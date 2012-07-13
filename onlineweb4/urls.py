@@ -1,6 +1,6 @@
 from django.conf.urls import patterns, include, url
 from tastypie.api import Api
-from apps.events.api import EventResource
+from apps.events.api import EventResource, UserResource
 
 # Uncomment the next two lines to enable the admin:
 # from django.contrib import admin
@@ -9,6 +9,7 @@ from apps.events.api import EventResource
 # 
 v0_api = Api(api_name='v0')
 v0_api.register(EventResource())
+v0_api.register(UserResource())
 event_resource = EventResource()
 
 urlpatterns = patterns('',

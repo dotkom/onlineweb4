@@ -7,7 +7,7 @@ class Event(models.Model):
     """
     Base class for Event-objects
     """
-    author = models.ForeignKey(User)
+    author = models.ForeignKey(User, related_name='author')
     title = models.CharField(_('title'), max_length=100)
     start_date = models.DateTimeField(_('start_date'))
     end_date = models.DateTimeField(_('end_date'))
