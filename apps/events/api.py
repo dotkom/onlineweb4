@@ -9,6 +9,7 @@ class UserResource(ModelResource):
     class Meta:
         queryset = User.objects.all()
         resource_name = 'author'
+        excludes = ['password']
 
 class EventResource(ModelResource):
     author = fields.ToOneField(UserResource, 'author', full=True)
