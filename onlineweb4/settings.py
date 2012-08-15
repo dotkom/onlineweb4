@@ -1,5 +1,3 @@
-import os.path
-
 TEST_RUNNER = "django_nose.NoseTestSuiteRunner"
 
 DEBUG = True

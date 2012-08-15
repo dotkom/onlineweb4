@@ -5,12 +5,14 @@ from tastypie.resources import ModelResource
 from tastypie.authorization import Authorization
 from apps.events.models import Event
 
+
 class UserResource(ModelResource):
     class Meta:
         queryset = User.objects.all()
         resource_name = 'author'
         # List of fields we do NOT want to make available
         excludes = ['password']
+
 
 class EventResource(ModelResource):
     author = fields.ToOneField(UserResource, 'author', full=True)
