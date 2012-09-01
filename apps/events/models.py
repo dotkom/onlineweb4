@@ -8,7 +8,7 @@ from apps.companys.models import Company
 
 class Event(models.Model):
     """
-    Base class for Event-objects
+    Base class for Event-objects.
     """
     event_id = models.AutoField(primary_key=True)
 
@@ -20,11 +20,11 @@ class Event(models.Model):
     description = models.TextField(_("description"))
 
     TYPE_CHOICES = (
-        (1, "Sosialt"),
-        (2, "Bedriftspresentasjon"),
-        (3, "Kurs"),
-        (4, "Utflukt"),
-        (5, "Annet")
+        (1, _("social")),
+        (2, _("enterprise presentation")),
+        (3, _("course")),
+        (4, _("excursion")),
+        (5, _("other")),
     )
     type = models.SmallIntegerField("type", choices=TYPE_CHOICES)
 
@@ -43,7 +43,10 @@ class EventCompanyExt(models.Model):
     If an event is somehow connected to a company, extend it with this.
     An event can only be affiliated with exactly one event.
     """
-    event = models.OneToOneField(Event, primary_key=True)
+    event = models.OneToOneField(
+            Event,
+            primary_key=True,
+            related_name="company")
     company = models.ForeignKey(Company)
 
 
@@ -51,8 +54,11 @@ class NewsExt(models.Model):
     """A news extension of Event.
     Adds fields that is necessary for an event to become a news story"""
 
-    #TODO: zope.implements(interface)
-    event = models.OneToOneField(Event, primary_key=True)
+    #XXX: zope.implements(interface) ??
+    event = models.OneToOneField(
+            Event,
+            primary_key=True,
+            related_name="news")
 
     post_date = models.DateTimeField(_("posted"), auto_now_add=True)
     last_edited_date = models.DateTimeField(_("last edited"), auto_now=True)
@@ -70,3 +76,73 @@ class NewsExt(models.Model):
     def author(self):
         #TODO: return event.author
         pass
+
+
+class EventAttendanceExt(models.Model):
+    """
+    Attendance extension of Event.
+    """
+    event = models.OneToOneField(
+            Event,
+            primary_key=True,
+            related_name="attendance")
+
+    withdraw_date = models.DateTimeField(_("withdraw_date"))
+    registration_end_date = models.DateTimeField(_("registration end date"))
+    registration_start_date = models.DateTimeField(
+            _("registration start date"))
+
+    gives_mark = models.BooleanField(_("gives mark"))
+    waitlist_is_open = models.BooleanField(_("wait list is open"),
+            default=False)
+
+    # restriction of event
+    RESTRICTION_CHOICES = (
+        (1, _("All")),
+        (2, _("2-5 year")),
+        (3, _("3-5 year")),
+        (4, _("Master"))
+    )
+    restriction = models.SmallIntegerField(_("restriction"),
+            choices=RESTRICTION_CHOICES)
+    seats = models.PositiveIntegerField(_("seats"))
+    guests = models.BooleanField(_("guests"))
+
+    attendants = models.ManyToManyField(User, through="AttendanceEntry")
+
+
+class EventAttendancePaymentExt(models.Model):
+    """
+    EventAttendance extension for payment.
+    Adds costs_money and price to the EventAttendanceExt
+    """
+    event = models.OneToOneField(
+            EventAttendanceExt,
+            primary_key=True,
+            related_name="payment")
+    costs_money = models.BooleanField(_("costs money"), default=False)
+    price = models.IntegerField(_("price"))
+
+
+class AttendanceEntry(models.Model):
+    """
+    A many to many table for User on EventAttendanceExt
+    """
+    event = models.ForeignKey(EventAttendanceExt)
+    user = models.ForeignKey(User)
+    timestamp = models.DateTimeField(auto_now_add=True, editable=False)
+    attended = models.BooleanField(_("attended"))
+
+
+class PayedAttendanceEntry(models.Model):
+    """
+    Adds information about event payment.
+    This class should not be added to AttendanceEntry if the event is
+    not extended with EventAttendancePaymentExt. This is not forced in
+    the database layer, due to the necessity of a big SQL query.
+    """
+    attendance_entry = models.OneToOneField(
+            AttendanceEntry,
+            related_name="payment")
+
+    paid = models.BooleanField(_("paid"))
