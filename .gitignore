@@ -1,3 +1,4 @@
+.ropeproject/
 .coverage
 *.pyc
 dev.db
