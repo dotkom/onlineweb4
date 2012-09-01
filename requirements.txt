@@ -9,3 +9,4 @@ nose==1.1.2
 python-dateutil==1.5
 unittest2==0.5.1
 wsgiref==0.1.2
+nose-cov==1.5
