@@ -5,7 +5,6 @@ from django.contrib.auth.models import User
 
 
 class UserProfile(models.Model):
-    #settings.py: AUTH_PROFILE_MODULE = "auth.UserProfile"
     user = models.ForeignKey(User, unique=True)
 
     is_online = models.BooleanField(_("is_online"))

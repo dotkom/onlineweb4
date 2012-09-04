@@ -64,8 +64,11 @@ class EventNewsExt(models.Model):
 
     post_date = models.DateTimeField(_("posted"), auto_now_add=True)
     last_edited_date = models.DateTimeField(_("last edited"), auto_now=True)
-    last_edited_by = models.ForeignKey(User, verbose_name=_("last edited by"),
-        editable=False, related_name="last_edits")
+    last_edited_by = models.ForeignKey(
+            User,
+            verbose_name=_("last edited by"),
+            editable=False,
+            related_name="last_event_news_edits")
     expiration_date = models.DateTimeField(_("expiration date"))
     #TODO: image
 
