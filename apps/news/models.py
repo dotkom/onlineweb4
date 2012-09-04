@@ -11,6 +11,5 @@ class News(models.Model):
     post_date = models.DateTimeField(_("posted date"), auto_now_add=True)
     last_edited_date = models.DateTimeField(_("last edited"), auto_now=True)
     last_edited_by = models.ForeignKey(User, verbose_name=_("last edited by"),
-        editable=False, related_name="last_edits")
-
+        editable=False, related_name="last_news_edits")
     expiration_date = models.DateTimeField(_("expiration date"))
