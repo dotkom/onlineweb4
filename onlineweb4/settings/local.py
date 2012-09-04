@@ -2,6 +2,7 @@ import os
 from base import PROJECT_ROOT_DIRECTORY
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
+ASSETS_DEBUG = DEBUG
 
 DATABASES = {
     #'default': {

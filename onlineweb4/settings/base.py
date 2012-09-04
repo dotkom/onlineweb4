@@ -50,6 +50,7 @@ STATICFILES_DIRS = (
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    'django_assets.finders.AssetsFinder',
 #    'django.contrib.staticfiles.finders.DefaultStorageFinder',
 )
 
@@ -93,6 +94,13 @@ INSTALLED_APPS = (
     'django_assets',
     'south',
     'apps.events',
+    'apps.companys',
+    'apps.news',
+    'apps.userprofile'
+    # Uncomment the next line to enable the admin:
+    # 'django.contrib.admin',
+    # Uncomment the next line to enable admin documentation:
+    # 'django.contrib.admindocs',
 )
 
 # A sample logging configuration. The only tangible logging
@@ -123,6 +131,9 @@ LOGGING = {
         },
     }
 }
+ASSETS_MODULES = [
+    'onlineweb4.assets'
+]
 
 try:
     from local import *
