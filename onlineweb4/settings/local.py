@@ -4,17 +4,17 @@ DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
 DATABASES = {
+    #'default': {
+        #'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        #'NAME': 'django',
+        #'USER': 'django',
+        #'PASSWORD': 'django',
+        #'HOST': '127.0.0.1',
+        #'PORT': '',
+    #},
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'django',
-        'USER': 'django',
-        'PASSWORD': 'django',
-        'HOST': '127.0.0.1',
-        'PORT': '',
-    },
-    'sqlite': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': 'sqlite3/db.db',
+        'NAME': 'db.db',
         'USER': '',
         'PASSWORD': '',
         'HOST': '',
