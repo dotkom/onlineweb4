@@ -1,4 +1,5 @@
-.ropeproject/
+collected_static
+.ropeproject
 .coverage
 *.pyc
 dev.db
