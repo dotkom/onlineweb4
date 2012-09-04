@@ -39,4 +39,11 @@ class EventAdmin(admin.ModelAdmin):
                EventNewsExtInline,
                EventAttendanceExtInline,)
 
+    def save_formset(self, request, form, formset, change):
+        instances = formset.save(commit=False)
+        for instance in instances:
+            if isinstance(instance, EventNewsExt):
+                instance.last_edited_by = request.user
+            instance.save()
+
 admin.site.register(Event, EventAdmin)
