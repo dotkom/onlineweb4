@@ -50,6 +50,7 @@ STATICFILES_DIRS = (
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    'django_assets.finders.AssetsFinder',
 #    'django.contrib.staticfiles.finders.DefaultStorageFinder',
 )
 
@@ -94,7 +95,8 @@ INSTALLED_APPS = (
     'south',
     'apps.events',
     'apps.companys',
-    'apps.feedbacks',
+    'apps.news',
+    'apps.userprofile'
     # Uncomment the next line to enable the admin:
     # 'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
@@ -129,6 +131,9 @@ LOGGING = {
         },
     }
 }
+ASSETS_MODULES = [
+    'onlineweb4.assets'
+]
 
 try:
     from local import *
