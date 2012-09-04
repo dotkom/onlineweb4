@@ -50,7 +50,7 @@ class EventCompanyExt(models.Model):
     company = models.ForeignKey(Company)
 
 
-class NewsExt(models.Model):
+class EventNewsExt(models.Model):
     """A news extension of Event.
     Adds fields that is necessary for an event to become a news story"""
 
@@ -59,6 +59,8 @@ class NewsExt(models.Model):
             Event,
             primary_key=True,
             related_name="news")
+
+    text = models.TextField(_("ingress"))
 
     post_date = models.DateTimeField(_("posted"), auto_now_add=True)
     last_edited_date = models.DateTimeField(_("last edited"), auto_now=True)
@@ -77,6 +79,11 @@ class NewsExt(models.Model):
         #TODO: return event.author
         pass
 
+    @property
+    def expiration_date(self):
+        #TODO: return event.end_date
+        pass
+
 
 class EventAttendanceExt(models.Model):
     """
@@ -87,7 +94,7 @@ class EventAttendanceExt(models.Model):
             primary_key=True,
             related_name="attendance")
 
-    withdraw_date = models.DateTimeField(_("withdraw_date"))
+    withdraw_date = models.DateTimeField(_("withdraw date"))
     registration_end_date = models.DateTimeField(_("registration end date"))
     registration_start_date = models.DateTimeField(
             _("registration start date"))
@@ -145,4 +152,5 @@ class PayedAttendanceEntry(models.Model):
             AttendanceEntry,
             related_name="payment")
 
+    paid = models.BooleanField(_("paid"))
     paid = models.BooleanField(_("paid"))
