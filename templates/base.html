@@ -15,8 +15,8 @@
 
     <body>
         {% block content %}{% endblock content %}
+        {% assets "js_all" %}
+        <script type="text/javascript" src="{{ ASSET_URL }}"></script>
+        {% endassets %}
     </body>
-    {% assets "js_all" %}
-    <script type="text/javascript" src="{{ ASSET_URL }}"></script>
-    {% endassets %}
 </html>
