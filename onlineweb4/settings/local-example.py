@@ -4,6 +4,10 @@ DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 ASSETS_DEBUG = DEBUG
 
+# FireSASS annotations in .css files
+# When changed, delete .webassets-cache in STATIC_ROOT
+SCSS_DEBUG = False
+
 DATABASES = {
     #'default': {
         #'ENGINE': 'django.db.backends.postgresql_psycopg2',
