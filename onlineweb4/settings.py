@@ -121,6 +121,8 @@ INSTALLED_APPS = (
     'django_nose',
     'south',
     'apps.events',
+    'apps.companys',
+    'apps.feedbacks',
     # Uncomment the next line to enable the admin:
     # 'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
