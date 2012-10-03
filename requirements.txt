@@ -1,6 +1,9 @@
 Django==1.4
+PIL==1.1.7
 South==0.7.5
 coverage==3.5.2
+django-filebrowser==3.5.0
+django-grappelli==2.4.2
 django-nose==1.0
 django-tastypie==0.9.11
 factory-boy==1.1.3
