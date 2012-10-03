@@ -11,3 +11,4 @@ class Company(models.Model):
     phone_number = models.IntegerField(_("Telefonnummer"), max_length=8, blank=True, null=True)
 #   public_profile = models.BooleanField(_("Offentlig profil"), default=False)
 
+
