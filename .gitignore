@@ -1,3 +1,5 @@
+*.pyc
+*.coverage
 dev.db
 .sass-cache/
 .bundle
