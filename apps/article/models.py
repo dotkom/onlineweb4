@@ -29,7 +29,6 @@ class Article(models.Model):
     created_by = models.ForeignKey(User, verbose_name=_("opprettet av"), related_name="created_by", editable=False)
     changed_by = models.ForeignKey(User, verbose_name=_("endret av"), related_name="chneged_by", editable=False)
     featured = models.BooleanField(_("featured artikkel"), default=False)
-    hurrdurr = models.BooleanField("blabla")
 
     class Meta:
         verbose_name = _("artikkel")
