@@ -45,7 +45,7 @@ AUTH_PROFILE_MODULE = 'apps.userprofile.UserProfile'
 # Don't put anything in this directory yourself; store your static files
 # in apps' "static/" subdirectories and in STATICFILES_DIRS.
 # Example: "/home/media/media.lawrence.com/static/"
-STATIC_ROOT = ''
+STATIC_ROOT = 'static/'
 
 # URL prefix for static files.
 # Example: "http://media.lawrence.com/static/"
@@ -93,8 +93,10 @@ TEMPLATE_DIRS = (
 )
 
 INSTALLED_APPS = (
-    # Third party apps
+    # Third party dependencies
     'south',
+    'grappelli',
+    'filebrowser',
     'django_nose',
 
     # Django apps
@@ -110,6 +112,7 @@ INSTALLED_APPS = (
     'apps.events',
     'apps.userprofile',
     'apps.autoconfig'
+    'apps.article',
 )
 
 # A sample logging configuration. The only tangible logging
