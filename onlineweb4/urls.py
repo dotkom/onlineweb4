@@ -12,7 +12,6 @@ v0_api = Api(api_name='v0')
 v0_api.register(EventResource())
 v0_api.register(UserResource())
 
-
 # URL config 
 admin.autodiscover()
 
