@@ -10,8 +10,8 @@ class Event(models.Model):
     """
     author = models.ForeignKey(User, related_name='author')
     title = models.CharField(_('title'), max_length=100)
-    start_date = models.DateTimeField(_('start_date'))
-    end_date = models.DateTimeField(_('end_date'))
+    event_start = models.DateTimeField(_('start_date'))
+    event_end = models.DateTimeField(_('end_date'))
     location = models.CharField(_('location'), max_length=100)
     description = models.TextField(_('description'))
 
@@ -21,3 +21,12 @@ class Event(models.Model):
     class Meta:
         verbose_name = _('event')
         verbose_name_plural = _('events')
+
+class AttendanceEvent(Event):
+    max_capacity = models.PositiveIntegerField(_('max_capacity'))
+    registration_start = models.DateTimeField(_('registration_start'))
+    registration_end = models.DateTimeField(_('registration_end'))
+
+    class Meta:
+        verbose_name = _('AttendanceEvent')
+        verbose_name_plural = _('AttendanceEvents')
