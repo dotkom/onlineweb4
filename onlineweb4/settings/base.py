@@ -95,8 +95,10 @@ TEMPLATE_DIRS = (
 GRAPPELLI_ADMIN_TITLE = 'Onlineweb'
 
 INSTALLED_APPS = (
-    # Third party apps
+    # Third party dependencies
     'south',
+    'grappelli',
+    'filebrowser',
     'django_nose',
     'grappelli',
     'filebrowser',
@@ -114,6 +116,7 @@ INSTALLED_APPS = (
     'apps.events',
     'apps.userprofile',
     'apps.autoconfig'
+    'apps.article',
 )
 
 # A sample logging configuration. The only tangible logging
