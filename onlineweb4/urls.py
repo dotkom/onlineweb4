@@ -7,17 +7,14 @@ from apps.events.api import EventResource, UserResource
 
 admin.autodiscover()
 
-urlpatterns = patterns('',
-    # Filebrowser must be above all admin-urls
-    url(r'^admin/filebrowser/', include(site.urls)),
-)
-
 # 
 v0_api = Api(api_name='v0')
 v0_api.register(EventResource())
 v0_api.register(UserResource())
 
-urlpatterns += patterns('',
+urlpatterns = patterns('',
+    # Filebrowser must be above all admin-urls
+    url(r'^admin/filebrowser/', include(site.urls)),
 
     # Admin urls
     url(r'^admin/', include(admin.site.urls)),

@@ -10,10 +10,11 @@ NOSE_ARGS = ['--with-coverage', '--cover-package=apps']
 DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 
-ADMINS = (
-     ('dotKom', 'dotkom@online.ntnu.no'),
-)
+TEST_RUNNER = "django_nose.NoseTestSuiteRunner"
 
+ADMINS = (
+    ('dotKom', 'dotkom@online.ntnu.no'),
+)
 MANAGERS = ADMINS
 
 # Email settings
@@ -36,19 +37,22 @@ LANGUAGES = (
 SITE_ID = 1
 USE_I18N = True
 USE_L10N = True
+DATETIME_FORMAT = 'N j, Y, H:i'
+
+# If you set this to False, Django will not use timezone-aware datetimes.
 USE_TZ = True
 SECRET_KEY = 'q#wy0df(7&amp;$ucfrxa1j72%do7ko*-6(g!8f$tc2$3x@3cq5@6c'
 
 AUTH_PROFILE_MODULE = 'apps.userprofile.UserProfile'
 
-# Absolute path to the directory static files should be collected to.
-# Don't put anything in this directory yourself; store your static files
-# in apps' "static/" subdirectories and in STATICFILES_DIRS.
-# Example: "/home/media/media.lawrence.com/static/"
-STATIC_ROOT = 'static/'
+MEDIA_ROOT = '/some/absolute/path/in/prod/'
+UPLOAD_DIRECTORY = 'uploads/'
 
-# URL prefix for static files.
-# Example: "http://media.lawrence.com/static/"
+if DEBUG:
+    MEDIA_ROOT = 'media/'
+
+
+STATIC_ROOT = 'static/'
 STATIC_URL = '/static/'
 
 # Additional locations of static files
@@ -56,8 +60,6 @@ STATICFILES_DIRS = (
     os.path.join(PROJECT_ROOT_DIRECTORY, 'static/'),
 )
 
-# List of finder classes that know how to find static files in
-# various locations.
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
@@ -66,11 +68,9 @@ STATICFILES_FINDERS = (
 
 # Make this unique, and don't share it with anybody.
 
-# List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.Loader',
     'django.template.loaders.app_directories.Loader',
-#     'django.template.loaders.eggs.Loader',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -94,6 +94,7 @@ TEMPLATE_DIRS = (
 
 INSTALLED_APPS = (
     # Third party dependencies
+    'django_nose',
     'south',
     'grappelli',
     'filebrowser',
