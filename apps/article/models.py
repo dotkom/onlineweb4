@@ -8,7 +8,7 @@ from django.utils.translation import ugettext as _
 from filebrowser.fields import FileBrowseField
 
 class Article(models.Model):
-    IMAGE_FOLDER = "images/article"
+    IMAGE_FOLDER = "/images/article"
     IMAGE_EXTENSIONS = ['.jpg', '.jpeg', '.gif', '.png', '.tif', '.tiff']
 
     heading = models.CharField(_("tittel"), max_length=200)

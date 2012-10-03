@@ -30,5 +30,3 @@ def details(request, article_id):
 		article.isChanged = False
 		
 	return render_to_response('article/details.html', {'article': article}, context_instance=RequestContext(request))
-
-	
