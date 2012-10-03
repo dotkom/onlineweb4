@@ -12,9 +12,10 @@ v0_api = Api(api_name='v0')
 v0_api.register(EventResource())
 v0_api.register(UserResource())
 
-admin.autodiscover()
 
 # URL config 
+admin.autodiscover()
+
 urlpatterns = patterns('',
     # Filebrowser must be above all admin-urls
     url(r'^admin/filebrowser/',     include(site.urls)),
