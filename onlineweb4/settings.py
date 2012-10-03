@@ -129,7 +129,7 @@ INSTALLED_APPS = (
 
     # Onlineweb 4 apps
     'apps.events',
-    #'apps.article',
+    'apps.article',
 )
 
 # A sample logging configuration. The only tangible logging
