@@ -1,5 +1,15 @@
-collected_static
+*.pyc
+*.*.swp
+*.swp
+*.project
+*.settings
+*.pydevproject
+.nfs*
+.idea*
 .ropeproject
 .coverage
-*.pyc
 dev.db
+
+collected_static
+sqlite/
+local.py
