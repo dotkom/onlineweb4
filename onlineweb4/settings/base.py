@@ -98,7 +98,6 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
 
     # Onlineweb apps
-    'apps.companies',
     'apps.events',
     'apps.userprofile'
 )
