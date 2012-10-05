@@ -2,6 +2,7 @@ import os
 import sys
 
 PROJECT_ROOT_DIRECTORY = os.path.join(os.path.dirname(globals()['__file__']),'../..')
+PROJECT_SETTINGS_DIRECTORY = os.path.join(PROJECT_ROOT_DIRECTORY, 'onlineweb4', 'settings')
 
 TEST_RUNNER = "django_nose.NoseTestSuiteRunner"
 NOSE_ARGS = ['--with-coverage', '--cover-package=apps']
@@ -124,10 +125,13 @@ LOGGING = {
     }
 }
 
-try:
-    from local import *
-except ImportError, e:
-    print("You need to copy the settings file "
-          "'onlineweb4/settings/example-local.py' to "
-          "'onlineweb4/settings/local.py'.")
-    sys.exit(1)
+for settings_module in ['local',]:
+    if not os.path.exists(os.path.join(PROJECT_SETTINGS_DIRECTORY, settings_module + ".py")):
+        sys.stderr.write("Could not find settings module '%s'. Project settings path: %s", settings_module, PROJECT_SETTINGS_DIRECTORY)
+        if settings_module == 'local':
+            print "You need to copy the settings file 'onlineweb4/settings/example-local.py' to 'onlineweb4/settings/local.py'."
+        sys.exit(1)
+    try:
+        exec('from %s import *' % settings_module)
+    except ImportError, e:
+        print "Could not import settings for '%s' : %s" % (settings_module, str(e))
