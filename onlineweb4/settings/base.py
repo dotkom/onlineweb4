@@ -16,6 +16,14 @@ ADMINS = (
 
 MANAGERS = ADMINS
 
+# Email settings
+DEFAULT_FROM_EMAIL = 'online@online.ntnu.no'
+EMAIL_ARRKOM = 'arrkom@online.ntnu.no'
+EMAIL_BEDKOM = 'bedkom@online.ntnu.no'
+EMAIL_DOTKOM = 'dotkom@online.ntnu.no' 
+EMAIL_FAGKOM = 'fagkom@online.ntnu.no'
+EMAIL_PROKOM = 'prokom@online.ntnu.no'
+EMAIL_TRIKOM = 'trikom@online.ntnu.no'
 
 TIME_ZONE = 'Europe/Oslo'
 # http://www.i18nguy.com/unicode/language-identifiers.html
@@ -27,9 +35,7 @@ USE_L10N = True
 USE_TZ = True
 SECRET_KEY = 'q#wy0df(7&amp;$ucfrxa1j72%do7ko*-6(g!8f$tc2$3x@3cq5@6c'
 
-
 AUTH_PROFILE_MODULE = 'apps.userprofile.UserProfile'
-
 
 # Absolute path to the directory static files should be collected to.
 # Don't put anything in this directory yourself; store your static files
