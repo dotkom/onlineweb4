@@ -1,7 +1,8 @@
 import os
 import sys
 
-PROJECT_ROOT_DIRECTORY = os.path.join(os.path.dirname(globals()['__file__']),'../..')
+PROJECT_SETTINGS_DIRECTORY = os.path.dirname(globals()['__file__'])
+PROJECT_ROOT_DIRECTORY = os.path.join(PROJECT_SETTINGS_DIRECTORY,'../..')
 
 TEST_RUNNER = "django_nose.NoseTestSuiteRunner"
 NOSE_ARGS = ['--with-coverage', '--cover-package=apps']
@@ -15,6 +16,14 @@ ADMINS = (
 
 MANAGERS = ADMINS
 
+# Email settings
+DEFAULT_FROM_EMAIL = 'online@online.ntnu.no'
+EMAIL_ARRKOM = 'arrkom@online.ntnu.no'
+EMAIL_BEDKOM = 'bedkom@online.ntnu.no'
+EMAIL_DOTKOM = 'dotkom@online.ntnu.no' 
+EMAIL_FAGKOM = 'fagkom@online.ntnu.no'
+EMAIL_PROKOM = 'prokom@online.ntnu.no'
+EMAIL_TRIKOM = 'trikom@online.ntnu.no'
 
 TIME_ZONE = 'Europe/Oslo'
 # http://www.i18nguy.com/unicode/language-identifiers.html
@@ -26,9 +35,7 @@ USE_L10N = True
 USE_TZ = True
 SECRET_KEY = 'q#wy0df(7&amp;$ucfrxa1j72%do7ko*-6(g!8f$tc2$3x@3cq5@6c'
 
-
 AUTH_PROFILE_MODULE = 'apps.userprofile.UserProfile'
-
 
 # Absolute path to the directory static files should be collected to.
 # Don't put anything in this directory yourself; store your static files
@@ -83,24 +90,23 @@ TEMPLATE_DIRS = (
 )
 
 INSTALLED_APPS = (
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.sites',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-    'django.contrib.admin',
+    # Third party apps
+    'south',
     'django_nose',
     'django_assets',
-    'south',
+
+    # Django apps
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.messages',
+    'django.contrib.sessions',
+    'django.contrib.sites',
+    'django.contrib.staticfiles',
+
+    # Onlineweb apps
     'apps.events',
-    'apps.companys',
-    'apps.news',
     'apps.userprofile'
-    # Uncomment the next line to enable the admin:
-    # 'django.contrib.admin',
-    # Uncomment the next line to enable admin documentation:
-    # 'django.contrib.admindocs',
 )
 
 # A sample logging configuration. The only tangible logging
@@ -135,10 +141,13 @@ ASSETS_MODULES = [
     'onlineweb4.assets'
 ]
 
-try:
-    from local import *
-except ImportError, e:
-    print("You need to copy the settings file "
-          "'onlineweb4/settings/example-local.py' to "
-          "'onlineweb4/settings/local.py'.")
-    sys.exit(1)
+for settings_module in ['local',]:
+    if not os.path.exists(os.path.join(PROJECT_SETTINGS_DIRECTORY, settings_module + ".py")):
+        sys.stderr.write("Could not find settings module '%s'.\n" % settings_module)
+        if settings_module == 'local':
+            sys.stderr.write("You need to copy the settings file 'onlineweb4/settings/example-local.py' to 'onlineweb4/settings/local.py'.\n")
+        sys.exit(1)
+    try:
+        exec('from %s import *' % settings_module)
+    except ImportError, e:
+        print "Could not import settings for '%s' : %s" % (settings_module, str(e))
