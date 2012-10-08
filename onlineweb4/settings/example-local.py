@@ -24,8 +24,8 @@ DATABASES = {
 }
 
 # Email settings
-# If you are actually sending mail, this should be replaced with an email adress
-# you can get all mail to.
+# If you are actually sending mail, this should be replaced with an
+# email adress you can get all mail to.
 DEVELOPMENT_EMAIL = 'your_preferred_adress_here'
 
 # Overwriting all the emails from base.py with the development email, so that
@@ -37,7 +37,7 @@ DEFAULT_FROM_EMAIL = 'development@online.ntnu.no'
 EMAIL_ARRKOM = DEVELOPMENT_EMAIL
 EMAIL_BEDKOM = DEVELOPMENT_EMAIL
 EMAIL_DOTKOM = DEVELOPMENT_EMAIL
-EMAIL_FAGKOM = DEVELOPMENT_EMAIL 
+EMAIL_FAGKOM = DEVELOPMENT_EMAIL
 EMAIL_PROKOM = DEVELOPMENT_EMAIL
 EMAIL_TRIKOM = DEVELOPMENT_EMAIL
 
