@@ -5,7 +5,7 @@ from django.utils.translation import gettext as _
 
 
 class Event(models.Model):
-    """
+    """ 
     Base class for Event-objects
     """
     author = models.ForeignKey(User, related_name='author')
