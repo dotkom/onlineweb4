@@ -93,17 +93,22 @@ TEMPLATE_DIRS = (
 )
 
 INSTALLED_APPS = (
+    # Third party apps
+    'south',
+    'django_nose',
+
+    # Django apps
+    'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
+    'django.contrib.messages',
     'django.contrib.sessions',
     'django.contrib.sites',
-    'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django.contrib.admin',
-    'django_nose',
-    'django_assets',
-    'south',
+
+    # Onlineweb apps
     'apps.events',
+    'apps.userprofile'
 )
 
 # A sample logging configuration. The only tangible logging
