@@ -2,7 +2,7 @@ import os
 import sys
 
 PROJECT_SETTINGS_DIRECTORY = os.path.dirname(globals()['__file__'])
-PROJECT_ROOT_DIRECTORY = os.path.join(PROJECT_SETTINGS_DIRECTORY,'../..')
+PROJECT_ROOT_DIRECTORY = os.path.join(PROJECT_SETTINGS_DIRECTORY, '../..')
 
 TEST_RUNNER = "django_nose.NoseTestSuiteRunner"
 NOSE_ARGS = ['--with-coverage', '--cover-package=apps']
@@ -20,7 +20,7 @@ MANAGERS = ADMINS
 DEFAULT_FROM_EMAIL = 'online@online.ntnu.no'
 EMAIL_ARRKOM = 'arrkom@online.ntnu.no'
 EMAIL_BEDKOM = 'bedkom@online.ntnu.no'
-EMAIL_DOTKOM = 'dotkom@online.ntnu.no' 
+EMAIL_DOTKOM = 'dotkom@online.ntnu.no'
 EMAIL_FAGKOM = 'fagkom@online.ntnu.no'
 EMAIL_PROKOM = 'prokom@online.ntnu.no'
 EMAIL_TRIKOM = 'trikom@online.ntnu.no'
@@ -61,7 +61,6 @@ STATICFILES_DIRS = (
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-    'django_assets.finders.AssetsFinder',
 #    'django.contrib.staticfiles.finders.DefaultStorageFinder',
 )
 
@@ -97,7 +96,6 @@ INSTALLED_APPS = (
     # Third party apps
     'south',
     'django_nose',
-    'django_assets',
 
     # Django apps
     'django.contrib.admin',
@@ -141,17 +139,19 @@ LOGGING = {
         },
     }
 }
-ASSETS_MODULES = [
-    'onlineweb4.assets'
-]
 
-for settings_module in ['local',]:
-    if not os.path.exists(os.path.join(PROJECT_SETTINGS_DIRECTORY, settings_module + ".py")):
-        sys.stderr.write("Could not find settings module '%s'.\n" % settings_module)
+for settings_module in ['local', ]:
+    if not os.path.exists(os.path.join(PROJECT_SETTINGS_DIRECTORY,
+                settings_module + ".py")):
+        sys.stderr.write("Could not find settings module '%s'.\n" %
+                settings_module)
         if settings_module == 'local':
-            sys.stderr.write("You need to copy the settings file 'onlineweb4/settings/example-local.py' to 'onlineweb4/settings/local.py'.\n")
+            sys.stderr.write("You need to copy the settings file"
+                             "'onlineweb4/settings/example-local.py' to "
+                             "'onlineweb4/settings/local.py'.\n")
         sys.exit(1)
     try:
         exec('from %s import *' % settings_module)
     except ImportError, e:
-        print "Could not import settings for '%s' : %s" % (settings_module, str(e))
+        print "Could not import settings for '%s' : %s" % (settings_module,
+                str(e))
