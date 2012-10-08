@@ -28,6 +28,10 @@ EMAIL_TRIKOM = 'trikom@online.ntnu.no'
 TIME_ZONE = 'Europe/Oslo'
 # http://www.i18nguy.com/unicode/language-identifiers.html
 LANGUAGE_CODE = 'nb'
+LANGUAGES = (
+                ('nb', 'Norwegian'),
+                ('en_US', 'English'),
+            )
 
 SITE_ID = 1
 USE_I18N = True
