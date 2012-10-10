@@ -11,7 +11,7 @@ def index(request):
     return render_to_response('events/index.html', {'events': events}, contex_instance=RequestContext(request))
 
 def details(request, event_id):
-    event = event = get_object_or_404(Event, pk=event_id)
+    event = get_object_or_404(Event, pk=event_id)
     context = {'now': datetime.datetime.now())}
     
     return render_to_response('events/details.html', context, context_instance=RequestContext(request))
