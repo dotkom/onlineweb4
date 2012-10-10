@@ -1,7 +1,6 @@
 from django.conf.urls import patterns, include, url
 from tastypie.api import Api
 from apps.events.api import EventResource, UserResource
-
 # Uncomment the next two lines to enable the admin:
 # from django.contrib import admin
 # admin.autodiscover()
@@ -22,4 +21,5 @@ urlpatterns = patterns('',
     # Uncomment the next line to enable the admin:
     # url(r'^admin/', include(admin.site.urls)),
     (r'^api/', include(v0_api.urls)),
+    (r'^mail/', include('apps.autoconfig.urls'))
 )
