@@ -1,62 +1,54 @@
+import os
+import sys
 
-DEBUG = True
+PROJECT_SETTINGS_DIRECTORY = os.path.dirname(globals()['__file__'])
+PROJECT_ROOT_DIRECTORY = os.path.join(PROJECT_SETTINGS_DIRECTORY, '../..')
+
+TEST_RUNNER = "django_nose.NoseTestSuiteRunner"
+NOSE_ARGS = ['--with-coverage', '--cover-package=apps']
+
+DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 
 TEST_RUNNER = "django_nose.NoseTestSuiteRunner"
 
 ADMINS = (
-    ('dotKom', 'dotkom@online.ntnu.no'),
+     ('dotKom', 'dotkom@online.ntnu.no'),
 )
 MANAGERS = ADMINS
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': 'dev.db',                      # Or path to database file if using sqlite3.
-        'USER': '',                      # Not used with sqlite3.
-        'PASSWORD': '',                  # Not used with sqlite3.
-        'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
-        'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
-    }
-}
-
-TIME_ZONE = 'Europe/Oslo'
-LANGUAGE_CODE = 'en-us'
-SITE_ID = 1
-DATETIME_FORMAT = 'N j, Y, H:i'
-SECRET_KEY = 'q#wy0df(7&amp;$ucfrxa1j72%do7ko*-6(g!8f$tc2$3x@3cq5@6c'
-
+# Email settings
 DEFAULT_FROM_EMAIL = 'online@online.ntnu.no'
 EMAIL_ARRKOM = 'arrkom@online.ntnu.no'
 EMAIL_BEDKOM = 'bedkom@online.ntnu.no'
-EMAIL_DOTKOM = 'dotkom@online.ntnu.no' 
+EMAIL_DOTKOM = 'dotkom@online.ntnu.no'
 EMAIL_FAGKOM = 'fagkom@online.ntnu.no'
 EMAIL_PROKOM = 'prokom@online.ntnu.no'
 EMAIL_TRIKOM = 'trikom@online.ntnu.no'
 
+TIME_ZONE = 'Europe/Oslo'
+# http://www.i18nguy.com/unicode/language-identifiers.html
+LANGUAGE_CODE = 'nb'
+LANGUAGES = (
+                ('nb', 'Norwegian'),
+                ('en_US', 'English'),
+            )
+
+SITE_ID = 1
 USE_I18N = True
-USE_L10N = False
-# If you set this to False, Django will not use timezone-aware datetimes.
+USE_L10N = True
 USE_TZ = True
+SECRET_KEY = 'q#wy0df(7&amp;$ucfrxa1j72%do7ko*-6(g!8f$tc2$3x@3cq5@6c'
 
-# Absolute filesystem path to the directory that will hold user-uploaded files.
-# Example: "/home/media/media.lawrence.com/media/"
-
-MEDIA_ROOT = '/some/absolute/path/in/prod/'
-DIRECTORY = 'uploads/'
-
-if DEBUG:
-    MEDIA_ROOT = 'media/'
-
-# URL that handles the media served from MEDIA_ROOT. Make sure to use a
-# trailing slash.
-# Examples: "http://media.lawrence.com/media/", "http://example.com/media/"
-MEDIA_URL = ''
+AUTH_PROFILE_MODULE = 'apps.userprofile.UserProfile'
 
 STATIC_ROOT = 'static/'
 STATIC_URL = '/static/'
 
-STATICFILES_DIRS = ()
+# Additional locations of static files
+STATICFILES_DIRS = (
+    os.path.join(PROJECT_ROOT_DIRECTORY, 'static/'),
+)
 
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
@@ -87,9 +79,7 @@ ROOT_URLCONF = 'onlineweb4.urls'
 WSGI_APPLICATION = 'onlineweb4.wsgi.application'
 
 TEMPLATE_DIRS = (
-    # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
-    # Always use forward slashes, even on Windows.
-    # Don't forget to use absolute paths, not relative paths.
+    os.path.join(PROJECT_ROOT_DIRECTORY, 'templates/')
 )
 
 INSTALLED_APPS = (
@@ -103,13 +93,14 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
+    'django.contrib.messages',
     'django.contrib.sessions',
     'django.contrib.sites',
-    'django.contrib.messages',
     'django.contrib.staticfiles',
 
     # Onlineweb 4 apps
     'apps.article',
+    'apps.userprofile',
     'apps.events',
 )
 
@@ -142,4 +133,18 @@ LOGGING = {
     }
 }
 
-
+for settings_module in ['local', ]:
+    if not os.path.exists(os.path.join(PROJECT_SETTINGS_DIRECTORY,
+            settings_module + ".py")):
+        sys.stderr.write("Could not find settings module '%s'.\n" %
+                settings_module)
+        if settings_module == 'local':
+            sys.stderr.write("You need to copy the settings file "
+                             "'onlineweb4/settings/example-local.py' to "
+                             "'onlineweb4/settings/local.py'.\n")
+        sys.exit(1)
+    try:
+        exec('from %s import *' % settings_module)
+    except ImportError, e:
+        print "Could not import settings for '%s' : %s" % (settings_module,
+                str(e))
