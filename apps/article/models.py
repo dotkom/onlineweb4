@@ -30,6 +30,9 @@ class Article(models.Model):
     changed_by = models.ForeignKey(User, verbose_name=_("endret av"), related_name="chneged_by", editable=False)
     featured = models.BooleanField(_("featured artikkel"), default=False)
 
+    def __unicode__(self):
+        return self.heading
+
     class Meta:
         verbose_name = _("artikkel")
         verbose_name_plural = _("artikler")
