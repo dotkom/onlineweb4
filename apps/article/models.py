@@ -8,7 +8,7 @@ from django.utils.translation import ugettext as _
 from filebrowser.fields import FileBrowseField
 
 class Article(models.Model):
-    IMAGE_FOLDER = "/images/article"
+    IMAGE_FOLDER = "images/article"
     IMAGE_EXTENSIONS = ['.jpg', '.jpeg', '.gif', '.png', '.tif', '.tiff']
 
     heading = models.CharField(_("tittel"), max_length=200)
@@ -24,10 +24,11 @@ class Article(models.Model):
         max_length=200, directory=IMAGE_FOLDER, blank=True,
         extensions=IMAGE_EXTENSIONS)
     created_date = models.DateTimeField(_("opprettet-dato"), auto_now_add=True, editable=False)
-    changed_date = models.DateTimeField(_("sist endret"), editable=False)
+    changed_date = models.DateTimeField(_("sist endret"), editable=False, auto_now=True)
     published_date = models.DateTimeField(_("publisert"))
-    created_by = models.ForeignKey(User, verbose_name=_("opprettet av"), related_name="created_by", editable=False)
-    changed_by = models.ForeignKey(User, verbose_name=_("endret av"), related_name="chneged_by", editable=False)
+
+    created_by = models.ForeignKey(User, null=False, verbose_name=_("opprettet av"), related_name="created_by", editable=False)
+    changed_by = models.ForeignKey(User, null=False, verbose_name=_("endret av"), related_name="chneged_by", editable=False)
     featured = models.BooleanField(_("featured artikkel"), default=False)
 
     def __unicode__(self):
