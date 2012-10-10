@@ -92,7 +92,7 @@ TEMPLATE_DIRS = (
     os.path.join(PROJECT_ROOT_DIRECTORY, 'templates/')
 )
 
-FILEBROWSER_DIRECTORY = "filebrowser" # MEDIA_ROOT + FILEBROWSER_DIRECTORY
+FILEBROWSER_DIRECTORY = "" # becomes MEDIA_ROOT
 
 INSTALLED_APPS = (
     # Third party dependencies
