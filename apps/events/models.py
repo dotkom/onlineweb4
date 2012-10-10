@@ -23,6 +23,9 @@ class Event(models.Model):
         verbose_name_plural = _('events')
 
 class AttendanceEvent(Event):
+    """
+    Events that require special considerations regarding attendance.
+    """
     max_capacity = models.PositiveIntegerField(_('max_capacity'))
     registration_start = models.DateTimeField(_('registration_start'))
     registration_end = models.DateTimeField(_('registration_end'))
