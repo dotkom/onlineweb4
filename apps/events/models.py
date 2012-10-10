@@ -6,7 +6,7 @@ from django.utils.translation import ugettext_lazy as _
 
 class Event(models.Model):
     """
-    Base class for Event-objects
+    Base class for Event-objects.
     """
     author = models.ForeignKey(User, related_name='oppretter')
     title = models.CharField(_('tittel'), max_length=100)
@@ -36,6 +36,9 @@ class AttendanceEvent(Event):
 
 
 class Attendee(models.Model):
+    """
+    User relation to AttendanceEvent.
+    """
     user = models.ForeignKey(User)
     event = models.ForeignKey(AttendanceEvent)
     timestamp = models.DateTimeField(auto_now_add=True, editable=False)
