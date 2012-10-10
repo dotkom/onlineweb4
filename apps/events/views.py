@@ -2,7 +2,7 @@
 from django.shortcuts import render_to_response
 from django.shortcuts import get_object_or_404
 from django.template import RequestContext
-from onlineweb4.apps.events import Event, Attendee
+from events import Event, Attendee
 import datetime
 
 def index(request):
