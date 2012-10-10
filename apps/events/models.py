@@ -1,7 +1,7 @@
 #-*- coding: utf-8 -*-
 from django.db import models
 from django.contrib.auth.models import User
-from django.utils.translation import gettext as _
+from django.utils.translation import ugettext_lazy as _
 
 
 class Event(models.Model):
@@ -23,10 +23,13 @@ class Event(models.Model):
         verbose_name_plural = _('arrangement')
 
 class AttendanceEvent(Event):
+    """
+    Events that require special considerations regarding attendance.
+    """
     max_capacity = models.PositiveIntegerField(_('maks-kapasitet'))
     registration_start = models.DateTimeField(_('registrerings-start'))
     registration_end = models.DateTimeField(_('registrerings-slutt'))
-
+    
     class Meta:
         verbose_name = _('påmeldingsarrangement')
         verbose_name_plural = _('påmeldingsarrangement')
