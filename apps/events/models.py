@@ -30,9 +30,13 @@ class AttendanceEvent(Event):
     registration_start = models.DateTimeField(_('registrerings-start'))
     registration_end = models.DateTimeField(_('registrerings-slutt'))
 
+    @property
+    def attendees(self):
+        return map(lambda x: getattr(x, 'user'), Attendee.objects.filter(event=self))
+
     class Meta:
-        verbose_name = _('påmeldingsarrangement')
-        verbose_name_plural = _('påmeldingsarrangement')
+        verbose_name = _('paameldingsarrangement')
+        verbose_name_plural = _('paameldingsarrangement')
 
 
 class Attendee(models.Model):
@@ -40,7 +44,7 @@ class Attendee(models.Model):
     User relation to AttendanceEvent.
     """
     user = models.ForeignKey(User)
-    event = models.ForeignKey(AttendanceEvent)
+    event = models.ManyToManyField(AttendanceEvent)
     timestamp = models.DateTimeField(auto_now_add=True, editable=False)
     paid = models.BooleanField(_('betalt'))
     attended = models.BooleanField(_('var tilstede'))
@@ -49,5 +53,4 @@ class Attendee(models.Model):
         return self.user.get_full_name()
 
     class Meta:
-        unique_together = ("event", "user")
         ordering = ['timestamp']
