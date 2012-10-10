@@ -82,6 +82,8 @@ TEMPLATE_DIRS = (
     os.path.join(PROJECT_ROOT_DIRECTORY, 'templates/')
 )
 
+FILEBROWSER_DIRECTORY = "filebrowser" # MEDIA_ROOT + FILEBROWSER_DIRECTORY
+
 INSTALLED_APPS = (
     # Third party dependencies
     'django_nose',
