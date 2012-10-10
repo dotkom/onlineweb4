@@ -8,6 +8,8 @@ class Event(models.Model):
     """
     Base class for Event-objects.
     """
+    event_id = models.AutoField(primary_key=True)
+    
     author = models.ForeignKey(User, related_name='oppretter')
     title = models.CharField(_('tittel'), max_length=100)
     event_start = models.DateTimeField(_('start-dato'))
@@ -22,17 +24,18 @@ class Event(models.Model):
         verbose_name = _('arrangement')
         verbose_name_plural = _('arrangement')
 
-class AttendanceEvent(Event):
+class AttendanceEvent(models.Model):
     """
     Events that require special considerations regarding attendance.
     """
+    event = models.OneToOneField(
+            Event,
+            primary_key=True,
+            related_name='attendance_event')
+
     max_capacity = models.PositiveIntegerField(_('maks-kapasitet'))
     registration_start = models.DateTimeField(_('registrerings-start'))
     registration_end = models.DateTimeField(_('registrerings-slutt'))
-
-    @property
-    def attendees(self):
-        return map(lambda x: getattr(x, 'user'), Attendee.objects.filter(event=self))
 
     class Meta:
         verbose_name = _('paameldingsarrangement')
@@ -43,10 +46,10 @@ class Attendee(models.Model):
     """
     User relation to AttendanceEvent.
     """
+    event = models.ForeignKey(AttendanceEvent)
     user = models.ForeignKey(User)
-    event = models.ManyToManyField(AttendanceEvent)
+
     timestamp = models.DateTimeField(auto_now_add=True, editable=False)
-    paid = models.BooleanField(_('betalt'))
     attended = models.BooleanField(_('var tilstede'))
 
     def __unicode__(self):
