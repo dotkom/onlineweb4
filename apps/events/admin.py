@@ -8,14 +8,11 @@ class AttendanceEventInline(admin.StackedInline):
     max_num = 1
     extra = 0
 
-# class AttendeeInline(admin.StackedInline):
-#     model = Attendee
-#     extra = 0
-
 class EventAdmin(admin.ModelAdmin):
-    inlines = ( AttendanceEventInline,
-                # AttendeeInline)
-                )
+    inlines = ( 
+        AttendanceEventInline,
+        )
+
     def save_formset(self, request, form, formset, change):
         instances = formset.save(commit=False)
         for instance in instances:
