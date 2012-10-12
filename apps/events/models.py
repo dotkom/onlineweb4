@@ -9,7 +9,7 @@ class Event(models.Model):
     Base class for Event-objects.
     """
     event_id = models.AutoField(primary_key=True)
-    
+
     author = models.ForeignKey(User, related_name='oppretter')
     title = models.CharField(_('tittel'), max_length=100)
     event_start = models.DateTimeField(_('start-dato'))
@@ -24,6 +24,7 @@ class Event(models.Model):
         verbose_name = _('arrangement')
         verbose_name_plural = _('arrangement')
 
+
 class AttendanceEvent(models.Model):
     """
     Events that require special considerations regarding attendance.
@@ -37,9 +38,12 @@ class AttendanceEvent(models.Model):
     registration_start = models.DateTimeField(_('registrerings-start'))
     registration_end = models.DateTimeField(_('registrerings-slutt'))
 
+    def __unicode__(self):
+        return self.event.title
+
     class Meta:
-        verbose_name = _('paameldingsarrangement')
-        verbose_name_plural = _('paameldingsarrangement')
+        verbose_name = _('paamelding')
+        verbose_name_plural = _('paameldinger')
 
 
 class Attendee(models.Model):
