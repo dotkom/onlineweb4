@@ -19,7 +19,7 @@
     </outgoingServer>
     <documentation url="https://wiki.online.ntnu.no/projects/komiteer/wiki/Tjenester">
       <descr lang="no">Wikihjelp for tjenestene til komiteer</descr>
-      <descr lang="en">Wikihelp for services for Online workers</descr>
+      <descr lang="en">Wikihelp for services for Online committee members</descr>
     </documentation>
   </emailProvider>
 </clientConfig>
