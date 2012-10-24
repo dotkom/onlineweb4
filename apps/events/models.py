@@ -30,9 +30,9 @@ class AttendanceEvent(models.Model):
     Events that require special considerations regarding attendance.
     """
     event = models.OneToOneField(
-            Event,
-            primary_key=True,
-            related_name='attendance_event')
+        Event,
+        primary_key=True,
+        related_name='attendance_event')
 
     max_capacity = models.PositiveIntegerField(_('maks-kapasitet'))
     registration_start = models.DateTimeField(_('registrerings-start'))
