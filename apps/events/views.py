@@ -20,6 +20,7 @@ def details(request, event_id):
 
     try:
         attendance_event = AttendanceEvent.objects.get(pk=event_id)
+        attendance_event.count_attendees = Attendee.objects.filter(event=attendance_event).count()
         is_attendance_event = True
     except AttendanceEvent.DoesNotExist:
         pass
