@@ -26,6 +26,6 @@ urlpatterns = patterns('',
     (r'^admin/', admin.site.urls),
     (r'^admin/doc/', include('django.contrib.admindocs.urls')),
     (r'^api/', include(v0_api.urls)),
-    (r'^events/(?P<event_id>\d+)/', views.details),
+    (r'^events/(?P<event_id>\d+)', views.details),
     (r'^events/', views.index),
 )
