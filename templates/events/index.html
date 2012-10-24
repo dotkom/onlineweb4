@@ -1,33 +1,32 @@
+{% load markup %
+}
+{% for event in events %}
+    <div class="event">
 
-{% block content %}
-    {% for event in events %}
-        <div class="event">
-
-            <div class="title">
-                <h1>{{ event.title|capfirst }}</h1>
-            </div>
-            <table class="details">
-                <tr>
-                    <td><strong>Fra:</strong></td>
-                    <td>{{ event.event_start|date:"d.m.Y" }} - {{event.event_start|time:"H:i" }}</td>
-                </tr>
-                <tr>
-                    <td><strong>Til:</strong></td>
-                    <td>{{ event.event_end|date:"d.m.Y" }} - {{event.event_end|time:"H:i" }}</td>
-                </tr>
-                <tr>
-                    <td><strong>Sted:</strong></td>
-                    <td>{{ event.location }}</td>
-                </tr>
-                <tr>
-                    <!-- Her kommer hatandance event --!>
-                <tr>
-                    <td colspan="2"><br />{{ event.description|striptags|markdown }}
-                    </td>
-                </tr>
-
-
-            </table>
+        <div class="title">
+            <h1>{{ event.title|capfirst }}</h1>
         </div>
-    {% endfor %}
-{% endblock content %}
+        <table class="details">
+            <tr>
+                <td><strong>Fra:</strong></td>
+                <td>{{ event.event_start|date:"d.m.Y" }} - {{event.event_start|time:"H:i" }}</td>
+            </tr>
+            <tr>
+                <td><strong>Til:</strong></td>
+                <td>{{ event.event_end|date:"d.m.Y" }} - {{event.event_end|time:"H:i" }}</td>
+            </tr>
+            <tr>
+                <td><strong>Sted:</strong></td>
+                <td>{{ event.location }}</td>
+            </tr>
+            <tr>
+                <!-- Her kommer hatandance event --!>
+            <tr>
+                <td colspan="2"><br />{{ event.description|striptags|markdown }}
+                </td>
+            </tr>
+
+
+        </table>
+    </div>
+{% endfor %}
