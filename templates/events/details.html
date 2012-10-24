@@ -1,2 +1,14 @@
+{% load markup %}
+
 <h1>Event</h1>
-{{ event }}
+<table>
+    <tr><td>Oppretter</td><td>{{ event.author }}</td><tr>
+    <tr><td>Tittel</td><td>{{ event.title }}</td><tr>
+    <tr><td>Fra</td><td>{{ event.event_start }}</td><tr>
+    <tr><td>Til</td><td>{{ event.event_end }}</td><tr>
+    <tr><td>Sted</td><td>{{ event.location }}</td></tr>
+</table>
+
+<div id="event-description">
+    {{ event.description|striptags|markdown }}
+</div>
