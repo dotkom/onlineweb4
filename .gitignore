@@ -1,7 +1,6 @@
 .ropeproject/
 .coverage
 *.pyc
-*.*.swp
 *.swp
 *.project
 *.settings
