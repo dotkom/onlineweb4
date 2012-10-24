@@ -4,8 +4,11 @@ coverage==3.5.2
 django-nose==1.0
 django-tastypie==0.9.11
 factory-boy==1.1.3
+fuzzywuzzy==0.1
+lettuce==0.2.10
 mimeparse==0.1.3
 nose==1.1.2
 python-dateutil==1.5
+sure==1.0.6
 unittest2==0.5.1
 wsgiref==0.1.2
