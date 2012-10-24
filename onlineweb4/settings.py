@@ -10,7 +10,7 @@ ADMINS = (
 
 MANAGERS = ADMINS
 
-SETTINGS_PATH = os.path.realpath(os.path.dirname(__file__))
+PROJECT_PATH = os.path.realpath(os.path.dirname(__file__))
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
