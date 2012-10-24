@@ -29,6 +29,7 @@ v0_api.register(MyActiveMarksResource())
 admin.autodiscover()
 
 urlpatterns = patterns('',
+<<<<<<< HEAD
     # Filebrowser must be above all admin-urls
     url(r'^admin/filebrowser/',     include(site.urls)),
     url(r'^grappelli/',             include('grappelli.urls')),
@@ -45,7 +46,7 @@ urlpatterns = patterns('',
     url(r'^auth/',      include('apps.authentication.urls')), 
 
     # TODO move these urls to events/urls.py
-    (r'^events/(?P<event_id>\d+)/', views.details),
+    (r'^events/(?P<event_id>\d+)/?', views.details),
     (r'^events/', views.index),
 )
 
