@@ -7,12 +7,15 @@
     <tr><td class="event-header-description">Fra</td><td class="event-header-value">{{ event.event_start }}</td><tr>
     <tr><td class="event-header-description">Til</td><td class="event-header-value">{{ event.event_end }}</td><tr>
     <tr><td class="event-header-description">Sted</td><td class="event-header-value">{{ event.location }}</td></tr>
+    {% if attendance_event %}
+    <tr><td class="event-header-description">Antall påmeldte</td><td class="event-header-value">{{ attendance_event.max_capacity }}</td></td>
+    <tr><td class="event-header-description">Registreringsfrist</td><td class="event-header-value">{{ attendance_event.registration_start }}</td></tr>
+    <tr><td class="event-header-description">Avmeldingsfrist</td><td class="event-header-value">{{ attendance_event.registration_end }}</td></tr>
+    {% endif %}
 </table>
 
 <div id="event-description">
     {{ event.description|striptags|markdown }}
 </div>
 
-{% if attendance_event %}
-    <div>derp</div>
-{% endif %}
+
