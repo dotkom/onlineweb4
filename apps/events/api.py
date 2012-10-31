@@ -4,6 +4,7 @@ from tastypie import fields
 from tastypie.resources import ModelResource
 from tastypie.authorization import Authorization
 from apps.events.models import Event
+from apps.events.models import AttendanceEvent
 
 
 class UserResource(ModelResource):
@@ -17,9 +18,17 @@ class UserResource(ModelResource):
                     'id',
                     'last_login']
 
+class AttendanceEventResource(ModelResource):
+    class Meta:
+        queryset = AttendanceEvent.objects.all()
+        resource_name = "attendance_event"
+
+        # XXX: Noop authorization is probably not safe for producion
+        authorization = Authorization()
 
 class EventResource(ModelResource):
     author = fields.ToOneField(UserResource, 'author', full=True)
+    attendance_event = fields.ToOneField(AttendanceEventResource, 'attendance_event', full=True, null=True, blank=True)
 
     def alter_list_data_to_serialize(self, request, data):
         # Renames list data "object" to "events".
