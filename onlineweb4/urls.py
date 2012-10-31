@@ -8,7 +8,7 @@ from filebrowser.sites import site
 
 # Tastypie 
 from tastypie.api import Api
-from apps.events.api import EventResource, UserResource
+from apps.events.api import EventResource, UserResource, AttendanceEventResource
 from apps.events import views
 from apps.article.api import ArticleResource, UserResource
 from apps.marks.api import MarkResource, MarkUserResource, EntryResource, MyMarksResource, MyActiveMarksResource
@@ -18,6 +18,7 @@ v0_api = Api(api_name='v0')
 v0_api.register(EventResource())
 v0_api.register(UserResource())
 v0_api.register(ArticleResource())
+v0_api.register(AttendanceEventResource())
 v0_api.register(MarkResource())
 v0_api.register(MarkUserResource())
 v0_api.register(EntryResource())
@@ -29,7 +30,6 @@ v0_api.register(MyActiveMarksResource())
 admin.autodiscover()
 
 urlpatterns = patterns('',
-<<<<<<< HEAD
     # Filebrowser must be above all admin-urls
     url(r'^admin/filebrowser/',     include(site.urls)),
     url(r'^grappelli/',             include('grappelli.urls')),
