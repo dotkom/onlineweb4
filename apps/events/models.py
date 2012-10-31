@@ -4,10 +4,18 @@ from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
 
 
+
 class Event(models.Model):
     """
     Base class for Event-objects.
     """
+    TYPE_CHOICES = (
+        (1, 'Sosialt'),
+        (2, 'Bedriftspresentasjon'),
+        (3, 'Kurs'),
+        (4, 'Utflukt'),
+        (5, 'Annet')
+    )
     event_id = models.AutoField(primary_key=True)
 
     author = models.ForeignKey(User, related_name='oppretter')
@@ -16,6 +24,9 @@ class Event(models.Model):
     event_end = models.DateTimeField(_('slutt-dato'))
     location = models.CharField(_('lokasjon'), max_length=100)
     description = models.TextField(_('beskrivelse'))
+    event_type = models.SmallIntegerField(_('type'), choices=TYPE_CHOICES)
+
+    
 
     def __unicode__(self):
         return self.title
