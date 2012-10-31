@@ -11,7 +11,11 @@ class UserResource(ModelResource):
         queryset = User.objects.all()
         resource_name = 'author'
         # List of fields we do NOT want to make available
-        excludes = ['password']
+        excludes = ['password',
+                    'email',
+                    'date_joined'
+                    'id',
+                    'last_login']
 
 
 class EventResource(ModelResource):
