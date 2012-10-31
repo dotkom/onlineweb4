@@ -9,6 +9,7 @@ from filebrowser.sites import site
 # Tastypie 
 from tastypie.api import Api
 from apps.events.api import EventResource, UserResource, AttendanceEventResource
+from apps.events.api import AttendeeResource
 from apps.events import views
 from apps.article.api import ArticleResource, UserResource
 from apps.marks.api import MarkResource, MarkUserResource, EntryResource, MyMarksResource, MyActiveMarksResource
@@ -19,6 +20,7 @@ v0_api.register(EventResource())
 v0_api.register(UserResource())
 v0_api.register(ArticleResource())
 v0_api.register(AttendanceEventResource())
+v0_api.register(AttendeeResource())
 v0_api.register(MarkResource())
 v0_api.register(MarkUserResource())
 v0_api.register(EntryResource())

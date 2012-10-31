@@ -4,13 +4,14 @@ from tastypie import fields
 from tastypie.resources import ModelResource
 from tastypie.authorization import Authorization
 from apps.events.models import Event
+from apps.events.models import Attendee
 from apps.events.models import AttendanceEvent
 
 
 class UserResource(ModelResource):
     class Meta:
         queryset = User.objects.all()
-        resource_name = 'author'
+        resource_name = 'user'
         # List of fields we do NOT want to make available
         excludes = ['password',
                     'email',
@@ -18,7 +19,16 @@ class UserResource(ModelResource):
                     'id',
                     'last_login']
 
+class AttendeeResource(ModelResource):
+    user = fields.ToOneField(UserResource, "user", full=True)
+
+    class Meta:
+        queryset = Attendee.objects.all()
+        resource_name = "attendees"
+
 class AttendanceEventResource(ModelResource):
+    users = fields.ToManyField(AttendeeResource, "attendees", full=False)
+
     class Meta:
         queryset = AttendanceEvent.objects.all()
         resource_name = "attendance_event"
