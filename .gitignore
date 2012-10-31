@@ -14,3 +14,4 @@
 collected_static
 sqlite/
 local.py
+uploaded_media/*
