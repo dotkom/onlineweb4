@@ -13,7 +13,7 @@ TEMPLATE_DEBUG = DEBUG
 TEST_RUNNER = "django_nose.NoseTestSuiteRunner"
 
 ADMINS = (
-     ('dotKom', 'dotkom@online.ntnu.no'),
+    ('dotKom', 'dotkom@online.ntnu.no'),
 )
 MANAGERS = ADMINS
 
@@ -37,10 +37,19 @@ LANGUAGES = (
 SITE_ID = 1
 USE_I18N = True
 USE_L10N = True
+DATETIME_FORMAT = 'N j, Y, H:i'
+
+# If you set this to False, Django will not use timezone-aware datetimes.
 USE_TZ = True
 SECRET_KEY = 'q#wy0df(7&amp;$ucfrxa1j72%do7ko*-6(g!8f$tc2$3x@3cq5@6c'
 
 AUTH_PROFILE_MODULE = 'apps.userprofile.UserProfile'
+
+MEDIA_ROOT = '/some/absolute/path/in/prod/'
+UPLOAD_DIRECTORY = 'uploads/'
+
+if DEBUG:
+    MEDIA_ROOT = 'media/'
 
 STATIC_ROOT = 'static/'
 STATIC_URL = '/static/'
@@ -102,8 +111,9 @@ INSTALLED_APPS = (
 
     # Onlineweb 4 apps
     'apps.article',
-    'apps.userprofile',
+    'apps.autoconfig',
     'apps.events',
+    'apps.userprofile',
 )
 
 # A sample logging configuration. The only tangible logging
