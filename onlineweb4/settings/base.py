@@ -114,7 +114,7 @@ INSTALLED_APPS = (
     # Onlineweb apps
     'apps.events',
     'apps.userprofile',
-    'apps.autoconfig'
+    'apps.autoconfig',
     'apps.article',
 )
 
