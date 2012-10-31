@@ -5,7 +5,6 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.contrib import admin
 from filebrowser.sites import site
 from tastypie.api import Api
-from apps.events.api import EventResource, UserResource
 
 admin.autodiscover()
 
@@ -43,4 +42,4 @@ if settings.DEBUG:
             'show_indexes': True
         }),
         (r'^500/$', 'django.views.defaults.server_error'),
-   )
+    )

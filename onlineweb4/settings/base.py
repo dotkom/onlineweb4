@@ -51,7 +51,6 @@ UPLOAD_DIRECTORY = 'uploads/'
 if DEBUG:
     MEDIA_ROOT = 'media/'
 
-
 STATIC_ROOT = 'static/'
 STATIC_URL = '/static/'
 
@@ -100,7 +99,6 @@ INSTALLED_APPS = (
     'south',
     'grappelli',
     'filebrowser',
-    'django_nose',
 
     # Django apps
     'django.contrib.admin',
@@ -111,11 +109,11 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.staticfiles',
 
-    # Onlineweb apps
+    # Onlineweb 4 apps
+    'apps.article',
+    'apps.autoconfig',
     'apps.events',
     'apps.userprofile',
-    'apps.autoconfig',
-    'apps.article',
 )
 
 # A sample logging configuration. The only tangible logging
