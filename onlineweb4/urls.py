@@ -1,5 +1,4 @@
 from django.conf import settings
-from apps.events.api import EventResource, UserResource
 from django.conf.urls import patterns, include, url
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.contrib import admin
@@ -8,11 +7,16 @@ from tastypie.api import Api
 
 admin.autodiscover()
 
-# 
+# Tastypie 
+from apps.events.api import EventResource, UserResource
+from apps.article.api import ArticleResource
+
 v0_api = Api(api_name='v0')
 v0_api.register(EventResource())
 v0_api.register(UserResource())
+v0_api.register(ArticleResource())
 
+# URL config
 urlpatterns = patterns('',
     # Filebrowser must be above all admin-urls
     url(r'^admin/filebrowser/', include(site.urls)),
