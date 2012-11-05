@@ -13,6 +13,7 @@ from apps.events.api import EventResource, UserResource
 v0_api = Api(api_name='v0')
 v0_api.register(EventResource())
 v0_api.register(UserResource())
+v0_api.register(ArticleResource())
 
 # URL config 
 admin.autodiscover()
