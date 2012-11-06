@@ -4,7 +4,7 @@ from datetime import datetime
 
 from django.db import models
 from django.db.models.signals import post_save
-from django.utils.translation import gettext_lazy as _
+from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import User
 
 
@@ -24,7 +24,7 @@ class UserProfile(models.Model):
     compiled = models.BooleanField(_("kompilert"), default=False)
     started_date = models.DateTimeField(_("startet studie"), default=datetime.now())
     
-    # Epost
+    # Email
     infomail = models.BooleanField(_("vil ha infomail"), default=True)
 
     # Address
