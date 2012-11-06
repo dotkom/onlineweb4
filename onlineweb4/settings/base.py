@@ -1,7 +1,9 @@
 import os
 import sys
 
+# Directory that contains this file.
 PROJECT_SETTINGS_DIRECTORY = os.path.dirname(globals()['__file__'])
+# Root directory. Contains manage.py
 PROJECT_ROOT_DIRECTORY = os.path.join(PROJECT_SETTINGS_DIRECTORY, '../..')
 
 TEST_RUNNER = "django_nose.NoseTestSuiteRunner"
@@ -41,14 +43,13 @@ SECRET_KEY = 'q#wy0df(7&amp;$ucfrxa1j72%do7ko*-6(g!8f$tc2$3x@3cq5@6c'
 
 AUTH_PROFILE_MODULE = 'apps.userprofile.UserProfile'
 
-# Absolute path to the directory static files should be collected to.
-# Don't put anything in this directory yourself; store your static files
-# in apps' "static/" subdirectories and in STATICFILES_DIRS.
-# Example: "/home/media/media.lawrence.com/static/"
-STATIC_ROOT = ''
+MEDIA_ROOT = 'media/' # Override this in local.py in prod.
+MEDIA_URL = '/media/'
 
-# URL prefix for static files.
-# Example: "http://media.lawrence.com/static/"
+# DIRECTORY is a variable used by django-filebrowser. It's a subfolder of MEDIA_ROOT
+DIRECTORY = 'uploads/'
+
+STATIC_ROOT = 'static/'
 STATIC_URL = '/static/'
 
 # Additional locations of static files
@@ -63,8 +64,6 @@ STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
 #    'django.contrib.staticfiles.finders.DefaultStorageFinder',
 )
-
-# Make this unique, and don't share it with anybody.
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
@@ -92,10 +91,15 @@ TEMPLATE_DIRS = (
     os.path.join(PROJECT_ROOT_DIRECTORY, 'templates/')
 )
 
+# Grappelli settings
+GRAPPELLI_ADMIN_TITLE = 'Onlineweb'
+
 INSTALLED_APPS = (
     # Third party apps
     'south',
     'django_nose',
+    'grappelli',
+    'filebrowser',
 
     # Django apps
     'django.contrib.admin',
