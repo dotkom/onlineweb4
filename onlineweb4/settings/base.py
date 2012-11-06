@@ -109,7 +109,8 @@ INSTALLED_APPS = (
     # Onlineweb apps
     'apps.events',
     'apps.userprofile',
-    'apps.autoconfig'
+    'apps.autoconfig',
+    'apps.marks',
 )
 
 # A sample logging configuration. The only tangible logging
