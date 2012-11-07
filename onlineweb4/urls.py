@@ -1,5 +1,6 @@
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
+from django.views.generic import TemplateView
 
 from filebrowser.sites import site
 
@@ -24,7 +25,7 @@ urlpatterns = patterns('',
     url(r'^admin/doc/',         include('django.contrib.admindocs.urls')),
 
     # Onlineweb app urls
-    # url(r'^$', 'onlineweb4.views.home', name='home'),
-    (r'^api/',      include(v0_api.urls)),
-    (r'^mail/',     include('apps.autoconfig.urls'))
+    url(r'^$', TemplateView.as_view(template_name='base_site.html'), name='home'),
+    url(r'^api/',      include(v0_api.urls)),
+    url(r'^mail/',     include('apps.autoconfig.urls'))
 )
