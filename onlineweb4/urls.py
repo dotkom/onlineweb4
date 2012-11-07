@@ -2,14 +2,16 @@ from django.conf.urls import patterns, include, url
 from django.contrib import admin
 
 from filebrowser.sites import site
-from tastypie.api import Api
 
 # Tastypie 
+from tastypie.api import Api
 from apps.events.api import EventResource, UserResource
 
 v0_api = Api(api_name='v0')
 v0_api.register(EventResource())
 v0_api.register(UserResource())
+
+admin.autodiscover()
 
 # URL config 
 urlpatterns = patterns('',
