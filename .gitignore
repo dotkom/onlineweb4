@@ -10,7 +10,7 @@
 .idea*
 .ropeproject
 .coverage
-dev.db
+*.db*
 
 collected_static
 sqlite/
