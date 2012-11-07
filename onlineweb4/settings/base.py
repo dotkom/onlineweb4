@@ -27,6 +27,9 @@ EMAIL_FAGKOM = 'fagkom@online.ntnu.no'
 EMAIL_PROKOM = 'prokom@online.ntnu.no'
 EMAIL_TRIKOM = 'trikom@online.ntnu.no'
 
+# We will receive errors and other django messages from this email
+SERVER_EMAIL = 'onlineweb4-error@online.ntnu.no'
+
 TIME_ZONE = 'Europe/Oslo'
 # http://www.i18nguy.com/unicode/language-identifiers.html
 LANGUAGE_CODE = 'nb'
@@ -38,16 +41,13 @@ LANGUAGES = (
 SITE_ID = 1
 USE_I18N = True
 USE_L10N = True
-USE_TZ = True
+USE_TZ = False
 SECRET_KEY = 'q#wy0df(7&amp;$ucfrxa1j72%do7ko*-6(g!8f$tc2$3x@3cq5@6c'
 
 AUTH_PROFILE_MODULE = 'apps.userprofile.UserProfile'
 
-MEDIA_ROOT = 'media/' # Override this in local.py in prod.
+MEDIA_ROOT = os.path.join(PROJECT_ROOT_DIRECTORY, 'media') # Override this in local.py in prod.
 MEDIA_URL = '/media/'
-
-# DIRECTORY is a variable used by django-filebrowser. It's a subfolder of MEDIA_ROOT
-DIRECTORY = 'uploads/'
 
 STATIC_ROOT = 'static/'
 STATIC_URL = '/static/'
@@ -145,7 +145,7 @@ LOGGING = {
     }
 }
 
-for settings_module in ['local', ]:
+for settings_module in ['filebrowser', 'local', ]: # Remember to keep 'local' last, so it can override any setting.
     if not os.path.exists(os.path.join(PROJECT_SETTINGS_DIRECTORY,
             settings_module + ".py")):
         sys.stderr.write("Could not find settings module '%s'.\n" %
