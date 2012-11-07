@@ -17,11 +17,12 @@ class Feedback(models.Model):
 # customized feedback forms.
 class FieldOfStudy(models.Model):
     CHOICES = (
-        (0, _('Intelligente Systemer (IRS)')),
-        (1, _('Software (SW')),
-        (2, _('Informasjonsforvaltning (DIF)')),
-        (3, _('Komplekse Datasystemer (KDS)')),
-        (4, _('Spillteknologi (SPT)')),
+        (0, _('Bachelor i Informatikk (BIT)')),
+        (1, _('Intelligente Systemer (IRS)')),
+        (2, _('Software (SW')),
+        (3, _('Informasjonsforvaltning (DIF)')),
+        (4, _('Komplekse Datasystemer (KDS)')),
+        (5, _('Spillteknologi (SPT)')),
     )
 
     feedback = models.OneToOneField(
