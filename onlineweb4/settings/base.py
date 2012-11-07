@@ -99,9 +99,6 @@ INSTALLED_APPS = (
     'south',
     'grappelli',
     'filebrowser',
-    'django_nose',
-    'grappelli',
-    'filebrowser',
 
     # Django apps
     'django.contrib.admin',
@@ -112,11 +109,11 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.staticfiles',
 
-    # Onlineweb apps
+    # Onlineweb 4 apps
+    'apps.article',
+    'apps.autoconfig',
     'apps.events',
     'apps.userprofile',
-    'apps.autoconfig',
-    'apps.article',
 )
 
 # A sample logging configuration. The only tangible logging

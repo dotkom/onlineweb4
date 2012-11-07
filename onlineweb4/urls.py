@@ -46,4 +46,4 @@ if settings.DEBUG:
             'show_indexes': True
         }),
         (r'^500/$', 'django.views.defaults.server_error'),
-   )
+    )
