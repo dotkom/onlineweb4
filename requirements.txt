@@ -11,6 +11,7 @@ django-filebrowser==3.5.0   # File uploading
 django-grappelli==2.4.2     # Admin template set    
 
 #test tools
+cov-core==1.7
 coverage==3.5.2
 django-nose==1.0
 factory-boy==1.1.3
