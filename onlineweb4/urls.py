@@ -9,6 +9,7 @@ from filebrowser.sites import site
 # Tastypie 
 from tastypie.api import Api
 from apps.events.api import EventResource, UserResource
+from apps.article.api import ArticleResource
 
 v0_api = Api(api_name='v0')
 v0_api.register(EventResource())
