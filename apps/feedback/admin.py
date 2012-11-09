@@ -15,7 +15,9 @@ class TextInline(admin.StackedInline):
     extra = 0
 
 class FeedbackAdmin(admin.ModelAdmin):
+    list_display = ('description', 'author')
     inlines = (FieldOfStudyInline, TextInline)
+    exclude = ('author',)
 
     def save_model(self, request, obj, form, change):
         if not change:  # created
