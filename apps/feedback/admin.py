@@ -2,20 +2,20 @@
 
 from apps.feedback.models import Feedback
 from apps.feedback.models import FieldOfStudy
+from apps.feedback.models import Text
 
 from django.contrib import admin
 
 
-class FeedbackInline(admin.TabularInline):
-    model = Feedback
-    extra = 1
-
-class FieldOfStudyInline(admin.TabularInline):
+class FieldOfStudyInline(admin.StackedInline):
     model = FieldOfStudy
-    extra = 1
+
+class TextInline(admin.StackedInline):
+    model = Text
+    extra = 0
 
 class FeedbackAdmin(admin.ModelAdmin):
-    inlines = (FeedbackInline, FieldOfStudyInline)
+    inlines = (FieldOfStudyInline, TextInline)
 
     def save_model(self, request, obj, form, change):
         if not change:  # created
