@@ -17,9 +17,14 @@ class Feedback(models.Model):
         verbose_name_plural = _('tilbakemeldinger')
 
 
+class Question(models.Model):
+    id = models.AutoField(primary_key=True)
+    description = models.CharField(_('beskrivelse'), max_length=100)
+    
+
 # Below this line are feedback "modules" classed that are used to create
 # customized feedback forms.
-class FieldOfStudy(models.Model):
+class FieldOfStudy(Question):
     CHOICES = (
         (0, _('Bachelor i Informatikk (BIT)')),
         (1, _('Intelligente Systemer (IRS)')),
@@ -35,10 +40,14 @@ class FieldOfStudy(models.Model):
         related_name='field_of_study')
     field_of_study = models.SmallIntegerField(_('Studieretning'), choices=CHOICES, default=0)
 
-class Text(models.Model):
-    id = models.AutoField(primary_key=True)
+    def __unicode__(self):
+        return self.description
+
+class Text(Question):
     feedback = models.ForeignKey(Feedback, related_name='text')
     label = models.TextField(_(u'Spørsmål'), blank=False)
 
     def __unicode__(self):
-        return self.label
+        return self.description
+
+
