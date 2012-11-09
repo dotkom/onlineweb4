@@ -2,14 +2,16 @@
 
 from django.contrib.auth.models import User
 from django.db import models
-from django.utils.translation import gettext_lazy as _
+from django.utils.translation import ugettext_lazy as _
 
 class Mark(models.Model):
     CATEGORY_CHOICES = (
         (0, _("Ingen")),
         (1, _("Sosialt")),
         (2, _("Bedriftspresentasjon")),
-        (3, _("Kontoret")),
+        (3, _("Kurs")),
+        (4, _("Tilbakemelding")),
+        (5, _("Kontoret")),
     )
 
     title = models.CharField(_("tittel"), max_length=50)
@@ -27,7 +29,7 @@ class Mark(models.Model):
     category = models.SmallIntegerField(_("kategori"), choices=CATEGORY_CHOICES, default=0)
 
     def __unicode__(self):
-        return "%s %s" % (_("Prikk for"), self.title)
+        return _("Prikk for %s") % self.title
 
     class Meta:
         verbose_name = _("Prikk")
@@ -38,7 +40,7 @@ class UserEntry(models.Model):
     mark = models.ForeignKey(Mark)
 
     def __unicode__(self):
-        return "%s %s" % (_("UserEntry for"), self.user.get_full_name())
+        return _("UserEntry for %s") % self.user.get_full_name()
 
     class Meta:
         unique_together = ("user", "mark")
