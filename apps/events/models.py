@@ -61,7 +61,7 @@ class Attendee(models.Model):
     """
     User relation to AttendanceEvent.
     """
-    event = models.ForeignKey(AttendanceEvent)
+    event = models.ForeignKey(AttendanceEvent, related_name="attendees")
     user = models.ForeignKey(User)
 
     timestamp = models.DateTimeField(auto_now_add=True, editable=False)
