@@ -1,2 +1,55 @@
-<h1>Events</h1>
-{{ events }}
+{% load markup %}
+{% for event in events %}
+    <div class="event">
+
+        <div class="title" class="event_type{{event.event_type}}">
+            <h1>{{ event.title|capfirst }}</h1>
+        </div>
+        <table class="details">
+            <tr>
+                <td><strong>Fra:</strong></td>
+                <td>{{ event.event_start|date:"d.m.Y" }} - {{event.event_start|time:"H:i" }}</td>
+            </tr>
+            <tr>
+                <td><strong>Til:</strong></td>
+                <td>{{ event.event_end|date:"d.m.Y" }} - {{event.event_end|time:"H:i" }}</td>
+            </tr>
+            <tr>
+                <td><strong>Sted:</strong></td>
+                <td>{{ event.location }}</td>
+            </tr>
+            <tr>
+            {% if event.attendance_event %}
+            <tr>
+                <td><strong>Antall plasser:</strong></td>
+                <td>{{ event.attendance_event.max_capacity }}</td>
+            </tr>
+            <tr>
+                <td><strong>Åpent for:</strong></td>
+                <td>{{ event.attendance_event.open_for }}</td>
+            </tr>
+            <tr>
+                <td><strong>Registreringsfrist:</strong></td>
+                <td>{{ event.attendance_event.registration_end|date:"d.m.Y" }} - {{event.attendance_event.registration_end|time:"H:i" }}</td>
+            </tr>
+            <tr>
+                <td><strong>Avmeldingsfrist:</strong></td>
+                <td>{{ event.attendance_event.unregister_deadline|date:"d.m.Y" }} - {{event.attendance_event.unregister_deadline|time:"H:i" }}</td>
+            </tr>
+            <tr>
+            {% if event.attandance_event.pointweight %} 
+                <td><strong>Prikkeinfo:</strong></td>
+                <td>Dette arrangementet er prikkbelastende, ved å melde deg på godtar du prikkereglene</td>
+            </tr>
+            {% endif %}
+            
+            {% endif %}
+            <tr>
+                <td colspan="2"><br />{{ event.description|striptags|markdown }}
+                </td>
+            </tr>
+
+
+        </table>
+    </div>
+{% endfor %}
