@@ -6,14 +6,17 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 
 
-class FeedbackToObjectRelation(models.Model):
-    feedback_id = models.OneToOneField(
-                    'Feedback')
+class FeedbackRelation(models.Model):
+    feedback_id = models.OneToOneField('Feedback')
     content_type = models.ForeignKey(ContentType)
     object_id = models.PositiveIntegerField()
     content_object = generic.GenericForeignKey('content_type', 'object_id')
 
-    answered = models.ManyToManyField(User, related_name='feedbacks', blank=True, null=True)
+    answered = models.ManyToManyField(
+        User,
+        related_name='feedbacks',
+        blank=True,
+        null=True)
 
     class Meta:
         unique_together = ('feedback_id', 'content_type', 'object_id')
@@ -34,8 +37,6 @@ class Feedback(models.Model):
         verbose_name = _('tilbakemelding')
         verbose_name_plural = _('tilbakemeldinger')
 
-## Questions ##
-
 
 class Question(models.Model):
     id = models.AutoField(primary_key=True)
@@ -45,49 +46,48 @@ class Question(models.Model):
         return self.description
 
 
-class FieldOfStudyQuestion(Question):
-    CHOICES = (
-        (0, _('Bachelor i Informatikk (BIT)')),
-        (1, _('Intelligente Systemer (IRS)')),
-        (2, _('Software (SW')),
-        (3, _('Informasjonsforvaltning (DIF)')),
-        (4, _('Komplekse Datasystemer (KDS)')),
-        (5, _('Spillteknologi (SPT)')),
-    )
-
-    feedback = models.OneToOneField(
-        Feedback,
-        primary_key=True,
-        related_name='field_of_study')
-    field_of_study = models.SmallIntegerField(
-        _('Studieretning'),
-        choices=CHOICES,
-        default=0)
-
-
-class TextQuestion(Question):
-    feedback = models.ForeignKey(Feedback, related_name='text')
-    label = models.TextField(_(u'Spørsmål'), blank=False)
-
-## Answers ##
-
-
 class Answer(models.Model):
     question = models.ForeignKey(Question, related_name='answer')
 
 
-class TextAnswer(Answer):
-    answer = models.TextField(_('svar'), blank=False)
+FIELD_OF_STUDY_CHOICES = (
+    (0, _('Bachelor i Informatikk (BIT)')),
+    (1, _('Intelligente Systemer (IRS)')),
+    (2, _('Software (SW')),
+    (3, _('Informasjonsforvaltning (DIF)')),
+    (4, _('Komplekse Datasystemer (KDS)')),
+    (5, _('Spillteknologi (SPT)')),
+)
+
+
+class FieldOfStudyQuestion(Question):
+    feedback = models.OneToOneField(
+        Feedback,
+        primary_key=True,
+        related_name='field_of_studys')
+    field_of_study = models.SmallIntegerField(
+        _('Studieretning'),
+        choices=FIELD_OF_STUDY_CHOICES,
+        default=0)
 
 
 class FieldOfStudyAnswer(Answer):
-    CHOICES = (
-        (0, _('Bachelor i Informatikk (BIT)')),
-        (1, _('Intelligente Systemer (IRS)')),
-        (2, _('Software (SW')),
-        (3, _('Informasjonsforvaltning (DIF)')),
-        (4, _('Komplekse Datasystemer (KDS)')),
-        (5, _('Spillteknologi (SPT)')),
-    )
+    answer = models.SmallIntegerField(
+        _('Studieretning'),
+        choices=FIELD_OF_STUDY_CHOICES,
+        default=0)
+    feedback_relation = models.ForeignKey(
+        FeedbackRelation,
+        related_name="field_of_study_answers")
 
-    answer = models.SmallIntegerField(_('Studieretning'), choices=CHOICES, default=0)
+
+class TextQuestion(Question):
+    feedback = models.ForeignKey(Feedback, related_name='texts')
+    label = models.TextField(_(u'Spørsmål'), blank=False)
+
+
+class TextAnswer(Answer):
+    answer = models.TextField(_('svar'), blank=False)
+    feedback_relation = models.ForeignKey(
+        FeedbackRelation,
+        related_name="text_answers")
