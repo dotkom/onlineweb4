@@ -25,7 +25,7 @@ class Question(models.Model):
 
     def __unicode__(self):
         return self.description
-    
+
 
 # Below this line are feedback "modules" classed that are used to create
 # customized feedback forms.
@@ -53,9 +53,11 @@ class TextQuestion(Question):
 
 class Answer(models.Model):
     question = models.ForeignKey(Question, related_name='answer')
-    
+
+
 class TextAnswer(Answer):
     answer = models.TextField(_('svar'), blank=False)
+
 
 class FieldOfStudyAnswer(Answer):
     CHOICES = (
