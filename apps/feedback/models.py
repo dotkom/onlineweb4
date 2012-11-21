@@ -17,7 +17,7 @@ class FeedbackToObjectRelation(models.Model):
 
     class Meta:
         unique_together = ('feedback_id', 'content_type', 'object_id')
-    
+
     def __unicode__(self):
         return str(self.feedback_id) + ': ' + str(self.content_object)
 
