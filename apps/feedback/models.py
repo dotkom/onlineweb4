@@ -5,6 +5,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 
+
 class Feedback(models.Model):
     feedback_id = models.AutoField(primary_key=True)
     author = models.ForeignKey(User, related_name='oppretter')
@@ -28,7 +29,7 @@ class Question(models.Model):
 
     def __unicode__(self):
         return self.description
-    
+
 
 # Below this line are feedback "modules" classed that are used to create
 # customized feedback forms.
@@ -56,9 +57,11 @@ class Text(Question):
 
 class Answer(models.Model):
     question = models.ForeignKey(Question, related_name='answer')
-    
+
+
 class TextAnswer(Answer):
     answer = models.TextField(_('svar'), blank=False)
+
 
 class FieldOfStudyAnswer(Answer):
     CHOICES = (
