@@ -13,7 +13,11 @@ class FeedbackToObjectRelation(models.Model):
     object_id = models.PositiveIntegerField()
     content_object = generic.GenericForeignKey('content_type', 'object_id')
 
-    answered = models.ManyToManyField(User, related_name='feedbacks', blank=True, null=True)
+    answered = models.ManyToManyField(
+        User,
+        related_name='feedbacks',
+        blank=True,
+        null=True)
 
     class Meta:
         unique_together = ('feedback_id', 'content_type', 'object_id')
@@ -90,4 +94,7 @@ class FieldOfStudyAnswer(Answer):
         (5, _('Spillteknologi (SPT)')),
     )
 
-    answer = models.SmallIntegerField(_('Studieretning'), choices=CHOICES, default=0)
+    answer = models.SmallIntegerField(
+        _('Studieretning'),
+        choices=CHOICES,
+        default=0)
