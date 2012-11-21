@@ -11,3 +11,10 @@ class Company(models.Model):
     email_address = models.EmailField(_("Epostaddresse"), max_length=75, blank=True, null=True)
     phone_number = models.IntegerField(_("Telefonnummer"), max_length=8, blank=True, null=True)
 #   public_profile = models.BooleanField(_("Offentlig profil"), default=False)
+    
+    def __unicode__(self):
+        return self.name
+    
+    class Meta:
+        verbose_name = _("Bedrift")
+        verbose_name_plural = _("Bedrifter")
