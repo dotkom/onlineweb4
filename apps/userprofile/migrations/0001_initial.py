@@ -14,7 +14,7 @@ class Migration(SchemaMigration):
             ('user', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'], unique=True)),
             ('field_of_study', self.gf('django.db.models.fields.SmallIntegerField')(default=0)),
             ('compiled', self.gf('django.db.models.fields.BooleanField')(default=False)),
-            ('started_date', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime(2012, 10, 24, 0, 0))),
+            ('started_date', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime(2012, 11, 21, 0, 0))),
             ('infomail', self.gf('django.db.models.fields.BooleanField')(default=True)),
             ('phone_number', self.gf('django.db.models.fields.CharField')(max_length=20, null=True, blank=True)),
             ('address', self.gf('django.db.models.fields.CharField')(max_length=30, null=True, blank=True)),
@@ -80,7 +80,7 @@ class Migration(SchemaMigration):
             'mark_rules': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'phone_number': ('django.db.models.fields.CharField', [], {'max_length': '20', 'null': 'True', 'blank': 'True'}),
             'rfid': ('django.db.models.fields.CharField', [], {'max_length': '50', 'null': 'True', 'blank': 'True'}),
-            'started_date': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2012, 10, 24, 0, 0)'}),
+            'started_date': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2012, 11, 21, 0, 0)'}),
             'user': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']", 'unique': 'True'})
         }
     }

@@ -13,8 +13,6 @@ class Migration(SchemaMigration):
             ('feedback_id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('author', self.gf('django.db.models.fields.related.ForeignKey')(related_name='oppretter', to=orm['auth.User'])),
             ('description', self.gf('django.db.models.fields.CharField')(max_length=100)),
-            ('content_type', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['contenttypes.ContentType'])),
-            ('object_id', self.gf('django.db.models.fields.PositiveIntegerField')()),
         ))
         db.send_create_signal('feedback', ['Feedback'])
 
@@ -25,21 +23,21 @@ class Migration(SchemaMigration):
         ))
         db.send_create_signal('feedback', ['Question'])
 
-        # Adding model 'FieldOfStudy'
-        db.create_table('feedback_fieldofstudy', (
+        # Adding model 'FieldOfStudyQuestion'
+        db.create_table('feedback_fieldofstudyquestion', (
             ('question_ptr', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['feedback.Question'], unique=True)),
             ('feedback', self.gf('django.db.models.fields.related.OneToOneField')(related_name='field_of_study', unique=True, primary_key=True, to=orm['feedback.Feedback'])),
             ('field_of_study', self.gf('django.db.models.fields.SmallIntegerField')(default=0)),
         ))
-        db.send_create_signal('feedback', ['FieldOfStudy'])
+        db.send_create_signal('feedback', ['FieldOfStudyQuestion'])
 
-        # Adding model 'Text'
-        db.create_table('feedback_text', (
+        # Adding model 'TextQuestion'
+        db.create_table('feedback_textquestion', (
             ('question_ptr', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['feedback.Question'], unique=True, primary_key=True)),
             ('feedback', self.gf('django.db.models.fields.related.ForeignKey')(related_name='text', to=orm['feedback.Feedback'])),
             ('label', self.gf('django.db.models.fields.TextField')()),
         ))
-        db.send_create_signal('feedback', ['Text'])
+        db.send_create_signal('feedback', ['TextQuestion'])
 
         # Adding model 'Answer'
         db.create_table('feedback_answer', (
@@ -62,19 +60,42 @@ class Migration(SchemaMigration):
         ))
         db.send_create_signal('feedback', ['FieldOfStudyAnswer'])
 
+        # Adding model 'FeedbackToObjectRelation'
+        db.create_table('feedback_feedbacktoobjectrelation', (
+            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('feedback_id', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['feedback.Feedback'], unique=True)),
+            ('content_type', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['contenttypes.ContentType'])),
+            ('object_id', self.gf('django.db.models.fields.PositiveIntegerField')()),
+        ))
+        db.send_create_signal('feedback', ['FeedbackToObjectRelation'])
+
+        # Adding unique constraint on 'FeedbackToObjectRelation', fields ['feedback_id', 'content_type', 'object_id']
+        db.create_unique('feedback_feedbacktoobjectrelation', ['feedback_id_id', 'content_type_id', 'object_id'])
+
+        # Adding M2M table for field answered on 'FeedbackToObjectRelation'
+        db.create_table('feedback_feedbacktoobjectrelation_answered', (
+            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
+            ('feedbacktoobjectrelation', models.ForeignKey(orm['feedback.feedbacktoobjectrelation'], null=False)),
+            ('user', models.ForeignKey(orm['auth.user'], null=False))
+        ))
+        db.create_unique('feedback_feedbacktoobjectrelation_answered', ['feedbacktoobjectrelation_id', 'user_id'])
+
 
     def backwards(self, orm):
+        # Removing unique constraint on 'FeedbackToObjectRelation', fields ['feedback_id', 'content_type', 'object_id']
+        db.delete_unique('feedback_feedbacktoobjectrelation', ['feedback_id_id', 'content_type_id', 'object_id'])
+
         # Deleting model 'Feedback'
         db.delete_table('feedback_feedback')
 
         # Deleting model 'Question'
         db.delete_table('feedback_question')
 
-        # Deleting model 'FieldOfStudy'
-        db.delete_table('feedback_fieldofstudy')
+        # Deleting model 'FieldOfStudyQuestion'
+        db.delete_table('feedback_fieldofstudyquestion')
 
-        # Deleting model 'Text'
-        db.delete_table('feedback_text')
+        # Deleting model 'TextQuestion'
+        db.delete_table('feedback_textquestion')
 
         # Deleting model 'Answer'
         db.delete_table('feedback_answer')
@@ -84,6 +105,12 @@ class Migration(SchemaMigration):
 
         # Deleting model 'FieldOfStudyAnswer'
         db.delete_table('feedback_fieldofstudyanswer')
+
+        # Deleting model 'FeedbackToObjectRelation'
+        db.delete_table('feedback_feedbacktoobjectrelation')
+
+        # Removing M2M table for field answered on 'FeedbackToObjectRelation'
+        db.delete_table('feedback_feedbacktoobjectrelation_answered')
 
 
     models = {
@@ -131,37 +158,43 @@ class Migration(SchemaMigration):
         'feedback.feedback': {
             'Meta': {'object_name': 'Feedback'},
             'author': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'oppretter'", 'to': "orm['auth.User']"}),
-            'content_type': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['contenttypes.ContentType']"}),
             'description': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
-            'feedback_id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'object_id': ('django.db.models.fields.PositiveIntegerField', [], {})
+            'feedback_id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'})
         },
-        'feedback.fieldofstudy': {
-            'Meta': {'object_name': 'FieldOfStudy', '_ormbases': ['feedback.Question']},
-            'feedback': ('django.db.models.fields.related.OneToOneField', [], {'related_name': "'field_of_study'", 'unique': 'True', 'primary_key': 'True', 'to': "orm['feedback.Feedback']"}),
-            'field_of_study': ('django.db.models.fields.SmallIntegerField', [], {'default': '0'}),
-            'question_ptr': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['feedback.Question']", 'unique': 'True'})
+        'feedback.feedbacktoobjectrelation': {
+            'Meta': {'unique_together': "(('feedback_id', 'content_type', 'object_id'),)", 'object_name': 'FeedbackToObjectRelation'},
+            'answered': ('django.db.models.fields.related.ManyToManyField', [], {'blank': 'True', 'related_name': "'feedbacks'", 'null': 'True', 'symmetrical': 'False', 'to': "orm['auth.User']"}),
+            'content_type': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['contenttypes.ContentType']"}),
+            'feedback_id': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['feedback.Feedback']", 'unique': 'True'}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'object_id': ('django.db.models.fields.PositiveIntegerField', [], {})
         },
         'feedback.fieldofstudyanswer': {
             'Meta': {'object_name': 'FieldOfStudyAnswer', '_ormbases': ['feedback.Answer']},
             'answer': ('django.db.models.fields.SmallIntegerField', [], {'default': '0'}),
             'answer_ptr': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['feedback.Answer']", 'unique': 'True', 'primary_key': 'True'})
         },
+        'feedback.fieldofstudyquestion': {
+            'Meta': {'object_name': 'FieldOfStudyQuestion', '_ormbases': ['feedback.Question']},
+            'feedback': ('django.db.models.fields.related.OneToOneField', [], {'related_name': "'field_of_study'", 'unique': 'True', 'primary_key': 'True', 'to': "orm['feedback.Feedback']"}),
+            'field_of_study': ('django.db.models.fields.SmallIntegerField', [], {'default': '0'}),
+            'question_ptr': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['feedback.Question']", 'unique': 'True'})
+        },
         'feedback.question': {
             'Meta': {'object_name': 'Question'},
             'description': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'})
         },
-        'feedback.text': {
-            'Meta': {'object_name': 'Text', '_ormbases': ['feedback.Question']},
-            'feedback': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'text'", 'to': "orm['feedback.Feedback']"}),
-            'label': ('django.db.models.fields.TextField', [], {}),
-            'question_ptr': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['feedback.Question']", 'unique': 'True', 'primary_key': 'True'})
-        },
         'feedback.textanswer': {
             'Meta': {'object_name': 'TextAnswer', '_ormbases': ['feedback.Answer']},
             'answer': ('django.db.models.fields.TextField', [], {}),
             'answer_ptr': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['feedback.Answer']", 'unique': 'True', 'primary_key': 'True'})
+        },
+        'feedback.textquestion': {
+            'Meta': {'object_name': 'TextQuestion', '_ormbases': ['feedback.Question']},
+            'feedback': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'text'", 'to': "orm['feedback.Feedback']"}),
+            'label': ('django.db.models.fields.TextField', [], {}),
+            'question_ptr': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['feedback.Question']", 'unique': 'True', 'primary_key': 'True'})
         }
     }
 

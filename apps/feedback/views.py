@@ -4,8 +4,8 @@ from django.shortcuts import get_object_or_404
 from django.template import RequestContext
 from apps.feedback.models import Feedback
 from apps.feedback.models import Question
-from apps.feedback.models import FieldOfStudy
-from apps.feedback.models import Text
+from apps.feedback.models import FieldOfStudyQuestion
+from apps.feedback.models import TextQuestion
 from apps.feedback.models import Answer
 from apps.feedback.models import TextAnswer
 from apps.feedback.models import FieldOfStudyAnswer

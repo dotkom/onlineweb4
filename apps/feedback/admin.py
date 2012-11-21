@@ -1,18 +1,22 @@
 # -*- coding: utf-8 -*-
 
 from apps.feedback.models import Feedback
-from apps.feedback.models import FieldOfStudy
-from apps.feedback.models import Text
+from apps.feedback.models import FieldOfStudyQuestion
+from apps.feedback.models import TextQuestion
 from apps.feedback.models import Answer
+from apps.feedback.models import FeedbackToObjectRelation
 
 from django.contrib import admin
 
+class FeedbackToObjectRelationAdmin(admin.ModelAdmin):
+    model = FeedbackToObjectRelation
+
 
 class FieldOfStudyInline(admin.StackedInline):
-    model = FieldOfStudy
+    model = FieldOfStudyQuestion
 
 class TextInline(admin.StackedInline):
-    model = Text
+    model = TextQuestion
     extra = 0
 
 class FeedbackAdmin(admin.ModelAdmin):
@@ -35,3 +39,4 @@ class AnswerAdmin(admin.ModelAdmin):
 
 admin.site.register(Feedback, FeedbackAdmin)
 admin.site.register(Answer, AnswerAdmin)
+admin.site.register(FeedbackToObjectRelation, FeedbackToObjectRelationAdmin)
