@@ -5,8 +5,8 @@ from apps.feedback.models import FieldOfStudyQuestion
 from apps.feedback.models import TextQuestion
 from apps.feedback.models import Answer
 from apps.feedback.models import FeedbackToObjectRelation
-
 from django.contrib import admin
+
 
 class FeedbackToObjectRelationAdmin(admin.ModelAdmin):
     model = FeedbackToObjectRelation
@@ -39,6 +39,7 @@ class FeedbackAdmin(admin.ModelAdmin):
 
 class AnswerAdmin(admin.ModelAdmin):
     pass
+
 
 admin.site.register(Feedback, FeedbackAdmin)
 admin.site.register(Answer, AnswerAdmin)

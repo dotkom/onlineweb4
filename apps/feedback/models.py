@@ -6,6 +6,22 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 
 
+class FeedbackToObjectRelation(models.Model):
+    feedback_id = models.OneToOneField(
+                    'Feedback')
+    content_type = models.ForeignKey(ContentType)
+    object_id = models.PositiveIntegerField()
+    content_object = generic.GenericForeignKey('content_type', 'object_id')
+
+    answered = models.ManyToManyField(User, related_name='feedbacks', blank=True, null=True)
+
+    class Meta:
+        unique_together = ('feedback_id', 'content_type', 'object_id')
+    
+    def __unicode__(self):
+        return str(self.feedback_id) + ': ' + str(self.content_object)
+
+
 class Feedback(models.Model):
     feedback_id = models.AutoField(primary_key=True)
     author = models.ForeignKey(User, related_name='oppretter')
@@ -70,19 +86,3 @@ class FieldOfStudyAnswer(Answer):
     )
 
     answer = models.SmallIntegerField(_('Studieretning'), choices=CHOICES, default=0)
-
-
-class FeedbackToObjectRelation(models.Model):
-    feedback_id = models.OneToOneField(
-                    Feedback)
-    content_type = models.ForeignKey(ContentType)
-    object_id = models.PositiveIntegerField()
-    content_object = generic.GenericForeignKey('content_type', 'object_id')
-
-    answered = models.ManyToManyField(User, related_name='feedbacks', blank=True, null=True)
-
-    class Meta:
-        unique_together = ('feedback_id', 'content_type', 'object_id')
-    
-    def __unicode__(self):
-        return str(self.feedback_id) + ': ' + str(self.content_object)
