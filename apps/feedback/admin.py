@@ -2,9 +2,9 @@
 
 from apps.feedback.models import Feedback
 from apps.feedback.models import FeedbackToObjectRelation
-from apps.feedback.questions import FieldOfStudyQuestion
-from apps.feedback.questions import TextQuestion
-from apps.feedback.answers import Answer
+from apps.feedback.models import FieldOfStudyQuestion
+from apps.feedback.models import TextQuestion
+from apps.feedback.models import Answer
 from django.contrib import admin
 
 
