@@ -8,6 +8,26 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
+        # Adding model 'FeedbackToObjectRelation'
+        db.create_table('feedback_feedbacktoobjectrelation', (
+            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('feedback_id', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['feedback.Feedback'], unique=True)),
+            ('content_type', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['contenttypes.ContentType'])),
+            ('object_id', self.gf('django.db.models.fields.PositiveIntegerField')()),
+        ))
+        db.send_create_signal('feedback', ['FeedbackToObjectRelation'])
+
+        # Adding unique constraint on 'FeedbackToObjectRelation', fields ['feedback_id', 'content_type', 'object_id']
+        db.create_unique('feedback_feedbacktoobjectrelation', ['feedback_id_id', 'content_type_id', 'object_id'])
+
+        # Adding M2M table for field answered on 'FeedbackToObjectRelation'
+        db.create_table('feedback_feedbacktoobjectrelation_answered', (
+            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
+            ('feedbacktoobjectrelation', models.ForeignKey(orm['feedback.feedbacktoobjectrelation'], null=False)),
+            ('user', models.ForeignKey(orm['auth.user'], null=False))
+        ))
+        db.create_unique('feedback_feedbacktoobjectrelation_answered', ['feedbacktoobjectrelation_id', 'user_id'])
+
         # Adding model 'Feedback'
         db.create_table('feedback_feedback', (
             ('feedback_id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
@@ -60,30 +80,16 @@ class Migration(SchemaMigration):
         ))
         db.send_create_signal('feedback', ['FieldOfStudyAnswer'])
 
-        # Adding model 'FeedbackToObjectRelation'
-        db.create_table('feedback_feedbacktoobjectrelation', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('feedback_id', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['feedback.Feedback'], unique=True)),
-            ('content_type', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['contenttypes.ContentType'])),
-            ('object_id', self.gf('django.db.models.fields.PositiveIntegerField')()),
-        ))
-        db.send_create_signal('feedback', ['FeedbackToObjectRelation'])
-
-        # Adding unique constraint on 'FeedbackToObjectRelation', fields ['feedback_id', 'content_type', 'object_id']
-        db.create_unique('feedback_feedbacktoobjectrelation', ['feedback_id_id', 'content_type_id', 'object_id'])
-
-        # Adding M2M table for field answered on 'FeedbackToObjectRelation'
-        db.create_table('feedback_feedbacktoobjectrelation_answered', (
-            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
-            ('feedbacktoobjectrelation', models.ForeignKey(orm['feedback.feedbacktoobjectrelation'], null=False)),
-            ('user', models.ForeignKey(orm['auth.user'], null=False))
-        ))
-        db.create_unique('feedback_feedbacktoobjectrelation_answered', ['feedbacktoobjectrelation_id', 'user_id'])
-
 
     def backwards(self, orm):
         # Removing unique constraint on 'FeedbackToObjectRelation', fields ['feedback_id', 'content_type', 'object_id']
         db.delete_unique('feedback_feedbacktoobjectrelation', ['feedback_id_id', 'content_type_id', 'object_id'])
+
+        # Deleting model 'FeedbackToObjectRelation'
+        db.delete_table('feedback_feedbacktoobjectrelation')
+
+        # Removing M2M table for field answered on 'FeedbackToObjectRelation'
+        db.delete_table('feedback_feedbacktoobjectrelation_answered')
 
         # Deleting model 'Feedback'
         db.delete_table('feedback_feedback')
@@ -105,12 +111,6 @@ class Migration(SchemaMigration):
 
         # Deleting model 'FieldOfStudyAnswer'
         db.delete_table('feedback_fieldofstudyanswer')
-
-        # Deleting model 'FeedbackToObjectRelation'
-        db.delete_table('feedback_feedbacktoobjectrelation')
-
-        # Removing M2M table for field answered on 'FeedbackToObjectRelation'
-        db.delete_table('feedback_feedbacktoobjectrelation_answered')
 
 
     models = {
