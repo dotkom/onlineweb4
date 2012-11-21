@@ -26,7 +26,10 @@ class FieldOfStudyQuestion(Question):
         Feedback,
         primary_key=True,
         related_name='field_of_study')
-    field_of_study = models.SmallIntegerField(_('Studieretning'), choices=CHOICES, default=0)
+    field_of_study = models.SmallIntegerField(
+        _('Studieretning'),
+        choices=CHOICES,
+        default=0)
 
 
 class TextQuestion(Question):
