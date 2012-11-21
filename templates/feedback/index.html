@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+    {% for feedback in feedbacks %}
+        {{feedback.field_of_study.answer}} 
+    {% endfor %}
+
+{%endblock content %}

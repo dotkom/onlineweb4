@@ -3,6 +3,7 @@
 from apps.feedback.models import Feedback
 from apps.feedback.models import FieldOfStudy
 from apps.feedback.models import Text
+from apps.feedback.models import Answer
 
 from django.contrib import admin
 
@@ -29,4 +30,8 @@ class FeedbackAdmin(admin.ModelAdmin):
         for instance in instances:
             instance.save()
 
+class AnswerAdmin(admin.ModelAdmin):
+    pass
+
 admin.site.register(Feedback, FeedbackAdmin)
+admin.site.register(Answer, AnswerAdmin)
