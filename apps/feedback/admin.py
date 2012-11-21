@@ -11,9 +11,11 @@ from django.contrib import admin
 class FieldOfStudyInline(admin.StackedInline):
     model = FieldOfStudy
 
+
 class TextInline(admin.StackedInline):
     model = Text
     extra = 0
+
 
 class FeedbackAdmin(admin.ModelAdmin):
     list_display = ('description', 'author')
@@ -29,6 +31,7 @@ class FeedbackAdmin(admin.ModelAdmin):
         instances = formset.save(commit=False)
         for instance in instances:
             instance.save()
+
 
 class AnswerAdmin(admin.ModelAdmin):
     pass
