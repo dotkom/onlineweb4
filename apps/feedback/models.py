@@ -5,9 +5,19 @@ from django.utils.translation import ugettext_lazy as _
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 
+'''
+Et mulig problem med denne løsninga.
+
+Dersom brukere /endrer/ et Feedback-skjema som allerede har fått svar
+vil man fucke opp eldre feedback-skjemaer.
+
+En mulig løsning er å _ikke_ tillate fag/bed/someKom å endre
+skjemaer, men opprette så mange de vil.
+'''
+
 
 class FeedbackRelation(models.Model):
-    feedback_id = models.OneToOneField('Feedback')
+    feedback = models.ForeignKey('Feedback')
     content_type = models.ForeignKey(ContentType)
     object_id = models.PositiveIntegerField()
     content_object = generic.GenericForeignKey('content_type', 'object_id')
@@ -18,8 +28,15 @@ class FeedbackRelation(models.Model):
         blank=True,
         null=True)
 
+    @property
+    def answers(self):
+        answers = []
+        answers.extend(self.field_of_study_answers.all())
+        answers.extend(self.text_answers.all())
+        return sorted(answers, key=lambda x: x.order)
+
     class Meta:
-        unique_together = ('feedback_id', 'content_type', 'object_id')
+        unique_together = ('feedback', 'content_type', 'object_id')
 
     def __unicode__(self):
         return str(self.feedback_id) + ': ' + str(self.content_object)
@@ -30,6 +47,13 @@ class Feedback(models.Model):
     author = models.ForeignKey(User, related_name='oppretter')
     description = models.CharField(_('beskrivelse'), max_length=100)
 
+    @property
+    def questions(self):
+        questions = []
+        questions.extend(self.field_of_study_questions.all())
+        questions.extend(self.text_questions.all())
+        return sorted(questions, key=lambda x: x.order)
+
     def __unicode__(self):
         return self.description
 
@@ -38,56 +62,78 @@ class Feedback(models.Model):
         verbose_name_plural = _('tilbakemeldinger')
 
 
-class Question(models.Model):
-    id = models.AutoField(primary_key=True)
-    description = models.CharField(_('beskrivelse'), max_length=100)
-
-    def __unicode__(self):
-        return self.description
-
-
-class Answer(models.Model):
-    question = models.ForeignKey(Question, related_name='answer')
-
-
 FIELD_OF_STUDY_CHOICES = (
     (0, _('Bachelor i Informatikk (BIT)')),
     (1, _('Intelligente Systemer (IRS)')),
-    (2, _('Software (SW')),
+    (2, _('Software (SW)')),
     (3, _('Informasjonsforvaltning (DIF)')),
     (4, _('Komplekse Datasystemer (KDS)')),
     (5, _('Spillteknologi (SPT)')),
 )
 
 
-class FieldOfStudyQuestion(Question):
-    feedback = models.OneToOneField(
+class FieldOfStudyQuestion(models.Model):
+    feedback = models.ForeignKey(
         Feedback,
         primary_key=True,
-        related_name='field_of_studys')
+        related_name='field_of_study_questions')
+
+    order = models.SmallIntegerField(_(u'Rekkefølge'), default=1)
+
     field_of_study = models.SmallIntegerField(
         _('Studieretning'),
         choices=FIELD_OF_STUDY_CHOICES,
         default=0)
 
+    def __unicode__(self):
+        return "Studieretning"
 
-class FieldOfStudyAnswer(Answer):
-    answer = models.SmallIntegerField(
-        _('Studieretning'),
-        choices=FIELD_OF_STUDY_CHOICES,
-        default=0)
+
+class FieldOfStudyAnswer(models.Model):
     feedback_relation = models.ForeignKey(
         FeedbackRelation,
         related_name="field_of_study_answers")
 
+    answer = models.SmallIntegerField(
+        _('Studieretning'),
+        choices=FIELD_OF_STUDY_CHOICES,
+        default=0)
 
-class TextQuestion(Question):
-    feedback = models.ForeignKey(Feedback, related_name='texts')
-    label = models.TextField(_(u'Spørsmål'), blank=False)
+    question = models.ForeignKey(FieldOfStudyQuestion, related_name='answer')
+
+    def __unicode__(self):
+        return str(self.question) + ": " + self.answer
+
+    @property
+    def order(self):
+        return self.question.order
 
 
-class TextAnswer(Answer):
-    answer = models.TextField(_('svar'), blank=False)
+class TextQuestion(models.Model):
+    feedback = models.ForeignKey(
+        Feedback,
+        related_name='text_questions')
+
+    order = models.SmallIntegerField(_(u'Rekkefølge'), default=10)
+
+    label = models.CharField(_(u'Spørsmål'), blank=False, max_length=256)
+
+    def __unicode__(self):
+        return self.label
+
+
+class TextAnswer(models.Model):
+    question = models.ForeignKey(TextQuestion, related_name='answer')
+
     feedback_relation = models.ForeignKey(
         FeedbackRelation,
         related_name="text_answers")
+
+    answer = models.TextField(_('svar'), blank=False)
+
+    def __unicode__(self):
+        return str(self.question) + ": " + self.answer
+
+    @property
+    def order(self):
+        return self.question.order
