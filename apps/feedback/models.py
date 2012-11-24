@@ -5,16 +5,6 @@ from django.utils.translation import ugettext_lazy as _
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 
-'''
-Et mulig problem med denne løsninga.
-
-Dersom brukere /endrer/ et Feedback-skjema som allerede har fått svar
-vil man fucke opp eldre feedback-skjemaer.
-
-En mulig løsning er å _ikke_ tillate fag/bed/someKom å endre
-skjemaer, men opprette så mange de vil.
-'''
-
 
 class FeedbackRelation(models.Model):
     feedback = models.ForeignKey('Feedback')
@@ -34,6 +24,9 @@ class FeedbackRelation(models.Model):
 
     @property
     def answers(self):
+        """
+        When creating more Question types, add their answers here
+        """
         answers = []
         answers.extend(self.field_of_study_answers.all())
         answers.extend(self.text_answers.all())
@@ -56,6 +49,9 @@ class Feedback(models.Model):
 
     @property
     def questions(self):
+        """
+        When creating more Question types, add them here
+        """
         questions = []
         questions.extend(self.field_of_study_questions.all())
         questions.extend(self.text_questions.all())
