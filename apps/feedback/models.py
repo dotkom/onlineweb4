@@ -29,11 +29,18 @@ class FeedbackRelation(models.Model):
         null=True)
 
     @property
+    def questions(self):
+        return self.feedback.questions
+
+    @property
     def answers(self):
         answers = []
         answers.extend(self.field_of_study_answers.all())
         answers.extend(self.text_answers.all())
         return sorted(answers, key=lambda x: x.order)
+
+    def answers_to_question(self, question):
+        return question.answer.filter(feedback_relation=self)
 
     class Meta:
         unique_together = ('feedback', 'content_type', 'object_id')
