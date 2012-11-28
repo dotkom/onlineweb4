@@ -10,7 +10,7 @@ from filebrowser.sites import site
 from tastypie.api import Api
 from apps.events.api import EventResource, UserResource
 from apps.article.api import ArticleResource, UserResource
-from apps.marks.api import MarkResource, MarkUserResource, EntryResource, MyEntryResource
+from apps.marks.api import MarkResource, MarkUserResource, EntryResource, MyMarksResource
 
 v0_api = Api(api_name='v0')
 v0_api.register(EventResource())
@@ -19,7 +19,7 @@ v0_api.register(ArticleResource())
 v0_api.register(MarkResource())
 v0_api.register(MarkUserResource())
 v0_api.register(EntryResource())
-v0_api.register(MyEntryResource())
+v0_api.register(MyMarksResource())
 
 
 # URL config 
