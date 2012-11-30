@@ -11,6 +11,7 @@ from tastypie.api import Api
 from apps.events.api import EventResource, UserResource
 from apps.article.api import ArticleResource, UserResource
 from apps.marks.api import MarkResource, MarkUserResource, EntryResource, MyMarksResource, MyActiveMarksResource
+from apps.userprofile.api import UserResource
 
 v0_api = Api(api_name='v0')
 v0_api.register(EventResource())
