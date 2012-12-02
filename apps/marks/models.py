@@ -10,8 +10,6 @@ class ActiveMarksManager(models.Manager):
     def get_query_set(self):
         threshhold = get_threshhold()
 
-        print "threshhold = %s" % repr(threshhold)
-
         return super(ActiveMarksManager, self).get_query_set().filter(mark_added_date__gte = threshhold)
 
 class Mark(models.Model):
@@ -79,8 +77,6 @@ def get_threshhold():
     first_winter_start_date = datetime.date(now.year -1, WINTER[0][0], WINTER[0][1]) 
     first_winter_end_date = datetime.date(now.year, WINTER[1][0], WINTER[1][1])
     second_winter_start_date = datetime.date(now.year, WINTER[0][0], WINTER[0][1])
-
-    print repr(threshhold)
 
     # If we're in the middle of summer, remove the days passed of summer
     if summer_start_date < now < summer_end_date:
