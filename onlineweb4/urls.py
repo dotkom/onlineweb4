@@ -7,7 +7,7 @@ from filebrowser.sites import site
 # Tastypie 
 from tastypie.api import Api
 from apps.events.api import EventResource, UserResource
-from apps.marks.api import MarkResource, MarkUserResource, EntryResource, MyMarksResource
+from apps.marks.api import MarkResource, MarkUserResource, EntryResource, MyMarksResource, MyActiveMarksResource
 
 v0_api = Api(api_name='v0')
 v0_api.register(EventResource())
@@ -16,6 +16,7 @@ v0_api.register(MarkResource())
 v0_api.register(MarkUserResource())
 v0_api.register(EntryResource())
 v0_api.register(MyMarksResource())
+v0_api.register(MyActiveMarksResource())
 
 admin.autodiscover()
 
