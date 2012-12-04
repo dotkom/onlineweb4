@@ -44,7 +44,7 @@ USE_L10N = True
 USE_TZ = False
 SECRET_KEY = 'q#wy0df(7&amp;$ucfrxa1j72%do7ko*-6(g!8f$tc2$3x@3cq5@6c'
 
-AUTH_PROFILE_MODULE = 'apps.userprofile.UserProfile'
+AUTH_PROFILE_MODULE = 'userprofile.UserProfile'
 
 MEDIA_ROOT = os.path.join(PROJECT_ROOT_DIRECTORY, 'media') # Override this in local.py in prod.
 MEDIA_URL = '/media/'
