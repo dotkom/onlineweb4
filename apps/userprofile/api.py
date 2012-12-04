@@ -12,6 +12,7 @@ class UserProfileResource(ModelResource):
     class Meta:
         queryset = UserProfile.objects.all()
         resource_name = 'profile'
+        fields = ['address', 'area_code', 'field_of_study', 'phone_number', 'started_date',]
         include_resource_uri = False
         include_absolute_url = False
 

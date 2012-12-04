@@ -22,7 +22,6 @@ v0_api.register(MarkUserResource())
 v0_api.register(EntryResource())
 v0_api.register(MyMarksResource())
 v0_api.register(MyActiveMarksResource())
-v0_api.register(UserProfileResource())
 
 
 # URL config 
