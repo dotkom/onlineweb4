@@ -43,7 +43,8 @@ class UserProfile(models.Model):
     @property
     def is_online(self):
         return self.field_of_study != 0
-
+    
+    @property
     def year(self):
         today = datetime.now()
         started = self.started_date
