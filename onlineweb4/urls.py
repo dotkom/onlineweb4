@@ -11,7 +11,7 @@ from tastypie.api import Api
 from apps.events.api import EventResource, UserResource
 from apps.article.api import ArticleResource, UserResource
 from apps.marks.api import MarkResource, MarkUserResource, EntryResource, MyMarksResource, MyActiveMarksResource
-from apps.userprofile.api import UserResource
+from apps.userprofile.api import UserResource, UserProfileResource
 
 v0_api = Api(api_name='v0')
 v0_api.register(EventResource())
@@ -22,6 +22,7 @@ v0_api.register(MarkUserResource())
 v0_api.register(EntryResource())
 v0_api.register(MyMarksResource())
 v0_api.register(MyActiveMarksResource())
+v0_api.register(UserProfileResource())
 
 
 # URL config 
