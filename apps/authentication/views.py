@@ -162,7 +162,7 @@ kan dette gjøres med funksjonen for å gjenopprette passord.
 
                 return HttpResponseRedirect('/')        
             else:
-                form = RecoveryForm(request.POST, auto_id=True, error_class=InlineSpanErrorList)
+                form = RecoveryForm(request.POST, auto_id=True)
         else:
             form = RecoveryForm()
 
