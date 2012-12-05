@@ -73,6 +73,8 @@ class MyMarksResource(ModelResource):
     class Meta:
         queryset = Mark.objects.all()
         resource_name = 'marks/mine'
+        authentication = BasicAuthentication()
+        authorization = DjangoAuthorization()
 
     def obj_create(self, bundle, request=None, **kwargs):
         return super(MyMarksResource, self).obj_create(bundle, request, given_to=request.user)
@@ -110,6 +112,8 @@ class MyActiveMarksResource(ModelResource):
     class Meta:
         queryset = Mark.active.all()
         resource_name = 'marks/active'
+        authentication = BasicAuthentication()
+        authorization = DjangoAuthorization()
 
     def obj_create(self, bundle, request=None, **kwargs):
         return super(MyMarksResource, self).obj_create(bundle, request, given_to=request.user)
