@@ -41,6 +41,7 @@ urlpatterns = patterns('',
     url(r'^api/',       include(v0_api.urls)),
     url(r'^article/',   include('apps.article.urls')),
     url(r'^mail/',      include('apps.autoconfig.urls'))
+    url(r'^auth/',      include('apps.authentication.urls')), 
 )
 
 
