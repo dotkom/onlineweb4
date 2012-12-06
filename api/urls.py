@@ -24,6 +24,9 @@ v0_api.register(EntryResource())
 v0_api.register(MyMarksResource())
 v0_api.register(MyActiveMarksResource())
 
+
+
+# Set the urls to be included.
 urlpatterns = patterns('',
     url(r'^',       include(v0_api.urls)),
 )
