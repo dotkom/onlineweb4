@@ -12,10 +12,11 @@ NOSE_ARGS = ['--with-coverage', '--cover-package=apps']
 DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 
-ADMINS = (
-     ('dotKom', 'dotkom@online.ntnu.no'),
-)
+TEST_RUNNER = "django_nose.NoseTestSuiteRunner"
 
+ADMINS = (
+    ('dotKom', 'dotkom@online.ntnu.no'),
+)
 MANAGERS = ADMINS
 
 # Email settings
@@ -42,6 +43,7 @@ SITE_ID = 1
 USE_I18N = True
 USE_L10N = True
 USE_TZ = False
+DATETIME_FORMAT = 'N j, Y, H:i'
 SECRET_KEY = 'q#wy0df(7&amp;$ucfrxa1j72%do7ko*-6(g!8f$tc2$3x@3cq5@6c'
 
 AUTH_PROFILE_MODULE = 'apps.userprofile.UserProfile'
@@ -57,8 +59,6 @@ STATICFILES_DIRS = (
     os.path.join(PROJECT_ROOT_DIRECTORY, 'static/'),
 )
 
-# List of finder classes that know how to find static files in
-# various locations.
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
@@ -69,7 +69,6 @@ STATICFILES_FINDERS = (
 TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.Loader',
     'django.template.loaders.app_directories.Loader',
-#     'django.template.loaders.eggs.Loader',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -95,9 +94,9 @@ TEMPLATE_DIRS = (
 GRAPPELLI_ADMIN_TITLE = 'Onlineweb'
 
 INSTALLED_APPS = (
-    # Third party apps
-    'south',
+    # Third party dependencies
     'django_nose',
+    'south',
     'grappelli',
     'filebrowser',
 
@@ -110,10 +109,11 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.staticfiles',
 
-    # Onlineweb apps
+    # Onlineweb 4 apps
+    'apps.article',
+    'apps.autoconfig',
     'apps.events',
     'apps.userprofile',
-    'apps.autoconfig'
 )
 
 # A sample logging configuration. The only tangible logging

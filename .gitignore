@@ -1,7 +1,6 @@
 .ropeproject/
 .coverage
 *.pyc
-*.*.swp
 *.swp
 *.project
 *.settings
@@ -15,3 +14,4 @@
 collected_static
 sqlite/
 local.py
+uploaded_media/*

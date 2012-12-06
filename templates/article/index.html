@@ -1,0 +1,26 @@
+<div id="news_wrapper" style="width: 700px;">
+	<div class="newsitem wide">
+		<a href="/article/{{ featured.id }}"><img src="{{ STATIC_URL }}{{ featured.image_featured }}" width="700" height="270" alt="{{ featured.heading }}" />
+		<a href="/article/{{ featured.id }}"><h2>{{ featured.heading }}</h2><a>
+		{% if featured.ingress %}
+			<p>{{ featured.ingress }}</p>
+		{% else %}
+			<p>{{ featured.content }}</p>
+		{% endif %}
+		<hr />
+    </div>
+	<div id="news_container">
+		{% for article in latest %}
+			<div class="newsitem">
+				<a href="/article/{{ article.id }}"><img style="float: left;{% ifnotequal forloop.counter|divisibleby:2 1 %}padding-right: 10px;{% endifnotequal %}" src="{{ STATIC_URL }}{% if article.image_thumbnail %}{{ article.image_thumbnail }}{% else %}{{ article.image_article }}{% endif %}" width="345" height="100" alt="{{ article.heading }}" />
+				<a href="/article/{{ article.id }}"><h2>{{ article.heading }}</h2><a>
+				{% if article.ingress %}
+					<p>{{ article.ingress }}</p>
+				{% else %}
+					<p>{{ article.content }}</p>
+				{% endif %}
+			</div>
+		{% endfor %}
+		<div style="clear: both;"></div>
+	</div>
+</div>
