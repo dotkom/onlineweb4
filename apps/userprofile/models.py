@@ -2,10 +2,10 @@
 
 from datetime import datetime
 
+from django.contrib.auth.models import User
 from django.db import models
 from django.db.models.signals import post_save
 from django.utils.translation import ugettext_lazy as _
-from django.contrib.auth.models import User
 
 
 class UserProfile(models.Model):
@@ -21,8 +21,8 @@ class UserProfile(models.Model):
 
     # Online related fields
     field_of_study = models.SmallIntegerField(_("studieretning"), choices=FIELD_OF_STUDY_CHOICES, default=0)
-    compiled = models.BooleanField(_("kompilert"), default=False)
     started_date = models.DateTimeField(_("startet studie"), default=datetime.now())
+    compiled = models.BooleanField(_("kompilert"), default=False)
     
     # Email
     infomail = models.BooleanField(_("vil ha infomail"), default=True)
@@ -68,8 +68,11 @@ class UserProfile(models.Model):
             return 4
 
     def __unicode__(self):
-        return u"Profile of user: %s" % self.user.username
+        return "for %s" % self.user.username
 
+    class Meta:
+        verbose_name = _("brukerprofil")
+        verbose_name_plural = _("brukerprofiler")
 
 # create userprofile when the user is created
 def create_user_profile(sender, instance, created, **kwargs):
