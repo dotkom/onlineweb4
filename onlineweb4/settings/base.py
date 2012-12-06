@@ -114,6 +114,7 @@ INSTALLED_APPS = (
     'apps.autoconfig',
     'apps.events',
     'apps.userprofile',
+    'apps.marks',
 )
 
 # A sample logging configuration. The only tangible logging
