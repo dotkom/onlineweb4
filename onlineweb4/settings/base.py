@@ -111,11 +111,11 @@ INSTALLED_APPS = (
 
     # Onlineweb 4 apps
     'apps.article',
+    'apps.authentication',
     'apps.autoconfig',
     'apps.events',
-    'apps.userprofile',
     'apps.marks',
-    'apps.authentication',
+    'apps.userprofile',
 )
 
 # A sample logging configuration. The only tangible logging
