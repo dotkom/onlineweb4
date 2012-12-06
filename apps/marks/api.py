@@ -11,28 +11,16 @@ from tastypie.bundle import Bundle
 from tastypie.resources import ModelResource, ALL_WITH_RELATIONS
 
 from apps.marks.models import Mark, UserEntry
-
-# TODO replace MarkUserResource with a global resource.
-class MarkUserResource(ModelResource):
-    class Meta:
-        queryset = User.objects.all()
-        resource_name = 'user'
-        fields = ['username', 'first_name', 'last_name', 'last_login', ]
-        allowed_methods = ['get', ]
-
-    def override_urls(self):
-        return [
-            url(r"^(?P<resource_name>%s)/(?P<username>[\w\d_.-]+)/$" % self._meta.resource_name, self.wrap_view('dispatch_detail'), name="api_dispatch_detail"),
-        ]
+from apps.userprofile.api import UserResource
 
 # TODO restrict access to this feature
 class MarkResource(ModelResource):
     """
     Displays all marks, with all linked resources exposed by api end-points.
     """
-    given_by = fields.ForeignKey(MarkUserResource, 'given_by') 
-    last_changed_by = fields.ForeignKey(MarkUserResource, 'last_changed_by')
-    given_to = fields.ToManyField(MarkUserResource, 'given_to')
+    given_by = fields.ForeignKey(UserResource, 'given_by') 
+    last_changed_by = fields.ForeignKey(UserResource, 'last_changed_by')
+    given_to = fields.ToManyField(UserResource, 'given_to')
 
     class Meta:
         queryset = Mark.objects.all()
@@ -45,7 +33,7 @@ class EntryResource(ModelResource):
     This resource exposes only the api end-points, which is the minimal ammount
     of data this api can supply while still listing all marks that belongs to a user.
     """
-    user = fields.ToOneField(MarkUserResource, 'user')
+    user = fields.ToOneField(UserResource, 'user')
     mark = fields.ToOneField(MarkResource, 'mark')
 
     class Meta:
@@ -67,8 +55,8 @@ class MyMarksResource(ModelResource):
     given_to is excluded, both because users should not be able to see this, 
     it's redundant and it avoids loops.
     """
-    given_by = fields.ForeignKey(MarkUserResource, 'given_by') 
-    last_changed_by = fields.ForeignKey(MarkUserResource, 'last_changed_by')
+    given_by = fields.ForeignKey(UserResource, 'given_by') 
+    last_changed_by = fields.ForeignKey(UserResource, 'last_changed_by')
 
     class Meta:
         queryset = Mark.objects.all()
@@ -106,8 +94,8 @@ class MyActiveMarksResource(ModelResource):
     """
     Supplies a list of an authenticated users' active marks.
     """
-    given_by = fields.ForeignKey(MarkUserResource, 'given_by') 
-    last_changed_by = fields.ForeignKey(MarkUserResource, 'last_changed_by')
+    given_by = fields.ForeignKey(UserResource, 'given_by') 
+    last_changed_by = fields.ForeignKey(UserResource, 'last_changed_by')
 
     class Meta:
         queryset = Mark.active.all()
