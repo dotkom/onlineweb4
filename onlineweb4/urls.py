@@ -20,7 +20,7 @@ urlpatterns = patterns('',
 
     # Onlineweb app urls
     url(r'^$', TemplateView.as_view(template_name='base_site.html'), name='home'),
-    url(r'^api/',       include('api.urls')),
+    url(r'^api/',       include('apps.api.urls')),
     url(r'^article/',   include('apps.article.urls')),
     url(r'^mail/',      include('apps.autoconfig.urls')),
     url(r'^auth/',      include('apps.authentication.urls')), 

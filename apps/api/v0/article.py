@@ -5,7 +5,7 @@ from tastypie import fields
 from tastypie.resources import ModelResource
 
 from apps.article.models import Article
-from apps.userprofile.api import UserResource
+from apps.api.v0.userprofile import UserResource
 
 class ArticleResource(ModelResource):
     author = fields.ToOneField(UserResource, 'created_by')
