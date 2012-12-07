@@ -25,6 +25,7 @@ class MarkResource(ModelResource):
     class Meta:
         queryset = Mark.objects.all()
         resource_name = 'marks/marks'
+        excludes = ['id', ]
 
 class EntryResource(ModelResource):
     """
@@ -39,6 +40,7 @@ class EntryResource(ModelResource):
     class Meta:
         queryset = UserEntry.objects.all()
         resource_name = 'marks/entry'
+        excludes = ['id', ]
         authentication = BasicAuthentication()
         authorization = DjangoAuthorization()
 
@@ -61,6 +63,7 @@ class MyMarksResource(ModelResource):
     class Meta:
         queryset = Mark.objects.all()
         resource_name = 'marks/mine'
+        excludes = ['id', ]
         authentication = BasicAuthentication()
         authorization = DjangoAuthorization()
 
