@@ -38,6 +38,7 @@ urlpatterns = patterns('',
 
     # Onlineweb app urls
     url(r'^$', TemplateView.as_view(template_name='base_site.html'), name='home'),
+    url(r'^admin/', include(admin.site.urls)),
     url(r'^api/',       include(v0_api.urls)),
     url(r'^article/',   include('apps.article.urls')),
     url(r'^mail/',      include('apps.autoconfig.urls')),
