@@ -15,6 +15,7 @@ from apps.article.api import ArticleResource, UserResource
 from apps.marks.api import MarkResource, MarkUserResource, EntryResource, MyMarksResource, MyActiveMarksResource
 from apps.userprofile.api import UserResource, UserProfileResource
 
+
 v0_api = Api(api_name='v0')
 v0_api.register(EventResource())
 v0_api.register(UserResource())
