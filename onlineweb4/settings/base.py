@@ -113,6 +113,7 @@ INSTALLED_APPS = (
     'apps.article',
     'apps.authentication',
     'apps.autoconfig',
+    'apps.companyprofile',
     'apps.events',
     'apps.marks',
     'apps.userprofile',
