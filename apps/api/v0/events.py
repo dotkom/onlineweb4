@@ -7,17 +7,7 @@ from apps.events.models import Event
 from apps.events.models import Attendee
 from apps.events.models import AttendanceEvent
 
-
-class UserResource(ModelResource):
-    class Meta:
-        queryset = User.objects.all()
-        resource_name = 'user'
-        # List of fields we do NOT want to make available
-        excludes = ['password',
-                    'email',
-                    'date_joined'
-                    'id',
-                    'last_login']
+from apps.api.v0.userprofile import UserResource
 
 class AttendeeResource(ModelResource):
     user = fields.ToOneField(UserResource, 'user', full=True)
