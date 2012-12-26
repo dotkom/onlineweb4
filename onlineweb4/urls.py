@@ -22,13 +22,9 @@ urlpatterns = patterns('',
     url(r'^$', TemplateView.as_view(template_name='base_site.html'), name='home'),
     url(r'^api/',       include('apps.api.urls')),
     url(r'^article/',   include('apps.article.urls')),
+    url(r'^events/',    include('apps.events.urls')),
     url(r'^mail/',      include('apps.autoconfig.urls')),
     url(r'^auth/',      include('apps.authentication.urls')), 
-
-    # TODO move these urls to events/urls.py
-#    from apps.events import views
-#    url(r'^events/(?P<event_id>\d+)/?',    views.details),
-#    url(r'^events/',                       views.index),
 )
 
 
