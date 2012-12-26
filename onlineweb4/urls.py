@@ -8,15 +8,20 @@ from filebrowser.sites import site
 
 # Tastypie 
 from tastypie.api import Api
-from apps.events.api import EventResource, UserResource
+from apps.events.api import EventResource, UserResource, AttendanceEventResource
+from apps.events.api import AttendeeResource
+from apps.events import views
 from apps.article.api import ArticleResource, UserResource
 from apps.marks.api import MarkResource, MarkUserResource, EntryResource, MyMarksResource, MyActiveMarksResource
 from apps.userprofile.api import UserResource, UserProfileResource
+
 
 v0_api = Api(api_name='v0')
 v0_api.register(EventResource())
 v0_api.register(UserResource())
 v0_api.register(ArticleResource())
+v0_api.register(AttendanceEventResource())
+v0_api.register(AttendeeResource())
 v0_api.register(MarkResource())
 v0_api.register(MarkUserResource())
 v0_api.register(EntryResource())
@@ -38,11 +43,14 @@ urlpatterns = patterns('',
 
     # Onlineweb app urls
     url(r'^$', TemplateView.as_view(template_name='base_site.html'), name='home'),
-    url(r'^admin/', include(admin.site.urls)),
     url(r'^api/',       include(v0_api.urls)),
     url(r'^article/',   include('apps.article.urls')),
     url(r'^mail/',      include('apps.autoconfig.urls')),
     url(r'^auth/',      include('apps.authentication.urls')), 
+
+    # TODO move these urls to events/urls.py
+    (r'^events/(?P<event_id>\d+)/?', views.details),
+    (r'^events/', views.index),
 )
 
 
