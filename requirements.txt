@@ -5,6 +5,7 @@ django-tastypie==0.9.11     # API
 mimeparse==0.1.3
 python-dateutil==1.5
 wsgiref==0.1.2
+Markdown==2.0.3             # textarea text formatting
 
 # third party deps
 django-filebrowser==3.5.0   # File uploading
@@ -15,6 +16,11 @@ cov-core==1.7
 coverage==3.5.2
 django-nose==1.0
 factory-boy==1.1.3
+fuzzywuzzy==0.1
+lettuce==0.2.10
+mimeparse==0.1.3
 nose==1.1.2
 nose-cov==1.5
+python-dateutil==1.5
+sure==1.0.6
 unittest2==0.5.1
