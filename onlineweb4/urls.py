@@ -26,8 +26,9 @@ urlpatterns = patterns('',
     url(r'^auth/',      include('apps.authentication.urls')), 
 
     # TODO move these urls to events/urls.py
-    (r'^events/(?P<event_id>\d+)/?',    views.details),
-    (r'^events/',                       views.index),
+#    from apps.events import views
+#    url(r'^events/(?P<event_id>\d+)/?',    views.details),
+#    url(r'^events/',                       views.index),
 )
 
 
