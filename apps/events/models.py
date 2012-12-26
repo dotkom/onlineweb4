@@ -1,23 +1,63 @@
 #-*- coding: utf-8 -*-
 from django.db import models
 from django.contrib.auth.models import User
-from django.utils.translation import gettext as _
+from django.utils.translation import ugettext_lazy as _
 
 
 class Event(models.Model):
     """
-    Base class for Event-objects
+    Base class for Event-objects.
     """
-    author = models.ForeignKey(User, related_name='author')
-    title = models.CharField(_('title'), max_length=100)
-    start_date = models.DateTimeField(_('start_date'))
-    end_date = models.DateTimeField(_('end_date'))
-    location = models.CharField(_('location'), max_length=100)
-    description = models.TextField(_('description'))
+    event_id = models.AutoField(primary_key=True)
+
+    author = models.ForeignKey(User, related_name='oppretter')
+    title = models.CharField(_('tittel'), max_length=100)
+    event_start = models.DateTimeField(_('start-dato'))
+    event_end = models.DateTimeField(_('slutt-dato'))
+    location = models.CharField(_('lokasjon'), max_length=100)
+    description = models.TextField(_('beskrivelse'))
 
     def __unicode__(self):
         return self.title
 
     class Meta:
-        verbose_name = _('event')
-        verbose_name_plural = _('events')
+        verbose_name = _('arrangement')
+        verbose_name_plural = _('arrangement')
+
+
+class AttendanceEvent(models.Model):
+    """
+    Events that require special considerations regarding attendance.
+    """
+    event = models.OneToOneField(
+        Event,
+        primary_key=True,
+        related_name='attendance_event')
+
+    max_capacity = models.PositiveIntegerField(_('maks-kapasitet'))
+    registration_start = models.DateTimeField(_('registrerings-start'))
+    registration_end = models.DateTimeField(_('registrerings-slutt'))
+
+    def __unicode__(self):
+        return self.event.title
+
+    class Meta:
+        verbose_name = _('paamelding')
+        verbose_name_plural = _('paameldinger')
+
+
+class Attendee(models.Model):
+    """
+    User relation to AttendanceEvent.
+    """
+    event = models.ForeignKey(AttendanceEvent, related_name="attendees")
+    user = models.ForeignKey(User)
+
+    timestamp = models.DateTimeField(auto_now_add=True, editable=False)
+    attended = models.BooleanField(_('var tilstede'))
+
+    def __unicode__(self):
+        return self.user.get_full_name()
+
+    class Meta:
+        ordering = ['timestamp']
