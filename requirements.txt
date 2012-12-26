@@ -20,6 +20,5 @@ fuzzywuzzy==0.1
 lettuce==0.2.10
 nose==1.1.2
 nose-cov==1.5
-python-dateutil==1.5
 sure==1.0.6
 unittest2==0.5.1
