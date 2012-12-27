@@ -102,7 +102,7 @@ class FieldOfStudyAnswer(models.Model):
     question = models.ForeignKey(FieldOfStudyQuestion, related_name='answer')
 
     def __unicode__(self):
-        return str(self.question) + ": " + self.answer
+        return str(self.question) + ": " + self.get_answer_display()
 
     @property
     def order(self):
@@ -168,7 +168,7 @@ class RatingAnswer(models.Model):
     question = models.ForeignKey(RatingQuestion, related_name='answer')
 
     def __unicode__(self):
-        return str(self.question) + ": " + self.answer
+        return str(self.question) + ": " + self.get_answer_display()
 
     @property
     def order(self):

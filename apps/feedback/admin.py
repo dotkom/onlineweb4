@@ -9,7 +9,18 @@ from apps.feedback.models import TextAnswer
 from apps.feedback.models import RatingQuestion
 from apps.feedback.models import RatingAnswer
 
+from django.forms.models import ModelForm
 from django.contrib import admin
+
+
+class AlwaysChangedModelForm(ModelForm):
+    def has_changed(self):
+        """
+        Should returns True if data differs from initial.
+        By always returning true even unchanged inlines will get
+        validated and saved.
+        """
+        return True
 
 
 class FeedbackRelationAdmin(admin.ModelAdmin):
@@ -18,7 +29,8 @@ class FeedbackRelationAdmin(admin.ModelAdmin):
 
 class FieldOfStudyInline(admin.StackedInline):
     model = FieldOfStudyQuestion
-    max_num = 1
+    extra = 0
+    form = AlwaysChangedModelForm
 
 
 class TextInline(admin.StackedInline):
