@@ -45,7 +45,7 @@ class FeedbackRelation(models.Model):
 
 class Feedback(models.Model):
     feedback_id = models.AutoField(primary_key=True)
-    author = models.ForeignKey(User, related_name='oppretter')
+    author = models.ForeignKey(User)
     description = models.CharField(_('beskrivelse'), max_length=100)
 
     @property
@@ -145,10 +145,9 @@ RATING_CHOICES = [(k, str(k)) for k in range(1, 7)]  # 1 to 6
 class RatingQuestion(models.Model):
     feedback = models.ForeignKey(
         Feedback,
-        primary_key=True,
         related_name='rating_questions')
 
-    order = models.SmallIntegerField(_(u'Rekkefølge'), default=1)
+    order = models.SmallIntegerField(_(u'Rekkefølge'), default=20)
 
     label = models.CharField(_(u'Spørsmål'), blank=False, max_length=256)
 

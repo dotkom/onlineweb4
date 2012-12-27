@@ -6,6 +6,8 @@ from apps.feedback.models import FieldOfStudyQuestion
 from apps.feedback.models import FieldOfStudyAnswer
 from apps.feedback.models import TextQuestion
 from apps.feedback.models import TextAnswer
+from apps.feedback.models import RatingQuestion
+from apps.feedback.models import RatingAnswer
 
 from django.contrib import admin
 
@@ -16,7 +18,6 @@ class FeedbackRelationAdmin(admin.ModelAdmin):
 
 class FieldOfStudyInline(admin.StackedInline):
     model = FieldOfStudyQuestion
-    exclude = ('field_of_study',)
     max_num = 1
 
 
@@ -27,10 +28,17 @@ class TextInline(admin.StackedInline):
     extra = 0
 
 
+class RatingInline(admin.StackedInline):
+    model = RatingQuestion
+    classes = ('grp-collapse grp-open',)
+    inline_classes = ('grp-collapse grp-open',)
+    extra = 0
+
+
 class FeedbackAdmin(admin.ModelAdmin):
     list_display = ('description', 'author')
 
-    inlines = (FieldOfStudyInline, TextInline)
+    inlines = (FieldOfStudyInline, TextInline, RatingInline)
     exclude = ('author',)
 
     def save_model(self, request, obj, form, change):
@@ -52,7 +60,12 @@ class TextAnswerAdmin(admin.ModelAdmin):
     model = TextAnswer
 
 
+class RatingAnswerAdmin(admin.ModelAdmin):
+    model = RatingAnswer
+
+
 admin.site.register(Feedback, FeedbackAdmin)
 admin.site.register(FieldOfStudyAnswer, FieldOfStudyAnswerAdmin)
 admin.site.register(FeedbackRelation, FeedbackRelationAdmin)
 admin.site.register(TextAnswer, TextAnswerAdmin)
+admin.site.register(RatingAnswer, RatingAnswerAdmin)
