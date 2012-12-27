@@ -1,7 +1,5 @@
 .ropeproject/
-.coverage
 *.pyc
-*.*.swp
 *.swp
 *.project
 *.settings
@@ -15,3 +13,19 @@
 collected_static
 sqlite/
 local.py
+uploaded_media/*
+*.coverage
+.sass-cache/
+.bundle
+*.log
+*.swn
+*.swm
+*~
+.DS_Store
+*.egg
+*.egg-info
+.installed.cfg
+.mr.developer.cfg
+*.swo
+filedump
+_tmp

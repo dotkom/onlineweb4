@@ -1,20 +1,14 @@
+from django.conf import settings
 from django.conf.urls import patterns, include, url
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.contrib import admin
 from django.views.generic import TemplateView
 
 from filebrowser.sites import site
 
-# Tastypie 
-from tastypie.api import Api
-from apps.events.api import EventResource, UserResource
-
-v0_api = Api(api_name='v0')
-v0_api.register(EventResource())
-v0_api.register(UserResource())
-
+# URL config
 admin.autodiscover()
 
-# URL config 
 urlpatterns = patterns('',
     # Filebrowser must be above all admin-urls
     url(r'^admin/filebrowser/',     include(site.urls)),
@@ -26,7 +20,23 @@ urlpatterns = patterns('',
 
     # Onlineweb app urls
     url(r'^$', TemplateView.as_view(template_name='base_site.html'), name='home'),
-    url(r'^api/',      include(v0_api.urls)),
-    url(r'^mail/',     include('apps.autoconfig.urls')),
+    url(r'^api/',       include('apps.api.urls')),
+    url(r'^article/',   include('apps.article.urls')),
+    url(r'^events/',    include('apps.events.urls')),
+    url(r'^mail/',      include('apps.autoconfig.urls')),
+    url(r'^auth/',      include('apps.authentication.urls')),
     url(r'^feedback/', include('apps.feedback.urls'))
 )
+
+
+# http://docs.djangoproject.com/en/1.3/howto/static-files/#staticfiles-development
+if settings.DEBUG:
+    urlpatterns += staticfiles_urlpatterns()
+
+    urlpatterns += patterns('',
+        url(r'^uploaded_media/(?P<path>.*)$', 'django.views.static.serve', {
+            'document_root': settings.MEDIA_ROOT,
+            'show_indexes': True
+        }),
+        (r'^500/$', 'django.views.defaults.server_error'),
+    )
