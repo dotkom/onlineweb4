@@ -30,6 +30,7 @@ class FeedbackRelation(models.Model):
         answers = []
         answers.extend(self.field_of_study_answers.all())
         answers.extend(self.text_answers.all())
+        answers.extend(self.rating_answers.all())
         return sorted(answers, key=lambda x: x.order)
 
     def answers_to_question(self, question):
@@ -55,6 +56,7 @@ class Feedback(models.Model):
         questions = []
         questions.extend(self.field_of_study_questions.all())
         questions.extend(self.text_questions.all())
+        questions.extend(self.rating_questions.all())
         return sorted(questions, key=lambda x: x.order)
 
     def __unicode__(self):
@@ -82,11 +84,6 @@ class FieldOfStudyQuestion(models.Model):
         related_name='field_of_study_questions')
 
     order = models.SmallIntegerField(_(u'Rekkefølge'), default=1)
-
-    field_of_study = models.SmallIntegerField(
-        _('Studieretning'),
-        choices=FIELD_OF_STUDY_CHOICES,
-        default=0)
 
     def __unicode__(self):
         return "Studieretning"
@@ -133,6 +130,43 @@ class TextAnswer(models.Model):
         related_name="text_answers")
 
     answer = models.TextField(_('svar'), blank=False)
+
+    def __unicode__(self):
+        return str(self.question) + ": " + self.answer
+
+    @property
+    def order(self):
+        return self.question.order
+
+
+RATING_CHOICES = [(k, str(k)) for k in range(1, 7)]  # 1 to 6
+
+
+class RatingQuestion(models.Model):
+    feedback = models.ForeignKey(
+        Feedback,
+        primary_key=True,
+        related_name='rating_questions')
+
+    order = models.SmallIntegerField(_(u'Rekkefølge'), default=1)
+
+    label = models.CharField(_(u'Spørsmål'), blank=False, max_length=256)
+
+    def __unicode__(self):
+        return self.label
+
+
+class RatingAnswer(models.Model):
+    feedback_relation = models.ForeignKey(
+        FeedbackRelation,
+        related_name="rating_answers")
+
+    answer = models.SmallIntegerField(
+        _('karakter'),
+        choices=RATING_CHOICES,
+        default=0)
+
+    question = models.ForeignKey(RatingQuestion, related_name='answer')
 
     def __unicode__(self):
         return str(self.question) + ": " + self.answer
