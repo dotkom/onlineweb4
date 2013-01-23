@@ -1,16 +1,27 @@
-"""
-This file demonstrates writing tests using the unittest module. These will pass
-when you run "manage.py test".
+from apps.events.models import Event, AttendanceEvent, Attendee
+from django.contrib.auth.models import User
+from nose.tools import assert_equal, assert_not_equal
+from django_dynamic_fixture import G
+import logging
 
-Replace this with more appropriate tests for your application.
-"""
+event = G(Event, title='Sjakkturnering')
+attendance_event = G(AttendanceEvent, event=event)
+user = G(User)
+attendee = G(Attendee, event=attendance_event, user=user)
+logger = logging.getLogger(__name__)
 
-from django.test import TestCase
+
+def testEventUnicodeIsCorrect():
+    logger.debug("Testing testing on Event with dynamic fixtures")
+    assert_equal(event.__unicode__(), u'Sjakkturnering')
 
 
-class SimpleTest(TestCase):
-    def test_basic_addition(self):
-        """
-        Tests that 1 + 1 always equals 2.
-        """
-        self.assertEqual(1 + 1, 2)
+def testAttendanceEventUnicodeIsCorrect():
+    logger.debug("Testing testing on AttendanceEvent with dynamic fixtures")
+    assert_equal(attendance_event.__unicode__(), u'Sjakkturnering')
+
+
+def testAttendeeUnicodeIsCorrect():
+    logger.debug("Testing testing on Attendee with dynamic fixtures")
+    assert_equal(attendee.__unicode__(), user.get_full_name())
+    assert_not_equal(attendee.__unicode__(), 'Ola Normann')
