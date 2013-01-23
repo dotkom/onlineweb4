@@ -5,12 +5,20 @@ when you run "manage.py test".
 Replace this with more appropriate tests for your application.
 """
 
-from django.test import TestCase
+from apps.marks.models import Mark
+from nose.tools import assert_equal, assert_not_equal
+from django_dynamic_fixture import G
+import logging
 
+def testMarks():
+    logger = logging.getLogger(__name__)
+    logger.debug("Testing some thershold stuff, with little success...")
 
-class SimpleTest(TestCase):
-    def test_basic_addition(self):
-        """
-        Tests that 1 + 1 always equals 2.
-        """
-        self.assertEqual(1 + 1, 2)
+    mark = G(Mark)
+    assert_not_equal(mark.__unicode__(), "1")
+    assert_equal(mark.__unicode__(), "Prikk for 1")
+   
+    
+    #user = G(UserEntry)
+    #asser_equal(user.__unicode__(), "1")
+    
