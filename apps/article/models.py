@@ -7,6 +7,7 @@ from django.utils.translation import ugettext as _
 
 from filebrowser.fields import FileBrowseField
 
+
 class Article(models.Model):
     IMAGE_FOLDER = "images/article"
     IMAGE_EXTENSIONS = ['.jpg', '.jpeg', '.gif', '.png', '.tif', '.tiff']
@@ -14,7 +15,7 @@ class Article(models.Model):
     heading = models.CharField(_("tittel"), max_length=200)
     ingress = models.TextField(_("ingress"))
     content = models.TextField(_("content"))
-    image_article = FileBrowseField(_("artikkel-bilde"), 
+    image_article = FileBrowseField(_("artikkel-bilde"),
         max_length=200, directory=IMAGE_FOLDER, blank=True,
         extensions=IMAGE_EXTENSIONS)
     image_thumbnail = FileBrowseField(_("thumbnail"),
@@ -39,12 +40,14 @@ class Article(models.Model):
         verbose_name_plural = _("artikler")
         ordering = ['published_date']
 
+
 class Tag(models.Model):
     name = models.CharField(_("navn"), max_length=50)
     slug = models.CharField(_("kort navn"), max_length=30)
 
     def __unicode__(self):
         return self.name
+
 
 class ArticleTag(models.Model):
     article = models.ForeignKey(Article, verbose_name=_("artikkel"))
