@@ -12,7 +12,7 @@ import logging
 
 def testMarks():
     logger = logging.getLogger(__name__)
-    logger.debug("Testing some thershold stuff, with little success...")
+    logger.debug("Testing Mark")
 
     mark = G(Mark)
     assert_not_equal(mark.__unicode__(), "1")
