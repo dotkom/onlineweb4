@@ -103,6 +103,7 @@ INSTALLED_APPS = (
     'chunks',
     'crispy_forms',
     'django_extensions',
+    'django_dynamic_fixture',
 
     # Django apps
     'django.contrib.admin',
