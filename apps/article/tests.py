@@ -1,16 +1,13 @@
-"""
-This file demonstrates writing tests using the unittest module. These will pass
-when you run "manage.py test".
+from apps.article.models import Article
+from nose.tools import assert_equal
+from django_dynamic_fixture import G
+import logging
 
-Replace this with more appropriate tests for your application.
-"""
+def testArticleUnicodeIsCorrect():
 
-from django.test import TestCase
+    logger = logging.getLogger(__name__)
+    logger.debug("Testing testing on Article with dynamic fixtures")
 
-
-class SimpleTest(TestCase):
-    def test_basic_addition(self):
-        """
-        Tests that 1 + 1 always equals 2.
-        """
-        self.assertEqual(1 + 1, 2)
+    article = G(Article)
+    assert_equal(article.__unicode__(), "1")
+    

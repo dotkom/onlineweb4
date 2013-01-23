@@ -99,6 +99,7 @@ INSTALLED_APPS = (
     'south',
     'grappelli',
     'filebrowser',
+    'django_dynamic_fixture',
 
     # Django apps
     'django.contrib.admin',
