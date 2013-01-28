@@ -1,9 +1,9 @@
 $(document).ready(function() {
 
     function scrolltothis(from, to) {
-
-        $(from).click(function() {
-            var topPosition = jQuery(to).offset().top - 57; // See body margin
+        $("a[href='"+from+"']").click(function(event) {
+            event.preventDefault();
+            var topPosition = jQuery(to).offset().top - 70; // See body margin
             jQuery('html, body').animate({scrollTop:topPosition}, 'slow');
         });
 
