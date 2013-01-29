@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-from PIL import Image
 from os import path
 from subprocess import check_call, CalledProcessError
 from django.db import models
