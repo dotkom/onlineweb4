@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
 
+from PIL import Image
 from os import path
-from PythonMagick import Image
+from subprocess import check_call, CalledProcessError
 from django.db import models
 from django.db.models.signals import post_save
 from filebrowser.fields import FileBrowseField
+from onlineweb4.settings.local import MEDIA_ROOT
 
 
 class Offline(models.Model):
@@ -47,17 +49,26 @@ class Issue(models.Model):
     def __unicode__(self):
         return self.title
 
+    @property
+    def url(self):
+        # TODO: url kan være feil ved prodsetting
+        url = str(self.issue).replace("/media/", "/var/websites/prod/onlineweb_uploads/")
+        url = path.join(MEDIA_ROOT, url)
+        return url
+
+    @property
+    def thumbnail(self):
+        thumb = self.url + '.thumb.png'
+        return thumb
+
+    @property
+    def thumbnail_exists(self):
+        return path.exists(self.thumbnail)
+
     class Meta:
         verbose_name = 'Utgivelse'
         verbose_name_plural = 'Utgivelser'
         ordering = ['-release_date']
-
-
-def resize(image, w, h):
-    img = Image(image)  # copy
-    s = "!%sx%s" % (w, h)
-    img.scale(s)
-    return img
 
 
 def create_thumbnail(sender, instance=None, **kwargs):
@@ -65,20 +76,20 @@ def create_thumbnail(sender, instance=None, **kwargs):
     if instance is None:
         return
     t = Issue.objects.get(id=instance.id)
-    url = str(t.issue).replace("/media/", "/var/websites/prod/onlineweb_uploads/")
-    thumb = url + '.thumb.png'
-    if path.exists(thumb) is False:
-        print 'Thumbnail not found - creating...'
-        im = Image(url + "[ 0]")
-        height = 200  # Ønsket høyde på thumbnail
-        width = height * float(float(im.size().width()) / float(im.size().height()))
-        im = resize(im, width, height)
-        im.write(thumb)
-        print 'Thumbnail created, and is located at: %s' % (thumb)
-    else:
-        print 'Thumbnail already exists, and is located at: %s' % (thumb)
 
-# FIXME: Denne kjører av en eller annen grunn to ganger
-# Dette bør dog ikke være noe problem da jeg sjekker om det finnes en
-# thumbnail fra før av før det genereres en ny.
+    if t.thumbnail_exists is False:
+        print 'Thumbnail not found - creating...'
+
+        try:
+            height = 200  # Ønsket høyde på thumbnail
+            check_call(["convert", "-resize", "x"+str(height), t.url+"[0]", t.thumbnail])
+        except (OSError, CalledProcessError) as e:
+            print("ERROR: {0}".format(e))
+
+        print 'Thumbnail created, and is located at: %s' % (t.thumbnail)
+
+    else:
+        print 'Thumbnail already exists, and is located at: %s' % (t.thumbnail)
+
+
 post_save.connect(create_thumbnail, sender=Issue)
