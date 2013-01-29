@@ -15,6 +15,10 @@ class Offline(models.Model):
     def __unicode__(self):
         return self.string + ': Dette er teksten som vises over utgivelsene.'
 
+    @property
+    def issues(self):
+        return Issue.objects.all()
+
     class Meta:
         verbose_name = 'Introduksjonstekst'
         verbose_name_plural = verbose_name
