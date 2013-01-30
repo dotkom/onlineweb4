@@ -1,13 +1,11 @@
 # -*- coding: utf-8 -*-
 
-import sys
-import datetime
-sys.path.append('/usr/lib/pymodules/python2.6')
 from os import path
-from PythonMagick import Image
+from PIL import Image
 from django.db import models
 from django.db.models.signals import post_save
 from filebrowser.fields import FileBrowseField
+
 
 class Offline(models.Model):
     string = 'Introduksjonstekst'
@@ -19,6 +17,7 @@ class Offline(models.Model):
     class Meta:
         verbose_name = 'Introduksjonstekst'
         verbose_name_plural = verbose_name
+
 
 class Issue(models.Model):
     title = models.CharField("tittel", max_length=50)
@@ -51,11 +50,13 @@ class Issue(models.Model):
         verbose_name_plural = 'Utgivelser'
         ordering = ['-release_date']
 
+
 def resize(image, w, h):
-    img = Image(image) # copy
+    img = Image(image)  # copy
     s = "!%sx%s" % (w, h)
     img.scale(s)
     return img
+
 
 def create_thumbnail(sender, instance=None, **kwargs):
     print 'Checking for thumbnail...'
@@ -66,9 +67,9 @@ def create_thumbnail(sender, instance=None, **kwargs):
     thumb = url + '.thumb.png'
     if path.exists(thumb) is False:
         print 'Thumbnail not found - creating...'
-        im = Image(url+"[ 0]")
-        height = 200    # Ønsket høyde på thumbnail
-        width = height * float(float(im.size().width())/float(im.size().height()))
+        im = Image(url + "[ 0]")
+        height = 200  # Ønsket høyde på thumbnail
+        width = height * float(float(im.size().width()) / float(im.size().height()))
         im = resize(im, width, height)
         im.write(thumb)
         print 'Thumbnail created, and is located at: %s' % (thumb)
