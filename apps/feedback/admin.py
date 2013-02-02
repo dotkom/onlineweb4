@@ -16,7 +16,7 @@ from django.contrib import admin
 class AlwaysChangedModelForm(ModelForm):
     def has_changed(self):
         """
-        Should returns True if data differs from initial.
+        Should return True if data differs from initial.
         By always returning true even unchanged inlines will get
         validated and saved.
         """
@@ -30,20 +30,22 @@ class FeedbackRelationAdmin(admin.ModelAdmin):
 class FieldOfStudyInline(admin.StackedInline):
     model = FieldOfStudyQuestion
     extra = 0
+
+    # one does not useally change it, but we would like to save it.
     form = AlwaysChangedModelForm
 
 
 class TextInline(admin.StackedInline):
     model = TextQuestion
-    classes = ('grp-collapse grp-open',)
-    inline_classes = ('grp-collapse grp-open',)
+    classes = ('grp-collapse grp-open',)  # style
+    inline_classes = ('grp-collapse grp-open',)  # style
     extra = 0
 
 
 class RatingInline(admin.StackedInline):
     model = RatingQuestion
-    classes = ('grp-collapse grp-open',)
-    inline_classes = ('grp-collapse grp-open',)
+    classes = ('grp-collapse grp-open',)  # style
+    inline_classes = ('grp-collapse grp-open',)  # style
     extra = 0
 
 
@@ -64,6 +66,13 @@ class FeedbackAdmin(admin.ModelAdmin):
             instance.save()
 
 
+admin.site.register(Feedback, FeedbackAdmin)
+admin.site.register(FeedbackRelation, FeedbackRelationAdmin)
+
+# TODO:  The answers do not usally need to be edited in the admin
+#        interface.  (Sigurd) 2013-02-02
+
+
 class FieldOfStudyAnswerAdmin(admin.ModelAdmin):
     model = FieldOfStudyAnswer
 
@@ -75,9 +84,6 @@ class TextAnswerAdmin(admin.ModelAdmin):
 class RatingAnswerAdmin(admin.ModelAdmin):
     model = RatingAnswer
 
-
-admin.site.register(Feedback, FeedbackAdmin)
 admin.site.register(FieldOfStudyAnswer, FieldOfStudyAnswerAdmin)
-admin.site.register(FeedbackRelation, FeedbackRelationAdmin)
 admin.site.register(TextAnswer, TextAnswerAdmin)
 admin.site.register(RatingAnswer, RatingAnswerAdmin)
