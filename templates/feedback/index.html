@@ -2,8 +2,8 @@
 
 {% block content %}
 
-    {% for feedback in feedbacks %}
-        {{feedback.field_of_study.answer}} 
+    {% for fbr in feedbacks %}
+        <a href="{{fbr.get_absolute_url}}"> {{fbr.feedback.description}}</a>
     {% endfor %}
 
 {%endblock content %}
