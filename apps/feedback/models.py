@@ -128,7 +128,6 @@ FIELD_OF_STUDY_CHOICES = [
 class FieldOfStudyQuestion(models.Model):
     feedback = models.ForeignKey(
         Feedback,
-        primary_key=True,
         related_name='field_of_study_questions')
 
     label = _('Studieretning')

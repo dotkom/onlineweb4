@@ -30,8 +30,8 @@ class FeedbackRelationAdmin(admin.ModelAdmin):
 class FieldOfStudyInline(admin.StackedInline):
     model = FieldOfStudyQuestion
     extra = 0
-
-    # one does not useally change it, but we would like to save it.
+    classes = ('grp-collapse grp-open',)  # style
+    inline_classes = ('grp-collapse grp-open',)  # style
     form = AlwaysChangedModelForm
 
 
@@ -59,11 +59,6 @@ class FeedbackAdmin(admin.ModelAdmin):
         if not change:  # created
             obj.author = request.user
         obj.save()
-
-    def save_formset(self, request, form, formset, change):
-        instances = formset.save(commit=False)
-        for instance in instances:
-            instance.save()
 
 
 admin.site.register(Feedback, FeedbackAdmin)
