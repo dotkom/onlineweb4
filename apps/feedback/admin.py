@@ -25,6 +25,9 @@ class AlwaysChangedModelForm(ModelForm):
 
 class FeedbackRelationAdmin(admin.ModelAdmin):
     model = FeedbackRelation
+    related_lookup_fields = {
+        'generic': [['content_type', 'object_id']],
+    }
 
 
 class FieldOfStudyInline(admin.StackedInline):
