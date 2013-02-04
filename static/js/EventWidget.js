@@ -5,11 +5,9 @@ function EventWidget (online) {
 
     var that = $(this);
 
-
-    EventWidget.prototype.render = function() {
-        
+    EventWidget.prototype.render = function() {      
         Online.makeApiRequest({
-            'url':'/static/test.json',
+            'url':'/static/mock/events.json',
             'method' : 'GET',
             'data': {},
             success: function(data) {
@@ -21,5 +19,4 @@ function EventWidget (online) {
                 }
         });
     };
-
 }

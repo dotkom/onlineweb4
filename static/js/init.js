@@ -1,8 +1,4 @@
-/* online.js
--------------------------------------------------- */
 
-
-// doit the jquery style
 $(document).ready(function()
 {
 	$('.dropdown-toggle').dropdown();
@@ -11,7 +7,5 @@ $(document).ready(function()
     eventWidget = new EventWidget(online);
 
     eventWidget.render();
-
-    
 });
 
