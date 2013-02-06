@@ -9,7 +9,8 @@ Markdown==2.0.3             # textarea text formatting
 
 # third party deps
 django-filebrowser==3.5.0   # File uploading
-django-grappelli==2.4.2     # Admin template set    
+django-grappelli==2.4.2     # Admin template set
+django-chunks==0.1 			# Chunks, or reusable key:content for templates.
 
 # test tools
 cov-core==1.7

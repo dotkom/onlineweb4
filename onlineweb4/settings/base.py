@@ -99,6 +99,7 @@ INSTALLED_APPS = (
     'south',
     'grappelli',
     'filebrowser',
+    'chunks',
 
     # Django apps
     'django.contrib.admin',
