@@ -49,3 +49,7 @@ class Tag(models.Model):
 class ArticleTag(models.Model):
     article = models.ForeignKey(Article, verbose_name=_("artikkel"))
     tag = models.ForeignKey(Tag, verbose_name=_("tag"))
+
+    class Meta:
+        verbose_name = _("tag")
+        verbose_name_plural = _("tags")
