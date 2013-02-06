@@ -1,13 +1,8 @@
 from django.contrib import admin
 from apps.article.models import Article, Tag, ArticleTag
 
-class TagInline(admin.TabularInline):
-    model = ArticleTag
-    extra = 1
-
 class ArticleTagAdmin(admin.ModelAdmin):
     model = ArticleTag
-    inlines = (TagInline,)
 
 class ArticleTagInline(admin.TabularInline):
     model = ArticleTag
@@ -31,9 +26,10 @@ class ArticleAdmin(admin.ModelAdmin):
         if not change:
             obj.created_by = request.user
         obj.save()
+    
     def save_formset(self, request, form, formset, change):
         instances = formset.save(commit=False)
-        for intances in instances:
+        for instances in instances:
             instances.save()
     
 admin.site.register(Article, ArticleAdmin)
