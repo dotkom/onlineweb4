@@ -11,7 +11,7 @@ from django.test import TestCase
 import logging
 
 
-class SimpleTest(TestCase):
+class AuthenticationTest(TestCase):
     def setUp(self):
         self.logger = logging.getLogger(__name__)
 
