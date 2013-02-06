@@ -1,12 +1,12 @@
 
 
 
-function EventWidget (online) {
+function EventWidget (utils) {
 
     var that = $(this);
 
     EventWidget.prototype.render = function() {      
-        Online.makeApiRequest({
+        utils.makeApiRequest({
             'url':'/static/mock/events.json',
             'method' : 'GET',
             'data': {},
