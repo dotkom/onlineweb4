@@ -14,7 +14,8 @@ class Event(models.Model):
         (2, 'Bedriftspresentasjon'),
         (3, 'Kurs'),
         (4, 'Utflukt'),
-        (5, 'Annet')
+        (5, 'Internt'),
+        (6, 'Annet')
     )
 
     author = models.ForeignKey(User, related_name='oppretter')
