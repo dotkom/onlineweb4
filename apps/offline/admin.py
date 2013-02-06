@@ -1,5 +1,4 @@
-from apps.offline.models import Offline
-from apps.offline.models import Issue
+from apps.offline.models import Offline, Issue
 from django.contrib import admin
 
 admin.site.register(Offline)

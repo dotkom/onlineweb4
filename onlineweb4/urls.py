@@ -24,7 +24,8 @@ urlpatterns = patterns('',
     url(r'^article/',   include('apps.article.urls')),
     url(r'^events/',    include('apps.events.urls')),
     url(r'^mail/',      include('apps.autoconfig.urls')),
-    url(r'^auth/',      include('apps.authentication.urls')), 
+    url(r'^auth/',      include('apps.authentication.urls')),
+    url(r'^offline/',   include('apps.offline.urls')),
 )
 
 

@@ -11,19 +11,10 @@ from onlineweb4.settings.local import MEDIA_ROOT
 THUMBNAIL_HEIGHT = 200  # Ønsket høyde på thumbnail
 
 class Offline(models.Model):
-    string = 'Introduksjonstekst'
-    intro_text = models.TextField(_(string))
-
-    def __unicode__(self):
-        return self.string + ': Dette er teksten som vises over utgivelsene.'
 
     @property
     def issues(self):
         return Issue.objects.all()
-
-    class Meta:
-        verbose_name = 'Introduksjonstekst'
-        verbose_name_plural = verbose_name
 
 
 class Issue(models.Model):
