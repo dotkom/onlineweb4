@@ -1,8 +1,8 @@
 # -*- encoding: utf-8 -*-
 
 from django.conf.urls.defaults import patterns, url
-from onlineweb.apps.offline.views import main
+from apps.offline.views import main
 
-urlpatterns = patterns('onlineweb.apps.offline.views',
+urlpatterns = patterns('apps.offline.views',
     url(r'^$', 'main', name='offline')
 )
