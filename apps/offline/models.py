@@ -8,6 +8,7 @@ from django.utils.translation import ugettext_lazy as _
 from filebrowser.fields import FileBrowseField
 from onlineweb4.settings.local import MEDIA_ROOT
 
+THUMBNAIL_HEIGHT = 200  # Ønsket høyde på thumbnail
 
 class Offline(models.Model):
     string = 'Introduksjonstekst'
@@ -85,8 +86,7 @@ def create_thumbnail(sender, instance=None, **kwargs):
         print 'Thumbnail not found - creating...'
 
         try:
-            height = 200  # Ønsket høyde på thumbnail
-            check_call(["convert", "-resize", "x"+str(height), t.url+"[0]", t.thumbnail])
+            check_call(["convert", "-resize", "x"+str(THUMBNAIL_HEIGHT), t.url+"[0]", t.thumbnail])
         except (OSError, CalledProcessError) as e:
             print("ERROR: {0}".format(e))
 
