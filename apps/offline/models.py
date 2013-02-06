@@ -4,13 +4,14 @@ from os import path
 from subprocess import check_call, CalledProcessError
 from django.db import models
 from django.db.models.signals import post_save
+from django.utils.translation import ugettext_lazy as _
 from filebrowser.fields import FileBrowseField
 from onlineweb4.settings.local import MEDIA_ROOT
 
 
 class Offline(models.Model):
     string = 'Introduksjonstekst'
-    intro_text = models.TextField(string)
+    intro_text = models.TextField(_(string))
 
     def __unicode__(self):
         return self.string + ': Dette er teksten som vises over utgivelsene.'
@@ -27,10 +28,10 @@ class Offline(models.Model):
 class Issue(models.Model):
     IMAGE_FOLDER = "images/offline"
 
-    title = models.CharField("tittel", max_length=50)
-    release_date = models.DateField("utgivelsesdato")
-    description = models.TextField("beskrivelse", blank=True, null=True)
-    issue = FileBrowseField("pdf", directory=IMAGE_FOLDER, max_length=500, extensions=['.pdf'])
+    title = models.CharField(_("tittel"), max_length=50)
+    release_date = models.DateField(_("utgivelsesdato"))
+    description = models.TextField(_("beskrivelse"), blank=True, null=True)
+    issue = FileBrowseField(_("pdf"), directory=IMAGE_FOLDER, max_length=500, extensions=['.pdf'])
 
     def release_date_to_string(self):
         month = {
