@@ -24,7 +24,7 @@ class Event(models.Model):
     event_end = models.DateTimeField(_('slutt-dato'))
     location = models.CharField(_('lokasjon'), max_length=100)
     description = models.TextField(_('beskrivelse'))
-    event_type = models.SmallIntegerField(_('type'), choices=TYPE_CHOICES)
+    event_type = models.SmallIntegerField(_('type'), choices=TYPE_CHOICES, null=False)
 
     def __unicode__(self):
         return self.title
