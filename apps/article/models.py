@@ -43,9 +43,13 @@ class Tag(models.Model):
     name = models.CharField(_("navn"), max_length=50)
     slug = models.CharField(_("kort navn"), max_length=30)
 
+    def __unicode__(self):
+        return self.name
+
 class ArticleTag(models.Model):
     article = models.ForeignKey(Article, verbose_name=_("artikkel"))
     tag = models.ForeignKey(Tag, verbose_name=_("tag"))
 
     class Meta:
-        unique_together = ("article", "tag",)
+        verbose_name = _("tag")
+        verbose_name_plural = _("tags")
