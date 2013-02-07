@@ -3,8 +3,8 @@ $(document).ready(function()
 {
     $('.dropdown-toggle').dropdown();
 
-    utils = new utils();
-    eventWidget = new EventWidget();
+    Utils = new Utils();
+    eventWidget = new EventWidget(Utils);
 
     eventWidget.render();
 });

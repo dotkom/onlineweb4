@@ -43,7 +43,7 @@ class EventResource(ModelResource):
         # XXX: Noop authorization is probably not safe for producion
         authorization = Authorization()
         
-        ordering = ['event_end']
+        ordering = ['event_start']
         filtering = {
             'event_end' : ('gte',)
         }
