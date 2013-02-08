@@ -5,21 +5,6 @@ function EventWidget (Utils){
 
     var that = $(this);
     
-    /* Private static method */
-    getBulletForEventType = function(type) {
-        
-        switch(type) {
-            case 1:
-                return 'arrkom';
-            case 2:
-                return 'bedkom';
-            case 3:
-                return 'fagkom';
-            default:
-                return 'arrkom';
-        }
-    };
-
     /* Render the widget */
     EventWidget.prototype.render = function() {
         var now = moment();
@@ -33,14 +18,13 @@ function EventWidget (Utils){
                     $.each(data.events, function(index, singleEvent) {
 
                         var date = moment(singleEvent.event_start);
-                        var bulletType = getBulletForEventType(singleEvent.event_type) 
 
                         // Distribute four on each side
                         if(index < 4)
-                            $('#event-right').append('<li><img src="/static/img/' + bulletType + '_bullet.png" />' + 
+                            $('#event-right').append('<li class="bullet-' + singleEvent.event_type + '">' + 
                                 singleEvent.title + '<span class="dates">' + date.format('DD/MM') + '</span></li>');
                         else
-                            $('#event-left').append('<li><img src="/static/img/' + bulletType + '_bullet.png" />' + 
+                            $('#event-left').append('<li class="bullet-' + singleEvent.event_type + '">' + 
                                 singleEvent.title + '<span class="dates">' + date.format('DD/MM') + '</span></li>');
                     });
                 }else{
