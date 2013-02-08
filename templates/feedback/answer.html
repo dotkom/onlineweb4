@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <form method="POST"> {% csrf_token %}
+    {% for f in answers %}
+        {{f.as_p}}
+    {% endfor %}
+    <input type="submit" value="Submit" />
+</form>
+{%endblock content %}

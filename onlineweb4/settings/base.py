@@ -119,6 +119,7 @@ INSTALLED_APPS = (
     'apps.marks',
     'apps.offline',
     'apps.userprofile',
+    'apps.feedback',
 )
 
 # A sample logging configuration. The only tangible logging
