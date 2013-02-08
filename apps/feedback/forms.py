@@ -3,8 +3,8 @@ from django import forms
 from apps.feedback.models import RatingAnswer
 from apps.feedback.models import RATING_CHOICES
 from apps.feedback.models import FieldOfStudyAnswer
-from apps.feedback.models import FIELD_OF_STUDY_CHOICES as FOSC
 from apps.feedback.models import TextAnswer
+from django.utils.translation import ugettext_lazy as _
 
 
 class RatingAnswerForm(forms.ModelForm):
@@ -28,7 +28,8 @@ class FieldOfStudyAnswerForm(forms.ModelForm):
     def clean_answer(self):
         data = self.cleaned_data['answer']
         if data == -1:
-            raise forms.ValidationError('Feltet er påkrevet.')
+            # raise the django field required error
+            raise forms.ValidationError(_(u'This field is required.'))
         return data
 
     class Meta:
