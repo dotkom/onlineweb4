@@ -15,17 +15,13 @@ function EventWidget (Utils){
             'data': {},
             success: function(data) {
                 if(data.events.length > 0) {
-                    $.each(data.events, function(index, singleEvent) {
-
-                        var date = moment(singleEvent.event_start);
+                    $.each(data.events, function(index, item) {
 
                         // Distribute four on each side
                         if(index < 4)
-                            $('#event-right').append('<li class="event-item bullet-' + singleEvent.event_type + '">' + 
-                                singleEvent.title + '<span class="dates">' + date.format('DD/MM') + '</span></li>');
+                            renderEventList($('#event-right'), item);
                         else
-                            $('#event-left').append('<li class="event-item bullet-' + singleEvent.event_type + '">' + 
-                                singleEvent.title + '<span class="dates">' + date.format('DD/MM') + '</span></li>');
+                            renderEventList($('#event-left'), item);
                     });
                 }else{
                     // Display text if no data was found
@@ -33,6 +29,14 @@ function EventWidget (Utils){
                 }
             }
         });
+    }
+
+    /* Private function to append items to a list
+     * @param jQuery-object
+     */
+    function renderEventList(list, item) {
+        list.append('<li class="event-item bullet-' + item.event_type + '">' + 
+            item.title + '<span class="dates">' + moment(item.event_start).format('DD/MM') + '</span></li>');
     }
 
     EventWidget.prototype.filter = function(flag) {
