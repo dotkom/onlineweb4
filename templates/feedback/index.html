@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+    {% for fbr in feedbacks %}
+        <a href="{{fbr.get_absolute_url}}"> {{fbr.feedback.description}}</a>
+    {% endfor %}
+
+{%endblock content %}

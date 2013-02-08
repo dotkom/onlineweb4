@@ -6,7 +6,7 @@ from django.views.generic import TemplateView
 
 from filebrowser.sites import site
 
-# URL config 
+# URL config
 admin.autodiscover()
 
 urlpatterns = patterns('',
@@ -25,6 +25,7 @@ urlpatterns = patterns('',
     url(r'^events/',    include('apps.events.urls')),
     url(r'^mail/',      include('apps.autoconfig.urls')),
     url(r'^auth/',      include('apps.authentication.urls')),
+    url(r'^feedback/',  include('apps.feedback.urls')),
     url(r'^offline/',   include('apps.offline.urls')),
 )
 
