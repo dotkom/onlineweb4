@@ -14,6 +14,7 @@ class SimpleTest(TestCase):
 
     def test_post_correct(self):
         #TODO: do eeet! test posted against db (Sigurd) 2013-02-08
+        pass
 
     def test_post_incorrect(self):
         resp = self.client.post("/feedback/auth/user/1/1/")
