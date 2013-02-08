@@ -1,7 +1,9 @@
 {% extends 'base.html' %}
 
 {% block content %}
-
+<script type="text/javascript" src="{{ STATIC_URL }}js/EventWidget.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/Utils.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/init.js"></script>
 <section id="events">
         <div class="container-fluid">
             <div class="row-fluid">
@@ -9,35 +11,28 @@
                 <div class="page-header">
                     <div class="row-fluid">
                     
-                        <div class="span9">
+                        <div class="span8">
                                 <h2 id="events-heading">ARRANGEMENTER</h2>
                         </div>
-                        <div class="span3">
+                        <div class="span4">
                             <ul class="filter unstyled pull-right">
                                 <li>FILTRÉR</li>
-                                <li><a href="#" title="Bedkom"><img src="{{ STATIC_URL }}img/bedkom.png" width="40px"></a></li>
-                                <li><a href="#" title="Arrkom"><img src="{{ STATIC_URL }}img/arrkom.png" width="40px"></a></li>
-                                <li><a href="#" title="Fagkom"><img src="{{ STATIC_URL }}img/fagkom.png" width="40px"></a></li>
+                                <li><a id="filter-bedkom" href="#" title="Bedkom"><img src="{{ STATIC_URL }}img/bedkom.png" width="40px"></a></li>
+                                <li><a id="filter-fagkom" href="#" title="Fagkom"><img src="{{ STATIC_URL }}img/fagkom.png" width="40px"></a></li>
+                                <li><a id="filter-arrkom" href="#" title="Arrkom"><img src="{{ STATIC_URL }}img/arrkom.png" width="40px"></a></li>
+                                <li><a id="filter-reset" class="close" style="margin-top:10px;" href="#">&times;</a></li>
                             </ul>
                         </div>
                     
                     </div>
                     </div>
                     <div class="row-fluid">
-                        <div class="span6">
-                            <ul class="event-list unstyled">
-                                <li class="bedkom-bullet"><img src="{{ STATIC_URL }}img/bedkom_bullet.png" width="27px" />Bedriftspresentasjon med Iterate<span class="dates">31/12</span></li>
-                                <li class="fagkom-bullet"><img src="{{ STATIC_URL }}img/fagkom_bullet.png" width="27px" />Jquery-kurs med Visma Consulting NO<span class="dates">31/12</span></li>
-                                <li class="arrkom-bullet"><img src="{{ STATIC_URL }}img/arrkom_bullet.png" width="27px" />Blatur 2013<span class="dates">31/12</span></li>
-                                <li class="arrkom-bullet"><img src="{{ STATIC_URL }}img/arrkom_bullet.png" width="27px" />Bowlingkveld med Delta<span class="dates">31/12</span></li>
+                        <div id="event-span-left" class="span6">
+                            <ul id="event-right" class="event-list unstyled">
                             </ul>
                         </div>
-                        <div class="span6">
-                            <ul class="event-list unstyled">
-                                <li class="bedkom-bullet"><img src="{{ STATIC_URL }}img/bedkom_bullet.png" width="27px" />Bedriftspresentasjon med Iterate<span class="dates">31/12</span></li>
-                                <li class="fagkom-bullet"><img src="{{ STATIC_URL }}img/fagkom_bullet.png" width="27px" />Jquery-kurs med Visma Consulting NO<span class="dates">31/12</span></li>
-                                <li class="arrkom-bullet"><img src="{{ STATIC_URL }}img/arrkom_bullet.png" width="27px" />Blatur 2013<span class="dates">31/12</span></li>
-                                <li class="arrkom-bullet"><img src="{{ STATIC_URL }}img/arrkom_bullet.png" width="27px" />Bowlingkveld med Delta<span class="dates">31/12</span></li>
+                        <div id="event-span-right" class="span6">
+                            <ul id="event-left" class="event-list unstyled">
                             </ul>
                         </div>
                     </div>

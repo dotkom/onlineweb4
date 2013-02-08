@@ -67,12 +67,17 @@ span.dates {
     }
 }
 
+
+/* Globals
+-------------------------------------------------- */
+
+
 section {
     margin-bottom:20px;
 }
 
 .grayed {
-background:@background; 
+    background:@background; 
 }
 
 .dark-grayed {
@@ -82,6 +87,12 @@ background:@background;
 .footer {
     padding:20px;
     color:#fbfbfb;
+}
+
+.ingress {
+    font-size:16px;
+    color:#777;
+    font-weight:300;
 }
 
 h2{
@@ -105,9 +116,11 @@ p {
     line-height:1.6em;
 }
 
+/* Events
+-------------------------------------------------- */
 .list-items {
     font-size:14px;
-    padding:10px 0px;
+    padding:10px 0px 10px 34px;
     font-weight:400;
     border-bottom: 1px dashed lighten(#333333, 70%);
 }
@@ -123,25 +136,22 @@ p {
     margin-right:5px;
     margin-top: -4px;
 }
-/*
-.arrkom-bullet {
-    list-style-image:url("../img/arrkom_bullet.png");
+
+.bullet-1 {
+    background:url("../img/arrkom_bullet.png") no-repeat 0;
 }
-.bedkom-bullet {
-    list-style-image:url("../img/bedkom_bullet.png");
+.bullet-2 {
+    background:url("../img/bedkom_bullet.png") no-repeat 0;
 }
-.fagkom-bullet {
-    list-style-image:url("../img/fagkom_bullet.png");
+.bullet-3 {
+    background:url("../img/fagkom_bullet.png") no-repeat 0;
 }
-*/
+
 .event-list-dates li {
     color:#2fa3d3;
     padding-bottom:7px;
     .list-items
     
-}
-.filter { 
-
 }
 
 .filter > li {
@@ -154,10 +164,8 @@ padding:80px 20px 20px 20px;
 
 }
 
-.page-header {
-
-}
-
+/* Business
+-------------------------------------------------- */
 .business-ingress {
     margin-bottom:20px;
 }
@@ -166,11 +174,7 @@ padding:80px 20px 20px 20px;
     margin:0 auto;
 }
 
-.ingress {
- font-size:16px;
- color:#777;
- font-weight:300;
-}
+
 
 .business-ingress > p {
     .ingress
@@ -204,77 +208,6 @@ section#business h3 {
 text-align:left;
 
 }
-
-/* COLORS */
-
-
-
-/*
-body {
-    padding-top:57px;
-    font: 12px 'Helvetica Neue', sans-serif;
-    background:@background;
-    font-weight:400;
-    
-    
-}
-h2 { 
-    font-size: 14px; 
-    
-}
-
-.container-fluid {
-background:@content-bg;
-
-}
-section {
-background:;
-
-}
-
-.event-list {
-}
-
-.event-list ul {
-    padding-left:@event-padding;
-}
-
-.widget-heading h2{
-    font-family: 'Open Sans', sans-serif;
-    padding-left:@event-padding;
-    color:@heading;
-    text-transform:uppercase;
-    font-size:22px;
-    font-weight:600;
-}
-
-.sidebar {
-    background:@sidebar-bg;
-    
-}
-
-.sidebar .sidebar-content {
-    text-align:center;
-    color:#999;
-    padding:0px 10px 0 10px;
-}
-
-.sidebar h3 {
-    font-family: 'Open Sans', sans-serif;
-    color:@sidebar-heading;
-    text-transform:uppercase;
-    font-size:14px;
-    font-weight:300;
-    text-align:center;
-}
-
-.main {
-    width:100%;
-    /*width:50%;
-    margin:0 auto;*/
-/*} */
-
-
 
 /* Logos
 -------------------------------------------------- */

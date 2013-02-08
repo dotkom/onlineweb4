@@ -1,5 +1,5 @@
 
-function utils() {
+function Utils() {
 
     var that = this;
     this.apiQueue = [];
@@ -8,7 +8,7 @@ function utils() {
     
     /* adapted from djangoproject.com */
     /* Static method */
-    utils.getCookie = function(name){
+    function getCookie(name) {
         var cookieValue;
         if(document.cookie){
             var cookies = document.cookie.split(';');
@@ -22,14 +22,14 @@ function utils() {
     } 
 
     /* Static method to make single API requests */
-    utils.makeApiRequest = function(request) {
+    Utils.prototype.makeApiRequest = function(request) {
 
-        console.log("doing request",request);
+        //console.log("doing request",request);
         $.ajax({
             url: request.url,
             type: request.type,
             data: request.data,
-            headers: {'X-CSRFToken':utils.getCookie('csrftoken')},
+            headers: {'X-CSRFToken':getCookie('csrftoken')},
             error: (function(error){
                 return function(e){
                     //$('.saving-info').text('Saving failed! Best option for now is to do a refresh.');
@@ -38,14 +38,14 @@ function utils() {
             success: (function(success){
                 return function(data){
                     success(data);
-                    console.log("request complete!",request);
+                    //console.log("request complete!",request);
                 }
             })(request.success)
         });
     }
 
     /* Object method to add a request to the API queue */
-    utils.prototype.makeApiQueueRequest = function(request){
+    Utils.prototype.makeApiQueueRequest = function(request){
 
         this.apiQueue.push(request);
 
