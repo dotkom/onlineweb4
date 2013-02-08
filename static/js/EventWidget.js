@@ -21,10 +21,10 @@ function EventWidget (Utils){
 
                         // Distribute four on each side
                         if(index < 4)
-                            $('#event-right').append('<li class="bullet-' + singleEvent.event_type + '">' + 
+                            $('#event-right').append('<li class="event-item bullet-' + singleEvent.event_type + '">' + 
                                 singleEvent.title + '<span class="dates">' + date.format('DD/MM') + '</span></li>');
                         else
-                            $('#event-left').append('<li class="bullet-' + singleEvent.event_type + '">' + 
+                            $('#event-left').append('<li class="event-item bullet-' + singleEvent.event_type + '">' + 
                                 singleEvent.title + '<span class="dates">' + date.format('DD/MM') + '</span></li>');
                     });
                 }else{
@@ -33,7 +33,19 @@ function EventWidget (Utils){
                 }
             }
         });
-    };
+    }
 
-    
+    EventWidget.prototype.filter = function(flag) {
+        // Check if reset or filter
+        if(flag == 0) {
+            $('.event-item').show();
+        }else{
+            $.when($('.event-item').show()).then(function() {
+                $.each($('.event-item'), function(index, item) { 
+                    if(!$(item).hasClass('bullet-'+ flag))
+                        $(item).hide();
+                });        
+            }); 
+        }
+    }
 }

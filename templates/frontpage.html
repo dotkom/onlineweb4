@@ -9,15 +9,16 @@
                 <div class="page-header">
                     <div class="row-fluid">
                     
-                        <div class="span9">
+                        <div class="span8">
                                 <h2 id="events-heading">ARRANGEMENTER</h2>
                         </div>
-                        <div class="span3">
+                        <div class="span4">
                             <ul class="filter unstyled pull-right">
                                 <li>FILTRÉR</li>
-                                <li><a href="#" title="Bedkom"><img src="{{ STATIC_URL }}img/bedkom.png" width="40px"></a></li>
-                                <li><a href="#" title="Arrkom"><img src="{{ STATIC_URL }}img/arrkom.png" width="40px"></a></li>
-                                <li><a href="#" title="Fagkom"><img src="{{ STATIC_URL }}img/fagkom.png" width="40px"></a></li>
+                                <li><a id="filter-bedkom" href="#" title="Bedkom"><img src="{{ STATIC_URL }}img/bedkom.png" width="40px"></a></li>
+                                <li><a id="filter-fagkom" href="#" title="Fagkom"><img src="{{ STATIC_URL }}img/fagkom.png" width="40px"></a></li>
+                                <li><a id="filter-arrkom" href="#" title="Arrkom"><img src="{{ STATIC_URL }}img/arrkom.png" width="40px"></a></li>
+                                <li><a id="filter-reset" class="close" style="margin-top:10px;" href="#">&times;</a></li>
                             </ul>
                         </div>
                     
