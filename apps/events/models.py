@@ -8,7 +8,15 @@ class Event(models.Model):
     """
     Base class for Event-objects.
     """
-    event_id = models.AutoField(primary_key=True)
+
+    TYPE_CHOICES = (
+        (1, 'Sosialt'),
+        (2, 'Bedriftspresentasjon'),
+        (3, 'Kurs'),
+        (4, 'Utflukt'),
+        (5, 'Internt'),
+        (6, 'Annet')
+    )
 
     author = models.ForeignKey(User, related_name='oppretter')
     title = models.CharField(_('tittel'), max_length=100)
@@ -16,6 +24,7 @@ class Event(models.Model):
     event_end = models.DateTimeField(_('slutt-dato'))
     location = models.CharField(_('lokasjon'), max_length=100)
     description = models.TextField(_('beskrivelse'))
+    event_type = models.SmallIntegerField(_('type'), choices=TYPE_CHOICES, null=False)
 
     def __unicode__(self):
         return self.title

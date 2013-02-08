@@ -1,0 +1,288 @@
+@background:#FBFBFB;
+@content-bg:#FFF;
+@heading:#ee7810;
+@sidebar-heading:#b3b2b2;
+@sidebar-bg:#f0f8fd;
+@event-padding:20px;
+@nav-height:57px;
+@media-desktop-min: 1240px;
+
+
+html {
+overflow-x: hidden;
+
+}
+
+body {
+    background:#FFF;
+    color:#555;
+    font:13px "Open Sans",arial,sans-serif;
+    font-weight:400;
+    margin:0;
+    overflow: hidden;
+    padding:57px 0 0 0;
+}
+
+@media all and (max-width: 980px) {
+    body {
+        margin-top: 0px;
+        padding-top: 0px;
+    }
+}
+
+/* Desktop */
+@media all and (min-width: @media-desktop-min) {
+    .container-fluid {
+        margin:0 auto;
+        width:1200px;
+        /*background: red;*/
+    }
+}
+
+/* Mobil e.l. */
+@media all and (max-width: @media-desktop-min) {
+    .container-fluid {
+        margin: 0px 20px;
+        width:100%;
+        /*background: green;*/
+    }
+}
+
+span.dates {
+    color:#2fa3d3;
+    float: right;
+}
+
+/* Mobil e.l. */
+@media all and (max-width: 756px) {
+    #articles {
+        .row-fluid {
+            .span2 {
+                display: inline-block;
+                vertical-align: top;
+                width: 100%;
+                text-align: center;
+            }
+        }
+    }
+}
+
+
+/* Globals
+-------------------------------------------------- */
+
+
+section {
+    margin-bottom:20px;
+}
+
+.grayed {
+    background:@background; 
+}
+
+.dark-grayed {
+    background:#666;
+}
+
+.footer {
+    padding:20px;
+    color:#fbfbfb;
+}
+
+.ingress {
+    font-size:16px;
+    color:#777;
+    font-weight:300;
+}
+
+h2{
+    font-weight:700;
+    color:@heading;
+    font-size:24px;
+}   
+    
+h3 {
+    font-weight:400;
+}
+
+h4 {
+    text-align:center;
+    font-weight:500;
+    font-size:14px;
+}
+
+p {
+    color:#666;
+    line-height:1.6em;
+}
+
+/* Events
+-------------------------------------------------- */
+.list-items {
+    font-size:14px;
+    padding:10px 0px 10px 34px;
+    font-weight:400;
+    border-bottom: 1px dashed lighten(#333333, 70%);
+}
+.event-list :last-child {
+    border-bottom: 0px;
+}
+
+.event-list li {
+    .list-items
+}
+
+.event-list li > img {
+    margin-right:5px;
+    margin-top: -4px;
+}
+
+.bullet-1 {
+    background:url("../img/arrkom_bullet.png") no-repeat 0;
+}
+.bullet-2 {
+    background:url("../img/bedkom_bullet.png") no-repeat 0;
+}
+.bullet-3 {
+    background:url("../img/fagkom_bullet.png") no-repeat 0;
+}
+
+.event-list-dates li {
+    color:#2fa3d3;
+    padding-bottom:7px;
+    .list-items
+    
+}
+
+.filter > li {
+    display:inline;
+    padding:0 0 0 5px;
+}
+
+.sidebar {
+padding:80px 20px 20px 20px;
+
+}
+
+/* Business
+-------------------------------------------------- */
+.business-ingress {
+    margin-bottom:20px;
+}
+
+.contact-buttons {
+    margin:0 auto;
+}
+
+
+
+.business-ingress > p {
+    .ingress
+}
+
+.business-text {
+    margin-bottom:30px;
+}
+
+.business-text > p {
+    font-weight:400;
+}
+
+section#business h5 {
+    color:#2fa3d3;
+    font-weight:600;
+}
+
+section#business h3 {
+    
+    font-weight:600;
+    font-size:20px;
+}
+
+.expander {
+    text-align:center;
+    
+}
+
+.sale-box {
+text-align:left;
+
+}
+
+/* Logos
+-------------------------------------------------- */
+.online-logo {
+    width: 140px; 
+    margin: -10px 45px 0 0;
+}
+
+.sponsor-logo {
+    width: 110px;
+    margin: -10px 0 0 0;
+}
+
+/* Navbar
+-------------------------------------------------- */
+
+.navbar a { text-transform: uppercase; }
+
+.navbar .nav {
+    height: @nav-height;
+    
+}
+.navbar-inner {
+    background: transparent url('../img/top_bar.jpg') repeat-x;
+    height:@nav-height;
+
+}
+
+.navbar .nav li a {
+    font-weight:400;
+    font:"Helvetica Neue"; 
+    float: none;
+    font-size:13px;
+    display: inline-block;
+    vertical-align: middle;
+    padding: 20px 15px 18px 15px;
+    color:#FFF;
+}
+.navbar .nav.menu-elements li a {
+    padding-top: 15px;
+}
+.navbar .nav.menu-elements li {
+    border-top: 5px solid rgba(255, 255, 255, 0.1);
+    margin-right: 1px;
+}
+.navbar .nav.menu-elements li a:last-child {
+    margin-left: 0;
+}
+
+.navbar a.brand {
+    padding-bottom: 0!important;
+}
+.navbar-inner li.divider-vertical {
+    height: 30px;
+    border-color: rgba(255,255,255,0.2);
+    border-right: none;
+}
+
+.navbar .nav > li > a:focus, .navbar .nav > li > a:hover  {
+    color: #FFF;
+}
+
+
+
+/* Login button
+-------------------------------------------------- */
+.login-btn {
+    margin: 15px 0 0 0;
+    padding: 4px 10px!important;
+    border-radius: 5px;
+    display: block;
+    float: right;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.1);
+}
+.login-box {
+    padding: 15px;
+}

@@ -19,13 +19,14 @@ urlpatterns = patterns('',
     url(r'^admin/doc/',         include('django.contrib.admindocs.urls')),
 
     # Onlineweb app urls
-    url(r'^$', TemplateView.as_view(template_name='base_site.html'), name='home'),
+    url(r'^$', TemplateView.as_view(template_name='frontpage.html'), name='home'),
     url(r'^api/',       include('apps.api.urls')),
     url(r'^article/',   include('apps.article.urls')),
     url(r'^events/',    include('apps.events.urls')),
     url(r'^mail/',      include('apps.autoconfig.urls')),
     url(r'^auth/',      include('apps.authentication.urls')),
-    url(r'^feedback/', include('apps.feedback.urls'))
+    url(r'^feedback/',  include('apps.feedback.urls')),
+    url(r'^offline/',   include('apps.offline.urls')),
 )
 
 
