@@ -9,8 +9,10 @@ from apps.feedback.models import TextAnswer
 from apps.feedback.models import RatingQuestion
 from apps.feedback.models import RatingAnswer
 
+
 from django.forms.models import ModelForm
 from django.contrib import admin
+from django.contrib.contenttypes import generic
 
 
 class AlwaysChangedModelForm(ModelForm):
@@ -21,6 +23,12 @@ class AlwaysChangedModelForm(ModelForm):
         validated and saved.
         """
         return True
+
+
+class FeedbackRelationInline(generic.GenericTabularInline):
+    model = FeedbackRelation
+    extra = 0
+    exclude = ("answered", )
 
 
 class FeedbackRelationAdmin(admin.ModelAdmin):
