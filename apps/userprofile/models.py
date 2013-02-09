@@ -62,22 +62,25 @@ class UserProfile(models.Model):
     def year(self):
         today = datetime.now()
         started = self.started_date
-        # We say that a year is 360 days incase we are a bit slower to add users one year.
+
+        # We say that a year is 360 days incase we are a bit slower to
+        # add users one year.
         year = ((today - started).days / 360) + 1
+
         # dont return a bachelor student as 4th or 5th grade
-        if self.field_of_Study == 0: # others
+        if self.field_of_Study == 0:  # others
             return 0
-        elif self.field_of_study == 1: # bachelor
+        elif self.field_of_study == 1:  # bachelor
             if year > 3:
                 return 3
             return year
-        elif self.field_of_study == 2: # master
+        elif self.field_of_study == 2:  # master
             if year >= 2:
                 return 5
             return 4
-        elif self.field_of_study == 3: # phd
+        elif self.field_of_study == 3:  # phd
             return year + 5
-        elif self.field_of_study == 4: # international
+        elif self.field_of_study == 4:  # international
             if year == 1:
                 return 1
             return 4
