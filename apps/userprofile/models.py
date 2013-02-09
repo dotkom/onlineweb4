@@ -23,7 +23,7 @@ class UserProfile(models.Model):
     field_of_study = models.SmallIntegerField(_("studieretning"), choices=FIELD_OF_STUDY_CHOICES, default=0)
     started_date = models.DateTimeField(_("startet studie"), default=datetime.now())
     compiled = models.BooleanField(_("kompilert"), default=False)
-    
+
     # Email
     infomail = models.BooleanField(_("vil ha infomail"), default=True)
 
@@ -31,9 +31,9 @@ class UserProfile(models.Model):
     phone_number = models.CharField(_("telefonnummer"), max_length=20, blank=True, null=True)
     address = models.CharField(_("adresse"), max_length=30, blank=True, null=True)
     area_code = models.CharField(_("postnummer"), max_length=4, blank=True, null=True)
-   
+
     # Other
-    allergies = models.TextField(_("allergier"))
+    allergies = models.TextField(_("allergier"), blank=True, null=True)
     mark_rules = models.BooleanField(_("godtatt prikkeregler"), default=False)
     rfid = models.CharField(_("RFID"), max_length=50, blank=True, null=True)
 
@@ -43,7 +43,7 @@ class UserProfile(models.Model):
     @property
     def is_online(self):
         return self.field_of_study != 0
-    
+
     @property
     def year(self):
         today = datetime.now()
