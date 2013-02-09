@@ -6,6 +6,7 @@ from django.contrib.auth.models import User
 from django.db import models
 from django.db.models.signals import post_save
 from django.utils.translation import ugettext_lazy as _
+from django.dispatch import receiver
 
 
 class UserProfile(models.Model):
@@ -39,6 +40,19 @@ class UserProfile(models.Model):
 
     # TODO profile pictures
     # TODO checkbox for forwarding of @online.ntnu.no mail
+
+    def save(self, *args, **kwargs):
+        """
+        For the post_save hook to work with django admin.
+        Update the newly created UserProfile instead of trying to create
+        a new one.
+        """
+        try:
+            existing = UserProfile.objects.get(user=self.user)
+            self.id = existing.id  # force update instead of insert
+        except UserProfile.DoesNotExist:
+            pass
+        models.Model.save(self, *args, **kwargs)
 
     @property
     def is_online(self):
@@ -75,9 +89,11 @@ class UserProfile(models.Model):
         verbose_name = _("brukerprofil")
         verbose_name_plural = _("brukerprofiler")
 
-# create userprofile when the user is created
-def create_user_profile(sender, instance, created, **kwargs):
-    if created:
-        UserProfile.objects.create(user=instance)
 
-post_save.connect(create_user_profile, sender=User)
+@receiver(post_save, sender=User)
+def create_profile(sender, instance, created, **kwargs):
+    """
+    Create UserProfile when user is created.
+    """
+    if created:
+        UserProfile.objects.get_or_create(user=instance)
