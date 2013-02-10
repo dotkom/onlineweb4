@@ -8,6 +8,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ObjectDoesNotExist
 from apps.feedback.models import FeedbackRelation
 from apps.feedback.forms import create_answer_forms
+from collections import namedtuple
 
 
 def feedback(request, applabel, appmodel, object_id, feedback_id):
@@ -36,7 +37,13 @@ def feedback(request, applabel, appmodel, object_id, feedback_id):
 def result(request, applabel, appmodel, object_id, feedback_id):
     fbr = _get_fbr_or_404(applabel, appmodel, object_id, feedback_id)
 
-    return HttpResponse(fbr.answers)
+    Qa = namedtuple("Qa", "question, answers")
+    question_and_answers = []
+    for q in fbr.questions:
+        question_and_answers.append(Qa(q, fbr.answers_to_question(q)))
+
+    return render(request, 'feedback/results.html',
+                  {'question_and_answers': question_and_answers})
 
 
 def index(request):

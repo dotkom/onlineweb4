@@ -11,7 +11,7 @@ very many database lookups.
 '''
 from django.db import models
 from django.contrib.auth.models import User
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext as _
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 from django.core.urlresolvers import reverse
@@ -88,7 +88,7 @@ class Feedback(models.Model):
     """
     feedback_id = models.AutoField(primary_key=True)
     author = models.ForeignKey(User)
-    description = models.CharField(_('beskrivelse'), max_length=100)
+    description = models.CharField(_(u'beskrivelse'), max_length=100)
 
     @property
     def questions(self):
@@ -110,18 +110,18 @@ class Feedback(models.Model):
         return self.description
 
     class Meta:
-        verbose_name = _('tilbakemelding')
-        verbose_name_plural = _('tilbakemeldinger')
+        verbose_name = _(u'tilbakemelding')
+        verbose_name_plural = _(u'tilbakemeldinger')
 
 
 FIELD_OF_STUDY_CHOICES = [
-    (-1, _('---')),
-    (0, _('Bachelor i Informatikk (BIT)')),
-    (1, _('Intelligente Systemer (IRS)')),
-    (2, _('Software (SW)')),
-    (3, _('Informasjonsforvaltning (DIF)')),
-    (4, _('Komplekse Datasystemer (KDS)')),
-    (5, _('Spillteknologi (SPT)')),
+    (-1, _(u'---')),
+    (0, _(u'Bachelor i Informatikk (BIT)')),
+    (1, _(u'Intelligente Systemer (IRS)')),
+    (2, _(u'Software (SW)')),
+    (3, _(u'Informasjonsforvaltning (DIF)')),
+    (4, _(u'Komplekse Datasystemer (KDS)')),
+    (5, _(u'Spillteknologi (SPT)')),
 ]
 
 
@@ -130,8 +130,8 @@ class FieldOfStudyQuestion(models.Model):
         Feedback,
         related_name='field_of_study_questions')
 
-    label = _('Studieretning')
-    order = models.SmallIntegerField(_('Rekkefølge'), default=1)
+    label = _(u'Studieretning')
+    order = models.SmallIntegerField(_(u'Rekkefølge'), default=1)
 
     def __unicode__(self):
         return "Studieretning"
@@ -143,13 +143,13 @@ class FieldOfStudyAnswer(models.Model):
         related_name="field_of_study_answers")
 
     answer = models.SmallIntegerField(
-        _('Studieretning'),
+        _(u'Studieretning'),
         choices=FIELD_OF_STUDY_CHOICES)
 
     question = models.ForeignKey(FieldOfStudyQuestion, related_name='answer')
 
     def __unicode__(self):
-        return str(self.question) + ": " + self.get_answer_display()
+        return self.get_answer_display()
 
     @property
     def order(self):
@@ -161,9 +161,9 @@ class TextQuestion(models.Model):
         Feedback,
         related_name='text_questions')
 
-    order = models.SmallIntegerField(_('Rekkefølge'), default=10)
+    order = models.SmallIntegerField(_(u'Rekkefølge'), default=10)
 
-    label = models.CharField(_('Spørsmål'), blank=False, max_length=256)
+    label = models.CharField(_(u'Spørsmål'), blank=False, max_length=256)
 
     def __unicode__(self):
         return self.label
@@ -176,10 +176,10 @@ class TextAnswer(models.Model):
         FeedbackRelation,
         related_name="text_answers")
 
-    answer = models.TextField(_('svar'), blank=False)
+    answer = models.TextField(_(u'svar'), blank=False)
 
     def __unicode__(self):
-        return str(self.question) + ": " + self.answer
+        return self.answer
 
     @property
     def order(self):
@@ -194,9 +194,9 @@ class RatingQuestion(models.Model):
         Feedback,
         related_name='rating_questions')
 
-    order = models.SmallIntegerField(_('Rekkefølge'), default=20)
+    order = models.SmallIntegerField(_(u'Rekkefølge'), default=20)
 
-    label = models.CharField(_('Spørsmål'), blank=False, max_length=256)
+    label = models.CharField(_(u'Spørsmål'), blank=False, max_length=256)
 
     def __unicode__(self):
         return self.label
@@ -208,14 +208,14 @@ class RatingAnswer(models.Model):
         related_name="rating_answers")
 
     answer = models.SmallIntegerField(
-        _('karakter'),
+        _(u'karakter'),
         choices=RATING_CHOICES,
         default=0)
 
     question = models.ForeignKey(RatingQuestion, related_name='answer')
 
     def __unicode__(self):
-        return str(self.question) + ": " + self.get_answer_display()
+        return self.get_answer_display()
 
     @property
     def order(self):
