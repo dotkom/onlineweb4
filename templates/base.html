@@ -70,18 +70,15 @@
                                     <span class="caret-inner"/>
                                 </li>
                                 <li>
-                                <form method="post" action="">
+                                <form method="POST" action="{% url auth_login %}">
                                     {% csrf_token %}
                                     <fieldset class="textbox">
-                                        <label>
-                                            <span>Brukernavn</span>
-                                            <input type="text" name="username">
-                                        </label>
-                                        <label>
-                                            <span>Passord</span>
-                                            <input type="password" name="password">
-                                        </label>
+                                        <label for="id_username">Brukernavn</label>
+                                        <input type="text" name="username" id="id_username">
+                                        <label for="id_password">Passord</span>
+                                        <input type="password" name="password" id="id_password">
                                     </fieldset>
+                                    <input type="hidden" name="next" value="{{ request.get_full_path }}" />
 
                                     <button type="submit" class="btn submit">Logg inn</button>
                                 </form>
