@@ -3,6 +3,7 @@
 from apps.events.models import Event
 from apps.events.models import AttendanceEvent
 from apps.events.models import Attendee
+from apps.feedback.admin import FeedbackRelationInline
 
 from django.contrib import admin
 
@@ -24,7 +25,7 @@ class AttendanceEventInline(admin.StackedInline):
 
 
 class EventAdmin(admin.ModelAdmin):
-    inlines = (AttendanceEventInline,)
+    inlines = (AttendanceEventInline, FeedbackRelationInline)
     exclude = ("author", )
 
     def save_model(self, request, obj, form, change):
