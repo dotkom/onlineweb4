@@ -35,7 +35,6 @@ body {
     .container-fluid {
         margin:0 auto;
         width:1200px;
-        /*background: red;*/
     }
 }
 
@@ -285,4 +284,26 @@ text-align:left;
 }
 .login-box {
     padding: 15px;
+}
+
+#feedback{
+    textarea{
+        width: 90%;
+    }
+    .radio {
+        padding-top: 0px;
+        margin-left: 20px;
+        float:left;
+    }
+    div{ /*TODO, create clearfix mixin*/
+        *zoom: 1;
+        &:before,
+        &:after {
+            display: table;
+            content: "";
+        }
+        &:after {
+            clear: both;
+        }
+    }
 }
