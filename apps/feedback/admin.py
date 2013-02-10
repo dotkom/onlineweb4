@@ -25,9 +25,11 @@ class AlwaysChangedModelForm(ModelForm):
         return True
 
 
-class FeedbackRelationInline(generic.GenericTabularInline):
+class FeedbackRelationInline(generic.GenericStackedInline):
     model = FeedbackRelation
     extra = 0
+    classes = ('grp-collapse grp-open',)  # style
+    inline_classes = ('grp-collapse grp-open',)  # style
     exclude = ("answered", )
 
 
