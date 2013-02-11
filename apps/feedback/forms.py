@@ -5,25 +5,31 @@ from apps.feedback.models import RATING_CHOICES
 from apps.feedback.models import FieldOfStudyAnswer
 from apps.feedback.models import TextAnswer
 from django.utils.translation import ugettext_lazy as _
+from crispy_forms.helper import FormHelper
 
 
-class RatingAnswerForm(forms.ModelForm):
+class AnswerForm(forms.ModelForm):
+    """
+    A superclass for answer forms.
+    """
+    def __init__(self, *args, **kwargs):
+        self.helper = FormHelper()
+        self.helper.form_tag = False
+        self.helper.html5_required = False
+        super(AnswerForm, self).__init__(*args, **kwargs)
+        self.fields['answer'].label = self.instance.question.label
+
+
+class RatingAnswerForm(AnswerForm):
     answer = forms.ChoiceField(widget=forms.RadioSelect,
                                choices=RATING_CHOICES)
-
-    def __init__(self, *a, **k):
-        super(RatingAnswerForm, self).__init__(*a, **k)
-        self.fields['answer'].label = self.instance.question.label
 
     class Meta:
         model = RatingAnswer
         exclude = ("feedback_relation", "question",)
 
 
-class FieldOfStudyAnswerForm(forms.ModelForm):
-    def __init__(self, *a, **k):
-        super(FieldOfStudyAnswerForm, self).__init__(*a, **k)
-        self.fields['answer'].label = self.instance.question.label
+class FieldOfStudyAnswerForm(AnswerForm):
 
     def clean_answer(self):
         data = self.cleaned_data['answer']
@@ -37,11 +43,7 @@ class FieldOfStudyAnswerForm(forms.ModelForm):
         exclude = ("feedback_relation", "question",)
 
 
-class TextAnswerForm(forms.ModelForm):
-    def __init__(self, *args, **kwargs):
-        super(TextAnswerForm, self).__init__(*args, **kwargs)
-        self.fields['answer'].label = self.instance.question.label
-
+class TextAnswerForm(AnswerForm):
     class Meta:
         model = TextAnswer
         exclude = ("feedback_relation", "question",)

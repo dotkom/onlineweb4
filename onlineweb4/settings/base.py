@@ -101,6 +101,7 @@ INSTALLED_APPS = (
     'grappelli',
     'filebrowser',
     'chunks',
+    'crispy_forms',
 
     # Django apps
     'django.contrib.admin',
