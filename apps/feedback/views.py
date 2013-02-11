@@ -1,21 +1,24 @@
 #-*- coding: utf-8 -*-
-from django.http import HttpResponse
 from django.http import Http404
 from django.shortcuts import render_to_response
 from django.shortcuts import render
 from django.template import RequestContext
 from django.contrib.contenttypes.models import ContentType
+from django.contrib import messages
 from django.core.exceptions import ObjectDoesNotExist
 from apps.feedback.models import FeedbackRelation
 from apps.feedback.forms import create_answer_forms
 from collections import namedtuple
+from django.utils.translation import ugettext_lazy as _
+from django.shortcuts import redirect
 
 
 def feedback(request, applabel, appmodel, object_id, feedback_id):
     fbr = _get_fbr_or_404(applabel, appmodel, object_id, feedback_id)
 
     if not fbr.can_answer(request.user):
-        return HttpResponse("Du kan ikke svare på dette skjemaet nå.")
+        messages.error(request, _(u"Du kan ikke svare på dette skjemaet."))
+        return redirect("home")
 
     if request.method == "POST":
         answers = create_answer_forms(fbr, post_data=request.POST)
@@ -26,7 +29,9 @@ def feedback(request, applabel, appmodel, object_id, feedback_id):
             # mark that the user has answered
             fbr.answered.add(request.user)
             fbr.save()
-            return HttpResponse("Du svarte!")
+
+            messages.success(request, _("Takk for at du svarte"))
+            return redirect("home")
     else:
         answers = create_answer_forms(fbr)
 

@@ -93,6 +93,22 @@
             </div>
         </div>
     </div>
+    {% if messages %}
+    <section id="messages">
+        <div class="container-fluid">
+            <div class="row-fluid">
+                <div class="span12">
+                    {% for message in messages %}
+                    <div class="alert {% if message.tags %}{{ message.tags }}{% endif %}">
+                        <button type="button" class="close" data-dismiss="alert">&times;</button>
+                        {{ message }}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </section>
+    {% endif %}
 
     {% block content %}
     {% endblock %}
