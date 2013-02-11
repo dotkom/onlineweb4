@@ -3,6 +3,7 @@
 from apps.events.models import Event
 from apps.events.models import AttendanceEvent
 from apps.events.models import Attendee
+from apps.events.models import CompanyEvent
 
 from django.contrib import admin
 
@@ -12,9 +13,20 @@ class AttendeeInline(admin.TabularInline):
     extra = 1
 
 
+class CompanyInline(admin.TabularInline):
+    model = CompanyEvent
+    max_num = 20
+    extra = 0
+
+
 class AttendanceEventAdmin(admin.ModelAdmin):
     model = AttendanceEvent
     inlines = (AttendeeInline,)
+
+
+class CompanyEventAdmin(admin.ModelAdmin):
+    model = CompanyEvent
+    inlines = (CompanyInline,)
 
 
 class AttendanceEventInline(admin.StackedInline):
@@ -24,7 +36,7 @@ class AttendanceEventInline(admin.StackedInline):
 
 
 class EventAdmin(admin.ModelAdmin):
-    inlines = (AttendanceEventInline,)
+    inlines = (AttendanceEventInline, CompanyInline,)
     exclude = ("author", )
 
     def save_model(self, request, obj, form, change):
