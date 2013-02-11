@@ -152,7 +152,8 @@ LOGGING = {
     }
 }
 
-for settings_module in ['local', 'filebrowser' ]: # Remember to keep 'local' last, so it can override any setting.
+# Remember to keep 'local' last, so it can override any setting.
+for settings_module in ['filebrowser', 'local']:  # local last
     if not os.path.exists(os.path.join(PROJECT_SETTINGS_DIRECTORY,
             settings_module + ".py")):
         sys.stderr.write("Could not find settings module '%s'.\n" %

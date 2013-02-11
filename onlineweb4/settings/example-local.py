@@ -56,6 +56,9 @@ STATIC_ROOT = os.path.join(PROJECT_ROOT_DIRECTORY, 'collected_static')
 #STATIC_URL = '//static.online.ntnu.no'
 STATIC_URL = '/static/'
 
+# Filebrowser local settings.
+FILEBROWSER_MEDIA_ROOT = MEDIA_ROOT
+
 # If you use django extensions that should not be used in production
 # add them here.
 # INSTALLED_APPS += (

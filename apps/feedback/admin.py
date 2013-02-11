@@ -6,8 +6,10 @@ from apps.feedback.models import FieldOfStudyQuestion
 from apps.feedback.models import TextQuestion
 from apps.feedback.models import RatingQuestion
 
+
 from django.forms.models import ModelForm
 from django.contrib import admin
+from django.contrib.contenttypes import generic
 
 
 class AlwaysChangedModelForm(ModelForm):
@@ -18,6 +20,14 @@ class AlwaysChangedModelForm(ModelForm):
         validated and saved.
         """
         return True
+
+
+class FeedbackRelationInline(generic.GenericStackedInline):
+    model = FeedbackRelation
+    extra = 0
+    classes = ('grp-collapse grp-open',)  # style
+    inline_classes = ('grp-collapse grp-open',)  # style
+    exclude = ("answered", )
 
 
 class FeedbackRelationAdmin(admin.ModelAdmin):
