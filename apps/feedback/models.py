@@ -131,7 +131,7 @@ class FieldOfStudyQuestion(models.Model):
         related_name='field_of_study_questions')
 
     label = _('Studieretning')
-    order = models.SmallIntegerField(_('Rekkefølge'), default=1)
+    order = models.SmallIntegerField(_(u'Rekkefølge'), default=1)
 
     def __unicode__(self):
         return "Studieretning"
@@ -161,9 +161,9 @@ class TextQuestion(models.Model):
         Feedback,
         related_name='text_questions')
 
-    order = models.SmallIntegerField(_('Rekkefølge'), default=10)
+    order = models.SmallIntegerField(_(u'Rekkefølge'), default=10)
 
-    label = models.CharField(_('Spørsmål'), blank=False, max_length=256)
+    label = models.CharField(_(u'Spørsmål'), blank=False, max_length=256)
 
     def __unicode__(self):
         return self.label
@@ -194,9 +194,9 @@ class RatingQuestion(models.Model):
         Feedback,
         related_name='rating_questions')
 
-    order = models.SmallIntegerField(_('Rekkefølge'), default=20)
+    order = models.SmallIntegerField(_(u'Rekkefølge'), default=20)
 
-    label = models.CharField(_('Spørsmål'), blank=False, max_length=256)
+    label = models.CharField(_(u'Spørsmål'), blank=False, max_length=256)
 
     def __unicode__(self):
         return self.label
