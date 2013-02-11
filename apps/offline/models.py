@@ -76,6 +76,12 @@ def create_thumbnail(sender, instance=None, **kwargs):
     if t.thumbnail_exists is False:
         print 'Thumbnail not found - creating...'
 
+        # Fixes an annoying Exception in logs, not really needed
+        # http://stackoverflow.com/questions/13193278/ {
+        import threading
+        threading._DummyThread._Thread__stop = lambda x: 42
+        # }
+
         try:
             check_call(["convert", "-resize", "x"+str(THUMBNAIL_HEIGHT), t.url+"[0]", t.thumbnail])
         except (OSError, CalledProcessError) as e:
