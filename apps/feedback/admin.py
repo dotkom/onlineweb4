@@ -3,11 +3,8 @@
 from apps.feedback.models import Feedback
 from apps.feedback.models import FeedbackRelation
 from apps.feedback.models import FieldOfStudyQuestion
-from apps.feedback.models import FieldOfStudyAnswer
 from apps.feedback.models import TextQuestion
-from apps.feedback.models import TextAnswer
 from apps.feedback.models import RatingQuestion
-from apps.feedback.models import RatingAnswer
 
 
 from django.forms.models import ModelForm
@@ -77,21 +74,20 @@ class FeedbackAdmin(admin.ModelAdmin):
 admin.site.register(Feedback, FeedbackAdmin)
 admin.site.register(FeedbackRelation, FeedbackRelationAdmin)
 
-# TODO:  The answers do not usally need to be edited in the admin
-#        interface.  (Sigurd) 2013-02-02
+
+# The answers do not usally need to be edited in the admin interface.
+# (Sigurd) 2013-02-02
+#class FieldOfStudyAnswerAdmin(admin.ModelAdmin):
+    #model = FieldOfStudyAnswer
 
 
-class FieldOfStudyAnswerAdmin(admin.ModelAdmin):
-    model = FieldOfStudyAnswer
+#class TextAnswerAdmin(admin.ModelAdmin):
+    #model = TextAnswer
 
 
-class TextAnswerAdmin(admin.ModelAdmin):
-    model = TextAnswer
+#class RatingAnswerAdmin(admin.ModelAdmin):
+    #model = RatingAnswer
 
-
-class RatingAnswerAdmin(admin.ModelAdmin):
-    model = RatingAnswer
-
-admin.site.register(FieldOfStudyAnswer, FieldOfStudyAnswerAdmin)
-admin.site.register(TextAnswer, TextAnswerAdmin)
-admin.site.register(RatingAnswer, RatingAnswerAdmin)
+#admin.site.register(FieldOfStudyAnswer, FieldOfStudyAnswerAdmin)
+#admin.site.register(TextAnswer, TextAnswerAdmin)
+#admin.site.register(RatingAnswer, RatingAnswerAdmin)

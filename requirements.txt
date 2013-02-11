@@ -11,6 +11,7 @@ Markdown==2.0.3             # textarea text formatting
 django-filebrowser==3.5.0   # File uploading
 django-grappelli==2.4.2     # Admin template set
 django-chunks==0.1 			# Chunks, or reusable key:content for templates.
+django-crispy-forms==1.2.3  # nice forms
 
 # test tools
 cov-core==1.7

@@ -1,10 +1,17 @@
 {% extends "base.html" %}
+{% load crispy_forms_tags %}
 
 {% block content %}
-    <form method="POST"> {% csrf_token %}
-    {% for f in answers %}
-        {{f.as_p}}
-    {% endfor %}
-    <input type="submit" value="Submit" />
-</form>
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="span9">
+            <form method="POST" id="feedback"> {% csrf_token %}
+                {% for f in answers %}
+                    {{f|crispy}}
+                {% endfor %}
+                <input type="submit" value="Submit" />
+            </form>
+        </div>
+    </div>
+</div>
 {%endblock content %}
