@@ -63,6 +63,9 @@
 
                     <ul class="nav pull-right">
                         <li class="dropdown" id="login_menu">
+                        {% if user.is_authenticated %}
+                            <a href="/auth/logout" class="btn btn-primary">Logg ut</a>
+                        {% else %}
                             <a href="#login_menu" class="login-btn dropdown-toggle dropdown-signin">Logg inn<b class="caret"></b></a>
                             <ul class="dropdown-menu dropdown-form login-box">
                                 <li class="dropdown-caret right">
@@ -79,11 +82,15 @@
                                         <input type="password" name="password" id="id_password">
                                     </fieldset>
                                     <input type="hidden" name="next" value="{{ request.get_full_path }}" />
-
-                                    <button type="submit" class="btn submit">Logg inn</button>
+                                        <button type="submit" class="btn">Logg inn</button>
+                                        <div class="login-extra">
+                                            <a href="/auth/register">Registrer</a>
+                                            <a href="/auth/recover">Glemt passord</a>
+                                        </div>
                                 </form>
                                 </li>
                             </ul>
+                        {% endif %}
                         </li>
                         <li>
                         <a href="http://visma.no/" class=""><img src="{{ STATIC_URL }}img/visma_clean.png" alt="" class="sponsor-logo"></a>
