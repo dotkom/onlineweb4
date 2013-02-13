@@ -1,4 +1,6 @@
 {% extends 'base.html' %}
+{% load chunks %}
+{% load markup %}
 
 {% block content %}
 <script type="text/javascript" src="{{ STATIC_URL }}js/EventWidget.js"></script>
@@ -39,7 +41,7 @@
                 </div>
                 <div class="span3">
                     <div class="sidebar">
-                    <p>Integer lorem nulla, commodo vel dapibus a, ultricies ac ante. Nullam in urna nec elit varius congue. Sed ac ligula tortor, eu varius turpis. Mauris euismod auctor massa ut rhoncus. Quisque placerat congue erat, blandit imperdiet ante eleifend ac. Pellentesque ac metus eu nisl bibendum hendrerit. Etiam ac mi ut diam ultricies porta et nec neque. </p>
+                    <p>"There is no one who loves pain itself, who seeks after it and wants to have it, simply because it is pain..." <p>
                     </div>
                 </div>
             </div>
@@ -128,55 +130,84 @@
                 <div class="span9">
                     <div class="tab-content">
                         <div class="tab-pane active" id="online">
-                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec nec facilisis urna. Curabitur sed purus risus. Aenean urna nunc, euismod ut pharetra at, tristique vitae nibh. Nam aliquet purus vel arcu vestibulum sodales. Nulla at porttitor sapien. Sed ultrices nulla vel magna malesuada quis viverra arcu posuere. Donec quis mollis diam. Ut orci tellus, pretium quis molestie ut, adipiscing nec dui. Morbi aliquet, velit vel ultricies luctus, metus lectus fringilla nulla, a ornare eros nibh vel lectus. Nullam massa risus, vehicula eu congue accumsan, placerat sit amet neque. Duis sit amet molestie leo. Aliquam magna mi, gravida non ornare tristique, sagittis quis turpis.</p>
-                            <p>Nulla dignissim molestie augue vitae rutrum. Curabitur congue laoreet vulputate. Pellentesque ante orci, aliquam et placerat sed, commodo vel dui. Nam quis mi a lectus sollicitudin porta id vitae sem. Curabitur euismod sem sit amet metus auctor rhoncus. Vivamus luctus leo dignissim nisi dictum ac sagittis urna feugiat. Aliquam erat volutpat. In elementum hendrerit nulla eget euismod. Cras sapien quam, sodales id gravida id, suscipit vel tellus. Aenean iaculis, neque ut adipiscing tincidunt, magna felis blandit ipsum, sed iaculis ante mi sit amet lacus.</p>
-                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec nec facilisis urna. Curabitur sed purus risus. Aenean urna nunc, euismod ut pharetra at, tristique vitae nibh. Nam aliquet purus vel arcu vestibulum sodales. Nulla at porttitor sapien. Sed ultrices nulla vel magna malesuada quis viverra arcu posuere. Donec quis mollis diam. Ut orci tellus, pretium quis molestie ut, adipiscing nec dui. Morbi aliquet, velit vel ultricies luctus, metus lectus fringilla nulla, a ornare eros nibh vel lectus. Nullam massa risus, vehicula eu congue accumsan, placerat sit amet neque. Duis sit amet molestie leo. Aliquam magna mi, gravida non ornare tristique, sagittis quis turpis.</p>
-                            <p>Nulla dignissim molestie augue vitae rutrum. Curabitur congue laoreet vulputate. Pellentesque ante orci, aliquam et placerat sed, commodo vel dui. Nam quis mi a lectus sollicitudin porta id vitae sem. Curabitur euismod sem sit amet metus auctor rhoncus. Vivamus luctus leo dignissim nisi dictum ac sagittis urna feugiat. Aliquam erat volutpat. In elementum hendrerit nulla eget euismod. Cras sapien quam, sodales id gravida id, suscipit vel tellus. Aenean iaculis, neque ut adipiscing tincidunt, magna felis blandit ipsum, sed iaculis ante mi sit amet lacus.</p>
+{% filter markdown %}
+{% chunk 'om_online' %}
+{% endfilter %}
                         </div>
                         <div class="tab-pane" id="hovedstyret">
-                            <p>Hovedstyret</p>
+{% filter markdown%}
+{% chunk 'om_hovedstyret' %}
+{% endfilter %}
                         </div>
                         <div class="tab-pane" id="arrkom">
-                            <p>Arrkom</p>
+{% filter markdown %}
+{% chunk 'om_arrkom' %}
+{% endfilter %}
                         </div>
                         <div class="tab-pane" id="bankom">
-                            <p>Bankom</p>
+{% filter markdown %}
+{% chunk 'om_bankom' %}
+{% endfilter %}
                         </div>
                         <div class="tab-pane" id="bedkom">
-                            <p>bedkom</p>
+{% filter markdown %}
+{% chunk 'om_bedkom' %}
+{% endfilter %}
                         </div>
                         <div class="tab-pane" id="dotkom">
-                            <p>dotkom</p>
+{% filter markdown %}
+{% chunk 'om_dotkom' %}
+{% endfilter %}
                         </div>
                         <div class="tab-pane" id="fagkom">
-                            <p>fagkom</p>
+{% filter markdown %}
+{% chunk 'om_fagkom' %}
+{% endfilter %}
                         </div>
                         <div class="tab-pane" id="pankom">
-                            <p>pankom</p>
+{% filter markdown %}
+{% chunk 'om_pankom' %}
+{% endfilter %}
                         </div>
                         <div class="tab-pane" id="prokom">
-                            <p>prokom</p>
+{% filter markdown %}
+{% chunk 'om_prokom' %}
+{% endfilter %}
                         </div>
                         <div class="tab-pane" id="trikom">
-                            <p>trikom</p>
+{% filter markdown %}
+{% chunk 'om_trikom' %}
+{% endfilter %}
                         </div>
                         <div class="tab-pane" id="ekskom">
-                            <p>ekskom</p>
+{% filter markdown %}
+{% chunk 'om_ekskom' %}
+{% endfilter %}
                         </div>
                         <div class="tab-pane" id="jubkom">
-                            <p>jubkom</p>
+{% filter markdown %}
+{% chunk 'om_jubkom' %}
+{% endfilter %}
                         </div>
                         <div class="tab-pane" id="velkom">
-                            <p>velkom</p>
+{% filter markdown %}
+{% chunk 'om_velkom' %}
+{% endfilter %}
                         </div>
                         <div class="tab-pane" id="kjelleren">
-                            <p>kjelleren</p>
+{% filter markdown %}
+{% chunk 'om_kjelleren' %}
+{% endfilter %}
                         </div>
                         <div class="tab-pane" id="datakameratene">
-                            <p>datakameratene</p>
+{% filter markdown %}
+{% chunk 'om_datakameratene' %}
+{% endfilter %}
                         </div>
                         <div class="tab-pane" id="cag">
-                            <p>casual gaming</p>
+{% filter markdown %}
+{% chunk 'om_casual_gaming' %}
+{% endfilter %}
                         </div>
                     </div>
                 </div>
