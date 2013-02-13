@@ -1,7 +1,7 @@
 [
     {
         "fields": {
-            "content": "\nOffline er Online sitt eget tidsskrift og s\u00e5 dagens lys i mars 2011. Profil- og aviskomiteen st\u00e5r for det grafiske og redaksjonelle ansvaret, og har i tillegg eksterne skribenter i andre deler av Online.", 
+            "content": "Offline er Online sitt eget tidsskrift og s\u00e5 dagens lys i mars 2011. Profil- og aviskomiteen st\u00e5r for det grafiske og redaksjonelle ansvaret, og har i tillegg eksterne skribenter i andre deler av Online.", 
             "key": "offline_ingress"
         }, 
         "model": "chunks.chunk", 
