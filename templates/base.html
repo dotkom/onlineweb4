@@ -116,8 +116,7 @@
         </div>
     </div>
     {% if messages %}
-    <section id="messages">
-        <div class="container-fluid">
+        <div class="container-fluid messages">
             <div class="row-fluid">
                 <div class="span12">
                     {% for message in messages %}
@@ -129,7 +128,6 @@
                 </div>
             </div>
         </div>
-    </section>
     {% endif %}
 
     {% block content %}
