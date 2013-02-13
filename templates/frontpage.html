@@ -136,7 +136,7 @@
                         <div class="tab-pane" id="hovedstyret">
                             <p>Hovedstyret</p>
                         </div>
-                            <div class="tab-pane" id="arrkom">
+                        <div class="tab-pane" id="arrkom">
                             <p>Arrkom</p>
                         </div>
                         <div class="tab-pane" id="bankom">
@@ -330,87 +330,10 @@
             </div>
         </div>
     </section>
-    <section id="offline">
-        <div class="container-fluid">
-            <div class="row-fluid">
-                <div class="span12">
-                    <div class="page-header">
-                        <h2 id="offline-heading">OFFLINE</h2>
-                    </div>
-                </div>
-            </div>
-            <div class="row-fluid">
-                <div class="span6">
-                    <div class="ingress">
-                        <p>Offline er Online sitt eget tidsskrift og så dagens lys i mars 2011. Profil- og aviskomiteen står for det grafiske og redaksjonelle ansvaret, og har i tillegg eksterne skribenter i andre deler av Online.</p>
-                    </div>
-                </div>
-            </div>
-            <div class="row-fluid">
-                <div class="span12">
-                    <div id="myCarousel" class="carousel slide">
-                        <!-- Carousel items -->
-                        <div class="carousel-inner">
-                            <div class="active item">
-                                <div class="span3 offset2">
-                                    <a class="">
-                                        <img src="{{ STATIC_URL}}js/holder.js/175x200" alt="">
-                                    </a>
-                                </div>
-                                <div class="span3">
-                                <a class="">
-                                        <img src="{{ STATIC_URL}}js/holder.js/175x200" alt="">
-                                    </a>
-                                </div>
-                                <div class="span3">
-                                <a class="">
-                                        <img src="{{ STATIC_URL}}js/holder.js/175x200" alt="">
-                                    </a>
-                                </div>
-                            </div>
-                            <div class="item">
-                                <div class="span3 offset2">
-                                    <a class="">
-                                        <img src="{{ STATIC_URL}}js/holder.js/175x200" alt="">
-                                    </a>
-                                </div>
-                                <div class="span3">
-                                <a class="">
-                                        <img src="{{ STATIC_URL}}js/holder.js/175x200" alt="">
-                                    </a>
-                                </div>
-                                <div class="span3">
-                                <a class="">
-                                        <img src="{{ STATIC_URL}}js/holder.js/175x200" alt="">
-                                    </a>
-                                </div>
-                            </div>
-                            <div class="item">
-                                <div class="span3 offset2">
-                                    <a class="">
-                                        <img src="{{ STATIC_URL}}js/holder.js/175x200" alt="">
-                                    </a>
-                                </div>
-                                <div class="span3">
-                                <a class="">
-                                        <img src="{{ STATIC_URL}}js/holder.js/175x200" alt="">
-                                    </a>
-                                </div>
-                                <div class="span3">
-                                <a class="">
-                                        <img src="{{ STATIC_URL}}js/holder.js/175x200" alt="">
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                      <!-- Carousel nav -->
-                      <a class="carousel-control left" href="#myCarousel" data-slide="prev">&lsaquo;</a>
-                      <a class="carousel-control right" href="#myCarousel" data-slide="next">&rsaquo;</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>    
+
+    <!-- Offline -->
+    {% include 'frontpage_offline.html' %}
+
     <div class="dark-grayed">
         <div class="container-fluid footer">
             <p>Footer</p>
@@ -418,12 +341,10 @@
     </div>
     
     <script>
-    $('.carousel').carousel({
- 
-})
     $('#about-tabs a').click(function (e) {
-  e.preventDefault();
-  $(this).tab('show');
-});</script>
+        e.preventDefault();
+        $(this).tab('show');
+    });
+    </script>
 
 {% endblock content %}
