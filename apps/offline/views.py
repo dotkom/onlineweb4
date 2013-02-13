@@ -6,3 +6,4 @@ from django.shortcuts import render
 def main(request):
     issues = Issue.objects.all()
     return render(request, "offline/offline.html", {"issues": issues})
+
