@@ -1,4 +1,29 @@
+{% extends 'base.html' %}
 {% load chunks %}
 
-<h1>Offline</h1>
-<p>{% chunk 'offline' %}</p>
+{% block content %}
+<div class="container-fluid">
+    <div class="row-fluid"> 
+        <div class="span12">
+            <div class="page-header">
+                <h2>OFFLINE</h2>
+            </div>
+        </div>
+    </div>
+    <div class="row-fluid">
+        <div class="span9"> 
+            <img src="holder.js/156x200"/>
+            <img src="holder.js/156x200"/>
+            <img src="holder.js/156x200"/>
+            <img src="holder.js/156x200"/>
+             <p>{% chunk 'offline_ingress' %}</p>
+        </div>
+        <div class="span3">
+            <div class="well">
+                sdajahfda
+            </div>
+        </div>
+    </div>
+                
+</div>
+{% endblock content %}
