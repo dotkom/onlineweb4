@@ -14,10 +14,10 @@ class Article(models.Model):
     heading = models.CharField(_("tittel"), max_length=200)
     ingress = models.TextField(_("ingress"))
     content = models.TextField(_("content"))
-    image_article = FileBrowseField(_("artikkel-bilde"), 
+    image = FileBrowseField(_("bilde"), 
         max_length=200, directory=IMAGE_FOLDER, blank=True,
         extensions=IMAGE_EXTENSIONS)
-    video = models.TextField(_("video-id"), max_length=200)
+    video = models.CharField(_("video-id"), max_length=200)
     created_date = models.DateTimeField(_("opprettet-dato"), auto_now_add=True, editable=False)
     changed_date = models.DateTimeField(_("sist endret"), editable=False, auto_now=True)
     published_date = models.DateTimeField(_("publisert"))
