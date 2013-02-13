@@ -1,14 +1,10 @@
 #!/usr/bin/env python
 import os
 import sys
-from bootstrap import Chunks
 
 if __name__ == "__main__":
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "onlineweb4.settings")
 
     from django.core.management import execute_from_command_line
 
-    if(sys.argv[1] == 'bootstrap'):
-        Chunks.bootstrap()
-    else:
-        execute_from_command_line(sys.argv)
+    execute_from_command_line(sys.argv)
