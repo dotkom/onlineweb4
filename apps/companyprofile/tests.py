@@ -1,13 +1,16 @@
 from apps.companyprofile.models import Company
-from nose.tools import assert_equal
 from django_dynamic_fixture import G
+from django.test import TestCase
+
 import logging
 
+class CompanyTests(TestCase):
 
-def testCompanyUnicodeIsCorrect():
+    def setUp(self):
+        self.logger = logging.getLogger(__name__)
+        self.company = G(Company, name="testname") 
 
-    logger = logging.getLogger(__name__)
-    logger.debug("Testing testing on Company with dynamic fixtures")
 
-    company = G(Company, name='lol')
-    assert_equal(company.__unicode__(), "lol")
+    def testCompanyUniqodeIsCorrect(self):
+        self.logger.debug("Company __unicode__() should return correct name")
+        self.assertEqual(self.company.__unicode__(), "testname")    
