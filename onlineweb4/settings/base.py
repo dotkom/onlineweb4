@@ -111,6 +111,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.sites',
     'django.contrib.staticfiles',
+    'django.contrib.markup',
 
     # Onlineweb 4 apps
     'apps.article',
