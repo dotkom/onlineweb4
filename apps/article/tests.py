@@ -1,8 +1,9 @@
-from apps.article.models import Article
+import logging
+
 from django_dynamic_fixture import G
 from django.test import TestCase
 
-import logging
+from apps.article.models import Article
 
 class ArticleTests(TestCase):
     

@@ -1,9 +1,10 @@
-from apps.authentication.models import RegisterToken
+import logging
 from datetime import datetime, timedelta
+
 from django_dynamic_fixture import G
 from django.test import TestCase
-import logging
 
+from apps.authentication.models import RegisterToken
 
 class AuthenticationTest(TestCase):
     def setUp(self):
