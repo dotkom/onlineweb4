@@ -1,8 +1,10 @@
-from apps.events.models import Event, AttendanceEvent, Attendee
+import logging
+
 from django.contrib.auth.models import User
 from django_dynamic_fixture import G
 from django.test import TestCase
-import logging
+
+from apps.events.models import Event, AttendanceEvent, Attendee
 
 class EventTest(TestCase):
 

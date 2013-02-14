@@ -1,10 +1,9 @@
-from apps.article.models import Article
-from apps.article.admin import ArticleAdmin
-from nose.tools import assert_equal
-from nose.tools import assert_not_equal
+import logging
+
 from django_dynamic_fixture import G
 from django.test import TestCase
-import logging
+
+from apps.article.models import Article
 
 class ArticleTests(TestCase):
     

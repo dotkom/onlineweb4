@@ -1,11 +1,12 @@
-from apps.marks.models import Mark, UserEntry
-from apps.marks.models import get_threshhold as duration
+import logging
 from datetime import datetime, timedelta
+
 from django.contrib.auth.models import User
 from django_dynamic_fixture import G
 from django.test import TestCase
-import logging
 
+from apps.marks.models import Mark, UserEntry
+from apps.marks.models import get_threshhold as duration
 
 class MarksTest(TestCase):
 
