@@ -1,13 +1,17 @@
 {% extends "base.html" %}
+{% load fb_versions %}
 
 {% block content %}
+
 <div id="article_wrapper">
-	<img src="{{ STATIC_URL }}{{ article.image_article }}" alt="{{ article.heading }}" width="950" height="200"/>
+	<img src="{% version article.image 'thumbnail' %}{{ article.image }}" alt="{{ article.heading }}"/>
 	<p>Skrevet av: <a href="/user/{{ article.created_by.id }}">{{ article.created_by.get_full_name }}</a> den {{ article.published_date }}{% if article.isChanged %}, sist endret {{ article.changed_date }} av <a href="/user/{{ article.changed_by.id }}">{{ article.changed_by.get_full_name }}</a>{% endif %}</p>
 	<h1>{{ article.heading }}</h1>
 	
 	<p>{{ article.ingress }}</p>
-	
-	{{ article.content }}
+    {% if article.video %}
+    <iframe src="http://player.vimeo.com/video/{{ article.video }}" width="WIDTH" height="HEIGHT" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>	
+	{% endif %}
+    {{ article.content }}
 </div>
 {% endblock content %}

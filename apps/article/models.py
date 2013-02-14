@@ -16,8 +16,8 @@ class Article(models.Model):
     content = models.TextField(_("content"))
     image = FileBrowseField(_("bilde"), 
         max_length=200, directory=IMAGE_FOLDER, blank=True,
-        extensions=IMAGE_EXTENSIONS)
-    video = models.CharField(_("video-id"), max_length=200)
+        extensions=IMAGE_EXTENSIONS, null=True)
+    video = models.CharField(_("video-id"), max_length=200, blank=True)
     created_date = models.DateTimeField(_("opprettet-dato"), auto_now_add=True, editable=False)
     changed_date = models.DateTimeField(_("sist endret"), editable=False, auto_now=True)
     published_date = models.DateTimeField(_("publisert"))
