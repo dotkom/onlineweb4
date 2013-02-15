@@ -10,7 +10,6 @@ function OfflineWidget (Utils){
             'method': 'GET',
             'data': {},
             success: function(data) {
-                console.log(data);
                 var maxCount = 3;
                 var prefix = $("#offlineCarousel").data("prefix");
                 var suffix = '.thumb.png';
@@ -22,18 +21,14 @@ function OfflineWidget (Utils){
                 for (var i = 0; i < data.objects.length; i++) {
                     if(i == 0) {
                         appendMe += itemWrapperStart;
-                        console.log('start');
                     }
 
                     appendMe += '<a href="'+prefix+data.objects[i].issue+'"><img src="'+prefix+data.objects[i].issue+suffix+'" /></a>';
-                    console.log(i);
 
                     if(i == data.objects.length - 1 || (i + 1) % maxCount == 0) {
                         appendMe += itemWrapperEnd;
-                        console.log('end');
                         if(i != data.objects.length - 1) {
                             appendMe += itemWrapperStart;
-                            console.log('start');
                         }
                     }
                 };
