@@ -25,5 +25,8 @@ $(document).ready(function()
         e.preventDefault();
         eventWidget.filter(0);
     });
+
+    offlineWidget = new OfflineWidget(Utils);
+    offlineWidget.render();
 });
 
