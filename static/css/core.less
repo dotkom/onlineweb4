@@ -75,8 +75,12 @@ section {
     margin-bottom:20px;
 }
 
-section#messages {
-    margin-top:20px;
+.messages {
+    padding:0;
+}
+
+.alert { 
+    margin-top:10px; 
 }
 
 .grayed {
@@ -249,15 +253,30 @@ text-align:left;
 
 }
 
-.navbar .nav li a {
-    font-weight:400;
-    font:"Helvetica Neue"; 
-    float: none;
-    font-size:13px;
+.top-menu-positioning {
     display: inline-block;
     vertical-align: middle;
     padding: 20px 15px 18px 15px;
+    float: none;
+}
+
+.top-menu-font {
+    font-weight:400;
+    font-size:13px;
     color:#FFF;
+}
+
+.navbar .nav  li.top-menu-link a {
+    .top-menu-positioning;
+    .top-menu-font;
+}
+
+.navbar .nav li.top-menu-img a {
+    .top-menu-positioning;
+}
+
+.navbar .nav li a.login {
+    .top-menu-font;
 }
 .navbar .nav.menu-elements li a {
     padding-top: 15px;
@@ -298,6 +317,11 @@ text-align:left;
 }
 .login-box {
     padding: 15px;
+}
+
+.dropdown-form li > form > .login-extra > a {
+    padding:20px 0 0 0;
+    display:block;
 }
 
 #feedback{
