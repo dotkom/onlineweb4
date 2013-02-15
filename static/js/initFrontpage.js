@@ -2,7 +2,7 @@
 $(function()
 {
     var utils = new Utils();
-    eventWidget = new EventWidget(utils);
+    var eventWidget = new EventWidget(utils);
 
     eventWidget.render();
 
