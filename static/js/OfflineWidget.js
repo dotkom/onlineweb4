@@ -31,7 +31,7 @@ function OfflineWidget (Utils){
                             appendMe += itemWrapperStart;
                         }
                     }
-                };
+                }
 
                 $("#offlineCarousel .carousel-inner").append(appendMe);
                 // Set active div.item
