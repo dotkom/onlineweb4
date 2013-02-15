@@ -1,10 +1,17 @@
 {% extends "base.html" %}
+{% load crispy_forms_tags %}
 
 {% block content %}
-    <form method="post" action={% url auth_register %}>{% csrf_token %}
-        <table>
-            {{ form.as_table }}
-        </table>
-        <input type="submit" value="Register" />
+<div class="container-fluid">
+    <div class="page-header">
+        <h2>Registrer bruker</h2>
+    </div>
+    <form method="post" action={% url auth_register %}>
+        {% csrf_token %}
+            {{ form|crispy }}
+        <div class="form-actions">
+            <input type="submit" value="Registrer" />
+        </div>
     </form>
+</div>
 {% endblock content %}
