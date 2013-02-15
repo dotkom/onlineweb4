@@ -7,6 +7,7 @@ from django.db.models.signals import post_save
 from django.utils.translation import ugettext_lazy as _
 from filebrowser.fields import FileBrowseField
 from onlineweb4.settings.local import MEDIA_ROOT
+from chunks.models import Chunk
 
 THUMBNAIL_HEIGHT = 200  # Ønsket høyde på thumbnail
 
@@ -16,6 +17,11 @@ class Offline(models.Model):
     def issues(self):
         return Issue.objects.all()
 
+class ProxyChunk(Chunk):
+    class Meta:
+        proxy = True
+        verbose_name = 'Offline'
+        verbose_name_plural = 'Offline'
 
 class Issue(models.Model):
     IMAGE_FOLDER = "images/offline"
