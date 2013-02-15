@@ -102,6 +102,7 @@ INSTALLED_APPS = (
     'filebrowser',
     'chunks',
     'crispy_forms',
+    'django_extensions',
 
     # Django apps
     'django.contrib.admin',
