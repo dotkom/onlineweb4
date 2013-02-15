@@ -1,6 +1,6 @@
 {% load chunks %}
 {% load markup %}
-
+<script type="text/javascript" src="{{ STATIC_URL }}js/OfflineWidget.js"></script>
 <section id="offline">
     <div class="container-fluid">
         <div class="row-fluid">
@@ -22,31 +22,9 @@
 {% endfilter %}
             </div>
             <div class="span6">
-                <div id="offlineCarousel" class="carousel slide">
+                <div id="offlineCarousel" class="carousel slide" data-prefix="{{ MEDIA_URL }}">
                     <!-- Carousel items -->
                     <div class="carousel-inner">
-                        <div class="active item centered">
-                            <a class="">
-                                <img src="{{ STATIC_URL}}js/holder.js/156x200" alt="" />
-                            </a>
-                            <a class="">
-                                <img src="{{ STATIC_URL}}js/holder.js/156x200" alt="" />
-                            </a>
-                            <a class="">
-                                <img src="{{ STATIC_URL}}js/holder.js/156x200" alt="" />
-                            </a>
-                        </div>
-                        <div class="item centered">
-                            <a class="">
-                                <img src="{{ STATIC_URL}}js/holder.js/156x200" alt="" />
-                            </a>
-                            <a class="">
-                                <img src="{{ STATIC_URL}}js/holder.js/156x200" alt="" />
-                            </a>
-                            <a class="">
-                                <img src="{{ STATIC_URL}}js/holder.js/156x200" alt="" />
-                            </a>
-                        </div>
                     </div>
                   <!-- Carousel nav -->
                   <a class="carousel-control left" href="#offlineCarousel" data-slide="prev">&lsaquo;</a>
