@@ -12,11 +12,16 @@
     </div>
     <div class="row-fluid">
         <div class="span9"> 
-            <img src="holder.js/156x200"/>
-            <img src="holder.js/156x200"/>
-            <img src="holder.js/156x200"/>
-            <img src="holder.js/156x200"/>
+<!--            <img src="holder.js/156x200"/> --!>
              <p>{% chunk 'offline_ingress' %}</p>
+             {% for issue in issues %}
+                <div class="span3">
+                    <a href="{{ issue.issue }}">{{ issue.title|capfirst }}</a>
+                    <a href="{{ issue.issue }}"><img alt="{{ issue.title }}: {{ issue.description }}" src="{{ issue.issue }}.thumb.png"/></a>
+                    <a href="{{ issue.issue }}"><img alt="{{ issue.title }}: {{ issue.description }}" src="{{ issue.title }}: {{ issue.description }}" src="{{ issue.issue }}.thumbnail.png"/></a>
+                    <a href="{{ issue.issue }}"><span>{{ issue.release_date_to_string|capfirst }} {{ issue.release_date.year }}</span></a>
+                </div>
+            {% endfor %}
         </div>
         <div class="span3">
             <div class="well">
