@@ -7,7 +7,14 @@ $(function()
 
     eventWidget.render();
     offlineWidget.render();
+    
+    // Enable tabbing in about section
+    $('#about-tabs a').click(function (e) {
+        e.preventDefault();
+        $(this).tab('show');
+    });
 
+    // Hook up filter buttons in event section
     $('#filter-arrkom').on('click', function (e) {
         e.preventDefault();
         eventWidget.filter(1);
