@@ -48,7 +48,7 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # prints
 MEDIA_ROOT = os.path.join(PROJECT_ROOT_DIRECTORY, "uploaded_media/")
 
 #MEDIA_URL = '//media.online.ntnu.no/'
-MEDIA_URL = 'uploaded_media/'
+MEDIA_URL = '/media/'
 
 
 #MEDIA_ROOT = '/var/websites/prod/static'
