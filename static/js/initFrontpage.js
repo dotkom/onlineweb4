@@ -3,8 +3,10 @@ $(function()
 {
     var utils = new Utils();
     var eventWidget = new EventWidget(utils);
+    var offlineWidget = new OfflineWidget(utils)
 
     eventWidget.render();
+    offlineWidget.render();
 
     $('#filter-arrkom').on('click', function (e) {
         e.preventDefault();
