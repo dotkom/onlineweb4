@@ -5,8 +5,9 @@ from django.test import TestCase
 
 from apps.article.models import Article
 
+
 class ArticleTests(TestCase):
-    
+
     def setUp(self):
         self.logger = logging.getLogger(__name__)
         self.article = G(Article, heading="test_heading")
