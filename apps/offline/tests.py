@@ -12,4 +12,6 @@ class OfflineTest(TestCase):
 
     def testThumbnailExists(self):
         self.assertTrue(self.issue.thumbnail_exists)
+
+    def tearDown(self):
         remove(self.issue.thumbnail)
