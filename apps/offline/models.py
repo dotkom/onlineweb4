@@ -11,17 +11,20 @@ from chunks.models import Chunk
 
 THUMBNAIL_HEIGHT = 200  # Ønsket høyde på thumbnail
 
+
 class Offline(models.Model):
 
     @property
     def issues(self):
         return Issue.objects.all()
 
+
 class ProxyChunk(Chunk):
     class Meta:
         proxy = True
         verbose_name = 'Offline'
         verbose_name_plural = 'Offline'
+
 
 class Issue(models.Model):
     IMAGE_FOLDER = "images/offline"
@@ -89,7 +92,7 @@ def create_thumbnail(sender, instance=None, **kwargs):
         # }
 
         try:
-            check_call(["convert", "-resize", "x"+str(THUMBNAIL_HEIGHT), t.url+"[0]", t.thumbnail])
+            check_call(["convert", "-resize", "x" + str(THUMBNAIL_HEIGHT), t.url + "[0]", t.thumbnail])
         except (OSError, CalledProcessError) as e:
             print("ERROR: {0}".format(e))
 
