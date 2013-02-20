@@ -1,5 +1,6 @@
 from django.contrib import admin
 from apps.article.models import Article, Tag, ArticleTag
+from django.conf import settings
 
 class ArticleTagAdmin(admin.ModelAdmin):
     model = ArticleTag
@@ -17,6 +18,10 @@ class TagAdmin(admin.ModelAdmin):
         obj.save()
 
 class ArticleAdmin(admin.ModelAdmin):
+    # Defining sizes for crop used by filebrowser
+    #ADMIN_VERSIONS = getattr(settings, 'FILEBROWSER_ADMIN_VERSIONS', ['article_main', 'article_front_featured', 'article_front_small'])
+    #ADMIN_THUMBNAIL = getattr(settings, 'FILEBROWSER_ADMIN_THUMBNAIL', 'admin_thumbnail')
+    
     inlines = (ArticleTagInline,)
     list_display = ("heading", "created_by", "changed_by")
 
