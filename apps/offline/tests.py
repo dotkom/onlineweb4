@@ -4,6 +4,7 @@ from django_dynamic_fixture import G
 from django.test import TestCase
 from apps.offline.models import IMAGE_FOLDER, Issue
 
+
 class OfflineTest(TestCase):
 
     def setUp(self):

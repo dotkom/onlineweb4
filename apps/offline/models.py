@@ -86,7 +86,7 @@ def create_thumbnail(sender, instance=None, **kwargs):
         # }
 
         try:
-            check_call(["convert", "-resize", "x"+str(THUMBNAIL_HEIGHT), t.url+"[0]", t.thumbnail])
+            check_call(["convert", "-resize", "x" + str(THUMBNAIL_HEIGHT), t.url + "[0]", t.thumbnail])
         except (OSError, CalledProcessError) as e:
             logger.debug("ERROR: {0}".format(e))
 
