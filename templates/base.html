@@ -17,6 +17,7 @@
         <script src="{{ STATIC_URL }}js/libs/jquery-1.8.2.min.js"></script>
         <script src="{{ STATIC_URL }}js/libs/bootstrap.min.js"></script>
         <script src="{{ STATIC_URL }}js/libs/bootstrap-dropdown.js"></script>
+        <script src="{{ STATIC_URL }}js/libs/bootstrap-collapse.js"></script>
         <script src="{{ STATIC_URL }}js/libs/moment.js"></script>
 
         <script src="{{ STATIC_URL }}js/holder.js"></script>
@@ -93,16 +94,14 @@
                                     <fieldset class="textbox">
                                         <label for="id_username">Brukernavn</label>
                                         <input type="text" name="username" id="id_username">
-                                        <label for="id_password">Passord</span>
+                                        <label for="id_password">Passord</label>
                                         <input type="password" name="password" id="id_password">
                                     </fieldset>
                                     <input type="hidden" name="next" value="{{ request.get_full_path }}" />
                                         <button type="submit" class="btn">Logg inn</button>
-                                        <div class="login-extra">
-                                            <a href="{% url auth_register %}">Registrer</a>
-                                            <a href="{% url auth_recover %}">Glemt passord</a>
-                                        </div>
                                 </form>
+                                <button class="btn btn-auth" data-url="{% url auth_register %}">Registrer</button>
+                                <button class="btn btn-auth" data-url="{% url auth_recover %}">Glemt passord</button>
                                 </li>
                             </ul>
                         {% endif %}
