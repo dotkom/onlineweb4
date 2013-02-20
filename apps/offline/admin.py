@@ -3,6 +3,7 @@ from chunks.models import Chunk
 from django.contrib import admin
 from django.db.models import Q
 
+
 class ProxyChunkAdmin(admin.ModelAdmin):
 
     readonly_fields = ['key']
