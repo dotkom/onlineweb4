@@ -1,16 +1,18 @@
-"""
-This file demonstrates writing tests using the unittest module. These will pass
-when you run "manage.py test".
-
-Replace this with more appropriate tests for your application.
-"""
-
+import logging
+from os import remove
+from django_dynamic_fixture import G
 from django.test import TestCase
+from apps.offline.models import IMAGE_FOLDER, Issue
 
 
-class SimpleTest(TestCase):
-    def test_basic_addition(self):
-        """
-        Tests that 1 + 1 always equals 2.
-        """
-        self.assertEqual(1 + 1, 2)
+class OfflineTest(TestCase):
+
+    def setUp(self):
+        self.logger = logging.getLogger(__name__)
+        self.issue = G(Issue, issue=IMAGE_FOLDER + '/offline-test-pdf.pdf')
+
+    def testThumbnailExists(self):
+        self.assertTrue(self.issue.thumbnail_exists)
+
+    def tearDown(self):
+        remove(self.issue.thumbnail)
