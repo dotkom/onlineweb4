@@ -26,6 +26,28 @@ class Event(models.Model):
     location = models.CharField(_('lokasjon'), max_length=100)
     description = models.TextField(_('beskrivelse'))
     event_type = models.SmallIntegerField(_('type'), choices=TYPE_CHOICES, null=False)
+    
+    @property
+    def number_of_attendees_on_waiting_list(self):
+        """
+        Sjekker antall på venteliste
+        """
+        waiting = self.attendance_event.attendees.count() - self.attendance_event.max_capacity
+        if waiting:
+            return waiting
+
+        return 0
+
+    @property
+    def number_of_attendees_on_event_not_waiting(self):
+        """
+        Sjekker hvor mange attendees som har meldt seg på innen max_grensa
+        """
+        not_waiting = self.attendance_event.attendees.count()
+        if not_waiting < self.attendance_event.max_capacity:
+            return not_waiting
+
+        return self.attendance_event.max_capacity
 
     def __unicode__(self):
         return self.title
