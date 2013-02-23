@@ -4,7 +4,7 @@
 @sidebar-heading:#b3b2b2;
 @sidebar-bg:#f0f8fd;
 @event-padding:20px;
-@nav-height:57px;
+@nav-height: auto;
 @media-desktop-min: 1240px;
 
 
@@ -42,7 +42,6 @@ body {
 @media all and (max-width: @media-desktop-min) {
     .container-fluid {
         margin: 0px 20px;
-        width:100%;
         /*background: green;*/
     }
 }
@@ -175,6 +174,7 @@ padding:80px 20px 20px 20px;
 
 }
 
+
 /* Business
 -------------------------------------------------- */
 .business-ingress {
@@ -302,6 +302,19 @@ text-align:left;
     color: #FFF;
 }
 
+div.nav-collapse.in.collapse {
+    margin-top: 52px;
+    background-color: #FAFAFA;
+}
+
+div.nav-collapse.in.collapse ul.nav.menu-elements li.top-menu-link a {
+    color: black;
+    width: 100%;
+}
+
+div.nav-collapse.in.collapse ul.nav.pull-right li.dropdown a.login-btn.dropdown-toggle.dropdown-signin.login {
+    color: black;
+}
 
 
 /* Login button
