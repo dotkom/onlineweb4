@@ -28,6 +28,9 @@ class Article(models.Model):
 
     def __unicode__(self):
         return self.heading
+    
+    def get_matchname(self):
+        return re.findall(r"[0-9]+", self.video.lower())
 
     class Meta:
         verbose_name = _("artikkel")

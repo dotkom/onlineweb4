@@ -28,5 +28,7 @@ def details(request, article_id):
 		article.isChanged = True
 	else:
 		article.isChanged = False
-		
-	return render_to_response('article/details.html', {'article': article}, context_instance=RequestContext(request))
+	
+        latestNews = Article.objects.exclude(id = article.id).order_by('published_date')[:2]
+
+	return render_to_response('article/details.html', {'article': article, 'latest': latestNews}, context_instance=RequestContext(request))
