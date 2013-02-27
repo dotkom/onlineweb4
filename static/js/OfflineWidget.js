@@ -10,10 +10,16 @@ function OfflineWidget (Utils){
             'method': 'GET',
             'data': {},
             success: function(data) {
-                var maxCount = Math.floor($("#offlineCarousel").width() / 156);
+                // Get the amount of images that would fit inside the widget.
+                var imgWidth = 156;
+                var imgCount = Math.floor($("#offlineCarousel").width() / imgWidth);
+                // Now account for margin.
+                // See #offlineCarousel .item a:not(:first-child) margin-left
+                var imgMargin = 10*(imgCount-1);
+                imgCount = Math.floor(($("#offlineCarousel").width() / (imgWidth+imgMargin)));
+
                 var prefix = $("#offlineCarousel").data("prefix");
                 var suffix = '.thumb.png';
-
                 var itemWrapperStart = '<div class="item centered">';
                 var itemWrapperEnd = '</div>';
                 var insertMe = '';
@@ -24,7 +30,7 @@ function OfflineWidget (Utils){
                     }
                     insertMe += '<a href="'+prefix+data.objects[i].issue+'"><img src="'+prefix+data.objects[i].issue+suffix+'" /></a>';
 
-                    if(i == data.objects.length - 1 || (i + 1) % maxCount == 0) {
+                    if(i == data.objects.length - 1 || (i + 1) % imgCount == 0) {
                         insertMe += itemWrapperEnd;
                         if(i != data.objects.length - 1) {
                             insertMe += itemWrapperStart;
