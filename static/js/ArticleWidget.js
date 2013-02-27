@@ -42,13 +42,13 @@ function ArticleWidget (Utils){
             item.image = resizeArticleImg(item.image,'article_front_featured');
         
             // Appender
-            list.append('<div class="span6"><a href="/articles/'+ item.id +'"><img width="584" height="275" src="/uploaded_media/'+ item.image +'" alt="'+ item.heading +'" /></a><h3>'+ item.heading +'</h3><p>'+ item.ingress +'s</p></div>');
+            list.append('<div class="span6"><a href="/articles/'+ item.id +'/'+ item.slug +'"><img width="584" height="275" src="/uploaded_media/'+ item.image +'" alt="'+ item.heading +'" /></a><h3>'+ item.heading +'</h3><p>'+ item.ingress +'s</p></div>');
         }
         else {
             // Fikser lite bilde
             item.image = resizeArticleImg(item.image,'article_front_small');
             // Appender
-            list.append('<div class="span2"><a href="/articles/'+ item.id +'"><img width="174" height="100" src="/uploaded_media/'+ item.image +'" alt="" /></a><h4>'+ item.heading +'</h4></div>');
+            list.append('<div class="span2"><a href="/articles/'+ item.id +'/'+ item.slug +'"><img width="174" height="100" src="/uploaded_media/'+ item.image +'" alt="" /></a><h4>'+ item.heading +'</h4></div>');
         }
     }   
 

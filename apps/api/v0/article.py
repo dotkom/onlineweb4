@@ -2,6 +2,7 @@
 from copy import copy
 
 from django.contrib.auth.models import User
+from django.template.defaultfilters import slugify
 
 from tastypie import fields
 from tastypie.resources import ModelResource
@@ -30,7 +31,10 @@ class ArticleLatestResource(ModelResource):
         max_limit = 25
     def alter_list_data_to_serialize(self, request, data):
         # Renames list data 'object' to 'articles'.
-        if isinstance(data, dict):
+        if isinstance(data, dict): 
             data['articles'] = copy(data['objects'])
             del(data['objects'])
         return data
+    def dehydrate(self, bundle):
+        bundle.data['slug'] = slugify(bundle.data['heading'])
+        return bundle
