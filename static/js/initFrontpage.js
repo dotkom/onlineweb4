@@ -5,8 +5,14 @@ $(function()
     var eventWidget = new EventWidget(utils);
     var offlineWidget = new OfflineWidget(utils)
 
+    // Render on load
     eventWidget.render();
     offlineWidget.render();
+
+    // Render on resize
+    $(window).resize(function() {
+        offlineWidget.render();
+    });
     
     // Enable tabbing in about section
     $('#about-tabs a').click(function (e) {
