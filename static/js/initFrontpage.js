@@ -7,11 +7,11 @@ $(function()
 
     // Render on load
     eventWidget.render();
-    offlineWidget.render();
+    offlineWidget.render(156, 10);
 
     // Render on resize
     $(window).resize(function() {
-        offlineWidget.render();
+        offlineWidget.render(156, 10);
     });
     
     // Enable tabbing in about section

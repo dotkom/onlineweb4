@@ -3,7 +3,7 @@ function OfflineWidget (Utils){
     var that = $(this);
     
     /* Render the widget */
-    OfflineWidget.prototype.render = function() {
+    OfflineWidget.prototype.render = function(imageWidth, imageMargin) {
 
         Utils.makeApiRequest({
             'url': '/api/v0/offline/issues/?format=json',
@@ -11,12 +11,11 @@ function OfflineWidget (Utils){
             'data': {},
             success: function(data) {
                 // Get the amount of images that would fit inside the widget.
-                var imgWidth = 156;
-                var imgCount = Math.floor($("#offlineCarousel").width() / imgWidth);
+                var imageCount = Math.floor($("#offlineCarousel").width() / imageWidth);
                 // Now account for margin.
                 // See #offlineCarousel .item a:not(:first-child) margin-left
-                var imgMargin = 10*(imgCount-1);
-                imgCount = Math.floor(($("#offlineCarousel").width() / (imgWidth+imgMargin)));
+                imageMargin = imageMargin*(imageCount-1);
+                imageCount = Math.floor(($("#offlineCarousel").width() / (imageWidth+imageMargin)));
 
                 var prefix = $("#offlineCarousel").data("prefix");
                 var suffix = '.thumb.png';
@@ -30,7 +29,7 @@ function OfflineWidget (Utils){
                     }
                     insertMe += '<a href="'+prefix+data.objects[i].issue+'"><img src="'+prefix+data.objects[i].issue+suffix+'" /></a>';
 
-                    if(i == data.objects.length - 1 || (i + 1) % imgCount == 0) {
+                    if(i == data.objects.length - 1 || (i + 1) % imageCount == 0) {
                         insertMe += itemWrapperEnd;
                         if(i != data.objects.length - 1) {
                             insertMe += itemWrapperStart;
