@@ -7,7 +7,7 @@ $(function()
 
     eventWidget.render();
     offlineWidget.render();
-    
+
     // Enable tabbing in about section
     $('#about-tabs a').click(function (e) {
         e.preventDefault();
