@@ -4,8 +4,7 @@ function ArticleWidget (Utils){
     
     /* Render the widget */
     ArticleWidget.prototype.render = function() {
-        var now = moment();
-
+        // Laster featured
         Utils.makeApiRequest({
             'url':'/api/v0/article/latest?featured=True&limit=2&format=json',
             'method' : 'GET',
@@ -18,32 +17,49 @@ function ArticleWidget (Utils){
                 }
             }
         });
+
+        // Laster non-featured
+        Utils.makeApiRequest({
+            'url':'/api/v0/article/latest?featured=False&limit=6&format=json',
+            'method' : 'GET',
+            'data': {},
+            success: function(data) {
+                if(data.articles.length > 0) {
+                    $.each(data.articles, function(index, item) {
+                        renderArticleList($('#articles_normal'), item);
+                    });
+                }
+            }
+        });
     }
 
     /* Private function to append items to a list
      * @param jQuery-object
      */
     function renderArticleList(list, item) {
-        // Fikser stort bilde
-        img = item.image.split('.');
-        //if (img.length > 1) {
-        //    img[img.length-2] = img[img.length-2]+"_article_front_featured"
-        //    item.image = img.join('.');
-        //}
-        list.append('<div class="span6"><a class="" href="#"><img src="/uploaded_media/'+ item.image +'" alt="" /></a><h3>'+ item.heading +'</h3><p>'+ item.ingress +'s</p></div>');
-    }
+        if (list.attr('id') == 'articles_featured') {
+            // Fikser stort bilde
+            item.image = resizeArticleImg(item.image,'article_front_featured');
+        
+            // Appender
+            list.append('<div class="span6"><a href="/articles/'+ item.id +'"><img width="584" height="275" src="/uploaded_media/'+ item.image +'" alt="'+ item.heading +'" /></a><h3>'+ item.heading +'</h3><p>'+ item.ingress +'s</p></div>');
+        }
+        else {
+            // Fikser lite bilde
+            item.image = resizeArticleImg(item.image,'article_front_small');
+            // Appender
+            list.append('<div class="span2"><a href="/articles/'+ item.id +'"><img width="174" height="100" src="/uploaded_media/'+ item.image +'" alt="" /></a><h4>'+ item.heading +'</h4></div>');
+        }
+    }   
 
-    ArticleWidget.prototype.filter = function(flag) {
-        // Check if reset or filter
-        if(flag == 0) {
-            $('.event-item').show();
-        }else{
-            $.when($('.event-item').show()).then(function() {
-                $.each($('.event-item'), function(index, item) { 
-                    if(!$(item).hasClass('bullet-'+ flag))
-                        $(item).hide();
-                });        
-            }); 
+    function resizeArticleImg(url,version) {
+        img = url.split('.');
+        if (img.length > 1) {
+            img[img.length-2] = img[img.length-2]+"_"+version
+            return img.join('.');
+        }
+        else {
+            return url;
         }
     }
 }
