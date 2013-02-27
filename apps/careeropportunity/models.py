@@ -11,6 +11,7 @@ class CareerOpportunity(models.Model):
 
     company = models.ForeignKey(Company, related_name='company')
     title = models.CharField(_('tittel'), max_length=100)
+    ingress = models.CharField(_('ingress'), max_length=250)
     description = models.TextField(_('beskrivelse'))
 
     def __unicode__(self):
