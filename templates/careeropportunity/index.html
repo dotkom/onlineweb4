@@ -12,22 +12,24 @@
             </div>
             <div class="row-fluid">
             {% for opportunity in opportunities %}
-                <div class="span5">
+                <div class="span3">
                     <div class="row-fluid">
-                        <div class="span5">
+                        <div class="span12">
                             <a href="{{opportunity.id}}">
-                                <img src="http://i.imgur.com/LdRiQ4A.gif"/>
+                                <img src=""/>
                             </a>
                         </div>
                     </div>
 
                     <div class="row-fluid">
-                        <div class="span5">
+                        <div class="span12">
                             <h4><a href="{{opportunity.id}}">{{opportunity.title}}</a></h4>
                         </div>
                     </div>
-                    <div class="span5">
-                        <p>{{opportunity.description}}</p>
+                    <div class="row-fluid">
+                        <div class="span12">
+                            <p>{{opportunity.description}}</p>
+                        </div>
                     </div>
                 </div>
             {% endfor %}
