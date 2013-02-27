@@ -1,23 +1,40 @@
+{% extends "base.html" %}
 {% load markup %}
+{% block content %}
+    
+    <section id="careeropportunity">
+        <div class="container-fluid">
+            <div class="row-fluid">
+                <div class="span12">
+                    <div class="page-header">
+                        <h2 id="careeropportunity-heading">{{opportunity.title}}</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="container-fluid">
+                <div class="span8">
+                    <div class="row-fluid" id="opportunity-description">
+                        <div class="span10">
+                            <p>{{opportunity.description}}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="span4">
+                    <div class="row-fluid" id="opportunity-company">
+                        <div id="company-name">
+                            <h3>{{opportunity.company.name}}</h3>
+                        </div>
+                        <div id="company-image">
+                            <img src="http://i.imgur.com/LdRiQ4A.gif" />
+                        </div>
+                        <hr />
+                        <div id="company-description">
+                            <p>{{opportunity.company.long_description}}
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-<h1>Event</h1>
-<table>
-    <tr><td class="event-header-description">Oppretter</td><td class="event-header-value">{{ event.author }}</td><tr>
-    <tr><td class="event-header-description">Tittel</td><td class="event-header-value">{{ event.title }}</td><tr>
-    <tr><td class="event-header-description">Fra</td><td class="event-header-value">{{ event.event_start }}</td><tr>
-    <tr><td class="event-header-description">Til</td><td class="event-header-value">{{ event.event_end }}</td><tr>
-    <tr><td class="event-header-description">Sted</td><td class="event-header-value">{{ event.location }}</td></tr>
-    {% if attendance_event %}
-        <tr><td class="event-header-description">Antall påmeldte</td><td class="event-header-value">{{ attendance_event.count_attendees }} / {{ attendance_event.max_capacity }}</td></td>
-        <tr><td class="event-header-description">Registreringsfrist</td><td class="event-header-value">{{ attendance_event.registration_start }}</td></tr>
-        <tr><td class="event-header-description">Avmeldingsfrist</td><td class="event-header-value">{{ attendance_event.registration_end }}</td></tr>
-    {% endif %}
-</table>
-
-{# TODO: Add company-profile #}
-
-<div id="event-description">
-    {{ event.description|striptags|markdown }}
-</div>
-
-{# TODO: Add registration form #}
+        </div>
+    </section>
+{%endblock content %}
