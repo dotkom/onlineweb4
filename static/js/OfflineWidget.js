@@ -41,6 +41,7 @@ function OfflineWidget (Utils){
                 // Set active div.item
                 $("#offlineCarousel .carousel-inner div.item:first").addClass("active");
 
+                $("#offlineCarousel").carousel('pause');
             }
         });
 
