@@ -120,6 +120,7 @@ INSTALLED_APPS = (
     'apps.article',
     'apps.authentication',
     'apps.autoconfig',
+    'apps.careeropportunity',
     'apps.companyprofile',
     'apps.events',
     'apps.marks',
