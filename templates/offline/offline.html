@@ -2,35 +2,8 @@
 {% load chunks %}
 {% block content %}
 <link href="{{ STATIC_URL }}/css/offline.css" rel="stylesheet" type="text/css">
-<script type="text/javascript">
+<script src="{{ STATIC_URL }}/js/offline-filter.js"></script>
 
-    $(function() {
-        $('.filter-year').on('click', function(e) {
-            e.preventDefault();
-            $("#filter-menu .active").removeClass("active")
-            $(this).parent().addClass("active")
-            filter($(this).html());
-            
-            });
-        });
-
-    function filter(year) {
-        year = parseInt(year)
-       $.each($('.offline_issue'), function(index, item) {
-           if(year != parseInt($(this).data('year'))) {
-               $(this).fadeOut(400, function(){
-               $(this).parent().css("display","none");
-               });
-           }
-           else {
-               $(this).fadeIn(400, function(){
-               $(this).parent().css("display","inline");
-               });
-           }
-         });
-    }
-
-</script>
 <div class="container-fluid">
     <div class="row-fluid"> 
         <div class="span12">
@@ -46,7 +19,7 @@
              </div>
              {% for issue in issues %}
                 <div class="span3">
-                <div class="offline_issue" data-year="{{ issue.release_date.year }}">
+                <div id="offline_{{ issue.id }}" class="offline_issue" data-year="{{ issue.release_date.year }}">
                     <a href="{{ MEDIA_URL }}{{ issue.issue }}">{{ issue.title|capfirst }}</a>
                     <a href="{{ MEDIA_URL }}{{ issue.issue }}"><img alt="{{ issue.title }}: {{ issue.description }}" src="{{ MEDIA_URL }}{{ issue.issue }}.thumb.png"/></a>
                     <a href="{{ MEDIA_URL }}{{ issue.issue }}"><span>{{ issue.release_date_to_string|capfirst }} {{ issue.release_date.year }}</span></a>
@@ -56,9 +29,10 @@
         </div>
         <div class="span3">
             <ul id="filter-menu" class="nav nav-list">
-                <li class="nav-header">År</li>
-                <li><a class="filter-year" href="#2013">2013</a></li>
-                <li><a class="filter-year" href="#2012">2012</a></li>
+                <li class="nav-header">År<button id="filter-reset" class="close pull-right">&times;</button></li>
+                {% for year in years %} 
+                    <li><a class="filter-year" href="#{{ year }}">{{year}}</a></li>
+                {% endfor %}
             </ul>
         </div>
     </div>
