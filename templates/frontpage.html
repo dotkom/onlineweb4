@@ -2,6 +2,7 @@
 
 {% block content %}
 <script type="text/javascript" src="{{ STATIC_URL }}js/EventWidget.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/ArticleWidget.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/Utils.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/init.js"></script>
 <section id="events">
@@ -54,25 +55,7 @@
                     </div>
                 </div>
             </div>
-            <div class="row-fluid">
-                <div class="span6">
-                    <a class="" href="#">
-                        <img src="{{ STATIC_URL}}js/holder.js/584x275" alt="">
-                    </a>
-                    <h3>Hovedstyret er ganske kule</h3>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
-                    Pellentesque hendrerit enim id arcu placerat vitae volutpat libero commodo. Sed ullamcorper molestie nibh quis sagittis. 
-                    Praesent ut varius mauris. Nunc risus nibh, porttitor id porta at, mollis id neque. Sed interdum vehicula porttitor.</p>
-                </div>
-                <div class="span6">
-                    <a class="">
-                        <img src="{{ STATIC_URL}}js/holder.js/584x275" alt="">
-                    </a>
-                    <h3>Archlinux er for prostituerte</h3>
-                    <p>Dette mener Dag Olav Prestegarden consectetur adipiscing elit. 
-                    Pellentesque hendrerit enim id arcu placerat vitae volutpat libero commodo. Sed ullamcorper molestie nibh quis sagittis. 
-                    Praesent ut varius mauris. Nunc risus nibh, porttitor id porta at, mollis id neque.</p>
-                </div>
+            <div class="row-fluid" id="articles_featured">
             </div>
             <div class="row-fluid">
                     <div class="span2">
