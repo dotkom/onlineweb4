@@ -18,10 +18,6 @@ $(document).ready(function() {
             event.preventDefault();
             var topPosition = jQuery(to).offset().top - 50; // See body margin
             jQuery('html, body').animate({scrollTop:topPosition}, 250);
-
-            // Set classes
-            $(".top-menu-link a").removeClass('active');
-            $("a[href='"+from+"']").addClass("active");
         });
     }
 
