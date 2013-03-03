@@ -175,6 +175,25 @@ section#events {
         background:@bedkom-color;
         color:@bedkom-color;
     }
+    
+    /* Gets overridden belowi if needed */
+    [class*='event-type-'] {
+        .event-arrkom;
+    }
+
+    .event-type-1 {
+        .event-arrkom;
+    }
+
+    .event-type-2 {
+        .event-bedkom;
+    }
+
+    .event-type-3 {
+        .event-fagkom;
+    }
+
+    
 
     .event-calendar-date {
         display:block;
@@ -185,7 +204,8 @@ section#events {
     .event-calendar-month {
         color:#FFF;
         font-size:13px;
-        font-weight:300;
+        font-weight:400;
+        text-transform:uppercase;
     }
 }
 

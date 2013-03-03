@@ -53,14 +53,14 @@ function EventWidget (Utils){
      */
     function createEventItem(item) {
         html = '<div class="span6">';
-        html +=     '<div class="span1 event-bedkom">';
+        html +=     '<div class="span1 event-type-' + item.event_type + '">';
         html +=         '<div class="row-fluid"><span class="event-calendar-date">' + moment(item.event_start).format('DD') + '</span></div>';
         html +=         '<div class="row-fluid"><span class="event-calendar-month">' + moment(item.event_start).format('MMM') + '</span></div>';
         html +=     '</div>';
         html +=     '<div class="span3"><img src="/static/js/holder.js/120x65" alt="" /></div>';
         html +=     '<div class="span8">';
         html +=         '<div class="event-title">' + item.title + '</div>';
-        html +=         '<div class="event-ingress">' + 'INSERT INGRESS HERE' + '</div>';
+        html +=         '<div class="event-ingress">' + item.ingress + '</div>';
         html += '   </div>';
         html += '</div>';
 
