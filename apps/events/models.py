@@ -24,6 +24,7 @@ class Event(models.Model):
     event_start = models.DateTimeField(_('start-dato'))
     event_end = models.DateTimeField(_('slutt-dato'))
     location = models.CharField(_('lokasjon'), max_length=100)
+    ingress = models.TextField(_('ingress'))
     description = models.TextField(_('beskrivelse'))
     event_type = models.SmallIntegerField(_('type'), choices=TYPE_CHOICES, null=False)
 
