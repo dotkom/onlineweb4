@@ -2,43 +2,51 @@
 {% load markup %}
 {% block content %}
     
-    <section id="careeropportunity">
-        <div class="container-fluid">
-            <div class="row-fluid">
-                <div class="span12">
-                    <div class="page-header">
-                        <h2 id="careeropportunity-heading">{{opportunity.title}}</h2>
-                    </div>
+<section id="careeropportunity">
+    <div class="container-fluid">
+        <div class="row-fluid">
+            <div class="span12">
+                <div class="page-header">
+                    <h2 id="careeropportunity-heading">{{opportunity.title}}</h2>
                 </div>
             </div>
-            <div class="container-fluid">
-                <div class="span8">
-                    <div class="row-fluid" id="opportunity-description">
-                        <div class="span10 ingress">
-                            <p>{{opportunity.description}}</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="span4">
-                    <div class="row-fluid" id="opportunity-company">
-                        <a href="{{opportunity.company.site}}" target="_blank">
-                            <div id="company-name">
-                                <h3>{{opportunity.company.name}}</h3>
-                            </div>
-                            <div id="company-image">
-                                <img src="" />
-                            </div>
-                        </a>
-                        <hr />
-                        <div class="ingress">
-                            <div id="company-description ingress">
-                                <p>{{opportunity.company.long_description}}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
         </div>
-    </section>
+        <div class="span12">
+            <div class="span8">
+                <div class="row-fluid" id="opportunity-description">
+                    <div class="span12">
+                        <p class="ingress">{{opportunity.description}}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="span3">
+                <div class="row-fluid" id="opportunity-image">
+                    <img src="http://i.imgur.com/A1S2UA3.png" />
+                </div>
+            </div>
+        </div>
+        
+        <div class="span12">
+            <hr />
+        </div>
+
+        <div class="span12">
+            <div class="span3">
+                <div class="row-fluid" id="opportunity-company">
+                    <a href="{{opportunity.company.site}}" target="_blank">
+                        <div id="opportunity-company-name">
+                            <h3>{{opportunity.company.name}}</h3>
+                        </div>
+                        <div id="company-image">
+                            <img src="http://i.imgur.com/f0UmIHC.png" />
+                        </div>
+                    </a>
+                </div>
+            </div>
+            <div class="span8">
+                <p class="ingress">{{opportunity.company.long_description}}</p>
+            </div>
+        </div>
+    </div>
+</section>
 {%endblock content %}
