@@ -1,0 +1,39 @@
+{% load chunks %}
+{% load markup %}
+<script type="text/javascript" src="{{ STATIC_URL }}js/OfflineWidget.js"></script>
+<section id="offline">
+    <div class="container-fluid">
+        <div class="row-fluid">
+            <div class="span12">
+                <div class="page-header">
+                    <h2 id="offline-heading">OFFLINE</h2>
+                </div>
+            </div>
+        </div>
+        <div class="row-fluid">
+            <div class="span6">
+                <div class="ingress">
+{% filter markdown %}
+{% chunk "offline_ingress" %}
+{% endfilter %}
+                </div>
+{% filter markdown %}
+{% chunk "offline_brodtekst" %}
+{% endfilter %}
+            </div>
+            <div class="span6">
+                <div id="offlineCarousel" class="carousel slide" data-prefix="{{ MEDIA_URL }}">
+                    <!-- Carousel items -->
+                    <div class="carousel-inner">
+                    </div>
+                  <!-- Carousel nav -->
+                  <a class="carousel-control left" href="#offlineCarousel" data-slide="prev">&lsaquo;</a>
+                  <a class="carousel-control right" href="#offlineCarousel" data-slide="next">&rsaquo;</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+        $('.carousel').carousel({})
+    </script>
+</section>

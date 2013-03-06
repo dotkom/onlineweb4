@@ -3,6 +3,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
 
+from apps.companyprofile.models import Company
 
 class Event(models.Model):
     """
@@ -24,7 +25,7 @@ class Event(models.Model):
     event_end = models.DateTimeField(_('slutt-dato'))
     location = models.CharField(_('lokasjon'), max_length=100)
     description = models.TextField(_('beskrivelse'))
-    event_type = models.SmallIntegerField(_('type'), choices=TYPE_CHOICES)
+    event_type = models.SmallIntegerField(_('type'), choices=TYPE_CHOICES, null=False)
 
     def __unicode__(self):
         return self.title
@@ -53,6 +54,18 @@ class AttendanceEvent(models.Model):
     class Meta:
         verbose_name = _('paamelding')
         verbose_name_plural = _('paameldinger')
+
+
+class CompanyEvent(models.Model):
+    """
+    Company relation to AttendanceEvent
+    """    
+    company = models.ForeignKey(Company, verbose_name=_('bedrifter'))
+    event = models.ForeignKey(Event, verbose_name=_('arrangement'))
+
+    class Meta:
+        verbose_name =_('bedrift')
+        verbose_name_plural = _('bedrifter')
 
 
 class Attendee(models.Model):

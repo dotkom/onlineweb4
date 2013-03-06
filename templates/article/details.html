@@ -29,21 +29,21 @@
             </div>
         </div>
         <div class="row-fluid">
-            <div class="span6">
+            <div class="span7">
                 <div class="article-details-ingress">
                     <p>{{ article.ingress }}</p>
                 </div>
             </div>
-            <div class="span6">
+            <div class="span5">
+                <div class="span12">
+                    <p style="font-size:20px">Siste nytt:</p>
+                </div>
             {% for l in latest %}
                 <div class="row-fluid">
-                    <div class="span5">
-                        <div>
-                            <iframe src="http://player.vimeo.com/video/{{ l.video }}" frameborder="0" webkitAllowFullscreen mozallowfullscreen allowFullScreen></iframe>
+                    <div class="span12">
+                        <div class="article-latestnews">
+                            <a href="../{{ l.id }}">{{ l.heading }}</a> </p>
                         </div>
-                    </div>
-                    <div class="span5 offset2">
-                        <h2>{{ l.heading }}</h2>
                     </div>
                 </div>
             {% endfor %}
@@ -51,7 +51,9 @@
         </div>
         <div class="row-fluid">
             <div class="span12">
-                <p>{{ article.content|striptags|markdown }}</p>
+                <div class="article-details-content">
+                    <p>{{ article.content|striptags|markdown }}</p>
+                </div>
             </div>
         </div>
     </div>

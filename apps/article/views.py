@@ -29,6 +29,6 @@ def details(request, article_id):
 	else:
 		article.isChanged = False
 	
-        latestNews = Article.objects.exclude(id = article.id).order_by('published_date')[:2]
+        latestNews = Article.objects.exclude(id = article.id).order_by('published_date').reverse()[:4]
 
 	return render_to_response('article/details.html', {'article': article, 'latest': latestNews}, context_instance=RequestContext(request))

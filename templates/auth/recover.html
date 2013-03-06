@@ -1,10 +1,18 @@
 {% extends "base.html" %}
-
+{% load crispy_forms_tags %}
 {% block content %}
+<div class="container-fluid">
+    <div class="page-header">
+        <h2>Glemt passord</h2>
+    </div>
+    <div class="ingress">
+    <p>Har du glemt passordet ditt? Skriv inn epostadressen din for å få tilsendt et nytt.</p>
+    </div>
     <form method="post" action={% url auth_recover %}>{% csrf_token %}
-        <table>
-            {{ form.as_table }}
-        </table>
-        <input type="submit" value="Recover" />
+        {{ form|crispy }}
+        <div class="form-actions">
+            <input type="submit" value="Få tilsendt passord" />
+        </div>
     </form>
+</div>
 {% endblock content %}

@@ -17,12 +17,11 @@
         <script src="{{ STATIC_URL }}js/libs/jquery-1.8.2.min.js"></script>
         <script src="{{ STATIC_URL }}js/libs/bootstrap.min.js"></script>
         <script src="{{ STATIC_URL }}js/libs/bootstrap-dropdown.js"></script>
+        <script src="{{ STATIC_URL }}js/libs/moment.js"></script>
 
-        <script src="{{ STATIC_URL }}js/utils.js"></script>
-        <script src="{{ STATIC_URL }}js/EventWidget.js"></script>
-        <script src="{{ STATIC_URL }}js/init.js"></script>
         <script src="{{ STATIC_URL }}js/holder.js"></script>
         <script src="{{ STATIC_URL }}js/scroller.js"></script>
+        <script src="{{ STATIC_URL }}js/init.js"></script>
 
         <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
     </head>
@@ -32,7 +31,7 @@
         <div class="navbar-inner">
             <div class="container-fluid">
                 <ul class="nav">
-                    <li>
+                    <li class="top-menu-img">
                         <a class="brand" href="./"><img src="{{ STATIC_URL }}img/online_logo.png" alt="Online" class="online-logo"></a>
                     </li>
                 </ul>
@@ -43,53 +42,70 @@
                 </a>
                 <div class="nav-collapse collapse">
                     <ul class="nav menu-elements">
-                        <li>
+                        <li class="top-menu-link">
                             <a href="#events" class="active">Arrangementer</a>
                         </li>
-                        <li>
+                        <li class="top-menu-link">
                             <a href="#articles">Artikler</a>
                         </li>
-                        <li>
+                        <li class="top-menu-link">
                             <a href="#about">Om online</a>
                         </li>
-                        <li>
+                        <li class="top-menu-link">
                             <a href="#business">For bedrifter</a>
                         </li>
-                        <li>
+                        <li class="top-menu-link">
                             <a href="#offline">Offline</a>
                         </li>
-                        <li>
+                        <li class="top-menu-link">
                             <a href="http://wiki.online.ntnu.no/">Wiki</a>
                         </li>
                     </ul>
 
                     <ul class="nav pull-right">
                         <li class="dropdown" id="login_menu">
-                            <a href="#login_menu" class="login-btn dropdown-toggle dropdown-signin">Logg inn<b class="caret"></b></a>
+                        {% if user.is_authenticated %}
+                        <a href="#login_menu" class="login-btn dropdown-toggle dropdown-signin login">{{ user.username }}<b class="caret"></b></a>
                             <ul class="dropdown-menu dropdown-form login-box">
                                 <li class="dropdown-caret right">
                                     <span class="caret-outer"/>
                                     <span class="caret-inner"/>
                                 </li>
                                 <li>
-                                <form method="post" action="">
-                                    <fieldset class="textbox">
-                                        <label>
-                                            <span>Brukernavn</span>
-                                            <input type="text" name="username">
-                                        </label>
-                                        <label>
-                                            <span>Passord</span>
-                                            <input type="password" name="password">
-                                        </label>
-                                    </fieldset>
-
-                                    <button type="submit" class="btn submit">Logg inn</button>
-                                </form>
+                                    <form>
+                                        <div class="login-extra">
+                                            <a href="{% url auth_logout %}">Logg ut</a>
+                                        </div>
+                                    </form>
                                 </li>
                             </ul>
+
+                        {% else %}
+                            <a href="#login_menu" class="login-btn dropdown-toggle dropdown-signin login">Logg inn<b class="caret"></b></a>
+                            <ul class="dropdown-menu dropdown-form login-box">
+                                <li class="dropdown-caret right">
+                                    <span class="caret-outer"/>
+                                    <span class="caret-inner"/>
+                                </li>
+                                <li>
+                                <form method="POST" action="{% url auth_login %}">
+                                    {% csrf_token %}
+                                    <fieldset class="textbox">
+                                        <label for="id_username">Brukernavn</label>
+                                        <input type="text" name="username" id="id_username">
+                                        <label for="id_password">Passord</label>
+                                        <input type="password" name="password" id="id_password">
+                                    </fieldset>
+                                    <input type="hidden" name="next" value="{{ request.get_full_path }}" />
+                                        <button type="submit" class="btn">Logg inn</button>
+                                </form>
+                                <button class="btn btn-auth" data-url="{% url auth_register %}">Registrer</button>
+                                <button class="btn btn-auth" data-url="{% url auth_recover %}">Glemt passord</button>
+                                </li>
+                            </ul>
+                        {% endif %}
                         </li>
-                        <li>
+                        <li class="top-menu-img">
                         <a href="http://visma.no/" class=""><img src="{{ STATIC_URL }}img/visma_clean.png" alt="" class="sponsor-logo"></a>
                     </li>
                 </ul>
@@ -97,6 +113,20 @@
             </div>
         </div>
     </div>
+    {% if messages %}
+        <div class="container-fluid messages">
+            <div class="row-fluid">
+                <div class="span12">
+                    {% for message in messages %}
+                    <div class="alert {% if message.tags %}{{ message.tags }}{% endif %}">
+                        <button type="button" class="close" data-dismiss="alert">&times;</button>
+                        {{ message }}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    {% endif %}
 
     {% block content %}
     {% endblock %}

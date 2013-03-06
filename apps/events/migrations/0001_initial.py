@@ -10,13 +10,14 @@ class Migration(SchemaMigration):
     def forwards(self, orm):
         # Adding model 'Event'
         db.create_table('events_event', (
-            ('event_id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('author', self.gf('django.db.models.fields.related.ForeignKey')(related_name='oppretter', to=orm['auth.User'])),
             ('title', self.gf('django.db.models.fields.CharField')(max_length=100)),
             ('event_start', self.gf('django.db.models.fields.DateTimeField')()),
             ('event_end', self.gf('django.db.models.fields.DateTimeField')()),
             ('location', self.gf('django.db.models.fields.CharField')(max_length=100)),
             ('description', self.gf('django.db.models.fields.TextField')()),
+            ('event_type', self.gf('django.db.models.fields.SmallIntegerField')()),
         ))
         db.send_create_signal('events', ['Event'])
 
@@ -32,7 +33,7 @@ class Migration(SchemaMigration):
         # Adding model 'Attendee'
         db.create_table('events_attendee', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('event', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['events.AttendanceEvent'])),
+            ('event', self.gf('django.db.models.fields.related.ForeignKey')(related_name='attendees', to=orm['events.AttendanceEvent'])),
             ('user', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'])),
             ('timestamp', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
             ('attended', self.gf('django.db.models.fields.BooleanField')(default=False)),
@@ -98,7 +99,7 @@ class Migration(SchemaMigration):
         'events.attendee': {
             'Meta': {'ordering': "['timestamp']", 'object_name': 'Attendee'},
             'attended': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'event': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['events.AttendanceEvent']"}),
+            'event': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'attendees'", 'to': "orm['events.AttendanceEvent']"}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'timestamp': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
             'user': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']"})
@@ -108,8 +109,9 @@ class Migration(SchemaMigration):
             'author': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'oppretter'", 'to': "orm['auth.User']"}),
             'description': ('django.db.models.fields.TextField', [], {}),
             'event_end': ('django.db.models.fields.DateTimeField', [], {}),
-            'event_id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'event_start': ('django.db.models.fields.DateTimeField', [], {}),
+            'event_type': ('django.db.models.fields.SmallIntegerField', [], {}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'location': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
             'title': ('django.db.models.fields.CharField', [], {'max_length': '100'})
         }

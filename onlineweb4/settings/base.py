@@ -1,5 +1,6 @@
 import os
 import sys
+from django.contrib.messages import constants as messages
 
 # Directory that contains this file.
 PROJECT_SETTINGS_DIRECTORY = os.path.dirname(globals()['__file__'])
@@ -99,15 +100,21 @@ INSTALLED_APPS = (
     'south',
     'grappelli',
     'filebrowser',
+    'chunks',
+    'crispy_forms',
+    'django_extensions',
+    'django_dynamic_fixture',
 
     # Django apps
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
+    'django.contrib.markup',
     'django.contrib.messages',
     'django.contrib.sessions',
     'django.contrib.sites',
     'django.contrib.staticfiles',
+    'django.contrib.markup',
 
     # Onlineweb 4 apps
     'apps.article',
@@ -118,6 +125,7 @@ INSTALLED_APPS = (
     'apps.marks',
     'apps.offline',
     'apps.userprofile',
+    'apps.feedback',
 )
 
 # A sample logging configuration. The only tangible logging
@@ -149,7 +157,18 @@ LOGGING = {
     }
 }
 
-for settings_module in ['local', 'filebrowser' ]: # Remember to keep 'local' last, so it can override any setting.
+# crispy forms settings
+CRISPY_TEMPLATE_PACK = 'bootstrap'
+
+# bootsrap messages classes
+MESSAGE_TAGS = {messages.DEBUG: 'alert-debug',
+                messages.INFO: 'alert-info',
+                messages.SUCCESS: 'alert-success',
+                messages.WARNING: 'alert-warning',
+                messages.ERROR: 'alert-error'}
+
+# Remember to keep 'local' last, so it can override any setting.
+for settings_module in ['filebrowser', 'local']:  # local last
     if not os.path.exists(os.path.join(PROJECT_SETTINGS_DIRECTORY,
             settings_module + ".py")):
         sys.stderr.write("Could not find settings module '%s'.\n" %

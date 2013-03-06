@@ -1,11 +1,11 @@
 
-$(document).ready(function()
+$(function()
 {
     $('.dropdown-toggle').dropdown();
 
-    utils = new utils();
-    eventWidget = new EventWidget();
+    $('.btn-auth').click(function(e) {
+        e.preventDefault();
+        window.location = $(this).data('url');
+    });
 
-    eventWidget.render();
 });
-

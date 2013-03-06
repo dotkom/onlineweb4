@@ -9,7 +9,7 @@ import datetime
 def index(request):
     events = Event.objects.filter(event_start__gte=datetime.date.today())
     if len(events) == 1:
-        return details(request, events[0].event_id)
+        return details(request, events[0].id)
     return render_to_response('events/index.html', {'events': events}, context_instance=RequestContext(request))
 
 
