@@ -21,22 +21,22 @@ class UserProfile(models.Model):
     user = models.ForeignKey(User, unique=True)
 
     # Online related fields
-    field_of_study = models.SmallIntegerField(_("studieretning"), choices=FIELD_OF_STUDY_CHOICES, default=0)
-    started_date = models.DateTimeField(_("startet studie"), default=datetime.now())
-    compiled = models.BooleanField(_("kompilert"), default=False)
+    field_of_study = models.SmallIntegerField(_(u"studieretning"), choices=FIELD_OF_STUDY_CHOICES, default=0)
+    started_date = models.DateTimeField(_(u"startet studie"), default=datetime.now())
+    compiled = models.BooleanField(_(u"kompilert"), default=False)
 
     # Email
-    infomail = models.BooleanField(_("vil ha infomail"), default=True)
+    infomail = models.BooleanField(_(u"vil ha infomail"), default=True)
 
     # Address
-    phone_number = models.CharField(_("telefonnummer"), max_length=20, blank=True, null=True)
-    address = models.CharField(_("adresse"), max_length=30, blank=True, null=True)
-    area_code = models.CharField(_("postnummer"), max_length=4, blank=True, null=True)
+    phone_number = models.CharField(_(u"telefonnummer"), max_length=20, blank=True, null=True)
+    address = models.CharField(_(u"adresse"), max_length=30, blank=True, null=True)
+    area_code = models.CharField(_(u"postnummer"), max_length=4, blank=True, null=True)
 
     # Other
-    allergies = models.TextField(_("allergier"), blank=True, null=True)
-    mark_rules = models.BooleanField(_("godtatt prikkeregler"), default=False)
-    rfid = models.CharField(_("RFID"), max_length=50, blank=True, null=True)
+    allergies = models.TextField(_(u"allergier"), blank=True, null=True)
+    mark_rules = models.BooleanField(_(u"godtatt prikkeregler"), default=False)
+    rfid = models.CharField(_(u"RFID"), max_length=50, blank=True, null=True)
 
     # TODO profile pictures
     # TODO checkbox for forwarding of @online.ntnu.no mail
@@ -89,8 +89,8 @@ class UserProfile(models.Model):
         return "for %s" % self.user.username
 
     class Meta:
-        verbose_name = _("brukerprofil")
-        verbose_name_plural = _("brukerprofiler")
+        verbose_name = _(u"brukerprofil")
+        verbose_name_plural = _(u"brukerprofiler")
 
 
 @receiver(post_save, sender=User)

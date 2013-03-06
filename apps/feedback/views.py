@@ -30,7 +30,7 @@ def feedback(request, applabel, appmodel, object_id, feedback_id):
             fbr.answered.add(request.user)
             fbr.save()
 
-            messages.success(request, _("Takk for at du svarte"))
+            messages.success(request, _(u"Takk for at du svarte"))
             return redirect("home")
     else:
         answers = create_answer_forms(fbr)
