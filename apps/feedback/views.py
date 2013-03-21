@@ -1,17 +1,18 @@
 #-*- coding: utf-8 -*-
-from django.http import Http404
+from django.http import Http404, HttpResponse
 from django.shortcuts import render_to_response
 from django.shortcuts import render
 from django.template import RequestContext
 from django.contrib.contenttypes.models import ContentType
 from django.contrib import messages
+from django.utils import simplejson
 from django.core.exceptions import ObjectDoesNotExist
-from apps.feedback.models import FeedbackRelation
+from apps.feedback.models import FeedbackRelation, FIELD_OF_STUDY_CHOICES
 from apps.feedback.forms import create_answer_forms
-from collections import namedtuple
+from collections import namedtuple, defaultdict
 from django.utils.translation import ugettext_lazy as _
 from django.shortcuts import redirect
-
+from django.utils.safestring import SafeString
 
 def feedback(request, applabel, appmodel, object_id, feedback_id):
     fbr = _get_fbr_or_404(applabel, appmodel, object_id, feedback_id)
@@ -44,11 +45,45 @@ def result(request, applabel, appmodel, object_id, feedback_id):
 
     Qa = namedtuple("Qa", "question, answers")
     question_and_answers = []
+
     for q in fbr.questions:
         question_and_answers.append(Qa(q, fbr.answers_to_question(q)))
+    
+    question = fbr.answers_to_question(fbr.fosquestion[0])
+    answer_count = defaultdict(int)
+    for answer in question:
+        answer_count[str(answer)] += 1
+
+    ordered_answers = []
+    for _, x in FIELD_OF_STUDY_CHOICES[1:]:
+        ordered_answers.append([x, answer_count[x]])
+  
+
+    chartdata = "["
+    for a in ordered_answers:
+        if a[1] > 0:
+            chartdata += simplejson.dumps({'label':a[0], 'value':a[1]}) + ','
+
+    chartdata = chartdata[:-1] + ']'    # Stygg hack
+
 
     return render(request, 'feedback/results.html',
-                  {'question_and_answers': question_and_answers})
+                  {'question_and_answers': question_and_answers, 'chartdata': SafeString(chartdata)})
+
+def some_view(request):
+    
+    response = HttpResponse(content_type='text/csv')
+    response ['Content-Disposition'] = 'attachment; filename="data.csv"'
+
+    writer = csv.writer(response)
+    writer.writerow(['age', 'population'])
+    writer.writerow(['1','12323'])
+    writer.writerow(['2','21321'])
+    writer.writerow(['3','36773'])
+    writer.writerow(['4','83642'])
+    writer.writerow(['5','23451'])
+
+    return response
 
 
 def index(request):
