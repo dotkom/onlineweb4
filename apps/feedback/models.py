@@ -45,6 +45,10 @@ class FeedbackRelation(models.Model):
         return self.feedback.fosquestions
 
     @property
+    def description(self):
+        return self.feedback.description
+
+    @property
     def answers(self):
         """
         All answers related to this FeedbackRelation.

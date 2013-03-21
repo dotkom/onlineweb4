@@ -58,6 +58,7 @@ def result(request, applabel, appmodel, object_id, feedback_id):
     for _, x in FIELD_OF_STUDY_CHOICES[1:]:
         ordered_answers.append([x, answer_count[x]])
   
+    description = fbr.description
 
     chartdata = "["
     for a in ordered_answers:
@@ -68,7 +69,7 @@ def result(request, applabel, appmodel, object_id, feedback_id):
 
 
     return render(request, 'feedback/results.html',
-                  {'question_and_answers': question_and_answers, 'chartdata': SafeString(chartdata)})
+                  {'question_and_answers': question_and_answers, 'chartdata': SafeString(chartdata), 'description': description})
 
 def some_view(request):
     

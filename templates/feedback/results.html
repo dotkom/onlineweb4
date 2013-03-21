@@ -3,12 +3,12 @@
 {% load question_filters %}
 {% block content %}
 
-<div> blablabla</div>
 <div class="container-fluid">
     <div class="row-fluid">
         <div class="span12">
             <h1 class="pagination-centered"> {{ description }} </h1>
-            <div class=span12" id="charts">
+            <div class="span12" id="charts"></div>
+            <div class="span12">
             {% for qa in question_and_answers%}
                 {% if qa.question|isinst:"apps.feedback.models.TextQuestion" %}
                  <table border=1>
@@ -20,6 +20,7 @@
                 </table>
                 {% endif %}
             {% endfor %}
+            </div>
         </div>
     </div>
 </div>
