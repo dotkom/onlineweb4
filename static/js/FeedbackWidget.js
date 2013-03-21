@@ -1,6 +1,6 @@
 function createchart(chartdata) {
 
-    var width = 960,
+    var width = 500,
         height = 500,
         radius = Math.min(width, height) / 2;
 
@@ -15,7 +15,6 @@ function createchart(chartdata) {
         .value(function(d) { return d.value; });
 
     var svg = d3.select("div#charts")
-        .html("lololololololololo")
         .append("svg")
         .attr("width", width)
         .attr("height", height)
