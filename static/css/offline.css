@@ -52,4 +52,7 @@ div.offline_issue span {
 div.offline_issue:hover span, div.offline_issue:hover a:first-child {
     opacity: 0.75;
 }
+div.offline_issue_archive {
+    transition: none;
+}
 /* END-Offline */
