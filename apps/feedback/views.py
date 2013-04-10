@@ -71,22 +71,6 @@ def result(request, applabel, appmodel, object_id, feedback_id):
     return render(request, 'feedback/results.html',
                   {'question_and_answers': question_and_answers, 'chartdata': SafeString(chartdata), 'description': description})
 
-def some_view(request):
-    
-    response = HttpResponse(content_type='text/csv')
-    response ['Content-Disposition'] = 'attachment; filename="data.csv"'
-
-    writer = csv.writer(response)
-    writer.writerow(['age', 'population'])
-    writer.writerow(['1','12323'])
-    writer.writerow(['2','21321'])
-    writer.writerow(['3','36773'])
-    writer.writerow(['4','83642'])
-    writer.writerow(['5','23451'])
-
-    return response
-
-
 def index(request):
     feedbacks = FeedbackRelation.objects.all()
     return render_to_response('feedback/index.html',
