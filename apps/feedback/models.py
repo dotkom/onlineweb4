@@ -45,6 +45,10 @@ class FeedbackRelation(models.Model):
         return self.feedback.fosquestions
 
     @property
+    def ratingquestion(self):
+        return self.feedback.ratingquestions
+
+    @property
     def description(self):
         return self.feedback.description
 
@@ -103,6 +107,12 @@ class Feedback(models.Model):
         field_of_study_question = []
         field_of_study_question.extend(self.field_of_study_questions.all())
         return field_of_study_question
+
+    @property
+    def ratingquestions(self):
+        rating_question = []
+        rating_question.extend(self.rating_questions.all())
+        return rating_question
 
     @property
     def questions(self):

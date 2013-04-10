@@ -60,16 +60,24 @@ def result(request, applabel, appmodel, object_id, feedback_id):
   
     description = fbr.description
 
-    chartdata = "["
+    foschartdata = "["
     for a in ordered_answers:
         if a[1] > 0:
-            chartdata += simplejson.dumps({'label':a[0], 'value':a[1]}) + ','
+            foschartdata += simplejson.dumps({'label':a[0], 'value':a[1]}) + ','
 
-    chartdata = chartdata[:-1] + ']'    # Stygg hack
+    foschartdata = foschartdata[:-1] + ']'
 
+    rating_questions = []
+    for i in range(0, len(fbr.ratingquestion)):
+        question = fbr.answers_to_question(fbr.ratingquestion[i])
+        answers = [0] * 7
+        for a in question:
+            answers[int(a.answer)] += 1
+        answers = answers[1:]
+        rating_questions.append(answers)
 
     return render(request, 'feedback/results.html',
-                  {'question_and_answers': question_and_answers, 'chartdata': SafeString(chartdata), 'description': description})
+                  {'question_and_answers': question_and_answers, 'foschartdata': SafeString(foschartdata), 'description': description, "rating_questions": rating_questions})
 
 def index(request):
     feedbacks = FeedbackRelation.objects.all()
