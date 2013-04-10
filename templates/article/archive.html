@@ -1,1 +1,28 @@
-<h1>Derp</h1>
+{% extends 'base.html' %}
+{% load chunks %}
+{% load markup %}
+{% block content %}
+<script type="text/javascript" src="{{ STATIC_URL }}js/OfflineWidget.js"></script>
+<section id="article_archive">
+    <div class="container-fluid">
+        <div class="row-fluid">
+            <div class="span12">
+                <div class="page-header">
+                    <h2 id="offline-heading">Article Archive</h2>
+                </div>
+            </div>
+        </div>
+        <div class="row-fluid">
+            <div class="span6">
+                <div class="ingress">
+{% filter markdown %}
+{% chunk "article_archive" %}
+{% endfilter %}
+                </div>
+            </div>
+        </div>
+        <div class="row-fluid">
+        </div>
+    </div>
+</section>
+{% endblock content %}
