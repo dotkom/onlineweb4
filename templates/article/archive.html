@@ -22,15 +22,19 @@
             </div>
         </div>
         <div class="row-fluid">
-            <div class="pagination">
-                <ul>
-                    <li><a href="#">Prev</a></li>
-                    <li><a href="#">1</a></li>
-                    <li><a href="#">2</a></li>
-                    <li><a href="#">3</a></li>
-                    <li><a href="#">4</a></li>
-                    <li><a href="#">Next</a></li>
-                </ul>
+            <div class="span12">
+                <table class="table">
+                    <thead>
+                        <th>Tittel</th>
+                        <th>Tags</th>
+                    </thead>
+                    {% for article in articles %}
+                        <tr>
+                            <td>{{ article.heading }}</td>
+                            <td>{{ article.tagstring }}</td>
+                        </tr>
+                    {% endfor %}
+                </table>
             </div>
         </div>
     </div>

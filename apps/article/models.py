@@ -35,6 +35,21 @@ class Article(models.Model):
     def __unicode__(self):
         return self.heading
 
+    @property
+    def tags(self):
+        at = ArticleTag.objects.filter(article=self.id)
+        tags = []
+        for a in at:
+            tags.append(a.tag)
+        return tags
+
+    @property
+    def tagstring(self):
+        tag_names = []
+        for tag in self.tags:
+            tag_names.append(tag.name)
+        return u', '.join(tag_names)
+
     class Meta:
         verbose_name = _(u"artikkel")
         verbose_name_plural = _(u"artikler")

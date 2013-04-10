@@ -22,7 +22,9 @@ def index(request):
     return render_to_response('article/index.html', {'featured' : featured[0], 'latest': latestNews}, context_instance=RequestContext(request))
 
 def archive(request):
-    return render_to_response('article/archive.html', context_instance=RequestContext(request))
+    articles = Article.objects.all()
+    return render_to_response('article/archive.html', {'articles' : articles } ,context_instance=RequestContext(request))
+
 
 def details(request, article_id):
 	article = get_object_or_404(Article, pk=article_id)
