@@ -1,7 +1,7 @@
 from django.template import Template, Context, loader, RequestContext
 from django.shortcuts import render_to_response, get_object_or_404
 from django.http import HttpResponse
-from models import Article
+from models import Article, Tag
 
 def index(request):
     # Featured
@@ -23,7 +23,8 @@ def index(request):
 
 def archive(request):
     articles = Article.objects.all()
-    return render_to_response('article/archive.html', {'articles' : articles } ,context_instance=RequestContext(request))
+    tags = Tag.objects.all()
+    return render_to_response('article/archive.html', {'articles' : articles, 'tags' : tags } ,context_instance=RequestContext(request))
 
 
 def details(request, article_id):
