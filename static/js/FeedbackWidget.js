@@ -1,4 +1,4 @@
-function createchart(chartdata) {
+function createFoschart(chartdata) {
 
     var width = 500,
         height = 500,
@@ -64,4 +64,63 @@ function createchart(chartdata) {
             var color = color_hash[fosdata.indexOf(d)][1];
             return color;})
 
+}
+
+function createRatingCharts(chartdata) {
+    for (var i = 0; i < chartdata.length; i++) {
+        var margin = {top: 20, right: 20, bottom: 30, left: 40},
+            width = 960 - margin.left - margin.right,
+            height = 500 - margin.top - margin.bottom;
+        
+        var x = d3.scale.ordinal()
+            .rangeRoundBands([0, width], .1);
+
+        var y = d3.scale.linear()
+            .range([height, 0]);
+
+        var xAxis = d3.svg.axis()
+            .scale(x)
+            .orient("bottom");
+
+        var yAxis = d3.svg.axis()
+            .scale(y)
+            .orient("left")
+            .tickFormat(d3.format(".2s"));
+
+        var svg = d3.select("body").append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+          .append("g")
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+        x.domain(5);
+
+        var color = ["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"]; 
+ 
+        svg.append("g")
+            .attr("class", "x axis")
+            .attr("transform", "translate(0," + height + ")")
+            .call(xAxis);
+
+        svg.append("g")
+            .attr("class", "y axis")
+            .call(yAxis)
+          .append("text")
+            .attr("transform", "rotate(-90)")
+            .attr("y", 6)
+            .attr("dy", ".71em")
+            .style("text-anchor", "end")
+            .text("tall");
+
+        svg.selectAll(".bar")
+            .data(chartdata[i])
+          .enter().append("rect")
+            .attr("class", "bar")
+            .attr("x", function(d, i) { return i * 30 + 30; })
+            .attr("width", 20)
+            .attr("y", function(d) { return y(d); })
+            .attr("height", function(d) { return height - y(d); })
+            .style("fill", function(d, i) { return color[i]; });
+
+    }
 }
