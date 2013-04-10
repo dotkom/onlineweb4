@@ -5,7 +5,7 @@
 <script src="{{ STATIC_URL }}/js/offline-filter.js"></script>
 
 <div class="container-fluid">
-    <div class="row-fluid"> 
+    <div class="row-fluid">
         <div class="span12">
             <div class="page-header">
                 <h2>OFFLINE</h2>
@@ -13,10 +13,11 @@
         </div>
     </div>
     <div class="row-fluid">
-        <div class="span9"> 
+        <div class="span9">
             <div class="span12 ingress">
              <p>{% chunk 'offline_ingress' %}</p>
              </div>
+            <div id="offline-wrapper" class="spann12">
              {% for issue in issues %}
                 <div class="span3">
                 <div id="offline_{{ issue.id }}" class="offline_issue" data-year="{{ issue.release_date.year }}">
@@ -26,11 +27,12 @@
                 </div>
                 </div>
             {% endfor %}
+            </div>
         </div>
         <div class="span3">
             <ul id="filter-menu" class="nav nav-list">
                 <li class="nav-header">År<button id="filter-reset" class="close pull-right">&times;</button></li>
-                {% for year in years %} 
+                {% for year in years %}
                     <li><a class="filter-year" href="#{{ year }}">{{year}}</a></li>
                 {% endfor %}
             </ul>
