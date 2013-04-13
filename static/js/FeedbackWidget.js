@@ -67,16 +67,16 @@ function createFoschart(chartdata) {
 }
 
 function createRatingCharts(chartdata) {
-    for (var i = 0; i < chartdata.length; i++) {
+    for (var index = 0; index < chartdata.length; index++) {
         var margin = {top: 20, right: 20, bottom: 30, left: 40},
-            width = 960 - margin.left - margin.right,
-            height = 500 - margin.top - margin.bottom;
+                            width = 570- margin.left - margin.right,
+            height = 350 - margin.top - margin.bottom;
         
         var x = d3.scale.ordinal()
             .rangeRoundBands([0, width], .1);
 
         var y = d3.scale.linear()
-            .range([height, 0]);
+            .rangeRound([height, 0]);
 
         var xAxis = d3.svg.axis()
             .scale(x)
@@ -85,15 +85,16 @@ function createRatingCharts(chartdata) {
         var yAxis = d3.svg.axis()
             .scale(y)
             .orient("left")
-            .tickFormat(d3.format(".2s"));
+            .tickFormat(d3.format("0"));
 
-        var svg = d3.select("body").append("svg")
+        var svg = d3.select("#ratingcharts").append("svg")
             .attr("width", width + margin.left + margin.right)
             .attr("height", height + margin.top + margin.bottom)
           .append("g")
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-        x.domain(5);
+        x.domain(chartdata[index].map(function(d, i) { return i + 1; }));
+        y.domain([0, d3.max(chartdata[index], function(d, i) { return chartdata[index][i]; })]);
 
         var color = ["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"]; 
  
@@ -101,6 +102,7 @@ function createRatingCharts(chartdata) {
             .attr("class", "x axis")
             .attr("transform", "translate(0," + height + ")")
             .call(xAxis);
+          
 
         svg.append("g")
             .attr("class", "y axis")
@@ -110,16 +112,16 @@ function createRatingCharts(chartdata) {
             .attr("y", 6)
             .attr("dy", ".71em")
             .style("text-anchor", "end")
-            .text("tall");
+            .text("stemmer");
 
         svg.selectAll(".bar")
-            .data(chartdata[i])
+            .data(chartdata[index])
           .enter().append("rect")
             .attr("class", "bar")
-            .attr("x", function(d, i) { return i * 30 + 30; })
-            .attr("width", 20)
+            .attr("x", function(d, i) { return i * 83 + 26; })
+            .attr("width", 40)
             .attr("y", function(d) { return y(d); })
-            .attr("height", function(d) { return height - y(d); })
+            .attr("height", function(d, i) { return height - y(chartdata[index][i]); })
             .style("fill", function(d, i) { return color[i]; });
 
     }
