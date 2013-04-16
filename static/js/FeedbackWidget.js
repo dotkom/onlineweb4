@@ -1,8 +1,10 @@
 function createFoschart(chartdata) {
 
-    var width = 500,
-        height = 500,
-        radius = Math.min(width, height) / 2;
+    var width = 700,
+        height = 400,
+        chartWidth = 400,
+        chartHeight = 400,
+        radius = Math.min(chartWidth, chartHeight) / 2;
 
     var color = d3.scale.category10();
 
@@ -15,6 +17,7 @@ function createFoschart(chartdata) {
                        4 :  ['Komplekse Datasystemer (KDS)', "gray"],
                        5 :  ['Spillteknologi (SPT)', "purple"]
     }
+
 
     arc = d3.svg.arc()
         .outerRadius(radius - 10)
@@ -29,26 +32,25 @@ function createFoschart(chartdata) {
         .attr("width", width)
         .attr("height", height)
       .append("g")
-        .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+        .attr("transform", "translate(" + chartWidth / 2 + "," + chartHeight / 2 + ")");
 
-    var legend = d3.select("#foschartlegend").append("svg")
-        .attr("class", "legend")
-        .attr("width", radius * 2)
-        .attr("height", radius * 2)
-      .selectAll("g")
+    var legend = svg.selectAll(".legend")
         .data(fosdata)
       .enter().append("g")
-        .attr("transform", function(d, i) { return "translate(0," + ((i * 20) + 100) + ")"; });
+        .attr("class", "legend")
+        .attr("transform", function(d, i) { return "translate(0," + ((i * 20) - 100) + ")"; });
 
     legend.append("rect")
+        .attr("x", chartWidth + 55)
         .attr("width", 18)
         .attr("height", 18)
         .style("fill", function(d) { return color_hash[fosdata.indexOf(d)][1]; })
 
     legend.append("text")
-        .attr("x", 24)
+        .attr("x", chartWidth + 50)
         .attr("y", 9)
         .attr("dy", ".35em")
+        .style("text-anchor", "end")
         .text(function(d) { return color_hash[fosdata.indexOf(d)][0]; });
 
 
