@@ -4,5 +4,7 @@ urlpatterns = patterns('apps.article.views',
     url(r'^$', 'index', name='article_index'),
     url(r'^archive$', 'archive', name='article_archive'),
     url(r'^(?P<article_id>\d+)/$', 'details', name='article_details'),
-    url(r'^tag/(?P<name>[^\.]+)/(?P<slug>[^\.]+)', 'archive', name='view_article_tag'),
+    url(r'^tag/(?P<name>[^\.]+)/(?P<slug>[^\.]+)', 'archive_tag', name='view_article_tag'),
+    url(r'^year/(?P<year>[^\.]+)', 'archive', name='article_archive_year'),
+    url(r'^year/(?P<year>[^\.]+)/month/(?P<month>[^\.]+)', 'archive', name='article_archive_month'),
 )
