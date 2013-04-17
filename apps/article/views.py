@@ -35,7 +35,6 @@ def archive(request, name=None, slug=None):
     if name:
         filtered = []
         for article in articles:
-            print(article.tags)
             for tag in article.tags:
                 if name == tag.name:
                     filtered.append(article)
