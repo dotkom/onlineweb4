@@ -63,6 +63,23 @@
                     </div>
                 </div>
             </div>
+            <div class="span4 well">
+                <div class="row-fluid">
+                    <div class="span12">
+                        <h3>Filtrér på dato</h3>
+                        <ul>
+                            {% for year, months in dates.items %}
+                                <a href="{% url article_archive_year year %}"><li>{{ year }}</li></a>
+                                <ul>
+                                    {% for month in months %}
+                                        <a href="{% url article_archive_month year month %}"><li>{{ month }}</li></a>
+                                    {% endfor %}
+                                </ul>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
         </div>
         <div class="row-fluid">
             <div class="span12">
