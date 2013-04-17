@@ -1,3 +1,4 @@
+var buzy = false; // Please wait….!"/&"&/"&/"
 var offline_num_in_row = 1; // Number of issues in a single row (may change on resize)
 var offline_total_rows = 1; // Number of total rows (calculated based on the number of total issues to display)
 var num_issues_to_display = 4; // Number of total issues
@@ -12,11 +13,13 @@ $(function() {
             e.stop();
 
         // Swap classes
-        $("#filter-menu .active").removeClass("active");
-        $(this).parent().addClass("active");
+        if (!buzy) {
+            $("#filter-menu .active").removeClass("active");
+            $(this).parent().addClass("active");
             
-        // The sort
-        filter($(this).html());
+            // The sort
+            filter($(this).html());
+        }
     });
     
     $('#filter-reset').on('click', function(e) {
@@ -25,16 +28,19 @@ $(function() {
         else
             e.stop();
         
-        num_issues_to_display = num_issues_to_display_max;
+        if (!buzy) {
+            num_issues_to_display = num_issues_to_display_max;
         
-        $('.offline_issue').each(function() {
-            $obj = $(this);
-            if (!$obj.hasClass('displayable'))
-                $obj.addClass('displayable');
-        });
+            $('#filter-menu .active').removeClass('active');
         
-        init_offline(true);
+            $('.offline_issue').each(function() {
+                $obj = $(this);
+                if (!$obj.hasClass('displayable'))
+                    $obj.addClass('displayable');
+            });
         
+            init_offline(true);
+        }
     });
     
     
@@ -78,17 +84,38 @@ $(function() {
             
             var num = 0;
             // Hide all the visible issues and fade in the new ones
-            $('.offline_issue:visible').fadeOut(400,function () {
-                if ($(".offline_issue:animated").length === 0) {
-
-                    $('.offline_issue.displayable').each(function() {
-                        if (num >= (num_issues_to_display*parseInt(clicked_index)) && num < (num_issues_to_display*(parseInt(clicked_index)+1))) {
-                            $(this).fadeIn(400);
-                        }
-                        num++;
-                    });
-                }
-            });
+            if ($('.offline_issue:visible').length > 0) {
+                $('.offline_issue:visible').fadeOut(400,function () {
+                    if ($(".offline_issue:animated").length === 0) {
+                        console.log("rofl");
+                        console.log("Display: "+num_issues_to_display);
+                        $('.offline_issue.displayable').each(function() {
+                            
+                            if (num >= (num_issues_to_display*parseInt(clicked_index)) && num < (num_issues_to_display*(parseInt(clicked_index)+1))) {
+                                console.log(num);
+                                $(this).stop().fadeIn(400,function () {
+                                    if ($(".displayable:animated").length === 0) {
+                                        busy = false;
+                                    }
+                                });
+                            }
+                            num++;
+                        });
+                    }
+                });
+            }
+            else {
+                $('.offline_issue.displayable').each(function() {
+                    if (num >= (num_issues_to_display*parseInt(clicked_index)) && num < (num_issues_to_display*(parseInt(clicked_index)+1))) {
+                        $(this).fadeIn(400,function () {
+                            if ($(".offline_issue.displayable:animated").length === 0) {
+                                busy = false;
+                            }
+                        });
+                    }
+                    num++;
+                });
+            }
             
             // Removing active
             $('#offline-nav .active').removeClass('active');
@@ -147,18 +174,17 @@ function filter(year) {
 
 function init_offline(state) {
     // Checking to see if offline_rows_minimum is greater than the number of issues
-    if ($('.offline_issue.displayable').length < num_issues_to_display)
+    if ($('.offline_issue.displayable').length < num_issues_to_display_max) {
+        
         num_issues_to_display = $('.offline_issue.displayable').length;
+    }
     
-    console.log(num_issues_to_display);
     // Number of issues in one row (this can change based on the width of the page)
     offline_num_in_row = parseInt(Math.floor($('#offline-wrapper').width()/182));
-    console.log(offline_num_in_row);
-    
+
     // Getting how many rows we have to display at once to display the minimum number of issues
     var offline_rows_minimum = parseInt(Math.ceil(num_issues_to_display/offline_num_in_row));
-    console.log(offline_rows_minimum);
-    
+
     // Animating the height of the container
     $('#offline-wrapper').css({height: (offline_rows_minimum*230)},400);
     
