@@ -41,7 +41,7 @@ def archive(request, name=None, slug=None):
                     filtered.append(article)
         articles = filtered
 
-    tags = Tag.objects.all()
+    tags = Tag.objects.all().order_by('?')
     return render_to_response('article/archive.html', {'articles' : articles, 'tags' : tags } ,context_instance=RequestContext(request))
 
 def details(request, article_id):
