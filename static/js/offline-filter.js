@@ -28,7 +28,7 @@ $(function() {
         else
             e.stop();
         
-        if (!buzy) {
+        if (!buzy && $('#filter-menu .active').length != 0) {
             num_issues_to_display = num_issues_to_display_max;
         
             $('#filter-menu .active').removeClass('active');
@@ -174,9 +174,11 @@ function filter(year) {
 
 function init_offline(state) {
     // Checking to see if offline_rows_minimum is greater than the number of issues
-    if ($('.offline_issue.displayable').length < num_issues_to_display_max) {
-        
-        num_issues_to_display = $('.offline_issue.displayable').length;
+    if ($('.offline_issue.displayable').length > num_issues_to_display) {
+        if ($('.offline_issue.displayable').length > num_issues_to_display_max)
+            num_issues_to_display = num_issues_to_display_max;
+        else
+            num_issues_to_display = $('.offline_issue.displayable').length;
     }
     
     // Number of issues in one row (this can change based on the width of the page)
