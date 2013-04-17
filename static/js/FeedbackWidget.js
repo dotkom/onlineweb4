@@ -68,9 +68,9 @@ function createFoschart(chartdata) {
 
 }
 
-function createRatingCharts(chartdata) {
+function createRatingCharts(chartdata, questions) {
     for (var index = 0; index < chartdata.length; index++) {
-        var margin = {top: 20, right: 20, bottom: 30, left: 40},
+        var margin = {top: 30, right: 20, bottom: 30, left: 40},
                             width = 570- margin.left - margin.right,
             height = 350 - margin.top - margin.bottom;
         
@@ -100,11 +100,19 @@ function createRatingCharts(chartdata) {
 
         var color = ["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"]; 
  
+        svg.append("text")
+            .attr("class", "barChartText")
+            .attr("y", -10)
+            .attr("x", width / 2)
+            .attr("text-anchor", "middle")
+            .style("font-size", "16px") 
+            .text(questions[index]);
+            
+
         svg.append("g")
             .attr("class", "x axis")
             .attr("transform", "translate(0," + height + ")")
             .call(xAxis);
-          
 
         svg.append("g")
             .attr("class", "y axis")
@@ -120,7 +128,7 @@ function createRatingCharts(chartdata) {
             .data(chartdata[index])
           .enter().append("rect")
             .attr("class", "bar")
-            .attr("x", function(d, i) { return i * 83 + 26; })
+            .attr("x", function(d, i) { return i * 83 + 27; })
             .attr("width", 40)
             .attr("y", function(d) { return y(d); })
             .attr("height", function(d, i) { return height - y(chartdata[index][i]); })
