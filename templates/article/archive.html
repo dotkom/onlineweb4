@@ -2,7 +2,7 @@
 {% load chunks %}
 {% load markup %}
 {% block content %}
-<script type="text/javascript" src="{{ STATIC_URL }}js/OfflineWidget.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/TagCloud.js"></script>
 <section id="article_archive">
     <div class="container-fluid">
         <div class="row-fluid">
@@ -56,12 +56,12 @@
                     </div>
                 </div>
                 <div class="row-fluid">
-                    <div class="span12">
+                    <div class="span12 tagcloud">
                         {% for tag in tags %}
                             {% comment %}
                                 FIXME: fancy-tagcloud :D
                             {% endcomment %}
-                            <span>{{ tag }}</span>
+                            <span data-frequency="{{ tag.frequency }}">{{ tag }}</span>
                         {% endfor %}
                     </div>
                 </div>
