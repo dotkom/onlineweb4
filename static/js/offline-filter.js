@@ -1,6 +1,7 @@
 var busy = false;
 var offline_num_in_row = 1;
 var offline_total_rows = 1;
+var num_issues_to_display = 12;
 var offline_num_in_row_previous = 1337;
 
 $(function() {
@@ -88,7 +89,7 @@ $(function() {
                 if ($(".offline_issue:animated").length === 0) {
 
                     $('.offline_issue').each(function(i) {
-                        if (i >= (offline_num_in_row*parseInt(clicked_index)) && i < (offline_num_in_row*(parseInt(clicked_index)+1))) {
+                        if (i >= (num_issues_to_display*parseInt(clicked_index)) && i < (num_issues_to_display*(parseInt(clicked_index)+1))) {
                             $(this).fadeIn(400);
                         }
                     });
@@ -148,17 +149,24 @@ function filter(year) {
 }
 
 function init_offline() {
+    // Checking to see if offline_rows_minimum is greater than the number of issues
+    if ($('.offline_issue').length < num_issues_to_display)
+        num_issues_to_display = $('.offline_issue').length;
+    
+    console.log(num_issues_to_display);
     // Number of issues in one row (this can change based on the width of the page)
-    offline_num_in_row = parseInt(Math.floor($('#offline-wrapper').width()/167));
+    offline_num_in_row = parseInt(Math.floor($('#offline-wrapper').width()/182));
+    console.log(offline_num_in_row);
     
     // Getting how many rows we have to display at once to display the minimum number of issues
-    var offline_rows_minimum = parseInt(Math.ceil(offline_num_in_row/offline_num_in_row));
+    var offline_rows_minimum = parseInt(Math.ceil(num_issues_to_display/offline_num_in_row));
+    console.log(offline_rows_minimum);
     
     // Animating the height of the container
-    $('#offline-wrapper').stop().animate({height: (offline_rows_minimum*226)},400);
+    $('#offline-wrapper').css({height: (offline_rows_minimum*230)},400);
     
     // Storing total number of rows with issues
-    offline_total_rows = parseInt(Math.ceil($('.offline_issue').length/offline_num_in_row));
+    offline_total_rows = parseInt(Math.ceil($('.offline_issue').length/(offline_num_in_row*offline_rows_minimum)));
     
     // Checking if we need to trigger a click and repaint the menu
     if (offline_num_in_row_previous == 1337)
@@ -180,7 +188,7 @@ function init_pageinator() {
     $('#offline-nav .pagination ul').empty();
     
     // Last/prev
-    if (offline_total_rows >= 1)
+    if (offline_total_rows > 1)
         $('#offline-nav .pagination ul').append('<li class="disabled"><a id="offline-nav-first" href="#">&#171;</a></li><li class="disabled"><a id="offline-nav-prev" href="#">&#8249;</a></li>');
     
     // Nums
@@ -189,7 +197,7 @@ function init_pageinator() {
     }
     
     // Next/last
-    if (offline_total_rows >= 1)
+    if (offline_total_rows > 1)
         $('#offline-nav .pagination ul').append('<li><a id="offline-nav-next" href="#">&#8250;</a></li><li><a id="offline-nav-last" href="#">&#187;</a></li>');
     
     // Clicky!
