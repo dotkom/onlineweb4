@@ -3,6 +3,7 @@
 {% block content %}
 <link href="{{ STATIC_URL }}/css/offline.css" rel="stylesheet" type="text/css">
 <script src="{{ STATIC_URL }}/js/offline-filter.js"></script>
+<script src="{{ STATIC_URL }}/js/libs/jquery.debouncedresize.js"></script>
 
 <div class="container-fluid">
     <div class="row-fluid">
@@ -17,7 +18,7 @@
             <div class="span12 ingress">
              <p>{% chunk 'offline_ingress' %}</p>
              </div>
-            <div id="offline-wrapper" class="span12" style="overflow: hidden;">
+            <div id="offline-wrapper" class="span12">
              {% for issue in issues %}
                 <div id="offline_{{ issue.id }}" class="offline_issue offline_issue_archive" data-year="{{ issue.release_date.year }}">
                     <a href="{{ MEDIA_URL }}{{ issue.issue }}">{{ issue.title|capfirst }}</a>
@@ -25,6 +26,12 @@
                     <a href="{{ MEDIA_URL }}{{ issue.issue }}"><span>{{ issue.release_date_to_string|capfirst }} {{ issue.release_date.year }}</span></a>
                 </div>
             {% endfor %}
+            </div>
+            <div id="offline-nav" class="span12">
+                <div class="pagination pagination-centered">
+                    <ul>
+                    </ul>
+                </div>
             </div>
         </div>
         <div class="span3">

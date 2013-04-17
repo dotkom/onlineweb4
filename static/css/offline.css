@@ -55,4 +55,11 @@ div.offline_issue:hover span, div.offline_issue:hover a:first-child {
 div.offline_issue_archive {
     transition: none;
 }
+div#offline-wrapper {
+    overflow: hidden;
+    height: 226px
+}
+div#offline-nav {
+    text-align: center;
+}
 /* END-Offline */
