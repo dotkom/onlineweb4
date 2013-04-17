@@ -60,6 +60,14 @@ class Tag(models.Model):
     name = models.CharField(_(u"navn"), max_length=50)
     slug = models.CharField(_(u"kort navn"), max_length=30)
 
+    @property
+    def frequency(self):
+        at = ArticleTag.objects.filter(tag=self.id)
+        count = 0
+        for a in at:
+            count += 1
+        return count
+
     def __unicode__(self):
         return self.name
 
