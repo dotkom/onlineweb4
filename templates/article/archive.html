@@ -58,9 +58,6 @@
                 <div class="row-fluid">
                     <div class="span12 tagcloud">
                         {% for tag in tags %}
-                            {% comment %}
-                                FIXME: fancy-tagcloud :D
-                            {% endcomment %}
                             <span data-frequency="{{ tag.frequency }}">{{ tag }}</span>
                         {% endfor %}
                     </div>
