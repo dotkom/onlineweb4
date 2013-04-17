@@ -62,4 +62,20 @@ div#offline-wrapper {
 div#offline-nav {
     text-align: center;
 }
+#offline-nav .paddright {
+    margin-right: 10px;
+}
+#offline-nav .paddleft {
+    margin-left: 10px;
+}
+.pagination ul > li {
+    display: inline-block;
+}
+/* Override stupid boobstrap */
+#offline-nav .paddleft a{
+    border-left-width: 1px;
+}
+#offline-nav .first a{
+    border-left-width: 1px;
+}
 /* END-Offline */
