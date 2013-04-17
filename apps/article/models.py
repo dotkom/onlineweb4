@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from django.db import models
-
+from django.db.models import permalink
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext as _
 
@@ -67,6 +67,10 @@ class Tag(models.Model):
         for a in at:
             count += 1
         return count
+
+    @permalink
+    def get_permalink(self):
+        return ('view_article_tag', None, {'name': self.name, 'slug': self.slug})
 
     def __unicode__(self):
         return self.name

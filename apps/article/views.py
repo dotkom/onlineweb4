@@ -21,11 +21,28 @@ def index(request):
     
     return render_to_response('article/index.html', {'featured' : featured[0], 'latest': latestNews}, context_instance=RequestContext(request))
 
-def archive(request):
+def archive(request, name=None, slug=None):
+    """
+    Parameters
+    ----------
+    name:
+        Tag name
+    slug:
+        Tag slug
+    """
+
     articles = Article.objects.all()
+    if name:
+        filtered = []
+        for article in articles:
+            print(article.tags)
+            for tag in article.tags:
+                if name == tag.name:
+                    filtered.append(article)
+        articles = filtered
+
     tags = Tag.objects.all()
     return render_to_response('article/archive.html', {'articles' : articles, 'tags' : tags } ,context_instance=RequestContext(request))
-
 
 def details(request, article_id):
 	article = get_object_or_404(Article, pk=article_id)
