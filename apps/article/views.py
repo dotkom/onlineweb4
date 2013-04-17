@@ -1,7 +1,7 @@
 from django.template import Template, Context, loader, RequestContext
 from django.shortcuts import render_to_response, get_object_or_404
 from django.http import HttpResponse
-from models import Article, Tag
+from models import Article, Tag, ArticleTag
 
 def index(request):
     # Featured
@@ -31,7 +31,7 @@ def archive(request, name=None, slug=None, year=None, month=None):
     year:
         Article year (published_date)
     month:
-        Article month (published_date)
+        Article month (published_date), most likely in norwegian written format.
     """
 
     articles = Article.objects.all()
@@ -71,8 +71,9 @@ def archive(request, name=None, slug=None, year=None, month=None):
         articles = filtered
 
     tags = Tag.objects.all().order_by('?')
+    max_tag_frequency = max([x.frequency for x in tags])
 
-    return render_to_response('article/archive.html', {'articles': articles, 'tags': tags, 'dates': dates } ,context_instance=RequestContext(request))
+    return render_to_response('article/archive.html', {'articles': articles, 'tags': tags, 'max_tag_frequency': max_tag_frequency, 'dates': dates } ,context_instance=RequestContext(request))
 
 def archive_tag(request, name, slug):
     return archive(request, name=name, slug=slug)
