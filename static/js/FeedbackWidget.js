@@ -10,12 +10,12 @@ function createFoschart(chartdata) {
 
     fosdata = chartdata
    
-    var color_hash = { 0 :  ['Bachelor i Informatikk (BIT)', "cyan"],
-                       1 :  ['Intelligente Systemer (IRS)', "pink"],
-                       2 :  ['Software (SW)', "yellow"],
-                       3 :  ['Informasjonsforvaltning (DIF)', "green"],
-                       4 :  ['Komplekse Datasystemer (KDS)', "gray"],
-                       5 :  ['Spillteknologi (SPT)', "purple"]
+    var color_hash = { 0 :  ['Bachelor i Informatikk (BIT)', "#ccd5e6"],
+                       1 :  ['Intelligente Systemer (IRS)', "#a3b5d4"],
+                       2 :  ['Software (SW)', "#668dc2"],
+                       3 :  ['Informasjonsforvaltning (DIF)', "#4774ab"],
+                       4 :  ['Komplekse Datasystemer (KDS)', "#3a6190"],
+                       5 :  ['Spillteknologi (SPT)', "#33567f"]
     }
 
 
@@ -41,13 +41,13 @@ function createFoschart(chartdata) {
         .attr("transform", function(d, i) { return "translate(0," + ((i * 20) - 100) + ")"; });
 
     legend.append("rect")
-        .attr("x", chartWidth + 55)
+        .attr("x", chartWidth + 5)
         .attr("width", 18)
         .attr("height", 18)
         .style("fill", function(d) { return color_hash[fosdata.indexOf(d)][1]; })
 
     legend.append("text")
-        .attr("x", chartWidth + 50)
+        .attr("x", chartWidth)
         .attr("y", 9)
         .attr("dy", ".35em")
         .style("text-anchor", "end")
@@ -98,14 +98,11 @@ function createRatingCharts(chartdata, questions) {
         x.domain(chartdata[index].map(function(d, i) { return i + 1; }));
         y.domain([0, d3.max(chartdata[index], function(d, i) { return chartdata[index][i]; })]);
 
-        var color = ["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"]; 
- 
         svg.append("text")
             .attr("class", "barChartText")
             .attr("y", -10)
             .attr("x", width / 2)
             .attr("text-anchor", "middle")
-            .style("font-size", "16px") 
             .text(questions[index]);
             
 
@@ -132,7 +129,7 @@ function createRatingCharts(chartdata, questions) {
             .attr("width", 40)
             .attr("y", function(d) { return y(d); })
             .attr("height", function(d, i) { return height - y(chartdata[index][i]); })
-            .style("fill", function(d, i) { return color[i]; });
+            .style("fill", "#4c7db7")
 
     }
 }

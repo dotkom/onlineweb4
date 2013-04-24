@@ -15,9 +15,11 @@
             {% for qa in question_and_answers%}
                 {% if qa.question|isinst:"apps.feedback.models.TextQuestion" %}
                  <h3><u>{{ qa.question }}</u></h3>
+                 <ul>
                  {% for a in qa.answers %}
-                    <ol>{{ a }}</ol>
+                    <li>{{ a }}</li>
                  {% endfor %}
+                 </ul>
                 {% endif %}
             {% endfor %}
             </div>
