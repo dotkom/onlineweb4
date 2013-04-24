@@ -2,6 +2,7 @@ from django.template import Template, Context, loader, RequestContext
 from django.shortcuts import render_to_response, get_object_or_404
 from django.http import HttpResponse
 from models import Article, Tag, ArticleTag
+import random
 
 def index(request):
     # Featured
@@ -90,8 +91,11 @@ def archive(request, name=None, slug=None, year=None, month=None):
                     filtered.append(article)
         articles = filtered
 
-    # Randomize tags
-    tags = Tag.objects.all().order_by('?')
+    # Get the 30 most used tags, then randomize them
+    tags = list(Tag.objects.all())
+    tags.sort(key=lambda x: x.frequency, reverse=True)
+    tags = tags[:30]
+    random.shuffle(tags)
     # Get max frequency of tags. This is used for relative sizing in the tag cloud.
     max_tag_frequency = max([x.frequency for x in tags])
 
