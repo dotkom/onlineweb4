@@ -36,8 +36,10 @@ def feedback(request, applabel, appmodel, object_id, feedback_id):
     else:
         answers = create_answer_forms(fbr)
 
+    description = fbr.description
+
     return render(request, 'feedback/answer.html',
-                  {'answers': answers})
+                  {'answers': answers, 'description':description})
 
 
 def result(request, applabel, appmodel, object_id, feedback_id):
