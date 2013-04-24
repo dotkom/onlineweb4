@@ -30,14 +30,15 @@ def feedback(request, applabel, appmodel, object_id, feedback_id):
             # mark that the user has answered
             fbr.answered.add(request.user)
             fbr.save()
-
             messages.success(request, _("Takk for at du svarte"))
             return redirect("home")
     else:
         answers = create_answer_forms(fbr)
 
+    description = fbr.description
+
     return render(request, 'feedback/answer.html',
-                  {'answers': answers})
+                  {'answers': answers, 'description':description})
 
 
 def result(request, applabel, appmodel, object_id, feedback_id):
