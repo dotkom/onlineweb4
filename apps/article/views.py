@@ -1,5 +1,6 @@
 from django.template import Template, Context, loader, RequestContext
 from django.shortcuts import render_to_response, get_object_or_404
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.http import HttpResponse
 from models import Article, Tag, ArticleTag
 import random
@@ -35,7 +36,7 @@ def archive(request, name=None, slug=None, year=None, month=None):
         Article month (published_date), most likely in norwegian written format.
     """
 
-    articles = Article.objects.all()
+    articles = Article.objects.all().order_by('-published_date')
 
     month_strings = {
         '1': u'Januar',
@@ -98,6 +99,19 @@ def archive(request, name=None, slug=None, year=None, month=None):
     random.shuffle(tags)
     # Get max frequency of tags. This is used for relative sizing in the tag cloud.
     max_tag_frequency = max([x.frequency for x in tags])
+
+    # Paginator
+    # Shows 10 articles per page. Note that these are also filtered beforehand by tag or date.
+    paginator = Paginator(articles, 10)
+    page = request.GET.get('page')
+    try:
+        articles = paginator.page(page)
+    except PageNotAnInteger:
+        # Deliver first page.
+        articles = paginator.page(1)
+    except EmptyPage:
+        # Deliver last page.
+        articles = paginator.page(paginator.num_pages)
 
     return render_to_response('article/archive.html', {'articles': articles, 'tags': tags, 'max_tag_frequency': max_tag_frequency, 'dates': dates } ,context_instance=RequestContext(request))
 

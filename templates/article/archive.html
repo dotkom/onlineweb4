@@ -119,12 +119,13 @@
             <div class="span12">
                 <div class="pagination">
                     <ul>
-                        <li><a href="#">Prev</a></li>
-                        <li><a href="#">1</a></li>
-                        <li><a href="#">2</a></li>
-                        <li><a href="#">3</a></li>
-                        <li><a href="#">4</a></li>
-                        <li><a href="#">Next</a></li>
+                        {% if articles.has_previous %}
+                            <li><a href="?page={{ articles.previous_page_number }}">Forrige</a></li>
+                        {% endif %}
+                        <li><a href="#">Side {{ articles.number }} av {{ articles.paginator.num_pages }}</a></li>
+                        {% if articles.has_next %}
+                            <li><a href="?page={{ articles.next_page_number }}">Neste</a></li>
+                        {% endif %}
                     </ul>
                 </div>
             </div>
