@@ -51,22 +51,37 @@ def archive(request, name=None, slug=None, year=None, month=None):
         '12': u'Desember',
     }
 
+    rev_month_strings = dict((v,k) for k,v in month_strings.iteritems())
+
     dates = {}
     for article in articles:
-        year = str(article.published_date.year)
-        month = str(article.published_date.month)
-        if year not in dates:
-            dates[year] = []
+        d_year = str(article.published_date.year)
+        d_month = str(article.published_date.month)
+        if d_year not in dates:
+            dates[d_year] = []
         for y in dates:
-            if year == y:
-                if month_strings[month] not in dates[year]:
-                    dates[year].append(month_strings[month])
+            if d_year == y:
+                if month_strings[d_month] not in dates[d_year]:
+                    dates[d_year].append(month_strings[d_month])
 
     if name:
         filtered = []
         for article in articles:
             for tag in article.tags:
                 if name == tag.name:
+                    filtered.append(article)
+        articles = filtered
+
+    if 'year' in request.path:
+        filtered = []
+        if 'month' in request.path:
+            month = rev_month_strings[month]
+            for article in articles:
+                if article.published_date.year == int(year) and article.published_date.month == int(month):
+                    filtered.append(article)
+        else:
+            for article in articles:
+                if article.published_date.year == int(year):
                     filtered.append(article)
         articles = filtered
 
@@ -77,6 +92,12 @@ def archive(request, name=None, slug=None, year=None, month=None):
 
 def archive_tag(request, name, slug):
     return archive(request, name=name, slug=slug)
+
+def archive_year(request, year):
+    return archive(request, year=year)
+
+def archive_month(request, year, month):
+    return archive(request, year=year, month=month)
 
 def details(request, article_id):
 	article = get_object_or_404(Article, pk=article_id)
