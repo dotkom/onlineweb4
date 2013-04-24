@@ -53,6 +53,7 @@ def archive(request, name=None, slug=None, year=None, month=None):
 
     rev_month_strings = dict((v,k) for k,v in month_strings.iteritems())
 
+    # For creating the date filters.
     dates = {}
     for article in articles:
         d_year = str(article.published_date.year)
@@ -64,6 +65,7 @@ def archive(request, name=None, slug=None, year=None, month=None):
                 if month_strings[d_month] not in dates[d_year]:
                     dates[d_year].append(month_strings[d_month])
 
+    # If we're filtering by tag
     if name:
         filtered = []
         for article in articles:
@@ -72,20 +74,25 @@ def archive(request, name=None, slug=None, year=None, month=None):
                     filtered.append(article)
         articles = filtered
 
+    # If we're filtering by year
     if 'year' in request.path:
         filtered = []
+        # If we're filtering by year and month
         if 'month' in request.path:
             month = rev_month_strings[month]
             for article in articles:
                 if article.published_date.year == int(year) and article.published_date.month == int(month):
                     filtered.append(article)
+        # If we're filtering by year, but not month
         else:
             for article in articles:
                 if article.published_date.year == int(year):
                     filtered.append(article)
         articles = filtered
 
+    # Randomize tags
     tags = Tag.objects.all().order_by('?')
+    # Get max frequency of tags. This is used for relative sizing in the tag cloud.
     max_tag_frequency = max([x.frequency for x in tags])
 
     return render_to_response('article/archive.html', {'articles': articles, 'tags': tags, 'max_tag_frequency': max_tag_frequency, 'dates': dates } ,context_instance=RequestContext(request))
