@@ -98,7 +98,7 @@ def archive(request, name=None, slug=None, year=None, month=None):
     tags = tags[:30]
     random.shuffle(tags)
     # Get max frequency of tags. This is used for relative sizing in the tag cloud.
-    max_tag_frequency = max([x.frequency for x in tags])
+    max_tag_frequency = max([x.frequency for x in tags]) or 1
 
     # Paginator
     # Shows 10 articles per page. Note that these are also filtered beforehand by tag or date.
