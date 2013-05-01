@@ -18,6 +18,7 @@ class AnswerForm(forms.ModelForm):
         self.helper.html5_required = False
         super(AnswerForm, self).__init__(*args, **kwargs)
         self.fields['answer'].label = self.instance.question.label
+        
 
 
 class RatingAnswerForm(AnswerForm):
@@ -31,11 +32,10 @@ class RatingAnswerForm(AnswerForm):
 
 class FieldOfStudyAnswerForm(AnswerForm):
 
+    
+
     def clean_answer(self):
         data = self.cleaned_data['answer']
-        if data == -1:
-            # raise the django field required error
-            raise forms.ValidationError(_(u'This field is required.'))
         return data
 
     class Meta:

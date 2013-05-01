@@ -139,7 +139,6 @@ class Feedback(models.Model):
 
 
 FIELD_OF_STUDY_CHOICES = [
-    (-1, _(u'---')),
     (0, _(u'Bachelor i Informatikk (BIT)')),
     (1, _(u'Intelligente Systemer (IRS)')),
     (2, _(u'Software (SW)')),
