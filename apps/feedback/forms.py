@@ -18,7 +18,6 @@ class AnswerForm(forms.ModelForm):
         self.helper.html5_required = False
         super(AnswerForm, self).__init__(*args, **kwargs)
         self.fields['answer'].label = self.instance.question.label
-        
 
 
 class RatingAnswerForm(AnswerForm):

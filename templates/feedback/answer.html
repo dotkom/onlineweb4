@@ -5,14 +5,16 @@
 <div class="container-fluid">
     <div class="row-fluid">
         <div class="span12">
-            <br>
-            <h1 class="pagination-centered">{{ description }}</h1>
-            <form method="POST" id="feedback"> {% csrf_token %}
+            <div class="page-header">
+                <h1>{{ description }}</h1>
+            </div>
+            <form method="POST" class="feedback-answer-label" id="feedback"> {% csrf_token %}
                 {% for f in answers %}
                     {{f|crispy}}
-                    <br>
                 {% endfor %}
-                <input type="submit" value="Submit" />
+                <div class="form-actions">
+                    <input class="btn btn-success" type="submit" value="Submit" />
+                </div>
             </form>
         </div>
     </div>
