@@ -128,50 +128,84 @@ p {
 
 /* Events
 -------------------------------------------------- */
-.list-items {
-    font-size:14px;
-    padding:10px 0px 10px 34px;
-    font-weight:400;
-    border-bottom: 1px dashed lighten(#333333, 70%);
-}
-.event-list :last-child {
-    border-bottom: 0px;
-}
 
-.event-list li {
-    .list-items
-}
 
-.event-list li > img {
-    margin-right:5px;
-    margin-top: -4px;
-}
+section#events {
 
-.bullet-1 {
-    background:url("../img/arrkom_bullet.png") no-repeat 0;
-}
-.bullet-2 {
-    background:url("../img/bedkom_bullet.png") no-repeat 0;
-}
-.bullet-3 {
-    background:url("../img/fagkom_bullet.png") no-repeat 0;
-}
+    .event-row {
+        margin-bottom:20px;
+    }
 
-.event-list-dates li {
-    color:#2fa3d3;
-    padding-bottom:7px;
-    .list-items
+    .event-title {
+        font-size:17px;
+        margin-bottom:5px;
+    }
+
+    .event-ingress {
+        font-size:12px;
+        color:#777;
+        font-weight:300;
+    }
+
+    @fagkom-color:#a1d40a;
+    @bedkom-color:#3366AA;
+    @arrkom-color:#B70000;
+
+    .event-calendar-box {
+        padding:3px 3px 4px 3px;
+        text-align:center;
+        font-weight:400;
+        font-size:19px;
+        /*-webkit-box-shadow: 3px 3px 8px 2px #AAA;*/
+    }
+
+    .event-arrkom {
+        .event-calendar-box();
+        background:@arrkom-color;
+        color:@arrkom-color;
+    }
+    .event-fagkom {
+        .event-calendar-box();
+        background:@fagkom-color;
+        color:@fagkom-color;
+    }
+    .event-bedkom {
+        .event-calendar-box();
+        background:@bedkom-color;
+        color:@bedkom-color;
+    }
     
-}
+    /* Gets overridden belowi if needed */
+    [class*='event-type-'] {
+        .event-arrkom;
+    }
 
-.filter > li {
-    display:inline;
-    padding:0 0 0 5px;
-}
+    .event-type-1 {
+        .event-arrkom;
+    }
 
-.sidebar {
-padding:80px 20px 20px 20px;
+    .event-type-2 {
+        .event-bedkom;
+    }
 
+    .event-type-3 {
+        .event-fagkom;
+    }
+
+    
+
+    .event-calendar-date {
+        display:block;
+        background:#FFF;
+        padding:3px;
+    }
+
+    .event-calendar-month {
+        color:#FFF;
+        font-size:13px;
+        font-weight:400;
+        text-transform:uppercase;
+    }
 }
 
 
@@ -365,3 +399,20 @@ div.nav-collapse.in.collapse ul.nav.pull-right li.dropdown a.login-btn.dropdown-
         }
     }
 }
+/* HACKING
+#background:before {
+    content: '';
+    display: block;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    bottom: 0;
+    background: -moz-linear-gradient(top,  rgba(93,99,101,0) 0%, rgba(93,99,101,1) 100%);    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(93,99,101,0)), color-stop(100%,rgba(93,99,101,1)));
+
+    background: -webkit-linear-gradient(top,  rgba(255,255,255,0) 0%,rgba(255,255,255,1) 100%); 
+    background: -o-linear-gradient(top,  rgba(93,99,101,0) 0%,rgba(93,99,101,1) 100%); 
+    background: -ms-linear-gradient(top,  rgba(93,99,101,0) 0%,rgba(93,99,101,1) 100%); 
+    background: linear-gradient(to bottom,  rgba(93,99,101,0) 0%,rgba(93,99,101,1) 100%); 
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#005d6365', endColorstr='#5d6365',GradientType=0 );
+}
+*/
