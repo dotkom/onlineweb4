@@ -4,10 +4,13 @@
 {% block content %}
 <div class="container-fluid">
     <div class="row-fluid">
-        <div class="span9">
+        <div class="span12">
+            <br>
+            <h1 class="pagination-centered">{{ description }}</h1>
             <form method="POST" id="feedback"> {% csrf_token %}
                 {% for f in answers %}
                     {{f|crispy}}
+                    <br>
                 {% endfor %}
                 <input type="submit" value="Submit" />
             </form>

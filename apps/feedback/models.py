@@ -41,6 +41,18 @@ class FeedbackRelation(models.Model):
         return self.feedback.questions
 
     @property
+    def fosquestion(self):
+        return self.feedback.fosquestions
+
+    @property
+    def ratingquestion(self):
+        return self.feedback.ratingquestions
+
+    @property
+    def description(self):
+        return self.feedback.description
+
+    @property
     def answers(self):
         """
         All answers related to this FeedbackRelation.
@@ -89,6 +101,18 @@ class Feedback(models.Model):
     feedback_id = models.AutoField(primary_key=True)
     author = models.ForeignKey(User)
     description = models.CharField(_(u'beskrivelse'), max_length=100)
+ 
+    @property
+    def fosquestions(self):
+        field_of_study_question = []
+        field_of_study_question.extend(self.field_of_study_questions.all())
+        return field_of_study_question
+
+    @property
+    def ratingquestions(self):
+        rating_question = []
+        rating_question.extend(self.rating_questions.all())
+        return rating_question
 
     @property
     def questions(self):
