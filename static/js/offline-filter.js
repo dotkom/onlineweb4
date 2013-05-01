@@ -22,7 +22,12 @@ $(function() {
             e.preventDefault();
         else
             e.stop();
-
+        
+        // Showing the reset-shiiiiit
+        if ($('#filter-reset').is(':hidden')) {
+            $('#filter-reset').fadeIn(400);
+        }
+        
         // Check if currently animating
         if (!buzy) {
             // Swap classes
@@ -40,6 +45,9 @@ $(function() {
             e.preventDefault();
         else
             e.stop();
+        
+        // Hide the reset-shit
+        $('#filter-reset').fadeOut(400);
         
         // Checking if currently animated and filter is set
         if (!buzy && $('#filter-menu .active').length != 0) {
@@ -246,6 +254,19 @@ function init_offline(state) {
 
 // Appending arrows and numbers to the navigation
 function init_pageinator() {
+    // Show/hide
+    if (offline_total_rows == 1) {
+        if ($('#offline-nav').is(':visible')) {
+            $('#offline-nav').hide();
+        }
+    }
+    else {
+        if ($('#offline-nav').is(':hidden')) {
+            $('#offline-nav').show();
+        }
+    }
+    
+    
     // Removing first
     $('#offline-nav .pagination ul').empty();
     
