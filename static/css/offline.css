@@ -1,0 +1,81 @@
+/* Offline */
+div#offline {
+    position: relative;
+    text-align: center;
+    margin: 0px auto;
+}
+div.offline_issue {
+    display: inline-block;
+    margin: 1em;
+    text-align: center;
+}
+div.offline_issue {
+    -webkit-transition: all 0.2s ease-in-out;
+    -moz-transition: all 0.2s ease-in-out;
+    -o-transition: all 0.2s ease-in-out;
+    -ms-transition: all 0.2s ease-in-out;
+    -moz-box-shadow: 5px 5px 5px #ccc;
+    -webkit-box-shadow: 5px 5px 5px #ccc;
+    box-shadow: 5px 5px 5px #ccc;
+}
+div.offline_issue:hover {
+    -moz-box-shadow: 10px 10px 10px #666;
+    -webkit-box-shadow: 10px 10px 10px #666;
+    box-shadow: 10px 10px 10px #666;
+}
+div.offline_issue a {
+    text-decoration: none;
+}
+div.offline_issue a:first-child, div.offline_issue span {
+    -webkit-transition: all 0.2s ease-in-out;
+    -moz-transition: all 0.2s ease-in-out;
+    -o-transition: all 0.2s ease-in-out;
+    -ms-transition: all 0.2s ease-in-out;
+    display: block;
+    color: #fff;
+    background: #333;
+    opacity: 0;
+}
+div.offline_issue a:first-child { 
+    text-decoration: none; 
+    margin-top: -24px; 
+    position: relative; bottom: -24px;
+}
+div.offline_issue a, div.offline_issue span {
+    line-height: 2em;
+    display: block;
+}
+div.offline_issue span { 
+    margin-bottom: -24px;
+    position: relative; top: -24px;
+}
+div.offline_issue:hover span, div.offline_issue:hover a:first-child {
+    opacity: 0.75;
+}
+div.offline_issue_archive {
+    transition: none;
+}
+div#offline-wrapper {
+    overflow: hidden;
+    height: 226px
+}
+div#offline-nav {
+    text-align: center;
+}
+#offline-nav .paddright {
+    margin-right: 10px;
+}
+#offline-nav .paddleft {
+    margin-left: 10px;
+}
+.pagination ul > li {
+    display: inline-block;
+}
+/* Override stupid boobstrap */
+#offline-nav .paddleft a{
+    border-left-width: 1px;
+}
+#offline-nav .first a{
+    border-left-width: 1px;
+}
+/* END-Offline */
