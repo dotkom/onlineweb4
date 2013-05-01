@@ -30,6 +30,13 @@ body {
     }
 }
 
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
 /* Desktop */
 @media all and (min-width: @media-desktop-min) {
     .container-fluid {
@@ -398,6 +405,16 @@ div.nav-collapse.in.collapse ul.nav.pull-right li.dropdown a.login-btn.dropdown-
             clear: both;
         }
     }
+}
+
+.control-label {
+    font-size:18px;
+}
+
+.barChartText {
+    stroke:@heading;
+    fill:@heading;
+    font-size:20px;
 }
 /* HACKING
 #background:before {
