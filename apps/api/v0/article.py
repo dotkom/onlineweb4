@@ -13,3 +13,8 @@ class ArticleResource(ModelResource):
     class Meta:
         queryset = Article.objects.all()
         resource_name = 'article/all'
+        
+        ordering = ['published_date']
+        filtering = {
+            'published_date' : ('gte',)
+        }
