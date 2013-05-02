@@ -5,7 +5,7 @@
             "key": "offline_ingress"
         }, 
         "model": "chunks.chunk", 
-        "pk": 1
+        "pk": 18
     },
     {
         "fields": {
@@ -13,6 +13,6 @@
             "key": "offline_brodtekst"
         }, 
         "model": "chunks.chunk", 
-        "pk": 2
+        "pk": 19
     }
 ]
