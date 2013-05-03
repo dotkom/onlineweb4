@@ -2,7 +2,7 @@
 {% load markup %}
 {% block content %}
     
-<section id="careeropportunity">
+<section id="articles">
     <div class="container-fluid">
         <div class="row-fluid">
             <div class="span12">
@@ -12,16 +12,19 @@
             </div>
         </div>
         <div class="span12">
-            <div class="span8">
-                <div class="row-fluid" id="opportunity-description">
-                    <div class="span12">
-                        <p class="ingress">{{opportunity.description}}</p>
-                    </div>
-                </div>
-            </div>
             <div class="span3">
                 <div class="row-fluid" id="opportunity-image">
                     <img src="http://i.imgur.com/A1S2UA3.png" />
+                </div>
+            </div>
+            <div class="divider-vertical"></div>
+            <div class="span8">
+                <div class="row-fluid" id="opportunity-description">
+                    <div class="span12">
+                        <p class="ingress">
+                            {{ opportunity.description|striptags|markdown }}
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -44,7 +47,9 @@
                 </div>
             </div>
             <div class="span8">
-                <p class="ingress">{{opportunity.company.long_description}}</p>
+                <p class="ingress">
+                    {{ opportunity.company.long_description|striptags|markdown }}
+                </p>
             </div>
         </div>
     </div>

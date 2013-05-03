@@ -1,5 +1,4 @@
 {% extends "base.html" %}
-{% load markup %}
 {% block content %}
     
     <section id="careeropportunities">
@@ -11,9 +10,11 @@
                     </div>
                 </div>
             </div>
+{% for opportunity in opportunities %}
+    {% if forloop.counter0|divisibleby:"4" %}
             <div class="row-fluid">
-            {% for opportunity in opportunities %}
-                <div class="span3">
+    {% endif %}
+                <div class="span3 breakwords">
                     <a href="{{opportunity.id}}">
                         <div class="row-fluid">
                             <div class="span12">
@@ -32,9 +33,14 @@
                         </div>
                     </div>
                 </div>
-            {% endfor %}
+    {% if forloop.counter|divisibleby:"4" and not forloop.last%}
             </div>
-
+    {% endif %}
+    
+    {% if forloop.last %}
+            </div>
+    {% endif %}
+{% endfor %}
         </div>
     </section>
 {%endblock content %}
