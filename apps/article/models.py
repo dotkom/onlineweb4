@@ -15,15 +15,9 @@ class Article(models.Model):
     heading = models.CharField(_(u"tittel"), max_length=200)
     ingress = models.TextField(_(u"ingress"))
     content = models.TextField(_(u"content"))
-    image_article = FileBrowseField(_(u"artikkel-bilde"),
+    image = FileBrowseField(_(u"bilde"), 
         max_length=200, directory=IMAGE_FOLDER, blank=True,
-        extensions=IMAGE_EXTENSIONS)
-    image_thumbnail = FileBrowseField(_(u"thumbnail"),
-        max_length=200, directory=IMAGE_FOLDER, blank=True,
-        extensions=IMAGE_EXTENSIONS)
-    image_featured = FileBrowseField(_(u"featured-bilde"),
-        max_length=200, directory=IMAGE_FOLDER, blank=True,
-        extensions=IMAGE_EXTENSIONS)
+        extensions=IMAGE_EXTENSIONS, null=True)
     created_date = models.DateTimeField(_(u"opprettet-dato"), auto_now_add=True, editable=False)
     changed_date = models.DateTimeField(_(u"sist endret"), editable=False, auto_now=True)
     published_date = models.DateTimeField(_(u"publisert"))
@@ -31,7 +25,7 @@ class Article(models.Model):
     created_by = models.ForeignKey(User, null=False, verbose_name=_(u"opprettet av"), related_name="created_by", editable=False)
     changed_by = models.ForeignKey(User, null=False, verbose_name=_(u"endret av"), related_name="changed_by", editable=False)
     featured = models.BooleanField(_(u"featured artikkel"), default=False)
-
+    
     def __unicode__(self):
         return self.heading
 
