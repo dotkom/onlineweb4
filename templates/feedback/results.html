@@ -2,14 +2,6 @@
 
 {% load question_filters %}
 {% block content %}
-
-<script>
-function printPdf()
-{
-    window.print();
-}
-</script>
-
 <div class="container-fluid">
     <div class="row-fluid">
         <div class="span12">
@@ -32,7 +24,7 @@ function printPdf()
                     {% endif %}
                 {% endfor %}
             <div class="form-actions">
-                <button class="btn btn-success" onclick="printPdf()">Print</button>
+                <button class="btn btn-success" onclick="window.print()">Print</button>
             </div>
         </div>
     </div>
