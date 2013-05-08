@@ -25,7 +25,7 @@ class Article(models.Model):
     created_by = models.ForeignKey(User, null=False, verbose_name=_(u"opprettet av"), related_name="created_by", editable=False)
     changed_by = models.ForeignKey(User, null=False, verbose_name=_(u"endret av"), related_name="changed_by", editable=False)
     featured = models.BooleanField(_(u"featured artikkel"), default=False)
-
+    
     def __unicode__(self):
         return self.heading
 
