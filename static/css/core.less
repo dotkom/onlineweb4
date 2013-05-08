@@ -330,9 +330,22 @@ text-align:left;
     color:#FFF;
 }
 
-.navbar .nav  li.top-menu-link a {
+.navbar .nav li.top-menu-link a {
     .top-menu-positioning;
     .top-menu-font;
+    -webkit-transition: text-shadow 0.15s ease-in-out 0s;
+    transition: text-shadow 0.15s ease-in-out 0s;
+}
+
+.navbar .nav li.top-menu-link .active {
+    color: #ffffff;
+    text-shadow:
+        0px 1px 0px #ffffff,
+        0px 0px 10px #ffffff,
+        0px 0px 15px #ffffff,
+        0px 0px 20px #ffffff,
+        0px 0px 30px #ffffff;
+
 }
 
 .navbar .nav li.top-menu-img a {
