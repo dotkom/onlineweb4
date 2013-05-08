@@ -3,25 +3,36 @@
 {% load question_filters %}
 {% block content %}
 
+<script>
+function printPdf()
+{
+    window.print();
+}
+</script>
+
 <div class="container-fluid">
     <div class="row-fluid">
         <div class="span12">
-            <h1 class="pagination-centered"> {{ description }} </h1>
+            <div class="page-header">
+                <h1>{{ description }}</h1> 
+            </div>
             <h2 class="pagination-centered">Studieretning</h2>
 
             <div class="span12 pagination-centered" id="foschart"></div>
-            <div class="span12" id="ratingcharts"<div></div>
+            <div class="span12" id="ratingcharts"></div>
             <div class="span12">
-            {% for qa in question_and_answers%}
-                {% if qa.question|isinst:"apps.feedback.models.TextQuestion" %}
-                 <h3><u>{{ qa.question }}</u></h3>
-                 <ul>
-                 {% for a in qa.answers %}
-                    <li>{{ a }}</li>
-                 {% endfor %}
-                 </ul>
-                {% endif %}
-            {% endfor %}
+                {% for qa in question_and_answers%}
+                    {% if qa.question|isinst:"apps.feedback.models.TextQuestion" %}
+                     <h3><u>{{ qa.question }}</u></h3>
+                     <ul>
+                     {% for a in qa.answers %}
+                        <li>{{ a }}</li>
+                     {% endfor %}
+                     </ul>
+                    {% endif %}
+                {% endfor %}
+            <div class="form-actions">
+                <button class="btn btn-success" onclick="printPdf()">Print</button>
             </div>
         </div>
     </div>
