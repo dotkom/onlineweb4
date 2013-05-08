@@ -81,5 +81,10 @@ function ArticleWidget (Utils){
                 }
             });
         }
+        else {
+            if (callback_func instanceof Function) {
+                callback_func();
+            }
+        }
     }
 }

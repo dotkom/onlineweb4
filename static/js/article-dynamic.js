@@ -21,7 +21,7 @@ $(function() {
     var articleWidget = new ArticleWidget(utils);
     
     // The initial rendgering (loading from ajax)
-    articleWidget.render(page,false,articleSettings);
+    articleWidget.render(1,false,articleSettings);
     
     //
     // Method for infinite scrolling
@@ -69,7 +69,7 @@ $(function() {
             page = 1;
             
             // Setting the urls correctly
-            window.history.pushState("", "Offline Archive", $obj.attr('href'));
+            //window.history.pushState("", "Offline Archive", $obj.attr('href'));
             
             // Updating the settings
             articleSettings.tag = null;
@@ -83,7 +83,7 @@ $(function() {
                 articleSettings.month = null;
             
             // Render!
-            articleWidget.render(page,true,articleSettings,function () {
+            articleWidget.render(1,true,articleSettings,function () {
                 // Setting loading to false, so we can load another round later
                 is_loading_new_content = false;
             });
@@ -117,9 +117,10 @@ $(function() {
             articleSettings.year = null;
             articleSettings.month = null;
             articleSettings.tag = url[url.length-1];
+            page = 1;
             
             // Render!
-            articleWidget.render(page,true,articleSettings,function () {
+            articleWidget.render(1,true,articleSettings,function () {
                 // Setting loading to false, so we can load another round later
                 is_loading_new_content = false;
             });
@@ -145,12 +146,13 @@ $(function() {
             articleSettings.year = null;
             articleSettings.month = null;
             articleSettings.tag = null;
+            page = 1;
             
             // Setting the urls correctly
             window.history.pushState("", "Offline Archive", $(this).attr('href'));
             
             // Render!
-            articleWidget.render(page,true,articleSettings,function () {
+            articleWidget.render(1,true,articleSettings,function () {
                 // Setting loading to false, so we can load another round later
                 is_loading_new_content = false;
             });
