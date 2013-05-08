@@ -1,5 +1,7 @@
 from django.contrib import admin
 from apps.article.models import Article, Tag, ArticleTag
+from django.conf import settings
+from filebrowser.settings import ADMIN_THUMBNAIL, ADMIN_VERSIONS
 
 class ArticleTagAdmin(admin.ModelAdmin):
     model = ArticleTag
@@ -22,7 +24,12 @@ class ArticleAdmin(admin.ModelAdmin):
 
     #set the created and changed by fields
     def save_model(self, request, obj, form, change): 
+        obj.image.version_generate(ADMIN_THUMBNAIL).url
+        
+        for ver in ADMIN_VERSIONS:
+            obj.image.version_generate(ver).url
         obj.changed_by = request.user
+        
         if not change:
             obj.created_by = request.user
         obj.save()
