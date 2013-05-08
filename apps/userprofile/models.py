@@ -8,9 +8,7 @@ from django.db.models.signals import post_save
 from django.utils.translation import ugettext_lazy as _
 from django.dispatch import receiver
 
-
-class UserProfile(models.Model):
-    FIELD_OF_STUDY_CHOICES = (
+FIELD_OF_STUDY_CHOICES = (
         (0, '--'),
         (1, 'BIT'),
         (2, 'MIT'),
@@ -18,6 +16,8 @@ class UserProfile(models.Model):
         (4, 'International'),
     )
 
+class UserProfile(models.Model):
+    
     user = models.ForeignKey(User, unique=True)
 
     # Online related fields

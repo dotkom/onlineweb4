@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
 
 from apps.companyprofile.models import Company
+from apps.userprofile.models import FIELD_OF_STUDY_CHOICES
 
 class Event(models.Model):
     """
@@ -52,6 +53,56 @@ class Event(models.Model):
         verbose_name = _('arrangement')
         verbose_name_plural = _('arrangement')
 
+"""
+ BEGIN ACCESS RESTRICTION --------------------------------------------------------------------------
+"""
+
+class RuleOffset(models.Model):
+    offset = models.IntegerField(_(u'antall timer'), blank=True)
+
+
+class Rule(models.Model):
+    """
+    Super class for a rule object
+    """
+    offset = models.ForeignKey(RuleOffset)
+
+    def satisfied(self, user):
+        """ Checks if a user """
+        return True
+
+
+class FieldOfStudyRule(Rule):
+    field_of_study = models.SmallIntegerField(_('type'), choices=FIELD_OF_STUDY_CHOICES, null=False)
+
+    def satisfied(self, user):
+        """ Override method """
+        return True
+
+class GradeRule(Rule):
+    #Grades
+
+    def satisfied(self, user):
+        """ Override method """
+        return True
+
+class UserGroupRule(Rule):
+    #ldapmagic
+
+    def satisfied(self, user):
+        """ Override method """
+        return True
+
+class RuleBundle(models.Model):
+    """
+    Access restriction rule object
+    """
+    rules = models.ManyToManyField(Rule)
+
+"""
+ END ACCESS RESTRICTION --------------------------------------------------------------------------
+"""
+
 
 class AttendanceEvent(models.Model):
     """
@@ -66,13 +117,16 @@ class AttendanceEvent(models.Model):
     registration_start = models.DateTimeField(_('registrerings-start'))
     registration_end = models.DateTimeField(_('registrerings-slutt'))
 
+    #Access rules
+    rules = models.ManyToManyField(Rule, blank=True, related_name='attendance_event')
+    rule_bundles = models.ManyToManyField(RuleBundle, blank=True, related_name='attendance_event')
+
     def __unicode__(self):
         return self.event.title
 
     class Meta:
         verbose_name = _('paamelding')
         verbose_name_plural = _('paameldinger')
-
 
 class CompanyEvent(models.Model):
     """
