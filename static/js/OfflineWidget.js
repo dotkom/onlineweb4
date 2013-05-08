@@ -23,16 +23,22 @@ function OfflineWidget (Utils){
                 var itemWrapperEnd = '</div>';
                 var insertMe = '';
 
-                for (var i = 0; i < data.objects.length; i++) {
-                    if(i == 0) {
-                        insertMe += itemWrapperStart;
-                    }
-                    insertMe += '<a href="'+prefix+data.objects[i].issue+'"><img src="'+prefix+data.objects[i].issue+suffix+'" /></a>';
-
-                    if(i == data.objects.length - 1 || (i + 1) % imageCount == 0) {
-                        insertMe += itemWrapperEnd;
-                        if(i != data.objects.length - 1) {
+                if (data.objects.length <= 0) {
+                    // No issues added
+                    insertMe += '<p>Ingen utgaver funnet.</p>';
+                } else {
+                    // Create DOM for issues.
+                    for (var i = 0; i < data.objects.length; i++) {
+                        if(i == 0) {
                             insertMe += itemWrapperStart;
+                        }
+                        insertMe += '<a href="'+prefix+data.objects[i].issue+'"><img src="'+prefix+data.objects[i].issue+suffix+'" /></a>';
+
+                        if(i == data.objects.length - 1 || (i + 1) % imageCount == 0) {
+                            insertMe += itemWrapperEnd;
+                            if(i != data.objects.length - 1) {
+                                insertMe += itemWrapperStart;
+                            }
                         }
                     }
                 }
