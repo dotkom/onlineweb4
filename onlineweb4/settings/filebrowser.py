@@ -7,7 +7,7 @@ FILEBROWSER_DIRECTORY = '' # becomes media root
 # Versions
 FILEBROWSER_VERSIONS = {
     # telling the user not to use resized pictures in the view (and avoid filebrowser crashing)
-    'donotuse': {'verbose_name': 'CLICK SELECT INSTEAD, NO RESIZED PICTURES', 'width': 60, 'height': 60, 'opts': 'crop'},
+    'donotuse': {'verbose_name': 'CLICK SELECT INSTEAD, NO RESIZED PICTURES', 'width': 99, 'height': 99, 'opts': 'crop'},
     
     # thumbnail
     'admin_thumbnail': {'verbose_name': 'Admin Thumbnail', 'width': 60, 'height': 60, 'opts': 'crop'},
