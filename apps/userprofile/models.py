@@ -18,7 +18,7 @@ FIELD_OF_STUDY_CHOICES = (
 
 class UserProfile(models.Model):
     
-    user = models.ForeignKey(User, unique=True)
+    user = models.ForeignKey(User, unique=True, related_name='userprofile')
 
     # Online related fields
     field_of_study = models.SmallIntegerField(_(u"studieretning"), choices=FIELD_OF_STUDY_CHOICES, default=0)
@@ -68,7 +68,7 @@ class UserProfile(models.Model):
         year = ((today - started).days / 360) + 1
 
         # dont return a bachelor student as 4th or 5th grade
-        if self.field_of_Study == 0:  # others
+        if self.field_of_study == 0:  # others
             return 0
         elif self.field_of_study == 1:  # bachelor
             if year > 3:

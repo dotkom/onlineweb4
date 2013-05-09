@@ -2,7 +2,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
-
+from apps.userprofile.models import UserProfile
 from apps.companyprofile.models import Company
 from apps.userprofile.models import FIELD_OF_STUDY_CHOICES
 
@@ -45,6 +45,48 @@ class Event(models.Model):
         not_waiting = self.attendance_event.attendees.count()
 
         return not_waiting if not_waiting < self.attendance_event.max_capacity else self.attendance_event.max_capacity
+
+    def is_attendance_event(self):
+        """ Returns true if the event is an attendance event """
+        return True if self.attendance_event else False
+
+    def is_eligible_for_signup(self, user):
+        """
+        Checks if a user can attend a specific event
+        This method checks for:
+            AttendanceEvent
+            Waitlist
+            Room on event
+            Rules
+            Marks
+        @param User object with userprofile
+        TODO:
+            Exception handling
+            Message handling (Return what went wrong. Tuple? (False, message))
+        """
+        #Check first if this is an attendance event
+        if not is_attendance_event():
+            return False
+
+        #Is waitlist enabled?
+        if not self.attendance_event.waitlist:
+            return False
+
+        #Room for me on the event?
+        if not self.attendance_event.room_on_event:
+            return False
+
+        #Are there any rules preventing me from attending?
+        try:
+            if not self.attendance_event.rules_satisfied(user):
+                return False
+        except:
+            return False
+
+        #Do I have any marks preventing me from attending?
+        #TODO check for marks
+        
+        return True
 
     def __unicode__(self):
         return self.title
@@ -136,11 +178,48 @@ class AttendanceEvent(models.Model):
         related_name='attendance_event')
 
     max_capacity = models.PositiveIntegerField(_('maks-kapasitet'))
+    waitlist = models.BooleanField(_(u'venteliste'), default=False)
     registration_start = models.DateTimeField(_('registrerings-start'))
     registration_end = models.DateTimeField(_('registrerings-slutt'))
 
     #Access rules
     rule_bundles = models.ManyToManyField(RuleBundle, blank=True, null=True)
+
+    @property
+    def room_on_event(self):
+        return True if self.attendees.count() < self.max_capacity else False
+
+    def rules_satisfied(self, user):
+        """
+        Checks a user against rules applied to an attendance event
+        """
+        if not self.rule_bundles:
+            return False
+
+        #Get userprofile for user
+        try:
+            userprofile = UserProfile.objects.get(pk=user.pk)
+        except ObjectDoesNotExist:
+            return False
+
+        #Check all rules
+        for rule_bundle in rule_bundles:
+            #Check grade rules
+            if rule_bundle.grade_rules:
+                satisfied_grade = False
+                for grade_rule in rule_bundle.grade_rules.all():
+                    if grade_rule.grade == userprofile.year:    
+                        satisfied_grade = True
+            #Check FOS rules
+            if rule_bundle.field_of_study_rules:
+                satisfied_fos = False
+                for fos_rule in rule_bundle.field_of_study_rules.all():
+                    if fos_rule.field_of_study == userprofile.field_of_study:
+                        satisfied_fos = True
+        
+        if satisfied_grade or satisfied_fos:
+            return True
+        return False
 
     def __unicode__(self):
         return self.event.title
