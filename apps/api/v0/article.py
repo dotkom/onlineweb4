@@ -3,6 +3,7 @@ import os
 import urlparse
 from copy import copy
 from datetime import datetime
+from django.conf import settings
 
 from django.contrib.auth.models import User
 
@@ -11,6 +12,9 @@ from tastypie.resources import ModelResource
 
 from apps.article.models import Article, ArticleTag, Tag
 from apps.api.v0.userprofile import UserResource
+
+from filebrowser.base import FileObject
+from filebrowser.settings import VERSIONS
 
 class ArticleResource(ModelResource):
     author = fields.ToOneField(UserResource, 'created_by')
@@ -21,6 +25,26 @@ class ArticleResource(ModelResource):
             data['articles'] = copy(data['objects'])
             del(data['objects'])
         return data
+    
+    # Making multiple images for the article
+    def dehydrate(self, bundle):
+        # If image is set
+        if bundle.data['image']:
+            # Parse to FileObject used by Filebrowser
+            temp_image = FileObject(bundle.data['image'])
+            
+            # Itterate the different versions (by key)
+            for ver in VERSIONS.keys():
+                # Check if the key start with article_ (if it does, we want to crop to that size)
+                if ver.startswith('article_'):
+                    # Adding the new image to the object
+                    bundle.data['image_'+ver] = temp_image.version_generate(ver).url
+        
+        # Unset the image-field
+        del(bundle.data['image'])
+        
+        # Returning washed object
+        return bundle
     
     def get_object_list(self, request):
         # Ugly hack to get the get-params (if they are set)

@@ -7,13 +7,14 @@ $(function()
 
     // Render on load
     eventWidget.render();
+
     offlineWidget.render(156, 10);
 
     // Render on resize
     $(window).resize(function() {
         offlineWidget.render(156, 10);
     });
-    
+
     // Enable tabbing in about section
     $('#about-tabs a').click(function (e) {
         e.preventDefault();
