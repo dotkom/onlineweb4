@@ -1,6 +1,4 @@
 #-*- coding: utf-8 -*-
-import os
-import urlparse
 from copy import copy
 from datetime import datetime
 from django.conf import settings
@@ -28,8 +26,9 @@ class ArticleResource(ModelResource):
     
     # Making multiple images for the article
     def dehydrate(self, bundle):
+        
         # If image is set
-        if bundle.data['image']:
+        try:
             # Parse to FileObject used by Filebrowser
             temp_image = FileObject(bundle.data['image'])
             
@@ -39,12 +38,15 @@ class ArticleResource(ModelResource):
                 if ver.startswith('article_'):
                     # Adding the new image to the object
                     bundle.data['image_'+ver] = temp_image.version_generate(ver).url
-        
-        # Unset the image-field
-        del(bundle.data['image'])
-        
-        # Returning washed object
-        return bundle
+            
+            # Unset the image-field
+            del(bundle.data['image'])
+            
+            # Returning washed object
+            return bundle
+        except:
+            # No image...
+            return bundle
     
     def get_object_list(self, request):
         # Ugly hack to get the get-params (if they are set)
@@ -91,5 +93,6 @@ class ArticleResource(ModelResource):
         
         ordering = ['published_date']
         filtering = {
-            'published_date' : ('gte',)
+            'featured' : ('exact',),
+            'published_date' : ('gte',),
         }
