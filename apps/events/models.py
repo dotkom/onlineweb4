@@ -68,10 +68,6 @@ class Event(models.Model):
         if not is_attendance_event():
             return False
 
-        #Is waitlist enabled?
-        if not self.attendance_event.waitlist:
-            return False
-
         #Room for me on the event?
         if not self.attendance_event.room_on_event:
             return False
@@ -187,7 +183,7 @@ class AttendanceEvent(models.Model):
 
     @property
     def room_on_event(self):
-        return True if self.attendees.count() < self.max_capacity else False
+        return True if (self.attendees.count() < self.max_capacity) or self.waitlist else False
 
     def rules_satisfied(self, user):
         """
