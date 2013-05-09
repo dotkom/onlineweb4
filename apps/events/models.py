@@ -59,17 +59,24 @@ class Event(models.Model):
 
 class RuleOffset(models.Model):
     offset = models.IntegerField(_(u'antall timer'), blank=True)
+    def __unicode__(self):
+        return str(self.offset)
+
 
 
 class Rule(models.Model):
     """
     Super class for a rule object
     """
-    offset = models.ForeignKey(RuleOffset)
+    offset = models.ForeignKey(RuleOffset, primary_key=False, null=True, blank=True, default=0)
 
     def satisfied(self, user):
         """ Checks if a user """
         return True
+
+    def __unicode__(self):
+        return 'Rule'
+
 
 
 class FieldOfStudyRule(Rule):
@@ -79,12 +86,18 @@ class FieldOfStudyRule(Rule):
         """ Override method """
         return True
 
+    def __unicode__(self):
+        return str(FIELD_OF_STUDY_CHOICES[self.field_of_study][1])
+
 class GradeRule(Rule):
     grade = models.SmallIntegerField(_(u'klassetrinn'), null=False)
 
     def satisfied(self, user):
         """ Override method """
         return True
+
+    def __unicode__(self):
+        return str(self.grade)
 
 class UserGroupRule(Rule):
     #ldapmagic
@@ -97,7 +110,16 @@ class RuleBundle(models.Model):
     """
     Access restriction rule object
     """
-    rules = models.ManyToManyField(Rule)
+    field_of_study_rules = models.ManyToManyField(FieldOfStudyRule, null=True, blank=True)
+    grade_rules = models.ManyToManyField(GradeRule, null=True, blank=True)
+
+    def __unicode__(self):
+        string = ""
+        for obj in self.field_of_study_rules.all():
+            string += unicode(obj) + ' '
+        for obj in self.grade_rules.all():
+            string += unicode(obj) + ' '
+        return string
 
 """
  END ACCESS RESTRICTION --------------------------------------------------------------------------
@@ -118,8 +140,7 @@ class AttendanceEvent(models.Model):
     registration_end = models.DateTimeField(_('registrerings-slutt'))
 
     #Access rules
-    rules = models.ManyToManyField(Rule, blank=True, related_name='attendance_event')
-    rule_bundles = models.ManyToManyField(RuleBundle, blank=True, related_name='attendance_event')
+    rule_bundles = models.ManyToManyField(RuleBundle, blank=True, null=True)
 
     def __unicode__(self):
         return self.event.title

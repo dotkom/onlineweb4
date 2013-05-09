@@ -24,11 +24,15 @@ class CompanyInline(admin.TabularInline):
     max_num = 20
     extra = 0
 
+class RuleBundleInline(admin.TabularInline):
+    model = RuleBundle
+    extra = 1
+    max_num = 20
+
 
 class AttendanceEventAdmin(admin.ModelAdmin):
     model = AttendanceEvent
-    inlines = (AttendeeInline,)
-
+    inlines = (AttendeeInline, RuleBundleInline)
 
 class CompanyEventAdmin(admin.ModelAdmin):
     model = CompanyEvent
@@ -36,7 +40,7 @@ class CompanyEventAdmin(admin.ModelAdmin):
 
 class RuleBundleAdmin(admin.ModelAdmin):
     model = RuleBundle
-
+   
 class FieldOfStudyRuleAdmin(admin.ModelAdmin):
     model = FieldOfStudyRule
 
@@ -65,6 +69,7 @@ class EventAdmin(admin.ModelAdmin):
         instances = formset.save(commit=False)
         for instance in instances:
             instance.save()
+        formset.save_m2m()
 
 admin.site.register(Event, EventAdmin)
 admin.site.register(AttendanceEvent, AttendanceEventAdmin)
