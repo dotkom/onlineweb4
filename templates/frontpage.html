@@ -2,12 +2,16 @@
 {% load chunks %}
 {% load markup %}
 
+{% block js %}
+    {{ block.super }}
+    <script type="text/javascript" src="{{ STATIC_URL }}js/scroller.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/EventWidget.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/ArticleWidget.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/Utils.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/initFrontpage.js"></script>
+{% endblock %}
+
 {% block content %}
-<script type="text/javascript" src="{{ STATIC_URL }}js/scroller.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}js/EventWidget.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}js/ArticleWidget.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}js/Utils.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}js/initFrontpage.js"></script>
     <section id="events">
         <div class="container-fluid">
             <div class="row-fluid">
