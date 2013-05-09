@@ -73,14 +73,14 @@ class Rule(models.Model):
 
 
 class FieldOfStudyRule(Rule):
-    field_of_study = models.SmallIntegerField(_('type'), choices=FIELD_OF_STUDY_CHOICES, null=False)
+    field_of_study = models.SmallIntegerField(_(u'studieretning'), choices=FIELD_OF_STUDY_CHOICES, null=False)
 
     def satisfied(self, user):
         """ Override method """
         return True
 
 class GradeRule(Rule):
-    #Grades
+    grade = models.SmallIntegerField(_(u'klassetrinn'), null=False)
 
     def satisfied(self, user):
         """ Override method """

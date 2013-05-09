@@ -4,6 +4,11 @@ from apps.events.models import Event
 from apps.events.models import AttendanceEvent
 from apps.events.models import Attendee
 from apps.events.models import CompanyEvent
+from apps.events.models import RuleBundle
+from apps.events.models import FieldOfStudyRule
+from apps.events.models import GradeRule
+from apps.events.models import RuleOffset
+
 from apps.feedback.admin import FeedbackRelationInline
 
 from django.contrib import admin
@@ -29,6 +34,17 @@ class CompanyEventAdmin(admin.ModelAdmin):
     model = CompanyEvent
     inlines = (CompanyInline,)
 
+class RuleBundleAdmin(admin.ModelAdmin):
+    model = RuleBundle
+
+class FieldOfStudyRuleAdmin(admin.ModelAdmin):
+    model = FieldOfStudyRule
+
+class GradeRuleAdmin(admin.ModelAdmin):
+    model = GradeRule
+
+class RuleOffsetAdmin(admin.ModelAdmin):
+    model = RuleOffset
 
 class AttendanceEventInline(admin.StackedInline):
     model = AttendanceEvent
@@ -52,3 +68,7 @@ class EventAdmin(admin.ModelAdmin):
 
 admin.site.register(Event, EventAdmin)
 admin.site.register(AttendanceEvent, AttendanceEventAdmin)
+admin.site.register(RuleBundle, RuleBundleAdmin)
+admin.site.register(GradeRule, GradeRuleAdmin)
+admin.site.register(FieldOfStudyRule, FieldOfStudyRuleAdmin)
+admin.site.register(RuleOffset, RuleOffsetAdmin)
