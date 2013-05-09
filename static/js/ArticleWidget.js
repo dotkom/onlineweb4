@@ -57,12 +57,18 @@ function ArticleWidget (Utils){
                     // Appending the content. Either appending content or replacing it based on parameters supplied
                     if (overwrite) {
                         // We are overwriting existing articles
-                        $(".article:visible").fadeOut(400,function () { // Fade out the visible ones
-                            if ($(".article:animated").length === 0) { // When all the fading out is done, continue
-                                $("#article_archive_container").html(output); // Appending content
-                                $("#article_archive_container .hide").fadeIn(400); // Aaaand finally fading in again
-                            }
-                        });
+						if ( $(".article:visible").length > 0) {
+							$(".article:visible").fadeOut(400,function () { // Fade out the visible ones
+								if ($(".article:animated").length === 0) { // When all the fading out is done, continue
+									$("#article_archive_container").html(output); // Appending content
+									$("#article_archive_container .hide").fadeIn(400); // Aaaand finally fading in again
+								}
+							});
+						}
+						else {
+							$("#article_archive_container").html(output); // Appending content
+							$("#article_archive_container .hide").fadeIn(400); // Aaaand finally fading in again
+						}
                     }
                     else {
                         // We are just appending articles
