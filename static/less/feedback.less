@@ -1,0 +1,36 @@
+.feedback-answer-label label {
+    font-size:20px;
+    margin-top:10px;
+}
+
+#feedback{
+    textarea{
+        width: 100%;
+    }
+    .radio {
+        padding-top: 0px;
+        margin-left: 20px;
+        float:left;
+    }
+    div{ /*TODO, create clearfix mixin*/
+        *zoom: 1;
+        &:before,
+        &:after {
+            display: table;
+            content: "";
+        }
+        &:after {
+            clear: both;
+        }
+    }
+}
+
+.control-label {
+    font-size:18px;
+}
+
+.barChartText {
+    stroke:@heading;
+    fill:@heading;
+    font-size:20px;
+}
