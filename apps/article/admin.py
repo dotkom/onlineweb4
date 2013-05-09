@@ -1,6 +1,7 @@
 from django.contrib import admin
 from apps.article.models import Article, Tag, ArticleTag
 from django.conf import settings
+
 from filebrowser.settings import VERSIONS, ADMIN_THUMBNAIL
 
 class ArticleTagAdmin(admin.ModelAdmin):
@@ -24,13 +25,14 @@ class ArticleAdmin(admin.ModelAdmin):
 
     #set the created and changed by fields
     def save_model(self, request, obj, form, change): 
-        obj.image.version_generate(ADMIN_THUMBNAIL).url
-        
-        # Itterate the different versions (by key)
-        for ver in VERSIONS.keys():
-            # Check if the key start with article_ (if it does, we want to crop to that size)
-            if ver.startswith('article_'):
-                obj.image.version_generate(ver).url
+        if (obj.image):
+            obj.image.version_generate(ADMIN_THUMBNAIL).url
+            
+            # Itterate the different versions (by key)
+            for ver in VERSIONS.keys():
+                # Check if the key start with article_ (if it does, we want to crop to that size)
+                if ver.startswith('article_'):
+                    obj.image.version_generate(ver).url
         
         obj.changed_by = request.user
         
