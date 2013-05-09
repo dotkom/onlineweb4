@@ -53,7 +53,8 @@ function EventWidget (Utils){
      */
     function createEventItem(item) {
 
-        var holderImage = $("<img>").attr({ "data-src": "holder.js/120x65" })
+        var holderImage = $("<img>").attr({ "data-src": "holder.js/120x65", "alt": "" });
+        Holder.run({images: holderImage[0]});
 
         html = '<div class="span6">';
         html +=     '<div class="span1 event-type-' + item.event_type + '">';
