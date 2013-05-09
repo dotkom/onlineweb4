@@ -1,9 +1,12 @@
 {% extends 'base.html' %}
 {% load chunks %}
 {% block content %}
-<link href="{{ STATIC_URL }}/css/offline.css" rel="stylesheet" type="text/css">
-<script src="{{ STATIC_URL }}/js/offline-filter.js"></script>
-<script src="{{ STATIC_URL }}/js/libs/jquery.debouncedresize.js"></script>
+
+{% block js %}
+{{ block.super }}
+    <script src="{{ STATIC_URL }}/js/offline-filter.js"></script>
+    <script src="{{ STATIC_URL }}/js/libs/jquery.debouncedresize.js"></script>
+{% endblock %}
 
 <div class="container-fluid">
     <div class="row-fluid">
