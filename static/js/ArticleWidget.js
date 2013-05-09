@@ -57,12 +57,18 @@ function ArticleWidget (Utils){
                     // Appending the content. Either appending content or replacing it based on parameters supplied
                     if (overwrite) {
                         // We are overwriting existing articles
-                        $(".article:visible").fadeOut(400,function () { // Fade out the visible ones
-                            if ($(".article:animated").length === 0) { // When all the fading out is done, continue
-                                $("#article_archive_container").html(output); // Appending content
-                                $("#article_archive_container .hide").fadeIn(400); // Aaaand finally fading in again
-                            }
-                        });
+						if ( $(".article:visible").length > 0) {
+							$(".article:visible").fadeOut(400,function () { // Fade out the visible ones
+								if ($(".article:animated").length === 0) { // When all the fading out is done, continue
+									$("#article_archive_container").html(output); // Appending content
+									$("#article_archive_container .hide").fadeIn(400); // Aaaand finally fading in again
+								}
+							});
+						}
+						else {
+							$("#article_archive_container").html(output); // Appending content
+							$("#article_archive_container .hide").fadeIn(400); // Aaaand finally fading in again
+						}
                     }
                     else {
                         // We are just appending articles
@@ -87,4 +93,40 @@ function ArticleWidget (Utils){
             }
         }
     }
+	
+	ArticleWidget.prototype.renderFrontpage = function() {
+		// Loading featured
+		Utils.makeApiRequest({
+			'url': '/api/v0/article/all/?format=json&limit=2&featured=True',
+			'method': 'GET',
+			'data': {},
+			success: function(data) {
+				var output = '';
+				
+				// The loop
+				for (var i = 0; i < data.articles.length; i++) {
+					output += '<div class="span6"><a href="/article/'+data.articles[i].id+'"><img src="'+data.articles[i].image_article_front_featured+'" alt="'+data.articles[i].heading+'"></a><h3>'+data.articles[i].heading+'</h3><p>'+data.articles[i].ingress+'</p></div>';
+				}
+				
+				$('#article-frontpage-featured').html(output);
+			}
+		});
+		
+		// Loading "normal" articles
+		Utils.makeApiRequest({
+			'url': '/api/v0/article/all/?format=json&limit=6&featured=False',
+			'method': 'GET',
+			'data': {},
+			success: function(data) {
+				var output = '';
+				
+				// The loop
+				for (var i = 0; i < data.articles.length; i++) {
+					output += '<div class="span2"><a href="/article/'+data.articles[i].id+'"><img src="'+data.articles[i].image_article_front_small+'" alt="'+data.articles[i].heading+'"></a><br /><h4>'+data.articles[i].heading+'</h4></div>';
+				}
+				
+				$('#article-frontpage-normal').html(output);
+			}
+		});
+	}
 }
