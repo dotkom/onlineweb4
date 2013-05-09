@@ -1,0 +1,182 @@
+@import "colors.less";
+@import "navbar.less";
+
+/* Specific imports */
+@import "eventwidget.less";
+@import "articlewidget.less";
+@import "business.less";
+@import "career.less";
+@import "feedback.less";
+@import "offline.less";
+@import "offlinewidget.less";
+
+
+/* Variables */
+@nav-height: auto;
+@media-desktop-min: 1240px;
+
+
+html {
+    overflow-x: hidden;
+}
+
+body {
+    background:#FFF;
+    color:#555;
+    font:13px "Open Sans",arial,sans-serif;
+    font-weight:400;
+    margin:0;
+    overflow: hidden;
+    padding:57px 0 0 0;
+}
+
+@media all and (max-width: 980px) {
+    body {
+        margin-top: 0px;
+        padding-top: 0px;
+    }
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+/* Desktop */
+@media all and (min-width: @media-desktop-min) {
+    .container-fluid {
+        margin:0 auto;
+        width:1200px;
+    }
+}
+
+/* Mobil e.l. */
+@media all and (max-width: @media-desktop-min) {
+    .container-fluid {
+        margin: 0px 20px;
+        /*background: green;*/
+    }
+}
+
+span.dates {
+    color:#2fa3d3;
+    float: right;
+}
+
+/* Mobil e.l. */
+@media all and (max-width: 768px) {
+    #articles {
+        .row-fluid {
+            .span2 {
+                display: inline-block;
+                vertical-align: top;
+                width: 100%;
+                text-align: center;
+            }
+        }
+    }
+    
+/* Careeropportunities title goes left */
+    #careeropportunities img, h4, p  {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        text-align: center;
+    }
+}
+
+
+/* Globals
+-------------------------------------------------- */
+
+
+section {
+    margin-bottom:20px;
+}
+
+.messages {
+    padding:0;
+}
+
+.alert { 
+    margin-top:10px; 
+}
+
+.grayed {
+    background:@grey-background; 
+}
+
+.dark-grayed {
+    background:#666;
+}
+
+.footer {
+    padding:20px;
+    color:#fbfbfb;
+}
+
+.ingress {
+    font-size:16px;
+    color:#777;
+    font-weight:300;
+}
+
+h2{
+    font-weight:700;
+    color:@heading;
+    font-size:24px;
+}   
+    
+h3 {
+    font-weight:400;
+}
+
+h4 {
+    text-align:center;
+    font-weight:500;
+    font-size:14px;
+}
+
+p {
+    color:#666;
+    line-height:1.6em;
+}
+
+.centered {
+    text-align: center;
+}
+
+/* Logos
+-------------------------------------------------- */
+.online-logo {
+    width: 140px; 
+    margin: -10px 45px 0 0;
+}
+
+.sponsor-logo {
+    width: 110px;
+    margin: -10px 0 0 0;
+}
+
+/* Login button
+-------------------------------------------------- */
+.login-btn {
+    margin: 15px 0 0 0;
+    padding: 4px 10px!important;
+    border-radius: 5px;
+    display: block;
+    float: right;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.1);
+}
+.login-box {
+    padding: 15px;
+}
+
+.dropdown-form li > form > .login-extra > a {
+    padding:20px 0 0 0;
+    display:block;
+}
+
