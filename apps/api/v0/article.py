@@ -40,8 +40,8 @@ class ArticleResource(ModelResource):
                     # Adding the new image to the object
                     bundle.data['image_'+ver] = temp_image.version_generate(ver).url
         
-        # Unset the image-field
-        del(bundle.data['image'])
+            # Unset the image-field
+            del(bundle.data['image'])
         
         # Returning washed object
         return bundle
@@ -91,5 +91,6 @@ class ArticleResource(ModelResource):
         
         ordering = ['published_date']
         filtering = {
-            'published_date' : ('gte',)
+            'featured' : ('exact',),
+            'published_date' : ('gte',),
         }
