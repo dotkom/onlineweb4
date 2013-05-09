@@ -33,7 +33,7 @@ class ArticleAdmin(admin.ModelAdmin):
                 # Check if the key start with article_ (if it does, we want to crop to that size)
                 if ver.startswith('article_'):
                     obj.image.version_generate(ver).url
-        
+            
         obj.changed_by = request.user
         
         if not change:
