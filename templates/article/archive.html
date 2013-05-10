@@ -1,12 +1,13 @@
 {% extends 'base.html' %}
+{% block styles %}
+    {{ block.super }}
+    <link href="{{ STATIC_URL }}/css/article.css" rel="stylesheet" type="text/css">
+{% endblock styles %}
+
 {% load chunks %}
 {% load markup %}
+
 {% block content %}
-<link href="{{ STATIC_URL }}/css/article.css" rel="stylesheet" type="text/css">
-<script type="text/javascript" src="{{ STATIC_URL }}js/Utils.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}js/ArticleWidget.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}js/article-dynamic.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}js/TagCloud.js"></script>
 <section id="article_archive">
     <div class="container-fluid">
         <div class="row-fluid">
@@ -66,3 +67,11 @@
     </div>
 </section>
 {% endblock content %}
+
+{% block js %}
+    {{ block.super }}
+    <script type="text/javascript" src="{{ STATIC_URL }}js/Utils.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/ArticleWidget.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/article-dynamic.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/TagCloud.js"></script>
+{% endblock js %}
