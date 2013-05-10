@@ -28,7 +28,7 @@ function ArticleWidget (Utils){
                 'url': '/api/v0/article/all/?format=json&offset='+((page-1)*elm_per_page)+'&limit='+elm_per_page+q, // Calcuating the offset, grabbing the limit and supplying the query from the settings
                 'method': 'GET',
                 'data': {},
-                success: function(data) {
+                'success': function(data) {
                     // Variables
                     var num = 1;
                     var output = '<div class="span12'+((page == 1 && !overwrite)?'':' hide')+'">'; // If we are not on the first page (and not using the filters), make the elements hidden to fade them in later
@@ -94,39 +94,57 @@ function ArticleWidget (Utils){
         }
     }
 	
-	ArticleWidget.prototype.renderFrontpage = function() {
-		// Loading featured
-		Utils.makeApiRequest({
-			'url': '/api/v0/article/all/?format=json&limit=2&featured=True',
-			'method': 'GET',
-			'data': {},
-			success: function(data) {
-				var output = '';
-				
-				// The loop
-				for (var i = 0; i < data.articles.length; i++) {
-					output += '<div class="span6"><a href="/article/'+data.articles[i].id+'"><img src="'+data.articles[i].image_article_front_featured+'" alt="'+data.articles[i].heading+'"></a><h3>'+data.articles[i].heading+'</h3><p>'+data.articles[i].ingress+'</p></div>';
-				}
-				
-				$('#article-frontpage-featured').html(output);
-			}
-		});
-		
-		// Loading "normal" articles
-		Utils.makeApiRequest({
-			'url': '/api/v0/article/all/?format=json&limit=6&featured=False',
-			'method': 'GET',
-			'data': {},
-			success: function(data) {
-				var output = '';
-				
-				// The loop
-				for (var i = 0; i < data.articles.length; i++) {
-					output += '<div class="span2"><a href="/article/'+data.articles[i].id+'"><img src="'+data.articles[i].image_article_front_small+'" alt="'+data.articles[i].heading+'"></a><br /><h4>'+data.articles[i].heading+'</h4></div>';
-				}
-				
-				$('#article-frontpage-normal').html(output);
-			}
-		});
-	}
+    ArticleWidget.prototype.renderFrontpage = function() {
+        // Loading featured
+        Utils.makeApiRequest({
+            'url': '/api/v0/article/all/?format=json&limit=2&featured=True',
+            'method': 'GET',
+            'data': {},
+            success: function(data) {
+                var output = '';
+
+                // The loop
+                for (var i = 0; i < data.articles.length; i++) {
+                    output += '<div class="span6"><a href="/article/'+data.articles[i].id+'"><img src="'+data.articles[i].image_article_front_featured+'" alt="'+data.articles[i].heading+'"></a><h3>'+data.articles[i].heading+'</h3><p>'+data.articles[i].ingress+'</p></div>';
+                }
+
+                $('#article-frontpage-featured').html(output);
+            }
+        });
+
+        // Loading "normal" articles
+        Utils.makeApiRequest({
+            'url': '/api/v0/article/all/?format=json&limit=6&featured=False',
+            'method': 'GET',
+            'data': {},
+            success: function(data) {
+                var output = '';
+
+                // The loop
+                for (var i = 0; i < data.articles.length; i++) {
+                    output += '<div class="span2"><a href="/article/'+data.articles[i].id+'"><img src="'+data.articles[i].image_article_front_small+'" alt="'+data.articles[i].heading+'"></a><br /><h4>'+data.articles[i].heading+'</h4></div>';
+                }
+
+                $('#article-frontpage-normal').html(output);
+            }
+        });
+    }
+    
+    ArticleWidget.prototype.renderLatest = function() {
+        Utils.makeApiRequest({
+            'url': '/api/v0/article/all/?format=json&limit=6&featured=False',
+            'method': 'GET',
+            'data': {},
+            success: function(data) {
+                var output = '';
+
+                // The loop
+                for (var i = 0; i < data.articles.length; i++) {
+                output += '<div class="row-fluid"><div class="span12"><a href="/article/'+data.articles[i].id+'"><img src="'+data.articles[i].image_article_front_small+'" alt="'+data.articles[i].heading+'"></a><br /><h4>'+data.articles[i].heading+'</h4></div></div>';
+                }
+
+                $('#article-detaill-latest').html(output);
+            }
+        });
+    }
 }
