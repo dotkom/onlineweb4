@@ -1,10 +1,14 @@
 {% extends "base.html" %}
+
+{% block styles %}
+    {{ block.super }}
+    <link href="{{ STATIC_URL }}/css/article.css" rel="stylesheet" type="text/css">
+{% endblock styles %}
+
 {% load markup %}
 {% load fb_versions %}
+
 {% block content %}
-<link href="{{ STATIC_URL }}/css/article.css" rel="stylesheet" type="text/css">
-<script type="text/javascript" src="{{ STATIC_URL }}js/Utils.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}js/ArticleWidget.js"></script>
 <div id="article_wrapper">
     <div class="container-fluid">
         <div class="row-fluid">
@@ -34,7 +38,7 @@
                         <p>{{ article.ingress }}</p>
                     </div>
                     <div class="article-details-content">
-                        <p>{{ article.content|striptags|markdown }}</p>
+                        {{ article.content|striptags|markdown }}
                     </div>
                 </div>
             </div>
@@ -47,3 +51,10 @@
     </div>
 </div>
 {% endblock content %}
+
+{% block js %}
+    {{ block.super }}
+    <script type="text/javascript" src="{{ STATIC_URL }}js/Utils.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/ArticleWidget.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/article-latest.js"></script>
+{% endblock js %}
