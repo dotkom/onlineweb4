@@ -3,6 +3,8 @@
 {% load fb_versions %}
 {% block content %}
 <link href="{{ STATIC_URL }}/css/article.css" rel="stylesheet" type="text/css">
+<script type="text/javascript" src="{{ STATIC_URL }}js/Utils.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/ArticleWidget.js"></script>
 <div id="article_wrapper">
     <div class="container-fluid">
         <div class="row-fluid">
@@ -18,7 +20,7 @@
         </div>
         <div class="row-fluid">
             <div class="span12">
-                <h1>{{ article.heading }}</h2>
+                <h1>{{ article.heading }}</h1>
             </div>
         </div>
         <div class="row-fluid">
@@ -26,7 +28,7 @@
                 <div class="span12">
                     <div class="article-details-details">
                         <p>Publisert: {{ article.published_date }}, endret: {{ article.changed_date }}</p>
-                        <p>Av: {{ article.created_by }}<p>
+                        <p>Av: {{ article.created_by }}</p>
                     </div>
                     <div class="article-details-ingress">
                         <p>{{ article.ingress }}</p>
@@ -37,23 +39,11 @@
                 </div>
             </div>
             <div class="span5">
-                <div class="span12">
-                    <p style="font-size:20px">Siste nytt:</p>
+                <h3>Siste nytt:</h3>
+                <div id="article-detaill-latest">
                 </div>
-            {% for l in latest %}
-                <div class="row-fluid">
-                    <div class="span12">
-                        <div class="article-latestnews">
-                            <a href="../{{ l.id }}">{{ l.heading }}</a> </p>
-                        </div>
-                    </div>
-                </div>
-            {% endfor %}
             </div>
         </div>
     </div>
 </div>
-    
-
-
 {% endblock content %}
