@@ -1,15 +1,10 @@
 {% extends "base.html" %}
 
-{% block styles %}
-    {{ block.super }}
-    <link href="{{ STATIC_URL }}/css/article.css" rel="stylesheet" type="text/css">
-{% endblock styles %}
-
 {% load markup %}
 {% load fb_versions %}
 
 {% block content %}
-<div id="article_wrapper">
+<div id="article-wrapper">
     <div class="container-fluid">
         <div class="row-fluid">
             <div class="span12">
