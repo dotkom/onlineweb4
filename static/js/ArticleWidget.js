@@ -28,7 +28,7 @@ function ArticleWidget (Utils){
                 'url': '/api/v0/article/all/?format=json&offset='+((page-1)*elm_per_page)+'&limit='+elm_per_page+q, // Calcuating the offset, grabbing the limit and supplying the query from the settings
                 'method': 'GET',
                 'data': {},
-                'success': function(data) {
+                success: function(data) {
                     // Variables
                     var num = 1;
                     var output = '<div class="span12'+((page == 1 && !overwrite)?'':' hide')+'">'; // If we are not on the first page (and not using the filters), make the elements hidden to fade them in later
