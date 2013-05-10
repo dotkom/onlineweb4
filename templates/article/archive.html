@@ -1,12 +1,9 @@
 {% extends 'base.html' %}
+
 {% load chunks %}
 {% load markup %}
+
 {% block content %}
-<link href="{{ STATIC_URL }}/css/article.css" rel="stylesheet" type="text/css">
-<script type="text/javascript" src="{{ STATIC_URL }}js/Utils.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}js/ArticleWidget.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}js/article-dynamic.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}js/TagCloud.js"></script>
 <section id="article_archive">
     <div class="container-fluid">
         <div class="row-fluid">
@@ -19,42 +16,13 @@
         <div class="row-fluid">
             <div class="span12">
                 <div class="ingress">
-{% filter markdown %}
-{% chunk "article_archive" %}
-{% endfilter %}
+                {% filter markdown %}
+                {% chunk "article_archive" %}
+                {% endfilter %}
                 </div>
             </div>
         </div>
         <div class="row-fluid">
-            <!--
-            <div class="span8">
-                {% for article in articles %}
-                    {% if forloop.first or forloop.counter|divisibleby:'5' %}
-                        <div class="row-fluid">
-                            <div class="span12">
-                    {% endif %}
-
-                    <div class="span3">
-                        <div class="row-fluid">
-                            <div class="span12"><b>{{ article.heading }}</b></div>
-                        </div>
-                        <div class="row-fluid">
-                            <div class="span12">
-                                <img src="holder.js/174x100" />
-                            </div>
-                        </div>
-                        <div class="row-fluid">
-                            <div class="span12"><i>{{ article.tagstring }}</i></div>
-                        </div>
-                    </div>
-
-                    {% if forloop.last or forloop.counter|divisibleby:'4' %}
-                            </div>
-                        </div>
-                    {% endif %}
-                {% endfor %}
-            </div>
-            -->
             <div class="span8" style="min-height: 400px;" id="article_archive_container">
             </div>
             <div class="span4 well">
@@ -95,3 +63,11 @@
     </div>
 </section>
 {% endblock content %}
+
+{% block js %}
+    {{ block.super }}
+    <script type="text/javascript" src="{{ STATIC_URL }}js/Utils.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/ArticleWidget.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/article-dynamic.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/TagCloud.js"></script>
+{% endblock js %}
