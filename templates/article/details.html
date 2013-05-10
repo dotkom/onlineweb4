@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load markup %}
+{% load fb_versions %}
 {% block content %}
 <link href="{{ STATIC_URL }}/css/article.css" rel="stylesheet" type="text/css">
 <div id="article_wrapper">
@@ -8,9 +9,9 @@
             <div class="span12">
                 <div class="flex-video">
                     {% if article.video_id %}
-                    <iframe src="http://player.vimeo.com/video/{{ article.video_id }}" frameborder="0" width="800" height="450" webkitAllowFullscreen mozallowfullscreen allowFullScreen></iframe>
+                    <iframe src="http://player.vimeo.com/video/{{ article.video_id }}" frameborder="0" width="950" height="534" webkitAllowFullscreen mozallowfullscreen allowFullScreen></iframe>
                     {% else %}
-                    <img src="{{ article.image }}" alt="{{ article.heading }}"/>
+                    <img src="{% version article.image 'article_main' %}" alt="{{ article.heading }}"/>
                     {% endif %}
                 </div>
             </div>
@@ -21,15 +22,18 @@
             </div>
         </div>
         <div class="row-fluid">
-            <div class="span12">
-                <p>Publisert: {{ article.published_date }}, endret: {{ article.changed_date }}</p>
-                <p>Av: {{ article.created_by }}<p>
-            </div>
-        </div>
-        <div class="row-fluid">
             <div class="span7">
-                <div class="article-details-ingress">
-                    <p>{{ article.ingress }}</p>
+                <div class="span12">
+                    <div class="article-details-details">
+                        <p>Publisert: {{ article.published_date }}, endret: {{ article.changed_date }}</p>
+                        <p>Av: {{ article.created_by }}<p>
+                    </div>
+                    <div class="article-details-ingress">
+                        <p>{{ article.ingress }}</p>
+                    </div>
+                    <div class="article-details-content">
+                        <p>{{ article.content|striptags|markdown }}</p>
+                    </div>
                 </div>
             </div>
             <div class="span5">
@@ -45,13 +49,6 @@
                     </div>
                 </div>
             {% endfor %}
-            </div>
-        </div>
-        <div class="row-fluid">
-            <div class="span12">
-                <div class="article-details-content">
-                    <p>{{ article.content|striptags|markdown }}</p>
-                </div>
             </div>
         </div>
     </div>
