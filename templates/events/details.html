@@ -1,24 +1,66 @@
+{% extends "base.html" %}
 {% load markup %}
+{% block content %}
 
-<h1>Event</h1>
-<table>
-    <tr><td class="event-header-description">Oppretter</td><td class="event-header-value">{{ event.author }}</td><tr>
-    <tr><td class="event-header-description">Tittel</td><td class="event-header-value">{{ event.title }}</td><tr>
-    <tr><td class="event-header-description">Fra</td><td class="event-header-value">{{ event.event_start }}</td><tr>
-    <tr><td class="event-header-description">Til</td><td class="event-header-value">{{ event.event_end }}</td><tr>
-    <tr><td class="event-header-description">Sted</td><td class="event-header-value">{{ event.location }}</td></tr>
-    {% if attendance_event %}
-        <tr><td class="event-header-description">Antall påmeldte</td><td class="event-header-value">{{ event.number_of_attendees_not_on_waiting_list }} / {{ attendance_event.max_capacity }}</td></tr>
-        <tr><td class="event-header-description">Antall på venteliste</td><td class="event-header-value">{{ event.number_of_attendees_on_waiting_list }}</td></tr>
-        <tr><td class="event-header-description">Registreringsfrist</td><td class="event-header-value">{{ attendance_event.registration_start }}</td></tr>
-        <tr><td class="event-header-description">Avmeldingsfrist</td><td class="event-header-value">{{ attendance_event.registration_end }}</td></tr>
-    {% endif %}
-</table>
+<section id="event-details">
+    <div class="container-fluid">
+        <div class="row-fluid">
+            <div class="span12">
+                <div class="page-header">
+                    <h2 id="event-details-heading">{{event.title}}</h2>
+                    <small id="event-details-author">Oppretter: {{ event.author }}</small>
+                </div>
+            </div>
+        </div>
+        <!-- eventinformasjon -->
+        <div class="row-fluid">
+            <div class="span7" id="event-description">
+                {{ event.description|striptags|markdown }}
+            </div>
+            <div class="span5" id="event-images">
+                <p>Here there be images</p>
+            </div>
+        </div>
 
-{# TODO: Add company-profile #}
+        <!-- horizontal line -->
+        <div class="row-fluid">
+            <div class="span12">
+                <hr />
+            </div>
+        </div>
 
-<div id="event-description">
-    {{ event.description|striptags|markdown }}
-</div>
+        <!-- event description -->
+        <div class="row-fluid">
+            <div class="span12">
+                <div class="row-fluid">
+                    <div class="span6" id="event-description">
+                        <h2 class="text-center">Informasjon</h2>
 
-{# TODO: Add registration form #}
+                        <table class="table table-bordered table-condensed">
+                            <tr><td>Starttidspunkt</td><td>{{ event.event_start }}</td></tr>
+                            <tr><td>Sluttidspunkt</td><td>{{ event.event_end }}</td></tr>
+                            <tr><td>Sted</td><td>{{ event.location }}</td></tr>
+
+                        {% if attendance_event %}
+                            <tr><td>Påmeldte</td><td>{{ event.number_of_attendees_not_on_waiting_list }}/{{ attendance_event.max_capacity }} </td></tr>
+                            <tr><td>Antall på venteliste</td><td>{{ event.number_of_attendees_on_waiting_list }}</td></tr>
+                            <tr><td>Registreringsfrist</td><td>{{ attendance_event.registration_start }}</td></tr>
+                            <tr><td>Avmeldingsfrist</td><td>{{ attendance_event.registration_end }}</td></tr>
+                        {% endif %}
+                        </table>
+                    </div>
+                    <div class="span6">
+                        <h2 class="text-center">Registrering</h2>
+                        {% if attendance_event %}
+                            Registration be here
+                        {% else %}
+                            <p  class="text-center"><strong>Dette arrangementet har ingen påmelding!</strong></p>
+                        {% endif %}
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{%endblock content %}
