@@ -28,7 +28,7 @@ class ArticleResource(ModelResource):
     def dehydrate(self, bundle):
         
         # If image is set
-        try:
+        if bundle.data['image']:
             # Parse to FileObject used by Filebrowser
             temp_image = FileObject(bundle.data['image'])
             
@@ -43,10 +43,7 @@ class ArticleResource(ModelResource):
             del(bundle.data['image'])
             
             # Returning washed object
-            return bundle
-        except:
-            # No image...
-            return bundle
+        return bundle
     
     def get_object_list(self, request):
         # Ugly hack to get the get-params (if they are set)
