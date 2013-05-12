@@ -1,4 +1,8 @@
 #-*- coding: utf-8 -*-
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from django.core.urlresolvers import reverse
+from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response
 from django.shortcuts import get_object_or_404
 from django.template import RequestContext
@@ -22,14 +26,25 @@ def details(request, event_id):
         attendance_event = AttendanceEvent.objects.get(pk=event_id)
         attendance_event.count_attendees = Attendee.objects.filter(event=attendance_event).count()
         is_attendance_event = True
+
+        # When rules appear, do magical stuff here
+        canAttend = True #attendance_event.rules.satisfy
+
     except AttendanceEvent.DoesNotExist:
         pass
 
     if is_attendance_event:
-        return render_to_response('events/details.html', {'event': event, 'attendance_event': attendance_event}, context_instance=RequestContext(request))
+        return render_to_response('events/details.html',
+                                  {'event': event, 'attendance_event': attendance_event, 'canAttend': canAttend},
+                                  context_instance=RequestContext(request))
     else:
         return render_to_response('events/details.html', {'event': event}, context_instance=RequestContext(request))
 
 
 def get_attendee(attendee_id):
     return get_object_or_404(Attendee, pk=attendee_id)
+
+def attendEvent(request, event_id):
+    messages.success(request, "Success!")
+    return HttpResponseRedirect(reverse(details, args=[event_id]))
+

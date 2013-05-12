@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load crispy_forms_tags %}
 {% load markup %}
 {% block content %}
 
@@ -49,10 +50,16 @@
                         {% endif %}
                         </table>
                     </div>
+
+                <!-- event registration -->
                     <div class="span6">
                         <h2 class="text-center">Registrering</h2>
+
                         {% if attendance_event %}
-                            Registration be here
+                            <form action="{% url attend_event event.id %}" method="POST"> {% csrf_token %}
+                                <button type="submit">Registrer</button>
+                            </form>
+
                         {% else %}
                             <p  class="text-center"><strong>Dette arrangementet har ingen påmelding!</strong></p>
                         {% endif %}
