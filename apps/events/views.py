@@ -28,14 +28,21 @@ def details(request, event_id):
         is_attendance_event = True
 
         # When rules appear, do magical stuff here
-        canAttend = True #attendance_event.rules.satisfy
+        canAttendWhen = 'never'
+
+    # if attendance_event.rules.satisfy:
+        canAttendWhen = 'placeholder'
+
 
     except AttendanceEvent.DoesNotExist:
         pass
 
     if is_attendance_event:
         return render_to_response('events/details.html',
-                                  {'event': event, 'attendance_event': attendance_event, 'canAttend': canAttend},
+                                  {'event': event,
+                                   'attendance_event': attendance_event,
+                                   'canAttendWhen': canAttendWhen,
+                                  },
                                   context_instance=RequestContext(request))
     else:
         return render_to_response('events/details.html', {'event': event}, context_instance=RequestContext(request))
@@ -46,6 +53,9 @@ def get_attendee(attendee_id):
 
 @login_required
 def attendEvent(request, event_id):
+
+    #Do rules check here as well to prevent scripts
+
     messages.success(request, "Success!")
     return HttpResponseRedirect(reverse(details, args=[event_id]))
 

@@ -55,14 +55,20 @@
                     <div class="span6">
                         <h2 class="text-center">Registrering</h2>
 
-                        {% if attendance_event %}
-                            <form action="{% url attend_event event.id %}" method="POST"> {% csrf_token %}
-                                <button type="submit">Registrer</button>
-                            </form>
+                {% if attendance_event %}
+                    {% ifequal canAttendWhen 'never' %}
+                        <p class="text-center"><strong>Du har ikke adgang til denne eventen.</strong></p>
+                    {% else %}
+                        <p class="text-center"><strong>Ved å melde deg på denne eventen godtar du prikkereglene.</strong></p>
 
-                        {% else %}
-                            <p  class="text-center"><strong>Dette arrangementet har ingen påmelding!</strong></p>
-                        {% endif %}
+                        <form action="{% url attend_event event.id %}" method="POST" class="pagination-centered">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-success">Meld meg på!</button>
+                        </form>
+                    {%  endifequal %}
+                {% else %}
+                        <p  class="text-center"><strong>Dette arrangementet har ingen påmelding!</strong></p>
+                {% endif %}
 
                     </div>
                 </div>
