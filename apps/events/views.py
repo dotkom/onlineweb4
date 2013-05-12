@@ -44,6 +44,7 @@ def details(request, event_id):
 def get_attendee(attendee_id):
     return get_object_or_404(Attendee, pk=attendee_id)
 
+@login_required
 def attendEvent(request, event_id):
     messages.success(request, "Success!")
     return HttpResponseRedirect(reverse(details, args=[event_id]))
