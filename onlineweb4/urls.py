@@ -28,6 +28,9 @@ urlpatterns = patterns('',
     url(r'^auth/',                  include('apps.authentication.urls')),
     url(r'^feedback/',              include('apps.feedback.urls')),
     url(r'^offline/',               include('apps.offline.urls')),
+
+    #Captcha url
+    url(r'^captcha/', include('captcha.urls')),
 )
 
 

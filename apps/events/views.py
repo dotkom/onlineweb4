@@ -7,6 +7,7 @@ from django.shortcuts import render_to_response
 from django.shortcuts import get_object_or_404
 from django.template import RequestContext
 from apps.events.models import Event, AttendanceEvent, Attendee
+from apps.events.forms import CaptchaForm
 import datetime
 
 
@@ -27,18 +28,22 @@ def details(request, event_id):
         attendance_event.count_attendees = Attendee.objects.filter(event=attendance_event).count()
         is_attendance_event = True
 
-        user_status = 'attending' if attendance_event.is_attendee(request.user) else 'not_attending'
-        position_in_wait_list = 0 if request.user.id not in event.wait_list else event.wait_list.index(request.user) + 1
-
+        position_in_wait_list = 0
+        event_opens_when = 'never'
         event_open = False
+        form = CaptchaForm()
 
-    # When rules appear, do magical stuff here
-    # if attendance_event.rules.satisfy:
-        event_opens_when = 'placeholder'
-        event_open = True
-    #else
-        #event_opens_when = 'never'
-
+        if request.user.is_authenticated():
+            user_status = 'attending' if attendance_event.is_attendee(request.user) else 'not_attending'
+            position_in_wait_list = 0 if request.user.id not in event.wait_list else event.wait_list.index(request.user) + 1
+        # When rules appear, do magical stuff here
+        # if attendance_event.rules.satisfy:
+            event_opens_when = 'placeholder'
+            event_open = True
+        #else
+            #event_opens_when = 'never'
+        else:
+            user_status = 'anonymous_user'
 
     except AttendanceEvent.DoesNotExist:
         pass
@@ -51,6 +56,7 @@ def details(request, event_id):
                                    'position_in_wait_list': position_in_wait_list,
                                    'event_opens_when': event_opens_when,
                                    'event_open': event_open,
+                                   'captcha_form': form,
                                   },
                                   context_instance=RequestContext(request))
     else:
@@ -62,6 +68,16 @@ def get_attendee(attendee_id):
 
 @login_required
 def attendEvent(request, event_id):
+
+    if not request.POST:
+        messages.error(request, 'Vennligst fyll inn formen.')
+        return HttpResponseRedirect(reverse(details, args=[event_id]))
+
+    form = CaptchaForm(request.POST)
+
+    if not form.is_valid():
+        messages.error(request, 'Du klarte ikke captchaen. Er du en bot?')
+        return HttpResponseRedirect(reverse(details, args=[event_id]))
 
     #Do rules check here as well to prevent scripts
     event = AttendanceEvent.objects.get(pk=event_id)
