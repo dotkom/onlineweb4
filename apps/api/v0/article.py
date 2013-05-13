@@ -28,7 +28,7 @@ class ArticleResource(ModelResource):
     def dehydrate(self, bundle):
         
         # If image is set
-        try:
+        if bundle.data['image']:
             # Parse to FileObject used by Filebrowser
             temp_image = FileObject(bundle.data['image'])
             
@@ -43,26 +43,23 @@ class ArticleResource(ModelResource):
             del(bundle.data['image'])
             
             # Returning washed object
-            return bundle
-        except:
-            # No image...
-            return bundle
+        return bundle
     
     def get_object_list(self, request):
-        # Ugly hack to get the get-params (if they are set)
-        try:
+        # Getting the GET-params
+        if 'tag' in request.GET:
             request_tag = request.GET['tag']
-        except:
+        else:
             request_tag = None
         
-        try:
+        if 'year' in request.GET:
             request_year = request.GET['year']
-        except:
+        else:
             request_year = None
         
-        try:
+        if 'month' in request.GET:
             request_month = request.GET['month']
-        except:
+        else:
             request_month = None
         
         # Check filtering here
