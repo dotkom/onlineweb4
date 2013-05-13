@@ -1,4 +1,5 @@
 #-*- coding: utf-8 -*-
+from django.core.urlresolvers import reverse
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
@@ -45,6 +46,13 @@ class Event(models.Model):
 
         return not_waiting if not_waiting < self.attendance_event.max_capacity else self.attendance_event.max_capacity
 
+    @property
+    def wait_list(self):
+        return [] if self.number_of_attendees_on_waiting_list is 0 else self.attendance_event.attendees[self.attendance_event.max_capacity:]
+
+    @models.permalink
+    def get_absolute_url(self):
+        return reverse('apps.event.views.details', args=[str(self.id)])
 
     def __unicode__(self):
         return self.title
@@ -67,7 +75,8 @@ class AttendanceEvent(models.Model):
     registration_start = models.DateTimeField(_('registrerings-start'))
     registration_end = models.DateTimeField(_('registrerings-slutt'))
 
-
+    def is_attendee(self, user):
+        return self.attendees.filter(user=user)
 
     def __unicode__(self):
         return self.event.title

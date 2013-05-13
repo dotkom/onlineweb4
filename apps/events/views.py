@@ -27,11 +27,17 @@ def details(request, event_id):
         attendance_event.count_attendees = Attendee.objects.filter(event=attendance_event).count()
         is_attendance_event = True
 
-        # When rules appear, do magical stuff here
-        canAttendWhen = 'never'
+        user_status = 'attending' if attendance_event.is_attendee(request.user) else 'not_attending'
+        position_in_wait_list = 0 if request.user.id not in event.wait_list else event.wait_list.index(request.user) + 1
 
+        event_open = False
+
+    # When rules appear, do magical stuff here
     # if attendance_event.rules.satisfy:
-        canAttendWhen = 'placeholder'
+        event_opens_when = 'placeholder'
+        event_open = True
+    #else
+        #event_opens_when = 'never'
 
 
     except AttendanceEvent.DoesNotExist:
@@ -41,7 +47,10 @@ def details(request, event_id):
         return render_to_response('events/details.html',
                                   {'event': event,
                                    'attendance_event': attendance_event,
-                                   'canAttendWhen': canAttendWhen,
+                                   'user_status': user_status,
+                                   'position_in_wait_list': position_in_wait_list,
+                                   'event_opens_when': event_opens_when,
+                                   'event_open': event_open,
                                   },
                                   context_instance=RequestContext(request))
     else:
@@ -55,7 +64,17 @@ def get_attendee(attendee_id):
 def attendEvent(request, event_id):
 
     #Do rules check here as well to prevent scripts
+    event = AttendanceEvent.objects.get(pk=event_id)
+    Attendee(event=event, user=request.user).save()
 
-    messages.success(request, "Success!")
+    messages.success(request, "Du ble påmeldt eventen!")
     return HttpResponseRedirect(reverse(details, args=[event_id]))
 
+@login_required
+def unattendEvent(request, event_id):
+
+    event = AttendanceEvent.objects.get(pk=event_id)
+    Attendee.objects.get(event=event, user=request.user).delete()
+
+    messages.success(request, "Du ble meldt av eventen!")
+    return HttpResponseRedirect(reverse(details, args=[event_id]))

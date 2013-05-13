@@ -55,22 +55,47 @@
                     <div class="span6">
                         <h2 class="text-center">Registrering</h2>
 
-                {% if attendance_event %}
-                    {% ifequal canAttendWhen 'never' %}
+{% if attendance_event %}
+    {% ifequal event_opens_when 'never' %}
                         <p class="text-center"><strong>Du har ikke adgang til denne eventen.</strong></p>
-                    {% else %}
+    {% else %}
+        {% if user_status == 'attending' %}
+                        <!-- User is already attending this event -->
+                        <p class="text-center"><strong>Du er meldt på denne eventen.</strong></p>
+                        <form action="{% url unattend_event event.id %}" method="POST" class="pagination-centered">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger">Meld meg av!</button>
+                        </form>
+
+        {% elif user_status == 'queued' %}
+                        <!-- User is already queued for this event -->
+                        <p class="text-center"><strong>Du står som nummer {{ position_in_wait_list }} på ventelisten for denne eventen.</strong></p>
+
+        {% elif user_status == 'not_attending' %}
+            {% if event_open %}
+                        <!-- User is not already attending the event, and is allowed to register -->
                         <p class="text-center"><strong>Ved å melde deg på denne eventen godtar du prikkereglene.</strong></p>
 
                         <form action="{% url attend_event event.id %}" method="POST" class="pagination-centered">
                             {% csrf_token %}
                             <button type="submit" class="btn btn-success">Meld meg på!</button>
                         </form>
-                    {%  endifequal %}
-                {% else %}
+            {% else %}
+                        <!-- User is allowed to attend the event, but the registration has not yet opened -->
+                        <p class="text-center"><strong>Registreringen begynner {{ event_opens_when }}</strong></p>
+            {% endif %}
+        {% endif %}
+    {% endifequal %}
+{% else %}
                         <p  class="text-center"><strong>Dette arrangementet har ingen påmelding!</strong></p>
-                {% endif %}
-
+{% endif %}
                     </div>
+                </div>
+            </div>
+                <!-- horizontal line -->
+            <div class="row-fluid">
+                <div class="span12">
+                    <hr />
                 </div>
             </div>
         </div>
