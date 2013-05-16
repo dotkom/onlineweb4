@@ -5,3 +5,7 @@
   padding: 10pt 20pt;
   border: 2pt solid red;
 }
+#resourcecenter img {
+  width: 100pt;
+  height: 100pt;
+}
