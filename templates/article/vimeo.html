@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<html>
+<body>
+<p>here:</p>
+<a href="{{ authorize_url }}">Authorize on vimeo</a>
+<p>Error: {{ error_message }} : {{ error_explanation }}</p>
+</body>
+</html>
+
+{% endblock content %}
