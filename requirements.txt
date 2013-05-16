@@ -6,6 +6,7 @@ mimeparse==0.1.3
 python-dateutil==1.5
 wsgiref==0.1.2
 Markdown==2.0.3                 # textarea text formatting
+vimeo                           # handles OAuth for vimeo api
 
 # third party deps
 django-filebrowser==3.5.0   # File uploading
