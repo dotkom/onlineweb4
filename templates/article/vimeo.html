@@ -1,13 +1,28 @@
 {% extends "base.html" %}
+{% load crispy_forms_tags %}
 
 {% block content %}
-
-<html>
-<body>
-<p>here:</p>
-<a href="{{ authorize_url }}">Authorize on vimeo</a>
-<p>Error: {{ error_message }} : {{ error_explanation }}</p>
-</body>
-</html>
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="span12">
+            <div class="page-header">
+                <h1>Vimeo video archive:</h1>
+            </div>
+            {% if message %}
+            <p> {{ message }} </p>
+            {% elif authorize_url %}
+            <a href="{{ authorize_url }}">Authorize on vimeo</a>
+            {% else %}
+            <form method="POST" enctype="multipart/form-data"> {% csrf_token %}
+                <input type="hidden" name="MAX_FILE_SIZE" value="{{ size_availiable }}" />
+                <p> {{ form|crispy }} </p>
+                <div class="form-actions">
+                    <input class="btn btn-success" type="submit" value="submit" />
+                </div>
+            </form>
+            {% endif %}
+        </div>
+    </div>
+</div>
 
 {% endblock content %}
