@@ -1,5 +1,10 @@
 {% extends "base.html" %}
 
+{% block styles %}
+	{{ block.super }}
+    <link rel="stylesheet/less" href="{{ STATIC_URL }}less/resourcecenter.less">
+{% endblock %}
+
 {% block content %}
 <div id="resourcecenter">
 	<a href="/resourcecenter/notifier">
