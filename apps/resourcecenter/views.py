@@ -1,10 +1,7 @@
 #-*- coding: utf-8 -*-
-# from django.http import HttpResponse
 from django.shortcuts import render_to_response
 from django.shortcuts import get_object_or_404
 from django.template import RequestContext
-# from apps.resourcecenter.models import Event, AttendanceEvent, Attendee
-# import datetime
 
 # Index page
 def index(request):
