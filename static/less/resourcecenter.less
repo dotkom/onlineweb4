@@ -1,3 +1,8 @@
+
+@debug: 1pt;
+.debugred {border: @debug solid red;}
+.debuglime {border: @debug solid lime;}
+
 /* Help mixin */
 .transition_easer(@seconds: 0.2s) {
     -webkit-transition: all @seconds ease-in-out;
@@ -8,13 +13,22 @@
 
 /* ResourceCenter */
 
-#resourcecenter {
+#resourcecenter-items {
+    .debugred;
     width: 100%;
-    padding: 10pt 20pt;
-    border: 2pt solid red; // debug
+    text-align: center;
 
-    img {
-    	width: 100pt;
-    	height: 100pt;
+    .item {
+        .debuglime;
+        display: inline-block;
+        margin: 0 10pt 20pt 10pt;
+        padding: 0 10pt 10pt 10pt;
+
+        img {
+            .debugred;
+        	width: 200pt;
+        	height: 200pt;
+        }
     }
+
 }
