@@ -22,3 +22,8 @@
 	</a>
 </div>
 {% endblock content %}
+
+{% block js %}
+    {{ block.super }}
+    <script type="text/javascript" src="{{ STATIC_URL }}js/ResourceCenter.js"></script>
+{% endblock js %}
