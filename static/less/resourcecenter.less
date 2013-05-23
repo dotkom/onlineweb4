@@ -1,7 +1,8 @@
 
-@debug: 1pt;
+@debug: 0pt;
 .debugred {border: @debug solid red;}
 .debuglime {border: @debug solid lime;}
+.debugpink {border: @debug solid pink;}
 
 /* Help mixin */
 .transition_easer(@seconds: 0.2s) {
@@ -22,7 +23,7 @@
         .debuglime;
         .transition_easer;
         display: inline-block;
-        margin: 0 10pt 20pt 10pt;
+        margin: 0 15pt 20pt 15pt;
         padding: 0 0 5pt 0;
         opacity: .9;
 
@@ -33,21 +34,31 @@
         img {
             .debugred;
             .transition_easer;
-            border: 2pt solid #aaa;
-            width: 200pt;
-            height: 200pt;
+            box-shadow: 0 0 0 #fff;
+            width: 190pt;
+            height: 190pt;
+            padding: 5pt;
             
             &:hover {
-                border: 2pt solid #333;
+                box-shadow: 0pt 0pt 10pt #555;
+                width: 200pt;
+                height: 200pt;
+                padding: 0pt;
             };
         }
-        .title {
-            font-size: 20pt;
-            font-weight: bold;
-            color: #222;
-        }
-        .subtitle {
-            font-size: 12pt;
+        .textwrapper {
+            .debugpink;
+            margin: 0 10pt;
+            padding: 5pt 0;
+
+            .title {
+                font-size: 18pt;
+                font-weight: bold;
+                color: #000;
+            }
+            .subtitle {
+                font-size: 12pt;
+            }
         }
     }
 
