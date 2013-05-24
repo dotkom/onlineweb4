@@ -8,6 +8,6 @@ urlpatterns = patterns('apps.resourcecenter.views',
     url(r'^mailinglists/$', 'mailinglists', name='resourcecenter_mailinglists'),
     url(r'^infopages/$', 'infopages', name='resourcecenter_infopages'),
     url(r'^gameservers/$', 'gameservers', name='resourcecenter_gameservers'),
-    url(r'^githubrepos/$', 'githubrepos', name='resourcecenter_githubrepos'),
+    # url(r'^githubrepos/$', 'githubrepos', name='resourcecenter_githubrepos'),
     url(r'^irc/$', 'irc', name='resourcecenter_irc'),
 )

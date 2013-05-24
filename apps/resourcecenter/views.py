@@ -15,7 +15,7 @@ def infopages(request):
 	return render_to_response('resourcecenter/infopages.html', context_instance=RequestContext(request))
 def gameservers(request):
 	return render_to_response('resourcecenter/gameservers.html', context_instance=RequestContext(request))
-def githubrepos(request):
-	return render_to_response('resourcecenter/githubrepos.html', context_instance=RequestContext(request))
+# def githubrepos(request):
+# 	return render_to_response('resourcecenter/githubrepos.html', context_instance=RequestContext(request))
 def irc(request):
 	return render_to_response('resourcecenter/irc.html', context_instance=RequestContext(request))
