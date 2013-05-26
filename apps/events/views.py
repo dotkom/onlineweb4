@@ -3,9 +3,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
-from django.shortcuts import render_to_response
+from django.shortcuts import render
 from django.shortcuts import get_object_or_404
-from django.template import RequestContext
 from apps.events.models import Event, AttendanceEvent, Attendee
 from apps.events.forms import CaptchaForm
 import datetime
@@ -15,7 +14,7 @@ def index(request):
     events = Event.objects.filter(event_start__gte=datetime.date.today())
     if len(events) == 1:
         return details(request, events[0].id)
-    return render_to_response('events/index.html', {'events': events}, context_instance=RequestContext(request))
+    return render(request, 'events/index.html', {'events': events})
 
 
 def details(request, event_id):
@@ -49,18 +48,18 @@ def details(request, event_id):
         pass
 
     if is_attendance_event:
-        return render_to_response('events/details.html',
-                                  {'event': event,
-                                   'attendance_event': attendance_event,
-                                   'user_status': user_status,
-                                   'position_in_wait_list': position_in_wait_list,
-                                   'event_opens_when': event_opens_when,
-                                   'event_open': event_open,
-                                   'captcha_form': form,
-                                  },
-                                  context_instance=RequestContext(request))
+        context = {'event': event,
+                'attendance_event': attendance_event,
+                'user_status': user_status,
+                'position_in_wait_list': position_in_wait_list,
+                'event_opens_when': event_opens_when,
+                'event_open': event_open,
+                'captcha_form': form,
+        }
+        
+        return render(request, 'events/details.html', context)
     else:
-        return render_to_response('events/details.html', {'event': event}, context_instance=RequestContext(request))
+        return render(request, 'events/details.html', {'event': event})
 
 
 def get_attendee(attendee_id):
