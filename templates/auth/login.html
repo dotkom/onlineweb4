@@ -5,7 +5,7 @@
     <div class="page-header">
         <h2>Logg inn</h2>
     </div>
-    <form method="post" action={% url auth_login %}>{% csrf_token %}
+    <form method="post" action={% url 'auth_login' %}>{% csrf_token %}
         {{ form|crispy }}
         <div class="form-actions">
             <input type="submit" value="Logg inn" />
