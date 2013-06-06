@@ -62,7 +62,7 @@
                                 <li>
                                     <form>
                                         <div class="login-extra">
-                                            <a href="{% url auth_logout %}">Logg ut</a>
+                                            <a href="{% url 'auth_logout' %}">Logg ut</a>
                                         </div>
                                     </form>
                                 </li>
@@ -76,7 +76,7 @@
                                     <span class="caret-inner"/>
                                 </li>
                                 <li>
-                                <form method="POST" action="{% url auth_login %}">
+                                <form method="POST" action="{% url 'auth_login' %}">
                                     {% csrf_token %}
                                     <fieldset class="textbox">
                                         <label for="id_username">Brukernavn</label>
@@ -87,8 +87,8 @@
                                     <input type="hidden" name="next" value="{{ request.get_full_path }}" />
                                         <button type="submit" class="btn">Logg inn</button>
                                 </form>
-                                <button class="btn btn-auth" data-url="{% url auth_register %}">Registrer</button>
-                                <button class="btn btn-auth" data-url="{% url auth_recover %}">Glemt passord</button>
+                                <button class="btn btn-auth" data-url="{% url 'auth_register' %}">Registrer</button>
+                                <button class="btn btn-auth" data-url="{% url 'auth_recover' %}">Glemt passord</button>
                                 </li>
                             </ul>
                         {% endif %}

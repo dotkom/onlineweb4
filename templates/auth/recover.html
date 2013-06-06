@@ -8,7 +8,7 @@
     <div class="ingress">
     <p>Har du glemt passordet ditt? Skriv inn epostadressen din for å få tilsendt et nytt.</p>
     </div>
-    <form method="post" action={% url auth_recover %}>{% csrf_token %}
+    <form method="post" action={% url 'auth_recover' %}>{% csrf_token %}
         {{ form|crispy }}
         <div class="form-actions">
             <input type="submit" value="Få tilsendt passord" />
