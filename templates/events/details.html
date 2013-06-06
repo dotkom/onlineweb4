@@ -65,7 +65,7 @@
             {% if user_status == 'attending' %}
                         <!-- User is already attending this event -->
                         <p class="text-center"><strong>Du er meldt på denne eventen.</strong></p>
-                        <form action="{% url unattend_event event.id %}" method="POST" class="pagination-centered">
+                        <form action="{% url 'unattend_event' event.id %}" method="POST" class="pagination-centered">
                             {% csrf_token %}
                             <button type="submit" class="btn btn-danger">Meld meg av!</button>
                         </form>
@@ -79,7 +79,7 @@
                         <!-- User is not already attending the event, and is allowed to register -->
                         <p class="text-center"><strong>Ved å melde deg på denne eventen godtar du prikkereglene.</strong></p>
 
-                        <form action="{% url attend_event event.id %}" method="POST" class="pagination-centered">
+                        <form action="{% url 'attend_event' event.id %}" method="POST" class="pagination-centered">
                             {% csrf_token %}
                             {{ captcha_form }}
                             <button style="margin-top: -10px" type="submit" class="btn btn-success">Meld meg på!</button>
