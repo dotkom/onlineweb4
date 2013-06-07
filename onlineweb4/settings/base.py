@@ -126,7 +126,6 @@ INSTALLED_APPS = (
     'apps.events',
     'apps.marks',
     'apps.offline',
-    'apps.userprofile',
     'apps.feedback',
 )
 
