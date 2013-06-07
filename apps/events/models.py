@@ -2,9 +2,10 @@
 from datetime import datetime, timedelta
 from django.core.urlresolvers import reverse
 from django.db import models
-from django.contrib.auth.models import User, Group
+from django.contrib.auth.models import Group
 from django.utils.translation import ugettext_lazy as _
-from apps.userprofile.models import UserProfile
+
+from apps.authentication.models import OnlineUser as User
 from apps.companyprofile.models import Company
 from apps.userprofile.models import FIELD_OF_STUDY_CHOICES
 from filebrowser.fields import FileBrowseField
