@@ -1,10 +1,32 @@
 # -*- coding: utf-8 -*-
 
-import datetime
+from datetime import datetime
 
-from django.contrib.auth.models import AbstractBaseUser
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
+
+class OnlineUserManager(BaseUserManager):
+    def create_user(self, email, password=None):
+        if not email:
+            raise ValueError('Users must have an email address')
+ 
+        user = self.model(
+            email=OnlineUserManager.normalize_email(email),
+        )
+ 
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+ 
+    def create_superuser(self, email, password):
+        user = self.create_user(
+            email,
+            password=password,
+        )
+        user.is_admin = True
+        user.save(using=self._db)
+        return user
 
 class OnlineUser(AbstractBaseUser):
     FIELD_OF_STUDY_CHOICES = (
@@ -16,8 +38,10 @@ class OnlineUser(AbstractBaseUser):
     )
     
     # standard django user fields
-    username = models.CharField(max_length=40, unique=True, db_index=True)
+    #username = models.CharField(max_length=40, unique=True, db_index=True)
     email = models.EmailField(max_length=254, unique=True)
+    objects = OnlineUserManager()
+    USERNAME_FIELD = 'email'
 
     # Online related fields
     field_of_study = models.SmallIntegerField(_(u"studieretning"), choices=FIELD_OF_STUDY_CHOICES, default=0)
@@ -81,7 +105,7 @@ class OnlineUser(AbstractBaseUser):
 class RegisterToken(models.Model):
     user = models.ForeignKey(OnlineUser)
     token = models.CharField("token", max_length=32)
-    created = models.DateTimeField("created", editable=False, auto_now_add=True, default=datetime.datetime.now())
+    created = models.DateTimeField("created", editable=False, auto_now_add=True, default=datetime.now())
 
     @property
     def is_valid(self):
