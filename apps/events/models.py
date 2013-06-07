@@ -1,9 +1,9 @@
 #-*- coding: utf-8 -*-
 from django.core.urlresolvers import reverse
 from django.db import models
-from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
 
+from apps.authentication.models import OnlineUser as User
 from apps.companyprofile.models import Company
 
 class Event(models.Model):
