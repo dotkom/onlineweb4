@@ -3,10 +3,10 @@ from django.conf.urls import patterns, url, include
 from tastypie.api import Api
 
 from apps.api.v0.article import ArticleResource, ArticleLatestResource
+from apps.api.v0.authentication import UserResource
 from apps.api.v0.events import EventResource, AttendanceEventResource, AttendeeResource
 from apps.api.v0.marks import MarkResource, EntryResource, MyMarksResource, MyActiveMarksResource
 from apps.api.v0.offline import IssueResource
-from apps.api.v0.userprofile import UserResource
 
 v0_api = Api(api_name='v0')
 
