@@ -11,7 +11,7 @@ from tastypie.bundle import Bundle
 from tastypie.resources import ModelResource, ALL_WITH_RELATIONS
 
 from apps.marks.models import Mark, UserEntry
-from apps.api.v0.userprofile import UserResource
+from apps.api.v0.authentication import UserResource
 
 # TODO restrict access to this feature
 class MarkResource(ModelResource):

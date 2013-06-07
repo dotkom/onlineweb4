@@ -1,5 +1,4 @@
 from copy import copy
-from django.contrib.auth.models import User
 from tastypie import fields
 from tastypie.resources import ModelResource
 from tastypie.authorization import Authorization
@@ -7,7 +6,7 @@ from apps.events.models import Event
 from apps.events.models import Attendee
 from apps.events.models import AttendanceEvent
 
-from apps.api.v0.userprofile import UserResource
+from apps.api.v0.authentication import UserResource
 
 class AttendeeResource(ModelResource):
     user = fields.ToOneField(UserResource, 'user', full=True)
