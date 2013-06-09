@@ -25,25 +25,29 @@
         display: inline-block;
         margin: 0 15pt 20pt 15pt;
         padding: 0 0 5pt 0;
-        opacity: .9;
+        // opacity: .9;
 
         &:hover {
-            opacity: 1;
+            // opacity: 1;
         };
         
         img {
             .debugred;
             .transition_easer;
             box-shadow: 0 0 0 #fff;
-            width: 190pt;
-            height: 190pt;
-            padding: 5pt;
+            width: 200pt;
+            height: 200pt;
+            // padding: 5pt;
             
             &:hover {
-                box-shadow: 0pt 0pt 10pt #555;
-                width: 200pt;
-                height: 200pt;
-                padding: 0pt;
+                box-shadow:
+                    0pt 0pt 10pt #555,
+                    0pt 0pt 20pt #555,
+                    0pt 0pt 30pt #555,
+                    0pt 0pt 40pt #555;
+                // width: 200pt;
+                // height: 200pt;
+                // padding: 0pt;
             };
         }
         .textwrapper {
