@@ -1,5 +1,5 @@
 
-@debug: 0pt;
+@debug: 1pt;
 .debugred {border: @debug solid red;}
 .debuglime {border: @debug solid lime;}
 .debugpink {border: @debug solid pink;}
@@ -25,11 +25,23 @@
         display: inline-block;
         margin: 0 15pt 20pt 15pt;
         padding: 0 0 5pt 0;
-        // opacity: .9;
+        height: 200pt;
+        width: 200pt;
 
-        &:hover {
-            // opacity: 1;
-        };
+        .facade {
+            .debugred;
+            background-color: red;
+            position: relative;
+            height: 200pt;
+            top: 0pt;
+        }
+        .details {
+            .debugpink;
+            background-color: green;
+            position: relative;
+            height: 200pt;
+            top: 200pt;
+        }
         
         img {
             .debugred;
@@ -37,21 +49,11 @@
             box-shadow: 0 0 0 #fff;
             width: 200pt;
             height: 200pt;
-            // padding: 5pt;
-            
-            &:hover {
-                box-shadow:
-                    0pt 0pt 10pt #555,
-                    0pt 0pt 20pt #555,
-                    0pt 0pt 30pt #555,
-                    0pt 0pt 40pt #555;
-                // width: 200pt;
-                // height: 200pt;
-                // padding: 0pt;
-            };
         }
         .textwrapper {
             .debugpink;
+            position: relative;
+            top: -50pt;
             margin: 0 10pt;
             padding: 5pt 0;
 
