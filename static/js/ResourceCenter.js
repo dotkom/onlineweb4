@@ -1,10 +1,13 @@
 
 $(function() {
-	var maximize = function() {
-		$(this).find('img').animate({
-			width:'100%',
-			height:'100%',
+	var showDetails = function() {
+		alert('yep')
+		$(this).find('.facade').animate({
+			top:'-200pt',
+		}, 200);
+		$(this).find('.details').animate({
+			top:'0pt',
 		}, 200);
 	};
-	$('#github').click(maximize);
+	$('#notifier').click(showDetails);
 });
