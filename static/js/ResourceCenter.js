@@ -10,6 +10,7 @@ function rslog(msg) {
 $(function() {
 
 	var toggleDetails = function() {
+		var speed = 250;
 		var isToggled = $(this).find('.facade').css('top') == '0px';
 		if (isToggled) {
 			rslog('Show details for', $(this.id));
@@ -17,11 +18,11 @@ $(function() {
 			$(this).find('.facade').animate({
 				top:'-200pt',
 				opacity:'0',
-			}, 150);
+			}, speed);
 			$(this).find('.details').animate({
 				top:'-200pt',
 				opacity:'1',
-			}, 150);
+			}, speed);
 		}
 		else {
 			rslog('Show facade', $(this.id));
@@ -29,11 +30,11 @@ $(function() {
 			$(this).find('.facade').animate({
 				top:'0pt',
 				opacity:'1',
-			}, 150);
+			}, speed);
 			$(this).find('.details').animate({
 				top:'0pt',
 				opacity:'0',
-			}, 150);
+			}, speed);
 		}
 	};
 

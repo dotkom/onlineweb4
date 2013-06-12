@@ -4,7 +4,13 @@
 .debuglime {border: @debug solid lime;}
 .debugpink {border: @debug solid pink;}
 
-/* Help mixin */
+/* Vars */
+
+@item-active: #e9e9e9;
+@item-idle: #f2f2f2;
+
+/* Mixins */
+
 .transition_easer(@seconds: 0.2s) {
     -webkit-transition: all @seconds ease-in-out;
     -moz-transition: all @seconds ease-in-out;
@@ -23,22 +29,26 @@
         .debuglime;
         .transition_easer;
         display: inline-block;
-        margin: 0 15pt 20pt 15pt;
-        padding: 0 0 5pt 0;
+        margin: 10pt;
+        padding: 2pt;
+        border: 4pt solid @item-active;
         width: 200pt;
         height: 200pt;
 
         .facade {
-            .debugred;
-            background-color: red;
+            // .debugred;
+            background-color: @item-idle;
             position: relative;
             top: 0pt;
             height: 200pt;
             opacity: 1;
+            &:hover {
+                background-color: @item-active;
+            };
         }
         .details {
-            .debugpink;
-            background-color: green;
+            // .debugpink;
+            background-color: @item-active;
             position: relative;
             top: 0pt;
             height: 200pt;
