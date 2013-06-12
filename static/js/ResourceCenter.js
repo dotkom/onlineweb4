@@ -11,33 +11,41 @@ $(function() {
 
 	var toggleDetails = function() {
 		var speed = 250;
-		var isToggled = $(this).find('.facade').css('top') == '0px';
-		if (isToggled) {
-			rslog('Show details for', $(this.id));
+		var isFacade = $(this).find('.facade').css('top') == '0px';
+		if (isFacade) {
+			var id = $(this).attr('id');
+			rslog('Show details for ' + id);
 			// Slide the facade up
 			$(this).find('.facade').animate({
 				top:'-200pt',
 				opacity:'0',
-			}, speed);
+			}, speed, function() {
+				$('#'+id).find('.facade').css('z-index','-1000');
+			});
 			$(this).find('.details').animate({
-				top:'-200pt',
+				top:'-207pt',
 				opacity:'1',
 			}, speed);
 		}
-		else {
-			rslog('Show facade', $(this.id));
-			// Slide the facade down
-			$(this).find('.facade').animate({
-				top:'0pt',
-				opacity:'1',
-			}, speed);
-			$(this).find('.details').animate({
-				top:'0pt',
-				opacity:'0',
-			}, speed);
-		}
+		// else {
+		// 	rslog('Show facade ' + $(this).attr('id'));
+		// 	// Slide the facade down
+		// 	$(this).find('.facade').animate({
+		// 		top:'0pt',
+		// 		opacity:'1',
+		// 	}, speed);
+		// 	$(this).find('.details').animate({
+		// 		top:'0pt',
+		// 		opacity:'0',
+		// 	}, speed);
+		// }
 	};
 
 	$('#notifier').click(toggleDetails);
+	$('#mailinglists').click(toggleDetails);
+	$('#infopages').click(toggleDetails);
+	$('#gameservers').click(toggleDetails);
+	$('#github').click(toggleDetails);
+	$('#irc').click(toggleDetails);
 
 });
