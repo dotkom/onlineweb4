@@ -1,13 +1,28 @@
-
+// Wait till the document is ready
 $(function() {
-	var showDetails = function() {
-		alert('yep')
-		$(this).find('.facade').animate({
-			top:'-200pt',
-		}, 200);
-		$(this).find('.details').animate({
-			top:'0pt',
-		}, 200);
+
+	var toggleDetails = function() {
+		var isToggled = $(this).find('.facade').css('top') == '0px';
+		if (isToggled) {
+			// Slide the facade up
+			$(this).find('.facade').animate({
+				top:'-200pt',
+			}, 150);
+			$(this).find('.details').animate({
+				top:'-200pt',
+			}, 150);
+		}
+		else {
+			// Slide the facade down
+			$(this).find('.facade').animate({
+				top:'0pt',
+			}, 150);
+			$(this).find('.details').animate({
+				top:'0pt',
+			}, 150);
+		}
 	};
-	$('#notifier').click(showDetails);
+
+	$('#notifier').click(toggleDetails);
+
 });
