@@ -29,7 +29,7 @@
         .debuglime;
         .transition_easer;
         display: inline-block;
-        margin: 10pt;
+        margin: 5pt;
         padding: 2pt;
         border: 4pt solid @item-active;
         width: 200pt;
@@ -51,23 +51,27 @@
             background-color: @item-active;
             position: relative;
             top: 0pt;
-            height: 200pt;
+            height: 180pt;
             opacity: 0;
+            padding: 10pt;
+            text-align: left;
         }
         
         img {
-            .debugred;
+            // .debugred;
             .transition_easer;
             box-shadow: 0 0 0 #fff;
             width: 200pt;
             height: 200pt;
         }
         .textwrapper {
-            .debugpink;
+            // .debugpink;
+            background-color: @item-active;
             position: relative;
-            top: -50pt;
-            margin: 0 10pt;
+            top: -55pt;
+            margin: 5pt;
             padding: 5pt 0;
+            opacity: .95;
 
             .title {
                 font-size: 18pt;
