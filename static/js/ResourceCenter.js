@@ -67,4 +67,17 @@ $(function() {
 		$(elementId).click(toggleDetails);
 	};
 
+	$('.flipbox').click(function(){
+
+		$(".flipbox").flippy({
+		    color_target: "red",
+		    duration: "500",
+		    verso: "woo<b>hoo</b>"
+		 });
+		$('.flipbox').unbind('click').click(function(){
+			$(".flipbox").flippyReverse();
+		});
+
+	});
+
 });

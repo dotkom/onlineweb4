@@ -15,6 +15,15 @@
                 </div>
             </div>
         </div>
+		
+		<div class="flipbox-container">
+
+		    <div class="flipbox">
+		        <span>Hello !</span>
+		    </div>
+
+		</div>
+
 		<div id="resourcecenter-items">
 
 			<div id="notifier" class="item">
@@ -147,4 +156,5 @@
 {% block js %}
     {{ block.super }}
     <script type="text/javascript" src="{{ STATIC_URL }}js/ResourceCenter.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/ResourceCenter.jquery.flippy.min.js"></script>
 {% endblock js %}
