@@ -53,7 +53,7 @@
                     <ul class="nav pull-right">
                         <li class="dropdown" id="login_menu">
                         {% if user.is_authenticated %}
-                        <a href="#login_menu" class="login-btn dropdown-toggle dropdown-signin login">{{ user.username }}<b class="caret"></b></a>
+                        <a href="#login_menu" class="login-btn dropdown-toggle dropdown-signin login">{{ user.get_full_name }}<b class="caret"></b></a>
                             <ul class="dropdown-menu dropdown-form login-box">
                                 <li class="dropdown-caret right">
                                     <span class="caret-outer"/>
