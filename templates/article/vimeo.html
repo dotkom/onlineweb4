@@ -1,7 +1,20 @@
 {% extends "base.html" %}
 {% load crispy_forms_tags %}
-
 {% block content %}
+
+<script type="text/javascript">
+    function uploadVideo() {
+        $.ajax({type:'POST', url: '{{ upload_ticket }}', data:$('upload').serialize(), success: function(response) {
+            console.log("sucess");
+            verifyUpload();
+        }});
+    }
+
+    function verifyUpload() {
+        $.ajax({type:'POST', url: '
+    }
+</script>
+
 <div class="container-fluid">
     <div class="row-fluid">
         <div class="span12">
@@ -13,13 +26,13 @@
             {% elif authorize_url %}
             <a href="{{ authorize_url }}">Authorize on vimeo</a>
             {% else %}
-            <form method="POST" enctype="multipart/form-data"> {% csrf_token %}
-                <input type="hidden" name="MAX_FILE_SIZE" value="{{ size_availiable }}" />
-                <p> {{ form|crispy }} </p>
-                <div class="form-actions">
-                    <input class="btn btn-success" type="submit" value="submit" />
-                </div>
-            </form>
+            <p>{{ upload_ticket }}</p>
+            <form id="upload" enctype="multipart/form-data" onSubmit="uploadVideo();"> {%csrf_token %}
+                <input type="hidden" name="ticket_id" value="{{ ticket_id }}" />
+                <input type="hidden" name="chunk_id" value="0" />
+                <input type="file" name="file_data" />
+                <input type="submit" value="Upload" />
+            <form>
             {% endif %}
         </div>
     </div>
