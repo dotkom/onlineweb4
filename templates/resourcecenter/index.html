@@ -17,8 +17,8 @@
         </div>
 
 		<div id="resourcecenter-items">
+
 	        <div class="flip-container" ontouchstart="this.classList.toggle('hover');">
-			
 				<div class="flipper">
 					<div class="front">
 						front content
@@ -27,7 +27,9 @@
 						back content
 					</div>
 				</div>
+			</div>
 
+	        <div class="flip-container" ontouchstart="this.classList.toggle('hover');">
 				<div id="mailinglists" class="flipper">
 					<div class="front">
 						<img src="{{ STATIC_URL }}img/resourcecenter/mailinglists.png" />
@@ -46,14 +48,36 @@
 						</p>
 					</div>
 				</div>
-			
 			</div>
+
+	        <div class="flip-container" ontouchstart="this.classList.toggle('hover');">
+				<div id="infopages" class="flipper">
+					<div class="front">
+						<img src="{{ STATIC_URL }}img/resourcecenter/infopages.png" />
+						<div class="textwrapper">
+							<h3>Infosider</h3>
+							<p>Lær om linjeforeninger</p>
+						</div>
+					</div>
+					<div class="back">
+						<h3>Infosider</h3>
+						<p>
+							Lær om linjeforeningene i Trondheim på Onlines infosider.
+							<ul>
+								<li><a href="http://gloshaugen.info">gloshaugen.info</a></li>
+								<li><a href="http://dragvoll.info">dragvoll.info</a></li>
+							</ul>
+						</p>
+					</div>
+				</div>
+			</div>
+
 		</div>
 		
 		<!-- 
 			
-			<div id="notifier" class="item">
-				<div class="details">
+			<div id="notifier" class="flipper">
+				<div class="back">
 					<h3>Online Notifier</h3>
 					<p>
 						Linjeforeningsnyheter, middagsmeny, sanntidsbuss og mer. Notifier er en extension til Chrome og Opera.
@@ -70,35 +94,17 @@
 			
 			<!- hole after mailingslists here -!>
 
-			<div id="infopages" class="item">
-				<div class="facade">
-					<img src="{{ STATIC_URL }}img/resourcecenter/infopages.png" />
-					<div class="textwrapper">
-						<h3>Infosider</h3>
-						<p>Lær om linjeforeninger</p>
-					</div>
-				</div>
-				<div class="details">
-					<h3>Infosider</h3>
-					<p>
-						Lær om linjeforeningene i Trondheim på Onlines infosider.
-						<ul>
-							<li><a href="http://gloshaugen.info">gloshaugen.info</a></li>
-							<li><a href="http://dragvoll.info">dragvoll.info</a></li>
-						</ul>
-					</p>
-				</div>
-			</div>
+			<!- hole after infopages here -!>
 
-			<div id="gameservers" class="item">
-				<div class="facade">
+			<div id="gameservers" class="flipper">
+				<div class="front">
 					<img src="{{ STATIC_URL }}img/resourcecenter/gameservers.png" />
 					<div class="textwrapper">
 						<h3>Spillservere</h3>
 						<p>Go down the rabbit hole.</p>
 					</div>
 				</div>
-				<div class="details">
+				<div class="back">
 					<h3>Spillservere</h3>
 					<p>
 						Go down the rabbit hole.
@@ -110,15 +116,15 @@
 				</div>
 			</div>
 
-			<div id="github" class="item">
-				<div class="facade">
+			<div id="github" class="flipper">
+				<div class="front">
 					<img src="{{ STATIC_URL }}img/resourcecenter/github.png" />
 					<div class="textwrapper">
 						<h3>Kode</h3>
 						<p>dotKom på GitHub</p>
 					</div>
 				</div>
-				<div class="details">
+				<div class="back">
 					<h3>Kode</h3>
 					<p>
 						Mange av dotKoms repositories ligger åpent på GitHub. Du er herved invitert til å bidra til våre prosjekter, <strong>send en pull request</strong>.
@@ -129,15 +135,15 @@
 				</div>
 			</div>
 
-			<div id="irc" class="item">
-				<div class="facade">
+			<div id="irc" class="flipper">
+				<div class="front">
 					<img src="{{ STATIC_URL }}img/resourcecenter/irc.png" />
 					<div class="textwrapper">
 						<h3>IRC</h3>
 						<p>#online @ irc.freenode.net</p>
 					</div>
 				</div>
-				<div class="details">
+				<div class="back">
 					<h3>IRC</h3>
 					<p>
 						<strong>#online</strong> på <strong>irc.freenode.net</strong> er aktiv døgnet rundt, året rundt. Bli med i samtalen.
