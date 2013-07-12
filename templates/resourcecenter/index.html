@@ -17,18 +17,37 @@
         </div>
 
 		<div id="resourcecenter-items">
-
 	        <div class="flip-container" ontouchstart="this.classList.toggle('hover');">
+			
 				<div class="flipper">
-					<div class="front" style="background:red;">
+					<div class="front">
 						front content
 					</div>
-					<div class="back" style="background:green;">
+					<div class="back">
 						back content
 					</div>
 				</div>
-			</div>
 
+				<div id="mailinglists" class="flipper">
+					<div class="front">
+						<img src="{{ STATIC_URL }}img/resourcecenter/mailinglists.png" />
+						<div class="textwrapper">
+							<h3>Epostlister</h3>
+							<p>Kontakt linjeforeninger</p>
+						</div>
+					</div>
+					<div class="back">
+						<h3>Epostlister</h3>
+						<p>
+							Kontakt linjeforeningene via epostlistene laget av Online.
+							<ul>
+								<li><a href="/resourcecenter/mailinglists">Mailinglists her</a></li>
+							</ul>
+						</p>
+					</div>
+				</div>
+			
+			</div>
 		</div>
 		
 		<!-- 
@@ -48,25 +67,8 @@
 					</p>
 				</div>
 			</div>
-
-			<div id="mailinglists" class="item">
-				<div class="facade">
-					<img src="{{ STATIC_URL }}img/resourcecenter/mailinglists.png" />
-					<div class="textwrapper">
-						<h3>Epostlister</h3>
-						<p>Kontakt linjeforeninger</p>
-					</div>
-				</div>
-				<div class="details">
-					<h3>Epostlister</h3>
-					<p>
-						Kontakt linjeforeningene via epostlistene laget av Online.
-						<ul>
-							<li><a href="/resourcecenter/mailinglists">Mailinglists her</a></li>
-						</ul>
-					</p>
-				</div>
-			</div>
+			
+			<!- hole after mailingslists here -!>
 
 			<div id="infopages" class="item">
 				<div class="facade">
