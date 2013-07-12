@@ -15,25 +15,22 @@
                 </div>
             </div>
         </div>
-		
-		<div class="flipbox-container">
 
-		    <div class="flipbox">
-		        <span>Hello !</span>
-		    </div>
-
-		</div>
-
-		<div id="resourcecenter-items">
-
-			<div id="notifier" class="item">
-				<div class="facade">
-					<img src="{{ STATIC_URL }}img/resourcecenter/notifier.png" />
-					<div class="textwrapper">
-						<h3>Online Notifier</h3>
-						<p>Extension til Chrome og Opera</p>
-					</div>
+        <div class="flip-container" ontouchstart="this.classList.toggle('hover');">
+			<div class="flipper">
+				<div class="front" style="background:red;">
+					front content
 				</div>
+				<div class="back" style="background:green;">
+					back content
+				</div>
+			</div>
+		</div>
+		
+		<!-- 
+		<div id="resourcecenter-items">
+			
+			<div id="notifier" class="item">
 				<div class="details">
 					<h3>Online Notifier</h3>
 					<p>
@@ -147,7 +144,7 @@
 				</div>
 			</div>
 
-		</div>
+		</div> -->
     </div>
 </section>
 
@@ -155,6 +152,6 @@
 
 {% block js %}
     {{ block.super }}
-    <script type="text/javascript" src="{{ STATIC_URL }}js/ResourceCenter.js"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}js/ResourceCenter.jquery.flippy.min.js"></script>
+    <script src="{{ STATIC_URL }}js/ResourceCenter.js"></script>
+    <script src="{{ STATIC_URL }}js/ResourceCenter.jquery.flippy.min.js"></script>
 {% endblock js %}
