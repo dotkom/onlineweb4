@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block styles %}
+	{{ block.super }}
+    <link rel="stylesheet/less" href="{{ STATIC_URL }}less/gameservers.less">
+{% endblock %}
+
+{% block content %}
+<section id="gameservers">
+    <div class="container-fluid">
+        <div class="row-fluid">
+            <div class="span12">
+                <div class="page-header">
+                    <h2 id="gameservers-heading">SPILLSERVERE</h2>
+                </div>
+            </div>
+        </div>
+
+		<div id="gameserver-items">
+			
+			<!-- noe -->
+			
+		</div>
+    </div>
+</section>
+
+{% endblock content %}
+
+{% block js %}
+    {{ block.super }}
+    <script src="{{ STATIC_URL }}js/Gameservers.js"></script>
+{% endblock js %}
