@@ -8,11 +8,10 @@
 
 /* Vars */
 
-@item-active: #f6f6f6;
-@item-idle: #f2f2f2;
 @box-width: 200pt;
 @box-height: 200pt;
 @box-padding: 10pt;
+@box-background: #fafafa;
 @animation-time: 0.7s;
 
 /* Mixins */
@@ -102,11 +101,21 @@
         }
         .wrapheader {
             .debugpink;
-            background-color: @item-active;
+            background-color: @box-background;
             position: relative;
-            top: -47pt;
+            top: -54pt;
             padding: 5pt;
             opacity: .96;
+            h3 {
+                .debugred;
+                margin: 0;
+                padding: 0;
+            }
+            p {
+                .debugred;
+                margin: 0;
+                padding: 0;
+            }
         }
     }
 
