@@ -2,7 +2,7 @@ var ML_DEBUG = 1;
 
 function mllog(msg) {
 	if (ML_DEBUG) {
-		console.log('Resourcecenter/Mailinglists:', msg);
+		console.log('Mailinglists:', msg);
 	}
 }
 
