@@ -10,9 +10,10 @@
 
 @item-active: #f6f6f6;
 @item-idle: #f2f2f2;
-@box-size: 200pt;
+@box-width: 200pt;
+@box-height: 250pt;
 @box-padding: 10pt;
-@animation-time: 0.6s;
+@animation-time: 0.7s;
 
 /* Mixins */
 
@@ -44,8 +45,8 @@
     }
     /* make sure all containers are the same size within each other */
     .flip-container, .front, .back {
-        width: @box-size;
-        height: @box-size;
+        width: @box-width;
+        height: @box-height;
     }
     /* flip speed goes here */
     .flipper {
@@ -96,8 +97,8 @@
         img {
             .debugred;
             box-shadow: 0 0 0 #fff;
-            width: @box-size;
-            height: @box-size;
+            width: @box-width;
+            height: @box-height;
         }
         .wrapheader {
             .debugpink;
@@ -116,7 +117,7 @@
         .wraptext {
             .debugpink;
             background-color: white;
-            height: @box-size - 2 * @box-padding;
+            height: @box-height - 2 * @box-padding;
             padding: @box-padding;
         }
     }
