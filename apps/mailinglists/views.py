@@ -4,7 +4,14 @@ from django.shortcuts import render
 from memcache import Client
 
 def index(request):
-    mc = Client(["127.0.0.1:11211"], debug=0)
+    # mc = Client(["127.0.0.1:11211"], debug=0)
+    # mc = Client(["morgan.online.ntnu.no:11211"], debug=0)
+    mc = Client(["dworek.online.ntnu.no:11211"], debug=0)
+
+    print 'LOOOOL', 'HEEEEER'
+    print
+    print mc
+    print
 
     retningslinjer = u"""
 Disse retningslinjene gjelder listene på denne siden.
@@ -22,5 +29,7 @@ Vi (Online) ønsker ikke å sensurere meldinger, da det kan være vanskelig å b
     """
 
     lists = mc.get("sympa_lists")
+
+    print lists
 
     return render(request, 'mailinglists/index.html', {'lists': lists, 'retningslinjer': retningslinjer}) 
