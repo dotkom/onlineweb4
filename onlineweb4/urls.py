@@ -28,6 +28,7 @@ urlpatterns = patterns('',
     url(r'^auth/',              include('apps.authentication.urls')),
     url(r'^feedback/',          include('apps.feedback.urls')),
     url(r'^offline/',           include('apps.offline.urls')),
+    url(r'^resourcecenter/mailinglists/', include('apps.mailinglists.urls')), # leave in this order
     url(r'^resourcecenter/',    include('apps.resourcecenter.urls')),
 )
 
