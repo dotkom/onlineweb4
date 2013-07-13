@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% load markup %}
+
+{% block content %}
+
+    <div class="artikkel">
+      <div class="arthead">
+        Retningslinjer
+      </div>
+      <div class="artdato">
+      </div>
+      <div class="arttekst">
+        {{ retningslinjer|markdown }}
+      </div>
+    </div>
+  {% for list in lists %}
+    <div class="artikkel">
+      <div class="arthead">
+          {{ list.name }}@online.ntnu.no
+      </div>
+      <div class="artdato">
+      </div>
+      <div class="arttekst">
+          <ul>
+              {% for member in list.members %}
+                <li> {{member.name}} </li>
+              {% endfor %}
+          </ul>
+      </div>
+    </div>
+  {% endfor %}
+{% endblock content %}
