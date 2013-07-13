@@ -8,12 +8,13 @@
 
 /* Vars */
 
-@box-width: 200pt;
-@box-height: 200pt;
+@box-width: 210pt;
+@box-height: 210pt;
 @box-padding: 10pt;
-@box-background: #f4f4f4;
+@box-background: #f2f2f2;
 @animation-time: 0.8s;
-@border: 1pt solid #777;
+@border-normal: 1pt solid #ddd;
+@border-thick: 2pt solid #ddd;
 
 /* Mixins */
 
@@ -85,15 +86,18 @@
     .flip-container {
         /* the background is visible behind the flip card during animation */
         background-color: @box-background;
-        border: @border;
-        box-shadow: inset 0 0 20pt #555;
+        border: @border-thick;
+        box-shadow: inset 0 0 20pt #333;
         display: inline-block;
-        margin: 10pt;
+        margin: 4pt;
     }
     #code {
         // Special animated matrix background for the github resource
         background-image: url('/static/img/resourcecenter/animatrix.gif');
-        box-shadow: inset 0 0 120pt black;
+        box-shadow:
+            inset 0 0 120pt black,
+            inset 0 0 70pt black,
+            inset 0 0 150pt green;
     }
 
     .front {
@@ -107,7 +111,7 @@
         .wrapheader {
             .debugpink;
             background-color: @box-background;
-            border-top: @border;
+            border-top: @border-normal;
             position: relative;
             top: -55pt;
             padding: 5pt;
