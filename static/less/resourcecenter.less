@@ -11,8 +11,9 @@
 @box-width: 200pt;
 @box-height: 200pt;
 @box-padding: 10pt;
-@box-background: #fafafa;
+@box-background: #f4f4f4;
 @animation-time: 0.7s;
+@border: 1pt solid #777;
 
 /* Mixins */
 
@@ -84,8 +85,8 @@
     .flip-container {
         /* the background is visible behind the flip card during animation */
         background-color: #f0f0f0;
-        border: 1px solid #777;
-        box-shadow: inset 0 0 40pt black;
+        border: @border;
+        box-shadow: inset 0 0 25pt black;
         display: inline-block;
         margin: 10pt;
     }
@@ -102,8 +103,9 @@
         .wrapheader {
             .debugpink;
             background-color: @box-background;
+            border-top: @border;
             position: relative;
-            top: -54pt;
+            top: -55pt;
             padding: 5pt;
             opacity: .96;
             h3 {
@@ -125,7 +127,7 @@
         text-align: left;
         .wraptext {
             .debugpink;
-            background-color: white;
+            background-color: @box-background;
             height: @box-height - 2 * @box-padding;
             padding: @box-padding;
         }
