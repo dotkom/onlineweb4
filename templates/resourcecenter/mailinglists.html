@@ -1,10 +1,32 @@
 {% extends "base.html" %}
 
+{% block styles %}
+	{{ block.super }}
+    <link rel="stylesheet/less" href="{{ STATIC_URL }}less/mailinglists.less">
+{% endblock %}
+
 {% block content %}
-<p>
-	En Chrome Extension for linjeforeninger i Trondheim, få den her: <a href="http://chrome.google.com/webstore/detail/hfgffimlnajpbenfpaofmmffcdmgkllf">chrome.google.com/webstore/detail/hfgffimlnajpbenfpaofmmffcdmgkllf</a>
-</p>
-<p>
-	Følgende linjeforeninger er støttet: liste
-</p>
+<section id="mailinglists">
+    <div class="container-fluid">
+        <div class="row-fluid">
+            <div class="span12">
+                <div class="page-header">
+                    <h2 id="mailinglists-heading">EPOSTLISTER</h2>
+                </div>
+            </div>
+        </div>
+
+		<div id="mailinglist-items">
+			
+			<!-- noe -->
+
+		</div>
+    </div>
+</section>
+
 {% endblock content %}
+
+{% block js %}
+    {{ block.super }}
+    <script src="{{ STATIC_URL }}js/Mailinglists.js"></script>
+{% endblock js %}
