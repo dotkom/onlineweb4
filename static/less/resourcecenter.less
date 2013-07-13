@@ -12,7 +12,7 @@
 @box-height: 200pt;
 @box-padding: 10pt;
 @box-background: #f4f4f4;
-@animation-time: 0.7s;
+@animation-time: 0.8s;
 @border: 1pt solid #777;
 
 /* Mixins */
@@ -84,16 +84,20 @@
     
     .flip-container {
         /* the background is visible behind the flip card during animation */
-        background-color: #f0f0f0;
+        background-color: #bbb;
         border: @border;
-        box-shadow: inset 0 0 25pt black;
+        box-shadow: inset 0 0 20pt #555;
         display: inline-block;
         margin: 10pt;
     }
 
+    #code {
+        background-image: url('/static/img/resourcecenter/animatrix.gif');
+    }
+
     .front {
         .debugred;
-        background: lightgreen;
+        background: lightblue;
         img {
             .debugred;
             box-shadow: 0 0 0 #fff;
@@ -123,11 +127,10 @@
 
     .back {
         .debugpink;
-        background: lightblue;
+        background-color: @box-background;
         text-align: left;
         .wraptext {
             .debugpink;
-            background-color: @box-background;
             height: @box-height - 2 * @box-padding;
             padding: @box-padding;
         }
