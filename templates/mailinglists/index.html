@@ -1,32 +1,55 @@
 {% extends "base.html" %}
-{% load markup %}
+
+{% block styles %}
+  {{ block.super }}
+    <link rel="stylesheet/less" href="{{ STATIC_URL }}less/mailinglists.less">
+{% endblock %}
 
 {% block content %}
+<section id="mailinglists">
+    <div class="container-fluid">
+        <div class="row-fluid">
+            <div class="span12">
+                <div class="page-header">
+                    <h2 id="mailinglists-heading">EPOSTLISTER</h2>
+                </div>
+            </div>
+        </div>
+        
+        <div id="guidelines">
+            <h3>Retningslinjer</h3>
+            <p>
+                {{ retningslinjer|markdown }}
+            </p>
+        </div>
 
-    <div class="artikkel">
-      <div class="arthead">
-        Retningslinjer
-      </div>
-      <div class="artdato">
-      </div>
-      <div class="arttekst">
-        {{ retningslinjer|markdown }}
-      </div>
+    <div id="mailinglist-items">
+      
+            <!-- TODO: BORROWED FROM OW3 -->
+      {% for list in lists %}
+                <div class="artikkel">
+                    <div class="arthead">
+                    {{ list.name }}@online.ntnu.no
+                    </div>
+                    <div class="artdato">
+                    </div>
+                    <div class="arttekst">
+                        <ul>
+                        {% for member in list.members %}
+                        <li> {{member.name}} </li>
+                        {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            {% endfor %}
+      
     </div>
-  {% for list in lists %}
-    <div class="artikkel">
-      <div class="arthead">
-          {{ list.name }}@online.ntnu.no
-      </div>
-      <div class="artdato">
-      </div>
-      <div class="arttekst">
-          <ul>
-              {% for member in list.members %}
-                <li> {{member.name}} </li>
-              {% endfor %}
-          </ul>
-      </div>
     </div>
-  {% endfor %}
+</section>
+
 {% endblock content %}
+
+{% block js %}
+    {{ block.super }}
+    <script src="{{ STATIC_URL }}js/Mailinglists.js"></script>
+{% endblock js %}
