@@ -2,7 +2,7 @@ var GS_DEBUG = 1;
 
 function gslog(msg) {
 	if (ML_DEBUG) {
-		console.log('Resourcecenter/Gameservers:', msg);
+		console.log('Gameservers:', msg);
 	}
 }
 

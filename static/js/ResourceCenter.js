@@ -2,7 +2,7 @@ var RS_DEBUG = 1;
 
 function rslog(msg) {
 	if (RS_DEBUG) {
-		console.log('ResourceCenter:', msg);
+		console.log('Resourcecenter:', msg);
 	}
 }
 
