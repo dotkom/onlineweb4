@@ -24,15 +24,17 @@ def index(request):
     retningslinjer = u"""
 Disse retningslinjene gjelder listene på denne siden.<br />
 <br />
+Epostlistene gjør det enkelt for linjeforeningene, og eksterne, å kontakte foreningene.<br />
 Hensikten med disse epostlistene er å fremme kommunikasjon mellom foreningene og å skape en kanal for å kunne kontakte alle foreningene på en enkel måte.<br />
 <br />
-Ettersom disse epostlistene distribueres til flere hundre brukere, bør post på disse listene begrenses til informasjon som kommer fellesskapet til gode. Dette gjelder gjerne informasjon om hendelser og arrangementer, som er interessant å avertere fordi det appellerer til studentmassen og/eller avgjørelser i de respektive styrene som mottar post fra listene.<br />
+Det er flere hundre brukere på epostlistene. Epost på listene må begrenses til informasjon som kommer fellesskapet til gode. Dette gjelder gjerne informasjon om hendelser og arrangementer som er interessant å informere om fordi det appellerer til studentmassen eller avgjørelser i de foreningsstyrene som mottar eposten.<br />
 <br />
-Gode eksempler på listemateriale:<br />
-<ul><li>- Invitasjoner til jubileum, ball, revy etc.</li>
-<li>Nyheter som påvirker linjeforeningene.</li></ul>
-<br />
-Epost som gjelder jobbtilbud, reklame og annen avertering skal ikke komme på disse listene. Meldinger uten noe faktisk relevant innhold for linjeforeningene direkte som kommer ut på disse listene kan medføre advarsler, utestenging eller annen inndragelse av rettigheter.
+Gode eksempler:<br />
+<ul>
+<li>Invitasjoner til jubileum, immatrikuleringsball, revy osv.</li>
+<li>Nyheter som påvirker linjeforeningene.</li>
+</ul>
+Epost om jobbtilbud, reklame og annen avertering skal ikke sendes til disse listene. Epost uten noe relevant innhold for linjeforeningene som blir sendt til disse listene kan medføre advarsler, utestenging eller annen inndragelse av rettigheter.
 Vi (Online) ønsker ikke å sensurere meldinger, da det kan være vanskelig å bedømme hva andre synes er relevant. Vi ber derfor folk tenke seg nøye om før man bruker listene.
     """
 
