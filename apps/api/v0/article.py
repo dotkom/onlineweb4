@@ -1,10 +1,7 @@
 #-*- coding: utf-8 -*-
 from copy import copy
-<<<<<<< HEAD
-=======
 from datetime import datetime
 from django.conf import settings
->>>>>>> develop
 
 from django.contrib.auth.models import User
 from django.template.defaultfilters import slugify
