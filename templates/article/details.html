@@ -2,9 +2,10 @@
 
 {% load markup %}
 
-{% block content %}
+{% load fb_versions %}
 
-<div id="article_wrapper">
+{% block content %}
+<div id="article-wrapper">
     <div class="container-fluid">
         <div class="row-fluid">
             <div class="span12">
@@ -12,7 +13,7 @@
                     {% if article.video %}
                     <iframe src="http://player.vimeo.com/video/{{ article.video }}" frameborder="0" webkitAllowFullscreen mozallowfullscreen allowFullScreen></iframe>
                     {% else %}
-                    <img src="{{ article.image }}" alt="{{ article.heading }}"/>
+                    <img src="{% version article.image 'article_main' %}" alt="{{ article.heading }}"/>
                     {% endif %}
                 </div>
             </div>
@@ -62,3 +63,10 @@
 
 	
 {% endblock content %}
+
+{% block js %}
+    {{ block.super }}
+    <script type="text/javascript" src="{{ STATIC_URL }}js/Utils.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/ArticleWidget.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/article-latest.js"></script>
+{% endblock js %}

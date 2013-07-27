@@ -104,6 +104,7 @@ INSTALLED_APPS = (
     'crispy_forms',
     'django_extensions',
     'django_dynamic_fixture',
+    'captcha',
 
     # Django apps
     'django.contrib.admin',
@@ -120,6 +121,7 @@ INSTALLED_APPS = (
     'apps.article',
     'apps.authentication',
     'apps.autoconfig',
+    'apps.careeropportunity',
     'apps.companyprofile',
     'apps.events',
     'apps.marks',

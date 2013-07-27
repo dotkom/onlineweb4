@@ -16,27 +16,27 @@ class ActiveMarksManager(models.Manager):
 
 class Mark(models.Model):
     CATEGORY_CHOICES = (
-        (0, _("Ingen")),
-        (1, _("Sosialt")),
-        (2, _("Bedriftspresentasjon")),
-        (3, _("Kurs")),
-        (4, _("Tilbakemelding")),
-        (5, _("Kontoret")),
+        (0, _(u"Ingen")),
+        (1, _(u"Sosialt")),
+        (2, _(u"Bedriftspresentasjon")),
+        (3, _(u"Kurs")),
+        (4, _(u"Tilbakemelding")),
+        (5, _(u"Kontoret")),
     )
 
-    title = models.CharField(_("tittel"), max_length=50)
+    title = models.CharField(_(u"tittel"), max_length=50)
     given_to = models.ManyToManyField(User, null=True, blank=True,
-        through="UserEntry", verbose_name=_("gitt til"))
-    mark_added_date = models.DateTimeField(_("utdelt dato"), auto_now_add=True)
-    given_by = models.ForeignKey(User, related_name="mark_given_by", verbose_name=_("gitt av"), editable=False)
-    last_changed_date = models.DateTimeField(_("sist redigert"), auto_now=True, editable=False)
+        through="UserEntry", verbose_name=_(u"gitt til"))
+    mark_added_date = models.DateTimeField(_(u"utdelt dato"), auto_now_add=True)
+    given_by = models.ForeignKey(User, related_name="mark_given_by", verbose_name=_(u"gitt av"), editable=False)
+    last_changed_date = models.DateTimeField(_(u"sist redigert"), auto_now=True, editable=False)
     last_changed_by = models.ForeignKey(User, related_name="marks_last_changed_by",
-        verbose_name=_("sist redigert av"), editable=False)
-    description = models.CharField(_("beskrivelse"), max_length=100,
-        help_text=_("Hvis dette feltet etterlates blankt vil det fylles med "
+        verbose_name=_(u"sist redigert av"), editable=False)
+    description = models.CharField(_(u"beskrivelse"), max_length=100,
+        help_text=_(u"Hvis dette feltet etterlates blankt vil det fylles med "
         "en standard grunn for typen prikk som er valgt."),
         blank=True)
-    category = models.SmallIntegerField(_("kategori"), choices=CATEGORY_CHOICES, default=0)
+    category = models.SmallIntegerField(_(u"kategori"), choices=CATEGORY_CHOICES, default=0)
 
     # managers
     objects = models.Manager()  # default manager
@@ -47,11 +47,11 @@ class Mark(models.Model):
         return self.mark_added_date < get_threshhold()
 
     def __unicode__(self):
-        return _("Prikk for %s") % self.title
+        return _(u"Prikk for %s") % self.title
 
     class Meta:
-        verbose_name = _("Prikk")
-        verbose_name_plural = _("Prikker")
+        verbose_name = _(u"Prikk")
+        verbose_name_plural = _(u"Prikker")
 
 
 class UserEntry(models.Model):
@@ -59,7 +59,7 @@ class UserEntry(models.Model):
     mark = models.ForeignKey(Mark)
 
     def __unicode__(self):
-        return _("UserEntry for %s") % self.user.get_full_name()
+        return _(u"UserEntry for %s") % self.user.get_full_name()
 
     class Meta:
         unique_together = ("user", "mark")

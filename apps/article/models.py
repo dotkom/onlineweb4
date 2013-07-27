@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from django.db import models
-
+from django.db.models import permalink
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext as _
 
@@ -12,45 +12,73 @@ class Article(models.Model):
     IMAGE_FOLDER = "images/article"
     IMAGE_EXTENSIONS = ['.jpg', '.jpeg', '.gif', '.png', '.tif', '.tiff']
 
-    heading = models.CharField(_("tittel"), max_length=200)
-    ingress = models.TextField(_("ingress"))
-    content = models.TextField(_("content"))
-    image = FileBrowseField(_("bilde"), 
-        max_length=200, directory=IMAGE_FOLDER, blank=True,
+
+    heading = models.CharField(_(u"tittel"), max_length=200)
+    ingress = models.CharField(_(u"ingress"), max_length=225)
+    content = models.TextField(_(u"content"))
+    image = FileBrowseField(_(u"bilde"), 
+        max_length=200, directory=IMAGE_FOLDER,
         extensions=IMAGE_EXTENSIONS, null=True)
-    video = models.CharField(_("video-id"), max_length=200, blank=True)
-    created_date = models.DateTimeField(_("opprettet-dato"), auto_now_add=True, editable=False)
-    changed_date = models.DateTimeField(_("sist endret"), editable=False, auto_now=True)
-    published_date = models.DateTimeField(_("publisert"))
+    video = models.CharField(_("vimeo id"), max_length=200, blank=True)
+    created_date = models.DateTimeField(_(u"opprettet-dato"), auto_now_add=True, editable=False)
+    changed_date = models.DateTimeField(_(u"sist endret"), editable=False, auto_now=True)
+    published_date = models.DateTimeField(_(u"publisert"))
 
-    created_by = models.ForeignKey(User, null=False, verbose_name=_("opprettet av"), related_name="created_by", editable=False)
-    changed_by = models.ForeignKey(User, null=False, verbose_name=_("endret av"), related_name="chneged_by", editable=False)
-    featured = models.BooleanField(_("featured artikkel"), default=False)
-
+    created_by = models.ForeignKey(User, null=False, verbose_name=_(u"opprettet av"), related_name="created_by", editable=False)
+    changed_by = models.ForeignKey(User, null=False, verbose_name=_(u"endret av"), related_name="changed_by", editable=False)
+    featured = models.BooleanField(_(u"featured artikkel"), default=False)
+    
     def __unicode__(self):
         return self.heading
     
     def get_matchname(self):
         return re.findall(r"[0-9]+", self.video.lower())
 
+    @property
+    def tags(self):
+        at = ArticleTag.objects.filter(article=self.id)
+        tags = []
+        for a in at:
+            tags.append(a.tag)
+        return tags
+
+    @property
+    def tagstring(self):
+        tag_names = []
+        for tag in self.tags:
+            tag_names.append(tag.name)
+        return u', '.join(tag_names)
+
     class Meta:
-        verbose_name = _("artikkel")
-        verbose_name_plural = _("artikler")
+        verbose_name = _(u"artikkel")
+        verbose_name_plural = _(u"artikler")
         ordering = ['published_date']
 
 
 class Tag(models.Model):
-    name = models.CharField(_("navn"), max_length=50)
-    slug = models.CharField(_("kort navn"), max_length=30)
+    name = models.CharField(_(u"navn"), max_length=50)
+    slug = models.CharField(_(u"kort navn"), max_length=30)
+
+    @property
+    def frequency(self):
+        at = ArticleTag.objects.filter(tag=self.id)
+        count = 0
+        for a in at:
+            count += 1
+        return count
+
+    @permalink
+    def get_permalink(self):
+        return ('view_article_tag', None, {'name': self.name, 'slug': self.slug})
 
     def __unicode__(self):
         return self.name
 
 
 class ArticleTag(models.Model):
-    article = models.ForeignKey(Article, verbose_name=_("artikkel"))
-    tag = models.ForeignKey(Tag, verbose_name=_("tag"))
+    article = models.ForeignKey(Article, verbose_name=_(u"artikkel"))
+    tag = models.ForeignKey(Tag, verbose_name=_(u"tag"))
 
     class Meta:
-        verbose_name = _("tag")
-        verbose_name_plural = _("tags")
+        verbose_name = _(u"tag")
+        verbose_name_plural = _(u"tags")

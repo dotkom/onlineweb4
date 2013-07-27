@@ -1,59 +1,39 @@
 {% extends "base.html" %}
-{% load question_filters %}
 
+{% load question_filters %}
 {% block content %}
 <div class="container-fluid">
     <div class="row-fluid">
         <div class="span12">
-            {% for qa in question_and_answers%}
-                <div>{{qa.question}}</div>
+            <div class="page-header">
+                <h1>{{ description }}</h1> 
+            </div>
+            <h2 class="pagination-centered">Studieretning</h2>
 
-                {% if qa.question|isinst:"apps.feedback.models.FieldOfStudyQuestion" %}
-                <table>
-                    {%for a in qa.answers|count_fos %}
-                    <tr>
-                        <td>
-                            <strong>{{a.0}}</strong>
-                        </td>
-                        <td>
-                            {{a.1}}
-                        </td>
-                    <tr>
-                    {% endfor %}
-                </table>
-                {% endif %}
-
-
-                {% if qa.question|isinst:"apps.feedback.models.TextQuestion" %}
-                <ul>
-                {% for a in qa.answers %}
-                    <li>{{a}}</li>
+            <div class="span12 pagination-centered" id="foschart"></div>
+            <div class="span12" id="ratingcharts"></div>
+            <div class="span12">
+                {% for qa in question_and_answers%}
+                    {% if qa.question|isinst:"apps.feedback.models.TextQuestion" %}
+                     <h3><u>{{ qa.question }}</u></h3>
+                     <ul>
+                     {% for a in qa.answers %}
+                        <li>{{ a }}</li>
+                     {% endfor %}
+                     </ul>
+                    {% endif %}
                 {% endfor %}
-                </ul>
-                {% endif %}
-
-
-                {% if qa.question|isinst:"apps.feedback.models.RatingQuestion" %}
-                <table>
-                    <tr>
-                    {%for a in qa.answers|count_rating %}
-                        <th>
-                            {{a.0}}
-                        </th>
-                    {% endfor %}
-                    </tr>
-                    <tr>
-                    {%for a in qa.answers|count_rating %}
-                        <td>
-                            {{a.1}}
-                        </td>
-                    {% endfor %}
-                    </tr>
-                </table>
-                {% endif %}
-                <div>&nbsp;</div>
-            {% endfor %}
+            <div class="form-actions">
+                <button class="btn btn-success" onclick="window.print()">Print</button>
+            </div>
         </div>
     </div>
 </div>
+
+<script src="{{ STATIC_URL }}js/FeedbackWidget.js"></script>
+<script type="text/javascript">
+    createFoschart({{ foschartdata }});
+    createRatingCharts({{ rating_question_answers }}, {{ rating_questions|safe }});
+</script>
+
 {%endblock content %}

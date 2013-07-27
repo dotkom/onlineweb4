@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% load markup %}
+{% block content %}
+    
+<section id="careeropportunity">
+    <div class="container-fluid">
+        <div class="row-fluid">
+            <div class="span12">
+                <div class="page-header">
+                    <h2 id="careeropportunity-heading">{{opportunity.title}}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="row-fluid">
+            <div class="span12">
+                <div class="span3 pull-right">
+                    <div class="row-fluid" id="opportunity-image">
+                        <img src="http://i.imgur.com/A1S2UA3.png" />
+                    </div>
+                </div>
+                <div class="span8">
+                    <div class="row-fluid" id="opportunity-description">
+                        <div class="span12">
+                            <p class="ingress">
+                                {{ opportunity.description|striptags|markdown }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row-fluid"> 
+            <div class="span12">
+                <hr />
+            </div>
+        </div>
+        
+        <div class="row-fluid"> 
+            <div class="span12">
+                <div class="span8">
+                    <a href="{{opportunity.company.site}}" target="blank">
+                        <h3>{{opportunity.company.name}}</h3>
+                    </a>
+                    <p class="ingress">
+                        {{ opportunity.company.long_description|striptags|markdown }}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{%endblock content %}

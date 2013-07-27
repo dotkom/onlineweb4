@@ -25,11 +25,6 @@ class Migration(SchemaMigration):
                       self.gf('filebrowser.fields.FileBrowseField')(max_length=200, null=True, blank=True),
                       keep_default=False)
 
-        # Adding field 'Article.video'
-        db.add_column('article_article', 'video',
-                      self.gf('django.db.models.fields.CharField')(default='', max_length=200, blank=True),
-                      keep_default=False)
-
 
         # Changing field 'Article.changed_date'
         db.alter_column('article_article', 'changed_date', self.gf('django.db.models.fields.DateTimeField')(auto_now=True))
@@ -56,17 +51,13 @@ class Migration(SchemaMigration):
         # Deleting field 'Article.image'
         db.delete_column('article_article', 'image')
 
-        # Deleting field 'Article.video'
-        db.delete_column('article_article', 'video')
-
-
         # Changing field 'Article.changed_date'
         db.alter_column('article_article', 'changed_date', self.gf('django.db.models.fields.DateTimeField')())
 
     models = {
         'article.article': {
             'Meta': {'ordering': "['published_date']", 'object_name': 'Article'},
-            'changed_by': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'chneged_by'", 'to': "orm['auth.User']"}),
+            'changed_by': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'changed_by'", 'to': "orm['auth.User']"}),
             'changed_date': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'}),
             'content': ('django.db.models.fields.TextField', [], {}),
             'created_by': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'created_by'", 'to': "orm['auth.User']"}),
@@ -76,8 +67,7 @@ class Migration(SchemaMigration):
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'image': ('filebrowser.fields.FileBrowseField', [], {'max_length': '200', 'null': 'True', 'blank': 'True'}),
             'ingress': ('django.db.models.fields.TextField', [], {}),
-            'published_date': ('django.db.models.fields.DateTimeField', [], {}),
-            'video': ('django.db.models.fields.CharField', [], {'max_length': '200', 'blank': 'True'})
+            'published_date': ('django.db.models.fields.DateTimeField', [], {})
         },
         'article.articletag': {
             'Meta': {'object_name': 'ArticleTag'},

@@ -8,8 +8,8 @@ from apps.marks.models import Mark, UserEntry
 class UserEntryInline(admin.TabularInline):
     model = UserEntry
     extra = 1
-    verbose_name = _("mottaker")
-    verbose_name_plural = _("mottakere")
+    verbose_name = _(u"mottaker")
+    verbose_name_plural = _(u"mottakere")
 
 class MarkAdmin(admin.ModelAdmin):
     inlines = (UserEntryInline,)

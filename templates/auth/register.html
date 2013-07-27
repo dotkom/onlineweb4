@@ -6,7 +6,7 @@
     <div class="page-header">
         <h2>Registrer bruker</h2>
     </div>
-    <form method="post" action={% url auth_register %}>
+    <form method="post" action={% url 'auth_register' %}>
         {% csrf_token %}
             {{ form|crispy }}
         <div class="form-actions">

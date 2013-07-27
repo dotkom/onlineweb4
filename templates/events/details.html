@@ -1,23 +1,109 @@
+{% extends "base.html" %}
 {% load markup %}
+{% block content %}
 
-<h1>Event</h1>
-<table>
-    <tr><td class="event-header-description">Oppretter</td><td class="event-header-value">{{ event.author }}</td><tr>
-    <tr><td class="event-header-description">Tittel</td><td class="event-header-value">{{ event.title }}</td><tr>
-    <tr><td class="event-header-description">Fra</td><td class="event-header-value">{{ event.event_start }}</td><tr>
-    <tr><td class="event-header-description">Til</td><td class="event-header-value">{{ event.event_end }}</td><tr>
-    <tr><td class="event-header-description">Sted</td><td class="event-header-value">{{ event.location }}</td></tr>
-    {% if attendance_event %}
-        <tr><td class="event-header-description">Antall påmeldte</td><td class="event-header-value">{{ attendance_event.count_attendees }} / {{ attendance_event.max_capacity }}</td></td>
-        <tr><td class="event-header-description">Registreringsfrist</td><td class="event-header-value">{{ attendance_event.registration_start }}</td></tr>
-        <tr><td class="event-header-description">Avmeldingsfrist</td><td class="event-header-value">{{ attendance_event.registration_end }}</td></tr>
+<section id="event-details">
+    <div class="container-fluid">
+        <div class="row-fluid">
+            <div class="span12">
+                <div class="page-header">
+                    <h2 id="event-details-heading">{{event.title}}</h2>
+                    <small id="event-details-author">Oppretter: {{ event.author }}</small>
+                </div>
+            </div>
+        </div>
+        <!-- eventinformasjon -->
+        <div class="row-fluid">
+            <div class="span7" id="event-description">
+                {{ event.description|striptags|markdown }}
+            </div>
+            <div class="span5" id="event-images">
+                <p>Here there be images</p>
+            </div>
+        </div>
+
+        <!-- horizontal line -->
+        <div class="row-fluid">
+            <div class="span12">
+                <hr />
+            </div>
+        </div>
+
+        <!-- event description -->
+        <div class="row-fluid">
+            <div class="span12">
+                <div class="row-fluid">
+                    <div class="span6" id="event-description">
+                        <h2 class="text-center">Informasjon</h2>
+
+                        <table class="table table-bordered table-condensed">
+                            <tr><td>Starttidspunkt</td><td>{{ event.event_start }}</td></tr>
+                            <tr><td>Sluttidspunkt</td><td>{{ event.event_end }}</td></tr>
+                            <tr><td>Sted</td><td>{{ event.location }}</td></tr>
+
+                        {% if attendance_event %}
+                            <tr><td>Påmeldte</td><td>{{ event.number_of_attendees_not_on_waiting_list }}/{{ attendance_event.max_capacity }} </td></tr>
+                            <tr><td>Antall på venteliste</td><td>{{ event.number_of_attendees_on_waiting_list }}</td></tr>
+                            <tr><td>Registreringsfrist</td><td>{{ attendance_event.registration_start }}</td></tr>
+                            <tr><td>Avmeldingsfrist</td><td>{{ attendance_event.registration_end }}</td></tr>
+                        {% endif %}
+                        </table>
+                    </div>
+
+                <!-- event registration -->
+                    <div class="span6">
+                        <h2 class="text-center">Registrering</h2>
+
+{% if attendance_event %}
+    {% if user_status == 'anonymous_user' %}
+                        <p class="text-center"><strong>Du må være logget inn for å se din status.</strong></p>
+    {% else %}
+
+        {% if event_opens_when == 'never' %}
+                        <p class="text-center"><strong>Du har ikke adgang til denne eventen.</strong></p>
+        {% else %}
+            {% if user_status == 'attending' %}
+                        <!-- User is already attending this event -->
+                        <p class="text-center"><strong>Du er meldt på denne eventen.</strong></p>
+                        <form action="{% url 'unattend_event' event.id %}" method="POST" class="pagination-centered">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger">Meld meg av!</button>
+                        </form>
+
+            {% elif user_status == 'queued' %}
+                        <!-- User is already queued for this event -->
+                        <p class="text-center"><strong>Du står som nummer {{ position_in_wait_list }} på ventelisten for denne eventen.</strong></p>
+
+            {% elif user_status == 'not_attending' %}
+                {% if event_open %}
+                        <!-- User is not already attending the event, and is allowed to register -->
+                        <p class="text-center"><strong>Ved å melde deg på denne eventen godtar du prikkereglene.</strong></p>
+
+                        <form action="{% url 'attend_event' event.id %}" method="POST" class="pagination-centered">
+                            {% csrf_token %}
+                            {{ captcha_form }}
+                            <button style="margin-top: -10px" type="submit" class="btn btn-success">Meld meg på!</button>
+                        </form>
+                {% else %}
+                        <!-- User is allowed to attend the event, but the registration has not yet opened -->
+                        <p class="text-center"><strong>Registreringen begynner {{ event_opens_when }}</strong></p>
+                {% endif %}
+            {% endif %}
+        {% endif %}
     {% endif %}
-</table>
-
-{# TODO: Add company-profile #}
-
-<div id="event-description">
-    {{ event.description|striptags|markdown }}
-</div>
-
-{# TODO: Add registration form #}
+{% else %}
+                        <p  class="text-center"><strong>Dette arrangementet har ingen påmelding!</strong></p>
+{% endif %}
+                    </div>
+                </div>
+            </div>
+                <!-- horizontal line -->
+            <div class="row-fluid">
+                <div class="span12">
+                    <hr />
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{%endblock content %}
