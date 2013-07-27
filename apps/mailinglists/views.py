@@ -14,9 +14,7 @@ from memcache import Client
 # $ print lists                                 # see all mailinglists that was stored in memcache
 
 def index(request):
-    # mc = Client(["127.0.0.1:11211"], debug=0)
-    # mc = Client(["morgan.online.ntnu.no:11211"], debug=0)
-    mc = Client(["dworek.online.ntnu.no:11211"], debug=0)
+    mc = Client(["127.0.0.1:11211"], debug=0) # morgan.online.ntnu.no
 
     print 'LOOOOL', 'HEEEEER'
     print
