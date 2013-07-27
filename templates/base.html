@@ -7,21 +7,10 @@
         <meta name="description" content="">
 
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-        <link href='http://fonts.googleapis.com/css?family=Open+Sans:300,400,600' rel='stylesheet' type='text/css'>
-        <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/bootstrap.min.css">
-        <link href="{{ STATIC_URL }}css/bootstrap-responsive.min.css" rel="stylesheet">
-        <link rel="stylesheet/less" href="{{ STATIC_URL }}css/core.less">
-
-        <script src="{{ STATIC_URL }}js/libs/less.js"></script>
-        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-        <script src="{{ STATIC_URL }}js/libs/bootstrap.min.js"></script>
-        <script src="{{ STATIC_URL }}js/libs/bootstrap-dropdown.js"></script>
-        <script src="{{ STATIC_URL }}js/libs/moment.js"></script>
-        <script src="{{ STATIC_URL }}js/libs/d3.v3.min.js"></script>
-        <script src="{{ STATIC_URL }}js/holder.js"></script>
-        <script src="{{ STATIC_URL }}js/scroller.js"></script>
-        <script src="{{ STATIC_URL }}js/init.js"></script>
+        {% block styles %}
+            <link href='http://fonts.googleapis.com/css?family=Open+Sans:300,400,600' rel='stylesheet' type='text/css'>
+            <link rel="stylesheet/less" href="{{ STATIC_URL }}less/core.less">
+        {% endblock %}
         <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
     </head>
     <body>
@@ -73,7 +62,7 @@
                                 <li>
                                     <form>
                                         <div class="login-extra">
-                                            <a href="{% url auth_logout %}">Logg ut</a>
+                                            <a href="{% url 'auth_logout' %}">Logg ut</a>
                                         </div>
                                     </form>
                                 </li>
@@ -87,7 +76,7 @@
                                     <span class="caret-inner"/>
                                 </li>
                                 <li>
-                                <form method="POST" action="{% url auth_login %}">
+                                <form method="POST" action="{% url 'auth_login' %}">
                                     {% csrf_token %}
                                     <fieldset class="textbox">
                                         <label for="id_username">Brukernavn</label>
@@ -98,8 +87,8 @@
                                     <input type="hidden" name="next" value="{{ request.get_full_path }}" />
                                         <button type="submit" class="btn">Logg inn</button>
                                 </form>
-                                <button class="btn btn-auth" data-url="{% url auth_register %}">Registrer</button>
-                                <button class="btn btn-auth" data-url="{% url auth_recover %}">Glemt passord</button>
+                                <button class="btn btn-auth" data-url="{% url 'auth_register' %}">Registrer</button>
+                                <button class="btn btn-auth" data-url="{% url 'auth_recover' %}">Glemt passord</button>
                                 </li>
                             </ul>
                         {% endif %}
@@ -129,6 +118,18 @@
 
     {% block content %}
     {% endblock %}
+    
+    {% block js %}
+        <script src="{{ STATIC_URL }}js/libs/less.js"></script>
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+        <script src="{{ STATIC_URL }}js/libs/bootstrap.min.js"></script>
+        <script src="{{ STATIC_URL }}js/libs/bootstrap-dropdown.js"></script>
+        <script src="{{ STATIC_URL }}js/libs/moment.js"></script>
+        <script src="{{ STATIC_URL }}js/libs/d3.v3.min.js"></script>
+        <script src="{{ STATIC_URL }}js/holder.js"></script>
+        <script src="{{ STATIC_URL }}js/init.js"></script>
+    {% endblock %}
+
     </body>
 </html>
 

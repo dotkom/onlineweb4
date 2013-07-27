@@ -1,13 +1,55 @@
 {% extends "base.html" %}
 
+{% load markup %}
+{% load fb_versions %}
+
 {% block content %}
-<div id="article_wrapper">
-	<img src="{{ STATIC_URL }}{{ article.image_article }}" alt="{{ article.heading }}" width="950" height="200"/>
-	<p>Skrevet av: <a href="/user/{{ article.created_by.id }}">{{ article.created_by.get_full_name }}</a> den {{ article.published_date }}{% if article.isChanged %}, sist endret {{ article.changed_date }} av <a href="/user/{{ article.changed_by.id }}">{{ article.changed_by.get_full_name }}</a>{% endif %}</p>
-	<h1>{{ article.heading }}</h1>
-	
-	<p>{{ article.ingress }}</p>
-	
-	{{ article.content }}
+<div id="article-wrapper">
+    <div class="container-fluid">
+        <div class="row-fluid">
+            <div class="span12">
+                <div class="flex-video">
+                    {% if article.video_id %}
+                    <iframe src="http://player.vimeo.com/video/{{ article.video_id }}" frameborder="0" width="950" height="534" webkitAllowFullscreen mozallowfullscreen allowFullScreen></iframe>
+                    {% else %}
+                    <img src="{% version article.image 'article_main' %}" alt="{{ article.heading }}"/>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="row-fluid">
+            <div class="span12">
+                <h1>{{ article.heading }}</h1>
+            </div>
+        </div>
+        <div class="row-fluid">
+            <div class="span7">
+                <div class="span12">
+                    <div class="article-details-details">
+                        <p>Publisert: {{ article.published_date }}, endret: {{ article.changed_date }}</p>
+                        <p>Av: {{ article.created_by }}</p>
+                    </div>
+                    <div class="article-details-ingress">
+                        <p>{{ article.ingress }}</p>
+                    </div>
+                    <div class="article-details-content">
+                        {{ article.content|striptags|markdown }}
+                    </div>
+                </div>
+            </div>
+            <div class="span5">
+                <h3>Siste nytt:</h3>
+                <div id="article-detaill-latest">
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock content %}
+
+{% block js %}
+    {{ block.super }}
+    <script type="text/javascript" src="{{ STATIC_URL }}js/Utils.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/ArticleWidget.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/article-latest.js"></script>
+{% endblock js %}
