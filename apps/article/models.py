@@ -16,7 +16,7 @@ class Article(models.Model):
     ingress = models.TextField(_(u"ingress"))
     content = models.TextField(_(u"content"))
     image = FileBrowseField(_(u"bilde"), 
-        max_length=200, directory=IMAGE_FOLDER, blank=True,
+        max_length=200, directory=IMAGE_FOLDER,
         extensions=IMAGE_EXTENSIONS, null=True)
     video_id = models.CharField(_("vimeo id"), max_length=200, blank=True)
     created_date = models.DateTimeField(_(u"opprettet-dato"), auto_now_add=True, editable=False)
