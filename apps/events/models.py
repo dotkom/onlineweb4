@@ -182,7 +182,7 @@ class GradeRule(Rule):
 
 class UserGroupRule(Rule):
     #ldapmagic
-    group = models.ForeignKey(Group, blank=False, null=False, default=None)
+    group = models.ForeignKey(Group, blank=False, null=False)
 
     def satisfied(self, user, registration_start):
         """ Override method """
@@ -250,10 +250,10 @@ class AttendanceEvent(models.Model):
         primary_key=True,
         related_name='attendance_event')
 
-    max_capacity = models.PositiveIntegerField(_('maks-kapasitet'))
+    max_capacity = models.PositiveIntegerField(_(u'maks-kapasitet'))
     waitlist = models.BooleanField(_(u'venteliste'), default=False)
-    registration_start = models.DateTimeField(_('registrerings-start'))
-    registration_end = models.DateTimeField(_('registrerings-slutt'))
+    registration_start = models.DateTimeField(_(u'registrerings-start'))
+    registration_end = models.DateTimeField(_(u'registrerings-slutt'))
 
     #Access rules
     rule_bundles = models.ManyToManyField(RuleBundle, blank=True, null=True)
@@ -283,15 +283,15 @@ class AttendanceEvent(models.Model):
         return self.event.title
 
     class Meta:
-        verbose_name = _('paamelding')
-        verbose_name_plural = _('paameldinger')
+        verbose_name = _(u'paamelding')
+        verbose_name_plural = _(u'paameldinger')
 
 class CompanyEvent(models.Model):
     """
     Company relation to AttendanceEvent
     """    
-    company = models.ForeignKey(Company, verbose_name=_('bedrifter'))
-    event = models.ForeignKey(Event, verbose_name=_('arrangement'))
+    company = models.ForeignKey(Company, verbose_name=_(u'bedrifter'))
+    event = models.ForeignKey(Event, verbose_name=_(u'arrangement'))
 
     class Meta:
         verbose_name =_('bedrift')
@@ -306,7 +306,7 @@ class Attendee(models.Model):
     user = models.ForeignKey(User)
 
     timestamp = models.DateTimeField(auto_now_add=True, editable=False)
-    attended = models.BooleanField(_('var tilstede'))
+    attended = models.BooleanField(_(u'var tilstede'))
 
     def __unicode__(self):
         return self.user.get_full_name()
