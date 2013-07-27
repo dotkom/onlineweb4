@@ -13,6 +13,7 @@ require.config({
         'hbs': '../bower_components/hbs/hbs',
         'json2': '../bower_components/hbs/hbs/json2',
         'i18nprecompile': '../bower_components/hbs/hbs/i18nprecompile',
+        'moment': '../bower_components/moment/moment',
 
         'templates': '../templates'
     },
@@ -54,7 +55,6 @@ require(['backbone', 'backbone.marionette', 'router'], function(Backbone, Marion
 
     EventWidget.on('initialize:after', function() {
         if (Backbone.history) {
-            console.log("backbone history starts");
             Backbone.history.start();
         }
     });

@@ -6,7 +6,6 @@ define(function(require) {
 
     var WidgetController = {
         index: function() {
-            console.log('In your controller, WOAH');
             var events = new EventCollection();
             events.fetch().done(function() {
                 var widget = new Widget({collection: events});
