@@ -69,21 +69,29 @@ def get_attendee(attendee_id):
 def attendEvent(request, event_id):
 
     if not request.POST:
-        messages.error(request, 'Vennligst fyll inn formen.')
+        messages.error(request, _(u'Vennligst fyll ut skjemaet.'))
         return HttpResponseRedirect(reverse(details, args=[event_id]))
 
     form = CaptchaForm(request.POST)
 
     if not form.is_valid():
-        messages.error(request, 'Du klarte ikke captchaen. Er du en bot?')
+        messages.error(request, _(u'Du klarte ikke captcha-en. Er du en bot?'))
         return HttpResponseRedirect(reverse(details, args=[event_id]))
 
-    #Do rules check here as well to prevent scripts
-    event = AttendanceEvent.objects.get(pk=event_id)
-    Attendee(event=event, user=request.user).save()
+    # Check if the user is eligible to attend this event.
+    # If not, an error message will be present in the returned dict
+    event = Event.objects.get(pk=event_id)
+    attendance_event = event.attendance_event
 
-    messages.success(request, "Du ble påmeldt eventen!")
-    return HttpResponseRedirect(reverse(details, args=[event_id]))
+    user_eligible = event.is_eligible_for_signup(request.user);
+
+    if user_eligible['status']:   
+        Attendee(event=attendance_event, user=request.user).save()
+        messages.success(request, _(u"Du er nå påmeldt på arrangementet!"))
+        return HttpResponseRedirect(reverse(details, args=[event_id]))
+    else:
+        messages.error(request, user_eligible['message'])
+        return HttpResponseRedirect(reverse(details, args=[event_id]))
 
 @login_required
 def unattendEvent(request, event_id):
@@ -91,5 +99,6 @@ def unattendEvent(request, event_id):
     event = AttendanceEvent.objects.get(pk=event_id)
     Attendee.objects.get(event=event, user=request.user).delete()
 
-    messages.success(request, "Du ble meldt av eventen!")
+    messages.success(request, _(u"Du ble meldt av arrangementet."))
     return HttpResponseRedirect(reverse(details, args=[event_id]))
+
