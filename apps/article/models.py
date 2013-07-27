@@ -13,7 +13,7 @@ class Article(models.Model):
     IMAGE_EXTENSIONS = ['.jpg', '.jpeg', '.gif', '.png', '.tif', '.tiff']
 
     heading = models.CharField(_(u"tittel"), max_length=200)
-    ingress = models.TextField(_(u"ingress"))
+    ingress = models.CharField(_(u"ingress"), max_length=225)
     content = models.TextField(_(u"content"))
     image = FileBrowseField(_(u"bilde"), 
         max_length=200, directory=IMAGE_FOLDER,
