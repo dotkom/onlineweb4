@@ -7,10 +7,6 @@ define(function(require) {
     });
 
     var Widget = Marionette.CollectionView.extend({
-        initialize: function(options) {
-            console.log("widget opts", options);
-        },
-
         itemView: EventItemView
     });
 

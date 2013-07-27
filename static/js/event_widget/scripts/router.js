@@ -9,7 +9,6 @@ define(function(require) {
             console.log('In your controller, WOAH');
             var events = new EventCollection();
             events.fetch().done(function() {
-                console.log(events);    
                 var widget = new Widget({collection: events});
                 RegionManager.main.show(widget);
             });

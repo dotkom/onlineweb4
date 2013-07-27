@@ -53,7 +53,6 @@ require(['backbone', 'backbone.marionette', 'router'], function(Backbone, Marion
     var EventWidget = new Marionette.Application();
 
     EventWidget.on('initialize:after', function() {
-        console.log(Backbone);
         if (Backbone.history) {
             console.log("backbone history starts");
             Backbone.history.start();
