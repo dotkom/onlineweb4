@@ -6,6 +6,7 @@ require.config({
         'backbone.wreqr': '../bower_components/backbone.wreqr/lib/amd/backbone.wreqr',
         'backbone.babysitter': '../bower_components/backbone.babysitter/lib/amd/backbone.babysitter',
         'backbone.tastypie': 'vendor/backbone-tastypie',
+        'backbone.marionette': '../bower_components/backbone.marionette/lib/backbone.marionette',
         'underscore': '../bower_components/underscore-amd/underscore',
         'jquery': '../bower_components/jquery/jquery',
         'handlebars': '../bower_components/hbs/handlebars',
@@ -37,12 +38,31 @@ require.config({
             exports: 'Backbone'
         },
 
+        'backbone.marionette': {
+            deps: ['backbone'],
+            exports: 'Marionette'
+        },
+
         'hbs': {
             deps: ['handlebars']
         }
     }
 });
 
-require(['main'], function(Main) {
-    new Main();
+require(['backbone', 'backbone.marionette', 'router'], function(Backbone, Marionette, Router) {
+    var EventWidget = new Marionette.Application();
+
+    EventWidget.on('initialize:after', function() {
+        console.log(Backbone);
+        if (Backbone.history) {
+            console.log("backbone history starts");
+            Backbone.history.start();
+        }
+    });
+
+    EventWidget.addInitializer(function() {
+        new Router();
+
+    });
+    EventWidget.start();
 });
