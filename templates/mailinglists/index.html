@@ -16,24 +16,23 @@
 			</div>
 		</div>
 		
-		<div id="guidelines">
+		<!-- <div id="guidelines">
 			<h3>Retningslinjer</h3>
 			<p>
-				{{ retningslinjer }} <!-- retningslinjer|markdown ? -->
 			</p>
-		</div>
+		</div> -->
 
 		<div id="mailinglist-items">
 			
+			{{ retningslinjer }} <!-- retningslinjer|markdown ? -->
+			
 			<!-- TODO: BORROWED FROM OW3 -->
 			{% for list in lists %}
-				<div class="artikkel">
-					<div class="arthead">
+				<div class="mailinglist">
+					<div class="title">
 						{{ list.name }}@online.ntnu.no
 					</div>
-					<div class="artdato">
-					</div>
-					<div class="arttekst">
+					<div class="members">
 						<ul>
 						{% for member in list.members %}
 						<li> {{member.name}} </li>

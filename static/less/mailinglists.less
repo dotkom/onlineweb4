@@ -1,7 +1,7 @@
 
 /* Debug */
 
-@debug: 0pt;
+@debug: 1pt;
 .debugred {border: @debug solid red;}
 .debuglime {border: @debug solid lime;}
 .debugpink {border: @debug solid pink;}
@@ -20,4 +20,19 @@
     .debugred;
     width: 100%;
     text-align: center;
+
+    .mailinglist {
+    	.debuglime;
+    	width: 200pt;
+    	float: left;
+
+    	.title {
+    		.debugpink;
+
+    	}
+    	.members {
+    		.debugpink;
+
+    	}
+    }
 }
