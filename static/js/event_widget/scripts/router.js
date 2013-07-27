@@ -1,8 +1,10 @@
 define(function(require) {
+    'use strict';
+
     var Marionette = require('backbone.marionette');
+    var RegionManager = require('regions');
     var EventCollection = require('event.collection');
     var Widget = require('widget.view');
-    var RegionManager = require('regions');
 
     var WidgetController = {
         index: function() {

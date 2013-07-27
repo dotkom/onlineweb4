@@ -1,4 +1,6 @@
 define(function(require) {
+    'use strict';
+
     var Marionette = require('backbone.marionette');
     var eventItemTemplate = require('hbs!templates/event_item.tpl');
 

@@ -1,3 +1,4 @@
+'use strict';
 require.config({
     baseUrl: '/static/js/event_widget/scripts/',
     paths: {
@@ -21,7 +22,6 @@ require.config({
     hbs: {
         disableI18n: true,
         helperPathCallback: function(name) {
-            "use strict";
             return '../templates/helpers/' + name;
         }
     },
@@ -51,6 +51,7 @@ require.config({
 });
 
 require(['backbone', 'backbone.marionette', 'router'], function(Backbone, Marionette, Router) {
+
     var EventWidget = new Marionette.Application();
 
     EventWidget.on('initialize:after', function() {

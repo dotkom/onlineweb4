@@ -1,4 +1,6 @@
 define(function(require) {
+    'use strict';
+
     var Backbone = require('backbone');
 
     var EventModel = Backbone.Model.extend({});
