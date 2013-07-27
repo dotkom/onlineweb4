@@ -1,0 +1,25 @@
+{
+  "name": "event-widget",
+  "version": "0.0.0",
+  "main": "scripts/config.js",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "Handlebars": "git://github.com/components/handlebars.js.git#~1.0.0",
+    "backbone-amd": "git://github.com/amdjs/backbone.git#~1.0.0",
+    "almond": "git://github.com/jrburke/almond.git#~0.2.5",
+    "backbone.babysitter": "~0.0.6",
+    "backbone.marionette": "git://github.com/marionettejs/backbone.marionette.git#~1.0.4",
+    "hbs": "git://github.com/SlexAxton/require-handlebars-plugin.git#~0.4.0",
+    "jquery": "git://github.com/components/jquery.git#~2.0.3",
+    "requirejs": "git://github.com/jrburke/requirejs.git#~2.1.8",
+    "requirejs-hbs": "git://github.com/epeli/requirejs-hbs.git",
+    "moment": "git://github.com/timrwood/moment.git#~2.1.0",
+    "underscore-amd": "git://github.com/amdjs/underscore.git#~1.5.1"
+  }
+}
