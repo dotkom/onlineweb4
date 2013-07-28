@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
+from django.utils.translation import ugettext_lazy as _
 from django.shortcuts import render
 from django.shortcuts import get_object_or_404
 from apps.events.models import Event, AttendanceEvent, Attendee
