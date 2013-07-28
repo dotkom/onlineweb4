@@ -2,10 +2,12 @@ import os
 from base import MEDIA_ROOT
 
 FILEBROWSER_MEDIA_ROOT = MEDIA_ROOT
-FILEBROWSER_DIRECTORY = '' # becomes media root
+FILEBROWSER_DIRECTORY = ''
 
 # Versions
+
 FILEBROWSER_VERSIONS = {
+
     # telling the user not to use resized pictures in the view (and avoid filebrowser crashing)
     'donotuse': {'verbose_name': 'CLICK SELECT INSTEAD, NO RESIZED PICTURES', 'width': 99, 'height': 99, 'opts': 'crop'},
     

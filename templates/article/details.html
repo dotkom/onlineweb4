@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
 {% load markup %}
+
 {% load fb_versions %}
 
 {% block content %}
@@ -9,8 +10,8 @@
         <div class="row-fluid">
             <div class="span12">
                 <div class="flex-video">
-                    {% if article.video_id %}
-                    <iframe src="http://player.vimeo.com/video/{{ article.video_id }}" frameborder="0" width="950" height="534" webkitAllowFullscreen mozallowfullscreen allowFullScreen></iframe>
+                    {% if article.video %}
+                    <iframe src="http://player.vimeo.com/video/{{ article.video }}" frameborder="0" webkitAllowFullscreen mozallowfullscreen allowFullScreen></iframe>
                     {% else %}
                     <img src="{% version article.image 'article_main' %}" alt="{{ article.heading }}"/>
                     {% endif %}
@@ -19,32 +20,48 @@
         </div>
         <div class="row-fluid">
             <div class="span12">
-                <h1>{{ article.heading }}</h1>
+                <h1>{{ article.heading }}</h2>
             </div>
         </div>
         <div class="row-fluid">
-            <div class="span7">
-                <div class="span12">
-                    <div class="article-details-details">
-                        <p>Publisert: {{ article.published_date }}, endret: {{ article.changed_date }}</p>
-                        <p>Av: {{ article.created_by }}</p>
-                    </div>
-                    <div class="article-details-ingress">
-                        <p>{{ article.ingress }}</p>
-                    </div>
-                    <div class="article-details-content">
-                        {{ article.content|striptags|markdown }}
-                    </div>
+            <div class="span12">
+                <p>Publisert: {{ article.published_date }}, endret: {{ article.changed_date }}</p>
+                <p>Av: {{ article.created_by }}<p>
+            </div>
+        </div>
+        <div class="row-fluid">
+            <div class="span9">
+                <div class="article-details-ingress">
+                    <p>{{ article.ingress }}</p>
                 </div>
             </div>
-            <div class="span5">
-                <h3>Siste nytt:</h3>
-                <div id="article-detaill-latest">
+            <div class="span3">
+                <div class="span12">
+                    <p style="font-size:20px">Siste nytt:</p>
+                </div>
+            {% for l in latest %}
+                <div class="row-fluid">
+                    <div class="span12">
+                        <div class="article-latestnews">
+                            <a href="../{{ l.id }}">{{ l.heading }}</a> </p>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+            </div>
+        </div>
+        <div class="row-fluid">
+            <div class="span12">
+                <div class="article-details-content">
+                    <p>{{ article.content|striptags|markdown }}</p>
                 </div>
             </div>
         </div>
     </div>
 </div>
+    
+
+	
 {% endblock content %}
 
 {% block js %}
