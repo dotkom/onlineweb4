@@ -7,11 +7,15 @@ from django.utils.translation import ugettext_lazy as _
 from apps.userprofile.models import UserProfile
 from apps.companyprofile.models import Company
 from apps.userprofile.models import FIELD_OF_STUDY_CHOICES
+from filebrowser.fields import FileBrowseField
 
 class Event(models.Model):
     """
     Base class for Event-objects.
     """
+
+    IMAGE_FOLDER = "images/events"
+    IMAGE_EXTENSIONS = ['.jpg', '.jpeg', '.gif', '.png', '.tif', '.tiff']
 
     TYPE_CHOICES = (
         (1, 'Sosialt'),
@@ -29,6 +33,9 @@ class Event(models.Model):
     location = models.CharField(_('lokasjon'), max_length=100)
     ingress = models.TextField(_('ingress'))
     description = models.TextField(_('beskrivelse'))
+    image = FileBrowseField(_(u"bilde"), 
+        max_length=200, directory=IMAGE_FOLDER,
+        extensions=IMAGE_EXTENSIONS, null=False, blank=False)
     event_type = models.SmallIntegerField(_('type'), choices=TYPE_CHOICES, null=False)
 
     def feedback_users(self):

@@ -3,6 +3,10 @@ from django.contrib.auth.models import User
 from tastypie import fields
 from tastypie.resources import ModelResource
 from tastypie.authorization import Authorization
+
+from filebrowser.base import FileObject
+from filebrowser.settings import VERSIONS
+
 from apps.events.models import Event
 from apps.events.models import Attendee
 from apps.events.models import AttendanceEvent
@@ -36,6 +40,27 @@ class EventResource(ModelResource):
             data['events'] = copy(data['objects'])
             del(data['objects'])
         return data
+
+    # Making multiple images for the events
+    def dehydrate(self, bundle):
+        
+        # If image is set
+        if bundle.data['image']:
+            # Parse to FileObject used by Filebrowser
+            temp_image = FileObject(bundle.data['image'])
+            
+            # Itterate the different versions (by key)
+            for ver in VERSIONS.keys():
+                # Check if the key start with article_ (if it does, we want to crop to that size)
+                if ver.startswith('events_'):
+                    # Adding the new image to the object
+                    bundle.data['image_'+ver] = temp_image.version_generate(ver).url
+            
+            # Unset the image-field
+            del(bundle.data['image'])
+            
+            # Returning washed object
+        return bundle
 
     class Meta:
         queryset = Event.objects.all()

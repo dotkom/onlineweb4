@@ -17,7 +17,11 @@ FILEBROWSER_VERSIONS = {
     # for articles
     'article_main': {'verbose_name': 'Artikkel hoved', 'width': 950, 'height': 534, 'opts': 'crop'},
     'article_front_featured': {'verbose_name': 'Artikkel forside featured', 'width': 584, 'height': 275, 'opts': 'crop'},
-    'article_front_small': {'verbose_name': 'Artikkel forside lite', 'width': 174, 'height': 100, 'opts': 'crop'}
+    'article_front_small': {'verbose_name': 'Artikkel forside lite', 'width': 174, 'height': 100, 'opts': 'crop'},
+
+    # Events
+    'events_main' : {'verbose_name' : 'Event large', 'width': 584, 'height': 275, 'opts': 'crop'},
+    'events_thumb' : {'verbose_name' : 'Event mini', 'width': 120, 'height': 65, 'opts': 'crop'}
 }
 
 # define the thumbnail in the admin-view
