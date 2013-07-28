@@ -290,6 +290,10 @@ class AttendanceEvent(models.Model):
             
         return False
 
+    @property
+    def waitlist_enabled(self):
+        return self.waitlist
+
     def is_attendee(self, user):
         return self.attendees.filter(user=user)
 
@@ -305,7 +309,7 @@ class CompanyEvent(models.Model):
     Company relation to AttendanceEvent
     """    
     company = models.ForeignKey(Company, verbose_name=_(u'bedrifter'))
-    event = models.ForeignKey(Event, verbose_name=_(u'arrangement'))
+    event = models.ForeignKey(Event, verbose_name=_(u'arrangement'), related_name='companies')
 
     class Meta:
         verbose_name =_('bedrift')
