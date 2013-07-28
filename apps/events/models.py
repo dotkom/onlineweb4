@@ -31,6 +31,13 @@ class Event(models.Model):
     description = models.TextField(_('beskrivelse'))
     event_type = models.SmallIntegerField(_('type'), choices=TYPE_CHOICES, null=False)
 
+    def feedback_users(self):
+        users = []
+        if self.attendance_event.attendees.all():
+            for attendee in self.attendance_event.attendees.all():
+                users.append(attendee.user)
+        return users
+
     @property
     def number_of_attendees_on_waiting_list(self):
         """

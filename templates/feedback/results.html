@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
 {% load question_filters %}
+
 {% block content %}
 <div class="container-fluid">
     <div class="row-fluid">
@@ -30,6 +31,7 @@
     </div>
 </div>
 
+<script src="{{ STATIC_URL }}js/libs/d3.v3.min.js"></script>
 <script src="{{ STATIC_URL }}js/FeedbackWidget.js"></script>
 <script type="text/javascript">
     createFoschart({{ foschartdata }});

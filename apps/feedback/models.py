@@ -89,7 +89,10 @@ class FeedbackRelation(models.Model):
             return False
 
         if hasattr(self.content_object, "feedback_users"):
-            if user not in self.content_object.feedback_users:
+            if self.content_object.feedback_users():
+                if user not in self.content_object.feedback_users():
+                    return False
+            else:
                 return False
         return True
 
