@@ -88,6 +88,15 @@ class Event(models.Model):
             response['message'] = _(u"Dette er ikke et påmeldingsarrangement.");
             return response
 
+        #Registration not open
+        if not datetime.now() > self.attendance_event.registration_start:
+            response['message'] = _(u'Påmeldingen har ikke åpnet enda.')
+            return response
+
+        #Registration closed
+        if not datetime.now() < self.attendance_event.registration_end:
+            response['message'] = _(u'Påmeldingen er ikke lenger åpen.')
+
         #Room for me on the event?
         if not self.attendance_event.room_on_event:
             response['message'] = _(u"Det er ikke mer plass på dette arrangementet.");
@@ -95,8 +104,14 @@ class Event(models.Model):
 
         #Are there any rules preventing me from attending?
         try:
-            if not self.attendance_event.rules_satisfied(user):
-                response['message'] = _(u"Du har ikke tilgang til dette arrangmentet akkurat nå.");
+            status_object = self.attendance_event.rules_satisfied(user)
+
+            if not status_object['status']:
+                if status_object['offset']:
+                    response_message = 'Du har ikke tilgang til dette arrangementet før om ' + str(status_object['offset'] / 60 / 60) + ' timer.'
+                    response['message'] = response_message
+                    return response
+                response['message'] = _(u"Du har ikke tilgang til dette arrangmentet.");
                 return response
         except Exception, e:
             response['message'] = e;
@@ -155,19 +170,22 @@ class FieldOfStudyRule(Rule):
     def satisfied(self, user, registration_start):
         """ Override method """
         #Get userprofile for user
-
         try:
             userprofile = UserProfile.objects.get(pk=user.pk)
         except ObjectDoesNotExist:
-            return False
+            return {"status": False, "message": _(u"Fant ikke din brukerprofil")}
 
         # If the user has the same FOS as this rule    
         if (self.field_of_study == userprofile.field_of_study):
             now = datetime.now()
             offset_datetime = registration_start + timedelta(hours=self.offset.offset)
             if offset_datetime <= now:
-                return True 
-        return False
+                return {"status": True, "message": None}
+            else:
+                object_with_offset = offset_datetime - now
+                seconds_until_eligible = object_with_offset.seconds
+                return {"status": False, "message": _(u"Du kan ikke melde deg på akkurat nå."), "offset": seconds_until_eligible}
+        return {"status": False, "message": _(u"Din studieretning er en annen enn de som har tilgang til dette arrangementet.")}
 
     def __unicode__(self):
         return '<FOS: ' + str(FIELD_OF_STUDY_CHOICES[self.field_of_study][1]) + ' offset: ' + str(self.offset) + 'hours>'
@@ -180,15 +198,19 @@ class GradeRule(Rule):
         try:
             userprofile = UserProfile.objects.get(pk=user.pk)
         except ObjectDoesNotExist:
-            return False
+            return {"status": False, "message": _(u"Fant ikke din brukerprofil.")}
 
         # If the user has the same FOS as this rule    
         if (self.grade == userprofile.year):
             now = datetime.now()
             offset_datetime = registration_start + timedelta(hours=self.offset.offset)
             if offset_datetime <= now:
-                return True 
-        return False
+                return {"status": True, "message": None}
+            else:
+                object_with_offset = offset_datetime - now
+                seconds_until_eligible = object_with_offset.seconds
+                return {"status": False, "message": _(u"Du kan ikke melde deg på akkurat nå."), "offset": seconds_until_eligible}
+        return {"status": False, "message": _(u"Du er ikke i et klassetrinn som har tilgang til dette arrangementet.")}
 
     def __unicode__(self):
         return '<Grade: ' + str(self.grade) + ' offset: ' + str(self.offset) + ' hours>'
@@ -204,8 +226,12 @@ class UserGroupRule(Rule):
             now = datetime.now()
             offset_datetime = registration_start + timedelta(hours=self.offset.offset)
             if offset_datetime <= now:
-                return True 
-        return False
+                return {"status": True, "message": None}
+            else:
+                object_with_offset = offset_datetime - now
+                seconds_until_eligible = object_with_offset.seconds
+                return {"status": False, "message": _(u"Du kan ikke melde deg på akkurat nå"), "offset": seconds_until_eligible}
+        return {"status": False, "message": _(u"Du er ikke i en brukergruppe som har tilgang til dette arrangmentet.")}
 
     def __unicode__(self):
         return '<Group: ' + str(self.group) + ' offset: ' + str(self.offset) + ' hours>'
@@ -221,22 +247,46 @@ class RuleBundle(models.Model):
 
     def satisfied(self, user, registration_start):
 
+        errors = []
+        # Used to find the largest offset the user can relate to before being eligible
+        largest_offset_in_seconds = 0
+
         if self.grade_rules:
             for grade_rule in self.grade_rules.all():
-                if grade_rule.satisfied(user, registration_start):    
-                    return True
+                response =  grade_rule.satisfied(user, registration_start)
+                if response['status']:
+                    return {"status": True}
+                else:
+                    errors.append(response)
 
         if self.field_of_study_rules:
             for fos_rule in self.field_of_study_rules.all():
-                if fos_rule.satisfied(user, registration_start):
-                    return True
+                response = fos_rule.satisfied(user, registration_start)
+                if response['status']:
+                    return {'status': True}
+                else:
+                    errors.append(response)
 
         if self.user_group_rules:
             for user_group_rule in self.user_group_rules.all():
-                if user_group_rule.satisfied(user, registration_start):
-                    return True
+                response = user_group_rule.satisfied(user, registration_start)
+                if response['status']:
+                    return {'status':True}
+                else:
+                    errors.append(response)
 
-        return False
+        # If we found errors, check if there was any that just had an offset. Then find the largest one so we can show the user when he will be eligible to register
+        if errors:
+            for error in errors:
+                if error['offset']:
+                    if error['offset'] > largest_offset_in_seconds:
+                        largest_offset_in_seconds = error['offset']
+            if largest_offset_in_seconds > 0:
+                return {"status":False, "offset": largest_offset_in_seconds}
+            else:
+                return {"status": False, "message": "Du har ikke tilgang til dette arrangementet."}
+
+        return {"status": False}
 
     def __unicode__(self):
         string = ""
@@ -284,11 +334,27 @@ class AttendanceEvent(models.Model):
         if not self.rule_bundles:
             return True
 
+        largest_offset_in_seconds = 0
+        errors = []    
+
+        # Check all rule bundles
+        # If one satisfies, return true, else check offset or append to response
         for rule_bundle in self.rule_bundles.all():
-            if rule_bundle.satisfied(user, self.registration_start):
-                return True
-            
-        return False
+            response =  rule_bundle.satisfied(user, self.registration_start)
+            if response['status']:
+                return {"status": True}
+            elif response['offset']:
+                if response['offset'] > largest_offset_in_seconds:
+                    largest_offset_in_seconds = response['offset']
+            else:
+                errors.append(response)
+
+        if largest_offset_in_seconds > 0:
+            return {"status": False, "offset": largest_offset_in_seconds}
+        if errors:
+            return {"status": False, "message": _(u"Du har ikke tilgang til arrangementet.")}   
+
+        return {"status": False}
 
     @property
     def waitlist_enabled(self):
