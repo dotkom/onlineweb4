@@ -22,22 +22,5 @@ $(function()
         $(this).tab('show');
     });
 
-    // Hook up filter buttons in event section
-    $('#filter-arrkom').on('click', function (e) {
-        e.preventDefault();
-        eventWidget.filter(1);
-    });
-    $('#filter-bedkom').on('click', function (e) {
-        e.preventDefault();
-        eventWidget.filter(2);
-    });
-    $('#filter-fagkom').on('click', function (e) {
-        e.preventDefault();
-        eventWidget.filter(3);
-    });
-    $('#filter-reset').on('click', function (e) {
-        e.preventDefault();
-        eventWidget.filter(0);
-    });
 });
 
