@@ -4,6 +4,12 @@ from apps.events.models import Event
 from apps.events.models import AttendanceEvent
 from apps.events.models import Attendee
 from apps.events.models import CompanyEvent
+from apps.events.models import RuleBundle
+from apps.events.models import FieldOfStudyRule
+from apps.events.models import GradeRule
+from apps.events.models import RuleOffset
+from apps.events.models import UserGroupRule
+
 from apps.feedback.admin import FeedbackRelationInline
 
 from django.contrib import admin
@@ -19,16 +25,34 @@ class CompanyInline(admin.TabularInline):
     max_num = 20
     extra = 0
 
+class RuleBundleInline(admin.TabularInline):
+    model = RuleBundle
+    extra = 1
+    max_num = 20
+
 
 class AttendanceEventAdmin(admin.ModelAdmin):
     model = AttendanceEvent
-    inlines = (AttendeeInline,)
-
+    inlines = (AttendeeInline, RuleBundleInline)
 
 class CompanyEventAdmin(admin.ModelAdmin):
     model = CompanyEvent
     inlines = (CompanyInline,)
 
+class RuleBundleAdmin(admin.ModelAdmin):
+    model = RuleBundle
+   
+class FieldOfStudyRuleAdmin(admin.ModelAdmin):
+    model = FieldOfStudyRule
+
+class GradeRuleAdmin(admin.ModelAdmin):
+    model = GradeRule
+
+class UserGroupRuleAdmin(admin.ModelAdmin):
+    model = UserGroupRule
+
+class RuleOffsetAdmin(admin.ModelAdmin):
+    model = RuleOffset
 
 class AttendanceEventInline(admin.StackedInline):
     model = AttendanceEvent
@@ -49,6 +73,12 @@ class EventAdmin(admin.ModelAdmin):
         instances = formset.save(commit=False)
         for instance in instances:
             instance.save()
+        formset.save_m2m()
 
 admin.site.register(Event, EventAdmin)
 admin.site.register(AttendanceEvent, AttendanceEventAdmin)
+admin.site.register(RuleBundle, RuleBundleAdmin)
+admin.site.register(GradeRule, GradeRuleAdmin)
+admin.site.register(UserGroupRule, UserGroupRuleAdmin)
+admin.site.register(FieldOfStudyRule, FieldOfStudyRuleAdmin)
+admin.site.register(RuleOffset, RuleOffsetAdmin)

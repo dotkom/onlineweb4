@@ -81,7 +81,6 @@ def result(request, applabel, appmodel, object_id, feedback_id):
             answers[int(a.answer)] += 1
         answers = answers[1:]
         rating_question_answers.append(answers)
-        print(rating_questions[i])
     return render(request, 'feedback/results.html',
                   {'question_and_answers': question_and_answers, 'foschartdata': SafeString(foschartdata), 'description': description, "rating_question_answers": rating_question_answers, "rating_questions": rating_questions})
 
