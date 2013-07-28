@@ -9,17 +9,188 @@
             <div class="span12">
                 <div class="page-header">
                     <h2 id="event-details-heading">{{event.title}}</h2>
-                    <small id="event-details-author">Oppretter: {{ event.author }}</small>
                 </div>
             </div>
         </div>
+        <div class="row-fluid row-space">
+            <div class="span7">
+                <div class="row-fluid">
+                  <!--   <div class="span2">
+                        <div class="event-hero">
+                            <div class="event-hero-duration">
+                                <span class="start-day"><span class="start-day-number">{{ event.event_start|date:"d" }}</span></span>
+                                <span class="start-month"><span class="start-month-text">{{ event.event_start|date:"M"}}</span></span>
+                            </div>
+                        </div>
+                    </div> -->
+                    <div class="span12">
+                        <div class="event-hero-meta">
+                            <div class="row-fluid" style="margin-bottom:30px">
+                                <div class="event-hero-meta-info">
+                                     <div class="span4">
+                                        <div class="event-hero-title">Fra</div>
+                                        <div class="event-hero-large-text">
+                                            <span class="break">{{event.event_start|date:"H.i"}}</span>
+                                            <span class="date-small">{{ event.event_start|date:"d. M Y" }}</span>
+                                        </div>
+                                    </div>
+                                    <div class="span4">
+                                        <div class="event-hero-title">Til</div>
+                                        <div class="event-hero-large-text">
+                                            <span class="break">{{event.event_end|date:"H.i"}}</span>
+                                            <span class="date-small">{{ event.event_end|date:"d. M Y" }}</span>
+                                        </div>
+                                    </div>
+                                    <div class="span4">
+                                        <div class="event-hero-title">Lokasjon</div>
+                                        <div class="event-hero-large-text">{{ event.location }}</div>
+                                    </div>   
+                                </div>
+                            </div>
+                            {% if attendance_event %}
+                                <div class="row-fluid">
+                                    <div class="event-hero-meta-info">
+                                        <div class="span4">
+                                            <div class="event-hero-title">Påmeldte</div>
+                                            <div class="event-hero-large-text">
+                                                {{ event.number_of_attendees_not_on_waiting_list }}/{{ attendance_event.max_capacity }}
+                                            </div>
+                                        </div>
+                                        <div class="span4">
+                                            {% if attendance_event.waitlist_enabled %}
+                                                <div class="event-hero-title">Antall på venteliste</div>
+                                                <div class="event-hero-large-text">{{ event.number_of_attendees_on_waiting_list }}</div> 
+                                            {% else %}
+                                                <div class="event-hero-title">Venteliste</div>
+                                                <div class="event-hero-small-text">Utilgjengelig</div>
+                                            {% endif %}                                   
+                                        </div>
+                                        <div class="span4">
+                                            <div class="event-hero-title">Registreringsstart</div>
+                                            <div class="event-hero-large-text">
+                                                <div class="event-hero-large-text">
+                                                    <span class="break">{{ attendance_event.registration_start|date:"H.i" }}</span>
+                                                    <span class="date-small">{{ attendance_event.registration_start|date:"d. M Y" }}</span>
+                                                </div>
+                                                <!-- <a href="#captcha" role="button" class="btn btn-success" data-toggle="modal">Meld meg på</a> -->
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="span5">
+                <div class="row-fluid ">
+                <div class="span12 event-status">
+                    {% if attendance_event %}
+                        {% if user_status == 'anonymous_user' %}
+                            <p class="status-text">Du må være logget inn for å se din status.</p>
+                        {% else %}
+                            {% if event_opens_when == 'never' %}
+                                <p class="status-text">Du har ikke adgang til dette arrangementet</p>
+                            {% else %}
+                                {% if user_status == 'attending' %}
+                                    <!-- User is already attending this event -->
+                                    <p class="status-text">Du er meldt på dette arrangementet.</p>
+                                    <div class="action"><a href="#unattend" role="button" class="btn btn-large btn-danger" data-toggle="modal">Meld meg av</a></div>
+                                    
+                                {% elif user_status == 'queued' %}
+                                   <!-- User is already queued for this event -->
+                                   <p class="text-center">Du står som nummer {{ position_in_wait_list }} på ventelisten for denne eventen.</p>
+
+                                {% elif user_status == 'not_attending' %}
+                                    {% if event_open %}
+                                         <!-- User is not already attending the event, and is allowed to register -->
+                                        <p class="status-text">Du kan melde deg på dette arrangementet.</p>
+                                        <div class="action"><a href="#attend" role="button" class="btn btn-large btn-success" data-toggle="modal">Meld meg på</a></div>
+                                    {% else %}
+                                        <!-- User is allowed to attend the event, but the registration has not yet opened -->
+                                        <p class="text-center">Registreringen begynner {{ event_opens_when }}</p>
+                                    {% endif %}
+                                {% endif %}
+                            {% endif %}
+                        {% endif %}
+                    {% else %}
+                    <p class="status-text">Dette er ikke et påmeldingsarrangement.</p>
+                    {% endif %}
+                </div>
+            </div>
+            {% if attendance_event %}
+                {% if user_status == 'attending' %}
+                    <div class="row-fluid">
+                        <div class="span12 event-status-extra">
+                            <p class="help-text">Avmeldingsfristen er {{ attendance_event.registration_end|date:"H.i d. M Y" }}</p>
+                        </div>
+                    </div>
+                {% endif %}
+            {% endif %}
+
+        </div>
+
+        </div>
+        <div class="row-fluid">
+            <div class="span7">
+                <div class="ingress">{{ event.ingress|striptags|markdown}}</div>
+                {{ event.description|striptags|markdown}}
+            </div>
+            <div class="span5">
+                {% if event.companies.all %}
+                <div class="row-fluid">
+                    <div class="span12 event-status-companies">
+                        <div class="title">Medarrangører</div>
+                        {% for company_relation in event.companies.all %}
+                            <div class="heading clearfix row-space">
+                                <a href="{% url 'company_details' company_relation.company.pk %}">
+                                    <div class="title">{{ company_relation.company.name }}</div>
+                                    <div class="image">
+                                        <img src="{% version company_relation.company.image 'companies_thumb' %}" alt="" />
+                                    </div>
+                                </a>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% else %}
+                <div class="row-fluid row-space">
+                    <div class="span12">
+                        <img src="{% version event.image 'events_main' %}" alt="{{ event.title }}"/>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        <div style="margin-top:300px;"></div>
         <!-- eventinformasjon -->
         <div class="row-fluid">
             <div class="span7" id="event-description">
                 {{ event.description|striptags|markdown }}
             </div>
             <div class="span5" id="event-images">
-                <img src="{% version event.image 'events_main' %}" alt="{{ event.title }}"/>
+                <div class="row-fluid">
+                    <div class="span12">
+                        <img src="{% version event.image 'events_main' %}" alt="{{ event.title }}"/>
+                    </div>
+                </div>
+                {% if event.companies %}
+                <div class="row-fluid">
+                    <div class="span12 event-status-companies">
+                        {% for company_relation in event.companies.all %}
+                            <div class="heading clearfix row-space">
+                                <a href="{% url 'company_details' company_relation.company.pk %}">
+                                    <div class="title">{{ company_relation.company.name }}</div>
+                                    <div class="image">
+                                        <img src="{% version company_relation.company.image 'companies_thumb' %}" alt="" />
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="ingress">{{ company_relation.company.short_description}}</div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
             </div>
         </div>
 
@@ -44,7 +215,7 @@
 
                         {% if attendance_event %}
                             <tr><td>Påmeldte</td><td>{{ event.number_of_attendees_not_on_waiting_list }}/{{ attendance_event.max_capacity }} </td></tr>
-                            <tr><td>Antall på venteliste</td><td>{{ event.number_of_attendees_on_waiting_list }}</td></tr>
+                            {% if attendance_event.waitlist_enabled %}<tr><td>Antall på venteliste</td><td>{{ event.number_of_attendees_on_waiting_list }}</td></tr>{% endif %}
                             <tr><td>Registreringsfrist</td><td>{{ attendance_event.registration_start }}</td></tr>
                             <tr><td>Avmeldingsfrist</td><td>{{ attendance_event.registration_end }}</td></tr>
                         {% endif %}
@@ -65,7 +236,7 @@
         {% else %}
             {% if user_status == 'attending' %}
                         <!-- User is already attending this event -->
-                        <p class="text-center"><strong>Du er meldt på denne eventen.</strong></p>
+                        <p class="status-text"><strong>Du er meldt på denne eventen.</strong></p>
                         <form action="{% url 'unattend_event' event.id %}" method="POST" class="pagination-centered">
                             {% csrf_token %}
                             <button type="submit" class="btn btn-danger">Meld meg av!</button>
@@ -83,7 +254,7 @@
                         <form action="{% url 'attend_event' event.id %}" method="POST" class="pagination-centered">
                             {% csrf_token %}
                             {{ captcha_form }}
-                            <button style="margin-top: -10px" type="submit" class="btn btn-success">Meld meg på!</button>
+                            <button style="margin-top: -10px" type="submit" class="btn-large btn-success">Meld meg på!</button>
                         </form>
                 {% else %}
                         <!-- User is allowed to attend the event, but the registration has not yet opened -->
@@ -105,6 +276,44 @@
                 </div>
             </div>
         </div>
+
+        <!-- MODALS -->
+
+        <div id="attend" class="modal hide fade">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h3>Meld deg på {{event.title}}</h3>
+             </div>
+            <form action="{% url 'attend_event' event.id %}" method="POST">
+                <div class="modal-body">
+                    Ved å melde deg på, godtar du prikkeregelfaen.
+                    {% csrf_token %}
+                    {{ captcha_form }}
+                </div>
+                <div class="modal-footer">
+                    <button class="btn" data-dismiss="modal" aria-hidden="true">Lukk</button>
+                    <button type="submit" class="btn btn-primary">Valider</a>
+                </div>
+            </form>
+        </div>
+
+        <div id="unattend" class="modal hide fade">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h3>Meld deg av {{ event.title }} </h3>
+             </div>
+            <form action="{% url 'unattend_event' event.id %}" method="POST">
+                <div class="modal-body">
+                    {% csrf_token %}
+                    <p>Er du sikker på at du vil melde deg av?</p>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn" data-dismiss="modal" aria-hidden="true">Lukk</button>
+                    <button type="submit" class="btn btn-danger">Meld meg av</a>
+                </div>
+            </form>
+        </div>
+
     </div>
 </section>
 {%endblock content %}
