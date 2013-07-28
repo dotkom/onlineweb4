@@ -169,6 +169,7 @@ MESSAGE_TAGS = {messages.DEBUG: 'alert-debug',
                 messages.WARNING: 'alert-warning',
                 messages.ERROR: 'alert-error'}
 
+
 # Remember to keep 'local' last, so it can override any setting.
 for settings_module in ['filebrowser', 'local']:  # local last
     if not os.path.exists(os.path.join(PROJECT_SETTINGS_DIRECTORY,
