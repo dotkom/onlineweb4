@@ -1,7 +1,7 @@
 
 /* Debug */
 
-@debug: 1pt;
+@debug: 0pt;
 .debugred {border: @debug solid red;}
 .debuglime {border: @debug solid lime;}
 .debugpink {border: @debug solid pink;}
@@ -16,19 +16,25 @@
 
 /* Mailinglists */
 
+#map {
+	text-align: center;
+	margin: 5pt 0 10pt 0;
+	width: 600pt;
+}
+
 #mailinglist-items {
     .debugred;
     width: 100%;
-    text-align: center;
 
     .mailinglist {
     	.debuglime;
-    	width: 200pt;
+    	width: 170pt;
     	float: left;
 
     	.title {
     		.debugpink;
-
+			padding: 10pt 0 5pt 0;
+			font-weight: bold;
     	}
     	.members {
     		.debugpink;
