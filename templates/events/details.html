@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load fb_versions %}
 {% load markup %}
 {% block content %}
 
@@ -18,7 +19,7 @@
                 {{ event.description|striptags|markdown }}
             </div>
             <div class="span5" id="event-images">
-                <p>Here there be images</p>
+                <img src="{% version event.image 'events_main' %}" alt="{{ event.title }}"/>
             </div>
         </div>
 
