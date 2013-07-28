@@ -1,6 +1,5 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-from apps.userprofile.models import FIELD_OF_STUDY_CHOICES
 from filebrowser.fields import FileBrowseField
 
 class Company(models.Model):
