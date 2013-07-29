@@ -15,14 +15,6 @@
         <div class="row-fluid row-space">
             <div class="span7">
                 <div class="row-fluid">
-                  <!--   <div class="span2">
-                        <div class="event-hero">
-                            <div class="event-hero-duration">
-                                <span class="start-day"><span class="start-day-number">{{ event.event_start|date:"d" }}</span></span>
-                                <span class="start-month"><span class="start-month-text">{{ event.event_start|date:"M"}}</span></span>
-                            </div>
-                        </div>
-                    </div> -->
                     <div class="span12">
                         <div class="event-hero-meta">
                             <div class="row-fluid" style="margin-bottom:30px">
@@ -66,7 +58,7 @@
                                             {% endif %}                                   
                                         </div>
                                         <div class="span4">
-                                            <div class="event-hero-title">Registreringsstart</div>
+                                            <div class="event-hero-title">Påmeldingsstart</div>
                                             <div class="event-hero-large-text">
                                                 <div class="event-hero-large-text">
                                                     <span class="break">{{ attendance_event.registration_start|date:"H.i" }}</span>
@@ -81,53 +73,81 @@
                         </div>
                     </div>
                 </div>
+                
             </div>
             <div class="span5">
-                <div class="row-fluid ">
+                <div class="row-fluid row-space">
                 <div class="span12 event-status">
                     {% if attendance_event %}
-                        {% if user_status == 'anonymous_user' %}
+                        {% if user_anonymous %}
                             <p class="status-text">Du må være logget inn for å se din status.</p>
                         {% else %}
                             {% if event_opens_when == 'never' %}
                                 <p class="status-text">Du har ikke adgang til dette arrangementet</p>
                             {% else %}
-                                {% if user_status == 'attending' %}
-                                    <!-- User is already attending this event -->
-                                    <p class="status-text">Du er meldt på dette arrangementet.</p>
-                                    <div class="action"><a href="#unattend" role="button" class="btn btn-large btn-danger" data-toggle="modal">Meld meg av</a></div>
-                                    
-                                {% elif user_status == 'queued' %}
-                                   <!-- User is already queued for this event -->
-                                   <p class="text-center">Du står som nummer {{ position_in_wait_list }} på ventelisten for denne eventen.</p>
-
-                                {% elif user_status == 'not_attending' %}
-                                    {% if event_open %}
-                                         <!-- User is not already attending the event, and is allowed to register -->
-                                        <p class="status-text">Du kan melde deg på dette arrangementet.</p>
-                                        <div class="action"><a href="#attend" role="button" class="btn btn-large btn-success" data-toggle="modal">Meld meg på</a></div>
+                                {% if user_attending %}
+                                    {% if place_on_wait_list %}
+                                        <p class="status-text">Du er nummer {{ place_on_wait_list }} på ventelisten.</p>
                                     {% else %}
-                                        <!-- User is allowed to attend the event, but the registration has not yet opened -->
-                                        <p class="text-center">Registreringen begynner {{ event_opens_when }}</p>
+                                        <p class="status-text">Du er meldt på dette arrangementet.</p>
+                                    {% endif %}
+                                        <div class="action"><a href="#unattend" role="button" class="btn btn-large btn-danger" data-toggle="modal">Meld meg av</a></div>
+                                {% else %}
+                                    {% if user_status.status %}
+                                        {% if will_be_on_wait_list %}
+                                            <p class="status-text">Du kan sette deg på venteliste.</p>
+                                            <div class="action">
+                                                <a href="#waitlist" role="button" class="btn btn-large btn-warning" data-toggle="modal">Sett meg på venteliste</a>
+                                            </div> 
+                                        {% else %}
+                                            <p class="status-text">Du kan melde deg på dette arrangementet.</p>
+                                           <div class="action"><a href="#attend" role="button" class="btn btn-large btn-success" data-toggle="modal">Meld meg på</a></div>
+                                        {% endif %}
+                                    {% elif user_staus.offset %}
+                                    
+                                        <p class="status-text">Du kan melde deg på om {{ user_status.offset }} timer.</p>
+                                    {% elif not user_status.status and user_status.message %} 
+                                        <p class="status-text">{{ user_status.message }}</p>
+                                    {% else %}
+                                        <p class="status-text">Du har ikke tilgang til dette arrangementet</p>
                                     {% endif %}
                                 {% endif %}
                             {% endif %}
                         {% endif %}
                     {% else %}
-                    <p class="status-text">Dette er ikke et påmeldingsarrangement.</p>
+                        <p class="status-text">Dette er ikke et påmeldingsarrangement.</p>
                     {% endif %}
-                </div>
-            </div>
+            
+
             {% if attendance_event %}
-                {% if user_status == 'attending' %}
-                    <div class="row-fluid">
-                        <div class="span12 event-status-extra">
-                            <p class="help-text">Avmeldingsfristen er {{ attendance_event.registration_end|date:"H.i d. M Y" }}</p>
-                        </div>
-                    </div>
+                {% if user_attending %}
+                            <p class="help-text" style="margin-top:20px">Avmeldingsfristen er {{ attendance_event.registration_end|date:"H.i d. M Y" }}</p>
                 {% endif %}
             {% endif %}
+                </div>
 
+            </div>
+            {% if attendance_event %}
+                <div class="row-fluid">
+                    <div class="span12">
+                        <div class="event-access">
+                            <p class="access-title">Dette arrangementet er åpent for</p>
+                            <div class="rules">
+
+                                {% if rules %}
+                                    {% for rule_bundle in rules %}
+                                        {% for rule in rule_bundle %}
+                                            <span class="label label-info">{{ rule }}</span>
+                                        {% endfor %}
+                                    {% endfor %}
+                                {% else %}
+                                    <span class="label label-important">Ingen</span>    
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
         </div>
 
         </div>
@@ -235,12 +255,16 @@
                         <p class="text-center"><strong>Du har ikke adgang til denne eventen.</strong></p>
         {% else %}
             {% if user_status == 'attending' %}
+                {% if place_on_waiting_list > 0 %}
+                    <p class="status-text">Du er nummer {{ place_on_waiting_list }} på ventelisten.</p>
+                {% else %}
                         <!-- User is already attending this event -->
                         <p class="status-text"><strong>Du er meldt på denne eventen.</strong></p>
                         <form action="{% url 'unattend_event' event.id %}" method="POST" class="pagination-centered">
                             {% csrf_token %}
                             <button type="submit" class="btn btn-danger">Meld meg av!</button>
                         </form>
+                {% endif %}
 
             {% elif user_status == 'queued' %}
                         <!-- User is already queued for this event -->
@@ -287,6 +311,27 @@
             <form action="{% url 'attend_event' event.id %}" method="POST">
                 <div class="modal-body">
                     Ved å melde deg på, godtar du prikkeregelfaen.
+                    {% csrf_token %}
+                    {{ captcha_form }}
+                </div>
+                <div class="modal-footer">
+                    <button class="btn" data-dismiss="modal" aria-hidden="true">Lukk</button>
+                    <button type="submit" class="btn btn-primary">Valider</a>
+                </div>
+            </form>
+        </div>
+
+        <div id="waitlist" class="modal hide fade">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h3>Sett meg på venteliste på {{event.title}}</h3>
+             </div>
+            <form action="{% url 'attend_event' event.id %}" method="POST">
+                <div class="modal-body">
+                    <p>Ved å sette deg på venteliste godtar du at du automatisk får plass om
+                        arrangementet utvides med flere plasser, eller andre påmeldte melder seg av, slik at du rykker frem i køen.
+                    </p>
+                    <p>Ved å melde deg på, godtar du prikkeregelfaen.</p>
                     {% csrf_token %}
                     {{ captcha_form }}
                 </div>
