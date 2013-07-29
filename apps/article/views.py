@@ -131,9 +131,9 @@ def details(request, article_id):
 	article = get_object_or_404(Article, pk=article_id)
 	
 	if (article.changed_date != article.created_date):
-		article.isChanged = True
+		article.is_changed = True
 	else:
-		article.isChanged = False
+		article.is_changed = False
 	
         latestNews = Article.objects.exclude(id = article.id).order_by('published_date').reverse()[:4]
 
