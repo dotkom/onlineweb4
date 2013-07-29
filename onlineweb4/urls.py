@@ -30,6 +30,13 @@ urlpatterns = patterns('',
     url(r'^feedback/',              include('apps.feedback.urls')),
     url(r'^offline/',               include('apps.offline.urls')),
 
+    # nav-bar menu urls
+    url(r'^#events$', TemplateView.as_view(template_name='frontpage.html#events'), name='events-link'),
+    url(r'^#articles$', TemplateView.as_view(template_name='frontpage.html#articles'), name='articles-link'),
+    url(r'^#about$', TemplateView.as_view(template_name='frontpage.html#about'), name='about-link'),
+    url(r'^#business$', TemplateView.as_view(template_name='frontpage.html#business'), name='business-link'),
+    url(r'^#offline$', TemplateView.as_view(template_name='frontpage.html#offline'), name='offline-link'),
+
     #Captcha url
     url(r'^captcha/', include('captcha.urls')),
 )
