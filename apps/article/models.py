@@ -14,6 +14,7 @@ class Article(models.Model):
 
 
     heading = models.CharField(_(u"tittel"), max_length=200)
+    ingress_short = models.CharField(_(u"kort ingress"), max_length=100)
     ingress = models.TextField(_(u"ingress"), max_length=225)
     content = models.TextField(_(u"content"))
     image = FileBrowseField(_(u"bilde"), 
