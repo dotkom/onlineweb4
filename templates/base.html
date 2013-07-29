@@ -31,19 +31,19 @@
                 <div class="nav-collapse collapse">
                     <ul class="nav menu-elements">
                         <li class="top-menu-link">
-                            <a href="#events" class="active">Arrangementer</a>
+                            <a href="{% url 'events-link' %}">Arrangementer</a>
                         </li>
                         <li class="top-menu-link">
-                            <a href="#articles">Artikler</a>
+                            <a href="{% url 'articles-link' %}">Artikler</a>
                         </li>
                         <li class="top-menu-link">
-                            <a href="#about">Om online</a>
+                            <a href="{% url 'about-link' %}">Om Online</a>
                         </li>
                         <li class="top-menu-link">
-                            <a href="#business">For bedrifter</a>
+                            <a href="{% url 'business-link' %}">For bedrifter</a>
                         </li>
                         <li class="top-menu-link">
-                            <a href="#offline">Offline</a>
+                            <a href="{% url 'offline-link' %}">Offilne</a>
                         </li>
                         <li class="top-menu-link">
                             <a href="http://wiki.online.ntnu.no/">Wiki</a>
