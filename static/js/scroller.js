@@ -10,6 +10,10 @@ $(document).ready(function() {
         };
         return navs;
     }
+    function setactive() {
+        $('a[href="/#events"]').addClass('active');
+    }
+    setactive();
 
     var navs = setnavs();
 
@@ -31,7 +35,7 @@ $(document).ready(function() {
             var diff = current - navs[nav];
             if (diff > -20) {
                 $(".top-menu-link a").removeClass('active');
-                $("a[href='/"+nav+"']").addClass("active");
+                $("a[href='/"+nav+"']").addClass('active');
             }
         }
     }
