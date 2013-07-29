@@ -59,7 +59,6 @@ class Event(models.Model):
         Sjekker hvor mange attendees som har meldt seg på innen max_grensa
         """
         not_waiting = self.attendance_event.attendees.count()
-
         return not_waiting if not_waiting < self.attendance_event.max_capacity else self.attendance_event.max_capacity
 
     def is_attendance_event(self):
@@ -107,7 +106,7 @@ class Event(models.Model):
             status_object = self.attendance_event.rules_satisfied(user)
 
             if not status_object['status']:
-                if status_object['offset']:
+                if 'offset' in status_object:
                     response_message = 'Du har ikke tilgang til dette arrangementet før om ' + str(status_object['offset'] / 60 / 60) + ' timer.'
                     response['message'] = response_message
                     return response
@@ -125,7 +124,20 @@ class Event(models.Model):
 
     @property
     def wait_list(self):
+        return self.attendance_event.attendees.all()[self.attendance_event.max_capacity:]
         return [] if self.number_of_attendees_on_waiting_list is 0 else self.attendance_event.attendees[self.attendance_event.max_capacity:]
+
+    
+    def what_place_is_user_on_wait_list(self, user):
+        if self.attendance_event:
+            if self.attendance_event.waitlist:
+                waitlist = self.wait_list
+                print waitlist
+                if waitlist:
+                    for attendee_object in waitlist:
+                        if attendee_object.user == user:
+                            return list(waitlist).index(attendee_object) + 1
+        return 0
 
     @models.permalink
     def get_absolute_url(self):
@@ -188,7 +200,10 @@ class FieldOfStudyRule(Rule):
         return {"status": False, "message": _(u"Din studieretning er en annen enn de som har tilgang til dette arrangementet.")}
 
     def __unicode__(self):
-        return '<FOS: ' + str(FIELD_OF_STUDY_CHOICES[self.field_of_study][1]) + ' offset: ' + str(self.offset) + 'hours>'
+        offset = 'timer'
+        if self.offset.offset == 1:
+            offset = 'time'
+        return str(FIELD_OF_STUDY_CHOICES[self.field_of_study][1]) + (' etter ' + str(self.offset.offset) + ' ' + offset if self.offset.offset > 0 else '')
 
 
 class GradeRule(Rule):
@@ -213,7 +228,10 @@ class GradeRule(Rule):
         return {"status": False, "message": _(u"Du er ikke i et klassetrinn som har tilgang til dette arrangementet.")}
 
     def __unicode__(self):
-        return '<Grade: ' + str(self.grade) + ' offset: ' + str(self.offset) + ' hours>'
+        offset = 'timer'
+        if self.offset.offset == 1:
+            offset = 'time'
+        return str(self.grade) + '. klasse' + (' etter ' + str(self.offset.offset) + ' ' + offset if self.offset.offset > 0 else '')
 
 
 class UserGroupRule(Rule):
@@ -234,17 +252,33 @@ class UserGroupRule(Rule):
         return {"status": False, "message": _(u"Du er ikke i en brukergruppe som har tilgang til dette arrangmentet.")}
 
     def __unicode__(self):
-        return '<Group: ' + str(self.group) + ' offset: ' + str(self.offset) + ' hours>'
+        offset = 'timer'
+        if self.offset.offset == 1:
+            offset = 'time'
+        return str(self.group) + (' etter ' + str(self.offset.offset) + ' ' + offset if self.offset.offset > 0 else '')
 
 
 class RuleBundle(models.Model):
     """
     Access restriction rule object
     """
+    description = models.CharField(_(u'beskrivelse'), max_length=100)
     field_of_study_rules = models.ManyToManyField(FieldOfStudyRule, null=True, blank=True)
     grade_rules = models.ManyToManyField(GradeRule, null=True, blank=True)
     user_group_rules = models.ManyToManyField(UserGroupRule, null=True, blank=True)
 
+    @property
+    def get_rule_strings(self):
+        rules = []
+        for rule in self.field_of_study_rules.all():
+            rules.append(unicode(rule))
+        for rule in self.grade_rules.all():
+            rules.append(unicode(rule))
+        for rule in self.user_group_rules.all():
+            rules.append(unicode(rule))
+        return rules
+        
+        
     def satisfied(self, user, registration_start):
 
         errors = []
@@ -278,7 +312,7 @@ class RuleBundle(models.Model):
         # If we found errors, check if there was any that just had an offset. Then find the largest one so we can show the user when he will be eligible to register
         if errors:
             for error in errors:
-                if error['offset']:
+                if 'offset' in error:
                     if error['offset'] > largest_offset_in_seconds:
                         largest_offset_in_seconds = error['offset']
             if largest_offset_in_seconds > 0:
@@ -291,9 +325,9 @@ class RuleBundle(models.Model):
     def __unicode__(self):
         string = ""
         for obj in self.field_of_study_rules.all():
-            string += unicode(obj) + ' '
+            string += unicode(obj) + ', '
         for obj in self.grade_rules.all():
-            string += unicode(obj) + ' '
+            string += unicode(obj) + ', '
         for obj in self.user_group_rules.all():
             string += unicode(obj) + ' '
         return string
@@ -326,13 +360,16 @@ class AttendanceEvent(models.Model):
     def room_on_event(self):
         return True if (self.attendees.count() < self.max_capacity) or self.waitlist else False
 
+    def will_i_be_on_wait_list(self):
+        return True if (self.attendees.count() >= self.max_capacity) and self.waitlist else False
+
     def rules_satisfied(self, user):
         """
         Checks a user against rules applied to an attendance event
         """
         # If there are no rule_bundles on this object, no one is allowed
         if not self.rule_bundles:
-            return True
+            return False
 
         largest_offset_in_seconds = 0
         errors = []    
@@ -343,7 +380,7 @@ class AttendanceEvent(models.Model):
             response =  rule_bundle.satisfied(user, self.registration_start)
             if response['status']:
                 return {"status": True}
-            elif response['offset']:
+            elif 'offset' in response:
                 if response['offset'] > largest_offset_in_seconds:
                     largest_offset_in_seconds = response['offset']
             else:
