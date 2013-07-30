@@ -29,3 +29,4 @@ local.py
 filedump
 _tmp
 *.vagrant
+uploaded_media/*
