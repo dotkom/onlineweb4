@@ -10,7 +10,7 @@ function ArticleWidget (Utils){
 
                 // The loop
                 for (var i = 0; i < data.articles.length; i++) {
-                    output += '<div class="span6"><a href="/article/'+data.articles[i].id+'"><img src="'+data.articles[i].image_article_front_featured+'" alt="'+data.articles[i].heading+'"></a><h3>'+data.articles[i].heading+'</h3><p>'+data.articles[i].ingress+'</p></div>';
+                    output += '<div class="span6"><a href="/article/'+data.articles[i].id+'"><img src="'+data.articles[i].image_article_front_featured+'" alt="'+data.articles[i].heading+'"></a><h3><a href="/article/'+data.articles[i].id+'">'+data.articles[i].heading+'</a></h3><p>'+data.articles[i].ingress+'</p></div>';
                 }
 
                 $('#article-frontpage-featured').html(output);
@@ -27,7 +27,7 @@ function ArticleWidget (Utils){
 
                 // The loop
                 for (var i = 0; i < data.articles.length; i++) {
-                    output += '<div class="span2"><a href="/article/'+data.articles[i].id+'"><img src="'+data.articles[i].image_article_front_small+'" alt="'+data.articles[i].heading+'"></a><br /><h4>'+data.articles[i].heading+'</h4></div>';
+                    output += '<div class="span2"><a href="/article/'+data.articles[i].id+'"><img src="'+data.articles[i].image_article_front_small+'" alt="'+data.articles[i].heading+'"></a><br /><h4><a href="/article/'+data.articles[i].id+'">'+data.articles[i].heading+'</a></h4></div>';
                 }
 
                 $('#article-frontpage-normal').html(output);
