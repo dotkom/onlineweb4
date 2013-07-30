@@ -88,7 +88,7 @@ class ArticleResource(ModelResource):
         API_LIMIT_PER_PAGE = 9
         queryset = Article.objects.all()
         resource_name = 'article/all'
-        ordering = ['published_date']
+        ordering = ['-published_date']
         filtering = {
             'featured' : ('exact',),
             'published_date' : ('gte',),
@@ -104,7 +104,7 @@ class ArticleLatestResource(ModelResource):
         filtering = {
             'featured': ('exact',)
         }
-        ordering = ['published_date']
+        ordering = ['-published_date']
         max_limit = 25
     def alter_list_data_to_serialize(self, request, data):
         # Renames list data 'object' to 'articles'.
