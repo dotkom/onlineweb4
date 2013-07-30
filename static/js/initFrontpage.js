@@ -1,6 +1,5 @@
 
-$(function()
-{
+$(function() {
     var utils = new Utils();
     var eventWidget = new EventWidget(utils);
     var offlineWidget = new OfflineWidget(utils);
