@@ -67,21 +67,21 @@ class ArticleResource(ModelResource):
         if (request_year is not None):
             if (request_month is not None):
                 # Filtering on both year and month
-                queryset = Article.objects.filter(published_date__year=request_year, published_date__month=request_month)
+                queryset = Article.objects.filter(published_date__year=request_year, published_date__month=request_month).order_by('-published_date')
             else:
                 # Filtering on only year
-                queryset = Article.objects.filter(published_date__year=request_year)
+                queryset = Article.objects.filter(published_date__year=request_year).order_by('-published_date')
         else:
             # Not filtering on year, check if filtering on slug (tag) or return default query
             if (request_tag is not None):
                 # Filtering on slug
                 slug_query = Tag.objects.filter(slug = request_tag)
                 slug_connect = ArticleTag.objects.filter(tag = slug_query).values('article_id')
-                queryset = Article.objects.filter(id__in = slug_connect)
+                queryset = Article.objects.filter(id__in = slug_connect).order_by('-published_date')
                 #queryset = slug_query
             else:
                 # No filtering at all, return default query
-                queryset = Article.objects.all()
+                queryset = Article.objects.all().order_by('-published_date')
         return queryset
     
     class Meta:     
@@ -104,7 +104,7 @@ class ArticleLatestResource(ModelResource):
         filtering = {
             'featured': ('exact',)
         }
-        ordering = ['published_date',]
+        ordering = ['published_date']
         max_limit = 25
     def alter_list_data_to_serialize(self, request, data):
         # Renames list data 'object' to 'articles'.
