@@ -198,7 +198,7 @@ function ArticleArchive (Utils) {
                     // The loop
                     for (var i = 0; i < data.articles.length; i++) {
                         // The markup
-                        output += '<div class="span4 article"><a href="'+data.articles[i].id+'"><img src="'+data.articles[i].image_article_front_small+'" style="width: 248px; height: 100px;" alt="'+data.articles[i].heading+'" /></a><a href="'+data.articles[i].id+'"><h3>'+data.articles[i].heading+'</h3></a><p>'+data.articles[i].ingress+'</p><span class="date pull-right">'+data.articles[i].published_date+'</span><span></span></div>'
+                        output += '<div class="span4 article"><a href="/article/'+data.articles[i].id+'"><img src="'+data.articles[i].image_article_front_small+'" style="width: 248px; height: 100px;" alt="'+data.articles[i].heading+'" /></a><a href="'+data.articles[i].id+'"><h3>'+data.articles[i].heading+'</h3></a><p>'+data.articles[i].ingress+'</p><span class="date pull-right">'+data.articles[i].published_date+'</span><span></span></div>'
                         
                         // Every third element in a chunk
                         if (num % 3 == 0)
