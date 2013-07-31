@@ -1,49 +1,39 @@
 $(document).ready(function() {
-
-    function setnavs() {
-        navs = {
-            '#events': jQuery('#events').offset().top - 50,
-            '#articles': jQuery('#articles').offset().top - 50,
-            '#about': jQuery('#about').offset().top - 50,
-            '#business': jQuery('#business').offset().top - 50,
-            '#offline': jQuery('#offline').offset().top - 50
-        };
-        return navs;
-    }
-    function setactive() {
-        $('a[href="/#events"]').addClass('active');
-    }
-    setactive();
-
-    var navs = setnavs();
-
-    function scrolltothis(from, to) {
-        $("a[href='/"+from+"']").click(function(event) {
-            event.preventDefault();
-            var topPosition = jQuery(to).offset().top - 50; // See body margin
-            jQuery('html, body').animate({scrollTop:topPosition}, 250);
-        });
-    }
-
-    for (nav in navs) {
-        scrolltothis(nav, nav)
+    // Defining all the navs on the frontpage
+    var navs = {
+        '#events': $('#events').offset().top,
+        '#articles': $('#articles').offset().top,
+        '#about': $('#about').offset().top,
+        '#business': $('#business').offset().top,
+        '#offline': $('#offline').offset().top
     };
-
+        
+    // On scroll, loop the navs and swap active (if it needs to)
     function scrollspy() {
         var current = $(window).scrollTop();
         for (nav in navs) {
             var diff = current - navs[nav];
             if (diff > -20) {
-                $(".top-menu-link a").removeClass('active');
-                $("a[href='/"+nav+"']").addClass('active');
+                $(".top-menu-link a.active").removeClass('active');
+                $(".nav a[href='/"+nav+"']").addClass('active');
             }
         }
     }
-
-    // TODO: heavy shit? Find a reliable way to setnavs instead of doing it fucking all the time.
-    $(window).scroll(function() {
-        navs = setnavs();
-        scrollspy();
+    
+    // Clicking the links in the topnav
+    $('.nav a').on('click',function(e) {
+        e.preventDefault();
+        var $that = $(this);
+        var jumpto_section = $that.data('section');
+        if (typeof jumpto_section !== 'undefined') {
+            var top_position = navs['#'+jumpto_section];
+            $('html, body').animate({scrollTop: top_position}, 250);
+        }
     });
-
+    
+    // TODO: heavy shit? Find a reliable way to setnavs instead of doing it fucking all the time.
+    $(window).scroll(scrollspy);
+    
+    // On load highlight the current menu-item if an anchor is represented
+    scrollspy();
 });
