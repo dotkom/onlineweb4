@@ -2,8 +2,10 @@
 
 from django.db import models
 
+from django.contrib import admin
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext as _
+from forms import UploadForm
 
 from filebrowser.fields import FileBrowseField
 
@@ -18,6 +20,7 @@ class Article(models.Model):
     image_article = FileBrowseField(_(u"artikkel-bilde"),
         max_length=200, directory=IMAGE_FOLDER, blank=True,
         extensions=IMAGE_EXTENSIONS)
+    video = UploadForm()
     image_thumbnail = FileBrowseField(_(u"thumbnail"),
         max_length=200, directory=IMAGE_FOLDER, blank=True,
         extensions=IMAGE_EXTENSIONS)
@@ -39,8 +42,7 @@ class Article(models.Model):
         verbose_name = _(u"artikkel")
         verbose_name_plural = _(u"artikler")
         ordering = ['published_date']
-
-
+    
 class Tag(models.Model):
     name = models.CharField(_(u"navn"), max_length=50)
     slug = models.CharField(_(u"kort navn"), max_length=30)

@@ -3,9 +3,8 @@ from django.shortcuts import render_to_response, get_object_or_404
 from django.http import HttpResponse
 from django.contrib import messages
 from models import Article
+import django.forms as forms
 from django.utils.translation import ugettext_lazy as _
-from apps.article.forms import UploadForm
-from apps.article.forms import createUploadForm
 import vimeo
 import simplejson as json
 import urllib2
@@ -28,7 +27,29 @@ def index(request):
     
     return render_to_response('article/index.html', {'featured' : featured[0], 'latest': latestNews}, context_instance=RequestContext(request))
 
-def vimeoUpload(request):
+def vimeoUpload(request, model_name, form=None):
+    normal_model_name = normalize_model_name(model_name)
+
+    if not form:
+        form = get_model_form(normal_model_name)
+
+    if request.method == 'POST':
+        form = form(request.POST)
+        if form.is_valid():
+            try:
+                new_obj = form.save()
+            except forms.ValidationError, error:
+                new_obj = None
+
+            if new_obj:
+                return HttpResponse('<script type="text/javascript">opener.dismissAddAnotherPopup(window, "%s", "%s");</script>' % \
+                (escape(new_obj._get_pk_val()), escape(new_obj)))
+    else:
+        form = form()
+
+    page_context = {'form':form, 'field': normal_model_name}
+    return render_to_response('popup.html', page_context, context_instance=RequestContext(request))
+
     if request.method == 'POST' and request.session.get('has_authorized', True) and 1 == 2:
         request.session['has_authorized'] = False
         form = UploadForm(request.POST, request.FILES)
@@ -56,6 +77,9 @@ def vimeoUpload(request):
         oauth_verif = request.GET.get('oauth_verifier', '')
         client = vimeo.Client(key='c60b0e891d1712b6e86534bcdab319f257a814dd', secret='b2e65f399539d43c9e124afd93476ac95f263b2b', callback='http://127.0.0.1:8000/article/vimeo/', username='user16310918', token = False)
         token = client.exchange_token(oauth_verif)
+        print(token)
+        access_token = token.key
+        print(access_token)
         client = vimeo.Client(key='c60b0e891d1712b6e86534bcdab319f257a814dd', secret='b2e65f399539d43c9e124afd93476ac95f263b2b', callback='http://127.0.0.1:8000/article/vimeo/', username='user16310918', token = True)
         request.session['client'] = client
         size_availiable = json.loads(client.get('vimeo.videos.upload.getQuota'))['user']['upload_space']['free']
@@ -63,7 +87,7 @@ def vimeoUpload(request):
         response = json.loads(client.get('vimeo.videos.upload.getTicket'))
         ticket = response['ticket']['endpoint']
         ticket_id = response['ticket']['id']
-        return render_to_response('article/vimeo.html', {'size_availiable' : size_availiable, 'upload_ticket' : ticket, 'ticket_id' : ticket_id  }, context_instance=RequestContext(request))
+        return render_to_response('article/vimeo.html', {'size_availiable' : size_availiable, 'upload_ticket' : ticket, 'ticket_id' : ticket_id, 'token':token  }, context_instance=RequestContext(request))
     else:
         print("start")
         client = vimeo.Client(key='c60b0e891d1712b6e86534bcdab319f257a814dd', secret='b2e65f399539d43c9e124afd93476ac95f263b2b', callback='http://127.0.0.1:8000/article/vimeo/', username='user16310918')

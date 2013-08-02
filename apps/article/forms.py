@@ -1,15 +1,24 @@
+from django.forms.models import modelform_factory
+from django.db.models.loading import get_models, get_app, get_apps
 from django import forms
+from widgets import PopUpBaseWidget
 
 class UploadForm(forms.Form):
-    docfile = forms.FileField(label='', required=True, help_text='max. 42. megabytes')
-    video_name = forms.CharField(label="Video name=")
+    name = forms.CharField(widget=PopUpBaseWidget)
 
-def createUploadForm(size):
-    upload_form = UploadForm()
-    if int(size) > 1024 ** 3:
-        size = str(int(size) / 1024 ** 3) + "GB"
+def normalize_model_name(model_name):
+    if (model_name.lower() == model_name):
+        normal_model_name = model.name.capitalize()
     else:
-        size  = str(int(size) / 1024 ** 2) + "MB"
-        
-    upload_form.fields['docfile'].help_text = size + " ledig plass."
-    return upload_form
+        normal_model_name = model_name
+
+    return normal_model_name
+
+def get_model_form(model_name):
+    app_list = get_apps()
+    for app in app_list:
+        for model in get_models(app):
+            if model.__name__ == model.name:
+                form = modelform_factory(model)
+                return form
+    raise Exception('Did not find the model %s' % (model_name))
