@@ -1,6 +1,5 @@
 
-$(function()
-{
+$(function() {
     var utils = new Utils();
     var eventWidget = new EventWidget(utils);
     var offlineWidget = new OfflineWidget(utils);
@@ -9,7 +8,7 @@ $(function()
     // Render on load
     eventWidget.render();
     offlineWidget.render(156, 10);
-	articleWidget.renderFrontpage();
+	articleWidget.render();
 
     // Render on resize
     $(window).resize(function() {
