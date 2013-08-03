@@ -1,55 +1,101 @@
 {% extends "base.html" %}
-
 {% load markup %}
 {% load fb_versions %}
-
 {% block content %}
-<div id="article-wrapper">
+<section id="article-details">
     <div class="container-fluid">
-        <div class="row-fluid">
-            <div class="span12">
-                <div class="flex-video">
-                    {% if article.video_id %}
-                    <iframe src="http://player.vimeo.com/video/{{ article.video_id }}" frameborder="0" width="950" height="534" webkitAllowFullscreen mozallowfullscreen allowFullScreen></iframe>
-                    {% else %}
-                    <img src="{% version article.image 'article_main' %}" alt="{{ article.heading }}"/>
-                    {% endif %}
-                </div>
-            </div>
+        <div class="row-fluid article-media">
+                {% if article.video %}
+                    <div class="span12 video-padding">
+                        <div class="offset2 span8">
+                            <div class="flex-video widescreen">
+                               <iframe src="http://player.vimeo.com/video/{{ article.video }}" frameborder="0" webkitAllowFullscreen mozallowfullscreen allowFullScreen></iframe>
+                            </div>
+                        </div>
+                    </div>
+                {% else %}
+                     <div class="span12">
+                            <img src="{% version article.image 'article_full' %}" alt="{{ article.heading }}"/>
+                    </div>
+                {% endif %}
         </div>
         <div class="row-fluid">
-            <div class="span12">
-                <h1>{{ article.heading }}</h1>
-            </div>
-        </div>
-        <div class="row-fluid">
-            <div class="span7">
-                <div class="span12">
-                    <div class="article-details-details">
-                        <p>Publisert: {{ article.published_date }}, endret: {{ article.changed_date }}</p>
-                        <p>Av: {{ article.created_by }}</p>
+            <div class="span8">
+                <div class="row-fluid">
+                    <div class="span12">
+                        <div class="page-header">
+                            <h1>{{ article.heading }}</h1>
+                        </div>
                     </div>
-                    <div class="article-details-ingress">
-                        <p>{{ article.ingress }}</p>
+                </div>
+                <div class="row-fluid">
+                    <div class="span12 article-detail-meta">
+                        <span class="meta-caption">Av</span> {{ article.created_by.get_full_name }} |
+                        <span class="meta-caption">Publisert</span> {{ article.published_date }}
+                        {% if article.is_changed %} |
+                        <span class="meta-caption">Endret</span> {{ article.changed_date }}
+                        {% endif %}
                     </div>
-                    <div class="article-details-content">
-                        {{ article.content|striptags|markdown }}
+                </div>
+                <div class="row-fluid">
+                    <div class="span12">
+                        <div class="ingress">
+                            {{ article.ingress|striptags|markdown }}
+                        </div>
+                        <div class="content">
+                            {{ article.content|striptags|markdown }}
+                        </div>
+                    </div>
+                </div>
+                <div class="row-fluid">
+                    <div class="span12">
+                        
                     </div>
                 </div>
             </div>
-            <div class="span5">
-                <h3>Siste nytt:</h3>
-                <div id="article-detaill-latest">
+            <div class="span4 related-articles">
+                <div class="row-fluid">
+                    <div class="span12">
+                        <div class="page-header">
+                            <h3>Relaterte artikler</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="row-fluid">
+                    <div class="span12">
+                        <div class="page-header">
+                            <h3>Tags</h3>
+                        </div>
+                        <div class="tag-cloud">
+                            {% if article.tags %}
+                                {% for tag in article.tags %}
+                                    <a href="{% url 'view_article_tag' tag.name tag.slug %}"><span class="tag">{{ tag }}</span></a>
+                                {% endfor %}
+                            {% else %}
+                                <p>Denne artikkelen har ingen tags.</p>
+                            {% endif%}
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
+</section>
+
+<!-- {% for l in latest %}
+    <div class="row-fluid">
+        <div class="span12">
+            <div class="article-latestnews">
+                <a href="../{{ l.id }}">{{ l.heading }}</a> </p>
+            </div>
+        </div>
+    </div>
+{% endfor %}
+ -->	
 {% endblock content %}
 
 {% block js %}
     {{ block.super }}
     <script type="text/javascript" src="{{ STATIC_URL }}js/Utils.js"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}js/ArticleWidget.js"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}js/article-latest.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/Article-related.js"></script>
 {% endblock js %}

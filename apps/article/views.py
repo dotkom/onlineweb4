@@ -131,8 +131,10 @@ def details(request, article_id):
 	article = get_object_or_404(Article, pk=article_id)
 	
 	if (article.changed_date != article.created_date):
-		article.isChanged = True
+		article.is_changed = True
 	else:
-		article.isChanged = False
-		
-	return render_to_response('article/details.html', {'article': article}, context_instance=RequestContext(request))
+		article.is_changed = False
+	
+        latestNews = Article.objects.exclude(id = article.id).order_by('published_date').reverse()[:4]
+
+	return render_to_response('article/details.html', {'article': article, 'latest': latestNews}, context_instance=RequestContext(request))

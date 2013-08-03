@@ -12,13 +12,15 @@ class Article(models.Model):
     IMAGE_FOLDER = "images/article"
     IMAGE_EXTENSIONS = ['.jpg', '.jpeg', '.gif', '.png', '.tif', '.tiff']
 
+
     heading = models.CharField(_(u"tittel"), max_length=200)
+    ingress_short = models.CharField(_(u"kort ingress"), max_length=100)
     ingress = models.TextField(_(u"ingress"))
     content = models.TextField(_(u"content"))
     image = FileBrowseField(_(u"bilde"), 
-        max_length=200, directory=IMAGE_FOLDER, blank=True,
+        max_length=200, directory=IMAGE_FOLDER,
         extensions=IMAGE_EXTENSIONS, null=True)
-    video_id = models.CharField(_("vimeo id"), max_length=200, blank=True)
+    video = models.CharField(_("vimeo id"), max_length=200, blank=True)
     created_date = models.DateTimeField(_(u"opprettet-dato"), auto_now_add=True, editable=False)
     changed_date = models.DateTimeField(_(u"sist endret"), editable=False, auto_now=True)
     published_date = models.DateTimeField(_(u"publisert"))
@@ -29,6 +31,9 @@ class Article(models.Model):
     
     def __unicode__(self):
         return self.heading
+    
+    def get_matchname(self):
+        return re.findall(r"[0-9]+", self.video.lower())
 
     @property
     def tags(self):

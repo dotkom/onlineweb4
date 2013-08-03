@@ -2,10 +2,12 @@ import os
 from base import MEDIA_ROOT
 
 FILEBROWSER_MEDIA_ROOT = MEDIA_ROOT
-FILEBROWSER_DIRECTORY = '' # becomes media root
+FILEBROWSER_DIRECTORY = ''
 
 # Versions
+
 FILEBROWSER_VERSIONS = {
+
     # telling the user not to use resized pictures in the view (and avoid filebrowser crashing)
     'donotuse': {'verbose_name': 'CLICK SELECT INSTEAD, NO RESIZED PICTURES', 'width': 99, 'height': 99, 'opts': 'crop'},
     
@@ -14,8 +16,18 @@ FILEBROWSER_VERSIONS = {
     
     # for articles
     'article_main': {'verbose_name': 'Artikkel hoved', 'width': 950, 'height': 534, 'opts': 'crop'},
+    'article_full': {'verbose_name': 'Artikkel full', 'width': 1200, 'height': 444, 'opts': 'crop'},
+
     'article_front_featured': {'verbose_name': 'Artikkel forside featured', 'width': 584, 'height': 275, 'opts': 'crop'},
-    'article_front_small': {'verbose_name': 'Artikkel forside lite', 'width': 174, 'height': 100, 'opts': 'crop'}
+    'article_front_small': {'verbose_name': 'Artikkel forside lite', 'width': 174, 'height': 100, 'opts': 'crop'},
+
+    # Events
+    'events_main' : {'verbose_name' : 'Event large', 'width': 584, 'height': 275, 'opts': 'crop'},
+    'events_thumb' : {'verbose_name' : 'Event mini', 'width': 120, 'height': 65, 'opts': 'crop'},
+
+    # Companies
+    'companies_main' : {'verbose_name' : 'Company large', 'width': 584, 'height': 275, 'opts': 'crop'},
+    'companies_thumb' : {'verbose_name' : 'Company mini', 'width': 120, 'height': 65, 'opts': 'crop'}
 }
 
 # define the thumbnail in the admin-view

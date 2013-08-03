@@ -4,7 +4,7 @@
 function EventWidget (Utils){
 
     var that = $(this);
-    
+
     /* Render the widget */
     EventWidget.prototype.render = function() {
         var now = moment();
@@ -15,7 +15,7 @@ function EventWidget (Utils){
             'data': {},
             success: function(data) {
                 if(data.events.length > 0) {
-                    
+
                     // Fragment to append and global rowNode
                     var fragment = document.createDocumentFragment();
                     var rowNode;
@@ -36,7 +36,7 @@ function EventWidget (Utils){
                         }
                     });
 
-                    // Append the fragment after processing rows        
+                    // Append the fragment after processing rows
                     $('#event-items').append(fragment);
 
                 }else{
@@ -53,18 +53,19 @@ function EventWidget (Utils){
      */
     function createEventItem(item) {
 
-        var holderImage = $("<img>").attr({ "data-src": "holder.js/120x65", "alt": "" });
-        Holder.run({images: holderImage[0]});
+        // var holderImage = $("<img>").attr({ "data-src": "holder.js/120x65", "alt": "" });
+        // Holder.run({images: holderImage[0]});
 
         html = '<div class="span6">';
         html +=     '<div class="span1 event-type-' + item.event_type + '">';
         html +=         '<div class="row-fluid"><span class="event-calendar-date">' + moment(item.event_start).format('DD') + '</span></div>';
         html +=         '<div class="row-fluid"><span class="event-calendar-month">' + moment(item.event_start).format('MMM') + '</span></div>';
         html +=     '</div>';
-    /*    html +=     '<div class="span3"><img src="/static/js/holder.js/120x65" alt="" /></div>';*/
-        html += '<div class="span3">' + holderImage[0].outerHTML + "</div>";
+        html += '<div class="span3"><img src="' + item.image_events_thumb + '" alt="" /></div>';
         html +=     '<div class="span8">';
-        html +=         '<div class="event-title">' + item.title + '</div>';
+        html +=         '<a href="events/' + item.id + '">';
+        html +=             '<div class="event-title">' + item.title + '</div>';
+        html +=         '</a>'
         html +=         '<div class="event-ingress">' + item.ingress + '</div>';
         html += '   </div>';
         html += '</div>';

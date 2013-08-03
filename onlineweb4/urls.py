@@ -24,6 +24,7 @@ urlpatterns = patterns('',
     url(r'^api/',               include('apps.api.urls')),
     url(r'^article/',           include('apps.article.urls')),
     url(r'^careeropportunity/', include('apps.careeropportunity.urls')),
+    url(r'^company/',           include('apps.companyprofile.urls')),
     url(r'^events/',            include('apps.events.urls')),
     url(r'^mail/',              include('apps.autoconfig.urls')),
     url(r'^auth/',              include('apps.authentication.urls')),
@@ -31,6 +32,16 @@ urlpatterns = patterns('',
     url(r'^offline/',           include('apps.offline.urls')),
     url(r'^resourcecenter/mailinglists/', include('apps.mailinglists.urls')), # leave in this order because...
     url(r'^resourcecenter/',    include('apps.resourcecenter.urls')), # ...resourcecenter has catch-all on subpages
+
+    # nav-bar menu urls
+    url(r'^#events$', TemplateView.as_view(template_name='frontpage.html#events'), name='events-link'),
+    url(r'^#articles$', TemplateView.as_view(template_name='frontpage.html#articles'), name='articles-link'),
+    url(r'^#about$', TemplateView.as_view(template_name='frontpage.html#about'), name='about-link'),
+    url(r'^#business$', TemplateView.as_view(template_name='frontpage.html#business'), name='business-link'),
+    url(r'^#offline$', TemplateView.as_view(template_name='frontpage.html#offline'), name='offline-link'),
+
+    #Captcha url
+    url(r'^captcha/', include('captcha.urls')),
 
     # Online Notifier Owner Verification (checked yearly or so by Google)
     url(r'^google79c0b331a83a53de\.html$', lambda r: HttpResponse(

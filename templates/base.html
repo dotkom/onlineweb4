@@ -20,7 +20,7 @@
             <div class="container-fluid">
                 <ul class="nav">
                     <li class="top-menu-img">
-                        <a class="brand" href="./"><img src="{{ STATIC_URL }}img/online_logo.png" alt="Online" class="online-logo"></a>
+                        <a class="brand" href="{% url 'home' %}"><img src="{{ STATIC_URL }}img/online_logo.png" alt="Online" class="online-logo"></a>
                     </li>
                 </ul>
                 <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
@@ -31,19 +31,19 @@
                 <div class="nav-collapse collapse">
                     <ul class="nav menu-elements">
                         <li class="top-menu-link">
-                            <a href="#events" class="active">Arrangementer</a>
+                            <a href="{% url 'events-link' %}">Arrangementer</a>
                         </li>
                         <li class="top-menu-link">
-                            <a href="#articles">Artikler</a>
+                            <a href="{% url 'articles-link' %}">Artikler</a>
                         </li>
                         <li class="top-menu-link">
-                            <a href="#about">Om online</a>
+                            <a href="{% url 'about-link' %}">Om Online</a>
                         </li>
                         <li class="top-menu-link">
-                            <a href="#business">For bedrifter</a>
+                            <a href="{% url 'business-link' %}">For bedrifter</a>
                         </li>
                         <li class="top-menu-link">
-                            <a href="#offline">Offline</a>
+                            <a href="{% url 'offline-link' %}">Offilne</a>
                         </li>
                         <li class="top-menu-link">
                             <a href="http://wiki.online.ntnu.no/">Wiki</a>
@@ -62,7 +62,7 @@
                                 <li>
                                     <form>
                                         <div class="login-extra">
-                                            <a href="{% url auth_logout %}">Logg ut</a>
+                                            <a href="{% url 'auth_logout' %}">Logg ut</a>
                                         </div>
                                     </form>
                                 </li>
@@ -76,7 +76,7 @@
                                     <span class="caret-inner"/>
                                 </li>
                                 <li>
-                                <form method="POST" action="{% url auth_login %}">
+                                <form method="POST" action="{% url 'auth_login' %}">
                                     {% csrf_token %}
                                     <fieldset class="textbox">
                                         <label for="id_username">Brukernavn</label>
@@ -87,8 +87,8 @@
                                     <input type="hidden" name="next" value="{{ request.get_full_path }}" />
                                         <button type="submit" class="btn">Logg inn</button>
                                 </form>
-                                <button class="btn btn-auth" data-url="{% url auth_register %}">Registrer</button>
-                                <button class="btn btn-auth" data-url="{% url auth_recover %}">Glemt passord</button>
+                                <button class="btn btn-auth" data-url="{% url 'auth_register' %}">Registrer</button>
+                                <button class="btn btn-auth" data-url="{% url 'auth_recover' %}">Glemt passord</button>
                                 </li>
                             </ul>
                         {% endif %}
@@ -125,7 +125,6 @@
         <script src="{{ STATIC_URL }}js/libs/bootstrap.min.js"></script>
         <script src="{{ STATIC_URL }}js/libs/bootstrap-dropdown.js"></script>
         <script src="{{ STATIC_URL }}js/libs/moment.js"></script>
-        <script src="{{ STATIC_URL }}js/libs/d3.v3.min.js"></script>
         <script src="{{ STATIC_URL }}js/holder.js"></script>
         <script src="{{ STATIC_URL }}js/init.js"></script>
     {% endblock %}

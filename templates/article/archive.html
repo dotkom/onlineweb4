@@ -28,7 +28,7 @@
             <div class="span4 well">
                 <div class="row-fluid">
                     <div class="span12">
-                        <h3>Tags <a href="{% url article_archive %}" id="article_archive_tag_reset"><small>Alle</small></a></h3>
+                        <h3>Tags <a href="{% url 'article_archive' %}" id="article_archive_tag_reset"><small>Alle</small></a></h3>
                     </div>
                 </div>
                 <div class="row-fluid">
@@ -45,13 +45,13 @@
                         <h3>Filtrér på dato</h3>
                         <ul>
                             <li>
-                                <a id="article_archive_filter_reset" href="{% url article_archive %}">Alle</a>
+                                <a id="article_archive_filter_reset" href="{% url 'article_archive' %}">Alle</a>
                             </li>
                             {% for year, months in dates.items %}
-                                <li><a data-year="{{ year }}" data-month="" href="{% url article_archive_year year %}">{{ year }}</a></li>
+                                <li><a data-year="{{ year }}" data-month="" href="{% url 'article_archive_year' year %}">{{ year }}</a></li>
                                 <ul>
                                     {% for month in months %}
-                                        <li><a data-year="{{ year }}" data-month="{{ month }}" href="{% url article_archive_month year month %}">{{ month }}</a></li>
+                                        <li><a data-year="{{ year }}" data-month="{{ month }}" href="{% url 'article_archive_month' year month %}">{{ month }}</a></li>
                                     {% endfor %}
                                 </ul>
                             {% endfor %}
@@ -67,7 +67,6 @@
 {% block js %}
     {{ block.super }}
     <script type="text/javascript" src="{{ STATIC_URL }}js/Utils.js"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}js/ArticleWidget.js"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}js/article-dynamic.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/Article-archive.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}js/TagCloud.js"></script>
 {% endblock js %}

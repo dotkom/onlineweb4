@@ -51,7 +51,6 @@ class Migration(SchemaMigration):
         # Deleting field 'Article.image'
         db.delete_column('article_article', 'image')
 
-
         # Changing field 'Article.changed_date'
         db.alter_column('article_article', 'changed_date', self.gf('django.db.models.fields.DateTimeField')())
 

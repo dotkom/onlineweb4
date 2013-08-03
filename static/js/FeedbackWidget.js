@@ -1,5 +1,4 @@
 function createFoschart(chartdata) {
-
     var width = 700,
         height = 400,
         chartWidth = 400,
