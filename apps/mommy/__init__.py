@@ -3,6 +3,11 @@ from registry import Task
 from registry import Schedule
 from utils import send_mail
 from utils import send_notification
+
+import logging
+logger = logging.getLogger(__name__)
+logger.addHandler(logging.NullHandler)  # logg to /dev/null if no other handler
+
 schedule = Schedule()
 
 def autodiscover():
@@ -34,13 +39,5 @@ def run():
     sched = Scheduler()
     sched.start()
 
-    def logged_run(run, task):
-        def log_and_run(*args, **kwargs):
-            #TODO: figure out proper logging
-            print "Running task: %s" % task.__name__
-            return run(*args, **kwargs)
-        return log_and_run
-
-    print schedule.tasks
     for task, kwargs in schedule.tasks.iteritems():
-       sched.add_cron_job(logged_run(task.run, task), **kwargs)
+       sched.add_cron_job(task.run, name=task.__name__, **kwargs)

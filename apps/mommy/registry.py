@@ -1,5 +1,19 @@
 # encoding: utf-8
 
+"""
+A simple usage example, runs task every 5 seconds:
+
+    class DummyTask(Task):
+        @staticmethod
+        def run():
+            pass
+
+    schedule.register(dummyTask, second="*/5")
+
+For keyword arguments to schedule.register see:
+http://pythonhosted.org/APScheduler/cronschedule.html
+"""
+
 class Task(object):
     """
     A Task object ment to be inherited. Contains default values
@@ -12,6 +26,7 @@ class Task(object):
     user_override_notification = False  # user can configure
     user_default_notification = True  # default for user
 
+    @staticmethod
     def run():
         raise NotImplementedError("you must define a run() method for your task")
 
