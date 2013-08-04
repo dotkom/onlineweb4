@@ -1,30 +1,6 @@
 # encoding: utf-8
 
-"""
-A simple usage example, runs task every 5 seconds:
-
-    class DummyTask(Task):
-        @staticmethod
-        def run():
-            pass
-
-    schedule.register(dummyTask, second="*/5")
-
-For keyword arguments to schedule.register see:
-http://pythonhosted.org/APScheduler/cronschedule.html
-"""
-
 class Task(object):
-    """
-    A Task object ment to be inherited. Contains default values
-    """
-    task_name = ""  # A human readable task_name.
-
-    user_override_email = False  # user can configurate email from this task
-    user_default_email = True  # The default configuration for the user
-
-    user_override_notification = False  # user can configure
-    user_default_notification = True  # default for user
 
     @staticmethod
     def run():
@@ -37,7 +13,9 @@ class Task(object):
         return self.task_name
 
 class Schedule(object):
-    """A Schedule containing tasks"""
+    """
+    A Schedule containing tasks
+    """
 
     def __init__(self):
         self._task_names = []
