@@ -128,6 +128,7 @@ INSTALLED_APPS = (
     'apps.offline',
     'apps.userprofile',
     'apps.feedback',
+    'apps.mommy',
 )
 
 # A sample logging configuration. The only tangible logging
