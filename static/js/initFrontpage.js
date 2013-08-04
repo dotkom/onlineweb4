@@ -7,7 +7,7 @@ $(function() {
     // Render on load
     eventWidget.render();
     offlineWidget.render(156, 10);
-	articleWidget.renderFrontpage();
+	articleWidget.render();
 
     // Render on resize
     $(window).on('debouncedresize',function() {

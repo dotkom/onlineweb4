@@ -170,6 +170,10 @@ MESSAGE_TAGS = {messages.DEBUG: 'alert-debug',
                 messages.ERROR: 'alert-error'}
 
 
+# Not really sure what this does.
+# Has something to do with django-dynamic-fixture bumped from 1.6.4 to 1.6.5 in order to run a syncdb with mysql/postgres (OptimusCrime)
+IMPORT_DDF_MODELS = False
+
 # Remember to keep 'local' last, so it can override any setting.
 for settings_module in ['filebrowser', 'local']:  # local last
     if not os.path.exists(os.path.join(PROJECT_SETTINGS_DIRECTORY,
