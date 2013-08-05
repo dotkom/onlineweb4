@@ -13,6 +13,8 @@ class CareerOpportunity(models.Model):
     title = models.CharField(_('tittel'), max_length=100)
     ingress = models.CharField(_('ingress'), max_length=250)
     description = models.TextField(_('beskrivelse'))
+    start = models.DateTimeField(_('aktiv fra'))
+    end = models.DateTimeField(_('aktiv til'))
 
     def __unicode__(self):
         return self.title
