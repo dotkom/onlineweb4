@@ -3,9 +3,9 @@ $(document).ready(function() {
     var navs = {
         '#events': $('#events').offset().top,
         '#articles': $('#articles').offset().top,
-        '#about': $('#about').offset().top,
+        '#offline': $('#offline').offset().top,
         '#business': $('#business').offset().top,
-        '#offline': $('#offline').offset().top
+        '#about': $('#about').offset().top
     };
         
     // On scroll, loop the navs and swap active (if it needs to)
