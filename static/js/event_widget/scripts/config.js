@@ -6,7 +6,6 @@ require.config({
         'backbone': '../bower_components/backbone-amd/backbone',
         'backbone.wreqr': '../bower_components/backbone.wreqr/lib/amd/backbone.wreqr',
         'backbone.babysitter': '../bower_components/backbone.babysitter/lib/amd/backbone.babysitter',
-        'backbone.tastypie': 'vendor/backbone-tastypie',
         'backbone.marionette': '../bower_components/backbone.marionette/lib/backbone.marionette',
         'underscore': '../bower_components/underscore-amd/underscore',
         'jquery': '../bower_components/jquery/jquery',
@@ -56,7 +55,7 @@ require(['backbone', 'backbone.marionette', 'router'], function(Backbone, Marion
 
     EventWidget.on('initialize:after', function() {
         if (Backbone.history) {
-            Backbone.history.start();
+            Backbone.history.start({root: '/events/'});
         }
     });
 
