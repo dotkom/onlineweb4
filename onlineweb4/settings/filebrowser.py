@@ -28,7 +28,7 @@ FILEBROWSER_VERSIONS = {
     # Companies
     'companies_main' : {'verbose_name' : 'Company large', 'width': 584, 'height': 275, 'opts': 'crop'},
     'companies_thumb' : {'verbose_name' : 'Company mini', 'width': 120, 'height': 65, 'opts': 'crop'},
-    'companies_medium' : {'verbose_name' : 'Company medium', 'width': 270, 'height': 146, 'opts': 'crop'}
+    'companies_medium' : {'verbose_name' : 'Company medium', 'width': 277, 'height': 146, 'opts': 'crop'}
 }
 
 # define the thumbnail in the admin-view
