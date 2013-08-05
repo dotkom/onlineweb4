@@ -1,4 +1,3 @@
-
 $(function() {
     var utils = new Utils();
     var eventWidget = new EventWidget(utils);
@@ -11,7 +10,7 @@ $(function() {
 	articleWidget.render();
 
     // Render on resize
-    $(window).resize(function() {
+    $(window).on('debouncedresize',function() {
         offlineWidget.render(156, 10);
     });
 

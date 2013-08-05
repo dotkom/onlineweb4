@@ -3,8 +3,6 @@ function Utils() {
 
     var that = this;
     this.apiQueue = [];
-
-    
     
     /* adapted from djangoproject.com */
     /* Static method */
