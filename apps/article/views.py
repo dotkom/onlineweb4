@@ -2,6 +2,7 @@ from django.template import Template, Context, loader, RequestContext
 from django.shortcuts import render_to_response, get_object_or_404
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.http import HttpResponse
+from django.db.models import Count
 from models import Article, Tag, ArticleTag
 import random
 
@@ -128,13 +129,14 @@ def archive_month(request, year, month):
     return archive(request, year=year, month=month)
 
 def details(request, article_id):
-	article = get_object_or_404(Article, pk=article_id)
-	
-	if (article.changed_date != article.created_date):
-		article.is_changed = True
-	else:
-		article.is_changed = False
-	
-        latestNews = Article.objects.exclude(id = article.id).order_by('published_date').reverse()[:4]
 
-	return render_to_response('article/details.html', {'article': article, 'latest': latestNews}, context_instance=RequestContext(request))
+    article = get_object_or_404(Article, pk=article_id)
+
+    if article.changed_date != article.created_date:
+        article.is_changed = True
+    else:
+        article.is_changed = False
+
+    related_articles = Article.objects.filter(article_tags__tag__in=article.tags).distinct().annotate(num_tags=Count('article_tags__tag')).order_by('-num_tags', '-published_date').exclude(id=article.id)[:4]
+
+    return render_to_response('article/details.html', {'article': article, 'related_articles': related_articles}, context_instance=RequestContext(request))
