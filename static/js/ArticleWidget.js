@@ -6,20 +6,26 @@ function ArticleWidget (Utils){
             'method': 'GET',
             'data': {},
             success: function(data) {
-                var output_featured = '';
-                var output_normal = '';
 
-                // The loop
-                for (var i = 0; i < data.articles.length; i++) {
-                    if (i <= 1)
-                        output_featured += '<div class="span6"><a href="/article/'+data.articles[i].id+'"><img src="'+data.articles[i].image_article_front_featured+'" alt="'+data.articles[i].heading+'"></a><h3><a href="/article/'+data.articles[i].id+'">'+data.articles[i].heading+'</a></h3><p>'+data.articles[i].ingress+'</p></div>';
-                    else
-                        output_normal += '<div class="span2"><a href="/article/'+data.articles[i].id+'"><img src="'+data.articles[i].image_article_front_small+'" alt="'+data.articles[i].heading+'"></a><br /><h4><a href="/article/'+data.articles[i].id+'">'+data.articles[i].heading+'</a></h4></div>';
+                if(data.length > 0) {
+                    var output_featured = '';
+                    var output_normal = '';
+
+                    // The loop
+                    for (var i = 0; i < data.articles.length; i++) {
+                        if (i <= 1)
+                            output_featured += '<div class="span6"><a href="/article/'+data.articles[i].id+'"><img src="'+data.articles[i].image_article_front_featured+'" alt="'+data.articles[i].heading+'"></a><h3><a href="/article/'+data.articles[i].id+'">'+data.articles[i].heading+'</a></h3><p>'+data.articles[i].ingress+'</p></div>';
+                        else
+                            output_normal += '<div class="span2"><a href="/article/'+data.articles[i].id+'"><img src="'+data.articles[i].image_article_front_small+'" alt="'+data.articles[i].heading+'"></a><br /><h4><a href="/article/'+data.articles[i].id+'">'+data.articles[i].heading+'</a></h4></div>';
+                    }
+                    
+                    // Appending
+                    $('#article-frontpage-featured').html(output_featured);
+                    $('#article-frontpage-normal').html(output_normal);
+                    
+                }else {
+                    $('#article-frontpage-featured').html('<p class="ingress">Ingen artikler funnet</p>');
                 }
-                
-                // Appending
-                $('#article-frontpage-featured').html(output_featured);
-                $('#article-frontpage-normal').html(output_normal);
             }
         });
         
