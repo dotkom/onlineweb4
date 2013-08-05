@@ -6,8 +6,7 @@ function ArticleWidget (Utils){
             'method': 'GET',
             'data': {},
             success: function(data) {
-
-                if(data.length > 0) {
+                if(data.articles.length > 0) {
                     var output_featured = '';
                     var output_normal = '';
 
@@ -22,7 +21,7 @@ function ArticleWidget (Utils){
                     // Appending
                     $('#article-frontpage-featured').html(output_featured);
                     $('#article-frontpage-normal').html(output_normal);
-                    
+
                 }else {
                     $('#article-frontpage-featured').html('<p class="ingress">Ingen artikler funnet</p>');
                 }
