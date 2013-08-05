@@ -1,14 +1,13 @@
 #-*- coding: utf-8 -*-
+from datetime import datetime
 from django.shortcuts import render_to_response
 from django.shortcuts import get_object_or_404
 from django.template import RequestContext
 from apps.careeropportunity.models import CareerOpportunity
 
-import datetime
-
 
 def index(request):
-    opportunities = CareerOpportunity.objects.all()
+    opportunities = CareerOpportunity.objects.filter(start__lte=datetime.now(), end__gte=datetime.now())
     
     return render_to_response('careeropportunity/index.html', \
             {'opportunities': opportunities}, \
