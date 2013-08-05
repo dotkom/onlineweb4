@@ -76,24 +76,28 @@
                 </div>
                 <div class="row-fluid">
                     <div class="span12 related-articles">
-                        {% for related_article in related_articles %}
-                            {% if forloop.counter0|divisibleby:"2" %}
-                                <div class="row-fluid row-space">
-                            {% endif %}
-                                <div class="span6">
-                                    <a href="{% url 'article_details' related_article.id%}">
-                                        <img src="{% version related_article.image 'article_related' %}" 
-                                            alt="{{ related_article.heading }}"/>
-                                        <h4>{{ related_article.heading }}</h4>
-                                    </a>
-                                </div>
-                            {% if forloop.counter|divisibleby:"2" and not forloop.last%}
-                                </div>
-                            {% endif %}
-                            {% if forloop.last %}
-                                </div>
-                            {% endif %}
-                        {% endfor %}
+                        {% if related_articles %}
+                            {% for related_article in related_articles %}
+                                {% if forloop.counter0|divisibleby:"2" %}
+                                    <div class="row-fluid row-space">
+                                {% endif %}
+                                    <div class="span6">
+                                        <a href="{% url 'article_details' related_article.id%}">
+                                            <img src="{% version related_article.image 'article_related' %}" 
+                                                alt="{{ related_article.heading }}"/>
+                                            <h4>{{ related_article.heading }}</h4>
+                                        </a>
+                                    </div>
+                                {% if forloop.counter|divisibleby:"2" and not forloop.last%}
+                                    </div>
+                                {% endif %}
+                                {% if forloop.last %}
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                        {% else %}
+                            <p>Ingen relaterte artikler funnet.</p>
+                        {% endif%}
                     </div>
                 </div>
                 <div class="row-fluid">
