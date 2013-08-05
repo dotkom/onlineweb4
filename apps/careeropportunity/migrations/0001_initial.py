@@ -7,6 +7,10 @@ from django.db import models
 
 class Migration(SchemaMigration):
 
+    depends_on = (
+        ('companyprofile', '0001_initial'),
+        )
+
     def forwards(self, orm):
         # Adding model 'CareerOpportunity'
         db.create_table('careeropportunity_careeropportunity', (
