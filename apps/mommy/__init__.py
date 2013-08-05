@@ -1,8 +1,6 @@
 # encoding: utf-8
 from registry import Task
 from registry import Schedule
-from utils import send_mail
-from utils import send_notification
 
 import logging
 logger = logging.getLogger(__name__)
