@@ -13,7 +13,7 @@ def autodiscover():
     imports mommy.py modules from all INSTALLED_APPS.
     """
     import copy
-    from importlib import import_module
+    from django.utils.importlib import import_module
     from django.conf import settings
     from django.utils.module_loading import module_has_submodule
 
