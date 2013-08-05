@@ -4,7 +4,7 @@ from registry import Schedule
 
 import logging
 logger = logging.getLogger(__name__)
-logger.addHandler(logging.NullHandler)  # logg to /dev/null if no other handler
+#logger.addHandler(logging.NullHandler)  # logg to /dev/null if no other handler
 
 schedule = Schedule()
 
