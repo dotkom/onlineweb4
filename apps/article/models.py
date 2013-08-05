@@ -77,8 +77,8 @@ class Tag(models.Model):
 
 
 class ArticleTag(models.Model):
-    article = models.ForeignKey(Article, verbose_name=_(u"artikkel"))
-    tag = models.ForeignKey(Tag, verbose_name=_(u"tag"))
+    article = models.ForeignKey(Article, verbose_name=_(u"artikkel"), related_name='article_tags')
+    tag = models.ForeignKey(Tag, verbose_name=_(u"tag"), related_name='article_tags')
 
     class Meta:
         verbose_name = _(u"tag")
