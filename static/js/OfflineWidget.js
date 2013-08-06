@@ -2,7 +2,7 @@ function OfflineWidget (Utils){
     var that = $(this);
     
     /* Render the widget */
-    OfflineWidget.prototype.render = function(imageWidth, imageMargin) {
+    OfflineWidget.prototype.render = function(imageWidth, imageMargin, callback) {
         Utils.makeApiRequest({
             'url': '/api/v0/offline/issues/?format=json',
             'method': 'GET',
@@ -44,6 +44,9 @@ function OfflineWidget (Utils){
                 $("#offlineCarousel .carousel-inner").html(insertMe);
                 $("#offlineCarousel .carousel-inner div.item:first").addClass("active");
                 $("#offlineCarousel").carousel('pause');
+                
+                // Calling the callback
+                callback();
             }
         });
     };
