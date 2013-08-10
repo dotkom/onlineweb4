@@ -6,11 +6,12 @@ from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import User
 
 from apps.userprofile.models import UserProfile
+from apps.userprofile.models import Privacy
 
 admin.site.unregister(User)
 
 class NoDeleteInline(models.BaseInlineFormSet):
-    """ 
+    """
     Custom formset to prevent deletion
 
     Used by the inline for userprofiles to prevent the possibility
@@ -27,8 +28,13 @@ class UserProfileInline(admin.StackedInline):
     # the user admin detail screen is opened.
     inline_classes = ('grp-collapse', 'grp-open',)
 
+class PrivacyInline(admin.StackedInline):
+    model = Privacy
+    formset = NoDeleteInline
+    inline_classes = ('grp-collapse', 'grp-closed',)
+
 class UserProfileAdmin(UserAdmin):
-    inlines = [UserProfileInline,]
+    inlines = [UserProfileInline, PrivacyInline, ]
     list_display = ('username', 'first_name', 'last_name', 'field_of_study',)
     list_filter = ('groups', 'is_staff', 'is_superuser')
     filter_horizontal = ('groups',)
