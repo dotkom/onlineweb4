@@ -100,6 +100,7 @@ class UserProfile(models.Model):
         verbose_name_plural = _(u"brukerprofiler")
 
 class Privacy(models.Model):
+    visible_for_other_users = models.BooleanField(_(u"profil synlig for andre brukere"), default=True)
     expose_username = models.BooleanField(_(u"vis brukernavn"), default=True)
     expose_email = models.BooleanField(_(u"vis epost"), default=True)
     expose_first_name = models.BooleanField(_(u"vis fornavn"), default=True)
@@ -110,10 +111,10 @@ class Privacy(models.Model):
     expose_phone_number = models.BooleanField(_(u"vis telefonnummer"), default=True)
     expose_address = models.BooleanField(_(u"vis addresse"), default=True)
 
-    user = models.OneToOneField(User, primary_key=True, related_name="privacy")
+    user = models.ForeignKey(User, unique=True, related_name="privacy")
 
     def __unicode__(self):
-        return self.user_profile.user.get_full_name()
+        return self.user.get_full_name()
 
     class Meta:
         verbose_name = _(u"personvern")

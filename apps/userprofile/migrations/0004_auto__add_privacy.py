@@ -10,16 +10,17 @@ class Migration(SchemaMigration):
     def forwards(self, orm):
         # Adding model 'Privacy'
         db.create_table(u'userprofile_privacy', (
-            ('expose_username', self.gf('django.db.models.fields.BooleanField')(default=False)),
-            ('expose_email', self.gf('django.db.models.fields.BooleanField')(default=False)),
-            ('expose_first_name', self.gf('django.db.models.fields.BooleanField')(default=False)),
-            ('expose_last_name', self.gf('django.db.models.fields.BooleanField')(default=False)),
-            ('expose_field_of_study', self.gf('django.db.models.fields.BooleanField')(default=False)),
-            ('expose_started_date', self.gf('django.db.models.fields.BooleanField')(default=False)),
-            ('expose_compiled', self.gf('django.db.models.fields.BooleanField')(default=False)),
-            ('expose_phone_number', self.gf('django.db.models.fields.BooleanField')(default=False)),
-            ('expose_address', self.gf('django.db.models.fields.BooleanField')(default=False)),
-            ('user', self.gf('django.db.models.fields.related.OneToOneField')(related_name='privacy', unique=True, primary_key=True, to=orm['auth.User'])),
+            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('expose_username', self.gf('django.db.models.fields.BooleanField')(default=True)),
+            ('expose_email', self.gf('django.db.models.fields.BooleanField')(default=True)),
+            ('expose_first_name', self.gf('django.db.models.fields.BooleanField')(default=True)),
+            ('expose_last_name', self.gf('django.db.models.fields.BooleanField')(default=True)),
+            ('expose_field_of_study', self.gf('django.db.models.fields.BooleanField')(default=True)),
+            ('expose_started_date', self.gf('django.db.models.fields.BooleanField')(default=True)),
+            ('expose_compiled', self.gf('django.db.models.fields.BooleanField')(default=True)),
+            ('expose_phone_number', self.gf('django.db.models.fields.BooleanField')(default=True)),
+            ('expose_address', self.gf('django.db.models.fields.BooleanField')(default=True)),
+            ('user', self.gf('django.db.models.fields.related.ForeignKey')(related_name='privacy', unique=True, to=orm['auth.User'])),
         ))
         db.send_create_signal(u'userprofile', ['Privacy'])
 
@@ -68,16 +69,17 @@ class Migration(SchemaMigration):
         },
         u'userprofile.privacy': {
             'Meta': {'object_name': 'Privacy'},
-            'expose_address': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'expose_compiled': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'expose_email': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'expose_field_of_study': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'expose_first_name': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'expose_last_name': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'expose_phone_number': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'expose_started_date': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'expose_username': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'user': ('django.db.models.fields.related.OneToOneField', [], {'related_name': "'privacy'", 'unique': 'True', 'primary_key': 'True', 'to': u"orm['auth.User']"})
+            'expose_address': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
+            'expose_compiled': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
+            'expose_email': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
+            'expose_field_of_study': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
+            'expose_first_name': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
+            'expose_last_name': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
+            'expose_phone_number': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
+            'expose_started_date': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
+            'expose_username': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'user': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'privacy'", 'unique': 'True', 'to': u"orm['auth.User']"})
         },
         u'userprofile.userprofile': {
             'Meta': {'object_name': 'UserProfile'},
@@ -92,7 +94,7 @@ class Migration(SchemaMigration):
             'mark_rules': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'phone_number': ('django.db.models.fields.CharField', [], {'max_length': '20', 'null': 'True', 'blank': 'True'}),
             'rfid': ('django.db.models.fields.CharField', [], {'max_length': '50', 'null': 'True', 'blank': 'True'}),
-            'started_date': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2013, 8, 10, 0, 0)'}),
+            'started_date': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2013, 8, 11, 0, 0)'}),
             'user': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'userprofile'", 'unique': 'True', 'to': u"orm['auth.User']"})
         }
     }
