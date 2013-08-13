@@ -1,0 +1,50 @@
+@image-width: 180px;
+@image-width-with-padding: 188px;
+
+.word-break {
+  word-break: normal;
+}
+
+#hidden-input {
+  display: none;
+}
+
+.img-polaroid {
+  border-bottom: none;
+  max-width: @image-width;
+  margin-bottom: 10px;
+}
+
+#image-box {
+  max-width: @image-width-with-padding;
+  position: relative;
+}
+
+#allergies {
+  height: 50px;
+}
+
+.image-box-entity {
+  max-width: @image-width-with-padding;
+  width: @image-width-with-padding;
+  margin: 5px;
+  margin-left: 0px;
+}
+
+label.image-box-entity {
+  padding: 4px 0px 4px 0px;
+  width: @image-width-with-padding - 2;
+}
+
+i.btn-icon {
+  .pull-left;
+  margin-top: 4px;
+}
+
+button > i.btn-icon {
+  margin-left: 10px;
+}
+
+label > i.btn-icon {
+  margin-left: 22px;
+}

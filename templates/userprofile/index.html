@@ -1,5 +1,8 @@
 {% extends "base.html" %}
-{% load fb_versions %}
+{% block js %}
+    {{ block.super }}
+    <script src="{{ STATIC_URL }}/js/userprofile.js"></script>
+{% endblock %}
 {% block content %}
 
     <section id="profile">
@@ -7,7 +10,7 @@
             <div class="row-fluid">
                 <div class="span12">
                     <div class="page-header">
-                        <h2>Mine side</h2>
+                        <h2>Min side</h2>
                     </div>
                 </div>
             </div>
@@ -18,16 +21,99 @@
                             <li class="active"><a href="#myprofile" data-toggle="tab">Brukerinformasjon</a></li>
                             <li><a href="#myevents" data-toggle="tab">Mine events</a></li>
                             <li><a href="#privacy" data-toggle="tab">Personvern</a></li>
+                            <li><a href="#password" data-toggle="tab">Passord</a></li>
                         </ul>
                         <div class="tab-content">
+                            <!-- Profile -->
                             <div id="myprofile" class="tab-pane active">
-                                <h3>Min profil</h3>
+                                <div class="row-fluid">
+                                    <form method="post" action="/saveprofile/" enctype="multipart/form-data">
+                                        <div class="span12">
+                                            {% csrf_token %}
+                                            <div class="row-fluid">
+                                                <div class="span6">
+                                                    <div class="row-fluid">
+                                                        <div class="span12">
+                                                            <h3>Personlig informasjon</h3>
+                                                        </div>
+                                                    </div>
+                                                    <div class="inline">
+                                                        <div class="span4">Nickname:</div>
+                                                        <div class="span8">{{ form.nickname }}</div>
+                                                    </div>
+                                                    <div class="inline">
+                                                        <div class="span4">E-post:</div>
+                                                        <div class="span8">{{ form.email }}</div>
+                                                    </div>
+                                                    <div class="inline">
+                                                        <div class="span4">Web-side:</div>
+                                                        <div class="span8">{{ form.website }}</div>
+                                                    </div>
+                                                    <hr />
+                                                    <div class="inline">
+                                                        <div class="span4">Telefonnummer:</div>
+                                                        <div class="span8">{{ form.phone_number }}</div>
+                                                    </div>
+                                                    <div class="inline">
+                                                        <div class="span4">Adresse:</div>
+                                                        <div class="span8">{{ form.address }}</div>
+                                                    </div>
+                                                    <div class="inline">
+                                                        <div class="span4">Postnummer:</div>
+                                                        <div class="span8">{{ form.area_code }}</div>
+                                                    </div>
+                                                    <div class="inline">
+                                                        <div class="span4">Allergier:</div>
+                                                        <div class="span8 input-medium">{{ form.allergies }}</div>
+                                                    </div>
+                                                    <hr />
+                                                    <div class="inline">
+                                                        <div class="span4"> Ønsker infomail:</div>
+                                                        <div class="span8">{{ form.infomail }}</div>
+                                                    </div>
+                                                    <div class="inline">
+                                                        <div class="span4 word-break">Godtatt prikkeregler:</div>
+                                                        <div class="span8 input-medium">{{ form.mark_rules }}</div>
+                                                    </div>
+                                                </div>
+                                                <div class="span5">
+                                                    <div class="row-fluid">
+                                                        <div class="span12">
+                                                            <h3>Bilde</h3>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row-fluid">
+                                                        <div class="span6">
+                                                            <div id="image-box">
+                                                                <img class="img-polaroid fadeload" id="profile-image" src="{{ userprofile.image.url }}" alt="profilbilde">
+                                                                <label for="hidden-input" class="btn image-box-entity"><i class="icon-upload btn-icon"></i> Velg et nytt bilde.</label>
+                                                                {{ form.image_upload }}
+                                                                {{ form.image_upload.errors }}
+                                                                <input type="text" id="image-name" class="image-box-entity"/>
+                                                                <button type="button" class="btn btn-danger image-box-entity" id="remove-image"><i class="icon-remove btn-icon"></i> Fjern bilde.</button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="span12 form-actions" style="margin-left: 0px">
+                                            <button class="btn btn-success pull-right" type="submit">Lagre</button>
+                                        </div>
+                                    </form>
+                                </div>
                             </div>
+                            <!-- My Events -->
                             <div id="myevents" class="tab-pane">
                                 <h3>Mine events</h3>
                             </div>
+                            <!-- Privacy -->
                             <div id="privacy" class="tab-pane">
-                                <h4></h4>
+                                <h4>Personvern</h4>
+                            </div>
+                            <!-- Password -->
+                            <div id="password" class="tab-pane">
+                                <h4>Passord</h4>
                             </div>
                         </div>
                     </div>
@@ -35,5 +121,4 @@
             </div>
         </div>
     </section>
-
 {% endblock content %}

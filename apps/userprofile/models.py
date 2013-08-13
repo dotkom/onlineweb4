@@ -38,6 +38,8 @@ class UserProfile(models.Model):
     area_code = models.CharField(_(u"postnummer"), max_length=4, blank=True, null=True)
 
     # Other
+    nickname = models.CharField(_(u"nickname"), max_length=50, blank=True, null=True)
+    website = models.CharField(_(u"hjemmeside"), max_length=50, blank=True, null=True)
     allergies = models.TextField(_(u"allergier"), blank=True, null=True)
     mark_rules = models.BooleanField(_(u"godtatt prikkeregler"), default=False)
     rfid = models.CharField(_(u"RFID"), max_length=50, blank=True, null=True)
