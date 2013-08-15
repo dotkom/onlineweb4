@@ -6,7 +6,7 @@ function EventWidget (Utils){
     var that = $(this);
 
     /* Render the widget */
-    EventWidget.prototype.render = function() {
+    EventWidget.prototype.render = function(callback) {
         var now = moment();
 
         Utils.makeApiRequest({
@@ -43,6 +43,9 @@ function EventWidget (Utils){
                     // Display text if no data was found
                     $('#event-items').html('<p class="ingress">Ingen arrangementer funnet</p>');
                 }
+                
+                // Calling the callback
+                callback();
             }
         });
     }
