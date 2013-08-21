@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-
 from tastypie import fields
 from tastypie.resources import ModelResource
 from tastypie.authorization import Authorization
