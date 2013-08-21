@@ -5,18 +5,8 @@ from tastypie.resources import ModelResource
 from tastypie.authorization import Authorization
 
 from apps.authentication.models import OnlineUser as User
-from apps.userprofile.models import UserProfile
-
-class UserProfileResource(ModelResource):
-    class Meta:
-        queryset = UserProfile.objects.all()
-        resource_name = 'profile'
-        fields = ['address', 'area_code', 'field_of_study', 'phone_number', 'started_date',]
-        include_resource_uri = False
-        include_absolute_url = False
 
 class UserResource(ModelResource):
-    profile = fields.ToOneField(UserProfileResource, 'get_profile', full=True)
 
     class Meta:
         queryset = User.objects.all()
