@@ -27,7 +27,7 @@ class ArticleResource(ModelResource):
     
     # Making multiple images for the article
     def dehydrate(self, bundle):
-        
+
         # If image is set
         if bundle.data['image']:
             # Parse to FileObject used by Filebrowser
@@ -89,6 +89,7 @@ class ArticleResource(ModelResource):
         queryset = Article.objects.all()
         resource_name = 'article/all'
         ordering = ['published_date']
+        include_absolute_url = True
         filtering = {
             'featured' : ('exact',),
             'published_date' : ('gte',),

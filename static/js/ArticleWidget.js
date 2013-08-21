@@ -35,8 +35,10 @@ function ArticleWidget (Utils){
                     
                     // The loop
                     for (var i = 0; i < data.articles.length; i++) {
+                        // For each please, can only mimic since javascript :-(
+                        article = data.articles[i]
                         // The markup
-                        output += '<div class="span4 article"><a href="'+data.articles[i].id+'"><img src="'+data.articles[i].image_article_front_small+'" style="width: 248px; height: 100px;" alt="'+data.articles[i].heading+'" /></a><a href="'+data.articles[i].id+'"><h3>'+data.articles[i].heading+'</h3></a><p>'+data.articles[i].ingress+'</p><span class="date pull-right">'+data.articles[i].published_date+'</span><span></span></div>'
+                        output += '<div class="span4 article"><a href="'+article.absolute_url+'"><img src="'+article.image_article_front_small+'" style="width: 248px; height: 100px;" alt="'+article.heading+'" /></a><a href="'+article.absolute_url+'"><h3>'+article.heading+'</h3></a><p>'+article.ingress+'</p><span class="date pull-right">'+article.published_date+'</span><span></span></div>'
                         
                         // Every third element in a chunk
                         if (num % 3 == 0)
@@ -105,7 +107,9 @@ function ArticleWidget (Utils){
 
                 // The loop
                 for (var i = 0; i < data.articles.length; i++) {
-                    output += '<div class="span6"><a href="/article/'+data.articles[i].id+'"><img src="'+data.articles[i].image_article_front_featured+'" alt="'+data.articles[i].heading+'"></a><h3>'+data.articles[i].heading+'</h3><p>'+data.articles[i].ingress+'</p></div>';
+                    // For each please, can only mimic since javascript :-(
+                    article = data.articles[i]
+                    output += '<div class="span6"><a href="'+article.absolute_url+'"><img src="'+article.image_article_front_featured+'" alt="'+article.heading+'"></a><h3>'+article.heading+'</h3><p>'+article.ingress+'</p></div>';
                 }
 
                 $('#article-frontpage-featured').html(output);
@@ -122,7 +126,9 @@ function ArticleWidget (Utils){
 
                 // The loop
                 for (var i = 0; i < data.articles.length; i++) {
-                    output += '<div class="span2"><a href="/article/'+data.articles[i].id+'"><img src="'+data.articles[i].image_article_front_small+'" alt="'+data.articles[i].heading+'"></a><br /><h4>'+data.articles[i].heading+'</h4></div>';
+                    // For each please, can only mimic since javascript :-(
+                    article = data.articles[i]
+                    output += '<div class="span2"><a href="'+article.absolute_url+'"><img src="'+article.image_article_front_small+'" alt="'+article.heading+'"></a><br /><h4>'+article.heading+'</h4></div>';
                 }
 
                 $('#article-frontpage-normal').html(output);
@@ -140,7 +146,9 @@ function ArticleWidget (Utils){
 
                 // The loop
                 for (var i = 0; i < data.articles.length; i++) {
-                output += '<div class="row-fluid"><div class="span12"><a href="/article/'+data.articles[i].id+'"><img src="'+data.articles[i].image_article_front_small+'" alt="'+data.articles[i].heading+'"></a><br /><h4>'+data.articles[i].heading+'</h4></div></div>';
+                    // For each please, can only mimic since javascript :-(
+                    article = data.articles[i]
+                    output += '<div class="row-fluid"><div class="span12"><a href="'+article.absolute_url+'"><img src="'+article.image_article_front_small+'" alt="'+article.heading+'"></a><br /><h4>'+article.heading+'</h4></div></div>';
                 }
 
                 $('#article-detaill-latest').html(output);
