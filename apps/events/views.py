@@ -43,8 +43,8 @@ def details(request, event_id):
             if attendance_event.is_attendee(request.user):
                 user_attending = True
 
-            if attendance_event.will_i_be_on_wait_list:
-                will_be_on_wait_list = True
+            
+            will_be_on_wait_list = attendance_event.will_i_be_on_wait_list
 
             user_status = event.is_eligible_for_signup(request.user)
 

@@ -209,7 +209,7 @@ class FieldOfStudyRule(Rule):
 class GradeRule(Rule):
     grade = models.SmallIntegerField(_(u'klassetrinn'), null=False)
 
-    def satisfied(self, user):
+    def satisfied(self, user, registration_start):
         try:
             userprofile = UserProfile.objects.get(pk=user.pk)
         except ObjectDoesNotExist:
@@ -360,6 +360,7 @@ class AttendanceEvent(models.Model):
     def room_on_event(self):
         return True if (self.attendees.count() < self.max_capacity) or self.waitlist else False
 
+    @property
     def will_i_be_on_wait_list(self):
         return True if (self.attendees.count() >= self.max_capacity) and self.waitlist else False
 
