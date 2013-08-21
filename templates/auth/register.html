@@ -8,9 +8,22 @@
     </div>
     <form method="post" action={% url 'auth_register' %}>
         {% csrf_token %}
-            {{ form|crispy }}
-        <div class="form-actions">
-            <input type="submit" value="Registrer" />
+        <div class="row-fluid">
+            <div class="span6">
+                {% for field in form %}
+                    <div class="inline">
+                        <div class="span4">{{ field.label }}</div>
+                        <div class="span8">
+                            {{ field }}
+                            {{ field.errors }}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div><!-- /span6 -->
+        </div><!-- /row-fluid -->
+        
+        <div class="span12 form-actions">
+            <button class="tbn btn-success pull-right" type="submit">Registrer</button>
         </div>
     </form>
 </div>
