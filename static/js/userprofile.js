@@ -1,23 +1,58 @@
+/* AJAX SETUP FOR CSRF */
+$.ajaxSetup({
+    crossDomain: false, // obviates need for sameOrigin test
+    beforeSend: function(xhr, settings) {
+        if (!csrfSafeMethod(settings.type)) {
+            xhr.setRequestHeader("X-CSRFToken", $.cookie('csrftoken'));
+        }
+    }
+});
+function csrfSafeMethod(method) {
+    // these HTTP methods do not require CSRF protection
+    return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+}
+/* END AJAX SETUP */
+
 $(document).ready(function() {
     $('#image-name').hide();
 });
 
+//Show image name input field when chosing new image
 $('input[type=file]').change(function() {
     var filename = $('input[type=file]').val().split('\\').pop();
     $('#image-name').val(filename);
     $('#image-name').show();
+
+    displayImage(this);
 });
 
-//$(".fadeload").bind("load", function () { $(this).fadeIn('slow'); });
+//Ajax request to remove profile image
+$('#confirm-delete').click(function() {
+    confirmRemoveImage();
+});
 
-//$(function() {
-//    $("#profile-image").hover(function() {
-//        $(this).animate({
-//            opacity: 0.2
-//        });
-//    }, function() {
-//        $(this).stop(true, true).animate({
-//            opacity: 1
-//        });
-//    });
-//});
+function confirmRemoveImage() {
+    $.ajax({
+        method: 'DELETE',
+        url: 'profile/removeprofileimage',
+        success: function() {
+            $('img#profile-image').attr('src', "http://i.imgur.com/dZivKdI.gif");
+            $('#remove-image-modal').modal("hide");
+        },
+        error: function() {
+            alert("Error!")
+        },
+        crossDomain: false
+    });
+}
+
+/* Load image when selecting file */
+function displayImage(inputBox) {
+    if(inputBox.files && input.files[0]) {
+        var reader = new FileReader();
+
+        reader.onload(function(e) {
+            $('img#profile-image').attr('src', e.target.result);
+        });
+    }
+}
