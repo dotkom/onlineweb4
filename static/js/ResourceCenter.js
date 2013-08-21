@@ -6,7 +6,21 @@ function rslog(msg) {
 	}
 }
 
+function resize() {
+    var card_width = $('.flipper').outerWidth();
+    // Container
+    $('.flipper').css({'height':card_width+'px'});
+    // Front and back
+    $('.front').css({'height':card_width+'px'});
+    $('.back').css({'height':card_width+'px'});
+    // // Image
+    // $('.front img').css({'height':card_width+'px'});
+}
+
 // Wait till the document is ready
 $(function() {
-	// nothing here yet
+	// Resize cards
+	resize();
+	// Bind it to window resize as well
+	$(window).resize(resize);
 });
