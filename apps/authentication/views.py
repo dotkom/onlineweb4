@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import uuid
+import re
 
 from django.contrib import auth
 from django.contrib import messages
@@ -47,14 +48,14 @@ def register(request):
 
                 # Create user
                 user = OnlineUser(
-                    username=cleaned['username'], 
-                    first_name=cleaned['first_name'], 
-                    last_name=cleaned['last_name'],
-                    email=cleaned['email'],
+                    username=cleaned['username'].lower(), 
+                    first_name=cleaned['first_name'].title(), 
+                    last_name=cleaned['last_name'].title(),
+                    email=cleaned['email'].lower(),
                 )
                 # Set remaining fields
                 user.phone=cleaned['phone'],
-                user.address=cleaned['address'],
+                user.address=cleaned['address'].title(),
                 user.zip_code=cleaned['zip_code'],
                 # Store password properly
                 user.set_password(cleaned['password'])
@@ -65,7 +66,7 @@ def register(request):
             
                 # Create the registration token
                 token = uuid.uuid4().hex
-                rt = RegisterToken(user=user, token=token)
+                rt = RegisterToken(user=user, email=cleaned['email'], token=token)
                 rt.save()
 
                 email_message = _(u"""
@@ -103,6 +104,8 @@ def verify(request, token):
             user = getattr(rt, 'user')
 
             user.is_active = True
+            if re.match(r'[^@]+@stud.ntnu.no', rt.email):
+                user.ntnu_username = rt.email.split("@")[0]
             user.save()
             rt.delete()
 
