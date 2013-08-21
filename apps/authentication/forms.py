@@ -9,7 +9,7 @@ from django.contrib import auth
 from apps.authentication.models import OnlineUser as User
 
 class LoginForm(forms.Form):
-    email = forms.CharField(widget=forms.TextInput(), label="Email", max_length=50)
+    username = forms.CharField(widget=forms.TextInput(), label="Username", max_length=50)
     password = forms.CharField(widget=forms.PasswordInput(render_value=False), label="Password")
     user = None
 
@@ -17,20 +17,20 @@ class LoginForm(forms.Form):
         if self._errors:
             return
     
-        user = auth.authenticate(username=self.cleaned_data['email'], password=self.cleaned_data['password'])
+        user = auth.authenticate(username=self.cleaned_data['username'], password=self.cleaned_data['password'])
 
         if user:
             if user.is_active:
                 self.user = user
             else:
-                self._errors['email'] = self.error_class(["Your account is inactive, try to recover it."])
+                self._errors['username'] = self.error_class(["Your account is inactive, try to recover it."])
         else:
-            self._errors['email'] = self.error_class(["The account does not exist, or username/password combination is incorrect."])
+            self._errors['username'] = self.error_class(["The account does not exist, or username/password combination is incorrect."])
         return self.cleaned_data
 
     def login(self, request):
         try:
-            User.objects.get(email=request.POST['email'])
+            User.objects.get(email=request.POST['username'])
         except:
             return False
         if self.is_valid():
@@ -40,6 +40,7 @@ class LoginForm(forms.Form):
         return False
 
 class RegisterForm(forms.Form):
+    username = forms.CharField(label="Username", max_length=20)
     first_name = forms.CharField(label="First name", max_length=50)
     last_name = forms.CharField(label="Last name", max_length=50)
     date_of_birth = forms.DateField(label="Date of birth", initial=datetime.date.today)
