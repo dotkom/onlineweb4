@@ -4,7 +4,6 @@ import uuid
 
 from django.contrib import auth
 from django.contrib import messages
-from django.contrib.auth.models import User
 from django.core.mail import send_mail
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponseRedirect
@@ -13,8 +12,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
 from apps.authentication.forms import (LoginForm, RegisterForm, 
                             RecoveryForm, ChangePasswordForm)
-from apps.authentication.models import RegisterToken
-from apps.userprofile.models import UserProfile
+from apps.authentication.models import OnlineUser, RegisterToken
 
 def login(request):
     redirect_url = request.REQUEST.get('next', '')
@@ -48,27 +46,23 @@ def register(request):
                 cleaned = form.cleaned_data
 
                 # Create user
-                user = User(
+                user = OnlineUser(
                     username=cleaned['username'], 
                     first_name=cleaned['first_name'], 
                     last_name=cleaned['last_name'],
                     email=cleaned['email'],
                 )
+                # Set remaining fields
+                user.phone=cleaned['phone'],
+                user.address=cleaned['address'],
+                user.zip_code=cleaned['zip_code'],
+                # Store password properly
                 user.set_password(cleaned['password'])
+                # Users need to be manually activated
                 user.is_active = False
+
                 user.save()
-
-                print user
-
-                # Fill in userprofile, it was automatically made when user was saved.
-                # See bottom of apps/userprofile/models.py
-                up = user.get_profile()
-                #date_of_birth=cleaned['date_of_birth'],
-                up.area_code=cleaned['zip_code'],
-                up.address=cleaned['address'],
-                up.phone_number=cleaned['phone'],
-                up.save() 
-
+            
                 # Create the registration token
                 token = uuid.uuid4().hex
                 rt = RegisterToken(user=user, token=token)
@@ -128,7 +122,7 @@ def recover(request):
             form = RecoveryForm(request.POST)
             if form.is_valid():
                 email = form.cleaned_data['email']
-                users = User.objects.filter(email=email)
+                users = OnlineUser.objects.filter(email=email)
 
                 if len(users) == 0:
                     messages.error(request, _(u'Denne eposten er ikke registrert i våre systemer.'))

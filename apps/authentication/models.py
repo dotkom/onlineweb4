@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from datetime import datetime
+import datetime
 
 from django.contrib.auth.models import AbstractUser, BaseUserManager, PermissionsMixin
 from django.db import models
@@ -17,7 +17,7 @@ class OnlineUser(AbstractUser):
     
     # Online related fields
     field_of_study = models.SmallIntegerField(_(u"studieretning"), choices=FIELD_OF_STUDY_CHOICES, default=0)
-    started_date = models.DateTimeField(_(u"startet studie"), default=datetime.now())
+    started_date = models.DateTimeField(_(u"startet studie"), default=datetime.datetime.now())
     compiled = models.BooleanField(_(u"kompilert"), default=False)
 
     # Email
@@ -26,7 +26,7 @@ class OnlineUser(AbstractUser):
     # Address
     phone_number = models.CharField(_(u"telefonnummer"), max_length=20, blank=True, null=True)
     address = models.CharField(_(u"adresse"), max_length=30, blank=True, null=True)
-    area_code = models.CharField(_(u"postnummer"), max_length=4, blank=True, null=True)
+    zip_code = models.CharField(_(u"postnummer"), max_length=4, blank=True, null=True)
 
     # Other
     allergies = models.TextField(_(u"allergier"), blank=True, null=True)
@@ -52,7 +52,7 @@ class OnlineUser(AbstractUser):
 
     @property
     def year(self):
-        today = datetime.now()
+        today = datetime.datetime.now()
         started = self.started_date
 
         # We say that a year is 360 days incase we are a bit slower to
@@ -87,7 +87,7 @@ class OnlineUser(AbstractUser):
 class RegisterToken(models.Model):
     user = models.ForeignKey(OnlineUser)
     token = models.CharField("token", max_length=32)
-    created = models.DateTimeField("created", editable=False, auto_now_add=True, default=datetime.now())
+    created = models.DateTimeField("created", editable=False, auto_now_add=True, default=datetime.datetime.now())
 
     @property
     def is_valid(self):
