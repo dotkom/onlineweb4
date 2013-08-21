@@ -30,7 +30,7 @@ class LoginForm(forms.Form):
 
     def login(self, request):
         try:
-            User.objects.get(username=request.POST['username'])
+            User.objects.get(email=request.POST['username'])
         except:
             return False
         if self.is_valid():
