@@ -2,34 +2,11 @@
 
 from datetime import datetime
 
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
+from django.contrib.auth.models import AbstractUser, BaseUserManager, PermissionsMixin
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
-class OnlineUserManager(BaseUserManager):
-    def create_user(self, email, password=None):
-        if not email:
-            raise ValueError('Users must have an email address')
- 
-        user = self.model(
-            email=OnlineUserManager.normalize_email(email),
-        )
- 
-        user.set_password(password)
-        user.save(using=self._db)
-        return user
- 
-    def create_superuser(self, email, password):
-        user = self.create_user(
-            email,
-            password=password,
-        )
-        user.is_staff = True
-        user.is_superuser = True
-        user.save(using=self._db)
-        return user
-
-class OnlineUser(AbstractBaseUser, PermissionsMixin):
+class OnlineUser(AbstractUser):
     FIELD_OF_STUDY_CHOICES = (
         (0, '--'),
         (1, 'BIT'),
@@ -38,21 +15,6 @@ class OnlineUser(AbstractBaseUser, PermissionsMixin):
         (4, 'International'),
     )
     
-    # standard django user fields
-    #username = models.CharField(max_length=40, unique=True, db_index=True)
-    email = models.EmailField(max_length=254, unique=True)
-    first_name = models.CharField(_(u'fornavn'), max_length=30, blank=True)
-    last_name = models.CharField(_(u'etternavn'), max_length=30, blank=True)
-    is_staff = models.BooleanField(_('staff status'), default=False,
-        help_text=_('Designates whether the user can log into this admin '
-                    'site.'))
-    is_active = models.BooleanField(_('active'), default=True,
-        help_text=_('Designates whether this user should be treated as '
-                    'active. Unselect this instead of deleting accounts.'))
-    
-    objects = OnlineUserManager()
-    USERNAME_FIELD = 'email'
-
     # Online related fields
     field_of_study = models.SmallIntegerField(_(u"studieretning"), choices=FIELD_OF_STUDY_CHOICES, default=0)
     started_date = models.DateTimeField(_(u"startet studie"), default=datetime.now())
