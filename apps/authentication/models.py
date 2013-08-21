@@ -17,7 +17,7 @@ class OnlineUser(AbstractUser):
     
     # Online related fields
     field_of_study = models.SmallIntegerField(_(u"studieretning"), choices=FIELD_OF_STUDY_CHOICES, default=0)
-    started_date = models.DateTimeField(_(u"startet studie"), default=datetime.datetime.now())
+    started_date = models.DateField(_(u"startet studie"), default=datetime.datetime.now())
     compiled = models.BooleanField(_(u"kompilert"), default=False)
 
     # Email
@@ -32,6 +32,9 @@ class OnlineUser(AbstractUser):
     allergies = models.TextField(_(u"allergier"), blank=True, null=True)
     mark_rules = models.BooleanField(_(u"godtatt prikkeregler"), default=False)
     rfid = models.CharField(_(u"RFID"), max_length=50, blank=True, null=True)
+
+    # NTNU credentials
+    ntnu_username = models.CharField(_(u"NTNU-brukernavn"), max_length=10, blank=True, null=True)
 
     # TODO profile pictures
     # TODO checkbox for forwarding of @online.ntnu.no mail
@@ -86,6 +89,7 @@ class OnlineUser(AbstractUser):
 
 class RegisterToken(models.Model):
     user = models.ForeignKey(OnlineUser)
+    email = models.EmailField("email", max_length=254)
     token = models.CharField("token", max_length=32)
     created = models.DateTimeField("created", editable=False, auto_now_add=True, default=datetime.datetime.now())
 
