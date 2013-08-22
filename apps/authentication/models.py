@@ -6,14 +6,15 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
+FIELD_OF_STUDY_CHOICES = (
+    (0, '--'),
+    (1, 'BIT'),
+    (2, 'MIT'),
+    (3, 'PhD'),
+    (4, 'International'),
+)
+
 class OnlineUser(AbstractUser):
-    FIELD_OF_STUDY_CHOICES = (
-        (0, '--'),
-        (1, 'BIT'),
-        (2, 'MIT'),
-        (3, 'PhD'),
-        (4, 'International'),
-    )
     
     # Online related fields
     field_of_study = models.SmallIntegerField(_(u"studieretning"), choices=FIELD_OF_STUDY_CHOICES, default=0)
