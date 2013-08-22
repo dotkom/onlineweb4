@@ -6,7 +6,7 @@ from django.db import models
 
 
 class Migration(SchemaMigration):
-    
+
     depends_on = (
         ("authentication", "0001_initial"),
     )
@@ -46,8 +46,14 @@ class Migration(SchemaMigration):
         ))
         db.send_create_signal(u'article', ['ArticleTag'])
 
+        # Adding unique constraint on 'ArticleTag', fields ['article', 'tag']
+        db.create_unique(u'article_articletag', ['article_id', 'tag_id'])
+
 
     def backwards(self, orm):
+        # Removing unique constraint on 'ArticleTag', fields ['article', 'tag']
+        db.delete_unique(u'article_articletag', ['article_id', 'tag_id'])
+
         # Deleting model 'Article'
         db.delete_table(u'article_article')
 
@@ -76,7 +82,7 @@ class Migration(SchemaMigration):
             'video': ('django.db.models.fields.CharField', [], {'max_length': '200', 'blank': 'True'})
         },
         u'article.articletag': {
-            'Meta': {'object_name': 'ArticleTag'},
+            'Meta': {'unique_together': "(('article', 'tag'),)", 'object_name': 'ArticleTag'},
             'article': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'article_tags'", 'to': u"orm['article.Article']"}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'tag': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'article_tags'", 'to': u"orm['article.Tag']"})
