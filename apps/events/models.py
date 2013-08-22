@@ -1,13 +1,17 @@
 #-*- coding: utf-8 -*-
+
 from datetime import datetime, timedelta
+
 from django.core.urlresolvers import reverse
-from django.db import models
 from django.contrib.auth.models import Group
+from django.db import models
 from django.utils.translation import ugettext_lazy as _
+
+from filebrowser.fields import FileBrowseField
 
 from apps.authentication.models import OnlineUser as User, FIELD_OF_STUDY_CHOICES
 from apps.companyprofile.models import Company
-from filebrowser.fields import FileBrowseField
+from apps.marks.models import Mark
 
 class Event(models.Model):
     """
@@ -81,46 +85,60 @@ class Event(models.Model):
             Message handling (Return what went wrong. Tuple? (False, message))
         """
 
-        response = {"status" : False, "message" : ""};
+        response = {"status" : False, "message" : ""}
 
         #Check first if this is an attendance event
         if not self.is_attendance_event():
-            response['message'] = _(u"Dette er ikke et påmeldingsarrangement.");
+            response['message'] = _(u"Dette er ikke et påmeldingsarrangement.")
             return response
 
         #Registration not open
-        if not datetime.now() > self.attendance_event.registration_start:
+        if not datetime.now() < self.attendance_event.registration_start:
             response['message'] = _(u'Påmeldingen har ikke åpnet enda.')
             return response
 
         #Registration closed
-        if not datetime.now() < self.attendance_event.registration_end:
+        if not datetime.now() > self.attendance_event.registration_end:
             response['message'] = _(u'Påmeldingen er ikke lenger åpen.')
+            return response
 
         #Room for me on the event?
         if not self.attendance_event.room_on_event:
-            response['message'] = _(u"Det er ikke mer plass på dette arrangementet.");
+            response['message'] = _(u"Det er ikke mer plass på dette arrangementet.")
             return response
+        
+        #
+        # Offset calculations.
+        #
+
+        # Do I have any marks that postpone my registration date?
+        active_marks = Marks.active.filter(given_to = user).count()
+        if active_marks > 0:
+            # Offset is currently 1 day per mark. We supply the offset in seconds.
+            offset = active_marks * 24 * 60 * 60
+            postponed_registration_start = self.attendance_event.registration_start + timedelta(seconds=offset)
+            if datetime.now() < postponed_registration_start:
+                # Signup is not possible, and 
+                response['offset'] = offset
+                response['message'] = _(u"Din påmelding er utsatt grunnet prikker.")
 
         #Are there any rules preventing me from attending?
-        try:
-            status_object = self.attendance_event.rules_satisfied(user)
+        status_object = self.attendance_event.rules_satisfied(user)
+        if not status_object['status']:
+            if 'offset' in status_object and status_object['offset'] > response['offset']:
+                response['offset'] = status_object['offset']
+                response['message'] = _("Din påmelding er utsatt.")
+            response['message'] = _(u"Du har ikke tilgang til dette arrangmentet.")
+            
+        # Return response if offset was set and higher than 0
+        if 'offset' in status_object and response['offset'] > 0:
+            return response 
+        #
+        # Offset calculations end
+        #
 
-            if not status_object['status']:
-                if 'offset' in status_object:
-                    response_message = 'Du har ikke tilgang til dette arrangementet før om ' + str(status_object['offset'] / 60 / 60) + ' timer.'
-                    response['message'] = response_message
-                    return response
-                response['message'] = _(u"Du har ikke tilgang til dette arrangmentet.");
-                return response
-        except Exception, e:
-            response['message'] = e;
-            return response
-
-        #Do I have any marks preventing me from attending?
-        #TODO check for marks
-
-        response['status'] = True;
+        # No objections, set eligible.
+        response['status'] = True
         return response
 
     @property
