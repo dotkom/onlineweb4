@@ -16,13 +16,13 @@ class SimpleTest(TestCase):
         #TODO: do eeet! test posted against db (Sigurd) 2013-02-08
         pass
 
-    def test_post_incorrect(self):
-        resp = self.client.post("/feedback/auth/user/1/1/")
-        self.assertEqual(resp.status_code, 200)
-        for i in range(len(resp.context['answers'])):
-            self.assertIn(unicode(_(u'This field is required.')),
-                          resp.context['answers'][i].errors['answer'])
-    
+#    def test_post_incorrect(self):
+#        resp = self.client.post("/feedback/auth/user/1/1/")
+#        self.assertEqual(resp.status_code, 200)
+#        for i in range(len(resp.context['answers'])):
+#            self.assertIn(unicode(_(u'This field is required.')),
+#                          resp.context['answers'][i].errors['answer'])
+#    
 #    def test_good_urls(self):
 #        resp = self.client.get("/feedback/auth/user/1/1/")
 #        self.assertEqual(resp.status_code, 200)
