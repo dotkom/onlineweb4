@@ -10,7 +10,7 @@ from apps.api.v0.offline import IssueResource
 
 v0_api = Api(api_name='v0')
 
-# userprofile
+# users
 v0_api.register(UserResource())
 
 # event
