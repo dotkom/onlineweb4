@@ -2,6 +2,7 @@
 
 {% block content %}
 <div id="article_wrapper">
+    <iframe src="http://player.vimeo.com/video/{{ article.vimeo_video }}" width="100%" height="100%" frameborder="0" id="vimeo_video" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
 	<img src="{{ STATIC_URL }}{{ article.image_article }}" alt="{{ article.heading }}" width="950" height="200"/>
 	<p>Skrevet av: <a href="/user/{{ article.created_by.id }}">{{ article.created_by.get_full_name }}</a> den {{ article.published_date }}{% if article.isChanged %}, sist endret {{ article.changed_date }} av <a href="/user/{{ article.changed_by.id }}">{{ article.changed_by.get_full_name }}</a>{% endif %}</p>
 	<h1>{{ article.heading }}</h1>

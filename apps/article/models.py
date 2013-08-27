@@ -5,8 +5,8 @@ from django.db import models
 from django.contrib import admin
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext as _
-from forms import UploadForm
 
+from fields import VimeoVideoField
 from filebrowser.fields import FileBrowseField
 
 
@@ -20,7 +20,7 @@ class Article(models.Model):
     image_article = FileBrowseField(_(u"artikkel-bilde"),
         max_length=200, directory=IMAGE_FOLDER, blank=True,
         extensions=IMAGE_EXTENSIONS)
-    video = UploadForm()
+    vimeo_video = VimeoVideoField()
     image_thumbnail = FileBrowseField(_(u"thumbnail"),
         max_length=200, directory=IMAGE_FOLDER, blank=True,
         extensions=IMAGE_EXTENSIONS)

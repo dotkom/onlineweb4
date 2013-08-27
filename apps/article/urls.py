@@ -4,4 +4,5 @@ urlpatterns = patterns('apps.article.views',
     url(r'^$', 'index', name='article_index'),
     url(r'^(?P<article_id>\d+)/$', 'details', name='article_details'),
     url(r'^vimeo/', 'vimeoUpload', name='article_vimeo'),
+    url(r'^completeUpload/', 'completeUpload', name='vimeo_uComplete'),
 )

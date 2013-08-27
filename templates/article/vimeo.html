@@ -8,39 +8,34 @@
             <div class="page-header">
                 <h1>Vimeo video archive:</h1>
             </div>
-            {% if message %}
-            <p> {{ message }} </p>
-            {% elif authorize_url %}
-            <a href="{{ authorize_url }}">Authorize on vimeo</a>
-            {% else %}
-            <p>{{ upload_ticket }}</p>
             <form id="uploadForm" method="POST" action="{{ upload_ticket }}" enctype="multipart/form-data" > {%csrf_token %}
                 <input id="ticket_id" type="hidden" name="ticket_id" value="{{ ticket_id }}" />
                 <input id="chunk_id" type="hidden" name="chunk_id" value="0" />
                 <input id="file_data" type="file" name="file_data" />
                 <input id="submit" type="submit" value="Upload" class="uploadButton" />
             <form>
-            {% endif %}
+            
         </div>
         <progress id="progress" max="100" value="0" hidden="true"></progress>
     </div>
 </div>
 
+
 <script>
+
     $('#uploadForm').submit(function() {
         var form = document.getElementById('uploadForm');
-            var formData = new FormData(form);
-            var action = form.getAttribute('action');
-            console.log("wokrs");
-            sendXHRequest(formData, action);
-            return false; 
+        var formData = new FormData(form);
+        var action = form.getAttribute('action');
+        sendXHRequest(formData, action);
+        return false; 
     });
     
     function sendXHRequest(formData, uri) {
         var xhr = new XMLHttpRequest();
         xhr.upload.addEventListener('loadstart', onloadstartHandler, false);
         xhr.upload.addEventListener('progress', onprogressHandler, false);
-        xhr.upload.addEventListener('load', onloadHandler, false);
+        xhr.upload.addEventListener('load', uploadComplete, false);
         xhr.addEventListener('readystatechange', onreadystatechangeHandler, false);
 
         xhr.open('POST', uri, true);
@@ -48,33 +43,31 @@
     }
 
     function onloadstartHandler(evt) {
-        console.log("upload started");
         document.getElementById("progress").hidden = false;
     }
-
-    function onloadHandler(evt) {
-        console.log("upload successfull");
+    
+    function uploadComplete(evt) {
+        $.ajax({
+            type: "post",
+            dataType: "json",
+            url: "/article/completeUpload/",
+            data: {
+                csrfmiddlewaretoken: '{{ csrf_token }}'
+            },
+            success: function(data) {
+                $.each(data, function(key, val) {
+                    if (key === "video_id") {
+                        opener.dismissAddAnotherPopup(window, val, "videoId");
+                    }
+                }); 
+            }
+        });
     }
 
     function onprogressHandler(evt) {
         var percent = evt.loaded/evt.total*100;
         var progressBar = document.getElementById("progress");
         progressBar.value = percent;
-    }
-
-    function onreadystatechangeHandler(evt) {
-        var status = null;
-
-        try {
-            status = evt.target.status;
-        }
-        catch(e) {
-            return;
-        }
-
-        if (status == '200' && evt.target.responseText) {
-            console.log(evt.target.responseText);
-        }
     }
 </script>
 
