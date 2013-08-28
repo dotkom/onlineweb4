@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 
+from apps.userprofile.models import Privacy
 from django import forms
 from django.utils.translation import ugettext_lazy as _
+
 
 class ProfileForm(forms.Form):
 
@@ -17,7 +19,7 @@ class ProfileForm(forms.Form):
     mark_rules = forms.BooleanField(required=False)
 
 
-def createFromUserProfile(userprofile):
+def create_profile_form(userprofile):
     return ProfileForm(initial = {
             'infomail' : userprofile.infomail,
             'address' : userprofile.address,
@@ -30,3 +32,10 @@ def createFromUserProfile(userprofile):
             'email' : userprofile.user.email,
             'phone_number' : userprofile.phone_number
         })
+
+
+class PrivacyForm(forms.ModelForm):
+
+    class Meta:
+        model = Privacy
+        exclude = ['user']

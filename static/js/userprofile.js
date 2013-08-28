@@ -56,3 +56,19 @@ function displayImage(inputBox) {
         });
     }
 }
+
+$('#userprofile-tabs > li > a').click(function() {
+    updateActiveTab(this.getAttribute('href').substr(1));
+})
+
+function updateActiveTab(activetab) {
+
+    var data = JSON.stringify({active_tab : activetab});
+
+    $.ajax({
+        method: 'POST',
+        data: data,
+        url: 'profile/updateactivetab',
+        crossDomain: false
+    });
+}

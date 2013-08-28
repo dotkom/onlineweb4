@@ -18,11 +18,19 @@
             <div class="row-fluid">
                 <div class="span12">
                     <div class="tabbable">
-                        <ul class="nav nav-tabs visible-desktop visible-tablet hidden-phone">
-                            <li class="active"><a href="#myprofile" data-toggle="tab">Brukerinformasjon</a></li>
-                            <li><a href="#myevents" data-toggle="tab">Mine events</a></li>
-                            <li><a href="#privacy" data-toggle="tab">Personvern</a></li>
-                            <li><a href="#password" data-toggle="tab">Passord</a></li>
+                        <ul class="nav nav-tabs visible-desktop visible-tablet hidden-phone" id="userprofile-tabs">
+                            <li class="{%ifequal 'myprofile' active_tab %}active{% endifequal %}">
+                                <a href="#myprofile" data-toggle="tab">Brukerinformasjon</a>
+                            </li>
+                            <li class="{%ifequal 'myevents' active_tab %}active{% endifequal %}">
+                                <a href="#myevents" data-toggle="tab">Mine events</a>
+                            </li>
+                            <li class="{%ifequal 'privacy' active_tab %}active{% endifequal %}">
+                                <a href="#privacy" data-toggle="tab">Personvern</a>
+                            </li>
+                            <li class="{%ifequal 'password' active_tab %}active{% endifequal %}">
+                                <a href="#password" data-toggle="tab">Passord</a>
+                            </li>
                         </ul>
                         <ul class="nav nav-list visible-phone hidden-desktop hidden-tablet">
                             <li class="active"><a href="#myprofile" data-toggle="tab">Brukerinformasjon</a></li>
@@ -32,7 +40,7 @@
                         </ul>
                         <div class="tab-content">
                             <!-- Profile -->
-                            <div id="myprofile" class="tab-pane active">
+                            <div id="myprofile" class="tab-pane {%ifequal 'myprofile' active_tab %}active{% endifequal %}">
                                 <div class="row-fluid">
                                     <form method="post" action="/profile/saveprofile" enctype="multipart/form-data">
                                         <div class="span12">
@@ -47,66 +55,66 @@
                                                     <div class="inline">
                                                         <div class="span4">Nickname:</div>
                                                         <div class="span8">
-                                                            {{ form.nickname }}
-                                                            {{ form.nickname.errors }}
+                                                            {{ user_profile_form.nickname }}
+                                                            {{ user_profile_form.nickname.errors }}
                                                         </div>
                                                     </div>
                                                     <div class="inline">
                                                         <div class="span4">E-post:</div>
                                                         <div class="span8">
-                                                            {{ form.email }}
-                                                            {{ form.email.errors }}
+                                                            {{ user_profile_form.email }}
+                                                            {{ user_profile_form.email.errors }}
                                                         </div>
                                                     </div>
                                                     <div class="inline">
                                                         <div class="span4">Web-side:</div>
                                                         <div class="span8">
-                                                            {{ form.website }}
-                                                            {{ form.website.errors }}
+                                                            {{ user_profile_form.website }}
+                                                            {{ user_profile_form.website.errors }}
                                                         </div>
                                                     </div>
                                                     <hr />
                                                     <div class="inline">
                                                         <div class="span4">Telefonnummer:</div>
                                                         <div class="span8">
-                                                            {{ form.phone_number }}
-                                                            {{ form.phone_number.errors }}
+                                                            {{ user_profile_form.phone_number }}
+                                                            {{ user_profile_form.phone_number.errors }}
                                                         </div>
                                                     </div>
                                                     <div class="inline">
                                                         <div class="span4">Adresse:</div>
                                                         <div class="span8">
-                                                            {{ form.address }}
-                                                            {{ form.address.errors }}
+                                                            {{ user_profile_form.address }}
+                                                            {{ user_profile_form.address.errors }}
                                                         </div>
                                                     </div>
                                                     <div class="inline">
                                                         <div class="span4">Postnummer:</div>
                                                         <div class="span8">
-                                                            {{ form.area_code }}
-                                                            {{ form.area_code.errors }}
+                                                            {{ user_profile_form.area_code }}
+                                                            {{ user_profile_form.area_code.errors }}
                                                         </div>
                                                     </div>
                                                     <div class="inline">
                                                         <div class="span4">Allergier:</div>
                                                         <div class="span8 input-medium">
-                                                            {{ form.allergies }}
-                                                            {{ form.allergies.errors }}
+                                                            {{ user_profile_form.allergies }}
+                                                            {{ user_profile_form.allergies.errors }}
                                                         </div>
                                                     </div>
                                                     <hr />
                                                     <div class="inline">
                                                         <div class="span4"> Ønsker infomail:</div>
                                                         <div class="span8">
-                                                            {{ form.infomail }}
-                                                            {{ form.infomail.errors }}
+                                                            {{ user_profile_form.infomail }}
+                                                            {{ user_profile_form.infomail.errors }}
                                                         </div>
                                                     </div>
                                                     <div class="inline">
                                                         <div class="span4 word-break">Godtatt prikkeregler:</div>
                                                         <div class="span8 input-medium">
-                                                            {{ form.mark_rules }}
-                                                            {{ form.mark_rules.errors }}
+                                                            {{ user_profile_form.mark_rules }}
+                                                            {{ user_profile_form.mark_rules.errors }}
                                                         </div>
                                                     </div>
                                                 </div>
@@ -121,8 +129,8 @@
                                                             <div id="image-box">
                                                                 <img class="img-polaroid fadeload" id="profile-image" src="{{ userprofile.image.url  }}" alt="profilbilde">
                                                                 <label for="hidden-input" class="btn image-box-entity"><i class="icon-upload btn-icon"></i> Velg et nytt bilde</label>
-                                                                {{ form.image_upload }}
-                                                                {{ form.image_upload.errors }}
+                                                                {{ user_profile_form.image_upload }}
+                                                                {{ user_profile_form.image_upload.errors }}
                                                                 <input type="text" id="image-name" class="image-box-entity"/>
                                                                 <button type="button" class="btn btn-danger image-box-entity" id="remove-image" data-toggle="modal" data-target="#remove-image-modal">
                                                                     <i class="icon-remove btn-icon"></i> Fjern bilde
@@ -155,15 +163,103 @@
                                 <!-- End modal -->
                             </div>
                             <!-- My Events -->
-                            <div id="myevents" class="tab-pane">
+                            <div id="myevents" class="tab-pane {%ifequal 'myevents' active_tab %} active {% endifequal %}">
                                 <h3>Mine events</h3>
                             </div>
                             <!-- Privacy -->
-                            <div id="privacy" class="tab-pane">
-                                <h4>Personvern</h4>
+                            <div id="privacy" class="tab-pane {%ifequal 'privacy' active_tab %} active {% endifequal %}">
+                                <div class="row-fluid">
+                                    <form method="post" action="/profile/saveprivacy" enctype="multipart/form-data">
+                                        <div class="span12">
+                                            {% csrf_token %}
+                                            <div class="row-fluid">
+                                                <div class="span6">
+                                                    <div class="row-fluid">
+                                                        <div class="span12">
+                                                            <h3>Personvern</h3>
+                                                        </div>
+                                                    </div>
+                                                    <div class="inline">
+                                                        <div class="span4">Synlig for andre brukere:</div>
+                                                        <div class="span8">
+                                                            {{ privacy_form.visible_for_other_users }}
+                                                            {{ privacy_form.visible_for_other_users.errors }}
+                                                        </div>
+                                                    </div>
+                                                    <div class="inline">
+                                                        <div class="span4">Synlig brukernavn:</div>
+                                                        <div class="span8">
+                                                            {{ privacy_form.expose_username }}
+                                                            {{ privacy_form.expose_username.errors }}
+                                                        </div>
+                                                    </div>
+                                                    <div class="inline">
+                                                        <div class="span4">Synlig epost:</div>
+                                                        <div class="span8">
+                                                            {{ privacy_form.expose_email }}
+                                                            {{ privacy_form.expose_email.errors }}
+                                                        </div>
+                                                    </div>
+                                                    <div class="inline">
+                                                        <div class="span4">Synlig fornavn:</div>
+                                                        <div class="span8">
+                                                            {{ privacy_form.expose_first_name }}
+                                                            {{ privacy_form.expose_first_name.errors }}
+                                                        </div>
+                                                    </div>
+                                                    <div class="inline">
+                                                        <div class="span4">Synlig etternavn:</div>
+                                                        <div class="span8">
+                                                            {{ privacy_form.expose_last_name }}
+                                                            {{ privacy_form.expose_last_name.errors }}
+                                                        </div>
+                                                    </div>
+                                                    <div class="inline">
+                                                        <div class="span4">Synlig studieretning:</div>
+                                                        <div class="span8">
+                                                            {{ privacy_form.expose_field_of_study }}
+                                                            {{ privacy_form.expose_field_of_study.errors }}
+                                                        </div>
+                                                    </div>
+                                                    <div class="inline">
+                                                        <div class="span4">Synlig studiestartsdato:</div>
+                                                        <div class="span8">
+                                                            {{ privacy_form.expose_started_date }}
+                                                            {{ privacy_form.expose_started_date.errors }}
+                                                        </div>
+                                                    </div>
+                                                    <div class="inline">
+                                                        <div class="span4">Synlig kompilert:</div>
+                                                        <div class="span8">
+                                                            {{ privacy_form.expose_compiled }}
+                                                            {{ privacy_form.expose_compiled.errors }}
+                                                        </div>
+                                                    </div>
+                                                    <div class="inline">
+                                                        <div class="span4">Synlig telefonnummer:</div>
+                                                        <div class="span8">
+                                                            {{ privacy_form.expose_phone_number }}
+                                                            {{ privacy_form.expose_phone_number.errors }}
+                                                        </div>
+                                                    </div>
+                                                    <div class="inline">
+                                                        <div class="span4">Synlig adresse:</div>
+                                                        <div class="span8">
+                                                            {{ privacy_form.expose_address }}
+                                                            {{ privacy_form.expose_address.errors }}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="span12 form-actions" style="margin-left: 0px">
+                                            <button class="btn btn-success pull-right" type="submit">Lagre personvern</button>
+                                        </div>
+                                    </form>
+                                </div>
                             </div>
                             <!-- Password -->
-                            <div id="password" class="tab-pane">
+                            <div id="password" class="tab-pane {%ifequal 'password' active_tab %} active {% endifequal %}">
                                 <h4>Passord</h4>
                             </div>
                         </div>

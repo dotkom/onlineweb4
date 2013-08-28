@@ -6,4 +6,6 @@ urlpatterns = patterns('apps.userprofile.views',
     url(r'^$', 'index', name='userprofile'),
     url(r'^/removeprofileimage$', 'confirmDeleteImage', name='confirm_delete_image'),
     url(r'^/saveprofile', 'saveUserProfile', name='save_user_profile'),
+    url(r'^/saveprivacy', 'savePrivacy', name='save_privacy'),
+    url(r'^/updateactivetab', 'updateActiveTab', name='update_active_userprofile_tab'),
 )
