@@ -21,7 +21,7 @@ def index(request):
     if not request.user.is_authenticated():
         return render_home(request)
 
-    dict = create_forms(request)
+    dict = create_request_dictionary(request)
 
     # If a user has made a post, a session value will be set for which tab the user posted from.
     # This enables us to return the user to the correct tab when returning the view.
@@ -35,7 +35,7 @@ def render_home(request):
     return redirect('home')
 
 
-def create_forms(request):
+def create_request_dictionary(request):
     dict = {
         'user_profile' : request.user.get_profile(),
         'privacy_form' : create_privacy_form(request),
@@ -76,7 +76,7 @@ def saveUserProfile(request):
     if request.method == 'POST':
 
         userprofile = request.user.get_profile()
-        dict = create_forms(request)
+        dict = create_request_dictionary(request)
         user_profile_form = ProfileForm(request.POST)
         dict['user_profile_form'] = user_profile_form
 
@@ -118,7 +118,7 @@ def savePrivacy(request):
         return render_home(request)
 
     if request.method == 'POST':
-        dict = create_forms(request)
+        dict = create_request_dictionary(request)
         privacy_form = PrivacyForm(request.POST, instance=request.user.privacy)
         dict['privacy_form'] = privacy_form
 
