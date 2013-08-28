@@ -52,71 +52,17 @@
                                                             <h3>Personlig informasjon</h3>
                                                         </div>
                                                     </div>
+                                            {% for field in user_profile_form %}
+                                                {% ifnotequal field.label 'image' %}
                                                     <div class="inline">
-                                                        <div class="span4">Nickname:</div>
+                                                        <div class="span4">{{ field.label }}</div>
                                                         <div class="span8">
-                                                            {{ user_profile_form.nickname }}
-                                                            {{ user_profile_form.nickname.errors }}
+                                                            {{ field }}
+                                                            {{ field.errors }}
                                                         </div>
                                                     </div>
-                                                    <div class="inline">
-                                                        <div class="span4">E-post:</div>
-                                                        <div class="span8">
-                                                            {{ user_profile_form.email }}
-                                                            {{ user_profile_form.email.errors }}
-                                                        </div>
-                                                    </div>
-                                                    <div class="inline">
-                                                        <div class="span4">Web-side:</div>
-                                                        <div class="span8">
-                                                            {{ user_profile_form.website }}
-                                                            {{ user_profile_form.website.errors }}
-                                                        </div>
-                                                    </div>
-                                                    <hr />
-                                                    <div class="inline">
-                                                        <div class="span4">Telefonnummer:</div>
-                                                        <div class="span8">
-                                                            {{ user_profile_form.phone_number }}
-                                                            {{ user_profile_form.phone_number.errors }}
-                                                        </div>
-                                                    </div>
-                                                    <div class="inline">
-                                                        <div class="span4">Adresse:</div>
-                                                        <div class="span8">
-                                                            {{ user_profile_form.address }}
-                                                            {{ user_profile_form.address.errors }}
-                                                        </div>
-                                                    </div>
-                                                    <div class="inline">
-                                                        <div class="span4">Postnummer:</div>
-                                                        <div class="span8">
-                                                            {{ user_profile_form.area_code }}
-                                                            {{ user_profile_form.area_code.errors }}
-                                                        </div>
-                                                    </div>
-                                                    <div class="inline">
-                                                        <div class="span4">Allergier:</div>
-                                                        <div class="span8 input-medium">
-                                                            {{ user_profile_form.allergies }}
-                                                            {{ user_profile_form.allergies.errors }}
-                                                        </div>
-                                                    </div>
-                                                    <hr />
-                                                    <div class="inline">
-                                                        <div class="span4"> Ønsker infomail:</div>
-                                                        <div class="span8">
-                                                            {{ user_profile_form.infomail }}
-                                                            {{ user_profile_form.infomail.errors }}
-                                                        </div>
-                                                    </div>
-                                                    <div class="inline">
-                                                        <div class="span4 word-break">Godtatt prikkeregler:</div>
-                                                        <div class="span8 input-medium">
-                                                            {{ user_profile_form.mark_rules }}
-                                                            {{ user_profile_form.mark_rules.errors }}
-                                                        </div>
-                                                    </div>
+                                                {% endifnotequal %}
+                                            {% endfor %}
                                                 </div>
                                                 <div class="span5">
                                                     <div class="row-fluid">
@@ -179,76 +125,17 @@
                                                             <h3>Personvern</h3>
                                                         </div>
                                                     </div>
+                                            {% for field in privacy_form %}
+                                                {% ifnotequal field.label 'image' %}
                                                     <div class="inline">
-                                                        <div class="span4">Synlig for andre brukere:</div>
+                                                        <div class="span4">{{ field.label }}</div>
                                                         <div class="span8">
-                                                            {{ privacy_form.visible_for_other_users }}
-                                                            {{ privacy_form.visible_for_other_users.errors }}
+                                                            {{ field }}
+                                                            {{ field.errors }}
                                                         </div>
                                                     </div>
-                                                    <div class="inline">
-                                                        <div class="span4">Synlig brukernavn:</div>
-                                                        <div class="span8">
-                                                            {{ privacy_form.expose_username }}
-                                                            {{ privacy_form.expose_username.errors }}
-                                                        </div>
-                                                    </div>
-                                                    <div class="inline">
-                                                        <div class="span4">Synlig epost:</div>
-                                                        <div class="span8">
-                                                            {{ privacy_form.expose_email }}
-                                                            {{ privacy_form.expose_email.errors }}
-                                                        </div>
-                                                    </div>
-                                                    <div class="inline">
-                                                        <div class="span4">Synlig fornavn:</div>
-                                                        <div class="span8">
-                                                            {{ privacy_form.expose_first_name }}
-                                                            {{ privacy_form.expose_first_name.errors }}
-                                                        </div>
-                                                    </div>
-                                                    <div class="inline">
-                                                        <div class="span4">Synlig etternavn:</div>
-                                                        <div class="span8">
-                                                            {{ privacy_form.expose_last_name }}
-                                                            {{ privacy_form.expose_last_name.errors }}
-                                                        </div>
-                                                    </div>
-                                                    <div class="inline">
-                                                        <div class="span4">Synlig studieretning:</div>
-                                                        <div class="span8">
-                                                            {{ privacy_form.expose_field_of_study }}
-                                                            {{ privacy_form.expose_field_of_study.errors }}
-                                                        </div>
-                                                    </div>
-                                                    <div class="inline">
-                                                        <div class="span4">Synlig studiestartsdato:</div>
-                                                        <div class="span8">
-                                                            {{ privacy_form.expose_started_date }}
-                                                            {{ privacy_form.expose_started_date.errors }}
-                                                        </div>
-                                                    </div>
-                                                    <div class="inline">
-                                                        <div class="span4">Synlig kompilert:</div>
-                                                        <div class="span8">
-                                                            {{ privacy_form.expose_compiled }}
-                                                            {{ privacy_form.expose_compiled.errors }}
-                                                        </div>
-                                                    </div>
-                                                    <div class="inline">
-                                                        <div class="span4">Synlig telefonnummer:</div>
-                                                        <div class="span8">
-                                                            {{ privacy_form.expose_phone_number }}
-                                                            {{ privacy_form.expose_phone_number.errors }}
-                                                        </div>
-                                                    </div>
-                                                    <div class="inline">
-                                                        <div class="span4">Synlig adresse:</div>
-                                                        <div class="span8">
-                                                            {{ privacy_form.expose_address }}
-                                                            {{ privacy_form.expose_address.errors }}
-                                                        </div>
-                                                    </div>
+                                                {% endifnotequal %}
+                                            {% endfor %}
                                                 </div>
                                             </div>
                                         </div>

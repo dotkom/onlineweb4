@@ -38,8 +38,8 @@ def render_home(request):
 def create_request_dictionary(request):
     dict = {
         'user_profile' : request.user.get_profile(),
-        'privacy_form' : create_privacy_form(request),
-        'user_profile_form' : create_user_profile_form(request),
+        'privacy_form' : PrivacyForm(instance=request.user.privacy),
+        'user_profile_form' : create_profile_form(request.user.get_profile()),
     }
 
     if request.session.has_key('userprofile_active_tab'):
@@ -48,14 +48,6 @@ def create_request_dictionary(request):
         dict['active_tab'] = 'myprofile'
 
     return dict
-
-
-def create_user_profile_form(request):
-    return create_profile_form(request.user.get_profile())
-
-
-def create_privacy_form(request):
-    return PrivacyForm(instance=request.user.privacy)
 
 
 def updateActiveTab(request):
