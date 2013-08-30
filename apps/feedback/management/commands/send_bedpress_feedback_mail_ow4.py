@@ -19,10 +19,10 @@ class Command(NoArgsCommand):
        
         events = Event.objects.filter(event_start__year=
                 yesterday.year, event_start__month=yesterday.month,
-                event_start__day=yesterday.day, event_type=2)  # 2 = bedpress
+                event_start__day=yesterday.day)
         notices = Event.objects.filter(event_start__year=
                 notice_date.year, event_start__month=notice_date.month,
-                event_start__day=notice_date.day, event_type=2)  # 2 = bedpress
+                event_start__day=notice_date.day)
 
         # Cant make methods so the lists are joined and looped to avoid duplicated code
         events_count = len(events)
@@ -37,17 +37,26 @@ class Command(NoArgsCommand):
             if not feedbacks:
                 continue
             
+            if event.event_type == 1 or event.event_type == 4: #Sosialt - urflukt
+                committtee_mail == settings.EMAIL_ARRKOM
+            elif event.event_type == 2: #Bedpres
+                committee_mail = settings.EMAIL_BEDKOM
+            elif event.event_type == 3: #Kurs
+                committee_mail = settings.EMAIL_PROKOM
+            else:
+                committee_mail = "online@online.ntnu.no"
+            
             attended = map(lambda x: getattr(x, 'user'),
                 Attendee.objects.filter(event=event, attended=True))
            
             link = ""
-            bedkom_link = ""
+            results_link = ""
             for  feedback in feedbacks:
                 link += "https://online.ntnu.no/feedback/events/event/%d/%d\n" % (event.id, feedback.id)
-                bedkom_link += "https://online.ntnu.no/feedback/events/event/%d/%d/results\n" % (event.id, feedback.id)
+                results_link += "https://online.ntnu.no/feedback/events/event/%d/%d/results\n" % (event.id, feedback.id)
     
             link.encode("utf-8")
-            bedkom_link.encode("utf-8")
+            results_link.encode("utf-8")
             
 
             timedelta = datetime.timedelta(days=4)
@@ -67,45 +76,44 @@ class Command(NoArgsCommand):
                 "tilbakemelding til bedriften ønsker vi at du svarer på noen " \
                 "spørsmål: \n%s\n\nVær oppmerksom på at du får prikk dersom du ikke svarer " \
                 "på disse spørsmålene innen %s klokka 23:59.\nTakk for hjelpen\n\n"\
-                "\nEventuelle spørsmål sendes til bedkom@online.ntnu.no\n" \
+                "\nEventuelle spørsmål sendes til %s\n" \
                 "\nMvh\nOnline linjeforening" % (title,
-                        start_date, link, deadline)
+                        start_date, link, deadline, committee_mail)
             
                 # mail til bedkom
-                bedkom_message = "Hei, nå har feedbackmail blitt sendt til alle " \
+                results_message = "Hei, nå har feedbackmail blitt sendt til alle " \
                 "deltagere på \"%s\". Dere kan nå feedback-resultatene på %s\n" % \
-                (title, bedkom_link)
+                (title, results_link)
                 
-                EmailMessage("Bedpres feedback", message, "bedkom@online.ntnu.no", [], mails).send()
-                EmailMessage("Bedpres feedback view", bedkom_message,"online@online.ntnu.no", [settings.EMAIL_BEDKOM]).send()
-            else: #Event is a notice
+                EmailMessage("Feedback", message, committee_mail, [], mails).send()
+                EmailMessage("Feedback resultat", results_message,"online@online.ntnu.no", [committee_mail]).send()
+            else: #Event is a deadline notice
                 not_responded = {}
                 for feedback in feedbacks:
                     not_responded_temp = set(attended).difference(set(feedback.answered.all()))
-                    
                     not_responded = set(list(not_responded) + list(not_responded_temp))
 
                 if not not_responded:
                     continue
 
                 mails = [user.email for user in not_responded]
-               # mail to attendees
+                #mail to attendees
                 message = "Du har enda ikke svart på tilbakemeldingen etter"\
                 " %s. Du har frist innen %s klokka 23:59. Dersom du ikke har svart"\
                 " på tilbakemeldingen innen denne tid vil du få en prikk.\n\n"\
                 "lenke:\n%s\n"\
-                "\nEventuelle spørsmål sendes til bedkom@online.ntnu.no\n" \
-                "\nMvh\nOnline linjeforening" % (title, deadline, link)
+                "\nEventuelle spørsmål sendes til %s\n" \
+                "\nMvh\nOnline linjeforening" % (title, deadline, link, committee_mail)
 
-                EmailMessage("Purring: Bedpres tilbakemelding", message,
-                    "bedkom@online.ntnu.no", [], mails).send()
+                EmailMessage("Purring: tilbakemelding", message,
+                    committee_mail, [], mails).send()
 
-                # mail to bedkom
-                bedkom_link = "https://online.ntnu.no/feedback/events/event/%d/%d/results" % (event.id, feedback.id)
-                bedkom_message = "Hei, nå har feedbackmail blitt sendt til alle " \
+                # mail to committee
+                results_link = "https://online.ntnu.no/feedback/events/event/%d/%d/results" % (event.id, feedback.id)
+                results_message = "Hei, nå har feedbackmail blitt sendt til alle " \
                 "deltagere på \"%s\". Dere kan nå feedback-resultatene på %s\n" % \
-                (event.title.encode("utf-8"), bedkom_link.encode("utf-8"))
+                (event.title.encode("utf-8"), results_link.encode("utf-8"))
                 
-                EmailMessage("purring sendt til deltagere", bedkom_message,
-                    "online@online.ntnu.no", [settings.EMAIL_BEDKOM]).send()
+                EmailMessage("Purring sendt til deltagere", results_message,
+                    "online@online.ntnu.no", [committee_mail]).send()
             
