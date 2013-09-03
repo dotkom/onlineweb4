@@ -46,6 +46,47 @@ section#article-details {
     }
 }
 
+section#article_archive {
+    .tag-cloud {
+    margin-top:20px;
+    margin-bottom:30px;
+        .tag {
+            padding:10px;
+            margin-right:5px;
+            color:white;
+            background:@baby-blue;
+        }
+    }
+
+    .date-filter {
+        ul, li {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        li {
+            margin-bottom: 25px;
+            .tag {
+                padding: 10px;
+                color: white;
+
+                &.tag-all {
+                    background: @light-orange;
+                }
+
+                &.tag-year {
+                    background: @baby-blue-light;
+                }
+
+                &.tag-month {
+                    background: @baby-blue;
+                }
+            }
+        }
+    }
+}
+
 .video-padding {
     background-color: #000;
 }
