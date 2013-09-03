@@ -24,7 +24,12 @@ $(function() {
     // Build settings by url
     var pathname = window.location.pathname;
     var url = pathname.split('/');
-    if(url[url.length-3] === 'tag') {
+    if (url[url.length-2] === 'month') {
+        articleSettings.month = url[url.length-1];
+        articleSettings.year  = url[url.length-3];
+    } else if (url[url.length-2] === 'year') {
+        articleSettings.year = url[url.length-1];
+    } else if (url[url.length-3] === 'tag') {
         articleSettings.tag = url[url.length-1];
     }
     articleWidget.render(1,false,articleSettings);
