@@ -6,6 +6,7 @@ from django.utils.translation import ugettext as _
 
 from apps.authentication.models import OnlineUser as User
 from filebrowser.fields import FileBrowseField
+from fields import VimeoVideoField
 
 
 class Article(models.Model):
@@ -20,7 +21,7 @@ class Article(models.Model):
     image = FileBrowseField(_(u"bilde"), 
         max_length=200, directory=IMAGE_FOLDER,
         extensions=IMAGE_EXTENSIONS, null=True)
-    video = models.CharField(_("vimeo id"), max_length=200, blank=True)
+    vimeo_video = VimeoVideoField()
     created_date = models.DateTimeField(_(u"opprettet-dato"), auto_now_add=True, editable=False)
     changed_date = models.DateTimeField(_(u"sist endret"), editable=False, auto_now=True)
     published_date = models.DateTimeField(_(u"publisert"))

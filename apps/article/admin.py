@@ -1,6 +1,8 @@
 from django.contrib import admin
 from apps.article.models import Article, Tag, ArticleTag
 from django.conf import settings
+import django.forms as forms
+from django.template.loader import render_to_string
 from filebrowser.settings import VERSIONS, ADMIN_THUMBNAIL
 
 class ArticleTagAdmin(admin.ModelAdmin):
@@ -18,10 +20,21 @@ class TagAdmin(admin.ModelAdmin):
             obj.created_by = request.user
         obj.save()
 
+class VimeoForm(forms.TextInput):
+    def render(self, name, *args, **kwargs):
+        html = super(VimeoForm, self).render(name, *args, **kwargs)
+        popup = render_to_string("vimeo_upload/popup_button.html", {'field':name})
+        return   popup
+
+class ArticleAdminForm(forms.ModelForm):
+    class Meta:
+        model = Article
+        widgets = { 'vimeo_video': VimeoForm }
+
 class ArticleAdmin(admin.ModelAdmin):
     inlines = (ArticleTagInline,)
     list_display = ("heading", "created_by", "changed_by")
-
+    form = ArticleAdminForm
     #set the created and changed by fields
     def save_model(self, request, obj, form, change): 
         if (obj.image):

@@ -5,6 +5,8 @@ from django.http import HttpResponse
 from django.db.models import Count
 from models import Article, Tag, ArticleTag
 import random
+import simplejson as json
+import vimeo
 
 def index(request):
     # Featured
@@ -22,6 +24,28 @@ def index(request):
         i += 1
 
     return render_to_response('article/index.html', {'featured' : featured[0], 'latest': latestNews}, context_instance=RequestContext(request))
+
+def completeUpload(request):
+    if request.is_ajax:
+        client = vimeo.Client(key='c60b0e891d1712b6e86534bcdab319f257a814dd', secret='b2e65f399539d43c9e124afd93476ac95f263b2b', callback='http://127.0.0.1:8000/article/vimeo/', username='user16310918', token = True)
+        client.token.key = 'ec7d7eb1455e582a97dd732ad74862a9'
+        response = json.loads(client.get('vimeo.videos.upload.complete', ticket_id = request.session.get('ticket_id'), filename="wildlife.wmv" ))
+        video_data = { 'video_id' : response['ticket']['video_id'] }
+        data = json.dumps(video_data)
+        return HttpResponse(data, mimetype='application/json')
+    else:
+        return HttpRequest(status=400)
+
+def vimeoUpload(request):
+    client = vimeo.Client(key='c60b0e891d1712b6e86534bcdab319f257a814dd', secret='b2e65f399539d43c9e124afd93476ac95f263b2b', callback='http://127.0.0.1:8000/article/vimeo/', username='user16310918', token = True)
+    client.token.key = 'ec7d7eb1455e582a97dd732ad74862a9'
+    size_availiable = json.loads(client.get('vimeo.videos.upload.getQuota'))['user']['upload_space']['free']
+    request.session['size_availiable'] = size_availiable
+    response = json.loads(client.get('vimeo.videos.upload.getTicket'))
+    ticket = response['ticket']['endpoint']
+    ticket_id = response['ticket']['id']
+    request.session['ticket_id'] = ticket_id
+    return render_to_response('article/vimeo.html', {'size_availiable' : size_availiable, 'upload_ticket' : ticket, 'ticket_id' : ticket_id  }, context_instance=RequestContext(request))
 
 def archive(request, name=None, slug=None, year=None, month=None):
     """
