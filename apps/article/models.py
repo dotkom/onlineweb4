@@ -2,9 +2,9 @@
 
 from django.db import models
 from django.db.models import permalink
-from django.contrib.auth.models import User
 from django.utils.translation import ugettext as _
 
+from apps.authentication.models import OnlineUser as User
 from filebrowser.fields import FileBrowseField
 
 
