@@ -1,0 +1,194 @@
+{% extends "base.html" %}
+
+{% block styles %}
+	{{ block.super }}
+	<link rel="stylesheet/less" href="{{ STATIC_URL }}less/resourcecenter.less">
+{% endblock %}
+
+{% block content %}
+
+	<section id="resourcecenter">
+		<div class="container-fluid">
+			<div class="row-fluid">
+				<div class="span12">
+					<div class="page-header">
+						<h2 id="resourcecenter-heading">RESSURSSENTER</h2>
+					</div>
+				</div>
+			</div>
+
+			<div class="row-fluid" id="resourcecenter-items">
+
+				<div class="span12">
+					
+					<div class="span4 flip-container">
+						<div id="notifier" class="flipper">
+							<div class="front">
+								<img src="{{ STATIC_URL }}img/resourcecenter/notifier.png" />
+								<div class="wrapheader">
+									<h3>Online Notifier</h3>
+									<p>Chrome og Opera utvidelse</p>
+								</div>
+							</div>
+							<div class="back">
+								<div class="wraptext">
+									<h3>Online Notifier</h3>
+									<p>
+										Linjeforeningsnyheter, middagsmeny, sanntidsbuss og mer. Notifier er en utvidelse til Chrome og Opera.
+										<ul>
+											<li><a href="http://chrome.google.com/webstore/detail/online-notifier/hfgffimlnajpbenfpaofmmffcdmgkllf">Notifier for Chrome</a></li>
+											<li><a href="http://addons.opera.com/en/extensions/details/online-notifier/?display=no">Notifier for Opera</a></li>
+											<li><a href="mailto:dotkom@online.ntnu.no">Kontakt oss med ønsker</a></li>
+											<li><a href="https://wiki.online.ntnu.no/projects/online/wiki/Notifier">Les om Notifier i wikien</a></li>
+											<li><a href="http://github.com/dotKom/online-notifier">Åpen kildekode på GitHub</a></li>
+										</ul>
+									</p>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="span4 flip-container">
+						<div id="mailinglists" class="flipper">
+							<div class="front">
+								<img src="{{ STATIC_URL }}img/resourcecenter/mailinglists.png" />
+								<div class="wrapheader">
+									<h3>Epostlister</h3>
+									<p>Kontakt linjeforeninger</p>
+								</div>
+							</div>
+							<div class="back">
+								<div class="wraptext">
+									<h3>Epostlister</h3>
+									<p>
+										Kontakt linjeforeningene via epostlistene laget av Online.
+										<ul>
+											<li><a href="/resourcecenter/mailinglists">Epostlister her</a></li>
+										</ul>
+									</p>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="span4 flip-container">
+						<div id="infopages" class="flipper">
+							<div class="front">
+								<img src="{{ STATIC_URL }}img/resourcecenter/infopages.png" />
+								<div class="wrapheader">
+									<h3>Infosider</h3>
+									<p>Lær om linjeforeninger</p>
+								</div>
+							</div>
+							<div class="back">
+								<div class="wraptext">
+									<h3>Infosider</h3>
+									<p>
+										Lær om linjeforeningene++ i Trondheim på Onlines infosider.
+										<ul>
+											<li><a href="http://gloshaugen.info">gloshaugen.info</a>, Gløshaugen++</li>
+											<li><a href="http://dragvoll.info">dragvoll.info</a>, Dragvoll</li>
+											<li><a href="http://kalvskinnet.info">kalvskinnet.info</a>, HiST</li>
+											<li><a href="http://studorg.info">studorg.info</a>, International orgs</li>
+											<li><a href="http://moholt.info">moholt.info</a>, Moholtkjellerne</li>
+											<li><a href="http://karrieredager.info">karrieredager.info</a>, Karrieredagene</li>
+										</ul>
+									</p>
+								</div>
+							</div>
+						</div>
+					</div>
+					
+					<div class="span4 flip-container">
+						<div id="gameservers" class="flipper">
+							<div class="front">
+								<img src="{{ STATIC_URL }}img/resourcecenter/gameservers.png" />
+								<div class="wrapheader">
+									<h3>Spillservere</h3>
+									<p>Go down the rabbit hole</p>
+								</div>
+							</div>
+							<div class="back">
+								<div class="wraptext">
+									<h3>Spillservere</h3>
+									<p>
+										Se Hovedbygget i Minecraft og spill Minecraft med oss!
+									</p>
+									<p>
+										Åpne Minecraft og logg på <a href="minecraft.online.ntnu.no:25567">minecraft.online.ntnu.no:25567</a>
+									</p>
+									<!--
+									<p>
+										<ul>
+											<li><a href="/resourcecenter/gameservers">Minecraftserveren her</a></li>
+											<ul>
+												<li>Minecraft</li>
+												<li>Counter-Strike</li>
+											</ul>
+										</ul>
+									</p>
+									-->
+								</div>
+							</div>
+						</div>
+					</div>
+					
+					<div class="span4 flip-container">
+						<div id="irc" class="flipper">
+							<div class="front">
+								<img src="{{ STATIC_URL }}img/resourcecenter/irc.png" />
+								<div class="wrapheader">
+									<h3>IRC</h3>
+									<p>#online @ irc.freenode.net</p>
+								</div>
+							</div>
+							<div class="back">
+								<div class="wraptext">
+									<h3>IRC</h3>
+									<p>
+										<strong>#online</strong> på <strong>irc.freenode.net</strong> er aktiv døgnet rundt, året rundt. Bli med i samtalen.
+										<ul>
+											<li><a href="http://webchat.freenode.net/?channels=online">Join #online via enkel WebChat</a></li>
+											<li><a href="https://wiki.online.ntnu.no/projects/online/wiki/IRC">Guide til IRC i terminalen</a></li>
+										</ul>
+									</p>
+								</div>
+							</div>
+						</div>
+					</div>
+					
+					<div id="code" class="span4 flip-container">
+						<div id="github" class="flipper">
+							<div class="front">
+								<img src="{{ STATIC_URL }}img/resourcecenter/github.png" />
+								<div class="wrapheader">
+									<h3>Kode</h3>
+									<p>dotKom på GitHub</p>
+								</div>
+							</div>
+							<div class="back">
+								<div class="wraptext">
+									<h3>Kode</h3>
+									<p>
+										Mange av dotKoms kodebaser ligger åpent på GitHub. Du er herved invitert til å bidra til våre prosjekter, <strong>send en pull request</strong>.
+										<ul>
+											<li><a href="https://github.com/dotKom/">github.com/dotkom</a></li>
+										</ul>
+									</p>
+								</div>
+							</div>
+						</div>
+					</div>
+
+				</div>
+
+			</div>
+		</div>
+	</section>
+
+{% endblock content %}
+
+{% block js %}
+	{{ block.super }}
+	<script src="{{ STATIC_URL }}js/resourcecenter.js"></script>
+{% endblock js %}
