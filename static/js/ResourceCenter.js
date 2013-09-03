@@ -38,10 +38,15 @@ function onClick() {
     var flipper = $(this).find('.flipper');
     var style = $(flipper).attr('style');
     
-    if (style != flip)
-        $(this).find('.flipper').attr('style', flip); // flip
-    else
+    if (style != flip) {
+        // flip it
+        $(this).find('.flipper').attr('style', flip);
+        // flip all others back
+        $('.flip-container').not(this).find('.flipper').attr('style', '');
+    }
+    else {
         $(flipper).attr('style',''); // backflip, lol
+    }
 }
 
 // Wait till the document is ready
