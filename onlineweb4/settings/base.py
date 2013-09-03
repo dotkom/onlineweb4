@@ -92,7 +92,7 @@ TEMPLATE_DIRS = (
 )
 
 # Grappelli settings
-GRAPPELLI_ADMIN_TITLE = 'Onlineweb'
+GRAPPELLI_ADMIN_TITLE = '<a href="/">Onlineweb</a>'
 
 INSTALLED_APPS = (
     # Third party dependencies
