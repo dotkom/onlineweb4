@@ -1,5 +1,5 @@
 function ArticleWidget (Utils){
-    ArticleWidget.prototype.render = function() {
+    ArticleWidget.prototype.render = function(callback) {
          // Loading featured
         Utils.makeApiRequest({
             'url': '/api/v0/article/all/?format=json&limit=8',
@@ -25,6 +25,9 @@ function ArticleWidget (Utils){
                 }else {
                     $('#article-frontpage-featured').html('<p class="ingress">Ingen artikler funnet</p>');
                 }
+                
+                // Calling the callback
+                callback();
             }
         });
         
