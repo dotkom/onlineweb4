@@ -47,7 +47,7 @@ USE_TZ = False
 DATETIME_FORMAT = 'N j, Y, H:i'
 SECRET_KEY = 'q#wy0df(7&amp;$ucfrxa1j72%do7ko*-6(g!8f$tc2$3x@3cq5@6c'
 
-AUTH_PROFILE_MODULE = 'userprofile.UserProfile'
+AUTH_USER_MODEL = 'authentication.OnlineUser'
 
 MEDIA_ROOT = os.path.join(PROJECT_ROOT_DIRECTORY, 'media') # Override this in local.py in prod.
 MEDIA_URL = '/media/'
@@ -126,7 +126,6 @@ INSTALLED_APPS = (
     'apps.events',
     'apps.marks',
     'apps.offline',
-    'apps.userprofile',
     'apps.feedback',
     'apps.mommy',
 )
@@ -171,7 +170,7 @@ LOGGING = {
 # crispy forms settings
 CRISPY_TEMPLATE_PACK = 'bootstrap'
 
-# bootsrap messages classes
+# bootstrap messages classes
 MESSAGE_TAGS = {messages.DEBUG: 'alert-debug',
                 messages.INFO: 'alert-info',
                 messages.SUCCESS: 'alert-success',

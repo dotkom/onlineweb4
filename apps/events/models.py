@@ -2,11 +2,11 @@
 from datetime import datetime, timedelta
 from django.core.urlresolvers import reverse
 from django.db import models
-from django.contrib.auth.models import User, Group
+from django.contrib.auth.models import Group
 from django.utils.translation import ugettext_lazy as _
-from apps.userprofile.models import UserProfile
+
+from apps.authentication.models import OnlineUser as User, FIELD_OF_STUDY_CHOICES
 from apps.companyprofile.models import Company
-from apps.userprofile.models import FIELD_OF_STUDY_CHOICES
 from filebrowser.fields import FileBrowseField
 
 class Event(models.Model):
@@ -74,7 +74,7 @@ class Event(models.Model):
             Room on event
             Rules
             Marks
-        @param User object with userprofile
+        @param User object
         TODO:
             Exception handling
             Message handling (Return what went wrong. Tuple? (False, message))
@@ -181,14 +181,9 @@ class FieldOfStudyRule(Rule):
 
     def satisfied(self, user, registration_start):
         """ Override method """
-        #Get userprofile for user
-        try:
-            userprofile = UserProfile.objects.get(pk=user.pk)
-        except ObjectDoesNotExist:
-            return {"status": False, "message": _(u"Fant ikke din brukerprofil")}
 
         # If the user has the same FOS as this rule    
-        if (self.field_of_study == userprofile.field_of_study):
+        if (self.field_of_study == user.field_of_study):
             now = datetime.now()
             offset_datetime = registration_start + timedelta(hours=self.offset.offset)
             if offset_datetime <= now:
@@ -210,13 +205,10 @@ class GradeRule(Rule):
     grade = models.SmallIntegerField(_(u'klassetrinn'), null=False)
 
     def satisfied(self, user, registration_start):
-        try:
-            userprofile = UserProfile.objects.get(pk=user.pk)
-        except ObjectDoesNotExist:
-            return {"status": False, "message": _(u"Fant ikke din brukerprofil.")}
+        """ Override method """
 
         # If the user has the same FOS as this rule    
-        if (self.grade == userprofile.year):
+        if (self.grade == user.year):
             now = datetime.now()
             offset_datetime = registration_start + timedelta(hours=self.offset.offset)
             if offset_datetime <= now:
