@@ -115,7 +115,6 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.sites',
     'django.contrib.staticfiles',
-    'django.contrib.markup',
 
     # Onlineweb 4 apps
     'apps.article',
@@ -124,10 +123,11 @@ INSTALLED_APPS = (
     'apps.careeropportunity',
     'apps.companyprofile',
     'apps.events',
-    'apps.marks',
-    'apps.offline',
     'apps.feedback',
+    'apps.marks',
     'apps.mommy',
+    'apps.offline',
+    'apps.profiles',
 )
 
 # A sample logging configuration. The only tangible logging

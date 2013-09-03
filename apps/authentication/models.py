@@ -5,6 +5,7 @@ import datetime
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
+from filebrowser.fields import FileBrowseField
 
 FIELD_OF_STUDY_CHOICES = (
     (0, '--'),
@@ -15,6 +16,9 @@ FIELD_OF_STUDY_CHOICES = (
 )
 
 class OnlineUser(AbstractUser):
+
+    IMAGE_FOLDER = "images/profiles"
+    IMAGE_EXTENSIONS = ['.jpg', '.jpeg', '.gif', '.png']
     
     # Online related fields
     field_of_study = models.SmallIntegerField(_(u"studieretning"), choices=FIELD_OF_STUDY_CHOICES, default=0)
@@ -33,6 +37,10 @@ class OnlineUser(AbstractUser):
     allergies = models.TextField(_(u"allergier"), blank=True, null=True)
     mark_rules = models.BooleanField(_(u"godtatt prikkeregler"), default=False)
     rfid = models.CharField(_(u"RFID"), max_length=50, blank=True, null=True)
+    nickname = models.CharField(_(u"nickname"), max_length=50, blank=True, null=True)
+    website = models.CharField(_(u"hjemmeside"), max_length=50, blank=True, null=True)
+    image = FileBrowseField(_(u"bilde"), max_length=200, directory=IMAGE_FOLDER,
+                            extensions=IMAGE_EXTENSIONS, null=True, blank=True)
 
     # NTNU credentials
     ntnu_username = models.CharField(_(u"NTNU-brukernavn"), max_length=10, blank=True, null=True)

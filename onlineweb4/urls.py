@@ -35,7 +35,7 @@ urlpatterns = patterns('',
     url(r'^auth/',                  include('apps.authentication.urls')),
     url(r'^feedback/',              include('apps.feedback.urls')),
     url(r'^offline/',               include('apps.offline.urls')),
-    url(r'^profile',                include('apps.userprofile.urls')),
+    url(r'^profile',                include('apps.profiles.urls')),
 
     # nav-bar menu urls
     url(r'^#events$', TemplateView.as_view(template_name='frontpage.html#events'), name='events-link'),
