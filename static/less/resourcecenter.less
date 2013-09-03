@@ -8,12 +8,12 @@
 
 /* Vars */
 
-@max-box-size: 250pt;
+@max-box-size: 230pt;
 @box-padding: 10pt;
 @box-background: #f2f2f2;
-@animation-time: 0.8s;
-@border-normal: 1pt solid #ccc;
-@border-thick: 2pt solid #ccc;
+@animation-time: 0.5s;
+@animation-time-long: 1.2s;
+@border: 2pt solid #ccc;
 
 /* Mixins */
 
@@ -35,14 +35,14 @@
         -moz-perspective: 1000;
         perspective: 1000;
     }
-    /* flip the pane when hovered */
-    .flip-container:hover .flipper {
-        -webkit-transform: rotateY(180deg);
-        -moz-transform: rotateY(180deg);
-        transform: rotateY(180deg);
-        -ms-filter: "FlipH";
-        filter: FlipH;
-    }
+    /* flip the pane when hovered instead of click */
+    // .flip-container:hover .flipper {
+    //     -webkit-transform: rotateY(180deg);
+    //     -moz-transform: rotateY(180deg);
+    //     transform: rotateY(180deg);
+    //     -ms-filter: "FlipH";
+    //     filter: FlipH;
+    // }
     /* make sure all containers are the same size within each other */
     .flip-container, .front, .back {
         max-width: @max-box-size;
@@ -58,6 +58,12 @@
         transition: @animation-time;
         transform-style: preserve-3d;
         position: relative;
+    }
+    #code .flipper {
+        .debuglime;
+        -webkit-transition: @animation-time-long;
+        -moz-transition: @animation-time-long;
+        transition: @animation-time-long;
     }
     /* hide back of pane during swap */
     .front, .back {
@@ -83,13 +89,14 @@
     // Additional CSS properties (not flip code)
     
     .flip-container {
-        /* the background is visible behind the flip card during animation */
+        // The background is visible behind the flip card during animation
         background-color: #666;
         background-image: url('/static/img/resourcecenter/linen.png');
-        border: @border-thick;
+        border: @border;
         box-shadow: inset 0 0 120pt #000;
+        cursor: pointer;
         display: inline-block;
-        margin: 4pt;
+        margin: 6pt;
     }
     #code {
         // Special animated matrix background for the github resource
@@ -106,15 +113,17 @@
         background: lightblue;
         img {
             .debugred;
+            -webkit-filter: brightness(110%) contrast(90%);
         }
         .wrapheader {
             .debugpink;
-            background-color: @box-background;
-            border-top: @border-normal;
+            background-color: white;
+            border-top: @border;
+            border-bottom: @border;
             position: relative;
-            top: -55pt;
+            top: -56.5pt;
             padding: 5pt;
-            opacity: .96;
+            opacity: .87;
             h3 {
                 .debugred;
                 margin: 0;
