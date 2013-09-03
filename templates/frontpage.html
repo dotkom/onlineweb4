@@ -12,6 +12,30 @@
     <script type="text/javascript" src="{{ STATIC_URL }}js/initFrontpage.js"></script>
 {% endblock %}
 
+{% block apple-webapp %}
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="viewport" content="user-scalable=0" />
+    <meta name="apple-mobile-web-app-title" content="Online">
+
+    <!-- App icons -->
+    <!-- Any device, iPhone, iPad, iPhone Retina, iPad Retina -->
+    <link href="{{ STATIC_URL }}mimg/icon-57.png" rel="apple-touch-icon-precomposed" />
+    <link href="{{ STATIC_URL }}mimg/icon-57.png" sizes="57x57" rel="apple-touch-icon-precomposed" />
+    <link href="{{ STATIC_URL }}mimg/icon-72.png" sizes="72x72" rel="apple-touch-icon-precomposed" />
+    <link href="{{ STATIC_URL }}mimg/icon-114.png" sizes="114x114" rel="apple-touch-icon-precomposed" />
+    <link href="{{ STATIC_URL }}mimg/icon-144.png" sizes="144x144" rel="apple-touch-icon-precomposed" />
+
+    <!-- Splash image -->
+    <!-- iPhone, iPhone4, iPhone5, iPad Portrait, iPad Landscape, iPad Retina Portrait, iPad Retina Landscape -->
+    <link href="{{ STATIC_URL }}mimg/splash-320x460.png" sizes="320x460" media="(device-width: 320px)" rel="apple-touch-startup-image" />
+    <link href="{{ STATIC_URL }}mimg/splash-640x920.png" sizes="640x920" media="(device-width: 320px) and (-webkit-device-pixel-ratio: 2)" rel="apple-touch-startup-image" />
+    <link href="{{ STATIC_URL }}mimg/splash-640x1096.png" sizes="640x1096" media="(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2)" rel="apple-touch-startup-image" />
+    <link href="{{ STATIC_URL }}mimg/splash-768x1004.png" sizes="768x1004" media="(min-device-width: 481px) and (max-device-width: 1024px) and (orientation: portrait)" rel="apple-touch-startup-image" />
+    <link href="{{ STATIC_URL }}mimg/splash-1024x748.png" sizes="1024x748" media="(min-device-width: 481px) and (max-device-width: 1024px) and (orientation: landscape)" rel="apple-touch-startup-image" />
+    <link href="{{ STATIC_URL }}mimg/splash-1536x2008.png" sizes="1536x2008" media="(device-width: 1536px) and (orientation: portrait) and (-webkit-device-pixel-ratio: 2)" rel="apple-touch-startup-image" />
+    <link href="{{ STATIC_URL }}mimg/splash-2048x1496.png" sizes="2048x1496" media="(device-width: 1536px) and (orientation: landscape) and (-webkit-device-pixel-ratio: 2)" rel="apple-touch-startup-image" />
+{% endblock %}
+
 {% block content %}
     <section id="events">
         <div class="container-fluid">
