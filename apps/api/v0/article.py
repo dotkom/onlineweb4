@@ -3,14 +3,13 @@ from copy import copy
 from datetime import datetime
 from django.conf import settings
 
-from django.contrib.auth.models import User
 from django.template.defaultfilters import slugify
 
 from tastypie import fields
 from tastypie.resources import ModelResource
 
 from apps.article.models import Article, ArticleTag, Tag
-from apps.api.v0.userprofile import UserResource
+from apps.api.v0.authentication import UserResource
 
 from filebrowser.base import FileObject
 from filebrowser.settings import VERSIONS
