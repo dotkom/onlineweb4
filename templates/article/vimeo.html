@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    </head>
+    <body>
+        <div class="container-fluid">
+            <div class="row-fluid">
+                <div class="span12">
+                    <div class="page-header">
+                        <h1>Vimeo video archive:</h1>
+                    </div>
+                    <form id="uploadForm" method="POST" action="{{ upload_ticket }}" enctype="multipart/form-data" > {%csrf_token %}
+                        <input id="ticket_id" type="hidden" name="ticket_id" value="{{ ticket_id }}" />
+                        <input id="chunk_id" type="hidden" name="chunk_id" value="0" />
+                        <input id="file_data" type="file" name="file_data" />
+                        <input id="submit" type="submit" value="Upload" class="uploadButton" />
+                    <form>
+                </div>
+                <progress id="progress" max="100" value="0" hidden="true"></progress>
+            </div>
+        </div>
+        <script src="{{ STATIC_URL }}js/VimeoWidget.js"></script>
+        <script>
+            function uploadComplete(evt) {
+                $.ajax({
+                    type: "post",
+                    dataType: "json",
+                    url: "/article/completeUpload/",
+                    data: {
+                        csrfmiddlewaretoken: '{{ csrf_token }}'
+                    },
+                    success: function(data) {
+                        $.each(data, function(key, val) {
+                            if (key === "video_id") {
+                                opener.dismissAddAnotherPopup(window, val, "videoId");
+                            }
+                        }); 
+                    }
+                });
+            }
+        </script>
+    </body>
+</html>
