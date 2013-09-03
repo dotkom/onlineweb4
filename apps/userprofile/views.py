@@ -10,13 +10,16 @@ from apps.userprofile.forms import create_profile_form, PrivacyForm, ProfileForm
 
 import json
 
-
+"""
+    Index for the entire user profile view
+    Methods redirect to this view on save
+"""
 def index(request):
 
-    '''
+    """
     This view is rendered for ever request made to the userprofile pages,
     due to the fact that it is a one-page view.
-    '''
+    """
 
     if not request.user.is_authenticated():
         return render_home(request)

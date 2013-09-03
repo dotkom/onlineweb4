@@ -1,5 +1,5 @@
-@image-width: 180px;
-@image-width-with-padding: 188px;
+@image-width: 230px;
+@image-width-with-padding: 238px;
 
 .word-break {
   word-break: normal;
@@ -51,4 +51,50 @@ label > i.btn-icon {
 
 #remove-image-modal {
   top: 35%;
+}
+
+.privacybox {
+
+  background-color: @baby-blue;
+  color: #fff;
+  width: 250px;
+  height: 75px;
+  line-height: 75px;
+  text-align: center;
+  margin: 0px 20px 20px 0px;
+  padding: 0px 5px 5px 0px;
+  font-size: 1.5em;
+
+  /* Make text non-selectable */
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: -moz-none;
+  -ms-user-select: none;
+  user-select: none;
+
+  span {
+    display: inline-block;
+    vertical-align: middle;
+    color: 111;
+    line-height: normal;
+  }
+
+  &.on {
+    opacity: 1.0;
+  }
+
+  &.off {
+    opacity: 0.10;
+  }
+
+  input[type="checkbox"] {
+    display: none;
+  }
+}
+
+@media all and (max-width: 768px) {
+  .privacybox {
+    width: 100%;
+  }
 }

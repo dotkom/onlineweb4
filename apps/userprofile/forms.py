@@ -7,6 +7,7 @@ from django.utils.translation import ugettext_lazy as _
 
 class ProfileForm(forms.Form):
 
+    hidden_checkbox_widget = forms.CheckboxInput(attrs={'id' : 'hidden-input'})
     email = forms.EmailField(required=True, error_messages={'required' : _(u"Feltet er påkrevd")}, label="E-post-adresse")
     nickname = forms.CharField(max_length=50, required=False, label="Nickname")
     website = forms.CharField(max_length=50, required=False, label="Webside")
