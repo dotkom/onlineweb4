@@ -37,7 +37,7 @@ class Command(NoArgsCommand):
             if not feedbacks:
                 continue
             
-            if event.event_type == 1 or event.event_type == 4: #Sosialt - urflukt
+            if event.event_type == 1 or event.event_type == 4: #Sosialt - utflukt
                 committtee_mail == settings.EMAIL_ARRKOM
             elif event.event_type == 2: #Bedpres
                 committee_mail = settings.EMAIL_BEDKOM
@@ -89,10 +89,12 @@ class Command(NoArgsCommand):
                 EmailMessage("Feedback resultat", results_message,"online@online.ntnu.no", [committee_mail]).send()
             else: #Event is a deadline notice
                 not_responded = {}
+                #Gets the users that has not yet responded to the feedback
                 for feedback in feedbacks:
                     not_responded_temp = set(attended).difference(set(feedback.answered.all()))
                     not_responded = set(list(not_responded) + list(not_responded_temp))
 
+                #Skip if eveyone has responded
                 if not not_responded:
                     continue
 

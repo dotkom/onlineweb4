@@ -25,6 +25,8 @@ class FeedbackRelation(models.Model):
     content_type = models.ForeignKey(ContentType)
     object_id = models.PositiveIntegerField()
     content_object = generic.GenericForeignKey('content_type', 'object_id')
+    deadline = models.DateField()
+    active = models.BooleanField(default=1)
 
     # Keep a record of who has answered. (not /what/ they have answered)
     answered = models.ManyToManyField(
