@@ -165,6 +165,12 @@ function ArticleArchive (Utils) {
     var elm_per_page = 9; // Number of elements we are loading at the same time
     var is_more_elements = true; // True if we have more elements, false if not. To avoid many empty ajax-calls
     var pre_query = ''; // The previous query made by the settings supplied
+
+    moment.lang('no', {
+        months: [
+            "januar", "februar", "mars", "april", "mai", "juni", "juli", "august", "september", "oktober", "november", "desember"
+        ]
+    });
     
     /* Render the widget */
     ArticleArchive.prototype.render = function(page, overwrite, settings, callback_func) {
@@ -193,16 +199,31 @@ function ArticleArchive (Utils) {
                 success: function(data) {
                     // Variables
                     var num = 1;
-                    var output = '<div class="span12'+((page == 1 && !overwrite)?'':' hide')+'">'; // If we are not on the first page (and not using the filters), make the elements hidden to fade them in later
+                    var output = '<div class="row-fluid"><div class="span12'+((page == 1 && !overwrite)?'':' hide')+'">'; // If we are not on the first page (and not using the filters), make the elements hidden to fade them in later
                     
                     // The loop
                     for (var i = 0; i < data.articles.length; i++) {
                         // The markup
-                        output += '<div class="span4 article"><a href="/article/'+data.articles[i].id+'"><img src="'+data.articles[i].image_article_front_small+'" style="width: 248px; height: 100px;" alt="'+data.articles[i].heading+'" /></a><a href="'+data.articles[i].id+'"><h3>'+data.articles[i].heading+'</h3></a><p>'+data.articles[i].ingress+'</p><span class="date pull-right">'+data.articles[i].published_date+'</span><span></span></div>'
+                        output += '<div class="span4 article">';
+                        output += '    <a href="'+data.articles[i].id+'"><h3>'+data.articles[i].heading+'</h3></a>';
+                        output += '    <a href="/article/'+data.articles[i].id+'">';
+                        output += '        <img src="'+data.articles[i].image_article_front_small+'" style="width: 248px; height: 100px;" alt="'+data.articles[i].heading+'" />';
+                        output += '    </a>';
+                        output += '    <div class="row-fluid">';
+                        output += '        <div class="span12 article-detail-meta">';
+                        //output += '          <span class="meta-caption">Av</span> {{ article.created_by.get_full_name }} |';
+                        output += '            <span class="meta-caption">Publisert</span> <span>'+moment(data.articles[i].published_date).format('D. MMMM YYYY')+'</span>';
+                        //output += '          {% if article.is_changed %} |';
+                        //output += '          <span class="meta-caption">Endret</span> {{ article.changed_date }}';
+                        //output += '          {% endif %}';
+                        output += '        </div>';
+                        output += '    </div>';
+                        output += '    <p>'+data.articles[i].ingress+'</p>';
+                        output += '</div>';
                         
                         // Every third element in a chunk
                         if (num % 3 == 0)
-                            output += '</div><div class="span12"><hr />';
+                            output += '</div></div><div class="row-fluid"><div class="span12">';
                     
                         // Increasing num!    
                         num++;
