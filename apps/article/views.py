@@ -67,6 +67,9 @@ def archive(request, name=None, slug=None, year=None, month=None):
             if d_year == y:
                 if month_strings[d_month] not in dates[d_year]:
                     dates[d_year].append(month_strings[d_month])
+    # Now sort months
+    for year in dates:
+        dates[year] = sorted(dates[year])
 
     # If we're filtering by tag
     if name:

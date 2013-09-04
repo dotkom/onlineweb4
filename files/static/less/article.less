@@ -59,30 +59,38 @@ section#article_archive {
     }
 
     .date-filter {
-        ul, li {
-            list-style: none;
-            padding: 0;
-            margin: 0;
+        div.year {
+            margin-right: 9px;
         }
 
-        li {
-            margin-bottom: 25px;
-            .tag {
-                padding: 10px;
-                color: white;
-
-                &.tag-all {
-                    background: @light-orange;
-                }
-
-                &.tag-year {
-                    background: @baby-blue-light;
-                }
-
-                &.tag-month {
-                    background: @baby-blue;
-                }
+        div.months {
+            div:nth-child(4n+0) {
+                margin: 0;
             }
+        }
+
+        .tag {
+            width: 100%;
+            padding: 5px 0;
+            text-align: center;
+            color: white;
+            margin-bottom: 5px;
+        }
+
+        .tag-all {
+            display: block;
+            text-align: center;
+            background: @light-orange;
+        }
+
+        .tag-year {
+            display: inline-block;
+            background: @baby-blue-light;
+        }
+
+        .tag-month {
+            display: inline-block;
+            background: @baby-blue;
         }
     }
 }
