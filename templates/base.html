@@ -1,3 +1,4 @@
+{% load compress %}
 <!DOCTYPE html>
 <html>
     <head>
@@ -9,7 +10,9 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         {% block styles %}
             <link href='http://fonts.googleapis.com/css?family=Open+Sans:300,400,600' rel='stylesheet' type='text/css'>
-            <link rel="stylesheet/less" href="{{ STATIC_URL }}less/core.less">
+            {% compress css %}
+            <link rel="stylesheet" type="text/less" href="{{ STATIC_URL }}less/core.less">
+            {% endcompress %}
         {% endblock %}
         {% block apple-webapp %}{% endblock %}
         <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
@@ -184,7 +187,7 @@
     </section>
     
     {% block js %}
-        <script src="{{ STATIC_URL }}js/libs/less.js"></script>
+        <!--<script src="{{ STATIC_URL }}js/libs/less.js"></script>-->
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
         <script src="{{ STATIC_URL }}js/libs/bootstrap.min.js"></script>
         <script src="{{ STATIC_URL }}js/libs/bootstrap-dropdown.js"></script>
