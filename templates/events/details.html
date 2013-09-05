@@ -103,10 +103,11 @@
                                             <p class="status-text">Du kan melde deg på dette arrangementet.</p>
                                             <div class="action"><a href="#attend" role="button" class="btn btn-large btn-success" data-toggle="modal">Meld meg på</a></div>
                                         {% endif %}
-                                    {% elif user_staus.offset %}
-                                        <p class="status-text">Du kan melde deg på om {{ user_status.offset }} timer.</p>
-                                    {% elif not user_status.status and user_status.message %} 
-                                        <p class="status-text">{{ user_status.message }}</p>
+                                    {% elif user_status.offset %}
+                                        <p class="status-text">Du kan melde deg på {{ user_status.offset }}.</p>
+                                        {% if not user_status.status and user_status.message %} 
+                                            <p class="status-text">{{ user_status.message }}</p>
+                                        {% endif %}
                                     {% else %}
                                         <p class="status-text">Du har ikke tilgang til dette arrangementet</p>
                                     {% endif %}
