@@ -3,33 +3,35 @@
 {% block content %}
     
     <section id="careeropportunities">
-        <div class="container-fluid">
-            <div class="row-fluid">
-                <div class="span12">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
                     <div class="page-header">
                         <h2>KARRIEREMULIGHETER</h2>
                     </div>
                 </div>
             </div>
+
+            {% if opportunities %}
 {% for opportunity in opportunities %}
     {% if forloop.counter0|divisibleby:"4" %}
-            <div class="row-fluid row-space">
+            <div class="row row-space">
     {% endif %}
-                <div class="span3">
+                <div class="col-md-3">
                     <a href="{% url 'careeropportunity_details' opportunity.id %}">
-                        <div class="row-fluid">
-                            <div class="span12">
+                        <div class="row">
+                            <div class="col-md-12">
                                 <img src="{% version opportunity.company.image 'companies_medium' %}" alt=""/>
                             </div>
                         </div>
-                        <div class="row-fluid">
-                            <div class="span12">
+                        <div class="row">
+                            <div class="col-md-12">
                                 <h3 class="career-title">{{opportunity.title}}</h3>
                             </div>
                         </div>
                     </a>
-                    <div class="row-fluid">
-                        <div class="span12">
+                    <div class="row">
+                        <div class="col-md-12">
                             <p class="career-ingress">{{opportunity.ingress}}</p>
                         </div>
                     </div>
@@ -43,5 +45,8 @@
     {% endif %}
 {% endfor %}
         </div>
+        {% else %}
+        <p class="ingress">Ingen karrieremuligheter funnet.</p>
+        {% endif %}
     </section>
 {%endblock content %}

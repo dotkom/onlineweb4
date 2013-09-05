@@ -19,9 +19,41 @@
     </head>
     <body>
     <!-- Header goes here! -->
-    <div id="topmenu" class="navbar navbar-fixed-top">
+
+    <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                  <span class="sr-only">Toggle navigation</span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                </button>
+               <a class="navbar-brand" href="{% url 'home' %}"><img width="140px" src="{{ STATIC_URL }}img/online_logo.png" alt="Online" class="logo"></a>
+            </div>
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse navbar-ex1-collapse">
+                <ul class="nav navbar-nav">
+                  <li class="active"><a href="#">Forside</a></li>
+                  <li><a href="#">Innholdssider</a></li>
+                  <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                      <li><a href="#">Action</a></li>
+                      <li><a href="#">Another action</a></li>
+                      <li><a href="#">Something else here</a></li>
+                      <li><a href="#">Separated link</a></li>
+                      <li><a href="#">One more separated link</a></li>
+                    </ul>
+                  </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!--<div id="topmenu" class="navbar navbar-fixed-top">
         <div class="navbar-inner">
-            <div class="container-fluid">
+            <div class="container">
                 <ul class="nav">
                     <li class="top-menu-img">
                         <a class="brand" href="{% url 'home' %}"><img src="{{ STATIC_URL }}img/online_logo.png" alt="Online" class="online-logo"></a>
@@ -105,10 +137,11 @@
             </div>
         </div>
     </div>
+    -->
     {% if messages %}
-        <div class="container-fluid messages">
-            <div class="row-fluid">
-                <div class="span12">
+        <div class="container messages">
+            <div class="row">
+                <div class="col-md-12">
                     {% for message in messages %}
                     <div class="alert {% if message.tags %}{{ message.tags }}{% endif %}">
                         <button type="button" class="close" data-dismiss="alert">&times;</button>
@@ -124,25 +157,25 @@
     {% endblock %}
 
     <section id="footer">
-        <div class="container-fluid">
-            <div class="row-fluid">
-                <div class="span4">
-                    <div class="row-fluid row-space">
-                        <div class="span12">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="row row-space">
+                        <div class="col-md-12">
                             <a href="http://facebook.com/LinjeforeningenOnline"><img src="{{ STATIC_URL }}img/facebook-64.png" alt="Facebook" /></a>
                             <a href="http://twitter.com/Online_NTNU"><img src="{{ STATIC_URL }}img/twitter-64.png" alt="Twitter" /></a>
                             <a href="https://plus.google.com/107294836198591872251"><img src="{{ STATIC_URL }}img/googleplus-64.png" alt="Google Plus" /></a>
                         </div>
                     </div>
-                    <div class="row-fluid">
-                        <div class="span12">
+                    <div class="row">
+                        <div class="col-md-12">
                             <p>Har du funnet en feil på nettsiden?<br />Ta kontakt med <a href="mailto:dotkom@online.ntnu.no">Utviklingsteamet</a></p>
                         </div>
                     </div>
                 </div>
-                <div class="span4">
-                    <div class="row-fluid">
-                        <div class="span12">
+                <div class="col-md-4">
+                    <div class="row">
+                        <div class="col-md-12">
                             <div class="contact-info">
                                  <div class="contact-item">
                                     <span class="glyphicon glyphicon-briefcase"></span>992548045 (OrgNr)
@@ -156,8 +189,8 @@
                             </div>
                         </div>
                     </div>
-                    <div class="row-fluid">
-                        <div class="span6">
+                    <div class="row">
+                        <div class="col-md-6">
                             <div class="address">
                                 <div class="address-heading">Besøksadresse <span class="glyphicon glyphicon-map-marker"></span></div>
                                 <div class="address-info">
@@ -167,7 +200,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="span6">
+                        <div class="col-md-6">
                             <div class="address">
                                 <div class="address-heading">Postadresse <span class="glyphicon glyphicon-map-marker"></span></div>
                                 <div class="address-info">
@@ -179,7 +212,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="span4">
+                <div class="col-md-4">
                     <img src="{{ STATIC_URL }}/holder.js/379x300" />
                 </div>
             </div>
@@ -190,7 +223,6 @@
         <!--<script src="{{ STATIC_URL }}js/libs/less.js"></script>-->
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
         <script src="{{ STATIC_URL }}js/libs/bootstrap.min.js"></script>
-        <script src="{{ STATIC_URL }}js/libs/bootstrap-dropdown.js"></script>
         <script src="{{ STATIC_URL }}js/libs/moment.js"></script>
         <script src="{{ STATIC_URL }}js/holder.js"></script>
         <script src="{{ STATIC_URL }}js/init.js"></script>
