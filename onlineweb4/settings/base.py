@@ -6,6 +6,7 @@ from django.contrib.messages import constants as messages
 PROJECT_SETTINGS_DIRECTORY = os.path.dirname(globals()['__file__'])
 # Root directory. Contains manage.py
 PROJECT_ROOT_DIRECTORY = os.path.join(PROJECT_SETTINGS_DIRECTORY, '../..')
+#PROJECT_ROOT_DIRECTORY = os.path.dirname(os.path.dirname(__file__))
 
 TEST_RUNNER = "django_nose.NoseTestSuiteRunner"
 NOSE_ARGS = ['--with-coverage', '--cover-package=apps']
@@ -49,21 +50,39 @@ SECRET_KEY = 'q#wy0df(7&amp;$ucfrxa1j72%do7ko*-6(g!8f$tc2$3x@3cq5@6c'
 
 AUTH_USER_MODEL = 'authentication.OnlineUser'
 
-MEDIA_ROOT = os.path.join(PROJECT_ROOT_DIRECTORY, 'media') # Override this in local.py in prod.
+MEDIA_ROOT = os.path.join(PROJECT_ROOT_DIRECTORY, 'uploaded_media') # Override this in local.py in prod.
 MEDIA_URL = '/media/'
 
-STATIC_ROOT = 'static/'
+STATIC_ROOT = os.path.join(PROJECT_ROOT_DIRECTORY, 'static')
 STATIC_URL = '/static/'
 
 # Additional locations of static files
 STATICFILES_DIRS = (
-    os.path.join(PROJECT_ROOT_DIRECTORY, 'static/'),
+    os.path.join(PROJECT_ROOT_DIRECTORY, 'files/static'),
 )
 
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
 #    'django.contrib.staticfiles.finders.DefaultStorageFinder',
+    'compressor.finders.CompressorFinder',
+)
+
+COMPRESS_OUTPUT_DIR = 'cache'
+COMPRESS_PRECOMPILERS = (
+    ('text/less', 'lessc {infile} {outfile}'),
+)
+
+COMPRESS_CSS_FILTERS = [
+    'compressor.filters.css_default.CssAbsoluteFilter',
+    'compressor-filters.cssmin.CSSMinFilter',
+]
+COMPRESS_JS_FILTERS = [
+    'compressor.filters.jsmin.JSMinFIlter',
+]
+
+COMPRESS_PRECOMPILERS = (
+    ('text/less', 'lessc -x {infile} {outfile}'),
 )
 
 # List of callables that know how to import templates from various sources.
@@ -105,6 +124,7 @@ INSTALLED_APPS = (
     'django_extensions',
     'django_dynamic_fixture',
     'captcha',
+    'compressor',
 
     # Django apps
     'django.contrib.admin',

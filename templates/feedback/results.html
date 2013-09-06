@@ -30,12 +30,14 @@
         </div>
     </div>
 </div>
+{% block js %}
+    {{ block.super }}
+    <script src="{{ STATIC_URL }}js/libs/d3.v3.min.js"></script>
+    <script src="{{ STATIC_URL }}js/FeedbackWidget.js"></script>
+    <script type="text/javascript">
+        createFoschart({{ foschartdata }});
+        createRatingCharts({{ rating_question_answers }}, {{ rating_questions|safe }});
+    </script>
+{% endblock %}
 
-<script src="{{ STATIC_URL }}js/libs/d3.v3.min.js"></script>
-<script src="{{ STATIC_URL }}js/FeedbackWidget.js"></script>
-<script type="text/javascript">
-    createFoschart({{ foschartdata }});
-    createRatingCharts({{ rating_question_answers }}, {{ rating_questions|safe }});
-</script>
-
-{%endblock content %}
+{% endblock content %}

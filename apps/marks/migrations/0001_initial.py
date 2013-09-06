@@ -7,6 +7,10 @@ from django.db import models
 
 class Migration(SchemaMigration):
 
+    depends_on = (
+        ("authentication", "0001_initial"),
+    )
+
     def forwards(self, orm):
         # Adding model 'Mark'
         db.create_table(u'marks_mark', (

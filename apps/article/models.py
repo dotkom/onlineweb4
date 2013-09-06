@@ -81,5 +81,6 @@ class ArticleTag(models.Model):
     tag = models.ForeignKey(Tag, verbose_name=_(u"tag"), related_name='article_tags')
 
     class Meta:
+        unique_together = ('article', 'tag')
         verbose_name = _(u"tag")
         verbose_name_plural = _(u"tags")

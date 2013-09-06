@@ -1,2 +1,2 @@
 apt-get update
-apt-get install -y python-dev python-setuptools python-virtualenv vim virtualenvwrapper git screen libjpeg8 libjpeg8-dev zlib-bin libtiff4 libtiff4-dev libfreetype6 libfreetype6-dev libwebp2 libpq-dev python-psycopg2
+apt-get install -y python-dev python-setuptools python-virtualenv vim virtualenvwrapper git screen libjpeg8 libjpeg8-dev zlib-bin libtiff4 libtiff4-dev libfreetype6 libfreetype6-dev libwebp2 libpq-dev python-psycopg2 git-core curl build-essential openssl libssl-dev
