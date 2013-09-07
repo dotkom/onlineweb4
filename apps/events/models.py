@@ -122,6 +122,8 @@ class Event(models.Model):
                 postponed_registration_start = response['offset'] + mark_offset
             else:
                 postponed_registration_start = self.attendance_event.registration_start + mark_offset
+
+            # Check if the marks are actually preventing signup
             if datetime.now() < postponed_registration_start:
                 # Signup is not possible because of the added delta from marks. 
                 response['offset'] = postponed_registration_start
