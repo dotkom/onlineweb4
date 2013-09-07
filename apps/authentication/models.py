@@ -50,11 +50,13 @@ class OnlineUser(AbstractUser):
     # TODO checkbox for forwarding of @online.ntnu.no mail
 
     @property
-    def is_online(self):
+    def is_member(self):
         """
         Returns true if the User object is associated with Online.
         """
-        return self.field_of_study != 0
+        if AllowedUsername.objects.filter(username=self.ntnu_username).count() > 0:
+            return True
+        return False
 
     def get_full_name(self):
         """
@@ -108,3 +110,24 @@ class RegisterToken(models.Model):
         valid_period = datetime.timedelta(days=1)
         now = datetime.datetime.now()
         return now < self.created + valid_period 
+
+class AllowedUsername(models.Model):
+    """
+    Holds usernames that are considered valid members of Online and the time they expire.
+    """
+    username = models.CharField(_(u"brukernavn"), max_length=10)
+    registered = models.DateField(_(u"registrert"))
+    note = models.CharField(_(u"notat"), max_length=100)
+    expiration_date = models.DateField(_(u"utløpsdato"))
+
+    @property
+    def is_active(self):
+        return datetime.datetime.now() < self.expiration_date
+
+    def __unicode__(self):
+        return self.username
+
+    class Meta:
+        verbose_name = _("tillatt brukernavn")
+        verbose_name_plural = _("tillatte brukernavn")
+        ordering = ("username",)
