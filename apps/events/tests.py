@@ -4,7 +4,9 @@ from django_dynamic_fixture import G
 from django.test import TestCase
 
 from apps.authentication.models import OnlineUser as User
-from apps.events.models import Event, AttendanceEvent, Attendee
+from apps.events.models import (Event, AttendanceEvent, Attendee,
+                                RuleBundle, RuleOffset,
+                                FieldOfStudyRule, GradeRule, UserGroupRule)
 
 class EventTest(TestCase):
 
@@ -27,3 +29,13 @@ class EventTest(TestCase):
         self.logger.debug("Testing testing on Attendee with dynamic fixtures")
         self.assertEqual(self.attendee.__unicode__(), self.user.get_full_name())
         self.assertNotEqual(self.attendee.__unicode__(), 'Ola Normann')
+
+    # Tests for Rule Bundles
+    def testFieldOfStudyRule(self):
+        self.logger.debug("Testing Field Of Study Rule")
+        self.rule_offset = G(RuleOffset, offset=24)
+        self.fos_rule = G(FieldOfStudyRule, offset=self.rule_offset, field_of_study=1)
+        #rule_bundle = G(RuleBundle)
+        #rule_bundle.field_of_study_rules = fos_rule
+        #self.attendance_event.rule_bundles = rule_bundle
+        self.assertTrue(True)
