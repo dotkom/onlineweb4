@@ -3,11 +3,11 @@
 from django.contrib import admin
 from django.utils.translation import ugettext as _
 
-from apps.authentication.models import OnlineUser
+from apps.authentication.models import OnlineUser, AllowedUsername
 
 class OnlineUserAdmin(admin.ModelAdmin):
     model = OnlineUser
-    list_display = ['username', 'first_name', 'last_name', 'field_of_study', 'is_online',]
+    list_display = ['username', 'first_name', 'last_name', 'field_of_study', 'is_member',]
     list_filter = ('is_staff', 'is_superuser', 'is_active', 'groups')
     fieldsets = (
         (None, {'fields': ('username', 'password')}),
@@ -21,3 +21,8 @@ class OnlineUserAdmin(admin.ModelAdmin):
     filter_horizontal = ('groups', 'user_permissions',)
 
 admin.site.register(OnlineUser, OnlineUserAdmin)
+
+class AllowedUsernameAdmin(admin.ModelAdmin):
+    model = AllowedUsername
+
+admin.site.register(AllowedUsername, AllowedUsernameAdmin)
