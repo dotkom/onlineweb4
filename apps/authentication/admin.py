@@ -11,11 +11,11 @@ class OnlineUserAdmin(admin.ModelAdmin):
     list_filter = ('is_staff', 'is_superuser', 'is_active', 'groups')
     fieldsets = (
         (None, {'fields': ('username', 'password')}),
-        (_('Personal info'), {'fields': ('first_name', 'last_name', 'email', 'phone_number', )}),
-        (_('Studieinformasjon'), {'fields': ('ntnu_username', 'field_of_study', 'started_date', 'compiled',)}),
-        (_('Address'), {'fields': ('address', 'zip_code',)}), 
-        (_('Important dates'), {'fields': ('last_login', 'date_joined',)}),
-        (_('Permissions'), {'fields': ('is_active', 'is_staff', 'is_superuser',
+        (_(u'Personal info'), {'fields': ('first_name', 'last_name', 'email', 'phone_number', )}),
+        (_(u'Studieinformasjon'), {'fields': ('ntnu_username', 'field_of_study', 'started_date', 'compiled',)}),
+        (_(u'Address'), {'fields': ('address', 'zip_code',)}), 
+        (_(u'Important dates'), {'fields': ('last_login', 'date_joined',)}),
+        (_(u'Permissions'), {'fields': ('is_active', 'is_staff', 'is_superuser',
                                        'groups', 'user_permissions')}),
     )
     filter_horizontal = ('groups', 'user_permissions',)
@@ -24,5 +24,11 @@ admin.site.register(OnlineUser, OnlineUserAdmin)
 
 class AllowedUsernameAdmin(admin.ModelAdmin):
     model = AllowedUsername
+    list_display = ('username', 'registered', 'expiration_date', 'note')
+    fieldsets = (
+        (None, {'fields': ('username', 'registered', 'expiration_date')}),
+        (_(u'Notater'), {'fields': ('note', 'description')}),
+
+    )
 
 admin.site.register(AllowedUsername, AllowedUsernameAdmin)
