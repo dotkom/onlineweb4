@@ -1,4 +1,5 @@
 import logging
+import datetime
 
 from django_dynamic_fixture import G
 from django.test import TestCase
@@ -7,6 +8,7 @@ from apps.authentication.models import OnlineUser as User
 from apps.events.models import (Event, AttendanceEvent, Attendee,
                                 RuleBundle, RuleOffset,
                                 FieldOfStudyRule, GradeRule, UserGroupRule)
+from apps.marks.models import Mark, UserEntry
 
 class EventTest(TestCase):
 
@@ -14,6 +16,7 @@ class EventTest(TestCase):
         self.event = G(Event, title='Sjakkturnering')
         self.attendance_event = G(AttendanceEvent, event=self.event)
         self.user = G(User)
+        self.user.username = 'ola123'
         self.attendee = G(Attendee, event=self.attendance_event, user=self.user)
         self.logger = logging.getLogger(__name__)
 
@@ -30,12 +33,19 @@ class EventTest(TestCase):
         self.assertEqual(self.attendee.__unicode__(), self.user.get_full_name())
         self.assertNotEqual(self.attendee.__unicode__(), 'Ola Normann')
 
-    # Tests for Rule Bundles
-    def testFieldOfStudyRule(self):
-        self.logger.debug("Testing Field Of Study Rule")
-        self.rule_offset = G(RuleOffset, offset=24)
-        self.fos_rule = G(FieldOfStudyRule, offset=self.rule_offset, field_of_study=1)
-        #rule_bundle = G(RuleBundle)
-        #rule_bundle.field_of_study_rules = fos_rule
-        #self.attendance_event.rule_bundles = rule_bundle
-        self.assertTrue(True)
+    def testMarksDelay(self):
+        self.logger.debug("Testing signup with marks.")
+        now = datetime.datetime.now()
+        # Setting registration start 1 hour in the past, end one week in the future.
+        self.attendance_event.registration_start = now - datetime.timedelta(hours=1)
+        self.attendance_event.registration_end = now + datetime.timedelta(days=7)
+       
+        # The user should be able to attend now, since the event has no rule bundles.
+        response = self.event.is_eligible_for_signup(self.user)
+        self.assertTrue(response['status'])
+        
+        # Giving the user a mark to see if the status goes to False.
+        mark1 = G(Mark, title='Testprikk12345')
+        userentry = G(UserEntry, user=self.user, mark=mark1)
+        response = self.event.is_eligible_for_signup(self.user)
+        self.assertFalse(response['status'])
