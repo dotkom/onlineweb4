@@ -228,8 +228,9 @@ class FieldOfStudyRule(Rule):
         return {"status": False, "message": _(u"Din studieretning er en annen enn de som har tilgang til dette arrangementet.")}
 
     def __unicode__(self):
+        time_unit = _(u'time') if self.offset.offset > 1 else _(u'timer')
         if self.offset.offset > 0:
-            return _("%s etter %d") % (self.get_field_of_study_display(), self.offset.offset)
+            return _("%s etter %d %s") % (self.get_field_of_study_display(), self.offset.offset, time_unit)
         return self.get_field_of_study_display()
 
 
@@ -249,8 +250,9 @@ class GradeRule(Rule):
         return {"status": False, "message": _(u"Du er ikke i et klassetrinn som har tilgang til dette arrangementet.")}
 
     def __unicode__(self):
+        time_unit = _(u'time') if self.offset.offset > 1 else _(u'timer')
         if self.offset.offset > 0:
-            return _("%s. klasse etter %d") % (self.grade, self.offset.offset)
+            return _("%s. klasse etter %d %s") % (self.grade, self.offset.offset, time_unit)
         return _("%s. klasse") % self.grade
 
 
@@ -269,8 +271,9 @@ class UserGroupRule(Rule):
         return {"status": False, "message": _(u"Du er ikke i en brukergruppe som har tilgang til dette arrangmentet.")}
 
     def __unicode__(self):
+        time_unit = _(u'time') if self.offset.offset > 1 else _(u'timer')
         if self.offset.offset > 0:
-            return _("%s etter %d") % (self.group, self.offset.offset)
+            return _("%s etter %d %s") % (self.group, self.offset.offset, time_unit)
         return self.group
 
 
