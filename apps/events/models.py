@@ -260,7 +260,6 @@ class GradeRule(Rule):
 
 
 class UserGroupRule(Rule):
-    #ldapmagic <-- explain. This is not a helpful comment. @lizter
     group = models.ForeignKey(Group, blank=False, null=False)
 
     def satisfied(self, user, registration_start):
