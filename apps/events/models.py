@@ -124,14 +124,14 @@ class Event(models.Model):
             # Offset is currently 1 day per mark. 
             mark_offset = timedelta(days=active_marks)
             postponed_registration_start = self.attendance_event.registration_start + mark_offset
-            if postponed_registration_start > datetime.datetime.now():
+            if postponed_registration_start > datetime.now():
                 if 'offset' in response and response['offset'] < postponed_registration_start or 'offset' not in response:    
                     response['status_code'] = 400
                     response['message'] = _(u"Din påmelding er utsatt grunnet prikker.")
                     response['offset'] = postponed_registration_start
             
         # Return response if offset was set.
-        if 'offset' in response and response['offset'] > datetime.datetime.now():
+        if 'offset' in response and response['offset'] > datetime.now():
             return response 
 
         #
@@ -191,7 +191,7 @@ class RuleOffset(models.Model):
 
     def get_offset_time(self, time):
         if type(time) is not datetime:
-            raise TypeError('time must be a datetime.datetime, not %s' % type(arg))
+            raise TypeError('time must be a datetime, not %s' % type(arg))
         else:
             return time + timedelta(hours=self.offset)
 
@@ -334,7 +334,7 @@ class RuleBundle(models.Model):
         if errors:
             # Offsets are returned as datetime objects. We compare them initially to a date 
             # before registration_start.
-            smallest_offset = registration_start - datetime.timedelta(days=1)
+            smallest_offset = registration_start - timedelta(days=1)
             current_response = {}
 
             for error in errors:
@@ -395,8 +395,8 @@ class AttendanceEvent(models.Model):
         Checks a user against rules applied to an attendance event
         """
         # If there are no rule_bundles on this object, all members of Online are allowed.
-        if not self.rule_bundles and user.is_online:
-            return True
+        if not self.rule_bundles.exists(): #and user.is_online:
+            return {'status': True}
 
         status_object = {}
         smallest_offset = self.registration_start 
