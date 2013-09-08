@@ -45,7 +45,7 @@ class OnlineUser(AbstractUser):
         """
         Returns true if the User object is associated with Online.
         """
-        if AllowedUsername.objects.filter(username=self.ntnu_username).count() > 0:
+        if AllowedUsername.objects.filter(username=self.ntnu_username).filter(expiration_date__gte=datetime.datetime.now()).count() > 0:
             return True
         return False
 
@@ -109,6 +109,7 @@ class AllowedUsername(models.Model):
     username = models.CharField(_(u"brukernavn"), max_length=10)
     registered = models.DateField(_(u"registrert"))
     note = models.CharField(_(u"notat"), max_length=100)
+    description = models.TextField(_(u"beskrivelse"))
     expiration_date = models.DateField(_(u"utløpsdato"))
 
     @property
