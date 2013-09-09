@@ -60,6 +60,7 @@ define(function(require) {
 
         appRoutes: {
             '': 'index',
+            // Replace with page number?
             ':eventType(/)(:limit)(/)(:offset)': 'filtered'
         }
     });
