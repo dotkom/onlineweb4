@@ -2,8 +2,8 @@
 
 from datetime import datetime, timedelta
 
-from django.core.urlresolvers import reverse
 from django.contrib.auth.models import Group
+from django.core.urlresolvers import reverse
 from django.db import models
 from django.utils.translation import ugettext as _
 
