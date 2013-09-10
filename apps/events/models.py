@@ -8,6 +8,7 @@ from apps.userprofile.models import UserProfile
 from apps.companyprofile.models import Company
 from apps.userprofile.models import FIELD_OF_STUDY_CHOICES
 from filebrowser.fields import FileBrowseField
+from django.conf import settings
 
 class Event(models.Model):
     """
@@ -138,6 +139,16 @@ class Event(models.Model):
                         if attendee_object.user == user:
                             return list(waitlist).index(attendee_object) + 1
         return 0
+
+    def get_email(self):
+        if self.event_type == 1 or self.event_type == 4: #sosialt/utflukt
+            return settings.EMAIL_ARRKOM
+        elif self.event_type == 2: #Bedpres
+            return settings.EMAIL_BEDKOM
+        elif self.event_type == 3: #Kurs
+            return settings.EMAIL_PROKOM
+        else:
+            return settings.DEFAULT_FROM_EMAIL
 
     @models.permalink
     def get_absolute_url(self):
