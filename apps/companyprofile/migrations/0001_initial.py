@@ -7,11 +7,6 @@ from django.db import models
 
 class Migration(SchemaMigration):
 
-    needed_by = (
-        ('careeropportunity', '0001_initial'),
-        ('events', '0002_auto__add_companyevent'),
-        )
-
     def forwards(self, orm):
         # Adding model 'Company'
         db.create_table(u'companyprofile_company', (

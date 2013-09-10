@@ -1,8 +1,10 @@
 {% extends "base.html" %}
-
+{% load compress %}
 {% block styles %}
 	{{ block.super }}
-	<link rel="stylesheet/less" href="{{ STATIC_URL }}less/resourcecenter.less">
+	{% compress css %}
+		<link rel="stylesheet" type="text/less" href="{{ STATIC_URL }}less/resourcecenter.less">
+	{% endcompress %}
 {% endblock %}
 
 {% block content %}
@@ -190,5 +192,5 @@
 
 {% block js %}
 	{{ block.super }}
-	<script src="{{ STATIC_URL }}js/resourcecenter.js"></script>
+	<script src="{{ STATIC_URL }}js/ResourceCenter.js"></script>
 {% endblock js %}
