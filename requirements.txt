@@ -8,6 +8,7 @@ python-memcached==1.45			# Memcache. Used by Mailinglists to fetch from Sympa.
 wsgiref==0.1.2
 Markdown==2.3.1                 # textarea text formatting
 psycopg2
+vimeo                           # handles OAuth for vimeo api
 
 # third party deps
 django-filebrowser==3.5.2       # File uploading

@@ -32,8 +32,8 @@ def index(request):
 
 def completeUpload(request):
     if request.is_ajax:
-        client = vimeo.Client(key=oauth_key, secret=oauth_secret, callback='http://127.0.0.1:8000/article/vimeo/', username=vimeo_username, token = True)
-        client.token.key = oauth_token
+        client = vimeo.Client(key='c60b0e891d1712b6e86534bcdab319f257a814dd', secret='b2e65f399539d43c9e124afd93476ac95f263b2b', callback='http://127.0.0.1:8000/article/vimeo/', username='user16310918', token = True)
+        client.token.key = 'ec7d7eb1455e582a97dd732ad74862a9'
         response = json.loads(client.get('vimeo.videos.upload.complete', ticket_id = request.session.get('ticket_id'), filename="wildlife.wmv" ))
         video_data = { 'video_id' : response['ticket']['video_id'] }
         data = json.dumps(video_data)

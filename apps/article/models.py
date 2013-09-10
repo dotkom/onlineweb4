@@ -5,8 +5,8 @@ from django.db.models import permalink
 from django.utils.translation import ugettext as _
 
 from apps.authentication.models import OnlineUser as User
-from filebrowser.fields import FileBrowseField
 from fields import VimeoVideoField
+from filebrowser.fields import FileBrowseField
 
 
 class Article(models.Model):
@@ -55,8 +55,7 @@ class Article(models.Model):
         verbose_name = _(u"artikkel")
         verbose_name_plural = _(u"artikler")
         ordering = ['published_date']
-
-
+    
 class Tag(models.Model):
     name = models.CharField(_(u"navn"), max_length=50)
     slug = models.CharField(_(u"kort navn"), max_length=30)

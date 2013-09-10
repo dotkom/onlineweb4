@@ -1,9 +1,10 @@
 from django.contrib import admin
+import django.forms as forms
 from apps.article.models import Article, Tag, ArticleTag
 from django.conf import settings
 import django.forms as forms
-from django.template.loader import render_to_string
 from filebrowser.settings import VERSIONS, ADMIN_THUMBNAIL
+from django.template.loader import render_to_string
 
 class ArticleTagAdmin(admin.ModelAdmin):
     model = ArticleTag
@@ -24,7 +25,7 @@ class VimeoForm(forms.TextInput):
     def render(self, name, *args, **kwargs):
         html = super(VimeoForm, self).render(name, *args, **kwargs)
         popup = render_to_string("article/vimeoAdminWidget.html", {'field':name})
-        return   popup
+        return popup
 
 class ArticleAdminForm(forms.ModelForm):
     class Meta:
