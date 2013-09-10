@@ -5,6 +5,7 @@ $(function() {
     center: new google.maps.LatLng(63.41819751959266, 10.40592152481463),
     zoom: 17,
     mapTypeId: google.maps.MapTypeId.ROADMAP,
+    disableDefaultUI: true,
     streetViewControl: false,
     styles: [{
         featureType: "all",
