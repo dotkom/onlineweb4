@@ -1,9 +1,9 @@
 import logging
 
-from django.contrib.auth.models import User
 from django_dynamic_fixture import G
 from django.test import TestCase
 
+from apps.authentication.models import OnlineUser as User
 from apps.events.models import Event, AttendanceEvent, Attendee
 
 class EventTest(TestCase):

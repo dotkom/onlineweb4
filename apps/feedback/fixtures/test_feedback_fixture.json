@@ -1,7 +1,7 @@
 [
     {
         "pk": 1, 
-        "model": "auth.user", 
+        "model": "authentication.onlineuser", 
         "fields": {
             "username": "sigurd", 
             "first_name": "", 
@@ -24,8 +24,8 @@
             "answered": [], 
             "feedback": 1, 
             "content_type": [
-                "auth", 
-                "user"
+                "authentication", 
+                "onlineuser"
             ], 
             "object_id": 1
         }

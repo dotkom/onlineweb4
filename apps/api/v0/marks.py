@@ -1,7 +1,6 @@
 #-*- coding: utf-8 -*-
 
 from django.conf.urls import url
-from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 
 from tastypie import fields
@@ -11,7 +10,7 @@ from tastypie.bundle import Bundle
 from tastypie.resources import ModelResource, ALL_WITH_RELATIONS
 
 from apps.marks.models import Mark, UserEntry
-from apps.api.v0.userprofile import UserResource
+from apps.api.v0.authentication import UserResource
 
 # TODO restrict access to this feature
 class MarkResource(ModelResource):

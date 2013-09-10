@@ -5,7 +5,8 @@ import re
 
 from django import forms
 from django.contrib import auth
-from django.contrib.auth.models import User
+
+from apps.authentication.models import OnlineUser as User
 
 class LoginForm(forms.Form):
     username = forms.CharField(widget=forms.TextInput(), label="Username", max_length=50)
@@ -42,7 +43,6 @@ class RegisterForm(forms.Form):
     username = forms.CharField(label="Username", max_length=20)
     first_name = forms.CharField(label="First name", max_length=50)
     last_name = forms.CharField(label="Last name", max_length=50)
-    date_of_birth = forms.DateField(label="Date of birth", initial=datetime.date.today)
     email = forms.EmailField(label="Email", max_length=50)
     password = forms.CharField(widget=forms.PasswordInput(render_value=False), label="Password")
     repeat_password = forms.CharField(widget=forms.PasswordInput(render_value=False), label="Repeat password")
@@ -54,12 +54,6 @@ class RegisterForm(forms.Form):
         super(RegisterForm, self).clean()
         if self.is_valid():
             cleaned_data = self.cleaned_data
-
-            # Check date of birth
-            # currently only checks that it is not after today
-            date = cleaned_data['date_of_birth']
-            if date >= datetime.date.today():
-                self._errors['date_of_birth'] = self.error_class(["You seem to be from the future, please enter a more believable date of birth."])
 
             # Check passwords
             if cleaned_data['password'] != cleaned_data['repeat_password']:
