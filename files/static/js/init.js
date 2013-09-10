@@ -22,14 +22,15 @@ $(function() {
         "stylers": [{
             "color": "#555555"
         }]
-    }, {
+    },/* {
         "featureType": "poi.business",
+        "visibility": 0,
         "stylers": [{
-            "color": "#3366aa"
+            "color": "#00396e"
         }, {
-            "weight": 0.5
+            "weight": 0
         }]
-    }, {
+    },*/ {
         "featureType": "poi.park",
         "stylers": [{
             "color": "#BBBBBB"
