@@ -13,7 +13,7 @@ $(function() {
         }]
     }, {
         stylers: [{
-            hue: "#545454"
+            hue: "#666666"
         }, {
             lightness: -30
         }]
@@ -32,7 +32,7 @@ $(function() {
     }, {
         "featureType": "poi.park",
         "stylers": [{
-            "color": "#bbcfbb"
+            "color": "#BBBBBB"
         }]
     }, {
         "featureType": "poi.sports_complex",
