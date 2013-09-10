@@ -47,50 +47,11 @@ $(function() {
     }]
 });
 
-/*
-[
-  {
-    "featureType": "poi.school",
-    "stylers": [
-      { "color": "#555555" }
-    ]
-  },{
-    "featureType": "poi.sports_complex",
-    "stylers": [
-      { "saturation": 4 },
-      { "weight": 0.5 },
-      { "color": "#bbcfbb" }
-    ]
-  },{
-    "featureType": "poi.business",
-    "elementType": "labels.text",
-    "stylers": [
-      { "visibility": "on" },
-      { "color": "#3366aa" },
-      { "weight": 1.6 },
-      { "saturation": 100 },
-      { "lightness": 11 }
-    ]
-  },{
-    "featureType": "poi.park",
-    "stylers": [
-      { "color": "#bbcfbb" }
-    ]
-  },{
-    "featureType": "poi.business",
-    "stylers": [
-      { "color": "#3366aa" },
-      { "weight": 0.5 }
-    ]
-  }
-]
-*/
-
 // Henter alle markere til kartet
 var tempMarker0 = new google.maps.Marker({
     map: map,
-    position: new google.maps.LatLng(63.41819751959266, 10.40592152481463),
-    //icon: 'assets/css/gfx/kartikoner/overnatting.png',
+    position: new google.maps.LatLng(63.41816871425781,10.405924207023645),
+    icon: '/static/img/map-marker.png',
     visible: true
 });
 });
