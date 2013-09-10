@@ -21,7 +21,7 @@ class Article(models.Model):
     image = FileBrowseField(_(u"bilde"), 
         max_length=200, directory=IMAGE_FOLDER,
         extensions=IMAGE_EXTENSIONS, null=True)
-    vimeo_video = VimeoVideoField()
+    vimeo_video = models.CharField(_(u"video"), max_length=200)
     created_date = models.DateTimeField(_(u"opprettet-dato"), auto_now_add=True, editable=False)
     changed_date = models.DateTimeField(_(u"sist endret"), editable=False, auto_now=True)
     published_date = models.DateTimeField(_(u"publisert"))
