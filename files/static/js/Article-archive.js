@@ -11,7 +11,7 @@ $(function() {
     var articleSettings = {
         year: null,
         month: null,
-        tag: null} // Object that holds the settings we are building an query from
+        tag: null};  // Object that holds the settings we are building an query from
     
     //
     // Here goes the code
@@ -21,6 +21,17 @@ $(function() {
     var articleWidget = new ArticleArchive(utils);
     
     // The initial rendgering (loading from ajax)
+    // Build settings by url
+    var pathname = window.location.pathname;
+    var url = pathname.split('/');
+    if (url[url.length-2] === 'month') {
+        articleSettings.month = url[url.length-1];
+        articleSettings.year  = url[url.length-3];
+    } else if (url[url.length-2] === 'year') {
+        articleSettings.year = url[url.length-1];
+    } else if (url[url.length-3] === 'tag') {
+        articleSettings.tag = url[url.length-1];
+    }
     articleWidget.render(1,false,articleSettings);
     
     //
@@ -188,7 +199,7 @@ function ArticleArchive (Utils) {
             pre_query = q;
             is_more_elements = true;
         }
-        
+
         // Only call the method if we have more elements
         if (is_more_elements) {
             // The api-call
@@ -271,5 +282,5 @@ function ArticleArchive (Utils) {
                 callback_func();
             }
         }
-    }
+    };
 }
