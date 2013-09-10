@@ -211,11 +211,7 @@ function ArticleArchive (Utils) {
                         output += '    </a>';
                         output += '    <div class="row-fluid">';
                         output += '        <div class="span12 article-detail-meta">';
-                        //output += '          <span class="meta-caption">Av</span> {{ article.created_by.get_full_name }} |';
                         output += '            <span class="meta-caption">Publisert</span> <span>'+moment(data.articles[i].published_date).format('D. MMMM YYYY')+'</span>';
-                        //output += '          {% if article.is_changed %} |';
-                        //output += '          <span class="meta-caption">Endret</span> {{ article.changed_date }}';
-                        //output += '          {% endif %}';
                         output += '        </div>';
                         output += '    </div>';
                         output += '    <p>'+data.articles[i].ingress+'</p>';
