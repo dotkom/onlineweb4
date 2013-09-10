@@ -23,7 +23,7 @@ class TagAdmin(admin.ModelAdmin):
 class VimeoForm(forms.TextInput):
     def render(self, name, *args, **kwargs):
         html = super(VimeoForm, self).render(name, *args, **kwargs)
-        popup = render_to_string("vimeo_upload/popup_button.html", {'field':name})
+        popup = render_to_string("article/vimeoAdminWidget.html", {'field':name})
         return   popup
 
 class ArticleAdminForm(forms.ModelForm):
