@@ -6,13 +6,19 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
-FIELD_OF_STUDY_CHOICES = (
-    (0, '--'),
-    (1, 'BIT'),
-    (2, 'MIT'),
-    (3, 'PhD'),
-    (4, 'International'),
-)
+
+FIELD_OF_STUDY_CHOICES = [
+    (0, _(u'Gjest')),
+    (1, _(u'Bachelor i Informatikk (BIT)')),
+    (2, _(u'Software (SW)')),
+    (3, _(u'Informasjonsforvaltning (DIF)')),
+    (4, _(u'Komplekse Datasystemer (KDS)')),
+    (5, _(u'Spillteknologi (SPT)')),
+    (6, _(u'Intelligente Systemer (IRS)')),
+    (7, _(u'PhD')),
+    (8, _(u'International')),
+]
+
 
 class OnlineUser(AbstractUser):
     
