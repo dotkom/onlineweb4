@@ -13,8 +13,8 @@ class Article(models.Model):
     IMAGE_EXTENSIONS = ['.jpg', '.jpeg', '.gif', '.png', '.tif', '.tiff']
 
 
-    heading = models.CharField(_(u"tittel"), max_length=200)
-    ingress_short = models.CharField(_(u"kort ingress"), max_length=100)
+    heading = models.CharField(_(u"tittel"), max_length=80)
+    ingress_short = models.CharField(_(u"kort ingress"), max_length=200)
     ingress = models.TextField(_(u"ingress"))
     content = models.TextField(_(u"content"))
     image = FileBrowseField(_(u"bilde"), 
