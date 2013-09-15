@@ -8,18 +8,18 @@ define(function(require) {
 
     var Widget = Marionette.Layout.extend({
         template: widgetLayoutTemplate,
-        id: 'widget-layout',
+        id: 'widget',
 
         regions: {
-            controls: '#controls',
-            content: '#main'
+            controls: '[data-js-archive-controls]',
+            content: '[data-js-event-list]'
         },
 
         onShow: function() {
             var widgetView = new EventCollectionView({collection: this.collection});
             this.content.show(widgetView);
 
-            var controlsView = new ControlsView({ collection: this.collection });
+            var controlsView = new ControlsView();
             this.controls.show(controlsView);
         }
     });

@@ -27,8 +27,7 @@ define(function(require) {
         filtered: function(eventType, limit, offset) {
             // XXX: This kind of coupling is pretty, pretty
             // awful. The client have no business knowing the
-            // internals of our data model. An identifier
-            // should suffice, yes?
+            // internals of our data model.
             var eventTypes = {
                 'sosialt': 1,
                 'bedpres': 2,
@@ -39,13 +38,14 @@ define(function(require) {
             };
 
             // This makes the available options explicit for
-            // clarity's sake. The Collection itself should have
-            // sane defaults if instantiated withhout parameters.
+            // clarity's sake. The Collection itself have
+            // sane defaults if instantiated without parameters.
             var events = new EventCollection({
                 eventType: eventTypes[eventType],
                 limit: limit,
                 offset: offset
             });
+
             var xhr = events.fetch();
 
             xhr.done(function() {

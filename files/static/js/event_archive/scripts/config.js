@@ -1,6 +1,6 @@
 'use strict';
 require.config({
-    baseUrl: '/static/js/event_widget/scripts/',
+    baseUrl: '/static/js/event_archive/scripts/',
     paths: {
         'almond': '../bower_components/almond/almond',
         'backbone': '../bower_components/backbone-amd/backbone',
