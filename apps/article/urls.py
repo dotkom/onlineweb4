@@ -7,4 +7,6 @@ urlpatterns = patterns('apps.article.views',
     url(r'^tag/(?P<name>[^\.]+)/(?P<slug>[^\.]+)', 'archive_tag', name='view_article_tag'),
     url(r'^year/(?P<year>\d+)/$', 'archive_year', name='article_archive_year'),
     url(r'^year/(?P<year>\d+)/month/(?P<month>[^\.]+)/$', 'archive_month', name='article_archive_month'),
+    url(r'^vimeo_upload/', 'vimeoUpload', name='vimeo_upload'),
+    url(r'^completeUpload/', 'completeUpload', name='complete_upload')
 )

@@ -5,6 +5,7 @@ from django.db.models import permalink
 from django.utils.translation import ugettext as _
 
 from apps.authentication.models import OnlineUser as User
+from fields import VimeoVideoField
 from filebrowser.fields import FileBrowseField
 
 
@@ -20,7 +21,7 @@ class Article(models.Model):
     image = FileBrowseField(_(u"bilde"), 
         max_length=200, directory=IMAGE_FOLDER,
         extensions=IMAGE_EXTENSIONS, null=True)
-    video = models.CharField(_("vimeo id"), max_length=200, blank=True)
+    vimeo_video = models.CharField(_(u"video"), max_length=200)
     created_date = models.DateTimeField(_(u"opprettet-dato"), auto_now_add=True, editable=False)
     changed_date = models.DateTimeField(_(u"sist endret"), editable=False, auto_now=True)
     published_date = models.DateTimeField(_(u"publisert"))
@@ -54,8 +55,7 @@ class Article(models.Model):
         verbose_name = _(u"artikkel")
         verbose_name_plural = _(u"artikler")
         ordering = ['published_date']
-
-
+    
 class Tag(models.Model):
     name = models.CharField(_(u"navn"), max_length=50)
     slug = models.CharField(_(u"kort navn"), max_length=30)
