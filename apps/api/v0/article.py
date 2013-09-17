@@ -27,6 +27,9 @@ class ArticleResource(ModelResource):
     # Making multiple images for the article
     def dehydrate(self, bundle):
         
+        # Setting sluyg-field
+        bundle.data['slug'] = slugify(bundle.data['heading'])
+        
         # If image is set
         if bundle.data['image']:
             # Parse to FileObject used by Filebrowser
@@ -92,10 +95,6 @@ class ArticleResource(ModelResource):
             'featured' : ('exact',),
             'published_date' : ('gte',),
         }
-    
-    def dehydrate(self, bundle):
-        bundle.data['slug'] = slugify(bundle.data['heading'])
-        return bundle
 
 class ArticleLatestResource(ModelResource):
     author = fields.ToOneField(UserResource, 'created_by')
