@@ -27,7 +27,7 @@ class ArticleResource(ModelResource):
     # Making multiple images for the article
     def dehydrate(self, bundle):
         
-        # Setting sluyg-field
+        # Setting slug-field
         bundle.data['slug'] = slugify(bundle.data['heading'])
         
         # If image is set
