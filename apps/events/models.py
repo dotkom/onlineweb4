@@ -41,10 +41,19 @@ class Event(models.Model):
 
     def feedback_users(self):
         users = []
-        if self.attendance_event.attendees.all():
-            for attendee in self.attendance_event.attendees.all():
-                users.append(attendee.user)
-        return users
+        try:
+            if self.attendance_event.attendees.all():
+                for attendee in self.attendance_event.attendees.all():
+                    users.append(attendee.user)
+            return users
+        except AttendanceEvent.DoesNotExist:
+            return users
+
+    def feedback_date(self):
+        return self.event_start
+
+    def feedback_title(self):
+        return self.title
 
     @property
     def number_of_attendees_on_waiting_list(self):
@@ -140,7 +149,7 @@ class Event(models.Model):
                             return list(waitlist).index(attendee_object) + 1
         return 0
 
-    def get_email(self):
+    def feedback_mail(self):
         if self.event_type == 1 or self.event_type == 4: #sosialt/utflukt
             return settings.EMAIL_ARRKOM
         elif self.event_type == 2: #Bedpres
