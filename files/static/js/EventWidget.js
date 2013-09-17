@@ -69,7 +69,7 @@ function EventWidget (Utils){
         html +=         '<a href="events/' + item.id + '">';
         html +=             '<div class="event-title">' + item.title + '</div>';
         html +=         '</a>'
-        html +=         '<div class="event-ingress">' + item.ingress + '</div>';
+        html +=         '<div class="event-ingress">' + item.ingress_short + '</div>';
         html += '   </div>';
         html += '</div>';
 
