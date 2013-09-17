@@ -77,7 +77,6 @@ def archive(request, name=None, slug=None, year=None, month=None):
             sorted_months[int(rev_month_strings[month])-1] = month
         remove_these = []
         for n, m in enumerate(sorted_months):
-            print n, m
             if m == '':
                 remove_these.append(n)
         for i in reversed(remove_these):

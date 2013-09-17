@@ -133,7 +133,6 @@ class Event(models.Model):
         if self.attendance_event:
             if self.attendance_event.waitlist:
                 waitlist = self.wait_list
-                print waitlist
                 if waitlist:
                     for attendee_object in waitlist:
                         if attendee_object.user == user:
