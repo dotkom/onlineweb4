@@ -1,8 +1,8 @@
-from django.template import Template, Context, loader, RequestContext
-from django.shortcuts import render_to_response, get_object_or_404
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
-from django.http import HttpResponse
 from django.db.models import Count
+from django.http import HttpResponse
+from django.shortcuts import render_to_response, get_object_or_404
+from django.template import Template, Context, loader, RequestContext
 from models import Article, Tag, ArticleTag
 import random
 
