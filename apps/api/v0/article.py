@@ -92,6 +92,10 @@ class ArticleResource(ModelResource):
             'featured' : ('exact',),
             'published_date' : ('gte',),
         }
+    
+    def dehydrate(self, bundle):
+        bundle.data['slug'] = slugify(bundle.data['heading'])
+        return bundle
 
 class ArticleLatestResource(ModelResource):
     author = fields.ToOneField(UserResource, 'created_by')
