@@ -84,7 +84,7 @@ $(document).ready(function() {
     function animatePrivacyBox(checkbox, state) {
         if(state) {
             $(checkbox).stop().animate(
-                {  opacity: 0.10  }, 100
+                {  opacity: 0.30  }, 100
             );
             $(checkbox).removeClass("on");
             $(checkbox).addClass("off");

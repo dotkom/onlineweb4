@@ -1,5 +1,6 @@
 #-*- coding: utf-8 -*-
 from django.contrib import messages
+from django.contrib.auth.forms import PasswordChangeForm
 from django.http import HttpResponse
 from django.shortcuts import redirect
 
@@ -42,6 +43,8 @@ def create_request_dictionary(request):
     dict = {
         'privacy_form' : PrivacyForm(instance=request.user.privacy),
         'user_profile_form' : ProfileForm(instance=request.user),
+        'password_change_form' : PasswordChangeForm(request.user)
+
     }
 
     if request.session.has_key('userprofile_active_tab'):
@@ -89,6 +92,7 @@ def saveUserProfile(request):
         user.email = user_profile_form.cleaned_data['email']
 
         user.save()
+        messages.success(request, _(u"Brukerprofilen din ble endret"))
 
     return redirect("profiles")
 
@@ -119,5 +123,26 @@ def savePrivacy(request):
             return render(request, 'profiles/index.html', dict)
 
         privacy_form.save()
+        messages.success(request, _(u"Personvern ble endret"))
+
+    return redirect("profiles")
+
+
+def savePassword(request):
+
+    if not request.user.is_authenticated():
+        return render_home(request)
+
+    if request.method == 'POST':
+        dict = create_request_dictionary(request)
+        password_change_form = PasswordChangeForm(user=request.user, data=request.POST)
+        dict['password_change_form'] = password_change_form
+
+        if not password_change_form.is_valid():
+            messages.error(request, _(u"Passordet ditt ble ikke endret"))
+            return render(request, 'profiles/index.html', dict)
+
+        password_change_form.save()
+        messages.success(request, _(u"Passordet ditt ble endret"))
 
     return redirect("profiles")
