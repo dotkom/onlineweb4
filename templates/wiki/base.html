@@ -1,4 +1,4 @@
-{% load sekizai_tags i18n wiki_tags %}{% load url from future %}<!DOCTYPE html>
+{% load sekizai_tags i18n wiki_tags compress %}{% load url from future %}<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8">
@@ -10,7 +10,12 @@
     <!-- Le styles -->
     <link href="{{ STATIC_URL }}wiki/bootstrap/css/wiki-bootstrap.min.css" rel="stylesheet">
     <link href="{{ STATIC_URL }}wiki/bootstrap/css/wiki-bootstrap-responsive.min.css" rel="stylesheet">
-        
+    
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300,400,600' rel='stylesheet' type='text/css'>
+    {% compress css %}
+        <link rel="stylesheet" type="text/less" href="{{ STATIC_URL }}less/core.less">
+    {% endcompress %}
+    
     {% render_block "css" %}
     
     <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
