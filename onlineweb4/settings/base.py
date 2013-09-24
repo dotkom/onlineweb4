@@ -221,15 +221,17 @@ MESSAGE_TAGS = {messages.DEBUG: 'alert-debug',
 IMPORT_DDF_MODELS = False
 
 # Required by the Wiki
-TEMPLATE_CONTEXT_PROCESSORS = ("django.core.context_processors.request",
+TEMPLATE_CONTEXT_PROCESSORS = (
     "django.contrib.auth.context_processors.auth",
     "django.core.context_processors.debug",
     "django.core.context_processors.i18n",
     "django.core.context_processors.media",
+    "django.core.context_processors.request",
     "django.core.context_processors.static",
     "django.core.context_processors.tz",
-    "django.contrib.messages.context_processors.messages")
-USE_TZ = True
+    "django.contrib.messages.context_processors.messages",
+    "sekizai.context_processors.sekizai",
+)
 
 # Remember to keep 'local' last, so it can override any setting.
 for settings_module in ['filebrowser', 'local']:  # local last
