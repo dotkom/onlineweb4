@@ -13,7 +13,7 @@
 			</div>
 		</div>
 		<div class="row">
-			<div class="col-lg-7 col-md-7 col-sm-6">
+			<div class="col-lg-7 col-md-7 col-sm-6 col-xs-12">
 				<div class="ingress">
 					{{ company.short_description|striptags|markdown }}
 				</div>
@@ -21,22 +21,20 @@
 					{{ company.long_description|striptags|markdown }}
 				</div>
 			</div>
-			<div class="col-lg-5 col-md-5 col-sm-6">
-                <div class="row">
-				    <img src="{% version company.image 'companies_main' %}" width="100%" alt="" />
-                </div>
-                <div class="row">
-                    <h5>Kontakt</h5>
-                    {% if company.site %}
-                    <p><a href="{{ company.site }}" title="{{ company.name }}">{{ company.site }}</a></p>
-                    {% endif %}
-                    {% if company.email_address %}
-                    <p><a href="mailto:{{ company.email_address }}" title="{{ company.name }}"</a></p>
-                    {% endif %}
-                    {% if company.phone_number %}
-                    <p>{{ company.phone_number }}</p>
-                    {% endif %}
-                </div>
+			<div class="col-lg-5 col-md-5 col-sm-6 col-xs-12">
+				<img src="{% version company.image 'companies_main' %}" width="100%" alt="" />
+                {% if company.site or company.email_address or company.phone_number %}
+                <h3>Kontakt</h3>
+                {% endif %}
+                {% if company.site %}
+                <p><a href="{{ company.site }}" title="{{ company.name }}">{{ company.site }}</a></p>
+                {% endif %}
+                {% if company.email_address %}
+                <p>E-post: <a href="mailto:{{ company.email_address }}" title="{{ company.name }}">{{ company.email_address }}</a></p>
+                {% endif %}
+                {% if company.phone_number %}
+                <p>Tlf: {{ company.phone_number }}</p>
+                {% endif %}
 			</div>
 		</div>
 	</div>
