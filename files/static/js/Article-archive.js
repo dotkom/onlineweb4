@@ -216,9 +216,9 @@ function ArticleArchive (Utils) {
                     for (var i = 0; i < data.articles.length; i++) {
                         // The markup
                         output += '<div class="span4 article">';
-                        output += '    <a href="'+data.articles[i].id+'"><h3>'+data.articles[i].heading+'</h3></a>';
-                        output += '    <a href="/article/'+data.articles[i].id+'">';
-                        output += '        <img src="'+data.articles[i].image_article_front_small+'" style="width: 248px; height: 100px;" alt="'+data.articles[i].heading+'" />';
+                        output += '    <a href="'+data.articles[i].id+'/'+data.articles[i].slug+'"><h3>'+data.articles[i].heading+'</h3></a>';
+                        output += '    <a href="/article/'+data.articles[i].id+'/'+data.articles[i].slug+'">';
+                        output += '        <img src="/'+data.articles[i].image_article_front_small+'" style="width: 248px; height: 100px;" alt="'+data.articles[i].heading+'" />';
                         output += '    </a>';
                         output += '    <div class="row-fluid">';
                         output += '        <div class="span12 article-detail-meta">';
