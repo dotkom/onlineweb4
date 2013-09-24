@@ -13,9 +13,9 @@ function ArticleWidget (Utils){
                     // The loop
                     for (var i = 0; i < data.articles.length; i++) {
                         if (i <= 1)
-                            output_featured += '<div class="col-md-6"><a href="/article/'+data.articles[i].id+'"><img src="'+data.articles[i].image_article_front_featured+'" alt="'+data.articles[i].heading+'"><h3>'+data.articles[i].heading+'</h3></a><p>'+data.articles[i].ingress+'</p></div>';
+                            output_featured += '<div class="col-md-6"><a href="/article/'+data.articles[i].id+'/'+data.articles[i].slug+'"><img src="'+data.articles[i].image_article_front_featured+'" alt="'+data.articles[i].heading+'"><h3>'+data.articles[i].heading+'</h3></a><p>'+data.articles[i].ingress_short+'</p></div>';
                         else
-                            output_normal += '<div class="col-md-2"><a href="/article/'+data.articles[i].id+'"><img src="'+data.articles[i].image_article_front_small+'" alt="'+data.articles[i].heading+'"><br /><h4>'+data.articles[i].heading+'</h4></a></div>';
+                            output_normal += '<div class="col-md-2"><a href="/article/'+data.articles[i].id+'/'+data.articles[i].slug+'"><img src="'+data.articles[i].image_article_front_small+'" alt="'+data.articles[i].heading+'"><br /><h4>'+data.articles[i].heading+'</h4></a></div>';
                     }
                     
                     // Appending
