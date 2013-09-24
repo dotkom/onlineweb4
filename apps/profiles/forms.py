@@ -16,7 +16,7 @@ class ProfileForm(forms.ModelForm):
         fields = ['email', 'nickname', 'website', 'phone_number', 'address', 'zip_code', 'allergies', 'infomail', 'mark_rules', 'image']
         widgets = {
             'allergies' : forms.Textarea(attrs={'id' : 'allergies'}),
-            'image' : forms.FileInput(attrs={'id' : 'hidden-input'}),
+            'image' : forms.FileInput(attrs={'id' : 'images', 'multiple' : '', 'class' : 'hidden-input' }),
         }
 
 

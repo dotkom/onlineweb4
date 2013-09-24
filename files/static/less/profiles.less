@@ -5,7 +5,7 @@
   word-break: normal;
 }
 
-#hidden-input {
+.hidden-input {
   display: none;
 }
 
@@ -36,8 +36,14 @@ label.image-box-entity {
   width: @image-width-with-padding - 2;
 }
 
+#image-upload-label {
+  padding: 4px 0px, 4px, 0px;
+  width: 300px;
+}
+
 #image-resize {
-  height: 300px;
+  max-height: 30px;
+
 }
 
 #upload-image-modal#modal-body {

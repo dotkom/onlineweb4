@@ -83,18 +83,29 @@ $(document).ready(function() {
     // Popover for privacy
     $('#privacy-help').popover({placement: 'bottom'});
 
-    /* Image cropping */
+    /* Image cropping and uploading */
     var api;
+    var formData = false;
+
+    if(window.FormData) {
+        formData = new FormData();
+    }
 
     $('input[type=file]').change(function() {
         readURL(this);
     });
 
     function readURL(input) {
+
         if (input.files && input.files[0]) {
+            var file = input.files[0];
+
+            if (!file.type.match(/image.*/)) {
+                return;
+            }
 
             var reader = new FileReader();
-            reader.readAsDataURL(input.files[0]);
+            reader.readAsDataURL(file);
 
             reader.onloadend = function(e) {
                 $('#image-resize').attr('src', e.target.result);
@@ -102,16 +113,48 @@ $(document).ready(function() {
                     // start off with jcrop-light class
                     bgOpacity: 0.5,
                     bgColor: 'white',
-                    addClass: 'jcrop-light'
-                },function(){
+                    addClass: 'jcrop-light',
+                    boxHeight: 300,
+                    aspectRatio: 3/4
+                },function() {
                     api = this;
                     api.setSelect([10,10,10+40,10+40]);
                     api.setOptions({ bgFade: true });
                     api.ui.selection.addClass('jcrop-selection');
+                    api.allowResize = false;
                 });
+                api.setImage(e.target.result);
+
+                if(formData) {
+                    formData.append("image[]", file);
+                }
             }
         }
     }
-    /* End image cropping */
+
+    var setStatus = function(statusMsg) {
+        $('#status').html(statusMsg);
+    }
+
+    $('#upload-button').click(function() {
+        if (formData) {
+            $.ajax({
+                url: "uploadImage",
+                type: "POST",
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (res) {
+                    document.getElementById("response").innerHTML = res;
+                }
+            });
+        }
+        else {
+            alert("standard form post");
+        }
+    });
+
+
+    /* End image cropping and uploading*/
 });
 
