@@ -35,55 +35,61 @@ class Command(NoArgsCommand):
             link = str(u"\n\nwww.online.ntnu.no" + feedback.get_absolute_url()).encode("utf-8")
             results_link = str(u"www.online.ntnu.no" + feedback.get_absolute_url() + "results").encode("utf-8")
             
-            send_first_notification = False
+            deadline_diff = (feedback.deadline - today).days
             start_date = feedback.get_start_date()
+
+            #If the object(event) doesnt have start date it will send 
+            #the first notification the day after the feedbackrelation is made
             if start_date:
                 start_date = start_date.date()
                 day_after_event = start_date + datetime.timedelta(days=1)
                 start_date_string = start_date.strftime("%d. %B").encode("utf-8")
+                send_first_notification = False
             else:
                 if feedback.created_date == yesterday:
                     send_first_notification = True
             
             attended_mails = [user.email for user in not_responded]
             
-            deadline_diff = (feedback.deadline - today).days
-
             results_message = False
             send_message = False
 
             subject = u"Feedback: %s" % (title)
             message_intro = u"Hei, vi ønsker tilbakemelding på \"%s\"" % (title)
-            message_start_date = ""
+            
             if start_date:
                 message_start_date = u"som du var med på den %s:" % (start_date_string)
-           
+            else:
+                message_start_date = ""
+            
             message_deadline = ""
             
-            message_mark = ""
             if feedback.gives_mark:
                 message_mark = u"\nVær oppmerksom på at du får prikk dersom du ikke svarer " \
                 u"på disse spørsmålene innen fristen."
+            else:
+                message_mark = ""
 
             message_contact = u"\n\nEventuelle spørsmål sendes til %s " % (committee_mail)
             message_end = u"\n\nMvh\nOnline linjeforening"
 
             if deadline_diff < 0: #Deadline passed
                 if feedback.gives_mark:
-                    user_entry = UserEntry()
+                    mark = Mark()
+                    mark.title = u"Manglende tilbakemelding på %s" % (title)
+                    mark.category = 4 #Missed feedback
+                    mark.description = u"Du har fått en prikk fordi du ikke har levert tilbakemelding."
+                    mark.save()
+                    
                     for user in not_responded:
-                        #TODO test med flere brukere
-                        mark = Mark()
-                        mark.title = u"manglende tilbakemelding på %s" % (title)
-                        mark.category = 4 #Missed feedback
-                        mark.description = u"Du har fått en prikk fordi du ikke har levert tilbakemelding."
-                        mark.save()
+                        user_entry = UserEntry()
                         user_entry.user = user
                         user_entry.mark = mark
-                    user_entry.save()
+                        user_entry.save()
                     
-                    #feedback.active = False
-                    #feedback.save()
+                    feedback.active = False
+                    feedback.save()
+
                     message_intro = u"Fristen for å svare på \"%s\" har gått ut og du har fått en prikk." % (title)
                     message_mark = ""
                     message_start_date = ""
@@ -92,7 +98,7 @@ class Command(NoArgsCommand):
             elif deadline_diff < 1: #Last warning
                 message_deadline = u"\n\nI dag innen 23:59 er siste frist til å svare på skjemaet."
                 
-                results_message = u"Hei, siste purre-mail på feedback skjema har blitt sendt til alle " \
+                results_message = u"Hei, siste purremail på feedback skjema har blitt sendt til alle " \
                 u"gjenværende deltagere på \"%s\". Dere kan se feedback-resultatene på\n%s\n" % \
                 (title, results_link)
                 send_message = True
