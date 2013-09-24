@@ -120,8 +120,13 @@ GRAPPELLI_ADMIN_TITLE = '<a href="/">Onlineweb</a>'
 
 INSTALLED_APPS = (
     # Third party dependencies
+    'django.contrib.humanize',
     'django_nose',
     'south',
+    'django_notify',
+    'mptt',
+    'sekizai',
+    'sorl.thumbnail',
     'grappelli',
     'filebrowser',
     'chunks',
@@ -154,6 +159,13 @@ INSTALLED_APPS = (
     'apps.feedback',
     'apps.mommy',
     'apps.profiles',
+    
+    # Wiki-related stuff
+    'wiki',
+    'wiki.plugins.attachments',
+    'wiki.plugins.notifications',
+    'wiki.plugins.images',
+    'wiki.plugins.macros',    
 )
 
 # A sample logging configuration. The only tangible logging
@@ -207,6 +219,10 @@ MESSAGE_TAGS = {messages.DEBUG: 'alert-debug',
 # Not really sure what this does.
 # Has something to do with django-dynamic-fixture bumped from 1.6.4 to 1.6.5 in order to run a syncdb with mysql/postgres (OptimusCrime)
 IMPORT_DDF_MODELS = False
+
+# Required by the Wiki
+TEMPLATE_CONTEXT_PROCESSORS = ("django.core.context_processors.request",
+    "django.contrib.auth.context_processors.auth",)
 
 # Remember to keep 'local' last, so it can override any setting.
 for settings_module in ['filebrowser', 'local']:  # local last
