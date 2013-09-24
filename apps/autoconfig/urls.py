@@ -1,4 +1,6 @@
-from django.conf.urls.defaults import patterns, url
+# -*- coding: utf-8 -*-
+
+from django.conf.urls import patterns, url
 from apps.autoconfig.views import autoconfig
 
 urlpatterns = patterns('apps.autoconfig.views',
