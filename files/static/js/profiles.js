@@ -86,6 +86,7 @@ $(document).ready(function() {
     /* Image cropping and uploading */
     var api;
     var formData = false;
+    var x, y, x2, y2, w, h;
 
     if(window.FormData) {
         formData = new FormData();
@@ -115,7 +116,9 @@ $(document).ready(function() {
                     bgColor: 'white',
                     addClass: 'jcrop-light',
                     boxHeight: 300,
-                    aspectRatio: 3/4
+                    aspectRatio: 3/4,
+                    onChange: updateCoords,
+                    onSelect: updateCoords
                 },function() {
                     api = this;
                     api.setSelect([10,10,10+40,10+40]);
@@ -132,20 +135,46 @@ $(document).ready(function() {
         }
     }
 
+    function updateCoords(c) {
+        x = c.x;
+        y = c.y;
+        x2 = c.x2;
+        y2 = c.y2;
+        w = c.w;
+        h = c.h;
+    }
+
     var setStatus = function(statusMsg) {
         $('#status').html(statusMsg);
     }
 
-    $('#upload-button').click(function() {
+    $('#upload-image-form').submit(function(e) {
         if (formData) {
+            e.preventDefault();
+
+            var fileInput = $('input[type=file]')[0];
+            if(!fileInput || fileInput.files.length < 1) {
+                setStatus("Ingen fil valgt.");
+                return;
+            }
+
+            //JCrop select coordinates
+            formData.append("x", x);
+            formData.append("y", y);
+            formData.append("x2", y);
+            formData.append("y2", y);
+            formData.append("w", y);
+            formData.append("h", y);
+
             $.ajax({
-                url: "uploadImage",
+                url: "profile/uploadimage",
                 type: "POST",
                 data: formData,
                 processData: false,
                 contentType: false,
+                crossDomain: false,
                 success: function (res) {
-                    document.getElementById("response").innerHTML = res;
+                    setStatus(res);
                 }
             });
         }

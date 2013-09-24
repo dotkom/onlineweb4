@@ -9,4 +9,5 @@ urlpatterns = patterns('apps.profiles.views',
     url(r'^/saveprivacy', 'savePrivacy', name='save_privacy'),
     url(r'^/savepassword', 'savePassword', name='save_password'),
     url(r'^/updateactivetab', 'updateActiveTab', name='update_active_profiles_tab'),
+    url(r'^/uploadimage', 'uploadImage', name='upload_image'),
 )

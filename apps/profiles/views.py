@@ -44,7 +44,6 @@ def create_request_dictionary(request):
         'privacy_form' : PrivacyForm(instance=request.user.privacy),
         'user_profile_form' : ProfileForm(instance=request.user),
         'password_change_form' : PasswordChangeForm(request.user)
-
     }
 
     if request.session.has_key('userprofile_active_tab'):
@@ -102,9 +101,29 @@ def saveUserProfile(request):
     return redirect("profiles")
 
 
-def handleImageUpload(file):
 
+def uploadImage(request):
+
+    if request.method != "POST":
+        return redirect("profiles")
+
+    file = None
+
+    if request.FILES['file']:
+        file = request.FILES['file']
+
+    if file is None:
+        messages.error(request, _(u"Ingen fil ble valgt"))
+        return redirect("profiles")
+
+    return handleImageUpload(request, file)
+
+
+def handleImageUpload(request, file):
+
+    # flytt til settings
     IMAGE_EXTENSIONS = ['.jpg', '.jpeg', '.gif', '.png']
+    IMAGE_FOLDER = "images/profiles"
 
     #sjekk om bildet er gyldig
         #dette gjøres muligens av imagefield
