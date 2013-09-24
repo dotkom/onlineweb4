@@ -2,9 +2,8 @@
 -------------------------------------------------- */
 
 nav.navbar {
-    background: #FFF url('/static/img/top_bar.jpg') repeat-x;
-    /*margin-bottom:1px;*/
-    /*border-bottom:1px solid black;*/
+    /*background: #FFF url('/static/img/top_bar.jpg') repeat-x;*/
+    background: #00518a;
 
     .logo {
         margin-bottom:-17px;
@@ -16,6 +15,9 @@ nav.navbar {
         margin-right: 1px;
         font-size: 13px;
         font-weight:400;
+
+        height: 57px;
+
         text-transform: uppercase;
 
         &.active {
@@ -24,6 +26,34 @@ nav.navbar {
     }
     
 }
+
+nav.subnavbar {
+    top: 57px;
+    width: 100%;
+    z-index: 9999;
+    background: #c0c0c0;
+    height: 35px;
+
+    .container {
+        margin: 0 0 0 100px;
+    }
+    li {
+        line-height: 40px;
+        height: 35px;
+    }
+
+    a {
+        color: #CCC;
+        height: 35px;
+        line-height: 35px;
+        padding-top: 0;
+    }
+}
+nav.subnavbar li a.active {
+    background: #d0d0d0;
+    height: 34px;
+}
+
 
 
 
