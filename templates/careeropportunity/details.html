@@ -13,30 +13,30 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-md-8 col-sm-7">
+            <div class="col-md-8 col-sm-7 careerdescription">
                 {{ opportunity.description|striptags|markdown }}
             </div>
             <div class="col-md-4 col-sm-5">
-            <div class="company">
-            <a href="{% url 'company_details' opportunity.company.id %}">
-                <div class="row">
-                    <div class="col-md-12">
-                        <img width="100%" src="{% version opportunity.company.image 'companies_medium' %}" alt="" />
+                <div class="company"><!-- Start company style wrapper -->
+                <a href="{% url 'company_details' opportunity.company.id %}">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <img width="100%" src="{% version opportunity.company.image 'companies_medium' %}" alt="" />
+                        </div>
                     </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-12">
-                        <h3>{{ opportunity.company.name }}</h3>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <h3>{{ opportunity.company.name }}</h3>
+                        </div>
                     </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="company-ingress">{{ opportunity.company.short_description|striptags|markdown }}</div>
-                        <p class="pull-right company-image-caption">Trykk for mer info</p>
-                    <div/>
-                </div>
-                </a>
-            </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="company-ingress">{{ opportunity.company.short_description|striptags|markdown }}</div>
+                            <p class="pull-right company-image-caption">Trykk for mer info</p>
+                        <div/>
+                    </div>
+                    </a>
+                </div><!-- End company style wrapper -->
             </div>
         </div>
     </div>
