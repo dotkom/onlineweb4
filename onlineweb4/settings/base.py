@@ -188,7 +188,7 @@ LOGGING = {
 }
 
 # crispy forms settings
-CRISPY_TEMPLATE_PACK = 'bootstrap'
+CRISPY_TEMPLATE_PACK = 'bootstrap3'
 
 # bootstrap messages classes
 MESSAGE_TAGS = {messages.DEBUG: 'alert-debug',
