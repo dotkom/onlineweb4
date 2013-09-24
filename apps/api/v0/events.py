@@ -28,7 +28,6 @@ class CompanyResource(ModelResource):
         queryset = Company.objects.all()
         resource_name = 'company'
         fields = ['image']
-
 class CompanyEventResource(ModelResource):
     companies = fields.ToOneField(CompanyResource, 'company', full=True)
     class Meta:
@@ -59,7 +58,6 @@ class EventResource(ModelResource):
 
     # Making multiple images for the events
     def dehydrate(self, bundle):
-        
         # If image is set
         if bundle.data['image']:
             # Parse to FileObject used by Filebrowser
@@ -74,9 +72,19 @@ class EventResource(ModelResource):
             
             # Unset the image-field
             del(bundle.data['image'])
-            
-            # Returning washed object
+        
+        # Do the same thing for the company image
+        if bundle.data['company_event']:
+            for company in bundle.data['company_event']:
+                temp_image = FileObject(company.data['companies'].data['image'])
+                for ver in VERSIONS.keys():
+                    if ver.startswith('companies_thumb'):
+                        company.data['companies'].data['image_'+ver] = temp_image.version_generate(ver).url
+                del(company.data['companies'].data['image'])
+
+        # Returning washed object 
         return bundle
+        
 
     class Meta:
         queryset = Event.objects.all()
