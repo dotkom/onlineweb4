@@ -4,7 +4,7 @@ from tastypie.api import Api
 
 from apps.api.v0.article import ArticleResource, ArticleLatestResource
 from apps.api.v0.authentication import UserResource
-from apps.api.v0.events import EventResource, AttendanceEventResource, AttendeeResource
+from apps.api.v0.events import EventResource, AttendanceEventResource, AttendeeResource, CompanyResource, CompanyEventResource
 from apps.api.v0.marks import MarkResource, EntryResource, MyMarksResource, MyActiveMarksResource
 from apps.api.v0.offline import IssueResource
 
@@ -17,6 +17,8 @@ v0_api.register(UserResource())
 v0_api.register(EventResource())
 v0_api.register(AttendanceEventResource())
 v0_api.register(AttendeeResource())
+v0_api.register(CompanyResource())
+v0_api.register(CompanyEventResource())
 
 # article
 v0_api.register(ArticleResource())
