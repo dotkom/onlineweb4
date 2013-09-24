@@ -13,10 +13,10 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-md-8">
+            <div class="col-md-8 col-sm-7">
                 {{ opportunity.description|striptags|markdown }}
             </div>
-            <div class="col-md-4">
+            <div class="col-md-4 col-sm-5">
             <div class="company">
             <a href="{% url 'company_details' opportunity.company.id %}">
                 <div class="row">
