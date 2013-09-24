@@ -3,7 +3,10 @@ from django.conf.urls import patterns, include, url
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.contrib import admin
 from django.http import HttpResponse
+from django_notify.urls import get_pattern as get_notify_pattern
 from django.views.generic import TemplateView
+
+from wiki.urls import get_pattern as get_wiki_pattern
 
 from apps import mommy
 
@@ -52,6 +55,10 @@ urlpatterns = patterns('',
     # Online Notifier Owner Verification (checked yearly or so by Google)
     url(r'^google79c0b331a83a53de\.html$', lambda r: HttpResponse(
         "google-site-verification: google79c0b331a83a53de.html", mimetype="text/html")),
+    
+    # Wiki
+    (r'^notify/', get_notify_pattern()),
+    (r'', get_wiki_pattern()),
 )
 
 
