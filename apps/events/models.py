@@ -27,10 +27,11 @@ class Event(models.Model):
     )
 
     author = models.ForeignKey(User, related_name='oppretter')
-    title = models.CharField(_('tittel'), max_length=100)
+    title = models.CharField(_('tittel'), max_length=45)
     event_start = models.DateTimeField(_('start-dato'))
     event_end = models.DateTimeField(_('slutt-dato'))
     location = models.CharField(_('lokasjon'), max_length=100)
+    ingress_short = models.CharField(_(u"kort ingress"), max_length=150)
     ingress = models.TextField(_('ingress'))
     description = models.TextField(_('beskrivelse'))
     image = FileBrowseField(_(u"bilde"), 
@@ -132,7 +133,6 @@ class Event(models.Model):
         if self.attendance_event:
             if self.attendance_event.waitlist:
                 waitlist = self.wait_list
-                print waitlist
                 if waitlist:
                     for attendee_object in waitlist:
                         if attendee_object.user == user:

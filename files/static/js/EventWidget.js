@@ -1,6 +1,3 @@
-
-
-
 function EventWidget (Utils){
 
     var that = $(this);
@@ -45,6 +42,7 @@ function EventWidget (Utils){
                 }
                 
                 // Calling the callback
+                $('.carousel').carousel();
                 callback();
             }
         });
@@ -55,21 +53,30 @@ function EventWidget (Utils){
      * @return string
      */
     function createEventItem(item) {
-
-        // var holderImage = $("<img>").attr({ "data-src": "holder.js/120x65", "alt": "" });
-        // Holder.run({images: holderImage[0]});
-
+        
         html = '<div class="col-md-6">';
         html +=     '<div class="col-md-1 event-type-' + item.event_type + '">';
         html +=         '<div class="row"><span class="event-calendar-date">' + moment(item.event_start).format('DD') + '</span></div>';
         html +=         '<div class="row"><span class="event-calendar-month">' + moment(item.event_start).format('MMM') + '</span></div>';
         html +=     '</div>';
-        html += '<div class="col-md-3"><img src="' + item.image_events_thumb + '" alt="" /></div>';
+        html +=     '<div class="col-md-3">';
+        html +=         '<div id="event-carousel" class="carousel slide">';
+        html +=             '<div class="carousel-inner">';
+        html +=                 '<div class="item active">';
+        html +=                     '<a href="events/' + item.id + '/' + item.slug + '">'; 
+        html +=                     '<img src="' + item.image_events_thumb + '" alt="" ></a>';
+        html +=                 '</div>';
+        for (var i=0; i<item.company_event.length; i++) {
+            html +=             '<div class="item"><a href="events/' + item.id + '/' + item.slug + '"><img src="' + item.company_event[i].companies.image_companies_thumb + '" alt="" ></a></div>';
+        }
+        html +=             '</div>';
+        html +=         '</div>';
+        html +=     '</div>';
         html +=     '<div class="col-md-8">';
-        html +=         '<a href="events/' + item.id + '">';
+        html +=         '<a href="events/' + item.id + '/' + item.slug + '">';
         html +=             '<div class="event-title">' + item.title + '</div>';
         html +=         '</a>'
-        html +=         '<div class="event-ingress">' + item.ingress + '</div>';
+        html +=         '<div class="event-ingress">' + item.ingress_short + '</div>';
         html += '   </div>';
         html += '</div>';
 

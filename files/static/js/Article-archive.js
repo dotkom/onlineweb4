@@ -11,7 +11,7 @@ $(function() {
     var articleSettings = {
         year: null,
         month: null,
-        tag: null} // Object that holds the settings we are building an query from
+        tag: null};  // Object that holds the settings we are building an query from
     
     //
     // Here goes the code
@@ -21,6 +21,17 @@ $(function() {
     var articleWidget = new ArticleArchive(utils);
     
     // The initial rendgering (loading from ajax)
+    // Build settings by url
+    var pathname = window.location.pathname;
+    var url = pathname.split('/');
+    if (url[url.length-2] === 'month') {
+        articleSettings.month = url[url.length-1];
+        articleSettings.year  = url[url.length-3];
+    } else if (url[url.length-2] === 'year') {
+        articleSettings.year = url[url.length-1];
+    } else if (url[url.length-3] === 'tag') {
+        articleSettings.tag = url[url.length-1];
+    }
     articleWidget.render(1,false,articleSettings);
     
     //
@@ -165,6 +176,12 @@ function ArticleArchive (Utils) {
     var elm_per_page = 9; // Number of elements we are loading at the same time
     var is_more_elements = true; // True if we have more elements, false if not. To avoid many empty ajax-calls
     var pre_query = ''; // The previous query made by the settings supplied
+
+    moment.lang('no', {
+        months: [
+            "januar", "februar", "mars", "april", "mai", "juni", "juli", "august", "september", "oktober", "november", "desember"
+        ]
+    });
     
     /* Render the widget */
     ArticleArchive.prototype.render = function(page, overwrite, settings, callback_func) {
@@ -182,7 +199,7 @@ function ArticleArchive (Utils) {
             pre_query = q;
             is_more_elements = true;
         }
-        
+
         // Only call the method if we have more elements
         if (is_more_elements) {
             // The api-call
@@ -193,16 +210,27 @@ function ArticleArchive (Utils) {
                 success: function(data) {
                     // Variables
                     var num = 1;
-                    var output = '<div class="span12'+((page == 1 && !overwrite)?'':' hide')+'">'; // If we are not on the first page (and not using the filters), make the elements hidden to fade them in later
+                    var output = '<div class="row-fluid"><div class="span12'+((page == 1 && !overwrite)?'':' hide')+'">'; // If we are not on the first page (and not using the filters), make the elements hidden to fade them in later
                     
                     // The loop
                     for (var i = 0; i < data.articles.length; i++) {
                         // The markup
-                        output += '<div class="span4 article"><a href="/article/'+data.articles[i].id+'"><img src="'+data.articles[i].image_article_front_small+'" style="width: 248px; height: 100px;" alt="'+data.articles[i].heading+'" /></a><a href="'+data.articles[i].id+'"><h3>'+data.articles[i].heading+'</h3></a><p>'+data.articles[i].ingress+'</p><span class="date pull-right">'+data.articles[i].published_date+'</span><span></span></div>'
+                        output += '<div class="span4 article">';
+                        output += '    <a href="'+data.articles[i].id+'/'+data.articles[i].slug+'"><h3>'+data.articles[i].heading+'</h3></a>';
+                        output += '    <a href="/article/'+data.articles[i].id+'/'+data.articles[i].slug+'">';
+                        output += '        <img src="'+data.articles[i].image_article_front_small+'" style="width: 248px; height: 100px;" alt="'+data.articles[i].heading+'" />';
+                        output += '    </a>';
+                        output += '    <div class="row-fluid">';
+                        output += '        <div class="span12 article-detail-meta">';
+                        output += '            <span class="meta-caption">Publisert</span> <span>'+moment(data.articles[i].published_date).format('D. MMMM YYYY')+'</span>';
+                        output += '        </div>';
+                        output += '    </div>';
+                        output += '    <p>'+data.articles[i].ingress+'</p>';
+                        output += '</div>';
                         
                         // Every third element in a chunk
                         if (num % 3 == 0)
-                            output += '</div><div class="span12"><hr />';
+                            output += '</div></div><div class="row-fluid"><div class="span12">';
                     
                         // Increasing num!    
                         num++;
@@ -219,18 +247,18 @@ function ArticleArchive (Utils) {
                     // Appending the content. Either appending content or replacing it based on parameters supplied
                     if (overwrite) {
                         // We are overwriting existing articles
-						if ( $(".article:visible").length > 0) {
-							$(".article:visible").fadeOut(400,function () { // Fade out the visible ones
-								if ($(".article:animated").length === 0) { // When all the fading out is done, continue
-									$("#article_archive_container").html(output); // Appending content
-									$("#article_archive_container .hide").fadeIn(400); // Aaaand finally fading in again
-								}
-							});
-						}
-						else {
-							$("#article_archive_container").html(output); // Appending content
-							$("#article_archive_container .hide").fadeIn(400); // Aaaand finally fading in again
-						}
+                        if ( $(".article:visible").length > 0) {
+                            $(".article:visible").fadeOut(400,function () { // Fade out the visible ones
+                                if ($(".article:animated").length === 0) { // When all the fading out is done, continue
+                                    $("#article_archive_container").html(output); // Appending content
+                                    $("#article_archive_container .hide").fadeIn(400); // Aaaand finally fading in again
+                                }
+                            });
+                        }
+                        else {
+                            $("#article_archive_container").html(output); // Appending content
+                            $("#article_archive_container .hide").fadeIn(400); // Aaaand finally fading in again
+                        }
                     }
                     else {
                         // We are just appending articles
@@ -254,5 +282,5 @@ function ArticleArchive (Utils) {
                 callback_func();
             }
         }
-    }
+    };
 }
