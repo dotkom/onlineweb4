@@ -74,12 +74,16 @@ def saveUserProfile(request):
 
         user = request.user
         dict = create_request_dictionary(request)
-        user_profile_form = ProfileForm(request.POST)
+        user_profile_form = ProfileForm(request.POST, request.FILES)
         dict['user_profile_form'] = user_profile_form
 
         if not user_profile_form.is_valid():
             messages.error(request, _(u"Noen av de påkrevde feltene mangler"))
             return render(request, 'profiles/index.html', dict)
+
+        # if request.FILES:
+        #     if handleImageUpload(request.FILES['image']):
+        #         pass
 
         user.address = user_profile_form.cleaned_data['address']
         user.allergies = user_profile_form.cleaned_data['allergies']
@@ -90,11 +94,26 @@ def saveUserProfile(request):
         user.phone_number = user_profile_form.cleaned_data['phone_number']
         user.website = user_profile_form.cleaned_data['website']
         user.email = user_profile_form.cleaned_data['email']
+        user.image = user_profile_form.cleaned_data['image']
 
         user.save()
         messages.success(request, _(u"Brukerprofilen din ble endret"))
 
     return redirect("profiles")
+
+
+def handleImageUpload(file):
+
+    IMAGE_EXTENSIONS = ['.jpg', '.jpeg', '.gif', '.png']
+
+    #sjekk om bildet er gyldig
+        #dette gjøres muligens av imagefield
+    #sjekk om bildet tilfredstiller størrelseskrav
+    #sjekk om brukeren har et bilde fra før
+        #slett bilde
+    #rename bilde til brukernavn
+    #return true
+
 
 
 def confirmDeleteImage(request):

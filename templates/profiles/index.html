@@ -3,11 +3,14 @@
     {{ block.super }}
     <script src="{{ STATIC_URL }}/js/libs/jquery.cookie.js"></script>
     <script src="{{ STATIC_URL }}/js/profiles.js"></script>
-    {#    <script src="{{ STATIC_URL }}/js/ligs/jquery-1.8.2.min.js"#}
+    <script src="{{ STATIC_URL }}/js/libs/jquery.Jcrop.min.js"></script>
+    <script src="{{ STATIC_URL }}/js/libs/jquery.color.js"></script>
+    <script src="{{ STATIC_URL }}/js/libs/jquery.min.js"></script>
     <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
 {% endblock %}
-{% block content %}
 
+{% block content %}
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}less/jcrop/jquery.Jcrop.css">
     <section id="profile">
         <div class="container-fluid">
             <div class="row-fluid">
@@ -55,7 +58,7 @@
                                                         </div>
                                                     </div>
                                                     {% for field in user_profile_form %}
-                                                        {% ifnotequal field.label 'image' %}
+                                                        {% ifnotequal field.name 'image' %}
                                                             <div class="inline">
                                                                 <div class="span4">{{ field.label }}</div>
                                                                 <div class="span8">
@@ -75,13 +78,12 @@
                                                     <div class="row-fluid">
                                                         <div class="span6">
                                                             <div id="image-box">
-                                                                <img class="img-polaroid fadeload" id="profile-image" src="{{ userprofile.image.url  }}" alt="profilbilde">
-                                                                <label for="hidden-input" class="btn image-box-entity"><i class="icon-upload btn-icon"></i> Velg et nytt bilde</label>
-                                                                {{ user_profile_form.image_upload }}
-                                                                {{ user_profile_form.image_upload.errors }}
-                                                                <input type="text" id="image-name" class="image-box-entity"/>
+                                                                <img class="img-polaroid fadeload" id="profile-image" src="{% if user.image %}{{ user.image.url  }}{% endif %}" alt="profilbilde">
                                                                 <button type="button" class="btn btn-danger image-box-entity" id="remove-image" data-toggle="modal" data-target="#remove-image-modal">
                                                                     <i class="icon-remove btn-icon"></i> Fjern bilde
+                                                                </button>
+                                                                <button type="button" class="btn image-box-entity" data-toggle="modal" data-target="#upload-image-modal">
+                                                                    <i class="icon-upload btn-icon"></i> Velg et nytt bilde
                                                                 </button>
                                                             </div>
                                                         </div>
@@ -106,6 +108,32 @@
                                     <div class="modal-footer">
                                         <button type="button" class="btn" data-dismiss="modal">Lukk</button>
                                         <button type="button" class="btn btn-danger" id="confirm-delete">Fjern bildet mitt!</button>
+                                    </div>
+                                </div>
+                                <!-- End modal -->
+                                <!-- Modal for uploading and cropping image -->
+                                <div class="modal hide fade" id="upload-image-modal">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                        <h3>Last opp nytt bilde</h3>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="row-fluid">
+                                            <div class="span12">
+                                                <div class="row-fluid">
+                                                    <div class="span12">
+                                                        {{ user_profile_form.image }}
+                                                        {{ user_profile_form.image.errors }}
+                                                        <img class="hidden-input" src="" id="image-resize" alt=""/>
+                                                        <label for="hidden-input" class="btn image-box-entity"><i class="icon-upload btn-icon"></i> Velg et nytt bilde</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn" data-dismiss="modal">Avbryt</button>
+                                        <button type="button" class="btn btn-success" id="upload-image">Lagre</button>
                                     </div>
                                 </div>
                                 <!-- End modal -->

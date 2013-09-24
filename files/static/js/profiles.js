@@ -17,14 +17,7 @@ $(document).ready(function() {
     $('#image-name').hide();
 
 
-//Show image name input field when chosing new image
-    $('input[type=file]').change(function() {
-        var filename = $('input[type=file]').val().split('\\').pop();
-        $('#image-name').val(filename);
-        $('#image-name').show();
 
-        displayImage(this);
-    });
 
 //Ajax request to remove profile image
     $('#confirm-delete').click(function() {
@@ -44,17 +37,6 @@ $(document).ready(function() {
             },
             crossDomain: false
         });
-    }
-
-    /* Load image when selecting file */
-    function displayImage(inputBox) {
-        if(inputBox.files && input.files[0]) {
-            var reader = new FileReader();
-
-            reader.onload(function(e) {
-                $('img#profile-image').attr('src', e.target.result);
-            });
-        }
     }
 
     $('#userprofile-tabs > li > a').click(function() {
@@ -100,4 +82,36 @@ $(document).ready(function() {
 
     // Popover for privacy
     $('#privacy-help').popover({placement: 'bottom'});
+
+    /* Image cropping */
+    var api;
+
+    $('input[type=file]').change(function() {
+        readURL(this);
+    });
+
+    function readURL(input) {
+        if (input.files && input.files[0]) {
+
+            var reader = new FileReader();
+            reader.readAsDataURL(input.files[0]);
+
+            reader.onloadend = function(e) {
+                $('#image-resize').attr('src', e.target.result);
+                $('#image-resize').Jcrop({
+                    // start off with jcrop-light class
+                    bgOpacity: 0.5,
+                    bgColor: 'white',
+                    addClass: 'jcrop-light'
+                },function(){
+                    api = this;
+                    api.setSelect([10,10,10+40,10+40]);
+                    api.setOptions({ bgFade: true });
+                    api.ui.selection.addClass('jcrop-selection');
+                });
+            }
+        }
+    }
+    /* End image cropping */
 });
+
