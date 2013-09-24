@@ -42,6 +42,7 @@ function EventWidget (Utils){
                 }
                 
                 // Calling the callback
+                $('.carousel').carousel();
                 callback();
             }
         });
@@ -58,7 +59,19 @@ function EventWidget (Utils){
         html +=         '<div class="row-fluid"><span class="event-calendar-date">' + moment(item.event_start).format('DD') + '</span></div>';
         html +=         '<div class="row-fluid"><span class="event-calendar-month">' + moment(item.event_start).format('MMM') + '</span></div>';
         html +=     '</div>';
-        html += '<div class="span3"><a href="events/' + item.id + '/' + item.slug + '"><img src="' + item.image_events_thumb + '" alt="" /></a></div>';
+        html +=     '<div class="span3">';
+        html +=         '<div id="event-carousel" class="carousel slide">';
+        html +=             '<div class="carousel-inner">';
+        html +=                 '<div class="item active">';
+        html +=                     '<a href="events/' + item.id + '/' + item.slug + '">'; 
+        html +=                     '<img src="' + item.image_events_thumb + '" alt="" ></a>';
+        html +=                 '</div>';
+        for (var i=0; i<item.company_event.length; i++) {
+            html +=             '<div class="item"><a href="events/' + item.id + '/' + item.slug + '"><img src="' + item.company_event[i].companies.image_companies_thumb + '" alt="" ></a></div>';
+        }
+        html +=             '</div>';
+        html +=         '</div>';
+        html +=     '</div>';
         html +=     '<div class="span8">';
         html +=         '<a href="events/' + item.id + '/' + item.slug + '">';
         html +=             '<div class="event-title">' + item.title + '</div>';
