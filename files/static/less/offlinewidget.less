@@ -3,6 +3,33 @@
 #offlineCarousel {
     text-align: center;
 
+    .carousel-control {
+        text-align: center;
+
+        background: #333;
+        border: #FFF 5px solid;
+        border-radius: 50%;
+        height: 40px;
+        width:  40px;
+
+        margin: auto auto;
+
+        &.left {
+            .glyphicon {
+                top:    4px;
+                left: -11px;                  /* Halfish of glyphicon's width */
+                margin-left: 50%;
+            }
+        }
+        &.right {
+            .glyphicon {
+                top:    3px;
+                left: -10px;                     /* Half of glyphicon's width */
+                margin-left: 50%;
+            }
+        }
+    }
+
     .item {
         a:not(:first-child) {
             margin-left: 10px;
