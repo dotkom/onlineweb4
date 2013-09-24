@@ -1,6 +1,0 @@
-
-$(function()
-{
-    $('.dropdown-toggle').dropdown();
-
-});

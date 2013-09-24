@@ -1,0 +1,75 @@
+section#events {
+
+    .event-row {
+        margin-bottom:20px;
+    }
+
+    .event-title {
+        font-size:17px;
+        margin-bottom:5px;
+        color:#666;
+        margin-top: -7px;
+    }
+
+    .event-ingress {
+        font-size:12px;
+        color:#777;
+        font-weight:300;
+    }
+
+    .event-calendar-box {
+        padding:3px 3px 4px 3px;
+        text-align:center;
+        font-weight:400;
+        font-size:19px;
+    }
+
+    .event-arrkom {
+        .event-calendar-box();
+        background:@arrkom-color;
+        color:@arrkom-color;
+    }
+
+    .event-fagkom {
+        .event-calendar-box();
+        background:@fagkom-color;
+        color:@fagkom-color;
+    }
+
+    .event-bedkom {
+        .event-calendar-box();
+        background:@bedkom-color;
+        color:@bedkom-color;
+    }
+    
+    /* Gets overridden below if needed */
+    [class*='event-type-'] {
+        .event-arrkom;
+    }
+
+    .event-type-1 {
+        .event-arrkom;
+    }
+
+    .event-type-2 {
+        .event-bedkom;
+    }
+
+    .event-type-3 {
+        .event-fagkom;
+    }
+
+    .event-calendar-date {
+        display:block;
+        background:#FFF;
+        padding:3px;
+    }
+
+    .event-calendar-month {
+        color:#FFF;
+        font-size:13px;
+        font-weight:400;
+        text-transform:uppercase;
+    }
+}
+

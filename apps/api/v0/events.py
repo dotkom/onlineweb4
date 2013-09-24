@@ -1,5 +1,5 @@
 from copy import copy
-from django.contrib.auth.models import User
+from django.template.defaultfilters import slugify
 from tastypie import fields
 from tastypie.resources import ModelResource
 from tastypie.authorization import Authorization
@@ -11,7 +11,7 @@ from apps.events.models import Event
 from apps.events.models import Attendee
 from apps.events.models import AttendanceEvent
 
-from apps.api.v0.userprofile import UserResource
+from apps.api.v0.authentication import UserResource
 
 class AttendeeResource(ModelResource):
     user = fields.ToOneField(UserResource, 'user', full=True)
@@ -43,6 +43,9 @@ class EventResource(ModelResource):
 
     # Making multiple images for the events
     def dehydrate(self, bundle):
+        
+        # Setting sluyg-field
+        bundle.data['slug'] = slugify(bundle.data['title'])
         
         # If image is set
         if bundle.data['image']:

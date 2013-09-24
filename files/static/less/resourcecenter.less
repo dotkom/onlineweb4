@@ -1,0 +1,150 @@
+
+/* Debug */
+
+@debug: 0pt;
+.debugred {border: @debug solid red;}
+.debuglime {border: @debug solid lime;}
+.debugpink {border: @debug solid pink;}
+
+/* Vars */
+
+@max-box-size: 230pt;
+@box-padding: 10pt;
+@box-background: #f2f2f2;
+@animation-time: 0.5s;
+@animation-time-long: 1.2s;
+@border: 2pt solid #ccc;
+
+/* Mixins */
+
+// TODO
+
+/* ResourceCenter */
+
+#resourcecenter-items {
+    .debugred;
+    width: 100%;
+    text-align: center;
+
+    // Flip code, separated from the rest of the styling
+    // Source: http://davidwalsh.name/css-flip
+
+    /* entire container, keeps perspective */
+    .flip-container {
+        -webkit-perspective: 1000;
+        -moz-perspective: 1000;
+        perspective: 1000;
+    }
+    /* flip the pane when hovered instead of click, currently using onClick instead */
+    // .flip-container:hover .flipper {
+    //     -webkit-transform: rotateY(180deg);
+    //     -moz-transform: rotateY(180deg);
+    //     transform: rotateY(180deg);
+    //     -ms-filter: "FlipH";
+    //     filter: FlipH;
+    // }
+    /* make sure all containers are the same size within each other */
+    .flip-container, .front, .back {
+        max-width: @max-box-size;
+        max-height: @max-box-size;
+    }
+    /* flip speed goes here */
+    .flipper {
+        .debuglime;
+        -webkit-transition: @animation-time;
+        -webkit-transform-style: preserve-3d;
+        -moz-transition: @animation-time;
+        -moz-transform-style: preserve-3d;
+        transition: @animation-time;
+        transform-style: preserve-3d;
+        position: relative;
+    }
+    #code .flipper {
+        .debuglime;
+        -webkit-transition: @animation-time-long;
+        -moz-transition: @animation-time-long;
+        transition: @animation-time-long;
+    }
+    /* hide back of pane during swap */
+    .front, .back {
+        -webkit-backface-visibility: hidden;
+        -moz-backface-visibility: hidden;
+        backface-visibility: hidden;
+        /* both front and back pane must be in the same place */
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
+    /* front pane, placed above back */
+    .front {
+        z-index: 2;
+    }
+    /* back, initially hidden pane */
+    .back {
+        -webkit-transform: rotateY(180deg);
+        -moz-transform: rotateY(180deg);
+        transform: rotateY(180deg);
+    }
+
+    // Additional CSS properties (not flip code)
+    
+    .flip-container {
+        // The background is visible behind the flip card during animation
+        background-color: #666;
+        background-image: url('/static/img/resourcecenter/linen.png');
+        border: @border;
+        box-shadow: inset 0 0 120pt #000;
+        cursor: pointer;
+        display: inline-block;
+        margin: 6pt;
+    }
+    #code {
+        // Special animated matrix background for the github resource
+        background-image: url('/static/img/resourcecenter/animatrix.gif');
+        box-shadow:
+            inset 0 0 120pt #000,
+            inset 0 0 120pt black,
+            inset 0 0 70pt black,
+            inset 0 0 150pt green;
+    }
+
+    .front {
+        .debugred;
+        background: lightblue;
+        img {
+            .debugred;
+            -webkit-filter: brightness(110%) contrast(90%);
+        }
+        .wrapheader {
+            .debugpink;
+            background-color: white;
+            border-top: @border;
+            border-bottom: @border;
+            position: relative;
+            top: -56.5pt;
+            padding: 5pt;
+            opacity: .87;
+            h3 {
+                .debugred;
+                margin: 0;
+                padding: 0;
+            }
+            p {
+                .debugred;
+                margin: 0;
+                padding: 0;
+            }
+        }
+    }
+
+    .back {
+        .debugpink;
+        background-color: @box-background;
+        text-align: left;
+        .wraptext {
+            .debugpink;
+            padding: @box-padding;
+        }
+    }
+    
+}

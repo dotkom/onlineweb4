@@ -10,12 +10,12 @@ This implementation is not very database friendly however, as it does
 very many database lookups.
 '''
 from django.db import models
-from django.contrib.auth.models import User
 from django.utils.translation import ugettext as _
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 from django.core.urlresolvers import reverse
 
+from apps.authentication.models import OnlineUser as User
 
 class FeedbackRelation(models.Model):
     """

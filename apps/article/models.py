@@ -2,9 +2,9 @@
 
 from django.db import models
 from django.db.models import permalink
-from django.contrib.auth.models import User
 from django.utils.translation import ugettext as _
 
+from apps.authentication.models import OnlineUser as User
 from filebrowser.fields import FileBrowseField
 
 
@@ -13,8 +13,8 @@ class Article(models.Model):
     IMAGE_EXTENSIONS = ['.jpg', '.jpeg', '.gif', '.png', '.tif', '.tiff']
 
 
-    heading = models.CharField(_(u"tittel"), max_length=200)
-    ingress_short = models.CharField(_(u"kort ingress"), max_length=100)
+    heading = models.CharField(_(u"tittel"), max_length=45)
+    ingress_short = models.CharField(_(u"kort ingress"), max_length=250)
     ingress = models.TextField(_(u"ingress"))
     content = models.TextField(_(u"content"))
     image = FileBrowseField(_(u"bilde"), 
@@ -81,5 +81,6 @@ class ArticleTag(models.Model):
     tag = models.ForeignKey(Tag, verbose_name=_(u"tag"), related_name='article_tags')
 
     class Meta:
+        unique_together = ('article', 'tag')
         verbose_name = _(u"tag")
         verbose_name_plural = _(u"tags")

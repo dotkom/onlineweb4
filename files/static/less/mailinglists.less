@@ -1,0 +1,43 @@
+
+/* Debug */
+
+@debug: 0pt;
+.debugred {border: @debug solid red;}
+.debuglime {border: @debug solid lime;}
+.debugpink {border: @debug solid pink;}
+
+/* Vars */
+
+// Todo
+
+/* Mixins */
+
+// TODO
+
+/* Mailinglists */
+
+#map {
+	text-align: center;
+	margin: 5pt 0 10pt 0;
+	max-width: 600pt;
+}
+
+#mailinglist-items {
+    .debugred;
+    width: 100%;
+
+    .mailinglist {
+    	.debuglime;
+    	min-width: 170pt;
+    	float: left;
+
+    	.title {
+    		.debugpink;
+			padding: 10pt 0 5pt 0;
+			font-weight: bold;
+    	}
+    	.members {
+    		.debugpink;
+    	}
+    }
+}
