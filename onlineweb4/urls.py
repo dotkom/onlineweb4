@@ -58,7 +58,7 @@ urlpatterns = patterns('',
     
     # Wiki
     (r'^notify/', get_notify_pattern()),
-    (r'', get_wiki_pattern()),
+    url(r'^wiki/', get_wiki_pattern()),
 )
 
 
