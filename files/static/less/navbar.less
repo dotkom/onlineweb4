@@ -4,11 +4,13 @@
 nav.navbar {
     /*background: #FFF url('/static/img/top_bar.jpg') repeat-x;*/
     background: #004b80;
+    border: 0;
 
     .logo {
         margin-bottom:-17px;
         margin-top:-21px;
     }
+    margin-bottom: 0;
 
     li {
         border-top: 5px solid rgba(255, 255, 255, 0.1);
@@ -16,7 +18,6 @@ nav.navbar {
         font-size: 13px;
         font-weight:400;
 
-        height: 57px;
         text-transform: uppercase;
 
         &.active {
@@ -26,9 +27,10 @@ nav.navbar {
 }
 
 nav.subnavbar {
-    top: 57px;
+    top: 62px;
     left: -30px;
     background: #bbb;
+    z-index: 1000;
 
     a {
         color: #ccc;

@@ -39,8 +39,54 @@
                   <li><a href="#">Arkiv</a></li>
                   <li><a href="#">Wiki</a></li>
                 </ul>
+
+                <ul class="nav navbar-nav navbar-right">
+                    <li class="dropdown" id="login_menu">
+                        {% if user.is_authenticated %}
+                        <a href="#login_menu" class="login-btn dropdown-toggle dropdown-signin login">{{ user.get_full_name }}<b class="caret"></b></a>
+                        <ul class="dropdown-menu dropdown-form login-box">
+                            <li class="dropdown-caret right">
+                                <span class="caret-outer"></span>
+                                <span class="caret-inner"></span>
+                            </li>
+                            <li>
+                                <form>
+                                    <div class="login-extra">
+                                        <a href="{% url 'auth_logout' %}">Logg ut</a>
+                                    </div>
+                                </form>
+                            </li>
+                        </ul>
+                        {% else %}
+                        <a href="#login_menu" class="login-btn dropdown-toggle dropdown-signin login">Logg inn <b class="caret"></b></a>
+                        <ul class="dropdown-menu login-box">
+                            <li>
+                                <form class="navbar-form" method="POST" action="{% url 'auth_login' %}">
+                                    {% csrf_token %}
+                                    <fieldset class="textbox">
+                                        <label for="id_username">Brukernavn</label>
+                                        <input type="text" name="username" id="id_username" class="form-control">
+                                        <label for="id_password">Passord</label>
+                                        <input type="password" name="password" id="id_password" class="form-control">
+                                    </fieldset>
+                                    <input type="hidden" name="next" value="{{ request.get_full_path }}" />
+                                    <button type="submit" class="btn">Logg inn</button>
+                                </form>
+                                <button class="btn btn-auth" data-url="{% url 'auth_register' %}">Registrer</button>
+                                <button class="btn btn-auth" data-url="{% url 'auth_recover' %}">Glemt passord</button>
+                            </li>
+                        </ul>
+                        {% endif %}
+                    </li>
+                    <li class="top-menu-img">
+                        <a href="http://visma.no/" class=""><img src="{{ STATIC_URL }}img/visma_clean.png" alt="" class="sponsor-logo"></a>
+                    </li>
+                </ul>
+
             </div>
         </div>
+
+
     </nav>
 
     <nav class="subnavbar navbar-default navbar-fixed-top">
@@ -74,6 +120,12 @@
                 </ul>
             </div>
         </div>
+
+
+
+
+
+
     </nav>
 
     <!--<div id="topmenu" class="navbar navbar-fixed-top">
