@@ -1,15 +1,19 @@
 #-*- coding: utf-8 -*-
+import json
+import os
+
+from PIL import Image
+
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.forms import PasswordChangeForm
 from django.http import HttpResponse
 from django.shortcuts import redirect
-
 from django.shortcuts import render
 from django.utils.translation import ugettext_lazy as _
 
 from apps.profiles.forms import PrivacyForm, ProfileForm
 
-import json
 
 """
     Index for the entire user profile view
@@ -109,21 +113,44 @@ def uploadImage(request):
 
     file = None
 
-    if request.FILES['file']:
-        file = request.FILES['file']
+    if request.FILES['image']:
+        file = request.FILES['image']
 
-    if file is None:
-        messages.error(request, _(u"Ingen fil ble valgt"))
+    # How to verify that it IS an image? Possible object injection hack
+    # Please check
+    if file is None and file.content_type:
+        messages.error(request, _(u"Ingen bildefil ble valgt"))
         return redirect("profiles")
 
     return handleImageUpload(request, file)
 
 
-def handleImageUpload(request, file):
+def handleImageUpload(request, image):
 
-    # flytt til settings
-    IMAGE_EXTENSIONS = ['.jpg', '.jpeg', '.gif', '.png']
-    IMAGE_FOLDER = "images/profiles"
+    try:
+        extension_index = image.name.rfind('.')
+
+        if extension_index == -1:
+            messages.error(request, _(u"Filnavnet inneholder ikke filtypen"))
+            return redirect("profiles")
+
+        extension = image.name[extension_index:]
+        filename = os.path.join(settings.MEDIA_ROOT, "images", "profiles", request.user.username + extension)
+        destination = open(filename, 'wb+')
+
+        for chunk in image.chunks():
+            destination.write(chunk)
+        destination.close()
+
+        box = (int(float(request.POST['x'])), int(float(request.POST['y'])), int(float(request.POST['x2'])), int(float(request.POST['y2'])))
+        img = Image.open(filename)
+        crop_img = img.crop(box)
+        img.save(filename)
+        crop_img.save(filename)
+    except Exception:
+        return HttpResponse(status=500, content=_(u"Bildet kunne ikke lagres"))
+
+    return HttpResponse(status=200, content=_(u"Bildet ble lagret"))
 
     #sjekk om bildet er gyldig
         #dette gjøres muligens av imagefield

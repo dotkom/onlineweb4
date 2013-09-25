@@ -129,7 +129,7 @@ $(document).ready(function() {
                 api.setImage(e.target.result);
 
                 if(formData) {
-                    formData.append("image[]", file);
+                    formData.append("image", file);
                 }
             }
         }
@@ -161,10 +161,10 @@ $(document).ready(function() {
             //JCrop select coordinates
             formData.append("x", x);
             formData.append("y", y);
-            formData.append("x2", y);
-            formData.append("y2", y);
-            formData.append("w", y);
-            formData.append("h", y);
+            formData.append("x2", x2);
+            formData.append("y2", y2);
+            formData.append("w", w);
+            formData.append("h", h);
 
             $.ajax({
                 url: "profile/uploadimage",
@@ -174,6 +174,9 @@ $(document).ready(function() {
                 contentType: false,
                 crossDomain: false,
                 success: function (res) {
+                    setStatus(res);
+                },
+                error: function(res) {
                     setStatus(res);
                 }
             });

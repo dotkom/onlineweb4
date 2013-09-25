@@ -5,7 +5,7 @@ from django.contrib.messages import constants as messages
 # Directory that contains this file.
 PROJECT_SETTINGS_DIRECTORY = os.path.dirname(globals()['__file__'])
 # Root directory. Contains manage.py
-PROJECT_ROOT_DIRECTORY = os.path.join(PROJECT_SETTINGS_DIRECTORY, '../..')
+PROJECT_ROOT_DIRECTORY = os.path.join(PROJECT_SETTINGS_DIRECTORY, '..', '..')
 #PROJECT_ROOT_DIRECTORY = os.path.dirname(os.path.dirname(__file__))
 
 TEST_RUNNER = "django_nose.NoseTestSuiteRunner"
