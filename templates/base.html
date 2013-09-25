@@ -56,11 +56,21 @@
             <!-- Collect the nav links, forms, and other content for toggling -->
             <div class="collapse navbar-collapse navbar-ex1-collapse">
                 <ul class="nav navbar-nav">
-                  <li><a href="#">Arrangementer</a></li>
-                  <li><a href="#" class="active">Artikler</a></li>
-                  <li><a href="#">Offline</a></li>
-                  <li><a href="#">For bedrifter</a></li>
-                  <li><a href="#">Om Online</a></li>
+                    <li class="top-menu-link">
+                        <a data-section="events" class="active" href="{% url 'events-link' %}">Arrangementer</a>
+                    </li>
+                    <li class="top-menu-link">
+                        <a data-section="articles" href="{% url 'articles-link' %}">Artikler</a>
+                    </li>
+                    <li class="top-menu-link">
+                        <a data-section="offline" href="{% url 'offline-link' %}">Offline</a>
+                    </li>
+                    <li class="top-menu-link">
+                        <a data-section="business" href="{% url 'business-link' %}">For bedrifter</a>
+                    </li>
+                    <li class="top-menu-link">
+                        <a data-section="about" href="{% url 'about-link' %}">Om Online</a>
+                    </li>
                 </ul>
             </div>
         </div>
