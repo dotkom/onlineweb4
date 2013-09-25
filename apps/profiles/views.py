@@ -10,7 +10,7 @@ from django.contrib.auth.forms import PasswordChangeForm
 from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.shortcuts import render
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext as _
 
 from apps.profiles.forms import PrivacyForm, ProfileForm
 
@@ -130,35 +130,53 @@ def handleImageUpload(request, image):
     try:
         extension_index = image.name.rfind('.')
 
+        #Make sure the image contains a file extension
         if extension_index == -1:
             messages.error(request, _(u"Filnavnet inneholder ikke filtypen"))
             return redirect("profiles")
 
+        #Prepare filename and open-create a new file if it does not exist
         extension = image.name[extension_index:]
         filename = os.path.join(settings.MEDIA_ROOT, "images", "profiles", request.user.username + extension)
         destination = open(filename, 'wb+')
 
+        #Write the image uncropped
         for chunk in image.chunks():
             destination.write(chunk)
         destination.close()
 
+        #Create cropping bounding box
         box = (int(float(request.POST['x'])), int(float(request.POST['y'])), int(float(request.POST['x2'])), int(float(request.POST['y2'])))
         img = Image.open(filename)
         crop_img = img.crop(box)
+        #Saving the image here so we release the lock on the file
         img.save(filename)
+        #Actual cropping save
         crop_img.save(filename)
+        #Set media url for user image
+        request.user.image = os.path.join(settings.MEDIA_URL, "images", "profiles", request.user.username + extension)
+        request.user.save()
+
     except Exception:
-        return HttpResponse(status=500, content=_(u"Bildet kunne ikke lagres"))
+        if request.is_ajax():
+            return HttpResponse(status=500, content=_(u"Bildet kunne ikke lagres"))
+        else:
+            messages.error(request, _(u"Bildet kunne ikke lagres"))
+            return redirect("profiles")
 
-    return HttpResponse(status=200, content=_(u"Bildet ble lagret"))
+    if request.is_ajax():
+        #Dumping object as json does not work with ugettext_lazy
 
-    #sjekk om bildet er gyldig
-        #dette gjøres muligens av imagefield
-    #sjekk om bildet tilfredstiller størrelseskrav
-    #sjekk om brukeren har et bilde fra før
-        #slett bilde
-    #rename bilde til brukernavn
-    #return true
+        print json.dumps(
+            {'message' : _(u"Bildet ble lagret"), 'image-url' : request.user.image.name }
+        )
+
+        return HttpResponse(status=200, content=json.dumps(
+            {'message' : _(u"Bildet ble lagret"), 'image-url' : request.user.image.name }
+        ))
+    else:
+        messages.success(request, _(u"Bildet ble lagret"))
+        return redirect("profiles")
 
 
 

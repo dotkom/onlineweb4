@@ -114,6 +114,7 @@ $(document).ready(function() {
                     // start off with jcrop-light class
                     bgOpacity: 0.5,
                     bgColor: 'white',
+                    setSelect: [100,100,50,50],
                     addClass: 'jcrop-light',
                     boxHeight: 300,
                     aspectRatio: 3/4,
@@ -121,16 +122,17 @@ $(document).ready(function() {
                     onSelect: updateCoords
                 },function() {
                     api = this;
-                    api.setSelect([10,10,10+40,10+40]);
                     api.setOptions({ bgFade: true });
                     api.ui.selection.addClass('jcrop-selection');
-                    api.allowResize = false;
+                    api.allowResize = true;
                 });
                 api.setImage(e.target.result);
 
                 if(formData) {
                     formData.append("image", file);
                 }
+
+                $('#upload-button').show();
             }
         }
     }
@@ -142,6 +144,12 @@ $(document).ready(function() {
         y2 = c.y2;
         w = c.w;
         h = c.h;
+        $('#inputx').val(c.x);
+        $('#inputy').val(c.y);
+        $('#inputx2').val(c.x2);
+        $('#inputy2').val(c.y2);
+        $('#inputw').val(c.w);
+        $('#inputh').val(c.h);
     }
 
     var setStatus = function(statusMsg) {
@@ -152,11 +160,9 @@ $(document).ready(function() {
         if (formData) {
             e.preventDefault();
 
-            var fileInput = $('input[type=file]')[0];
-            if(!fileInput || fileInput.files.length < 1) {
-                setStatus("Ingen fil valgt.");
-                return;
-            }
+            if(!imageChosen()) return;
+
+            setStatus("Laster opp bildet...")
 
             //JCrop select coordinates
             formData.append("x", x);
@@ -174,7 +180,9 @@ $(document).ready(function() {
                 contentType: false,
                 crossDomain: false,
                 success: function (res) {
-                    setStatus(res);
+                    res = JSON.parse(res);
+                    setStatus(res['message']);
+                    $('#profile-image').attr("src", (res['image-url']));
                 },
                 error: function(res) {
                     setStatus(res);
@@ -182,9 +190,20 @@ $(document).ready(function() {
             });
         }
         else {
-            alert("standard form post");
+            if(!imageChosen()) {
+                e.preventDefault();
+            }
         }
     });
+
+    function imageChosen() {
+        var fileInput = $('input[type=file]')[0];
+            if(!fileInput || fileInput.files.length < 1) {
+                setStatus("Ingen fil valgt.");
+                return false;
+            }
+        return true;
+    }
 
 
     /* End image cropping and uploading*/
