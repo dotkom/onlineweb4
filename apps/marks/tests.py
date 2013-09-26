@@ -6,7 +6,7 @@ from django.test import TestCase
 
 from apps.authentication.models import OnlineUser as User
 from apps.marks.models import Mark, UserEntry
-from apps.marks.models import get_threshhold as duration
+from apps.marks.models import get_threshold as duration
 
 class MarksTest(TestCase):
 
