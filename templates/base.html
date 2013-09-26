@@ -60,8 +60,8 @@
                         <a href="#login_menu" class="login-btn dropdown-toggle dropdown-signin login">{{ user.get_full_name }}<b class="caret"></b></a>
                             <ul class="dropdown-menu dropdown-form login-box">
                                 <li class="dropdown-caret right">
-                                    <span class="caret-outer"/>
-                                    <span class="caret-inner"/>
+                                    <span class="caret-outer"></span>
+                                    <span class="caret-inner"></span>
                                 </li>
                                 <li>
                                     <form>
@@ -76,8 +76,8 @@
                             <a href="#login_menu" class="login-btn dropdown-toggle dropdown-signin login">Logg inn<b class="caret"></b></a>
                             <ul class="dropdown-menu dropdown-form login-box">
                                 <li class="dropdown-caret right">
-                                    <span class="caret-outer"/>
-                                    <span class="caret-inner"/>
+                                    <span class="caret-outer"></span>
+                                    <span class="caret-inner"></span>
                                 </li>
                                 <li>
                                 <form method="POST" action="{% url 'auth_login' %}">
@@ -180,7 +180,7 @@
                     </div>
                 </div>
                 <div class="span4">
-                    <img src="{{ STATIC_URL }}/holder.js/379x180" />
+                    <div id="footer-map"></div>
                 </div>
             </div>
         </div>
@@ -189,6 +189,7 @@
     {% block js %}
         <!--<script src="{{ STATIC_URL }}js/libs/less.js"></script>-->
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+        <script src="http://maps.googleapis.com/maps/api/js?v=3&sensor=true"></script>
         <script src="{{ STATIC_URL }}js/libs/bootstrap.min.js"></script>
         <script src="{{ STATIC_URL }}js/libs/bootstrap-dropdown.js"></script>
         <script src="{{ STATIC_URL }}js/libs/moment.js"></script>

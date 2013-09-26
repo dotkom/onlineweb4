@@ -54,7 +54,7 @@ $(function() {
     
     // Clicking the links in the topnav
     $('.nav a').on('click',function(e) {
-        e.preventDefault();
+        //e.preventDefault();
         var $that = $(this);
         var jumpto_section = $that.data('section');
         if (typeof jumpto_section !== 'undefined') {

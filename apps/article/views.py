@@ -1,8 +1,8 @@
-from django.template import Template, Context, loader, RequestContext
-from django.shortcuts import render_to_response, get_object_or_404
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
-from django.http import HttpResponse
 from django.db.models import Count
+from django.http import HttpResponse
+from django.shortcuts import render_to_response, get_object_or_404
+from django.template import Template, Context, loader, RequestContext
 from models import Article, Tag, ArticleTag
 import random
 
@@ -56,6 +56,9 @@ def archive(request, name=None, slug=None, year=None, month=None):
 
     rev_month_strings = dict((v,k) for k,v in month_strings.iteritems())
 
+    # HERE BE DRAGONS
+    # TODO: Fix all these for loops...
+    # --------------------------------
     # For creating the date filters.
     dates = {}
     for article in articles:
@@ -67,6 +70,18 @@ def archive(request, name=None, slug=None, year=None, month=None):
             if d_year == y:
                 if month_strings[d_month] not in dates[d_year]:
                     dates[d_year].append(month_strings[d_month])
+    # Now sort months
+    for year in dates:
+        sorted_months = ['' for x in range(1, 13)]
+        for month in dates[year]:
+            sorted_months[int(rev_month_strings[month])-1] = month
+        remove_these = []
+        for n, m in enumerate(sorted_months):
+            if m == '':
+                remove_these.append(n)
+        for i in reversed(remove_these):
+            del sorted_months[i]
+        dates[year] = sorted_months
 
     # If we're filtering by tag
     if name:
