@@ -12,6 +12,7 @@ from django.shortcuts import redirect
 from django.shortcuts import render
 from django.utils.translation import ugettext as _
 
+from apps.marks.models import Mark
 from apps.profiles.forms import PrivacyForm, ProfileForm
 
 
@@ -44,10 +45,16 @@ def render_home(request):
 
 
 def create_request_dictionary(request):
+
     dict = {
         'privacy_form' : PrivacyForm(instance=request.user.privacy),
         'user_profile_form' : ProfileForm(instance=request.user),
-        'password_change_form' : PasswordChangeForm(request.user)
+        'password_change_form' : PasswordChangeForm(request.user),
+        'marks' : [
+            # Tuple syntax ('title', list_of_marks, is_collapsed)
+            (_(u'aktive prikker'), Mark.active.all().filter(given_to=request.user), False),
+            (_(u'inaktive prikker'), Mark.inactive.all().filter(given_to=request.user), True),
+        ]
     }
 
     if request.session.has_key('userprofile_active_tab'):
@@ -84,10 +91,6 @@ def saveUserProfile(request):
             messages.error(request, _(u"Noen av de påkrevde feltene mangler"))
             return render(request, 'profiles/index.html', dict)
 
-        # if request.FILES:
-        #     if handleImageUpload(request.FILES['image']):
-        #         pass
-
         user.address = user_profile_form.cleaned_data['address']
         user.allergies = user_profile_form.cleaned_data['allergies']
         user.area_code = user_profile_form.cleaned_data['address']
@@ -97,13 +100,11 @@ def saveUserProfile(request):
         user.phone_number = user_profile_form.cleaned_data['phone_number']
         user.website = user_profile_form.cleaned_data['website']
         user.email = user_profile_form.cleaned_data['email']
-        user.image = user_profile_form.cleaned_data['image']
 
         user.save()
         messages.success(request, _(u"Brukerprofilen din ble endret"))
 
     return redirect("profiles")
-
 
 
 def uploadImage(request):
@@ -166,11 +167,6 @@ def handleImageUpload(request, image):
 
     if request.is_ajax():
         #Dumping object as json does not work with ugettext_lazy
-
-        print json.dumps(
-            {'message' : _(u"Bildet ble lagret"), 'image-url' : request.user.image.name }
-        )
-
         return HttpResponse(status=200, content=json.dumps(
             {'message' : _(u"Bildet ble lagret"), 'image-url' : request.user.image.name }
         ))

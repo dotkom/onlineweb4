@@ -12,220 +12,63 @@
 {% block content %}
     <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}less/jcrop/jquery.Jcrop.css">
     <section id="profile">
-    <div class="container-fluid">
-    <div class="row-fluid">
-        <div class="span12">
-            <div class="page-header">
-                <h2>Min side</h2>
+        <div class="container-fluid">
+            <div class="row-fluid">
+                <div class="span12">
+                    <div class="page-header">
+                        <h2>Min side</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="row-fluid">
+                <div class="span12">
+                    <div class="tabbable">
+                        <!-- Desktop menu -->
+                        <ul class="nav nav-tabs visible-desktop visible-tablet hidden-phone" id="userprofile-tabs">
+                            <li class="{%ifequal 'myprofile' active_tab %}active{% endifequal %}">
+                                <a href="#myprofile" data-toggle="tab">Brukerinformasjon</a>
+                            </li>
+                            {#        <li class="{%ifequal 'myevents' active_tab %}active{% endifequal %}">#}
+                            {#            <a href="#myevents" data-toggle="tab">Mine events</a>#}
+                            {#        </li>#}
+                            <li class="{%ifequal 'privacy' active_tab %}active{% endifequal %}">
+                                <a href="#privacy" data-toggle="tab">Personvern</a>
+                            </li>
+                            <li class="{%ifequal 'marks' active_tab %}active{% endifequal %}">
+                                <a href="#marks" data-toggle="tab">Prikker</a>
+                            </li>
+                            <li class="{%ifequal 'password' active_tab %}active{% endifequal %}">
+                                <a href="#password" data-toggle="tab">Passord</a>
+                            </li>
+                        </ul>
+                        <!-- End Desktop menu -->
+                        <!-- Mobile menu -->
+                        <ul class="nav nav-list visible-phone hidden-desktop hidden-tablet" id="userprofile-tabs">
+                            <li class="{% ifequal 'myprofile' active_tab %}active{% endifequal %}"><a href="#myprofile" data-toggle="tab">Brukerinformasjon</a></li>
+                            {#        <li class="{% ifequal 'myevents' active_tab %}active{% endifequal %}"><a href="#myevents" data-toggle="tab">Mine events</a></li>#}
+                            <li class="{% ifequal 'privacy' active_tab %}active{% endifequal %}"><a href="#privacy" data-toggle="tab">Personvern</a></li>
+                            <li class="{% ifequal 'marks' active_tab %}active{% endifequal %}"><a href="#marks" data-toggle="tab">Prikker</a></li>
+                            <li class="{% ifequal 'password' active_tab %}active{% endifequal %}"><a href="#password" data-toggle="tab">Passord</a></li>
+                        </ul>
+                        <!-- End Mobile menu -->
+                        <div class="tab-content">
+                            <div id="myprofile" class="tab-pane {%ifequal 'myprofile' active_tab %}active{% endifequal %}">
+                                {% include "profiles/myprofile.html" %}
+                            </div>
+                            {% include "profiles/myevents.html" %}
+                            <div id="privacy" class="tab-pane {%ifequal 'privacy' active_tab %} active {% endifequal %}">
+                                {% include "profiles/privacy.html" %}
+                            </div>
+                            <div id="marks" class="tab-pane {%ifequal 'marks' active_tab %} active {% endifequal %}">
+                                {% include "profiles/marks.html" %}
+                            </div>
+                            <div id="password" class="tab-pane {%ifequal 'password' active_tab %} active {% endifequal %}">
+                                {% include "profiles/change_password.html" %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
-    <div class="row-fluid">
-    <div class="span12">
-        <div class="tabbable">
-            <!-- Desktop menu -->
-            <ul class="nav nav-tabs visible-desktop visible-tablet hidden-phone" id="userprofile-tabs">
-                <li class="{%ifequal 'myprofile' active_tab %}active{% endifequal %}">
-                    <a href="#myprofile" data-toggle="tab">Brukerinformasjon</a>
-                </li>
-                <li class="{%ifequal 'myevents' active_tab %}active{% endifequal %}">
-                    <a href="#myevents" data-toggle="tab">Mine events</a>
-                </li>
-                <li class="{%ifequal 'privacy' active_tab %}active{% endifequal %}">
-                    <a href="#privacy" data-toggle="tab">Personvern</a>
-                </li>
-                <li class="{%ifequal 'password' active_tab %}active{% endifequal %}">
-                    <a href="#password" data-toggle="tab">Passord</a>
-                </li>
-            </ul>
-            <!-- End Desktop menu -->
-            <!-- Mobile menu -->
-            <ul class="nav nav-list visible-phone hidden-desktop hidden-tablet" id="userprofile-tabs">
-                <li class="{% ifequal 'myprofile' active_tab %}active{% endifequal %}"><a href="#myprofile" data-toggle="tab">Brukerinformasjon</a></li>
-                <li class="{% ifequal 'myevents' active_tab %}active{% endifequal %}"><a href="#myevents" data-toggle="tab">Mine events</a></li>
-                <li class="{% ifequal 'privacy' active_tab %}active{% endifequal %}"><a href="#privacy" data-toggle="tab">Personvern</a></li>
-                <li class="{% ifequal 'password' active_tab %}active{% endifequal %}"><a href="#password" data-toggle="tab">Passord</a></li>
-            </ul>
-            <!-- End Mobile menu -->
-            <div class="tab-content">
-                <!-- Profile -->
-                <div id="myprofile" class="tab-pane {%ifequal 'myprofile' active_tab %}active{% endifequal %}">
-                    <div class="row-fluid">
-                        <form method="post" action="/profile/saveprofile" enctype="multipart/form-data">
-                            <div class="span12">
-                                {% csrf_token %}
-                                <div class="row-fluid">
-                                    <div class="span6">
-                                        <div class="row-fluid row-space">
-                                            <div class="span12">
-                                                <h3>Personlig informasjon</h3>
-                                            </div>
-                                        </div>
-                                        {% for field in user_profile_form %}
-                                            {% ifnotequal field.name 'image' %}
-                                                <div class="inline">
-                                                    <div class="span4">{{ field.label }}</div>
-                                                    <div class="span8">
-                                                        {{ field }}
-                                                        {{ field.errors }}
-                                                    </div>
-                                                </div>
-                                            {% endifnotequal %}
-                                        {% endfor %}
-                                    </div>
-                                    <div class="span5">
-                                        <div class="row-fluid row-space">
-                                            <div class="span12">
-                                                <h3>Bilde</h3>
-                                            </div>
-                                        </div>
-                                        <div class="row-fluid">
-                                            <div class="span6">
-                                                <div id="image-box">
-                                                    <img class="img-polaroid fadeload" id="profile-image" src="{% if user.image %}{{ user.image.url  }}{% endif %}" alt="profilbilde">
-                                                    <button type="button" class="btn btn-danger image-box-entity" id="remove-image" data-toggle="modal" data-target="#remove-image-modal">
-                                                        <i class="icon-remove btn-icon"></i> Fjern bilde
-                                                    </button>
-                                                    <button type="button" class="btn image-box-entity" data-toggle="modal" data-target="#upload-image-modal">
-                                                        <i class="icon-upload btn-icon"></i> Velg et nytt bilde
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="span12 form-actions" style="margin-left: 0px">
-                                <button class="btn btn-success pull-right" type="submit">Lagre brukerinformasjon</button>
-                            </div>
-                        </form>
-                    </div>
-                    <!-- Modal for confirming removal of profile image -->
-                    <div class="modal hide fade" id="remove-image-modal">
-                        <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                            <h3>Fjern bilde</h3>
-                        </div>
-                        <div class="modal-body">
-                            <p>Er du sikker på at du vil fjerne profilbildet ditt?</p>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn" data-dismiss="modal">Lukk</button>
-                            <button type="button" class="btn btn-danger" id="confirm-delete">Fjern bildet mitt!</button>
-                        </div>
-                    </div>
-                    <!-- End modal -->
-                    <!-- Modal for uploading and cropping image -->
-                    <div class="modal hide fade" id="upload-image-modal">
-                        <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                            <h3>Last opp nytt bilde</h3>
-                        </div>
-                        <div class="modal-body">
-                            <div class="row-fluid">
-                                <div class="span12">
-                                    <div class="row-fluid">
-                                        <div class="span12">
-                                            <form method="post" enctype="multipart/form-data"  action="profile/uploadimage" id="upload-image-form">
-                                                {% csrf_token %}
-                                                {{ user_profile_form.image }}
-                                                {{ user_profile_form.image.errors }}
-                                                <input name="x" type="text" id="inputx" class="hidden-input">
-                                                <input name="y" type="text" id="inputy" class="hidden-input">
-                                                <input name="x2" type="text" id="inputx2" class="hidden-input">
-                                                <input name="y2" type="text" id="inputy2" class="hidden-input">
-                                                <input name="w" type="text" id="inputw" class="hidden-input">
-                                                <input name="h" type="text" id="inputh" class="hidden-input">
-                                                <img class="hidden-input" src="" id="image-resize" alt=""/>
-                                                <label for="image" class="btn image-box-entity" id="image-upload-label">
-                                                    <i class="icon-upload btn-icon"></i> Velg et nytt bilde
-                                                </label>
-                                                <button type="submit" class="btn btn-success" id="upload-button">Last opp bilde</button>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <div id="status" class="pull-left">Venter på opplasting av bilde.</div>
-                            <button type="button" class="btn" data-dismiss="modal">Lukk</button>
-                        </div>
-                    </div>
-                    <!-- End modal -->
-                </div>
-                <!-- End Profile -->
-                <!-- My Events -->
-                <div id="myevents" class="tab-pane {%ifequal 'myevents' active_tab %} active {% endifequal %}">
-                    <h3>Mine events</h3>
-                </div>
-                <!-- End My Events -->
-                <!-- Privacy -->
-                <div id="privacy" class="tab-pane {%ifequal 'privacy' active_tab %} active {% endifequal %}">
-                    <div class="row-fluid">
-                        <form method="post" action="/profile/saveprivacy" enctype="multipart/form-data">
-                            <div class="span12">
-                                {% csrf_token %}
-                                <div class="row-fluid">
-                                    <div class="row-fluid row-space">
-                                        <div class="span12 inline">
-                                            <h3 style="display: inline">Personvern</h3>
-                                            <a href="#"
-                                               class="icon-question-sign"
-                                               data-toggle="popover"
-                                               data-content="Mørkere farge indikerer valgt, lysere indikerer ikke valgt. Dersom du velger at profilen din ikke skal være synlig for andre brukere, vil ikke de andre valgene ha noen effekt."
-                                               data-original-title="Hjelpeinformasjon"
-                                               id="privacy-help">
-                                            </a>
-                                        </div>
-                                    </div>
-                                    <div class="row-fluid">
-                                        <div class="span12">
-                                            {% for field in privacy_form %}
-                                                <div class="privacybox {% if field.value %}on{% else %}off{% endif %} pull-left">
-                                                            <span>
-                                                                {{ field.label }}
-                                                                {{ field }}
-                                                            </span>
-                                                </div>
-                                            {% endfor %}
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="span12 form-actions" style="margin-left: 0px">
-                                <button class="btn btn-success pull-right" type="submit">Lagre personvern</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-                <!-- End Privacy -->
-                <!-- Password -->
-                <div id="password" class="tab-pane {%ifequal 'password' active_tab %} active {% endifequal %}">
-                    <div class="row-fluid">
-                        <form method="post" action="/profile/savepassword">
-                            <div class="span12">
-                                {% csrf_token %}
-                                <div class="row-fluid row-space">
-                                    <h3>Bytt passord</h3>
-                                </div>
-                                <div class="row-fluid">
-                                    <div class="span12">
-                                        {{ password_change_form }}
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="span12 form-actions" style="margin-left: 0px">
-                                <button class="btn btn-success pull-right" type="submit">Lagre passord</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-                <!-- End Password -->
-            </div>
-        </div>
-    </div>
-    </div>
-    </div>
     </section>
 {% endblock content %}
