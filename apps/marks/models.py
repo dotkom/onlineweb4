@@ -14,6 +14,13 @@ class ActiveMarksManager(models.Manager):
         return super(ActiveMarksManager, self).get_query_set().filter(mark_added_date__gt=threshhold)
 
 
+class InactiveMarksManager(models.Manager):
+    def get_query_set(self):
+        threshhold = get_threshold()
+
+        return super(InactiveMarksManager, self).get_query_set().filter(mark_added_date__lte=threshhold)
+
+
 class Mark(models.Model):
     CATEGORY_CHOICES = (
         (0, _(u"Ingen")),
@@ -26,21 +33,22 @@ class Mark(models.Model):
 
     title = models.CharField(_(u"tittel"), max_length=50)
     given_to = models.ManyToManyField(User, null=True, blank=True,
-        through="UserEntry", verbose_name=_(u"gitt til"))
+                                      through="UserEntry", verbose_name=_(u"gitt til"))
     mark_added_date = models.DateTimeField(_(u"utdelt dato"), auto_now_add=True)
     given_by = models.ForeignKey(User, related_name="mark_given_by", verbose_name=_(u"gitt av"), editable=False)
     last_changed_date = models.DateTimeField(_(u"sist redigert"), auto_now=True, editable=False)
     last_changed_by = models.ForeignKey(User, related_name="marks_last_changed_by",
-        verbose_name=_(u"sist redigert av"), editable=False)
+                                        verbose_name=_(u"sist redigert av"), editable=False)
     description = models.CharField(_(u"beskrivelse"), max_length=100,
-        help_text=_(u"Hvis dette feltet etterlates blankt vil det fylles med "
-        "en standard grunn for typen prikk som er valgt."),
-        blank=True)
+                                   help_text=_(u"Hvis dette feltet etterlates blankt vil det fylles med "
+                                               "en standard grunn for typen prikk som er valgt."),
+                                   blank=True)
     category = models.SmallIntegerField(_(u"kategori"), choices=CATEGORY_CHOICES, default=0)
 
     # managers
     objects = models.Manager()  # default manager
     active = ActiveMarksManager()  # active marks manager
+    inactive = InactiveMarksManager()  #inactive marks manager
 
     @property
     def is_active(self):
