@@ -40,6 +40,9 @@
                             <li class="{%ifequal 'password' active_tab %}active{% endifequal %}">
                                 <a href="#password" data-toggle="tab">Passord</a>
                             </li>
+                            <li class="{%ifequal 'mail-settings' active_tab %}active{% endifequal %}">
+                                <a href="#mail-settings" data-toggle="tab">E-post-instillinger</a>
+                            </li>
                         </ul>
                         <!-- End Desktop menu -->
                         <!-- Mobile menu -->
@@ -49,6 +52,7 @@
                             <li class="{% ifequal 'privacy' active_tab %}active{% endifequal %}"><a href="#privacy" data-toggle="tab">Personvern</a></li>
                             <li class="{% ifequal 'marks' active_tab %}active{% endifequal %}"><a href="#marks" data-toggle="tab">Prikker</a></li>
                             <li class="{% ifequal 'password' active_tab %}active{% endifequal %}"><a href="#password" data-toggle="tab">Passord</a></li>
+                            <li class="{% ifequal 'mail-settings' active_tab %}active{% endifequal %}"><a href="#mail-settings" data-toggle="tab">E-post-instillinger</a></li>
                         </ul>
                         <!-- End Mobile menu -->
                         <div class="tab-content">
@@ -64,6 +68,9 @@
                             </div>
                             <div id="password" class="tab-pane {%ifequal 'password' active_tab %} active {% endifequal %}">
                                 {% include "profiles/change_password.html" %}
+                            </div>
+                            <div id="mail-settings" class="tab-pane {%ifequal 'mail-settings' active_tab %} active {% endifequal %}">
+                                {% include "profiles/mail_settings.html" %}
                             </div>
                         </div>
                     </div>

@@ -13,7 +13,7 @@ from django.shortcuts import render
 from django.utils.translation import ugettext as _
 
 from apps.marks.models import Mark
-from apps.profiles.forms import PrivacyForm, ProfileForm
+from apps.profiles.forms import MailSettingsForm, PrivacyForm, ProfileForm
 
 
 """
@@ -54,7 +54,8 @@ def create_request_dictionary(request):
             # Tuple syntax ('title', list_of_marks, is_collapsed)
             (_(u'aktive prikker'), Mark.active.all().filter(given_to=request.user), False),
             (_(u'inaktive prikker'), Mark.inactive.all().filter(given_to=request.user), True),
-        ]
+        ],
+        'mail_settings' : MailSettingsForm(instance=request.user),
     }
 
     if request.session.has_key('userprofile_active_tab'):
@@ -94,12 +95,10 @@ def saveUserProfile(request):
         user.address = user_profile_form.cleaned_data['address']
         user.allergies = user_profile_form.cleaned_data['allergies']
         user.area_code = user_profile_form.cleaned_data['address']
-        user.infomail = user_profile_form.cleaned_data['infomail']
         user.mark_rules = user_profile_form.cleaned_data['mark_rules']
         user.nickname = user_profile_form.cleaned_data['nickname']
         user.phone_number = user_profile_form.cleaned_data['phone_number']
         user.website = user_profile_form.cleaned_data['website']
-        user.email = user_profile_form.cleaned_data['email']
 
         user.save()
         messages.success(request, _(u"Brukerprofilen din ble endret"))

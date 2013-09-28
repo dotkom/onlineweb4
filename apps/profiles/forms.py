@@ -7,13 +7,10 @@ from apps.authentication.models import OnlineUser
 
 class ProfileForm(forms.ModelForm):
 
-    # image_upload = forms.ImageField()
-    # image_upload.widget.attrs["id"] = "hidden-input"
-
     class Meta:
         model = OnlineUser
 
-        fields = ['email', 'nickname', 'website', 'phone_number', 'address', 'zip_code', 'allergies', 'infomail', 'mark_rules', 'image']
+        fields = ['nickname', 'website', 'phone_number', 'address', 'zip_code', 'allergies', 'mark_rules', 'image']
         widgets = {
             'allergies' : forms.Textarea(attrs={'id' : 'allergies'}),
             'image' : forms.FileInput(attrs={'id' : 'image', 'class' : 'hidden-input' }),
@@ -25,3 +22,11 @@ class PrivacyForm(forms.ModelForm):
     class Meta:
         model = Privacy
         exclude = ['user']
+
+
+class MailSettingsForm(forms.ModelForm):
+
+    class Meta:
+        model = OnlineUser
+
+        fields = ['email', 'infomail', ]
