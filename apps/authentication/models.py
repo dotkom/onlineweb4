@@ -2,6 +2,7 @@
 
 import datetime
 
+from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
@@ -42,7 +43,8 @@ class OnlineUser(AbstractUser):
     # image = FileBrowseField(_(u"bilde"), max_length=200, directory=IMAGE_FOLDER,
     #                         extensions=IMAGE_EXTENSIONS, null=True, blank=True)
 
-    image = models.ImageField(_(u"bilde"), max_length=200, upload_to=IMAGE_FOLDER, blank=True, null=True)
+    image = models.ImageField(_(u"bilde"), max_length=200, upload_to=IMAGE_FOLDER, blank=True, null=True,
+                              default=settings.DEFAULT_PROFILE_PICTURE_URL)
 
     # NTNU credentials
     ntnu_username = models.CharField(_(u"NTNU-brukernavn"), max_length=10, blank=True, null=True)
