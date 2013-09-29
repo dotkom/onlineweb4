@@ -179,11 +179,18 @@ def confirmDeleteImage(request):
 
     if request.is_ajax():
         if request.method == 'DELETE':
-            request.user.image = None
-            request.user.save()
+            if request.user.image.url != settings.DEFAULT_PROFILE_PICTURE_URL:
+                extension_index = request.user.image.name.rfind('.')
+                extension = request.user.image.name[extension_index:]
+                filename = os.path.join(settings.MEDIA_ROOT, "images", "profiles", request.user.username + extension)
+                os.remove(filename)
 
-            return HttpResponse(status=204)
-    return HttpResponse(status=405)
+                request.user.image = settings.DEFAULT_PROFILE_PICTURE_URL
+                request.user.save()
+                lol = json.dumps({'url' : settings.DEFAULT_PROFILE_PICTURE_URL})
+                return HttpResponse(status=200, content=json.dumps({'url' : settings.DEFAULT_PROFILE_PICTURE_URL }))
+
+    return HttpResponse(status=200, content=json.dumps({'url' : request.user.image.url }))
 
 
 def savePrivacy(request):

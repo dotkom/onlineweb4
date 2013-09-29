@@ -53,11 +53,11 @@ AUTH_USER_MODEL = 'authentication.OnlineUser'
 MEDIA_ROOT = os.path.join(PROJECT_ROOT_DIRECTORY, 'uploaded_media') # Override this in local.py in prod.
 MEDIA_URL = '/media/'
 
-#Place of default profile picture
-DEFAULT_PROFILE_PICTURE_URL = os.path.join(MEDIA_URL, "images", "profiles", "default", "default.png")
-
 STATIC_ROOT = os.path.join(PROJECT_ROOT_DIRECTORY, 'static')
 STATIC_URL = '/static/'
+
+#Url of default profile picture
+DEFAULT_PROFILE_PICTURE_URL = os.path.join(STATIC_URL, "img", "profile_default.png")
 
 # Additional locations of static files
 STATICFILES_DIRS = (

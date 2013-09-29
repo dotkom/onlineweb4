@@ -17,8 +17,6 @@ $(document).ready(function() {
     $('#image-name').hide();
 
 
-
-
 //Ajax request to remove profile image
     $('#confirm-delete').click(function() {
         confirmRemoveImage();
@@ -28,8 +26,10 @@ $(document).ready(function() {
         $.ajax({
             method: 'DELETE',
             url: 'profile/removeprofileimage',
-            success: function() {
-                $('img#profile-image').attr('src', "http://i.imgur.com/dZivKdI.gif");
+            success: function(res) {
+                console.log(res);
+                res = JSON.parse(res);
+                $('img#profile-image').attr('src', res['url']);
                 $('#remove-image-modal').modal("hide");
             },
             error: function() {
@@ -182,7 +182,8 @@ $(document).ready(function() {
                 success: function (res) {
                     res = JSON.parse(res);
                     setStatus(res['message']);
-                    $('#profile-image').attr("src", (res['image-url']));
+                    $('#profile-image').attr("src", res['image-url']);
+                    $('#upload-image-modal').modal('hide');
                 },
                 error: function(res) {
                     setStatus(res);

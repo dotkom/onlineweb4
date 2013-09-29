@@ -50,13 +50,13 @@ MEDIA_ROOT = os.path.join(PROJECT_ROOT_DIRECTORY, "uploaded_media/")
 #MEDIA_URL = '//media.online.ntnu.no/'
 MEDIA_URL = '/media/'
 
-#Place of default profile picture
-DEFAULT_PROFILE_PICTURE_URL = os.path.join(MEDIA_URL, "images", "profiles", "default", "default.png")
-
 #MEDIA_ROOT = '/var/websites/prod/static'
 STATIC_ROOT = os.path.join(PROJECT_ROOT_DIRECTORY, 'collected_static')
 #STATIC_URL = '//static.online.ntnu.no'
 STATIC_URL = '/static/'
+
+#Url of default profile picture
+DEFAULT_PROFILE_PICTURE_URL = os.path.join(STATIC_URL, "img", "profile_default.png")
 
 # Filebrowser local settings.
 FILEBROWSER_MEDIA_ROOT = MEDIA_ROOT
