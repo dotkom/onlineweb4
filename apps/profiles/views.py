@@ -94,11 +94,11 @@ def saveUserProfile(request):
 
         user.address = user_profile_form.cleaned_data['address']
         user.allergies = user_profile_form.cleaned_data['allergies']
-        user.area_code = user_profile_form.cleaned_data['address']
         user.mark_rules = user_profile_form.cleaned_data['mark_rules']
         user.nickname = user_profile_form.cleaned_data['nickname']
         user.phone_number = user_profile_form.cleaned_data['phone_number']
         user.website = user_profile_form.cleaned_data['website']
+        user.zip_code = user_profile_form.cleaned_data['zip_code']
 
         user.save()
         messages.success(request, _(u"Brukerprofilen din ble endret"))
