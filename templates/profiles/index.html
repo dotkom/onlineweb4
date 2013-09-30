@@ -1,16 +1,23 @@
 {% extends "base.html" %}
+{% load compress %}
 {% block js %}
     {{ block.super }}
     <script src="{{ STATIC_URL }}/js/libs/jquery.cookie.js"></script>
     <script src="{{ STATIC_URL }}/js/profiles.js"></script>
     <script src="{{ STATIC_URL }}/js/libs/jquery.Jcrop.min.js"></script>
     <script src="{{ STATIC_URL }}/js/libs/jquery.color.js"></script>
-    <script src="{{ STATIC_URL }}/js/libs/jquery.min.js"></script>
     <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
 {% endblock %}
 
-{% block content %}
+{% block styles %}
+    {{ block.super }}
+    {% compress css %}
     <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}less/jcrop/jquery.Jcrop.css">
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}less/profiles.less">
+    {% endcompress %}
+{% endblock %}
+
+{% block content %}
     <section id="profile">
         <div class="container-fluid">
             <div class="row-fluid">
