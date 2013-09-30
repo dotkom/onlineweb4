@@ -25,7 +25,7 @@ $(document).ready(function() {
     function confirmRemoveImage() {
         $.ajax({
             method: 'DELETE',
-            url: 'profile/removeprofileimage',
+            url: 'removeprofileimage/',
             success: function(res) {
                 console.log(res);
                 res = JSON.parse(res);
@@ -48,7 +48,7 @@ $(document).ready(function() {
         $.ajax({
             method: 'POST',
             data: data,
-            url: 'profile/updateactivetab',
+            url: 'updateactivetab/',
             crossDomain: false
         });
     }
@@ -173,7 +173,7 @@ $(document).ready(function() {
             formData.append("h", h);
 
             $.ajax({
-                url: "profile/uploadimage",
+                url: "uploadimage/",
                 type: "POST",
                 data: formData,
                 processData: false,

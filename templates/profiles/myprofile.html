@@ -1,5 +1,5 @@
 <div class="row-fluid">
-    <form method="post" action="/profile/saveprofile" enctype="multipart/form-data">
+    <form method="post" action="{% url 'save_user_profile' %}" enctype="multipart/form-data">
         <div class="span12">
             {% csrf_token %}
             <div class="row-fluid">
@@ -74,7 +74,7 @@
             <div class="span12">
                 <div class="row-fluid">
                     <div class="span12">
-                        <form method="post" enctype="multipart/form-data"  action="profile/uploadimage" id="upload-image-form">
+                        <form method="post" enctype="multipart/form-data"  action="{% url 'upload_image' %}" id="upload-image-form">
                             {% csrf_token %}
                             {{ user_profile_form.image }}
                             {{ user_profile_form.image.errors }}
