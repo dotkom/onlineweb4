@@ -17,8 +17,8 @@ from apps.profiles.forms import MailSettingsForm, PrivacyForm, ProfileForm
 
 
 """
-    Index for the entire user profile view
-    Methods redirect to this view on save
+Index for the entire user profile view
+Methods redirect to this view on save
 """
 def index(request):
 
