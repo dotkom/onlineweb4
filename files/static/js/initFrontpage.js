@@ -27,7 +27,6 @@ $(function() {
     $('#about-tabs a').click(function (e) {
         e.preventDefault();
         $(this).tab('show',update_pos);
-        // Above callback is broken. Does not scroll to anchor.
         $('html, body').animate({scrollTop: $('#about').offset().top - 75}, 250);
     });
        
