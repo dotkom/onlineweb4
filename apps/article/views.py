@@ -143,7 +143,7 @@ def archive_year(request, year):
 def archive_month(request, year, month):
     return archive(request, year=year, month=month)
 
-def details(request, article_id):
+def details(request, article_id, article_slug):
 
     article = get_object_or_404(Article, pk=article_id)
 
