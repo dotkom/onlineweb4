@@ -52,7 +52,7 @@ msgstr "Tittel"
 
 #: forms.py:88
 msgid "Initial title of the article. May be overridden with revision titles."
-msgstr "Título inicial para o artigo. Poderá ser alterado depois."
+msgstr "Initialtittel."
 
 #: forms.py:89
 msgid "Type in some contents"
@@ -78,23 +78,23 @@ msgstr "Oppsummering"
 #: forms.py:100
 msgid ""
 "Give a short reason for your edit, which will be stated in the revision log."
-msgstr "Descreva resumidamente suas alterações. Essa descrição aparecerá no histórico de mudanças."
+msgstr "Gi en kort begrunnelse for din redigering, for revisjonsloggen."
 
 #: forms.py:147
 msgid ""
 "While you were editing, someone else changed the revision. Your contents "
 "have been automatically merged with the new contents. Please review the text "
 "below."
-msgstr "Enquanto você estava editando, outra pessoa salvou esse artigo. Sua edição "
-"foi automaticamente mesclado com o novo conteúdo. Por favor, revise o conteúdo abaixo."
+msgstr "Noen andre har endret revisjonen mens du redigerte "
+"Din endring er automatisk sammenslått med det nye innholdet"
 
 #: forms.py:149
 msgid "No changes made. Nothing to save."
-msgstr "Nenhuma mudança efetuada. Nada a ser salvo."
+msgstr "Ingen endringer gjort. Ingenting å lagre."
 
 #: forms.py:184
 msgid "Select an option"
-msgstr "Escolha uma opção"
+msgstr "Velg et alternativ"
 
 #: forms.py:233 templates/wiki/dir.html:49
 msgid "Slug"
@@ -105,71 +105,71 @@ msgid ""
 "This will be the address where your article can be found. Use only "
 "alphanumeric characters and - or _. Note that you cannot change the slug "
 "after creating the article."
-msgstr "Esse será o endereço onde seu artigo será encontrado. Use apenas "
-"caracteres alfa numéricos e - ou _. Atenção: você não poderá esse valor depois "
-"de criar o artigo."
+msgstr "Dette er adressen hvor artikkelen din vil være. Bruk bare "
+"alphnumeriske tegn og - eller _, merk at dette ikke kan endres "
+"etter artikkelen er laget."
 
 #: forms.py:238
 msgid "Write a brief message for the article's history log."
-msgstr "Escreva uma breve mensagem para o histórico de mudanças desse artigo."
+msgstr "Skriv en kort beskjed for artikkelens historielogg."
 
 #: forms.py:244
 msgid "A slug may not begin with an underscore."
-msgstr "A URL não pode começar com o carcatere: _"
+msgstr "En slug kan ikke begynne med _"
 
 #: forms.py:253
 #, python-format
 msgid "A deleted article with slug \"%s\" already exists."
-msgstr "Um artigo que já foi removido já está usando essa URL: \"%s\"."
+msgstr "En slettet artikkel med slug \"%s\" finnes fra før."
 
 #: forms.py:255
 #, python-format
 msgid "A slug named \"%s\" already exists."
-msgstr "A URL \"%s\" já existe."
+msgstr "En slug med navn  \"%s\" finnes fra før."
 
 #: forms.py:272
 msgid "Yes, I am sure"
-msgstr "Sim, tenho certeza"
+msgstr "Ja, jeg er sikker"
 
 #: forms.py:274 templates/wiki/deleted.html:47
 msgid "Purge"
-msgstr "Limpar"
+msgstr "Slett"
 
 #: forms.py:275
 msgid ""
 "Purge the article: Completely remove it (and all its contents) with no undo. "
 "Purging is a good idea if you want to free the slug such that users can "
 "create new articles in its place."
-msgstr "Remover o artigo: Essa operação removerá todos os conteúdos desse artigo e não poderá ser desfeita. "
-"Deletar pode ser uma boa idéia se você deseja usar a mesma URL para outro artigo."
+msgstr "Slett artikkelen. Fullstendig fjerne den (og alt innhold) uten mulighet til å angre"
+"Sletting er en god idè om du vil frigi slugen slik at den kan brukes til andre artikler."
 
 #: forms.py:282 plugins/attachments/forms.py:140 plugins/images/forms.py:66
 msgid "You are not sure enough!"
-msgstr "Você não está certo o suficiente!"
+msgstr "Du er ikke sikker nok"
 
 #: forms.py:284
 msgid "While you tried to delete this article, it was modified. TAKE CARE!"
-msgstr "Enquanto você tentou remover esse artigo, alguém o editou. Tome cuidado!"
+msgstr "Artikkelen ble redigert i det du prøvde å slette den, PASS PÅ!"
 
 #: forms.py:290
 msgid "Lock article"
-msgstr "Travar artigo"
+msgstr "Lås artikkel"
 
 #: forms.py:290
 msgid "Deny all users access to edit this article."
-msgstr "Negar o acesso a esse artigo a todos os usuários."
+msgstr "Nekt alle brukere å redigere denne artikkelen."
 
 #: forms.py:293
 msgid "Permissions"
-msgstr "Permissões"
+msgstr "Rettigheter"
 
 #: forms.py:297
 msgid "Owner"
-msgstr "Proprietário"
+msgstr "Eier"
 
 #: forms.py:298
 msgid "Enter the username of the owner."
-msgstr "Entre o nome de usuário do proprietário."
+msgstr "Skrive navnet på eieren."
 
 #: forms.py:299 plugins/notifications/util.py:10
 msgid "(none)"
@@ -177,161 +177,158 @@ msgstr ""
 
 #: forms.py:304
 msgid "Inherit permissions"
-msgstr "Herdar permissões."
+msgstr "Arv rettigheter."
 
 #: forms.py:304
 msgid ""
 "Check here to apply the above permissions (excluding group and owner of the "
 "article) recursively to articles below this one."
-msgstr "Marque aqui para aplicar as permissões acima (excluindo grupo e proprietário do artigo) "
-"de forma recursiva a todos os artigos abaixo desse."
+msgstr "Klikk av her for å rekursivt arve rettigheter fra denne artikkelen og nedover "
+"(utenom gruppe og eier av artikkelen)"
 
 #: forms.py:307
 msgid "Inherit owner"
-msgstr "Herdar proprietário"
+msgstr "Arv eier"
 
 #: forms.py:307
 msgid ""
 "Check here to apply the ownership setting recursively to articles below this "
 "one."
-msgstr "Marque aqui para aplicar as permissões de forma recusriva a todos os artigos "
-"abaixo desse."
+msgstr "Klikk av her for å la eierskap gå rekursivt til artikler under denne."
 
 #: forms.py:310
 msgid "Inherit group"
-msgstr "Herdar Grupo"
+msgstr "Arv Gruppe"
 
 #: forms.py:310
 msgid ""
 "Check here to apply the group setting recursively to articles below this one."
-msgstr "Marque aqui para aplicar as permissões de grupo de forma recusriva a todos os artigos "
-"abaixo desse."
+msgstr "Klikk av her for å la gruppe gå rekursivt til artikler under denne."
 
 #: forms.py:315
 msgid "Permission settings for the article were updated."
-msgstr "Configurações de permissão atualizadas para esse artigo."
+msgstr "Rettigheter knyttet til denne artikkelen er oppdatert."
 
 #: forms.py:317
 msgid "Your permission settings were unchanged, so nothing saved."
-msgstr "Configurações de permissão não foram modificadas. Nada a ser salvo."
+msgstr "Rettighet konfigurasjon uendret, ingenting ble lagret."
 
 #: forms.py:357
 msgid "No user with that username"
-msgstr "Usuário inexistente."
+msgstr "Ingen bruker med det brukernavnet."
 
 #: forms.py:383
 msgid "Article locked for editing"
-msgstr "Artigo travado para edição"
+msgstr "Artikkelen låst for redigering"
 
 #: forms.py:390
 msgid "Article unlocked for editing"
-msgstr "Artigo destravado para edição"
+msgstr "Artikkelen åpnet for redigering"
 
 #: forms.py:404
 msgid "Filter..."
-msgstr "Filtro..."
+msgstr "Filter..."
 
 #: forms.py:410 templates/wiki/base.html:41
 msgid "Search..."
-msgstr "Busca..."
+msgstr "Søk..."
 
 #: conf/settings.py:20
 msgid "Table of Contents"
-msgstr "Índice"
+msgstr "Innhold"
 
 #: core/plugins/base.py:50
 msgid "Settings for plugin"
-msgstr "Configurações de plugin"
+msgstr "Konfigurasjon av plugin"
 
 #: models/article.py:21 models/pluginbase.py:172
 #: plugins/attachments/models.py:23
 msgid "current revision"
-msgstr "versão atual"
+msgstr "Gjeldende revisjon"
 
 #: models/article.py:23
 msgid ""
 "The revision being displayed for this article. If you need to do a roll-"
 "back, simply change the value of this field."
-msgstr "A revisão atual desse artigo. Se você precisar reverter, apenas mude o valor desse campo."
+msgstr "Revisjonen vist for denne artikkelen. Om du trenger å gå tilbake til tidligere versjoner, endre verdien til dette feltet."
 
 #: models/article.py:27
 msgid "modified"
-msgstr "modificado"
+msgstr "redigert"
 
 #: models/article.py:28
 msgid "Article properties last modified"
-msgstr "Propriedades do artigo modificadas em"
+msgstr "Artikkelegenskaper sist redigert"
 
 #: models/article.py:30
 msgid "owner"
-msgstr "proprietário"
+msgstr "eier"
 
 #: models/article.py:32
 msgid ""
 "The owner of the article, usually the creator. The owner always has both "
 "read and write access."
-msgstr "O proprietáario do artigo, normalmente quem criou. O proprietário sempre "
-"tem permisão de leitura e escrita."
+msgstr "Eieren av denne artikkelen, vanligvis skaperen. Eieren har alltid både les og skriv rettigheter"
 
 #: models/article.py:35
 msgid "group"
-msgstr "grupo"
+msgstr "gruppe"
 
 #: models/article.py:37
 msgid ""
 "Like in a UNIX file system, permissions can be given to a user according to "
 "group membership. Groups are handled through the Django auth system."
-msgstr "Como em um sistema de arquivos UNIX, permissões podem ser dadas a um usuário "
-"através de grupos. Grupos são gerenciados pelo sistema de autenticação do Django."
+msgstr "I likhet med UNIX systemer, kan rettigheter gis til en bruker etter  "
+"gruppemedlemskap. Grupper håndteres gjennom Django auth systemere"
 
 #: models/article.py:40
 msgid "group read access"
-msgstr "permissão de leitura do grupo"
+msgstr "gruppe les rettigheter"
 
 #: models/article.py:41
 msgid "group write access"
-msgstr "permissão de escrita do grupo"
+msgstr "gruppe skrive rettigheter"
 
 #: models/article.py:42
 msgid "others read access"
-msgstr "permissão de leitura para outras pessoas"
+msgstr "andre kan lese"
 
 #: models/article.py:43
 msgid "others write access"
-msgstr "permissão de escrita para outras pessoas"
+msgstr "andre kan skrive"
 
 #: models/article.py:177
 #, python-format
 msgid "Article without content (%(id)d)"
-msgstr "Artigo sem conteúdo (%(id)d)"
+msgstr "Artikkel uten innhold (%(id)d)"
 
 #: models/article.py:219
 msgid "content type"
-msgstr "tipo do conteúdo"
+msgstr "innholds type"
 
 #: models/article.py:221
 msgid "object ID"
-msgstr "ID do objeto"
+msgstr "objekt ID"
 
 #: models/article.py:228
 msgid "Article for object"
-msgstr ""
+msgstr "Artikkel for objekt"
 
 #: models/article.py:229
 msgid "Articles for object"
-msgstr ""
+msgstr "Artikkel for objekter"
 
 #: models/article.py:237
 msgid "revision number"
-msgstr "número da revisão"
+msgstr "revisjonsnummer"
 
 #: models/article.py:242
 msgid "IP address"
-msgstr "Endereço IP"
+msgstr "Ip-Adresse"
 
 #: models/article.py:243
 msgid "user"
-msgstr "usuário"
+msgstr "bruker"
 
 #: models/article.py:255
 #: plugins/attachments/templates/wiki/plugins/attachments/history.html:23
@@ -339,48 +336,48 @@ msgstr "usuário"
 #: plugins/attachments/templates/wiki/plugins/attachments/search.html:40
 #: templates/wiki/includes/revision_info.html:15
 msgid "deleted"
-msgstr "removido"
+msgstr "slettet"
 
 #: models/article.py:256 templates/wiki/article.html:23
 #: templates/wiki/includes/revision_info.html:21
 msgid "locked"
-msgstr "travado"
+msgstr "låst"
 
 #: models/article.py:274 models/pluginbase.py:40
 msgid "article"
-msgstr "artigo"
+msgstr "artikkel"
 
 #: models/article.py:277
 msgid "article contents"
-msgstr "conteúdo do artigo"
+msgstr "artikkel innhold"
 
 #: models/article.py:281
 msgid "article title"
-msgstr "título do artigo"
+msgstr "artikkel tittel"
 
 #: models/article.py:282
 msgid ""
 "Each revision contains a title field that must be filled out, even if the "
 "title has not changed"
-msgstr "Cada revisão precisa conter um título, mesmo que o título não tenha mudado"
+msgstr "Hver revisjon har et tittelfelt som må fylles ut, selv om tittelen er uendret."
 
 #: models/pluginbase.py:80
 msgid "original article"
-msgstr "artigo original"
+msgstr "orginal artikkelen"
 
 #: models/pluginbase.py:81
 msgid "Permissions are inherited from this article"
-msgstr "Permissões são herdadas desse artigo"
+msgstr "Rettigheter er arvet fra denne artikkelen"
 
 #: models/pluginbase.py:143
 msgid "A plugin was changed"
-msgstr "Algum plugin mudou"
+msgstr "En plugin har blitt endret"
 
 #: models/pluginbase.py:174
 msgid ""
 "The revision being displayed for this plugin. If you need to do a roll-back, "
 "simply change the value of this field."
-msgstr "Revisão desse plugin. Se você precisar reverter, apenas mude o valor desse campo."
+msgstr "Revisjonen som vises for denne pluginen."
 
 #: models/urlpath.py:40
 msgid "Cache lookup value for articles"
@@ -388,32 +385,32 @@ msgstr ""
 
 #: models/urlpath.py:44
 msgid "slug"
-msgstr "url"
+msgstr "slug"
 
 #: models/urlpath.py:141
 msgid "(root)"
-msgstr "(raiz)"
+msgstr "(root)"
 
 #: models/urlpath.py:151
 msgid "URL path"
-msgstr "URL"
+msgstr "URL-sti"
 
 #: models/urlpath.py:152
 msgid "URL paths"
-msgstr "URLs"
+msgstr "URL-stier"
 
 #: models/urlpath.py:158
 msgid "Sorry but you cannot have a root article with a slug."
-msgstr "Desculpe  mas você não pode ter o artigo raiz com uma URL diferente de /"
+msgstr "Beklager, men du kan ikke ha rotartikkel med en slug"
 
 #: models/urlpath.py:160
 msgid "A non-root note must always have a slug."
-msgstr "Um artigo não-raiz deve sempre ter uma URL"
+msgstr "En ikke-rot tekst må alltid ha en slug"
 
 #: models/urlpath.py:163
 #, python-format
 msgid "There is already a root node on %s"
-msgstr "Já existe um nó raiz em %s"
+msgstr "Det finnes alt en rotnode på %s"
 
 #: models/urlpath.py:274
 msgid ""
@@ -423,152 +420,151 @@ msgid ""
 "The children of this article have had their parents deleted. You should "
 "probably find a new home for them."
 msgstr ""
-"Artigos que perderam seus ancestrais\n"
+"Artikkel som mistet foreldrene\n"
 "====================================\n"
 "\n"
-"Os artigos-filhos desse artigo estão sem um artigo-pai. Você provavelmente "
-"precisará encontrar um novo artigo-pai para eles."
+"Barna til denne artikkelen har fått sine foreldre slettet. Du burde "
+"finne et nytt hjem for dem."
 
 #: models/urlpath.py:277
 msgid "Lost and found"
-msgstr "Achados e perdidos"
+msgstr "Tapt og funnet"
 
 #: plugins/attachments/forms.py:16
 #: plugins/attachments/templates/wiki/plugins/attachments/history.html:14
 msgid "Description"
-msgstr "Descrição"
+msgstr "Beskrivelse"
 
 #: plugins/attachments/forms.py:17
 msgid "A short summary of what the file contains"
-msgstr "Um pequeno sumário do conteúdo do arquivo"
+msgstr "En kort oppsummering av innholdet"
 
 #: plugins/attachments/forms.py:59
 msgid "File or zip archive"
-msgstr "Arquivo ou ZIP"
+msgstr "Fil eller ZIP"
 
 #: plugins/attachments/forms.py:64
 msgid "Unzip file"
-msgstr "Descompactar arquivo"
+msgstr "Pakk ut fil"
 
 #: plugins/attachments/forms.py:65
 msgid ""
 "Create individual attachments for files in a .zip file - directories do not "
 "work."
-msgstr "Crie vários anexos para um artigo usando um arquivo .zip. O arquivo zip "
-"não deverá conter diretórios."
+msgstr "Opprett individuelle vedlegg for filer i en .zip fil - Mappeadresse fungerer ikke."
 
 #: plugins/attachments/forms.py:85
 msgid "Not a zip file"
-msgstr "Não é um arquivo zip"
+msgstr "Ikke en zippet fil"
 
 #: plugins/attachments/forms.py:135
 msgid "Yes I am sure..."
-msgstr "Sim, tenho certeza..."
+msgstr "Ja, jeg er sikker..."
 
 #: plugins/attachments/models.py:25
 msgid ""
 "The revision of this attachment currently in use (on all articles using the "
 "attachment)"
-msgstr "Esta revisão está atualmente sendo usada por algum artigo."
+msgstr "Revisjonen av vedlegget nå i bruk på alle aktuelle artikler."
 
 #: plugins/attachments/models.py:28
 msgid "original filename"
-msgstr "nome original do arquivo"
+msgstr "orginal filnavn"
 
 #: plugins/attachments/models.py:40
 msgid "attachment"
-msgstr "anexo"
+msgstr "vedlegg"
 
 #: plugins/attachments/models.py:41
 msgid "attachments"
-msgstr "Vedlegg"
+msgstr "vedlegg"
 
 #: plugins/attachments/models.py:91
 msgid "file"
-msgstr "arquivo"
+msgstr "fil"
 
 #: plugins/attachments/models.py:97
 msgid "attachment revision"
-msgstr "revisão do anexo"
+msgstr "vedlegg revisjon"
 
 #: plugins/attachments/models.py:98
 msgid "attachment revisions"
-msgstr "revisões dos anexos"
+msgstr "vedlegg revisjoner"
 
 #: plugins/attachments/views.py:48
 #, python-format
 msgid "Successfully added: %s"
-msgstr "Adicionado com sucesso: %s"
+msgstr "Lagt til: %s"
 
 #: plugins/attachments/views.py:50
 #, python-format
 msgid "%s was successfully added."
-msgstr "%s foi adicionado com sucesso."
+msgstr "%s ble lagt til."
 
 #: plugins/attachments/views.py:113
 #, python-format
 msgid "%s uploaded and replaces old attachment."
-msgstr "%s adicionado e substituiu o anexo anterior."
+msgstr "%s uplastet og erstatter gamle vedlegg."
 
 #: plugins/attachments/views.py:115
 #, python-format
 msgid "Your file could not be saved: %s"
-msgstr "Seu arquivo não pode ser salvo: %s"
+msgstr "Filen din ble ikke lagret: %s"
 
 #: plugins/attachments/views.py:119
 msgid ""
 "Your file could not be saved, probably because of a permission error on the "
 "web server."
-msgstr "Seu arquivo não pode ser salvo, provavelmente por um erro no servidor."
+msgstr "Filen din kunne ikke lagres, mest sannsynlig grunnet rettighetsfeil på web-serveren."
 
 #: plugins/attachments/views.py:127
 msgid ""
 "Your new file will automatically be renamed to match the file already "
 "present. Files with different extensions are not allowed."
-msgstr "Seu novo arquivo será renomeado automaticamente para um nome compatível "
-"com o nome do arquivo já existente. Arquivos com extensões diferentes não serão permitidos"
+msgstr "Navnet på filen din vil automatisk bli endret til å stemme med den gamle filen  "
+"Forskjellige filtyper er ikke tillatt"
 
 #: plugins/attachments/views.py:182
 #, python-format
 msgid "Current revision changed for %s."
-msgstr "Versão atual alterada para %s"
+msgstr "Revisjon endret for %s"
 
 #: plugins/attachments/views.py:201
 #, python-format
 msgid "Added a reference to \"%(att)s\" from \"%(art)s\"."
-msgstr "Adicionada uma referencia de \"%(att)s\" para \"%(art)s\""
+msgstr "La til en referanse til  \"%(att)s\" fra \"%(art)s\""
 
 #: plugins/attachments/views.py:231
 #, python-format
 msgid "The file %s was deleted."
-msgstr "O arquivo %s fei excluído"
+msgstr "Filen %s ble slettet"
 
 #: plugins/attachments/views.py:234
 #, python-format
 msgid "This article is no longer related to the file %s."
-msgstr "Este artigo não está mais relacionado com o arquivo %s"
+msgstr "Denne artikkelen har ikke lengre relasjon til filen %s"
 
 #: plugins/attachments/wiki_plugin.py:31
 #: plugins/attachments/templates/wiki/plugins/attachments/index.html:5
 msgid "Attachments"
-msgstr "Anexos"
+msgstr "Vedlegg"
 
 #: plugins/attachments/wiki_plugin.py:37
 #, python-format
 msgid "A file was changed: %s"
-msgstr "Um arquivo foi alterado: %s"
+msgstr "En fil ble endret: %s"
 
 #: plugins/attachments/wiki_plugin.py:37
 #, python-format
 msgid "A file was deleted: %s"
-msgstr "Um arquivo foi excluído: %s"
+msgstr "En fil ble slettet: %s"
 
 #: plugins/attachments/templates/wiki/plugins/attachments/delete.html:5
 #: plugins/attachments/templates/wiki/plugins/attachments/delete.html:10
 #: plugins/attachments/templates/wiki/plugins/attachments/index.html:36
 #: templates/wiki/delete.html:8
 msgid "Delete"
-msgstr "Excluir"
+msgstr "Slett"
 
 #: plugins/attachments/templates/wiki/plugins/attachments/delete.html:12
 msgid ""
@@ -579,9 +575,9 @@ msgid ""
 "    "
 msgstr ""
 "\n"
-"O arquivo pode ter sido referenciado por outros artigos. Excluí-lo "
-"significa que todos esses artigos não serão mais capazes de exibir esse arquivo."
-"Os seguintes artigos fazem referência a esse arquivo:\n"
+"   Filen er kanskje referert til fra andre artikler. Å slette den betyr  "
+"at de vil miste sin referanse. Følgende artikler refererer til filen"
+"\n"
 "    "
 
 #: plugins/attachments/templates/wiki/plugins/attachments/delete.html:27
@@ -594,11 +590,11 @@ msgstr ""
 #: templates/wiki/create.html:52 templates/wiki/delete.html:12
 #: templates/wiki/delete.html.py:46
 msgid "Go back"
-msgstr "Voltar"
+msgstr "Tilbake"
 
 #: plugins/attachments/templates/wiki/plugins/attachments/delete.html:31
 msgid "Delete it!"
-msgstr "Apagar!"
+msgstr "Slett den!"
 
 #: plugins/attachments/templates/wiki/plugins/attachments/delete.html:37
 msgid "Remove"
