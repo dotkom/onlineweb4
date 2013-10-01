@@ -26,9 +26,9 @@ class FeedbackRelation(models.Model):
     object_id = models.PositiveIntegerField()
     content_object = generic.GenericForeignKey('content_type', 'object_id')
     deadline = models.DateField()
-    gives_mark = models.BooleanField(_("Prikk"), default=True)
+    gives_mark = models.BooleanField(default=True)
     active = models.BooleanField(default=True)
-    created_date = models.DateTimeField(_(u"utdelt dato"), auto_now_add=True)
+    created_date = models.DateTimeField(auto_now_add=True)
 
     # Keep a record of who has answered. (not /what/ they have answered)
     answered = models.ManyToManyField(
