@@ -42,7 +42,7 @@ LANGUAGES = (
                 ('en_US', 'English'),
             )
 LOCALE_PATHS = [
-    os.path.join(PROJECT_ROOT_DIRECTORY, '/locale'),
+    os.path.join(PROJECT_ROOT_DIRECTORY, 'locale'),
 ]
 
 SITE_ID = 1
@@ -211,7 +211,7 @@ LOGGING = {
 }
 
 # crispy forms settings
-CRISPY_TEMPLATE_PACK = 'bootstrap3'
+CRISPY_TEMPLATE_PACK = 'bootstrap'
 
 # bootstrap messages classes
 MESSAGE_TAGS = {messages.DEBUG: 'alert-debug',
