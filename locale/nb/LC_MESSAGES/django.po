@@ -177,7 +177,7 @@ msgstr ""
 
 #: forms.py:304
 msgid "Inherit permissions"
-msgstr "Arv rettigheter."
+msgstr "Arv rettigheter"
 
 #: forms.py:304
 msgid ""
@@ -731,7 +731,7 @@ msgstr "Søk"
 
 #: plugins/attachments/templates/wiki/plugins/attachments/index.html:120
 msgid "Restore attachments"
-msgstr "Gjenoprett vedlegg"
+msgstr "Gjenopprett vedlegg"
 
 #: plugins/attachments/templates/wiki/plugins/attachments/index.html:133
 #: templates/wiki/deleted.html:25 templates/wiki/deleted.html.py:30
@@ -1095,7 +1095,7 @@ msgstr ""
 
 #: plugins/macros/wiki_plugin.py:15
 msgid "Macros"
-msgstr "Markro"
+msgstr "Makro"
 
 #: plugins/macros/mdx/macro.py:72
 msgid "Article list"
@@ -1143,7 +1143,7 @@ msgstr "Når denne artikkelen er endret"
 
 #: plugins/notifications/forms.py:18
 msgid "Also receive emails about article edits"
-msgstr "Motta e-poster om artikkel-endringer også"
+msgstr "Motta e-post om artikkel-endring"
 
 #: plugins/notifications/forms.py:41
 msgid "Your notification settings were updated."
