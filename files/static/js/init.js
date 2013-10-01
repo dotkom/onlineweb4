@@ -57,5 +57,10 @@ $(function() {
         icon: '/static/img/map-marker.png',
         visible: true
     });
-
+    
+    // Reset center of the map on window-resize (using jquery-plugin to only fire the event when resizing is finished)
+    $(window).on("debouncedresize",function(e) {
+        console.log('fired');
+        map.panTo(new google.maps.LatLng(63.41819751959266, 10.40592152481463));
+    });
 });
