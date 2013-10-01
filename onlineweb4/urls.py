@@ -46,6 +46,9 @@ urlpatterns = patterns('',
     url(r'^#business$', TemplateView.as_view(template_name='frontpage.html#business'), name='business-link'),
     url(r'^#offline$', TemplateView.as_view(template_name='frontpage.html#offline'), name='offline-link'),
 
+    # pizzasystem
+    url(r'^pizza/',   include('pizzasystem.urls')),
+
     #Captcha url
     url(r'^captcha/', include('captcha.urls')),
 

@@ -110,6 +110,10 @@ TEMPLATE_DIRS = (
     os.path.join(PROJECT_ROOT_DIRECTORY, 'templates/')
 )
 
+# Pizzasystem settings
+PIZZA_GROUP = 'dotkom'
+PIZZA_ADMIN_GROUP = 'pizzaadmin'
+
 # Grappelli settings
 GRAPPELLI_ADMIN_TITLE = '<a href="/">Onlineweb</a>'
 
@@ -125,6 +129,7 @@ INSTALLED_APPS = (
     'django_dynamic_fixture',
     'captcha',
     'compressor',
+    'pizzasystem',
 
     # Django apps
     'django.contrib.admin',
