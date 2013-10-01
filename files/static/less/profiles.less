@@ -1,0 +1,144 @@
+@import "core.less";
+
+@image-width: 230px;
+@image-width-with-padding: 238px;
+
+.word-break {
+  word-break: normal;
+}
+
+input.hidden-input {
+  display: none;
+}
+
+#upload-button {
+  display: none;
+}
+
+.hidden-input {
+  display: none;
+}
+
+.img-polaroid {
+  border-bottom: none;
+  max-width: @image-width;
+  margin-bottom: 10px;
+  max-height: 280px;
+}
+
+#image-box {
+  max-width: @image-width-with-padding;
+  position: relative;
+}
+
+#allergies {
+  height: 50px;
+}
+
+.image-box-entity {
+  max-width: @image-width-with-padding;
+  width: @image-width-with-padding;
+  margin: 5px;
+  margin-left: 0px;
+}
+
+label.image-box-entity {
+  padding: 4px 0px 4px 0px;
+  width: @image-width-with-padding - 2;
+}
+
+#image-upload-label {
+  padding: 4px 0px, 4px, 0px;
+  width: 300px;
+}
+
+#image-resize {
+  max-height: 300px;
+
+}
+
+#upload-image-modal#modal-body {
+  text-align: center;
+}
+
+i.btn-icon {
+  .pull-left;
+  margin-top: 4px;
+}
+
+button > i.btn-icon {
+  margin-left: 10px;
+}
+
+label > i.btn-icon {
+  margin-left: 22px;
+}
+
+#remove-image-modal {
+  top: 35%;
+}
+
+.privacybox {
+
+  background-color: @baby-blue;
+  color: #fff;
+  width: 250px;
+  height: 75px;
+  line-height: 75px;
+  text-align: center;
+  margin: 0px 20px 20px 0px;
+  padding: 0px 5px 5px 0px;
+  font-size: 1.5em;
+
+  /* Make text non-selectable */
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: -moz-none;
+  -ms-user-select: none;
+  user-select: none;
+
+  span {
+    display: inline-block;
+    vertical-align: middle;
+    color: 111;
+    line-height: normal;
+  }
+
+  &.on {
+    opacity: 1.0;
+  }
+
+  &.off {
+    opacity: 0.30;
+  }
+
+  input[type="checkbox"] {
+    display: none;
+  }
+}
+
+.mark {
+  padding-top: 10px;
+}
+
+.markheader {
+  font-weight: bold;
+  font-size: 17px;
+  padding-bottom: 5px;
+}
+
+.markbody {
+  background-color: white;
+  padding-left: 10px;
+}
+
+.markbody .inline .row-fluid [class*="span"] {
+  min-height: 15px;
+}
+
+@media all and (max-width: 768px) {
+  .privacybox {
+    width: 100%;
+  }
+}
