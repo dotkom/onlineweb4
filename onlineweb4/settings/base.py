@@ -130,6 +130,7 @@ INSTALLED_APPS = (
     'django_dynamic_fixture',
     'captcha',
     'compressor',
+    'django_ldapbackend',
 
     # Django apps
     'django.contrib.admin',
