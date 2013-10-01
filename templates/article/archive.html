@@ -16,18 +16,6 @@
                     </div>
                 </div>
 
-                {% comment 'Trenger vi ingress her?' %}
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="ingress">
-                        {% filter markdown %}
-                        {% chunk "article_archive" %}
-                        {% endfilter %}
-                        </div>
-                    </div>
-                </div>
-                {% endcomment %}
-
                 <div class="row">
                     <div class="col-md-12" style="min-height: 400px;" id="article_archive_container"></div>
                 </div>
@@ -41,7 +29,7 @@
                         </div>
                         <div class="tag-cloud" id="article_archive_tagcloud">
                             {% for tag in tags %}
-                                <a href="{{ tag.get_permalink }}"><span class="tag">{{ tag }}</span></a>
+                                <a href="{{ tag.get_absolute_url }}"><span class="tag">{{ tag }}</span></a>
                             {% endfor %}
                         </div>
                     </div>
