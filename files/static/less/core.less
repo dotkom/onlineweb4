@@ -1,5 +1,4 @@
 @import "bootstrap/bootstrap.less";
-@import "bootstrap/responsive.less";
 @import "colors.less";
 @import "navbar.less";
 
@@ -8,6 +7,7 @@
 @import "articlewidget.less";
 @import "business.less";
 @import "career.less";
+@import "company.less";
 @import "feedback.less";
 @import "offline.less";
 @import "offlinewidget.less";
@@ -32,14 +32,16 @@ body {
     font-weight:400;
     margin:0;
     overflow: hidden;
-    padding:57px 0 0 0;
+    padding:87px 0 0 0;
 }
 
 @media all and (max-width: 980px) {
+    /*
     body {
         margin-top: 0px;
         padding-top: 0px;
     }
+    */
 }
 
 .axis path,
@@ -172,7 +174,8 @@ p {
     background: rgba(255, 255, 255, 0.1);
 }
 .login-box {
-    padding: 15px;
+    /*padding: 15px;*/
+    z-index: 2000;
 }
 
 .dropdown-form li > form > .login-extra > a {

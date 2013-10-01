@@ -4,34 +4,39 @@
 {% block content %}
     
 <section id="careeropportunity">
-    <div class="container-fluid">
-        <div class="row-fluid">
-            <div class="span12">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
                 <div class="page-header">
                     <h2>{{opportunity.title}}</h2>
                 </div>
             </div>
         </div>
-        <div class="row-fluid">
-            <div class="span7">
+        <div class="row">
+            <div class="col-md-8 col-sm-7 careerdescription">
                 {{ opportunity.description|striptags|markdown }}
             </div>
-            <div class="span5 company">
-            <a href="{% url 'company_details' opportunity.company.id %}">
-
-                <div class="row-fluid row-space">
-                    <div class="span6">
-                        <h3>{{ opportunity.company.name }}</h3>
+            <div class="col-md-4 col-sm-5">
+                <div class="company"><!-- Start company style wrapper -->
+                <a href="{% url 'company_details' opportunity.company.id %}">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <img width="100%" src="{% version opportunity.company.image 'companies_medium' %}" alt="" />
+                        </div>
                     </div>
-                    <div class="span6">
-                        <img src="{% version opportunity.company.image 'companies_medium' %}" alt="" />
+                    <div class="row">
+                        <div class="col-md-12">
+                            <h3>{{ opportunity.company.name }}</h3>
+                        </div>
                     </div>
-                </div>
-                <div class="row-fluid">
-                    <div class="company-ingress">{{ opportunity.company.short_description|striptags|markdown }}</div>
-                    <p class="pull-right company-image-caption">Trykk for mer info</p>
-                </div>
-                </a>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="company-ingress">{{ opportunity.company.short_description|striptags|markdown }}</div>
+                            <p class="pull-right company-image-caption">Trykk for mer info</p>
+                        <div/>
+                    </div>
+                    </a>
+                </div><!-- End company style wrapper -->
             </div>
         </div>
     </div>

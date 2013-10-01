@@ -37,11 +37,46 @@
     <link href="{{ STATIC_URL }}mimg/splash-2048x1496.png" sizes="2048x1496" media="(device-width: 1536px) and (orientation: landscape) and (-webkit-device-pixel-ratio: 2)" rel="apple-touch-startup-image" />
 {% endblock %}
 
+{% block submenu %}
+    <nav class="subnavbar navbar-default navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                  <span class="sr-only">Toggle navigation</span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                </button>
+            </div>
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse navbar-ex1-collapse">
+                <ul class="nav navbar-nav">
+                    <li class="top-menu-link">
+                        <a data-section="events" class="active" href="{% url 'events-link' %}">Arrangementer</a>
+                    </li>
+                    <li class="top-menu-link">
+                        <a data-section="articles" href="{% url 'articles-link' %}">Artikler</a>
+                    </li>
+                    <li class="top-menu-link">
+                        <a data-section="offline" href="{% url 'offline-link' %}">Offline</a>
+                    </li>
+                    <li class="top-menu-link">
+                        <a data-section="business" href="{% url 'business-link' %}">For bedrifter</a>
+                    </li>
+                    <li class="top-menu-link">
+                        <a data-section="about" href="{% url 'about-link' %}">Om Online</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+{% endblock %}
+
 {% block content %}
     <section id="events">
-        <div class="container-fluid">
-            <div class="row-fluid">
-                <div class="span12">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
                     <div class="page-header">
                         <h2 id="events-heading">ARRANGEMENTER</h2>
                     </div>
@@ -52,17 +87,17 @@
         </div>
     </section>
     <section id="articles">
-        <div class="container-fluid">
-            <div class="row-fluid" >
-                <div class="span12">
+        <div class="container">
+            <div class="row" >
+                <div class="col-md-12">
                     <div class="page-header">
                         <h2 id="articles-heading">ARTIKLER</h2>
                     </div>
                 </div>
             </div>
-            <div class="row-fluid row-space" id="article-frontpage-featured">
+            <div class="row row-space" id="article-frontpage-featured">
             </div>
-            <div class="row-fluid" id="article-frontpage-normal">
+            <div class="row" id="article-frontpage-normal">
             </div>
         </div>
     </section>
@@ -72,77 +107,67 @@
 
 
     <section id="business">
-        <div class="container-fluid">
-            <div class="row-fluid">
-                <div class="span12">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
                     <div class="page-header">
                         <h2 id="business-heading">BEDRIFTER</h2>
                     </div>
                 </div>
             </div>
-            <div class="row-fluid">
-                <div class="span6">
-                    <div class="row-fluid">
-                        <div class="ingress">
-                            <p>Er du en bedrift som er på jakt etter skarpe IT-studenter?<br /> Da vil vi gjerne høre fra deg! Les videre for å finne ut hva vi kan tilby.</p>
-                        </div>
-                        <div class="business-text">
-                            <p>Online er linjeforeningen for informatikkstudentene ved NTNU. Våre studenter går Bachelor- eller Mastergradstudium i informatikk. Dette innebærer blant annet læren utvikling, forbedring, evaluering og bruk av datasystemer.
-                            For mer informasjon om studiet, se NTNU sine <a href="http://www.ntnu.no/studier/informasjonsteknologi-informatikk" target="_blank">offisielle nettsider.</a></p>
-                            <p>
-                            Linjeforeningen har gjennom flere år opparbeidet seg et repertoar av tjenester som vi tilbyr våre studenter. I samarbeid med næringslivet tilbyr vi kurs og bedriftspresentasjoner for å gi studentene våre en bredere og dypere fagkunnskap samt et innblikk i hverdagen i aktuelle på arbeidsplasser.
-                            </p>
-                            <p>Send oss en forespørsel for å komme i kontakt. Vi gleder oss til å samarbeide med dere!</p>
-                            <a style="font-size:16px;" href="mailto:bedriftskontakt@online.ntnu.no">
-                                    <span class="glyphicon glyphicon-envelope">  Send epost til bedriftskontakt</span>
-                            </a>
-                        </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="ingress">
+                        <p>Er du en bedrift som er på jakt etter skarpe IT-studenter?<br /> Da vil vi gjerne høre fra deg! Les videre for å finne ut hva vi kan tilby.</p>
                     </div>
-                    
+                    <div class="business-text">
+                        <p>Online er linjeforeningen for informatikkstudentene ved NTNU. Våre studenter går Bachelor- eller Mastergradstudium i informatikk. Dette innebærer blant annet læren utvikling, forbedring, evaluering og bruk av datasystemer.
+                        For mer informasjon om studiet, se NTNU sine <a href="http://www.ntnu.no/studier/informasjonsteknologi-informatikk" target="_blank">offisielle nettsider.</a></p>
+                        <p>
+                        Linjeforeningen har gjennom flere år opparbeidet seg et repertoar av tjenester som vi tilbyr våre studenter. I samarbeid med næringslivet tilbyr vi kurs og bedriftspresentasjoner for å gi studentene våre en bredere og dypere fagkunnskap samt et innblikk i hverdagen i aktuelle på arbeidsplasser.
+                        </p>
+                        <p>Send oss en forespørsel for å komme i kontakt. Vi gleder oss til å samarbeide med dere!</p>
+                        <a style="font-size:16px;" href="mailto:bedriftskontakt@online.ntnu.no">
+                                <span class="glyphicon glyphicon-envelope">  Send epost til bedriftskontakt</span>
+                        </a>
+                    </div>
+                
                 </div>
-                <div class="span6">
-                    <div class="row-fluid">
-                        <div class="span6">
-                            <div class="row-fluid">
-                                <div class="span12 sale-box">
-                                    <div class="sale-heading">Profilering</div>
-                                    <div class="sale-chevron">
-                                        <span class="glyphicon glyphicon-chevron-down"></span>
-                                    </div>
+                <div class="col-md-6">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="col-md-12 sale-box">
+                                <div class="sale-heading">Profilering</div>
+                                <div class="sale-chevron">
+                                    <span class="glyphicon glyphicon-chevron-down"></span>
                                 </div>
                             </div>
-                            <div class="row-fluid">
-                                <div class="span12 sale-content">
-                                    <ul class="unstyled sale-points">
-                                        <li><span class="glyphicon glyphicon-ok"></span>  Bedriftspresentasjon</li>
-                                        <li><span class="glyphicon glyphicon-ok"></span>  Annonse i Offline</li>
-                                        <li><span class="glyphicon glyphicon-ok"></span>  Stillingsutlysning</li>
-                                    </ul>
-                                    <div class="link" style="text-align:center">
-                                        <a href="#business-profiling" data-toggle="modal">Les mer</a>
-                                    </div>
+                            <div class="col-md-12 sale-content">
+                                <ul class="list-unstyled sale-points">
+                                    <li><span class="glyphicon glyphicon-ok"></span>  Bedriftspresentasjon</li>
+                                    <li><span class="glyphicon glyphicon-ok"></span>  Annonse i Offline</li>
+                                    <li><span class="glyphicon glyphicon-ok"></span>  Stillingsutlysning</li>
+                                </ul>
+                                <div class="link" style="text-align:center">
+                                    <a href="#business-profiling" data-toggle="modal">Les mer</a>
                                 </div>
                             </div>
                         </div>
-                        <div class="span6">
-                            <div class="row-fluid">
-                                <div class="span12 sale-box">
-                                    <div class="sale-heading">Faglig</div>
-                                    <div class="sale-chevron">
-                                        <span class="glyphicon glyphicon-chevron-down"></span>
-                                    </div>
+                        <div class="col-md-6">
+                            <div class="col-md-12 sale-box">
+                                <div class="sale-heading">Faglig</div>
+                                <div class="sale-chevron">
+                                    <span class="glyphicon glyphicon-chevron-down"></span>
                                 </div>
                             </div>
-                            <div class="row-fluid">
-                                <div class="span12 sale-content">
-                                    <ul class="unstyled sale-points">
-                                        <li><span class="glyphicon glyphicon-ok"></span>  Kurs/kursserie</li>
-                                        <li><span class="glyphicon glyphicon-ok"></span>  Workshop</li>
-                                        <li><span class="glyphicon glyphicon-ok"></span>  Hackathon</li>
-                                    </ul>
-                                    <div class="link" style="text-align:center">
-                                        <a href="#business-academic" data-toggle="modal">Les mer</a>
-                                    </div>
+                            <div class="col-md-12 sale-content">
+                                <ul class="list-unstyled sale-points">
+                                    <li><span class="glyphicon glyphicon-ok"></span>  Kurs/kursserie</li>
+                                    <li><span class="glyphicon glyphicon-ok"></span>  Workshop</li>
+                                    <li><span class="glyphicon glyphicon-ok"></span>  Hackathon</li>
+                                </ul>
+                                <div class="link" style="text-align:center">
+                                    <a href="#business-academic" data-toggle="modal">Les mer</a>
                                 </div>
                             </div>
                         </div>
@@ -153,20 +178,20 @@
     </section>
 
     <section id="about">
-        <div class="container-fluid">
-            <div class="row-fluid">
-                <div class="span12">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
                     <div class="page-header">
                         <h2 id="about-heading">OM ONLINE</h2>
                     </div>
                 </div>
             </div>
-            <div class="row-fluid">
-                <div class="span9">
+            <div class="row">
+                <div class="col-md-9">
                     <div class="tab-content">
                         <div class="tab-pane active" id="online">
-                            <div class="row-fluid">
-                                <div class="span12">
+                            <div class="row">
+                                <div class="col-md-12">
                                     <p class="ingress">
                                         Online er linjeforeningen for informatikkstudenter ved NTNU i Trondheim.
                                         Linjeforeningens oppgave er å forbedre studiemiljøet ved å fremme sosialt samvær, 
@@ -253,8 +278,8 @@
                         </div>
                     </div>
                 </div>
-                <div class="span3">
-                    <ul class="nav nav-list" id="about-tabs">
+                <div class="col-md-3">
+                    <ul class="nav nav-pills nav-stacked" id="about-tabs">
                         <li class="active"><a href="#online">Om Online</a></li>
                         <li><a href="#hovedstyret">Hovedstyret</a></li>
                         <li class="nav-header">Komiteer</li>
@@ -281,42 +306,50 @@
     </section>    
 
     <!-- <div class="dark-grayed">
-        <div class="container-fluid footer">
+        <div class="container footer">
             <p>Footer</p>
         </div>
     </div> -->
 
     <!-- MODALS -->
 
-    <div id="business-profiling" class="modal hide fade">
-        <div class="modal-body">
-            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-            <h3>Bedriftspresentasjon</h3>
-                <p>Vi får ganske regelmessig besøk fra både små og store IT-bedrifter som har behov for dyktige utviklere, konsulenter og systemarkitekter o.l. En bedriftspresentasjon gir hovedsaklig en mulighet for å opprette kontakt mellom bedrift og aktuelle studenter. Rekruttering gjennom denne kanalen er veldig aktuell og de aller fleste studentene bruker dette som et springbrett for sin karriere. </p>
-                <p>Dette er et eksempel på hvordan mange bedrifter velger å gjøre det, men er på ingen måte en fasit. Noen bedrifter har valgt å gå utenfor denne «malen» med suksess, så det er alltid rom for nye ideer. Bedriftspresentasjonene blir vanligvis gjennomført på Gløshaugen, med påfølgende servering i en uformell setting, hvor det kan stilles spørsmål og der studentene kan bli kjent med dere og omvendt. Vi stiller med lokaler, markedsføring, påmelding og deltagere. I tillegg tilrettelegger vi servering og eventuell transport etter ønske og behov. Fra deres side håper vi at dere stiller med motiverte ansatte som leverer en informativ og hyggelig presentasjon, og som kan svare på de spørsmål studentene måtte ha.</p>
-                <p>Som nevnt består informatikk av både års-, bachelor og masterstudie. De fleste bedrifter henvender seg til masterstudentene våre, men det skal nevnes at bachelorstudentene også har et fullverdig studium.</p>
-            <h3>Annonsering i Offline</h3>
-                <p>Ta kontakt for mer informasjon.</p>
-            <h3>Stillingsutlysning på web</h3>
-                <p>Ta kontakt for mer informasjon.</p>
-        </div>
-        <div class="modal-footer">
-            <button class="btn" data-dismiss="modal" aria-hidden="true">Lukk</button>
+    <div id="business-profiling" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="businessProfiling" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h3>Bedriftspresentasjon</h3>
+                        <p>Vi får ganske regelmessig besøk fra både små og store IT-bedrifter som har behov for dyktige utviklere, konsulenter og systemarkitekter o.l. En bedriftspresentasjon gir hovedsaklig en mulighet for å opprette kontakt mellom bedrift og aktuelle studenter. Rekruttering gjennom denne kanalen er veldig aktuell og de aller fleste studentene bruker dette som et springbrett for sin karriere. </p>
+                        <p>Dette er et eksempel på hvordan mange bedrifter velger å gjøre det, men er på ingen måte en fasit. Noen bedrifter har valgt å gå utenfor denne «malen» med suksess, så det er alltid rom for nye ideer. Bedriftspresentasjonene blir vanligvis gjennomført på Gløshaugen, med påfølgende servering i en uformell setting, hvor det kan stilles spørsmål og der studentene kan bli kjent med dere og omvendt. Vi stiller med lokaler, markedsføring, påmelding og deltagere. I tillegg tilrettelegger vi servering og eventuell transport etter ønske og behov. Fra deres side håper vi at dere stiller med motiverte ansatte som leverer en informativ og hyggelig presentasjon, og som kan svare på de spørsmål studentene måtte ha.</p>
+                        <p>Som nevnt består informatikk av både års-, bachelor og masterstudie. De fleste bedrifter henvender seg til masterstudentene våre, men det skal nevnes at bachelorstudentene også har et fullverdig studium.</p>
+                    <h3>Annonsering i Offline</h3>
+                        <p>Ta kontakt for mer informasjon.</p>
+                    <h3>Stillingsutlysning på web</h3>
+                        <p>Ta kontakt for mer informasjon.</p>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn" data-dismiss="modal" aria-hidden="true">Lukk</button>
+                </div>
+            </div>
         </div>
     </div>
 
-    <div id="business-academic" class="modal hide fade">
-        <div class="modal-body">
-            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-            <h3>Kurs/Workshop/Foredrag</h3>
-                <p>Studentene ved informatikk har mange ulike interesser og det er alltid gøy å se hva bedrifter holder på med. Det har blitt gjennomført kurs i for eksempel Ruby on Rails, Test Driven Development, Scrum og mye mer.</p>
-                <p>I motsetning til bedriftspresentasjoner er det begrensinger på hvor lenge bedriften kan fortelle om seg selv. Det er ment som et faglig tilskudd til studiet og innholdet må gjenspeile dette. Selve kursgjennomføringen er ofte litt mer uformell enn ved en bedriftspresentasjon. Det å få studentene til å vere med er viktig. Som ved en bedriftspresentasjon vil vi ordne det meste, ved spesialbehov gjør vi vårt beste for å ordne dette også.</p>
-                <p>Da kurs gjerne ikke er direkte rettet for rekruttering er det mye vanligere å åpne for alle årstrinn slik at folk med alle mulige interesser kan delta. Det er selvsagt en del kurs som krever forkunnskaper, men det er bare å spesifisere i eventen.</p>
-            <h3>Hackathon</h3>
-                <p>Ta kontakt for mer informasjon.</p>
-        </div>
-        <div class="modal-footer">
-            <button class="btn" data-dismiss="modal" aria-hidden="true">Lukk</button>
+    <div id="business-academic"  class="modal fade" tabindex="-1" role="dialog" aria-labelledby="businessAcademic" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h3>Kurs/Workshop/Foredrag</h3>
+                        <p>Studentene ved informatikk har mange ulike interesser og det er alltid gøy å se hva bedrifter holder på med. Det har blitt gjennomført kurs i for eksempel Ruby on Rails, Test Driven Development, Scrum og mye mer.</p>
+                        <p>I motsetning til bedriftspresentasjoner er det begrensinger på hvor lenge bedriften kan fortelle om seg selv. Det er ment som et faglig tilskudd til studiet og innholdet må gjenspeile dette. Selve kursgjennomføringen er ofte litt mer uformell enn ved en bedriftspresentasjon. Det å få studentene til å vere med er viktig. Som ved en bedriftspresentasjon vil vi ordne det meste, ved spesialbehov gjør vi vårt beste for å ordne dette også.</p>
+                        <p>Da kurs gjerne ikke er direkte rettet for rekruttering er det mye vanligere å åpne for alle årstrinn slik at folk med alle mulige interesser kan delta. Det er selvsagt en del kurs som krever forkunnskaper, men det er bare å spesifisere i eventen.</p>
+                    <h3>Hackathon</h3>
+                        <p>Ta kontakt for mer informasjon.</p>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn" data-dismiss="modal" aria-hidden="true">Lukk</button>
+                </div>
+            </div>
         </div>
     </div>
 
