@@ -394,7 +394,7 @@ class AttendanceEvent(models.Model):
         Checks a user against rules applied to an attendance event
         """
         # If there are no rule_bundles on this object, all members of Online are allowed.
-        if not self.rule_bundles.exists(): #and user.is_online:
+        if not self.rule_bundles.exists() and user.is_member:
             return {'status': True}
 
         status_object = {}
