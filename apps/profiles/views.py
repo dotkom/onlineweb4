@@ -135,6 +135,9 @@ def handleImageUpload(request, image):
             messages.error(request, _(u"Filnavnet inneholder ikke filtypen"))
             return redirect("profiles")
 
+        #remove already existing profile image, in case new extension is different from already existing
+        remove_file(request)
+
         #Prepare filename and open-create a new file if it does not exist
         extension = image.name[extension_index:]
         filename = os.path.join(settings.MEDIA_ROOT, "images", "profiles", request.user.username + extension)
@@ -180,18 +183,20 @@ def confirmDeleteImage(request):
     if request.is_ajax():
         if request.method == 'DELETE':
             if request.user.image.url != settings.DEFAULT_PROFILE_PICTURE_URL:
-                extension_index = request.user.image.name.rfind('.')
-                extension = request.user.image.name[extension_index:]
-                filename = os.path.join(settings.MEDIA_ROOT, "images", "profiles", request.user.username + extension)
-                os.remove(filename)
-
-                request.user.image = settings.DEFAULT_PROFILE_PICTURE_URL
-                request.user.save()
-                lol = json.dumps({'url' : settings.DEFAULT_PROFILE_PICTURE_URL})
+                remove_file(request)
                 return HttpResponse(status=200, content=json.dumps({'url' : settings.DEFAULT_PROFILE_PICTURE_URL }))
 
     return HttpResponse(status=200, content=json.dumps({'url' : request.user.image.url }))
 
+
+def remove_file(request):
+    if request.user.image.url != settings.DEFAULT_PROFILE_PICTURE_URL:
+        extension_index = request.user.image.name.rfind('.')
+        extension = request.user.image.name[extension_index:]
+        filename = os.path.join(settings.MEDIA_ROOT, "images", "profiles", request.user.username + extension)
+        os.remove(filename)
+        request.user.image = settings.DEFAULT_PROFILE_PICTURE_URL
+        request.user.save()
 
 def savePrivacy(request):
 
