@@ -34,12 +34,16 @@ EMAIL_TRIKOM = 'trikom@online.ntnu.no'
 SERVER_EMAIL = 'onlineweb4-error@online.ntnu.no'
 
 TIME_ZONE = 'Europe/Oslo'
+
 # http://www.i18nguy.com/unicode/language-identifiers.html
 LANGUAGE_CODE = 'nb'
 LANGUAGES = (
                 ('nb', 'Norwegian'),
                 ('en_US', 'English'),
             )
+LOCALE_PATHS = [
+    os.path.join(PROJECT_ROOT_DIRECTORY, '/locale'),
+]
 
 SITE_ID = 1
 USE_I18N = True
