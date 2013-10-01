@@ -27,6 +27,7 @@ $(function() {
     $('#about-tabs a').click(function (e) {
         e.preventDefault();
         $(this).tab('show',update_pos);
+        $('html, body').animate({scrollTop: $('#about').offset().top - 75}, 250);
     });
        
     // On scroll, loop the navs and swap active (if it needs to)
