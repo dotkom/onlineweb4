@@ -1,20 +1,17 @@
 import logging
-from datetime import datetime, timedelta
 
 from django_dynamic_fixture import G
 from django.test import TestCase
 
 from apps.authentication.models import OnlineUser as User
 from apps.marks.models import Mark, UserEntry
-from apps.marks.models import get_threshold as duration
 
 class MarksTest(TestCase):
 
     def setUp(self):
         self.user=G(User)
         #Mark added 59 (working) days ago.
-        markdate = duration()-timedelta(days=1)
-        self.mark = G(Mark, title="1",  mark_added_date=markdate)
+        self.mark = G(Mark, title="1")
         self.userentry = G(UserEntry, user=self.user)
         self.logger = logging.getLogger(__name__)
 
