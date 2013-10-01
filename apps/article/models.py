@@ -50,6 +50,10 @@ class Article(models.Model):
             tag_names.append(tag.name)
         return u', '.join(tag_names)
 
+    @permalink
+    def get_absolute_url(self):
+        return ('article_details', None, {'article_id': self.id, 'article_slug': self.slug})
+
     class Meta:
         verbose_name = _(u"artikkel")
         verbose_name_plural = _(u"artikler")
@@ -69,7 +73,7 @@ class Tag(models.Model):
         return count
 
     @permalink
-    def get_permalink(self):
+    def get_absolute_url(self):
         return ('view_article_tag', None, {'name': self.name, 'slug': self.slug})
 
     def __unicode__(self):
