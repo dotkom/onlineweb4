@@ -55,8 +55,8 @@ function EventWidget (Utils){
     function createEventItem(item) {
         
         html = '<div class="col-md-6">';
-        html +=     '<div class="col-md-1 event-type-' + item.event_type + '">';
-        html +=         '<div class="row"><span class="event-calendar-date">' + moment(item.event_start).format('DD') + '</span></div>';
+        html +=     '<div class="pull-left event-type-' + item.event_type + '">';
+        html +=         '<span class="event-calendar-date">' + moment(item.event_start).format('DD') + '</span>';
         html +=         '<div class="row"><span class="event-calendar-month">' + moment(item.event_start).format('MMM') + '</span></div>';
         html +=     '</div>';
         html +=     '<div class="col-md-3">';
