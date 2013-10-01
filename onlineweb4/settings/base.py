@@ -136,6 +136,7 @@ INSTALLED_APPS = (
     'captcha',
     'compressor',
     'watson',
+    'django_ldapbackend',
 
     # Django apps
     'django.contrib.admin',
