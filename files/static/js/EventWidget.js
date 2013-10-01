@@ -22,7 +22,7 @@ function EventWidget (Utils){
                         // If the index is even, create a row and append item. Else just append item to row.
                         // (This is to distribute items left and right)
                         if(index % 2 == 0) {
-                            htmlRow = '<div class="row-fluid event-row"></div>';
+                            htmlRow = '<div class="row event-row"></div>';
                             rowNode = fragment.appendChild($(htmlRow)[0]);
 
                             htmlItem = createEventItem(this);
@@ -54,12 +54,12 @@ function EventWidget (Utils){
      */
     function createEventItem(item) {
         
-        html = '<div class="span6">';
-        html +=     '<div class="span1 event-type-' + item.event_type + '">';
-        html +=         '<div class="row-fluid"><span class="event-calendar-date">' + moment(item.event_start).format('DD') + '</span></div>';
-        html +=         '<div class="row-fluid"><span class="event-calendar-month">' + moment(item.event_start).format('MMM') + '</span></div>';
+        html = '<div class="col-md-6">';
+        html +=     '<div class="col-md-1 event-type-' + item.event_type + '">';
+        html +=         '<div class="row"><span class="event-calendar-date">' + moment(item.event_start).format('DD') + '</span></div>';
+        html +=         '<div class="row"><span class="event-calendar-month">' + moment(item.event_start).format('MMM') + '</span></div>';
         html +=     '</div>';
-        html +=     '<div class="span3">';
+        html +=     '<div class="col-md-3">';
         html +=         '<div id="event-carousel" class="carousel slide">';
         html +=             '<div class="carousel-inner">';
         html +=                 '<div class="item active">';
@@ -72,7 +72,7 @@ function EventWidget (Utils){
         html +=             '</div>';
         html +=         '</div>';
         html +=     '</div>';
-        html +=     '<div class="span8">';
+        html +=     '<div class="col-md-8">';
         html +=         '<a href="events/' + item.id + '/' + item.slug + '">';
         html +=             '<div class="event-title">' + item.title + '</div>';
         html +=         '</a>'

@@ -210,18 +210,18 @@ function ArticleArchive (Utils) {
                 success: function(data) {
                     // Variables
                     var num = 1;
-                    var output = '<div class="row-fluid"><div class="span12'+((page == 1 && !overwrite)?'':' hide')+'">'; // If we are not on the first page (and not using the filters), make the elements hidden to fade them in later
+                    var output = '<div class="row"><div class="col-md-12'+((page == 1 && !overwrite)?'':' hide')+'">'; // If we are not on the first page (and not using the filters), make the elements hidden to fade them in later
                     
                     // The loop
                     for (var i = 0; i < data.articles.length; i++) {
                         // The markup
-                        output += '<div class="span4 article">';
+                        output += '<div class="col-md-4 article">';
                         output += '    <a href="'+data.articles[i].id+'/'+data.articles[i].slug+'"><h3>'+data.articles[i].heading+'</h3></a>';
                         output += '    <a href="/article/'+data.articles[i].id+'/'+data.articles[i].slug+'">';
-                        output += '        <img src="'+data.articles[i].image_article_front_small+'" style="width: 248px; height: 100px;" alt="'+data.articles[i].heading+'" />';
+                        output += '        <img src="'+data.articles[i].image_article_front_small+'" width="100%" alt="'+data.articles[i].heading+'" />';
                         output += '    </a>';
-                        output += '    <div class="row-fluid">';
-                        output += '        <div class="span12 article-detail-meta">';
+                        output += '    <div class="row">';
+                        output += '        <div class="col-md-12 article-detail-meta">';
                         output += '            <span class="meta-caption">Publisert</span> <span>'+moment(data.articles[i].published_date).format('D. MMMM YYYY')+'</span>';
                         output += '        </div>';
                         output += '    </div>';
@@ -230,7 +230,7 @@ function ArticleArchive (Utils) {
                         
                         // Every third element in a chunk
                         if (num % 3 == 0)
-                            output += '</div></div><div class="row-fluid"><div class="span12">';
+                            output += '</div></div><div class="row"><div class="col-md-12">';
                     
                         // Increasing num!    
                         num++;

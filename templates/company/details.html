@@ -4,16 +4,16 @@
 {% block content %}
 
 <section id="company">
-	<div class="container-fluid">
-		<div class="row-fluid">
-			<div class="span12">
+	<div class="container">
+		<div class="row">
+			<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
 				<div class="page-header">
 					<h2>{{ company.name }}</h2>
 				</div>
 			</div>
 		</div>
-		<div class="row-fluid">
-			<div class="span7">
+		<div class="row">
+			<div class="col-lg-7 col-md-7 col-sm-6 col-xs-12">
 				<div class="ingress">
 					{{ company.short_description|striptags|markdown }}
 				</div>
@@ -21,8 +21,26 @@
 					{{ company.long_description|striptags|markdown }}
 				</div>
 			</div>
-			<div class="span5">
-				<img src="{% version company.image 'companies_main' %}" alt="" />
+			<div class="col-lg-5 col-md-5 col-sm-6 col-xs-12">
+				<img src="{% version company.image 'companies_main' %}" width="100%" alt="" />
+                {% if company.site or company.email_address or company.phone_number %}
+                <div class="contactinfo">
+                    {% if company.site %}
+                    <p><i class="glyphicon glyphicon-globe"></i> 
+                    <a href="{{ company.site }}" title="{{ company.name }}">{{ company.site }}</a></p>
+                    {% endif %}
+                    {% if company.email_address %}
+                    <p><i class="glyphicon glyphicon-envelope"></i>
+                    <a href="mailto:{{ company.email_address }}" title="{{ company.name }}">
+                    {{ company.email_address }}
+                    </a></p>
+                    {% endif %}
+                    {% if company.phone_number %}
+                    <p><i class="glyphicon glyphicon-phone-alt"></i> {{ company.phone_number }}</li>
+                    {% endif %}
+                </div>
+                {% endif %}
+
 			</div>
 		</div>
 	</div>
