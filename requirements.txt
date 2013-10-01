@@ -8,6 +8,8 @@ python-memcached==1.45			# Memcache. Used by Mailinglists to fetch from Sympa.
 wsgiref==0.1.2
 Markdown==2.3.1                 # textarea text formatting
 psycopg2
+python-ldap
+django-ldapbackend
 
 # third party deps
 django-filebrowser==3.5.2       # File uploading
@@ -32,9 +34,14 @@ nose-cov==1.5
 sure==1.0.6
 unittest2==0.5.1
 
-
 # non-pip
 # imagemagick                   # From package repository. Tested with version == 8:6.7.7.10.
-# python-ldap					# From package repository. 
 # libjpeg-dev					# From package repository. 
-# libpq-dev						# From package repository. 
+# libpq-dev						# From package repository.
+# libldap2-dev
+# libsasl2-dev
+# libssl-dev
+
+# Wiki-related
+wiki
+git+git://github.com/benjaoming/django-wiki.git

@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% load sekizai_tags i18n wiki_tags compress %}
+{% load url from future %}
+
+<link href="{{ STATIC_URL }}wiki/bootstrap/css/wiki-bootstrap.min.css" rel="stylesheet">
+<link href="{{ STATIC_URL }}wiki/bootstrap/css/wiki-bootstrap-responsive.min.css" rel="stylesheet">
+
+{% block content %}
+    <section id="wiki">
+        <div class="container-fluid">
+            {% block wiki_body %}
+            
+                <div class="row-fluid">
+                    <div class="span12">
+                        <div class="page-header">
+                            {% block wiki_breadcrumbs %}{% endblock %}
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row-fluid">
+                    <div class="span12">
+                        {% block wiki_contents %}{% endblock %}
+                    </div>
+                </div>
+        
+            {% endblock %}
+        </div>
+    </section>
+{% endblock content %}
+
+{% block js %}
+    {{ block.super }}
+    <script src="{{ STATIC_URL }}wiki/js/core.js"></script>
+{% endblock %}
+
+
