@@ -2,6 +2,8 @@
 
 from django.db import models
 from django.db.models import permalink
+from django.template.defaultfilters import slugify
+from django.template.defaultfilters import slugify
 from django.utils.translation import ugettext as _
 
 from apps.authentication.models import OnlineUser as User
@@ -34,6 +36,10 @@ class Article(models.Model):
     
     def get_matchname(self):
         return re.findall(r"[0-9]+", self.video.lower())
+
+    @property
+    def slug(self):
+        return slugify(self.heading) 
 
     @property
     def tags(self):
