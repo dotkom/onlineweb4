@@ -34,10 +34,10 @@
             <!-- Collect the nav links, forms, and other content for toggling -->
             <div class="collapse navbar-collapse navbar-ex1-collapse">
                 <ul class="nav navbar-nav">
-                  <li class="active"><a href="#">Forside</a></li>
-                  <li><a href="#">Karrieremuligheter</a></li>
-                  <li><a href="#">Arkiv</a></li>
-                  <li><a href="#">Wiki</a></li>
+                  <li><a href="{% url 'home' %}">Forside</a></li>
+                  <li><a href="{% url 'careeropportunity_index' %}">Karrieremuligheter</a></li>
+                  <li><a href="{% url 'article_archive' %}">Arkiv</a></li>
+                  <li><a href="http://wiki.online.ntnu.no/">Wiki</a></li>
                 </ul>
 
                 <ul class="nav navbar-nav navbar-right">
@@ -89,44 +89,8 @@
 
     </nav>
 
-    <nav class="subnavbar navbar-default navbar-fixed-top">
-        <div class="container">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
-                  <span class="sr-only">Toggle navigation</span>
-                  <span class="icon-bar"></span>
-                  <span class="icon-bar"></span>
-                  <span class="icon-bar"></span>
-                </button>
-            </div>
-            <!-- Collect the nav links, forms, and other content for toggling -->
-            <div class="collapse navbar-collapse navbar-ex1-collapse">
-                <ul class="nav navbar-nav">
-                    <li class="top-menu-link">
-                        <a data-section="events" class="active" href="{% url 'events-link' %}">Arrangementer</a>
-                    </li>
-                    <li class="top-menu-link">
-                        <a data-section="articles" href="{% url 'articles-link' %}">Artikler</a>
-                    </li>
-                    <li class="top-menu-link">
-                        <a data-section="offline" href="{% url 'offline-link' %}">Offline</a>
-                    </li>
-                    <li class="top-menu-link">
-                        <a data-section="business" href="{% url 'business-link' %}">For bedrifter</a>
-                    </li>
-                    <li class="top-menu-link">
-                        <a data-section="about" href="{% url 'about-link' %}">Om Online</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-
-
-
-
-
-
-    </nav>
+    {% block submenu %}
+    {% endblock %}
 
     <!--<div id="topmenu" class="navbar navbar-fixed-top">
         <div class="navbar-inner">
