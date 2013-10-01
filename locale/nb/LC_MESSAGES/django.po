@@ -602,7 +602,7 @@ msgstr "Apagar!"
 
 #: plugins/attachments/templates/wiki/plugins/attachments/delete.html:37
 msgid "Remove"
-msgstr "Remover"
+msgstr "Fjern"
 
 #: plugins/attachments/templates/wiki/plugins/attachments/delete.html:39
 msgid ""
@@ -612,152 +612,152 @@ msgid ""
 "    "
 msgstr ""
 "\n"
-"    Você pode remover a referência a um arquivo, mas ele manterá suas referências "
-"em outros artigos.\n"
+"    Du kan fjerne referansen til en fil, men den vil beholde sin refereanse "
+"i andre artikler.\n"
 "    "
 
 
 #: plugins/attachments/templates/wiki/plugins/attachments/delete.html:52
 msgid "Remove reference"
-msgstr "Remover referência"
+msgstr "Fjern referanse"
 
 #: plugins/attachments/templates/wiki/plugins/attachments/history.html:5
 #: plugins/attachments/templates/wiki/plugins/attachments/history.html:9
 msgid "History of"
-msgstr "Histórico de"
+msgstr "Historie av"
 
 #: plugins/attachments/templates/wiki/plugins/attachments/history.html:12
 #: plugins/attachments/templates/wiki/plugins/attachments/search.html:24
 msgid "Date"
-msgstr "Data"
+msgstr "Dato"
 
 #: plugins/attachments/templates/wiki/plugins/attachments/history.html:13
 msgid "User"
-msgstr "Usuário"
+msgstr "Bruker"
 
 #: plugins/attachments/templates/wiki/plugins/attachments/history.html:15
 #: plugins/attachments/templates/wiki/plugins/attachments/search.html:22
 msgid "File"
-msgstr "Arquivo"
+msgstr "Fil"
 
 #: plugins/attachments/templates/wiki/plugins/attachments/history.html:16
 #: plugins/attachments/templates/wiki/plugins/attachments/index.html:30
 #: plugins/attachments/templates/wiki/plugins/attachments/search.html:26
 #: plugins/images/templates/wiki/plugins/images/index.html:22
 msgid "Size"
-msgstr "Tamanho"
+msgstr "Størrelse"
 
 #: plugins/attachments/templates/wiki/plugins/attachments/history.html:17
 #: plugins/attachments/templates/wiki/plugins/attachments/search.html:27
 msgid "Action"
-msgstr "Ação"
+msgstr "Handling"
 
 #: plugins/attachments/templates/wiki/plugins/attachments/history.html:28
 #: plugins/attachments/templates/wiki/plugins/attachments/search.html:33
 msgid "<em>No description</em>"
-msgstr "<em>Sem descrição</em>"
+msgstr "<em>Ingen beskrivelse</em>"
 
 #: plugins/attachments/templates/wiki/plugins/attachments/history.html:36
 #: plugins/attachments/templates/wiki/plugins/attachments/search.html:51
 msgid "Download"
-msgstr "Baixar"
+msgstr "Last ned"
 
 #: plugins/attachments/templates/wiki/plugins/attachments/history.html:41
 msgid "Use this!"
-msgstr "Use esse!"
+msgstr "Bruk denne!"
 
 #: plugins/attachments/templates/wiki/plugins/attachments/index.html:10
 msgid ""
 "The following files are available for this article. Copy the markdown tag to "
 "directly refer to a file from the article text."
 msgstr ""
-"Os seguintes arquivos estão disponíveis para esse artigo. Copie o código markdown "
-"para referenciá-lo diretamente no texto do seu artigo."
+"De følgende filene er tilgjengelige for denne artikkelen. Kopier markdown tag for å "
+"referere direkte til en fil fra artikkel-teksten."
 
 #: plugins/attachments/templates/wiki/plugins/attachments/index.html:28
 #: plugins/images/templates/wiki/plugins/images/index.html:20
 msgid "Markdown tag"
-msgstr "Código Markdown"
+msgstr "Markdown tag"
 
 #: plugins/attachments/templates/wiki/plugins/attachments/index.html:29
 #: plugins/attachments/templates/wiki/plugins/attachments/search.html:25
 #: plugins/images/templates/wiki/plugins/images/index.html:21
 msgid "Uploaded by"
-msgstr "Adicionado por"
+msgstr "Lastet opp av"
 
 #: plugins/attachments/templates/wiki/plugins/attachments/index.html:34
 #: plugins/attachments/templates/wiki/plugins/attachments/replace.html:5
 #: plugins/attachments/templates/wiki/plugins/attachments/replace.html:9
 #: plugins/images/templates/wiki/plugins/images/sidebar.html:34
 msgid "Replace"
-msgstr "Substituir"
+msgstr "Erstatt"
 
 #: plugins/attachments/templates/wiki/plugins/attachments/index.html:38
 msgid "Detach"
-msgstr "Desanexar"
+msgstr "Løsriv"
 
 #: plugins/attachments/templates/wiki/plugins/attachments/index.html:47
 msgid "File history"
-msgstr "Histórico do arquivo"
+msgstr "Filhistorikk"
 
 #: plugins/attachments/templates/wiki/plugins/attachments/index.html:47
 msgid "revisions"
-msgstr "revisões"
+msgstr "revisjoner"
 
 #: plugins/attachments/templates/wiki/plugins/attachments/index.html:62
 msgid "There are no attachments for this article."
-msgstr "Não existe nenhum anexo para esse artigo."
+msgstr "Det er ingen vedlegg for denne artikkelen"
 
 #: plugins/attachments/templates/wiki/plugins/attachments/index.html:74
 msgid "Upload new file"
-msgstr "Adicionar um novo arquivo"
+msgstr "Last opp ny fil"
 
 #: plugins/attachments/templates/wiki/plugins/attachments/index.html:86
 msgid "Upload file"
-msgstr "Adicionar arquivo"
+msgstr "Last opp fil"
 
 #: plugins/attachments/templates/wiki/plugins/attachments/index.html:98
 msgid "Search and add file"
-msgstr "Buscar e adicionar um arquivo"
+msgstr "Søk og legg til fil"
 
 #: plugins/attachments/templates/wiki/plugins/attachments/index.html:104
 msgid ""
 "You can reuse files from other articles. These files are subject to updates "
 "on other articles which may or may not be a good thing."
 msgstr ""
-"Você pode usar arquivos de outros artigos. Esses arquivos estão sujeitos a atualizações "
-"em outros artigos, o que pode (ou não) ser uma boa coisa."
+"Du kan gjenbruke filer fra andre artikler. Disse kan endres i andre artikler "
+"som kan være en kjip ting."
 
 
 #: plugins/attachments/templates/wiki/plugins/attachments/index.html:109
 msgid "Search"
-msgstr "Buscar"
+msgstr "Søk"
 
 #: plugins/attachments/templates/wiki/plugins/attachments/index.html:120
 msgid "Restore attachments"
-msgstr "Restaurar anexos"
+msgstr "Gjenoprett vedlegg"
 
 #: plugins/attachments/templates/wiki/plugins/attachments/index.html:133
 #: templates/wiki/deleted.html:25 templates/wiki/deleted.html.py:30
 msgid "Restore"
-msgstr "Restaurar"
+msgstr "Gjenopprett"
 
 #: plugins/attachments/templates/wiki/plugins/attachments/index.html:140
 msgid "Nothing to restore"
-msgstr "Nada para restaurar"
+msgstr "Ingenting å gjenopprettet"
 
 #: plugins/attachments/templates/wiki/plugins/attachments/index.html:156
 msgid ""
 "The article is currently locked for editing, and therefore no new "
 "attachments can be added."
 msgstr ""
-"Esse artigo está atualmente travado para edições, e por isso nenhum novo "
-"anexo pode ser adicionado."
+"Artikkelen er for øyeblikket låst for redigering, og derfor kan ingen nye vedlegg "
+"legges til."
 
 
 #: plugins/attachments/templates/wiki/plugins/attachments/render.html:5
 msgid "Click to download"
-msgstr "Clique para fazer o download"
+msgstr "Klikk for å laste ned"
 
 #: plugins/attachments/templates/wiki/plugins/attachments/replace.html:12
 #, python-format
@@ -773,13 +773,13 @@ msgid ""
 "  "
 msgstr ""
 "\n"
-"  Substituir um anexo significa adicionar um novo arquivo em seu lugar. "
-"Todas as referências desse arquivos serão substituídas pelo arquivo que você adicionar e "
-"o arquivo será baixando como <strong>%(filename)s</strong>. Note que esse anexo "
-"está sendo usado em outros artigos e você poderá alterar seu conteúdo. "
-"Entretanto, não hesite em tirar vantagem desse recurso para conseguir "
-"mudar um mesmo arquivo em vários artigos de uma só vez, caso necessário. "
-"Essa é uma forma mais eficiente de trabalhar...\n"
+"  Replacing an attachment means adding a new file that will be used in its "
+"place. All references to the file will be replaced by the one you upload and "
+"the file will be downloaded as <strong>%(filename)s</strong>. Please note "
+"that this attachment is in use on other articles, you may distort contents. "
+"However, do not hestitate to take advantage of this and make replacements "
+"for the listed articles where necessary. This way of working is more "
+"efficient....\n"
 "  "
 
 
@@ -791,7 +791,7 @@ msgid ""
 "  "
 msgstr ""
 "\n"
-"  Artigos usando %(filename)s\n"
+"  Artikler som bruker %(filename)s\n"
 "  "
 
 #: plugins/attachments/templates/wiki/plugins/attachments/replace.html:26
@@ -804,39 +804,39 @@ msgid ""
 "  "
 msgstr ""
 "\n"
-"  Substituir um anexo significa adicionar um novo arquivo em seu lugar. "
-"Todas as referências desse arquivos serão substituídas pelo arquivo que você adicionar e "
-"o arquivo será baixando como <strong>%(filename)s</strong>."
+"  Erstatte ett vedlegg betyr opprettelse av ny fil som vil bli brukt i dets plass. "
+"Alle referanser til fila vil bli erstattet med den du lastet opp og filen vil bli "
+"lastet ned som <strong>%(filename)s</strong>."
 
 #: plugins/attachments/templates/wiki/plugins/attachments/replace.html:41
 #: plugins/images/templates/wiki/plugins/images/index.html:35
 #: plugins/images/templates/wiki/plugins/images/revision_add.html:25
 msgid "Upload replacement"
-msgstr "Adicionar substituto"
+msgstr "Last opp erstatning"
 
 #: plugins/attachments/templates/wiki/plugins/attachments/search.html:5
 msgid "Add file to"
-msgstr "Adicionar arquivo a"
+msgstr "Legg til fil til"
 
 #: plugins/attachments/templates/wiki/plugins/attachments/search.html:9
 msgid "Add attachment from other article"
-msgstr "Adicionar anexo de outro artigo"
+msgstr "Legg til vedlegg fra en annen artikkel"
 
 #: plugins/attachments/templates/wiki/plugins/attachments/search.html:15
 msgid "Search files and articles"
-msgstr "Buscar arquivos e artigos"
+msgstr "Søk filer og artikler"
 
 #: plugins/attachments/templates/wiki/plugins/attachments/search.html:23
 msgid "Main article"
-msgstr "Artigo principal"
+msgstr "Hovedartikkel"
 
 #: plugins/attachments/templates/wiki/plugins/attachments/search.html:55
 msgid "Add to article"
-msgstr "Adicionar ao artigo"
+msgstr "Legg til artikkel"
 
 #: plugins/attachments/templates/wiki/plugins/attachments/search.html:63
 msgid "Your search did not return any results"
-msgstr "Sua busca não retornou resultados"
+msgstr "Ditt søk returnerte ingen resultater"
 
 #: plugins/help/wiki_plugin.py:13
 msgid "Help"
@@ -844,15 +844,15 @@ msgstr "Ajuda"
 
 #: plugins/help/templates/wiki/plugins/help/sidebar.html:1
 msgid "Adding new articles"
-msgstr "Adicionando novos artigos"
+msgstr "Legg til ny artikkel"
 
 #: plugins/help/templates/wiki/plugins/help/sidebar.html:3
 msgid ""
 "To create a new wiki article, create a link to it. Clicking the link gives "
 "you the creation page."
 msgstr ""
-"Para criar um novo artigo na wiki, crie um link para ele. Clicando no link "
-"você será levado para a página onde poderá criar o novo artigo."
+"For å opprette en ny artikkel oppretter du en link til den. Klikk på linken gir deg "
+"opprettelses-siden."
 
 
 #: plugins/help/templates/wiki/plugins/help/sidebar.html:6
@@ -862,25 +862,25 @@ msgstr "Um link externo"
 
 #: plugins/help/templates/wiki/plugins/help/sidebar.html:9
 msgid "Headers"
-msgstr "Cabeçalhos"
+msgstr "Headers"
 
 #: plugins/help/templates/wiki/plugins/help/sidebar.html:10
 msgid ""
 "Use these codes for headers and to automatically generate Tables of Contents."
 msgstr ""
-"Use esses códigos para os cabeçalhos e para automaticamente gerar o Índice."
+"Bruk disse kodene å automatisk generere oversikt over innhold"
 
 #: plugins/help/templates/wiki/plugins/help/sidebar.html:25
 msgid "Typography"
-msgstr "Tipografia"
+msgstr "Typografi"
 
 #: plugins/help/templates/wiki/plugins/help/sidebar.html:30
 msgid "Lists"
-msgstr "Listas"
+msgstr "Lister"
 
 #: plugins/help/templates/wiki/plugins/help/sidebar.html:38
 msgid "Tables"
-msgstr "Tabelas"
+msgstr "Tabeller"
 
 #: plugins/images/forms.py:17
 #, python-format
@@ -888,171 +888,171 @@ msgid ""
 "New image %s was successfully uploaded. You can use it by selecting it from "
 "the list of available images."
 msgstr ""
-"A nova imagem %s foi adicionada com sucesso. Você pode usá-la selecionando na lista de imagens disponíveis."
+"Nytt bilde %s ble lastet opp. Du kan nå velge det fra listen over tilgjengelige bilder."
 
 #: plugins/images/forms.py:61
 msgid "Are you sure?"
-msgstr "Você tem certeza?"
+msgstr "Er du sikker????????"
 
 #: plugins/images/models.py:42
 msgid "image"
-msgstr "imagem"
+msgstr "bilde"
 
 #: plugins/images/models.py:43
 msgid "images"
-msgstr "imagens"
+msgstr "bilder"
 
 #: plugins/images/models.py:47
 #, python-format
 msgid "Image: %s"
-msgstr "Imagem: %s"
+msgstr "Bilde: %s"
 
 #: plugins/images/models.py:47
 msgid "Current revision not set!!"
-msgstr "Revisão atual não escolhida!!"
+msgstr "Aktuelle revisjon er ikke satt!!"
 
 #: plugins/images/models.py:95
 msgid "image revision"
-msgstr "revisão da imagem"
+msgstr "bilde revisjon"
 
 #: plugins/images/models.py:96
 msgid "image revisions"
-msgstr "revisões da imagem"
+msgstr "bilde revisjon"
 
 #: plugins/images/models.py:101
 #, python-format
 msgid "Image Revsion: %d"
-msgstr "Revisão da Imagem: %d"
+msgstr "Bilde Revisjon: %d"
 
 #: plugins/images/views.py:64
 #, python-format
 msgid "%s has been restored"
-msgstr "%s foi restaurado"
+msgstr "%s har blitt gjenopprettet"
 
 #: plugins/images/views.py:66
 #, python-format
 msgid "%s has been marked as deleted"
-msgstr "%s foi marcado como removido"
+msgstr "%s har blitt markert som slettet"
 
 #: plugins/images/views.py:116
 #, python-format
 msgid "%(file)s has been changed to revision #%(revision)d"
-msgstr "%(file)s mudou para revisão #%(revision)d"
+msgstr "%(file)s har blitt endret til revisjon #%(revision)d"
 
 #: plugins/images/views.py:150
 #, python-format
 msgid "%(file)s has been saved."
-msgstr "%(file)s foi salvo."
+msgstr "%(file)s er lagret."
 
 #: plugins/images/wiki_plugin.py:16
 #: plugins/images/templates/wiki/plugins/images/index.html:5
 msgid "Images"
-msgstr "Imagens"
+msgstr "Bilder"
 
 #: plugins/images/wiki_plugin.py:27
 #, python-format
 msgid "An image was added: %s"
-msgstr "Uma imagem foi adicionada: %s"
+msgstr "Et bilde ble lagt til: %s"
 
 #: plugins/images/templates/wiki/plugins/images/index.html:8
 msgid ""
 "The following images are available for this article. Copy the markdown tag "
 "to directly refer to an image from the article text."
 msgstr ""
-"As seguintes imagens estão disponíveis para esse artigo. Copie o código markdown "
-"para referenciar essa imagem no texto do seu artigo."
+"Det følgende bilde er tilgjengelig for denne artikkelen. Kopier markdown-tag "
+"for å referere direkte til et bilde fra artikkel-teksten."
 
 
 #: plugins/images/templates/wiki/plugins/images/index.html:12
 msgid "Back to edit page"
-msgstr "Voltar à página de edição"
+msgstr "Tilbake til redigeringssiden"
 
 #: plugins/images/templates/wiki/plugins/images/index.html:19
 msgid "No file"
-msgstr "Nenhum arquivo"
+msgstr "Ingen fil"
 
 #: plugins/images/templates/wiki/plugins/images/index.html:40
 msgid "Restore image"
-msgstr "restaurar imagem"
+msgstr "Gjenopprett bilde"
 
 #: plugins/images/templates/wiki/plugins/images/index.html:45
 msgid "Remove image"
-msgstr "Remover imagem"
+msgstr "Fjern bilde"
 
 #: plugins/images/templates/wiki/plugins/images/index.html:52
 msgid "Completely delete"
-msgstr "Remover completamente"
+msgstr "Slett permanent"
 
 #: plugins/images/templates/wiki/plugins/images/index.html:66
 #: templates/wiki/history.html:5
 msgid "History"
-msgstr "Histórico"
+msgstr "Historie"
 
 #: plugins/images/templates/wiki/plugins/images/index.html:85
 msgid "Revert to this version"
-msgstr "Reverter para essa versão"
+msgstr "Reversjer til denne versjonen"
 
 #: plugins/images/templates/wiki/plugins/images/index.html:98
 msgid "There are no images for this article."
-msgstr "Não existem imagens para esse artigo"
+msgstr "Det er ingen bilder i denne artikkelen."
 
 #: plugins/images/templates/wiki/plugins/images/purge.html:5
 #: templates/wiki/deleted.html:40
 msgid "Purge deletion"
-msgstr "Restaurar"
+msgstr "Tøm slettede bilder"
 
 #: plugins/images/templates/wiki/plugins/images/purge.html:14
 msgid "Purge image: Completely remove image file and all revisions."
-msgstr "Remover completamente a imagem e todas as suas revisões."
+msgstr "Tøm bilde: Permanent slett bilde-filen og alle revisjoner."
 
 #: plugins/images/templates/wiki/plugins/images/purge.html:25
 msgid "Remove it completely!"
-msgstr "Remover completamente!"
+msgstr "Slett permanent!"
 
 #: plugins/images/templates/wiki/plugins/images/render.html:14
 msgid "Image not found"
-msgstr "Imagem não encontrada"
+msgstr "Bilde ikke funnet"
 
 #: plugins/images/templates/wiki/plugins/images/revision_add.html:5
 msgid "Replace image"
-msgstr "Substituir imagem"
+msgstr "Erstatt bilde"
 
 #: plugins/images/templates/wiki/plugins/images/revision_add.html:14
 msgid "Choose an image file to replace current image."
-msgstr "Escolha uma imagem para substituir a atual."
+msgstr "Velg en bildefil for å erstatte det aktuelle bildet."
 
 #: plugins/images/templates/wiki/plugins/images/sidebar.html:30
 msgid "Image id"
-msgstr "Id da imagem"
+msgstr "Bilde-id"
 
 #: plugins/images/templates/wiki/plugins/images/sidebar.html:32
 #: plugins/links/templates/wiki/plugins/links/sidebar.html:14
 msgid "Insert"
-msgstr "Inserir"
+msgstr "Sett inn"
 
 #: plugins/images/templates/wiki/plugins/images/sidebar.html:48
 msgid "No images found for this article"
-msgstr "Sem imagens para esse artigo"
+msgstr "Ingen bilder ble funnet for denne artikkelen"
 
 #: plugins/images/templates/wiki/plugins/images/sidebar.html:57
 msgid "Manage images"
-msgstr "Gerenciar imagens"
+msgstr "Generer bilder"
 
 #: plugins/images/templates/wiki/plugins/images/sidebar.html:63
 msgid "Add new image"
-msgstr "Adicionar uma nova imagem"
+msgstr "Legg til nytt bilde"
 
 #: plugins/images/templates/wiki/plugins/images/sidebar.html:104
 msgid "Add image"
-msgstr "Adicionar imagem"
+msgstr "Legg til bilde"
 
 #: plugins/images/templates/wiki/plugins/images/sidebar.html:112
 msgid "You do not have permissions to add images."
-msgstr "Você não tem permissão para adicionar imagens"
+msgstr "Du har ikke rettigheter til å legge til bilder."
 
 #: plugins/images/templates/wiki/plugins/images/sidebar.html:119
 msgid "How to use images"
-msgstr "Como usar imagens"
+msgstr "Hvordan å bruke bilder"
 
 #: plugins/images/templates/wiki/plugins/images/sidebar.html:122
 msgid ""
@@ -1064,49 +1064,50 @@ msgid ""
 "Markdown in the caption. The markdown code syntax for images looks like "
 "this, possible values for align are left and right:"
 msgstr ""
-"Após adicionar uma imagem, ela estará associada a esse artigo em particular e pode "
-"ser usada apenas aqui. Outros usuários podem substituir essa imagem, mas as versões antigas "
-"serão mantidas. Você provavelmente vai querer mostrar essa imagem com alguma legenda. Para isso, "
-"clique no botão Inserir e preencha os campos e escolha o alinhamento da sua imagem (esquerda ou direita). "
-"Você pode usar código markdown na legenda. O código markdown para imagens está exemplificado abaixo. "
-"Os valores possíveis para o alinhamento são: left e right"
+"After uploading an image, it is attached to this particular artice and can "
+"be used only here. Other users may replace the image, but older versions are "
+"kept. You probably want to show the image with a nice caption. To achieve "
+"this, press the Insert button and fill in the caption fields and possibly "
+"choose to have you image floating right or left of the content. You can use "
+"Markdown in the caption. The markdown code syntax for images looks like "
+"this, possible values for align are left and right:"
 
 
 #: plugins/links/wiki_plugin.py:20
 msgid "Links"
-msgstr "Links"
+msgstr "Linker"
 
 #: plugins/links/templates/wiki/plugins/links/sidebar.html:3
 msgid "Link to another wiki page"
-msgstr "Link para um outro artigo da wiki"
+msgstr "Link til en annen wiki-side"
 
 #: plugins/links/templates/wiki/plugins/links/sidebar.html:6
 msgid ""
 "Type in something from another wiki page's title and auto-complete will help "
 "you create a tag for you wiki link. Tags for links look like this:"
 msgstr ""
-"Digite parte do título de outro artigo da wiki e o auto-completar vai te ajudar a criar um link para o artigo escolhido. "
-"Links estão exemplificados abaixo:"
+"Skriv inn noe fra en annen wiki sin overskrift og auto-fullfør vil hjelpe "
+"deg med å opprette en tag for din wiki-link. Tag for en link ser slik ut:"
 
 #: plugins/links/templates/wiki/plugins/links/sidebar.html:23
 msgid ""
 "You can link to another website simply by inserting an address example.com "
 "or http://example.com or by using the markdown syntax:"
 msgstr ""
-"Você pode fazer um link para outro site apenas inserindo o endereço (example.com ou http://example.com) "
-"ou você pode usar a tag markdown para isso."
+"Du kan linke til en annen nettside enkelt ved å sette inn en adresse (example.com eller http://example.com) "
+"eller ved å bruke markdown-syntaks:"
 
 #: plugins/macros/wiki_plugin.py:15
 msgid "Macros"
-msgstr "Macros"
+msgstr "Markro"
 
 #: plugins/macros/mdx/macro.py:72
 msgid "Article list"
-msgstr "Lista de artigos"
+msgstr "Artikkel-liste"
 
 #: plugins/macros/mdx/macro.py:73
 msgid "Insert a list of articles in this level."
-msgstr "Insira uma lista de artigos nesse nível."
+msgstr "Sett inn en liste av artikler i dette nivået."
 
 #: plugins/macros/mdx/macro.py:74
 msgid "[article_list depth:2]"
@@ -1114,15 +1115,15 @@ msgstr "[article_list depth:2]"
 
 #: plugins/macros/mdx/macro.py:75
 msgid "Maximum depth to show levels for."
-msgstr "Número máximo de níveis a ser mostrado."
+msgstr "Maksimum dypte å vise nivåer for."
 
 #: plugins/macros/mdx/macro.py:81
 msgid "Table of contents"
-msgstr "Índice"
+msgstr "Innhold"
 
 #: plugins/macros/mdx/macro.py:82
 msgid "Insert a table of contents matching the headings."
-msgstr "Inserir Índice apenas para sub-títulos."
+msgstr "Sett inn en innholdsfortegnelse som matcher overskriftene."
 
 #: plugins/macros/mdx/macro.py:83
 msgid "[TOC]"
@@ -1130,92 +1131,92 @@ msgstr "[TOC]"
 
 #: plugins/macros/templates/wiki/plugins/macros/article_list.html:6
 msgid "Article index"
-msgstr "Índe de artigos"
+msgstr "Artikkel index"
 
 #: plugins/macros/templates/wiki/plugins/macros/article_list.html:10
 msgid "Nothing below this level"
-msgstr "Nada a ser mostrado abaixo desse nível"
+msgstr "Ingenting under dette nivået"
 
 #: plugins/notifications/forms.py:13
 msgid "Notifications"
-msgstr "Notificações"
+msgstr "Varsler"
 
 #: plugins/notifications/forms.py:17
 msgid "When this article is edited"
-msgstr "Quando esse artigo foi editado"
+msgstr "Når denne artikkelen er endret"
 
 #: plugins/notifications/forms.py:18
 msgid "Also receive emails about article edits"
-msgstr "Também receber emails sobre edições feitas nesse artigo"
+msgstr "Motta e-poster om artikkel-endringer også"
 
 #: plugins/notifications/forms.py:41
 msgid "Your notification settings were updated."
-msgstr "Suas configurações de notificação foram atualizadas."
+msgstr "Din varslings-innstilling er lagret."
 
 #: plugins/notifications/forms.py:43
 msgid "Your notification settings were unchanged, so nothing saved."
-msgstr "Suas configurações de notificação não mudaram, nada a ser salvo."
+msgstr "Din varslings-innstilling var uendret, så ingenting ble lagret."
 
 #: plugins/notifications/models.py:18
 #, python-format
 msgid "%(user)s subscribing to %(article)s (%(type)s)"
-msgstr "%(user)s receberá notificações do artigo %(article)s (%(type)s)"
+msgstr "%(user)s abbonerer %(article)s (%(type)s)"
 
 #: plugins/notifications/models.py:42
 #, python-format
 msgid "Article deleted: %s"
-msgstr "Artigo removido: %s"
+msgstr "Artikkel slettet: %s"
 
 #: plugins/notifications/models.py:45
 #, python-format
 msgid "Article modified: %s"
-msgstr "Artigo modificado: %s"
+msgstr "Artikkel endret: %s"
 
 #: plugins/notifications/models.py:48
 #, python-format
 msgid "New article created: %s"
-msgstr "Novo artigo criado: %s"
+msgstr "Ny artikkel opprettet: %s"
 
 #: templates/wiki/article.html:39
 msgid "This article was last modified:"
-msgstr "Última modificação desse artigo:"
+msgstr "Denne artikkelen ble sist endret:"
 
 #: templates/wiki/base.html:57
 msgid "Log out"
-msgstr "Sair"
+msgstr "Logg ut"
 
 #: templates/wiki/base.html:63
 msgid "No notifications"
-msgstr "Sem notificações"
+msgstr "Ingen varsler"
 
 #: templates/wiki/base.html:65
 msgid "Clear notifications list"
-msgstr "Limpar notificações"
+msgstr "Skjul varsler"
 
 #: templates/wiki/base.html:73 templates/wiki/accounts/login.html:4
 msgid "Log in"
-msgstr "Entrar"
+msgstr "Logg inn"
 
 #: templates/wiki/base.html:76 templates/wiki/accounts/login.html:19
 #: templates/wiki/accounts/signup.html:3 templates/wiki/accounts/signup.html:6
 msgid "Sign up"
-msgstr "Criar conta"
+msgstr "Registrer deg"
 
 #: templates/wiki/create.html:5 templates/wiki/create.html.py:45
 msgid "Add new article"
-msgstr "Adicionar novo artigo"
+msgstr "Legg til ny artikkel"
 
 #: templates/wiki/create.html:56
 msgid "Create article"
-msgstr "Criar artigo"
+msgstr "Opprett artikkel"
 
 #: templates/wiki/create_root.html:4
 msgid "Create root article"
-msgstr "Criar artigo raiz"
+msgstr "Opprett rot-artikkel"
 
 #: templates/wiki/create_root.html:22
 msgid "Congratulations!"
-msgstr "Parabéns!"
+msgstr "Gratulerer!"
 
 #: templates/wiki/create_root.html:24
 msgid ""
@@ -1223,104 +1224,104 @@ msgid ""
 "create the first one, the root article. In the beginning, it will only be "
 "editable by administrators, but you can define permissions after."
 msgstr ""
-"Sua wiki já está funcionando... mas ela não tem nenhum artigo. Então é hora de "
-"criar o primeiro, o artigo raiz. Inicialmente, ele será editável "
-"apenas pelos administradores, mas você pode definir essas permissões mais tarde."
+"dotKom er awesome "
+" "
+" "
 
 
 #: templates/wiki/create_root.html:27
 msgid "Root article"
-msgstr "Artigo raiz"
+msgstr "Rot-artikkel"
 
 #: templates/wiki/create_root.html:32
 msgid "Create root"
-msgstr "Criar raiz"
+msgstr "Opprett rot-artikle"
 
 #: templates/wiki/delete.html:5 templates/wiki/delete.html.py:50
 #: templates/wiki/edit.html:51
 msgid "Delete article"
-msgstr "Remover artigo"
+msgstr "Slett artikkel"
 
 #: templates/wiki/delete.html:11
 msgid "You cannot delete a root article."
-msgstr "Você não pode remover o artigo raiz."
+msgstr "Du kan ikke slette en rot-artikkel."
 
 #: templates/wiki/delete.html:17
 msgid ""
 "You cannot delete this article because you do not have permission to delete "
 "articles with children. Try to remove the children manually one-by-one."
 msgstr ""
-"Você não pode remover esse artigo pois não possui permissão para remover artigos que possuam artigos filhos. "
-"Tente remover os artigos filhos, um por um."
+"Du kan ikke slette denne artikkelen fordi du ikke har rettigheter til å slette "
+"artikler med barn. Prøv å slette barna manuelt en-etter-en."
 
 #: templates/wiki/delete.html:23
 msgid ""
 "You are deleting an article. This means that its children will be deleted as "
 "well. If you choose to purge, children will also be purged!"
 msgstr ""
-"Você está removendo um artigo. Isso significa que todos os artigos filhos também serão removidos. "
-"Se você decidir excluir completamente, os artigos filhos também serão removidos completamente!"
+"Du sletter en artikkel. Dette betyr at dets barn også vil bli slettet. "
+"Dersom du velger å tømme vil barna også bli tømt!"
 
 #: templates/wiki/delete.html:25
 msgid "Articles that will be deleted"
-msgstr "Artigos que serão removidos."
+msgstr "Artikler som vil bli slettet."
 
 #: templates/wiki/delete.html:31
 msgid "...and more!"
-msgstr "... e mais!"
+msgstr "...og mer!"
 
 #: templates/wiki/delete.html:39
 msgid "You are deleting an article. Please confirm."
-msgstr "Você está removendo um artigo. Por favor, confirme."
+msgstr "Du sletter en artikkel. Vennligst bekreft."
 
 #: templates/wiki/deleted.html:5
 msgid "Article deleted"
-msgstr "Artigo removido"
+msgstr "Slettet artikkel"
 
 #: templates/wiki/deleted.html:14
 msgid "Article Deleted"
-msgstr "Artigo Removido"
+msgstr "Slettet Artikkel"
 
 #: templates/wiki/deleted.html:17
 msgid "The article you were looking for has been deleted."
-msgstr "O artigo que você está procurando foi removido."
+msgstr "Artikkelen du ser etter har blitt slettet."
 
 #: templates/wiki/deleted.html:26
 msgid "You may restore this article and its children by clicking restore."
-msgstr "Você pode restaurar esse artigo e todos os seus artigos filhos clicando em Restaurar."
+msgstr "Du kan gjenopprette denne artikkelen og dets barn ved å trykke på gjenopprett."
 
 #: templates/wiki/deleted.html:41
 msgid ""
 "You may remove this article and any children permanently and free their "
 "slugs by clicking the below button. This action cannot be undone."
 msgstr ""
-"Você pode remover esse artigo e todos os seus artigos filhos (para liberar as URLs usadas por eles) clicando no botão abaixo."
-"Essa ação não poderá ser desfeita."
+"Du kan fjerne denne artikkelen og alle barn permanent og frigi deres "
+"slug ved å klikke knappen under. Denne handlingen kan ikke reverseres."
 
 
 #: templates/wiki/dir.html:5
 msgid "Listing articles in"
-msgstr "Listando artigo em"
+msgstr "Lister artikler i"
 
 #: templates/wiki/dir.html:17
 msgid "Up one level"
-msgstr "Um nível para cima"
+msgstr "Opp ett nivå"
 
 #: templates/wiki/dir.html:22
 msgid "Add article"
-msgstr "Adicionar artigo"
+msgstr "Legg til artikkel"
 
 #: templates/wiki/dir.html:30
 msgid "clear"
-msgstr "limpar"
+msgstr "tøm"
 
 #: templates/wiki/dir.html:40
 msgid "article,articles"
-msgstr "artigo,artigos"
+msgstr "artikkel,artikler"
 
 #: templates/wiki/dir.html:40
 msgid "is,are"
-msgstr "e, em"
+msgstr "er,er"
 
 #: templates/wiki/dir.html:40
 #, python-format
@@ -1332,17 +1333,17 @@ msgid ""
 "    "
 msgstr ""
 "\n"
-"      Visualizando <strong><a href=\"%(self_url)s\">/%(path)s</a></strong>. "
-"Exist%(articles_plur_verb)s <strong>%(cnt)s %(articles_plur)s</strong> nesse nível.\n"
+"      Viser <strong><a href=\"%(self_url)s\">/%(path)s</a></strong>. "
+"Det %(articles_plur_verb)s <strong>%(cnt)s %(articles_plur)s</strong> i dette nivået.\n"
 "    "
 
 #: templates/wiki/dir.html:50 templates/wiki/search.html:25
 msgid "Last modified"
-msgstr "Última modificação"
+msgstr "Sist endret"
 
 #: templates/wiki/dir.html:74 templates/wiki/search.html:50
 msgid "There are no articles in this level"
-msgstr "Não existem artigos nesse nível"
+msgstr "Det er ingen artikler på dette nivået"
 
 #: templates/wiki/edit.html:5 templates/wiki/includes/article_menu.html:34
 msgid "Edit"
@@ -1353,48 +1354,48 @@ msgid ""
 "<strong>Warning:</strong> You are not logged in. Your IP address will be "
 "logged."
 msgstr ""
-"<strong>Atenção:</strong> Você nãpo está logado. Seu endereço IP será guardado."
+"<strong>Advarsel:</strong> Du er ikke logget inn. Din IP-adresse vil bli "
 
 #: templates/wiki/edit.html:12
 msgid "Click here to log in"
-msgstr "Clique aqui para entrar"
+msgstr "Klikk her for å logge inn"
 
 #: templates/wiki/edit.html:41
 msgid "Preview"
-msgstr "Visualizar mudanças"
+msgstr "Forhåndsvis"
 
 #: templates/wiki/edit.html:45 templates/wiki/edit.html.py:67
 #: templates/wiki/settings.html:16
 msgid "Save changes"
-msgstr "Salvar"
+msgstr "Lagre endringer"
 
 #: templates/wiki/edit.html:63
 msgid "Back to editor"
-msgstr "Voltar ao editor"
+msgstr "Tilbake til editor"
 
 #: templates/wiki/error.html:5 templates/wiki/error.html.py:26
 msgid "Error"
-msgstr "Erro"
+msgstr "Feil"
 
 #: templates/wiki/error.html:15
 msgid "Not found"
-msgstr "Não encontrado"
+msgstr "Ikke funnet"
 
 #: templates/wiki/error.html:18
 msgid "This article was not found, and neither was its parent article."
-msgstr "Esse artigo não foi encontrado, nem seu artigo pai."
+msgstr "Verken artikkelen eller foreldrene ble funnet."
 
 #: templates/wiki/error.html:20
 msgid "Start page"
-msgstr "Página inical"
+msgstr "Startside"
 
 #: templates/wiki/error.html:30
 msgid "There was some sort of error accessing this page. Sorry!"
-msgstr "Erro inesperado acessando essa página. Desculpe!"
+msgstr "Det oppsto en ukjent feil."
 
 #: templates/wiki/error.html:38
 msgid "Back to"
-msgstr "Voltar"
+msgstr "Tilbake til"
 
 #: templates/wiki/history.html:49
 msgid ""
@@ -1403,23 +1404,23 @@ msgid ""
 "can change to a particular revision or merge an old revision with the "
 "current one."
 msgstr ""
-"Clique em cada revisão para ver quais linhas foram modificadas. Clique no botão \"Visualizar essa revisão\" "
-"para ver como o artigo era nessa revisão. No fim dessa pagina, você "
-"poderá juntar a versão atual à revisão escolhida "
-"ou reverter completamente para a revisão escolhida."
+"Klikk på hver revisjon for å se en liste av redigerte linjer. Trykk på Forhåndsvisnings-knappen "
+"for å se hvordan artikkelen så ut på dette tidspunkt. På bunnen av siden kan du "
+"skifte til en bestemt revisjon eller slå sammen en gammel revisjon med den "
+"gjeldende."
 
 
 #: templates/wiki/history.html:72
 msgid "no log message"
-msgstr "nenhuma mensagem disponível"
+msgstr "ingen loggmelding"
 
 #: templates/wiki/history.html:84 templates/wiki/history.html.py:89
 msgid "Preview this revision"
-msgstr "Visualizar essa revisão"
+msgstr "Forhåndsvis denne revisjonen"
 
 #: templates/wiki/history.html:103
 msgid "Auto log:"
-msgstr "Histórico Automático"
+msgstr "Auto logg:"
 
 #: templates/wiki/history.html:111
 msgid "Change"
@@ -1427,88 +1428,88 @@ msgstr "Endre"
 
 #: templates/wiki/history.html:129
 msgid "Merge selected with current..."
-msgstr "Mesclar selecionada com atual ..."
+msgstr "Sammenslå den valgte med den gjeldende versjonen ..."
 
 #: templates/wiki/history.html:133
 msgid "Switch to selected version"
-msgstr "Trocar para revisão selecionada"
+msgstr "Bytt til valgt versjon"
 
 #: templates/wiki/history.html:149 templates/wiki/history.html.py:176
 msgid "Back to history view"
-msgstr "Voltar para lista de histórico"
+msgstr "Tilbake til historisk visning"
 
 #: templates/wiki/history.html:154 templates/wiki/history.html.py:159
 msgid "Switch to this version"
-msgstr "Trocar para essa revisão"
+msgstr "Bytt til denne versjonen"
 
 #: templates/wiki/history.html:167
 msgid "Merge with current"
-msgstr "Mesclar com a atual"
+msgstr "Sammenslå med den gjeldende versjonen"
 
 #: templates/wiki/history.html:168
 msgid ""
 "When you merge a revision with the current, all data will be retained from "
 "both versions and merged at its approximate location from each revision."
 msgstr ""
-"Quando você mescla a revisão com a atual, todos os dados das duas versões são mantidos "
-"e colocados em suas localizações originais."
+"Når du sammenslår en revisjon med den gjeldenden versjonen vil all data beholdes fra "
+"begge versjonene og sammenslåing av dets omentrentlige plassing fra begge revisjone."
 
 #: templates/wiki/history.html:168
 msgid "After this, it's important to do a manual review."
-msgstr "Depois disso, é importante fazer uma revisão manual."
+msgstr "Etter dette er det viktig å gjøre en manuell gjennomgang."
 
 #: templates/wiki/history.html:181 templates/wiki/history.html.py:186
 msgid "Create new merged version"
-msgstr "Criar uma nova versão como resultado da mesclagem"
+msgstr "Skap ny versjon for sammenslåing"
 
 #: templates/wiki/permission_denied.html:8
 msgid "Permission Denied"
-msgstr "Permissão Negada"
+msgstr "Manglende rettigheter"
 
 #: templates/wiki/permission_denied.html:11
 msgid "Sorry, you don't have permission to access this page."
-msgstr "Desculpe, você não possui permissão para acessar esta pagina"
+msgstr "Beklager, du har ikke rettigheter til å vise denne siden."
 
 #: templates/wiki/permission_denied.html:16
 msgid "This article is locked for editing."
-msgstr "Este artigo está travado para edição"
+msgstr "Denne artikkelen er låst for redigering."
 
 #: templates/wiki/permission_denied.html:22
 msgid "Back to article"
-msgstr "Voltar ao artigo"
+msgstr "Tilbake til artikkel"
 
 #: templates/wiki/preview_inline.html:8
 msgid "Previewing revision"
-msgstr "Visualizando revisão"
+msgstr "Forhåndsviser revisjon"
 
 #: templates/wiki/preview_inline.html:15
 msgid "Previewing merge between"
-msgstr "Visualizando mesclagem entre"
+msgstr "Forhåndsviser sammenslåing av"
 
 #: templates/wiki/preview_inline.html:17
 msgid "and"
-msgstr "e"
+msgstr "og"
 
 #: templates/wiki/preview_inline.html:22 views/article.py:664
 msgid "You cannot merge with a deleted revision"
-msgstr "Você não pode mesclar com uma revisão que já foi apagada"
+msgstr "Du kan ikke sammenslå med en slettet revisjon"
 
 #: templates/wiki/preview_inline.html:31
 msgid "This revision has been deleted."
-msgstr "Esta revisão foi removida"
+msgstr "Denne revisjonen har blitt slettet."
 
 #: templates/wiki/preview_inline.html:32
 msgid "Restoring to this revision will mark the article as deleted."
-msgstr "Restaurando para esta revisão, marcará o artigo como removido."
+msgstr "Gjenopprettning av denne revisjonen vil markere artikkelen som slettet."
 
 #: templates/wiki/search.html:5 templates/wiki/search.html.py:9
 msgid "Search results for:"
-msgstr "Procurar resultados para:"
+msgstr "Søkeresultater for:"
 
 #: templates/wiki/search.html:17
 #, python-format
 msgid "Your search returned <strong>%(cnt)s</strong> results."
-msgstr "Sua busca retornou <strong>%(cnt)s</strong> resultados"
+msgstr "Ditt søk returnerte <strong>%(cnt)s</strong> resultater."
 
 #: templates/wiki/settings.html:5 templates/wiki/includes/article_menu.html:9
 msgid "Settings"
@@ -1516,27 +1517,27 @@ msgstr "Innstillinger"
 
 #: templates/wiki/source.html:5
 msgid "Source of"
-msgstr "Código Fonte de"
+msgstr "Kilde av"
 
 #: templates/wiki/source.html:10
 msgid "This article is currently locked for editing."
-msgstr "Esse artigo está atualmente travado para edição"
+msgstr "Denne artikkelen er for øyeblikket låst for redigering"
 
 #: templates/wiki/accounts/login.html:7
 msgid "Please log in"
-msgstr "Por favor, faça log in"
+msgstr "Vennligst logg inn"
 
 #: templates/wiki/accounts/login.html:13
 msgid "Log me in..."
-msgstr "Entrar"
+msgstr "Logg meg inn"
 
 #: templates/wiki/accounts/login.html:19
 msgid "Don't have an account?"
-msgstr "Não possui uma conta de usuário? "
+msgstr "Har ikke bruker?"
 
 #: templates/wiki/accounts/signup.html:12
 msgid "Sign me up..."
-msgstr "Cadastrar"
+msgstr "Meld meg opp"
 
 #: templates/wiki/includes/anonymous_blocked.html:7
 #, python-format
@@ -1547,21 +1548,21 @@ msgid ""
 "  "
 msgstr ""
 "\n"
-"  Você precisa <a href=\"%(login_url)s\">estar logado</a> ou <a href="
-"\"%(signup_url)s\">ter uma conta de usuário</a> para usar essa função.\n"
+"  Du må <a href=\"%(login_url)s\">logge inn</a> eller <a href="
+"\"%(signup_url)s\">registrere deg</a> for å bruke denne funksjonen.\n"
 "  "
 
 #: templates/wiki/includes/anonymous_blocked.html:11
 msgid "You need to log in or sign up to use this function."
-msgstr "Você precisa estar logado ou registar-se para usar esta função"
+msgstr "Du må logge inn eller registrere deg for å bruke denne funksjonen"
 
 #: templates/wiki/includes/article_menu.html:26
 msgid "Changes"
-msgstr "Mudanças"
+msgstr "Endringer"
 
 #: templates/wiki/includes/article_menu.html:41
 msgid "View Source"
-msgstr "Exibir Código Fonte"
+msgstr "Vis kilde"
 
 #: templates/wiki/includes/article_menu.html:49
 msgid "View"
@@ -1570,43 +1571,43 @@ msgstr "Vis"
 #: templates/wiki/includes/breadcrumbs.html:16
 #: templates/wiki/includes/breadcrumbs.html:42
 msgid "Sub-articles for"
-msgstr "Sub-artigos para"
+msgstr "Sub-artikler for"
 
 #: templates/wiki/includes/breadcrumbs.html:28
 msgid "No sub-articles"
-msgstr "Nenhum artigo filho"
+msgstr "Ingen sub-artikler"
 
 #: templates/wiki/includes/breadcrumbs.html:31
 msgid "...and more"
-msgstr "...e mais"
+msgstr "...og  mer"
 
 #: templates/wiki/includes/breadcrumbs.html:35
 msgid "Browse articles in this level"
-msgstr "Listagem de artigos nesse nível"
+msgstr "Vis artikler på dette nivået"
 
 #: templates/wiki/includes/breadcrumbs.html:51
 msgid "New article next to"
-msgstr "Novo artigo irmão de"
+msgstr "Ny artikkel ved siden av"
 
 #: templates/wiki/includes/breadcrumbs.html:56
 msgid "New article below"
-msgstr "Novo artigo filho de"
+msgstr "Ny artikkel under"
 
 #: templates/wiki/includes/revision_info.html:10
 msgid "by"
-msgstr "por"
+msgstr "av"
 
 #: templates/wiki/includes/revision_info.html:10
 msgid "anonymous (IP logged)"
-msgstr "anonimo (IP registrado)"
+msgstr "anonym (IP registrert)"
 
 #: templates/wiki/includes/revision_info.html:18
 msgid "restored"
-msgstr "restaurado"
+msgstr "gjenopprettet"
 
 #: templates/wiki/includes/revision_info.html:24
 msgid "unlocked"
-msgstr "destravado"
+msgstr "ulåst"
 
 #: views/accounts.py:47
 msgid "You are now signed up... and now you can sign in!"
@@ -1614,37 +1615,37 @@ msgstr "Você está registrado... e agora pode entrar"
 
 #: views/accounts.py:60
 msgid "You are no longer logged in. Bye bye!"
-msgstr "Você não está mais logado. Até logo!"
+msgstr "Du er nå logget ut"
 
 #: views/accounts.py:93
 msgid "You are now logged in! Have fun!"
-msgstr "Você agora está logado! Divirta-se"
+msgstr "Du er nå logget inn."
 
 #: views/article.py:87
 #, python-format
 msgid "New article '%s' created."
-msgstr "Novo artigo '%s' criado."
+msgstr "Ny artikkel '%s' opprettet."
 
 #: views/article.py:94
 #, python-format
 msgid "There was an error creating this article: %s"
-msgstr "Existe um erro na criação desse artigo: %s"
+msgstr "Det oppsto en feil under oppretting av denne artikkelen: %s"
 
 #: views/article.py:96
 msgid "There was an error creating this article."
-msgstr "Existe um erro na criação desse artigo."
+msgstr "Det oppsto en feil under oppretting av denne artikkelen."
 
 #: views/article.py:173
 msgid ""
 "This article cannot be deleted because it has children or is a root article."
 msgstr ""
-"Esse artigo não pode ser removido pois possui artigos filhos ou é o artigo raiz."
+"Denne artikkelen kan ikke slettes fordi den har barn eller er rot-artikkelen."
 
 #: views/article.py:182
 msgid ""
 "This article together with all its contents are now completely gone! Thanks!"
 msgstr ""
-"Esse artigo e todo o seu conteúdo foram removidos! Obrigado!"
+"Denne artikkelen og dets innhold er nå helt borte."
 
 #: views/article.py:189
 #, python-format
@@ -1652,44 +1653,44 @@ msgid ""
 "The article \"%s\" is now marked as deleted! Thanks for keeping the site "
 "free from unwanted material!"
 msgstr ""
-"Este artigo \"%s\" está agora marcado como removido! Obrigado por manter esse site livre de SPAM."
+"Artikkelen \"%s\" er nå markert som slettet"
 
 #: views/article.py:277
 msgid "Your changes were saved."
-msgstr "Suas mudanças foram gravadas."
+msgstr "Dine endringer er lagret."
 
 #: views/article.py:285
 msgid "Please note that your article text has not yet been saved!"
-msgstr "Note que o conteúdo do seu artigo ainda não foi salvo!"
+msgstr "Vennligst noter at teksten i artikkelen din ikke har blitt lagret enda!"
 
 #: views/article.py:310
 msgid "A new revision of the article was succesfully added."
-msgstr "Uma nova revisão desse artigo foi criada com sucesso."
+msgstr "En ny revisjon av artikkelen ble lagt til."
 
 #: views/article.py:363
 msgid "Restoring article"
-msgstr "Restaurando artigo"
+msgstr "Gjenopprett artikkel"
 
 #: views/article.py:365
 #, python-format
 msgid "The article \"%s\" and its children are now restored."
-msgstr "O artigo \"%s\" e seus artigos filhos foram restaurados."
+msgstr "Artikkelen \"%s\" og dets barn er nå gjenopprettet."
 
 #: views/article.py:581
 #, python-format
 msgid ""
 "The article %(title)s is now set to display revision #%(revision_number)d"
 msgstr ""
-"O artigo %(title)s está agora exibindo a revisão #%(revision_number)d"
+"Artikkelen %(title)s er nå satt til å vise revisjon #%(revision_number)d"
 
 #: views/article.py:644
 msgid "New title"
-msgstr "Novo título"
+msgstr "Ny tittel"
 
 #: views/article.py:675
 #, python-format
 msgid "Merge between revision #%(r1)d and revision #%(r2)d"
-msgstr "Mesclar revisões #%(r1)d e #%(r2)d"
+msgstr "Sammenslåing mellom revisjon #%(r1)d og #%(r2)d"
 
 #: views/article.py:683
 #, python-format
@@ -1697,6 +1698,6 @@ msgid ""
 "A new revision was created: Merge between revision #%(r1)d and revision #"
 "%(r2)d"
 msgstr ""
-"Uma nova revisão foi criada: Mesclando revisão #%(r1)d e revisão #"
+"En ny revisjon ble laget: Sammenslåing mellom revisjon #%(r1)d og revisjon #"
 "%(r2)d"
 
