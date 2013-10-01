@@ -2,8 +2,6 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
@@ -20,7 +18,7 @@ msgstr ""
 
 #: admin.py:72 models/article.py:26
 msgid "created"
-msgstr "Lagd"
+msgstr "Laget"
 
 #: forms.py:47
 msgid "Spam protection failed to find both a logged in user and an IP address."
