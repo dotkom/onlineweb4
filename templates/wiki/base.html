@@ -1,44 +1,35 @@
 {% extends 'base.html' %}
+
 {% load sekizai_tags i18n wiki_tags compress %}
 {% load url from future %}
 
-{% block js %}
-    {{ block.super }}
-{% endblock %}
 <link href="{{ STATIC_URL }}wiki/bootstrap/css/wiki-bootstrap.min.css" rel="stylesheet">
 <link href="{{ STATIC_URL }}wiki/bootstrap/css/wiki-bootstrap-responsive.min.css" rel="stylesheet">
 
 {% block content %}
-{% block wiki_body %}
-    <div class="container" style="margin-top: 60px;">
-
-      {% if messages %}
-        <!-- Messages for this instance -->
-        {% for message in messages %}
-          <div class="alert alert-{{ message.tags }}">
-            <a class="close" data-dismiss="alert" href="#">&times;</a>
-            {{ message }}
-          </div>
-        {% endfor %}
-      {% endif %}
-
-      <!-- Reserved for breadcrumbs -->
-      {% block wiki_breadcrumbs %}{% endblock %}
-      
-      <!-- Main page contents go here -->
-      {% block wiki_contents %}{% endblock %}
-      
-      </div>
-
-    </div> <!-- /container -->
-
-    {% endblock %}
-
-    <script src="{{ STATIC_URL }}wiki/js/jquery.min.js"></script>
-    <script src="{{ STATIC_URL }}wiki/js/core.js"></script>
-    <script src="{{ STATIC_URL }}wiki/bootstrap/js/bootstrap.min.js"></script>
-  
-  </body>
-</html>
-
+    <section id="wiki">
+        {% block wiki_body %}
+            {% if messages %}
+                <!-- Messages for this instance -->
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }}">
+                        <a class="close" data-dismiss="alert" href="#">&times;</a>
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        
+            {% block wiki_breadcrumbs %}{% endblock %}
+        
+            {% block wiki_contents %}{% endblock %}
+    
+        {% endblock %}
+    </section>
 {% endblock content %}
+
+{% block js %}
+    {{ block.super }}
+    <script src="{{ STATIC_URL }}wiki/js/core.js"></script>
+{% endblock %}
+
+
