@@ -146,10 +146,10 @@ INSTALLED_APPS = (
     'apps.careeropportunity',
     'apps.companyprofile',
     'apps.events',
-    'apps.feedback',
     'apps.marks',
-    'apps.mommy',
     'apps.offline',
+    'apps.feedback',
+    'apps.mommy',
     'apps.profiles',
 )
 
