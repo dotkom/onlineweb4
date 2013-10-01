@@ -2,6 +2,8 @@
 
 from django.db import models
 from django.db.models import permalink
+from django.template.defaultfilters import slugify
+from django.template.defaultfilters import slugify
 from django.utils.translation import ugettext as _
 
 from apps.authentication.models import OnlineUser as User
@@ -36,6 +38,10 @@ class Article(models.Model):
         return re.findall(r"[0-9]+", self.video.lower())
 
     @property
+    def slug(self):
+        return slugify(self.heading) 
+
+    @property
     def tags(self):
         at = ArticleTag.objects.filter(article=self.id)
         tags = []
@@ -49,6 +55,10 @@ class Article(models.Model):
         for tag in self.tags:
             tag_names.append(tag.name)
         return u', '.join(tag_names)
+
+    @permalink
+    def get_absolute_url(self):
+        return ('article_details', None, {'article_id': self.id, 'article_slug': self.slug})
 
     class Meta:
         verbose_name = _(u"artikkel")
@@ -69,7 +79,7 @@ class Tag(models.Model):
         return count
 
     @permalink
-    def get_permalink(self):
+    def get_absolute_url(self):
         return ('view_article_tag', None, {'name': self.name, 'slug': self.slug})
 
     def __unicode__(self):
