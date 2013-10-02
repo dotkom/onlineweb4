@@ -5,7 +5,7 @@ import datetime
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.db import models
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext as _
 
 FIELD_OF_STUDY_CHOICES = (
     (0, '--'),
@@ -26,7 +26,6 @@ class OnlineUser(AbstractUser):
     compiled = models.BooleanField(_(u"kompilert"), default=False)
 
     # Email
-    email_alternate = models.EmailField(_(u"alternativ epost"), blank=True, null=True)
     infomail = models.BooleanField(_(u"vil ha infomail"), default=True)
 
     # Address
@@ -100,6 +99,7 @@ class OnlineUser(AbstractUser):
         verbose_name = _(u"brukerprofil")
         verbose_name_plural = _(u"brukerprofiler")
 
+
 class RegisterToken(models.Model):
     user = models.ForeignKey(OnlineUser)
     email = models.EmailField("email", max_length=254)
@@ -111,6 +111,7 @@ class RegisterToken(models.Model):
         valid_period = datetime.timedelta(days=1)
         now = datetime.datetime.now()
         return now < self.created + valid_period 
+
 
 class AllowedUsername(models.Model):
     """
