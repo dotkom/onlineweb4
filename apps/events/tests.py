@@ -4,7 +4,7 @@ import datetime
 from django_dynamic_fixture import G
 from django.test import TestCase
 
-from apps.authentication.models import OnlineUser as User
+from apps.authentication.models import OnlineUser as User, AllowedUsername
 from apps.events.models import (Event, AttendanceEvent, Attendee,
                                 RuleBundle, RuleOffset,
                                 FieldOfStudyRule, GradeRule, UserGroupRule)
@@ -17,6 +17,7 @@ class EventTest(TestCase):
         self.attendance_event = G(AttendanceEvent, event=self.event)
         self.user = G(User)
         self.user.username = 'ola123'
+        self.user.ntnu_username = 'ola123ntnu'
         self.attendee = G(Attendee, event=self.attendance_event, user=self.user)
         self.logger = logging.getLogger(__name__)
 
@@ -39,6 +40,8 @@ class EventTest(TestCase):
         # Setting registration start 1 hour in the past, end one week in the future.
         self.attendance_event.registration_start = now - datetime.timedelta(hours=1)
         self.attendance_event.registration_end = now + datetime.timedelta(days=7)
+        # Making the user a member.
+        allowed_username = G(AllowedUsername, username='ola123ntnu', expiration_date = now + datetime.timedelta(weeks=1))
        
         # The user should be able to attend now, since the event has no rule bundles.
         response = self.event.is_eligible_for_signup(self.user)
