@@ -1,5 +1,5 @@
-<div class="row-fluid">
-    <div class="span12">
+<div class="row">
+    <div class="col-md-12">
         <h3>Mine prikker</h3>
     </div>
 </div>
@@ -17,41 +17,41 @@
                         Du har ingen {{ heading }}.
                     {% endif %}
                     {% for mark in mark_list %}
-                        <div class="row-fluid">
-                            <div class="span4">
+                        <div class="row">
+                            <div class="col-md-4">
                                 <div class="mark">
                                     <div class="markheader">
                                         {{ mark.title }}
                                     </div>
                                     <div class="markbody">
                                         <div class="inline">
-                                            <div class="row-fluid">
-                                                <div class="span5"><b>Kategori:</b></div>
-                                                <div class="span7">
+                                            <div class="row">
+                                                <div class="col-md-5"><b>Kategori:</b></div>
+                                                <div class="col-md-7">
                                                     {{ mark.get_category_display }}
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="inline">
-                                            <div class="row-fluid">
-                                                <div class="span5"><b>Beskrivelse:</b></div>
-                                                <div class="span7">
+                                            <div class="row">
+                                                <div class="col-md-5"><b>Beskrivelse:</b></div>
+                                                <div class="col-md-7">
                                                     {{ mark.description }}
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="inline">
-                                            <div class="row-fluid">
-                                                <div class="span5"><b>Utdelt:</b></div>
-                                                <div class="span7">
+                                            <div class="row">
+                                                <div class="col-md-5"><b>Utdelt:</b></div>
+                                                <div class="col-md-7">
                                                     {{ mark.mark_added_date }}
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="inline">
-                                            <div class="row-fluid">
-                                                <div class="span5"><b>Utløpsdato:</b></div>
-                                                <div class="span7">
+                                            <div class="row">
+                                                <div class="col-md-5"><b>Utløpsdato:</b></div>
+                                                <div class="col-md-7">
                                                     {{ mark.expires }}
                                                 </div>
                                             </div>
