@@ -29,4 +29,4 @@ class MailSettingsForm(forms.ModelForm):
     class Meta:
         model = OnlineUser
 
-        fields = ['email', 'infomail', ]
+        fields = ['email', 'email_alternate', 'infomail', ]
