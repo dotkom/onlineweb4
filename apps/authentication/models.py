@@ -48,7 +48,7 @@ class OnlineUser(AbstractUser):
 
     # TODO profile pictures
     # TODO checkbox for forwarding of @online.ntnu.no mail
-
+        
     @property
     def is_member(self):
         """
@@ -64,6 +64,12 @@ class OnlineUser(AbstractUser):
         """
         full_name = u'%s %s' % (self.first_name, self.last_name)
         return full_name.strip()
+
+    def get_email(self):
+        return self.get_emails().filter(active = True)[0]
+
+    def get_emails(self):
+        return Email.objects.all().filter(user = self)
 
     @property
     def year(self):
@@ -100,8 +106,21 @@ class OnlineUser(AbstractUser):
         verbose_name_plural = _(u"brukerprofiler")
 
 
+class Email(models.Model):
+    user = models.ForeignKey(OnlineUser, related_name="email_user")
+    email = models.EmailField(_(u"epostadresse"), unique=True)
+    active = models.BooleanField(_(u"aktiv"), default=False)
+
+    def __unicode__(self):
+        return self.email
+
+    class Meta:
+        verbose_name = _(u"epostadresse")
+        verbose_name_plural = _(u"epostadresser")
+
+
 class RegisterToken(models.Model):
-    user = models.ForeignKey(OnlineUser)
+    user = models.ForeignKey(OnlineUser, related_name="register_user")
     email = models.EmailField("email", max_length=254)
     token = models.CharField("token", max_length=32)
     created = models.DateTimeField("created", editable=False, auto_now_add=True, default=datetime.datetime.now())
