@@ -26,6 +26,7 @@ class OnlineUser(AbstractUser):
     compiled = models.BooleanField(_(u"kompilert"), default=False)
 
     # Email
+    email_alternate = models.EmailField(_(u"alternativ epost"), blank=True, null=True)
     infomail = models.BooleanField(_(u"vil ha infomail"), default=True)
 
     # Address
