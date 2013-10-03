@@ -36,6 +36,7 @@
                 <ul class="nav navbar-nav">
                   <li><a href="{% url 'home' %}">Forside</a></li>
                   <li><a href="{% url 'careeropportunity_index' %}">Karrieremuligheter</a></li>
+                  <li><a href="{% url 'resourcecenter_index' %}">Ressurser</a></li>
                   <li><a href="{% url 'article_archive' %}">Arkiv</a></li>
                   <li><a href="http://wiki.online.ntnu.no/">Wiki</a></li>
                 </ul>
@@ -43,23 +44,16 @@
                 <ul class="nav navbar-nav navbar-right">
                     <li class="dropdown" id="login_menu">
                         {% if user.is_authenticated %}
-                        <a href="#login_menu" class="login-btn dropdown-toggle dropdown-signin login">{{ user.get_full_name }}<b class="caret"></b></a>
-                        <ul class="dropdown-menu dropdown-form login-box">
-                            <li class="dropdown-caret right">
-                                <span class="caret-outer"></span>
-                                <span class="caret-inner"></span>
-                            </li>
-                            <li>
-                                <form>
-                                    <div class="login-extra">
-                                        <a href="{% url 'auth_logout' %}">Logg ut</a>
-                                    </div>
-                                </form>
-                            </li>
+                        <a href="#login_menu" class="login-btn dropdown-toggle dropdown-signin login" data-toggle="dropdown">{{ user.get_full_name }}<b class="caret"></b></a>
+                        <ul class="dropdown-menu login-box" role="menu">
+                            <li><a href="{% url 'profiles' %}">Min profil</a></li>
+                            <li class="divider"></li>
+                            <li><a href="{% url 'auth_logout' %}">Logg ut</a></li>
                         </ul>
+                       
                         {% else %}
-                        <a href="#login_menu" class="login-btn dropdown-toggle dropdown-signin login">Logg inn <b class="caret"></b></a>
-                        <ul class="dropdown-menu login-box">
+                        <a href="#login_menu" class="login-btn dropdown-toggle dropdown-signin login" data-toggle="dropdown">Logg inn <b class="caret"></b></a>
+                        <ul class="dropdown-menu login-box" role="menu">
                             <li>
                                 <form class="navbar-form" method="POST" action="{% url 'auth_login' %}">
                                     {% csrf_token %}
@@ -70,10 +64,12 @@
                                         <input type="password" name="password" id="id_password" class="form-control">
                                     </fieldset>
                                     <input type="hidden" name="next" value="{{ request.get_full_path }}" />
-                                    <button type="submit" class="btn">Logg inn</button>
+                                    <button type="submit" class="btn btn-primary">Logg inn</button>
                                 </form>
-                                <button class="btn btn-auth" data-url="{% url 'auth_register' %}">Registrer</button>
-                                <button class="btn btn-auth" data-url="{% url 'auth_recover' %}">Glemt passord</button>
+                                <div id="login-form-btn-group">
+                                    <a class="btn btn-default" href="{% url 'auth_register' %}">Registrer</a>
+                                    <a class="btn btn-default" href="{% url 'auth_recover' %}">Glemt passord</a>
+                                </div>
                             </li>
                         </ul>
                         {% endif %}
@@ -92,99 +88,14 @@
     {% block submenu %}
     {% endblock %}
 
-    <!--<div id="topmenu" class="navbar navbar-fixed-top">
-        <div class="navbar-inner">
-            <div class="container">
-                <ul class="nav">
-                    <li class="top-menu-img">
-                        <a class="brand" href="{% url 'home' %}"><img src="{{ STATIC_URL }}img/online_logo.png" alt="Online" class="online-logo"></a>
-                    </li>
-                </ul>
-                <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </a>
-                <div class="nav-collapse collapse">
-                    <ul class="nav menu-elements">
-                        <li class="top-menu-link">
-                            <a data-section="events" class="active" href="{% url 'events-link' %}">Arrangementer</a>
-                        </li>
-                        <li class="top-menu-link">
-                            <a data-section="articles" href="{% url 'articles-link' %}">Artikler</a>
-                        </li>
-                        <li class="top-menu-link">
-                            <a data-section="offline" href="{% url 'offline-link' %}">Offline</a>
-                        </li>
-                        <li class="top-menu-link">
-                            <a data-section="business" href="{% url 'business-link' %}">For bedrifter</a>
-                        </li>
-                        <li class="top-menu-link">
-                            <a data-section="about" href="{% url 'about-link' %}">Om Online</a>
-                        </li>
-                        <li class="top-menu-link">
-                            <a href="http://wiki.online.ntnu.no/">Wiki</a>
-                        </li>
-                    </ul>
-
-                    <ul class="nav pull-right">
-                        <li class="dropdown" id="login_menu">
-                        {% if user.is_authenticated %}
-                        <a href="#login_menu" class="login-btn dropdown-toggle dropdown-signin login">{{ user.get_full_name }}<b class="caret"></b></a>
-                            <ul class="dropdown-menu dropdown-form login-box">
-                                <li class="dropdown-caret right">
-                                    <span class="caret-outer"></span>
-                                    <span class="caret-inner"></span>
-                                </li>
-                                <li>
-                                    <form>
-                                        <div class="login-extra">
-                                            <a href="{% url 'auth_logout' %}">Logg ut</a>
-                                        </div>
-                                    </form>
-                                </li>
-                            </ul>
-
-                        {% else %}
-                            <a href="#login_menu" class="login-btn dropdown-toggle dropdown-signin login">Logg inn<b class="caret"></b></a>
-                            <ul class="dropdown-menu dropdown-form login-box">
-                                <li class="dropdown-caret right">
-                                    <span class="caret-outer"></span>
-                                    <span class="caret-inner"></span>
-                                </li>
-                                <li>
-                                <form method="POST" action="{% url 'auth_login' %}">
-                                    {% csrf_token %}
-                                    <fieldset class="textbox">
-                                        <label for="id_username">Brukernavn</label>
-                                        <input type="text" name="username" id="id_username">
-                                        <label for="id_password">Passord</label>
-                                        <input type="password" name="password" id="id_password">
-                                    </fieldset>
-                                    <input type="hidden" name="next" value="{{ request.get_full_path }}" />
-                                        <button type="submit" class="btn">Logg inn</button>
-                                </form>
-                                <button class="btn btn-auth" data-url="{% url 'auth_register' %}">Registrer</button>
-                                <button class="btn btn-auth" data-url="{% url 'auth_recover' %}">Glemt passord</button>
-                                </li>
-                            </ul>
-                        {% endif %}
-                        </li>
-                        <li class="top-menu-img">
-                        <a href="http://visma.no/" class=""><img src="{{ STATIC_URL }}img/visma_clean.png" alt="" class="sponsor-logo"></a>
-                    </li>
-                </ul>
-                </div>
-            </div>
-        </div>
-    </div>
-    -->
     {% if messages %}
         <div class="container messages">
             <div class="row">
                 <div class="col-md-12">
                     {% for message in messages %}
-                    <div class="alert {% if message.tags %}{{ message.tags }}{% endif %}">
+                    <div class="alert {% if message.tags %}
+                        {% if message.tags == 'alert-error' %} alert-danger {% else %}
+                        {{ message.tags }}{% endif %}{% endif %}">
                         <button type="button" class="close" data-dismiss="alert">&times;</button>
                         {{ message }}
                     </div>
