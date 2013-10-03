@@ -1,17 +1,21 @@
 #-*- coding: utf-8 -*-
 import json
 import os
+import uuid
 
 from PIL import Image
 
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.forms import PasswordChangeForm
+from django.contrib.auth.decorators import login_required
+from django.core.mail import send_mail
 from django.http import HttpResponse
-from django.shortcuts import redirect
-from django.shortcuts import render
+from django.shortcuts import redirect, render, get_object_or_404
 from django.utils.translation import ugettext as _
 
+from apps.authentication.forms import NewEmailForm
+from apps.authentication.models import Email, RegisterToken
 from apps.marks.models import Mark
 from apps.profiles.forms import MailSettingsForm, PrivacyForm, ProfileForm
 
@@ -56,10 +60,11 @@ def create_request_dictionary(request):
             (_(u'inaktive prikker'), Mark.inactive.all().filter(given_to=request.user), True),
         ],
         'mail_settings' : MailSettingsForm(instance=request.user),
+        'new_email' : NewEmailForm(),
     }
 
     if request.session.has_key('userprofile_active_tab'):
-         dict['active_tab'] = request.session['userprofile_active_tab']
+        dict['active_tab'] = request.session['userprofile_active_tab']
     else:
         dict['active_tab'] = 'myprofile'
 
@@ -236,3 +241,133 @@ def savePassword(request):
         messages.success(request, _(u"Passordet ditt ble endret"))
 
     return redirect("profiles")
+
+@login_required
+def add_email(request):
+    dict = create_request_dictionary(request)
+    if request.method == 'POST':
+        form = NewEmailForm(request.POST)
+        if form.is_valid():
+            print "valid"
+            cleaned = form.cleaned_data
+            email_string = cleaned['new_email']
+
+            # Check if the email already exists
+            if Email.objects.filter(email=cleaned['new_email']).count() > 0:
+                messages.error(request, _(u"Eposten %s er allerede registrert.") % email_string)
+                return redirect('profiles')
+
+            # Create the email
+            email = Email(email=email_string, user=request.user)
+            email.save()
+
+            # Send the verification mail
+            _send_verification_mail(request, email.email)
+
+            messages.success(request, _(u"Eposten ble lagret. Du må sjekke din innboks for å verifisere den."))
+        
+        else:
+            for key, value in form.errors.items():
+                print key,
+                print value    
+
+    return redirect('profiles')
+
+    
+
+@login_required
+def delete_email(request):
+    if request.is_ajax():
+        if request.method == 'POST':
+            email_string = request.POST.get('email')
+            email = get_object_or_404(Email, email=email_string)
+            
+            # Check if the email belongs to the registered user
+            if email.user != request.user:
+                return HttpResponse(status=412, content=json.dumps(
+                                                    {'message': _(u"%s er ikke en eksisterende epostaddresse på din profil.") % email.email}
+                                                ))
+
+            # Users cannot delete their primary email, to avoid them deleting all their emails
+            if email.primary:
+                return HttpResponse(status=412, content=json.dumps({'message': _(u"Kan ikke slette primær-epostadresse.")}))
+            
+            email.delete()
+            return HttpResponse(status=200)
+    return HttpResponse(status=404)
+
+@login_required
+def set_primary(request):
+    if request.is_ajax():
+        if request.method == 'POST':
+            email_string = request.POST.get('email')
+            email = get_object_or_404(Email, email=email_string)
+
+            # Check if the email belongs to the registered user
+            if email.user != request.user:
+                return HttpResponse(status=412, content=json.dumps(
+                                                    {'message': _(u"%s er ikke en eksisterende epostaddresse på din profil.") % email.email}
+                                                ))
+
+            # Check if it was already primary
+            if email.primary:
+                return HttpResponse(status=412, content=json.dumps(
+                                                    {'message': _(u"%s er allerede satt som primær-epostaddresse.") % email.email}
+                                                ))
+            
+            # Deactivate old primary email
+            primary_email = request.user.get_email()
+            primary_email.primary = False
+            primary_email.save()
+            # Activate new primary
+            email.primary = True
+            email.save()
+
+            return HttpResponse(status=200)
+    return HttpResponse(status=404)
+
+@login_required
+def verify_email(request):
+    if request.is_ajax():
+        if request.method == 'POST':
+            email_string = request.POST.get('email')
+            email = get_object_or_404(Email, email=email_string)
+
+            # Check if the email belongs to the registered user
+            if email.user != request.user:
+                return HttpResponse(status=412, content=json.dumps(
+                                                    {'message': _(u"%s er ikke en eksisterende epostaddresse på din profil.") % email.email}
+                                                ))
+
+            # Check if it was already verified
+            if email.verified:
+                return HttpResponse(status=412, content=json.dumps(
+                                                    {'message': _(u"%s er allerede verifisert.") % email.email}
+                                                ))
+
+            # Send the verification mail
+            _send_verification_mail(request, email.email)
+
+            return HttpResponse(status=200)
+    return HttpResponse(status=404)
+
+def _send_verification_mail(request, email):
+
+    # Create the registration token
+    token = uuid.uuid4().hex
+    rt = RegisterToken(user=request.user, email=email, token=token)
+    rt.save()
+
+    email_message = _(u"""
+En ny epost har blitt registrert på din profile på online.ntnu.no.
+
+For å kunne ta eposten i bruk kreves det at du verifiserer den. Du kan gjore dette
+ved å besøke lenken under.
+
+http://%s/auth/verify/%s/
+
+Denne lenken vil være gyldig i 24 timer. Dersom du behøver å få tilsendt en ny lenke
+kan dette gjøres ved å klikke på knappen for verifisering på din profil.
+""") % (request.META['HTTP_HOST'], token)
+
+    send_mail(_(u'Verifiser din epost %s') % email, email_message, settings.DEFAULT_FROM_EMAIL, [email,])
