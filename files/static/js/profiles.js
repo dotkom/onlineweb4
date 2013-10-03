@@ -244,7 +244,7 @@ $(document).ready(function() {
         });
     });
 
-    function deleteEmail(email, row) {
+    var deleteEmail = function(email, row) {
         $.ajax({
             method: 'POST',
             url: 'delete_email/',
@@ -254,7 +254,7 @@ $(document).ready(function() {
                 $(row).hide();
             },
             error: function(res) {
-                if (status = 412) {
+                if (status === 412) {
                     res = JSON.parse(res['responseText']);
                     alert(res['message']);
                 }
@@ -267,7 +267,7 @@ $(document).ready(function() {
         });
     }
 
-    function setPrimaryEmail(email, row) {
+    var setPrimaryEmail = function(email, row) {
         $.ajax({
             method: 'POST',
             url: 'set_primary/',
@@ -279,7 +279,7 @@ $(document).ready(function() {
                     .prop('disabled', true).text('Primær');
             },
             error: function(res) {
-                if (status = 412) {
+                if (status === 412) {
                     res = JSON.parse(res['responseText']);
                     alert(res['message']);
                 }
@@ -292,7 +292,7 @@ $(document).ready(function() {
         });
     }
 
-    function verifyEmail(email, row) {
+    var verifyEmail = function(email, row) {
         $.ajax({
             method: 'POST',
             url: 'verify_email/',
@@ -301,7 +301,7 @@ $(document).ready(function() {
                 alert("tada");
             },
             error: function(res) {
-                if (status = 412) {
+                if (status === 412) {
                     res = JSON.parse(res['responseText']);
                     alert(res['message']);
                 }
