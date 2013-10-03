@@ -359,7 +359,7 @@ def _send_verification_mail(request, email):
     rt.save()
 
     email_message = _(u"""
-En ny epost har blitt registrert på din profile på online.ntnu.no.
+En ny epost har blitt registrert på din profil på online.ntnu.no.
 
 For å kunne ta eposten i bruk kreves det at du verifiserer den. Du kan gjore dette
 ved å besøke lenken under.
