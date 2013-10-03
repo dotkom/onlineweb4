@@ -122,9 +122,9 @@ class Email(models.Model):
 
 class RegisterToken(models.Model):
     user = models.ForeignKey(OnlineUser, related_name="register_user")
-    email = models.EmailField("email", max_length=254)
-    token = models.CharField("token", max_length=32)
-    created = models.DateTimeField("created", editable=False, auto_now_add=True, default=datetime.datetime.now())
+    email = models.EmailField(_("epost"), max_length=254)
+    token = models.CharField(_("token"), max_length=32)
+    created = models.DateTimeField(_("opprettet dato"), editable=False, auto_now_add=True, default=datetime.datetime.now())
 
     @property
     def is_valid(self):
