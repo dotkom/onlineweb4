@@ -1,11 +1,10 @@
 is_unix = RUBY_PLATFORM =~ /linux|darwin/ ? true : false
+puts "host platform : #{RUBY_PLATFORM} (unix : #{is_unix})"
 
 machines = {
     # name     => enabled
     :onlineweb => true
 }
-
-puts 'host platform : #{RUBY_PLATFORM} (unix : #{is_unix})'
 
 Vagrant.configure('2') do |config|
 
