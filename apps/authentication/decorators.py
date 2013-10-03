@@ -1,12 +1,5 @@
 # -*- coding: utf-8 -*-
 
-from functools import wraps
-
-from django.contrib.auth.decorators import user_passes_test
-from django.contrib.auth import REDIRECT_FIELD_NAME
-from django.http import HttpResponseForbidden
-from django.utils.decorators import available_attrs
-
 from middleware.http import Http403
 
 def need_membership(view_func):
