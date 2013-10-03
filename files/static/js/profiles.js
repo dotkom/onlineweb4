@@ -209,6 +209,10 @@ $(document).ready(function() {
 
     /* End image cropping and uploading*/
 
+/*
+ JS for email management.
+*/
+
     $('button.addnewemail').click(function() {
         $('tr.addnewemail').show();
         $(this).hide();
