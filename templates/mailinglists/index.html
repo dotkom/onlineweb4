@@ -48,15 +48,15 @@
 		</div>
 
 		<div class="row-fluid" id="mailinglist-items">
-			<div class="span12">
-				<h3>Lister og medlemmer</h3>
+			<h3>Lister og medlemmer</h3>
+			<div id="masonry" class="span12">
 				
 				{% for list in lists %}
 					<div class="span2 mailinglist">
-						<div class="title">
-							{{ list.name }}@online.ntnu.no
-						</div>
 						<div class="members">
+							<span class="title">
+								{{ list.name }}@online.ntnu.no
+							</span>
 							<ul>
 							{% for member in list.members %}
 							<li> {{member.name}} </li>
@@ -75,5 +75,6 @@
 
 {% block js %}
 	{{ block.super }}
+	<script src="{{ STATIC_URL }}js/libs/masonry-3.1.2.min.js"></script>
 	<script src="{{ STATIC_URL }}js/mailinglists.js"></script>
 {% endblock js %}
