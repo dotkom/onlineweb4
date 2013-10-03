@@ -34,7 +34,7 @@ Vagrant.configure('2') do |config|
             onlineweb_config.vm.provider :virtualbox do |vbox|
                 vbox.gui = false
                 vbox.customize ['modifyvm', :id, '--natdnshostresolver1', 'on']
-                vbox.customize ['modifyvm', :id, '--memory', '256']
+                #vbox.customize ['modifyvm', :id, '--memory', '256']
             end
 
             onlineweb_config.vm.provision :shell, :path => 'vagrantbootstrap.sh', :privileged => false
