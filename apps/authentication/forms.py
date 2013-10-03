@@ -5,6 +5,7 @@ import re
 
 from django import forms
 from django.contrib import auth
+from django.utils.translation import ugettext as _
 
 from apps.authentication.models import OnlineUser as User
 
@@ -95,3 +96,7 @@ class ChangePasswordForm(forms.Form):
                 self._errors['repeat_password'] = self.error_class(["Passwords did not match."])
 
             return cleaned_data
+
+
+class NewEmailForm(forms.Form):
+    new_email = forms.EmailField(_(u"ny epostadresse"))

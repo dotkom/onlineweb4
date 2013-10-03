@@ -66,7 +66,7 @@ class OnlineUser(AbstractUser):
         return full_name.strip()
 
     def get_email(self):
-        return self.get_emails().filter(active = True)[0]
+        return self.get_emails().filter(primary = True)[0]
 
     def get_emails(self):
         return Email.objects.all().filter(user = self)
@@ -109,7 +109,8 @@ class OnlineUser(AbstractUser):
 class Email(models.Model):
     user = models.ForeignKey(OnlineUser, related_name="email_user")
     email = models.EmailField(_(u"epostadresse"), unique=True)
-    active = models.BooleanField(_(u"aktiv"), default=False)
+    primary = models.BooleanField(_(u"aktiv"), default=False)
+    verified = models.BooleanField(_(u"verifisert"), default=False)
 
     def __unicode__(self):
         return self.email
