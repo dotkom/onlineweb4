@@ -314,6 +314,13 @@ $(document).ready(function() {
             crossDomain: false
         });
     }
+
+/*
+  JS for membership  
+*/
+
+    $(".hasDatePicker").datepicker({ dateFormat: "yy-mm-dd" })
+        
 });
 
 
