@@ -382,7 +382,11 @@ kan dette gjøres ved å klikke på knappen for verifisering på din profil.
 
 @login_required
 def save_membership_details(request):
+<<<<<<< HEAD
     if request.is_ajax():
         if request.method == 'POST':
             pass
     return HttpResponse(status = 404) 
+=======
+    if 
+>>>>>>> Progress on membership settings in profile.
