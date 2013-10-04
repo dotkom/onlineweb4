@@ -17,7 +17,7 @@ from django.utils.translation import ugettext as _
 from apps.authentication.forms import NewEmailForm
 from apps.authentication.models import Email, RegisterToken
 from apps.marks.models import Mark
-from apps.profiles.forms import MailSettingsForm, PrivacyForm, ProfileForm
+from apps.profiles.forms import MailSettingsForm, PrivacyForm, ProfileForm, MembershipSettingsForm
 
 
 """
@@ -61,6 +61,8 @@ def create_request_dictionary(request):
         ],
         'mail_settings' : MailSettingsForm(instance=request.user),
         'new_email' : NewEmailForm(),
+        #'membership_settings' : MembershipSettingsForm({'field_of_study': request.user.field_of_study, 'started_date': request.user.started_date}),
+        'membership_settings' : MembershipSettingsForm(instance=request.user),
     }
 
     if request.session.has_key('userprofile_active_tab'):
@@ -371,3 +373,7 @@ kan dette gjøres ved å klikke på knappen for verifisering på din profil.
 """) % (request.META['HTTP_HOST'], token)
 
     send_mail(_(u'Verifiser din epost %s') % email, email_message, settings.DEFAULT_FROM_EMAIL, [email,])
+
+@login_required
+def save_membership_details(request):
+    if 

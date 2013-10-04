@@ -140,7 +140,7 @@ class AllowedUsername(models.Model):
     username = models.CharField(_(u"brukernavn"), max_length=10)
     registered = models.DateField(_(u"registrert"))
     note = models.CharField(_(u"notat"), max_length=100)
-    description = models.TextField(_(u"beskrivelse"))
+    description = models.TextField(_(u"beskrivelse"), blank=True, null=True)
     expiration_date = models.DateField(_(u"utløpsdato"))
 
     @property
