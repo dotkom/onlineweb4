@@ -72,7 +72,7 @@ function EventWidget (Utils){
         html +=             '</div>';
         for(var i=0; i < item.company_event.length; i++){
             html +=         '<div class="item">';
-            html +=             '<img src="' + item.company_event[i].companies.image_companies_thumb + '" alt="" />';
+            html +=             '<img src="' + item.company_event[i].companies.image_companies_thumb + '" width="100%" alt="" />';
             html +=         '</div>';
         }
         html +=         '</div>';
