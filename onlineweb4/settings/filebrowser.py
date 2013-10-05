@@ -27,11 +27,11 @@ FILEBROWSER_VERSIONS = {
 
     # Events
     'events_main' : {'verbose_name' : 'Event large', 'width': 584, 'height': 275, 'opts': 'crop'},
-    'events_thumb' : {'verbose_name' : 'Event mini', 'width': 120, 'height': 65, 'opts': 'crop'},
+    'events_thumb' : {'verbose_name' : 'Event mini', 'width': 165, 'height': 71, 'opts': 'crop'},
 
     # Companies
     'companies_main' : {'verbose_name' : 'Company large', 'width': 584, 'height': 275, 'opts': 'crop'},
-    'companies_thumb' : {'verbose_name' : 'Company mini', 'width': 120, 'height': 65, 'opts': 'crop'},
+    'companies_thumb' : {'verbose_name' : 'Company mini', 'width': 165, 'height': 71, 'opts': 'crop'},
     'companies_medium' : {'verbose_name' : 'Company medium', 'width': 277, 'height': 146, 'opts': 'crop'}
 }
 
