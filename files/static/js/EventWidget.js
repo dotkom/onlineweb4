@@ -4,6 +4,7 @@ function EventWidget (Utils){
 
     /* Render the widget */
     EventWidget.prototype.render = function(callback) {
+        
         var now = moment();
 
         Utils.makeApiRequest({
@@ -53,7 +54,7 @@ function EventWidget (Utils){
      * @return string
      */
     function createEventItem(item) {
-        
+
         html = '<div><div class="col-md-4 col-xs-7">';
         html +=     '<div class="hero-title">';
         html +=         '<a href="events/' + item.id + '/' + item.slug + '">';
@@ -77,7 +78,7 @@ function EventWidget (Utils){
         }
         html +=         '</div>';
         html +=     '</div>'
-        html +=     '<span class="hero-date">' + moment(item.event_start).format('DD. MMMM') + '</span>';
+        html +=     '<span class="hero-date">' + moment(item.event_start).lang('nb').format('DD. MMMM') + '</span>';
         html += '</div></div>';
 
         return html;
