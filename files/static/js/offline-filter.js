@@ -268,19 +268,19 @@ function init_pageinator() {
     
     
     // Removing first
-    $('#offline-nav .pagination ul').empty();
+    $('#offline-nav ul.pagination').empty();
     
     // Last/prev
-    $('#offline-nav .pagination ul').append('<li class="disabled"><a id="offline-nav-first" href="#">&#171;</a></li><li class="disabled paddright"><a id="offline-nav-prev" href="#">&#8249;</a></li>');
+    $('#offline-nav ul.pagination').append('<li class="disabled"><a id="offline-nav-first" href="#">&#171;</a></li><li class="disabled paddright"><a id="offline-nav-prev" href="#">&#8249;</a></li>');
     
     // Nums
     for (var i = 0; i < offline_total_rows; i++) {
-        $('#offline-nav .pagination ul').append('<li'+((i == 0)?' class="active first"':'')+'><a class="offline-nav" id="page-'+i+'" href="#">'+(i+1)+'</a></li>');
+        $('#offline-nav ul.pagination').append('<li'+((i == 0)?' class="active first"':'')+'><a class="offline-nav" id="page-'+i+'" href="#">'+(i+1)+'</a></li>');
     }
     
     // Next/last
     console.log(offline_total_rows);
-    $('#offline-nav .pagination ul').append('<li class="paddleft'+((offline_total_rows == 1)?' disabled':'')+'"><a id="offline-nav-next" href="#">&#8250;</a></li><li'+((offline_total_rows == 1)?' class="disabled"':'')+'><a id="offline-nav-last" href="#">&#187;</a></li>');
+    $('#offline-nav ul.pagination').append('<li class="paddleft'+((offline_total_rows == 1)?' disabled':'')+'"><a id="offline-nav-next" href="#">&#8250;</a></li><li'+((offline_total_rows == 1)?' class="disabled"':'')+'><a id="offline-nav-last" href="#">&#187;</a></li>');
     
     // Clicky!
     $('#offline-nav .active a').trigger('click');
