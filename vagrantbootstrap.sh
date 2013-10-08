@@ -1,8 +1,8 @@
 #!/bin/bash
 
 
-LJUST_COLS=50
-RJUST_COLS=60
+LJUST_COLS=20
+RJUST_COLS=30
 VERBOSE=false
 
 
