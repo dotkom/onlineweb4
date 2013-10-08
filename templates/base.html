@@ -185,7 +185,9 @@
             <div class="row">
                 <div class="col-md-12">
                     {% for message in messages %}
-                    <div class="alert {% if message.tags %}{{ message.tags }}{% endif %}">
+                    <div class="alert {% if message.tags %}
+                        {% if message.tags == 'alert-error' %} alert-danger {% else %}
+                        {{ message.tags }}{% endif %}{% endif %}">
                         <button type="button" class="close" data-dismiss="alert">&times;</button>
                         {{ message }}
                     </div>
