@@ -45,7 +45,7 @@
                         {% if user.is_authenticated %}
                         <a href="#login_menu" class="login-btn dropdown-toggle dropdown-signin login" data-toggle="dropdown">{{ user.get_full_name }}<b class="caret"></b></a>
                         <ul class="dropdown-menu login-box" role="menu">
-                            <li><a href="#">Min profil</a></li>
+                            <li><a href="{% url 'profiles' %}">Min profil</a></li>
                             <li class="divider"></li>
                             <li><a href="{% url 'auth_logout' %}">Logg ut</a></li>
                         </ul>
