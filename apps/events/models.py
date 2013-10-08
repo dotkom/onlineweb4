@@ -113,6 +113,7 @@ class Event(models.Model):
         # Are there any rules preventing me from attending?
         # This should be checked last of the offsets, because it can completely deny you access.
         status_object = self.attendance_event.rules_satisfied(user)
+        print status_object
         if not status_object['status']:
             response = status_object
             if 'offset' not in status_object:
@@ -394,10 +395,9 @@ class AttendanceEvent(models.Model):
         Checks a user against rules applied to an attendance event
         """
         # If there are no rule_bundles on this object, all members of Online are allowed.
-        if not self.rule_bundles.exists(): #and user.is_online:
-            return {'status': True}
+        if not self.rule_bundles.exists() and user.is_member:
+            return {'status': True, 'status_code': 200}
 
-        status_object = {}
         smallest_offset = self.registration_start 
         errors = []    
 
@@ -418,6 +418,9 @@ class AttendanceEvent(models.Model):
             return status_object
         if errors:
             return errors[0]
+
+        # If there are no rule bundles and the user is not a member, return False
+        return {'status': False, 'message': _(u"Dette arrangementet er kun åpent for medlemmer."), 'status_code': 400}
 
     def is_attendee(self, user):
         return self.attendees.filter(user=user)

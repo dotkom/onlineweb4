@@ -7,6 +7,4 @@ urlpatterns = patterns('apps.resourcecenter.views',
     url(r'^$', 'index', name='resourcecenter_index'),
     # Subpages
     url(r'^gameservers/$', 'gameservers', name='resourcecenter_gameservers'),
-    # Catch-all
-    url(r'^.*/$', 'index', name='resourcecenter_index'),
 )
