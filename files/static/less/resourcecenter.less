@@ -1,7 +1,7 @@
 
 /* Debug */
 
-@debug: 0pt;
+@debug: 0px;
 .debugred {border: @debug solid red;}
 .debuglime {border: @debug solid lime;}
 .debugpink {border: @debug solid pink;}
@@ -11,7 +11,7 @@
 @box-background: #f2f2f2;
 @animation-time: 0.5s;
 @animation-time-long: 1.2s;
-@border: 2pt solid #ccc;
+@border: 2px solid #ccc;
 
 /* ResourceCenter */
 
@@ -32,7 +32,7 @@
     /* make sure all containers are the same size within each other */
     .flip-container, .front, .back {
         width: 100%;
-        min-height: 50pt;
+        min-height: 60px;
         overflow: visible;
     }
     /* flip speed goes here */
@@ -77,8 +77,8 @@
         .debuglime;
         // The background is visible behind the flip card during animation
         cursor: pointer;
-        padding: 5pt;
-        margin-bottom: 10pt;
+        padding: 5px;
+        margin-bottom: 10px;
     }
 
     .front {
@@ -86,10 +86,10 @@
         background-color: @box-background;
         border: @border;
         box-sizing: border-box;
-        padding-top: 10pt;
+        padding-top: 10px;
         img {
-            width: 110pt;
-            height: 110pt;
+            width: 130px;
+            height: 130px;
         }
     }
 
@@ -101,7 +101,7 @@
         text-align: left;
         .wraptext {
             .debugpink;
-            padding: 10pt;
+            padding: 10px;
         }
     }
     
