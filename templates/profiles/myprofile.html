@@ -10,7 +10,6 @@
                             <h3>Personlig informasjon</h3>
                         </div>
                     </div>
-{#                    {{ user_profile_form|crispy }}#}
                     {% for field in user_profile_form %}
                         {% ifnotequal field.name 'image' %}
                             <div class="inline">
@@ -45,7 +44,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-12 form-actions" style="margin-left: 0px">
+        <div class="col-md-12" style="margin-left: 0px">
             <button class="btn btn-success pull-right" type="submit">Lagre brukerinformasjon</button>
         </div>
     </form>
