@@ -3,8 +3,11 @@
 {% load sekizai_tags i18n wiki_tags compress %}
 {% load url from future %}
 
-<link href="{{ STATIC_URL }}wiki/bootstrap/css/wiki-bootstrap.min.css" rel="stylesheet">
-<link href="{{ STATIC_URL }}wiki/bootstrap/css/wiki-bootstrap-responsive.min.css" rel="stylesheet">
+{% block styles %}
+    {{ block.super }}
+    <link href="{{ STATIC_URL }}wiki/bootstrap/css/wiki-bootstrap.min.css" rel="stylesheet">
+    <link href="{{ STATIC_URL }}wiki/bootstrap/css/wiki-bootstrap-responsive.min.css" rel="stylesheet">
+{% endblock %}
 
 {% block content %}
     <section id="wiki">
