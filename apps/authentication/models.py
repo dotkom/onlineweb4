@@ -5,7 +5,7 @@ import datetime
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.db import models
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext as _
 
 FIELD_OF_STUDY_CHOICES = (
     (0, '--'),
@@ -48,13 +48,15 @@ class OnlineUser(AbstractUser):
 
     # TODO profile pictures
     # TODO checkbox for forwarding of @online.ntnu.no mail
-
+        
     @property
-    def is_online(self):
+    def is_member(self):
         """
         Returns true if the User object is associated with Online.
         """
-        return self.field_of_study != 0
+        if AllowedUsername.objects.filter(username=self.ntnu_username).filter(expiration_date__gte=datetime.datetime.now()).count() > 0:
+            return True
+        return False
 
     def get_full_name(self):
         """
@@ -62,6 +64,12 @@ class OnlineUser(AbstractUser):
         """
         full_name = u'%s %s' % (self.first_name, self.last_name)
         return full_name.strip()
+
+    def get_email(self):
+        return self.get_emails().filter(primary = True)[0]
+
+    def get_emails(self):
+        return Email.objects.all().filter(user = self)
 
     @property
     def year(self):
@@ -97,14 +105,52 @@ class OnlineUser(AbstractUser):
         verbose_name = _(u"brukerprofil")
         verbose_name_plural = _(u"brukerprofiler")
 
+
+class Email(models.Model):
+    user = models.ForeignKey(OnlineUser, related_name="email_user")
+    email = models.EmailField(_(u"epostadresse"), unique=True)
+    primary = models.BooleanField(_(u"aktiv"), default=False)
+    verified = models.BooleanField(_(u"verifisert"), default=False)
+
+    def __unicode__(self):
+        return self.email
+
+    class Meta:
+        verbose_name = _(u"epostadresse")
+        verbose_name_plural = _(u"epostadresser")
+
+
 class RegisterToken(models.Model):
-    user = models.ForeignKey(OnlineUser)
-    email = models.EmailField("email", max_length=254)
-    token = models.CharField("token", max_length=32)
-    created = models.DateTimeField("created", editable=False, auto_now_add=True, default=datetime.datetime.now())
+    user = models.ForeignKey(OnlineUser, related_name="register_user")
+    email = models.EmailField(_("epost"), max_length=254)
+    token = models.CharField(_("token"), max_length=32)
+    created = models.DateTimeField(_("opprettet dato"), editable=False, auto_now_add=True, default=datetime.datetime.now())
 
     @property
     def is_valid(self):
         valid_period = datetime.timedelta(days=1)
         now = datetime.datetime.now()
         return now < self.created + valid_period 
+
+
+class AllowedUsername(models.Model):
+    """
+    Holds usernames that are considered valid members of Online and the time they expire.
+    """
+    username = models.CharField(_(u"brukernavn"), max_length=10)
+    registered = models.DateField(_(u"registrert"))
+    note = models.CharField(_(u"notat"), max_length=100)
+    description = models.TextField(_(u"beskrivelse"))
+    expiration_date = models.DateField(_(u"utløpsdato"))
+
+    @property
+    def is_active(self):
+        return datetime.datetime.now() < self.expiration_date
+
+    def __unicode__(self):
+        return self.username
+
+    class Meta:
+        verbose_name = _("tillatt brukernavn")
+        verbose_name_plural = _("tillatte brukernavn")
+        ordering = ("username",)

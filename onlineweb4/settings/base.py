@@ -49,6 +49,7 @@ DATETIME_FORMAT = 'N j, Y, H:i'
 SECRET_KEY = 'q#wy0df(7&amp;$ucfrxa1j72%do7ko*-6(g!8f$tc2$3x@3cq5@6c'
 
 AUTH_USER_MODEL = 'authentication.OnlineUser'
+LOGIN_URL = '/auth/login/'
 
 MEDIA_ROOT = os.path.join(PROJECT_ROOT_DIRECTORY, 'uploaded_media') # Override this in local.py in prod.
 MEDIA_URL = '/media/'
@@ -100,6 +101,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
+    'middleware.http.Http403Middleware',
     # Uncomment the next line for simple clickjacking protection:
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
