@@ -14,16 +14,9 @@ Vagrant.configure('2') do |config|
             onlineweb_config.vm.box = 'precise32'
             onlineweb_config.vm.box_url = 'http://files.vagrantup.com/precise32.box'
 
-            if is_unix
-                puts 'unix forwarding (80 -> 8080, 8000 -> 8001, 443 -> 8443)'
-                onlineweb_config.vm.network :forwarded_port, guest: 8000, host: 8001
-                onlineweb_config.vm.network :forwarded_port, guest: 80, host: 8080
-                onlineweb_config.vm.network :forwarded_port, guest: 443, host: 8443
-            else
-                puts 'windows forwarding (80 -> 80, 443 -> 443)'
-                onlineweb_config.vm.network :forwarded_port, guest: 80, host: 80
-                onlineweb_config.vm.network :forwarded_port, guest: 443, host: 443
-            end
+            onlineweb_config.vm.network :forwarded_port, guest: 8000, host: 8001
+            onlineweb_config.vm.network :forwarded_port, guest: 80, host: 8080
+            onlineweb_config.vm.network :forwarded_port, guest: 443, host: 8443
 
             onlineweb_config.ssh.forward_agent = true
 
@@ -33,7 +26,7 @@ Vagrant.configure('2') do |config|
 
             onlineweb_config.vm.provider :virtualbox do |vbox|
                 vbox.gui = false
-                vbox.customize ['modifyvm', :id, '--natdnshostresolver1', 'on']
+                #vbox.customize ['modifyvm', :id, '--natdnshostresolver1', 'on']
                 #vbox.customize ['modifyvm', :id, '--memory', '256']
             end
 
