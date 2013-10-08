@@ -202,7 +202,7 @@ function ArticleArchive (Utils) {
                     // Variables
                     var num = 1;
                     var output = '<div class="row">'; // If we are not on the first page (and not using the filters), make the elements hidden to fade them in later
-                    
+
                     // The loop
                     for (var i = 0; i < data.articles.length; i++) {
                         // The markup
