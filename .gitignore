@@ -10,7 +10,7 @@ bower_components/
 .ropeproject
 .coverage
 *.db*
-
+static/*
 collected_static
 sqlite/
 local.py

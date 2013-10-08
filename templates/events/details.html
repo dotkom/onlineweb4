@@ -4,51 +4,51 @@
 {% block content %}
 
 <section id="event-details">
-    <div class="container-fluid">
-        <div class="row-fluid">
-            <div class="span12">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
                 <div class="page-header">
                     <h2 id="event-details-heading">{{event.title}}</h2>
                 </div>
             </div>
         </div>
-        <div class="row-fluid row-space">
-            <div class="span7">
-                <div class="row-fluid">
-                    <div class="span12">
+        <div class="row row-space">
+            <div class="col-md-7">
+                <div class="row">
+                    <div class="col-md-12">
                         <div class="event-hero-meta">
-                            <div class="row-fluid" style="margin-bottom:30px">
+                            <div class="row" style="margin-bottom:30px">
                                 <div class="event-hero-meta-info">
-                                     <div class="span4">
+                                     <div class="col-md-4">
                                         <div class="event-hero-title">Fra</div>
                                         <div class="event-hero-large-text">
                                             <span class="break">{{event.event_start|date:"H.i"}}</span>
                                             <span class="date-small">{{ event.event_start|date:"d. M Y" }}</span>
                                         </div>
                                     </div>
-                                    <div class="span4">
+                                    <div class="col-md-4">
                                         <div class="event-hero-title">Til</div>
                                         <div class="event-hero-large-text">
                                             <span class="break">{{event.event_end|date:"H.i"}}</span>
                                             <span class="date-small">{{ event.event_end|date:"d. M Y" }}</span>
                                         </div>
                                     </div>
-                                    <div class="span4">
+                                    <div class="col-md-4">
                                         <div class="event-hero-title">Lokasjon</div>
-                                        <div class="event-hero-large-text">{{ event.location }}</div>
+                                        <div class="event-hero-small-text">{{ event.location }}</div>
                                     </div>   
                                 </div>
                             </div>
                             {% if attendance_event %}
-                                <div class="row-fluid">
+                                <div class="row">
                                     <div class="event-hero-meta-info">
-                                        <div class="span4">
+                                        <div class="col-md-4">
                                             <div class="event-hero-title">Påmeldte</div>
                                             <div class="event-hero-large-text">
                                                 {{ event.number_of_attendees_not_on_waiting_list }}/{{ attendance_event.max_capacity }}
                                             </div>
                                         </div>
-                                        <div class="span4">
+                                        <div class="col-md-4">
                                             {% if attendance_event.waitlist_enabled %}
                                                 <div class="event-hero-title">Antall på venteliste</div>
                                                 <div class="event-hero-large-text">{{ event.number_of_attendees_on_waiting_list }}</div> 
@@ -57,7 +57,7 @@
                                                 <div class="event-hero-small-text">Utilgjengelig</div>
                                             {% endif %}                                   
                                         </div>
-                                        <div class="span4">
+                                        <div class="col-md-4">
                                             <div class="event-hero-title">Påmeldingsstart</div>
                                             <div class="event-hero-large-text">
                                                 <div class="event-hero-large-text">
@@ -75,9 +75,8 @@
                 </div>
                 
             </div>
-            <div class="span5">
-                <div class="row-fluid row-space">
-                <div class="span12 event-status">
+            <div class="col-md-5">
+                <div class="col-md-12 event-status row-space">
                     {% if attendance_event %}
                         {% if user_anonymous %}
                             <p class="status-text">Du må være logget inn for å se din status.</p>
@@ -101,13 +100,13 @@
                                             </div> 
                                         {% else %}
                                             <p class="status-text">Du kan melde deg på dette arrangementet.</p>
-                                           <div class="action"><a href="#attend" role="button" class="btn btn-large btn-success" data-toggle="modal">Meld meg på</a></div>
+                                            <div class="action"><a href="#attend" role="button" class="btn btn-large btn-success" data-toggle="modal">Meld meg på</a></div>
                                         {% endif %}
-                                    {% elif user_staus.offset %}
-                                    
-                                        <p class="status-text">Du kan melde deg på om {{ user_status.offset }} timer.</p>
-                                    {% elif not user_status.status and user_status.message %} 
-                                        <p class="status-text">{{ user_status.message }}</p>
+                                    {% elif user_status.offset %}
+                                        <p class="status-text">Du kan melde deg på {{ user_status.offset }}.</p>
+                                        {% if not user_status.status and user_status.message %} 
+                                            <p class="status-text">{{ user_status.message }}</p>
+                                        {% endif %}
                                     {% else %}
                                         <p class="status-text">Du har ikke tilgang til dette arrangementet</p>
                                     {% endif %}
@@ -126,10 +125,9 @@
             {% endif %}
                 </div>
 
-            </div>
             {% if attendance_event %}
-                <div class="row-fluid">
-                    <div class="span12">
+                <div class="row">
+                    <div class="col-md-12">
                         <div class="event-access">
                             <p class="access-title">Dette arrangementet er åpent for</p>
                             <div class="rules">
@@ -151,15 +149,15 @@
         </div>
 
         </div>
-        <div class="row-fluid">
-            <div class="span7">
+        <div class="row">
+            <div class="col-md-7">
                 <div class="ingress">{{ event.ingress|striptags|markdown}}</div>
                 {{ event.description|striptags|markdown}}
             </div>
-            <div class="span5">
+            <div class="col-md-5">
                 {% if event.companies.all %}
-                <div class="row-fluid">
-                    <div class="span12 event-status-companies">
+                <div class="row">
+                    <div class="col-md-12 event-status-companies">
                         <div class="title">Medarrangører</div>
                         {% for company_relation in event.companies.all %}
                             <div class="heading clearfix row-space">
@@ -174,11 +172,7 @@
                     </div>
                 </div>
                 {% else %}
-                <div class="row-fluid row-space">
-                    <div class="span12">
-                        <img src="{% version event.image 'events_main' %}" alt="{{ event.title }}"/>
-                    </div>
-                </div>
+                    <img width="100%" src="{% version event.image 'events_main' %}" alt="{{ event.title }}"/>
                 {% endif %}
             </div>
         </div>

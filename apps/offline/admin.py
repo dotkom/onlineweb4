@@ -8,6 +8,9 @@ class ProxyChunkAdmin(admin.ModelAdmin):
 
     readonly_fields = ['key']
 
+    def has_add_permission(self, request):
+        return False
+
     def queryset(self, request):
         offline = Chunk.objects.filter(Q(key='offline_ingress') | Q(key='offline_brodtekst'))
         return offline

@@ -27,6 +27,7 @@ $(function() {
     $('#about-tabs a').click(function (e) {
         e.preventDefault();
         $(this).tab('show',update_pos);
+        $('html, body').animate({scrollTop: $('#about').offset().top - 75}, 250);
     });
        
     // On scroll, loop the navs and swap active (if it needs to)
@@ -54,7 +55,7 @@ $(function() {
     
     // Clicking the links in the topnav
     $('.nav a').on('click',function(e) {
-        e.preventDefault();
+        //e.preventDefault();
         var $that = $(this);
         var jumpto_section = $that.data('section');
         if (typeof jumpto_section !== 'undefined') {

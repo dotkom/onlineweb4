@@ -1,7 +1,64 @@
 /* Navbar
 -------------------------------------------------- */
+nav.navbar {
+    /*background: #FFF url('/static/img/top_bar.jpg') repeat-x;*/
+    background: #004b80;
+    border: 0;
+    margin-bottom: 0;
 
-.navbar a { text-transform: uppercase; }
+    .logo {
+        margin-bottom:-17px;
+        margin-top:-21px;
+    }
+
+    li {
+        border-top: 5px solid rgba(255, 255, 255, 0.1);
+        margin-right: 1px;
+        font-size: 13px;
+        font-weight:400;
+
+        text-transform: uppercase;
+
+        &.active {
+            border-top: 5px solid rgba(255, 255, 255, 1);
+        }
+    }
+
+    .navbar-right {
+        li {
+            border-color: transparent;
+
+            &.top-menu-img a:hover {
+                background: none;
+            }
+        }
+    }
+}
+
+nav.subnavbar {
+    top: 62px;
+    left: -30px;
+    background: #bbb;
+    z-index: 1000;
+
+    a {
+        color: #ccc;
+        height: 35px;
+        line-height: 35px;
+        padding-top: 0;
+    }
+
+    li {
+        font-size: 12px;
+
+        a.active {
+            background: #d0d0d0;
+        }
+    }
+}
+
+
+/*.navbar a { text-transform: uppercase; }
 
 .navbar .nav {
     height: @nav-height;
@@ -88,4 +145,4 @@ div.nav-collapse.in.collapse ul.nav.menu-elements li.top-menu-link a {
 div.nav-collapse.in.collapse ul.nav.pull-right li.dropdown a.login-btn.dropdown-toggle.dropdown-signin.login {
     color: black;
 }
-
+*/
