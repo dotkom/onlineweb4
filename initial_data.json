@@ -134,5 +134,93 @@
         }, 
         "model": "chunks.chunk", 
         "pk": 17
+    },
+    {
+        "pk": 1, 
+        "model": "auth.group", 
+        "fields": {
+            "name": "arrKom", 
+            "permissions": []
+        }
+    },
+    {
+        "pk": 2, 
+        "model": "auth.group", 
+        "fields": {
+            "name": "bankKom", 
+            "permissions": []
+        }
+    },
+    {
+        "pk": 3, 
+        "model": "auth.group", 
+        "fields": {
+            "name": "bedKom", 
+            "permissions": []
+        }
+    },
+    {
+        "pk": 4, 
+        "model": "auth.group", 
+        "fields": {
+            "name": "dotKom", 
+            "permissions": []
+        }
+    },
+    {
+        "pk": 5, 
+        "model": "auth.group", 
+        "fields": {
+            "name": "eksKom", 
+            "permissions": []
+        }
+    },
+    {
+        "pk": 6, 
+        "model": "auth.group", 
+        "fields": {
+            "name": "fagKom", 
+            "permissions": []
+        }
+    },
+    {
+        "pk": 7, 
+        "model": "auth.group", 
+        "fields": {
+            "name": "proKom", 
+            "permissions": []
+        }
+    },
+    {
+        "pk": 8, 
+        "model": "auth.group", 
+        "fields": {
+            "name": "triKom", 
+            "permissions": []
+        }
+    },
+    {
+        "pk": 9, 
+        "model": "auth.group", 
+        "fields": {
+            "name": "velKom", 
+            "permissions": []
+        }
+    },
+    {
+        "pk": 10, 
+        "model": "auth.group", 
+        "fields": {
+            "name": "pangKom", 
+            "permissions": []
+        }
+    },
+    {
+        "pk": 11, 
+        "model": "auth.group", 
+        "fields": {
+            "name": "Hovedstyre", 
+            "permissions": []
+        }
     }
 ]
