@@ -21,7 +21,6 @@ FIELD_OF_STUDY_CHOICES = [
     (9, _(u'Annet Onlinemedlem')),
 ]
 
-
 class OnlineUser(AbstractUser):
 
     IMAGE_FOLDER = "images/profiles"
