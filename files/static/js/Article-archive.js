@@ -235,8 +235,6 @@ function ArticleArchive (Utils) {
                     // Wrapping up the chunk
                     output += '</div>';
                     
-                    console.log(overwrite);
-                    
                     // Appending the content. Either appending content or replacing it based on parameters supplied
                     if (overwrite) {
                         // We are overwriting existing articles
