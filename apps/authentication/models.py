@@ -18,6 +18,7 @@ FIELD_OF_STUDY_CHOICES = [
     (6, _(u'Intelligente Systemer (IRS)')),
     (7, _(u'PhD')),
     (8, _(u'International')),
+    (9, _(u'Annet Onlinemedlem')),
 ]
 
 
