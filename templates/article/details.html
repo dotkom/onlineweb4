@@ -70,7 +70,7 @@
                                     <div class="row row-space">
                                 {% endif %}
                                     <div class="col-md-6">
-                                        <a href="{% url 'article_details' related_article.id%}">
+                                        <a href="{{ related_article.get_absolute_url }}">
                                             <img src="{% version related_article.image 'article_related' %}" 
                                                 alt="{{ related_article.heading }}"/>
                                             <h4>{{ related_article.heading }}</h4>
