@@ -5,7 +5,7 @@ from django.contrib.messages import constants as messages
 # Directory that contains this file.
 PROJECT_SETTINGS_DIRECTORY = os.path.dirname(globals()['__file__'])
 # Root directory. Contains manage.py
-PROJECT_ROOT_DIRECTORY = os.path.join(PROJECT_SETTINGS_DIRECTORY, '../..')
+PROJECT_ROOT_DIRECTORY = os.path.join(PROJECT_SETTINGS_DIRECTORY, '..', '..')
 #PROJECT_ROOT_DIRECTORY = os.path.dirname(os.path.dirname(__file__))
 
 TEST_RUNNER = "django_nose.NoseTestSuiteRunner"
@@ -55,6 +55,9 @@ MEDIA_URL = '/media/'
 
 STATIC_ROOT = os.path.join(PROJECT_ROOT_DIRECTORY, 'static')
 STATIC_URL = '/static/'
+
+#Url of default profile picture
+DEFAULT_PROFILE_PICTURE_URL = os.path.join(STATIC_URL, "img", "profile_default.png")
 
 # Additional locations of static files
 STATICFILES_DIRS = (
@@ -135,7 +138,6 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.sites',
     'django.contrib.staticfiles',
-    'django.contrib.markup',
 
     # Onlineweb 4 apps
     'apps.article',
@@ -148,6 +150,7 @@ INSTALLED_APPS = (
     'apps.offline',
     'apps.feedback',
     'apps.mommy',
+    'apps.profiles',
 )
 
 # A sample logging configuration. The only tangible logging

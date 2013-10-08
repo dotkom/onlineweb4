@@ -82,7 +82,6 @@ class RecoveryForm(forms.Form):
     email = forms.EmailField(label="Email", max_length=50)
 
 class ChangePasswordForm(forms.Form):
-    old_password = forms.CharField(widget=forms.PasswordInput(render_value=False), label="Old password", required=False)
     new_password = forms.CharField(widget=forms.PasswordInput(render_value=False), label="New password")
     repeat_password = forms.CharField(widget=forms.PasswordInput(render_value=False), label="Repeat new password")
 

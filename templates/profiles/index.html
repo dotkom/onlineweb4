@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% load compress %}
+{% block js %}
+    {{ block.super }}
+    <script src="{{ STATIC_URL }}/js/libs/jquery.cookie.js"></script>
+    <script src="{{ STATIC_URL }}/js/profiles.js"></script>
+    <script src="{{ STATIC_URL }}/js/libs/jquery.Jcrop.min.js"></script>
+    <script src="{{ STATIC_URL }}/js/libs/jquery.color.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
+{% endblock %}
+
+{% block styles %}
+    {{ block.super }}
+    {% compress css %}
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}less/jcrop/jquery.Jcrop.min.css">
+    <link rel="stylesheet" type="text/less" href="{{ STATIC_URL }}less/profiles.less">
+    {% endcompress %}
+{% endblock %}
+
+{% block content %}
+    <section id="profile">
+        <div class="container-fluid">
+            <div class="row-fluid">
+                <div class="span12">
+                    <div class="page-header">
+                        <h2>Min side</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="row-fluid">
+                <div class="span12">
+                    <div class="tabbable">
+                        <!-- Desktop menu -->
+                        <ul class="nav nav-tabs visible-desktop visible-tablet hidden-phone" id="userprofile-tabs">
+                            <li class="{%ifequal 'myprofile' active_tab %}active{% endifequal %}">
+                                <a href="#myprofile" data-toggle="tab">Brukerinformasjon</a>
+                            </li>
+                            {#        <li class="{%ifequal 'myevents' active_tab %}active{% endifequal %}">#}
+                            {#            <a href="#myevents" data-toggle="tab">Mine events</a>#}
+                            {#        </li>#}
+                            <li class="{%ifequal 'privacy' active_tab %}active{% endifequal %}">
+                                <a href="#privacy" data-toggle="tab">Personvern</a>
+                            </li>
+                            <li class="{%ifequal 'marks' active_tab %}active{% endifequal %}">
+                                <a href="#marks" data-toggle="tab">Prikker</a>
+                            </li>
+                            <li class="{%ifequal 'password' active_tab %}active{% endifequal %}">
+                                <a href="#password" data-toggle="tab">Passord</a>
+                            </li>
+                            <li class="{%ifequal 'mail-settings' active_tab %}active{% endifequal %}">
+                                <a href="#mail-settings" data-toggle="tab">E-post-instillinger</a>
+                            </li>
+                        </ul>
+                        <!-- End Desktop menu -->
+                        <!-- Mobile menu -->
+                        <ul class="nav nav-list visible-phone hidden-desktop hidden-tablet" id="userprofile-tabs">
+                            <li class="{% ifequal 'myprofile' active_tab %}active{% endifequal %}"><a href="#myprofile" data-toggle="tab">Brukerinformasjon</a></li>
+                            {#        <li class="{% ifequal 'myevents' active_tab %}active{% endifequal %}"><a href="#myevents" data-toggle="tab">Mine events</a></li>#}
+                            <li class="{% ifequal 'privacy' active_tab %}active{% endifequal %}"><a href="#privacy" data-toggle="tab">Personvern</a></li>
+                            <li class="{% ifequal 'marks' active_tab %}active{% endifequal %}"><a href="#marks" data-toggle="tab">Prikker</a></li>
+                            <li class="{% ifequal 'password' active_tab %}active{% endifequal %}"><a href="#password" data-toggle="tab">Passord</a></li>
+                            <li class="{% ifequal 'mail-settings' active_tab %}active{% endifequal %}"><a href="#mail-settings" data-toggle="tab">E-post-instillinger</a></li>
+                        </ul>
+                        <!-- End Mobile menu -->
+                        <div class="tab-content">
+                            <div id="myprofile" class="tab-pane {%ifequal 'myprofile' active_tab %}active{% endifequal %}">
+                                {% include "profiles/myprofile.html" %}
+                            </div>
+{#                            <div id="myevents" class="tab-pane {%ifequal 'myevents' active_tab %} active {% endifequal %}">#}
+{#                                {% include "profiles/myevents.html" %}#}
+{#                            </div>#}
+                            <div id="privacy" class="tab-pane {%ifequal 'privacy' active_tab %} active {% endifequal %}">
+                                {% include "profiles/privacy.html" %}
+                            </div>
+                            <div id="marks" class="tab-pane {%ifequal 'marks' active_tab %} active {% endifequal %}">
+                                {% include "profiles/marks.html" %}
+                            </div>
+                            <div id="password" class="tab-pane {%ifequal 'password' active_tab %} active {% endifequal %}">
+                                {% include "profiles/change_password.html" %}
+                            </div>
+                            <div id="mail-settings" class="tab-pane {%ifequal 'mail-settings' active_tab %} active {% endifequal %}">
+                                {% include "profiles/mail_settings.html" %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock content %}

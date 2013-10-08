@@ -26,6 +26,6 @@ Vagrant.configure("2") do |config|
 #Sharing
     
     #Share the vagrant folder on the host OS with the home folder on guest OS
-    #config.vm.synced_folder ".", "/Vagrant/"
+    config.vm.synced_folder ".", "/Vagrant/"
     
 end

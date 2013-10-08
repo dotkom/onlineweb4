@@ -3,10 +3,17 @@
 section#business {
 
     .sales-contact {
-        background:@baby-blue;
-        color:white;
-        padding:10px;
-        float:left;
+        background:white;
+        color:@baby-blue;
+        font-size: 18px;
+        line-height: 20px;
+        vertical-align: top;
+        padding-top: 10px;
+        padding-bottom: 10px;
+
+        i.glyphicon {
+            color: @heading;
+        }
     }
 
 
@@ -33,7 +40,8 @@ section#business {
     .sale-content {
         font-weight:300;
         padding:10px;
-        font-size:18px;
+        margin-bottom: 15px;
+        font-size:15px;
         background:@light-blue-soft;
 
         .sale-points {
