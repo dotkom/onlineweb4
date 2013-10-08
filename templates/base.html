@@ -271,6 +271,12 @@
         <script src="{{ STATIC_URL }}js/init.js"></script>
     {% endblock %}
 
+    {%  block backbone %}
+        <!-- build:js scripts/main.js -->
+        <script data-main="{{ STATIC_URL }}js/event_archive/scripts/config" src="{{ STATIC_URL }}js/event_archive/bower_components/requirejs/require.js"></script>
+        <!-- endbuild -->
+    {%  endblock %}
+
     </body>
 </html>
 

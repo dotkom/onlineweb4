@@ -192,6 +192,8 @@ LOGGING = {
     }
 }
 
+IMPORT_DDF_MODELS = False
+
 # crispy forms settings
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
 

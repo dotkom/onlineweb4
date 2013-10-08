@@ -99,5 +99,6 @@ class EventResource(ModelResource):
         
         ordering = ['event_start']
         filtering = {
-            'event_end' : ('gte',)
+            'event_end' : ('gte',),
+            'event_type': ('exact',)
         }
