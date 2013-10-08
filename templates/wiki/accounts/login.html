@@ -15,10 +15,11 @@
 </div>
 </form>
 
-{% addtoblock "js" %}
-<script type="text/javascript">
-  $('#id_username').focus();
-</script>
-{% endaddtoblock %}
+{% block js %}
+    {{ block.super }}
+    <script type="text/javascript">
+        $('#id_username').focus();
+    </script>
+{% endblock %}
 
 {% endblock %}
