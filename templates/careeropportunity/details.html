@@ -17,13 +17,15 @@
                 {{ opportunity.description|striptags|markdown }}
             </div>
             <div class="col-md-4 col-sm-5">
+                <div class="row">
+                    <div class="col-md-12">
+                        <a href="{% url 'company_details' opportunity.company.id %}">
+                        <img width="100%" src="{% version opportunity.company.image 'companies_medium'     %}" alt="" />
+                        </a>
+                    </div>
+                </div>
                 <div class="company"><!-- Start company style wrapper -->
                 <a href="{% url 'company_details' opportunity.company.id %}">
-                    <div class="row">
-                        <div class="col-md-12">
-                            <img width="100%" src="{% version opportunity.company.image 'companies_medium' %}" alt="" />
-                        </div>
-                    </div>
                     <div class="row">
                         <div class="col-md-12">
                             <h3>{{ opportunity.company.name }}</h3>
