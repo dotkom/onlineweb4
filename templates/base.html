@@ -45,7 +45,7 @@
                         {% if user.is_authenticated %}
                         <a href="#login_menu" class="login-btn dropdown-toggle dropdown-signin login" data-toggle="dropdown">{{ user.get_full_name }}<b class="caret"></b></a>
                         <ul class="dropdown-menu login-box" role="menu">
-                            <li><a href="#">Profile bleh</a></li>
+                            <li><a href="#">Min profil</a></li>
                             <li class="divider"></li>
                             <li><a href="{% url 'auth_logout' %}">Logg ut</a></li>
                         </ul>
@@ -65,9 +65,9 @@
                                     <input type="hidden" name="next" value="{{ request.get_full_path }}" />
                                     <button type="submit" class="btn btn-primary">Logg inn</button>
                                 </form>
-                                <div class="login-form-btn-group">
-                                    <button class="btn btn-default" data-url="{% url 'auth_register' %}">Registrer</button>
-                                    <button class="btn btn-default" data-url="{% url 'auth_recover' %}">Glemt passord</button>
+                                <div id="login-form-btn-group">
+                                    <a class="btn btn-default" href="{% url 'auth_register' %}">Registrer</a>
+                                    <a class="btn btn-default" href="{% url 'auth_recover' %}">Glemt passord</a>
                                 </div>
                             </li>
                         </ul>
