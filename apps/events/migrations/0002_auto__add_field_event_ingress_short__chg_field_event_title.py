@@ -10,7 +10,7 @@ class Migration(SchemaMigration):
     def forwards(self, orm):
         # Adding field 'Event.ingress_short'
         db.add_column(u'events_event', 'ingress_short',
-                      self.gf('django.db.models.fields.CharField')(default=datetime.datetime(2013, 9, 11, 0, 0), max_length=150),
+                      self.gf('django.db.models.fields.CharField')(default='', max_length=150),
                       keep_default=False)
 
 
