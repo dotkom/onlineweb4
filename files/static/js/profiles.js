@@ -208,5 +208,111 @@ $(document).ready(function() {
 
 
     /* End image cropping and uploading*/
+
+/*
+ JS for email management.
+*/
+
+    $('button.addnewemail').click(function() {
+        $('tr.addnewemail').show();
+        $(this).hide();
+    });
+    $('.emptyonclick').focus(function() {
+        $(this).val('');
+    });
+
+    $('tr').each(function(i, row) {
+// Ajax request to delete an email
+        $(row).find('button.delete').click(function() {
+            if ($(row).find('button.active').length) {
+                alert("Du kan ikke fjerne din primæraddresse.");
+            }
+            else {
+                email = $(row).find('span.email').text();
+                deleteEmail(email, row);
+            }
+        });
+// Ajax request to set email as primary
+        $(row).find('button.primary').click(function() { 
+            email = $(row).find('span.email').text();
+            setPrimaryEmail(email, row);
+        });
+// Ajax request to send verification mail
+        $(row).find('button.verify').click(function() {
+            email = $(row).find('span.email').text();
+            verifyEmail(email, row);
+        });
+    });
+
+    var deleteEmail = function(email, row) {
+        $.ajax({
+            method: 'POST',
+            url: 'delete_email/',
+            data: {'email':email, },
+            success: function() {
+                // TODO Make animation
+                $(row).hide();
+            },
+            error: function(res) {
+                if (status === 412) {
+                    res = JSON.parse(res['responseText']);
+                    alert(res['message']);
+                }
+                else {
+                // TODO write a proper error function
+                    alert("Error!");
+                }
+            },
+            crossDomain: false
+        });
+    }
+
+    var setPrimaryEmail = function(email, row) {
+        $.ajax({
+            method: 'POST',
+            url: 'set_primary/',
+            data: {'email':email, },
+            success: function() {
+                $('button.active').removeClass('active').removeClass('btn-success').addClass('btn-default')
+                    .prop('disabled', false).text('Sett primær');
+                $(row).find('button.primary').addClass('active').removeClass('btn-default').addClass('btn-success')
+                    .prop('disabled', true).text('Primær');
+            },
+            error: function(res) {
+                if (status === 412) {
+                    res = JSON.parse(res['responseText']);
+                    alert(res['message']);
+                }
+                else {
+                // TODO write a proper error function
+                    alert("Error!");
+                }
+            },
+            crossDomain: false
+        });
+    }
+
+    var verifyEmail = function(email, row) {
+        $.ajax({
+            method: 'POST',
+            url: 'verify_email/',
+            data: {'email':email, },
+            success: function() {
+                alert("tada");
+            },
+            error: function(res) {
+                if (status === 412) {
+                    res = JSON.parse(res['responseText']);
+                    alert(res['message']);
+                }
+                else {
+                // TODO write a proper error function
+                    alert("Error!");
+                }
+            },
+            crossDomain: false
+        });
+    }
 });
+
 
