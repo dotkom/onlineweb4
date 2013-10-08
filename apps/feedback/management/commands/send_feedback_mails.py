@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
-
+from django.core.management.base import NoArgsCommand
 from apps.feedback.models import FeedbackRelation
-from apps.feedback.feedback_mail import FeedbackMail, Message
+from apps.feedback.feedback_mails import FeedbackMail, Message
+from django.core.mail import EmailMessage
 
 class Command(NoArgsCommand):
     help = "Loops trough active feedbacks and sends mails to attendees. Run it once a day"

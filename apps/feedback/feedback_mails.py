@@ -3,8 +3,6 @@
 import datetime
 import locale
 
-from django.core.management.base import NoArgsCommand
-from django.core.mail import EmailMessage
 from django.contrib.contenttypes.models import ContentType
 from apps.events.models import Event, AttendanceEvent, Attendee
 from apps.feedback.models import FeedbackRelation
@@ -12,37 +10,38 @@ from apps.marks.models import Mark, UserEntry
 import socket
 
 class FeedbackMail():
+    @staticmethod
     def generate_message(feedback):
         today = datetime.date.today()
         yesterday = today + datetime.timedelta(days=-1)
-        not_responded = get_users(feedback)
+        not_responded = FeedbackMail.get_users(feedback)
         #return false if everyone has answered
         if not not_responded:
             return False
         
-        message.attended_mails = get_user_mails(not_responded)
+        message = Message()
+        message.attended_mails = FeedbackMail.get_user_mails(not_responded)
 
         locale.setlocale(locale.LC_TIME, 'nb_NO.UTF-8')
-        message.committee_mail = get_committee_email()
+        message.committee_mail = FeedbackMail.get_committee_email(feedback)
         deadline = feedback.deadline.strftime("%d. %B").encode("utf-8")
-        title = str(get_title(feedback)).encode("utf-8")
-        message.link = str(u"\n\n" + get_link(feedback)).encode("utf-8")
-        results_link = str(get_link(feedback) + "results").encode("utf-8")
+        title = str(FeedbackMail.get_title(feedback)).encode("utf-8")
+        message.link = str(u"\n\n" + FeedbackMail.get_link(feedback)).encode("utf-8")
+        results_link = str(FeedbackMail.get_link(feedback) + "results").encode("utf-8")
        
-        start_date = start_date(feedback):
+        start_date = feedback.get_start_date()
         deadline_diff = (feedback.deadline - today).days
-        day_after_event = day_after_event(start_date)
+        day_after_event = FeedbackMail.day_after_event(start_date)
         
-        message = Message()
 
         message.subject = u"Feedback: %s" % (title)
         message.intro = u"Hei, vi ønsker tilbakemelding på \"%s\"" % (title)
-        message.mark = mark_message(feedback)
-        message.contact = u"\n\nEventuelle spørsmål sendes til %s " % (committee_mail)
-        message.start_date = start_date_message(start_date)
+        message.mark = FeedbackMail.mark_message(feedback)
+        message.contact = u"\n\nEventuelle spørsmål sendes til %s " % (message.committee_mail)
+        message.start_date = FeedbackMail.start_date_message(start_date)
 
         if deadline_diff < 0: #Deadline passed
-            set_marks(feedback, title, not_responded)
+            FeedbackMail.set_marks(feedback, title, not_responded)
                 
             feedback.active = False
             feedback.save()
@@ -72,6 +71,7 @@ class FeedbackMail():
 
         return message
         
+    @staticmethod
     def day_after_event(start_date):
         if start_date:
             return start_date + datetime.timedelta(days=1)
@@ -79,7 +79,8 @@ class FeedbackMail():
             return False
 
        
-    def start_date(feedback)
+    @staticmethod
+    def start_date(feedback):
         start_date = feedback.get_start_date()
         
         if start_date:
@@ -87,6 +88,7 @@ class FeedbackMail():
         else:
             return False
 
+    @staticmethod
     def start_date_message(start_date):
         #If the object(event) doesnt have start date it will send 
         #the first notification the day after the feedbackrelation is made
@@ -98,22 +100,28 @@ class FeedbackMail():
         
         return message_start_date   
 
+    @staticmethod
     def get_users(feedback):
         return feedback.get_slackers()
 
+    @staticmethod
     def get_user_mails(not_responded):
         return  [user.email for user in not_responded]
 
+    @staticmethod
     def get_link(feedback):
         hostname = socket.gethostname()
         return str(hostname + feedback.get_absolute_url())
 
+    @staticmethod
     def get_title(feedback):
         return feedback.get_title()
 
+    @staticmethod
     def get_committee_email(feedback):
-        return feedback.get_mail()
+        return feedback.get_email()
 
+    @staticmethod
     def mark_message(feedback):
         if feedback.gives_mark:
             return u"\nVær oppmerksom på at du får prikk dersom du ikke svarer " \
@@ -121,6 +129,7 @@ class FeedbackMail():
         else:
             return ""
 
+    @staticmethod
     def set_marks(feedback, title, not_responded):
         mark = Mark()
         mark.title = u"Manglende tilbakemelding på %s" % (title)
@@ -148,7 +157,7 @@ class Message():
     results_message = False
 
     committee_mail = ""
-    atendee_mail = ""
+    attended_mails = False
 
 
     def __unicode__(self):
