@@ -63,4 +63,34 @@ $(function() {
         console.log('fired');
         map.panTo(new google.maps.LatLng(63.41819751959266, 10.40592152481463));
     });
+
+    /* Login / user button change on window resize
+    --------------------------------------------------------------------------------- */
+    var old_login_btn =  $('#login_menu a').html();
+
+    change_login_button_view();
+
+    $(window).resize(function() {
+        change_login_button_view();
+    });
+
+    function change_login_button_view() {
+        if ($(window).innerWidth() <= 992) {
+            $('#login_menu a').html('');
+            $('#login_menu a').addClass('glyphicon glyphicon-user');
+        }
+        else {
+            $('#login_menu a').html(old_login_btn);
+            $('#login_menu a').removeClass('glyphicon glyphicon-user');
+        }
+    }
+
+    $('.dropdown-menu input, .dropdown-menu button, .dropdown-menu label').click(function(e) {
+        e.stopPropagation();
+    });
+
+    /* Menu element change
+    --------------------------------------------------------------------------------- */
+    $("a[href='"+window.location.pathname+"']").parent().addClass('active');
+
 });
