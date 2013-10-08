@@ -14,12 +14,8 @@
     </button>
 </div>
 </form>
-
-{% block js %}
-    {{ block.super }}
-    <script type="text/javascript">
-        $('#id_username').focus();
-    </script>
-{% endblock %}
+<script type="text/javascript">
+$('#id_username').focus();
+</script>
 
 {% endblock %}
