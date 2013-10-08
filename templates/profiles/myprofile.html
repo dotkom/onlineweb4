@@ -1,3 +1,4 @@
+{% load crispy_forms_tags %}
 <div class="row">
     <form method="post" action="{% url 'save_user_profile' %}" enctype="multipart/form-data">
         <div class="col-md-12">
@@ -9,6 +10,7 @@
                             <h3>Personlig informasjon</h3>
                         </div>
                     </div>
+{#                    {{ user_profile_form|crispy }}#}
                     {% for field in user_profile_form %}
                         {% ifnotequal field.name 'image' %}
                             <div class="inline">
@@ -82,8 +84,8 @@
                             <div class="col-md-12">
                                 <form method="post" enctype="multipart/form-data"  action="{% url 'upload_image' %}" id="upload-image-form">
                                     {% csrf_token %}
-                                    {{ user_profile_form.image }}
-                                    {{ user_profile_form.image.errors }}
+                                    {{ image_form.image }}
+                                    {{ image_form.image.errors }}
                                     <input name="x" type="hidden" id="inputx">
                                     <input name="y" type="hidden" id="inputy">
                                     <input name="x2" type="hidden" id="inputx2">

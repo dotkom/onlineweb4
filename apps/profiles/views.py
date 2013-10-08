@@ -13,7 +13,7 @@ from django.shortcuts import render
 from django.utils.translation import ugettext as _
 
 from apps.marks.models import Mark
-from apps.profiles.forms import MailSettingsForm, PrivacyForm, ProfileForm
+from apps.profiles.forms import ImageForm, MailSettingsForm, PrivacyForm, ProfileForm
 
 
 """
@@ -49,6 +49,7 @@ def create_request_dictionary(request):
     dict = {
         'privacy_form' : PrivacyForm(instance=request.user.privacy),
         'user_profile_form' : ProfileForm(instance=request.user),
+        'image_form' : ImageForm(instance=request.user),
         'password_change_form' : PasswordChangeForm(request.user),
         'marks' : [
             # Tuple syntax ('title', list_of_marks, is_collapsed)
