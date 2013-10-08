@@ -1400,10 +1400,8 @@ msgid ""
 "can change to a particular revision or merge an old revision with the "
 "current one."
 msgstr ""
-"Klikk på hver revisjon for å se en liste av redigerte linjer. Trykk på Forhåndsvisnings-knappen "
-"for å se hvordan artikkelen så ut på dette tidspunkt. På bunnen av siden kan du "
-"skifte til en bestemt revisjon eller slå sammen en gammel revisjon med den "
-"gjeldende."
+"Klikk for å se revisjon." 
+"Trykk på Forhåndsvisnings-knappen for å se valgte revisjon"
 
 
 #: templates/wiki/history.html:72
@@ -1424,7 +1422,7 @@ msgstr "Endre"
 
 #: templates/wiki/history.html:129
 msgid "Merge selected with current..."
-msgstr "Sammenslå den valgte med den gjeldende versjonen ..."
+msgstr "Sammenslå med gjeldende.."
 
 #: templates/wiki/history.html:133
 msgid "Switch to selected version"
