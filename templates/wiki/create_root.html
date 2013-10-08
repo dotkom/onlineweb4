@@ -5,11 +5,9 @@
 
 {% block wiki_contents %}
   
-  {% addtoblock "js" %}
   {% for js in editor.Media.js %}
   <script type="text/javascript" src="{{ STATIC_URL }}{{ js }}"></script>
   {% endfor %}
-  {% endaddtoblock %}
 
   {% addtoblock "css" %}
   {% for media, srcs in editor.Media.css.items %}

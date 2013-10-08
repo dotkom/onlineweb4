@@ -55,11 +55,8 @@
  
   {% endif %}
 
-{% addtoblock "js" %}
 <script type="text/javascript">
   $('#id_revision').val('{{ article.current_revision.id }}');
 </script>
-{% endaddtoblock %}
 
 {% endblock %}
-

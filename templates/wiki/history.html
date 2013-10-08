@@ -8,11 +8,8 @@
 
 {% include "wiki/includes/modals.html" %}
 
-{% addtoblock "js" %}
 <script type="text/javascript" src="{{ STATIC_URL }}wiki/js/diffview.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}wiki/js/diff.js"></script>
-{% endaddtoblock %}
-{% addtoblock "css" %}
 <style type="text/css">
   td.linenumber {
     width: 20px;
@@ -43,7 +40,6 @@
     border-top: 1px solid #DDD;    
   }
 </style>
-{% endaddtoblock %}
 
 <p class="lead">
   {% trans "Click each revision to see a list of edited lines. Click the Preview button to see how the article looked at this stage. At the bottom of this page, you can change to a particular revision or merge an old revision with the current one." %}
@@ -191,4 +187,3 @@
 </form>
   
 {% endblock %}
-

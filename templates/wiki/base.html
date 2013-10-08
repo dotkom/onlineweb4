@@ -4,12 +4,12 @@
 {% load url from future %}
 
 {% block styles %}
-    {{ block.super }}
-    <link href="{{ STATIC_URL }}wiki/bootstrap/css/wiki-bootstrap.min.css" rel="stylesheet">
-    <link href="{{ STATIC_URL }}wiki/bootstrap/css/wiki-bootstrap-responsive.min.css" rel="stylesheet">
     {% compress css %}
     <link rel="stylesheet" type="text/less" href="{{ STATIC_URL }}less/wiki.less">
     {% endcompress %}
+    {{ block.super }}
+    <link href="{{ STATIC_URL }}wiki/bootstrap/css/wiki-bootstrap.min.css" rel="stylesheet">
+    <link href="{{ STATIC_URL }}wiki/bootstrap/css/wiki-bootstrap-responsive.min.css" rel="stylesheet">
 {% endblock %}
 
 {% block content %}
