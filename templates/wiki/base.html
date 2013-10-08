@@ -13,6 +13,14 @@
 {% endblock %}
 
 {% block content %}
+    <script src="{{ STATIC_URL }}js/libs/jquery-1.8.2.min.js"></script>
+    <script src="{{ STATIC_URL }}wiki/js/jqueryui/jquery-ui-1.10.0.custom.min.js"></script>
+    <script src="http://maps.googleapis.com/maps/api/js?v=3&sensor=true"></script>
+    <script src="{{ STATIC_URL }}js/libs/bootstrap.min.js"></script>
+    <script src="{{ STATIC_URL }}js/libs/jquery.debouncedresize.js"></script>
+    <script src="{{ STATIC_URL }}js/holder.js"></script>
+    <script src="{{ STATIC_URL }}js/init.js"></script>
+    <script src="{{ STATIC_URL }}wiki/js/core.js"></script>
     <section id="wiki">
         <div class="container-fluid">
             {% block wiki_body %}
@@ -37,8 +45,4 @@
 {% endblock content %}
 
 {% block js %}
-    {{ block.super }}
-    <script src="{{ STATIC_URL }}wiki/js/core.js"></script>
 {% endblock %}
-
-

@@ -1,5 +1,4 @@
 {% load sekizai_tags %}
-{% addtoblock "js" %}
 <script type="text/javascript" src="{{ STATIC_URL }}wiki/js/jqueryui/jquery-ui-1.10.0.custom.min.js"></script>
 <script type="text/javascript">
 $(document).ready(function() {
@@ -25,7 +24,4 @@ $(document).ready(function() {
   $(".modal").resizable();
 });
 </script>
-{% endaddtoblock %}
-{% addtoblock "css" %}
 <link rel="stylesheet" href="{{ STATIC_URL }}wiki/js/jqueryui/jquery-ui-1.10.0.custom.min.css" type="text/css" />
-{% endaddtoblock %}

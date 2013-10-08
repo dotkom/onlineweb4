@@ -2,13 +2,10 @@
 
 {% include "wiki/includes/formerrors.html" %}
 
-{% addtoblock "js" %}
-{{ form.media.js }}
-{% endaddtoblock %}
 
-{% addtoblock "css" %}
+{{ form.media.js }}
+
 {{ form.media.css }}
-{% endaddtoblock %}
 
 {% for field in form %}
 
