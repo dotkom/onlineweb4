@@ -76,12 +76,10 @@ $(function() {
 
     function change_login_button_view() {
         if ($(window).innerWidth() < 995) {
-            console.log("testsetset");
             $('#login_menu a').html('');
             $('#login_menu a').addClass('glyphicon glyphicon-user');
         }
         else {
-            console.log("lolol");
             $('#login_menu a').html(old_login_btn);
             $('#login_menu a').removeClass('glyphicon glyphicon-user');
         }
