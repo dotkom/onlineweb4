@@ -1,6 +1,11 @@
 $(function() {
     // ??
     $('.dropdown-toggle').dropdown();
+
+    // Fadeout alerts
+    setTimeout(function () {
+        $('.alert').fadeOut();
+    }, 5000);
     
     // Init the footer-map
     var map = new google.maps.Map(document.getElementById("footer-map"),{
