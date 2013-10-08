@@ -201,7 +201,7 @@ function ArticleArchive (Utils) {
                 success: function(data) {
                     // Variables
                     var num = 1;
-                    var output = '<div class="row"><div class="col-md-12">'; // If we are not on the first page (and not using the filters), make the elements hidden to fade them in later
+                    var output = '<div class="row">'; // If we are not on the first page (and not using the filters), make the elements hidden to fade them in later
                     
                     // The loop
                     for (var i = 0; i < data.articles.length; i++) {
@@ -221,7 +221,7 @@ function ArticleArchive (Utils) {
                         
                         // Every third element in a chunk
                         if (num % 3 == 0)
-                            output += '</div></div><div class="row"><div class="col-md-12">';
+                            output += '</div><div class="row">';
                     
                         // Increasing num!    
                         num++;
