@@ -80,13 +80,13 @@ $(function() {
     });
 
     function change_login_button_view() {
-        if ($(window).innerWidth() <= 992) {
-            $('#login_menu a').html('');
-            $('#login_menu a').addClass('glyphicon glyphicon-user');
+        if ($(window).innerWidth() < 995) {
+            $('#login_menu a.login').html('');
+            $('#login_menu a.login').addClass('glyphicon glyphicon-user');
         }
         else {
-            $('#login_menu a').html(old_login_btn);
-            $('#login_menu a').removeClass('glyphicon glyphicon-user');
+            $('#login_menu a.login').html(old_login_btn);
+            $('#login_menu a.login').removeClass('glyphicon glyphicon-user');
         }
     }
 
