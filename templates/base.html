@@ -43,8 +43,8 @@
                 <ul class="nav navbar-nav navbar-right">
                     <li class="dropdown" id="login_menu">
                         {% if user.is_authenticated %}
-                        <a href="#login_menu" class="login-btn dropdown-toggle dropdown-signin login">{{ user.get_full_name }}<b class="caret"></b></a>
-                        <ul class="dropdown-menu dropdown-form login-box">
+                        <a href="#login_menu" class="login-btn dropdown-toggle dropdown-signin login" data-toggle="dropdown">{{ user.get_full_name }}<b class="caret"></b></a>
+                        <ul class="dropdown-menu dropdown-form login-box" role="menu">
                             <li class="dropdown-caret right">
                                 <span class="caret-outer"></span>
                                 <span class="caret-inner"></span>
@@ -58,8 +58,8 @@
                             </li>
                         </ul>
                         {% else %}
-                        <a href="#login_menu" class="login-btn dropdown-toggle dropdown-signin login">Logg inn <b class="caret"></b></a>
-                        <ul class="dropdown-menu login-box">
+                        <a href="#login_menu" class="login-btn dropdown-toggle dropdown-signin login" data-toggle="dropdown">Logg inn <b class="caret"></b></a>
+                        <ul class="dropdown-menu login-box" role="menu">
                             <li>
                                 <form class="navbar-form" method="POST" action="{% url 'auth_login' %}">
                                     {% csrf_token %}
