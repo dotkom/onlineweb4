@@ -65,9 +65,13 @@ section#article_archive {
     }
 
     .tag-cloud {
-    margin-top:30px;
-    margin-bottom:10px;
+        a:hover {
+            color: white;
+        }
+        margin-top:20px;
         .tag {
+            display: inline-block;
+            margin-bottom: 5px;
             padding:10px;
             color:white;
             background:@baby-blue;
@@ -75,15 +79,6 @@ section#article_archive {
     }
 
     .date-filter {
-        .year {
-            margin-right: 9px;
-        }
-
-        .months {
-            div:nth-child(4n+0) {
-                margin: 0;
-            }
-        }
 
         .tag {
             padding: 10px;
@@ -99,12 +94,12 @@ section#article_archive {
         }
 
         .tag-year {
-            display: inline-block;
+            display: block;
             background: @baby-blue-light;
         }
 
         .tag-month {
-            display: inline-block;
+            display: block;
             background: @baby-blue;
         }
     }
