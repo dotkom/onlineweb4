@@ -50,11 +50,9 @@
                                     <div class="year col-md-3">
                                         <a class="tag tag-year" data-year="{{ year }}" data-month="" href="{% url 'article_archive_year' year %}">{{ year }}</a>
                                     </div>
-                                    <div class="months">
-                                        {% for month in months %}
-                                            <div class="col-md-3"><a class="tag tag-month" data-year="{{ year }}" data-month="{{ month }}" href="{% url 'article_archive_month' year month %}">{{ month }}</a></div>
-                                        {% endfor %}
-                                    </div>
+                                    {% for month in months %}
+                                    <div class="col-md-3"><a class="tag tag-month" data-year="{{ year }}" data-month="{{ month }}" href="{% url 'article_archive_month' year month %}">{{ month }}</a></div>
+                                    {% endfor %}
                                 </div>
                             {% endfor %}
                         </div>
