@@ -7,11 +7,11 @@
 <section id="article_archive">
     <div class="container">
         <div class="row">
-            <div class="col-md-8">
+            <div class="col-sm-7 col-md-8">
                 <div class="row">
                     <div class="col-md-12">
                         <div class="page-header">
-                            <h1>Artikkelarkiv</h1>
+                            <h2>ARTIKKELARKIV</h2>
                         </div>
                     </div>
                 </div>
@@ -21,15 +21,15 @@
                 </div>
             </div>
 
-            <div class="col-md-4">
+            <div class="col-sm-5 col-md-4">
                 <div class="row">
                     <div class="col-md-12">
                         <div class="page-header">
-                            <h3>Tags</h3>
+                            <h3>TAGS</h3>
                         </div>
                         <div class="tag-cloud" id="article_archive_tagcloud">
                             {% for tag in tags %}
-                                <a href="{{ tag.get_absolute_url }}"><span class="tag">{{ tag }}</span></a>
+                                <span><a href="{{ tag.get_absolute_url }}" class="tag">{{ tag }}</a></span>
                             {% endfor %}
                         </div>
                     </div>
@@ -37,7 +37,7 @@
                 <div class="row">
                     <div class="col-md-12">
                         <div class="page-header">
-                            <h3>Filtrér på dato</h3>
+                            <h3>FILTER</h3>
                         </div>
                         <div class="date-filter" id="article_archive_filter">
                             <div class="row">
@@ -47,14 +47,12 @@
                             </div>
                             {% for year, months in dates.items %}
                                 <div class="row">
-                                    <div class="year col-md-3">
+                                    <div class="year col-md-4">
                                         <a class="tag tag-year" data-year="{{ year }}" data-month="" href="{% url 'article_archive_year' year %}">{{ year }}</a>
                                     </div>
-                                    <div class="months">
-                                        {% for month in months %}
-                                            <div class="col-md-3"><a class="tag tag-month" data-year="{{ year }}" data-month="{{ month }}" href="{% url 'article_archive_month' year month %}">{{ month }}</a></div>
-                                        {% endfor %}
-                                    </div>
+                                    {% for month in months %}
+                                    <div class="col-md-4"><a class="tag tag-month" data-year="{{ year }}" data-month="{{ month }}" href="{% url 'article_archive_month' year month %}">{{ month }}</a></div>
+                                    {% endfor %}
                                 </div>
                             {% endfor %}
                         </div>

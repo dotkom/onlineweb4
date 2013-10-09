@@ -79,9 +79,6 @@ $(function() {
             // Setting page to 1 again
             page = 1;
             
-            // Setting the urls correctly
-            //window.history.pushState("", "Offline Archive", $obj.attr('href'));
-            
             // Updating the settings
             articleSettings.tag = null;
             if ($obj.data('year') != '' && typeof $obj.data('year') != 'undefined')
@@ -121,9 +118,6 @@ $(function() {
             // Getting the tag-slug (had to be done using the url…
             var url = $obj.attr('href').split('/');
             
-            // Setting the urls correctly
-            window.history.pushState("", "Offline Archive", $obj.attr('href'));
-            
             // Updating the settings
             articleSettings.year = null;
             articleSettings.month = null;
@@ -158,9 +152,6 @@ $(function() {
             articleSettings.month = null;
             articleSettings.tag = null;
             page = 1;
-            
-            // Setting the urls correctly
-            window.history.pushState("", "Offline Archive", $(this).attr('href'));
             
             // Render!
             articleWidget.render(1,true,articleSettings,function () {
@@ -210,16 +201,16 @@ function ArticleArchive (Utils) {
                 success: function(data) {
                     // Variables
                     var num = 1;
-                    var output = '<div class="row"><div class="col-md-12'+((page == 1 && !overwrite)?'':' hide')+'">'; // If we are not on the first page (and not using the filters), make the elements hidden to fade them in later
-                    
+                    var output = '<div class="row">'; // If we are not on the first page (and not using the filters), make the elements hidden to fade them in later
+
                     // The loop
                     for (var i = 0; i < data.articles.length; i++) {
                         // The markup
-                        output += '<div class="col-md-4 article">';
-                        output += '    <a href="'+data.articles[i].id+'/'+data.articles[i].slug+'"><h3>'+data.articles[i].heading+'</h3></a>';
+                        output += '<div class="col-md-4 article'+((page == 1 && !overwrite)?'':' article-hidden')+'">';
                         output += '    <a href="/article/'+data.articles[i].id+'/'+data.articles[i].slug+'">';
-                        output += '        <img src="'+data.articles[i].image_article_front_small+'" width="100%" alt="'+data.articles[i].heading+'" />';
+                        output += '    <img src="'+data.articles[i].image_article_front_small+'" width="100%" alt="'+data.articles[i].heading+'" />';
                         output += '    </a>';
+                        output += '    <a href="'+data.articles[i].id+'/'+data.articles[i].slug+'"><h3>'+data.articles[i].heading+'</h3></a>';
                         output += '    <div class="row">';
                         output += '        <div class="col-md-12 article-detail-meta">';
                         output += '            <span class="meta-caption">Publisert</span> <span>'+moment(data.articles[i].published_date).format('D. MMMM YYYY')+'</span>';
@@ -230,7 +221,7 @@ function ArticleArchive (Utils) {
                         
                         // Every third element in a chunk
                         if (num % 3 == 0)
-                            output += '</div></div><div class="row"><div class="col-md-12">';
+                            output += '</div><div class="row">';
                     
                         // Increasing num!    
                         num++;
@@ -247,17 +238,17 @@ function ArticleArchive (Utils) {
                     // Appending the content. Either appending content or replacing it based on parameters supplied
                     if (overwrite) {
                         // We are overwriting existing articles
-                        if ( $(".article:visible").length > 0) {
+                        if ($(".article:visible").length > 0) {
                             $(".article:visible").fadeOut(400,function () { // Fade out the visible ones
                                 if ($(".article:animated").length === 0) { // When all the fading out is done, continue
                                     $("#article_archive_container").html(output); // Appending content
-                                    $("#article_archive_container .hide").fadeIn(400); // Aaaand finally fading in again
+                                    $("#article_archive_container .article-hidden").fadeIn(400); // Aaaand finally fading in again
                                 }
                             });
                         }
                         else {
                             $("#article_archive_container").html(output); // Appending content
-                            $("#article_archive_container .hide").fadeIn(400); // Aaaand finally fading in again
+                            $("#article_archive_container .article-hidden").fadeIn(400); // Aaaand finally fading in again
                         }
                     }
                     else {
@@ -266,7 +257,7 @@ function ArticleArchive (Utils) {
                         
                         // If we are not on the first page, animate them in!
                         if (page != 1) {
-                            $("#article_archive_container .hide").fadeIn(400);
+                            $("#article_archive_container .article-hidden").fadeIn(400);
                         }
                     }
                     
