@@ -67,10 +67,13 @@ nav.subnavbar {
 }
 
 /* Controls gap between navbar and content */
+.subnavbar  + section           { padding: 87px 0 0 0; }
+.subnavbar  + div.messages      { padding: 97px 0 0 0; }
 
-.subnavbar + section {
-    padding: 87px 0 0 0;
-}
-.navbar + section {
-    padding: 52px 0 0 0;
+.navbar     + section           { padding: 52px 0 0 0; }
+.navbar     + div.messages      { padding: 62px 0 0 0; }
+
+.subnavbar  + div.messages .alert,
+.navbar     + div.messages .alert {
+    margin-bottom: 0;
 }
