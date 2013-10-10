@@ -4,6 +4,7 @@
 LJUST_COLS=20
 RJUST_COLS=30
 VERBOSE=false
+RUNSERVER=false
 
 
 function init() {
@@ -40,6 +41,12 @@ function progress() {
     fi
 }
 
+function add_custom_repos() {
+    echo "adding custom repositories for nodejs"
+    progress sudo apt-get install -y python-software-properties
+    progress sudo add-apt-repository -y ppa:chris-lea/node.js
+}
+
 function update_packages() {
     echo "updating packages"
     progress sudo apt-get update
@@ -51,7 +58,8 @@ function install_packages() {
         python-dev python-setuptools python-virtualenv vim \
         tmux screen git-core curl build-essential openssl \
         libjpeg8 libjpeg8-dev zlib-bin libtiff4 libtiff4-dev libfreetype6 libfreetype6-dev libwebp2 libpq-dev libssl-dev\
-        python-psycopg2
+        python-psycopg2 \
+        nodejs # from custom ppa:chris-lea/node.js
 }
 
 function setup_virtualenv() {
@@ -78,34 +86,7 @@ function install_onlineweb_requirements() {
 
 
 function install_lessc() {
-    cd /home/vagrant
-    workon onlineweb
-    echo "installing node"
-    if [ ! -f "node-v0.10.20.tar.gz" ]
-    then
-        if $VERBOSE
-        then
-            progress wget http://nodejs.org/dist/v0.10.20/node-v0.10.20.tar.gz
-        else
-            progress wget --quiet http://nodejs.org/dist/v0.10.20/node-v0.10.20.tar.gz
-        fi
-    fi
-    progress tar zxf node-v0.10.20.tar.gz
-    cd node-v0.10.20/
-    # set install prefix to virtualenv directory, maybe this will solve the problems with lessc not being available in the virtualenv
-    progress ./configure --prefix /home/vagrant/.virtualenvs/onlineweb/
-    echo "compiling node (go get coffee)"
-    progress make
-    progress make install
-
-    workon onlineweb
-    if ! type "npm" > /dev/null; then
-        echo "installing npm"
-        progress `curl https://npmjs.org/install.sh | sh`
-    fi
-
-    echo "installing less compiler"
-    progress npm install less -g
+    progress sudo npm install less -g
 }
 
 function prepare_and_run_onlineweb() {
@@ -114,13 +95,17 @@ function prepare_and_run_onlineweb() {
     cp onlineweb4/settings/example-local.py onlineweb4/settings/local.py
     echo "creating tables"
     progress python manage.py syncdb
-    echo "starting dev server"
-    python manage.py runserver 0.0.0.0:8000 &
-    echo "done, check http://localhost:8001 on host"
+    if $RUNSERVER
+    then
+        echo "starting dev server"
+        python manage.py runserver 0.0.0.0:8000 &
+        echo "done, check http://localhost:8001 on host"
+    fi
 }
 
 init
-
+update_packages
+add_custom_repos
 update_packages
 install_packages
 setup_virtualenv
