@@ -216,7 +216,7 @@ function ArticleArchive (Utils) {
                         output += '            <span class="meta-caption">Publisert</span> <span>'+moment(data.articles[i].published_date).format('D. MMMM YYYY')+'</span>';
                         output += '        </div>';
                         output += '    </div>';
-                        output += '    <p>'+data.articles[i].ingress+'</p>';
+                        output += '    <p>'+data.articles[i].ingress_short+'</p>';
                         output += '</div>';
                         
                         // Every third element in a chunk
