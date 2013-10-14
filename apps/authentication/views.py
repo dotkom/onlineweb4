@@ -87,7 +87,7 @@ Denne lenken vil være gyldig i 24 timer. Dersom du behøver å få tilsendt en 
 kan dette gjøres med funksjonen for å gjenopprette passord.
 """) % (request.META['HTTP_HOST'], token)
 
-                send_mail(_(u'Verifiser din konto'), email_message, settings.DEFAULT_FROM_EMAIL, [user.email,])
+                send_mail(_(u'Verifiser din konto'), email_message, settings.DEFAULT_FROM_EMAIL, [email.email,])
 
                 messages.success(request, _(u'Registreringen var vellykket. Se tilsendt epost for verifiseringsinstrukser.'))
 
@@ -140,19 +140,18 @@ def recover(request):
         if request.method == 'POST':
             form = RecoveryForm(request.POST)
             if form.is_valid():
-                email = form.cleaned_data['email']
-                users = OnlineUser.objects.filter(email=email)
+                email_string = form.cleaned_data['email']
+                emails = Email.objects.filter(email=email_string)
 
-                if len(users) == 0:
+                if len(emails) == 0:
                     messages.error(request, _(u'Denne eposten er ikke registrert i våre systemer.'))
                     return HttpResponseRedirect('/')        
 
-                user = users[0]
-                user.save()
+                email = emails[0]
     
                 # Create the registration token
                 token = uuid.uuid4().hex
-                rt = RegisterToken(user=user, token=token)
+                rt = RegisterToken(user=email.user, email=email.email, token=token)
                 rt.save()
 
                 email_message = _(u"""
@@ -167,11 +166,11 @@ http://%s/auth/set_password/%s/
 
 Denne lenken vil være gyldig i 24 timer. Dersom du behøver å få tilsendt en ny lenke
 kan dette gjøres med funksjonen for å gjenopprette passord.
-""") % (email, user.username, request.META['HTTP_HOST'], token)
+""") % (email.email, email.user, request.META['HTTP_HOST'], token)
 
-                send_mail(_(u'Gjenoppretning av passord'), email_message, settings.DEFAULT_FROM_EMAIL, [email,])
+                send_mail(_(u'Gjenoppretning av passord'), email_message, settings.DEFAULT_FROM_EMAIL, [email.email,])
 
-                messages.success(request, _(u'En lenke for gjenoppretning har blitt sendt til %s.') % email)
+                messages.success(request, _(u'En lenke for gjenoppretning har blitt sendt til %s.') % email.email)
 
                 return HttpResponseRedirect('/')        
             else:
