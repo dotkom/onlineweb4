@@ -8,15 +8,19 @@ from django.db import models
 from django.utils.translation import ugettext as _
 
 
+# If this list is changed, remember to check that the year property on
+# OnlineUser is still correct!
 FIELD_OF_STUDY_CHOICES = [
     (0, _(u'Gjest')),
     (1, _(u'Bachelor i Informatikk (BIT)')),
+    # master degrees take up the interval [10,30>
     (10, _(u'Software (SW)')),
     (11, _(u'Informasjonsforvaltning (DIF)')),
     (12, _(u'Komplekse Datasystemer (KDS)')),
     (13, _(u'Spillteknologi (SPT)')),
     (14, _(u'Intelligente Systemer (IRS)')),
     (15, _(u'Helseinformatikk (MSMEDTEK)')),
+    (30, _(u'Annen mastergrad')),
     (80, _(u'PhD')),
     (90, _(u'International')),
     (100, _(u'Annet Onlinemedlem')),
@@ -87,20 +91,20 @@ class OnlineUser(AbstractUser):
         # add users one year.
         year = ((today - started).days / 360) + 1
 
-        # dont return a bachelor student as 4th or 5th grade
-        if self.field_of_Study == 0:  # others
+        if self.field_of_Study == 0 or self.field_of_study == 100:  # others
             return 0
+        # dont return a bachelor student as 4th or 5th grade
         elif self.field_of_study == 1:  # bachelor
             if year > 3:
                 return 3
             return year
-        elif self.field_of_study == 2:  # master
+        elif 9 < self.field_of_study < 30:  # 10-29 is considered master
             if year >= 2:
                 return 5
             return 4
-        elif self.field_of_study == 3:  # phd
+        elif self.field_of_study == 80:  # phd
             return year + 5
-        elif self.field_of_study == 4:  # international
+        elif self.field_of_study == 90:  # international
             if year == 1:
                 return 1
             return 4
