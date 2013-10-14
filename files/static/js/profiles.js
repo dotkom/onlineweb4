@@ -119,7 +119,8 @@ $(document).ready(function() {
                     boxHeight: 300,
                     aspectRatio: 3/4,
                     onChange: updateCoords,
-                    onSelect: updateCoords
+                    onSelect: updateCoords,
+                    keySupport: false
                 },function() {
                     api = this;
                     api.setOptions({ bgFade: true });

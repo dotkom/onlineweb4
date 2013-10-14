@@ -53,8 +53,7 @@ label.image-box-entity {
 }
 
 #image-resize {
-  max-height: 300px;
-
+  width: 100%;
 }
 
 #upload-image-modal#modal-body {
@@ -74,8 +73,16 @@ label > i.btn-icon {
   margin-left: 22px;
 }
 
-#remove-image-modal {
-  top: 35%;
+#paddingtop {
+  padding-top: 20px;
+}
+
+#inline {
+  display: inline;
+}
+
+#privacy-help {
+  cursor: pointer;
 }
 
 .privacybox {
@@ -136,6 +143,12 @@ label > i.btn-icon {
 .markbody .inline .row-fluid [class*="span"] {
   min-height: 15px;
 }
+
+textarea, input[type="text"] {
+  .form-control;
+  margin-bottom: 7px;
+}
+
 
 @media all and (max-width: 768px) {
   .privacybox {
