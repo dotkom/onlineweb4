@@ -6,11 +6,11 @@
     </div>
 </div>
 <div class="row">
-    <div class="col-xs-12 col-sm-8 col-md-6">
+    <div class="col-xs-12 col-sm-8 col-md-8">
         {% if user.is_member %}
         <form method="post" action="{% url 'profile_save_membership_details' %}" >
             {{ membership_settings|crispy }}
-            <button type="submit" id="save-membership-details" class="btn btn-success">Lagre</button>
+            <button type="submit" id="save-membership-details" class="btn btn-success pull-right">Lagre</button>
         </form>
         {% else %}
             For å aktivere ditt medlemskap kreves det at du har knyttet din studentkonto til din profil.<br/ ><br />

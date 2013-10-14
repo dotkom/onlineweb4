@@ -8,7 +8,7 @@
         <div class="row">
             <div class="col-md-12">
                 <div class="page-header">
-                    <h2 id="event-details-heading">{{event.title}}</h2>
+                    <h2 id="event-details-heading">{{ event.title }}</h2>
                 </div>
             </div>
         </div>
@@ -22,14 +22,14 @@
                                      <div class="col-md-4">
                                         <div class="event-hero-title">Fra</div>
                                         <div class="event-hero-large-text">
-                                            <span class="break">{{event.event_start|date:"H.i"}}</span>
+                                            <span class="break">{{ event.event_start|date:"H.i" }}</span>
                                             <span class="date-small">{{ event.event_start|date:"d. M Y" }}</span>
                                         </div>
                                     </div>
                                     <div class="col-md-4">
                                         <div class="event-hero-title">Til</div>
                                         <div class="event-hero-large-text">
-                                            <span class="break">{{event.event_end|date:"H.i"}}</span>
+                                            <span class="break">{{ event.event_end|date:"H.i" }}</span>
                                             <span class="date-small">{{ event.event_end|date:"d. M Y" }}</span>
                                         </div>
                                     </div>
@@ -81,35 +81,31 @@
                         {% if user_anonymous %}
                             <p class="status-text">Du må være logget inn for å se din status.</p>
                         {% else %}
-                            {% if event_opens_when == 'never' %}
-                                <p class="status-text">Du har ikke adgang til dette arrangementet</p>
-                            {% else %}
-                                {% if user_attending %}
-                                    {% if place_on_wait_list %}
-                                        <p class="status-text">Du er nummer {{ place_on_wait_list }} på ventelisten.</p>
-                                    {% else %}
-                                        <p class="status-text">Du er meldt på dette arrangementet.</p>
-                                    {% endif %}
-                                        <div class="action"><a href="#unattend" role="button" class="btn btn-large btn-danger" data-toggle="modal">Meld meg av</a></div>
+                            {% if user_attending %}
+                                {% if place_on_wait_list %}
+                                    <p class="status-text">Du er nummer {{ place_on_wait_list }} på ventelisten.</p>
                                 {% else %}
-                                    {% if user_status.status %}
-                                        {% if will_be_on_wait_list %}
-                                            <p class="status-text">Du kan sette deg på venteliste.</p>
-                                            <div class="action">
-                                                <a href="#waitlist" role="button" class="btn btn-large btn-warning" data-toggle="modal">Sett meg på venteliste</a>
-                                            </div> 
-                                        {% else %}
-                                            <p class="status-text">Du kan melde deg på dette arrangementet.</p>
-                                            <div class="action"><a href="#attend" role="button" class="btn btn-large btn-success" data-toggle="modal">Meld meg på</a></div>
-                                        {% endif %}
-                                    {% elif user_status.offset %}
-                                        <p class="status-text">Du kan melde deg på {{ user_status.offset }}.</p>
-                                        {% if not user_status.status and user_status.message %} 
-                                            <p class="status-text">{{ user_status.message }}</p>
-                                        {% endif %}
+                                    <p class="status-text">Du er meldt på dette arrangementet.</p>
+                                {% endif %}
+                                    <div class="action"><a href="#unattend" role="button" class="btn btn-large btn-danger" data-toggle="modal">Meld meg av</a></div>
+                            {% else %}
+                                {% if user_status.status %}
+                                    {% if will_be_on_wait_list %}
+                                        <p class="status-text">Du kan sette deg på venteliste.</p>
+                                        <div class="action">
+                                            <a href="#waitlist" role="button" class="btn btn-large btn-warning" data-toggle="modal">Sett meg på venteliste</a>
+                                        </div> 
                                     {% else %}
-                                        <p class="status-text">Du har ikke tilgang til dette arrangementet</p>
+                                        <p class="status-text">Du kan melde deg på dette arrangementet.</p>
+                                        <div class="action"><a href="#attend" role="button" class="btn btn-large btn-success" data-toggle="modal">Meld meg på</a></div>
                                     {% endif %}
+                                {% elif user_status.offset %}
+                                    <p class="status-text">Du kan melde deg på {{ user_status.offset }}.</p>
+                                    {% if not user_status.status and user_status.message %} 
+                                        <p class="status-text">{{ user_status.message }}</p>
+                                    {% endif %}
+                                {% else %}
+                                    <p class="status-text">Du har ikke tilgang til dette arrangementet</p>
                                 {% endif %}
                             {% endif %}
                         {% endif %}
@@ -139,7 +135,7 @@
                                         {% endfor %}
                                     {% endfor %}
                                 {% else %}
-                                    <span class="label label-important">Ingen</span>    
+                                    <span class="label label-important">Alle medlemmer</span>    
                                 {% endif %}
                             </div>
                         </div>
@@ -151,8 +147,8 @@
         </div>
         <div class="row">
             <div class="col-md-7">
-                <div class="ingress">{{ event.ingress|striptags|markdown}}</div>
-                {{ event.description|striptags|markdown}}
+                <div class="ingress">{{ event.ingress|striptags|markdown }}</div>
+                {{ event.description|striptags|markdown }}
             </div>
             <div class="col-md-5">
                 {% if event.companies.all %}
