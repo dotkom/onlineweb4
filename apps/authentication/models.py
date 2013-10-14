@@ -91,7 +91,7 @@ class OnlineUser(AbstractUser):
         # add users one year.
         year = ((today - started).days / 360) + 1
 
-        if self.field_of_Study == 0 or self.field_of_study == 100:  # others
+        if self.field_of_study == 0 or self.field_of_study == 100:  # others
             return 0
         # dont return a bachelor student as 4th or 5th grade
         elif self.field_of_study == 1:  # bachelor
