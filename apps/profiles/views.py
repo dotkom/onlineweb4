@@ -62,7 +62,6 @@ def create_request_dictionary(request):
         ],
         'mail_settings' : MailSettingsForm(instance=request.user),
         'new_email' : NewEmailForm(),
-        #'membership_settings' : MembershipSettingsForm({'field_of_study': request.user.field_of_study, 'started_date': request.user.started_date}),
         'membership_settings' : MembershipSettingsForm(instance=request.user),
     }
 
