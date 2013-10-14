@@ -20,7 +20,6 @@ from apps.marks.models import Mark
 from apps.profiles.forms import (ImageForm, MailSettingsForm, PrivacyForm, 
                                 ProfileForm, MembershipSettingsForm)
 
-
 """
 Index for the entire user profile view
 Methods redirect to this view on save
