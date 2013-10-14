@@ -1,13 +1,16 @@
 {% extends "base.html" %}
 {% load compress %}
+
 {% block js %}
     {{ block.super }}
     <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/libs/jquery.Jcrop.min.js"></script>
+    {% compress css %}
     <script type="text/javascript" src="{{ STATIC_URL }}js/libs/jquery.color.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}js/libs/jquery.cookie.js"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}js/libs/jquery.Jcrop.min.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}js/Utils.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}js/profiles.js"></script>
+    {% endcompress %}
 {% endblock %}
 
 {% block styles %}
