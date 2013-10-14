@@ -11,14 +11,15 @@ from django.utils.translation import ugettext as _
 FIELD_OF_STUDY_CHOICES = [
     (0, _(u'Gjest')),
     (1, _(u'Bachelor i Informatikk (BIT)')),
-    (2, _(u'Software (SW)')),
-    (3, _(u'Informasjonsforvaltning (DIF)')),
-    (4, _(u'Komplekse Datasystemer (KDS)')),
-    (5, _(u'Spillteknologi (SPT)')),
-    (6, _(u'Intelligente Systemer (IRS)')),
-    (7, _(u'PhD')),
-    (8, _(u'International')),
-    (9, _(u'Annet Onlinemedlem')),
+    (10, _(u'Software (SW)')),
+    (11, _(u'Informasjonsforvaltning (DIF)')),
+    (12, _(u'Komplekse Datasystemer (KDS)')),
+    (13, _(u'Spillteknologi (SPT)')),
+    (14, _(u'Intelligente Systemer (IRS)')),
+    (15, _(u'Helseinformatikk (MSMEDTEK)')),
+    (80, _(u'PhD')),
+    (90, _(u'International')),
+    (100, _(u'Annet Onlinemedlem')),
 ]
 
 class OnlineUser(AbstractUser):
