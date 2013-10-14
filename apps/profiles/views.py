@@ -384,5 +384,24 @@ kan dette gjøres ved å klikke på knappen for verifisering på din profil.
 def save_membership_details(request):
     if request.is_ajax():
         if request.method == 'POST':
-            pass
-    return HttpResponse(status = 404) 
+            form = MembershipSettingsForm(request.POST)
+            if form.is_valid():
+                cleaned = form.cleaned_data
+                request.user.field_of_study = cleaned['field_of_study']
+                request.user.started_date = cleaned['started_date']
+                
+                request.user.save()
+
+                return HttpResponse(status=200)
+            else:
+                field_errors = []
+                form_errors = form.errors.items()
+                for form_error in form_errors:
+                    for field_error in form_error[1]:
+                        field_errors.append(field_error)
+
+                return HttpResponse(status=412, content=json.dumps(
+                                                    {'message': ", ".join(field_errors)}
+                                                ))
+
+    return HttpResponse(status=404) 
