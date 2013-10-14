@@ -84,7 +84,7 @@ class OnlineUser(AbstractUser):
 
     @property
     def year(self):
-        today = datetime.datetime.now()
+        today = datetime.datetime.now().date()
         started = self.started_date
 
         # We say that a year is 360 days incase we are a bit slower to
