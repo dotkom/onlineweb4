@@ -67,6 +67,7 @@ def register(request):
                     user=user,
                     email=cleaned['email'],
                 )
+                email.primary = True
                 email.save()    
 
                 # Create the registration token
