@@ -8,12 +8,12 @@ from django.contrib import messages
 from django.core.mail import send_mail
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponseRedirect
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext as _
 
 from django.conf import settings
 from apps.authentication.forms import (LoginForm, RegisterForm, 
                             RecoveryForm, ChangePasswordForm)
-from apps.authentication.models import OnlineUser, RegisterToken
+from apps.authentication.models import OnlineUser, RegisterToken, Email
 
 def login(request):
     redirect_url = request.REQUEST.get('next', '')
@@ -54,9 +54,9 @@ def register(request):
                     email=cleaned['email'].lower(),
                 )
                 # Set remaining fields
-                user.phone=cleaned['phone'],
-                user.address=cleaned['address'].title(),
-                user.zip_code=cleaned['zip_code'],
+                user.phone=cleaned['phone']
+                user.address=cleaned['address'].title()
+                user.zip_code=cleaned['zip_code']
                 # Store password properly
                 user.set_password(cleaned['password'])
                 # Users need to be manually activated
@@ -95,25 +95,36 @@ kan dette gjøres med funksjonen for å gjenopprette passord.
         return render(request, 'auth/register.html', {'form': form, })
 
 def verify(request, token):
-    if request.user.is_authenticated():
-        return HttpResponseRedirect('/')
-    else:
-        rt = get_object_or_404(RegisterToken, token=token)
-        
-        if rt.is_valid:
-            user = getattr(rt, 'user')
+    rt = get_object_or_404(RegisterToken, token=token)
+    
+    if rt.is_valid:
+        email = get_object_or_404(Email, email=rt.email)
+        email.verified = True
+        email.save()
+         
+        user = getattr(rt, 'user')
 
+        # If it is a stud email, set the ntnu_username for user
+        if re.match(r'[^@]+@stud.ntnu.no', rt.email):
+            user.ntnu_username = rt.email.split("@")[0]
+
+        user_activated = False
+        if not user.is_active:
             user.is_active = True
-            if re.match(r'[^@]+@stud.ntnu.no', rt.email):
-                user.ntnu_username = rt.email.split("@")[0]
-            user.save()
-            rt.delete()
+            user_activated = True
 
+        user.save()
+        rt.delete()
+
+        if user_activated:
             messages.success(request, _(u'Bruker %s ble aktivert. Du kan nå logge inn.') % user.username)
             return redirect('auth_login')
         else:
-            messages.error(request, _(u'Denne lenken er utløpt. Bruk gjenopprett passord for å få tilsendt en ny lenke.'))
-            return HttpResponseRedirect('/')        
+            messages.success(request, _(u'Eposten %s er nå verifisert.') % email)
+            return redirect('profiles')
+    else:
+        messages.error(request, _(u'Denne lenken er utløpt. Bruk gjenopprett passord for å få tilsendt en ny lenke.'))
+        return HttpResponseRedirect('/')        
             
 
 def recover(request):

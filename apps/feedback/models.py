@@ -16,6 +16,7 @@ from django.contrib.contenttypes import generic
 from django.core.urlresolvers import reverse
 
 from apps.authentication.models import OnlineUser as User
+from apps.authentication.models import FIELD_OF_STUDY_CHOICES
 
 class FeedbackRelation(models.Model):
     """
@@ -167,15 +168,6 @@ class Feedback(models.Model):
         verbose_name = _(u'tilbakemelding')
         verbose_name_plural = _(u'tilbakemeldinger')
 
-
-FIELD_OF_STUDY_CHOICES = [
-    (0, _(u'Bachelor i Informatikk (BIT)')),
-    (1, _(u'Intelligente Systemer (IRS)')),
-    (2, _(u'Software (SW)')),
-    (3, _(u'Informasjonsforvaltning (DIF)')),
-    (4, _(u'Komplekse Datasystemer (KDS)')),
-    (5, _(u'Spillteknologi (SPT)')),
-]
 
 
 class FieldOfStudyQuestion(models.Model):

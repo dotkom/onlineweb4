@@ -4,6 +4,7 @@ function EventWidget (Utils){
 
     /* Render the widget */
     EventWidget.prototype.render = function(callback) {
+        
         var now = moment();
 
         Utils.makeApiRequest({
@@ -22,7 +23,7 @@ function EventWidget (Utils){
                         // If the index is even, create a row and append item. Else just append item to row.
                         // (This is to distribute items left and right)
                         if(index % 2 == 0) {
-                            htmlRow = '<div class="row-fluid event-row"></div>';
+                            htmlRow = '<div class="row clearfix hero"></div>';
                             rowNode = fragment.appendChild($(htmlRow)[0]);
 
                             htmlItem = createEventItem(this);
@@ -42,6 +43,7 @@ function EventWidget (Utils){
                 }
                 
                 // Calling the callback
+                $('.carousel').carousel();
                 callback();
             }
         });
@@ -52,20 +54,36 @@ function EventWidget (Utils){
      * @return string
      */
     function createEventItem(item) {
-        
-        html = '<div class="span6">';
-        html +=     '<div class="span1 event-type-' + item.event_type + '">';
-        html +=         '<div class="row-fluid"><span class="event-calendar-date">' + moment(item.event_start).format('DD') + '</span></div>';
-        html +=         '<div class="row-fluid"><span class="event-calendar-month">' + moment(item.event_start).format('MMM') + '</span></div>';
-        html +=     '</div>';
-        html += '<div class="span3"><a href="events/' + item.id + '/' + item.slug + '"><img src="' + item.image_events_thumb + '" alt="" /></a></div>';
-        html +=     '<div class="span8">';
+
+        html = '<div><div class="col-md-4 col-xs-7">';
+        html +=     '<div class="hero-title">';
         html +=         '<a href="events/' + item.id + '/' + item.slug + '">';
-        html +=             '<div class="event-title">' + item.title + '</div>';
-        html +=         '</a>'
-        html +=         '<div class="event-ingress">' + item.ingress_short + '</div>';
-        html += '   </div>';
+        html +=             '<p>' + item.title + '</p>';
+        html +=         '</a>';
+        html +=     '</div>';
+        html +=     '<div class="hero-ingress hidden-xs">';
+        html +=         '<p>' + item.ingress_short + '</p>';
+        html +=     '</div>';
         html += '</div>';
+        html += '<div class="col-xs-5 col-md-2">';
+        html +=     '<div id="event-carousel" class="carousel slide">';
+        html +=         '<div class="carousel-inner">';
+        html +=             '<div class="item active">';
+        html +=                 '<a href="events/' + item.id + '/' + item.slug + '">';
+        html +=                         '<img src="' + item.image_events_thumb + '" width="100%" alt="" >';
+        html +=                 '</a>';
+        html +=             '</div>';
+        for(var i=0; i < item.company_event.length; i++){
+            html +=         '<div class="item">';
+            html +=             '<a href="events/' + item.id + '/' + item.slug + '">';
+            html +=                 '<img src="' + item.company_event[i].companies.image_companies_thumb + '" width="100%" alt="" />';
+            html +=             '</a>';
+            html +=         '</div>';
+        }
+        html +=         '</div>';
+        html +=     '</div>'
+        html +=     '<span class="hero-date">' + moment(item.event_start).lang('nb').format('DD. MMMM') + '</span>';
+        html += '</div></div>';
 
         return html;
     }

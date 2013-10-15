@@ -10,6 +10,9 @@ from filebrowser.settings import VERSIONS
 from apps.events.models import Event
 from apps.events.models import Attendee
 from apps.events.models import AttendanceEvent
+from apps.events.models import CompanyEvent
+
+from apps.companyprofile.models import Company
 
 from apps.api.v0.authentication import UserResource
 
@@ -19,6 +22,18 @@ class AttendeeResource(ModelResource):
     class Meta:
         queryset = Attendee.objects.all()
         resource_name = 'attendees'
+
+class CompanyResource(ModelResource):
+    
+    class Meta:
+        queryset = Company.objects.all()
+        resource_name = 'company'
+        fields = ['image']
+class CompanyEventResource(ModelResource):
+    companies = fields.ToOneField(CompanyResource, 'company', full=True)
+    class Meta:
+        queryset = CompanyEvent.objects.all()
+        resource_name ='companies'
 
 class AttendanceEventResource(ModelResource):
     users = fields.ToManyField(AttendeeResource, 'attendees', full=False)
@@ -32,6 +47,7 @@ class AttendanceEventResource(ModelResource):
 
 class EventResource(ModelResource):
     author = fields.ToOneField(UserResource, 'author', full=True)
+    company_event = fields.ToManyField(CompanyEventResource, 'companies', full=True, null=True, blank=True)
     attendance_event = fields.ToOneField(AttendanceEventResource, 'attendance_event', full=True, null=True, blank=True)
 
     def alter_list_data_to_serialize(self, request, data):
@@ -61,9 +77,19 @@ class EventResource(ModelResource):
             
             # Unset the image-field
             del(bundle.data['image'])
-            
-            # Returning washed object
+        
+        # Do the same thing for the company image
+        if bundle.data['company_event']:
+            for company in bundle.data['company_event']:
+                temp_image = FileObject(company.data['companies'].data['image'])
+                for ver in VERSIONS.keys():
+                    if ver.startswith('companies_thumb'):
+                        company.data['companies'].data['image_'+ver] = temp_image.version_generate(ver).url
+                del(company.data['companies'].data['image'])
+
+        # Returning washed object 
         return bundle
+        
 
     class Meta:
         queryset = Event.objects.all()

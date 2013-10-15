@@ -3,10 +3,10 @@
 {% load fb_versions %}
 {% block content %}
 <section id="article-details">
-    <div class="container-fluid">
-        <div class="row-fluid article-media">
+    <div class="container">
+        <div class="row article-media">
                 {% if article.video %}
-                    <div class="span12 video-padding">
+                    <div class="col-md-12 video-padding">
                         <div class="offset2 span8">
                             <div class="flex-video widescreen">
                                <iframe src="http://player.vimeo.com/video/{{ article.video }}" frameborder="0" webkitAllowFullscreen mozallowfullscreen allowFullScreen></iframe>
@@ -14,75 +14,63 @@
                         </div>
                     </div>
                 {% else %}
-                     <div class="span12">
-                            <img src="{% version article.image 'article_full' %}" alt="{{ article.heading }}"/>
+                     <div class="col-md-12">
+                            <img width="100%" src="{% version article.image 'article_full' %}" alt="{{ article.heading }}"/>
                     </div>
                 {% endif %}
         </div>
-        <div class="row-fluid">
-            <div class="span8">
-                <div class="row-fluid">
-                    <div class="span12">
-                        <div class="page-header">
-                            <h1>{{ article.heading }}</h1>
-                        </div>
+        <div class="row">
+            <div class="col-md-8">
+                <div class="col-md-12">
+                    <div class="page-header">
+                        <h1>{{ article.heading }}</h1>
                     </div>
                 </div>
-                <div class="row-fluid">
-                    <div class="span12 article-detail-meta">
-                        <span class="meta-caption">Av</span> {{ article.created_by.get_full_name }} |
-                        <span class="meta-caption">Publisert</span> {{ article.published_date }}
-                        {% if article.is_changed %} |
-                        <span class="meta-caption">Endret</span> {{ article.changed_date }}
-                        {% endif %}
+                <div class="col-md-12 article-detail-meta">
+                    <span class="meta-caption">Av</span> {{ article.created_by.get_full_name }} |
+                    <span class="meta-caption">Publisert</span> {{ article.published_date }}
+                    {% if article.is_changed %} |
+                    <span class="meta-caption">Endret</span> {{ article.changed_date }}
+                    {% endif %}
+                </div>
+                <div class="col-md-12 row-space">
+                    <div class="ingress">
+                        {{ article.ingress|striptags|markdown }}
+                    </div>
+                    <div class="content">
+                        {{ article.content|striptags|markdown }}
                     </div>
                 </div>
-                <div class="row-fluid row-space">
-                    <div class="span12">
-                        <div class="ingress">
-                            {{ article.ingress|striptags|markdown }}
-                        </div>
-                        <div class="content">
-                            {{ article.content|striptags|markdown }}
-                        </div>
-                    </div>
-                </div>
-                <div class="row-fluid">
-                    <div class="span12">
-                        <div id="disqus_thread"></div>
-                        <script type="text/javascript">
-                            /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
-                            var disqus_shortname = 'onlinentnu'; // required: replace example with your forum shortname
+                <div class="col-md-12">
+                    <div id="disqus_thread"></div>
+                    <script type="text/javascript">
+                        /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+                        var disqus_shortname = 'onlinentnu'; // required: replace example with your forum shortname
 
-                            /* * * DON'T EDIT BELOW THIS LINE * * */
-                            (function() {
-                                var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-                                dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-                                (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-                            })();
-                        </script>
-                        <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-                        <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
-                    </div>
+                        /* * * DON'T EDIT BELOW THIS LINE * * */
+                        (function() {
+                            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+                            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+                            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+                        })();
+                    </script>
+                    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+                    <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
                 </div>
             </div>
-            <div class="span4 related-articles">
-                <div class="row-fluid">
-                    <div class="span12">
-                        <div class="page-header">
-                            <h3>Relaterte artikler</h3>
-                        </div>
-                    </div>
+            <div class="col-md-4 related-articles">
+                <div class="page-header">
+                    <h3>Relaterte artikler</h3>
                 </div>
-                <div class="row-fluid">
-                    <div class="span12 related-articles">
+                <div class="row">
+                    <div class="col-md-12 related-articles">
                         {% if related_articles %}
                             {% for related_article in related_articles %}
                                 {% if forloop.counter0|divisibleby:"2" %}
-                                    <div class="row-fluid row-space">
+                                    <div class="row row-space">
                                 {% endif %}
-                                    <div class="span6">
-                                        <a href="{% url 'article_details' related_article.id%}">
+                                    <div class="col-md-6">
+                                        <a href="{{ related_article.get_absolute_url }}">
                                             <img src="{% version related_article.image 'article_related' %}" 
                                                 alt="{{ related_article.heading }}"/>
                                             <h4>{{ related_article.heading }}</h4>
@@ -100,8 +88,8 @@
                         {% endif%}
                     </div>
                 </div>
-                <div class="row-fluid">
-                    <div class="span12">
+                <div class="row">
+                    <div class="col-md-12">
                         <div class="page-header">
                             <h3>Tags</h3>
                         </div>
@@ -121,16 +109,6 @@
     </div>
 </section>
 
-<!-- {% for l in latest %}
-    <div class="row-fluid">
-        <div class="span12">
-            <div class="article-latestnews">
-                <a href="../{{ l.id }}">{{ l.heading }}</a> </p>
-            </div>
-        </div>
-    </div>
-{% endfor %}
- -->	
 {% endblock content %}
 
 {% block js %}

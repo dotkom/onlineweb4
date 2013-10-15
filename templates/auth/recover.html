@@ -1,32 +1,23 @@
 {% extends "base.html" %}
 {% load crispy_forms_tags %}
+
 {% block content %}
-<div class="container-fluid">
+<div class="container">
     <div class="page-header">
         <h2>Glemt passord</h2>
     </div>
     <div class="ingress">
     <p>Har du glemt passordet ditt? Skriv inn epostadressen din for å få tilsendt et nytt.</p>
     </div>
-    <form method="post" action={% url 'auth_recover' %}>
-        {% csrf_token %}
-        <div class="row-fluid">
-            <div class="span6">
-                {% for field in form %}
-                    <div class="inline">
-                        <div class="span4">{{ field.label }}</div>
-                        <div class="span8">
-                            {{ field }}
-                            {{ field.errors }}
-                        </div>
-                    </div>
-                {% endfor %}
-            </div><!-- /span6 -->
-        </div><!-- /row-fluid -->
-        
-        <div class="span12 form-actions">
-            <button class="tbn btn-success pull-right" type="submit">Registrer</button>
+
+    <div class="row">
+        <div class="col-xs-12 col-sm-6 col-md-4">
+            <form method="post" action={% url 'auth_recover' %}>
+                {% csrf_token %}
+                {{ form|crispy }}
+                <button class="btn btn-success" type="submit">Registrer</button>
+            </form>
         </div>
-    </form>
+    </div>
 </div>
 {% endblock content %}
