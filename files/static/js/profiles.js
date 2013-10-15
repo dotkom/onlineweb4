@@ -84,7 +84,6 @@ $(document).ready(function() {
     $('#privacy-help').popover({placement: 'bottom'});
 
     /* Image cropping and uploading */
-    var api;
     var formData = false;
     var x, y, x2, y2, w, h;
 
@@ -109,12 +108,13 @@ $(document).ready(function() {
             reader.readAsDataURL(file);
 
             reader.onloadend = function(e) {
+                
                 $('#image-resize').attr('src', e.target.result);
-                $('#image-resize').Jcrop({
+                var api = $('#image-resize').Jcrop({
                     // start off with jcrop-light class
                     bgOpacity: 0.5,
                     bgColor: 'white',
-                    setSelect: [100,100,50,50],
+                    setSelect: [0,0,1000,1000],
                     addClass: 'jcrop-light',
                     boxHeight: 300,
                     aspectRatio: 3/4,
@@ -126,8 +126,8 @@ $(document).ready(function() {
                     api.setOptions({ bgFade: true });
                     api.ui.selection.addClass('jcrop-selection');
                     api.allowResize = true;
+                    api.setImage = e.target.result;
                 });
-                api.setImage(e.target.result);
 
                 if(formData) {
                     formData.append("image", file);
