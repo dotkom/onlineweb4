@@ -8,6 +8,7 @@ from django.db import models
 from django.utils.translation import ugettext as _
 
 from filebrowser.fields import FileBrowseField
+import watson
 
 from apps.authentication.models import OnlineUser as User, FIELD_OF_STUDY_CHOICES
 from apps.companyprofile.models import Company
@@ -459,3 +460,7 @@ class Attendee(models.Model):
 
     class Meta:
         ordering = ['timestamp']
+
+
+# Registrations for watson indexing
+watson.register(Event)
