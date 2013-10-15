@@ -6,13 +6,13 @@ from django.contrib.auth.models import Group
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.utils.translation import ugettext as _
+from django.conf import settings
 
 from filebrowser.fields import FileBrowseField
 
 from apps.authentication.models import OnlineUser as User, FIELD_OF_STUDY_CHOICES
 from apps.companyprofile.models import Company
 from filebrowser.fields import FileBrowseField
-from django.conf import settings
 from apps.marks.models import Mark
 
 class Event(models.Model):

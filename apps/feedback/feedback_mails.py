@@ -1,13 +1,12 @@
 # -*- coding: utf-8 -*-
 
 import datetime
-import locale
 
 from django.contrib.contenttypes.models import ContentType
+
 from apps.events.models import Event, AttendanceEvent, Attendee
 from apps.feedback.models import FeedbackRelation
 from apps.marks.models import Mark, UserEntry
-import socket
 
 class FeedbackMail():
     @staticmethod
