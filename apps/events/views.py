@@ -141,7 +141,7 @@ def _search_indexed(request, query, filters):
             Event.objects.filter(**kwargs).prefetch_related(
                 'attendance_event', 'attendance_event__attendees'),)):
             results.append(result.object)
-        return results
+        return results[:10]
 
     return Event.objects.filter(**kwargs).prefetch_related(
             'attendance_event', 'attendance_event__attendees')
