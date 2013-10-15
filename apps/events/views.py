@@ -1,4 +1,6 @@
 #-*- coding: utf-8 -*-
+import datetime
+
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.core.urlresolvers import reverse
@@ -6,9 +8,12 @@ from django.http import HttpResponseRedirect
 from django.utils.translation import ugettext_lazy as _
 from django.shortcuts import render
 from django.shortcuts import get_object_or_404
+
+import watson
+
 from apps.events.models import Event, AttendanceEvent, Attendee
 from apps.events.forms import CaptchaForm
-import datetime
+
 
 
 def index(request):
@@ -112,4 +117,25 @@ def unattendEvent(request, event_id):
 
     messages.success(request, _(u"Du ble meldt av arrangementet."))
     return HttpResponseRedirect(reverse(details, args=[event_id]))
+
+
+def search_events(request):
+    query = request.GET.get('query')
+    events = _search_indexed(query)
+
+    return render(request, 'events/search.html', {'events': events})
+
+
+def _search_indexed(query):
+
+    if query:
+        results = []
+
+        for result in watson.search(query, models=(Event.objects.all(),)):
+            results.append(result)
+
+        return results
+
+    return Event.objects.all()
+
 
