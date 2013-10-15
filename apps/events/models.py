@@ -32,17 +32,17 @@ class Event(models.Model):
     )
 
     author = models.ForeignKey(User, related_name='oppretter')
-    title = models.CharField(_('tittel'), max_length=45)
-    event_start = models.DateTimeField(_('start-dato'))
-    event_end = models.DateTimeField(_('slutt-dato'))
-    location = models.CharField(_('lokasjon'), max_length=100)
+    title = models.CharField(_(u'tittel'), max_length=45)
+    event_start = models.DateTimeField(_(u'start-dato'))
+    event_end = models.DateTimeField(_(u'slutt-dato'))
+    location = models.CharField(_(u'lokasjon'), max_length=100)
     ingress_short = models.CharField(_(u"kort ingress"), max_length=150)
-    ingress = models.TextField(_('ingress'))
-    description = models.TextField(_('beskrivelse'))
+    ingress = models.TextField(_(u'ingress'))
+    description = models.TextField(_(u'beskrivelse'))
     image = FileBrowseField(_(u"bilde"), 
         max_length=200, directory=IMAGE_FOLDER,
         extensions=IMAGE_EXTENSIONS, null=False, blank=False)
-    event_type = models.SmallIntegerField(_('type'), choices=TYPE_CHOICES, null=False)
+    event_type = models.SmallIntegerField(_(u'type'), choices=TYPE_CHOICES, null=False)
 
     def feedback_users(self):
         users = []
