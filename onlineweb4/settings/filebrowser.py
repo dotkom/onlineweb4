@@ -28,6 +28,8 @@ FILEBROWSER_VERSIONS = {
     # Events
     'events_main' : {'verbose_name' : 'Event large', 'width': 584, 'height': 275, 'opts': 'crop'},
     'events_thumb' : {'verbose_name' : 'Event mini', 'width': 165, 'height': 71, 'opts': 'crop'},
+    'events_archive' : {'verbose_name' : 'Event medium', 'width': 330, 'height': 142, 'opts': 'crop'},
+
 
     # Companies
     'companies_main' : {'verbose_name' : 'Company large', 'width': 584, 'height': 275, 'opts': 'crop'},
