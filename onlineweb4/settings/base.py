@@ -48,7 +48,7 @@ LOCALE_PATHS = [
 SITE_ID = 1
 USE_I18N = True
 USE_L10N = True
-USE_TZ = False
+USE_TZ = True
 DATETIME_FORMAT = 'N j, Y, H:i'
 SECRET_KEY = 'q#wy0df(7&amp;$ucfrxa1j72%do7ko*-6(g!8f$tc2$3x@3cq5@6c'
 
