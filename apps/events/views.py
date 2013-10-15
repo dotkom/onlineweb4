@@ -17,11 +17,7 @@ from apps.events.forms import CaptchaForm
 
 
 def index(request):
-    events = Event.objects.filter(event_start__gte=datetime.date.today())
-    if len(events) == 1:
-        return details(request, events[0].id)
-    return render(request, 'events/index.html', {'events': events})
-
+    return render(request, 'events/index.html', {})
 
 def details(request, event_id):
     event = get_object_or_404(Event, pk=event_id)
@@ -121,19 +117,32 @@ def unattendEvent(request, event_id):
 
 def search_events(request):
     query = request.GET.get('query')
-    events = _search_indexed(query)
+    filters = {
+        'future' : request.GET.get('future'),
+        'myevents' : request.GET.get('myevents')
+    }
+    events = _search_indexed(request, query, filters)
 
     return render(request, 'events/search.html', {'events': events})
 
 
-def _search_indexed(query):
+def _search_indexed(request, query, filters):
+    results = []
+    kwargs = {}
+
+    if filters['future'] == 'true':
+        kwargs['event_start__gte'] = datetime.datetime.now()
+
+    if filters['myevents'] == 'true':
+        kwargs['attendance_event__attendees'] = request.user
 
     if query:
-        results = []
-
-        for result in watson.search(query, models=(Event.objects.all(),)):
+        for result in watson.search(query, models=(
+            Event.objects.filter(**kwargs).prefetch_related(
+                'attendance_event', 'attendance_event__attendees'),)):
             results.append(result)
-
+            print results
         return results
 
-    return Event.objects.all()
+    return Event.objects.filter(**kwargs).prefetch_related(
+            'attendance_event', 'attendance_event__attendees')
