@@ -82,7 +82,7 @@ COMPRESS_CSS_FILTERS = [
     'compressor-filters.cssmin.CSSMinFilter',
 ]
 COMPRESS_JS_FILTERS = [
-    'compressor.filters.jsmin.JSMinFIlter',
+    'compressor.filters.jsmin.JSMinFilter',
 ]
 
 COMPRESS_PRECOMPILERS = (
