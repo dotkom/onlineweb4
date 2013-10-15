@@ -53,16 +53,16 @@ def register(request):
                     last_name=cleaned['last_name'].title(),
                 )
                 # Set remaining fields
-                user.phone=cleaned['phone']
+                user.phone_number=cleaned['phone']
                 user.address=cleaned['address'].title()
                 user.zip_code=cleaned['zip_code']
                 # Store password properly
                 user.set_password(cleaned['password'])
                 # Users need to be manually activated
                 user.is_active = False
-
                 user.save()
 
+                # Set email address
                 email = Email(
                     user=user,
                     email=cleaned['email'],
