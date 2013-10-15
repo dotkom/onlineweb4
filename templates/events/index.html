@@ -1,2 +1,63 @@
+{% extends 'base.html' %}
+{% load compress %}
+
+{% block content %}
 <h1>Events</h1>
-{{ events }}
+
+<input type="text" id="search" />
+<input type="checkbox" id="future" checked />Vis bare kommende arrangmenter
+<input type="checkbox" id="myevents" /> Mine arrangementer
+
+<div id="events"></div>
+{% endblock %}
+{% block js %}
+
+	{{ block.super }}
+	{% compress js %}
+	<script type="text/javascript">
+		var Filters = function () {
+
+			var that = this;
+			this.query = '';
+			this.future = true;
+			this.myevents = false;
+		};
+
+		Filters.prototype.search = function () {
+				var url = '{% url 'search_events' %}?query=';
+				var query = this.query;
+				var filters = '';
+				filters 	+= '&future=' + this.future;
+				filters     += '&myevents=' + this.myevents;
+
+				$.get(url + query + filters, function (result) {
+					$('#events').empty();
+					$('#events').append(result);
+				});
+			};
+
+		$(function () {
+
+			var filters = new Filters();
+			filters.search();
+
+
+			$('#search').keyup(function () {
+				filters.query = $(this).val();
+				filters.search();
+			});
+
+			$('#future').on('click', function () {
+				filters.future = !filters.future;
+				filters.search();
+			});
+
+			$('#myevents').on('click', function () {
+				filters.myevents = !filters.myevents;
+				filters.search();
+			});
+		});
+	</script>
+	{% endcompress %}
+
+{% endblock %}
