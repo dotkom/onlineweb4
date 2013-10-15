@@ -140,8 +140,7 @@ def _search_indexed(request, query, filters):
         for result in watson.search(query, models=(
             Event.objects.filter(**kwargs).prefetch_related(
                 'attendance_event', 'attendance_event__attendees'),)):
-            results.append(result)
-            print results
+            results.append(result.object)
         return results
 
     return Event.objects.filter(**kwargs).prefetch_related(
