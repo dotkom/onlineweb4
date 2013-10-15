@@ -174,7 +174,7 @@ class Event(models.Model):
 
     @models.permalink
     def get_absolute_url(self):
-        return reverse('apps.event.views.details', args=[str(self.id)])
+        return ('events_details', None, {'event_id': self.id})
 
 
     def __unicode__(self):
