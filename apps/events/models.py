@@ -234,9 +234,9 @@ class FieldOfStudyRule(Rule):
 
     def __unicode__(self):
         if self.offset.offset > 0:
-            time_unit = _(u'time') if self.offset.offset > 1 else _(u'timer')
-            return _("%s etter %d %s") % (self.get_field_of_study_display(), self.offset.offset, time_unit)
-        return self.get_field_of_study_display()
+            time_unit = _(u'timer') if self.offset.offset > 1 else _(u'time')
+            return _("%s etter %d %s") % (unicode(self.get_field_of_study_display()), self.offset.offset, time_unit)
+        return unicode(self.get_field_of_study_display())
 
 
 class GradeRule(Rule):
