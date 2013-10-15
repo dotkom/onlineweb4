@@ -1,4 +1,3 @@
-
 {% extends "base.html" %}
 {% load fb_versions %}
 
@@ -12,7 +11,7 @@
 
 {% block content %}
 
-<section id="events">
+<section>
   <div class="container">
 
     <div class="row">
@@ -28,7 +27,7 @@
 
       <div class="row">
         <div class="input-group">
-          <input type="text" class="form-control" placeholder="Søk blant arrangementene">
+          <input type="text" class="form-control" placeholder="Søk blant arrangementene" id="search">
         </div>
       </div>
 
@@ -36,14 +35,14 @@
 
         <div class="checkbox">
           <label>
-            <input type="checkbox" name="optionCheckboxs" id="optionCheckboxs1" value="option1">
+            <input type="checkbox" name="optionCheckboxs" value="option1" id="future" checked>
             Fremtidige arrangementer
           </label>
         </div>
 
         <div class="checkbox">
           <label>
-            <input type="checkbox" name="optionCheckboxs" id="optionCheckboxs1" value="option1">
+            <input type="checkbox" name="optionCheckboxs" value="option1" id="myevents">
             Mine arrangementer
           </label>
         </div>
@@ -54,7 +53,7 @@
       
         <div class="checkbox">
           <label>
-            <input type="checkbox" name="optionCheckboxs" id="optionCheckboxs1" value="option1">
+            <input type="checkbox" name="optionCheckboxs" value="option1">
             Somehting elze
           </label>
         </div>
@@ -63,101 +62,69 @@
 
     </div> <!-- end col-md-2 -->
 
-    <div class="col-md-10 pull-left">
-
-      <article class="row">
-
-        <div class="col-md-4 left-box">
-          <div class="row">
-            <img src="" alt="">
-            <button type="button" class="btn btn-success">Gå til påmelding</button>
-          </div>
-        </div>
-
-        <div class="content col-md-8">
-          <h1><span>25. Okt 2013</span>Lipsum dolor</h1>
-          <p class="ingress">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin a justo sit amet lorem sagittis laoreet ut venenatis metus. Integer malesuada ipsum eu gravida facilisis.</p>
-
-          <div class="meta">
-            <div class="col-md-3">
-              <p>Påmeldte: 15/20</p>
-            </div>
-            <div class="col-md-3">
-              <p>Sted: R1</p>
-            </div>
-            <div class="col-md-4">
-              <p>Påmelding åpner 24.okt kl 1200</p>
-            </div>
-          </div>
-        </div>
-
-      </article>
-
-
-      <article class="row">
-        <div class="col-md-4 left-box">
-          <div class="row">
-            <img src="" alt="">
-            <button type="button" class="btn btn-danger">Gå til arrangementsiden</button>
-          </div>
-        </div>
-
-        <div class="content col-md-8">
-          <h1><span>25. Okt 2013</span>Lipsum dolor</h1>
-          <p class="ingress">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin a justo sit amet lorem sagittis laoreet ut venenatis metus. Integer malesuada ipsum eu gravida facilisis.</p>
-
-          <div class="meta">
-            <div class="col-md-3">
-              <p>Påmeldte: 15/20</p>
-            </div>
-            <div class="col-md-3">
-              <p>Sted: Høgskoleparken</p>
-            </div>
-            <div class="col-md-4">
-              <p>Påmelding åpner 24.okt kl 1200</p>
-            </div>
-          </div>
-        </div>
-
-      </article>
-
-
-      <article class="row">
-
-        <div class="col-md-4 left-box">
-          <div class="row">
-            <img src="" alt="">
-            <button type="button" class="btn btn-primary">Gå til påmelding</button>
-          </div>
-        </div>
-
-        <div class="content col-md-8">
-          <h1><span>25. Okt 2013</span>Lipsum dolor</h1>
-          <p class="ingress">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin a justo sit amet lorem sagittis laoreet ut venenatis metus. Integer malesuada ipsum eu gravida facilisis.</p>
-
-          <div class="meta">
-            <div class="col-md-3">
-              <p>Påmeldte: 15/20</p>
-            </div>
-            <div class="col-md-3">
-              <p>Sted: R1</p>
-            </div>
-            <div class="col-md-4">
-              <p>Påmelding åpner 24.okt kl 1200</p>
-            </div>
-          </div>
-        </div>
-
-      </article>
+    <div class="col-md-10 pull-left" id="events">
 
     </div> <!-- end col-md-10 -->
-
+<!-- 
   {% if events %}
   
   {% else %}
-    <!-- <p class="ingress">Ingen arrangementer funnet.</p> -->
-  {% endif %}
+    <p class="ingress">Ingen arrangementer funnet.</p>
+  {% endif %} -->
 
   </div>
 </section>
 {%endblock content %}
+
+{% block js %}
+
+  {{ block.super }}
+  {% compress js %}
+  <script type="text/javascript">
+    var Filters = function () {
+
+      var that = this;
+      this.query = '';
+      this.future = true;
+      this.myevents = false;
+    };
+
+    Filters.prototype.search = function () {
+        var url = '{% url 'search_events' %}?query=';
+        var query = this.query;
+        var filters = '';
+        filters   += '&future=' + this.future;
+        filters     += '&myevents=' + this.myevents;
+
+        $.get(url + query + filters, function (result) {
+          $('#events').empty();
+          $('#events').append(result);
+        });
+      };
+
+    $(function () {
+
+      var filters = new Filters();
+      filters.search();
+
+
+      $('#search').keyup(function () {
+        filters.query = $(this).val();
+        filters.search();
+      });
+
+      $('#future').on('click', function () {
+        filters.future = !filters.future;
+        filters.search();
+      });
+
+      $('#myevents').on('click', function () {
+        filters.myevents = !filters.myevents;
+        filters.search();
+      });
+    });
+  </script>
+  {% endcompress %}
+
+{% endblock %}
+

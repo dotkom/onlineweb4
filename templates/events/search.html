@@ -1,0 +1,29 @@
+{% for event in events %}
+ <article class="row">
+
+  <div class="col-md-4 left-box">
+    <div class="row">
+      <img src="{% version event.image|event_archive %}" alt="">
+      <button type="button" class="btn btn-success">Gå til påmelding</button>
+    </div>
+  </div>
+
+  <div class="content col-md-8">
+    <h1><span>{{ event.event_start|date:"d.m.Y"}}</span>{{ event.title }}</h1>
+    <p class="ingress">{{ event.ingress }}</p>
+
+    <div class="meta">
+      <div class="col-md-3">
+        <p>Påmeldte: {{ event.number_of_attendees_not_on_waiting_list }}</p>
+      </div>
+      <div class="col-md-3">
+        <p>Sted: {{ event.location }}</p>
+      </div>
+      <div class="col-md-4">
+        <p>Påmelding åpner {{ event.event_start }}</p>
+      </div>
+    </div>
+  </div>
+
+</article>
+{% endfor %}
