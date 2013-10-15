@@ -134,6 +134,10 @@ def uploadImage(request):
 def handleImageUpload(request, image):
 
     try:
+
+        if not os.path.exists(os.path.join(settings.MEDIA_ROOT, "images", "profiles")):
+            os.makedirs(os.path.join(settings.MEDIA_ROOT, "images", "profiles"))
+
         extension_index = image.name.rfind('.')
 
         #Make sure the image contains a file extension
