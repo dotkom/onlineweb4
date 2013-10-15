@@ -8,4 +8,5 @@ urlpatterns = patterns('apps.events.views',
     url(r'^(?P<event_id>\d+)/attend/$', 'attendEvent', name='attend_event'),
     url(r'^(?P<event_id>\d+)/unattend/$', 'unattendEvent', name='unattend_event'),
     url(r'^(?P<event_id>\d+)/(.*)$', 'details', name='events_details'), # Slug
+    url(r'^search/', 'search_events', name="search_events"),
 )
