@@ -1,2 +1,163 @@
-<h1>Events</h1>
-{{ events }}
+
+{% extends "base.html" %}
+{% load fb_versions %}
+
+{% load compress %}
+{% block styles %}
+  {{ block.super }}
+  {% compress css %}
+    <link rel="stylesheet" type="text/less" href="{{ STATIC_URL }}less/event_archive.less">
+  {% endcompress %}
+{% endblock %}
+
+{% block content %}
+
+<section id="events">
+  <div class="container">
+
+    <div class="row">
+      <div class="col-md-12">
+        <div class="page-header">
+          <h2>Arrangementer</h2>
+        </div>
+      </div>
+    </div>
+
+    
+    <div class="col-md-2 pull-right" id="filter">
+
+      <div class="row">
+        <div class="input-group">
+          <input type="text" class="form-control" placeholder="Søk blant arrangementene">
+        </div>
+      </div>
+
+      <div class="row">
+
+        <div class="checkbox">
+          <label>
+            <input type="checkbox" name="optionCheckboxs" id="optionCheckboxs1" value="option1">
+            Fremtidige arrangementer
+          </label>
+        </div>
+
+        <div class="checkbox">
+          <label>
+            <input type="checkbox" name="optionCheckboxs" id="optionCheckboxs1" value="option1">
+            Mine arrangementer
+          </label>
+        </div>
+
+      </div>
+
+      <div class="row">
+      
+        <div class="checkbox">
+          <label>
+            <input type="checkbox" name="optionCheckboxs" id="optionCheckboxs1" value="option1">
+            Somehting elze
+          </label>
+        </div>
+
+      </div> <!-- end row -->
+
+    </div> <!-- end col-md-2 -->
+
+    <div class="col-md-10 pull-left">
+
+      <article class="row">
+
+        <div class="col-md-4 left-box">
+          <div class="row">
+            <img src="" alt="">
+            <button type="button" class="btn btn-success">Gå til påmelding</button>
+          </div>
+        </div>
+
+        <div class="content col-md-8">
+          <h1><span>25. Okt 2013</span>Lipsum dolor</h1>
+          <p class="ingress">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin a justo sit amet lorem sagittis laoreet ut venenatis metus. Integer malesuada ipsum eu gravida facilisis.</p>
+
+          <div class="meta">
+            <div class="col-md-3">
+              <p>Påmeldte: 15/20</p>
+            </div>
+            <div class="col-md-3">
+              <p>Sted: R1</p>
+            </div>
+            <div class="col-md-4">
+              <p>Påmelding åpner 24.okt kl 1200</p>
+            </div>
+          </div>
+        </div>
+
+      </article>
+
+
+      <article class="row">
+        <div class="col-md-4 left-box">
+          <div class="row">
+            <img src="" alt="">
+            <button type="button" class="btn btn-danger">Gå til arrangementsiden</button>
+          </div>
+        </div>
+
+        <div class="content col-md-8">
+          <h1><span>25. Okt 2013</span>Lipsum dolor</h1>
+          <p class="ingress">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin a justo sit amet lorem sagittis laoreet ut venenatis metus. Integer malesuada ipsum eu gravida facilisis.</p>
+
+          <div class="meta">
+            <div class="col-md-3">
+              <p>Påmeldte: 15/20</p>
+            </div>
+            <div class="col-md-3">
+              <p>Sted: Høgskoleparken</p>
+            </div>
+            <div class="col-md-4">
+              <p>Påmelding åpner 24.okt kl 1200</p>
+            </div>
+          </div>
+        </div>
+
+      </article>
+
+
+      <article class="row">
+
+        <div class="col-md-4 left-box">
+          <div class="row">
+            <img src="" alt="">
+            <button type="button" class="btn btn-primary">Gå til påmelding</button>
+          </div>
+        </div>
+
+        <div class="content col-md-8">
+          <h1><span>25. Okt 2013</span>Lipsum dolor</h1>
+          <p class="ingress">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin a justo sit amet lorem sagittis laoreet ut venenatis metus. Integer malesuada ipsum eu gravida facilisis.</p>
+
+          <div class="meta">
+            <div class="col-md-3">
+              <p>Påmeldte: 15/20</p>
+            </div>
+            <div class="col-md-3">
+              <p>Sted: R1</p>
+            </div>
+            <div class="col-md-4">
+              <p>Påmelding åpner 24.okt kl 1200</p>
+            </div>
+          </div>
+        </div>
+
+      </article>
+
+    </div> <!-- end col-md-10 -->
+
+  {% if events %}
+  
+  {% else %}
+    <!-- <p class="ingress">Ingen arrangementer funnet.</p> -->
+  {% endif %}
+
+  </div>
+</section>
+{%endblock content %}
