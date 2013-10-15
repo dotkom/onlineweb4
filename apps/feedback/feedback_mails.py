@@ -22,7 +22,6 @@ class FeedbackMail():
         message = Message()
         message.attended_mails = FeedbackMail.get_user_mails(not_responded)
 
-        locale.setlocale(locale.LC_TIME, 'nb_NO.UTF-8')
         message.committee_mail = FeedbackMail.get_committee_email(feedback)
         deadline = feedback.deadline.strftime("%d. %B").encode("utf-8")
         title = str(FeedbackMail.get_title(feedback)).encode("utf-8")
