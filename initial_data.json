@@ -222,5 +222,13 @@
             "name": "Hovedstyre", 
             "permissions": []
         }
+    },
+    {
+        "pk": 12, 
+        "model": "auth.group", 
+        "fields": {
+            "name": "Komiteer", 
+            "permissions": []
+        }
     }
 ]
