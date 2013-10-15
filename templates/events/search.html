@@ -16,15 +16,21 @@
       <p class="ingress">{{ event.ingress }}</p>
 
       <div class="meta">
-        <div class="col-md-2">
-          <p>Påmeldte: {{ event.number_of_attendees_not_on_waiting_list }}</p>
-        </div>
-        <div class="col-md-3">
-          <p>Sted: {{ event.location }}</p>
-        </div>
-        <div class="col-md-5 pull-right">
-          <p>Påmelding åpner {{ event.event_start }}</p>
-        </div>
+        {% if event.is_attendance_event %}
+          <div class="col-md-3">
+            <p>Påmeldte: {{ event.number_of_attendees_not_on_waiting_list }}</p>
+          </div>
+          <div class="col-md-3">
+            <p>Sted: {{ event.location }}</p>
+          </div>
+          <div class="col-md-5 pull-right">
+            <p>Påmelding åpner {{ event.attendance_event.registration_start|date:"d.m.y H.i" }}</p>
+          </div>
+        {% else %}
+          <div class="col-md-12">
+            <p>Sted: {{ event.location }}</p>
+          </div>
+        {% endif %}
       </div>
     </div>
 
