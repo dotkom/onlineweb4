@@ -109,26 +109,26 @@ $(document).ready(function() {
             reader.readAsDataURL(file);
 
             reader.onloadend = function(e) {
-                $('#image-resize').attr('src', e.target.result);
-                $('#image-resize').Jcrop({
+                var api;
+                $('.jcrop-holder').remove();
+                api = $.Jcrop('#image-resize', {
                     // start off with jcrop-light class
                     bgOpacity: 0.5,
                     bgColor: 'white',
-                    setSelect: [100,100,50,50],
                     addClass: 'jcrop-light',
                     boxHeight: 300,
                     aspectRatio: 3/4,
                     onChange: updateCoords,
                     onSelect: updateCoords,
-                    keySupport: false
-                },function() {
-                    api = this;
-                    api.setOptions({ bgFade: true });
-                    api.ui.selection.addClass('jcrop-selection');
-                    api.allowResize = true;
+                    keySupport: false,
+                    allowSelect: false
                 });
-                api.setImage(e.target.result);
-
+                api.setImage(e.target.result, function () {
+                    api.setSelect([0,0,500,500]);
+                });
+                api.setOptions({ bgFade: true });
+                api.ui.selection.addClass('jcrop-selection');
+                api.allowResize = true;
                 if(formData) {
                     formData.append("image", file);
                 }
@@ -225,13 +225,8 @@ $(document).ready(function() {
     $('tr').each(function(i, row) {
 // Ajax request to delete an email
         $(row).find('button.delete').click(function() {
-            if ($(row).find('button.active').length) {
-                alert("Du kan ikke fjerne din primæraddresse.");
-            }
-            else {
-                email = $(row).find('span.email').text();
-                deleteEmail(email, row);
-            }
+            email = $(row).find('span.email').text();
+            deleteEmail(email, row);
         });
 // Ajax request to set email as primary
         $(row).find('button.primary').click(function() { 
@@ -255,7 +250,7 @@ $(document).ready(function() {
                 $(row).hide();
             },
             error: function(res) {
-                if (status === 412) {
+                if (res['status'] === 412) {
                     res = JSON.parse(res['responseText']);
                     alert(res['message']);
                 }
@@ -280,7 +275,7 @@ $(document).ready(function() {
                     .prop('disabled', true).text('Primær');
             },
             error: function(res) {
-                if (status === 412) {
+                if (res['status'] === 412) {
                     res = JSON.parse(res['responseText']);
                     alert(res['message']);
                 }
@@ -302,7 +297,7 @@ $(document).ready(function() {
                 alert("tada");
             },
             error: function(res) {
-                if (status === 412) {
+                if (res['status'] === 412) {
                     res = JSON.parse(res['responseText']);
                     alert(res['message']);
                 }
@@ -314,6 +309,36 @@ $(document).ready(function() {
             crossDomain: false
         });
     }
+
+/*
+  JS for membership  
+*/
+
+    $(".hasDatePcker").datepicker({ dateFormat: "yy-mm-dd" });
+        
+    $("#membership-details").submit(function(event) {
+        event.preventDefault();
+        $.ajax({
+            method: $(this).attr('method'),
+            url: $(this).attr('action'),
+            data: $(this).serialize(),
+            success: function() {
+                alert('success');
+            },
+            error: function(res) {
+                if (res['status'] === 412) {
+                    res = JSON.parse(res['responseText']);
+                    alert(res['message']);
+                }
+                else {
+                // TODO write a proper error function
+                    alert("Error!");
+                }
+            },
+            crossDomain: false
+        });
+    });
+
 });
 
 

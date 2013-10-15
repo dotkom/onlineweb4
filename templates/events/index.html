@@ -1,2 +1,127 @@
-<h1>Events</h1>
-{{ events }}
+{% extends "base.html" %}
+
+{% load compress %}
+{% block styles %}
+  {{ block.super }}
+  {% compress css %}
+    <link rel="stylesheet" type="text/less" href="{{ STATIC_URL }}less/event_archive.less">
+  {% endcompress %}
+{% endblock %}
+
+{% block content %}
+
+<section>
+  <div class="container">
+
+    <div class="row">
+      <div class="col-md-12">
+        <div class="page-header">
+          <h2>Arrangementer</h2>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-3 pull-right" id="filter">
+
+      <div class="row">
+        <div class="input-group col-md-12">
+          <input type="text" class="form-control" placeholder="Søk blant arrangementene" id="search">
+        </div>
+      </div>
+
+      <div class="row">
+
+        <div class="checkbox col-md-12">
+          <label>
+            <input type="checkbox" name="optionCheckboxs" value="option1" id="future" checked>
+            Fremtidige arrangementer
+          </label>
+        </div>
+
+        <div class="checkbox col-md-12">
+          <label>
+            <input type="checkbox" name="optionCheckboxs" value="option1" id="myevents">
+            Mine arrangementer
+          </label>
+        </div>
+
+      </div>
+
+      <div class="row">
+      
+        <div class="checkbox">
+          <label>
+            <input type="checkbox" name="optionCheckboxs" value="option1">
+            Somehting elze
+          </label>
+        </div>
+
+      </div> <!-- end row -->
+
+    </div> <!-- end col-md-3 -->
+
+    <div class="col-md-9 pull-left" id="events">
+
+    </div> <!-- end col-md-9 -->
+<!-- 
+  {% if events %}
+  
+  {% else %}
+    <p class="ingress">Ingen arrangementer funnet.</p>
+  {% endif %} -->
+
+  </div>
+</section>
+{%endblock content %}
+
+{% block js %}
+
+  {{ block.super }}
+  {% compress js %}
+  <script type="text/javascript">
+    var Filters = function () {
+
+      this.query = '';
+      this.future = true;
+      this.myevents = false;
+    };
+
+    Filters.prototype.search = function () {
+        var url = '{% url 'search_events' %}?query=';
+        var query = this.query;
+        var filters = '';
+        filters   += '&future=' + this.future;
+        filters     += '&myevents=' + this.myevents;
+
+        $.get(url + query + filters, function (result) {
+          $('#events').empty();
+          $('#events').append(result);
+        });
+      };
+
+    $(function () {
+
+      var filters = new Filters();
+      filters.search();
+
+
+      $('#search').keyup(function () {
+        filters.query = $(this).val();
+        filters.search();
+      });
+
+      $('#future').on('click', function () {
+        filters.future = !filters.future;
+        filters.search();
+      });
+
+      $('#myevents').on('click', function () {
+        filters.myevents = !filters.myevents;
+        filters.search();
+      });
+    });
+  </script>
+  {% endcompress %}
+
+{% endblock %}
+

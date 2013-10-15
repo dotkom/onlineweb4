@@ -54,9 +54,9 @@ def register(request):
                     email=cleaned['email'].lower(),
                 )
                 # Set remaining fields
-                user.phone=cleaned['phone'],
-                user.address=cleaned['address'].title(),
-                user.zip_code=cleaned['zip_code'],
+                user.phone=cleaned['phone']
+                user.address=cleaned['address'].title()
+                user.zip_code=cleaned['zip_code']
                 # Store password properly
                 user.set_password(cleaned['password'])
                 # Users need to be manually activated
