@@ -110,7 +110,7 @@ class FeedbackRelation(models.Model):
         if hasattr(self.content_object, "feedback_mail"):
             return self.content_object.feedback_mail()
         else:
-            return settings.DEFAULT_FROM_MAIL
+            return "missing mail"
 
     def get_title(self):
         if hasattr(self.content_object, "feedback_title"):

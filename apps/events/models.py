@@ -156,7 +156,7 @@ class Event(models.Model):
         elif self.event_type == 2: #Bedpres
             return settings.EMAIL_BEDKOM
         elif self.event_type == 3: #Kurs
-            return settings.EMAIL_PROKOM
+            return settings.EMAIL_FAGKOM
         else:
             return settings.DEFAULT_FROM_EMAIL
 

@@ -10,6 +10,7 @@ from django.utils.translation import ugettext_lazy as _
 from apps.feedback.feedback_mails import FeedbackMail, Message
 from apps.feedback.models import Feedback, FeedbackRelation
 from apps.events.models import Event, AttendanceEvent, Attendee
+from apps.marks.models import Mark
 from apps.authentication.models import OnlineUser as User
 from datetime import datetime, timedelta
 from django.conf import settings
@@ -26,14 +27,27 @@ class SimpleTest(TestCase):
         atendee1 = Attendee.objects.create(event = attendance_event, user = user1)
         atendee2 = Attendee.objects.create(event = attendance_event, user = user2)
         FeedbackRelation.objects.create(feedback=feedback, content_object=event, deadline=datetime.today(), active=True)
+        FeedbackRelation.objects.create(feedback=feedback, content_object=atendee1, deadline=datetime.today(), active=True)
 
 
-    def test_test_attendees(self):
-        feedback_relation = FeedbackRelation.objects.get()
+    def test_attendees(self):
+        feedback_relation = FeedbackRelation.objects.get(pk=1)
+        message = FeedbackMail.generate_message(feedback_relation)
+        user_mails = [user.email for user in User.objects.all()]
+
+        self.assertEqual(set(message.attended_mails), set(user_mails))
+
+        user1 = User.objects.get(pk=1)
+        feedback_relation.answered = [user1]
+
+        message = FeedbackMail.generate_message(feedback_relation)
+        user_mails = [user.email for user in [User.objects.get(pk=2)]]
+        self.assertEqual(set(message.attended_mails), set(user_mails))
+
+        feedback_relation = FeedbackRelation.objects.get(pk=2)
         message = FeedbackMail.generate_message(feedback_relation)
 
-        self.assertEqual(message.attended_mails[0], "user1@mail.com")
-        self.assertEqual(message.attended_mails[1], "user2@mail.com")
+        self.assertEqual(message, None)
 
     def test_committee_mails(self):
         event = Event.objects.get()
@@ -41,50 +55,70 @@ class SimpleTest(TestCase):
         #Sosialt
         event.event_type = 1
         event.save()
-        feedback_relation = FeedbackRelation.objects.get()
+        feedback_relation = FeedbackRelation.objects.get(pk=1)
         email = FeedbackMail.get_committee_email(feedback_relation)
         self.assertEqual(email, settings.EMAIL_ARRKOM)
         
         #Bedkom
         event.event_type = 2
         event.save()
-        feedback_relation = FeedbackRelation.objects.get()
+        feedback_relation = FeedbackRelation.objects.get(pk=1)
         email = FeedbackMail.get_committee_email(feedback_relation)
         self.assertEqual(email, settings.EMAIL_BEDKOM)
 
         #Kurs
         event.event_type = 3
         event.save()
-        feedback_relation = FeedbackRelation.objects.get()
+        feedback_relation = FeedbackRelation.objects.get(pk=1)
         email = FeedbackMail.get_committee_email(feedback_relation)
-        self.assertEqual(email, settings.EMAIL_PROKOM)
+        self.assertEqual(email, settings.EMAIL_FAGKOM)
         
         #Utflukt
         event.event_type = 4
         event.save()
-        feedback_relation = FeedbackRelation.objects.get()
+        feedback_relation = FeedbackRelation.objects.get(pk=1)
         email = FeedbackMail.get_committee_email(feedback_relation)
         self.assertEqual(email, settings.EMAIL_ARRKOM)
         
         #Default
         event.event_type = 5
         event.save()
-        feedback_relation = FeedbackRelation.objects.get()
+        feedback_relation = FeedbackRelation.objects.get(pk=1)
         email = FeedbackMail.get_committee_email(feedback_relation)
         self.assertEqual(email, settings.DEFAULT_FROM_EMAIL)
+        
+        feedback_relation2 = FeedbackRelation.objects.get(pk=2)
+        email = FeedbackMail.get_committee_email(feedback_relation2)
+        self.assertEqual(email, "missing mail")
  
     def test_start_date(self):
-        feedback_relation = FeedbackRelation.objects.get()
+        feedback_relation = FeedbackRelation.objects.get(pk=1)
         start_date = FeedbackMail.start_date(feedback_relation)
 
         self.assertEqual(start_date, datetime.today().date())
 
-    def test_get_link(self):
-        feedback_relation = FeedbackRelation.objects.get()
-        link = FeedbackMail.get_link(feedback_relation)
-        #TODO
-        pass
+        feedback_relation2 = FeedbackRelation.objects.get(pk=2)
+        start_date = FeedbackMail.start_date(feedback_relation2)
+        self.assertFalse(start_date)
 
+    def test_active(self):
+        feedback_relation = FeedbackRelation.objects.get(pk=1)
+        yesterday = datetime.now() - timedelta(days=1)
+        feedback_relation.deadline = yesterday.date()
+        feedback_relation.active = True
+        feedback_relation.save()
+        FeedbackMail.generate_message(feedback_relation)
+
+        self.assertFalse(feedback_relation.active)
+
+    def test_marks(self):
+        users = [User.objects.get(pk=1)]
+        all_users = User.objects.all()
+        FeedbackMail.set_marks("test_title", users)
+        mark = Mark.objects.get()
+
+        self.assertEqual(set(users), set(mark.given_to.all()))
+        self.assertNotEqual(set(all_users), set(mark.given_to.all()))
 
     def test_post_correct(self):
         #TODO: do eeet! test posted against db (Sigurd) 2013-02-08

@@ -12,11 +12,10 @@ class Command(NoArgsCommand):
         active_feedbacks = FeedbackRelation.objects.filter(active=True)
        
         for feedback in active_feedbacks:
-           
             message = FeedbackMail.generate_message(feedback)
 
-            if message:
-                EmailMessage(message.subject, message, message.committee_mail, [], message.attended_mails).send()
+            if message.send:
+                EmailMessage(message.subject, unicode(message), message.committee_mail, [], message.attended_mails).send()
 
-                if results_message:
+                if message.results_message:
                     EmailMessage("Feedback resultat", message.results_message,"online@online.ntnu.no", [message.committee_mail]).send()

@@ -17,7 +17,7 @@ class FeedbackMail():
         not_responded = FeedbackMail.get_users(feedback)
         #return false if everyone has answered
         if not not_responded:
-            return False
+            return None
         
         message = Message()
         message.attended_mails = FeedbackMail.get_user_mails(not_responded)
@@ -31,8 +31,6 @@ class FeedbackMail():
        
         start_date = feedback.get_start_date()
         deadline_diff = (feedback.deadline - today).days
-        day_after_event = FeedbackMail.day_after_event(start_date)
-        
 
         message.subject = u"Feedback: %s" % (title)
         message.intro = u"Hei, vi ønsker tilbakemelding på \"%s\"" % (title)
@@ -41,7 +39,7 @@ class FeedbackMail():
         message.start_date = FeedbackMail.start_date_message(start_date)
 
         if deadline_diff < 0: #Deadline passed
-            FeedbackMail.set_marks(feedback, title, not_responded)
+            FeedbackMail.set_marks(title, not_responded)
                 
             feedback.active = False
             feedback.save()
@@ -55,30 +53,39 @@ class FeedbackMail():
             message.deadline = u"\n\nI dag innen 23:59 er siste frist til å svare på skjemaet."
             
             message.results_message = u"Hei, siste purremail på feedback skjema har blitt sendt til alle " \
-            u"gjenværende deltagere på \"%s\". Dere kan se feedback-resultatene på\n%s\n" % \
+            u"gjenværende deltagere på \"%s\".\nDere kan se feedback-resultatene på:\n%s\n" % \
             (title, results_link)
             message.send = True
         elif deadline_diff < 3: # 3 days from the deadline
             message.deadline = u"\n\nFristen for å svare på skjema er %s innen kl 23:59." % (deadline)
             message.send = True
-        elif today == day_after_event or send_first_notification: #Day after the event or feedback creation 
+        elif FeedbackMail.send_first_notification(feedback): #Day after the event or feedback creation 
             message.deadline = u"\n\nFristen for å svare på skjema er %s innen kl 23:59." % (deadline)
         
             message.results_message = u"Hei, nå har feedbackmail blitt sendt til alle " \
-            u"deltagere på \"%s\". Dere kan se feedback-resultatene på \n%s\n" % \
+            u"deltagere på \"%s\".\nDere kan se feedback-resultatene på:\n%s\n" % \
             (title, results_link)
             message.send = True
 
         return message
         
     @staticmethod
-    def day_after_event(start_date):
-        if start_date:
-            return start_date + datetime.timedelta(days=1)
-        else:
-            return False
+    def send_first_notification(feedback):
+        start_date = FeedbackMail.start_date(feedback)
 
-       
+        if not start_date:
+            yesterday = datetime.date() - datetime.timedelta(days=1)
+            #The object that requires feedback doesnt have a start date
+            if feedback.created_date == yesterday.date():
+                #Send the first notification the day after the feedback relation was created
+                return True
+        else:
+            day_after_event = start_date + datetime.timedelta(1)
+            if day_after_event == datetime.date.today():
+                #Send the first notification the day after the event
+                return True
+        return False
+
     @staticmethod
     def start_date(feedback):
         start_date = feedback.get_start_date()
@@ -110,8 +117,9 @@ class FeedbackMail():
 
     @staticmethod
     def get_link(feedback):
-        hostname = socket.gethostname()
-        return str(hostname + feedback.get_absolute_url())
+        #hostname = socket.gethostname()
+        #TODO Hostname returns name of the server, not the url of the running django application, look into alternative solution
+        return str("www.online.ntnu.no" + feedback.get_absolute_url())
 
     @staticmethod
     def get_title(feedback):
@@ -130,7 +138,7 @@ class FeedbackMail():
             return ""
 
     @staticmethod
-    def set_marks(feedback, title, not_responded):
+    def set_marks(title, not_responded):
         mark = Mark()
         mark.title = u"Manglende tilbakemelding på %s" % (title)
         mark.category = 4 #Missed feedback
@@ -163,7 +171,7 @@ class Message():
     def __unicode__(self):
         message = "%s %s %s %s %s %s %s" % (
             self.intro, 
-            self.message_start_date, 
+            self.start_date, 
             self.link, 
             self.deadline, 
             self.mark, 
