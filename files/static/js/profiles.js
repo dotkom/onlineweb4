@@ -109,26 +109,26 @@ $(document).ready(function() {
             reader.readAsDataURL(file);
 
             reader.onloadend = function(e) {
-                $('#image-resize').attr('src', e.target.result);
-                $('#image-resize').Jcrop({
+                var api;
+                $('.jcrop-holder').remove();
+                api = $.Jcrop('#image-resize', {
                     // start off with jcrop-light class
                     bgOpacity: 0.5,
                     bgColor: 'white',
-                    setSelect: [100,100,50,50],
                     addClass: 'jcrop-light',
                     boxHeight: 300,
                     aspectRatio: 3/4,
                     onChange: updateCoords,
                     onSelect: updateCoords,
-                    keySupport: false
-                },function() {
-                    api = this;
-                    api.setOptions({ bgFade: true });
-                    api.ui.selection.addClass('jcrop-selection');
-                    api.allowResize = true;
+                    keySupport: false,
+                    allowSelect: false
                 });
-                api.setImage(e.target.result);
-
+                api.setImage(e.target.result, function () {
+                    api.setSelect([0,0,500,500]);
+                });
+                api.setOptions({ bgFade: true });
+                api.ui.selection.addClass('jcrop-selection');
+                api.allowResize = true;
                 if(formData) {
                     formData.append("image", file);
                 }
