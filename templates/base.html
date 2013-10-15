@@ -17,7 +17,7 @@
         {% block apple-webapp %}{% endblock %}
         <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
     </head>
-    <body>
+    <body>http://pastie.org/private/nylnts6ijvwnywfuivj8mw
     <!-- Header goes here! -->
 
     <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -46,6 +46,9 @@
                         {% if user.is_authenticated %}
                         <a href="#login_menu" class="login-btn dropdown-toggle dropdown-signin login" data-toggle="dropdown">{{ user.get_full_name }}<b class="caret"></b></a>
                         <ul class="dropdown-menu login-box" role="menu">
+                            {% if user.is_staff %}
+                            <li><a href="/admin/">Administrasjon</a></li>
+                            {% endif %}
                             <li><a href="{% url 'profiles' %}">Min profil</a></li>
                             <li class="divider"></li>
                             <li><a href="{% url 'auth_logout' %}">Logg ut</a></li>
