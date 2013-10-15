@@ -137,5 +137,3 @@ def _search_indexed(query):
         return results
 
     return Event.objects.all()
-
-
