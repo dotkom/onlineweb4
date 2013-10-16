@@ -6,12 +6,14 @@ from django.contrib.auth.models import Group
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.utils.translation import ugettext as _
+from django.conf import settings
 
 from filebrowser.fields import FileBrowseField
 import watson
 
 from apps.authentication.models import OnlineUser as User, FIELD_OF_STUDY_CHOICES
 from apps.companyprofile.models import Company
+from filebrowser.fields import FileBrowseField
 from apps.marks.models import Mark
 
 class Event(models.Model):
@@ -46,10 +48,19 @@ class Event(models.Model):
 
     def feedback_users(self):
         users = []
-        if self.attendance_event.attendees.all():
-            for attendee in self.attendance_event.attendees.all():
-                users.append(attendee.user)
-        return users
+        try:
+            if self.attendance_event.attendees.all():
+                for attendee in self.attendance_event.attendees.all():
+                    users.append(attendee.user)
+            return users
+        except AttendanceEvent.DoesNotExist:
+            return users
+
+    def feedback_date(self):
+        return self.event_start
+
+    def feedback_title(self):
+        return self.title
 
     @property
     def number_of_attendees_on_waiting_list(self):
@@ -171,6 +182,16 @@ class Event(models.Model):
                         if attendee_object.user == user:
                             return list(waitlist).index(attendee_object) + 1
         return 0
+
+    def feedback_mail(self):
+        if self.event_type == 1 or self.event_type == 4: #sosialt/utflukt
+            return settings.EMAIL_ARRKOM
+        elif self.event_type == 2: #Bedpres
+            return settings.EMAIL_BEDKOM
+        elif self.event_type == 3: #Kurs
+            return settings.EMAIL_FAGKOM
+        else:
+            return settings.DEFAULT_FROM_EMAIL
 
     @models.permalink
     def get_absolute_url(self):
