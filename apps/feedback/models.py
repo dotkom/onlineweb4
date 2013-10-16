@@ -26,6 +26,10 @@ class FeedbackRelation(models.Model):
     content_type = models.ForeignKey(ContentType)
     object_id = models.PositiveIntegerField()
     content_object = generic.GenericForeignKey('content_type', 'object_id')
+    deadline = models.DateField()
+    gives_mark = models.BooleanField(default=True)
+    active = models.BooleanField(default=True)
+    created_date = models.DateTimeField(auto_now_add=True)
 
     # Keep a record of who has answered. (not /what/ they have answered)
     answered = models.ManyToManyField(
@@ -97,6 +101,29 @@ class FeedbackRelation(models.Model):
                 return False
         return True
 
+    def get_slackers(self):
+        if hasattr(self.content_object, "feedback_users"):
+            return set(self.content_object.feedback_users()).difference(set(self.answered.all()))
+        else:
+            return False
+
+    def get_email(self):
+        if hasattr(self.content_object, "feedback_mail"):
+            return self.content_object.feedback_mail()
+        else:
+            return "missing mail"
+
+    def get_title(self):
+        if hasattr(self.content_object, "feedback_title"):
+            return self.content_object.feedback_title()
+        else:
+            return "Missing title"
+
+    def get_start_date(self):
+        if hasattr(self.content_object, "feedback_date"):
+            return self.content_object.feedback_date()
+        else:
+            False
 
 class Feedback(models.Model):
     """
