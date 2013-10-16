@@ -7,8 +7,8 @@ from django.conf import settings
 from django.contrib.auth.models import Group
 from django.core.urlresolvers import reverse
 from django.db import models
+from django.template.defaultfilters import slugify
 from django.utils.translation import ugettext as _
-from django.conf import settings
 
 from filebrowser.fields import FileBrowseField
 import watson
@@ -195,10 +195,13 @@ class Event(models.Model):
         else:
             return settings.DEFAULT_FROM_EMAIL
 
+    @property
+    def slug(self):
+        return slugify(self.title)    
+
     @models.permalink
     def get_absolute_url(self):
-        return ('events_details', None, {'event_id': self.id})
-
+        return reverse('apps.event.views.details', None, {'article_id': self.id, 'article_slug': self.slug})
 
     def __unicode__(self):
         return self.title
@@ -447,8 +450,8 @@ class AttendanceEvent(models.Model):
         return self.event.title
 
     class Meta:
-        verbose_name = _(u'paamelding')
-        verbose_name_plural = _(u'paameldinger')
+        verbose_name = _(u'påmelding')
+        verbose_name_plural = _(u'påmeldinger')
 
 class CompanyEvent(models.Model):
     """
