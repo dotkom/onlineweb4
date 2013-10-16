@@ -6,16 +6,20 @@
     <div class="container">
         <div class="row article-media">
                 {% if article.video %}
-                    <div class="col-md-12 video-padding">
-                        <div class="offset2 span8">
+                <div class="col-md-12">
+                    <div class="col-md-12 video-container media-padding">
+                        <div class="col-md-10 col-md-offset-1 media-padding">
                             <div class="flex-video widescreen">
                                <iframe src="http://player.vimeo.com/video/{{ article.video }}" frameborder="0" webkitAllowFullscreen mozallowfullscreen allowFullScreen></iframe>
                             </div>
                         </div>
                     </div>
+                </div>
                 {% else %}
                      <div class="col-md-12">
+                        <div>
                             <img width="100%" src="{% version article.image 'article_full' %}" alt="{{ article.heading }}"/>
+                        </div>
                     </div>
                 {% endif %}
         </div>
@@ -59,33 +63,35 @@
                 </div>
             </div>
             <div class="col-md-4 related-articles">
-                <div class="page-header">
-                    <h3>Relaterte artikler</h3>
-                </div>
-                <div class="row">
-                    <div class="col-md-12 related-articles">
-                        {% if related_articles %}
-                            {% for related_article in related_articles %}
-                                {% if forloop.counter0|divisibleby:"2" %}
-                                    <div class="row row-space">
-                                {% endif %}
-                                    <div class="col-md-6">
-                                        <a href="{{ related_article.get_absolute_url }}">
-                                            <img src="{% version related_article.image 'article_related' %}" 
-                                                alt="{{ related_article.heading }}"/>
-                                            <h4>{{ related_article.heading }}</h4>
-                                        </a>
-                                    </div>
-                                {% if forloop.counter|divisibleby:"2" and not forloop.last%}
-                                    </div>
-                                {% endif %}
-                                {% if forloop.last %}
-                                    </div>
-                                {% endif %}
-                            {% endfor %}
-                        {% else %}
-                            <p>Ingen relaterte artikler funnet.</p>
-                        {% endif%}
+                <div class="col-md-12">
+                    <div class="page-header">
+                        <h3>Relaterte artikler</h3>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 related-articles">
+                            {% if related_articles %}
+                                {% for related_article in related_articles %}
+                                    {% if forloop.counter0|divisibleby:"2" %}
+                                        <div class="row row-space">
+                                    {% endif %}
+                                        <div class="col-md-6 bilde">
+                                            <a href="{{ related_article.get_absolute_url }}">
+                                                <img src="{% version related_article.image 'article_related' %}" 
+                                                    alt="{{ related_article.heading }}"/>
+                                                <h4>{{ related_article.heading }}</h4>
+                                            </a>
+                                        </div>
+                                    {% if forloop.counter|divisibleby:"2" and not forloop.last%}
+                                        </div>
+                                    {% endif %}
+                                    {% if forloop.last %}
+                                        </div>
+                                    {% endif %}
+                                {% endfor %}
+                            {% else %}
+                                <p>Ingen relaterte artikler funnet.</p>
+                            {% endif%}
+                        </div>
                     </div>
                 </div>
                 <div class="row">
