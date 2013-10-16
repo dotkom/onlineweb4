@@ -8,6 +8,7 @@ from django.db import models
 from django.utils.translation import ugettext as _
 
 from filebrowser.fields import FileBrowseField
+import watson
 
 from apps.authentication.models import OnlineUser as User, FIELD_OF_STUDY_CHOICES
 from apps.companyprofile.models import Company
@@ -31,17 +32,17 @@ class Event(models.Model):
     )
 
     author = models.ForeignKey(User, related_name='oppretter')
-    title = models.CharField(_('tittel'), max_length=45)
-    event_start = models.DateTimeField(_('start-dato'))
-    event_end = models.DateTimeField(_('slutt-dato'))
-    location = models.CharField(_('lokasjon'), max_length=100)
+    title = models.CharField(_(u'tittel'), max_length=45)
+    event_start = models.DateTimeField(_(u'start-dato'))
+    event_end = models.DateTimeField(_(u'slutt-dato'))
+    location = models.CharField(_(u'lokasjon'), max_length=100)
     ingress_short = models.CharField(_(u"kort ingress"), max_length=150)
-    ingress = models.TextField(_('ingress'))
-    description = models.TextField(_('beskrivelse'))
+    ingress = models.TextField(_(u'ingress'))
+    description = models.TextField(_(u'beskrivelse'))
     image = FileBrowseField(_(u"bilde"), 
         max_length=200, directory=IMAGE_FOLDER,
         extensions=IMAGE_EXTENSIONS, null=False, blank=False)
-    event_type = models.SmallIntegerField(_('type'), choices=TYPE_CHOICES, null=False)
+    event_type = models.SmallIntegerField(_(u'type'), choices=TYPE_CHOICES, null=False)
 
     def feedback_users(self):
         users = []
@@ -173,7 +174,7 @@ class Event(models.Model):
 
     @models.permalink
     def get_absolute_url(self):
-        return reverse('apps.event.views.details', args=[str(self.id)])
+        return ('events_details', None, {'event_id': self.id})
 
 
     def __unicode__(self):
@@ -232,10 +233,10 @@ class FieldOfStudyRule(Rule):
         return {"status": False, "message": _(u"Din studieretning er en annen enn de som har tilgang til dette arrangementet."), "status_code": 410}
 
     def __unicode__(self):
-        time_unit = _(u'time') if self.offset.offset > 1 else _(u'timer')
         if self.offset.offset > 0:
-            return _("%s etter %d %s") % (self.get_field_of_study_display(), self.offset.offset, time_unit)
-        return self.get_field_of_study_display()
+            time_unit = _(u'timer') if self.offset.offset > 1 else _(u'time')
+            return _("%s etter %d %s") % (unicode(self.get_field_of_study_display()), self.offset.offset, time_unit)
+        return unicode(self.get_field_of_study_display())
 
 
 class GradeRule(Rule):
@@ -254,10 +255,10 @@ class GradeRule(Rule):
         return {"status": False, "message": _(u"Du er ikke i et klassetrinn som har tilgang til dette arrangementet."), "status_code": 411}
 
     def __unicode__(self):
-        time_unit = _(u'time') if self.offset.offset > 1 else _(u'timer')
         if self.offset.offset > 0:
-            return _("%s. klasse etter %d %s") % (self.grade, self.offset.offset, time_unit)
-        return _("%s. klasse") % self.grade
+            time_unit = _(u'time') if self.offset.offset > 1 else _(u'timer')
+            return _(u"%s. klasse etter %d %s") % (self.grade, self.offset.offset, time_unit)
+        return _(u"%s. klasse") % self.grade
 
 
 class UserGroupRule(Rule):
@@ -274,10 +275,10 @@ class UserGroupRule(Rule):
         return {"status": False, "message": _(u"Du er ikke i en brukergruppe som har tilgang til dette arrangmentet."), "status_code": 412}
 
     def __unicode__(self):
-        time_unit = _(u'time') if self.offset.offset > 1 else _(u'timer')
         if self.offset.offset > 0:
-            return _("%s etter %d %s") % (self.group, self.offset.offset, time_unit)
-        return self.group
+            time_unit = _(u'time') if self.offset.offset > 1 else _(u'timer')
+            return _(u"%s etter %d %s") % (unicode(self.group), self.offset.offset, time_unit)
+        return unicode(self.group)
 
 
 class RuleBundle(models.Model):
@@ -459,3 +460,7 @@ class Attendee(models.Model):
 
     class Meta:
         ordering = ['timestamp']
+
+
+# Registrations for watson indexing
+watson.register(Event)

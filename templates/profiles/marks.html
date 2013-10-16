@@ -8,10 +8,8 @@
         <div class="panel-group" id="marksaccordion">
             {% for heading, mark_list, is_collapsed in marks %}
                 <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <a class="accordion-toggle" data-toggle="collapse" data-parent="#marksaccordion" href="#collapse-{{ heading|slugify }}">
-                            {{ heading|capfirst }}
-                        </a>
+                    <div class="panel-heading accordion-toggle" data-toggle="collapse" data-parent="#marksaccordion" href="#collapse-{{ heading|slugify }}">
+                        <h5>{{ heading|capfirst }}</h5>
                     </div>
                     <div id="collapse-{{ heading|slugify }}" class="panel-collapse collapse {% if not is_collapsed %}in{% endif %}">
                         <div class="panel-body">
