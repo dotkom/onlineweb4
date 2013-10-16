@@ -1,28 +1,27 @@
 #-*- coding: utf-8 -*-
+
 import datetime
 
 from django.utils import timezone
 
 from django.conf import settings
-from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
-from django.utils.translation import ugettext_lazy as _
-from django.shortcuts import render
-from django.shortcuts import get_object_or_404
+from django.shortcuts import render, get_object_or_404
+from django.utils.translation import ugettext as _
 
 import watson
 
-from apps.events.models import Event, AttendanceEvent, Attendee
 from apps.events.forms import CaptchaForm
-
+from apps.events.models import Event, AttendanceEvent, Attendee
 
 
 def index(request):
     return render(request, 'events/index.html', {})
 
-def details(request, event_id):
+def details(request, event_id, event_slug):
     event = get_object_or_404(Event, pk=event_id)
 
     is_attendance_event = False
