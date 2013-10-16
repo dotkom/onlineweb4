@@ -41,7 +41,7 @@ $(document).ready(function() {
     $('#userprofile-tabs > li > a').click(function(e) {
         e.preventDefault();
         updateActiveTab(this.getAttribute('href').substr(1));
-        $(this).tab('show', 1);
+        $(this).tab('show');
     })
 
     function updateActiveTab(activetab) {
