@@ -4,17 +4,19 @@
 {% block content %}
 <section id="article-details">
     <div class="container">
-        <div class="row article-media video-container">
+        <div class="row article-media">
                 {% if article.video %}
-                    <!-- <div class="col-md-12"> -->
+                <div class="col-md-12">
+                    <div class="col-md-12 video-container media-padding">
                         <div class="col-md-10 col-md-offset-1 media-padding">
                             <div class="flex-video widescreen">
                                <iframe src="http://player.vimeo.com/video/{{ article.video }}" frameborder="0" webkitAllowFullscreen mozallowfullscreen allowFullScreen></iframe>
                             </div>
                         </div>
-                    <!-- </div> -->
+                    </div>
+                </div>
                 {% else %}
-                     <div class="col-md-12 media-padding">
+                     <div class="col-md-12">
                             <img width="100%" src="{% version article.image 'article_full' %}" alt="{{ article.heading }}"/>
                     </div>
                 {% endif %}
