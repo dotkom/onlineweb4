@@ -54,3 +54,9 @@ class EventTest(TestCase):
         userentry = G(UserEntry, user=self.user, mark=mark1)
         response = self.event.is_eligible_for_signup(self.user)
         self.assertFalse(response['status'])
+
+    def testRuleOffsets(self):
+        self.logger.debug("Testing rule offsets.")
+        offset = G(RuleOffset, offset=24)
+        self.assertEquals(offset.offset, 24)
+        
