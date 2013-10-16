@@ -26,7 +26,6 @@ $(document).ready(function() {
             method: 'DELETE',
             url: 'removeprofileimage/',
             success: function(res) {
-                console.log(res);
                 res = JSON.parse(res);
                 $('img#profile-image').attr('src', res['url']);
                 $('#remove-image-modal').modal("hide");
