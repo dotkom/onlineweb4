@@ -201,7 +201,7 @@ class Event(models.Model):
 
     @models.permalink
     def get_absolute_url(self):
-        return reverse('apps.event.views.details', None, {'article_id': self.id, 'article_slug': self.slug})
+        return ('events_details', None, {'event_id': self.id, 'event_slug': self.slug})
 
     def __unicode__(self):
         return self.title
