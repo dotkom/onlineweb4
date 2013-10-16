@@ -16,8 +16,6 @@ function csrfSafeMethod(method) {
 $(document).ready(function() {
     $('#image-name').hide();
 
-
-
 //Ajax request to remove profile image
     $('#confirm-delete').click(function() {
         confirmRemoveImage();
@@ -40,8 +38,10 @@ $(document).ready(function() {
         });
     }
 
-    $('#userprofile-tabs > li > a').click(function() {
+    $('#userprofile-tabs > li > a').click(function(e) {
+        e.preventDefault();
         updateActiveTab(this.getAttribute('href').substr(1));
+        $(this).tab('show');
     })
 
     function updateActiveTab(activetab) {
@@ -342,7 +342,6 @@ $(document).ready(function() {
             crossDomain: false
         });
     });
-
 });
 
 
