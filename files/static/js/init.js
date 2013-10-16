@@ -68,14 +68,31 @@ $(function() {
         map.panTo(new google.maps.LatLng(63.41819751959266, 10.40592152481463));
     });
 
+
+
+
+    /* Menu element change
+    --------------------------------------------------------------------------------- */
+    $(".nav.navbar-nav a[href='"+window.location.pathname+"']").parent().addClass('active');
+
+    switch (window.location.pathname) {
+        case "/article/archive":
+        case "/offline/":
+            $(".nav.navbar-nav a[href='/events/']").parent().addClass('active');
+    }
+
+
     /* Login / user button change on window resize
     --------------------------------------------------------------------------------- */
-    var old_login_btn =  $('#login_menu a').html();
+    var old_login_btn       =  $('#login_menu a').html();
+    var active_link_clone   = $('.navbar .nav.navbar-nav .active').clone(true);
 
     change_login_button_view();
+    change_subnavbar_behaviour();
 
     $(window).resize(function() {
         change_login_button_view();
+        change_subnavbar_behaviour();
     });
 
     function change_login_button_view() {
@@ -89,12 +106,25 @@ $(function() {
         }
     }
 
+    function change_subnavbar_behaviour() {
+        var active_link = $('.navbar .nav.navbar-nav .active');
+
+        if ($('.subnavbar').length) {
+            if ($(window).innerWidth() < 768) {
+                if (!active_link.hasClass('appended')) {
+                    active_link.append($('.subnavbar div').html());
+                    active_link.addClass('appended');
+                }
+            }
+            else {
+                active_link.html(active_link_clone.html());
+                active_link.removeClass('appended');
+            }
+        }
+    }
+
     $('.dropdown-menu input, .dropdown-menu button, .dropdown-menu label').click(function(e) {
         e.stopPropagation();
     });
-
-    /* Menu element change
-    --------------------------------------------------------------------------------- */
-    $("a[href='"+window.location.pathname+"']").parent().addClass('active');
 
 });
