@@ -77,3 +77,9 @@ nav.subnavbar {
 .navbar     + div.messages .alert {
     margin-bottom: 0;
 }
+
+@media (max-width: 767px) {
+    .subnavbar                      { display: none; }
+    .subnavbar  + section           { padding: 52px 0 0 0; }
+    .subnavbar  + div.messages      { padding: 62px 0 0 0; }
+}
