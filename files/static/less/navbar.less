@@ -82,4 +82,21 @@ nav.subnavbar {
     .subnavbar                      { display: none; }
     .subnavbar  + section           { padding: 52px 0 0 0; }
     .subnavbar  + div.messages      { padding: 62px 0 0 0; }
+
+    nav {
+        &.navbar li, &.navbar li.active {
+            border-top: none;
+        }
+
+        &.navbar li.active {
+            background-color: #222;
+        }
+    }
+    .navbar-nav {
+        margin-top: 0;
+    }
+}
+
+.navbar-collapse {
+    border: none;
 }
