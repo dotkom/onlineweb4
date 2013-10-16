@@ -13,7 +13,7 @@ from django.utils.translation import ugettext as _
 from django.conf import settings
 from apps.authentication.forms import (LoginForm, RegisterForm, 
                             RecoveryForm, ChangePasswordForm)
-from apps.authentication.models import OnlineUser, RegisterToken, Email
+from apps.authentication.models import OnlineUser as User, RegisterToken, Email
 
 def login(request):
     redirect_url = request.REQUEST.get('next', '')
@@ -47,7 +47,7 @@ def register(request):
                 cleaned = form.cleaned_data
 
                 # Create user
-                user = OnlineUser(
+                user = User(
                     username=cleaned['username'].lower(), 
                     first_name=cleaned['first_name'].title(), 
                     last_name=cleaned['last_name'].title(),
