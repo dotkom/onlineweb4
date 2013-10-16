@@ -78,7 +78,7 @@ $(function() {
     switch (window.location.pathname) {
         case "/article/archive":
         case "/offline/":
-            $(".nav.navbar-nav a[href='/events/']").parent().addClass('active');
+            $(".navbar .nav.navbar-nav a[href='/events/']").parent().addClass('active');
     }
 
 
