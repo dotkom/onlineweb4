@@ -75,6 +75,12 @@ $(function() {
     --------------------------------------------------------------------------------- */
     $(".nav.navbar-nav a[href='"+window.location.pathname+"']").parent().addClass('active');
 
+    switch (window.location.pathname) {
+        case "/article/archive":
+        case "/offline/":
+            $(".nav.navbar-nav a[href='/events/']").parent().addClass('active');
+    }
+
 
     /* Login / user button change on window resize
     --------------------------------------------------------------------------------- */
@@ -120,7 +126,5 @@ $(function() {
     $('.dropdown-menu input, .dropdown-menu button, .dropdown-menu label').click(function(e) {
         e.stopPropagation();
     });
-
-    
 
 });
