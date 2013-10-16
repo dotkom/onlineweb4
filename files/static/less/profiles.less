@@ -1,7 +1,9 @@
 @import "core.less";
+@import "bootstrap/variables.less";
 
 @image-width: 230px;
 @image-width-with-padding: 238px;
+
 
 .word-break {
   word-break: normal;
@@ -162,8 +164,14 @@ textarea {
 }
 
 
-@media all and (max-width: 768px) {
+@media all and (max-width: @screen-xs-max) {
   .privacybox {
     width: 100%;
+  }
+}
+
+@media all and (min-width: @screen-xs-max) and (max-width: @screen-md-max) {
+  .privacybox {
+    width: 200px;
   }
 }
