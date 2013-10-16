@@ -51,7 +51,6 @@ def register(request):
                     username=cleaned['username'].lower(), 
                     first_name=cleaned['first_name'].title(), 
                     last_name=cleaned['last_name'].title(),
-                    email=cleaned['email'].lower(),
                 )
                 # Set remaining fields
                 user.phone=cleaned['phone']
@@ -63,7 +62,13 @@ def register(request):
                 user.is_active = False
 
                 user.save()
-            
+
+                email = Email(
+                    user=user,
+                    email=cleaned['email'],
+                )
+                email.save()    
+
                 # Create the registration token
                 token = uuid.uuid4().hex
                 rt = RegisterToken(user=user, email=cleaned['email'], token=token)
