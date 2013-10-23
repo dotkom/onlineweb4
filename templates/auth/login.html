@@ -20,3 +20,7 @@
     </div>
 </section>
 {% endblock content %}
+{% block js %}
+    {{ block.super }}
+    <script type="text/javascript" src="{{ STATIC_URL }}js/login.js"></script>
+{% endblock js %}
