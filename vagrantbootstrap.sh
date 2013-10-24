@@ -84,6 +84,12 @@ function install_onlineweb_requirements() {
     progress pip install -r requirements.txt
 }
 
+function install_wiki_requirements() {
+    progress sudo apt-get install -y \
+    libldap2-dev libsasl2-dev
+    echo "installing wiki requirements"
+}
+
 
 function install_lessc() {
     progress sudo npm install less -g
