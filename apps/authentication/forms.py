@@ -7,7 +7,7 @@ from django import forms
 from django.contrib import auth
 from django.utils.translation import ugettext as _
 
-from apps.authentication.models import OnlineUser as User
+from apps.authentication.models import OnlineUser as User, Email
 
 class LoginForm(forms.Form):
     username = forms.CharField(widget=forms.TextInput(), label=_("Brukernavn"), max_length=50)
@@ -69,7 +69,7 @@ class RegisterForm(forms.Form):
 
             # Check email
             email = cleaned_data['email']
-            if User.objects.filter(email=email).count() > 0:
+            if Email.objects.filter(email=email).count() > 0:
                 self._errors['email'] = self.error_class([_(u"Det fins allerede en bruker med denne epostadressen.")])
 
             # ZIP code digits only
