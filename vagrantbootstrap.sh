@@ -85,9 +85,9 @@ function install_onlineweb_requirements() {
 }
 
 function install_wiki_requirements() {
-    progress sudo apt-get install -y \
-    libldap2-dev libsasl2-dev
     echo "installing wiki requirements"
+    progress sudo apt-get install -y \
+    	libldap2-dev libsasl2-dev
 }
 
 
@@ -116,5 +116,6 @@ update_packages
 install_packages
 setup_virtualenv
 install_onlineweb_requirements
+install_wiki_requirements
 install_lessc
 prepare_and_run_onlineweb
