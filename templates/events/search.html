@@ -4,7 +4,7 @@
   {% for event in events %}
   <article class="row">
 
-    <div class="col-md-4 left-box">
+    <div class="col-xs-12 col-sm-12 col-md-4 left-box">
       <div class="row">
         <a href="{{ event.get_absolute_url }}">
         <img src="{% version event.image 'events_archive' %}" alt="" />
@@ -17,7 +17,7 @@
       </div>
     </div>
 
-    <div class="content col-md-8">
+    <div class="content col-xs-12 col-sm-12 col-md-8">
         <div class="row">
             <div class=" col-sm-12 col-md-8">
                 <h1>
@@ -25,7 +25,7 @@
                 </h1>
             </div>
             <div class="col-sm-12 col-md-4">
-                <span class="pull-right">{{ event.event_start|date:"d.m.Y"}}</span>
+                <span>{{ event.event_start|date:"d.m.Y"}}</span>
             </div>
         </div>
 
