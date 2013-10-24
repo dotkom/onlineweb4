@@ -109,7 +109,7 @@ def archive(request, name=None, slug=None, year=None, month=None):
         articles = filtered
 
     # Get the 30 most used tags, then randomize them
-    tags = list(Tag.objects.all())
+    tags = list(Tag.objects.filter(article_tags__isnull=False).distinct())
     tags.sort(key=lambda x: x.frequency, reverse=True)
     tags = tags[:30]
     random.shuffle(tags)
