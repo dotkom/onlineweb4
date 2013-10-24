@@ -133,9 +133,9 @@ class Email(models.Model):
 
 class RegisterToken(models.Model):
     user = models.ForeignKey(OnlineUser, related_name="register_user")
-    email = models.EmailField(_("epost"), max_length=254)
-    token = models.CharField(_("token"), max_length=32)
-    created = models.DateTimeField(_("opprettet dato"), editable=False, auto_now_add=True, default=datetime.datetime.now())
+    email = models.EmailField(_(u"epost"), max_length=254)
+    token = models.CharField(_(u"token"), max_length=32)
+    created = models.DateTimeField(_(u"opprettet dato"), editable=False, auto_now_add=True, default=datetime.datetime.now())
 
     @property
     def is_valid(self):
@@ -162,6 +162,6 @@ class AllowedUsername(models.Model):
         return self.username
 
     class Meta:
-        verbose_name = _("tillatt brukernavn")
-        verbose_name_plural = _("tillatte brukernavn")
-        ordering = ("username",)
+        verbose_name = _(u"tillatt brukernavn")
+        verbose_name_plural = _(u"tillatte brukernavn")
+        ordering = (u"username",)
