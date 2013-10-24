@@ -3,7 +3,7 @@
 
 LJUST_COLS=20
 RJUST_COLS=30
-VERBOSE=true
+VERBOSE=false
 RUNSERVER=false
 
 
