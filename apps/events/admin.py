@@ -58,7 +58,8 @@ class AttendanceEventInline(admin.StackedInline):
     model = AttendanceEvent
     max_num = 1
     extra = 0
-
+    filter_horizontal = ('rule_bundles',)
+    
 
 class EventAdmin(admin.ModelAdmin):
     inlines = (AttendanceEventInline, FeedbackRelationInline, CompanyInline)
