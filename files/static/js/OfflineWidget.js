@@ -2,19 +2,12 @@ function OfflineWidget (Utils){
     var that = $(this);
     
     /* Render the widget */
-    OfflineWidget.prototype.render = function(imageWidth, imageMargin, callback) {
+    OfflineWidget.prototype.render = function() {
         Utils.makeApiRequest({
             'url': '/api/v0/offline/issues/?format=json',
             'method': 'GET',
             'data': {},
             success: function(data) {
-                // Get the amount of images that would fit inside the widget.
-                var imageCount = Math.floor($("#offlineCarousel").width() / imageWidth);
-                // Now account for margin.
-                // See #offlineCarousel .item a:not(:first-child) margin-left
-                imageMargin = imageMargin*(imageCount-1);
-                imageCount = Math.floor(($("#offlineCarousel").width() / (imageWidth+imageMargin)));
-                
                 var prefix = $("#offlineCarousel").data("prefix");
                 var suffix = '.thumb.png';
                 var itemWrapperStart = '<div class="item centered">';
@@ -32,7 +25,7 @@ function OfflineWidget (Utils){
                         }
                         insertMe += '<a href="'+prefix+data.objects[i].issue+'"><img src="'+prefix+data.objects[i].issue+suffix+'" /></a>';
 
-                        if (i == data.objects.length - 1 || (i + 1) % imageCount == 0) {
+                        if (i == data.objects.length - 1 || (i + 1) % 3 == 0) {
                             insertMe += itemWrapperEnd;
                             if (i != data.objects.length - 1) {
                                 insertMe += itemWrapperStart;
@@ -44,9 +37,6 @@ function OfflineWidget (Utils){
                 $("#offlineCarousel .carousel-inner").html(insertMe);
                 $("#offlineCarousel .carousel-inner div.item:first").addClass("active");
                 $("#offlineCarousel").carousel('pause');
-                
-                // Calling the callback
-                callback();
             }
         });
     };
