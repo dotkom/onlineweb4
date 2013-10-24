@@ -393,10 +393,10 @@ class AttendanceEvent(models.Model):
         primary_key=True,
         related_name='attendance_event')
 
-    max_capacity = models.PositiveIntegerField(_(u'maks-kapasitet'))
+    max_capacity = models.PositiveIntegerField(_(u'maks-kapasitet'), null=False, blank=False)
     waitlist = models.BooleanField(_(u'venteliste'), default=False)
-    registration_start = models.DateTimeField(_(u'registrerings-start'))
-    registration_end = models.DateTimeField(_(u'registrerings-slutt'))
+    registration_start = models.DateTimeField(_(u'registrerings-start'), null=False, blank=False)
+    registration_end = models.DateTimeField(_(u'registrerings-slutt'), null=False, blank=False)
 
     #Access rules
     rule_bundles = models.ManyToManyField(RuleBundle, blank=True, null=True)
