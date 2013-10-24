@@ -1,0 +1,25 @@
+{% load crispy_forms_tags %}
+
+<div class="row">
+    <div class="col-xs-12 col-sm-6 col-md-4">
+        <h3>Medlemskap</h3>
+    </div>
+</div>
+<div class="row">
+    <div class="col-xs-12 col-sm-6 col-md-4">
+        {% if user.is_member %}
+        <form id="membership-details" method="post" action="{% url 'profile_save_membership_details' %}">
+            {% csrf_token %}
+            {{ membership_settings|crispy }}
+            <button type="submit" class="btn btn-success pull-right">Lagre</button>
+        </form>
+        {% else %}
+            {% if user.ntnu_username %}
+                Du er ikke registrert som medlem av Linjeforeningen Online.
+            {% else %}
+                <p>For å aktivere ditt medlemskap kreves det at du har knyttet din studentkonto til din profil.</p>
+                <p>Gå til Epost-innstillinger og registrer din @stud.ntnu.no epost.</p>
+            {% endif %}
+        {% endif %}
+    </div>
+</div>

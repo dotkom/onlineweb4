@@ -17,8 +17,8 @@ from django.utils.translation import ugettext as _
 from apps.authentication.forms import NewEmailForm
 from apps.authentication.models import Email, RegisterToken
 from apps.marks.models import Mark
-from apps.profiles.forms import MailSettingsForm, PrivacyForm, ProfileForm
-
+from apps.profiles.forms import (ImageForm, MailSettingsForm, PrivacyForm, 
+                                ProfileForm, MembershipSettingsForm)
 
 """
 Index for the entire user profile view
@@ -53,6 +53,7 @@ def create_request_dictionary(request):
     dict = {
         'privacy_form' : PrivacyForm(instance=request.user.privacy),
         'user_profile_form' : ProfileForm(instance=request.user),
+        'image_form' : ImageForm(instance=request.user),
         'password_change_form' : PasswordChangeForm(request.user),
         'marks' : [
             # Tuple syntax ('title', list_of_marks, is_collapsed)
@@ -61,6 +62,7 @@ def create_request_dictionary(request):
         ],
         'mail_settings' : MailSettingsForm(instance=request.user),
         'new_email' : NewEmailForm(),
+        'membership_settings' : MembershipSettingsForm(instance=request.user),
     }
 
     if request.session.has_key('userprofile_active_tab'):
@@ -133,6 +135,10 @@ def uploadImage(request):
 def handleImageUpload(request, image):
 
     try:
+
+        if not os.path.exists(os.path.join(settings.MEDIA_ROOT, "images", "profiles")):
+            os.makedirs(os.path.join(settings.MEDIA_ROOT, "images", "profiles"))
+
         extension_index = image.name.rfind('.')
 
         #Make sure the image contains a file extension
@@ -371,3 +377,29 @@ kan dette gjøres ved å klikke på knappen for verifisering på din profil.
 """) % (request.META['HTTP_HOST'], token)
 
     send_mail(_(u'Verifiser din epost %s') % email, email_message, settings.DEFAULT_FROM_EMAIL, [email,])
+
+@login_required
+def save_membership_details(request):
+    if request.is_ajax():
+        if request.method == 'POST':
+            form = MembershipSettingsForm(request.POST)
+            if form.is_valid():
+                cleaned = form.cleaned_data
+                request.user.field_of_study = cleaned['field_of_study']
+                request.user.started_date = cleaned['started_date']
+                
+                request.user.save()
+
+                return HttpResponse(status=200)
+            else:
+                field_errors = []
+                form_errors = form.errors.items()
+                for form_error in form_errors:
+                    for field_error in form_error[1]:
+                        field_errors.append(field_error)
+
+                return HttpResponse(status=412, content=json.dumps(
+                                                    {'message': ", ".join(field_errors)}
+                                                ))
+
+    return HttpResponse(status=404) 

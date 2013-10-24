@@ -30,6 +30,9 @@ section#article-details {
             font-weight:300;
             color:#666;
         }
+    .bilde img {
+        width: 100%;
+    }
 
     }
 
@@ -47,38 +50,41 @@ section#article-details {
 
 section#article_archive {
     .article-detail-meta {
+        h3 {
+            padding-top: 0px;
+            margin-top: 0px;
+            line-height: normal;
+        }
+
         font-weight:300;
-        margin-bottom:10px;
+        padding-bottom: 10px;
         .meta-caption {
             font-weight:600;
         }
     }
 
+    p {
+        margin-bottom: 30px;
+    }
+
     .tag-cloud {
-    margin-top:20px;
-    margin-bottom:30px;
+        a:hover {
+            color: white;
+        }
+        margin-top:20px;
         .tag {
+            display: inline-block;
+            margin-bottom: 5px;
             padding:10px;
-            margin-right:5px;
             color:white;
             background:@baby-blue;
         }
     }
 
     .date-filter {
-        div.year {
-            margin-right: 9px;
-        }
-
-        div.months {
-            div:nth-child(4n+0) {
-                margin: 0;
-            }
-        }
 
         .tag {
-            width: 100%;
-            padding: 5px 0;
+            padding: 10px;
             text-align: center;
             color: white;
             margin-bottom: 5px;
@@ -91,19 +97,27 @@ section#article_archive {
         }
 
         .tag-year {
-            display: inline-block;
+            display: block;
             background: @baby-blue-light;
         }
 
         .tag-month {
-            display: inline-block;
+            display: block;
             background: @baby-blue;
         }
     }
+    .article-hidden {
+        display: none;
+    }
 }
 
-.video-padding {
+.media-padding {
+    padding: 0px !important;
+}
+
+.video-container {
     background-color: #000;
+    overflow: auto;
 }
 
 .flex-video {

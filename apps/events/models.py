@@ -6,11 +6,14 @@ from django.contrib.auth.models import Group
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.utils.translation import ugettext as _
+from django.conf import settings
 
 from filebrowser.fields import FileBrowseField
+import watson
 
 from apps.authentication.models import OnlineUser as User, FIELD_OF_STUDY_CHOICES
 from apps.companyprofile.models import Company
+from filebrowser.fields import FileBrowseField
 from apps.marks.models import Mark
 
 class Event(models.Model):
@@ -31,24 +34,33 @@ class Event(models.Model):
     )
 
     author = models.ForeignKey(User, related_name='oppretter')
-    title = models.CharField(_('tittel'), max_length=45)
-    event_start = models.DateTimeField(_('start-dato'))
-    event_end = models.DateTimeField(_('slutt-dato'))
-    location = models.CharField(_('lokasjon'), max_length=100)
+    title = models.CharField(_(u'tittel'), max_length=45)
+    event_start = models.DateTimeField(_(u'start-dato'))
+    event_end = models.DateTimeField(_(u'slutt-dato'))
+    location = models.CharField(_(u'lokasjon'), max_length=100)
     ingress_short = models.CharField(_(u"kort ingress"), max_length=150)
-    ingress = models.TextField(_('ingress'))
-    description = models.TextField(_('beskrivelse'))
+    ingress = models.TextField(_(u'ingress'))
+    description = models.TextField(_(u'beskrivelse'))
     image = FileBrowseField(_(u"bilde"), 
         max_length=200, directory=IMAGE_FOLDER,
         extensions=IMAGE_EXTENSIONS, null=False, blank=False)
-    event_type = models.SmallIntegerField(_('type'), choices=TYPE_CHOICES, null=False)
+    event_type = models.SmallIntegerField(_(u'type'), choices=TYPE_CHOICES, null=False)
 
     def feedback_users(self):
         users = []
-        if self.attendance_event.attendees.all():
-            for attendee in self.attendance_event.attendees.all():
-                users.append(attendee.user)
-        return users
+        try:
+            if self.attendance_event.attendees.all():
+                for attendee in self.attendance_event.attendees.all():
+                    users.append(attendee.user)
+            return users
+        except AttendanceEvent.DoesNotExist:
+            return users
+
+    def feedback_date(self):
+        return self.event_start
+
+    def feedback_title(self):
+        return self.title
 
     @property
     def number_of_attendees_on_waiting_list(self):
@@ -171,9 +183,19 @@ class Event(models.Model):
                             return list(waitlist).index(attendee_object) + 1
         return 0
 
+    def feedback_mail(self):
+        if self.event_type == 1 or self.event_type == 4: #sosialt/utflukt
+            return settings.EMAIL_ARRKOM
+        elif self.event_type == 2: #Bedpres
+            return settings.EMAIL_BEDKOM
+        elif self.event_type == 3: #Kurs
+            return settings.EMAIL_FAGKOM
+        else:
+            return settings.DEFAULT_FROM_EMAIL
+
     @models.permalink
     def get_absolute_url(self):
-        return reverse('apps.event.views.details', args=[str(self.id)])
+        return ('events_details', None, {'event_id': self.id})
 
 
     def __unicode__(self):
@@ -188,7 +210,8 @@ class Event(models.Model):
 """
 
 class RuleOffset(models.Model):
-    offset = models.IntegerField(_(u'antall timer'), blank=True)
+    # Django admin seems to ignore max_length so with higher values than a signed int the database will throw an error
+    offset = models.PositiveIntegerField(_(u'antall timer'), unique=True, max_length=3)
 
     def get_offset_time(self, time):
         if type(time) is not datetime:
@@ -232,10 +255,10 @@ class FieldOfStudyRule(Rule):
         return {"status": False, "message": _(u"Din studieretning er en annen enn de som har tilgang til dette arrangementet."), "status_code": 410}
 
     def __unicode__(self):
-        time_unit = _(u'time') if self.offset.offset > 1 else _(u'timer')
         if self.offset.offset > 0:
-            return _("%s etter %d %s") % (self.get_field_of_study_display(), self.offset.offset, time_unit)
-        return self.get_field_of_study_display()
+            time_unit = _(u'timer') if self.offset.offset > 1 else _(u'time')
+            return _("%s etter %d %s") % (unicode(self.get_field_of_study_display()), self.offset.offset, time_unit)
+        return unicode(self.get_field_of_study_display())
 
 
 class GradeRule(Rule):
@@ -254,10 +277,10 @@ class GradeRule(Rule):
         return {"status": False, "message": _(u"Du er ikke i et klassetrinn som har tilgang til dette arrangementet."), "status_code": 411}
 
     def __unicode__(self):
-        time_unit = _(u'time') if self.offset.offset > 1 else _(u'timer')
         if self.offset.offset > 0:
-            return _("%s. klasse etter %d %s") % (self.grade, self.offset.offset, time_unit)
-        return _("%s. klasse") % self.grade
+            time_unit = _(u'time') if self.offset.offset > 1 else _(u'timer')
+            return _(u"%s. klasse etter %d %s") % (self.grade, self.offset.offset, time_unit)
+        return _(u"%s. klasse") % self.grade
 
 
 class UserGroupRule(Rule):
@@ -274,10 +297,10 @@ class UserGroupRule(Rule):
         return {"status": False, "message": _(u"Du er ikke i en brukergruppe som har tilgang til dette arrangmentet."), "status_code": 412}
 
     def __unicode__(self):
-        time_unit = _(u'time') if self.offset.offset > 1 else _(u'timer')
         if self.offset.offset > 0:
-            return _("%s etter %d %s") % (self.group, self.offset.offset, time_unit)
-        return self.group
+            time_unit = _(u'time') if self.offset.offset > 1 else _(u'timer')
+            return _(u"%s etter %d %s") % (unicode(self.group), self.offset.offset, time_unit)
+        return unicode(self.group)
 
 
 class RuleBundle(models.Model):
@@ -370,10 +393,10 @@ class AttendanceEvent(models.Model):
         primary_key=True,
         related_name='attendance_event')
 
-    max_capacity = models.PositiveIntegerField(_(u'maks-kapasitet'))
+    max_capacity = models.PositiveIntegerField(_(u'maks-kapasitet'), null=False, blank=False)
     waitlist = models.BooleanField(_(u'venteliste'), default=False)
-    registration_start = models.DateTimeField(_(u'registrerings-start'))
-    registration_end = models.DateTimeField(_(u'registrerings-slutt'))
+    registration_start = models.DateTimeField(_(u'registrerings-start'), null=False, blank=False)
+    registration_end = models.DateTimeField(_(u'registrerings-slutt'), null=False, blank=False)
 
     #Access rules
     rule_bundles = models.ManyToManyField(RuleBundle, blank=True, null=True)
@@ -459,3 +482,7 @@ class Attendee(models.Model):
 
     class Meta:
         ordering = ['timestamp']
+
+
+# Registrations for watson indexing
+watson.register(Event)

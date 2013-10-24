@@ -1,0 +1,48 @@
+{% load fb_versions %}
+
+{% if events %}
+  {% for event in events %}
+   <article class="row">
+
+    <div class="col-md-4 left-box">
+      <div class="row">
+        <a href="{{ event.get_absolute_url }}">
+        <img src="{% version event.image 'events_archive' %}" alt="" />
+        </a>
+        {% if event.is_attendance_event %}
+    <a href="{{ event.get_absolute_url }}">
+    <button type="button" class="btn btn-success">Gå til påmelding</button>
+    </a>
+    {% endif %}
+      </div>
+    </div>
+
+    <div class="content col-md-8">
+    <h1><span>{{ event.event_start|date:"d.m.Y"}}</span>
+    <a href="{{ event.get_absolute_url }}">{{ event.title }}</a></h1>
+      <p class="ingress">{{ event.ingress }}</p>
+
+      <div class="meta">
+        {% if event.is_attendance_event %}
+          <div class="col-md-3">
+            <p>Påmeldte: {{ event.number_of_attendees_not_on_waiting_list }}</p>
+          </div>
+          <div class="col-md-3">
+            <p>Sted: {{ event.location }}</p>
+          </div>
+          <div class="col-md-5">
+            <p>Påmelding åpner {{ event.attendance_event.registration_start|date:"d.m.y H.i" }}</p>
+          </div>
+        {% else %}
+          <div class="col-md-12">
+            <p>Sted: {{ event.location }}</p>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+
+  </article>
+  {% endfor %}
+{% else %}
+  <p class="ingress">Ingen arrangementer funnet.</p>
+{% endif %}

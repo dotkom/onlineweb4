@@ -15,13 +15,8 @@ $(function() {
 
     // Render on load
     eventWidget.render(update_pos);
-    offlineWidget.render(156, 10, update_pos);
+    offlineWidget.render();
 	articleWidget.render(update_pos);
-
-    // Render on resize
-    $(window).on('debouncedresize',function() {
-        offlineWidget.render(156, 10, update_pos);
-    });
 
     // Enable tabbing in about section
     $('#about-tabs a').click(function (e) {
@@ -48,7 +43,7 @@ $(function() {
             // Checking if the current section is a part of the scroll-thingy
             var idn = '#'+this.id;
             if (idn in navs) {
-                navs[idn] = $(this).offset().top - 55;
+                navs[idn] = $(this).offset().top - 74;
             }
         });
     }

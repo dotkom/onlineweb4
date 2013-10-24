@@ -7,11 +7,11 @@ from django import forms
 from django.contrib import auth
 from django.utils.translation import ugettext as _
 
-from apps.authentication.models import OnlineUser as User
+from apps.authentication.models import OnlineUser as User, Email
 
 class LoginForm(forms.Form):
     username = forms.CharField(widget=forms.TextInput(), label=_("Brukernavn"), max_length=50)
-    password = forms.CharField(widget=forms.PasswordInput(render_value=False), label=_("Passord"))
+    password = forms.CharField(widget=forms.PasswordInput(render_value=False), label=_(u"Passord"))
     user = None
 
     def clean(self):
@@ -24,9 +24,9 @@ class LoginForm(forms.Form):
             if user.is_active:
                 self.user = user
             else:
-                self._errors['username'] = self.error_class([_("Din konto er ikke aktiv. Forsøk gjenoppretning av passord.")])
+                self._errors['username'] = self.error_class([_(u"Din konto er ikke aktiv. Forsøk gjenoppretning av passord.")])
         else:
-            self._errors['username'] = self.error_class([_("Kontoen eksisterer ikke, eller kombinasjonen av brukernavn og passord er feil.")])
+            self._errors['username'] = self.error_class([_(u"Kontoen eksisterer ikke, eller kombinasjonen av brukernavn og passord er feil.")])
         return self.cleaned_data
 
     def login(self, request):
@@ -58,24 +58,24 @@ class RegisterForm(forms.Form):
 
             # Check passwords
             if cleaned_data['password'] != cleaned_data['repeat_password']:
-                self._errors['repeat_password'] = self.error_class([_("Passordene er ikke like.")])
+                self._errors['repeat_password'] = self.error_class([_(u"Passordene er ikke like.")])
 
             # Check username
             username = cleaned_data['username']
             if User.objects.filter(username=username).count() > 0:
-                self._errors['username'] = self.error_class([_("Brukernavnet er allerede registrert.")])
+                self._errors['username'] = self.error_class([_(u"Brukernavnet er allerede registrert.")])
             if not re.match("^[a-zA-Z0-9_-]+$", username):
-                self._errors['username'] = self.error_class([_("Ditt brukernavn inneholdt ulovlige tegn. Lovlige tegn: a-Z 0-9 - _")])
+                self._errors['username'] = self.error_class([_(u"Ditt brukernavn inneholdt ulovlige tegn. Lovlige tegn: a-Z 0-9 - _")])
 
             # Check email
             email = cleaned_data['email']
-            if User.objects.filter(email=email).count() > 0:
-                self._errors['email'] = self.error_class([_("Det fins allerede en bruker med denne epostadressen.")])
+            if Email.objects.filter(email=email).count() > 0:
+                self._errors['email'] = self.error_class([_(u"Det fins allerede en bruker med denne epostadressen.")])
 
             # ZIP code digits only
             zip_code = cleaned_data['zip_code']
             if len(zip_code) != 4 or not zip_code.isdigit():
-                self._errors['zip_code'] = self.error_class([_("Postnummer må bestå av fire siffer.")])
+                self._errors['zip_code'] = self.error_class([_(u"Postnummer må bestå av fire siffer.")])
 
             return cleaned_data 
 
@@ -83,8 +83,8 @@ class RecoveryForm(forms.Form):
     email = forms.EmailField(label="Email", max_length=50)
 
 class ChangePasswordForm(forms.Form):
-    new_password = forms.CharField(widget=forms.PasswordInput(render_value=False), label=_("nytt passord"))
-    repeat_password = forms.CharField(widget=forms.PasswordInput(render_value=False), label=_("gjenta passord"))
+    new_password = forms.CharField(widget=forms.PasswordInput(render_value=False), label=_(u"nytt passord"))
+    repeat_password = forms.CharField(widget=forms.PasswordInput(render_value=False), label=_(u"gjenta passord"))
 
     def clean(self):
         super(ChangePasswordForm, self).clean()
@@ -93,7 +93,7 @@ class ChangePasswordForm(forms.Form):
 
             # Check passwords
             if cleaned_data['new_password'] != cleaned_data['repeat_password']:
-                self._errors['repeat_password'] = self.error_class([_("Passordene er ikke like.")])
+                self._errors['repeat_password'] = self.error_class([_(u"Passordene er ikke like.")])
 
             return cleaned_data
 

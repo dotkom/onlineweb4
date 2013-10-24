@@ -1,7 +1,9 @@
 @import "core.less";
+@import "bootstrap/variables.less";
 
 @image-width: 230px;
 @image-width-with-padding: 238px;
+
 
 .word-break {
   word-break: normal;
@@ -53,8 +55,7 @@ label.image-box-entity {
 }
 
 #image-resize {
-  max-height: 300px;
-
+  width: 100%;
 }
 
 #upload-image-modal#modal-body {
@@ -74,8 +75,16 @@ label > i.btn-icon {
   margin-left: 22px;
 }
 
-#remove-image-modal {
-  top: 35%;
+#paddingtop {
+  padding-top: 20px;
+}
+
+#inline {
+  display: inline;
+}
+
+#privacy-help {
+  cursor: pointer;
 }
 
 .privacybox {
@@ -118,6 +127,14 @@ label > i.btn-icon {
   }
 }
 
+.privacybox:hover {
+  cursor: pointer;
+}
+
+.panel-heading:hover {
+  cursor: pointer;
+}
+
 .mark {
   padding-top: 10px;
 }
@@ -137,8 +154,24 @@ label > i.btn-icon {
   min-height: 15px;
 }
 
-@media all and (max-width: 768px) {
+textarea, input[type="text"] {
+  .form-control;
+  margin-bottom: 7px;
+}
+
+textarea {
+  resize: vertical;
+}
+
+
+@media all and (max-width: @screen-xs-max) {
   .privacybox {
     width: 100%;
+  }
+}
+
+@media all and (min-width: @screen-xs-max) and (max-width: @screen-md-max) {
+  .privacybox {
+    width: 200px;
   }
 }

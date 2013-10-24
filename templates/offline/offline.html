@@ -6,6 +6,26 @@
     <script src="{{ STATIC_URL }}/js/libs/jquery.debouncedresize.js"></script>
 {% endblock %}
 
+{% block submenu %}
+    <nav class="subnavbar navbar-default navbar-fixed-top">
+        <div class="container">
+            <div class="collapse navbar-collapse navbar-ex1-collapse">
+                <ul class="nav navbar-nav">
+                    <li class="top-menu-link">
+                        <a href="{% url 'events_index' %}">Arrangementer</a>
+                    </li>
+                    <li class="top-menu-link">
+                        <a href="{% url 'article_archive' %}">Artikler</a>
+                    </li>
+                    <li class="top-menu-link active">
+                        <a class="active" href="{% url 'offline' %}">Offline</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+{% endblock %}
+
 {% block content %}
 <section id="offline">
     <div class="container">
