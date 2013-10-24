@@ -18,11 +18,6 @@ $(function() {
     offlineWidget.render(156, 10, update_pos);
 	articleWidget.render(update_pos);
 
-    // Render on resize
-    $(window).on('debouncedresize',function() {
-        offlineWidget.render(156, 10, update_pos);
-    });
-
     // Enable tabbing in about section
     $('#about-tabs a').click(function (e) {
         e.preventDefault();
