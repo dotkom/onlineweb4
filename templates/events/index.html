@@ -41,24 +41,22 @@
       </div>
     </div>
 
-    <div class="col-md-3 pull-right" id="filter">
-
+    <div class="col-xs-12 col-sm-12 col-md-3 pull-right" id="filter">
       <div class="row">
-        <div class="input-group col-md-12">
-          <input type="text" class="form-control" placeholder="Søk blant arrangementene" id="search">
+        <div class="input-group col-xs-12 col-sm-12 col-md-12">
+          <input type="text" class="form-control col-xs-12 col-sm-12" placeholder="Søk blant arrangementene" id="search">
         </div>
       </div>
 
-      <div class="row">
 
-        <div class="checkbox col-md-12">
+        <div class="checkbox col-xs-12 col-sm-12 col-md-12">
           <label>
             <input type="checkbox" name="optionCheckboxs" value="option1" id="future" checked>
-            Fremtidige arrangementer
+            Bare fremtidige arrangementer
           </label>
         </div>
 	{% if user.is_authenticated %}
-        <div class="checkbox col-md-12">
+        <div class="checkbox col-xs-12 col-sm-12 col-md-12">
           <label>
             <input type="checkbox" name="optionCheckboxs" value="option1" id="myevents">
             Mine arrangementer
@@ -66,22 +64,19 @@
         </div>
 	{% endif %}
 
-      </div>
 
-      <div class="row">
       
-        <div class="checkbox">
+        <div class="checkbox col-xs-12 col-sm-12 col-md-12">
           <label>
             <input type="checkbox" name="optionCheckboxs" value="option1">
             Somehting elze
           </label>
         </div>
 
-      </div> <!-- end row -->
 
     </div> <!-- end col-md-3 -->
 
-    <div class="col-md-9 pull-left" id="events">
+    <div class="col-xs-12 col-sm-12 col-md-9 pull-left" id="events">
 
     </div> <!-- end col-md-9 -->
 <!-- 
