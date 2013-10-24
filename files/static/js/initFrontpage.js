@@ -15,7 +15,7 @@ $(function() {
 
     // Render on load
     eventWidget.render(update_pos);
-    offlineWidget.render(156, 10, update_pos);
+    offlineWidget.render();
 	articleWidget.render(update_pos);
 
     // Enable tabbing in about section
