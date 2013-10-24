@@ -5,14 +5,16 @@
   padding:10px;
   color:#FFF;
   margin-bottom: 20px;
+  float: right;
+  input[type="text"] { width: 100%; }
 }
 
 #events {
-
-  #filter .input-group {
-    width:  100%;
+    #filter .input-group {
     margin-bottom: 10px;
     
+    float: left;
+
     input {
       font-size: 12px;
       border-radius: 15px;
@@ -25,10 +27,6 @@
     padding-bottom: 30px;
     /*border-bottom: 1px dotted #ccc;*/
     /*position: relative;*/
-
-    .left-box div {
-      /*margin-right: 0;*/
-    }
 
     button {
       width: 100%;
@@ -86,12 +84,16 @@
     @media (max-width: 989px) {
 	h1 {
 	    font-size: 18px;
-            margin-top: 15px;
         }
 	span {
 	    float: left;
 	    font-size: 14px;
 	    margin-bottom: 10px;
+	}
+    }
+    @media (max-width: 767px) {
+	h1 {
+		margin-top: 15px;
 	}
     }
   }
