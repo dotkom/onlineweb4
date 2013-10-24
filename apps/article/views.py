@@ -109,9 +109,8 @@ def archive(request, name=None, slug=None, year=None, month=None):
         articles = filtered
 
     # Get the 30 most used tags, then randomize them
-    tags = list(Tag.objects.filter(article_tags__isnull=False).distinct())
-    tags.sort(key=lambda x: x.frequency, reverse=True)
-    tags = tags[:30]
+    tags = Tag.objects.filter(article_tags__isnull=False).distinct().annotate(num_tags=Count('article_tags__tag')).order_by('-num_tags')
+    tags = list(tags[:30])
     random.shuffle(tags)
     # Get max frequency of tags. This is used for relative sizing in the tag cloud.
     try:
