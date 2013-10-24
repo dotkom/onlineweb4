@@ -6,15 +6,20 @@
 
     <div class="col-md-4 left-box">
       <div class="row">
+        <a href="{{ event.get_absolute_url }}">
         <img src="{% version event.image 'events_archive' %}" alt="" />
+        </a>
         {% if event.is_attendance_event %}
-          <button type="button" class="btn btn-success">Gå til påmelding</butn>
-        {% endif %}
+    <a href="{{ event.get_absolute_url }}">
+    <button type="button" class="btn btn-success">Gaa til paamelding</button>
+    </a>
+    {% endif %}
       </div>
     </div>
 
     <div class="content col-md-8">
-      <h1><span>{{ event.event_start|date:"d.m.Y"}}</span>{{ event.title }}</h1>
+    <h1><span>{{ event.event_start|date:"d.m.Y"}}</span>
+    <a href="{{ event.get_absolute_url }}">{{ event.title }}</a></h1>
       <p class="ingress">{{ event.ingress }}</p>
 
       <div class="meta">
