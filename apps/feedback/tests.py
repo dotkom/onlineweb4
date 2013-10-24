@@ -5,25 +5,33 @@ when you run "manage.py test".
 Replace this with more appropriate tests for your application.
 """
 
+from datetime import datetime, timedelta
+
 from django.test import TestCase
 from django.utils.translation import ugettext_lazy as _
+from django.conf import settings
+from django.test.client import Client
+
 from apps.feedback.feedback_mails import FeedbackMail, Message
-from apps.feedback.models import Feedback, FeedbackRelation
+from apps.feedback.models import Feedback, FeedbackRelation, TextQuestion, RatingQuestion
 from apps.events.models import Event, AttendanceEvent, Attendee
 from apps.marks.models import Mark
 from apps.authentication.models import OnlineUser as User
-from datetime import datetime, timedelta
-from django.conf import settings
+from apps.authentication.forms import LoginForm
 
 class SimpleTest(TestCase):
 
     #Feedback mail 
     def setUp(self):
-        user1 = User.objects.create(username="user1", email="user1@mail.com")
+        user1 = User.objects.create(username="user1", email="user1@mail.com", is_active=True, is_staff=True, is_superuser=True)
+        user1.set_password("Herpaderp123")
+        user1.save()
         user2 = User.objects.create(username="user2", email="user2@mail.com")
         event = Event.objects.create(title="Bedpress", event_start = datetime.today(), event_end= datetime.today(), event_type = 2, author = user1)
         attendance_event = AttendanceEvent.objects.create(registration_start = datetime.today(), registration_end = datetime.today(), event = event, max_capacity=30)
         feedback = Feedback.objects.create(author = user1)
+        TextQuestion.objects.create(feedback = feedback)
+        RatingQuestion.objects.create(feedback = feedback)
         atendee1 = Attendee.objects.create(event = attendance_event, user = user1)
         atendee2 = Attendee.objects.create(event = attendance_event, user = user2)
         FeedbackRelation.objects.create(feedback=feedback, content_object=event, deadline=datetime.today(), active=True)
@@ -124,29 +132,38 @@ class SimpleTest(TestCase):
         #TODO: do eeet! test posted against db (Sigurd) 2013-02-08
         pass
 
-#    def test_post_incorrect(self):
-#        resp = self.client.post("/feedback/auth/user/1/1/")
-#        self.assertEqual(resp.status_code, 200)
-#        for i in range(len(resp.context['answers'])):
-#            self.assertIn(unicode(_(u'This field is required.')),
-#                          resp.context['answers'][i].errors['answer'])
-#    
-#    def test_good_urls(self):
-#        resp = self.client.get("/feedback/auth/user/1/1/")
-#        self.assertEqual(resp.status_code, 200)
-#
-#        resp = self.client.get("/feedback/auth/user/1/1/results")
-#        self.assertEqual(resp.status_code, 200)
-#
-#    def test_bad_urls(self):
-#        resp = self.client.get("/feedback/auth/user/100/1/")
-#        self.assertEqual(resp.status_code, 404)
-#
-#        resp = self.client.get("/feedback/auth/user/1/100/")
-#        self.assertEqual(resp.status_code, 404)
-#
-#        resp = self.client.get("/feedback/auth/user/100/100/")
-#        self.assertEqual(resp.status_code, 404)
-#
-#        resp = self.client.get("/feedback/auth/derp/1/1/")
-#        self.assertEqual(resp.status_code, 404)
+    def test_login(self):
+        client = Client()
+        self.assertTrue(client.login(username="user1", password="Herpaderp123"))
+
+    def test_post_incorrect(self):
+        client = Client()
+        client.login(username="user1", password="Herpaderp123")
+        feedback_relation = FeedbackRelation.objects.get(pk=1)
+        response = client.post(feedback_relation.get_absolute_url())
+        for i in range(len(response.context['answers'])):
+            self.assertIn(unicode(_(u'This field is required.')),
+                          response.context['answers'][i].errors['answer'])
+    
+    def test_good_urls(self):
+        client = Client()
+        client.login(username="user1", password="Herpaderp123")
+        feedback_relation = FeedbackRelation.objects.get(pk=1)
+        response = client.post(feedback_relation.get_absolute_url())
+        self.assertEqual(response.status_code, 200)
+        #TODO
+        #response = client.get(feedback_relation.get_absolute_url() + 'results')
+        #self.assertEqual(response.status_code, 200)
+
+    def test_bad_urls(self):
+        response = self.client.get("/feedback/events/event/100/1/")
+        self.assertEqual(response.status_code, 404)
+
+        response = self.client.get("/feedback/events/event/1/100/")
+        self.assertEqual(response.status_code, 404)
+
+        response = self.client.get("/feedback/events/event/100/100/")
+        self.assertEqual(response.status_code, 404)
+
+        response = self.client.get("/feedback/events/derp/1/1/")
+        self.assertEqual(response.status_code, 404)
