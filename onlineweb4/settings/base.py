@@ -134,7 +134,7 @@ INSTALLED_APPS = (
     'django_dynamic_fixture',
     'captcha',
     'compressor',
-    'pizzasystem',
+    
     'watson',
 
     # Django apps
@@ -159,6 +159,8 @@ INSTALLED_APPS = (
     'apps.feedback',
     'apps.mommy',
     'apps.profiles',
+
+    'pizzasystem',
 )
 
 # A sample logging configuration. The only tangible logging
