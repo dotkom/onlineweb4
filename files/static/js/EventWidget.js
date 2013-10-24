@@ -55,7 +55,7 @@ function EventWidget (Utils){
      */
     function createEventItem(item) {
 
-        html = '<div><div class="col-md-4 col-xs-7">';
+        html = '<div><div class="col-xs-12 col-sm-4 col-md-4">';
         html +=     '<div class="hero-title">';
         html +=         '<a href="events/' + item.id + '/' + item.slug + '">';
         html +=             '<p>' + item.title + '</p>';
@@ -65,7 +65,7 @@ function EventWidget (Utils){
         html +=         '<p>' + item.ingress_short + '</p>';
         html +=     '</div>';
         html += '</div>';
-        html += '<div class="col-xs-5 col-md-2">';
+        html += '<div class="col-xs-12 col-sm-8 col-md-8">';
         html +=     '<div id="event-carousel" class="carousel slide">';
         html +=         '<div class="carousel-inner">';
         html +=             '<div class="item active">';
