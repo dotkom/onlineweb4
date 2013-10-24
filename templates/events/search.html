@@ -7,7 +7,9 @@
     <div class="col-md-4 left-box">
       <div class="row">
         <img src="{% version event.image 'events_archive' %}" alt="" />
-        <button type="button" class="btn btn-success">Gå til påmelding</button>
+        {% if event.is_attendance_event %}
+          <button type="button" class="btn btn-success">Gå til påmelding</butn>
+        {% endif %}
       </div>
     </div>
 

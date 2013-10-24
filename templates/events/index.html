@@ -57,13 +57,14 @@
             Fremtidige arrangementer
           </label>
         </div>
-
+	{% if user.is_authenticated %}
         <div class="checkbox col-md-12">
           <label>
             <input type="checkbox" name="optionCheckboxs" value="option1" id="myevents">
             Mine arrangementer
           </label>
         </div>
+	{% endif %}
 
       </div>
 
