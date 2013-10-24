@@ -210,7 +210,8 @@ class Event(models.Model):
 """
 
 class RuleOffset(models.Model):
-    offset = models.IntegerField(_(u'antall timer'), blank=True)
+    # Django admin seems to ignore max_length so with higher values than a signed int the database will throw an error
+    offset = models.PositiveIntegerField(_(u'antall timer'), unique=True, max_length=3)
 
     def get_offset_time(self, time):
         if type(time) is not datetime:
