@@ -219,7 +219,7 @@
         "pk": 11, 
         "model": "auth.group", 
         "fields": {
-            "name": "Hovedstyre", 
+            "name": "Hovedstyret", 
             "permissions": []
         }
     },
