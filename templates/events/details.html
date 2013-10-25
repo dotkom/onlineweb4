@@ -19,21 +19,21 @@
                     <div class="event-hero-meta">
                         <div class="row" style="margin-bottom:30px">
                             <div class="event-hero-meta-info">
-                                <div class="col-md-4">
+                                <div class="col-sm-4 col-md-4">
                                     <div class="event-hero-title">Fra</div>
                                     <div class="event-hero-large-text">
                                         <span class="break">{{ event.event_start|date:"H.i" }}</span>
                                         <span class="date-small">{{ event.event_start|date:"d. M Y" }}</span>
                                     </div>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-sm-4 col-md-4">
                                     <div class="event-hero-title">Til</div>
                                     <div class="event-hero-large-text">
                                         <span class="break">{{ event.event_end|date:"H.i" }}</span>
                                         <span class="date-small">{{ event.event_end|date:"d. M Y" }}</span>
                                     </div>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-sm-4 col-md-4">
                                     <div class="event-hero-title">Lokasjon</div>
                                     <div class="event-hero-small-text">{{ event.location }}</div>
                                 </div>
@@ -42,13 +42,13 @@
                         {% if attendance_event %}
                             <div class="row">
                                 <div class="event-hero-meta-info">
-                                    <div class="col-md-4">
+                                    <div class="col-sm-4 col-md-4">
                                         <div class="event-hero-title">Påmeldte</div>
                                         <div class="event-hero-large-text">
                                             {{ event.number_of_attendees_not_on_waiting_list }}/{{ attendance_event.max_capacity }}
                                         </div>
                                     </div>
-                                    <div class="col-md-4">
+                                    <div class="col-sm-4 col-md-4">
                                         {% if attendance_event.waitlist_enabled %}
                                             <div class="event-hero-title">Antall på venteliste</div>
                                             <div class="event-hero-large-text">{{ event.number_of_attendees_on_waiting_list }}</div>
@@ -57,7 +57,7 @@
                                             <div class="event-hero-small-text">Utilgjengelig</div>
                                         {% endif %}
                                     </div>
-                                    <div class="col-md-4">
+                                    <div class="col-sm-4 col-md-4">
                                         <div class="event-hero-title">Påmeldingsstart</div>
                                         <div class="event-hero-large-text">
                                             <div class="event-hero-large-text">
@@ -135,7 +135,7 @@
                                         {% endfor %}
                                     {% endfor %}
                                 {% else %}
-                                    <span class="label label-important">Alle medlemmer</span>
+                                    <span class="label label-info">Alle medlemmer</span>
                                 {% endif %}
                             </div>
                         </div>
