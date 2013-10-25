@@ -125,6 +125,12 @@
         filters.query = $(this).val();
         filters.search();
       });
+      
+      // This is a slight hack to avoid a difficult bug in jQuery where some browsers tend to preserve checkbox states
+      // without them being domready.	
+      $(document).ready(function () {
+        $('#future').prop('checked', true); 
+      });
 
       $('#future').on('click', function () {
         filters.future = !filters.future;
