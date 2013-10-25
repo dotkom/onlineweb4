@@ -1,110 +1,21 @@
-
-/* Debug */
-
-@debug: 0px;
-.debugred {border: @debug solid red;}
-.debuglime {border: @debug solid lime;}
-.debugpink {border: @debug solid pink;}
-
 /* Vars */
 
-@box-background: #f2f2f2;
-@animation-time: 0.5s;
-@animation-time-long: 1.2s;
-@border: 2px solid #ccc;
 
 /* ResourceCenter */
 
-#resourcecenter-items {
-    .debugred;
-    width: 100%;
-    text-align: center;
+#resourcecenter {
 
-    // Flip code, separated from the rest of the styling
-    // Source: http://davidwalsh.name/css-flip
-
-    /* entire container, keeps perspective */
-    .flip-container {
-        -webkit-perspective: 1000;
-        -moz-perspective: 1000;
-        perspective: 1000;
-    }
-    /* make sure all containers are the same size within each other */
-    .flip-container, .front, .back {
-        width: 100%;
-        min-height: 60px;
-        overflow: visible;
-    }
-    /* flip speed goes here */
-    .flipper {
-        -webkit-transition: @animation-time;
-        -webkit-transform-style: preserve-3d;
-        -moz-transition: @animation-time;
-        -moz-transform-style: preserve-3d;
-        transition: @animation-time;
-        transform-style: preserve-3d;
-        position: relative;
-    }
-    /* hide back of pane during swap */
-    .front, .back {
-        -webkit-backface-visibility: hidden;
-        -moz-backface-visibility: hidden;
-        backface-visibility: hidden;
-        /* both front and back pane must be in the same place */
-        position: absolute;
-        top: 0;
-        left: 0;
-    }
-    /* front pane, placed above back */
-    .front {
-        z-index: 2;
-    }
-    /* back, initially hidden pane */
-    .back {
-        -webkit-transform: rotateY(180deg);
-        -moz-transform: rotateY(180deg);
-        transform: rotateY(180deg);
+    .resourcedescription {
+	margin-bottom: 20px;
     }
 
-    // Additional CSS properties (not flip code)
-
-    .col-xs-12, .col-sm-6, .col-md-4 {
-        padding-left: 0;
-        padding-right: 0;
+    img {
+	margin-bottom: 20px;
+	width: 100%;
+	max-width: 260px;
     }
     
-    .flip-container {
-        .debuglime;
-        // The background is visible behind the flip card during animation
-        cursor: pointer;
-        padding: 10px;
-        margin-bottom: 20px;
+    h3 {
+	margin-top: 0px;
     }
-
-    .front {
-        .debugred;
-        background-color: @box-background;
-        border: @border;
-        box-sizing: border-box;
-        padding-top: 15%;
-        .wrapheader {
-            img {
-                width: 130px;
-                height: 130px;
-            }
-        }
-    }
-
-    .back {
-        .debugred;
-        background-color: @box-background;
-        border: @border;
-        box-sizing: border-box;
-        text-align: left;
-        .wraptext {
-            .debugpink;
-            padding: 20px;
-        }
-    }
-    
 }
