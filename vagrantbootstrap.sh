@@ -77,13 +77,18 @@ function setup_virtualenv() {
     progress mkvirtualenv onlineweb
 }
 
+function install_wiki_requirements() {
+    echo "installing wiki requirements"
+    progress sudo apt-get install -y \
+    	libldap2-dev libsasl2-dev
+}
+
 function install_onlineweb_requirements() {
     echo "installing onlineweb requirements"
     workon onlineweb
     cd /vagrant
     progress pip install -r requirements.txt
 }
-
 
 function install_lessc() {
     progress sudo npm install less -g
@@ -109,6 +114,7 @@ add_custom_repos
 update_packages
 install_packages
 setup_virtualenv
+install_wiki_requirements
 install_onlineweb_requirements
 install_lessc
 prepare_and_run_onlineweb

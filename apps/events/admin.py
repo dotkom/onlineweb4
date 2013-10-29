@@ -35,6 +35,10 @@ class AttendanceEventAdmin(admin.ModelAdmin):
     model = AttendanceEvent
     inlines = (AttendeeInline, RuleBundleInline)
 
+class AttendeeAdmin(admin.ModelAdmin):
+    model = Attendee
+    list_display = ('user', 'event')
+
 class CompanyEventAdmin(admin.ModelAdmin):
     model = CompanyEvent
     inlines = (CompanyInline,)
@@ -77,6 +81,7 @@ class EventAdmin(admin.ModelAdmin):
         formset.save_m2m()
 
 admin.site.register(Event, EventAdmin)
+admin.site.register(Attendee, AttendeeAdmin)
 admin.site.register(AttendanceEvent, AttendanceEventAdmin)
 admin.site.register(RuleBundle, RuleBundleAdmin)
 admin.site.register(GradeRule, GradeRuleAdmin)

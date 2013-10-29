@@ -10,10 +10,10 @@ from apps.careeropportunity.models import CareerOpportunity
 
 def index(request):
     opportunities = CareerOpportunity.objects.filter(
-    	start__lte=datetime.now(), end__gte=datetime.now()).orderBy('featured')
+    	start__lte=datetime.now(), end__gte=datetime.now()).order_by('featured', '-start')
     
     return render_to_response('careeropportunity/index.html', \
-            {'featured_opportunities': featured_opportunities, 'opportunities': opportunities}, \
+            {'opportunities': opportunities}, \
             context_instance=RequestContext(request))
 
 
