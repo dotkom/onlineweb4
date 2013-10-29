@@ -2,7 +2,6 @@
 
 from apps.feedback.models import Feedback
 from apps.feedback.models import FeedbackRelation
-from apps.feedback.models import FieldOfStudyQuestion
 from apps.feedback.models import TextQuestion
 from apps.feedback.models import RatingQuestion
 
