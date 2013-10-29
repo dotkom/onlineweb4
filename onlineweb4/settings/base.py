@@ -145,7 +145,6 @@ INSTALLED_APPS = (
     'compressor',
     
     'watson',
-    'django_ldapbackend',
 
     # Django apps
     'django.contrib.admin',
