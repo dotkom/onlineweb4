@@ -10,6 +10,7 @@ Markdown==2.3.1                 # textarea text formatting
 psycopg2
 python-ldap
 django-ldapbackend
+pytz
 
 # third party deps
 django-filebrowser==3.5.2       # File uploading
