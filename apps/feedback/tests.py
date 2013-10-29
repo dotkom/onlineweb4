@@ -5,7 +5,7 @@ when you run "manage.py test".
 Replace this with more appropriate tests for your application.
 """
 
-from pytz import timezone as _timezone
+from pytz import timezone as timezone
 from datetime import datetime, timedelta
 
 from django.test import TestCase
@@ -18,8 +18,6 @@ from apps.feedback.models import Feedback, FeedbackRelation, TextQuestion, Ratin
 from apps.events.models import Event, AttendanceEvent, Attendee
 from apps.marks.models import Mark
 from apps.authentication.models import OnlineUser as User
-from django.conf import settings
-from django.utils import timezone
 from apps.authentication.forms import LoginForm
 
 class SimpleTest(TestCase):
@@ -30,16 +28,16 @@ class SimpleTest(TestCase):
         user1.set_password("Herpaderp123")
         user1.save()
         user2 = User.objects.create(username="user2", email="user2@mail.com")
-        event = Event.objects.create(title="Bedpress", event_start = datetime.now(_timezone(settings.TIME_ZONE)), event_end= datetime.now(_timezone(settings.TIME_ZONE)), event_type = 2, author = user1)
-        attendance_event = AttendanceEvent.objects.create(registration_start = datetime.now(_timezone(settings.TIME_ZONE)), registration_end = datetime.now(_timezone(settings.TIME_ZONE)), event = event, max_capacity=30)
+        event = Event.objects.create(title="Bedpress", event_start = datetime.now(timezone(settings.TIME_ZONE)), event_end= datetime.now(timezone(settings.TIME_ZONE)), event_type = 2, author = user1)
+        attendance_event = AttendanceEvent.objects.create(registration_start = datetime.now(timezone(settings.TIME_ZONE)), registration_end = datetime.now(timezone(settings.TIME_ZONE)), event = event, max_capacity=30)
         feedback = Feedback.objects.create(author = user1)
         TextQuestion.objects.create(feedback = feedback)
         RatingQuestion.objects.create(feedback = feedback)
         FieldOfStudyQuestion.objects.create(feedback = feedback)
         atendee1 = Attendee.objects.create(event = attendance_event, user = user1)
         atendee2 = Attendee.objects.create(event = attendance_event, user = user2)
-        FeedbackRelation.objects.create(feedback=feedback, content_object=event, deadline=datetime.now(_timezone(settings.TIME_ZONE)), active=True)
-        FeedbackRelation.objects.create(feedback=feedback, content_object=atendee1, deadline=datetime.now(_timezone(settings.TIME_ZONE)), active=True)
+        FeedbackRelation.objects.create(feedback=feedback, content_object=event, deadline=datetime.now(timezone(settings.TIME_ZONE)), active=True)
+        FeedbackRelation.objects.create(feedback=feedback, content_object=atendee1, deadline=datetime.now(timezone(settings.TIME_ZONE)), active=True)
 
 
     def test_attendees(self):
@@ -107,7 +105,7 @@ class SimpleTest(TestCase):
         feedback_relation = FeedbackRelation.objects.get(pk=1)
         start_date = FeedbackMail.start_date(feedback_relation)
 
-        self.assertEqual(start_date, datetime.now(_timezone(settings.TIME_ZONE)).date())
+        self.assertEqual(start_date, datetime.now(timezone(settings.TIME_ZONE)).date())
 
         feedback_relation2 = FeedbackRelation.objects.get(pk=2)
         start_date = FeedbackMail.start_date(feedback_relation2)
@@ -115,7 +113,7 @@ class SimpleTest(TestCase):
 
     def test_active(self):
         feedback_relation = FeedbackRelation.objects.get(pk=1)
-        yesterday = datetime.now(_timezone(settings.TIME_ZONE)) - timedelta(days=1)
+        yesterday = datetime.now(timezone(settings.TIME_ZONE)) - timedelta(days=1)
         feedback_relation.deadline = yesterday.date()
         feedback_relation.active = True
         feedback_relation.save()
