@@ -11,8 +11,8 @@
             </div>
             <h2 class="pagination-centered">Studieretning</h2>
 
-            <div class="span12 pagination-centered" id="fieldOfStudyChart"></div>
-            <div class="span12" id="ratingcharts"></div>
+            <div class="span12" id="field-of-study-chart"></div>
+            <div class="span12" id="chartdiv"></div>
             <div class="span12">
                 {% for qa in question_and_answers%}
                     {% if qa.question|isinst:"apps.feedback.models.TextQuestion" %}
@@ -30,6 +30,7 @@
         </div>
     </div>
 </div>
+<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/jqplot/jquery.jqplot.css" />
 {% block js %}
     {{ block.super }}
     <script src="{{ STATIC_URL }}js/libs/jquery.jqplot.min.js"></script>
@@ -39,7 +40,6 @@
     <script src="{{ STATIC_URL }}js/FeedbackWidget.js"></script>
     <script type="text/javascript">
         printPieChart({{ foschartdata }});
-        createRatingCharts({{ rating_question_answers }}, {{ rating_questions|safe }});
     </script>
 {% endblock %}
 

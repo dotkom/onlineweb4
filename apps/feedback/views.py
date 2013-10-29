@@ -71,9 +71,11 @@ def result(request, applabel, appmodel, object_id, feedback_id):
     foschartdata = "["
     for a in ordered_answers:
         if a[1] > 0:
-            foschartdata += '[' + a[0] + ',' + a[1] + '],'
+            foschartdata += "['" + a[0] + '",' a[1]
     
-    fochartdata += ']'
+
+
+    foschartdata = foschartdata[:-1] + ']'
 
     rating_question_answers = []
     rating_questions = []
@@ -86,7 +88,7 @@ def result(request, applabel, appmodel, object_id, feedback_id):
         answers = answers[1:]
         rating_question_answers.append(answers)
     return render(request, 'feedback/results.html',
-                  {'question_and_answers': question_and_answers, 'foschartdata': SafeString(foschartdata), 'description': description, "rating_question_answers": rating_question_answers, "rating_questions": rating_questions})
+                  {'question_and_answers': question_and_answers, 'foschartdata': foschartdata, 'description': description, "rating_question_answers": rating_question_answers, "rating_questions": rating_questions})
 
 def index(request):
     feedbacks = FeedbackRelation.objects.all()

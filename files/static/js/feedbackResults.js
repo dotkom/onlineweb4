@@ -1,6 +1,7 @@
-function printPieChart(data)
+function printPieChart(var data)
 {
-    var plot1 = jQuery.jqplot ('fieldOfStudyChart', [data], 
+    alert("derp");
+    var plot1 = jQuery.jqplot ('field-of-study-chart', [data], 
     { 
         seriesDefaults: 
         {
@@ -13,3 +14,4 @@ function printPieChart(data)
         legend: { show:true, location: 'e' }
     });
 }
+
