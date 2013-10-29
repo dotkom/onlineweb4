@@ -160,7 +160,7 @@ INSTALLED_APPS = (
     'apps.mommy',
     'apps.profiles',
 
-    'pizzasystem',
+    #'pizzasystem',
 )
 
 # A sample logging configuration. The only tangible logging
