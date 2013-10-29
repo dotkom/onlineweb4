@@ -15,9 +15,9 @@ from apps.events.models import Event, AttendanceEvent, Attendee
 from apps.events.forms import CaptchaForm
 
 
-
 def index(request):
     return render(request, 'events/index.html', {})
+
 
 def details(request, event_id):
     event = get_object_or_404(Event, pk=event_id)
@@ -44,7 +44,7 @@ def details(request, event_id):
             if attendance_event.is_attendee(request.user):
                 user_attending = True
 
-            
+
             will_be_on_wait_list = attendance_event.will_i_be_on_wait_list
 
             user_status = event.is_eligible_for_signup(request.user)
@@ -68,7 +68,7 @@ def details(request, event_id):
                 #'position_in_wait_list': position_in_wait_list,
                 'captcha_form': form,
         }
-        
+
         return render(request, 'events/details.html', context)
     else:
         return render(request, 'events/details.html', {'event': event})
@@ -97,7 +97,7 @@ def attendEvent(request, event_id):
 
     user_eligible = event.is_eligible_for_signup(request.user);
 
-    if user_eligible['status']:   
+    if user_eligible['status']:
         Attendee(event=attendance_event, user=request.user).save()
         messages.success(request, _(u"Du er nå påmeldt på arrangementet!"))
         return HttpResponseRedirect(reverse(details, args=[event_id]))

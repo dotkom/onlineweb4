@@ -3,7 +3,6 @@
 from datetime import datetime, timedelta
 
 from django.contrib.auth.models import Group
-from django.core.urlresolvers import reverse
 from django.db import models
 from django.utils.translation import ugettext as _
 from django.conf import settings
@@ -13,7 +12,6 @@ import watson
 
 from apps.authentication.models import OnlineUser as User, FIELD_OF_STUDY_CHOICES
 from apps.companyprofile.models import Company
-from filebrowser.fields import FileBrowseField
 from apps.marks.models import Mark
 
 class Event(models.Model):
@@ -41,7 +39,7 @@ class Event(models.Model):
     ingress_short = models.CharField(_(u"kort ingress"), max_length=150)
     ingress = models.TextField(_(u'ingress'))
     description = models.TextField(_(u'beskrivelse'))
-    image = FileBrowseField(_(u"bilde"), 
+    image = FileBrowseField(_(u"bilde"),
         max_length=200, directory=IMAGE_FOLDER,
         extensions=IMAGE_EXTENSIONS, null=False, blank=False)
     event_type = models.SmallIntegerField(_(u'type'), choices=TYPE_CHOICES, null=False)
@@ -115,9 +113,9 @@ class Event(models.Model):
         # Registration closed
         if datetime.now() > self.attendance_event.registration_end:
             response['message'] = _(u'Påmeldingen er ikke lenger åpen.')
-            response['status_code'] = 502 
+            response['status_code'] = 502
             return response
-        
+
         #
         # Offset calculations.
         #
@@ -125,42 +123,41 @@ class Event(models.Model):
         # Are there any rules preventing me from attending?
         # This should be checked last of the offsets, because it can completely deny you access.
         status_object = self.attendance_event.rules_satisfied(user)
-        print status_object
         if not status_object['status']:
             response = status_object
             if 'offset' not in status_object:
                 return response
-        
+
         # Do I have any marks that postpone my registration date?
         active_marks = Mark.active.filter(given_to = user).count()
         if active_marks > 0:
-            # Offset is currently 1 day per mark. 
+            # Offset is currently 1 day per mark.
             mark_offset = timedelta(days=active_marks)
             postponed_registration_start = self.attendance_event.registration_start + mark_offset
             if postponed_registration_start > datetime.now():
-                if 'offset' in response and response['offset'] < postponed_registration_start or 'offset' not in response:    
+                if 'offset' in response and response['offset'] < postponed_registration_start or 'offset' not in response:
                     response['status_code'] = 400
                     response['message'] = _(u"Din påmelding er utsatt grunnet prikker.")
                     response['offset'] = postponed_registration_start
-            
+
         # Return response if offset was set.
         if 'offset' in response and response['offset'] > datetime.now():
-            return response 
+            return response
 
         #
         # Offset calculations end
         #
 
-        #Registration not open  
+        # Registration not open
         if datetime.now() < self.attendance_event.registration_start:
             response['message'] = _(u'Påmeldingen har ikke åpnet enda.')
             response['status_code'] = 501 
             return response
 
-        #Room for me on the event?
+        # Room for me on the event?
         if not self.attendance_event.room_on_event:
             response['message'] = _(u"Det er ikke mer plass på dette arrangementet.")
-            response['status_code'] = 503 
+            response['status_code'] = 503
             return response
 
         # No objections, set eligible.
@@ -170,9 +167,9 @@ class Event(models.Model):
     @property
     def wait_list(self):
         return self.attendance_event.attendees.all()[self.attendance_event.max_capacity:]
-        return [] if self.number_of_attendees_on_waiting_list is 0 else self.attendance_event.attendees[self.attendance_event.max_capacity:]
+        #return [] if self.number_of_attendees_on_waiting_list is 0 else self.attendance_event.attendees[self.attendance_event.max_capacity:]
 
-    
+
     def what_place_is_user_on_wait_list(self, user):
         if self.attendance_event:
             if self.attendance_event.waitlist:
@@ -245,7 +242,7 @@ class FieldOfStudyRule(Rule):
     def satisfied(self, user, registration_start):
         """ Override method """
 
-        # If the user has the same FOS as this rule    
+        # If the user has the same FOS as this rule
         if (self.field_of_study == user.field_of_study):
             offset_datetime = self.offset.get_offset_time(registration_start)
             if offset_datetime <= datetime.now():
@@ -267,7 +264,7 @@ class GradeRule(Rule):
     def satisfied(self, user, registration_start):
         """ Override method """
 
-        # If the user has the same FOS as this rule    
+        # If the user has the same FOS as this rule
         if (self.grade == user.year):
             offset_datetime = self.offset.get_offset_time(registration_start)
             if offset_datetime <= datetime.now():
@@ -322,8 +319,8 @@ class RuleBundle(models.Model):
         for rule in self.user_group_rules.all():
             rules.append(unicode(rule))
         return rules
-        
-        
+
+
     def satisfied(self, user, registration_start):
 
         errors = []
@@ -351,11 +348,11 @@ class RuleBundle(models.Model):
                     return response
                 else:
                     errors.append(response)
-        
-        # If we found errors, check if there was any that just had an offset. Then find the 
+
+        # If we found errors, check if there was any that just had an offset. Then find the
         # largest one so we can show the user when he will be eligible to register.
         if errors:
-            # Offsets are returned as datetime objects. We compare them initially to a date 
+            # Offsets are returned as datetime objects. We compare them initially to a date
             # before registration_start.
             smallest_offset = registration_start - timedelta(days=1)
             current_response = {}
@@ -414,8 +411,8 @@ class AttendanceEvent(models.Model):
         if not self.rule_bundles.exists() and user.is_member:
             return {'status': True, 'status_code': 200}
 
-        smallest_offset = self.registration_start 
-        errors = []    
+        smallest_offset = self.registration_start
+        errors = []
 
         # Check all rule bundles
         # If one satisfies, return true, else check offset or append to response
@@ -429,7 +426,7 @@ class AttendanceEvent(models.Model):
                     status_object = response
             else:
                 errors.append(response)
-        
+
         if smallest_offset > self.registration_start:
             return status_object
         if errors:
@@ -451,12 +448,12 @@ class AttendanceEvent(models.Model):
 class CompanyEvent(models.Model):
     """
     Company relation to AttendanceEvent
-    """    
+    """
     company = models.ForeignKey(Company, verbose_name=_(u'bedrifter'))
     event = models.ForeignKey(Event, verbose_name=_(u'arrangement'), related_name='companies')
 
     class Meta:
-        verbose_name =_('bedrift')
+        verbose_name = _('bedrift')
         verbose_name_plural = _('bedrifter')
 
 

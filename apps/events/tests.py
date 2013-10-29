@@ -5,9 +5,7 @@ from django_dynamic_fixture import G
 from django.test import TestCase
 
 from apps.authentication.models import OnlineUser as User, AllowedUsername
-from apps.events.models import (Event, AttendanceEvent, Attendee,
-                                RuleBundle, RuleOffset,
-                                FieldOfStudyRule, GradeRule, UserGroupRule)
+from apps.events.models import Event, AttendanceEvent, Attendee
 from apps.marks.models import Mark, UserEntry
 
 class EventTest(TestCase):
@@ -42,11 +40,11 @@ class EventTest(TestCase):
         self.attendance_event.registration_end = now + datetime.timedelta(days=7)
         # Making the user a member.
         allowed_username = G(AllowedUsername, username='ola123ntnu', expiration_date = now + datetime.timedelta(weeks=1))
-       
+
         # The user should be able to attend now, since the event has no rule bundles.
         response = self.event.is_eligible_for_signup(self.user)
         self.assertTrue(response['status'])
-        
+
         # Giving the user a mark to see if the status goes to False.
         mark1 = G(Mark, title='Testprikk12345')
         userentry = G(UserEntry, user=self.user, mark=mark1)
