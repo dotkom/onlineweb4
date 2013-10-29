@@ -215,6 +215,8 @@ MESSAGE_TAGS = {messages.DEBUG: 'alert-debug',
                 messages.WARNING: 'alert-warning',
                 messages.ERROR: 'alert-error'}
 
+FAB_HOST="absint.online.ntnu.no'
+
 
 # Not really sure what this does.
 # Has something to do with django-dynamic-fixture bumped from 1.6.4 to 1.6.5 in order to run a syncdb with mysql/postgres (OptimusCrime)
