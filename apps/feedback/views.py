@@ -65,11 +65,9 @@ def result(request, applabel, appmodel, object_id, feedback_id):
     foschartdata = "["
     for a in ordered_answers:
         if a[1] > 0:
-            foschartdata += simplejson.dumps({'label':a[0], 'value':a[1]}) + ','
+            foschartdata += '[' + a[0] + ',' + a[1] + '],'
     
-
-
-    foschartdata = foschartdata[:-1] + ']'
+    fochartdata += ']'
 
     rating_question_answers = []
     rating_questions = []
