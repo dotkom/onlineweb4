@@ -3,14 +3,35 @@
     margin-top:10px;
 }
 
+#feedbackanswer {
+	h2 {
+		text-transform: uppercase;
+	}
+}
+
 #feedback{
     textarea{
         width: 100%;
+	border: 1px solid #aaa;
+	border-radius: 4px;
     }
-    .radio {
+
+    ul {
+	margin-left: 0px;
+	padding-left: 0px;
+    }
+    li {
+	list-style: none;
+	float: left;
+	margin-left: 0px;
+    }
+    input[type=radio] {
         padding-top: 0px;
         margin-left: 20px;
         float:left;
+	margin-right: 10px;
+	display: inline-block;
+	font-size: 12px;
     }
     div{ /*TODO, create clearfix mixin*/
         *zoom: 1;
