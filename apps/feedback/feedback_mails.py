@@ -13,7 +13,7 @@ from apps.marks.models import Mark, UserEntry
 class FeedbackMail():
     @staticmethod
     def generate_message(feedback):
-        today = datetime.date.today(timezone(settings.TIME_ZONE))
+        today = datetime.today(timezone(settings.TIME_ZONE))
         yesterday = today + datetime.timedelta(days=-1)
         not_responded = FeedbackMail.get_users(feedback)
         #return false if everyone has answered
@@ -81,7 +81,7 @@ class FeedbackMail():
                 return True
         else:
             day_after_event = start_date + datetime.timedelta(1)
-            if day_after_event == datetime.date.today(timezone(settings.TIME_ZONE)):
+            if day_after_event == datetime.today(timezone(settings.TIME_ZONE)):
                 #Send the first notification the day after the event
                 return True
         return False
