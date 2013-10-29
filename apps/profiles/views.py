@@ -320,14 +320,19 @@ def set_primary(request):
                 return HttpResponse(status=412, content=json.dumps(
                                                     {'message': _(u"%s er allerede satt som primær-epostaddresse.") % email.email}
                                                 ))
-            
-            # Deactivate old primary email
-            primary_email = email
-            primary_email.primary = False
-            primary_email.save()
-            # Activate new primary
-            email.primary = True
-            email.save()
+
+            #Hack for develop branch where user is created with createsuperuser
+            try:
+                # Deactivate old primary email
+                primary_email = request.user.get_email()
+                primary_email.primary = False
+                primary_email.save()
+            except:
+                pass
+            finally:
+                # Activate new primary
+                email.primary = True
+                email.save()
 
             return HttpResponse(status=200)
     return HttpResponse(status=404)
