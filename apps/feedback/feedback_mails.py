@@ -13,7 +13,7 @@ from apps.marks.models import Mark, UserEntry
 class FeedbackMail():
     @staticmethod
     def generate_message(feedback):
-        today = datetime.today(timezone(settings.TIME_ZONE))
+        today = datetime.datetime.date(datetime.datetime.now(timezone(settings.TIME_ZONE))) 
         yesterday = today + datetime.timedelta(days=-1)
         not_responded = FeedbackMail.get_users(feedback)
         #return false if everyone has answered
@@ -74,14 +74,14 @@ class FeedbackMail():
         start_date = FeedbackMail.start_date(feedback)
 
         if not start_date:
-            yesterday = datetime.date(timezone(settings.TIME_ZONE)) - datetime.timedelta(days=1)
+            yesterday = datetime.datetime.date(datetime.datetime.now(timezone(settings.TIME_ZONE))) - datetime.timedelta(days=1)
             #The object that requires feedback doesnt have a start date
             if feedback.created_date == yesterday.date():
                 #Send the first notification the day after the feedback relation was created
                 return True
         else:
             day_after_event = start_date + datetime.timedelta(1)
-            if day_after_event == datetime.today(timezone(settings.TIME_ZONE)):
+            if day_after_event == datetime.datetime.date(datetime.datetime.now(timezone(settings.TIME_ZONE))):
                 #Send the first notification the day after the event
                 return True
         return False
