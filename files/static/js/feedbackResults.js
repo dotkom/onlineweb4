@@ -1,6 +1,5 @@
-function printPieChart(var data)
+function printPieChart(data)
 {
-    alert("derp");
     var plot1 = jQuery.jqplot ('field-of-study-chart', [data], 
     { 
         seriesDefaults: 
@@ -8,7 +7,9 @@ function printPieChart(var data)
             renderer: jQuery.jqplot.PieRenderer, 
             rendererOptions: 
             {
-                showDataLabels: true
+                showDataLabels: true,
+                dataLabels: 'value',
+                sliceMargin: 4
             }
         }, 
         legend: { show:true, location: 'e' }

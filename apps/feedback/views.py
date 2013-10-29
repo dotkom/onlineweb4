@@ -12,6 +12,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.utils.translation import ugettext_lazy as _
 from django.shortcuts import redirect
 from django.utils.safestring import SafeString
+from django.core import serializers
 
 from apps.feedback.models import FeedbackRelation, FieldOfStudyAnswer, FIELD_OF_STUDY_CHOICES
 from apps.feedback.forms import create_answer_forms
@@ -64,18 +65,12 @@ def result(request, applabel, appmodel, object_id, feedback_id):
 
     ordered_answers = []
     for _, x in FIELD_OF_STUDY_CHOICES[1:]:
-        ordered_answers.append([x, answer_count[x]])
+        if answer_count[x] > 0:
+            ordered_answers.append([x, answer_count[x]])
   
     description = fbr.description
 
-    foschartdata = "["
-    for a in ordered_answers:
-        if a[1] > 0:
-            foschartdata += "['" + a[0] + '",' a[1]
-    
-
-
-    foschartdata = foschartdata[:-1] + ']'
+    ordered_answers = simplejson.dumps(ordered_answers)
 
     rating_question_answers = []
     rating_questions = []
@@ -88,7 +83,7 @@ def result(request, applabel, appmodel, object_id, feedback_id):
         answers = answers[1:]
         rating_question_answers.append(answers)
     return render(request, 'feedback/results.html',
-                  {'question_and_answers': question_and_answers, 'foschartdata': foschartdata, 'description': description, "rating_question_answers": rating_question_answers, "rating_questions": rating_questions})
+                  {'question_and_answers': question_and_answers, 'foschartdata': ordered_answers, 'description': description, "rating_question_answers": rating_question_answers, "rating_questions": rating_questions})
 
 def index(request):
     feedbacks = FeedbackRelation.objects.all()

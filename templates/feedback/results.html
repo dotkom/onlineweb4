@@ -11,7 +11,7 @@
             </div>
             <h2 class="pagination-centered">Studieretning</h2>
 
-            <div class="span12" id="field-of-study-chart"></div>
+            <div class="span12" style="height:300px;width:500px;" id="field-of-study-chart"></div>
             <div class="span12" id="chartdiv"></div>
             <div class="span12">
                 {% for qa in question_and_answers%}
@@ -39,7 +39,7 @@
     <script src="{{ STATIC_URL }}js/libs/d3.v3.min.js"></script>
     <script src="{{ STATIC_URL }}js/FeedbackWidget.js"></script>
     <script type="text/javascript">
-        printPieChart({{ foschartdata }});
+        printPieChart({{ foschartdata|safe }});
     </script>
 {% endblock %}
 
