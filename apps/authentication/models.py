@@ -110,7 +110,7 @@ class OnlineUser(AbstractUser):
             return 4
 
     def __unicode__(self):
-        return self.username
+        return self.get_full_name()
 
     class Meta:
         verbose_name = _(u"brukerprofil")
