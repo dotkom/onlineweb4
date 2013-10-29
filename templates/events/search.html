@@ -10,7 +10,7 @@
         <img src="{% version event.image 'events_archive' %}" alt="" />
         </a>
         {% if event.is_attendance_event %}
-            <a href="{{ event.get_absolute_url }}">
+            <a href="{{ event.get_absolute_url }}" id="attendbutton">
                 <button type="button" class="btn btn-success">Gå til påmelding</button>
             </a>
         {% endif %}
