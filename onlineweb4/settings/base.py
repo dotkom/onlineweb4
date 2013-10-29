@@ -34,17 +34,21 @@ EMAIL_TRIKOM = 'trikom@online.ntnu.no'
 SERVER_EMAIL = 'onlineweb4-error@online.ntnu.no'
 
 TIME_ZONE = 'Europe/Oslo'
+
 # http://www.i18nguy.com/unicode/language-identifiers.html
 LANGUAGE_CODE = 'nb'
 LANGUAGES = (
                 ('nb', 'Norwegian'),
                 ('en_US', 'English'),
             )
+LOCALE_PATHS = [
+    os.path.join(PROJECT_ROOT_DIRECTORY, 'locale'),
+]
 
 SITE_ID = 1
 USE_I18N = True
 USE_L10N = True
-USE_TZ = False
+USE_TZ = True
 DATETIME_FORMAT = 'N j, Y, H:i'
 SECRET_KEY = 'q#wy0df(7&amp;$ucfrxa1j72%do7ko*-6(g!8f$tc2$3x@3cq5@6c'
 
@@ -124,8 +128,13 @@ GRAPPELLI_ADMIN_TITLE = '<a href="/">Onlineweb</a>'
 
 INSTALLED_APPS = (
     # Third party dependencies
+    'django.contrib.humanize',
     'django_nose',
     'south',
+    'django_notify',
+    'mptt',
+    'sekizai',
+    'sorl.thumbnail',
     'grappelli',
     'filebrowser',
     'chunks',
@@ -136,6 +145,7 @@ INSTALLED_APPS = (
     'compressor',
     
     'watson',
+    'django_ldapbackend',
 
     # Django apps
     'django.contrib.admin',
@@ -159,8 +169,15 @@ INSTALLED_APPS = (
     'apps.feedback',
     'apps.mommy',
     'apps.profiles',
+    
+    # Wiki-related stuff
+    'wiki',
+    'wiki.plugins.attachments',
+    'wiki.plugins.notifications',
+    'wiki.plugins.images',
+    'wiki.plugins.macros',    
 
-    'pizzasystem',
+    #'pizzasystem',
 )
 
 # A sample logging configuration. The only tangible logging
@@ -214,6 +231,19 @@ MESSAGE_TAGS = {messages.DEBUG: 'alert-debug',
 # Not really sure what this does.
 # Has something to do with django-dynamic-fixture bumped from 1.6.4 to 1.6.5 in order to run a syncdb with mysql/postgres (OptimusCrime)
 IMPORT_DDF_MODELS = False
+
+# Required by the Wiki
+TEMPLATE_CONTEXT_PROCESSORS = (
+    "django.contrib.auth.context_processors.auth",
+    "django.core.context_processors.debug",
+    "django.core.context_processors.i18n",
+    "django.core.context_processors.media",
+    "django.core.context_processors.request",
+    "django.core.context_processors.static",
+    "django.core.context_processors.tz",
+    "django.contrib.messages.context_processors.messages",
+    "sekizai.context_processors.sekizai",
+)
 
 # Remember to keep 'local' last, so it can override any setting.
 for settings_module in ['filebrowser', 'local']:  # local last

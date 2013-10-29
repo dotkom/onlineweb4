@@ -368,14 +368,7 @@ class RuleBundle(models.Model):
             return current_response or errors[0]
 
     def __unicode__(self):
-        output = []
-        for obj in self.field_of_study_rules.all():
-            output.append(unicode(obj))
-        for obj in self.grade_rules.all():
-            output.append(unicode(obj))
-        for obj in self.user_group_rules.all():
-            output.append(unicode(obj))
-        return ", ".join(output)
+        return self.description
 
 
 
@@ -482,6 +475,7 @@ class Attendee(models.Model):
 
     class Meta:
         ordering = ['timestamp']
+        unique_together = (('event', 'user'),)
 
 
 # Registrations for watson indexing
