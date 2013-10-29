@@ -1,4 +1,6 @@
 #-*- coding: utf-8 -*-
+from collections import namedtuple, defaultdict
+
 from django.http import Http404, HttpResponse
 from django.shortcuts import render_to_response
 from django.shortcuts import render
@@ -7,12 +9,12 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib import messages
 from django.utils import simplejson
 from django.core.exceptions import ObjectDoesNotExist
-from apps.feedback.models import FeedbackRelation, FIELD_OF_STUDY_CHOICES
-from apps.feedback.forms import create_answer_forms
-from collections import namedtuple, defaultdict
 from django.utils.translation import ugettext_lazy as _
 from django.shortcuts import redirect
 from django.utils.safestring import SafeString
+
+from apps.feedback.models import FeedbackRelation, FieldOfStudyAnswer, FIELD_OF_STUDY_CHOICES
+from apps.feedback.forms import create_answer_forms
 
 def feedback(request, applabel, appmodel, object_id, feedback_id):
     fbr = _get_fbr_or_404(applabel, appmodel, object_id, feedback_id)
@@ -30,6 +32,10 @@ def feedback(request, applabel, appmodel, object_id, feedback_id):
             # mark that the user has answered
             fbr.answered.add(request.user)
             fbr.save()
+
+            # Set field of study automaticly
+            fosa = FieldOfStudyAnswer(feedback_relation = fbr, answer = request.user.field_of_study)
+            fosa.save()
 
             messages.success(request, _(u"Takk for at du svarte"))
             return redirect("home")
@@ -51,9 +57,9 @@ def result(request, applabel, appmodel, object_id, feedback_id):
     for q in fbr.questions:
         question_and_answers.append(Qa(q, fbr.answers_to_question(q)))
     
-    question = fbr.answers_to_question(fbr.fosquestion[0])
+    fos = fbr.field_of_study_answers.all()
     answer_count = defaultdict(int)
-    for answer in question:
+    for answer in fos:
         answer_count[str(answer)] += 1
 
     ordered_answers = []
