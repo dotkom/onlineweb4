@@ -482,6 +482,7 @@ class Attendee(models.Model):
 
     class Meta:
         ordering = ['timestamp']
+        unique_together = (('event', 'user'),)
 
 
 # Registrations for watson indexing
