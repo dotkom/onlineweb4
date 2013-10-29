@@ -107,7 +107,7 @@ class SimpleTest(TestCase):
         feedback_relation = FeedbackRelation.objects.get(pk=1)
         start_date = FeedbackMail.start_date(feedback_relation)
 
-        self.assertEqual(start_date, datetime.now().date())
+        self.assertEqual(start_date, datetime.now(_timezone(settings.TIME_ZONE)).date())
 
         feedback_relation2 = FeedbackRelation.objects.get(pk=2)
         start_date = FeedbackMail.start_date(feedback_relation2)
@@ -115,7 +115,7 @@ class SimpleTest(TestCase):
 
     def test_active(self):
         feedback_relation = FeedbackRelation.objects.get(pk=1)
-        yesterday = datetime.now() - timedelta(days=1)
+        yesterday = datetime.now(_timezone(settings.TIME_ZONE)) - timedelta(days=1)
         feedback_relation.deadline = yesterday.date()
         feedback_relation.active = True
         feedback_relation.save()
