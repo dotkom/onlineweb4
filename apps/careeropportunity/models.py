@@ -15,6 +15,7 @@ class CareerOpportunity(models.Model):
     description = models.TextField(_('beskrivelse'))
     start = models.DateTimeField(_('aktiv fra'))
     end = models.DateTimeField(_('aktiv til'))
+    featured = models.BooleanField(_(u'fremhevet'), default=False, blank=True)
 
     def __unicode__(self):
         return self.title

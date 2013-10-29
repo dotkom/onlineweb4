@@ -50,9 +50,6 @@ urlpatterns = patterns('',
     url(r'^#business$', TemplateView.as_view(template_name='frontpage.html#business'), name='business-link'),
     url(r'^#offline$', TemplateView.as_view(template_name='frontpage.html#offline'), name='offline-link'),
 
-    #Captcha url
-    url(r'^captcha/', include('captcha.urls')),
-
     # Online Notifier Owner Verification (checked yearly or so by Google)
     url(r'^google79c0b331a83a53de\.html$', lambda r: HttpResponse(
         "google-site-verification: google79c0b331a83a53de.html", mimetype="text/html")),
@@ -61,6 +58,14 @@ urlpatterns = patterns('',
     (r'^notify/', get_notify_pattern()),
     url(r'^wiki/', get_wiki_pattern()),
 )
+# pizzasystem
+if 'pizzasystem' in settings.INSTALLED_APPS:
+    urlpatterns += patterns('', url(r'^pizza/', include('pizzasystem.urls')))
+
+#Captcha url
+if 'captcha' in settings.INSTALLED_APPS:
+    urlpatterns += patterns('', url(r'^captcha/', include('captcha.urls')))
+
 
 
 # http://docs.djangoproject.com/en/1.3/howto/static-files/#staticfiles-development
