@@ -322,7 +322,7 @@ def set_primary(request):
                                                 ))
             
             # Deactivate old primary email
-            primary_email = request.user.get_email()
+            primary_email = email
             primary_email.primary = False
             primary_email.save()
             # Activate new primary
