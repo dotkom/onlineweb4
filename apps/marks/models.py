@@ -1,7 +1,9 @@
 #-*- coding: utf-8 -*-
 
 import datetime
+from pytz import timezone
 
+from django.conf import settings
 from django.db import models
 from django.utils.translation import ugettext as _
 
@@ -80,7 +82,8 @@ def get_threshold():
     WINTER = ((12, 1), (1, 15))
 
     # Todays date
-    now = datetime.datetime.now().date()
+    now = datetime.datetime.now(timezone(settings.TIME_ZONE)).date()
+    print "now = "+ str(now)
     # Threshhold is the day in the past which marks will be filtered on by mark_added_date
     threshold = now - datetime.timedelta(days=DURATION)
     summer_start_date = datetime.date(now.year, SUMMER[0][0], SUMMER[0][1])
@@ -107,4 +110,4 @@ def get_threshold():
         threshold -= datetime.timedelta(days=(now - second_winter_start_date).days)
 
     # The returned value is a datetime object
-    return datetime.datetime.combine(threshold, datetime.time())
+    return datetime.datetime.combine(threshold, datetime.time()).replace(tzinfo=timezone(settings.TIME_ZONE))
