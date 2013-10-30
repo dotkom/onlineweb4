@@ -53,7 +53,7 @@ class Mark(models.Model):
 
     @property
     def is_active(self):
-        return self.mark_added_date > get_threshold()
+        return timezone.make_naive(self.mark_added_date, timezone.get_current_timezone()) > get_threshold()
 
     def __unicode__(self):
         return _(u"Prikk for %s") % self.title
