@@ -4,6 +4,7 @@ import datetime
 from django.utils import timezone
 
 from django.contrib.contenttypes.models import ContentType
+from django.conf import settings
 
 from apps.events.models import Event, AttendanceEvent, Attendee
 from apps.feedback.models import FeedbackRelation
@@ -80,7 +81,7 @@ class FeedbackMail():
                 return True
         else:
             day_after_event = start_date + datetime.timedelta(1)
-            if day_after_event == timezone.now():
+            if day_after_event == datetime.datetime.date(timezone.now()):
                 #Send the first notification the day after the event
                 return True
         return False
