@@ -86,11 +86,11 @@ def get_threshold():
     print "now = "+ str(now)
     # Threshhold is the day in the past which marks will be filtered on by mark_added_date
     threshold = now - datetime.timedelta(days=DURATION)
-    summer_start_date = datetime.date(now.year, SUMMER[0][0], SUMMER[0][1])
-    summer_end_date = datetime.date(now.year, SUMMER[1][0], SUMMER[1][1])
-    first_winter_start_date = datetime.date(now.year - 1, WINTER[0][0], WINTER[0][1])
-    first_winter_end_date = datetime.date(now.year, WINTER[1][0], WINTER[1][1])
-    second_winter_start_date = datetime.date(now.year, WINTER[0][0], WINTER[0][1])
+    summer_start_date = timezone.now().date(now.year, SUMMER[0][0], SUMMER[0][1])
+    summer_end_date = timezone.now().date(now.year, SUMMER[1][0], SUMMER[1][1])
+    first_winter_start_date = timezone.now().date(now.year - 1, WINTER[0][0], WINTER[0][1])
+    first_winter_end_date = timezone.now().date(now.year, WINTER[1][0], WINTER[1][1])
+    second_winter_start_date = timezone.now().date(now.year, WINTER[0][0], WINTER[0][1])
 
     # If we're in the middle of summer, remove the days passed of summer
     if summer_start_date < now < summer_end_date:
