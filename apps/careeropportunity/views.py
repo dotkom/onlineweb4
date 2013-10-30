@@ -1,5 +1,5 @@
 #-*- coding: utf-8 -*-
-from pytz import timezone
+from django.utils import timezone
 
 from datetime import datetime
 
@@ -13,7 +13,7 @@ from apps.careeropportunity.models import CareerOpportunity
 
 def index(request):
     opportunities = CareerOpportunity.objects.filter(
-    	start__lte=datetime.now(timezone(settings.TIME_ZONE)), end__gte=datetime.now(timezone(settings.TIME_ZONE))).order_by('featured', '-start')
+    	start__lte=timezone.now(), end__gte=timezone.now()).order_by('featured', '-start')
     
     return render_to_response('careeropportunity/index.html', \
             {'opportunities': opportunities}, \
