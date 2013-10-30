@@ -1,6 +1,6 @@
 import logging
 import datetime
-from pytz import timezone
+from django.utils import timezone
 
 from django_dynamic_fixture import G
 from django.conf import settings
@@ -38,7 +38,7 @@ class EventTest(TestCase):
 
     def testMarksDelay(self):
         self.logger.debug("Testing signup with marks.")
-        now = datetime.datetime.now(timezone(settings.TIME_ZONE))
+        now = timezone.now()
         # Setting registration start 1 hour in the past, end one week in the future.
         self.attendance_event.registration_start = now - datetime.timedelta(hours=1)
         self.attendance_event.registration_end = now + datetime.timedelta(days=7)
