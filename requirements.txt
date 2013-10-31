@@ -8,8 +8,6 @@ python-memcached==1.45			# Memcache. Used by Mailinglists to fetch from Sympa.
 wsgiref==0.1.2
 Markdown==2.3.1                 # textarea text formatting
 psycopg2
-python-ldap
-django-ldapbackend
 pytz
 
 # third party deps
@@ -41,9 +39,6 @@ unittest2==0.5.1
 # imagemagick                   # From package repository. Tested with version == 8:6.7.7.10.
 # libjpeg-dev					# From package repository. 
 # libpq-dev						# From package repository.
-# libldap2-dev
-# libsasl2-dev
-# libssl-dev
 
 # Wiki-related
 wiki

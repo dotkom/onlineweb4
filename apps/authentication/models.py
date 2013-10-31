@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
 
 import datetime
+from pytz import timezone
 
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils.translation import ugettext as _
+from django.utils import timezone
 
 
 # If this list is changed, remember to check that the year property on
@@ -33,7 +35,7 @@ class OnlineUser(AbstractUser):
     
     # Online related fields
     field_of_study = models.SmallIntegerField(_(u"studieretning"), choices=FIELD_OF_STUDY_CHOICES, default=0)
-    started_date = models.DateField(_(u"startet studie"), default=datetime.datetime.now())
+    started_date = models.DateField(_(u"startet studie"), default=timezone.now().date())
     compiled = models.BooleanField(_(u"kompilert"), default=False)
 
     # Email
@@ -67,7 +69,7 @@ class OnlineUser(AbstractUser):
         """
         Returns true if the User object is associated with Online.
         """
-        if AllowedUsername.objects.filter(username=self.ntnu_username).filter(expiration_date__gte=datetime.datetime.now()).count() > 0:
+        if AllowedUsername.objects.filter(username=self.ntnu_username).filter(expiration_date__gte=timezone.now()).count() > 0:
             return True
         return False
 
@@ -86,7 +88,7 @@ class OnlineUser(AbstractUser):
 
     @property
     def year(self):
-        today = datetime.datetime.now().date()
+        today = timezone.now().date()
         started = self.started_date
 
         # We say that a year is 360 days incase we are a bit slower to
@@ -112,7 +114,7 @@ class OnlineUser(AbstractUser):
             return 4
 
     def __unicode__(self):
-        return self.username
+        return self.get_full_name()
 
     class Meta:
         verbose_name = _(u"brukerprofil")
@@ -137,12 +139,12 @@ class RegisterToken(models.Model):
     user = models.ForeignKey(OnlineUser, related_name="register_user")
     email = models.EmailField(_(u"epost"), max_length=254)
     token = models.CharField(_(u"token"), max_length=32)
-    created = models.DateTimeField(_(u"opprettet dato"), editable=False, auto_now_add=True, default=datetime.datetime.now())
+    created = models.DateTimeField(_(u"opprettet dato"), editable=False, auto_now_add=True)
 
     @property
     def is_valid(self):
         valid_period = datetime.timedelta(days=1)
-        now = datetime.datetime.now()
+        now = timezone.now()
         return now < self.created + valid_period 
 
 
@@ -158,7 +160,7 @@ class AllowedUsername(models.Model):
 
     @property
     def is_active(self):
-        return datetime.datetime.now() < self.expiration_date
+        return timezone.now().date() < self.expiration_date
 
     def __unicode__(self):
         return self.username

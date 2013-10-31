@@ -1,7 +1,9 @@
 #-*- coding: utf-8 -*-
 
 from datetime import datetime, timedelta
+from django.utils import timezone
 
+from django.conf import settings
 from django.contrib.auth.models import Group
 from django.core.urlresolvers import reverse
 from django.db import models
@@ -113,7 +115,7 @@ class Event(models.Model):
             return response
 
         # Registration closed
-        if datetime.now() > self.attendance_event.registration_end:
+        if timezone.now() > self.attendance_event.registration_end:
             response['message'] = _(u'Påmeldingen er ikke lenger åpen.')
             response['status_code'] = 502 
             return response
@@ -137,14 +139,14 @@ class Event(models.Model):
             # Offset is currently 1 day per mark. 
             mark_offset = timedelta(days=active_marks)
             postponed_registration_start = self.attendance_event.registration_start + mark_offset
-            if postponed_registration_start > datetime.now():
+            if postponed_registration_start > timezone.now():
                 if 'offset' in response and response['offset'] < postponed_registration_start or 'offset' not in response:    
                     response['status_code'] = 400
                     response['message'] = _(u"Din påmelding er utsatt grunnet prikker.")
                     response['offset'] = postponed_registration_start
             
         # Return response if offset was set.
-        if 'offset' in response and response['offset'] > datetime.now():
+        if 'offset' in response and response['offset'] > timezone.now():
             return response 
 
         #
@@ -152,7 +154,7 @@ class Event(models.Model):
         #
 
         #Registration not open  
-        if datetime.now() < self.attendance_event.registration_start:
+        if timezone.now() < self.attendance_event.registration_start:
             response['message'] = _(u'Påmeldingen har ikke åpnet enda.')
             response['status_code'] = 501 
             return response
@@ -248,7 +250,7 @@ class FieldOfStudyRule(Rule):
         # If the user has the same FOS as this rule    
         if (self.field_of_study == user.field_of_study):
             offset_datetime = self.offset.get_offset_time(registration_start)
-            if offset_datetime <= datetime.now():
+            if offset_datetime <= timezone.now():
                 return {"status": True, "message": None, "status_code": 210}
             else:
                 return {"status": False, "message": _(u"Din studieretning har utsatt påmelding."), "offset": offset_datetime, "status_code": 410}
@@ -270,7 +272,7 @@ class GradeRule(Rule):
         # If the user has the same FOS as this rule    
         if (self.grade == user.year):
             offset_datetime = self.offset.get_offset_time(registration_start)
-            if offset_datetime <= datetime.now():
+            if offset_datetime <= timezone.now():
                 return {"status": True, "message": None, "status_code": 211}
             else:
                 return {"status": False, "message": _(u"Ditt klassetrinn har utsatt påmelding."), "offset": offset_datetime, "status_code": 411}
@@ -290,7 +292,7 @@ class UserGroupRule(Rule):
         """ Override method """
         if self.group in user.groups.all():
             offset_datetime = self.offset.get_offset_time(registration_start)
-            if offset_datetime <= datetime.now():
+            if offset_datetime <= timezone.now():
                 return {"status": True, "message": None, "status_code": 212}
             else:
                 return {"status": False, "message": _(u"%s har utsatt påmelding.") % self.group, "offset": offset_datetime, "status_code": 412}
