@@ -2,7 +2,7 @@ from copy import copy
 from django.template.defaultfilters import slugify
 from tastypie import fields
 from tastypie.authorization import Authorization
-from tastypie.resources import ModelResource
+from tastypie.resources import ModelResource, ALL, ALL_WITH_RELATIONS
 from filebrowser.base import FileObject
 from filebrowser.settings import VERSIONS
 from apps.events.models import Event

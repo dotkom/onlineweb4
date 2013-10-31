@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from tastypie import fields
-from tastypie.resources import ModelResource
+from tastypie.resources import ModelResource, ALL
 from apps.authentication.models import OnlineUser as User
 
 class UserResource(ModelResource):
@@ -10,4 +10,8 @@ class UserResource(ModelResource):
         queryset = User.objects.all()
         resource_name = 'user'
         fields = ['username', 'first_name', 'last_name', 'rfid', ]
+        filtering = {
+            "username": ALL,
+            "rfid": ALL,
+        }
 
