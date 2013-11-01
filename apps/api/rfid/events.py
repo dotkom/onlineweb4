@@ -11,6 +11,7 @@ from apps.events.models import AttendanceEvent
 from apps.events.models import CompanyEvent
 from apps.companyprofile.models import Company
 from apps.api.rfid.user import UserResource
+from apps.api.rfid.auth import RfidAuthentication
 
 class AttendeeResource(ModelResource):
     user = fields.ToOneField(UserResource, 'user', full=True)
@@ -18,6 +19,20 @@ class AttendeeResource(ModelResource):
     class Meta:
         queryset = Attendee.objects.all()
         resource_name = 'attendees'
+        authorization = Authorization()
+        authentication = RfidAuthentication()
+        filtering = {
+            'user': ALL_WITH_RELATIONS,
+        }
+
+class AttendResource(ModelResource):
+    
+    class Meta:
+        queryset = Attendee.objects.all()
+        resource_name = 'attend'
+        allowed_methods = ['post']
+        authorization = Authorization()
+        authentication = RfidAuthentication()
 
 class CompanyResource(ModelResource):
     
@@ -25,6 +40,7 @@ class CompanyResource(ModelResource):
         queryset = Company.objects.all()
         resource_name = 'company'
         fields = ['image']
+
 class CompanyEventResource(ModelResource):
     companies = fields.ToOneField(CompanyResource, 'company', full=True)
     class Meta:
@@ -32,14 +48,14 @@ class CompanyEventResource(ModelResource):
         resource_name ='companies'
 
 class AttendanceEventResource(ModelResource):
-    users = fields.ToManyField(AttendeeResource, 'attendees', full=False)
+    users = fields.ToManyField(AttendeeResource, 'attendees', full=True)
 
     class Meta:
         queryset = AttendanceEvent.objects.all()
         resource_name = 'attendance_event'
-
-        # XXX: Noop authorization is probably not safe for producion
-        authorization = Authorization()
+        filtering = {
+            'users': ALL_WITH_RELATIONS,
+        }
 
 class EventResource(ModelResource):
     author = fields.ToOneField(UserResource, 'author', full=True)
@@ -92,8 +108,10 @@ class EventResource(ModelResource):
         resource_name = 'events'
         # XXX: Noop authorization is probably not safe for producion
         authorization = Authorization()
+        authentication = RfidAuthentication()
         
         ordering = ['event_start']
         filtering = {
-            'event_end' : ('gte',)
+            'event_end' : ('gte',),
+            'attendance_event': ALL_WITH_RELATIONS,
         }
