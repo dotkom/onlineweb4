@@ -3,7 +3,7 @@
 from tastypie import fields
 from tastypie.resources import ModelResource, ALL
 from apps.authentication.models import OnlineUser as User
-from tastypie.authentication import ApiKeyAuthentication
+from apps.authentication.models import RfidAuthentication
 from tastypie.authorization import Authorization
 
 class UserResource(ModelResource):
@@ -14,6 +14,7 @@ class UserResource(ModelResource):
         fields = ['username', 'first_name', 'last_name', 'rfid', ]
 	allowed_methods = ['get', 'patch']
         authorization = Authorization()
+        authentication = RfidAuthentication()
         filtering = {
             "username": ALL,
             "rfid": ALL,
