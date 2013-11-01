@@ -1,28 +1,23 @@
 <!DOCTYPE html>
-<html lang="en" ng-app="rfid">
+<html lang="en">
 <head>
     <meta charset="utf-8">
     <title>Oppmøteregistrering</title>
-    <link rel="stylesheet" href="css/rfid.css">
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.8/angular.min.js"></script>
 </head>
 <body>
-<div class="container" ng-controller="mainCtrl">
+<div class="container">
     <h1>Oppmøteregistrering</h1>
-    <input class="form-control" type="text" ng-model="name" autofocus placeholder="Type a name..." /><br />
-    <button ng-click="addPerson()" class="btn btn-default">Add Person</button>
+    <input class="form-control" type="text" autofocus placeholder="Type a name..." /><br />
+    <button class="btn btn-default">Add Person</button>
     <hr />
     <ul>
-        <li ng-repeat="person in getPeople">
-            <span alertable='{{ person }}'>{{ person }}</span>
-        </li>
+        <li>Some item</li>
     </ul>
 </div>
 </body>
 <script src="http://code.jquery.com/jquery-2.0.3.min.js"></script>
+<script src="/static/js/rfid/main.js"></script>
 <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
-<script src="/static/js/rfid/libs/angular-route.min.js"></script>
-<script src="/static/js/rfid/app.js"></script>
-<script src="/static/js/rfid/controllers/controllers.js"></script>
 </html>
