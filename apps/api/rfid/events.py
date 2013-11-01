@@ -112,6 +112,6 @@ class EventResource(ModelResource):
         
         ordering = ['event_start']
         filtering = {
-            'event_end' : ('gte',),
+            'event_end' : ['gte'],
             'attendance_event': ALL_WITH_RELATIONS,
         }
