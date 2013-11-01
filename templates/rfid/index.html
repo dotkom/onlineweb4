@@ -8,13 +8,37 @@
 </head>
 <body>
 <div class="container">
+    <div class="navbar navbar-default navbar-fixed-top">
+      <div class="container">
+      <div class="row">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+           <span class="icon-bar"></span>
+           <span class="icon-bar"></span>
+           <span class="icon-bar"></span>
+        </button>
+        <div class="navbar-collapse collapse">
+          <ul class="nav navbar-nav" id="nav">
+          </ul>
+        </div><!--/.nav-collapse -->
+      </div>
+      </div>    
+    </div>
+    <br /><br /><br />
+    <div class="row">
+	<div class="col-md-12">
+	    <div id="topmessage"></div>
+	</div>
+    </div>
     <h1>Oppmøteregistrering</h1>
-    <input class="form-control" type="text" autofocus placeholder="Type a name..." /><br />
-    <button class="btn btn-default">Add Person</button>
-    <hr />
-    <ul>
-        <li>Some item</li>
-    </ul>
+    <input class="form-control" type="text" autofocus placeholder="Skriv inn RFID eller brukernavn..." /><br />
+    <button class="btn btn-primary">Registrer</button>
+    <br /><br />
+    <p id="total_attendees"></p>
+    <div class="table-responsive">
+	<table class="table table-hover table-condensed" id="attendees">
+	    
+	</table>
+    </div>
 </div>
 </body>
 <script src="http://code.jquery.com/jquery-2.0.3.min.js"></script>
