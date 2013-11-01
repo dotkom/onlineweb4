@@ -58,6 +58,8 @@ events = (function () {
             event_list = data.events;
             tools.populate_nav(event_list);
             active_event = event_list[0];
+            $('#title').text(active_event.title);
+            $('#1').parent().addClass('active');
             tools.populate_attendance_list(active_event.attendance_event.users);
             console.log(event_list);
         }
@@ -87,6 +89,7 @@ events = (function () {
         // Sets the active event in view
         set_active_event: function (index) {
             active_event = event_list[index];
+            $('#title').text(active_event.title);
         },
 
         // Registers an attendant by the attendee URI
@@ -134,7 +137,7 @@ tools = (function () {
 
         populate_nav: function (event_list) {
             $(event_list).each(function (id) {
-                $('#nav').append($('<li><a href="#" id="' + event_list[id].id + '">' + event_list[id].description + '</a></li>'));
+                $('#nav').append($('<li><a href="#" id="' + event_list[id].id + '">' + event_list[id].title + '</a></li>'));
             });
         },
 
