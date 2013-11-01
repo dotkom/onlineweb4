@@ -3,7 +3,7 @@
 from tastypie import fields
 from tastypie.resources import ModelResource, ALL
 from apps.authentication.models import OnlineUser as User
-from apps.authentication.models import RfidAuthentication
+from apps.api.rfid.auth import RfidAuthentication
 from tastypie.authorization import Authorization
 
 class UserResource(ModelResource):
