@@ -1,4 +1,4 @@
 from django.shortcuts import render
 
-def index(request):
-    return render(request, 'index.html', {})
+def rfid(request):
+    return render(request, 'rfid/index.html', {})

@@ -168,6 +168,7 @@ INSTALLED_APPS = (
     'apps.feedback',
     'apps.mommy',
     'apps.profiles',
+    'apps.rfid',
     
     # Wiki-related stuff
     'wiki',

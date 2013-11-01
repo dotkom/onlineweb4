@@ -40,6 +40,7 @@ urlpatterns = patterns('',
     url(r'^feedback/',          include('apps.feedback.urls')),
     url(r'^offline/',           include('apps.offline.urls')),
     url(r'^profile/',           include('apps.profiles.urls')),
+    url(r'^rfid/',              include('apps.rfid.urls')),
     url(r'^resourcecenter/mailinglists/', include('apps.mailinglists.urls')), # leave in this order because...
     url(r'^resourcecenter/',    include('apps.resourcecenter.urls')), # ...resourcecenter has catch-all on subpages
 
