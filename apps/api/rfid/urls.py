@@ -10,7 +10,6 @@ rfid_api = Api(api_name='rfid')
 rfid_api.register(UserResource())
 rfid_api.register(AttendeeResource())
 rfid_api.register(AttendanceEventResource())
-
 rfid_api.register(EventResource())
 
 urlpatterns = patterns('',
