@@ -3,35 +3,48 @@
 {% load question_filters %}
 
 {% block content %}
-<div class="container-fluid">
-    <div class="row-fluid">
-        <div class="span12">
-            <div class="page-header">
-                <h1>{{ description }}</h1> 
+<section class="container">
+    <div class="row">
+        <div class="page-header">
+            <h1>{{ description }}</h1> 
+        </div>
+        <div class="col-md-6">
+            <h2>Studieretning</h2>
+            <div id="field-of-study-chart"></div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="page-header">
+            <h2>Vurderinger</h2>
+        </div>
+        {% for rating_answer in rating_answers %}
+            <div class="col-md-6">
+                <div id="rating-chart-{{ forloop.counter }}"></div>
             </div>
-            <h2 class="pagination-centered">Studieretning</h2>
-
-            <div class="span12" style="height:400px;width:600px;" id="field-of-study-chart"></div>
-            {% for rating_answer in rating_answers %}
-                <div class="span12" style="height:400px;width:600px;" id="rating-chart-{{ forloop.counter }}"></div>
-            {% endfor %}
-            <div class="span12">
-                {% for qa in question_and_answers%}
-                    {% if qa.question|isinst:"apps.feedback.models.TextQuestion" %}
-                     <h3><u>{{ qa.question }}</u></h3>
-                     <ul>
+        {% endfor %}
+    </div>
+    <div class="row">
+        <div class="page-header">
+            <h2>Tilbakemeldinger</h2>
+        </div>
+        <div class="col-md-12">
+            {% for qa in question_and_answers%}
+                {% if qa.question|isinst:"apps.feedback.models.TextQuestion" %}
+                    <h3><u>{{ qa.question }}</u></h3>
+                    <ul>
                      {% for a in qa.answers %}
                         <li>{{ a }}</li>
                      {% endfor %}
                      </ul>
-                    {% endif %}
-                {% endfor %}
+                {% endif %}
+            {% endfor %}
+            </div>
             <div class="form-actions">
                 <button class="btn btn-success" onclick="window.print()">Print</button>
             </div>
         </div>
     </div>
-</div>
+</section>
 <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/jqplot/jquery.jqplot.min.css" />
 {% block js %}
     {{ block.super }}
