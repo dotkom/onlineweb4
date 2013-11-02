@@ -21,6 +21,10 @@ p {
     margin-bottom: 15px;
 }
 
+th {
+    background: #004b80;
+}
+
 .navbar, #nav a {
     background: #004b80;
     color: #efefef;
