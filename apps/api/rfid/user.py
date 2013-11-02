@@ -12,7 +12,8 @@ class UserResource(ModelResource):
         queryset = User.objects.all()
         resource_name = 'user'
         fields = ['username', 'first_name', 'last_name', 'rfid', ]
-	allowed_methods = ['get', 'patch']
+        allowed_update_fields = ['rfid']
+        allowed_methods = ['get', 'patch']
         authorization = Authorization()
         authentication = RfidAuthentication()
         filtering = {
@@ -20,3 +21,13 @@ class UserResource(ModelResource):
             "rfid": ALL,
         }
 
+    def update_in_place(self, request, original_bundle, new_data):
+        """
+        Override to restrict patching of user fields to RFID only
+        """
+        if set(new_data.keys()) - set(self._meta.allowed_update_fields):
+            raise BadRequest(
+                'Kun oppdatering av %s er tillatt.' % ', '.join(self._meta.allowed_update_fields)
+            )
+
+        return super(UserResource, self).update_in_place(request, original_bundle, new_data)
