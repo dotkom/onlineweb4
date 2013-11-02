@@ -1,0 +1,31 @@
+body {
+    background-image: url("/static/img/splash_bg.jpg");
+    background-repeat: repeat-y;
+    background-position: center;
+    color: #efefef;
+    padding-top: 45px;
+}
+
+h1 {
+    color: #ee7810;
+    font-weight: 200;
+
+}
+
+button {
+    margin-bottom: 15px;
+}
+
+p {
+    margin-top: 15px;
+    margin-bottom: 15px;
+}
+
+.navbar, ul, li {
+    background: #004b80;
+}
+
+li.active {
+    background: red;
+}
+
