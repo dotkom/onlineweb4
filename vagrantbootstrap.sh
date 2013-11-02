@@ -82,6 +82,11 @@ function install_onlineweb_requirements() {
     workon onlineweb
     cd /vagrant
     progress pip install -r requirements.txt
+    echo "uninstalling PIP and Pillow to fix dependency crashes"
+    progress pip uninstall PIL -y
+    progress pip uninstall Pillow -y
+    echo "installing Pillow 2.0.0"
+    progress pip install Pillow==2.0.0
 }
 
 function install_lessc() {
