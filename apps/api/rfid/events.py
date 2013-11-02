@@ -19,26 +19,31 @@ class AttendeeResource(ModelResource):
     class Meta:
         queryset = Attendee.objects.all()
         resource_name = 'attendees'
+        allowed_methods = ['get', 'patch']
+        allowed_update_fields = ['attended']
         authorization = Authorization()
         authentication = RfidAuthentication()
         filtering = {
             'user': ALL_WITH_RELATIONS,
         }
 
-class AttendResource(ModelResource):
-    
-    class Meta:
-        queryset = Attendee.objects.all()
-        resource_name = 'attend'
-        allowed_methods = ['post']
-        authorization = Authorization()
-        authentication = RfidAuthentication()
+    def update_in_place(self, request, origial_bundle, new_data):
+        """
+        Override to restrict modification of object fields to those set in allowed_update_fields
+        """
+        if set(new_data.keys()) - set(self._meta.allowed_update_fields):
+            raise BadRequest(
+                'Kun oppdatering av %s er tillatt.' % ', '.join(self._meta.allowed_update_fields)
+            )
+
+        return super(AttendeeResource, self).update_in_place(request, original_bundle, new_data)
 
 class CompanyResource(ModelResource):
     
     class Meta:
         queryset = Company.objects.all()
         resource_name = 'company'
+        allowed_methods = ['get']
         fields = ['image']
 
 class CompanyEventResource(ModelResource):
@@ -46,6 +51,7 @@ class CompanyEventResource(ModelResource):
     class Meta:
         queryset = CompanyEvent.objects.all()
         resource_name ='companies'
+        allowed_methods = ['get']
 
 class AttendanceEventResource(ModelResource):
     users = fields.ToManyField(AttendeeResource, 'attendees', full=True)
@@ -53,6 +59,7 @@ class AttendanceEventResource(ModelResource):
     class Meta:
         queryset = AttendanceEvent.objects.all()
         resource_name = 'attendance_event'
+        allowed_methods = ['get']
         filtering = {
             'users': ALL_WITH_RELATIONS,
         }
@@ -106,7 +113,7 @@ class EventResource(ModelResource):
     class Meta:
         queryset = Event.objects.all()
         resource_name = 'events'
-        # XXX: Noop authorization is probably not safe for producion
+        allowed_methods = ['get']
         authorization = Authorization()
         authentication = RfidAuthentication()
         

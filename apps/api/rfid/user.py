@@ -23,7 +23,7 @@ class UserResource(ModelResource):
 
     def update_in_place(self, request, original_bundle, new_data):
         """
-        Override to restrict patching of user fields to RFID only
+        Override to restrict patching of user fields to those specified in allowed_update_fields
         """
         if set(new_data.keys()) - set(self._meta.allowed_update_fields):
             raise BadRequest(
