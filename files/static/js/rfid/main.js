@@ -78,7 +78,12 @@ events = (function () {
         
         // Public callback for event list
         events_callback: function (data) {
-            extract_events(data);
+            if (data != null) {
+                extract_events(data);
+            }
+            else {
+                tools.
+            }
         },
 
         // Returns the active event in view
@@ -99,11 +104,11 @@ events = (function () {
 
         // Public callback for the register_attendant method
         attended_callback: function (user) {
-            if (user) {
-                tools.showsuccess(200, "Tihi");
+            if (user != null) {
+                tools.showsuccess(200, user.username + " er registrert som deltaker!");
             }
             else {
-
+                tools.showerror(400, "Det oppstod en uventet feil under registering av deltakeren.");
             }
         }
     }
@@ -128,6 +133,17 @@ tools = (function () {
             tools.tempshow($('#topmessage').removeClass().addClass("alert alert-success").text(message));
         },
 
+        get_time: function () {
+            var t = new Date();
+            var h = t.getHours();
+            var m = t.getMinutes();
+            var s = t.getSeconds();
+            if (h < 10) h = "0" + h;
+            if (m < 10) m = "0" + m;
+            if (s < 10) s = "0" + s;
+            return h + ":" + m + ":" + s;
+        },
+
         tempshow: function (object) {
             object.fadeIn(200);
             setTimeout(function () {
@@ -144,11 +160,12 @@ tools = (function () {
         populate_attendance_list: function (attendees) {
             var attended = 0;
             $('#attendees').empty();
-            $('#attendees').append($('<tr><th>Nr</th><th>Fornavn</th><th>Etternavn</th></tr>'));
+            $('#attendees').append($('<tr><th>Nr</th><th>Fornavn</th><th>Etternavn</th><th>Tidspunkt</th></tr>'));
             $(attendees).each(function (id) {
                 if (attendees[id].attended) {
                     attended++;
-                    $('#attendees').append($('<tr><td>' + (id+1) + '</td><td>' + attendees[id].user.first_name + '</td><td>' + attendees[id].user.last_name + '</td></tr>'));
+                    $('#attendees').append($('<tr><td>' + (id+1) + '</td><td>' + attendees[id].user.first_name + '</td><td>' + attendees[id].user.last_name + '</td><td>' + 
+                    tools.get_time() + '</td></tr>'));
                 }
             });
             $('#total_attendees').text('Antall oppmøtte: ' + attended + '/' + events.get_active_event().attendance_event.max_capacity);
