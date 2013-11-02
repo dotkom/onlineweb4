@@ -63,16 +63,14 @@ def result(request, applabel, appmodel, object_id, feedback_id):
     for answer in fos:
         answer_count[str(answer)] += 1
 
-    ordered_answers = []
+    fos_data = []
     for _, x in FIELD_OF_STUDY_CHOICES[1:]:
         if answer_count[x] > 0:
-            ordered_answers.append([x, answer_count[x]])
+            fos_data.append([x, answer_count[x]])
   
-    description = fbr.description
+    fos_data = simplejson.dumps(fos_data)
 
-    ordered_answers = simplejson.dumps(ordered_answers)
-
-    rating_question_answers = []
+    rating_answers = []
     rating_questions = []
     for i in range(0, len(fbr.ratingquestion)):
         question = fbr.answers_to_question(fbr.ratingquestion[i])
@@ -81,9 +79,9 @@ def result(request, applabel, appmodel, object_id, feedback_id):
         for a in question:
             answers[int(a.answer)] += 1
         answers = answers[1:]
-        rating_question_answers.append(answers)
+        rating_answers.append(answers)
     return render(request, 'feedback/results.html',
-                  {'question_and_answers': question_and_answers, 'foschartdata': ordered_answers, 'description': description, "rating_question_answers": rating_question_answers, "rating_questions": rating_questions})
+                  {'question_and_answers': question_and_answers, 'fos_data': fos_data, 'description': fbr.description, "rating_answers": rating_answers, "rating_questions": rating_questions})
 
 def index(request):
     feedbacks = FeedbackRelation.objects.all()

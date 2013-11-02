@@ -11,8 +11,10 @@
             </div>
             <h2 class="pagination-centered">Studieretning</h2>
 
-            <div class="span12" style="height:300px;width:500px;" id="field-of-study-chart"></div>
-            <div class="span12" id="chartdiv"></div>
+            <div class="span12" style="height:400px;width:600px;" id="field-of-study-chart"></div>
+            {% for rating_answer in rating_answers %}
+                <div class="span12" style="height:400px;width:600px;" id="rating-chart-{{ forloop.counter }}"></div>
+            {% endfor %}
             <div class="span12">
                 {% for qa in question_and_answers%}
                     {% if qa.question|isinst:"apps.feedback.models.TextQuestion" %}
@@ -30,16 +32,18 @@
         </div>
     </div>
 </div>
-<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/jqplot/jquery.jqplot.css" />
+<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/jqplot/jquery.jqplot.min.css" />
 {% block js %}
     {{ block.super }}
-    <script src="{{ STATIC_URL }}js/libs/jquery.jqplot.min.js"></script>
-    <script src="{{ STATIC_URL }}js/libs/jqplot.pieRenderer.min.js"></script>
+    <script src="{{ STATIC_URL }}js/libs/jqplot/jquery.jqplot.min.js"></script>
+    <script src="{{ STATIC_URL }}js/libs/jqplot/jqplot.pieRenderer.min.js"></script>
+    <script src="{{ STATIC_URL }}js/libs/jqplot/jqplot.barRenderer.min.js"></script>
+    <script src="{{ STATIC_URL }}js/libs/jqplot/jqplot.categoryAxisRenderer.min.js"></script>
+    <script src="{{ STATIC_URL }}js/libs/jqplot/jqplot.pointLabels.min.js"></script>
     <script src="{{ STATIC_URL }}js/feedbackResults.js"></script>
-    <script src="{{ STATIC_URL }}js/libs/d3.v3.min.js"></script>
-    <script src="{{ STATIC_URL }}js/FeedbackWidget.js"></script>
     <script type="text/javascript">
-        printPieChart({{ foschartdata|safe }});
+        printPieChart({{ fos_data|safe }});
+        printRatingCharts({{ rating_answers|safe }}, {{rating_questions|safe}});
     </script>
 {% endblock %}
 
