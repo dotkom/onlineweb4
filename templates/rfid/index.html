@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <title>Oppmøteregistrering</title>
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.8/angular.min.js"></script>
+    <link rel="stylesheet" href="/static/css/rfid.css">
 </head>
 <body>
 <div class="container">
@@ -23,7 +23,6 @@
       </div>
       </div>    
     </div>
-    <br /><br /><br />
     <div class="row">
 	<div class="col-md-12">
 	    <div id="topmessage"></div>
@@ -32,10 +31,9 @@
     <h1 id="title">Oppmøteregistrering</h1>
     <input class="form-control" type="text" autofocus placeholder="Skriv inn RFID eller brukernavn..." /><br />
     <button class="btn btn-primary">Registrer</button>
-    <br /><br />
     <p id="total_attendees"></p>
     <div class="table-responsive">
-	<table class="table table-hover table-condensed" id="attendees">
+	<table class="table table-condensed" id="attendees">
 	    
 	</table>
     </div>

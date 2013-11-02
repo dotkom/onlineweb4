@@ -151,7 +151,7 @@ tools = (function () {
                     $('#attendees').append($('<tr><td>' + (id+1) + '</td><td>' + attendees[id].user.first_name + '</td><td>' + attendees[id].user.last_name + '</td></tr>'));
                 }
             });
-            $('#total_attendees').text('Antall oppmøtte: ' + attended);
+            $('#total_attendees').text('Antall oppmøtte: ' + attended + '/' + events.get_active_event().attendance_event.max_capacity);
         }
 
     }
