@@ -21,11 +21,27 @@ p {
     margin-bottom: 15px;
 }
 
-.navbar, ul, li {
+.navbar, #nav a {
     background: #004b80;
+    color: #efefef;
 }
 
-li.active {
+#nav a:hover {
+    text-decoration: underline;
+}
+
+.navbar-header {
+    vertical-align: middle;
+}
+
+img#onlinelogo {
+    height: 35px;
+    width: 140px;
+    margin-right: 10px;
+    margin-top: 7px;
+}
+
+#nav .active {
     background: red;
 }
 
