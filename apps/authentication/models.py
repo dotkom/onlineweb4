@@ -51,7 +51,6 @@ class OnlineUser(AbstractUser):
     mark_rules = models.BooleanField(_(u"godtatt prikkeregler"), default=False)
     rfid = models.CharField(_(u"RFID"), max_length=50, blank=True, null=True)
     nickname = models.CharField(_(u"nickname"), max_length=50, blank=True, null=True)
-    #website = models.CharField(_(u"hjemmeside"), max_length=50, blank=True, null=True)
     website = models.URLField(_(u"hjemmeside"), blank=True, null=True)
 
 
