@@ -95,7 +95,7 @@ events = (function () {
             active_event = event_list[index];
             $('#title').text(active_event.title);
             $('#event_image').attr('src', active_event.image_events_thumb);
-            tools.pupulate_attendance_list(active_event.attendance_event.users);
+            tools.populate_attendance_list(active_event.attendance_event.users);
         },
 
         // Updates the active event with new data from the API
@@ -133,25 +133,18 @@ events = (function () {
 // The tools module contains different methods for manipulating the DOM and other fancy stuff
 tools = (function () {
 
+    return {
+        // Temporarily show an error message on the top of the page...
         showerror: function (status, message) {
             tools.tempshow($('#topmessage').removeClass().addClass("alert alert-danger").text(message));
         },
 
+        // Temporarily show a success message on the top of the page...
         showsuccess: function (status, message) {
             tools.tempshow($('#topmessage').removeClass().addClass("alert alert-success").text(message));
         },
 
-        get_time: function () {
-            var t = new Date();
-            var h = t.getHours();
-            var m = t.getMinutes();
-            var s = t.getSeconds();
-            if (h < 10) h = "0" + h;
-            if (m < 10) m = "0" + m;
-            if (s < 10) s = "0" + s;
-            return h + ":" + m + ":" + s;
-        },
-
+        // Temporarily show a DOM object
         tempshow: function (object) {
             object.fadeIn(200);
             setTimeout(function () {
@@ -159,21 +152,23 @@ tools = (function () {
             }, 3000);
         },
 
+        // This method populates the navbar dropdown with the events in the specified event_list
         populate_nav: function (event_list) {
             $(event_list).each(function (id) {
-                $('#nav').append($('<li><a href="#" id="' + event_list[id] + '">' + event_list[id].title + '</a></li>'));
+                $('#nav').append($('<li><a href="#" id="' + id + '">' + event_list[id].title + '</a></li>'));
             });
         },
 
+        // This method takes in an array of attendees and lists those whose attended flag is set to true,
+        // as well as keeping track of the total amount of attendees.
         populate_attendance_list: function (attendees) {
             var attended = 0;
             $('#attendees').empty();
-            $('#attendees').append($('<tr><th>Nr</th><th>Fornavn</th><th>Etternavn</th><th>Tidspunkt</th></tr>'));
+            $('#attendees').append($('<tr><th>Nr</th><th>Fornavn</th><th>Etternavn</th></tr>'));
             $(attendees).each(function (id) {
                 if (attendees[id].attended) {
                     attended++;
-                    $('#attendees').append($('<tr><td>' + (id+1) + '</td><td>' + attendees[id].user.first_name + '</td><td>' + attendees[id].user.last_name + '</td><td>' + 
-                    tools.get_time() + '</td></tr>'));
+                    $('#attendees').append($('<tr><td>' + (id+1) + '</td><td>' + attendees[id].user.first_name + '</td><td>' + attendees[id].user.last_name + '</td></tr>'));
                 }
             });
             $('#total_attendees').text('Antall oppmøtte: ' + attended + '/' + events.get_active_event().attendance_event.max_capacity);
@@ -184,9 +179,13 @@ tools = (function () {
 
 // On page load complete, do this stuff...
 $(document).ready(function () {
+
+    // Get the event list from the API
     events.get_event_list();
+
+    // Bind click listeners to the events menu links
     $('#nav').on('click', 'a', function (event) {
         event.preventDefault();
-        
+        events.set_active_event($(this).attr("id"));
     });
 });
