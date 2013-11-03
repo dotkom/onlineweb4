@@ -227,13 +227,36 @@ tools = (function () {
         // Public callback for User queries
         user_callback: function (user) {
             if (user != null && user.meta.total_count == 1) {
-                events.active_user = user;
+                events.set_active_user = user[0];
+                console.log("User object returned");
+                concols.log(user[0]);
+                var e = events.is_attendee(events.get_active_user);
+                if (e) {
+                    console.log("Attendee is in list and attendee object returned");
+                    events.register_attendant(e);
+                }
+                else {
+                    tools.showerror(401, "Brukeren er ikke oppført på listen, eller er på venteliste");
+                }
             }
             else {
                 tools.showerror(404, "Brukeren eksisterer ikke i databasen");
-                events.active_user = null;
+                events.set_active_user = null;
             }
-        }
+        },
+
+        // Parse text input for RFID or username
+        parse_input: function (input) {
+            console.log("Parsing input...");
+            if (/^[0-9]{10}$/.test(input)) {
+                console.log("Rfid valid");
+                api.get_user_by_rfid(input);
+            }
+            else {
+                console.log("Not RFID");
+                api.get_user_by_username(input);
+            }
+        },
     }
 }());
 
@@ -252,9 +275,7 @@ $(document).ready(function () {
     });
 
     $('#submit').on('click', function (event) {
-        // Regex for possible rfid
-        if (/^[0-9]{10}$/.test($('#input').val())) {
-            console.log("RegEx is valid RFID");
-        }
+        var input = $('#input').val();
+        tools.parse_input(input);
     });
 });
