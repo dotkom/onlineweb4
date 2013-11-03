@@ -229,7 +229,7 @@ tools = (function () {
             if (user != null && user.meta.total_count == 1) {
                 events.set_active_user = user[0];
                 console.log("User object returned");
-                concols.log(user[0]);
+                console.log(user[0]);
                 var e = events.is_attendee(events.get_active_user);
                 if (e) {
                     console.log("Attendee is in list and attendee object returned");
