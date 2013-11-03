@@ -150,7 +150,7 @@ events = (function () {
         // Checks if user is in attendee list
         is_attendee: function (user) {
             for (var x = 0; x < active_event.attendance_event.users.length) {
-                if (active_event.attendance_event.users[x].user.id == user.id) return true;
+                if (active_event.attendance_event.users[x].user.id == user.id) return active_event.attendance_event.users[x];
             }
             return false;
         },
@@ -252,7 +252,13 @@ $(document).ready(function () {
         if (/^[0-9]{10}$/.test($('#input').val())) {
             tools.get_user_by_rfid($('#input').val());
             if (events.active_user != null) {
-                
+                var attendee = events.is_attendee(events.active_user);
+                if (attendee) {
+                    events.register_attendant(attendee);
+                }
+                else {
+                    tools.showerror(401, events.active_user.first_name + " " events.active_user.last_name + " er ikke påmeldt, eller står på venteliste");
+                }
             }
         }
     });
