@@ -28,7 +28,7 @@ api = (function () {
     return {
         // Gets event list
         get_events: function () {
-            return doRequest("GET", "/api/rfid/events/", "?api_key=" + API_KEY + "&event_end__gte=" + tools.today() + "&limit=3", {}, events.events_callback);
+            return doRequest("GET", "/api/rfid/events/", "?api_key=" + API_KEY + "&event_end__gte=" + "2013-10-30" + "&limit=3", {}, events.events_callback);
         },
 
         // Gets user object by username
@@ -149,7 +149,7 @@ events = (function () {
 
         // Checks if user is in attendee list
         is_attendee: function (user) {
-            for (var x = 0; x < active_event.attendance_event.users.length) {
+            for (var x = 0; x < active_event.attendance_event.users.length; x++) {
                 if (active_event.attendance_event.users[x].user.id == user.id) return active_event.attendance_event.users[x];
             }
             return false;
@@ -238,6 +238,8 @@ tools = (function () {
 // On page load complete, do this stuff...
 $(document).ready(function () {
 
+    var last_rfid = null;
+
     // Get the event list from the API
     events.get_event_list();
 
@@ -250,14 +252,17 @@ $(document).ready(function () {
     $('#submit').on('click', function (event) {
         // Regex for possible rfid
         if (/^[0-9]{10}$/.test($('#input').val())) {
-            tools.get_user_by_rfid($('#input').val());
+            
+            last_rfid = $('#input').val();
+
+            tools.get_user_by_rfid(last_rfid);
             if (events.active_user != null) {
                 var attendee = events.is_attendee(events.active_user);
                 if (attendee) {
                     events.register_attendant(attendee);
                 }
                 else {
-                    tools.showerror(401, events.active_user.first_name + " " events.active_user.last_name + " er ikke påmeldt, eller står på venteliste");
+                    tools.showerror(401, events.active_user.first_name + " " + events.active_user.last_name + " er ikke påmeldt, eller står på venteliste");
                 }
             }
         }
