@@ -18,7 +18,6 @@ api = (function () {
                 callback(data);
             },
             error: function (xhr, ajaxOptions, thrownError) {
-                // tools.showerror(xhr);
                 console.log("" + xhr.status + ":" + xhr.responseText);
                 callback(null);
             }
@@ -43,7 +42,7 @@ api = (function () {
 
         // Sets an attendee as attended
         set_attended: function (attendee) {
-            return doRequest("PATCH", attendee.resource_uri, "?api_key=" + API_KEY, {"attended": true}, events.attend_callback(attendee));
+            return doRequest("PATCH", attendee.resource_uri, "?api_key=" + API_KEY, {"attended": true}, events.attend_callback);
         },
 
         // Updates an event with new info
@@ -125,11 +124,14 @@ events = (function () {
         // Registers an attendant by the attendee URI
         register_attendant: function (attendee) {
             api.set_attended(attendee);
+            console.log("Api trigger set_attended");
+            console.log(attendee);
         },
 
         // Public callback for the register_attendant method
         attend_callback: function (attendee) {
-            if (user != null) {
+            console.log(attendee);
+            if (attendee != null) {
                 tools.showsuccess(200, attendee.user.first_name + " " + attendee.user.last_name + " er registrert som deltaker!");
             }
             else {
@@ -252,19 +254,7 @@ $(document).ready(function () {
     $('#submit').on('click', function (event) {
         // Regex for possible rfid
         if (/^[0-9]{10}$/.test($('#input').val())) {
-            
-            last_rfid = $('#input').val();
-
-            tools.get_user_by_rfid(last_rfid);
-            if (events.active_user != null) {
-                var attendee = events.is_attendee(events.active_user);
-                if (attendee) {
-                    events.register_attendant(attendee);
-                }
-                else {
-                    tools.showerror(401, events.active_user.first_name + " " + events.active_user.last_name + " er ikke påmeldt, eller står på venteliste");
-                }
-            }
+            console.log("RegEx is valid RFID");
         }
     });
 });
