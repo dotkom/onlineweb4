@@ -36,9 +36,11 @@ api = (function () {
             return doRequest("GET", "/api/rfid/user/", "?username=" + username + "&api_key=" + API_KEY, {}, tools.user_callback);
         },
 
-        set_attended: function (uri, user) {
-            return doRequest("PATCH", uri, "?api_key=" + API_KEY, {"attended": true}, events.attend_callback(user));
-        }
+        set_attended: function (user) {
+            return doRequest("PATCH", user.resource_uri, "?api_key=" + API_KEY, {"attended": true}, events.attend_callback(user));
+        },
+
+
 
     }
 }());
@@ -57,9 +59,7 @@ events = (function () {
         if (data.meta.total_count > 0) {
             event_list = data.events;
             tools.populate_nav(event_list);
-            active_event = event_list[0];
-            $('#title').text(active_event.title);
-            $('#1').parent().addClass('active');
+            events.set_active_event(0);
             tools.populate_attendance_list(active_event.attendance_event.users);
             console.log(event_list);
         }
@@ -82,7 +82,7 @@ events = (function () {
                 extract_events(data);
             }
             else {
-                tools.
+                tools.showerror(404, "Det oppstod en uventet feil under henting av arrangementene.");
             }
         },
 
@@ -95,17 +95,20 @@ events = (function () {
         set_active_event: function (index) {
             active_event = event_list[index];
             $('#title').text(active_event.title);
+            $('#1').parent().addClass('active');
+            $('#event_image').attr('src', active_event.image_events_thumb);
+            console.log(active_event.attendance_event);
         },
 
         // Registers an attendant by the attendee URI
-        register_attendant: function (uri, user) {
-            api.set_attended(uri, user);
+        register_attendant: function (user) {
+            api.set_attended(user);
         },
 
         // Public callback for the register_attendant method
-        attended_callback: function (user) {
+        attend_callback: function (user) {
             if (user != null) {
-                tools.showsuccess(200, user.username + " er registrert som deltaker!");
+                tools.showsuccess(200, user.first_name + " " + user.last_name + " er registrert som deltaker!");
             }
             else {
                 tools.showerror(400, "Det oppstod en uventet feil under registering av deltakeren.");
@@ -178,7 +181,6 @@ tools = (function () {
 $(document).ready(function () {
     events.get_event_list();
     $('#nav').on('click', 'a', function (event) {
-        console.log($(this));
         $(this).parent().addClass('active');
     });
 });
