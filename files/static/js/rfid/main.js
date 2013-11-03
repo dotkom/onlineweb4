@@ -12,7 +12,7 @@ api = (function () {
             type: type,
             dataType: "json",
             data: data,
-                url: url + params,
+            url: url + params,
             success: function (data) {
                 console.log(data);
                 callback(data);
@@ -28,7 +28,7 @@ api = (function () {
     return {
         // Gets event list
         get_events: function () {
-            return doRequest("GET", "/api/rfid/events/", "?api_key=" + API_KEY, {}, events.events_callback);
+            return doRequest("GET", "/api/rfid/events/", "?api_key=" + API_KEY + "&event_end__gte=" + tools.today() + "&limit=3", {}, events.events_callback);
         },
 
         // Gets user object by username
@@ -146,6 +146,14 @@ events = (function () {
         set_active_user: function (user) {
             active_user = user;
         },
+
+        // Checks if user is in attendee list
+        is_attendee: function (user) {
+            for (var x = 0; x < active_event.attendance_event.users.length) {
+                if (active_event.attendance_event.users[x].user.id == user.id) return true;
+            }
+            return false;
+        },
     }
 }());
 
@@ -169,6 +177,17 @@ tools = (function () {
             setTimeout(function () {
                 object.fadeOut(200);
             }, 3000);
+        },
+
+        // Returns a date string representing today for filtering purposes
+        today: function () {
+            var d = new Date();
+            y = d.getFullYear();
+            m = d.getMonth() + 1;
+            d = d.getDate();
+            if (m < 10) m = "0" + m;
+            if (d < 10) d = "0" + d;
+            return y + "-" + m + "-" + d;
         },
 
         // This method populates the navbar dropdown with the events in the specified event_list
@@ -210,7 +229,7 @@ tools = (function () {
             }
             else {
                 tools.showerror(404, "Brukeren eksisterer ikke i databasen");
-                
+                events.active_user = null;
             }
         }
     }
@@ -226,5 +245,15 @@ $(document).ready(function () {
     $('#nav').on('click', 'a', function (event) {
         event.preventDefault();
         events.set_active_event($(this).attr("id"));
+    });
+
+    $('#submit').on('click', function (event) {
+        // Regex for possible rfid
+        if (/^[0-9]{10}$/.test($('#input').val())) {
+            tools.get_user_by_rfid($('#input').val());
+            if (events.active_user != null) {
+                
+            }
+        }
     });
 });
