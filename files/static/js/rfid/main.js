@@ -57,9 +57,9 @@ api = (function () {
 events = (function () {
 
     var event_list = [];
-    var active_event = {};
+    var active_event = null;
     var active_attendees = [];
-    var active_user = {};
+    var active_user = null;
 
     // Private method that parses the returned events object and checks if there are any
     var extract_events = function (data) {
@@ -135,7 +135,17 @@ events = (function () {
             else {
                 tools.showerror(400, "Det oppstod en uventet feil under registering av deltakeren.");
             }
-        }
+        },
+
+        // Gets the active user being processed
+        get_active_user: function () {
+            return active_user;
+        },
+
+        // Sets the active user being processed
+        set_active_user: function (user) {
+            active_user = user;
+        },
     }
 }());
 
@@ -185,14 +195,24 @@ tools = (function () {
 
         // Get user by RFID
         get_user_by_rfid: function (rfid) {
-            
+            api.get_user_by_rfid(rfid);
         },
 
         // Get user by Username
         get_user_by_username: function (username) {
-            
+            api.get_user_by_username(username);  
         },
 
+        // Public callback for User queries
+        user_callback: function (user) {
+            if (user != null && user.meta.total_count == 1) {
+                events.active_user = user;
+            }
+            else {
+                tools.showerror(404, "Brukeren eksisterer ikke i databasen");
+                
+            }
+        }
     }
 }());
 
