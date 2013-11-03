@@ -40,8 +40,9 @@ api = (function () {
             return doRequest("PATCH", attendee.resource_uri, "?api_key=" + API_KEY, {"attended": true}, events.attend_callback(attendee));
         },
 
-
-
+        update_event: function (event) {
+            return doRequest("GET", event.resource_uri, "?api_key=" + API_KEY, {}, events.update_event_callback(event));
+        }
     }
 }());
 
@@ -60,8 +61,6 @@ events = (function () {
             event_list = data.events;
             tools.populate_nav(event_list);
             events.set_active_event(0);
-            tools.populate_attendance_list(active_event.attendance_event.users);
-            console.log(event_list);
         }
         else {
             console.log("No events returned from query...");
@@ -95,9 +94,23 @@ events = (function () {
         set_active_event: function (index) {
             active_event = event_list[index];
             $('#title').text(active_event.title);
-            $('#1').parent().addClass('active');
             $('#event_image').attr('src', active_event.image_events_thumb);
-            console.log(active_event.attendance_event);
+            tools.pupulate_attendance_list(active_event.attendance_event.users);
+        },
+
+        // Updates the active event with new data from the API
+        update_active_event: function (event) {
+            api.update_event(event);
+        },
+
+        // Public callback for the update event method
+        update_event_callback: function (event) {
+            if (data != null) {
+                active_event = event;
+            }
+            else {
+                tools.showerror(400, "Det oppstod en feil under oppdatering av arrangementsinformasjonen.");
+            }
         },
 
         // Registers an attendant by the attendee URI
@@ -119,14 +132,6 @@ events = (function () {
 
 // The tools module contains different methods for manipulating the DOM and other fancy stuff
 tools = (function () {
-    
-    var active_user = {};
-
-    return {
-
-        get_user_by_uri: function (uri) {
-            active_user = {};
-        },
 
         showerror: function (status, message) {
             tools.tempshow($('#topmessage').removeClass().addClass("alert alert-danger").text(message));
@@ -156,7 +161,7 @@ tools = (function () {
 
         populate_nav: function (event_list) {
             $(event_list).each(function (id) {
-                $('#nav').append($('<li><a href="#" id="' + event_list[id].id + '">' + event_list[id].title + '</a></li>'));
+                $('#nav').append($('<li><a href="#" id="' + event_list[id] + '">' + event_list[id].title + '</a></li>'));
             });
         },
 
@@ -180,4 +185,8 @@ tools = (function () {
 // On page load complete, do this stuff...
 $(document).ready(function () {
     events.get_event_list();
+    $('#nav').on('click', 'a', function (event) {
+        event.preventDefault();
+        
+    });
 });
