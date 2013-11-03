@@ -36,10 +36,17 @@ api = (function () {
             return doRequest("GET", "/api/rfid/user/", "?username=" + username + "&api_key=" + API_KEY, {}, tools.user_callback);
         },
 
+        // Gets user object by rfid
+        get_user_by_rfid: function (rfid) {
+            return doRequest("GET", "/api/rfid/user/", "?rfid=" + rfid + "&api_key=" + API_KEY, {}, tools.user_callback);
+        },
+
+        // Sets an attendee as attended
         set_attended: function (attendee) {
             return doRequest("PATCH", attendee.resource_uri, "?api_key=" + API_KEY, {"attended": true}, events.attend_callback(attendee));
         },
 
+        // Updates an event with new info
         update_event: function (event) {
             return doRequest("GET", event.resource_uri, "?api_key=" + API_KEY, {}, events.update_event_callback(event));
         }
@@ -94,7 +101,9 @@ events = (function () {
         set_active_event: function (index) {
             active_event = event_list[index];
             $('#title').text(active_event.title);
-            $('#event_image').attr('src', active_event.image_events_thumb);
+            if (active_event.company_event.length > 0) {
+                $('#event_image').attr('src', active_event.company_event[0].companies.image_companies_thumb);
+            }
             tools.populate_attendance_list(active_event.attendance_event.users);
         },
 
@@ -172,7 +181,17 @@ tools = (function () {
                 }
             });
             $('#total_attendees').text('Antall oppmøtte: ' + attended + '/' + events.get_active_event().attendance_event.max_capacity);
-        }
+        },
+
+        // Get user by RFID
+        get_user_by_rfid: function (rfid) {
+            
+        },
+
+        // Get user by Username
+        get_user_by_username: function (username) {
+            
+        },
 
     }
 }());
