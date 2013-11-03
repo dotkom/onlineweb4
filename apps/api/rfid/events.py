@@ -27,7 +27,7 @@ class AttendeeResource(ModelResource):
             'user': ALL_WITH_RELATIONS,
         }
 
-    def update_in_place(self, request, origial_bundle, new_data):
+    def update_in_place(self, request, original_bundle, new_data):
         """
         Override to restrict modification of object fields to those set in allowed_update_fields
         """
