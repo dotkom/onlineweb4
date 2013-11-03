@@ -92,20 +92,22 @@ def saveUserProfile(request):
 
         user = request.user
         dict = create_request_dictionary(request)
-        user_profile_form = ProfileForm(request.POST, request.FILES)
+        user_profile_form = ProfileForm(request.POST)
         dict['user_profile_form'] = user_profile_form
 
         if not user_profile_form.is_valid():
             messages.error(request, _(u"Noen av de påkrevde feltene mangler"))
             return render(request, 'profiles/index.html', dict)
 
-        user.address = user_profile_form.cleaned_data['address']
-        user.allergies = user_profile_form.cleaned_data['allergies']
-        user.mark_rules = user_profile_form.cleaned_data['mark_rules']
-        user.nickname = user_profile_form.cleaned_data['nickname']
-        user.phone_number = user_profile_form.cleaned_data['phone_number']
-        user.website = user_profile_form.cleaned_data['website']
-        user.zip_code = user_profile_form.cleaned_data['zip_code']
+        cleaned = user_profile_form.cleaned_data
+
+        user.address = cleaned['address']
+        user.allergies = cleaned['allergies']
+        user.mark_rules = cleaned['mark_rules']
+        user.nickname = cleaned['nickname']
+        user.phone_number = cleaned['phone_number']
+        user.website = cleaned['website']
+        user.zip_code = cleaned['zip_code']
 
         user.save()
         messages.success(request, _(u"Brukerprofilen din ble endret"))
