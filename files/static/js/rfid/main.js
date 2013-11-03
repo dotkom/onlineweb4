@@ -36,8 +36,8 @@ api = (function () {
             return doRequest("GET", "/api/rfid/user/", "?username=" + username + "&api_key=" + API_KEY, {}, tools.user_callback);
         },
 
-        set_attended: function (user) {
-            return doRequest("PATCH", user.resource_uri, "?api_key=" + API_KEY, {"attended": true}, events.attend_callback(user));
+        set_attended: function (attendee) {
+            return doRequest("PATCH", attendee.resource_uri, "?api_key=" + API_KEY, {"attended": true}, events.attend_callback(attendee));
         },
 
 
@@ -101,14 +101,14 @@ events = (function () {
         },
 
         // Registers an attendant by the attendee URI
-        register_attendant: function (user) {
-            api.set_attended(user);
+        register_attendant: function (attendee) {
+            api.set_attended(attendee);
         },
 
         // Public callback for the register_attendant method
-        attend_callback: function (user) {
+        attend_callback: function (attendee) {
             if (user != null) {
-                tools.showsuccess(200, user.first_name + " " + user.last_name + " er registrert som deltaker!");
+                tools.showsuccess(200, attendee.user.first_name + " " + attendee.user.last_name + " er registrert som deltaker!");
             }
             else {
                 tools.showerror(400, "Det oppstod en uventet feil under registering av deltakeren.");
@@ -180,7 +180,4 @@ tools = (function () {
 // On page load complete, do this stuff...
 $(document).ready(function () {
     events.get_event_list();
-    $('#nav').on('click', 'a', function (event) {
-        $(this).parent().addClass('active');
-    });
 });

@@ -41,7 +41,25 @@ th {
     background: #004b80;
 }
 
-.navbar, #nav a {
+.dropdown a {
+    color: #efefef;
+}
+
+.navbar-fixed-top .navbar-nav>.open>a, .navbar-fixed-top .navbar-nav>.open>a:hover, .navbar-fixed-top .navbar-nav>.open>a:focus {
+    color: #efefef;
+    background-color: #004b80;
+}
+
+.navbar-default .navbar-nav>li>a:hover, .navbar-default .navbar-nav>li>a:focus {
+    color: #efefef;
+    background-color: #004b80;
+}
+
+.navbar-default .navbar-nav>li>a {
+    color: #efefef;
+}
+
+.navbar, dropdown-toggle {
     background: #004b80;
     color: #efefef;
 }
@@ -59,9 +77,5 @@ img#onlinelogo {
     width: 140px;
     margin-right: 10px;
     margin-top: 7px;
-}
-
-#nav .active {
-    background: red;
 }
 
