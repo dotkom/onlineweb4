@@ -4,12 +4,28 @@ body {
     background-position: center;
     color: #efefef;
     padding-top: 45px;
+    @media (max-width: 767px) {
+        padding-top: 90px;
+    }
+}
+
+@media (max-width: 767px) {
+    body {
+        padding-top: 90px;
+    }
 }
 
 h1 {
     color: #ee7810;
     font-weight: 200;
 
+}
+
+#event_image {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 15px;
 }
 
 button {
