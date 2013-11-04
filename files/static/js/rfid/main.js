@@ -110,8 +110,7 @@ events = (function () {
 
     var event_list = [];
     var active_event = null;
-    var active_attendees = [];
-    var active_user = null;
+    var update_event_index = -1;
 
     // Private method that parses the returned events object and checks if there are any
     var extract_events = function (data) {
@@ -158,20 +157,31 @@ events = (function () {
             }
             else $('#event_image').attr('src', '/static/img/online_logo.png');
             tools.populate_attendance_list(active_event.attendance_event.users);
+            $('#input').val('').focus();
         },
 
         // Updates the active event with new data from the API
-        update_active_event: function (event) {
-            api.update_event(event);
+        update_active_event: function () {
+            console.log("Updating event...");
+            update_event_index = event_list.indexOf(events.get_active_event());
+            console.log("Active event index: " + update_event_index);
+            api.update_event(events.get_active_event());
         },
 
         // Public callback for the update event method
         update_event_callback: function (event) {
-            if (data != null) {
-                active_event = event;
+            if (event != null) {
+                console.log(event);
+                console.log(update_event_index);
+                if (update_event_index >= 0) {
+                    event_list[update_event_index] = event;
+                    events.set_active_event(update_event_index);
+                }
+                update_event_index = -1;
             }
             else {
                 tools.showerror(400, "Det oppstod en feil under oppdatering av arrangementsinformasjonen.");
+                update_event_index = -1;
             }
         },
 
@@ -187,6 +197,7 @@ events = (function () {
             if (events.get_active_user() != null) {
                 tools.showsuccess(200, events.get_active_user().first_name + " " + events.get_active_user().last_name + " er registrert som deltaker!");
                 events.set_active_user(null);
+                events.update_active_event();
             }
             else {
                 tools.showerror(400, "Det oppstod en uventet feil under registering av deltakeren.");
