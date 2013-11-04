@@ -108,6 +108,7 @@ events = (function () {
             if (active_event.company_event.length > 0) {
                 $('#event_image').attr('src', active_event.company_event[0].companies.image_companies_thumb);
             }
+            else $('#event_image').attr('src', '/static/img/online_logo.png');
             tools.populate_attendance_list(active_event.attendance_event.users);
         },
 
@@ -184,7 +185,7 @@ tools = (function () {
         // Temporarily show a success message on the top of the page...
         showsuccess: function (status, message) {
             tools.tempshow($('#topmessage').removeClass().addClass("alert alert-success").text(parse_code(status) + message));
-        }parse_code(status) + ,
+        },
 
         // Temporarily show a DOM object
         tempshow: function (object) {
