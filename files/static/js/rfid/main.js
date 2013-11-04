@@ -128,6 +128,7 @@ events = (function () {
 
         // Registers an attendant by the attendee URI
         register_attendant: function (attendee) {
+            console.log(events.get_active_user);
             api.set_attended(attendee);
             console.log("Api trigger set_attended");
             console.log(attendee);
@@ -135,8 +136,8 @@ events = (function () {
 
         // Public callback for the register_attendant method
         attend_callback: function () {
-            if (events.active_user != null) {
-                tools.showsuccess(200, events.active_user.first_name + " " + events.active_user.last_name + " er registrert som deltaker!");
+            if (events.get_active_user != null) {
+                tools.showsuccess(200, events.get_active_user.first_name + " " + events.get_active_user.last_name + " er registrert som deltaker!");
             }
             else {
                 tools.showerror(400, "Det oppstod en uventet feil under registering av deltakeren.");
