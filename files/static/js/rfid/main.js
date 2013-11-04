@@ -185,13 +185,6 @@ events = (function () {
             }
         },
 
-        // Registers an attendant by the attendee URI
-        register_attendant: function (attendee) {
-            api.set_attended(attendee);
-            console.log("Api trigger set_attended");
-            console.log(attendee);
-        },
-
         // Public callback for the register_attendant method
         attend_callback: function () {
             if (events.get_active_user() != null) {
