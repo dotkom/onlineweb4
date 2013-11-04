@@ -7,15 +7,15 @@ var API_KEY = "5db1fee4b5703808c48078a76768b155b421b210c0761cd6a5d223f4d99f1eaa"
 api = (function () {
 
     // Does a request based in input parameters
-    var doRequest = function (type, url, params, data, callback) {
+    var doRequest = function (type, dataType, url, params, send_data, callback) {
         $.ajax({
             type: type,
-            dataType: "json",
-            data: data,
+            dataType: dataType,
+            data: send_data,
             url: url + params,
-            success: function (data) {
-                console.log(data);
-                callback(data);
+            success: function (return_data) {
+                console.log(return_data);
+                callback(return_data);
             },
             error: function (xhr, ajaxOptions, thrownError) {
                 console.log("" + xhr.status + ":" + xhr.responseText);
@@ -27,27 +27,27 @@ api = (function () {
     return {
         // Gets event list
         get_events: function () {
-            return doRequest("GET", "/api/rfid/events/", "?api_key=" + API_KEY + "&event_end__gte=" + "2013-10-30" + "&limit=3", {}, events.events_callback);
+            return doRequest("GET", "json", "/api/rfid/events/", "?api_key=" + API_KEY + "&event_end__gte=" + "2013-10-30" + "&limit=3", {}, events.events_callback);
         },
 
         // Gets user object by username
         get_user_by_username: function (username) {
-            return doRequest("GET", "/api/rfid/user/", "?username=" + username + "&api_key=" + API_KEY, {}, tools.user_callback);
+            return doRequest("GET", "json", "/api/rfid/user/", "?username=" + username + "&api_key=" + API_KEY, {}, tools.user_callback);
         },
 
         // Gets user object by rfid
         get_user_by_rfid: function (rfid) {
-            return doRequest("GET", "/api/rfid/user/", "?rfid=" + rfid + "&api_key=" + API_KEY, {}, tools.user_callback);
+            return doRequest("GET", "json", "/api/rfid/user/", "?rfid=" + rfid + "&api_key=" + API_KEY, {}, tools.user_callback);
         },
 
         // Sets an attendee as attended
         set_attended: function (attendee) {
-            return doRequest("PATCH", attendee.resource_uri, "?api_key=" + API_KEY, {"attended": true}, events.attend_callback);
+            return doRequest("PATCH", "json", attendee.resource_uri, "?api_key=" + API_KEY, {"attended": true}, events.attend_callback);
         },
 
         // Updates an event with new info
         update_event: function (event) {
-            return doRequest("GET", event.resource_uri, "?api_key=" + API_KEY, {}, events.update_event_callback(event));
+            return doRequest("GET", "json", event.resource_uri, "?api_key=" + API_KEY, {}, events.update_event_callback(event));
         }
     }
 }());
@@ -227,9 +227,9 @@ tools = (function () {
         // Public callback for User queries
         user_callback: function (user) {
             if (user != null && user.meta.total_count == 1) {
-                events.set_active_user = user[0];
+                events.set_active_user = user.objects[0];
                 console.log("User object returned");
-                console.log(user[0]);
+                console.log(user.objects[0]);
                 var e = events.is_attendee(events.get_active_user);
                 if (e) {
                     console.log("Attendee is in list and attendee object returned");
