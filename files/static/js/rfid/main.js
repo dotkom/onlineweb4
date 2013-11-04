@@ -6,6 +6,25 @@ var API_KEY = "5db1fee4b5703808c48078a76768b155b421b210c0761cd6a5d223f4d99f1eaa"
 // API module, has a private doRequest method, and public get and set methods
 api = (function () {
 
+    /*
+    TABLE OF CONTENTS
+    =================
+
+    Private:
+    -----------------
+    - doRequest
+
+    Public:
+    -----------------
+    - get_events
+    - get_user_by_username
+    - get_user_by_rfid
+    - set_attended
+    - patch_user
+    - update_event
+
+    */
+
     // Does a request based in input parameters
     var doRequest = function (type, dataType, url, params, send_data, callback) {
         $.ajax({
@@ -57,13 +76,37 @@ api = (function () {
 
         // Updates an event with new info
         update_event: function (event) {
-            return doRequest("GET", "json", event.resource_uri, "?api_key=" + API_KEY, {}, events.update_event_callback(event));
+            return doRequest("GET", "json", event.resource_uri, "?api_key=" + API_KEY, {}, events.update_event_callback);
         }
     }
 }());
 
 // The events module contains functions and containers for events, active event, active attendees and active user
 events = (function () {
+    
+    /*
+    TABLE OF CONTENTS
+    =================
+
+    Private:
+    -----------------
+    - extract_events
+
+    Public:
+    -----------------
+    - get_event_list
+    - events_callback
+    - get_active_event
+    - set_active_event
+    - update_active_event
+    - update_event_callback
+    - register_attendant
+    - attend_callback
+    - get_active_user
+    - set_active_user
+    - is_attendee
+
+    */
 
     var event_list = [];
     var active_event = null;
@@ -174,6 +217,30 @@ events = (function () {
 
 // The tools module contains different methods for manipulating the DOM and other fancy stuff
 tools = (function () {
+
+    /*
+    TABLE OF CONTENTS
+    =================
+
+    Private:
+    -----------------
+    - parse_code
+
+    Public:
+    -----------------
+    - showerror
+    - showsuccess
+    - tempshow
+    - today
+    - populate_nav
+    - populate_attendance_list
+    - get_user_by_rfid
+    - get_user_by_username
+    - user_callback
+    - patch_user_callback
+    - parse_input
+
+    */
 
     var last_rfid = null;
 
