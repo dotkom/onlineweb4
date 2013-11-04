@@ -128,7 +128,7 @@ events = (function () {
 
         // Registers an attendant by the attendee URI
         register_attendant: function (attendee) {
-            console.log(events.get_active_user);
+            console.log(events.get_active_user());
             api.set_attended(attendee);
             console.log("Api trigger set_attended");
             console.log(attendee);
@@ -136,8 +136,9 @@ events = (function () {
 
         // Public callback for the register_attendant method
         attend_callback: function () {
-            if (events.get_active_user != null) {
-                tools.showsuccess(200, events.get_active_user.first_name + " " + events.get_active_user.last_name + " er registrert som deltaker!");
+            if (events.get_active_user() != null) {
+                tools.showsuccess(200, events.get_active_user().first_name + " " + events.get_active_user().last_name + " er registrert som deltaker!");
+                tools.populate_attendance_list(active_event.attendance_event.users);
             }
             else {
                 tools.showerror(400, "Det oppstod en uventet feil under registering av deltakeren.");
@@ -167,16 +168,23 @@ events = (function () {
 // The tools module contains different methods for manipulating the DOM and other fancy stuff
 tools = (function () {
 
+    var parse_code = function (code) {
+        if (code > 199 && code < 205) return "OK: ";
+        else if (code === 401) return "IKKE TILGANG: ";
+        else if (code === 404) return "IKKE FUNNET: ";
+        else if (code >= 400) return "ERROR: ";
+    };
+
     return {
         // Temporarily show an error message on the top of the page...
         showerror: function (status, message) {
-            tools.tempshow($('#topmessage').removeClass().addClass("alert alert-danger").text(message));
+            tools.tempshow($('#topmessage').removeClass().addClass("alert alert-danger").text(parse_code(status) + message));
         },
 
         // Temporarily show a success message on the top of the page...
         showsuccess: function (status, message) {
-            tools.tempshow($('#topmessage').removeClass().addClass("alert alert-success").text(message));
-        },
+            tools.tempshow($('#topmessage').removeClass().addClass("alert alert-success").text(parse_code(status) + message));
+        }parse_code(status) + ,
 
         // Temporarily show a DOM object
         tempshow: function (object) {
@@ -232,10 +240,10 @@ tools = (function () {
         // Public callback for User queries
         user_callback: function (user) {
             if (user != null && user.meta.total_count == 1) {
-                events.set_active_user = user.objects[0];
+                events.set_active_user(user.objects[0]);
                 console.log("User object returned");
                 console.log(user.objects[0]);
-                var e = events.is_attendee(events.get_active_user);
+                var e = events.is_attendee(events.get_active_user());
                 if (e) {
                     console.log("Attendee is in list and attendee object returned");
                     events.register_attendant(e);
@@ -246,7 +254,7 @@ tools = (function () {
             }
             else {
                 tools.showerror(404, "Brukeren eksisterer ikke i databasen");
-                events.set_active_user = null;
+                events.set_active_user(null);
             }
         },
 
@@ -279,6 +287,7 @@ $(document).ready(function () {
         events.set_active_event($(this).attr("id"));
     });
 
+    // Click binding on the register button
     $('#submit').on('click', function (event) {
         var input = $('#input').val();
         tools.parse_input(input);

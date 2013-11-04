@@ -3,9 +3,9 @@ body {
     background-repeat: repeat-y;
     background-position: center;
     color: #efefef;
-    padding-top: 45px;
+    padding-top: 55px;
     @media (max-width: 767px) {
-        padding-top: 90px;
+        padding-top: 100px;
     }
 }
 
