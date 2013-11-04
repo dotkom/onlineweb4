@@ -231,11 +231,13 @@ tools = (function () {
         // Get user by RFID
         get_user_by_rfid: function (rfid) {
             api.get_user_by_rfid(rfid);
+            console.log("Getting user by RFID: " + rfid);
         },
 
         // Get user by Username
         get_user_by_username: function (username) {
-            api.get_user_by_username(username);  
+            api.get_user_by_username(username);
+            console.log("Getting user by username: " + username);
         },
 
         // Public callback for User queries
