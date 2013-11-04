@@ -129,7 +129,6 @@ events = (function () {
 
         // Registers an attendant by the attendee URI
         register_attendant: function (attendee) {
-            console.log(events.get_active_user());
             api.set_attended(attendee);
             console.log("Api trigger set_attended");
             console.log(attendee);
@@ -139,7 +138,7 @@ events = (function () {
         attend_callback: function () {
             if (events.get_active_user() != null) {
                 tools.showsuccess(200, events.get_active_user().first_name + " " + events.get_active_user().last_name + " er registrert som deltaker!");
-                tools.populate_attendance_list(active_event.attendance_event.users);
+                events.set_active_user(null);
             }
             else {
                 tools.showerror(400, "Det oppstod en uventet feil under registering av deltakeren.");
@@ -158,8 +157,10 @@ events = (function () {
 
         // Checks if user is in attendee list
         is_attendee: function (user) {
+            console.log("Checkinf if attendee:");
+            console.log(user);
             for (var x = 0; x < active_event.attendance_event.users.length; x++) {
-                if (active_event.attendance_event.users[x].user.id == user.id) return active_event.attendance_event.users[x];
+                if (active_event.attendance_event.users[x].user.username == user.username) return active_event.attendance_event.users[x];
             }
             return false;
         },
