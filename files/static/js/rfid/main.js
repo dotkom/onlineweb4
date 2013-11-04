@@ -50,6 +50,11 @@ api = (function () {
             return doRequest("PATCH", "json", attendee.resource_uri, "?api_key=" + API_KEY, "{\"attended\": true}", events.attend_callback);
         },
 
+        // Updates the RFID field on a user
+        patch_user: function (user, rfid) {
+            return doRequest("PATCH", "json", user.resource_uri, "?api_key=" + API_KEY, '{"rfid": "' + rfid + '"}', tools.patch_user_callback);
+        },
+
         // Updates an event with new info
         update_event: function (event) {
             return doRequest("GET", "json", event.resource_uri, "?api_key=" + API_KEY, {}, events.update_event_callback(event));
@@ -157,7 +162,7 @@ events = (function () {
 
         // Checks if user is in attendee list
         is_attendee: function (user) {
-            console.log("Checkinf if attendee:");
+            console.log("Checking if attendee:");
             console.log(user);
             for (var x = 0; x < active_event.attendance_event.users.length; x++) {
                 if (active_event.attendance_event.users[x].user.username == user.username) return active_event.attendance_event.users[x];
@@ -170,6 +175,9 @@ events = (function () {
 // The tools module contains different methods for manipulating the DOM and other fancy stuff
 tools = (function () {
 
+    var last_rfid = null;
+
+    // Parses HTTP status codes to prepend a status group indicator for messages
     var parse_code = function (code) {
         if (code > 199 && code < 205) return "OK: ";
         else if (code === 401) return "IKKE TILGANG: ";
@@ -231,22 +239,33 @@ tools = (function () {
 
         // Get user by RFID
         get_user_by_rfid: function (rfid) {
+            console.log("Getting user by rfid: " + rfid);
+            last_rfid = rfid;
             api.get_user_by_rfid(rfid);
-            console.log("Getting user by RFID: " + rfid);
         },
 
         // Get user by Username
         get_user_by_username: function (username) {
-            api.get_user_by_username(username);
             console.log("Getting user by username: " + username);
+            api.get_user_by_username(username);
         },
 
         // Public callback for User queries
         user_callback: function (user) {
             if (user != null && user.meta.total_count == 1) {
+
+                // Set the active user
                 events.set_active_user(user.objects[0]);
                 console.log("User object returned");
                 console.log(user.objects[0]);
+
+                // Patch the active user object with RFID if there still is an active RFID in processing
+                if (last_rfid != null) {
+                    api.patch_user(events.get_active_user(), last_rfid);
+                }
+
+                // Check wether active user is a registered attendee for active event
+                // Returns an attendee object if true, false otherwise
                 var e = events.is_attendee(events.get_active_user());
                 if (e) {
                     console.log("Attendee is in list and attendee object returned");
@@ -262,16 +281,23 @@ tools = (function () {
             }
         },
 
+        // If patching of the user object was a success, reset the last_rfid field to null
+        patch_user_callback: function (xhr) {
+            if (xhr.status < 400) {
+                last_rfid = null;
+            }
+        },
+
         // Parse text input for RFID or username
         parse_input: function (input) {
             console.log("Parsing input...");
             if (/^[0-9]{10}$/.test(input)) {
                 console.log("Rfid valid");
-                api.get_user_by_rfid(input);
+                tools.get_user_by_rfid(input);
             }
             else {
                 console.log("Not RFID");
-                api.get_user_by_username(input);
+                tools.get_user_by_username(input);
             }
         },
     }
