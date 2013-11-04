@@ -19,7 +19,8 @@ class AttendeeResource(ModelResource):
     class Meta:
         queryset = Attendee.objects.all()
         resource_name = 'attendees'
-        allowed_methods = ['get', 'patch']
+        allowed_methods = ['get']
+        detail_allowed_methods = ['get', 'patch']
         allowed_update_fields = ['attended']
         authorization = Authorization()
         authentication = RfidAuthentication()
