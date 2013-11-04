@@ -13,7 +13,8 @@ class UserResource(ModelResource):
         resource_name = 'user'
         fields = ['username', 'first_name', 'last_name', 'rfid', ]
         allowed_update_fields = ['rfid']
-        allowed_methods = ['get', 'patch']
+        allowed_methods = ['get']
+        detail_allowed_methods = ['get', 'patch']
         authorization = Authorization()
         authentication = RfidAuthentication()
         filtering = {
