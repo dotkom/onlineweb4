@@ -3,22 +3,16 @@ body {
     background-repeat: repeat-y;
     background-position: center;
     color: #efefef;
-    padding-top: 55px;
+    padding-top: 75px;
     @media (max-width: 767px) {
-        padding-top: 100px;
-    }
-}
-
-@media (max-width: 767px) {
-    body {
-        padding-top: 90px;
+        padding-top: 105px;
     }
 }
 
 h1 {
     color: #ee7810;
     font-weight: 200;
-
+    margin-top: 0px;
 }
 
 #event_image {

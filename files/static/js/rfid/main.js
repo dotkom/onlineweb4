@@ -266,12 +266,12 @@ tools = (function () {
     return {
         // Temporarily show an error message on the top of the page...
         showerror: function (status, message) {
-            tools.tempshow($('#topmessage').removeClass().addClass("alert alert-danger").text(parse_code(status) + message));
+            $('#topmessage').removeClass().addClass("alert alert-danger").text(parse_code(status) + message);
         },
 
         // Temporarily show a success message on the top of the page...
         showsuccess: function (status, message) {
-            tools.tempshow($('#topmessage').removeClass().addClass("alert alert-success").text(parse_code(status) + message));
+            $('#topmessage').removeClass().addClass("alert alert-success").text(parse_code(status) + message);
         },
 
         // Temporarily show a DOM object
@@ -377,6 +377,7 @@ tools = (function () {
                 console.log("Not RFID");
                 tools.get_user_by_username(input);
             }
+            $('#input').val('').focus();
         },
     }
 }());
@@ -384,10 +385,11 @@ tools = (function () {
 // On page load complete, do this stuff...
 $(document).ready(function () {
 
-    var last_rfid = null;
-
     // Get the event list from the API
     events.get_event_list();
+
+    // Initiate the top message box!
+    $('#topmessage').removeClass().addClass("alert alert-success").text("Systemet er klart til bruk!").fadeIn(200);
 
     // Bind click listeners to the events menu links
     $('#nav').on('click', 'a', function (event) {
@@ -400,4 +402,12 @@ $(document).ready(function () {
         var input = $('#input').val();
         tools.parse_input(input);
     });
+
+    // Enter key binding in the input field
+    $('#input').keypress(function (key) {
+        if (key.which === 13) {
+            $('#submit').click();
+        }
+    });
+
 });
