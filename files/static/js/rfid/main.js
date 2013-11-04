@@ -20,9 +20,11 @@ api = (function () {
             },
             error: function (xhr, ajaxOptions, thrownError) {
                 if (xhr.status === 202 || xhr.status === 204 || xhr.status === 304) {
-                    success(xhr);
+                    callback(xhr);
                 }
-                callback(null);
+                else {
+                    callback(null);
+                }
             }
         });
     }
