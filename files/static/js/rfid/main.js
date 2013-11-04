@@ -11,6 +11,7 @@ api = (function () {
         $.ajax({
             type: type,
             dataType: dataType,
+            contentType: "application/json",
             data: send_data,
             url: url + params,
             success: function (return_data) {
@@ -18,7 +19,9 @@ api = (function () {
                 callback(return_data);
             },
             error: function (xhr, ajaxOptions, thrownError) {
-                console.log("" + xhr.status + ":" + xhr.responseText);
+                if (xhr.status === 202 || xhr.status === 204 || xhr.status === 304) {
+                    success(xhr);
+                }
                 callback(null);
             }
         });
@@ -42,7 +45,7 @@ api = (function () {
 
         // Sets an attendee as attended
         set_attended: function (attendee) {
-            return doRequest("PATCH", "json", attendee.resource_uri, "?api_key=" + API_KEY, {"attended": true}, events.attend_callback);
+            return doRequest("PATCH", "json", attendee.resource_uri, "?api_key=" + API_KEY, "{\"attended\": true}", events.attend_callback);
         },
 
         // Updates an event with new info
@@ -129,10 +132,9 @@ events = (function () {
         },
 
         // Public callback for the register_attendant method
-        attend_callback: function (attendee) {
-            console.log(attendee);
-            if (attendee != null) {
-                tools.showsuccess(200, attendee.user.first_name + " " + attendee.user.last_name + " er registrert som deltaker!");
+        attend_callback: function () {
+            if (events.active_user != null) {
+                tools.showsuccess(200, events.active_user.first_name + " " + events.active_user.last_name + " er registrert som deltaker!");
             }
             else {
                 tools.showerror(400, "Det oppstod en uventet feil under registering av deltakeren.");
