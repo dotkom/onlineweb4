@@ -131,10 +131,6 @@ INSTALLED_APPS = (
     'django.contrib.humanize',
     'django_nose',
     'south',
-    'django_notify',
-    'mptt',
-    'sekizai',
-    'sorl.thumbnail',
     'grappelli',
     'filebrowser',
     'chunks',
@@ -232,7 +228,6 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "django.core.context_processors.static",
     "django.core.context_processors.tz",
     "django.contrib.messages.context_processors.messages",
-    "sekizai.context_processors.sekizai",
 )
 
 # Remember to keep 'local' last, so it can override any setting.
