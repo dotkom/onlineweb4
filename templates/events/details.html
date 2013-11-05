@@ -156,15 +156,24 @@
                     <div class="col-md-12 event-status-companies">
                         <div class="title">Medarrangører</div>
                         {% for company_relation in event.companies.all %}
-                            <div class="heading clearfix row-space">
-                                <a href="{% url 'company_details' company_relation.company.pk %}">
-                                    <div class="title">{{ company_relation.company.name }}</div>
-                                    <div class="image">
-                                        <img src="{% version company_relation.company.image 'companies_thumb' %}" alt="" />
-                                    </div>
-                                </a>
+                        <div class="col-md-12 company-wrapper">
+                            <div class="col-md-6 col-xs-6">
+                                <div class="heading clearfix row-space">
+                                    <a href="{% url 'company_details' company_relation.company.pk %}">
+                                        <div class="title">{{ company_relation.company.name }}</div>
+                                    </a>    
+                                </div>
                             </div>
-                        {% endfor %}
+                            
+                                <div class="col-md-6 col-xs-6">
+                                    <div class="image">
+                                        <a href="{% url 'company_details' company_relation.company.pk %}">
+                                            <img src="{% version company_relation.company.image 'companies_thumb' %}" alt="" />
+                                        </a>
+                                    </div>
+                            </div>
+                        </div>
+                    {% endfor %}
                     </div>
                 </div>
             {% else %}
