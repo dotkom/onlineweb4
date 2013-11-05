@@ -1,4 +1,5 @@
 from tastypie.authentication import Authentication
+from django.conf import settings
 
 class RfidAuthentication(Authentication):
     """
@@ -8,7 +9,7 @@ class RfidAuthentication(Authentication):
 
     def is_authenticated(self, request, **kwargs):
         if 'api_key' in request.GET:
-            if '5db1fee4b5703808c48078a76768b155b421b210c0761cd6a5d223f4d99f1eaa' in request.GET["api_key"]:
+            if settings.RFID_API_KEY in request.GET["api_key"]:
                 return True
         return False
 
