@@ -1,9 +1,11 @@
 var chartData;
+var fosChart;
+var ratingCharts = new Array();
 
 function printPieChart()
 {
     data = chartData.replies.fos;
-    var fosChart = jQuery.jqplot ('field-of-study-chart', [data], 
+    fosChart = jQuery.jqplot ('field-of-study-chart', [data], 
     {
         grid: {
             drawBorder: false, 
@@ -25,7 +27,7 @@ function printPieChart()
         { 
             show:true, 
             location: 'e',
-            //fontSize: '15pt',
+            fontSize: '15pt',
             border: 'none'
         }
     });
@@ -36,10 +38,12 @@ function printRatingCharts()
     data = chartData.replies.ratings;
     titles = chartData.replies.titles;
     for(var i = 0; i < titles.length; i++)
-    {  
+    {   
+        box = '<div class="col-md-6 rating-chart"><div id="rating-chart-' + i + '"></div></div>'
+        $('#ratings').append(box);
         ticks = Array.range(1, data[i].length, 1);
         title = titles[i];
-        $.jqplot('rating-chart-' + (i + 1), data[i], 
+        ratingCharts[i] = $.jqplot('rating-chart-' + i, [data[i]], 
         {
             title: title,
             seriesDefaults:
@@ -104,7 +108,11 @@ $(document).ready(function()
     });
     $(window).on("debouncedresize", function(e)
     {
-        printPieChart();
+        fosChart.replot({ resetAxes: true});
+        for(var i = 0; i < ratingCharts.length; i++)
+        {
+            ratingCharts[i].destroy();
+        }
         printRatingCharts();
     });
 });

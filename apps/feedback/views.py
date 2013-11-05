@@ -14,7 +14,7 @@ from django.shortcuts import redirect
 from django.utils.safestring import SafeString
 from django.core import serializers
 
-from apps.feedback.models import FeedbackRelation, FieldOfStudyAnswer
+from apps.feedback.models import FeedbackRelation, FieldOfStudyAnswer, RATING_CHOICES
 from apps.feedback.forms import create_answer_forms
 
 def feedback(request, applabel, appmodel, object_id, feedback_id):
@@ -68,10 +68,12 @@ def get_chart_data(request, applabel, appmodel, object_id, feedback_id):
     rating_titles = []
     answer_collection = dict()
     answer_collection['replies'] = dict()
+    answer_length = int(len(RATING_CHOICES) +1)
+    print answer_length
     for question in fbr.ratingquestion:
         rating_titles.append(str(question))
         answers = fbr.answers_to_question(question)
-        answer_count = [0] * 7
+        answer_count = [0] * answer_length
         for answer in answers:
             answer_count[int(answer.answer)] += 1
         rating_answers.append(answer_count[1:])
