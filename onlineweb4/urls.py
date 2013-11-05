@@ -51,6 +51,7 @@ urlpatterns = patterns('',
     url(r'^google79c0b331a83a53de\.html$', lambda r: HttpResponse(
         "google-site-verification: google79c0b331a83a53de.html", mimetype="text/html")),
 )
+
 # pizzasystem
 if 'pizzasystem' in settings.INSTALLED_APPS:
     urlpatterns += patterns('', url(r'^pizza/', include('pizzasystem.urls')))

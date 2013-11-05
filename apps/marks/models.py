@@ -1,7 +1,9 @@
 #-*- coding: utf-8 -*-
 
 import datetime
+from django.utils import timezone
 
+from django.conf import settings
 from django.db import models
 from django.utils.translation import ugettext as _
 
@@ -51,7 +53,7 @@ class Mark(models.Model):
 
     @property
     def is_active(self):
-        return self.mark_added_date > get_threshold()
+        return timezone.make_naive(self.mark_added_date, timezone.get_current_timezone()) > get_threshold()
 
     def __unicode__(self):
         return _(u"Prikk for %s") % self.title
@@ -81,6 +83,7 @@ def get_threshold():
 
     # Todays date
     now = datetime.datetime.now().date()
+    print "now = "+ str(now)
     # Threshhold is the day in the past which marks will be filtered on by mark_added_date
     threshold = now - datetime.timedelta(days=DURATION)
     summer_start_date = datetime.date(now.year, SUMMER[0][0], SUMMER[0][1])

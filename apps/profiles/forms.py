@@ -16,6 +16,18 @@ class ProfileForm(forms.ModelForm):
             'allergies' : forms.Textarea(attrs={'id' : 'allergies'}),
         }
 
+    def clean(self):
+        super(ProfileForm, self).clean()
+
+        cleaned_data = self.cleaned_data
+
+        # ZIP code digits only
+        zip_code = cleaned_data['zip_code']
+        if len(zip_code) != 0 and (len(zip_code) != 4 or not zip_code.isdigit()):
+            self._errors['zip_code'] = self.error_class([_(u"Postnummer må bestå av fire siffer.")])
+
+        return cleaned_data
+
 class ImageForm(forms.ModelForm):
 
     class Meta:
