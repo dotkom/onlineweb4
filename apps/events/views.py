@@ -1,6 +1,9 @@
 #-*- coding: utf-8 -*-
 import datetime
 
+from django.utils import timezone
+
+from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.core.urlresolvers import reverse
@@ -131,7 +134,7 @@ def _search_indexed(request, query, filters):
     kwargs = {}
 
     if filters['future'] == 'true':
-        kwargs['event_start__gte'] = datetime.datetime.now()
+        kwargs['event_start__gte'] = timezone.now()
 
     if filters['myevents'] == 'true':
         kwargs['attendance_event__attendees'] = request.user

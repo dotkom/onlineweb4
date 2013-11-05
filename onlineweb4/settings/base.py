@@ -145,7 +145,6 @@ INSTALLED_APPS = (
     'compressor',
     
     'watson',
-    'django_ldapbackend',
 
     # Django apps
     'django.contrib.admin',
@@ -169,15 +168,6 @@ INSTALLED_APPS = (
     'apps.feedback',
     'apps.mommy',
     'apps.profiles',
-    
-    # Wiki-related stuff
-    'wiki',
-    'wiki.plugins.attachments',
-    'wiki.plugins.notifications',
-    'wiki.plugins.images',
-    'wiki.plugins.macros',    
-
-    #'pizzasystem',
 )
 
 # A sample logging configuration. The only tangible logging
