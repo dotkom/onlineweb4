@@ -33,7 +33,7 @@ def details(request, event_id):
     try:
         attendance_event = AttendanceEvent.objects.get(pk=event_id)
         is_attendance_event = True
-        form = CaptchaForm()
+        form = CaptchaForm(user=request.user)
 
         if attendance_event.rule_bundles:
             for rule_bundle in attendance_event.rule_bundles.all():
@@ -83,11 +83,14 @@ def attendEvent(request, event_id):
     if not request.POST:
         messages.error(request, _(u'Vennligst fyll ut skjemaet.'))
         return HttpResponseRedirect(reverse(details, args=[event_id]))
-
-    form = CaptchaForm(request.POST)
+    form = CaptchaForm(request.POST, user=request.user)
 
     if not form.is_valid():
-        messages.error(request, _(u'Du klarte ikke captcha-en. Er du en bot?'))
+        if not 'mark_rules' in request.POST:
+            error_message = u'Du må godta prikkreglene for å melde deg på.'
+        else:
+            error_message = u'Du klarte ikke captcha-en. Er du en bot?'
+        messages.error(request, _(error_message))
         return HttpResponseRedirect(reverse(details, args=[event_id]))
 
     # Check if the user is eligible to attend this event.
@@ -98,6 +101,10 @@ def attendEvent(request, event_id):
     user_eligible = event.is_eligible_for_signup(request.user);
 
     if user_eligible['status']:   
+        # First time accepting mark rules
+        if 'mark_rules' in form.cleaned_data:
+            request.user.mark_rules = True
+            request.user.save()
         Attendee(event=attendance_event, user=request.user).save()
         messages.success(request, _(u"Du er nå påmeldt på arrangementet!"))
         return HttpResponseRedirect(reverse(details, args=[event_id]))
