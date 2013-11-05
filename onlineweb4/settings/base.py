@@ -123,6 +123,9 @@ TEMPLATE_DIRS = (
 PIZZA_GROUP = 'dotkom'
 PIZZA_ADMIN_GROUP = 'pizzaadmin'
 
+# Captcha settings
+CAPTCHA_NOISE_FUNCTIONS = None
+
 # Grappelli settings
 GRAPPELLI_ADMIN_TITLE = '<a href="/">Onlineweb</a>'
 
