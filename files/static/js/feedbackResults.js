@@ -100,7 +100,7 @@ Array.range= function(a, b, step){
 
 $(document).ready(function()
 {
-    $.get($(location).attr('href') + "/chartdata", function(data)
+    $.get($(location).attr('href') + "chartdata", function(data)
     {
         chartData = data;
         printPieChart();
