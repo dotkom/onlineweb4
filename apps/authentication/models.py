@@ -116,6 +116,7 @@ class OnlineUser(AbstractUser):
         return self.get_full_name()
 
     class Meta:
+        ordering = ['first_name', 'last_name']
         verbose_name = _(u"brukerprofil")
         verbose_name_plural = _(u"brukerprofiler")
 
