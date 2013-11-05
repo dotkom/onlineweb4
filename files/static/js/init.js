@@ -114,7 +114,7 @@ $(function() {
     });
 
     function change_login_button_view() {
-        if ($(window).innerWidth() < 995) {
+        if ($(window).innerWidth() < 992) {
             $('#login_menu a.login').html('');
             $('#login_menu a.login').addClass('glyphicon glyphicon-user');
         }
