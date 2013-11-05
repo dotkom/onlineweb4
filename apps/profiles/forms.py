@@ -61,3 +61,7 @@ class MembershipSettingsForm(forms.ModelForm):
     class Meta:
         model = OnlineUser
         fields = ['field_of_study', 'started_date', ]
+
+        widgets = {
+            'started_date' : forms.TextInput(attrs={'placeholder' : 'YYYY-MM-DD'}),
+        }

@@ -316,7 +316,11 @@ $(document).ready(function() {
   JS for membership  
 */
 
-    $(".hasDatePcker").datepicker({ dateFormat: "yy-mm-dd" });
+    $(".hasDatePicker").datepicker({
+        yearRange: "2004:" + new Date().getFullYear(),
+        changeYear: true,
+        dateFormat: "yy-mm-dd"
+    });
         
     $("#membership-details").submit(function(event) {
         event.preventDefault();
