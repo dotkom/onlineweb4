@@ -1,75 +1,58 @@
+@import url(http://fonts.googleapis.com/css?family=Open+Sans:300,400,600);
+
 body {
     background-image: url("/static/img/splash_bg.jpg");
     background-repeat: repeat-y;
     background-position: center;
     color: #efefef;
-    padding-top: 75px;
-    @media (max-width: 767px) {
-        padding-top: 105px;
-    }
+    font-family: 'Open Sans', sans-serif;
 }
 
 h1 {
-    color: #ee7810;
-    font-weight: 200;
-    margin-top: 0px;
+    color: #efefef;
+    font-weight: 300;
+    font-size: 22px;
+    margin-top: 150px;
+    margin-bottom: 40px;
+}
+
+#options {
+    display: none;
+}
+
+#nav {
+    margin-left: 15px;
+    margin-bottom: 20px;
+}
+
+#input {
+    font-size: 18px;
+    height: 50px;
 }
 
 #event_image {
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    margin-top: 15px;
+    margin-top: 10px;
+    margin-left: 10px;
+}
+
+#logo {
+    margin-right: 10px;
+    margin-top: 10px;
 }
 
 button {
     margin-bottom: 15px;
 }
 
+#toggle_options {
+    margin-top: 10px;
+    float: right;
+}
+
 p {
-    margin-top: 15px;
     margin-bottom: 15px;
 }
 
 th {
     background: #004b80;
 }
-
-.dropdown a {
-    color: #efefef;
-}
-
-.navbar-fixed-top .navbar-nav>.open>a, .navbar-fixed-top .navbar-nav>.open>a:hover, .navbar-fixed-top .navbar-nav>.open>a:focus {
-    color: #efefef;
-    background-color: #004b80;
-}
-
-.navbar-default .navbar-nav>li>a:hover, .navbar-default .navbar-nav>li>a:focus {
-    color: #efefef;
-    background-color: #004b80;
-}
-
-.navbar-default .navbar-nav>li>a {
-    color: #efefef;
-}
-
-.navbar, dropdown-toggle {
-    background: #004b80;
-    color: #efefef;
-}
-
-#nav a:hover {
-    text-decoration: underline;
-}
-
-.navbar-header {
-    vertical-align: middle;
-}
-
-img#onlinelogo {
-    height: 35px;
-    width: 140px;
-    margin-right: 10px;
-    margin-top: 7px;
-}
-

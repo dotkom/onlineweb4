@@ -163,6 +163,10 @@ events = (function () {
             else $('#event_image').attr('src', '/static/img/online_logo.png');
             tools.populate_attendance_list(active_event.attendance_event.users);
             $('#input').val('').focus();
+            if (tools.is_there_active_rfid()) {
+                tools.showsuccess(200, "Systemet er klart til bruk!");
+            }
+            tools.reset_last_rfid();
         },
 
         // Updates the active event with new data from the API
@@ -200,7 +204,7 @@ events = (function () {
         // Public callback for the register_attendant method
         attend_callback: function () {
             if (events.get_active_user() != null) {
-                tools.showsuccess(200, events.get_active_user().first_name + " " + events.get_active_user().last_name + " er registrert som deltaker!");
+                tools.showsuccess(200, events.get_active_user().first_name + " " + events.get_active_user().last_name + " er registrert som deltaker. Velkommen!");
                 events.set_active_user(null);
                 events.update_active_event();
             }
@@ -260,6 +264,8 @@ tools = (function () {
     - populate_attendance_list
     - get_user_by_rfid
     - get_user_by_username
+    - reset_last_rfid
+    - is_there_active_rfid
     - user_callback
     - patch_user_callback
     - parse_input
@@ -268,23 +274,15 @@ tools = (function () {
 
     var last_rfid = null;
 
-    // Parses HTTP status codes to prepend a status group indicator for messages
-    var parse_code = function (code) {
-        if (code > 199 && code < 205) return " (OK) ";
-        else if (code === 401) return " (IKKE TILGANG) ";
-        else if (code === 404) return " (IKKE FUNNET) ";
-        else if (code >= 400) return " (ERROR) ";
-    };
-
     return {
         // Show an error message on the top of the page...
         showerror: function (status, message) {
-            $('#topmessage').removeClass().addClass("alert alert-danger").text("[" + tools.now() + "]" + parse_code(status) + message);
+            $('#topmessage').removeClass().addClass("alert alert-danger").html(message + '<div class="pull-right">' + tools.now() + '</div>');
         },
 
         // Show a success message on the top of the page...
         showsuccess: function (status, message) {
-            $('#topmessage').removeClass().addClass("alert alert-success").text("[" + tools.now() + "]" + parse_code(status) + message);
+            $('#topmessage').removeClass().addClass("alert alert-success").html(message + '<div class="pull-right">' + tools.now() + '</div>');
         },
 
         // Temporarily show a DOM object
@@ -356,6 +354,19 @@ tools = (function () {
             api.get_user_by_username(username);
         },
 
+        reset_last_rfid: function () {
+            last_rfid = null;
+        },
+
+        is_there_active_rfid: function () {
+            if (last_rfid != null) {
+                return true;
+            }
+            else {
+                return false;
+            }
+        },
+
         // Public callback for User queries
         user_callback: function (user) {
             if (user != null && user.meta.total_count == 1) {
@@ -365,28 +376,30 @@ tools = (function () {
                 if (debug) console.log("User object returned");
                 if (debug) console.log(user.objects[0]);
 
-                // Patch the active user object with RFID if there still is an active RFID in processing
-                if (last_rfid != null) {
-                    api.patch_user(events.get_active_user(), last_rfid);
-                }
-
                 // Check wether active user is a registered attendee for active event
                 var e = events.is_attendee(events.get_active_user());
                 if (e) {
                     console.log("Attendee is in list and attendee object returned");
                     if (!events.is_already_signed_up(e)) {
                         events.register_attendant(e);
+
+                        // Update the user object with the RFID number if an active RFID is in processing
+                        if (last_rfid != null) {
+                            api.patch_user(events.get_active_user(), last_rfid);
+                        }
                     }
                     else {
                         tools.showerror(400, "Brukeren er allerede registrert!");
                     }
                 }
                 else {
-                    tools.showerror(401, "Brukeren er ikke oppført på listen, eller er på venteliste");
+                    tools.showerror(401, "Brukeren er ikke påmeldt arrangementet, eller er på venteliste");
                 }
             }
             else {
-                tools.showerror(404, "Brukeren eksisterer ikke i databasen");
+                var msg = "Brukeren eksisterer ikke i databasen.";
+                if (last_rfid != null) msg += " Skriv inn et brukernavn for å knytte RFID'en til brukeren og sjekk inn.";
+                tools.showerror(404, msg);
                 events.set_active_user(null);
             }
         },
@@ -421,7 +434,7 @@ $(document).ready(function () {
     events.get_event_list();
 
     // Initiate the top message box!
-    $('#topmessage').removeClass().addClass("alert alert-success").text("[" + tools.now() + "] (OK) Systemet er klart til bruk!").fadeIn(200);
+    $('#topmessage').removeClass().addClass("alert alert-success").html('Systemet er klart til bruk!<div class="pull-right">' + tools.now() + '</div>').fadeIn(200);
 
     // Bind click listeners to the events menu links
     $('#nav').on('click', 'a', function (event) {
@@ -429,18 +442,17 @@ $(document).ready(function () {
         events.set_active_event($(this).attr("id"));
     });
 
-    // Click binding on the register button
-    $('#submit').on('click', function (event) {
-        var input = $('#input').val();
-        tools.parse_input(input);
-        return false;
-    });
-
     // Enter key binding in the input field
     $('#input').keypress(function (key) {
         if (key.which === 13) {
-            $('#submit').click();
+            var input = $('#input').val();
+            tools.parse_input(input);
         }
+    });
+
+    $('#toggle_options').on('click', function (e) {
+        $('#options').fadeToggle(200);
+        $('#input').focus();
     });
 
 });

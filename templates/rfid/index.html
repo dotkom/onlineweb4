@@ -7,46 +7,38 @@
     <link rel="stylesheet" href="/static/css/rfid.css">
 </head>
 <body>
+<div class="pull-left"><img src="/static/img/online_logo.png" alt="Image" id="event_image"></div>
+<div class="pull-right"><img src="/static/img/online_logo.png" alt="" id="logo"/></div>
 <div class="container">
-    <div class="navbar navbar-default navbar-fixed-top">
-      <div class="container">
-        <div class="navbar-header">
-            <a href="/"><img src="/static/img/online_logo.png" alt="" id="onlinelogo" /></a>
-        </div>
-        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-           <span class="icon-bar"></span>
-           <span class="icon-bar"></span>
-           <span class="icon-bar"></span>
-        </button>
-        <div class="navbar-collapse collapse">
-          <ul class="nav navbar-nav">
-            <li class="dropdown">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                Arrangementer
-                <b class="caret"></b>
-                </a>
-                <ul class="dropdown-menu" id="nav">
-                </ul>
-            </li>
-          </ul>
-        </div><!--/.nav-collapse -->
-      </div>    
-    </div>
     <h1 id="title">Oppmøteregistrering</h1>
     <div class="row">
         <div class="col-md-12">
             <div id="topmessage"></div>
         </div>
-    </div>
-    <input class="form-control" type="text" id="input" autofocus placeholder="Skriv inn RFID eller brukernavn..." /><br />
-    <button class="btn btn-success" id="submit">Registrer</button>
-    <img src="/static/img/online_logo.png" alt="Image" id="event_image">
-    <p id="total_attendees"></p>
-    <div>
-	<table class="table table-condensed" id="attendees">
-	    
-	</table>
-    </div>
+    </div><!-- end row -->
+    <div class="row">
+        <div class="col-md-12">
+            <input class="form-control" type="text" id="input" autofocus placeholder="Skriv inn RFID eller brukernavn..." /><br />
+            <p id="total_attendees"></p>
+            <button class="btn btn-default" id="toggle_options">Alternativer</button>
+        </div><!-- end col -->
+    </div><!-- end row -->
+    <div class="row" id="options">
+        <div class="col-md-12">
+            <div class="page-header">
+                <h4>Arrangementer</h4>
+            </div>
+        </div>
+        <ul class="nav nav-pills" id="nav">
+            
+        </ul>
+        <div class="col-md-12">
+            <h4>Registrerte deltakere</h4>
+            <table class="table table-condensed" id="attendees">
+
+            </table>
+        </div><!-- end col -->
+    </div><!-- end row -->
 </div>
 </body>
 <script src="http://code.jquery.com/jquery-2.0.3.min.js"></script>
