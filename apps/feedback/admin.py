@@ -2,7 +2,6 @@
 
 from apps.feedback.models import Feedback
 from apps.feedback.models import FeedbackRelation
-from apps.feedback.models import FieldOfStudyQuestion
 from apps.feedback.models import TextQuestion
 from apps.feedback.models import RatingQuestion
 
@@ -36,15 +35,6 @@ class FeedbackRelationAdmin(admin.ModelAdmin):
         'generic': [['content_type', 'object_id']],
     }
 
-
-class FieldOfStudyInline(admin.StackedInline):
-    model = FieldOfStudyQuestion
-    extra = 0
-    classes = ('grp-collapse grp-open',)  # style
-    inline_classes = ('grp-collapse grp-open',)  # style
-    form = AlwaysChangedModelForm
-
-
 class TextInline(admin.StackedInline):
     model = TextQuestion
     classes = ('grp-collapse grp-open',)  # style
@@ -62,7 +52,7 @@ class RatingInline(admin.StackedInline):
 class FeedbackAdmin(admin.ModelAdmin):
     list_display = ('description', 'author')
 
-    inlines = (FieldOfStudyInline, TextInline, RatingInline)
+    inlines = (TextInline, RatingInline)
     exclude = ('author',)
 
     def save_model(self, request, obj, form, change):
