@@ -6,6 +6,7 @@ from django.shortcuts import render, redirect, render_to_response
 from django.template import RequestContext
 from django.contrib.contenttypes.models import ContentType
 from django.contrib import messages
+from django.contrib.admin.views.decorators import staff_member_required
 from django.utils import simplejson
 from django.core.exceptions import ObjectDoesNotExist
 from django.utils.translation import ugettext_lazy as _
@@ -45,7 +46,7 @@ def feedback(request, applabel, appmodel, object_id, feedback_id):
     return render(request, 'feedback/answer.html',
                   {'answers': answers, 'description':description})
 
-
+@staff_member_required
 def result(request, applabel, appmodel, object_id, feedback_id):
     fbr = _get_fbr_or_404(applabel, appmodel, object_id, feedback_id)
 
@@ -58,6 +59,7 @@ def result(request, applabel, appmodel, object_id, feedback_id):
     return render(request, 'feedback/results.html',{'question_and_answers': question_and_answers, 
         'description': fbr.description})
 
+@staff_member_required
 def get_chart_data(request, applabel, appmodel, object_id, feedback_id):
     fbr = _get_fbr_or_404(applabel, appmodel, object_id, feedback_id)
     

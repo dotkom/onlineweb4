@@ -24,7 +24,7 @@ class SimpleTest(TestCase):
 
     #Feedback mail 
     def setUp(self):
-        user1 = User.objects.create(username="user1", email="user1@mail.com", is_active=True, is_staff=True, is_superuser=True)
+        user1 = User.objects.create(username="user1", email="user1@mail.com", is_active=True, is_staff=True)
         user1.set_password("Herpaderp123")
         user1.save()
         user2 = User.objects.create(username="user2", email="user2@mail.com")
@@ -152,7 +152,7 @@ class SimpleTest(TestCase):
         feedback_relation = FeedbackRelation.objects.get(pk=1)
         response = client.post(feedback_relation.get_absolute_url())
         self.assertEqual(response.status_code, 200)
-        response = client.get(feedback_relation.get_absolute_url() + 'results')
+        response = client.get(feedback_relation.get_absolute_url() + 'results/')
         self.assertEqual(response.status_code, 200)
 
     def test_bad_urls(self):
