@@ -67,17 +67,6 @@ def result(request, applabel, appmodel, object_id, feedback_id):
 
     rating_answers = []
     rating_questions = []
-    '''
-    for i in range(0, len(fbr.ratingquestion)):
-        question = fbr.answers_to_question(fbr.ratingquestion[i])
-        rating_questions.append(fbr.ratingquestion[i])
-        answers = [0] * 7
-        for a in question:
-            answers[int(a.answer)] += 1
-        answers = answers[1:]
-        rating_answers.append(answers)
-    print rating_questions
-    '''
     for question in fbr.ratingquestion:
         answers = fbr.answers_to_question(question)
         answer_count = [0] * 7 
@@ -86,9 +75,6 @@ def result(request, applabel, appmodel, object_id, feedback_id):
         rating_answers.append(answer_count[1:])
         rating_questions.append(str(question))
         
-    print rating_answers
-    print rating_questions
-
     return render(request, 'feedback/results.html',
                   {'question_and_answers': question_and_answers, 'fos_data': fos_data, 
                   'description': fbr.description, "rating_answers": rating_answers, "rating_questions": rating_questions})
