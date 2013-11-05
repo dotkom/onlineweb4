@@ -329,14 +329,17 @@ tools = (function () {
         // as well as keeping track of the total amount of attendees.
         populate_attendance_list: function (attendees) {
             var attended = 0;
-            $('#attendees').empty();
-            $('#attendees').append($('<tr><th>Nr</th><th>Fornavn</th><th>Etternavn</th></tr>'));
-            $(attendees).each(function (id) {
-                if (attendees[id].attended) {
+            var list = $('#attendees');
+            var data = '';
+            list.empty();
+            data += '<tr><th>Nr</th><th>Fornavn</th><th>Etternavn</th></tr>\n';
+            for (var x = 0; x < attendees.length; x++) {
+                if (attendees[x].attended) {
                     attended++;
-                    $('#attendees').append($('<tr><td>' + (id+1) + '</td><td>' + attendees[id].user.first_name + '</td><td>' + attendees[id].user.last_name + '</td></tr>'));
+                    data += '<tr><td>' + (attended) + '</td><td>' + attendees[x].user.first_name + '</td><td>' + attendees[x].user.last_name + '</td></tr>\n';
                 }
-            });
+            };
+            list.append(data);
             $('#total_attendees').text('Antall oppmøtte: ' + attended + '/' + events.get_active_event().attendance_event.max_capacity);
         },
 
@@ -430,6 +433,7 @@ $(document).ready(function () {
     $('#submit').on('click', function (event) {
         var input = $('#input').val();
         tools.parse_input(input);
+        return false;
     });
 
     // Enter key binding in the input field
