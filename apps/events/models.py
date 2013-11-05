@@ -1,13 +1,13 @@
 #-*- coding: utf-8 -*-
 
 from datetime import datetime, timedelta
-from django.utils import timezone
 
 from django.conf import settings
 from django.contrib.auth.models import Group
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.template.defaultfilters import slugify
+from django.utils import timezone
 from django.utils.translation import ugettext as _
 
 from filebrowser.fields import FileBrowseField
@@ -126,11 +126,11 @@ class Event(models.Model):
 
         # Are there any rules preventing me from attending?
         # This should be checked last of the offsets, because it can completely deny you access.
-        status_object = self.attendance_event.rules_satisfied(user)
-        print status_object
-        if not status_object['status']:
-            response = status_object
-            if 'offset' not in status_object:
+        response = self.attendance_event.rules_satisfied(user)
+        print 'rules response: ',
+        print response
+        if not response['status']:
+            if 'offset' not in response:
                 return response
         
         # Do I have any marks that postpone my registration date?
@@ -141,10 +141,16 @@ class Event(models.Model):
             postponed_registration_start = self.attendance_event.registration_start + mark_offset
             if postponed_registration_start > timezone.now():
                 if 'offset' in response and response['offset'] < postponed_registration_start or 'offset' not in response:    
+                    response['status'] = False
                     response['status_code'] = 400
                     response['message'] = _(u"Din påmelding er utsatt grunnet prikker.")
                     response['offset'] = postponed_registration_start
             
+        print 'response after marks: ',
+        print response
+
+        print '------------'
+
         # Return response if offset was set.
         if 'offset' in response and response['offset'] > timezone.now():
             return response 
@@ -234,7 +240,7 @@ class Rule(models.Model):
     """
     Super class for a rule object
     """
-    offset = models.ForeignKey(RuleOffset, primary_key=False, null=True, blank=True, default=0)
+    offset = models.ForeignKey(RuleOffset, primary_key=False, null=True, blank=True)
 
     def satisfied(self, user):
         """ Checks if a user """
@@ -256,7 +262,7 @@ class FieldOfStudyRule(Rule):
             if offset_datetime <= timezone.now():
                 return {"status": True, "message": None, "status_code": 210}
             else:
-                return {"status": False, "message": _(u"Din studieretning har utsatt påmelding."), "offset": offset_datetime, "status_code": 410}
+                return {"status": False, "message": _(u"Din studieretning har utsatt påmelding."), "offset": offset_datetime, "status_code": 420}
         return {"status": False, "message": _(u"Din studieretning er en annen enn de som har tilgang til dette arrangementet."), "status_code": 410}
 
     def __unicode__(self):
@@ -272,18 +278,20 @@ class GradeRule(Rule):
     def satisfied(self, user, registration_start):
         """ Override method """
 
+
         # If the user has the same FOS as this rule    
         if (self.grade == user.year):
+            print "WTF"
             offset_datetime = self.offset.get_offset_time(registration_start)
             if offset_datetime <= timezone.now():
                 return {"status": True, "message": None, "status_code": 211}
             else:
-                return {"status": False, "message": _(u"Ditt klassetrinn har utsatt påmelding."), "offset": offset_datetime, "status_code": 411}
+                return {"status": False, "message": _(u"Ditt klassetrinn har utsatt påmelding."), "offset": offset_datetime, "status_code": 421}
         return {"status": False, "message": _(u"Du er ikke i et klassetrinn som har tilgang til dette arrangementet."), "status_code": 411}
 
     def __unicode__(self):
         if self.offset.offset > 0:
-            time_unit = _(u'time') if self.offset.offset > 1 else _(u'timer')
+            time_unit = _(u'timer') if self.offset.offset > 1 else _(u'time')
             return _(u"%s. klasse etter %d %s") % (self.grade, self.offset.offset, time_unit)
         return _(u"%s. klasse") % self.grade
 
@@ -298,12 +306,12 @@ class UserGroupRule(Rule):
             if offset_datetime <= timezone.now():
                 return {"status": True, "message": None, "status_code": 212}
             else:
-                return {"status": False, "message": _(u"%s har utsatt påmelding.") % self.group, "offset": offset_datetime, "status_code": 412}
+                return {"status": False, "message": _(u"%s har utsatt påmelding.") % self.group, "offset": offset_datetime, "status_code": 422}
         return {"status": False, "message": _(u"Du er ikke i en brukergruppe som har tilgang til dette arrangmentet."), "status_code": 412}
 
     def __unicode__(self):
         if self.offset.offset > 0:
-            time_unit = _(u'time') if self.offset.offset > 1 else _(u'timer')
+            time_unit = _(u'timer') if self.offset.offset > 1 else _(u'time')
             return _(u"%s etter %d %s") % (unicode(self.group), self.offset.offset, time_unit)
         return unicode(self.group)
 
