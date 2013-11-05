@@ -105,11 +105,9 @@ $(function() {
     var old_login_btn       =  $('#login_menu a').html();
     var active_link_clone   = $('.navbar .nav.navbar-nav .active').clone(true);
 
-    change_login_button_view();
     change_subnavbar_behaviour();
 
     $(window).resize(function() {
-        change_login_button_view();
         change_subnavbar_behaviour();
     });
 
