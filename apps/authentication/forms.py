@@ -41,15 +41,15 @@ class LoginForm(forms.Form):
         return False
 
 class RegisterForm(forms.Form):
-    username = forms.CharField(label=_("brukernavn"), max_length=20)
-    first_name = forms.CharField(label=_("fornavn"), max_length=50)
-    last_name = forms.CharField(label=_("etternavn"), max_length=50)
-    email = forms.EmailField(label=_("epost"), max_length=50)
-    password = forms.CharField(widget=forms.PasswordInput(render_value=False), label=_("passord"))
-    repeat_password = forms.CharField(widget=forms.PasswordInput(render_value=False), label=_("gjenta passord"))
-    address = forms.CharField(label=_("adresse"), max_length=50)
-    zip_code = forms.CharField(label=_("postnummer"), max_length=4)
-    phone = forms.CharField(label=_("telefon"), max_length=20)
+    username = forms.CharField(label=_("Brukernavn"), max_length=20)
+    first_name = forms.CharField(label=_("Fornavn"), max_length=50)
+    last_name = forms.CharField(label=_("Etternavn"), max_length=50)
+    email = forms.EmailField(label=_("Epost"), max_length=50)
+    password = forms.CharField(widget=forms.PasswordInput(render_value=False), label=_("Passord"))
+    repeat_password = forms.CharField(widget=forms.PasswordInput(render_value=False), label=_("Gjenta passord"))
+    address = forms.CharField(label=_("Adresse"), max_length=50)
+    zip_code = forms.CharField(label=_("Postnummer"), max_length=4)
+    phone = forms.CharField(label=_("Telefon"), max_length=20)
     
     def clean(self):
         super(RegisterForm, self).clean()
@@ -83,8 +83,8 @@ class RecoveryForm(forms.Form):
     email = forms.EmailField(label="Email", max_length=50)
 
 class ChangePasswordForm(forms.Form):
-    new_password = forms.CharField(widget=forms.PasswordInput(render_value=False), label=_(u"nytt passord"))
-    repeat_password = forms.CharField(widget=forms.PasswordInput(render_value=False), label=_(u"gjenta passord"))
+    new_password = forms.CharField(widget=forms.PasswordInput(render_value=False), label=_(u"Nytt passord"))
+    repeat_password = forms.CharField(widget=forms.PasswordInput(render_value=False), label=_(u"Gjenta passord"))
 
     def clean(self):
         super(ChangePasswordForm, self).clean()
