@@ -38,9 +38,7 @@
         </div>
         <div class="row">
             <div class="col-md-9">
-                <div class="col-md-12 ingress">
-                 <p>{% chunk 'offline_ingress' %}</p>
-                 </div>
+                <p>{% chunk 'offline_ingress' %}</p>
                 <div id="offline-wrapper" class="col-md-12">
                  {% for issue in issues %}
                     <div id="offline_{{ issue.id }}" class="offline_issue offline_issue_archive displayable" data-year="{{ issue.release_date.year }}">
