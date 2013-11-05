@@ -206,7 +206,7 @@ function ArticleArchive (Utils) {
                     // The loop
                     for (var i = 0; i < data.articles.length; i++) {
                         // The markup
-                        output += '<div class="col-md-4 article'+((page == 1 && !overwrite)?'':' article-hidden')+'">';
+                        output += '<div class="col-md-6 article'+((page == 1 && !overwrite)?'':' article-hidden')+'">';
                         output += '    <a href="/article/'+data.articles[i].id+'/'+data.articles[i].slug+'">';
                         output += '    <img src="'+data.articles[i].image_article_front_small+'" width="100%" alt="'+data.articles[i].heading+'" />';
                         output += '    </a>';
@@ -220,7 +220,7 @@ function ArticleArchive (Utils) {
                         output += '</div>';
                         
                         // Every third element in a chunk
-                        if (num % 3 == 0)
+                        if (num % 2 == 0)
                             output += '</div><div class="row">';
                     
                         // Increasing num!    
