@@ -2,6 +2,7 @@
 
 var events, tools, api;
 var API_KEY = "5db1fee4b5703808c48078a76768b155b421b210c0761cd6a5d223f4d99f1eaa";
+var debug = true;
 
 // API module, has a private doRequest method, and public get and set methods
 api = (function () {
@@ -34,7 +35,7 @@ api = (function () {
             data: send_data,
             url: url + params,
             success: function (return_data) {
-                console.log(return_data);
+                if (debug) console.log(return_data);
                 callback(return_data);
             },
             error: function (xhr, ajaxOptions, thrownError) {
@@ -114,14 +115,14 @@ events = (function () {
 
     // Private method that parses the returned events object and checks if there are any
     var extract_events = function (data) {
-        console.log(data);
+        if (debug) console.log(data);
         if (data.meta.total_count > 0) {
             event_list = data.events;
             tools.populate_nav(event_list);
             events.set_active_event(0);
         }
         else {
-            console.log("No events returned from query...");
+            if (debug) console.log("No events returned from query...");
             tools.showerror(404, "There are no upcoming events available...");
             event_list = [];
         }
@@ -162,17 +163,17 @@ events = (function () {
 
         // Updates the active event with new data from the API
         update_active_event: function () {
-            console.log("Updating event...");
+            if (debug) console.log("Updating event...");
             update_event_index = event_list.indexOf(events.get_active_event());
-            console.log("Active event index: " + update_event_index);
+            if (debug) console.log("Active event index: " + update_event_index);
             api.update_event(events.get_active_event());
         },
 
         // Public callback for the update event method
         update_event_callback: function (event) {
             if (event != null) {
-                console.log(event);
-                console.log(update_event_index);
+                if (debug) console.log(event);
+                if (debug) console.log(update_event_index);
                 if (update_event_index >= 0) {
                     event_list[update_event_index] = event;
                     events.set_active_event(update_event_index);
@@ -187,10 +188,10 @@ events = (function () {
 
         // Registers an attendant by the attendee URI
         register_attendant: function (attendee) {
-            console.log(events.get_active_user());
+            if (debug) console.log(events.get_active_user());
             api.set_attended(attendee);
-            console.log("Api trigger set_attended");
-            console.log(attendee);
+            if (debug) console.log("Api trigger set_attended");
+            if (debug) console.log(attendee);
         },
 
         // Public callback for the register_attendant method
@@ -217,8 +218,8 @@ events = (function () {
 
         // Checks if user is in attendee list, returns an attendee object if true, false otherwise
         is_attendee: function (user) {
-            console.log("Checking if attendee:");
-            console.log(user);
+            if (debug) console.log("Checking if attendee:");
+            if (debug) console.log(user);
             for (var x = 0; x < active_event.attendance_event.users.length; x++) {
                 if (active_event.attendance_event.users[x].user.username == user.username) return active_event.attendance_event.users[x];
             }
@@ -326,14 +327,14 @@ tools = (function () {
 
         // Get user by RFID
         get_user_by_rfid: function (rfid) {
-            console.log("Getting user by rfid: " + rfid);
+            if (debug) console.log("Getting user by rfid: " + rfid);
             last_rfid = rfid;
             api.get_user_by_rfid(rfid);
         },
 
         // Get user by Username
         get_user_by_username: function (username) {
-            console.log("Getting user by username: " + username);
+            if (debug) console.log("Getting user by username: " + username);
             api.get_user_by_username(username);
         },
 
@@ -343,8 +344,8 @@ tools = (function () {
 
                 // Set the active user
                 events.set_active_user(user.objects[0]);
-                console.log("User object returned");
-                console.log(user.objects[0]);
+                if (debug) console.log("User object returned");
+                if (debug) console.log(user.objects[0]);
 
                 // Patch the active user object with RFID if there still is an active RFID in processing
                 if (last_rfid != null) {
@@ -382,13 +383,13 @@ tools = (function () {
 
         // Parse text input for RFID or username
         parse_input: function (input) {
-            console.log("Parsing input...");
+            if (debug) console.log("Parsing input...");
             if (/^[0-9]{10}$/.test(input)) {
-                console.log("Rfid valid");
+                if (debug) console.log("Rfid valid");
                 tools.get_user_by_rfid(input);
             }
             else {
-                console.log("Not RFID");
+                if (debug) console.log("Not RFID");
                 tools.get_user_by_username(input);
             }
             $('#input').val('').focus();
