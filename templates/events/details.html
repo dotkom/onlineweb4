@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% load fb_versions %}
 {% load markup %}
+{% load crispy_forms_tags %}
 {% block content %}
 
     <section id="event-details">
@@ -185,9 +186,8 @@
                 </div>
                 <form action="{% url 'attend_event' event.id %}" method="POST">
                     <div class="modal-body">
-                        <p>Ved å melde deg på, godtar du prikkereglene.</p>
                         {% csrf_token %}
-                        {{ captcha_form }}
+                        {{ captcha_form|crispy }}
                     </div>
                     <div class="modal-footer">
                         <button type="submit" class="btn btn-primary">Valider</button>
