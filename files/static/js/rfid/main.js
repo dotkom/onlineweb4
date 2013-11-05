@@ -215,12 +215,20 @@ events = (function () {
             active_user = user;
         },
 
-        // Checks if user is in attendee list
+        // Checks if user is in attendee list, returns an attendee object if true, false otherwise
         is_attendee: function (user) {
             console.log("Checking if attendee:");
             console.log(user);
             for (var x = 0; x < active_event.attendance_event.users.length; x++) {
                 if (active_event.attendance_event.users[x].user.username == user.username) return active_event.attendance_event.users[x];
+            }
+            return false;
+        },
+
+        // Checks if attendee is already set as attended to an event
+        is_already_signed_up: function (attendee) {
+            if (attendee.attended) {
+                return true;
             }
             return false;
         },
@@ -265,12 +273,12 @@ tools = (function () {
     };
 
     return {
-        // Temporarily show an error message on the top of the page...
+        // Show an error message on the top of the page...
         showerror: function (status, message) {
             $('#topmessage').removeClass().addClass("alert alert-danger").text(parse_code(status) + message);
         },
 
-        // Temporarily show a success message on the top of the page...
+        // Show a success message on the top of the page...
         showsuccess: function (status, message) {
             $('#topmessage').removeClass().addClass("alert alert-success").text(parse_code(status) + message);
         },
@@ -348,7 +356,12 @@ tools = (function () {
                 var e = events.is_attendee(events.get_active_user());
                 if (e) {
                     console.log("Attendee is in list and attendee object returned");
-                    events.register_attendant(e);
+                    if (!events.is_already_signed_up(e)) {
+                        events.register_attendant(e);
+                    }
+                    else {
+                        tools.showerror(400, "Brukeren er allerede registrert!");
+                    }
                 }
                 else {
                     tools.showerror(401, "Brukeren er ikke oppført på listen, eller er på venteliste");
