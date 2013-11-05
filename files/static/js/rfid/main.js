@@ -270,21 +270,21 @@ tools = (function () {
 
     // Parses HTTP status codes to prepend a status group indicator for messages
     var parse_code = function (code) {
-        if (code > 199 && code < 205) return "OK: ";
-        else if (code === 401) return "IKKE TILGANG: ";
-        else if (code === 404) return "IKKE FUNNET: ";
-        else if (code >= 400) return "ERROR: ";
+        if (code > 199 && code < 205) return " (OK) ";
+        else if (code === 401) return " (IKKE TILGANG) ";
+        else if (code === 404) return " (IKKE FUNNET) ";
+        else if (code >= 400) return " (ERROR) ";
     };
 
     return {
         // Show an error message on the top of the page...
         showerror: function (status, message) {
-            $('#topmessage').removeClass().addClass("alert alert-danger").text(parse_code(status) + message + " (" + tools.now() + ")");
+            $('#topmessage').removeClass().addClass("alert alert-danger").text("[" + tools.now() + "]" + parse_code(status) + message);
         },
 
         // Show a success message on the top of the page...
         showsuccess: function (status, message) {
-            $('#topmessage').removeClass().addClass("alert alert-success").text(parse_code(status) + message + " (" + tools.now() + ")");
+            $('#topmessage').removeClass().addClass("alert alert-success").text("[" + tools.now() + "]" + parse_code(status) + message);
         },
 
         // Temporarily show a DOM object
@@ -339,7 +339,7 @@ tools = (function () {
                     data += '<tr><td>' + (attended) + '</td><td>' + attendees[x].user.first_name + '</td><td>' + attendees[x].user.last_name + '</td></tr>\n';
                 }
             };
-            list.append(data);
+            list.html(data);
             $('#total_attendees').text('Antall oppmøtte: ' + attended + '/' + events.get_active_event().attendance_event.max_capacity);
         },
 
@@ -421,7 +421,7 @@ $(document).ready(function () {
     events.get_event_list();
 
     // Initiate the top message box!
-    $('#topmessage').removeClass().addClass("alert alert-success").text("Systemet er klart til bruk!").fadeIn(200);
+    $('#topmessage').removeClass().addClass("alert alert-success").text("[" + tools.now() + "] (OK) Systemet er klart til bruk!").fadeIn(200);
 
     // Bind click listeners to the events menu links
     $('#nav').on('click', 'a', function (event) {
