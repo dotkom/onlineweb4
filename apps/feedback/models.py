@@ -46,10 +46,6 @@ class FeedbackRelation(models.Model):
         return self.feedback.questions
 
     @property
-    def fosquestion(self):
-        return self.feedback.fosquestions
-
-    @property
     def ratingquestion(self):
         return self.feedback.ratingquestions
 
@@ -134,12 +130,6 @@ class Feedback(models.Model):
     description = models.CharField(_(u'beskrivelse'), max_length=100)
  
     @property
-    def fosquestions(self):
-        field_of_study_question = []
-        field_of_study_question.extend(self.field_of_study_questions.all())
-        return field_of_study_question
-
-    @property
     def ratingquestions(self):
         rating_question = []
         rating_question.extend(self.rating_questions.all())
@@ -156,7 +146,6 @@ class Feedback(models.Model):
         NB!: When creating more Question types, add them here.
         """
         questions = []
-        questions.extend(self.field_of_study_questions.all())
         questions.extend(self.text_questions.all())
         questions.extend(self.rating_questions.all())
         return sorted(questions, key=lambda x: x.order)  # sort by order
@@ -170,36 +159,16 @@ class Feedback(models.Model):
 
 
 
-class FieldOfStudyQuestion(models.Model):
-    feedback = models.ForeignKey(
-        Feedback,
-        related_name='field_of_study_questions')
-
-    label = _(u'Studieretning')
-    order = models.SmallIntegerField(_(u'Rekkefølge'), default=1)
-
-    def __unicode__(self):
-        return "Studieretning"
-
-
 class FieldOfStudyAnswer(models.Model):
     feedback_relation = models.ForeignKey(
         FeedbackRelation,
         related_name="field_of_study_answers")
 
     answer = models.SmallIntegerField(
-        _(u'Studieretning'),
-        choices=FIELD_OF_STUDY_CHOICES)
-
-    question = models.ForeignKey(FieldOfStudyQuestion, related_name='answer')
+        _(u'Studieretning'), choices = FIELD_OF_STUDY_CHOICES)
 
     def __unicode__(self):
         return self.get_answer_display()
-
-    @property
-    def order(self):
-        return self.question.order
-
 
 class TextQuestion(models.Model):
     feedback = models.ForeignKey(
