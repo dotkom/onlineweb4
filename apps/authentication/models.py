@@ -15,7 +15,7 @@ from django.utils import timezone
 FIELD_OF_STUDY_CHOICES = [
     (0, _(u'Gjest')),
     (1, _(u'Bachelor i Informatikk (BIT)')),
-    # master degrees take up the interval [10,30>
+    # master degrees take up the interval [10,30]
     (10, _(u'Software (SW)')),
     (11, _(u'Informasjonsforvaltning (DIF)')),
     (12, _(u'Komplekse Datasystemer (KDS)')),
