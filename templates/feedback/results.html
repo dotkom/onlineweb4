@@ -17,11 +17,9 @@
         <h2>Vurderinger</h2>
     </div>
     <div class="row">
-        {% for rating_answer in rating_answers %}
-            <div class="col-md-6">
-                <div class="rating-chart" id="rating-chart-{{ forloop.counter }}"></div>
-            </div>
-        {% endfor %}
+        <div class="col-md-6">
+            <div class="rating-chart" id="rating-charts"></div>
+        </div>
     </div>
     <div class="page-header">
         <h2>Tilbakemeldinger</h2>
@@ -61,10 +59,6 @@
     <script src="{{ STATIC_URL }}js/libs/jqplot/jqplot.categoryAxisRenderer.min.js"></script>
     <script src="{{ STATIC_URL }}js/libs/jqplot/jqplot.pointLabels.min.js"></script>
     <script src="{{ STATIC_URL }}js/feedbackResults.js"></script>
-    <script type="text/javascript">
-        printPieChart({{ fos_data|safe }});
-        printRatingCharts({{ rating_answers|safe }}, {{rating_questions|safe}});
-    </script>
 {% endblock %}
 
 {% endblock content %}

@@ -1,6 +1,9 @@
-function printPieChart(data)
+var chartData;
+
+function printPieChart()
 {
-    var plot1 = jQuery.jqplot ('field-of-study-chart', [data], 
+    data = chartData.replies.fos;
+    var fosChart = jQuery.jqplot ('field-of-study-chart', [data], 
     {
         grid: {
             drawBorder: false, 
@@ -22,20 +25,23 @@ function printPieChart(data)
         { 
             show:true, 
             location: 'e',
-            fontSize: '15pt',
+            //fontSize: '15pt',
             border: 'none'
         }
     });
 }
 
-function printRatingCharts(data, titles)
+function printRatingCharts()
 {
-    for(var i = 0; i < data.length; i++)
-    {            
+    data = chartData.replies.ratings;
+    titles = chartData.replies.titles;
+    for(var i = 0; i < titles.length; i++)
+    {  
         ticks = Array.range(1, data[i].length, 1);
-        $.jqplot('rating-chart-' + (i + 1), [data[i]], 
+        title = titles[i];
+        $.jqplot('rating-chart-' + (i + 1), data[i], 
         {
-            title: titles[i],
+            title: title,
             seriesDefaults:
             {
                 renderer:$.jqplot.BarRenderer,
@@ -87,3 +93,18 @@ Array.range= function(a, b, step){
     }
     return A;
 }
+
+$(document).ready(function()
+{
+    $.get($(location).attr('href') + "/chartdata", function(data)
+    {
+        chartData = data;
+        printPieChart();
+        printRatingCharts();
+    });
+    $(window).on("debouncedresize", function(e)
+    {
+        printPieChart();
+        printRatingCharts();
+    });
+});
