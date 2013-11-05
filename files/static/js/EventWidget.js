@@ -16,8 +16,8 @@ function EventWidget (Utils){
 
                     // Fragment to append and global rowNode
                     var fragment = document.createDocumentFragment();
-                    var col1 = $('<ul class="col-sm-12 col-md-6"></ul>');
-                    var col2 = $('<ul class="col-sm-12 col-md-6"></ul>');
+                    var col1 = $('<ul class="event-list col-sm-12 col-md-6"></ul>');
+                    var col2 = $('<ul class="event-list col-sm-12 col-md-6"></ul>');
                     var rowNode;
 
                     $.each(data.events, function (index) {
