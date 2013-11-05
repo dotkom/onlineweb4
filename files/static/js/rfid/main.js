@@ -106,6 +106,7 @@ events = (function () {
     - get_active_user
     - set_active_user
     - is_attendee
+    - is_already_registered
 
     */
 
@@ -123,8 +124,11 @@ events = (function () {
         }
         else {
             if (debug) console.log("No events returned from query...");
-            tools.showerror(404, "There are no upcoming events available...");
+            tools.showerror(404, "Det er ingen pågående eller fremtidige arrangement.");
             event_list = [];
+            $('#input').hide();
+            $('#event_image').hide();
+            $('#submit').hide();
         }
     }
 
@@ -178,12 +182,11 @@ events = (function () {
                     event_list[update_event_index] = event;
                     events.set_active_event(update_event_index);
                 }
-                update_event_index = -1;
             }
             else {
                 tools.showerror(400, "Det oppstod en feil under oppdatering av arrangementsinformasjonen.");
-                update_event_index = -1;
             }
+            update_event_index = -1;
         },
 
         // Registers an attendant by the attendee URI
@@ -276,12 +279,12 @@ tools = (function () {
     return {
         // Show an error message on the top of the page...
         showerror: function (status, message) {
-            $('#topmessage').removeClass().addClass("alert alert-danger").text(parse_code(status) + message);
+            $('#topmessage').removeClass().addClass("alert alert-danger").text(parse_code(status) + message + " (" + tools.now() + ")");
         },
 
         // Show a success message on the top of the page...
         showsuccess: function (status, message) {
-            $('#topmessage').removeClass().addClass("alert alert-success").text(parse_code(status) + message);
+            $('#topmessage').removeClass().addClass("alert alert-success").text(parse_code(status) + message + " (" + tools.now() + ")");
         },
 
         // Temporarily show a DOM object
@@ -301,6 +304,18 @@ tools = (function () {
             if (m < 10) m = "0" + m;
             if (d < 10) d = "0" + d;
             return y + "-" + m + "-" + d;
+        },
+
+        // Returns a time string representing present time
+        now: function () {
+            var d = new Date();
+            h = d.getHours();
+            m = d.getMinutes();
+            s = d.getSeconds();
+            if (h < 10) h = "0" + h;
+            if (m < 10) m = "0" + m;
+            if (s < 10) s = "0" + s;
+            return h + ":" + m + ":" + s;
         },
 
         // This method populates the navbar dropdown with the events in the specified event_list
@@ -353,7 +368,6 @@ tools = (function () {
                 }
 
                 // Check wether active user is a registered attendee for active event
-                // Returns an attendee object if true, false otherwise
                 var e = events.is_attendee(events.get_active_user());
                 if (e) {
                     console.log("Attendee is in list and attendee object returned");
