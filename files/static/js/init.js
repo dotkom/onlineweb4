@@ -105,24 +105,11 @@ $(function() {
     var old_login_btn       =  $('#login_menu a').html();
     var active_link_clone   = $('.navbar .nav.navbar-nav .active').clone(true);
 
-    change_login_button_view();
     change_subnavbar_behaviour();
 
     $(window).resize(function() {
-        change_login_button_view();
         change_subnavbar_behaviour();
     });
-
-    function change_login_button_view() {
-        if ($(window).innerWidth() < 995) {
-            $('#login_menu a.login').html('');
-            $('#login_menu a.login').addClass('glyphicon glyphicon-user');
-        }
-        else {
-            $('#login_menu a.login').html(old_login_btn);
-            $('#login_menu a.login').removeClass('glyphicon glyphicon-user');
-        }
-    }
 
     function change_subnavbar_behaviour() {
         var active_link = $('.navbar .nav.navbar-nav .active');

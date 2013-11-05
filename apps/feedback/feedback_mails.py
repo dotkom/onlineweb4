@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 
 import datetime
+from django.utils import timezone
 
 from django.contrib.contenttypes.models import ContentType
+from django.conf import settings
 
 from apps.events.models import Event, AttendanceEvent, Attendee
 from apps.feedback.models import FeedbackRelation
@@ -11,7 +13,7 @@ from apps.marks.models import Mark, UserEntry
 class FeedbackMail():
     @staticmethod
     def generate_message(feedback):
-        today = datetime.date.today()
+        today = timezone.now().date()
         yesterday = today + datetime.timedelta(days=-1)
         not_responded = FeedbackMail.get_users(feedback)
         #return false if everyone has answered
@@ -72,14 +74,14 @@ class FeedbackMail():
         start_date = FeedbackMail.start_date(feedback)
 
         if not start_date:
-            yesterday = datetime.date() - datetime.timedelta(days=1)
+            yesterday = timezone.now().date() - datetime.timedelta(days=1)
             #The object that requires feedback doesnt have a start date
             if feedback.created_date == yesterday.date():
                 #Send the first notification the day after the feedback relation was created
                 return True
         else:
             day_after_event = start_date + datetime.timedelta(1)
-            if day_after_event == datetime.date.today():
+            if day_after_event == datetime.datetime.date(timezone.now()):
                 #Send the first notification the day after the event
                 return True
         return False

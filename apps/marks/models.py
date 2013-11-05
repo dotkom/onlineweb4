@@ -1,7 +1,7 @@
 #-*- coding: utf-8 -*-
 
 import datetime
-from pytz import timezone
+from django.utils import timezone
 
 from django.conf import settings
 from django.db import models
@@ -53,7 +53,7 @@ class Mark(models.Model):
 
     @property
     def is_active(self):
-        return self.mark_added_date > get_threshold()
+        return timezone.make_naive(self.mark_added_date, timezone.get_current_timezone()) > get_threshold()
 
     def __unicode__(self):
         return _(u"Prikk for %s") % self.title
@@ -82,7 +82,7 @@ def get_threshold():
     WINTER = ((12, 1), (1, 15))
 
     # Todays date
-    now = datetime.datetime.now(timezone(settings.TIME_ZONE)).date()
+    now = datetime.datetime.now().date()
     print "now = "+ str(now)
     # Threshhold is the day in the past which marks will be filtered on by mark_added_date
     threshold = now - datetime.timedelta(days=DURATION)
@@ -110,4 +110,4 @@ def get_threshold():
         threshold -= datetime.timedelta(days=(now - second_winter_start_date).days)
 
     # The returned value is a datetime object
-    return datetime.datetime.combine(threshold, datetime.time()).replace(tzinfo=timezone(settings.TIME_ZONE))
+    return datetime.datetime.combine(threshold, datetime.time())

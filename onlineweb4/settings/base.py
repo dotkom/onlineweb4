@@ -131,10 +131,6 @@ INSTALLED_APPS = (
     'django.contrib.humanize',
     'django_nose',
     'south',
-    'django_notify',
-    'mptt',
-    'sekizai',
-    'sorl.thumbnail',
     'grappelli',
     'filebrowser',
     'chunks',
@@ -145,7 +141,6 @@ INSTALLED_APPS = (
     'compressor',
     
     'watson',
-    'django_ldapbackend',
 
     # Django apps
     'django.contrib.admin',
@@ -169,15 +164,6 @@ INSTALLED_APPS = (
     'apps.feedback',
     'apps.mommy',
     'apps.profiles',
-    
-    # Wiki-related stuff
-    'wiki',
-    'wiki.plugins.attachments',
-    'wiki.plugins.notifications',
-    'wiki.plugins.images',
-    'wiki.plugins.macros',    
-
-    #'pizzasystem',
 )
 
 # A sample logging configuration. The only tangible logging
@@ -242,7 +228,6 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "django.core.context_processors.static",
     "django.core.context_processors.tz",
     "django.contrib.messages.context_processors.messages",
-    "sekizai.context_processors.sekizai",
 )
 
 # Remember to keep 'local' last, so it can override any setting.
