@@ -169,3 +169,4 @@ class AllowedUsername(models.Model):
         verbose_name = _(u"tillatt brukernavn")
         verbose_name_plural = _(u"tillatte brukernavn")
         ordering = (u"username",)
+
