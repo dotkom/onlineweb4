@@ -2,18 +2,16 @@
 from collections import namedtuple, defaultdict
 
 from django.http import Http404, HttpResponse
-from django.shortcuts import render_to_response
-from django.shortcuts import render
+from django.shortcuts import render, redirect, render_to_response
 from django.template import RequestContext
 from django.contrib.contenttypes.models import ContentType
 from django.contrib import messages
 from django.utils import simplejson
 from django.core.exceptions import ObjectDoesNotExist
 from django.utils.translation import ugettext_lazy as _
-from django.shortcuts import redirect
 from django.utils.safestring import SafeString
 
-from apps.feedback.models import FeedbackRelation, FieldOfStudyAnswer, FIELD_OF_STUDY_CHOICES
+from apps.feedback.models import FeedbackRelation, FieldOfStudyAnswer, RATING_CHOICES
 from apps.feedback.forms import create_answer_forms
 
 def feedback(request, applabel, appmodel, object_id, feedback_id):
@@ -56,39 +54,37 @@ def result(request, applabel, appmodel, object_id, feedback_id):
 
     for q in fbr.questions:
         question_and_answers.append(Qa(q, fbr.answers_to_question(q)))
+        
+    return render(request, 'feedback/results.html',{'question_and_answers': question_and_answers, 
+        'description': fbr.description})
+
+def get_chart_data(request, applabel, appmodel, object_id, feedback_id):
+    fbr = _get_fbr_or_404(applabel, appmodel, object_id, feedback_id)
+    
+    rating_answers = []
+    rating_titles = []
+    answer_collection = dict()
+    answer_collection['replies'] = dict()
+    answer_length = int(len(RATING_CHOICES) +1)
+    for question in fbr.ratingquestion:
+        rating_titles.append(str(question))
+        answers = fbr.answers_to_question(question)
+        answer_count = [0] * answer_length
+        for answer in answers:
+            answer_count[int(answer.answer)] += 1
+        rating_answers.append(answer_count[1:])
     
     fos = fbr.field_of_study_answers.all()
     answer_count = defaultdict(int)
     for answer in fos:
         answer_count[str(answer)] += 1
 
-    ordered_answers = []
-    for _, x in FIELD_OF_STUDY_CHOICES[1:]:
-        ordered_answers.append([x, answer_count[x]])
-  
-    description = fbr.description
+    answer_collection['replies']['ratings'] = rating_answers
+    answer_collection['replies']['titles'] = rating_titles
+    answer_collection['replies']['fos'] = answer_count.items()
+   
+    return HttpResponse(simplejson.dumps(answer_collection), mimetype='application/json')
 
-    foschartdata = "["
-    for a in ordered_answers:
-        if a[1] > 0:
-            foschartdata += simplejson.dumps({'label':a[0], 'value':a[1]}) + ','
-    
-
-
-    foschartdata = foschartdata[:-1] + ']'
-
-    rating_question_answers = []
-    rating_questions = []
-    for i in range(0, len(fbr.ratingquestion)):
-        question = fbr.answers_to_question(fbr.ratingquestion[i])
-        rating_questions.append(str(fbr.ratingquestion[i]))
-        answers = [0] * 7
-        for a in question:
-            answers[int(a.answer)] += 1
-        answers = answers[1:]
-        rating_question_answers.append(answers)
-    return render(request, 'feedback/results.html',
-                  {'question_and_answers': question_and_answers, 'foschartdata': SafeString(foschartdata), 'description': description, "rating_question_answers": rating_question_answers, "rating_questions": rating_questions})
 
 def index(request):
     feedbacks = FeedbackRelation.objects.all()
