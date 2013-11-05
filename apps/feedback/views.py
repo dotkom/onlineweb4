@@ -2,17 +2,14 @@
 from collections import namedtuple, defaultdict
 
 from django.http import Http404, HttpResponse
-from django.shortcuts import render_to_response
-from django.shortcuts import render
+from django.shortcuts import render, redirect, render_to_response
 from django.template import RequestContext
 from django.contrib.contenttypes.models import ContentType
 from django.contrib import messages
 from django.utils import simplejson
 from django.core.exceptions import ObjectDoesNotExist
 from django.utils.translation import ugettext_lazy as _
-from django.shortcuts import redirect
 from django.utils.safestring import SafeString
-from django.core import serializers
 
 from apps.feedback.models import FeedbackRelation, FieldOfStudyAnswer, RATING_CHOICES
 from apps.feedback.forms import create_answer_forms
@@ -69,7 +66,6 @@ def get_chart_data(request, applabel, appmodel, object_id, feedback_id):
     answer_collection = dict()
     answer_collection['replies'] = dict()
     answer_length = int(len(RATING_CHOICES) +1)
-    print answer_length
     for question in fbr.ratingquestion:
         rating_titles.append(str(question))
         answers = fbr.answers_to_question(question)
