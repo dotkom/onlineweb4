@@ -14,7 +14,7 @@ from django.conf import settings
 from django.test.client import Client
 
 from apps.feedback.feedback_mails import FeedbackMail, Message
-from apps.feedback.models import Feedback, FeedbackRelation, TextQuestion, RatingQuestion
+from apps.feedback.models import Feedback, FeedbackRelation, TextQuestion, RatingQuestion, TextAnswer
 from apps.events.models import Event, AttendanceEvent, Attendee
 from apps.marks.models import Mark
 from apps.authentication.models import OnlineUser as User
@@ -144,6 +144,22 @@ class SimpleTest(TestCase):
         #TODO results returns 200 even if the user is not staff and gets redirected.
         #response = self.client.get(self.feedback_relation.get_absolute_url() + 'results/')
         #self.assertEqual(response.status_code, 200)
+
+    def test_remove_answer(self):
+        tq = TextQuestion.objects.get()
+        TextAnswer.objects.create(feedback_relation = self.feedback_relation, question = tq, answer = "test")
+        self.assertEqual(len(TextAnswer.objects.all()), 1)
+        
+        #Whitouth staff permissions
+        self.client.post("/feedback/deleteanswer/", {'answer_id' : 1})
+        self.assertEqual(len(TextAnswer.objects.all()), 1)
+
+        #With staff permissions
+        self.user.is_staff = True
+        self.user.save()
+        self.client.login(username="user1", password="Herpaderp123")
+        response = self.client.post("/feedback/deleteanswer/", {'answer_id' : 1})
+        self.assertEqual(len(TextAnswer.objects.all()), 0)
 
     def test_bad_urls(self):
         response = self.client.get("/feedback/events/event/100/1/")

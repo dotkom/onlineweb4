@@ -96,13 +96,12 @@ def index(request):
 
 @staff_member_required
 def delete_answer(request):
-    if request.is_ajax():
-        if request.method == 'POST':
-            answer_id = request.POST.get('answer_id')
-            answer = get_object_or_404(TextAnswer, pk=answer_id)
-            answer.delete()
-            return HttpResponse(status = 200)
-    return HttpResonse(status=404)
+    if request.method == 'POST':
+        answer_id = request.POST.get('answer_id')
+        answer = get_object_or_404(TextAnswer, pk=answer_id)
+        answer.delete()
+        return HttpResponse(status = 200)
+    return HttpResponse(status=404)
 
 
 def _get_fbr_or_404(app_label, app_model, object_id, feedback_id):
