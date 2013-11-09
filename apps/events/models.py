@@ -220,38 +220,16 @@ class Event(models.Model):
  BEGIN ACCESS RESTRICTION --------------------------------------------------------------------------
 """
 
-class RuleOffset(models.Model):
-    # Django admin seems to ignore max_length so with higher values than a signed int the database will throw an error
-    offset = models.PositiveIntegerField(_(u'antall timer'), unique=True, max_length=3)
+
+class FieldOfStudyRule(models.Model):
+    field_of_study = models.SmallIntegerField(_(u'studieretning'), choices=FIELD_OF_STUDY_CHOICES)
+    offset = models.PositiveSmallIntegerField(_(u'utsettelse'), help_text=_(u'utsettelse oppgis i timer')) 
 
     def get_offset_time(self, time):
         if type(time) is not datetime:
             raise TypeError('time must be a datetime, not %s' % type(arg))
         else:
             return time + timedelta(hours=self.offset)
-
-    def __unicode__(self):
-        if self.offset == 1:
-            return "1 time"
-        return "%d timer" % self.offset
-
-
-class Rule(models.Model):
-    """
-    Super class for a rule object
-    """
-    offset = models.ForeignKey(RuleOffset, primary_key=False, null=True, blank=True)
-
-    def satisfied(self, user):
-        """ Checks if a user """
-        return True
-
-    def __unicode__(self):
-        return 'Rule'
-
-
-class FieldOfStudyRule(Rule):
-    field_of_study = models.SmallIntegerField(_(u'studieretning'), choices=FIELD_OF_STUDY_CHOICES, null=False)
 
     def satisfied(self, user, registration_start):
         """ Override method """
@@ -272,12 +250,18 @@ class FieldOfStudyRule(Rule):
         return unicode(self.get_field_of_study_display())
 
 
-class GradeRule(Rule):
+class GradeRule(models.Model):
     grade = models.SmallIntegerField(_(u'klassetrinn'), null=False)
+    offset = models.PositiveSmallIntegerField(_(u'utsettelse'), help_text=_(u'utsettelse oppgis i timer')) 
+
+    def get_offset_time(self, time):
+        if type(time) is not datetime:
+            raise TypeError('time must be a datetime, not %s' % type(arg))
+        else:
+            return time + timedelta(hours=self.offset)
 
     def satisfied(self, user, registration_start):
         """ Override method """
-
 
         # If the user has the same FOS as this rule    
         if (self.grade == user.year):
@@ -296,8 +280,15 @@ class GradeRule(Rule):
         return _(u"%s. klasse") % self.grade
 
 
-class UserGroupRule(Rule):
+class UserGroupRule(models.Model):
     group = models.ForeignKey(Group, blank=False, null=False)
+    offset = models.PositiveSmallIntegerField(_(u'utsettelse'), help_text=_(u'utsettelse oppgis i timer')) 
+
+    def get_offset_time(self, time):
+        if type(time) is not datetime:
+            raise TypeError('time must be a datetime, not %s' % type(arg))
+        else:
+            return time + timedelta(hours=self.offset)
 
     def satisfied(self, user, registration_start):
         """ Override method """

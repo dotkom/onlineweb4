@@ -8,8 +8,7 @@ from django.utils import timezone
 
 from apps.authentication.models import OnlineUser as User, AllowedUsername
 from apps.events.models import (Event, AttendanceEvent, Attendee,
-                                RuleBundle, RuleOffset,
-                                FieldOfStudyRule, GradeRule, UserGroupRule)
+                                RuleBundle, FieldOfStudyRule, GradeRule, UserGroupRule)
 from apps.marks.models import Mark, UserEntry
 
 class EventTest(TestCase):
@@ -60,21 +59,13 @@ class EventTest(TestCase):
         self.assertFalse(response['status'])
         self.assertEquals(400, response['status_code'])
 
-    def testRuleOffsets(self):
-        self.logger.debug("Testing rule offsets.")
-        offset = G(RuleOffset, offset=24)
-        self.assertEquals(offset.offset, 24)
-
     def testGradeRule(self):
         self.logger.debug("Testing restriction with grade rules.")
 
         # Create the offset, rule and rule_bundles
-        self.offset = G(RuleOffset, offset=24)
-        self.assertEquals(self.offset.offset, 24)
-        self.graderule = G(GradeRule, grade=1)
+        self.graderule = G(GradeRule, grade=1, offset=24)
         self.assertEquals(self.graderule.grade, 1)
-        self.graderule.offset = self.offset 
-        self.assertEquals(self.graderule.offset.offset, 24)
+        self.assertEquals(self.graderule.offset, 24)
         self.assertEquals(unicode(self.graderule), u"1. klasse etter 24 timer")
         self.rule_bundle = G(RuleBundle) 
         self.rule_bundle.grade_rules.add(self.graderule)

@@ -7,7 +7,6 @@ from apps.events.models import CompanyEvent
 from apps.events.models import RuleBundle
 from apps.events.models import FieldOfStudyRule
 from apps.events.models import GradeRule
-from apps.events.models import RuleOffset
 from apps.events.models import UserGroupRule
 
 from apps.feedback.admin import FeedbackRelationInline
@@ -55,9 +54,6 @@ class GradeRuleAdmin(admin.ModelAdmin):
 class UserGroupRuleAdmin(admin.ModelAdmin):
     model = UserGroupRule
 
-class RuleOffsetAdmin(admin.ModelAdmin):
-    model = RuleOffset
-
 class AttendanceEventInline(admin.StackedInline):
     model = AttendanceEvent
     max_num = 1
@@ -87,4 +83,3 @@ admin.site.register(RuleBundle, RuleBundleAdmin)
 admin.site.register(GradeRule, GradeRuleAdmin)
 admin.site.register(UserGroupRule, UserGroupRuleAdmin)
 admin.site.register(FieldOfStudyRule, FieldOfStudyRuleAdmin)
-admin.site.register(RuleOffset, RuleOffsetAdmin)
