@@ -2,7 +2,7 @@
 from collections import namedtuple, defaultdict
 
 from django.http import Http404, HttpResponse
-from django.shortcuts import render, redirect, render_to_response
+from django.shortcuts import render, redirect, render_to_response, get_object_or_404
 from django.template import RequestContext
 from django.contrib.contenttypes.models import ContentType
 from django.contrib import messages
@@ -12,7 +12,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import SafeString
 
-from apps.feedback.models import FeedbackRelation, FieldOfStudyAnswer, RATING_CHOICES
+from apps.feedback.models import FeedbackRelation, FieldOfStudyAnswer, RATING_CHOICES, TextAnswer
 from apps.feedback.forms import create_answer_forms
 
 def feedback(request, applabel, appmodel, object_id, feedback_id):
@@ -93,6 +93,15 @@ def index(request):
     return render_to_response('feedback/index.html',
                               {'feedbacks': feedbacks},
                               context_instance=RequestContext(request))
+
+@staff_member_required
+def delete_answer(request):
+    if request.method == 'POST':
+        answer_id = request.POST.get('answer_id')
+        answer = get_object_or_404(TextAnswer, pk=answer_id)
+        answer.delete()
+        return HttpResponse(status = 200)
+    return HttpResponse(status=404)
 
 
 def _get_fbr_or_404(app_label, app_model, object_id, feedback_id):

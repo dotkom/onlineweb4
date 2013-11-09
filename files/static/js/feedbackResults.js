@@ -2,6 +2,21 @@ var chartData;
 var fosChart;
 var ratingCharts = new Array();
 
+/* AJAX SETUP FOR CSRF */
+$.ajaxSetup({
+    crossDomain: false, // obviates need for sameOrigin test
+    beforeSend: function(xhr, settings) {
+        if (!csrfSafeMethod(settings.type)) {
+            xhr.setRequestHeader("X-CSRFToken", $.cookie('csrftoken'));
+        }
+    }
+});
+function csrfSafeMethod(method) {
+    // these HTTP methods do not require CSRF protection
+    return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+}
+/* END AJAX SETUP */
+
 function printPieChart()
 {
     data = chartData.replies.fos;
@@ -98,6 +113,30 @@ Array.range= function(a, b, step){
     return A;
 }
 
+function deleteAnswer(answer, row)
+{
+    $.ajax({
+        method: 'POST',
+        url: '/feedback/deleteanswer/',
+        data: {'answer_id':answerId, },
+        success: function() {
+            // TODO Make animation
+            $(row).hide();
+        },
+        error: function(res) {
+            var utils = new Utils();
+            if (res['status'] === 412) {
+                res = JSON.parse(res['responseText']);
+                utils.setStatusMessage(res['message'], 'alert-danger');
+            }
+            else {
+                utils.setStatusMessage('En uventet error ble oppdaget. Kontakt dotkom@online.ntnu.no for assistanse.', 'alert-danger');
+            }
+        },
+        crossDomain: false
+    });
+}
+
 $(document).ready(function()
 {
     $.get($(location).attr('href') + "chartdata", function(data)
@@ -114,5 +153,14 @@ $(document).ready(function()
             ratingCharts[i].destroy();
         }
         printRatingCharts();
+    });
+
+    $('tr').each(function(i, row)
+    {
+        $(row).click(function()
+        {
+            answerId = $(row).find('td.answer-id').text();
+            deleteAnswer(answerId, row);
+        });
     });
 });
