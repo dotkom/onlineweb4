@@ -15,7 +15,6 @@ import watson
 
 from apps.authentication.models import OnlineUser as User, FIELD_OF_STUDY_CHOICES
 from apps.companyprofile.models import Company
-from filebrowser.fields import FileBrowseField
 from apps.marks.models import Mark
 
 class Event(models.Model):
@@ -221,8 +220,10 @@ class Event(models.Model):
 """
 
 
-class FieldOfStudyRule(models.Model):
-    field_of_study = models.SmallIntegerField(_(u'studieretning'), choices=FIELD_OF_STUDY_CHOICES)
+class Rule(models.Model):
+    """
+    Super class for a rule object
+    """
     offset = models.PositiveSmallIntegerField(_(u'utsettelse'), help_text=_(u'utsettelse oppgis i timer')) 
 
     def get_offset_time(self, time):
@@ -230,6 +231,17 @@ class FieldOfStudyRule(models.Model):
             raise TypeError('time must be a datetime, not %s' % type(arg))
         else:
             return time + timedelta(hours=self.offset)
+
+    def satisfied(self, user):
+        """ Checks if a user """
+        return True
+
+    def __unicode__(self):
+        return 'Rule'
+
+
+class FieldOfStudyRule(Rule):
+    field_of_study = models.SmallIntegerField(_(u'studieretning'), choices=FIELD_OF_STUDY_CHOICES)
 
     def satisfied(self, user, registration_start):
         """ Override method """
@@ -244,28 +256,20 @@ class FieldOfStudyRule(models.Model):
         return {"status": False, "message": _(u"Din studieretning er en annen enn de som har tilgang til dette arrangementet."), "status_code": 410}
 
     def __unicode__(self):
-        if self.offset.offset > 0:
-            time_unit = _(u'timer') if self.offset.offset > 1 else _(u'time')
-            return _("%s etter %d %s") % (unicode(self.get_field_of_study_display()), self.offset.offset, time_unit)
+        if self.offset > 0:
+            time_unit = _(u'timer') if self.offset > 1 else _(u'time')
+            return _("%s etter %d %s") % (unicode(self.get_field_of_study_display()), self.offset, time_unit)
         return unicode(self.get_field_of_study_display())
 
 
-class GradeRule(models.Model):
+class GradeRule(Rule):
     grade = models.SmallIntegerField(_(u'klassetrinn'), null=False)
-    offset = models.PositiveSmallIntegerField(_(u'utsettelse'), help_text=_(u'utsettelse oppgis i timer')) 
-
-    def get_offset_time(self, time):
-        if type(time) is not datetime:
-            raise TypeError('time must be a datetime, not %s' % type(arg))
-        else:
-            return time + timedelta(hours=self.offset)
 
     def satisfied(self, user, registration_start):
         """ Override method """
 
         # If the user has the same FOS as this rule    
         if (self.grade == user.year):
-            print "WTF"
             offset_datetime = self.offset.get_offset_time(registration_start)
             if offset_datetime <= timezone.now():
                 return {"status": True, "message": None, "status_code": 211}
@@ -274,21 +278,14 @@ class GradeRule(models.Model):
         return {"status": False, "message": _(u"Du er ikke i et klassetrinn som har tilgang til dette arrangementet."), "status_code": 411}
 
     def __unicode__(self):
-        if self.offset.offset > 0:
-            time_unit = _(u'timer') if self.offset.offset > 1 else _(u'time')
-            return _(u"%s. klasse etter %d %s") % (self.grade, self.offset.offset, time_unit)
+        if self.offset > 0:
+            time_unit = _(u'timer') if self.offset > 1 else _(u'time')
+            return _(u"%s. klasse etter %d %s") % (self.grade, self.offset, time_unit)
         return _(u"%s. klasse") % self.grade
 
 
-class UserGroupRule(models.Model):
+class UserGroupRule(Rule):
     group = models.ForeignKey(Group, blank=False, null=False)
-    offset = models.PositiveSmallIntegerField(_(u'utsettelse'), help_text=_(u'utsettelse oppgis i timer')) 
-
-    def get_offset_time(self, time):
-        if type(time) is not datetime:
-            raise TypeError('time must be a datetime, not %s' % type(arg))
-        else:
-            return time + timedelta(hours=self.offset)
 
     def satisfied(self, user, registration_start):
         """ Override method """
@@ -301,9 +298,9 @@ class UserGroupRule(models.Model):
         return {"status": False, "message": _(u"Du er ikke i en brukergruppe som har tilgang til dette arrangmentet."), "status_code": 412}
 
     def __unicode__(self):
-        if self.offset.offset > 0:
-            time_unit = _(u'timer') if self.offset.offset > 1 else _(u'time')
-            return _(u"%s etter %d %s") % (unicode(self.group), self.offset.offset, time_unit)
+        if self.offset > 0:
+            time_unit = _(u'timer') if self.offset > 1 else _(u'time')
+            return _(u"%s etter %d %s") % (unicode(self.group), self.offset, time_unit)
         return unicode(self.group)
 
 
