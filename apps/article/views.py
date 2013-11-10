@@ -1,27 +1,14 @@
+import random
+
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.db.models import Count
 from django.http import HttpResponse
+from django.utils import timezone
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import Template, Context, loader, RequestContext
-from models import Article, Tag, ArticleTag
-import random
 
-def index(request):
-    # Featured
-    featured = Article.objects.filter(featured=True).order_by('-id')[:1]
-    
-    # Siste 4 nyheter
-    latestNews = Article.objects.filter(featured=False).order_by('-id')[:4]
-    
-    i = 0
-    for latest in latestNews:
-        if (i % 2 == 0):
-            latest.i = 0
-        else:
-            latest.i = 1
-        i += 1
+from apps.article.models import Article, Tag, ArticleTag
 
-    return render_to_response('article/index.html', {'featured' : featured[0], 'latest': latestNews}, context_instance=RequestContext(request))
 
 def archive(request, name=None, slug=None, year=None, month=None):
     """
@@ -37,7 +24,7 @@ def archive(request, name=None, slug=None, year=None, month=None):
         Article month (published_date), most likely in norwegian written format.
     """
 
-    articles = Article.objects.all().order_by('-published_date')
+    articles = Article.objects.filter(published_date__lte=timezone.now()).order_by('-published_date')
 
     month_strings = {
         '1': u'Januar',
