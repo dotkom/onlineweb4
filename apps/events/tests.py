@@ -3,6 +3,7 @@ import logging
 
 from django_dynamic_fixture import G
 from django.conf import settings
+from django.contrib.auth.models import Group
 from django.test import TestCase
 from django.utils import timezone
 
@@ -47,7 +48,17 @@ class EventTest(TestCase):
         # The user should be able to attend now, since the event has no rule bundles.
         response = self.event.is_eligible_for_signup(self.user)
         self.assertTrue(response['status'])
-        self.assertEquals(200, response['status_code'])
+        self.assertEqual(200, response['status_code'])
+        
+    def testSignUpWithNoRulesNoMarksNoMembership(self):
+        self.logger.debug("Testing signup with no rules, no marks and user not member.")
+        
+        self.allowed_username.delete()
+        # The user should not be able to attend, since the event has no rule bundles 
+        # and they are not a member.
+        response = self.event.is_eligible_for_signup(self.user)
+        self.assertFalse(response['status'])
+        self.assertEqual(400, response['status_code'])
         
     def testSignUpWithNoRulesAndAMark(self):
         self.logger.debug("Testing signup with no rules and a mark.")
@@ -57,30 +68,102 @@ class EventTest(TestCase):
         userentry = G(UserEntry, user=self.user, mark=mark1)
         response = self.event.is_eligible_for_signup(self.user)
         self.assertFalse(response['status'])
-        self.assertEquals(400, response['status_code'])
+        self.assertEqual(401, response['status_code'])
+
+    def testFieldOfStudyRule(self):
+        self.logger.debug("Testing restriction with field of study rules.")
+
+        # Create the rule and rule_bundles
+        self.fosrule = G(FieldOfStudyRule, field_of_study=1, offset=24)
+        self.assertEqual(self.fosrule.field_of_study, 1)
+        self.assertEqual(self.fosrule.offset, 24)
+        self.assertEqual(unicode(self.fosrule), u"Bachelor i Informatikk (BIT) etter 24 timer")
+        self.rulebundle = G(RuleBundle, description='') 
+        self.rulebundle.field_of_study_rules.add(self.fosrule)
+        self.assertEqual(unicode(self.rulebundle), "Bachelor i Informatikk (BIT) etter 24 timer")
+        self.attendance_event.rule_bundles.add(self.rulebundle)
+        
+        # Status should be negative, and indicate that the restriction is a grade rule
+        response = self.event.is_eligible_for_signup(self.user)
+        self.assertFalse(response['status'])
+        self.assertEqual(410, response['status_code'])
+
+        # Make the user a bachelor and try again. Should get message about offset.
+        self.user.field_of_study = 1
+        response = self.event.is_eligible_for_signup(self.user)
+        self.assertFalse(response['status'])
+        self.assertEqual(420, response['status_code'])
+
+        # Add a new grade rule with no offset and see if signup works
+        self.fosrule2 = G(FieldOfStudyRule, field_of_study=1, offset=0)
+        self.rulebundle.field_of_study_rules.add(self.fosrule2)
+
+        response = self.event.is_eligible_for_signup(self.user)
+        self.assertTrue(response['status'])
+        self.assertEqual(210, response['status_code'])
 
     def testGradeRule(self):
         self.logger.debug("Testing restriction with grade rules.")
 
-        # Create the offset, rule and rule_bundles
+        # Create the rule and rule_bundles
         self.graderule = G(GradeRule, grade=1, offset=24)
-        self.assertEquals(self.graderule.grade, 1)
-        self.assertEquals(self.graderule.offset, 24)
-        self.assertEquals(unicode(self.graderule), u"1. klasse etter 24 timer")
-        self.rule_bundle = G(RuleBundle) 
-        self.rule_bundle.grade_rules.add(self.graderule)
-        self.assertEqual("", unicode(self.rule_bundle))
-
-        self.attendance_event.rule_bundles.add(self.rule_bundle)
+        self.assertEqual(self.graderule.grade, 1)
+        self.assertEqual(self.graderule.offset, 24)
+        self.assertEqual(unicode(self.graderule), u"1. klasse etter 24 timer")
+        self.rulebundle = G(RuleBundle, description='') 
+        self.rulebundle.grade_rules.add(self.graderule)
+        self.assertEqual(unicode(self.rulebundle), u"1. klasse etter 24 timer")
+        self.attendance_event.rule_bundles.add(self.rulebundle)
         
         # Status should be negative, and indicate that the restriction is a grade rule
         response = self.event.is_eligible_for_signup(self.user)
         self.assertFalse(response['status'])
         self.assertEqual(411, response['status_code'])
 
-        # Make the user a grade 1 and try again.
+        # Make the user a grade 1 and try again. Should get message about offset.
         self.user.field_of_study = 1
         self.user.started_date = self.now.date()
         response = self.event.is_eligible_for_signup(self.user)
         self.assertFalse(response['status'])
+        self.assertEqual(421, response['status_code'])
+
+        # Add a new grade rule with no offset and see if signup works
+        self.graderule2 = G(GradeRule, grade=1, offset=0)
+        self.rulebundle.grade_rules.add(self.graderule2)
+
+        response = self.event.is_eligible_for_signup(self.user)
+        self.assertTrue(response['status'])
+        self.assertEqual(211, response['status_code'])
+
+    def testUserGroupRule(self):
+        self.logger.debug("Testing restriction with group rules.")
+
+        # Create the rule and rule_bundles
+        self.group = G(Group, name="Testgroup")
+        self.grouprule = G(UserGroupRule, group=self.group, offset=24)
+        self.assertEqual(self.grouprule.group, self.group)
+        self.assertEqual(self.grouprule.offset, 24)
+        self.assertEqual(unicode(self.grouprule), u"Testgroup etter 24 timer")
+        self.rulebundle = G(RuleBundle, description='') 
+        self.rulebundle.user_group_rules.add(self.grouprule)
+        self.assertEqual(unicode(self.rulebundle), u"Testgroup etter 24 timer")
+        self.attendance_event.rule_bundles.add(self.rulebundle)
+        
+        # Status should be negative, and indicate that the restriction is a grade rule
+        response = self.event.is_eligible_for_signup(self.user)
+        self.assertFalse(response['status'])
+        self.assertEqual(412, response['status_code'])
+
+        # Make the user a grade 1 and try again. Should get message about offset.
+        self.user.groups.add(self.group)
+        response = self.event.is_eligible_for_signup(self.user)
+        self.assertFalse(response['status'])
+        self.assertEqual(422, response['status_code'])
+
+        # Add a new grade rule with no offset and see if signup works
+        self.grouprule2 = G(UserGroupRule, group=self.group, offset=0)
+        self.rulebundle.user_group_rules.add(self.grouprule2)
+
+        response = self.event.is_eligible_for_signup(self.user)
+        self.assertTrue(response['status'])
         self.assertEqual(212, response['status_code'])

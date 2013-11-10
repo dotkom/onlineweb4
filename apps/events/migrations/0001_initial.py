@@ -32,7 +32,7 @@ class Migration(SchemaMigration):
         # Adding model 'Rule'
         db.create_table(u'events_rule', (
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('offset', self.gf('django.db.models.fields.PositiveSmallIntegerField')()),
+            ('offset', self.gf('django.db.models.fields.PositiveSmallIntegerField')(default=0)),
         ))
         db.send_create_signal(u'events', ['Rule'])
 
@@ -60,7 +60,7 @@ class Migration(SchemaMigration):
         # Adding model 'RuleBundle'
         db.create_table(u'events_rulebundle', (
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('description', self.gf('django.db.models.fields.CharField')(max_length=100)),
+            ('description', self.gf('django.db.models.fields.CharField')(max_length=100, null=True, blank=True)),
         ))
         db.send_create_signal(u'events', ['RuleBundle'])
 
@@ -210,7 +210,7 @@ class Migration(SchemaMigration):
             'password': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
             'phone_number': ('django.db.models.fields.CharField', [], {'max_length': '20', 'null': 'True', 'blank': 'True'}),
             'rfid': ('django.db.models.fields.CharField', [], {'max_length': '50', 'null': 'True', 'blank': 'True'}),
-            'started_date': ('django.db.models.fields.DateField', [], {'default': 'datetime.datetime(2013, 11, 9, 0, 0)'}),
+            'started_date': ('django.db.models.fields.DateField', [], {'default': 'datetime.datetime(2013, 11, 10, 0, 0)'}),
             'user_permissions': ('django.db.models.fields.related.ManyToManyField', [], {'to': u"orm['auth.Permission']", 'symmetrical': 'False', 'blank': 'True'}),
             'username': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '30'}),
             'website': ('django.db.models.fields.URLField', [], {'max_length': '200', 'null': 'True', 'blank': 'True'}),
@@ -284,11 +284,11 @@ class Migration(SchemaMigration):
         u'events.rule': {
             'Meta': {'object_name': 'Rule'},
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'offset': ('django.db.models.fields.PositiveSmallIntegerField', [], {})
+            'offset': ('django.db.models.fields.PositiveSmallIntegerField', [], {'default': '0'})
         },
         u'events.rulebundle': {
             'Meta': {'object_name': 'RuleBundle'},
-            'description': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
+            'description': ('django.db.models.fields.CharField', [], {'max_length': '100', 'null': 'True', 'blank': 'True'}),
             'field_of_study_rules': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'to': u"orm['events.FieldOfStudyRule']", 'null': 'True', 'blank': 'True'}),
             'grade_rules': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'to': u"orm['events.GradeRule']", 'null': 'True', 'blank': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
