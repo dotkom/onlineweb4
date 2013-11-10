@@ -59,7 +59,6 @@ class OnlineUser(AbstractUser):
     # NTNU credentials
     ntnu_username = models.CharField(_(u"NTNU-brukernavn"), max_length=10, blank=True, null=True)
 
-    # TODO profile pictures
     # TODO checkbox for forwarding of @online.ntnu.no mail
         
     @property
