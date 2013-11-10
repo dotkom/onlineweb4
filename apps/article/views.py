@@ -70,55 +70,12 @@ def archive(request, name=None, slug=None, year=None, month=None):
             del sorted_months[i]
         dates[year] = sorted_months
 
-    # If we're filtering by tag
-    if name:
-        filtered = []
-        for article in articles:
-            for tag in article.tags:
-                if name == tag.name:
-                    filtered.append(article)
-        articles = filtered
-
-    # If we're filtering by year
-    if 'year' in request.path:
-        filtered = []
-        # If we're filtering by year and month
-        if 'month' in request.path:
-            month = rev_month_strings[month]
-            for article in articles:
-                if article.published_date.year == int(year) and article.published_date.month == int(month):
-                    filtered.append(article)
-        # If we're filtering by year, but not month
-        else:
-            for article in articles:
-                if article.published_date.year == int(year):
-                    filtered.append(article)
-        articles = filtered
-
     # Get the 30 most used tags, then randomize them
     tags = Tag.objects.filter(article_tags__isnull=False).distinct().annotate(num_tags=Count('article_tags__tag')).order_by('-num_tags')
     tags = list(tags[:30])
     random.shuffle(tags)
-    # Get max frequency of tags. This is used for relative sizing in the tag cloud.
-    try:
-        max_tag_frequency = max([x.frequency for x in tags])
-    except ValueError:
-        max_tag_frequency = 1
 
-    # Paginator
-    # Shows 10 articles per page. Note that these are also filtered beforehand by tag or date.
-    paginator = Paginator(articles, 10)
-    page = request.GET.get('page')
-    try:
-        articles = paginator.page(page)
-    except PageNotAnInteger:
-        # Deliver first page.
-        articles = paginator.page(1)
-    except EmptyPage:
-        # Deliver last page.
-        articles = paginator.page(paginator.num_pages)
-
-    return render_to_response('article/archive.html', {'articles': articles, 'tags': tags, 'max_tag_frequency': max_tag_frequency, 'dates': dates } ,context_instance=RequestContext(request))
+    return render_to_response('article/archive.html', {'tags': tags, 'dates': dates } ,context_instance=RequestContext(request))
 
 def archive_tag(request, name, slug):
     return archive(request, name=name, slug=slug)
