@@ -119,6 +119,12 @@ class Event(models.Model):
             response['status_code'] = 502 
             return response
         
+        #Room for me on the event?
+        if not self.attendance_event.room_on_event:
+            response['message'] = _(u"Det er ikke mer plass på dette arrangementet.")
+            response['status_code'] = 503 
+            return response
+
         #
         # Offset calculations.
         #
@@ -155,12 +161,6 @@ class Event(models.Model):
         if timezone.now() < self.attendance_event.registration_start:
             response['message'] = _(u'Påmeldingen har ikke åpnet enda.')
             response['status_code'] = 501 
-            return response
-
-        #Room for me on the event?
-        if not self.attendance_event.room_on_event:
-            response['message'] = _(u"Det er ikke mer plass på dette arrangementet.")
-            response['status_code'] = 503 
             return response
 
         # No objections, set eligible.
