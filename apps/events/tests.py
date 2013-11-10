@@ -154,7 +154,7 @@ class EventTest(TestCase):
         self.assertFalse(response['status'])
         self.assertEqual(412, response['status_code'])
 
-        # Make the user a grade 1 and try again. Should get message about offset.
+        # Make the user a grade 1 and try again. Should get message about offset
         self.user.groups.add(self.group)
         response = self.event.is_eligible_for_signup(self.user)
         self.assertFalse(response['status'])
@@ -167,3 +167,26 @@ class EventTest(TestCase):
         response = self.event.is_eligible_for_signup(self.user)
         self.assertTrue(response['status'])
         self.assertEqual(212, response['status_code'])
+
+    def testFutureAccessTrumpsOffset(self):
+        self.logger.debug("Testing restriction with group rules.")
+        
+        # Create two different rules, and verify that the response is false, but without offset
+        # Group rule
+        self.group = G(Group, name="Testgroup")
+        self.grouprule = G(UserGroupRule, group=self.group, offset=0)
+        self.user.groups.add(self.group)
+        # Grade rule
+        self.graderule = G(GradeRule, grade=1, offset=24)
+        self.user.field_of_study = 1
+        self.user.started_date = self.now.date()
+        # Make the rule bundle
+        self.rulebundle = G(RuleBundle, description='') 
+        self.rulebundle.grade_rules.add(self.graderule)
+        self.rulebundle.user_group_rules.add(self.grouprule)
+        self.attendance_event.rule_bundles.add(self.rulebundle)
+        # Move registration start into the future
+        self.attendance_event.registration_start = self.now + datetime.timedelta(hours=1)
+        response = self.event.is_eligible_for_signup(self.user)
+        self.assertFalse(response['status'])
+        self.assertEqual(402, response['status_code'])
