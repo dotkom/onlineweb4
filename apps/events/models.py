@@ -143,11 +143,6 @@ class Event(models.Model):
                     response['message'] = _(u"Din påmelding er utsatt grunnet prikker.")
                     response['offset'] = postponed_registration_start
             
-        print 'response after marks: ',
-        print response
-
-        print '------------'
-
         # Return response if offset was set.
         if 'offset' in response and response['offset'] > timezone.now():
             return response 
@@ -267,16 +262,11 @@ class GradeRule(Rule):
         """ Override method """
 
         # If the user has the same FOS as this rule    
-        print "grade",
-        print self.grade
-        print "user year",
-        print user.year
         if (self.grade == user.year):
             offset_datetime = self.get_offset_time(registration_start)
             if offset_datetime <= timezone.now():
                 return {"status": True, "message": None, "status_code": 211}
             else:
-                print "I'm here"
                 return {"status": False, "message": _(u"Ditt klassetrinn har utsatt påmelding."), "offset": offset_datetime, "status_code": 421}
         return {"status": False, "message": _(u"Du er ikke i et klassetrinn som har tilgang til dette arrangementet."), "status_code": 411}
 
@@ -358,7 +348,6 @@ class RuleBundle(models.Model):
         # If we found errors, check if there was any that just had an offset. Then find the 
         # largest one so we can show the user when he will be eligible to register.
         if errors:
-            print "checking errors"
             # Offsets are returned as datetime objects. We compare them initially to a date 
             # before registration_start.
             smallest_offset = registration_start - timedelta(days=1)
@@ -369,7 +358,6 @@ class RuleBundle(models.Model):
                     if error['offset'] < smallest_offset:
                         smallest_offset = error['offset']
                         current_response = error
-            print current_response or errors[0]
             return current_response or errors[0]
 
     def __unicode__(self):
@@ -432,8 +420,6 @@ class AttendanceEvent(models.Model):
         # If one satisfies, return true, else check offset or append to response
         for rule_bundle in self.rule_bundles.all():
             response =  rule_bundle.satisfied(user, self.registration_start)
-            print "response in rules_satisfied",
-            print response
             if response['status']:
                 return response
             elif 'offset' in response:
@@ -443,8 +429,6 @@ class AttendanceEvent(models.Model):
             else:
                 errors.append(response)
         
-        print "Here are the errors: ",
-        print errors
         if smallest_offset > timezone.now() and current_response:
             return current_response
         if errors:
