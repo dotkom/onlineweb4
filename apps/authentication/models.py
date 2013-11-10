@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 import datetime
-from pytz import timezone
 
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
@@ -15,7 +14,7 @@ from django.utils import timezone
 FIELD_OF_STUDY_CHOICES = [
     (0, _(u'Gjest')),
     (1, _(u'Bachelor i Informatikk (BIT)')),
-    # master degrees take up the interval [10,30>
+    # master degrees take up the interval [10,30]
     (10, _(u'Software (SW)')),
     (11, _(u'Informasjonsforvaltning (DIF)')),
     (12, _(u'Komplekse Datasystemer (KDS)')),
@@ -60,7 +59,6 @@ class OnlineUser(AbstractUser):
     # NTNU credentials
     ntnu_username = models.CharField(_(u"NTNU-brukernavn"), max_length=10, blank=True, null=True)
 
-    # TODO profile pictures
     # TODO checkbox for forwarding of @online.ntnu.no mail
         
     @property

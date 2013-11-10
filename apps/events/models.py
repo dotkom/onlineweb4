@@ -1,21 +1,20 @@
 #-*- coding: utf-8 -*-
 
 from datetime import datetime, timedelta
-from django.utils import timezone
 
 from django.conf import settings
 from django.contrib.auth.models import Group
 from django.core.urlresolvers import reverse
 from django.db import models
+from django.template.defaultfilters import slugify
+from django.utils import timezone
 from django.utils.translation import ugettext as _
-from django.conf import settings
 
 from filebrowser.fields import FileBrowseField
 import watson
 
 from apps.authentication.models import OnlineUser as User, FIELD_OF_STUDY_CHOICES
 from apps.companyprofile.models import Company
-from filebrowser.fields import FileBrowseField
 from apps.marks.models import Mark
 
 class Event(models.Model):
@@ -120,17 +119,21 @@ class Event(models.Model):
             response['status_code'] = 502 
             return response
         
+        #Room for me on the event?
+        if not self.attendance_event.room_on_event:
+            response['message'] = _(u"Det er ikke mer plass på dette arrangementet.")
+            response['status_code'] = 503 
+            return response
+
         #
         # Offset calculations.
         #
 
         # Are there any rules preventing me from attending?
         # This should be checked last of the offsets, because it can completely deny you access.
-        status_object = self.attendance_event.rules_satisfied(user)
-        print status_object
-        if not status_object['status']:
-            response = status_object
-            if 'offset' not in status_object:
+        response = self.attendance_event.rules_satisfied(user)
+        if not response['status']:
+            if 'offset' not in response:
                 return response
         
         # Do I have any marks that postpone my registration date?
@@ -141,7 +144,8 @@ class Event(models.Model):
             postponed_registration_start = self.attendance_event.registration_start + mark_offset
             if postponed_registration_start > timezone.now():
                 if 'offset' in response and response['offset'] < postponed_registration_start or 'offset' not in response:    
-                    response['status_code'] = 400
+                    response['status'] = False
+                    response['status_code'] = 401
                     response['message'] = _(u"Din påmelding er utsatt grunnet prikker.")
                     response['offset'] = postponed_registration_start
             
@@ -157,12 +161,6 @@ class Event(models.Model):
         if timezone.now() < self.attendance_event.registration_start:
             response['message'] = _(u'Påmeldingen har ikke åpnet enda.')
             response['status_code'] = 501 
-            return response
-
-        #Room for me on the event?
-        if not self.attendance_event.room_on_event:
-            response['message'] = _(u"Det er ikke mer plass på dette arrangementet.")
-            response['status_code'] = 503 
             return response
 
         # No objections, set eligible.
@@ -195,10 +193,13 @@ class Event(models.Model):
         else:
             return settings.DEFAULT_FROM_EMAIL
 
+    @property
+    def slug(self):
+        return slugify(self.title)    
+
     @models.permalink
     def get_absolute_url(self):
-        return ('events_details', None, {'event_id': self.id})
-
+        return ('events_details', None, {'event_id': self.id, 'event_slug': self.slug})
 
     def __unicode__(self):
         return self.title
@@ -211,9 +212,12 @@ class Event(models.Model):
  BEGIN ACCESS RESTRICTION --------------------------------------------------------------------------
 """
 
-class RuleOffset(models.Model):
-    # Django admin seems to ignore max_length so with higher values than a signed int the database will throw an error
-    offset = models.PositiveIntegerField(_(u'antall timer'), unique=True, max_length=3)
+
+class Rule(models.Model):
+    """
+    Super class for a rule object
+    """
+    offset = models.PositiveSmallIntegerField(_(u'utsettelse'), help_text=_(u'utsettelse oppgis i timer'), default=0)
 
     def get_offset_time(self, time):
         if type(time) is not datetime:
@@ -221,20 +225,8 @@ class RuleOffset(models.Model):
         else:
             return time + timedelta(hours=self.offset)
 
-    def __unicode__(self):
-        if self.offset == 1:
-            return "1 time"
-        return "%d timer" % self.offset
-
-
-class Rule(models.Model):
-    """
-    Super class for a rule object
-    """
-    offset = models.ForeignKey(RuleOffset, primary_key=False, null=True, blank=True, default=0)
-
     def satisfied(self, user):
-        """ Checks if a user """
+        """ Checks if a user satisfies the rules """
         return True
 
     def __unicode__(self):
@@ -242,24 +234,29 @@ class Rule(models.Model):
 
 
 class FieldOfStudyRule(Rule):
-    field_of_study = models.SmallIntegerField(_(u'studieretning'), choices=FIELD_OF_STUDY_CHOICES, null=False)
+    field_of_study = models.SmallIntegerField(_(u'studieretning'), choices=FIELD_OF_STUDY_CHOICES)
 
     def satisfied(self, user, registration_start):
         """ Override method """
 
         # If the user has the same FOS as this rule    
         if (self.field_of_study == user.field_of_study):
-            offset_datetime = self.offset.get_offset_time(registration_start)
-            if offset_datetime <= timezone.now():
+            offset_datetime = self.get_offset_time(registration_start)
+            # If the offset is in the past, it means you can attend even with the offset
+            if offset_datetime < timezone.now():
                 return {"status": True, "message": None, "status_code": 210}
+            # If there is no offset, the signup just hasn't started yet
+            elif self.offset == 0:
+                return {"status": False, "message": _(u"Påmeldingen er ikke åpnet enda."), "status_code": 402}
+            # In the last case there is a delayed signup
             else:
-                return {"status": False, "message": _(u"Din studieretning har utsatt påmelding."), "offset": offset_datetime, "status_code": 410}
+                return {"status": False, "message": _(u"Din studieretning har utsatt påmelding."), "offset": offset_datetime, "status_code": 420}
         return {"status": False, "message": _(u"Din studieretning er en annen enn de som har tilgang til dette arrangementet."), "status_code": 410}
 
     def __unicode__(self):
-        if self.offset.offset > 0:
-            time_unit = _(u'timer') if self.offset.offset > 1 else _(u'time')
-            return _("%s etter %d %s") % (unicode(self.get_field_of_study_display()), self.offset.offset, time_unit)
+        if self.offset > 0:
+            time_unit = _(u'timer') if self.offset > 1 else _(u'time')
+            return _("%s etter %d %s") % (unicode(self.get_field_of_study_display()), self.offset, time_unit)
         return unicode(self.get_field_of_study_display())
 
 
@@ -271,17 +268,22 @@ class GradeRule(Rule):
 
         # If the user has the same FOS as this rule    
         if (self.grade == user.year):
-            offset_datetime = self.offset.get_offset_time(registration_start)
-            if offset_datetime <= timezone.now():
+            offset_datetime = self.get_offset_time(registration_start)
+            # If the offset is in the past, it means you can attend even with the offset
+            if offset_datetime < timezone.now():
                 return {"status": True, "message": None, "status_code": 211}
+            # If there is no offset, the signup just hasn't started yet
+            elif self.offset == 0:
+                return {"status": False, "message": _(u"Påmeldingen er ikke åpnet enda."), "status_code": 402}
+            # In the last case there is a delayed signup
             else:
-                return {"status": False, "message": _(u"Ditt klassetrinn har utsatt påmelding."), "offset": offset_datetime, "status_code": 411}
+                return {"status": False, "message": _(u"Ditt klassetrinn har utsatt påmelding."), "offset": offset_datetime, "status_code": 421}
         return {"status": False, "message": _(u"Du er ikke i et klassetrinn som har tilgang til dette arrangementet."), "status_code": 411}
 
     def __unicode__(self):
-        if self.offset.offset > 0:
-            time_unit = _(u'time') if self.offset.offset > 1 else _(u'timer')
-            return _(u"%s. klasse etter %d %s") % (self.grade, self.offset.offset, time_unit)
+        if self.offset > 0:
+            time_unit = _(u'timer') if self.offset > 1 else _(u'time')
+            return _(u"%s. klasse etter %d %s") % (self.grade, self.offset, time_unit)
         return _(u"%s. klasse") % self.grade
 
 
@@ -291,17 +293,22 @@ class UserGroupRule(Rule):
     def satisfied(self, user, registration_start):
         """ Override method """
         if self.group in user.groups.all():
-            offset_datetime = self.offset.get_offset_time(registration_start)
-            if offset_datetime <= timezone.now():
+            offset_datetime = self.get_offset_time(registration_start)
+            # If the offset is in the past, it means you can attend even with the offset
+            if offset_datetime < timezone.now():
                 return {"status": True, "message": None, "status_code": 212}
+            # If there is no offset, the signup just hasn't started yet
+            elif self.offset == 0:
+                return {"status": False, "message": _(u"Påmeldingen er ikke åpnet enda."), "status_code": 402}
+            # In the last case there is a delayed signup
             else:
-                return {"status": False, "message": _(u"%s har utsatt påmelding.") % self.group, "offset": offset_datetime, "status_code": 412}
+                return {"status": False, "message": _(u"%s har utsatt påmelding.") % self.group, "offset": offset_datetime, "status_code": 422}
         return {"status": False, "message": _(u"Du er ikke i en brukergruppe som har tilgang til dette arrangmentet."), "status_code": 412}
 
     def __unicode__(self):
-        if self.offset.offset > 0:
-            time_unit = _(u'time') if self.offset.offset > 1 else _(u'timer')
-            return _(u"%s etter %d %s") % (unicode(self.group), self.offset.offset, time_unit)
+        if self.offset > 0:
+            time_unit = _(u'timer') if self.offset > 1 else _(u'time')
+            return _(u"%s etter %d %s") % (unicode(self.group), self.offset, time_unit)
         return unicode(self.group)
 
 
@@ -309,12 +316,11 @@ class RuleBundle(models.Model):
     """
     Access restriction rule object
     """
-    description = models.CharField(_(u'beskrivelse'), max_length=100)
+    description = models.CharField(_(u'beskrivelse'), max_length=100, blank=True, null=True)
     field_of_study_rules = models.ManyToManyField(FieldOfStudyRule, null=True, blank=True)
     grade_rules = models.ManyToManyField(GradeRule, null=True, blank=True)
     user_group_rules = models.ManyToManyField(UserGroupRule, null=True, blank=True)
 
-    @property
     def get_rule_strings(self):
         rules = []
         for rule in self.field_of_study_rules.all():
@@ -334,7 +340,7 @@ class RuleBundle(models.Model):
             for grade_rule in self.grade_rules.all():
                 response = grade_rule.satisfied(user, registration_start)
                 if response['status']:
-                    return response
+                    return [response]
                 else:
                     errors.append(response)
 
@@ -342,7 +348,7 @@ class RuleBundle(models.Model):
             for fos_rule in self.field_of_study_rules.all():
                 response = fos_rule.satisfied(user, registration_start)
                 if response['status']:
-                    return response
+                    return [response]
                 else:
                     errors.append(response)
 
@@ -350,27 +356,19 @@ class RuleBundle(models.Model):
             for user_group_rule in self.user_group_rules.all():
                 response = user_group_rule.satisfied(user, registration_start)
                 if response['status']:
-                    return response
+                    return [response]
                 else:
                     errors.append(response)
+
+        return errors
         
-        # If we found errors, check if there was any that just had an offset. Then find the 
-        # largest one so we can show the user when he will be eligible to register.
-        if errors:
-            # Offsets are returned as datetime objects. We compare them initially to a date 
-            # before registration_start.
-            smallest_offset = registration_start - timedelta(days=1)
-            current_response = {}
-
-            for error in errors:
-                if 'offset' in error:
-                    if error['offset'] < smallest_offset:
-                        smallest_offset = error['offset']
-                        current_response = error
-            return current_response or errors[0]
-
     def __unicode__(self):
-        return self.description
+        if self.description:
+            return self.description
+        elif self.get_rule_strings():
+            return ", ".join(self.get_rule_strings())
+        else:  
+            return _(u"Tom rule bundle.")
 
 
 
@@ -412,33 +410,46 @@ class AttendanceEvent(models.Model):
         """
         Checks a user against rules applied to an attendance event
         """
+        # If the user is not a member, return False right away
+        # TODO check for guest list
+        if not user.is_member:
+            return {'status': False, 'message': _(u"Dette arrangementet er kun åpent for medlemmer."), 'status_code': 400}
+
         # If there are no rule_bundles on this object, all members of Online are allowed.
         if not self.rule_bundles.exists() and user.is_member:
             return {'status': True, 'status_code': 200}
-
-        smallest_offset = self.registration_start 
-        errors = []    
+        
+        # Put the smallest offset faaar into the future.
+        smallest_offset = timezone.now() + timedelta(days=365)
+        offset_response = {}
+        future_response = {}
+        responses = []    
+        errors = []
 
         # Check all rule bundles
-        # If one satisfies, return true, else check offset or append to response
+        # If one satisfies, return true, else append to the error list
         for rule_bundle in self.rule_bundles.all():
-            response =  rule_bundle.satisfied(user, self.registration_start)
+            responses.extend(rule_bundle.satisfied(user, self.registration_start))
+        
+        for response in responses:
+            print response
             if response['status']:
                 return response
             elif 'offset' in response:
                 if response['offset'] < smallest_offset:
                     smallest_offset = response['offset']
-                    status_object = response
+                    offset_response = response
+            elif response['status_code'] == 402:
+                future_response = response
             else:
                 errors.append(response)
-        
-        if smallest_offset > self.registration_start:
-            return status_object
+
+        if future_response:
+            return future_response
+        if smallest_offset > timezone.now() and offset_response:
+            return offset_response
         if errors:
             return errors[0]
-
-        # If there are no rule bundles and the user is not a member, return False
-        return {'status': False, 'message': _(u"Dette arrangementet er kun åpent for medlemmer."), 'status_code': 400}
 
     def is_attendee(self, user):
         return self.attendees.filter(user=user)
@@ -447,8 +458,8 @@ class AttendanceEvent(models.Model):
         return self.event.title
 
     class Meta:
-        verbose_name = _(u'paamelding')
-        verbose_name_plural = _(u'paameldinger')
+        verbose_name = _(u'påmelding')
+        verbose_name_plural = _(u'påmeldinger')
 
 class CompanyEvent(models.Model):
     """
