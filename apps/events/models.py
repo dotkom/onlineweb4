@@ -408,6 +408,11 @@ class AttendanceEvent(models.Model):
         """
         Checks a user against rules applied to an attendance event
         """
+        # If the user is not a member, return False right away
+        # TODO check for guest list
+        if not user.is_member:
+            return {'status': False, 'message': _(u"Dette arrangementet er kun åpent for medlemmer."), 'status_code': 400}
+
         # If there are no rule_bundles on this object, all members of Online are allowed.
         if not self.rule_bundles.exists() and user.is_member:
             return {'status': True, 'status_code': 200}
@@ -433,9 +438,6 @@ class AttendanceEvent(models.Model):
             return current_response
         if errors:
             return errors[0]
-
-        # If there are no rule bundles and the user is not a member, return False
-        return {'status': False, 'message': _(u"Dette arrangementet er kun åpent for medlemmer."), 'status_code': 400}
 
     def is_attendee(self, user):
         return self.attendees.filter(user=user)
