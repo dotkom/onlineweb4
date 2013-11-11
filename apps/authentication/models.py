@@ -99,7 +99,7 @@ class OnlineUser(AbstractUser):
             if year > 3:
                 return 3
             return year
-        elif 9 < self.field_of_study < 30:  # 10-29 is considered master
+        elif 10 <= self.field_of_study <= 30:  # 10-29 is considered master
             if year >= 2:
                 return 5
             return 4
@@ -109,6 +109,9 @@ class OnlineUser(AbstractUser):
             if year == 1:
                 return 1
             return 4
+        # If user's field of study is not matched by any of these tests, return -1
+        else:
+            return -1
 
     def __unicode__(self):
         return self.get_full_name()
