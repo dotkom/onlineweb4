@@ -164,7 +164,7 @@ class AllowedUsername(models.Model):
         return self.username
 
     class Meta:
-        verbose_name = _(u"tillatt brukernavn")
-        verbose_name_plural = _(u"tillatte brukernavn")
+        verbose_name = _(u"medlemsregister")
+        verbose_name_plural = _(u"medlemsregister")
         ordering = (u"username",)
 
