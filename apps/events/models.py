@@ -432,7 +432,6 @@ class AttendanceEvent(models.Model):
             responses.extend(rule_bundle.satisfied(user, self.registration_start))
         
         for response in responses:
-            print response
             if response['status']:
                 return response
             elif 'offset' in response:
