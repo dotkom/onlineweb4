@@ -90,7 +90,7 @@ def attendEvent(request, event_id):
     form = CaptchaForm(request.POST, user=request.user)
 
     if not form.is_valid():
-        if not 'mark_rules' in request.POST:
+        if not 'mark_rules' in request.POST and not request.user.mark_rules:
             error_message = u'Du må godta prikkreglene for å melde deg på.'
         else:
             error_message = u'Du klarte ikke captcha-en. Er du en bot?'
@@ -101,9 +101,9 @@ def attendEvent(request, event_id):
     # If not, an error message will be present in the returned dict
     attendance_event = event.attendance_event
 
-    user_eligible = event.is_eligible_for_signup(request.user);
+    response = event.is_eligible_for_signup(request.user);
 
-    if user_eligible['status']:   
+    if response['status']:   
         # First time accepting mark rules
         if 'mark_rules' in form.cleaned_data:
             request.user.mark_rules = True
@@ -112,7 +112,7 @@ def attendEvent(request, event_id):
         messages.success(request, _(u"Du er nå påmeldt på arrangementet!"))
         return redirect(event)
     else:
-        messages.error(request, user_eligible['message'])
+        messages.error(request, response['message'])
         return redirect(event)
 
 @login_required
