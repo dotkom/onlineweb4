@@ -57,7 +57,7 @@ class OnlineUser(AbstractUser):
                               default=settings.DEFAULT_PROFILE_PICTURE_URL)
 
     # NTNU credentials
-    ntnu_username = models.CharField(_(u"NTNU-brukernavn"), max_length=10, blank=True, null=True)
+    ntnu_username = models.CharField(_(u"NTNU-brukernavn"), max_length=10, blank=True, null=True, unique=True)
 
     # TODO checkbox for forwarding of @online.ntnu.no mail
         
@@ -150,7 +150,7 @@ class AllowedUsername(models.Model):
     """
     Holds usernames that are considered valid members of Online and the time they expire.
     """
-    username = models.CharField(_(u"brukernavn"), max_length=10)
+    username = models.CharField(_(u"NTNU-brukernavn"), max_length=10, unique=True)
     registered = models.DateField(_(u"registrert"))
     note = models.CharField(_(u"notat"), max_length=100)
     description = models.TextField(_(u"beskrivelse"), blank=True, null=True)
