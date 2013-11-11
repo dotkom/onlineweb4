@@ -106,7 +106,7 @@
                                     <p class="status-text">{{ user_status.message }}</p>
                                 {% endif %}
                             {% else %}
-                                <p class="status-text">Du har ikke tilgang til dette arrangementet</p>
+                                <p class="status-text">{{ user_status.message }}</p>
                             {% endif %}
                         {% endif %}
                     {% endif %}

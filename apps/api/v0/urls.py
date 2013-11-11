@@ -18,7 +18,6 @@ v0_api.register(UserResource())
 # event
 v0_api.register(EventResource())
 v0_api.register(AttendanceEventResource())
-v0_api.register(AttendeeResource())
 v0_api.register(CompanyResource())
 v0_api.register(CompanyEventResource())
 

@@ -95,14 +95,23 @@ function Utils() {
     /* Method to add status messages which mimic django's own. */
     Utils.prototype.setStatusMessage = function(message, tags) {
         if ($('div.messages').length === 0) {
-            prnt = $('nav.subnavbar');
+            var prnt = $('nav.subnavbar');
             if (prnt.length === 0) {
                 prnt = $('nav.navbar');
             }
             $('<div class="container messages"><div class"row"><div class="message-container col-md-12"></div></div></div>').insertAfter(prnt);
         }
-        msgWrapper = $('div.messages');
-        inner = msgWrapper.find('.message-container'); 
-        $('<div class="alert ' + tags + '"><button type="button" class="close" data-dismiss="alert">&times;</button>' + message + '</div>').appendTo(inner);
+        var msgWrapper = $('div.messages');
+        var inner = msgWrapper.find('.message-container');
+        var id = new Date().getTime();
+        $('<div class="alert ' + tags + '" id="' + id +'"><button type="button" class="close" data-dismiss="alert">&times;</button>' + message + '</div>').appendTo(inner);
+
+        //Fadeout and remove the alert
+        setTimeout(function() {
+            $('[id=' + id +']').fadeOut();
+            setTimeout(function() {
+                $('[id=' + id +']').remove();
+            }, 5000);
+        }, 5000);
     }
 }

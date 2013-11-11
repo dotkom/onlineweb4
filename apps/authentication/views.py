@@ -152,7 +152,7 @@ def recover(request):
     
                 # Create the registration token
                 token = uuid.uuid4().hex
-                rt = RegisterToken(user=email.user, email=email.email, token=token)
+                rt = RegisterToken(user=email.user.username, email=email.email, token=token)
                 rt.save()
 
                 email_message = _(u"""
@@ -167,7 +167,7 @@ http://%s/auth/set_password/%s/
 
 Denne lenken vil være gyldig i 24 timer. Dersom du behøver å få tilsendt en ny lenke
 kan dette gjøres med funksjonen for å gjenopprette passord.
-""") % (email.email, email.user, request.META['HTTP_HOST'], token)
+""") % (email.email, email.user.username, request.META['HTTP_HOST'], token)
 
                 send_mail(_(u'Gjenoppretning av passord'), email_message, settings.DEFAULT_FROM_EMAIL, [email.email,])
 
@@ -199,7 +199,7 @@ def set_password(request, token=None):
                     
                     rt.delete()
 
-                    messages.success(request, _(u'Bruker %s har gjennomført vellykket gjenoppretning av passord. Du kan nå logge inn.') % user)
+                    messages.success(request, _(u'Bruker %s har gjennomført vellykket gjenoppretning av passord. Du kan nå logge inn.') % user.username)
                     
                     return HttpResponseRedirect('/')        
             else:

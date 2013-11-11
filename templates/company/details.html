@@ -26,17 +26,13 @@
                 {% if company.site or company.email_address or company.phone_number %}
                 <div class="contactinfo">
                     {% if company.site %}
-                    <p><i class="glyphicon glyphicon-globe"></i> 
-                    <a href="{{ company.site }}" title="{{ company.name }}">{{ company.site }}</a></p>
+                    <p><i class="glyphicon glyphicon-globe"></i><a href="{{ company.site }}" title="{{ company.name }}">{{ company.site }}</a></p>
                     {% endif %}
                     {% if company.email_address %}
-                    <p><i class="glyphicon glyphicon-envelope"></i>
-                    <a href="mailto:{{ company.email_address }}" title="{{ company.name }}">
-                    {{ company.email_address }}
-                    </a></p>
+                    <p><i class="glyphicon glyphicon-envelope"></i><a href="mailto:{{ company.email_address }}" title="{{ company.name }}">{{ company.email_address }}</a></p>
                     {% endif %}
                     {% if company.phone_number %}
-                    <p><i class="glyphicon glyphicon-phone-alt"></i> {{ company.phone_number }}</p>
+                    <p><i class="glyphicon glyphicon-phone-alt"></i>{{ company.phone_number }}</p>
                     {% endif %}
                 </div>
                 {% endif %}

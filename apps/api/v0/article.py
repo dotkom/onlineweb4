@@ -1,18 +1,20 @@
 #-*- coding: utf-8 -*-
 from copy import copy
-from datetime import datetime
+
 from django.conf import settings
-
 from django.template.defaultfilters import slugify
-
-from tastypie import fields
-from tastypie.resources import ModelResource
-
-from apps.article.models import Article, ArticleTag, Tag
-from apps.api.v0.authentication import UserResource
+from django.utils import timezone
 
 from filebrowser.base import FileObject
 from filebrowser.settings import VERSIONS
+from tastypie import fields
+from tastypie.resources import ModelResource
+
+from apps.api.v0.authentication import UserResource
+from apps.article.models import Article, ArticleTag, Tag
+
+
+
 
 class ArticleResource(ModelResource):
     author = fields.ToOneField(UserResource, 'created_by')
@@ -69,26 +71,25 @@ class ArticleResource(ModelResource):
         if (request_year is not None):
             if (request_month is not None):
                 # Filtering on both year and month
-                queryset = Article.objects.filter(published_date__year=request_year, published_date__month=request_month).order_by('-published_date')
+                queryset = Article.objects.filter(published_date__year=request_year, published_date__month=request_month, published_date__lte=timezone.now()).order_by('-published_date')
             else:
                 # Filtering on only year
-                queryset = Article.objects.filter(published_date__year=request_year).order_by('-published_date')
+                queryset = Article.objects.filter(published_date__year=request_year, published_date__lte=timezone.now()).order_by('-published_date')
         else:
             # Not filtering on year, check if filtering on slug (tag) or return default query
             if (request_tag is not None):
                 # Filtering on slug
                 slug_query = Tag.objects.filter(slug = request_tag)
                 slug_connect = ArticleTag.objects.filter(tag = slug_query).values('article_id')
-                queryset = Article.objects.filter(id__in = slug_connect).order_by('-published_date')
-                #queryset = slug_query
+                queryset = Article.objects.filter(id__in = slug_connect, published_date__lte=timezone.now()).order_by('-published_date')
             else:
                 # No filtering at all, return default query
-                queryset = Article.objects.all().order_by('-published_date')
+                queryset = Article.objects.filter(published_date__lte=timezone.now()).order_by('-published_date')
         return queryset
     
     class Meta:     
         API_LIMIT_PER_PAGE = 9
-        queryset = Article.objects.all()
+        queryset = Article.objects.filter(published_date__lte=timezone.now())
         resource_name = 'article/all'
         ordering = ['-published_date']
         include_absolute_url = True
@@ -101,7 +102,7 @@ class ArticleLatestResource(ModelResource):
     author = fields.ToOneField(UserResource, 'created_by')
     
     class Meta:
-        queryset = Article.objects.all()
+        queryset = Article.objects.filter(published_date__lte=timezone.now())
         
         resource_name = 'article/latest'
         filtering = {

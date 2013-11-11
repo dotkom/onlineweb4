@@ -2,18 +2,17 @@
 from collections import namedtuple, defaultdict
 
 from django.http import Http404, HttpResponse
-from django.shortcuts import render_to_response
-from django.shortcuts import render
+from django.shortcuts import render, redirect, render_to_response, get_object_or_404
 from django.template import RequestContext
 from django.contrib.contenttypes.models import ContentType
 from django.contrib import messages
+from django.contrib.admin.views.decorators import staff_member_required
 from django.utils import simplejson
 from django.core.exceptions import ObjectDoesNotExist
 from django.utils.translation import ugettext_lazy as _
-from django.shortcuts import redirect
 from django.utils.safestring import SafeString
 
-from apps.feedback.models import FeedbackRelation, FieldOfStudyAnswer, FIELD_OF_STUDY_CHOICES
+from apps.feedback.models import FeedbackRelation, FieldOfStudyAnswer, RATING_CHOICES, TextAnswer
 from apps.feedback.forms import create_answer_forms
 
 def feedback(request, applabel, appmodel, object_id, feedback_id):
@@ -47,7 +46,7 @@ def feedback(request, applabel, appmodel, object_id, feedback_id):
     return render(request, 'feedback/answer.html',
                   {'answers': answers, 'description':description})
 
-
+@staff_member_required
 def result(request, applabel, appmodel, object_id, feedback_id):
     fbr = _get_fbr_or_404(applabel, appmodel, object_id, feedback_id)
 
@@ -56,45 +55,53 @@ def result(request, applabel, appmodel, object_id, feedback_id):
 
     for q in fbr.questions:
         question_and_answers.append(Qa(q, fbr.answers_to_question(q)))
+        
+    return render(request, 'feedback/results.html',{'question_and_answers': question_and_answers, 
+        'description': fbr.description})
+
+@staff_member_required
+def get_chart_data(request, applabel, appmodel, object_id, feedback_id):
+    fbr = _get_fbr_or_404(applabel, appmodel, object_id, feedback_id)
+    
+    rating_answers = []
+    rating_titles = []
+    answer_collection = dict()
+    answer_collection['replies'] = dict()
+    answer_length = int(len(RATING_CHOICES) +1)
+    for question in fbr.ratingquestion:
+        rating_titles.append(str(question))
+        answers = fbr.answers_to_question(question)
+        answer_count = [0] * answer_length
+        for answer in answers:
+            answer_count[int(answer.answer)] += 1
+        rating_answers.append(answer_count[1:])
     
     fos = fbr.field_of_study_answers.all()
     answer_count = defaultdict(int)
     for answer in fos:
         answer_count[str(answer)] += 1
 
-    ordered_answers = []
-    for _, x in FIELD_OF_STUDY_CHOICES[1:]:
-        ordered_answers.append([x, answer_count[x]])
-  
-    description = fbr.description
+    answer_collection['replies']['ratings'] = rating_answers
+    answer_collection['replies']['titles'] = rating_titles
+    answer_collection['replies']['fos'] = answer_count.items()
+   
+    return HttpResponse(simplejson.dumps(answer_collection), mimetype='application/json')
 
-    foschartdata = "["
-    for a in ordered_answers:
-        if a[1] > 0:
-            foschartdata += simplejson.dumps({'label':a[0], 'value':a[1]}) + ','
-    
-
-
-    foschartdata = foschartdata[:-1] + ']'
-
-    rating_question_answers = []
-    rating_questions = []
-    for i in range(0, len(fbr.ratingquestion)):
-        question = fbr.answers_to_question(fbr.ratingquestion[i])
-        rating_questions.append(str(fbr.ratingquestion[i]))
-        answers = [0] * 7
-        for a in question:
-            answers[int(a.answer)] += 1
-        answers = answers[1:]
-        rating_question_answers.append(answers)
-    return render(request, 'feedback/results.html',
-                  {'question_and_answers': question_and_answers, 'foschartdata': SafeString(foschartdata), 'description': description, "rating_question_answers": rating_question_answers, "rating_questions": rating_questions})
 
 def index(request):
     feedbacks = FeedbackRelation.objects.all()
     return render_to_response('feedback/index.html',
                               {'feedbacks': feedbacks},
                               context_instance=RequestContext(request))
+
+@staff_member_required
+def delete_answer(request):
+    if request.method == 'POST':
+        answer_id = request.POST.get('answer_id')
+        answer = get_object_or_404(TextAnswer, pk=answer_id)
+        answer.delete()
+        return HttpResponse(status = 200)
+    return HttpResponse(status=404)
 
 
 def _get_fbr_or_404(app_label, app_model, object_id, feedback_id):

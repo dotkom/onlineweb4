@@ -83,7 +83,6 @@ def get_threshold():
 
     # Todays date
     now = datetime.datetime.now().date()
-    print "now = "+ str(now)
     # Threshhold is the day in the past which marks will be filtered on by mark_added_date
     threshold = now - datetime.timedelta(days=DURATION)
     summer_start_date = datetime.date(now.year, SUMMER[0][0], SUMMER[0][1])
