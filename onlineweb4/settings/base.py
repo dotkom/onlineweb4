@@ -228,6 +228,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "django.core.context_processors.static",
     "django.core.context_processors.tz",
     "django.contrib.messages.context_processors.messages",
+    "onlineweb4.context_processors.analytics",
 )
 
 # Remember to keep 'local' last, so it can override any setting.
