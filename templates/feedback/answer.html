@@ -8,12 +8,13 @@
             <div class="page-header">
                 <h2>{{ description }}</h2>
             </div>
-            <form method="POST" role="form" class="feedback-answer-label" id="feedback"> {% csrf_token %}
+            <form method="POST" role="form" class="feedback-answer-label" id="feedback"> 
+                {% csrf_token %}
                 <div class="form-group">
-		{% for f in answers %}
-                    {{ f }}
-                {% endfor %}
-		</div>
+		            {% for f in answers %}
+                        {{ f }}
+                    {% endfor %}
+		        </div>
                 <div class="form-group">
                     <button class="btn btn-success" type="submit">Send</button>
                 </div>
