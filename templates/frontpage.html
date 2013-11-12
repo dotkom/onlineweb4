@@ -3,6 +3,10 @@
 {% load compress %}
 {% load markup %}
 
+{% block title %}
+Online, linjeforeningen for informatikk ved NTNU
+{% endblock title %}
+
 {% block js %}
     {{ block.super }}
     <script type="text/javascript" src="{{ STATIC_URL }}js/libs/jquery.debouncedresize.js"></script>

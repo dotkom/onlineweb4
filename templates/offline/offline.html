@@ -1,5 +1,10 @@
 {% extends 'base.html' %}
 {% load chunks %}
+
+{% block title %}
+Tidsskriftet Offline - Online
+{% endblock title %}
+
 {% block js %}
     {{ block.super }}
     <script src="{{ STATIC_URL }}/js/offline-filter.js"></script>
