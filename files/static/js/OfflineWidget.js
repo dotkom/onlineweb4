@@ -13,6 +13,9 @@ function OfflineWidget (Utils){
                 var itemWrapperStart = '<div class="item centered">';
                 var itemWrapperEnd = '</div>';
                 var insertMe = '';
+                var maxWidth = $('.carousel-inner').width();
+                var maxWidthPer = 150;
+                var issuesPerSlide = Math.floor(maxWidth/maxWidthPer);
                 
                 if (data.objects.length <= 0) {
                     // No issues added
@@ -25,7 +28,7 @@ function OfflineWidget (Utils){
                         }
                         insertMe += '<a href="'+prefix+data.objects[i].issue+'"><img src="'+prefix+data.objects[i].issue+suffix+'" /></a>';
 
-                        if (i == data.objects.length - 1 || (i + 1) % 3 == 0) {
+                        if (i == data.objects.length - 1 || (i + 1) % issuesPerSlide == 0) {
                             insertMe += itemWrapperEnd;
                             if (i != data.objects.length - 1) {
                                 insertMe += itemWrapperStart;
