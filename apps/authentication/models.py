@@ -131,6 +131,14 @@ class Email(models.Model):
     primary = models.BooleanField(_(u"primær"), default=False)
     verified = models.BooleanField(_(u"verifisert"), default=False, editable=False)
 
+    def save(self, *args, **kwargs):
+        primary_email = self.user.get_email()
+        if not primary_email:
+            self.primary = True
+        if primary_email:
+            self.primary = False
+        super(Email, self).save(*args, **kwargs)
+
     def __unicode__(self):
         return self.email
 
