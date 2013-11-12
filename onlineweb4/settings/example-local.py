@@ -44,6 +44,8 @@ EMAIL_TRIKOM = DEVELOPMENT_EMAIL
 #EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'  # real
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # prints
 
+# GOOGLE_ANALYTICS_KEY = 'UA-XXXX-Y'
+
 #MEDIA_ROOT = '/var/websites/prod/onlineweb_uploads'
 MEDIA_ROOT = os.path.join(PROJECT_ROOT_DIRECTORY, "uploaded_media/")
 
