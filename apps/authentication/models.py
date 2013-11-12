@@ -78,7 +78,10 @@ class OnlineUser(AbstractUser):
         return full_name.strip()
 
     def get_email(self):
-        return self.get_emails().filter(primary = True)[0]
+        email = self.get_emails().filter(primary = True)
+        if email:
+            return email[0]
+        return None
 
     def get_emails(self):
         return Email.objects.all().filter(user = self)
