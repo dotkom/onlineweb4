@@ -57,7 +57,7 @@ class OnlineUser(AbstractUser):
                               default=settings.DEFAULT_PROFILE_PICTURE_URL)
 
     # NTNU credentials
-    ntnu_username = models.CharField(_(u"NTNU-brukernavn"), max_length=10, blank=True, null=True)
+    ntnu_username = models.CharField(_(u"NTNU-brukernavn"), max_length=10, blank=True, null=True, unique=True)
 
     # TODO checkbox for forwarding of @online.ntnu.no mail
         
@@ -125,8 +125,8 @@ class OnlineUser(AbstractUser):
 class Email(models.Model):
     user = models.ForeignKey(OnlineUser, related_name="email_user")
     email = models.EmailField(_(u"epostadresse"), unique=True)
-    primary = models.BooleanField(_(u"aktiv"), default=False)
-    verified = models.BooleanField(_(u"verifisert"), default=False)
+    primary = models.BooleanField(_(u"primær"), default=False)
+    verified = models.BooleanField(_(u"verifisert"), default=False, editable=False)
 
     def __unicode__(self):
         return self.email
@@ -153,7 +153,7 @@ class AllowedUsername(models.Model):
     """
     Holds usernames that are considered valid members of Online and the time they expire.
     """
-    username = models.CharField(_(u"brukernavn"), max_length=10)
+    username = models.CharField(_(u"NTNU-brukernavn"), max_length=10, unique=True)
     registered = models.DateField(_(u"registrert"))
     note = models.CharField(_(u"notat"), max_length=100)
     description = models.TextField(_(u"beskrivelse"), blank=True, null=True)
@@ -167,7 +167,7 @@ class AllowedUsername(models.Model):
         return self.username
 
     class Meta:
-        verbose_name = _(u"tillatt brukernavn")
-        verbose_name_plural = _(u"tillatte brukernavn")
+        verbose_name = _(u"medlemsregister")
+        verbose_name_plural = _(u"medlemsregister")
         ordering = (u"username",)
 
