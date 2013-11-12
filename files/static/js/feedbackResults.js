@@ -157,7 +157,7 @@ $(document).ready(function()
 
     $('tr').each(function(i, row)
     {
-        $(row).click(function()
+        $(row).find('.icon').click(function()
         {
             answerId = $(row).find('td.answer-id').text();
             deleteAnswer(answerId, row);
