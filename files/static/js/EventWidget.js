@@ -60,6 +60,12 @@ function EventWidget (Utils){
                     $('#event-items').html('<p class="ingress">Ingen arrangementer funnet</p>');
                 }
                 
+                if ( ($($('.event-list')[0]).children().length <= 1 && $($('.event-list')[1]).children().length == 1) ||
+                    ($($('.event-list')[0]).children().length == 1 && $($('.event-list')[1]).children().length <= 1)
+                ) {
+                    $('.event-list li').addClass('border');
+                }
+
                 // Calling the callback
                 $('.carousel').carousel();
                 callback();

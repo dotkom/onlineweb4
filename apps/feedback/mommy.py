@@ -1,26 +1,42 @@
 # -*- coding: utf-8 -*-
-
 import datetime
-from django.utils import timezone
 
+from django.utils import timezone
 from django.contrib.contenttypes.models import ContentType
 from django.conf import settings
+from django.core.mail import EmailMessage
 
 from apps.events.models import Event, AttendanceEvent, Attendee
 from apps.feedback.models import FeedbackRelation
 from apps.marks.models import Mark, UserEntry
+from apps.mommy import Task, schedule
 
-class FeedbackMail():
+class FeedbackMail(Task):
+
+    @staticmethod
+    def run():
+       active_feedbacks = FeedbackRelation.objects.filter(active=True)
+       
+       for feedback in active_feedbacks:
+            message = FeedbackMail.generate_message(feedback)
+
+            if message.send:
+                EmailMessage(message.subject, unicode(message), message.committee_mail, [], message.attended_mails).send()
+
+                if message.results_message:
+                    EmailMessage("Feedback resultat", message.results_message,"online@online.ntnu.no", [message.committee_mail]).send() 
+
     @staticmethod
     def generate_message(feedback):
         today = timezone.now().date()
         yesterday = today + datetime.timedelta(days=-1)
         not_responded = FeedbackMail.get_users(feedback)
-        #return false if everyone has answered
-        if not not_responded:
-            return None
-        
         message = Message()
+
+        #return if everyone has answered
+        if not not_responded:
+            return message
+        
         message.attended_mails = FeedbackMail.get_user_mails(not_responded)
 
         message.committee_mail = FeedbackMail.get_committee_email(feedback)
@@ -39,16 +55,18 @@ class FeedbackMail():
         message.start_date = FeedbackMail.start_date_message(start_date)
 
         if deadline_diff < 0: #Deadline passed
-            FeedbackMail.set_marks(title, not_responded)
-                
             feedback.active = False
             feedback.save()
 
-            message.intro = u"Fristen for å svare på \"%s\" har gått ut og du har fått en prikk." % (title)
-            message.mark = ""
-            message.start_date = ""
-            message.link = ""
-            message.send = True
+            if feedback.gives_mark:
+                FeedbackMail.set_marks(title, not_responded)    
+                
+                message.intro = u"Fristen for å svare på \"%s\" har gått ut og du har fått en prikk." % (title)
+                message.mark = ""
+                message.start_date = ""
+                message.link = ""
+                message.send = True
+
         elif deadline_diff < 1: #Last warning
             message.deadline = u"\n\nI dag innen 23:59 er siste frist til å svare på skjemaet."
             
@@ -56,7 +74,7 @@ class FeedbackMail():
             u"gjenværende deltagere på \"%s\".\nDere kan se feedback-resultatene på:\n%s\n" % \
             (title, results_link)
             message.send = True
-        elif deadline_diff < 3: # 3 days from the deadline
+        elif deadline_diff < 3 and feedback.gives_mark: # 3 days from the deadline
             message.deadline = u"\n\nFristen for å svare på skjema er %s innen kl 23:59." % (deadline)
             message.send = True
         elif FeedbackMail.send_first_notification(feedback): #Day after the event or feedback creation 
@@ -73,9 +91,9 @@ class FeedbackMail():
     def send_first_notification(feedback):
         start_date = FeedbackMail.start_date(feedback)
 
+        #The object that requires feedback doesnt have a start date
         if not start_date:
             yesterday = timezone.now().date() - datetime.timedelta(days=1)
-            #The object that requires feedback doesnt have a start date
             if feedback.created_date == yesterday.date():
                 #Send the first notification the day after the feedback relation was created
                 return True
@@ -150,8 +168,7 @@ class FeedbackMail():
             user_entry.user = user
             user_entry.mark = mark
             user_entry.save()
-
-
+    
 class Message():
     subject = ""
     intro = ""
@@ -179,3 +196,4 @@ class Message():
             self.end)
         return message
 
+schedule.register(FeedbackMail, day_of_week='mon-sun', hour=8, minute=0)
