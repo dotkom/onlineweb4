@@ -201,27 +201,33 @@ function ArticleArchive (Utils) {
                 success: function(data) {
                     // Variables
                     var num = 1;
-                    var output = '<div class="row">'; // If we are not on the first page (and not using the filters), make the elements hidden to fade them in later
+                    var output = '';
 
                     // The loop
                     for (var i = 0; i < data.articles.length; i++) {
                         // The markup
-                        output += '<div class="col-md-6 article'+((page == 1 && !overwrite)?'':' article-hidden')+'">';
-                        output += '    <a href="/article/'+data.articles[i].id+'/'+data.articles[i].slug+'">';
-                        output += '    <img src="'+data.articles[i].image_article_front_small+'" width="100%" alt="'+data.articles[i].heading+'" />';
-                        output += '    </a>';
-                        output += '    <a href="'+data.articles[i].id+'/'+data.articles[i].slug+'"><h3>'+data.articles[i].heading+'</h3></a>';
-                        output += '    <div class="row">';
-                        output += '        <div class="col-md-12 article-detail-meta">';
+                        output += '<div class="row">';
+                        output += '<div class="col-md-12 article'+((page == 1 && !overwrite)?'':' article-hidden')+'">';
+                        output += '  <div class="row">';
+                        output += '    <div class="col-md-4">';
+                        output += '      <div class="row">';
+                        output += '        <a href="/article/'+data.articles[i].id+'/'+data.articles[i].slug+'">';
+                        output += '          <img src="'+data.articles[i].image_article_front_featured+'" width="100%" alt="'+data.articles[i].heading+'" />';
+                        output += '        </a>';
+                        output += '      </div><!-- end row -->';
+                        output += '    </div><!-- end col-md-4 -->';
+                        output += '    <div class="col-md-8">';
+                        output += '      <a href="'+data.articles[i].id+'/'+data.articles[i].slug+'"><h3>'+data.articles[i].heading+'</h3></a>';
+                        output += '      <div class="row">';
+                        output += '          <div class="col-md-12 article-detail-meta">';
                         output += '            <span class="meta-caption">Publisert</span> <span>'+moment(data.articles[i].published_date).format('D. MMMM YYYY')+'</span>';
-                        output += '        </div>';
-                        output += '    </div>';
-                        output += '    <p>'+data.articles[i].ingress_short+'</p>';
-                        output += '</div>';
-                        
-                        // Every third element in a chunk
-                        if (num % 2 == 0)
-                            output += '</div><div class="row">';
+                        output += '          </div>';
+		        output += '      </div><!-- end row -->';
+                        output += '      <p>'+data.articles[i].ingress_short+'</p>';
+                        output += '    </div><!-- end col-md-8 -->';
+                        output += '  </div><!-- end row -->';
+                        output += '</div><!-- end col-md-12 -->';
+                        output += '</div><!-- end row -->';
                     
                         // Increasing num!    
                         num++;

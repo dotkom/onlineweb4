@@ -1,3 +1,5 @@
+@import 'colors.less';
+
 
 section#article-details {
 
@@ -49,6 +51,25 @@ section#article-details {
 }
 
 section#article_archive {
+
+    h3 {
+        margin-top: 0px;
+    }
+
+    img {
+        margin-bottom: 20px;
+    }
+
+    #filterbox {
+
+        background: @baby-blue-medium;
+        padding: 15px;
+
+        h3 {
+            color: white;
+        }
+    }
+    
     .article-detail-meta {
         h3 {
             padding-top: 0px;
@@ -71,7 +92,6 @@ section#article_archive {
         a:hover {
             color: white;
         }
-        margin-top:20px;
         .tag {
             display: inline-block;
             margin-bottom: 5px;
