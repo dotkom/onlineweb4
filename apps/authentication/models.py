@@ -78,7 +78,10 @@ class OnlineUser(AbstractUser):
         return full_name.strip()
 
     def get_email(self):
-        return self.get_emails().filter(primary = True)[0]
+        email = self.get_emails().filter(primary = True)
+        if email:
+            return email[0]
+        return None
 
     def get_emails(self):
         return Email.objects.all().filter(user = self)
@@ -128,6 +131,14 @@ class Email(models.Model):
     primary = models.BooleanField(_(u"primær"), default=False)
     verified = models.BooleanField(_(u"verifisert"), default=False, editable=False)
 
+    def save(self, *args, **kwargs):
+        primary_email = self.user.get_email()
+        if not primary_email:
+            self.primary = True
+        else:
+            self.primary = False
+        super(Email, self).save(*args, **kwargs)
+
     def __unicode__(self):
         return self.email
 
@@ -167,7 +178,7 @@ class AllowedUsername(models.Model):
         return self.username
 
     class Meta:
-        verbose_name = _(u"medlemsregister")
+        verbose_name = _(u"medlem")
         verbose_name_plural = _(u"medlemsregister")
         ordering = (u"username",)
 
