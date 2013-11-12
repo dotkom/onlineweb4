@@ -122,8 +122,8 @@ class OnlineUser(AbstractUser):
 class Email(models.Model):
     user = models.ForeignKey(OnlineUser, related_name="email_user")
     email = models.EmailField(_(u"epostadresse"), unique=True)
-    primary = models.BooleanField(_(u"aktiv"), default=False)
-    verified = models.BooleanField(_(u"verifisert"), default=False)
+    primary = models.BooleanField(_(u"primær"), default=False)
+    verified = models.BooleanField(_(u"verifisert"), default=False, editable=False)
 
     def __unicode__(self):
         return self.email
