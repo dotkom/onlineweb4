@@ -211,7 +211,7 @@
                         </p>
                         <p>Ved å melde deg på, godtar du prikkereglene.</p>
                         {% csrf_token %}
-                        {{ captcha_form }}
+                        {{ captcha_form|crispy }}
                     </div>
                     <div class="modal-footer">
                         <button class="btn" data-dismiss="modal" aria-hidden="true">Lukk</button>
