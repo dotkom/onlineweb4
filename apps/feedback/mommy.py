@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import datetime
+import socket
 
 from django.utils import timezone
 from django.contrib.contenttypes.models import ContentType
@@ -135,9 +136,8 @@ class FeedbackMail(Task):
 
     @staticmethod
     def get_link(feedback):
-        #hostname = socket.gethostname()
-        #TODO Hostname returns name of the server, not the url of the running django application, look into alternative solution
-        return str("www.online.ntnu.no" + feedback.get_absolute_url())
+        hostname = socket.getfqdn()
+        return str(hostname + feedback.get_absolute_url())
 
     @staticmethod
     def get_title(feedback):
