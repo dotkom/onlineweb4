@@ -218,7 +218,7 @@ function ArticleArchive (Utils) {
                         output += '    </div><!-- end col-md-4 -->';
                         output += '    <div class="col-md-8">';
                         output += '      <div class="pull-right article-detail-meta">';
-                        output += '        <span>'+moment(data.articles[i].published_date).format('DD.MM.YY')+'</span>';
+                        output += '        <span>'+moment(data.articles[i].published_date).format('DD.MM.YYYY')+'</span>';
                         output += '      </div>';
                         output += '      <a href="'+data.articles[i].id+'/'+data.articles[i].slug+'"><h3>'+data.articles[i].heading+'</h3></a>';
                         output += '      <p>'+data.articles[i].ingress_short+'</p>';
