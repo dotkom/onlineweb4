@@ -26,10 +26,10 @@ v0_api.register(ArticleResource())
 v0_api.register(ArticleLatestResource())
 
 # marks
-v0_api.register(MarkResource())
-v0_api.register(EntryResource())
-v0_api.register(MyMarksResource())
-v0_api.register(MyActiveMarksResource())
+#v0_api.register(MarkResource())
+#v0_api.register(EntryResource())
+#v0_api.register(MyMarksResource())
+#v0_api.register(MyActiveMarksResource())
 
 # offline
 v0_api.register(IssueResource())
