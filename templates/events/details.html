@@ -2,8 +2,12 @@
 {% load fb_versions %}
 {% load markup %}
 {% load crispy_forms_tags %}
-{% block content %}
 
+{% block title %}
+{{ event.title }} - Online
+{% endblock title %}
+
+{% block content %}
     <section id="event-details">
     <div class="container">
     <div class="row">
