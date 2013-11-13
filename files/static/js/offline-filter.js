@@ -31,7 +31,7 @@ $(function() {
         // Check if currently animating
         if (!buzy) {
             // Swap classes
-            $("#filter-menu .active").removeClass("active");
+            $("#nav-header .active").removeClass("active");
             $(this).parent().addClass("active");
             
             // The sort
@@ -50,12 +50,12 @@ $(function() {
         $('#filter-reset').fadeOut(400);
         
         // Checking if currently animated and filter is set
-        if (!buzy && $('#filter-menu .active').length != 0) {
+        if (!buzy && $('#nav-header .active').length != 0) {
             // Resetting issues to display
             num_issues_to_display = num_issues_to_display_max;
             
             // Removing active menu-point
-            $('#filter-menu .active').removeClass('active');
+            $('#nav-header .active').removeClass('active');
             
             // Adding displayable to all issues
             $('.offline_issue').each(function() {
