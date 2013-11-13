@@ -1,10 +1,10 @@
 #-*- coding: utf-8 -*-
 
-import datetime
-from django.utils import timezone
+from datetime import date, timedelta
 
 from django.conf import settings
 from django.db import models
+from django.utils import timezone
 from django.utils.translation import ugettext as _
 
 from apps.authentication.models import OnlineUser as User
@@ -75,6 +75,10 @@ class UserEntry(models.Model):
 
 
 def get_threshold():
+    """
+    Calculates the offset, which is the amount of days  
+    """
+
     DURATION = 60
     # summer starts 1st June, ends 15th August
     SUMMER = ((6, 1), (8, 15))
@@ -82,7 +86,7 @@ def get_threshold():
     WINTER = ((12, 1), (1, 15))
 
     # Todays date
-    now = datetime.datetime.now().date()
+    now = timezone.now().date()
     # Threshhold is the day in the past which marks will be filtered on by mark_added_date
     threshold = now - datetime.timedelta(days=DURATION)
     summer_start_date = datetime.date(now.year, SUMMER[0][0], SUMMER[0][1])
@@ -110,3 +114,46 @@ def get_threshold():
 
     # The returned value is a datetime object
     return datetime.datetime.combine(threshold, datetime.time())
+
+def _get_expiry_date(start_date):
+    """
+    Calculates the datetime in the future when a mark will expire. 
+    """
+
+    DURATION = 60
+    # summer starts 1st June, ends 15th August
+    SUMMER = ((6, 1), (8, 15))
+    # winter starts 1st December, ends 15th January
+    WINTER = ((12, 1), (1, 15))
+
+    # Todays date
+    now = timezone.now().date()
+    # Add the duration
+    expiry_date = start_date + timedelta(days=DURATION)
+    # Set up the summer and winter vacations
+    summer_start_date = datetime.date(now.year, SUMMER[0][0], SUMMER[0][1])
+    summer_end_date = datetime.date(now.year, SUMMER[1][0], SUMMER[1][1])
+    first_winter_start_date = datetime.date(now.year, WINTER[0][0], WINTER[0][1])
+    first_winter_end_date = datetime.date(now.year + 1, WINTER[1][0], WINTER[1][1])
+    second_winter_end_date = datetime.date(now.year, WINTER[1][0], WINTER[1][1])
+
+    # If we're in the middle of summer, add the days remaining of summer
+    if summer_start_date < now < summer_end_date:
+        expiry_date += timedelta(days=(summer_end_date - now).days)
+    # If the number of days between now and the beginning of summer vacation is less
+    # than the duration, we need to add the length of summer to the expiry date
+    elif 0 < (summer_start_date - now).days < DURATION:
+        expiry_date += timedelta(days=(summer_end_date - summer_start_date).days)
+    # Same for middle of winter vacation, which will be at the end of the year
+    elif first_winter_start_date < now < first_winter_end_date:
+        expiry_date += timedelta(days=(first_winter_end_date - now).days)
+    # And for before the vacation
+    elif 0 < (first_winter_start_date - now).days < DURATION:
+        expiry_date += timedelta(days=(first_winter_end_date - first_winter_start_date).days)
+    # Then we need to check the edge case where now is between newyears and and of winter vacation
+    elif second_winter_end_date < now:
+        expiry_date += timedelta(days=(second_winter_end_date - now).days)
+
+    # The returned value is a datetime object
+    return datetime.datetime.combine(expiry_date, datetime.time())
+
