@@ -1,3 +1,5 @@
+@import 'colors.less';
+
 
 section#article-details {
 
@@ -49,29 +51,54 @@ section#article-details {
 }
 
 section#article_archive {
-    .article-detail-meta {
-        h3 {
-            padding-top: 0px;
-            margin-top: 0px;
-            line-height: normal;
-        }
 
-        font-weight:300;
-        padding-bottom: 10px;
-        .meta-caption {
-            font-weight:600;
+    h3 {
+        margin-top: 0px;
+        font-size: 20px;
+    }
+
+    img {
+        margin-bottom: 20px;
+    }
+
+    #filterbox {
+
+        background: @baby-blue-medium;
+        padding: 15px;
+        margin-bottom: 20px;
+
+        h3 {
+            color: white;
         }
+    }
+    
+    .article-detail-meta {
+
+        color: #ee7810;
+        font-size: 18px;
+
+        font-weight:400;
+        padding-bottom: 10px;
     }
 
     p {
-        margin-bottom: 30px;
+        margin-bottom: 5px;
+        font-size: 16px;
+        font-weight: 300;
+    }
+
+    .meta {
+        border-top: 1px dotted #ccc;
+        margin-top: 10px;       
+        p {
+            font-size: 11px;
+        }
     }
 
     .tag-cloud {
         a:hover {
             color: white;
         }
-        margin-top:20px;
         .tag {
             display: inline-block;
             margin-bottom: 5px;
