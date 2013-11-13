@@ -11,4 +11,4 @@ class UserResource(ModelResource):
     class Meta:
         queryset = User.objects.all()
         resource_name = 'user'
-        fields = ['username', 'first_name', 'last_name', 'last_login', 'email', ]
+        fields = ['username', 'first_name', 'last_name', 'email', ]
