@@ -16,6 +16,7 @@ import watson
 
 from apps.events.forms import CaptchaForm
 from apps.events.models import Event, AttendanceEvent, Attendee
+from apps.events.pdf_generator import EventPDF
 
 
 def index(request):
@@ -155,3 +156,8 @@ def _search_indexed(request, query, filters):
 
     return Event.objects.filter(**kwargs).prefetch_related(
             'attendance_event', 'attendance_event__attendees')
+
+
+def generate_pdf(request, event_id):
+    event = get_object_or_404(Event, pk=event_id)
+    return EventPDF(event).render_pdf()
