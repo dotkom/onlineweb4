@@ -52,17 +52,34 @@ $(function() {
     
     // Clicking the links in the topnav
     $('.nav').on('click', 'a', function(e) {
-        var jumpto_section = $(this).data('section');
-        if (typeof jumpto_section !== 'undefined') {
-            var top_position = navs['#'+jumpto_section];
-            $('html, body').animate({scrollTop: $('#'+jumpto_section).offset().top - TOP_OFFSET_ADJUST}, 250);
-        }
+        jump($(this).data('section'));
     });
     
+    var jump = function (section) {
+        if (typeof section !== 'undefined') {
+            $('html, body').animate({scrollTop: $('#'+section).offset().top - TOP_OFFSET_ADJUST}, 250);
+        }
+    };
+
     // TODO: heavy shit? Find a reliable way to setnavs instead of doing it fucking all the time.
     $(window).scroll(scrollspy);
+
+    if ($(window).width < 1200) {
+
+    }
+    $(window).resize(function() {
+      $(window).scroll(scrollspy);
+    });
+
     
     // On load highlight the current menu-item if an anchor is represented
     scrollspy();
+
+    // reposition after reload / link open with hashUrl
+    setTimeout(function () {
+        if ($(location).attr('hash')) {
+            jump($(location).attr('hash').substring(1));
+        }
+    }, 200);
 });
 
