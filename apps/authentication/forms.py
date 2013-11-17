@@ -47,9 +47,9 @@ class RegisterForm(forms.Form):
     email = forms.EmailField(label=_("Epost"), max_length=50)
     password = forms.CharField(widget=forms.PasswordInput(render_value=False), label=_("Passord"))
     repeat_password = forms.CharField(widget=forms.PasswordInput(render_value=False), label=_("Gjenta passord"))
-    address = forms.CharField(label=_("Adresse"), max_length=50)
-    zip_code = forms.CharField(label=_("Postnummer"), max_length=4)
-    phone = forms.CharField(label=_("Telefon"), max_length=20)
+    address = forms.CharField(label=_("Adresse"), max_length=50, required=False)
+    zip_code = forms.CharField(label=_("Postnummer"), max_length=4, required=False)
+    phone = forms.CharField(label=_("Telefon"), max_length=20, required=False)
     
     def clean(self):
         super(RegisterForm, self).clean()
@@ -74,8 +74,9 @@ class RegisterForm(forms.Form):
 
             # ZIP code digits only
             zip_code = cleaned_data['zip_code']
-            if len(zip_code) != 4 or not zip_code.isdigit():
-                self._errors['zip_code'] = self.error_class([_(u"Postnummer må bestå av fire siffer.")])
+            if len(zip_code) != 0:
+                if len(zip_code) != 4 or len(zip_code) != 0 or not zip_code.isdigit():
+                    self._errors['zip_code'] = self.error_class([_(u"Postnummer må bestå av fire siffer.")])
 
             return cleaned_data 
 
