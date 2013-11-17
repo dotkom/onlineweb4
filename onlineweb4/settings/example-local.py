@@ -4,6 +4,9 @@ from base import PROJECT_ROOT_DIRECTORY
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
+# Change this to the host in production
+ALLOWED_HOSTS = '*'
+
 DATABASES = {
     #'default': {
         #'ENGINE': 'django.db.backends.postgresql_psycopg2',

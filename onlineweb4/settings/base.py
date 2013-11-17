@@ -76,6 +76,8 @@ STATICFILES_FINDERS = (
     'compressor.finders.CompressorFinder',
 )
 
+COMPRESS_FILES = True
+COMPRESS_ENABLED = True
 COMPRESS_OUTPUT_DIR = 'cache'
 COMPRESS_PRECOMPILERS = (
     ('text/less', 'lessc {infile} {outfile}'),
@@ -83,15 +85,12 @@ COMPRESS_PRECOMPILERS = (
 
 COMPRESS_CSS_FILTERS = [
     'compressor.filters.css_default.CssAbsoluteFilter',
-    'compressor-filters.cssmin.CSSMinFilter',
+    # We want this later on, but it breaks production so disabling for now.
+    #'compressor-filters.cssmin.CSSMinFilter',
 ]
 COMPRESS_JS_FILTERS = [
     'compressor.filters.jsmin.JSMinFilter',
 ]
-
-COMPRESS_PRECOMPILERS = (
-    ('text/less', 'lessc -x {infile} {outfile}'),
-)
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
@@ -139,8 +138,8 @@ INSTALLED_APPS = (
     'django_dynamic_fixture',
     'captcha',
     'compressor',
-    
     'watson',
+    'gunicorn',
 
     # Django apps
     'django.contrib.admin',

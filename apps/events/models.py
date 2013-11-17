@@ -51,7 +51,7 @@ class Event(models.Model):
         users = []
         try:
             if self.attendance_event.attendees.all():
-                for attendee in self.attendance_event.attendees.all():
+                for attendee in self.attendance_event.attendees.filter(attended=True):
                     users.append(attendee.user)
             return users
         except AttendanceEvent.DoesNotExist:

@@ -9,6 +9,7 @@ wsgiref==0.1.2
 Markdown==2.3.1                 # textarea text formatting
 psycopg2                        # Postgres adapter
 pytz                            # Timezone lib. Obsolete?
+gunicorn==18.0
 
 # third party deps
 django-filebrowser==3.5.2       # File uploading
