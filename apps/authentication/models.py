@@ -120,7 +120,6 @@ class OnlineUser(AbstractUser):
         return self.get_full_name()
 
     def save(self, *args, **kwargs):
-        self.ntnu_username = self.ntnu_username.strip() # Hopefully reduces junk to ""
         if self.ntnu_username == "":
             self.ntnu_username = None
         super(OnlineUser, self).save(*args, **kwargs)
