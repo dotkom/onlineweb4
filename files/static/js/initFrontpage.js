@@ -64,11 +64,10 @@ $(function() {
     // TODO: heavy shit? Find a reliable way to setnavs instead of doing it fucking all the time.
     $(window).scroll(scrollspy);
 
-    if ($(window).width < 1200) {
-
-    }
     $(window).resize(function() {
-      $(window).scroll(scrollspy);
+        if ($(location).attr('hash')) {
+            $(window).scrollTop($($(location).attr('hash')).offset().top - TOP_OFFSET_ADJUST);
+        }
     });
 
     
@@ -76,10 +75,10 @@ $(function() {
     scrollspy();
 
     // reposition after reload / link open with hashUrl
-    setTimeout(function () {
-        if ($(location).attr('hash')) {
+    if ($(location).attr('hash')) {
+        setTimeout(function () {
             jump($(location).attr('hash').substring(1));
-        }
-    }, 200);
+        }, 500);
+    }
 });
 
