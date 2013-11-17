@@ -11,7 +11,6 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
         {% block styles %}
-            <link href='http://fonts.googleapis.com/css?family=Open+Sans:300,400,600' rel='stylesheet' type='text/css'>
             {% compress css %}
             <link rel="stylesheet" type="text/less" href="{{ STATIC_URL }}less/core.less">
             {% endcompress %}
@@ -179,8 +178,8 @@
     
     {% block js %}
         <!--<script src="{{ STATIC_URL }}js/libs/less.js"></script>-->
-        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-        <script src="http://maps.googleapis.com/maps/api/js?v=3&sensor=true"></script>
+        <script src="{{ STATIC_URL}}js/libs/jquery-1.9.1.min.js"></script>
+        <script src="https://maps.googleapis.com/maps/api/js?v=3&sensor=true"></script>
         <script src="{{ STATIC_URL }}js/libs/bootstrap.min.js"></script>
         <script src="{{ STATIC_URL }}js/libs/moment.js"></script>
         <script src="{{ STATIC_URL }}js/libs/jquery.debouncedresize.js"></script>
