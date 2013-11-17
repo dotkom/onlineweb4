@@ -26,17 +26,32 @@ $(function() {
         $(this).tab('show',update_pos);
         $('html, body').animate({scrollTop: $('#about').offset().top - TOP_OFFSET_ADJUST}, 250);
     });
+
+
+    /* FUNCTIONS
+    ------------------------------------------------------------------------ */
+    var jump = function (section) {
+        if (typeof section !== 'undefined') {
+            $('html, body').animate({scrollTop: $('#'+section).offset().top - TOP_OFFSET_ADJUST}, 250);
+        }
+    };
        
     // On scroll, loop the navs and swap active (if it needs to)
     function scrollspy() {
         var current = $(window).scrollTop();
+        var last = null;
         for (nav in navs) {
-            var diff = current - navs[nav];
+            var diff = current - $(nav).offset().top + TOP_OFFSET_ADJUST;
             if (diff > -20) {
                 $(".top-menu-link.active").removeClass('active');
                 $(".nav a[href='/"+nav+"']").parent().addClass('active');
+                last = nav;
             }
         }
+
+        var yScroll = document.body.scrollTop;
+        window.location.hash = last;
+        document.body.scrollTop = yScroll;
     }
     
     // Update position of the sections
@@ -54,14 +69,11 @@ $(function() {
     $('.nav').on('click', 'a', function(e) {
         jump($(this).data('section'));
     });
-    
-    var jump = function (section) {
-        if (typeof section !== 'undefined') {
-            $('html, body').animate({scrollTop: $('#'+section).offset().top - TOP_OFFSET_ADJUST}, 250);
-        }
-    };
+   
 
-    // TODO: heavy shit? Find a reliable way to setnavs instead of doing it fucking all the time.
+
+    /* TODO: heavy shit? Find a reliable way to setnavs instead of doing it fucking all the time.
+    ------------------------------------------------------------------------ */
     $(window).scroll(scrollspy);
 
     $(window).resize(function() {
@@ -70,11 +82,12 @@ $(function() {
         }
     });
 
-    
     // On load highlight the current menu-item if an anchor is represented
     scrollspy();
 
-    // reposition after reload / link open with hashUrl
+
+    /* Reload fix - reposition after reload
+    ------------------------------------------------------------------------ */
     if ($(location).attr('hash')) {
         setTimeout(function () {
             jump($(location).attr('hash').substring(1));
