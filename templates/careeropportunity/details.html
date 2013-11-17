@@ -13,7 +13,18 @@
         <div class="row">
             <div class="col-md-12">
                 <div class="page-header">
-                    <h2>{{opportunity.title}}</h2>
+                    <h2>{{opportunity.title}}
+                    {% if user.is_staff %}
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                            <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu" role="menu">
+                            <li><a href="{% url 'admin:careeropportunity_careeropportunity_change' opportunity.id %}">Edit</a></li>
+                        </ul>
+                    </div>
+                    {% endif %}
+                    </h2>
                 </div>
             </div>
         </div>
