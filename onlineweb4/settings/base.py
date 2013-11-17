@@ -29,6 +29,8 @@ EMAIL_DOTKOM = 'dotkom@online.ntnu.no'
 EMAIL_FAGKOM = 'fagkom@online.ntnu.no'
 EMAIL_PROKOM = 'prokom@online.ntnu.no'
 EMAIL_TRIKOM = 'trikom@online.ntnu.no'
+# Whether or not django should start the scheduler for feedback mails
+FEEDBACK_MAIL_SCHEDULER = True
 
 # We will receive errors and other django messages from this email
 SERVER_EMAIL = 'onlineweb4-error@online.ntnu.no'
