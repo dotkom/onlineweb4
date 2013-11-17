@@ -2,8 +2,12 @@
 {% load fb_versions %}
 {% load markup %}
 {% load crispy_forms_tags %}
-{% block content %}
 
+{% block title %}
+{{ event.title }} - Online
+{% endblock title %}
+
+{% block content %}
     <section id="event-details">
     <div class="container">
     <div class="row">
@@ -211,11 +215,11 @@
                         </p>
                         <p>Ved å melde deg på, godtar du prikkereglene.</p>
                         {% csrf_token %}
-                        {{ captcha_form }}
+                        {{ captcha_form|crispy }}
                     </div>
                     <div class="modal-footer">
-                        <button class="btn" data-dismiss="modal" aria-hidden="true">Lukk</button>
                         <button type="submit" class="btn btn-primary">Valider</button>
+                        <button class="btn" data-dismiss="modal" aria-hidden="true">Lukk</button>
                     </div>
                 </form>
             </div>

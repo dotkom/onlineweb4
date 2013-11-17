@@ -1,6 +1,11 @@
 {% extends "base.html" %}
 {% load markup %}
 {% load fb_versions %}
+
+{% block title %}
+{{ article.title }} - Online
+{% endblock title %}
+
 {% block content %}
 <section id="article-details">
     <div class="container">
