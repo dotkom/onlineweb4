@@ -13,6 +13,8 @@ $(function() {
     var offlineWidget = new OfflineWidget(utils);
     var articleWidget = new ArticleWidget(utils);
 
+    var TOP_OFFSET_ADJUST = 65;
+
     // Render on load
     eventWidget.render(update_pos);
     offlineWidget.render();
@@ -22,7 +24,7 @@ $(function() {
     $('#about-tabs a').click(function (e) {
         e.preventDefault();
         $(this).tab('show',update_pos);
-        $('html, body').animate({scrollTop: $('#about').offset().top - 75}, 250);
+        $('html, body').animate({scrollTop: $('#about').offset().top - TOP_OFFSET_ADJUST}, 250);
     });
        
     // On scroll, loop the navs and swap active (if it needs to)
@@ -43,19 +45,17 @@ $(function() {
             // Checking if the current section is a part of the scroll-thingy
             var idn = '#'+this.id;
             if (idn in navs) {
-                navs[idn] = $(this).offset().top - 64;
+                navs[idn] = $(this).offset().top - TOP_OFFSET_ADJUST;
             }
         });
     }
     
     // Clicking the links in the topnav
-    $('.nav a').on('click',function(e) {
-        //e.preventDefault();
-        var $that = $(this);
-        var jumpto_section = $that.data('section');
+    $('.nav').on('click', 'a', function(e) {
+        var jumpto_section = $(this).data('section');
         if (typeof jumpto_section !== 'undefined') {
             var top_position = navs['#'+jumpto_section];
-            $('html, body').animate({scrollTop: top_position}, 250);
+            $('html, body').animate({scrollTop: $('#'+jumpto_section).offset().top - TOP_OFFSET_ADJUST}, 250);
         }
     });
     
