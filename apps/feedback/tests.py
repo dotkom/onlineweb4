@@ -33,8 +33,8 @@ class SimpleTest(TestCase):
         feedback = Feedback.objects.create(author = user1)
         TextQuestion.objects.create(feedback = feedback)
         RatingQuestion.objects.create(feedback = feedback)
-        atendee1 = Attendee.objects.create(event = attendance_event, user = user1)
-        atendee2 = Attendee.objects.create(event = attendance_event, user = user2)
+        atendee1 = Attendee.objects.create(event = attendance_event, user = user1, attended=True)
+        atendee2 = Attendee.objects.create(event = attendance_event, user = user2, attended =True)
         FeedbackRelation.objects.create(feedback=feedback, content_object=event, deadline=timezone.now(), active=True)
         FeedbackRelation.objects.create(feedback=feedback, content_object=atendee1, deadline=timezone.now(), active=True)
 
