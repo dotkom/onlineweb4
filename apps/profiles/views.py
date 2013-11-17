@@ -24,6 +24,7 @@ from apps.profiles.forms import (ImageForm, MailSettingsForm, PrivacyForm,
 Index for the entire user profile view
 Methods redirect to this view on save
 """
+@login_required
 def index(request):
 
     """
