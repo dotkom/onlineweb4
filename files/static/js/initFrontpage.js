@@ -31,8 +31,8 @@ $(function() {
         for (nav in navs) {
             var diff = current - navs[nav];
             if (diff > -20) {
-                $(".top-menu-link a.active").removeClass('active');
-                $(".nav a[href='/"+nav+"']").addClass('active');
+                $(".top-menu-link.active").removeClass('active');
+                $(".nav a[href='/"+nav+"']").parent().addClass('active');
             }
         }
     }
@@ -43,7 +43,7 @@ $(function() {
             // Checking if the current section is a part of the scroll-thingy
             var idn = '#'+this.id;
             if (idn in navs) {
-                navs[idn] = $(this).offset().top - 74;
+                navs[idn] = $(this).offset().top - 64;
             }
         });
     }
