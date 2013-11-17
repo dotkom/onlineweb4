@@ -66,7 +66,8 @@ $(function() {
     }
     
     // Clicking the links in the topnav
-    $('.nav').on('click', 'a', function(e) {
+    $('.subnavbar').on('click', 'a', function(e) {
+        e.preventDefault();
         jump($(this).data('section'));
     });
    
