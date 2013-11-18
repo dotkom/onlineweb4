@@ -1,9 +1,33 @@
 {% extends "base.html" %}
 
-{% block content %}
+{% block title %}
+Tilbakemeldinger - Online
+{% endblock title %}
 
-    {% for fbr in feedbacks %}
-        <a href="{{fbr.get_absolute_url}}"> {{fbr.feedback.description}}</a>
-    {% endfor %}
+{% block content %}
+<section class="container" id="feedback-archive">
+    <div class="page-header">
+        <h1>Feedback Skjemaer</h1>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <table class="table table-condensed">
+                <tr>
+                    <th>Feedback</th>
+                    <th>Title</th>
+                    <th>Deadline</th>
+                <tr>
+                {% for feedback in feedbacks reversed  %}
+                    <!-- <tr class="{% if feedback.active %} warning {% else %} success {% endif %}" > -->
+                    <tr>
+                        <td><a href="{{feedback.get_absolute_url}}results">{{feedback}}</a></td>
+                        <td>{{feedback.get_title}}</td>
+                        <td>{{feedback.deadline}}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+</section>
 
 {%endblock content %}

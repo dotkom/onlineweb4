@@ -1,5 +1,10 @@
 {% extends 'base.html' %}
 {% load chunks %}
+
+{% block title %}
+Tidsskriftet Offline - Online
+{% endblock title %}
+
 {% block js %}
     {{ block.super }}
     <script src="{{ STATIC_URL }}/js/offline-filter.js"></script>
@@ -36,8 +41,19 @@
                 </div>
             </div>
         </div>
-        <div class="row">
-            <div class="col-md-9">
+
+        <div class="col-xs-12 col-sm-4 col-md-3 filterbox pull-right">
+            <h3>Filter</h3>
+            <ul id="nav-header" class="nav nav-pills nav-stacked">
+                <li class="nav-header">År<button id="filter-reset" class="close pull-righ">&times;</button></li>
+                {% for year in years %}
+                    <li><a class="filter-year" href="#{{ year }}">{{ year }}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div class="col-xs-12 col-sm-8 col-md-9 pull-left">
+            <div class="row">
                 <p>{% chunk 'offline_ingress' %}</p>
                 <div id="offline-wrapper" class="col-md-12">
                  {% for issue in issues %}
@@ -53,15 +69,8 @@
                     </ul>
                 </div>
             </div>
-            <div class="col-md-3">
-                <ul id="filter-menu" class="nav nav-pills nav-stacked">
-                    <li class="nav-header">År<button id="filter-reset" class="close pull-right">&times;</button></li>
-                    {% for year in years %}
-                        <li><a class="filter-year" href="#{{ year }}">{{year}}</a></li>
-                    {% endfor %}
-                </ul>
-            </div>
-        </div>          
+        </div>
+          
     </div>
 </section>
 {% endblock content %}

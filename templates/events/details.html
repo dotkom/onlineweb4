@@ -2,14 +2,30 @@
 {% load fb_versions %}
 {% load markup %}
 {% load crispy_forms_tags %}
-{% block content %}
 
+{% block title %}
+{{ event.title }} - Online
+{% endblock title %}
+
+{% block content %}
     <section id="event-details">
     <div class="container">
     <div class="row">
         <div class="col-md-12">
             <div class="page-header">
-                <h2 id="event-details-heading">{{ event.title }}</h2>
+                <h2 id="event-details-heading">
+                    {{ event.title }}
+                    {% if user.is_staff %}
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                            <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu" role="menu">
+                            <li><a href="{% url 'admin:events_event_change' event.id %}">Edit</a></li>
+                        </ul>
+                    </div>
+                    {% endif %}
+                </h2>
             </div>
         </div>
     </div>
@@ -211,11 +227,11 @@
                         </p>
                         <p>Ved å melde deg på, godtar du prikkereglene.</p>
                         {% csrf_token %}
-                        {{ captcha_form }}
+                        {{ captcha_form|crispy }}
                     </div>
                     <div class="modal-footer">
-                        <button class="btn" data-dismiss="modal" aria-hidden="true">Lukk</button>
                         <button type="submit" class="btn btn-primary">Valider</button>
+                        <button class="btn" data-dismiss="modal" aria-hidden="true">Lukk</button>
                     </div>
                 </form>
             </div>

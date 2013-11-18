@@ -1,6 +1,11 @@
 {% extends "base.html" %}
 
 {% load compress %}
+
+{% block title %}
+Arrangementsarkiv - Online
+{% endblock title %}
+
 {% block styles %}
   {{ block.super }}
   {% compress css %}

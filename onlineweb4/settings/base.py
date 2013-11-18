@@ -29,6 +29,8 @@ EMAIL_DOTKOM = 'dotkom@online.ntnu.no'
 EMAIL_FAGKOM = 'fagkom@online.ntnu.no'
 EMAIL_PROKOM = 'prokom@online.ntnu.no'
 EMAIL_TRIKOM = 'trikom@online.ntnu.no'
+# Whether or not django should start the scheduler for feedback mails
+FEEDBACK_MAIL_SCHEDULER = True
 
 # We will receive errors and other django messages from this email
 SERVER_EMAIL = 'onlineweb4-error@online.ntnu.no'
@@ -76,6 +78,8 @@ STATICFILES_FINDERS = (
     'compressor.finders.CompressorFinder',
 )
 
+COMPRESS_FILES = True
+COMPRESS_ENABLED = True
 COMPRESS_OUTPUT_DIR = 'cache'
 COMPRESS_PRECOMPILERS = (
     ('text/less', 'lessc {infile} {outfile}'),
@@ -83,15 +87,12 @@ COMPRESS_PRECOMPILERS = (
 
 COMPRESS_CSS_FILTERS = [
     'compressor.filters.css_default.CssAbsoluteFilter',
-    'compressor-filters.cssmin.CSSMinFilter',
+    # We want this later on, but it breaks production so disabling for now.
+    #'compressor-filters.cssmin.CSSMinFilter',
 ]
 COMPRESS_JS_FILTERS = [
     'compressor.filters.jsmin.JSMinFilter',
 ]
-
-COMPRESS_PRECOMPILERS = (
-    ('text/less', 'lessc -x {infile} {outfile}'),
-)
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
@@ -140,8 +141,8 @@ INSTALLED_APPS = (
     'captcha',
     'compressor',
     'pdfdocument',
-    
     'watson',
+    'gunicorn',
 
     # Django apps
     'django.contrib.admin',
@@ -229,6 +230,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "django.core.context_processors.static",
     "django.core.context_processors.tz",
     "django.contrib.messages.context_processors.messages",
+    "onlineweb4.context_processors.analytics",
 )
 
 # Remember to keep 'local' last, so it can override any setting.

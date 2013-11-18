@@ -2,7 +2,7 @@
 from collections import namedtuple, defaultdict
 
 from django.http import Http404, HttpResponse
-from django.shortcuts import render, redirect, render_to_response, get_object_or_404
+from django.shortcuts import render, redirect, get_object_or_404
 from django.template import RequestContext
 from django.contrib.contenttypes.models import ContentType
 from django.contrib import messages
@@ -87,12 +87,10 @@ def get_chart_data(request, applabel, appmodel, object_id, feedback_id):
    
     return HttpResponse(simplejson.dumps(answer_collection), mimetype='application/json')
 
-
+@staff_member_required
 def index(request):
     feedbacks = FeedbackRelation.objects.all()
-    return render_to_response('feedback/index.html',
-                              {'feedbacks': feedbacks},
-                              context_instance=RequestContext(request))
+    return render(request, 'feedback/index.html', {'feedbacks': feedbacks})
 
 @staff_member_required
 def delete_answer(request):

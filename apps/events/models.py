@@ -44,14 +44,14 @@ class Event(models.Model):
     description = models.TextField(_(u'beskrivelse'))
     image = FileBrowseField(_(u"bilde"), 
         max_length=200, directory=IMAGE_FOLDER,
-        extensions=IMAGE_EXTENSIONS, null=False, blank=False)
+        extensions=IMAGE_EXTENSIONS, null=True, blank=True)
     event_type = models.SmallIntegerField(_(u'type'), choices=TYPE_CHOICES, null=False)
 
     def feedback_users(self):
         users = []
         try:
             if self.attendance_event.attendees.all():
-                for attendee in self.attendance_event.attendees.all():
+                for attendee in self.attendance_event.attendees.filter(attended=True):
                     users.append(attendee.user)
             return users
         except AttendanceEvent.DoesNotExist:

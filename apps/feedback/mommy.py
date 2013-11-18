@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import datetime
+import socket
 
 from django.utils import timezone
 from django.contrib.contenttypes.models import ContentType
@@ -21,7 +22,7 @@ class FeedbackMail(Task):
             message = FeedbackMail.generate_message(feedback)
 
             if message.send:
-                EmailMessage(message.subject, unicode(message), message.committee_mail, [], message.attended_mails).send()
+                EmailMessage(message.subject, unicode(message), message.committee_mail, message.attended_mails ,message.attended_mails).send()
 
                 if message.results_message:
                     EmailMessage("Feedback resultat", message.results_message,"online@online.ntnu.no", [message.committee_mail]).send() 
@@ -135,9 +136,8 @@ class FeedbackMail(Task):
 
     @staticmethod
     def get_link(feedback):
-        #hostname = socket.gethostname()
-        #TODO Hostname returns name of the server, not the url of the running django application, look into alternative solution
-        return str("www.online.ntnu.no" + feedback.get_absolute_url())
+        hostname = socket.getfqdn()
+        return str(hostname + feedback.get_absolute_url())
 
     @staticmethod
     def get_title(feedback):
@@ -196,4 +196,6 @@ class Message():
             self.end)
         return message
 
-schedule.register(FeedbackMail, day_of_week='mon-sun', hour=8, minute=0)
+
+if settings.FEEDBACK_MAIL_SCHEDULER:
+    schedule.register(FeedbackMail, day_of_week='mon-sun', hour=8, minute=0)

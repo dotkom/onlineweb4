@@ -24,6 +24,7 @@ from apps.profiles.forms import (ImageForm, MailSettingsForm, PrivacyForm,
 Index for the entire user profile view
 Methods redirect to this view on save
 """
+@login_required
 def index(request):
 
     """
@@ -323,18 +324,14 @@ def set_primary(request):
                                                     {'message': _(u"%s er allerede satt som primær-epostaddresse.") % email.email}
                                                 ))
 
-            #Hack for develop branch where user is created with createsuperuser
-            try:
-                # Deactivate old primary email
-                primary_email = request.user.get_email()
+            # Deactivate the old primary, if there was one
+            primary_email = request.user.get_email()
+            if primary_email:
                 primary_email.primary = False
                 primary_email.save()
-            except:
-                pass
-            finally:
-                # Activate new primary
-                email.primary = True
-                email.save()
+            # Activate new primary
+            email.primary = True
+            email.save()
 
             return HttpResponse(status=200)
     return HttpResponse(status=404)

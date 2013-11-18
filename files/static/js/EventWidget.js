@@ -92,13 +92,15 @@ function EventWidget (Utils){
         html += '<div class="col-sm-4 col-md-2" id="eventimage">';
         html +=     '<div id="event-carousel" class="carousel slide">';
         html +=         '<div class="carousel-inner">';
-        html +=             '<div class="item active">';
-        html +=                 '<a href="events/' + item.id + '/' + item.slug + '">';
-        html +=                         '<img src="' + item.image_events_thumb + '" width="100%" alt="" >';
-        html +=                 '</a>';
-        html +=             '</div>';
+        if(item.image_events_thumb) {
+            html +=             '<div class="item active">';
+            html +=                 '<a href="events/' + item.id + '/' + item.slug + '">';
+            html +=                         '<img src="' + item.image_events_thumb + '" width="100%" alt="" >';
+            html +=                 '</a>';
+            html +=             '</div>';
+        }
         for(var i=0; i < item.company_event.length; i++){
-            html +=         '<div class="item">';
+            html +=         '<div class="item ' + (item.image_events_thumb ? '' : 'active') + '">';
             html +=             '<a href="events/' + item.id + '/' + item.slug + '">';
             html +=                 '<img src="' + item.company_event[i].companies.image_companies_thumb + '" width="100%" alt="" />';
             html +=             '</a>';
