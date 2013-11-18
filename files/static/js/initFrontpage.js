@@ -17,7 +17,7 @@ $(function() {
     /* EVENT LISTENERS
     ------------------------------------------------------------------------ */
     // Enable tabbing in about section
-    $('#about-tabs a').click(function (e) {
+    $('#about-tabs').on('click', 'a', function (e) {
         e.preventDefault();
         $(this).tab('show');
         $('html, body').animate({scrollTop: $('#about').offset().top - TOP_OFFSET_ADJUST}, 250);
