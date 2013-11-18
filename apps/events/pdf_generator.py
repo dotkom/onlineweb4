@@ -56,7 +56,9 @@ class EventPDF:
         pdf, response = pdf_response(self.event.title + u" attendees")
         pdf.init_report()
 
-        pdf.p(self.event.title + u' - ' + self.event.event_start.strftime('%d. %B %Y'), style=create_paragraph_style(font_size=20))
+        pdf.p(self.event.title, style=create_paragraph_style(font_size=18))
+        pdf.spacer(10)
+        pdf.p(self.event.event_start.strftime('%d. %B %Y'), create_paragraph_style(font_size=9))
         pdf.spacer(height=25)
 
         pdf.p(u"Påmeldte", style=create_paragraph_style(font_size=14))
