@@ -86,6 +86,9 @@ class OnlineUser(AbstractUser):
     def get_emails(self):
         return Email.objects.all().filter(user = self)
 
+    def in_group(self, group_name):
+        return reduce(lambda x,y: x or y.name == group_name, self.groups.all(), False)
+
     @property
     def year(self):
         today = timezone.now().date()
