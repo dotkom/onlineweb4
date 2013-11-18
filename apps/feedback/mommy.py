@@ -132,7 +132,7 @@ class FeedbackMail(Task):
 
     @staticmethod
     def get_user_mails(not_responded):
-        return  [user.email for user in not_responded]
+        return  [str(user.get_email()) for user in not_responded]
 
     @staticmethod
     def get_link(feedback):
