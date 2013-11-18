@@ -21,7 +21,7 @@ class EventPDF:
         self.waiters = event.wait_list
         self.attendee_table_data = [(u'Navn', u'Klassetrinn', u'Studie', u'Telefon'), ]
         self.waiters_table_data = [(u'Navn', u'Klassetrinn', u'Studie', u'Telefon'), ]
-        self.allergies_table_data = (u'')
+        self.allergies_table_data = ()
 
         self.create_attendees_table_data()
         self.create_waiters_table_data()
@@ -34,8 +34,9 @@ class EventPDF:
             self.attendee_table_data.append((create_body_text("%s, %s" % (user.last_name, user.first_name)), user.year, user.get_field_of_study_display(), user.phone_number))
 
             if user.allergies:
-                self.allergies_table_data = self.allergies_table_data + user.allergies
+                self.allergies_table_data = self.allergies_table_data + (user.allergies,)
 
+    # Create table data for attendees waiting for a spot
     def create_waiters_table_data(self):
 
         for attendee in self.waiters:
@@ -43,7 +44,7 @@ class EventPDF:
             self.waiters_table_data.append((create_body_text("%s, %s" % (user.last_name, user.first_name)), user.year, user.get_field_of_study_display(), user.phone_number))
 
             if user.allergies:
-                self.allergies_table_data = self.allergies_table_data + user.allergies
+                self.allergies_table_data = self.allergies_table_data + (user.allergies,)
 
     def attendee_column_widths(self):
         return (200, 60, 140, 60)
@@ -55,7 +56,7 @@ class EventPDF:
         pdf, response = pdf_response(self.event.title + u" attendees")
         pdf.init_report()
 
-        pdf.p(self.event.title, style=create_paragraph_style(font_size=20))
+        pdf.p(self.event.title + u' - ' + self.event.event_start.strftime('%d. %B %Y'), style=create_paragraph_style(font_size=20))
         pdf.spacer(height=25)
 
         pdf.p(u"Påmeldte", style=create_paragraph_style(font_size=14))
@@ -69,9 +70,8 @@ class EventPDF:
         pdf.spacer(height=25)
 
         pdf.p(u"Allergier", style=create_paragraph_style(font_size=14))
+        pdf.spacer(height=12)
         pdf.ul(self.allergies_table_data)
-        #pdf.spacer(height=20)
-        #pdf.table(self.allergies_table_data, self.allergies_column_widths(), style=get_table_style())
 
         pdf.generate()
         return response
