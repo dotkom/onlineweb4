@@ -18,16 +18,19 @@ from apps.feedback.models import Feedback, FeedbackRelation, TextQuestion, Ratin
 from apps.events.models import Event, AttendanceEvent, Attendee
 from apps.marks.models import Mark
 from apps.authentication.models import OnlineUser as User
+from apps.authentication.models import Email
 from apps.authentication.forms import LoginForm
 
 class SimpleTest(TestCase):
 
     #Feedback mail 
     def setUp(self):
-        user1 = User.objects.create(username="user1", email="user1@mail.com", is_active=True, is_staff=True)
+        user1 = User.objects.create(username="user1", is_active=True, is_staff=True)
         user1.set_password("Herpaderp123")
         user1.save()
-        user2 = User.objects.create(username="user2", email="user2@mail.com")
+        Email.objects.create(user = user1, email="user1@gmail.com", primary=True)
+        user2 = User.objects.create(username="user2")
+        Email.objects.create(user = user2, email="user2@gmail.com", primary=True)
         event = Event.objects.create(title="Bedpress", event_start = timezone.now(), event_end = timezone.now(), event_type = 2, author = user1)
         attendance_event = AttendanceEvent.objects.create(registration_start = timezone.now(), registration_end = timezone.now(), event = event, max_capacity=30)
         feedback = Feedback.objects.create(author = user1)
@@ -42,7 +45,7 @@ class SimpleTest(TestCase):
     def test_attendees(self):
         feedback_relation = FeedbackRelation.objects.get(pk=1)
         message = FeedbackMail.generate_message(feedback_relation)
-        user_mails = [user.email for user in User.objects.all()]
+        user_mails = [str(user.get_email()) for user in User.objects.all()]
 
         self.assertEqual(set(message.attended_mails), set(user_mails))
 
@@ -50,7 +53,7 @@ class SimpleTest(TestCase):
         feedback_relation.answered = [user1]
 
         message = FeedbackMail.generate_message(feedback_relation)
-        user_mails = [user.email for user in [User.objects.get(pk=2)]]
+        user_mails = [str(user.get_email()) for user in [User.objects.get(pk=2)]]
         self.assertEqual(set(message.attended_mails), set(user_mails))
 
         feedback_relation = FeedbackRelation.objects.get(pk=2)
