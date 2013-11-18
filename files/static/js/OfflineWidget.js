@@ -16,6 +16,7 @@ function OfflineWidget (Utils){
 
     /* Create the DOM */
     OfflineWidget.prototype.createDom = function () {
+        console.log($('.carousel-inner').width());
         var data = that.data;
         var prefix = $("#offlineCarousel").data("prefix");
         var suffix = '.thumb.png';
