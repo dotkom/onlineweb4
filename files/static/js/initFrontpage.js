@@ -24,7 +24,7 @@ $(function() {
     });
 
     // Clicking the links in the topnav
-    $('.subnavbar').on('click', 'a', function(e) {
+    $('.subnavbar').on('click', 'a', function (e) {
         e.preventDefault();
         jump($(this).data('section'));
     });
@@ -35,7 +35,7 @@ $(function() {
     ------------------------------------------------------------------------ */
     var jump = function (section) {
         if (typeof section !== 'undefined') {
-            $('html, body').animate({scrollTop: $('#'+section).offset().top - TOP_OFFSET_ADJUST}, 250, function () {
+            $('html, body').animate({scrollTop: $('#' + section).offset().top - TOP_OFFSET_ADJUST}, 250, function () {
                 window.location.hash = '#!' + section;
             });
         }
@@ -51,7 +51,7 @@ $(function() {
 
             if (diff > -20) {
                 $(".top-menu-link.active").removeClass('active');
-                $(".nav a[href='/"+section+"']").parent().addClass('active');
+                $(".nav a[href='/" + section + "']").parent().addClass('active');
             }
         }
     }
@@ -67,6 +67,7 @@ $(function() {
             $(window).scrollTop($($(location).attr('hash').replace(/^#!/, '')).offset().top - TOP_OFFSET_ADJUST);
         }
     });
+
 
     /* On load highlight the current menu-item if an anchor is represented
     ------------------------------------------------------------------------ */
