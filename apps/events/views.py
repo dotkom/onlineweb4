@@ -160,4 +160,11 @@ def _search_indexed(request, query, filters):
 
 def generate_pdf(request, event_id):
     event = get_object_or_404(Event, pk=event_id)
-    return EventPDF(event).render_pdf()
+
+    pdf_generator = EventPDF(event)
+
+    print pdf_generator
+
+    pdf = pdf_generator.render_pdf()
+
+    return pdf

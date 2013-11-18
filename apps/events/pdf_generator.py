@@ -1,50 +1,52 @@
 # -*- coding: utf-8 -*-
+from django.contrib.auth.decorators import login_required, user_passes_test
 
 from pdfdocument.utils import pdf_response
 from reportlab.platypus import TableStyle, Paragraph
 from reportlab.lib import colors
 from reportlab.lib.styles import getSampleStyleSheet
 
-#@login_required
-#@user_passes_test(lambda u: u.groups.filter(name='Komiteer').count() == 1)
-
 class EventPDF:
 
     event = None
     attendees = None
     waiters = None
-
-    attendee_table_data = [(u'Navn', u'Klassetrinn', u'Studie', u'Telefon'), ]
-    waiters_table_data = [(u'Navn', u'Klassetrinn', u'Studie', u'Telefon'), ]
-    allergies_table_data = [(u'Matallergier', u'test'), ]
+    attendee_table_data = None
+    waiters_table_data = None
+    allergies_table_data = None
 
     def __init__(self, event):
         self.event = event
         self.attendees = sorted(event.attendance_event.attendees.all()[:event.attendance_event.max_capacity], key=lambda attendee: attendee.user.last_name)
         self.waiters = event.wait_list
+        self.attendee_table_data = [(u'Navn', u'Klassetrinn', u'Studie', u'Telefon'), ]
+        self.waiters_table_data = [(u'Navn', u'Klassetrinn', u'Studie', u'Telefon'), ]
+        self.allergies_table_data = (u'')
 
         self.create_attendees_table_data()
         self.create_waiters_table_data()
 
     # Create table data for attendees with a spot
     def create_attendees_table_data(self):
+
         for attendee in self.attendees:
             user = attendee.user
             self.attendee_table_data.append((create_body_text("%s, %s" % (user.last_name, user.first_name)), user.year, user.get_field_of_study_display(), user.phone_number))
 
             if user.allergies:
-                self.allergies_table_data.append((create_body_text(user.allergies), u"hallo"))
+                self.allergies_table_data = self.allergies_table_data + user.allergies
 
     def create_waiters_table_data(self):
+
         for attendee in self.waiters:
             user = attendee.user
             self.waiters_table_data.append((create_body_text("%s, %s" % (user.last_name, user.first_name)), user.year, user.get_field_of_study_display(), user.phone_number))
 
             if user.allergies:
-                self.allergies_table_data.append((create_body_text(user.allergies), u"hallo"))
+                self.allergies_table_data = self.allergies_table_data + user.allergies
 
     def attendee_column_widths(self):
-        return (220, 80, 140, 75)
+        return (200, 60, 140, 60)
 
     def allergies_column_widths(self):
         return (200, 200)
@@ -67,8 +69,9 @@ class EventPDF:
         pdf.spacer(height=25)
 
         pdf.p(u"Allergier", style=create_paragraph_style(font_size=14))
-        pdf.spacer(height=20)
-        pdf.table(self.allergies_table_data, self.allergies_column_widths(), style=get_table_style())
+        pdf.ul(self.allergies_table_data)
+        #pdf.spacer(height=20)
+        #pdf.table(self.allergies_table_data, self.allergies_column_widths(), style=get_table_style())
 
         pdf.generate()
         return response
