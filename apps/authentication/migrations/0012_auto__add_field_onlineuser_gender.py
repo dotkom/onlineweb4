@@ -10,7 +10,7 @@ class Migration(SchemaMigration):
     def forwards(self, orm):
         # Adding field 'OnlineUser.gender'
         db.add_column(u'authentication_onlineuser', 'gender',
-                      self.gf('django.db.models.fields.CharField')(default='mann', max_length=10),
+                      self.gf('django.db.models.fields.CharField')(default='male', max_length=10),
                       keep_default=False)
 
 
@@ -59,10 +59,10 @@ class Migration(SchemaMigration):
             'email': ('django.db.models.fields.EmailField', [], {'max_length': '75', 'blank': 'True'}),
             'field_of_study': ('django.db.models.fields.SmallIntegerField', [], {'default': '0'}),
             'first_name': ('django.db.models.fields.CharField', [], {'max_length': '30', 'blank': 'True'}),
-            'gender': ('django.db.models.fields.CharField', [], {'default': "'mann'", 'max_length': '10'}),
+            'gender': ('django.db.models.fields.CharField', [], {'default': "'male'", 'max_length': '10'}),
             'groups': ('django.db.models.fields.related.ManyToManyField', [], {'to': u"orm['auth.Group']", 'symmetrical': 'False', 'blank': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'image': ('django.db.models.fields.files.ImageField', [], {'default': "'/static/img/profile_default.png'", 'max_length': '200', 'null': 'True', 'blank': 'True'}),
+            'image': ('django.db.models.fields.files.ImageField', [], {'max_length': '200', 'null': 'True', 'blank': 'True'}),
             'infomail': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
             'is_active': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
             'is_staff': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),

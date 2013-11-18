@@ -56,7 +56,7 @@ class OnlineUser(AbstractUser):
     rfid = models.CharField(_(u"RFID"), max_length=50, blank=True, null=True)
     nickname = models.CharField(_(u"nickname"), max_length=50, blank=True, null=True)
     website = models.URLField(_(u"hjemmeside"), blank=True, null=True)
-    gender = models.CharField(_(u"kjønn"), max_length=10, choices=GENDER_CHOICES, default="mann")
+    gender = models.CharField(_(u"kjønn"), max_length=10, choices=GENDER_CHOICES, default="male")
 
     image = models.ImageField(_(u"bilde"), max_length=200, upload_to=IMAGE_FOLDER, blank=True, null=True)
 
@@ -96,7 +96,7 @@ class OnlineUser(AbstractUser):
     def get_image_url(self):
         if self.image:
             return self.image.url
-        return settings.DEFAULT_PROFILE_PICTURE_PREFIX + self.gender + ".png"
+        return "%s_%s.png" % (settings.DEFAULT_PROFILE_PICTURE_PREFIX, self.gender)
 
     @property
     def year(self):
