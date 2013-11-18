@@ -32,7 +32,10 @@ $(function() {
     ------------------------------------------------------------------------ */
     var jump = function (section) {
         if (typeof section !== 'undefined') {
-            $('html, body').animate({scrollTop: $('#'+section).offset().top - TOP_OFFSET_ADJUST}, 250);
+            
+            $('html, body').animate({scrollTop: $('#'+section).offset().top - TOP_OFFSET_ADJUST}, 250, function () {
+                window.location.hash = '#!' + section;
+            });
         }
     };
        
@@ -48,10 +51,6 @@ $(function() {
                 last = nav;
             }
         }
-
-        var yScroll = document.body.scrollTop;
-        window.location.hash = last;
-        document.body.scrollTop = yScroll;
     }
     
     // Update position of the sections
@@ -78,8 +77,8 @@ $(function() {
     $(window).scroll(scrollspy);
 
     $(window).resize(function() {
-        if ($(location).attr('hash')) {
-            $(window).scrollTop($($(location).attr('hash')).offset().top - TOP_OFFSET_ADJUST);
+        if ($(location).attr('hash').replace(/^#!/, '')) {
+            $(window).scrollTop($($(location).attr('hash').replace(/^#!/, '')).offset().top - TOP_OFFSET_ADJUST);
         }
     });
 
@@ -89,9 +88,9 @@ $(function() {
 
     /* Reload fix - reposition after reload
     ------------------------------------------------------------------------ */
-    if ($(location).attr('hash')) {
+    if ($(location).attr('hash').replace(/^#!/, '')) {
         setTimeout(function () {
-            jump($(location).attr('hash').substring(1));
+            jump($(location).attr('hash').replace(/^#!/, '').substring(1));
         }, 500);
     }
 });
