@@ -6,7 +6,7 @@ from django.utils import timezone
 
 from django.conf import settings
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404, redirect
@@ -16,6 +16,7 @@ import watson
 
 from apps.events.forms import CaptchaForm
 from apps.events.models import Event, AttendanceEvent, Attendee
+from apps.events.pdf_generator import EventPDF
 
 
 def index(request):
@@ -155,3 +156,10 @@ def _search_indexed(request, query, filters):
 
     return Event.objects.filter(**kwargs).prefetch_related(
             'attendance_event', 'attendance_event__attendees')
+
+
+@login_required()
+@user_passes_test(lambda u: u.groups.filter(name='Komiteer').count() == 1)
+def generate_pdf(request, event_id):
+    event = get_object_or_404(Event, pk=event_id)
+    return EventPDF(event).render_pdf()

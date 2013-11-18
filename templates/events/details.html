@@ -22,6 +22,7 @@
                         </button>
                         <ul class="dropdown-menu" role="menu">
                             <li><a href="{% url 'admin:events_event_change' event.id %}">Edit</a></li>
+                            <li><a href="{% url 'event_attendees_pdf' event.id %}">Påmeldingsliste</a></li>
                         </ul>
                     </div>
                     {% endif %}

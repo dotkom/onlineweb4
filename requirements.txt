@@ -23,6 +23,8 @@ django_compressor==1.3          # Compiles less and minifies js
 django-watson==1.1.2            # Indexed model search lib
 APScheduler==2.1.1              # Scheduler
 #git+https://github.com/dotKom/pizzasystem.git@1.2#egg=pizzasystem
+reportlab==2.7
+pdfdocument==1.6
 
 #test tools
 cov-core==1.7

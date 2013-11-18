@@ -140,6 +140,7 @@ INSTALLED_APPS = (
     'django_dynamic_fixture',
     'captcha',
     'compressor',
+    'pdfdocument',
     'watson',
     'gunicorn',
 
