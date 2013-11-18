@@ -9,12 +9,15 @@ from django.core.mail import send_mail
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponseRedirect
 from django.utils.translation import ugettext as _
+from django.views.decorators.debug import sensitive_post_parameters
 
 from django.conf import settings
 from apps.authentication.forms import (LoginForm, RegisterForm, 
                             RecoveryForm, ChangePasswordForm)
 from apps.authentication.models import OnlineUser as User, RegisterToken, Email
 
+
+@sensitive_post_parameters()
 def login(request):
     redirect_url = request.REQUEST.get('next', '')
     if request.method == 'POST':
@@ -31,11 +34,14 @@ def login(request):
     response_dict = { 'form' : form, 'next' : redirect_url}
     return render(request, 'auth/login.html', response_dict)
 
+
 def logout(request):
     auth.logout(request)
     messages.success(request, _(u'Du er nå logget ut.'))
     return HttpResponseRedirect('/')
 
+
+@sensitive_post_parameters()
 def register(request):
     if request.user.is_authenticated():
         messages.error(request, _(u'Registrering av ny konto krever at du er logget ut.'))
@@ -99,6 +105,7 @@ kan dette gjøres med funksjonen for å gjenopprette passord.
             form = RegisterForm()
 
         return render(request, 'auth/register.html', {'form': form, })
+
 
 def verify(request, token):
     rt = get_object_or_404(RegisterToken, token=token)
@@ -181,6 +188,8 @@ kan dette gjøres med funksjonen for å gjenopprette passord.
 
         return render(request, 'auth/recover.html', {'form': form})
 
+
+@sensitive_post_parameters()
 def set_password(request, token=None): 
     if request.user.is_authenticated():
         return HttpResponseRedirect('/')
