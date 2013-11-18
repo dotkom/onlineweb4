@@ -29,9 +29,14 @@ $(document).ready(function() {
                 res = JSON.parse(res);
                 $('img#profile-image').attr('src', res['url']);
                 $('#remove-image-modal').modal("hide");
+                var utils = new Utils();
+                utils.setStatusMessage(res['message'], 'alert-success');
             },
-            error: function() {
-                alert("Error!")
+            error: function(res) {
+                res = JSON.parse(res['responseText']);
+                $('#remove-image-modal').modal("hide");
+                var utils = new Utils();
+                utils.setStatusMessage(res['message'], 'alert-danger');
             },
             crossDomain: false
         });
@@ -182,12 +187,16 @@ $(document).ready(function() {
                 crossDomain: false,
                 success: function (res) {
                     res = JSON.parse(res);
-                    setStatus(res['message']);
                     $('#profile-image').attr("src", res['image-url']);
                     $('#upload-image-modal').modal('hide');
+                    var utils = new Utils();
+                    utils.setStatusMessage(res['message'], 'alert-success');
                 },
                 error: function(res) {
-                    setStatus(res);
+                    res = JSON.parse(res);
+                    var utils = new Utils();
+                    $('#upload-image-modal').modal('hide');
+                    utils.setStatusMessage(res['message'], 'alert-success');
                 }
             });
         }
