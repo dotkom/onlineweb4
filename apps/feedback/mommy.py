@@ -22,7 +22,7 @@ class FeedbackMail(Task):
             message = FeedbackMail.generate_message(feedback)
 
             if message.send:
-                EmailMessage(message.subject, unicode(message), message.committee_mail, message.attended_mails).send()
+                EmailMessage(message.subject, unicode(message), message.committee_mail, [], message.attended_mails).send()
 
                 if message.results_message:
                     EmailMessage("Feedback resultat", message.results_message,"online@online.ntnu.no", [message.committee_mail]).send() 
