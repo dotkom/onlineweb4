@@ -9,13 +9,14 @@
         }
     },
     {
+        "pk": 2,
+        "model": "chunks.chunk",
         "fields": {
-            "content": "DotKom er komit\u00e9en som er ansvarlig for utvikling og vedlikehold av Online sine nettsider, samt drift av maskinparken.\r\n\r\n\r\ndotKom har ogs\u00e5 ansvaret for \u00e5 sikre at Online p\u00e5 best mulig m\u00e5te benytter IT i sine arbeidsprosesser, der Online er tjent med det. dotKom er som f\u00f8lge av det, ogs\u00e5 forpliktet til \u00e5 utvikle og vedlikeholde IT-systemer som Online er tjent med - med hensyn til Online som linjeforening og Online sine studenter. \r\n\r\n*Aktive*\r\n\r\n* Christian Strand Young (komit\u00e9leder)\r\n* Espen Jacobsson\r\n* H\u00e5vard Svae Slettvold\r\n* Magnus Bl\u00fctecher Dysthe\r\n* Sigurd Fosseng\r\n* Jonas Svarvaa\r\n* Tor H\u00e5kon Bonsaksen\r\n* Torkil Rein Gustavsen\r\n* Michael Johansen\r\n* Hanne Gunby (permitert)\r\n* Kristoffer Andreas Dalby (\u00f8konomiansvarlig)\r\n* Kristian Selvik Ekle\r\n* Nils Herde (nestleder)\r\n* Iver Egge Asperud\r\n* Edgar Mo Vedvik\r\n* Thomas Gautvedt\r\n\r\n*Aktive Pensjonister*\r\n\r\n* Dag Olav Prestegarden\r\n* Roy Sindre Norangshol\r\n\r\nFor sp\u00f8rsm\u00e5l; send oss en [epost](mailto:dotkom@online.ntnu.no \"Send en epost til dotKom\")", 
+            "content": "dotKom er komitéen som er ansvarlig for utvikling og vedlikehold av Online sine nettsider, samt drift av maskinparken.\r\n\r\n\r\ndotKom har også ansvaret for å sikre at Online på best mulig måte benytter IT i sine arbeidsprosesser, der Online er tjent med det. dotKom er som følge av det, også forpliktet til å utvikle og vedlikeholde IT-systemer som Online er tjent med - med hensyn til Online som linjeforening og Online sine studenter. \r\n\r\n*Aktive*\r\n\r\n* Nils Herde (Komitéleder)\r\n* Christian Strand Young \r\n* Espen Jacobsson\r\n* Håvard Svae Slettvold\r\n* Magnus Blütecher Dysthe\r\n* Jonas Svarvaa\r\n* Tor Håkon Bonsaksen\r\n* Hanne Gunby\r\n* Kristoffer Andreas Dalby (Økonomiansvarlig)\r\n* Kristian Selvik Ekle\r\n* Iver Egge Asperud\r\n* Edgar Mo Vedvik\r\n* Thomas Gautvedt\r\n* Aleksander Skraastad\r\n* Nicolas Almagro Tonne\r\n* Christian Duvholt\r\n* Rikke Rye-Holmboe\r\n* Tri M. Nguyen\r\n\r\n*Aktive Pensjonister*\r\n\r\n* Dag Olav Prestegarden\r\n* Sigurd Fosseng\r\n* Torkil Gustavsen\r\n* Michael Johansen\r\n\r\nFor spørsmål; send oss en [epost](mailto:dotkom@online.ntnu.no \"Send en epost til dotKom\")",
+            "description": "",
             "key": "om_dotkom"
-        }, 
-        "model": "chunks.chunk", 
-        "pk": 2
-    }, 
+        }
+    },
     {
         "fields": {
             "content": "\"There is no one who loves pain itself, who seeks after it and wants to have it, simply because it is pain...\"", 
