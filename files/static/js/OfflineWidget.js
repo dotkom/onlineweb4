@@ -24,7 +24,7 @@ function OfflineWidget (Utils){
         var itemWrapperEnd = '</div>';
         var insertMe = '';
         var maxWidth = $('.carousel-inner').width();
-        var maxWidthPer = 150;
+        var maxWidthPer = 160;
         var issuesPerSlide = Math.floor(maxWidth/maxWidthPer);
         
         if (data.objects.length <= 0) {
