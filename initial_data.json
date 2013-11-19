@@ -98,12 +98,13 @@
         }
     },
     {
-        "fields": {
-            "content": "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.\r\n\r\nLorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.\r\n\r\nLorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.", 
-            "key": "om_ekskom"
-        }, 
-        "model": "chunks.chunk", 
-        "pk": 12
+       "pk": 12, 
+	"model": "chunks.chunk", 
+	"fields": {
+		"content": "**Ekskursjonskomiteen** har ansvaret for \u00e5 arrangere informatikkstudentene i tredje \u00e5rstrinn sin \u00e5rlige ekskursjon. Dette er en periodisk komite hvor medlemmene typisk sitter ett \u00e5r av gangen. Ekskursjonen er av akademisk grad og g\u00e5r gjerne til et sted av utenlandsk opprinnelse hvor n\u00e6ringsliv og utdanningsinstitusjoner blir bes\u00f8kt. Ekskursjonskomiteens f\u00f8rste ekskursjon blir avholdt til 2014 og g\u00e5r til Folkerepublikken Kina.", 
+		"description": "", 
+		"key": "om_ekskom"
+	} 
     }, 
     {
         "fields": {
