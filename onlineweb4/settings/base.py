@@ -63,8 +63,8 @@ MEDIA_URL = '/media/'
 STATIC_ROOT = os.path.join(PROJECT_ROOT_DIRECTORY, 'static')
 STATIC_URL = '/static/'
 
-#Url of default profile picture
-DEFAULT_PROFILE_PICTURE_URL = os.path.join(STATIC_URL, "img", "profile_default.png")
+# Prefix for default profile picture
+DEFAULT_PROFILE_PICTURE_PREFIX = os.path.join(STATIC_URL, "img", "profile_default")
 
 # Additional locations of static files
 STATICFILES_DIRS = (

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from django.db import models
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext as _
 
 from apps.authentication.models import OnlineUser as User
 
@@ -15,7 +15,7 @@ class Privacy(models.Model):
     expose_field_of_study = models.BooleanField(_(u"vis studieretning"), default=True)
     expose_started_date = models.BooleanField(_(u"vis studiestartdato"), default=True)
     expose_compiled = models.BooleanField(_(u"vis kompilert dato"), default=True)
-    expose_phone_number = models.CharField(_(u"vis telefonnummer"), max_length=20, default=True)
+    expose_phone_number = models.BooleanField(_(u"vis telefonnummer"), default=True)
     expose_address = models.BooleanField(_(u"vis addresse"), default=True)
 
     user = models.ForeignKey(User, unique=True, related_name="privacy")

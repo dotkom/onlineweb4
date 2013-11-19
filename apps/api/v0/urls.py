@@ -13,7 +13,7 @@ from apps.api.v0.offline import IssueResource
 v0_api = Api(api_name='v0')
 
 # users
-v0_api.register(UserResource())
+# User endpoint not registered at the moment. Maybe in the future with some restrictions / auth
 
 # event
 v0_api.register(EventResource())

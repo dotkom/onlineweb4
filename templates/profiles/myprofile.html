@@ -34,7 +34,7 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div id="image-box">
-                                <img class="img-polaroid fadeload" id="profile-image" src="{% if user.image %}{{ user.image.url  }}{% endif %}" alt="profilbilde">
+                                <img class="img-polaroid fadeload" id="profile-image" src="{{ user.get_image_url }}" alt="profilbilde">
                                 <button type="button" class="btn btn-danger image-box-entity" id="remove-image" data-toggle="modal" data-target="#remove-image-modal">
                                     <i class="icon-remove btn-icon"></i> Fjern bilde
                                 </button>

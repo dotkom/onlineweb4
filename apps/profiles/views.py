@@ -35,7 +35,7 @@ def index(request):
     if not request.user.is_authenticated():
         return render_home(request)
 
-    dict = create_request_dictionary(request)
+    dict = _create_request_dictionary(request)
 
     # If a user has made a post, a session value will be set for which tab the user posted from.
     # This enables us to return the user to the correct tab when returning the view.
@@ -49,7 +49,7 @@ def render_home(request):
     return redirect('home')
 
 
-def create_request_dictionary(request):
+def _create_request_dictionary(request):
 
     dict = {
         'privacy_form' : PrivacyForm(instance=request.user.privacy),
@@ -92,7 +92,7 @@ def saveUserProfile(request):
     if request.method == 'POST':
 
         user = request.user
-        dict = create_request_dictionary(request)
+        dict = _create_request_dictionary(request)
         user_profile_form = ProfileForm(request.POST)
         dict['user_profile_form'] = user_profile_form
 
@@ -109,6 +109,7 @@ def saveUserProfile(request):
         user.phone_number = cleaned['phone_number']
         user.website = cleaned['website']
         user.zip_code = cleaned['zip_code']
+        user.gender = cleaned['gender']
 
         user.save()
         messages.success(request, _(u"Brukerprofilen din ble endret"))
@@ -176,18 +177,15 @@ def handleImageUpload(request, image):
 
     except Exception:
         if request.is_ajax():
-            return HttpResponse(status=500, content=_(u"Bildet kunne ikke lagres"))
+            return HttpResponse(status=500, content=json.dumps({ 'message': _(u"Bildet kunne ikke lagres.") }))
         else:
-            messages.error(request, _(u"Bildet kunne ikke lagres"))
+            messages.error(request, _(u"Bildet kunne ikke lagres."))
             return redirect("profiles")
 
     if request.is_ajax():
-        #Dumping object as json does not work with ugettext_lazy
-        return HttpResponse(status=200, content=json.dumps(
-            {'message' : _(u"Bildet ble lagret"), 'image-url' : request.user.image.name }
-        ))
+        return HttpResponse(status=200, content=json.dumps({'message' : _(u"Bildet ble lagret."), 'image-url' : request.user.get_image_url() }))
     else:
-        messages.success(request, _(u"Bildet ble lagret"))
+        messages.success(request, _(u"Bildet ble lagret."))
         return redirect("profiles")
 
 
@@ -196,29 +194,28 @@ def confirmDeleteImage(request):
 
     if request.is_ajax():
         if request.method == 'DELETE':
-            if request.user.image.url != settings.DEFAULT_PROFILE_PICTURE_URL:
+            if "/profiles/" in request.user.get_image_url():
                 remove_file(request)
-                return HttpResponse(status=200, content=json.dumps({'url' : settings.DEFAULT_PROFILE_PICTURE_URL }))
-
-    return HttpResponse(status=200, content=json.dumps({'url' : request.user.image.url }))
-
+                return HttpResponse(status=200, content=json.dumps({'message': _(u"Ditt bilde har blitt fjernet."), 'url' : request.user.get_image_url() }))
+        return HttpResponse(status=412, content=json.dumps({'message': _(u"Du har ikke lastet opp noe bilde å fjerne.") }))
+    else:
+        return redirect("profiles")
 
 def remove_file(request):
-    if request.user.image.url != settings.DEFAULT_PROFILE_PICTURE_URL:
+    if "/profiles/" in request.user.get_image_url():
         extension_index = request.user.image.name.rfind('.')
         extension = request.user.image.name[extension_index:]
         filename = os.path.join(settings.MEDIA_ROOT, "images", "profiles", request.user.username + extension)
-        os.remove(filename)
-        request.user.image = settings.DEFAULT_PROFILE_PICTURE_URL
+        request.user.image = None
         request.user.save()
+        os.remove(filename)
 
 def savePrivacy(request):
-
     if not request.user.is_authenticated():
         return render_home(request)
 
     if request.method == 'POST':
-        dict = create_request_dictionary(request)
+        dict = _create_request_dictionary(request)
         privacy_form = PrivacyForm(request.POST, instance=request.user.privacy)
         dict['privacy_form'] = privacy_form
 
@@ -231,14 +228,12 @@ def savePrivacy(request):
 
     return redirect("profiles")
 
-
 def savePassword(request):
-
     if not request.user.is_authenticated():
         return render_home(request)
 
     if request.method == 'POST':
-        dict = create_request_dictionary(request)
+        dict = _create_request_dictionary(request)
         password_change_form = PasswordChangeForm(user=request.user, data=request.POST)
         dict['password_change_form'] = password_change_form
 
@@ -253,11 +248,10 @@ def savePassword(request):
 
 @login_required
 def add_email(request):
-    dict = create_request_dictionary(request)
+    dict = _create_request_dictionary(request)
     if request.method == 'POST':
         form = NewEmailForm(request.POST)
         if form.is_valid():
-            print "valid"
             cleaned = form.cleaned_data
             email_string = cleaned['new_email']
 
@@ -275,13 +269,7 @@ def add_email(request):
 
             messages.success(request, _(u"Eposten ble lagret. Du må sjekke din innboks for å verifisere den."))
         
-        else:
-            for key, value in form.errors.items():
-                print key,
-                print value    
-
     return redirect('profiles')
-
     
 
 @login_required
