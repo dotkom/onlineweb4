@@ -16,18 +16,21 @@
             <div class="page-header">
                 <h2 id="event-details-heading">
                     {{ event.title }}
-                    {% in_group "Komiteer" as in_komiteer %}
-
-                    {% if in_komiteer %}
-                    <div class="btn-group">
-                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-                            <span class="caret"></span>
-                        </button>
-                        <ul class="dropdown-menu" role="menu">
-                            <li><a href="{% url 'admin:events_event_change' event.id %}">Edit</a></li>
-                            <li><a href="{% url 'event_attendees_pdf' event.id %}">Påmeldingsliste</a></li>
-                        </ul>
-                    </div>
+                    {% if user.is_authenticated %}
+                        {% in_group "Komiteer" as in_komiteer %}
+                        {% if in_komiteer %}
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                                <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu" role="menu">
+                                <li><a href="{% url 'admin:events_event_change' event.id %}">Edit</a></li>
+                                {% if event.is_attendance_event %}
+                                    <li><a href="{% url 'event_attendees_pdf' event.id %}">Påmeldingsliste</a></li>
+                                {% endif %}
+                            </ul>
+                        </div>
+                        {% endif %}
                     {% endif %}
                 </h2>
             </div>

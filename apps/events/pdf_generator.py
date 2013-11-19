@@ -19,8 +19,8 @@ class EventPDF:
         self.event = event
         self.attendees = sorted(event.attendance_event.attendees.all()[:event.attendance_event.max_capacity], key=lambda attendee: attendee.user.last_name)
         self.waiters = event.wait_list
-        self.attendee_table_data = [(u'Navn', u'Klassetrinn', u'Studie', u'Telefon'), ]
-        self.waiters_table_data = [(u'Navn', u'Klassetrinn', u'Studie', u'Telefon'), ]
+        self.attendee_table_data = [(u'Navn', u'Klasse', u'Studie', u'Telefon'), ]
+        self.waiters_table_data = [(u'Navn', u'Klasse', u'Studie', u'Telefon'), ]
         self.allergies_table_data = ()
 
         self.create_attendees_table_data()
@@ -32,7 +32,9 @@ class EventPDF:
 
         for attendee in self.attendees:
             user = attendee.user
-            self.attendee_table_data.append((create_body_text("%s, %s" % (user.last_name, user.first_name)), user.year, user.get_field_of_study_display(), user.phone_number))
+            self.attendee_table_data.append((create_body_text("%s, %s" % (user.last_name, user.first_name)),
+                                             user.year, create_body_text(user.get_field_of_study_display()),
+                                             user.phone_number))
 
             if user.allergies:
                 self.allergies_table_data = self.allergies_table_data + (user.allergies,)
@@ -42,13 +44,15 @@ class EventPDF:
 
         for attendee in self.waiters:
             user = attendee.user
-            self.waiters_table_data.append((create_body_text("%s, %s" % (user.last_name, user.first_name)), user.year, user.get_field_of_study_display(), user.phone_number))
+            self.waiters_table_data.append((create_body_text("%s, %s" % (user.last_name, user.first_name)),
+                                            user.year, create_body_text(user.get_field_of_study_display()),
+                                            user.phone_number))
 
             if user.allergies:
                 self.allergies_table_data = self.allergies_table_data + (user.allergies,)
 
     def attendee_column_widths(self):
-        return (200, 60, 140, 60)
+        return (200, 40, 140, 60)
 
     def allergies_column_widths(self):
         return (200, 200)
@@ -85,7 +89,6 @@ def get_table_style():
     return TableStyle(
         [
             ('GRID',(0,0),(-1,-1),0.5,colors.grey),
-            ('BOX',(0,0),(1,-1),1,colors.black),
             ('BOX',(0,0),(-1,-1),1,colors.black),
         ]
     )
