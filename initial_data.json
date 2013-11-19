@@ -1,20 +1,22 @@
 [
     {
+        "pk": 1,
+        "model": "chunks.chunk",
         "fields": {
-            "content": "###Kontaktinformasjon: \r\n\r\n_Linjeforeningen er opprettet, og drives, av informatikkstudenter ved NTNU._\r\n\r\n* Epost: [kontakt@online.ntnu.no](mailto:kontakt@online.ntnu.no \"Send oss en epost\") \r\n* Telefon: 73 59 64 89 \r\n* Organisasjonsnummer: 992 548 045 \r\n* Vedtekter: [Onlines vedtekter, 2012](/media/onlines_vedtekter_2012.pdf\"Trykk for \u00e5 \u00e5pne vedtektene\") \r\n* Retningslinjer: [Onlines retningslinjer, 2012](/media/onlines_retningslinjer_2012.pdf\"Trykk for \u00e5 \u00e5pne retningslinjene\")\r\n\r\n\r\n###Postadresse: \r\n* Online Linjeforening \r\n* Sem S\u00e6landsv. 7-9 \r\n* 7034 Trondheim \r\n\r\n###Bes\u00f8ksadresse: \r\n* Rom 303 \r\n* 3 etg. H\u00f8gskoleringen 3 \r\n* NTNU Gl\u00f8shaugen   \r\n\r\n###Epost til administrative enheter: \r\n* Hovedstyret: [hovedstyret@online.ntnu.no](mailto:hovedstyret@online.ntnu.no \"Send mail til hovedstyret\")  \r\n\r\n###Epost til komiteene: \r\n* Arrangementskomiteen: [arrkom@online.ntnu.no](mailto:arrkom@online.ntnu.no \"Send epost til ArrKom\")\r\n* Bank- og \u00f8konomikomiteen: [bankom@online.ntnu.no](mailto:bankom@online.ntnu.no \"Send epost til BanKom\")   \r\n* Bedriftskomiteen: [bedkom@online.ntnu.no](mailto:bedkom@online.ntnu.no \"Send epost til BedKom\")\r\n* Fag- og kurskomiteen: [fagkom@online.ntnu.no](mailto:fagkom@online.ntnu.no \"Send epost til FagKom\")\r\n* Drifts- og utviklingskomiteen: [dotkom@online.ntnu.no](mailto:dotkom@online.ntnu.no \"Send epost til DotKom\")\r\n* Profil- og aviskomiteen: [prokom@online.ntnu.no](mailto:prokom@online.ntnu.no \"Send epost til ProKom\")\r\n* Trivselskomiteen: [trikom@online.ntnu.no](mailto:trikom@online.ntnu.no \"Send epost til TriKom\")  \r\n\r\n###Online p\u00e5 IRC: \r\n* Nettverk: irc.freenode.net \r\n* Kanal: #online", 
+            "content": "###Kontaktinformasjon: \r\n\r\n_Linjeforeningen er opprettet, og drives, av informatikkstudenter ved NTNU._\r\n\r\n* Epost: [kontakt@online.ntnu.no](mailto:kontakt@online.ntnu.no \"Send oss en epost\") \r\n* Telefon: 73 59 64 89 \r\n* Organisasjonsnummer: 992 548 045 \r\n* Vedtekter: [Onlines vedtekter, 2012](/media/onlines_vedtekter_2012.pdf\"Trykk for å åpne vedtektene\") \r\n* Retningslinjer: [Onlines retningslinjer, 2012](/media/onlines_retningslinjer_2012.pdf\"Trykk for å åpne retningslinjene\")\r\n\r\n\r\n###Postadresse: \r\n* Online Linjeforening \r\n* Sem Sælandsv. 7-9 \r\n* 7034 Trondheim \r\n\r\n###Besøksadresse: \r\n* Rom 303 \r\n* 3 etg. Høgskoleringen 3 \r\n* NTNU Gløshaugen   \r\n\r\n###Epost til administrative enheter: \r\n* Hovedstyret: [hovedstyret@online.ntnu.no](mailto:hovedstyret@online.ntnu.no \"Send mail til hovedstyret\")  \r\n\r\n###Epost til komiteene: \r\n* Arrangementskomiteen: [arrkom@online.ntnu.no](mailto:arrkom@online.ntnu.no \"Send epost til ArrKom\")\r\n* Bank- og økonomikomiteen: [bankom@online.ntnu.no](mailto:bankom@online.ntnu.no \"Send epost til BanKom\")   \r\n* Bedriftskomiteen: [bedkom@online.ntnu.no](mailto:bedkom@online.ntnu.no \"Send epost til BedKom\")\r\n* Fag- og kurskomiteen: [fagkom@online.ntnu.no](mailto:fagkom@online.ntnu.no \"Send epost til FagKom\")\r\n* Drifts- og utviklingskomiteen: [dotkom@online.ntnu.no](mailto:dotkom@online.ntnu.no \"Send epost til DotKom\")\r\n* Profil- og aviskomiteen: [prokom@online.ntnu.no](mailto:prokom@online.ntnu.no \"Send epost til ProKom\")\r\n* Trivselskomiteen: [trikom@online.ntnu.no](mailto:trikom@online.ntnu.no \"Send epost til TriKom\")  \r\n\r\n###Online på IRC: \r\n* Nettverk: irc.freenode.net \r\n* Kanal: #online",
+            "description": "",
             "key": "om_online"
-        }, 
-        "model": "chunks.chunk", 
-        "pk": 1
-    }, 
+        }
+    },
     {
+        "pk": 2,
+        "model": "chunks.chunk",
         "fields": {
-            "content": "DotKom er komit\u00e9en som er ansvarlig for utvikling og vedlikehold av Online sine nettsider, samt drift av maskinparken.\r\n\r\n\r\ndotKom har ogs\u00e5 ansvaret for \u00e5 sikre at Online p\u00e5 best mulig m\u00e5te benytter IT i sine arbeidsprosesser, der Online er tjent med det. dotKom er som f\u00f8lge av det, ogs\u00e5 forpliktet til \u00e5 utvikle og vedlikeholde IT-systemer som Online er tjent med - med hensyn til Online som linjeforening og Online sine studenter. \r\n\r\n*Aktive*\r\n\r\n* Christian Strand Young (komit\u00e9leder)\r\n* Espen Jacobsson\r\n* H\u00e5vard Svae Slettvold\r\n* Magnus Bl\u00fctecher Dysthe\r\n* Sigurd Fosseng\r\n* Jonas Svarvaa\r\n* Tor H\u00e5kon Bonsaksen\r\n* Torkil Rein Gustavsen\r\n* Michael Johansen\r\n* Hanne Gunby (permitert)\r\n* Kristoffer Andreas Dalby (\u00f8konomiansvarlig)\r\n* Kristian Selvik Ekle\r\n* Nils Herde (nestleder)\r\n* Iver Egge Asperud\r\n* Edgar Mo Vedvik\r\n* Thomas Gautvedt\r\n\r\n*Aktive Pensjonister*\r\n\r\n* Dag Olav Prestegarden\r\n* Roy Sindre Norangshol\r\n\r\nFor sp\u00f8rsm\u00e5l; send oss en [epost](mailto:dotkom@online.ntnu.no \"Send en epost til dotKom\")", 
+            "content": "dotKom er komitéen som er ansvarlig for utvikling og vedlikehold av Online sine nettsider, samt drift av maskinparken.\r\n\r\n\r\ndotKom har også ansvaret for å sikre at Online på best mulig måte benytter IT i sine arbeidsprosesser, der Online er tjent med det. dotKom er som følge av det, også forpliktet til å utvikle og vedlikeholde IT-systemer som Online er tjent med - med hensyn til Online som linjeforening og Online sine studenter. \r\n\r\n*Aktive*\r\n\r\n* Nils Herde (Komitéleder)\r\n* Christian Strand Young \r\n* Espen Jacobsson\r\n* Håvard Svae Slettvold\r\n* Magnus Blütecher Dysthe\r\n* Jonas Svarvaa\r\n* Tor Håkon Bonsaksen\r\n* Hanne Gunby\r\n* Kristoffer Andreas Dalby (Økonomiansvarlig)\r\n* Kristian Selvik Ekle\r\n* Iver Egge Asperud\r\n* Edgar Mo Vedvik\r\n* Thomas Gautvedt\r\n* Aleksander Skraastad\r\n* Nicolas Almagro Tonne\r\n* Christian Duvholt\r\n* Rikke Rye-Holmboe\r\n* Tri M. Nguyen\r\n\r\n*Aktive Pensjonister*\r\n\r\n* Dag Olav Prestegarden\r\n* Sigurd Fosseng\r\n* Torkil Gustavsen\r\n* Michael Johansen\r\n\r\nFor spørsmål; send oss en [epost](mailto:dotkom@online.ntnu.no \"Send en epost til dotKom\")",
+            "description": "",
             "key": "om_dotkom"
-        }, 
-        "model": "chunks.chunk", 
-        "pk": 2
-    }, 
+        }
+    },
     {
         "fields": {
             "content": "\"There is no one who loves pain itself, who seeks after it and wants to have it, simply because it is pain...\"", 
@@ -24,69 +26,77 @@
         "pk": 3
     }, 
     {
+        "pk": 4,
+        "model": "chunks.chunk",
         "fields": {
-            "content": "Hovedstyret velges av linjeforeningens medlemmer p\u00e5 generalforsamlingen i l\u00f8pet av v\u00e5rsemesteret og sitter ett \u00e5r frem i tid. Styret best\u00e5r av leder, nestleder og alle komitelederne. \r\n\r\nHovedstyret er f\u00f8rst og fremst er en m\u00f8teplass for koordinering av de forskjellige komiteene. Styret driver ogs\u00e5 med \u00f8konomistyring og annet administrativt arbeid.\r\n\r\nHovedstyret er ogs\u00e5 linjeforeningens ansikt utad, og opprettholder kontakten med fakultet, institutt og representerer Online ved forskjellige anledninger.\r\n\r\nHovedstyret best\u00e5r av:\r\n\r\n* __Leder:__ Hanne Gunby \r\n* __Nestleder:__ Tri M. Nguyen\r\n* __Leder arrKom:__ Martin Akre Midtsund\r\n* __Leder banKom:__ Marius Krakeli\r\n* __Leder bedKom:__ Vilde Kristine Grav\r\n* __Leder dotKom:__ Christian Strand Young\r\n* __Leder fagKom:__ Linn Vikre\r\n* __Leder proKom:__ Magnus Line\r\n* __Leder triKom:__ David Storjord", 
+            "content": "**Hovedstyret** velges av linjeforeningens medlemmer på generalforsamlingen i løpet av vårsemesteret og sitter ett år frem i tid. Styret består av leder, nestleder og alle komitelederne. \r\n\r\nHovedstyret er først og fremst en møteplass for koordinering av de forskjellige komiteene. Styret driver også med økonomistyring og annet administrativt arbeid.\r\n\r\nHovedstyret er også linjeforeningens ansikt utad, og opprettholder kontakten med fakultet, institutt og representerer Online ved forskjellige anledninger.\r\n\r\nHovedstyret består av:\r\n\r\n* __Leder:__ Sverre Johann Bjørke\r\n* __Nestleder:__ Linn Vikre\r\n* __Leder arrKom:__ Marius Thingwall\r\n* __Leder banKom:__ Jim Frode Hoff\r\n* __Leder bedKom:__ Jim Tørlen\r\n* __Leder dotKom:__ Nils Herde\r\n* __Leder fagKom:__ Henning M. Wold\r\n* __Leder proKom:__ Thor Håkon Bredesen\r\n* __Leder triKom:__ John Hanssen Kolstad",
+            "description": "",
             "key": "om_hovedstyret"
-        }, 
-        "model": "chunks.chunk", 
-        "pk": 4
-    }, 
+        }
+    },
     {
+        "pk": 5,
+        "model": "chunks.chunk",
         "fields": {
-            "content": "ArrKom er arrangementskomit\u00e9en til Online og har som hovedansvar \u00e5 arrangere sosiale tilstelninger for informatikkstudenter. \r\n\r\nOnline arrangerer b\u00e5de tradisjonsrike fester, og mer uformelle fester, i l\u00f8pet av skole\u00e5ret. Dette er et tilbud til deg slik at du kan ha det moro og knytte nye kontakter innad i linjeforeningen. \r\n\r\n\r\nRetningslinjer for arrKom:\r\n\r\nArrangementskomit\u00e9en til Online skal bidra til \u00f8kt samhold og sosialisering blant Onlines medlemmer. Dette gj\u00f8r vi ved \u00e5 arrangere fadderuke for 1.klassingene i starten av deres studietid, og arrangerer flere ulike arrangementer utover skole\u00e5ret. \r\n\r\n\r\nVi skal v\u00e6re en aktiv og synlig komit\u00e9 som inkluderer alle og s\u00f8rger for \u00e5 tilby et s\u00e5 variert tilbud av arrangementer at enhver av Onlines medlemmer kan stille p\u00e5 flest mulig av disse. Komit\u00e9en best\u00e5r av:\r\n\r\n* [Martin Akre Midtsund](mailto:martiam@stud.ntnu.no \"Send en epost til komit\u00e9leder\") (komit\u00e9leder) \r\n* Jim Frode Hoff (\u00f8konomiansvarlig)\r\n* Juni Angelfoss\r\n* John Hanssen Kolstad \r\n* Anja R\u00f8nning  \r\n* Ingrid Kittelsen \r\n* Marte Johansen S\u00e6ther\r\n* Marius Thingwall\r\n* Tale Prestmo\r\n* Ragnhild Seim\r\n* Marthe Sofie \u00d8ynes\r\n* Ivar Arning Flakstad\r\n* Mathilde Oftedal (permittert)\r\n* Joakim Aune (permittert) \r\n* Andr\u00e9 Knudsen (permittert)\r\n\r\n\r\nSp\u00f8rsm\u00e5l? Send oss en [epost](mailto:arrkom@online.ntnu.no \"Send en epost til arrKom\") da, vel!", 
+            "content": "**Arrangementkomiteen**  har som hovedansvar å arrangere sosiale tilstelninger for informatikkstudenter. \r\n\r\nOnline arrangerer både tradisjonsrike fester, og mer uformelle fester, i løpet av skoleåret. Dette er et tilbud til deg slik at du kan ha det moro og knytte nye kontakter innad i linjeforeningen. Vi bidrar jobber for økt samhold og sosialisering blant Onlines medlemmer. Dette gjør vi ved å bidra til et variert sosialt tilbud for alle Onlinere.  \r\n\r\nVi skal være en aktiv og synlig komité som inkluderer alle og sørger for å tilby et så variert tilbud av arrangementer at enhver av Onlines medlemmer kan stille på flest mulig av disse. Komitéen består av:\r\n\r\n* [Marius Thingwall](mailto:mariuthi@stud.ntnu.no \"Send en epost til komitéleder\") (Komitéleder) \r\n* Tale Prestmo (Nestleder)\r\n* Ivar Arning Flakstad (Økonomiansvarlig)\r\n* Ragnhild Seim\r\n* Marthe Sofie Øynes\r\n* Ingrid Kittelsen \r\n* Marte Johansen Sæther\r\n* Caroline Odden\r\n* Thea Lerfaldet\r\n* Leif Marius Sethne Reppen\r\n* Gaute Lunde\r\n* Sondre Johan Widmark\r\n\r\nPermitterte: \r\n\r\n* Jim Frode Hoff \r\n* John Hanssen Kolstad \r\n\r\nSpørsmål? Send oss en [epost](mailto:arrkom@online.ntnu.no \"Send en epost til arrKom\") da, vel!",
+            "description": "",
             "key": "om_arrkom"
-        }, 
-        "model": "chunks.chunk", 
-        "pk": 5
-    }, 
+        }
+    },
     {
+        "pk": 6,
+        "model": "chunks.chunk",
         "fields": {
-            "content": "Bank- og \u00f8konomikomiteen er ansvarlig for alt det \u00f8konomiske innad i Online.\r\nDette best\u00e5r av regnskapsf\u00f8ring, fakturering og \u00e5 ha kontroll p\u00e5 det som\r\nskjer i nettbanken.\r\n\r\nKomiteen best\u00e5r av representanter fra arrKom, bedKom, fagKom, proKom og\r\nvelKom som har ansvar for sine representative regnskap og \u00f8konomi. Leder er\r\nansvarlig for regnskapet til banKom, dotKom og Hovedstyret.\r\n\r\n\r\n   - Leder: Marius Krakeli\r\n   - For arrKom: Jim Frode Hoff\r\n   - For bedKom: Ren\u00e9 Olavi R\u00e4is\u00e4nen\r\n   - For dotKom: Helle Grimnes\r\n   - For fagKom: Nina Margrethe Sm\u00f8rsg\u00e5rd\r\n   - For proKom: Rikard Eide\r\n   - For velKom: Magnus German Hove", 
+            "content": "**Bank- og økonomikomiteen** er ansvarlig for alt det økonomiske innad i Online. Dette består av regnskapsføring, fakturering og å ha kontroll på det som skjer i nettbanken.\r\n\r\nKomiteen består av representanter fra alle komiteer som har ansvar for komiteenes regnskap og økonomi. Leder eransvarlig for regnskapet til banKom og Hovedstyret. \r\n\r\n   - Leder: Jim Frode Hoff\r\n   - For arrKom: Ivar Flakstad\r\n   - For bedKom: Fredrik Borgen Tørnvall\r\n   - For dotKom: Kristoffer Dalby\r\n   - For fagKom: Truls Mørk Pettersen\r\n   - For proKom: Hallvard Jore Christensen\r\n   - For triKom: Johan Slettevold\r\n   - for velKom: Henning Moberg Wold",
+            "description": "",
             "key": "om_bankom"
-        }, 
-        "model": "chunks.chunk", 
-        "pk": 6
-    }, 
+        }
+    },
     {
+        "pk": 7,
+        "model": "chunks.chunk",
         "fields": {
-            "content": "Vi i bedKom er bindeleddet mellom n\u00e6ringsliv og informatikkstudenter, og skal i tillegg samarbeide med andre linjeforeninger p\u00e5 NTNU for \u00e5 i vareta informatikkstudentenes interesser. V\u00e5rt m\u00e5l er \u00e5 kommunisere og formidle v\u00e5re studenter som potensielle arbeidstakere til aktuelle bedrifter p\u00e5 en positiv m\u00e5te. For \u00e5 fremme dette er bedriftspresentasjoner en viktig del av v\u00e5rt virke, i tillegg til andre m\u00e5ter \u00e5 kommunisere ut informasjon til studentene p\u00e5 en god m\u00e5te.\r\n\r\nVi er en hardtarbeidende komit\u00e8 som igjennom mange \u00e5r har opparbeidet oss et meget stort kontaktnett av bedrifter. Bedriftskomiteen operer som en kontaktpunkt for bedrifter og studentene p\u00e5 informatikkstudiet.\r\n\r\nSom medlem i bedriftskomiteen f\u00e5r du en unik mulighet til \u00e5 komme i kontakt med mange bedrifter, som vil gagne dine medstudenter og deg selv.\r\n\r\nEtterhvert som \u00e5rene g\u00e5r kommer nye medlemmer og gamle faller fra. N\u00e5 ser det ut som vi trenger \u00e5 f\u00e5 inn noen flere medlemmer, og vi vil derfor utlyse stillinger i komiteen etter sommeren 2013. Det vil bli annonsert og gjennomf\u00f8rt intervjuer, og vi h\u00e5per at flest mulig \u00f8nsker \u00e5 s\u00f8ke seg inn hos oss. \r\n\r\n\r\nKomiteen best\u00e5r av:\r\n \r\n* Vilde Kristine Grav (komit\u00e9leder)\r\n* Jens Kristian Espevik (nestleder)\r\n* Markus Andersen (\u00f8konomiansvarlig)\r\n* Ren\u00e9 Olavi R\u00e4is\u00e4nen  \r\n* Are Sj\u00f8berg\r\n* Ada A. Jordal\r\n* Lise Bulling\r\n* Magnus Kongshem\r\n* Per \u00d8yvind Kanestr\u00f8m\r\n* Anders S. Pedersen\r\n* Even Lisleb\u00f8\r\n* Fredrik B. T\u00f8rnvall\r\n* Jim T\u00f8rlen\r\n\r\n\r\nFor sp\u00f8rsm\u00e5l send oss en [epost](mailto:bedkom@online.ntnu.no)", 
+            "content": "Vi i **bedKom** er bindeleddet mellom næringslivet og informatikkstudenter, og skal i tillegg samarbeide med andre linjeforeninger på NTNU for å i vareta informatikkstudentenes interesser. Vårt mål er å kommunisere og formidle våre studenter som potensielle arbeidstakere til aktuelle bedrifter på en positiv måte. For å fremme dette er bedriftspresentasjoner en viktig del av vårt virke, i tillegg til andre måter å kommunisere ut informasjon til studentene - på en god måte.\r\n\r\nVi er en hardtarbeidende komitè som igjennom mange år har opparbeidet oss et meget stort kontaktnett av bedrifter. Bedriftskomiteen opererer som en kontaktpunkt for bedrifter og studentene på informatikkstudiet.\r\n\r\nSom medlem i bedriftskomiteen får du en unik mulighet til å komme i kontakt med mange bedrifter, som vil gagne dine medstudenter og deg selv.\r\n\r\n\r\nKomiteen består av:\r\n \r\n* [Jim Tørlen (komitéleder)](mailto:bedkom-leder@online.ntnu.no)\r\n* Magnus Kongshem (Nestleder)\r\n* Even Lislebø\r\n* Fredrik B. Tørnvall\r\n* Per Øyvind Kanestrøm\r\n* Emil Golmen\r\n* Kamilla Tellefsen\r\n* Kasper Rynning-Tønnesen\r\n* Kristian Svoren\r\n* Kathrine Løfqvist\r\n* Lasse Drevland\r\n* Oscar Conrad\r\n\r\n\r\nPermittert:\r\n\r\n* Are Sjøberg\r\n* Vilde Kristine Grav\r\n\r\nFor spørsmål send oss en [epost](mailto:bedkom@online.ntnu.no)",
+            "description": "",
             "key": "om_bedkom"
-        }, 
-        "model": "chunks.chunk", 
-        "pk": 7
-    }, 
+        }
+    },
     {
+        "pk": 8,
+        "model": "chunks.chunk",
         "fields": {
-            "content": "Fag- og kurskomiteen jobber med \u00e5 arrangere kurs, workshop, faglige presentasjoner og andre faglige arrangementer for studentene ved informatikk.\r\n\r\nV\u00e5rt m\u00e5l er \u00e5 \u00e5 tilby kunnskap en ikke f\u00e5r gjennom skolen, slik som webutvikling, hacking og andre aktuelle teknologier. \r\n\r\nVi holder ogs\u00e5 eksamenskurs i enkelte emner; kursholderne er ofte studenter, men mange holdes av eksterne bedrifter, gjerne da med bespisning og muligheter til \u00e5 mingle med bedriften.\r\n\r\nHar du forslag til kurs eller sp\u00f8rsm\u00e5l? Send oss gjerne en epost: [fagkom@online.ntnu.no](mailto:fagkom@online.ntnu.no \"Send en epost til FagKom\").\r\n\r\nKomiteen best\u00e5r av:\r\n\r\n* [Linn Vikre (komiteleder)](mailto:fagkom-leder@online.ntnu.no)\r\n* Nina Margrethe Sm\u00f8rsg\u00e5rd (\u00f8konomiansvarlig)\r\n* Dag Erik Vikan \r\n* Henning Moberg Wold \r\n* Kristian Laskemoen\r\n* Fredrik Sol\u00f8y\r\n* Nikolai Krill\r\n* Tri M. Nguyen (permitert)\r\n* Aina Elisabeth Thunestveit\r\n* Espen Hellerud\r\n* H\u00e5kon \u00d8deg\u00e5rd L\u00f8vdal\r\n* Pia Karlsen Lindkj\u00f8len\r\n* Truls M\u00f8rk Pettersen", 
+            "content": "**Fag- og kurskomiteen** jobber med å arrangere kurs, workshop, faglige presentasjoner og andre faglige arrangementer for studentene ved informatikk.\r\n\r\nVårt mål er å å tilby kunnskap en ikke får gjennom skolen, slik som webutvikling, hacking og andre aktuelle teknologier. Vi holder også eksamenskurs i enkelte emner; kursholderne er ofte studenter, men mange holdes av eksterne bedrifter, gjerne da med bespisning og muligheter til å mingle med bedriften.\r\n\r\nHar du forslag til kurs eller spørsmål? Send oss gjerne en epost: [fagkom@online.ntnu.no](mailto:fagkom@online.ntnu.no \"Send en epost til FagKom\").\r\n\r\nKomiteen består av:\r\n\r\n* [Henning M. Wold (komiteleder)](mailto:fagkom-leder@online.ntnu.no)\r\n* Espen Hellerud (Nestleder)\r\n* Truls Mørk Pettersen (økonomiansvarlig)\r\n* Nikolai Krill\r\n* Aina Elisabeth Thunestveit\r\n* Håkon Ødegård Løvdal\r\n* Pia Karlsen Lindkjølen\r\n* Ingeborg Ødegård Oftedal\r\n* Paul Philip Mitchell\r\n* Fredrik Berg\r\n* Peter Jensen\r\n* Linn Vikre (permittert)",
+            "description": "",
             "key": "om_fagkom"
-        }, 
-        "model": "chunks.chunk", 
-        "pk": 8
-    }, 
+        }
+    },
     {
+        "pk": 9,
+        "model": "chunks.chunk",
         "fields": {
-            "content": "Pensjonistkomiteen har som oppgave \u00e5 holde kontakt med gamle medlemmer av Online, samt arrangere sosiale festligheter for medlemene. \r\n\r\n\r\nKomiteen best\u00e5r av:\r\n\r\n* Glenn Ruben Bakke (komit\u00e9leder, Trondheim) \r\n* Patrick Mostad \r\n* Silje Sletteng \r\n* May Linda Martinsen \r\n* Mari Lie H\u00e6reid \r\n* Kari Korntorp \r\n* J\u00f8rgen Hovelsen \r\n* Asbj\u00f8rn Fellinghaug", 
+            "content": "**Pensjonistkomiteen** har som oppgave å holde kontakt med gamle medlemmer av Online, samt arrangere sosiale festligheter for medlemene. \r\n\r\nKomiteen består av:\r\n\r\n* Glenn Ruben Bakke (komitéleder, Trondheim) \r\n* Patrick Mostad \r\n* Silje Sletteng \r\n* May Linda Martinsen \r\n* Mari Lie Hæreid \r\n* Kari Korntorp \r\n* Jørgen Hovelsen \r\n* Asbjørn Fellinghaug",
+            "description": "",
             "key": "om_pankom"
-        }, 
-        "model": "chunks.chunk", 
-        "pk": 9
-    }, 
+        }
+    },
     {
+        "pk": 10,
+        "model": "chunks.chunk",
         "fields": {
-            "content": "Profil- og aviskomiteens hovedoppgave er \u00e5 sikre kvalitet p\u00e5 profileringsmateriell, samt gi ut linjeforeningens tidsskrift, Offline. Dette betyr i praksis \u00e5 designe og lage de produktene for profilering som linjeforeningen trenger. \r\n\r\nProKom har laget spesielt mye plakater for arrKom, bedKom og fagKom, henholdsvis til sosiale arrangementer, bedpreser og kurs. I tillegg lages ogs\u00e5 produkter til spesielle arrangementer som f.eks. invitasjoner, bordkort og gensere/t-skjorter og annet som gir Online et pent ansikt utad, f.eks. rollup, medaljer og pinser.\r\n\r\nProKom gir ut Onlines tidsskrift, Offline, to ganger i semesteret. Redaksjonen best\u00e5r av komiteens medlemmer i tillegg til noen f\u00e5 utenforst\u00e5ende skribenter.\r\n\r\n\r\nKomiteen best\u00e5r av:\r\n\r\n* Magnus Bolmstedt Line (komit\u00e9leder)\r\n* Rikard Eide (\u00f8konomiansvarlig)(redakt\u00f8r)\r\n* Lorents Odin Grav\u00e5s \r\n* Beate Baier Biribakken (permitert)\r\n* Beate Hay Sandmo\r\n* Erik Lothe\r\n* Espen Skarsb\u00f8 Olsen\r\n* Kathrine Steffensen\r\n* Susanne Gustavsen (permitert)\r\n* Sverre Johann Bj\u00f8rke\r\n* Aleksander Skraastad\r\n* Hallvard Jore Christensen\r\n* Ingrid Myrann\r\n* Kari Skjold\r\n* Liang Zhu\r\n* Thor H\u00e5kon Bredesen\r\n* \u00d8yvind Hellenes\r\n\r\n\r\nFor sp\u00f8rsm\u00e5l send oss en [e-post](mailto:prokom@online.ntnu.no)", 
+            "content": "**Profil- og aviskomiteens** hovedoppgave er å sikre kvalitet på profileringsmateriell, samt gi ut linjeforeningens tidsskrift, Offline. Dette betyr i praksis å designe og lage de produktene for profilering som linjeforeningen trenger. \r\n\r\nProKom har laget spesielt mye plakater for arrKom, bedKom og fagKom, henholdsvis til sosiale arrangementer, bedpreser og kurs. I tillegg lages også produkter til spesielle arrangementer som f.eks. invitasjoner, bordkort og gensere/t-skjorter og annet som gir Online et pent ansikt utad, f.eks. rollup, medaljer og pinser.\r\n\r\nProKom gir ut Onlines tidsskrift, Offline, to ganger i semesteret. Redaksjonen består av komiteens medlemmer i tillegg til noen få utenforstående skribenter.\r\n\r\nKomiteen består av:\r\n\r\n* Thor Håkon Bredesen (komitéleder)\r\n* Kathrine Steffensen (nestleder)\r\n* Rikard Eide\r\n* Sverre Johann Bjørke (permitert)\r\n* Hallvard Jore Christensen\r\n* Ingrid Myrann\r\n* Kari Skjold\r\n* Liang Zhu\r\n* Øyvind Hellenes\r\n* Stian Dysthe\r\n* Elise Fehn Olsen\r\n* Said Turusbekov\r\n* Lars Liverød Andersen\r\n* Anne-Marie Samuelsen\r\n* Hanna Sollie Storaker\r\n\r\n\r\nFor spørsmål send oss en [e-post](mailto:prokom@online.ntnu.no)",
+            "description": "",
             "key": "om_prokom"
-        }, 
-        "model": "chunks.chunk", 
-        "pk": 10
-    }, 
+        }
+    },
     {
+        "pk": 11,
+        "model": "chunks.chunk",
         "fields": {
-            "content": "TriKom er komiteen til Online som har ansvaret for trivsel blant studentene og drift av kontoret.\r\n\r\n\r\nTriKom best\u00e5r for tiden av f\u00f8lgende medlemmer:\r\n\r\n- David Storjord (leder)\r\n- Ingeborg \u00d8deg\u00e5rd Oftedal (nestleder)\r\n- Johan Slettvold (\u00f8konomiansvarlig)\r\n- Even \u00d8degaard\r\n- H\u00e5vard Holmboe Lian\r\n- Daniell Sollie Hansen\r\n- Mats Tostrup\r\n- Vigdis Hanto\r\n\r\n\r\nHva skjer p\u00e5 kontoret akkurat n\u00e5?: [Kalender](https://www.google.com/calendar/embed?src=54v6g4v6r46qi4asf7lh5j9pcs%40group.calendar.google.com&ctz=Europe/Oslo)\r\n\r\nSend oss gjerne en mail dersom du har noen ideer til ting triKom kan finne p\u00e5! [send epost](mailto:trikom@online.ntnu.no \"Send epost til triKom\")\r\n\r\n\r\nOnlinekontoret ligger i tredje etasje i H\u00f8gskoleringen 3 (ogs\u00e5 kjent som P-15 bygget eller fragleberget).\r\n\r\nTa heisen opp i 3. og g\u00e5 rett inn til h\u00f8yre, eller g\u00e5 opp trappa og rett frem. \r\n\r\n\r\nKontoret er arbeids- og m\u00f8telokale for hovedstyret og de forskjellige komiteene i Online og dessuten et sosialt sted man kan stikke innom for en kopp kaffe, en prat, hjelp med \u00f8vinger og mye mer. \r\n\r\n\r\nBillettsalg til arrangementer i regi av Online foreg\u00e5r som regel p\u00e5 kontoret. \r\n\r\n\r\n\u00c5pningstidene for h\u00f8stsemesteret 2012 er kl. 10.00-16.00 \r\n\r\n\r\nDet er som regel folk p\u00e5 kontoret utenom \u00e5pningstidene, da spesielt utover kveldene. \r\n\r\n\r\nTelefonnummer til kontoret er: 73 59 64 89 \r\n\r\n\r\nFor ytterligere informasjon, kontakt kontorsjef David Storjord p\u00e5 [epost](mailto:kontorsjef@online.ntnu.no \"Send epost til kontorsjefen\")  ", 
+            "content": "**TriKom** er Online-komitéen som har ansvaret for trivsel blant studentene og drift av kontoret. TriKom består for tiden av følgende medlemmer:\r\n\r\n- John Hanssen Kolstad (leder)\r\n- Vigdis Hanto (nestleder)\r\n- Johan Slettvold (økonomiansvarlig)\r\n- Håvard Holmboe Lian\r\n- Daniell Sollie Hansen\r\n- Mats Tostrup\r\n- David Storjord\r\n- Elin Hagen\r\n- Erik Wiker\r\n- William Henriksen\r\n\r\nHva skjer på kontoret akkurat nå? Se [kalenderen](https://www.google.com/calendar/embed?src=54v6g4v6r46qi4asf7lh5j9pcs%40group.calendar.google.com&ctz=Europe/Oslo). [Send oss gjerne en epost](mailto:trikom@online.ntnu.no \"Send epost til triKom\") dersom du har noen ideer til ting triKom kan finne på!\r\n\r\nOnlinekontoret ligger i tredje etasje i Høgskoleringen 3 (også kjent som P-15 bygget eller Fragleberget). Ta heisen opp i 3. og gå rett inn til høyre, eller gå opp trappa og rett frem.\r\n\r\nKontoret er arbeids- og møtelokale for Hovedstyret og de forskjellige komitéene i Online og dessuten et sosialt sted man kan stikke innom for en kopp kaffe, en prat, hjelp med øvinger og mye mer.\r\n\r\nÅpningstidene for høstsemesteret 2013 er kl. 10.00-15.00. Det er som regel folk på kontoret utenom åpningstidene, da spesielt utover kveldene.\r\n\r\nFor ytterligere informasjon, kontakt kontorsjef John Hanssen Kolstad på [epost](mailto:kontorsjef@online.ntnu.no \"Send epost til kontorsjefen\")",
+            "description": "",
             "key": "om_trikom"
-        }, 
-        "model": "chunks.chunk", 
-        "pk": 11
-    }, 
+        }
+    },
     {
         "fields": {
             "content": "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.\r\n\r\nLorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.\r\n\r\nLorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.", 
@@ -104,13 +114,14 @@
         "pk": 13
     }, 
     {
+        "pk": 14,
+        "model": "chunks.chunk",
         "fields": {
-            "content": "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.\r\n\r\nLorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.", 
+            "content": "**Velkomstkomiteen** har ansvaret for å planelgge og gjennomføre fadderukene hvert år. Komiteen blir opprettet av Hovedstyret på våren, og jobber til over sommeren. Komiteens hovedoppgave er å fremme Online overfor nye studenter som starter på informatikk ved NTNU. Komiteen engasjerer faddere som skal hjelpe de nye studtenene i gang med studenttilværelsen.\r\n",
+            "description": "",
             "key": "om_velkom"
-        }, 
-        "model": "chunks.chunk", 
-        "pk": 14
-    }, 
+        }
+    },
     {
         "fields": {
             "content": "Sammen med linjeforeningene Delta, Spanskr\u00f8ret og Volvox &amp; Alkymisten har Online en kjeller som blir brukt til mange sosiale aktiviteter igjennom semesteret. Kjelleren er lokalisert i Herman Krags vei 15 p\u00e5 Moholt.\r\n\r\nKart: [Finner du her](http://goo.gl/maps/jeu7)  \r\nMer informasjon p\u00e5 [Realfagskjellerens egen hjemmeside](http://org.ntnu.no/realfagskjellern)", 
@@ -120,12 +131,13 @@
         "pk": 15
     }, 
     {
+        "pk": 16,
+        "model": "chunks.chunk",
         "fields": {
-            "content": "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.\r\n\r\nLorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.\r\n\r\nLorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.", 
+            "content": "**Datakameratene** FK Gløshaugen er en fotballklubb primært for studenter ved linjene datateknikk, kommunikasjonsteknologi og informatikk ved NTNU. Fotballklubben består av et styre og to avdelinger; herreavdelingen og kvinneavdelingen. Klubben har ingen direkte tilknytning til Online og Abakus, men er et fint samlingspunkt for studenter fra de to linjeforeningene. \r\n\r\n###Herreavdelingen \r\nHerreavdelingen, som opprinnelig var den eneste avdelingen i klubben, har ett fotballag som spiller 11’er-fotball i den såkalte studentligaen i 6. divisjon i Trøndelag Fotballkrets, der det har spilt siden 2009. \r\n\r\n###Kvinneavdelingen \r\nKvinneavdelingen ble opprettet i 2011, og har et fotballag som spiller 7’er-fotball i bedriftsserien for kvinner i Trondheim, sammen med flere andre studentlag. Laget består av jenter fra hele IME-fakultetet, og vi håper på å kunne være med på å skape bedre bekjentskaper på tvers av linjene. \r\n\r\n###Rekruttering & Kontaktinformasjon: \r\nRekruttering foregår i hovedsak to ganger i året, på våren før seriestart og i perioden etter fadderukene, men ta kontakt dersom du plutselig får lyst til å være med, eller dersom du bare ønsker mer informasjon. \r\n\r\nAlle er selvfølgelig hjertelig velkommen, enten man planlegger å være med på kamper, eller bare ønsker å være med på treninger. \r\n\r\nHerrelaget: datakameratene [æ] gmail.com \r\nKvinnelaget: jentefotball [æ] abakus.no \r\n\r\nMer informasjon finner du på www.datakameratene.com \r\n\r\nLeder av klubben: Sigurd Sandve (data) \r\nAnsvarlige herrelaget: Arild Almås Berg (data)\r\nAnsvarlige kvinnelaget: Kristin Tønnesen (data) og Linn Vikre (informatikk). \r\nHistorie\r\n\r\n\r\n###2008: \r\nKlubben ble dannet i 2008 under navnet Informatikkerne FC-Gløshaugen. Mye på grunn av et langt regelsett for navnekonvensjon fra fotballforbundet. Det var Kristian Oftedal, daværende kontorsjef i Online som tok initiativet til å starte et fotballag. Formålet med klubben var å gi alle som spilte fotball tidligere en mulighet til å spille igjen sammen med studiekamerater, samt å forbedre det alkoholfrie tilbudet til medlemmene av Online. Draktene ble den gang finansiert av Institutt for Datateknikk og Informasjonsvitenskap. I tillegg ble laget støttet av Online og Know IT. \r\n\r\nLaget spilte den gang i en vanlig avdeling i daværende 5. divisjon, og resultatene var preget av at dette var lagets første sesong. Det endte til slutt med sisteplass av totalt 10 lag, med hele 1 poeng på 18 kamper og en målforskjell på 16-144. Klubbens første poeng i en obligatorisk kamp noen sinne kom i siste serierunde. Etter å ha ledet 0-3 til pause endte kampen 3-3 selv om motstanderne, Sverresborg Fotball 2, kun spilte med ti mann i andre omgang, da én av spillerne dro hjem tidlig for å se på Champions League. \r\nhttp://www.fotball.no/System-pages/Tabell/?tournamentId=116751 \r\n\r\n###2009: \r\nEtter at det allerede første sesongen ble et problem med for få spillere fra informatikk ble det besluttet å åpne laget for studenter fra Abakus, og foreningen skiftet navn til Datakameratene FK-Gløshaugen. (Hovedforslaget 1337 Gløshaugen ble avslått fra forbundet). \r\n\r\nLaget endte denne sesongen på 13. plass av totalt 15. lag, med 9 poeng på 14 kamper og en målforskjell på 29-60. \r\nhttp://www.fotball.no/System-pages/Tabell/?tournamentId=37484 \r\n\r\n###2010: \r\nSesongen 2010 endte laget på 6. plass av totalt 15. lag, med 21 poeng på 14 kamper og en målforskjell på 23-21. \r\nhttp://www.fotball.no/System-pages/Tabell/?tournamentId=81284 \r\n\r\n###2011: \r\nKvinneavdelingen ble denne sesongen opprettet etter initiativ fra Anlaug Underdal og Line Valåmo fra Abakus. Avdelingen stilte denne sesongen med to lag i bedriftsserien. De to lagene endte på 5. og 6. plass av totalt 7 lag denne sesongen, med 13 poeng på 12 kamper. \r\nhttp://www.n3sport.no/07/table.aspx?TournamentId=311128 \r\n\r\nHerrelaget endte på 12. plass av totalt 14 lag denne sesongen, med 14 poeng på 13 kamper og en målforskjell på 20-35. \r\nhttp://www.fotball.no/System-pages/Tabell/?tournamentId=125743 \r\n\r\n###2012: \r\nSesongen 2012 stilte begge avdelingene med hvert sitt lag. \r\n\r\nKvinnelaget endte denne sesongen midt på tabellen, en solid 5. plass av totalt 9 lag, med 22 poeng på 16 kamper. \r\nhttp://www.n3sport.no/07/table.aspx?TournamentId=314878 \r\n\r\nHerrelaget gjorde det veldig sterkt i år, og endte på en fin 4. plass av totalt 18 lag, med 35 poeng på 17 kamper. \r\nhttp://www.fotball.no/System-pages/Tabell/?tournamentId=130550 \r\n\r\n###2013: \r\nHerrelaget: \r\nhttp://www.fotball.no/System-pages/Tabell/?tournamentId=135134\r\n",
+            "description": "",
             "key": "om_datakameratene"
-        }, 
-        "model": "chunks.chunk", 
-        "pk": 16
+        }
     }, 
     {
         "fields": {
