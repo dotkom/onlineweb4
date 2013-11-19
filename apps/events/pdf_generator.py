@@ -52,7 +52,7 @@ class EventPDF:
                 self.allergies_table_data = self.allergies_table_data + (user.allergies,)
 
     def attendee_column_widths(self):
-        return (200, 40, 140, 60)
+        return (200, 40, 170, 60)
 
     def allergies_column_widths(self):
         return (200, 200)
