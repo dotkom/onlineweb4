@@ -159,7 +159,7 @@ def recover(request):
     
                 # Create the registration token
                 token = uuid.uuid4().hex
-                rt = RegisterToken(user=email.user.username, email=email.email, token=token)
+                rt = RegisterToken(user=email.user, email=email.email, token=token)
                 rt.save()
 
                 email_message = _(u"""
