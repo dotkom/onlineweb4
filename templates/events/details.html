@@ -2,6 +2,7 @@
 {% load fb_versions %}
 {% load markup %}
 {% load crispy_forms_tags %}
+{% load group_membership %}
 
 {% block title %}
 {{ event.title }} - Online
@@ -15,7 +16,9 @@
             <div class="page-header">
                 <h2 id="event-details-heading">
                     {{ event.title }}
-                    {% if user.is_staff %}
+                    {% in_group "Komiteer" as in_komiteer %}
+
+                    {% if in_komiteer %}
                     <div class="btn-group">
                         <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
                             <span class="caret"></span>
