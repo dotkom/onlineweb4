@@ -25,6 +25,7 @@ class EventPDF:
 
         self.create_attendees_table_data()
         self.create_waiters_table_data()
+        
 
     # Create table data for attendees with a spot
     def create_attendees_table_data(self):
