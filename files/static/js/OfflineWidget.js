@@ -16,15 +16,14 @@ function OfflineWidget (Utils){
 
     /* Create the DOM */
     OfflineWidget.prototype.createDom = function () {
-        console.log($('.carousel-inner').width());
         var data = that.data;
         var prefix = $("#offlineCarousel").data("prefix");
         var suffix = '.thumb.png';
         var itemWrapperStart = '<div class="item centered">';
         var itemWrapperEnd = '</div>';
         var insertMe = '';
-        var maxWidth = $('.carousel-inner').width();
-        var maxWidthPer = 170;
+        var maxWidth = $('#offlineCarousel .carousel-inner').width();
+        var maxWidthPer = 156;
         var issuesPerSlide = Math.floor(maxWidth/maxWidthPer);
         
         if (data.objects.length <= 0) {
