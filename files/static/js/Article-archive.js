@@ -222,10 +222,8 @@ function ArticleArchive (Utils) {
                         output += '      </div>';
                         output += '      <a href="'+data.articles[i].id+'/'+data.articles[i].slug+'"><h3>'+data.articles[i].heading+'</h3></a>';
                         output += '      <p>'+data.articles[i].ingress_short+'</p>';
-                        output += '      <div class="meta"><div class="row"><div class="col-md-6">';
+                        output += '      <div class="meta"><div class="row"><div class="col-md-12">';
                         output += '        <p><strong>Publisert av: </strong>' + data.articles[i].author.first_name + ' ' + data.articles[i].author.last_name + '</p>';
-                        output += '      </div><div class="col-md-6 pull-right">';
-                        output += '        <p style="text-align: right"><strong>Sist endret: </strong>' + moment(data.articles[i].changed_date).format('DD.MM.YY HH:mm:ss') + '</p>';
                         output += '      </div></div></div>';
                         output += '    </div><!-- end col-md-8 -->';
                         output += '  </div><!-- end row -->';
