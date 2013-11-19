@@ -6,6 +6,8 @@ import logging
 logger = logging.getLogger(__name__)
 #logger.addHandler(logging.NullHandler)  # logg to /dev/null if no other handler
 
+from django.conf import settings
+
 schedule = Schedule()
 
 def autodiscover():
@@ -31,11 +33,12 @@ def run():
     """
     imports apscheduler, registers scheduled jobs, runs the scheduler
     """
-    from apscheduler.scheduler import Scheduler
+    if settings.FEEDBACK_MAIL_SCHEDULER:
+        from apscheduler.scheduler import Scheduler
 
-    # Start the scheduler
-    sched = Scheduler()
-    sched.start()
+        # Start the scheduler
+        sched = Scheduler()
+        sched.start()
 
-    for task, kwargs in schedule.tasks.iteritems():
-       sched.add_cron_job(task.run, name=task.__name__, **kwargs)
+        for task, kwargs in schedule.tasks.iteritems():
+            sched.add_cron_job(task.run, name=task.__name__, **kwargs)

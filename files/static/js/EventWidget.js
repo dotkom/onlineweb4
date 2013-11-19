@@ -4,6 +4,7 @@ function EventWidget (Utils){
 
     /* Render the widget */
     EventWidget.prototype.render = function(callback) {
+        callback = callback || function () {};
         
         var now = moment();
 

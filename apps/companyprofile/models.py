@@ -16,7 +16,7 @@ class Company(models.Model):
         extensions=IMAGE_EXTENSIONS, null=False, blank=False)
     site = models.URLField(_(u"hjemmeside"))
     email_address = models.EmailField(_(u"epostaddresse"), max_length=75, blank=True, null=True)
-    phone_number = models.IntegerField(_(u"telefonnummer"), max_length=8, blank=True, null=True)
+    phone_number = models.CharField(_(u"telefonnummer"), max_length=20, blank=True, null=True)
 
     def __unicode__(self):
         return self.name
