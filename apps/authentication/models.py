@@ -152,7 +152,7 @@ class Email(models.Model):
         primary_email = self.user.get_email()
         if not primary_email:
             self.primary = True
-        else:
+        elif primary_email.email != self.email:
             self.primary = False
         super(Email, self).save(*args, **kwargs)
 

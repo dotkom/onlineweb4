@@ -7,7 +7,7 @@ from django.conf import settings
 from django.test import TestCase
 from django.utils import timezone
 
-from apps.authentication.models import RegisterToken, OnlineUser
+from apps.authentication.models import RegisterToken, OnlineUser, Email
 
 class AuthenticationTest(TestCase):
     def setUp(self):
@@ -89,3 +89,6 @@ class AuthenticationTest(TestCase):
         self.user.field_of_study = 90
         self.assertEqual(4, self.user.year)
 
+    def testEmailPrimaryOnCreation(self):
+        email = G(Email, user=self.user, email="test@test.com")
+        self.assertTrue(email.primary)
