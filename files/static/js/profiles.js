@@ -219,6 +219,45 @@ $(document).ready(function() {
 
     /* End image cropping and uploading*/
 
+
+/*
+ JS for marks pane
+*/
+
+    $(".marks").click(function() {
+        var markscheckbox = $("#marks-checkbox");
+        var checked = markscheckbox.is(':checked');
+        markscheckbox.prop('checked', !checked)
+
+        if(!checked) {
+            $(".marks").removeClass("off").addClass("on");
+            updateMarkRules(true);
+        }
+        else {
+            $(".marks").removeClass("on").addClass("off");
+            updateMarkRules(false);
+        }
+    });
+
+    var updateMarkRules = function(accepted) {
+
+        var utils = new Utils();
+
+        $.ajax({
+            method: 'POST',
+            url: 'update_mark_rules/',
+            data: { 'rules_accepted': accepted },
+            success: function(res) {
+                res = jQuery.parseJSON(res);
+                utils.setStatusMessage(res['message'], 'alert-success');
+            },
+            error: function() {
+                utils.setStatusMessage('En uventet error ble oppdaget. Kontakt dotkom@online.ntnu.no for assistanse.', 'alert-danger');
+            },
+            crossDomain: false
+        });
+    }
+
 /*
  JS for email management.
 */
