@@ -158,6 +158,26 @@ label > i.btn-icon {
   padding: 1px 15px;
 }
 
+.marks.on {
+  width: 100%;
+  .btn;
+  .button-variant(@btn-success-color; @btn-success-bg; @btn-success-border);
+}
+
+.marks.on:after {
+  content: "Jeg har godtatt prikkereglene og er inneforstått med hva dette betyr."
+}
+
+.marks.off {
+  width: 100%;
+  .btn;
+  .button-variant(@btn-warning-color; @btn-warning-bg; @btn-warning-border);
+}
+
+.marks.off:after {
+  content: "Jeg har ikke godtatt prikkereglene enda."
+}
+
 textarea, input[type="text"] {
   .form-control;
   margin-bottom: 7px;
