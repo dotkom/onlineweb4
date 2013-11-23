@@ -16,7 +16,13 @@ function csrfSafeMethod(method) {
 $(document).ready(function() {
     $('#image-name').hide();
 
-//Ajax request to remove profile image
+    $('.img-polaroid').imagesLoaded().always( function() {
+        var imageWidth = $('.img-polaroid').outerWidth() - 24;
+        if(imageWidth < 150) imageWidth = 150;
+        $('.image-choice-button').width(imageWidth);
+    });
+
+    //Ajax request to remove profile image
     $('#confirm-delete').click(function() {
         confirmRemoveImage();
     });
