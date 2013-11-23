@@ -64,6 +64,7 @@ def _create_request_dictionary(request):
         'mail_settings' : MailSettingsForm(instance=request.user),
         'new_email' : NewEmailForm(),
         'membership_settings' : MembershipSettingsForm(instance=request.user),
+        'mark_rules_accepted' : request.user.mark_rules,
     }
 
     if request.session.has_key('userprofile_active_tab'):
@@ -104,7 +105,7 @@ def saveUserProfile(request):
 
         user.address = cleaned['address']
         user.allergies = cleaned['allergies']
-        user.mark_rules = cleaned['mark_rules']
+        #user.mark_rules = cleaned['mark_rules']
         user.nickname = cleaned['nickname']
         user.phone_number = cleaned['phone_number']
         user.website = cleaned['website']
@@ -245,6 +246,27 @@ def savePassword(request):
         messages.success(request, _(u"Passordet ditt ble endret"))
 
     return redirect("profiles")
+
+
+@login_required
+def update_mark_rules(request):
+    if request.is_ajax():
+        if request.method == 'POST':
+            accepted = request.POST.get('rules_accepted') == "true"
+
+            if accepted:
+                return_status = json.dumps({'message': _(u"Du har valgt å akseptere prikkereglene.")})
+                request.user.mark_rules = True
+                request.user.save()
+            else:
+                return_status = json.dumps({'message': _(u"Du har valgt å ikke akseptere prikkereglene.")})
+                request.user.mark_rules = False
+                request.user.save()
+
+            return HttpResponse(status=212, content=return_status)
+        return HttpResponse(status=405)
+    return HttpResponse(status=404)
+
 
 @login_required
 def add_email(request):
