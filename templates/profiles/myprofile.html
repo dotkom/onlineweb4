@@ -10,20 +10,24 @@
                             <h3>Personlig informasjon</h3>
                         </div>
                     </div>
-                    {% for field in user_profile_form %}
-                        {% ifnotequal field.name 'image' %}
-                            <div class="inline">
-                                <div class="col-md-4">{{ field.label }}</div>
-                                <div class="col-md-8">
-                                    {{ field }}
-                                    {{ field.errors }}
-                                </div>
+                    <div class="row row-space">
+                {% for field in user_profile_form %}
+                    {% ifnotequal field.name 'image' %}
+                        <div class="inline">
+                            <div class="col-md-4">{{ field.label }}</div>
+                            <div class="col-md-8">
+                                {{ field }}
+                                {{ field.errors }}
                             </div>
-                        {% endifnotequal %}
-                    {% endfor %}
-                <div class="col-md-12" style="margin-left: 0px">
-                    <button class="btn btn-success pull-right" type="submit">Lagre brukerinformasjon</button>
-                </div>
+                        </div>
+                    {% endifnotequal %}
+                {% endfor %}
+                    </div>
+                    <div class="row row-space">
+                        <div class="col-md-12" style="margin-left: 0px">
+                            <button class="btn btn-success pull-right" type="submit">Lagre brukerinformasjon</button>
+                        </div>
+                    </div>
                 </div>
                 <div class="col-md-5 col-sm-4">
                     <div class="row row-space">
