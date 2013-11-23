@@ -105,7 +105,6 @@ def saveUserProfile(request):
 
         user.address = cleaned['address']
         user.allergies = cleaned['allergies']
-        #user.mark_rules = cleaned['mark_rules']
         user.nickname = cleaned['nickname']
         user.phone_number = cleaned['phone_number']
         user.website = cleaned['website']
