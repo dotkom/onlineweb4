@@ -230,10 +230,10 @@ $(document).ready(function() {
  JS for marks pane
 */
 
-    $(".marks").click(function() {
+    function performMarkRulesClick() {
         var markscheckbox = $("#marks-checkbox");
         var checked = markscheckbox.is(':checked');
-        markscheckbox.prop('checked', !checked)
+        markscheckbox.prop('checked', !checked);
 
         if(!checked) {
             $(".marks").removeClass("off").addClass("on");
@@ -243,10 +243,18 @@ $(document).ready(function() {
             $(".marks").removeClass("on").addClass("off");
             updateMarkRules(false);
         }
+    }
+
+    $(".marks").mouseup(function(e) {
+        performMarkRulesClick();
+    });
+
+    $("#marks-checkbox").click(function(e){
+        e.stopPropagation();
+        e.preventDefault();
     });
 
     var updateMarkRules = function(accepted) {
-
         var utils = new Utils();
 
         $.ajax({
