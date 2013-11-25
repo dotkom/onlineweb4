@@ -231,7 +231,7 @@ $(document).ready(function() {
         $(this).val('');
     });
 
-    $('div.email').each(function(i, row) {
+    $('div.email-row').each(function(i, row) {
 // Ajax request to delete an email
         $(row).find('button.delete').click(function() {
             email = $(row).find('span.email').text();
