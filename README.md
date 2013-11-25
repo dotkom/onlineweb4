@@ -29,7 +29,7 @@ alternatively on windows, use the github for windows app to setup everything
 
 # vagrant
 
-this will create a virtual machine with all that is required to start developing
+This will create a virtual machine with all that is required to start developing
 
 * see the Vagrantfile for special vm configuration options and
 * see the vagrantbootstrap.sh script for provisioning options
@@ -60,3 +60,24 @@ to suspend/resume the vm
 $ vagrant suspend onlineweb
 $ vagrant resume onlineweb
 ```
+
+# vagrant for parallels
+If you wish to use a parallels, the Vagrantfile has been set up to accept that. There is one more step to setup this.
+```bash
+$ vagrant plugin install vagrant-parallels
+```
+
+Then run `vagrant up` with parallels as the provider.
+```bash
+$ vagrant up --provider=parallels
+```
+
+Some things are worth noting here;  
+CONS:
+* The port forwarding doesn't work for parallels, as of the time of writing this (26.11.13).
+* You have to access the dev server on <parallels-ip>:<some port> instead of the neat localhost:8001 that virtualbox let's you do.
+PROS:
+* Parallels is _much_ better than virtualbox for mac. 
+* VB will hang after sleep, which requires a shutdown of the machine to keep working, causing lots of .swp files. This has never happened to me (melwil) with parallels.
+* Parallels is faster, tab completion, checking out branches, stashing, is all ~instant in parallels, while it can take as much as seconds in VB.
+* Parallels was made for Mac.
