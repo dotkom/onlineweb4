@@ -5,15 +5,15 @@
         <h3>E-postadresser</h3>
     </div>
 </div>
-<div class="row">
+<div class="row emails">
     <div class="col-xs-12 col-sm-12 col-md-10">
         {% for email in user.get_emails %}
-        <div class="row">
+        <div class="row email">
             <div class="col-sm-8 col-md-8">
                 <span class="email">{{ email }}</span>
             </div>
             <div class="col-sm-4 col-md-4">
-                <div class="btn-group">
+                <div class="btn-group pull-right">
                 {% if email.verified %}
                     {% if email.primary %}
                         <button type="button" class="btn btn-sm btn-success primary active" disabled>
@@ -31,75 +31,32 @@
             </div>
         </div>
         {% endfor %}
-        <div class="row">
+    </div>
+</div>
+<div class="row new-email">
+    <div class="col-xs-12 col-sm-12 col-md-10">
+        <div class="new-email-form" style="display:none;">
             <form method="post" action="{% url 'profile_add_email' %}">
             <div class="col-sm-8 col-md-8">
                 {% csrf_token %}
                 <input type="text" name="new_email" value="Ny Epostadresse" id="addnewemailinput" class="emptyonclick" />
             </div>
             <div class="col-sm-4 col-md-4">
-                <button type="submit" class="btn btn-success btn-sm add">Legg til</button>
+                <button type="submit" class="btn btn-success btn-sm add pull-right">Legg til</button>
             </div>
             </form>
         </div>
-        <div class="row">
-            <button type="button" class="btn btn-success btn-sm addnewemail">Legg til ny epostadresse</button>
-        </div>
+        <button type="button" class="btn btn-success btn-sm add-new-email">Legg til ny epostadresse</button>
     </div>
 </div>
 <div class="row-space"></div>
 <div class="row">
     <div class="col-xs-12 col-sm-12 col-md-8">
-        <div class="row">
-            
-        </div>
-    <!--
-        <table class="table emailtable">
-            <thead>
-                <tr><th>Epostadresser</th><th></th></tr>
-            </thead>
-            <tbody>
-            {% for email in user.get_emails %}
-                <tr>
-                    <form method="post">
-                        <td><span class="email">{{ email }}</span></td>
-                        <td>
-                            <div class="btn-group pull-right">
-                            {% if email.verified %}
-                                {% if email.primary %}
-                                    <button type="button" class="btn btn-sm btn-success primary active" disabled>
-                                {% else %}
-                                    <button type="button" class="btn btn-sm btn-default primary">
-                                {% endif %}
-                                    {% if email.primary %}Primær{% else %}Sett primær{% endif %}
-                                </button>
-                            {% endif %}
-                            {% if not email.verified %}
-                                <button type="button" class="btn btn-sm btn-primary verify">Send ny lenke</button>
-                            {% endif %}
-                                <button type="button" class="btn btn-sm btn-danger delete">Slett</button>
-                            </div>
-                        </td>
-                    </form>
-                </tr>
-            {% endfor %}
-                <tr class="addnewemail" style="display:none;">
-                    <form method="post" action="{% url 'profile_add_email' %}">
-                        {% csrf_token %}
-                        <td><input type="text" name="new_email" value="Ny Epostadresse" id="addnewemailinput" class="emptyonclick" /></td>
-                        <td>
-                            <button type="submit" class="btn btn-success btn-sm add">Legg til</button>
-                        </td>
-                    </form>
-                </tr>
-            </tbody>
-        </table>
-        <button type="button" class="btn btn-success btn-sm addnewemail">Legg til ny epostadresse</button>
-    -->
+        <h3>Listealternativer</h3>        
     </div>
 </div>
 <div class="row">
-    <div class="col-xs-12 col-sm-6 col-md-4">
+    <div class="col-xs-12">
         {{ mail_settings|crispy }}
     </div>
 </div>
