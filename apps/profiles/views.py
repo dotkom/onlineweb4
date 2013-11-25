@@ -18,6 +18,7 @@ from apps.authentication.forms import NewEmailForm
 from apps.authentication.models import Email, RegisterToken
 from apps.marks.models import Mark
 from apps.profiles.forms import ImageForm, MailSettingsForm, PrivacyForm, ProfileForm, MembershipSettingsForm
+from apps.profiles.image_utils import handle_upload
 
 """
 Index for the entire user profile view
@@ -114,71 +115,21 @@ def upload_image(request):
     if request.method != "POST":
         return redirect("profiles")
 
-    uploaded_file = None
-
-    if request.FILES['image']:
-        uploaded_file = request.FILES['image']
-
-    # How to verify that it IS an image? Possible object injection hack
-    # Please check
-    if uploaded_file is None and uploaded_file.content_type:
-        messages.error(request, _(u"Ingen bildefil ble valgt"))
-        return redirect("profiles")
-
-    return _handle_image_upload(request, uploaded_file)
-
-
-def _handle_image_upload(request, image):
-
-    try:
-        if not os.path.exists(os.path.join(settings.MEDIA_ROOT, "images", "profiles")):
-            os.makedirs(os.path.join(settings.MEDIA_ROOT, "images", "profiles"))
-
-        extension_index = image.name.rfind('.')
-
-        #Make sure the image contains a file extension
-        if extension_index == -1:
-            messages.error(request, _(u"Filnavnet inneholder ikke filtypen"))
-            return redirect("profiles")
-
-        #remove already existing profile image, in case new extension is different from already existing
-        remove_file(request)
-
-        #Prepare filename and open-create a new file if it does not exist
-        extension = image.name[extension_index:]
-        filename = os.path.join(settings.MEDIA_ROOT, "images", "profiles", request.user.username + extension)
-        destination = open(filename, 'wb+')
-
-        #Write the image uncropped
-        for chunk in image.chunks():
-            destination.write(chunk)
-        destination.close()
-
-        #Create cropping bounding box
-        box = (int(float(request.POST['x'])), int(float(request.POST['y'])), int(float(request.POST['x2'])), int(float(request.POST['y2'])))
-        img = Image.open(filename)
-        crop_img = img.crop(box)
-        #Saving the image here so we release the lock on the file
-        img.save(filename)
-        #Actual cropping save
-        crop_img.save(filename)
-        #Set media url for user image
-        request.user.image = os.path.join(settings.MEDIA_URL, "images", "profiles", request.user.username + extension)
-        request.user.save()
-
-    except Exception:
-        if request.is_ajax():
-            return HttpResponse(status=500, content=json.dumps({ 'message': _(u"Bildet kunne ikke lagres.") }))
-        else:
-            messages.error(request, _(u"Bildet kunne ikke lagres."))
-            return redirect("profiles")
+    success, statuses = handle_upload(request)
+    status_code = 201 if success else 412
 
     if request.is_ajax():
-        return HttpResponse(status=200, content=json.dumps({'message' : _(u"Bildet ble lagret."), 'image-url' : request.user.get_image_url() }))
+        return HttpResponse(status=status_code, content=json.dumps({'message' : statuses, 'image-url' : request.user.get_image_url() }))
     else:
-        messages.success(request, _(u"Bildet ble lagret."))
+        if success:
+            messages.success(request, _(u"Bildet ble lagret."))
+        else:
+            status_message = ""
+            for status in statuses:
+                status_message += status + ", "
+            status_message = status_message[:2]
+            messages.error(request, status_message)
         return redirect("profiles")
-
 
 @login_required
 def confirm_delete_image(request):

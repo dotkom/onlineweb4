@@ -186,17 +186,28 @@ $(document).ready(function() {
                 contentType: false,
                 crossDomain: false,
                 success: function (res) {
-                    res = JSON.parse(res);
+                    res = $.parseJSON(res);
                     $('#profile-image').attr("src", res['image-url']);
                     $('#upload-image-modal').modal('hide');
+
+                    console.log(res);
+
                     var utils = new Utils();
                     utils.setStatusMessage(res['message'], 'alert-success');
                 },
                 error: function(res) {
-                    res = JSON.parse(res);
-                    var utils = new Utils();
+                    res = $.parseJSON(res['responseText']);
                     $('#upload-image-modal').modal('hide');
-                    utils.setStatusMessage(res['message'], 'alert-success');
+
+                    var statusMessage = "";
+                    for(var i = 0; i < res['message'].length; i++) {
+                        statusMessage += res['message'][i];
+                        if(i != statusMessage.length-1) {
+                            statusMessage += "<br>";
+                        }
+                    }
+                    var utils = new Utils();
+                    utils.setStatusMessage(statusMessage, 'alert-danger');
                 }
             });
         }
