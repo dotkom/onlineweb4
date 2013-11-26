@@ -58,8 +58,9 @@ $(document).ready(function() {
         }
     }
 
-    // Popover for privacy
+    // Popover for privacy and user image
     $('#privacy-help').popover({placement: 'bottom'});
+    $('#image-help').popover({placement: 'bottom'});
 
 /*
  JS for marks pane
