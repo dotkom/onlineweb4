@@ -54,7 +54,7 @@ def register(request):
 
                 # Create user
                 user = User(
-                    username=cleaned['username'].lower(), 
+                    username=cleaned['username'], 
                     first_name=cleaned['first_name'].title(), 
                     last_name=cleaned['last_name'].title(),
                 )
