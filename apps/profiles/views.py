@@ -17,8 +17,8 @@ from django.utils.translation import ugettext as _
 from apps.authentication.forms import NewEmailForm
 from apps.authentication.models import Email, RegisterToken
 from apps.marks.models import Mark
-from apps.profiles.forms import (ImageForm, MailSettingsForm, PrivacyForm, 
-                                ProfileForm, MembershipSettingsForm)
+from apps.profiles.forms import ImageForm, MailSettingsForm, PrivacyForm, ProfileForm, MembershipSettingsForm
+from apps.profiles.image_utils import handle_upload
 
 """
 Index for the entire user profile view
@@ -32,26 +32,18 @@ def index(request):
     due to the fact that it is a one-page view.
     """
 
-    if not request.user.is_authenticated():
-        return render_home(request)
+    dictionary = _create_request_dictionary(request)
 
-    dict = _create_request_dictionary(request)
-
-    # If a user has made a post, a session value will be set for which tab the user posted from.
+    # When a user clicks on one of the navigation tabs, a session key will be set.
     # This enables us to return the user to the correct tab when returning the view.
     # If no session key is set, return the user to the default first tab
 
-    return render(request, 'profiles/index.html', dict)
-
-
-def render_home(request):
-    messages.error(request, _(u"Du er ikke logget inn, og kan ikke se din profil."))
-    return redirect('home')
+    return render(request, 'profiles/index.html', dictionary)
 
 
 def _create_request_dictionary(request):
 
-    dict = {
+    dictionary = {
         'privacy_form' : PrivacyForm(instance=request.user.privacy),
         'user_profile_form' : ProfileForm(instance=request.user),
         'image_form' : ImageForm(instance=request.user),
@@ -67,14 +59,15 @@ def _create_request_dictionary(request):
     }
 
     if request.session.has_key('userprofile_active_tab'):
-        dict['active_tab'] = request.session['userprofile_active_tab']
+        dictionary['active_tab'] = request.session['userprofile_active_tab']
     else:
-        dict['active_tab'] = 'myprofile'
+        dictionary['active_tab'] = 'myprofile'
 
-    return dict
+    return dictionary
 
 
-def updateActiveTab(request):
+@login_required
+def update_active_tab(request):
 
     if request.is_ajax():
         if request.method == 'POST':
@@ -84,21 +77,20 @@ def updateActiveTab(request):
             return HttpResponse(status=200)
     return HttpResponse(status=405)
 
-def saveUserProfile(request):
 
-    if not request.user.is_authenticated():
-        return render_home(request)
+@login_required
+def save_user_profile(request):
 
     if request.method == 'POST':
 
         user = request.user
-        dict = _create_request_dictionary(request)
+        dictionary = _create_request_dictionary(request)
         user_profile_form = ProfileForm(request.POST)
-        dict['user_profile_form'] = user_profile_form
+        dictionary['user_profile_form'] = user_profile_form
 
         if not user_profile_form.is_valid():
             messages.error(request, _(u"Noen av de påkrevde feltene mangler"))
-            return render(request, 'profiles/index.html', dict)
+            return render(request, 'profiles/index.html', dictionary)
 
         cleaned = user_profile_form.cleaned_data
 
@@ -117,80 +109,30 @@ def saveUserProfile(request):
     return redirect("profiles")
 
 
-def uploadImage(request):
+@login_required
+def upload_image(request):
 
     if request.method != "POST":
         return redirect("profiles")
 
-    file = None
-
-    if request.FILES['image']:
-        file = request.FILES['image']
-
-    # How to verify that it IS an image? Possible object injection hack
-    # Please check
-    if file is None and file.content_type:
-        messages.error(request, _(u"Ingen bildefil ble valgt"))
-        return redirect("profiles")
-
-    return handleImageUpload(request, file)
-
-
-def handleImageUpload(request, image):
-
-    try:
-
-        if not os.path.exists(os.path.join(settings.MEDIA_ROOT, "images", "profiles")):
-            os.makedirs(os.path.join(settings.MEDIA_ROOT, "images", "profiles"))
-
-        extension_index = image.name.rfind('.')
-
-        #Make sure the image contains a file extension
-        if extension_index == -1:
-            messages.error(request, _(u"Filnavnet inneholder ikke filtypen"))
-            return redirect("profiles")
-
-        #remove already existing profile image, in case new extension is different from already existing
-        remove_file(request)
-
-        #Prepare filename and open-create a new file if it does not exist
-        extension = image.name[extension_index:]
-        filename = os.path.join(settings.MEDIA_ROOT, "images", "profiles", request.user.username + extension)
-        destination = open(filename, 'wb+')
-
-        #Write the image uncropped
-        for chunk in image.chunks():
-            destination.write(chunk)
-        destination.close()
-
-        #Create cropping bounding box
-        box = (int(float(request.POST['x'])), int(float(request.POST['y'])), int(float(request.POST['x2'])), int(float(request.POST['y2'])))
-        img = Image.open(filename)
-        crop_img = img.crop(box)
-        #Saving the image here so we release the lock on the file
-        img.save(filename)
-        #Actual cropping save
-        crop_img.save(filename)
-        #Set media url for user image
-        request.user.image = os.path.join(settings.MEDIA_URL, "images", "profiles", request.user.username + extension)
-        request.user.save()
-
-    except Exception:
-        if request.is_ajax():
-            return HttpResponse(status=500, content=json.dumps({ 'message': _(u"Bildet kunne ikke lagres.") }))
-        else:
-            messages.error(request, _(u"Bildet kunne ikke lagres."))
-            return redirect("profiles")
+    success, statuses = handle_upload(request)
+    status_code = 201 if success else 412
 
     if request.is_ajax():
-        return HttpResponse(status=200, content=json.dumps({'message' : _(u"Bildet ble lagret."), 'image-url' : request.user.get_image_url() }))
+        return HttpResponse(status=status_code, content=json.dumps({'message' : statuses, 'image-url' : request.user.get_image_url() }))
     else:
-        messages.success(request, _(u"Bildet ble lagret."))
+        if success:
+            messages.success(request, _(u"Bildet ble lagret."))
+        else:
+            status_message = ""
+            for status in statuses:
+                status_message += status + ", "
+            status_message = status_message[:2]
+            messages.error(request, status_message)
         return redirect("profiles")
 
-
-
-def confirmDeleteImage(request):
+@login_required
+def confirm_delete_image(request):
 
     if request.is_ajax():
         if request.method == 'DELETE':
@@ -201,7 +143,10 @@ def confirmDeleteImage(request):
     else:
         return redirect("profiles")
 
+
+@login_required
 def remove_file(request):
+
     if "/profiles/" in request.user.get_image_url():
         extension_index = request.user.image.name.rfind('.')
         extension = request.user.image.name[extension_index:]
@@ -210,45 +155,46 @@ def remove_file(request):
         request.user.save()
         os.remove(filename)
 
-def savePrivacy(request):
-    if not request.user.is_authenticated():
-        return render_home(request)
+
+@login_required
+def save_privacy(request):
 
     if request.method == 'POST':
-        dict = _create_request_dictionary(request)
+        dictionary = _create_request_dictionary(request)
         privacy_form = PrivacyForm(request.POST, instance=request.user.privacy)
-        dict['privacy_form'] = privacy_form
+        dictionary['privacy_form'] = privacy_form
 
         if not privacy_form.is_valid():
             messages.error(request, _(u"Noen av de påkrevde feltene mangler"))
-            return render(request, 'profiles/index.html', dict)
+            return render(request, 'profiles/index.html', dictionary)
 
         privacy_form.save()
         messages.success(request, _(u"Personvern ble endret"))
 
     return redirect("profiles")
 
-def savePassword(request):
-    if not request.user.is_authenticated():
-        return render_home(request)
+
+@login_required
+def save_password(request):
 
     if request.method == 'POST':
-        dict = _create_request_dictionary(request)
+        dictionary = _create_request_dictionary(request)
         password_change_form = PasswordChangeForm(user=request.user, data=request.POST)
-        dict['password_change_form'] = password_change_form
+        dictionary['password_change_form'] = password_change_form
 
         if not password_change_form.is_valid():
             messages.error(request, _(u"Passordet ditt ble ikke endret"))
-            return render(request, 'profiles/index.html', dict)
+            return render(request, 'profiles/index.html', dictionary)
 
         password_change_form.save()
         messages.success(request, _(u"Passordet ditt ble endret"))
 
     return redirect("profiles")
 
+
 @login_required
 def add_email(request):
-    dict = _create_request_dictionary(request)
+
     if request.method == 'POST':
         form = NewEmailForm(request.POST)
         if form.is_valid():
@@ -274,6 +220,7 @@ def add_email(request):
 
 @login_required
 def delete_email(request):
+
     if request.is_ajax():
         if request.method == 'POST':
             email_string = request.POST.get('email')
@@ -293,8 +240,10 @@ def delete_email(request):
             return HttpResponse(status=200)
     return HttpResponse(status=404)
 
+
 @login_required
 def set_primary(request):
+
     if request.is_ajax():
         if request.method == 'POST':
             email_string = request.POST.get('email')
@@ -324,8 +273,10 @@ def set_primary(request):
             return HttpResponse(status=200)
     return HttpResponse(status=404)
 
+
 @login_required
 def verify_email(request):
+
     if request.is_ajax():
         if request.method == 'POST':
             email_string = request.POST.get('email')
@@ -349,6 +300,7 @@ def verify_email(request):
             return HttpResponse(status=200)
     return HttpResponse(status=404)
 
+
 def _send_verification_mail(request, email):
 
     # Create the registration token
@@ -370,8 +322,10 @@ kan dette gjøres ved å klikke på knappen for verifisering på din profil.
 
     send_mail(_(u'Verifiser din epost %s') % email, email_message, settings.DEFAULT_FROM_EMAIL, [email,])
 
+
 @login_required
 def save_membership_details(request):
+
     if request.is_ajax():
         if request.method == 'POST':
             form = MembershipSettingsForm(request.POST)
@@ -390,8 +344,6 @@ def save_membership_details(request):
                     for field_error in form_error[1]:
                         field_errors.append(field_error)
 
-                return HttpResponse(status=412, content=json.dumps(
-                                                    {'message': ", ".join(field_errors)}
-                                                ))
+                return HttpResponse(status=412, content=json.dumps({'message': ", ".join(field_errors)}))
 
     return HttpResponse(status=404) 

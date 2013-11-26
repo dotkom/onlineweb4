@@ -86,13 +86,7 @@
                                     {% csrf_token %}
                                     {{ image_form.image }}
                                     {{ image_form.image.errors }}
-                                    <input name="x" type="hidden" id="inputx">
-                                    <input name="y" type="hidden" id="inputy">
-                                    <input name="x2" type="hidden" id="inputx2">
-                                    <input name="y2" type="hidden" id="inputy2">
-                                    <input name="w" type="hidden" id="inputw">
-                                    <input name="h" type="hidden" id="inputh">
-                                    <img class="hidden-input" src="" id="image-resize" alt=""/>
+                                    <img src="" id="profile-image-upload" alt=""/>
                                     <label for="image" class="btn btn-primary image-box-entity" id="image-upload-label">
                                         <i class="icon-upload btn-icon"></i> Velg et nytt bilde
                                     </label>

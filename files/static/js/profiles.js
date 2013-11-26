@@ -89,9 +89,7 @@ $(document).ready(function() {
     $('#privacy-help').popover({placement: 'bottom'});
 
     /* Image cropping and uploading */
-    var api;
     var formData = false;
-    var x, y, x2, y2, w, h;
 
     if(window.FormData) {
         formData = new FormData();
@@ -114,26 +112,9 @@ $(document).ready(function() {
             reader.readAsDataURL(file);
 
             reader.onloadend = function(e) {
-                var api;
-                $('.jcrop-holder').remove();
-                api = $.Jcrop('#image-resize', {
-                    // start off with jcrop-light class
-                    bgOpacity: 0.5,
-                    bgColor: 'white',
-                    addClass: 'jcrop-light',
-                    boxHeight: 300,
-                    aspectRatio: 3/4,
-                    onChange: updateCoords,
-                    onSelect: updateCoords,
-                    keySupport: false,
-                    allowSelect: false
-                });
-                api.setImage(e.target.result, function () {
-                    api.setSelect([0,0,500,500]);
-                });
-                api.setOptions({ bgFade: true });
-                api.ui.selection.addClass('jcrop-selection');
-                api.allowResize = true;
+                console.log(e.target.result);
+
+                $('#profile-image-upload').prop('src', e.target.result);
                 if(formData) {
                     formData.append("image", file);
                 }
@@ -143,21 +124,6 @@ $(document).ready(function() {
         }
     }
 
-    function updateCoords(c) {
-        x = c.x;
-        y = c.y;
-        x2 = c.x2;
-        y2 = c.y2;
-        w = c.w;
-        h = c.h;
-        $('#inputx').val(c.x);
-        $('#inputy').val(c.y);
-        $('#inputx2').val(c.x2);
-        $('#inputy2').val(c.y2);
-        $('#inputw').val(c.w);
-        $('#inputh').val(c.h);
-    }
-
     var setStatus = function(statusMsg) {
         $('#status').html(statusMsg);
     }
@@ -165,18 +131,8 @@ $(document).ready(function() {
     $('#upload-image-form').submit(function(e) {
         if (formData) {
             e.preventDefault();
-
             if(!imageChosen()) return;
-
             setStatus("Laster opp bildet...")
-
-            //JCrop select coordinates
-            formData.append("x", x);
-            formData.append("y", y);
-            formData.append("x2", x2);
-            formData.append("y2", y2);
-            formData.append("w", w);
-            formData.append("h", h);
 
             $.ajax({
                 url: "uploadimage/",
@@ -186,17 +142,26 @@ $(document).ready(function() {
                 contentType: false,
                 crossDomain: false,
                 success: function (res) {
-                    res = JSON.parse(res);
+                    res = $.parseJSON(res);
                     $('#profile-image').attr("src", res['image-url']);
                     $('#upload-image-modal').modal('hide');
+
                     var utils = new Utils();
                     utils.setStatusMessage(res['message'], 'alert-success');
                 },
                 error: function(res) {
-                    res = JSON.parse(res);
-                    var utils = new Utils();
+                    res = $.parseJSON(res['responseText']);
                     $('#upload-image-modal').modal('hide');
-                    utils.setStatusMessage(res['message'], 'alert-success');
+
+                    var statusMessage = "";
+                    for(var i = 0; i < res['message'].length; i++) {
+                        statusMessage += res['message'][i];
+                        if(i != statusMessage.length-1) {
+                            statusMessage += "<br>";
+                        }
+                    }
+                    var utils = new Utils();
+                    utils.setStatusMessage(statusMessage, 'alert-danger');
                 }
             });
         }
