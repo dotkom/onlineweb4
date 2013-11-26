@@ -154,6 +154,7 @@ class Email(models.Model):
             self.primary = True
         else:
             self.primary = False
+        self.email = self.email.lower()
         super(Email, self).save(*args, **kwargs)
 
     def __unicode__(self):

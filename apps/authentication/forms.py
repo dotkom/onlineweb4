@@ -68,7 +68,7 @@ class RegisterForm(forms.Form):
                 self._errors['username'] = self.error_class([_(u"Ditt brukernavn inneholdt ulovlige tegn. Lovlige tegn: a-Z 0-9 - _")])
 
             # Check email
-            email = cleaned_data['email']
+            email = cleaned_data['email'].lower()
             if Email.objects.filter(email=email).count() > 0:
                 self._errors['email'] = self.error_class([_(u"Det fins allerede en bruker med denne epostadressen.")])
 
