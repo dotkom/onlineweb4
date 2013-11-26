@@ -79,7 +79,6 @@ STATICFILES_FINDERS = (
 )
 
 COMPRESS_FILES = True
-COMPRESS_ENABLED = True
 COMPRESS_OUTPUT_DIR = 'cache'
 COMPRESS_PRECOMPILERS = (
     ('text/less', 'lessc {infile} {outfile}'),
