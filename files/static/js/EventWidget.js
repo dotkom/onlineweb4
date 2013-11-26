@@ -79,7 +79,10 @@ function EventWidget (Utils){
      * @return string
      */
     function createEventItem(item) {
-
+        var event_image = item.image_events_thumb;
+        if ($(window).innerWidth() < 768) {
+            event_image = item.image_events_main;
+        }
         html = '<div><div class="col-sm-8 col-md-4" id="eventdescription">';
         html +=     '<div class="hero-title">';
         html +=         '<a href="events/' + item.id + '/' + item.slug + '">';
@@ -96,7 +99,7 @@ function EventWidget (Utils){
         if(item.image_events_thumb) {
             html +=             '<div class="item active">';
             html +=                 '<a href="events/' + item.id + '/' + item.slug + '">';
-            html +=                         '<img src="' + item.image_events_thumb + '" width="100%" alt="" >';
+            html +=                         '<img src="' + event_image + '" width="100%" alt="" >';
             html +=                 '</a>';
             html +=             '</div>';
         }
