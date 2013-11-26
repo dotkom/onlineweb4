@@ -70,7 +70,7 @@ class OnlineUser(AbstractUser):
         """
         Returns true if the User object is associated with Online.
         """
-        if AllowedUsername.objects.filter(username=self.ntnu_username).filter(expiration_date__gte=timezone.now()).count() > 0:
+        if AllowedUsername.objects.filter(username=self.ntnu_username.lower()).filter(expiration_date__gte=timezone.now()).count() > 0:
             return True
         return False
 
