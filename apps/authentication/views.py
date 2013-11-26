@@ -71,7 +71,7 @@ def register(request):
                 # Set email address
                 email = Email(
                     user=user,
-                    email=cleaned['email'],
+                    email=cleaned['email'].lower(),
                 )
                 email.primary = True
                 email.save()    
