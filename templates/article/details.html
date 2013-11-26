@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% load markup %}
 {% load fb_versions %}
+{% load group_membership %}
 
 {% block title %}
 {{ article.heading }} - Online
@@ -34,15 +35,18 @@
                     <div class="page-header">
                         <h1>
                             {{ article.heading }}
-                            {% if user.is_staff %}
-                            <div class="btn-group">
-                                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-                                    <span class="caret"></span>
-                                </button>
-                                <ul class="dropdown-menu" role="menu">
-                                    <li><a href="{% url 'admin:article_article_change' article.id %}">Edit</a></li>
-                                </ul>
-                            </div>
+                            {% if user.is_authenticated %}
+                                {% in_group "Komiteer" as in_komiteer %}
+                                {% if in_komiteer %}
+                                    <div class="btn-group pull-right">
+                                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                                            <span class="caret"></span>
+                                        </button>
+                                        <ul class="dropdown-menu" role="menu">
+                                            <li><a href="{% url 'admin:article_article_change' article.id %}">Edit</a></li>
+                                        </ul>
+                                    </div>
+                                {% endif %}
                             {% endif %}
                         </h1>
                     </div>
