@@ -58,8 +58,6 @@ class OnlineUser(AbstractUser):
     website = models.URLField(_(u"hjemmeside"), blank=True, null=True)
     gender = models.CharField(_(u"kjønn"), max_length=10, choices=GENDER_CHOICES, default="male")
 
-    image = models.ImageField(_(u"bilde"), max_length=200, upload_to=IMAGE_FOLDER, blank=True, null=True)
-
     # NTNU credentials
     ntnu_username = models.CharField(_(u"NTNU-brukernavn"), max_length=10, blank=True, null=True, unique=True)
 
@@ -92,11 +90,6 @@ class OnlineUser(AbstractUser):
 
     def in_group(self, group_name):
         return reduce(lambda x,y: x or y.name == group_name, self.groups.all(), False)
-
-    def get_image_url(self):
-        if self.image:
-            return self.image.url
-        return "%s_%s.png" % (settings.DEFAULT_PROFILE_PICTURE_PREFIX, self.gender)
 
     @property
     def year(self):

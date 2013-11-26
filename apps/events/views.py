@@ -147,15 +147,15 @@ def _search_indexed(request, query, filters):
     if filters['myevents'] == 'true':
         kwargs['attendance_event__attendees'] = request.user
 
+    events = Event.objects.filter(**kwargs).order_by('event_start').prefetch_related(
+            'attendance_event', 'attendance_event__attendees')
+
     if query:
-        for result in watson.search(query, models=(
-            Event.objects.filter(**kwargs).prefetch_related(
-                'attendance_event', 'attendance_event__attendees'),)):
+        for result in watson.search(query, models=(events,)):
             results.append(result.object)
         return results[:10]
 
-    return Event.objects.filter(**kwargs).prefetch_related(
-            'attendance_event', 'attendance_event__attendees')
+    return events
 
 
 @login_required()
