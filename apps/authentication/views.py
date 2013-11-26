@@ -71,7 +71,7 @@ def register(request):
                 # Set email address
                 email = Email(
                     user=user,
-                    email=cleaned['email'],
+                    email=cleaned['email'].lower(),
                 )
                 email.primary = True
                 email.save()    
@@ -194,31 +194,32 @@ def set_password(request, token=None):
     if request.user.is_authenticated():
         return HttpResponseRedirect('/')
     else:
-        rt = get_object_or_404(RegisterToken, token=token)
+        tokens = RegisterToken.objects.filter(token=token)
        
-        if rt.is_valid:
-            if request.method == 'POST':
-                form = ChangePasswordForm(request.POST, auto_id=True)
-                if form.is_valid():
-                    user = getattr(rt, 'user')
+        if tokens.count() == 1:
+            rt = tokens[0]
+            if rt.is_valid:
+                if request.method == 'POST':
+                    form = ChangePasswordForm(request.POST, auto_id=True)
+                    if form.is_valid():
+                        user = getattr(rt, 'user')
 
-                    user.is_active = True
-                    user.set_password(form.cleaned_data['new_password'])
-                    user.save()
-                    
-                    rt.delete()
+                        user.is_active = True
+                        user.set_password(form.cleaned_data['new_password'])
+                        user.save()
+                        
+                        rt.delete()
 
-                    messages.success(request, _(u'Bruker %s har gjennomført vellykket gjenoppretning av passord. Du kan nå logge inn.') % user.username)
-                    
-                    return HttpResponseRedirect('/')        
-            else:
-                
-                form = ChangePasswordForm()
+                        messages.success(request, _(u'Bruker %s har gjennomført vellykket gjenoppretning av passord. Du kan nå logge inn.') % user.username)
+                        
+                        return HttpResponseRedirect('/')        
+                else:
+                    form = ChangePasswordForm()
 
-                messages.success(request, _(u'Lenken er akseptert. Vennligst skriv inn ønsket passord.'))
+                    messages.success(request, _(u'Lenken er akseptert. Vennligst skriv inn ønsket passord.'))
 
-            return render(request, 'auth/set_password.html', {'form': form, 'token': token})
+                return render(request, 'auth/set_password.html', {'form': form, 'token': token})
 
         else:
-            messages.error(request, _(u'Lenken er utløpt. Vennligst bruk gjenoppretning av passord for å få tilsendt en ny lenke.'))
+            messages.error(request, _(u'Lenken er ugyldig. Vennligst bruk gjenoppretning av passord for å få tilsendt en ny lenke.'))
             return HttpResponseRedirect('/')        

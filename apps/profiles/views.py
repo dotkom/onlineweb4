@@ -274,7 +274,7 @@ def add_email(request):
         form = NewEmailForm(request.POST)
         if form.is_valid():
             cleaned = form.cleaned_data
-            email_string = cleaned['new_email']
+            email_string = cleaned['new_email'].lower()
 
             # Check if the email already exists
             if Email.objects.filter(email=cleaned['new_email']).count() > 0:

@@ -70,7 +70,7 @@ class OnlineUser(AbstractUser):
         """
         Returns true if the User object is associated with Online.
         """
-        if AllowedUsername.objects.filter(username=self.ntnu_username).filter(expiration_date__gte=timezone.now()).count() > 0:
+        if AllowedUsername.objects.filter(username=self.ntnu_username.lower()).filter(expiration_date__gte=timezone.now()).count() > 0:
             return True
         return False
 
@@ -154,6 +154,7 @@ class Email(models.Model):
             self.primary = True
         elif primary_email.email != self.email:
             self.primary = False
+        self.email = self.email.lower()
         super(Email, self).save(*args, **kwargs)
 
     def __unicode__(self):
@@ -190,6 +191,10 @@ class AllowedUsername(models.Model):
     @property
     def is_active(self):
         return timezone.now().date() < self.expiration_date
+
+    def save(self, *args, **kwargs):
+        self.username = self.username.lower()
+        super(AllowedUsername, self).save(*args, **kwargs)
 
     def __unicode__(self):
         return self.username
