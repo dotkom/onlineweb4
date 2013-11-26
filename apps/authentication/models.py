@@ -192,6 +192,10 @@ class AllowedUsername(models.Model):
     def is_active(self):
         return timezone.now().date() < self.expiration_date
 
+    def save(self, *args, **kwargs):
+        self.username = self.username.lower()
+        super(AllowedUsername, self).save(*args, **kwargs)
+
     def __unicode__(self):
         return self.username
 
