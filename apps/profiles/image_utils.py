@@ -2,10 +2,6 @@
 import os
 import shutil
 
-from PIL import Image
-
-from apps.profiles import images2gif
-
 from django.conf import settings
 from django.utils.translation import ugettext as _
 
@@ -53,10 +49,8 @@ def handle_upload(request):
         if (os.path.exists(user_image_name_path) and created_backup is False) or not remove_user_profile_image_successful:
             return False, [generic_fail_status]
 
-        if extension == ".gif":
-            save_animated_image(request, uploaded_file, extension, user_image_name_path)
-        else:
-            save_regular_image(request, uploaded_file, extension, user_image_name_path)
+        save_image_file(uploaded_file, user_image_name_path)
+        request.user.image = request.user.image = os.path.join(settings.MEDIA_URL, "images", "profiles", request.user.username + extension)
 
     except Exception, err:
 
@@ -183,25 +177,6 @@ def remove_user_profile_image(request):
         return False
 
 
-def save_regular_image(request, uploaded_file, extension, user_image_name_path):
-
-    save_image_file(uploaded_file, user_image_name_path)
-    crop_bounding_box = get_crop_bounding_box(request)
-
-    img = Image.open(user_image_name_path)
-    crop_img = img.crop(crop_bounding_box)
-
-    #Saving the image here so we release the lock on the file
-    img.save(user_image_name_path)
-
-    #Actual cropping save
-    crop_img.save(user_image_name_path)
-
-    #Set media url for user image
-    request.user.image = os.path.join(settings.MEDIA_URL, "images", "profiles", request.user.username + extension)
-    request.user.save()
-
-
 def save_image_file(uploaded_file, user_image_name_path):
 
     destination = open(user_image_name_path, 'wb+')
@@ -209,28 +184,3 @@ def save_image_file(uploaded_file, user_image_name_path):
     for chunk in uploaded_file.chunks():
         destination.write(chunk)
     destination.close()
-
-
-def get_crop_bounding_box(request):
-
-    return (int(float(request.POST['x'])), int(float(request.POST['y'])),
-            int(float(request.POST['x2'])), int(float(request.POST['y2'])))
-
-
-def save_animated_image(request, uploaded_file, extension, user_image_name_path):
-
-    save_image_file(uploaded_file, user_image_name_path)
-    crop_bounding_box = get_crop_bounding_box(request)
-
-    frames = images2gif.readGif(user_image_name_path, False)
-    frames2 = []
-
-    for frame in frames:
-        frame2 = frame
-        frame2 = frame2.crop(crop_bounding_box)
-        frames2.append(frame2)
-
-    images2gif.writeGif(user_image_name_path, frames2, subRectangles=True)
-
-    request.user.image = os.path.join(settings.MEDIA_URL, "images", "profiles", request.user.username + extension)
-    request.user.save()

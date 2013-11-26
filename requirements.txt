@@ -25,8 +25,6 @@ APScheduler==2.1.1              # Scheduler
 #git+https://github.com/dotKom/pizzasystem.git@1.2#egg=pizzasystem
 reportlab==2.7
 pdfdocument==1.6
-numpy==1.8.0
-images2gif==1.0.1
 
 #test tools
 cov-core==1.7
