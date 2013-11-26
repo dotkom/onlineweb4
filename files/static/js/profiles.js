@@ -276,15 +276,15 @@ $(document).ready(function() {
  JS for email management.
 */
 
-    $('button.addnewemail').click(function() {
-        $('tr.addnewemail').show();
+    $('button.add-new-email').click(function() {
+        $('div.new-email-form').show();
         $(this).hide();
     });
     $('.emptyonclick').focus(function() {
         $(this).val('');
     });
 
-    $('tr').each(function(i, row) {
+    $('div.email-row').each(function(i, row) {
 // Ajax request to delete an email
         $(row).find('button.delete').click(function() {
             email = $(row).find('span.email').text();
