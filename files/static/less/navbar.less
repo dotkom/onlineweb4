@@ -1,6 +1,39 @@
 /* Navbar
 -------------------------------------------------- */
+@dropdown-link-active-color:     #fff;
+@dropdown-link-active-bg:        @component-active-bg;
+
+@dropdown-link-hover-color:      #fff;
+@dropdown-link-hover-bg:         @dropdown-link-active-bg;
+
+@navbar-height:                    57px;
+
+@navbar-default-color:             #FFF;
+@navbar-default-bg:                #FFF;
+@navbar-default-border:            darken(@navbar-default-bg, 6.5%);
+
+@navbar-default-link-color:                #FFF;
+@navbar-default-link-hover-color:          #FFF;
+@navbar-default-link-hover-bg:             rgba(255,255,255,0.1);
+@navbar-default-link-active-color:         #FFF;
+@navbar-default-link-active-bg:            transparent;
+
+@navbar-default-brand-hover-color:         darken(@navbar-default-link-color, 10%);
+@nav-pills-active-link-hover-color:         #fff;
+
+@state-warning-text:             #c09853;
+@state-warning-bg:               #fcf8e3;
+@state-warning-border:           darken(spin(@state-warning-bg, -10), 3%);
+
+@state-danger-text:              #b94a48;
+@state-danger-bg:                #f2dede;
+@state-danger-border:            darken(spin(@state-danger-bg, -10), 3%);
+
 nav.navbar {
+    ul.nav.navbar-nav > li > a {
+        color: #fff;
+    }
+
     background: #004b80;
     border: 0;
     margin-bottom: 0;
@@ -37,6 +70,9 @@ nav.navbar {
         }
     }
 
+    a.login-btn {
+        width: 33px;
+    }
     #login_menu {
         li {
             border: none;
