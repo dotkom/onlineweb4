@@ -58,8 +58,6 @@ class OnlineUser(AbstractUser):
     website = models.URLField(_(u"hjemmeside"), blank=True, null=True)
     gender = models.CharField(_(u"kjønn"), max_length=10, choices=GENDER_CHOICES, default="male")
 
-    image = models.ImageField(_(u"bilde"), max_length=200, upload_to=IMAGE_FOLDER, blank=True, null=True)
-
     # NTNU credentials
     ntnu_username = models.CharField(_(u"NTNU-brukernavn"), max_length=10, blank=True, null=True, unique=True)
 
@@ -70,8 +68,9 @@ class OnlineUser(AbstractUser):
         """
         Returns true if the User object is associated with Online.
         """
-        if AllowedUsername.objects.filter(username=self.ntnu_username.lower()).filter(expiration_date__gte=timezone.now()).count() > 0:
-            return True
+        if self.ntnu_username:
+            if AllowedUsername.objects.filter(username=self.ntnu_username.lower()).filter(expiration_date__gte=timezone.now()).count() > 0:
+                return True
         return False
 
     def get_full_name(self):
@@ -92,11 +91,6 @@ class OnlineUser(AbstractUser):
 
     def in_group(self, group_name):
         return reduce(lambda x,y: x or y.name == group_name, self.groups.all(), False)
-
-    def get_image_url(self):
-        if self.image:
-            return self.image.url
-        return "%s_%s.png" % (settings.DEFAULT_PROFILE_PICTURE_PREFIX, self.gender)
 
     @property
     def year(self):

@@ -29,15 +29,6 @@ class ProfileForm(forms.ModelForm):
 
         return cleaned_data
 
-class ImageForm(forms.ModelForm):
-
-    class Meta:
-        model = OnlineUser
-
-        fields = ['image']
-        widgets = {
-            'image': forms.FileInput(attrs={'class' : 'hidden-input', 'id' : 'image'}),
-        }
 
 class PrivacyForm(forms.ModelForm):
 

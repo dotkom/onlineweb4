@@ -22,7 +22,7 @@ class OnlineUserAdmin(admin.ModelAdmin):
         (_(u'Studieinformasjon'), {'fields': ('ntnu_username', 'field_of_study', 'started_date', 'compiled',)}),
         (_(u'Adresse'), {'fields': ('address', 'zip_code',)}), 
         (_(u'Viktige datoer'), {'fields': ('last_login', 'date_joined',)}),
-        (_(u'Annen info'), { 'fields': ('infomail', 'mark_rules', 'rfid', 'nickname', 'website', 'image',) }),
+        (_(u'Annen info'), { 'fields': ('infomail', 'mark_rules', 'rfid', 'nickname', 'website',) }),
         (_(u'Tilganger'), {'fields': ('is_active', 'is_staff', 'is_superuser',
                                        'groups', 'user_permissions')}),
     )
