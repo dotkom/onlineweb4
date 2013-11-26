@@ -204,3 +204,27 @@ class AllowedUsername(models.Model):
         verbose_name_plural = _(u"medlemsregister")
         ordering = (u"username",)
 
+
+class Position(models.Model):
+    """
+    Contains a users position in the organization from a given year
+    """
+    start_year = models.CharField(_(u'startår'), max_length=4, blank=False)
+    end_year   = models.CharField(_(u'sluttår'), max_length=4, blank=True)
+    present    = models.BooleanField(_(u'jeg har denne posisjonen nå'), default=False, blank=True)
+    committee  = models.CharField(_(u'komite'), max_length=100, blank=False)
+    position   = models.CharField(_(u'stilling'), max_length=100, blank=False)
+    user       = models.ForeignKey(OnlineUser, related_name='positions', blank=False)
+
+    @property
+    def print_string(self):
+        ending = self.end_year if self.end_year else u'Nå'
+        return '%s-%s: %s(%s)' % (self.start_year, ending, self.committee, self.position)
+
+    def __unicode__(self):
+        return self.print_string
+
+    class Meta:
+        verbose_name = _(u'posisjon')
+        verbose_name_plural = _(u'posisjoner')
+        ordering = (u'user',)
