@@ -1,5 +1,19 @@
 <div class="row">
     <div class="col-md-12">
+        <h3>Godkjenning av prikkeregler</h3>
+    </div>
+</div>
+<div class="row-space"></div>
+<div class="row">
+    <div class="col-md-12">
+        <button class="marks {% ifequal mark_rules_accepted True %}on{% else %}off{% endifequal %}">
+            <input id="marks-checkbox" type="checkbox" {% ifequal mark_rules_accepted True %}checked="checked"{% endifequal %}>
+        </button>
+    </div>
+</div>
+<hr>
+<div class="row">
+    <div class="col-md-12">
         <h3>Mine prikker</h3>
     </div>
 </div>
@@ -68,6 +82,8 @@
         </div>
     </div>
 </div>
+<br>
+<hr>
 <div class="row">
     <div class="col-md-12">
         <h3>Prikk?</h3>

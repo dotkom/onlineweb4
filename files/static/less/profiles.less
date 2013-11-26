@@ -38,10 +38,13 @@ input.hidden-input {
 }
 
 .image-box-entity {
-  max-width: @image-width-with-padding;
-  width: @image-width-with-padding;
   margin: 5px;
   margin-left: 0px;
+}
+
+.image-choice-button {
+  min-width: 150px;
+  .image-box-entity;
 }
 
 label.image-box-entity {
@@ -152,6 +155,30 @@ label > i.btn-icon {
 
 .markbody .inline .row-fluid [class*="span"] {
   min-height: 15px;
+}
+
+.panel-heading {
+  padding: 1px 15px;
+}
+
+.marks.on {
+  width: 100%;
+  .btn;
+  .button-variant(@btn-success-color; @btn-success-bg; @btn-success-border);
+}
+
+.marks.on:after {
+  content: "Jeg har godtatt prikkereglene og er inneforstått med hva dette betyr."
+}
+
+.marks.off {
+  width: 100%;
+  .btn;
+  .button-variant(@btn-warning-color; @btn-warning-bg; @btn-warning-border);
+}
+
+.marks.off:after {
+  content: "Jeg har ikke godtatt prikkereglene enda."
 }
 
 textarea, input[type="text"] {

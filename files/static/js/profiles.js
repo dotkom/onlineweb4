@@ -16,7 +16,13 @@ function csrfSafeMethod(method) {
 $(document).ready(function() {
     $('#image-name').hide();
 
-//Ajax request to remove profile image
+    $('.img-polaroid').imagesLoaded().always( function() {
+        var imageWidth = $('.img-polaroid').outerWidth() - 24;
+        if(imageWidth < 150) imageWidth = 150;
+        $('.image-choice-button').width(imageWidth);
+    });
+
+    //Ajax request to remove profile image
     $('#confirm-delete').click(function() {
         confirmRemoveImage();
     });
@@ -218,6 +224,53 @@ $(document).ready(function() {
 
 
     /* End image cropping and uploading*/
+
+
+/*
+ JS for marks pane
+*/
+
+    function performMarkRulesClick() {
+        var markscheckbox = $("#marks-checkbox");
+        var checked = markscheckbox.is(':checked');
+        markscheckbox.prop('checked', !checked);
+
+        if(!checked) {
+            $(".marks").removeClass("off").addClass("on");
+            updateMarkRules(true);
+        }
+        else {
+            $(".marks").removeClass("on").addClass("off");
+            updateMarkRules(false);
+        }
+    }
+
+    $(".marks").mouseup(function(e) {
+        performMarkRulesClick();
+    });
+
+    $("#marks-checkbox").click(function(e){
+        e.stopPropagation();
+        e.preventDefault();
+    });
+
+    var updateMarkRules = function(accepted) {
+        var utils = new Utils();
+
+        $.ajax({
+            method: 'POST',
+            url: 'update_mark_rules/',
+            data: { 'rules_accepted': accepted },
+            success: function(res) {
+                res = jQuery.parseJSON(res);
+                utils.setStatusMessage(res['message'], 'alert-success');
+            },
+            error: function() {
+                utils.setStatusMessage('En uventet error ble oppdaget. Kontakt dotkom@online.ntnu.no for assistanse.', 'alert-danger');
+            },
+            crossDomain: false
+        });
+    }
 
 /*
  JS for email management.
