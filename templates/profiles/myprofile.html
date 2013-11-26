@@ -1,3 +1,4 @@
+{% load gravatar_url_resolver %}
 {% load crispy_forms_tags %}
 <div class="row">
     <form method="post" action="{% url 'save_user_profile' %}" enctype="multipart/form-data">
@@ -32,85 +33,27 @@
                 <div class="col-md-5 col-sm-4">
                     <div class="row row-space">
                         <div class="col-md-12">
-                            <h3>Bilde</h3>
+                            <h3 class="header-inline">Bilde</h3>
+                            <i id="privacy-help"
+                               class="glyphicon glyphicon-question-sign"
+                               href="#"
+                               data-toggle="popover"
+                               title="Hjelpeinformasjon"
+                               data-content="Vi henter bilder fra Gravatar! For å få hentet bildet ditt må din
+                               primære epost-adresse være en epost-adresse du har registrert på Gravatar. Konto kan
+                               registreres på https://gravatar.com."
+                               data-original-title="Hjelpeinformasjon">
+                            </i>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-md-12">
-                            <div id="image-box">
-                                <img class="img-polaroid fadeload" id="profile-image" src="{{ user.get_image_url }}" alt="profilbilde">
-                                <button type="button" class="btn btn-danger image-choice-button" id="remove-image" data-toggle="modal" data-target="#remove-image-modal">
-                                    <i class="icon-remove btn-icon"></i> Fjern bilde
-                                </button>
-                                <button type="button" class="btn image-choice-button" data-toggle="modal" href="#upload-image-modal">
-                                    <i class="icon-upload btn-icon"></i> Velg et nytt bilde
-                                </button>
-                            </div>
+                            {% gravatar_url request.user 286 as gravatar_url %}
+                            <img class="img-thumbnail" src="{{ gravatar_url }}">
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-
     </form>
-</div>
-<!-- Modal for confirming removal of profile image -->
-<div class="modal fade" id="remove-image-modal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h3>Fjern bilde</h3>
-            </div>
-            <div class="modal-body">
-                <p>Er du sikker på at du vil fjerne profilbildet ditt?</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn" data-dismiss="modal">Lukk</button>
-                <button type="button" class="btn btn-danger" id="confirm-delete">Fjern bildet mitt!</button>
-            </div>
-        </div>
-    </div>
-</div>
-<!-- End modal -->
-<!-- Modal for uploading and cropping image -->
-<div class="modal fade" id="upload-image-modal" tabindex="-1" role="dialog">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h3>Last opp nytt bilde</h3>
-            </div>
-            <div class="modal-body">
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="row">
-                            <div class="col-md-12">
-                                <form method="post" enctype="multipart/form-data"  action="{% url 'upload_image' %}" id="upload-image-form">
-                                    {% csrf_token %}
-                                    {{ image_form.image }}
-                                    {{ image_form.image.errors }}
-                                    <input name="x" type="hidden" id="inputx">
-                                    <input name="y" type="hidden" id="inputy">
-                                    <input name="x2" type="hidden" id="inputx2">
-                                    <input name="y2" type="hidden" id="inputy2">
-                                    <input name="w" type="hidden" id="inputw">
-                                    <input name="h" type="hidden" id="inputh">
-                                    <img class="hidden-input" src="" id="image-resize" alt=""/>
-                                    <label for="image" class="btn btn-primary image-box-entity" id="image-upload-label">
-                                        <i class="icon-upload btn-icon"></i> Velg et nytt bilde
-                                    </label>
-                                    <button type="submit" class="btn btn-success" id="upload-button">Last opp bilde</button>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <div id="status" class="pull-left">Venter på opplasting av bilde.</div>
-                <button type="button" class="btn" data-dismiss="modal">Lukk</button>
-            </div>
-        </div>
-    </div>
 </div>

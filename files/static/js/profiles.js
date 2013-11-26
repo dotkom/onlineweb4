@@ -14,39 +14,12 @@ function csrfSafeMethod(method) {
 /* END AJAX SETUP */
 
 $(document).ready(function() {
-    $('#image-name').hide();
 
     $('.img-polaroid').imagesLoaded().always( function() {
         var imageWidth = $('.img-polaroid').outerWidth() - 24;
         if(imageWidth < 150) imageWidth = 150;
         $('.image-choice-button').width(imageWidth);
     });
-
-    //Ajax request to remove profile image
-    $('#confirm-delete').click(function() {
-        confirmRemoveImage();
-    });
-
-    function confirmRemoveImage() {
-        $.ajax({
-            method: 'DELETE',
-            url: 'removeprofileimage/',
-            success: function(res) {
-                res = JSON.parse(res);
-                $('img#profile-image').attr('src', res['url']);
-                $('#remove-image-modal').modal("hide");
-                var utils = new Utils();
-                utils.setStatusMessage(res['message'], 'alert-success');
-            },
-            error: function(res) {
-                res = JSON.parse(res['responseText']);
-                $('#remove-image-modal').modal("hide");
-                var utils = new Utils();
-                utils.setStatusMessage(res['message'], 'alert-danger');
-            },
-            crossDomain: false
-        });
-    }
 
     $('#userprofile-tabs > li > a').click(function(e) {
         e.preventDefault();
@@ -93,138 +66,6 @@ $(document).ready(function() {
 
     // Popover for privacy
     $('#privacy-help').popover({placement: 'bottom'});
-
-    /* Image cropping and uploading */
-    var api;
-    var formData = false;
-    var x, y, x2, y2, w, h;
-
-    if(window.FormData) {
-        formData = new FormData();
-    }
-
-    $('input[type=file]').change(function() {
-        readURL(this);
-    });
-
-    function readURL(input) {
-
-        if (input.files && input.files[0]) {
-            var file = input.files[0];
-
-            if (!file.type.match(/image.*/)) {
-                return;
-            }
-
-            var reader = new FileReader();
-            reader.readAsDataURL(file);
-
-            reader.onloadend = function(e) {
-                var api;
-                $('.jcrop-holder').remove();
-                api = $.Jcrop('#image-resize', {
-                    // start off with jcrop-light class
-                    bgOpacity: 0.5,
-                    bgColor: 'white',
-                    addClass: 'jcrop-light',
-                    boxHeight: 300,
-                    aspectRatio: 3/4,
-                    onChange: updateCoords,
-                    onSelect: updateCoords,
-                    keySupport: false,
-                    allowSelect: false
-                });
-                api.setImage(e.target.result, function () {
-                    api.setSelect([0,0,500,500]);
-                });
-                api.setOptions({ bgFade: true });
-                api.ui.selection.addClass('jcrop-selection');
-                api.allowResize = true;
-                if(formData) {
-                    formData.append("image", file);
-                }
-
-                $('#upload-button').show();
-            }
-        }
-    }
-
-    function updateCoords(c) {
-        x = c.x;
-        y = c.y;
-        x2 = c.x2;
-        y2 = c.y2;
-        w = c.w;
-        h = c.h;
-        $('#inputx').val(c.x);
-        $('#inputy').val(c.y);
-        $('#inputx2').val(c.x2);
-        $('#inputy2').val(c.y2);
-        $('#inputw').val(c.w);
-        $('#inputh').val(c.h);
-    }
-
-    var setStatus = function(statusMsg) {
-        $('#status').html(statusMsg);
-    }
-
-    $('#upload-image-form').submit(function(e) {
-        if (formData) {
-            e.preventDefault();
-
-            if(!imageChosen()) return;
-
-            setStatus("Laster opp bildet...")
-
-            //JCrop select coordinates
-            formData.append("x", x);
-            formData.append("y", y);
-            formData.append("x2", x2);
-            formData.append("y2", y2);
-            formData.append("w", w);
-            formData.append("h", h);
-
-            $.ajax({
-                url: "uploadimage/",
-                type: "POST",
-                data: formData,
-                processData: false,
-                contentType: false,
-                crossDomain: false,
-                success: function (res) {
-                    res = JSON.parse(res);
-                    $('#profile-image').attr("src", res['image-url']);
-                    $('#upload-image-modal').modal('hide');
-                    var utils = new Utils();
-                    utils.setStatusMessage(res['message'], 'alert-success');
-                },
-                error: function(res) {
-                    res = JSON.parse(res);
-                    var utils = new Utils();
-                    $('#upload-image-modal').modal('hide');
-                    utils.setStatusMessage(res['message'], 'alert-success');
-                }
-            });
-        }
-        else {
-            if(!imageChosen()) {
-                e.preventDefault();
-            }
-        }
-    });
-
-    function imageChosen() {
-        var fileInput = $('input[type=file]')[0];
-            if(!fileInput || fileInput.files.length < 1) {
-                setStatus("Ingen fil valgt.");
-                return false;
-            }
-        return true;
-    }
-
-
-    /* End image cropping and uploading*/
-
 
 /*
  JS for marks pane
