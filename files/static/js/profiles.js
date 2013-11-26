@@ -15,12 +15,6 @@ function csrfSafeMethod(method) {
 
 $(document).ready(function() {
 
-    $('.img-polaroid').imagesLoaded().always( function() {
-        var imageWidth = $('.img-polaroid').outerWidth() - 24;
-        if(imageWidth < 150) imageWidth = 150;
-        $('.image-choice-button').width(imageWidth);
-    });
-
     $('#userprofile-tabs > li > a').click(function(e) {
         e.preventDefault();
         updateActiveTab(this.getAttribute('href').substr(1));
