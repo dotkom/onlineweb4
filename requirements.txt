@@ -12,7 +12,7 @@ pytz                            # Timezone lib. Obsolete?
 gunicorn==18.0
 
 # third party deps
-git+https://github.com/sehmaschine/django-filebrowser.git@stable/3.5.x#egg=filebrowser # File uploading
+django-filebrowser==3.5.2 		# File uploading
 django-grappelli==2.5.0         # Admin template set
 git+git://github.com/clintecker/django-chunks.git@0.2# Chunks, or reusable key:content for templates.
 django-crispy-forms==1.4.0      # nice forms
