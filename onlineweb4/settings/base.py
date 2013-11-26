@@ -215,7 +215,7 @@ MESSAGE_TAGS = {messages.DEBUG: 'alert-debug',
                 messages.WARNING: 'alert-warning',
                 messages.ERROR: 'alert-error'}
 
-FAB_HOST="absint.online.ntnu.no'
+FAB_HOST='morgan.online.ntnu.no'
 
 
 # Not really sure what this does.

@@ -27,10 +27,10 @@ class Site(object):
         if mode != 'quick':
             self.update_packages()
             self.run('cp onlineweb4/settings/example-local.py onlineweb4/settings/local.py')
-            self.run('/var/www/.enviroments/onlineweb/bin/python manage.py syncdb')
-            self.run('/var/www/.enviroments/onlineweb/bin/python manage.py migrate --delete-ghost-migrations')
+            self.run('venv/bin/python manage.py syncdb')
+            self.run('venv/bin/python manage.py migrate --delete-ghost-migrations')
  
-        self.run('/var/www/.enviroments/onlineweb/bin/python manage.py collectstatic --noinput')
+        self.run('venv/bin/python manage.py collectstatic --noinput')
         self.restart()
         print green("Deployed %s" % DEV)
  
@@ -41,41 +41,33 @@ class Site(object):
         self.run("git checkout " + branch)
         self.run("git reset --hard origin/" + branch)
  
-#    def git_tag(self):
-#        if confirm("Give new tag for this deployment?"):
-#            self.run("git tag |tail -n 5")
-#            tag = prompt('Gi ny tag for deploymenten: ')
-#           self.run("git tag %s" % tag)
-#            self.run("git push --tags && git push")
+    def git_tag(self):
+        if confirm("Give new tag for this deployment?"):
+            self.run("git tag |tail -n 5")
+            tag = prompt('Gi ny tag for deploymenten: ')
+            self.run("git tag %s" % tag)
+            self.run("git push --tags && git push")
  
     def update_packages(self):
-        self.run("/var/www/.enviroments/onlineweb/bin/pip install -r requirements.txt")
+        self.run("venv/bin/pip install -r requirements.txt")
  
     def restart(self):
-        header("Running: Restart server script: %s" % self.gunicorn)
-        process_id = sudo('cat /var/run/gunicorn/%s' % self.gunicorn, user=self.user_id)
-        sudo('kill -HUP %s' % process_id, user=self.user_id)
- 
+        header("Running: Restart server script: %s" % self.site)
+        sudo('supervisorctl restart %s' % self.site, user=self.user_id)
+
 DEV = Site(
-    dir='/var/www/onlineweb/dev/onlineweb4',
-    gunicorn='dev.absint.no.pid',
-    user_id='www-data'
+    dir='/var/websites/dev/onlineweb4/',
+    site='onlineweb4_dev',
+    user_id='root'
 )
  
 PROD = Site(
-    dir='/var/www/websites/www/',
-    gunicorn='www.uka.no.pid',
-    user_id='uka-data'
-)
- 
-STAGING = Site(
-    dir='/var/www/websites/staging/',
-    gunicorn='staging.uka.no.pid',
+    dir='/var/websites/onlineweb4/',
+    site='onlineweb4',
     user_id='www-data'
 )
  
 env.hosts = django_settings.FAB_HOST
- 
  
 @task
 def clone_prod_data():
@@ -113,7 +105,7 @@ def clone_prod_data():
 @task
 def test(is_deploying=False):
     print yellow("Running tests, please wait!")
-    result = local("venv/bin/python manage.py test --settings=onlineweb4.settings.test", capture=True)
+    result = local("venv/bin/python manage.py test", capture=True)
     if result.failed:
         print red("Tests failed")
         if is_deploying and not confirm('Do you really want to deploy?'):
@@ -124,7 +116,7 @@ def test(is_deploying=False):
 @task
 def deploy(mode='full'):
     """
-    Deploy the current master branch of UNO to prod (or dev, first)
+    Deploy the current develop branch of onlineweb to prod (or dev, first)
     """
     env.user = prompt('Username: ', default=getpass.getuser())
  
@@ -148,22 +140,19 @@ def deploy(mode='full'):
     PROD.run('venv/bin/python manage.py collectstatic --noinput')
     PROD.restart()
  
-    #Purge all cached in varnish
-    PROD.run("curl -4 -X BAN -H 'Host: www.uka.no' http://localhost:6081/")
- 
     # Check if we want to tag the deployment
     PROD.git_tag()
  
 @task
 def purge_static(mode='full'):
     env.user = prompt('Username: ', default=getpass.getuser())
-    PROD.run("curl -4 -X BAN -H 'Host: www.uka.no' http://localhost:6081/static/")
+    PROD.run("curl -4 -X BAN -H 'Host: www.online.ntnu.no' http://localhost:6081/static/")
  
  
 @task
 def purge_all(mode='full'):
     env.user = prompt('Username: ', default=getpass.getuser())
-    PROD.run("curl -4 -X BAN -H 'Host: www.uka.no' http://localhost:6081/")
+    PROD.run("curl -4 -X BAN -H 'Host: www.online.ntnu.no' http://localhost:6081/")
  
  
 @task
