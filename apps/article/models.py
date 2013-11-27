@@ -3,7 +3,6 @@
 from django.db import models
 from django.db.models import permalink
 from django.template.defaultfilters import slugify
-from django.template.defaultfilters import slugify
 from django.utils.translation import ugettext as _
 
 from apps.authentication.models import OnlineUser as User
@@ -16,8 +15,8 @@ class Article(models.Model):
 
 
     heading = models.CharField(_(u"tittel"), max_length=45)
-    ingress_short = models.CharField(_(u"kort ingress"), max_length=250)
-    ingress = models.TextField(_(u"ingress"), max_length=100)
+    ingress_short = models.CharField(_(u"kort ingress"), max_length=100)
+    ingress = models.TextField(_(u"ingress"))
     content = models.TextField(_(u"content"))
     image = FileBrowseField(_(u"bilde"), 
         max_length=200, directory=IMAGE_FOLDER,

@@ -1,24 +1,22 @@
 #-*- coding: utf-8 -*-
 
-import datetime
+from datetime import date, datetime, time, timedelta
 
+from django.conf import settings
 from django.db import models
-from django.utils.translation import ugettext_lazy as _
+from django.utils import timezone
+from django.utils.translation import ugettext as _
 
 from apps.authentication.models import OnlineUser as User
 
 class ActiveMarksManager(models.Manager):
     def get_query_set(self):
-        threshhold = get_threshold()
-
-        return super(ActiveMarksManager, self).get_query_set().filter(mark_added_date__gt=threshhold)
+        return super(ActiveMarksManager, self).get_query_set().filter(expiration_date__gt=timezone.now())
 
 
 class InactiveMarksManager(models.Manager):
     def get_query_set(self):
-        threshhold = get_threshold()
-
-        return super(InactiveMarksManager, self).get_query_set().filter(mark_added_date__lte=threshhold)
+        return super(InactiveMarksManager, self).get_query_set().filter(expiration_date__lte=timezone.now())
 
 
 class Mark(models.Model):
@@ -33,11 +31,12 @@ class Mark(models.Model):
 
     title = models.CharField(_(u"tittel"), max_length=50)
     given_to = models.ManyToManyField(User, null=True, blank=True, through="UserEntry", verbose_name=_(u"gitt til"))
-    mark_added_date = models.DateTimeField(_(u"utdelt dato"), auto_now_add=True)
-    given_by = models.ForeignKey(User, related_name="mark_given_by", verbose_name=_(u"gitt av"), editable=False)
+    added_date = models.DateField(_(u"utdelt dato"))
+    expiration_date = models.DateField(_(u"utløpsdato"), editable=False)
+    given_by = models.ForeignKey(User, related_name="mark_given_by", verbose_name=_(u"gitt av"), editable=False, null=True, blank=True)
     last_changed_date = models.DateTimeField(_(u"sist redigert"), auto_now=True, editable=False)
     last_changed_by = models.ForeignKey(User, related_name="marks_last_changed_by",
-                                        verbose_name=_(u"sist redigert av"), editable=False)
+        verbose_name=_(u"sist redigert av"), editable=False, null=True, blank=False)
     description = models.CharField(_(u"beskrivelse"), max_length=100,
                                    help_text=_(u"Hvis dette feltet etterlates blankt vil det fylles med "
                                                "en standard grunn for typen prikk som er valgt."),
@@ -51,10 +50,16 @@ class Mark(models.Model):
 
     @property
     def is_active(self):
-        return self.mark_added_date > get_threshold()
+        return self.expiration_date > timezone.now()
 
     def __unicode__(self):
         return _(u"Prikk for %s") % self.title
+
+    def save(self, *args, **kwargs):
+        if not self.added_date:
+            self.added_date = timezone.now()
+        self.expiration_date = _get_expiration_date(self.added_date) 
+        super(Mark, self).save(*args, **kwargs)
 
     class Meta:
         verbose_name = _(u"Prikk")
@@ -72,39 +77,45 @@ class UserEntry(models.Model):
         unique_together = ("user", "mark")
 
 
-def get_threshold():
+def _get_expiration_date(added_date=timezone.now()):
+    """
+    Calculates the datetime in the future when a mark will expire. 
+    """
+
+    if type(added_date) == datetime:
+        added_date = added_date.date()
+
     DURATION = 60
     # summer starts 1st June, ends 15th August
     SUMMER = ((6, 1), (8, 15))
     # winter starts 1st December, ends 15th January
     WINTER = ((12, 1), (1, 15))
 
-    # Todays date
-    now = datetime.datetime.now().date()
-    # Threshhold is the day in the past which marks will be filtered on by mark_added_date
-    threshold = now - datetime.timedelta(days=DURATION)
-    summer_start_date = datetime.date(now.year, SUMMER[0][0], SUMMER[0][1])
-    summer_end_date = datetime.date(now.year, SUMMER[1][0], SUMMER[1][1])
-    first_winter_start_date = datetime.date(now.year - 1, WINTER[0][0], WINTER[0][1])
-    first_winter_end_date = datetime.date(now.year, WINTER[1][0], WINTER[1][1])
-    second_winter_start_date = datetime.date(now.year, WINTER[0][0], WINTER[0][1])
+    # Add the duration
+    expiry_date = added_date + timedelta(days=DURATION)
+    # Set up the summer and winter vacations
+    summer_start_date = date(added_date.year, SUMMER[0][0], SUMMER[0][1])
+    summer_end_date = date(added_date.year, SUMMER[1][0], SUMMER[1][1])
+    first_winter_start_date = date(added_date.year, WINTER[0][0], WINTER[0][1])
+    first_winter_end_date = date(added_date.year + 1, WINTER[1][0], WINTER[1][1])
+    second_winter_end_date = date(added_date.year, WINTER[1][0], WINTER[1][1])
 
-    # If we're in the middle of summer, remove the days passed of summer
-    if summer_start_date < now < summer_end_date:
-        threshold -= datetime.timedelta(days=(now - summer_start_date).days)
-    # If the number of days between now and the end of the summer vacation is less than
-    # the duration, we need to remove the length of summer from the threshhold
-    elif 0 < (now - summer_end_date).days < DURATION:
-        threshold -= datetime.timedelta(days=(summer_end_date - summer_start_date).days)
-    # Same for middle of winter vacation, which will be after newyears
-    elif first_winter_start_date < now < first_winter_end_date:
-        threshold -= datetime.timedelta(days=(now - first_winter_start_date).days)
-    # And for after the vacation
-    elif 0 < (now - first_winter_end_date).days < DURATION:
-        threshold -= datetime.timedelta(days=(first_winter_end_date - first_winter_start_date).days)
-    # Then we need to check if we're into the start of the vacation this year, i.e. before newyears
-    elif second_winter_start_date < now:
-        threshold -= datetime.timedelta(days=(now - second_winter_start_date).days)
+    # If we're in the middle of summer, add the days remaining of summer
+    if summer_start_date < added_date < summer_end_date:
+        expiry_date += timedelta(days=(summer_end_date - added_date).days)
+    # If the number of days between added_date and the beginning of summer vacation is less
+    # than the duration, we need to add the length of summer to the expiry date
+    elif 0 < (summer_start_date - added_date).days < DURATION:
+        expiry_date += timedelta(days=(summer_end_date - summer_start_date).days)
+    # Same for middle of winter vacation, which will be at the end of the year
+    elif first_winter_start_date < added_date < first_winter_end_date:
+        expiry_date += timedelta(days=(first_winter_end_date - added_date).days)
+    # And for before the vacation
+    elif 0 < (first_winter_start_date - added_date).days < DURATION:
+        expiry_date += timedelta(days=(first_winter_end_date - first_winter_start_date).days)
+    # Then we need to check the edge case where now is between newyears and and of winter vacation
+    elif second_winter_end_date > added_date:
+        expiry_date += timedelta(days=(second_winter_end_date - added_date).days)
 
-    # The returned value is a datetime object
-    return datetime.datetime.combine(threshold, datetime.time())
+    # The returned value is a timezone aware datetime object
+    return timezone.make_aware(datetime.combine(expiry_date, time()), timezone.get_current_timezone())

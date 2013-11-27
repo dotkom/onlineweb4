@@ -4,12 +4,13 @@
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-        <title>Online, Linjeforeningen for Informatikk</title>
+        <title>{% block title %}{% endblock %}</title>
         <meta name="description" content="">
+        <link rel="icon" href="{{ STATIC_URL }}img/favicon.png">
 
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
         {% block styles %}
-            <link href='http://fonts.googleapis.com/css?family=Open+Sans:300,400,600' rel='stylesheet' type='text/css'>
             {% compress css %}
             <link rel="stylesheet" type="text/less" href="{{ STATIC_URL }}less/core.less">
             {% endcompress %}
@@ -29,30 +30,33 @@
                   <span class="icon-bar"></span>
                   <span class="icon-bar"></span>
                 </button>
-               <a class="navbar-brand" href="{% url 'home' %}"><img width="140px" src="{{ STATIC_URL }}img/online_logo.png" alt="Online" class="logo"></a>
+               <a class="navbar-brand" href="{% url 'home' %}"><img width="140px" height="35px" src="{{ STATIC_URL }}img/online_logo.svg" alt="Online" class="logo"></a>
             </div>
             <!-- Collect the nav links, forms, and other content for toggling -->
             <div class="collapse navbar-collapse navbar-ex1-collapse">
                 <ul class="nav navbar-nav">
                   <li><a href="{% url 'home' %}">Forside</a></li>
+                  <li><a href="{% url 'events_index' %}">Arkiver</a></li>
                   <li><a href="{% url 'careeropportunity_index' %}">Karrieremuligheter</a></li>
                   <li><a href="{% url 'resourcecenter_index' %}">Ressurser</a></li>
-                  <li><a href="{% url 'article_archive' %}">Arkiv</a></li>
-                  <li><a href="http://wiki.online.ntnu.no/">Wiki</a></li>
+                  <li><a href="https://wiki.online.ntnu.no/projects/online/wiki">Wiki</a></li>
                 </ul>
 
                 <ul class="nav navbar-nav navbar-right">
                     <li class="dropdown" id="login_menu">
                         {% if user.is_authenticated %}
-                        <a href="#login_menu" class="login-btn dropdown-toggle dropdown-signin login" data-toggle="dropdown">{{ user.get_full_name }}<b class="caret"></b></a>
+                        <a href="#login_menu" class="login-btn dropdown-toggle dropdown-signin login glyphicon glyphicon-user" data-toggle="dropdown"></a>
                         <ul class="dropdown-menu login-box" role="menu">
+                            {% if user.is_staff %}
+                            <li><a href="/admin/">Administrasjon</a></li>
+                            {% endif %}
                             <li><a href="{% url 'profiles' %}">Min profil</a></li>
                             <li class="divider"></li>
                             <li><a href="{% url 'auth_logout' %}">Logg ut</a></li>
                         </ul>
                        
                         {% else %}
-                        <a href="#login_menu" class="login-btn dropdown-toggle dropdown-signin login" data-toggle="dropdown">Logg inn <b class="caret"></b></a>
+                        <a href="#login_menu" class="login-btn dropdown-toggle dropdown-signin login glyphicon glyphicon-lock" data-toggle="dropdown"></a>
                         <ul class="dropdown-menu login-box" role="menu">
                             <li>
                                 <form class="navbar-form" method="POST" action="{% url 'auth_login' %}">
@@ -74,8 +78,9 @@
                         </ul>
                         {% endif %}
                     </li>
-                    <li class="top-menu-img">
-                        <a href="http://visma.no/"><img src="{{ STATIC_URL }}img/visma_clean.png" alt="" class="sponsor-logo"></a>
+                    <li class="top-menu-img main-sponsor">
+                        <a href="http://www.visma.no/Prosjekt-og-konsulenttjenester/Karriere/Overview/"><img src="{{ STATIC_URL }}img/visma_clean.png" alt="" class="sponsor-logo"></a>
+                        <span>Hovedsamarbeidspartner</span>
                     </li>
                 </ul>
 
@@ -91,7 +96,7 @@
     {% if messages %}
         <div class="container messages">
             <div class="row">
-                <div class="col-md-12">
+                <div class="message-container col-md-12">
                     {% for message in messages %}
                     <div class="alert {% if message.tags %}
                         {% if message.tags == 'alert-error' %} alert-danger {% else %}
@@ -113,7 +118,7 @@
             <div class="row">
                 <div class="col-xs-12 col-sm-6 col-md-4">
                     <div class="row row-space">
-                        <div class="col-md-12">
+                        <div class="col-md-12 footer-social">
                             <a href="http://facebook.com/LinjeforeningenOnline"><img src="{{ STATIC_URL }}img/facebook-64.png" alt="Facebook" /></a>
                             <a href="http://twitter.com/Online_NTNU"><img src="{{ STATIC_URL }}img/twitter-64.png" alt="Twitter" /></a>
                             <a href="https://plus.google.com/107294836198591872251"><img src="{{ STATIC_URL }}img/googleplus-64.png" alt="Google Plus" /></a>
@@ -130,13 +135,13 @@
                         <div class="col-md-12">
                             <div class="contact-info">
                                  <div class="contact-item">
-                                    <span class="glyphicon glyphicon-briefcase"></span>992548045 (OrgNr)
+                                    <span class="glyphicon glyphicon-briefcase"></span>992 548 045 (OrgNr)
                                 </div>
                                 <div class="contact-item">
                                     <span class="glyphicon glyphicon-envelope"></span>kontakt@online.ntnu.no
                                 </div>
                                 <div class="contact-item">
-                                    <span class="glyphicon glyphicon-phone"></span>752 53 839
+                                    <span class="glyphicon glyphicon-phone"></span>75 25 38 39
                                 </div>
                             </div>
                         </div>
@@ -173,8 +178,8 @@
     
     {% block js %}
         <!--<script src="{{ STATIC_URL }}js/libs/less.js"></script>-->
-        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-        <script src="http://maps.googleapis.com/maps/api/js?v=3&sensor=true"></script>
+        <script src="{{ STATIC_URL}}js/libs/jquery-1.9.1.min.js"></script>
+        <script src="https://maps.googleapis.com/maps/api/js?v=3&sensor=true"></script>
         <script src="{{ STATIC_URL }}js/libs/bootstrap.min.js"></script>
         <script src="{{ STATIC_URL }}js/libs/moment.js"></script>
         <script src="{{ STATIC_URL }}js/libs/jquery.debouncedresize.js"></script>
@@ -182,6 +187,19 @@
         <script src="{{ STATIC_URL }}js/init.js"></script>
     {% endblock %}
 
+    {% if GOOGLE_ANALYTICS_KEY %}
+    <script type="text/javascript">
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', '{{ GOOGLE_ANALYTICS_KEY }}']);
+        _gaq.push(['_trackPageview']);
+
+        (function() {
+            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+        })();
+    </script>
+    {% endif %}
     </body>
 </html>
 

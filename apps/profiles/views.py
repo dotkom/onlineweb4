@@ -17,13 +17,14 @@ from django.utils.translation import ugettext as _
 from apps.authentication.forms import NewEmailForm
 from apps.authentication.models import Email, RegisterToken
 from apps.marks.models import Mark
-from apps.profiles.forms import (ImageForm, MailSettingsForm, PrivacyForm, 
+from apps.profiles.forms import (MailSettingsForm, PrivacyForm,
                                 ProfileForm, MembershipSettingsForm)
 
 """
 Index for the entire user profile view
 Methods redirect to this view on save
 """
+@login_required
 def index(request):
 
     """
@@ -34,7 +35,7 @@ def index(request):
     if not request.user.is_authenticated():
         return render_home(request)
 
-    dict = create_request_dictionary(request)
+    dict = _create_request_dictionary(request)
 
     # If a user has made a post, a session value will be set for which tab the user posted from.
     # This enables us to return the user to the correct tab when returning the view.
@@ -48,21 +49,20 @@ def render_home(request):
     return redirect('home')
 
 
-def create_request_dictionary(request):
+def _create_request_dictionary(request):
 
     dict = {
         'privacy_form' : PrivacyForm(instance=request.user.privacy),
         'user_profile_form' : ProfileForm(instance=request.user),
-        'image_form' : ImageForm(instance=request.user),
         'password_change_form' : PasswordChangeForm(request.user),
         'marks' : [
             # Tuple syntax ('title', list_of_marks, is_collapsed)
             (_(u'aktive prikker'), Mark.active.all().filter(given_to=request.user), False),
             (_(u'inaktive prikker'), Mark.inactive.all().filter(given_to=request.user), True),
         ],
-        'mail_settings' : MailSettingsForm(instance=request.user),
         'new_email' : NewEmailForm(),
         'membership_settings' : MembershipSettingsForm(instance=request.user),
+        'mark_rules_accepted' : request.user.mark_rules,
     }
 
     if request.session.has_key('userprofile_active_tab'):
@@ -91,21 +91,23 @@ def saveUserProfile(request):
     if request.method == 'POST':
 
         user = request.user
-        dict = create_request_dictionary(request)
-        user_profile_form = ProfileForm(request.POST, request.FILES)
+        dict = _create_request_dictionary(request)
+        user_profile_form = ProfileForm(request.POST)
         dict['user_profile_form'] = user_profile_form
 
         if not user_profile_form.is_valid():
             messages.error(request, _(u"Noen av de påkrevde feltene mangler"))
             return render(request, 'profiles/index.html', dict)
 
-        user.address = user_profile_form.cleaned_data['address']
-        user.allergies = user_profile_form.cleaned_data['allergies']
-        user.mark_rules = user_profile_form.cleaned_data['mark_rules']
-        user.nickname = user_profile_form.cleaned_data['nickname']
-        user.phone_number = user_profile_form.cleaned_data['phone_number']
-        user.website = user_profile_form.cleaned_data['website']
-        user.zip_code = user_profile_form.cleaned_data['zip_code']
+        cleaned = user_profile_form.cleaned_data
+
+        user.address = cleaned['address']
+        user.allergies = cleaned['allergies']
+        user.nickname = cleaned['nickname']
+        user.phone_number = cleaned['phone_number']
+        user.website = cleaned['website']
+        user.zip_code = cleaned['zip_code']
+        user.gender = cleaned['gender']
 
         user.save()
         messages.success(request, _(u"Brukerprofilen din ble endret"))
@@ -113,109 +115,12 @@ def saveUserProfile(request):
     return redirect("profiles")
 
 
-def uploadImage(request):
-
-    if request.method != "POST":
-        return redirect("profiles")
-
-    file = None
-
-    if request.FILES['image']:
-        file = request.FILES['image']
-
-    # How to verify that it IS an image? Possible object injection hack
-    # Please check
-    if file is None and file.content_type:
-        messages.error(request, _(u"Ingen bildefil ble valgt"))
-        return redirect("profiles")
-
-    return handleImageUpload(request, file)
-
-
-def handleImageUpload(request, image):
-
-    try:
-
-        if not os.path.exists(os.path.join(settings.MEDIA_ROOT, "images", "profiles")):
-            os.makedirs(os.path.join(settings.MEDIA_ROOT, "images", "profiles"))
-
-        extension_index = image.name.rfind('.')
-
-        #Make sure the image contains a file extension
-        if extension_index == -1:
-            messages.error(request, _(u"Filnavnet inneholder ikke filtypen"))
-            return redirect("profiles")
-
-        #remove already existing profile image, in case new extension is different from already existing
-        remove_file(request)
-
-        #Prepare filename and open-create a new file if it does not exist
-        extension = image.name[extension_index:]
-        filename = os.path.join(settings.MEDIA_ROOT, "images", "profiles", request.user.username + extension)
-        destination = open(filename, 'wb+')
-
-        #Write the image uncropped
-        for chunk in image.chunks():
-            destination.write(chunk)
-        destination.close()
-
-        #Create cropping bounding box
-        box = (int(float(request.POST['x'])), int(float(request.POST['y'])), int(float(request.POST['x2'])), int(float(request.POST['y2'])))
-        img = Image.open(filename)
-        crop_img = img.crop(box)
-        #Saving the image here so we release the lock on the file
-        img.save(filename)
-        #Actual cropping save
-        crop_img.save(filename)
-        #Set media url for user image
-        request.user.image = os.path.join(settings.MEDIA_URL, "images", "profiles", request.user.username + extension)
-        request.user.save()
-
-    except Exception:
-        if request.is_ajax():
-            return HttpResponse(status=500, content=_(u"Bildet kunne ikke lagres"))
-        else:
-            messages.error(request, _(u"Bildet kunne ikke lagres"))
-            return redirect("profiles")
-
-    if request.is_ajax():
-        #Dumping object as json does not work with ugettext_lazy
-        return HttpResponse(status=200, content=json.dumps(
-            {'message' : _(u"Bildet ble lagret"), 'image-url' : request.user.image.name }
-        ))
-    else:
-        messages.success(request, _(u"Bildet ble lagret"))
-        return redirect("profiles")
-
-
-
-def confirmDeleteImage(request):
-
-    if request.is_ajax():
-        if request.method == 'DELETE':
-            if request.user.image.url != settings.DEFAULT_PROFILE_PICTURE_URL:
-                remove_file(request)
-                return HttpResponse(status=200, content=json.dumps({'url' : settings.DEFAULT_PROFILE_PICTURE_URL }))
-
-    return HttpResponse(status=200, content=json.dumps({'url' : request.user.image.url }))
-
-
-def remove_file(request):
-    if request.user.image.url != settings.DEFAULT_PROFILE_PICTURE_URL:
-        extension_index = request.user.image.name.rfind('.')
-        extension = request.user.image.name[extension_index:]
-        filename = os.path.join(settings.MEDIA_ROOT, "images", "profiles", request.user.username + extension)
-        os.remove(filename)
-        request.user.image = settings.DEFAULT_PROFILE_PICTURE_URL
-        request.user.save()
-
 def savePrivacy(request):
-
     if not request.user.is_authenticated():
         return render_home(request)
 
     if request.method == 'POST':
-        dict = create_request_dictionary(request)
+        dict = _create_request_dictionary(request)
         privacy_form = PrivacyForm(request.POST, instance=request.user.privacy)
         dict['privacy_form'] = privacy_form
 
@@ -228,14 +133,12 @@ def savePrivacy(request):
 
     return redirect("profiles")
 
-
 def savePassword(request):
-
     if not request.user.is_authenticated():
         return render_home(request)
 
     if request.method == 'POST':
-        dict = create_request_dictionary(request)
+        dict = _create_request_dictionary(request)
         password_change_form = PasswordChangeForm(user=request.user, data=request.POST)
         dict['password_change_form'] = password_change_form
 
@@ -248,15 +151,35 @@ def savePassword(request):
 
     return redirect("profiles")
 
+
+@login_required
+def update_mark_rules(request):
+    if request.is_ajax():
+        if request.method == 'POST':
+            accepted = request.POST.get('rules_accepted') == "true"
+
+            if accepted:
+                return_status = json.dumps({'message': _(u"Du har valgt å akseptere prikkereglene.")})
+                request.user.mark_rules = True
+                request.user.save()
+            else:
+                return_status = json.dumps({'message': _(u"Du har valgt å ikke akseptere prikkereglene.")})
+                request.user.mark_rules = False
+                request.user.save()
+
+            return HttpResponse(status=212, content=return_status)
+        return HttpResponse(status=405)
+    return HttpResponse(status=404)
+
+
 @login_required
 def add_email(request):
-    dict = create_request_dictionary(request)
+    dict = _create_request_dictionary(request)
     if request.method == 'POST':
         form = NewEmailForm(request.POST)
         if form.is_valid():
-            print "valid"
             cleaned = form.cleaned_data
-            email_string = cleaned['new_email']
+            email_string = cleaned['new_email'].lower()
 
             # Check if the email already exists
             if Email.objects.filter(email=cleaned['new_email']).count() > 0:
@@ -272,13 +195,7 @@ def add_email(request):
 
             messages.success(request, _(u"Eposten ble lagret. Du må sjekke din innboks for å verifisere den."))
         
-        else:
-            for key, value in form.errors.items():
-                print key,
-                print value    
-
     return redirect('profiles')
-
     
 
 @login_required
@@ -320,11 +237,12 @@ def set_primary(request):
                 return HttpResponse(status=412, content=json.dumps(
                                                     {'message': _(u"%s er allerede satt som primær-epostaddresse.") % email.email}
                                                 ))
-            
-            # Deactivate old primary email
+
+            # Deactivate the old primary, if there was one
             primary_email = request.user.get_email()
-            primary_email.primary = False
-            primary_email.save()
+            if primary_email:
+                primary_email.primary = False
+                primary_email.save()
             # Activate new primary
             email.primary = True
             email.save()

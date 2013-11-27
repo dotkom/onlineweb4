@@ -1,5 +1,7 @@
 function ArticleWidget (Utils){
     ArticleWidget.prototype.render = function(callback) {
+        callback = callback || function () {};
+        
          // Loading featured
         Utils.makeApiRequest({
             'url': '/api/v0/article/all/?format=json&limit=8',

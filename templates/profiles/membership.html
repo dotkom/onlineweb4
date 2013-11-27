@@ -6,8 +6,18 @@
     </div>
 </div>
 <div class="row">
+    {% if user.is_member %}
+        <div class="col-md-12">
+            <p class="ingress">
+                Her kan du selv registrere hvilken studieretning du går, samt hvilken dato du startet.
+                Om du har vært bachelor-student og skal over på master, skal startdato på studie endres til da du ble tatt opp
+                på mastergraden. Merk at det er viktig at du legger inn virkelig informasjon i dette skjemaet. Fusk med feil startdato og studieretning kan få svært alvorlige konsekvenser, og du risikerer utestengelse fra linjeforeningens arrangementer.
+            </p>
+        </div>
+    {% endif %}
     <div class="col-xs-12 col-sm-6 col-md-4">
         {% if user.is_member %}
+        
         <form id="membership-details" method="post" action="{% url 'profile_save_membership_details' %}">
             {% csrf_token %}
             {{ membership_settings|crispy }}
@@ -15,7 +25,7 @@
         </form>
         {% else %}
             {% if user.ntnu_username %}
-                Du er ikke registrert som medlem av Linjeforeningen Online.
+                <p>Du er ikke registrert som medlem av Linjeforeningen Online.</p>
             {% else %}
                 <p>For å aktivere ditt medlemskap kreves det at du har knyttet din studentkonto til din profil.</p>
                 <p>Gå til Epost-innstillinger og registrer din @stud.ntnu.no epost.</p>

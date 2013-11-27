@@ -58,7 +58,7 @@ function install_packages() {
         python-dev python-setuptools python-virtualenv vim \
         tmux screen git-core curl build-essential openssl \
         libjpeg8 libjpeg8-dev zlib-bin libtiff4 libtiff4-dev libfreetype6 libfreetype6-dev libwebp2 libpq-dev libssl-dev\
-        python-psycopg2 \
+        python-psycopg2 imagemagick \
         nodejs # from custom ppa:chris-lea/node.js
 }
 
@@ -83,7 +83,6 @@ function install_onlineweb_requirements() {
     cd /vagrant
     progress pip install -r requirements.txt
 }
-
 
 function install_lessc() {
     progress sudo npm install less -g

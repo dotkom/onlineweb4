@@ -1,24 +1,24 @@
 section#events {
 
+    #eventimage {
+	margin-bottom: 15px;
+    }
+
     .hero {
-        color:#333;
-        margin-bottom:20px;
+
         .hero-time {
             font-size:18px;
-            font-weight:300;
-            
         }
 
         .hero-title p {
-            color:#333;
-            font-weight:300;
-            font-size:20px;
+            color:#666;
+            font-weight:400;
+            font-size:18px;
             margin-bottom:10px;
         }
 
         .hero-ingress p {
             font-weight:400;
-            text-align:justify;
         }
 
         .hero-date {
@@ -33,9 +33,6 @@ section#events {
     }
 
     /* Old stuff for refrence below */
-    .event-row {
-        margin-bottom:20px;
-    }
 
     .event-title {
         font-size:17px;
@@ -104,6 +101,48 @@ section#events {
         font-size:13px;
         font-weight:400;
         text-transform:uppercase;
+    }
+
+    ul.event-list {
+        list-style: none;
+        margin-top: 8px;
+
+        li {
+            padding: 10px 0;
+            border-bottom: 1px solid #e0e0e0;
+            font-size: 14px;
+        }
+        li:last-child {
+            border: none;
+        }
+
+        li:last-child.border {
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        li span {
+            float: right;
+            color: #ccc;
+            color: #428bca;
+        }
+
+        li a {
+            color: #666;
+        }
+    }
+
+
+    @media (max-width: 991px) {
+        ul.event-list:nth-child(1) {
+            margin-bottom: 0;
+
+            li:last-child {
+                border-bottom: 1px solid #e0e0e0;
+            }
+        }
+        ul.event-list:nth-child(2) {
+            margin-top: 0;
+        }
     }
 }
 

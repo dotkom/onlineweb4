@@ -1,5 +1,19 @@
 <div class="row">
     <div class="col-md-12">
+        <h3>Godkjenning av prikkeregler</h3>
+    </div>
+</div>
+<div class="row-space"></div>
+<div class="row">
+    <div class="col-md-12">
+        <button class="marks {% ifequal mark_rules_accepted True %}on{% else %}off{% endifequal %}">
+            <input id="marks-checkbox" type="checkbox" {% ifequal mark_rules_accepted True %}checked="checked"{% endifequal %}>
+        </button>
+    </div>
+</div>
+<hr>
+<div class="row">
+    <div class="col-md-12">
         <h3>Mine prikker</h3>
     </div>
 </div>
@@ -44,7 +58,7 @@
                                                     <div class="row">
                                                         <div class="col-md-5"><b>Utdelt:</b></div>
                                                         <div class="col-md-7">
-                                                            {{ mark.mark_added_date }}
+                                                            {{ mark.added_date }}
                                                         </div>
                                                     </div>
                                                 </div>
@@ -52,7 +66,7 @@
                                                     <div class="row">
                                                         <div class="col-md-5"><b>Utløpsdato:</b></div>
                                                         <div class="col-md-7">
-                                                            {{ mark.expires }}
+                                                            {{ mark.expiration_date }}
                                                         </div>
                                                     </div>
                                                 </div>
@@ -66,5 +80,44 @@
                 </div>
             {% endfor %}
         </div>
+    </div>
+</div>
+<br>
+<hr>
+<div class="row">
+    <div class="col-md-12">
+        <h3>Prikk?</h3>
+        <ul>
+            <p>En prikk innebærer at du vil måtte vente 24 timer lenger enn alle andre på å kunne få meldt deg på et arrangement. To prikker gir 48 timer, og så videre.
+        </ul>
+        <h3>Generelle prikkeregler for kurs, bedriftspresentasjoner og arrangementer:</h3>
+        <ul>
+            <li>
+                 kreves at en møter opp ved påmelding til et arrangement. Dersom du må melde deg av etter avmeldingsfristen har gått ut, sender du en mail til den ansvarlige komiteen og melder frafall slik at vi kan gi plassen din videre. Du vil få prikk så lenge avmeldingsfristen er ute.
+            </li>
+            <li>
+                Ved frafall etter avmeldingsfristen pga sykdom må dette meldes til den ansvarlige komiteen senest samme dag som kurset/bedriftspresentasjonen/arrangementet kl.12.00. Dette for å kunne endre antall personer ved bespisning. Avbud senere enn dette vil gi en prikk.
+            </li>
+            <li>
+                Ved kurs og bedriftspresentasjon åpnes ventelisten normalt ti minutter etter dørene åpnes. Kommer du senere enn dette kan du risikere at din plass er gitt videre til en annen student. Du vil da få prikk for manglende oppmøte.</p>
+            </li>
+            <li>
+                Det kreves at en deltager svarer på den elektroniske tilbakemeldingen etter bedriftspresentasjon og kurs. Det vil komme epost dagen etter presentasjonen med lenke til tilbakemeldingsskjema som må besvares innen noen få dager (frist er oppgitt i eposten). Om en deltager ikke svarer innen fristen vil dette gi en prikk.
+            </li>
+        </ul>
+        <p><strong>Betalingsarrangement</strong></p>
+        <ul>
+            <li>
+                Betalingsfrister skal overholdes! Man får en prikk for betaling etter fristen, og utestenging fra neste betalingsarrangement fram til man har betalt det utestående beløpet
+            </li>
+            <li>
+                Hvis man er påmeldt et betalingsarrangement, og har betalt, er det ikke mulighet for å få tilbakebetalt pengene etter betalingsfristen. Unntak for dette vil være om det er personer på ventelisten. Da kan vi kontakte disse for å ta over plassen og betalingen. Dette må avtales med komiteen som har ansvar for betalingsarrangementet, som oftest Arrangementskomiteen. Man får en prikk som vanlig, når man melder seg av for sent.
+            </li>
+        </ul>
+        <h3>Hvorfor har jeg fått en prikk?</h3>
+        <ul>
+            <p>På toppen av denne siden vil du kunne se grunnen til prikkene dine. Om de ikke vises kan du ta kontakt med  <a href="mailto:dotkom@online.ntnu.no">dotKom</a>, så finner de det ut for deg.</p>
+        </ul>
+        <p><strong>Ved upassende oppførsel under et av Onlines arrangement vil du stå økonomisk ansvarlig for eventuelle skader, og i verste fall risikere utestengelse fra <em>alle</em> Onlines arrangement</strong></p>
     </div>
 </div>

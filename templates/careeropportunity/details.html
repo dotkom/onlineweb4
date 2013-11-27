@@ -1,14 +1,35 @@
 {% extends "base.html" %}
 {% load markup %}
 {% load fb_versions %}
+{% load group_membership %}
+
+{% block title %}
+{{ opportunity.title }} - Online
+{% endblock title %}
+
 {% block content %}
-    
+
 <section id="careeropportunity">
     <div class="container">
         <div class="row">
             <div class="col-md-12">
                 <div class="page-header">
-                    <h2>{{opportunity.title}}</h2>
+                    <h2>
+                        {{opportunity.title}}
+                            {% if user.is_authenticated %}
+                                {% in_group "Komiteer" as in_komiteer %}
+                                {% if in_komiteer %}
+                                    <div class="btn-group">
+                                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                                            <span class="caret"></span>
+                                        </button>
+                                        <ul class="dropdown-menu" role="menu">
+                                            <li><a href="{% url 'admin:careeropportunity_careeropportunity_change' opportunity.id %}">Edit</a></li>
+                                        </ul>
+                                    </div>
+                            {% endif %}
+                        {% endif %}
+                    </h2>
                 </div>
             </div>
         </div>
@@ -20,27 +41,27 @@
                 <div class="row">
                     <div class="col-md-12">
                         <a href="{% url 'company_details' opportunity.company.id %}">
-                        <img width="100%" src="{% version opportunity.company.image 'companies_medium'     %}" alt="" />
+                            <img width="100%" src="{% version opportunity.company.image 'companies_medium'     %}" alt="" />
                         </a>
                     </div>
                 </div>
                 <div class="company"><!-- Start company style wrapper -->
-                <a href="{% url 'company_details' opportunity.company.id %}">
-                    <div class="row">
-                        <div class="col-md-12">
-                            <h3>{{ opportunity.company.name }}</h3>
+                    <a href="{% url 'company_details' opportunity.company.id %}">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h3>{{ opportunity.company.name }}</h3>
+                            </div>
                         </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="company-ingress">{{ opportunity.company.short_description|striptags|markdown }}</div>
-                            <p class="pull-right company-image-caption">Trykk for mer info</p>
-                        <div/>
-                    </div>
-                    </a>
-                </div><!-- End company style wrapper -->
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="company-ingress">{{ opportunity.company.short_description|striptags|markdown }}</div>
+                                <p class="pull-right company-image-caption">Trykk for mer info</p>
+                                <div/>
+                            </div>
+                        </a>
+                    </div><!-- End company style wrapper -->
+                </div>
             </div>
         </div>
-    </div>
-</section>
-{%endblock content %}
+    </section>
+    {%endblock content %}

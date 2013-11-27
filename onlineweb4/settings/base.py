@@ -29,24 +29,30 @@ EMAIL_DOTKOM = 'dotkom@online.ntnu.no'
 EMAIL_FAGKOM = 'fagkom@online.ntnu.no'
 EMAIL_PROKOM = 'prokom@online.ntnu.no'
 EMAIL_TRIKOM = 'trikom@online.ntnu.no'
+# Whether or not django should start the scheduler for feedback mails
+FEEDBACK_MAIL_SCHEDULER = True
 
 # We will receive errors and other django messages from this email
 SERVER_EMAIL = 'onlineweb4-error@online.ntnu.no'
 
 TIME_ZONE = 'Europe/Oslo'
+
 # http://www.i18nguy.com/unicode/language-identifiers.html
 LANGUAGE_CODE = 'nb'
 LANGUAGES = (
                 ('nb', 'Norwegian'),
                 ('en_US', 'English'),
             )
+LOCALE_PATHS = [
+    os.path.join(PROJECT_ROOT_DIRECTORY, 'locale'),
+]
 
 SITE_ID = 1
 USE_I18N = True
 USE_L10N = True
-USE_TZ = False
+USE_TZ = True
 DATETIME_FORMAT = 'N j, Y, H:i'
-SECRET_KEY = 'q#wy0df(7&amp;$ucfrxa1j72%do7ko*-6(g!8f$tc2$3x@3cq5@6c'
+SECRET_KEY = 'override-this-in-local.py'
 
 AUTH_USER_MODEL = 'authentication.OnlineUser'
 LOGIN_URL = '/auth/login/'
@@ -57,8 +63,8 @@ MEDIA_URL = '/media/'
 STATIC_ROOT = os.path.join(PROJECT_ROOT_DIRECTORY, 'static')
 STATIC_URL = '/static/'
 
-#Url of default profile picture
-DEFAULT_PROFILE_PICTURE_URL = os.path.join(STATIC_URL, "img", "profile_default.png")
+# Prefix for default profile picture
+DEFAULT_PROFILE_PICTURE_PREFIX = os.path.join(STATIC_URL, "img", "profile_default")
 
 # Additional locations of static files
 STATICFILES_DIRS = (
@@ -72,6 +78,7 @@ STATICFILES_FINDERS = (
     'compressor.finders.CompressorFinder',
 )
 
+COMPRESS_FILES = True
 COMPRESS_OUTPUT_DIR = 'cache'
 COMPRESS_PRECOMPILERS = (
     ('text/less', 'lessc {infile} {outfile}'),
@@ -79,15 +86,12 @@ COMPRESS_PRECOMPILERS = (
 
 COMPRESS_CSS_FILTERS = [
     'compressor.filters.css_default.CssAbsoluteFilter',
-    'compressor-filters.cssmin.CSSMinFilter',
+    # We want this later on, but it breaks production so disabling for now.
+    #'compressor-filters.cssmin.CSSMinFilter',
 ]
 COMPRESS_JS_FILTERS = [
     'compressor.filters.jsmin.JSMinFilter',
 ]
-
-COMPRESS_PRECOMPILERS = (
-    ('text/less', 'lessc -x {infile} {outfile}'),
-)
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
@@ -115,11 +119,16 @@ TEMPLATE_DIRS = (
     os.path.join(PROJECT_ROOT_DIRECTORY, 'templates/')
 )
 
+# Pizzasystem settings
+PIZZA_GROUP = 'dotkom'
+PIZZA_ADMIN_GROUP = 'pizzaadmin'
+
 # Grappelli settings
 GRAPPELLI_ADMIN_TITLE = '<a href="/">Onlineweb</a>'
 
 INSTALLED_APPS = (
     # Third party dependencies
+    'django.contrib.humanize',
     'django_nose',
     'south',
     'grappelli',
@@ -130,7 +139,9 @@ INSTALLED_APPS = (
     'django_dynamic_fixture',
     'captcha',
     'compressor',
+    'pdfdocument',
     'watson',
+    'gunicorn',
 
     # Django apps
     'django.contrib.admin',
@@ -207,6 +218,19 @@ MESSAGE_TAGS = {messages.DEBUG: 'alert-debug',
 # Not really sure what this does.
 # Has something to do with django-dynamic-fixture bumped from 1.6.4 to 1.6.5 in order to run a syncdb with mysql/postgres (OptimusCrime)
 IMPORT_DDF_MODELS = False
+
+# Required by the Wiki
+TEMPLATE_CONTEXT_PROCESSORS = (
+    "django.contrib.auth.context_processors.auth",
+    "django.core.context_processors.debug",
+    "django.core.context_processors.i18n",
+    "django.core.context_processors.media",
+    "django.core.context_processors.request",
+    "django.core.context_processors.static",
+    "django.core.context_processors.tz",
+    "django.contrib.messages.context_processors.messages",
+    "onlineweb4.context_processors.analytics",
+)
 
 # Remember to keep 'local' last, so it can override any setting.
 for settings_module in ['filebrowser', 'local']:  # local last

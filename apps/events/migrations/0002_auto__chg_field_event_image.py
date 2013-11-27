@@ -8,22 +8,14 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        # Adding field 'Event.ingress_short'
-        db.add_column(u'events_event', 'ingress_short',
-                      self.gf('django.db.models.fields.CharField')(default='', max_length=150),
-                      keep_default=False)
 
-
-        # Changing field 'Event.title'
-        db.alter_column(u'events_event', 'title', self.gf('django.db.models.fields.CharField')(max_length=45))
+        # Changing field 'Event.image'
+        db.alter_column(u'events_event', 'image', self.gf('filebrowser.fields.FileBrowseField')(max_length=200, null=True))
 
     def backwards(self, orm):
-        # Deleting field 'Event.ingress_short'
-        db.delete_column(u'events_event', 'ingress_short')
 
-
-        # Changing field 'Event.title'
-        db.alter_column(u'events_event', 'title', self.gf('django.db.models.fields.CharField')(max_length=100))
+        # Changing field 'Event.image'
+        db.alter_column(u'events_event', 'image', self.gf('filebrowser.fields.FileBrowseField')(default=None, max_length=200))
 
     models = {
         u'auth.group': {
@@ -40,7 +32,7 @@ class Migration(SchemaMigration):
             'name': ('django.db.models.fields.CharField', [], {'max_length': '50'})
         },
         u'authentication.onlineuser': {
-            'Meta': {'object_name': 'OnlineUser'},
+            'Meta': {'ordering': "['first_name', 'last_name']", 'object_name': 'OnlineUser'},
             'address': ('django.db.models.fields.CharField', [], {'max_length': '30', 'null': 'True', 'blank': 'True'}),
             'allergies': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
             'compiled': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
@@ -50,6 +42,7 @@ class Migration(SchemaMigration):
             'first_name': ('django.db.models.fields.CharField', [], {'max_length': '30', 'blank': 'True'}),
             'groups': ('django.db.models.fields.related.ManyToManyField', [], {'to': u"orm['auth.Group']", 'symmetrical': 'False', 'blank': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'image': ('django.db.models.fields.files.ImageField', [], {'default': "'/static/img/profile_default.png'", 'max_length': '200', 'null': 'True', 'blank': 'True'}),
             'infomail': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
             'is_active': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
             'is_staff': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
@@ -57,13 +50,15 @@ class Migration(SchemaMigration):
             'last_login': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
             'last_name': ('django.db.models.fields.CharField', [], {'max_length': '30', 'blank': 'True'}),
             'mark_rules': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'nickname': ('django.db.models.fields.CharField', [], {'max_length': '50', 'null': 'True', 'blank': 'True'}),
             'ntnu_username': ('django.db.models.fields.CharField', [], {'max_length': '10', 'null': 'True', 'blank': 'True'}),
             'password': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
             'phone_number': ('django.db.models.fields.CharField', [], {'max_length': '20', 'null': 'True', 'blank': 'True'}),
             'rfid': ('django.db.models.fields.CharField', [], {'max_length': '50', 'null': 'True', 'blank': 'True'}),
-            'started_date': ('django.db.models.fields.DateField', [], {'default': 'datetime.datetime(2013, 9, 11, 0, 0)'}),
+            'started_date': ('django.db.models.fields.DateField', [], {'default': 'datetime.datetime(2013, 11, 12, 0, 0)'}),
             'user_permissions': ('django.db.models.fields.related.ManyToManyField', [], {'to': u"orm['auth.Permission']", 'symmetrical': 'False', 'blank': 'True'}),
             'username': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '30'}),
+            'website': ('django.db.models.fields.URLField', [], {'max_length': '200', 'null': 'True', 'blank': 'True'}),
             'zip_code': ('django.db.models.fields.CharField', [], {'max_length': '4', 'null': 'True', 'blank': 'True'})
         },
         u'companyprofile.company': {
@@ -94,7 +89,7 @@ class Migration(SchemaMigration):
             'waitlist': ('django.db.models.fields.BooleanField', [], {'default': 'False'})
         },
         u'events.attendee': {
-            'Meta': {'ordering': "['timestamp']", 'object_name': 'Attendee'},
+            'Meta': {'ordering': "['timestamp']", 'unique_together': "(('event', 'user'),)", 'object_name': 'Attendee'},
             'attended': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'event': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'attendees'", 'to': u"orm['events.AttendanceEvent']"}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
@@ -115,7 +110,7 @@ class Migration(SchemaMigration):
             'event_start': ('django.db.models.fields.DateTimeField', [], {}),
             'event_type': ('django.db.models.fields.SmallIntegerField', [], {}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'image': ('filebrowser.fields.FileBrowseField', [], {'max_length': '200'}),
+            'image': ('filebrowser.fields.FileBrowseField', [], {'max_length': '200', 'null': 'True', 'blank': 'True'}),
             'ingress': ('django.db.models.fields.TextField', [], {}),
             'ingress_short': ('django.db.models.fields.CharField', [], {'max_length': '150'}),
             'location': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
@@ -134,20 +129,15 @@ class Migration(SchemaMigration):
         u'events.rule': {
             'Meta': {'object_name': 'Rule'},
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'offset': ('django.db.models.fields.related.ForeignKey', [], {'default': '0', 'to': u"orm['events.RuleOffset']", 'null': 'True', 'blank': 'True'})
+            'offset': ('django.db.models.fields.PositiveSmallIntegerField', [], {'default': '0'})
         },
         u'events.rulebundle': {
             'Meta': {'object_name': 'RuleBundle'},
-            'description': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
+            'description': ('django.db.models.fields.CharField', [], {'max_length': '100', 'null': 'True', 'blank': 'True'}),
             'field_of_study_rules': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'to': u"orm['events.FieldOfStudyRule']", 'null': 'True', 'blank': 'True'}),
             'grade_rules': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'to': u"orm['events.GradeRule']", 'null': 'True', 'blank': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'user_group_rules': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'to': u"orm['events.UserGroupRule']", 'null': 'True', 'blank': 'True'})
-        },
-        u'events.ruleoffset': {
-            'Meta': {'object_name': 'RuleOffset'},
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'offset': ('django.db.models.fields.IntegerField', [], {'blank': 'True'})
         },
         u'events.usergrouprule': {
             'Meta': {'object_name': 'UserGroupRule', '_ormbases': [u'events.Rule']},

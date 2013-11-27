@@ -11,20 +11,24 @@ class ProfileForm(forms.ModelForm):
     class Meta:
         model = OnlineUser
 
-        fields = ['nickname', 'website', 'phone_number', 'address', 'zip_code', 'allergies', 'mark_rules', ]
+        fields = ['nickname', 'website', 'phone_number', 'address', 'zip_code', 'allergies', 'gender', ]
         widgets = {
             'allergies' : forms.Textarea(attrs={'id' : 'allergies'}),
+            'gender' : forms.Select(attrs={'class' : 'form-control'}),
         }
 
-class ImageForm(forms.ModelForm):
+    def clean(self):
+        super(ProfileForm, self).clean()
 
-    class Meta:
-        model = OnlineUser
+        cleaned_data = self.cleaned_data
 
-        fields = ['image']
-        widgets = {
-            'image': forms.FileInput(attrs={'class' : 'hidden-input', 'id' : 'image'}),
-        }
+        # ZIP code digits only
+        zip_code = cleaned_data['zip_code']
+        if len(zip_code) != 0 and (len(zip_code) != 4 or not zip_code.isdigit()):
+            self._errors['zip_code'] = self.error_class([_(u"Postnummer må bestå av fire siffer.")])
+
+        return cleaned_data
+
 
 class PrivacyForm(forms.ModelForm):
 
@@ -49,3 +53,7 @@ class MembershipSettingsForm(forms.ModelForm):
     class Meta:
         model = OnlineUser
         fields = ['field_of_study', 'started_date', ]
+
+        widgets = {
+            'started_date' : forms.TextInput(attrs={'placeholder' : 'YYYY-MM-DD'}),
+        }

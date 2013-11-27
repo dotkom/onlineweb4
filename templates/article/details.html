@@ -1,21 +1,31 @@
 {% extends "base.html" %}
 {% load markup %}
 {% load fb_versions %}
+{% load group_membership %}
+
+{% block title %}
+{{ article.heading }} - Online
+{% endblock title %}
+
 {% block content %}
 <section id="article-details">
     <div class="container">
         <div class="row article-media">
                 {% if article.video %}
-                    <div class="col-md-12 video-padding">
-                        <div class="offset2 span8">
+                <div class="col-md-12">
+                    <div class="col-md-12 video-container media-padding">
+                        <div class="col-md-10 col-md-offset-1 media-padding">
                             <div class="flex-video widescreen">
-                               <iframe src="http://player.vimeo.com/video/{{ article.video }}" frameborder="0" webkitAllowFullscreen mozallowfullscreen allowFullScreen></iframe>
+                               <iframe src="https://player.vimeo.com/video/{{ article.video }}" frameborder="0" webkitAllowFullscreen mozallowfullscreen allowFullScreen></iframe>
                             </div>
                         </div>
                     </div>
+                </div>
                 {% else %}
                      <div class="col-md-12">
+                        <div>
                             <img width="100%" src="{% version article.image 'article_full' %}" alt="{{ article.heading }}"/>
+                        </div>
                     </div>
                 {% endif %}
         </div>
@@ -23,7 +33,22 @@
             <div class="col-md-8">
                 <div class="col-md-12">
                     <div class="page-header">
-                        <h1>{{ article.heading }}</h1>
+                        <h1>
+                            {{ article.heading }}
+                            {% if user.is_authenticated %}
+                                {% in_group "Komiteer" as in_komiteer %}
+                                {% if in_komiteer %}
+                                    <div class="btn-group pull-right">
+                                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                                            <span class="caret"></span>
+                                        </button>
+                                        <ul class="dropdown-menu" role="menu">
+                                            <li><a href="{% url 'admin:article_article_change' article.id %}">Edit</a></li>
+                                        </ul>
+                                    </div>
+                                {% endif %}
+                            {% endif %}
+                        </h1>
                     </div>
                 </div>
                 <div class="col-md-12 article-detail-meta">
@@ -59,35 +84,39 @@
                 </div>
             </div>
             <div class="col-md-4 related-articles">
-                <div class="page-header">
-                    <h3>Relaterte artikler</h3>
-                </div>
-                <div class="row">
-                    <div class="col-md-12 related-articles">
-                        {% if related_articles %}
-                            {% for related_article in related_articles %}
-                                {% if forloop.counter0|divisibleby:"2" %}
-                                    <div class="row row-space">
-                                {% endif %}
-                                    <div class="col-md-6">
-                                        <a href="{{ related_article.get_absolute_url }}">
-                                            <img src="{% version related_article.image 'article_related' %}" 
-                                                alt="{{ related_article.heading }}"/>
-                                            <h4>{{ related_article.heading }}</h4>
-                                        </a>
-                                    </div>
-                                {% if forloop.counter|divisibleby:"2" and not forloop.last%}
-                                    </div>
-                                {% endif %}
-                                {% if forloop.last %}
-                                    </div>
-                                {% endif %}
-                            {% endfor %}
-                        {% else %}
-                            <p>Ingen relaterte artikler funnet.</p>
-                        {% endif%}
+		<div class="row">
+                <div class="col-md-12">
+                    <div class="page-header">
+                        <h3>Relaterte artikler</h3>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 related-articles">
+                            {% if related_articles %}
+                                {% for related_article in related_articles %}
+                                    {% if forloop.counter0|divisibleby:"2" %}
+                                        <div class="row row-space">
+                                    {% endif %}
+                                        <div class="col-md-6 bilde">
+                                            <a href="{{ related_article.get_absolute_url }}">
+                                                <img src="{% version related_article.image 'article_related' %}" 
+                                                    alt="{{ related_article.heading }}"/>
+                                                <h4>{{ related_article.heading }}</h4>
+                                            </a>
+                                        </div>
+                                    {% if forloop.counter|divisibleby:"2" and not forloop.last%}
+                                        </div>
+                                    {% endif %}
+                                    {% if forloop.last %}
+                                        </div>
+                                    {% endif %}
+                                {% endfor %}
+                            {% else %}
+                                <p>Ingen relaterte artikler funnet.</p>
+                            {% endif%}
+                        </div>
                     </div>
                 </div>
+		</div><!-- end row -->
                 <div class="row">
                     <div class="col-md-12">
                         <div class="page-header">

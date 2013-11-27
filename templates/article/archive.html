@@ -3,18 +3,13 @@
 {% load chunks %}
 {% load markup %}
 
+{% block title %}
+Artikkelarkiv - Online
+{% endblock title %}
+
 {% block submenu %}
     <nav class="subnavbar navbar-default navbar-fixed-top">
         <div class="container">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
-                  <span class="sr-only">Toggle navigation</span>
-                  <span class="icon-bar"></span>
-                  <span class="icon-bar"></span>
-                  <span class="icon-bar"></span>
-                </button>
-            </div>
-            <!-- Collect the nav links, forms, and other content for toggling -->
             <div class="collapse navbar-collapse navbar-ex1-collapse">
                 <ul class="nav navbar-nav">
                     <li class="top-menu-link">
@@ -34,62 +29,48 @@
 
 {% block content %}
 <section id="article_archive">
+
     <div class="container">
+
         <div class="row">
-            <div class="col-sm-7 col-md-8">
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="page-header">
-                            <h2>ARTIKKELARKIV</h2>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-md-12" style="min-height: 400px;" id="article_archive_container"></div>
+            <div class="col-md-12">
+                <div class="page-header">
+                    <h2>ARTIKKELARKIV</h2>
                 </div>
             </div>
+        </div><!-- end row -->
+        <div class="col-xs-12 col-sm-12 col-md-3 pull-right" id="filterbox">
 
-            <div class="col-sm-5 col-md-4">
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="page-header">
-                            <h3>TAGS</h3>
-                        </div>
-                        <div class="tag-cloud" id="article_archive_tagcloud">
-                            {% for tag in tags %}
-                                <span><a href="{{ tag.get_absolute_url }}" class="tag">{{ tag }}</a></span>
-                            {% endfor %}
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="page-header">
-                            <h3>FILTER</h3>
-                        </div>
-                        <div class="date-filter" id="article_archive_filter">
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <a class="tag tag-all" id="article_archive_filter_reset" href="{% url 'article_archive' %}">Alle</a>
-                                </div>
-                            </div>
-                            {% for year, months in dates.items %}
-                                <div class="row">
-                                    <div class="year col-md-4">
-                                        <a class="tag tag-year" data-year="{{ year }}" data-month="" href="{% url 'article_archive_year' year %}">{{ year }}</a>
-                                    </div>
-                                    {% for month in months %}
-                                    <div class="col-md-4"><a class="tag tag-month" data-year="{{ year }}" data-month="{{ month }}" href="{% url 'article_archive_month' year month %}">{{ month }}</a></div>
-                                    {% endfor %}
-                                </div>
-                            {% endfor %}
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+                <h3>Tags</h3>
+
+                <div class="tag-cloud" id="article_archive_tagcloud">
+                    {% for tag in tags %}
+                        <span><a href="{{ tag.get_absolute_url }}" class="tag">{{ tag }}</a></span>
+                    {% endfor %}
+                </div><!-- end tag-cloud -->
+
+                <h3>Filter</h3>
+
+                <div class="date-filter" id="article_archive_filter">
+
+                    <a class="tag tag-all" id="article_archive_filter_reset" href="{% url 'article_archive' %}">Alle</a>
+
+                    {% for year, months in dates.items %}
+                        <a class="tag tag-year" data-year="{{ year }}" data-month="" href="{% url 'article_archive_year' year %}">{{ year }}</a>
+                        {% for month in months %}
+                            <a class="tag tag-month" data-year="{{ year }}" data-month="{{ month }}" href="{% url 'article_archive_month' year month %}">{{ month }}</a>
+                        {% endfor %}
+                    {% endfor %}
+
+                </div><!-- end date-filter -->
+
+        </div><!-- end col-md-3 -->
+        
+        <div class="col-xs-12 col-sm-12 col-md-9 pull-left" id="article_archive_container">
+            
+        </div><!-- end col-md-9 -->
+
+    </div><!-- end container -->
 </section>
 {% endblock content %}
 

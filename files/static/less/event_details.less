@@ -1,7 +1,14 @@
 
 section#event-details {
 
-	.row-space { margin-bottom:30px;}
+	.row-space { 
+            margin-bottom:30px;
+
+            @media screen and (max-width: 767px) {
+                margin-bottom: 0px;
+            }
+
+        }
 
 	.event-hero {
 		color:#FFF;
@@ -12,7 +19,10 @@ section#event-details {
 			font-size:20px;
 			text-align:center;
 			padding:20px;
-
+                        @media screen and (max-width: 767px) {
+                            padding: 0px;
+                            margin-bottom: 0px;
+                        }
 
 			.start-day {
 				width:100%;
@@ -51,10 +61,20 @@ section#event-details {
 		color:#FFF;
 		background-color:#49A0CC;
 		padding:20px;
+                
+                @media screen and (max-width: 767px) {
+                    padding-top: 20px;
+                    padding-bottom: 0px;
+                }
+                
 		text-align:center;
 
 		.event-hero-meta-info {
 			padding-bottom:50px;
+
+                        @media screen and (max-width: 767px) {
+                            padding-bottom: 20px;
+                        }
 
 			.event-hero-title {
 				font-size:14px;
@@ -86,8 +106,7 @@ section#event-details {
 			.event-hero-small-text {
 				font-weight:300;
 				font-size:20px;
-
-
+                                margin-bottom: 9px;
 			}
 		}
 	}
@@ -162,6 +181,7 @@ section#event-details {
 
 	.event-access {
 		padding:10px;
+                margin-bottom: 20px;
 		background:#D6EAFF;
 		text-align:center;
 
@@ -170,6 +190,10 @@ section#event-details {
 			font-size:15px;
 			font-weight:300;
 			text-align:center;
+		}
+
+		.label-info {
+			line-height:21px;
 		}
 	}
 	

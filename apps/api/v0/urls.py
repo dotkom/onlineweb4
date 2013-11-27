@@ -13,12 +13,11 @@ from apps.api.v0.offline import IssueResource
 v0_api = Api(api_name='v0')
 
 # users
-v0_api.register(UserResource())
+# User endpoint not registered at the moment. Maybe in the future with some restrictions / auth
 
 # event
 v0_api.register(EventResource())
 v0_api.register(AttendanceEventResource())
-v0_api.register(AttendeeResource())
 v0_api.register(CompanyResource())
 v0_api.register(CompanyEventResource())
 
@@ -27,10 +26,10 @@ v0_api.register(ArticleResource())
 v0_api.register(ArticleLatestResource())
 
 # marks
-v0_api.register(MarkResource())
-v0_api.register(EntryResource())
-v0_api.register(MyMarksResource())
-v0_api.register(MyActiveMarksResource())
+#v0_api.register(MarkResource())
+#v0_api.register(EntryResource())
+#v0_api.register(MyMarksResource())
+#v0_api.register(MyActiveMarksResource())
 
 # offline
 v0_api.register(IssueResource())

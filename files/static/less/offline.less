@@ -1,3 +1,5 @@
+@import 'colors.less';
+
 /* Help mixin */
 .transition_easer(@seconds: 0.2s) {
     -webkit-transition: all @seconds ease-in-out;
@@ -101,5 +103,41 @@ div#offline {
     .pagination ul > li {
         display: inline-block;
     }
+}
+
+.filterbox {
+
+    background-color: @baby-blue-medium;
+    padding: 15px;
+    margin-bottom: 20px;
+
+    a, li {
+        color: white;
+    }
+
+    a:hover {
+        color: @baby-blue;
+        border-radius: 0px;
+    }
+
+    li.active a {
+        border-radius: 0px;
+    }
+
+    h3 {
+        color: white;
+        font-size: 20px;
+        font-weight: 400;
+        margin-top: 0px;
+    }
+
+    #filter-menu {
+ 
+         a {
+            padding: 5px 15px;
+            border-radius: 0px;
+        }
+    }
+
 }
 

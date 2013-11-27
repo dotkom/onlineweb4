@@ -1,25 +1,28 @@
 #-*- coding: utf-8 -*-
+
 import datetime
 
-from django.contrib.auth.decorators import login_required
+from django.utils import timezone
+
+from django.conf import settings
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
-from django.utils.translation import ugettext_lazy as _
-from django.shortcuts import render
-from django.shortcuts import get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
+from django.utils.translation import ugettext as _
 
 import watson
 
-from apps.events.models import Event, AttendanceEvent, Attendee
 from apps.events.forms import CaptchaForm
-
+from apps.events.models import Event, AttendanceEvent, Attendee
+from apps.events.pdf_generator import EventPDF
 
 
 def index(request):
     return render(request, 'events/index.html', {})
 
-def details(request, event_id):
+def details(request, event_id, event_slug):
     event = get_object_or_404(Event, pk=event_id)
 
     is_attendance_event = False
@@ -33,7 +36,7 @@ def details(request, event_id):
     try:
         attendance_event = AttendanceEvent.objects.get(pk=event_id)
         is_attendance_event = True
-        form = CaptchaForm()
+        form = CaptchaForm(user=request.user)
 
         if attendance_event.rule_bundles:
             for rule_bundle in attendance_event.rule_bundles.all():
@@ -79,41 +82,49 @@ def get_attendee(attendee_id):
 
 @login_required
 def attendEvent(request, event_id):
+    
+    event = get_object_or_404(Event, pk=event_id)
 
     if not request.POST:
         messages.error(request, _(u'Vennligst fyll ut skjemaet.'))
-        return HttpResponseRedirect(reverse(details, args=[event_id]))
-
-    form = CaptchaForm(request.POST)
+        return redirect(event)
+    form = CaptchaForm(request.POST, user=request.user)
 
     if not form.is_valid():
-        messages.error(request, _(u'Du klarte ikke captcha-en. Er du en bot?'))
-        return HttpResponseRedirect(reverse(details, args=[event_id]))
+        if not 'mark_rules' in request.POST and not request.user.mark_rules:
+            error_message = u'Du må godta prikkreglene for å melde deg på.'
+        else:
+            error_message = u'Du klarte ikke captcha-en. Er du en bot?'
+        messages.error(request, _(error_message))
+        return redirect(event)
 
     # Check if the user is eligible to attend this event.
     # If not, an error message will be present in the returned dict
-    event = Event.objects.get(pk=event_id)
     attendance_event = event.attendance_event
 
-    user_eligible = event.is_eligible_for_signup(request.user);
+    response = event.is_eligible_for_signup(request.user);
 
-    if user_eligible['status']:   
+    if response['status']:   
+        # First time accepting mark rules
+        if 'mark_rules' in form.cleaned_data:
+            request.user.mark_rules = True
+            request.user.save()
         Attendee(event=attendance_event, user=request.user).save()
         messages.success(request, _(u"Du er nå påmeldt på arrangementet!"))
-        return HttpResponseRedirect(reverse(details, args=[event_id]))
+        return redirect(event)
     else:
-        messages.error(request, user_eligible['message'])
-        return HttpResponseRedirect(reverse(details, args=[event_id]))
+        messages.error(request, response['message'])
+        return redirect(event)
 
 @login_required
 def unattendEvent(request, event_id):
 
-    event = AttendanceEvent.objects.get(pk=event_id)
-    Attendee.objects.get(event=event, user=request.user).delete()
+    event = get_object_or_404(Event, pk=event_id)
+    attendance_event = event.attendance_event
+    Attendee.objects.get(event=attendance_event, user=request.user).delete()
 
     messages.success(request, _(u"Du ble meldt av arrangementet."))
-    return HttpResponseRedirect(reverse(details, args=[event_id]))
-
+    return redirect(event)
 
 def search_events(request):
     query = request.GET.get('query')
@@ -131,17 +142,24 @@ def _search_indexed(request, query, filters):
     kwargs = {}
 
     if filters['future'] == 'true':
-        kwargs['event_start__gte'] = datetime.datetime.now()
+        kwargs['event_start__gte'] = timezone.now()
 
     if filters['myevents'] == 'true':
         kwargs['attendance_event__attendees'] = request.user
 
+    events = Event.objects.filter(**kwargs).order_by('event_start').prefetch_related(
+            'attendance_event', 'attendance_event__attendees')
+
     if query:
-        for result in watson.search(query, models=(
-            Event.objects.filter(**kwargs).prefetch_related(
-                'attendance_event', 'attendance_event__attendees'),)):
+        for result in watson.search(query, models=(events,)):
             results.append(result.object)
         return results[:10]
 
-    return Event.objects.filter(**kwargs).prefetch_related(
-            'attendance_event', 'attendance_event__attendees')
+    return events
+
+
+@login_required()
+@user_passes_test(lambda u: u.groups.filter(name='Komiteer').count() == 1)
+def generate_pdf(request, event_id):
+    event = get_object_or_404(Event, pk=event_id)
+    return EventPDF(event).render_pdf()

@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 
-from apps.authentication.models import OnlineUser as User
 from django.db import models
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext as _
+
+from apps.authentication.models import OnlineUser as User
+
 
 class Privacy(models.Model):
     visible_for_other_users = models.BooleanField(_(u"profil synlig for andre brukere"), default=True)
@@ -24,3 +26,6 @@ class Privacy(models.Model):
     class Meta:
         verbose_name = _(u"personvern")
         verbose_name_plural = _(u"personvern")
+
+
+User.privacy = property(lambda u: Privacy.objects.get_or_create(user=u)[0])

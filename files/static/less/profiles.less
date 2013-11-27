@@ -1,4 +1,5 @@
 @import "core.less";
+@import "bootstrap/variables.less";
 
 @image-width: 230px;
 @image-width-with-padding: 238px;
@@ -11,53 +12,12 @@ input.hidden-input {
   display: none;
 }
 
-#upload-button {
-  display: none;
-}
-
 .hidden-input {
   display: none;
 }
 
-.img-polaroid {
-  border-bottom: none;
-  max-width: @image-width;
-  margin-bottom: 10px;
-  max-height: 280px;
-}
-
-#image-box {
-  max-width: @image-width-with-padding;
-  position: relative;
-}
-
 #allergies {
   height: 50px;
-}
-
-.image-box-entity {
-  max-width: @image-width-with-padding;
-  width: @image-width-with-padding;
-  margin: 5px;
-  margin-left: 0px;
-}
-
-label.image-box-entity {
-  padding: 4px 0px 4px 0px;
-  width: @image-width-with-padding - 2;
-}
-
-#image-upload-label {
-  padding: 4px 0px, 4px, 0px;
-  width: 300px;
-}
-
-#image-resize {
-  width: 100%;
-}
-
-#upload-image-modal#modal-body {
-  text-align: center;
 }
 
 i.btn-icon {
@@ -77,11 +37,16 @@ label > i.btn-icon {
   padding-top: 20px;
 }
 
-#inline {
-  display: inline;
+.header-inline {
+  display: inline-block;
+  padding-right: 10px;
 }
 
-#privacy-help {
+.glyphicon-info-sign {
+  font-size: 14px;
+}
+
+#privacy-help, #image-help {
   cursor: pointer;
 }
 
@@ -152,6 +117,30 @@ label > i.btn-icon {
   min-height: 15px;
 }
 
+.panel-heading {
+  padding: 1px 15px;
+}
+
+.marks.on {
+  width: 100%;
+  .btn;
+  .button-variant(@btn-success-color; @btn-success-bg; @btn-success-border);
+}
+
+.marks.on:after {
+  content: "Jeg har godtatt prikkereglene og er inneforstått med hva dette betyr."
+}
+
+.marks.off {
+  width: 100%;
+  .btn;
+  .button-variant(@btn-warning-color; @btn-warning-bg; @btn-warning-border);
+}
+
+.marks.off:after {
+  content: "Jeg har ikke godtatt prikkereglene enda."
+}
+
 textarea, input[type="text"] {
   .form-control;
   margin-bottom: 7px;
@@ -162,8 +151,27 @@ textarea {
 }
 
 
-@media all and (max-width: 768px) {
+@media all and (max-width: @screen-xs-max) {
   .privacybox {
     width: 100%;
+  }
+}
+
+@media all and (min-width: @screen-xs-max) and (max-width: @screen-md-max) {
+  .privacybox {
+    width: 200px;
+  }
+}
+
+#mail-settings {
+  div.emails {
+    div.row {
+      padding: 7px 0; 
+      border-bottom: 1px solid #eeeeee; 
+    }
+  }
+
+  div.new-email {
+    padding: 7px 0;
   }
 }

@@ -1,27 +1,14 @@
+import random
+
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.db.models import Count
 from django.http import HttpResponse
+from django.utils import timezone
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import Template, Context, loader, RequestContext
-from models import Article, Tag, ArticleTag
-import random
 
-def index(request):
-    # Featured
-    featured = Article.objects.filter(featured=True).order_by('-id')[:1]
-    
-    # Siste 4 nyheter
-    latestNews = Article.objects.filter(featured=False).order_by('-id')[:4]
-    
-    i = 0
-    for latest in latestNews:
-        if (i % 2 == 0):
-            latest.i = 0
-        else:
-            latest.i = 1
-        i += 1
+from apps.article.models import Article, Tag, ArticleTag
 
-    return render_to_response('article/index.html', {'featured' : featured[0], 'latest': latestNews}, context_instance=RequestContext(request))
 
 def archive(request, name=None, slug=None, year=None, month=None):
     """
@@ -37,7 +24,7 @@ def archive(request, name=None, slug=None, year=None, month=None):
         Article month (published_date), most likely in norwegian written format.
     """
 
-    articles = Article.objects.all().order_by('-published_date')
+    articles = Article.objects.filter(published_date__lte=timezone.now()).order_by('-published_date')
 
     month_strings = {
         '1': u'Januar',
@@ -83,56 +70,12 @@ def archive(request, name=None, slug=None, year=None, month=None):
             del sorted_months[i]
         dates[year] = sorted_months
 
-    # If we're filtering by tag
-    if name:
-        filtered = []
-        for article in articles:
-            for tag in article.tags:
-                if name == tag.name:
-                    filtered.append(article)
-        articles = filtered
-
-    # If we're filtering by year
-    if 'year' in request.path:
-        filtered = []
-        # If we're filtering by year and month
-        if 'month' in request.path:
-            month = rev_month_strings[month]
-            for article in articles:
-                if article.published_date.year == int(year) and article.published_date.month == int(month):
-                    filtered.append(article)
-        # If we're filtering by year, but not month
-        else:
-            for article in articles:
-                if article.published_date.year == int(year):
-                    filtered.append(article)
-        articles = filtered
-
     # Get the 30 most used tags, then randomize them
-    tags = list(Tag.objects.all())
-    tags.sort(key=lambda x: x.frequency, reverse=True)
-    tags = tags[:30]
+    tags = Tag.objects.filter(article_tags__isnull=False).distinct().annotate(num_tags=Count('article_tags__tag')).order_by('-num_tags')
+    tags = list(tags[:30])
     random.shuffle(tags)
-    # Get max frequency of tags. This is used for relative sizing in the tag cloud.
-    try:
-        max_tag_frequency = max([x.frequency for x in tags])
-    except ValueError:
-        max_tag_frequency = 1
 
-    # Paginator
-    # Shows 10 articles per page. Note that these are also filtered beforehand by tag or date.
-    paginator = Paginator(articles, 10)
-    page = request.GET.get('page')
-    try:
-        articles = paginator.page(page)
-    except PageNotAnInteger:
-        # Deliver first page.
-        articles = paginator.page(1)
-    except EmptyPage:
-        # Deliver last page.
-        articles = paginator.page(paginator.num_pages)
-
-    return render_to_response('article/archive.html', {'articles': articles, 'tags': tags, 'max_tag_frequency': max_tag_frequency, 'dates': dates } ,context_instance=RequestContext(request))
+    return render_to_response('article/archive.html', {'tags': tags, 'dates': dates } ,context_instance=RequestContext(request))
 
 def archive_tag(request, name, slug):
     return archive(request, name=name, slug=slug)

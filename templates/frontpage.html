@@ -3,6 +3,10 @@
 {% load compress %}
 {% load markup %}
 
+{% block title %}
+Online, linjeforeningen for informatikk ved NTNU
+{% endblock title %}
+
 {% block js %}
     {{ block.super }}
     <script type="text/javascript" src="{{ STATIC_URL }}js/libs/jquery.debouncedresize.js"></script>
@@ -15,7 +19,7 @@
 
 {% block apple-webapp %}
     <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="viewport" content="user-scalable=0" />
+    <meta name="viewport" content="width=device-width, user-scalable=no">
     <meta name="apple-mobile-web-app-title" content="Online">
 
     <!-- App icons -->
@@ -38,17 +42,10 @@
 {% endblock %}
 
 {% block submenu %}
+
+
     <nav class="subnavbar navbar-default navbar-fixed-top">
         <div class="container">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
-                  <span class="sr-only">Toggle navigation</span>
-                  <span class="icon-bar"></span>
-                  <span class="icon-bar"></span>
-                  <span class="icon-bar"></span>
-                </button>
-            </div>
-            <!-- Collect the nav links, forms, and other content for toggling -->
             <div class="collapse navbar-collapse navbar-ex1-collapse">
                 <ul class="nav navbar-nav">
                     <li class="top-menu-link">
@@ -75,8 +72,8 @@
 {% block content %}
     <section id="events">
         <div class="container">
-            <div class="row">
-                <div class="page-header clearfix">
+            <div class="page-header clearfix">
+                <div class="row">
                     <div class="col-md-8 col-xs-6">
                         <h2 id="events-heading">ARRANGEMENTER</h2>
                     </div>
@@ -87,14 +84,13 @@
                     </div>
                 </div>
             </div>
-            <div id="event-items">
-            </div>
+            <div id="event-items"></div>
         </div>
     </section>
     <section id="articles">
         <div class="container">
-            <div class="row" >
-                <div class="page-header clearfix">
+            <div class="page-header clearfix">
+                <div class="row">
                     <div class="col-md-8 col-xs-6">
                         <h2 id="events-heading">ARTIKLER</h2>
                     </div>
@@ -118,9 +114,9 @@
 
     <section id="business">
         <div class="container">
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="page-header">
+            <div class="page-header clearfix">
+                <div class="row">
+                    <div class="col-md-12">
                         <h2 id="business-heading">BEDRIFTER</h2>
                     </div>
                 </div>
@@ -131,10 +127,10 @@
                         <p>Er du en bedrift som er på jakt etter skarpe IT-studenter?<br /> Da vil vi gjerne høre fra deg! Les videre for å finne ut hva vi kan tilby.</p>
                     </div>
                     <div class="business-text">
-                        <p>Online er linjeforeningen for informatikkstudentene ved NTNU. Våre studenter går Bachelor- eller Mastergradstudium i informatikk. Dette innebærer blant annet læren utvikling, forbedring, evaluering og bruk av datasystemer.
+                        <p>Online er linjeforeningen for informatikkstudentene ved NTNU. Våre studenter går Bachelor- eller Mastergradstudium i informatikk. Dette innebærer blant annet å lære om utvikling, forbedring, evaluering og bruk av datasystemer.
                         For mer informasjon om studiet, se NTNU sine <a href="http://www.ntnu.no/studier/informasjonsteknologi-informatikk" target="_blank">offisielle nettsider.</a></p>
                         <p>
-                        Linjeforeningen har gjennom flere år opparbeidet seg et repertoar av tjenester som vi tilbyr våre studenter. I samarbeid med næringslivet tilbyr vi kurs og bedriftspresentasjoner for å gi studentene våre en bredere og dypere fagkunnskap samt et innblikk i hverdagen i aktuelle på arbeidsplasser.
+                        Linjeforeningen har gjennom flere år opparbeidet seg et repertoar av tjenester som vi tilbyr våre studenter. I samarbeid med næringslivet tilbyr vi kurs og bedriftspresentasjoner for å gi studentene våre en bredere og dypere fagkunnskap samt et innblikk i hverdagen til aktuelle arbeidsplasser.
                         </p>
                         <p>Send oss en forespørsel for å komme i kontakt. Vi gleder oss til å samarbeide med dere!</p>
                         <p>
@@ -192,9 +188,9 @@
 
     <section id="about">
         <div class="container">
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="page-header">
+            <div class="page-header clearfix">
+                <div class="row">
+                    <div class="col-md-12">
                         <h2 id="about-heading">OM ONLINE</h2>
                     </div>
                 </div>
@@ -206,11 +202,27 @@
                             <div class="row">
                                 <div class="col-md-12">
                                     <p class="ingress">
-                                        Online er linjeforeningen for informatikkstudenter ved NTNU i Trondheim.
-                                        Linjeforeningens oppgave er å forbedre studiemiljøet ved å fremme sosialt samvær, 
-                                        faglig kompetanse og kontakt med næringslivet.
+                                    Online er linjeforeningen for informatikkstudenter ved NTNU i Trondheim. 
+                                    Linjeforeningens oppgave er å forbedre studiemiljøet ved å fremme sosialt 
+                                    samvær, faglig kompetanse og kontakt med næringslivet.
                                     </p>
-                                    <p>Linjeforeningen består av omtrent 100 frivillige medarbeidere</p>
+                                    <p>Linjeforeningen består av omtrent 100 frivillige medarbeidere, 
+                                    fordelt over Hovedstyret, komiteer og nodekomiteer. I tillegg til vervene i 
+                                    linjeforeningen er mange studenter også engasjert i Realfagskjelleren, 
+                                    Datakameratene FK og Casual Gaming.</p>
+                                    <p>Vi kontorer på Gløshaugen i Høgskoleringen 3, også kjent som P15. Her
+                                    fins det mat og drikke for alle som vil ha, og ofte kan det være greit å 
+                                    finne hjelp til en øving eller et prosjekt man jobber med. Det er heller 
+                                    ikke uhørt at triKom serverer vafler eller kake.</p>
+                                    <p>Ekskursjoner, kurs og presentasjoner fra bedrifter er ukentlige hendelser
+                                    hos oss. Mange arrangementer er sponset av linjeforeningen eller bedrifter
+                                    slik at du kan hygge deg i godt selskap selv om studielånet er langt unna.</p>
+                                    <p>I de siste årene har Online hatt en eventyrlig vekst på alle områder,
+                                    og har etablert seg som en betydningsfull organisasjon i Trondheim. Fokus
+                                    på samarbeid og kommunikasjon har drevet frem mange gode initiativer hvor
+                                    vi har stått langt fremme som pådrivere.</p>
+                                    <p>Hos oss vil du stifte nye vennskap som vil vare livet ut, og hjelpe
+                                    deg når du skal ut i arbeidslivet. Du vil trives i Online!</p>
                                 </div>
                             </div>
                         </div>
@@ -354,7 +366,7 @@
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                     <h3>Kurs/Workshop/Foredrag</h3>
                         <p>Studentene ved informatikk har mange ulike interesser og det er alltid gøy å se hva bedrifter holder på med. Det har blitt gjennomført kurs i for eksempel Ruby on Rails, Test Driven Development, Scrum og mye mer.</p>
-                        <p>I motsetning til bedriftspresentasjoner er det begrensinger på hvor lenge bedriften kan fortelle om seg selv. Det er ment som et faglig tilskudd til studiet og innholdet må gjenspeile dette. Selve kursgjennomføringen er ofte litt mer uformell enn ved en bedriftspresentasjon. Det å få studentene til å vere med er viktig. Som ved en bedriftspresentasjon vil vi ordne det meste, ved spesialbehov gjør vi vårt beste for å ordne dette også.</p>
+                        <p>I motsetning til bedriftspresentasjoner er det begrensinger på hvor lenge bedriften kan fortelle om seg selv. Det er ment som et faglig tilskudd til studiet og innholdet må gjenspeile dette. Selve kursgjennomføringen er ofte litt mer uformell enn ved en bedriftspresentasjon. Det å få studentene til å være med er viktig. Som ved en bedriftspresentasjon vil vi ordne det meste, ved spesialbehov gjør vi vårt beste for å ordne dette også.</p>
                         <p>Da kurs gjerne ikke er direkte rettet for rekruttering er det mye vanligere å åpne for alle årstrinn slik at folk med alle mulige interesser kan delta. Det er selvsagt en del kurs som krever forkunnskaper, men det er bare å spesifisere i eventen.</p>
                     <h3>Hackathon</h3>
                         <p>Ta kontakt for mer informasjon.</p>

@@ -3,25 +3,33 @@
 from django.contrib import admin
 from django.utils.translation import ugettext as _
 
-from apps.authentication.models import OnlineUser, AllowedUsername
+from apps.authentication.models import AllowedUsername, Email, OnlineUser
+
+
+class EmailInline(admin.TabularInline):
+    model = Email
+    extra = 1 
+
 
 class OnlineUserAdmin(admin.ModelAdmin):
     model = OnlineUser
+    inlines = (EmailInline,)
     list_display = ['username', 'first_name', 'last_name', 'field_of_study', 'is_member',]
     list_filter = ('is_staff', 'is_superuser', 'is_active', 'groups')
     fieldsets = (
         (None, {'fields': ('username', 'password')}),
-        (_(u'Personal info'), {'fields': ('first_name', 'last_name', 'email', 'phone_number', )}),
+        (_(u'Personlig info'), {'fields': ('first_name', 'last_name', 'phone_number', )}),
         (_(u'Studieinformasjon'), {'fields': ('ntnu_username', 'field_of_study', 'started_date', 'compiled',)}),
-        (_(u'Address'), {'fields': ('address', 'zip_code',)}), 
-        (_(u'Important dates'), {'fields': ('last_login', 'date_joined',)}),
-        (_(u'Other info'), { 'fields': ('infomail', 'mark_rules', 'rfid', 'nickname', 'website', 'image',) }),
-        (_(u'Permissions'), {'fields': ('is_active', 'is_staff', 'is_superuser',
+        (_(u'Adresse'), {'fields': ('address', 'zip_code',)}), 
+        (_(u'Viktige datoer'), {'fields': ('last_login', 'date_joined',)}),
+        (_(u'Annen info'), { 'fields': ('infomail', 'mark_rules', 'rfid', 'nickname', 'website',) }),
+        (_(u'Tilganger'), {'fields': ('is_active', 'is_staff', 'is_superuser',
                                        'groups', 'user_permissions')}),
     )
     filter_horizontal = ('groups', 'user_permissions',)
 
 admin.site.register(OnlineUser, OnlineUserAdmin)
+
 
 class AllowedUsernameAdmin(admin.ModelAdmin):
     model = AllowedUsername

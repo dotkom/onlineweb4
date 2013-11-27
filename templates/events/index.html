@@ -1,6 +1,11 @@
 {% extends "base.html" %}
 
 {% load compress %}
+
+{% block title %}
+Arrangementsarkiv - Online
+{% endblock title %}
+
 {% block styles %}
   {{ block.super }}
   {% compress css %}
@@ -11,15 +16,6 @@
 {% block submenu %}
     <nav class="subnavbar navbar-default navbar-fixed-top">
         <div class="container">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
-                  <span class="sr-only">Toggle navigation</span>
-                  <span class="icon-bar"></span>
-                  <span class="icon-bar"></span>
-                  <span class="icon-bar"></span>
-                </button>
-            </div>
-            <!-- Collect the nav links, forms, and other content for toggling -->
             <div class="collapse navbar-collapse navbar-ex1-collapse">
                 <ul class="nav navbar-nav">
                     <li class="top-menu-link">
@@ -45,51 +41,37 @@
     <div class="row">
       <div class="col-md-12">
         <div class="page-header">
-          <h2>Arrangementer</h2>
+          <h2>ARRANGEMENTER</h2>
         </div>
       </div>
     </div>
 
-    <div class="col-md-3 pull-right" id="filter">
-
+    <div class="col-xs-12 col-sm-12 col-md-3 pull-right" id="filter">
       <div class="row">
-        <div class="input-group col-md-12">
-          <input type="text" class="form-control" placeholder="Søk blant arrangementene" id="search">
+        <div class="input-group col-xs-12 col-sm-12 col-md-12">
+          <input type="text" class="form-control col-xs-12 col-sm-12" placeholder="Søk blant arrangementene" id="search">
         </div>
       </div>
 
-      <div class="row">
 
-        <div class="checkbox col-md-12">
+        <div class="checkbox col-xs-12 col-sm-12 col-md-12">
           <label>
             <input type="checkbox" name="optionCheckboxs" value="option1" id="future" checked>
-            Fremtidige arrangementer
+            Bare fremtidige arrangementer
           </label>
         </div>
-
-        <div class="checkbox col-md-12">
+	{% if user.is_authenticated %}
+        <div class="checkbox col-xs-12 col-sm-12 col-md-12">
           <label>
             <input type="checkbox" name="optionCheckboxs" value="option1" id="myevents">
             Mine arrangementer
           </label>
         </div>
-
-      </div>
-
-      <div class="row">
-      
-        <div class="checkbox">
-          <label>
-            <input type="checkbox" name="optionCheckboxs" value="option1">
-            Somehting elze
-          </label>
-        </div>
-
-      </div> <!-- end row -->
+	{% endif %}
 
     </div> <!-- end col-md-3 -->
 
-    <div class="col-md-9 pull-left" id="events">
+    <div class="col-xs-12 col-sm-12 col-md-9 pull-left" id="events">
 
     </div> <!-- end col-md-9 -->
 <!-- 
@@ -137,6 +119,12 @@
       $('#search').keyup(function () {
         filters.query = $(this).val();
         filters.search();
+      });
+      
+      // This is a slight hack to avoid a difficult bug in jQuery where some browsers tend to preserve checkbox states
+      // without them being domready.	
+      $(document).ready(function () {
+        $('#future').prop('checked', true); 
       });
 
       $('#future').on('click', function () {

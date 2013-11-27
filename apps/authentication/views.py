@@ -9,12 +9,15 @@ from django.core.mail import send_mail
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponseRedirect
 from django.utils.translation import ugettext as _
+from django.views.decorators.debug import sensitive_post_parameters
 
 from django.conf import settings
 from apps.authentication.forms import (LoginForm, RegisterForm, 
                             RecoveryForm, ChangePasswordForm)
-from apps.authentication.models import OnlineUser, RegisterToken, Email
+from apps.authentication.models import OnlineUser as User, RegisterToken, Email
 
+
+@sensitive_post_parameters()
 def login(request):
     redirect_url = request.REQUEST.get('next', '')
     if request.method == 'POST':
@@ -31,11 +34,14 @@ def login(request):
     response_dict = { 'form' : form, 'next' : redirect_url}
     return render(request, 'auth/login.html', response_dict)
 
+
 def logout(request):
     auth.logout(request)
     messages.success(request, _(u'Du er nå logget ut.'))
     return HttpResponseRedirect('/')
 
+
+@sensitive_post_parameters()
 def register(request):
     if request.user.is_authenticated():
         messages.error(request, _(u'Registrering av ny konto krever at du er logget ut.'))
@@ -47,23 +53,29 @@ def register(request):
                 cleaned = form.cleaned_data
 
                 # Create user
-                user = OnlineUser(
-                    username=cleaned['username'].lower(), 
+                user = User(
+                    username=cleaned['username'], 
                     first_name=cleaned['first_name'].title(), 
                     last_name=cleaned['last_name'].title(),
-                    email=cleaned['email'].lower(),
                 )
                 # Set remaining fields
-                user.phone=cleaned['phone']
+                user.phone_number=cleaned['phone']
                 user.address=cleaned['address'].title()
                 user.zip_code=cleaned['zip_code']
                 # Store password properly
                 user.set_password(cleaned['password'])
                 # Users need to be manually activated
                 user.is_active = False
-
                 user.save()
-            
+
+                # Set email address
+                email = Email(
+                    user=user,
+                    email=cleaned['email'].lower(),
+                )
+                email.primary = True
+                email.save()    
+
                 # Create the registration token
                 token = uuid.uuid4().hex
                 rt = RegisterToken(user=user, email=cleaned['email'], token=token)
@@ -82,7 +94,7 @@ Denne lenken vil være gyldig i 24 timer. Dersom du behøver å få tilsendt en 
 kan dette gjøres med funksjonen for å gjenopprette passord.
 """) % (request.META['HTTP_HOST'], token)
 
-                send_mail(_(u'Verifiser din konto'), email_message, settings.DEFAULT_FROM_EMAIL, [user.email,])
+                send_mail(_(u'Verifiser din konto'), email_message, settings.DEFAULT_FROM_EMAIL, [email.email,])
 
                 messages.success(request, _(u'Registreringen var vellykket. Se tilsendt epost for verifiseringsinstrukser.'))
 
@@ -93,6 +105,7 @@ kan dette gjøres med funksjonen for å gjenopprette passord.
             form = RegisterForm()
 
         return render(request, 'auth/register.html', {'form': form, })
+
 
 def verify(request, token):
     rt = get_object_or_404(RegisterToken, token=token)
@@ -135,19 +148,18 @@ def recover(request):
         if request.method == 'POST':
             form = RecoveryForm(request.POST)
             if form.is_valid():
-                email = form.cleaned_data['email']
-                users = OnlineUser.objects.filter(email=email)
+                email_string = form.cleaned_data['email']
+                emails = Email.objects.filter(email=email_string)
 
-                if len(users) == 0:
+                if len(emails) == 0:
                     messages.error(request, _(u'Denne eposten er ikke registrert i våre systemer.'))
                     return HttpResponseRedirect('/')        
 
-                user = users[0]
-                user.save()
+                email = emails[0]
     
                 # Create the registration token
                 token = uuid.uuid4().hex
-                rt = RegisterToken(user=user, token=token)
+                rt = RegisterToken(user=email.user, email=email.email, token=token)
                 rt.save()
 
                 email_message = _(u"""
@@ -162,11 +174,11 @@ http://%s/auth/set_password/%s/
 
 Denne lenken vil være gyldig i 24 timer. Dersom du behøver å få tilsendt en ny lenke
 kan dette gjøres med funksjonen for å gjenopprette passord.
-""") % (email, user.username, request.META['HTTP_HOST'], token)
+""") % (email.email, email.user.username, request.META['HTTP_HOST'], token)
 
-                send_mail(_(u'Gjenoppretning av passord'), email_message, settings.DEFAULT_FROM_EMAIL, [email,])
+                send_mail(_(u'Gjenoppretning av passord'), email_message, settings.DEFAULT_FROM_EMAIL, [email.email,])
 
-                messages.success(request, _(u'En lenke for gjenoppretning har blitt sendt til %s.') % email)
+                messages.success(request, _(u'En lenke for gjenoppretning har blitt sendt til %s.') % email.email)
 
                 return HttpResponseRedirect('/')        
             else:
@@ -176,35 +188,38 @@ kan dette gjøres med funksjonen for å gjenopprette passord.
 
         return render(request, 'auth/recover.html', {'form': form})
 
+
+@sensitive_post_parameters()
 def set_password(request, token=None): 
     if request.user.is_authenticated():
         return HttpResponseRedirect('/')
     else:
-        rt = get_object_or_404(RegisterToken, token=token)
+        tokens = RegisterToken.objects.filter(token=token)
        
-        if rt.is_valid:
-            if request.method == 'POST':
-                form = ChangePasswordForm(request.POST, auto_id=True)
-                if form.is_valid():
-                    user = getattr(rt, 'user')
+        if tokens.count() == 1:
+            rt = tokens[0]
+            if rt.is_valid:
+                if request.method == 'POST':
+                    form = ChangePasswordForm(request.POST, auto_id=True)
+                    if form.is_valid():
+                        user = getattr(rt, 'user')
 
-                    user.is_active = True
-                    user.set_password(form.cleaned_data['new_password'])
-                    user.save()
-                    
-                    rt.delete()
+                        user.is_active = True
+                        user.set_password(form.cleaned_data['new_password'])
+                        user.save()
+                        
+                        rt.delete()
 
-                    messages.success(request, _(u'Bruker %s har gjennomført vellykket gjenoppretning av passord. Du kan nå logge inn.') % user)
-                    
-                    return HttpResponseRedirect('/')        
-            else:
-                
-                form = ChangePasswordForm()
+                        messages.success(request, _(u'Bruker %s har gjennomført vellykket gjenoppretning av passord. Du kan nå logge inn.') % user.username)
+                        
+                        return HttpResponseRedirect('/')        
+                else:
+                    form = ChangePasswordForm()
 
-                messages.success(request, _(u'Lenken er akseptert. Vennligst skriv inn ønsket passord.'))
+                    messages.success(request, _(u'Lenken er akseptert. Vennligst skriv inn ønsket passord.'))
 
-            return render(request, 'auth/set_password.html', {'form': form, 'token': token})
+                return render(request, 'auth/set_password.html', {'form': form, 'token': token})
 
         else:
-            messages.error(request, _(u'Lenken er utløpt. Vennligst bruk gjenoppretning av passord for å få tilsendt en ny lenke.'))
+            messages.error(request, _(u'Lenken er ugyldig. Vennligst bruk gjenoppretning av passord for å få tilsendt en ny lenke.'))
             return HttpResponseRedirect('/')        

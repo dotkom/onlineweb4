@@ -1,3 +1,4 @@
+@import "fonts.less";
 @import "bootstrap/bootstrap.less";
 @import "colors.less";
 @import "navbar.less";
@@ -122,7 +123,7 @@ section {
 }
 
 h2{
-    font-weight:700;
+    font-weight:600;
     color:@heading;
     font-size:24px;
 }   
@@ -132,14 +133,20 @@ h3 {
 }
 
 h4 {
-    text-align:center;
-    font-weight:500;
-    font-size:14px;
+    text-align:left;
+    font-weight:400;
+    font-size:18px;
 }
 
 p {
     color:#666;
     line-height:1.6em;
+}
+
+a,
+a:active,
+a:focus {
+    outline: none;
 }
 
 .centered {
@@ -157,6 +164,16 @@ p {
     margin-top:21px;
 }
 
+ul li {
+    padding: 2px 0;
+}
+
+#about-tabs li,
+.subnavbar li,
+.navbar li {
+    padding: 0;
+}
+
 /* Logos
 -------------------------------------------------- */
 .online-logo {
@@ -165,25 +182,12 @@ p {
 }
 
 .sponsor-logo {
-    width: 110px;
-    margin: -10px 0 0 0;
-}
+    position: relative;
+    top: 2px;
+    left: 15px;
 
-/* Login button
--------------------------------------------------- */
-.login-btn {
-    margin: 15px 0 0 0;
-    padding: 4px 10px!important;
-    border-radius: 5px;
-    display: block;
-    float: right;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    background: rgba(255, 255, 255, 0.1);
-}
-.login-box {
-    /*padding: 15px;*/
-    z-index: 2000;
-    width: 250px;
+    width: 128px;
+    margin: 5px 0 0 0;
 }
 
 .dropdown-form li > form > .login-extra > a {
@@ -192,21 +196,4 @@ p {
 }
 #events, #articles, #about, #business, #offline {
     /*padding-top: 50px;*/
-}
-.btn-primary {
-    margin: 10px 0 0 0;
-}
-
-#login-form-btn-group {
-    clear: both;
-    border-top: 1px solid #CCC;
-    padding: 10px 15px 10px 15px;
-}
-#login-form-btn-group a {
-    text-transform: none;
-    float: left;
-    padding: 5px 11px;
-}
-#login-form-btn-group a:first-child {
-    margin: 0 10px 5px 0;
 }

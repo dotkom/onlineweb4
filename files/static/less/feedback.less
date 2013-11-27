@@ -3,14 +3,44 @@
     margin-top:10px;
 }
 
+#feedbackanswer {
+	h2 {
+		text-transform: uppercase;
+	}
+}
+
 #feedback{
     textarea{
         width: 100%;
+	border: 1px solid #aaa;
+	border-radius: 4px;
     }
-    .radio {
+    label {
+        display: block;
+        clear: both;
+    }
+
+    ul {
+	margin-left: 0px;
+	padding-left: 0px;
+    }
+    li {
+	list-style: none;
+	float: left;
+	margin-left: 0px;
+    }
+    input[type=radio] {
         padding-top: 0px;
         margin-left: 20px;
         float:left;
+	margin-right: 10px;
+	display: inline-block;
+	font-size: 12px;
+    }
+    select {
+	display: block;
+	border-radius: 4px;
+	border: 1px solid #aaa;
     }
     div{ /*TODO, create clearfix mixin*/
         *zoom: 1;
@@ -33,4 +63,34 @@
     stroke:@heading;
     fill:@heading;
     font-size:20px;
+}
+
+#feedback-results
+{
+    .rating-chart
+    {
+        margin-bottom: 25px;
+    }
+    .panel-heading
+    {
+        font-weight: 600;
+        color: #004b80;
+    }
+    .answer:hover
+    {
+        cursor: pointer;
+        //border-style:outset;
+    }
+    .answer:hover .icon
+    {
+        visibility:visible;
+    }
+
+    .icon
+    {
+        visibility: hidden;
+        color: red;
+        padding-right: 10px;
+    }
+
 }
