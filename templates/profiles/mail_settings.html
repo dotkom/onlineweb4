@@ -49,6 +49,10 @@
         <button type="button" class="btn btn-success btn-sm add-new-email">Legg til ny epostadresse</button>
     </div>
 </div>
+{% comment %}
+This block is redundant as long as mailinglists aren't being synced with onlinwweb4.
+If we want to use this, the form has to be added to the dictionary again in the view.
+This is related to issue #595
 <div class="row-space"></div>
 <div class="row">
     <div class="col-xs-12 col-sm-12 col-md-8">
@@ -57,6 +61,10 @@
 </div>
 <div class="row">
     <div class="col-xs-12">
-        {{ mail_settings|crispy }}
+        <form method="post" action="{% url 'profile' %}">
+            {{ mail_settings|crispy }}
+            <button type="submit" class="btn btn-success">Lagre</button>
+        </form>
     </div>
 </div>
+{% endcomment %}
