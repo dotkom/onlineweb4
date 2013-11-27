@@ -14,11 +14,15 @@ from django.http import HttpResponse
 from django.shortcuts import redirect, render, get_object_or_404
 from django.utils.translation import ugettext as _
 
+import watson
+
 from apps.authentication.forms import NewEmailForm
 from apps.authentication.models import Email, RegisterToken
+from apps.authentication.models import OnlineUser as User
 from apps.marks.models import Mark
 from apps.profiles.forms import (MailSettingsForm, PrivacyForm,
                                 ProfileForm, MembershipSettingsForm)
+from utils.shortcuts import render_json
 
 """
 Index for the entire user profile view
@@ -69,7 +73,7 @@ def _create_request_dictionary(request):
     if request.session.has_key('userprofile_active_tab'):
         dict['active_tab'] = request.session['userprofile_active_tab']
     else:
-        dict['active_tab'] = 'myprofile'
+        dict['active_tab'] = 'users'
 
     return dict
 
@@ -322,3 +326,24 @@ def save_membership_details(request):
                                                 ))
 
     return HttpResponse(status=404) 
+
+
+@login_required
+def api_user_search(request):
+    if request.GET.get('query'):
+        users = search_for_users(request.GET.get('query'))
+        return render_json(users)
+    return render_json(error='Mangler søkestreng')
+
+
+
+def search_for_users(query, limit=10):
+    if not query:
+        return []
+
+    results = []
+
+    for result in watson.search(query, models=(User.objects.all(),)):
+        results.append(result.object)
+
+    return results[:limit]

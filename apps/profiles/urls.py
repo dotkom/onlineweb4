@@ -14,4 +14,5 @@ urlpatterns = patterns('apps.profiles.views',
     url(r'^verify_email/$', 'verify_email', name='profile_verify_email'),
     url(r'^save_membership_details/$', 'save_membership_details', name='profile_save_membership_details'),
     url(r'^update_mark_rules/$', 'update_mark_rules', name='update_mark_rules'),
+    url(r'^api_user_search/$', 'api_user_search', name='profiles_api_user_search'),
 )
