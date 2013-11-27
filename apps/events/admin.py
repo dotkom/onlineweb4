@@ -93,7 +93,6 @@ class EventAdmin(admin.ModelAdmin):
         form.base_fields['ingress'].validators=[validators.MinLengthValidator(75)]
         form.base_fields['description'].validators=[
                                                     validators.MinLengthValidator(140),
-                                                    validators.RegexValidator("^(?:(?!TBA).)*$", _("Beskrivelsen kan ikke inneholde 'TBA'."), "ulovlig"),
                                                     ]
         return form
 
