@@ -60,7 +60,6 @@ def _create_request_dictionary(request):
             (_(u'aktive prikker'), Mark.active.all().filter(given_to=request.user), False),
             (_(u'inaktive prikker'), Mark.inactive.all().filter(given_to=request.user), True),
         ],
-        'mail_settings' : MailSettingsForm(instance=request.user),
         'new_email' : NewEmailForm(),
         'membership_settings' : MembershipSettingsForm(instance=request.user),
         'mark_rules_accepted' : request.user.mark_rules,
