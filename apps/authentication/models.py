@@ -8,6 +8,8 @@ from django.db import models
 from django.utils.translation import ugettext as _
 from django.utils import timezone
 
+import watson
+
 
 # If this list is changed, remember to check that the year property on
 # OnlineUser is still correct!
@@ -130,6 +132,14 @@ class OnlineUser(AbstractUser):
             self.ntnu_username = None
         super(OnlineUser, self).save(*args, **kwargs)
 
+    def serializable_object(self):
+        
+        return {
+            'id': self.id,
+            'value': self.get_full_name(),  # typeahead
+            'name': self.get_full_name(),
+        }
+
     class Meta:
         ordering = ['first_name', 'last_name']
         verbose_name = _(u"brukerprofil")
@@ -222,3 +232,6 @@ class Position(models.Model):
         verbose_name = _(u'posisjon')
         verbose_name_plural = _(u'posisjoner')
         ordering = (u'user',)
+
+# Register OnlineUser in watson index for searching
+watson.register(OnlineUser)
