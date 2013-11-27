@@ -60,7 +60,10 @@ If we want to use this, the form has to be added to the dictionary again in the 
 </div>
 <div class="row">
     <div class="col-xs-12">
-        {{ mail_settings|crispy }}
+        <form method="post" action="{% url 'profile' %}">
+            {{ mail_settings|crispy }}
+            <button type="submit" class="btn btn-success">Lagre</button>
+        </form>
     </div>
 </div>
 {% endcomment %}
