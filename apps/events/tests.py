@@ -188,5 +188,5 @@ class EventTest(TestCase):
         # Move registration start into the future
         self.attendance_event.registration_start = self.now + datetime.timedelta(hours=1)
         response = self.event.is_eligible_for_signup(self.user)
-        self.assertTrue(response['status'])
+        self.assertFalse(response['status'])
         self.assertEqual(504, response['status_code'])
