@@ -114,10 +114,15 @@ Min profil - Online
         <script type="text/javascript">
         
         $(function () {
-
+            /*var url = 'url 'profiles_get_user_by_id' 1 %}';
+            $.get(url, function(data) {
+                $('#user').html(data);
+            });
+*/
             {% verbatim %}
             var user_search_template =  [
-            '{{ name }}'
+            '<img src="{{ image }}" alt="" />',
+            '<span data-id="{{ id }}" class="user-meta"><h4>{{ name }}</h4></span>',
             ].join('');
             {% endverbatim %}
 
@@ -132,7 +137,20 @@ Min profil - Online
                 if(e.keyCode == 13) {
                     console.log('trykka enter')
                 }
-            });
+            }).on('typeahead:selected typeahead:autocompleted', function(e, datum) {
+                console.log(e);
+                console.log(datum);
+                window.location = '/profile/' + datum.username;
+                //console.log(url);
+                //var url = url 'display_user_by_name' %}
+                //$.get();
+            //$('#locationId').val(datum.id);
+        });
+
+            // $('.tt-suggestion').on('click', function () {
+            //     console.log('hei!');
+            //     console.log($(this));
+            // });
         });     
-    </script>
+        </script>
 {% endblock %}

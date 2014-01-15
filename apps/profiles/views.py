@@ -56,6 +56,7 @@ def render_home(request):
 def _create_request_dictionary(request):
 
     dict = {
+        'user' : request.user,
         'privacy_form' : PrivacyForm(instance=request.user.privacy),
         'user_profile_form' : ProfileForm(instance=request.user),
         'password_change_form' : PasswordChangeForm(request.user),
@@ -336,7 +337,7 @@ def api_user_search(request):
     return render_json(error='Mangler søkestreng')
 
 
-
+#@login_required
 def search_for_users(query, limit=10):
     if not query:
         return []
@@ -347,3 +348,11 @@ def search_for_users(query, limit=10):
         results.append(result.object)
 
     return results[:limit]
+
+
+@login_required
+def view_profile(request, username):
+    print username
+    user = get_object_or_404(User, username=username)
+    print user
+    return render(request, 'profiles/view_profile.html', {'user': user})

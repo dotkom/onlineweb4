@@ -1,0 +1,46 @@
+{% extends 'base.html'%}
+{% load gravatar_url_resolver %}
+{% load crispy_forms_tags %}
+{% block content %}
+<section id="mordi">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12">
+				<div class="page-header">
+					<h2>Profil for {{ user.get_full_name }}</h2>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-8">
+				<div class="row" style="margin-bottom:20px;">
+					<div class="col-md-4">
+						<b>Navn</b><br />{{ user.get_full_name }}
+					</div>
+					<div class="col-md-4">
+						<b>Studieretning</b><br />{{ user.get_field_of_study_display }}
+					</div>
+					<div class="col-md-4">
+						<b>Klassetrinn</b><br />{{ user.year }}
+					</div>
+				</div>
+				<div class="row">
+			    	<div class="col-md-4">
+						<b>Adresse</b><br />{{ user.address }}<br />{{ user.zip_code }}
+					</div>
+					<div class="col-md-4">
+						<b>Telefonnummer</b><br />{{ user.phone_number }}
+					</div>
+					<div class="col-md-4">
+						<b>Kallenavn</b><br />{{ user.nickname }}
+					</div>
+				</div>
+			</div>
+			<div class="col-md-4">
+				{% gravatar_url request.user 286 as gravatar_url %}
+		        <img class="img-thumbnail pull-right" src="{{ gravatar_url }}" alt="" />
+			</div>
+		</div>
+	</div>
+</section>
+{% endblock%}

@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 
 import datetime
+import socket
+import urllib
+import hashlib
 
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
@@ -124,6 +127,10 @@ class OnlineUser(AbstractUser):
         else:
             return -1
 
+    @models.permalink
+    def get_absolute_url(self):
+        return ('profiles_view', None, {'username': self.username})
+
     def __unicode__(self):
         return self.get_full_name()
 
@@ -133,12 +140,28 @@ class OnlineUser(AbstractUser):
         super(OnlineUser, self).save(*args, **kwargs)
 
     def serializable_object(self):
-        
         return {
             'id': self.id,
+            'username': self.username,
             'value': self.get_full_name(),  # typeahead
             'name': self.get_full_name(),
+            'image': self.get_image_url(),
         }
+
+    def get_image_url(self, size=50):
+        email = self.get_email()
+        if email:
+            email = email.email
+        else:
+            email = "empty"
+
+        prefix = "https://"
+        default = "%s%s%s_%s.png" % (prefix, socket.getfqdn(),
+                                   settings.DEFAULT_PROFILE_PICTURE_PREFIX, self.gender)
+
+        gravatar_url = "https://www.gravatar.com/avatar/" + hashlib.md5(email).hexdigest() + "?"
+        gravatar_url += urllib.urlencode({'d': default, 's':str(size)})
+        return gravatar_url
 
     class Meta:
         ordering = ['first_name', 'last_name']
