@@ -1,4 +1,4 @@
-Django==1.6
+Django==1.6.1
 South==0.7.5                    # DB migration tool. 
 Pillow==2.0.0                   # pillow
 django-tastypie==0.9.15         # API
@@ -6,14 +6,14 @@ mimeparse==0.1.3
 python-dateutil==1.5
 python-memcached==1.45			# Memcache. Used by Mailinglists to fetch from Sympa.
 wsgiref==0.1.2
-markdown2==2.1.0                # textarea text formatting
+markdown2==2.2.0                # textarea text formatting
 psycopg2                        # Postgres adapter
 pytz                            # Timezone lib. Obsolete?
 gunicorn==18.0
 
 # third party deps
-django-filebrowser==3.5.2 		# File uploading
-django-grappelli==2.5.0         # Admin template set
+django-filebrowser==3.5.3 		# File uploading
+django-grappelli==2.5.1         # Admin template set
 git+git://github.com/clintecker/django-chunks.git@0.2# Chunks, or reusable key:content for templates.
 django-crispy-forms==1.4.0      # nice forms
 django-extensions==1.0.3        # nice extra commands for debugging, etc
