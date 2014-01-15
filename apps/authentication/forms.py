@@ -100,4 +100,4 @@ class ChangePasswordForm(forms.Form):
 
 
 class NewEmailForm(forms.Form):
-    new_email = forms.EmailField(_(u"ny epostadresse"))
+    new_email = forms.EmailField(label=_(u"ny epostadresse"))
