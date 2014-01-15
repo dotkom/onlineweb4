@@ -142,12 +142,12 @@ INSTALLED_APPS = (
     'pdfdocument',
     'watson',
     'gunicorn',
+    'markdown_deux',
 
     # Django apps
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
-    'django.contrib.markup',
     'django.contrib.messages',
     'django.contrib.sessions',
     'django.contrib.sites',
