@@ -142,6 +142,7 @@ class OnlineUser(AbstractUser):
     def serializable_object(self):
         return {
             'id': self.id,
+            'phone': self.phone_number,
             'username': self.username,
             'value': self.get_full_name(),  # typeahead
             'name': self.get_full_name(),

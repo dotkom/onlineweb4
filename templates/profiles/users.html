@@ -8,6 +8,31 @@
 		</form>
 	</div>
 </div>
+
+{% for group in groups %}
+	<div class="row">
+		<div class="col-md-12">
+			<h4>{{ group }}</h4>
+		</div>
+	</div>
+	{% for user in group.onlineuser_set.all %}
+		<div class="row">
+			<a href="{% url 'profiles_view' user.username %}">
+				<div class="col-md-12">
+					<div class="col-md-2">
+						{% gravatar_url user 120 as gravatar_url %}
+					        <img class="img-thumbnail" src="{{ gravatar_url }}" alt="" />
+					</div>
+					<div class="col-md-10">
+						<div style="margin-bottom:10px; font-size:17px; font-weight:600;">{{ user.get_full_name }}</div>
+						Telefonnummer: +47{{ user.phone_number }}<br />
+						Epost: {{ user.get_email.email }}
+					</div>
+				</div>
+			</a>
+		</div>
+	{% endfor %}
+{% endfor %}
 <section id="user">	
 </section>
 

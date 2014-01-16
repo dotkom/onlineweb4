@@ -13,6 +13,7 @@ from django.core.mail import send_mail
 from django.http import HttpResponse
 from django.shortcuts import redirect, render, get_object_or_404
 from django.utils.translation import ugettext as _
+from django.contrib.auth.models import Group
 
 import watson
 
@@ -55,7 +56,12 @@ def render_home(request):
 
 def _create_request_dictionary(request):
 
+    groups = Group.objects.all()
+    users_to_display = User.objects.filter(privacy__visible_for_other_users=True)
+
     dict = {
+        'users' : users_to_display,
+        'groups' : groups,
         'user' : request.user,
         'privacy_form' : PrivacyForm(instance=request.user.privacy),
         'user_profile_form' : ProfileForm(instance=request.user),
