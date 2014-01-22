@@ -18,7 +18,7 @@ from django.contrib.auth.models import Group
 import watson
 
 from apps.authentication.forms import NewEmailForm
-from apps.authentication.models import Email, RegisterToken
+from apps.authentication.models import Email, RegisterToken, Position
 from apps.authentication.models import OnlineUser as User
 from apps.marks.models import Mark
 from apps.profiles.forms import (MailSettingsForm, PrivacyForm,
@@ -181,6 +181,17 @@ def save_position(request):
         new_position.save()
         messages.success(request, _(u'Posisjonen ble lagret'))
         return redirect('profiles')
+
+
+@login_required
+def delete_position(request, position_id):
+    position = get_object_or_404(Position, pk=position_id)
+    if position.user == request.user:
+        position.delete()
+        messages.success(request, _(u'Posisjonen ble slettet'))
+    else:
+        messages.error(request, _(u'Du prøvde å slette en posisjon som ikke tilhørte deg selv. Fy.'))
+    return redirect('profiles')
 
 
 @login_required

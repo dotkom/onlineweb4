@@ -54,6 +54,8 @@
 				{% for position in user.positions.all %}
 					<div class="col-md-12">
 						{{ position.period }}: {{ position.get_position_display }}, {{ position.get_committee_display }}
+						
+							<a href="{% url 'delete_position' position.id %}"><i class="glyphicon glyphicon-remove"></i></a>
 					</div>
 				{% endfor %}
 			{% endif %}
