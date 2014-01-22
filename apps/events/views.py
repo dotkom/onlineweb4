@@ -7,6 +7,7 @@ from django.utils import timezone
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
+from django.core.mail import send_mail
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404, redirect
@@ -121,6 +122,25 @@ def attendEvent(request, event_id):
 def unattendEvent(request, event_id):
 
     event = get_object_or_404(Event, pk=event_id)
+    # Notify next user on waiting list
+    wait_list = event.wait_list
+    if wait_list:
+        # Checking if user is on the wait list
+        on_wait_list = False
+        for waiting_user in event.wait_list:
+            if waiting_user.user == request.user:
+                on_wait_list = True
+                break
+        if not on_wait_list:
+            user = wait_list[0].user
+            email_message = _(u"""
+Du har stått på venteliste for arrangementet "%s" og har nå fått plass.
+Det kreves ingen ekstra handling fra deg med mindre du vil melde deg av.
+
+For mer info:
+http://%s%s
+""") % (event.title, request.META['HTTP_HOST'], event.get_absolute_url())
+            send_mail(_(u'Du har fått plass på et arrangement'), email_message, settings.DEFAULT_FROM_EMAIL, [user.get_email().email])
     attendance_event = event.attendance_event
 
     # Check if the deadline for unattending has passed
