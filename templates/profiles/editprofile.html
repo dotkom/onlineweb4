@@ -1,17 +1,18 @@
 {% load gravatar_url_resolver %}
 {% load crispy_forms_tags %}
 <div class="row">
-    <form method="post" action="{% url 'save_user_profile' %}" enctype="multipart/form-data">
-        <div class="col-md-12">
-            {% csrf_token %}
-            <div class="row">
-                <div class="col-md-6 col-sm-5">
-                    <div class="row row-space">
-                        <div class="col-md-12">
-                            <h3>Personlig informasjon</h3>
-                        </div>
+    
+    <div class="col-md-12">
+        <div class="row">
+            <div class="col-md-6 col-sm-5">
+                <div class="row row-space">
+                    <div class="col-md-12">
+                        <h3>Personlig informasjon</h3>
                     </div>
+                </div>
+                <form method="post" action="{% url 'save_user_profile' %}" enctype="multipart/form-data">
                     <div class="row row-space">
+                    {% csrf_token %}
                 {% for field in user_profile_form %}
                     {% ifnotequal field.name 'image' %}
                         <div class="inline">
@@ -29,31 +30,60 @@
                             <button class="btn btn-success pull-right" type="submit">Lagre brukerinformasjon</button>
                         </div>
                     </div>
+                </form>
+                <div class="row row-space">
+                    <div class="col-md-12">
+                        <h3>Posisjoner</h3>
+                        <p class="">
+                            Her kan du registrere verv du har hatt i linjeforeningen Online.
+                            En periode kan være på opptil et år. F.eks. fra høsten 2013 til våren 2014 vil skrives '2013-2014'.
+                        </p>
+                    </div>
                 </div>
-                <div class="col-md-5 col-sm-4">
+                <form action="{% url 'save_position' %}" method="post">
+                    <div class="row row-space">
+                        {% csrf_token %}
+                        {% for field in position_form %}
+                            <div class="inline">
+                                <div class="col-md-4">{{ field.label }}</div>
+                                <div class="col-md-8" style="margin-bottom:5px;">
+                                    {{ field }}
+                                    {{ field.errors }}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
                     <div class="row row-space">
                         <div class="col-md-12">
-                            <h3 class="header-inline">Bilde</h3>
-                            <i id="image-help"
-                               class="glyphicon glyphicon-info-sign"
-                               href="#"
-                               data-toggle="popover"
-                               title="Hjelpeinformasjon"
-                               data-content="Vi henter bilder fra Gravatar! For å få hentet bildet ditt må din
-                               primære epost-adresse være en epost-adresse du har registrert på Gravatar. Konto kan
-                               registreres på https://gravatar.com."
-                               data-original-title="Hjelpeinformasjon">
-                            </i>
+                            <input class="btn btn-success pull-right" type="submit" name="submit" value="Legg til stilling" />
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col-md-12">
-                            {% gravatar_url request.user 286 as gravatar_url %}
-                            <img class="img-thumbnail" src="{{ gravatar_url }}">
-                        </div>
+                </form>
+
+            </div>
+            <div class="col-md-5 col-sm-4">
+                <div class="row row-space">
+                    <div class="col-md-12">
+                        <h3 class="header-inline">Bilde</h3>
+                        <i id="image-help"
+                           class="glyphicon glyphicon-info-sign"
+                           href="#"
+                           data-toggle="popover"
+                           title="Hjelpeinformasjon"
+                           data-content="Vi henter bilder fra Gravatar! For å få hentet bildet ditt må din
+                           primære epost-adresse være en epost-adresse du har registrert på Gravatar. Konto kan
+                           registreres på https://gravatar.com."
+                           data-original-title="Hjelpeinformasjon">
+                        </i>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        {% gravatar_url request.user 286 as gravatar_url %}
+                        <img class="img-thumbnail" src="{{ gravatar_url }}">
                     </div>
                 </div>
             </div>
         </div>
-    </form>
+    </div>
 </div>

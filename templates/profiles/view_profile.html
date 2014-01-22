@@ -24,7 +24,7 @@
 						<b>Klassetrinn</b><br />{{ user.year }}
 					</div>
 				</div>
-				<div class="row" style="margin-bottom:40px;">
+				<div class="row" style="margin-bottom:20px;">
 			    	<div class="col-md-4">
 						<b>Adresse</b><br />{{ user.address }}<br />{{ user.zip_code }}
 					</div>
@@ -35,9 +35,25 @@
 						<b>Kallenavn</b><br />{{ user.nickname }}
 					</div>
 				</div>
+				<div class="row" style="margin-bottom:40px;">
+					<div class="col-md-12" style="margin-bottom:10px;">
+						<b>Posisjoner</b>
+					</div>
+					{% if not user.positions.all %}
+						<div class="col-md-12">
+							<em>Ingen posisjoner registrert...</em>
+						</div>
+					{% else %}
+						{% for position in user.positions.all %}
+							<div class="col-md-12">
+								{{ position.period }}: {{ position.get_position_display }}, {{ position.get_committee_display }}
+							</div>
+						{% endfor %}
+					{% endif %}
+				</div>
 				<div class="row">
 					<div class="col-md-3">
-						<a href="{% url 'profiles' %}" class="btn btn-primary"><i class="glyphicon glyphicon-chevron-left"></i> Tilbake til min profil</a>
+						<a href="{% url 'profiles' %}" class="btn btn-primary"><i class="glyphicon glyphicon-chevron-left"></i> Tilbake til min side</a>
 					</div>
 				</div>
 			</div>
