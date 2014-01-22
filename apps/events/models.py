@@ -394,6 +394,7 @@ class AttendanceEvent(models.Model):
     max_capacity = models.PositiveIntegerField(_(u'maks-kapasitet'), null=False, blank=False)
     waitlist = models.BooleanField(_(u'venteliste'), default=False)
     registration_start = models.DateTimeField(_(u'registrerings-start'), null=False, blank=False)
+    unattend_deadline = models.DateTimeField(_(u'avmeldings-frist'), null=False, blank=False) 
     registration_end = models.DateTimeField(_(u'registrerings-slutt'), null=False, blank=False)
 
     #Access rules
