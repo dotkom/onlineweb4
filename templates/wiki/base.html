@@ -39,7 +39,11 @@
                     {% endfor %}
                 {% endif %}
 
-                {% block wiki_breadcrumbs %}{% endblock %}
+                {% block wiki_breadcrumbs %}
+                    <ul id="article-menu" class="nav nav-pills pull-right">
+              {% include "wiki/includes/article_menu.html" %}
+            </ul>
+                {% endblock %}
 
                 {% block wiki_contents %}{% endblock %}
             </div>
