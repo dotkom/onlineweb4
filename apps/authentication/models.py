@@ -37,6 +37,28 @@ GENDER_CHOICES = [
     ("female", _(u"kvinne")),
 ]
 
+COMMITTEES = [
+    ('hs', _(u'Hovedstyret')),
+    ('arrkom', _(u'Arrangementskomiteen')),
+    ('bankom', _(u'Bank- og økonomikomiteen')),
+    ('bedkom', _(u'Bedriftskomiteen')),
+    ('dotkom', _(u'Drifts- og utviklingskomiteen')),
+    ('ekskom', _(u'Ekskursjonskomiteen')),
+    ('fagkom', _(u'Fag- og kurskomiteen')),
+    ('jubkom', _(u'Jubileumskomiteen')),
+    ('pangkom', _(u'Pensjonistkomiteen')),
+    ('prokom', _(u'Profil-og aviskomiteen')),
+    ('trikom', _(u'Trivselskomiteen')),
+    ('velkom', _(u'Velkomstkomiteen')),
+]
+
+POSITIONS = [
+    ('medlem', _(u'Medlem')),
+    ('leder', _(u'Leder')),
+    ('nestleder', _(u'Nestleder')),
+    ('okonomiansvarlig', _(u'Økonomiansvarlig')),
+]
+
 class OnlineUser(AbstractUser):
 
     IMAGE_FOLDER = "images/profiles"
@@ -237,17 +259,14 @@ class Position(models.Model):
     """
     Contains a users position in the organization from a given year
     """
-    start_year = models.CharField(_(u'startår'), max_length=4, blank=False)
-    end_year   = models.CharField(_(u'sluttår'), max_length=4, blank=True)
-    present    = models.BooleanField(_(u'jeg har denne posisjonen nå'), default=False, blank=True)
-    committee  = models.CharField(_(u'komite'), max_length=100, blank=False)
-    position   = models.CharField(_(u'stilling'), max_length=100, blank=False)
+    period     = models.CharField(_(u'periode'), max_length=9, default="2013-2014", blank=False)
+    committee  = models.CharField(_(u"komite"), max_length=10, choices=COMMITTEES, default="hs")
+    position   = models.CharField(_(u"stilling"), max_length=10, choices=POSITIONS, default="medlem")
     user       = models.ForeignKey(OnlineUser, related_name='positions', blank=False)
 
     @property
     def print_string(self):
-        ending = self.end_year if self.end_year else u'Nå'
-        return '%s-%s: %s(%s)' % (self.start_year, ending, self.committee, self.position)
+        return '%s: %s(%s)' % (self.period, self.committee, self.position)
 
     def __unicode__(self):
         return self.print_string
