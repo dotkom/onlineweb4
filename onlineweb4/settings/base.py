@@ -131,6 +131,10 @@ INSTALLED_APPS = (
     'django.contrib.humanize',
     'django_nose',
     'south',
+    'django_notify', # Wiki
+    'mptt', # Wiki
+    'sekizai', # Wiki
+    'sorl.thumbnail', # Wiki
     'grappelli',
     'filebrowser',
     'chunks',
@@ -143,6 +147,13 @@ INSTALLED_APPS = (
     'watson',
     'gunicorn',
     'markdown_deux',
+    
+    # Wiki
+    'wiki',
+    'wiki.plugins.attachments',
+    'wiki.plugins.notifications',
+    'wiki.plugins.images',
+    'wiki.plugins.macros',
 
     # Django apps
     'django.contrib.admin',
@@ -229,6 +240,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "django.core.context_processors.static",
     "django.core.context_processors.tz",
     "django.contrib.messages.context_processors.messages",
+    "sekizai.context_processors.sekizai", # Wiki
     "onlineweb4.context_processors.analytics",
 )
 
