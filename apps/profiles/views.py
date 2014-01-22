@@ -380,7 +380,7 @@ def search_for_users(query, limit=10):
 
     results = []
 
-    for result in watson.search(query, models=(User.objects.all(),)):
+    for result in watson.search(query, models=(User.objects.filter(privacy__visible_for_other_users=True),)):
         results.append(result.object)
 
     return results[:limit]
@@ -388,7 +388,9 @@ def search_for_users(query, limit=10):
 
 @login_required
 def view_profile(request, username):
-    print username
     user = get_object_or_404(User, username=username)
-    print user
-    return render(request, 'profiles/view_profile.html', {'user': user})
+    if user.privacy.visible_for_other_users or user == request.user:
+        return render(request, 'profiles/view_profile.html', {'user': user})
+
+    messages.error(request, _(u'Du har ikke tilgang til denne profilen'))
+    return redirect('profiles')
