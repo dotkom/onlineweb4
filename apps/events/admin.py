@@ -41,7 +41,7 @@ class AttendanceEventAdmin(admin.ModelAdmin):
 
 class AttendeeAdmin(admin.ModelAdmin):
     model = Attendee
-    list_display = ('user', 'event')
+    list_display = ('user', 'event', 'paid')
 
 
 class CompanyEventAdmin(admin.ModelAdmin):
