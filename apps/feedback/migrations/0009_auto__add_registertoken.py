@@ -1,25 +1,27 @@
 # -*- coding: utf-8 -*-
 import datetime
-import uuid
-
 from south.db import db
-from south.v2 import DataMigration
+from south.v2 import SchemaMigration
 from django.db import models
 
-class Migration(DataMigration):
+
+class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        for fbr in orm.FeedbackRelation.objects.all():
-            if len(fbr.registertoken_set.all()) < 1:
-                token = uuid.uuid4().hex
-                rt = RegisterToken(fbr = self, token = token)
-                rt.save()
+        # Adding model 'RegisterToken'
+        db.create_table(u'feedback_registertoken', (
+            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('fbr', self.gf('django.db.models.fields.related.ForeignKey')(related_name='Feedback_relation', to=orm['feedback.FeedbackRelation'])),
+            ('token', self.gf('django.db.models.fields.CharField')(max_length=32)),
+            ('created', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
+        ))
+        db.send_create_signal(u'feedback', ['RegisterToken'])
 
-        "Write your forwards methods here."
-        # Note: Remember to use orm['appname.ModelName'] rather than "from appname.models..."
 
     def backwards(self, orm):
-        "Write your backwards methods here."
+        # Deleting model 'RegisterToken'
+        db.delete_table(u'feedback_registertoken')
+
 
     models = {
         u'auth.group': {
@@ -134,4 +136,3 @@ class Migration(DataMigration):
     }
 
     complete_apps = ['feedback']
-    symmetrical = True
