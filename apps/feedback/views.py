@@ -12,7 +12,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import SafeString
 
-from apps.feedback.models import FeedbackRelation, FieldOfStudyAnswer, RATING_CHOICES, TextAnswer
+from apps.feedback.models import FeedbackRelation, FieldOfStudyAnswer, RATING_CHOICES, TextAnswer, RegisterToken
 from apps.feedback.forms import create_answer_forms
 
 def feedback(request, applabel, appmodel, object_id, feedback_id):
@@ -48,6 +48,17 @@ def feedback(request, applabel, appmodel, object_id, feedback_id):
 
 @staff_member_required
 def result(request, applabel, appmodel, object_id, feedback_id):
+    return feedback_results(request, applabel, appmodel, object_id, feedback_id)
+
+def results_token(request, applabel, appmodel, object_id, feedback_id,  token):
+    rt = get_object_or_404(RegisterToken, token = token)
+
+    if rt.is_valid:
+        return feedback_results(request, applabel, appmodel, object_id, feedback_id)
+    else:
+        raise Http404
+
+def feedback_results(request, applabel, appmodel, object_id, feedback_id):
     fbr = _get_fbr_or_404(applabel, appmodel, object_id, feedback_id)
 
     Qa = namedtuple("Qa", "question, answers")
@@ -55,11 +66,28 @@ def result(request, applabel, appmodel, object_id, feedback_id):
 
     for q in fbr.questions:
         question_and_answers.append(Qa(q, fbr.answers_to_question(q)))
+    
+    rt = get_object_or_404(RegisterToken, fbr = fbr)
+
+    token_url = u"%s%sresults/%s" % (request.META['HTTP_HOST'], fbr.get_absolute_url(), rt.token)
         
     return render(request, 'feedback/results.html',{'question_and_answers': question_and_answers, 
-        'description': fbr.description})
+        'description': fbr.description, 'token_url' : token_url})
+
 
 @staff_member_required
+def chart_data(request, applabel, appmodel, object_id, feedback_id):
+    return get_chart_data(request, applabel, appmodel, object_id, feedback_id)
+
+def chart_data_token(request, applabel, appmodel, object_id, feedback_id, token):
+    print "derp"
+    rt = get_object_or_404(RegisterToken, token = token)
+
+    if rt.is_valid:
+        return get_chart_data(request, applabel, appmodel, object_id, feedback_id)
+    else:
+        raise Http404
+
 def get_chart_data(request, applabel, appmodel, object_id, feedback_id):
     fbr = _get_fbr_or_404(applabel, appmodel, object_id, feedback_id)
     
@@ -87,6 +115,7 @@ def get_chart_data(request, applabel, appmodel, object_id, feedback_id):
    
     return HttpResponse(simplejson.dumps(answer_collection), mimetype='application/json')
 
+
 @staff_member_required
 def index(request):
     feedbacks = FeedbackRelation.objects.all()
@@ -100,7 +129,6 @@ def delete_answer(request):
         answer.delete()
         return HttpResponse(status = 200)
     return HttpResponse(status=404)
-
 
 def _get_fbr_or_404(app_label, app_model, object_id, feedback_id):
     """

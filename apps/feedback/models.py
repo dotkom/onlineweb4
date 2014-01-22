@@ -9,6 +9,8 @@ An Answer is related to an Object and a Question.
 This implementation is not very database friendly however, as it does
 very many database lookups.
 '''
+import uuid
+
 from django.db import models
 from django.utils.translation import ugettext as _
 from django.contrib.contenttypes.models import ContentType
@@ -120,6 +122,14 @@ class FeedbackRelation(models.Model):
             return self.content_object.feedback_date()
         else:
             False
+
+    def save(self, *args, **kwargs):
+        new_fbr = not self.pk
+        super(FeedbackRelation, self).save(*args, **kwargs)
+        if new_fbr:
+            token = uuid.uuid4().hex
+            rt = RegisterToken(fbr = self, token = token)
+            rt.save()
 
 class Feedback(models.Model):
     """
@@ -234,3 +244,17 @@ class RatingAnswer(models.Model):
     @property
     def order(self):
         return self.question.order
+
+#For creating a link for others(companies) to see the results page
+class RegisterToken(models.Model):
+    fbr = models.ForeignKey(FeedbackRelation, related_name="Feedback_relation")
+    token = models.CharField(_(u"token"), max_length=32)
+    created = models.DateTimeField(_(u"opprettet dato"), editable=False, auto_now_add=True)
+
+    @property
+    def is_valid(self):
+        return True
+        
+        #valid_period = datetime.timedelta(days=365)#1 year
+        #now = timezone.now()
+        #return now < self.created + valid_period
