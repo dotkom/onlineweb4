@@ -5,6 +5,9 @@ from django.contrib import admin
 from django.http import HttpResponse
 from django.views.generic import TemplateView
 
+from wiki.urls import get_pattern as get_wiki_pattern
+from django_notify.urls import get_pattern as get_notify_pattern
+
 from apps import mommy
 
 from filebrowser.sites import site
