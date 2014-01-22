@@ -171,7 +171,7 @@ class EventTest(TestCase):
     def testFutureAccessTrumpsOffset(self):
         self.logger.debug("Testing restriction with group rules.")
         
-        # Create two different rules, and verify that the response is false, but without offset
+        # Create two different rules, and verify that the response is true, but without offset
         # Group rule
         self.group = G(Group, name="Testgroup")
         self.grouprule = G(UserGroupRule, group=self.group, offset=0)
@@ -189,4 +189,4 @@ class EventTest(TestCase):
         self.attendance_event.registration_start = self.now + datetime.timedelta(hours=1)
         response = self.event.is_eligible_for_signup(self.user)
         self.assertFalse(response['status'])
-        self.assertEqual(402, response['status_code'])
+        self.assertEqual(504, response['status_code'])

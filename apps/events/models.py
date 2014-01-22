@@ -118,6 +118,11 @@ class Event(models.Model):
             response['message'] = _(u'Påmeldingen er ikke lenger åpen.')
             response['status_code'] = 502 
             return response
+
+        if timezone.now() < self.attendance_event.registration_start:
+            response['message'] = _(u'Påmeldingen har ikke åpnet enda.')
+            response['status_code'] = 504
+            return response
         
         #Room for me on the event?
         if not self.attendance_event.room_on_event:
