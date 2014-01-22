@@ -33,13 +33,13 @@
 		</div>
 		<div class="row" style="margin-bottom:20px;">
 	    	<div class="col-md-4">
-				<b>Adresse</b><br />{{ user.address }}<br />{{ user.zip_code }}
+				<b>Adresse</b><br />{% if user.address %}{{ user.address }}<br />{{ user.zip_code }}{% else %}Ikke tilgjengelig{% endif %}
 			</div>
 			<div class="col-md-4">
-				<b>Telefonnummer</b><br />{{ user.phone_number }}
+				<b>Telefonnummer</b><br />{% firstof user.phone_number 'Ikke tilgjengelig' %}
 			</div>
 			<div class="col-md-4">
-				<b>Kallenavn</b><br />{{ user.nickname }}
+				<b>Kallenavn</b><br />{% firstof user.nickname 'Ikke tilgjengelig' %}
 			</div>
 		</div>
 		<div class="row" style="margin-bottom:40px;">
