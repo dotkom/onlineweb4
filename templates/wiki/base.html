@@ -1,6 +1,7 @@
-{% extends 'base.html' %}
+{% extends 'wiki_base.html' %}
 
-{% load sekizai_tags i18n wiki_tags %}
+{% load sekizai_tags %}
+{% load i18n wiki_tags %}
 {% load url from future %}
 {% load compress %}
 
@@ -8,22 +9,10 @@
 {% block wiki_pagetitle %}{% endblock %}
 {% endblock title %}
 
-{% block styles %}
-    {{ block.super }}
-    <link rel="stylesheet" type="text/less" href="{{ STATIC_URL }}wiki/bootstrap/css/wiki-bootstrap.min.css">
-    {% compress css %}
-    <link rel="stylesheet" type="text/less" href="{{ STATIC_URL }}less/wiki.less">
-    {% endcompress %}
-{% endblock %}
-
-{% block js %}
-    {{ block.super }}
-    <script src="{{ STATIC_URL }}wiki/js/jquery.min.js"></script>
-    <script src="{{ STATIC_URL }}wiki/js/core.js"></script>
-    <script src="{{ STATIC_URL }}wiki/bootstrap/js/bootstrap.min.js"></script>
-    <!-- Optionally enable responsive features in IE8 -->
-    <script src="{{ STATIC_URL }}wiki/js/respond.min.js"></script>
-{% endblock %}
+{% addtoblock "css" %}
+<link href="{{ STATIC_URL }}wiki/bootstrap/css/wiki-bootstrap.min.css" rel="stylesheet">
+<!--[if lt IE 9]><script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+{% endaddtoblock %}
 
 {% block content %}
     <section id="wiki">
@@ -40,9 +29,6 @@
                 {% endif %}
 
                 {% block wiki_breadcrumbs %}
-                    <ul id="article-menu" class="nav nav-pills pull-right">
-              {% include "wiki/includes/article_menu.html" %}
-            </ul>
                 {% endblock %}
 
                 {% block wiki_contents %}{% endblock %}
