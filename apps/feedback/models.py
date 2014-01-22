@@ -123,9 +123,9 @@ class FeedbackRelation(models.Model):
         else:
             False
 
-    def save(self):
+    def save(self, *args, **kwargs):
         new_fbr = not self.pk
-        super(FeedbackRelation, self).save()
+        super(FeedbackRelation, self).save(*args, **kwargs)
         if new_fbr:
             token = uuid.uuid4().hex
             rt = RegisterToken(fbr = self, token = token)
