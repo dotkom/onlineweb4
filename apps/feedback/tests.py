@@ -32,7 +32,13 @@ class SimpleTest(TestCase):
         user2 = User.objects.create(username="user2")
         Email.objects.create(user = user2, email="user2@gmail.com", primary=True)
         event = Event.objects.create(title="Bedpress", event_start = timezone.now(), event_end = timezone.now(), event_type = 2, author = user1)
-        attendance_event = AttendanceEvent.objects.create(registration_start = timezone.now(), registration_end = timezone.now(), event = event, max_capacity=30)
+        attendance_event = AttendanceEvent.objects.create(
+                                                        registration_start = timezone.now(), 
+                                                        unattend_deadline = timezone.now(), 
+                                                        registration_end = timezone.now(), 
+                                                        event = event, 
+                                                        max_capacity=30
+                                                        )
         feedback = Feedback.objects.create(author = user1)
         TextQuestion.objects.create(feedback = feedback)
         RatingQuestion.objects.create(feedback = feedback)
