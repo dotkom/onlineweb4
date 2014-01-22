@@ -486,6 +486,7 @@ class Attendee(models.Model):
 
     timestamp = models.DateTimeField(auto_now_add=True, editable=False)
     attended = models.BooleanField(_(u'var tilstede'), default=False)
+    paid = models.BooleanField(_(u'har betalt'), default=False)
 
     def __unicode__(self):
         return self.user.get_full_name()
