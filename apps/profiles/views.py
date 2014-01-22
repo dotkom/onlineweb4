@@ -22,7 +22,7 @@ from apps.authentication.models import Email, RegisterToken
 from apps.authentication.models import OnlineUser as User
 from apps.marks.models import Mark
 from apps.profiles.forms import (MailSettingsForm, PrivacyForm,
-                                ProfileForm, MembershipSettingsForm)
+                                ProfileForm, MembershipSettingsForm, PositionForm)
 from utils.shortcuts import render_json
 
 """
@@ -63,6 +63,7 @@ def _create_request_dictionary(request):
         'users' : users_to_display,
         'groups' : groups,
         'user' : request.user,
+        'position_form' : PositionForm(),
         'privacy_form' : PrivacyForm(instance=request.user.privacy),
         'user_profile_form' : ProfileForm(instance=request.user),
         'password_change_form' : PasswordChangeForm(request.user),
@@ -162,6 +163,24 @@ def savePassword(request):
         messages.success(request, _(u"Passordet ditt ble endret"))
 
     return redirect("profiles")
+
+@login_required
+def save_position(request):
+    if request.method == 'POST':
+
+        form = PositionForm(request.POST)
+        dict = _create_request_dictionary(request)
+        dict['position_form'] = form
+
+        if not form.is_valid():
+            messages.error(request, _(u'Skjemaet inneholder feil'))
+            return render(request, 'profiles/index.html', dict)
+
+        new_position = form.save(commit=False)
+        new_position.user = request.user
+        new_position.save()
+        messages.success(request, _(u'Posisjonen ble lagret'))
+        return redirect('profiles')
 
 
 @login_required
