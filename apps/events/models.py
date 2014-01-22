@@ -485,7 +485,7 @@ class Attendee(models.Model):
     user = models.ForeignKey(User)
 
     timestamp = models.DateTimeField(auto_now_add=True, editable=False)
-    attended = models.BooleanField(_(u'var tilstede'))
+    attended = models.BooleanField(_(u'var tilstede'), default=False)
 
     def __unicode__(self):
         return self.user.get_full_name()
