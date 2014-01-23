@@ -33,12 +33,11 @@ def run(**kwargs):
     """
     imports apscheduler, registers scheduled jobs, runs the scheduler
     """
-    if settings.FEEDBACK_MAIL_SCHEDULER:
-        from apscheduler.scheduler import Scheduler
+    from apscheduler.scheduler import Scheduler
 
-        sched = Scheduler(**kwargs)
+    sched = Scheduler(**kwargs)
 
-        for task, kwargs in schedule.tasks.iteritems():
-            sched.add_cron_job(task.run, name=task.__name__, **kwargs)
+    for task, kwargs in schedule.tasks.iteritems():
+        sched.add_cron_job(task.run, name=task.__name__, **kwargs)
 
-        sched.start() # main loop
+    sched.start() # main loop
