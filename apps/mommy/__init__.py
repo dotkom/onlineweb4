@@ -29,16 +29,16 @@ def autodiscover():
             if module_has_submodule(mod, 'mommy'):
                 raise
 
-def run():
+def run(**kwargs):
     """
     imports apscheduler, registers scheduled jobs, runs the scheduler
     """
     if settings.FEEDBACK_MAIL_SCHEDULER:
         from apscheduler.scheduler import Scheduler
 
-        # Start the scheduler
-        sched = Scheduler()
-        sched.start()
+        sched = Scheduler(**kwargs)
 
         for task, kwargs in schedule.tasks.iteritems():
             sched.add_cron_job(task.run, name=task.__name__, **kwargs)
+
+        sched.start() # main loop
