@@ -196,6 +196,4 @@ class Message():
             self.end)
         return message
 
-
-if settings.FEEDBACK_MAIL_SCHEDULER:
-    schedule.register(FeedbackMail, day_of_week='mon-sun', hour=8, minute=0)
+schedule.register(FeedbackMail, day_of_week='mon-sun', hour=8, minute=0)
