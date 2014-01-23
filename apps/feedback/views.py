@@ -81,6 +81,14 @@ def get_chart_data(request, applabel, appmodel, object_id, feedback_id):
     for answer in fos:
         answer_count[str(answer)] += 1
 
+    # TODO: Sigurd - dette må gjøres av noen
+    mc_answers = []
+    for q in [fbr.answers_to_question(q) for q in fbr.multiple_choice_question]:
+        for a in q:
+            mc_answers.append(a.answer)
+    answer_collection['replies']['mc'] = mc_answers
+    # TODO Sigurd END!
+
     answer_collection['replies']['ratings'] = rating_answers
     answer_collection['replies']['titles'] = rating_titles
     answer_collection['replies']['fos'] = answer_count.items()

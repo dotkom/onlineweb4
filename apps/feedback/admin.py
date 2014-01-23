@@ -4,6 +4,8 @@ from apps.feedback.models import Feedback
 from apps.feedback.models import FeedbackRelation
 from apps.feedback.models import TextQuestion
 from apps.feedback.models import RatingQuestion
+from apps.feedback.models import Choice
+from apps.feedback.models import MultipleChoiceQuestion
 
 
 from django.forms.models import ModelForm
@@ -48,11 +50,29 @@ class RatingInline(admin.StackedInline):
     inline_classes = ('grp-collapse grp-open',)  # style
     extra = 0
 
+class ChoiceInline(admin.StackedInline):
+    model = Choice
+    classes = ('grp-collapse grp-open',)  # style
+    inline_classes = ('grp-collapse grp-open',)  # style
+    extra = 0
+
+class MultipleChoiceAdmin(admin.ModelAdmin):
+    model = MultipleChoiceQuestion
+    inlines = (ChoiceInline, )
+    classes = ('grp-collapse grp-open',)  # style
+    inline_classes = ('grp-collapse grp-open',)  # style
+    extra = 0
+
+class MultipleChoiceInline(admin.TabularInline):
+    model = MultipleChoiceQuestion
+    classes = ('grp-collapse grp-open',)  # style
+    inline_classes = ('grp-collapse grp-open',)  # style
+    extra = 0
 
 class FeedbackAdmin(admin.ModelAdmin):
     list_display = ('description', 'author')
 
-    inlines = (TextInline, RatingInline)
+    inlines = (TextInline, RatingInline, MultipleChoiceInline)
     exclude = ('author',)
 
     def save_model(self, request, obj, form, change):
@@ -62,6 +82,7 @@ class FeedbackAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Feedback, FeedbackAdmin)
+admin.site.register(MultipleChoiceQuestion, MultipleChoiceAdmin)
 admin.site.register(FeedbackRelation, FeedbackRelationAdmin)
 
 
