@@ -16,7 +16,7 @@ Vagrant.configure('2') do |config|
 
             onlineweb_config.vm.provider :parallels do |v, prl|
                 onlineweb_config.vm.box = 'devbox'
-                onlineweb_config.vm.box_url = 'https://s3-eu-west-1.amazonaws.com/vagrant-parallels/devbox.box'
+                onlineweb_config.vm.box_url = 'https://s3-eu-west-1.amazonaws.com/vagrant-parallels/devbox-201312.box'
             end
 
             onlineweb_config.vm.network :forwarded_port, guest: 8000, host: 8001
