@@ -45,7 +45,7 @@ class SimpleTest(TestCase):
     def test_attendees(self):
         feedback_relation = FeedbackRelation.objects.get(pk=1)
         message = FeedbackMail.generate_message(feedback_relation)
-        user_mails = [str(user.get_email()) for user in User.objects.all()]
+        user_mails = [user.email for user in User.objects.all()]
 
         self.assertEqual(set(message.attended_mails), set(user_mails))
 
@@ -53,7 +53,7 @@ class SimpleTest(TestCase):
         feedback_relation.answered = [user1]
 
         message = FeedbackMail.generate_message(feedback_relation)
-        user_mails = [str(user.get_email()) for user in [User.objects.get(pk=2)]]
+        user_mails = [user.email for user in [User.objects.get(pk=2)]]
         self.assertEqual(set(message.attended_mails), set(user_mails))
 
         feedback_relation = FeedbackRelation.objects.get(pk=2)
