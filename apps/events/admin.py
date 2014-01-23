@@ -75,6 +75,7 @@ class AttendanceEventInline(admin.StackedInline):
 class EventAdmin(admin.ModelAdmin):
     inlines = (AttendanceEventInline, FeedbackRelationInline, CompanyInline)
     exclude = ("author", )
+    search_fields = ('title',)
 
     def save_model(self, request, obj, form, change):
         if not change:  # created

@@ -27,6 +27,7 @@ class OnlineUserAdmin(admin.ModelAdmin):
                                        'groups', 'user_permissions')}),
     )
     filter_horizontal = ('groups', 'user_permissions',)
+    search_fields = ('first_name', 'last_name', 'username', 'ntnu_username',)
 
 admin.site.register(OnlineUser, OnlineUserAdmin)
 
@@ -39,5 +40,6 @@ class AllowedUsernameAdmin(admin.ModelAdmin):
         (_(u'Notater'), {'fields': ('note', 'description')}),
 
     )
+    search_fields = ('username',)
 
 admin.site.register(AllowedUsername, AllowedUsernameAdmin)
