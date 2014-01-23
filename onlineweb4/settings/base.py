@@ -114,7 +114,7 @@ ROOT_URLCONF = 'onlineweb4.urls'
 WSGI_APPLICATION = 'onlineweb4.wsgi.application'
 
 TEMPLATE_DIRS = (
-    os.path.join(PROJECT_ROOT_DIRECTORY, 'templates/')
+    os.path.join(PROJECT_ROOT_DIRECTORY, 'templates/'),
 )
 
 # Pizzasystem settings
