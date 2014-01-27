@@ -20,18 +20,24 @@ from apps.feedback.admin import FeedbackRelationInline
 class AttendeeInline(admin.TabularInline):
     model = Attendee
     extra = 1
+    classes = ('grp-collapse grp-open',)  # style
+    inline_classes = ('grp-collapse grp-open',)  # style
 
 
 class CompanyInline(admin.TabularInline):
     model = CompanyEvent
     max_num = 20
     extra = 0
+    classes = ('grp-collapse grp-open',)  # style
+    inline_classes = ('grp-collapse grp-open',)  # style
 
 
 class RuleBundleInline(admin.TabularInline):
     model = RuleBundle
     extra = 1
     max_num = 20
+    classes = ('grp-collapse grp-open',)  # style
+    inline_classes = ('grp-collapse grp-open',)  # style
 
 
 class AttendanceEventAdmin(admin.ModelAdmin):
@@ -70,6 +76,8 @@ class AttendanceEventInline(admin.StackedInline):
     max_num = 1
     extra = 0
     filter_horizontal = ('rule_bundles',)
+    classes = ('grp-collapse grp-open',)  # style
+    inline_classes = ('grp-collapse grp-open',)  # style
 
 
 class EventAdmin(admin.ModelAdmin):
