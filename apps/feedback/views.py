@@ -7,6 +7,7 @@ from django.template import RequestContext
 from django.contrib.contenttypes.models import ContentType
 from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
+from django.contrib.auth.decorators import login_required
 from django.utils import simplejson
 from django.core.exceptions import ObjectDoesNotExist
 from django.utils.translation import ugettext_lazy as _
@@ -15,6 +16,7 @@ from django.utils.safestring import SafeString
 from apps.feedback.models import FeedbackRelation, FieldOfStudyAnswer, RATING_CHOICES, TextAnswer, RegisterToken
 from apps.feedback.forms import create_answer_forms
 
+@login_required
 def feedback(request, applabel, appmodel, object_id, feedback_id):
     fbr = _get_fbr_or_404(applabel, appmodel, object_id, feedback_id)
 
