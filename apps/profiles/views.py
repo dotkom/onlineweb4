@@ -187,7 +187,7 @@ def delete_position(request, position_id):
         position.delete()
         messages.success(request, _(u'Posisjonen ble slettet'))
     else:
-        messages.error(request, _(u'Du prøvde å slette en posisjon som ikke tilhørte deg selv. Fy.'))
+        messages.error(request, _(u'Du prøvde å slette en posisjon som ikke tilhørte deg selv.'))
     return redirect('profiles')
 
 
