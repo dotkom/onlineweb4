@@ -10,6 +10,7 @@ markdown2==2.2.0                # textarea text formatting
 psycopg2                        # Postgres adapter
 pytz                            # Timezone lib. Obsolete?
 gunicorn==18.0
+fabric                          # streamlines deployment
 
 # third party deps
 django-filebrowser==3.5.3 		# File uploading
