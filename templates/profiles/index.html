@@ -119,7 +119,7 @@ Min profil - Online
     <script type="text/javascript" src="{{ STATIC_URL }}js/libs/imagesloaded.pkgd.min.js"></script>
     {% endcompress %}
         <script type="text/javascript">
-
+        // Smart toggle function that we add to jQuery
         (function($) {
             $.fn.toggleDisabled = function(){
                 return this.each(function(){
@@ -144,15 +144,9 @@ Min profil - Online
                 },
                 template: user_search_template,
                 engine: Hogan
-            }).on('keydown', function (e, datum) {
-                /*console.log(datum);
-                if(e.keyCode == 13) {
-                    //window.location = '/profile/' + datum.username;
-                }*/
             }).on('typeahead:selected typeahead:autocompleted', function(e, datum) {
                 window.location = '/profile/' + datum.username;
             });
-
 
             $('#id_present').on('change', function () {
                 $('#id_end_year').toggleDisabled();
