@@ -5,22 +5,27 @@
 	<div class="col-md-10">
 		<p class="ingress">Velkommen til din side, {{ user.get_full_name}}.</p>
 		<p>Bruk menyen til venstre for å justere dine innstillinger. På denne siden vil det etterhvert komme mer hendig info.</p>
+		
 	</div>
 	<div class="col-md-2">
 		{% gravatar_url user 120 as gravatar_url %}
-        <img class="img-thumbnail" src="{{ gravatar_url }}" alt="" />
+        <img class="img-thumbnail dashboard-image" src="{{ gravatar_url }}" alt="" style="margin-bottom:20px" />
+        <a href="{% url 'profiles_view' user.username %}" class="btn btn-primary btn-sm pull-right official-link">
+			Offentlig profil 
+			<i class="glyphicon glyphicon-chevron-right"></i>
+		</a>
     </div>
 </div>
 <div class="row">
-	<div class="col-md-12">
+	<div class="col-md-12 ">
 		<div class="page-header">
 			<h4>Din profilinformasjon</h4>
-		</div>
+		</div>			
 	</div>
 </div>
 <div class="row">
 	<div class="col-md-12">
-		<div class="row" style="margin-bottom:20px;">
+		<div class="row attribute-list">
 			<div class="col-md-4">
 				<b>Navn</b><br />{{ user.get_full_name }}
 			</div>
@@ -31,7 +36,7 @@
 				<b>Klassetrinn</b><br />{{ user.year }}
 			</div>
 		</div>
-		<div class="row" style="margin-bottom:20px;">
+		<div class="row attribute-list">
 	    	<div class="col-md-4">
 				<b>Adresse</b><br />{% if user.address %}{{ user.address }}<br />{{ user.zip_code }}{% else %}Ikke tilgjengelig{% endif %}
 			</div>
@@ -42,8 +47,8 @@
 				<b>Kallenavn</b><br />{% firstof user.nickname 'Ikke tilgjengelig' %}
 			</div>
 		</div>
-		<div class="row" style="margin-bottom:40px;">
-			<div class="col-md-12" style="margin-bottom:10px;">
+		<div class="row row-space">
+			<div class="col-md-12">
 				<b>Posisjoner</b>
 			</div>
 			{% if not user.positions.all %}

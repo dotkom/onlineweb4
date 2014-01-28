@@ -1,6 +1,13 @@
 {% extends 'base.html'%}
 {% load gravatar_url_resolver %}
 {% load crispy_forms_tags %}
+{% load compress %}
+{% block styles %}
+    {{ block.super }}
+    {% compress css %}
+        <link rel="stylesheet" type="text/less" href="{{ STATIC_URL }}less/profiles.less" />
+    {% endcompress %}
+{% endblock %}
 {% block content %}
 <section id="mordi">
 	<div class="container">
@@ -13,7 +20,7 @@
 		</div>
 		<div class="row">
 			<div class="col-md-8">
-				<div class="row" style="margin-bottom:20px;">
+				<div class="row attribute-list">
 					<div class="col-md-4">
 						<b>Navn</b><br />{{ user.get_full_name }}
 					</div>
@@ -24,7 +31,7 @@
 						<b>Klassetrinn</b><br />{{ user.year }}
 					</div>
 				</div>
-				<div class="row" style="margin-bottom:20px;">
+				<div class="row attribute-list">
 			    	<div class="col-md-4">
 						<b>Adresse</b><br />
 						{% if user.privacy.expose_address %}
