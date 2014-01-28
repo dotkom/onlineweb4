@@ -3,17 +3,15 @@ import json
 import os
 import uuid
 
-from PIL import Image
-
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import Group
 from django.core.mail import send_mail
 from django.http import HttpResponse
 from django.shortcuts import redirect, render, get_object_or_404
 from django.utils.translation import ugettext as _
-from django.contrib.auth.models import Group
 
 import watson
 
