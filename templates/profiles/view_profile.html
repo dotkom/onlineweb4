@@ -26,13 +26,28 @@
 				</div>
 				<div class="row" style="margin-bottom:20px;">
 			    	<div class="col-md-4">
-						<b>Adresse</b><br />{% if user.address %}{{ user.address }}<br />{{ user.zip_code }}{% else %}Ikke tilgjengelig{% endif %}
+						<b>Adresse</b><br />
+						{% if user.privacy.expose_address %}
+							{% if user.address %}{{ user.address }}<br />{{ user.zip_code }}{% else %}Ikke tilgjenglig{% endif %}
+						{% else %}
+							Ikke tilgjengelig
+						{% endif %}
 					</div>
 					<div class="col-md-4">
-						<b>Telefonnummer</b><br />{% firstof user.phone_number 'Ikke tilgjengelig' %}
+						<b>Telefonnummer</b><br />
+						{% if user.privacy.expose_phone_number %}
+							{% firstof user.phone_number 'Ikke tilgjengelig' %}
+						{% else %}
+							Ikke tilgjengelig
+						{% endif %}
 					</div>
 					<div class="col-md-4">
-						<b>Kallenavn</b><br />{% firstof user.nickname 'Ikke tilgjengelig' %}
+						<b>Kallenavn</b><br />
+						{% if user.privacy.expose_nickname %}
+							{% firstof user.nickname 'Ikke tilgjengelig' %}
+						{% else %}
+							Ikke tilgjengelig
+						{% endif %}
 					</div>
 				</div>
 				<div class="row" style="margin-bottom:40px;">
