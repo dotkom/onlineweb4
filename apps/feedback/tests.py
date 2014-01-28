@@ -166,16 +166,23 @@ class SimpleTest(TestCase):
         response = client.get(feedback_relation.get_absolute_url() + 'results/')
         self.assertEqual(response.status_code, 200)
     '''
-    
-    def test_bad_urls(self):
+
+    def test_should_redirect(self): #login_required / not logged inn
         response = self.client.get("/feedback/events/event/100/1/")
+        self.assertEqual(response.status_code, 302)
+
+    def test_bad_urls(self):
+        client = Client()
+        client.login(username="user1", password="Herpaderp123")
+
+        response = client.get("/feedback/events/event/100/1/")
         self.assertEqual(response.status_code, 404)
 
-        response = self.client.get("/feedback/events/event/1/100/")
+        response = client.get("/feedback/events/event/1/100/")
         self.assertEqual(response.status_code, 404)
 
-        response = self.client.get("/feedback/events/event/100/100/")
+        response = client.get("/feedback/events/event/100/100/")
         self.assertEqual(response.status_code, 404)
 
-        response = self.client.get("/feedback/events/derp/1/1/")
+        response = client.get("/feedback/events/derp/1/1/")
         self.assertEqual(response.status_code, 404)
