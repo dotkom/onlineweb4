@@ -243,6 +243,28 @@ $(document).ready(function() {
             crossDomain: false
         });
     });
+
+    $(".delete-position").on('click', function(e) {
+        var that = $(this);
+        e.preventDefault();
+        $.ajax({
+            method: 'post',
+            url: '/profile/deleteposition/',
+            data: {'position_id' : $(this).data('position-id')},
+            success: function (res) {
+                var result = JSON.parse(res);
+                var utils = new Utils();
+                $(that).parent().remove();
+                utils.setStatusMessage(result['message'], 'alert-success');
+            },
+            error: function (res) {
+                var utils = new Utils();
+                var result = JSON.parse(res);
+                if(res['status'] === 500) {
+                    utils.setStatusMessage(result['message'], 'alert-danger');
+                }
+            },
+            crossDomain: false
+        });
+    });
 });
-
-

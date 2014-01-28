@@ -181,14 +181,20 @@ def save_position(request):
 
 
 @login_required
-def delete_position(request, position_id):
-    position = get_object_or_404(Position, pk=position_id)
-    if position.user == request.user:
-        position.delete()
-        messages.success(request, _(u'Posisjonen ble slettet'))
-    else:
-        messages.error(request, _(u'Du prøvde å slette en posisjon som ikke tilhørte deg selv.'))
-    return redirect('profiles')
+def delete_position(request):
+    if request.is_ajax():
+        if request.method == 'POST':
+            position_id = request.POST.get('position_id')
+            print position_id
+            position = get_object_or_404(Position, pk=position_id)
+            if position.user == request.user:
+                position.delete()
+                return_status = json.dumps({'message': _(u"Posisjonen ble slettet.")})
+                return HttpResponse(status=200, content=return_status)
+            else:
+                return_status = json.dumps({'message': _(u"Du prøvde å slette en posisjon som ikke tilhørte deg selv.")})
+            return HttpResponse(status=500, content=return_status)
+        return HttpResponse(status=404)
 
 
 @login_required
