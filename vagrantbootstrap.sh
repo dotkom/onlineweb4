@@ -81,7 +81,7 @@ function install_onlineweb_requirements() {
     echo "installing onlineweb requirements"
     workon onlineweb
     cd /vagrant
-    progress pip install -r requirements.txt
+    progress pip install -U -r requirements.txt
 }
 
 function install_lessc() {

@@ -5,16 +5,10 @@ from django.contrib import admin
 from django.http import HttpResponse
 from django.views.generic import TemplateView
 
-from apps import mommy
-
 from filebrowser.sites import site
 
 # URL config
 admin.autodiscover()
-
-# Mommy config
-mommy.autodiscover()
-mommy.run()
 
 urlpatterns = patterns('',
     # Filebrowser must be above all admin-urls

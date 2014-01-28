@@ -20,18 +20,24 @@ from apps.feedback.admin import FeedbackRelationInline
 class AttendeeInline(admin.TabularInline):
     model = Attendee
     extra = 1
+    classes = ('grp-collapse grp-open',)  # style
+    inline_classes = ('grp-collapse grp-open',)  # style
 
 
 class CompanyInline(admin.TabularInline):
     model = CompanyEvent
     max_num = 20
     extra = 0
+    classes = ('grp-collapse grp-open',)  # style
+    inline_classes = ('grp-collapse grp-open',)  # style
 
 
 class RuleBundleInline(admin.TabularInline):
     model = RuleBundle
     extra = 1
     max_num = 20
+    classes = ('grp-collapse grp-open',)  # style
+    inline_classes = ('grp-collapse grp-open',)  # style
 
 
 class AttendanceEventAdmin(admin.ModelAdmin):
@@ -41,7 +47,7 @@ class AttendanceEventAdmin(admin.ModelAdmin):
 
 class AttendeeAdmin(admin.ModelAdmin):
     model = Attendee
-    list_display = ('user', 'event')
+    list_display = ('user', 'event', 'paid')
 
 
 class CompanyEventAdmin(admin.ModelAdmin):
@@ -70,11 +76,14 @@ class AttendanceEventInline(admin.StackedInline):
     max_num = 1
     extra = 0
     filter_horizontal = ('rule_bundles',)
+    classes = ('grp-collapse grp-open',)  # style
+    inline_classes = ('grp-collapse grp-open',)  # style
 
 
 class EventAdmin(admin.ModelAdmin):
     inlines = (AttendanceEventInline, FeedbackRelationInline, CompanyInline)
     exclude = ("author", )
+    search_fields = ('title',)
 
     def save_model(self, request, obj, form, change):
         if not change:  # created
@@ -89,12 +98,9 @@ class EventAdmin(admin.ModelAdmin):
 
     def get_form(self, request, obj=None, **kwargs):
         form = super(EventAdmin, self).get_form(request, obj, **kwargs)
-        form.base_fields['ingress_short'].validators=[validators.MinLengthValidator(75)]
-        form.base_fields['ingress'].validators=[validators.MinLengthValidator(100)]
-        form.base_fields['description'].validators=[
-                                                    validators.MinLengthValidator(200),
-                                                    validators.RegexValidator("^(?:(?!TBA).)*$", _("Beskrivelsen kan ikke inneholde 'TBA'."), "ulovlig"),
-                                                    ]
+        form.base_fields['ingress_short'].validators=[validators.MinLengthValidator(50)]
+        form.base_fields['ingress'].validators=[validators.MinLengthValidator(75)]
+        form.base_fields['description'].validators=[validators.MinLengthValidator(140)]
         return form
 
 admin.site.register(Event, EventAdmin)

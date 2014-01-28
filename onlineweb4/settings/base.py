@@ -29,8 +29,6 @@ EMAIL_DOTKOM = 'dotkom@online.ntnu.no'
 EMAIL_FAGKOM = 'fagkom@online.ntnu.no'
 EMAIL_PROKOM = 'prokom@online.ntnu.no'
 EMAIL_TRIKOM = 'trikom@online.ntnu.no'
-# Whether or not django should start the scheduler for feedback mails
-FEEDBACK_MAIL_SCHEDULER = True
 
 # We will receive errors and other django messages from this email
 SERVER_EMAIL = 'onlineweb4-error@online.ntnu.no'
@@ -116,7 +114,7 @@ ROOT_URLCONF = 'onlineweb4.urls'
 WSGI_APPLICATION = 'onlineweb4.wsgi.application'
 
 TEMPLATE_DIRS = (
-    os.path.join(PROJECT_ROOT_DIRECTORY, 'templates/')
+    os.path.join(PROJECT_ROOT_DIRECTORY, 'templates/'),
 )
 
 # Pizzasystem settings
@@ -142,12 +140,12 @@ INSTALLED_APPS = (
     'pdfdocument',
     'watson',
     'gunicorn',
+    'markdown_deux',
 
     # Django apps
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
-    'django.contrib.markup',
     'django.contrib.messages',
     'django.contrib.sessions',
     'django.contrib.sites',

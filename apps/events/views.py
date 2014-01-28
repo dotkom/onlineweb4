@@ -60,6 +60,7 @@ def details(request, event_id, event_slug):
 
     if is_attendance_event:
         context = {
+                'now': timezone.now(),
                 'event': event,
                 'attendance_event': attendance_event,
                 'user_anonymous': user_anonymous,
@@ -121,6 +122,12 @@ def unattendEvent(request, event_id):
 
     event = get_object_or_404(Event, pk=event_id)
     attendance_event = event.attendance_event
+
+    # Check if the deadline for unattending has passed
+    if attendance_event.unattend_deadline < timezone.now():
+        messages.error(request, _(u"Avmeldingsfristen for dette arrangementet har utløpt."))
+        return redirect(event)
+    
     Attendee.objects.get(event=attendance_event, user=request.user).delete()
 
     messages.success(request, _(u"Du ble meldt av arrangementet."))

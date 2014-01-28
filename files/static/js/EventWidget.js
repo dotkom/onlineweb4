@@ -38,7 +38,7 @@ function EventWidget (Utils){
                             }
                         }
                         else {
-                            if (index - 2 < (data.events.length - 2) / 2) {
+                            if (index % 2 == 0) {
                                 var htmlItem = createEventListitem(this);
                                 $(col1).append($(htmlItem)[0]);
                             }

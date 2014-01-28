@@ -132,7 +132,7 @@ class FeedbackMail(Task):
 
     @staticmethod
     def get_user_mails(not_responded):
-        return  [str(user.get_email()) for user in not_responded]
+        return  [user.email for user in not_responded]
 
     @staticmethod
     def get_link(feedback):
@@ -196,6 +196,4 @@ class Message():
             self.end)
         return message
 
-
-if settings.FEEDBACK_MAIL_SCHEDULER:
-    schedule.register(FeedbackMail, day_of_week='mon-sun', hour=8, minute=0)
+schedule.register(FeedbackMail, day_of_week='mon-sun', hour=8, minute=0)

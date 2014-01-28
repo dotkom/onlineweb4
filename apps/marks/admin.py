@@ -13,6 +13,7 @@ class UserEntryInline(admin.TabularInline):
 
 class MarkAdmin(admin.ModelAdmin):
     inlines = (UserEntryInline,)
+    search_fields = ('title',)
 
     def save_model(self, request, obj, form, change):
         if not change:

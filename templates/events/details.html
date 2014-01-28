@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% load fb_versions %}
-{% load markup %}
+{% load markdown_deux_tags %}
 {% load crispy_forms_tags %}
 {% load group_membership %}
 
@@ -82,13 +82,12 @@
                                         {% endif %}
                                     </div>
                                     <div class="col-xs-12 col-sm-4 col-md-4">
-                                        <div class="event-hero-title">Påmeladingsstart</div>
+                                        <div class="event-hero-title">Påmeldingsstart</div>
                                         <div class="event-hero-large-text">
                                             <div class="event-hero-large-text">
                                                 <span class="break">{{ attendance_event.registration_start|date:"H.i" }}</span>
                                                 <span class="date-small">{{ attendance_event.registration_start|date:"d. M Y" }}</span>
                                             </div>
-                                            <!-- <a href="#captcha" role="button" class="btn btn-success" data-toggle="modal">Meld meg på</a> -->
                                         </div>
                                     </div>
                                 </div>
@@ -111,7 +110,9 @@
                             {% else %}
                                 <p class="status-text">Du er meldt på dette arrangementet.</p>
                             {% endif %}
-                            <div class="action"><a href="#unattend" role="button" class="btn btn-large btn-danger" data-toggle="modal">Meld meg av</a></div>
+                            {% if attendance_event.unattend_deadline > now %}
+                                <div class="action"><a href="#unattend" role="button" class="btn btn-large btn-danger" data-toggle="modal">Meld meg av</a></div>
+                            {% endif %}
                         {% else %}
                             {% if user_status.status %}
                                 {% if will_be_on_wait_list %}
@@ -140,7 +141,7 @@
 
                 {% if attendance_event %}
                     {% if user_attending %}
-                        <p class="help-text" style="margin-top:20px">Avmeldingsfristen er {{ attendance_event.registration_end|date:"H.i d. M Y" }}</p>
+                        <p class="help-text" style="margin-top:20px">Avmeldingsfristen er {{ attendance_event.unattend_deadline|date:"H.i d. M Y" }}</p>
                     {% endif %}
                 {% endif %}
             </div>

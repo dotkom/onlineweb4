@@ -118,7 +118,7 @@ class Event(models.Model):
             response['message'] = _(u'Påmeldingen er ikke lenger åpen.')
             response['status_code'] = 502 
             return response
-        
+
         #Room for me on the event?
         if not self.attendance_event.room_on_event:
             response['message'] = _(u"Det er ikke mer plass på dette arrangementet.")
@@ -159,6 +159,7 @@ class Event(models.Model):
 
         #Registration not open  
         if timezone.now() < self.attendance_event.registration_start:
+            response['status'] = False
             response['message'] = _(u'Påmeldingen har ikke åpnet enda.')
             response['status_code'] = 501 
             return response
@@ -389,6 +390,7 @@ class AttendanceEvent(models.Model):
     max_capacity = models.PositiveIntegerField(_(u'maks-kapasitet'), null=False, blank=False)
     waitlist = models.BooleanField(_(u'venteliste'), default=False)
     registration_start = models.DateTimeField(_(u'registrerings-start'), null=False, blank=False)
+    unattend_deadline = models.DateTimeField(_(u'avmeldings-frist'), null=False, blank=False) 
     registration_end = models.DateTimeField(_(u'registrerings-slutt'), null=False, blank=False)
 
     #Access rules
@@ -480,7 +482,8 @@ class Attendee(models.Model):
     user = models.ForeignKey(User)
 
     timestamp = models.DateTimeField(auto_now_add=True, editable=False)
-    attended = models.BooleanField(_(u'var tilstede'))
+    attended = models.BooleanField(_(u'var tilstede'), default=False)
+    paid = models.BooleanField(_(u'har betalt'), default=False)
 
     def __unicode__(self):
         return self.user.get_full_name()

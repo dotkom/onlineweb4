@@ -205,6 +205,9 @@ class Email(models.Model):
         elif primary_email.email != self.email:
             self.primary = False
         self.email = self.email.lower()
+        if self.primary:
+            self.user.email = self.email
+            self.user.save()
         super(Email, self).save(*args, **kwargs)
 
     def __unicode__(self):
