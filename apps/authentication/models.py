@@ -172,17 +172,11 @@ class OnlineUser(AbstractUser):
         }
 
     def get_image_url(self, size=50):
-        email = self.get_email()
-        if email:
-            email = email.email
-        else:
-            email = "empty"
-
         prefix = "https://"
         default = "%s%s%s_%s.png" % (prefix, socket.getfqdn(),
                                    settings.DEFAULT_PROFILE_PICTURE_PREFIX, self.gender)
 
-        gravatar_url = "https://www.gravatar.com/avatar/" + hashlib.md5(email).hexdigest() + "?"
+        gravatar_url = "https://www.gravatar.com/avatar/" + hashlib.md5(self.email).hexdigest() + "?"
         gravatar_url += urllib.urlencode({'d': default, 's':str(size)})
         return gravatar_url
 
