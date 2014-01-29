@@ -163,6 +163,11 @@ class OnlineUser(AbstractUser):
         super(OnlineUser, self).save(*args, **kwargs)
 
     def serializable_object(self):
+        if self.privacy.expose_phone_number:
+            phone = self.phone_number
+        else:
+            phone = "Ikke tilgjengelig"
+            
         return {
             'id': self.id,
             'phone': strip_tags(self.phone_number),
