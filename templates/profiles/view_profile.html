@@ -1,0 +1,89 @@
+{% extends 'base.html'%}
+{% load gravatar_url_resolver %}
+{% load crispy_forms_tags %}
+{% load compress %}
+{% block styles %}
+    {{ block.super }}
+    {% compress css %}
+        <link rel="stylesheet" type="text/less" href="{{ STATIC_URL }}less/profiles.less" />
+    {% endcompress %}
+{% endblock %}
+{% block content %}
+<section id="mordi">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12">
+				<div class="page-header">
+					<h2>Profil for {{ user.get_full_name }}</h2>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-8">
+				<div class="row attribute-list">
+					<div class="col-md-4">
+						<b>Navn</b><br />{{ user.get_full_name }}
+					</div>
+					<div class="col-md-4">
+						<b>Studieretning</b><br />{{ user.get_field_of_study_display }}
+					</div>
+					<div class="col-md-4">
+						<b>Klassetrinn</b><br />{{ user.year }}
+					</div>
+				</div>
+				<div class="row attribute-list">
+			    	<div class="col-md-4">
+						<b>Adresse</b><br />
+						{% if user.privacy.expose_address %}
+							{% if user.address %}{{ user.address }}<br />{{ user.zip_code }}{% else %}Ikke tilgjenglig{% endif %}
+						{% else %}
+							Ikke tilgjengelig
+						{% endif %}
+					</div>
+					<div class="col-md-4">
+						<b>Telefonnummer</b><br />
+						{% if user.privacy.expose_phone_number %}
+							{% firstof user.phone_number 'Ikke tilgjengelig' %}
+						{% else %}
+							Ikke tilgjengelig
+						{% endif %}
+					</div>
+					<div class="col-md-4">
+						<b>Kallenavn</b><br />
+						{% if user.privacy.expose_nickname %}
+							{% firstof user.nickname 'Ikke tilgjengelig' %}
+						{% else %}
+							Ikke tilgjengelig
+						{% endif %}
+					</div>
+				</div>
+				<div class="row" style="margin-bottom:40px;">
+					<div class="col-md-12" style="margin-bottom:10px;">
+						<b>Posisjoner</b>
+					</div>
+					{% if not user.positions.all %}
+						<div class="col-md-12">
+							<em>Ingen posisjoner registrert...</em>
+						</div>
+					{% else %}
+						{% for position in user.positions.all %}
+							<div class="col-md-12">
+								{{ position.period }}: {{ position.get_position_display }}, {{ position.get_committee_display }}
+							</div>
+						{% endfor %}
+					{% endif %}
+				</div>
+				<div class="row">
+					<div class="col-md-3">
+						<a href="{% url 'profiles' %}" class="btn btn-primary"><i class="glyphicon glyphicon-chevron-left"></i> Tilbake til min side</a>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-4">
+				{% gravatar_url user 286 as gravatar_url %}
+		        <img class="img-thumbnail pull-right" src="{{ gravatar_url }}" alt="" />
+			</div>
+		</div>
+	</div>
+</section>
+{% endblock%}

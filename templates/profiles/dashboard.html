@@ -1,0 +1,69 @@
+{% load gravatar_url_resolver %}
+{% load crispy_forms_tags %}
+
+<div class="row row-space">
+	<div class="col-md-10">
+		<p class="ingress">Velkommen til din side, {{ user.get_full_name}}.</p>
+		<p>Bruk menyen til venstre for å justere dine innstillinger. På denne siden vil det etterhvert komme mer hendig info.</p>
+		
+	</div>
+	<div class="col-md-2">
+		{% gravatar_url user 120 as gravatar_url %}
+        <img class="img-thumbnail dashboard-image" src="{{ gravatar_url }}" alt="" style="margin-bottom:20px" />
+        <a href="{% url 'profiles_view' user.username %}" class="btn btn-primary btn-sm pull-right official-link">
+			Offentlig profil 
+			<i class="glyphicon glyphicon-chevron-right"></i>
+		</a>
+    </div>
+</div>
+<div class="row">
+	<div class="col-md-12 ">
+		<div class="page-header">
+			<h4>Din profilinformasjon</h4>
+		</div>			
+	</div>
+</div>
+<div class="row">
+	<div class="col-md-12">
+		<div class="row attribute-list">
+			<div class="col-md-4">
+				<b>Navn</b><br />{{ user.get_full_name }}
+			</div>
+			<div class="col-md-4">
+				<b>Studieretning</b><br />{{ user.get_field_of_study_display }}
+			</div>
+			<div class="col-md-4">
+				<b>Klassetrinn</b><br />{{ user.year }}
+			</div>
+		</div>
+		<div class="row attribute-list">
+	    	<div class="col-md-4">
+				<b>Adresse</b><br />{% if user.address %}{{ user.address }}<br />{{ user.zip_code }}{% else %}Ikke tilgjengelig{% endif %}
+			</div>
+			<div class="col-md-4">
+				<b>Telefonnummer</b><br />{% firstof user.phone_number 'Ikke tilgjengelig' %}
+			</div>
+			<div class="col-md-4">
+				<b>Kallenavn</b><br />{% firstof user.nickname 'Ikke tilgjengelig' %}
+			</div>
+		</div>
+		<div class="row row-space">
+			<div class="col-md-12">
+				<b>Posisjoner</b>
+			</div>
+			{% if not user.positions.all %}
+				<div class="col-md-12">
+					<em>Ingen posisjoner registrert...</em>
+				</div>
+			{% else %}
+				{% for position in user.positions.all %}
+					<div class="col-md-12">
+						{{ position.period }}: {{ position.get_position_display }}, {{ position.get_committee_display }}
+						
+							<button class="delete-position" data-position-id="{{ position.id }}"><i class="glyphicon glyphicon-remove"></i></button>
+					</div>
+				{% endfor %}
+			{% endif %}
+		</div>
+	</div>
+</div>

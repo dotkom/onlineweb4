@@ -3,7 +3,7 @@
 from django.contrib import admin
 from django.utils.translation import ugettext as _
 
-from apps.authentication.models import AllowedUsername, Email, OnlineUser
+from apps.authentication.models import AllowedUsername, Email, OnlineUser, Position
 
 
 class EmailInline(admin.TabularInline):
@@ -43,3 +43,9 @@ class AllowedUsernameAdmin(admin.ModelAdmin):
     search_fields = ('username',)
 
 admin.site.register(AllowedUsername, AllowedUsernameAdmin)
+
+
+class PositionAdmin(admin.ModelAdmin):
+    model = Position
+
+admin.site.register(Position, PositionAdmin)

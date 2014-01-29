@@ -150,13 +150,36 @@ textarea {
 }
 
 
-@media all and (max-width: @screen-xs-max) {
+@media all and (max-width: @screen-sm-max) {
   .privacybox {
     width: 100%;
   }
+
+  .attribute-list [class^='col-'] {
+    margin-bottom:10px;
+  }
+
+  .img-thumbnail {
+    margin-top:20px;
+    float:left !important;
+  }
+
+  .official-link {
+    float:left !important;
+  }
+
+  .dashboard-image {
+    float:right !important;
+  }
 }
 
-@media all and (min-width: @screen-xs-max) and (max-width: @screen-md-max) {
+@media all and (min-width: @screen-sm-max) {
+
+  .attribute-list {
+    margin-bottom:20px;    
+  }
+  
+
   .privacybox {
     width: 200px;
   }

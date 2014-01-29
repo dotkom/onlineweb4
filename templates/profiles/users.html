@@ -1,0 +1,46 @@
+{% load gravatar_url_resolver %}
+{% load crispy_forms_tags %}
+
+<div class="row" style="margin-bottom:20px">
+	<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+		<p class="ingress">Her kan du søke i brukere og komitemedlemmer. Brukere som har skjult profilen sin vil ikke dukke opp her.</p>
+		<form action="" role="search" method="get">
+			<input type="text" id="search-users" autocomplete="off" name="search-users" placeholder="Søk etter bruker" />
+		</form>
+	</div>
+</div>
+
+{% for group in groups %}
+	<div class="row">
+		<div class="col-md-12">
+			<h4>{{ group }}</h4>
+		</div>
+	</div>
+	{% for user in group.onlineuser_set.all %}
+		{% if user.privacy.visible_for_other_users %}
+			<div class="row" style="margin-bottom:10px;">
+				<a href="{% url 'profiles_view' user.username %}">
+					<div class="col-md-12">
+						<div class="col-md-2">
+							{% gravatar_url user 120 as gravatar_url %}
+						        <img class="img-thumbnail" src="{{ gravatar_url }}" alt="" />
+						</div>
+						<div class="col-md-10">
+							<div style="margin-bottom:10px; font-size:17px; font-weight:600;">{{ user.get_full_name }}</div>
+							<b>Telefon</b> {% if user.privacy.expose_phone_number %}
+								{% firstof user.phone_number '<em>Ikke tilgjengelig</em>' %}
+							{% else %}
+								<em>Ikke tilgjengelig</em>
+							{% endif %}<br />
+							<b>Epost</b> {% if user.privacy.expose_email %}
+								{% firstof user.get_email.email '<em>Ikke tilgjengelig</em>' %}
+							{% else %}
+								<em>Ikke tilgjenglig</em>
+							{% endif %}
+						</div>
+					</div>
+				</a>
+			</div>
+		{% endif %}
+	{% endfor %}
+{% endfor %}

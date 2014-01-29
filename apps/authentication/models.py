@@ -1,12 +1,17 @@
 # -*- coding: utf-8 -*-
 
 import datetime
+import socket
+import urllib
+import hashlib
 
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils.translation import ugettext as _
 from django.utils import timezone
+
+import watson
 
 
 # If this list is changed, remember to check that the year property on
@@ -30,6 +35,28 @@ FIELD_OF_STUDY_CHOICES = [
 GENDER_CHOICES = [
     ("male", _(u"mann")),
     ("female", _(u"kvinne")),
+]
+
+COMMITTEES = [
+    ('hs', _(u'Hovedstyret')),
+    ('arrkom', _(u'Arrangementskomiteen')),
+    ('bankom', _(u'Bank- og økonomikomiteen')),
+    ('bedkom', _(u'Bedriftskomiteen')),
+    ('dotkom', _(u'Drifts- og utviklingskomiteen')),
+    ('ekskom', _(u'Ekskursjonskomiteen')),
+    ('fagkom', _(u'Fag- og kurskomiteen')),
+    ('jubkom', _(u'Jubileumskomiteen')),
+    ('pangkom', _(u'Pensjonistkomiteen')),
+    ('prokom', _(u'Profil-og aviskomiteen')),
+    ('trikom', _(u'Trivselskomiteen')),
+    ('velkom', _(u'Velkomstkomiteen')),
+]
+
+POSITIONS = [
+    ('medlem', _(u'Medlem')),
+    ('leder', _(u'Leder')),
+    ('nestleder', _(u'Nestleder')),
+    ('okonomiansvarlig', _(u'Økonomiansvarlig')),
 ]
 
 class OnlineUser(AbstractUser):
@@ -122,6 +149,10 @@ class OnlineUser(AbstractUser):
         else:
             return -1
 
+    @models.permalink
+    def get_absolute_url(self):
+        return ('profiles_view', None, {'username': self.username})
+
     def __unicode__(self):
         return self.get_full_name()
 
@@ -129,6 +160,25 @@ class OnlineUser(AbstractUser):
         if self.ntnu_username == "":
             self.ntnu_username = None
         super(OnlineUser, self).save(*args, **kwargs)
+
+    def serializable_object(self):
+        return {
+            'id': self.id,
+            'phone': self.phone_number,
+            'username': self.username,
+            'value': self.get_full_name(),  # typeahead
+            'name': self.get_full_name(),
+            'image': self.get_image_url(),
+        }
+
+    def get_image_url(self, size=50):
+        prefix = "https://"
+        default = "%s%s%s_%s.png" % (prefix, socket.getfqdn(),
+                                   settings.DEFAULT_PROFILE_PICTURE_PREFIX, self.gender)
+
+        gravatar_url = "https://www.gravatar.com/avatar/" + hashlib.md5(self.email).hexdigest() + "?"
+        gravatar_url += urllib.urlencode({'d': default, 's':str(size)})
+        return gravatar_url
 
     class Meta:
         ordering = ['first_name', 'last_name']
@@ -201,3 +251,27 @@ class AllowedUsername(models.Model):
         verbose_name_plural = _(u"medlemsregister")
         ordering = (u"username",)
 
+
+class Position(models.Model):
+    """
+    Contains a users position in the organization from a given year
+    """
+    period     = models.CharField(_(u'periode'), max_length=9, default="2013-2014", blank=False)
+    committee  = models.CharField(_(u"komite"), max_length=10, choices=COMMITTEES, default="hs")
+    position   = models.CharField(_(u"stilling"), max_length=10, choices=POSITIONS, default="medlem")
+    user       = models.ForeignKey(OnlineUser, related_name='positions', blank=False)
+
+    @property
+    def print_string(self):
+        return '%s: %s(%s)' % (self.period, self.committee, self.position)
+
+    def __unicode__(self):
+        return self.print_string
+
+    class Meta:
+        verbose_name = _(u'posisjon')
+        verbose_name_plural = _(u'posisjoner')
+        ordering = (u'user',)
+
+# Register OnlineUser in watson index for searching
+watson.register(OnlineUser)
