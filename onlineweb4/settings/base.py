@@ -52,6 +52,9 @@ USE_TZ = True
 DATETIME_FORMAT = 'N j, Y, H:i'
 SECRET_KEY = 'override-this-in-local.py'
 
+# Override this in local for production envs
+BASE_URL = 'https://online.ntnu.no'
+
 AUTH_USER_MODEL = 'authentication.OnlineUser'
 LOGIN_URL = '/auth/login/'
 
