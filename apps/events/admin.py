@@ -48,6 +48,7 @@ class AttendanceEventAdmin(admin.ModelAdmin):
 class AttendeeAdmin(admin.ModelAdmin):
     model = Attendee
     list_display = ('user', 'event', 'paid')
+    actions = None
 
     def delete_model(self, request, obj):
         event = obj.event.event
