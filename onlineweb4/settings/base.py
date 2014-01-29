@@ -52,6 +52,9 @@ USE_TZ = True
 DATETIME_FORMAT = 'N j, Y, H:i'
 SECRET_KEY = 'override-this-in-local.py'
 
+# Session cookie expires after one year
+SESSION_COOKIE_AGE = 31540000
+
 # Override this in local if you need to :)
 BASE_URL = 'https://online.ntnu.no'
 

@@ -36,7 +36,6 @@ class LoginForm(forms.Form):
             return False
         if self.is_valid():
             auth.login(request, self.user)
-            request.session.set_expiry(0)
             return True
         return False
 
