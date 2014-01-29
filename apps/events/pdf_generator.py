@@ -19,9 +19,9 @@ class EventPDF:
         self.event = event
         self.attendees = sorted(event.attendance_event.attendees.all()[:event.attendance_event.max_capacity], key=lambda attendee: attendee.user.last_name)
         self.waiters = event.wait_list
-        self.attendee_table_data = [(u'Navn', u'Klasse', u'Studie', u'Telefon', u'Allergier'), ]
-        self.waiters_table_data = [(u'Navn', u'Klasse', u'Studie', u'Telefon',  u'Allergier'), ]
-        self.allergies_table_data = ()
+        self.attendee_table_data = [(u'Navn', u'Klasse', u'Studie', u'Telefon'), ]
+        self.waiters_table_data = [(u'Navn', u'Klasse', u'Studie', u'Telefon'), ]
+        self.allergies_table_data = []
 
         self.create_attendees_table_data()
         self.create_waiters_table_data()
@@ -34,10 +34,10 @@ class EventPDF:
             user = attendee.user
             self.attendee_table_data.append((create_body_text("%s, %s" % (user.last_name, user.first_name)),
                                              user.year, create_body_text(user.get_field_of_study_display()),
-                                             user.phone_number, user.allergies))
+                                             user.phone_number))
 
             if user.allergies:
-                self.allergies_table_data = self.allergies_table_data + (user.allergies,)
+                self.allergies_table_data = self.allergies_table_data + [user.allergies + ', ' + user.first_name + user.last_name]
 
     # Create table data for attendees waiting for a spot
     def create_waiters_table_data(self):
@@ -46,13 +46,13 @@ class EventPDF:
             user = attendee.user
             self.waiters_table_data.append((create_body_text("%s, %s" % (user.last_name, user.first_name)),
                                             user.year, create_body_text(user.get_field_of_study_display()),
-                                            user.phone_number, user.allergies))
+                                            user.phone_number))
 
             if user.allergies:
-                self.allergies_table_data = self.allergies_table_data + (user.allergies,)
+                self.allergies_table_data = self.allergies_table_data + [user.allergies + ', ' + user.first_name + user.last_name]
 
     def attendee_column_widths(self):
-        return (150, 40, 170, 60, 100)
+        return (185, 40, 170, 75)
 
     def allergies_column_widths(self):
         return (200, 200)
