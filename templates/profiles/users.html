@@ -26,7 +26,7 @@
 						        <img class="img-thumbnail" src="{{ gravatar_url }}" alt="" />
 						</div>
 						<div class="col-md-10">
-							<div style="margin-bottom:10px; font-size:17px; font-weight:600;">{{ user.get_full_name }} &nbsp;</div>
+							<div style="margin-bottom:10px; font-size:17px; font-weight:600;">{{ user.get_full_name|striptags }} &nbsp;</div>
 							<b>Telefon</b> 
 							{% if user.privacy.expose_phone_number %}
 								{% firstof user.phone_number|striptags '<em>Ikke tilgjengelig</em>' %}
