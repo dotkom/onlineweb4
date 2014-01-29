@@ -56,7 +56,7 @@ urlpatterns = patterns('',
     
     # Wiki
     (r'^notify/', get_notify_pattern()),
-    (r'^wiki/', get_wiki_pattern())
+    (r'^d54b7ba275/', get_wiki_pattern())
 )
 
 # pizzasystem
