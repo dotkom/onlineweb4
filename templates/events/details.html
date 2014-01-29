@@ -140,9 +140,7 @@
 
 
                 {% if attendance_event %}
-                    {% if user_attending %}
-                        <p class="help-text" style="margin-top:20px">Avmeldingsfristen er {{ attendance_event.unattend_deadline|date:"H.i d. M Y" }}</p>
-                    {% endif %}
+                    <p class="help-text" style="margin-top:20px">Avmeldingsfristen er {{ attendance_event.unattend_deadline|date:"H.i d. M Y" }}</p>
                 {% endif %}
             </div>
 

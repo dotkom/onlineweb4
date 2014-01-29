@@ -6,8 +6,9 @@
 <div class="row-space"></div>
 <div class="row">
     <div class="col-md-12">
-        <button class="marks {% ifequal mark_rules_accepted True %}on{% else %}off{% endifequal %}">
-            <input id="marks-checkbox" type="checkbox" {% ifequal mark_rules_accepted True %}checked="checked"{% endifequal %}>
+	<p><strong>NB!</strong> Godkjennig av prikkereglene er endelig, med mindre endringer i reglene forekommer.</p>
+        <button class="marks {% ifequal mark_rules_accepted True %}on{% else %}off{% endifequal %}" {% ifequal mark_rules_accepted True %}disabled{% endifequal %}>
+            <input id="marks-checkbox" type="checkbox" {% ifequal mark_rules_accepted True %}checked{% endifequal %}>
         </button>
     </div>
 </div>
