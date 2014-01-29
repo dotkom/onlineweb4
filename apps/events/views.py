@@ -10,6 +10,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404, redirect
+from django.utils.html import strip_tags
 from django.utils.translation import ugettext as _
 
 import watson
@@ -89,14 +90,14 @@ def attendEvent(request, event_id):
     if not request.POST:
         messages.error(request, _(u'Vennligst fyll ut skjemaet.'))
         return redirect(event)
+
     form = CaptchaForm(request.POST, user=request.user)
 
     if not form.is_valid():
-        if not 'mark_rules' in request.POST and not request.user.mark_rules:
-            error_message = u'Du må godta prikkreglene for å melde deg på.'
-        else:
-            error_message = u'Du klarte ikke captcha-en. Er du en bot?'
-        messages.error(request, _(error_message))
+        for field,errors in form.errors.items():
+            for error in errors:
+                messages.error(request, error)
+
         return redirect(event)
 
     # Check if the user is eligible to attend this event.
@@ -106,10 +107,6 @@ def attendEvent(request, event_id):
     response = event.is_eligible_for_signup(request.user);
 
     if response['status']:   
-        # First time accepting mark rules
-        if 'mark_rules' in form.cleaned_data:
-            request.user.mark_rules = True
-            request.user.save()
         Attendee(event=attendance_event, user=request.user).save()
         messages.success(request, _(u"Du er nå påmeldt på arrangementet!"))
         return redirect(event)
