@@ -121,14 +121,14 @@ def attendEvent(request, event_id):
 def unattendEvent(request, event_id):
 
     event = get_object_or_404(Event, pk=event_id)
-    event.notify_waiting_list(host=request.META['HTTP_HOST'], unattended_user=request.user)
     attendance_event = event.attendance_event
 
     # Check if the deadline for unattending has passed
     if attendance_event.unattend_deadline < timezone.now():
         messages.error(request, _(u"Avmeldingsfristen for dette arrangementet har utløpt."))
         return redirect(event)
-    
+
+    event.notify_waiting_list(host=request.META['HTTP_HOST'], unattended_user=request.user)
     Attendee.objects.get(event=attendance_event, user=request.user).delete()
 
     messages.success(request, _(u"Du ble meldt av arrangementet."))
