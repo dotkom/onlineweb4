@@ -41,7 +41,7 @@ sure==1.0.6
 unittest2==0.5.1
 
 # Wiki
-wiki
+wiki==0.0.23
 
 # non-pip
 # imagemagick                   # From package repository. Tested with version == 8:6.7.7.10.
