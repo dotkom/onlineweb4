@@ -4,8 +4,12 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.contrib import admin
 from django.http import HttpResponse
 from django.views.generic import TemplateView
+from django_notify.urls import get_pattern as get_notify_pattern
 
+from wiki.urls import get_pattern as get_wiki_pattern
 from filebrowser.sites import site
+
+from apps import mommy
 
 # URL config
 admin.autodiscover()
@@ -44,6 +48,10 @@ urlpatterns = patterns('',
     # Online Notifier Owner Verification (checked yearly or so by Google)
     url(r'^google79c0b331a83a53de\.html$', lambda r: HttpResponse(
         "google-site-verification: google79c0b331a83a53de.html", mimetype="text/html")),
+    
+    # Wiki
+    (r'^notify/', get_notify_pattern()),
+    (r'^d54b7ba275/', get_wiki_pattern())
 )
 
 # pizzasystem
