@@ -6,9 +6,17 @@
 
     <div class="col-xs-12 col-sm-4 col-md-4 left-box">
       <div class="row">
-        <a href="{{ event.get_absolute_url }}">
-        <img src="{% version event.image 'events_archive' %}" alt="" />
-        </a>
+        {% if event.companies.all %}
+            {% for company_relation in event.companies.all %}
+                <a href="{% url 'company_details' company_relation.company.pk %}">
+                    <img src="{% version company_relation.company.image 'companies_thumb' %}" alt="" />
+                </a>
+            {% endfor %} 
+        {% else %}
+            <a href="{{ event.get_absolute_url }}">
+                <img src="{% version event.image 'events_archive' %}" alt="" />
+            </a>
+        {% endif %}
         {% if event.is_attendance_event %}
             <a href="{{ event.get_absolute_url }}">
                 <button type="button" class="btn btn-success">Gå til påmelding</button>
