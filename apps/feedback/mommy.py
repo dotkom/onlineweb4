@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import datetime
 import socket
+import locale
 
 from django.utils import timezone
 from django.contrib.contenttypes.models import ContentType
@@ -16,9 +17,10 @@ class FeedbackMail(Task):
 
     @staticmethod
     def run():
-       active_feedbacks = FeedbackRelation.objects.filter(active=True)
+        locale.setlocale(locale.LC_ALL, "nb_NO.UTF-8")
+        active_feedbacks = FeedbackRelation.objects.filter(active=True)
        
-       for feedback in active_feedbacks:
+        for feedback in active_feedbacks:
             message = FeedbackMail.generate_message(feedback)
 
             if message.send:
@@ -196,4 +198,4 @@ class Message():
             self.end)
         return message
 
-schedule.register(FeedbackMail, day_of_week='mon-sun', hour=8, minute=0)
+schedule.register(FeedbackMail, day_of_week='mon-sun', hour=8, minute=00)
