@@ -10,7 +10,6 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404, redirect
-from django.utils.html import strip_tags
 from django.utils.translation import ugettext as _
 
 import watson
