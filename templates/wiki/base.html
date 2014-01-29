@@ -18,18 +18,7 @@
     <section id="wiki">
         {% block wiki_body %}
             <div class="container">
-                {% if messages %}
-                    <!-- Messages for this instance -->
-                    {% for message in messages %}
-                        <div class="alert alert-{{ message.tags }}">
-                        <a class="close" data-dismiss="alert" href="#">&times;</a>
-                            {{ message }}
-                        </div>
-                    {% endfor %}
-                {% endif %}
-
-                {% block wiki_breadcrumbs %}
-                {% endblock %}
+                {% block wiki_breadcrumbs %}{% endblock %}
 
                 {% block wiki_contents %}{% endblock %}
             </div>
