@@ -14,7 +14,7 @@
 		<div class="row">
 			<div class="col-md-12">
 				<div class="page-header">
-					<h2>Profil for {{ user.get_full_name }}</h2>
+					<h2>Profil for {{ user.get_full_name|striptags }}</h2>
 				</div>
 			</div>
 		</div>
@@ -22,7 +22,7 @@
 			<div class="col-md-8">
 				<div class="row attribute-list">
 					<div class="col-md-4">
-						<b>Navn</b><br />{{ user.get_full_name }}
+						<b>Navn</b><br />{{ user.get_full_name|striptags }}
 					</div>
 					<div class="col-md-4">
 						<b>Studieretning</b><br />{{ user.get_field_of_study_display }}
@@ -35,7 +35,7 @@
 			    	<div class="col-md-4">
 						<b>Adresse</b><br />
 						{% if user.privacy.expose_address %}
-							{% if user.address %}{{ user.address }}<br />{{ user.zip_code }}{% else %}Ikke tilgjenglig{% endif %}
+							{% if user.address %}{{ user.address|striptags }}<br />{{ user.zip_code|striptags }}{% else %}Ikke tilgjenglig{% endif %}
 						{% else %}
 							Ikke tilgjengelig
 						{% endif %}
@@ -43,7 +43,7 @@
 					<div class="col-md-4">
 						<b>Telefonnummer</b><br />
 						{% if user.privacy.expose_phone_number %}
-							{% firstof user.phone_number 'Ikke tilgjengelig' %}
+							{% firstof user.phone_number|striptags 'Ikke tilgjengelig' %}
 						{% else %}
 							Ikke tilgjengelig
 						{% endif %}
@@ -51,7 +51,7 @@
 					<div class="col-md-4">
 						<b>Kallenavn</b><br />
 						{% if user.privacy.expose_nickname %}
-							{% firstof user.nickname 'Ikke tilgjengelig' %}
+							{% firstof user.nickname|striptags 'Ikke tilgjengelig' %}
 						{% else %}
 							Ikke tilgjengelig
 						{% endif %}
@@ -80,8 +80,8 @@
 				</div>
 			</div>
 			<div class="col-md-4">
-				{% gravatar_url user 286 as gravatar_url %}
-		        <img class="img-thumbnail pull-right" src="{{ gravatar_url }}" alt="" />
+				{% gravatar_url user 286 as gravatar_url2 %}
+		        <img class="img-thumbnail pull-right" src="{{ gravatar_url2 }}" alt="" />
 			</div>
 		</div>
 	</div>
