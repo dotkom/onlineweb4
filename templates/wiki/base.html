@@ -1,0 +1,27 @@
+{% extends 'wiki_base.html' %}
+
+{% load sekizai_tags %}
+{% load i18n wiki_tags %}
+{% load url from future %}
+{% load compress %}
+
+{% block title %}
+{% block wiki_pagetitle %}{% endblock %}
+{% endblock title %}
+
+{% addtoblock "css" %}
+<link href="{{ STATIC_URL }}wiki/bootstrap/css/wiki-bootstrap.min.css" rel="stylesheet">
+<!--[if lt IE 9]><script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+{% endaddtoblock %}
+
+{% block content %}
+    <section id="wiki">
+        {% block wiki_body %}
+            <div class="container">
+                {% block wiki_breadcrumbs %}{% endblock %}
+
+                {% block wiki_contents %}{% endblock %}
+            </div>
+        {% endblock %}
+    </section>
+{% endblock %}

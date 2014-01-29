@@ -52,6 +52,9 @@ USE_TZ = True
 DATETIME_FORMAT = 'N j, Y, H:i'
 SECRET_KEY = 'override-this-in-local.py'
 
+# Session cookie expires after one year
+SESSION_COOKIE_AGE = 31540000
+
 # Override this in local if you need to :)
 BASE_URL = 'https://online.ntnu.no'
 
@@ -132,6 +135,10 @@ INSTALLED_APPS = (
     'django.contrib.humanize',
     'django_nose',
     'south',
+    'django_notify', # Wiki
+    'mptt', # Wiki
+    'sekizai', # Wiki
+    'sorl.thumbnail', # Wiki
     'grappelli',
     'filebrowser',
     'chunks',
@@ -144,6 +151,13 @@ INSTALLED_APPS = (
     'watson',
     'gunicorn',
     'markdown_deux',
+    
+    # Wiki
+    'wiki',
+    'wiki.plugins.attachments',
+    'wiki.plugins.notifications',
+    'wiki.plugins.images',
+    'wiki.plugins.macros',
 
     # Django apps
     'django.contrib.admin',
@@ -230,6 +244,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "django.core.context_processors.static",
     "django.core.context_processors.tz",
     "django.contrib.messages.context_processors.messages",
+    "sekizai.context_processors.sekizai", # Wiki
     "onlineweb4.context_processors.analytics",
 )
 
