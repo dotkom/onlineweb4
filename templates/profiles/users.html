@@ -16,7 +16,7 @@
 			<h4>{{ group }}</h4>
 		</div>
 	</div>
-	{% for user in group.onlineuser_set.all %}
+	{% for user in group.user_set.all %}
 		{% if user.privacy.visible_for_other_users %}
 			<div class="row" style="margin-bottom:10px;">
 				<a href="{% url 'profiles_view' user.username %}">
