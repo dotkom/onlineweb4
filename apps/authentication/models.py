@@ -167,10 +167,10 @@ class OnlineUser(AbstractUser):
             phone = self.phone_number
         else:
             phone = "Ikke tilgjengelig"
-            
+
         return {
             'id': self.id,
-            'phone': strip_tags(self.phone_number),
+            'phone': strip_tags(phone),
             'username': strip_tags(self.username),
             'value': strip_tags(self.get_full_name()),  # typeahead
             'name': strip_tags(self.get_full_name()),
