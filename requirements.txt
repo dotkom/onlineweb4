@@ -40,6 +40,9 @@ nose-cov==1.5
 sure==1.0.6
 unittest2==0.5.1
 
+# Wiki
+wiki
+
 # non-pip
 # imagemagick                   # From package repository. Tested with version == 8:6.7.7.10.
 # libjpeg-dev					# From package repository. 
