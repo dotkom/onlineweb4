@@ -208,9 +208,8 @@ def update_mark_rules(request):
                 request.user.mark_rules = True
                 request.user.save()
             else:
-                return_status = json.dumps({'message': _(u"Du har valgt å ikke akseptere prikkereglene.")})
-                request.user.mark_rules = False
-                request.user.save()
+                return_status = json.dumps({'message': _(u"Du kan ikke endre din godkjenning av prikkereglene.")})
+		return HttpResponse(status=403, content=return_status)
 
             return HttpResponse(status=212, content=return_status)
         return HttpResponse(status=405)
