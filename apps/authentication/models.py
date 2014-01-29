@@ -278,5 +278,11 @@ class Position(models.Model):
         verbose_name_plural = _(u'posisjoner')
         ordering = (u'user',)
 
+# Static method for resetting all users mark rules accepted field to false due to changes in mark rules
+def reset_marks_acceptance():
+    for user in OnlineUser.objects.all():
+        user.mark_rules = False
+        user.save()
+
 # Register OnlineUser in watson index for searching
 watson.register(OnlineUser)
