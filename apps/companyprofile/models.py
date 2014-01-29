@@ -5,7 +5,7 @@ from filebrowser.fields import FileBrowseField
 class Company(models.Model):
 
     IMAGE_FOLDER = "images/companies"
-    IMAGE_EXTENSIONS = ['.jpg', '.jpeg', '.gif', '.png', '.tif', '.tiff', '.svg']
+    IMAGE_EXTENSIONS = ['.jpg', '.jpeg', '.gif', '.png', '.tif', '.tiff']
 
 
     name = models.CharField(_(u"bedriftsnavn"), max_length=100)
