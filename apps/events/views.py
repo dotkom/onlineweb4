@@ -184,5 +184,5 @@ def generate_pdf(request, event_id):
         if event.event_type == 3 and not groups.filter(name='fagKom').count() == 1:
             messages.error(request, _(u'Du har ikke tilgang til listen for dette arrangementet.'))  
             return redirect(event)
-            
+
     return EventPDF(event).render_pdf()
