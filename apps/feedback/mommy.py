@@ -136,8 +136,7 @@ class FeedbackMail(Task):
 
     @staticmethod
     def get_link(feedback):
-        hostname = socket.getfqdn()
-        return str(hostname + feedback.get_absolute_url())
+        return str(settings.BASE_URL + feedback.get_absolute_url())
 
     @staticmethod
     def get_title(feedback):
