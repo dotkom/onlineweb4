@@ -10,6 +10,7 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils.translation import ugettext as _
 from django.utils import timezone
+from django.utils.html import strip_tags
 
 import watson
 
@@ -164,10 +165,10 @@ class OnlineUser(AbstractUser):
     def serializable_object(self):
         return {
             'id': self.id,
-            'phone': self.phone_number,
-            'username': self.username,
-            'value': self.get_full_name(),  # typeahead
-            'name': self.get_full_name(),
+            'phone': strip_tags(self.phone_number),
+            'username': strip_tags(self.username),
+            'value': strip_tags(self.get_full_name()),  # typeahead
+            'name': strip_tags(self.get_full_name()),
             'image': self.get_image_url(),
         }
 
