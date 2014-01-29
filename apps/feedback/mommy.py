@@ -180,7 +180,7 @@ class Message():
     contact = ""
     link = ""
     send = False
-    end = u"\n\nMvh\nOnline linjeforening"
+    end = u"\n\nMvh\nLinjeforeningen Online"
     results_message = False
 
     committee_mail = ""
