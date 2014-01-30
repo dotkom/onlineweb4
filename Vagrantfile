@@ -14,9 +14,11 @@ Vagrant.configure('2') do |config|
             onlineweb_config.vm.box = 'precise32'
             onlineweb_config.vm.box_url = 'http://files.vagrantup.com/precise32.box'
 
-            onlineweb_config.vm.provider :parallels do |v, prl|
-                onlineweb_config.vm.box = 'devbox'
-                onlineweb_config.vm.box_url = 'https://s3-eu-west-1.amazonaws.com/vagrant-parallels/devbox-201312.box'
+            if is_unix == true
+                onlineweb_config.vm.provider :parallels do |v, prl|
+                    onlineweb_config.vm.box = 'devbox'
+                    onlineweb_config.vm.box_url = 'https://s3-eu-west-1.amazonaws.com/vagrant-parallels/devbox-201312.box'
+                end
             end
 
             onlineweb_config.vm.network :forwarded_port, guest: 8000, host: 8001
