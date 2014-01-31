@@ -1,5 +1,26 @@
-is_unix = RUBY_PLATFORM =~ /linux|darwin/ ? true : false
-puts "host platform : #{RUBY_PLATFORM} (unix : #{is_unix})"
+require 'rbconfig'
+
+def get_os
+    @os ||= (
+        host_os = RbConfig::CONFIG['host_os']
+        case host_os
+        when /mswin|msys|mingw|cygwin|bccwin|wince|emc/
+            :"windows"
+        when /darwin|mac os/
+            :"macosx"
+        when /linux/
+            :"linux"
+        when /solaris|bsd/
+            :"unix"
+        else
+            raise Error::WebDriverError, "unknown os: #{host_os.inspect}"
+        end
+    )
+end
+
+os = get_os.to_s
+  
+puts "host platform : #{RUBY_PLATFORM} (operative system : #{os})"
 
 machines = {
     # name     => enabled
@@ -13,10 +34,12 @@ Vagrant.configure('2') do |config|
 
             onlineweb_config.vm.box = 'precise32'
             onlineweb_config.vm.box_url = 'http://files.vagrantup.com/precise32.box'
-
-            onlineweb_config.vm.provider :parallels do |v, prl|
-                onlineweb_config.vm.box = 'devbox'
-                onlineweb_config.vm.box_url = 'https://s3-eu-west-1.amazonaws.com/vagrant-parallels/devbox-201312.box'
+            
+            if os == "macosx"
+                onlineweb_config.vm.provider :parallels do |v, prl|
+                    onlineweb_config.vm.box = 'devbox'
+                    onlineweb_config.vm.box_url = 'https://s3-eu-west-1.amazonaws.com/vagrant-parallels/devbox-201312.box'
+                end
             end
 
             onlineweb_config.vm.network :forwarded_port, guest: 8000, host: 8001
@@ -26,7 +49,7 @@ Vagrant.configure('2') do |config|
             onlineweb_config.ssh.forward_agent = true
 
             # nfs requires static IP
-            #onlineweb_config.vm.synced_folder '.', '/vagrant/', :nfs => is_unix
+            #onlineweb_config.vm.synced_folder '.', '/vagrant/', :nfs => (os == "linux")
             onlineweb_config.vm.synced_folder '.', '/vagrant/'
 
             onlineweb_config.vm.provider :virtualbox do |vbox|
