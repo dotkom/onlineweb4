@@ -8,6 +8,9 @@
         <link rel="stylesheet" type="text/less" href="{{ STATIC_URL }}less/profiles.less" />
     {% endcompress %}
 {% endblock %}
+{% block title %}
+    {{ user.get_full_name }}s profil
+{% endblock title %}
 {% block content %}
 <section id="mordi">
 	<div class="container">
