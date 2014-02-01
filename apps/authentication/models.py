@@ -276,7 +276,7 @@ class Position(models.Model):
     class Meta:
         verbose_name = _(u'posisjon')
         verbose_name_plural = _(u'posisjoner')
-        ordering = (u'user',)
+        ordering = (u'user', u'period', )
 
 # Static method for resetting all users mark rules accepted field to false due to changes in mark rules
 def reset_marks_acceptance():
