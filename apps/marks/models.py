@@ -29,7 +29,7 @@ class Mark(models.Model):
         (5, _(u"Kontoret")),
     )
 
-    title = models.CharField(_(u"tittel"), max_length=50)
+    title = models.CharField(_(u"tittel"), max_length=155)
     given_to = models.ManyToManyField(User, null=True, blank=True, through="UserEntry", verbose_name=_(u"gitt til"))
     added_date = models.DateField(_(u"utdelt dato"))
     expiration_date = models.DateField(_(u"utløpsdato"), editable=False)
@@ -37,7 +37,7 @@ class Mark(models.Model):
     last_changed_date = models.DateTimeField(_(u"sist redigert"), auto_now=True, editable=False)
     last_changed_by = models.ForeignKey(User, related_name="marks_last_changed_by",
         verbose_name=_(u"sist redigert av"), editable=False, null=True, blank=False)
-    description = models.CharField(_(u"beskrivelse"), max_length=100,
+    description = models.CharField(_(u"beskrivelse"), max_length=255,
                                    help_text=_(u"Hvis dette feltet etterlates blankt vil det fylles med "
                                                "en standard grunn for typen prikk som er valgt."),
                                    blank=True)
