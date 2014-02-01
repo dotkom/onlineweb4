@@ -57,7 +57,7 @@ POSITIONS = [
     ('medlem', _(u'Medlem')),
     ('leder', _(u'Leder')),
     ('nestleder', _(u'Nestleder')),
-    ('okonomiansvarlig', _(u'Økonomiansvarlig')),
+    ('okoans', _(u'Økonomiansvarlig')),
 ]
 
 class OnlineUser(AbstractUser):
