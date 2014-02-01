@@ -49,21 +49,28 @@
 		</div>
 		<div class="row row-space">
 			<div class="col-md-12">
-				<b>Posisjoner</b>
-			</div>
-			{% if not user.positions.all %}
-				<div class="col-md-12">
-					<em>Ingen posisjoner registrert...</em>
-				</div>
-			{% else %}
-				{% for position in user.positions.all %}
-					<div class="col-md-12">
-						{{ position.period }}: {{ position.get_position_display }}, {{ position.get_committee_display }}
-						
-							<button class="delete-position" data-position-id="{{ position.id }}"><i class="glyphicon glyphicon-remove"></i></button>
-					</div>
-				{% endfor %}
-			{% endif %}
+                <div class="row">
+                    <div class="col-md-12">
+                        <b>Posisjoner</b>
+                    </div>
+                </div>
+            {% if not user.positions.all %}
+                <div class="row">
+                    <div class="col-md-12">
+                        <em>Ingen posisjoner registrert...</em>
+                    </div>
+                </div>
+            {% else %}
+                {% for position in user.positions.all %}
+                    <div class="row row-small-space">
+                        <div class="col-md-12 position">
+                            <span class="glyphicon glyphicon-remove delete-position" data-position-id="{{ position.id }}"></span>
+                            <p>{{ position.period }}: {{ position.get_position_display }}, {{ position.get_committee_display }}</p>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% endif %}
+            </div>
 		</div>
 	</div>
 </div>
