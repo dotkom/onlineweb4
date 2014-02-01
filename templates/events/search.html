@@ -8,7 +8,7 @@
       <div class="row">
         {% if event.companies.all %}
             {% for company_relation in event.companies.all %}
-                <a href="{% url 'company_details' company_relation.company.pk %}">
+                <a href="{{ event.get_absolute_url }}">
                     <img src="{% version company_relation.company.image 'companies_thumb' %}" alt="" />
                 </a>
             {% endfor %} 
