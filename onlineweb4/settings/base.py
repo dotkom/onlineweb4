@@ -151,7 +151,7 @@ INSTALLED_APPS = (
     'watson',
     'gunicorn',
     'markdown_deux',
-    
+
     # Wiki
     'wiki',
     'wiki.plugins.attachments',
@@ -195,6 +195,11 @@ LOGGING = {
             '()': 'django.utils.log.RequireDebugFalse'
         }
     },
+    'formatters': {
+        'standard': {
+            'format': '%(asctime)s [%(levelname)s] %(name)s: %(message)s'
+        },
+    },
     'handlers': {
         'mail_admins': {
             'level': 'ERROR',
@@ -204,6 +209,7 @@ LOGGING = {
         'console':{
             'level': 'DEBUG',
             'class': 'logging.StreamHandler',
+            'formatter': 'standard'
         },
     },
     'loggers': {
@@ -212,9 +218,9 @@ LOGGING = {
             'level': 'ERROR',
             'propagate': True,
         },
-        'apscheduler.scheduler': {
+        '': {
             'handlers': ['console'],
-            'level': 'INFO',
+            'level': 'DEBUG',
         },
     }
 }
