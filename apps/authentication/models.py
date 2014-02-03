@@ -75,7 +75,7 @@ class OnlineUser(AbstractUser):
 
     # Address
     phone_number = models.CharField(_(u"telefonnummer"), max_length=20, blank=True, null=True)
-    address = models.CharField(_(u"adresse"), max_length=30, blank=True, null=True)
+    address = models.CharField(_(u"adresse"), max_length=100, blank=True, null=True)
     zip_code = models.CharField(_(u"postnummer"), max_length=4, blank=True, null=True)
 
     # Other
