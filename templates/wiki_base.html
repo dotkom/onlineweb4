@@ -4,7 +4,7 @@
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-        <title>{% block title %}{% endblock %}</title>
+        <title>{% block title %}{% endblock %} - Online</title>
         <meta name="description" content="">
         <link rel="icon" href="{{ STATIC_URL }}img/favicon.png">
 
@@ -38,7 +38,7 @@
                   <li><a href="{% url 'events_index' %}">Arkiver</a></li>
                   <li><a href="{% url 'careeropportunity_index' %}">Karrieremuligheter</a></li>
                   <li><a href="{% url 'resourcecenter_index' %}">Ressurser</a></li>
-                  <li><a href="https://wiki.online.ntnu.no/projects/online/wiki">Wiki</a></li>
+                  <li class="active"><a href="/wiki">Wiki</a></li>
                 </ul>
 
                 <ul class="nav navbar-nav navbar-right">
