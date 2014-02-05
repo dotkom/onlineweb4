@@ -106,7 +106,10 @@ def attendEvent(request, event_id):
     response = event.is_eligible_for_signup(request.user);
 
     if response['status']:   
-        Attendee(event=attendance_event, user=request.user).save()
+        ae = Attendee(event=attendance_event, user=request.user)
+        if 'note' in form.cleaned_data:
+            ae.note = form.cleaned_data['note']
+        ae.save()
         messages.success(request, _(u"Du er nå påmeldt på arrangementet!"))
         return redirect(event)
     else:
