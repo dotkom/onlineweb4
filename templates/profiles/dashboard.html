@@ -1,5 +1,6 @@
 {% load gravatar_url_resolver %}
 {% load crispy_forms_tags %}
+{% load compress %}
 
 <div class="row row-space">
 	<div class="col-md-10">
@@ -37,16 +38,21 @@
 			</div>
 		</div>
 		<div class="row attribute-list">
-	    	<div class="col-md-4">
-				<b>Adresse</b><br />{% if user.address %}{{ user.address }}<br />{{ user.zip_code }}{% else %}Ikke tilgjengelig{% endif %}
-			</div>
-			<div class="col-md-4">
-				<b>Telefonnummer</b><br />{% firstof user.phone_number 'Ikke tilgjengelig' %}
-			</div>
-			<div class="col-md-4">
-				<b>Kallenavn</b><br />{% firstof user.nickname 'Ikke tilgjengelig' %}
-			</div>
-		</div>
+            <div class="col-md-4">
+                <b>Adresse</b><br />
+                {% if user.privacy.expose_address %}
+                    {% if user.address %}
+                        <div id="address">{{ user.address|striptags }}</div>
+                        <div id="zip-code">{{ user.zip_code|striptags }}</div>
+                        <div id="city"><div class="refresh"></div></div>
+                    {% else %}
+                        Ikke tilgjenglig
+                    {% endif %}
+                {% else %}
+                    Ikke tilgjengelig
+                {% endif %}
+            </div>
+        </div>
 		<div class="row row-space">
 			<div class="col-md-12">
                 <div class="row">

@@ -38,7 +38,13 @@
 			    	<div class="col-md-4">
 						<b>Adresse</b><br />
 						{% if user.privacy.expose_address %}
-							{% if user.address %}{{ user.address|striptags }}<br />{{ user.zip_code|striptags }}{% else %}Ikke tilgjenglig{% endif %}
+                            {% if user.address %}
+                                <div id="address">{{ user.address|striptags }}</div>
+                                <div id="zip-code">{{ user.zip_code|striptags }}</div>
+                                <div id="city"><div class="refresh"></div></div>
+                            {% else %}
+                                Ikke tilgjenglig
+                            {% endif %}
 						{% else %}
 							Ikke tilgjengelig
 						{% endif %}
@@ -89,4 +95,12 @@
 		</div>
 	</div>
 </section>
-{% endblock%}
+
+{% endblock content %}
+
+{% block js %}
+    {{ block.super }}
+    {% compress js %}
+    <script type="text/javascript" src="{{ STATIC_URL }}js/zipcodecity.js"></script>
+    {% endcompress %}
+{% endblock %}
