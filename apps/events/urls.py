@@ -9,4 +9,7 @@ urlpatterns = patterns('apps.events.views',
     url(r'^(?P<event_id>\d+)/unattend/$', 'unattendEvent', name='unattend_event'),
     url(r'^(?P<event_id>\d+)/(?P<event_slug>[a-zA-Z0-9_-]+)/$', 'details', name='events_details'), 
     url(r'^search/.*$', 'search_events', name="search_events"),
+    # iCalendar
+    url(r'^events.ics$', 'calendar_export', name='events_ics'),
+    url(r'^(?P<event_id>\d+).ics$', 'calendar_export', name='event_ics'),
 )

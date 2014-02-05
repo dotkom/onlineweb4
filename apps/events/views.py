@@ -8,10 +8,11 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core.urlresolvers import reverse
-from django.http import HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404, redirect
 from django.utils.translation import ugettext as _
 
+import icalendar
 import watson
 
 from apps.events.forms import CaptchaForm
@@ -58,10 +59,10 @@ def details(request, event_id, event_slug):
     except AttendanceEvent.DoesNotExist:
         pass
 
+    context = {'event': event, 'ics_path': request.build_absolute_uri(reverse('event_ics', args=(event.id,)))}
     if is_attendance_event:
-        context = {
+        context.update({
                 'now': timezone.now(),
-                'event': event,
                 'attendance_event': attendance_event,
                 'user_anonymous': user_anonymous,
                 'user_attending': user_attending,
@@ -71,12 +72,8 @@ def details(request, event_id, event_slug):
                 'place_on_wait_list': int(place_on_wait_list),
                 #'position_in_wait_list': position_in_wait_list,
                 'captcha_form': form,
-        }
-        
-        return render(request, 'events/details.html', context)
-    else:
-        return render(request, 'events/details.html', {'event': event})
-
+        })
+    return render(request, 'events/details.html', context)
 
 def get_attendee(attendee_id):
     return get_object_or_404(Attendee, pk=attendee_id)
@@ -183,3 +180,35 @@ def generate_pdf(request, event_id):
             return redirect(event)
 
     return EventPDF(event).render_pdf()
+
+def calendar_export(request, event_id=None):
+    cal = icalendar.Calendar()
+    cal.add('prodid', '-//Online//Onlineweb//EN')
+    cal.add('version', '2.0')
+    if event_id:
+        # Single event
+        try:
+            events = [Event.objects.get(id=event_id)]
+        except Event.DoesNotExist:
+            events = []
+        filename = str(event_id)
+    else:
+        # All future events
+        events = Event.objects.filter(event_start__gt=timezone.now())
+        filename = 'events'
+
+    for event in events:
+        cal_event = icalendar.Event()
+
+        cal_event.add('dtstart', event.event_start)
+        cal_event.add('dtend', event.event_end)
+        cal_event.add('location', event.location)
+        cal_event.add('summary', event.ingress_short)
+
+        cal.add_component(cal_event)
+
+    response = HttpResponse(cal.to_ical(), mimetype='text/calendar')
+    response['Content-Type'] = 'text/calendar; charset=utf-8';
+    response['Content-Disposition'] = 'attachment; filename=' + filename + '.ics'
+
+    return response

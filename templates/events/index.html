@@ -41,7 +41,19 @@ Arrangementsarkiv - Online
     <div class="row">
       <div class="col-md-12">
         <div class="page-header">
-          <h2>ARRANGEMENTER</h2>
+          <h2>ARRANGEMENTER
+            <div class="btn-group pull-right">
+              <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                <span class="glyphicon glyphicon-calendar"></span>
+                Eksporter
+                <span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu">
+                <li><a href="{% url 'events_ics' %}">ICS</a></li>
+                <li><a href="http://www.google.com/calendar/render?cid={{ request.build_absolute_uri|urlencode }}events.ics">Google Calendar</a></li>
+              </ul>
+            </div>
+          </h2>
         </div>
       </div>
     </div>
