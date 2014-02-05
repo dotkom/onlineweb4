@@ -12,7 +12,6 @@
         {% block apple-webapp %}{% endblock %}
         {% compress css %}
             <link rel="stylesheet" type="text/less" href="{{ STATIC_URL }}less/core.less">
-            <link rel="stylesheet" type="text/less" href="{{ STATIC_URL }}less/typeahead.less">
             <link rel="stylesheet" type="text/less" href="{{ STATIC_URL }}less/wiki.less">
         {% endcompress %}
         {% render_block "css" %}
