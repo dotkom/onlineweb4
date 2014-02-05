@@ -31,7 +31,7 @@
 			  if(!e._changed) {
 			    slug = URLify(this.value, 50);
 			    wikislug = slug.replace(/\-/g, " ");
-			    wikislug = wikislug.replace(/\w\S*/gi, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1);});
+			    wikislug = wikislug.replace(/\w\S*/gi, function(txt){return txt;});
           wikislug = wikislug.replace(/\s*/g, "");
 				  e.value = wikislug;
 			  }
