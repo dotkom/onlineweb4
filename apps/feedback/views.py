@@ -40,6 +40,8 @@ def feedback(request, applabel, appmodel, object_id, feedback_id):
 
             messages.success(request, _(u"Takk for at du svarte"))
             return redirect("home")
+        else:
+            messages.error(request, _(u"Du må svare på alle påkrevde felt"))
     else:
         answers = create_answer_forms(fbr)
 
