@@ -419,6 +419,7 @@ class AttendanceEvent(models.Model):
     registration_start = models.DateTimeField(_(u'registrerings-start'), null=False, blank=False)
     unattend_deadline = models.DateTimeField(_(u'avmeldings-frist'), null=False, blank=False) 
     registration_end = models.DateTimeField(_(u'registrerings-slutt'), null=False, blank=False)
+    guest_attendance = models.BooleanField(_(u'gjestepåmelding'), null=False, blank=False, default=False)
 
     #Access rules
     rule_bundles = models.ManyToManyField(RuleBundle, blank=True, null=True)
