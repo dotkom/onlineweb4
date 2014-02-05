@@ -422,10 +422,10 @@ class AttendanceEvent(models.Model):
 
     max_capacity = models.PositiveIntegerField(_(u'maks-kapasitet'), null=False, blank=False)
     waitlist = models.BooleanField(_(u'venteliste'), default=False)
+    guest_attendance = models.BooleanField(_(u'gjestepåmelding'), null=False, blank=False, default=False)
     registration_start = models.DateTimeField(_(u'registrerings-start'), null=False, blank=False)
     unattend_deadline = models.DateTimeField(_(u'avmeldings-frist'), null=False, blank=False) 
     registration_end = models.DateTimeField(_(u'registrerings-slutt'), null=False, blank=False)
-    guest_attendance = models.BooleanField(_(u'gjestepåmelding'), null=False, blank=False, default=False)
 
     #Access rules
     rule_bundles = models.ManyToManyField(RuleBundle, blank=True, null=True)
@@ -446,6 +446,10 @@ class AttendanceEvent(models.Model):
         """
         Checks a user against rules applied to an attendance event
         """
+        # If the event has guest attendance, allow absolutely anyone
+        if self.guest_attendance:
+            return {'status': True, 'status_code': 201}
+
         # If the user is not a member, return False right away
         # TODO check for guest list
         if not user.is_member:
