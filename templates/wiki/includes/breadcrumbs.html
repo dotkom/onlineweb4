@@ -42,12 +42,6 @@
     </a>    
     <ul class="dropdown-menu">
       <li>
-        {% if urlpath.parent %}
-        <a href="{% url 'wiki:create' path=urlpath.parent.path %}" style="padding: 7px;">
-          <span class="icon-arrow-right"></span>
-          {% trans "New article next to" %} {{ article.current_revision.title }}
-        </a>
-        {% endif %}
         <a href="{% url 'wiki:create' path=urlpath.path %}" style="padding: 7px;">
           <span class="icon-arrow-down"></span>
           {% trans "New article below" %} {{ article.current_revision.title }}
