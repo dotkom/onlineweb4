@@ -34,7 +34,8 @@ FILEBROWSER_VERSIONS = {
     # Companies
     'companies_main' : {'verbose_name' : 'Company large', 'width': 584, 'height': 275, 'opts': 'crop'},
     'companies_thumb' : {'verbose_name' : 'Company mini', 'width': 165, 'height': 71, 'opts': 'crop'},
-    'companies_medium' : {'verbose_name' : 'Company medium', 'width': 277, 'height': 146, 'opts': 'crop'}
+    'companies_medium' : {'verbose_name' : 'Company medium', 'width': 277, 'height': 146, 'opts': 'crop'},
+    'companies_archive' : {'verbose_name' : 'Company medium', 'width': 330, 'height': 142, 'opts': 'crop'}
 }
 
 # define the thumbnail in the admin-view
