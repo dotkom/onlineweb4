@@ -14,7 +14,7 @@ class Company(models.Model):
     image = FileBrowseField(_(u"bilde"), 
         max_length=200, directory=IMAGE_FOLDER,
         extensions=IMAGE_EXTENSIONS, null=False, blank=False)
-    site = models.URLField(_(u"hjemmeside"))
+    site = models.CharField(_(u"hjemmeside"), max_length=100)
     email_address = models.EmailField(_(u"epostaddresse"), max_length=75, blank=True, null=True)
     phone_number = models.CharField(_(u"telefonnummer"), max_length=20, blank=True, null=True)
 
