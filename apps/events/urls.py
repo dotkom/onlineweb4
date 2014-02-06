@@ -12,4 +12,5 @@ urlpatterns = patterns('apps.events.views',
     # iCalendar
     url(r'^events.ics$', 'calendar_export', name='events_ics'),
     url(r'^(?P<event_id>\d+).ics$', 'calendar_export', name='event_ics'),
+    url(r'^user/(?P<user>[\w:-]+).ics$', 'calendar_export', name='events_personal_ics'),
 )

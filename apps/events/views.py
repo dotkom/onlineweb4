@@ -7,6 +7,7 @@ from django.utils import timezone
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
+from django.core.signing import Signer, BadSignature
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404, redirect
@@ -15,13 +16,19 @@ from django.utils.translation import ugettext as _
 import icalendar
 import watson
 
+from apps.authentication.models import OnlineUser as User
 from apps.events.forms import CaptchaForm
 from apps.events.models import Event, AttendanceEvent, Attendee
 from apps.events.pdf_generator import EventPDF
 
 
 def index(request):
-    return render(request, 'events/index.html', {})
+    context = {}
+    if request.user and request.user.is_authenticated():
+        signer = Signer()
+        context['signer_value'] = signer.sign(request.user.username)
+        context['personal_ics_path'] = request.build_absolute_uri(reverse('events_personal_ics', args=(context['signer_value'],)))
+    return render(request, 'events/index.html', context)
 
 def details(request, event_id, event_slug):
     event = get_object_or_404(Event, pk=event_id)
@@ -181,10 +188,11 @@ def generate_pdf(request, event_id):
 
     return EventPDF(event).render_pdf()
 
-def calendar_export(request, event_id=None):
+def calendar_export(request, event_id=None, user=None):
     cal = icalendar.Calendar()
     cal.add('prodid', '-//Online//Onlineweb//EN')
     cal.add('version', '2.0')
+    filename = 'online'
     if event_id:
         # Single event
         try:
@@ -192,6 +200,19 @@ def calendar_export(request, event_id=None):
         except Event.DoesNotExist:
             events = []
         filename = str(event_id)
+    elif user:
+        signer = Signer()
+        try:
+            username = signer.unsign(user)
+            user = User.objects.get(username=username)
+        except BadSignature, User.DoesNotExist:
+            user = None
+        if user:
+            events = Event.objects.filter(attendance_event__attendees__user=user).order_by('event_start').prefetch_related(
+            'attendance_event', 'attendance_event__attendees')
+            filename = username
+        else:
+            events = []
     else:
         # All future events
         events = Event.objects.filter(event_start__gt=timezone.now())
@@ -203,7 +224,9 @@ def calendar_export(request, event_id=None):
         cal_event.add('dtstart', event.event_start)
         cal_event.add('dtend', event.event_end)
         cal_event.add('location', event.location)
-        cal_event.add('summary', event.ingress_short)
+        cal_event.add('summary', event.title)
+        cal_event.add('description', event.ingress_short)
+        cal_event.add('uid', 'event-' + str(event.id) + '@online.ntnu.no')
 
         cal.add_component(cal_event)
 
