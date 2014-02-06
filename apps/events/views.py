@@ -149,7 +149,7 @@ def _search_indexed(request, query, filters):
         kwargs['event_start__gte'] = timezone.now()
 
     if filters['myevents'] == 'true':
-        kwargs['attendance_event__attendees'] = request.user
+        kwargs['attendance_event__attendees__user'] = request.user
 
     events = Event.objects.filter(**kwargs).order_by('event_start').prefetch_related(
             'attendance_event', 'attendance_event__attendees')
