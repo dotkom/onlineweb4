@@ -217,8 +217,8 @@ def calendar_export(request, event_id=None, user=None):
         else:
             events = []
     else:
-        # All future events
-        events = Event.objects.filter(event_start__gt=timezone.now())
+        # All events that haven't ended yet
+        events = Event.objects.filter(event_end__gt=timezone.now()).order_by('event_start')
         filename = 'events'
 
     for event in events:
