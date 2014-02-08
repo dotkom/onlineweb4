@@ -201,6 +201,8 @@ def calendar_export(request, event_id=None, user=None):
             events = []
         filename = str(event_id)
     elif user:
+        # Personalized calendar
+        # This calendar is publicly available, but the url is not guessable so data should not be leaked to everyone
         signer = Signer()
         try:
             username = signer.unsign(user)
@@ -208,6 +210,7 @@ def calendar_export(request, event_id=None, user=None):
         except BadSignature, User.DoesNotExist:
             user = None
         if user:
+            # Getting all events that the user has/is participating in
             events = Event.objects.filter(attendance_event__attendees__user=user).order_by('event_start').prefetch_related(
             'attendance_event', 'attendance_event__attendees')
             filename = username
