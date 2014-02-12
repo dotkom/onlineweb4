@@ -167,7 +167,9 @@
                             <p class="access-title">Dette arrangementet er åpent for</p>
                             <div class="rules">
 
-                                {% if rules %}
+                                {% if attendance_event.guest_attendance %}
+                                    <span class="label label-info">Alle</span>
+                                {% elif rules %}
                                     {% for rule_bundle in rules %}
                                         {% for rule in rule_bundle %}
                                             <span class="label label-info">{{ rule }}</span>
