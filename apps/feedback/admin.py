@@ -63,8 +63,9 @@ class MultipleChoiceAdmin(admin.ModelAdmin):
     inline_classes = ('grp-collapse grp-open',)  # style
     extra = 0
 
-class MultipleChoiceInline(admin.TabularInline):
+class MultipleChoiceInline(admin.StackedInline):
     model = MultipleChoiceQuestion
+    inlines = (ChoiceInline, )
     classes = ('grp-collapse grp-open',)  # style
     inline_classes = ('grp-collapse grp-open',)  # style
     extra = 0

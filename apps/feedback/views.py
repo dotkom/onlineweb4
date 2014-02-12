@@ -77,21 +77,27 @@ def get_chart_data(request, applabel, appmodel, object_id, feedback_id):
         rating_answers.append(answer_count[1:])
     
     fos = fbr.field_of_study_answers.all()
-    answer_count = defaultdict(int)
+    fos_answer_count = defaultdict(int)
     for answer in fos:
-        answer_count[str(answer)] += 1
+        fos_answer_count[str(answer)] += 1
 
-    # TODO: Sigurd - dette må gjøres av noen
-    mc_answers = []
-    for q in [fbr.answers_to_question(q) for q in fbr.multiple_choice_question]:
-        for a in q:
-            mc_answers.append(a.answer)
-    answer_collection['replies']['mc'] = mc_answers
-    # TODO Sigurd END!
+    print fos_answer_count.items()
+
+    mc_questions = []
+    mc_answer_count = []
+    for question in fbr.multiple_choice_question:
+        mc_questions.append(unicode(question))
+        answer_count = defaultdict(int)
+        for answer in fbr.answers_to_question(question):
+            answer_count[str(answer)] += 1
+        print answer_count.items()
+        mc_answer_count.append(answer_count.items())
 
     answer_collection['replies']['ratings'] = rating_answers
     answer_collection['replies']['titles'] = rating_titles
-    answer_collection['replies']['fos'] = answer_count.items()
+    answer_collection['replies']['fos'] = fos_answer_count.items()
+    answer_collection['replies']['mc_questions'] = mc_questions
+    answer_collection['replies']['mc_answers'] = mc_answer_count
    
     return HttpResponse(simplejson.dumps(answer_collection), mimetype='application/json')
 
