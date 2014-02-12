@@ -123,9 +123,9 @@ class BooleanVote(AbstractVote):
         realname = u'%s, %s' %(super(BooleanVote, self).voter.user.last_name, super(BooleanVote, self).voter.user.first_name)
         if super(BooleanVote, self).question.anonymous:
             realname = super(BooleanVote, self).hide_user(realname)
-        if answer is None:
+        if self.answer is None:
             a = u'blankt'
-        elif answer:
+        elif self.answer:
             a = u'ja'
         else:
             a = u'nei'
