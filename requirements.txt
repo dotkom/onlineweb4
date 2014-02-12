@@ -10,7 +10,6 @@ markdown2==2.2.0                # textarea text formatting
 psycopg2                        # Postgres adapter
 pytz                            # Timezone lib. Obsolete?
 gunicorn==18.0
-simplejson==3.3.1
 icalendar==3.6.1
 
 # third party deps
