@@ -93,7 +93,7 @@ class Question(models.Model):
         return result
 
     def __unicode__(self):
-        return u'[%d] %s' %(self.id - meeting.num_questions(), self.description)
+        return u'[%d] %s' %(self.id - self.meeting.num_questions(), self.description)
 
 # Individual abstract vote and vote types
 
