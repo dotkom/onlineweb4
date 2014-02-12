@@ -58,7 +58,7 @@ class RegisteredVoter(models.Model):
     def __unicode__(self):
         return u'%s, %s' %(user.last_name, user.first_name)
 
-# Single questions
+# Question wrapper
 
 class Question(models.Model):
     '''
