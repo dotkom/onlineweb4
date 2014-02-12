@@ -81,7 +81,10 @@ class Event(models.Model):
 
     def is_attendance_event(self):
         """ Returns true if the event is an attendance event """
-        return True if self.attendance_event else False
+        try:
+            return True if self.attendance_event else False
+        except AttendanceEvent.DoesNotExist:
+            return False
 
     def is_eligible_for_signup(self, user):
         """
