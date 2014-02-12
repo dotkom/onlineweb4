@@ -3,6 +3,7 @@ import from django.db import models
 from apps.authentication.models import OnlineUser as User
 from django.utils.translation import ugettext as _
 from hashlib import sha256
+import settings
 
 # General genfors model
 
@@ -82,6 +83,14 @@ class AbstractVote(models.Model):
     voter = models.ForeignKey(RegisteredVoter, related_name=_(u'votes'), help_text=_(u'Bruker'), null=False)
     question = models.ForeignKey(Question, related_name=_(u'votes'), null=False)
 
+    # Simple hashing function to hide realnames
+    def hide_user(self, arg):
+        h = sha256()
+        h.update(arg)
+        h.update(settings.GENFORS_ANON_SALT)
+        h = h[:8]
+        return h
+
 class BooleanVote(AbstractVote):
     '''
     The BooleanVote model holds the yes/no/blank answer to a specific question held in superclass
@@ -91,10 +100,7 @@ class BooleanVote(AbstractVote):
     def __unicode__(self):
         realname = u'%s, %s' %(super(BooleanVote, self).voter.user.last_name, super(BooleanVote, self).voter.user.first_name)
         if super(BooleanVote, self).question.anonymous:
-            h = sha256()
-            h.update(realname)
-            h.update(h)
-            realname = h[:8]
+            realname = super(BooleanVote, self).hide_user(realname)
         if answer is None:
             a = u'blankt'
         elif answer:
@@ -109,3 +115,10 @@ class MultipleChoice(AbstractVote):
     The MultipleChoice model holds the answered alternative to a specific question held in superclass
     '''
     answer = models.PositiveIntegerField(null=True, blank=True, help_text=_(u'Alternativ'))
+
+    def __unicode__(self):
+        realname = u'%s, %s' %(super(MultipleChoice, self).voter.user.last_name, super(MultipleChoice, self).voter.user.first_name)
+        if super(MultipleChoice, self).anonymous:
+            realname = super(MultipleChoice, self).hide_user(realname)
+        
+        return '%s stemte %d på %s' %(realname, self.answer, super(MultipleChoice, self).question)
