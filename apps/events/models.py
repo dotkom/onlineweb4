@@ -173,6 +173,9 @@ class Event(models.Model):
         return self.attendance_event.attendees.all()[self.attendance_event.max_capacity:]
         return [] if self.number_of_attendees_on_waiting_list is 0 else self.attendance_event.attendees[self.attendance_event.max_capacity:]
 
+    @property
+    def attendees_not_paid(self):
+        return self.attendance_event.attendees.filter(paid=False)
     
     def what_place_is_user_on_wait_list(self, user):
         if self.attendance_event:
