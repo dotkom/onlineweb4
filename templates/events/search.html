@@ -6,9 +6,17 @@
 
     <div class="col-xs-12 col-sm-4 col-md-4 left-box">
       <div class="row">
-        <a href="{{ event.get_absolute_url }}">
-        <img src="{% version event.image 'events_archive' %}" alt="" />
-        </a>
+        {% if event.companies.all %}
+            {% for company_relation in event.companies.all %}
+                <a href="{{ event.get_absolute_url }}">
+                    <img src="{% version company_relation.company.image 'companies_archive' %}" alt="" />
+                </a>
+            {% endfor %} 
+        {% else %}
+            <a href="{{ event.get_absolute_url }}">
+                <img src="{% version event.image 'events_archive' %}" alt="" />
+            </a>
+        {% endif %}
         {% if event.is_attendance_event %}
             <a href="{{ event.get_absolute_url }}">
                 <button type="button" class="btn btn-success">Gå til påmelding</button>
@@ -34,7 +42,7 @@
       <div class="meta">
         {% if event.is_attendance_event %}
           <div class="col-md-3">
-            <p>Påmeldte: {{ event.number_of_attendees_not_on_waiting_list }}</p>
+            <p>Påmeldte: {{ event.number_of_attendees_not_on_waiting_list }} / {{ event.attendance_event.max_capacity }}</p>
           </div>
           <div class="col-md-3">
             <p>Sted: {{ event.location }}</p>

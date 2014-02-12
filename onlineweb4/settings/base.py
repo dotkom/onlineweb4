@@ -29,8 +29,6 @@ EMAIL_DOTKOM = 'dotkom@online.ntnu.no'
 EMAIL_FAGKOM = 'fagkom@online.ntnu.no'
 EMAIL_PROKOM = 'prokom@online.ntnu.no'
 EMAIL_TRIKOM = 'trikom@online.ntnu.no'
-# Whether or not django should start the scheduler for feedback mails
-FEEDBACK_MAIL_SCHEDULER = True
 
 # We will receive errors and other django messages from this email
 SERVER_EMAIL = 'onlineweb4-error@online.ntnu.no'
@@ -53,6 +51,12 @@ USE_L10N = True
 USE_TZ = True
 DATETIME_FORMAT = 'N j, Y, H:i'
 SECRET_KEY = 'override-this-in-local.py'
+
+# Session cookie expires after one year
+SESSION_COOKIE_AGE = 31540000
+
+# Override this in local if you need to :)
+BASE_URL = 'https://online.ntnu.no'
 
 AUTH_USER_MODEL = 'authentication.OnlineUser'
 LOGIN_URL = '/auth/login/'
@@ -116,7 +120,7 @@ ROOT_URLCONF = 'onlineweb4.urls'
 WSGI_APPLICATION = 'onlineweb4.wsgi.application'
 
 TEMPLATE_DIRS = (
-    os.path.join(PROJECT_ROOT_DIRECTORY, 'templates/')
+    os.path.join(PROJECT_ROOT_DIRECTORY, 'templates/'),
 )
 
 # Pizzasystem settings
@@ -131,6 +135,10 @@ INSTALLED_APPS = (
     'django.contrib.humanize',
     'django_nose',
     'south',
+    'django_notify', # Wiki
+    'mptt', # Wiki
+    'sekizai', # Wiki
+    'sorl.thumbnail', # Wiki
     'grappelli',
     'filebrowser',
     'chunks',
@@ -143,6 +151,13 @@ INSTALLED_APPS = (
     'watson',
     'gunicorn',
     'markdown_deux',
+
+    # Wiki
+    'wiki',
+    'wiki.plugins.attachments',
+    'wiki.plugins.notifications',
+    'wiki.plugins.images',
+    'wiki.plugins.macros',
 
     # Django apps
     'django.contrib.admin',
@@ -180,6 +195,11 @@ LOGGING = {
             '()': 'django.utils.log.RequireDebugFalse'
         }
     },
+    'formatters': {
+        'standard': {
+            'format': '%(asctime)s [%(levelname)s] %(name)s: %(message)s'
+        },
+    },
     'handlers': {
         'mail_admins': {
             'level': 'ERROR',
@@ -189,6 +209,7 @@ LOGGING = {
         'console':{
             'level': 'DEBUG',
             'class': 'logging.StreamHandler',
+            'formatter': 'standard'
         },
     },
     'loggers': {
@@ -197,9 +218,10 @@ LOGGING = {
             'level': 'ERROR',
             'propagate': True,
         },
-        'apscheduler.scheduler': {
+        '': {
             'handlers': ['console'],
-            'level': 'INFO',
+            'level': 'DEBUG',
+            'propagate': True,
         },
     }
 }
@@ -229,6 +251,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "django.core.context_processors.static",
     "django.core.context_processors.tz",
     "django.contrib.messages.context_processors.messages",
+    "sekizai.context_processors.sekizai", # Wiki
     "onlineweb4.context_processors.analytics",
 )
 

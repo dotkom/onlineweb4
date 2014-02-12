@@ -3,22 +3,25 @@ import json
 import os
 import uuid
 
-from PIL import Image
-
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import Group
 from django.core.mail import send_mail
 from django.http import HttpResponse
 from django.shortcuts import redirect, render, get_object_or_404
 from django.utils.translation import ugettext as _
 
+import watson
+
 from apps.authentication.forms import NewEmailForm
-from apps.authentication.models import Email, RegisterToken
+from apps.authentication.models import Email, RegisterToken, Position
+from apps.authentication.models import OnlineUser as User
 from apps.marks.models import Mark
 from apps.profiles.forms import (MailSettingsForm, PrivacyForm,
-                                ProfileForm, MembershipSettingsForm)
+                                ProfileForm, MembershipSettingsForm, PositionForm)
+from utils.shortcuts import render_json
 
 """
 Index for the entire user profile view
@@ -51,7 +54,14 @@ def render_home(request):
 
 def _create_request_dictionary(request):
 
+    groups = Group.objects.all()
+    users_to_display = User.objects.filter(privacy__visible_for_other_users=True)
+
     dict = {
+        'users' : users_to_display,
+        'groups' : groups,
+        'user' : request.user,
+        'position_form' : PositionForm(),
         'privacy_form' : PrivacyForm(instance=request.user.privacy),
         'user_profile_form' : ProfileForm(instance=request.user),
         'password_change_form' : PasswordChangeForm(request.user),
@@ -68,7 +78,7 @@ def _create_request_dictionary(request):
     if request.session.has_key('userprofile_active_tab'):
         dict['active_tab'] = request.session['userprofile_active_tab']
     else:
-        dict['active_tab'] = 'myprofile'
+        dict['active_tab'] = 'users'
 
     return dict
 
@@ -151,6 +161,41 @@ def savePassword(request):
 
     return redirect("profiles")
 
+@login_required
+def save_position(request):
+    if request.method == 'POST':
+
+        form = PositionForm(request.POST)
+        dict = _create_request_dictionary(request)
+        dict['position_form'] = form
+
+        if not form.is_valid():
+            messages.error(request, _(u'Skjemaet inneholder feil'))
+            return render(request, 'profiles/index.html', dict)
+
+        new_position = form.save(commit=False)
+        new_position.user = request.user
+        new_position.save()
+        messages.success(request, _(u'Posisjonen ble lagret'))
+        return redirect('profiles')
+
+
+@login_required
+def delete_position(request):
+    if request.is_ajax():
+        if request.method == 'POST':
+            position_id = request.POST.get('position_id')
+            print position_id
+            position = get_object_or_404(Position, pk=position_id)
+            if position.user == request.user:
+                position.delete()
+                return_status = json.dumps({'message': _(u"Posisjonen ble slettet.")})
+                return HttpResponse(status=200, content=return_status)
+            else:
+                return_status = json.dumps({'message': _(u"Du prøvde å slette en posisjon som ikke tilhørte deg selv.")})
+            return HttpResponse(status=500, content=return_status)
+        return HttpResponse(status=404)
+
 
 @login_required
 def update_mark_rules(request):
@@ -163,9 +208,8 @@ def update_mark_rules(request):
                 request.user.mark_rules = True
                 request.user.save()
             else:
-                return_status = json.dumps({'message': _(u"Du har valgt å ikke akseptere prikkereglene.")})
-                request.user.mark_rules = False
-                request.user.save()
+                return_status = json.dumps({'message': _(u"Du kan ikke endre din godkjenning av prikkereglene.")})
+		return HttpResponse(status=403, content=return_status)
 
             return HttpResponse(status=212, content=return_status)
         return HttpResponse(status=405)
@@ -321,3 +365,34 @@ def save_membership_details(request):
                                                 ))
 
     return HttpResponse(status=404) 
+
+
+@login_required
+def api_user_search(request):
+    if request.GET.get('query'):
+        users = search_for_users(request.GET.get('query'))
+        return render_json(users)
+    return render_json(error='Mangler søkestreng')
+
+
+#@login_required
+def search_for_users(query, limit=10):
+    if not query:
+        return []
+
+    results = []
+
+    for result in watson.search(query, models=(User.objects.filter(privacy__visible_for_other_users=True),)):
+        results.append(result.object)
+
+    return results[:limit]
+
+
+@login_required
+def view_profile(request, username):
+    user = get_object_or_404(User, username=username)
+    if user.privacy.visible_for_other_users or user == request.user:
+        return render(request, 'profiles/view_profile.html', {'user': user})
+
+    messages.error(request, _(u'Du har ikke tilgang til denne profilen'))
+    return redirect('profiles')

@@ -73,16 +73,14 @@ $(document).ready(function() {
 
         if(!checked) {
             $(".marks").removeClass("off").addClass("on");
-            updateMarkRules(true);
-        }
-        else {
-            $(".marks").removeClass("on").addClass("off");
-            updateMarkRules(false);
+            updateMarkRules();
         }
     }
 
     $(".marks").mouseup(function(e) {
-        performMarkRulesClick();
+	if (!($("#marks-checkbox").is(':checked'))) {
+            performMarkRulesClick();
+        }
     });
 
     $("#marks-checkbox").click(function(e){
@@ -90,16 +88,17 @@ $(document).ready(function() {
         e.preventDefault();
     });
 
-    var updateMarkRules = function(accepted) {
+    var updateMarkRules = function() {
         var utils = new Utils();
 
         $.ajax({
             method: 'POST',
             url: 'update_mark_rules/',
-            data: { 'rules_accepted': accepted },
+            data: { 'rules_accepted': true },
             success: function(res) {
                 res = jQuery.parseJSON(res);
                 utils.setStatusMessage(res['message'], 'alert-success');
+                $(".marks").attr('disabled', true);
             },
             error: function() {
                 utils.setStatusMessage('En uventet error ble oppdaget. Kontakt dotkom@online.ntnu.no for assistanse.', 'alert-danger');
@@ -243,6 +242,28 @@ $(document).ready(function() {
             crossDomain: false
         });
     });
+
+    $(".delete-position").on('click', function(e) {
+        var that = $(this);
+        e.preventDefault();
+        $.ajax({
+            method: 'post',
+            url: '/profile/deleteposition/',
+            data: {'position_id' : $(this).data('position-id')},
+            success: function (res) {
+                var result = JSON.parse(res);
+                var utils = new Utils();
+                $(that).parent().remove();
+                utils.setStatusMessage(result['message'], 'alert-success');
+            },
+            error: function (res) {
+                var utils = new Utils();
+                var result = JSON.parse(res);
+                if(res['status'] === 500) {
+                    utils.setStatusMessage(result['message'], 'alert-danger');
+                }
+            },
+            crossDomain: false
+        });
+    });
 });
-
-

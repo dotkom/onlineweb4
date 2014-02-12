@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import datetime
 import socket
+import locale
 
 from django.utils import timezone
 from django.contrib.contenttypes.models import ContentType
@@ -16,9 +17,10 @@ class FeedbackMail(Task):
 
     @staticmethod
     def run():
-       active_feedbacks = FeedbackRelation.objects.filter(active=True)
+        locale.setlocale(locale.LC_ALL, "nb_NO.UTF-8")
+        active_feedbacks = FeedbackRelation.objects.filter(active=True)
        
-       for feedback in active_feedbacks:
+        for feedback in active_feedbacks:
             message = FeedbackMail.generate_message(feedback)
 
             if message.send:
@@ -132,12 +134,11 @@ class FeedbackMail(Task):
 
     @staticmethod
     def get_user_mails(not_responded):
-        return  [str(user.get_email()) for user in not_responded]
+        return  [user.email for user in not_responded]
 
     @staticmethod
     def get_link(feedback):
-        hostname = socket.getfqdn()
-        return str(hostname + feedback.get_absolute_url())
+        return str(settings.BASE_URL + feedback.get_absolute_url())
 
     @staticmethod
     def get_title(feedback):
@@ -178,7 +179,7 @@ class Message():
     contact = ""
     link = ""
     send = False
-    end = u"\n\nMvh\nOnline linjeforening"
+    end = u"\n\nMvh\nLinjeforeningen Online"
     results_message = False
 
     committee_mail = ""
@@ -196,6 +197,4 @@ class Message():
             self.end)
         return message
 
-
-if settings.FEEDBACK_MAIL_SCHEDULER:
-    schedule.register(FeedbackMail, day_of_week='mon-sun', hour=8, minute=0)
+schedule.register(FeedbackMail, day_of_week='mon-sun', hour=8, minute=00)

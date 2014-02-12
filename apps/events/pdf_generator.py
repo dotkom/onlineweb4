@@ -21,7 +21,7 @@ class EventPDF:
         self.waiters = event.wait_list
         self.attendee_table_data = [(u'Navn', u'Klasse', u'Studie', u'Telefon'), ]
         self.waiters_table_data = [(u'Navn', u'Klasse', u'Studie', u'Telefon'), ]
-        self.allergies_table_data = ()
+        self.allergies_table_data = []
 
         self.create_attendees_table_data()
         self.create_waiters_table_data()
@@ -37,7 +37,7 @@ class EventPDF:
                                              user.phone_number))
 
             if user.allergies:
-                self.allergies_table_data = self.allergies_table_data + (user.allergies,)
+                self.allergies_table_data = self.allergies_table_data + [user.first_name + ' ' + user.last_name  + ': ' + user.allergies]
 
     # Create table data for attendees waiting for a spot
     def create_waiters_table_data(self):
@@ -49,10 +49,10 @@ class EventPDF:
                                             user.phone_number))
 
             if user.allergies:
-                self.allergies_table_data = self.allergies_table_data + (user.allergies,)
+                self.allergies_table_data = self.allergies_table_data + [user.first_name + ' ' + user.last_name  + ': ' + user.allergies]
 
     def attendee_column_widths(self):
-        return (200, 40, 170, 60)
+        return (185, 40, 170, 75)
 
     def allergies_column_widths(self):
         return (200, 200)

@@ -3,7 +3,7 @@
 from django.contrib import admin
 from django.utils.translation import ugettext as _
 
-from apps.authentication.models import AllowedUsername, Email, OnlineUser
+from apps.authentication.models import AllowedUsername, Email, OnlineUser, Position
 
 
 class EmailInline(admin.TabularInline):
@@ -14,7 +14,7 @@ class EmailInline(admin.TabularInline):
 class OnlineUserAdmin(admin.ModelAdmin):
     model = OnlineUser
     inlines = (EmailInline,)
-    list_display = ['username', 'first_name', 'last_name', 'field_of_study', 'is_member',]
+    list_display = ['username', 'first_name', 'last_name', 'ntnu_username', 'field_of_study', 'is_member',]
     list_filter = ('is_staff', 'is_superuser', 'is_active', 'groups')
     fieldsets = (
         (None, {'fields': ('username', 'password')}),
@@ -27,6 +27,7 @@ class OnlineUserAdmin(admin.ModelAdmin):
                                        'groups', 'user_permissions')}),
     )
     filter_horizontal = ('groups', 'user_permissions',)
+    search_fields = ('first_name', 'last_name', 'username', 'ntnu_username',)
 
 admin.site.register(OnlineUser, OnlineUserAdmin)
 
@@ -39,5 +40,12 @@ class AllowedUsernameAdmin(admin.ModelAdmin):
         (_(u'Notater'), {'fields': ('note', 'description')}),
 
     )
+    search_fields = ('username',)
 
 admin.site.register(AllowedUsername, AllowedUsernameAdmin)
+
+
+class PositionAdmin(admin.ModelAdmin):
+    model = Position
+
+admin.site.register(Position, PositionAdmin)

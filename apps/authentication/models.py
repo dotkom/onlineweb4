@@ -1,12 +1,18 @@
 # -*- coding: utf-8 -*-
 
 import datetime
+import socket
+import urllib
+import hashlib
 
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils.translation import ugettext as _
 from django.utils import timezone
+from django.utils.html import strip_tags
+
+import watson
 
 
 # If this list is changed, remember to check that the year property on
@@ -32,6 +38,28 @@ GENDER_CHOICES = [
     ("female", _(u"kvinne")),
 ]
 
+COMMITTEES = [
+    ('hs', _(u'Hovedstyret')),
+    ('arrkom', _(u'Arrangementskomiteen')),
+    ('bankom', _(u'Bank- og økonomikomiteen')),
+    ('bedkom', _(u'Bedriftskomiteen')),
+    ('dotkom', _(u'Drifts- og utviklingskomiteen')),
+    ('ekskom', _(u'Ekskursjonskomiteen')),
+    ('fagkom', _(u'Fag- og kurskomiteen')),
+    ('jubkom', _(u'Jubileumskomiteen')),
+    ('pangkom', _(u'Pensjonistkomiteen')),
+    ('prokom', _(u'Profil-og aviskomiteen')),
+    ('trikom', _(u'Trivselskomiteen')),
+    ('velkom', _(u'Velkomstkomiteen')),
+]
+
+POSITIONS = [
+    ('medlem', _(u'Medlem')),
+    ('leder', _(u'Leder')),
+    ('nestleder', _(u'Nestleder')),
+    ('okoans', _(u'Økonomiansvarlig')),
+]
+
 class OnlineUser(AbstractUser):
 
     IMAGE_FOLDER = "images/profiles"
@@ -47,7 +75,7 @@ class OnlineUser(AbstractUser):
 
     # Address
     phone_number = models.CharField(_(u"telefonnummer"), max_length=20, blank=True, null=True)
-    address = models.CharField(_(u"adresse"), max_length=30, blank=True, null=True)
+    address = models.CharField(_(u"adresse"), max_length=100, blank=True, null=True)
     zip_code = models.CharField(_(u"postnummer"), max_length=4, blank=True, null=True)
 
     # Other
@@ -122,6 +150,10 @@ class OnlineUser(AbstractUser):
         else:
             return -1
 
+    @models.permalink
+    def get_absolute_url(self):
+        return ('profiles_view', None, {'username': self.username})
+
     def __unicode__(self):
         return self.get_full_name()
 
@@ -129,6 +161,29 @@ class OnlineUser(AbstractUser):
         if self.ntnu_username == "":
             self.ntnu_username = None
         super(OnlineUser, self).save(*args, **kwargs)
+
+    def serializable_object(self):
+        if self.privacy.expose_phone_number:
+            phone = self.phone_number
+        else:
+            phone = "Ikke tilgjengelig"
+
+        return {
+            'id': self.id,
+            'phone': strip_tags(phone),
+            'username': strip_tags(self.username),
+            'value': strip_tags(self.get_full_name()),  # typeahead
+            'name': strip_tags(self.get_full_name()),
+            'image': self.get_image_url(),
+        }
+
+    def get_image_url(self, size=50):
+        default = "%s%s_%s.png" % (settings.BASE_URL,
+                                   settings.DEFAULT_PROFILE_PICTURE_PREFIX, self.gender)
+
+        gravatar_url = "https://www.gravatar.com/avatar/" + hashlib.md5(self.email).hexdigest() + "?"
+        gravatar_url += urllib.urlencode({'d': default, 's':str(size)})
+        return gravatar_url
 
     class Meta:
         ordering = ['first_name', 'last_name']
@@ -149,6 +204,9 @@ class Email(models.Model):
         elif primary_email.email != self.email:
             self.primary = False
         self.email = self.email.lower()
+        if self.primary:
+            self.user.email = self.email
+            self.user.save()
         super(Email, self).save(*args, **kwargs)
 
     def __unicode__(self):
@@ -198,3 +256,33 @@ class AllowedUsername(models.Model):
         verbose_name_plural = _(u"medlemsregister")
         ordering = (u"username",)
 
+
+class Position(models.Model):
+    """
+    Contains a users position in the organization from a given year
+    """
+    period     = models.CharField(_(u'periode'), max_length=9, default="2013-2014", blank=False)
+    committee  = models.CharField(_(u"komite"), max_length=10, choices=COMMITTEES, default="hs")
+    position   = models.CharField(_(u"stilling"), max_length=10, choices=POSITIONS, default="medlem")
+    user       = models.ForeignKey(OnlineUser, related_name='positions', blank=False)
+
+    @property
+    def print_string(self):
+        return '%s: %s(%s)' % (self.period, self.committee, self.position)
+
+    def __unicode__(self):
+        return self.print_string
+
+    class Meta:
+        verbose_name = _(u'posisjon')
+        verbose_name_plural = _(u'posisjoner')
+        ordering = (u'user', u'period', )
+
+# Static method for resetting all users mark rules accepted field to false due to changes in mark rules
+def reset_marks_acceptance():
+    for user in OnlineUser.objects.all():
+        user.mark_rules = False
+        user.save()
+
+# Register OnlineUser in watson index for searching
+watson.register(OnlineUser)

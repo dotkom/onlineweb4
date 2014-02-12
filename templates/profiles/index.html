@@ -5,27 +5,15 @@
 Min profil - Online
 {% endblock title %}
 
-{% block js %}
-    {{ block.super }}
-    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}js/libs/jquery.Jcrop.min.js"></script>
-    {% compress js %}
-    <script type="text/javascript" src="{{ STATIC_URL }}js/libs/jquery.color.js"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}js/libs/jquery.cookie.js"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}js/Utils.js"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}js/profiles.js"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}js/libs/imagesloaded.pkgd.min.js"></script>
-    {% endcompress %}
-{% endblock %}
-
 {% block styles %}
     {{ block.super }}
     {% compress css %}
-        <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}less/jcrop/jquery.Jcrop.min.css">
-        <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}less/jquery-ui/jquery.ui.datepicker.min.css">
-        <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}less/jquery-ui/jquery.ui.theme.min.css">
-        <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}less/jquery-ui/jquery.ui.core.min.css">
-        <link rel="stylesheet" type="text/less" href="{{ STATIC_URL }}less/profiles.less">
+        <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}less/jcrop/jquery.Jcrop.min.css" />
+        <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}less/jquery-ui/jquery.ui.datepicker.min.css" />
+        <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}less/jquery-ui/jquery.ui.theme.min.css" />
+        <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}less/jquery-ui/jquery.ui.core.min.css" />
+        <link rel="stylesheet" type="text/less" href="{{ STATIC_URL }}less/profiles.less" />
+        <link rel="stylesheet" type="text/less" href="{{ STATIC_URL }}less/typeahead.less" />
     {% endcompress %}
 {% endblock %}
 
@@ -43,8 +31,14 @@ Min profil - Online
                 <div class="col-md-2 col-sm-3 col-xs-12">
                     <!-- Desktop menu -->
                     <ul class="nav nav-pills nav-stacked visible-lg hidden-xs" id="userprofile-tabs">
-                        <li class="{% ifequal 'myprofile' active_tab %}active{% endifequal %}">
-                            <a href="#myprofile">Brukerinformasjon</a>
+                        <li class="{% ifequal 'dashboard' active_tab %}active{% endifequal %}">
+                            <a href="#dashboard">Dashboard</a>
+                        </li>
+                        <li class="{% ifequal 'users' active_tab %}active{% endifequal %}">
+                            <a href="#users">Finn brukere</a>
+                        </li>
+                        <li class="{% ifequal 'editprofile' active_tab %}active{% endifequal %}">
+                            <a href="#editprofile">Rediger profil</a>
                         </li>
                         <li class="{% ifequal 'privacy' active_tab %}active{% endifequal %}">
                             <a href="#privacy">Personvern</a>
@@ -56,7 +50,7 @@ Min profil - Online
                             <a href="#password">Passord</a>
                         </li>
                         <li class="{% ifequal 'mail-settings' active_tab %}active{% endifequal %}">
-                            <a href="#mail-settings">E-post-instillinger</a>
+                            <a href="#mail-settings">Epost-instillinger</a>
                         </li>
                         <li class="{%ifequal 'membership' active_tab %}active{% endifequal %}">
                             <a href="#membership">Medlemskap</a>
@@ -65,18 +59,26 @@ Min profil - Online
                     <!-- End Desktop menu -->
                     <!-- Mobile menu -->
                     <ul class="nav nav-pills nav-stacked visible-xs" id="userprofile-tabs">
-                        <li class="{% ifequal 'myprofile' active_tab %}active{% endifequal %}"><a href="#myprofile" data-toggle="tab">Brukerinformasjon</a></li>
+                        <li class="{% ifequal 'dashboard' active_tab %}Dashboard{% endifequal %}"><a href="#dashboard" data-toggle="tab">Dashboard</a></li>
+                        <li class="{% ifequal 'users' active_tab %}active{% endifequal %}"><a href="#users" data-toggle="tab">Finn brukere</a></li>
+                        <li class="{% ifequal 'editprofile' active_tab %}active{% endifequal %}"><a href="#editprofile" data-toggle="tab">Brukerinformasjon</a></li>
                         <li class="{% ifequal 'privacy' active_tab %}active{% endifequal %}"><a href="#privacy" data-toggle="tab">Personvern</a></li>
                         <li class="{% ifequal 'marks' active_tab %}active{% endifequal %}"><a href="#marks" data-toggle="tab">Prikker</a></li>
                         <li class="{% ifequal 'password' active_tab %}active{% endifequal %}"><a href="#password" data-toggle="tab">Passord</a></li>
-                        <li class="{% ifequal 'mail-settings' active_tab %}active{% endifequal %}"><a href="#mail-settings" data-toggle="tab">E-post-instillinger</a></li>
+                        <li class="{% ifequal 'mail-settings' active_tab %}active{% endifequal %}"><a href="#mail-settings" data-toggle="tab">Epost-instillinger</a></li>
                         <li class="{% ifequal 'membership' active_tab %}active{% endifequal %}"><a href="#membership" data-toggle="tab">Medlemskap</a></li>
                     </ul>
                 </div>
                 <div class="col-md-10 col-sm-9 col-xs-12">
                     <div class="tab-content">
-                        <div id="myprofile" class="tab-pane {% ifequal 'myprofile' active_tab %}active{% endifequal %}">
-                            {% include "profiles/myprofile.html" %}
+                        <div id="dashboard" class="tab-pane {% ifequal 'dashboard' active_tab %}active{% endifequal %}">
+                            {% include "profiles/dashboard.html" %}
+                        </div>
+                        <div id="users" class="tab-pane {% ifequal 'users' active_tab %}active{% endifequal %}">
+                            {% include "profiles/users.html" %}
+                        </div>
+                        <div id="editprofile" class="tab-pane {% ifequal 'editprofile' active_tab %}active{% endifequal %}">
+                            {% include "profiles/editprofile.html" %}
                         </div>
                         <div id="privacy" class="tab-pane {% ifequal 'privacy' active_tab %}active{% endifequal %}">
                             {% include "profiles/privacy.html" %}
@@ -98,4 +100,56 @@ Min profil - Online
             </div>
         </div>
     </section>
+
+
 {% endblock content %}
+{% block js %}
+    {{ block.super }}
+    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/libs/jquery.Jcrop.min.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/libs/hogan-2.0.0.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/libs/typeahead.min.js"></script>
+    {% compress js %}
+    <script type="text/javascript" src="{{ STATIC_URL }}js/libs/jquery.color.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/libs/jquery.cookie.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/Utils.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/profiles.js"></script>
+        <script type="text/javascript" src="{{ STATIC_URL }}js/zipcodecity.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/libs/imagesloaded.pkgd.min.js"></script>
+    {% endcompress %}
+        <script type="text/javascript">
+        // Smart toggle function that we add to jQuery
+        (function($) {
+            $.fn.toggleDisabled = function(){
+                return this.each(function(){
+                    this.disabled = !this.disabled;
+                });
+            };
+        })(jQuery);
+        
+        $(function () {
+            {% verbatim %}
+            var user_search_template =  [
+            '<img width="100%" src="{{ image }}" alt="" />',
+            '<span data-id="{{ id }}" class="user-meta"><h4>{{ name }}</h4>',
+            '<span class="phone"><b>Telefon</b> {{ phone }}</span></span>',
+            ].join('');
+            {% endverbatim %}
+
+            $('#search-users').typeahead({
+                remote: "{% url 'profiles_api_user_search' %}?query=%QUERY",
+                updater: function (item) {
+                    return item;
+                },
+                template: user_search_template,
+                engine: Hogan
+            }).on('typeahead:selected typeahead:autocompleted', function(e, datum) {
+                window.location = '/profile/' + datum.username;
+            });
+
+            $('#id_present').on('change', function () {
+                $('#id_end_year').toggleDisabled();
+            });
+        });     
+        </script>
+{% endblock %}

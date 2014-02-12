@@ -3,7 +3,7 @@
 
 LJUST_COLS=20
 RJUST_COLS=30
-VERBOSE=false
+VERBOSE=true
 RUNSERVER=false
 
 
@@ -81,7 +81,7 @@ function install_onlineweb_requirements() {
     echo "installing onlineweb requirements"
     workon onlineweb
     cd /vagrant
-    progress pip install -r requirements.txt
+    progress pip install -U -r requirements.txt
 }
 
 function install_lessc() {
@@ -111,3 +111,6 @@ setup_virtualenv
 install_onlineweb_requirements
 install_lessc
 prepare_and_run_onlineweb
+
+# Support for pip install inside the VM
+curl https://bitbucket.org/pypa/setuptools/raw/bootstrap/ez_setup.py | python

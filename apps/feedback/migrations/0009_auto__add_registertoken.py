@@ -8,42 +8,19 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        # Adding model 'MultipleChoiceQuestion'
-        db.create_table(u'feedback_multiplechoicequestion', (
+        # Adding model 'RegisterToken'
+        db.create_table(u'feedback_registertoken', (
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('feedback', self.gf('django.db.models.fields.related.ForeignKey')(related_name='multiple_choice_questions', to=orm['feedback.Feedback'])),
-            ('order', self.gf('django.db.models.fields.SmallIntegerField')(default=30)),
-            ('label', self.gf('django.db.models.fields.CharField')(max_length=256)),
+            ('fbr', self.gf('django.db.models.fields.related.ForeignKey')(related_name='Feedback_relation', to=orm['feedback.FeedbackRelation'])),
+            ('token', self.gf('django.db.models.fields.CharField')(max_length=32)),
+            ('created', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
         ))
-        db.send_create_signal(u'feedback', ['MultipleChoiceQuestion'])
-
-        # Adding model 'Choice'
-        db.create_table(u'feedback_choice', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('question', self.gf('django.db.models.fields.related.ForeignKey')(related_name='choices', to=orm['feedback.MultipleChoiceQuestion'])),
-            ('choice', self.gf('django.db.models.fields.CharField')(max_length=256)),
-        ))
-        db.send_create_signal(u'feedback', ['Choice'])
-
-        # Adding model 'MultipleChoiceAnswer'
-        db.create_table(u'feedback_multiplechoiceanswer', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('feedback_relation', self.gf('django.db.models.fields.related.ForeignKey')(related_name='multiple_choice_answers', to=orm['feedback.FeedbackRelation'])),
-            ('answer', self.gf('django.db.models.fields.CharField')(max_length=256)),
-            ('question', self.gf('django.db.models.fields.related.ForeignKey')(related_name='answer', to=orm['feedback.MultipleChoiceQuestion'])),
-        ))
-        db.send_create_signal(u'feedback', ['MultipleChoiceAnswer'])
+        db.send_create_signal(u'feedback', ['RegisterToken'])
 
 
     def backwards(self, orm):
-        # Deleting model 'MultipleChoiceQuestion'
-        db.delete_table(u'feedback_multiplechoicequestion')
-
-        # Deleting model 'Choice'
-        db.delete_table(u'feedback_choice')
-
-        # Deleting model 'MultipleChoiceAnswer'
-        db.delete_table(u'feedback_multiplechoiceanswer')
+        # Deleting model 'RegisterToken'
+        db.delete_table(u'feedback_registertoken')
 
 
     models = {
@@ -70,7 +47,7 @@ class Migration(SchemaMigration):
             'field_of_study': ('django.db.models.fields.SmallIntegerField', [], {'default': '0'}),
             'first_name': ('django.db.models.fields.CharField', [], {'max_length': '30', 'blank': 'True'}),
             'gender': ('django.db.models.fields.CharField', [], {'default': "'male'", 'max_length': '10'}),
-            'groups': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'related_name': "u'user_set'", 'blank': 'True', 'to': u"orm['auth.Group']"}),
+            'groups': ('django.db.models.fields.related.ManyToManyField', [], {'to': u"orm['auth.Group']", 'symmetrical': 'False', 'blank': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'infomail': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
             'is_active': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
@@ -85,7 +62,7 @@ class Migration(SchemaMigration):
             'phone_number': ('django.db.models.fields.CharField', [], {'max_length': '20', 'null': 'True', 'blank': 'True'}),
             'rfid': ('django.db.models.fields.CharField', [], {'max_length': '50', 'null': 'True', 'blank': 'True'}),
             'started_date': ('django.db.models.fields.DateField', [], {'default': 'datetime.datetime(2014, 1, 22, 0, 0)'}),
-            'user_permissions': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'related_name': "u'user_set'", 'blank': 'True', 'to': u"orm['auth.Permission']"}),
+            'user_permissions': ('django.db.models.fields.related.ManyToManyField', [], {'to': u"orm['auth.Permission']", 'symmetrical': 'False', 'blank': 'True'}),
             'username': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '30'}),
             'website': ('django.db.models.fields.URLField', [], {'max_length': '200', 'null': 'True', 'blank': 'True'}),
             'zip_code': ('django.db.models.fields.CharField', [], {'max_length': '4', 'null': 'True', 'blank': 'True'})
@@ -96,12 +73,6 @@ class Migration(SchemaMigration):
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'model': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '100'})
-        },
-        u'feedback.choice': {
-            'Meta': {'object_name': 'Choice'},
-            'choice': ('django.db.models.fields.CharField', [], {'max_length': '256'}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'question': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'choices'", 'to': u"orm['feedback.MultipleChoiceQuestion']"})
         },
         u'feedback.feedback': {
             'Meta': {'object_name': 'Feedback'},
@@ -127,20 +98,6 @@ class Migration(SchemaMigration):
             'feedback_relation': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'field_of_study_answers'", 'to': u"orm['feedback.FeedbackRelation']"}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'})
         },
-        u'feedback.multiplechoiceanswer': {
-            'Meta': {'object_name': 'MultipleChoiceAnswer'},
-            'answer': ('django.db.models.fields.CharField', [], {'max_length': '256'}),
-            'feedback_relation': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'multiple_choice_answers'", 'to': u"orm['feedback.FeedbackRelation']"}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'question': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'answer'", 'to': u"orm['feedback.MultipleChoiceQuestion']"})
-        },
-        u'feedback.multiplechoicequestion': {
-            'Meta': {'object_name': 'MultipleChoiceQuestion'},
-            'feedback': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'multiple_choice_questions'", 'to': u"orm['feedback.Feedback']"}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'label': ('django.db.models.fields.CharField', [], {'max_length': '256'}),
-            'order': ('django.db.models.fields.SmallIntegerField', [], {'default': '30'})
-        },
         u'feedback.ratinganswer': {
             'Meta': {'object_name': 'RatingAnswer'},
             'answer': ('django.db.models.fields.SmallIntegerField', [], {'default': '0'}),
@@ -154,6 +111,13 @@ class Migration(SchemaMigration):
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'label': ('django.db.models.fields.CharField', [], {'max_length': '256'}),
             'order': ('django.db.models.fields.SmallIntegerField', [], {'default': '20'})
+        },
+        u'feedback.registertoken': {
+            'Meta': {'object_name': 'RegisterToken'},
+            'created': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
+            'fbr': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'Feedback_relation'", 'to': u"orm['feedback.FeedbackRelation']"}),
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'token': ('django.db.models.fields.CharField', [], {'max_length': '32'})
         },
         u'feedback.textanswer': {
             'Meta': {'object_name': 'TextAnswer'},

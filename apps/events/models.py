@@ -4,12 +4,12 @@ from datetime import datetime, timedelta
 
 from django.conf import settings
 from django.contrib.auth.models import Group
+from django.core.mail import send_mail
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.template.defaultfilters import slugify
 from django.utils import timezone
 from django.utils.translation import ugettext as _
-
 from filebrowser.fields import FileBrowseField
 import watson
 
@@ -119,11 +119,6 @@ class Event(models.Model):
             response['status_code'] = 502 
             return response
 
-        if timezone.now() < self.attendance_event.registration_start:
-            response['message'] = _(u'Påmeldingen har ikke åpnet enda.')
-            response['status_code'] = 504
-            return response
-        
         #Room for me on the event?
         if not self.attendance_event.room_on_event:
             response['message'] = _(u"Det er ikke mer plass på dette arrangementet.")
@@ -164,6 +159,7 @@ class Event(models.Model):
 
         #Registration not open  
         if timezone.now() < self.attendance_event.registration_start:
+            response['status'] = False
             response['message'] = _(u'Påmeldingen har ikke åpnet enda.')
             response['status_code'] = 501 
             return response
@@ -187,6 +183,33 @@ class Event(models.Model):
                         if attendee_object.user == user:
                             return list(waitlist).index(attendee_object) + 1
         return 0
+
+    def notify_waiting_list(self, host, unattended_user=None, extra_capacity=1):
+        if not self.is_attendance_event():
+            return
+        # Notify next user on waiting list
+        wait_list = self.wait_list
+        if wait_list:
+            # Checking if user is on the wait list
+            on_wait_list = False
+            if unattended_user:
+                for waiting_user in wait_list:
+                    if waiting_user.user == unattended_user:
+                        on_wait_list = True
+                        break
+            if not on_wait_list:
+                # Send mail to first user on waiting list
+                attendees = wait_list[:extra_capacity]
+                email_message = _(u"""
+Du har stått på venteliste for arrangementet "%s" og har nå fått plass.
+Det kreves ingen ekstra handling fra deg med mindre du vil melde deg av.
+
+For mer info:
+http://%s%s
+""") % (self.title, host, self.get_absolute_url())
+                for attendee in attendees:
+                    send_mail(_(u'Du har fått plass på et arrangement'), email_message,
+                              settings.DEFAULT_FROM_EMAIL, [attendee.user.get_email().email])
 
     def feedback_mail(self):
         if self.event_type == 1 or self.event_type == 4: #sosialt/utflukt
@@ -394,6 +417,7 @@ class AttendanceEvent(models.Model):
     max_capacity = models.PositiveIntegerField(_(u'maks-kapasitet'), null=False, blank=False)
     waitlist = models.BooleanField(_(u'venteliste'), default=False)
     registration_start = models.DateTimeField(_(u'registrerings-start'), null=False, blank=False)
+    unattend_deadline = models.DateTimeField(_(u'avmeldings-frist'), null=False, blank=False) 
     registration_end = models.DateTimeField(_(u'registrerings-slutt'), null=False, blank=False)
 
     #Access rules
@@ -486,6 +510,7 @@ class Attendee(models.Model):
 
     timestamp = models.DateTimeField(auto_now_add=True, editable=False)
     attended = models.BooleanField(_(u'var tilstede'), default=False)
+    paid = models.BooleanField(_(u'har betalt'), default=False)
 
     def __unicode__(self):
         return self.user.get_full_name()

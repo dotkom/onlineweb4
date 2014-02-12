@@ -36,7 +36,6 @@ class LoginForm(forms.Form):
             return False
         if self.is_valid():
             auth.login(request, self.user)
-            request.session.set_expiry(0)
             return True
         return False
 
@@ -47,7 +46,7 @@ class RegisterForm(forms.Form):
     email = forms.EmailField(label=_("Epost"), max_length=50)
     password = forms.CharField(widget=forms.PasswordInput(render_value=False), label=_("Passord"))
     repeat_password = forms.CharField(widget=forms.PasswordInput(render_value=False), label=_("Gjenta passord"))
-    address = forms.CharField(label=_("Adresse"), max_length=50, required=False)
+    address = forms.CharField(label=_("Adresse"), max_length=100, required=False)
     zip_code = forms.CharField(label=_("Postnummer"), max_length=4, required=False)
     phone = forms.CharField(label=_("Telefon"), max_length=20, required=False)
     

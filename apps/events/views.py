@@ -60,6 +60,7 @@ def details(request, event_id, event_slug):
 
     if is_attendance_event:
         context = {
+                'now': timezone.now(),
                 'event': event,
                 'attendance_event': attendance_event,
                 'user_anonymous': user_anonymous,
@@ -88,14 +89,14 @@ def attendEvent(request, event_id):
     if not request.POST:
         messages.error(request, _(u'Vennligst fyll ut skjemaet.'))
         return redirect(event)
+
     form = CaptchaForm(request.POST, user=request.user)
 
     if not form.is_valid():
-        if not 'mark_rules' in request.POST and not request.user.mark_rules:
-            error_message = u'Du må godta prikkreglene for å melde deg på.'
-        else:
-            error_message = u'Du klarte ikke captcha-en. Er du en bot?'
-        messages.error(request, _(error_message))
+        for field,errors in form.errors.items():
+            for error in errors:
+                messages.error(request, error)
+
         return redirect(event)
 
     # Check if the user is eligible to attend this event.
@@ -105,10 +106,6 @@ def attendEvent(request, event_id):
     response = event.is_eligible_for_signup(request.user);
 
     if response['status']:   
-        # First time accepting mark rules
-        if 'mark_rules' in form.cleaned_data:
-            request.user.mark_rules = True
-            request.user.save()
         Attendee(event=attendance_event, user=request.user).save()
         messages.success(request, _(u"Du er nå påmeldt på arrangementet!"))
         return redirect(event)
@@ -121,6 +118,13 @@ def unattendEvent(request, event_id):
 
     event = get_object_or_404(Event, pk=event_id)
     attendance_event = event.attendance_event
+
+    # Check if the deadline for unattending has passed
+    if attendance_event.unattend_deadline < timezone.now():
+        messages.error(request, _(u"Avmeldingsfristen for dette arrangementet har utløpt."))
+        return redirect(event)
+
+    event.notify_waiting_list(host=request.META['HTTP_HOST'], unattended_user=request.user)
     Attendee.objects.get(event=attendance_event, user=request.user).delete()
 
     messages.success(request, _(u"Du ble meldt av arrangementet."))
@@ -145,7 +149,7 @@ def _search_indexed(request, query, filters):
         kwargs['event_start__gte'] = timezone.now()
 
     if filters['myevents'] == 'true':
-        kwargs['attendance_event__attendees'] = request.user
+        kwargs['attendance_event__attendees__user'] = request.user
 
     events = Event.objects.filter(**kwargs).order_by('event_start').prefetch_related(
             'attendance_event', 'attendance_event__attendees')
@@ -161,5 +165,21 @@ def _search_indexed(request, query, filters):
 @login_required()
 @user_passes_test(lambda u: u.groups.filter(name='Komiteer').count() == 1)
 def generate_pdf(request, event_id):
+
     event = get_object_or_404(Event, pk=event_id)
+
+    groups = request.user.groups.all()
+    if not (groups.filter(name='dotKom').count() == 1 or groups.filter(name='Hovedstyret').count() == 1):
+        if event.event_type == 1 and not groups.filter(name='arrKom').count() == 1:
+            messages.error(request, _(u'Du har ikke tilgang til listen for dette arrangementet.'))
+            return redirect(event)
+
+        if event.event_type == 2 and not groups.filter(name='bedKom').count() == 1:
+            messages.error(request, _(u'Du har ikke tilgang til listen for dette arrangementet.'))
+            return redirect(event)
+
+        if event.event_type == 3 and not groups.filter(name='fagKom').count() == 1:
+            messages.error(request, _(u'Du har ikke tilgang til listen for dette arrangementet.'))  
+            return redirect(event)
+
     return EventPDF(event).render_pdf()
