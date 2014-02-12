@@ -121,7 +121,17 @@ def attendEvent(request, event_id):
 def unattendEvent(request, event_id):
 
     event = get_object_or_404(Event, pk=event_id)
+
+    if not event.is_attendance_event():
+        messages.error(request, _(u"Dette er ikke et påmeldingsarrangement."))
+        return redirect(event)
+
     attendance_event = event.attendance_event
+
+    # Check if user is attending
+    if len(Attendee.objects.filter(event=attendance_event, user=request.user)) == 0:
+        messages.error(request, _(u"Du er ikke påmeldt dette arrangementet."))
+        return redirect(event)
 
     # Check if the deadline for unattending has passed
     if attendance_event.unattend_deadline < timezone.now():
