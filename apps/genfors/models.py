@@ -1,9 +1,9 @@
 from datetime import datetime
-import from django.db import models
+from django.db import models
 from apps.authentication.models import OnlineUser as User
 from django.utils.translation import ugettext as _
 from hashlib import sha256
-import settings
+from onlineweb4.settings.base import GENFORS_ANON_SALT
 
 # Statics
 
@@ -20,10 +20,10 @@ class Meeting(models.Model):
     '''
     start_date = models.DateTimeField(_(u'date'), help_text=_('Dato for arrangementsstart'), null=False)
     title = models.CharField(_(u'title'), max_length=150, null=False)
-    registration_locked = models.BooleanField(_(u'registration_lock'), help_text=_(u'Lås registrering til generalforsamlingen'), default=False, blank=False, null=False)
+    registration_locked = models.BooleanField(_(u'registration_lock'), help_text=_(u'Steng registreringn'), default=False, blank=False, null=False)
 
     def __unicode__(self):
-        return self.title + ' (' + self.start_date + ')'
+        return self.title + ' (' + self.start_date.ctime() + ')'
 
     def num_attendees(self):
         return RegisteredVoter.objects.filter(meeting=self).count()
@@ -51,12 +51,12 @@ class RegisteredVoter(models.Model):
     The RegisteredVoter model is a wrapper for OnlineUser with added fields for attendance registry
     porpuses, as well as an added can_vote field for future use.
     '''
-    meeting = models.ForeignKey(Meeting, related_name=_(u'general_meeting'), null=False)
-    user = models.ForeignKey(User, related_name=_(u'registered_voter'), null=False)
+    meeting = models.ForeignKey(Meeting, null=False)
+    user = models.ForeignKey(User, null=False)
     can_vote = models.BooleanField(_(u'voting_right'), help_text=_(u'Har stemmerett'), null=False, default=True)
 
     def __unicode__(self):
-        return u'%s, %s' %(user.last_name, user.first_name)
+        return u'%s, %s' %(self.user.last_name, self.user.first_name)
 
 # Question wrapper
 
@@ -64,28 +64,28 @@ class Question(models.Model):
     '''
     A question is a wrapper to which all votes must be connected.
     '''
-    meeting = models.ForeignKey(Meeting, _(u'meeting'), help_text=_(u'Generalforsamling'), null=False)
+    meeting = models.ForeignKey(Meeting, help_text=_(u'Generalforsamling'), null=False)
     anonymous = models.BooleanField(_(u'anonymous'), help_text=_(u'Hemmelig valg'), null=False, blank=False)
     created_time = models.DateTimeField(_(u'added'), auto_now_add=True)
     number_of_alternatives = models.PositiveIntegerField(_(u'Antall alternativer'), null=True, blank=True)
-    locked = models.BooleanField(_(u'locked'), help_text=_(u'Låsing av spørsmål'), null=False, blank=False, default=False)
-    question_type = models.SmallIntegerField(_(u'question_type'), help_text=_(u'Spørsmålstype'), choices=QUESTION_TYPES, null=False, default=0)
+    locked = models.BooleanField(_(u'locked'), help_text=_(u'Steng avstemmingen'), null=False, blank=False, default=False)
+    question_type = models.SmallIntegerField(_(u'question_type'), help_text=_(u'Type'), choices=QUESTION_TYPES, null=False, default=0)
     description = models.TextField(_(u'description'), help_text=_(u'Beskrivelse av saken som skal stemmes over'), max_length=300, blank=True)
 
     def get_results(self):
         retults = None
 
-        if self.question_type = 0:
+        if self.question_type == 0:
             results = {'JA': 0, 'NEI': 0, 'BLANKT': 0}
             for a in BooleanVote.objects.filter(question=self):
-                if a.answer = None:
+                if a.answer == None:
                     results['BLANKT'] += 1
-                elif a.answer = False:
+                elif a.answer == False:
                     results['NEI'] += 1
-                elif a.answer = True:
+                elif a.answer == True:
                     results['JA'] += 1
         
-        elif self.question_type = 1:
+        elif self.question_type == 1:
             results = {n:0 for n in range(1, self.number_of_alternatives)}
             for a in MultipleChoice.objects.filter(question=self):
                 results[a.answer] += 1
@@ -102,14 +102,14 @@ class AbstractVote(models.Model):
     The AbstractVote model holds some key components of a vote to a specific question
     '''
     time = models.DateTimeField(_(u'timestamp'), auto_now_add=True)
-    voter = models.ForeignKey(RegisteredVoter, related_name=_(u'votes'), help_text=_(u'Bruker'), null=False)
-    question = models.ForeignKey(Question, related_name=_(u'votes'), null=False)
+    voter = models.ForeignKey(RegisteredVoter, help_text=_(u'Bruker'), null=False)
+    question = models.ForeignKey(Question, null=False)
 
     # Simple hashing function to hide realnames
     def hide_user(self, arg):
         h = sha256()
         h.update(arg)
-        h.update(settings.GENFORS_ANON_SALT)
+        h.update(GENFORS_ANON_SALT)
         h = h[:8]
         return h
 
@@ -117,7 +117,7 @@ class BooleanVote(AbstractVote):
     '''
     The BooleanVote model holds the yes/no/blank answer to a specific question held in superclass
     '''
-    answer = models.BooleanField(_(u'answer'), help_text=_(u'Ja/Nei'), null=True, blank=True)
+    answer = models.NullBooleanField(_(u'answer'), help_text=_(u'Ja/Nei'), null=True, blank=True)
 
     def __unicode__(self):
         realname = u'%s, %s' %(super(BooleanVote, self).voter.user.last_name, super(BooleanVote, self).voter.user.first_name)
@@ -130,7 +130,7 @@ class BooleanVote(AbstractVote):
         else:
             a = u'nei'
         
-        return '%s stemte %s på %s' %(realname, a, super(BooleanVote, self).question)
+        return '%s stemte %s ved %s' %(realname, a, super(BooleanVote, self).question)
 
 class MultipleChoice(AbstractVote):
     '''
@@ -143,4 +143,4 @@ class MultipleChoice(AbstractVote):
         if super(MultipleChoice, self).anonymous:
             realname = super(MultipleChoice, self).hide_user(realname)
         
-        return '%s stemte %d på %s' %(realname, self.answer, super(MultipleChoice, self).question)
+        return '%s stemte %d ved %s' %(realname, self.answer, super(MultipleChoice, self).question)
