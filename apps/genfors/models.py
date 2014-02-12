@@ -5,6 +5,13 @@ from django.utils.translation import ugettext as _
 from hashlib import sha256
 import settings
 
+# Statics
+
+QUESTION_TYPES = [
+    (0, _(u'Ja/Nei')),
+    (1, _(u'Multiple Choice')),
+]
+
 # General genfors model
 
 class Meeting(models.Model):
@@ -30,8 +37,8 @@ class Meeting(models.Model):
     def num_questions(self):
         return Question.objects.filter(meeting=self).count()
 
-    def get_result_from_answer(self, question):
-        
+    def get_results_from_question(self, question):
+        return question.get_results()
 
     class Meta:
         verbose_name = _(u'Generalforsamling')
@@ -53,11 +60,6 @@ class RegisteredVoter(models.Model):
 
 # Single questions
 
-QUESTION_TYPES = [
-    (0, _(u'Ja/Nei')),
-    (1, _(u'Multiple Choice')),
-]
-
 class Question(models.Model):
     '''
     A question is a wrapper to which all votes must be connected.
@@ -65,10 +67,30 @@ class Question(models.Model):
     meeting = models.ForeignKey(Meeting, _(u'meeting'), help_text=_(u'Generalforsamling'), null=False)
     anonymous = models.BooleanField(_(u'anonymous'), help_text=_(u'Hemmelig valg'), null=False, blank=False)
     created_time = models.DateTimeField(_(u'added'), auto_now_add=True)
-    nuber_of_alternatives = models.PositiveIntegerField(_(u'Antall alternativer'), null=True, blank=True)
+    number_of_alternatives = models.PositiveIntegerField(_(u'Antall alternativer'), null=True, blank=True)
     locked = models.BooleanField(_(u'locked'), help_text=_(u'Låsing av spørsmål'), null=False, blank=False, default=False)
     question_type = models.SmallIntegerField(_(u'question_type'), help_text=_(u'Spørsmålstype'), choices=QUESTION_TYPES, null=False, default=0)
     description = models.TextField(_(u'description'), help_text=_(u'Beskrivelse av saken som skal stemmes over'), max_length=300, blank=True)
+
+    def get_results(self):
+        retults = None
+
+        if self.question_type = 0:
+            results = {'JA': 0, 'NEI': 0, 'BLANKT': 0}
+            for a in BooleanVote.objects.filter(question=self):
+                if a.answer = None:
+                    results['BLANKT'] += 1
+                elif a.answer = False:
+                    results['NEI'] += 1
+                elif a.answer = True:
+                    results['JA'] += 1
+        
+        elif self.question_type = 1:
+            results = {n:0 for n in range(1, self.number_of_alternatives)}
+            for a in MultipleChoice.objects.filter(question=self):
+                results[a.answer] += 1
+                
+        return result
 
     def __unicode__(self):
         return u'[%d] %s' %(self.id - meeting.num_questions(), self.description)
@@ -79,7 +101,7 @@ class AbstractVote(models.Model):
     '''
     The AbstractVote model holds some key components of a vote to a specific question
     '''
-    time = models.DateTimeFIeld(_(u'timestamp'), auto_now_add=True)
+    time = models.DateTimeField(_(u'timestamp'), auto_now_add=True)
     voter = models.ForeignKey(RegisteredVoter, related_name=_(u'votes'), help_text=_(u'Bruker'), null=False)
     question = models.ForeignKey(Question, related_name=_(u'votes'), null=False)
 
