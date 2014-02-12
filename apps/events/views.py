@@ -7,8 +7,10 @@ from django.utils import timezone
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
+from django.core.mail import send_mail
 from django.core.signing import Signer, BadSignature
 from django.core.urlresolvers import reverse
+from django.db.models import Q
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404, redirect
 from django.utils.translation import ugettext as _
@@ -20,6 +22,7 @@ from apps.authentication.models import OnlineUser as User
 from apps.events.forms import CaptchaForm
 from apps.events.models import Event, AttendanceEvent, Attendee
 from apps.events.pdf_generator import EventPDF
+from apps.events.utils import get_group_restricted_events
 
 
 def index(request):
@@ -40,6 +43,11 @@ def details(request, event_id, event_slug):
     will_be_on_wait_list = False
     rules = []
     user_status = False
+
+    user_access_to_event = False
+    if request.user:
+        if event in get_group_restricted_events(request.user):
+            user_access_to_event = True
 
     try:
         attendance_event = AttendanceEvent.objects.get(pk=event_id)
@@ -79,6 +87,7 @@ def details(request, event_id, event_slug):
                 'place_on_wait_list': int(place_on_wait_list),
                 #'position_in_wait_list': position_in_wait_list,
                 'captcha_form': form,
+                'user_access_to_event': user_access_to_event,
         })
     return render(request, 'events/details.html', context)
 
@@ -238,3 +247,66 @@ def calendar_export(request, event_id=None, user=None):
     response['Content-Disposition'] = 'attachment; filename=' + filename + '.ics'
 
     return response
+
+
+@login_required
+def mail_participants(request, event_id):
+
+    event = get_object_or_404(Event, pk=event_id)
+
+    if not event.attendance_event:
+        return HttpResponse(status=503)
+
+    # Check access
+    if not event in get_group_restricted_events(request.user):
+        messages.error(request, _(u'Du har ikke tilgang til å vise denne siden.'))
+        return redirect(event)
+
+    all_attendees = event.attendance_event.attendees
+    attendees_on_waitlist = event.wait_list
+    attendees_not_paid = event.attendees_not_paid
+
+    if request.method == 'POST':
+
+        # Decide from email
+        from_email = 'kontakt@online.ntnu.no'
+        from_email_value = request.POST.get('from_email')
+
+        if from_email_value == 1:
+            from_email = settings.ARRKOM_EMAIL
+        elif from_email_value == 2:
+            from_email = settings.BEDKOM_EMAIL
+        elif from_email_value == 3:
+            from_email = settings.FAGKOM_EMAIL
+
+        signature = u'\n\nVennlig hilsen Linjeforeningen Online.\n(Denne eposten kan besvares til %s)' % from_email
+
+        # Decide who to send mail to 
+        to_emails = []
+        to_emails_value = request.POST.get('to_email')
+
+        if to_emails_value == 1:
+            to_emails = [attendee.user.email for attendee in all_attendees.all()]
+        elif to_emails_value == 2:
+            to_emails = [attendee.user.email for attendee in attendees_on_waitlist.all()]
+        else:
+            to_emails = [attendee.user.email for attendee in attendees_not_paid.all()]
+
+        message = '%s%s' % (request.POST.get('message'), signature)
+        subject = request.POST.get('subject')
+
+        # Send mail
+        try:
+
+            if send_mail(unicode(subject), unicode(message), from_email, to_emails, fail_silently=False):
+                messages.success(request, _(u'Mailen ble sendt'))
+                return redirect(event)
+            else:
+                messages.error(request, _(u'Vi klarte ikke å sende mailene dine. Prøv igjen'))
+                return redirect(event)
+        except Exception, e:
+            messages.error(request, str(e))
+            return redirect(event)
+
+    return render(request, 'events/mail_participants.html', {
+        'all_attendees' : all_attendees, 'attendees_on_waitlist': attendees_on_waitlist, 'attendees_not_paid': attendees_not_paid, 'event' : event})
