@@ -97,7 +97,7 @@ class EventAdmin(admin.ModelAdmin):
         else:
             # If attendance max capacity changed we will notify users that they are now on the attend list
             old_event = Event.objects.get(id=obj.id)
-            if obj.is_attendance_event() and old_event.wait_list:
+            if old_event.is_attendance_event() and old_event.wait_list:
                 diff_capacity = obj.attendance_event.max_capacity - old_event.attendance_event.max_capacity
                 if diff_capacity > 0:
                     if diff_capacity > len(old_event.wait_list):
