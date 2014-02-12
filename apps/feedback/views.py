@@ -113,8 +113,6 @@ def get_chart_data(request, applabel, appmodel, object_id, feedback_id):
     for answer in fos:
         fos_answer_count[str(answer)] += 1
 
-    print fos_answer_count.items()
-
     mc_questions = []
     mc_answer_count = []
     for question in fbr.multiple_choice_question:
@@ -122,7 +120,6 @@ def get_chart_data(request, applabel, appmodel, object_id, feedback_id):
         answer_count = defaultdict(int)
         for answer in fbr.answers_to_question(question):
             answer_count[str(answer)] += 1
-        print answer_count.items()
         mc_answer_count.append(answer_count.items())
 
     answer_collection['replies']['ratings'] = rating_answers
