@@ -2,6 +2,7 @@ from datetime import datetime
 import from django.db import models
 from apps.authentication.models import OnlineUser as User
 from django.utils.translation import ugettext as _
+from hashlib import sha256
 
 # General genfors model
 
@@ -20,16 +21,20 @@ class Meeting(models.Model):
         return RegisteredVoter.objects.filter(meeting=self).count()
 
     def get_attendee_list(self):
-        return sorted(['%s, %s' %(a.user.last_name, a.user.first_name) for a in RegisteredVoter.objects.filter(meeting=self)])
+        return sorted([u'%s, %s' %(a.user.last_name, a.user.first_name) for a in RegisteredVoter.objects.filter(meeting=self)])
 
     def get_questions(self):
         return [q for q in Question.objects.filter(meeting=self)]
 
-    
+    def num_questions(self):
+        return Question.objects.filter(meeting=self).count()
+
+    def get_result_from_answer(self, question):
+        
 
     class Meta:
-        verbose_name = _('Generalforsamling')
-        verbose_name_plural = _('Generalforsamlinger')
+        verbose_name = _(u'Generalforsamling')
+        verbose_name_plural = _(u'Generalforsamlinger')
 
 # User related models
 
@@ -42,7 +47,15 @@ class RegisteredVoter(models.Model):
     user = models.ForeignKey(User, related_name=_(u'registered_voter'), null=False)
     can_vote = models.BooleanField(_(u'voting_right'), help_text=_(u'Har stemmerett'), null=False, default=True)
 
+    def __unicode__(self):
+        return u'%s, %s' %(user.last_name, user.first_name)
+
 # Single questions
+
+QUESTION_TYPES = [
+    (0, _(u'Ja/Nei')),
+    (1, _(u'Multiple Choice')),
+]
 
 class Question(models.Model):
     '''
@@ -53,6 +66,11 @@ class Question(models.Model):
     created_time = models.DateTimeField(_(u'added'), auto_now_add=True)
     nuber_of_alternatives = models.PositiveIntegerField(_(u'Antall alternativer'), null=True, blank=True)
     locked = models.BooleanField(_(u'locked'), help_text=_(u'Låsing av spørsmål'), null=False, blank=False, default=False)
+    question_type = models.SmallIntegerField(_(u'question_type'), help_text=_(u'Spørsmålstype'), choices=QUESTION_TYPES, null=False, default=0)
+    description = models.TextField(_(u'description'), help_text=_(u'Beskrivelse av saken som skal stemmes over'), max_length=300, blank=True)
+
+    def __unicode__(self):
+        return u'[%d] %s' %(self.id - meeting.num_questions(), self.description)
 
 # Individual abstract vote and vote types
 
@@ -69,6 +87,22 @@ class BooleanVote(AbstractVote):
     The BooleanVote model holds the yes/no/blank answer to a specific question held in superclass
     '''
     answer = models.BooleanField(_(u'answer'), help_text=_(u'Ja/Nei'), null=True, blank=True)
+
+    def __unicode__(self):
+        realname = u'%s, %s' %(super(BooleanVote, self).voter.user.last_name, super(BooleanVote, self).voter.user.first_name)
+        if super(BooleanVote, self).question.anonymous:
+            h = sha256()
+            h.update(realname)
+            h.update(h)
+            realname = h[:8]
+        if answer is None:
+            a = u'blankt'
+        elif answer:
+            a = u'ja'
+        else:
+            a = u'nei'
+        
+        return '%s stemte %s på %s' %(realname, a, super(BooleanVote, self).question)
 
 class MultipleChoice(AbstractVote):
     '''
