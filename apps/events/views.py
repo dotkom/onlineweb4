@@ -7,7 +7,7 @@ from django.utils import timezone
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
-from django.core.mail import send_mail
+from django.core.mail import EmailMessage
 from django.core.signing import Signer, BadSignature
 from django.core.urlresolvers import reverse
 from django.db.models import Q
@@ -298,7 +298,7 @@ def mail_participants(request, event_id):
         # Send mail
         try:
 
-            if send_mail(unicode(subject), unicode(message), from_email, to_emails, fail_silently=False):
+            if EmailMessage(unicode(subject), unicode(message), from_email, [], to_emails).send():
                 messages.success(request, _(u'Mailen ble sendt'))
                 return redirect(event)
             else:
