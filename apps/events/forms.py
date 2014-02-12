@@ -10,7 +10,8 @@ class CaptchaForm(forms.Form):
                                    error_messages={'required' : _(u'Telefonnummer er påkrevd!')})
     note = forms.CharField(label=_(u'Som gjest ønsker vi at du oppgir din tilhørighet til Online og annen ' \
                                    u'tilleggsinformasjon som f.eks. hvem du ønsker å sitte med.'),
-                                    error_messages={'required' : _(u'Du må fylle inn et notat!')})
+                                    error_messages={'required' : _(u'Du må fylle inn et notat!')},
+                                    max_length = 100)
     mark_rules = forms.BooleanField(label=_(u'Jeg godtar <a href="/profile/#marks" target="_blank">prikkreglene</a>'),
                                     error_messages={'required' : _(u'Du må godta prikkereglene!')})
     captcha = CaptchaField(error_messages={'required' : _(u'Du klarte ikke captchaen! Er du en bot?')})
