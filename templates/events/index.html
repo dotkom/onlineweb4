@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
 {% load compress %}
+{% load calendar_filters %}
 
 {% block title %}
 Arrangementsarkiv - Online
@@ -50,12 +51,12 @@ Arrangementsarkiv - Online
               </button>
               <ul class="dropdown-menu">
                 <li><a href="{% url 'events_ics' %}">ICS</a></li>
-                <li><a href="http://www.google.com/calendar/render?cid={{ request.build_absolute_uri|urlencode }}events.ics">Google Calendar</a></li>
+                <li><a href="http://www.google.com/calendar/render?cid={{ request.build_absolute_uri|unhttps|urlencode }}events.ics">Google Calendar</a></li>
                 {% if user.is_authenticated %}
                   <li role="presentation" class="divider"></li>
                   <li class="dropdown-header">Mine arrangementer</li>
                   <li><a href="{% url 'events_personal_ics' user=signer_value %}">ICS</a></li>
-                  <li><a href="http://www.google.com/calendar/render?cid={{ personal_ics_path|urlencode }}">Google Calendar</a></li>
+                  <li><a href="http://www.google.com/calendar/render?cid={{ personal_ics_path|unhttps|urlencode }}">Google Calendar</a></li>
                   {% endif %}
               </ul>
             </div>
