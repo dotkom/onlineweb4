@@ -3,6 +3,7 @@
 {% load markdown_deux_tags %}
 {% load crispy_forms_tags %}
 {% load group_membership %}
+{% load calendar_filters %}
 
 {% block title %}
 {{ event.title }} - Online
@@ -25,7 +26,7 @@
                           </button>
                           <ul class="dropdown-menu">
                             <li><a href="{{ ics_path }}">ICS</a></li>
-                            <li><a href="http://www.google.com/calendar/render?cid={{ ics_path|urlencode }}">Google Calendar</a></li>
+                            <li><a href="http://www.google.com/calendar/render?cid={{ ics_path|unhttps|urlencode }}">Google Calendar</a></li>
                           </ul>
                         </div>
                     {% if user.is_authenticated %}
