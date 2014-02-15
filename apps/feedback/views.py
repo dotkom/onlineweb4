@@ -8,10 +8,11 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.decorators import login_required
-from django.utils import simplejson
 from django.core.exceptions import ObjectDoesNotExist
 from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import SafeString
+
+import json
 
 from apps.feedback.models import FeedbackRelation, FieldOfStudyAnswer, RATING_CHOICES, TextAnswer, RegisterToken
 from apps.feedback.forms import create_answer_forms
@@ -117,7 +118,7 @@ def get_chart_data(request, applabel, appmodel, object_id, feedback_id):
     answer_collection['replies']['titles'] = rating_titles
     answer_collection['replies']['fos'] = answer_count.items()
    
-    return HttpResponse(simplejson.dumps(answer_collection), mimetype='application/json')
+    return HttpResponse(json.dumps(answer_collection), mimetype='application/json')
 
 
 @staff_member_required
