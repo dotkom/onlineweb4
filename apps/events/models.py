@@ -35,7 +35,7 @@ class Event(models.Model):
     )
 
     author = models.ForeignKey(User, related_name='oppretter')
-    title = models.CharField(_(u'tittel'), max_length=45)
+    title = models.CharField(_(u'tittel'), max_length=60)
     event_start = models.DateTimeField(_(u'start-dato'))
     event_end = models.DateTimeField(_(u'slutt-dato'))
     location = models.CharField(_(u'lokasjon'), max_length=100)
