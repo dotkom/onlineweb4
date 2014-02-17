@@ -282,12 +282,12 @@ def mail_participants(request, event_id):
         from_email = 'kontakt@online.ntnu.no'
         from_email_value = request.POST.get('from_email')
 
-        if from_email_value == 1:
-            from_email = settings.ARRKOM_EMAIL
-        elif from_email_value == 2:
-            from_email = settings.BEDKOM_EMAIL
-        elif from_email_value == 3:
-            from_email = settings.FAGKOM_EMAIL
+        if from_email_value == '1':
+            from_email = settings.EMAIL_ARRKOM
+        elif from_email_value == '2':
+            from_email = settings.EMAIL_BEDKOM
+        elif from_email_value == '3':
+            from_email = settings.EMAIL_FAGKOM
 
         signature = u'\n\nVennlig hilsen Linjeforeningen Online.\n(Denne eposten kan besvares til %s)' % from_email
 
@@ -295,9 +295,10 @@ def mail_participants(request, event_id):
         to_emails = []
         to_emails_value = request.POST.get('to_email')
 
-        if to_emails_value == 1:
+        if to_emails_value == '1':
             to_emails = [attendee.user.email for attendee in all_attendees.all()]
-        elif to_emails_value == 2:
+            print to_emails
+        elif to_emails_value == '2':
             to_emails = [attendee.user.email for attendee in attendees_on_waitlist.all()]
         else:
             to_emails = [attendee.user.email for attendee in attendees_not_paid.all()]
