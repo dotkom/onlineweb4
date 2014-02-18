@@ -11,18 +11,11 @@ class Migration(SchemaMigration):
 
         # Changing field 'Event.title'
         db.alter_column(u'events_event', 'title', self.gf('django.db.models.fields.CharField')(max_length=60))
-        # Adding field 'Attendee.paid'
-        db.add_column(u'events_attendee', 'paid',
-                      self.gf('django.db.models.fields.BooleanField')(default=False),
-                      keep_default=False)
-
 
     def backwards(self, orm):
 
         # Changing field 'Event.title'
         db.alter_column(u'events_event', 'title', self.gf('django.db.models.fields.CharField')(max_length=45))
-        # Deleting field 'Attendee.paid'
-        db.delete_column(u'events_attendee', 'paid')
 
 
     models = {
