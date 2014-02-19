@@ -24,12 +24,13 @@ def genfors(request):
 @login_required
 def admin(request):
     context = {}
+    # Check if user is logged in as genfors admin
     if request.session.get('genfors_admin') == True:
         meetings = Meeting.objects.filter(registration_locked=False).order_by('-start_date')
         if meetings:
             meeting = meetings[0]
             context['meeting'] = meeting
-            return render(request, "genfors/admin.html", context)
+        return render(request, "genfors/admin.html", context)
     else:
         if request.method == 'POST':
             form = LoginForm(request.POST)
