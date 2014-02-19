@@ -392,7 +392,15 @@ def search_for_users(query, limit=10):
 def view_profile(request, username):
     user = get_object_or_404(User, username=username)
     if user.privacy.visible_for_other_users or user == request.user:
-        return render(request, 'profiles/view_profile.html', {'user': user})
+        # Profiles endfixes names with s. Check if the last letter in the name is a s or not
+        profile_name = user.get_full_name()
+        if (profile_name[-1:] == 's'):
+            profile_name += '\''
+        else:
+            profile_name += 's'
+
+        # Render view
+        return render(request, 'profiles/view_profile.html', {'user': user, 'profile_name': profile_name})
 
     messages.error(request, _(u'Du har ikke tilgang til denne profilen'))
     return redirect('profiles')
