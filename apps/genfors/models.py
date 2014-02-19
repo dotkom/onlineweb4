@@ -32,7 +32,17 @@ class Meeting(models.Model):
         return sorted([u'%s, %s' %(a.user.last_name, a.user.first_name) for a in RegisteredVoter.objects.filter(meeting=self)])
 
     def get_questions(self):
-        return [q for q in Question.objects.filter(meeting=self)]
+        return Question.objects.filter(meeting=self).order_by('-id')
+
+    def get_active_question(self):
+        questions = self.get_questions
+        if questions:
+            return self.get_questions()[0]
+        else:
+            return None
+
+    def get_locked_questions(self):
+        return self.get_questions().filter(locked=True)
 
     def num_questions(self):
         return Question.objects.filter(meeting=self).count()
@@ -91,6 +101,12 @@ class Question(models.Model):
                 results[a.answer] += 1
                 
         return result
+
+    def get_votes(self):
+        if self.question_type == 0:
+            return BooleanVote.objects.filter(question=self)
+        elif self.question_type == 1:
+            return MultipleChoice.objects.filter(question=self)
 
     def __unicode__(self):
         return u'[%d] %s' %(self.id - self.meeting.num_questions(), self.description)
