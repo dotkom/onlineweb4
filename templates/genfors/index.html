@@ -19,28 +19,45 @@ Generalforsamling - Online
             <div class="col-md-12">
                 {% with meeting.get_active_question as q %}
                 <div class="row">
-                    <div class="col-md-12">
-                        <p>Diverse statistikk og metadata</p>
-                        <!-- insert stats stuff here -->
+                    <div class="col-xs-12 col-sm-7 col-md-8">
+                        <h3>Aktiv sak</h3>
+                        <div class="well">{{ q.description }}</div>
+                    </div>
+                    <div class="col-xs-12 col-sm-5 col-md-4">
+                        <h3>Foreløpig status</h3>
+                        <ul>
+                            {% with q.get_results as res %}
+                            {% if q.question_type == 0 %}
+                                <li>JA: {{ res.JA }}</li>
+                                <li>NEI: {{ res.NEI }}</li>
+                                <li>BLANKT: {{ res.BLANKT }}</li>
+                            {% else %}
+                                {% for alternative in res %}
+                                    <li>{{ alternative }}: {{ res.alternative }}</li>
+                                {% endfor %}
+                            {% endif %}
+                            {% endwith %}
+                        </ul>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-xs-12 col-sm-7 col-md-8">
-                        <h3>Saker</h3>
+                        <h3>Avsluttede saker</h3>
                         <p>Liste over tidligere besvarte spørsmål og aktivt spørsmål</p>
+                        <p class="text-muted">
                         <ol reversed>
-                            <li><p><strong>{{ q.description }}</strong></p><br /><br />
                             {% for question in meeting.get_locked_questions %}
-                                <li><p class="text-muted">{{ question.description }}</p></li>
+                                <li>{{ question.description }}</li>
                             {% endfor %}
                         </ol>
+                        </p>
                     </div>
                     <div class="col-xs-12 col-sm-5 col-md-4">
                         <h3>Stemmer</h3>
                         <!-- insert list of registered votes here -->
                         <ul>
                         {% for vote in q.get_votes %}
-                            <li>{{ vote.voter.user.first_name }} {{ vote.voter.user.last_name }}
+                            <li>{{ vote.get_voter_name }}
                                 {% if q.question_type == 0 %}
                                     {% if vote.answer %}
                                         <span class="label label-success pull-right">JA</span>

@@ -100,7 +100,7 @@ class Question(models.Model):
             for a in MultipleChoice.objects.filter(question=self):
                 results[a.answer] += 1
                 
-        return result
+        return results
 
     def get_votes(self):
         if self.question_type == 0:
@@ -121,12 +121,20 @@ class AbstractVote(models.Model):
     voter = models.ForeignKey(RegisteredVoter, help_text=_(u'Bruker'), null=False)
     question = models.ForeignKey(Question, null=False)
 
+    # Get voter name
+    def get_voter_name(self):
+        realname = u'' + self.voter.user.first_name + ' ' + self.voter.user.last_name
+        if self.question.anonymous:
+            return self.hide_user(realname)
+        else:
+            return realname
+
     # Simple hashing function to hide realnames
     def hide_user(self, arg):
         h = sha256()
         h.update(arg)
         h.update(settings.GENFORS_ANON_SALT)
-        h = h[:8]
+        h = h.hexdigest()[:8]
         return h
 
 class BooleanVote(AbstractVote):
