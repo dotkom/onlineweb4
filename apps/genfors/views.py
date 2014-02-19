@@ -17,3 +17,9 @@ def genfors(request):
 		meeting = meetings[0]
 		context['meeting'] = meeting
 	return render(request, "genfors/index.html", context)
+
+
+@login_required
+def admin(request):
+	context = {}
+	return render(request, "genfors/index.html", context)
