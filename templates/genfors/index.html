@@ -10,11 +10,12 @@ Generalforsamling - Online
             <div class="col-md-12">
                 <div class="page-header">
                     <button class="btn btn-warning pull-right" id="gf_admin_login">Admin</button>
-                    <h2>GENERALFORSAMLING</h2>
+                    <h2>{% if meeting %}{{ meeting.title }}{% else %}GENERALFORSAMLING{% endif %}</h2>
                 </div>
             </div>
         </div>
         <div class="row">
+            {% if meeting %}
             <div class="col-md-12">
                 <div class="row">
                     <div class="col-md-12">
@@ -34,6 +35,11 @@ Generalforsamling - Online
                     </div>
                 </div>
             </div>
+            {% else %}
+                <div class="col-md-12">
+                    <p>Det er ingen aktiv generalforsamling.</p>
+                </div>
+            {% endif %}
         </div>
     </div>
 </section>
