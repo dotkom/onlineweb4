@@ -20,7 +20,8 @@ class Meeting(models.Model):
     '''
     start_date = models.DateTimeField(_(u'date'), help_text=_('Dato for arrangementsstart'), null=False)
     title = models.CharField(_(u'title'), max_length=150, null=False)
-    registration_locked = models.BooleanField(_(u'registration_lock'), help_text=_(u'Steng registreringn'), default=False, blank=False, null=False)
+    registration_locked = models.BooleanField(_(u'registration_lock'), help_text=_(u'Steng registrering'), default=False, blank=False, null=False)
+    ended = models.BooleanField(_(u'event_lockdown'), help_text=_(u'Avslutt generalforsamlingen'), default=False, blank=False, null=False)
 
     def __unicode__(self):
         return self.title + ' (' + self.start_date.ctime() + ')'
@@ -35,9 +36,9 @@ class Meeting(models.Model):
         return Question.objects.filter(meeting=self).order_by('-id')
 
     def get_active_question(self):
-        questions = self.get_questions
-        if questions:
-            return self.get_questions()[0]
+        question = self.get_questions()
+        if question and not question[0].locked:
+            return question[0]
         else:
             return None
 
@@ -81,7 +82,9 @@ class Question(models.Model):
     locked = models.BooleanField(_(u'locked'), help_text=_(u'Steng avstemmingen'), null=False, blank=False, default=False)
     question_type = models.SmallIntegerField(_(u'question_type'), help_text=_(u'Type'), choices=QUESTION_TYPES, null=False, default=0)
     description = models.TextField(_(u'description'), help_text=_(u'Beskrivelse av saken som skal stemmes over'), max_length=300, blank=True)
+    result = models.CharField(_(u'result'), help_text=_(u'Resultatet av avstemmingen'), null=True, editable=False)
 
+    # Returns results as a dictionary, either by alternative or boolean-ish types
     def get_results(self):
         retults = None
 
@@ -100,8 +103,26 @@ class Question(models.Model):
             for a in MultipleChoice.objects.filter(question=self):
                 results[a.answer] += 1
                 
-        return result
+        return results
 
+    # Resets the question if there has not been enough difference to settle the case
+    def reset_question(self):
+        BooleanVote.objects.filter(question=self).delete()
+        MultipleChoice.objects.filter(question=self).delete()
+
+    # Sets final result as a string for later fast lookup and locks question
+    def set_result_and_lock(self):
+        r = self.get_results()
+        if self.question_type == 0:
+            self.result = 'J:' + str(r['JA']) + ' N:' + str(r['NEI']) + ' B:' + str(r['BLANKT'])
+        else:
+            result_string = ''
+            for k in r:
+                result_string += str(k) ':' + str(r[k]) + ' '
+            self.result = result_string
+        self.locked = True
+
+    # Returns all votes connected to this question
     def get_votes(self):
         if self.question_type == 0:
             return BooleanVote.objects.filter(question=self)
@@ -121,12 +142,20 @@ class AbstractVote(models.Model):
     voter = models.ForeignKey(RegisteredVoter, help_text=_(u'Bruker'), null=False)
     question = models.ForeignKey(Question, null=False)
 
+    # Get voter name
+    def get_voter_name(self):
+        realname = u'' + self.voter.user.first_name + ' ' + self.voter.user.last_name
+        if self.question.anonymous:
+            return self.hide_user(realname)
+        else:
+            return realname
+
     # Simple hashing function to hide realnames
     def hide_user(self, arg):
         h = sha256()
         h.update(arg)
         h.update(settings.GENFORS_ANON_SALT)
-        h = h[:8]
+        h = h.hexdigest()[:8]
         return h
 
 class BooleanVote(AbstractVote):

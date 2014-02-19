@@ -17,22 +17,73 @@ Generalforsamling - Online
         <div class="row">
             {% if meeting %}
             <div class="col-md-12">
+                {% with meeting.get_active_question as q %}
                 <div class="row">
-                    <div class="col-md-12">
-                        <p>Diverse statistikk og metadata</p>
-                        <!-- insert stats stuff here -->
+                    <div class="col-xs-12 col-sm-7 col-md-8">
+                        <h3>Aktiv sak</h3>
+                        <div class="well">{% if q %}{{ q.description }}{% else %}Ingen aktiv sak.{% endif %}</div>
+                    </div>
+                    <div class="col-xs-12 col-sm-5 col-md-4">
+                        <h3>Foreløpig status</h3>
+                        {% if q %}
+                        <ul>
+                            {% with q.get_results as res %}
+                            {% if q.question_type == 0 %}
+                                <li>JA: {{ res.JA }}</li>
+                                <li>NEI: {{ res.NEI }}</li>
+                                <li>BLANKT: {{ res.BLANKT }}</li>
+                            {% else %}
+                                {% for alternative in res %}
+                                    <li>{{ alternative }}: {{ res.alternative }}</li>
+                                {% endfor %}
+                            {% endif %}
+                            {% endwith %}
+                        </ul>
+                        {% else %}
+                            <p>Ingen aktiv sak.</p>
+                        {% endif %}
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-xs-12 col-sm-7 col-md-8">
-                        <h3>Saker</h3>
+                        <h3>Avsluttede saker</h3>
                         <p>Liste over tidligere besvarte spørsmål og aktivt spørsmål</p>
-                        <!-- insert genfors secific stuff here -->
+                        <p class="text-muted">
+                        <ol reversed>
+                            {% for question in meeting.get_locked_questions %}
+                                <li>{{ question.description }}</li>
+                            {% endfor %}
+                        </ol>
+                        </p>
                     </div>
                     <div class="col-xs-12 col-sm-5 col-md-4">
                         <h3>Stemmer</h3>
-                        <!-- insert list of registered voters here -->
+                        <!-- insert list of registered votes here -->
+                        {% if q %}<!-- If active queestion -->
+                        <ul>
+                        {% for vote in q.get_votes %}
+                            <li>{{ vote.get_voter_name }}
+                                {% if q.question_type == 0 %}<!-- If question type is boolean -->
+                                    {% if vote.answer %}
+                                        <span class="label label-success pull-right">JA</span>
+                                    {% else %}
+                                        {% if vote.answer == False %}
+                                            <span class="label label-danger pull-right">NEI</span>
+                                        {% else %}
+                                            <span class="label label-primary pull-right">BLANKT</span>
+                                        {% endif %}
+                                    {% endif %}
+                                {% else %}<!-- If question type is multiple choice -->
+                                    <span class="label label-primary pull-right">{{ vote.answer }}</span>
+                                {% endif %}
+                            </li>
+                        {% endfor %}
+                        </ul>
+                        {% else %}
+                        <p>Ingen aktiv sak.</p>
+                        {% endif %}<!-- End if active question -->
                     </div>
+                    {% endwith %}
                 </div>
             </div>
             {% else %}
