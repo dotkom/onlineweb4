@@ -17,6 +17,7 @@ Generalforsamling - Online
         <div class="row">
             {% if meeting %}
             <div class="col-md-12">
+                {% with meeting.get_active_question as q %}
                 <div class="row">
                     <div class="col-md-12">
                         <p>Diverse statistikk og metadata</p>
@@ -27,17 +28,37 @@ Generalforsamling - Online
                     <div class="col-xs-12 col-sm-7 col-md-8">
                         <h3>Saker</h3>
                         <p>Liste over tidligere besvarte spørsmål og aktivt spørsmål</p>
-                        <!-- insert genfors secific stuff here -->
+                        <ol reversed>
+                            <li><p><strong>{{ q.description }}</strong></p><br /><br />
+                            {% for question in meeting.get_locked_questions %}
+                                <li><p class="text-muted">{{ question.description }}</p></li>
+                            {% endfor %}
+                        </ol>
                     </div>
                     <div class="col-xs-12 col-sm-5 col-md-4">
                         <h3>Stemmer</h3>
                         <!-- insert list of registered votes here -->
                         <ul>
-                        {% for vote in meeting.get_active_question.get_voters %}
-                            <li>{{ vote.voter.first_name }} {{ vote.voter.last_name }}</li>
+                        {% for vote in q.get_votes %}
+                            <li>{{ vote.voter.user.first_name }} {{ vote.voter.user.last_name }}
+                                {% if q.question_type == 0 %}
+                                    {% if vote.answer %}
+                                        <span class="label label-success pull-right">JA</span>
+                                    {% else %}
+                                        {% if vote.answer == False %}
+                                            <span class="label label-danger pull-right">NEI</span>
+                                        {% else %}
+                                            <span class="label label-primary pull-right">BLANKT</span>
+                                        {% endif %}
+                                    {% endif %}
+                                {% else %}
+                                    <span class="label label-primary pull-right">{{ vote.answer }}</span>
+                                {% endif %}
+                            </li>
                         {% endfor %}
                         </ul>
                     </div>
+                    {% endwith %}
                 </div>
             </div>
             {% else %}
