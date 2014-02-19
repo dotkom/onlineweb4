@@ -526,5 +526,28 @@ class Attendee(models.Model):
         unique_together = (('event', 'user'),)
 
 
+class Reservation(models.Model):
+    event = models.OneToOneField(AttendanceEvent, related_name="reserved_seats")
+    seats = models.PositiveIntegerField(u"reserverte plasser", blank=False, null=False)
+    
+
+class Reservee(models.Model):
+    """
+    Reservation entry
+    """
+    reservation = models.ForeignKey(Reservation, related_name='reservees')
+    # I 2014 var norges lengste navn på 69 tegn;
+    # julius andreas gimli arn macgyver chewbacka highlander elessar-jankov
+    name = models.CharField(u'navn', max_length=69)
+    note = models.CharField(u'notat', max_length=100)
+    allergies = models.CharField(u'allergier', max_length=200)
+    
+    def __unicode__(self):
+        return self.name
+
+    class Meta:
+        ordering = ['id']
+
+
 # Registrations for watson indexing
 watson.register(Event)
