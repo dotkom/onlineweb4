@@ -27,7 +27,9 @@ class Article(models.Model):
     published_date = models.DateTimeField(_(u"publisert"))
 
     created_by = models.ForeignKey(User, null=False, verbose_name=_(u"opprettet av"), related_name="created_by", editable=False)
+    additional_authors = models.CharField(_(u'andre forfattere'), max_length=200, blank=True)
     changed_by = models.ForeignKey(User, null=False, verbose_name=_(u"endret av"), related_name="changed_by", editable=False)
+    photographers = models.CharField(_(u'fotograf(er)'), max_length=200, blank=True)
     featured = models.BooleanField(_(u"featured artikkel"), default=False)
     
     def __unicode__(self):

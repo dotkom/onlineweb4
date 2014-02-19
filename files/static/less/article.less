@@ -27,7 +27,14 @@ section#article-details {
                 background:@baby-blue;
             }
         }
-
+    .photograph-detail-meta {
+        font-weight: 300;
+        margin-left: -15px;
+        margin-top: 5px;
+        .meta-caption {
+            font-weight: 600;
+        }
+    }
     .article-detail-meta {
         font-weight:300;
         margin-bottom:10px;
@@ -197,9 +204,12 @@ section#article_archive {
 }
 
 .article-details-content {
-    font-size:18px;
+    font-size:13px;
     font-weight:400;
     margin:0;
+    p {
+        max-width: 80%;
+    }
 }
 
 @media only screen and (max-device-width: 800px), only screen and (device-width: 1024px) and (device-height: 600px), only screen and (width: 1280px) and (orientation: landscape), only screen and (device-width: 800px), only screen and (max-width: 767px) {
