@@ -2,6 +2,7 @@
 import datetime
 import socket
 import locale
+import logging
 
 from django.utils import timezone
 from django.contrib.contenttypes.models import ContentType
@@ -17,28 +18,36 @@ class FeedbackMail(Task):
 
     @staticmethod
     def run():
+        logger = logging.getLogger("feedback")
+        logger.info("Feedback job started")
         locale.setlocale(locale.LC_ALL, "nb_NO.UTF-8")
         active_feedbacks = FeedbackRelation.objects.filter(active=True)
        
         for feedback in active_feedbacks:
-            message = FeedbackMail.generate_message(feedback)
+            message = FeedbackMail.generate_message(feedback, logger)
 
             if message.send:
                 EmailMessage(message.subject, unicode(message), message.committee_mail, [], message.attended_mails).send()
+                logger.info('Emails sent to: ' + str(message.attended_mails))
 
                 if message.results_message:
                     EmailMessage("Feedback resultat", message.results_message,"online@online.ntnu.no", [message.committee_mail]).send() 
+                    logger.info('Results mail sent to :' + message.committee_mail)
 
     @staticmethod
-    def generate_message(feedback):
+    def generate_message(feedback, logger):
+        logger.info('Processing: "' + feedback.get_title() + '"')
         today = timezone.now().date()
         yesterday = today + datetime.timedelta(days=-1)
         not_responded = FeedbackMail.get_users(feedback)
+        logger.info('Not responded: ' + str(not_responded))
         message = Message()
 
         #return if everyone has answered
         if not not_responded:
+            logger.info('Everyone has answered')
             return message
+
         
         message.attended_mails = FeedbackMail.get_user_mails(not_responded)
 
@@ -60,6 +69,7 @@ class FeedbackMail(Task):
         if deadline_diff < 0: #Deadline passed
             feedback.active = False
             feedback.save()
+            logger.info("Deadline passed feedback set to inactive")
 
             if feedback.gives_mark:
                 FeedbackMail.set_marks(title, not_responded)    
@@ -69,6 +79,8 @@ class FeedbackMail(Task):
                 message.start_date = ""
                 message.link = ""
                 message.send = True
+            
+            logger.info("Marks given to: " + str(not_responded))
 
         elif deadline_diff < 1: #Last warning
             message.deadline = u"\n\nI dag innen 23:59 er siste frist til å svare på skjemaet."
@@ -77,9 +89,11 @@ class FeedbackMail(Task):
             u"gjenværende deltagere på \"%s\".\nDere kan se feedback-resultatene på:\n%s\n" % \
             (title, results_link)
             message.send = True
+            logger.info("Last warning message generated")
         elif deadline_diff < 3 and feedback.gives_mark: # 3 days from the deadline
             message.deadline = u"\n\nFristen for å svare på skjema er %s innen kl 23:59." % (deadline)
             message.send = True
+            logger.info("Warning message generated")
         elif FeedbackMail.send_first_notification(feedback): #Day after the event or feedback creation 
             message.deadline = u"\n\nFristen for å svare på skjema er %s innen kl 23:59." % (deadline)
         
@@ -87,6 +101,7 @@ class FeedbackMail(Task):
             u"deltagere på \"%s\".\nDere kan se feedback-resultatene på:\n%s\n" % \
             (title, results_link)
             message.send = True
+            logger.info("First message generated")
 
         return message
         
@@ -197,4 +212,4 @@ class Message():
             self.end)
         return message
 
-schedule.register(FeedbackMail, day_of_week='mon-sun', hour=8, minute=00)
+schedule.register(FeedbackMail, day_of_week='mon-sun', hour=22, minute=0)
