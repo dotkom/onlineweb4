@@ -12,6 +12,7 @@ Generalforsamling - Online
         <div class="col-md-12">
             <div class="row">
                 <div class="col-md-12">
+                    <button class="btn btn-warning pull-right" id="gf_admin_login">Admin</button>
                     <!-- insert stats stuff here -->
                 </div>
             </div>
@@ -29,6 +30,6 @@ Generalforsamling - Online
 {% endblock %}
 
 {% block js %}
-    {% block.super %}
+    {{ block.super }}
     <!-- insert JS-stuff here -->
 {% endblock %}
