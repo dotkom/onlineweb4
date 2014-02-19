@@ -276,7 +276,25 @@ class Position(models.Model):
     class Meta:
         verbose_name = _(u'posisjon')
         verbose_name_plural = _(u'posisjoner')
-        ordering = (u'user', u'period', )
+        ordering = ('user', 'period', )
+
+
+class SpecialPosition(models.Model):
+    """
+    Special object to represent special positions that typically lasts for life.
+    """
+    position   = models.CharField(_(u'Posisjon'), max_length=50, blank=False)
+    since_year = models.IntegerField(_(u'Medlem siden'), max_length=4, blank=False)
+    user       = models.ForeignKey(OnlineUser, related_name='special_positions', blank=False)
+
+    def __unicode__(self):
+        return '%s, %s' % (self.user.get_full_name(), self.position)
+
+    class Meta:
+        verbose_name = _(u'spesialposisjon')
+        verbose_name_plural = _(u'spesialposisjoner')
+        ordering = ('user', 'since_year',)
+
 
 
 # Register OnlineUser in watson index for searching
