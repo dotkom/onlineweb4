@@ -102,6 +102,8 @@ class FeedbackMail(Task):
             (title, results_link)
             message.send = True
             logger.info("First message generated")
+        else:
+            logger.info("No message generated")
 
         return message
         
@@ -212,4 +214,4 @@ class Message():
             self.end)
         return message
 
-schedule.register(FeedbackMail, day_of_week='mon-sun', hour=22, minute=0)
+schedule.register(FeedbackMail, day_of_week='mon-sun', hour=22, minute=21)
