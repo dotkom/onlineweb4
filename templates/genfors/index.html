@@ -31,7 +31,12 @@ Generalforsamling - Online
                     </div>
                     <div class="col-xs-12 col-sm-5 col-md-4">
                         <h3>Stemmer</h3>
-                        <!-- insert list of registered voters here -->
+                        <!-- insert list of registered votes here -->
+                        <ul>
+                        {% for vote in meeting.get_active_question.get_voters %}
+                            <li>{{ vote.voter.first_name }} {{ vote.voter.last_name }}</li>
+                        {% endfor %}
+                        </ul>
                     </div>
                 </div>
             </div>
