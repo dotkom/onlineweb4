@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+Generalforsamling logg inn- Online
+{% endblock %}
+
+{% block content %}
+<section id="generalforsamling">
+    <div class="container">
+        <div class="row">
+            <div class="page-header">
+                <a href="{% url 'genfors_admin_logout' %}"class="btn btn-warning pull-right" id="gf_admin_logout">Logg ut</a>
+                <h2>Generalformsamling admin</h2>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12">
+                Legg til ting her
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block js %}
+    {{ block.super }}
+    <!-- insert JS-stuff here -->
+{% endblock %}
