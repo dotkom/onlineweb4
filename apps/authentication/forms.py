@@ -40,14 +40,14 @@ class LoginForm(forms.Form):
         return False
 
 class RegisterForm(forms.Form):
-    username = forms.CharField(label=_("Brukernavn"), max_length=20)
-    first_name = forms.CharField(label=_("Fornavn"), max_length=50)
+    username = forms.CharField(label=_("Brukernavn"), max_length=20, help_text=u'Valgfritt brukernavn')
+    first_name = forms.CharField(label=_("Fornavn"), max_length=50, help_text=u'Mellomnavn inkluderer du etter fornavnet ditt')
     last_name = forms.CharField(label=_("Etternavn"), max_length=50)
-    email = forms.EmailField(label=_("Epost"), max_length=50)
+    email = forms.EmailField(label=_("Epost"), max_length=50, help_text=u'Du kan legge til flere epostadresser senere i din profil.')
     password = forms.CharField(widget=forms.PasswordInput(render_value=False), label=_("Passord"))
     repeat_password = forms.CharField(widget=forms.PasswordInput(render_value=False), label=_("Gjenta passord"))
-    address = forms.CharField(label=_("Adresse"), max_length=100, required=False)
-    zip_code = forms.CharField(label=_("Postnummer"), max_length=4, required=False)
+    address = forms.CharField(label=_("Adresse"), max_length=100, required=False, widget=forms.Textarea(attrs={'rows':3}))
+    zip_code = forms.CharField(label=_("Postnummer"), max_length=4, required=False, help_text=u'Vi henter by basert på postnummer')
     phone = forms.CharField(label=_("Telefon"), max_length=20, required=False)
     
     def clean(self):
