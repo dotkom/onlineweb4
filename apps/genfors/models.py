@@ -82,7 +82,7 @@ class Question(models.Model):
     locked = models.BooleanField(_(u'locked'), help_text=_(u'Steng avstemmingen'), null=False, blank=False, default=False)
     question_type = models.SmallIntegerField(_(u'question_type'), help_text=_(u'Type'), choices=QUESTION_TYPES, null=False, default=0)
     description = models.TextField(_(u'description'), help_text=_(u'Beskrivelse av saken som skal stemmes over'), max_length=300, blank=True)
-    result = models.CharField(_(u'result'), help_text=_(u'Resultatet av avstemmingen'), null=True, editable=False)
+    result = models.CharField(_(u'result'), max_length=100, help_text=_(u'Resultatet av avstemmingen'), null=True, editable=False)
 
     # Returns results as a dictionary, either by alternative or boolean-ish types
     def get_results(self):
@@ -118,7 +118,7 @@ class Question(models.Model):
         else:
             result_string = ''
             for k in r:
-                result_string += str(k) ':' + str(r[k]) + ' '
+                result_string += str(k) + ':' + str(r[k]) + ' '
             self.result = result_string
         self.locked = True
 
