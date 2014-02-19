@@ -3,7 +3,7 @@ from django.db import models
 from apps.authentication.models import OnlineUser as User
 from django.utils.translation import ugettext as _
 from hashlib import sha256
-from onlineweb4.settings.base import GENFORS_ANON_SALT
+from django.conf import settings
 
 # Statics
 
@@ -109,7 +109,7 @@ class AbstractVote(models.Model):
     def hide_user(self, arg):
         h = sha256()
         h.update(arg)
-        h.update(GENFORS_ANON_SALT)
+        h.update(settings.GENFORS_ANON_SALT)
         h = h[:8]
         return h
 
