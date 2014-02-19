@@ -9,7 +9,7 @@
     {% endcompress %}
 {% endblock %}
 {% block title %}
-    {{ user.get_full_name }}s profil
+    Profilen til {{ user.get_full_name }}
 {% endblock title %}
 {% block content %}
     <section id="public-profile">
@@ -67,20 +67,43 @@
                         </div>
                     </div>
                     <div class="row" style="margin-bottom:40px;">
-                        <div class="col-md-12" style="margin-bottom:10px;">
-                            <b>Posisjoner</b>
-                        </div>
-                        {% if not user.positions.all %}
-                            <div class="col-md-12">
-                                <em>Ingen posisjoner registrert...</em>
+                        <div class="col-md-12">
+                        {% if user.positions.all %}
+                            <div class="row">
+                                <div class="col-md-12" style="margin-bottom:10px;">
+                                    <b>Verv i linjeforeningen</b>
+                                </div>
                             </div>
-                        {% else %}
                             {% for position in user.positions.all %}
-                                <div class="col-md-12">
-                                    {{ position.period }}: {{ position.get_position_display }}, {{ position.get_committee_display }}
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        {{ position.period }}: {{ position.get_position_display }}, {{ position.get_committee_display }}
+                                    </div>
                                 </div>
                             {% endfor %}
                         {% endif %}
+                        {% if user.special_positions.all %}
+                            <div class="row">
+                                <div class="col-md-12" style="margin:10px 0;">
+                                    <b>Hedersposisjoner</b>
+                                </div>
+                            </div>
+                            {% for position in user.special_positions.all %}
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        Fra {{ position.since_year }}, {{ position.position }}
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                        {% if not user.positions and not user.special_positions %}
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <em>Ingen verv registrert...</em>
+                                </div>
+                            </div>
+                        {% endif %}
+                        </div>
                     </div>
                     <div class="row">
                         <div class="col-md-3">
