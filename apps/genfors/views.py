@@ -3,6 +3,9 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.utils.translation import ugettext as _
+from django.http import HttpResponse
+from django.views.decorators.http import require_http_methods
+import json
 
 from apps.genfors.forms import LoginForm, MeetingForm, QuestionForm
 from apps.genfors.models import Meeting, Question
@@ -92,3 +95,14 @@ def admin_logout(request):
     if 'genfors_admin' in request.session:
         del request.session['genfors_admin']
     return redirect('genfors_index')
+
+@require_http_methods(["POST"])
+def vote(request):
+    meetings = Meeting.objects.filter(registration_locked=False).order_by('-start_date')
+    if meetings:
+        m = meetings[0]
+        data = json.decode(request.body)
+        if not RegisteredVoter.objects.filter(user=request.user, meeting=m):
+            return HttpResponse(status_code=403, reason_phrase='Forbidden')
+    else:
+        return HttpResponse(status_code=403, reason_phrase='Forbidden')
