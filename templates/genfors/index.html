@@ -35,12 +35,36 @@ Generalforsamling - Online
                         {% if q %}
                             {% with q.get_results as res %}
                             {% if q.question_type == 0 %}
-                                JA: {{ res.JA }}
-                                NEI: {{ res.NEI }}
-                                BLANKT: {{ res.BLANKT }}
+                                <div class="progress">
+                                    <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="{{ active_question.yes_percent }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ active_question.yes_percent }}%">
+                                        {{ res.JA }} JA ({{ active_question.yes_percent }}%)
+                                    </div>
+                                </div>
+                                <div class="progress">
+                                    <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="{{ active_question.no_percent }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ active_question.no_percent }}%">
+                                        {{ res.NEI }} NEI ({{ active_question.no_percent }}%)
+                                    </div>
+                                </div>
+                                <div class="progress">
+                                    <div class="progress-bar progress-bar-primary" role="progressbar" aria-valuenow="{{ active_question.blank_percent }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ active_question.blank_percent }}%">
+                                        {{ res.BLANKT }} JA ({{ active_question.blank_percent }}%)
+                                    </div>
+                                </div>
                             {% else %}
                                 {% for alternative in res %}
-                                    <li>{{ alternative }}: {{ res.alternative }}</li>
+                                    {% if forloop.counter0 == 0 %}
+                                     <div class="progress">
+                                         <div class="progress-bar progress-bar-primary" role="progressbar" aria-valuenow="{{ active_question.blank_percent }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ active_question.blank_percent }}%">
+                                              {{ res.0 }} BLANKT ({{ active_question.0 }}%)
+                                         </div>
+                                    </div>
+                                    {% else %}
+                                     <div class="progress">
+                                        <div class="progress-bar progress-bar-primary" role="progressbar" aria-valuenow="{{ active_question.0 }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ active_question.0 }}%">
+                                        {{ alternative }} Alternativ {{ forloop.counter0 }} ({{ active_question.forloop.counter0 }}%)
+                                        </div>
+                                    </div>
+                                    {% endif %}
                                 {% endfor %}
                             {% endif %}
                             {% endwith %}
