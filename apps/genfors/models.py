@@ -80,9 +80,9 @@ class Question(models.Model):
     created_time = models.DateTimeField(_(u'added'), auto_now_add=True)
     number_of_alternatives = models.PositiveIntegerField(_(u'Antall alternativer'), null=True, blank=True)
     locked = models.BooleanField(_(u'locked'), help_text=_(u'Steng avstemmingen'), null=False, blank=False, default=False)
-    question_type = models.SmallIntegerField(_(u'question_type'), help_text=_(u'Type'), choices=QUESTION_TYPES, null=False, default=0)
-    description = models.TextField(_(u'description'), help_text=_(u'Beskrivelse av saken som skal stemmes over'), max_length=300, blank=True)
-    result = models.CharField(_(u'result'), max_length=100, help_text=_(u'Resultatet av avstemmingen'), null=True, editable=False)
+    question_type = models.SmallIntegerField(_(u'question_type'), help_text=_(u'Type'), choices=QUESTION_TYPES, null=False, default=0, blank=False)
+    description = models.TextField(_(u'description'), help_text=_(u'Beskrivelse av saken som skal stemmes over'), max_length=500, blank=True)
+    result = models.CharField(_(u'result'), max_length=100, help_text=_(u'Resultatet av avstemmingen'), null=True, blank=True)
 
     # Returns results as a dictionary, either by alternative or boolean-ish types
     def get_results(self):
@@ -99,11 +99,21 @@ class Question(models.Model):
                     results['JA'] += 1
         
         elif self.question_type == 1:
-            results = {n:0 for n in range(1, self.number_of_alternatives)}
+            results = [0 for x in range(0, self.number_of_alternatives + 1)]
             for a in MultipleChoice.objects.filter(question=self):
-                results[a.answer] += 1
+                alt = a.answer.alt_id
+                if alt == None:
+                    alt = 0
+                results[alt] += 1
                 
         return results
+
+    # Returns the queryset of alternatives connected to this question if it is a multiple choice question
+    def get_alternatives(self):
+        if self.question_type == 1:
+            return Alternative.objects.filter(question=self)
+        else:
+            return None
 
     # Resets the question if there has not been enough difference to settle the case
     def reset_question(self):
@@ -121,6 +131,7 @@ class Question(models.Model):
                 result_string += str(k) + ':' + str(r[k]) + ' '
             self.result = result_string
         self.locked = True
+        self.save()
 
     # Returns all votes connected to this question
     def get_votes(self):
@@ -177,11 +188,22 @@ class BooleanVote(AbstractVote):
         
         return '%s stemte %s ved %s' %(realname, a, super(BooleanVote, self).question)
 
+class Alternative(models.Model): 
+    '''         
+    The Alternative class represents a single alternative that is connected to a particular multiple choice type question
+    '''     
+    alt_id = models.PositiveIntegerField(null=False, help_text=_(u'Alternativ ID'), blank=False)
+    question = models.ForeignKey(Question, null=False, help_text=_(u'Question'))
+    description = models.CharField(null=True, blank=True, help_text=_(u'Beskrivelse'), max_length=150)
+ 
+    def __unicode__(self):
+        return self.description
+
 class MultipleChoice(AbstractVote):
     '''
     The MultipleChoice model holds the answered alternative to a specific question held in superclass
     '''
-    answer = models.PositiveIntegerField(null=True, blank=True, help_text=_(u'Alternativ'))
+    answer = models.ForeignKey(Alternative, null=True, blank=True, help_text=_(u'Alternativ'))
 
     def __unicode__(self):
         realname = u'%s, %s' %(super(MultipleChoice, self).voter.user.last_name, super(MultipleChoice, self).voter.user.first_name)
@@ -189,3 +211,4 @@ class MultipleChoice(AbstractVote):
             realname = super(MultipleChoice, self).hide_user(realname)
         
         return '%s stemte %d ved %s' %(realname, self.answer, super(MultipleChoice, self).question)
+

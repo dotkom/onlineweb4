@@ -22,23 +22,52 @@ Generalforsamling - Online
                     <div class="col-xs-12 col-sm-7 col-md-8">
                         <h3>Aktiv sak</h3>
                         <div class="well">{% if q %}{{ q.description }}{% else %}Ingen aktiv sak.{% endif %}</div>
+                        {% if q.question_type == 0 %}
+                        <button class="btn btn-success" id="boolean_yes">JA</button>
+                        <button class="btn btn-danger" id="boolean_no">NEI</button>
+                        <button class="btn btn-primary" id="boolean_blank">BLANKT</button>
+                        {% else %}
+                        
+                        {% endif %}
                     </div>
                     <div class="col-xs-12 col-sm-5 col-md-4">
                         <h3>Foreløpig status</h3>
                         {% if q %}
-                        <ul>
                             {% with q.get_results as res %}
                             {% if q.question_type == 0 %}
-                                <li>JA: {{ res.JA }}</li>
-                                <li>NEI: {{ res.NEI }}</li>
-                                <li>BLANKT: {{ res.BLANKT }}</li>
+                                <div class="progress">
+                                    <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="{{ active_question.yes_percent }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ active_question.yes_percent }}%">
+                                        {{ res.JA }} JA ({{ active_question.yes_percent }}%)
+                                    </div>
+                                </div>
+                                <div class="progress">
+                                    <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="{{ active_question.no_percent }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ active_question.no_percent }}%">
+                                        {{ res.NEI }} NEI ({{ active_question.no_percent }}%)
+                                    </div>
+                                </div>
+                                <div class="progress">
+                                    <div class="progress-bar progress-bar-primary" role="progressbar" aria-valuenow="{{ active_question.blank_percent }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ active_question.blank_percent }}%">
+                                        {{ res.BLANKT }} JA ({{ active_question.blank_percent }}%)
+                                    </div>
+                                </div>
                             {% else %}
                                 {% for alternative in res %}
-                                    <li>{{ alternative }}: {{ res.alternative }}</li>
+                                    {% if forloop.counter0 == 0 %}
+                                     <div class="progress">
+                                         <div class="progress-bar progress-bar-primary" role="progressbar" aria-valuenow="{{ active_question.blank_percent }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ active_question.blank_percent }}%">
+                                              {{ res.0 }} BLANKT ({{ active_question.0 }}%)
+                                         </div>
+                                    </div>
+                                    {% else %}
+                                     <div class="progress">
+                                        <div class="progress-bar progress-bar-primary" role="progressbar" aria-valuenow="{{ active_question.0 }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ active_question.0 }}%">
+                                        {{ alternative }} Alternativ {{ forloop.counter0 }} ({{ active_question.forloop.counter0 }}%)
+                                        </div>
+                                    </div>
+                                    {% endif %}
                                 {% endfor %}
                             {% endif %}
                             {% endwith %}
-                        </ul>
                         {% else %}
                             <p>Ingen aktiv sak.</p>
                         {% endif %}
@@ -51,7 +80,7 @@ Generalforsamling - Online
                         <p class="text-muted">
                         <ol reversed>
                             {% for question in meeting.get_locked_questions %}
-                                <li>{{ question.description }}</li>
+                                <li>{{ question.description }} ({{ question.result }})</li>
                             {% endfor %}
                         </ol>
                         </p>
