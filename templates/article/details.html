@@ -26,7 +26,7 @@
                         <div>
                             <img width="100%" src="{% version article.image 'article_full' %}" alt="{{ article.heading }}"/>
                             <div class="col-md-12 photograph-detail-meta">
-                                <span class="meta-caption">Fotograf</span> {{ article.photographers }}
+                                <span class="meta-caption">{% if article.multiple_photographers %} Fotograf</span> {{ article.photographers }} {% endif %}
                             </div>
                         </div>
                     </div>
