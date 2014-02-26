@@ -32,7 +32,7 @@ def genfors(request):
                 context['active_question']['multiple_choice']
                 context['active_question']['multiple_choice'] = [sum(res[r] * 100 / context['active_question']['total_votes']) for r in res]
         
-	return render(request, "genfors/index.html", context)
+    return render(request, "genfors/index.html", context)
 
 
 @login_required
