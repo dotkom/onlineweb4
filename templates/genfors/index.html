@@ -22,23 +22,28 @@ Generalforsamling - Online
                     <div class="col-xs-12 col-sm-7 col-md-8">
                         <h3>Aktiv sak</h3>
                         <div class="well">{% if q %}{{ q.description }}{% else %}Ingen aktiv sak.{% endif %}</div>
+                        {% if q.question_type == 0 %}
+                        <button class="btn btn-success" id="boolean_yes">JA</button>
+                        <button class="btn btn-danger" id="boolean_no">NEI</button>
+                        <button class="btn btn-primary" id="boolean_blank">BLANKT</button>
+                        {% else %}
+                        
+                        {% endif %}
                     </div>
                     <div class="col-xs-12 col-sm-5 col-md-4">
                         <h3>Foreløpig status</h3>
                         {% if q %}
-                        <ul>
                             {% with q.get_results as res %}
                             {% if q.question_type == 0 %}
-                                <li>JA: {{ res.JA }}</li>
-                                <li>NEI: {{ res.NEI }}</li>
-                                <li>BLANKT: {{ res.BLANKT }}</li>
+                                JA: {{ res.JA }}
+                                NEI: {{ res.NEI }}
+                                BLANKT: {{ res.BLANKT }}
                             {% else %}
                                 {% for alternative in res %}
                                     <li>{{ alternative }}: {{ res.alternative }}</li>
                                 {% endfor %}
                             {% endif %}
                             {% endwith %}
-                        </ul>
                         {% else %}
                             <p>Ingen aktiv sak.</p>
                         {% endif %}

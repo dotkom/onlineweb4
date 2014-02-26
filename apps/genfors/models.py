@@ -99,9 +99,12 @@ class Question(models.Model):
                     results['JA'] += 1
         
         elif self.question_type == 1:
-            results = {n:0 for n in range(1, self.number_of_alternatives)}
+            results = []
             for a in MultipleChoice.objects.filter(question=self):
-                results[a.answer] += 1
+                alt = a.answer
+                if not alt:
+                    alt = 0
+                results[alt] += 1
                 
         return results
 
