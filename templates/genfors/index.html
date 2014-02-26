@@ -9,7 +9,9 @@ Generalforsamling - Online
         <div class="row">
             <div class="col-md-12">
                 <div class="page-header">
-                    <button class="btn btn-warning pull-right" id="gf_admin_login">Admin</button>
+                    <a href="/genfors/admin">
+                        <button class="btn btn-warning pull-right" id="gf_admin_login">Admin</button>
+                    </a>
                     <h2>{% if meeting %}{{ meeting.title }}{% else %}GENERALFORSAMLING{% endif %}</h2>
                 </div>
             </div>
