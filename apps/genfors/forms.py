@@ -1,6 +1,7 @@
 from django import forms
 from django.conf import settings
 from django.utils.translation import ugettext as _
+from apps.genfors.models import Meeting, Question
 
 class LoginForm(forms.Form):
     password = forms.CharField(widget=forms.PasswordInput(render_value=False), label=_(u"Passord"))
@@ -17,3 +18,14 @@ class LoginForm(forms.Form):
         elif self.cleaned_data['password'] != settings.GENFORS_ADMIN_PASSWORD:
             self._errors['password'] = self.error_class([_(u"Feil passord")])
         return self.cleaned_data
+
+class MeetingForm(forms.ModelForm):
+    class Meta:
+        model = Meeting
+        fields = ['title', 'start_date']
+
+
+class QuestionForm(forms.ModelForm):
+    class Meta:
+        model = Question
+        fields = ['question_type', 'number_of_alternatives', 'anonymous', 'description']

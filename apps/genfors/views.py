@@ -2,9 +2,10 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
+from django.utils.translation import ugettext as _
 
-from apps.genfors.forms import LoginForm
-from apps.genfors.models import Meeting
+from apps.genfors.forms import LoginForm, MeetingForm, QuestionForm
+from apps.genfors.models import Meeting, Question
 
 import datetime
 
@@ -28,8 +29,39 @@ def admin(request):
     if request.session.get('genfors_admin') == True:
         meetings = Meeting.objects.filter(registration_locked=False).order_by('-start_date')
         if meetings:
+            # Ongoing meeting
             meeting = meetings[0]
             context['meeting'] = meeting
+            question = meeting.get_active_question()
+            if question:
+                context['question'] = question
+            else:
+                if request.method == 'POST':
+                    form = QuestionForm(request.POST)
+                    if form.is_valid():
+                        data = form.cleaned_data
+                        question = Question(meeting=meeting, anonymous=data['anonymous'],
+                                            question_type=data['anonymous'], description=data['description'],
+                                            number_of_alternatives=data['number_of_alternatives'])
+                        question.save()
+                        messages.success(request, _(u'Nytt spørsmål lagt til'))
+                        return redirect('genfors_admin')
+                else:
+                    form = QuestionForm()
+                context['form'] = form
+        elif request.method == 'POST':
+            form = MeetingForm(request.POST)
+            context['form'] = form
+            if form.is_valid():
+                meeting = Meeting(title=form.cleaned_data['title'],
+                                  start_date=form.cleaned_data['start_date'])
+                meeting.save()
+                context['meeting'] = meeting
+                return redirect('genfors_admin')
+        else:
+            # Create meeting view
+            form = MeetingForm()
+            context['form'] = form
         return render(request, "genfors/admin.html", context)
     else:
         if request.method == 'POST':
