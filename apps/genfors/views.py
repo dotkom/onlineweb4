@@ -69,7 +69,7 @@ def admin(request):
                 meeting = Meeting(title=form.cleaned_data['title'],
                                   start_date=form.cleaned_data['start_date'])
                 meeting.save()
-                context['meeting'] = meeting
+                messages.success(request, _(u'Generalforsamling lagt til'))
                 return redirect('genfors_admin')
         else:
             # Create meeting view
