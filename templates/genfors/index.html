@@ -51,7 +51,7 @@ Generalforsamling - Online
                         <p class="text-muted">
                         <ol reversed>
                             {% for question in meeting.get_locked_questions %}
-                                <li>{{ question.description }}</li>
+                                <li>{{ question.description }} ({{ question.result }})</li>
                             {% endfor %}
                         </ol>
                         </p>
