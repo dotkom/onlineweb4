@@ -102,7 +102,7 @@ class Question(models.Model):
             results = [0 for x in range(0, self.number_of_alternatives + 1)]
             for a in MultipleChoice.objects.filter(question=self):
                 alt = a.answer.alt_id
-                if == None:
+                if alt == None:
                     alt = 0
                 results[alt] += 1
                 
@@ -112,7 +112,8 @@ class Question(models.Model):
     def get_alternatives(self):
         if self.question_type == 1:
             return Alternative.objects.filter(question=self)
-        else return None
+        else:
+            return None
 
     # Resets the question if there has not been enough difference to settle the case
     def reset_question(self):
@@ -187,11 +188,22 @@ class BooleanVote(AbstractVote):
         
         return '%s stemte %s ved %s' %(realname, a, super(BooleanVote, self).question)
 
+class Alternative(models.Model): 
+    '''         
+    The Alternative class represents a single alternative that is connected to a particular multiple choice type question
+    '''     
+    alt_id = models.PositiveIntegerField(null=False, help_text=_(u'Alternativ ID'), blank=False)
+    question = models.ForeignKey(Question, null=False, help_text=_(u'Question'))
+    description = models.CharField(null=True, blank=True, help_text=_(u'Beskrivelse'), max_length=150)
+ 
+    def __unicode__(self):
+        return self.description
+
 class MultipleChoice(AbstractVote):
     '''
     The MultipleChoice model holds the answered alternative to a specific question held in superclass
     '''
-    answer = models.ForeignKey(null=True, blank=True, help_text=_(u'Alternativ'))
+    answer = models.ForeignKey(Alternative, null=True, blank=True, help_text=_(u'Alternativ'))
 
     def __unicode__(self):
         realname = u'%s, %s' %(super(MultipleChoice, self).voter.user.last_name, super(MultipleChoice, self).voter.user.first_name)
@@ -200,13 +212,3 @@ class MultipleChoice(AbstractVote):
         
         return '%s stemte %d ved %s' %(realname, self.answer, super(MultipleChoice, self).question)
 
-class Alternative(models.Model):
-    '''
-    The Alternative class represents a single alternative that is connected to a particular multiple choice type question
-    '''
-    alt_id = models.PositiveIntegerField(null=False, help_text=_(u'Alternativ ID'), blank=False)
-    question = models.ForeignKey(Question, null=False, help_text=_(u'Question'))
-    description = models.CharField(null=True, blank=True, help_text=_(u'Beskrivelse'), max_length=150)
-
-    def __unicode__(self):
-        return self.description
