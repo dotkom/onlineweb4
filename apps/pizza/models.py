@@ -6,7 +6,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
 #from django.contrib.auth import get_user_model
 
-User = getattr(settings, 'AUTH_USER_MODEL', 'auth.User') 
+from apps.authentication.models import OnlineUser as User
 
 class OrderLine(models.Model):
     date = models.DateField(_("dato"))

@@ -1,6 +1,6 @@
 from django.conf.urls import patterns, include, url
 
-urlpatterns = patterns('pizzasystem.views',
+urlpatterns = patterns('apps.pizza.views',
     url(r'^$', 'index', name='index'),
     url(r'^newpizza/$', 'pizzaview', name='new_pizza'),
     url(r'^edit/(?P<pizza_id>\d+)/$','edit_pizza', name='edit_pizza'),

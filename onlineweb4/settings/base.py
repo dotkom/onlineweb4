@@ -256,6 +256,10 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "onlineweb4.context_processors.analytics",
 )
 
+# Pizza
+PIZZA_GROUP = 'dotKom'
+PIZZA_ADMIN_GROUP = 'dotKom'
+
 # Remember to keep 'local' last, so it can override any setting.
 for settings_module in ['filebrowser', 'local']:  # local last
     if not os.path.exists(os.path.join(PROJECT_SETTINGS_DIRECTORY,

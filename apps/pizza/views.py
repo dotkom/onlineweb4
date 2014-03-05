@@ -2,18 +2,18 @@ from django.contrib import messages
 from django.conf import settings
 
 from django.shortcuts import render, get_object_or_404, redirect
-from pizzasystem.models import OrderLine, Pizza, Order, Saldo, ManageOrderLimit
+from apps.pizza.models import OrderLine, Pizza, Order, Saldo, ManageOrderLimit
 from forms import PizzaForm, OrderForm,  ManageOrderLinesForm, ManageOrderLimitForm, NewOrderLineForm, ManageUsersForm
 from django.contrib.auth.decorators import user_passes_test
 from datetime import date, timedelta
 from django.contrib.auth import get_user_model
 
-User = get_user_model()
+from apps.authentication.models import OnlineUser as User
 
 @user_passes_test(lambda u: u.groups.filter(name=settings.PIZZA_GROUP).count() == 1)
 def index(request):
     order_line = get_order_line()
-    return render(request, 'index.html', {'order_line' : order_line, 'is_admin' : is_admin(request)})
+    return render(request, 'pizza/index.html', {'order_line' : order_line, 'is_admin' : is_admin(request)})
 
 @user_passes_test(lambda u: u.groups.filter(name=settings.PIZZA_GROUP).count() == 1)
 def pizzaview(request, pizza_id=None):
@@ -46,7 +46,7 @@ def pizzaview(request, pizza_id=None):
             form = PizzaForm(instance=pizza, initial={'buddy' : request.user})
             form.fields["buddy"].queryset = get_order_line().free_users()
     
-    return render(request, 'orderview.html', {'form' : form, 'is_admin' : is_admin(request)})
+    return render(request, 'pizza/orderview.html', {'form' : form, 'is_admin' : is_admin(request)})
 
 def edit_pizza(request, pizza_id):
     pizza = get_object_or_404(Pizza, pk=pizza_id)
@@ -89,7 +89,7 @@ def orderview(request, order_id=None):
     else:
         form = OrderForm(instance=order)
 
-    return render(request, 'orderview.html', {'form' : form, 'is_admin' : is_admin(request)})
+    return render(request, 'pizza/orderview.html', {'form' : form, 'is_admin' : is_admin(request)})
 
 def delete_order(request, order_id):
     order = get_object_or_404(Order, pk=order_id)
@@ -148,7 +148,7 @@ def new_order_line(request):
         form = NewOrderLineForm()
         form.fields["date"].initial = get_next_tuesday()
 
-    return render(request, 'admin.html', {'form' : form })
+    return render(request, 'pizza/admin.html', {'form' : form })
 
 @user_passes_test(lambda u: u.groups.filter(name=settings.PIZZA_ADMIN_GROUP).count() == 1)
 def set_order_limit(request):
@@ -164,7 +164,7 @@ def set_order_limit(request):
     else:
         form = ManageOrderLimitForm(instance=limit)
 
-    return render(request, 'admin.html', {'form' : form })
+    return render(request, 'pizza/admin.html', {'form' : form })
 
 @user_passes_test(lambda u: u.groups.filter(name=settings.PIZZA_ADMIN_GROUP).count() == 1)
 def manage_users(request):
@@ -180,7 +180,7 @@ def manage_users(request):
         form = ManageUsersForm()
         form.fields["users"].queryset = get_pizza_users()
     
-    return render(request, 'admin.html', {'form' : form })
+    return render(request, 'pizza/admin.html', {'form' : form })
 
 @user_passes_test(lambda u: u.groups.filter(name=settings.PIZZA_ADMIN_GROUP).count() == 1)
 def manage_order_lines(request):
@@ -197,7 +197,7 @@ def manage_order_lines(request):
     
     unhandeled_orders = OrderLine.objects.filter(total_sum=0)
     form.fields["order_lines"].queryset = unhandeled_orders
-    return render(request, 'admin.html', {'form' : form, 'order_lines' : unhandeled_orders})
+    return render(request, 'pizza/admin.html', {'form' : form, 'order_lines' : unhandeled_orders})
 
 def get_order_limit():
     order_limit = ManageOrderLimit.objects.all()
