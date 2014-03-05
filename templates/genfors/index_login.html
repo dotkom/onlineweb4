@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+Registrering - Online
+{% endblock %}
+
+{% block content %}
+<section id="generalforsamling">
+    <div class="container">
+        <div class="row">
+            <div class="page-header">
+            <h2>Generalformsamling - Oppmøteregistrering</h2>
+        </div>
+    
+    {% if not registration_locked %}
+        <div class="row">
+            <div class="col-xs-12 col-sm-6 col-md-4">
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form|crispy }}
+                    <button class="btn btn-success" type="submit">Registrer oppmøte</button>
+                </form>
+            </div>
+        </div>
+    {% else %}
+    <div class="row">
+        <div class="col-md-12">
+            <p>Oppmøteregistrering er stengt.</p>   
+        </div>
+    </div>
+    {% endif %}
+    </div>
+</section>
+{% endblock %}
+
+{% block js %}
+    {{ block.super }}
+    <!-- insert JS-stuff here -->
+{% endblock %}
