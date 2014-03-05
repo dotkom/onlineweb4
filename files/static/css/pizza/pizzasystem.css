@@ -1,6 +1,3 @@
-.fieldWrapper{
-    padding-top: 10px;
-}
 .fieldWrapper label {
     float: left;
     width: 150px;
@@ -32,6 +29,7 @@
 div.clear {
     clear: both;
 }
+
 .padding-nexto-button {
     padding-left: 10px; 
 }
