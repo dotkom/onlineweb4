@@ -32,7 +32,7 @@ def genfors(request):
                     context['active_question']['multiple_choice'] = [sum(res[r] * 100 / context['active_question']['total_votes']) for r in res]
         return render(request, "genfors/index.html", context)
     else:
-        if request.method == 'POST' and not meeting.registration_locked:
+        if request.method == 'POST':
             form = RegisterVoterForm(request.POST)
             context['form'] = form
             if form.is_valid():
@@ -40,7 +40,6 @@ def genfors(request):
                 return redirect('genfors_index')
         else:
             context['form'] = RegisterVoterForm()
-            context['registration_locked'] = meeting.registration_locked
     return render(request, "genfors/index_login.html", context)
 
 
@@ -94,7 +93,7 @@ def admin(request):
             context['form'] = form
         return render(request, "genfors/admin.html", context)
     else:
-        if request.method == 'POST':
+        if request.method == 'POST' and not meeting.registration_locked:
             form = LoginForm(request.POST)
             context['form'] = form
             if form.is_valid():
@@ -102,6 +101,8 @@ def admin(request):
                 return redirect('genfors_admin')
         else:
             context['form'] = LoginForm()
+            if not meeting.registration_locked:
+                context['registration_locked'] = True
     return render(request, "genfors/admin_login.html", context)
 
 

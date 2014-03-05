@@ -78,7 +78,6 @@ class Question(models.Model):
     meeting = models.ForeignKey(Meeting, help_text=_(u'Generalforsamling'), null=False)
     anonymous = models.BooleanField(_(u'anonymous'), help_text=_(u'Hemmelig valg'), null=False, blank=False)
     created_time = models.DateTimeField(_(u'added'), auto_now_add=True)
-    number_of_alternatives = models.PositiveIntegerField(_(u'Antall alternativer'), null=True, blank=True)
     locked = models.BooleanField(_(u'locked'), help_text=_(u'Steng avstemmingen'), null=False, blank=False, default=False)
     question_type = models.SmallIntegerField(_(u'question_type'), help_text=_(u'Type'), choices=QUESTION_TYPES, null=False, default=0, blank=False)
     description = models.TextField(_(u'description'), help_text=_(u'Beskrivelse av saken som skal stemmes over'), max_length=500, blank=True)
@@ -99,7 +98,7 @@ class Question(models.Model):
                     results['JA'] += 1
         
         elif self.question_type == 1:
-            results = [0 for x in range(0, self.number_of_alternatives + 1)]
+            results = [0 for x in range(0, Alternative.objects.filter(question=self).count())]
             for a in MultipleChoice.objects.filter(question=self):
                 alt = a.answer.alt_id
                 if alt == None:
