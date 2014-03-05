@@ -28,7 +28,7 @@ class MeetingForm(forms.ModelForm):
 class QuestionForm(forms.ModelForm):
     class Meta:
         model = Question
-        fields = ['question_type', 'number_of_alternatives', 'anonymous', 'description']
+        fields = ['question_type', 'anonymous', 'description']
 
 class RegisterVoterForm(forms.Form):
     password = forms.CharField(widget=forms.PasswordInput(render_value=False), label=_(u"Pinkode"))
