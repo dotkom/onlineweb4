@@ -12,7 +12,8 @@ Registrering - Online
             <div class="page-header">
             <h2>Generalformsamling - Oppmøteregistrering</h2>
         </div>
-
+    
+    {% if not registration_locked %}
         <div class="row">
             <div class="col-xs-12 col-sm-6 col-md-4">
                 <form method="post">
@@ -22,6 +23,13 @@ Registrering - Online
                 </form>
             </div>
         </div>
+    {% else %}
+    <div class="row">
+        <div class="col-md-12">
+            <p>Oppmøteregistrering er stengt.</p>   
+        </div>
+    </div>
+    {% endif %}
     </div>
 </section>
 {% endblock %}
