@@ -6,11 +6,8 @@ from django.utils.translation import ugettext as _
 from django.http import HttpResponse
 from django.views.decorators.http import require_http_methods
 import json
-
-<<<<<<< HEAD
 from apps.genfors.forms import LoginForm, MeetingForm, QuestionForm, RegisterVoterForm
 from apps.genfors.models import Meeting, Question, RegisteredVoter
-
 import datetime
 
 
@@ -18,7 +15,6 @@ import datetime
 def genfors(request):
     context = {}
     today = datetime.date.today()
-<<<<<<< HEAD
     
     if request.session.get('registered_voter') == True:
         meetings = Meeting.objects.filter(start_date__range=[today, today + datetime.timedelta(days=1)]).order_by('-start_date')
