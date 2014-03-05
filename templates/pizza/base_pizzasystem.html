@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Pizzasystem</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="torri og kradde">
+
+    <!-- Le styles -->
+
+    <link href="{{ STATIC_URL }}css/bootstrap.css" rel="stylesheet">
+    <link href="{{ STATIC_URL }}css/bootstrap-responsive.css" rel="stylesheet">
+    <link href="{{ STATIC_URL }}css/pizzasystem.css" rel="stylesheet">
+    
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script src="{{ STATIC_URL }}js/bootstrap.min.js" type="text/javascript"></script>
+    <script src="{{ STATIC_URL }}js/bootstrap.js" type="text/javascript"></script>
+    <script src="{{ STATIC_URL }}js/pizzasystem.js"></script>
+
+</head>
+    <body>
+    <div class="navbar navbar-inverse navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container">
+          <a class="brand" href="{% url "index" %}">Pizzasystem</a>
+            <ul class="nav pull-right">
+                {% if is_admin %}
+                    <li><a href="{% url "admin" %}">Admin</a></li>
+                {% endif %}
+              <li><a href="#">Bruker: {{ user.username }}</a></li>
+              <li><a href="#">Saldo: {{ user.saldo_set.get.saldo }}</a></li>
+            </ul>
+        </div>
+      </div>
+    </div>
+    {% if messages %}
+        <div class="container-fluid messages">
+            <div class="row-fluid">
+                <div class="span12"> 
+                    {% for message in messages %}
+                        <div class="alert {{ message.tags }}" data-alert>
+                            <button type="button" class="close"  data-dismiss="alert">&times;</button>
+                            <p>{{ message }}</p>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    {% endif %}
+    <div class="container">
+       {% block content %}
+       {% endblock%}
+    </div>
+    </div>
+    </body>
+</html>
+

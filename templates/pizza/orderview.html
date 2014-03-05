@@ -1,0 +1,23 @@
+{% extends "base_pizzasystem.html" %}
+
+{% block content %}
+<script>
+    var username = "{{ user.username }}";
+</script>
+
+<form action="" method="post">
+    {% csrf_token %}
+   <fieldset>
+        <legend>{{ form.name|title }}</legend>
+        {% for field in form %}
+            <div class="fieldWrapper">
+                <label>{{ field.label_tag }}</label>
+                <div class="input">{{ field }}</div>
+                <div class="error">{{ field.errors }}</div>
+        {% endfor %}
+        <a target="_blank" href="https://www.pizzabakeren.no/pizzameny">Meny</a>
+            </div>
+    </fieldset>
+    <input type="submit" class="btn btn-primary" value="Save" />
+{% endblock content %}
+

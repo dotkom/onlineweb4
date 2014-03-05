@@ -180,6 +180,7 @@ INSTALLED_APPS = (
     'apps.feedback',
     'apps.mommy',
     'apps.profiles',
+    'apps.pizza',
 )
 
 # A sample logging configuration. The only tangible logging

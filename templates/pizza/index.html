@@ -1,0 +1,67 @@
+{% extends "base_pizzasystem.html" %}
+
+{% block content %}
+
+{% if order_line %}
+    <h4>{{ order_line.date }}</h4>
+    <table class="table table-striped table-bordered">
+    <tr>
+        <th>Pizza</th>
+        <th>Brus</th>
+        <th>Hvitløksdressing</th>
+        <th>Bestiller</th>
+        <th>PizzaBuddy</th>
+        <th></th>
+    </tr>
+    {% for pizza in order_line.pizza_set.all %}
+        <tr>
+            <td>{{ pizza.pizza }}</td>
+            <td>{{ pizza.soda }}</td>
+            {% if pizza.dressing %}
+                <td><img class="icon" src="{{ STATIC_URL }}img/check.png"/></td>
+            {% else %}
+                <td><img class="icon" src="{{ STATIC_URL }}img/x.jpg"/></td>
+            {% endif %}
+            <td>{{ pizza.user.username }}</td>
+            <td>{{ pizza.buddy.username }}</td>
+            {% if user == pizza.user or user == pizza.buddy %}
+                <td>
+                    <a href="{% url "edit_pizza" pizza.id %}"><button class="btn btn-primary">edit</button></a>
+                    <a href="{% url "delete_pizza" pizza.id %}"><button class="btn btn-danger">delete</button></a></td>
+            {% elif user not in order_line.used_users and user != pizza.user and pizza.need_buddy %}
+                <td><a href={% url "join_pizza" pizza.id %}><button class="btn btn-warning">join</button></a></td>
+            {% else %}
+                <td></td>
+            {% endif %}
+         </tr>
+    {% endfor %}
+    </table>
+    {% if order_line.order_set.all %}
+        <table class="table table-striped table-bordered">
+        <tr>
+            <th>User</th>
+            <th>Description</th>
+            <th></th>
+        </tr>
+        {% for order in order_line.order_set.all %}
+            <tr>
+                <td>{{ order.user }}</td>
+                <td>{{ order.content }}</td>
+                {% if user == order.user %}
+                    <td><a href="{% url "edit_order" order.id %}"><button class="btn btn-primary">edit</button></a>
+                    <a href="{% url "delete_order" order.id %}"><button class="btn btn-danger">delete</button></a></td>
+                {% else %}
+                    <td></td>
+                {% endif %}
+            </tr>
+        {% endfor %}
+        </table>
+    {% endif %}
+    {% if user not in order_line.used_users %}
+        <a href="{% url "new_pizza" %}"><button class="btn btn-primary">Ny pizza</button></a>
+    {% endif %}
+    <a href="{% url "new_order" %}"><button class="btn btn-primary">Annet</button></a>
+{% else %}
+    <p>No orders available.</p>
+{% endif %}
+{% endblock content %}
