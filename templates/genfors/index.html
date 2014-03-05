@@ -26,12 +26,15 @@ Generalforsamling - Online
                         <button class="btn btn-danger" id="boolean_no">NEI</button>
                         <button class="btn btn-primary" id="boolean_blank">BLANKT</button>
                         {% else %}
+                        <p>Velg en av alternativene:</p>
                         <form action="/genfors/vote" id="vote">
-                        {% for alt in alternatives %}
-                            
+                        {% for alt in active_question.alternatives %}
+                            <input type="radio" id="0" value="0">Blankt</input>
                         {% endfor %}
-                        
+                            <input type="radio" id="{{ alt.alt_id }}" value="{{ alt.alt_id }}">{{ alt.description }}</input>
                         {% endif %}
+                            <button class="btn btn-success" type="submit">Stem</button>
+                        </form>
                     </div>
                     <div class="col-xs-12 col-sm-5 col-md-4">
                         <h3>Foreløpig status</h3>

@@ -82,6 +82,7 @@ class Question(models.Model):
     question_type = models.SmallIntegerField(_(u'question_type'), help_text=_(u'Type'), choices=QUESTION_TYPES, null=False, default=0, blank=False)
     description = models.TextField(_(u'description'), help_text=_(u'Beskrivelse av saken som skal stemmes over'), max_length=500, blank=True)
     result = models.CharField(_(u'result'), max_length=100, help_text=_(u'Resultatet av avstemmingen'), null=True, blank=True)
+    only_show_winner = models.BooleanField(_(u'onlywinner'), help_text=_(u'Vis kun vinner'), null=False, blank=False, default=False)
 
     # Returns results as a dictionary, either by alternative or boolean-ish types
     def get_results(self):
@@ -98,8 +99,10 @@ class Question(models.Model):
                     results['JA'] += 1
         
         elif self.question_type == 1:
-            results = {}
-            for a in MultipleChoice.objects.filter(question=self):
+            mc = MultipleChoice.objects.filter(question=self)
+            results = {a.answer.alt_id:0 for a in mc}
+            results[0] = 0
+            for a in mc:
                 alt = a.answer.alt_id
                 if alt == None:
                     alt = 0
@@ -174,19 +177,6 @@ class BooleanVote(AbstractVote):
     '''
     answer = models.NullBooleanField(_(u'answer'), help_text=_(u'Ja/Nei'), null=True, blank=True)
 
-    def __unicode__(self):
-        realname = u'%s, %s' %(super(BooleanVote, self).voter.user.last_name, super(BooleanVote, self).voter.user.first_name)
-        if super(BooleanVote, self).question.anonymous:
-            realname = super(BooleanVote, self).hide_user(realname)
-        if self.answer is None:
-            a = u'blankt'
-        elif self.answer:
-            a = u'ja'
-        else:
-            a = u'nei'
-        
-        return '%s stemte %s ved %s' %(realname, a, super(BooleanVote, self).question)
-
 class Alternative(models.Model): 
     '''         
     The Alternative class represents a single alternative that is connected to a particular multiple choice type question
@@ -203,11 +193,4 @@ class MultipleChoice(AbstractVote):
     The MultipleChoice model holds the answered alternative to a specific question held in superclass
     '''
     answer = models.ForeignKey(Alternative, null=True, blank=True, help_text=_(u'Alternativ'))
-
-    def __unicode__(self):
-        realname = u'%s, %s' %(super(MultipleChoice, self).voter.user.last_name, super(MultipleChoice, self).voter.user.first_name)
-        if super(MultipleChoice, self).anonymous:
-            realname = super(MultipleChoice, self).hide_user(realname)
-        
-        return '%s stemte %d ved %s' %(realname, self.answer, super(MultipleChoice, self).question)
 

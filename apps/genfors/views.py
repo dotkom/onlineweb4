@@ -22,14 +22,16 @@ def genfors(request):
                 aq = meeting.get_active_question()
                 context['active_question'] = {}
                 context['active_question']['total_votes'] = aq.get_votes().count()
+                context['active_question']['alternatives'] = aq.get_alternatives()
                 res = aq.get_results()
                 if aq.question_type == 0 and context['active_question']['total_votes'] != 0:
                     context['active_question']['yes_percent'] = res['JA'] * 100 / context['active_question']['total_votes']
                     context['active_question']['no_percent'] = res['NEI'] * 100 / context['active_question']['total_votes']
                     context['active_question']['blank_percent'] = res['BLANKT'] * 100 / context['active_question']['total_votes']
                 elif aq.question_type == 1 and context['active_question']['total_votes'] != 0:
-                    context['active_question']['multiple_choice']
-                    context['active_question']['multiple_choice'] = [sum(res[r] * 100 / context['active_question']['total_votes']) for r in res]
+                    sorted_results = res.items()
+                    sorted_results.sort()
+                    context['active_question']['multiple_choice'] = {k:v * 100 / context['active_question']['total_votes'] for k,v in sorted_results}
         return render(request, "genfors/index.html", context)
     else:
         if request.method == 'POST' and not meeting.registration_locked:
@@ -40,7 +42,10 @@ def genfors(request):
                 return redirect('genfors_index')
         else:
             context['form'] = RegisterVoterForm()
-            context['registration_locked'] = meeting.registration_locked
+            if meeting:
+                context['registration_locked'] = meeting.registration_locked
+            else:
+                context['registration_locked'] = True
     return render(request, "genfors/index_login.html", context)
 
 
