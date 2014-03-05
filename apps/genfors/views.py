@@ -17,7 +17,6 @@ def genfors(request):
     meeting = get_active_meeting()
     if request.session.get('registered_voter') == True:
         if meeting:
-            meeting = meetings[0]
             context['meeting'] = meeting
             if meeting.get_active_question():
                 aq = meeting.get_active_question()
