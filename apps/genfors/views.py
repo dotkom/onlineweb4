@@ -16,11 +16,8 @@ import datetime
 @login_required
 def genfors(request):
     context = {}
-    today = datetime.date.today()
-
-    meetings = Meeting.objects.filter(start_date__range=[today, today + datetime.timedelta(days=1)]).order_by('-start_date')
-    if meetings:
-        meeting = meetings[0]
+    meeting = get_active_meeting()
+    if meeting:
         context['meeting'] = meeting
         if meeting.get_active_question():
             aq = meeting.get_active_question()
@@ -48,18 +45,12 @@ def registered_voters(request):
     return render(request, "genfors/registered_voters.html", context)
 
 
-def get_active_meeting():
-    meetings = Meeting.objects.filter(registration_locked=False).order_by('-start_date')
-    if meetings:
-        return meetings[0]
-
-
 @login_required
 def admin(request):
     context = {}
     # Check if user is logged in as genfors admin
     if request.session.get('genfors_admin') is True:
-        meeting = get_active_meeting()
+        meeting = get_next_meeting()
         if meeting:
             context['meeting'] = meeting
             question = meeting.get_active_question()
@@ -120,3 +111,17 @@ def vote(request):
             return HttpResponse(status_code=403, reason_phrase='Forbidden')
     else:
         return HttpResponse(status_code=403, reason_phrase='Forbidden')
+
+
+def get_active_meeting():
+    today = datetime.date.today()
+    meetings = Meeting.objects.filter(start_date__range=[today, today + datetime.timedelta(days=1)]).order_by('-start_date')
+    if meetings:
+        return meetings[0]
+
+
+def get_next_meeting():
+    today = datetime.date.today()
+    meetings = Meeting.objects.filter(registration_locked=False, start_date__gt=today).order_by('-start_date')
+    if meetings:
+        return meetings[0]
