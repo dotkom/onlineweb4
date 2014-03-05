@@ -10,12 +10,12 @@
         <th>Brus</th>
         <th>Hvitløksdressing</th>
         <th>Bestiller</th>
-        <th>PizzaBuddy</th>
+        <th>Buddy</th>
         <th></th>
     </tr>
     {% for pizza in order_line.pizza_set.all %}
         <tr>
-            <td>{{ pizza.pizza }}</td>
+            <td><a href="https://www.pizzabakeren.no/pizzameny" target="_blank"><strong>{{ pizza.pizza }}</strong></a></td>
             <td>{{ pizza.soda }}</td>
             {% if pizza.dressing %}
                 <td><img class="icon" src="{{ STATIC_URL }}img/check.png"/></td>
@@ -23,16 +23,21 @@
                 <td><img class="icon" src="{{ STATIC_URL }}img/x.jpg"/></td>
             {% endif %}
             <td>{{ pizza.user.username }}</td>
-            <td>{{ pizza.buddy.username }}</td>
-            {% if user == pizza.user or user == pizza.buddy %}
-                <td>
+            <td>
+                {% if pizza.need_buddy == True and pizza.buddy == pizza.user %}
+                    <em>Trenger buddy!</em>
+                {% else %}
+                    {{ pizza.buddy.username }}
+                {% endif %}
+            </td>
+            <td>
+                {% if user == pizza.user or user == pizza.buddy %}
                     <a href="{% url "pizza_edit" pizza.id %}"><button class="btn btn-primary">Rediger</button></a>
                     <a href="{% url "pizza_delete" pizza.id %}"><button class="btn btn-danger">Slett</button></a></td>
-            {% elif user not in order_line.used_users and user != pizza.user and pizza.need_buddy %}
-                <td><a href={% url "pizza_join" pizza.id %}><button class="btn btn-warning">Join</button></a></td>
-            {% else %}
-                <td></td>
-            {% endif %}
+                {% elif user not in order_line.used_users and user != pizza.user and pizza.need_buddy %}
+                    <a href={% url "pizza_join" pizza.id %}><button class="btn btn-warning">Join</button></a>
+                {% endif %}
+            </td>
          </tr>
     {% endfor %}
     {% if order_num == 0 %}
