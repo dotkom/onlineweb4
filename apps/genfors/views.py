@@ -5,7 +5,7 @@ from django.shortcuts import render, redirect
 from django.utils.translation import ugettext as _
 
 from apps.genfors.forms import LoginForm, MeetingForm, QuestionForm
-from apps.genfors.models import Meeting, Question
+from apps.genfors.models import Meeting, Question, RegisteredVoter
 
 import datetime
 
@@ -31,19 +31,33 @@ def genfors(request):
             elif aq.question_type == 1 and context['active_question']['total_votes'] != 0:
                 context['active_question']['multiple_choice']
                 context['active_question']['multiple_choice'] = [sum(res[r] * 100 / context['active_question']['total_votes']) for r in res]
-        
+
     return render(request, "genfors/index.html", context)
+
+
+@login_required
+def registered_voters(request):
+    context = {}
+    if request.session.get('genfors_admin') is True:
+        meeting = get_active_meeting()
+        if meeting:
+            context['registered_voters'] = meeting.get_attendee_list()
+    return render(request, "genfors/registered_voters.html", context)
+
+
+def get_active_meeting():
+    meetings = Meeting.objects.filter(registration_locked=False).order_by('-start_date')
+    if meetings:
+        return meetings[0]
 
 
 @login_required
 def admin(request):
     context = {}
     # Check if user is logged in as genfors admin
-    if request.session.get('genfors_admin') == True:
-        meetings = Meeting.objects.filter(registration_locked=False).order_by('-start_date')
-        if meetings:
-            # Ongoing meeting
-            meeting = meetings[0]
+    if request.session.get('genfors_admin') is True:
+        meeting = get_active_meeting()
+        if meeting:
             context['meeting'] = meeting
             question = meeting.get_active_question()
             if question:
