@@ -29,3 +29,16 @@ class QuestionForm(forms.ModelForm):
     class Meta:
         model = Question
         fields = ['question_type', 'number_of_alternatives', 'anonymous', 'description']
+
+class RegisterVoterForm(forms.Form):
+    password = forms.CharField(widget=forms.PasswordInput(render_value=False), label=_(u"Pinkode"))
+
+    def clean(self):
+        if self._errors:
+            return
+        if not hasattr(settings, 'GENFORS_PIN_CODE'):
+            self._errors['password'] = self.error_class([_(u'PIN-kode har ikke blitt satt')])
+        elif self.cleaned_data['password'] != settings.GENFORS_PIN_CODE:
+            self._errors['password'] = self.error_class([_(u'Feil PIN-kode')])
+        return self.cleaned_data
+        

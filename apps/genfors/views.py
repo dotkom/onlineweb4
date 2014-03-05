@@ -7,7 +7,7 @@ from django.http import HttpResponse
 from django.views.decorators.http import require_http_methods
 import json
 
-from apps.genfors.forms import LoginForm, MeetingForm, QuestionForm
+from apps.genfors.forms import LoginForm, MeetingForm, QuestionForm, RegisterVoterForm
 from apps.genfors.models import Meeting, Question
 
 import datetime
@@ -17,25 +17,37 @@ import datetime
 def genfors(request):
     context = {}
     today = datetime.date.today()
-
-    meetings = Meeting.objects.filter(start_date__range=[today, today + datetime.timedelta(days=1)]).order_by('-start_date')
-    if meetings:
-        meeting = meetings[0]
-        context['meeting'] = meeting
-        if meeting.get_active_question():
-            aq = meeting.get_active_question()
-            context['active_question'] = {}
-            context['active_question']['total_votes'] = aq.get_votes().count()
-            res = aq.get_results()
-            if aq.question_type == 0 and context['active_question']['total_votes'] != 0:
-                context['active_question']['yes_percent'] = res['JA'] * 100 / context['active_question']['total_votes']
-                context['active_question']['no_percent'] = res['NEI'] * 100 / context['active_question']['total_votes']
-                context['active_question']['blank_percent'] = res['BLANKT'] * 100 / context['active_question']['total_votes']
-            elif aq.question_type == 1 and context['active_question']['total_votes'] != 0:
-                context['active_question']['multiple_choice']
-                context['active_question']['multiple_choice'] = [sum(res[r] * 100 / context['active_question']['total_votes']) for r in res]
+    
+    if request.session.get('registered_voter') == True:
+        meetings = Meeting.objects.filter(start_date__range=[today, today + datetime.timedelta(days=1)]).order_by('-start_date')
+        if meetings:
+            meeting = meetings[0]
+            context['meeting'] = meeting
+            if meeting.get_active_question():
+                aq = meeting.get_active_question()
+                context['active_question'] = {}
+                context['active_question']['total_votes'] = aq.get_votes().count()
+                res = aq.get_results()
+                if aq.question_type == 0 and context['active_question']['total_votes'] != 0:
+                    context['active_question']['yes_percent'] = res['JA'] * 100 / context['active_question']['total_votes']
+                    context['active_question']['no_percent'] = res['NEI'] * 100 / context['active_question']['total_votes']
+                    context['active_question']['blank_percent'] = res['BLANKT'] * 100 / context['active_question']['total_votes']
+                elif aq.question_type == 1 and context['active_question']['total_votes'] != 0:
+                    context['active_question']['multiple_choice']
+                    context['active_question']['multiple_choice'] = [sum(res[r] * 100 / context['active_question']['total_votes']) for r in res]
+        return render(request, "genfors/index.html", context)
+    else:
+        if request.method == 'POST':
+            form = RegisterVoterForm(request.POST)
+            context['form'] = form
+            if form.is_valid():
+                request.session['registered_voter'] = True
+                return redirect('genfors_index')
+        else:
+            context['form'] = RegisterVoterForm()
         
-    return render(request, "genfors/index.html", context)
+        
+    return render(request, "genfors/index_login.html", context)
 
 
 @login_required
