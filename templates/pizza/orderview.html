@@ -14,9 +14,10 @@
                 <label>{{ field.label_tag }}</label>
                 <div class="input">{{ field }}</div>
                 <div class="error">{{ field.errors }}</div>
+                <div class"clear"></div>
             </div>
         {% endfor %}
     </fieldset>
-    <input type="submit" class="btn btn-primary" value="Lagre" /> eller <a href="{% url "pizza_index" %}">Avbryt</a>
+    <input type="submit" class="btn btn-primary" value="Lagre" /> <span class="padding-nexto-button">eller <a href="{% url "pizza_index" %}">avbryt</a></span>
 {% endblock content %}
 

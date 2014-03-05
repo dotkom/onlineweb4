@@ -13,7 +13,7 @@ from apps.authentication.models import OnlineUser as User
 @user_passes_test(lambda u: u.groups.filter(name=settings.PIZZA_GROUP).count() == 1)
 def pizza_index(request):
     order_line = get_order_line()
-    return render(request, 'pizza/index.html', {'order_line' : order_line, 'is_admin' : is_admin(request)})
+    return render(request, 'pizza/index.html', {'order_line' : order_line, 'order_num' : order_line.pizza_set.count(), 'is_admin' : is_admin(request)})
 
 @user_passes_test(lambda u: u.groups.filter(name=settings.PIZZA_GROUP).count() == 1)
 def pizza_new(request, pizza_id=None):

@@ -26,15 +26,22 @@
             <td>{{ pizza.buddy.username }}</td>
             {% if user == pizza.user or user == pizza.buddy %}
                 <td>
-                    <a href="{% url "pizza_edit" pizza.id %}"><button class="btn btn-primary">edit</button></a>
-                    <a href="{% url "pizza_delete" pizza.id %}"><button class="btn btn-danger">delete</button></a></td>
+                    <a href="{% url "pizza_edit" pizza.id %}"><button class="btn btn-primary">Rediger</button></a>
+                    <a href="{% url "pizza_delete" pizza.id %}"><button class="btn btn-danger">Slett</button></a></td>
             {% elif user not in order_line.used_users and user != pizza.user and pizza.need_buddy %}
-                <td><a href={% url "pizza_join" pizza.id %}><button class="btn btn-warning">join</button></a></td>
+                <td><a href={% url "pizza_join" pizza.id %}><button class="btn btn-warning">Join</button></a></td>
             {% else %}
                 <td></td>
             {% endif %}
          </tr>
     {% endfor %}
+    {% if order_num == 0 %}
+        <tr>
+            <td colspan="6" style="text-align: center;">
+                <p>Ingen bestillinger</p>
+            </td>
+        </tr>
+    {% endif %}
     </table>
     {% if order_line.order_set.all %}
         <table class="table table-striped table-bordered">
@@ -48,8 +55,8 @@
                 <td>{{ order.user }}</td>
                 <td>{{ order.content }}</td>
                 {% if user == order.user %}
-                    <td><a href="{% url "pizza_order_edit" order.id %}"><button class="btn btn-primary">edit</button></a>
-                    <a href="{% url "pizza_order_delete" order.id %}"><button class="btn btn-danger">delete</button></a></td>
+                    <td><a href="{% url "pizza_order_edit" order.id %}"><button class="btn btn-primary">Rediger</button></a>
+                    <a href="{% url "pizza_order_delete" order.id %}"><button class="btn btn-danger">Slett</button></a></td>
                 {% else %}
                     <td></td>
                 {% endif %}
