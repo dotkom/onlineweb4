@@ -20,10 +20,10 @@
     <div class="navbar navbar-inverse navbar-fixed-top">
       <div class="navbar-inner">
         <div class="container">
-          <a class="brand" href="{% url "index" %}">Pizzasystem</a>
+          <a class="brand" href="{% url "pizza_index" %}">Pizzasystem</a>
             <ul class="nav pull-right">
                 {% if is_admin %}
-                    <li><a href="{% url "admin" %}">Admin</a></li>
+                    <li><a href="{% url "pizza_admin_new" %}">Admin</a></li>
                 {% endif %}
               <li><a href="#">Bruker: {{ user.username }}</a></li>
               <li><a href="#">Saldo: {{ user.saldo_set.get.saldo }}</a></li>

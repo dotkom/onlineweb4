@@ -14,10 +14,9 @@
                 <label>{{ field.label_tag }}</label>
                 <div class="input">{{ field }}</div>
                 <div class="error">{{ field.errors }}</div>
-        {% endfor %}
-        <a target="_blank" href="https://www.pizzabakeren.no/pizzameny">Meny</a>
             </div>
+        {% endfor %}
     </fieldset>
-    <input type="submit" class="btn btn-primary" value="Save" />
+    <input type="submit" class="btn btn-primary" value="Lagre" /> eller <a href="{% url "pizza_index" %}">Avbryt</a>
 {% endblock content %}
 

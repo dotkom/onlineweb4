@@ -26,10 +26,10 @@
             <td>{{ pizza.buddy.username }}</td>
             {% if user == pizza.user or user == pizza.buddy %}
                 <td>
-                    <a href="{% url "edit_pizza" pizza.id %}"><button class="btn btn-primary">edit</button></a>
-                    <a href="{% url "delete_pizza" pizza.id %}"><button class="btn btn-danger">delete</button></a></td>
+                    <a href="{% url "pizza_edit" pizza.id %}"><button class="btn btn-primary">edit</button></a>
+                    <a href="{% url "pizza_delete" pizza.id %}"><button class="btn btn-danger">delete</button></a></td>
             {% elif user not in order_line.used_users and user != pizza.user and pizza.need_buddy %}
-                <td><a href={% url "join_pizza" pizza.id %}><button class="btn btn-warning">join</button></a></td>
+                <td><a href={% url "pizza_join" pizza.id %}><button class="btn btn-warning">join</button></a></td>
             {% else %}
                 <td></td>
             {% endif %}
@@ -48,8 +48,8 @@
                 <td>{{ order.user }}</td>
                 <td>{{ order.content }}</td>
                 {% if user == order.user %}
-                    <td><a href="{% url "edit_order" order.id %}"><button class="btn btn-primary">edit</button></a>
-                    <a href="{% url "delete_order" order.id %}"><button class="btn btn-danger">delete</button></a></td>
+                    <td><a href="{% url "pizza_order_edit" order.id %}"><button class="btn btn-primary">edit</button></a>
+                    <a href="{% url "pizza_order_delete" order.id %}"><button class="btn btn-danger">delete</button></a></td>
                 {% else %}
                     <td></td>
                 {% endif %}
@@ -58,9 +58,9 @@
         </table>
     {% endif %}
     {% if user not in order_line.used_users %}
-        <a href="{% url "new_pizza" %}"><button class="btn btn-primary">Ny pizza</button></a>
+        <a href="{% url "pizza_new" %}"><button class="btn btn-primary">Ny pizza</button></a>
     {% endif %}
-    <a href="{% url "new_order" %}"><button class="btn btn-primary">Annet</button></a>
+    <a href="{% url "pizza_order_new" %}"><button class="btn btn-primary">Annet</button></a>
 {% else %}
     <p>No orders available.</p>
 {% endif %}

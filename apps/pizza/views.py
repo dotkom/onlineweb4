@@ -11,12 +11,12 @@ from django.contrib.auth import get_user_model
 from apps.authentication.models import OnlineUser as User
 
 @user_passes_test(lambda u: u.groups.filter(name=settings.PIZZA_GROUP).count() == 1)
-def index(request):
+def pizza_index(request):
     order_line = get_order_line()
     return render(request, 'pizza/index.html', {'order_line' : order_line, 'is_admin' : is_admin(request)})
 
 @user_passes_test(lambda u: u.groups.filter(name=settings.PIZZA_GROUP).count() == 1)
-def pizzaview(request, pizza_id=None):
+def pizza_new(request, pizza_id=None):
     if pizza_id == None:
         pizza = Pizza()
     else:
@@ -33,7 +33,7 @@ def pizzaview(request, pizza_id=None):
             
             if check_pizza_order(request, form, pizza_id):
                 form.save()
-                return redirect(index)
+                return redirect(pizza_index)
             else:
                 form = PizzaForm(request.POST, auto_id=True)
         else:
@@ -48,16 +48,16 @@ def pizzaview(request, pizza_id=None):
     
     return render(request, 'pizza/orderview.html', {'form' : form, 'is_admin' : is_admin(request)})
 
-def edit_pizza(request, pizza_id):
+def pizza_edit(request, pizza_id):
     pizza = get_object_or_404(Pizza, pk=pizza_id)
     if not is_in_current_order('pizza', pizza_id):
         messages.error(request, 'you can not edit pizzas from old orders')
     elif pizza.user != request.user and pizza.buddy != request.user:
         messages.error(request, 'You need to be the creator or the buddy')
-        return redirect(index)
-    return pizzaview(request, pizza_id)
+        return redirect(pizza_index)
+    return pizza_new(request, pizza_id)
 
-def delete_pizza(request, pizza_id):
+def pizza_delete(request, pizza_id):
     pizza = get_object_or_404(Pizza, pk=pizza_id)
     if not is_in_current_order('pizza', pizza_id):
         messages.error(request, 'you can not delete pizzas from old orders')
@@ -66,10 +66,10 @@ def delete_pizza(request, pizza_id):
         messages.success(request,'Pizza deleted')
     else:
         messages.error(request, 'You need to be the creator or the buddy')
-    return redirect(index)
+    return redirect(pizza_index)
 
 @user_passes_test(lambda u: u.groups.filter(name=settings.PIZZA_GROUP).count() == 1)
-def orderview(request, order_id=None):
+def pizza_new_order(request, order_id=None):
     if order_id:
         order = get_object_or_404(Order, pk=order_id)
     else:
@@ -83,7 +83,7 @@ def orderview(request, order_id=None):
             form.order_line = get_order_line()
             form.save()
             messages.success(request, 'Order added')
-            return redirect(index)
+            return redirect(pizza_index)
         
         form = OrderForm(request.POST)
     else:
@@ -91,7 +91,7 @@ def orderview(request, order_id=None):
 
     return render(request, 'pizza/orderview.html', {'form' : form, 'is_admin' : is_admin(request)})
 
-def delete_order(request, order_id):
+def pizza_order_delete(request, order_id):
     order = get_object_or_404(Order, pk=order_id)
     if not is_in_current_order('order', order_id):
         messages.error(request, 'you can not delete orders from old orders')
@@ -100,22 +100,22 @@ def delete_order(request, order_id):
         messages.success(request,'Order deleted')
     else:
         messages.error(request, 'You need to be the creator')
-    return redirect(index)
+    return redirect(pizza_index)
 
 
-def edit_order(request, order_id):
+def pizza_order_edit(request, order_id):
     order = get_object_or_404(Order, pk=order_id)
     if not is_in_current_order('order', order_id):
         messages.error(request, 'you can not edit orders from old orders')
     elif order.user != request.user:
         messages.error(request, 'You need to be the creator to edit orders')
     else:
-        return orderview(request, order_id)
-    return redirect(index)
+        return pizza_new_order(request, order_id)
+    return redirect(pizza_index)
 
 
 @user_passes_test(lambda u: u.groups.filter(name=settings.PIZZA_GROUP).count() == 1)
-def join_pizza(request, pizza_id):
+def pizza_join(request, pizza_id):
     pizza = get_object_or_404(Pizza, pk=pizza_id)
     if user_is_taken(request.user):
         messages.error(request, 'You are already a part of a pizza')
@@ -132,18 +132,18 @@ def join_pizza(request, pizza_id):
         pizza.need_buddy = False
         pizza.save()
         messages.success(request, 'Success!')
-    return redirect(index) 
+    return redirect(pizza_index) 
 
 # ADMIN
 
 @user_passes_test(lambda u: u.groups.filter(name=settings.PIZZA_ADMIN_GROUP).count() == 1)
-def new_order_line(request):
+def pizza_admin_new(request):
     if request.method == 'POST':
         form = NewOrderLineForm(request.POST)
         if form.is_valid():
             form.save()
             messages.success(request,'New order line added')
-            return redirect(new_order_line)
+            return redirect(pizza_admin_new)
     else:
         form = NewOrderLineForm()
         form.fields["date"].initial = get_next_tuesday()
@@ -151,7 +151,7 @@ def new_order_line(request):
     return render(request, 'pizza/admin.html', {'form' : form })
 
 @user_passes_test(lambda u: u.groups.filter(name=settings.PIZZA_ADMIN_GROUP).count() == 1)
-def set_order_limit(request):
+def pizza_admin_limit(request):
     limit = get_order_limit()
     if request.method == 'POST':
         form = ManageOrderLimitForm(request.POST)
@@ -160,21 +160,21 @@ def set_order_limit(request):
             limit.order_limit = data['order_limit']
             limit.save()
             messages.success(request,'Order limit changed')
-            return redirect(set_order_limit)
+            return redirect(pizza_admin_limit)
     else:
         form = ManageOrderLimitForm(instance=limit)
 
     return render(request, 'pizza/admin.html', {'form' : form })
 
 @user_passes_test(lambda u: u.groups.filter(name=settings.PIZZA_ADMIN_GROUP).count() == 1)
-def manage_users(request):
+def pizza_admin_users(request):
     if request.method == 'POST':
         form = ManageUsersForm(request.POST)
         if form.is_valid():
             data = form.cleaned_data
             handle_deposit(data)
             messages.success(request, 'Deposit successful')
-            return redirect(manage_users)
+            return redirect(pizza_admin_users)
     else:
         validate_saldo()
         form = ManageUsersForm()
@@ -183,13 +183,13 @@ def manage_users(request):
     return render(request, 'pizza/admin.html', {'form' : form })
 
 @user_passes_test(lambda u: u.groups.filter(name=settings.PIZZA_ADMIN_GROUP).count() == 1)
-def manage_order_lines(request):
+def pizza_admin_orders(request):
     if request.method == 'POST':
         form = ManageOrderLinesForm(request.POST)
         if form.is_valid():
             data = form.cleaned_data
             handle_payment(request, data)
-            return redirect(manage_order_lines)
+            return redirect(pizza_admin_orders)
         else:
             form = ManageOrderLinesForm(request.POST)
     else:
