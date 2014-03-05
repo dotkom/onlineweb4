@@ -98,7 +98,7 @@ class Question(models.Model):
                     results['JA'] += 1
         
         elif self.question_type == 1:
-            results = [0 for x in range(0, Alternative.objects.filter(question=self).count())]
+            results = {}
             for a in MultipleChoice.objects.filter(question=self):
                 alt = a.answer.alt_id
                 if alt == None:
