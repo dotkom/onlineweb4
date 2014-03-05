@@ -5,4 +5,5 @@ urlpatterns = patterns('apps.genfors.views',
     url(r'^admin/$', 'admin', name='genfors_admin'),
     url(r'^admin/logout$', 'admin_logout', name='genfors_admin_logout'),
     url(r'^admin/users$', 'registered_voters', name='genfors_users'),
+    url(r'^vote', 'vote', name='genfors_vote'),
 )

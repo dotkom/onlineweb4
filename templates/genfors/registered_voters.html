@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% load compress %}
+
+{% block title %}
+Generalforsamling brukere - Online
+{% endblock %}
+
+{% block content %}
+<section id="generalforsamling">
+    <div class="container">
+        <div class="row">
+            <div class="page-header">
+                <button class="btn btn-warning pull-right" id="gf_admin_login">Admin</button>
+                <h2>Generalforsamling registrerte brukere</h2>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12">
+            <ul>
+            {% for user in registered_voters %}
+            <li>{{ user }}</li>
+            {% empty %}
+            <li>Ingen brukere har registrert seg enda</li>
+            {% endfor %}
+            </ul>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block js %}
+    {{ block.super }}
+    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            $('#id_start_date').datepicker({dateFormat: "dd.mm.yy"});
+        });
+    </script>
+{% endblock %}
