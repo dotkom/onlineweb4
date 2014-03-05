@@ -1,8 +1,18 @@
 {% extends "base.html" %}
 {% load crispy_forms_tags %}
+{% load compress %}
 
 {% block title %}
 Generalforsamling logg inn- Online
+{% endblock %}
+
+{% block styles %}
+    {{ block.super }}
+    {% compress css %}
+        <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}less/jquery-ui/jquery.ui.datepicker.min.css" />
+        <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}less/jquery-ui/jquery.ui.theme.min.css" />
+        <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}less/jquery-ui/jquery.ui.core.min.css" />
+    {% endcompress %}
 {% endblock %}
 
 {% block content %}
@@ -11,7 +21,7 @@ Generalforsamling logg inn- Online
         <div class="row">
             <div class="page-header">
                 <a href="{% url 'genfors_admin_logout' %}"class="btn btn-warning pull-right" id="gf_admin_logout">Logg ut</a>
-                <h2>Generalformsamling adminpanel</h2>
+                <h2>Generalforsamling adminpanel</h2>
             </div>
         </div>
 
@@ -46,5 +56,10 @@ Generalforsamling logg inn- Online
 
 {% block js %}
     {{ block.super }}
-    <!-- insert JS-stuff here -->
+    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            $('#id_start_date').datepicker({dateFormat: "dd.mm.yy"});
+        });
+    </script>
 {% endblock %}
