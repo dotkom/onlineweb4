@@ -121,14 +121,14 @@ class Question(models.Model):
             mc = MultipleChoice.objects.filter(question=self)
             results = {}
             for a in mc:
-                if a.answer:
-                    if a.answer.alt_id not in results:
-                        results[a.answer.alt_id] = 0
-                    results[a.answer.alt_id] += 1
+                if a.answer != None:
+                    if a.answer.description not in results:
+                        results[a.answer.description] = 0
+                    results[a.answer.description] += 1
                 else:
                     if 0 not in results:
-                        results[0] = 0
-                    results[0] += 1
+                        results['Blankt'] = 0
+                    results['Blankt'] += 1
 
         return results
 
