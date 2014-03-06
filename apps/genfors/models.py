@@ -4,6 +4,7 @@ from apps.authentication.models import OnlineUser as User
 from django.utils.translation import ugettext as _
 from hashlib import sha256
 from django.conf import settings
+import operator
 
 # Statics
 
@@ -11,6 +12,9 @@ QUESTION_TYPES = [
     (0, _(u'Ja/Nei')),
     (1, _(u'Multiple Choice')),
 ]
+
+BOOLEAN_VOTE = 0
+MULTIPLE_CHOICE = 1
 
 # General genfors model
 
@@ -25,16 +29,20 @@ class Meeting(models.Model):
 
     def __unicode__(self):
         return self.title + ' (' + self.start_date.ctime() + ')'
-
+    
+    # Return the number of attendees
     def num_attendees(self):
         return RegisteredVoter.objects.filter(meeting=self).count()
 
+    # Get attendee list as a list of strings
     def get_attendee_list(self):
         return sorted([u'%s, %s' %(a.user.last_name, a.user.first_name) for a in RegisteredVoter.objects.filter(meeting=self)])
 
+    # Get the queryset of all questions
     def get_questions(self):
         return Question.objects.filter(meeting=self).order_by('-id')
 
+    # Get active question, if there is one
     def get_active_question(self):
         question = self.get_questions()
         if question and not question[0].locked:
@@ -42,12 +50,15 @@ class Meeting(models.Model):
         else:
             return None
 
+    # Get all previous questions
     def get_locked_questions(self):
         return self.get_questions().filter(locked=True)
 
+    # Get the number of questions
     def num_questions(self):
         return Question.objects.filter(meeting=self).count()
 
+    # Get results from a specific question
     def get_results_from_question(self, question):
         return question.get_results()
 
@@ -66,8 +77,16 @@ class RegisteredVoter(models.Model):
     user = models.ForeignKey(User, null=False)
     can_vote = models.BooleanField(_(u'voting_right'), help_text=_(u'Har stemmerett'), null=False, default=True)
 
+    # Simple hashing function to hide realnames
+    def hide_user(self):
+        h = sha256()
+        h.update(self.user.first_name + self.user.last_name)
+        h.update(settings.SECRET_KEY)
+        h = h.hexdigest()[:8]
+        return h
+
     def __unicode__(self):
-        return u'%s, %s' %(self.user.last_name, self.user.first_name)
+        return u'%s %s' %(self.user.first_name, self.user.last_name)
 
 # Question wrapper
 
@@ -88,7 +107,7 @@ class Question(models.Model):
     def get_results(self):
         retults = None
 
-        if self.question_type == 0:
+        if self.question_type is BOOLEAN_VOTE:
             results = {'JA': 0, 'NEI': 0, 'BLANKT': 0}
             for a in BooleanVote.objects.filter(question=self):
                 if a.answer == None:
@@ -98,21 +117,32 @@ class Question(models.Model):
                 elif a.answer == True:
                     results['JA'] += 1
         
-        elif self.question_type == 1:
+        elif self.question_type is MULTIPLE_CHOICE:
             mc = MultipleChoice.objects.filter(question=self)
-            results = {a.answer.alt_id:0 for a in mc}
-            results[0] = 0
+            results = {}
             for a in mc:
-                alt = a.answer.alt_id
-                if alt == None:
-                    alt = 0
-                results[alt] += 1
-                
+                if a.answer:
+                    if a.answer.alt_id not in results:
+                        results[a.answer.alt_id] = 0
+                    results[a.answer.alt_id] += 1
+                else:
+                    if 0 not in results:
+                        results[0] = 0
+                    results[0] += 1
+
+        return results
+
+    # Fetches the winner of a vote
+    def get_winner(self):
+        results = self.get_results()
+        winner = max(results.iterkeys, key=(lambda key: results[key]))
+        results = {winner: results[winner]}
+
         return results
 
     # Returns the queryset of alternatives connected to this question if it is a multiple choice question
     def get_alternatives(self):
-        if self.question_type == 1:
+        if self.question_type is MULTIPLE_CHOICE:
             return Alternative.objects.filter(question=self)
         else:
             return None
@@ -125,22 +155,31 @@ class Question(models.Model):
     # Sets final result as a string for later fast lookup and locks question
     def set_result_and_lock(self):
         r = self.get_results()
-        if self.question_type == 0:
+        if self.question_type is BOOLEAN_VOTE:
             self.result = 'J:' + str(r['JA']) + ' N:' + str(r['NEI']) + ' B:' + str(r['BLANKT'])
-        else:
+        elif self.question_type is MULTIPLE_CHOICE:
+            if self.only_show_winner:
+                r = self.get_winner()
             result_string = ''
-            for k in r:
-                result_string += str(k) + ':' + str(r[k]) + ' '
+            for k,v in r.items():
+                result_string += u'%s: %s ' %(str(k), str(v))
             self.result = result_string
         self.locked = True
         self.save()
 
     # Returns all votes connected to this question
     def get_votes(self):
-        if self.question_type == 0:
+        if self.question_type is BOOLEAN_VOTE:
             return BooleanVote.objects.filter(question=self)
-        elif self.question_type == 1:
+        elif self.question_type is MULTIPLE_CHOICE:
             return MultipleChoice.objects.filter(question=self)
+
+    # Check if a RegisteredVoter already has voted on this question
+    def already_voted(self, v):
+        if self.question_type is BOOLEAN_VOTE:
+            return BooleanVote.objects.filter(question=self, voter=v).count()
+        elif self.question_type is MULTIPLE_CHOICE:
+            return MultipleChoice.objects.filter(question=self, voter=v).count()
 
     def __unicode__(self):
         return u'[%d] %s' %(self.id - self.meeting.num_questions(), self.description)
@@ -157,19 +196,10 @@ class AbstractVote(models.Model):
 
     # Get voter name
     def get_voter_name(self):
-        realname = u'' + self.voter.user.first_name + ' ' + self.voter.user.last_name
         if self.question.anonymous:
-            return self.hide_user(realname)
+            return voter.hide_user()
         else:
-            return realname
-
-    # Simple hashing function to hide realnames
-    def hide_user(self, arg):
-        h = sha256()
-        h.update(arg)
-        h.update(settings.GENFORS_ANON_SALT)
-        h = h.hexdigest()[:8]
-        return h
+            return u'%s %s' %(self.voter.user.first_name, self.voter.user.last_name)
 
 class BooleanVote(AbstractVote):
     '''

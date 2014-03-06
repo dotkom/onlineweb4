@@ -21,68 +21,80 @@ Generalforsamling - Online
                     <div class="col-xs-12 col-sm-7 col-md-8">
                         <h3>Aktiv sak</h3>
                         <div class="well">{% if q %}{{ q.description }}{% else %}Ingen aktiv sak.{% endif %}</div>
-                        {% if q.question_type == 0 %}
-                        <button class="btn btn-success" id="boolean_yes">JA</button>
-                        <button class="btn btn-danger" id="boolean_no">NEI</button>
-                        <button class="btn btn-primary" id="boolean_blank">BLANKT</button>
-                        {% else %}
-                        <p>Velg en av alternativene:</p>
-                        <form action="/genfors/vote" id="vote">
-                        {% for alt in active_question.alternatives %}
-                            <input type="radio" id="0" value="0">Blankt</input>
-                        {% endfor %}
-                            <input type="radio" id="{{ alt.alt_id }}" value="{{ alt.alt_id }}">{{ alt.description }}</input>
-                        {% endif %}
+                        {% if not already_voted %}
+                            {% if q.question_type == 0 %}
+                                <button class="btn btn-success" id="boolean_yes">JA</button>
+                                <button class="btn btn-danger" id="boolean_no">NEI</button>
+                                <button class="btn btn-primary" id="boolean_blank">BLANKT</button>
+                            {% else %}
+                                <p>Velg en av alternativene:</p>
+                                <form action="/genfors/vote" id="vote" method="post">
+                                    <fieldset>
+                                        <input type="radio" id="0" name="choice" value="0" checked> Blankt</input><br />
+                                        {% for alt in active_question.alternatives %}
+                                            <input type="radio" id="{{ alt.alt_id }}" name="choice" value="{{ alt.alt_id }}"> {{ alt.description }}</input><br />
+                                        {% endfor %}
+                                    </fieldset>
+                            {% endif %}<!-- End if question_type -->
+                            <br />
                             <button class="btn btn-success" type="submit">Stem</button>
-                        </form>
+                            </form>
+                        {% else %}
+                            <p>Du har allerede avlagt stemme i denne saken.
+                            {% if q.anonymous %}
+                                <br /><br />
+                                Din kvittering: <strong>{{ registered_voter.hide_user }}</strong>
+                            {% endif %}
+                            </p>
+                        {% endif %}<!-- End if already voted -->
                     </div>
                     <div class="col-xs-12 col-sm-5 col-md-4">
                         <h3>Foreløpig status</h3>
                         {% if q %}
-                            {% with q.get_results as res %}
-                            {% if q.question_type == 0 %}
-                                <div class="progress">
-                                    <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="{{ active_question.yes_percent }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ active_question.yes_percent }}%">
-                                        {{ res.JA }} JA ({{ active_question.yes_percent }}%)
-                                    </div>
-                                </div>
-                                <div class="progress">
-                                    <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="{{ active_question.no_percent }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ active_question.no_percent }}%">
-                                        {{ res.NEI }} NEI ({{ active_question.no_percent }}%)
-                                    </div>
-                                </div>
-                                <div class="progress">
-                                    <div class="progress-bar progress-bar-primary" role="progressbar" aria-valuenow="{{ active_question.blank_percent }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ active_question.blank_percent }}%">
-                                        {{ res.BLANKT }} JA ({{ active_question.blank_percent }}%)
-                                    </div>
-                                </div>
+                            {% if q.only_show_winner %}
+                                <p>Vinneren vil bli annonsert når alle stemmene er telt opp.</p>
                             {% else %}
-                                {% for alternative in res %}
-                                    {% if forloop.counter0 == 0 %}
-                                     <div class="progress">
-                                         <div class="progress-bar progress-bar-primary" role="progressbar" aria-valuenow="{{ active_question.blank_percent }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ active_question.blank_percent }}%">
-                                              {{ res.0 }} BLANKT ({{ active_question.0 }}%)
-                                         </div>
-                                    </div>
-                                    {% else %}
-                                     <div class="progress">
-                                        <div class="progress-bar progress-bar-primary" role="progressbar" aria-valuenow="{{ active_question.0 }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ active_question.0 }}%">
-                                        {{ alternative }} Alternativ {{ forloop.counter0 }} ({{ active_question.forloop.counter0 }}%)
+                                {% with q.get_results as res %}
+                                {% if q.question_type == 0 %}
+                                    <strong>Ja</strong>: {{ res.JA }} stemme(r)<br />
+                                    <div class="progress">
+                                        <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="{{ active_question.yes_percent }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ active_question.yes_percent }}%">
+                                            {{ active_question.yes_percent }}%
                                         </div>
                                     </div>
-                                    {% endif %}
-                                {% endfor %}
-                            {% endif %}
-                            {% endwith %}
+                                    <strong>Nei</strong>: {{ res.NEI }} stemme(r)<br />
+                                    <div class="progress">
+                                        <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="{{ active_question.no_percent }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ active_question.no_percent }}%">
+                                            {{ active_question.no_percent }}%
+                                        </div>
+                                    </div>
+                                    <strong>Blankt</strong>: {{ res.BLANKT }} stemme(r)<br />
+                                    <div class="progress">
+                                        <div class="progress-bar progress-bar-primary" role="progressbar" aria-valuenow="{{ active_question.blank_percent }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ active_question.blank_percent }}%">
+                                            {{ active_question.blank_percent }}%
+                                        </div>
+                                    </div>
+                                {% else %}
+                                    {% for alt, votes in active_question.multiple_choice.items %}
+                                        <strong>{{ alt }}</strong>: {{ votes.0 }} stemme(r)<br />
+                                        <div class="progress">
+                                            <div class="progress-bar progress-bar-primary" role="progressbar" aria-valuenow="{{ votes.1 }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ votes.1 }}%">
+                                                 {{ votes.1 }}%
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                {% endif %}<!-- End if question_type -->
+                                {% endwith %}
+                            {% endif %}<!-- End if only_show_winner -->
                         {% else %}
                             <p>Ingen aktiv sak.</p>
-                        {% endif %}
+                        {% endif %}<!-- End if question -->
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-xs-12 col-sm-7 col-md-8">
                         <h3>Avsluttede saker</h3>
-                        <p>Liste over tidligere besvarte spørsmål og aktivt spørsmål</p>
+                        <p>Liste over avsluttede saker og deres sluttresultat.</p>
                         <p class="text-muted">
                         <ol reversed>
                             {% for question in meeting.get_locked_questions %}
@@ -95,25 +107,37 @@ Generalforsamling - Online
                         <h3>Stemmer</h3>
                         <!-- insert list of registered votes here -->
                         {% if q %}<!-- If active queestion -->
-                        <ul>
-                        {% for vote in q.get_votes %}
-                            <li>{{ vote.get_voter_name }}
-                                {% if q.question_type == 0 %}<!-- If question type is boolean -->
-                                    {% if vote.answer %}
-                                        <span class="label label-success pull-right">JA</span>
+                            {% if q.only_show_winner %}
+                                <p>Vinneren vil bli annonsert når alle stemmene er telt opp</p>
+                            {% else %}
+                            <ul>
+                            {% for vote in q.get_votes %}
+                                <li>{% if q.anonymous %}
+                                        {{ registered_voter.hide_user }}
                                     {% else %}
-                                        {% if vote.answer == False %}
-                                            <span class="label label-danger pull-right">NEI</span>
+                                        {{ registered_voter }}
+                                    {% endif %}
+                                    {% if q.question_type == 0 %}<!-- If question type is boolean -->
+                                        {% if vote.answer %}
+                                            <span class="label label-success pull-right">Ja</span>
                                         {% else %}
-                                            <span class="label label-primary pull-right">BLANKT</span>
+                                            {% if vote.answer == False %}
+                                                <span class="label label-danger pull-right">Nei</span>
+                                            {% else %}
+                                                <span class="label label-primary pull-right">Blankt</span>
+                                            {% endif %}
+                                        {% endif %}
+                                    {% else %}<!-- If question type is multiple choice -->
+                                        {% if vote.answer %}
+                                            <span class="label label-primary pull-right">{{ vote.answer.description }}</span>
+                                        {% else %}
+                                            <span class="label label-warning pull-right">Blankt</span>
                                         {% endif %}
                                     {% endif %}
-                                {% else %}<!-- If question type is multiple choice -->
-                                    <span class="label label-primary pull-right">{{ vote.answer }}</span>
-                                {% endif %}
-                            </li>
-                        {% endfor %}
-                        </ul>
+                                </li>
+                            {% endfor %}
+                            </ul>
+                            {% endif %}
                         {% else %}
                         <p>Ingen aktiv sak.</p>
                         {% endif %}<!-- End if active question -->
@@ -125,7 +149,7 @@ Generalforsamling - Online
                 <div class="col-md-12">
                     <p>Det er ingen aktiv generalforsamling.</p>
                 </div>
-            {% endif %}
+            {% endif %}<!-- End if meeting -->
         </div>
     </div>
 </section>
