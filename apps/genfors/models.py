@@ -135,7 +135,7 @@ class Question(models.Model):
     # Fetches the winner of a vote
     def get_winner(self):
         results = self.get_results()
-        winner = max(results.iterkeys, key=(lambda key: results[key]))
+        winner = max(results.iterkeys(), key=(lambda key: results[key]))
         results = {winner: results[winner]}
 
         return results
@@ -158,11 +158,14 @@ class Question(models.Model):
         if self.question_type is BOOLEAN_VOTE:
             self.result = 'J:' + str(r['JA']) + ' N:' + str(r['NEI']) + ' B:' + str(r['BLANKT'])
         elif self.question_type is MULTIPLE_CHOICE:
+            result_string = ''
             if self.only_show_winner:
                 r = self.get_winner()
-            result_string = ''
-            for k,v in r.items():
-                result_string += u'%s: %s ' %(str(k), str(v))
+                for k,v in r.items():
+                    result_string += u'%s' %(str(k))
+            else:
+                for k,v in r.items():
+                    result_string += u'%s: %s ' %(str(k), str(v))
             self.result = result_string
         self.locked = True
         self.save()

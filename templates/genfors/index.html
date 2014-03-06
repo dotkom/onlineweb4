@@ -21,20 +21,22 @@ Generalforsamling - Online
                     <div class="col-xs-12 col-sm-7 col-md-8">
                         <h3>Aktiv sak</h3>
                         <div class="well">{% if q %}{{ q.description }}{% else %}Ingen aktiv sak.{% endif %}</div>
+                        {% if q %}
                         {% if not already_voted %}
                             {% if q.question_type == 0 %}
-                                <p>Velg en av alternativene:</p>
+                                <p>Velg ett av alternativene:</p>
                                 <form action="/genfors/vote" id="vote" method="post">
                                     {% csrf_token %}
                                     <fieldset>
                                     <input type="radio" id="0" name="choice" value="0" checked> Blankt</input><br />
-                                    <input type="radio" id="1" name="choice" value="0"> JA</input><br />
-                                    <input type="radio" id="2" name="choice" value="0"> NEI</input><br />
+                                    <input type="radio" id="1" name="choice" value="1"> Ja</input><br />
+                                    <input type="radio" id="2" name="choice" value="2"> Nei</input><br />
                                     </fieldset>
+                                    <br />
                                     <button class="btn btn-success" type="submit">Stem</button>
                                 </form>
                             {% else %}
-                                <p>Velg en av alternativene:</p>
+                                <p>Velg ett av alternativene:</p>
                                 <form action="/genfors/vote" id="vote" method="post">
                                     {% csrf_token %}
                                     <fieldset>
@@ -43,14 +45,15 @@ Generalforsamling - Online
                                             <input type="radio" id="{{ alt.alt_id }}" name="choice" value="{{ alt.alt_id }}"> {{ alt.description }}</input><br />
                                         {% endfor %}
                                     </fieldset>
+                                <br />
+                                <button class="btn btn.success" type="submit">Stem</button>
+                                </form>
                             {% endif %}<!-- End if question_type -->
-                            <br />
-                            <button class="btn btn-success" type="submit">Stem</button>
-                            </form>
                         {% else %}
                             <p>Du har avlagt stemme i denne saken.</p>
                             <p>Din stemmekode: <strong>{{ registered_voter.hide_user }}</strong></p>
                         {% endif %}<!-- End if already voted -->
+                        {% endif %}<!-- End if question -->
                     </div>
                     <div class="col-xs-12 col-sm-5 col-md-4">
                         <h3>Foreløpig status</h3>
