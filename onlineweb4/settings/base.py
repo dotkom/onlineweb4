@@ -227,8 +227,6 @@ LOGGING = {
     }
 }
 
-GENFORS_ANON_SALT = u'uUYBOAEufyboU83#%&/(#)(=#%N(fB=(3f80830bf=#(bf0(#Bf08b3f08b=#F8bb'
-
 # crispy forms settings
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
 

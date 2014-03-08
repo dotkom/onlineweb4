@@ -7,40 +7,81 @@ from django.http import HttpResponse
 from django.views.decorators.http import require_http_methods
 import json
 from apps.genfors.forms import LoginForm, MeetingForm, QuestionForm, RegisterVoterForm, AlternativeFormSet
-from apps.genfors.models import Meeting, Question, RegisteredVoter
+from apps.genfors.models import Meeting, Question, RegisteredVoter, Alternative, BooleanVote, MultipleChoice
+from apps.genfors.models import BOOLEAN_VOTE, MULTIPLE_CHOICE
 import datetime
-
 
 @login_required
 def genfors(request):
     context = {}
     meeting = get_active_meeting()
+    
+    # Check for session token
     if request.session.get('registered_voter') == True:
+        # Check for active meeting
         if meeting:
             context['meeting'] = meeting
+
+            # If there is an active question
             if meeting.get_active_question():
                 aq = meeting.get_active_question()
+                total_votes = aq.get_votes().count()
+                alternatives = aq.get_alternatives()
+
                 context['active_question'] = {}
-                context['active_question']['total_votes'] = aq.get_votes().count()
+                context['active_question']['total_votes'] = total_votes
+                context['active_question']['alternatives'] = alternatives
+
+                reg_voter = RegisteredVoter.objects.filter(user=request.user, meeting=meeting)
+                if reg_voter:
+                    reg_voter = reg_voter[0]
+                else:
+                    reg_voter = None
+                context['registered_voter'] = reg_voter
+
+                context['already_voted'] = aq.already_voted(reg_voter)
+                
                 res = aq.get_results()
-                if aq.question_type == 0 and context['active_question']['total_votes'] != 0:
-                    context['active_question']['yes_percent'] = res['JA'] * 100 / context['active_question']['total_votes']
-                    context['active_question']['no_percent'] = res['NEI'] * 100 / context['active_question']['total_votes']
-                    context['active_question']['blank_percent'] = res['BLANKT'] * 100 / context['active_question']['total_votes']
-                elif aq.question_type == 1 and context['active_question']['total_votes'] != 0:
-                    context['active_question']['multiple_choice']
-                    context['active_question']['multiple_choice'] = [sum(res[r] * 100 / context['active_question']['total_votes']) for r in res]
+                
+                if aq.question_type is BOOLEAN_VOTE and total_votes != 0:
+                    context['active_question']['yes_percent'] = res['JA'] * 100 / total_votes
+                    context['active_question']['no_percent'] = res['NEI'] * 100 / total_votes
+                    context['active_question']['blank_percent'] = res['BLANKT'] * 100 / total_votes
+                
+                elif aq.question_type is MULTIPLE_CHOICE and total_votes != 0:
+                    context['active_question']['multiple_choice'] = {a.description : [0, 0] for a in alternatives}
+                    context['active_question']['multiple_choice']['Blankt'] = [0, 0]
+                    for k,v in res.items():
+                        context['active_question']['multiple_choice'][k] = [v, v * 100 / total_votes]
+
         return render(request, "genfors/index.html", context)
+    
+    # If user is not logged in
     else:
+        
+        # Process stuff from the login form
         if request.method == 'POST' and not meeting.registration_locked:
             form = RegisterVoterForm(request.POST)
             context['form'] = form
             if form.is_valid():
+
+                # Create a registered voter object if it does not already exis
+                reg_voter = RegisteredVoter.objects.filter(meeting=meeting, user=request.user)
+                if not reg_voter:
+                    reg_voter = RegisteredVoter(user=request.user, meeting=meeting, can_vote=True)
+                    reg_voter.save()
+                    
                 request.session['registered_voter'] = True
                 return redirect('genfors_index')
+
+        # Set registration_locked context and create login form
         else:
             context['form'] = RegisterVoterForm()
-            context['registration_locked'] = meeting.registration_locked
+            if meeting:
+                context['registration_locked'] = meeting.registration_locked
+            else:
+                context['registration_locked'] = True
+    
     return render(request, "genfors/index_login.html", context)
 
 
@@ -112,21 +153,74 @@ def admin_logout(request):
         del request.session['genfors_admin']
     return redirect('genfors_index')
 
+# Handle votes
 @require_http_methods(["POST"])
 def vote(request):
-    meetings = Meeting.objects.filter(registration_locked=False).order_by('-start_date')
-    if meetings:
-        m = meetings[0]
-        data = json.decode(request.body)
-        if not RegisteredVoter.objects.filter(user=request.user, meeting=m):
-            return HttpResponse(status_code=403, reason_phrase='Forbidden')
+    m = get_active_meeting()
+    if m:
+
+        # If user is logged in.. 
+        if request.session.get('registered_voter') == True:
+            q = m.get_active_question()
+            r = RegisteredVoter.objects.filter(user=request.user, meeting=m)
+            if r:
+                r = r[0]
+            else:
+                messages.error(request, 'Du er ikke registrert som oppmøtt, og kan derfor ikke avlegge stemme.')
+                return redirect('genfors_index')
+
+            if q.already_voted(r):
+                messages.error(request, 'Du har allerede avlagt en stemme i denne saken.')
+                return redirect('genfors_index')
+            # If user is registered and has not cast a vote on the active question
+            else:
+                if 'choice' in request.POST:
+                    alt = int(request.POST['choice'])
+                    if q.question_type is BOOLEAN_VOTE:
+                        valid = [0, 1, 2]
+                        if alt in valid:
+                            vote = None
+                            if alt == 0:
+                                vote = BooleanVote(voter=r, question=q, answer=None)
+                            elif alt == 1:
+                                vote = BooleanVote(voter=r, question=q, answer=True)
+                            elif alt == 2:
+                                vote = BooleanVote(voter=r, question=q, answer=False)
+                            vote.save()
+                            messages.success(request, 'Din stemme ble registrert!')
+                            return redirect('genfors_index')
+
+                    elif q.question_type is MULTIPLE_CHOICE:
+                        alternatives = Alternative.objects.filter(question=q)
+                        valid = [a.alt_id for a in alternatives]
+                        valid.append(0)
+                        if alt in valid:
+                            vote = None
+                            if alt == 0:
+                                vote = MultipleChoice(voter=r, question=q, answer=None)
+                                vote.save()
+                                messages.success(request, 'Din stemme ble registrert!')
+                                return redirect('genfors_index')
+                            else:
+                                choice = Alternative.objects.filter(id=alt)
+                                if choice:
+                                    vote = MultipleChoice(voter=r, question=q, answer=choice[0])
+                                    vote.save()
+                                    messages.success(request, 'Din stemme ble registrert!')
+                                    return redirect('genfors_index')
+                
+                messages.error(request, 'Det ble forsøkt å stemme på et ugyldig alternativ, stemmen ble ikke registrert.')
+                return redirect('genfors_index')
+
+        # Else forbid
+        return HttpResponse(status_code=403, reason_phrase='Forbidden')
     else:
         return HttpResponse(status_code=403, reason_phrase='Forbidden')
 
 
 def get_active_meeting():
     today = datetime.date.today()
-    meetings = Meeting.objects.filter(start_date__range=[today, today + datetime.timedelta(days=1)]).order_by('-start_date')
+    meetings = Meeting.objects.filter(start_date__range=[today, today + datetime.timedelta(hours=24)]).order_by('-start_date')
     if meetings:
         return meetings[0]
 
