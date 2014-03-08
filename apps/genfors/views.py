@@ -112,8 +112,7 @@ def admin(request):
                     if form.is_valid():
                         data = form.cleaned_data
                         question = Question(meeting=meeting, anonymous=data['anonymous'],
-                                            question_type=data['anonymous'], description=data['description'],
-                                            number_of_alternatives=data['number_of_alternatives'])
+                                            question_type=data['anonymous'], description=data['description'])
                         question.save()
                         messages.success(request, _(u'Nytt spørsmål lagt til'))
                         return redirect('genfors_admin')
