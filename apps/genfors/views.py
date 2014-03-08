@@ -6,7 +6,7 @@ from django.utils.translation import ugettext as _
 from django.http import HttpResponse
 from django.views.decorators.http import require_http_methods
 import json
-from apps.genfors.forms import LoginForm, MeetingForm, QuestionForm, RegisterVoterForm
+from apps.genfors.forms import LoginForm, MeetingForm, QuestionForm, RegisterVoterForm, AlternativeFormSet
 from apps.genfors.models import Meeting, Question, RegisteredVoter
 import datetime
 
@@ -78,7 +78,9 @@ def admin(request):
                         return redirect('genfors_admin')
                 else:
                     form = QuestionForm()
+                    formset = AlternativeFormSet()
                 context['form'] = form
+                context['formset'] = formset
         elif request.method == 'POST':
             form = MeetingForm(request.POST)
             context['form'] = form

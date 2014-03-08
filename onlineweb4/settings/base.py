@@ -151,6 +151,7 @@ INSTALLED_APPS = (
     'watson',
     'gunicorn',
     'markdown_deux',
+    'djangoformsetjs',
 
     # Wiki
     'wiki',

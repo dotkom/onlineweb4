@@ -1,7 +1,9 @@
 from django import forms
 from django.conf import settings
+from django.forms.models import modelformset_factory
 from django.utils.translation import ugettext as _
-from apps.genfors.models import Meeting, Question
+from apps.genfors.models import Alternative, Meeting, Question
+
 
 class LoginForm(forms.Form):
     password = forms.CharField(widget=forms.PasswordInput(render_value=False), label=_(u"Passord"))
@@ -19,6 +21,7 @@ class LoginForm(forms.Form):
             self._errors['password'] = self.error_class([_(u"Feil passord")])
         return self.cleaned_data
 
+
 class MeetingForm(forms.ModelForm):
     class Meta:
         model = Meeting
@@ -29,6 +32,16 @@ class QuestionForm(forms.ModelForm):
     class Meta:
         model = Question
         fields = ['question_type', 'anonymous', 'description']
+
+
+class AlternativeForm(forms.ModelForm):
+    class Meta:
+        model = Alternative
+        fields = ['description']
+
+
+AlternativeFormSet = modelformset_factory(Alternative, form=AlternativeForm, extra=2, can_delete=True)
+
 
 class RegisterVoterForm(forms.Form):
     password = forms.CharField(widget=forms.PasswordInput(render_value=False), label=_(u"Pinkode"))
@@ -41,4 +54,3 @@ class RegisterVoterForm(forms.Form):
         elif self.cleaned_data['password'] != settings.GENFORS_PIN_CODE:
             self._errors['password'] = self.error_class([_(u'Feil PIN-kode')])
         return self.cleaned_data
-        
