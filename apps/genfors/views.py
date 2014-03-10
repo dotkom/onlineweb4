@@ -183,6 +183,9 @@ def question_admin(request, question_id=None):
                     alternatives = formset.save(commit=False)
                     # # Add new
                     for index, alternative in enumerate(formset.changed_objects + formset.new_objects):
+                        if type(alternative) is tuple:
+                            # changed_objects come in the form of (object, 'changed_field')
+                            alternative = alternative[0]
                         alternative.question = question
                         alternative.alt_id = index + 1
                         alternative.save()
