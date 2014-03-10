@@ -19,6 +19,7 @@ MULTIPLE_CHOICE = 1
 
 # General genfors model
 
+
 class Meeting(models.Model):
     '''
     The Meeting model encapsulates a single Generalforsamling with all cascading one-to-many relationships
@@ -30,14 +31,14 @@ class Meeting(models.Model):
 
     def __unicode__(self):
         return self.title + ' (' + self.start_date.ctime() + ')'
-    
+
     # Return the number of attendees
     def num_attendees(self):
         return RegisteredVoter.objects.filter(meeting=self).count()
 
     # Get attendee list as a list of strings
     def get_attendee_list(self):
-        return sorted([u'%s, %s' %(a.user.last_name, a.user.first_name) for a in RegisteredVoter.objects.filter(meeting=self)])
+        return sorted([u'%s, %s' % (a.user.last_name, a.user.first_name) for a in RegisteredVoter.objects.filter(meeting=self)])
 
     # Get the queryset of all questions
     def get_questions(self):
@@ -69,6 +70,7 @@ class Meeting(models.Model):
 
 # User related models
 
+
 class RegisteredVoter(models.Model):
     '''
     The RegisteredVoter model is a wrapper for OnlineUser with added fields for attendance registry
@@ -87,9 +89,10 @@ class RegisteredVoter(models.Model):
         return h
 
     def __unicode__(self):
-        return u'%s %s' %(self.user.first_name, self.user.last_name)
+        return u'%s %s' % (self.user.first_name, self.user.last_name)
 
 # Question wrapper
+
 
 class Question(models.Model):
     '''
@@ -111,18 +114,18 @@ class Question(models.Model):
         if self.question_type is BOOLEAN_VOTE:
             results = {'JA': 0, 'NEI': 0, 'BLANKT': 0}
             for a in BooleanVote.objects.filter(question=self):
-                if a.answer == None:
+                if a.answer is None:
                     results['BLANKT'] += 1
-                elif a.answer == False:
+                elif a.answer is False:
                     results['NEI'] += 1
-                elif a.answer == True:
+                elif a.answer is True:
                     results['JA'] += 1
-        
+
         elif self.question_type is MULTIPLE_CHOICE:
             mc = MultipleChoice.objects.filter(question=self)
             results = {}
             for a in mc:
-                if a.answer != None:
+                if a.answer is not None:
                     if a.answer.description not in results:
                         results[a.answer.description] = 0
                     results[a.answer.description] += 1
@@ -162,11 +165,11 @@ class Question(models.Model):
             result_string = ''
             if self.only_show_winner:
                 r = self.get_winner()
-                for k,v in r.items():
-                    result_string += u'%s' %(str(k))
+                for k, v in r.items():
+                    result_string += u'%s' % (str(k))
             else:
-                for k,v in r.items():
-                    result_string += u'%s: %s ' %(str(k), str(v))
+                for k, v in r.items():
+                    result_string += u'%s: %s ' % (str(k), str(v))
             self.result = result_string
         self.locked = True
         self.save()
@@ -186,9 +189,10 @@ class Question(models.Model):
             return MultipleChoice.objects.filter(question=self, voter=v).count()
 
     def __unicode__(self):
-        return u'[%d] %s' %(self.id - self.meeting.num_questions(), self.description)
+        return u'[%d] %s' % (self.id - self.meeting.num_questions(), self.description)
 
 # Individual abstract vote and vote types
+
 
 class AbstractVote(models.Model):
     '''
@@ -203,7 +207,8 @@ class AbstractVote(models.Model):
         if self.question.anonymous:
             return voter.hide_user()
         else:
-            return u'%s %s' %(self.voter.user.first_name, self.voter.user.last_name)
+            return u'%s %s' % (self.voter.user.first_name, self.voter.user.last_name)
+
 
 class BooleanVote(AbstractVote):
     '''
@@ -211,20 +216,21 @@ class BooleanVote(AbstractVote):
     '''
     answer = models.NullBooleanField(_(u'answer'), help_text=_(u'Ja/Nei'), null=True, blank=True)
 
-class Alternative(models.Model): 
-    '''         
+
+class Alternative(models.Model):
+    '''
     The Alternative class represents a single alternative that is connected to a particular multiple choice type question
-    '''     
+    '''
     alt_id = models.PositiveIntegerField(null=False, help_text=_(u'Alternativ ID'), blank=False)
     question = models.ForeignKey(Question, null=False, help_text=_(u'Question'))
     description = models.CharField(_(u'Beskrivelse'), null=True, blank=True, max_length=150)
- 
+
     def __unicode__(self):
         return self.description
+
 
 class MultipleChoice(AbstractVote):
     '''
     The MultipleChoice model holds the answered alternative to a specific question held in superclass
     '''
     answer = models.ForeignKey(Alternative, null=True, blank=True, help_text=_(u'Alternativ'))
-

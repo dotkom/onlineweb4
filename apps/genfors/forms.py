@@ -9,6 +9,7 @@ from django.forms.models import modelformset_factory
 from django.utils.translation import ugettext as _
 from apps.genfors.models import Alternative, Meeting, Question
 
+
 class LoginForm(forms.Form):
     password = forms.CharField(widget=forms.PasswordInput(render_value=False), label=_(u"Passord"))
 

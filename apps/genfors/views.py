@@ -11,13 +11,14 @@ from apps.genfors.models import Meeting, Question, RegisteredVoter, Alternative,
 from apps.genfors.models import BOOLEAN_VOTE, MULTIPLE_CHOICE
 import datetime
 
+
 @login_required
 def genfors(request):
     context = {}
     meeting = get_active_meeting()
-    
+
     # Check for session token
-    if request.session.get('registered_voter') == True:
+    if request.session.get('registered_voter') is True:
         # Check for active meeting
         if meeting:
             context['meeting'] = meeting
@@ -40,25 +41,25 @@ def genfors(request):
                 context['registered_voter'] = reg_voter
 
                 context['already_voted'] = aq.already_voted(reg_voter)
-                
+
                 res = aq.get_results()
-                
+
                 if aq.question_type is BOOLEAN_VOTE and total_votes != 0:
                     context['active_question']['yes_percent'] = res['JA'] * 100 / total_votes
                     context['active_question']['no_percent'] = res['NEI'] * 100 / total_votes
                     context['active_question']['blank_percent'] = res['BLANKT'] * 100 / total_votes
-                
+
                 elif aq.question_type is MULTIPLE_CHOICE and total_votes != 0:
-                    context['active_question']['multiple_choice'] = {a.description : [0, 0] for a in alternatives}
+                    context['active_question']['multiple_choice'] = {a.description: [0, 0] for a in alternatives}
                     context['active_question']['multiple_choice']['Blankt'] = [0, 0]
-                    for k,v in res.items():
+                    for k, v in res.items():
                         context['active_question']['multiple_choice'][k] = [v, v * 100 / total_votes]
 
         return render(request, "genfors/index.html", context)
-    
+
     # If user is not logged in
     else:
-        
+
         # Process stuff from the login form
         if request.method == 'POST' and not meeting.registration_locked:
             form = RegisterVoterForm(request.POST)
@@ -70,7 +71,7 @@ def genfors(request):
                 if not reg_voter:
                     reg_voter = RegisteredVoter(user=request.user, meeting=meeting, can_vote=True)
                     reg_voter.save()
-                    
+
                 request.session['registered_voter'] = True
                 return redirect('genfors_index')
 
@@ -81,7 +82,7 @@ def genfors(request):
                 context['registration_locked'] = meeting.registration_locked
             else:
                 context['registration_locked'] = True
-    
+
     return render(request, "genfors/index_login.html", context)
 
 
@@ -251,14 +252,15 @@ def question_delete(request, question_id):
         messages.error(request, 'Du har ikke tilgang til dette')
     return redirect('genfors_admin')
 
+
 # Handle votes
 @require_http_methods(["POST"])
 def vote(request):
     m = get_active_meeting()
     if m:
 
-        # If user is logged in.. 
-        if request.session.get('registered_voter') == True:
+        # If user is logged in
+        if request.session.get('registered_voter') is True:
             q = m.get_active_question()
             r = RegisteredVoter.objects.filter(user=request.user, meeting=m)
             if r:
@@ -306,7 +308,7 @@ def vote(request):
                                     vote.save()
                                     messages.success(request, 'Din stemme ble registrert!')
                                     return redirect('genfors_index')
-                
+
                 messages.error(request, 'Det ble forsøkt å stemme på et ugyldig alternativ, stemmen ble ikke registrert.')
                 return redirect('genfors_index')
 
