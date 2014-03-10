@@ -104,25 +104,7 @@ def admin(request):
         meeting = get_next_meeting()
         if meeting:
             context['meeting'] = meeting
-            question = meeting.get_active_question()
-            if question:
-                context['question'] = question
-            else:
-                if request.method == 'POST':
-                    form = QuestionForm(request.POST)
-                    formset = AlternativeFormSet(request.POST)
-                    if form.is_valid() and formset.is_valid():
-                        data = form.cleaned_data
-                        question = Question(meeting=meeting, anonymous=data['anonymous'],
-                                            question_type=data['question_type'], description=data['description'])
-                        question.save()
-                        messages.success(request, _(u'Nytt spørsmål lagt til'))
-                        return redirect('genfors_admin')
-                else:
-                    form = QuestionForm()
-                    formset = AlternativeFormSet()
-                context['form'] = form
-                context['formset'] = formset
+            context['question'] = meeting.get_active_question()
             context['questions'] = meeting.get_locked_questions()
         elif request.method == 'POST':
             form = MeetingForm(request.POST)
@@ -195,21 +177,25 @@ def question_admin(request, question_id=None):
                 context['formset'] = formset
                 return render(request, "genfors/question.html", context)
         else:
+            q = None
+            q_alt = None
             if question_id:
                 q = Question.objects.get(id=question_id, locked=False)
                 if q:
+                    q_alt = q.get_alternatives()
                     form = QuestionForm(instance=q)
                     formset = AlternativeFormSet(queryset=q.get_alternatives())
                 else:
                     messages.error(request, 'Spørsmålet finnes ikke eller har allerede blitt stengt.')
                     return redirect('genfors_admin')
             else:
-                form = QuestionForm()
-                # By default ModelFormSets will add all objects from model, adding .none() to make sure the form is always empty
-                formset = AlternativeFormSet(queryset=Alternative.objects.none())
                 context['create'] = True
-            context['form'] = form
-            context['formset'] = formset
+            if not q_alt:
+                # If 'queryset' is None ModelFormSets will add all objects from model
+                # adding .none() to make sure the form is always empty
+                q_alt = Alternative.objects.none()
+            context['form'] = QuestionForm(instance=q)
+            context['formset'] = AlternativeFormSet(queryset=q_alt)
             return render(request, "genfors/question.html", context)
 
     else:
@@ -222,7 +208,7 @@ def question_close(request, question_id):
         q = Question.objects.get(id=question_id, locked=False)
         if q:
             q.set_result_and_lock()
-            messages.success(request, 'Avstemning for spørsmål #%s ble stengt.' % q.id)
+            messages.success(request, 'Avstemning for spørsmål \'%s\' ble stengt.' % q)
         else:
             messages.error(request, 'Spørsmålet finnes ikke eller har allerede blitt stengt.')
     else:
@@ -235,7 +221,7 @@ def question_reset(request, question_id):
         q = Question.objects.get(id=question_id, locked=False)
         if q:
             q.reset_question()
-            messages.success(request, 'Avstemning for spørsmål #%s ble resatt.' % q.id)
+            messages.success(request, 'Avstemning for spørsmål \'%s\' ble tilbakestilt.' % q)
         else:
             messages.error(request, 'Spørsmålet finnes ikke eller har allerede blitt stengt.')
     else:
@@ -247,7 +233,7 @@ def question_delete(request, question_id):
     if is_admin(request):
         q = Question.objects.get(id=question_id)
         if q:
-            messages.success(request, 'Spørsmål #%s ble slettet' % q.id)
+            messages.success(request, 'Spørsmål \'%s\' ble slettet' % q)
             q.delete()
         else:
             messages.error(request, 'Spørsmålet finnes ikke')
