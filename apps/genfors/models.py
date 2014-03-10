@@ -1,3 +1,4 @@
+#-*- coding: utf-8 -*-
 from datetime import datetime
 from django.db import models
 from apps.authentication.models import OnlineUser as User
@@ -22,8 +23,8 @@ class Meeting(models.Model):
     '''
     The Meeting model encapsulates a single Generalforsamling with all cascading one-to-many relationships
     '''
-    start_date = models.DateTimeField(_(u'date'), help_text=_('Dato for arrangementsstart'), null=False)
-    title = models.CharField(_(u'title'), max_length=150, null=False)
+    start_date = models.DateTimeField(_(u'Dato'), help_text=_('Dato for arrangementsstart'), null=False)
+    title = models.CharField(_(u'Tittel'), max_length=150, null=False)
     registration_locked = models.BooleanField(_(u'registration_lock'), help_text=_(u'Steng registrering'), default=False, blank=False, null=False)
     ended = models.BooleanField(_(u'event_lockdown'), help_text=_(u'Avslutt generalforsamlingen'), default=False, blank=False, null=False)
 
@@ -95,13 +96,13 @@ class Question(models.Model):
     A question is a wrapper to which all votes must be connected.
     '''
     meeting = models.ForeignKey(Meeting, help_text=_(u'Generalforsamling'), null=False)
-    anonymous = models.BooleanField(_(u'anonymous'), help_text=_(u'Hemmelig valg'), null=False, blank=False)
+    anonymous = models.BooleanField(_(u'Hemmelig valg'), null=False, blank=False)
     created_time = models.DateTimeField(_(u'added'), auto_now_add=True)
     locked = models.BooleanField(_(u'locked'), help_text=_(u'Steng avstemmingen'), null=False, blank=False, default=False)
-    question_type = models.SmallIntegerField(_(u'question_type'), help_text=_(u'Type'), choices=QUESTION_TYPES, null=False, default=0, blank=False)
-    description = models.TextField(_(u'description'), help_text=_(u'Beskrivelse av saken som skal stemmes over'), max_length=500, blank=True)
+    question_type = models.SmallIntegerField(_(u'Spørsmålstype'), choices=QUESTION_TYPES, null=False, default=0, blank=False)
+    description = models.TextField(_(u'Beskrivelse'), help_text=_(u'Beskrivelse av saken som skal stemmes over'), max_length=500, blank=True)
     result = models.CharField(_(u'result'), max_length=100, help_text=_(u'Resultatet av avstemmingen'), null=True, blank=True)
-    only_show_winner = models.BooleanField(_(u'onlywinner'), help_text=_(u'Vis kun vinner'), null=False, blank=False, default=False)
+    only_show_winner = models.BooleanField(_(u'Vis kun vinner'), null=False, blank=False, default=False)
 
     # Returns results as a dictionary, either by alternative or boolean-ish types
     def get_results(self):
@@ -216,7 +217,7 @@ class Alternative(models.Model):
     '''     
     alt_id = models.PositiveIntegerField(null=False, help_text=_(u'Alternativ ID'), blank=False)
     question = models.ForeignKey(Question, null=False, help_text=_(u'Question'))
-    description = models.CharField(null=True, blank=True, help_text=_(u'Beskrivelse'), max_length=150)
+    description = models.CharField(_(u'Beskrivelse'), null=True, blank=True, max_length=150)
  
     def __unicode__(self):
         return self.description
