@@ -138,6 +138,7 @@ def admin_logout(request):
     return redirect('genfors_index')
 
 
+@login_required
 def question_admin(request, question_id=None):
     context = {}
     meeting = get_active_meeting()
@@ -206,6 +207,7 @@ def question_admin(request, question_id=None):
     return redirect('genfors_admin')
 
 
+@login_required
 def question_close(request, question_id):
     response = question_validate(request, question_id)
     if response:
@@ -221,6 +223,7 @@ def question_close(request, question_id):
     return redirect('genfors_admin')
 
 
+@login_required
 def question_reset(request, question_id):
     response = question_validate(request, question_id)
     if response:
@@ -236,6 +239,7 @@ def question_reset(request, question_id):
     return redirect('genfors_admin')
 
 
+@login_required
 def question_delete(request, question_id):
     response = question_validate(request, question_id)
     if response:
@@ -253,6 +257,7 @@ def question_delete(request, question_id):
 
 # Handle votes
 @require_http_methods(["POST"])
+@login_required
 def vote(request):
     m = get_active_meeting()
     if m:
@@ -316,16 +321,72 @@ def vote(request):
         return HttpResponse(status_code=403, reason_phrase='Forbidden')
 
 
+@login_required
+def genfors_lock_registration(request):
+    if is_admin(request):
+        meeting = get_active_meeting()
+        if meeting:
+            if request.method == 'POST':
+                meeting.registration_locked = True
+                meeting.save()
+            else:
+                question = 'Er du sikker på at du vil stenge registrering for nye brukere?'
+                return render(request, 'genfors/confirm.html', {'question': question})
+        else:
+            messages.error(request, 'Ingen aktiv generalforsamling')
+    else:
+        messages.error(request, 'Du har ikke tilgang til dette')
+    return redirect('genfors_admin')
+
+
+@login_required
+def genfors_open_registration(request):
+    if is_admin(request):
+        meeting = get_active_meeting()
+        if meeting:
+            if request.method == 'POST':
+                meeting.registration_locked = False
+                meeting.save()
+            else:
+                question = 'Er du sikker på at du vil åpne registrering for nye brukere?'
+                return render(request, 'genfors/confirm.html', {'question': question})
+        else:
+            messages.error(request, 'Ingen aktiv generalforsamling')
+    else:
+        messages.error(request, 'Du har ikke tilgang til dette')
+    return redirect('genfors_admin')
+
+
+
+@login_required
+def genfors_end(request):
+    if is_admin(request):
+        meeting = get_active_meeting()
+        if meeting:
+            if request.method == 'POST':
+                meeting.ended = True
+                meeting.save()
+                messages.success(request, 'Generalforsamlingen ble avsluttet')
+            else:
+                question = 'Er du sikker på at du vil avslutte generalforsamlingen?'
+                return render(request, 'genfors/confirm.html', {'question': question})
+        else:
+            messages.error(request, 'Ingen aktiv generalforsamling')
+    else:
+        messages.error(request, 'Du har ikke tilgang til dette')
+    return redirect('genfors_admin')
+
+
 def get_active_meeting():
     today = datetime.date.today()
-    meetings = Meeting.objects.filter(start_date__range=[today, today + datetime.timedelta(hours=24)]).order_by('-start_date')
+    meetings = Meeting.objects.filter(start_date__range=[today, today + datetime.timedelta(hours=24)], ended=False).order_by('-start_date')
     if meetings:
         return meetings[0]
 
 
 def get_next_meeting():
     today = datetime.date.today()
-    meetings = Meeting.objects.filter(registration_locked=False, start_date__gte=today).order_by('-start_date')
+    meetings = Meeting.objects.filter(ended=False, start_date__gte=today).order_by('-start_date')
     if meetings:
         return meetings[0]
 
