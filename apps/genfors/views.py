@@ -305,9 +305,9 @@ def vote(request):
                                 messages.success(request, 'Din stemme ble registrert!')
                                 return redirect('genfors_index')
                             else:
-                                choice = Alternative.objects.filter(id=alt)
+                                choice = Alternative.objects.get(alt_id=alt, question=q)
                                 if choice:
-                                    vote = MultipleChoice(voter=r, question=q, answer=choice[0])
+                                    vote = MultipleChoice(voter=r, question=q, answer=choice)
                                     vote.save()
                                     messages.success(request, 'Din stemme ble registrert!')
                                     return redirect('genfors_index')
