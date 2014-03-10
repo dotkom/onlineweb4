@@ -201,7 +201,8 @@ def question_admin(request, question_id=None):
                     return redirect('genfors_admin')
             else:
                 form = QuestionForm()
-                formset = AlternativeFormSet()
+                # By default ModelFormSets will add all objects from model, adding .none() to make sure the form is always empty
+                formset = AlternativeFormSet(queryset=Alternative.objects.none())
                 context['create'] = True
             context['form'] = form
             context['formset'] = formset
