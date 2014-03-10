@@ -1,9 +1,12 @@
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Layout, Submit, Button
+from crispy_forms.bootstrap import AppendedText, FormActions, Field
+
 from django import forms
 from django.conf import settings
 from django.forms.models import modelformset_factory
 from django.utils.translation import ugettext as _
 from apps.genfors.models import Alternative, Meeting, Question
-
 
 class LoginForm(forms.Form):
     password = forms.CharField(widget=forms.PasswordInput(render_value=False), label=_(u"Passord"))
@@ -31,7 +34,7 @@ class MeetingForm(forms.ModelForm):
 class QuestionForm(forms.ModelForm):
     class Meta:
         model = Question
-        fields = ['question_type', 'anonymous', 'description']
+        fields = ['description', 'anonymous', 'only_show_winner', 'question_type']
 
 
 class AlternativeForm(forms.ModelForm):
@@ -40,7 +43,7 @@ class AlternativeForm(forms.ModelForm):
         fields = ['description']
 
 
-AlternativeFormSet = modelformset_factory(Alternative, form=AlternativeForm, extra=2, can_delete=True)
+AlternativeFormSet = modelformset_factory(Alternative, form=AlternativeForm, can_delete=True, extra=0)
 
 
 class RegisterVoterForm(forms.Form):

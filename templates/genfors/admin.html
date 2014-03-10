@@ -30,42 +30,30 @@ Generalforsamling logg inn- Online
             <div class="col-md-12">
             {% if meeting %}
                 <h1>{{ meeting.title }}</h1>
-                {% if question %}
-                {{ question.description }}
-                {% else %}
-                <h3>Nytt spørsmål</h3>
-                <div class="col-md-6">
-                    <form method="post">
-                        {% csrf_token %}
-                        {{ form|crispy }}
-                        <div id="formset" data-formset-prefix="{{ formset.prefix }}">
-                            {{ formset.management_form }}
-                            <div data-formset-body>
-                                {% for form in formset %}
-                                    <div data-formset-form>
-                                        {{ form.description|as_crispy_field }}
-                                        <div class="hidden">{{ form.DELETE }}</div>
-                                        <button class="btn" data-formset-delete-button>X</button>
-                                    </div>
-                                {% endfor %}
-                            </div>
-                            <script type="form-template" data-formset-empty-form>
-                                {% escapescript %}
-                                    <div data-formset-form>
-                                        {{ formset.empty_form.description|as_crispy_field }}
-                                        <div class="hidden">{{ formset.empty_form.DELETE }}</div>
-                                        <button class="btn" type="button" data-formset-delete-button>X</button>
-                                    </div>
-                                {% endescapescript %}
-                            </script>
-                            <button class="btn" data-formset-add>Legg til nytt valg</button>
-
-                        </div>
-                        <button class="btn btn-success" type="submit">Legg til spørsmål</button>
-                    </form>
+                <div class="row">
+                    <div class="col-md-12">
+                    {% if question %}
+                        <h3>Aktivt spørsmål</h3>
+                        <p>{{ question.description }}</p>
+                        <a href="{% url 'genfors_question_edit' question_id=question.id %}" class="btn btn-primary">Rediger</a>
+                        <a href="{% url 'genfors_question_close' question_id=question.id %}" class="btn btn-warning">Steng</a>
+                        <a href="{% url 'genfors_question_delete' question_id=question.id %}" class="btn btn-danger">Slett</a>
+                    {% else %}
+                    <h3><a href="{% url 'genfors_question_new' %}">Opprett nytt spørsmål</a></h3>
+                    {% endif %}
+                    </div>
                 </div>
-                {% endif %}
-            {% else %}
+                <div class="row">
+                    <div class="col-md-6">
+                        <h3>Avholdte spørsmål</h3>
+                        {% for question in questions %}
+                        <li>{{ question.description }}</li>
+                        {% empty %}
+                        <li>Ingen avholdte spørsmål funnet</li>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% else %}
                 <form method="post">
                     {% csrf_token %}
                     {{ form|crispy }}
@@ -76,27 +64,4 @@ Generalforsamling logg inn- Online
         </div>
     </div>
 </section>
-{% endblock %}
-
-{% block js %}
-    {{ block.super }}
-    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
-    <script src="{{ STATIC_URL }}js/jquery.formset.js"></script>
-    <script type="text/javascript">
-        $(function () {
-            $('#id_start_date').datepicker({dateFormat: "dd.mm.yy"});
-            $("#formset").formset({animateForms: true});
-            $("#formset").hide();
-            // Hide multiple choice values based on question type
-            $("#id_question_type").change(function() {
-                // Multiple choice selected
-                if($(this).val() == 1) {
-                    $("#formset").show();
-                }
-                else {
-                    $("#formset").hide();
-                }
-            });
-        });
-    </script>
 {% endblock %}

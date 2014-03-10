@@ -109,10 +109,11 @@ def admin(request):
             else:
                 if request.method == 'POST':
                     form = QuestionForm(request.POST)
-                    if form.is_valid():
+                    formset = AlternativeFormSet(request.POST)
+                    if form.is_valid() and formset.is_valid():
                         data = form.cleaned_data
                         question = Question(meeting=meeting, anonymous=data['anonymous'],
-                                            question_type=data['anonymous'], description=data['description'])
+                                            question_type=data['question_type'], description=data['description'])
                         question.save()
                         messages.success(request, _(u'Nytt spørsmål lagt til'))
                         return redirect('genfors_admin')
@@ -121,6 +122,7 @@ def admin(request):
                     formset = AlternativeFormSet()
                 context['form'] = form
                 context['formset'] = formset
+            context['questions'] = meeting.get_locked_questions()
         elif request.method == 'POST':
             form = MeetingForm(request.POST)
             context['form'] = form
@@ -151,6 +153,102 @@ def admin_logout(request):
     if 'genfors_admin' in request.session:
         del request.session['genfors_admin']
     return redirect('genfors_index')
+
+
+def question_admin(request, question_id=None):
+    context = {}
+    meeting = get_active_meeting()
+    if is_admin(request):
+        if request.method == 'POST':
+            try:
+                q = Question.objects.get(id=question_id, locked=False)
+            except Question.DoesNotExist:
+                q = Question()
+            q_alt = q.get_alternatives() if q else None
+            form = QuestionForm(request.POST, instance=q)
+            formset = AlternativeFormSet(request.POST, queryset=q_alt)
+            if form.is_valid() and formset.is_valid():
+                question = form.save(commit=False)
+                if not question.pk:
+                    question.meeting = meeting
+                    messages.success(request, _(u'Nytt spørsmål lagt til'))
+                else:
+                    # Resetting question votes
+                    question.reset_question()
+                    messages.success(request, _(u'Spørsmål ble oppdatert'))
+                question.save()
+                print type(question.question_type)
+                if question.question_type == 1:
+                    alternatives = formset.save(commit=False)
+                    # # Add new
+                    for index, alternative in enumerate(formset.changed_objects + formset.new_objects):
+                        alternative.question = question
+                        alternative.alt_id = index + 1
+                        alternative.save()
+                return redirect('genfors_admin')
+            else:
+                context['form'] = form
+                context['formset'] = formset
+                return render(request, "genfors/question.html", context)
+        else:
+            if question_id:
+                q = Question.objects.get(id=question_id, locked=False)
+                if q:
+                    form = QuestionForm(instance=q)
+                    formset = AlternativeFormSet(queryset=q.get_alternatives())
+                else:
+                    messages.error(request, 'Spørsmålet finnes ikke eller har allerede blitt stengt.')
+                    return redirect('genfors_admin')
+            else:
+                form = QuestionForm()
+                formset = AlternativeFormSet()
+                context['create'] = True
+            context['form'] = form
+            context['formset'] = formset
+            return render(request, "genfors/question.html", context)
+
+    else:
+        messages.error(request, 'Du har ikke tilgang til dette')
+    return redirect('genfors_admin')
+
+
+def question_close(request, question_id):
+    if is_admin(request):
+        q = Question.objects.get(id=question_id, locked=False)
+        if q:
+            q.set_result_and_lock()
+            messages.success(request, 'Avstemning for spørsmål #%s ble stengt.' % q.id)
+        else:
+            messages.error(request, 'Spørsmålet finnes ikke eller har allerede blitt stengt.')
+    else:
+        messages.error(request, 'Du har ikke tilgang til dette')
+    return redirect('genfors_admin')
+
+
+def question_reset(request, question_id):
+    if is_admin(request):
+        q = Question.objects.get(id=question_id, locked=False)
+        if q:
+            q.reset_question()
+            messages.success(request, 'Avstemning for spørsmål #%s ble resatt.' % q.id)
+        else:
+            messages.error(request, 'Spørsmålet finnes ikke eller har allerede blitt stengt.')
+    else:
+        messages.error(request, 'Du har ikke tilgang til dette')
+    return redirect('genfors_admin')
+
+
+def question_delete(request, question_id):
+    if is_admin(request):
+        q = Question.objects.get(id=question_id)
+        if q:
+            messages.success(request, 'Spørsmål #%s ble slettet' % q.id)
+            q.delete()
+        else:
+            messages.error(request, 'Spørsmålet finnes ikke')
+    else:
+        messages.error(request, 'Du har ikke tilgang til dette')
+    return redirect('genfors_admin')
 
 # Handle votes
 @require_http_methods(["POST"])
@@ -226,6 +324,11 @@ def get_active_meeting():
 
 def get_next_meeting():
     today = datetime.date.today()
-    meetings = Meeting.objects.filter(registration_locked=False, start_date__gt=today).order_by('-start_date')
+    meetings = Meeting.objects.filter(registration_locked=False, start_date__gte=today).order_by('-start_date')
     if meetings:
         return meetings[0]
+
+
+# Helper function
+def is_admin(request):
+    return request.session.get('genfors_admin') is True
