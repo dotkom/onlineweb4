@@ -142,6 +142,9 @@ def question_admin(request, question_id=None):
     context = {}
     meeting = get_active_meeting()
     if is_admin(request):
+        if question_id is None and meeting.get_active_question():
+            messages.error(request, _(u'Kan ikke legge til et nytt spørsmål når det allerede er et aktivt et'))
+            return redirect('genfors_admin')
         if request.method == 'POST':
             try:
                 q = Question.objects.get(id=question_id, locked=False)
