@@ -7,15 +7,6 @@
 Generalforsamling logg inn- Online
 {% endblock %}
 
-{% block styles %}
-    {{ block.super }}
-    {% compress css %}
-        <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}less/jquery-ui/jquery.ui.datepicker.min.css" />
-        <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}less/jquery-ui/jquery.ui.theme.min.css" />
-        <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}less/jquery-ui/jquery.ui.core.min.css" />
-    {% endcompress %}
-{% endblock %}
-
 {% block content %}
 <section id="generalforsamling">
     <div class="container">
@@ -82,11 +73,9 @@ Generalforsamling logg inn- Online
 
 {% block js %}
     {{ block.super }}
-    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
     <script src="{{ STATIC_URL }}js/jquery.formset.js"></script>
     <script type="text/javascript">
         $(function () {
-            $('#id_start_date').datepicker({dateFormat: "dd.mm.yy"});
             $("#formset").formset({animateForms: true});
             if($("#id_question_type").val() != 1) {                
                 $("#formset").hide();
