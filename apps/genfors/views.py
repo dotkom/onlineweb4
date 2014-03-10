@@ -89,7 +89,7 @@ def genfors(request):
 @login_required
 def registered_voters(request):
     context = {}
-    if request.session.get('genfors_admin') is True:
+    if is_admin(request):
         meeting = get_active_meeting()
         if meeting:
             context['registered_voters'] = meeting.get_attendee_list()
@@ -100,7 +100,7 @@ def registered_voters(request):
 def admin(request):
     context = {}
     # Check if user is logged in as genfors admin
-    if request.session.get('genfors_admin') is True:
+    if is_admin(request):
         meeting = get_next_meeting()
         if meeting:
             context['meeting'] = meeting
@@ -133,7 +133,7 @@ def admin(request):
 
 
 def admin_logout(request):
-    if 'genfors_admin' in request.session:
+    if is_admin(request):
         del request.session['genfors_admin']
     return redirect('genfors_index')
 
@@ -204,41 +204,47 @@ def question_admin(request, question_id=None):
 
 
 def question_close(request, question_id):
-    if is_admin(request):
-        q = Question.objects.get(id=question_id, locked=False)
-        if q:
-            q.set_result_and_lock()
-            messages.success(request, 'Avstemning for spørsmål \'%s\' ble stengt.' % q)
-        else:
-            messages.error(request, 'Spørsmålet finnes ikke eller har allerede blitt stengt.')
+    response = question_validate(request, question_id)
+    if response:
+        return response
+
+    q = Question.objects.get(id=question_id)
+    if request.method == 'POST':
+        q.set_result_and_lock()
+        messages.success(request, 'Avstemning for spørsmål \'%s\' ble stengt.' % q)
     else:
-        messages.error(request, 'Du har ikke tilgang til dette')
+        question = 'Er du sikker på at du vil avslutte spørsmål \'%s\'?' % q
+        return render(request, 'genfors/confirm.html', {'question': question})
     return redirect('genfors_admin')
 
 
 def question_reset(request, question_id):
-    if is_admin(request):
-        q = Question.objects.get(id=question_id, locked=False)
-        if q:
-            q.reset_question()
-            messages.success(request, 'Avstemning for spørsmål \'%s\' ble tilbakestilt.' % q)
-        else:
-            messages.error(request, 'Spørsmålet finnes ikke eller har allerede blitt stengt.')
+    response = question_validate(request, question_id)
+    if response:
+        return response
+
+    q = Question.objects.get(id=question_id)
+    if request.method == 'POST':
+        q.reset_question()
+        messages.success(request, 'Avstemning for spørsmål \'%s\' ble tilbakestilt.' % q)
     else:
-        messages.error(request, 'Du har ikke tilgang til dette')
+        question = 'Er du sikker på at du vil tilbakestille spørsmål \'%s\'?' % q
+        return render(request, 'genfors/confirm.html', {'question': question})
     return redirect('genfors_admin')
 
 
 def question_delete(request, question_id):
-    if is_admin(request):
-        q = Question.objects.get(id=question_id)
-        if q:
-            messages.success(request, 'Spørsmål \'%s\' ble slettet' % q)
-            q.delete()
-        else:
-            messages.error(request, 'Spørsmålet finnes ikke')
+    response = question_validate(request, question_id)
+    if response:
+        return response
+
+    q = Question.objects.get(id=question_id)
+    if request.method == 'POST':
+        messages.success(request, 'Spørsmål \'%s\' ble slettet' % q)
+        q.delete()
     else:
-        messages.error(request, 'Du har ikke tilgang til dette')
+        question = 'Er du sikker på at du vil slette spørsmål \'%s\'?' % q
+        return render(request, 'genfors/confirm.html', {'question': question})
     return redirect('genfors_admin')
 
 
@@ -324,3 +330,18 @@ def get_next_meeting():
 # Helper function
 def is_admin(request):
     return request.session.get('genfors_admin') is True
+
+
+def question_validate(request, question_id):
+    """Returns a HttpResponse if not passing validation"""
+    if is_admin(request):
+        try:
+            q = Question.objects.get(id=question_id)
+        except Question.DoesNotExist:
+            messages.error(request, 'Spørsmålet finnes ikke')
+            return redirect('genfors_admin')
+        # Return None when passing
+        return None
+    else:
+        messages.error(request, 'Du har ikke tilgang til dette')
+    return redirect('genfors_admin')

@@ -24,7 +24,7 @@ Generalforsamling logg inn- Online
                             <h4 class="panel-title">{{ create|yesno:"Nytt spørsmål, Rediger spørsmål" }}</h4>
                         </div>
                         <div class="panel-body">
-                            {% if not create %}<h4><p id="panel_danger">Ved endring av spørsmål vil alle stemmer bli tilbakestilt</p></h4>{% endif %}
+                            {% if not create %}<h4><p id="bg-danger">Ved endring av spørsmål vil alle stemmer bli tilbakestilt</p></h4>{% endif %}
                             {% csrf_token %}
                             {{ form|crispy }}
                             <div id="formset" data-formset-prefix="{{ formset.prefix }}">
