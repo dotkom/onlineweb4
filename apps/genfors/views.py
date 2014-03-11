@@ -119,6 +119,7 @@ def admin(request):
             # Create meeting view
             form = MeetingForm()
             context['form'] = form
+        context['meetings'] = Meeting.objects.filter(ended=True).order_by('-start_date')
         return render(request, "genfors/admin.html", context)
     else:
         if request.method == 'POST':
