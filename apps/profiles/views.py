@@ -78,7 +78,7 @@ def _create_request_dictionary(request):
     if request.session.has_key('userprofile_active_tab'):
         dict['active_tab'] = request.session['userprofile_active_tab']
     else:
-        dict['active_tab'] = 'users'
+        dict['active_tab'] = 'dashboard'
 
     return dict
 

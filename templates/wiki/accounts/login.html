@@ -1,0 +1,31 @@
+{% extends "wiki/base.html" %}
+{% load i18n wiki_tags sekizai_tags %}
+{% load url from future %}
+{% block wiki_pagetitle %}{% trans "Log in" %}{% endblock %}
+
+{% block wiki_contents %}
+  <div id="article-container">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="page-header">
+                <h2>
+                  Laster...
+                </h2>
+            </div>
+        </div>
+    </div>
+    <div>
+      <p>Sender deg til login</p>
+    </div>
+  </div>
+
+{% addtoblock "js" %}
+<script type="text/javascript">
+  var path = document.URL.split('?next=');
+  if (path.length > 1)
+  	document.location.href = '/auth/login/?next=' + path[1];
+  else
+  	document.location.href = '/auth/login/';
+</script>
+{% endaddtoblock %}
+{% endblock %}

@@ -2,6 +2,7 @@
 
 import uuid
 import re
+from smtplib import SMTPException
 
 from django.contrib import auth
 from django.contrib import messages
@@ -93,8 +94,11 @@ http://%s/auth/verify/%s/
 Denne lenken vil være gyldig i 24 timer. Dersom du behøver å få tilsendt en ny lenke
 kan dette gjøres med funksjonen for å gjenopprette passord.
 """) % (request.META['HTTP_HOST'], token)
-
-                send_mail(_(u'Verifiser din konto'), email_message, settings.DEFAULT_FROM_EMAIL, [email.email,])
+                try:
+                    send_mail(_(u'Verifiser din konto'), email_message, settings.DEFAULT_FROM_EMAIL, [email.email,])
+                except SMTPException as e:
+                    messages.error(request, u'Det oppstod en kritisk feil, ' + e)
+                    return redirect('home')
 
                 messages.success(request, _(u'Registreringen var vellykket. Se tilsendt epost for verifiseringsinstrukser.'))
 
@@ -118,7 +122,7 @@ def verify(request, token):
         user = getattr(rt, 'user')
 
         # If it is a stud email, set the ntnu_username for user
-        if re.match(r'[^@]+@stud.ntnu.no', rt.email):
+        if re.match(r'[^@]+@stud\.ntnu\.no', rt.email):
             user.ntnu_username = rt.email.split("@")[0]
 
         user_activated = False

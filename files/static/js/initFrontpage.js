@@ -20,6 +20,16 @@ $(function() {
     $('#about-tabs').on('click', 'a', function (e) {
         e.preventDefault();
         $(this).tab('show');
+
+        // Swap header
+        var title = $(this).html();
+        if ($(this).data('prefixom') == undefined || $(this).data('prefixom') == 'false') {
+            title = 'Om ' + title;
+        }
+
+        $('#about-heading').html(title.toUpperCase());
+
+        // Swap content
         $('html, body').animate({scrollTop: $('#about').offset().top - TOP_OFFSET_ADJUST}, 250);
     });
 
