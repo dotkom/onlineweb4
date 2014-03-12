@@ -6,7 +6,6 @@ from django.contrib.messages import constants as messages
 PROJECT_SETTINGS_DIRECTORY = os.path.dirname(globals()['__file__'])
 # Root directory. Contains manage.py
 PROJECT_ROOT_DIRECTORY = os.path.join(PROJECT_SETTINGS_DIRECTORY, '..', '..')
-PROJECT_LOG_DIRECTORY = os.path.join(PROJECT_ROOT_DIRECTORY, 'log/')
 
 TEST_RUNNER = "django_nose.NoseTestSuiteRunner"
 NOSE_ARGS = ['--with-coverage', '--cover-package=apps']
@@ -210,13 +209,7 @@ LOGGING = {
             'level': 'DEBUG',
             'class': 'logging.StreamHandler',
             'formatter': 'standard'
-        },
-        'file': {
-            'level': 'DEBUG',
-            'class': 'logging.FileHandler',
-            'filename': os.path.join(PROJECT_LOG_DIRECTORY , 'feedback.log'),
-            'formatter': 'standard'
-        },
+        }
     },
     'loggers': {
         'django.request': {
@@ -225,7 +218,7 @@ LOGGING = {
             'propagate': True,
         },
         'feedback': {
-            'handlers': ['file'],
+            'handlers': ['console'],
             'level': 'DEBUG',
             'propagate': True,
         },   
