@@ -25,9 +25,9 @@ Generalforsamling logg inn- Online
                 <h2>Generalforsamling adminpanel</h2>
                 {% if meeting %}
                 {% if meeting.registration_locked %}
-                <a href="{% url 'genfors_admin_open_registration' %}" class="btn btn-info">Åpne registrering</a>
+                <a href="{% url 'genfors_admin_open_registration' %}" class="btn btn-warning">Åpne registrering</a>
                 {% else %}
-                <a href="{% url 'genfors_admin_lock_registration' %}" class="btn btn-info">Steng registrering</a>
+                <a href="{% url 'genfors_admin_lock_registration' %}" class="btn btn-warning">Steng registrering</a>
                 {% endif %}
                 <a href="{% url 'genfors_admin_end' %}" class="btn btn-danger">Avslutt generalforsamlingen</a>
                 {% endif %}
