@@ -69,7 +69,7 @@ def genfors(request):
                 # Create a registered voter object if it does not already exis
                 reg_voter = RegisteredVoter.objects.filter(meeting=meeting, user=request.user)
                 if not reg_voter:
-                    reg_voter = RegisteredVoter(user=request.user, meeting=meeting, can_vote=True)
+                    reg_voter = RegisteredVoter(user=request.user, meeting=meeting)
                     reg_voter.save()
 
                 request.session['registered_voter'] = True

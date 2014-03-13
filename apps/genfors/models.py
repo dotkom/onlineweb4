@@ -38,7 +38,7 @@ class Meeting(models.Model):
 
     # Get attendee list as a list of strings
     def get_attendee_list(self):
-        return sorted([u'%s, %s' % (a.user.last_name, a.user.first_name) for a in RegisteredVoter.objects.filter(meeting=self)])
+        return sorted([unicode(a) for a in RegisteredVoter.objects.filter(meeting=self)])
 
     # Get the queryset of all questions
     def get_questions(self):
@@ -78,18 +78,19 @@ class RegisteredVoter(models.Model):
     '''
     meeting = models.ForeignKey(Meeting, null=False)
     user = models.ForeignKey(User, null=False)
-    can_vote = models.BooleanField(_(u'voting_right'), help_text=_(u'Har stemmerett'), null=False, default=True)
+    can_vote = models.BooleanField(_(u'voting_right'), help_text=_(u'Har stemmerett'), null=False, default=False)
 
     # Simple hashing function to hide realnames
     def hide_user(self):
         h = sha256()
-        h.update(self.user.first_name + self.user.last_name)
+        h.update(self.user.get_full_name())
         h.update(settings.SECRET_KEY)
         h = h.hexdigest()[:8]
         return h
 
     def __unicode__(self):
-        return u'%s %s' % (self.user.first_name, self.user.last_name)
+        return self.user.get_full_name()
+
 
 # Question wrapper
 
@@ -207,7 +208,7 @@ class AbstractVote(models.Model):
         if self.question.anonymous:
             return voter.hide_user()
         else:
-            return u'%s %s' % (self.voter.user.first_name, self.voter.user.last_name)
+            return self.voter.user.get_full_name()
 
 
 class BooleanVote(AbstractVote):
