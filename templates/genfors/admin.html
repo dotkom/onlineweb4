@@ -23,47 +23,53 @@ Generalforsamling logg inn- Online
             <div class="page-header">
                 <a href="{% url 'genfors_admin_logout' %}"class="btn btn-warning pull-right" id="gf_admin_logout">Logg ut</a>
                 <h2>Generalforsamling adminpanel</h2>
-                {% if meeting %}
-                {% if meeting.registration_locked %}
-                <a href="{% url 'genfors_admin_open_registration' %}" class="btn btn-success">
-                    <span class="glyphicon glyphicon-ok-circle"></span> Åpne registrering
-                </a>
-                {% else %}
-                <a href="{% url 'genfors_admin_lock_registration' %}" class="btn btn-warning">
-                    <span class="glyphicon glyphicon-lock"></span> Steng registrering
-                </a>
-                {% endif %}
-                <a href="{% url 'genfors_admin_end' %}" class="btn btn-danger">
-                    <span class="glyphicon glyphicon-off"></span> Avslutt generalforsamlingen
-                </a>
-                {% endif %}
             </div>
         </div>
-
         <div class="row">
-            <div class="col-md-12">
             {% if meeting %}
-                <h1>{{ meeting.title }}</h1>
+            <div class="col-sm-4 col-sm-push-8">
+                <h3>Møteadministrasjon</h3>
+                <div class="btn-group-vertical">
+                    {% if meeting.registration_locked %}
+                    <a href="{% url 'genfors_admin_open_registration' %}" class="btn btn-success">
+                        <span class="glyphicon glyphicon-ok-circle"></span> Åpne registrering
+                    </a>
+                    {% else %}
+                    <a href="{% url 'genfors_admin_lock_registration' %}" class="btn btn-warning">
+                        <span class="glyphicon glyphicon-lock"></span> Steng registrering
+                    </a>
+                    {% endif %}
+                    <a href="{% url 'genfors_admin_end' %}" class="btn btn-danger">
+                        <span class="glyphicon glyphicon-off"></span> Avslutt generalforsamlingen
+                    </a>
+                </div>
+            </div>
+            <div class="col-sm-8 col-sm-pull-4">
+                <div class="row">
+                    <h1>{{ meeting }}</h1>
+                </div>
                 <div class="row">
                     <div class="col-md-12">
-                    {% if question %}
+                        {% if question %}
                         <h3>Aktivt spørsmål</h3>
                         <p>{{ question.description }}</p>
-                        <a href="{% url 'genfors_question_edit' question_id=question.id %}" class="btn btn-sm btn-primary">
-                            <span class="glyphicon glyphicon-edit"></span> Rediger
-                        </a>
-                        <a href="{% url 'genfors_question_reset' question_id=question.id %}" class="btn btn-sm btn-info">
-                            <span class="glyphicon glyphicon-refresh"></span> Tilbakestill
-                        </a>
-                        <a href="{% url 'genfors_question_close' question_id=question.id %}" class="btn btn-sm btn-warning">
-                            <span class="glyphicon glyphicon-lock"></span> Steng
-                        </a>
-                        <a href="{% url 'genfors_question_delete' question_id=question.id %}" class="btn btn-sm btn-danger">
-                            <span class="glyphicon glyphicon-remove"></span> Slett
-                        </a>
-                    {% else %}
-                    <h3><a href="{% url 'genfors_question_new' %}">Opprett nytt spørsmål</a></h3>
-                    {% endif %}
+                        <div class="btn-group">
+                            <a href="{% url 'genfors_question_edit' question_id=question.id %}" class="btn btn-sm btn-primary">
+                                <span class="glyphicon glyphicon-edit"></span> Rediger
+                            </a>
+                            <a href="{% url 'genfors_question_reset' question_id=question.id %}" class="btn btn-sm btn-info">
+                                <span class="glyphicon glyphicon-refresh"></span> Tilbakestill
+                            </a>
+                            <a href="{% url 'genfors_question_close' question_id=question.id %}" class="btn btn-sm btn-warning">
+                                <span class="glyphicon glyphicon-lock"></span> Steng
+                            </a>
+                            <a href="{% url 'genfors_question_delete' question_id=question.id %}" class="btn btn-sm btn-danger">
+                                <span class="glyphicon glyphicon-remove"></span> Slett
+                            </a>
+                        </div>
+                        {% else %}
+                        <h3><a href="{% url 'genfors_question_new' %}">Opprett nytt spørsmål</a></h3>
+                        {% endif %}
                     </div>
                 </div>
                 <div class="row">
@@ -76,18 +82,20 @@ Generalforsamling logg inn- Online
                         {% endfor %}
                     </div>
                 </div>
-                {% else %}
+            </div>
+            {% else %}
+            <div class="col-sm-8">
                 <form method="post">
                     {% csrf_token %}
                     {{ form|crispy }}
                     <button class="btn btn-success" type="submit">Opprett nytt møte</button>
                 </form>
-            {% endif %}
             </div>
+            {% endif %}
         </div>
         <div class="row">
-            <h3>Tidligere generalforsamlinger </h3>
-            <div class="col-md-12">
+            <h1>Tidligere generalforsamlinger </h1>
+            <div class="col-md-8">
                 <div class="panel-group" id="meetings">
                 {% for meeting in meetings %}
                 <div class="panel panel-default">

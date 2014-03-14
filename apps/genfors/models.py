@@ -30,7 +30,7 @@ class Meeting(models.Model):
     ended = models.BooleanField(_(u'event_lockdown'), help_text=_(u'Avslutt generalforsamlingen'), default=False, blank=False, null=False)
 
     def __unicode__(self):
-        return self.title + ' (' + self.start_date.ctime() + ')'
+        return self.title + ' (' + self.start_date.strftime("%d/%m/%y") + ')'
 
     # Return the number of attendees
     def num_attendees(self):
