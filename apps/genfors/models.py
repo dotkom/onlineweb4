@@ -26,7 +26,7 @@ class Meeting(models.Model):
     '''
     start_date = models.DateTimeField(_(u'Dato'), help_text=_('Dato for arrangementsstart'), null=False)
     title = models.CharField(_(u'Tittel'), max_length=150, null=False)
-    registration_locked = models.BooleanField(_(u'registration_lock'), help_text=_(u'Steng registrering'), default=False, blank=False, null=False)
+    registration_locked = models.BooleanField(_(u'registration_lock'), help_text=_(u'Steng registrering'), default=True, blank=False, null=False)
     ended = models.BooleanField(_(u'event_lockdown'), help_text=_(u'Avslutt generalforsamlingen'), default=False, blank=False, null=False)
 
     def __unicode__(self):
