@@ -1,4 +1,4 @@
-
+#-*- coding: utf-8 -*-
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Submit, Button
 from crispy_forms.bootstrap import AppendedText, FormActions, Field
@@ -8,6 +8,8 @@ from django.conf import settings
 from django.forms.models import modelformset_factory
 from django.utils.translation import ugettext as _
 from apps.genfors.models import Alternative, Meeting, Question
+
+import datetime
 
 
 class LoginForm(forms.Form):
@@ -31,6 +33,12 @@ class MeetingForm(forms.ModelForm):
     class Meta:
         model = Meeting
         fields = ['title', 'start_date']
+
+    def clean_start_date(self):
+        date = self.cleaned_data['start_date']
+        if date.date() < datetime.date.today():
+            raise forms.ValidationError(_(u'Datoen må være i dag eller senere'))
+        return date
 
 
 class QuestionForm(forms.ModelForm):

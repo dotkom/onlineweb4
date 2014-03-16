@@ -362,7 +362,7 @@ def genfors_open_registration(request):
 @login_required
 def genfors_end(request):
     if is_admin(request):
-        meeting = get_active_meeting()
+        meeting = get_next_meeting()
         if meeting:
             if request.method == 'POST':
                 meeting.ended = True
@@ -387,7 +387,7 @@ def get_active_meeting():
 
 def get_next_meeting():
     today = datetime.date.today()
-    meetings = Meeting.objects.filter(ended=False, start_date__gte=today).order_by('-start_date')
+    meetings = Meeting.objects.filter(ended=False).order_by('-start_date')
     if meetings:
         return meetings[0]
 
