@@ -128,8 +128,11 @@ Generalforsamling logg inn- Online
     <script type="text/javascript" src="{{ STATIC_URL }}genfors/js/bootstrap-datetimepicker.js"></script>
     <script type="text/javascript">
         $(function () {
+            var date = new Date();
+            date.setDate(date.getDate() - 1); // Yesterday
             $('#id_start_date').datetimepicker({
-                language: 'nb'
+                language: 'nb',
+                minDate: date
             });
         });
     </script>

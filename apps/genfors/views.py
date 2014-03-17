@@ -144,6 +144,12 @@ def question_admin(request, question_id=None):
     context = {}
     meeting = get_active_meeting()
     if is_admin(request):
+        if not meeting:
+            if get_next_meeting():
+                messages.error(request, _(u'Den gjeldende generalforsamlingen er ikke aktiv enda eller har utgått'))
+            else:
+                messages.error(request, _(u'Det finnes ingen aktiv generalforsamling'))
+            return redirect('genfors_admin')
         if question_id is None and meeting.get_active_question():
             messages.error(request, _(u'Kan ikke legge til et nytt spørsmål når det allerede er et aktivt et'))
             return redirect('genfors_admin')
