@@ -5,6 +5,7 @@ from apps.authentication.models import OnlineUser as User
 from django.utils.translation import ugettext as _
 from hashlib import sha256
 from django.conf import settings
+from django.utils.timezone import localtime
 import operator
 
 # Statics
@@ -24,13 +25,13 @@ class Meeting(models.Model):
     '''
     The Meeting model encapsulates a single Generalforsamling with all cascading one-to-many relationships
     '''
-    start_date = models.DateTimeField(_(u'Dato'), help_text=_('Dato for arrangementsstart'), null=False)
+    start_date = models.DateTimeField(_(u'Tidspunkt'), help_text=_('Tidspunkt for arrangementsstart'), null=False)
     title = models.CharField(_(u'Tittel'), max_length=150, null=False)
     registration_locked = models.BooleanField(_(u'registration_lock'), help_text=_(u'Steng registrering'), default=True, blank=False, null=False)
     ended = models.BooleanField(_(u'event_lockdown'), help_text=_(u'Avslutt generalforsamlingen'), default=False, blank=False, null=False)
 
     def __unicode__(self):
-        return self.title + ' (' + self.start_date.strftime("%d/%m/%y") + ')'
+        return self.title + ' (' + localtime(self.start_date).strftime("%d/%m/%y %H:%M") + ')'
 
     # Return the number of attendees
     def num_attendees(self):

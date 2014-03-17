@@ -30,6 +30,15 @@ class LoginForm(forms.Form):
 
 
 class MeetingForm(forms.ModelForm):
+    helper = FormHelper()
+    helper.layout = Layout(
+        'title',
+        Field('start_date', data_date_format="DD.MM.YY hh:mm"),
+        FormActions(
+            Submit('create', _(u'Opprett nytt møte'), css_class="btn-success"),
+        )
+    )
+
     class Meta:
         model = Meeting
         fields = ['title', 'start_date']

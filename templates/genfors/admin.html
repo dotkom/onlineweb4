@@ -9,11 +9,7 @@ Generalforsamling logg inn- Online
 
 {% block styles %}
     {{ block.super }}
-    {% compress css %}
-        <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}less/jquery-ui/jquery.ui.datepicker.min.css" />
-        <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}less/jquery-ui/jquery.ui.theme.min.css" />
-        <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}less/jquery-ui/jquery.ui.core.min.css" />
-    {% endcompress %}
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}genfors/css/bootstrap-datetimepicker.min.css" />
 {% endblock %}
 
 {% block content %}
@@ -85,11 +81,7 @@ Generalforsamling logg inn- Online
             </div>
             {% else %}
             <div class="col-sm-8">
-                <form method="post">
-                    {% csrf_token %}
-                    {{ form|crispy }}
-                    <button class="btn btn-success" type="submit">Opprett nytt møte</button>
-                </form>
+                {% crispy form %}
             </div>
             {% endif %}
         </div>
@@ -131,10 +123,14 @@ Generalforsamling logg inn- Online
 
 {% block js %}
     {{ block.super }}
-    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
+    <script src="{{ STATIC_URL }}genfors/js/moment.min.js"></script>
+    <script src="{{ STATIC_URL }}genfors/js/langs.min.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}genfors/js/bootstrap-datetimepicker.js"></script>
     <script type="text/javascript">
         $(function () {
-            $('#id_start_date').datepicker({dateFormat: "dd.mm.yy"});
+            $('#id_start_date').datetimepicker({
+                language: 'nb'
+            });
         });
     </script>
 {% endblock %}
