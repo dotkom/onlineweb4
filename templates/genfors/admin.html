@@ -27,14 +27,17 @@ Generalforsamling logg inn- Online
                 <h3>Møteadministrasjon</h3>
                 <div class="btn-group-vertical">
                     {% if meeting.registration_locked %}
-                    <a href="{% url 'genfors_admin_open_registration' %}" class="btn btn-success">
-                        <span class="glyphicon glyphicon-ok-circle"></span> Åpne registrering
+                    <a href="{% url 'genfors_admin_open_registration' %}" class="btn btn-warning">
+                        <span class="glyphicon glyphicon-lock"></span> Registrering stengt
                     </a>
                     {% else %}
-                    <a href="{% url 'genfors_admin_lock_registration' %}" class="btn btn-warning">
-                        <span class="glyphicon glyphicon-lock"></span> Steng registrering
+                    <a href="{% url 'genfors_admin_lock_registration' %}" class="btn btn-success">
+                        <span class="glyphicon glyphicon-ok-circle"></span> Registrering åpen
                     </a>
                     {% endif %}
+                    <a href="{% url 'genfors_users' %}" class="btn btn-primary">
+                        <span class="glyphicon glyphicon-user"></span> Brukeradministrasjon
+                    </a>
                     <a href="{% url 'genfors_admin_end' %}" class="btn btn-danger">
                         <span class="glyphicon glyphicon-off"></span> Avslutt generalforsamlingen
                     </a>
