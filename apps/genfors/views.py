@@ -1,15 +1,17 @@
 #-*- coding: utf-8 -*-
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.utils.translation import ugettext as _
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseServerError
 from django.views.decorators.http import require_http_methods
-import json
 from apps.genfors.forms import LoginForm, MeetingForm, QuestionForm, RegisterVoterForm, AlternativeFormSet
-from apps.genfors.models import Meeting, Question, RegisteredVoter, Alternative, BooleanVote, MultipleChoice
+from apps.genfors.models import Meeting, Question, RegisteredVoter, AnonymousVoter, Alternative, BooleanVote, MultipleChoice
 from apps.genfors.models import BOOLEAN_VOTE, MULTIPLE_CHOICE
+from hashlib import sha256
 import datetime
+import json
 
 
 @login_required
@@ -17,62 +19,84 @@ def genfors(request):
     context = {}
     meeting = get_active_meeting()
 
-    # Check for session token
-    if request.session.get('registered_voter') is True:
-        # Check for active meeting
-        if meeting:
-            context['meeting'] = meeting
+    # Check for active meeting
+    if not meeting:
+        return render(request, "genfors/index.html", context)
 
-            # If there is an active question
-            if meeting.get_active_question():
-                aq = meeting.get_active_question()
-                total_votes = aq.get_votes().count()
-                alternatives = aq.get_alternatives()
+    # Check for session voter object
+    if is_registered(request):
+        context['meeting'] = meeting
 
-                context['active_question'] = {}
-                context['active_question']['total_votes'] = total_votes
-                context['active_question']['alternatives'] = alternatives
+        # If there is an active question
+        aq = meeting.get_active_question()
+        if aq:
+            reg_voter = RegisteredVoter.objects.filter(user=request.user, meeting=meeting)
+            anon_voter = AnonymousVoter.objects.get(id=request.session.get('anon_voter'))
+            if reg_voter:
+                reg_voter = reg_voter[0]
 
-                reg_voter = RegisteredVoter.objects.filter(user=request.user, meeting=meeting)
-                if reg_voter:
-                    reg_voter = reg_voter[0]
+                if aq.anonymous:
+                    context['already_voted'] = aq.already_voted(anon_voter)
                 else:
-                    reg_voter = None
-                context['registered_voter'] = reg_voter
+                    context['already_voted'] = aq.already_voted(reg_voter)
+            else:
+                reg_voter = None
 
-                context['already_voted'] = aq.already_voted(reg_voter)
+            total_votes = aq.get_votes().count()
+            alternatives = aq.get_alternatives()
 
-                res = aq.get_results()
+            context['active_question'] = {}
+            context['active_question']['total_votes'] = total_votes
+            context['active_question']['alternatives'] = alternatives
 
-                if aq.question_type is BOOLEAN_VOTE and total_votes != 0:
-                    context['active_question']['yes_percent'] = res['JA'] * 100 / total_votes
-                    context['active_question']['no_percent'] = res['NEI'] * 100 / total_votes
-                    context['active_question']['blank_percent'] = res['BLANKT'] * 100 / total_votes
+            context['registered_voter'] = reg_voter
+            context['anonymous_voter'] = anon_voter
 
-                elif aq.question_type is MULTIPLE_CHOICE and total_votes != 0:
-                    context['active_question']['multiple_choice'] = {a.description: [0, 0] for a in alternatives}
-                    context['active_question']['multiple_choice']['Blankt'] = [0, 0]
-                    for k, v in res.items():
-                        context['active_question']['multiple_choice'][k] = [v, v * 100 / total_votes]
+            res = aq.get_results()
+
+            if aq.question_type is BOOLEAN_VOTE and total_votes != 0:
+                context['active_question']['yes_percent'] = res['JA'] * 100 / total_votes
+                context['active_question']['no_percent'] = res['NEI'] * 100 / total_votes
+                context['active_question']['blank_percent'] = res['BLANKT'] * 100 / total_votes
+
+            elif aq.question_type is MULTIPLE_CHOICE and total_votes != 0:
+                context['active_question']['multiple_choice'] = {a.description: [0, 0] for a in alternatives}
+                context['active_question']['multiple_choice']['Blankt'] = [0, 0]
+                for k, v in res.items():
+                    context['active_question']['multiple_choice'][k] = [v, v * 100 / total_votes]
 
         return render(request, "genfors/index.html", context)
 
     # If user is not logged in
     else:
-
         # Process stuff from the login form
         if request.method == 'POST' and not meeting.registration_locked:
             form = RegisterVoterForm(request.POST)
             context['form'] = form
             if form.is_valid():
-
-                # Create a registered voter object if it does not already exis
+                # Creating hash
+                h = sha256()
+                h.update(settings.SECRET_KEY)
+                h.update(request.user.username)
+                h.update(form.cleaned_data['salt'])
+                h = h.hexdigest()
+                # Create a registered voter object if it does not already exist
                 reg_voter = RegisteredVoter.objects.filter(meeting=meeting, user=request.user)
                 if not reg_voter:
                     reg_voter = RegisteredVoter(user=request.user, meeting=meeting)
                     reg_voter.save()
-
-                request.session['registered_voter'] = True
+                    anon_voter = AnonymousVoter(user_hash=h, meeting=meeting)
+                    anon_voter.save()
+                else:
+                    try:
+                        anon_voter = AnonymousVoter.objects.get(user_hash=h, meeting=meeting)
+                    except AnonymousVoter.DoesNotExist:
+                        messages.error(request, _(u'Feil personlig kode'))
+                        anon_voter = None
+                if anon_voter:
+                    request.session['anon_voter'] = anon_voter.id
+                elif 'anon_voter' in request.session:
+                    del request.session['anon_voter']
                 return redirect('genfors_index')
 
         # Set registration_locked context and create login form
@@ -214,6 +238,32 @@ def question_admin(request, question_id=None):
     return redirect('genfors_admin')
 
 
+@require_http_methods(["POST"])
+@login_required
+def user_can_vote(request):
+    if is_admin(request):
+        json_response = {'success': False}
+        m = get_active_meeting()
+        if m:
+            user_id = request.POST.get('user-id')
+            try:
+                user_id = int(user_id)
+                user = RegisteredVoter.objects.get(meeting=m, id=user_id)
+                # Changing can_vote
+                user.can_vote = not user.can_vote
+                user.save()
+                json_response['can_vote': user.can_vote]
+                json_response['success'] = True
+            except ValueError:
+                json_response['error'] = 'Brukerid ikke gyldig'
+            except RegisteredVoter.DoesNotExist:
+                json_response['error'] = 'Bruker ikke funnet'
+        else:
+            json_response['error'] = 'Det er ingen aktiv generalforsamling'
+        return HttpResponse(json.dumps(json_response))
+    return HttpResponse(status_code=403, reason_phrase='Forbidden')
+
+
 @login_required
 def question_close(request, question_id):
     response = question_validate(request, question_id)
@@ -268,18 +318,22 @@ def question_delete(request, question_id):
 def vote(request):
     m = get_active_meeting()
     if m:
-
         # If user is logged in
-        if request.session.get('registered_voter') is True:
+        if is_registered(request):
             q = m.get_active_question()
+            a = AnonymousVoter.objects.get(id=request.session.get('anon_voter'))
             r = RegisteredVoter.objects.filter(user=request.user, meeting=m)
             if r:
                 r = r[0]
             else:
                 messages.error(request, 'Du er ikke registrert som oppmøtt, og kan derfor ikke avlegge stemme.')
                 return redirect('genfors_index')
-
-            if q.already_voted(r):
+            if not r.can_vote:
+                messages.error(request, 'Du har ikke tilgang til å avlegge stemme')
+                return redirect('genfors_index')
+            # v(ote) is either AnonymousVoter or RegisterVoter
+            v = a if q.anonymous else r
+            if q.already_voted(v):
                 messages.error(request, 'Du har allerede avlagt en stemme i denne saken.')
                 return redirect('genfors_index')
             # If user is registered and has not cast a vote on the active question
@@ -291,11 +345,11 @@ def vote(request):
                         if alt in valid:
                             vote = None
                             if alt == 0:
-                                vote = BooleanVote(voter=r, question=q, answer=None)
+                                vote = BooleanVote(voter=v, question=q, answer=None)
                             elif alt == 1:
-                                vote = BooleanVote(voter=r, question=q, answer=True)
+                                vote = BooleanVote(voter=v, question=q, answer=True)
                             elif alt == 2:
-                                vote = BooleanVote(voter=r, question=q, answer=False)
+                                vote = BooleanVote(voter=v, question=q, answer=False)
                             vote.save()
                             messages.success(request, 'Din stemme ble registrert!')
                             return redirect('genfors_index')
@@ -307,14 +361,14 @@ def vote(request):
                         if alt in valid:
                             vote = None
                             if alt == 0:
-                                vote = MultipleChoice(voter=r, question=q, answer=None)
+                                vote = MultipleChoice(voter=v, question=q, answer=None)
                                 vote.save()
                                 messages.success(request, 'Din stemme ble registrert!')
                                 return redirect('genfors_index')
                             else:
                                 choice = Alternative.objects.get(alt_id=alt, question=q)
                                 if choice:
-                                    vote = MultipleChoice(voter=r, question=q, answer=choice)
+                                    vote = MultipleChoice(voter=v, question=q, answer=choice)
                                     vote.save()
                                     messages.success(request, 'Din stemme ble registrert!')
                                     return redirect('genfors_index')
@@ -401,6 +455,21 @@ def get_next_meeting():
 # Helper function
 def is_admin(request):
     return request.session.get('genfors_admin') is True
+
+
+def is_registered(request):
+    try:
+        av = AnonymousVoter.objects.get(id=request.session.get('anon_voter'))
+    except AnonymousVoter.DoesNotExist:
+        return False
+    if type(av) is AnonymousVoter:
+        if av.meeting == get_active_meeting():
+            return True
+        else:
+            # RegisteredVoter object is for an older genfors
+            del request.session['anon_voter']
+            return False
+    return False
 
 
 def question_validate(request, question_id):

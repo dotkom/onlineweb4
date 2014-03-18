@@ -66,7 +66,11 @@ AlternativeFormSet = modelformset_factory(Alternative, form=AlternativeForm, can
 
 
 class RegisterVoterForm(forms.Form):
-    password = forms.CharField(widget=forms.PasswordInput(render_value=False), label=_(u"Pinkode"))
+    password = forms.CharField(widget=forms.PasswordInput(render_value=False), label=_(u"Pinkode"), help_text='Kode oppgitt under generalforsamling')
+    salt = forms.CharField(widget=forms.PasswordInput(render_value=False),
+                           label=_(u'Personlig kode'), help_text=_(u'''
+                            Personlig kode brukes for å lage en unik hash som brukes til hemmelige valg.
+                            Denne lagres ikke og det er derfor ytterst viktig at du ikke glemmer den.'''))
 
     def clean(self):
         if self._errors:

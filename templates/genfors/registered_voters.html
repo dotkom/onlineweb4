@@ -11,19 +11,47 @@ Generalforsamling brukere - Online
         <div class="row">
             <div class="page-header">
                 <button class="btn btn-warning pull-right" id="gf_admin_login">Admin</button>
-                <h2>Generalforsamling registrerte brukere</h2>
+                <h2>GENERALFORSAMLING REGISTERTE BRUKERE</h2>
             </div>
         </div>
 
         <div class="row">
             <div class="col-md-12">
-            <ul>
-            {% for user in registered_voters %}
-            <li>{{ user }}</li>
-            {% empty %}
-            <li>Ingen brukere har registrert seg enda</li>
-            {% endfor %}
-            </ul>
+                <div class="panel panel-default">
+                    <div class="panel-heading"><h4>Registerte brukere</h4></div>
+                    <table class="table table-hover">
+                        <tr>
+                            <th>Bruker</th>
+                            <th>Kan stemme</th>
+                        </tr>
+                        {% for user in registered_voters %}
+                        <tr>
+                            <td>{{ user }}</td>
+                            <td><button data-user-id="{{ user.id }}" class="vote-button btn btn-sm {% if user.can_vote %}btn-success">Ja{% else %}btn-danger">Nei{% endif %}</button></td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td>Ingen brukere har registrert seg enda</td>
+                        </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="errorModal" class="modal fade" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title">En feil skjedde</h4>
+                </div>
+                <div class="modal-body">
+                    <p>Error</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
             </div>
         </div>
     </div>
@@ -32,10 +60,62 @@ Generalforsamling brukere - Online
 
 {% block js %}
     {{ block.super }}
-    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
-    <script type="text/javascript">
-        $(function () {
-            $('#id_start_date').datepicker({dateFormat: "dd.mm.yy"});
+    <script>
+        function getCookie(name) {
+            var cookieValue = null;
+            if (document.cookie && document.cookie != '') {
+                var cookies = document.cookie.split(';');
+                for (var i = 0; i < cookies.length; i++) {
+                    var cookie = jQuery.trim(cookies[i]);
+                    // Does this cookie string begin with the name we want?
+                    if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+        var csrftoken = getCookie('csrftoken');
+        function csrfSafeMethod(method) {
+            // these HTTP methods do not require CSRF protection
+            return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+        }
+        $.ajaxSetup({
+            crossDomain: false, // obviates need for sameOrigin test
+            beforeSend: function(xhr, settings) {
+                if (!csrfSafeMethod(settings.type)) {
+                    xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                }
+            }
+        });
+        $(".vote-button").click(function (e) {
+            var button = $(this);
+            var userid = button.data("user-id");
+            $.ajax({
+                type: "post", url: '/genfors/admin/user/can_vote',
+                data: {'user-id': userid},
+                success: function(data) {
+                    if(data['success']) {
+                        button.removeClass('btn-danger btn-success');
+                        if (data['can_vote']) {
+                            button.addClass('btn-success');
+                            button.text('Ja');
+                        }
+                        else {
+                            button.addClass('btn-danger');
+                            button.text('Nei');
+                        }
+                    }
+                    else {
+                        console.log(data);
+                        var modal = $('#errorModal');
+                        modal.find('.modal-body > p').text(data['error']);
+                        modal.modal();
+                    }
+                },
+                dataType: 'json'
+            });
         });
     </script>
 {% endblock %}

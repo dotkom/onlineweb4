@@ -51,7 +51,7 @@ Generalforsamling - Online
                             {% endif %}<!-- End if question_type -->
                         {% else %}
                             <p>Du har avlagt stemme i denne saken.</p>
-                            <p>Din stemmekode: <strong>{{ registered_voter.hide_user }}</strong></p>
+                            <p>Din stemmekode: <strong>{{ anonymous_voter }}</strong></p>
                         {% endif %}<!-- End if already voted -->
                         {% endif %}<!-- End if question -->
                     </div>
@@ -63,19 +63,19 @@ Generalforsamling - Online
                             {% else %}
                                 {% with q.get_results as res %}
                                 {% if q.question_type == 0 %}
-                                    <strong>Ja</strong>: {{ res.JA }} stemme(r)<br />
+                                    <strong>Ja</strong>: {{ res.JA }} stemme{{ res.JA|pluralize:"r" }}<br />
                                     <div class="progress">
                                         <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="{{ active_question.yes_percent }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ active_question.yes_percent }}%">
                                             {{ active_question.yes_percent }}%
                                         </div>
                                     </div>
-                                    <strong>Nei</strong>: {{ res.NEI }} stemme(r)<br />
+                                    <strong>Nei</strong>: {{ res.NEI }} stemme{{ res.NEI|pluralize:"r" }}<br />
                                     <div class="progress">
                                         <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="{{ active_question.no_percent }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ active_question.no_percent }}%">
                                             {{ active_question.no_percent }}%
                                         </div>
                                     </div>
-                                    <strong>Blankt</strong>: {{ res.BLANKT }} stemme(r)<br />
+                                    <strong>Blankt</strong>: {{ res.BLANKT }} stemme{{ res.BLANKT|pluralize:"r" }}<br />
                                     <div class="progress">
                                         <div class="progress-bar progress-bar-primary" role="progressbar" aria-valuenow="{{ active_question.blank_percent }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ active_question.blank_percent }}%">
                                             {{ active_question.blank_percent }}%
@@ -86,7 +86,7 @@ Generalforsamling - Online
                                         <p>Ingen stemmer avlagt.</p>
                                     {% else %}
                                         {% for alt, votes in active_question.multiple_choice.items %}
-                                            <strong>{{ alt }}</strong>: {{ votes.0 }} stemme(r)<p />
+                                            <strong>{{ alt }}</strong>: {{ votes.0 }} stemme{{ votes.0|pluralize:"r" }}<p />
                                             <div class="progress">
                                                 <div class="progress-bar progress-bar-primary" role="progressbar" aria-valuenow="{{ votes.1 }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ votes.1 }}%">
                                                      {{ votes.1 }}%
@@ -124,7 +124,7 @@ Generalforsamling - Online
                             <ul>
                             {% for vote in q.get_votes %}
                                 <li>{% if q.anonymous %}
-                                        {{ registered_voter.hide_user }}
+                                        {{ anonymous_voter }}
                                     {% else %}
                                         {{ registered_voter }}
                                     {% endif %}

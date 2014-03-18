@@ -3,7 +3,6 @@ from datetime import datetime
 from django.db import models
 from apps.authentication.models import OnlineUser as User
 from django.utils.translation import ugettext as _
-from hashlib import sha256
 from django.conf import settings
 from django.utils.timezone import localtime
 import operator
@@ -39,7 +38,7 @@ class Meeting(models.Model):
 
     # Get attendee list as a list of strings
     def get_attendee_list(self):
-        return sorted([unicode(a) for a in RegisteredVoter.objects.filter(meeting=self)])
+        return RegisteredVoter.objects.filter(meeting=self).order_by('user__first_name', 'user__last_name')
 
     # Get the queryset of all questions
     def get_questions(self):
@@ -72,25 +71,32 @@ class Meeting(models.Model):
 # User related models
 
 
-class RegisteredVoter(models.Model):
+class AbstractVoter(models.Model):
+    meeting = models.ForeignKey(Meeting, null=False)
+
+
+class RegisteredVoter(AbstractVoter):
     '''
     The RegisteredVoter model is a wrapper for OnlineUser with added fields for attendance registry
     porpuses, as well as an added can_vote field for future use.
     '''
-    meeting = models.ForeignKey(Meeting, null=False)
     user = models.ForeignKey(User, null=False)
     can_vote = models.BooleanField(_(u'voting_right'), help_text=_(u'Har stemmerett'), null=False, default=False)
 
-    # Simple hashing function to hide realnames
-    def hide_user(self):
-        h = sha256()
-        h.update(self.user.get_full_name())
-        h.update(settings.SECRET_KEY)
-        h = h.hexdigest()[:8]
-        return h
-
     def __unicode__(self):
         return self.user.get_full_name()
+
+
+class AnonymousVoter(AbstractVoter):
+    '''
+    AnonymousVoter model is used for anonymous votes and should not be linked with a user model
+    The hash is calculated from SECRET_KEY, username and a salt provided by the user (which is never stored)
+    '''
+    # sha256
+    user_hash = models.CharField(null=False, max_length=64)
+
+    def __unicode__(self):
+        return self.user_hash[:8]
 
 
 # Question wrapper
@@ -201,15 +207,11 @@ class AbstractVote(models.Model):
     The AbstractVote model holds some key components of a vote to a specific question
     '''
     time = models.DateTimeField(_(u'timestamp'), auto_now_add=True)
-    voter = models.ForeignKey(RegisteredVoter, help_text=_(u'Bruker'), null=False)
+    voter = models.ForeignKey(AbstractVoter, help_text=_(u'Bruker'), null=False)
     question = models.ForeignKey(Question, null=False)
 
-    # Get voter name
     def get_voter_name(self):
-        if self.question.anonymous:
-            return voter.hide_user()
-        else:
-            return self.voter.user.get_full_name()
+        return unicode(voter)
 
 
 class BooleanVote(AbstractVote):
