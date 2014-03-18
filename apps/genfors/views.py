@@ -252,7 +252,7 @@ def user_can_vote(request):
                 # Changing can_vote
                 user.can_vote = not user.can_vote
                 user.save()
-                json_response['can_vote': user.can_vote]
+                json_response['can_vote'] = user.can_vote
                 json_response['success'] = True
             except ValueError:
                 json_response['error'] = 'Brukerid ikke gyldig'
