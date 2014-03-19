@@ -40,11 +40,6 @@ class RuleBundleInline(admin.TabularInline):
     inline_classes = ('grp-collapse grp-open',)  # style
 
 
-class AttendanceEventAdmin(admin.ModelAdmin):
-    model = AttendanceEvent
-    inlines = (AttendeeInline, RuleBundleInline)
-
-
 class AttendeeAdmin(admin.ModelAdmin):
     model = Attendee
     list_display = ('user', 'event', 'paid')
@@ -119,9 +114,9 @@ class EventAdmin(admin.ModelAdmin):
         form.base_fields['description'].validators=[validators.MinLengthValidator(140)]
         return form
 
+
 admin.site.register(Event, EventAdmin)
 admin.site.register(Attendee, AttendeeAdmin)
-admin.site.register(AttendanceEvent, AttendanceEventAdmin)
 admin.site.register(RuleBundle, RuleBundleAdmin)
 admin.site.register(GradeRule, GradeRuleAdmin)
 admin.site.register(UserGroupRule, UserGroupRuleAdmin)
