@@ -42,7 +42,7 @@
       <div class="meta">
         {% if event.is_attendance_event %}
           <div class="col-md-3">
-            <p>Påmeldte: {{ event.number_of_attendees_not_on_waiting_list }} / {{ event.attendance_event.max_capacity }}</p>
+            <p>Påmeldte: {{ event.attendance_event.number_of_attendees_not_on_waiting_list }} / {{ event.attendance_event.max_capacity }}</p>
           </div>
           <div class="col-md-3">
             <p>Sted: {{ event.location }}</p>

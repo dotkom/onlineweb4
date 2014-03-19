@@ -63,22 +63,6 @@ class Event(models.Model):
     def feedback_title(self):
         return self.title
 
-    @property
-    def number_of_attendees_on_waiting_list(self):
-        """
-        Sjekker antall på venteliste
-        """
-        waiting = self.attendance_event.attendees.count() - self.attendance_event.max_capacity
-        return 0 if waiting < 0 else waiting
-
-    @property
-    def number_of_attendees_not_on_waiting_list(self):
-        """
-        Sjekker hvor mange attendees som har meldt seg på innen max_grensa
-        """
-        not_waiting = self.attendance_event.attendees.count()
-        return not_waiting if not_waiting < self.attendance_event.max_capacity else self.attendance_event.max_capacity
-
     def is_attendance_event(self):
         """ Returns true if the event is an attendance event """
         return True if self.attendance_event else False
@@ -171,7 +155,7 @@ class Event(models.Model):
     @property
     def wait_list(self):
         return self.attendance_event.attendees.all()[self.attendance_event.max_capacity:]
-        return [] if self.number_of_attendees_on_waiting_list is 0 else self.attendance_event.attendees[self.attendance_event.max_capacity:]
+        return [] if self.attendance_event.number_of_attendees_on_waiting_list is 0 else self.attendance_event.attendees[self.attendance_event.max_capacity:]
 
     
     def what_place_is_user_on_wait_list(self, user):
@@ -439,6 +423,23 @@ class AttendanceEvent(models.Model):
     @property
     def waitlist_enabled(self):
         return self.waitlist
+
+    @property
+    def number_of_attendees_on_waiting_list(self):
+        """
+        Sjekker antall på venteliste
+        """
+        waiting = self.attendance_event.attendees.count() - self.attendance_event.max_capacity
+        return 0 if waiting < 0 else waiting
+
+    @property
+    def number_of_attendees_not_on_waiting_list(self):
+        """
+        Sjekker hvor mange attendees som har meldt seg på innen max_grensa
+        """
+        not_waiting = self.attendance_event.attendees.count()
+        return not_waiting if not_waiting < self.attendance_event.max_capacity else self.attendance_event.max_capacity
+
 
     def rules_satisfied(self, user):
         """
