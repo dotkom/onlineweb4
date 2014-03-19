@@ -179,6 +179,7 @@ INSTALLED_APPS = (
     'apps.feedback',
     'apps.mommy',
     'apps.profiles',
+    'apps.pizza',
 )
 
 # A sample logging configuration. The only tangible logging
@@ -258,6 +259,10 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "sekizai.context_processors.sekizai", # Wiki
     "onlineweb4.context_processors.analytics",
 )
+
+# Pizza
+PIZZA_GROUP = 'dotKom'
+PIZZA_ADMIN_GROUP = 'dotKom'
 
 # Remember to keep 'local' last, so it can override any setting.
 for settings_module in ['filebrowser', 'local']:  # local last

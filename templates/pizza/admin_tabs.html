@@ -1,0 +1,6 @@
+<ul class="nav nav-tabs">
+    <li{% if active == 'new order' %} class="active"{% endif %}><a href="{% url "pizza_admin_new" %}">New order</a></li>
+    <li{% if active == 'orders' %} class="active"{% endif %}><a href="{% url "pizza_admin_orders" %}">Manage orders</a></li>
+    <li{% if active == 'users' %} class="active"{% endif %}><a href="{% url "pizza_admin_users" %}">Manage users</a></li>
+    <li{% if active == 'order limit' %} class="active"{% endif %}><a href="{% url "pizza_admin_limit" %}">Order limit</a></li>
+</ul>

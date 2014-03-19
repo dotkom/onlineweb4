@@ -1,0 +1,23 @@
+{% extends "pizza/base_pizzasystem.html" %}
+
+{% block content %}
+<script>
+    var username = "{{ user.username }}";
+</script>
+
+<form action="" method="post">
+    {% csrf_token %}
+   <fieldset>
+        <legend>{{ form.name|title }}</legend>
+        {% for field in form %}
+            <div class="fieldWrapper">
+                <label>{{ field.label_tag }}</label>
+                <div class="input">{{ field }}</div>
+                <div class="error">{{ field.errors }}</div>
+                <div class="clear"></div>
+            </div>
+        {% endfor %}
+    </fieldset>
+    <input type="submit" class="btn btn-primary" value="Lagre" /> <span class="padding-nexto-button">eller <a href="{% url "pizza_index" %}">avbryt</a></span>
+{% endblock content %}
+

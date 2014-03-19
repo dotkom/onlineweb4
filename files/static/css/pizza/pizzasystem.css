@@ -1,0 +1,35 @@
+.fieldWrapper label {
+    float: left;
+    width: 150px;
+    text-align: right;
+    padding: 5px;
+}
+.fieldWrapper .input {
+    float: left;
+    padding: 5px;
+}
+.fieldWrapper .error {
+    float: left;
+    color: red;
+    padding: 5px;
+}
+
+.fieldWrapper textarea  {
+    height:100px;
+    width:500px;
+}
+.fieldWrapper a {
+    float: left;
+    padding: 10px;
+}
+.icon {
+    width: 30px;
+    height: 30px;
+}
+div.clear {
+    clear: both;
+}
+
+.padding-nexto-button {
+    padding-left: 10px; 
+}
