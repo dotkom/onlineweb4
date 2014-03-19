@@ -54,16 +54,17 @@ def genfors(request):
 
             res = aq.get_results()
 
-            if aq.question_type is BOOLEAN_VOTE and total_votes != 0:
-                context['active_question']['yes_percent'] = res['JA'] * 100 / total_votes
-                context['active_question']['no_percent'] = res['NEI'] * 100 / total_votes
-                context['active_question']['blank_percent'] = res['BLANKT'] * 100 / total_votes
+            if total_votes != 0 and not aq.only_show_winner:
+                if aq.question_type is BOOLEAN_VOTE:
+                    context['active_question']['yes_percent'] = res['JA'] * 100 / total_votes
+                    context['active_question']['no_percent'] = res['NEI'] * 100 / total_votes
+                    context['active_question']['blank_percent'] = res['BLANKT'] * 100 / total_votes
 
-            elif aq.question_type is MULTIPLE_CHOICE and total_votes != 0:
-                context['active_question']['multiple_choice'] = {a.description: [0, 0] for a in alternatives}
-                context['active_question']['multiple_choice']['Blankt'] = [0, 0]
-                for k, v in res.items():
-                    context['active_question']['multiple_choice'][k] = [v, v * 100 / total_votes]
+                elif aq.question_type is MULTIPLE_CHOICE and total_votes != 0:
+                    context['active_question']['multiple_choice'] = {a.description: [0, 0] for a in alternatives}
+                    context['active_question']['multiple_choice']['Blankt'] = [0, 0]
+                    for k, v in res.items():
+                        context['active_question']['multiple_choice'][k] = [v, v * 100 / total_votes]
 
         return render(request, "genfors/index.html", context)
 
@@ -277,7 +278,8 @@ def question_close(request, question_id):
 
     q = Question.objects.get(id=question_id)
     if request.method == 'POST':
-        q.set_result_and_lock()
+        q.locked = True
+        q.save()
         messages.success(request, 'Avstemning for spørsmål \'%s\' ble stengt.' % q)
     else:
         question = 'Er du sikker på at du vil avslutte spørsmål \'%s\'?' % q

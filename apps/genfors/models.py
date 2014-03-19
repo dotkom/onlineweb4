@@ -126,12 +126,11 @@ class Question(models.Model):
     locked = models.BooleanField(_(u'locked'), help_text=_(u'Steng avstemmingen'), null=False, blank=False, default=False)
     question_type = models.SmallIntegerField(_(u'Spørsmålstype'), choices=QUESTION_TYPES, null=False, default=0, blank=False)
     description = models.TextField(_(u'Beskrivelse'), help_text=_(u'Beskrivelse av saken som skal stemmes over'), max_length=500, blank=True)
-    result = models.CharField(_(u'result'), max_length=100, help_text=_(u'Resultatet av avstemmingen'), null=True, blank=True)
     majority_type = models.SmallIntegerField(_(u'Flertallstype'), choices=MAJORITY_TYPES, null=False, default=0, blank=False)
     only_show_winner = models.BooleanField(_(u'Vis kun vinner'), null=False, blank=False, default=False)
 
     # Returns results as a dictionary, either by alternative or boolean-ish types
-    def get_results(self):
+    def get_results(self, admin=False):
         retults = None
 
         if self.question_type is BOOLEAN_VOTE:
@@ -156,16 +155,22 @@ class Question(models.Model):
                     if 'Blankt' not in results:
                         results['Blankt'] = 0
                     results['Blankt'] += 1
-
-        return results
-
-    # Fetches the winner of a vote
-    def get_winner(self):
-        results = self.get_results()
         winner = max(results.iterkeys(), key=(lambda key: results[key]))
-        results = {winner: results[winner]}
+        winner_votes = results[winner]
+        total_votes = len(self.meeting.get_can_vote())
+        # Normal
+        if self.majority_type == 0:
+            minimum = 1 / float(2)
+        # Qualitative
+        elif self.majority_type == 1:
+            minimum = 2 / float(3)
+        results['__valid__'] = winner_votes / float(total_votes) > minimum
 
-        return results
+        # Admins should see all info regardless of only show winner
+        if not self.only_show_winner or admin:
+            return results
+        else:
+            return {winner: None}
 
     # Returns the queryset of alternatives connected to this question if it is a multiple choice question
     def get_alternatives(self):
@@ -178,30 +183,6 @@ class Question(models.Model):
     def reset_question(self):
         BooleanVote.objects.filter(question=self).delete()
         MultipleChoice.objects.filter(question=self).delete()
-
-    # Sets final result as a string for later fast lookup and locks question
-    def set_result_and_lock(self):
-        r = self.get_results()
-        if self.question_type is BOOLEAN_VOTE:
-            if self.only_show_winner:
-                r = self.get_winner()
-                for k, v in r.items():
-                    self.result = u'%s' % (unicode(k))
-            else:
-                self.result = 'J:' + str(r['JA']) + ' N:' + str(r['NEI']) + ' B:' + str(r['BLANKT'])
-                
-        elif self.question_type is MULTIPLE_CHOICE:
-            result_string = ''
-            if self.only_show_winner:
-                r = self.get_winner()
-                for k, v in r.items():
-                    result_string += u'%s' % (unicode(k))
-            else:
-                for k, v in r.items():
-                    result_string += u'%s: %s ' % (unicode(k), unicode(v))
-            self.result = result_string
-        self.locked = True
-        self.save()
 
     # Returns all votes connected to this question
     def get_votes(self):
