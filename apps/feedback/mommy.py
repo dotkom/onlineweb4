@@ -45,7 +45,10 @@ class FeedbackMail(Task):
 
         #return if everyone has answered
         if not not_responded:
+            feedback.active = False
+            feedback.save()
             logger.info('Everyone has answered')
+            logger.info('Feedback set to innactive')
             return message
 
         
