@@ -439,10 +439,14 @@ def genfors_end(request):
 
 # Logs out user of genfors removing the only link between that user and the anoymous votes
 def logout(request):
-    if is_registered(request):
-        del request.session['anon_voter']
-        messages.success(request, 'Du er nå logget ut av generalforsamlingen')
-    return redirect('home')
+    if request.method == 'POST':
+        if is_registered(request):
+            del request.session['anon_voter']
+            messages.success(request, 'Du er nå logget ut av generalforsamlingen')
+        return redirect('home')
+    else:
+        question = 'Er du sikker på at du vil logge ut? Den eneste måten å logge seg inn igjen er med den personlige koden du skrev inn!'
+        return render(request, 'genfors/confirm.html', {'question': question})
 
 
 # Helper functions
