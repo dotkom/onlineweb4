@@ -11,7 +11,7 @@ class Migration(SchemaMigration):
         # Adding model 'Reservation'
         db.create_table(u'events_reservation', (
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('event', self.gf('django.db.models.fields.related.OneToOneField')(related_name='reserved_seats', unique=True, to=orm['events.AttendanceEvent'])),
+            ('attendance_event', self.gf('django.db.models.fields.related.OneToOneField')(related_name='reserved_seats', unique=True, to=orm['events.AttendanceEvent'])),
             ('seats', self.gf('django.db.models.fields.PositiveIntegerField')()),
         ))
         db.send_create_signal(u'events', ['Reservation'])
@@ -150,7 +150,7 @@ class Migration(SchemaMigration):
         },
         u'events.reservation': {
             'Meta': {'object_name': 'Reservation'},
-            'event': ('django.db.models.fields.related.OneToOneField', [], {'related_name': "'reserved_seats'", 'unique': 'True', 'to': u"orm['events.AttendanceEvent']"}),
+            'attendance_event': ('django.db.models.fields.related.OneToOneField', [], {'related_name': "'reserved_seats'", 'unique': 'True', 'to': u"orm['events.AttendanceEvent']"}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'seats': ('django.db.models.fields.PositiveIntegerField', [], {})
         },
