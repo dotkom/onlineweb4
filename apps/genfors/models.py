@@ -96,7 +96,7 @@ class AnonymousVoter(AbstractVoter):
     user_hash = models.CharField(null=False, max_length=64)
 
     def __unicode__(self):
-        return self.user_hash[:8]
+        return self.user_hash[:12]
 
 
 # Question wrapper
