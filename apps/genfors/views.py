@@ -31,6 +31,7 @@ def genfors(request):
     # Check for session voter object
     if is_registered(request):
         context['meeting'] = meeting
+        context['registered_voter'] = reg_voter
 
         # If there is an active question
         aq = meeting.get_active_question()
