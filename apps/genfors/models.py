@@ -36,6 +36,14 @@ class Meeting(models.Model):
     def num_attendees(self):
         return RegisteredVoter.objects.filter(meeting=self).count()
 
+    # Returns the number of registered voter that are eligible to vote at the time of calling the function
+    def num_can_vote(self):
+        return RegisteredVoter.objects.filter(meeting=self, can_vote=True).count()
+    
+    # Returns the result set of registered voter objects that can vote at the time of calling the function
+    def get_can_vote(self):
+        return RegisteredVoter.objects.filter(meeting=self, can_vote=True)
+
     # Get attendee list as a list of strings
     def get_attendee_list(self):
         return RegisteredVoter.objects.filter(meeting=self).order_by('user__first_name', 'user__last_name')
@@ -73,6 +81,7 @@ class Meeting(models.Model):
 
 class AbstractVoter(models.Model):
     meeting = models.ForeignKey(Meeting, null=False)
+    timestamp = models.DateTimeField(auto_now_add=True)
 
 
 class RegisteredVoter(AbstractVoter):
@@ -174,10 +183,10 @@ class Question(models.Model):
             if self.only_show_winner:
                 r = self.get_winner()
                 for k, v in r.items():
-                    result_string += u'%s' % (str(k))
+                    result_string += u'%s' % (unicode(k))
             else:
                 for k, v in r.items():
-                    result_string += u'%s: %s ' % (str(k), str(v))
+                    result_string += u'%s: %s ' % (unicode(k), unicode(v))
             self.result = result_string
         self.locked = True
         self.save()

@@ -9,25 +9,35 @@ Generalforsamling brukere - Online
 <section id="generalforsamling">
     <div class="container">
         <div class="row">
+            <div class="col-md-12">
             <div class="page-header">
                 <a href="{% url 'genfors_admin' %}" class="btn btn-warning pull-right" id="gf_admin">Admin</a>
-                <h2>GENERALFORSAMLING REGISTERTE BRUKERE</h2>
+                <h2>REGISTRERTE DELTAKERE</h2>
+            </div>
             </div>
         </div>
 
         <div class="row">
             <div class="col-md-12">
                 <div class="panel panel-default">
-                    <div class="panel-heading"><h4>Registerte brukere</h4></div>
-                    <table class="table table-hover">
+                    <div class="panel-heading"><h4>Oversikt over stemmeberettigelse</h4></div>
+                    <div class="panel-body">
+                    <p>Denne oversikten viser alle brukere som er registrert som møtt på generalforsamlingen. I tillegg vises deres status som deltaker,
+                    nærmere bestemt om de har stemmerett eller ikke. Klikk på "Kan stemme" knappen for en person for å endre status. Denne statusen <u>skal</u> brukes
+                    dersom en person forlater salen for å gå på toalettet under et spørsmål, eller om personen forlater generalforsamlingen for godt.</p>
+                    <a href="/genfors/admin/"><button class="btn btn-primary">Tilbake til dashbord</button></a>
+                    </div>
+                    <table class="table table-hover table-striped">
                         <tr>
                             <th>Bruker</th>
                             <th>Kan stemme</th>
+                            <th>Regisrert</th>
                         </tr>
                         {% for user in registered_voters %}
                         <tr>
                             <td>{{ user }}</td>
                             <td><button data-user-id="{{ user.id }}" class="vote-button btn btn-sm {% if user.can_vote %}btn-success">Ja{% else %}btn-danger">Nei{% endif %}</button></td>
+                            <td>{{ user.timestamp }}</td>
                         </tr>
                         {% empty %}
                         <tr>

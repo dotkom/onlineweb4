@@ -47,7 +47,7 @@ Generalforsamling - Online
                                         {% endfor %}
                                     </fieldset>
                                 <br />
-                                <button class="btn btn.success" type="submit">Stem</button>
+                                <button class="btn btn-success" type="submit">Stem</button>
                                 </form>
                             {% endif %}<!-- End if question_type -->
                         {% else %}
@@ -59,6 +59,7 @@ Generalforsamling - Online
                     <div class="col-xs-12 col-sm-5 col-md-4">
                         <h3>Foreløpig status</h3>
                         {% if q %}
+                        <p><strong>Stemmer</strong>: {{ q.get_votes.count }} av {{ meeting.num_can_vote }}</p>
                         {% if already_voted %}
                             {% if q.only_show_winner %}
                                 <p>Vinneren vil bli annonsert når alle stemmene er telt opp.</p>
