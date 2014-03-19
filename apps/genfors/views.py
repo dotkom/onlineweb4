@@ -28,14 +28,14 @@ def genfors(request):
     if reg_voter:
         reg_voter = reg_voter[0]
 
-    # Check for session voter object
+    # Check for cookie voter hash
     if is_registered(request):
         context['meeting'] = meeting
 
         # If there is an active question
         aq = meeting.get_active_question()
         if aq:
-            anon_voter = AnonymousVoter.objects.get(id=request.session.get('anon_voter'))
+            anon_voter = AnonymousVoter.objects.get(user_hash=request.COOKIES.get('anon_voter'), meeting=meeting)
             if aq.anonymous:
                 context['already_voted'] = aq.already_voted(anon_voter)
             else:
@@ -92,12 +92,17 @@ def genfors(request):
                     except AnonymousVoter.DoesNotExist:
                         messages.error(request, _(u'Feil personlig kode'))
                         anon_voter = None
+                response = redirect('genfors_index')
                 if anon_voter:
-                    request.session['anon_voter'] = anon_voter.id
-                elif 'anon_voter' in request.session:
-                    del request.session['anon_voter']
-                return redirect('genfors_index')
-
+                    # Anyonous voter hash stored in cookies for 1 day
+                    response.set_cookie('anon_voter', anon_voter.user_hash, expires=datetime.datetime.now() + datetime.timedelta(days=1))
+                elif 'anon_voter' in request.COOKIES:
+                    response.delete_cookie('anon_voter')
+                return response
+            elif 'anon_voter' in request.COOKIES:
+                response = render(request, "genfors/index_login.html", context)
+                response.delete_cookie('anon_voter')
+                return response
         # Set registration_locked context and create login form
         else:
             context['form'] = RegisterVoterForm()
@@ -195,7 +200,6 @@ def question_admin(request, question_id=None):
                     question.reset_question()
                     messages.success(request, _(u'Spørsmål ble oppdatert'))
                 question.save()
-                print type(question.question_type)
                 if question.question_type == 1:
                     alternatives = formset.save(commit=False)
                     # # Add new
@@ -321,7 +325,7 @@ def vote(request):
         # If user is logged in
         if is_registered(request):
             q = m.get_active_question()
-            a = AnonymousVoter.objects.get(id=request.session.get('anon_voter'))
+            a = AnonymousVoter.objects.get(user_hash=request.COOKIES.get('anon_voter'), meeting=m)
             r = RegisteredVoter.objects.filter(user=request.user, meeting=m)
             if r:
                 r = r[0]
@@ -439,11 +443,11 @@ def genfors_end(request):
 
 # Logs out user of genfors removing the only link between that user and the anoymous votes
 def logout(request):
+    response = redirect('home')
     if is_registered(request):
-        del request.session['anon_voter']
+        response.delete_cookie('anon_voter')
         messages.success(request, 'Du er nå logget ut av generalforsamlingen')
-    return redirect('home')
-
+    return response
 
 # Helper functions
 
@@ -470,18 +474,12 @@ def is_admin(request):
 
 
 def is_registered(request):
+    meeting = get_active_meeting()
     try:
-        av = AnonymousVoter.objects.get(id=request.session.get('anon_voter'))
+        av = AnonymousVoter.objects.get(user_hash=request.COOKIES.get('anon_voter'), meeting=meeting)
     except AnonymousVoter.DoesNotExist:
         return False
-    if type(av) is AnonymousVoter:
-        if av.meeting == get_active_meeting():
-            return True
-        else:
-            # RegisteredVoter object is for an older genfors
-            del request.session['anon_voter']
-            return False
-    return False
+    return True
 
 
 def question_validate(request, question_id):
