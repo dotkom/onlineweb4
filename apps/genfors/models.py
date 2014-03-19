@@ -36,6 +36,9 @@ class Meeting(models.Model):
     def num_attendees(self):
         return RegisteredVoter.objects.filter(meeting=self).count()
 
+    def num_can_vote(self):
+        return RegisteredVoter.objects.filter(meeting=self, can_vote=True).count()
+
     # Get attendee list as a list of strings
     def get_attendee_list(self):
         return RegisteredVoter.objects.filter(meeting=self).order_by('user__first_name', 'user__last_name')
