@@ -78,7 +78,7 @@ def feedback_results(request, applabel, appmodel, object_id, feedback_id, token=
     token_url = u"%s%sresults/%s" % (request.META['HTTP_HOST'], fbr.get_absolute_url(), rt.token)
         
     return render(request, 'feedback/results.html',{'question_and_answers': question_and_answers, 
-        'description': fbr.description, 'token_url' : token_url, 'token': token})
+        'description': fbr.description, 'token_url' : token_url, 'token': token, 'display_fos': fbr.feedback.display_field_of_study})
 
 
 @staff_member_required
@@ -109,15 +109,17 @@ def get_chart_data(request, applabel, appmodel, object_id, feedback_id, token=Fa
             for answer in answers:
                 answer_count[int(answer.answer)] += 1
             rating_answers.append(answer_count[1:])
-    
-    fos = fbr.field_of_study_answers.all()
-    answer_count = defaultdict(int)
-    for answer in fos:
-        answer_count[str(answer)] += 1
+        
+    if fbr.feedback.display_field_of_study or not token:
+        fos = fbr.field_of_study_answers.all()
+        answer_count = defaultdict(int)
+        for answer in fos:
+            answer_count[str(answer)] += 1
+        
+        answer_collection['replies']['fos'] = answer_count.items()
 
     answer_collection['replies']['ratings'] = rating_answers
     answer_collection['replies']['titles'] = rating_titles
-    answer_collection['replies']['fos'] = answer_count.items()
    
     return HttpResponse(json.dumps(answer_collection), mimetype='application/json')
 

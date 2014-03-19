@@ -138,6 +138,8 @@ class Feedback(models.Model):
     feedback_id = models.AutoField(primary_key=True)
     author = models.ForeignKey(User)
     description = models.CharField(_(u'beskrivelse'), max_length=100)
+    display_field_of_study = models.BooleanField(_(u'Vis studie oversikt'), default=True, 
+        help_text=_('Grafen over studiefelt vil bli vist til bedriften'))
  
     @property
     def ratingquestions(self):
