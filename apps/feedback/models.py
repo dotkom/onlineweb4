@@ -186,8 +186,9 @@ class TextQuestion(models.Model):
         related_name='text_questions')
 
     order = models.SmallIntegerField(_(u'Rekkefølge'), default=10)
-
     label = models.CharField(_(u'Spørsmål'), blank=False, max_length=256)
+    display = models.BooleanField(_(u'Vis til bedrift'), default=True)
+
 
     def __unicode__(self):
         return self.label
@@ -219,8 +220,8 @@ class RatingQuestion(models.Model):
         related_name='rating_questions')
 
     order = models.SmallIntegerField(_(u'Rekkefølge'), default=20)
-
     label = models.CharField(_(u'Spørsmål'), blank=False, max_length=256)
+    display = models.BooleanField(_(u'Vis til bedrift'), default=True)
 
     def __unicode__(self):
         return self.label
