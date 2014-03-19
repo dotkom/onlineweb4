@@ -177,7 +177,13 @@ class Question(models.Model):
     def set_result_and_lock(self):
         r = self.get_results()
         if self.question_type is BOOLEAN_VOTE:
-            self.result = 'J:' + str(r['JA']) + ' N:' + str(r['NEI']) + ' B:' + str(r['BLANKT'])
+            if self.only_show_winner:
+                r = self.get_winner()
+                for k, v in r.items():
+                    self.result = u'%s' % (unicode(k))
+            else:
+                self.result = 'J:' + str(r['JA']) + ' N:' + str(r['NEI']) + ' B:' + str(r['BLANKT'])
+                
         elif self.question_type is MULTIPLE_CHOICE:
             result_string = ''
             if self.only_show_winner:

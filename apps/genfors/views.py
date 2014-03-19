@@ -31,6 +31,7 @@ def genfors(request):
     # Check for cookie voter hash
     if is_registered(request):
         context['meeting'] = meeting
+        context['registered_voter'] = reg_voter
 
         # If there is an active question
         aq = meeting.get_active_question()
@@ -443,11 +444,15 @@ def genfors_end(request):
 
 # Logs out user of genfors removing the only link between that user and the anoymous votes
 def logout(request):
-    response = redirect('home')
-    if is_registered(request):
-        response.delete_cookie('anon_voter')
-        messages.success(request, 'Du er nå logget ut av generalforsamlingen')
-    return response
+    if request.method == 'POST':
+        response = redirect('home')
+        if is_registered(request):
+            response.delete_cookie('anon_voter')
+            messages.success(request, 'Du er nå logget ut av generalforsamlingen')
+        return response
+    else:
+        question = 'Er du sikker på at du vil logge ut? Den eneste måten å logge seg inn igjen er med den personlige koden du skrev inn!'
+        return render(request, 'genfors/confirm.html', {'question': question})
 
 # Helper functions
 

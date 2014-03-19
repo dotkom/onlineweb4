@@ -24,32 +24,31 @@ Generalforsamling - Online
                         <div class="well">{% if q %}{{ q.description }}{% else %}Ingen aktiv sak.{% endif %}</div>
                         {% if q %}
                         {% if not already_voted %}
+                            <p>Velg ett av alternativene:</p>
+                            <form action="/genfors/vote" id="vote_form" method="post">
+                            {% csrf_token %}
                             {% if q.question_type == 0 %}
-                                <p>Velg ett av alternativene:</p>
-                                <form action="/genfors/vote" id="vote" method="post">
-                                    {% csrf_token %}
-                                    <fieldset>
-                                    <input type="radio" id="0" name="choice" value="0" checked> Blankt</input><br />
-                                    <input type="radio" id="1" name="choice" value="1"> Ja</input><br />
-                                    <input type="radio" id="2" name="choice" value="2"> Nei</input><br />
-                                    </fieldset>
-                                    <br />
-                                    <button class="btn btn-success" type="submit">Stem</button>
-                                </form>
+                                <fieldset>
+                                <input type="radio" id="0" name="choice" value="0" checked> Blankt</input><br />
+                                <input type="radio" id="1" name="choice" value="1"> Ja</input><br />
+                                <input type="radio" id="2" name="choice" value="2"> Nei</input><br />
+                                </fieldset>
                             {% else %}
-                                <p>Velg ett av alternativene:</p>
-                                <form action="/genfors/vote" id="vote" method="post">
-                                    {% csrf_token %}
-                                    <fieldset>
-                                        <input type="radio" id="0" name="choice" value="0" checked> Blankt</input><br />
-                                        {% for alt in active_question.alternatives %}
-                                            <input type="radio" id="{{ alt.alt_id }}" name="choice" value="{{ alt.alt_id }}"> {{ alt.description }}</input><br />
-                                        {% endfor %}
-                                    </fieldset>
-                                <br />
-                                <button class="btn btn-success" type="submit">Stem</button>
-                                </form>
+                                <fieldset>
+                                    <input type="radio" id="0" name="choice" value="0" checked> Blankt</input><br />
+                                    {% for alt in active_question.alternatives %}
+                                        <input type="radio" id="{{ alt.alt_id }}" name="choice" value="{{ alt.alt_id }}"> {{ alt.description }}</input><br />
+                                    {% endfor %}
+                                </fieldset>
                             {% endif %}<!-- End if question_type -->
+                                <br />
+                                <button class="btn btn-primary" id="verify_vote">Stem</button><br />
+                                <div class="voteverification" style="display:none">
+                                    <br />
+                                    <p>Er du sikker på at du ønsker å stemme på dette alternativet?</p>
+                                    <button class="btn btn-success" type="submit">JA</button> <button class="btn btn-danger" id="cancel_vote">NEI</button>
+                                </div>
+                            </form>
                         {% else %}
                             <p>Du har avlagt stemme i denne saken.</p>
                             <p>Din stemmekode: <strong>{{ anonymous_voter }}</strong></p>
@@ -178,5 +177,5 @@ Generalforsamling - Online
 
 {% block js %}
     {{ block.super }}
-    <!-- insert JS-stuff here -->
+    <script src="/static/js/genfors.js"></script>
 {% endblock %}
