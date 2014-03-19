@@ -13,6 +13,8 @@ from apps.events.models import RuleBundle
 from apps.events.models import FieldOfStudyRule
 from apps.events.models import GradeRule
 from apps.events.models import UserGroupRule
+from apps.events.models import Reservation
+from apps.events.models import Reservee
 from apps.feedback.admin import FeedbackRelationInline
 
 
@@ -139,9 +141,32 @@ class EventAdmin(admin.ModelAdmin):
         return form
 
 
+class ReserveeInline(admin.TabularInline):
+    model = Reservee
+    extra = 1
+    classes = ('grp-collapse grp-open',)  # style
+    inline_classes = ('grp-collapse grp-open',)  # style
+
+    
+class ReservationAdmin(admin.ModelAdmin):
+    model = Reservation
+    inlines = (ReserveeInline,)
+    max_num = 1
+    extra = 0
+    list_display = ('attendance_event', 'seats', 'filled_seats',)
+    classes = ('grp-collapse grp-open',)  # style
+    inline_classes = ('grp-collapse grp-open',)  # style
+
+    def save_model(self, request, obj, form, change):
+        if obj.seats > obj.attendance_event.attendees.count():
+            obj.seats = obj.attendance_event.free_seats
+        obj.save()
+            
+    
 admin.site.register(Event, EventAdmin)
 admin.site.register(Attendee, AttendeeAdmin)
 admin.site.register(RuleBundle, RuleBundleAdmin)
 admin.site.register(GradeRule, GradeRuleAdmin)
 admin.site.register(UserGroupRule, UserGroupRuleAdmin)
 admin.site.register(FieldOfStudyRule, FieldOfStudyRuleAdmin)
+admin.site.register(Reservation, ReservationAdmin)
