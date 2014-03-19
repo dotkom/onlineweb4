@@ -58,6 +58,7 @@ Generalforsamling - Online
                     <div class="col-xs-12 col-sm-5 col-md-4">
                         <h3>Foreløpig status</h3>
                         {% if q %}
+                        {% if already_voted %}
                             {% if q.only_show_winner %}
                                 <p>Vinneren vil bli annonsert når alle stemmene er telt opp.</p>
                             {% else %}
@@ -98,6 +99,9 @@ Generalforsamling - Online
                                 {% endwith %}
                             {% endif %}<!-- End if only_show_winner -->
                         {% else %}
+                            <p>Du må stemme først før du kan se status.</p>
+                        {% endif %}
+                        {% else %}
                             <p>Ingen aktiv sak.</p>
                         {% endif %}<!-- End if question -->
                     </div>
@@ -121,6 +125,7 @@ Generalforsamling - Online
                             {% if q.only_show_winner %}
                                 <p>Vinneren vil bli annonsert når alle stemmene er telt opp</p>
                             {% else %}
+                            {% if already_voted %}
                             <ul>
                             {% for vote in q.get_votes %}
                                 <li>{% if q.anonymous %}
@@ -148,6 +153,9 @@ Generalforsamling - Online
                                 </li>
                             {% endfor %}
                             </ul>
+                            {% else %}
+                                <p>Du må stemme først før du kan se status.</p>
+                            {% endif %}
                             {% endif %}
                         {% else %}
                         <p>Ingen aktiv sak.</p>
