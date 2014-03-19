@@ -114,7 +114,10 @@ def registered_voters(request):
         meeting = get_active_meeting()
         if meeting:
             context['registered_voters'] = meeting.get_attendee_list()
-    return render(request, "genfors/registered_voters.html", context)
+        return render(request, "genfors/registered_voters.html", context)
+    else:
+        messages.error(request, 'Du har ikke tilgang til dette')
+        return redirect('genfors_admin')
 
 
 @login_required
