@@ -418,7 +418,6 @@ def genfors_open_registration(request):
     return redirect('genfors_admin')
 
 
-
 @login_required
 def genfors_end(request):
     if is_admin(request):
@@ -436,6 +435,17 @@ def genfors_end(request):
     else:
         messages.error(request, 'Du har ikke tilgang til dette')
     return redirect('genfors_admin')
+
+
+# Logs out user of genfors removing the only link between that user and the anoymous votes
+def logout(request):
+    if is_registered(request):
+        del request.session['anon_voter']
+        messages.success(request, 'Du er nå logget ut av generalforsamlingen')
+    return redirect('home')
+
+
+# Helper functions
 
 
 def get_active_meeting():
