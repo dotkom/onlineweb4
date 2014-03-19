@@ -53,7 +53,7 @@ class MeetingForm(forms.ModelForm):
 class QuestionForm(forms.ModelForm):
     class Meta:
         model = Question
-        fields = ['description', 'anonymous', 'only_show_winner', 'question_type']
+        fields = ['description', 'anonymous', 'only_show_winner', 'majority_type', 'question_type']
 
 
 class AlternativeForm(forms.ModelForm):

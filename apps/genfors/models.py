@@ -14,6 +14,11 @@ QUESTION_TYPES = [
     (1, _(u'Multiple Choice')),
 ]
 
+MAJORITY_TYPES = [
+    (0, _(u'Alminnelig flertall (1/2)')),
+    (1, _(u'Kvalifisert flertall (2/3)')),
+]
+
 BOOLEAN_VOTE = 0
 MULTIPLE_CHOICE = 1
 
@@ -122,6 +127,7 @@ class Question(models.Model):
     question_type = models.SmallIntegerField(_(u'Spørsmålstype'), choices=QUESTION_TYPES, null=False, default=0, blank=False)
     description = models.TextField(_(u'Beskrivelse'), help_text=_(u'Beskrivelse av saken som skal stemmes over'), max_length=500, blank=True)
     result = models.CharField(_(u'result'), max_length=100, help_text=_(u'Resultatet av avstemmingen'), null=True, blank=True)
+    majority_type = models.SmallIntegerField(_(u'Flertallstype'), choices=MAJORITY_TYPES, null=False, default=0, blank=False)
     only_show_winner = models.BooleanField(_(u'Vis kun vinner'), null=False, blank=False, default=False)
 
     # Returns results as a dictionary, either by alternative or boolean-ish types
