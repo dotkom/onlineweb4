@@ -11,18 +11,20 @@ Generalforsamling bekreft valg - Online
 <section id="generalforsamling">
     <div class="container">
         <div class="row">
-            <div class="page-header">
-                <a href="{% url 'genfors_admin_logout' %}"class="btn btn-warning pull-right" id="gf_admin_logout">Logg ut</a>
-                <h2>Generalforsamling adminpanel</h2>
+            <div class="col-md-12">
+                <div class="page-header">
+                    <a href="{% url 'genfors_admin_logout' %}"class="btn btn-warning pull-right" id="gf_admin_logout">Logg ut</a>
+                    <h2>Administrasjonspanel</h2>
+                </div>
             </div>
         </div>
         <div class="row">
-            <div class="col-lg-8">
+            <div class="col-md-12">
                 <h4><p id="text-danger">{{ question }}</p></h4>
                 <form method="post">
                     {% csrf_token %}
-                    <button class="btn btn-danger">Bekreft</button>
-                    <a class="btn btn-primary" href="{% url 'genfors_admin' %}">Avbryt</a>
+                    <button class="btn btn-success">Bekreft</button>
+                    <a class="btn btn-danger" href="{% url 'genfors_admin' %}">Avbryt</a>
                 </form>
             </div>
         </div>

@@ -110,14 +110,25 @@ Generalforsamling - Online
                 <div class="row">
                     <div class="col-xs-12 col-sm-7 col-md-8">
                         <h3>Avsluttede saker</h3>
-                        <p>Liste over avsluttede saker og deres sluttresultat.</p>
-                        <p class="text-muted">
-                        <ol reversed>
-                            {% for question in meeting.get_locked_questions %}
-                                <li>{{ question.description }} ({{ question.result }})</li>
-                            {% endfor %}
-                        </ol>
-                        </p>
+                        <div class="panel">
+                            <div class="panel-header">
+                                <h3>Liste over avsluttede saker og resultat</h3>
+                            </div>
+                            <table class="table table-striped table-hover">
+                                <tr>
+                                    <th>Sak</th>
+                                    <th>Flertallskrav</th>
+                                    <th>Resultat</th>
+                                </tr>
+                                {% for question in meeting.get_locked_questions %}
+                                    <tr>
+                                        <td>{{ question.description }}</td>
+                                        <td>{% if question.majority_type == 0 %}Alminnelig{% else %}Kvalitativt{% endif %}</td>
+                                        <td>// RESULT //</td>
+                                    </tr>
+                                {% endfor %}
+                            </table>
+                        </div>
                     </div>
                     <div class="col-xs-12 col-sm-5 col-md-4" id="stemmer">
                         <h3>Stemmer</h3>
