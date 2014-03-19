@@ -81,7 +81,7 @@ class Meeting(models.Model):
 
 class AbstractVoter(models.Model):
     meeting = models.ForeignKey(Meeting, null=False)
-    timestamp = models.DatetimeField(auto_now_add=True, null=False, blank=False)
+    timestamp = models.DateTimeField(auto_now_add=True)
 
 
 class RegisteredVoter(AbstractVoter):
