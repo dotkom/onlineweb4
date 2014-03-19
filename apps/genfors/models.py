@@ -138,7 +138,7 @@ class Question(models.Model):
                         results[a.answer.description] = 0
                     results[a.answer.description] += 1
                 else:
-                    if 0 not in results:
+                    if 'Blankt' not in results:
                         results['Blankt'] = 0
                     results['Blankt'] += 1
 

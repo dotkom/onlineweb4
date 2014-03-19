@@ -124,9 +124,9 @@ Generalforsamling - Online
                             <ul>
                             {% for vote in q.get_votes %}
                                 <li>{% if q.anonymous %}
-                                        {{ anonymous_voter }}
+                                        {{ vote.voter.anonymousvoter }}
                                     {% else %}
-                                        {{ registered_voter }}
+                                        {{ vote.voter.registeredvoter }}
                                     {% endif %}
                                     {% if q.question_type == 0 %}<!-- If question type is boolean -->
                                         {% if vote.answer %}
