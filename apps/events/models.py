@@ -436,6 +436,10 @@ class AttendanceEvent(models.Model):
     rule_bundles = models.ManyToManyField(RuleBundle, blank=True, null=True)
 
     @property
+    def free_seats(self):
+        return self.max_capacity - self.attendees.count() 
+
+    @property
     def room_on_event(self):
         return True if (self.attendees.count() < self.max_capacity) or self.waitlist else False
 
@@ -538,9 +542,19 @@ class Attendee(models.Model):
 
 
 class Reservation(models.Model):
-    event = models.OneToOneField(AttendanceEvent, related_name="reserved_seats")
+    attendance_event = models.OneToOneField(AttendanceEvent, related_name="reserved_seats")
     seats = models.PositiveIntegerField(u"reserverte plasser", blank=False, null=False)
-    
+
+    @property
+    def filled_seats(self):
+        return self.reservees.all().count()
+
+    def __unicode__(self):
+        return "Reservasjoner for %s" % self.attendance_event.event.title
+
+    class Meta:
+        verbose_name = _("reservasjon")
+        verbose_name_plural = _("reservasjoner")
 
 class Reservee(models.Model):
     """
@@ -551,12 +565,14 @@ class Reservee(models.Model):
     # julius andreas gimli arn macgyver chewbacka highlander elessar-jankov
     name = models.CharField(u'navn', max_length=69)
     note = models.CharField(u'notat', max_length=100)
-    allergies = models.CharField(u'allergier', max_length=200)
+    allergies = models.CharField(u'allergier', max_length=200, blank=True, null=True)
     
     def __unicode__(self):
         return self.name
 
     class Meta:
+        verbose_name = _("reservasjon")
+        verbose_name_plural = _("reservasjoner")
         ordering = ['id']
 
 
