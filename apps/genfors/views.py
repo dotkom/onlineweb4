@@ -4,6 +4,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.utils.translation import ugettext as _
+from django.utils import timezone
 from django.http import HttpResponse, HttpResponseServerError
 from django.views.decorators.http import require_http_methods
 from apps.genfors.forms import LoginForm, MeetingForm, QuestionForm, RegisterVoterForm, AlternativeFormSet
@@ -23,6 +24,10 @@ def genfors(request):
     if not meeting:
         return render(request, "genfors/index.html", context)
 
+    reg_voter = RegisteredVoter.objects.filter(user=request.user, meeting=meeting)
+    if reg_voter:
+        reg_voter = reg_voter[0]
+
     # Check for session voter object
     if is_registered(request):
         context['meeting'] = meeting
@@ -30,17 +35,11 @@ def genfors(request):
         # If there is an active question
         aq = meeting.get_active_question()
         if aq:
-            reg_voter = RegisteredVoter.objects.filter(user=request.user, meeting=meeting)
             anon_voter = AnonymousVoter.objects.get(id=request.session.get('anon_voter'))
-            if reg_voter:
-                reg_voter = reg_voter[0]
-
-                if aq.anonymous:
-                    context['already_voted'] = aq.already_voted(anon_voter)
-                else:
-                    context['already_voted'] = aq.already_voted(reg_voter)
+            if aq.anonymous:
+                context['already_voted'] = aq.already_voted(anon_voter)
             else:
-                reg_voter = None
+                context['already_voted'] = aq.already_voted(reg_voter)
 
             total_votes = aq.get_votes().count()
             alternatives = aq.get_alternatives()
@@ -70,7 +69,7 @@ def genfors(request):
     # If user is not logged in
     else:
         # Process stuff from the login form
-        if request.method == 'POST' and not meeting.registration_locked:
+        if request.method == 'POST' and (reg_voter or not meeting.registration_locked):
             form = RegisterVoterForm(request.POST)
             context['form'] = form
             if form.is_valid():
@@ -102,10 +101,8 @@ def genfors(request):
         # Set registration_locked context and create login form
         else:
             context['form'] = RegisterVoterForm()
-            if meeting:
+            if not reg_voter:
                 context['registration_locked'] = meeting.registration_locked
-            else:
-                context['registration_locked'] = True
 
     return render(request, "genfors/index_login.html", context)
 
@@ -440,7 +437,9 @@ def genfors_end(request):
 
 def get_active_meeting():
     today = datetime.date.today()
-    meetings = Meeting.objects.filter(start_date__range=[today, today + datetime.timedelta(hours=24)], ended=False).order_by('-start_date')
+    hour24 = datetime.timedelta(hours=24)
+    meetings = Meeting.objects.filter(start_date__lte=timezone.now(), ended=False,
+                                      start_date__range=[today - hour24, today + hour24]).order_by('-start_date')
     if meetings:
         return meetings[0]
 
