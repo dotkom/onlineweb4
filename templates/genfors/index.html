@@ -124,7 +124,7 @@ Generalforsamling - Online
                                 {% for question in meeting.get_locked_questions %}
                                     <tr>
                                         <td>{{ question.description }}</td>
-                                        <td>{% if question.majority_type == 0 %}Alminnelig{% else %}Kvalitativt{% endif %}</td>
+                                        <td>{% if question.majority_type == 0 %}Alminnelig (1/2){% else %}Kvalitativt (2/3){% endif %}</td>
                                         <td>// RESULT //</td>
                                     </tr>
                                 {% empty %}
