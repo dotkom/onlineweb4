@@ -26,7 +26,7 @@
                         <div>
                             <img width="100%" src="{% version article.image 'article_full' %}" alt="{{ article.heading }}"/>
                             <div class="col-md-12 photograph-detail-meta">
-                                <span class="meta-caption">{% if article.multiple_photographers %} Fotograf</span> {{ article.photographers }} {% endif %}
+                                <span class="meta-caption">{% if article.photographers %} Fotograf</span> {{ article.photographers }} {% endif %}
                             </div>
                         </div>
                     </div>
@@ -55,7 +55,7 @@
                     </div>
                 </div>
                 <div class="col-md-12 article-detail-meta">
-                    <span class="meta-caption">Av</span> {% if article.multiple_authors %} {{ article.additional_authors }} og {% endif %} {{ article.created_by.get_full_name }} |
+                    <span class="meta-caption">Av</span> {% if article.additional_authors %} {{ article.additional_authors }} og {% endif %} {{ article.created_by.get_full_name }} |
                     <span class="meta-caption">Publisert</span> {{ article.published_date }}
                     {% if article.is_changed %} |
                     <span class="meta-caption">Endret</span> {{ article.changed_date }}
