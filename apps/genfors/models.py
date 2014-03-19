@@ -164,13 +164,16 @@ class Question(models.Model):
         # Qualitative
         elif self.majority_type == 1:
             minimum = 2 / float(3)
-        results['__valid__'] = winner_votes / float(total_votes) > minimum
+
+        res = {'valid': winner_votes / float(total_votes) > minimum, 'data': {}}
 
         # Admins should see all info regardless of only show winner
         if not self.only_show_winner or admin:
-            return results
+            res['data'] = results
+            return res
         else:
-            return {winner: None}
+            res['data'] = {winner: None}
+            return res
 
     # Returns the queryset of alternatives connected to this question if it is a multiple choice question
     def get_alternatives(self):
