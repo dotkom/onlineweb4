@@ -134,18 +134,19 @@ class Question(models.Model):
         results = None
 
         if self.question_type is BOOLEAN_VOTE:
-            results = {'JA': 0, 'NEI': 0, 'BLANKT': 0}
+            results = {'Ja': 0, 'Nei': 0, 'Blankt': 0}
             for a in BooleanVote.objects.filter(question=self):
                 if a.answer is None:
-                    results['BLANKT'] += 1
+                    results['Blankt'] += 1
                 elif a.answer is False:
-                    results['NEI'] += 1
+                    results['Nei'] += 1
                 elif a.answer is True:
-                    results['JA'] += 1
+                    results['Ja'] += 1
 
         elif self.question_type is MULTIPLE_CHOICE:
             mc = MultipleChoice.objects.filter(question=self)
-            results = {}
+            results = {alt.description: 0 for alt in Alternative.objects.filter(question=self)}
+            results['Blankt'] = 0
             for a in mc:
                 if a.answer is not None:
                     if a.answer.description not in results:
@@ -176,12 +177,23 @@ class Question(models.Model):
                 res['valid'] = winner_votes / float(total_votes) >= minimum
 
             # Admins should see all info regardless of only show winner
-            if not self.only_show_winner or admin:
+            if admin or not self.only_show_winner:
                 res['data'] = results
                 return res
             else:
                 res['data'] = {winner: None}
                 return res
+        else:
+            return None
+
+    def get_admin_results(self):
+        return self.get_results(admin=True)
+
+    # Gets the name of the alt with the most votes
+    def get_leader(self):
+        results = self.get_results()
+        if results:
+            return max(results['data'].iterkeys(), key=lambda key: results['data'][key])
         else:
             return None
 
