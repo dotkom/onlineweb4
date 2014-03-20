@@ -131,7 +131,7 @@ class Question(models.Model):
 
     # Returns results as a dictionary, either by alternative or boolean-ish types
     def get_results(self, admin=False):
-        retults = None
+        results = None
 
         if self.question_type is BOOLEAN_VOTE:
             results = {'JA': 0, 'NEI': 0, 'BLANKT': 0}
@@ -155,25 +155,35 @@ class Question(models.Model):
                     if 'Blankt' not in results:
                         results['Blankt'] = 0
                     results['Blankt'] += 1
-        winner = max(results.iterkeys(), key=(lambda key: results[key]))
-        winner_votes = results[winner]
-        total_votes = len(self.meeting.get_can_vote())
-        # Normal
-        if self.majority_type == 0:
-            minimum = 1 / float(2)
-        # Qualitative
-        elif self.majority_type == 1:
-            minimum = 2 / float(3)
 
-        res = {'valid': winner_votes / float(total_votes) > minimum, 'data': {}}
+        if results:
+            winner = max(results.iterkeys(), key=(lambda key: results[key]))
+            winner_votes = results[winner]
 
-        # Admins should see all info regardless of only show winner
-        if not self.only_show_winner or admin:
-            res['data'] = results
-            return res
+            total_votes = len(self.meeting.get_can_vote())
+
+            # Normal
+            if self.majority_type == 0:
+                minimum = 1 / float(2)
+
+            # Qualitative
+            elif self.majority_type == 1:
+                minimum = 2 / float(3)
+        
+            res = {'valid': False, 'data': {}}
+
+            if total_votes != 0:
+                res['valid'] = winner_votes / float(total_votes) >= minimum
+
+            # Admins should see all info regardless of only show winner
+            if not self.only_show_winner or admin:
+                res['data'] = results
+                return res
+            else:
+                res['data'] = {winner: None}
+                return res
         else:
-            res['data'] = {winner: None}
-            return res
+            return None
 
     # Returns the queryset of alternatives connected to this question if it is a multiple choice question
     def get_alternatives(self):

@@ -21,6 +21,9 @@ Generalforsamling bekreft valg - Online
         <div class="row">
             <div class="col-md-12">
                 <h4><p id="text-danger">{{ question }}</p></h4>
+                {% if description %}
+                <p>{{ description }}</p>
+                {% endif %}
                 <form method="post">
                     {% csrf_token %}
                     <button class="btn btn-success">Bekreft</button>

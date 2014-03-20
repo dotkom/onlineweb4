@@ -23,61 +23,67 @@ Generalforsamling - Online
                         <h3>Aktiv sak</h3>
                         <div class="well">{% if q %}{{ q.description }}{% else %}Ingen aktiv sak.{% endif %}</div>
                         {% if q %}
-                        {% if not already_voted %}
-                            <p>Velg ett av alternativene:</p>
-                            <form action="/genfors/vote" id="vote_form" method="post">
-                            {% csrf_token %}
-                            {% if q.question_type == 0 %}
-                                <fieldset>
-                                <input type="radio" id="0" name="choice" value="0" checked> Blankt</input><br />
-                                <input type="radio" id="1" name="choice" value="1"> Ja</input><br />
-                                <input type="radio" id="2" name="choice" value="2"> Nei</input><br />
-                                </fieldset>
-                            {% else %}
-                                <fieldset>
-                                    <input type="radio" id="0" name="choice" value="0" checked> Blankt</input><br />
-                                    {% for alt in active_question.alternatives %}
-                                        <input type="radio" id="{{ alt.alt_id }}" name="choice" value="{{ alt.alt_id }}"> {{ alt.description }}</input><br />
-                                    {% endfor %}
-                                </fieldset>
-                            {% endif %}<!-- End if question_type -->
-                                <br />
-                                <button class="btn btn-primary" id="verify_vote">Stem</button><br />
-                                <div class="voteverification" style="display:none">
+                            {% if registered_voter.can_vote %}
+                            {% if not already_voted %}
+                                <p>Velg ett av alternativene:</p>
+                                <form action="/genfors/vote" id="vote_form" method="post">
+                                {% csrf_token %}
+                                {% if q.question_type == 0 %}
+                                    <fieldset>
+                                        <input type="radio" id="0" name="choice" value="0" checked> Blankt</input><br />
+                                        <input type="radio" id="1" name="choice" value="1"> Ja</input><br />
+                                        <input type="radio" id="2" name="choice" value="2"> Nei</input><br />
+                                    </fieldset>
+                                {% else %}
+                                    <fieldset>
+                                        <input type="radio" id="0" name="choice" value="0" checked> Blankt</input><br />
+                                        {% for alt in active_question.alternatives %}
+                                            <input type="radio" id="{{ alt.alt_id }}" name="choice" value="{{ alt.alt_id }}"> {{ alt.description }}</input><br />
+                                        {% endfor %}
+                                    </fieldset>
+                                {% endif %}<!-- End if question_type -->
                                     <br />
-                                    <p>Er du sikker på at du ønsker å stemme på dette alternativet?</p>
-                                    <button class="btn btn-success" type="submit">JA</button> <button class="btn btn-danger" id="cancel_vote">NEI</button>
-                                </div>
-                            </form>
-                        {% else %}
-                            <p>Du har avlagt stemme i denne saken.</p>
-                            <p>Din stemmekode: <strong>{{ anonymous_voter }}</strong></p>
-                        {% endif %}<!-- End if already voted -->
+                                    <button class="btn btn-primary" id="verify_vote">Stem</button><br />
+                                    <div class="voteverification" style="display:none">
+                                        <br />
+                                        <p>Er du sikker på at du ønsker å stemme på dette alternativet?</p>
+                                        <button class="btn btn-success" type="submit">JA</button> <button class="btn btn-danger" id="cancel_vote">NEI</button>
+                                    </div>
+                                </form>
+                            {% else %}
+                                <p>Du har avlagt stemme i denne saken.</p>
+                                <p>Din stemmekode: <strong>{{ anonymous_voter }}</strong></p>
+                            {% endif %}<!-- End if already voted -->
+                            {% else %}
+                                <p>Du er ikke stemmeberettiget, og kan derfor ikke avlegge stemme. Kun administratorer (tellekorps) kan endre din status.</p>
+                            {% endif %}<!-- End if can vote -->
                         {% endif %}<!-- End if question -->
                     </div>
                     <div class="col-xs-12 col-sm-5 col-md-4">
                         <h3>Foreløpig status</h3>
                         {% if q %}
-                        <p><strong>Stemmer</strong>: {{ q.get_votes.count }} av {{ meeting.num_can_vote }}</p>
+                        <div class="well">
+                            Stemmer: <strong>{{ q.get_votes.count }}</strong> av <strong>{{ meeting.num_can_vote }}</strong>
+                        </div>
                         {% if already_voted %}
                             {% if q.only_show_winner %}
                                 <p>Vinneren vil bli annonsert når alle stemmene er telt opp.</p>
                             {% else %}
-                                {% with q.get_results as res %}
+                                {% with q.get_results.data as res %}
                                 {% if q.question_type == 0 %}
-                                    <strong>Ja</strong>: {{ res.JA }} stemme{{ res.JA|pluralize:"r" }}<br />
+                                    <strong>Ja</strong>: {{ res.JA }} stemme{{ res.JA|pluralize:"r" }}<p />
                                     <div class="progress">
                                         <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="{{ active_question.yes_percent }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ active_question.yes_percent }}%">
                                             {{ active_question.yes_percent }}%
                                         </div>
                                     </div>
-                                    <strong>Nei</strong>: {{ res.NEI }} stemme{{ res.NEI|pluralize:"r" }}<br />
+                                    <strong>Nei</strong>: {{ res.NEI }} stemme{{ res.NEI|pluralize:"r" }}<p />
                                     <div class="progress">
                                         <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="{{ active_question.no_percent }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ active_question.no_percent }}%">
                                             {{ active_question.no_percent }}%
                                         </div>
                                     </div>
-                                    <strong>Blankt</strong>: {{ res.BLANKT }} stemme{{ res.BLANKT|pluralize:"r" }}<br />
+                                    <strong>Blankt</strong>: {{ res.BLANKT }} stemme{{ res.BLANKT|pluralize:"r" }}<p />
                                     <div class="progress">
                                         <div class="progress-bar progress-bar-primary" role="progressbar" aria-valuenow="{{ active_question.blank_percent }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ active_question.blank_percent }}%">
                                             {{ active_question.blank_percent }}%
@@ -100,7 +106,7 @@ Generalforsamling - Online
                                 {% endwith %}
                             {% endif %}<!-- End if only_show_winner -->
                         {% else %}
-                            <p>Du må stemme først før du kan se status.</p>
+                            <p>Du må stemme før du kan se status.</p>
                         {% endif %}
                         {% else %}
                             <p>Ingen aktiv sak.</p>
@@ -131,27 +137,26 @@ Generalforsamling - Online
                                         <td>{% if question.majority_type == 0 %}Alminnelig (1/2){% else %}Kvalitativt (2/3){% endif %}</td>
                                         <td>
                                         {% with question.get_results as results %}
-                                        
-                                        {% for alt, votes in results.data %}
+                                        {% if results.valid %}
+                                            <span class="label label-success">Flertall</span><br />
+                                        {% else %}
+                                            <span class="label label-danger">Ikke flertall</span><br />
+                                        {% endif %}
+                                        {% for alt, votes in results.data.items %}
                                             {% if question.only_show_winner %}
                                                 {% if results.valid %}
                                                     <strong>{{ alt }}</strong><br />
                                                 {% endif %}
                                             {% else %}
-                                                <strong>{{ alt }}</strong>: {{ votes }} stemmer.   
+                                                <strong>{{ alt }}</strong>: {{ votes }} stemme{{ votes|pluralize:"r"}}.<br />
                                             {% endif %}
                                         {% endfor %}
-                                        {% if results.valid %}
-                                            <span class="label label-success">Flertall</span>
-                                        {% else %}
-                                            <span class="label label-danger">Ikke flertall</span>
-                                        {% endif %}
                                         {% endwith %}
                                         </td>
                                     </tr>
                                 {% empty %}
                                     <tr>
-                                        <td>Ingen avsluttede saker.</td>
+                                        <td colspan="3">Ingen avsluttede saker.</td>
                                     </tr>
                                 {% endfor %}
                             </table>
@@ -193,7 +198,7 @@ Generalforsamling - Online
                             {% endfor %}
                             </ul>
                             {% else %}
-                                <p>Du må stemme først før du kan se status.</p>
+                                <p>Du må stemme før du kan se status.</p>
                             {% endif %}
                             {% endif %}
                         {% else %}

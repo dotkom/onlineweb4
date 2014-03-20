@@ -56,14 +56,14 @@ def genfors(request):
 
             if total_votes != 0 and not aq.only_show_winner:
                 if aq.question_type is BOOLEAN_VOTE:
-                    context['active_question']['yes_percent'] = res['JA'] * 100 / total_votes
-                    context['active_question']['no_percent'] = res['NEI'] * 100 / total_votes
-                    context['active_question']['blank_percent'] = res['BLANKT'] * 100 / total_votes
+                    context['active_question']['yes_percent'] = res['data']['JA'] * 100 / total_votes
+                    context['active_question']['no_percent'] = res['data']['NEI'] * 100 / total_votes
+                    context['active_question']['blank_percent'] = res['data']['BLANKT'] * 100 / total_votes
 
                 elif aq.question_type is MULTIPLE_CHOICE and total_votes != 0:
                     context['active_question']['multiple_choice'] = {a.description: [0, 0] for a in alternatives}
                     context['active_question']['multiple_choice']['Blankt'] = [0, 0]
-                    for k, v in res.items():
+                    for k, v in res['data'].items():
                         context['active_question']['multiple_choice'][k] = [v, v * 100 / total_votes]
 
         return render(request, "genfors/index.html", context)
@@ -453,8 +453,9 @@ def logout(request):
             messages.success(request, 'Du er nå logget ut av generalforsamlingen')
         return response
     else:
-        question = 'Er du sikker på at du vil logge ut? Den eneste måten å logge seg inn igjen er med den personlige koden du skrev inn!'
-        return render(request, 'genfors/confirm.html', {'question': question})
+        question = 'Er du sikker på at du vil logge ut?'
+        description = 'Den eneste måten å logge seg inn igjen er med den personlige koden du skrev inn!'
+        return render(request, 'genfors/confirm.html', {'question': question, 'description': description})
 
 # Helper functions
 
