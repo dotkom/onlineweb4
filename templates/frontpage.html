@@ -136,7 +136,7 @@ Online, linjeforeningen for informatikk ved NTNU
                         <p>
                         <span class="sales-contact">
                             <span><i class="glyphicon glyphicon-chevron-right"></i>
-                            <a href="mailto:bedriftskontakt@online.ntnu.no" title="bedriftskontakt@online.ntnu.no">Send epost til bedriftskontakt</a></span>
+                            <a href="mailto:bedkom@online.ntnu.no" title="bedkom@online.ntnu.no">Send epost til bedriftskontakt</a></span>
                         </span>
                         </p>
                     </div>
@@ -231,6 +231,11 @@ Online, linjeforeningen for informatikk ved NTNU
 {% chunk 'om_hovedstyret' %}
 {% endfilter %}
                         </div>
+                        <div class="tab-pane" id="hovedsamarbeidspartner">
+{% filter markdown %}
+{% chunk 'om_hovedsamarbeidspartner' %}
+{% endfilter %}
+                        </div>
                         <div class="tab-pane" id="arrkom">
 {% filter markdown %}
 {% chunk 'om_arrkom' %}
@@ -308,6 +313,7 @@ Online, linjeforeningen for informatikk ved NTNU
                         <li class="nav-header">Organisasjonen</li>
                         <li class="active"><a data-prefixom="false" href="#online">Om Online</a></li>
                         <li><a href="#hovedstyret">Hovedstyret</a></li>
+                        <li><a href="#hovedsamarbeidspartner">Hovedsamarbeidspartner</a></li>
                         <li class="nav-header">Komiteer</li>
                         <li><a href="#arrkom">ArrKom</a></li>
                         <li><a href="#bankom">BanKom</a></li>
