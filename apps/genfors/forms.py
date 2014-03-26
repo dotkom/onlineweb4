@@ -7,6 +7,7 @@ from django import forms
 from django.conf import settings
 from django.forms.models import modelformset_factory
 from django.utils.translation import ugettext as _
+from django.utils import timezone
 from apps.genfors.models import Alternative, Meeting, Question
 
 import datetime
@@ -72,11 +73,20 @@ class RegisterVoterForm(forms.Form):
                             Personlig kode brukes for å lage en unik hash som brukes til hemmelige valg.
                             Denne lagres ikke og det er derfor ytterst viktig at du ikke glemmer den.'''))
 
+    def get_active_meeting(self):
+        today = datetime.date.today()
+        hour24 = datetime.timedelta(hours=24)
+        meetings = Meeting.objects.filter(start_date__lte=timezone.now(), ended=False,
+            start_date__range=[today - hour24, today + hour24]).order_by('-start_date')
+        
+        if meetings:
+            return meetings[0]
+
     def clean(self):
         if self._errors:
             return
         if not hasattr(settings, 'GENFORS_PIN_CODE'):
             self._errors['password'] = self.error_class([_(u'PIN-kode har ikke blitt satt')])
-        elif self.cleaned_data['password'] != settings.GENFORS_PIN_CODE:
+        elif self.cleaned_data['password'] != self.get_active_meeting().pin:
             self._errors['password'] = self.error_class([_(u'Feil PIN-kode')])
         return self.cleaned_data

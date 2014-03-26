@@ -13,7 +13,7 @@ from apps.genfors.models import BOOLEAN_VOTE, MULTIPLE_CHOICE
 from hashlib import sha256
 import datetime
 import json
-
+import random
 
 @login_required
 def genfors(request):
@@ -123,7 +123,7 @@ def registered_voters(request):
             context['registered_voters'] = meeting.get_attendee_list()
         return render(request, "genfors/registered_voters.html", context)
     else:
-        messages.error(request, 'Du har ikke tilgang til dette')
+        messages.error(request, u'Du har ikke tilgang til dette')
         return redirect('genfors_admin')
 
 
@@ -137,6 +137,7 @@ def admin(request):
             context['meeting'] = meeting
             context['question'] = meeting.get_active_question()
             context['questions'] = meeting.get_locked_questions()
+            context['pin_code'] = meeting.get_pin_code()
         elif request.method == 'POST':
             form = MeetingForm(request.POST)
             context['form'] = form
@@ -144,6 +145,7 @@ def admin(request):
                 meeting = Meeting(title=form.cleaned_data['title'],
                                   start_date=form.cleaned_data['start_date'])
                 meeting.save()
+                meeting.generate_pin_code()
                 messages.success(request, _(u'Generalforsamling lagt til'))
                 return redirect('genfors_admin')
         else:
@@ -227,7 +229,7 @@ def question_admin(request, question_id=None):
                     form = QuestionForm(instance=q)
                     formset = AlternativeFormSet(queryset=q.get_alternatives())
                 else:
-                    messages.error(request, 'Spørsmålet finnes ikke eller har allerede blitt stengt.')
+                    messages.error(request, u'Spørsmålet finnes ikke eller har allerede blitt stengt.')
                     return redirect('genfors_admin')
             else:
                 context['create'] = True
@@ -240,7 +242,7 @@ def question_admin(request, question_id=None):
             return render(request, "genfors/question.html", context)
 
     else:
-        messages.error(request, 'Du har ikke tilgang til dette')
+        messages.error(request, u'Du har ikke tilgang til dette')
     return redirect('genfors_admin')
 
 
@@ -261,11 +263,11 @@ def user_can_vote(request):
                 json_response['can_vote'] = user.can_vote
                 json_response['success'] = True
             except ValueError:
-                json_response['error'] = 'Brukerid ikke gyldig'
+                json_response['error'] = u'Brukerid ikke gyldig'
             except RegisteredVoter.DoesNotExist:
-                json_response['error'] = 'Bruker ikke funnet'
+                json_response['error'] = u'Bruker ikke funnet'
         else:
-            json_response['error'] = 'Det er ingen aktiv generalforsamling'
+            json_response['error'] = u'Det er ingen aktiv generalforsamling'
         return HttpResponse(json.dumps(json_response))
     return HttpResponse(status_code=403, reason_phrase='Forbidden')
 
@@ -280,9 +282,9 @@ def question_close(request, question_id):
     if request.method == 'POST':
         q.locked = True
         q.save()
-        messages.success(request, 'Avstemning for spørsmål \'%s\' ble stengt.' % q)
+        messages.success(request, u'Avstemning for spørsmål \'%s\' ble stengt.' % q)
     else:
-        question = 'Er du sikker på at du vil avslutte spørsmål \'%s\'?' % q
+        question = u'Er du sikker på at du vil avslutte spørsmål \'%s\'?' % q
         return render(request, 'genfors/confirm.html', {'question': question})
     return redirect('genfors_admin')
 
@@ -296,9 +298,9 @@ def question_reset(request, question_id):
     q = Question.objects.get(id=question_id)
     if request.method == 'POST':
         q.reset_question()
-        messages.success(request, 'Avstemning for spørsmål \'%s\' ble tilbakestilt.' % q)
+        messages.success(request, u'Avstemning for spørsmål \'%s\' ble tilbakestilt.' % q)
     else:
-        question = 'Er du sikker på at du vil tilbakestille spørsmål \'%s\'?' % q
+        question = u'Er du sikker på at du vil tilbakestille spørsmål \'%s\'?' % q
         return render(request, 'genfors/confirm.html', {'question': question})
     return redirect('genfors_admin')
 
@@ -311,10 +313,10 @@ def question_delete(request, question_id):
 
     q = Question.objects.get(id=question_id)
     if request.method == 'POST':
-        messages.success(request, 'Spørsmål \'%s\' ble slettet' % q)
+        messages.success(request, u'Spørsmål \'%s\' ble slettet' % q)
         q.delete()
     else:
-        question = 'Er du sikker på at du vil slette spørsmål \'%s\'?' % q
+        question = u'Er du sikker på at du vil slette spørsmål \'%s\'?' % q
         return render(request, 'genfors/confirm.html', {'question': question})
     return redirect('genfors_admin')
 
@@ -333,15 +335,15 @@ def vote(request):
             if r:
                 r = r[0]
             else:
-                messages.error(request, 'Du er ikke registrert som oppmøtt, og kan derfor ikke avlegge stemme.')
+                messages.error(request, u'Du er ikke registrert som oppmøtt, og kan derfor ikke avlegge stemme.')
                 return redirect('genfors_index')
             if not r.can_vote:
-                messages.error(request, 'Du har ikke tilgang til å avlegge stemme')
+                messages.error(request, u'Du har ikke tilgang til å avlegge stemme')
                 return redirect('genfors_index')
             # v(ote) is either AnonymousVoter or RegisterVoter
             v = a if q.anonymous else r
             if q.already_voted(v):
-                messages.error(request, 'Du har allerede avlagt en stemme i denne saken.')
+                messages.error(request, u'Du har allerede avlagt en stemme i denne saken.')
                 return redirect('genfors_index')
             # If user is registered and has not cast a vote on the active question
             else:
@@ -358,7 +360,7 @@ def vote(request):
                             elif alt == 2:
                                 vote = BooleanVote(voter=v, question=q, answer=False)
                             vote.save()
-                            messages.success(request, 'Din stemme ble registrert!')
+                            messages.success(request, u'Din stemme ble registrert!')
                             return redirect('genfors_index')
 
                     elif q.question_type is MULTIPLE_CHOICE:
@@ -370,17 +372,17 @@ def vote(request):
                             if alt == 0:
                                 vote = MultipleChoice(voter=v, question=q, answer=None)
                                 vote.save()
-                                messages.success(request, 'Din stemme ble registrert!')
+                                messages.success(request, u'Din stemme ble registrert!')
                                 return redirect('genfors_index')
                             else:
                                 choice = Alternative.objects.get(alt_id=alt, question=q)
                                 if choice:
                                     vote = MultipleChoice(voter=v, question=q, answer=choice)
                                     vote.save()
-                                    messages.success(request, 'Din stemme ble registrert!')
+                                    messages.success(request, u'Din stemme ble registrert!')
                                     return redirect('genfors_index')
 
-                messages.error(request, 'Det ble forsøkt å stemme på et ugyldig alternativ, stemmen ble ikke registrert.')
+                messages.error(request, u'Det ble forsøkt å stemme på et ugyldig alternativ, stemmen ble ikke registrert.')
                 return redirect('genfors_index')
 
         # Else forbid
@@ -398,12 +400,12 @@ def genfors_lock_registration(request):
                 meeting.registration_locked = True
                 meeting.save()
             else:
-                question = 'Er du sikker på at du vil stenge registrering for nye brukere?'
+                question = u'Er du sikker på at du vil stenge registrering for nye brukere?'
                 return render(request, 'genfors/confirm.html', {'question': question})
         else:
-            messages.error(request, 'Ingen aktiv generalforsamling')
+            messages.error(request, u'Ingen aktiv generalforsamling')
     else:
-        messages.error(request, 'Du har ikke tilgang til dette')
+        messages.error(request, u'Du har ikke tilgang til dette')
     return redirect('genfors_admin')
 
 
@@ -415,13 +417,15 @@ def genfors_open_registration(request):
             if request.method == 'POST':
                 meeting.registration_locked = False
                 meeting.save()
+                meeting.generate_pin_code()
             else:
-                question = 'Er du sikker på at du vil åpne registrering for nye brukere?'
-                return render(request, 'genfors/confirm.html', {'question': question})
+                question = u'Er du sikker på at du vil åpne registrering for nye brukere?'
+                description = u'Vær oppmerksom på at når man åpner registrering vil pinkoden for registrering av oppmøte forandre seg. Du vil se den oppdaterte koden i administrasjonspanelet.'
+                return render(request, 'genfors/confirm.html', {'question': question, 'description': description})
         else:
-            messages.error(request, 'Ingen aktiv generalforsamling')
+            messages.error(request, u'Ingen aktiv generalforsamling')
     else:
-        messages.error(request, 'Du har ikke tilgang til dette')
+        messages.error(request, u'Du har ikke tilgang til dette')
     return redirect('genfors_admin')
 
 
@@ -433,14 +437,14 @@ def genfors_end(request):
             if request.method == 'POST':
                 meeting.ended = True
                 meeting.save()
-                messages.success(request, 'Generalforsamlingen ble avsluttet')
+                messages.success(request, u'Generalforsamlingen ble avsluttet')
             else:
-                question = 'Er du sikker på at du vil avslutte generalforsamlingen?'
+                question = u'Er du sikker på at du vil avslutte generalforsamlingen?'
                 return render(request, 'genfors/confirm.html', {'question': question})
         else:
-            messages.error(request, 'Ingen aktiv generalforsamling')
+            messages.error(request, u'Ingen aktiv generalforsamling')
     else:
-        messages.error(request, 'Du har ikke tilgang til dette')
+        messages.error(request, u'Du har ikke tilgang til dette')
     return redirect('genfors_admin')
 
 
@@ -450,11 +454,11 @@ def logout(request):
         response = redirect('home')
         if is_registered(request):
             response.delete_cookie('anon_voter')
-            messages.success(request, 'Du er nå logget ut av generalforsamlingen')
+            messages.success(request, u'Du er nå logget ut av generalforsamlingen')
         return response
     else:
-        question = 'Er du sikker på at du vil logge ut?'
-        description = 'Den eneste måten å logge seg inn igjen er med den personlige koden du skrev inn!'
+        question = u'Er du sikker på at du vil logge ut?'
+        description = u'Den eneste måten å logge seg inn igjen er med den personlige koden du skrev inn!'
         return render(request, 'genfors/confirm.html', {'question': question, 'description': description})
 
 # Helper functions
@@ -489,17 +493,16 @@ def is_registered(request):
         return False
     return True
 
-
 def question_validate(request, question_id):
     """Returns a HttpResponse if not passing validation"""
     if is_admin(request):
         try:
             q = Question.objects.get(id=question_id)
         except Question.DoesNotExist:
-            messages.error(request, 'Spørsmålet finnes ikke')
+            messages.error(request, u'Spørsmålet finnes ikke')
             return redirect('genfors_admin')
         # Return None when passing
         return None
     else:
-        messages.error(request, 'Du har ikke tilgang til dette')
+        messages.error(request, u'Du har ikke tilgang til dette')
     return redirect('genfors_admin')

@@ -6,6 +6,8 @@ from django.utils.translation import ugettext as _
 from django.conf import settings
 from django.utils.timezone import localtime
 import operator
+from hashlib import sha256
+import random
 
 # Statics
 
@@ -33,9 +35,21 @@ class Meeting(models.Model):
     title = models.CharField(_(u'Tittel'), max_length=150, null=False)
     registration_locked = models.BooleanField(_(u'registration_lock'), help_text=_(u'Steng registrering'), default=True, blank=False, null=False)
     ended = models.BooleanField(_(u'event_lockdown'), help_text=_(u'Avslutt generalforsamlingen'), default=False, blank=False, null=False)
+    pin = models.CharField(_(u'Pinkode'), max_length=8, null=False, default='stub')
 
     def __unicode__(self):
         return self.title + ' (' + localtime(self.start_date).strftime("%d/%m/%y %H:%M") + ')'
+
+    def get_pin_code(self):
+        return self.pin
+
+    # Pincode generator for a particular meeting
+    def generate_pin_code(self):
+        h = sha256()
+        h.update(str(random.randint(0, 100000)))
+        h = h.hexdigest()
+        self.pin = h[:6]
+        self.save()
 
     # Return the number of attendees
     def num_attendees(self):
