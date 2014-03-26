@@ -142,6 +142,7 @@ class Question(models.Model):
     description = models.TextField(_(u'Beskrivelse'), help_text=_(u'Beskrivelse av saken som skal stemmes over'), max_length=500, blank=True)
     majority_type = models.SmallIntegerField(_(u'Flertallstype'), choices=MAJORITY_TYPES, null=False, default=0, blank=False)
     only_show_winner = models.BooleanField(_(u'Vis kun vinner'), null=False, blank=False, default=False)
+    total_voters = models.IntegerField(_(u'Stemmeberettigede'), null=True)
 
     # Returns results as a dictionary, either by alternative or boolean-ish types
     def get_results(self, admin=False):
@@ -174,8 +175,12 @@ class Question(models.Model):
         if results:
             winner = max(results.iterkeys(), key=(lambda key: results[key]))
             winner_votes = results[winner]
-
-            total_votes = len(self.meeting.get_can_vote())
+            
+            total_votes = None
+            if self.locked:
+                total_votes = self.total_voters
+            else:
+                total_votes = len(self.meeting.get_can_vote())
 
             # Normal
             if self.majority_type == 0:

@@ -279,8 +279,10 @@ def question_close(request, question_id):
         return response
 
     q = Question.objects.get(id=question_id)
+    m = get_active_meeting()
     if request.method == 'POST':
         q.locked = True
+        q.total_voters = m.num_can_vote()
         q.save()
         messages.success(request, u'Avstemning for spørsmål \'%s\' ble stengt.' % q)
     else:
