@@ -53,31 +53,32 @@ def feedback(request, applabel, appmodel, object_id, feedback_id):
 
 @staff_member_required
 def result(request, applabel, appmodel, object_id, feedback_id):
-    return feedback_results(request, applabel, appmodel, object_id, feedback_id, True)
+    return feedback_results(request, applabel, appmodel, object_id, feedback_id)
 
 def results_token(request, applabel, appmodel, object_id, feedback_id,  token):
     rt = get_object_or_404(RegisterToken, token = token)
 
     if rt.is_valid:
-        return feedback_results(request, applabel, appmodel, object_id, feedback_id)
+        return feedback_results(request, applabel, appmodel, object_id, feedback_id, True)
     else:
         raise Http404
 
-def feedback_results(request, applabel, appmodel, object_id, feedback_id, delete_permission=False):
+def feedback_results(request, applabel, appmodel, object_id, feedback_id, token=False):
     fbr = _get_fbr_or_404(applabel, appmodel, object_id, feedback_id)
 
     Qa = namedtuple("Qa", "question, answers")
     question_and_answers = []
 
-    for q in fbr.questions:
-        question_and_answers.append(Qa(q, fbr.answers_to_question(q)))
+    for question in fbr.questions:
+        if question.display or not token:
+            question_and_answers.append(Qa(question, fbr.answers_to_question(question)))
     
     rt = get_object_or_404(RegisterToken, fbr = fbr)
 
     token_url = u"%s%sresults/%s" % (request.META['HTTP_HOST'], fbr.get_absolute_url(), rt.token)
         
     return render(request, 'feedback/results.html',{'question_and_answers': question_and_answers, 
-        'description': fbr.description, 'token_url' : token_url, 'delete_permission': delete_permission})
+        'description': fbr.description, 'token_url' : token_url, 'token': token, 'display_fos': fbr.feedback.display_field_of_study})
 
 
 @staff_member_required
@@ -85,15 +86,14 @@ def chart_data(request, applabel, appmodel, object_id, feedback_id):
     return get_chart_data(request, applabel, appmodel, object_id, feedback_id)
 
 def chart_data_token(request, applabel, appmodel, object_id, feedback_id, token):
-    print "derp"
     rt = get_object_or_404(RegisterToken, token = token)
 
     if rt.is_valid:
-        return get_chart_data(request, applabel, appmodel, object_id, feedback_id)
+        return get_chart_data(request, applabel, appmodel, object_id, feedback_id, True)
     else:
         raise Http404
 
-def get_chart_data(request, applabel, appmodel, object_id, feedback_id):
+def get_chart_data(request, applabel, appmodel, object_id, feedback_id, token=False):
     fbr = _get_fbr_or_404(applabel, appmodel, object_id, feedback_id)
     
     rating_answers = []
@@ -102,21 +102,24 @@ def get_chart_data(request, applabel, appmodel, object_id, feedback_id):
     answer_collection['replies'] = dict()
     answer_length = int(len(RATING_CHOICES) +1)
     for question in fbr.ratingquestion:
-        rating_titles.append(str(question))
-        answers = fbr.answers_to_question(question)
-        answer_count = [0] * answer_length
-        for answer in answers:
-            answer_count[int(answer.answer)] += 1
-        rating_answers.append(answer_count[1:])
-    
-    fos = fbr.field_of_study_answers.all()
-    answer_count = defaultdict(int)
-    for answer in fos:
-        answer_count[str(answer)] += 1
+        if question.display or not token:
+            rating_titles.append(str(question))
+            answers = fbr.answers_to_question(question)
+            answer_count = [0] * answer_length
+            for answer in answers:
+                answer_count[int(answer.answer)] += 1
+            rating_answers.append(answer_count[1:])
+        
+    if fbr.feedback.display_field_of_study or not token:
+        fos = fbr.field_of_study_answers.all()
+        answer_count = defaultdict(int)
+        for answer in fos:
+            answer_count[str(answer)] += 1
+        
+        answer_collection['replies']['fos'] = answer_count.items()
 
     answer_collection['replies']['ratings'] = rating_answers
     answer_collection['replies']['titles'] = rating_titles
-    answer_collection['replies']['fos'] = answer_count.items()
    
     return HttpResponse(json.dumps(answer_collection), mimetype='application/json')
 

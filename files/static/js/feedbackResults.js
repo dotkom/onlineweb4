@@ -142,7 +142,10 @@ $(document).ready(function()
     $.get($(location).attr('href') + "chartdata", function(data)
     {
         chartData = data;
-        printPieChart();
+        if($("#field-of-study-chart").length)
+        {
+            printPieChart();
+        }
         printRatingCharts();
     });
     $(window).on("debouncedresize", function(e)
