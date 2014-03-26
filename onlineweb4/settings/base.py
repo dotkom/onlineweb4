@@ -126,6 +126,11 @@ TEMPLATE_DIRS = (
 PIZZA_GROUP = 'dotkom'
 PIZZA_ADMIN_GROUP = 'pizzaadmin'
 
+# Variables for fagKom/bedKom-sync script
+BEDKOM_GROUP_ID = 3
+FAGKOM_GROUP_ID = 6
+COMMON_GROUP_ID = 17
+
 # Grappelli settings
 GRAPPELLI_ADMIN_TITLE = '<a href="/">Onlineweb</a>'
 

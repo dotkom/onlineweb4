@@ -1,10 +1,7 @@
 # -*- coding: utf-8 -*-
 from django.core.management.base import NoArgsCommand
+from django.conf import settings
 
-# Define the ids for all the groups
-BEDKOM_GROUP_ID = 2
-FAGKOM_GROUP_ID = 3
-COMMON_GROUP_ID = 4
 
 class Command(NoArgsCommand):
 	help = u'Alle medlemmer av bedKom og fagKom blir automatisk medlem av en felles gruppe om de ikke allerede er i den gruppen'
@@ -17,14 +14,14 @@ class Command(NoArgsCommand):
 		user_container = []
 
 		# Get bedKom-group
-		bedkom_group = Group.objects.get(id = BEDKOM_GROUP_ID)
+		bedkom_group = Group.objects.get(id = settings.BEDKOM_GROUP_ID)
 
 		# Append bedKom to list
 		for user in bedkom_group.user_set.all():
 			user_container.append(user)
 
 		# Get fagKom group
-		fagkom_group = Group.objects.get(id = FAGKOM_GROUP_ID)
+		fagkom_group = Group.objects.get(id = settings.FAGKOM_GROUP_ID)
 
 		# Append fagKom to list if user is not already there
 		for user in fagkom_group.user_set.all():
@@ -38,7 +35,7 @@ class Command(NoArgsCommand):
 				user_container.append(user)
 
 		# Load object for the common group
-		COMMON_GROUP_OBJ = Group.objects.get(id = COMMON_GROUP_ID)
+		COMMON_GROUP_OBJ = Group.objects.get(id = settings.COMMON_GROUP_ID)
 
 		# Loop the list of all users we have by now
 		for user in user_container:
@@ -49,7 +46,7 @@ class Command(NoArgsCommand):
 			
 			# Loop the groups
 			for group in user_groups:
-				if (group.id == COMMON_GROUP_ID):
+				if (group.id == settings.COMMON_GROUP_ID):
 					is_already_member = True
 					break
 
