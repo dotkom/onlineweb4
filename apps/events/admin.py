@@ -40,11 +40,6 @@ class RuleBundleInline(admin.TabularInline):
     inline_classes = ('grp-collapse grp-open',)  # style
 
 
-class AttendanceEventAdmin(admin.ModelAdmin):
-    model = AttendanceEvent
-    inlines = (AttendeeInline, RuleBundleInline)
-
-
 class AttendeeAdmin(admin.ModelAdmin):
     model = Attendee
     list_display = ('user', 'event', 'paid')
@@ -97,7 +92,7 @@ class EventAdmin(admin.ModelAdmin):
         else:
             # If attendance max capacity changed we will notify users that they are now on the attend list
             old_event = Event.objects.get(id=obj.id)
-            if obj.is_attendance_event() and old_event.wait_list:
+            if old_event.is_attendance_event() and old_event.wait_list:
                 diff_capacity = obj.attendance_event.max_capacity - old_event.attendance_event.max_capacity
                 if diff_capacity > 0:
                     if diff_capacity > len(old_event.wait_list):
@@ -119,9 +114,9 @@ class EventAdmin(admin.ModelAdmin):
         form.base_fields['description'].validators=[validators.MinLengthValidator(140)]
         return form
 
+
 admin.site.register(Event, EventAdmin)
 admin.site.register(Attendee, AttendeeAdmin)
-admin.site.register(AttendanceEvent, AttendanceEventAdmin)
 admin.site.register(RuleBundle, RuleBundleAdmin)
 admin.site.register(GradeRule, GradeRuleAdmin)
 admin.site.register(UserGroupRule, UserGroupRuleAdmin)

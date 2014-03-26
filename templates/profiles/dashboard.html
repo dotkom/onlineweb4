@@ -37,24 +37,29 @@
 			</div>
 		</div>
 		<div class="row attribute-list">
-	    	<div class="col-md-4">
-				<b>Adresse</b><br />{% if user.address %}{{ user.address }}<br />{{ user.zip_code }}{% else %}Ikke tilgjengelig{% endif %}
-			</div>
-			<div class="col-md-4">
-				<b>Telefonnummer</b><br />{% firstof user.phone_number 'Ikke tilgjengelig' %}
-			</div>
-			<div class="col-md-4">
-				<b>Kallenavn</b><br />{% firstof user.nickname 'Ikke tilgjengelig' %}
-			</div>
-		</div>
+            <div class="col-md-4">
+                <b>Adresse</b><br />
+                {% if user.privacy.expose_address %}
+                    {% if user.address %}
+                        <div id="address">{{ user.address|striptags }}</div>
+                        <div id="zip-code">{{ user.zip_code|striptags }}</div>
+                        <div id="city"><div class="refresh"></div></div>
+                    {% else %}
+                        Ikke tilgjenglig
+                    {% endif %}
+                {% else %}
+                    Ikke tilgjengelig
+                {% endif %}
+            </div>
+        </div>
 		<div class="row row-space">
 			<div class="col-md-12">
                 <div class="row">
                     <div class="col-md-12">
-                        <b>Posisjoner</b>
+                        <b>Verv i linjeforeningen</b>
                     </div>
                 </div>
-            {% if not user.positions.all %}
+            {% if not user.positions.all and not user.special_positions.all %}
                 <div class="row">
                     <div class="col-md-12">
                         <em>Ingen posisjoner registrert...</em>
@@ -69,6 +74,20 @@
                         </div>
                     </div>
                 {% endfor %}
+                {% if user.special_positions.all %}
+                    <div class="row">
+                        <div class="col-md-12" style="margin-top:10px;">
+                            <b>Hedersposisjoner</b>
+                        </div>
+                    </div>
+                    {% for position in user.special_positions.all %}
+                        <div class="row row-small-space">
+                            <div class="col-md-12">
+                                Fra {{ position.since_year }}, {{ position.position }}
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% endif %}
             {% endif %}
             </div>
 		</div>

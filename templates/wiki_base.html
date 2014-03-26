@@ -4,16 +4,17 @@
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-        <title>{% block title %}{% endblock %}</title>
+        <title>{% block title %}{% endblock %} - Online</title>
         <meta name="description" content="">
         <link rel="icon" href="{{ STATIC_URL }}img/favicon.png">
 
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         {% block apple-webapp %}{% endblock %}
+        <link href="{{ STATIC_URL }}wiki/bootstrap/css/wiki-bootstrap.min.css" rel="stylesheet">
         {% compress css %}
             <link rel="stylesheet" type="text/less" href="{{ STATIC_URL }}less/core.less">
             <link rel="stylesheet" type="text/less" href="{{ STATIC_URL }}less/wiki.less">
-        {% endcompress %}
+        {% endcompress %}   
         {% render_block "css" %}
         <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
     </head>
@@ -35,10 +36,10 @@
             <div class="collapse navbar-collapse navbar-ex1-collapse">
                 <ul class="nav navbar-nav">
                   <li><a href="{% url 'home' %}">Forside</a></li>
-                  <li><a href="{% url 'events_index' %}">Arkiver</a></li>
+                  <li><a href="{% url 'events_index' %}">Arkiv</a></li>
                   <li><a href="{% url 'careeropportunity_index' %}">Karrieremuligheter</a></li>
                   <li><a href="{% url 'resourcecenter_index' %}">Ressurser</a></li>
-                  <li><a href="https://wiki.online.ntnu.no/projects/online/wiki">Wiki</a></li>
+                  <li class="active"><a href="{% url 'wiki:root' %}">Wiki</a></li>
                 </ul>
 
                 <ul class="nav navbar-nav navbar-right">
@@ -178,6 +179,8 @@
     <script src="{{ STATIC_URL }}wiki/bootstrap/js/bootstrap.min.js"></script>
     <!-- Optionally enable responsive features in IE8 -->
     <script src="{{ STATIC_URL }}wiki/js/respond.min.js"></script>
+    <script src="{{ STATIC_URL }}js/wiki.js"></script>
+    <script src="https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js"></script>
     {% render_block "js" %}
 
     {% if GOOGLE_ANALYTICS_KEY %}

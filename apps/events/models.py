@@ -35,7 +35,7 @@ class Event(models.Model):
     )
 
     author = models.ForeignKey(User, related_name='oppretter')
-    title = models.CharField(_(u'tittel'), max_length=45)
+    title = models.CharField(_(u'tittel'), max_length=60)
     event_start = models.DateTimeField(_(u'start-dato'))
     event_end = models.DateTimeField(_(u'slutt-dato'))
     location = models.CharField(_(u'lokasjon'), max_length=100)
@@ -81,7 +81,10 @@ class Event(models.Model):
 
     def is_attendance_event(self):
         """ Returns true if the event is an attendance event """
-        return True if self.attendance_event else False
+        try:
+            return True if self.attendance_event else False
+        except AttendanceEvent.DoesNotExist:
+            return False
 
     def is_eligible_for_signup(self, user):
         """
@@ -173,6 +176,9 @@ class Event(models.Model):
         return self.attendance_event.attendees.all()[self.attendance_event.max_capacity:]
         return [] if self.number_of_attendees_on_waiting_list is 0 else self.attendance_event.attendees[self.attendance_event.max_capacity:]
 
+    @property
+    def attendees_not_paid(self):
+        return self.attendance_event.attendees.filter(paid=False)
     
     def what_place_is_user_on_wait_list(self, user):
         if self.attendance_event:
