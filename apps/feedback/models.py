@@ -257,12 +257,9 @@ class RatingAnswer(models.Model):
     def order(self):
         return self.question.order
 
-class MultipleChoiceQuestion(models.Model):
-    feedback = models.ForeignKey(
-        Feedback,
-        related_name='multiple_choice_questions')
+    
 
-    order = models.SmallIntegerField(_(u'Rekkefølge'), default=30)
+class MultipleChoiceQuestion(models.Model):
     label = models.CharField(_(u'Spørsmål'), blank=False, max_length=256)
 
     class Meta:
@@ -271,6 +268,11 @@ class MultipleChoiceQuestion(models.Model):
 
     def __unicode__(self):
         return self.label
+
+class MultipleChoiceRelation(models.Model):
+    multiple_choice_relation = models.ForeignKey(MultipleChoiceQuestion)
+    order = models.SmallIntegerField(_(u'Rekkefølge'), default=30)
+    feedback = models.ForeignKey(Feedback, related_name='multiple_choice_questions')
 
 class Choice(models.Model):
     question = models.ForeignKey(MultipleChoiceQuestion, related_name="choices")
@@ -285,7 +287,7 @@ class MultipleChoiceAnswer(models.Model):
         related_name="multiple_choice_answers")
 
     answer = models.CharField(_(u'svar'), blank=False, max_length=256)
-    question = models.ForeignKey(MultipleChoiceQuestion, related_name='answer')
+    question = models.ForeignKey(MultipleChoiceRelation, related_name='answer')
 
     def __unicode__(self):
         return self.answer
