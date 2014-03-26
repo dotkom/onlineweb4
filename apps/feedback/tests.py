@@ -5,6 +5,8 @@ when you run "manage.py test".
 Replace this with more appropriate tests for your application.
 """
 
+import logging
+
 from django.utils import timezone as timezone
 from datetime import datetime, timedelta
 
@@ -49,8 +51,10 @@ class SimpleTest(TestCase):
 
 
     def test_attendees(self):
+        logger = logging.getLogger()
+
         feedback_relation = FeedbackRelation.objects.get(pk=1)
-        message = FeedbackMail.generate_message(feedback_relation)
+        message = FeedbackMail.generate_message(feedback_relation, logger)
         user_mails = [user.email for user in User.objects.all()]
 
         self.assertEqual(set(message.attended_mails), set(user_mails))
@@ -58,12 +62,12 @@ class SimpleTest(TestCase):
         user1 = User.objects.get(pk=1)
         feedback_relation.answered = [user1]
 
-        message = FeedbackMail.generate_message(feedback_relation)
+        message = FeedbackMail.generate_message(feedback_relation, logger)
         user_mails = [user.email for user in [User.objects.get(pk=2)]]
         self.assertEqual(set(message.attended_mails), set(user_mails))
 
         feedback_relation = FeedbackRelation.objects.get(pk=2)
-        message = FeedbackMail.generate_message(feedback_relation)
+        message = FeedbackMail.generate_message(feedback_relation, logger)
 
         self.assertFalse(message.send)
 
@@ -120,12 +124,14 @@ class SimpleTest(TestCase):
         self.assertFalse(start_date)
 
     def test_active(self):
+        logger = logging.getLogger()
+
         feedback_relation = FeedbackRelation.objects.get(pk=1)
         yesterday = timezone.now() - timedelta(days=1)
         feedback_relation.deadline = yesterday.date()
         feedback_relation.active = True
         feedback_relation.save()
-        FeedbackMail.generate_message(feedback_relation)
+        FeedbackMail.generate_message(feedback_relation, logger)
 
         self.assertFalse(feedback_relation.active)
 
