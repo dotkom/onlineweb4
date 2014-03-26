@@ -4,7 +4,7 @@ from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.db.models import Count
 from django.http import HttpResponse
 from django.utils import timezone
-from django.shortcuts import render_to_response, get_object_or_404
+from django.shortcuts import render, get_object_or_404
 from django.template import Template, Context, loader, RequestContext
 
 from apps.article.models import Article, Tag, ArticleTag
@@ -75,7 +75,7 @@ def archive(request, name=None, slug=None, year=None, month=None):
     tags = list(tags[:30])
     random.shuffle(tags)
 
-    return render_to_response('article/archive.html', {'tags': tags, 'dates': dates } ,context_instance=RequestContext(request))
+    return render(request, 'article/archive.html', {'tags': tags, 'dates': dates })
 
 def archive_tag(request, name, slug):
     return archive(request, name=name, slug=slug)
@@ -97,4 +97,4 @@ def details(request, article_id, article_slug):
 
     related_articles = Article.objects.filter(article_tags__tag__in=article.tags).distinct().annotate(num_tags=Count('article_tags__tag')).order_by('-num_tags', '-published_date').exclude(id=article.id)[:4]
 
-    return render_to_response('article/details.html', {'article': article, 'related_articles': related_articles}, context_instance=RequestContext(request))
+    return render(request, 'article/details.html', {'article': article, 'related_articles': related_articles})
