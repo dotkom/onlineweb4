@@ -35,7 +35,7 @@ Tilbakemeldinger - Resultater - Online
                         <div class="panel-heading">{{qa.question}}</div>
                         <table class="table table-striped table-condensed table-bordered table-hover">
                             {% for answer in qa.answers %}
-                            <tr class="answer">
+                            <tr{% if delete_permission %} class="answer"{% endif %}>
                                 <td><span class="icon glyphicon glyphicon-remove"></span>{{ answer }}</td>
                                 <td class="answer-id hidden">{{ answer.id }}</td>
                             </tr>

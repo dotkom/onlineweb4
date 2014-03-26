@@ -95,6 +95,11 @@ def details(request, article_id, article_slug):
     else:
         article.is_changed = False
 
+    if len(article.additional_authors) != 0:
+        article.multiple_authors = True
+    else:
+        article.multiple_authors = False
+
     related_articles = Article.objects.filter(article_tags__tag__in=article.tags).distinct().annotate(num_tags=Count('article_tags__tag')).order_by('-num_tags', '-published_date').exclude(id=article.id)[:4]
 
     return render_to_response('article/details.html', {'article': article, 'related_articles': related_articles}, context_instance=RequestContext(request))

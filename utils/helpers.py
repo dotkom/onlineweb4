@@ -1,12 +1,12 @@
 # -*- coding: utf8 -*-
 from datetime import datetime, date
-import simplejson
+import json
 
 from django.db.models.query import QuerySet
 from django.db import models
 
 
-class JsonHelper(simplejson.JSONEncoder):
+class JsonHelper(json.JSONEncoder):
 
     def default(self, obj):
         if isinstance(obj, datetime):
@@ -21,4 +21,4 @@ class JsonHelper(simplejson.JSONEncoder):
         elif isinstance(obj, QuerySet):
             return list(obj)
 
-        return simplejson.JSONEncoder.default(self, obj)
+        return json.JSONEncoder.default(self, obj)

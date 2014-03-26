@@ -3,7 +3,7 @@
 from django.contrib import admin
 from django.utils.translation import ugettext as _
 
-from apps.authentication.models import AllowedUsername, Email, OnlineUser, Position
+from apps.authentication.models import AllowedUsername, Email, OnlineUser, Position, SpecialPosition
 
 
 class EmailInline(admin.TabularInline):
@@ -49,3 +49,9 @@ class PositionAdmin(admin.ModelAdmin):
     model = Position
 
 admin.site.register(Position, PositionAdmin)
+
+
+class SpecialPositionAdmin(admin.ModelAdmin):
+    model = SpecialPosition
+
+admin.site.register(SpecialPosition, SpecialPositionAdmin)
