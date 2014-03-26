@@ -27,6 +27,7 @@ APScheduler==2.1.1              # Scheduler
 reportlab==2.7
 pdfdocument==1.6
 django-markdown-deux==1.0.4
+django-formset-js==0.4.0
 
 #test tools
 cov-core==1.7

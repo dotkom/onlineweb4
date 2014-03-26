@@ -150,6 +150,7 @@ INSTALLED_APPS = (
     'watson',
     'gunicorn',
     'markdown_deux',
+    'djangoformsetjs',
 
     # Wiki
     'wiki',
@@ -179,6 +180,7 @@ INSTALLED_APPS = (
     'apps.feedback',
     'apps.mommy',
     'apps.profiles',
+    'apps.genfors',
 )
 
 # A sample logging configuration. The only tangible logging

@@ -37,6 +37,7 @@ urlpatterns = patterns('',
     url(r'^profile/',           include('apps.profiles.urls')),
     url(r'^resourcecenter/mailinglists/', include('apps.mailinglists.urls')), # leave in this order because...
     url(r'^resourcecenter/',    include('apps.resourcecenter.urls')), # ...resourcecenter has catch-all on subpages
+    url(r'^genfors/',           include('apps.genfors.urls')),
 
     # nav-bar menu urls
     url(r'^#events$', TemplateView.as_view(template_name='frontpage.html#events'), name='events-link'),

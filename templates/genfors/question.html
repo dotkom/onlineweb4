@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% load compress %}
+{% load formset_tags %}
+
+{% block title %}
+Generalforsamling logg inn- Online
+{% endblock %}
+
+{% block content %}
+<section id="generalforsamling">
+    <div class="container">
+        <div class="row">
+            <div class="page-header">
+                <a href="{% url 'genfors_admin_logout' %}"class="btn btn-warning pull-right" id="gf_admin_logout">Logg ut</a>
+                <h2>Generalforsamling adminpanel</h2>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-8">
+                <form method="post">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">{{ create|yesno:"Nytt spørsmål, Rediger spørsmål" }}</h4>
+                        </div>
+                        <div class="panel-body">
+                            {% if not create %}<h4><p id="bg-danger">Ved endring av spørsmål vil alle stemmer bli tilbakestilt</p></h4>{% endif %}
+                            {% csrf_token %}
+                            {{ form|crispy }}
+                            <div id="formset" data-formset-prefix="{{ formset.prefix }}">
+                                <h3>Alternativer</h3>
+                                <hr>
+                                {{ formset.management_form }}
+                                <div data-formset-body>
+                                    {% for form in formset %}
+                                        <div class="row" data-formset-form>
+                                            {{ form.id|as_crispy_field }}
+                                            <div class="col-lg-10">
+                                                {{ form.description|as_crispy_field }}
+                                            </div>
+                                            <div class="col-lg-2">
+                                                <button class="btn btn-lg btn-link pull-right" type="button" data-formset-delete-button><span class="glyphicon glyphicon-remove"></span></button>
+                                            </div>
+                                            <div class="hidden">{{ form.DELETE }}</div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                                <script type="form-template" data-formset-empty-form>
+                                    {% escapescript %}
+                                        <div class="row" data-formset-form>
+                                            <div class="col-lg-10">
+                                                {{ formset.empty_form.description|as_crispy_field }}
+                                            </div>
+                                            <div class="col-lg-2">
+                                                <button class="btn btn-lg btn-link pull-right" type="button" data-formset-delete-button><span class="glyphicon glyphicon-remove"></span></button>
+                                            </div>
+                                            <div class="hidden">{{ formset.empty_form.DELETE }}</div>
+                                        </div>
+                                    {% endescapescript %}
+                                </script>
+                                <button class="btn btn-primary" type="button" data-formset-add><span class="glyphicon glyphicon-plus"></span></button>
+                            </div>
+                        </div>
+                        <div class="panel-footer">
+                            <button class="btn btn-success" type="submit">Lagre</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block js %}
+    {{ block.super }}
+    <script src="{{ STATIC_URL }}js/jquery.formset.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            $("#formset").formset({animateForms: true});
+            if($("#id_question_type").val() != 1) {                
+                $("#formset").hide();
+            }
+            // Hide multiple choice values based on question type
+            $("#id_question_type").change(function() {
+                // Multiple choice selected
+                if($(this).val() == 1) {
+                    $("#formset").show();
+                }
+                else {
+                    $("#formset").hide();
+                }
+            });
+        });
+    </script>
+{% endblock %}
