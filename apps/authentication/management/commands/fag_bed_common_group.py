@@ -19,14 +19,14 @@ class Command(NoArgsCommand):
 		# Get bedKom-group
 		bedkom_group = Group.objects.get(id = BEDKOM_GROUP_ID)
 
-		# Append bedKom to dict
+		# Append bedKom to list
 		for user in bedkom_group.user_set.all():
 			user_container.append(user)
 
 		# Get fagKom group
 		fagkom_group = Group.objects.get(id = FAGKOM_GROUP_ID)
 
-		# Append fagKom to dict if user is not already there
+		# Append fagKom to list if user is not already there
 		for user in fagkom_group.user_set.all():
 			found = False
 			for existing_user in user_container:
@@ -52,7 +52,7 @@ class Command(NoArgsCommand):
 				if (group.id == COMMON_GROUP_ID):
 					is_already_member = True
 					break
-			
+
 			# The user is not already a member, add
 			if (is_already_member == False):
 				COMMON_GROUP_OBJ.user_set.add(user)
