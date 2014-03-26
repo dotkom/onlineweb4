@@ -8,14 +8,14 @@ from apps.feedback.models import Choice
 from apps.feedback.models import MultipleChoiceQuestion
 from apps.feedback.models import MultipleChoiceRelation
 
-
 from django.forms.models import ModelForm
 from django.contrib import admin
 from django.contrib.contenttypes import generic
 
 
 class AlwaysChangedModelForm(ModelForm):
-    def has_changed(self):
+   
+   def has_changed(self):
         """
         Should return True if data differs from initial.
         By always returning true even unchanged inlines will get
@@ -38,6 +38,7 @@ class FeedbackRelationAdmin(admin.ModelAdmin):
         'generic': [['content_type', 'object_id']],
     }
 
+
 class TextInline(admin.StackedInline):
     model = TextQuestion
     classes = ('grp-collapse grp-open',)  # style
@@ -51,11 +52,13 @@ class RatingInline(admin.StackedInline):
     inline_classes = ('grp-collapse grp-open',)  # style
     extra = 0
 
+
 class ChoiceInline(admin.StackedInline):
     model = Choice
     classes = ('grp-collapse grp-open',)  # style
     inline_classes = ('grp-collapse grp-open',)  # style
     extra = 0
+
 
 class MultipleChoiceAdmin(admin.ModelAdmin):
     model = MultipleChoiceRelation
@@ -64,11 +67,13 @@ class MultipleChoiceAdmin(admin.ModelAdmin):
     inline_classes = ('grp-collapse grp-open',)  # style
     extra = 0
 
+
 class MultipleChoiceInline(admin.StackedInline):
     model = MultipleChoiceRelation
     classes = ('grp-collapse grp-open',)  # style
     inline_classes = ('grp-collapse grp-open',)  # style
     extra = 0
+
 
 class FeedbackAdmin(admin.ModelAdmin):
     list_display = ('description', 'author')
@@ -85,21 +90,3 @@ class FeedbackAdmin(admin.ModelAdmin):
 admin.site.register(Feedback, FeedbackAdmin)
 admin.site.register(MultipleChoiceQuestion, MultipleChoiceAdmin)
 admin.site.register(FeedbackRelation, FeedbackRelationAdmin)
-
-
-# The answers do not usally need to be edited in the admin interface.
-# (Sigurd) 2013-02-02
-#class FieldOfStudyAnswerAdmin(admin.ModelAdmin):
-    #model = FieldOfStudyAnswer
-
-
-#class TextAnswerAdmin(admin.ModelAdmin):
-    #model = TextAnswer
-
-
-#class RatingAnswerAdmin(admin.ModelAdmin):
-    #model = RatingAnswer
-
-#admin.site.register(FieldOfStudyAnswer, FieldOfStudyAnswerAdmin)
-#admin.site.register(TextAnswer, TextAnswerAdmin)
-#admin.site.register(RatingAnswer, RatingAnswerAdmin)

@@ -1,3 +1,6 @@
+
+(function() {
+
 var chartData;
 var fosChart;
 var ratingCharts = new Array();
@@ -21,7 +24,6 @@ function csrfSafeMethod(method) {
 function printPieChart()
 {
     data = chartData.replies.fos;
-    console.log(data);
     fosChart = jQuery.jqplot ('field-of-study-chart', [data], 
     {
         grid: {
@@ -98,12 +100,16 @@ function printMultipleChoiceCharts()
 {
     data = chartData.replies.mc_answers;
     questions = chartData.replies.mc_questions;
+
+    if(questions.length > 0){
+        $('#mc-header').append('<div class="page-header"><h2>Flervalgspørsmål</h2></div>');
+    }
+
     for(var i = 0; i < questions.length; i++)
     {   
         box = '<div class="col-md-6"><div id="mc-chart-' + i + '"></div></div>'
         $('#mc').append(box);
         question = questions[i];
-        console.log(data[i]);
         mcCharts[i] = $.jqplot('mc-chart-' + i, [data[i]], 
         {
             title: question,
@@ -181,8 +187,10 @@ function deleteAnswer(answer, row)
 
 $(document).ready(function()
 {
-    $.get($(location).attr('href') + "chartdata", function(data)
+
+    $.get("chartdata/", function(data)
     {
+        console.log("derp");
         chartData = data;
         if($("#field-of-study-chart").length)
         {
@@ -210,3 +218,5 @@ $(document).ready(function()
         });
     });
 });
+
+}());

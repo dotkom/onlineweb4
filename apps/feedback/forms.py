@@ -54,8 +54,8 @@ class MultipleChoiceForm(forms.ModelForm):
         self.helper.html5_required = False
         super(MultipleChoiceForm, self).__init__(*args, **kwargs)
 
-        self.fields['answer'] = forms.ModelChoiceField(queryset=Choice.objects.filter(question=self.instance.question))
-        self.fields['answer'].label = self.instance.question.label
+        self.fields['answer'] = forms.ModelChoiceField(queryset=Choice.objects.filter(question=self.instance.question.multiple_choice_relation))
+        self.fields['answer'].label = self.instance.question.multiple_choice_relation.label
 
     class Meta:
         model = MultipleChoiceAnswer
