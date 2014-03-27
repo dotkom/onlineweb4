@@ -86,7 +86,8 @@ Generalforsamling - Online
                                 </form>
                             {% else %}
                                 <p>Du har avlagt stemme i denne saken.</p>
-                                <p>Din stemmekode: <strong>{{ anonymous_voter }}</strong></p>
+                                <p><button id="toggle_vote_code" class="btn btn-sm">Vis stemmekode</button></p>
+                                <p><strong id="vote_code" style="display: none;">{{ anonymous_voter }}</strong></p>
                             {% endif %}<!-- End if already voted -->
                             {% else %}
                                 <p>Du er ikke stemmeberettiget, og kan derfor ikke avlegge stemme. Kun administratorer (tellekorps) kan endre din status.</p>
