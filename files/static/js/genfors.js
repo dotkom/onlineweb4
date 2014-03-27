@@ -117,7 +117,7 @@ Genfors = (function () {
                         $('#mc_progress').html(html);
                     }
                 }
-                console.log(new Date() + ': Fetched stats from genfors API.');
+                //console.log(new Date() + ': Fetched stats from genfors API.');
             });
         },
 
