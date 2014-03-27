@@ -98,7 +98,7 @@ Generalforsamling - Online
                         <h3>Foreløpig status</h3>
                         {% if q %}
                         <div class="well">
-                            Stemmer: <strong>{{ q.get_votes.count }}</strong> av <strong>{{ meeting.num_can_vote }}</strong>
+                            Stemmer: <strong id="current_vote_count">{{ q.get_votes.count }}</strong> av <strong id="total_voters">{{ meeting.num_can_vote }}</strong>
                         </div>
                         {% if already_voted %}
                             {% if q.only_show_winner %}
@@ -106,36 +106,42 @@ Generalforsamling - Online
                             {% else %}
                                 {% with q.get_results.data as res %}
                                 {% if q.question_type == 0 %}
-                                    <strong>Ja</strong>: {{ res.Ja }} stemme{{ res.Ja|pluralize:"r" }}<p />
-                                    <div class="progress">
-                                        <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="{{ active_question.yes_percent }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ active_question.yes_percent }}%">
+                                <div id="bool_progress">
+                                    <strong>Ja</strong>: <span id="boolean_yes">{{ res.Ja }}</span> stemme{{ res.Ja|pluralize:"r" }}<p />
+                                    <div class="progress" id="yes_progress">
+                                        <div class="progress-bar progress-bar-success" id="boolean_yes_progress" role="progressbar" aria-valuenow="{{ active_question.yes_percent }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ active_question.yes_percent }}%">
                                             {{ active_question.yes_percent }}%
                                         </div>
                                     </div>
-                                    <strong>Nei</strong>: {{ res.Nei }} stemme{{ res.Nei|pluralize:"r" }}<p />
-                                    <div class="progress">
-                                        <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="{{ active_question.no_percent }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ active_question.no_percent }}%">
+                                    <strong>Nei</strong>: <span id="boolean_no">{{ res.Nei }}</span> stemme{{ res.Nei|pluralize:"r" }}<p />
+                                    <div class="progress" id="no_progress">
+                                        <div class="progress-bar progress-bar-danger" id="boolean_no_progress" role="progressbar" aria-valuenow="{{ active_question.no_percent }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ active_question.no_percent }}%">
                                             {{ active_question.no_percent }}%
                                         </div>
                                     </div>
-                                    <strong>Blankt</strong>: {{ res.Blankt }} stemme{{ res.Blankt|pluralize:"r" }}<p />
-                                    <div class="progress">
-                                        <div class="progress-bar progress-bar-primary" role="progressbar" aria-valuenow="{{ active_question.blank_percent }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ active_question.blank_percent }}%">
+                                    <strong>Blankt</strong>: <span id="boolean_blank">{{ res.Blankt }}</span> stemme{{ res.Blankt|pluralize:"r" }}<p />
+                                    <div class="progress" id="blank_progress">
+                                        <div class="progress-bar progress-bar-warning" id="boolean_blank_progress" role="progressbar" aria-valuenow="{{ active_question.blank_percent }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ active_question.blank_percent }}%">
                                             {{ active_question.blank_percent }}%
                                         </div>
                                     </div>
+                                </div>
                                 {% else %}
                                     {% if not active_question.multiple_choice %}
                                         <p>Ingen stemmer avlagt.</p>
                                     {% else %}
+                                        <div id="mc_progress">
                                         {% for alt, votes in active_question.multiple_choice.items %}
-                                            <strong>{{ alt }}</strong>: {{ votes.0 }} stemme{{ votes.0|pluralize:"r" }}<p />
+                                            
+                                            <strong id="{{ alt }}">{{ alt }}</strong>: <span id="{{ alt }}_votes">{{ votes.0 }}</span> stemme{{ votes.0|pluralize:"r" }}<p />
                                             <div class="progress">
-                                                <div class="progress-bar progress-bar-primary" role="progressbar" aria-valuenow="{{ votes.1 }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ votes.1 }}%">
+                                                <div class="progress-bar progress-bar-primary" id="{{ alt }}_progress" role="progressbar" aria-valuenow="{{ votes.1 }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ votes.1 }}%">
                                                      {{ votes.1 }}%
                                                 </div>
                                             </div>
+                                            
                                         {% endfor %}
+                                        </div>
                                     {% endif %}
                                 {% endif %}<!-- End if question_type -->
                                 {% endwith %}
@@ -201,7 +207,7 @@ Generalforsamling - Online
                                 <p>Vinneren vil bli annonsert når alle stemmene er telt opp</p>
                             {% else %}
                             {% if already_voted %}
-                            <ul>
+                            <ul id="votes">
                             {% for vote in q.get_votes %}
                                 <li>{% if q.anonymous %}
                                         {{ vote.voter.anonymousvoter }}
@@ -215,7 +221,7 @@ Generalforsamling - Online
                                             {% if vote.answer == False %}
                                                 <span class="label label-danger pull-right">Nei</span>
                                             {% else %}
-                                                <span class="label label-primary pull-right">Blankt</span>
+                                                <span class="label label-warning pull-right">Blankt</span>
                                             {% endif %}
                                         {% endif %}
                                     {% else %}<!-- If question type is multiple choice -->

@@ -15,5 +15,7 @@ urlpatterns = patterns('apps.genfors.views',
     url(r'^admin/end$', 'genfors_end', name='genfors_admin_end'),
     url(r'^admin/lock_registration$', 'genfors_lock_registration', name='genfors_admin_lock_registration'),
     url(r'^admin/open_registration$', 'genfors_open_registration', name='genfors_admin_open_registration'),
-    url(r'^vote', 'vote', name='genfors_vote'),
+    url(r'^vote$', 'vote', name='genfors_vote'),
+    url(r'^api/admin$', 'api_admin', name='api_admin'),
+    url(r'^api/user$', 'api_user', name='api_user'),
 )
