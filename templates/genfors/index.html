@@ -21,7 +21,18 @@ Generalforsamling - Online
                 <div class="row">
                     <div class="col-xs-12 col-sm-7 col-md-8">
                         <h3>Aktiv sak</h3>
-                        <div class="well">{% if q %}{{ q.description }}{% else %}Ingen aktiv sak.{% endif %}</div>
+                        <div class="well">
+                            {% if q %}{{ q.description }}
+                                {% if q.anonymous %}
+                                    <br /><br />
+                                    <small><i>Dette er et hemmelig valg</i></small>
+                                {% endif %}
+                                {% if q.only_show_winner %}
+                                    <br />
+                                    <small><i>Bare vinneren vil bli annonsert</i></small>
+                                {% endif %}
+                            {% else %}Ingen aktiv sak.{% endif %}
+                        </div>
                         {% if q %}
                             {% if registered_voter.can_vote %}
                             {% if not already_voted %}
@@ -29,16 +40,39 @@ Generalforsamling - Online
                                 <form action="/genfors/vote" id="vote_form" method="post">
                                 {% csrf_token %}
                                 {% if q.question_type == 0 %}
-                                    <fieldset>
-                                        <input type="radio" id="0" name="choice" value="0" checked> Blankt</input><br />
-                                        <input type="radio" id="1" name="choice" value="1"> Ja</input><br />
-                                        <input type="radio" id="2" name="choice" value="2"> Nei</input><br />
-                                    </fieldset>
+                                    <div class="radio">
+                                        <label>
+                                            <input type="radio" id="0" name="choice" value="0" checked>
+                                            Blankt
+                                        </label>
+                                    </div>
+                                    <div class="radio">
+                                        <label>
+                                            <input type="radio" id="1" name="choice" value="1">
+                                            Ja
+                                        </label>
+                                    </div>
+                                    <div class="radio">
+                                        <label>
+                                            <input type="radio" id="2" name="choice" value="2">
+                                            Nei
+                                        </label>
+                                    </div>
                                 {% else %}
                                     <fieldset>
-                                        <input type="radio" id="0" name="choice" value="0" checked> Blankt</input><br />
+                                        <div class="radio">
+                                            <label>
+                                                <input type="radio" id="0" name="choice" value="0" checked>
+                                                Blankt
+                                            </label>
+                                        </div>
                                         {% for alt in active_question.alternatives %}
-                                            <input type="radio" id="{{ alt.alt_id }}" name="choice" value="{{ alt.alt_id }}"> {{ alt.description }}</input><br />
+                                        <div class="radio">
+                                            <label>
+                                                <input type="radio" id="{{ alt.alt_id }}" name="choice" value="{{ alt.alt_id }}">
+                                                {{ alt.description }}
+                                            </label>
+                                        </div>
                                         {% endfor %}
                                     </fieldset>
                                 {% endif %}<!-- End if question_type -->
@@ -52,7 +86,8 @@ Generalforsamling - Online
                                 </form>
                             {% else %}
                                 <p>Du har avlagt stemme i denne saken.</p>
-                                <p>Din stemmekode: <strong>{{ anonymous_voter }}</strong></p>
+                                <p><button id="toggle_vote_code" class="btn btn-sm">Vis stemmekode</button></p>
+                                <p><strong id="vote_code" style="display: none;">{{ anonymous_voter }}</strong></p>
                             {% endif %}<!-- End if already voted -->
                             {% else %}
                                 <p>Du er ikke stemmeberettiget, og kan derfor ikke avlegge stemme. Kun administratorer (tellekorps) kan endre din status.</p>

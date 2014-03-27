@@ -61,7 +61,9 @@ def genfors(request):
                     context['active_question']['blank_percent'] = res['data']['Blankt'] * 100 / total_votes
 
                 elif aq.question_type is MULTIPLE_CHOICE and total_votes != 0:
-                    context['active_question']['multiple_choice'] = {a.description: [0, 0] for a in alternatives}
+                    context['active_question']['multiple_choice'] = {}
+                    for a in alternatives:
+                        context['active_question']['multiple_choice'][a] = [0, 0]
                     context['active_question']['multiple_choice']['Blankt'] = [0, 0]
                     for k, v in res['data'].items():
                         context['active_question']['multiple_choice'][k] = [v, v * 100 / total_votes]

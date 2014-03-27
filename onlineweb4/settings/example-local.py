@@ -74,6 +74,8 @@ FILEBROWSER_MEDIA_ROOT = MEDIA_ROOT
 #   'django_extensions', # http://packages.python.org/django-extensions/
 # )
 
+GENFORS_ADMIN_PASSWORD = 'ADMIN_PASSWORD'
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,

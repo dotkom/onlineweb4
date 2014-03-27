@@ -160,7 +160,9 @@ class Question(models.Model):
 
         elif self.question_type is MULTIPLE_CHOICE:
             mc = MultipleChoice.objects.filter(question=self)
-            results = {alt.description: 0 for alt in Alternative.objects.filter(question=self)}
+            results = {}
+            for alt in Alternative.objects.filter(question=self):
+                results[alt.description] = 0
             results['Blankt'] = 0
             for a in mc:
                 if a.answer is not None:

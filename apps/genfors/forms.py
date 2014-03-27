@@ -72,6 +72,7 @@ class RegisterVoterForm(forms.Form):
                            label=_(u'Personlig kode'), help_text=_(u'''
                             Personlig kode brukes for å lage en unik hash som brukes til hemmelige valg.
                             Denne lagres ikke og det er derfor ytterst viktig at du ikke glemmer den.'''))
+    salt2 = forms.CharField(widget=forms.PasswordInput(render_value=False), label=_(u'Gjenta personlig kode'))
 
     def get_active_meeting(self):
         today = datetime.date.today()
@@ -87,4 +88,6 @@ class RegisterVoterForm(forms.Form):
             return
         elif self.cleaned_data['password'] != self.get_active_meeting().pin:
             self._errors['password'] = self.error_class([_(u'Feil PIN-kode')])
+        elif self.cleaned_data['salt'] != self.cleaned_data['salt2']:
+            self._errors['salt'] = self.error_class([_(u'De personlige kodene er ikke like')])
         return self.cleaned_data

@@ -138,6 +138,8 @@ class Feedback(models.Model):
     feedback_id = models.AutoField(primary_key=True)
     author = models.ForeignKey(User)
     description = models.CharField(_(u'beskrivelse'), max_length=100)
+    display_field_of_study = models.BooleanField(_(u'Vis studie oversikt'), default=True, 
+        help_text=_('Grafen over studiefelt vil bli vist til bedriften'))
  
     @property
     def ratingquestions(self):
@@ -186,8 +188,9 @@ class TextQuestion(models.Model):
         related_name='text_questions')
 
     order = models.SmallIntegerField(_(u'Rekkefølge'), default=10)
-
     label = models.CharField(_(u'Spørsmål'), blank=False, max_length=256)
+    display = models.BooleanField(_(u'Vis til bedrift'), default=True)
+
 
     def __unicode__(self):
         return self.label
@@ -219,8 +222,8 @@ class RatingQuestion(models.Model):
         related_name='rating_questions')
 
     order = models.SmallIntegerField(_(u'Rekkefølge'), default=20)
-
     label = models.CharField(_(u'Spørsmål'), blank=False, max_length=256)
+    display = models.BooleanField(_(u'Vis til bedrift'), default=True)
 
     def __unicode__(self):
         return self.label
