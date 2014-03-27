@@ -449,6 +449,50 @@ def genfors_end(request):
         messages.error(request, u'Du har ikke tilgang til dette')
     return redirect('genfors_admin')
 
+def api_admin(request):
+    return HttpResponse(json.dumps({"error": "Du har ikke tilgang til dette endepunktet."}))
+
+def api_user(request):
+    if is_registered(request):
+        m = get_active_meeting()
+        q = m.get_active_question()
+        genfors = {}
+        reg_voter = RegisteredVoter.objects.filter(user=request.user, meeting=m)[0]
+        anon_voter = AnonymousVoter.objects.get(user_hash=request.COOKIES.get('anon_voter'), meeting=m)
+
+        genfors["total_voters"] = m.num_can_vote()
+        if q:
+            genfors["question"] = {}
+            genfors["question"]["description"] = q.description
+            if q.anonymous:
+                already_voted = q.already_voted(anon_voter)
+            else:
+                already_voted = q.already_voted(reg_voter)
+            if already_voted:
+                if not q.only_show_winner:
+                    genfors["question"]["results"] = q.get_results()
+            genfors["question"]["current_votes"] = q.get_votes().count()
+
+            if not q.only_show_winner:
+                votes = q.get_votes()
+                if q.anonymous:
+                    if q.question_type == 0:
+                        genfors["question"]["votes"] = [[unicode(v.voter.anonymousvoter), v.answer] for v in votes]
+                    elif q.question_type == 1:
+                        genfors["question"]["votes"] = [[unicode(v.voter.anonymousvoter), v.answer.description] if v.answer else [unicode(v.voter.anonymousvoter), "Blankt"] for v in votes]
+                else:
+                    if q.question_type == 0:
+                        genfors["question"]["votes"] = [[unicode(v.voter.registeredvoter), v.answer] for v in votes]
+                    elif q.question_type == 1:
+                        genfors["question"]["votes"] = [[unicode(v.voter.registeredvoter), v.answer.description] if v.answer else [unicode(v.voter.registeredvoter), "Blankt"] for v in votes]
+        else:
+            genfors["question"] = None
+
+        return HttpResponse(json.dumps(genfors))
+
+    else:
+        return HttpResponse(json.dumps({"error": "Du har ikke tilgang til dette endepunktet."}))
+
 
 # Logs out user of genfors removing the only link between that user and the anoymous votes
 def logout(request):

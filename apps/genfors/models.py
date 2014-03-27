@@ -193,7 +193,7 @@ class Question(models.Model):
             res = {'valid': False, 'data': {}}
 
             if total_votes != 0:
-                res['valid'] = winner_votes / float(total_votes) >= minimum
+                res['valid'] = winner_votes / float(total_votes) > minimum
 
             # Admins should see all info regardless of only show winner
             if admin or not self.only_show_winner:
@@ -257,7 +257,7 @@ class AbstractVote(models.Model):
     question = models.ForeignKey(Question, null=False)
 
     def get_voter_name(self):
-        return unicode(voter)
+        return unicode(self.voter)
 
 
 class BooleanVote(AbstractVote):
