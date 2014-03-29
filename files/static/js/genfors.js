@@ -101,7 +101,7 @@ Genfors = (function () {
                     else {
                         var alternatives = Object.keys(r);
                         alternatives.sort(function(a,b){return r[b]-r[a]});
-                        var current_votes = data.current_votes;
+                        var current_votes = data.question.current_votes;
                         var html = "";
                         for (var x = 0; x < alternatives.length; x++) {
                             var key = alternatives[x];
