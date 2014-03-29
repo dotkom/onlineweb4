@@ -72,7 +72,7 @@ Genfors = (function () {
                         var yes = r['Ja']
                         var no = r['Nei']
                         var blank = r['Blankt']
-                        var current_votes = data.current_votes;
+                        var current_votes = data.question.current_votes;
                         var options = Object.keys(r);
                         options.sort(function(a,b) {return r[b]-r[a]});
                         var html = "";

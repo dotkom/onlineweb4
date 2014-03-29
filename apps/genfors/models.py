@@ -8,6 +8,7 @@ from django.utils.timezone import localtime
 import operator
 from hashlib import sha256
 import random
+import json
 
 # Statics
 
@@ -147,13 +148,15 @@ class Question(models.Model):
     # Returns results as a dictionary, either by alternative or boolean-ish types
     def get_results(self, admin=False):
         if self.locked:
-            r = Result.objects.filter(meeting=self.meeting, question=self)
+            r = Result.objects.filter(question=self)
             if r:
                 r = r[0]
-            if admin:
-                return json.loads(r.result_private)
+                if admin:
+                    return json.loads(r.result_private)
+                else:
+                    return json.loads(r.result_public)
             else:
-                return json.loads(r.result_public)
+                return None
         else:
             results = None
 
