@@ -286,3 +286,12 @@ class MultipleChoice(AbstractVote):
     The MultipleChoice model holds the answered alternative to a specific question held in superclass
     '''
     answer = models.ForeignKey(Alternative, null=True, blank=True, help_text=_(u'Alternativ'))
+
+class Result(models.Model):
+    '''
+    Result string container to reduce serverload
+    '''
+    meeting = models.ForeignKey(Meeting, null=False, help_text=(u'Meeting'))
+    question = models.ForeignKey(Question, null=False, help_text=(u'Meeting'))
+    result_public = models.TextField(null=False, max_length=2000)
+    result_private = models.TextField(null=False, max_length=2000)
