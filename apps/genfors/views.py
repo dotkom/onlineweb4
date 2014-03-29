@@ -8,7 +8,7 @@ from django.utils import timezone
 from django.http import HttpResponse, HttpResponseServerError
 from django.views.decorators.http import require_http_methods
 from apps.genfors.forms import LoginForm, MeetingForm, QuestionForm, RegisterVoterForm, AlternativeFormSet
-from apps.genfors.models import Meeting, Question, RegisteredVoter, AnonymousVoter, Alternative, BooleanVote, MultipleChoice
+from apps.genfors.models import Meeting, Question, RegisteredVoter, AnonymousVoter, Alternative, BooleanVote, MultipleChoice, Result
 from apps.genfors.models import BOOLEAN_VOTE, MULTIPLE_CHOICE
 from hashlib import sha256
 import datetime
@@ -285,6 +285,8 @@ def question_close(request, question_id):
     if request.method == 'POST':
         q.locked = True
         q.total_voters = m.num_can_vote()
+        result = Result(meeting=m, question=q, result_private=q.get_admin_results(), result_public=q.get_results())
+        result.save()
         q.save()
         messages.success(request, u'Avstemning for spørsmål \'%s\' ble stengt.' % q)
     else:
