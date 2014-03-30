@@ -74,6 +74,11 @@ FILEBROWSER_MEDIA_ROOT = MEDIA_ROOT
 #   'django_extensions', # http://packages.python.org/django-extensions/
 # )
 
+# Variables for fagKom/bedKom-sync script
+BEDKOM_GROUP_ID = 3
+FAGKOM_GROUP_ID = 6
+COMMON_GROUP_ID = 17
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
