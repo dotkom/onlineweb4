@@ -8,6 +8,7 @@ from django.utils.timezone import localtime
 import operator
 from hashlib import sha256
 import random
+import json
 
 # Statics
 
@@ -146,66 +147,77 @@ class Question(models.Model):
 
     # Returns results as a dictionary, either by alternative or boolean-ish types
     def get_results(self, admin=False):
-        results = None
-
-        if self.question_type is BOOLEAN_VOTE:
-            results = {'Ja': 0, 'Nei': 0, 'Blankt': 0}
-            for a in BooleanVote.objects.filter(question=self):
-                if a.answer is None:
-                    results['Blankt'] += 1
-                elif a.answer is False:
-                    results['Nei'] += 1
-                elif a.answer is True:
-                    results['Ja'] += 1
-
-        elif self.question_type is MULTIPLE_CHOICE:
-            mc = MultipleChoice.objects.filter(question=self)
-            results = {}
-            for alt in Alternative.objects.filter(question=self):
-                results[alt.description] = 0
-            results['Blankt'] = 0
-            for a in mc:
-                if a.answer is not None:
-                    if a.answer.description not in results:
-                        results[a.answer.description] = 0
-                    results[a.answer.description] += 1
+        if self.locked:
+            r = Result.objects.filter(question=self)
+            if r:
+                r = r[0]
+                if admin:
+                    return json.loads(r.result_private)
                 else:
-                    if 'Blankt' not in results:
-                        results['Blankt'] = 0
-                    results['Blankt'] += 1
-
-        if results:
-            winner = max(results.iterkeys(), key=(lambda key: results[key]))
-            winner_votes = results[winner]
-            
-            total_votes = None
-            if self.locked:
-                total_votes = self.total_voters
+                    return json.loads(r.result_public)
             else:
-                total_votes = len(self.meeting.get_can_vote())
-
-            # Normal
-            if self.majority_type == 0:
-                minimum = 1 / float(2)
-
-            # Qualitative
-            elif self.majority_type == 1:
-                minimum = 2 / float(3)
-        
-            res = {'valid': False, 'data': {}}
-
-            if total_votes != 0:
-                res['valid'] = winner_votes / float(total_votes) > minimum
-
-            # Admins should see all info regardless of only show winner
-            if admin or not self.only_show_winner:
-                res['data'] = results
-                return res
-            else:
-                res['data'] = {winner: None}
-                return res
+                return None
         else:
-            return None
+            results = None
+
+            if self.question_type is BOOLEAN_VOTE:
+                results = {'Ja': 0, 'Nei': 0, 'Blankt': 0}
+                for a in BooleanVote.objects.filter(question=self):
+                    if a.answer is None:
+                        results['Blankt'] += 1
+                    elif a.answer is False:
+                        results['Nei'] += 1
+                    elif a.answer is True:
+                        results['Ja'] += 1
+
+            elif self.question_type is MULTIPLE_CHOICE:
+                mc = MultipleChoice.objects.filter(question=self)
+                results = {}
+                for alt in Alternative.objects.filter(question=self):
+                    results[alt.description] = 0
+                results['Blankt'] = 0
+                for a in mc:
+                    if a.answer is not None:
+                        if a.answer.description not in results:
+                            results[a.answer.description] = 0
+                        results[a.answer.description] += 1
+                    else:
+                        if 'Blankt' not in results:
+                            results['Blankt'] = 0
+                        results['Blankt'] += 1
+
+            if results:
+                winner = max(results.iterkeys(), key=(lambda key: results[key]))
+                winner_votes = results[winner]
+            
+                total_votes = None
+                if self.locked:
+                    total_votes = self.total_voters
+                else:
+                    total_votes = len(self.meeting.get_can_vote())
+
+                # Normal
+                if self.majority_type == 0:
+                    minimum = 1 / float(2)
+
+                # Qualitative
+                elif self.majority_type == 1:
+                    minimum = 2 / float(3)
+        
+                res = {'valid': False, 'data': {}}
+
+                if total_votes != 0:
+                    res['valid'] = winner_votes / float(total_votes) > minimum
+
+                # Admins should see all info regardless of only show winner
+                if admin or not self.only_show_winner:
+                    res['data'] = results
+                    return res
+                else:
+                    res['data'] = {winner: None}
+                    return res
+            else:
+                return None
 
     def get_admin_results(self):
         return self.get_results(admin=True)
@@ -286,3 +298,12 @@ class MultipleChoice(AbstractVote):
     The MultipleChoice model holds the answered alternative to a specific question held in superclass
     '''
     answer = models.ForeignKey(Alternative, null=True, blank=True, help_text=_(u'Alternativ'))
+
+class Result(models.Model):
+    '''
+    Result string container to reduce serverload
+    '''
+    meeting = models.ForeignKey(Meeting, null=False, help_text=(u'Meeting'))
+    question = models.ForeignKey(Question, null=False, help_text=(u'Meeting'))
+    result_public = models.TextField(null=False, max_length=2000)
+    result_private = models.TextField(null=False, max_length=2000)

@@ -8,7 +8,7 @@ from django.utils import timezone
 from django.http import HttpResponse, HttpResponseServerError
 from django.views.decorators.http import require_http_methods
 from apps.genfors.forms import LoginForm, MeetingForm, QuestionForm, RegisterVoterForm, AlternativeFormSet
-from apps.genfors.models import Meeting, Question, RegisteredVoter, AnonymousVoter, Alternative, BooleanVote, MultipleChoice
+from apps.genfors.models import Meeting, Question, RegisteredVoter, AnonymousVoter, Alternative, BooleanVote, MultipleChoice, Result
 from apps.genfors.models import BOOLEAN_VOTE, MULTIPLE_CHOICE
 from hashlib import sha256
 import datetime
@@ -63,10 +63,12 @@ def genfors(request):
                 elif aq.question_type is MULTIPLE_CHOICE and total_votes != 0:
                     context['active_question']['multiple_choice'] = {}
                     for a in alternatives:
-                        context['active_question']['multiple_choice'][a] = [0, 0]
+                        context['active_question']['multiple_choice'][a.description] = [0, 0]
                     context['active_question']['multiple_choice']['Blankt'] = [0, 0]
                     for k, v in res['data'].items():
                         context['active_question']['multiple_choice'][k] = [v, v * 100 / total_votes]
+
+                    print context['active_question']
 
         return render(request, "genfors/index.html", context)
 
@@ -283,8 +285,10 @@ def question_close(request, question_id):
     q = Question.objects.get(id=question_id)
     m = get_active_meeting()
     if request.method == 'POST':
-        q.locked = True
         q.total_voters = m.num_can_vote()
+        result = Result(meeting=m, question=q, result_private=json.dumps(q.get_admin_results()), result_public=json.dumps(q.get_results()))
+        result.save()
+        q.locked = True
         q.save()
         messages.success(request, u'Avstemning for spørsmål \'%s\' ble stengt.' % q)
     else:

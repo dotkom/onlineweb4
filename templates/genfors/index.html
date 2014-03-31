@@ -23,12 +23,15 @@ Generalforsamling - Online
                         <h3>Aktiv sak</h3>
                         <div class="well">
                             {% if q %}{{ q.description }}
-                                {% if q.anonymous %}
+                                {% if q.anonymous and q.only_show_winner %}
+                                    <br /><br />
+                                    <small><i>Dette er et hemmelig valg</i></small><br />
+                                    <small><i>Bare vinneren vil bli annonsert</i></small>
+                                {% elif q.anonymous %}
                                     <br /><br />
                                     <small><i>Dette er et hemmelig valg</i></small>
-                                {% endif %}
-                                {% if q.only_show_winner %}
-                                    <br />
+                                {% elif q.only_show_winner %}
+                                    <br /><br />
                                     <small><i>Bare vinneren vil bli annonsert</i></small>
                                 {% endif %}
                             {% else %}Ingen aktiv sak.{% endif %}
