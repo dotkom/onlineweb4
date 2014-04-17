@@ -24,26 +24,27 @@ function EventWidget (Utils){
                     $.each(data.events, function (index) {
                         // If the index is even, create a row and append item. Else just append item to row.
                         // (This is to distribute items left and right)
+                        var htmlItem = '';
+                        
                         if (index < 2) {
+                            htmlItem = createEventItem(this);
+
                             if (index % 2 === 0) {
                                 var htmlRow = '<div class="row clearfix hero"></div>';
                                 rowNode = fragment.appendChild($(htmlRow)[0]);
-
-                                var htmlItem = createEventItem(this);
                                 rowNode.appendChild($(htmlItem)[0]);
                             }
                             else {
-                                var htmlItem = createEventItem(this);
                                 rowNode.appendChild($(htmlItem)[0]);
                             }
                         }
                         else {
+                            htmlItem = createEventListitem(this);
+
                             if (index % 2 === 0) {
-                                var htmlItem = createEventListitem(this);
                                 $(col1).append($(htmlItem)[0]);
                             }
                             else {
-                                var htmlItem = createEventListitem(this);
                                 $(col2).append($(htmlItem)[0]);
                             }
                         }
