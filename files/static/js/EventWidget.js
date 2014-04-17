@@ -17,42 +17,27 @@ function EventWidget (Utils){
 
                     // Fragment to append and global rowNode
                     var fragment = document.createDocumentFragment();
-                    var col1 = $('<ul class="event-list col-sm-12 col-md-6"></ul>');
-                    var col2 = $('<ul class="event-list col-sm-12 col-md-6"></ul>');
+                    var eventList = $('<ul class="event-list clearfix"></ul>');
                     var rowNode;
 
                     $.each(data.events, function (index) {
                         // If the index is even, create a row and append item. Else just append item to row.
                         // (This is to distribute items left and right)
-                        var htmlItem = '';
-                        
                         if (index < 2) {
-                            htmlItem = createEventItem(this);
-
                             if (index % 2 === 0) {
                                 var htmlRow = '<div class="row clearfix hero"></div>';
                                 rowNode = fragment.appendChild($(htmlRow)[0]);
-                                rowNode.appendChild($(htmlItem)[0]);
                             }
-                            else {
-                                rowNode.appendChild($(htmlItem)[0]);
-                            }
+
+                            rowNode.appendChild($(createEventItem(this))[0]);
                         }
                         else {
-                            htmlItem = createEventListitem(this);
-
-                            if (index % 2 === 0) {
-                                $(col1).append($(htmlItem)[0]);
-                            }
-                            else {
-                                $(col2).append($(htmlItem)[0]);
-                            }
+                            eventList.append($(createEventListitem(this))[0]);
                         }
                     });
 
                     rowNode = fragment.appendChild($('<div class="row clearfix hero"></div>')[0]);
-                    rowNode.appendChild($(col1)[0]);
-                    rowNode.appendChild($(col2)[0]);
+                    rowNode.appendChild($(eventList)[0]);
 
                     // Append the fragment after processing rows
                     $('#event-items').append(fragment);
