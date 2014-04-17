@@ -5,7 +5,7 @@ function EventWidget (Utils){
     /* Render the widget */
     EventWidget.prototype.render = function(callback) {
         callback = callback || function () {};
-        
+
         var now = moment();
 
         Utils.makeApiRequest({
@@ -25,7 +25,7 @@ function EventWidget (Utils){
                         // If the index is even, create a row and append item. Else just append item to row.
                         // (This is to distribute items left and right)
                         if (index < 2) {
-                            if (index % 2 == 0) {
+                            if (index % 2 === 0) {
                                 var htmlRow = '<div class="row clearfix hero"></div>';
                                 rowNode = fragment.appendChild($(htmlRow)[0]);
 
@@ -38,7 +38,7 @@ function EventWidget (Utils){
                             }
                         }
                         else {
-                            if (index % 2 == 0) {
+                            if (index % 2 === 0) {
                                 var htmlItem = createEventListitem(this);
                                 $(col1).append($(htmlItem)[0]);
                             }
@@ -60,7 +60,7 @@ function EventWidget (Utils){
                     // Display text if no data was found
                     $('#event-items').html('<p class="ingress">Ingen arrangementer funnet</p>');
                 }
-                
+
                 if ( ($($('.event-list')[0]).children().length <= 1 && $($('.event-list')[1]).children().length == 1) ||
                     ($($('.event-list')[0]).children().length == 1 && $($('.event-list')[1]).children().length <= 1)
                 ) {
@@ -72,7 +72,7 @@ function EventWidget (Utils){
                 callback();
             }
         });
-    }
+    };
 
      /* Private function to create a string which represents an event item.
      * @param json object
@@ -111,7 +111,7 @@ function EventWidget (Utils){
             html +=         '</div>';
         }
         html +=         '</div>';
-        html +=     '</div>'
+        html +=     '</div>';
         html +=     '<span class="hero-date">' + moment(item.event_start).lang('nb').format('DD. MMMM') + '</span>';
         html += '</div></div>';
 
