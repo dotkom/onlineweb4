@@ -116,6 +116,11 @@ section#events {
             @media (min-width: 992px) {
                 width: 455px;
 
+                &.column-bottom,
+                &:last-child {
+                    border: none;
+                }
+
                 &:nth-child(odd) {
                     float: left;
                 }
@@ -128,14 +133,6 @@ section#events {
                 width: 555px;
             }
 
-            &:last-child {
-                border: none;
-            }
-
-            &:last-child.border {
-                border-bottom: 1px solid #e0e0e0;
-            }
-
             span {
                 float: right;
                 color: #ccc;
@@ -146,6 +143,7 @@ section#events {
                 color: #666;
             }
         }
+
     }
 
 

@@ -41,17 +41,16 @@ function EventWidget (Utils){
 
                     // Append the fragment after processing rows
                     $('#event-items').append(fragment);
+
+                    if ($('li', eventList).length % 2 === 0) {
+                      $($('li', eventList)[$('li', eventList).length-2]).addClass('column-bottom');
+                    }
                 }
                 else {
                     // Display text if no data was found
                     $('#event-items').html('<p class="ingress">Ingen arrangementer funnet</p>');
                 }
 
-                if ( ($($('.event-list')[0]).children().length <= 1 && $($('.event-list')[1]).children().length == 1) ||
-                    ($($('.event-list')[0]).children().length == 1 && $($('.event-list')[1]).children().length <= 1)
-                ) {
-                    $('.event-list li').addClass('border');
-                }
 
                 // Calling the callback
                 $('.carousel').carousel();
