@@ -19,6 +19,13 @@ function ArticleWidget (Utils){
                         }
                         else {
                             output_normal += '<div class="col-xs-6 col-md-2"><a href="/article/'+data.articles[i].id+'/'+data.articles[i].slug+'"><img src="'+data.articles[i].image_article_front_small+'" alt="'+data.articles[i].heading+'"><br /><h4>'+data.articles[i].heading+'</h4></a></div>';
+
+                            // adds a separator to clear the floats in movile view
+                            // #article-frontpage-normal @media (max-width: 991px) { div:nth-child(even) { .clearfix(); } }
+                            // won't do magic afaik
+                            if (i % 2 !== 0) {
+                              output_normal += '<div class="article-widget-mobile-view-separator"></div>';
+                            }
                         }
                     }
 
