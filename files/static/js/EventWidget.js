@@ -51,6 +51,11 @@ function EventWidget (Utils){
                     $('#event-items').html('<p class="ingress">Ingen arrangementer funnet</p>');
                 }
 
+                if ( ($($('.event-list')[0]).children().length <= 1 && $($('.event-list')[1]).children().length == 1) ||
+                    ($($('.event-list')[0]).children().length == 1 && $($('.event-list')[1]).children().length <= 1)
+                ) {
+                    $('.event-list li').addClass('border');
+                }
 
                 // Calling the callback
                 $('.carousel').carousel();
@@ -104,6 +109,6 @@ function EventWidget (Utils){
     }
 
     function createEventListitem (item) {
-        return '<li><a href="events/' + item.id + '/' + item.slug + '">'+item.title+'</a><span>'+moment(item.event_start).lang('nb').format('DD.MM')+'</span></li> ';
+        return '<li><span>'+moment(item.event_start).lang('nb').format('DD.MM')+'</span><a href="events/' + item.id + '/' + item.slug + '">'+item.title+'</a></li> ';
     }
 }
