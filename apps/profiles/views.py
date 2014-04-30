@@ -340,8 +340,8 @@ kan dette gjøres ved å klikke på knappen for verifisering på din profil.
 
     try:
         send_mail(_(u'Verifiser din epost %s') % email, email_message, settings.DEFAULT_FROM_EMAIL, [email,])
-    except SMTPException as e:
-        messages.error(request, u'Det oppstod en kritisk feil, epostadressen er ugjyldig!')
+    except SMTPException:
+        messages.error(request, u'Det oppstod en kritisk feil, epostadressen er ugyldig!')
         return redirect('home')
 
 
