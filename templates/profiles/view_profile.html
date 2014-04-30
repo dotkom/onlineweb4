@@ -68,6 +68,14 @@
                     </div>
                     <div class="row attribute-list">
                         <div class="col-md-4">
+                            <b>E-Post</b><br />
+                            {% if user.privacy.expose_email %}
+                                {% firstof user.get_email|striptags 'Ikke tilgjengelig' %}
+                            {% else %}
+                                Ikke tilgjengelig
+                            {% endif %}
+                        </div>
+                        <div class="col-md-4">
                             <b>NTNU-brukernavn</b><br />
                             {{ user.ntnu_username }}
                         </div>
