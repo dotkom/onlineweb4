@@ -97,7 +97,7 @@ kan dette gjøres med funksjonen for å gjenopprette passord.
                 try:
                     send_mail(_(u'Verifiser din konto'), email_message, settings.DEFAULT_FROM_EMAIL, [email.email,])
                 except SMTPException as e:
-                    messages.error(request, u'Det oppstod en kritisk feil, ' + e)
+                    messages.error(request, u'Det oppstod en kritisk feil, epostadressen er ugjyldig!')
                     return redirect('home')
 
                 messages.success(request, _(u'Registreringen var vellykket. Se tilsendt epost for verifiseringsinstrukser.'))
