@@ -42,7 +42,8 @@ class RuleBundleInline(admin.TabularInline):
 
 class AttendeeAdmin(admin.ModelAdmin):
     model = Attendee
-    list_display = ('user', 'event', 'paid')
+    list_display = ('user', 'event', 'paid', 'note')
+    list_filter = ('event__event__title',)
     actions = None
 
     def delete_model(self, request, obj):

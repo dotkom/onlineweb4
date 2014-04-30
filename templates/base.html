@@ -62,10 +62,14 @@
                                 <form class="navbar-form" method="POST" action="{% url 'auth_login' %}">
                                     {% csrf_token %}
                                     <fieldset class="textbox">
-                                        <label for="id_username">Brukernavn</label>
-                                        <input type="text" name="username" id="id_username" class="form-control">
-                                        <label for="id_password">Passord</label>
-                                        <input type="password" name="password" id="id_password" class="form-control">
+                                        <div class="input-group">
+                                            <label for="id_username">Brukernavn</label>
+                                            <input type="text" name="username" id="id_username" class="form-control">
+                                        </div>
+                                        <div class="input-group">
+                                            <label for="id_password">Passord</label>
+                                            <input type="password" name="password" id="id_password" class="form-control">
+                                        </div>
                                     </fieldset>
                                     <input type="hidden" name="next" value="{{ request.get_full_path }}" />
                                     <button type="submit" class="btn btn-primary">Logg inn</button>

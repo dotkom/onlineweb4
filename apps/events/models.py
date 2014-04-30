@@ -140,12 +140,17 @@ class Event(models.Model):
                 return response
         
         # Do I have any marks that postpone my registration date?
-        active_marks = Mark.active.filter(given_to = user).count()
-        if active_marks > 0:
+        active_marks = Mark.active.filter(given_to = user)
+        num_active_marks = active_marks.count()
+
+        if num_active_marks > 0:
             # Offset is currently 1 day per mark. 
-            mark_offset = timedelta(days=active_marks)
+            mark_offset = timedelta(days=num_active_marks)
             postponed_registration_start = self.attendance_event.registration_start + mark_offset
-            if postponed_registration_start > timezone.now():
+
+            before_expiry = self.attendance_event.registration_start.date() < active_marks.aggregate(models.Max('expiration_date'))['expiration_date__max']
+
+            if postponed_registration_start > timezone.now() and before_expiry:
                 if 'offset' in response and response['offset'] < postponed_registration_start or 'offset' not in response:    
                     response['status'] = False
                     response['status_code'] = 401
@@ -422,6 +427,7 @@ class AttendanceEvent(models.Model):
 
     max_capacity = models.PositiveIntegerField(_(u'maks-kapasitet'), null=False, blank=False)
     waitlist = models.BooleanField(_(u'venteliste'), default=False)
+    guest_attendance = models.BooleanField(_(u'gjestepåmelding'), null=False, blank=False, default=False)
     registration_start = models.DateTimeField(_(u'registrerings-start'), null=False, blank=False)
     unattend_deadline = models.DateTimeField(_(u'avmeldings-frist'), null=False, blank=False) 
     registration_end = models.DateTimeField(_(u'registrerings-slutt'), null=False, blank=False)
@@ -445,6 +451,10 @@ class AttendanceEvent(models.Model):
         """
         Checks a user against rules applied to an attendance event
         """
+        # If the event has guest attendance, allow absolutely anyone
+        if self.guest_attendance:
+            return {'status': True, 'status_code': 201}
+
         # If the user is not a member, return False right away
         # TODO check for guest list
         if not user.is_member:
@@ -517,6 +527,7 @@ class Attendee(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True, editable=False)
     attended = models.BooleanField(_(u'var tilstede'), default=False)
     paid = models.BooleanField(_(u'har betalt'), default=False)
+    note = models.CharField(_(u'notat'), max_length=100, blank=True, default='')
 
     def __unicode__(self):
         return self.user.get_full_name()
