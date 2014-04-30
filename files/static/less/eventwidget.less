@@ -72,7 +72,7 @@ section#events {
         background:@bedkom-color;
         color:@bedkom-color;
     }
-    
+
     /* Gets overridden below if needed */
     [class*='event-type-'] {
         .event-arrkom;
@@ -106,29 +106,44 @@ section#events {
     ul.event-list {
         list-style: none;
         margin-top: 8px;
+        padding: 0 15px;
 
         li {
             padding: 10px 0;
             border-bottom: 1px solid #e0e0e0;
             font-size: 14px;
-        }
-        li:last-child {
-            border: none;
+
+            @media (min-width: 992px) {
+                width: 455px;
+
+                &.column-bottom,
+                &:last-child {
+                    border: none;
+                }
+
+                &:nth-child(odd) {
+                    float: left;
+                }
+                &:nth-child(even) {
+                    float: right;
+                }
+            }
+
+            @media (min-width: 1200px) {
+                width: 555px;
+            }
+
+            span {
+                float: right;
+                color: #ccc;
+                color: #428bca;
+            }
+
+            a {
+                color: #666;
+            }
         }
 
-        li:last-child.border {
-            border-bottom: 1px solid #e0e0e0;
-        }
-
-        li span {
-            float: right;
-            color: #ccc;
-            color: #428bca;
-        }
-
-        li a {
-            color: #666;
-        }
     }
 
 
@@ -145,4 +160,3 @@ section#events {
         }
     }
 }
-

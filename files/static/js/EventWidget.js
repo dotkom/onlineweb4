@@ -5,7 +5,7 @@ function EventWidget (Utils){
     /* Render the widget */
     EventWidget.prototype.render = function(callback) {
         callback = callback || function () {};
-        
+
         var now = moment();
 
         Utils.makeApiRequest({
@@ -17,62 +17,47 @@ function EventWidget (Utils){
 
                     // Fragment to append and global rowNode
                     var fragment = document.createDocumentFragment();
-                    var col1 = $('<ul class="event-list col-sm-12 col-md-6"></ul>');
-                    var col2 = $('<ul class="event-list col-sm-12 col-md-6"></ul>');
+                    var eventList = $('<ul class="event-list clearfix"></ul>');
                     var rowNode;
 
                     $.each(data.events, function (index) {
                         // If the index is even, create a row and append item. Else just append item to row.
                         // (This is to distribute items left and right)
                         if (index < 2) {
-                            if (index % 2 == 0) {
+                            if (index % 2 === 0) {
                                 var htmlRow = '<div class="row clearfix hero"></div>';
                                 rowNode = fragment.appendChild($(htmlRow)[0]);
+                            }
 
-                                var htmlItem = createEventItem(this);
-                                rowNode.appendChild($(htmlItem)[0]);
-                            }
-                            else {
-                                var htmlItem = createEventItem(this);
-                                rowNode.appendChild($(htmlItem)[0]);
-                            }
+                            rowNode.appendChild($(createEventItem(this))[0]);
                         }
                         else {
-                            if (index % 2 == 0) {
-                                var htmlItem = createEventListitem(this);
-                                $(col1).append($(htmlItem)[0]);
-                            }
-                            else {
-                                var htmlItem = createEventListitem(this);
-                                $(col2).append($(htmlItem)[0]);
-                            }
+                            eventList.append($(createEventListitem(this))[0]);
                         }
                     });
 
                     rowNode = fragment.appendChild($('<div class="row clearfix hero"></div>')[0]);
-                    rowNode.appendChild($(col1)[0]);
-                    rowNode.appendChild($(col2)[0]);
+                    rowNode.appendChild($(eventList)[0]);
 
                     // Append the fragment after processing rows
                     $('#event-items').append(fragment);
+
+                    if ($('li', eventList).length % 2 === 0) {
+                      $($('li', eventList)[$('li', eventList).length-2]).addClass('column-bottom');
+                    }
                 }
                 else {
                     // Display text if no data was found
                     $('#event-items').html('<p class="ingress">Ingen arrangementer funnet</p>');
                 }
-                
-                if ( ($($('.event-list')[0]).children().length <= 1 && $($('.event-list')[1]).children().length == 1) ||
-                    ($($('.event-list')[0]).children().length == 1 && $($('.event-list')[1]).children().length <= 1)
-                ) {
-                    $('.event-list li').addClass('border');
-                }
+
 
                 // Calling the callback
                 $('.carousel').carousel();
                 callback();
             }
         });
-    }
+    };
 
      /* Private function to create a string which represents an event item.
      * @param json object
@@ -111,7 +96,7 @@ function EventWidget (Utils){
             html +=         '</div>';
         }
         html +=         '</div>';
-        html +=     '</div>'
+        html +=     '</div>';
         html +=     '<span class="hero-date">' + moment(item.event_start).lang('nb').format('DD. MMMM') + '</span>';
         html += '</div></div>';
 
