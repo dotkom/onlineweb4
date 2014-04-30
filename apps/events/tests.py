@@ -37,6 +37,14 @@ class EventTest(TestCase):
         self.logger.debug("Testing testing on AttendanceEvent with dynamic fixtures")
         self.assertEqual(self.attendance_event.__unicode__(), u'Sjakkturnering')
 
+    #
+    # Event attendees, seats and wait list
+    # 
+
+    #
+    # Rule Bundles
+    #
+
     def testAttendeeUnicodeIsCorrect(self):
         self.logger.debug("Testing testing on Attendee with dynamic fixtures")
         self.assertEqual(self.attendee.__unicode__(), self.user.get_full_name())
