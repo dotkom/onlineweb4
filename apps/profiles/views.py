@@ -338,7 +338,12 @@ Denne lenken vil være gyldig i 24 timer. Dersom du behøver å få tilsendt en 
 kan dette gjøres ved å klikke på knappen for verifisering på din profil.
 """) % (request.META['HTTP_HOST'], token)
 
-    send_mail(_(u'Verifiser din epost %s') % email, email_message, settings.DEFAULT_FROM_EMAIL, [email,])
+    try:
+        send_mail(_(u'Verifiser din epost %s') % email, email_message, settings.DEFAULT_FROM_EMAIL, [email,])
+    except SMTPException:
+        messages.error(request, u'Det oppstod en kritisk feil, epostadressen er ugyldig!')
+        return redirect('home')
+
 
 @login_required
 def save_membership_details(request):
