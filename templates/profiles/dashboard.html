@@ -39,14 +39,44 @@
 		<div class="row attribute-list">
             <div class="col-md-4">
                 <b>Adresse</b><br />
-                {% if user.privacy.expose_address %}
-                    {% if user.address %}
-                        <div id="address">{{ user.address|striptags }}</div>
-                        <div id="zip-code">{{ user.zip_code|striptags }}</div>
-                        <div id="city"><div class="refresh"></div></div>
-                    {% else %}
-                        Ikke tilgjenglig
-                    {% endif %}
+                {% if user.address %}
+                    <div id="address">{{ user.address|striptags }}</div>
+                    <div id="zip-code">{{ user.zip_code|striptags }}</div>
+                    <div id="city"><div class="refresh"></div></div>
+                {% else %}
+                    Ikke tilgjenglig
+                {% endif %}
+            </div>
+            <div class="col-md-4">
+                <b>Telefonnummer</b><br />
+                {% if user.phone_number %}
+                    {{ user.phone_number|striptags }}
+                {% else %}
+                    Ikke tilgjengelig
+                {% endif %}
+            </div>
+            <div class="col-md-4">
+                <b>Kallenavn</b><br />
+                {% if user.nickname %}
+                    {{ user.nickname }}
+                {% else %}
+                    Ikke tilgjengelig
+                {% endif %}
+            </div>
+        </div>
+        <div class="row attribute-list">
+            <div class="col-md-4">
+                <b>E-post</b><br />
+                {% if user.get_email %}
+                    {{ user.get_email }}
+                {% else %}
+                    Ikke tilgjengelig
+                {% endif %}
+            </div>
+            <div class="col-md-4">
+                <b>NTNU-brukernavn</b><br />
+                {% if user.ntnu_username %}
+                    {{ user.ntnu_username }}
                 {% else %}
                     Ikke tilgjengelig
                 {% endif %}
