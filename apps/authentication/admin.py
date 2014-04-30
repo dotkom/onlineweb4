@@ -15,7 +15,7 @@ class OnlineUserAdmin(admin.ModelAdmin):
     model = OnlineUser
     inlines = (EmailInline,)
     list_display = ['username', 'first_name', 'last_name', 'ntnu_username', 'field_of_study', 'is_member',]
-    list_filter = ('is_staff', 'is_superuser', 'is_active', 'groups')
+    list_filter = ('is_staff', 'is_superuser', 'is_active', 'groups__name')
     fieldsets = (
         (None, {'fields': ('username', 'password')}),
         (_(u'Personlig info'), {'fields': ('first_name', 'last_name', 'phone_number', )}),

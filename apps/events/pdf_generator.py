@@ -14,10 +14,13 @@ class EventPDF:
     attendee_table_data = None
     waiters_table_data = None
     allergies_table_data = None
+    full_span_attendee_lines = []
+    full_span_waiters_lines = []
 
     def __init__(self, event):
         self.event = event
-        self.attendees = sorted(event.attendance_event.attendees.all()[:event.attendance_event.max_capacity], key=lambda attendee: attendee.user.last_name)
+        attendee_qs = event.attendance_event.attendees.filter()
+        self.attendees = sorted(attendee_qs[:event.attendance_event.max_capacity], key=lambda attendee: attendee.user.last_name)
         self.waiters = event.wait_list
         self.attendee_table_data = [(u'Navn', u'Klasse', u'Studie', u'Telefon'), ]
         self.waiters_table_data = [(u'Navn', u'Klasse', u'Studie', u'Telefon'), ]
@@ -29,27 +32,47 @@ class EventPDF:
 
     # Create table data for attendees with a spot
     def create_attendees_table_data(self):
+        i = 1
 
         for attendee in self.attendees:
             user = attendee.user
-            self.attendee_table_data.append((create_body_text("%s, %s" % (user.last_name, user.first_name)),
-                                             user.year, create_body_text(user.get_field_of_study_display()),
-                                             user.phone_number))
+            self.attendee_table_data.append((
+                                            create_body_text("%s, %s" % (user.last_name, user.first_name)),
+                                            user.year, 
+                                            create_body_text(user.get_field_of_study_display()),
+                                            user.phone_number
+                                            ))
 
+            if attendee.note:
+                self.attendee_table_data.append((create_body_text(u'Notat for %s: ' % attendee.user.first_name + attendee.note),))
+                i += 1
+                self.full_span_attendee_lines.append(i) 
             if user.allergies:
                 self.allergies_table_data = self.allergies_table_data + [user.first_name + ' ' + user.last_name  + ': ' + user.allergies]
+
+            i += 1
 
     # Create table data for attendees waiting for a spot
     def create_waiters_table_data(self):
+        i = 1
 
         for attendee in self.waiters:
             user = attendee.user
-            self.waiters_table_data.append((create_body_text("%s, %s" % (user.last_name, user.first_name)),
-                                            user.year, create_body_text(user.get_field_of_study_display()),
-                                            user.phone_number))
-
+            self.waiters_table_data.append((
+                                            create_body_text("%s, %s" % (user.last_name, user.first_name)),
+                                            user.year, 
+                                            create_body_text(user.get_field_of_study_display()),
+                                            user.phone_number
+                                            ))
+                
+            if attendee.note:
+                self.waiters_table_data.append((create_body_text(u'Notat for %s: ' % attendee.user.first_name + attendee.note),))
+                i += 1
+                self.full_span_waiters_lines.append(i) 
             if user.allergies:
                 self.allergies_table_data = self.allergies_table_data + [user.first_name + ' ' + user.last_name  + ': ' + user.allergies]
+
+            i += 1
 
     def attendee_column_widths(self):
         return (185, 40, 170, 75)
@@ -68,30 +91,38 @@ class EventPDF:
 
         pdf.p(u"Påmeldte", style=create_paragraph_style(font_size=14))
         pdf.spacer(height=20)
-        pdf.table(self.attendee_table_data, self.attendee_column_widths(), style=get_table_style())
+        pdf.table(self.attendee_table_data, self.attendee_column_widths(), style=get_table_style(self.full_span_attendee_lines))
         pdf.spacer(height=25)
+        
+        if len(self.waiters) > 0:
+            pdf.p(u"Venteliste", style=create_paragraph_style(font_size=14))
+            pdf.spacer(height=20)
+            pdf.table(self.waiters_table_data, self.attendee_column_widths(), style=get_table_style(self.full_span_waiters_lines))
+            pdf.spacer(height=25)
 
-        pdf.p(u"Venteliste", style=create_paragraph_style(font_size=14))
-        pdf.spacer(height=20)
-        pdf.table(self.waiters_table_data, self.attendee_column_widths(), style=get_table_style())
-        pdf.spacer(height=25)
-
-        pdf.p(u"Allergier", style=create_paragraph_style(font_size=14))
-        pdf.spacer(height=12)
-        pdf.ul(self.allergies_table_data)
+        if self.allergies_table_data:
+            pdf.p(u"Allergier", style=create_paragraph_style(font_size=14))
+            pdf.spacer(height=12)
+            pdf.ul(self.allergies_table_data)
 
         pdf.generate()
         return response
 
 
 # Table style for framed table with grids
-def get_table_style():
-    return TableStyle(
-        [
-            ('GRID',(0,0),(-1,-1),0.5,colors.grey),
-            ('BOX',(0,0),(-1,-1),1,colors.black),
-        ]
-    )
+def get_table_style(full_spans=None):
+    style = [
+                ('GRID',(0,0),(-1,-1),0.5,colors.grey),
+                ('BOX',(0,0),(-1,-1),1,colors.black),
+            ]
+    if full_spans:
+        for line in full_spans:
+            style.append(('SPAN',(0,line),(-1,line)))
+
+    print full_spans
+    print style
+
+    return TableStyle(style)
 
 # Normal paragraph
 def create_paragraph_style(font_name='Helvetica', font_size=10, color=colors.black):
