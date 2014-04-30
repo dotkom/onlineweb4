@@ -152,13 +152,6 @@ INSTALLED_APPS = (
     'markdown_deux',
     'djangoformsetjs',
 
-    # Wiki
-    'wiki',
-    'wiki.plugins.attachments',
-    'wiki.plugins.notifications',
-    'wiki.plugins.images',
-    'wiki.plugins.macros',
-
     # Django apps
     'django.contrib.admin',
     'django.contrib.auth',
@@ -181,6 +174,13 @@ INSTALLED_APPS = (
     'apps.mommy',
     'apps.profiles',
     'apps.genfors',
+
+     # Wiki
+    'wiki',
+    'wiki.plugins.attachments',
+    'wiki.plugins.notifications',
+    'wiki.plugins.images',
+    'wiki.plugins.macros',
 )
 
 # A sample logging configuration. The only tangible logging
