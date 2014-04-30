@@ -35,7 +35,7 @@ class PrivacyForm(forms.ModelForm):
 
     class Meta:
         model = Privacy
-        exclude = ['user']
+        exclude = ['user', 'expose_nickname']
 
 
 class MailSettingsForm(forms.ModelForm):

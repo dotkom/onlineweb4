@@ -298,4 +298,4 @@ class SpecialPosition(models.Model):
 
 
 # Register OnlineUser in watson index for searching
-watson.register(OnlineUser)
+watson.register(OnlineUser, fields=('first_name', 'last_name', 'ntnu_username', 'nickname'))

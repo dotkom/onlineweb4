@@ -66,6 +66,12 @@
                             {% endif %}
                         </div>
                     </div>
+                    <div class="row attribute-list">
+                        <div class="col-md-4">
+                            <b>NTNU-brukernavn</b><br />
+                            {{ user.ntnu_username }}
+                        </div>
+                    </div>
                     <div class="row" style="margin-bottom:40px;">
                         <div class="col-md-12">
                         {% if user.positions.all %}
