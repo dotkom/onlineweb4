@@ -40,11 +40,34 @@ class RuleBundleInline(admin.TabularInline):
     inline_classes = ('grp-collapse grp-open',)  # style
 
 
+def mark_paid(modeladmin, request, queryset):
+    queryset.update(paid=True)
+mark_paid.short_description = "Merk som betalt"
+
+def mark_not_paid(modeladmin, request, queryset):
+    queryset.update(paid=False)
+mark_not_paid.short_description = "Merk som ikke betalt"
+
+def mark_attended(modeladmin, request, queryset):
+    queryset.update(attended=True)
+mark_attended.short_description = "Merk som møtt"
+
+def mark_not_attended(modeladmin, request, queryset):
+    queryset.update(attended=False)
+mark_not_attended.short_description = "Merk som ikke møtt"
+
 class AttendeeAdmin(admin.ModelAdmin):
     model = Attendee
-    list_display = ('user', 'event', 'paid', 'note')
+    list_display = ('user', 'event', 'paid', 'attended', 'note')
     list_filter = ('event__event__title',)
-    actions = None
+    actions = [mark_paid, mark_attended, mark_not_paid, mark_not_attended]
+
+    # Disable delete_selected http://bit.ly/1o4nleN
+    def get_actions(self, request):
+        actions = super(AttendeeAdmin, self).get_actions(request)
+        if 'delete_selected' in actions:
+            del actions['delete_selected']
+        return actions
 
     def delete_model(self, request, obj):
         event = obj.event.event
