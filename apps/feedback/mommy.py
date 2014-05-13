@@ -226,4 +226,4 @@ class Message():
             self.end)
         return message
 
-schedule.register(FeedbackMail, day_of_week='mon-sun', hour=19, minute=33)
+schedule.register(FeedbackMail, day_of_week='mon-sun', hour=8, minute=00)
