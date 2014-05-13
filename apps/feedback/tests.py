@@ -33,7 +33,7 @@ class SimpleTest(TestCase):
         Email.objects.create(user = user1, email="user1@gmail.com", primary=True)
         user2 = User.objects.create(username="user2")
         Email.objects.create(user = user2, email="user2@gmail.com", primary=True)
-        event = Event.objects.create(title="Bedpress", event_start = timezone.now(), event_end = timezone.now(), event_type = 2, author = user1)
+        event = Event.objects.create(title="Bedpress", event_start = timezone.now() - timedelta(days=1), event_end = timezone.now(), event_type = 2, author = user1)
         attendance_event = AttendanceEvent.objects.create(
                                                         registration_start = timezone.now(), 
                                                         unattend_deadline = timezone.now(), 
@@ -117,7 +117,7 @@ class SimpleTest(TestCase):
         feedback_relation = FeedbackRelation.objects.get(pk=1)
         start_date = FeedbackMail.start_date(feedback_relation)
 
-        self.assertEqual(start_date, timezone.now().date())
+        self.assertEqual(start_date, timezone.now().date() - timedelta(days=1))
 
         feedback_relation2 = FeedbackRelation.objects.get(pk=2)
         start_date = FeedbackMail.start_date(feedback_relation2)
