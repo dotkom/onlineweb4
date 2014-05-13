@@ -75,7 +75,7 @@ class FeedbackRelation(models.Model):
         return question.answer.filter(feedback_relation=self)
 
     def __unicode__(self):
-        return str(self.feedback_id) + ': ' + str(self.content_object)
+        return str(self.feedback_id) + ': ' + unicode(self.content_object)
 
     def get_absolute_url(self):
         """
@@ -139,7 +139,7 @@ class Feedback(models.Model):
     author = models.ForeignKey(User)
     description = models.CharField(_(u'beskrivelse'), max_length=100)
     display_field_of_study = models.BooleanField(_(u'Vis studie oversikt'), default=True, 
-        help_text=_('Grafen over studiefelt vil bli vist til bedriften'))
+        help_text =_(u'Grafen over studiefelt vil bli vist til bedriften'))
  
     @property
     def ratingquestions(self):

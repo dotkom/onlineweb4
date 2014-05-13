@@ -42,6 +42,16 @@ class FeedbackMail(Task):
         not_responded = FeedbackMail.get_users(feedback)
         logger.info('Not responded: ' + str(not_responded))
         message = Message()
+        start_date = feedback.get_start_date()
+
+        if not start_date:
+            logger.info('Content object has no date')
+            return message
+
+        #Return if the event has not yet happened
+        if start_date.date() >= today:
+            logger.info('Event has not finished yet')
+            return message
 
         #return if everyone has answered
         if not not_responded:
@@ -56,15 +66,14 @@ class FeedbackMail(Task):
 
         message.committee_mail = FeedbackMail.get_committee_email(feedback)
         deadline = feedback.deadline.strftime("%d. %B").encode("utf-8")
-        title = str(FeedbackMail.get_title(feedback)).encode("utf-8")
+        title = FeedbackMail.get_title(feedback)
         message.link = str(u"\n\n" + FeedbackMail.get_link(feedback)).encode("utf-8")
         results_link = str(FeedbackMail.get_link(feedback) + "results").encode("utf-8")
        
-        start_date = feedback.get_start_date()
         deadline_diff = (feedback.deadline - today).days
 
-        message.subject = u"Feedback: %s" % (title)
-        message.intro = u"Hei, vi ønsker tilbakemelding på \"%s\"" % (title)
+        message.subject = u"Feedback: " + title
+        message.intro = u"Hei, vi ønsker tilbakemelding på \"" + title + "\""
         message.mark = FeedbackMail.mark_message(feedback)
         message.contact = u"\n\nEventuelle spørsmål sendes til %s " % (message.committee_mail)
         message.start_date = FeedbackMail.start_date_message(start_date)
