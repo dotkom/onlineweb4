@@ -99,25 +99,25 @@ class FeedbackRelation(models.Model):
                 return False
         return True
 
-    def get_slackers(self):
+    def not_answered(self):
         if hasattr(self.content_object, "feedback_users"):
             return set(self.content_object.feedback_users()).difference(set(self.answered.all()))
         else:
             return False
 
-    def get_email(self):
+    def content_email(self):
         if hasattr(self.content_object, "feedback_mail"):
             return self.content_object.feedback_mail()
         else:
             return "missing mail"
 
-    def get_title(self):
+    def content_title(self):
         if hasattr(self.content_object, "feedback_title"):
             return self.content_object.feedback_title()
         else:
             return "Missing title"
 
-    def get_start_date(self):
+    def content_end_date(self):
         if hasattr(self.content_object, "feedback_date"):
             return self.content_object.feedback_date()
         else:

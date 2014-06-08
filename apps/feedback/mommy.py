@@ -121,7 +121,7 @@ class FeedbackMail(Task):
         
     @staticmethod
     def send_first_notification(feedback):
-        start_date = FeedbackMail.start_date(feedback)
+        start_date = FeedbackMail.end_date(feedback)
 
         #The object that requires feedback doesnt have a start date
         if not start_date:
@@ -137,7 +137,7 @@ class FeedbackMail(Task):
         return False
 
     @staticmethod
-    def start_date(feedback):
+    def end_date(feedback):
         start_date = feedback.get_start_date()
         
         if start_date:
