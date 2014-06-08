@@ -37,10 +37,21 @@ class SimpleTest(TestCase):
 
         user1.set_password("Herpaderp123")
         user1.save()
+    
+    def yesterday(self):
+        return timezone.now().date() - timedelta(days=1)
+
+    def tomorow(self):
+        return timezone.now().date() + timedelta(days=1)
 
 
-    def create_feedback_relation(self, end_date=self.yesterday(), event_type=2, 
-                                 feedback=None, deadline= self.tomorow()):
+    def create_feedback_relation(self, end_date=False, event_type=2, 
+                                 feedback=None, deadline= False):
+        if not end_date:
+            end_date = self.yesterday()
+
+        if not deadline:
+            deadline = self.tomorow()
         
         event = Event.objects.create(title="-", event_start = timezone.now() - timedelta(days=1), 
                                      event_end = end_date, event_type = event_type, author = self.user1)
@@ -197,8 +208,3 @@ class SimpleTest(TestCase):
 
 
 
-    def yesterday(self):
-        return timezone.now().date() - timedelta(days=1)
-
-    def tomorow(self):
-        return timezone.now().date() + timedelta(days=1)
