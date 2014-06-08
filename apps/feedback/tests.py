@@ -31,18 +31,18 @@ class SimpleTest(TestCase):
 
         #Setup users
         self.user1 = User.objects.create(username="user1", is_active=True, is_staff=True)
-        Email.objects.create(user = user1, email="user1@gmail.com", primary=True)
+        Email.objects.create(user = self.user1, email="user1@gmail.com", primary=True)
         self.user2 = User.objects.create(username="user2")
-        Email.objects.create(user = user2, email="user2@gmail.com", primary=True)
+        Email.objects.create(user = self.user2, email="user2@gmail.com", primary=True)
 
-        user1.set_password("Herpaderp123")
-        user1.save()
+        self.user1.set_password("Herpaderp123")
+        self.user1.save()
     
     def yesterday(self):
-        return timezone.now().date() - timedelta(days=1)
+        return timezone.now() - timedelta(days=1)
 
     def tomorow(self):
-        return timezone.now().date() + timedelta(days=1)
+        return timezone.now() + timedelta(days=1)
 
 
     def create_feedback_relation(self, end_date=False, event_type=2, 
@@ -51,9 +51,9 @@ class SimpleTest(TestCase):
             end_date = self.yesterday()
 
         if not deadline:
-            deadline = self.tomorow()
+            deadline = self.tomorow().date()
         
-        event = Event.objects.create(title="-", event_start = timezone.now() - timedelta(days=1), 
+        event = Event.objects.create(title="-", event_start = self.yesterday(), 
                                      event_end = end_date, event_type = event_type, author = self.user1)
 
         attendance_event = AttendanceEvent.objects.create(registration_start = timezone.now(), 
@@ -71,6 +71,8 @@ class SimpleTest(TestCase):
         return FeedbackRelation.objects.create(feedback=feedback, content_object=event, deadline=deadline, active=True)
 
     def create_void_feedback_relation(self):
+        feedback = Feedback.objects.create(author = self.user1)
+        deadline = self.tomorow()
         return FeedbackRelation.objects.create(feedback=feedback, content_object=self.user1, deadline=deadline, active=True)
 
     def test_users_mail_addresses(self):
@@ -82,7 +84,7 @@ class SimpleTest(TestCase):
 
 
     def test_event_not_done(self):
-        feedback_relation = self.create_feedback_relation(timezone.now())
+        feedback_relation = self.create_feedback_relation(end_date=timezone.now())
         message = FeedbackMail.generate_message(feedback_relation, self.logger)
 
         self.assertFalse(message.send)
@@ -130,14 +132,14 @@ class SimpleTest(TestCase):
         self.assertEqual(email, settings.DEFAULT_FROM_EMAIL)
         
         #Not existing
-        feedback_relation = self.create_feedback_relation(event_type=8)
+        feedback_relation = self.create_void_feedback_relation()
         email = FeedbackMail.get_committee_email(feedback_relation)
         self.assertEqual(email, "missing mail")
  
-    def test_end_date(self):
-        feedback_relation = self.create_feedback_relation(self.yesterday())
-        start_date = FeedbackMail.end_date(feedback_relation)
-        self.assertEqual(start_date, self.yesterday())
+    def test_date(self):
+        feedback_relation = self.create_feedback_relation()
+        date = FeedbackMail.end_date(feedback_relation)
+        self.assertEqual(date, self.yesterday().date())
 
     def test_void_date(self):
         feedback_relation = self.create_void_feedback_relation()
@@ -146,7 +148,7 @@ class SimpleTest(TestCase):
 
     def test_disable(self):
         feedback_relation = self.create_feedback_relation()
-        feedback_relation.deadline = self.yesterday()
+        feedback_relation.deadline = self.yesterday().date()
         feedback_relation.save()
         FeedbackMail.generate_message(feedback_relation, self.logger)
         self.assertFalse(feedback_relation.active)

@@ -58,7 +58,7 @@ class Event(models.Model):
             return users
 
     def feedback_date(self):
-        return self.event_start
+        return self.event_end
 
     def feedback_title(self):
         return self.title

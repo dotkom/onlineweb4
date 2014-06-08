@@ -36,20 +36,20 @@ class FeedbackMail(Task):
 
     @staticmethod
     def generate_message(feedback, logger):
-        logger.info('Processing: "' + feedback.get_title() + '"')
+        logger.info('Processing: "' + feedback.content_title() + '"')
         today = timezone.now().date()
         yesterday = today + datetime.timedelta(days=-1)
         not_responded = FeedbackMail.get_users(feedback)
         logger.info('Not responded: ' + str(not_responded))
         message = Message()
-        start_date = feedback.get_start_date()
+        end_date = feedback.content_end_date()
 
-        if not start_date:
+        if not end_date:
             logger.info('Content object has no date')
             return message
 
         #Return if the event has not yet happened
-        if start_date.date() >= today:
+        if end_date.date() >= today:
             logger.info('Event has not finished yet')
             return message
 
@@ -76,7 +76,7 @@ class FeedbackMail(Task):
         message.intro = u"Hei, vi ønsker tilbakemelding på \"" + title + "\""
         message.mark = FeedbackMail.mark_message(feedback)
         message.contact = u"\n\nEventuelle spørsmål sendes til %s " % (message.committee_mail)
-        message.start_date = FeedbackMail.start_date_message(start_date)
+        message.date = FeedbackMail.date_message(end_date)
 
         if deadline_diff < 0: #Deadline passed
             feedback.active = False
@@ -138,28 +138,28 @@ class FeedbackMail(Task):
 
     @staticmethod
     def end_date(feedback):
-        start_date = feedback.get_start_date()
+        end_date = feedback.content_end_date()
         
-        if start_date:
-            return start_date.date()
+        if end_date:
+            return end_date.date()
         else:
             return False
 
     @staticmethod
-    def start_date_message(start_date):
+    def date_message(date):
         #If the object(event) doesnt have start date it will send 
         #the first notification the day after the feedbackrelation is made
-        if start_date:
-            start_date_string = start_date.strftime("%d. %B").encode("utf-8")
-            message_start_date = u"som du var med på den %s:" % (start_date_string)
+        if date:
+            date_string = date.strftime("%d. %B").encode("utf-8")
+            message_date = u"som du var med på den %s:" % (date_string)
         else:
-            message_start_date = ""
+            message_date = ""
         
-        return message_start_date   
+        return message_date   
 
     @staticmethod
     def get_users(feedback):
-        return feedback.get_slackers()
+        return feedback.not_answered()
 
     @staticmethod
     def get_user_mails(not_responded):
@@ -171,11 +171,11 @@ class FeedbackMail(Task):
 
     @staticmethod
     def get_title(feedback):
-        return feedback.get_title()
+        return feedback.content_title()
 
     @staticmethod
     def get_committee_email(feedback):
-        return feedback.get_email()
+        return feedback.content_email()
 
     @staticmethod
     def mark_message(feedback):
@@ -202,7 +202,7 @@ class FeedbackMail(Task):
 class Message():
     subject = ""
     intro = ""
-    start_date = ""
+    date = ""
     deadline = ""
     mark = ""
     contact = ""
@@ -218,7 +218,7 @@ class Message():
     def __unicode__(self):
         message = "%s %s %s %s %s %s %s" % (
             self.intro, 
-            self.start_date, 
+            self.date, 
             self.link, 
             self.deadline, 
             self.mark, 
