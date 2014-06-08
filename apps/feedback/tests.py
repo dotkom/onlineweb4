@@ -192,3 +192,6 @@ class SimpleTest(TestCase):
 
         response = client.get("/feedback/events/derp/1/1/")
         self.assertEqual(response.status_code, 404)
+
+    def test_derp(self):
+        self.assertFalse(True);
