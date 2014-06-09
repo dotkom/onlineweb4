@@ -51,7 +51,7 @@ class SimpleTest(TestCase):
             end_date = self.yesterday()
 
         if not deadline:
-            deadline = self.tomorow().date()
+            deadline = timezone.now().date() + timedelta(days=4)
         
         event = Event.objects.create(title="-", event_start = self.yesterday(), 
                                      event_end = end_date, event_type = event_type, author = self.user1)
@@ -70,6 +70,7 @@ class SimpleTest(TestCase):
         atendee2 = Attendee.objects.create(event = attendance_event, user = self.user2, attended =True)
         return FeedbackRelation.objects.create(feedback=feedback, content_object=event, deadline=deadline, active=True)
 
+    #Create a feedback relation that won't work
     def create_void_feedback_relation(self):
         feedback = Feedback.objects.create(author = self.user1)
         deadline = self.tomorow()
@@ -87,6 +88,7 @@ class SimpleTest(TestCase):
         feedback_relation = self.create_feedback_relation(end_date=timezone.now())
         message = FeedbackMail.generate_message(feedback_relation, self.logger)
 
+        self.assertEqual(message.status, "Event not done")
         self.assertFalse(message.send)
 
     def test_user_answered(self):
@@ -102,9 +104,46 @@ class SimpleTest(TestCase):
         feedback_relation.answered = [self.user1, self.user2]
         message = FeedbackMail.generate_message(feedback_relation, self.logger)
 
+        self.assertEqual(message.status, 'Everyone has answered')
         self.assertFalse(message.send)
         self.assertFalse(feedback_relation.active)
 
+    def test_deadline_passeed(self):
+        feedback_relation = self.create_feedback_relation(deadline=self.yesterday().date())
+        FeedbackMail.generate_message(feedback_relation, self.logger)
+
+        self.assertEqual(message.status, "Deadine passed")
+        self.assertFalse(feedback_relation.active)
+
+    def test_last_warning(self):
+        feedback_relation = self.create_feedback_relation(deadline=timezone.now().date())
+        FeedbackMail.generate_message(feedback_relation, self.logger)
+
+        self.assertEqual(message.status, "Last warning")
+        self.assertTrue(message.send)
+
+    def test_warning(self):
+        feedback_relation = self.create_feedback_relation(deadline=timezone.now().date() + timedelta(days=2))
+        FeedbackMail.generate_message(feedback_relation, self.logger)
+
+        self.assertEqual(message.status, "Warning message")
+        self.assertTrue(message.send)
+
+    def test_first_mail(self):
+        feedback_relation = self.create_feedback_relation()
+        FeedbackMail.generate_message(feedback_relation, self.logger)
+
+        self.assertEqual(message.status, "First message")
+        self.assertTrue(message.send)
+
+    def test_no_message(self):
+        #TODO
+        feedback_relation = self.create_feedback_relation(end_date = timezone.now() - timedelta(days=2))
+        FeedbackMail.generate_message(feedback_relation, self.logger)
+
+        self.assertEqual(message.status, "No message generated")
+        self.assertFalse(message.send)
+        
     def test_committee_mails(self):
         #Sosialt
         feedback_relation = self.create_feedback_relation(event_type=1)
@@ -146,12 +185,6 @@ class SimpleTest(TestCase):
         end_date = FeedbackMail.end_date(feedback_relation)
         self.assertFalse(end_date)
 
-    def test_disable(self):
-        feedback_relation = self.create_feedback_relation()
-        feedback_relation.deadline = self.yesterday().date()
-        feedback_relation.save()
-        FeedbackMail.generate_message(feedback_relation, self.logger)
-        self.assertFalse(feedback_relation.active)
 
     def test_mark_setting(self):
         users = [User.objects.get(pk=1)]

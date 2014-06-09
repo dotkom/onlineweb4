@@ -25,6 +25,7 @@ class FeedbackMail(Task):
        
         for feedback in active_feedbacks:
             message = FeedbackMail.generate_message(feedback, logger)
+            logger.info("Status: " + message.status)
 
             if message.send:
                 EmailMessage(message.subject, unicode(message), message.committee_mail, [], message.attended_mails).send()
@@ -37,28 +38,33 @@ class FeedbackMail(Task):
     @staticmethod
     def generate_message(feedback, logger):
         logger.info('Processing: "' + feedback.content_title() + '"')
+
         today = timezone.now().date()
-        yesterday = today + datetime.timedelta(days=-1)
-        not_responded = FeedbackMail.get_users(feedback)
-        logger.info('Not responded: ' + str(not_responded))
-        message = Message()
+        yesterday = today - datetime.timedelta(days=1)
         end_date = feedback.content_end_date()
 
+        message = Message()
+
         if not end_date:
-            logger.info('Content object has no date')
+            #logger.info('Content object has no date')
+            message.status = "Content object has no date"
             return message
 
         #Return if the event has not yet happened
         if end_date.date() >= today:
-            logger.info('Event has not finished yet')
+            #logger.info('Event has not finished yet')
+            message.status = "Event not done"
             return message
+
+        
+        not_responded = FeedbackMail.get_users(feedback)
+        logger.info('Not responded: ' + str(not_responded))
 
         #return if everyone has answered
         if not not_responded:
             feedback.active = False
             feedback.save()
-            logger.info('Everyone has answered')
-            logger.info('Feedback set to innactive')
+            message.status = 'Everyone has answered'
             return message
 
         
@@ -82,6 +88,7 @@ class FeedbackMail(Task):
             feedback.active = False
             feedback.save()
             logger.info("Deadline passed feedback set to inactive")
+            message.status = "Deadine passed"
 
             if feedback.gives_mark:
                 FeedbackMail.set_marks(title, not_responded)    
@@ -101,11 +108,11 @@ class FeedbackMail(Task):
             u"gjenværende deltagere på \"%s\".\nDere kan se feedback-resultatene på:\n%s\n" % \
             (title, results_link)
             message.send = True
-            logger.info("Last warning message generated")
+            message.status = "Last warning"
         elif deadline_diff < 3 and feedback.gives_mark: # 3 days from the deadline
             message.deadline = u"\n\nFristen for å svare på skjema er %s innen kl 23:59." % (deadline)
             message.send = True
-            logger.info("Warning message generated")
+            message.status = "Warning message"
         elif FeedbackMail.send_first_notification(feedback): #Day after the event or feedback creation 
             message.deadline = u"\n\nFristen for å svare på skjema er %s innen kl 23:59." % (deadline)
         
@@ -113,9 +120,9 @@ class FeedbackMail(Task):
             u"deltagere på \"%s\".\nDere kan se feedback-resultatene på:\n%s\n" % \
             (title, results_link)
             message.send = True
-            logger.info("First message generated")
+            message.status = "First message"
         else:
-            logger.info("No message generated")
+            message.status = "No message generated"
 
         return message
         
@@ -210,6 +217,7 @@ class Message():
     send = False
     end = u"\n\nMvh\nLinjeforeningen Online"
     results_message = False
+    status = "-"
 
     committee_mail = ""
     attended_mails = False
