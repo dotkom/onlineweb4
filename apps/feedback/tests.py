@@ -110,36 +110,35 @@ class SimpleTest(TestCase):
 
     def test_deadline_passeed(self):
         feedback_relation = self.create_feedback_relation(deadline=self.yesterday().date())
-        FeedbackMail.generate_message(feedback_relation, self.logger)
+        message = FeedbackMail.generate_message(feedback_relation, self.logger)
 
         self.assertEqual(message.status, "Deadine passed")
         self.assertFalse(feedback_relation.active)
 
     def test_last_warning(self):
         feedback_relation = self.create_feedback_relation(deadline=timezone.now().date())
-        FeedbackMail.generate_message(feedback_relation, self.logger)
+        message = FeedbackMail.generate_message(feedback_relation, self.logger)
 
         self.assertEqual(message.status, "Last warning")
         self.assertTrue(message.send)
 
     def test_warning(self):
         feedback_relation = self.create_feedback_relation(deadline=timezone.now().date() + timedelta(days=2))
-        FeedbackMail.generate_message(feedback_relation, self.logger)
+        message = FeedbackMail.generate_message(feedback_relation, self.logger)
 
         self.assertEqual(message.status, "Warning message")
         self.assertTrue(message.send)
 
     def test_first_mail(self):
         feedback_relation = self.create_feedback_relation()
-        FeedbackMail.generate_message(feedback_relation, self.logger)
+        message = FeedbackMail.generate_message(feedback_relation, self.logger)
 
         self.assertEqual(message.status, "First message")
         self.assertTrue(message.send)
 
     def test_no_message(self):
-        #TODO
         feedback_relation = self.create_feedback_relation(end_date = timezone.now() - timedelta(days=2))
-        FeedbackMail.generate_message(feedback_relation, self.logger)
+        message = FeedbackMail.generate_message(feedback_relation, self.logger)
 
         self.assertEqual(message.status, "No message generated")
         self.assertFalse(message.send)
