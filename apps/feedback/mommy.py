@@ -78,7 +78,8 @@ class FeedbackMail(Task):
        
         deadline_diff = (feedback.deadline - today).days
 
-        message.subject = u"Feedback: " + title
+        message.subject = unicode(u"Feedback: " + title)
+        print message.subject
         message.intro = u"Hei, vi ønsker tilbakemelding på \"" + title + "\""
         message.mark = FeedbackMail.mark_message(feedback)
         message.contact = u"\n\nEventuelle spørsmål sendes til %s " % (message.committee_mail)
@@ -95,7 +96,7 @@ class FeedbackMail(Task):
                 
                 message.intro = u"Fristen for å svare på \"%s\" har gått ut og du har fått en prikk." % (title)
                 message.mark = ""
-                message.start_date = ""
+                message.date = ""
                 message.link = ""
                 message.send = True
             
@@ -178,7 +179,7 @@ class FeedbackMail(Task):
 
     @staticmethod
     def get_title(feedback):
-        return feedback.content_title()
+        return unicode(feedback.content_title())
 
     @staticmethod
     def get_committee_email(feedback):
@@ -234,4 +235,4 @@ class Message():
             self.end)
         return message
 
-schedule.register(FeedbackMail, day_of_week='mon-sun', hour=8, minute=00)
+schedule.register(FeedbackMail, day_of_week='mon-sun', hour=00, minute=14)
