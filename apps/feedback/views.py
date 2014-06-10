@@ -116,10 +116,24 @@ def get_chart_data(request, applabel, appmodel, object_id, feedback_id, token=Fa
         for answer in fos:
             answer_count[str(answer)] += 1
         
-        answer_collection['replies']['fos'] = answer_count.items()
+
+    mc_questions = []
+    mc_answer_count = []
+    
+    for question in fbr.multiple_choice_question:
+        if question.display or not token:
+            mc_questions.append(unicode(question))
+            answer_count = defaultdict(int)
+            for answer in fbr.answers_to_question(question):
+                answer_count[str(answer)] += 1
+            print answer_count.items()
+            mc_answer_count.append(answer_count.items())
 
     answer_collection['replies']['ratings'] = rating_answers
     answer_collection['replies']['titles'] = rating_titles
+    answer_collection['replies']['mc_questions'] = mc_questions
+    answer_collection['replies']['mc_answers'] = mc_answer_count
+    answer_collection['replies']['fos'] = answer_count.items()
    
     return HttpResponse(json.dumps(answer_collection), mimetype='application/json')
 

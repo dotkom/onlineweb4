@@ -52,6 +52,10 @@ class FeedbackRelation(models.Model):
         return self.feedback.ratingquestions
 
     @property
+    def multiple_choice_question(self):
+        return self.feedback.multiple_choice_question
+
+    @property
     def description(self):
         return self.feedback.description
 
@@ -69,6 +73,7 @@ class FeedbackRelation(models.Model):
         answers.extend(self.field_of_study_answers.all())
         answers.extend(self.text_answers.all())
         answers.extend(self.rating_answers.all())
+        answers.extend(self.multiple_choice_answers.all())
         return sorted(answers, key=lambda x: x.order)  # sort by order
 
     def answers_to_question(self, question):
@@ -131,6 +136,7 @@ class FeedbackRelation(models.Model):
             rt = RegisterToken(fbr = self, token = token)
             rt.save()
 
+
 class Feedback(models.Model):
     """
     A customizable Feedback schema.
@@ -148,6 +154,12 @@ class Feedback(models.Model):
         return rating_question
 
     @property
+    def multiple_choice_question(self):
+        multiple_choice_question = []
+        multiple_choice_question.extend(self.multiple_choice_questions.all())
+        return multiple_choice_question
+
+    @property
     def questions(self):
         """
         All questions related to this Feedback schema.
@@ -160,6 +172,7 @@ class Feedback(models.Model):
         questions = []
         questions.extend(self.text_questions.all())
         questions.extend(self.rating_questions.all())
+        questions.extend(self.multiple_choice_questions.all())
         return sorted(questions, key=lambda x: x.order)  # sort by order
 
     def __unicode__(self):
@@ -168,7 +181,6 @@ class Feedback(models.Model):
     class Meta:
         verbose_name = _(u'tilbakemelding')
         verbose_name_plural = _(u'tilbakemeldinger')
-
 
 
 class FieldOfStudyAnswer(models.Model):
@@ -181,6 +193,7 @@ class FieldOfStudyAnswer(models.Model):
 
     def __unicode__(self):
         return self.get_answer_display()
+
 
 class TextQuestion(models.Model):
     feedback = models.ForeignKey(
@@ -247,6 +260,52 @@ class RatingAnswer(models.Model):
     @property
     def order(self):
         return self.question.order
+
+    
+class MultipleChoiceQuestion(models.Model):
+    label = models.CharField(_(u'Spørsmål'), blank=False, max_length=256)
+
+    class Meta:
+        verbose_name = _(u'Flervalgspørsmål')
+        verbose_name_plural = _(u'Flervalgspørsmål')
+
+    def __unicode__(self):
+        return self.label
+
+
+class MultipleChoiceRelation(models.Model):
+    multiple_choice_relation = models.ForeignKey(MultipleChoiceQuestion)
+    order = models.SmallIntegerField(_(u'Rekkefølge'), default=30)
+    display = models.BooleanField(_(u'Vis til bedrift'), default=True)
+    feedback = models.ForeignKey(Feedback, related_name='multiple_choice_questions')
+
+    def __unicode__(self):
+        return self.multiple_choice_relation.label
+
+
+class Choice(models.Model):
+    question = models.ForeignKey(MultipleChoiceQuestion, related_name="choices")
+    choice = models.CharField(_(u'valg'), max_length=256, blank=False)
+
+    def __unicode__(self):
+        return self.choice
+
+
+class MultipleChoiceAnswer(models.Model):
+    feedback_relation = models.ForeignKey(
+        FeedbackRelation,
+        related_name="multiple_choice_answers")
+
+    answer = models.CharField(_(u'svar'), blank=False, max_length=256)
+    question = models.ForeignKey(MultipleChoiceRelation, related_name='answer')
+
+    def __unicode__(self):
+        return self.answer
+
+    @property
+    def order(self):
+        return self.question.order
+
 
 #For creating a link for others(companies) to see the results page
 class RegisterToken(models.Model):
