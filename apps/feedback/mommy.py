@@ -28,7 +28,7 @@ class FeedbackMail(Task):
             logger.info("Status: " + message.status)
 
             if message.send:
-                EmailMessage(message.subject, unicode(message), message.committee_mail, [], message.attended_mails).send()
+                email = EmailMessage(message.subject, unicode(message), message.committee_mail, [], message.attended_mails).send()
                 logger.info('Emails sent to: ' + str(message.attended_mails))
 
                 if message.results_message:
@@ -78,8 +78,7 @@ class FeedbackMail(Task):
        
         deadline_diff = (feedback.deadline - today).days
 
-        message.subject = unicode(u"Feedback: " + title)
-        print message.subject
+        message.subject = u"Feedback: " + title
         message.intro = u"Hei, vi ønsker tilbakemelding på \"" + title + "\""
         message.mark = FeedbackMail.mark_message(feedback)
         message.contact = u"\n\nEventuelle spørsmål sendes til %s " % (message.committee_mail)
@@ -235,4 +234,4 @@ class Message():
             self.end)
         return message
 
-schedule.register(FeedbackMail, day_of_week='mon-sun', hour=00, minute=14)
+schedule.register(FeedbackMail, day_of_week='mon-sun', hour=13, minute=02)

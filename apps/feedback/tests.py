@@ -239,6 +239,10 @@ class SimpleTest(TestCase):
         response = client.get("/feedback/events/derp/1/1/")
         self.assertEqual(response.status_code, 404)
 
+    #TODO test tokens
+    #TODO test permissions when implemented
+
+
 
 
 
