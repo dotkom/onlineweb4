@@ -57,6 +57,8 @@ class FeedbackRelation(models.Model):
 
     @property
     def description(self):
+        if self.content_title():
+            return _(u"Tilbakemelding: " + self.content_title())
         return self.feedback.description
 
     @property
@@ -179,8 +181,8 @@ class Feedback(models.Model):
         return self.description
 
     class Meta:
-        verbose_name = _(u'tilbakemelding')
-        verbose_name_plural = _(u'tilbakemeldinger')
+        verbose_name = _(u'tilbakemeldingsskjema')
+        verbose_name_plural = _(u'tilbakemeldingsskjemaer')
 
 
 class FieldOfStudyAnswer(models.Model):
