@@ -313,9 +313,8 @@ class RegisterToken(models.Model):
     token = models.CharField(_(u"token"), max_length=32)
     created = models.DateTimeField(_(u"opprettet dato"), editable=False, auto_now_add=True)
 
-    @property
-    def is_valid(self):
-        return True
+    def is_valid(self, feedback_relation):
+        return self.token == RegisterToken.objects.get(fbr=feedback_relation).token
         
         #valid_period = datetime.timedelta(days=365)#1 year
         #now = timezone.now()

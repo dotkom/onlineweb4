@@ -1,3 +1,5 @@
+
+//The code was loading twice, this is an ugly fix to prevent that.
 var pageInitialized = false;
 
 $(function() {
@@ -16,46 +18,58 @@ $(function() {
     }
     /* END AJAX SETUP */
 
-    function printPieChart(data)
+    function printFosChart(data)
     {
-        fosChart = jQuery.jqplot ('field-of-study-chart', [data], 
+        if(data.length > 0)
         {
-            grid: {
-                drawBorder: false, 
-                drawGridlines: false,
-                background: '#ffffff',
-                shadow:false
-            },
-            seriesDefaults: 
+            $('#field-of-study-header').append('<div class="page-header"><h2>Studieretning</h2></div>');
+
+            box = '<div class="col-md-6"><div id="fos-graph"></div></div>'
+            $('#field-of-study-graph').append(box);
+            fosChart = jQuery.jqplot ('fos-graph', [data], 
             {
-                renderer: jQuery.jqplot.PieRenderer, 
-                rendererOptions: 
+                grid: {
+                    drawBorder: false, 
+                    drawGridlines: false,
+                    background: '#ffffff',
+                    shadow:false
+                },
+                seriesDefaults: 
                 {
-                    showDataLabels: true,
-                    dataLabels: 'value',
-                    sliceMargin: 10
+                    renderer: jQuery.jqplot.PieRenderer, 
+                    rendererOptions: 
+                    {
+                        showDataLabels: true,
+                        dataLabels: 'value',
+                        sliceMargin: 10
+                    }
+                }, 
+                legend: 
+                { 
+                    show:true, 
+                    location: 'e',
+                    fontSize: '15pt',
+                    border: 'none'
                 }
-            }, 
-            legend: 
-            { 
-                show:true, 
-                location: 'e',
-                fontSize: '15pt',
-                border: 'none'
-            }
-        });
+            });
+        }
     }
 
-    function printRatingCharts(data, titles)
+    function printRatingCharts(ratings, titles)
     {
         ratingCharts = new Array();
+
+        if(ratings.length > 0){
+            $('#rating-header').append('<div class="page-header"><h2>Vurderinger</h2></div>');
+        }
+
         for(var i = 0; i < titles.length; i++)
         {   
             box = '<div class="col-md-6 rating-chart"><div id="rating-chart-' + i + '"></div></div>'
-            $('#ratings').append(box);
-            ticks = Array.range(1, data[i].length, 1);
+            $('#rating-graphs').append(box);
+            ticks = Array.range(1, ratings[i].length, 1);
             title = titles[i];
-            ratingCharts[i] = $.jqplot('rating-chart-' + i, [data[i]], 
+            ratingCharts[i] = $.jqplot('rating-chart-' + i, [ratings[i]], 
             {
                 title: title,
                 seriesDefaults:
@@ -93,13 +107,13 @@ $(function() {
     {
         mcCharts = new Array();
         if(questions.length > 0){
-            $('#mc-header').append('<div class="page-header"><h2>Flervalgspørsmål</h2></div>');
+            $('#multiple-choice-header').append('<div class="page-header"><h2>Flervalgspørsmål</h2></div>');
         }
 
         for(i = 0; i < questions.length; i++)
         {   
             box = '<div class="col-md-6"><div id="mc-chart-' + i + '"></div></div>'
-            $('#mc').append(box);
+            $('#multiple-choice-graphs').append(box);
             question = questions[i];
             mcCharts[i] = $.jqplot('mc-chart-' + i, [data[i]], 
             {
@@ -183,23 +197,21 @@ $(function() {
 
             $.get("chartdata/", function(data)
             {
-                if($("#field-of-study-chart").length)
-                {
-                    printPieChart(data.replies.fos);
-                }
+                printFosChart(data.replies.fos);
                 printRatingCharts(data.replies.ratings, data.replies.titles);
                 printMultipleChoiceCharts(data.replies.mc_answers, data.replies.mc_questions);
             });
+            /*
             $(window).on("debouncedresize", function(e)
             {
-                console.log("derp");
                 fosChart.replot({ resetAxes: true});
                 for(var i = 0; i < ratingCharts.length; i++)
                 {
                     ratingCharts[i].destroy();
                 }
-                printRatingCharts();
+                printRatingCharts(data.replies.ratings, data.replies.titles);
             });
+*/
 
             $('tr').each(function(i, row)
             {
