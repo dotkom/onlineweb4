@@ -112,9 +112,9 @@ def get_chart_data(request, applabel, appmodel, object_id, feedback_id, token=Fa
         
     if fbr.feedback.display_field_of_study or not token:
         fos = fbr.field_of_study_answers.all()
-        answer_count = defaultdict(int)
+        fos_answer_count = defaultdict(int)
         for answer in fos:
-            answer_count[str(answer)] += 1
+            fos_answer_count[str(answer)] += 1
         
 
     mc_questions = []
@@ -133,7 +133,7 @@ def get_chart_data(request, applabel, appmodel, object_id, feedback_id, token=Fa
     answer_collection['replies']['titles'] = rating_titles
     answer_collection['replies']['mc_questions'] = mc_questions
     answer_collection['replies']['mc_answers'] = mc_answer_count
-    answer_collection['replies']['fos'] = answer_count.items()
+    answer_collection['replies']['fos'] = fos_answer_count.items()
    
     return HttpResponse(json.dumps(answer_collection), mimetype='application/json')
 
