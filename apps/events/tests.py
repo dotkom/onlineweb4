@@ -82,8 +82,6 @@ class EventTest(TestCase):
         self.assertEqual(self.attendance_event.number_of_attendees, 2)
         self.assertEqual(self.attendance_event.number_of_seats_taken, 4)
         
-
-
     #
     # Rule Bundles
     #
