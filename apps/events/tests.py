@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import datetime
 import logging
 
@@ -9,7 +11,8 @@ from django.utils import timezone
 
 from apps.authentication.models import OnlineUser as User, AllowedUsername
 from apps.events.models import (Event, AttendanceEvent, Attendee,
-                                RuleBundle, FieldOfStudyRule, GradeRule, UserGroupRule)
+                                RuleBundle, FieldOfStudyRule, GradeRule, UserGroupRule,
+                                Reservation, Reservee)
 from apps.marks.models import Mark, UserEntry
 
 class EventTest(TestCase):
@@ -17,9 +20,7 @@ class EventTest(TestCase):
     def setUp(self):
         self.event = G(Event, title='Sjakkturnering')
         self.attendance_event = G(AttendanceEvent, event=self.event)
-        self.user = G(User)
-        self.user.username = 'ola123'
-        self.user.ntnu_username = 'ola123ntnu'
+        self.user = G(User, username = 'ola123', ntnu_username = 'ola123ntnu', first_name = "ola", last_name = "nordmann")
         self.attendee = G(Attendee, event=self.attendance_event, user=self.user)
         self.logger = logging.getLogger(__name__)
         # Setting registration start 1 hour in the past, end one week in the future.
@@ -40,6 +41,48 @@ class EventTest(TestCase):
     #
     # Event attendees, seats and wait list
     # 
+
+    def testAttendeeAndWaitlistQS(self):
+        self.logger.debug("Testing attendee queryset")
+        user1 = G(User, username="jan", first_name="jan")
+        attendee = G(Attendee, event=self.attendance_event, user=user1) 
+        user2 = G(User, username="per", first_name="per")
+        attendee = G(Attendee, event=self.attendance_event, user=user2) 
+        user3 = G(User, username="gro", first_name="gro")
+        attendee = G(Attendee, event=self.attendance_event, user=user3) 
+        self.assertEqual(self.attendance_event.max_capacity, 2)
+        self.assertEqual(self.attendance_event.number_of_attendees, 2)
+        self.assertEqual(self.attendance_event.number_on_waitlist, 2)
+
+    def testReservedSeats(self):
+        self.logger.debug("Testing reserved seats")
+        reservation = G(Reservation, attendance_event=self.attendance_event, seats=2)
+        reservee1 = G(Reservee, reservation=reservation, name="jan", note="jan er kul", allergier="allergi1")
+        self.assertEqual(self.attendance_event.number_of_reserved_seats_taken, 1) 
+        reservee2 = G(Reservee, reservation=reservation, name="per", note="per er rå", allergier="allergi2")
+        self.assertEqual(self.attendance_event.number_of_reserved_seats_taken, 2) 
+
+    def testNumberOfTakenSeats(self):
+        # Increase event capacity so we have more room to test with
+        self.attendance_event.max_capacity = 5
+        self.assertEqual(self.attendance_event.number_of_attendees, 1)
+        # Make a reservation, for 2 seats
+        reservation = G(Reservation, attendance_event=self.attendance_event, seats=2)
+        reservee1 = G(Reservee, reservation=reservation, name="jan", note="jan er kul", allergier="allergi1")
+        self.assertEqual(self.attendance_event.max_capacity, 5)
+        self.assertEqual(self.attendance_event.number_of_attendees, 1)
+        self.assertEqual(self.attendance_event.number_of_reserved_seats_taken, 1) 
+        self.assertEqual(self.attendance_event.number_of_seats_taken, 3)
+        reservee2 = G(Reservee, reservation=reservation, name="per", note="per er rå", allergier="allergi2")
+        self.assertEqual(self.attendance_event.number_of_attendees, 1)
+        self.assertEqual(self.attendance_event.number_of_reserved_seats_taken, 2) 
+        self.assertEqual(self.attendance_event.number_of_seats_taken, 3)
+        user3 = G(User, username="gro", first_name="gro")
+        attendee = G(Attendee, event=self.attendance_event, user=user3) 
+        self.assertEqual(self.attendance_event.number_of_attendees, 2)
+        self.assertEqual(self.attendance_event.number_of_seats_taken, 4)
+        
+
 
     #
     # Rule Bundles

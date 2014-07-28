@@ -420,16 +420,74 @@ class AttendanceEvent(models.Model):
     rule_bundles = models.ManyToManyField(RuleBundle, blank=True, null=True)
 
     @property
+    def has_reservation(self):
+        """ Returns whether this event has an attached reservation """
+        try:
+            return True if self.reserved_seats else False
+        except Reservation.DoesNotExist:
+            return False
+
+    @property
+    def attendees_qs(self):
+        """ Queryset with all attendees not on waiting list """
+        return self.attendees.all()[:self.max_capacity]
+
+    @property
+    def waitlist_qs(self):
+        """ Queryset with all attendees in waiting list """
+        return self.attendees.all()[self.max_capacity:]
+
+    @property
+    def number_of_attendees(self):
+        """ Count of all attendees not in waiting list """
+        return self.attendees_qs.count()
+
+    @property
+    def number_on_waitlist(self):
+        """ Count of all attendees on waiting list """
+        return self.waitlist_qs.count()
+
+    @property
+    def number_of_reserved_seats(self):
+        """
+        Total number of seats for this event that are reserved
+        """
+        return self.reserved_seats.seats if self.has_reservation else 0
+
+    @property
+    def number_of_reserved_seats_taken(self):
+        """
+        Returns number of reserved seats which have been filled
+        """
+        return self.reserved_seats.number_of_seats_taken if self.has_reservation else 0
+
+    @property
+    def number_of_seats_taken(self):
+        """
+        Returns the total amount of taken seats for an attendance_event.
+        """
+        # This includes all attendees + reserved seats for the event, if any.
+        # Always use the total number of reserved seats here, because they are not
+        # available for regular users to claim.
+        return self.number_of_attendees + self.number_of_reserved_seats
+
+    @property
     def free_seats(self):
-        return self.max_capacity - self.attendees.count() 
+        """
+        Integer representing the number of free seats for an event
+        """
+        return 0 if self.number_of_seats_taken == self.max_capacity else self.max_capacity - self.number_of_seats_taken 
 
     @property
     def room_on_event(self):
-        return True if (self.attendees.count() < self.max_capacity) or self.waitlist else False
+        """
+        Returns True if there are free seats or an open waiting list
+        """
+        return True if self.free_seats or self.waitlist else False
 
     @property
     def will_i_be_on_wait_list(self):
-        return True if (self.attendees.count() >= self.max_capacity) and self.waitlist else False
+        return True if self.free_seats == 0 and self.waitlist else False
 
     @property
     def waitlist_enabled(self):
@@ -547,8 +605,8 @@ class Reservation(models.Model):
     seats = models.PositiveIntegerField(u"reserverte plasser", blank=False, null=False)
 
     @property
-    def filled_seats(self):
-        return self.reservees.all().count()
+    def number_of_seats_taken(self):
+        return self.reservees.count()
 
     def __unicode__(self):
         return "Reservasjoner for %s" % self.attendance_event.event.title
