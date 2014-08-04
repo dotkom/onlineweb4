@@ -161,18 +161,13 @@ class Event(models.Model):
         return response
 
     @property
-    def wait_list(self):
-        return self.attendance_event.attendees.all()[self.attendance_event.max_capacity:]
-        return [] if self.attendance_event.number_of_attendees_on_waiting_list is 0 else self.attendance_event.attendees[self.attendance_event.max_capacity:]
-
-    @property
     def attendees_not_paid(self):
         return self.attendance_event.attendees.filter(paid=False)
     
     def what_place_is_user_on_wait_list(self, user):
         if self.attendance_event:
             if self.attendance_event.waitlist:
-                waitlist = self.wait_list
+                waitlist = self.attendance_event.waitlist_qs
                 if waitlist:
                     for attendee_object in waitlist:
                         if attendee_object.user == user:
@@ -183,7 +178,7 @@ class Event(models.Model):
         if not self.is_attendance_event():
             return
         # Notify next user on waiting list
-        wait_list = self.wait_list
+        wait_list = self.attendance_event.waitlist_qs
         if wait_list:
             # Checking if user is on the wait list
             on_wait_list = False
@@ -204,7 +199,7 @@ http://%s%s
 """) % (self.title, host, self.get_absolute_url())
                 for attendee in attendees:
                     send_mail(_(u'Du har fått plass på et arrangement'), email_message,
-                              settings.DEFAULT_FROM_EMAIL, [attendee.user.get_email().email])
+                              settings.DEFAULT_FROM_EMAIL, [attendee.user.email])
 
     def feedback_mail(self):
         if self.event_type == 1 or self.event_type == 4: #sosialt/utflukt
@@ -430,12 +425,19 @@ class AttendanceEvent(models.Model):
     @property
     def attendees_qs(self):
         """ Queryset with all attendees not on waiting list """
-        return self.attendees.all()[:self.max_capacity]
+        return self.attendees.all()[:self.max_capacity - self.number_of_reserved_seats]
 
     @property
     def waitlist_qs(self):
         """ Queryset with all attendees in waiting list """
-        return self.attendees.all()[self.max_capacity:]
+        return self.attendees.all()[self.max_capacity - self.number_of_reserved_seats:]
+
+    @property
+    def reservees_qs(self):
+        """ Queryset with all reserved seats which have been filled """
+        if self.has_reservation:
+            return self.reserved_seats.reservees.all()
+        return []
 
     @property
     def number_of_attendees(self):
