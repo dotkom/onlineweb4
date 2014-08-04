@@ -493,23 +493,6 @@ class AttendanceEvent(models.Model):
     def waitlist_enabled(self):
         return self.waitlist
 
-    @property
-    def number_of_attendees_on_waiting_list(self):
-        """
-        Sjekker antall på venteliste
-        """
-        waiting = self.attendance_event.attendees.count() - self.attendance_event.max_capacity
-        return 0 if waiting < 0 else waiting
-
-    @property
-    def number_of_attendees_not_on_waiting_list(self):
-        """
-        Sjekker hvor mange attendees som har meldt seg på innen max_grensa
-        """
-        not_waiting = self.attendance_event.attendees.count()
-        return not_waiting if not_waiting < self.attendance_event.max_capacity else self.attendance_event.max_capacity
-
-
     def rules_satisfied(self, user):
         """
         Checks a user against rules applied to an attendance event
