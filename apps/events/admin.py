@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from django import forms
-from django.contrib import admin
+from django.contrib import admin, messages
 from django.core import validators
 from django.utils.translation import ugettext as _
 
@@ -147,19 +147,34 @@ class ReserveeInline(admin.TabularInline):
     classes = ('grp-collapse grp-open',)  # style
     inline_classes = ('grp-collapse grp-open',)  # style
 
-    
+
 class ReservationAdmin(admin.ModelAdmin):
     model = Reservation
     inlines = (ReserveeInline,)
     max_num = 1
     extra = 0
-    list_display = ('attendance_event', 'seats', 'filled_seats',)
+    list_display = ('attendance_event', '_number_of_seats_taken', 'seats', '_attendees', '_max_capacity')
     classes = ('grp-collapse grp-open',)  # style
     inline_classes = ('grp-collapse grp-open',)  # style
 
+    def _number_of_seats_taken(self, obj):
+        return obj.number_of_seats_taken
+    _number_of_seats_taken.short_description = _("Fylte reservasjoner")
+
+    def _attendees(self, obj):
+        return obj.attendance_event.number_of_attendees
+    _attendees.short_description = _("Antall deltakere")
+
+    def _max_capacity(self, obj):
+        return obj.attendance_event.max_capacity 
+    _max_capacity.short_description = _("Arrangementets maks-kapasitet")
+
     def save_model(self, request, obj, form, change):
-        if obj.seats > obj.attendance_event.attendees.count():
-            obj.seats = obj.attendance_event.free_seats
+        if change:
+            number_of_free_seats = obj.attendance_event.max_capacity - obj.attendance_event.number_of_attendees
+            if number_of_free_seats < obj.seats:
+                obj.seats = number_of_free_seats
+                self.message_user(request, _("Du har valgt et antall reserverte plasser som overskrider antallet ledige plasser for dette arrangementet. Antallet ble automatisk justert til %d (alle ledige plasser).") % number_of_free_seats, messages.WARNING)
         obj.save()
             
     
