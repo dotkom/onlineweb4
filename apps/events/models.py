@@ -368,10 +368,7 @@ class RuleBundle(models.Model):
         return rules
         
     def get_rule_strings(self):
-        rules = []
-        for rule in self.get_all_rules():
-            rules.append(unicode(rule))
-        return rules
+        return map(lambda r: unicode(r), self.get_all_rules())
         
     def satisfied(self, user, registration_start):
 
