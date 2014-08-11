@@ -204,6 +204,7 @@ INSTALLED_APPS = (
 
     # Onlineweb 4 apps
     'apps.api',
+    'apps.approval',
     'apps.article',
     'apps.authentication',
     'apps.autoconfig',
