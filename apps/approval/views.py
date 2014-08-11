@@ -63,4 +63,3 @@ def create_fos_application(request):
 @login_required
 def create_membership_application(request):
     pass
-
