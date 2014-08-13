@@ -174,6 +174,7 @@ INSTALLED_APPS = (
     'apps.mommy',
     'apps.profiles',
     'apps.genfors',
+    'scripts',
 
      # Wiki
     'wiki',
