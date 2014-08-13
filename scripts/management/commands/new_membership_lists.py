@@ -23,6 +23,9 @@ class Command(BaseCommand):
         expiration_date = now
         note = ''
 
+        if len(args) != 1:
+            self.stdout.write("Error: You need to specify a filename as the first argument.")
+            return
         filename = args[0]
         f = open(filename, 'r')
 
