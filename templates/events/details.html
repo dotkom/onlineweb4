@@ -85,13 +85,13 @@
                                     <div class="col-xs-12 col-sm-4 col-md-4">
                                         <div class="event-hero-title">Påmeldte</div>
                                         <div class="event-hero-large-text">
-                                            {{ event.number_of_attendees_not_on_waiting_list }}/{{ attendance_event.max_capacity }}
+                                            {{ attendance_event.number_of_seats_taken }}/{{ attendance_event.max_capacity }}
                                         </div>
                                     </div>
                                     <div class="col-xs-12 col-sm-4 col-md-4">
                                         {% if attendance_event.waitlist_enabled %}
                                             <div class="event-hero-title">Antall på venteliste</div>
-                                            <div class="event-hero-large-text">{{ event.number_of_attendees_on_waiting_list }}</div>
+                                            <div class="event-hero-large-text">{{ attendance_event.number_on_waitlist }}</div>
                                         {% else %}
                                             <div class="event-hero-title">Venteliste</div>
                                             <div class="event-hero-small-text">Utilgjengelig</div>

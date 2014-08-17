@@ -63,22 +63,6 @@ class Event(models.Model):
     def feedback_title(self):
         return self.title
 
-    @property
-    def number_of_attendees_on_waiting_list(self):
-        """
-        Sjekker antall på venteliste
-        """
-        waiting = self.attendance_event.attendees.count() - self.attendance_event.max_capacity
-        return 0 if waiting < 0 else waiting
-
-    @property
-    def number_of_attendees_not_on_waiting_list(self):
-        """
-        Sjekker hvor mange attendees som har meldt seg på innen max_grensa
-        """
-        not_waiting = self.attendance_event.attendees.count()
-        return not_waiting if not_waiting < self.attendance_event.max_capacity else self.attendance_event.max_capacity
-
     def is_attendance_event(self):
         """ Returns true if the event is an attendance event """
         try:
@@ -177,18 +161,13 @@ class Event(models.Model):
         return response
 
     @property
-    def wait_list(self):
-        return self.attendance_event.attendees.all()[self.attendance_event.max_capacity:]
-        return [] if self.number_of_attendees_on_waiting_list is 0 else self.attendance_event.attendees[self.attendance_event.max_capacity:]
-
-    @property
     def attendees_not_paid(self):
         return self.attendance_event.attendees.filter(paid=False)
     
     def what_place_is_user_on_wait_list(self, user):
         if self.attendance_event:
             if self.attendance_event.waitlist:
-                waitlist = self.wait_list
+                waitlist = self.attendance_event.waitlist_qs
                 if waitlist:
                     for attendee_object in waitlist:
                         if attendee_object.user == user:
@@ -199,7 +178,7 @@ class Event(models.Model):
         if not self.is_attendance_event():
             return
         # Notify next user on waiting list
-        wait_list = self.wait_list
+        wait_list = self.attendance_event.waitlist_qs
         if wait_list:
             # Checking if user is on the wait list
             on_wait_list = False
@@ -220,7 +199,7 @@ http://%s%s
 """) % (self.title, host, self.get_absolute_url())
                 for attendee in attendees:
                     send_mail(_(u'Du har fått plass på et arrangement'), email_message,
-                              settings.DEFAULT_FROM_EMAIL, [attendee.user.get_email().email])
+                              settings.DEFAULT_FROM_EMAIL, [attendee.user.email])
 
     def feedback_mail(self):
         if self.event_type == 1 or self.event_type == 4: #sosialt/utflukt
@@ -436,12 +415,81 @@ class AttendanceEvent(models.Model):
     rule_bundles = models.ManyToManyField(RuleBundle, blank=True, null=True)
 
     @property
+    def has_reservation(self):
+        """ Returns whether this event has an attached reservation """
+        try:
+            return True if self.reserved_seats else False
+        except Reservation.DoesNotExist:
+            return False
+
+    @property
+    def attendees_qs(self):
+        """ Queryset with all attendees not on waiting list """
+        return self.attendees.all()[:self.max_capacity - self.number_of_reserved_seats]
+
+    @property
+    def waitlist_qs(self):
+        """ Queryset with all attendees in waiting list """
+        return self.attendees.all()[self.max_capacity - self.number_of_reserved_seats:]
+
+    @property
+    def reservees_qs(self):
+        """ Queryset with all reserved seats which have been filled """
+        if self.has_reservation:
+            return self.reserved_seats.reservees.all()
+        return []
+
+    @property
+    def number_of_attendees(self):
+        """ Count of all attendees not in waiting list """
+        return self.attendees_qs.count()
+
+    @property
+    def number_on_waitlist(self):
+        """ Count of all attendees on waiting list """
+        return self.waitlist_qs.count()
+
+    @property
+    def number_of_reserved_seats(self):
+        """
+        Total number of seats for this event that are reserved
+        """
+        return self.reserved_seats.seats if self.has_reservation else 0
+
+    @property
+    def number_of_reserved_seats_taken(self):
+        """
+        Returns number of reserved seats which have been filled
+        """
+        return self.reserved_seats.number_of_seats_taken if self.has_reservation else 0
+
+    @property
+    def number_of_seats_taken(self):
+        """
+        Returns the total amount of taken seats for an attendance_event.
+        """
+        # This includes all attendees + reserved seats for the event, if any.
+        # Always use the total number of reserved seats here, because they are not
+        # available for regular users to claim.
+        return self.number_of_attendees + self.number_of_reserved_seats
+
+    @property
+    def free_seats(self):
+        """
+        Integer representing the number of free seats for an event
+        """
+        return 0 if self.number_of_seats_taken == self.max_capacity else self.max_capacity - self.number_of_seats_taken 
+
+    @property
     def room_on_event(self):
-        return True if (self.attendees.count() < self.max_capacity) or self.waitlist else False
+        """
+        Returns True if there are free seats or an open waiting list
+        """
+        return True if self.free_seats or self.waitlist else False
 
     @property
     def will_i_be_on_wait_list(self):
-        return True if (self.attendees.count() >= self.max_capacity) and self.waitlist else False
+        return True if self.free_seats == 0 and self.waitlist else False
 
     @property
     def waitlist_enabled(self):
@@ -535,6 +583,41 @@ class Attendee(models.Model):
     class Meta:
         ordering = ['timestamp']
         unique_together = (('event', 'user'),)
+
+
+class Reservation(models.Model):
+    attendance_event = models.OneToOneField(AttendanceEvent, related_name="reserved_seats")
+    seats = models.PositiveIntegerField(u"reserverte plasser", blank=False, null=False)
+
+    @property
+    def number_of_seats_taken(self):
+        return self.reservees.count()
+
+    def __unicode__(self):
+        return "Reservasjoner for %s" % self.attendance_event.event.title
+
+    class Meta:
+        verbose_name = _("reservasjon")
+        verbose_name_plural = _("reservasjoner")
+
+class Reservee(models.Model):
+    """
+    Reservation entry
+    """
+    reservation = models.ForeignKey(Reservation, related_name='reservees')
+    # I 2014 var norges lengste navn på 69 tegn;
+    # julius andreas gimli arn macgyver chewbacka highlander elessar-jankov
+    name = models.CharField(u'navn', max_length=69)
+    note = models.CharField(u'notat', max_length=100)
+    allergies = models.CharField(u'allergier', max_length=200, blank=True, null=True)
+    
+    def __unicode__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = _("reservasjon")
+        verbose_name_plural = _("reservasjoner")
+        ordering = ['id']
 
 
 # Registrations for watson indexing
