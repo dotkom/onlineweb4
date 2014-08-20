@@ -7,7 +7,7 @@ from smtplib import SMTPException
 from django.contrib import auth
 from django.contrib import messages
 from django.core.mail import send_mail
-from django.db.utils import IntegrityErro
+from django.db.utils import IntegrityError
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponseRedirect
 from django.utils.translation import ugettext as _
