@@ -123,7 +123,7 @@ class EventPDF:
             pdf.table(self.waiters_table_data, self.attendee_column_widths(), style=get_table_style(self.full_span_waiters_lines))
             pdf.spacer(height=25)
     
-        if self.reservees.count() > 0: 
+        if self.reservees and self.reservees.count() > 0: 
             pdf.p(u"Reservasjoner", style=create_paragraph_style(font_size=14))
             pdf.spacer(height=20)
             pdf.table(self.reservee_table_data, self.reservee_column_widths(), style=get_table_style())
