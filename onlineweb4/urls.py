@@ -55,6 +55,10 @@ urlpatterns = patterns('',
     (r'^wiki/', get_wiki_pattern())
 )
 
+# redwine
+if 'redWine' in settings.INSTALLED_APPS:
+    urlpatterns += patterns('', url(r'^redwine/', include('redWine.urls')))
+
 # pizzasystem
 if 'pizzasystem' in settings.INSTALLED_APPS:
     urlpatterns += patterns('', url(r'^pizza/', include('pizzasystem.urls')))
