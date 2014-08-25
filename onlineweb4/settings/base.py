@@ -175,6 +175,9 @@ INSTALLED_APPS = (
     'apps.profiles',
     'apps.genfors',
     'scripts',
+    
+    #External apps
+    'redWine',
 
      # Wiki
     'wiki',
