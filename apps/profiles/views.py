@@ -371,6 +371,18 @@ def save_membership_details(request):
 
     return HttpResponse(status=404) 
 
+@login_required
+def user_search(request):
+    groups_to_include = ['arrKom', 'bedKom', 'dotKom', 'fagKom', 'Hovedstyret', 'velKom', 'proKom', 'banKom', 'eksKom', 'triKom']
+    groups = Group.objects.filter(name__in=groups_to_include)
+    users_to_display = User.objects.filter(privacy__visible_for_other_users=True)
+    
+    context = {
+        'users' : users_to_display,
+        'groups' : groups,
+        }
+    return render(request, 'profiles/users.html', context)
+
 
 @login_required
 def api_user_search(request):
