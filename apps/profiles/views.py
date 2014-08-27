@@ -397,7 +397,7 @@ def search_for_users(query, limit=10):
 def view_profile(request, username):
     user = get_object_or_404(User, username=username)
     if user.privacy.visible_for_other_users or user == request.user:
-        return render(request, 'profiles/view_profile.html', {'user': user})
+        return render(request, 'profiles/view_profile.html', {'user_profile': user})
 
     messages.error(request, _(u'Du har ikke tilgang til denne profilen'))
     return redirect('profiles')
