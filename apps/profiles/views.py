@@ -373,10 +373,10 @@ def save_membership_details(request):
 
 @login_required
 def user_search(request):
-    groups_to_include = ['arrKom', 'bedKom', 'dotKom', 'fagKom', 'Hovedstyret', 'velKom', 'proKom', 'banKom', 'eksKom', 'triKom']
-    groups = Group.objects.filter(name__in=groups_to_include)
+    groups_to_include = settings.USER_SEARCH_GROUPS
+    groups = Group.objects.filter(pk__in=groups_to_include)
     users_to_display = User.objects.filter(privacy__visible_for_other_users=True)
-    
+
     context = {
         'users' : users_to_display,
         'groups' : groups,
