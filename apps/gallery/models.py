@@ -7,9 +7,24 @@ import cStringIO
 from PIL import Image
 
 from django.conf import settings
+from django.contrib.contenttypes.models import ContentType
 from django.core.files.base import ContentFile
 from django.db import models
 from django.db.models.signals import post_delete
+
+
+def get_thumbnail_path(instance, file_name):
+
+    if isinstance(instance, UnhandledImage):
+        print "madda"
+    elif isinstance(instance, ResponsiveImage):
+        print "fakka"
+
+
+
+class ImageWithThumbnail(models.Model):
+
+    thumbnail = models.ImageField(upload_to=get_thumbnail_path)
 
 
 
@@ -17,9 +32,19 @@ UNHANDLED_IMAGES_PATH = os.path.join('images', 'non-edited')
 UNHANDLED_THUMBNAIL_PATH = os.path.join(UNHANDLED_IMAGES_PATH, 'thumbnails')
 UNHANDLED_THUMBNAIL_SIZE = (200, 200)
 
+def test(instance, filename):
+
+    if isinstance(instance, UnhandledImage):
+        print "madda"
+    elif isinstance(instance, ResponsiveImage):
+        print "fakka"
+    else:
+        print "aliens"
+
+
 class UnhandledImage(models.Model):
     image = models.ImageField(upload_to=UNHANDLED_IMAGES_PATH)
-    thumbnail = models.ImageField(upload_to=UNHANDLED_THUMBNAIL_PATH)
+    thumbnail = models.ImageField(upload_to=test)
 
     @property
     def filename(self):
@@ -27,6 +52,7 @@ class UnhandledImage(models.Model):
 
     def save(self):
         try:
+            self.image.upload_to = 'images/'
             # Save the model first to get the image to disk so we can create a thumbnail
             super(UnhandledImage, self).save()
             # Create the thumbnail, the thumbnail itself will be returned in a ContentFile
