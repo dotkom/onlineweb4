@@ -24,7 +24,7 @@ django_compressor==1.3          # Compiles less and minifies js
 django-watson==1.1.2            # Indexed model search lib
 APScheduler==2.1.1              # Scheduler
 #git+https://github.com/dotKom/pizzasystem.git@1.2#egg=pizzasystem
-git+https://github.com/dotKom/redWine.git@0.2#egg=redWine==0.2
+git+https://github.com/dotKom/redWine.git@0.4#egg=redWine==0.4
 reportlab==2.7
 pdfdocument==1.6
 django-markdown-deux==1.0.4
