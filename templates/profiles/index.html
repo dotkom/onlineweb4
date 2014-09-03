@@ -34,9 +34,6 @@ Min side - Online
                         <li class="{% ifequal 'dashboard' active_tab %}active{% endifequal %}">
                             <a href="#dashboard">Dashboard</a>
                         </li>
-                        <li class="{% ifequal 'users' active_tab %}active{% endifequal %}">
-                            <a href="#users">Finn brukere</a>
-                        </li>
                         <li class="{% ifequal 'editprofile' active_tab %}active{% endifequal %}">
                             <a href="#editprofile">Rediger profil</a>
                         </li>
@@ -60,7 +57,6 @@ Min side - Online
                     <!-- Mobile menu -->
                     <ul class="nav nav-pills nav-stacked visible-xs" id="userprofile-tabs">
                         <li class="{% ifequal 'dashboard' active_tab %}Dashboard{% endifequal %}"><a href="#dashboard" data-toggle="tab">Dashboard</a></li>
-                        <li class="{% ifequal 'users' active_tab %}active{% endifequal %}"><a href="#users" data-toggle="tab">Finn brukere</a></li>
                         <li class="{% ifequal 'editprofile' active_tab %}active{% endifequal %}"><a href="#editprofile" data-toggle="tab">Brukerinformasjon</a></li>
                         <li class="{% ifequal 'privacy' active_tab %}active{% endifequal %}"><a href="#privacy" data-toggle="tab">Personvern</a></li>
                         <li class="{% ifequal 'marks' active_tab %}active{% endifequal %}"><a href="#marks" data-toggle="tab">Prikker</a></li>
@@ -73,9 +69,6 @@ Min side - Online
                     <div class="tab-content">
                         <div id="dashboard" class="tab-pane {% ifequal 'dashboard' active_tab %}active{% endifequal %}">
                             {% include "profiles/dashboard.html" %}
-                        </div>
-                        <div id="users" class="tab-pane {% ifequal 'users' active_tab %}active{% endifequal %}">
-                            {% include "profiles/users.html" %}
                         </div>
                         <div id="editprofile" class="tab-pane {% ifequal 'editprofile' active_tab %}active{% endifequal %}">
                             {% include "profiles/editprofile.html" %}
@@ -114,7 +107,7 @@ Min side - Online
     <script type="text/javascript" src="{{ STATIC_URL }}js/libs/jquery.cookie.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}js/Utils.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}js/profiles.js"></script>
-        <script type="text/javascript" src="{{ STATIC_URL }}js/zipcodecity.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/zipcodecity.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}js/libs/imagesloaded.pkgd.min.js"></script>
     {% endcompress %}
         <script type="text/javascript">

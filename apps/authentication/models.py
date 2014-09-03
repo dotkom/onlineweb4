@@ -174,7 +174,7 @@ class OnlineUser(AbstractUser):
             'username': strip_tags(self.username),
             'value': strip_tags(self.get_full_name()),  # typeahead
             'name': strip_tags(self.get_full_name()),
-            'image': self.get_image_url(),
+            'image': self.get_image_url(75),
         }
 
     def get_image_url(self, size=50):
