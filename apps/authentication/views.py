@@ -80,7 +80,7 @@ def register(request):
 
                 # Create the registration token
                 token = uuid.uuid4().hex
-                rt = RegisterToken(user=user, email=cleaned['email'], token=token)
+                rt = RegisterToken(user=user, email=email.email, token=token)
                 rt.save()
 
                 email_message = _(u"""
