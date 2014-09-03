@@ -73,6 +73,7 @@ def _create_request_dictionary(request):
         'new_email' : NewEmailForm(),
         'membership_settings' : MembershipSettingsForm(instance=request.user),
         'mark_rules_accepted' : request.user.mark_rules,
+        'list_groups' : settings.LIST_GROUPS,
     }
 
     if request.session.has_key('userprofile_active_tab'):

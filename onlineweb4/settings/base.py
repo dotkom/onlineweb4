@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import os
 import sys
 from django.contrib.messages import constants as messages
@@ -261,6 +263,23 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "sekizai.context_processors.sekizai", # Wiki
     "onlineweb4.context_processors.analytics",
 )
+
+# List of usergroups that should be listed under "Finn brukere" in user profile
+LIST_GROUPS = [
+    16,  # appKom
+    1,   # arrKom
+    2,   # banKom
+    3,   # bedKom
+    4,   # dotKom
+    5,   # eksKom
+    14,  # Eldsterådet
+    6,   # fagKom
+    11,  # Hovedstyret
+    10,  # pangKom
+    7,   # proKom
+    8,   # triKom
+    9,   # velKom
+]
 
 # Remember to keep 'local' last, so it can override any setting.
 for settings_module in ['filebrowser', 'local']:  # local last
