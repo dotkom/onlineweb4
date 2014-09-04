@@ -489,14 +489,15 @@ def api_user(request):
                         genfors["question"]["votes"] = [[unicode(v.voter.anonymousvoter), v.answer] for v in votes]
                     elif q.question_type == 1:
                         genfors["question"]["votes"] = [[unicode(v.voter.anonymousvoter), v.answer.description] if v.answer else [unicode(v.voter.anonymousvoter), "Blankt"] for v in votes]
+                    
+                    # Shuffle the order of votes so you cannot infer who cast what vote when there are few voters left
+                    random.shuffle(genfors['question']['votes'])
+
                 else:
                     if q.question_type == 0:
                         genfors["question"]["votes"] = [[unicode(v.voter.registeredvoter), v.answer] for v in votes]
                     elif q.question_type == 1:
                         genfors["question"]["votes"] = [[unicode(v.voter.registeredvoter), v.answer.description] if v.answer else [unicode(v.voter.registeredvoter), "Blankt"] for v in votes]
-
-                # Shuffle the order of votes so you cannot infer who cast what vote when there are few voters left
-                random.shuffle(genfors['question']['votes'])
         else:
             genfors["question"] = None
 
