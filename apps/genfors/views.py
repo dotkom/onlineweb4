@@ -7,6 +7,7 @@ from django.utils.translation import ugettext as _
 from django.utils import timezone
 from django.http import HttpResponse, HttpResponseServerError
 from django.views.decorators.http import require_http_methods
+from django.views.decorators.cache import cache_page
 from apps.genfors.forms import LoginForm, MeetingForm, QuestionForm, RegisterVoterForm, AlternativeFormSet
 from apps.genfors.models import Meeting, Question, RegisteredVoter, AnonymousVoter, Alternative, BooleanVote, MultipleChoice, Result
 from apps.genfors.models import BOOLEAN_VOTE, MULTIPLE_CHOICE
