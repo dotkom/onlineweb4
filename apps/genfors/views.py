@@ -458,6 +458,8 @@ def genfors_end(request):
 def api_admin(request):
     return HttpResponse(json.dumps({"error": "Du har ikke tilgang til dette endepunktet."}))
 
+# Simple cached JSON Api-like endpoint to dynamically update stats via AJAX
+@cache_page(10)
 def api_user(request):
     if is_registered(request):
         m = get_active_meeting()
