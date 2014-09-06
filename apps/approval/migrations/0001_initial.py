@@ -11,9 +11,12 @@ class Migration(SchemaMigration):
         # Adding model 'Approval'
         db.create_table(u'approval_approval', (
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('user', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='approver', null=True, to=orm['authentication.OnlineUser'])),
+            ('applicant', self.gf('django.db.models.fields.related.ForeignKey')(related_name='applicant', to=orm['authentication.OnlineUser'])),
+            ('approver', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='approver', null=True, to=orm['authentication.OnlineUser'])),
             ('created', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
             ('processed', self.gf('django.db.models.fields.BooleanField')(default=False)),
+            ('approved', self.gf('django.db.models.fields.BooleanField')(default=False)),
+            ('message', self.gf('django.db.models.fields.TextField')()),
         ))
         db.send_create_signal(u'approval', ['Approval'])
 
@@ -47,10 +50,13 @@ class Migration(SchemaMigration):
     models = {
         u'approval.approval': {
             'Meta': {'object_name': 'Approval'},
+            'applicant': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'applicant'", 'to': u"orm['authentication.OnlineUser']"}),
+            'approved': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'approver': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'approver'", 'null': 'True', 'to': u"orm['authentication.OnlineUser']"}),
             'created': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'processed': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'user': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'approver'", 'null': 'True', 'to': u"orm['authentication.OnlineUser']"})
+            'message': ('django.db.models.fields.TextField', [], {}),
+            'processed': ('django.db.models.fields.BooleanField', [], {'default': 'False'})
         },
         u'approval.fieldofstudyapproval': {
             'Meta': {'object_name': 'FieldOfStudyApproval', '_ormbases': [u'approval.Approval']},
@@ -100,7 +106,7 @@ class Migration(SchemaMigration):
             'password': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
             'phone_number': ('django.db.models.fields.CharField', [], {'max_length': '20', 'null': 'True', 'blank': 'True'}),
             'rfid': ('django.db.models.fields.CharField', [], {'max_length': '50', 'null': 'True', 'blank': 'True'}),
-            'started_date': ('django.db.models.fields.DateField', [], {'default': 'datetime.datetime(2014, 8, 9, 0, 0)'}),
+            'started_date': ('django.db.models.fields.DateField', [], {'default': 'datetime.datetime(2014, 9, 6, 0, 0)'}),
             'user_permissions': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'related_name': "u'user_set'", 'blank': 'True', 'to': u"orm['auth.Permission']"}),
             'username': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '30'}),
             'website': ('django.db.models.fields.URLField', [], {'max_length': '200', 'null': 'True', 'blank': 'True'}),
