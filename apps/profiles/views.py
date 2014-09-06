@@ -16,6 +16,7 @@ from django.utils.translation import ugettext as _
 
 import watson
 
+from apps.approval.forms import FieldOfStudyApplicationForm
 from apps.authentication.forms import NewEmailForm
 from apps.authentication.models import Email, RegisterToken, Position
 from apps.authentication.models import OnlineUser as User
@@ -72,7 +73,7 @@ def _create_request_dictionary(request):
             (_(u'inaktive prikker'), Mark.inactive.all().filter(given_to=request.user), True),
         ],
         'new_email' : NewEmailForm(),
-        'membership_settings' : MembershipSettingsForm(instance=request.user),
+        'field_of_study_application': FieldOfStudyApplicationForm(),
         'mark_rules_accepted' : request.user.mark_rules,
     }
 
@@ -355,32 +356,6 @@ def toggle_infomail(request):
             request.user.save()
 
             return HttpResponse(status=200, content=json.dumps({'state': request.user.infomail}))
-    raise Http404
-
-@login_required
-def save_membership_details(request):
-    if request.is_ajax():
-        if request.method == 'POST':
-            form = MembershipSettingsForm(request.POST)
-            if form.is_valid():
-                cleaned = form.cleaned_data
-                request.user.field_of_study = cleaned['field_of_study']
-                request.user.started_date = cleaned['started_date']
-                
-                request.user.save()
-
-                return HttpResponse(status=200)
-            else:
-                field_errors = []
-                form_errors = form.errors.items()
-                for form_error in form_errors:
-                    for field_error in form_error[1]:
-                        field_errors.append(field_error)
-
-                return HttpResponse(status=412, content=json.dumps(
-                                                    {'message': ", ".join(field_errors)}
-                                                ))
-
     raise Http404
 
 @login_required
