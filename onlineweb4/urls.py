@@ -55,7 +55,6 @@ if 'apps.approval' in settings.INSTALLED_APPS:
         url(r'^dashboard/approval/',include('apps.approval.dashboard.urls')),
     )
 
-
 if 'apps.article' in settings.INSTALLED_APPS:
     urlpatterns += patterns('',
         url(r'^article/',           include('apps.article.urls')),
