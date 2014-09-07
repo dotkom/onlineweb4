@@ -209,6 +209,34 @@ $(document).ready(function() {
         });
     }
 
+    infomail = $('#toggle_infomail')
+    infomail.on('click', function (e) {
+        e.preventDefault()
+        $.ajax({
+            method: 'POST',
+            url: 'toggle_infomail/',
+            data: {},
+            success: function (data) {
+                res = JSON.parse(data)
+                if (res['state'] === true) {
+                    infomail.removeClass('btn-success')
+                    infomail.addClass('btn-danger')
+                    infomail.text('Deaktivér')
+                }
+                else {
+                    infomail.removeClass('btn-danger')
+                    infomail.addClass('btn-success')
+                    infomail.text('Aktivér')
+                }
+            },
+            error: function (e, s, xhr) {
+                var utils = new Utils()
+                utils.setStatusMessage('Det oppstod en uventet feil under endring av infomail.', 'alert-danger')
+            },
+            crossDomain: false
+        })
+    });
+
 /*
   JS for membership  
 */
