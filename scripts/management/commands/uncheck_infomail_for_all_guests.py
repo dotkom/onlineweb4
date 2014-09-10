@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import django.core.management.base import BaseCommand
+from django.core.management.base import BaseCommand
 from apps.authentication.models import OnlineUser as User
 
 class Command(BaseCommand):
