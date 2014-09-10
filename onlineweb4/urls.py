@@ -23,21 +23,8 @@ urlpatterns = patterns('',
     url(r'^admin/',             include(admin.site.urls)),
     url(r'^admin/doc/',         include('django.contrib.admindocs.urls')),
 
-    # Onlineweb app urls
+    # Onlineweb front page
     url(r'^$', TemplateView.as_view(template_name='frontpage.html'), name='home'),
-    url(r'^api/',               include('apps.api.urls')),
-    url(r'^article/',           include('apps.article.urls')),
-    url(r'^careeropportunity/', include('apps.careeropportunity.urls')),
-    url(r'^company/',           include('apps.companyprofile.urls')),
-    url(r'^events/',            include('apps.events.urls')),
-    url(r'^mail/',              include('apps.autoconfig.urls')),
-    url(r'^auth/',              include('apps.authentication.urls')),
-    url(r'^feedback/',          include('apps.feedback.urls')),
-    url(r'^offline/',           include('apps.offline.urls')),
-    url(r'^profile/',           include('apps.profiles.urls')),
-    url(r'^resourcecenter/mailinglists/', include('apps.mailinglists.urls')), # leave in this order because...
-    url(r'^resourcecenter/',    include('apps.resourcecenter.urls')), # ...resourcecenter has catch-all on subpages
-    url(r'^genfors/',           include('apps.genfors.urls')),
 
     # nav-bar menu urls
     url(r'^#events$', TemplateView.as_view(template_name='frontpage.html#events'), name='events-link'),
@@ -54,6 +41,69 @@ urlpatterns = patterns('',
     (r'^notify/', get_notify_pattern()),
     (r'^wiki/', get_wiki_pattern())
 )
+
+
+# Onlineweb app urls
+if 'apps.api' in settings.INSTALLED_APPS:
+    urlpatterns += patterns('',
+        url(r'^api/',               include('apps.api.urls')),
+    )
+
+if 'apps.article' in settings.INSTALLED_APPS:
+    urlpatterns += patterns('',
+        url(r'^article/',           include('apps.article.urls')),
+    )
+
+if 'apps.careeropportunity' in settings.INSTALLED_APPS:
+    urlpatterns += patterns('',
+        url(r'^careeropportunity/', include('apps.careeropportunity.urls')),
+    )
+
+if 'apps.companyprofile' in settings.INSTALLED_APPS:
+    urlpatterns += patterns('',
+        url(r'^company/',           include('apps.companyprofile.urls')),
+    )
+
+if 'apps.events' in settings.INSTALLED_APPS:
+    urlpatterns += patterns('',
+        url(r'^events/',            include('apps.events.urls')),
+    )
+
+if 'apps.autoconfig' in settings.INSTALLED_APPS:
+    urlpatterns += patterns('',
+        url(r'^mail/',              include('apps.autoconfig.urls')),
+    )
+
+if 'apps.authentication' in settings.INSTALLED_APPS:
+    urlpatterns += patterns('',
+        url(r'^auth/',              include('apps.authentication.urls')),
+    )
+
+if 'apps.feedback' in settings.INSTALLED_APPS:
+    urlpatterns += patterns('',
+        url(r'^feedback/',          include('apps.feedback.urls')),
+    )
+
+if 'apps.offline' in settings.INSTALLED_APPS:
+    urlpatterns += patterns('',
+        url(r'^offline/',           include('apps.offline.urls')),
+    )
+
+if 'apps.profiles' in settings.INSTALLED_APPS:
+    urlpatterns += patterns('',
+        url(r'^profile/',           include('apps.profiles.urls')),
+    )
+
+if 'apps.resourcecenter' in settings.INSTALLED_APPS and 'apps.mailinglists' in settings.INSTALLED_APPS:
+    urlpatterns += patterns('',
+        url(r'^resourcecenter/mailinglists/', include('apps.mailinglists.urls')), # leave in this order because...
+        url(r'^resourcecenter/',    include('apps.resourcecenter.urls')), # ...resourcecenter has catch-all on subpages
+    )
+
+if 'apps.genfors' in settings.INSTALLED_APPS:
+    urlpatterns += patterns('',
+        url(r'^genfors/',           include('apps.genfors.urls')),
+    )
 
 # redwine
 if 'redWine' in settings.INSTALLED_APPS:
