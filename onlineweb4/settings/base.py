@@ -162,6 +162,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
 
     # Onlineweb 4 apps
+    'apps.api',
     'apps.article',
     'apps.authentication',
     'apps.autoconfig',
@@ -174,6 +175,8 @@ INSTALLED_APPS = (
     'apps.mommy',
     'apps.profiles',
     'apps.genfors',
+    'apps.resourcecenter',
+    'apps.mailinglists',
     'scripts',
     
     #External apps
