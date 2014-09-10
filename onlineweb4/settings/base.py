@@ -195,9 +195,6 @@ INSTALLED_APPS = (
     'apps.resourcecenter',
     'apps.mailinglists',
     'scripts',
-    
-    #External apps
-    'redWine',
 
      # Wiki
     'wiki',
