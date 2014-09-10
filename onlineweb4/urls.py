@@ -109,6 +109,10 @@ if 'apps.genfors' in settings.INSTALLED_APPS:
 if 'pizzasystem' in settings.INSTALLED_APPS:
     urlpatterns += patterns('', url(r'^pizza/', include('pizzasystem.urls')))
 
+# redwine
+if 'redWine' in settings.INSTALLED_APPS:
+    urlpatterns += patterns('', url(r'^redwine/', include('redWine.urls')))
+
 #Captcha url
 if 'captcha' in settings.INSTALLED_APPS:
     urlpatterns += patterns('', url(r'^captcha/', include('captcha.urls')))
