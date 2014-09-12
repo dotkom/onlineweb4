@@ -199,6 +199,7 @@ INSTALLED_APPS = (
     #External apps
     'redWine',
 
+    #Wiki
     'wiki',
     'wiki.plugins.attachments',
     'wiki.plugins.notifications',
