@@ -113,7 +113,6 @@ if 'redWine' in settings.INSTALLED_APPS:
 if 'pizzasystem' in settings.INSTALLED_APPS:
     urlpatterns += patterns('', url(r'^pizza/', include('pizzasystem.urls')))
 
-
 #Captcha url
 if 'captcha' in settings.INSTALLED_APPS:
     urlpatterns += patterns('', url(r'^captcha/', include('captcha.urls')))
