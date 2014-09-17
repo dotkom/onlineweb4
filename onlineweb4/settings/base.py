@@ -201,10 +201,7 @@ INSTALLED_APPS = (
     'apps.mailinglists',
     'scripts',
 
-    #External apps
-    'redWine',
-
-    #Wiki
+     # Wiki
     'wiki',
     'wiki.plugins.attachments',
     'wiki.plugins.notifications',
