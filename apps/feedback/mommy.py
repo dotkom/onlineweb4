@@ -46,13 +46,11 @@ class FeedbackMail(Task):
         message = Message()
 
         if not end_date:
-            #logger.info('Content object has no date')
             message.status = "Content object has no date"
             return message
 
         #Return if the event has not yet happened
         if end_date.date() >= today:
-            #logger.info('Event has not finished yet')
             message.status = "Event not done"
             return message
 
@@ -234,4 +232,4 @@ class Message():
             self.end)
         return message
 
-schedule.register(FeedbackMail, day_of_week='mon-sun', hour=13, minute=02)
+schedule.register(FeedbackMail, day_of_week='mon-sun', hour=8, minute=00)
