@@ -71,7 +71,7 @@ class OnlineUser(AbstractUser):
     compiled = models.BooleanField(_(u"kompilert"), default=False)
 
     # Email
-    infomail = models.BooleanField(_(u"vil ha infomail"), default=True)
+    infomail = models.BooleanField(_(u"vil ha infomail"), default=False)
 
     # Address
     phone_number = models.CharField(_(u"telefonnummer"), max_length=20, blank=True, null=True)
