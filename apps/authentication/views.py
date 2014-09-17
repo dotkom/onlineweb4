@@ -125,6 +125,10 @@ def verify(request, token):
         # If it is a stud email, set the ntnu_username for user
         if re.match(r'[^@]+@stud\.ntnu\.no', rt.email):
             user.ntnu_username = rt.email.split("@")[0]
+            
+            # Check if Online-member, and set Infomail to True is he/she is
+            if user.is_member():
+                user.infomail = True
 
         user_activated = False
         if not user.is_active:
