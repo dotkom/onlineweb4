@@ -111,7 +111,7 @@ class FeedbackMail(Task):
             message.deadline = u"\n\nFristen for å svare på skjema er %s innen kl 23:59." % (deadline)
             message.send = True
             message.status = "Warning message"
-        elif FeedbackMail.send_first_notification(feedback): #Day after the event or feedback creation 
+        elif not feedback.first_mail_sent:
             message.deadline = u"\n\nFristen for å svare på skjema er %s innen kl 23:59." % (deadline)
         
             message.results_message = u"Hei, nå har feedbackmail blitt sendt til alle " \
@@ -119,27 +119,12 @@ class FeedbackMail(Task):
             (title, results_link)
             message.send = True
             message.status = "First message"
+            feedback.first_mail_sent = True
+            feedback.save()
+            logger.info("first_mail_sent set")
         else:
             message.status = "No message generated"
-
         return message
-        
-    @staticmethod
-    def send_first_notification(feedback):
-        start_date = FeedbackMail.end_date(feedback)
-
-        #The object that requires feedback doesnt have a start date
-        if not start_date:
-            yesterday = timezone.now().date() - datetime.timedelta(days=1)
-            if feedback.created_date == yesterday.date():
-                #Send the first notification the day after the feedback relation was created
-                return True
-        else:
-            day_after_event = start_date + datetime.timedelta(1)
-            if day_after_event == datetime.datetime.date(timezone.now()):
-                #Send the first notification the day after the event
-                return True
-        return False
 
     @staticmethod
     def end_date(feedback):
