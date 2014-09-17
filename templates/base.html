@@ -39,22 +39,22 @@
                   <li><a href="{% url 'events_index' %}">Arkiv</a></li>
                   <li><a href="{% url 'careeropportunity_index' %}">Karrieremuligheter</a></li>
                   <li><a href="{% url 'resourcecenter_index' %}">Ressurser</a></li>
-                  <li><a href="https://wiki.online.ntnu.no/projects/online/wiki">Wiki</a></li>
+                  <li><a href="/wiki/">Wiki</a></li>
                 </ul>
 
                 <ul class="nav navbar-nav navbar-right">
                     <li class="dropdown" id="login_menu">
                         {% if user.is_authenticated %}
-                        <a href="#login_menu" class="login-btn dropdown-toggle dropdown-signin login glyphicon glyphicon-user" data-toggle="dropdown"></a>
-                        <ul class="dropdown-menu login-box" role="menu">
-                            {% if user.is_staff %}
-                            <li><a href="/admin/">Administrasjon</a></li>
-                            {% endif %}
-                            <li><a href="{% url 'profiles' %}">Min profil</a></li>
-                            <li class="divider"></li>
-                            <li><a href="{% url 'auth_logout' %}">Logg ut</a></li>
-                        </ul>
-                       
+                            <a href="#login_menu" class="login-btn dropdown-toggle dropdown-signin login glyphicon glyphicon-user" data-toggle="dropdown"></a>
+                            <ul class="dropdown-menu login-box" role="menu">
+                                {% if user.is_staff %}
+                                <li><a href="/admin/">Administrasjon</a></li>
+                                {% endif %}
+                                <li><a href="{% url 'profiles' %}">Min side</a></li>
+                                <li><a href="{% url 'profiles_user_search' %}">Finn brukere</a></li>
+                                <li class="divider"></li>
+                                <li><a href="{% url 'auth_logout' %}">Logg ut</a></li>
+                            </ul>
                         {% else %}
                         <a href="#login_menu" class="login-btn dropdown-toggle dropdown-signin login glyphicon glyphicon-lock" data-toggle="dropdown"></a>
                         <ul class="dropdown-menu login-box" role="menu">
@@ -145,7 +145,7 @@
                                     <span class="glyphicon glyphicon-envelope"></span>kontakt@online.ntnu.no
                                 </div>
                                 <div class="contact-item">
-                                    <span class="glyphicon glyphicon-phone"></span>75 25 38 39
+                                    <span class="glyphicon glyphicon-phone"></span>73 59 64 89
                                 </div>
                             </div>
                         </div>
@@ -187,7 +187,6 @@
         <script src="{{ STATIC_URL }}js/libs/bootstrap.min.js"></script>
         <script src="{{ STATIC_URL }}js/libs/moment.js"></script>
         <script src="{{ STATIC_URL }}js/libs/jquery.debouncedresize.js"></script>
-        <script src="{{ STATIC_URL }}js/holder.js"></script>
         <script src="{{ STATIC_URL }}js/init.js"></script>
     {% endblock %}
 

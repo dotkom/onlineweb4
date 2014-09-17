@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from django import forms
-from django.contrib import admin
+from django.contrib import admin, messages
 from django.core import validators
 from django.utils.translation import ugettext as _
 
@@ -13,6 +13,8 @@ from apps.events.models import RuleBundle
 from apps.events.models import FieldOfStudyRule
 from apps.events.models import GradeRule
 from apps.events.models import UserGroupRule
+from apps.events.models import Reservation
+from apps.events.models import Reservee
 from apps.feedback.admin import FeedbackRelationInline
 
 
@@ -116,13 +118,15 @@ class EventAdmin(admin.ModelAdmin):
         else:
             # If attendance max capacity changed we will notify users that they are now on the attend list
             old_event = Event.objects.get(id=obj.id)
-            if old_event.is_attendance_event() and old_event.wait_list:
-                diff_capacity = obj.attendance_event.max_capacity - old_event.attendance_event.max_capacity
-                if diff_capacity > 0:
-                    if diff_capacity > len(old_event.wait_list):
-                        diff_capacity = len(old_event.wait_list)
-                    # Using old_event because max_capacity has already been changed in obj
-                    old_event.notify_waiting_list(host=request.META['HTTP_HOST'], extra_capacity=diff_capacity)
+            if old_event.is_attendance_event():
+                old_waitlist_size = old_event.attendance_event.waitlist_qs.count()
+                if old_waitlist_size > 0:
+                    diff_capacity = obj.attendance_event.max_capacity - old_event.attendance_event.max_capacity
+                    if diff_capacity > 0:
+                        if diff_capacity > old_waitlist_size:
+                            diff_capacity = old_waitlist_size
+                        # Using old_event because max_capacity has already been changed in obj
+                        old_event.notify_waiting_list(host=request.META['HTTP_HOST'], extra_capacity=diff_capacity)
         obj.save()
 
     def save_formset(self, request, form, formset, change):
@@ -139,9 +143,47 @@ class EventAdmin(admin.ModelAdmin):
         return form
 
 
+class ReserveeInline(admin.TabularInline):
+    model = Reservee
+    extra = 1
+    classes = ('grp-collapse grp-open',)  # style
+    inline_classes = ('grp-collapse grp-open',)  # style
+
+
+class ReservationAdmin(admin.ModelAdmin):
+    model = Reservation
+    inlines = (ReserveeInline,)
+    max_num = 1
+    extra = 0
+    list_display = ('attendance_event', '_number_of_seats_taken', 'seats', '_attendees', '_max_capacity')
+    classes = ('grp-collapse grp-open',)  # style
+    inline_classes = ('grp-collapse grp-open',)  # style
+
+    def _number_of_seats_taken(self, obj):
+        return obj.number_of_seats_taken
+    _number_of_seats_taken.short_description = _("Fylte reservasjoner")
+
+    def _attendees(self, obj):
+        return obj.attendance_event.number_of_attendees
+    _attendees.short_description = _("Antall deltakere")
+
+    def _max_capacity(self, obj):
+        return obj.attendance_event.max_capacity 
+    _max_capacity.short_description = _("Arrangementets maks-kapasitet")
+
+    def save_model(self, request, obj, form, change):
+        if change:
+            number_of_free_seats = obj.attendance_event.max_capacity - obj.attendance_event.number_of_attendees
+            if number_of_free_seats < obj.seats:
+                obj.seats = number_of_free_seats
+                self.message_user(request, _("Du har valgt et antall reserverte plasser som overskrider antallet ledige plasser for dette arrangementet. Antallet ble automatisk justert til %d (alle ledige plasser).") % number_of_free_seats, messages.WARNING)
+        obj.save()
+            
+    
 admin.site.register(Event, EventAdmin)
 admin.site.register(Attendee, AttendeeAdmin)
 admin.site.register(RuleBundle, RuleBundleAdmin)
 admin.site.register(GradeRule, GradeRuleAdmin)
 admin.site.register(UserGroupRule, UserGroupRuleAdmin)
 admin.site.register(FieldOfStudyRule, FieldOfStudyRuleAdmin)
+admin.site.register(Reservation, ReservationAdmin)

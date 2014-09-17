@@ -371,6 +371,18 @@ def save_membership_details(request):
 
     return HttpResponse(status=404) 
 
+@login_required
+def user_search(request):
+    groups_to_include = settings.USER_SEARCH_GROUPS
+    groups = Group.objects.filter(pk__in=groups_to_include)
+    users_to_display = User.objects.filter(privacy__visible_for_other_users=True)
+
+    context = {
+        'users' : users_to_display,
+        'groups' : groups,
+        }
+    return render(request, 'profiles/users.html', context)
+
 
 @login_required
 def api_user_search(request):
@@ -397,7 +409,7 @@ def search_for_users(query, limit=10):
 def view_profile(request, username):
     user = get_object_or_404(User, username=username)
     if user.privacy.visible_for_other_users or user == request.user:
-        return render(request, 'profiles/view_profile.html', {'user': user})
+        return render(request, 'profiles/view_profile.html', {'user_profile': user})
 
     messages.error(request, _(u'Du har ikke tilgang til denne profilen'))
     return redirect('profiles')

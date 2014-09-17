@@ -226,6 +226,8 @@ nav.subnavbar {
     }
 }
 
+/* Logos
+-------------------------------------------------- */
 
 .main-sponsor {
     a {
@@ -240,5 +242,44 @@ nav.subnavbar {
         font-size: 9px;
         opacity: 0.3;
         padding: 3px 0 0 13px;
+        position: relative;
+        right: -5px;
     }
 }
+
+.online-logo {
+    width: 140px;
+    margin: -10px 45px 0 0;
+}
+
+.sponsor-logo {
+    position: relative;
+    top: 2px;
+    left: 15px;
+
+    width: 128px;
+    margin: 5px 0 0 0;
+
+}
+
+@media (min-width: 768px) {
+    .navbar-nav.navbar-right:last-child {
+        margin-right: 5px;
+    }
+}
+
+.dropdown-form li > form > .login-extra > a {
+    padding:20px 0 0 0;
+    display:block;
+}
+#events, #articles, #about, #business, #offline {
+    /*padding-top: 50px;*/
+}
+
+
+/* Login
+-------------------------------------------------- */
+label[for='id_password'] {
+  padding-top: 10px;
+}
+

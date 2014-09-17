@@ -276,7 +276,7 @@ def mail_participants(request, event_id):
         return redirect(event)
 
     all_attendees = event.attendance_event.attendees
-    attendees_on_waitlist = event.wait_list
+    attendees_on_waitlist = event.attendance_event.waitlist_qs
     attendees_not_paid = event.attendees_not_paid
 
     if request.method == 'POST':

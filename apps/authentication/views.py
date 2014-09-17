@@ -7,6 +7,7 @@ from smtplib import SMTPException
 from django.contrib import auth
 from django.contrib import messages
 from django.core.mail import send_mail
+from django.db.utils import IntegrityError
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponseRedirect
 from django.utils.translation import ugettext as _
@@ -79,7 +80,7 @@ def register(request):
 
                 # Create the registration token
                 token = uuid.uuid4().hex
-                rt = RegisterToken(user=user, email=cleaned['email'], token=token)
+                rt = RegisterToken(user=user, email=email.email, token=token)
                 rt.save()
 
                 email_message = _(u"""
@@ -130,15 +131,29 @@ def verify(request, token):
             user.is_active = True
             user_activated = True
 
-        user.save()
-        rt.delete()
+        try:
+            user.save()
+            rt.delete()
 
-        if user_activated:
-            messages.success(request, _(u'Bruker %s ble aktivert. Du kan nå logge inn.') % user.username)
-            return redirect('auth_login')
-        else:
-            messages.success(request, _(u'Eposten %s er nå verifisert.') % email)
-            return redirect('profiles')
+            if user_activated:
+                messages.success(request, _(u'Bruker %s ble aktivert. Du kan nå logge inn.') % user.username)
+                return redirect('auth_login')
+            else:
+                messages.success(request, _(u'Eposten %s er nå verifisert.') % email)
+                return redirect('profiles')
+
+        except IntegrityError:
+            email_message = u"""
+Problemer med en verifikasjon av en epost, klager på duplikat av ntnu_brukernavn.
+
+Det er umulig å fikse denne bugen uten å vite hvilken konto det er, så kan man finne ut hvorfor det skjer, folk skal ikke kunne legge til duplikater av eposter uansett, så det hele er meget rart.
+
+Brukerid = %d
+NTNU brukernavn = %s
+            """ % (user.id, user.ntnu_username)
+            send_mail(_(u'Halvsketchy debug epost for rar bug'), email_message, u"havardsv@rambo.drift.biz", ["dotkom@online.ntnu.no",])                
+            messages.error(request, _(u"Noe gikk meget galt mens vi forsøkte å verifisere eposten din. Vennligst send en epost til dotkom@online.ntnu.no med detaljer."))
+
     else:
         messages.error(request, _(u'Denne lenken er utløpt. Bruk gjenopprett passord for å få tilsendt en ny lenke.'))
         return HttpResponseRedirect('/')        

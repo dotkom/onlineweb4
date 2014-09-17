@@ -129,6 +129,23 @@ PIZZA_ADMIN_GROUP = 'pizzaadmin'
 # Grappelli settings
 GRAPPELLI_ADMIN_TITLE = '<a href="/">Onlineweb</a>'
 
+# List of usergroups that should be listed under "Finn brukere" in user profile
+USER_SEARCH_GROUPS = [
+    16,  # appKom
+    1,   # arrKom
+    2,   # banKom
+    3,   # bedKom
+    4,   # dotKom
+    5,   # eksKom
+    14,  # Eldsteradet
+    6,   # fagKom
+    11,  # Hovedstyret
+    10,  # pangKom
+    7,   # proKom
+    8,   # triKom
+    9,   # velKom
+]
+
 INSTALLED_APPS = (
     # Third party dependencies
     'django.contrib.humanize',
@@ -162,6 +179,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
 
     # Onlineweb 4 apps
+    'apps.api',
     'apps.article',
     'apps.authentication',
     'apps.autoconfig',
@@ -174,6 +192,9 @@ INSTALLED_APPS = (
     'apps.mommy',
     'apps.profiles',
     'apps.genfors',
+    'apps.resourcecenter',
+    'apps.mailinglists',
+    'scripts',
 
      # Wiki
     'wiki',

@@ -11,23 +11,28 @@ class EventPDF:
     event = None
     attendees = None
     waiters = None
+    reservees = None
     attendee_table_data = None
     waiters_table_data = None
+    reservee_table_data = None
     allergies_table_data = None
     full_span_attendee_lines = []
     full_span_waiters_lines = []
 
     def __init__(self, event):
         self.event = event
-        attendee_qs = event.attendance_event.attendees.filter()
-        self.attendees = sorted(attendee_qs[:event.attendance_event.max_capacity], key=lambda attendee: attendee.user.last_name)
-        self.waiters = event.wait_list
+        attendee_qs = event.attendance_event.attendees_qs
+        self.attendees = sorted(attendee_qs, key=lambda attendee: attendee.user.last_name)
+        self.waiters = event.attendance_event.waitlist_qs
+        self.reservees = event.attendance_event.reservees_qs 
         self.attendee_table_data = [(u'Navn', u'Klasse', u'Studie', u'Telefon'), ]
         self.waiters_table_data = [(u'Navn', u'Klasse', u'Studie', u'Telefon'), ]
-        self.allergies_table_data = []
+        self.reservee_table_data = [(u'Navn', u'Notat'), ]
+        self.allergies_table_data = [(u'Allergisk mot', u'Navn'), ]
 
         self.create_attendees_table_data()
         self.create_waiters_table_data()
+        self.create_reservees_table_data()
         
 
     # Create table data for attendees with a spot
@@ -48,7 +53,7 @@ class EventPDF:
                 i += 1
                 self.full_span_attendee_lines.append(i) 
             if user.allergies:
-                self.allergies_table_data = self.allergies_table_data + [user.first_name + ' ' + user.last_name  + ': ' + user.allergies]
+                self.allergies_table_data.append((user.allergies, user.get_full_name(),))
 
             i += 1
 
@@ -70,15 +75,33 @@ class EventPDF:
                 i += 1
                 self.full_span_waiters_lines.append(i) 
             if user.allergies:
-                self.allergies_table_data = self.allergies_table_data + [user.first_name + ' ' + user.last_name  + ': ' + user.allergies]
+                self.allergies_table_data.append((user.allergies, user.get_full_name(),))
 
             i += 1
+
+    def create_reservees_table_data(self):
+        for reservee in self.reservees:
+            self.reservee_table_data.append((
+                                             create_body_text(reservee.name), 
+                                             create_body_text(reservee.note)
+                                             ))
+            if reservee.allergies:
+                self.allergies_table_data.append((
+                                                  create_body_text(reservee.allergies),
+                                                  create_body_text(reservee.name), 
+                                                  ))
+                if reservee.allergies:
+                    #self.allergies_table_data = self.allergies_table_data + [reservee.name + ' ' + reservee.allergies] 
+                    pass
 
     def attendee_column_widths(self):
         return (185, 40, 170, 75)
 
+    def reservee_column_widths(self):
+        return (185, 285)
+
     def allergies_column_widths(self):
-        return (200, 200)
+        return (285, 185)
 
     def render_pdf(self):
         pdf, response = pdf_response(self.event.title + u" attendees")
@@ -94,16 +117,23 @@ class EventPDF:
         pdf.table(self.attendee_table_data, self.attendee_column_widths(), style=get_table_style(self.full_span_attendee_lines))
         pdf.spacer(height=25)
         
-        if len(self.waiters) > 0:
+        if self.waiters.count() > 0:
             pdf.p(u"Venteliste", style=create_paragraph_style(font_size=14))
             pdf.spacer(height=20)
             pdf.table(self.waiters_table_data, self.attendee_column_widths(), style=get_table_style(self.full_span_waiters_lines))
             pdf.spacer(height=25)
+    
+        if self.reservees and self.reservees.count() > 0: 
+            pdf.p(u"Reservasjoner", style=create_paragraph_style(font_size=14))
+            pdf.spacer(height=20)
+            pdf.table(self.reservee_table_data, self.reservee_column_widths(), style=get_table_style())
+            pdf.spacer(height=25)
 
         if self.allergies_table_data:
             pdf.p(u"Allergier", style=create_paragraph_style(font_size=14))
-            pdf.spacer(height=12)
-            pdf.ul(self.allergies_table_data)
+            pdf.spacer(height=20)
+            pdf.table(self.allergies_table_data, self.allergies_column_widths(), style=get_table_style())
+            pdf.spacer(height=25)
 
         pdf.generate()
         return response
@@ -118,9 +148,6 @@ def get_table_style(full_spans=None):
     if full_spans:
         for line in full_spans:
             style.append(('SPAN',(0,line),(-1,line)))
-
-    print full_spans
-    print style
 
     return TableStyle(style)
 
