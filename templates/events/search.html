@@ -42,8 +42,13 @@
       <div class="meta">
         {% if event.is_attendance_event %}
           <div class="col-md-3">
-            <p>Påmeldte: {{ event.attendance_event.number_of_attendees_not_on_waiting_list }} / {{ event.attendance_event.max_capacity }}</p>
+            <p>Påmeldte: {{ event.attendance_event.number_of_seats_taken }} / {{ event.attendance_event.max_capacity }}</p>
           </div>
+          {% ifequal event.attendance_event.number_of_seats_taken event.attendance_event.max_capacity %}
+            <div class="col-md-3">
+              <p>Venteliste: {{ event.attendance_event.number_on_waitlist }} </p>
+            </div>
+          {% endifequal %}
           <div class="col-md-3">
             <p>Sted: {{ event.location }}</p>
           </div>
