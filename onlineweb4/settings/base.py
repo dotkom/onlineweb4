@@ -197,7 +197,7 @@ INSTALLED_APPS = (
     'scripts',
 
     #External apps
-    'redWine',
+    'redwine',
 
     #Wiki
     'wiki',

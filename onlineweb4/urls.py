@@ -106,8 +106,8 @@ if 'apps.genfors' in settings.INSTALLED_APPS:
     )
 
 # redwine
-if 'redWine' in settings.INSTALLED_APPS:
-    urlpatterns += patterns('', url(r'^redwine/', include('redWine.urls')))
+if 'redwine' in settings.INSTALLED_APPS:
+    urlpatterns += patterns('', url(r'^redwine/', include('redwine.urls')))
 
 # pizzasystem
 if 'pizzasystem' in settings.INSTALLED_APPS:
