@@ -13,26 +13,10 @@ class Migration(SchemaMigration):
                       self.gf('django.db.models.fields.BooleanField')(default=True),
                       keep_default=False)
 
-        # Adding field 'TextQuestion.display'
-        db.add_column(u'feedback_textquestion', 'display',
-                      self.gf('django.db.models.fields.BooleanField')(default=True),
-                      keep_default=False)
-
-        # Adding field 'RatingQuestion.display'
-        db.add_column(u'feedback_ratingquestion', 'display',
-                      self.gf('django.db.models.fields.BooleanField')(default=True),
-                      keep_default=False)
-
 
     def backwards(self, orm):
         # Deleting field 'MultipleChoiceRelation.display'
         db.delete_column(u'feedback_multiplechoicerelation', 'display')
-
-        # Deleting field 'TextQuestion.display'
-        db.delete_column(u'feedback_textquestion', 'display')
-
-        # Deleting field 'RatingQuestion.display'
-        db.delete_column(u'feedback_ratingquestion', 'display')
 
 
     models = {
