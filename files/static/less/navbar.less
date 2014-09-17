@@ -50,19 +50,35 @@ nav.navbar {
     }
 
     li {
+        text-transform: uppercase;
         border-top: 5px solid rgba(255, 255, 255, 0.1);
         margin-right: 1px;
         font-size: 13px;
         font-weight:400;
 
-        text-transform: uppercase;
-
         &.active {
             border-top: 5px solid rgba(255, 255, 255, 1);
         }
+
         a {
             padding-left: 13px;
             padding-right: 13px;
+        }
+    }
+
+    li.dropdown {
+
+      text-transform: none;
+
+        li#username {
+            margin-top: 5px;
+            padding-left: 13px;
+            padding-right: 13px;
+            cursor: default;
+            text-transform: none;
+        }
+        a {
+            text-transform: none;
         }
     }
 
@@ -158,6 +174,12 @@ nav.subnavbar {
     }
     .nav li.active a {
         background: #333;
+    }
+
+    .navbar-nav .open .dropdown-menu > li#username {
+      padding-left: 25px;
+      padding-top: 20px;
+      color: #fff;
     }
 }
 
@@ -256,7 +278,6 @@ nav.subnavbar {
     position: relative;
     top: 2px;
     left: 15px;
-
     width: 128px;
     margin: 5px 0 0 0;
 
