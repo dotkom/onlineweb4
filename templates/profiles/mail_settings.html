@@ -9,8 +9,8 @@
     <div class="col-xs-12 col-sm-12 col-md-10">
         {% for email in user.get_emails %}
         <div class="row email-row">
-            <div class="col-sm-8 col-md-8">
-                <span class="email">{{ email }}</span>
+            <div class="col-xs-4 col-sm-8 col-md-8">
+                <p>{{ email }}</p>
             </div>
             <div class="col-sm-4 col-md-4">
                 <div class="btn-group pull-right">
@@ -49,6 +49,23 @@
         <button type="button" class="btn btn-success btn-sm add-new-email">Legg til ny epostadresse</button>
     </div>
 </div>
+<div class="row">
+    <div class="col-xs-12 col-sm-12 col-md-10">
+        <h3>Infomail</h3>
+        <p>Her velger du om du ønsker/ikke ønsker å motta periodiske oppdateringer om hva som skjer i Online fremover.</p>
+    </div>
+</div>
+<div class="row">
+    <div class="col-xs-12 col-sm-12 col-md-10">
+        <form method="post" action="{% url 'profile_toggle_infomail' %}">
+            {% csrf_token %}
+            <button type="submit" id="toggle_infomail" class="btn btn-sm {{ user.infomail|yesno:"btn-danger,btn-success" }}">
+            {{ user.infomail|yesno:"Deaktivér,Aktivér" }}
+            </button>
+        </form>
+    </div>
+</div>
+
 {% comment %}
 This block is redundant as long as mailinglists aren't being synced with onlinwweb4.
 If we want to use this, the form has to be added to the dictionary again in the view.

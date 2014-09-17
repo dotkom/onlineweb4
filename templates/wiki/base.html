@@ -13,6 +13,13 @@
 <!--[if lt IE 9]><script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
 {% endaddtoblock %}
 
+{% block styles %}
+    {{ block.super }}
+    {% compress css %}
+        <link rel="stylesheet" type="text/less" href="{{ STATIC_URL }}less/wiki.less" />
+    {% endcompress %}
+{% endblock %}
+
 {% block content %}
     <section id="wiki">
         {% block wiki_body %}

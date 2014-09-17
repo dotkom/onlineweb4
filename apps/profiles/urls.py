@@ -14,6 +14,7 @@ urlpatterns = patterns('apps.profiles.views',
     url(r'^delete_email/$', 'delete_email', name='profile_delete_email'),
     url(r'^set_primary/$', 'set_primary', name='profile_set_primary'),
     url(r'^verify_email/$', 'verify_email', name='profile_verify_email'),
+    url(r'^toggle_infomail/$', 'toggle_infomail', name='profile_toggle_infomail'),
     url(r'^save_membership_details/$', 'save_membership_details', name='profile_save_membership_details'),
     url(r'^update_mark_rules/$', 'update_mark_rules', name='update_mark_rules'),
     

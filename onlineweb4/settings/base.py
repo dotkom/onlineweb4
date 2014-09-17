@@ -122,9 +122,14 @@ TEMPLATE_DIRS = (
     os.path.join(PROJECT_ROOT_DIRECTORY, 'templates/'),
 )
 
-# Pizzasystem settings
-PIZZA_GROUP = 'dotkom'
-PIZZA_ADMIN_GROUP = 'pizzaadmin'
+# Feedme settings
+FEEDME_GROUP = 'dotkom'
+FEEDME_ADMIN_GROUP = 'feedmeadmin'
+
+# Variables for fagKom/bedKom-sync script, override in local.py
+BEDKOM_GROUP_ID = 1
+FAGKOM_GROUP_ID = 2
+COMMON_GROUP_ID = 3
 
 # Grappelli settings
 GRAPPELLI_ADMIN_TITLE = '<a href="/">Onlineweb</a>'
@@ -195,6 +200,7 @@ INSTALLED_APPS = (
     'apps.resourcecenter',
     'apps.mailinglists',
     'scripts',
+    'feedme',
 
     #External apps
     'redwine',
@@ -247,7 +253,12 @@ LOGGING = {
             'handlers': ['console'],
             'level': 'DEBUG',
             'propagate': True,
-        },   
+        },
+        'bedfagsyncer': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
         '': {
             'handlers': ['console'],
             'level': 'DEBUG',

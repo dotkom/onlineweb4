@@ -344,6 +344,19 @@ kan dette gjøres ved å klikke på knappen for verifisering på din profil.
         messages.error(request, u'Det oppstod en kritisk feil, epostadressen er ugyldig!')
         return redirect('home')
 
+@login_required
+def toggle_infomail(request):
+    """
+    Toggles the infomail field in Onlineuser object
+    """
+    if request.is_ajax():
+        if request.method == 'POST':
+            request.user.infomail = not request.user.infomail
+            request.user.save()
+
+            return HttpResponse(status=200, content=json.dumps({'state': request.user.infomail}))
+    return HttpResponse(status=404)
+
 
 @login_required
 def save_membership_details(request):
