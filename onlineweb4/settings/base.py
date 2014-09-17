@@ -126,6 +126,11 @@ TEMPLATE_DIRS = (
 PIZZA_GROUP = 'dotkom'
 PIZZA_ADMIN_GROUP = 'pizzaadmin'
 
+# Variables for fagKom/bedKom-sync script, override in local.py
+BEDKOM_GROUP_ID = 1
+FAGKOM_GROUP_ID = 2
+COMMON_GROUP_ID = 3
+
 # Grappelli settings
 GRAPPELLI_ADMIN_TITLE = '<a href="/">Onlineweb</a>'
 
@@ -244,7 +249,12 @@ LOGGING = {
             'handlers': ['console'],
             'level': 'DEBUG',
             'propagate': True,
-        },   
+        },
+        'bedfagsyncer': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
         '': {
             'handlers': ['console'],
             'level': 'DEBUG',
