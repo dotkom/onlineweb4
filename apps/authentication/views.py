@@ -127,7 +127,7 @@ def verify(request, token):
             user.ntnu_username = rt.email.split("@")[0]
             
             # Check if Online-member, and set Infomail to True is he/she is
-            if user.is_member():
+            if user.is_member:
                 user.infomail = True
 
         user_activated = False
