@@ -185,7 +185,6 @@ def delete_position(request):
     if request.is_ajax():
         if request.method == 'POST':
             position_id = request.POST.get('position_id')
-            print position_id
             position = get_object_or_404(Position, pk=position_id)
             if position.user == request.user:
                 position.delete()
@@ -268,7 +267,6 @@ def set_primary(request):
     if request.is_ajax():
         if request.method == 'POST':
             email_string = request.POST.get('email')
-            print "email:", email_string
             email = get_object_or_404(Email, email=email_string)
 
             # Check if the email belongs to the registered user
