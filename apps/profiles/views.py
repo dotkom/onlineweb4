@@ -9,7 +9,7 @@ from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Group
 from django.core.mail import send_mail
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404
 from django.shortcuts import redirect, render, get_object_or_404
 from django.utils.translation import ugettext as _
 
@@ -194,7 +194,7 @@ def delete_position(request):
             else:
                 return_status = json.dumps({'message': _(u"Du prøvde å slette en posisjon som ikke tilhørte deg selv.")})
             return HttpResponse(status=500, content=return_status)
-        return HttpResponse(status=404)
+        raise Http404
 
 
 @login_required
@@ -213,7 +213,7 @@ def update_mark_rules(request):
 
             return HttpResponse(status=212, content=return_status)
         return HttpResponse(status=405)
-    return HttpResponse(status=404)
+    raise Http404
 
 
 @login_required
@@ -268,6 +268,7 @@ def set_primary(request):
     if request.is_ajax():
         if request.method == 'POST':
             email_string = request.POST.get('email')
+            print "email:", email_string
             email = get_object_or_404(Email, email=email_string)
 
             # Check if the email belongs to the registered user
@@ -292,7 +293,8 @@ def set_primary(request):
             email.save()
 
             return HttpResponse(status=200)
-    return HttpResponse(status=404)
+    raise Http404
+
 
 @login_required
 def verify_email(request):
@@ -317,7 +319,8 @@ def verify_email(request):
             _send_verification_mail(request, email.email)
 
             return HttpResponse(status=200)
-    return HttpResponse(status=404)
+    raise Http404
+
 
 def _send_verification_mail(request, email):
 
@@ -355,7 +358,7 @@ def toggle_infomail(request):
             request.user.save()
 
             return HttpResponse(status=200, content=json.dumps({'state': request.user.infomail}))
-    return HttpResponse(status=404)
+    raise Http404
 
 
 @login_required
@@ -382,7 +385,8 @@ def save_membership_details(request):
                                                     {'message': ", ".join(field_errors)}
                                                 ))
 
-    return HttpResponse(status=404) 
+    raise Http404
+
 
 @login_required
 def user_search(request):
