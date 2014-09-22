@@ -14,6 +14,7 @@
 {% endaddtoblock %}
 
 {% block styles %}
+    <link href="{{ STATIC_URL }}wiki/bootstrap/css/wiki-bootstrap.min.css" rel="stylesheet">
     {{ block.super }}
     {% compress css %}
         <link rel="stylesheet" type="text/less" href="{{ STATIC_URL }}less/wiki.less" />
