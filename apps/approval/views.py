@@ -9,7 +9,7 @@ from django.shortcuts import render, redirect
 from django.utils.translation import ugettext as _
 
 from apps.approval.forms import FieldOfStudyApplicationForm
-from apps.approval.models import MembershipApproval, FieldOfStudyApproval 
+from apps.approval.models import MembershipApproval
 from apps.authentication.models import get_length_of_field_of_study
 
 @login_required
@@ -42,21 +42,17 @@ def create_fos_application(request):
                     messages.error(request, _(u"Du er allerede registrert med denne studieretningen og denne startdatoen."))
                     redirect('profiles')
 
-            fos_application = FieldOfStudyApproval(
+            application = MembershipApproval(
                 applicant = request.user,
                 field_of_study = field_of_study,
                 started_date = started_date
             )
-            fos_application.save()
 
             length_of_fos = get_length_of_field_of_study(field_of_study)
             if length_of_fos > 0:
-                membership_application = MembershipApproval(
-                    applicant = request.user,
-                    # Expiry dates should be 15th September, so that we have tiem to get new lists from NTNU
-                    new_expiry_date = datetime.date(started_year, 9, 15) + datetime.timedelta(days=365*length_of_fos)
-                ) 
-                membership_application.save()
+                # Expiry dates should be 15th September, so that we have tiem to get new lists from NTNU
+                application.new_expiry_date = datetime.date(started_year, 9, 16) + datetime.timedelta(days=365*length_of_fos)
+            application.save()
 
     return redirect('profiles')
 
