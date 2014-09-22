@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% load compress %}
+
+{% block title %}
+Søknadsgodkjenning - Online 
+{% endblock title %}
+
+{% block styles %}
+    {{ block.super }}
+    {% compress css %}
+        <link rel="stylesheet" type="text/less" href="{{ STATIC_URL }}less/approval.less" />
+    {% endcompress %}
+{% endblock %}
+
+{% block content %}
+    <section id="approval-list">
+    <div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="page-header">
+                <h2 id="approval-list-heading">Pending approvals</h2>
+            </div>
+        </div>
+    </div>
+    {% if membership_applications %}
+    <div class="row row-space headings">
+        <div class="col-md-12">
+            <div class="col-md-3">
+                <span><div class="visible-xs visible-sm">1. </div>Navn på søker</span>
+            </div>
+            <div class="col-md-3">
+                <span><div class="visible-xs visible-sm">2. </div>Utløpsdato for medlemskap</span>
+            </div>
+            <div class="col-md-4">
+                <span><div class="visible-xs visible-sm">3. </div>Detaljer for søknad om ny studieretning</span>
+            </div>
+        </div>
+    </div>
+        {% for app in membership_applications %}
+        
+        <div class="row row-space-sm application">
+            <div class="col-md-12">
+                <div class="col-md-3 cell">
+                    <div class="visible-xs visible-sm">1. </div>{{ app.applicant.get_full_name }}
+                </div>
+                <div class="col-md-3 cell">
+                    {% if app.is_membership_application %}
+                        <div class="visible-xs visible-sm">2. </div>{{ app.new_expiry_date }}
+                    {% else %}
+                        -
+                    {% endif %}
+                </div>
+                <div class="col-md-4 cell">
+                    {% if app.is_fos_application %}
+                        <div class="visible-xs visible-sm">3. </div>{{ app.get_field_of_study_display }} (startet: {{ app.started_date }})
+                    {% else %}
+                        -
+                    {% endif %}
+                </div>
+                <div class="btn-group">
+                    <a href="{% url 'approval_approve_application' application_id=app.id %}" type="submit" class="btn btn-success">Godkjenn</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %} 
+    {% else %}
+    <div class="row">
+        <div class="col-md-12">
+            <span>Ingen ubesvarte søknader.</span>
+        </div>
+    </div>
+    {% endif %}
+    </section>
+{% endblock content %}
