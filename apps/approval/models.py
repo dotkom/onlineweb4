@@ -12,28 +12,39 @@ class Approval(models.Model):
     approver = models.ForeignKey(User, verbose_name=_(u"godkjenner"), related_name="approver", blank=True, null=True, editable=False)
     created = models.DateTimeField(_(u"opprettet"), auto_now_add=True)
     processed = models.BooleanField(_(u"behandlet"), default=False, editable=False)
+    processed_date = models.DateTimeField(_(u"behandlet dato"), blank=True, null=True)
     approved = models.BooleanField(_(u"godkjent"), default=False, editable=False)
     message = models.TextField(_(u"melding"))
     
 
 class MembershipApproval(Approval):
-    new_expiry_date = models.DateTimeField(_(u"ny utløpsdato"))
+    new_expiry_date = models.DateField(_(u"ny utløpsdato"), blank=True, null=True)
+    field_of_study = models.SmallIntegerField(_(u"studieretning"), choices=FIELD_OF_STUDY_CHOICES, default=0)
+    started_date = models.DateField(_(u"startet dato"), blank=True, null=True)
+
+    def is_membership_application(self):
+        if self.new_expiry_date:
+            return True
+        return False
+
+    def is_fos_application(self):
+        if self.field_of_study != 0 and self.started_date:
+            return True
+        return False
 
     def __unicode__(self):
-        return _(u"Medlemskapssøknad for %s") % self.applicant.get_full_name()
+        output = ""
+        if self.is_fos_application():
+            output = _(u"studieretningssøknad ")
+        if self.is_membership_application():
+            if not output:
+                output = _(u"Medlemskapssøknad ")
+            else:
+                output = _(u"Medlemskaps- og ") + output
+        if not output:
+            return _(u"Tom søknad for %s") % self.applicant.get_full_name()
+        return output + "for " + self.applicant.get_full_name()
 
     class Meta:
         verbose_name = _(u"medlemskapssøknad")
         verbose_name_plural = _(u"medlemskapssøknader")
-
-
-class FieldOfStudyApproval(Approval):
-    field_of_study = models.SmallIntegerField(_(u"studieretning"), choices=FIELD_OF_STUDY_CHOICES, default=0)
-    started_date = models.DateField(_(u"startet dato"))
-
-    def __unicode__(self):
-        return _(u"Studieretningssøknad for %s") % self.applicant.get_full_name()
-
-    class Meta:
-        verbose_name = _(u"studieretningssøknad")
-        verbose_name_plural = _(u"studieretningssøknader")
