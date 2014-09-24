@@ -1,7 +1,7 @@
 #-*- coding: utf-8 -*-
 
 from datetime import datetime, timedelta
-import reversion
+
 from django.conf import settings
 from django.contrib.auth.models import Group
 from django.core.mail import send_mail
@@ -226,8 +226,6 @@ http://%s%s
         verbose_name = _('arrangement')
         verbose_name_plural = _('arrangement')
 
-reversion.register(Event)
-
 """
  BEGIN ACCESS RESTRICTION --------------------------------------------------------------------------
 """
@@ -252,7 +250,6 @@ class Rule(models.Model):
     def __unicode__(self):
         return 'Rule'
 
-reversion.register(Rule)
 
 class FieldOfStudyRule(Rule):
     field_of_study = models.SmallIntegerField(_(u'studieretning'), choices=FIELD_OF_STUDY_CHOICES)
@@ -280,7 +277,6 @@ class FieldOfStudyRule(Rule):
             return _("%s etter %d %s") % (unicode(self.get_field_of_study_display()), self.offset, time_unit)
         return unicode(self.get_field_of_study_display())
 
-reversion.register(FieldOfStudyRule)
 
 class GradeRule(Rule):
     grade = models.SmallIntegerField(_(u'klassetrinn'), null=False)
@@ -308,7 +304,6 @@ class GradeRule(Rule):
             return _(u"%s. klasse etter %d %s") % (self.grade, self.offset, time_unit)
         return _(u"%s. klasse") % self.grade
 
-reversion.register(GradeRule)
 
 class UserGroupRule(Rule):
     group = models.ForeignKey(Group, blank=False, null=False)
@@ -334,7 +329,6 @@ class UserGroupRule(Rule):
             return _(u"%s etter %d %s") % (unicode(self.group), self.offset, time_unit)
         return unicode(self.group)
 
-reversion.register(UserGroupRule)
 
 class RuleBundle(models.Model):
     """
@@ -376,7 +370,7 @@ class RuleBundle(models.Model):
         else:  
             return _(u"Tom rule bundle.")
 
-reversion.register(RuleBundle)
+
 
 """
  END ACCESS RESTRICTION --------------------------------------------------------------------------
@@ -541,8 +535,6 @@ class AttendanceEvent(models.Model):
         verbose_name = _(u'påmelding')
         verbose_name_plural = _(u'påmeldinger')
 
-reversion.register(AttendanceEvent)
-
 class CompanyEvent(models.Model):
     """
     Company relation to AttendanceEvent
@@ -554,7 +546,6 @@ class CompanyEvent(models.Model):
         verbose_name =_('bedrift')
         verbose_name_plural = _('bedrifter')
 
-reversion.register(CompanyEvent)
 
 class Attendee(models.Model):
     """
@@ -575,7 +566,6 @@ class Attendee(models.Model):
         ordering = ['timestamp']
         unique_together = (('event', 'user'),)
 
-reversion.register(Attendee)
 
 class Reservation(models.Model):
     attendance_event = models.OneToOneField(AttendanceEvent, related_name="reserved_seats")
@@ -591,8 +581,6 @@ class Reservation(models.Model):
     class Meta:
         verbose_name = _("reservasjon")
         verbose_name_plural = _("reservasjoner")
-
-reversion.register(Reservation)
 
 class Reservee(models.Model):
     """
@@ -613,7 +601,6 @@ class Reservee(models.Model):
         verbose_name_plural = _("reservasjoner")
         ordering = ['id']
 
-reversion.register(Reservee)
 
 # Registrations for watson indexing
 watson.register(Event)

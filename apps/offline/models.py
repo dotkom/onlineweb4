@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 import logging
-import reversion
 from os import path
 from subprocess import check_call, CalledProcessError
 from django.db import models
@@ -21,7 +20,6 @@ class ProxyChunk(Chunk):
         verbose_name = 'Informasjonstekst'
         verbose_name_plural = 'Informasjonstekster'
 
-reversion.register(Chunk)
 
 class Issue(models.Model):
     title = models.CharField(_(u"tittel"), max_length=50)
@@ -70,7 +68,6 @@ class Issue(models.Model):
         verbose_name_plural = 'Utgivelser'
         ordering = ['-release_date']
 
-reversion.register(Issue)
 
 def create_thumbnail(sender, instance=None, **kwargs):
     logger = logging.getLogger(__name__)
