@@ -1,5 +1,7 @@
 # -*- encoding: utf-8 -*-
 
+import json
+
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import Http404, HttpResponse
@@ -27,17 +29,23 @@ def approve_application(request):
     if request.is_ajax():
         if request.method == 'POST':
             application_id = request.POST.get('application_id')
-            app = get_object_or_404(MembershipApproval, pk=application_id)
+            apps = MembershipApproval.objects.filter(pk = application_id)
+
+            if apps.count() == 0:
+                response_text = json.dumps({'message': _(u"Kan ikke finne en søknad med denne IDen (%s). Om feilen vedvarer etter en refresh, kontakt dotkom@online.ntnu.no.") % application_id})
+                return HttpResponse(status=412, content=response_text)
+            
+            app = apps[0]
 
             if app.processed:
-                messages.error(request, _(u"Denne søknaden er allerede behandlet."))
-                return redirect(index)
+                response_text = json.dumps({'message': _(u"Denne søknaden er allerede behandlet.")})
+                return HttpResponse(status=412, content=response_text)
 
             user = app.applicant
 
             if not user.ntnu_username:
-                messages.error(request, _(u"Brukeren (%s) har ikke noe lagret ntnu brukernavn.") % user.get_full_name())
-                return redirect(index)
+                response_text = json.dumps({'message': _(u"Brukeren (%s) har ikke noe lagret ntnu brukernavn.") % user.get_full_name()})
+                return HttpResponse(status=412, content=response_text)
 
             if app.is_fos_application():
                 user.field_of_study = app.field_of_study
@@ -83,6 +91,29 @@ Approved by %s on %s.""" % (request.user.get_full_name(), str(timezone.now().dat
 
 @login_required
 def decline_application(request):
-    
+    if request.is_ajax():
+        if request.method == 'POST':
+            application_id = request.POST.get('application_id')
+            apps = MembershipApproval.objects.filter(pk = application_id)
 
-    return redirect(index)
+            if apps.count() == 0:
+                response_text = json.dumps({'message': _(u"Kan ikke finne en søknad med denne IDen (%s). Om feilen vedvarer etter en refresh, kontakt dotkom@online.ntnu.no.") % application_id})
+                return HttpResponse(status=412, content=response_text)
+            
+            app = apps[0]
+
+            if app.processed:
+                response_text = json.dumps({'message': _(u"Denne søknaden er allerede behandlet.")})
+                return HttpResponse(status=412, content=response_text)
+
+            message = request.POST.get('message')
+
+            app.processed = True
+            app.approver = request.user
+            app.processed_date = timezone.now()
+            app.message = message
+            app.save()
+
+            return HttpResponse(status=200)
+    
+    raise Http404
