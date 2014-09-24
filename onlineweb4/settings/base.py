@@ -210,6 +210,7 @@ INSTALLED_APPS = (
     'wiki.plugins.notifications',
     'wiki.plugins.images',
     'wiki.plugins.macros',
+    
 )
 
 # A sample logging configuration. The only tangible logging
