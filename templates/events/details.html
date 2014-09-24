@@ -24,15 +24,15 @@
                     <div class="col-md-4">
                         <div class="eventdetails-dropdown btn-group pull-right">
                             <div class="btn-group">
-                              <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-                                <span class="glyphicon glyphicon-calendar"></span>
-                                Eksporter
-                                <span class="caret"></span>
-                              </button>
-                              <ul class="dropdown-menu">
-                                <li><a href="{{ ics_path }}">ICS</a></li>
-                                <li><a href="http://www.google.com/calendar/render?cid={{ ics_path|unhttps|urlencode }}">Google Calendar</a></li>
-                              </ul>
+                                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                                    <span class="glyphicon glyphicon-calendar"></span>
+                                    Eksporter
+                                    <span class="caret"></span>
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li><a href="{{ ics_path }}">ICS</a></li>
+                                    <li><a href="http://www.google.com/calendar/render?cid={{ ics_path|unhttps|urlencode }}">Google Calendar</a></li>
+                                </ul>
                             </div>
                         {% if user.is_authenticated %}
                             {% in_group "Komiteer" as in_komiteer %}
