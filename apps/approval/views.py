@@ -12,9 +12,6 @@ from apps.approval.forms import FieldOfStudyApplicationForm
 from apps.approval.models import MembershipApproval
 from apps.authentication.models import get_length_of_field_of_study
 
-@login_required
-def index(request):
-    return render(request, 'approval/index.html', {})
 
 @login_required
 def create_fos_application(request):
@@ -55,6 +52,7 @@ def create_fos_application(request):
             application.save()
 
     return redirect('profiles')
+
 
 @login_required
 def create_membership_application(request):
