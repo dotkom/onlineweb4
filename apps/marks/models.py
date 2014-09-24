@@ -1,7 +1,7 @@
 #-*- coding: utf-8 -*-
 
 from datetime import date, datetime, time, timedelta
-
+import reversion
 from django.conf import settings
 from django.db import models
 from django.utils import timezone
@@ -65,6 +65,7 @@ class Mark(models.Model):
         verbose_name = _(u"Prikk")
         verbose_name_plural = _(u"Prikker")
 
+reversion.register(Mark)
 
 class UserEntry(models.Model):
     user = models.ForeignKey(User)
@@ -76,6 +77,7 @@ class UserEntry(models.Model):
     class Meta:
         unique_together = ("user", "mark")
 
+reversion.register(UserEntry)
 
 def _get_expiration_date(added_date=timezone.now()):
     """

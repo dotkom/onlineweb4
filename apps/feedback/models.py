@@ -10,6 +10,7 @@ This implementation is not very database friendly however, as it does
 very many database lookups.
 '''
 import uuid
+import reversion
 
 from django.db import models
 from django.utils.translation import ugettext as _
@@ -138,6 +139,7 @@ class FeedbackRelation(models.Model):
             rt = RegisterToken(fbr = self, token = token)
             rt.save()
 
+reversion.register(FeedbackRelation)
 
 class Feedback(models.Model):
     """
@@ -184,6 +186,7 @@ class Feedback(models.Model):
         verbose_name = _(u'tilbakemeldingsskjema')
         verbose_name_plural = _(u'tilbakemeldingsskjemaer')
 
+reversion.register(Feedback)
 
 class FieldOfStudyAnswer(models.Model):
     feedback_relation = models.ForeignKey(
@@ -196,6 +199,7 @@ class FieldOfStudyAnswer(models.Model):
     def __unicode__(self):
         return self.get_answer_display()
 
+reversion.register(FieldOfStudyAnswer)
 
 class TextQuestion(models.Model):
     feedback = models.ForeignKey(
@@ -210,6 +214,7 @@ class TextQuestion(models.Model):
     def __unicode__(self):
         return self.label
 
+reversion.register(TextQuestion)
 
 class TextAnswer(models.Model):
     question = models.ForeignKey(TextQuestion, related_name='answer')
@@ -227,6 +232,7 @@ class TextAnswer(models.Model):
     def order(self):
         return self.question.order
 
+reversion.register(TextAnswer)
 
 RATING_CHOICES = [(k, str(k)) for k in range(1, 7)]  # 1 to 6
 
@@ -243,6 +249,7 @@ class RatingQuestion(models.Model):
     def __unicode__(self):
         return self.label
 
+reversion.register(RatingQuestion)
 
 class RatingAnswer(models.Model):
     feedback_relation = models.ForeignKey(
@@ -263,6 +270,7 @@ class RatingAnswer(models.Model):
     def order(self):
         return self.question.order
 
+reversion.register(RatingAnswer)
     
 class MultipleChoiceQuestion(models.Model):
     label = models.CharField(_(u'Spørsmål'), blank=False, max_length=256)
@@ -274,6 +282,7 @@ class MultipleChoiceQuestion(models.Model):
     def __unicode__(self):
         return self.label
 
+reversion.register(MultipleChoiceQuestion)
 
 class MultipleChoiceRelation(models.Model):
     multiple_choice_relation = models.ForeignKey(MultipleChoiceQuestion)
@@ -284,6 +293,7 @@ class MultipleChoiceRelation(models.Model):
     def __unicode__(self):
         return self.multiple_choice_relation.label
 
+reversion.register(MultipleChoiceRelation)
 
 class Choice(models.Model):
     question = models.ForeignKey(MultipleChoiceQuestion, related_name="choices")
@@ -292,6 +302,7 @@ class Choice(models.Model):
     def __unicode__(self):
         return self.choice
 
+reversion.register(Choice)
 
 class MultipleChoiceAnswer(models.Model):
     feedback_relation = models.ForeignKey(
@@ -308,6 +319,7 @@ class MultipleChoiceAnswer(models.Model):
     def order(self):
         return self.question.order
 
+reversion.register(MultipleChoiceAnswer)
 
 #For creating a link for others(companies) to see the results page
 class RegisterToken(models.Model):
@@ -321,3 +333,5 @@ class RegisterToken(models.Model):
         #valid_period = datetime.timedelta(days=365)#1 year
         #now = timezone.now()
         #return now < self.created + valid_period
+
+reversion.register(RegisterToken)

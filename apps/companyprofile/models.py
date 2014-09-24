@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from filebrowser.fields import FileBrowseField
+import reversion
 
 class Company(models.Model):
 
@@ -24,3 +25,5 @@ class Company(models.Model):
     class Meta:
         verbose_name = _(u"Bedrift")
         verbose_name_plural = _(u"Bedrifter")
+
+reversion.register(Company)

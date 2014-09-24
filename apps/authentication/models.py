@@ -4,6 +4,7 @@ import datetime
 import socket
 import urllib
 import hashlib
+import reversion
 
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
@@ -190,6 +191,7 @@ class OnlineUser(AbstractUser):
         verbose_name = _(u"brukerprofil")
         verbose_name_plural = _(u"brukerprofiler")
 
+reversion.register(OnlineUser)
 
 class Email(models.Model):
     user = models.ForeignKey(OnlineUser, related_name="email_user")
@@ -216,6 +218,7 @@ class Email(models.Model):
         verbose_name = _(u"epostadresse")
         verbose_name_plural = _(u"epostadresser")
 
+reversion.register(Email)
 
 class RegisterToken(models.Model):
     user = models.ForeignKey(OnlineUser, related_name="register_user")
@@ -229,6 +232,7 @@ class RegisterToken(models.Model):
         now = timezone.now()
         return now < self.created + valid_period 
 
+reversion.register(RegisterToken)
 
 class AllowedUsername(models.Model):
     """
@@ -256,6 +260,7 @@ class AllowedUsername(models.Model):
         verbose_name_plural = _(u"medlemsregister")
         ordering = (u"username",)
 
+reversion.register(AllowedUsername)
 
 class Position(models.Model):
     """
@@ -278,6 +283,7 @@ class Position(models.Model):
         verbose_name_plural = _(u'posisjoner')
         ordering = ('user', 'period', )
 
+reversion.register(Position)
 
 class SpecialPosition(models.Model):
     """
@@ -295,7 +301,7 @@ class SpecialPosition(models.Model):
         verbose_name_plural = _(u'spesialposisjoner')
         ordering = ('user', 'since_year',)
 
-
+reversion.register(SpecialPosition)
 
 # Register OnlineUser in watson index for searching
 watson.register(OnlineUser, fields=('first_name', 'last_name', 'ntnu_username', 'nickname'))
