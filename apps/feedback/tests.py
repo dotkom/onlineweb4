@@ -135,9 +135,11 @@ class SimpleTest(TestCase):
 
         self.assertEqual(message.status, "First message")
         self.assertTrue(message.send)
+        self.assertTrue(feedback_relation.first_mail_sent)
 
     def test_no_message(self):
         feedback_relation = self.create_feedback_relation(end_date = timezone.now() - timedelta(days=2))
+        feedback_relation.first_mail_sent = True
         message = FeedbackMail.generate_message(feedback_relation, self.logger)
 
         self.assertEqual(message.status, "No message generated")

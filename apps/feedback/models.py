@@ -32,6 +32,7 @@ class FeedbackRelation(models.Model):
     gives_mark = models.BooleanField(default=True)
     active = models.BooleanField(default=True)
     created_date = models.DateTimeField(auto_now_add=True)
+    first_mail_sent = models.BooleanField(default=False)
 
     # Keep a record of who has answered. (not /what/ they have answered)
     answered = models.ManyToManyField(
