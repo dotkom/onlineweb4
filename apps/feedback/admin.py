@@ -29,7 +29,7 @@ class FeedbackRelationInline(generic.GenericStackedInline):
     extra = 0
     classes = ('grp-collapse grp-open',)  # style
     inline_classes = ('grp-collapse grp-open',)  # style
-    exclude = ("answered", "active")
+    exclude = ("answered", "active", "first_mail_sent")
 
 
 class FeedbackRelationAdmin(admin.ModelAdmin):
