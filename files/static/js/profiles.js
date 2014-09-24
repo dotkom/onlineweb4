@@ -122,17 +122,17 @@ $(document).ready(function() {
     $('div.email-row').each(function(i, row) {
 // Ajax request to delete an email
         $(row).find('button.delete').click(function() {
-            email = $(row).find('span.email').text();
+            email = $(row).find('p.email').text();
             deleteEmail(email, row);
         });
 // Ajax request to set email as primary
         $(row).find('button.primary').click(function() { 
-            email = $(row).find('span.email').text();
+            email = $(row).find('p.email').text();
             setPrimaryEmail(email, row);
         });
 // Ajax request to send verification mail
         $(row).find('button.verify').click(function() {
-            email = $(row).find('span.email').text();
+            email = $(row).find('p.email').text();
             verifyEmail(email, row);
         });
     });
