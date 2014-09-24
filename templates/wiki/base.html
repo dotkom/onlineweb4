@@ -9,12 +9,18 @@
 {% block wiki_pagetitle %}{% endblock %}
 {% endblock title %}
 
-{% addtoblock "css" %}
-<!--[if lt IE 9]><script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
-{% endaddtoblock %}
+{% block js %}
+    {{ block.super }}
+    <script type="text/javascript" src="/static/wiki/js/editor.js"></script>
+    <script type="text/javascript" src="/static/wiki/markitup/frontend.init.js"></script>
+    <script type="text/javascript" src="/static/wiki/markitup/jquery.markitup.js"></script>
+    <script type="text/javascript" src="/static/wiki/markitup/sets/frontend/set.js"></script>
+{% endblock %}
 
 {% block styles %}
     <link href="{{ STATIC_URL }}wiki/bootstrap/css/wiki-bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" media="all" href="/static/wiki/markitup/skins/simple/style.css" />
+    <link rel="stylesheet" media="all" href="/static/wiki/markitup/sets/frontend/style.css" />
     {{ block.super }}
     {% compress css %}
         <link rel="stylesheet" type="text/less" href="{{ STATIC_URL }}less/wiki.less" />
