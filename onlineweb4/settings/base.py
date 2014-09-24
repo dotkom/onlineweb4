@@ -151,6 +151,23 @@ USER_SEARCH_GROUPS = [
     9,   # velKom
 ]
 
+#List of mailing lists, used in update_sympa_memcache_from_sql.py
+PUBLIC_LISTS = [
+    "foreninger",
+    "linjeforeninger",
+    "gloshaugen",
+    "dragvoll",
+    "masterforeninger",
+    "kjellere",
+    "linjeledere",
+    "linjeredaksjoner",
+    "glosfaddere",
+    "sr-samarbeid",
+    "ivt-samarbeid",
+    "linjekor",
+    "studentdemokratiet"
+]
+
 INSTALLED_APPS = (
     # Third party dependencies
     'django.contrib.humanize',
