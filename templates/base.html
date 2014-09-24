@@ -20,20 +20,20 @@
         <div class="container">
             <div class="navbar-header">
                 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
-                  <span class="sr-only">Toggle navigation</span>
-                  <span class="icon-bar"></span>
-                  <span class="icon-bar"></span>
-                  <span class="icon-bar"></span>
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
                 </button>
-               <a class="navbar-brand" href="{% url 'home' %}"><img width="140px" height="35px" src="{{ STATIC_URL }}img/online_logo.svg" alt="Online" class="logo"></a>
+               <a class="navbar-brand" href="{% url 'home' %}"><img width="140" height="35" src="{{ STATIC_URL }}img/online_logo.svg" alt="Online" class="logo"></a>
             </div>
             <div class="collapse navbar-collapse navbar-ex1-collapse">
                 <ul class="nav navbar-nav">
-                  <li><a href="{% url 'home' %}">Forside</a></li>
-                  <li><a href="{% url 'events_index' %}">Arkiv</a></li>
-                  <li><a href="{% url 'careeropportunity_index' %}">Karrieremuligheter</a></li>
-                  <li><a href="{% url 'resourcecenter_index' %}">Ressurser</a></li>
-                  <li><a href="/wiki/">Wiki</a></li>
+                    <li><a href="{% url 'home' %}">Forside</a></li>
+                    <li><a href="{% url 'events_index' %}">Arkiv</a></li>
+                    <li><a href="{% url 'careeropportunity_index' %}">Karrieremuligheter</a></li>
+                    <li><a href="{% url 'resourcecenter_index' %}">Ressurser</a></li>
+                    <li><a href="/wiki/">Wiki</a></li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                     <li class="dropdown" id="login_menu">
@@ -170,7 +170,7 @@
     
     {% block js %}
         <script src="{{ STATIC_URL}}js/libs/jquery-1.9.1.min.js"></script>
-        <script src="https://maps.googleapis.com/maps/api/js?v=3&sensor=true"></script>
+        <script src="https://maps.googleapis.com/maps/api/js?v=3&amp;sensor=true"></script>
         <script src="{{ STATIC_URL }}js/libs/bootstrap.min.js"></script>
         <script src="{{ STATIC_URL }}js/libs/moment.js"></script>
         <script src="{{ STATIC_URL }}js/libs/jquery.debouncedresize.js"></script>

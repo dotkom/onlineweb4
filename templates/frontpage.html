@@ -85,7 +85,7 @@
             <div class="page-header clearfix">
                 <div class="row">
                     <div class="col-md-8 col-xs-6">
-                        <h2 id="events-heading">ARTIKLER</h2>
+                        <h2 id="articles-heading">ARTIKLER</h2>
                     </div>
                     <div class="col-md-4 col-xs-6 archive-link">
                         <a href="{% url 'article_archive' %}">ARKIV
@@ -104,7 +104,7 @@
             <div class="page-header clearfix">
                 <div class="row">
                     <div class="col-md-8 col-xs-6">
-                        <h2 id="events-heading">OFFLINE</h2>
+                        <h2 id="offline-heading">OFFLINE</h2>
                     </div>
                     <div class="col-md-4 col-xs-6 archive-link">
                         <a href="{% url 'offline' %}">ARKIV
@@ -116,13 +116,13 @@
             <div class="row">
                 <div class="col-md-6">
                     <div class="ingress">
-                        {% filter markdown %}
-                            {% chunk "offline_ingress" %}
-                        {% endfilter %}
+{% filter markdown %}
+{% chunk "offline_ingress" %}
+{% endfilter %}
                     </div>
-                    {% filter markdown %}
-                        {% chunk "offline_brodtekst" %}
-                    {% endfilter %}   
+{% filter markdown %}
+{% chunk "offline_brodtekst" %}
+{% endfilter %}   
                 </div>
                 <div class="col-md-6">
                     <div id="offlineCarousel" class="carousel slide" data-prefix="{{ MEDIA_URL }}">
@@ -250,84 +250,84 @@
                             </div>
                         </div>
                         <div class="tab-pane" id="hovedstyret">
-                            {% filter markdown %}
-                                {% chunk 'om_hovedstyret' %}
-                            {% endfilter %}
+{% filter markdown %}
+{% chunk 'om_hovedstyret' %}
+{% endfilter %}
                         </div>
                         <div class="tab-pane" id="hovedsamarbeidspartner">
-                            {% filter markdown %}
-                                {% chunk 'om_hovedsamarbeidspartner' %}
-                            {% endfilter %}
+{% filter markdown %}
+{% chunk 'om_hovedsamarbeidspartner' %}
+{% endfilter %}
                         </div>
                         <div class="tab-pane" id="arrkom">
-                            {% filter markdown %}
-                                {% chunk 'om_arrkom' %}
-                            {% endfilter %}
+{% filter markdown %}
+{% chunk 'om_arrkom' %}
+{% endfilter %}
                         </div>
                         <div class="tab-pane" id="bankom">
-                            {% filter markdown %}
-                                {% chunk 'om_bankom' %}
-                            {% endfilter %}
+{% filter markdown %}
+{% chunk 'om_bankom' %}
+{% endfilter %}
                         </div>
                         <div class="tab-pane" id="bedkom">
-                            {% filter markdown %}
-                                {% chunk 'om_bedkom' %}
-                            {% endfilter %}
+{% filter markdown %}
+{% chunk 'om_bedkom' %}
+{% endfilter %}
                         </div>
                         <div class="tab-pane" id="dotkom">
-                            {% filter markdown %}
-                                {% chunk 'om_dotkom' %}
-                            {% endfilter %}
+{% filter markdown %}
+{% chunk 'om_dotkom' %}
+{% endfilter %}
                         </div>
                         <div class="tab-pane" id="fagkom">
-                            {% filter markdown %}
-                                {% chunk 'om_fagkom' %}
-                            {% endfilter %}
+{% filter markdown %}
+{% chunk 'om_fagkom' %}
+{% endfilter %}
                         </div>
                         <div class="tab-pane" id="pankom">
-                            {% filter markdown %}
-                                {% chunk 'om_pankom' %}
-                            {% endfilter %}
+{% filter markdown %}
+{% chunk 'om_pankom' %}
+{% endfilter %}
                         </div>
                         <div class="tab-pane" id="prokom">
-                            {% filter markdown %}
-                                {% chunk 'om_prokom' %}
-                            {% endfilter %}
+{% filter markdown %}
+{% chunk 'om_prokom' %}
+{% endfilter %}
                         </div>
                         <div class="tab-pane" id="trikom">
-                            {% filter markdown %}
-                                {% chunk 'om_trikom' %}
-                            {% endfilter %}
+{% filter markdown %}
+{% chunk 'om_trikom' %}
+{% endfilter %}
                         </div>
                         <div class="tab-pane" id="ekskom">
-                            {% filter markdown %}
-                                {% chunk 'om_ekskom' %}
-                            {% endfilter %}
+{% filter markdown %}
+{% chunk 'om_ekskom' %}
+{% endfilter %}
                         </div>
                         <div class="tab-pane" id="jubkom">
-                            {% filter markdown %}
-                                {% chunk 'om_jubkom' %}
-                            {% endfilter %}
+{% filter markdown %}
+{% chunk 'om_jubkom' %}
+{% endfilter %}
                         </div>
                         <div class="tab-pane" id="velkom">
-                            {% filter markdown %}
-                                {% chunk 'om_velkom' %}
-                            {% endfilter %}
+{% filter markdown %}
+{% chunk 'om_velkom' %}
+{% endfilter %}
                         </div>
                         <div class="tab-pane" id="kjelleren">
-                            {% filter markdown %}
-                                {% chunk 'om_kjelleren' %}
-                            {% endfilter %}
+{% filter markdown %}
+{% chunk 'om_kjelleren' %}
+{% endfilter %}
                         </div>
                         <div class="tab-pane" id="datakameratene">
-                            {% filter markdown %}
-                                {% chunk 'om_datakameratene' %}
-                            {% endfilter %}
+{% filter markdown %}
+{% chunk 'om_datakameratene' %}
+{% endfilter %}
                         </div>
                         <div class="tab-pane" id="cag">
-                            {% filter markdown %}
-                                {% chunk 'om_casual_gaming' %}
-                            {% endfilter %}
+{% filter markdown %}
+{% chunk 'om_casual_gaming' %}
+{% endfilter %}
                         </div>
                     </div>
                 </div>
@@ -366,13 +366,13 @@
                 <div class="modal-body">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                     <h3>Bedriftspresentasjon</h3>
-                        <p>Vi får ganske regelmessig besøk fra både små og store IT-bedrifter som har behov for dyktige utviklere, konsulenter og systemarkitekter o.l. En bedriftspresentasjon gir hovedsaklig en mulighet for å opprette kontakt mellom bedrift og aktuelle studenter. Rekruttering gjennom denne kanalen er veldig aktuell og de aller fleste studentene bruker dette som et springbrett for sin karriere. </p>
-                        <p>Dette er et eksempel på hvordan mange bedrifter velger å gjøre det, men er på ingen måte en fasit. Noen bedrifter har valgt å gå utenfor denne «malen» med suksess, så det er alltid rom for nye ideer. Bedriftspresentasjonene blir vanligvis gjennomført på Gløshaugen, med påfølgende servering i en uformell setting, hvor det kan stilles spørsmål og der studentene kan bli kjent med dere og omvendt. Vi stiller med lokaler, markedsføring, påmelding og deltagere. I tillegg tilrettelegger vi servering og eventuell transport etter ønske og behov. Fra deres side håper vi at dere stiller med motiverte ansatte som leverer en informativ og hyggelig presentasjon, og som kan svare på de spørsmål studentene måtte ha.</p>
-                        <p>Som nevnt består informatikk av både bachelor- og masterstudie. De fleste bedrifter henvender seg til masterstudentene våre, men det skal nevnes at bachelorstudentene også har et fullverdig studium.</p>
+                    <p>Vi får ganske regelmessig besøk fra både små og store IT-bedrifter som har behov for dyktige utviklere, konsulenter og systemarkitekter o.l. En bedriftspresentasjon gir hovedsaklig en mulighet for å opprette kontakt mellom bedrift og aktuelle studenter. Rekruttering gjennom denne kanalen er veldig aktuell og de aller fleste studentene bruker dette som et springbrett for sin karriere. </p>
+                    <p>Dette er et eksempel på hvordan mange bedrifter velger å gjøre det, men er på ingen måte en fasit. Noen bedrifter har valgt å gå utenfor denne «malen» med suksess, så det er alltid rom for nye ideer. Bedriftspresentasjonene blir vanligvis gjennomført på Gløshaugen, med påfølgende servering i en uformell setting, hvor det kan stilles spørsmål og der studentene kan bli kjent med dere og omvendt. Vi stiller med lokaler, markedsføring, påmelding og deltagere. I tillegg tilrettelegger vi servering og eventuell transport etter ønske og behov. Fra deres side håper vi at dere stiller med motiverte ansatte som leverer en informativ og hyggelig presentasjon, og som kan svare på de spørsmål studentene måtte ha.</p>
+                    <p>Som nevnt består informatikk av både bachelor- og masterstudie. De fleste bedrifter henvender seg til masterstudentene våre, men det skal nevnes at bachelorstudentene også har et fullverdig studium.</p>
                     <h3>Annonsering i Offline</h3>
-                        <p>Ta kontakt for mer informasjon.</p>
+                    <p>Ta kontakt for mer informasjon.</p>
                     <h3>Stillingsutlysning på web</h3>
-                        <p>Ta kontakt for mer informasjon.</p>
+                    <p>Ta kontakt for mer informasjon.</p>
                 </div>
                 <div class="modal-footer">
                     <button class="btn" data-dismiss="modal" aria-hidden="true">Lukk</button>
@@ -387,11 +387,11 @@
                 <div class="modal-body">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                     <h3>Kurs/Workshop/Foredrag</h3>
-                        <p>Studentene ved informatikk har mange ulike interesser og det er alltid gøy å se hva bedrifter holder på med. Det har blitt gjennomført kurs i for eksempel Ruby on Rails, Test Driven Development, Scrum og mye mer.</p>
-                        <p>I motsetning til bedriftspresentasjoner er det begrensinger på hvor lenge bedriften kan fortelle om seg selv. Det er ment som et faglig tilskudd til studiet og innholdet må gjenspeile dette. Selve kursgjennomføringen er ofte litt mer uformell enn ved en bedriftspresentasjon. Det å få studentene til å være med er viktig. Som ved en bedriftspresentasjon vil vi ordne det meste, ved spesialbehov gjør vi vårt beste for å ordne dette også.</p>
-                        <p>Da kurs gjerne ikke er direkte rettet for rekruttering er det mye vanligere å åpne for alle årstrinn slik at folk med alle mulige interesser kan delta. Det er selvsagt en del kurs som krever forkunnskaper, men det er bare å spesifisere i eventen.</p>
+                    <p>Studentene ved informatikk har mange ulike interesser og det er alltid gøy å se hva bedrifter holder på med. Det har blitt gjennomført kurs i for eksempel Ruby on Rails, Test Driven Development, Scrum og mye mer.</p>
+                    <p>I motsetning til bedriftspresentasjoner er det begrensinger på hvor lenge bedriften kan fortelle om seg selv. Det er ment som et faglig tilskudd til studiet og innholdet må gjenspeile dette. Selve kursgjennomføringen er ofte litt mer uformell enn ved en bedriftspresentasjon. Det å få studentene til å være med er viktig. Som ved en bedriftspresentasjon vil vi ordne det meste, ved spesialbehov gjør vi vårt beste for å ordne dette også.</p>
+                    <p>Da kurs gjerne ikke er direkte rettet for rekruttering er det mye vanligere å åpne for alle årstrinn slik at folk med alle mulige interesser kan delta. Det er selvsagt en del kurs som krever forkunnskaper, men det er bare å spesifisere i eventen.</p>
                     <h3>Hackathon</h3>
-                        <p>Ta kontakt for mer informasjon.</p>
+                    <p>Ta kontakt for mer informasjon.</p>
                 </div>
                 <div class="modal-footer">
                     <button class="btn" data-dismiss="modal" aria-hidden="true">Lukk</button>
