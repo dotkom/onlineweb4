@@ -229,7 +229,7 @@ def calendar_export(request, event_id=None, user=None):
         try:
             username = signer.unsign(user)
             user = User.objects.get(username=username)
-        except BadSignature, User.DoesNotExist:
+        except (BadSignature, User.DoesNotExist):
             user = None
         if user:
             # Getting all events that the user has/is participating in

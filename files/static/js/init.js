@@ -153,4 +153,7 @@ $(function() {
         e.stopPropagation();
     });
 
+    // Removes 300 ms delay on touch via libs/fastclick.js
+    FastClick.attach(document.body);
+
 });
