@@ -3,9 +3,7 @@
 {% load compress %}
 {% load markdown_deux_tags %}
 
-{% block title %}
-Online, linjeforeningen for informatikk ved NTNU
-{% endblock title %}
+{% block title %}Online, linjeforeningen for informatikk ved NTNU{% endblock title %}
 
 {% block js %}
     {{ block.super }}
@@ -22,16 +20,12 @@ Online, linjeforeningen for informatikk ved NTNU
     <meta name="viewport" content="width=device-width, user-scalable=no">
     <meta name="apple-mobile-web-app-title" content="Online">
 
-    <!-- App icons -->
-    <!-- Any device, iPhone, iPad, iPhone Retina, iPad Retina -->
     <link href="{{ STATIC_URL }}mimg/icon-57.png" rel="apple-touch-icon-precomposed" />
     <link href="{{ STATIC_URL }}mimg/icon-57.png" sizes="57x57" rel="apple-touch-icon-precomposed" />
     <link href="{{ STATIC_URL }}mimg/icon-72.png" sizes="72x72" rel="apple-touch-icon-precomposed" />
     <link href="{{ STATIC_URL }}mimg/icon-114.png" sizes="114x114" rel="apple-touch-icon-precomposed" />
     <link href="{{ STATIC_URL }}mimg/icon-144.png" sizes="144x144" rel="apple-touch-icon-precomposed" />
 
-    <!-- Splash image -->
-    <!-- iPhone, iPhone4, iPhone5, iPad Portrait, iPad Landscape, iPad Retina Portrait, iPad Retina Landscape -->
     <link href="{{ STATIC_URL }}mimg/splash-320x460.png" sizes="320x460" media="(device-width: 320px)" rel="apple-touch-startup-image" />
     <link href="{{ STATIC_URL }}mimg/splash-640x920.png" sizes="640x920" media="(device-width: 320px) and (-webkit-device-pixel-ratio: 2)" rel="apple-touch-startup-image" />
     <link href="{{ STATIC_URL }}mimg/splash-640x1096.png" sizes="640x1096" media="(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2)" rel="apple-touch-startup-image" />
@@ -42,8 +36,6 @@ Online, linjeforeningen for informatikk ved NTNU
 {% endblock %}
 
 {% block submenu %}
-
-
     <nav class="subnavbar navbar-default navbar-fixed-top">
         <div class="container">
             <div class="collapse navbar-collapse navbar-ex1-collapse">
@@ -87,12 +79,13 @@ Online, linjeforeningen for informatikk ved NTNU
             <div id="event-items"></div>
         </div>
     </section>
+    
     <section id="articles">
         <div class="container">
             <div class="page-header clearfix">
                 <div class="row">
                     <div class="col-md-8 col-xs-6">
-                        <h2 id="events-heading">ARTIKLER</h2>
+                        <h2 id="articles-heading">ARTIKLER</h2>
                     </div>
                     <div class="col-md-4 col-xs-6 archive-link">
                         <a href="{% url 'article_archive' %}">ARKIV
@@ -101,17 +94,47 @@ Online, linjeforeningen for informatikk ved NTNU
                     </div>
                 </div>
             </div>
-            <div class="row row-space" id="article-frontpage-featured">
-            </div>
-            <div class="row" id="article-frontpage-normal">
-            </div>
+            <div class="row row-space" id="article-frontpage-featured"></div>
+            <div class="row" id="article-frontpage-normal"></div>
         </div>
     </section>
 
-    <!-- Offline -->
-    {% include 'frontpage_offline.html' %}
-
-
+    <section id="offline">
+        <div class="container">
+            <div class="page-header clearfix">
+                <div class="row">
+                    <div class="col-md-8 col-xs-6">
+                        <h2 id="offline-heading">OFFLINE</h2>
+                    </div>
+                    <div class="col-md-4 col-xs-6 archive-link">
+                        <a href="{% url 'offline' %}">ARKIV
+                            <i class="glyphicon glyphicon-chevron-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="ingress">
+{% filter markdown %}
+{% chunk "offline_ingress" %}
+{% endfilter %}
+                    </div>
+{% filter markdown %}
+{% chunk "offline_brodtekst" %}
+{% endfilter %}   
+                </div>
+                <div class="col-md-6">
+                    <div id="offlineCarousel" class="carousel slide" data-prefix="{{ MEDIA_URL }}">
+                        <div class="carousel-inner"></div>
+                        <a class="carousel-control left" href="#offlineCarousel" data-slide="prev"><span class="glyphicon glyphicon-chevron-left"></span></a>
+                        <a class="carousel-control right" href="#offlineCarousel" data-slide="next"><span class="glyphicon glyphicon-chevron-right"></span></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
     <section id="business">
         <div class="container">
             <div class="page-header clearfix">
@@ -124,23 +147,25 @@ Online, linjeforeningen for informatikk ved NTNU
             <div class="row">
                 <div class="col-sm-7 col-md-6">
                     <div class="ingress">
-                        <p>Er du en bedrift som er på jakt etter skarpe IT-studenter?<br /> Da vil vi gjerne høre fra deg! Les videre for å finne ut hva vi kan tilby.</p>
+                        <p>Er du en bedrift som er på jakt etter skarpe IT-studenter?<br />
+                        Da vil vi gjerne høre fra deg! Les videre for å finne ut hva vi kan tilby.</p>
                     </div>
                     <div class="business-text">
-                        <p>Online er linjeforeningen for informatikkstudentene ved NTNU. Våre studenter går Bachelor- eller Mastergradstudium i informatikk. Dette innebærer blant annet å lære om utvikling, forbedring, evaluering og bruk av datasystemer.
-                        For mer informasjon om studiet, se NTNU sine <a href="http://www.ntnu.no/studier/informasjonsteknologi-informatikk" target="_blank">offisielle nettsider.</a></p>
-                        <p>
-                        Linjeforeningen har gjennom flere år opparbeidet seg et repertoar av tjenester som vi tilbyr våre studenter. I samarbeid med næringslivet tilbyr vi kurs og bedriftspresentasjoner for å gi studentene våre en bredere og dypere fagkunnskap samt et innblikk i hverdagen til aktuelle arbeidsplasser.
-                        </p>
+                        <p>Online er linjeforeningen for informatikkstudentene ved NTNU. Våre studenter går Bachelor- eller
+                        Mastergradstudium i informatikk. Dette innebærer blant annet å lære om utvikling, forbedring, evaluering
+                        og bruk av datasystemer. For mer informasjon om studiet, se NTNU sine
+                        <a href="http://www.ntnu.no/studier/informasjonsteknologi-informatikk" target="_blank">offisielle nettsider.</a></p>
+                        <p>Linjeforeningen har gjennom flere år opparbeidet seg et repertoar av tjenester som vi tilbyr våre studenter.
+                        I samarbeid med næringslivet tilbyr vi kurs og bedriftspresentasjoner for å gi studentene våre en bredere og dypere
+                        fagkunnskap samt et innblikk i hverdagen til aktuelle arbeidsplasser.</p>
                         <p>Send oss en forespørsel for å komme i kontakt. Vi gleder oss til å samarbeide med dere!</p>
                         <p>
-                        <span class="sales-contact">
-                            <span><i class="glyphicon glyphicon-chevron-right"></i>
-                            <a href="mailto:bedkom@online.ntnu.no" title="bedkom@online.ntnu.no">Send epost til bedriftskontakt</a></span>
-                        </span>
+                            <span class="sales-contact">
+                                <span><i class="glyphicon glyphicon-chevron-right"></i>
+                                <a href="mailto:bedkom@online.ntnu.no" title="bedkom@online.ntnu.no">Send epost til bedriftskontakt</a></span>
+                            </span>
                         </p>
                     </div>
-                
                 </div>
                 <div class="col-sm-5 col-md-6">
                     <div class="row">
@@ -153,9 +178,9 @@ Online, linjeforeningen for informatikk ved NTNU
                             </div>
                             <div class="col-md-12 sale-content">
                                 <ul class="list-unstyled sale-points">
-                                    <li><span class="glyphicon glyphicon-ok"></span>  Bedriftspresentasjon</li>
-                                    <li><span class="glyphicon glyphicon-ok"></span>  Annonse i Offline</li>
-                                    <li><span class="glyphicon glyphicon-ok"></span>  Stillingsutlysning</li>
+                                    <li><span class="glyphicon glyphicon-ok"></span> Bedriftspresentasjon</li>
+                                    <li><span class="glyphicon glyphicon-ok"></span> Annonse i Offline</li>
+                                    <li><span class="glyphicon glyphicon-ok"></span> Stillingsutlysning</li>
                                 </ul>
                                 <div class="link" style="text-align:center">
                                     <a href="#business-profiling" data-toggle="modal">Les mer</a>
@@ -171,9 +196,9 @@ Online, linjeforeningen for informatikk ved NTNU
                             </div>
                             <div class="col-md-12 sale-content">
                                 <ul class="list-unstyled sale-points">
-                                    <li><span class="glyphicon glyphicon-ok"></span>  Kurs/kursserie</li>
-                                    <li><span class="glyphicon glyphicon-ok"></span>  Workshop</li>
-                                    <li><span class="glyphicon glyphicon-ok"></span>  Hackathon</li>
+                                    <li><span class="glyphicon glyphicon-ok"></span> Kurs/kursserie</li>
+                                    <li><span class="glyphicon glyphicon-ok"></span> Workshop</li>
+                                    <li><span class="glyphicon glyphicon-ok"></span> Hackathon</li>
                                 </ul>
                                 <div class="link" style="text-align:center">
                                     <a href="#business-academic" data-toggle="modal">Les mer</a>
@@ -201,11 +226,9 @@ Online, linjeforeningen for informatikk ved NTNU
                         <div class="tab-pane active" id="online">
                             <div class="row">
                                 <div class="col-md-12">
-                                    <p class="ingress">
-                                    Online er linjeforeningen for informatikkstudenter ved NTNU i Trondheim. 
-                                    Linjeforeningens oppgave er å forbedre studiemiljøet ved å fremme sosialt 
-                                    samvær, faglig kompetanse og kontakt med næringslivet.
-                                    </p>
+                                    <p class="ingress">Online er linjeforeningen for informatikkstudenter ved
+                                    NTNU i Trondheim. Linjeforeningens oppgave er å forbedre studiemiljøet ved
+                                    å fremme sosialt samvær, faglig kompetanse og kontakt med næringslivet.</p>
                                     <p>Linjeforeningen består av omtrent 100 frivillige medarbeidere, 
                                     fordelt over Hovedstyret, komiteer og nodekomiteer. I tillegg til vervene i 
                                     linjeforeningen er mange studenter også engasjert i Realfagskjelleren, 
@@ -335,15 +358,7 @@ Online, linjeforeningen for informatikk ved NTNU
                 </div>
             </div>
         </div>
-    </section>    
-
-    <!-- <div class="dark-grayed">
-        <div class="container footer">
-            <p>Footer</p>
-        </div>
-    </div> -->
-
-    <!-- MODALS -->
+    </section>
 
     <div id="business-profiling" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="businessProfiling" aria-hidden="true">
         <div class="modal-dialog">
@@ -351,13 +366,13 @@ Online, linjeforeningen for informatikk ved NTNU
                 <div class="modal-body">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                     <h3>Bedriftspresentasjon</h3>
-                        <p>Vi får ganske regelmessig besøk fra både små og store IT-bedrifter som har behov for dyktige utviklere, konsulenter og systemarkitekter o.l. En bedriftspresentasjon gir hovedsaklig en mulighet for å opprette kontakt mellom bedrift og aktuelle studenter. Rekruttering gjennom denne kanalen er veldig aktuell og de aller fleste studentene bruker dette som et springbrett for sin karriere. </p>
-                        <p>Dette er et eksempel på hvordan mange bedrifter velger å gjøre det, men er på ingen måte en fasit. Noen bedrifter har valgt å gå utenfor denne «malen» med suksess, så det er alltid rom for nye ideer. Bedriftspresentasjonene blir vanligvis gjennomført på Gløshaugen, med påfølgende servering i en uformell setting, hvor det kan stilles spørsmål og der studentene kan bli kjent med dere og omvendt. Vi stiller med lokaler, markedsføring, påmelding og deltagere. I tillegg tilrettelegger vi servering og eventuell transport etter ønske og behov. Fra deres side håper vi at dere stiller med motiverte ansatte som leverer en informativ og hyggelig presentasjon, og som kan svare på de spørsmål studentene måtte ha.</p>
-                        <p>Som nevnt består informatikk av både bachelor- og masterstudie. De fleste bedrifter henvender seg til masterstudentene våre, men det skal nevnes at bachelorstudentene også har et fullverdig studium.</p>
+                    <p>Vi får ganske regelmessig besøk fra både små og store IT-bedrifter som har behov for dyktige utviklere, konsulenter og systemarkitekter o.l. En bedriftspresentasjon gir hovedsaklig en mulighet for å opprette kontakt mellom bedrift og aktuelle studenter. Rekruttering gjennom denne kanalen er veldig aktuell og de aller fleste studentene bruker dette som et springbrett for sin karriere. </p>
+                    <p>Dette er et eksempel på hvordan mange bedrifter velger å gjøre det, men er på ingen måte en fasit. Noen bedrifter har valgt å gå utenfor denne «malen» med suksess, så det er alltid rom for nye ideer. Bedriftspresentasjonene blir vanligvis gjennomført på Gløshaugen, med påfølgende servering i en uformell setting, hvor det kan stilles spørsmål og der studentene kan bli kjent med dere og omvendt. Vi stiller med lokaler, markedsføring, påmelding og deltagere. I tillegg tilrettelegger vi servering og eventuell transport etter ønske og behov. Fra deres side håper vi at dere stiller med motiverte ansatte som leverer en informativ og hyggelig presentasjon, og som kan svare på de spørsmål studentene måtte ha.</p>
+                    <p>Som nevnt består informatikk av både bachelor- og masterstudie. De fleste bedrifter henvender seg til masterstudentene våre, men det skal nevnes at bachelorstudentene også har et fullverdig studium.</p>
                     <h3>Annonsering i Offline</h3>
-                        <p>Ta kontakt for mer informasjon.</p>
+                    <p>Ta kontakt for mer informasjon.</p>
                     <h3>Stillingsutlysning på web</h3>
-                        <p>Ta kontakt for mer informasjon.</p>
+                    <p>Ta kontakt for mer informasjon.</p>
                 </div>
                 <div class="modal-footer">
                     <button class="btn" data-dismiss="modal" aria-hidden="true">Lukk</button>
@@ -372,11 +387,11 @@ Online, linjeforeningen for informatikk ved NTNU
                 <div class="modal-body">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                     <h3>Kurs/Workshop/Foredrag</h3>
-                        <p>Studentene ved informatikk har mange ulike interesser og det er alltid gøy å se hva bedrifter holder på med. Det har blitt gjennomført kurs i for eksempel Ruby on Rails, Test Driven Development, Scrum og mye mer.</p>
-                        <p>I motsetning til bedriftspresentasjoner er det begrensinger på hvor lenge bedriften kan fortelle om seg selv. Det er ment som et faglig tilskudd til studiet og innholdet må gjenspeile dette. Selve kursgjennomføringen er ofte litt mer uformell enn ved en bedriftspresentasjon. Det å få studentene til å være med er viktig. Som ved en bedriftspresentasjon vil vi ordne det meste, ved spesialbehov gjør vi vårt beste for å ordne dette også.</p>
-                        <p>Da kurs gjerne ikke er direkte rettet for rekruttering er det mye vanligere å åpne for alle årstrinn slik at folk med alle mulige interesser kan delta. Det er selvsagt en del kurs som krever forkunnskaper, men det er bare å spesifisere i eventen.</p>
+                    <p>Studentene ved informatikk har mange ulike interesser og det er alltid gøy å se hva bedrifter holder på med. Det har blitt gjennomført kurs i for eksempel Ruby on Rails, Test Driven Development, Scrum og mye mer.</p>
+                    <p>I motsetning til bedriftspresentasjoner er det begrensinger på hvor lenge bedriften kan fortelle om seg selv. Det er ment som et faglig tilskudd til studiet og innholdet må gjenspeile dette. Selve kursgjennomføringen er ofte litt mer uformell enn ved en bedriftspresentasjon. Det å få studentene til å være med er viktig. Som ved en bedriftspresentasjon vil vi ordne det meste, ved spesialbehov gjør vi vårt beste for å ordne dette også.</p>
+                    <p>Da kurs gjerne ikke er direkte rettet for rekruttering er det mye vanligere å åpne for alle årstrinn slik at folk med alle mulige interesser kan delta. Det er selvsagt en del kurs som krever forkunnskaper, men det er bare å spesifisere i eventen.</p>
                     <h3>Hackathon</h3>
-                        <p>Ta kontakt for mer informasjon.</p>
+                    <p>Ta kontakt for mer informasjon.</p>
                 </div>
                 <div class="modal-footer">
                     <button class="btn" data-dismiss="modal" aria-hidden="true">Lukk</button>
