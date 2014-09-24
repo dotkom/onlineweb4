@@ -4,6 +4,8 @@ from django.utils.translation import ugettext_lazy as _
 
 from apps.companyprofile.models import Company
 
+import reversion
+
 class CareerOpportunity(models.Model):
     """
     Base class for CareerOpportunity
@@ -23,3 +25,6 @@ class CareerOpportunity(models.Model):
     class Meta:
         verbose_name = _('karrieremulighet')
         verbose_name_plural = _('karrieremuligheter')
+
+
+reversion.register(CareerOpportunity)
