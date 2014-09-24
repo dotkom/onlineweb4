@@ -58,7 +58,7 @@ class Event(models.Model):
             return users
 
     def feedback_date(self):
-        return self.event_start
+        return self.event_end
 
     def feedback_title(self):
         return self.title
@@ -424,12 +424,14 @@ class AttendanceEvent(models.Model):
     @property
     def number_of_attendees(self):
         """ Count of all attendees not in waiting list """
-        return self.attendees_qs.count()
+        # We need to use len() instead of .count() here, because of the prefetched event archive
+        return len(self.attendees_qs)
 
     @property
     def number_on_waitlist(self):
         """ Count of all attendees on waiting list """
-        return self.waitlist_qs.count()
+        # We need to use len() instead of .count() here, because of the prefetched event archive
+        return len(self.waitlist_qs)
 
     @property
     def number_of_reserved_seats(self):
