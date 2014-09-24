@@ -2,6 +2,7 @@
 import json
 import os
 import uuid
+from smtplib import SMTPException
 
 from django.conf import settings
 from django.contrib import messages
@@ -9,7 +10,7 @@ from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Group
 from django.core.mail import send_mail
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404
 from django.shortcuts import redirect, render, get_object_or_404
 from django.utils.translation import ugettext as _
 
@@ -185,7 +186,6 @@ def delete_position(request):
     if request.is_ajax():
         if request.method == 'POST':
             position_id = request.POST.get('position_id')
-            print position_id
             position = get_object_or_404(Position, pk=position_id)
             if position.user == request.user:
                 position.delete()
@@ -194,7 +194,7 @@ def delete_position(request):
             else:
                 return_status = json.dumps({'message': _(u"Du prøvde å slette en posisjon som ikke tilhørte deg selv.")})
             return HttpResponse(status=500, content=return_status)
-        return HttpResponse(status=404)
+        raise Http404
 
 
 @login_required
@@ -213,7 +213,7 @@ def update_mark_rules(request):
 
             return HttpResponse(status=212, content=return_status)
         return HttpResponse(status=405)
-    return HttpResponse(status=404)
+    raise Http404
 
 
 @login_required
@@ -292,7 +292,8 @@ def set_primary(request):
             email.save()
 
             return HttpResponse(status=200)
-    return HttpResponse(status=404)
+    raise Http404
+
 
 @login_required
 def verify_email(request):
@@ -317,7 +318,8 @@ def verify_email(request):
             _send_verification_mail(request, email.email)
 
             return HttpResponse(status=200)
-    return HttpResponse(status=404)
+    raise Http404
+
 
 def _send_verification_mail(request, email):
 
@@ -344,6 +346,19 @@ kan dette gjøres ved å klikke på knappen for verifisering på din profil.
         messages.error(request, u'Det oppstod en kritisk feil, epostadressen er ugyldig!')
         return redirect('home')
 
+@login_required
+def toggle_infomail(request):
+    """
+    Toggles the infomail field in Onlineuser object
+    """
+    if request.is_ajax():
+        if request.method == 'POST':
+            request.user.infomail = not request.user.infomail
+            request.user.save()
+
+            return HttpResponse(status=200, content=json.dumps({'state': request.user.infomail}))
+    raise Http404
+
 
 @login_required
 def save_membership_details(request):
@@ -369,7 +384,8 @@ def save_membership_details(request):
                                                     {'message': ", ".join(field_errors)}
                                                 ))
 
-    return HttpResponse(status=404) 
+    raise Http404
+
 
 @login_required
 def user_search(request):
@@ -409,7 +425,7 @@ def search_for_users(query, limit=10):
 def view_profile(request, username):
     user = get_object_or_404(User, username=username)
     if user.privacy.visible_for_other_users or user == request.user:
-        return render(request, 'profiles/view_profile.html', {'user': user})
+        return render(request, 'profiles/view_profile.html', {'user_profile': user})
 
     messages.error(request, _(u'Du har ikke tilgang til denne profilen'))
     return redirect('profiles')

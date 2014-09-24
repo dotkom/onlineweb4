@@ -109,6 +109,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'middleware.http.Http403Middleware',
+    'reversion.middleware.RevisionMiddleware',
     # Uncomment the next line for simple clickjacking protection:
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
@@ -125,6 +126,11 @@ TEMPLATE_DIRS = (
 # Pizzasystem settings
 PIZZA_GROUP = 'dotkom'
 PIZZA_ADMIN_GROUP = 'pizzaadmin'
+
+# Variables for fagKom/bedKom-sync script, override in local.py
+BEDKOM_GROUP_ID = 1
+FAGKOM_GROUP_ID = 2
+COMMON_GROUP_ID = 3
 
 # Grappelli settings
 GRAPPELLI_ADMIN_TITLE = '<a href="/">Onlineweb</a>'
@@ -168,6 +174,7 @@ INSTALLED_APPS = (
     'gunicorn',
     'markdown_deux',
     'djangoformsetjs',
+    'reversion',
 
     # Django apps
     'django.contrib.admin',
@@ -179,6 +186,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
 
     # Onlineweb 4 apps
+    'apps.api',
     'apps.article',
     'apps.authentication',
     'apps.autoconfig',
@@ -191,6 +199,8 @@ INSTALLED_APPS = (
     'apps.mommy',
     'apps.profiles',
     'apps.genfors',
+    'apps.resourcecenter',
+    'apps.mailinglists',
     'scripts',
 
      # Wiki
@@ -241,7 +251,12 @@ LOGGING = {
             'handlers': ['console'],
             'level': 'DEBUG',
             'propagate': True,
-        },   
+        },
+        'bedfagsyncer': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
         '': {
             'handlers': ['console'],
             'level': 'DEBUG',

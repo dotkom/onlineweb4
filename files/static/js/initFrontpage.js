@@ -91,5 +91,11 @@ $(function() {
             jump($(location).attr('hash').replace(/^#!/, ''));
         }, 500);
     }
+	
+	/* Menu retract on action */
+	$('.top-menu-link a').on('click touchend', function () {
+		if ($('.navbar-toggle').is(':visible')) {
+			$('.navbar-toggle').trigger('click');
+		}
+	});
 });
-

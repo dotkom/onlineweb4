@@ -58,7 +58,7 @@ class Event(models.Model):
             return users
 
     def feedback_date(self):
-        return self.event_start
+        return self.event_end
 
     def feedback_title(self):
         return self.title
@@ -339,44 +339,26 @@ class RuleBundle(models.Model):
     grade_rules = models.ManyToManyField(GradeRule, null=True, blank=True)
     user_group_rules = models.ManyToManyField(UserGroupRule, null=True, blank=True)
 
-    def get_rule_strings(self):
+    def get_all_rules(self):
         rules = []
-        for rule in self.field_of_study_rules.all():
-            rules.append(unicode(rule))
-        for rule in self.grade_rules.all():
-            rules.append(unicode(rule))
-        for rule in self.user_group_rules.all():
-            rules.append(unicode(rule))
+        rules.extend(self.field_of_study_rules.all())
+        rules.extend(self.grade_rules.all())
+        rules.extend(self.user_group_rules.all())
         return rules
         
+    def get_rule_strings(self):
+        return map(lambda r: unicode(r), self.get_all_rules())
         
     def satisfied(self, user, registration_start):
 
         errors = []
-
-        if self.grade_rules:
-            for grade_rule in self.grade_rules.all():
-                response = grade_rule.satisfied(user, registration_start)
-                if response['status']:
-                    return [response]
-                else:
-                    errors.append(response)
-
-        if self.field_of_study_rules:
-            for fos_rule in self.field_of_study_rules.all():
-                response = fos_rule.satisfied(user, registration_start)
-                if response['status']:
-                    return [response]
-                else:
-                    errors.append(response)
-
-        if self.user_group_rules:
-            for user_group_rule in self.user_group_rules.all():
-                response = user_group_rule.satisfied(user, registration_start)
-                if response['status']:
-                    return [response]
-                else:
-                    errors.append(response)
+        
+        for rule in self.get_all_rules():
+            response = rule.satisfied(user, registration_start)
+            if response['status']:
+                return [response]
+            else:
+                errors.append(response)
 
         return errors
         
@@ -442,12 +424,14 @@ class AttendanceEvent(models.Model):
     @property
     def number_of_attendees(self):
         """ Count of all attendees not in waiting list """
-        return self.attendees_qs.count()
+        # We need to use len() instead of .count() here, because of the prefetched event archive
+        return len(self.attendees_qs)
 
     @property
     def number_on_waitlist(self):
         """ Count of all attendees on waiting list """
-        return self.waitlist_qs.count()
+        # We need to use len() instead of .count() here, because of the prefetched event archive
+        return len(self.waitlist_qs)
 
     @property
     def number_of_reserved_seats(self):

@@ -7,6 +7,7 @@ from smtplib import SMTPException
 from django.contrib import auth
 from django.contrib import messages
 from django.core.mail import send_mail
+from django.db.utils import IntegrityError
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponseRedirect
 from django.utils.translation import ugettext as _
@@ -79,7 +80,7 @@ def register(request):
 
                 # Create the registration token
                 token = uuid.uuid4().hex
-                rt = RegisterToken(user=user, email=cleaned['email'], token=token)
+                rt = RegisterToken(user=user, email=email.email, token=token)
                 rt.save()
 
                 email_message = _(u"""
@@ -124,6 +125,10 @@ def verify(request, token):
         # If it is a stud email, set the ntnu_username for user
         if re.match(r'[^@]+@stud\.ntnu\.no', rt.email):
             user.ntnu_username = rt.email.split("@")[0]
+            
+            # Check if Online-member, and set Infomail to True is he/she is
+            if user.is_member:
+                user.infomail = True
 
         user_activated = False
         if not user.is_active:

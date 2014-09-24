@@ -178,8 +178,9 @@ def _search_indexed(request, query, filters):
         kwargs['attendance_event__attendees__user'] = request.user
 
     events = Event.objects.filter(**kwargs).order_by('event_start').prefetch_related(
-            'attendance_event', 'attendance_event__attendees')
-
+            'attendance_event', 'attendance_event__attendees', 'attendance_event__reserved_seats',
+            'attendance_event__reserved_seats__reservees')
+    
     if query:
         for result in watson.search(query, models=(events,)):
             results.append(result.object)
@@ -229,7 +230,7 @@ def calendar_export(request, event_id=None, user=None):
         try:
             username = signer.unsign(user)
             user = User.objects.get(username=username)
-        except BadSignature, User.DoesNotExist:
+        except (BadSignature, User.DoesNotExist):
             user = None
         if user:
             # Getting all events that the user has/is participating in

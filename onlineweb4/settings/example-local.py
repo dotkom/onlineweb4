@@ -74,6 +74,11 @@ FILEBROWSER_MEDIA_ROOT = MEDIA_ROOT
 #   'django_extensions', # http://packages.python.org/django-extensions/
 # )
 
+# Variables for fagKom/bedKom-sync script
+BEDKOM_GROUP_ID = 3
+FAGKOM_GROUP_ID = 6
+COMMON_GROUP_ID = 17
+
 GENFORS_ADMIN_PASSWORD = 'ADMIN_PASSWORD'
 
 LOGGING = {
@@ -105,6 +110,11 @@ LOGGING = {
         'django.request': {
             'handlers': ['mail_admins'],
             'level': 'ERROR',
+            'propagate': True,
+        },
+        'bedfagsyncer': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
             'propagate': True,
         },
     }
