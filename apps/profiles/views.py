@@ -2,6 +2,7 @@
 import json
 import os
 import uuid
+from smtplib import SMTPException
 
 from django.conf import settings
 from django.contrib import messages
