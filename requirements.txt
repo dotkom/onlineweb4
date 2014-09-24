@@ -24,8 +24,8 @@ django_compressor==1.3          # Compiles less and minifies js
 django-watson==1.1.2            # Indexed model search lib
 django-reversion==1.8.1          # Model version history
 APScheduler==2.1.1              # Scheduler
-#git+https://github.com/dotKom/pizzasystem.git@1.2#egg=pizzasystem
-git+https://github.com/dotKom/redWine.git@0.5#egg=redWine==0.5
+git+https://github.com/dotKom/redwine.git@0.56#egg=redwine==0.56
+#git+https://github.com/dotKom/feedme.git@#egg=feedme==1.0.5
 reportlab==2.7
 pdfdocument==1.6
 django-markdown-deux==1.0.4

@@ -203,12 +203,16 @@ INSTALLED_APPS = (
     'apps.mailinglists',
     'scripts',
 
-     # Wiki
+    #External apps
+    'redwine',
+
+    #Wiki
     'wiki',
     'wiki.plugins.attachments',
     'wiki.plugins.notifications',
     'wiki.plugins.images',
     'wiki.plugins.macros',
+    
 )
 
 # A sample logging configuration. The only tangible logging
