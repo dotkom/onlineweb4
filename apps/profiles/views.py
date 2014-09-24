@@ -294,7 +294,6 @@ def set_primary(request):
             return HttpResponse(status=200)
     raise Http404
 
-
 @login_required
 def verify_email(request):
     if request.is_ajax():
@@ -319,7 +318,6 @@ def verify_email(request):
 
             return HttpResponse(status=200)
     raise Http404
-
 
 def _send_verification_mail(request, email):
 
@@ -359,7 +357,6 @@ def toggle_infomail(request):
             return HttpResponse(status=200, content=json.dumps({'state': request.user.infomail}))
     raise Http404
 
-
 @login_required
 def save_membership_details(request):
     if request.is_ajax():
@@ -386,7 +383,6 @@ def save_membership_details(request):
 
     raise Http404
 
-
 @login_required
 def user_search(request):
     groups_to_include = settings.USER_SEARCH_GROUPS
@@ -399,7 +395,6 @@ def user_search(request):
         }
     return render(request, 'profiles/users.html', context)
 
-
 @login_required
 def api_user_search(request):
     if request.GET.get('query'):
@@ -407,8 +402,6 @@ def api_user_search(request):
         return render_json(users)
     return render_json(error='Mangler søkestreng')
 
-
-#@login_required
 def search_for_users(query, limit=10):
     if not query:
         return []
@@ -419,7 +412,6 @@ def search_for_users(query, limit=10):
         results.append(result.object)
 
     return results[:limit]
-
 
 @login_required
 def view_profile(request, username):
