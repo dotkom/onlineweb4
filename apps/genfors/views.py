@@ -7,6 +7,7 @@ from django.utils.translation import ugettext as _
 from django.utils import timezone
 from django.http import HttpResponse, HttpResponseServerError
 from django.views.decorators.http import require_http_methods
+from django.views.decorators.cache import cache_page
 from apps.genfors.forms import LoginForm, MeetingForm, QuestionForm, RegisterVoterForm, AlternativeFormSet
 from apps.genfors.models import Meeting, Question, RegisteredVoter, AnonymousVoter, Alternative, BooleanVote, MultipleChoice, Result
 from apps.genfors.models import BOOLEAN_VOTE, MULTIPLE_CHOICE
@@ -458,6 +459,8 @@ def genfors_end(request):
 def api_admin(request):
     return HttpResponse(json.dumps({"error": "Du har ikke tilgang til dette endepunktet."}))
 
+# Simple cached JSON Api-like endpoint to dynamically update stats via AJAX
+@cache_page(10)
 def api_user(request):
     if is_registered(request):
         m = get_active_meeting()
@@ -486,6 +489,10 @@ def api_user(request):
                         genfors["question"]["votes"] = [[unicode(v.voter.anonymousvoter), v.answer] for v in votes]
                     elif q.question_type == 1:
                         genfors["question"]["votes"] = [[unicode(v.voter.anonymousvoter), v.answer.description] if v.answer else [unicode(v.voter.anonymousvoter), "Blankt"] for v in votes]
+                    
+                    # Shuffle the order of votes so you cannot infer who cast what vote when there are few voters left
+                    random.shuffle(genfors['question']['votes'])
+
                 else:
                     if q.question_type == 0:
                         genfors["question"]["votes"] = [[unicode(v.voter.registeredvoter), v.answer] for v in votes]

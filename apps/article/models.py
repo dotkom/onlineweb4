@@ -8,6 +8,8 @@ from django.utils.translation import ugettext as _
 from apps.authentication.models import OnlineUser as User
 from filebrowser.fields import FileBrowseField
 
+import reversion
+
 
 class Article(models.Model):
     IMAGE_FOLDER = "images/article"
@@ -67,6 +69,9 @@ class Article(models.Model):
         ordering = ['published_date']
 
 
+reversion.register(Article)
+
+
 class Tag(models.Model):
     name = models.CharField(_(u"navn"), max_length=50)
     slug = models.CharField(_(u"kort navn"), max_length=30)
@@ -87,6 +92,9 @@ class Tag(models.Model):
         return self.name
 
 
+reversion.register(Tag)
+
+
 class ArticleTag(models.Model):
     article = models.ForeignKey(Article, verbose_name=_(u"artikkel"), related_name='article_tags')
     tag = models.ForeignKey(Tag, verbose_name=_(u"tag"), related_name='article_tags')
@@ -95,3 +103,5 @@ class ArticleTag(models.Model):
         unique_together = ('article', 'tag')
         verbose_name = _(u"tag")
         verbose_name_plural = _(u"tags")
+
+reversion.register(ArticleTag)

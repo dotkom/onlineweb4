@@ -122,17 +122,17 @@ $(document).ready(function() {
     $('div.email-row').each(function(i, row) {
 // Ajax request to delete an email
         $(row).find('button.delete').click(function() {
-            email = $(row).find('span.email').text();
+            email = $(row).find('p.email').text();
             deleteEmail(email, row);
         });
 // Ajax request to set email as primary
         $(row).find('button.primary').click(function() { 
-            email = $(row).find('span.email').text();
+            email = $(row).find('p.email').text();
             setPrimaryEmail(email, row);
         });
 // Ajax request to send verification mail
         $(row).find('button.verify').click(function() {
-            email = $(row).find('span.email').text();
+            email = $(row).find('p.email').text();
             verifyEmail(email, row);
         });
     });
@@ -208,6 +208,34 @@ $(document).ready(function() {
             crossDomain: false
         });
     }
+
+    infomail = $('#toggle_infomail')
+    infomail.on('click', function (e) {
+        e.preventDefault()
+        $.ajax({
+            method: 'POST',
+            url: 'toggle_infomail/',
+            data: {},
+            success: function (data) {
+                res = JSON.parse(data)
+                if (res['state'] === true) {
+                    infomail.removeClass('btn-success')
+                    infomail.addClass('btn-danger')
+                    infomail.text('Deaktivér')
+                }
+                else {
+                    infomail.removeClass('btn-danger')
+                    infomail.addClass('btn-success')
+                    infomail.text('Aktivér')
+                }
+            },
+            error: function (e, s, xhr) {
+                var utils = new Utils()
+                utils.setStatusMessage('Det oppstod en uventet feil under endring av infomail.', 'alert-danger')
+            },
+            crossDomain: false
+        })
+    });
 
 /*
   JS for membership  

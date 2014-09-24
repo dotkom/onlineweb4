@@ -129,5 +129,5 @@ Genfors = (function () {
 
 $(document).ready(function () {
     Genfors.vote.bind_buttons();
-    setInterval(Genfors.update, 15000);
+    setInterval(Genfors.update, 10000);
 });

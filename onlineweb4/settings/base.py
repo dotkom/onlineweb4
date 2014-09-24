@@ -109,6 +109,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'middleware.http.Http403Middleware',
+    'reversion.middleware.RevisionMiddleware',
     # Uncomment the next line for simple clickjacking protection:
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
@@ -125,6 +126,11 @@ TEMPLATE_DIRS = (
 # Feedme settings
 FEEDME_GROUP = 'dotKom'
 FEEDME_ADMIN_GROUP = 'feedmeadmin'
+
+# Variables for fagKom/bedKom-sync script, override in local.py
+BEDKOM_GROUP_ID = 1
+FAGKOM_GROUP_ID = 2
+COMMON_GROUP_ID = 3
 
 # Grappelli settings
 GRAPPELLI_ADMIN_TITLE = '<a href="/">Onlineweb</a>'
@@ -144,6 +150,23 @@ USER_SEARCH_GROUPS = [
     7,   # proKom
     8,   # triKom
     9,   # velKom
+]
+
+#List of mailing lists, used in update_sympa_memcache_from_sql.py
+PUBLIC_LISTS = [
+    "foreninger",
+    "linjeforeninger",
+    "gloshaugen",
+    "dragvoll",
+    "masterforeninger",
+    "kjellere",
+    "linjeledere",
+    "linjeredaksjoner",
+    "glosfaddere",
+    "sr-samarbeid",
+    "ivt-samarbeid",
+    "linjekor",
+    "studentdemokratiet"
 ]
 
 INSTALLED_APPS = (
@@ -168,6 +191,7 @@ INSTALLED_APPS = (
     'gunicorn',
     'markdown_deux',
     'djangoformsetjs',
+    'reversion',
 
     # Django apps
     'django.contrib.admin',
@@ -195,14 +219,17 @@ INSTALLED_APPS = (
     'apps.resourcecenter',
     'apps.mailinglists',
     'scripts',
-    'feedme',
 
-     # Wiki
+    #External apps
+    'redwine',
+
+    #Wiki
     'wiki',
     'wiki.plugins.attachments',
     'wiki.plugins.notifications',
     'wiki.plugins.images',
     'wiki.plugins.macros',
+    
 )
 
 # A sample logging configuration. The only tangible logging
@@ -245,7 +272,12 @@ LOGGING = {
             'handlers': ['console'],
             'level': 'DEBUG',
             'propagate': True,
-        },   
+        },
+        'bedfagsyncer': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
         '': {
             'handlers': ['console'],
             'level': 'DEBUG',

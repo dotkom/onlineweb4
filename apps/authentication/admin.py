@@ -41,6 +41,20 @@ class AllowedUsernameAdmin(admin.ModelAdmin):
 
     )
     search_fields = ('username',)
+    
+    def save_model(self, request, obj, form, change):
+        if not change:
+            # Try to fetch user with this username
+            try:
+                user = OnlineUser.objects.get(ntnu_username=obj.username)
+            except OnlineUser.DoesNotExist:
+                user = None
+            
+            # If username was found, set infomail to True
+            if user and user.infomail is False:
+                user.infomail = True
+                user.save()
+        obj.save()
 
 admin.site.register(AllowedUsername, AllowedUsernameAdmin)
 
