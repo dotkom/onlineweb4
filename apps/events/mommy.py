@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import datetime
 import locale
+import logging
 
 from django.utils import timezone
 from django.conf import settings
@@ -18,20 +19,24 @@ class SetEventMarks(Task):
         logger.info("Attendance mark setting started")
         locale.setlocale(locale.LC_ALL, "nb_NO.UTF-8")
 
-        events = Event.objects.filter(automatic_mark=True, marks_has_belen_set=False)
+        #Gets all active attendance events thats suposed to give automatic marks
+        attendance_events = AttendanceEvent.objects.filter(automatically_set_marks=True, marks_has_been_set=False, event.event_end__lt = timezone.now())
 
-        for event in events:
-            SetEventMarks.setMarks(event)
-            message = SetEventMarks.generate_message(event)
+        for attendance_event in attendance_events:
+            SetEventMarks.setMarks(attendance_event)
+            message = SetEventMarks.generate_message(attendance_event.event)
 
             if message.send:
                 EmailMessage(message.subject, unicode(message), message.committee_mail, [], message.not_attended_mails).send()
+                logger.info("Emails sent to: " + message.not_attended_mails)
 
                 if message.committee_message:
                     EmailMessage("Event prikker", message.committee_message,"online@online.ntnu.no", [message.committee_mail]).send() 
+                    logger.info("Email sent to: " + message.committee_mail)
 
     @staticmethod
-    def setMarks(event, logger):
+    def setMarks(attendance_event, logger):
+        event = attendance_event.event
         logger.info("Proccessing" + event.title)
         mark = Mark()
         mark.title = u"Manglende oppmøte på %s" % (event.title)
@@ -39,14 +44,14 @@ class SetEventMarks(Task):
         mark.description = u"Du har fått en prikk på grunn av manglende oppmøte på %s." % (event.title)
         mark.save()
         
-        for attendee in event.attendance_event.not_attended():
+        for attendee in attendance_event.not_attended_qs():
             user_entry = UserEntry()
             user_entry.user = attendee.user
             user_entry.mark = mark
             user_entry.save()
-            logger.info("Marks given to: " + user_entry.user)
+            logger.info("Mark given to: " + user_entry.user)
         
-        event.attendanceEvent.marks_has_been_set = True
+        attendance_event.marks_has_been_set = True
         event.save()
         
 
@@ -97,4 +102,4 @@ class Message():
             self.end)
         return message
 
-schedule.register(SetEventMarks, day_of_week='mon-sun', hour=8, minute=05)
+schedule.register(SetEventMarks, day_of_week='mon-sun', hour=23, minute=36)
