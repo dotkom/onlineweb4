@@ -37,34 +37,37 @@ Arrangementsarkiv - Online
 {% block content %}
 
 <section>
-  <div class="container">
-
-    <div class="row">
-      <div class="col-md-12">
-        <div class="page-header">
-          <h2>ARRANGEMENTER
-            <div class="btn-group pull-right">
-              <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-                <span class="glyphicon glyphicon-calendar"></span>
-                Eksporter
-                <span class="caret"></span>
-              </button>
-              <ul class="dropdown-menu">
-                <li><a href="{% url 'events_ics' %}">ICS</a></li>
-                <li><a href="http://www.google.com/calendar/render?cid={{ request.build_absolute_uri|unhttps|urlencode }}events.ics">Google Calendar</a></li>
-                {% if user.is_authenticated %}
-                  <li role="presentation" class="divider"></li>
-                  <li class="dropdown-header">Mine arrangementer</li>
-                  <li><a href="{% url 'events_personal_ics' user=signer_value %}">ICS</a></li>
-                  <li><a href="http://www.google.com/calendar/render?cid={{ personal_ics_path|unhttps|urlencode }}">Google Calendar</a></li>
-                  {% endif %}
+<div class="container">
+<div class="row">
+  <div class="col-md-12">
+    <div class="page-header">
+      <div class="row">
+        <div class="col-md-8">
+          <h2>ARRANGEMENTER</h2>
+        </div>
+        <div class="col-md-4">
+          <div class="event-archive-dropdown btn-group pull-right">
+            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+              <span class="glyphicon glyphicon-calendar"></span>
+              Eksporter
+              <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu">
+              <li><a href="{% url 'events_ics' %}">ICS</a></li>
+              <li><a href="http://www.google.com/calendar/render?cid={{ request.build_absolute_uri|unhttps|urlencode }}events.ics">Google Calendar</a></li>
+              {% if user.is_authenticated %}
+                <li role="presentation" class="divider"></li>
+                <li class="dropdown-header">Mine arrangementer</li>
+                <li><a href="{% url 'events_personal_ics' user=signer_value %}">ICS</a></li>
+                <li><a href="http://www.google.com/calendar/render?cid={{ personal_ics_path|unhttps|urlencode }}">Google Calendar</a></li>
+                {% endif %}
               </ul>
             </div>
-          </h2>
+          </div>
         </div>
       </div>
     </div>
-
+    </div>
     <div class="col-xs-12 col-sm-12 col-md-3 pull-right" id="filter">
       <div class="row">
         <div class="col-xs-12 col-sm-12 col-md-12">
