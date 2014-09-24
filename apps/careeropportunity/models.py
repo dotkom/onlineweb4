@@ -1,7 +1,7 @@
 #-*- coding: utf-8 -*-
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-import reversion
+
 from apps.companyprofile.models import Company
 
 class CareerOpportunity(models.Model):
@@ -23,5 +23,3 @@ class CareerOpportunity(models.Model):
     class Meta:
         verbose_name = _('karrieremulighet')
         verbose_name_plural = _('karrieremuligheter')
-
-reversion.register(CareerOpportunity)

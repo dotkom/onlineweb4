@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import reversion
 from django.db import models
 from django.db.models import permalink
 from django.template.defaultfilters import slugify
@@ -8,6 +7,7 @@ from django.utils.translation import ugettext as _
 
 from apps.authentication.models import OnlineUser as User
 from filebrowser.fields import FileBrowseField
+
 
 class Article(models.Model):
     IMAGE_FOLDER = "images/article"
@@ -66,7 +66,6 @@ class Article(models.Model):
         verbose_name_plural = _(u"artikler")
         ordering = ['published_date']
 
-reversion.register(Article)
 
 class Tag(models.Model):
     name = models.CharField(_(u"navn"), max_length=50)
@@ -87,7 +86,6 @@ class Tag(models.Model):
     def __unicode__(self):
         return self.name
 
-reversion.register(Tag)
 
 class ArticleTag(models.Model):
     article = models.ForeignKey(Article, verbose_name=_(u"artikkel"), related_name='article_tags')
@@ -97,5 +95,3 @@ class ArticleTag(models.Model):
         unique_together = ('article', 'tag')
         verbose_name = _(u"tag")
         verbose_name_plural = _(u"tags")
-
-reversion.register(ArticleTag)

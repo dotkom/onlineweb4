@@ -109,7 +109,6 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'middleware.http.Http403Middleware',
-    'reversion.middleware.RevisionMiddleware',
     # Uncomment the next line for simple clickjacking protection:
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
@@ -174,7 +173,6 @@ INSTALLED_APPS = (
     'gunicorn',
     'markdown_deux',
     'djangoformsetjs',
-    'reversion',
 
     # Django apps
     'django.contrib.admin',
