@@ -433,12 +433,14 @@ class AttendanceEvent(models.Model):
     @property
     def number_of_attendees(self):
         """ Count of all attendees not in waiting list """
-        return self.attendees_qs.count()
+        # We need to use len() instead of .count() here, because of the prefetched event archive
+        return len(self.attendees_qs)
 
     @property
     def number_on_waitlist(self):
         """ Count of all attendees on waiting list """
-        return self.waitlist_qs.count()
+        # We need to use len() instead of .count() here, because of the prefetched event archive
+        return len(self.waitlist_qs)
 
     @property
     def number_of_reserved_seats(self):
