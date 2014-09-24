@@ -57,17 +57,19 @@ Epostlister - Online
 				<h3>Lister og medlemmer</h3>
 				<div id="masonry">
 					
+
 					<!-- masonry used for responsiveness, don't add bootstrap3 -->
 					{% for list in lists %}
 						<div class="mailinglist">
 							<div class="members">
-								<span class="title">
-									{{ list.name }}@online.ntnu.no
+								<span class="title" data-toggle="collapse" data-target="#{{ list.name }}">
+									{{ list.name }}@online.ntnu.no 
+									<i class="glyphicon glyphicon-chevron-down"></i>
 								</span>
-								<ul>
-								{% for member in list.members %}
-								<li> {{member.name}} </li>
-								{% endfor %}
+								<ul id="{{ list.name }}" class="collapse out">
+									{% for member in list.members %}
+										<li> {{member.name}} </li>
+									{% endfor %}
 								</ul>
 							</div>
 						</div>
