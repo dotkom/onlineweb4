@@ -15,6 +15,7 @@ Søknadsgodkjenning - Online
 {% block js %}
     {{ block.super }}
     {% compress js %}
+        <script type="text/javascript" src="{{ STATIC_URL }}js/libs/jquery.cookie.js"></script>
         <script type="text/javascript" src="{{ STATIC_URL }}js/Utils.js"></script>
         <script type="text/javascript" src="{{ STATIC_URL }}js/approval.js"></script>
     {% endcompress %}
@@ -46,7 +47,7 @@ Søknadsgodkjenning - Online
     </div>
         {% for app in membership_applications %}
         
-        <div class="row row-space-sm application">
+        <div class="row application">
             <div class="col-md-12">
                 <div class="col-md-3 cell">
                     <div class="visible-xs visible-sm">1. </div>{{ app.applicant.get_full_name }}
@@ -67,9 +68,24 @@ Søknadsgodkjenning - Online
                         -
                     {% endif %}
                 </div>
-                <div class="btn-group">
-                    <button type="button" class="btn btn-success approve" value="{{ app.id }}">Godkjenn</button>
-                    <button type="button" class="btn btn-danger decline" value="{{ app.id }}">Avslå</button>
+                <div class="col-md-2">
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-success approve" value="{{ app.id }}">Godkjenn</button>
+                        <button type="button" class="btn btn-danger decline" value="{{ app.id }}">Avslå</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="confirm{{ app.id }}" class="row confirm">
+            <div class="col-md-12">
+                <div class="col-md-6">
+                    <textarea rows="6">Skriv litt om hvorfor søknaden avslås.</textarea>
+                </div>
+                <div class="col-md-2">
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-warning cancel">Lukk</button>
+                        <button type="button" class="btn btn-danger sendDecline" value="{{ app.id }}">Avslå</button>
+                    </div>
                 </div>
             </div>
         </div>
