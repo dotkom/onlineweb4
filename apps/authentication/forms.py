@@ -17,6 +17,8 @@ class LoginForm(forms.Form):
     def clean(self):
         if self._errors:
             return
+
+        self.cleaned_data['username'] = self.cleaned_data['username'].lower()
     
         user = auth.authenticate(username=self.cleaned_data['username'], password=self.cleaned_data['password'])
 
