@@ -15,6 +15,7 @@ class Migration(SchemaMigration):
             ('approver', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='approver', null=True, to=orm['authentication.OnlineUser'])),
             ('created', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
             ('processed', self.gf('django.db.models.fields.BooleanField')(default=False)),
+            ('processed_date', self.gf('django.db.models.fields.DateTimeField')(null=True, blank=True)),
             ('approved', self.gf('django.db.models.fields.BooleanField')(default=False)),
             ('message', self.gf('django.db.models.fields.TextField')()),
         ))
@@ -23,17 +24,11 @@ class Migration(SchemaMigration):
         # Adding model 'MembershipApproval'
         db.create_table(u'approval_membershipapproval', (
             (u'approval_ptr', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['approval.Approval'], unique=True, primary_key=True)),
-            ('new_expiry_date', self.gf('django.db.models.fields.DateTimeField')()),
+            ('new_expiry_date', self.gf('django.db.models.fields.DateField')(null=True, blank=True)),
+            ('field_of_study', self.gf('django.db.models.fields.SmallIntegerField')(default=0)),
+            ('started_date', self.gf('django.db.models.fields.DateField')(null=True, blank=True)),
         ))
         db.send_create_signal(u'approval', ['MembershipApproval'])
-
-        # Adding model 'FieldOfStudyApproval'
-        db.create_table(u'approval_fieldofstudyapproval', (
-            (u'approval_ptr', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['approval.Approval'], unique=True, primary_key=True)),
-            ('field_of_study', self.gf('django.db.models.fields.SmallIntegerField')(default=0)),
-            ('started_date', self.gf('django.db.models.fields.DateField')()),
-        ))
-        db.send_create_signal(u'approval', ['FieldOfStudyApproval'])
 
 
     def backwards(self, orm):
@@ -42,9 +37,6 @@ class Migration(SchemaMigration):
 
         # Deleting model 'MembershipApproval'
         db.delete_table(u'approval_membershipapproval')
-
-        # Deleting model 'FieldOfStudyApproval'
-        db.delete_table(u'approval_fieldofstudyapproval')
 
 
     models = {
@@ -56,18 +48,15 @@ class Migration(SchemaMigration):
             'created': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'message': ('django.db.models.fields.TextField', [], {}),
-            'processed': ('django.db.models.fields.BooleanField', [], {'default': 'False'})
-        },
-        u'approval.fieldofstudyapproval': {
-            'Meta': {'object_name': 'FieldOfStudyApproval', '_ormbases': [u'approval.Approval']},
-            u'approval_ptr': ('django.db.models.fields.related.OneToOneField', [], {'to': u"orm['approval.Approval']", 'unique': 'True', 'primary_key': 'True'}),
-            'field_of_study': ('django.db.models.fields.SmallIntegerField', [], {'default': '0'}),
-            'started_date': ('django.db.models.fields.DateField', [], {})
+            'processed': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'processed_date': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'})
         },
         u'approval.membershipapproval': {
             'Meta': {'object_name': 'MembershipApproval', '_ormbases': [u'approval.Approval']},
             u'approval_ptr': ('django.db.models.fields.related.OneToOneField', [], {'to': u"orm['approval.Approval']", 'unique': 'True', 'primary_key': 'True'}),
-            'new_expiry_date': ('django.db.models.fields.DateTimeField', [], {})
+            'field_of_study': ('django.db.models.fields.SmallIntegerField', [], {'default': '0'}),
+            'new_expiry_date': ('django.db.models.fields.DateField', [], {'null': 'True', 'blank': 'True'}),
+            'started_date': ('django.db.models.fields.DateField', [], {'null': 'True', 'blank': 'True'})
         },
         u'auth.group': {
             'Meta': {'object_name': 'Group'},
@@ -106,7 +95,7 @@ class Migration(SchemaMigration):
             'password': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
             'phone_number': ('django.db.models.fields.CharField', [], {'max_length': '20', 'null': 'True', 'blank': 'True'}),
             'rfid': ('django.db.models.fields.CharField', [], {'max_length': '50', 'null': 'True', 'blank': 'True'}),
-            'started_date': ('django.db.models.fields.DateField', [], {'default': 'datetime.datetime(2014, 9, 6, 0, 0)'}),
+            'started_date': ('django.db.models.fields.DateField', [], {'default': 'datetime.datetime(2014, 9, 24, 0, 0)'}),
             'user_permissions': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'related_name': "u'user_set'", 'blank': 'True', 'to': u"orm['auth.Permission']"}),
             'username': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '30'}),
             'website': ('django.db.models.fields.URLField', [], {'max_length': '200', 'null': 'True', 'blank': 'True'}),
