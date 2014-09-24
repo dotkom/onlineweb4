@@ -2,7 +2,7 @@
 
 from django.db import models
 from django.utils.translation import ugettext as _
-
+import reversion
 from apps.authentication.models import OnlineUser as User
 
 
@@ -24,3 +24,5 @@ class Privacy(models.Model):
 
 
 User.privacy = property(lambda u: Privacy.objects.get_or_create(user=u)[0])
+
+reversion.register(Privacy)
