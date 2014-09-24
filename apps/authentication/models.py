@@ -13,7 +13,7 @@ from django.utils import timezone
 from django.utils.html import strip_tags
 
 import watson
-
+import reversion
 
 # If this list is changed, remember to check that the year property on
 # OnlineUser is still correct!
@@ -191,6 +191,9 @@ class OnlineUser(AbstractUser):
         verbose_name_plural = _(u"brukerprofiler")
 
 
+reversion.register(OnlineUser)
+
+
 class Email(models.Model):
     user = models.ForeignKey(OnlineUser, related_name="email_user")
     email = models.EmailField(_(u"epostadresse"), unique=True)
@@ -217,6 +220,9 @@ class Email(models.Model):
         verbose_name_plural = _(u"epostadresser")
 
 
+reversion.register(Email)
+
+
 class RegisterToken(models.Model):
     user = models.ForeignKey(OnlineUser, related_name="register_user")
     email = models.EmailField(_(u"epost"), max_length=254)
@@ -228,6 +234,9 @@ class RegisterToken(models.Model):
         valid_period = datetime.timedelta(days=1)
         now = timezone.now()
         return now < self.created + valid_period 
+
+
+reversion.register(RegisterToken)
 
 
 class AllowedUsername(models.Model):
@@ -257,6 +266,9 @@ class AllowedUsername(models.Model):
         ordering = (u"username",)
 
 
+reversion.register(AllowedUsername)
+
+
 class Position(models.Model):
     """
     Contains a users position in the organization from a given year
@@ -279,6 +291,9 @@ class Position(models.Model):
         ordering = ('user', 'period', )
 
 
+reversion.register(Position)
+
+
 class SpecialPosition(models.Model):
     """
     Special object to represent special positions that typically lasts for life.
@@ -295,6 +310,8 @@ class SpecialPosition(models.Model):
         verbose_name_plural = _(u'spesialposisjoner')
         ordering = ('user', 'since_year',)
 
+
+reversion.register(SpecialPosition)
 
 
 # Register OnlineUser in watson index for searching

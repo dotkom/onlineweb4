@@ -10,12 +10,14 @@ from django.db import models
 from django.template.defaultfilters import slugify
 from django.utils import timezone
 from django.utils.translation import ugettext as _
-from filebrowser.fields import FileBrowseField
-import watson
 
 from apps.authentication.models import OnlineUser as User, FIELD_OF_STUDY_CHOICES
 from apps.companyprofile.models import Company
 from apps.marks.models import Mark
+
+import reversion
+import watson
+from filebrowser.fields import FileBrowseField
 
 class Event(models.Model):
     """
@@ -226,6 +228,9 @@ http://%s%s
         verbose_name = _('arrangement')
         verbose_name_plural = _('arrangement')
 
+
+reversion.register(Event)
+
 """
  BEGIN ACCESS RESTRICTION --------------------------------------------------------------------------
 """
@@ -249,6 +254,9 @@ class Rule(models.Model):
 
     def __unicode__(self):
         return 'Rule'
+
+
+reversion.register(Rule)
 
 
 class FieldOfStudyRule(Rule):
@@ -278,6 +286,9 @@ class FieldOfStudyRule(Rule):
         return unicode(self.get_field_of_study_display())
 
 
+reversion.register(FieldOfStudyRule)
+
+
 class GradeRule(Rule):
     grade = models.SmallIntegerField(_(u'klassetrinn'), null=False)
 
@@ -305,6 +316,9 @@ class GradeRule(Rule):
         return _(u"%s. klasse") % self.grade
 
 
+reversion.register(GradeRule)
+
+
 class UserGroupRule(Rule):
     group = models.ForeignKey(Group, blank=False, null=False)
 
@@ -328,6 +342,9 @@ class UserGroupRule(Rule):
             time_unit = _(u'timer') if self.offset > 1 else _(u'time')
             return _(u"%s etter %d %s") % (unicode(self.group), self.offset, time_unit)
         return unicode(self.group)
+
+
+reversion.register(UserGroupRule)
 
 
 class RuleBundle(models.Model):
@@ -370,6 +387,8 @@ class RuleBundle(models.Model):
         else:  
             return _(u"Tom rule bundle.")
 
+
+reversion.register(RuleBundle)
 
 
 """
@@ -537,6 +556,10 @@ class AttendanceEvent(models.Model):
         verbose_name = _(u'påmelding')
         verbose_name_plural = _(u'påmeldinger')
 
+
+reversion.register(AttendanceEvent)
+
+
 class CompanyEvent(models.Model):
     """
     Company relation to AttendanceEvent
@@ -547,6 +570,9 @@ class CompanyEvent(models.Model):
     class Meta:
         verbose_name =_('bedrift')
         verbose_name_plural = _('bedrifter')
+
+
+reversion.register(CompanyEvent)
 
 
 class Attendee(models.Model):
@@ -569,6 +595,9 @@ class Attendee(models.Model):
         unique_together = (('event', 'user'),)
 
 
+reversion.register(Attendee)
+
+
 class Reservation(models.Model):
     attendance_event = models.OneToOneField(AttendanceEvent, related_name="reserved_seats")
     seats = models.PositiveIntegerField(u"reserverte plasser", blank=False, null=False)
@@ -583,6 +612,10 @@ class Reservation(models.Model):
     class Meta:
         verbose_name = _("reservasjon")
         verbose_name_plural = _("reservasjoner")
+
+
+reversion.register(Reservation)
+
 
 class Reservee(models.Model):
     """
@@ -602,6 +635,9 @@ class Reservee(models.Model):
         verbose_name = _("reservasjon")
         verbose_name_plural = _("reservasjoner")
         ordering = ['id']
+
+
+reversion.register(Reservee)
 
 
 # Registrations for watson indexing
