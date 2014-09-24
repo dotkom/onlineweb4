@@ -1,27 +1,15 @@
 # -*- coding: utf-8 -*-
 #!/usr/bin/python
 
-from django.core.management.base import NoArgsCommand
+import psycopg2
 from memcache import Client
+
+from django.core.management.base import NoArgsCommand
 
 from onlineweb.settings import DATABASES
 from onlineweb.settings import SYMPA_DB_PASSWD, SYMPA_DB_USER, SYMPA_DB_NAME, SYMPA_DB_PORT, SYMPA_DB_HOST
+from onlineweb.settings import PUBLIC_LISTS
 
-import psycopg2
-
-PUBLIC_LISTS = [
-    "foreninger",
-    "linjeforeninger",
-    "gloshaugen",
-    "dragvoll",
-    "masterforeninger",
-    "kjellere",
-    "linjeledere",
-    "linjeredaksjoner",
-    "glosfaddere",
-    "sr-samarbeid",
-    "ivt-samarbeid",
-]
 
 class Command(NoArgsCommand):
     def handle_noargs(self, **kwargs):
@@ -32,7 +20,6 @@ class Command(NoArgsCommand):
         lists = []
         for pl in PUBLIC_LISTS:
             cur_list = {'name': pl, 'members': []}
-
             query = "select comment_subscriber,user_subscriber, reception_subscriber  from subscriber_table where list_subscriber = '%s' and reception_subscriber != 'nomail';" % pl
 
             db_con = psycopg2.connect(database = SYMPA_DB_NAME , host = SYMPA_DB_HOST, port = SYMPA_DB_PORT,  user = SYMPA_DB_USER, password = SYMPA_DB_PASSWD)
@@ -41,7 +28,7 @@ class Command(NoArgsCommand):
             rows = cursor.fetchall()
             cursor.close()
             db_con.close()
-
+        
             for row in rows:
                 comment_subscriber, user_subscriber, reception_subscriber = row
                 member = {}
