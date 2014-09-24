@@ -40,7 +40,7 @@ class LoginForm(forms.Form):
         return False
 
 class RegisterForm(forms.Form):
-    username = forms.CharField(label=_("Brukernavn"), max_length=20, help_text=u'Valgfritt brukernavn')
+    username = forms.CharField(label=_("Brukernavn"), max_length=20, help_text=u'Valgfritt brukernavn. (Konverteres automatisk til små bokstaver.)')
     first_name = forms.CharField(label=_("Fornavn"), max_length=50, help_text=u'Mellomnavn inkluderer du etter fornavnet ditt')
     last_name = forms.CharField(label=_("Etternavn"), max_length=50)
     email = forms.EmailField(label=_("Epost"), max_length=50, help_text=u'Du kan legge til flere epostadresser senere i din profil.')
