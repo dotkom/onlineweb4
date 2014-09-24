@@ -160,6 +160,7 @@ class OnlineUser(AbstractUser):
     def save(self, *args, **kwargs):
         if self.ntnu_username == "":
             self.ntnu_username = None
+        self.username = self.username.lower()
         super(OnlineUser, self).save(*args, **kwargs)
 
     def serializable_object(self):
