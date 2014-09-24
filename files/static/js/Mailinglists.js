@@ -20,4 +20,8 @@ $(function() {
     	// If Masonry didn't get it right the first time
     	masonry.layout();
     }, 1500);
+
+   $('.members .title').on('click', function () {
+    $(this).find('.glyphicon').toggleClass('glyphicon-chevron-up').toggleClass('glyphicon-chevron-down');
+   }); 
 });
