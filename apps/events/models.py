@@ -392,6 +392,10 @@ class AttendanceEvent(models.Model):
     registration_start = models.DateTimeField(_(u'registrerings-start'), null=False, blank=False)
     unattend_deadline = models.DateTimeField(_(u'avmeldings-frist'), null=False, blank=False) 
     registration_end = models.DateTimeField(_(u'registrerings-slutt'), null=False, blank=False)
+    
+    #Automatic mark setting for not attending
+    automatically_set_marks = models.BooleanField(_(u'automatisk prikk'), default=False)
+    marks_has_been_set = models.BooleanField(default=False)
 
     #Access rules
     rule_bundles = models.ManyToManyField(RuleBundle, blank=True, null=True)
@@ -408,6 +412,11 @@ class AttendanceEvent(models.Model):
     def attendees_qs(self):
         """ Queryset with all attendees not on waiting list """
         return self.attendees.all()[:self.max_capacity - self.number_of_reserved_seats]
+    
+    @property   
+    def not_attended_qs(self):
+        """ Queryset with all attendees not attended """
+        return self.attendees_qs.filter(attended=False)
 
     @property
     def waitlist_qs(self):
