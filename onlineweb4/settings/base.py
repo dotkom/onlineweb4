@@ -123,7 +123,7 @@ TEMPLATE_DIRS = (
 )
 
 # Feedme settings
-FEEDME_GROUP = 'dotkom'
+FEEDME_GROUP = 'dotKom'
 FEEDME_ADMIN_GROUP = 'feedmeadmin'
 
 # Grappelli settings
