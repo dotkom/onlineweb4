@@ -1,23 +1,20 @@
 {% extends "base.html" %}
 
-{% block title %}
-Permission denied - Online
-{% endblock title %}
+{% block title %}Permission denied - Online{% endblock title %}
 
 {% block content %}
-<section id=error>
-    <div class="container-fluid">
-        <div class="row-fluid">
-            <div class="span12">
-                <div class="page-header">
-                    <h2 id="error-heading">403 Error: Access Denied</h2>
+    <section id=error>
+        <div class="container-fluid">
+            <div class="row-fluid">
+                <div class="span12">
+                    <div class="page-header">
+                        <h2 id="error-heading">403 Error: Access Denied</h2>
+                    </div>
                 </div>
             </div>
+            <div class="error-items">
+                <p>Vi beklager, men du er ikke autorisert for å se denne siden.</p>
+            </div>
         </div>
-        <div class="error-items">
-            <p>Vi beklager, men du er ikke autorisert for å se denne siden.</p>
-        </div>
-    </div>
-    </div>
-</section>
+    </section>
 {% endblock content %}

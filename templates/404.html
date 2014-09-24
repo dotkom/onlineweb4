@@ -1,24 +1,21 @@
 {% extends "base.html" %}
 
-{% block title %}
-Page not found - Online
-{% endblock title %}
+{% block title %}Page not found - Online{% endblock title %}
 
 {% block content %}
-<section id=error>
-    <div class="container-fluid">
-        <div class="row-fluid">
-            <div class="span12">
-                <div class="page-header">
-                    <h2 id="error-heading">404 Error: Page not found</h2>
+    <section id="error">
+        <div class="container-fluid">
+            <div class="row-fluid">
+                <div class="span12">
+                    <div class="page-header">
+                        <h2 id="error-heading">404 Error: Page not found</h2>
+                    </div>
                 </div>
             </div>
+            <div class="error-items centered">
+                <img class="panel-body" src="{{ STATIC_URL }}img/404Balloon.gif">
+                <p>Siden du har bedt om finnes ikke.</p>
+            </div>
         </div>
-        <div class="error-items centered">
-            <img class="panel-body" src="{{ STATIC_URL }}img/404Balloon.gif">
-            <p>Siden du har bedt om finnes ikke.</p>
-        </div>
-    </div>
-    </div>
-</section>
+    </section>
 {% endblock content %}
