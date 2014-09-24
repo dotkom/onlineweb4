@@ -20,7 +20,6 @@ class Command(NoArgsCommand):
         lists = []
         for pl in PUBLIC_LISTS:
             cur_list = {'name': pl, 'members': []}
-            
             query = "select comment_subscriber,user_subscriber, reception_subscriber  from subscriber_table where list_subscriber = '%s' and reception_subscriber != 'nomail';" % pl
 
             db_con = psycopg2.connect(database = SYMPA_DB_NAME , host = SYMPA_DB_HOST, port = SYMPA_DB_PORT,  user = SYMPA_DB_USER, password = SYMPA_DB_PASSWD)
@@ -29,7 +28,6 @@ class Command(NoArgsCommand):
             rows = cursor.fetchall()
             cursor.close()
             db_con.close()
-
         
             for row in rows:
                 comment_subscriber, user_subscriber, reception_subscriber = row
