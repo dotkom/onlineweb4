@@ -123,9 +123,9 @@ TEMPLATE_DIRS = (
     os.path.join(PROJECT_ROOT_DIRECTORY, 'templates/'),
 )
 
-# Pizzasystem settings
-PIZZA_GROUP = 'dotkom'
-PIZZA_ADMIN_GROUP = 'pizzaadmin'
+# Feedme settings
+FEEDME_GROUP = 'dotKom'
+FEEDME_ADMIN_GROUP = 'feedmeadmin'
 
 # Variables for fagKom/bedKom-sync script, override in local.py
 BEDKOM_GROUP_ID = 1

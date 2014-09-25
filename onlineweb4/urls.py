@@ -105,6 +105,10 @@ if 'apps.genfors' in settings.INSTALLED_APPS:
         url(r'^genfors/',           include('apps.genfors.urls')),
     )
 
+# feedme  
+if 'feedme' in settings.INSTALLED_APPS:
+    urlpatterns += patterns('', url(r'^feedme/', include('feedme.urls'))) 
+
 # redwine
 if 'redwine' in settings.INSTALLED_APPS:
     urlpatterns += patterns('', url(r'^redwine/', include('redwine.urls')))
