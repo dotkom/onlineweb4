@@ -17,6 +17,7 @@ from django.utils.translation import ugettext as _
 import watson
 
 from apps.approval.forms import FieldOfStudyApplicationForm
+from apps.approval.models import MembershipApproval
 from apps.authentication.forms import NewEmailForm
 from apps.authentication.models import Email, RegisterToken, Position
 from apps.authentication.models import OnlineUser as User
@@ -69,10 +70,11 @@ def _create_request_dictionary(request):
         'password_change_form' : PasswordChangeForm(request.user),
         'marks' : [
             # Tuple syntax ('title', list_of_marks, is_collapsed)
-            (_(u'aktive prikker'), Mark.active.all().filter(given_to=request.user), False),
-            (_(u'inaktive prikker'), Mark.inactive.all().filter(given_to=request.user), True),
+            (_(u'aktive prikker'), Mark.active.filter(given_to=request.user), False),
+            (_(u'inaktive prikker'), Mark.inactive.filter(given_to=request.user), True),
         ],
         'new_email' : NewEmailForm(),
+        'active_applications': MembershipApproval.objects.filter(applicant=request.user, approved=False),
         'field_of_study_application': FieldOfStudyApplicationForm(),
         'mark_rules_accepted' : request.user.mark_rules,
     }

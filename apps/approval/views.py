@@ -5,7 +5,7 @@ import datetime
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, Http404
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.utils.translation import ugettext as _
 
 from apps.approval.forms import FieldOfStudyApplicationForm
@@ -86,3 +86,16 @@ def create_membership_application(request):
 
         return redirect('profiles')
     raise Http404
+
+
+@login_required
+def cancel_application(request, application_id):
+    app = get_object_or_404(MembershipApproval, pk = application_id)
+
+    if app.applicant != request.user:
+        messages.error(request, _(u"Bare søkeren selv kan slette en søknad."))
+        return redirect('profiles')
+
+    app.delete()
+
+    return redirect('profiles')
