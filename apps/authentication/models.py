@@ -122,9 +122,10 @@ class OnlineUser(AbstractUser):
         return False
 
     @property
-    def has_old_membership(self):
+    def has_expiring_membership(self):
         if self.ntnu_username:
-            if AllowedUsername.objects.filter(username=self.ntnu_username.lower()).filter(expiration_date__lt=timezone.now()).count() > 0:
+            expiration_threshold = timezone.now() + datetime.timedelta(days=60)
+            if AllowedUsername.objects.filter(username=self.ntnu_username.lower()).filter(expiration_date__lt=expiration_threshold).count() > 0:
                 return True
         return False
 

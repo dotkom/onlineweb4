@@ -4,18 +4,22 @@ import datetime
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404
 from django.shortcuts import render, redirect
 from django.utils.translation import ugettext as _
 
 from apps.approval.forms import FieldOfStudyApplicationForm
 from apps.approval.models import MembershipApproval
-from apps.authentication.models import get_length_of_field_of_study
+from apps.authentication.models import AllowedUsername, get_length_of_field_of_study
 
 
 @login_required
 def create_fos_application(request):
     if request.method == 'POST':
+        if not request.user.ntnu_username:
+            messages.error(request, _(u"Du må knytte et NTNU-brukernavn til kontoen din."))
+            return redirect('profiles')
+
         form = FieldOfStudyApplicationForm(request.POST)
         if form.is_valid(): 
             cleaned = form.cleaned_data
@@ -51,9 +55,34 @@ def create_fos_application(request):
                 application.new_expiry_date = datetime.date(started_year, 9, 16) + datetime.timedelta(days=365*length_of_fos)
             application.save()
 
-    return redirect('profiles')
+            messages.success(request, _(u"Søknad om bytte av studieretning er sendt.")) 
+
+        return redirect('profiles')
+    raise Http404
 
 
 @login_required
 def create_membership_application(request):
-    pass
+    if request.method == 'POST':
+        if not request.user.has_expiring_membership:
+            messages.error(request, _(u"Din bruker har ikke et utløpende medlemskap."))
+            return redirect('profiles')
+
+        if not request.user.ntnu_username:
+            messages.error(request, _(u"Du må knytte et NTNU-brukernavn til kontoen din."))
+            return redirect('profiles')
+
+        # Extend length of membership by 1 year
+        membership = AllowedUsername.objects.get(username = request.user.ntnu_username) 
+        new_expiration_date = datetime.date(membership.expiration_date.year + 1, 9, 16)
+
+        application = MembershipApproval(
+            applicant = request.user,
+            new_expiry_date = new_expiration_date,
+        )
+        application.save()
+
+        messages.success(request, _(u"Søknad om ett års forlenget medlemskap er sendt."))
+
+        return redirect('profiles')
+    raise Http404
