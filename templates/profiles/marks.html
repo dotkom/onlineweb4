@@ -33,7 +33,7 @@
                             {% endif %}
                             {% for mark in mark_list %}
                                 <div class="row">
-                                    <div class="col-md-4">
+                                    <div class="col-md-11">
                                         <div class="mark">
                                             <div class="markheader">
                                                 {{ mark.title }}
@@ -41,32 +41,32 @@
                                             <div class="markbody">
                                                 <div class="inline">
                                                     <div class="row">
-                                                        <div class="col-md-5"><b>Kategori:</b></div>
-                                                        <div class="col-md-7">
+                                                        <div class="col-md-2"><b>Kategori:</b></div>
+                                                        <div class="col-md-10">
                                                             {{ mark.get_category_display }}
                                                         </div>
                                                     </div>
                                                 </div>
                                                 <div class="inline">
                                                     <div class="row">
-                                                        <div class="col-md-5"><b>Beskrivelse:</b></div>
-                                                        <div class="col-md-7">
+                                                        <div class="col-md-2"><b>Beskrivelse:</b></div>
+                                                        <div class="col-md-10">
                                                             {{ mark.description }}
                                                         </div>
                                                     </div>
                                                 </div>
                                                 <div class="inline">
                                                     <div class="row">
-                                                        <div class="col-md-5"><b>Utdelt:</b></div>
-                                                        <div class="col-md-7">
+                                                        <div class="col-md-2"><b>Utdelt:</b></div>
+                                                        <div class="col-md-10">
                                                             {{ mark.added_date }}
                                                         </div>
                                                     </div>
                                                 </div>
                                                 <div class="inline">
                                                     <div class="row">
-                                                        <div class="col-md-5"><b>Utløpsdato:</b></div>
-                                                        <div class="col-md-7">
+                                                        <div class="col-md-2"><b>Utløpsdato:</b></div>
+                                                        <div class="col-md-10">
                                                             {{ mark.expiration_date }}
                                                         </div>
                                                     </div>
