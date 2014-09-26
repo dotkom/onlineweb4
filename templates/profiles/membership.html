@@ -64,14 +64,37 @@
     <div class="row">
         <div class="col-md-12">
             <h4>{{ app }}</h4>    
+            <div class="inline">
+                <div class="row">
+                    <div class="col-md-3"><b>Opprettet dato:</b></div>
+                    <div class="col-md-9"> {{ app.created }}</div>
+                </div>
+            </div>
             {% if app.is_fos_application %}
-                <p>Startet dato: {{ app.started_date }}</p>
-                <p>Studieretning: {{ app.get_field_of_study_display }}</p>
+                <div class="inline">
+                    <div class="row">
+                        <div class="col-md-3"><b>Startet på studiet:</b></div>
+                        <div class="col-md-9"> {{ app.started_date }}</div>
+                    </div>
+                </div>
+                <div class="inline">
+                    <div class="row">
+                        <div class="col-md-3"><b>Studieretning:</b></div>
+                        <div class="col-md-9"> {{ app.get_field_of_study_display }}</div>
+                    </div>
+                </div>
             {% endif %}
             {% if app.is_membership_application %}
-                <p>Utløpsdato for medlemskap: {{ app.new_expiry_date }}</p>
+                <div class="inline">
+                    <div class="row">
+                        <div class="col-md-3"><b>Utløpsdato for medlemskap:</b></div>
+                        <div class="col-md-9"> {{ app.new_expiry_date }}</div>
+                    </div>
+                </div>
             {% endif %}
-            <a href="{% url 'approval_cancel_application' application_id=app.id %}" type="submit" class="btn btn-danger" value="{{ app.id }}">Slett søknad</a>
+            <div class="row-space-sm">
+                <a href="{% url 'approval_cancel_application' application_id=app.id %}" type="submit" class="btn btn-danger" value="{{ app.id }}">Slett søknad</a>
+            </div>
         </div>
     </div>
     {% endfor %}
