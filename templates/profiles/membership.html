@@ -5,50 +5,74 @@
         <h3>Medlemskap</h3>
     </div>
 </div>
-{% if user.ntnu_username %}
-    {% if not user.has_old_membership %} 
-<div class="row">
-    <div class="col-xs-12 col-sm-6 col-md-4">
-        Ettersom du har et gammelt medlemskap kan du søke om å få dette forlenget. Forlengelsen er for ett år om gangen.
+{% if not active_applications %}
+    {% if user.ntnu_username %}
+        {% if not user.has_old_membership %} 
+    <hr />
+    <div class="row">
+        <div class="col-xs-12 col-sm-6 col-md-3">
+            Ettersom du har et gammelt medlemskap kan du søke om å få dette forlenget. Forlengelsen er for ett år om gangen.
+        </div>
+        <div class="col-xs-12 col-sm-6 col-md-3">
+            <form id="membership-application" method="post" action="{% url 'approval_send_membership_application' %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-success pull-right">Send søknad</button>
+            </form>
+        </div>
     </div>
-    <div class="col-xs-12 col-sm-6 col-md-4">
-        <form id="membership-application" method="post" action="{% url 'approval_send_membership_application' %}">
-            {% csrf_token %}
-            <button type="submit" class="btn btn-success pull-right">Send søknad</button>
-        </form>
+        {% endif %}
+    <hr />
+    <div class="row">
+        <div class="col-md-12">
+            <p class="ingress">
+                Med skjemaet under søker du om å få oppdatert studieretningen din. Starten på studieretningen er når du ble tatt opp.
+                Om du tidligere har vært bachelor og ønsker å søke deg over på master, skal starttidspunkt være når du kom 
+                inn på mastergraden.
+            </p>
+            <p>
+                Merk at det er viktig at du legger inn virkelig informasjon i dette skjemaet. Fusk med feil startdato 
+                og studieretning kan få svært alvorlige konsekvenser, og du risikerer utestengelse fra linjeforeningens 
+                arrangementer.
+            </p>
+        </div>
     </div>
-</div>
+    <div class="row">
+        <div class="col-xs-12 col-sm-6 col-md-4">
+            <form id="field-of-study-application" method="post" action="{% url 'approval_send_fos_application' %}">
+                {% csrf_token %}
+                {{ field_of_study_application|crispy }}
+                <button type="submit" class="btn btn-success pull-right">Send søknad</button>
+            </form>
+        </div>
+    </div>
+
+    {% else %}
+    <div class="row">
+        <div class="col-xs-12 col-sm-6 col-md-4">
+            <p>For å aktivere ditt medlemskap kreves det at du har knyttet din studentkonto til din profil.</p>
+            <p>Gå til Epost-innstillinger og registrer din @stud.ntnu.no epost.</p>
+        </div>
+    </div>
     {% endif %}
-
-<div class="row">
-    <div class="col-md-12">
-        <p class="ingress">
-            Med skjemaet under søker du om å få oppdatert studieretningen din. Starten på studieretningen er når du ble tatt opp.
-            Om du tidligere har vært bachelor og ønsker å søke deg over på master, skal starttidspunkt være når du kom 
-            inn på mastergraden.
-        </p>
-        <p>
-            Merk at det er viktig at du legger inn virkelig informasjon i dette skjemaet. Fusk med feil startdato 
-            og studieretning kan få svært alvorlige konsekvenser, og du risikerer utestengelse fra linjeforeningens 
-            arrangementer.
-        </p>
-    </div>
-</div>
-<div class="row">
-    <div class="col-xs-12 col-sm-6 col-md-4">
-        <form id="field-of-study-application" method="post" action="{% url 'approval_send_fos_application' %}">
-            {% csrf_token %}
-            {{ field_of_study_application|crispy }}
-            <button type="submit" class="btn btn-success pull-right">Send søknad</button>
-        </form>
-    </div>
-</div>
-
 {% else %}
-<div class="row">
-    <div class="col-xs-12 col-sm-6 col-md-4">
-        <p>For å aktivere ditt medlemskap kreves det at du har knyttet din studentkonto til din profil.</p>
-        <p>Gå til Epost-innstillinger og registrer din @stud.ntnu.no epost.</p>
+    <div class="row">
+        <div class="col-md-12">
+            <h3>Aktive søknader</h3>
+        </div>
     </div>
-</div>
+    {% for app in active_applications %}
+    <div class="row">
+        <div class="col-md-12">
+            <h4>{{ app }}</h4>    
+            {% if app.is_fos_application %}
+                <p>Startet dato: {{ app.started_date }}</p>
+                <p>Studieretning: {{ app.get_field_of_study_display }}</p>
+            {% endif %}
+            {% if app.is_membership_application %}
+                <p>Utløpsdato for medlemskap: {{ app.new_expiry_date }}</p>
+            {% endif %}
+            <a href="{% url 'approval_cancel_application' application_id=app.id %}" type="submit" class="btn btn-danger" value="{{ app.id }}">Slett søknad</a>
+        </div>
+    </div>
+    {% endfor %}
 {% endif %}
