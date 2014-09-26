@@ -80,8 +80,9 @@ Approved by %s on %s.""" % (request.user.get_full_name(), str(timezone.now().dat
                     membership.save()
 
             app.processed = True
-            app.approver = request.user
             app.processed_date = timezone.now()
+            app.approved = True
+            app.approver = request.user
             app.save()
 
             return HttpResponse(status=200)
@@ -109,8 +110,9 @@ def decline_application(request):
             message = request.POST.get('message')
 
             app.processed = True
-            app.approver = request.user
             app.processed_date = timezone.now()
+            app.approved = False
+            app.approver = request.user
             app.message = message
             app.save()
 
