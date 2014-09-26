@@ -61,7 +61,7 @@
         </div>
     </div>
     {% for app in active_applications %}
-    <div class="row">
+    <div class="row row-space-sm">
         <div class="col-md-12">
             <h4>{{ app }}</h4>    
             <div class="inline">
@@ -92,7 +92,15 @@
                     </div>
                 </div>
             {% endif %}
-            <div class="row-space-sm">
+            {% if app.message %}
+                <div class="inline">
+                    <div class="row">
+                        <div class="col-md-3"><b>Melding fra godkjenner:</b></div>
+                        <div class="col-md-9"> {{ app.message }}</div>
+                    </div>
+                </div>
+            {% endif %}
+            <div class="row-space-top-sm">
                 <a href="{% url 'approval_cancel_application' application_id=app.id %}" type="submit" class="btn btn-danger" value="{{ app.id }}">Slett søknad</a>
             </div>
         </div>
