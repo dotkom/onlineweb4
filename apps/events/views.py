@@ -292,6 +292,8 @@ def mail_participants(request, event_id):
             from_email = settings.EMAIL_BEDKOM
         elif from_email_value == '3':
             from_email = settings.EMAIL_FAGKOM
+        elif from_email_value == '4':
+            from_email = settings.EMAIL_EKSKOM
 
         signature = u'\n\nVennlig hilsen Linjeforeningen Online.\n(Denne eposten kan besvares til %s)' % from_email
 
