@@ -60,7 +60,7 @@ $(function() {
             var diff        = current - $(section).offset().top + TOP_OFFSET_ADJUST;
 
             if (diff > -20) {
-                $(".top-menu-link.active").removeClass('active');
+                $(".subnavbar li.active").removeClass('active');
                 $("a[href='/" + section + "']").parent().addClass('active');
             }
         }
