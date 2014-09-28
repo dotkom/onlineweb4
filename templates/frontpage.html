@@ -36,27 +36,25 @@
 {% endblock %}
 
 {% block submenu %}
-    <nav class="subnavbar navbar-default navbar-fixed-top">
+    <nav class="subnavbar">
         <div class="container">
-            <div class="collapse navbar-collapse navbar-ex1-collapse">
-                <ul class="nav navbar-nav">
-                    <li class="top-menu-link">
-                        <a data-section="events" class="active" href="{% url 'events-link' %}">Arrangementer</a>
-                    </li>
-                    <li class="top-menu-link">
-                        <a data-section="articles" href="{% url 'articles-link' %}">Artikler</a>
-                    </li>
-                    <li class="top-menu-link">
-                        <a data-section="offline" href="{% url 'offline-link' %}">Offline</a>
-                    </li>
-                    <li class="top-menu-link">
-                        <a data-section="business" href="{% url 'business-link' %}">For bedrifter</a>
-                    </li>
-                    <li class="top-menu-link">
-                        <a data-section="about" href="{% url 'about-link' %}">Om Online</a>
-                    </li>
-                </ul>
-            </div>
+            <ul>
+                <li class="top-menu-link">
+                    <a data-section="events" class="active" href="{% url 'events-link' %}">Arrangementer</a>
+                </li>
+                <li class="top-menu-link">
+                    <a data-section="articles" href="{% url 'articles-link' %}">Artikler</a>
+                </li>
+                <li class="top-menu-link">
+                    <a data-section="offline" href="{% url 'offline-link' %}">Offline</a>
+                </li>
+                <li class="top-menu-link">
+                    <a data-section="business" href="{% url 'business-link' %}">For bedrifter</a>
+                </li>
+                <li class="top-menu-link">
+                    <a data-section="about" href="{% url 'about-link' %}">Om Online</a>
+                </li>
+            </ul>
         </div>
     </nav>
 {% endblock %}
@@ -79,7 +77,7 @@
             <div id="event-items"></div>
         </div>
     </section>
-    
+
     <section id="articles">
         <div class="container">
             <div class="page-header clearfix">
@@ -122,7 +120,7 @@
                     </div>
 {% filter markdown %}
 {% chunk "offline_brodtekst" %}
-{% endfilter %}   
+{% endfilter %}
                 </div>
                 <div class="col-md-6">
                     <div id="offlineCarousel" class="carousel slide" data-prefix="{{ MEDIA_URL }}">
@@ -134,7 +132,7 @@
             </div>
         </div>
     </section>
-    
+
     <section id="business">
         <div class="container">
             <div class="page-header clearfix">
@@ -229,13 +227,13 @@
                                     <p class="ingress">Online er linjeforeningen for informatikkstudenter ved
                                     NTNU i Trondheim. Linjeforeningens oppgave er å forbedre studiemiljøet ved
                                     å fremme sosialt samvær, faglig kompetanse og kontakt med næringslivet.</p>
-                                    <p>Linjeforeningen består av omtrent 100 frivillige medarbeidere, 
-                                    fordelt over Hovedstyret, komiteer og nodekomiteer. I tillegg til vervene i 
-                                    linjeforeningen er mange studenter også engasjert i Realfagskjelleren, 
+                                    <p>Linjeforeningen består av omtrent 100 frivillige medarbeidere,
+                                    fordelt over Hovedstyret, komiteer og nodekomiteer. I tillegg til vervene i
+                                    linjeforeningen er mange studenter også engasjert i Realfagskjelleren,
                                     Datakameratene FK og Casual Gaming.</p>
                                     <p>Vi har kontorer på Gløshaugen i Høgskoleringen 3, også kjent som P15. Her
-                                    fins det mat og drikke for alle som vil ha, og ofte kan det være greit å 
-                                    finne hjelp til en øving eller et prosjekt man jobber med. Det er heller 
+                                    fins det mat og drikke for alle som vil ha, og ofte kan det være greit å
+                                    finne hjelp til en øving eller et prosjekt man jobber med. Det er heller
                                     ikke uhørt at triKom serverer vafler eller kake.</p>
                                     <p>Ekskursjoner, kurs og presentasjoner fra bedrifter er ukentlige hendelser
                                     hos oss. Mange arrangementer er sponset av linjeforeningen eller bedrifter
