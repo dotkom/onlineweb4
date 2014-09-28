@@ -38,6 +38,7 @@
 #mainnav .container     { position: relative; }
 #mainnav .glyphicon     { top: 0; }
 #mainnav .dropdown-menu { margin: 0 0 0 -1px; }
+#mainnav .dropdown-menu .divider { padding: 0; }
 
     #mainnav .container > ul {
         list-style: none;
@@ -87,10 +88,12 @@
     }
 
 svg, rect {
-    -webkit-transform: translate3d(0,0,0);
     -webkit-transition: all 0.3s;
+       -moz-transition: all 0.3s;
             transition: all 0.3s;
+
     -webkit-transition-timing-function: ease-in-out;
+       -moz-transition-timing-function: ease-in-out;
             transition-timing-function: ease-in-out;
 }
 .mn-svg {
@@ -101,24 +104,29 @@ svg, rect {
 }
     .mn-svg-rect-top {
         -webkit-transform: translate3d(0, -8px, 0);
+           -moz-transform: translate3d(0, -8px, 0);
                 transform: translate3d(0, -8px, 0);
     }
     .mn-svg-rect-bottom {
         -webkit-transform: translate3d(0, 8px, 0);
+           -moz-transform: translate3d(0, 8px, 0);
                 transform: translate3d(0, 8px, 0);
     }
 
 .transform-button {
     -webkit-transform: translate3d(0, 0, 0);
+       -moz-transform: translate3d(0, 0, 0);
             transform: translate3d(0, 0, 0);
 }
 
 .rotate-button {
     -webkit-transform: rotate3d(0, 0, 1, 135deg);
+       -moz-transform: rotate3d(0, 0, 1, 135deg);
             transform: rotate3d(0, 0, 1, 135deg);
 }
 .rotate-button-ccw {
     -webkit-transform: rotate3d(0, 0, 1, -135deg);
+       -moz-transform: rotate3d(0, 0, 1, -135deg);
             transform: rotate3d(0, 0, 1, -135deg);
 }
 
