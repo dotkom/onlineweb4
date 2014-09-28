@@ -30,8 +30,6 @@ $(function() {
                     { "hue": "#666666" },
                     { "lightness": -30 }
                 ]
-
-
             },
             {
                 "featureType": "poi.school",

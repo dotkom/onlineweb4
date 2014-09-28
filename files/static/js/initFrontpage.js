@@ -50,7 +50,7 @@ $(function() {
             });
         }
     };
-       
+
     // On scroll, loop the navs and swap active (if it needs to)
     var scrollspy = function () {
         var current = $(window).scrollTop();
@@ -61,13 +61,13 @@ $(function() {
 
             if (diff > -20) {
                 $(".top-menu-link.active").removeClass('active');
-                $(".nav a[href='/" + section + "']").parent().addClass('active');
+                $("a[href='/" + section + "']").parent().addClass('active');
             }
         }
     }
-    
-    
-   
+
+
+
     /* TODO: heavy shit? Find a reliable way to setnavs instead of doing it fucking all the time.
     ------------------------------------------------------------------------ */
     $(window).scroll(scrollspy);
@@ -91,7 +91,7 @@ $(function() {
             jump($(location).attr('hash').replace(/^#!/, ''));
         }, 500);
     }
-	
+
 	/* Menu retract on action */
 	$('.top-menu-link a').on('click touchend', function () {
 		if ($('.navbar-toggle').is(':visible')) {
