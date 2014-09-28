@@ -143,15 +143,6 @@ $(function() {
 
     /* Menu element change
     --------------------------------------------------------------------------------- */
-    $(".subnavbar a[href='"+window.location.pathname+"']").parent().addClass('active');
-
-    switch (window.location.pathname) {
-        case "/article/archive":
-        case "/offline/":
-            $(".navbar .nav.navbar-nav a[href='/events/']").parent().addClass('active');
-    }
-
-
     $(".mn-nav a[href='"+window.location.pathname+"']").parent().addClass('active');
 
     switch (window.location.pathname) {
