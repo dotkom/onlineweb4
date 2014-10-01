@@ -61,11 +61,10 @@ Epostlister - Online
 					{% for list in lists %}
 						<div class="mailinglist">
 							<div class="members">
-								<span class="title" data-toggle="collapse" data-target="#{{ list.name }}">
-									{{ list.name }}@online.ntnu.no 
-									<i class="glyphicon glyphicon-chevron-down"></i>
+								<span class="title">
+									{{ list.name }}@online.ntnu.no
 								</span>
-								<ul id="{{ list.name }}" class="collapse out">
+								<ul id="{{ list.name }}">
 									{% for member in list.members %}
 										<li> {{member.name}} </li>
 									{% endfor %}
