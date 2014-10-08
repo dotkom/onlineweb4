@@ -47,7 +47,7 @@ $(function() {
                 legend: 
                 { 
                     show:true, 
-                    location: 'e',
+                    location: $(window).width() > 991 ? 'e' : 's',
                     fontSize: '15pt',
                     border: 'none'
                 }
@@ -55,7 +55,7 @@ $(function() {
         }
     }
 
-    function printRatingCharts(ratings, titles)
+    function printRatingCharts(ratings, titles) 
     {
         ratingCharts = new Array();
 
@@ -69,6 +69,7 @@ $(function() {
             $('#rating-graphs').append(box);
             ticks = Array.range(1, ratings[i].length, 1);
             title = titles[i];
+
             ratingCharts[i] = $.jqplot('rating-chart-' + i, [ratings[i]], 
             {
                 title: title,
@@ -137,7 +138,7 @@ $(function() {
                 legend: 
                 { 
                     show:true, 
-                    location: 'e',
+                    location: $(window).width() > 991 ? 'e' : 's',
                     fontSize: '15pt',
                     border: 'none'
                 }
@@ -183,7 +184,7 @@ $(function() {
                     utils.setStatusMessage(res['message'], 'alert-danger');
                 }
                 else {
-                    utils.setStatusMessage('En uventet error ble oppdaget. Kontakt dotkom@online.ntnu.no for assistanse.', 'alert-danger');
+                    utils.setStatusMessage('En uventet feil ble oppdaget. Kontakt dotkom@online.ntnu.no for assistanse.', 'alert-danger');
                 }
             },
             crossDomain: false
@@ -201,17 +202,54 @@ $(function() {
                 printRatingCharts(data.replies.ratings, data.replies.titles);
                 printMultipleChoiceCharts(data.replies.mc_answers, data.replies.mc_questions);
             });
-            /*
-            $(window).on("debouncedresize", function(e)
-            {
-                fosChart.replot({ resetAxes: true});
-                for(var i = 0; i < ratingCharts.length; i++)
-                {
-                    ratingCharts[i].destroy();
+
+              // change the size of different charts when the screen size changes
+             $(window).on("debouncedresize", function(e)
+             {
+                // Checking if window is less than 992px of width. If so, location of text is south (s) of the graph. If not, the location is east (e)
+                if($(window).width() < 992){
+                    for(i = 0; i < mcCharts.length; i++){
+                        mcCharts[i].replot({
+                            legend: 
+                            { 
+                                location: 's',
+                            }
+                        });
+                    }
+
+                    fosChart.replot({
+                        legend: 
+                        { 
+                            location: 's',
+                        }
+                    });
                 }
-                printRatingCharts(data.replies.ratings, data.replies.titles);
-            });
-*/
+                else{
+                    for(i = 0; i < mcCharts.length; i++){
+                        mcCharts[i].replot({
+                            legend: 
+                            { 
+                                location: 'e',
+                            }
+                        });
+                    }
+
+                    fosChart.replot({
+                        legend: 
+                        { 
+                            location: 'e',
+                        }
+                    });
+                }
+
+                // Difficult to replot this section. Better solution needed.
+               /* for(var i = 0; i < ratingCharts.length; i++)
+                {
+                    ratingCharts[i].replot({ data: options });
+                    console.log('Fikser graf nummer ' + i);
+                }*/
+             });
+
 
             $('tr').each(function(i, row)
             {
@@ -233,6 +271,19 @@ $(function() {
                     $('div.specifier').addClass('whitespaceFix');
                }
             });
+
+            // if width of screen is less than 992px, remove class whitespaceFix, which sets every even column to float: right
+            if($(window).width() < 992){
+                $('div.specifier').removeClass('whitespaceFix');
+            }
+
+            // Doesnt work properly yet. Will need rework. Should fix height of graph-container if window-width was less than a certain number.
+           /* console.log($(window).width());
+            if($(window).width() < 992){
+                $('#fos-graph').css('height', "500px");
+                console.log("small'ne");
+                console.log($(window).width());
+            }*/
 
             pageInitialized = true;
         }
