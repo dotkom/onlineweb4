@@ -392,7 +392,7 @@ def user_search(request):
     context = {
         'users' : users_to_display,
         'groups' : groups,
-        }
+    }
     return render(request, 'profiles/users.html', context)
 
 @login_required
