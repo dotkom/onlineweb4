@@ -12,7 +12,7 @@
         </div>
     </div>
     {% if user.ntnu_username %}
-        {% if not user.has_expiring_membership %} 
+        {% if user.has_expiring_membership %} 
     <hr />
     <div class="row">
         <div class="col-xs-12 col-sm-6 col-md-6">
