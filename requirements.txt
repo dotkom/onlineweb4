@@ -24,7 +24,7 @@ django_compressor==1.3          # Compiles less and minifies js
 django-watson==1.1.2            # Indexed model search lib
 django-reversion==1.8.1         # Model version history with middleware hooks to all post_save signals
 APScheduler==2.1.1              # Scheduler
-git+https://github.com/dotKom/redwine.git@1.0.3#egg=redwine==1.0.3
+git+https://github.com/dotKom/redwine.git@1.0.4#egg=redwine==1.0.4
 #git+https://github.com/dotKom/feedme.git@#egg=feedme==1.0.5
 reportlab==2.7
 pdfdocument==1.6
