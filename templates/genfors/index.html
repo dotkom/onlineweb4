@@ -260,5 +260,7 @@ Generalforsamling - Online
 
 {% block js %}
     {{ block.super }}
-    <script src="/static/js/genfors.js"></script>
+    {% compress js %}
+	<script src="/static/js/genfors.js"></script>
+	{% endcompress %}
 {% endblock %}

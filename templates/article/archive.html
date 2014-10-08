@@ -58,7 +58,9 @@
 
 {% block js %}
     {{ block.super }}
+    {% compress js %}
     <script type="text/javascript" src="{{ STATIC_URL }}js/Utils.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}js/Article-archive.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}js/TagCloud.js"></script>
+    {% endcompress %}
 {% endblock js %}
