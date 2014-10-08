@@ -49,12 +49,12 @@ Tilbakemeldinger - Resultater - Online
 <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/jqplot/jquery.jqplot.min.css" />
 {% block js %}
     {{ block.super }}
-    {% compress js %}
     <script src="{{ STATIC_URL }}js/libs/jqplot/jquery.jqplot.min.js"></script>
     <script src="{{ STATIC_URL }}js/libs/jqplot/jqplot.pieRenderer.min.js"></script>
     <script src="{{ STATIC_URL }}js/libs/jqplot/jqplot.barRenderer.min.js"></script>
     <script src="{{ STATIC_URL }}js/libs/jqplot/jqplot.categoryAxisRenderer.min.js"></script>
     <script src="{{ STATIC_URL }}js/libs/jqplot/jqplot.pointLabels.min.js"></script>
+    {% compress js %}
     <script src="{{ STATIC_URL }}js/libs/jquery.cookie.js"></script>
     <script src="{{ STATIC_URL }}js/Utils.js"></script>
     <script src="{{ STATIC_URL }}js/feedbackResults.js"></script>
