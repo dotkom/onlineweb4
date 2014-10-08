@@ -137,7 +137,7 @@
                                 <p class="status-text">Du er meldt på dette arrangementet.</p>
                             {% endif %}
                             {% if attendance_event.unattend_deadline > now or place_on_wait_list %}
-                                {% if attendance_event.start_date > now %}
+                                {% if event.event_start > now %}
                                     <div class="action"><a href="#unattend" role="button" class="btn btn-large btn-danger" data-toggle="modal">Meld meg av</a></div>
                                 {% endif %}
                             {% endif %}

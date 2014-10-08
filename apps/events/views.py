@@ -150,7 +150,7 @@ def unattendEvent(request, event_id):
         messages.error(request, _(u"Avmeldingsfristen for dette arrangementet har utløpt."))
         return redirect(event)
 
-    if attendance_Event.start_date < timezone.now():
+    if attendance_event.event.event_start < timezone.now():
         messages.error(request, _(u"Dette arrangementet har allerede startet."))
         return redirect(event)
 
