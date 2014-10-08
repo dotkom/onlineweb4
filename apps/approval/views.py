@@ -41,7 +41,7 @@ def create_fos_application(request):
                 # If there is no change from the current settings, ignore the request
                 if request.user.started_date == started_date and request.user.field_of_study == field_of_study:
                     messages.error(request, _(u"Du er allerede registrert med denne studieretningen og denne startdatoen."))
-                    redirect('profiles')
+                    return redirect('profiles')
 
             application = MembershipApproval(
                 applicant = request.user,
