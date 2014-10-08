@@ -276,6 +276,11 @@ Online, linjeforeningen for informatikk ved NTNU
 {% chunk 'om_trikom' %}
 {% endfilter %}
                         </div>
+                        <div class="tab-pane" id="appkom">
+{% filter markdown %}
+{% chunk 'om_appkom' %}
+{% endfilter %}
+                        </div>
                         <div class="tab-pane" id="ekskom">
 {% filter markdown %}
 {% chunk 'om_ekskom' %}
@@ -289,11 +294,6 @@ Online, linjeforeningen for informatikk ved NTNU
                         <div class="tab-pane" id="velkom">
 {% filter markdown %}
 {% chunk 'om_velkom' %}
-{% endfilter %}
-                        </div>
-                        <div class="tab-pane" id="appkom">
-{% filter markdown %}
-{% chunk 'om_appkom' %}
 {% endfilter %}
                         </div>
                         <div class="tab-pane" id="kjelleren">
@@ -329,10 +329,10 @@ Online, linjeforeningen for informatikk ved NTNU
                         <li><a href="#prokom">ProKom</a></li>
                         <li><a href="#trikom">TriKom</a></li>
                         <li class="nav-header">Nodekomiteer</li>
+                        <li><a href="#appkom">AppKom</a></li>
                         <li><a href="#ekskom">EksKom</a></li>
                         <li><a href="#jubkom">JubKom</a></li>
                         <li><a href="#velkom">VelKom</a></li>
-                        <li><a href="#velkom">AppKom</a></li>
                         <li class="nav-header">Annet</li>
                         <li><a href="#kjelleren">Realfagskjelleren</a></li>
                         <li><a href="#datakameratene">Datakameratene FK</a></li>
