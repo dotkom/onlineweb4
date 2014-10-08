@@ -221,7 +221,22 @@ $(function() {
                     deleteAnswer(answerId, row);
                 });
             });
+
+            // Adds and removes class that controls whitespace between columns on feedback results page.
+            $(window).on("debouncedresize", function(e)
+            {
+               if($(window).width() < 992){
+                    $('div.specifier').removeClass('whitespaceFix');
+               }
+
+               if($(window).width() > 991){
+                    $('div.specifier').addClass('whitespaceFix');
+               }
+            });
+
             pageInitialized = true;
         }
     });
 });
+
+
