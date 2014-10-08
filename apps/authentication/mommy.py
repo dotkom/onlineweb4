@@ -127,8 +127,8 @@ class SynchronizePublicWikiEditAccess(Task):
             # The user is not already a member, add
             if (is_already_member == False):
                 # Logging
-                logger.info("User id " + str(user.id) + " is not a member of the group having \
-                            public wiki edit permissions. Adding.")
+                logger.info("User id " + str(user.id) + " is not a member of the group having " \
+                            "public wiki edit permissions. Adding.")
                 
                 # Adding to group
                 WIKI_EDIT_ACCESS_GROUP.user_set.add(user)
@@ -179,8 +179,8 @@ class SynchronizeCommitteeAccess(Task):
             # The user is not already a member, add
             if (is_already_member == False):
                 # Logging
-                logger.info("User id " + str(user.id) + " is not a member of the group having \
-                            access permissions to the committee wiki. Adding.")
+                logger.info("User id " + str(user.id) + " is not a member of the group having " \
+                            "access permissions to the committee wiki. Adding.")
                 
                 # Adding to group
                 WIKI_COMMITTEE_GROUP.user_set.add(user)
