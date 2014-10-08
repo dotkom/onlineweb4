@@ -15,16 +15,16 @@ class SetEventMarks(Task):
 
     @staticmethod
     def run():
-        logger = logging.getLogger("feedback")
+        logger = logging.getLogger()
         logger.info("Attendance mark setting started")
         locale.setlocale(locale.LC_ALL, "nb_NO.UTF-8")
 
         #Gets all active attendance events thats suposed to give automatic marks
-        attendance_events = AttendanceEvent.objects.filter(automatically_set_marks=True, marks_has_been_set=False, event.event_end__lt = timezone.now())
+        attendance_events = SetEventMarks().active_events()
 
         for attendance_event in attendance_events:
-            SetEventMarks.setMarks(attendance_event)
-            message = SetEventMarks.generate_message(attendance_event.event)
+            SetEventMarks.setMarks(attendance_event, logger)
+            message = SetEventMarks.generate_message(attendance_event)
 
             if message.send:
                 EmailMessage(message.subject, unicode(message), message.committee_mail, [], message.not_attended_mails).send()
@@ -35,43 +35,44 @@ class SetEventMarks(Task):
                     logger.info("Email sent to: " + message.committee_mail)
 
     @staticmethod
-    def setMarks(attendance_event, logger):
+    def setMarks(attendance_event, logger=logging.getLogger()):
         event = attendance_event.event
-        logger.info("Proccessing" + event.title)
+        logger.info('Proccessing "' + event.title + '"')
         mark = Mark()
         mark.title = u"Manglende oppmøte på %s" % (event.title)
         mark.category = event.event_type
         mark.description = u"Du har fått en prikk på grunn av manglende oppmøte på %s." % (event.title)
         mark.save()
         
-        for attendee in attendance_event.not_attended_qs():
+        for user in attendance_event.not_attended():
             user_entry = UserEntry()
-            user_entry.user = attendee.user
+            user_entry.user = user
             user_entry.mark = mark
             user_entry.save()
-            logger.info("Mark given to: " + user_entry.user)
+            logger.info("Mark given to: " + str(user_entry.user))
         
         attendance_event.marks_has_been_set = True
         event.save()
         
 
     @staticmethod
-    def generate_message(event):
+    def generate_message(attendance_event):
         message = Message()
 
-        not_attended = event.not_attended()
+        not_attended = attendance_event.not_attended()
 
         #return if everyone attended
         if not not_attended:
             return message
 
+        event = attendance_event.event
         title = event.title    
 
         
-        message.not_attended_mails = [attendee.user.email.encode("utf-8") for attendee in not_attended]
+        message.not_attended_mails = [user.email.encode("utf-8") for user in not_attended]
 
         message.committee_mail = event.feedback_mail()
-        not_attended_string = u'\n'.join([attendee.user.get_full_name() for attendee in not_attended])
+        not_attended_string = u'\n'.join([user.get_full_name() for user in not_attended])
 
         message.subject = u"Event: %s" % (title)
         message.intro = u"Hei, på grunn av manglende oppmøte på \"%s\" har du fått en prikk" % (title)
@@ -80,6 +81,10 @@ class SetEventMarks(Task):
         message.committee_message = u"På grunn av manglende oppmøte på \"%s\" har følgende brukere fått en prikk:\n" % (event.title)
         message.committee_message += not_attended_string
         return message
+
+    @staticmethod
+    def active_events():
+        return AttendanceEvent.objects.filter(automatically_set_marks=True, marks_has_been_set=False, event__event_end__lt= timezone.now())
 
 
 class Message():
@@ -102,4 +107,4 @@ class Message():
             self.end)
         return message
 
-schedule.register(SetEventMarks, day_of_week='mon-sun', hour=23, minute=36)
+schedule.register(SetEventMarks, day_of_week='mon-sun', hour=8, minute=05)

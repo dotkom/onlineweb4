@@ -413,10 +413,18 @@ class AttendanceEvent(models.Model):
         """ Queryset with all attendees not on waiting list """
         return self.attendees.all()[:self.max_capacity - self.number_of_reserved_seats]
     
-    @property   
-    def not_attended_qs(self):
+    def not_attended(self):
         """ Queryset with all attendees not attended """
-        return self.attendees_qs.filter(attended=False)
+        # .filter does apperantly not work on sliced querysets
+        #return self.attendees_qs.filter(attended=False)
+
+        not_attended = []
+
+        for attendee in self.attendees_qs:
+            if not attendee.attended:
+                not_attended.append(attendee.user)
+
+        return not_attended
 
     @property
     def waitlist_qs(self):
