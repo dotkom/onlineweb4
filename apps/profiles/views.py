@@ -74,7 +74,13 @@ def _create_request_dictionary(request):
             (_(u'inaktive prikker'), Mark.inactive.filter(given_to=request.user), True),
         ],
         'new_email' : NewEmailForm(),
-        'active_applications': MembershipApproval.objects.filter(applicant=request.user, approved=False),
+        'has_active_approvals' : MembershipApproval.objects.filter(applicant=request.user, processed=False).count() > 0,
+        'approvals': [
+            # Tuple syntax ('title', list_of_approvals, is_collapsed)
+            (_(u"aktive søknader"), MembershipApproval.objects.filter(applicant=request.user, processed=False), False),
+            (_(u"avslåtte søknader"), MembershipApproval.objects.filter(applicant=request.user, processed=True, approved=False), True),
+            (_(u"godkjente søknader"), MembershipApproval.objects.filter(applicant=request.user, processed=True), True),
+        ],
         'field_of_study_application': FieldOfStudyApplicationForm(),
         'mark_rules_accepted' : request.user.mark_rules,
     }

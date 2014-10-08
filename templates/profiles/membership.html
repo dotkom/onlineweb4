@@ -5,13 +5,20 @@
         <h3>Medlemskap</h3>
     </div>
 </div>
-{% if not active_applications %}
+{% if not has_active_approvals %}
+    <div class="row">
+        <div class="col-md-12">
+            <p><strong>Avslåtte søknader havner nederst på siden, sjekk her før du sender inn nye søknader!</strong></p>
+        </div>
+    </div>
     {% if user.ntnu_username %}
-        {% if user.has_old_membership %} 
+        {% if not user.has_expiring_membership %} 
     <hr />
     <div class="row">
-        <div class="col-xs-12 col-sm-6 col-md-3">
-            Ettersom du har et gammelt medlemskap kan du søke om å få dette forlenget. Forlengelsen er for ett år om gangen.
+        <div class="col-xs-12 col-sm-6 col-md-6">
+            <p class="ingress">
+                Ettersom du har et gammelt medlemskap kan du søke om å få dette forlenget. Forlengelsen er for ett år om gangen.
+            </p>
         </div>
         <div class="col-xs-12 col-sm-6 col-md-3">
             <form id="membership-application" method="post" action="{% url 'approval_send_membership_application' %}">
@@ -54,56 +61,88 @@
         </div>
     </div>
     {% endif %}
-{% else %}
-    <div class="row">
-        <div class="col-md-12">
-            <h3>Aktive søknader</h3>
-        </div>
-    </div>
-    {% for app in active_applications %}
-    <div class="row row-space-sm">
-        <div class="col-md-12">
-            <h4>{{ app }}</h4>    
-            <div class="inline">
-                <div class="row">
-                    <div class="col-md-3"><b>Opprettet dato:</b></div>
-                    <div class="col-md-9"> {{ app.created }}</div>
-                </div>
-            </div>
-            {% if app.is_fos_application %}
-                <div class="inline">
-                    <div class="row">
-                        <div class="col-md-3"><b>Startet på studiet:</b></div>
-                        <div class="col-md-9"> {{ app.started_date }}</div>
-                    </div>
-                </div>
-                <div class="inline">
-                    <div class="row">
-                        <div class="col-md-3"><b>Studieretning:</b></div>
-                        <div class="col-md-9"> {{ app.get_field_of_study_display }}</div>
-                    </div>
-                </div>
-            {% endif %}
-            {% if app.is_membership_application %}
-                <div class="inline">
-                    <div class="row">
-                        <div class="col-md-3"><b>Utløpsdato for medlemskap:</b></div>
-                        <div class="col-md-9"> {{ app.new_expiry_date }}</div>
-                    </div>
-                </div>
-            {% endif %}
-            {% if app.message %}
-                <div class="inline">
-                    <div class="row">
-                        <div class="col-md-3"><b>Melding fra godkjenner:</b></div>
-                        <div class="col-md-9"> {{ app.message }}</div>
-                    </div>
-                </div>
-            {% endif %}
-            <div class="row-space-top-sm">
-                <a href="{% url 'approval_cancel_application' application_id=app.id %}" type="submit" class="btn btn-danger" value="{{ app.id }}">Slett søknad</a>
-            </div>
-        </div>
-    </div>
-    {% endfor %}
 {% endif %}
+<hr />
+<div class="row">
+    <div class="col-md-12">
+        <p>
+            Du har aktive søknader. 
+        </p>
+        <p>
+            Dersom du oppdager feil eller mangler i en aktiv søknad kan du slette den og sende inn en ny.
+        </p>
+    </div>
+</div>
+<div class="row row-space-sm">
+    <div class="col-md-12">
+        <div class="panel-group" id="approvalsaccordion">
+            {% for heading, app_list, is_collapsed in approvals %}
+                <div class="panel panel-default">
+                    <div class="panel-heading accordion-toggle" data-toggle="collapse" data-parent="#approvalsaccordion" href="#collapse-{{ heading|slugify }}">
+                        <h5>{{ heading|capfirst }}</h5>
+                    </div>
+                    <div id="collapse-{{ heading|slugify }}" class="panel-collapse collapse {% if not is_collapsed %}in{% endif %}">
+                        <div class="panel-body">
+                            {% for app in app_list %}
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="application">
+                                            <div class="applicationheader">
+                                                {{ app }}
+                                            </div>
+                                            <div class="applicationbody">
+                                                <div class="inline">
+                                                    <div class="row">
+                                                        <div class="col-md-3"><b>Opprettet dato:</b></div>
+                                                        <div class="col-md-9"> {{ app.created }}</div>
+                                                    </div>
+                                                </div>
+                                                {% if app.is_fos_application %}
+                                                    <div class="inline">
+                                                        <div class="row">
+                                                            <div class="col-md-3"><b>Startet på studiet:</b></div>
+                                                            <div class="col-md-9"> {{ app.started_date }}</div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="inline">
+                                                        <div class="row">
+                                                            <div class="col-md-3"><b>Studieretning:</b></div>
+                                                            <div class="col-md-9"> {{ app.get_field_of_study_display }}</div>
+                                                        </div>
+                                                    </div>
+                                                {% endif %}
+                                                {% if app.is_membership_application %}
+                                                    <div class="inline">
+                                                        <div class="row">
+                                                            <div class="col-md-3"><b>Utløpsdato for medlemskap:</b></div>
+                                                            <div class="col-md-9"> {{ app.new_expiry_date }}</div>
+                                                        </div>
+                                                    </div>
+                                                {% endif %}
+                                                {% if app.message %}
+                                                    <div class="inline">
+                                                        <div class="row">
+                                                            <div class="col-md-3"><b>Melding fra godkjenner:</b></div>
+                                                            <div class="col-md-9"> {{ app.message }}</div>
+                                                        </div>
+                                                    </div>
+                                                {% endif %}
+                                                {% if not app.processed %}
+                                                    <div class="row-space-top-sm">
+                                                        <a href="{% url 'approval_cancel_application' application_id=app.id %}" type="submit" class="btn btn-danger" value="{{ app.id }}">Slett søknad</a>
+                                                    </div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% empty %}
+                                <p>Du har ingen {{ heading }}.</p>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
