@@ -96,6 +96,10 @@ def cancel_application(request, application_id):
         messages.error(request, _(u"Bare søkeren selv kan slette en søknad."))
         return redirect('profiles')
 
+    if app.processed:
+        messages.error(request, _(u"Denne søknaden er behandlet og kan ikke slettes."))
+        return redirect('profiles')
+
     app.delete()
 
     return redirect('profiles')
