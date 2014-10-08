@@ -22,8 +22,11 @@
                         </h2>
                     </div>
                     <div class="col-md-4">
-                        <div class="eventdetails-dropdown btn-group pull-right">
-                            <div class="btn-group">
+                        <div class="event-details-dropdown btn-group pull-right">
+                            {%if user.is_authenticated %}
+                                {% in_group "Komiteer" as in_komiteer %}
+                            {%endif%}
+                            {% if in_komiteer != True %}
                                 <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
                                     <span class="glyphicon glyphicon-calendar"></span>
                                     Eksporter
@@ -33,25 +36,33 @@
                                     <li><a href="{{ ics_path }}">ICS</a></li>
                                     <li><a href="http://www.google.com/calendar/render?cid={{ ics_path|unhttps|urlencode }}">Google Calendar</a></li>
                                 </ul>
-                            </div>
-                        {% if user.is_authenticated %}
-                            {% in_group "Komiteer" as in_komiteer %}
-                            {% if in_komiteer %}
-                            <div class="btn-group pull-right">
-                                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-                                    Administrasjon
-                                    <span class="caret"></span>
-                                </button>
-                                <ul class="dropdown-menu" role="menu">
-                                    <li><a href="{% url 'admin:events_event_change' event.id %}">Rediger</a></li>
-                                    {% if event.is_attendance_event %}
-                                        <li><a href="{% url 'event_attendees_pdf' event.id %}">Påmeldingsliste</a></li>
-                                        <li><a href="{% url 'event_mail_participants' event.id %}">Send epost til deltakere</a></li>
-                                    {% endif %}
-                                </ul>
-                            </div>
                             {% endif %}
-                        {% endif %}
+                            {% if in_komiteer %}
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                                        <span class="glyphicon glyphicon-calendar"></span>
+                                        Eksporter
+                                        <span class="caret"></span>
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li><a href="{{ ics_path }}">ICS</a></li>
+                                        <li><a href="http://www.google.com/calendar/render?cid={{ ics_path|unhttps|urlencode }}">Google Calendar</a></li>
+                                    </ul>
+                                </div>
+                                <div class="btn-group pull-right">
+                                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                                        Administrasjon
+                                        <span class="caret"></span>
+                                    </button>
+                                    <ul class="dropdown-menu" role="menu">
+                                        <li><a href="{% url 'admin:events_event_change' event.id %}">Rediger</a></li>
+                                        {% if event.is_attendance_event %}
+                                            <li><a href="{% url 'event_attendees_pdf' event.id %}">Påmeldingsliste</a></li>
+                                            <li><a href="{% url 'event_mail_participants' event.id %}">Send epost til deltakere</a></li>
+                                        {% endif %}
+                                    </ul>
+                                </div>
+                            {% endif %}
                         </div>
                     </div>
                 </div>

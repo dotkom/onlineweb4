@@ -1,4 +1,5 @@
 @import "colors.less";
+@import "bootstrap/variables.less";
 
 #filter {
   background: @baby-blue-medium;
@@ -95,5 +96,7 @@
   }
 }
 .event-archive-dropdown {
-  margin-top: 20px;
+  @media (min-width: @screen-sm-min){
+    margin-top: 20px;
+  }
 }
