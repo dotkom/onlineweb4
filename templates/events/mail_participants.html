@@ -55,7 +55,7 @@
 				<form method="post" onsubmit="return confirm('Har du dobbeltsjekket informasjonen og vil sende denne eposten?');">
 					{% csrf_token %}
 					<div class="form-group">
-						<label for="to_email">Fra epost</label>
+						<label for="to_email">Til epost</label>
 						<select id="to_email" name="to_email" class="form-control">
 						  	<option value="1">Alle påmeldte</option>
 						  	<option value="2">Påmeldte på venteliste</option>
