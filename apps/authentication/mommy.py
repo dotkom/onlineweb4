@@ -80,7 +80,8 @@ class SynchronizeBedFagUsers(Task):
         
         # Logging the result
         logger.info("Added " + str(synces) + " users to the common group.")
-    
+
+
 class SynchronizePublicWikiEditAccess(Task):
 
     @staticmethod
@@ -88,7 +89,7 @@ class SynchronizePublicWikiEditAccess(Task):
         logger = logging.getLogger('syncer')
         locale.setlocale(locale.LC_ALL, "en_US.utf8")
         
-        SynchronizeBedFagUsers.sync_users(logger)
+        SynchronizePublicWikiEditAccess.sync_users(logger)
     
     @staticmethod
     def sync_users(logger):
@@ -133,5 +134,57 @@ class SynchronizePublicWikiEditAccess(Task):
                 WIKI_EDIT_ACCESS_GROUP.user_set.add(user)
 
 
+class SynchronizeCommitteeAccess(Task):
+
+    @staticmethod
+    def run():
+        logger = logging.getLogger('syncer')
+        locale.setlocale(locale.LC_ALL, "en_US.utf8")
+        
+        SynchronizeCommitteeAccess.sync_users(logger)
+    
+    @staticmethod
+    def sync_users(logger):
+        # Logging
+        logger.info("Started syncing users to a common group for committee access")
+        
+        # Define container for all users
+        user_container = []
+        
+        for group_id in settings.WIKI_COMMITTEE_ACCESS:
+            # Get users for this group
+            group_members = Group.objects.get(id = group_id)
+            
+            # Append users to user_container (if they are not already there)
+            for user in group_members.user_set.all():
+                if user not in user_container:
+                    user_container.append(user)
+        
+        # Load object for the group the users should be assigned to
+        WIKI_COMMITTEE_GROUP = Group.objects.get(id = settings.WIKI_COMMITTEE_ACCESS_GROUP_ID)
+        
+        # Loop the list of all users we have
+        for user in user_container:
+            is_already_member = False
+            
+            # Get all groups
+            user_groups = user.groups.all()
+            
+            # Loop the groups
+            for group in user_groups:
+                if (group.id == settings.WIKI_COMMITTEE_ACCESS_GROUP_ID):
+                    is_already_member = True
+                    break
+            
+            # The user is not already a member, add
+            if (is_already_member == False):
+                # Logging
+                logger.info("User id " + str(user.id) + " is not a member of the group having \
+                            access permissions to the committee wiki. Adding.")
+                
+                # Adding to group
+                WIKI_COMMITTEE_GROUP.user_set.add(user)
+
 schedule.register(SynchronizeBedFagUsers, day_of_week='mon-sun', hour=4, minute=00)
 schedule.register(SynchronizePublicWikiEditAccess, day_of_week='mon-sun', hour=4, minute=00)
+schedule.register(SynchronizeCommitteeAccess, day_of_week='mon-sun', hour=4, minute=00)
