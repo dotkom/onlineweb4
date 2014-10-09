@@ -146,8 +146,12 @@ def unattendEvent(request, event_id):
         return redirect(event)
 
     # Check if the deadline for unattending has passed
-    if attendance_event.unattend_deadline < timezone.now():
+    if attendance_event.unattend_deadline < timezone.now() and not attendance_event.is_on_waitlist(request.user):
         messages.error(request, _(u"Avmeldingsfristen for dette arrangementet har utløpt."))
+        return redirect(event)
+
+    if attendance_event.event.event_start < timezone.now():
+        messages.error(request, _(u"Dette arrangementet har allerede startet."))
         return redirect(event)
 
     event.notify_waiting_list(host=request.META['HTTP_HOST'], unattended_user=request.user)

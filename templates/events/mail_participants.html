@@ -1,90 +1,92 @@
 {% extends 'base.html' %}
 
+{% block title %}
+Send epost til påmeldte - Online
+{% endblock title %}
+
 {% block content %}
 <section>
     <div class="container">
-    <div class="row">
-    	<div class="col-md-12">
-        <div class="page-header">
-            <h2>Send epost til påmeldte for  «{{ event.title }}»</h2>
-        </div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-4">
-        <div class="page-header">
-            <h3>Alle påmeldte</h3>
-        </div>
-            {% if all_attendees %}
-            {% for attendee in all_attendees.all %}
-                {{ attendee.user.email }},
-            {% endfor %}
-            {% else %}
-            Ingen er påmeldt dette arrangementet.
-            {% endif %}
-
-        </div>
-        <div class="col-md-4">
-        <div class="page-header">
-            <h3>Påmeldte som er på venteliste</h3>
-        </div>
-        {% if attendees_on_waitlist %}
-            {% for attendee in attendees_on_waitlist.all %}
-            {{ attendee.user.email }},
-            {% endfor %}
-        {% else %}
-            Ingen er på venteliste.
-        {% endif %}
-        </div>
-        <div class="col-md-4">
-        <div class="page-header">
-            <h3>Påmeldte som ikke har betalt</h3>
-        </div>
-        {% if attendees_not_paid %}
-            {% for attendee in attendees_not_paid.all %}
-            {{ attendee.user.email }},
-            {% endfor %}
-        {% else %}
-            Alle som er meldt på har betalt
-        {% endif %}
-        </div>
-    </div>
-    <div class="row" style="margin-top:30px">
-        <div class="col-md-6">
-        <h3>Send epost direkte</h3>
-        <form method="post" onsubmit="return confirm('Har du dobbeltsjekket informasjonen og vil sende denne eposten?');">
-            {% csrf_token %}
-            <div class="form-group">
-            <label for="to_email">Fra epost</label>
-            <select id="to_email" name="to_email" class="form-control">
-                <option value="1">Alle påmeldte</option>
-                <option value="2">Påmeldte på venteliste</option>
-                <option value="3">Påmeldte som ikke har betalt</option>
-            </select>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="page-header">
+                    <h2>Send epost til påmeldte for  «{{ event.title }}»</h2>
+                </div>
             </div>
-            <div class="form-group">
-            <label for="from_email">Fra epost</label>
-            <select id="from_email" name="from_email" class="form-control">
-				<option value="1">arrkom@online.ntnu.no</option>
-            	<option value="2">bedkom@online.ntnu.no</option>
-                <option value="3">fagkom@online.ntnu.no</option>
-				<option value="4">ekskom@online.ntnu.no</option>
-                <option value="5">kontakt@online.ntnu.no</option>
-            </select>
-            </div>
-            <div class="form-group">
-            <label for="subject">Emne</label>
-            <input type="text" class="form-control" name="subject" id="subject" />
-            </div>
-            <div class="form-group">
-            <label for="message">Melding</label>
-            <textarea id="message" name="message" class="form-control" rows="5"></textarea>
-            </div>
-            <p style="padding:10px; text-align:center" class="alert-warning">Vi legger automatisk på signatur for deg, skriv BARE din beskjed.</p>
-            <input name="submit" class="btn btn-success" type="submit" value="Send" />
-        </form>
         </div>
-    </div>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="page-header">
+                    <h3>Alle påmeldte</h3>
+                </div>
+                {% if all_attendees %}
+                    {% for attendee in all_attendees.all %}
+                        {{ attendee.user.email }},
+                    {% endfor %}
+                {% else %}
+                    Ingen er påmeldt dette arrangementet.
+                {% endif %}
+            </div>
+            <div class="col-md-4">
+                <div class="page-header">
+                    <h3>Påmeldte som er på venteliste</h3>
+                </div>
+                {% if attendees_on_waitlist %}
+                    {% for attendee in attendees_on_waitlist.all %}
+                        {{ attendee.user.email }},
+                    {% endfor %}
+                {% else %}
+                    Ingen er på venteliste.
+                {% endif %}
+            </div>
+            <div class="col-md-4">
+                <div class="page-header">
+                    <h3>Påmeldte som ikke har betalt</h3>
+                </div>
+                {% if attendees_not_paid %}
+                    {% for attendee in attendees_not_paid.all %}
+                        {{ attendee.user.email }},
+                    {% endfor %}
+                {% else %}
+                    Alle som er meldt på har betalt
+                {% endif %}
+            </div>
+        </div>
+        <div class="row" style="margin-top:30px">
+            <div class="col-md-6">
+                <h3>Send epost direkte</h3>
+                <form method="post" onsubmit="return confirm('Har du dobbeltsjekket informasjonen og vil sende denne eposten?');">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="to_email">Til epost</label>
+                        <select id="to_email" name="to_email" class="form-control">
+                        <option value="1">Alle påmeldte</option>
+                        <option value="2">Påmeldte på venteliste</option>
+                        <option value="3">Påmeldte som ikke har betalt</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="from_email">Fra epost</label>
+                        <select id="from_email" name="from_email" class="form-control">
+                            <option value="1">arrkom@online.ntnu.no</option>
+                            <option value="2">bedkom@online.ntnu.no</option>
+                            <option value="3">fagkom@online.ntnu.no</option>
+                            <option value="4">kontakt@online.ntnu.no</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="subject">Emne</label>
+                        <input type="text" class="form-control" name="subject" id="subject" />
+                    </div>
+                    <div class="form-group">
+                        <label for="message">Melding</label>
+                        <textarea id="message" name="message" class="form-control" rows="5"></textarea>
+                    </div>
+                    <p style="padding:10px; text-align:center" class="alert-warning">Vi legger automatisk på signatur for deg, skriv BARE din beskjed.</p>
+                    <input name="submit" class="btn btn-success" type="submit" value="Send" />
+                </form>
+            </div>
+        </div>
     </div>
 </section>
 {% endblock %}

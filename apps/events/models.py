@@ -552,6 +552,9 @@ class AttendanceEvent(models.Model):
     def is_attendee(self, user):
         return self.attendees.filter(user=user)
 
+    def is_on_waitlist(self, user):
+        return reduce(lambda x, y: x or y.user == user, self.waitlist_qs, False)
+
     def __unicode__(self):
         return self.event.title
 

@@ -51,6 +51,7 @@ COMMITTEES = [
     ('prokom', _(u'Profil-og aviskomiteen')),
     ('trikom', _(u'Trivselskomiteen')),
     ('velkom', _(u'Velkomstkomiteen')),
+    ('appkom', _(u'Applikasjonskomiteen')),
 ]
 
 POSITIONS = [
