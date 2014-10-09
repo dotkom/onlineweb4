@@ -286,13 +286,13 @@ def mail_participants(request, event_id):
         from_email = 'kontakt@online.ntnu.no'
         from_email_value = request.POST.get('from_email')
 
-        if from_email_value == '1':
+        if from_email_value == '1' or from_email_value == '4':
             from_email = settings.EMAIL_ARRKOM
         elif from_email_value == '2':
             from_email = settings.EMAIL_BEDKOM
         elif from_email_value == '3':
             from_email = settings.EMAIL_FAGKOM
-        elif from_email_value == '4':
+        elif from_email_value == '7':
             from_email = settings.EMAIL_EKSKOM
 
         signature = u'\n\nVennlig hilsen Linjeforeningen Online.\n(Denne eposten kan besvares til %s)' % from_email
