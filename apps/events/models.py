@@ -33,7 +33,8 @@ class Event(models.Model):
         (3, 'Kurs'),
         (4, 'Utflukt'),
         (5, 'Internt'),
-        (6, 'Annet')
+        (6, 'Annet'),
+        (7, 'Ekskursjon')
     )
 
     author = models.ForeignKey(User, related_name='oppretter')
@@ -204,13 +205,13 @@ http://%s%s
                               settings.DEFAULT_FROM_EMAIL, [attendee.user.email])
 
     def feedback_mail(self):
-        if self.event_type == 1: # Sosialt 
+        if self.event_type == 1 or self.event_type == 4: # Sosialt & Utflukt
             return settings.EMAIL_ARRKOM
         elif self.event_type == 2: #Bedpres
             return settings.EMAIL_BEDKOM
         elif self.event_type == 3: #Kurs
             return settings.EMAIL_FAGKOM
-        elif self.event_type == 4: # Utflukt
+        elif self.event_type == 7: # Ekskursjon
             return settings.EMAIL_EKSKOM
         else:
             return settings.DEFAULT_FROM_EMAIL
