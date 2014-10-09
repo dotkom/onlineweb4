@@ -164,6 +164,11 @@ class SimpleTest(TestCase):
         #Utflukt
         feedback_relation = self.create_feedback_relation(event_type=4)
         email = FeedbackMail.get_committee_email(feedback_relation)
+        self.assertEqual(email, settings.EMAIL_ARRKOM)
+
+        #Ekskursjon
+        feedback_relation = self.create_feedback_relation(event_type=7)
+        email = FeedbackMail.get_committee_email(feedback_relation)
         self.assertEqual(email, settings.EMAIL_EKSKOM)
         
         #Default
