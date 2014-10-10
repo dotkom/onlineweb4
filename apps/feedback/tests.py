@@ -167,12 +167,12 @@ class SimpleTest(TestCase):
         self.assertEqual(email, settings.EMAIL_ARRKOM)
 
         #Ekskursjon
-        feedback_relation = self.create_feedback_relation(event_type=7)
+        feedback_relation = self.create_feedback_relation(event_type=5)
         email = FeedbackMail.get_committee_email(feedback_relation)
         self.assertEqual(email, settings.EMAIL_EKSKOM)
         
         #Default
-        feedback_relation = self.create_feedback_relation(event_type=5)
+        feedback_relation = self.create_feedback_relation(event_type=6)
         email = FeedbackMail.get_committee_email(feedback_relation)
         self.assertEqual(email, settings.DEFAULT_FROM_EMAIL)
         
