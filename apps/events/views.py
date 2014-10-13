@@ -273,17 +273,19 @@ def mail_participants(request, event_id):
 
     event = get_object_or_404(Event, pk=event_id)
 
+    # If this is not an attendance event, redirect to event with error
     if not event.attendance_event:
-        return HttpResponse(status=503)
+        messages.error(request, _(u"Dette er ikke et påmeldingsarrangement."))
+        return redirect(event)
 
     # Check access
     if not event in get_group_restricted_events(request.user):
         messages.error(request, _(u'Du har ikke tilgang til å vise denne siden.'))
         return redirect(event)
 
-    all_attendees = event.attendance_event.attendees
-    attendees_on_waitlist = event.attendance_event.waitlist_qs
-    attendees_not_paid = event.attendees_not_paid
+    all_attendees = list(event.attendance_event.attendees.attendee_qs)
+    attendees_on_waitlist = list(event.attendance_event.waitlist_qs)
+    attendees_not_paid = list(event.attendance_event.attendees_not_paid)
 
     if request.method == 'POST':
 
@@ -307,19 +309,17 @@ def mail_participants(request, event_id):
         to_emails_value = request.POST.get('to_email')
 
         if to_emails_value == '1':
-            to_emails = [attendee.user.email for attendee in all_attendees.all()]
-            print to_emails
+            to_emails = [attendee.user.email for attendee in all_attendees]
         elif to_emails_value == '2':
-            to_emails = [attendee.user.email for attendee in attendees_on_waitlist.all()]
+            to_emails = [attendee.user.email for attendee in attendees_on_waitlist]
         else:
-            to_emails = [attendee.user.email for attendee in attendees_not_paid.all()]
+            to_emails = [attendee.user.email for attendee in attendees_not_paid]
 
         message = '%s%s' % (request.POST.get('message'), signature)
         subject = request.POST.get('subject')
 
         # Send mail
         try:
-
             if EmailMessage(unicode(subject), unicode(message), from_email, [], to_emails).send():
                 messages.success(request, _(u'Mailen ble sendt'))
                 return redirect(event)

@@ -166,10 +166,6 @@ class Event(models.Model):
         response['status'] = True
         return response
 
-    @property
-    def attendees_not_paid(self):
-        return self.attendance_event.attendees.filter(paid=False)
-    
     def what_place_is_user_on_wait_list(self, user):
         if self.attendance_event:
             if self.attendance_event.waitlist:
@@ -490,6 +486,10 @@ class AttendanceEvent(models.Model):
         if self.has_reservation:
             return self.reserved_seats.reservees.all()
         return []
+
+    @property
+    def attendees_not_paid(self):
+        return map(lambda a: a.paid == False, self.attendees_qs)
 
     @property
     def number_of_attendees(self):
