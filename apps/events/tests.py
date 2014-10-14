@@ -58,9 +58,9 @@ class EventTest(TestCase):
     def testReservedSeats(self):
         self.logger.debug("Testing reserved seats")
         reservation = G(Reservation, attendance_event=self.attendance_event, seats=2)
-        reservee1 = G(Reservee, reservation=reservation, name="jan", note="jan er kul", allergier="allergi1")
+        reservee1 = G(Reservee, reservation=reservation, name="jan", note="jan er kul", allergies="allergi1")
         self.assertEqual(self.attendance_event.number_of_reserved_seats_taken, 1) 
-        reservee2 = G(Reservee, reservation=reservation, name="per", note="per er rå", allergier="allergi2")
+        reservee2 = G(Reservee, reservation=reservation, name="per", note="per er rå", allergies="allergi2")
         self.assertEqual(self.attendance_event.number_of_reserved_seats_taken, 2) 
 
     def testNumberOfTakenSeats(self):
@@ -69,12 +69,12 @@ class EventTest(TestCase):
         self.assertEqual(self.attendance_event.number_of_attendees, 1)
         # Make a reservation, for 2 seats
         reservation = G(Reservation, attendance_event=self.attendance_event, seats=2)
-        reservee1 = G(Reservee, reservation=reservation, name="jan", note="jan er kul", allergier="allergi1")
+        reservee1 = G(Reservee, reservation=reservation, name="jan", note="jan er kul", allergies="allergi1")
         self.assertEqual(self.attendance_event.max_capacity, 5)
         self.assertEqual(self.attendance_event.number_of_attendees, 1)
         self.assertEqual(self.attendance_event.number_of_reserved_seats_taken, 1) 
         self.assertEqual(self.attendance_event.number_of_seats_taken, 3)
-        reservee2 = G(Reservee, reservation=reservation, name="per", note="per er rå", allergier="allergi2")
+        reservee2 = G(Reservee, reservation=reservation, name="per", note="per er rå", allergies="allergi2")
         self.assertEqual(self.attendance_event.number_of_attendees, 1)
         self.assertEqual(self.attendance_event.number_of_reserved_seats_taken, 2) 
         self.assertEqual(self.attendance_event.number_of_seats_taken, 3)
