@@ -78,94 +78,6 @@ class Event(models.Model):
         except AttendanceEvent.DoesNotExist:
             return False
 
-    def is_eligible_for_signup(self, user):
-        """
-        Checks if a user can attend a specific event
-        This method checks for:
-            AttendanceEvent
-            Waitlist
-            Room on event
-            Rules
-            Marks
-        @param User object
-        The returned dict contains a key called 'status_code'. These codes follow the HTTP
-        standard in terms of overlying scheme.
-        2XX = successful
-        4XX = client error (user related)
-        5XX = server error (event related)
-        These codes are meant as a debugging tool only. The eligibility checking is quite
-        extensive, and tracking where it's going wrong is much needed.
-        TODO:
-            Exception handling
-            Message handling (Return what went wrong. Tuple? (False, message))
-        """
-
-        response = {'status' : False, 'message' : '', 'status_code': None}
-
-        # Check first if this is an attendance event
-        if not self.is_attendance_event():
-            response['message'] = _(u"Dette er ikke et påmeldingsarrangement.")
-            response['status_code'] = 500
-            return response
-
-        # Registration closed
-        if timezone.now() > self.attendance_event.registration_end:
-            response['message'] = _(u'Påmeldingen er ikke lenger åpen.')
-            response['status_code'] = 502 
-            return response
-
-        #Room for me on the event?
-        if not self.attendance_event.room_on_event:
-            response['message'] = _(u"Det er ikke mer plass på dette arrangementet.")
-            response['status_code'] = 503 
-            return response
-
-        #
-        # Offset calculations.
-        #
-
-        # Are there any rules preventing me from attending?
-        # This should be checked last of the offsets, because it can completely deny you access.
-        response = self.attendance_event.rules_satisfied(user)
-        if not response['status']:
-            if 'offset' not in response:
-                return response
-        
-        # Do I have any marks that postpone my registration date?
-        expiry_date = get_expiration_date(user)
-        if expiry_date and expiry_date > timezone.now().date():
-            # Offset is currently 1 day if you have marks, regardless of amount. 
-            mark_offset = timedelta(days=1)
-            postponed_registration_start = self.attendance_event.registration_start + mark_offset
-
-            before_expiry = self.attendance_event.registration_start.date() < expiry_date
-
-            if postponed_registration_start > timezone.now() and before_expiry:
-                if 'offset' in response and response['offset'] < postponed_registration_start or 'offset' not in response:    
-                    response['status'] = False
-                    response['status_code'] = 401
-                    response['message'] = _(u"Din påmelding er utsatt grunnet prikker.")
-                    response['offset'] = postponed_registration_start
-            
-        # Return response if offset was set.
-        if 'offset' in response and response['offset'] > timezone.now():
-            return response 
-
-        #
-        # Offset calculations end
-        #
-
-        #Registration not open  
-        if timezone.now() < self.attendance_event.registration_start:
-            response['status'] = False
-            response['message'] = _(u'Påmeldingen har ikke åpnet enda.')
-            response['status_code'] = 501 
-            return response
-
-        # No objections, set eligible.
-        response['status'] = True
-        return response
-
     def notify_waiting_list(self, host, unattended_user=None, extra_capacity=1):
         if not self.is_attendance_event():
             return
@@ -529,7 +441,7 @@ class AttendanceEvent(models.Model):
         """
         Returns True if there are free seats or an open waiting list
         """
-        return True if self.free_seats or self.waitlist else False
+        return True if self.free_seats > 0 or self.waitlist else False
 
     @property
     def will_i_be_on_wait_list(self):
@@ -538,6 +450,88 @@ class AttendanceEvent(models.Model):
     @property
     def waitlist_enabled(self):
         return self.waitlist
+
+    def is_eligible_for_signup(self, user):
+        """
+        Checks if a user can attend a specific event
+        This method checks for:
+            Waitlist
+            Room on event
+            Rules
+            Marks
+        @param User object
+        The returned dict contains a key called 'status_code'. These codes follow the HTTP
+        standard in terms of overlying scheme.
+        2XX = successful
+        4XX = client error (user related)
+        5XX = server error (event related)
+        These codes are meant as a debugging tool only. The eligibility checking is quite
+        extensive, and tracking where it's going wrong is much needed.
+        TODO:
+            Exception handling
+        """
+
+        response = {'status' : False, 'message' : '', 'status_code': None}
+
+        # Registration closed
+        if timezone.now() > self.attendance_event.registration_end:
+            response['message'] = _(u'Påmeldingen er ikke lenger åpen.')
+            response['status_code'] = 502 
+            return response
+
+        #Room for me on the event?
+        if not self.attendance_event.room_on_event:
+            response['message'] = _(u"Det er ikke mer plass på dette arrangementet.")
+            response['status_code'] = 503 
+            return response
+
+        #
+        # Offset calculations.
+        #
+
+        # Are there any rules preventing me from attending?
+        # This should be checked last of the offsets, because it can completely deny you access.
+        response = self.attendance_event.rules_satisfied(user)
+        if not response['status']:
+            if 'offset' not in response:
+                return response
+        
+        # Do I have any marks that postpone my registration date?
+        active_marks = Mark.active.filter(given_to = user)
+        num_active_marks = active_marks.count()
+
+        if num_active_marks > 0:
+            # Offset is currently 1 day per mark. 
+            mark_offset = timedelta(days=num_active_marks)
+            postponed_registration_start = self.attendance_event.registration_start + mark_offset
+
+            before_expiry = self.attendance_event.registration_start.date() < active_marks.aggregate(models.Max('expiration_date'))['expiration_date__max']
+
+            if postponed_registration_start > timezone.now() and before_expiry:
+                if 'offset' in response and response['offset'] < postponed_registration_start or 'offset' not in response:    
+                    response['status'] = False
+                    response['status_code'] = 401
+                    response['message'] = _(u"Din påmelding er utsatt grunnet prikker.")
+                    response['offset'] = postponed_registration_start
+            
+        # Return response if offset was set.
+        if 'offset' in response and response['offset'] > timezone.now():
+            return response 
+
+        #
+        # Offset calculations end
+        #
+
+        #Registration not open  
+        if timezone.now() < self.attendance_event.registration_start:
+            response['status'] = False
+            response['message'] = _(u'Påmeldingen har ikke åpnet enda.')
+            response['status_code'] = 501 
+            return response
+
+        # No objections, set eligible.
+        response['status'] = True
+        return response
 
     def rules_satisfied(self, user):
         """
