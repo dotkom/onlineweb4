@@ -37,7 +37,6 @@ def index(request):
 def details(request, event_id, event_slug):
     event = get_object_or_404(Event, pk=event_id)
 
-    is_attendance_event = False
     user_anonymous = True
     user_attending = False
     place_on_wait_list = 0
@@ -50,9 +49,10 @@ def details(request, event_id, event_slug):
         if event in get_group_restricted_events(request.user):
             user_access_to_event = True
 
-    try:
+    context = {'event': event, 'ics_path': request.build_absolute_uri(reverse('event_ics', args=(event.id,)))}
+
+    if event.is_attendance_event():
         attendance_event = AttendanceEvent.objects.get(pk=event_id)
-        is_attendance_event = True
         form = CaptchaForm(user=request.user)
 
         if attendance_event.rule_bundles:
@@ -70,13 +70,8 @@ def details(request, event_id, event_slug):
             user_status = event.is_eligible_for_signup(request.user)
 
             # Check if this user is on the waitlist
-            place_on_wait_list = event.what_place_is_user_on_wait_list(request.user)
+            place_on_wait_list = attendance_event.what_place_is_user_on_wait_list(request.user)
 
-    except AttendanceEvent.DoesNotExist:
-        pass
-
-    context = {'event': event, 'ics_path': request.build_absolute_uri(reverse('event_ics', args=(event.id,)))}
-    if is_attendance_event:
         context.update({
                 'now': timezone.now(),
                 'attendance_event': attendance_event,
@@ -90,6 +85,7 @@ def details(request, event_id, event_slug):
                 'captcha_form': form,
                 'user_access_to_event': user_access_to_event,
         })
+
     return render(request, 'events/details.html', context)
 
 def get_attendee(attendee_id):

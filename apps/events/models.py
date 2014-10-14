@@ -166,16 +166,6 @@ class Event(models.Model):
         response['status'] = True
         return response
 
-    def what_place_is_user_on_wait_list(self, user):
-        if self.attendance_event:
-            if self.attendance_event.waitlist:
-                waitlist = self.attendance_event.waitlist_qs
-                if waitlist:
-                    for attendee_object in waitlist:
-                        if attendee_object.user == user:
-                            return list(waitlist).index(attendee_object) + 1
-        return 0
-
     def notify_waiting_list(self, host, unattended_user=None, extra_capacity=1):
         if not self.is_attendance_event():
             return
@@ -602,6 +592,15 @@ class AttendanceEvent(models.Model):
 
     def is_on_waitlist(self, user):
         return reduce(lambda x, y: x or y.user == user, self.waitlist_qs, False)
+
+    def what_place_is_user_on_wait_list(self, user):
+        if self.waitlist:
+            waitlist = self.waitlist_qs
+            if waitlist:
+                for attendee_object in waitlist:
+                    if attendee_object.user == user:
+                        return list(waitlist).index(attendee_object) + 1
+        return 0
 
     def __unicode__(self):
         return self.event.title
