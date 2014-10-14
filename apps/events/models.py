@@ -497,7 +497,7 @@ class AttendanceEvent(models.Model):
                 return response
         
         # Do I have any marks that postpone my registration date?
-        active_marks = Mark.active.filter(given_to = user)
+        active_marks = Mark.active.filter(given_to = user, expiration_date > self.registration_start)
         num_active_marks = active_marks.count()
 
         if num_active_marks > 0:
@@ -505,9 +505,7 @@ class AttendanceEvent(models.Model):
             mark_offset = timedelta(days=num_active_marks)
             postponed_registration_start = self.attendance_event.registration_start + mark_offset
 
-            before_expiry = self.attendance_event.registration_start.date() < active_marks.aggregate(models.Max('expiration_date'))['expiration_date__max']
-
-            if postponed_registration_start > timezone.now() and before_expiry:
+            if postponed_registration_start > timezone.now():
                 if 'offset' in response and response['offset'] < postponed_registration_start or 'offset' not in response:    
                     response['status'] = False
                     response['status_code'] = 401
