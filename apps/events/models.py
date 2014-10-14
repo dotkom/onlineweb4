@@ -474,13 +474,13 @@ class AttendanceEvent(models.Model):
         response = {'status' : False, 'message' : '', 'status_code': None}
 
         # Registration closed
-        if timezone.now() > self.attendance_event.registration_end:
+        if timezone.now() > self.registration_end:
             response['message'] = _(u'Påmeldingen er ikke lenger åpen.')
             response['status_code'] = 502 
             return response
 
         #Room for me on the event?
-        if not self.attendance_event.room_on_event:
+        if not self.room_on_event:
             response['message'] = _(u"Det er ikke mer plass på dette arrangementet.")
             response['status_code'] = 503 
             return response
@@ -491,27 +491,31 @@ class AttendanceEvent(models.Model):
 
         # Are there any rules preventing me from attending?
         # This should be checked last of the offsets, because it can completely deny you access.
-        response = self.attendance_event.rules_satisfied(user)
+        response = self.rules_satisfied(user)
         if not response['status']:
             if 'offset' not in response:
                 return response
         
-        # Do I have any marks that postpone my registration date?
-        active_marks = Mark.active.filter(given_to = user, expiration_date > self.registration_start)
-        num_active_marks = active_marks.count()
-
+        # Do I have any marks that postpone my registration date? 
+        # We filter on the registration start to find marks relevant for this event.
+        num_active_marks = Mark.active.filter(given_to = user, expiration_date__gte = self.registration_start).count()
         if num_active_marks > 0:
             # Offset is currently 1 day per mark. 
             mark_offset = timedelta(days=num_active_marks)
-            postponed_registration_start = self.attendance_event.registration_start + mark_offset
 
-            if postponed_registration_start > timezone.now():
-                if 'offset' in response and response['offset'] < postponed_registration_start or 'offset' not in response:    
+            if 'offset' in response:
+                response['offset'] += mark_offset
+                response['message'] += " %s" % _(u"Din påmelding er utsatt grunnet prikker.")
+                # All rule offsets have a corresponding code that is 'n + 10' meaning itself + marks offset.
+                response['status_code'] += 10
+            else:
+                postponed_registration_start = self.registration_start + mark_offset
+                if postponed_registration_start > timezone.now():
                     response['status'] = False
-                    response['status_code'] = 401
-                    response['message'] = _(u"Din påmelding er utsatt grunnet prikker.")
                     response['offset'] = postponed_registration_start
-            
+                    response['message'] = _(u"Din påmelding er utsatt grunnet prikker.")
+                    response['status_code'] = 401
+
         # Return response if offset was set.
         if 'offset' in response and response['offset'] > timezone.now():
             return response 
@@ -521,7 +525,7 @@ class AttendanceEvent(models.Model):
         #
 
         #Registration not open  
-        if timezone.now() < self.attendance_event.registration_start:
+        if timezone.now() < self.registration_start:
             response['status'] = False
             response['message'] = _(u'Påmeldingen har ikke åpnet enda.')
             response['status_code'] = 501 
