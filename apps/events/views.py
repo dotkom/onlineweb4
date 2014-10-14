@@ -96,6 +96,10 @@ def attendEvent(request, event_id):
     
     event = get_object_or_404(Event, pk=event_id)
 
+    if not event.is_attendance_event():
+        messages.error(request, _(u"Dette er ikke et påmeldingsarrangement."))
+        return redirect(event)
+
     if not request.POST:
         messages.error(request, _(u'Vennligst fyll ut skjemaet.'))
         return redirect(event)
