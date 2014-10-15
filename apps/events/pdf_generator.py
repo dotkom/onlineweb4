@@ -6,7 +6,7 @@ from reportlab.platypus import TableStyle, Paragraph
 from reportlab.lib import colors
 from reportlab.lib.styles import getSampleStyleSheet
 
-class EventPDF:
+class EventPDF(object):
 
     event = None
     attendees = None
@@ -16,8 +16,6 @@ class EventPDF:
     waiters_table_data = None
     reservee_table_data = None
     allergies_table_data = None
-    full_span_attendee_lines = []
-    full_span_waiters_lines = []
 
     def __init__(self, event):
         self.event = event
@@ -30,6 +28,8 @@ class EventPDF:
         self.reservee_table_data = [(u'Navn', u'Notat'), ]
         self.allergies_table_data = [(u'Allergisk mot', u'Navn'), ]
 
+        self.full_span_attendee_lines = []
+        self.full_span_waiters_lines = []
         self.create_attendees_table_data()
         self.create_waiters_table_data()
         self.create_reservees_table_data()
