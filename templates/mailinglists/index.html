@@ -83,5 +83,7 @@ Epostlister - Online
 {% block js %}
 	{{ block.super }}
 	<script src="{{ STATIC_URL }}js/libs/masonry-3.1.2.min.js"></script>
+	{% compress js %}
 	<script src="{{ STATIC_URL }}js/Mailinglists.js"></script>
+	{% endcompress %}
 {% endblock js %}

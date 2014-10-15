@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
 {% load question_filters %}
+{% load compress %}
 
 {% block title %}
 Tilbakemeldinger - Resultater - Online
@@ -53,9 +54,11 @@ Tilbakemeldinger - Resultater - Online
     <script src="{{ STATIC_URL }}js/libs/jqplot/jqplot.barRenderer.min.js"></script>
     <script src="{{ STATIC_URL }}js/libs/jqplot/jqplot.categoryAxisRenderer.min.js"></script>
     <script src="{{ STATIC_URL }}js/libs/jqplot/jqplot.pointLabels.min.js"></script>
+    {% compress js %}
     <script src="{{ STATIC_URL }}js/libs/jquery.cookie.js"></script>
     <script src="{{ STATIC_URL }}js/Utils.js"></script>
     <script src="{{ STATIC_URL }}js/feedbackResults.js"></script>
+    {% endcompress %}
 {% endblock %}
 
 {% endblock content %}
