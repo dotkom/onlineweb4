@@ -146,8 +146,12 @@ def unattendEvent(request, event_id):
         return redirect(event)
 
     # Check if the deadline for unattending has passed
-    if attendance_event.unattend_deadline < timezone.now():
+    if attendance_event.unattend_deadline < timezone.now() and not attendance_event.is_on_waitlist(request.user):
         messages.error(request, _(u"Avmeldingsfristen for dette arrangementet har utløpt."))
+        return redirect(event)
+
+    if attendance_event.event.event_start < timezone.now():
+        messages.error(request, _(u"Dette arrangementet har allerede startet."))
         return redirect(event)
 
     event.notify_waiting_list(host=request.META['HTTP_HOST'], unattended_user=request.user)
@@ -178,8 +182,9 @@ def _search_indexed(request, query, filters):
         kwargs['attendance_event__attendees__user'] = request.user
 
     events = Event.objects.filter(**kwargs).order_by('event_start').prefetch_related(
-            'attendance_event', 'attendance_event__attendees')
-
+            'attendance_event', 'attendance_event__attendees', 'attendance_event__reserved_seats',
+            'attendance_event__reserved_seats__reservees')
+    
     if query:
         for result in watson.search(query, models=(events,)):
             results.append(result.object)
@@ -229,7 +234,7 @@ def calendar_export(request, event_id=None, user=None):
         try:
             username = signer.unsign(user)
             user = User.objects.get(username=username)
-        except BadSignature, User.DoesNotExist:
+        except (BadSignature, User.DoesNotExist):
             user = None
         if user:
             # Getting all events that the user has/is participating in

@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 from django import forms
 from apps.feedback.models import RatingAnswer
+from apps.feedback.models import MultipleChoiceAnswer
+from apps.feedback.models import Choice
 from apps.feedback.models import RATING_CHOICES
 from apps.feedback.models import FieldOfStudyAnswer
 from apps.feedback.models import TextAnswer
@@ -31,8 +33,6 @@ class RatingAnswerForm(AnswerForm):
 
 class FieldOfStudyAnswerForm(AnswerForm):
 
-    
-
     def clean_answer(self):
         data = self.cleaned_data['answer']
         return data
@@ -47,6 +47,19 @@ class TextAnswerForm(AnswerForm):
         model = TextAnswer
         exclude = ("feedback_relation", "question",)
 
+class MultipleChoiceForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        self.helper = FormHelper()
+        self.helper.form_tag = False
+        self.helper.html5_required = False
+        super(MultipleChoiceForm, self).__init__(*args, **kwargs)
+
+        self.fields['answer'] = forms.ModelChoiceField(queryset=Choice.objects.filter(question=self.instance.question.multiple_choice_relation))
+        self.fields['answer'].label = self.instance.question.multiple_choice_relation.label
+
+    class Meta:
+        model = MultipleChoiceAnswer
+        exclude = ("feedback_relation", "question", "choice")
 
 def create_answer_forms(fbr, post_data=None):
     """
@@ -70,3 +83,6 @@ def answer_form_factory(question, feedback_relation, prefix, post_data=None):
 
     elif question.answer.model == TextAnswer:
         return TextAnswerForm(post_data, instance=instance, prefix=prefix)
+
+    elif question.answer.model == MultipleChoiceAnswer:
+        return MultipleChoiceForm(post_data, instance=instance, prefix=prefix)

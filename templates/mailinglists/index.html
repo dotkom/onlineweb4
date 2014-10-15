@@ -49,7 +49,6 @@ Epostlister - Online
 						Følgende er en oversikt over epostlister som overlapper. Øverst har du foreninger-epostlisten som går til alle. Pass på så du ikke sender epost til overlappende lister da du risikerer at flere hundre personer får samme epost to ganger, da vil du oppleve å få frustrasjon rettet mot deg.
 						<img id="map" src="{{ STATIC_URL }}img/resourcecenter/mailinglists-map.png" />
 					</p>
-					<!-- {{ retningslinjer }} --> <!-- retningslinjer|markdown ? -->
 				</div>
 			</div>
 
@@ -57,6 +56,7 @@ Epostlister - Online
 				<h3>Lister og medlemmer</h3>
 				<div id="masonry">
 					
+
 					<!-- masonry used for responsiveness, don't add bootstrap3 -->
 					{% for list in lists %}
 						<div class="mailinglist">
@@ -64,10 +64,10 @@ Epostlister - Online
 								<span class="title">
 									{{ list.name }}@online.ntnu.no
 								</span>
-								<ul>
-								{% for member in list.members %}
-								<li> {{member.name}} </li>
-								{% endfor %}
+								<ul id="{{ list.name }}">
+									{% for member in list.members %}
+										<li> {{member.name}} </li>
+									{% endfor %}
 								</ul>
 							</div>
 						</div>
