@@ -18,8 +18,6 @@ class EventPDF(object):
     allergies_table_data = None
 
     def __init__(self, event):
-        self.full_span_attendee_lines = []
-        self.full_span_waiters_lines = []
         self.event = event
         attendee_qs = event.attendance_event.attendees_qs
         self.attendees = sorted(attendee_qs, key=lambda attendee: attendee.user.last_name)
@@ -30,6 +28,8 @@ class EventPDF(object):
         self.reservee_table_data = [(u'Navn', u'Notat'), ]
         self.allergies_table_data = [(u'Allergisk mot', u'Navn'), ]
 
+        self.full_span_attendee_lines = []
+        self.full_span_waiters_lines = []
         self.create_attendees_table_data()
         self.create_waiters_table_data()
         self.create_reservees_table_data()
