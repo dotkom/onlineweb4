@@ -23,6 +23,12 @@ def create_fos_application(request):
         form = FieldOfStudyApplicationForm(request.POST)
         if form.is_valid(): 
             cleaned = form.cleaned_data
+
+            field_of_study = int(cleaned['field_of_study'])
+
+            if field_of_study == 0:
+                messages.warning(request, _(u"Denne studieretningen (Gjest) er ikke et gyldig alternativ."))
+                return redirect('profiles')
             
             started_day = 1
             started_month = 0
@@ -34,7 +40,6 @@ def create_fos_application(request):
                 started_month = 1
             
             started_date = datetime.date(started_year, started_month, started_day)
-            field_of_study = int(cleaned['field_of_study'])
             
             # Does the user already have a field of study and started date?
             if request.user.started_date and request.user.field_of_study:
