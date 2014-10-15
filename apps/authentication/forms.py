@@ -19,7 +19,6 @@ class LoginForm(forms.Form):
             return
 
         self.cleaned_data['username'] = self.cleaned_data['username'].lower()
-    
         user = auth.authenticate(username=self.cleaned_data['username'], password=self.cleaned_data['password'])
 
         if user:
@@ -32,10 +31,6 @@ class LoginForm(forms.Form):
         return self.cleaned_data
 
     def login(self, request):
-        try:
-            User.objects.get(username=request.POST['username'])
-        except:
-            return False
         if self.is_valid():
             auth.login(request, self.user)
             return True
