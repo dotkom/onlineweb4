@@ -1,39 +1,31 @@
-"""
-This file demonstrates writing tests using the unittest module. These will pass
-when you run "manage.py test".
-
-Replace this with more appropriate tests for your application.
-"""
-
 import logging
 
 from django.utils import timezone as timezone
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 from django.test import TestCase
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
 from django.test.client import Client
 
-from apps.feedback.mommy import FeedbackMail, Message
+from apps.feedback.mommy import FeedbackMail
 from apps.feedback.models import Feedback, FeedbackRelation, TextQuestion, RatingQuestion
 from apps.events.models import Event, AttendanceEvent, Attendee
 from apps.marks.models import Mark
 from apps.authentication.models import OnlineUser as User
 from apps.authentication.models import Email
-from apps.authentication.forms import LoginForm
 
 class SimpleTest(TestCase):
 
-    #Feedback mail 
+    #Feedback mail
     def setUp(self):
         self.logger = logging.getLogger()
 
         #Setup users
         self.user1 = User.objects.create(username="user1", is_active=True, is_staff=True)
-        Email.objects.create(user = self.user1, email="user1@gmail.com", primary=True)
+        Email.objects.create(user=self.user1, email="user1@gmail.com", primary=True)
         self.user2 = User.objects.create(username="user2")
-        Email.objects.create(user = self.user2, email="user2@gmail.com", primary=True)
+        Email.objects.create(user=self.user2, email="user2@gmail.com", primary=True)
 
         self.user1.set_password("Herpaderp123")
         self.user1.save()
@@ -45,34 +37,33 @@ class SimpleTest(TestCase):
         return timezone.now() + timedelta(days=1)
 
 
-    def create_feedback_relation(self, end_date=False, event_type=2, 
-                                 feedback=None, deadline= False):
+    def create_feedback_relation(self, end_date=False, event_type=2, feedback=None, deadline=False):
         if not end_date:
             end_date = self.yesterday()
 
         if not deadline:
             deadline = timezone.now().date() + timedelta(days=4)
         
-        event = Event.objects.create(title="-", event_start = self.yesterday(), 
-                                     event_end = end_date, event_type = event_type, author = self.user1)
+        event = Event.objects.create(title="-", event_start=self.yesterday(), 
+                                     event_end=end_date, event_type=event_type, author=self.user1)
 
-        attendance_event = AttendanceEvent.objects.create(registration_start = timezone.now(), 
-                                                        unattend_deadline = timezone.now(), 
-                                                        registration_end = timezone.now(), 
-                                                        event = event, 
+        attendance_event = AttendanceEvent.objects.create(registration_start=timezone.now(), 
+                                                        unattend_deadline=timezone.now(), 
+                                                        registration_end=timezone.now(), 
+                                                        event=event, 
                                                         max_capacity=30)
 
-        feedback = Feedback.objects.create(author = self.user1)
-        TextQuestion.objects.create(feedback = feedback)
-        RatingQuestion.objects.create(feedback = feedback)
+        feedback = Feedback.objects.create(author=self.user1)
+        TextQuestion.objects.create(feedback=feedback)
+        RatingQuestion.objects.create(feedback=feedback)
 
-        atendee1 = Attendee.objects.create(event = attendance_event, user = self.user1, attended=True)
-        atendee2 = Attendee.objects.create(event = attendance_event, user = self.user2, attended =True)
+        atendee1 = Attendee.objects.create(event=attendance_event, user=self.user1, attended=True)
+        atendee2 = Attendee.objects.create(event=attendance_event, user=self.user2, attended=True)
         return FeedbackRelation.objects.create(feedback=feedback, content_object=event, deadline=deadline, active=True)
 
     #Create a feedback relation that won't work
     def create_void_feedback_relation(self):
-        feedback = Feedback.objects.create(author = self.user1)
+        feedback = Feedback.objects.create(author=self.user1)
         deadline = self.tomorow()
         return FeedbackRelation.objects.create(feedback=feedback, content_object=self.user1, deadline=deadline, active=True)
 
@@ -138,7 +129,7 @@ class SimpleTest(TestCase):
         self.assertTrue(feedback_relation.first_mail_sent)
 
     def test_no_message(self):
-        feedback_relation = self.create_feedback_relation(end_date = timezone.now() - timedelta(days=2))
+        feedback_relation = self.create_feedback_relation(end_date=timezone.now() - timedelta(days=2))
         feedback_relation.first_mail_sent = True
         message = FeedbackMail.generate_message(feedback_relation, self.logger)
 
@@ -243,8 +234,3 @@ class SimpleTest(TestCase):
 
     #TODO test tokens
     #TODO test permissions when implemented
-
-
-
-
-

@@ -4,7 +4,6 @@ import datetime
 import logging
 
 from django_dynamic_fixture import G
-from django.conf import settings
 from django.contrib.auth.models import Group
 from django.test import TestCase
 from django.utils import timezone
@@ -41,7 +40,7 @@ class EventTest(TestCase):
 
     #
     # Event attendees, seats and wait list
-    # 
+    #
 
     def testAttendeeAndWaitlistQS(self):
         self.logger.debug("Testing attendee queryset")
@@ -274,7 +273,6 @@ class EventTest(TestCase):
 
         self.assertFalse(SetEventMarks.active_events())
 
-    
     def testMommyDontAutmaticallySetMarks(self):
         self.attendance_event.marks_has_been_set = False
         self.attendance_event.automatically_set_marks = False
@@ -348,4 +346,3 @@ class EventTest(TestCase):
 
         self.assertTrue(message.send)
         self.assertTrue(message.committee_message)
-        

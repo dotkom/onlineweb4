@@ -138,7 +138,7 @@ class FeedbackRelation(models.Model):
         super(FeedbackRelation, self).save(*args, **kwargs)
         if new_fbr:
             token = uuid.uuid4().hex
-            rt = RegisterToken(fbr = self, token = token)
+            rt = RegisterToken(fbr=self, token=token)
             rt.save()
 
 

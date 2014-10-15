@@ -5,14 +5,12 @@ from collections import namedtuple, defaultdict
 
 from django.http import Http404, HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
-from django.template import RequestContext
 from django.contrib.contenttypes.models import ContentType
 from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ObjectDoesNotExist
 from django.utils.translation import ugettext_lazy as _
-from django.utils.safestring import SafeString
 
 from apps.feedback.models import FeedbackRelation, FieldOfStudyAnswer, RATING_CHOICES, TextQuestion, TextAnswer, RegisterToken
 from apps.feedback.forms import create_answer_forms
@@ -36,7 +34,7 @@ def feedback(request, applabel, appmodel, object_id, feedback_id):
             fbr.save()
 
             # Set field of study automaticly
-            fosa = FieldOfStudyAnswer(feedback_relation = fbr, answer = request.user.field_of_study)
+            fosa = FieldOfStudyAnswer(feedback_relation=fbr, answer=request.user.field_of_study)
             fosa.save()
 
             messages.success(request, _(u"Takk for at du svarte"))
@@ -55,9 +53,9 @@ def feedback(request, applabel, appmodel, object_id, feedback_id):
 def result(request, applabel, appmodel, object_id, feedback_id):
     return feedback_results(request, applabel, appmodel, object_id, feedback_id)
 
-def results_token(request, applabel, appmodel, object_id, feedback_id,  token):
+def results_token(request, applabel, appmodel, object_id, feedback_id, token):
     fbr = _get_fbr_or_404(applabel, appmodel, object_id, feedback_id)
-    rt = get_object_or_404(RegisterToken, token = token)
+    rt = get_object_or_404(RegisterToken, token=token)
 
     if rt.is_valid(fbr):
         return feedback_results(request, applabel, appmodel, object_id, feedback_id, True)
@@ -74,11 +72,11 @@ def feedback_results(request, applabel, appmodel, object_id, feedback_id, token=
         if (question.display or not token) and isinstance(question, TextQuestion):
             question_and_answers.append(Qa(question, fbr.answers_to_question(question)))
     
-    rt = get_object_or_404(RegisterToken, fbr = fbr)
+    rt = get_object_or_404(RegisterToken, fbr=fbr)
 
     token_url = u"%s%sresults/%s" % (request.META['HTTP_HOST'], fbr.get_absolute_url(), rt.token)
         
-    return render(request, 'feedback/results.html',{'question_and_answers': question_and_answers, 
+    return render(request, 'feedback/results.html', {'question_and_answers': question_and_answers, 
         'description': fbr.description, 'token_url' : token_url,'token' : token})
 
 @staff_member_required
@@ -87,7 +85,7 @@ def chart_data(request, applabel, appmodel, object_id, feedback_id):
 
 def chart_data_token(request, applabel, appmodel, object_id, feedback_id, token):
     fbr = _get_fbr_or_404(applabel, appmodel, object_id, feedback_id)
-    rt = get_object_or_404(RegisterToken, token = token)
+    rt = get_object_or_404(RegisterToken, token=token)
 
     if rt.is_valid(fbr):
         return get_chart_data(request, applabel, appmodel, object_id, feedback_id, True)
@@ -149,7 +147,7 @@ def delete_answer(request):
         answer_id = request.POST.get('answer_id')
         answer = get_object_or_404(TextAnswer, pk=answer_id)
         answer.delete()
-        return HttpResponse(status = 200)
+        return HttpResponse(status=200)
     return HttpResponse(status=401)
 
 def _get_fbr_or_404(app_label, app_model, object_id, feedback_id):
