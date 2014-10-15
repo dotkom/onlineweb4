@@ -36,7 +36,7 @@ $(document).ready(function() {
                 $(that).prop('disabled', false);
                 $(confirmrow).hide();
             });
-        });
+        }).prop('disabled', false);
     });
     
     var approveApplication = function(application_id, row) {
