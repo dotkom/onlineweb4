@@ -1,0 +1,18 @@
+{% extends 'dashboard_base.html' %}
+{% load compress %}
+{% block title %}Dashboard{% endblock %}
+
+{% block styles %}
+    {% compress css %}
+    <link rel="stylesheet" type="text/less" href="{{ STATIC_URL }}less/dashboard/main.less">
+    {% endcompress %}
+{% endblock %}
+
+{% block content %}
+
+{% endblock %}
+
+{% block js %}
+    {{ block.super }}
+    <!-- Dashboard JS here -->
+{% endblock %}
