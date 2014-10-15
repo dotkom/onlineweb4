@@ -46,6 +46,12 @@ nav#dashboard_main_nav {
     padding-top: 60px;
 }
 
+/* Overrides */
+
+ol.breadcrumb {
+    border-radius: 0px;
+}
+
 /* TEMPLATE STUFF */
 
 /*! 
@@ -95,9 +101,6 @@ body {
   background-color: @sidebar-bg;
 }
 @media screen and (min-width: 992px) {
-  .left-side {
-    top: 50px;
-  }
   /*Right side strech mode*/
   .right-side.strech {
     margin-left: 0;
@@ -248,10 +251,15 @@ img {
   padding: 12px 5px 12px 15px;
   display: block;
 }
+.sidebar .sidebar-menu > li > a:hover {
+  background-color: #e6e6e6;
+  text-decoration: none;
+}
 .sidebar .sidebar-menu > li > a > .fa,
 .sidebar .sidebar-menu > li > a > .glyphicon,
 .sidebar .sidebar-menu > li > a > .ion {
   width: 20px;
+  padding-right: 5px;
 }
 .sidebar .sidebar-menu .treeview-menu {
   display: none;
@@ -272,42 +280,7 @@ img {
 .sidebar .sidebar-menu .treeview-menu > li > a > .glyphicon,
 .sidebar .sidebar-menu .treeview-menu > li > a > .ion {
   width: 20px;
-}
-.user-panel {
-  padding: 10px;
-}
-.user-panel:before,
-.user-panel:after {
-  display: table;
-  content: " ";
-}
-.user-panel:after {
-  clear: both;
-}
-.user-panel > .image > img {
-  width: 45px;
-  height: 45px;
-}
-.user-panel > .info {
-  font-weight: 600;
-  padding: 5px 5px 5px 15px;
-  font-size: 14px;
-  line-height: 1;
-}
-.user-panel > .info > p {
-  margin-bottom: 9px;
-}
-.user-panel > .info > a {
-  text-decoration: none;
   padding-right: 5px;
-  margin-top: 3px;
-  font-size: 11px;
-  font-weight: normal;
-}
-.user-panel > .info > a > .fa,
-.user-panel > .info > a > .ion,
-.user-panel > .info > a > .glyphicon {
-  margin-right: 3px;
 }
 /*
  * Off Canvas
@@ -344,4 +317,14 @@ img {
   body.fixed .row-offcanvas-left.active .sidebar-offcanvas {
     left: 0px;
   }
+}
+.content {
+    padding: 15px;
+}
+.content-header {
+    h2 {
+        padding-left: 15px;
+        margin-top: 15px;
+        margin-bottom: 15px;
+    }
 }
