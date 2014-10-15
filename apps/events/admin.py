@@ -105,6 +105,7 @@ class AttendanceEventInline(admin.StackedInline):
     filter_horizontal = ('rule_bundles',)
     classes = ('grp-collapse grp-open',)  # style
     inline_classes = ('grp-collapse grp-open',)  # style
+    exclude = ("marks_has_been_set",)
 
 
 class EventAdmin(admin.ModelAdmin):

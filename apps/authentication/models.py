@@ -40,6 +40,7 @@ GENDER_CHOICES = [
 
 COMMITTEES = [
     ('hs', _(u'Hovedstyret')),
+    ('appkom', _(u'Applikasjonskomiteen')),
     ('arrkom', _(u'Arrangementskomiteen')),
     ('bankom', _(u'Bank- og økonomikomiteen')),
     ('bedkom', _(u'Bedriftskomiteen')),
@@ -51,7 +52,6 @@ COMMITTEES = [
     ('prokom', _(u'Profil-og aviskomiteen')),
     ('trikom', _(u'Trivselskomiteen')),
     ('velkom', _(u'Velkomstkomiteen')),
-    ('appkom', _(u'Applikasjonskomiteen')),
 ]
 
 POSITIONS = [
@@ -60,6 +60,26 @@ POSITIONS = [
     ('nestleder', _(u'Nestleder')),
     ('okoans', _(u'Økonomiansvarlig')),
 ]
+
+def get_length_of_field_of_study(field_of_study):
+    """ 
+    Returns length of a field of study
+    """
+    if field_of_study == 0 or field_of_study == 100:  # others
+        return 0
+    # dont return a bachelor student as 4th or 5th grade
+    elif field_of_study == 1:  # bachelor
+        return 3
+    elif 10 <= field_of_study <= 30:  # 10-30 is considered master
+        return 2
+    elif field_of_study == 80:  # phd
+        return 3
+    elif field_of_study == 90:  # international
+        return 1
+    # If user's field of study is not matched by any of these tests, return -1
+    else:
+        return 0
+
 
 class OnlineUser(AbstractUser):
 
@@ -102,6 +122,14 @@ class OnlineUser(AbstractUser):
                 return True
         return False
 
+    @property
+    def has_expiring_membership(self):
+        if self.ntnu_username:
+            expiration_threshold = timezone.now() + datetime.timedelta(days=60)
+            if AllowedUsername.objects.filter(username=self.ntnu_username.lower(), expiration_date__lt=expiration_threshold).count() > 0:
+                return True
+        return False
+
     def get_full_name(self):
         """
         Returns the first_name plus the last_name, with a space in between.
@@ -137,7 +165,7 @@ class OnlineUser(AbstractUser):
             if year > 3:
                 return 3
             return year
-        elif 10 <= self.field_of_study <= 30:  # 10-29 is considered master
+        elif 10 <= self.field_of_study <= 30:  # 10-30 is considered master
             if year >= 2:
                 return 5
             return 4

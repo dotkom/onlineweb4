@@ -131,7 +131,7 @@ class FeedbackRelation(models.Model):
         if hasattr(self.content_object, "feedback_date"):
             return self.content_object.feedback_date()
         else:
-            False
+            return False
 
     def save(self, *args, **kwargs):
         new_fbr = not self.pk
