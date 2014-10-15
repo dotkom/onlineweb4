@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import datetime
-import socket
 import locale
 import logging
 
@@ -28,11 +27,11 @@ class FeedbackMail(Task):
             logger.info("Status: " + message.status)
 
             if message.send:
-                email = EmailMessage(message.subject, unicode(message), message.committee_mail, [], message.attended_mails).send()
+                EmailMessage(message.subject, unicode(message), message.committee_mail, [], message.attended_mails).send()
                 logger.info('Emails sent to: ' + str(message.attended_mails))
 
                 if message.results_message:
-                    EmailMessage("Feedback resultat", message.results_message,"online@online.ntnu.no", [message.committee_mail]).send() 
+                    EmailMessage("Feedback resultat", message.results_message, "online@online.ntnu.no", [message.committee_mail]).send() 
                     logger.info('Results mail sent to :' + message.committee_mail)
 
     @staticmethod
@@ -89,7 +88,7 @@ class FeedbackMail(Task):
             message.status = "Deadine passed"
 
             if feedback.gives_mark:
-                FeedbackMail.set_marks(title, not_responded)    
+                FeedbackMail.set_marks(title, not_responded) 
                 
                 message.intro = u"Fristen for å svare på \"%s\" har gått ut og du har fått en prikk." % (title)
                 message.mark = ""
@@ -137,7 +136,7 @@ class FeedbackMail(Task):
 
     @staticmethod
     def date_message(date):
-        #If the object(event) doesnt have start date it will send 
+        #If the object(event) doesnt have start date it will send
         #the first notification the day after the feedbackrelation is made
         if date:
             date_string = date.strftime("%d. %B").encode("utf-8")
@@ -145,7 +144,7 @@ class FeedbackMail(Task):
         else:
             message_date = ""
         
-        return message_date   
+        return message_date 
 
     @staticmethod
     def get_users(feedback):
@@ -189,7 +188,7 @@ class FeedbackMail(Task):
             user_entry.mark = mark
             user_entry.save()
     
-class Message():
+class Message(object):
     subject = ""
     intro = ""
     date = ""
@@ -208,12 +207,12 @@ class Message():
 
     def __unicode__(self):
         message = "%s %s %s %s %s %s %s" % (
-            self.intro, 
-            self.date, 
-            self.link, 
-            self.deadline, 
-            self.mark, 
-            self.contact, 
+            self.intro,
+            self.date,
+            self.link,
+            self.deadline,
+            self.mark,
+            self.contact,
             self.end)
         return message
 
