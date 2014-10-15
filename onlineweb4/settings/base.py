@@ -156,6 +156,7 @@ USER_SEARCH_GROUPS = [
     11,  # Hovedstyret
     10,  # pangKom
     7,   # proKom
+    18,  # seniorKom
     8,   # triKom
     9,   # velKom
 ]
