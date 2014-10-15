@@ -241,8 +241,9 @@ class EventTest(TestCase):
         self.assertFalse(response['status'])
         self.assertEqual(402, response['status_code'])
 
-
-#Mommy Attandance mark tests
+    #
+    # Mommy Attandance mark tests
+    #
 
     def testMommyNotAttended(self):
         self.attendee.attended = False

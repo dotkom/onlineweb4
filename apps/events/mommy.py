@@ -56,7 +56,6 @@ class SetEventMarks(Task):
         attendance_event.marks_has_been_set = True
         attendance_event.save()
         
-
     @staticmethod
     def generate_message(attendance_event):
         message = Message()
@@ -98,7 +97,6 @@ class Message():
 
     committee_mail = ""
     committee_message = False
-
 
     def __unicode__(self):
         message = "%s %s %s" % (
