@@ -246,31 +246,7 @@ $(document).ready(function() {
         changeYear: true,
         dateFormat: "yy-mm-dd"
     });
-        
-    $("#membership-details").submit(function(event) {
-        event.preventDefault();
-        $.ajax({
-            method: $(this).attr('method'),
-            url: $(this).attr('action'),
-            data: $(this).serialize(),
-            success: function() {
-                var utils = new Utils();
-                utils.setStatusMessage('Detaljer for ditt medlemskap har blitt lagret.', 'alert-success');
-            },
-            error: function(res) {
-                var utils = new Utils();
-                if (res['status'] === 412) {
-                    res = JSON.parse(res['responseText']);
-                    utils.setStatusMessage(res['message'], 'alert-danger');
-                }
-                else {
-                    utils.setStatusMessage('En uventet error ble oppdaget. Kontakt dotkom@online.ntnu.no for assistanse.', 'alert-danger');
-                }
-            },
-            crossDomain: false
-        });
-    });
-
+       
     $(".delete-position").on('click', function(e) {
         var that = $(this);
         e.preventDefault();
