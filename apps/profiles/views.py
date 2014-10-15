@@ -2,6 +2,7 @@
 import json
 import os
 import uuid
+from smtplib import SMTPException
 
 from django.conf import settings
 from django.contrib import messages
@@ -15,6 +16,8 @@ from django.utils.translation import ugettext as _
 
 import watson
 
+from apps.approval.forms import FieldOfStudyApplicationForm
+from apps.approval.models import MembershipApproval
 from apps.authentication.forms import NewEmailForm
 from apps.authentication.models import Email, RegisterToken, Position
 from apps.authentication.models import OnlineUser as User
@@ -67,11 +70,18 @@ def _create_request_dictionary(request):
         'password_change_form' : PasswordChangeForm(request.user),
         'marks' : [
             # Tuple syntax ('title', list_of_marks, is_collapsed)
-            (_(u'aktive prikker'), Mark.active.all().filter(given_to=request.user), False),
-            (_(u'inaktive prikker'), Mark.inactive.all().filter(given_to=request.user), True),
+            (_(u'aktive prikker'), Mark.active.filter(given_to=request.user), False),
+            (_(u'inaktive prikker'), Mark.inactive.filter(given_to=request.user), True),
         ],
         'new_email' : NewEmailForm(),
-        'membership_settings' : MembershipSettingsForm(instance=request.user),
+        'has_active_approvals' : MembershipApproval.objects.filter(applicant=request.user, processed=False).count() > 0,
+        'approvals': [
+            # Tuple syntax ('title', list_of_approvals, is_collapsed)
+            (_(u"aktive søknader"), MembershipApproval.objects.filter(applicant=request.user, processed=False), False),
+            (_(u"avslåtte søknader"), MembershipApproval.objects.filter(applicant=request.user, processed=True, approved=False), True),
+            (_(u"godkjente søknader"), MembershipApproval.objects.filter(applicant=request.user, processed=True), True),
+        ],
+        'field_of_study_application': FieldOfStudyApplicationForm(),
         'mark_rules_accepted' : request.user.mark_rules,
     }
 
@@ -293,7 +303,6 @@ def set_primary(request):
             return HttpResponse(status=200)
     raise Http404
 
-
 @login_required
 def verify_email(request):
     if request.is_ajax():
@@ -318,7 +327,6 @@ def verify_email(request):
 
             return HttpResponse(status=200)
     raise Http404
-
 
 def _send_verification_mail(request, email):
 
@@ -358,38 +366,10 @@ def toggle_infomail(request):
             return HttpResponse(status=200, content=json.dumps({'state': request.user.infomail}))
     raise Http404
 
-
-@login_required
-def save_membership_details(request):
-    if request.is_ajax():
-        if request.method == 'POST':
-            form = MembershipSettingsForm(request.POST)
-            if form.is_valid():
-                cleaned = form.cleaned_data
-                request.user.field_of_study = cleaned['field_of_study']
-                request.user.started_date = cleaned['started_date']
-                
-                request.user.save()
-
-                return HttpResponse(status=200)
-            else:
-                field_errors = []
-                form_errors = form.errors.items()
-                for form_error in form_errors:
-                    for field_error in form_error[1]:
-                        field_errors.append(field_error)
-
-                return HttpResponse(status=412, content=json.dumps(
-                                                    {'message': ", ".join(field_errors)}
-                                                ))
-
-    raise Http404
-
-
 @login_required
 def user_search(request):
     groups_to_include = settings.USER_SEARCH_GROUPS
-    groups = Group.objects.filter(pk__in=groups_to_include)
+    groups = Group.objects.filter(pk__in=groups_to_include).order_by('name')
     users_to_display = User.objects.filter(privacy__visible_for_other_users=True)
 
     context = {
@@ -398,7 +378,6 @@ def user_search(request):
         }
     return render(request, 'profiles/users.html', context)
 
-
 @login_required
 def api_user_search(request):
     if request.GET.get('query'):
@@ -406,8 +385,6 @@ def api_user_search(request):
         return render_json(users)
     return render_json(error='Mangler søkestreng')
 
-
-#@login_required
 def search_for_users(query, limit=10):
     if not query:
         return []
@@ -418,7 +395,6 @@ def search_for_users(query, limit=10):
         results.append(result.object)
 
     return results[:limit]
-
 
 @login_required
 def view_profile(request, username):

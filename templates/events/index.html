@@ -15,21 +15,19 @@ Arrangementsarkiv - Online
 {% endblock %}
 
 {% block submenu %}
-    <nav class="subnavbar navbar-default navbar-fixed-top">
+    <nav class="subnavbar">
         <div class="container">
-            <div class="collapse navbar-collapse navbar-ex1-collapse">
-                <ul class="nav navbar-nav">
-                    <li class="top-menu-link">
-                        <a class="active" href="{% url 'events_index' %}">Arrangementer</a>
-                    </li>
-                    <li class="top-menu-link">
-                        <a href="{% url 'article_archive' %}">Artikler</a>
-                    </li>
-                    <li class="top-menu-link">
-                        <a href="{% url 'offline' %}">Offline</a>
-                    </li>
-                </ul>
-            </div>
+            <ul>
+                <li class="top-menu-link active">
+                    <a href="{% url 'events_index' %}">Arrangementer</a>
+                </li>
+                <li class="top-menu-link">
+                    <a href="{% url 'article_archive' %}">Artikler</a>
+                </li>
+                <li class="top-menu-link">
+                    <a href="{% url 'offline' %}">Offline</a>
+                </li>
+            </ul>
         </div>
     </nav>
 {% endblock %}
@@ -93,9 +91,9 @@ Arrangementsarkiv - Online
     <div class="col-xs-12 col-sm-12 col-md-9 pull-left" id="events">
 
     </div> <!-- end col-md-9 -->
-<!-- 
+<!--
   {% if events %}
-  
+
   {% else %}
     <p class="ingress">Ingen arrangementer funnet.</p>
   {% endif %} -->
@@ -139,11 +137,11 @@ Arrangementsarkiv - Online
         filters.query = $(this).val();
         filters.search();
       });
-      
+
       // This is a slight hack to avoid a difficult bug in jQuery where some browsers tend to preserve checkbox states
-      // without them being domready.	
+      // without them being domready.
       $(document).ready(function () {
-        $('#future').prop('checked', true); 
+        $('#future').prop('checked', true);
       });
 
       $('#future').on('click', function () {
@@ -160,4 +158,3 @@ Arrangementsarkiv - Online
   {% endcompress %}
 
 {% endblock %}
-

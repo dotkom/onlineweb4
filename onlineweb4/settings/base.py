@@ -132,6 +132,14 @@ BEDKOM_GROUP_ID = 1
 FAGKOM_GROUP_ID = 2
 COMMON_GROUP_ID = 3
 
+# List of groups that should have edit access to Online wiki (public)
+WIKI_OPEN_EDIT_ACCESS = [1, 2]
+WIKI_OPEN_EDIT_ACCESS_GROUP_ID = 3
+
+# List of groups that should have access to the Komite wiki
+WIKI_COMMITTEE_ACCESS = [1, 2]
+WIKI_COMMITTEE_ACCESS_GROUP_ID = 3
+
 # Grappelli settings
 GRAPPELLI_ADMIN_TITLE = '<a href="/">Onlineweb</a>'
 
@@ -150,6 +158,23 @@ USER_SEARCH_GROUPS = [
     7,   # proKom
     8,   # triKom
     9,   # velKom
+]
+
+#List of mailing lists, used in update_sympa_memcache_from_sql.py
+PUBLIC_LISTS = [
+    "foreninger",
+    "linjeforeninger",
+    "gloshaugen",
+    "dragvoll",
+    "masterforeninger",
+    "kjellere",
+    "linjeledere",
+    "linjeredaksjoner",
+    "glosfaddere",
+    "sr-samarbeid",
+    "ivt-samarbeid",
+    "linjekor",
+    "studentdemokratiet"
 ]
 
 INSTALLED_APPS = (
@@ -187,6 +212,7 @@ INSTALLED_APPS = (
 
     # Onlineweb 4 apps
     'apps.api',
+    'apps.approval',
     'apps.article',
     'apps.authentication',
     'apps.autoconfig',
@@ -203,12 +229,16 @@ INSTALLED_APPS = (
     'apps.mailinglists',
     'scripts',
 
-     # Wiki
+    #External apps
+    'redwine',
+
+    #Wiki
     'wiki',
     'wiki.plugins.attachments',
     'wiki.plugins.notifications',
     'wiki.plugins.images',
     'wiki.plugins.macros',
+    
 )
 
 # A sample logging configuration. The only tangible logging
@@ -252,7 +282,7 @@ LOGGING = {
             'level': 'DEBUG',
             'propagate': True,
         },
-        'bedfagsyncer': {
+        'syncer': {
             'handlers': ['console'],
             'level': 'DEBUG',
             'propagate': True,

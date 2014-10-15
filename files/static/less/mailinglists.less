@@ -1,13 +1,3 @@
-
-/* Debug */
-
-@debug: 0px;
-.debugred {border: @debug solid red;}
-.debuglime {border: @debug solid lime;}
-.debugpink {border: @debug solid pink;}
-
-/* Mailinglists */
-
 #map {
     text-align: center;
     margin: 10px 0 15px 0;
@@ -17,19 +7,16 @@
 }
 
 #mailinglist-items {
-    .debugred;
     width: 100%;
 
     .mailinglist {
-    	.debuglime;
         margin-bottom: 25px;
 
         .title {
-            .debugpink;
-			font-weight: bold;
+			cursor: pointer;
+            font-weight: bold;
     	}
     	.members {
-    		.debugpink;
     	}
     }
 }

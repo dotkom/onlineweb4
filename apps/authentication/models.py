@@ -13,7 +13,7 @@ from django.utils import timezone
 from django.utils.html import strip_tags
 
 import watson
-
+import reversion
 
 # If this list is changed, remember to check that the year property on
 # OnlineUser is still correct!
@@ -51,6 +51,7 @@ COMMITTEES = [
     ('prokom', _(u'Profil-og aviskomiteen')),
     ('trikom', _(u'Trivselskomiteen')),
     ('velkom', _(u'Velkomstkomiteen')),
+    ('appkom', _(u'Applikasjonskomiteen')),
 ]
 
 POSITIONS = [
@@ -59,6 +60,26 @@ POSITIONS = [
     ('nestleder', _(u'Nestleder')),
     ('okoans', _(u'Økonomiansvarlig')),
 ]
+
+def get_length_of_field_of_study(field_of_study):
+    """ 
+    Returns length of a field of study
+    """
+    if field_of_study == 0 or field_of_study == 100:  # others
+        return 0
+    # dont return a bachelor student as 4th or 5th grade
+    elif field_of_study == 1:  # bachelor
+        return 3
+    elif 10 <= field_of_study <= 30:  # 10-30 is considered master
+        return 2
+    elif field_of_study == 80:  # phd
+        return 3
+    elif field_of_study == 90:  # international
+        return 1
+    # If user's field of study is not matched by any of these tests, return -1
+    else:
+        return 0
+
 
 class OnlineUser(AbstractUser):
 
@@ -101,6 +122,14 @@ class OnlineUser(AbstractUser):
                 return True
         return False
 
+    @property
+    def has_expiring_membership(self):
+        if self.ntnu_username:
+            expiration_threshold = timezone.now() + datetime.timedelta(days=60)
+            if AllowedUsername.objects.filter(username=self.ntnu_username.lower(), expiration_date__lt=expiration_threshold).count() > 0:
+                return True
+        return False
+
     def get_full_name(self):
         """
         Returns the first_name plus the last_name, with a space in between.
@@ -136,7 +165,7 @@ class OnlineUser(AbstractUser):
             if year > 3:
                 return 3
             return year
-        elif 10 <= self.field_of_study <= 30:  # 10-29 is considered master
+        elif 10 <= self.field_of_study <= 30:  # 10-30 is considered master
             if year >= 2:
                 return 5
             return 4
@@ -160,6 +189,7 @@ class OnlineUser(AbstractUser):
     def save(self, *args, **kwargs):
         if self.ntnu_username == "":
             self.ntnu_username = None
+        self.username = self.username.lower()
         super(OnlineUser, self).save(*args, **kwargs)
 
     def serializable_object(self):
@@ -191,6 +221,9 @@ class OnlineUser(AbstractUser):
         verbose_name_plural = _(u"brukerprofiler")
 
 
+reversion.register(OnlineUser)
+
+
 class Email(models.Model):
     user = models.ForeignKey(OnlineUser, related_name="email_user")
     email = models.EmailField(_(u"epostadresse"), unique=True)
@@ -217,6 +250,9 @@ class Email(models.Model):
         verbose_name_plural = _(u"epostadresser")
 
 
+reversion.register(Email)
+
+
 class RegisterToken(models.Model):
     user = models.ForeignKey(OnlineUser, related_name="register_user")
     email = models.EmailField(_(u"epost"), max_length=254)
@@ -228,6 +264,9 @@ class RegisterToken(models.Model):
         valid_period = datetime.timedelta(days=1)
         now = timezone.now()
         return now < self.created + valid_period 
+
+
+reversion.register(RegisterToken)
 
 
 class AllowedUsername(models.Model):
@@ -257,6 +296,9 @@ class AllowedUsername(models.Model):
         ordering = (u"username",)
 
 
+reversion.register(AllowedUsername)
+
+
 class Position(models.Model):
     """
     Contains a users position in the organization from a given year
@@ -279,6 +321,9 @@ class Position(models.Model):
         ordering = ('user', 'period', )
 
 
+reversion.register(Position)
+
+
 class SpecialPosition(models.Model):
     """
     Special object to represent special positions that typically lasts for life.
@@ -295,6 +340,8 @@ class SpecialPosition(models.Model):
         verbose_name_plural = _(u'spesialposisjoner')
         ordering = ('user', 'since_year',)
 
+
+reversion.register(SpecialPosition)
 
 
 # Register OnlineUser in watson index for searching
