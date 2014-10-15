@@ -1,13 +1,11 @@
 # -*- coding: utf-8 -*-
-import datetime
 import locale
 import logging
 
 from django.utils import timezone
-from django.conf import settings
 from django.core.mail import EmailMessage
 
-from apps.events.models import Event, AttendanceEvent, Attendee
+from apps.events.models import Event, AttendanceEvent
 from apps.marks.models import Mark, UserEntry
 from apps.mommy import Task, schedule
 
@@ -33,7 +31,7 @@ class SetEventMarks(Task):
                 logger.info("Everyone met. No mails sent to users")
 
             if message.committee_message:
-                EmailMessage(message.subject, message.committee_message,"online@online.ntnu.no", [message.committee_mail]).send() 
+                EmailMessage(message.subject, message.committee_message, "online@online.ntnu.no", [message.committee_mail]).send() 
                 logger.info("Email sent to: " + message.committee_mail)
 
     @staticmethod
@@ -83,7 +81,7 @@ class SetEventMarks(Task):
 
     @staticmethod
     def active_events():
-        return AttendanceEvent.objects.filter(automatically_set_marks=True, marks_has_been_set=False, event__event_end__lt= timezone.now())
+        return AttendanceEvent.objects.filter(automatically_set_marks=True, marks_has_been_set=False, event__event_end__lt=timezone.now())
 
 
 class Message():
@@ -100,8 +98,8 @@ class Message():
 
     def __unicode__(self):
         message = "%s %s %s" % (
-            self.intro, 
-            self.contact, 
+            self.intro,
+            self.contact,
             self.end)
         return message
 
