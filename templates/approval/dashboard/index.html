@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "dashboard_base.html" %}
 {% load compress %}
 
 {% block title %}
@@ -20,6 +20,10 @@ Søknadsgodkjenning - Online
         <script type="text/javascript" src="{{ STATIC_URL }}js/approval.js"></script>
     {% endcompress %}
 {% endblock js %}
+
+{% block breadcrumbs %}
+    <li>Approvals</li> 
+{% endblock %}
 
 {% block content %}
     <section id="approval-list">
