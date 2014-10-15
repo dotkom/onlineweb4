@@ -40,6 +40,7 @@ GENDER_CHOICES = [
 
 COMMITTEES = [
     ('hs', _(u'Hovedstyret')),
+    ('appkom', _(u'Applikasjonskomiteen')),
     ('arrkom', _(u'Arrangementskomiteen')),
     ('bankom', _(u'Bank- og økonomikomiteen')),
     ('bedkom', _(u'Bedriftskomiteen')),
@@ -51,7 +52,6 @@ COMMITTEES = [
     ('prokom', _(u'Profil-og aviskomiteen')),
     ('trikom', _(u'Trivselskomiteen')),
     ('velkom', _(u'Velkomstkomiteen')),
-    ('appkom', _(u'Applikasjonskomiteen')),
 ]
 
 POSITIONS = [
