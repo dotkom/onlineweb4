@@ -394,7 +394,7 @@ class AttendanceEvent(models.Model):
     registration_end = models.DateTimeField(_(u'registrerings-slutt'), null=False, blank=False)
     
     #Automatic mark setting for not attending
-    automatically_set_marks = models.BooleanField(_(u'automatisk prikk'), default=False)
+    automatically_set_marks = models.BooleanField(_(u'automatisk prikk'), default=False, help_text=_(u'Påmeldte som ikke har møtt vil automatisk få prikk'))
     marks_has_been_set = models.BooleanField(default=False)
 
     #Access rules

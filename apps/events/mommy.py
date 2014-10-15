@@ -28,11 +28,13 @@ class SetEventMarks(Task):
 
             if message.send:
                 EmailMessage(message.subject, unicode(message), message.committee_mail, [], message.not_attended_mails).send()
-                logger.info("Emails sent to: " + message.not_attended_mails)
+                logger.info("Emails sent to: " + str(message.not_attended_mails))
+            else:
+                logger.info("Everyone met. No mails sent to users")
 
-                if message.committee_message:
-                    EmailMessage("Event prikker", message.committee_message,"online@online.ntnu.no", [message.committee_mail]).send() 
-                    logger.info("Email sent to: " + message.committee_mail)
+            if message.committee_message:
+                EmailMessage(message.subject, message.committee_message,"online@online.ntnu.no", [message.committee_mail]).send() 
+                logger.info("Email sent to: " + message.committee_mail)
 
     @staticmethod
     def setMarks(attendance_event, logger=logging.getLogger()):
@@ -52,7 +54,7 @@ class SetEventMarks(Task):
             logger.info("Mark given to: " + str(user_entry.user))
         
         attendance_event.marks_has_been_set = True
-        event.save()
+        attendance_event.save()
         
 
     @staticmethod
@@ -60,22 +62,20 @@ class SetEventMarks(Task):
         message = Message()
 
         not_attended = attendance_event.not_attended()
+        event = attendance_event.event
+        title = unicode(event.title)    
 
         #return if everyone attended
         if not not_attended:
             return message
-
-        event = attendance_event.event
-        title = event.title    
-
         
-        message.not_attended_mails = [user.email.encode("utf-8") for user in not_attended]
+        message.not_attended_mails = [user.email for user in not_attended]
 
         message.committee_mail = event.feedback_mail()
         not_attended_string = u'\n'.join([user.get_full_name() for user in not_attended])
 
-        message.subject = u"Event: %s" % (title)
-        message.intro = u"Hei, på grunn av manglende oppmøte på \"%s\" har du fått en prikk" % (title)
+        message.subject = title
+        message.intro = u"Hei\n\nPå grunn av manglende oppmøte på \"%s\" har du fått en prikk" % (title)
         message.contact = u"\n\nEventuelle spørsmål sendes til %s " % (message.committee_mail)
         message.send = True
         message.committee_message = u"På grunn av manglende oppmøte på \"%s\" har følgende brukere fått en prikk:\n" % (event.title)
