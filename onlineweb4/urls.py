@@ -60,6 +60,16 @@ if 'apps.article' in settings.INSTALLED_APPS:
         url(r'^article/',           include('apps.article.urls')),
     )
 
+if 'apps.autoconfig' in settings.INSTALLED_APPS:
+    urlpatterns += patterns('',
+        url(r'^mail/',              include('apps.autoconfig.urls')),
+    )
+
+if 'apps.authentication' in settings.INSTALLED_APPS:
+    urlpatterns += patterns('',
+        url(r'^auth/',              include('apps.authentication.urls')),
+    )
+
 if 'apps.careeropportunity' in settings.INSTALLED_APPS:
     urlpatterns += patterns('',
         url(r'^careeropportunity/', include('apps.careeropportunity.urls')),
@@ -70,19 +80,14 @@ if 'apps.companyprofile' in settings.INSTALLED_APPS:
         url(r'^company/',           include('apps.companyprofile.urls')),
     )
 
+if 'apps.dashboard' in settings.INSTALLED_APPS:
+    urlpatterns += patterns('',
+        url(r'^dashboard/',        include('apps.dashboard.urls')),
+    )
+
 if 'apps.events' in settings.INSTALLED_APPS:
     urlpatterns += patterns('',
         url(r'^events/',            include('apps.events.urls')),
-    )
-
-if 'apps.autoconfig' in settings.INSTALLED_APPS:
-    urlpatterns += patterns('',
-        url(r'^mail/',              include('apps.autoconfig.urls')),
-    )
-
-if 'apps.authentication' in settings.INSTALLED_APPS:
-    urlpatterns += patterns('',
-        url(r'^auth/',              include('apps.authentication.urls')),
     )
 
 if 'apps.feedback' in settings.INSTALLED_APPS:

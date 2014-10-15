@@ -219,6 +219,7 @@ INSTALLED_APPS = (
     'apps.autoconfig',
     'apps.careeropportunity',
     'apps.companyprofile',
+    'apps.dashboard',
     'apps.events',
     'apps.marks',
     'apps.offline',
