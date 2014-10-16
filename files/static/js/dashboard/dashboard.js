@@ -10,12 +10,20 @@ var Dashboard = (function ($) {
 
             Dashboard.bind_sidebar_toggle()
 
+            var expanded = null
+
             $('.treeview-menu').each(function () {
                 var nav_menu = $(this)
                 var nav_item = $(this).parent()
                 nav_item.on('click', 'a', function (e) {
+
                     // Toggle the submenu
                     nav_menu.slideToggle(200)
+
+                    if (expanded != nav_menu && expanded != null) expanded.slideUp(200)
+
+                    expanded = nav_menu
+
                 })
             })
         },

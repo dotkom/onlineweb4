@@ -6,6 +6,7 @@
 @dash-bg: #fff;
 @sidebar-bg: #eee;
 @orange: #ee7810;
+@blue: #004b80;
 
 /* Generics */
 
@@ -22,7 +23,7 @@ ul {
     height: 35px;
     width: 140px;
     margin-top: 10px;
-    margin-bottom: 15px;
+    margin-bottom: 12px;
 }
 
 .center-text {
@@ -34,20 +35,28 @@ ol.breadcrumb {
     background-color: #f6f6f6;
 }
 
+/* Color classes */
+
+.orange {
+    color: @orange;
+}
+.blue {
+    color: @blue;
+}
 
 /* Navbars */
 
 nav#dashboard_main_nav {
     box-sizing: border-box;
-    background-color: #004b80;
+    background-color: @blue;
     position: fixed;
-    height: 60px;
+    height: 57px;
     z-index: 20;
     width: 100%;
 }
 
 .sidebar-center {
-    width: 200px;
+    width: 220px;
     text-align: center;
     display: inline-block;
 }
@@ -59,11 +68,11 @@ nav#dashboard_main_nav {
 }
 
 #sidebar_toggle {
-    height: 60px;
+    height: 57px;
     margin-right: 20px;
     font-size: 20px;
     color: #fff;
-    line-height: 60px;
+    line-height: 57px;
     vertical-align: middle;
     cursor: pointer
 }
@@ -308,7 +317,7 @@ img {
 .sidebar .sidebar-menu .treeview-menu > li > a {
   padding: 5px 5px 5px 15px;
   display: block;
-  font-size: 14px;
+  font-size: 13px;
   margin: 0px 0px;
 }
 .sidebar .sidebar-menu .treeview-menu > li:hover {
