@@ -46,7 +46,7 @@ $(document).ready(function() {
             url: 'approve_application/',
             data: {'application_id': application_id, },
             success: function() {
-                $(row).css('background-color', '#5cb85c');
+                $(row).css('background-color', '#b0ffb0');
                 $(row).fadeOut(500);
             },
             error: function(response) {
@@ -69,7 +69,7 @@ $(document).ready(function() {
             url: 'decline_application/',
             data: {'application_id': application_id, 'message': message, },
             success: function() {
-                $(row).css('background-color', '#d9534f');
+                $(row).css('background-color', '#f0b0b0');
                 $(row).fadeOut(500);
             },
             error: function(response) {
