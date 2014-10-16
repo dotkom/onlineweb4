@@ -8,7 +8,7 @@ Søknadsgodkjenning - Online
 {% block styles %}
     {{ block.super }}
     {% compress css %}
-        <link rel="stylesheet" type="text/less" href="{{ STATIC_URL }}less/approval.less" />
+        <link rel="stylesheet" type="text/less" href="{{ STATIC_URL }}less/dashboard/approval.less" />
     {% endcompress %}
 {% endblock %}
 
@@ -33,63 +33,59 @@ Søknadsgodkjenning
     <section id="approval-list">
     {% if membership_applications %}
     <div class="row row-space headings">
-        <div class="col-md-12">
-            <div class="col-md-3">
-                <span><div class="visible-xs visible-sm">1. </div>Navn på søker</span>
-            </div>
-            <div class="col-md-3">
-                <span><div class="visible-xs visible-sm">2. </div>Utløpsdato for medlemskap</span>
-            </div>
-            <div class="col-md-4">
-                <span><div class="visible-xs visible-sm">3. </div>Detaljer for søknad om ny studieretning</span>
-            </div>
+        <div class="col-md-3">
+            <span><div class="visible-xs visible-sm">1. </div>Navn på søker</span>
+        </div>
+        <div class="col-md-3">
+            <span><div class="visible-xs visible-sm">2. </div>Utløpsdato for medlemskap</span>
+        </div>
+        <div class="col-md-6">
+            <span><div class="visible-xs visible-sm">3. </div>Detaljer for søknad om ny studieretning</span>
         </div>
     </div>
-        {% for app in membership_applications %}
-        
-        <div class="row application">
-            <div class="col-md-12">
-                <div class="col-md-3 cell">
-                    <div class="visible-xs visible-sm">1. </div>{{ app.applicant.get_full_name }}
-                </div>
-                <div class="col-md-3 cell">
-                    <div class="visible-xs visible-sm">2. </div>
-                    {% if app.is_membership_application %}
-                        {{ app.new_expiry_date }}
-                    {% else %}
-                        -
-                    {% endif %}
-                </div>
-                <div class="col-md-4 cell">
-                    <div class="visible-xs visible-sm">3. </div>
-                    {% if app.is_fos_application %}
-                        {{ app.get_field_of_study_display }} (startet: {{ app.started_date }})
-                    {% else %}
-                        -
-                    {% endif %}
-                </div>
-                <div class="col-md-2">
-                    <div class="btn-group">
-                        <button type="button" class="btn btn-success approve" value="{{ app.id }}">Godkjenn</button>
-                        <button type="button" class="btn btn-danger decline" value="{{ app.id }}">Avslå</button>
-                    </div>
-                </div>
+    {% for app in membership_applications %}
+    <div class="row application">
+        <div class="col-md-3 cell">
+            <div class="visible-xs visible-sm">1. </div>{{ app.applicant.get_full_name }}
+        </div>
+        <div class="col-md-3 cell">
+            <div class="visible-xs visible-sm">2. </div>
+            {% if app.is_membership_application %}
+                {{ app.new_expiry_date }}
+            {% else %}
+                -
+            {% endif %}
+        </div>
+        <div class="col-md-4 cell">
+            <div class="visible-xs visible-sm">3. </div>
+            {% if app.is_fos_application %}
+                {{ app.get_field_of_study_display }} (startet: {{ app.started_date }})
+            {% else %}
+                -
+            {% endif %}
+        </div>
+        <div class="col-md-2">
+            <div class="btn-group">
+                <button type="button" class="btn btn-success approve" value="{{ app.id }}">Godkjenn</button>
+                <button type="button" class="btn btn-danger decline" value="{{ app.id }}">Avslå</button>
+            </div>
+
+        </div>
+    </div>
+    <div id="confirm{{ app.id }}" class="row confirm">
+        <div class="col-md-6">
+            <textarea rows="6">Skriv litt om hvorfor søknaden avslås.</textarea>
+        </div>
+        <div class="col-md-2">
+            <div class="btn-group">
+                <button type="button" class="btn btn-warning cancel">Lukk</button>
+                <button type="button" class="btn btn-danger sendDecline" value="{{ app.id }}">Avslå</button>
             </div>
         </div>
-        <div id="confirm{{ app.id }}" class="row confirm">
-            <div class="col-md-12">
-                <div class="col-md-6">
-                    <textarea rows="6">Skriv litt om hvorfor søknaden avslås.</textarea>
-                </div>
-                <div class="col-md-2">
-                    <div class="btn-group">
-                        <button type="button" class="btn btn-warning cancel">Lukk</button>
-                        <button type="button" class="btn btn-danger sendDecline" value="{{ app.id }}">Avslå</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-        {% endfor %} 
+
+    </div>
+    {% endfor %}
+    </section>
     {% else %}
     <div class="row">
         <div class="col-md-12">

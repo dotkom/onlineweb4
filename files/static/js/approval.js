@@ -46,8 +46,8 @@ $(document).ready(function() {
             url: 'approve_application/',
             data: {'application_id': application_id, },
             success: function() {
-                // TODO Make animation
-                $(row).hide();
+                $(row).css('background-color', '#5cb85c');
+                $(row).fadeOut(500);
             },
             error: function(response) {
                 if (response['status'] === 412) {
@@ -69,8 +69,8 @@ $(document).ready(function() {
             url: 'decline_application/',
             data: {'application_id': application_id, 'message': message, },
             success: function() {
-                // TODO Make animation
-                $(row).hide();
+                $(row).css('background-color', '#d9534f');
+                $(row).fadeOut(500);
             },
             error: function(response) {
                 if (response['status'] === 412) {

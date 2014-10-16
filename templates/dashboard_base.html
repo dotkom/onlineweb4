@@ -177,22 +177,23 @@
                     {% endblock %}
                 </ol>
 
-                {% if messages %}
-                    <div class="container messages">
-                        <div class="row">
-                            <div class="message-container col-md-12">
-                                {% for message in messages %}
-                                    <div class="alert {% if message.tags %}
-                                        {% if message.tags == 'alert-error' %} alert-danger {% else %}
-                                        {{ message.tags }}{% endif %}{% endif %}">
-                                        <button type="button" class="close" data-dismiss="alert">&times;</button>
-                                        {{ message }}
-                                    </div>
-                                {% endfor %}
-                            </div>
+
+                <div class="messages">
+                    <div class="row">
+                        {% if messages %}
+                        <div class="message-container col-md-12">
+                            {% for message in messages %}
+                                <div class="alert {% if message.tags %}
+                                    {% if message.tags == 'alert-error' %} alert-danger {% else %}
+                                    {{ message.tags }}{% endif %}{% endif %}">
+                                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                                    {{ message }}
+                                </div>
+                            {% endfor %}
                         </div>
+                        {% endif %}
                     </div>
-                {% endif %}
+                </div>
 
             </section>
             <!-- Main content -->
