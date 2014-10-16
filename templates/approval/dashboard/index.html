@@ -21,20 +21,16 @@ Søknadsgodkjenning - Online
     {% endcompress %}
 {% endblock js %}
 
+{% block page-header %}
+Søknadsgodkjenning
+{% endblock %}
+
 {% block breadcrumbs %}
     <li>Approvals</li> 
 {% endblock %}
 
 {% block content %}
     <section id="approval-list">
-    <div class="container">
-    <div class="row">
-        <div class="col-md-12">
-            <div class="page-header">
-                <h2 id="approval-list-heading">Pending approvals</h2>
-            </div>
-        </div>
-    </div>
     {% if membership_applications %}
     <div class="row row-space headings">
         <div class="col-md-12">
@@ -101,5 +97,4 @@ Søknadsgodkjenning - Online
         </div>
     </div>
     {% endif %}
-    </section>
 {% endblock content %}

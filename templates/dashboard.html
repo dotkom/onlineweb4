@@ -3,12 +3,13 @@
 {% block title %}Dashboard{% endblock %}
 
 {% block styles %}
+    {{ block.super }}
     {% compress css %}
     {% endcompress %}
 {% endblock %}
 
 {% block breadcrumbs %}
-
+Dashboard
 {% endblock %}
 
 {% block content %}
