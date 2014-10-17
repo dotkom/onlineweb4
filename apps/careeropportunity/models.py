@@ -25,6 +25,9 @@ class CareerOpportunity(models.Model):
     class Meta:
         verbose_name = _('karrieremulighet')
         verbose_name_plural = _('karrieremuligheter')
+        permissions = (
+            ('view_careeropportunity', 'View CareerOpportunity'),
+        )
 
 
 reversion.register(CareerOpportunity)

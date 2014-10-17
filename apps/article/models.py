@@ -67,6 +67,9 @@ class Article(models.Model):
         verbose_name = _(u"artikkel")
         verbose_name_plural = _(u"artikler")
         ordering = ['published_date']
+        permissions = (
+            ('view_article', 'View Article'),
+        )
 
 
 reversion.register(Article)
@@ -91,6 +94,11 @@ class Tag(models.Model):
     def __unicode__(self):
         return self.name
 
+    class Meta:
+        permissions = (
+            ('view_tag', 'View Tag'),
+        )
+
 
 reversion.register(Tag)
 
@@ -103,5 +111,8 @@ class ArticleTag(models.Model):
         unique_together = ('article', 'tag')
         verbose_name = _(u"tag")
         verbose_name_plural = _(u"tags")
+        permissions = (
+            ('view_articletag', 'View ArticleTag'),
+        )
 
 reversion.register(ArticleTag)

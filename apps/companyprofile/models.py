@@ -27,6 +27,9 @@ class Company(models.Model):
     class Meta:
         verbose_name = _(u"Bedrift")
         verbose_name_plural = _(u"Bedrifter")
+        permissions = (
+            ('view_company', 'View Company'),
+        )
 
 
 reversion.register(Company)

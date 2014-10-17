@@ -45,6 +45,9 @@ class FeedbackRelation(models.Model):
 
     class Meta:
         unique_together = ('feedback', 'content_type', 'object_id')
+        permissions = (
+            ('view_feedbackrelation', 'View FeedbackRelation'),
+        )
 
     @property
     def questions(self):
@@ -189,6 +192,9 @@ class Feedback(models.Model):
     class Meta:
         verbose_name = _(u'tilbakemeldingsskjema')
         verbose_name_plural = _(u'tilbakemeldingsskjemaer')
+        permissions = (
+            ('view_feedback', 'View Feedback'),
+        )
 
 
 reversion.register(Feedback)
@@ -204,6 +210,11 @@ class FieldOfStudyAnswer(models.Model):
 
     def __unicode__(self):
         return self.get_answer_display()
+
+    class Meta:
+        permissions = (
+            ('view_fieldofstudyanswer', 'View FieldOfStudyAnswer'),
+        )
 
 
 reversion.register(FieldOfStudyAnswer)
@@ -221,6 +232,11 @@ class TextQuestion(models.Model):
 
     def __unicode__(self):
         return self.label
+
+    class Meta:
+        permissions = (
+            ('view_textquestion', 'View TextQuestion'),
+        )
 
 
 reversion.register(TextQuestion)
@@ -242,6 +258,11 @@ class TextAnswer(models.Model):
     def order(self):
         return self.question.order
 
+    class Meta:
+        permissions = (
+            ('view_textanswer', 'View TextAnswer'),
+        )
+
 
 reversion.register(TextAnswer)
 
@@ -260,6 +281,11 @@ class RatingQuestion(models.Model):
 
     def __unicode__(self):
         return self.label
+
+    class Meta:
+        permissions = (
+            ('view_ratingquestion', 'View RatingQuestion'),
+        )
 
 
 reversion.register(RatingQuestion)
@@ -284,6 +310,11 @@ class RatingAnswer(models.Model):
     def order(self):
         return self.question.order
 
+    class Meta:
+        permissions = (
+            ('view_ratinganswer', 'View RatingAnswer'),
+        )
+
 
 reversion.register(RatingAnswer)
 
@@ -298,6 +329,11 @@ class MultipleChoiceQuestion(models.Model):
     def __unicode__(self):
         return self.label
 
+    class Meta:
+        permissions = (
+            ('view_multiplechoicequestion', 'View MultipleChoiceQuestion'),
+        )
+
 
 reversion.register(MultipleChoiceQuestion)
 
@@ -311,6 +347,11 @@ class MultipleChoiceRelation(models.Model):
     def __unicode__(self):
         return self.multiple_choice_relation.label
 
+    class Meta:
+        permissions = (
+            ('view_multiplechoicerelation', 'View MultipleChoiceRelation'),
+        )
+
 
 reversion.register(MultipleChoiceRelation)
 
@@ -321,6 +362,11 @@ class Choice(models.Model):
 
     def __unicode__(self):
         return self.choice
+
+    class Meta:
+        permissions = (
+            ('view_choice', 'View Choice'),
+        )
 
 
 reversion.register(Choice)
@@ -341,6 +387,11 @@ class MultipleChoiceAnswer(models.Model):
     def order(self):
         return self.question.order
 
+    class Meta:
+        permissions = (
+            ('view_multiplechoiceanswer', 'View MultipleChoiceAnswer'),
+        )
+
 
 reversion.register(MultipleChoiceAnswer)
 
@@ -357,6 +408,11 @@ class RegisterToken(models.Model):
         #valid_period = datetime.timedelta(days=365)#1 year
         #now = timezone.now()
         #return now < self.created + valid_period
+
+    class Meta:
+        permissions = (
+            ('view_feedbackregistertoken', 'View FeedbackRegisterToken'),
+        )
 
 
 reversion.register(RegisterToken)
