@@ -29,6 +29,7 @@
                 <h4 class="center-text"><small>Velkommen</small><br />{{ request.user.first_name }}</h4>
                 <ul class="sidebar-menu">
                     {% block sidebar %}
+                    {% if 'events.view_event' in user_permissions %}
                     <li class="treeview">
                         <a href="#">
                             <i class="fa fa-wheelchair blue"></i>
@@ -43,7 +44,8 @@
                             <li><a href="#"><i class="fa fa-angle-double-right orange"></i> Reservasjoner</a></li>
                         </ul>
                     </li>
-
+                    {% endif %}
+                    {% if 'article.view_article' in user_permissions %}
                     <li class="treeview">
                         <a href="#">
                             <i class="fa fa-file-text-o blue"></i>
@@ -56,6 +58,8 @@
                             <li><a href="#"><i class="fa fa-angle-double-right orange"></i> Tags</a></li>
                         </ul>
                     </li>
+                    {% endif %}
+                    {% if 'authentication.view_onlineuser' in user_permissions %}
                     <li class="treeview">
                         <a href="#">
                             <i class="fa fa-user blue"></i>
@@ -69,6 +73,8 @@
                             <li><a href="#"><i class="fa fa-angle-double-right orange"></i> Spesialposisjoner</a></li>
                         </ul>
                     </li>
+                    {% endif %}
+                    {% if 'companyprofile.view_company' in user_permissions %}
                     <li class="treeview">
                         <a href="#">
                             <i class="fa fa-money blue"></i> <span>Bedrifter</span>
@@ -79,6 +85,8 @@
                             <li><a href="#"><i class="fa fa-angle-double-right orange"></i> Oversikt</a></li>
                         </ul>
                     </li>
+                    {% endif %}
+                    {% if 'chunks.view_chunk' in user_permissions %}
                     <li class="treeview">
                         <a href="#">
                             <i class="fa fa-file-o blue"></i> <span>Chunks</span>
@@ -89,6 +97,8 @@
                             <li><a href="#"><i class="fa fa-angle-double-right orange"></i> Oversikt</a></li>
                         </ul>
                     </li>
+                    {% endif %}
+                    {% if request.user.is_superuser %}
                     <li class="treeview">
                         <a href="#">
                             <i class="fa fa-group blue"></i> <span>Grupper</span>
@@ -99,6 +109,8 @@
                             <li><a href="#"><i class="fa fa-angle-double-right orange"></i> Oversikt</a></li>
                         </ul>
                     </li>
+                    {% endif %}
+                    {% if 'careeropportunity.view_careeropportunity' in user_permissions %}
                     <li class="treeview">
                         <a href="#">
                             <i class="fa fa-suitcase blue"></i> <span>Karrieremuligheter</span>
@@ -109,6 +121,8 @@
                             <li><a href="#"><i class="fa fa-angle-double-right orange"></i> Oversikt</a></li>
                         </ul>
                     </li>
+                    {% endif %}
+                    {% if 'offline.view_issue' in user_permissions %}
                     <li class="treeview">
                         <a href="#">
                             <i class="fa fa-plug blue"></i> <span>Offline</span>
@@ -119,7 +133,10 @@
                             <li><a href="#"><i class="fa fa-angle-double-right orange"></i> Ny utgivelse</a></li>
                             <li><a href="#"><i class="fa fa-angle-double-right orange"></i> Oversikt</a></li>
                         </ul>
-                    </li>                   <li class="treeview">
+                    </li>
+                    {% endif %}
+                    {% if 'marks.view_mark' in user_permissions %}
+                    <li class="treeview">
                         <a href="#">
                             <i class="fa fa-times-circle blue"></i> <span>Prikker</span>
                             <i class="fa fa-angle-down pull-right"></i>
@@ -129,17 +146,23 @@
                             <li><a href="#"><i class="fa fa-angle-double-right orange"></i> Oversikt</a></li>
                         </ul>
                     </li>
+                    {% endif %}
+                    {% if request.user.is_superuser %}
                     <li>
                         <a href="#">
                             <i class="fa fa-trophy blue"></i> <span>Redwine</span>
                         </a>
                     </li>
+                    {% endif %}
+                    {% if 'approval.view_membershipapproval' in user_permissions %}
                     <li>
                         <a href="/dashboard/approval/">
                             <i class="fa fa-envelope-o blue"></i> <span>Søknader</span>
                             <small class="badge pull-right bg-red">2</small>
                         </a>
                     </li>
+                    {% endif %}
+                    {% if 'feedback.view_feedback' in user_permissions %}
                     <li class="treeview">
                         <a href="#">
                             <i class="fa fa-envelope blue"></i> <span>Tilbakemelding</span>
@@ -150,6 +173,7 @@
                             <li><a href="#"><i class="fa fa-angle-double-right orange"></i> Tilbakemeldingsskjema</a></li>
                         </ul>
                     </li>
+                    {% endif %}
                     <li>
                         <a href="#">
                             <i class="fa fa-bell blue"></i> <span>Til oppfølging</span>
@@ -176,8 +200,9 @@
                     <li><i class="fa fa-dashboard"></i> Dashboard</li>
                     {% endblock %}
                 </ol>
-
-
+            </section>
+            <!-- Main content -->
+            <section class="content">
                 <div class="messages">
                     <div class="row">
                         {% if messages %}
@@ -194,10 +219,6 @@
                         {% endif %}
                     </div>
                 </div>
-
-            </section>
-            <!-- Main content -->
-            <section class="content">
                 {% block content %}
 
                 {% endblock %}

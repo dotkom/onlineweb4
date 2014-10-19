@@ -1,20 +1,17 @@
 # -*- encoding: utf-8 -*-
 
-from django.shortcuts import render, redirect
-from django.contrib.auth.decorators import permission_required
+from django.shortcuts import render
+from django.contrib.auth.models import Permission, Group
 
-@permission_required('dashboard.main')
+from guardian.decorators import permission_required
+
+@permission_required('approval.view_membershipapproval', return_403=True)
 def index(request):
     """
     This is the main dashboard view
     """
 
-    return render(request, 'dashboard.html', {})
+    perms = list(request.user.get_group_permissions())
+    perms.sort()
 
-def _create_permissions_dictionary(request):
-    """
-    Helper method to create a complete dictionary of permissions
-    and model managers needed to render the dashboard_base template
-    """
-    
-    pass   
+    return render(request, 'dashboard.html', {'user_permissions': perms})

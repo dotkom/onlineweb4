@@ -15,12 +15,12 @@ Dashboard
 {% block content %}
 <div class="row">
     <div class="col-md-12">
-        <div class="alert alert-success">Meldingsboks om feilfri utførelse av handling.</div>
-    </div>
-</div>
-<div class="row">
-    <div class="col-md-12">
-        <p>Here be some col-md-12 paragraph</p>
+        <p>Du har følgende tilganger:</p>
+        <p>
+        {% for perm in user_permissions %}
+            {{ perm }}<br />
+        {% endfor %}
+        </p>
     </div>
 </div>
 <div class="row">
