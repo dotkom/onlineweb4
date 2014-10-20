@@ -1,26 +1,20 @@
 # -*- encoding: utf-8 -*-
 
 from django.shortcuts import render
-from django.contrib.auth.models import Group
-from django.core.exceptions import PermissionDenied, ObjectDoesNotExist
+from django.core.exceptions import PermissionDenied
 
 from guardian.decorators import permission_required
+
+from apps.dashboard.tools import has_access
 
 def index(request):
     """
     This is the main dashboard view
     """
 
-    try:
-        committees = Group.objects.get(name='Komiteer')
-    except ObjectDoesNotExist:
-        committees = None
+    if not has_access(request):
+        raise PermissionDenied
 
-    if not request.user.is_superuser:
-        if not committees or committees not in request.user.groups.all():
-            raise PermissionDenied
-
-    perms = list(request.user.get_group_permissions())
-    perms.sort()
+    perms = request.user.get_group_permissions()
 
     return render(request, 'dashboard.html', {'user_permissions': perms})

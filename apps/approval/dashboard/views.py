@@ -4,7 +4,9 @@ import json
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import Group
 from django.http import Http404, HttpResponse
+from django.core.exceptions import PermissionDenied, ObjectDoesNotExist
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
 from django.utils.translation import ugettext as _
@@ -12,13 +14,20 @@ from django.views.decorators.csrf import ensure_csrf_cookie
 
 from apps.approval.models import MembershipApproval
 from apps.authentication.models import AllowedUsername
+from apps.dashboard.tools import has_access
 
 
 @ensure_csrf_cookie
 @login_required
 def index(request):
     context = {}
+    
+    # Generic check to see if user has access to dashboard. (In Komiteer or superuser)
+    if not has_access(request):
+        raise PermissionDenied
+
     context['membership_applications'] = MembershipApproval.objects.filter(processed=False)
+    context['user_permissions'] = set(request.user.get_all_permissions())
     
     return render(request, 'approval/dashboard/index.html', context)
 
