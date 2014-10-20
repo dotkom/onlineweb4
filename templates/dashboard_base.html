@@ -158,7 +158,7 @@
                     <li>
                         <a href="/dashboard/approval/">
                             <i class="fa fa-envelope-o blue"></i> <span>Søknader</span>
-                            <small class="badge pull-right bg-red">2</small>
+                            {% if approval_pending %}<small class="badge pull-right">{{ approval_pending }}</small>{% endif %}
                         </a>
                     </li>
                     {% endif %}
@@ -177,7 +177,7 @@
                     <li>
                         <a href="#">
                             <i class="fa fa-bell blue"></i> <span>Til oppfølging</span>
-                            <small class="badge pull-right bg-red">21</small>
+                            <small class="badge pull-right">6</small>
                         </a>
                     </li>
                     {% endblock %}

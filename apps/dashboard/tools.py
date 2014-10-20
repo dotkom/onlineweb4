@@ -3,6 +3,8 @@
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.models import Group
 
+from apps.approval.models import MembershipApproval
+
 def has_access(request):
     """
     This helper method does a basic check to see if the logged in user
@@ -22,3 +24,20 @@ def has_access(request):
 
     return False
 
+def get_base_context(request):
+    """
+    This function returns a dictionary with the proper context variables
+    needed for given permission settings. Should be used as the initial
+    context for every dashboard view.
+    """
+
+    context = {}
+
+    context['user_permissions'] = set(request.user.get_all_permissions())
+
+    # Check if we need approval count to display in template sidebar badge
+    if request.user.has_perm('approval.view_membershipapproval'):
+        context['approval_pending'] = MembershipApproval.objects.filter(
+            processed=False).count()
+
+    return context

@@ -14,20 +14,21 @@ from django.views.decorators.csrf import ensure_csrf_cookie
 
 from apps.approval.models import MembershipApproval
 from apps.authentication.models import AllowedUsername
-from apps.dashboard.tools import has_access
+from apps.dashboard.tools import has_access, get_base_context
 
 
 @ensure_csrf_cookie
 @login_required
 def index(request):
-    context = {}
     
     # Generic check to see if user has access to dashboard. (In Komiteer or superuser)
     if not has_access(request):
         raise PermissionDenied
 
+    # Create the base context needed for the sidebar
+    context = get_base_context(request)
+
     context['membership_applications'] = MembershipApproval.objects.filter(processed=False)
-    context['user_permissions'] = set(request.user.get_all_permissions())
     
     return render(request, 'approval/dashboard/index.html', context)
 
