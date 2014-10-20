@@ -1,0 +1,62 @@
+{% extends 'dashboard_base.html' %}
+{% load compress %}
+{% block title %}Grupper - {{ group }}{% endblock %}
+
+{% block styles %}
+    {{ block.super }}
+    {% compress css %}
+    {% endcompress %}
+{% endblock %}
+
+{% block page-header %}
+    {{ group }}
+{% endblock %}
+
+{% block breadcrumbs %}
+<li><a href="/dashboard/groups/">Grupper</a></li>
+<li>{{ group }}</li>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-6">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">
+                    Innstillinger for {{ group }}
+                </h3>
+            </div>
+            <div class="panel-body">
+                Some settings...
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">
+                    Medlemmer
+                </h3>
+            </div>
+            <div class="panel-body">
+                Oversikt over alle brukere som er med i {{ group }}.
+            </div>
+            <table class="table table-striped table-condensed">
+                <tr>
+                    <th>Navn</th>
+                </tr>
+                {% for user in group_users %}
+                    <tr>
+                        <td><a href="#">{{ user }}</a></td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block js %}
+    {{ block.super }}
+    <!-- Dashboard JS here -->
+{% endblock %}
