@@ -37,7 +37,8 @@ def group_index(request):
 
     context = get_base_context(request)
 
-    context['groups'] = Group.objects.all().order_by('name')
+    context['groups'] = list(Group.objects.all())
+    context['groups'].sort(key=lambda x: str(x).lower())
 
     return render(request, 'dashboard/groups.html', context)
 
@@ -54,6 +55,6 @@ def group_detail(request, pk):
 
     context['group'] = get_object_or_404(Group, pk=pk)
     context['group_users'] = list(context['group'].user_set.all())
-    context['group_users'].sort()
+    context['group_users'].sort(key=lambda x: str(x).lower())
 
     return render(request, 'dashboard/groups_detail.html', context)
