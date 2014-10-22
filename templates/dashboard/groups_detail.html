@@ -18,19 +18,26 @@
 {% endblock %}
 
 {% block content %}
+<p>Denne oversikten er kun ment brukt i informasjonssammenheng, og ikke til endring av den faktiske gruppen.
+Dette gjøres fortsatt fra Django-admin som kan nås via &laquo;Redigér&raquo; knappen.
+{% for h in history %}
+    {{ h }}<br /><br />
+{% endfor %}
 <div class="row">
-    <div class="col-md-6">
+    <div class="col-md-12">
         <div class="panel panel-default">
             <div class="panel-heading">
                 <h3 class="panel-title">
-                    Innstillinger for {{ group }}
+                    Innstillinger for &laquo;{{ group }}&raquo;
                 </h3>
             </div>
             <div class="panel-body">
-                <a href="/admin/auth/group/{{ group.id }}/" class="btn btn-warning">Endre</a>
+                <a href="/admin/auth/group/{{ group.id }}/" class="btn btn-warning">Redigér</a>
             </div>
         </div>
     </div>
+</div>
+<div class="row">
     <div class="col-md-6">
         <div class="panel panel-default">
             <div class="panel-heading">
@@ -39,8 +46,7 @@
                 </h3>
             </div>
             <div class="panel-body">
-                Oversikt over alle brukere som er med i {{ group }}.
-            </div>
+                <p>Oversikt over alle brukere som er med i {{ group }}.</p>
             <table class="table table-striped table-condensed">
                 <tr>
                     <th>Navn</th>
@@ -51,6 +57,23 @@
                     </tr>
                 {% endfor %}
             </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">Tilganger</h3>
+            </div>
+            <div class="panel-body">
+                <div class="row">
+                    {% for perm in group_permissions %}
+                        <div class="col-md-12">
+                            {{ perm }}
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
         </div>
     </div>
 </div>
