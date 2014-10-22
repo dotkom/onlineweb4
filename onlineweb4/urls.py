@@ -68,6 +68,7 @@ if 'apps.autoconfig' in settings.INSTALLED_APPS:
 if 'apps.authentication' in settings.INSTALLED_APPS:
     urlpatterns += patterns('',
         url(r'^auth/',              include('apps.authentication.urls')),
+        url(r'^dashboard/auth/',    include('apps.authentication.dashboard.urls')),
     )
 
 if 'apps.careeropportunity' in settings.INSTALLED_APPS:
@@ -82,7 +83,7 @@ if 'apps.companyprofile' in settings.INSTALLED_APPS:
 
 if 'apps.dashboard' in settings.INSTALLED_APPS:
     urlpatterns += patterns('',
-        url(r'^dashboard/',        include('apps.dashboard.urls')),
+        url(r'^dashboard/',         include('apps.dashboard.urls')),
     )
 
 if 'apps.events' in settings.INSTALLED_APPS:

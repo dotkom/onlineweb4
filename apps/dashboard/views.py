@@ -2,14 +2,8 @@
 
 from django.core.exceptions import PermissionDenied
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import Group
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render
 
-from guardian.decorators import permission_required
-from reversion import get_for_object as get_history_for_object
-
-from apps.approval.models import MembershipApproval
-from apps.authentication.models import OnlineUser as User
 from apps.dashboard.tools import has_access, get_base_context
 
 @login_required
@@ -24,51 +18,3 @@ def index(request):
     context = get_base_context(request)
 
     return render(request, 'dashboard/dashboard.html', context)
-
-# Group module views
-
-@login_required
-def group_index(request):
-    """
-    Group module in dashboard that lists groups.
-    """
-
-    if not has_access(request):
-        raise PermissionDenied
-
-    context = get_base_context(request)
-
-    context['groups'] = list(Group.objects.all())
-    context['groups'].sort(key=lambda x: str(x).lower())
-
-    return render(request, 'dashboard/groups.html', context)
-
-@login_required
-def group_detail(request, pk):
-    """
-    Group module in dashboard that lists groups.
-    """
-
-    if not has_access(request):
-        raise PermissionDenied
-
-    context = get_base_context(request)
-
-    context['group'] = get_object_or_404(Group, pk=pk)
-
-    context['group_users'] = list(context['group'].user_set.all())
-    context['group_permissions'] = list(context['group'].permissions.all())
-
-    context['group_users'].sort(key=lambda x: str(x).lower())
-    context['group_permissions'].sort(key=lambda x: str(x))
-
-    history = get_history_for_object(context['group'])
-    
-    field_dicts = []
-
-    for h in history:
-        field_dicts.append(repr(h.field_dict))
-
-    context['history'] = field_dicts
-
-    return render(request, 'dashboard/groups_detail.html', context)
