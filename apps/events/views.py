@@ -260,7 +260,7 @@ def calendar_export(request, event_id=None, user=None):
 
         cal.add_component(cal_event)
 
-    response = HttpResponse(cal.to_ical(), mimetype='text/calendar')
+    response = HttpResponse(cal.to_ical(), content_type='text/calendar')
     response['Content-Type'] = 'text/calendar; charset=utf-8';
     response['Content-Disposition'] = 'attachment; filename=' + filename + '.ics'
 
