@@ -16,6 +16,7 @@ from django.utils.safestring import SafeString
 
 from apps.feedback.models import FeedbackRelation, FieldOfStudyAnswer, RATING_CHOICES, TextQuestion, TextAnswer, RegisterToken
 from apps.feedback.forms import create_answer_forms
+from apps.events.models import Event
 
 @login_required
 def feedback(request, applabel, appmodel, object_id, feedback_id):
@@ -74,7 +75,17 @@ def feedback_results(request, applabel, appmodel, object_id, feedback_id, token=
         if (question.display or not token) and isinstance(question, TextQuestion):
             question_and_answers.append(Qa(question, fbr.answers_to_question(question)))
     
-    rt = get_object_or_404(RegisterToken, fbr = fbr)
+    info = None
+
+    if(fbr.feedback.display_info or not token):
+        if(isinstance(fbr.content_object, Event)):
+            info = dict()
+            info['attended'] = fbr.content_object.attendance_event.number_of_attendees
+            info['waitlist'] = fbr.content_object.attendance_event.number_on_waitlist
+            info['answered'] = fbr.answered.count()
+            
+    
+    rt = get_object_or_404(RegisterToken, fbr=fbr)
 
     token_url = u"%s%sresults/%s" % (request.META['HTTP_HOST'], fbr.get_absolute_url(), rt.token)
         

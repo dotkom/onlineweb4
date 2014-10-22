@@ -156,6 +156,8 @@ class Feedback(models.Model):
     description = models.CharField(_(u'beskrivelse'), max_length=100)
     display_field_of_study = models.BooleanField(_(u'Vis studie oversikt'), default=True, 
         help_text =_(u'Grafen over studiefelt vil bli vist til bedriften'))
+    display_info = models.BooleanField(_('Vis extra informasjon'), default=True,
+        help_text=_(u'En boks med ekstra informasjon vil bli vist til bedriften'))
  
     @property
     def ratingquestions(self):
