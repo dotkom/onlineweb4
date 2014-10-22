@@ -20,6 +20,8 @@ from django.core.urlresolvers import reverse
 from apps.authentication.models import OnlineUser as User
 from apps.authentication.models import FIELD_OF_STUDY_CHOICES
 
+import reversion
+
 class FeedbackRelation(models.Model):
     """
     A many to many relation between a Generic Object and a Feedback schema.
@@ -32,6 +34,7 @@ class FeedbackRelation(models.Model):
     gives_mark = models.BooleanField(default=True)
     active = models.BooleanField(default=True)
     created_date = models.DateTimeField(auto_now_add=True)
+    first_mail_sent = models.BooleanField(default=False)
 
     # Keep a record of who has answered. (not /what/ they have answered)
     answered = models.ManyToManyField(
@@ -52,7 +55,13 @@ class FeedbackRelation(models.Model):
         return self.feedback.ratingquestions
 
     @property
+    def multiple_choice_question(self):
+        return self.feedback.multiple_choice_question
+
+    @property
     def description(self):
+        if self.content_title():
+            return _(u"Tilbakemelding: " + self.content_title())
         return self.feedback.description
 
     @property
@@ -69,6 +78,7 @@ class FeedbackRelation(models.Model):
         answers.extend(self.field_of_study_answers.all())
         answers.extend(self.text_answers.all())
         answers.extend(self.rating_answers.all())
+        answers.extend(self.multiple_choice_answers.all())
         return sorted(answers, key=lambda x: x.order)  # sort by order
 
     def answers_to_question(self, question):
@@ -99,29 +109,29 @@ class FeedbackRelation(models.Model):
                 return False
         return True
 
-    def get_slackers(self):
+    def not_answered(self):
         if hasattr(self.content_object, "feedback_users"):
             return set(self.content_object.feedback_users()).difference(set(self.answered.all()))
         else:
             return False
 
-    def get_email(self):
+    def content_email(self):
         if hasattr(self.content_object, "feedback_mail"):
             return self.content_object.feedback_mail()
         else:
             return "missing mail"
 
-    def get_title(self):
+    def content_title(self):
         if hasattr(self.content_object, "feedback_title"):
             return self.content_object.feedback_title()
         else:
             return "Missing title"
 
-    def get_start_date(self):
+    def content_end_date(self):
         if hasattr(self.content_object, "feedback_date"):
             return self.content_object.feedback_date()
         else:
-            False
+            return False
 
     def save(self, *args, **kwargs):
         new_fbr = not self.pk
@@ -130,6 +140,10 @@ class FeedbackRelation(models.Model):
             token = uuid.uuid4().hex
             rt = RegisterToken(fbr = self, token = token)
             rt.save()
+
+
+reversion.register(FeedbackRelation)
+
 
 class Feedback(models.Model):
     """
@@ -148,6 +162,12 @@ class Feedback(models.Model):
         return rating_question
 
     @property
+    def multiple_choice_question(self):
+        multiple_choice_question = []
+        multiple_choice_question.extend(self.multiple_choice_questions.all())
+        return multiple_choice_question
+
+    @property
     def questions(self):
         """
         All questions related to this Feedback schema.
@@ -160,15 +180,18 @@ class Feedback(models.Model):
         questions = []
         questions.extend(self.text_questions.all())
         questions.extend(self.rating_questions.all())
+        questions.extend(self.multiple_choice_questions.all())
         return sorted(questions, key=lambda x: x.order)  # sort by order
 
     def __unicode__(self):
         return self.description
 
     class Meta:
-        verbose_name = _(u'tilbakemelding')
-        verbose_name_plural = _(u'tilbakemeldinger')
+        verbose_name = _(u'tilbakemeldingsskjema')
+        verbose_name_plural = _(u'tilbakemeldingsskjemaer')
 
+
+reversion.register(Feedback)
 
 
 class FieldOfStudyAnswer(models.Model):
@@ -182,6 +205,10 @@ class FieldOfStudyAnswer(models.Model):
     def __unicode__(self):
         return self.get_answer_display()
 
+
+reversion.register(FieldOfStudyAnswer)
+
+
 class TextQuestion(models.Model):
     feedback = models.ForeignKey(
         Feedback,
@@ -194,6 +221,9 @@ class TextQuestion(models.Model):
 
     def __unicode__(self):
         return self.label
+
+
+reversion.register(TextQuestion)
 
 
 class TextAnswer(models.Model):
@@ -213,6 +243,9 @@ class TextAnswer(models.Model):
         return self.question.order
 
 
+reversion.register(TextAnswer)
+
+
 RATING_CHOICES = [(k, str(k)) for k in range(1, 7)]  # 1 to 6
 
 
@@ -227,6 +260,9 @@ class RatingQuestion(models.Model):
 
     def __unicode__(self):
         return self.label
+
+
+reversion.register(RatingQuestion)
 
 
 class RatingAnswer(models.Model):
@@ -248,16 +284,79 @@ class RatingAnswer(models.Model):
     def order(self):
         return self.question.order
 
+
+reversion.register(RatingAnswer)
+
+    
+class MultipleChoiceQuestion(models.Model):
+    label = models.CharField(_(u'Spørsmål'), blank=False, max_length=256)
+
+    class Meta:
+        verbose_name = _(u'Flervalgspørsmål')
+        verbose_name_plural = _(u'Flervalgspørsmål')
+
+    def __unicode__(self):
+        return self.label
+
+
+reversion.register(MultipleChoiceQuestion)
+
+
+class MultipleChoiceRelation(models.Model):
+    multiple_choice_relation = models.ForeignKey(MultipleChoiceQuestion)
+    order = models.SmallIntegerField(_(u'Rekkefølge'), default=30)
+    display = models.BooleanField(_(u'Vis til bedrift'), default=True)
+    feedback = models.ForeignKey(Feedback, related_name='multiple_choice_questions')
+
+    def __unicode__(self):
+        return self.multiple_choice_relation.label
+
+
+reversion.register(MultipleChoiceRelation)
+
+
+class Choice(models.Model):
+    question = models.ForeignKey(MultipleChoiceQuestion, related_name="choices")
+    choice = models.CharField(_(u'valg'), max_length=256, blank=False)
+
+    def __unicode__(self):
+        return self.choice
+
+
+reversion.register(Choice)
+
+
+class MultipleChoiceAnswer(models.Model):
+    feedback_relation = models.ForeignKey(
+        FeedbackRelation,
+        related_name="multiple_choice_answers")
+
+    answer = models.CharField(_(u'svar'), blank=False, max_length=256)
+    question = models.ForeignKey(MultipleChoiceRelation, related_name='answer')
+
+    def __unicode__(self):
+        return self.answer
+
+    @property
+    def order(self):
+        return self.question.order
+
+
+reversion.register(MultipleChoiceAnswer)
+
+
 #For creating a link for others(companies) to see the results page
 class RegisterToken(models.Model):
     fbr = models.ForeignKey(FeedbackRelation, related_name="Feedback_relation")
     token = models.CharField(_(u"token"), max_length=32)
     created = models.DateTimeField(_(u"opprettet dato"), editable=False, auto_now_add=True)
 
-    @property
-    def is_valid(self):
-        return True
+    def is_valid(self, feedback_relation):
+        return self.token == RegisterToken.objects.get(fbr=feedback_relation).token
         
         #valid_period = datetime.timedelta(days=365)#1 year
         #now = timezone.now()
         #return now < self.created + valid_period
+
+
+reversion.register(RegisterToken)

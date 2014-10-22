@@ -1,4 +1,9 @@
 import os
+import sys
+
+# Prevent python from making .pyc files
+sys.dont_write_bytecode = True
+
 from base import PROJECT_ROOT_DIRECTORY
 
 DEBUG = True
@@ -26,6 +31,7 @@ DATABASES = {
     },
 }
 
+
 # Email settings
 # If you are actually sending mail, this should be replaced with an
 # email adress you can get all mail to.
@@ -40,6 +46,7 @@ DEFAULT_FROM_EMAIL = 'development@online.ntnu.no'
 EMAIL_ARRKOM = DEVELOPMENT_EMAIL
 EMAIL_BEDKOM = DEVELOPMENT_EMAIL
 EMAIL_DOTKOM = DEVELOPMENT_EMAIL
+EMAIL_EKSKOM = DEVELOPMENT_EMAIL
 EMAIL_FAGKOM = DEVELOPMENT_EMAIL
 EMAIL_PROKOM = DEVELOPMENT_EMAIL
 EMAIL_TRIKOM = DEVELOPMENT_EMAIL
@@ -80,6 +87,12 @@ FAGKOM_GROUP_ID = 6
 COMMON_GROUP_ID = 17
 
 GENFORS_ADMIN_PASSWORD = 'ADMIN_PASSWORD'
+
+SYMPA_DB_PASSWD = ''
+SYMPA_DB_USER = ''
+SYMPA_DB_NAME = ''
+SYMPA_DB_PORT = ''
+SYMPA_DB_HOST = ''
 
 LOGGING = {
     'version': 1,

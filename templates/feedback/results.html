@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
 {% load question_filters %}
+{% load compress %}
 
 {% block title %}
 Tilbakemeldinger - Resultater - Online
@@ -11,40 +12,33 @@ Tilbakemeldinger - Resultater - Online
     <div class="page-header">
         <h1>{{ description }}</h1> 
     </div>
-    {% if display_fos or not token %}
-        <div class="row">
-            <div class="col-md-6">
-                <h2>Studieretning</h2>
-                <div id="field-of-study-chart"></div>
-            </div>
+    <div id="field-of-study-header"></div>
+    <div class="row" id="field-of-study-graph"></div>
+    <div id="rating-header"></div>
+    <div class="row" id="rating-graphs"></div>
+    <div id="multiple-choice-header"></div>
+    <div class="row" id="multiple-choice-graphs"></div>
+    {% if question_and_answers %}
+        <div class="page-header">
+            <h2>Tilbakemeldinger</h2>
         </div>
-    {% endif %}
-    <div class="page-header">
-        <h2>Vurderinger</h2>
-    </div>
-    <div class="row" id="ratings">
-    </div>
-    <div class="page-header">
-        <h2>Tilbakemeldinger</h2>
-    </div>
-    <div class="row">
-        {% for qa in question_and_answers%}
-            {% if qa.question|isinst:"apps.feedback.models.TextQuestion" %}
-                <div class="col-md-6">
-                    <div class="panel panel-default">
-                        <div class="panel-heading">{{qa.question}}</div>
-                        <table class="table table-striped table-condensed table-bordered table-hover">
-                            {% for answer in qa.answers %}
-                            <tr{% if not token %} class="answer"{% endif %}>
-                                <td><span class="icon glyphicon glyphicon-remove"></span>{{ answer }}</td>
-                                <td class="answer-id hidden">{{ answer.id }}</td>
-                            </tr>
-                            {% endfor %}
-                        </table>
-                    </div>
-                </div>
-            {% endif %}
-        {% endfor %}
+        <div class="row">
+            {% for qa in question_and_answers%}
+                        <div class="col-md-6 specifier whitespaceFix">
+                            <div class="panel panel-default">
+                                <div class="panel-heading">{{qa.question}}</div>
+                                <table class="table table-striped table-condensed table-bordered table-hover">
+                                    {% for answer in qa.answers %}
+                                    <tr{% if not token %} class="answer"{% endif %}>
+                                        <td><span class="icon glyphicon glyphicon-remove"></span>{{ answer }}</td>
+                                        <td class="answer-id hidden">{{ answer.id }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </table>
+                            </div>
+                        </div>
+            {% endfor %}
+        {% endif %}
     </div><!-- endrow -->
     <div class="row">
         <div class="col-md-12">
@@ -60,9 +54,11 @@ Tilbakemeldinger - Resultater - Online
     <script src="{{ STATIC_URL }}js/libs/jqplot/jqplot.barRenderer.min.js"></script>
     <script src="{{ STATIC_URL }}js/libs/jqplot/jqplot.categoryAxisRenderer.min.js"></script>
     <script src="{{ STATIC_URL }}js/libs/jqplot/jqplot.pointLabels.min.js"></script>
+    {% compress js %}
     <script src="{{ STATIC_URL }}js/libs/jquery.cookie.js"></script>
     <script src="{{ STATIC_URL }}js/Utils.js"></script>
     <script src="{{ STATIC_URL }}js/feedbackResults.js"></script>
+    {% endcompress %}
 {% endblock %}
 
 {% endblock content %}

@@ -1,4 +1,7 @@
 {% extends "base.html" %}
+
+{% load compress %}
+
 {% block title %}
 Generalforsamling - Online
 {% endblock %}
@@ -260,5 +263,7 @@ Generalforsamling - Online
 
 {% block js %}
     {{ block.super }}
+    {% compress js %}
     <script src="/static/js/genfors.js"></script>
+    {% endcompress %}
 {% endblock %}

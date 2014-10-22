@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load chunks %}
+{% load compress %}
 
 {% block title %}
 Tidsskriftet Offline - Online
@@ -7,26 +8,25 @@ Tidsskriftet Offline - Online
 
 {% block js %}
     {{ block.super }}
-    <script src="{{ STATIC_URL }}/js/offline-filter.js"></script>
-    <script src="{{ STATIC_URL }}/js/libs/jquery.debouncedresize.js"></script>
+    {% compress js %}
+    <script src="{{ STATIC_URL }}js/offline-filter.js"></script>
+    {% endcompress %}
 {% endblock %}
 
 {% block submenu %}
-    <nav class="subnavbar navbar-default navbar-fixed-top">
+    <nav class="subnavbar">
         <div class="container">
-            <div class="collapse navbar-collapse navbar-ex1-collapse">
-                <ul class="nav navbar-nav">
-                    <li class="top-menu-link">
-                        <a href="{% url 'events_index' %}">Arrangementer</a>
-                    </li>
-                    <li class="top-menu-link">
-                        <a href="{% url 'article_archive' %}">Artikler</a>
-                    </li>
-                    <li class="top-menu-link active">
-                        <a class="active" href="{% url 'offline' %}">Offline</a>
-                    </li>
-                </ul>
-            </div>
+            <ul>
+                <li class="top-menu-link">
+                    <a href="{% url 'events_index' %}">Arrangementer</a>
+                </li>
+                <li class="top-menu-link">
+                    <a href="{% url 'article_archive' %}">Artikler</a>
+                </li>
+                <li class="top-menu-link active">
+                    <a class="active" href="{% url 'offline' %}">Offline</a>
+                </li>
+            </ul>
         </div>
     </nav>
 {% endblock %}
@@ -70,7 +70,7 @@ Tidsskriftet Offline - Online
                 </div>
             </div>
         </div>
-          
+
     </div>
 </section>
 {% endblock content %}

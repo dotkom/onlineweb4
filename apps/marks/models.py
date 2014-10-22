@@ -9,6 +9,8 @@ from django.utils.translation import ugettext as _
 
 from apps.authentication.models import OnlineUser as User
 
+import reversion
+
 class ActiveMarksManager(models.Manager):
     def get_query_set(self):
         return super(ActiveMarksManager, self).get_query_set().filter(expiration_date__gt=timezone.now())
@@ -66,6 +68,9 @@ class Mark(models.Model):
         verbose_name_plural = _(u"Prikker")
 
 
+reversion.register(Mark)
+
+
 class UserEntry(models.Model):
     user = models.ForeignKey(User)
     mark = models.ForeignKey(Mark)
@@ -75,6 +80,9 @@ class UserEntry(models.Model):
 
     class Meta:
         unique_together = ("user", "mark")
+
+
+reversion.register(UserEntry)
 
 
 def _get_expiration_date(added_date=timezone.now()):

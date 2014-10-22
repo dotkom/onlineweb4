@@ -22,7 +22,7 @@ class Migration(SchemaMigration):
             ('reservation', self.gf('django.db.models.fields.related.ForeignKey')(related_name='reservees', to=orm['events.Reservation'])),
             ('name', self.gf('django.db.models.fields.CharField')(max_length=69)),
             ('note', self.gf('django.db.models.fields.CharField')(max_length=100)),
-            ('allergies', self.gf('django.db.models.fields.CharField')(max_length=200)),
+            ('allergies', self.gf('django.db.models.fields.CharField')(max_length=200, null=True, blank=True)),
         ))
         db.send_create_signal(u'events', ['Reservee'])
 
@@ -61,7 +61,7 @@ class Migration(SchemaMigration):
             'gender': ('django.db.models.fields.CharField', [], {'default': "'male'", 'max_length': '10'}),
             'groups': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'related_name': "u'user_set'", 'blank': 'True', 'to': u"orm['auth.Group']"}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'infomail': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
+            'infomail': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'is_active': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
             'is_staff': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'is_superuser': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
@@ -73,7 +73,7 @@ class Migration(SchemaMigration):
             'password': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
             'phone_number': ('django.db.models.fields.CharField', [], {'max_length': '20', 'null': 'True', 'blank': 'True'}),
             'rfid': ('django.db.models.fields.CharField', [], {'max_length': '50', 'null': 'True', 'blank': 'True'}),
-            'started_date': ('django.db.models.fields.DateField', [], {'default': 'datetime.datetime(2014, 2, 19, 0, 0)'}),
+            'started_date': ('django.db.models.fields.DateField', [], {'default': 'datetime.datetime(2014, 9, 24, 0, 0)'}),
             'user_permissions': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'related_name': "u'user_set'", 'blank': 'True', 'to': u"orm['auth.Permission']"}),
             'username': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '30'}),
             'website': ('django.db.models.fields.URLField', [], {'max_length': '200', 'null': 'True', 'blank': 'True'}),
@@ -88,7 +88,7 @@ class Migration(SchemaMigration):
             'name': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
             'phone_number': ('django.db.models.fields.CharField', [], {'max_length': '20', 'null': 'True', 'blank': 'True'}),
             'short_description': ('django.db.models.fields.TextField', [], {'max_length': '200'}),
-            'site': ('django.db.models.fields.URLField', [], {'max_length': '200'})
+            'site': ('django.db.models.fields.CharField', [], {'max_length': '100'})
         },
         u'contenttypes.contenttype': {
             'Meta': {'ordering': "('name',)", 'unique_together': "(('app_label', 'model'),)", 'object_name': 'ContentType', 'db_table': "'django_content_type'"},
@@ -113,7 +113,7 @@ class Migration(SchemaMigration):
             'attended': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'event': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'attendees'", 'to': u"orm['events.AttendanceEvent']"}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'note': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '100'}),
+            'note': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '100', 'blank': 'True'}),
             'paid': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'timestamp': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
             'user': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['authentication.OnlineUser']"})
@@ -136,7 +136,7 @@ class Migration(SchemaMigration):
             'ingress': ('django.db.models.fields.TextField', [], {}),
             'ingress_short': ('django.db.models.fields.CharField', [], {'max_length': '150'}),
             'location': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
-            'title': ('django.db.models.fields.CharField', [], {'max_length': '45'})
+            'title': ('django.db.models.fields.CharField', [], {'max_length': '60'})
         },
         u'events.fieldofstudyrule': {
             'Meta': {'object_name': 'FieldOfStudyRule', '_ormbases': [u'events.Rule']},
@@ -156,7 +156,7 @@ class Migration(SchemaMigration):
         },
         u'events.reservee': {
             'Meta': {'ordering': "['id']", 'object_name': 'Reservee'},
-            'allergies': ('django.db.models.fields.CharField', [], {'max_length': '200'}),
+            'allergies': ('django.db.models.fields.CharField', [], {'max_length': '200', 'null': 'True', 'blank': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '69'}),
             'note': ('django.db.models.fields.CharField', [], {'max_length': '100'}),

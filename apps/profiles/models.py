@@ -5,6 +5,8 @@ from django.utils.translation import ugettext as _
 
 from apps.authentication.models import OnlineUser as User
 
+import reversion
+
 
 class Privacy(models.Model):
     visible_for_other_users = models.BooleanField(_(u"profil synlig for andre brukere"), default=True)
@@ -21,6 +23,9 @@ class Privacy(models.Model):
     class Meta:
         verbose_name = _(u"personvern")
         verbose_name_plural = _(u"personvern")
+
+
+reversion.register(Privacy)
 
 
 User.privacy = property(lambda u: Privacy.objects.get_or_create(user=u)[0])

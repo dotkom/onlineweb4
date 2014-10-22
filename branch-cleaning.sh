@@ -3,7 +3,7 @@
 echo "----------------------------------"
 echo "- Deleting merged local branches -"
 echo "----------------------------------"
-git branch --merged | grep -v "\*" | xargs -n 1 git branch -d
+git branch --merged | grep -v -e "\*" -e "develop" | xargs -n 1 git branch -d
 
 echo "------------------------------------"
 echo "- Pruning origin's merged branches -"
