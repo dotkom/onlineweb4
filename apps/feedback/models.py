@@ -26,12 +26,12 @@ class FeedbackRelation(models.Model):
     """
     A many to many relation between a Generic Object and a Feedback schema.
     """
-    feedback = models.ForeignKey('Feedback')
+    feedback = models.ForeignKey('Feedback', verbose_name=_(u'Tilbakemeldingskjema'))
     content_type = models.ForeignKey(ContentType)
     object_id = models.PositiveIntegerField()
     content_object = generic.GenericForeignKey('content_type', 'object_id')
-    deadline = models.DateField()
-    gives_mark = models.BooleanField(default=True)
+    deadline = models.DateField(_(u'Tidsfrist'))
+    gives_mark = models.BooleanField(_(u'Gir Prikk'), default=True, help_text=_(u'Gir automatisk prikk til brukere som ikke har svart innen fristen'))
     active = models.BooleanField(default=True)
     created_date = models.DateTimeField(auto_now_add=True)
     first_mail_sent = models.BooleanField(default=False)
@@ -45,6 +45,8 @@ class FeedbackRelation(models.Model):
 
     class Meta:
         unique_together = ('feedback', 'content_type', 'object_id')
+        verbose_name = _(u'tilbakemelding')
+        verbose_name_plural = _(u'tilbakemeldinger')
 
     @property
     def questions(self):
