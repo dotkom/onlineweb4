@@ -10,6 +10,7 @@ from guardian.decorators import permission_required
 from reversion import get_for_object as get_history_for_object
 
 from apps.authentication.models import OnlineUser as User
+from apps.authentication.models import AllowedUsername
 from apps.dashboard.tools import has_access, get_base_context
 
 @login_required
@@ -83,6 +84,7 @@ def members_index(request):
         raise PermissionDenied
 
     context = get_base_context(request)
+    context['members'] = AllowedUsername.objects.all()
 
     return render(request, 'auth/dashboard/members_index.html', context)
 

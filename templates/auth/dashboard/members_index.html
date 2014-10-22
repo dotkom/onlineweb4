@@ -24,10 +24,18 @@ Medlemsregister
         <table class="table table-striped table-condensed">
             <tr>
                 <th>NTNU-brukernavn</th>
+                <th>Ble medlem</th>
+                <th>Medlemskap utløper</th>
+                <th>Notat</th>
+                <th>Aktiv</th>
             </tr>
-            {% for username in allowed_username %}
+            {% for member in members %}
                 <tr>
-                    <td><a href="/dashboard/auth/members/{{ username.id }}/">{{ username }}</a></td>
+                    <td><a href="/dashboard/auth/members/{{ member.id }}/">{{ member }}</a></td>
+                    <td>{{ member.registered }}</td>
+                    <td>{{ member.expiration_date }}</td>
+                    <td>{{ member.note }}</td>
+                    <td>{% if member.is_active %}Ja{% else %}Nei{% endif %}</td>
                 </tr>
             {% endfor %}
         </table>
