@@ -49,6 +49,12 @@ if 'apps.api' in settings.INSTALLED_APPS:
         url(r'^api/',               include('apps.api.urls')),
     )
 
+if 'apps.approval' in settings.INSTALLED_APPS:
+    urlpatterns += patterns('',
+        url(r'^approval/',          include('apps.approval.urls')),
+        url(r'^dashboard/approval/',include('apps.approval.dashboard.urls')),
+    )
+
 if 'apps.article' in settings.INSTALLED_APPS:
     urlpatterns += patterns('',
         url(r'^article/',           include('apps.article.urls')),
@@ -105,9 +111,9 @@ if 'apps.genfors' in settings.INSTALLED_APPS:
         url(r'^genfors/',           include('apps.genfors.urls')),
     )
 
-# pizzasystem
-if 'pizzasystem' in settings.INSTALLED_APPS:
-    urlpatterns += patterns('', url(r'^pizza/', include('pizzasystem.urls')))
+# redwine
+if 'redwine' in settings.INSTALLED_APPS:
+    urlpatterns += patterns('', url(r'^redwine/', include('redwine.urls')))
 
 #Captcha url
 if 'captcha' in settings.INSTALLED_APPS:

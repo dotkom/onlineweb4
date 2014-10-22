@@ -30,7 +30,7 @@ Min side - Online
             <div class="row">
                 <div class="col-md-2 col-sm-3 col-xs-12">
                     <!-- Desktop menu -->
-                    <ul class="nav nav-pills nav-stacked visible-lg visible-md visible-sm hidden-xs" id="userprofile-tabs">
+                    <ul class="nav nav-pills nav-stacked hidden-xs" id="userprofile-tabs">
                         <li class="{% ifequal 'dashboard' active_tab %}active{% endifequal %}">
                             <a href="#dashboard">Dashboard</a>
                         </li>
@@ -47,7 +47,7 @@ Min side - Online
                             <a href="#password">Passord</a>
                         </li>
                         <li class="{% ifequal 'mail-settings' active_tab %}active{% endifequal %}">
-                            <a href="#mail-settings">Epost-instillinger</a>
+                            <a href="#mail-settings">Epost-innstillinger</a>
                         </li>
                         <li class="{%ifequal 'membership' active_tab %}active{% endifequal %}">
                             <a href="#membership">Medlemskap</a>
@@ -55,13 +55,13 @@ Min side - Online
                     </ul>
                     <!-- End Desktop menu -->
                     <!-- Mobile menu -->
-                    <ul class="nav nav-pills nav-stacked visible-xs" id="userprofile-tabs">
+                    <ul class="nav nav-pills nav-stacked visible-xs-block" id="userprofile-tabs">
                         <li class="{% ifequal 'dashboard' active_tab %}Dashboard{% endifequal %}"><a href="#dashboard" data-toggle="tab">Dashboard</a></li>
                         <li class="{% ifequal 'editprofile' active_tab %}active{% endifequal %}"><a href="#editprofile" data-toggle="tab">Brukerinformasjon</a></li>
                         <li class="{% ifequal 'privacy' active_tab %}active{% endifequal %}"><a href="#privacy" data-toggle="tab">Personvern</a></li>
                         <li class="{% ifequal 'marks' active_tab %}active{% endifequal %}"><a href="#marks" data-toggle="tab">Prikker</a></li>
                         <li class="{% ifequal 'password' active_tab %}active{% endifequal %}"><a href="#password" data-toggle="tab">Passord</a></li>
-                        <li class="{% ifequal 'mail-settings' active_tab %}active{% endifequal %}"><a href="#mail-settings" data-toggle="tab">Epost-instillinger</a></li>
+                        <li class="{% ifequal 'mail-settings' active_tab %}active{% endifequal %}"><a href="#mail-settings" data-toggle="tab">Epost-innstillinger</a></li>
                         <li class="{% ifequal 'membership' active_tab %}active{% endifequal %}"><a href="#membership" data-toggle="tab">Medlemskap</a></li>
                     </ul>
                 </div>
@@ -98,8 +98,6 @@ Min side - Online
 {% endblock content %}
 {% block js %}
     {{ block.super }}
-    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}js/libs/jquery.Jcrop.min.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}js/libs/hogan-2.0.0.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}js/libs/typeahead.min.js"></script>
     {% compress js %}

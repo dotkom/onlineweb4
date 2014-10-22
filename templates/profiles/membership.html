@@ -5,31 +5,144 @@
         <h3>Medlemskap</h3>
     </div>
 </div>
-<div class="row">
-    {% if user.is_member %}
+{% if not has_active_approvals %}
+    <div class="row">
         <div class="col-md-12">
+            <p><strong>Avslåtte søknader havner nederst på siden, sjekk her før du sender inn nye søknader!</strong></p>
+        </div>
+    </div>
+    {% if user.ntnu_username %}
+        {% if user.has_expiring_membership %} 
+    <hr />
+    <div class="row">
+        <div class="col-xs-12 col-sm-6 col-md-6">
             <p class="ingress">
-                Her kan du selv registrere hvilken studieretning du går, samt hvilken dato du startet.
-                Om du har vært bachelor-student og skal over på master, skal startdato på studie endres til da du ble tatt opp
-                på mastergraden. Merk at det er viktig at du legger inn virkelig informasjon i dette skjemaet. Fusk med feil startdato og studieretning kan få svært alvorlige konsekvenser, og du risikerer utestengelse fra linjeforeningens arrangementer.
+                Ettersom du har et gammelt medlemskap kan du søke om å få dette forlenget. Forlengelsen er for ett år om gangen.
             </p>
         </div>
-    {% endif %}
-    <div class="col-xs-12 col-sm-6 col-md-4">
-        {% if user.is_member %}
-        
-        <form id="membership-details" method="post" action="{% url 'profile_save_membership_details' %}">
-            {% csrf_token %}
-            {{ membership_settings|crispy }}
-            <button type="submit" class="btn btn-success pull-right">Lagre</button>
-        </form>
-        {% else %}
-            {% if user.ntnu_username %}
-                <p>Du er ikke registrert som medlem av Linjeforeningen Online.</p>
-            {% else %}
-                <p>For å aktivere ditt medlemskap kreves det at du har knyttet din studentkonto til din profil.</p>
-                <p>Gå til Epost-innstillinger og registrer din @stud.ntnu.no epost.</p>
-            {% endif %}
+        <div class="col-xs-12 col-sm-6 col-md-3">
+            <form id="membership-application" method="post" action="{% url 'approval_send_membership_application' %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-success pull-right">Send søknad</button>
+            </form>
+        </div>
+    </div>
         {% endif %}
+    <hr />
+    <div class="row">
+        <div class="col-md-12">
+            <p class="ingress">
+                Med skjemaet under søker du om å få oppdatert studieretningen din. Starten på studieretningen er når du ble tatt opp.
+                Om du tidligere har vært bachelor og ønsker å søke deg over på master, skal starttidspunkt være når du kom 
+                inn på mastergraden.
+            </p>
+            <p>
+                Merk at det er viktig at du legger inn virkelig informasjon i dette skjemaet. Fusk med feil startdato 
+                og studieretning kan få svært alvorlige konsekvenser, og du risikerer utestengelse fra linjeforeningens 
+                arrangementer.
+            </p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12 col-sm-6 col-md-4">
+            <form id="field-of-study-application" method="post" action="{% url 'approval_send_fos_application' %}">
+                {% csrf_token %}
+                {{ field_of_study_application|crispy }}
+                <button type="submit" class="btn btn-success pull-right">Send søknad</button>
+            </form>
+        </div>
+    </div>
+
+    {% else %}
+    <div class="row">
+        <div class="col-xs-12 col-sm-6 col-md-4">
+            <p>For å aktivere ditt medlemskap kreves det at du har knyttet din studentkonto til din profil.</p>
+            <p>Gå til Epost-innstillinger og registrer din @stud.ntnu.no epost.</p>
+        </div>
+    </div>
+    {% endif %}
+{% endif %}
+<hr />
+<div class="row">
+    <div class="col-md-12">
+        <p>
+            Du har aktive søknader. 
+        </p>
+        <p>
+            Dersom du oppdager feil eller mangler i en aktiv søknad kan du slette den og sende inn en ny.
+        </p>
+    </div>
+</div>
+<div class="row row-space-sm">
+    <div class="col-md-12">
+        <div class="panel-group" id="approvalsaccordion">
+            {% for heading, app_list, is_collapsed in approvals %}
+                <div class="panel panel-default">
+                    <div class="panel-heading accordion-toggle" data-toggle="collapse" data-parent="#approvalsaccordion" href="#collapse-{{ heading|slugify }}">
+                        <h5>{{ heading|capfirst }}</h5>
+                    </div>
+                    <div id="collapse-{{ heading|slugify }}" class="panel-collapse collapse {% if not is_collapsed %}in{% endif %}">
+                        <div class="panel-body">
+                            {% for app in app_list %}
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="application">
+                                            <div class="applicationheader">
+                                                {{ app }}
+                                            </div>
+                                            <div class="applicationbody">
+                                                <div class="inline">
+                                                    <div class="row">
+                                                        <div class="col-md-3"><b>Opprettet dato:</b></div>
+                                                        <div class="col-md-9"> {{ app.created }}</div>
+                                                    </div>
+                                                </div>
+                                                {% if app.is_fos_application %}
+                                                    <div class="inline">
+                                                        <div class="row">
+                                                            <div class="col-md-3"><b>Startet på studiet:</b></div>
+                                                            <div class="col-md-9"> {{ app.started_date }}</div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="inline">
+                                                        <div class="row">
+                                                            <div class="col-md-3"><b>Studieretning:</b></div>
+                                                            <div class="col-md-9"> {{ app.get_field_of_study_display }}</div>
+                                                        </div>
+                                                    </div>
+                                                {% endif %}
+                                                {% if app.is_membership_application %}
+                                                    <div class="inline">
+                                                        <div class="row">
+                                                            <div class="col-md-3"><b>Utløpsdato for medlemskap:</b></div>
+                                                            <div class="col-md-9"> {{ app.new_expiry_date }}</div>
+                                                        </div>
+                                                    </div>
+                                                {% endif %}
+                                                {% if app.message %}
+                                                    <div class="inline">
+                                                        <div class="row">
+                                                            <div class="col-md-3"><b>Melding fra godkjenner:</b></div>
+                                                            <div class="col-md-9"> {{ app.message }}</div>
+                                                        </div>
+                                                    </div>
+                                                {% endif %}
+                                                {% if not app.processed %}
+                                                    <div class="row-space-top-sm">
+                                                        <a href="{% url 'approval_cancel_application' application_id=app.id %}" type="submit" class="btn btn-danger" value="{{ app.id }}">Slett søknad</a>
+                                                    </div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% empty %}
+                                <p>Du har ingen {{ heading }}.</p>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
     </div>
 </div>

@@ -105,6 +105,7 @@ class AttendanceEventInline(admin.StackedInline):
     filter_horizontal = ('rule_bundles',)
     classes = ('grp-collapse grp-open',)  # style
     inline_classes = ('grp-collapse grp-open',)  # style
+    exclude = ("marks_has_been_set",)
 
 
 class EventAdmin(admin.ModelAdmin):
@@ -172,11 +173,11 @@ class ReservationAdmin(admin.ModelAdmin):
     _max_capacity.short_description = _("Arrangementets maks-kapasitet")
 
     def save_model(self, request, obj, form, change):
-        if change:
-            number_of_free_seats = obj.attendance_event.max_capacity - obj.attendance_event.number_of_attendees
-            if number_of_free_seats < obj.seats:
-                obj.seats = number_of_free_seats
-                self.message_user(request, _("Du har valgt et antall reserverte plasser som overskrider antallet ledige plasser for dette arrangementet. Antallet ble automatisk justert til %d (alle ledige plasser).") % number_of_free_seats, messages.WARNING)
+        attendance_event = AttendanceEvent.objects.get(pk=obj.attendance_event.event)
+        number_of_free_seats = attendance_event.max_capacity - attendance_event.number_of_attendees
+        if number_of_free_seats < obj.seats:
+            obj.seats = number_of_free_seats
+            self.message_user(request, _(u"Du har valgt et antall reserverte plasser som overskrider antallet ledige plasser for dette arrangementet. Antallet ble automatisk justert til %d (alle ledige plasser).") % number_of_free_seats, messages.WARNING)
         obj.save()
             
     

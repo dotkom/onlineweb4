@@ -128,7 +128,7 @@ class Migration(SchemaMigration):
             'ingress': ('django.db.models.fields.TextField', [], {}),
             'ingress_short': ('django.db.models.fields.CharField', [], {'max_length': '150'}),
             'location': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
-            'title': ('django.db.models.fields.CharField', [], {'max_length': '45'})
+            'title': ('django.db.models.fields.CharField', [], {'max_length': '60'})
         },
         u'events.fieldofstudyrule': {
             'Meta': {'object_name': 'FieldOfStudyRule', '_ormbases': [u'events.Rule']},

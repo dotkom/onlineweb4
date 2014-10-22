@@ -25,6 +25,7 @@ DEFAULT_FROM_EMAIL = 'online@online.ntnu.no'
 EMAIL_ARRKOM = 'arrkom@online.ntnu.no'
 EMAIL_BEDKOM = 'bedkom@online.ntnu.no'
 EMAIL_DOTKOM = 'dotkom@online.ntnu.no'
+EMAIL_EKSKOM = 'ekskom@online.ntnu.no'
 EMAIL_FAGKOM = 'fagkom@online.ntnu.no'
 EMAIL_PROKOM = 'prokom@online.ntnu.no'
 EMAIL_TRIKOM = 'trikom@online.ntnu.no'
@@ -109,6 +110,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'middleware.http.Http403Middleware',
+    'reversion.middleware.RevisionMiddleware',
     # Uncomment the next line for simple clickjacking protection:
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
@@ -126,6 +128,19 @@ TEMPLATE_DIRS = (
 PIZZA_GROUP = 'dotkom'
 PIZZA_ADMIN_GROUP = 'pizzaadmin'
 
+# Variables for fagKom/bedKom-sync script, override in local.py
+BEDKOM_GROUP_ID = 1
+FAGKOM_GROUP_ID = 2
+COMMON_GROUP_ID = 3
+
+# List of groups that should have edit access to Online wiki (public)
+WIKI_OPEN_EDIT_ACCESS = [1, 2]
+WIKI_OPEN_EDIT_ACCESS_GROUP_ID = 3
+
+# List of groups that should have access to the Komite wiki
+WIKI_COMMITTEE_ACCESS = [1, 2]
+WIKI_COMMITTEE_ACCESS_GROUP_ID = 3
+
 # Grappelli settings
 GRAPPELLI_ADMIN_TITLE = '<a href="/">Onlineweb</a>'
 
@@ -142,8 +157,26 @@ USER_SEARCH_GROUPS = [
     11,  # Hovedstyret
     10,  # pangKom
     7,   # proKom
+    18,  # seniorKom
     8,   # triKom
     9,   # velKom
+]
+
+#List of mailing lists, used in update_sympa_memcache_from_sql.py
+PUBLIC_LISTS = [
+    "foreninger",
+    "linjeforeninger",
+    "gloshaugen",
+    "dragvoll",
+    "masterforeninger",
+    "kjellere",
+    "linjeledere",
+    "linjeredaksjoner",
+    "glosfaddere",
+    "sr-samarbeid",
+    "ivt-samarbeid",
+    "linjekor",
+    "studentdemokratiet"
 ]
 
 INSTALLED_APPS = (
@@ -168,6 +201,7 @@ INSTALLED_APPS = (
     'gunicorn',
     'markdown_deux',
     'djangoformsetjs',
+    'reversion',
 
     # Django apps
     'django.contrib.admin',
@@ -180,6 +214,7 @@ INSTALLED_APPS = (
 
     # Onlineweb 4 apps
     'apps.api',
+    'apps.approval',
     'apps.article',
     'apps.authentication',
     'apps.autoconfig',
@@ -196,12 +231,16 @@ INSTALLED_APPS = (
     'apps.mailinglists',
     'scripts',
 
-     # Wiki
+    #External apps
+    'redwine',
+
+    #Wiki
     'wiki',
     'wiki.plugins.attachments',
     'wiki.plugins.notifications',
     'wiki.plugins.images',
     'wiki.plugins.macros',
+    
 )
 
 # A sample logging configuration. The only tangible logging
@@ -244,7 +283,12 @@ LOGGING = {
             'handlers': ['console'],
             'level': 'DEBUG',
             'propagate': True,
-        },   
+        },
+        'syncer': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
         '': {
             'handlers': ['console'],
             'level': 'DEBUG',
