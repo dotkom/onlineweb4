@@ -1,3 +1,4 @@
+
 # -*- encoding: utf-8 -*-
 
 from django.core.exceptions import PermissionDenied
@@ -73,6 +74,7 @@ def groups_detail(request, pk):
     return render(request, 'auth/dashboard/groups_detail.html', context)
 
 @login_required
+@permission_required("authentication.view_allowedusername", raise403=True)
 def members_index(request):
     """
     Index overview for allowedusernames in dashboard
@@ -85,6 +87,7 @@ def members_index(request):
     return render(request, 'auth/dashboard/members_index.html', context)
 
 @login_required
+@permission_required("authentication.view_allowedusername", raise403=True)
 def members_detail(request, pk):
     """
     Detail view for allowedusername with PK=pk
@@ -97,6 +100,7 @@ def members_detail(request, pk):
     return render(request, 'auth/dashboard/members_detail.html', context)
 
 @login_required
+@permission_required("authentication.change_allowedusername", raise403=True)
 def members_new(request):
     """
     Create new allowedusername form and handling
