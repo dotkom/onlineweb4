@@ -1,18 +1,3 @@
-/* AJAX SETUP FOR CSRF */
-$.ajaxSetup({
-    crossDomain: false, // obviates need for sameOrigin test
-    beforeSend: function(xhr, settings) {
-        if (!csrfSafeMethod(settings.type)) {
-            xhr.setRequestHeader("X-CSRFToken", $.cookie('csrftoken'));
-        }
-    }
-});
-function csrfSafeMethod(method) {
-    // these HTTP methods do not require CSRF protection
-    return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
-}
-/* END AJAX SETUP */
-
 $(document).ready(function() {
     $("div.application").each(function(i, row) {
         $(row).find("button.approve").click(function() {
@@ -40,7 +25,7 @@ $(document).ready(function() {
     });
     
     var approveApplication = function(application_id, row) {
-        var utils = new Utils();
+        var utils = Dashboard.tools
         $.ajax({
             method: 'POST',
             url: 'approve_application/',
@@ -63,7 +48,7 @@ $(document).ready(function() {
     }
 
     var declineApplication = function(application_id, message, row) {
-        var utils = new Utils();
+        var utils = Dashboard.tools
         $.ajax({
             method: 'POST',
             url: 'decline_application/',
@@ -84,5 +69,4 @@ $(document).ready(function() {
             crossDomain: false
         });
     }
-
 });

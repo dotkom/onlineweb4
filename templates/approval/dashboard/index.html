@@ -15,9 +15,7 @@ Søknadsgodkjenning - Online
 {% block js %}
     {{ block.super }}
     {% compress js %}
-        <script type="text/javascript" src="{{ STATIC_URL }}js/libs/jquery.cookie.js"></script>
-        <script type="text/javascript" src="{{ STATIC_URL }}js/Utils.js"></script>
-        <script type="text/javascript" src="{{ STATIC_URL }}js/approval.js"></script>
+        <script type="text/javascript" src="{{ STATIC_URL }}js/dashboard/approval.js"></script>
     {% endcompress %}
 {% endblock js %}
 

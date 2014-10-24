@@ -5,6 +5,7 @@
 {% block styles %}
     {{ block.super }}
     {% compress css %}
+        <link rel="stylesheet" type="text/less" href="{{ STATIC_URL }}less/dashboard/groups.less" />
     {% endcompress %}
 {% endblock %}
 
@@ -13,31 +14,31 @@
 {% endblock %}
 
 {% block breadcrumbs %}
-<li><a href="/dashboard/groups/">Grupper</a></li>
+<li><a href="/dashboard/auth/groups/">Grupper</a></li>
 <li>{{ group }}</li>
 {% endblock %}
 
 {% block content %}
-<p>Denne oversikten er kun ment brukt i informasjonssammenheng, og ikke til endring av den faktiske gruppen.
-Dette gjøres fortsatt fra Django-admin som kan nås via &laquo;Redigér&raquo; knappen.
-{% for h in history %}
-    {{ h }}<br /><br />
-{% endfor %}
 <div class="row">
     <div class="col-md-12">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h3 class="panel-title">
-                    Innstillinger for &laquo;{{ group }}&raquo;
-                </h3>
-            </div>
-            <div class="panel-body">
-                <a href="/admin/auth/group/{{ group.id }}/" class="btn btn-warning"><i class="fa fa-cogs"></i> Endre</a>
-                <a href="#" class="btn btn-primary" id="edit_users"><i class="fa fa-users"></i> Administrér brukere</a>
-            </div>
+        <a href="/admin/auth/group/{{ group.id }}/" class="btn btn-warning"><i class="fa fa-cogs"></i> Endre</a>
+        <a href="#" class="btn btn-primary" id="group_users_button"><i class="fa fa-users"></i> Legg til</a>
+        <div id="group_edit_users" style="display: none;">
+            <hr />
+            <h4>Legg til brukere</h4>
+            <p><small><strong>TIPS</strong> Hold inne CTRL for å velge flere enkeltbrukere.
+                Hold inne shift for å velge alle fra valgt bruker til den neste som klikkes på.</small></p>
+            <form action="" method="POST">
+                <select multiple="multiple" id="group_users_available">
+                    {% for user in group_users_not_in_group %}
+                    <option value="{{ user.id }}" title="{{ user.get_full_name }}">{{ user.get_full_name }}</option>
+                    {% endfor %}
+                </select>
+            </form>
         </div>
     </div>
 </div>
+<br />
 <div class="row">
     <div class="col-md-6">
         <div class="panel panel-default">
@@ -47,16 +48,25 @@ Dette gjøres fortsatt fra Django-admin som kan nås via &laquo;Redigér&raquo; 
                 </h3>
             </div>
             <div class="panel-body">
-                <p>Oversikt over alle brukere som er med i {{ group }}.</p>
-            <table class="table table-striped table-condensed">
-                <tr>
-                    <th>Navn</th>
-                </tr>
+            <p>Oversikt over alle brukere som er med i {{ group }}.</p>
+            <table class="table table-striped table-condensed" id="users">
+                <thead>
+                    <tr>
+                        <th>Navn</th>
+                    </tr>
+                </thead>
+                <tbody>
                 {% for user in group_users %}
                     <tr>
-                        <td><a href="#">{{ user }}</a></td>
+                        <td>
+                            <a href="#">{{ user.get_full_name }}</a>
+                            <a href="#" id="{{ user.id }}" class="remove-user">
+                                <i class="fa fa-times fa-lg pull-right red"></i>
+                            </a>
+                        </td>
                     </tr>
                 {% endfor %}
+                </tbody>
             </table>
             </div>
         </div>
@@ -82,5 +92,7 @@ Dette gjøres fortsatt fra Django-admin som kan nås via &laquo;Redigér&raquo; 
 
 {% block js %}
     {{ block.super }}
-    <script src="{{ STATIC_DIR }}js/dashboard/group.js" type="text/javascript" />
+    {% compress js %}
+    <script type="text/javascript" src="{{ STATIC_URL }}js/dashboard/group.js"></script>
+    {% endcompress %}
 {% endblock %}

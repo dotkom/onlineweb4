@@ -5,6 +5,8 @@ from django.core.exceptions import PermissionDenied
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Group
 from django.shortcuts import render, get_object_or_404
+from django.http import HttpResponse
+from django.views.decorators.csrf import ensure_csrf_cookie
 
 from guardian.decorators import permission_required
 from reversion import get_for_object as get_history_for_object
@@ -59,7 +61,24 @@ def groups_detail(request, pk):
 
     context['group'] = get_object_or_404(Group, pk=pk)
 
+    # AJAX
+    if request.method  == 'POST':
+        if request.is_ajax and 'action' in request.POST \
+            and request.POST['action'] == 'remove_user':
+            user = get_object_or_404(User, pk=int(request.POST['user_id']))
+            context['group'].user_set.remove(user)
+
+            return HttpResponse('%s ble fjernet fra %s' % (user.get_full_name(),
+                                context['group'].name),
+                                status=200)
+        else:
+            return HttpResponse('Ugyldig handling.', status=400)
+
     context['group_users'] = list(context['group'].user_set.all())
+    context['group_users_not_in_group'] = list(
+        User.objects.exclude(groups__name=context['group'].name)
+    )
+    
     context['group_permissions'] = list(context['group'].permissions.all())
 
     context['group_users'].sort(key=lambda x: str(x).lower())
