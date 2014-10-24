@@ -13,6 +13,7 @@ from apps.authentication.models import OnlineUser as User
 from apps.authentication.models import AllowedUsername
 from apps.dashboard.tools import has_access, get_base_context
 
+
 @login_required
 def index(request):
     """
@@ -26,8 +27,8 @@ def index(request):
 
     return render(request, 'auth/dashboard/index.html', context)
 
-# Group module views
 
+# GROUP MODULE VIEWS
 @login_required
 def groups_index(request):
     """
@@ -43,6 +44,7 @@ def groups_index(request):
     context['groups'].sort(key=lambda x: str(x).lower())
 
     return render(request, 'auth/dashboard/groups_index.html', context)
+
 
 @login_required
 def groups_detail(request, pk):
@@ -74,6 +76,7 @@ def groups_detail(request, pk):
 
     return render(request, 'auth/dashboard/groups_detail.html', context)
 
+
 @login_required
 @permission_required("authentication.view_allowedusername", return_403=True)
 def members_index(request):
@@ -88,6 +91,7 @@ def members_index(request):
 
     return render(request, 'auth/dashboard/members_index.html', context)
 
+
 @login_required
 @permission_required("authentication.view_allowedusername", return_403=True)
 def members_detail(request, pk):
@@ -101,6 +105,7 @@ def members_detail(request, pk):
 
     return render(request, 'auth/dashboard/members_detail.html', context)
 
+
 @login_required
 @permission_required("authentication.add_allowedusername", return_403=True)
 def members_new(request):
@@ -113,5 +118,3 @@ def members_new(request):
     context = get_base_context(request)
 
     return render(request, 'auth/dashboard/members_new.html', context)
-
-

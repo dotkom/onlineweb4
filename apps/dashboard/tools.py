@@ -5,6 +5,7 @@ from django.contrib.auth.models import Group
 
 from apps.approval.models import MembershipApproval
 
+
 def has_access(request):
     """
     This helper method does a basic check to see if the logged in user
@@ -23,6 +24,7 @@ def has_access(request):
         return True
 
     return False
+
 
 def get_base_context(request):
     """

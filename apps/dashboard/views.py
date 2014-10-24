@@ -6,6 +6,7 @@ from django.shortcuts import render
 
 from apps.dashboard.tools import has_access, get_base_context
 
+
 @login_required
 def index(request):
     """

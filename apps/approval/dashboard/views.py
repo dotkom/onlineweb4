@@ -12,6 +12,8 @@ from django.utils import timezone
 from django.utils.translation import ugettext as _
 from django.views.decorators.csrf import ensure_csrf_cookie
 
+from guardian.decorators import permission_required
+
 from apps.approval.models import MembershipApproval
 from apps.authentication.models import AllowedUsername
 from apps.dashboard.tools import has_access, get_base_context
@@ -19,6 +21,7 @@ from apps.dashboard.tools import has_access, get_base_context
 
 @ensure_csrf_cookie
 @login_required
+@permission_required('authentication.view_membershipapproval', return_403=True)
 def index(request):
     
     # Generic check to see if user has access to dashboard. (In Komiteer or superuser)
@@ -35,16 +38,19 @@ def index(request):
 
 @ensure_csrf_cookie
 @login_required
+@permission_required('authentication.change_membershipapproval', return_403=True)
 def approve_application(request):
     if request.is_ajax():
         if request.method == 'POST':
             application_id = request.POST.get('application_id')
-            apps = MembershipApproval.objects.filter(pk = application_id)
+            apps = MembershipApproval.objects.filter(pk=application_id)
 
             if apps.count() == 0:
-                response_text = json.dumps({'message': _(u"Kan ikke finne en søknad med denne IDen (%s). Om feilen vedvarer etter en refresh, kontakt dotkom@online.ntnu.no.") % application_id})
+                response_text = json.dumps({'message': _(
+                    u"""Kan ikke finne en søknad med denne IDen (%s).
+Om feilen vedvarer etter en refresh, kontakt dotkom@online.ntnu.no.""") % application_id})
                 return HttpResponse(status=412, content=response_text)
-            
+
             app = apps[0]
 
             if app.processed:
@@ -54,7 +60,8 @@ def approve_application(request):
             user = app.applicant
 
             if not user.ntnu_username:
-                response_text = json.dumps({'message': _(u"Brukeren (%s) har ikke noe lagret ntnu brukernavn.") % user.get_full_name()})
+                response_text = json.dumps({'message': _(
+                    u"""Brukeren (%s) har ikke noe lagret ntnu brukernavn.""") % user.get_full_name()})
                 return HttpResponse(status=412, content=response_text)
 
             if app.is_fos_application():
@@ -63,7 +70,7 @@ def approve_application(request):
                 user.save()
 
             if app.is_membership_application():
-                membership = AllowedUsername.objects.filter(username = user.ntnu_username)
+                membership = AllowedUsername.objects.filter(username=user.ntnu_username)
                 if membership.count() == 1:
                     membership = membership[0]
                     membership.expiration_date = app.new_expiry_date
@@ -84,7 +91,7 @@ Old notes:
                     membership.expiration_date = app.new_expiry_date
                     membership.registered = timezone.now().date()
                     membership.note = user.get_field_of_study_display() + " " + str(user.started_date)
-                    membership.description = """Added by approvals app.
+                    membership.description = u"""Added by approvals app.
 
 Approved by %s on %s.""" % (request.user.get_full_name(), str(timezone.now().date()))
                     membership.save()
@@ -101,14 +108,18 @@ Approved by %s on %s.""" % (request.user.get_full_name(), str(timezone.now().dat
 
 
 @login_required
+@ensure_csrf_cookie
+@permission_required('authentication.change_membershipapproval', return_403=True)
 def decline_application(request):
     if request.is_ajax():
         if request.method == 'POST':
             application_id = request.POST.get('application_id')
-            apps = MembershipApproval.objects.filter(pk = application_id)
+            apps = MembershipApproval.objects.filter(pk=application_id)
 
             if apps.count() == 0:
-                response_text = json.dumps({'message': _(u"Kan ikke finne en søknad med denne IDen (%s). Om feilen vedvarer etter en refresh, kontakt dotkom@online.ntnu.no.") % application_id})
+                response_text = json.dumps({'message': _(u"""
+Kan ikke finne en søknad med denne IDen (%s).
+Om feilen vedvarer etter en refresh, kontakt dotkom@online.ntnu.no.""") % application_id})
                 return HttpResponse(status=412, content=response_text)
             
             app = apps[0]
