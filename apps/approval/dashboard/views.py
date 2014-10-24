@@ -21,7 +21,7 @@ from apps.dashboard.tools import has_access, get_base_context
 
 @ensure_csrf_cookie
 @login_required
-@permission_required('authentication.view_membershipapproval', return_403=True)
+@permission_required('approval.view_membershipapproval', return_403=True)
 def index(request):
     
     # Generic check to see if user has access to dashboard. (In Komiteer or superuser)
@@ -38,7 +38,7 @@ def index(request):
 
 @ensure_csrf_cookie
 @login_required
-@permission_required('authentication.change_membershipapproval', return_403=True)
+@permission_required('approval.change_membershipapproval', return_403=True)
 def approve_application(request):
     if request.is_ajax():
         if request.method == 'POST':
@@ -109,7 +109,7 @@ Approved by %s on %s.""" % (request.user.get_full_name(), str(timezone.now().dat
 
 @login_required
 @ensure_csrf_cookie
-@permission_required('authentication.change_membershipapproval', return_403=True)
+@permission_required('approval.change_membershipapproval', return_403=True)
 def decline_application(request):
     if request.is_ajax():
         if request.method == 'POST':

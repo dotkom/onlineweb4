@@ -65,15 +65,6 @@ def groups_detail(request, pk):
     context['group_users'].sort(key=lambda x: str(x).lower())
     context['group_permissions'].sort(key=lambda x: str(x))
 
-    history = get_history_for_object(context['group'])
-
-    field_dicts = []
-
-    for h in history:
-        field_dicts.append(repr(h.field_dict))
-
-    context['history'] = field_dicts
-
     return render(request, 'auth/dashboard/groups_detail.html', context)
 
 

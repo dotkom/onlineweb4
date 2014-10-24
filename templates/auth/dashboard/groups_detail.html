@@ -32,7 +32,8 @@ Dette gjøres fortsatt fra Django-admin som kan nås via &laquo;Redigér&raquo; 
                 </h3>
             </div>
             <div class="panel-body">
-                <a href="/admin/auth/group/{{ group.id }}/" class="btn btn-warning">Redigér</a>
+                <a href="/admin/auth/group/{{ group.id }}/" class="btn btn-warning"><i class="fa fa-cogs"></i> Endre</a>
+                <a href="#" class="btn btn-primary" id="edit_users"><i class="fa fa-users"></i> Administrér brukere</a>
             </div>
         </div>
     </div>
@@ -81,5 +82,5 @@ Dette gjøres fortsatt fra Django-admin som kan nås via &laquo;Redigér&raquo; 
 
 {% block js %}
     {{ block.super }}
-    <!-- Dashboard JS here -->
+    <script src="{{ STATIC_DIR }}js/dashboard/group.js" type="text/javascript" />
 {% endblock %}
