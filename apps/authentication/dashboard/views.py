@@ -1,5 +1,6 @@
-
 # -*- encoding: utf-8 -*-
+
+import json
 
 from django.core.exceptions import PermissionDenied
 from django.contrib.auth.decorators import login_required
@@ -62,17 +63,25 @@ def groups_detail(request, pk):
     context['group'] = get_object_or_404(Group, pk=pk)
 
     # AJAX
-    if request.method  == 'POST':
-        if request.is_ajax and 'action' in request.POST \
-            and request.POST['action'] == 'remove_user':
-            user = get_object_or_404(User, pk=int(request.POST['user_id']))
-            context['group'].user_set.remove(user)
+    if request.method == 'POST':
+        if request.is_ajax and 'action' in request.POST:
+            resp = {'status': 200}
+            if request.POST['action'] == 'remove_user':
+                user = get_object_or_404(User, pk=int(request.POST['user_id']))
+                context['group'].user_set.remove(user)
+                resp['message'] = '%s ble fjernet fra %s' % (user.get_full_name(), context['group'].name)
 
-            return HttpResponse('%s ble fjernet fra %s' % (user.get_full_name(),
-                                context['group'].name),
-                                status=200)
-        else:
-            return HttpResponse('Ugyldig handling.', status=400)
+                return HttpResponse(json.dumps(resp), status=200)
+            elif request.POST['action'] == 'add_user':
+                user = get_object_or_404(User, pk=int(request.POST['user_id']))
+                context['group'].user_set.add(user)
+                resp['full_name'] = user.get_full_name()
+                resp['user_id'] = user.id
+                resp['message'] = '%s ble lagt til i %s' % (resp['full_name'], context['group'].name)
+
+                return HttpResponse(json.dumps(resp), status=200)
+
+        return HttpResponse('Ugyldig handling.', status=400)
 
     context['group_users'] = list(context['group'].user_set.all())
     context['group_users_not_in_group'] = list(

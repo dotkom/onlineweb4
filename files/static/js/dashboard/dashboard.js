@@ -111,6 +111,35 @@ var Dashboard = (function ($) {
                 }, 5000)
             },
 
+            // Sort a table body, given a column index
+            tablesort: function (tbody, c) {
+
+                var rows = tbody.rows
+                var rlen = rows.length
+                var a = new Array()
+                var m, n, cells, clen
+
+                for (m = 0; m < rlen; m++) {
+                    cells = rows[m].cells
+                    clen = cells.length
+                    a[m] = new Array()
+                    for (n = 0; n < clen; n++) {
+                        a[m][n] = cells[n].innerHTML
+                    }
+                }
+
+                a.sort(function (a, b) {
+                    if (a[c] == b[c]) return 0
+                    else return a[c] > b[c] ? 1 : -1
+                })
+
+                for (m = 0; m < rlen; m++) {
+                    a[m] = "<td>" + a[m].join("</td><td>") + "</td>"
+                }
+                
+                tbody.innerHTML = "<tr>" + a.join("</tr><tr>") + "</tr>"
+            },
+
             // Check if we have jQuery
             performSelfCheck: function () {
                 var errors = false

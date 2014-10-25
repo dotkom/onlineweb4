@@ -26,15 +26,8 @@
         <div id="group_edit_users" style="display: none;">
             <hr />
             <h4>Legg til brukere</h4>
-            <p><small><strong>TIPS</strong> Hold inne CTRL for å velge flere enkeltbrukere.
-                Hold inne shift for å velge alle fra valgt bruker til den neste som klikkes på.</small></p>
-            <form action="" method="POST">
-                <select multiple="multiple" id="group_users_available">
-                    {% for user in group_users_not_in_group %}
-                    <option value="{{ user.id }}" title="{{ user.get_full_name }}">{{ user.get_full_name }}</option>
-                    {% endfor %}
-                </select>
-            </form>
+            <p>Klikk på den aktuelle brukeren for å legge han/hun til i &laquo;{{ group }}&raquo;</p>
+            <input type="text" class="form-control" maxlength="50" autocomplete=off name="usersearch" id="usersearch" placeholder="Søk..." />
         </div>
     </div>
 </div>
@@ -55,7 +48,7 @@
                         <th>Navn</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="userlist">
                 {% for user in group_users %}
                     <tr>
                         <td>
@@ -93,6 +86,8 @@
 {% block js %}
     {{ block.super }}
     {% compress js %}
+    <script type="text/javascript" src="{{ STATIC_URL }}js/libs/hogan-2.0.0.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/libs/typeahead.min.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}js/dashboard/group.js"></script>
     {% endcompress %}
 {% endblock %}
