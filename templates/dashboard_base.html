@@ -81,8 +81,10 @@
                             <i class="fa fa-angle-down pull-right"></i>
                         </a>
                         <ul class="treeview-menu">
-                            <li><a href="#"><i class="fa fa-angle-double-right orange"></i> Ny bedrift</a></li>
-                            <li><a href="#"><i class="fa fa-angle-double-right orange"></i> Oversikt</a></li>
+                            {% if 'companyprofile.add_company' in user_permissions %}
+                                <li><a href="/dashboard/company/new/"><i class="fa fa-angle-double-right orange"></i> Ny bedrift</a></li>
+                            {% endif %}
+                            <li><a href="/dashboard/company/"><i class="fa fa-angle-double-right orange"></i> Oversikt</a></li>
                         </ul>
                     </li>
                     {% endif %}

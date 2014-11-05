@@ -79,6 +79,7 @@ if 'apps.careeropportunity' in settings.INSTALLED_APPS:
 if 'apps.companyprofile' in settings.INSTALLED_APPS:
     urlpatterns += patterns('',
         url(r'^company/',           include('apps.companyprofile.urls')),
+        url(r'^dashboard/company/', include('apps.companyprofile.dashboard.urls')),
     )
 
 if 'apps.dashboard' in settings.INSTALLED_APPS:
