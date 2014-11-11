@@ -78,33 +78,6 @@ class Event(models.Model):
         except AttendanceEvent.DoesNotExist:
             return False
 
-    def notify_waiting_list(self, host, unattended_user=None, extra_capacity=1):
-        if not self.is_attendance_event():
-            return
-        # Notify next user on waiting list
-        wait_list = self.attendance_event.waitlist_qs
-        if wait_list:
-            # Checking if user is on the wait list
-            on_wait_list = False
-            if unattended_user:
-                for waiting_user in wait_list:
-                    if waiting_user.user == unattended_user:
-                        on_wait_list = True
-                        break
-            if not on_wait_list:
-                # Send mail to first user on waiting list
-                attendees = wait_list[:extra_capacity]
-                email_message = _(u"""
-Du har stått på venteliste for arrangementet "%s" og har nå fått plass.
-Det kreves ingen ekstra handling fra deg med mindre du vil melde deg av.
-
-For mer info:
-http://%s%s
-""") % (self.title, host, self.get_absolute_url())
-                for attendee in attendees:
-                    send_mail(_(u'Du har fått plass på et arrangement'), email_message,
-                              settings.DEFAULT_FROM_EMAIL, [attendee.user.email])
-
     def feedback_mail(self):
         if self.event_type == 1 or self.event_type == 4: # Sosialt & Utflukt
             return settings.EMAIL_ARRKOM
@@ -450,6 +423,31 @@ class AttendanceEvent(models.Model):
     @property
     def waitlist_enabled(self):
         return self.waitlist
+
+    def notify_waiting_list(self, host, unattended_user=None, extra_capacity=1):
+        # Notify next user on waiting list
+        wait_list = self.waitlist_qs
+        if wait_list:
+            # Checking if user is on the wait list
+            on_wait_list = False
+            if unattended_user:
+                for waiting_user in wait_list:
+                    if waiting_user.user == unattended_user:
+                        on_wait_list = True
+                        break
+            if not on_wait_list:
+                # Send mail to first user on waiting list
+                attendees = wait_list[:extra_capacity]
+                email_message = _(u"""
+Du har stått på venteliste for arrangementet "%s" og har nå fått plass.
+Det kreves ingen ekstra handling fra deg med mindre du vil melde deg av.
+
+For mer info:
+http://%s%s
+""") % (self.title, host, self.get_absolute_url())
+                for attendee in attendees:
+                    send_mail(_(u'Du har fått plass på et arrangement'), email_message,
+                              settings.DEFAULT_FROM_EMAIL, [attendee.user.email])
 
     def is_eligible_for_signup(self, user):
         """
