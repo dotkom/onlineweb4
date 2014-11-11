@@ -155,7 +155,7 @@ def unattendEvent(request, event_id):
         messages.error(request, _(u"Dette arrangementet har allerede startet."))
         return redirect(event)
 
-    event.notify_waiting_list(host=request.META['HTTP_HOST'], unattended_user=request.user)
+    event.attendance_event.notify_waiting_list(host=request.META['HTTP_HOST'], unattended_user=request.user)
     Attendee.objects.get(event=attendance_event, user=request.user).delete()
 
     messages.success(request, _(u"Du ble meldt av arrangementet."))
