@@ -67,7 +67,7 @@ def details(request, event_id, event_slug):
             
             will_be_on_wait_list = attendance_event.will_i_be_on_wait_list
 
-            user_status = event.is_eligible_for_signup(request.user)
+            user_status = event.attendance_event.is_eligible_for_signup(request.user)
 
             # Check if this user is on the waitlist
             place_on_wait_list = attendance_event.what_place_is_user_on_wait_list(request.user)
@@ -117,7 +117,7 @@ def attendEvent(request, event_id):
     # If not, an error message will be present in the returned dict
     attendance_event = event.attendance_event
 
-    response = event.is_eligible_for_signup(request.user);
+    response = event.attendance_event.is_eligible_for_signup(request.user);
 
     if response['status']:   
         ae = Attendee(event=attendance_event, user=request.user)

@@ -451,7 +451,7 @@ Det kreves ingen ekstra handling fra deg med mindre du vil melde deg av.
 
 For mer info:
 http://%s%s
-""") % (self.title, host, self.get_absolute_url())
+""") % (self.event.title, host, self.event.get_absolute_url())
                 for attendee in attendees:
                     send_mail(_(u'Du har fått plass på et arrangement'), email_message,
                               settings.DEFAULT_FROM_EMAIL, [attendee.user.email])
