@@ -51,6 +51,13 @@ class Event(models.Model):
         extensions=IMAGE_EXTENSIONS, null=True, blank=True)
     event_type = models.SmallIntegerField(_(u'type'), choices=TYPE_CHOICES, null=False)
 
+    def is_attendance_event(self):
+        """ Returns true if the event is an attendance event """
+        try:
+            return True if self.attendance_event else False
+        except AttendanceEvent.DoesNotExist:
+            return False
+
     def feedback_users(self):
         if self.is_attendance_event:
             return [a.user for a in self.attendance_event.attendees.filter(attended=True)]
