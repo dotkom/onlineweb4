@@ -13,18 +13,20 @@ Tilbakemeldinger - Resultater - Online
         <h1>{{ description }}</h1> 
     </div>
     <div id="field-of-study-header"></div>
+        {% if info %}
         <div class="col-md-6">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <h3 class="panel-title">Info:</h3>
+                    <h3 class="panel-title">Statistikk:</h3>
                 </div>
                 <ul class="list-group">
-                    <li class="list-group-item">Antall oppmøtte:</li>
-                    <li class="list-group-item">Antall tilbakemeldinger:</li>
-                    <li class="list-group-item">Antall på venteliste:</li>
+                    {% for key, value in info.items %}
+                        <li class="list-group-item">{{key}} : <span class="infonumber">{{value}}</span></li>
+                    {% endfor %}
                 </ul>
             </div>
-        </div>    
+        </div>
+        {% endif %}
     <div class="row" id="field-of-study-graph">
     </div>
     <div id="rating-header"></div>
