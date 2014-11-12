@@ -78,11 +78,8 @@ def feedback_results(request, applabel, appmodel, object_id, feedback_id, token=
     info = None
 
     if(fbr.feedback.display_info or not token):
-        if(isinstance(fbr.content_object, Event)):
-            info = dict()
-            info['attended'] = fbr.content_object.attendance_event.number_of_attendees
-            info['waitlist'] = fbr.content_object.attendance_event.number_on_waitlist
-            info['answered'] = fbr.answered.count()
+        info = fbr.content_info()
+        info[_(u'Besvarelser')] = fbr.answered.count()
             
     
     rt = get_object_or_404(RegisterToken, fbr=fbr)
@@ -90,7 +87,7 @@ def feedback_results(request, applabel, appmodel, object_id, feedback_id, token=
     token_url = u"%s%sresults/%s" % (request.META['HTTP_HOST'], fbr.get_absolute_url(), rt.token)
         
     return render(request, 'feedback/results.html',{'question_and_answers': question_and_answers, 
-        'description': fbr.description, 'token_url' : token_url,'token' : token})
+        'description': fbr.description, 'token_url' : token_url,'token' : token, 'info': info})
 
 @staff_member_required
 def chart_data(request, applabel, appmodel, object_id, feedback_id):

@@ -135,6 +135,12 @@ class FeedbackRelation(models.Model):
         else:
             return False
 
+    def content_info(self):
+        if hasattr(self.content_object, "feedback_info"):
+            return self.content_object.feedback_info()
+        else:
+            return dict()
+
     def save(self, *args, **kwargs):
         new_fbr = not self.pk
         super(FeedbackRelation, self).save(*args, **kwargs)
