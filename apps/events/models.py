@@ -66,6 +66,14 @@ class Event(models.Model):
     def feedback_title(self):
         return self.title
 
+    def feedback_info(self):
+        info = dict()
+        if self.is_attendance_event():
+            info[_(u'Påmeldte')] = self.attendance_event.number_of_attendees
+            info[_('Venteliste')] = self.attendance_event.number_on_waitlist
+
+        return info
+
     def is_attendance_event(self):
         """ Returns true if the event is an attendance event """
         try:
