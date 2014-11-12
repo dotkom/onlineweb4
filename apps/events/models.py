@@ -1,6 +1,7 @@
 #-*- coding: utf-8 -*-
 
 from datetime import datetime, timedelta
+from collections import OrderedDict
 
 from django.conf import settings
 from django.contrib.auth.models import Group
@@ -67,10 +68,11 @@ class Event(models.Model):
         return self.title
 
     def feedback_info(self):
-        info = dict()
+        info = OrderedDict()
         if self.is_attendance_event():
             info[_(u'Påmeldte')] = self.attendance_event.number_of_attendees
-            info[_('Venteliste')] = self.attendance_event.number_on_waitlist
+            info[_(u'Oppmøtte')] = self.attendance_event.number_of_attendees - len(self.attendance_event.not_attended())
+            info[_(u'Venteliste')] = self.attendance_event.number_on_waitlist
 
         return info
 
