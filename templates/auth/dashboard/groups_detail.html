@@ -21,8 +21,9 @@
 {% block content %}
 <div class="row">
     <div class="col-md-12">
-        <a href="/admin/auth/group/{{ group.id }}/" class="btn btn-warning"><i class="fa fa-cogs"></i> Endre</a>
         <a href="#" class="btn btn-primary" id="group_users_button"><i class="fa fa-users"></i> Legg til</a>
+        <a href="/admin/auth/group/{{ group.id }}/" class="btn btn-warning"><i class="fa fa-cogs"></i> Endre</a>
+        <a href="/admin/auth/group/{{ group.id }}/delete/" class="btn btn-danger pull-right"><i class="fa fa-times"></i> Slett</a>
         <div id="group_edit_users" style="display: none;">
             <hr />
             <h4>Legg til brukere</h4>

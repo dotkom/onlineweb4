@@ -4,9 +4,11 @@
 @import "../colors.less";
 
 @dash-bg: #fff;
+@header-bg: #f6f6f6;
 @sidebar-bg: #e9e9e9;
 @orange: #ee7810;
 @blue: #004b80;
+
 
 /* Generics */
 
@@ -16,6 +18,10 @@ html, body {
 
 h1,h2 {
     color: @orange;
+}
+h3, h4 {
+    margin-top: 0px;
+    margin-bottom: 15px;
 }
 
 ul {
@@ -102,9 +108,12 @@ nav#dashboard_main_nav {
 }
 
 .content-header {
+    background-color: @header-bg;
+
     h2 {
+        margin: 0px;
         padding-left: 15px;
-        margin-top: 15px;
+        padding-top: 15px;
         margin-bottom: 15px;
     }
 }
@@ -113,7 +122,7 @@ nav#dashboard_main_nav {
 
 ol.breadcrumb {
     border-radius: 0px;
-    background-color: #f6f6f6;
+    background-color: @header-bg;
     border-bottom: 1px solid #ddd;
     margin-bottom: 0px;
 }

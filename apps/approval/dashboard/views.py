@@ -23,7 +23,7 @@ from apps.dashboard.tools import has_access, get_base_context
 @login_required
 @permission_required('approval.view_membershipapproval', return_403=True)
 def index(request):
-    
+
     # Generic check to see if user has access to dashboard. (In Komiteer or superuser)
     if not has_access(request):
         raise PermissionDenied
@@ -32,7 +32,8 @@ def index(request):
     context = get_base_context(request)
 
     context['membership_applications'] = MembershipApproval.objects.filter(processed=False)
-    
+    context['processed_applications'] = MembershipApproval.objects.filter(processed=True).order_by('-processed_date')[:10]
+
     return render(request, 'approval/dashboard/index.html', context)
 
 
@@ -121,7 +122,7 @@ def decline_application(request):
 Kan ikke finne en søknad med denne IDen (%s).
 Om feilen vedvarer etter en refresh, kontakt dotkom@online.ntnu.no.""") % application_id})
                 return HttpResponse(status=412, content=response_text)
-            
+
             app = apps[0]
 
             if app.processed:
@@ -138,5 +139,5 @@ Om feilen vedvarer etter en refresh, kontakt dotkom@online.ntnu.no.""") % applic
             app.save()
 
             return HttpResponse(status=200)
-    
+
     raise Http404
