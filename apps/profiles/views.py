@@ -1,6 +1,7 @@
 #-*- coding: utf-8 -*-
 import json
 import os
+import re
 import uuid
 from smtplib import SMTPException
 
@@ -238,6 +239,15 @@ def add_email(request):
             if Email.objects.filter(email=cleaned['new_email']).count() > 0:
                 messages.error(request, _(u"Eposten %s er allerede registrert.") % email_string)
                 return redirect('profiles')
+
+            # Check if it's studmail and if someone else already has it in their profile
+            if re.match(r'[^@]+@stud\.ntnu\.no', email_string):
+                ntnu_username = email_string.split("@")[0]
+                user = User.objects.filter(ntnu_username = ntnu_username)
+                if user.count() == 1:
+                    if user != request.user:
+                        messages.error(request, _(u"En bruker med dette NTNU-brukernavnet fins allerede."))
+                        return redirect('profiles')
 
             # Create the email
             email = Email(email=email_string, user=request.user)
