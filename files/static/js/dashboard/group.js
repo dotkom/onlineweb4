@@ -14,30 +14,33 @@ var Group = (function ($, tools) {
         return true
     }
 
-    // Private helper method to add a new user to table
-    var add_user_to_table = function (fullname, id) {
-        $('<tr>').html(
-            '<td><a href="#">' + fullname + '</a><a href="#" id="' + id + 
-            '" class="remove-user"><i class="fa fa-times fa-lg pull-right red">' +
-            '</i></a></td>'
-        ).appendTo($('#userlist'))
-        
-        var cell = $('#' + id).parent()
-        $('#' + id).on('click', function (e) {
-            e.preventDefault()
-            Group.user.remove(id, cell)
+    // Private helper method to draw the user table
+    //
+    // :param tbody: the ID of the <tbody> element of the table
+    // :param data: the JSON parsed data returned by the server
+    var draw_table = function (tbody, data) {
+        var tbody_html = ''
+        $(data.users).each(function (i) {
+            tbody_html += '<tr><td><a href="#">' + data.users[i].user + '</a>' +
+                          '<a href="#" id="user_' + data.users[i].id + '" class="remove-user">' + 
+                          '<i class="fa fa-times fa-lg pull-right red">' + '</i></a></td></tr>'
         })
-
-        // Sort the table again
-        //tools.tablesort(document.getElementById('userlist'), 0)
+        $('#' + tbody).html(tbody_html)
+        
+        $(data.users).each(function (i) {
+            var user = data.users[i]
+            $('#user_' + user.id).on('click', function (e) {
+                e.preventDefault()
+                Group.user.remove(user.id)
+            })
+        })
     }
 
     // Private generic ajax handler.
     // 
     // :param id: user ID in database
     // :param action: either 'remove_user' or 'add_user'
-    // :param row: the jQuery row object, so it can be faded out
-    var ajax_usermod = function (id, action, row) {
+    var ajax_usermod = function (id, action) {
         var url = window.location.href.toString()
         var data = {
                 "user_id": id,
@@ -45,14 +48,12 @@ var Group = (function ($, tools) {
         }
         var success = function (data) {
             if (action === 'remove_user') {
-                row.fadeOut(200, function () {
-                    row.remove()
-                })
+                data = JSON.parse(data)
+                draw_table('userlist', data)
             }
             else if (action === 'add_user') {
                 data = JSON.parse(data)
-                add_user_to_table(data['full_name'], data['user_id'])
-                tools.tablesort(document.getElementById('userlist'), 0)
+                draw_table('userlist', data)
             }
         }
         var error = function (xhr, txt, error) {
@@ -84,7 +85,7 @@ var Group = (function ($, tools) {
                 var user_id = $(this).attr('id')
                 $(this).on('click', function (e) {
                     e.preventDefault()
-                    Group.user.remove(user_id, cell)
+                    Group.user.remove(user_id)
                 })
             })
             
@@ -113,6 +114,7 @@ var Group = (function ($, tools) {
             }).on('typeahead:selected typeahead:autocompleted', function(e, datum) {
                 ($(function() {
                     Group.user.add(datum.id)
+                    $('#usersearch').val('')
                 }))
             })
         },
@@ -120,7 +122,7 @@ var Group = (function ($, tools) {
         // User module, has add and remove functions
         user: {
             remove: function (user_id, cell) {
-                ajax_usermod(user_id, 'remove_user', cell.parent())
+                ajax_usermod(user_id, 'remove_user')
             },
             
             add: function (user_id) {

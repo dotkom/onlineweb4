@@ -33,6 +33,7 @@ def index(request):
 
 # GROUP MODULE VIEWS
 @login_required
+@permission_required('auth.change_group', raise_403=True)
 def groups_index(request):
     """
     Group module in dashboard that lists groups.
@@ -50,6 +51,7 @@ def groups_index(request):
 
 
 @login_required
+@permission_required('auth.change_group', raise_403=True)
 def groups_detail(request, pk):
     """
     Group module in dashboard that lists groups.
@@ -70,13 +72,16 @@ def groups_detail(request, pk):
                 user = get_object_or_404(User, pk=int(request.POST['user_id']))
                 context['group'].user_set.remove(user)
                 resp['message'] = '%s ble fjernet fra %s' % (user.get_full_name(), context['group'].name)
+                resp['users'] = [{'user': u.get_full_name(), 'id': u.id} for u in context['group'].user_set.all()]
+                resp['users'].sort(key=lambda x: x['user'])
 
                 return HttpResponse(json.dumps(resp), status=200)
             elif request.POST['action'] == 'add_user':
                 user = get_object_or_404(User, pk=int(request.POST['user_id']))
                 context['group'].user_set.add(user)
                 resp['full_name'] = user.get_full_name()
-                resp['user_id'] = user.id
+                resp['users'] = [{'user': u.get_full_name(), 'id': u.id} for u in context['group'].user_set.all()]
+                resp['users'].sort(key=lambda x: x['user'])
                 resp['message'] = '%s ble lagt til i %s' % (resp['full_name'], context['group'].name)
 
                 return HttpResponse(json.dumps(resp), status=200)
@@ -87,7 +92,7 @@ def groups_detail(request, pk):
     context['group_users_not_in_group'] = list(
         User.objects.exclude(groups__name=context['group'].name)
     )
-    
+
     context['group_permissions'] = list(context['group'].permissions.all())
 
     context['group_users'].sort(key=lambda x: str(x).lower())
