@@ -35,7 +35,7 @@ urlpatterns = patterns('',
 
     # Online Notifier Owner Verification (checked yearly or so by Google)
     url(r'^google79c0b331a83a53de\.html$', lambda r: HttpResponse(
-        "google-site-verification: google79c0b331a83a53de.html", mimetype="text/html")),
+        "google-site-verification: google79c0b331a83a53de.html", content_type="text/html")),
     
     # Wiki
     (r'^notify/', get_notify_pattern()),
