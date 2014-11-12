@@ -11,7 +11,7 @@ class ProxyChunkAdmin(admin.ModelAdmin):
     def has_add_permission(self, request):
         return False
 
-    def queryset(self, request):
+    def get_queryset(self, request):
         offline = Chunk.objects.filter(Q(key='offline_ingress') | Q(key='offline_brodtekst'))
         return offline
 
