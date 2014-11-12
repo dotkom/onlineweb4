@@ -135,6 +135,12 @@ class FeedbackRelation(models.Model):
         else:
             return False
 
+    def content_info(self):
+        if hasattr(self.content_object, "feedback_info"):
+            return self.content_object.feedback_info()
+        else:
+            return dict()
+
     def save(self, *args, **kwargs):
         new_fbr = not self.pk
         super(FeedbackRelation, self).save(*args, **kwargs)
@@ -156,6 +162,8 @@ class Feedback(models.Model):
     description = models.CharField(_(u'beskrivelse'), max_length=100)
     display_field_of_study = models.BooleanField(_(u'Vis studie oversikt'), default=True, 
         help_text =_(u'Grafen over studiefelt vil bli vist til bedriften'))
+    display_info = models.BooleanField(_('Vis extra informasjon'), default=True,
+        help_text=_(u'En boks med ekstra informasjon vil bli vist til bedriften'))
  
     @property
     def ratingquestions(self):
