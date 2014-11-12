@@ -136,7 +136,7 @@ def get_chart_data(request, applabel, appmodel, object_id, feedback_id, token=Fa
     answer_collection['replies']['mc_answers'] = mc_answer_count
     answer_collection['replies']['fos'] = fos_answer_count.items()
    
-    return HttpResponse(json.dumps(answer_collection), mimetype='application/json')
+    return HttpResponse(json.dumps(answer_collection), content_type='application/json')
 
 @staff_member_required
 def index(request):

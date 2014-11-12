@@ -42,14 +42,14 @@
                 <li><a href="{% url 'resourcecenter_index' %}">Ressurser</a></li>
                 <li><a href="/wiki/">Wiki</a></li>
             </ul>
-
             <ul class="mn-user-nav">
+            {% if user.is_authenticated %}
+                <li class="username hidden-xs hidden-sm hidden-md">Logget inn som {{ user.username }}</li>
                 <li>
-                    {% if user.is_authenticated %}
-
                     <a href="#login_menu" class="dropdown-toggle dropdown-signin login glyphicon glyphicon-user" data-toggle="dropdown"></a>
 
                     <ul class="dropdown-menu login-box" role="menu">
+                        <li class="hidden-lg"><p>Logget inn som {{ user.username }}</p></li>
                         {% if user.is_staff %}
                             <li><a href="/admin/">Administrasjon</a></li>
                         {% endif %}
@@ -58,36 +58,33 @@
                         <li class="divider"></li>
                         <li><a href="{% url 'auth_logout' %}">Logg ut</a></li>
                     </ul>
-
-                    {% else %}
-
-                    <a href="#login_menu" class="dropdown-toggle dropdown-signin login glyphicon glyphicon-lock" data-toggle="dropdown"></a>
-                    <ul class="dropdown-menu login-box" role="menu">
-                        <li>
-                            <form class="navbar-form" method="POST" action="{% url 'auth_login' %}">
-                                {% csrf_token %}
-                                <fieldset class="textbox">
-                                    <div class="input-group">
-                                        <label for="id_username">Brukernavn</label>
-                                        <input type="text" name="username" id="id_username" class="form-control">
-                                    </div>
-                                    <div class="input-group">
-                                        <label for="id_password">Passord</label>
-                                        <input type="password" name="password" id="id_password" class="form-control">
-                                    </div>
-                                </fieldset>
-                                <input type="hidden" name="next" value="{{ request.get_full_path }}" />
-                                <button type="submit" class="btn btn-primary">Logg inn</button>
-                            </form>
-                            <div id="login-form-btn-group">
-                                <a class="btn btn-default" href="{% url 'auth_register' %}">Registrer</a>
-                                <a class="btn btn-default" href="{% url 'auth_recover' %}">Glemt passord</a>
-                            </div>
-                        </li>
-                    </ul>
-
-                    {% endif %}
                 </li>
+            {% else %}
+                <a href="#login_menu" class="dropdown-toggle dropdown-signin login glyphicon glyphicon-lock" data-toggle="dropdown"></a>
+                <ul class="dropdown-menu login-box" role="menu">
+                    <li>
+                        <form class="navbar-form" method="POST" action="{% url 'auth_login' %}">
+                            {% csrf_token %}
+                            <fieldset class="textbox">
+                                <div class="input-group">
+                                    <label for="id_username">Brukernavn</label>
+                                    <input type="text" name="username" id="id_username" class="form-control">
+                                </div>
+                                <div class="input-group">
+                                    <label for="id_password">Passord</label>
+                                    <input type="password" name="password" id="id_password" class="form-control">
+                                </div>
+                            </fieldset>
+                            <input type="hidden" name="next" value="{{ request.get_full_path }}" />
+                            <button type="submit" class="btn btn-primary">Logg inn</button>
+                        </form>
+                        <div id="login-form-btn-group">
+                            <a class="btn btn-default" href="{% url 'auth_register' %}">Registrer</a>
+                            <a class="btn btn-default" href="{% url 'auth_recover' %}">Glemt passord</a>
+                        </div>
+                    </li>
+                </ul>
+            {% endif %}
 
             </ul>
 
