@@ -19,37 +19,31 @@ Send epost til påmeldte - Online
                 <div class="page-header">
                     <h3>Alle påmeldte</h3>
                 </div>
-                {% if all_attendees %}
-                    {% for attendee in all_attendees %}
-                        {{ attendee.user.email }},
-                    {% endfor %}
-                {% else %}
-                    Ingen er påmeldt dette arrangementet.
-                {% endif %}
+				{% for attendee in all_attendees %}
+					{{ attendee.user.email }},
+				{% empty %}
+					Ingen er påmeldt dette arrangementet.
+				{% endfor %}
             </div>
             <div class="col-md-4">
                 <div class="page-header">
                     <h3>Påmeldte som er på venteliste</h3>
                 </div>
-                {% if attendees_on_waitlist %}
-                    {% for attendee in attendees_on_waitlist %}
-                        {{ attendee.user.email }},
-                    {% endfor %}
-                {% else %}
-                    Ingen er på venteliste.
-                {% endif %}
+				{% for attendee in attendees_on_waitlist %}
+					{{ attendee.user.email }},
+				{% empty %}
+					Ingen er på venteliste.
+				{% endfor %}
             </div>
             <div class="col-md-4">
                 <div class="page-header">
                     <h3>Påmeldte som ikke har betalt</h3>
                 </div>
-                {% if attendees_not_paid %}
-                    {% for attendee in attendees_not_paid %}
-                        {{ attendee.user.email }},
-                    {% endfor %}
-                {% else %}
-                    Alle som er meldt på har betalt
-                {% endif %}
+				{% for attendee in attendees_not_paid %}
+					{{ attendee.user.email }},
+				{% empty %}
+					Alle som er meldt på har betalt
+				{% endfor %}
             </div>
         </div>
         <div class="row" style="margin-top:30px">
