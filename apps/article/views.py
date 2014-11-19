@@ -41,7 +41,7 @@ def archive(request, name=None, slug=None, year=None, month=None):
         '12': u'Desember',
     }
 
-    rev_month_strings = dict((v,k) for k,v in month_strings.iteritems())
+    rev_month_strings = dict((v, k) for k, v in month_strings.iteritems())
 
     # HERE BE DRAGONS
     # TODO: Fix all these for loops...
@@ -61,7 +61,7 @@ def archive(request, name=None, slug=None, year=None, month=None):
     for year in dates:
         sorted_months = ['' for x in range(1, 13)]
         for month in dates[year]:
-            sorted_months[int(rev_month_strings[month])-1] = month
+            sorted_months[int(rev_month_strings[month]) - 1] = month
         remove_these = []
         for n, m in enumerate(sorted_months):
             if m == '':
@@ -75,16 +75,20 @@ def archive(request, name=None, slug=None, year=None, month=None):
     tags = list(tags[:30])
     random.shuffle(tags)
 
-    return render(request, 'article/archive.html', {'tags': tags, 'dates': dates })
+    return render(request, 'article/archive.html', {'tags': tags, 'dates': dates})
+
 
 def archive_tag(request, name, slug):
     return archive(request, name=name, slug=slug)
 
+
 def archive_year(request, year):
     return archive(request, year=year)
 
+
 def archive_month(request, year, month):
     return archive(request, year=year, month=month)
+
 
 def details(request, article_id, article_slug):
 

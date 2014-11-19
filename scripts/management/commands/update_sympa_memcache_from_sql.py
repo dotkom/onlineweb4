@@ -6,9 +6,9 @@ from memcache import Client
 
 from django.core.management.base import NoArgsCommand
 
-from onlineweb.settings import DATABASES
-from onlineweb.settings import SYMPA_DB_PASSWD, SYMPA_DB_USER, SYMPA_DB_NAME, SYMPA_DB_PORT, SYMPA_DB_HOST
-from onlineweb.settings import PUBLIC_LISTS
+from onlineweb4.settings import DATABASES
+from onlineweb4.settings import SYMPA_DB_PASSWD, SYMPA_DB_USER, SYMPA_DB_NAME, SYMPA_DB_PORT, SYMPA_DB_HOST
+from onlineweb4.settings import PUBLIC_LISTS
 
 
 class Command(NoArgsCommand):

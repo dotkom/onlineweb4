@@ -16,6 +16,7 @@ from django.utils.safestring import SafeString
 
 from apps.feedback.models import FeedbackRelation, FieldOfStudyAnswer, RATING_CHOICES, TextQuestion, TextAnswer, RegisterToken
 from apps.feedback.forms import create_answer_forms
+from apps.events.models import Event
 
 @login_required
 def feedback(request, applabel, appmodel, object_id, feedback_id):
@@ -74,12 +75,19 @@ def feedback_results(request, applabel, appmodel, object_id, feedback_id, token=
         if (question.display or not token) and isinstance(question, TextQuestion):
             question_and_answers.append(Qa(question, fbr.answers_to_question(question)))
     
-    rt = get_object_or_404(RegisterToken, fbr = fbr)
+    info = None
+
+    if(fbr.feedback.display_info or not token):
+        info = fbr.content_info()
+        info[_(u'Besvarelser')] = fbr.answered.count()
+            
+    
+    rt = get_object_or_404(RegisterToken, fbr=fbr)
 
     token_url = u"%s%sresults/%s" % (request.META['HTTP_HOST'], fbr.get_absolute_url(), rt.token)
         
     return render(request, 'feedback/results.html',{'question_and_answers': question_and_answers, 
-        'description': fbr.description, 'token_url' : token_url,'token' : token})
+        'description': fbr.description, 'token_url' : token_url,'token' : token, 'info': info})
 
 @staff_member_required
 def chart_data(request, applabel, appmodel, object_id, feedback_id):
@@ -136,7 +144,7 @@ def get_chart_data(request, applabel, appmodel, object_id, feedback_id, token=Fa
     answer_collection['replies']['mc_answers'] = mc_answer_count
     answer_collection['replies']['fos'] = fos_answer_count.items()
    
-    return HttpResponse(json.dumps(answer_collection), mimetype='application/json')
+    return HttpResponse(json.dumps(answer_collection), content_type='application/json')
 
 @staff_member_required
 def index(request):

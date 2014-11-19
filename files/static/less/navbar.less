@@ -179,30 +179,46 @@ svg, rect {
         vertical-align: middle;
     }
 
-
 .mn-user-nav {
     position: absolute;
     top: 0;
     right: 180px;
 }
 
-    .mn-user-nav > li {
-        padding: 0;
-    }
-    .mn-user-nav > li > a {
-        color: #fff;
-        margin: 0;
-        border-radius: 0;
-        border: 0;
-        display: block;
-        line-height: @navbar-height;
-        background: rgba(255, 255, 255, 0.1);
-        padding: 0 20px;
-    }
-    .mn-user-nav > li > a:hover {
-        text-decoration: none;
-        background: rgba(255, 255, 255, 0.2);
-    }
+.mn-user-nav li {
+    display: inline;
+}
+
+.mn-user-nav > li.username {
+    display: inline-block;
+    color: #fff;
+    background: rgba(255, 255, 255, 0.1);
+    top: 0;
+    line-height: @navbar-height;
+    height: @navbar-height;
+    padding-left: 20px;
+    padding-right: 20px;
+    margin-right: -3px;
+}
+
+.username_menu{
+    padding-left: 10px;
+}
+
+.mn-user-nav > li > a {
+    color: #fff;
+    margin: 0;
+    border-radius: 0;
+    border: 0;
+    line-height: @navbar-height;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 0 20px;
+    text-decoration: none;
+}
+.mn-user-nav > li > a:hover {
+    text-decoration: none;
+    background: rgba(255, 255, 255, 0.2);
+}
 
 
 .subnavbar {
@@ -394,6 +410,16 @@ svg, rect {
     }
 
     border-radius: 0px;
+}
+
+.dropdown-menu > li > p {
+    display: block;
+    padding: 3px 20px;
+    clear: both;
+    font-weight: normal;
+    line-height: 1.42857143;
+    color: #333333;
+    white-space: nowrap;
 }
 
 label[for='id_password'] {
