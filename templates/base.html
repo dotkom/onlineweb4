@@ -61,30 +61,32 @@
                     </ul>
                 </li>
             {% else %}
-                <a href="#login_menu" class="dropdown-toggle dropdown-signin login glyphicon glyphicon-lock" data-toggle="dropdown"></a>
-                <ul class="dropdown-menu login-box" role="menu">
-                    <li>
-                        <form class="navbar-form" method="POST" action="{% url 'auth_login' %}">
-                            {% csrf_token %}
-                            <fieldset class="textbox">
-                                <div class="input-group">
-                                    <label for="id_username">Brukernavn</label>
-                                    <input type="text" name="username" id="id_username" class="form-control">
-                                </div>
-                                <div class="input-group">
-                                    <label for="id_password">Passord</label>
-                                    <input type="password" name="password" id="id_password" class="form-control">
-                                </div>
-                            </fieldset>
-                            <input type="hidden" name="next" value="{{ request.get_full_path }}" />
-                            <button type="submit" class="btn btn-primary">Logg inn</button>
-                        </form>
-                        <div id="login-form-btn-group">
-                            <a class="btn btn-default" href="{% url 'auth_register' %}">Registrer</a>
-                            <a class="btn btn-default" href="{% url 'auth_recover' %}">Glemt passord</a>
-                        </div>
-                    </li>
-                </ul>
+                <li>
+                    <a href="#login_menu" class="dropdown-toggle dropdown-signin login glyphicon glyphicon-lock" data-toggle="dropdown"></a>
+                    <ul class="dropdown-menu login-box" role="menu">
+                        <li>
+                            <form class="navbar-form" method="POST" action="{% url 'auth_login' %}">
+                                {% csrf_token %}
+                                <fieldset class="textbox">
+                                    <div class="input-group">
+                                        <label for="id_username">Brukernavn</label>
+                                        <input type="text" name="username" id="id_username" class="form-control">
+                                    </div>
+                                    <div class="input-group">
+                                        <label for="id_password">Passord</label>
+                                        <input type="password" name="password" id="id_password" class="form-control">
+                                    </div>
+                                </fieldset>
+                                <input type="hidden" name="next" value="{{ request.get_full_path }}" />
+                                <button type="submit" class="btn btn-primary">Logg inn</button>
+                            </form>
+                            <div id="login-form-btn-group">
+                                <a class="btn btn-default" href="{% url 'auth_register' %}">Registrer</a>
+                                <a class="btn btn-default" href="{% url 'auth_recover' %}">Glemt passord</a>
+                            </div>
+                        </li>
+                    </ul>
+                </li>
             {% endif %}
 
             </ul>
