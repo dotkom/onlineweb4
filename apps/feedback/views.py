@@ -22,7 +22,7 @@ def feedback(request, applabel, appmodel, object_id, feedback_id):
     fbr = _get_fbr_or_404(applabel, appmodel, object_id, feedback_id)
 
     if not fbr.can_answer(request.user):
-        messages.error(request, fbr.)
+        messages.error(request, fbr.answer_error_message(request.user))
         return redirect("home")
 
     if request.method == "POST":
