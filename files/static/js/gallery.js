@@ -76,7 +76,7 @@ updateUneditedFiles();
 $(".bttrlazyloading").each(function() {
     $(this).bttrlazyloading(
         {
-            container: '#edit-pane'
+            container: '#gallery'
         }
     );
 });
@@ -173,6 +173,21 @@ $("a#fetchallimages").click(function() {
 
 fetchUnhandledImages();
 
+
+var imageEditingSuccessful = function() {
+
+    var editPane = $('#image-edit-content');
+    editPane.empty();
+
+    var editPreview = $('#image-edit-preview');
+    editPreview.empty();
+
+    $('#showthumbnailpane').tab('show');
+
+    fetchUnhandledImages();
+}
+
+
 var crop_image = function() {
     var image = $('#editing-image');
     var cropData = image.cropper("getData");
@@ -180,7 +195,7 @@ var crop_image = function() {
     cropData.id = imageId;
 
     var request = $.post("crop_image", cropData, function() {
-        console.log("success 1");
+        imageEditingSuccessful();
     })
         .done(function() {
             console.log("success 2");

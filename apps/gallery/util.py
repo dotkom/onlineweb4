@@ -4,13 +4,14 @@ import os
 import shutil
 
 from PIL import Image
+from django.conf import settings as django_settings
 
 from apps.gallery import settings as gallery_settings
 
 
 def save_unhandled_file(uploaded_file):
 
-    filepath = os.path.join(gallery_settings.UNHANDLED_IMAGES_PATH, uploaded_file.name)
+    filepath = os.path.join(django_settings.MEDIA_ROOT, gallery_settings.UNHANDLED_IMAGES_PATH, uploaded_file.name)
 
     try:
         with open(filepath, 'wb+') as destination:
@@ -23,6 +24,16 @@ def save_unhandled_file(uploaded_file):
     return filepath
 
 
+def save_responsive_image(unhandled_image, crop_data):
+
+    source_path = os.path.join(django_settings.MEDIA_ROOT, unhandled_image.image.name)
+    destination_path = os.path.join(django_settings.MEDIA_ROOT, gallery_settings.RESPONSIVE_IMAGES_PATH, os.path.basename(unhandled_image.image.name))
+
+    crop_image(source_path, destination_path, crop_data)
+
+    return destination_path
+
+
 def copy_file(source_path, destination_path):
     shutil.copy2(source_path, destination_path)
 
@@ -30,12 +41,33 @@ def copy_file(source_path, destination_path):
 def create_thumbnail_for_unhandled_images(unhandled_image_path):
 
     filename = os.path.basename(unhandled_image_path)
-    thumbnail_path = os.path.join(gallery_settings.UNHANDLED_THUMBNAIL_PATH, filename)
+    thumbnail_path = os.path.join(django_settings.MEDIA_ROOT, gallery_settings.UNHANDLED_THUMBNAIL_PATH, filename)
 
     errors = create_thumbnail(unhandled_image_path, thumbnail_path, gallery_settings.UNHANDLED_THUMBNAIL_SIZE)
-    return_value = { 'thumbnail_path': thumbnail_path, 'errors': errors }
 
-    return return_value
+    if 'error' in errors:
+        return { 'error': errors['error'] }
+    else:
+        return { 'thumbnail_path': thumbnail_path }
+
+
+def create_responsive_images(source_path):
+
+    lg_destination_path = os.path.join(django_settings.MEDIA_ROOT, gallery_settings.RESPONSIVE_IMAGES_LG_PATH, os.path.basename(source_path))
+    md_destination_path = os.path.join(django_settings.MEDIA_ROOT, gallery_settings.RESPONSIVE_IMAGES_MD_PATH, os.path.basename(source_path))
+    sm_destination_path = os.path.join(django_settings.MEDIA_ROOT, gallery_settings.RESPONSIVE_IMAGES_SM_PATH, os.path.basename(source_path))
+    xs_destination_path = os.path.join(django_settings.MEDIA_ROOT, gallery_settings.RESPONSIVE_IMAGES_XS_PATH, os.path.basename(source_path))
+
+    lg_status = resize_image(source_path, lg_destination_path, gallery_settings.RESPONSIVE_IMAGES_LG_SIZE)
+    md_status = resize_image(source_path, md_destination_path, gallery_settings.RESPONSIVE_IMAGES_MD_SIZE)
+    sm_status = resize_image(source_path, sm_destination_path, gallery_settings.RESPONSIVE_IMAGES_SM_SIZE)
+    xs_stauts = resize_image(source_path, xs_destination_path, gallery_settings.RESPONSIVE_IMAGES_XS_SIZE)
+
+    unhandled_thumbnail_name = os.path.basename(source_path)
+    unhandled_thumbnail_path = os.path.join(django_settings.MEDIA_ROOT, gallery_settings.UNHANDLED_THUMBNAIL_PATH, unhandled_thumbnail_name)
+    responsive_thumbnail_path = os.path.join(django_settings.MEDIA_ROOT, gallery_settings.RESPONSIVE_THUMBNAIL_PATH, unhandled_thumbnail_name)
+
+    shutil.copy2(unhandled_thumbnail_path, responsive_thumbnail_path)
 
 
 def create_thumbnail(source_image_path, destination_thumbnail_path, size):
@@ -43,7 +75,7 @@ def create_thumbnail(source_image_path, destination_thumbnail_path, size):
     try:
         image = Image.open(source_image_path, 'r')
     except IOError:
-        return "File was not an image file, or could not be found."
+        return { 'success': False, 'error': 'File was not an image file, or could not be found.' }
 
     # If necessary, convert the image to RGB mode
     if image.mode not in ('L', 'RGB', 'RGBA'):
@@ -52,13 +84,132 @@ def create_thumbnail(source_image_path, destination_thumbnail_path, size):
     file_name, file_extension = os.path.splitext(source_image_path)
 
     if not file_extension:
-        return 'File must have an extension.'
+        return { 'success': False, 'error': 'File must have an extension.' }
 
     try:
         # Convert our image to a thumbnail
         image.thumbnail(size, Image.ANTIALIAS)
     except IOError:
-        return 'Image is truncated.'
+        return { 'success': False, 'error': 'Image is truncated.' }
+
+    quality = 90
+
+    print file_extension
+    print file_extension[1:]
 
     # Save the image to file
-    image.save(destination_thumbnail_path)
+    image.save(destination_thumbnail_path, file_extension[1:], quality=quality, optimize=True)
+
+    return { 'success': True }
+
+
+def resize_image(source_image_path, destination_thumbnail_path, size):
+
+    try:
+        image = Image.open(source_image_path, 'r')
+    except IOError:
+        return { 'success': False, 'error': 'File was not an image file, or could not be found.' }
+
+    # If necessary, convert the image to RGB mode
+    if image.mode not in ('L', 'RGB', 'RGBA'):
+       image = image.convert('RGB')
+
+    file_name, file_extension = os.path.splitext(source_image_path)
+
+    if not file_extension:
+        return { 'success': False, 'error': 'File must have an extension.' }
+
+
+    image_width, image_height = image.size
+    target_width, target_height = size
+
+
+    if image_width < target_width:
+        target_width = image_width
+
+    if image_height < target_height:
+        target_height = image_height
+
+    if float(image_width) / float(image_height) < float(16)/float(9) - 0.01 or float(image_width) / float(image_height) > float(16)/float(9) + 0.01:
+        return { 'success': False, 'error': 'Image has invalid dimensions.' }
+
+    try:
+        # Convert our image to a thumbnail
+        image = image.resize((target_width, target_height), Image.ANTIALIAS)
+    except IOError:
+        return {'success': False, 'error': 'Image is truncated.' }
+
+    quality = 90
+    image.save(destination_thumbnail_path, file_extension[1:], quality=quality, optimize=True)
+
+    return { 'success': True }
+
+
+def crop_image(source_image_path, destination_path, crop_data):
+
+    try:
+        image = Image.open(source_image_path, 'r')
+    except IOError:
+        return { 'success': False, 'error': "File was not an image file, or could not be found." }
+
+    # If necessary, convert the image to RGB mode
+    if image.mode not in ('L', 'RGB', 'RGBA'):
+       image = image.convert('RGB')
+
+    file_name, file_extension = os.path.splitext(source_image_path)
+
+    if not file_extension:
+        return {'success': False, 'error': 'File must have an extension.' }
+
+
+    crop_x = float(crop_data['x'])
+    crop_y = float(crop_data['y'])
+    crop_height = float(crop_data['height'])
+    crop_width = float(crop_data['width'])
+
+    image_width, image_height = image.size
+
+    if crop_width / crop_height < float(16)/float(9) - 0.01 or crop_width / crop_height > float(16)/float(9) + 0.01:
+        return { 'success': False, 'error': 'Cropping ratio was not 16:9.'}
+
+    if (crop_x < 0) or (crop_y < 0) or (crop_x > image_width) or (crop_y > image_height) or (crop_x + crop_width > image_width) or (crop_y + crop_height > image_height):
+        return { 'success': False, 'error': 'Crop bounds are illegal!' }
+
+    image = image.crop((int(crop_x), int(crop_y), int(crop_x) + int(crop_width), int(crop_y) + int(crop_height)))
+
+    quality = 90
+    image.save(destination_path, file_extension[1:], quality=quality, optimize=True)
+
+    return { 'success': True }
+
+
+def get_unhandled_media_path(unhandled_file_path):
+    return os.path.join(gallery_settings.UNHANDLED_IMAGES_PATH, os.path.basename(unhandled_file_path))
+
+
+def get_unhandled_thumbnail_media_path(unhandled_thumbnail_path):
+    return os.path.join(gallery_settings.UNHANDLED_THUMBNAIL_PATH, os.path.basename(unhandled_thumbnail_path))
+
+
+def get_responsive_original_path(responsive_path):
+    return os.path.join(gallery_settings.RESPONSIVE_IMAGES_PATH, os.path.basename(responsive_path))
+
+
+def get_responsive_lg_path(responsive_path):
+    return os.path.join(gallery_settings.RESPONSIVE_IMAGES_LG_PATH, os.path.basename(responsive_path))
+
+
+def get_responsive_md_path(responsive_path):
+    return os.path.join(gallery_settings.RESPONSIVE_IMAGES_MD_PATH, os.path.basename(responsive_path))
+
+
+def get_responsive_sm_path(responsive_path):
+    return os.path.join(gallery_settings.RESPONSIVE_IMAGES_SM_PATH, os.path.basename(responsive_path))
+
+
+def get_responsive_xs_path(responsive_path):
+    return os.path.join(gallery_settings.RESPONSIVE_IMAGES_XS_PATH, os.path.basename(responsive_path))
+
+
+def get_responsive_thumbnail_path(responsive_path):
+    return os.path.join(gallery_settings.RESPONSIVE_THUMBNAIL_PATH, os.path.basename(responsive_path))

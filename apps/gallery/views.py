@@ -1,23 +1,27 @@
 #-*- coding: utf-8 -*-
 
-import os
-import shutil
-
-from django.conf import settings
 import json
 from django.shortcuts import HttpResponse, get_object_or_404, redirect, render
-from django.utils.translation import ugettext as _
 
 from apps.gallery.models import UnhandledImage, ResponsiveImage
 from apps.gallery.forms import DocumentForm
-from apps.gallery import util as galleryUtil
+from apps.gallery import util
 
 def _create_request_dictionary(request):
 
-    dict = {
+
+    for image in ResponsiveImage.objects.all():
+        print image.thumbnail.url
+        print image.image_lg.url
+        print image.image_md.url
+        print image.image_sm.url
+        print image.image_xs.url
+
+    dictionary = {
         'unhandled_images': UnhandledImage.objects.all(),
+        'responsive_images': ResponsiveImage.objects.all(),
     }
-    return dict
+    return dictionary
 
 
 def delete_all(request):
@@ -33,38 +37,10 @@ def delete_all(request):
 def index(request):
 
     request_dict = _create_request_dictionary(request)
-
-    return render(request, 'gallery/index.html', request_dict)
+    return render(request, "gallery/index.html", request_dict)
 
 
 def upload(request):
-    return upload_image_temp(request)
-
-def upload2(request):
-# Handle file upload
-    if request.method == 'POST':
-        form = DocumentForm(request.POST, request.FILES)
-        if form.is_valid():
-
-            unhandled_image = UnhandledImage(image = request.FILES['file'])
-            errors = unhandled_image.save()
-
-            if errors:
-                return HttpResponse(status=400, content=errors)
-
-            # Redirect to the document list after POST
-            return HttpResponse(status=201)
-        else:
-            error_message = ""
-
-            for field in form.errors:
-                error_message += form.errors[field] + "\n"
-
-            return HttpResponse(status=400, content=error_message)
-    return HttpResponse(status=405)
-
-
-def upload_image_temp(request):
 
     if request.method == "POST":
         form = DocumentForm(request.POST, request.FILES)
@@ -74,17 +50,19 @@ def upload_image_temp(request):
     return HttpResponse(status=500)
 
 
-def _handle_upload(uploadedFile):
-    unhandled_file_path = galleryUtil.save_unhandled_file(uploadedFile)
-    thumbnail_result = galleryUtil.create_thumbnail_for_unhandled_images(unhandled_file_path)
+def _handle_upload(uploaded_file):
 
-    print "THUMBNAIL RESULT"
-    print thumbnail_result
+    unhandled_file_path = util.save_unhandled_file(uploaded_file)
+    thumbnail_result = util.create_thumbnail_for_unhandled_images(unhandled_file_path)
 
-    if thumbnail_result['errors']:
+    if 'error' in thumbnail_result:
         return HttpResponse(status=500, content=json.dumps(thumbnail_result['error']))
 
-    unhandled_result = UnhandledImage(image = unhandled_file_path, thumbnail = thumbnail_result['thumbnail_path']).save()
+    # Image objects need to be created with relative paths, create media paths to please django (fuck you, django)
+    unhandle_media = util.get_unhandled_media_path(unhandled_file_path)
+    unhandled_thumbnail_media = util.get_unhandled_thumbnail_media_path(thumbnail_result['thumbnail_path'])
+
+    UnhandledImage(image = unhandle_media, thumbnail = unhandled_thumbnail_media).save()
 
     return HttpResponse(status=200)
 
@@ -116,23 +94,31 @@ def get_all_untreated(request):
 def crop_image(request):
     if request.is_ajax():
         if request.method == 'POST':
-            cropData = request.POST
+            crop_data = request.POST
 
-            if 'id' not in cropData or 'x' not in cropData or 'y' not in cropData or 'height' not in cropData or 'width' not in cropData:
+            if not _verify_crop_data(crop_data):
                 return HttpResponse(status=404, content=json.dumps({'error': 'Json must contain id, x, y, height and width.'}))
 
-            image = get_object_or_404(UnhandledImage, pk=cropData['id'])
+            image = get_object_or_404(UnhandledImage, pk=crop_data['id'])
+            responsive_image_path = util.save_responsive_image(image, crop_data)
 
-            copyFrom = image.image.file.name
-            copyTo = os.path.join(settings.MEDIA_ROOT, 'images', 'responsive', os.path.basename(image.image.name))
-            shutil.copy2(copyFrom, copyTo)
+            # SAMLE ERRORZ PLZ
+            util.create_responsive_images(responsive_image_path)
 
-            responsive_image = ResponsiveImage(image_original = copyTo)
-            errors = responsive_image.save()
-            print image.image.url
-            print image.thumbnail.url
-            print cropData
+            original_media = util.get_responsive_original_path(responsive_image_path)
+            lg_media = util.get_responsive_lg_path(responsive_image_path)
+            md_media = util.get_responsive_md_path(responsive_image_path)
+            sm_media = util.get_responsive_sm_path(responsive_image_path)
+            xs_media = util.get_responsive_xs_path(responsive_image_path)
+            thumbnail = util.get_responsive_thumbnail_path(responsive_image_path)
 
-            return HttpResponse(status=200, content=json.dumps({'cropData': cropData}))
+            ResponsiveImage(image_original=original_media, image_lg=lg_media, image_md=md_media, image_sm=sm_media, image_xs=xs_media, thumbnail=thumbnail).save()
+            image.delete()
+
+            return HttpResponse(status=200, content=json.dumps({'cropData': crop_data}))
 
     return HttpResponse(status=405)
+
+
+def _verify_crop_data(crop_data):
+    return 'id' in crop_data and 'x' in crop_data and 'y' in crop_data and 'height' in crop_data and 'width' in crop_data

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from django.conf.urls import patterns, include, url
+from django.conf.urls import patterns, url
 
 urlpatterns = patterns('apps.gallery.views',
     url(r'^$', 'index', name='gallery_index'),
@@ -9,5 +9,4 @@ urlpatterns = patterns('apps.gallery.views',
     url(r'^delete_all$', 'delete_all', name='delete_all'),
     url(r'^get_all_untreated$', 'get_all_untreated', name='get_all_untreated'),
     url(r'^crop_image', 'crop_image', name='crop_image'),
-#    url(r'^(?P<event_id>\d+)/attend/$', 'attendEvent', name='attend_event'),
 )
