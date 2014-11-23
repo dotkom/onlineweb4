@@ -31,6 +31,7 @@ def unhandled_image_delete(sender, instance, **kwargs):
 post_delete.connect(receiver=unhandled_image_delete, dispatch_uid=uuid.uuid1(), sender=UnhandledImage)
 
 
+# TODO: Introduce tags to images
 class ResponsiveImage(models.Model):
     image_original = models.FileField(upload_to = gallerySettings.RESPONSIVE_IMAGES_PATH)
     image_lg = models.ImageField(upload_to = gallerySettings.RESPONSIVE_IMAGES_PATH)

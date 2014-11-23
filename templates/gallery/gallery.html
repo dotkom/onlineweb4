@@ -1,10 +1,10 @@
-{% load thumbnail %}
+{#{% load thumbnail %}#}
 
 <div class="row">
     <div class="col-md-12">
         <div id="thumbview-header" class="row">
             <div class="col-md-12">
-                <h2>Galleri av bilder i gal gallerigallesyregallabekledning</h2>
+                <h2>Behandlede bilder</h2>
                 <div id="gallery">
                 {% for image in responsive_images %}
                     <img id="yourImageId9"  class="bttrlazyloading"
@@ -18,25 +18,5 @@
                 </div>
             </div>
         </div>
-        <div class="row">
-            <div class="col-md-12">
-            </div>
-        </div>
-        {#        {% for image in unhandled_images %}#}
-
-        {#            <img src="{{ image.thumbnail.url }}">#}
-        {##}
-        {#            {% thumbnail image.image "x300" as im %}#}
-        {#                <img src="{{ im.url }}">#}
-        {#            {% endthumbnail %}#}
-
-        {#            <img id="yourImageId9"  class="bttrlazyloading"#}
-        {#                 data-bttrlazyloading-xs-src="http://i.imgur.com/BvYBjHb.png"#}
-        {#                 data-bttrlazyloading-sm-src="http://i.imgur.com/BvYBjHb.png"#}
-        {#                 data-bttrlazyloading-md-src="http://i.imgur.com/BvYBjHb.png"#}
-        {#                 data-bttrlazyloading-lg-src="http://i.imgur.com/BvYBjHb.png"#}
-        {#                 data-bttrlazyloading-transition="rotatedIn"#}
-        {#                    />#}
-        {#        {% endfor %}#}
     </div>
 </div>

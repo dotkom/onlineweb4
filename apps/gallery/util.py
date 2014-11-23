@@ -17,8 +17,7 @@ def save_unhandled_file(uploaded_file):
         with open(filepath, 'wb+') as destination:
             for chunk in uploaded_file.chunks():
                 destination.write(chunk)
-    except Exception as exception:
-        print exception
+    except Exception:
         return False
 
     return filepath
@@ -63,6 +62,8 @@ def create_responsive_images(source_path):
     sm_status = resize_image(source_path, sm_destination_path, gallery_settings.RESPONSIVE_IMAGES_SM_SIZE)
     xs_stauts = resize_image(source_path, xs_destination_path, gallery_settings.RESPONSIVE_IMAGES_XS_SIZE)
 
+    # TODO: Do something with the statuses, they implicate success or error messages
+
     unhandled_thumbnail_name = os.path.basename(source_path)
     unhandled_thumbnail_path = os.path.join(django_settings.MEDIA_ROOT, gallery_settings.UNHANDLED_THUMBNAIL_PATH, unhandled_thumbnail_name)
     responsive_thumbnail_path = os.path.join(django_settings.MEDIA_ROOT, gallery_settings.RESPONSIVE_THUMBNAIL_PATH, unhandled_thumbnail_name)
@@ -93,11 +94,8 @@ def create_thumbnail(source_image_path, destination_thumbnail_path, size):
         return { 'success': False, 'error': 'Image is truncated.' }
 
     quality = 90
-
-    print file_extension
-    print file_extension[1:]
-
     # Save the image to file
+    #Have not tried setting file extension to png, but I guess PIL would fuck you in the ass for it
     image.save(destination_thumbnail_path, file_extension[1:], quality=quality, optimize=True)
 
     return { 'success': True }
@@ -140,6 +138,7 @@ def resize_image(source_image_path, destination_thumbnail_path, size):
         return {'success': False, 'error': 'Image is truncated.' }
 
     quality = 90
+    #Have not tried setting file extension to png, but I guess PIL would fuck you in the ass for it
     image.save(destination_thumbnail_path, file_extension[1:], quality=quality, optimize=True)
 
     return { 'success': True }
@@ -169,15 +168,20 @@ def crop_image(source_image_path, destination_path, crop_data):
 
     image_width, image_height = image.size
 
+    # Check all the dimension and size things \o/
+
     if crop_width / crop_height < float(16)/float(9) - 0.01 or crop_width / crop_height > float(16)/float(9) + 0.01:
         return { 'success': False, 'error': 'Cropping ratio was not 16:9.'}
 
     if (crop_x < 0) or (crop_y < 0) or (crop_x > image_width) or (crop_y > image_height) or (crop_x + crop_width > image_width) or (crop_y + crop_height > image_height):
         return { 'success': False, 'error': 'Crop bounds are illegal!' }
 
+    # All is OK, crop the crop
+
     image = image.crop((int(crop_x), int(crop_y), int(crop_x) + int(crop_width), int(crop_y) + int(crop_height)))
 
     quality = 90
+    #Have not tried setting file extension to png, but I guess PIL would fuck you in the ass for it
     image.save(destination_path, file_extension[1:], quality=quality, optimize=True)
 
     return { 'success': True }

@@ -1,3 +1,12 @@
+/*
+ TODO: When cropping images, make a spinner on the crop button to let the user know that it is working. Remove spinner when complete.
+ TODO: Remove edit and preview image when crop is complete.
+ TODO: Automatically update the list of thumbnails when new images are uploaded
+ TODO: Add ajax method to fetch new images that are cropped and put them in the gallery, example in gallery.html
+ TODO: Add support for tagging images
+ TODO: Make the gallery prettier by framing stuff and allowing previews of different sizes
+ */
+
 $.ajaxSetup({
     crossDomain: false, // obviates need for sameOrigin test
     beforeSend: function(xhr, settings) {
@@ -7,21 +16,18 @@ $.ajaxSetup({
     }
 });
 
-
 function csrfSafeMethod(method) {
     // these HTTP methods do not require CSRF protection
     return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
 }
 
-
 function readURL(input) {
-
     if (input.files && input.files[0]) {
         var reader = new FileReader();
 
         reader.onload = function (e) {
             $('#large-preview').attr('src', e.target.result);
-        }
+        };
 
         reader.readAsDataURL(input.files[0]);
     }
@@ -52,11 +58,6 @@ $("#originalimagebutton").click(function() {
 });
 
 
-setInterval(function() {
-    updateUneditedFiles();
-}, 500000);
-
-
 var updateUneditedFiles = function() {
     $.ajax({
         method: 'GET',
@@ -65,13 +66,10 @@ var updateUneditedFiles = function() {
             var res = jQuery.parseJSON(res);
             var text = "Behandle (" + res['untreated'] + ")";
             $("#edit-button > div.caption").text(text);
-            console.log("updated");
         },
         crossDomain: false
     });
-}
-
-updateUneditedFiles();
+};
 
 $(".bttrlazyloading").each(function() {
     $(this).bttrlazyloading(
@@ -83,14 +81,13 @@ $(".bttrlazyloading").each(function() {
 
 
 var fetchUnhandledImages = function() {
-
     setUpdateSpin();
 
     $.ajax({
         method: 'GET',
         url: 'get_all_untreated',
         success: function(res) {
-            var res = jQuery.parseJSON(res);
+            res = jQuery.parseJSON(res);
             updateAllUnhandledImages(res['untreated']);
             setUpdateRefresh();
         },
@@ -104,11 +101,11 @@ var fetchUnhandledImages = function() {
 
 var setUpdateSpin = function() {
     $('a#fetchallimages > i').removeClass("fa-refresh").addClass("fa-spinner fa-spin");
-}
+};
 
 var setUpdateRefresh = function() {
     $('a#fetchallimages > i').removeClass("fa-spinner").removeClass("fa-spin").addClass("fa-refresh");
-}
+};
 
 var showEditView = function() {
     var editPane = $('#image-edit-content');
@@ -150,7 +147,6 @@ var showEditView = function() {
     }, 400);
 };
 
-
 var updateAllUnhandledImages = function(unhandledImages) {
     var thumbnailContainer = $("#thumbnail-view");
     thumbnailContainer.empty();
@@ -166,13 +162,9 @@ var updateAllUnhandledImages = function(unhandledImages) {
     });
 };
 
-
 $("a#fetchallimages").click(function() {
     fetchUnhandledImages();
 });
-
-fetchUnhandledImages();
-
 
 var imageEditingSuccessful = function() {
 
@@ -183,44 +175,42 @@ var imageEditingSuccessful = function() {
     editPreview.empty();
 
     $('#showthumbnailpane').tab('show');
-
     fetchUnhandledImages();
-}
+};
 
 
 var crop_image = function() {
     var image = $('#editing-image');
     var cropData = image.cropper("getData");
-    var imageId = image.attr("data-image-id");
-    cropData.id = imageId;
+    cropData.id = image.attr("data-image-id");
 
-    var request = $.post("crop_image", cropData, function() {
+    $.post("crop_image", cropData, function() {
+        // Post a success message for the user
         imageEditingSuccessful();
+
+    }).done(function() {
+
+    }).fail(function() {
+        // Update error messages
     })
-        .done(function() {
-            console.log("success 2");
-        })
-        .fail(function() {
-            console.log("fail");
-        })
-        .always(function() {
-            console.log("finished");
-        });
 };
 
 $("#accept-crop-button").click(function() {
     crop_image();
 });
 
-//var bLazy = new Blazy({
-//    loaded: function() {
-//        console.log("FITTEEEE!");
-//    },
-//    success: function() {
-//        console.log("HELVETE");
-//    }
-//});
 
+// Initial stuff
+
+updateUneditedFiles();
+fetchUnhandledImages();
+
+setInterval(function() {
+    updateUneditedFiles();
+}, 5000);
+
+// No idea what this does, but it made things work earlier
+// Can probably be removed
 new Blazy({
     container: '#edit-pane'
 });

@@ -9,21 +9,13 @@ from apps.gallery import util
 
 def _create_request_dictionary(request):
 
-
-    for image in ResponsiveImage.objects.all():
-        print image.thumbnail.url
-        print image.image_lg.url
-        print image.image_md.url
-        print image.image_sm.url
-        print image.image_xs.url
-
     dictionary = {
         'unhandled_images': UnhandledImage.objects.all(),
         'responsive_images': ResponsiveImage.objects.all(),
     }
     return dictionary
 
-
+#TODO: Remove this, only for testing
 def delete_all(request):
     for image in UnhandledImage.objects.all():
         image.delete()
@@ -50,18 +42,22 @@ def upload(request):
     return HttpResponse(status=500)
 
 
+
+# If something goes wrong, all files will have to be deleted, this is not handled now
 def _handle_upload(uploaded_file):
 
     unhandled_file_path = util.save_unhandled_file(uploaded_file)
     thumbnail_result = util.create_thumbnail_for_unhandled_images(unhandled_file_path)
 
     if 'error' in thumbnail_result:
+        #delete files
         return HttpResponse(status=500, content=json.dumps(thumbnail_result['error']))
 
     # Image objects need to be created with relative paths, create media paths to please django (fuck you, django)
     unhandle_media = util.get_unhandled_media_path(unhandled_file_path)
     unhandled_thumbnail_media = util.get_unhandled_thumbnail_media_path(thumbnail_result['thumbnail_path'])
 
+    #try catch this and delete files on exception
     UnhandledImage(image = unhandle_media, thumbnail = unhandled_thumbnail_media).save()
 
     return HttpResponse(status=200)
@@ -91,6 +87,7 @@ def get_all_untreated(request):
     return HttpResponse(status=405)
 
 
+# Same here, delete all files if something goes wrong, not yet handled
 def crop_image(request):
     if request.is_ajax():
         if request.method == 'POST':
