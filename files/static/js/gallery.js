@@ -1,5 +1,4 @@
 /*
- TODO: Remove edit and preview image when crop is complete.
  TODO: Automatically update the list of thumbnails when new images are uploaded, try to make it so that only the edited image is loaded to avoid unnecessary data traffic
  TODO: Add ajax method to fetch new images that are cropped and put them in the gallery, example in gallery.html
  TODO: Add support for tagging images
@@ -59,8 +58,11 @@ $("#originalimagebutton").click(function() {
 
 var clearMessage = function(id) {
     setTimeout(function() {
-        $('#' + id).remove();
-    }, 10000);
+        var message = $('#' + id);
+        message.fadeOut(1000, function() {
+            $(this).remove();
+        })
+    }, 6000);
 }
 
 var createMessage = function(message) {
@@ -148,7 +150,7 @@ var clearEditView = function() {
     var imageEditPreview = $("#image-edit-preview");
     editPane.empty();
     imageEditPreview.empty();
-}
+};
 
 
 var showEditView = function() {
@@ -210,8 +212,26 @@ $("a#fetchallimages").click(function() {
     fetchUnhandledImages();
 });
 
+
+var getCurrentEditImageName = function() {
+    var imageSrc = $('#editing-image').attr('src');
+    return imageSrc.substring(imageSrc.lastIndexOf('/') + 1);
+
+};
+
+
+var getCurrentEditImageId = function() {
+    return $('#editing-image').attr('data-image-id');
+};
+
+
 var imageEditingSuccessful = function() {
-    setSuccessMessage("Image was edited successfully!");
+
+    var imageName = getCurrentEditImageName();
+    var imageId = getCurrentEditImageId();
+    var message = "Image '" + imageName + "' with id " + imageId + " was edited successfully!";
+
+    setSuccessMessage(message);
     clearEditView();
 
     $('#showthumbnailpane').tab('show');
@@ -227,13 +247,9 @@ var crop_image = function() {
     setCropSpin();
 
     $.post("crop_image", cropData, function() {
-        // Post a success message for the user
         imageEditingSuccessful();
-
-
     }).fail(function($xhr) {
-        var data = $xhr.responseJSON;
-        setErrorMessage(data);
+        setErrorMessage($xhr.responseJSON);
     }).always(function() {
         setCropDefault();
     });
