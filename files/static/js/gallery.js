@@ -56,6 +56,7 @@ $("#originalimagebutton").click(function() {
     window.open(image.attr("src"));
 });
 
+
 var clearMessage = function(id) {
     setTimeout(function() {
         $('#' + id).remove();
@@ -142,10 +143,18 @@ var setCropDefault = function() {
     $('button#accept-crop-button > i').removeClass("fa-spinner").removeClass("fa-spin").addClass("fa-check");
 };
 
+var clearEditView = function() {
+    var editPane = $('#image-edit-content');
+    var imageEditPreview = $("#image-edit-preview");
+    editPane.empty();
+    imageEditPreview.empty();
+}
+
 
 var showEditView = function() {
-    var editPane = $('#image-edit-content');
+    clearEditView();
 
+    var editPane = $('#image-edit-content');
     var imageContainer = $('<div class="image-container">');
     imageContainer.hide();
 
@@ -162,7 +171,7 @@ var showEditView = function() {
     setTimeout(function() {
         image.cropper({
             aspectRatio: 16/9,
-            preview: "div > .image-edit-preview",
+            preview: "div > #image-edit-preview",
             autoCrop: true,
             dragCrop: true,
             modal: true,
@@ -203,12 +212,7 @@ $("a#fetchallimages").click(function() {
 
 var imageEditingSuccessful = function() {
     setSuccessMessage("Image was edited successfully!");
-
-    var editPane = $('#image-edit-content');
-    editPane.empty();
-
-    var editPreview = $('#image-edit-preview');
-    editPreview.empty();
+    clearEditView();
 
     $('#showthumbnailpane').tab('show');
     fetchUnhandledImages();
