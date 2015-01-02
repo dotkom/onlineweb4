@@ -128,6 +128,7 @@ def resize_image(source_image_path, destination_thumbnail_path, size):
     if image_height < target_height:
         target_height = image_height
 
+    # Give an epsilon of 0.01 because calculations.
     if float(image_width) / float(image_height) < float(16)/float(9) - 0.01 or float(image_width) / float(image_height) > float(16)/float(9) + 0.01:
         return { 'success': False, 'error': 'Image has invalid dimensions.' }
 
@@ -138,8 +139,14 @@ def resize_image(source_image_path, destination_thumbnail_path, size):
         return {'success': False, 'error': 'Image is truncated.' }
 
     quality = 90
-    #Have not tried setting file extension to png, but I guess PIL would fuck you in the ass for it
-    image.save(destination_thumbnail_path, file_extension[1:], quality=quality, optimize=True)
+
+    try:
+        #Have not tried setting file extension to png, but I guess PIL would fuck you in the ass for it
+        image.save(destination_thumbnail_path, file_extension[1:], quality=quality, optimize=True)
+    except KeyError as key_error:
+        return { 'success': False, 'error': 'Unknown extension.' }
+    except IOError:
+        return { 'success': False, 'error': 'Image could not be saved.' }
 
     return { 'success': True }
 
@@ -169,7 +176,7 @@ def crop_image(source_image_path, destination_path, crop_data):
     image_width, image_height = image.size
 
     # Check all the dimension and size things \o/
-
+    # Give an epsilon of 0.01 because calculations.
     if crop_width / crop_height < float(16)/float(9) - 0.01 or crop_width / crop_height > float(16)/float(9) + 0.01:
         return { 'success': False, 'error': 'Cropping ratio was not 16:9.'}
 

@@ -1,7 +1,6 @@
 /*
- TODO: When cropping images, make a spinner on the crop button to let the user know that it is working. Remove spinner when complete.
  TODO: Remove edit and preview image when crop is complete.
- TODO: Automatically update the list of thumbnails when new images are uploaded
+ TODO: Automatically update the list of thumbnails when new images are uploaded, try to make it so that only the edited image is loaded to avoid unnecessary data traffic
  TODO: Add ajax method to fetch new images that are cropped and put them in the gallery, example in gallery.html
  TODO: Add support for tagging images
  TODO: Make the gallery prettier by framing stuff and allowing previews of different sizes
@@ -57,6 +56,34 @@ $("#originalimagebutton").click(function() {
     window.open(image.attr("src"));
 });
 
+var clearMessage = function(id) {
+    setTimeout(function() {
+        $('#' + id).remove();
+    }, 10000);
+}
+
+var createMessage = function(message) {
+    var id = new Date().getTime();
+    var messageElement = document.createElement("p");
+    messageElement.setAttribute('id', id);
+    messageElement.setAttribute('class', 'gallery-message');
+    messageElement.innerHTML = message;
+    clearMessage(id);
+    return messageElement;
+}
+
+var setErrorMessage = function(message) {
+    var messageElement = createMessage(message);
+    messageElement.className += " " + 'text-danger' + " " + 'bg-danger';
+    $('div#messages').append(messageElement);
+}
+
+var setSuccessMessage = function(message) {
+    var messageElement = createMessage(message);
+    messageElement.className += " " + 'text-success' + " " + 'bg-success';
+    $('div#messages').append(messageElement);
+}
+
 
 var updateUneditedFiles = function() {
     $.ajax({
@@ -107,9 +134,17 @@ var setUpdateRefresh = function() {
     $('a#fetchallimages > i').removeClass("fa-spinner").removeClass("fa-spin").addClass("fa-refresh");
 };
 
+var setCropSpin = function() {
+    $('button#accept-crop-button > i').removeClass("fa-check").addClass("fa-spinner fa-spin");
+};
+
+var setCropDefault = function() {
+    $('button#accept-crop-button > i').removeClass("fa-spinner").removeClass("fa-spin").addClass("fa-check");
+};
+
+
 var showEditView = function() {
     var editPane = $('#image-edit-content');
-    editPane.empty();
 
     var imageContainer = $('<div class="image-container">');
     imageContainer.hide();
@@ -167,6 +202,7 @@ $("a#fetchallimages").click(function() {
 });
 
 var imageEditingSuccessful = function() {
+    setSuccessMessage("Image was edited successfully!");
 
     var editPane = $('#image-edit-content');
     editPane.empty();
@@ -184,15 +220,19 @@ var crop_image = function() {
     var cropData = image.cropper("getData");
     cropData.id = image.attr("data-image-id");
 
+    setCropSpin();
+
     $.post("crop_image", cropData, function() {
         // Post a success message for the user
         imageEditingSuccessful();
 
-    }).done(function() {
 
-    }).fail(function() {
-        // Update error messages
-    })
+    }).fail(function($xhr) {
+        var data = $xhr.responseJSON;
+        setErrorMessage(data);
+    }).always(function() {
+        setCropDefault();
+    });
 };
 
 $("#accept-crop-button").click(function() {
@@ -207,7 +247,7 @@ fetchUnhandledImages();
 
 setInterval(function() {
     updateUneditedFiles();
-}, 5000);
+}, 3000);
 
 // No idea what this does, but it made things work earlier
 // Can probably be removed
