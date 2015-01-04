@@ -1,6 +1,7 @@
 #-*- coding: utf-8 -*-
 
 import datetime
+from collections import OrderedDict
 
 from django.utils import timezone
 
@@ -146,8 +147,12 @@ def unattendEvent(request, event_id):
         return redirect(event)
 
     # Check if the deadline for unattending has passed
-    if attendance_event.unattend_deadline < timezone.now():
+    if attendance_event.unattend_deadline < timezone.now() and not attendance_event.is_on_waitlist(request.user):
         messages.error(request, _(u"Avmeldingsfristen for dette arrangementet har utløpt."))
+        return redirect(event)
+
+    if attendance_event.event.event_start < timezone.now():
+        messages.error(request, _(u"Dette arrangementet har allerede startet."))
         return redirect(event)
 
     event.notify_waiting_list(host=request.META['HTTP_HOST'], unattended_user=request.user)
@@ -178,8 +183,9 @@ def _search_indexed(request, query, filters):
         kwargs['attendance_event__attendees__user'] = request.user
 
     events = Event.objects.filter(**kwargs).order_by('event_start').prefetch_related(
-            'attendance_event', 'attendance_event__attendees')
-
+            'attendance_event', 'attendance_event__attendees', 'attendance_event__reserved_seats',
+            'attendance_event__reserved_seats__reservees')
+    
     if query:
         for result in watson.search(query, models=(events,)):
             results.append(result.object)
@@ -229,7 +235,7 @@ def calendar_export(request, event_id=None, user=None):
         try:
             username = signer.unsign(user)
             user = User.objects.get(username=username)
-        except BadSignature, User.DoesNotExist:
+        except (BadSignature, User.DoesNotExist):
             user = None
         if user:
             # Getting all events that the user has/is participating in
@@ -255,7 +261,7 @@ def calendar_export(request, event_id=None, user=None):
 
         cal.add_component(cal_event)
 
-    response = HttpResponse(cal.to_ical(), mimetype='text/calendar')
+    response = HttpResponse(cal.to_ical(), content_type='text/calendar')
     response['Content-Type'] = 'text/calendar; charset=utf-8';
     response['Content-Disposition'] = 'attachment; filename=' + filename + '.ics'
 
@@ -276,7 +282,7 @@ def mail_participants(request, event_id):
         return redirect(event)
 
     all_attendees = event.attendance_event.attendees
-    attendees_on_waitlist = event.wait_list
+    attendees_on_waitlist = event.attendance_event.waitlist_qs
     attendees_not_paid = event.attendees_not_paid
 
     if request.method == 'POST':
@@ -285,12 +291,14 @@ def mail_participants(request, event_id):
         from_email = 'kontakt@online.ntnu.no'
         from_email_value = request.POST.get('from_email')
 
-        if from_email_value == '1':
+        if from_email_value == '1' or from_email_value == '4':
             from_email = settings.EMAIL_ARRKOM
         elif from_email_value == '2':
             from_email = settings.EMAIL_BEDKOM
         elif from_email_value == '3':
             from_email = settings.EMAIL_FAGKOM
+        elif from_email_value == '5':
+            from_email = settings.EMAIL_EKSKOM
 
         signature = u'\n\nVennlig hilsen Linjeforeningen Online.\n(Denne eposten kan besvares til %s)' % from_email
 

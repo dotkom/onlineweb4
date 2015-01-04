@@ -8,17 +8,18 @@ from django.utils.translation import ugettext as _
 from apps.authentication.models import OnlineUser as User
 from filebrowser.fields import FileBrowseField
 
+import reversion
+
 
 class Article(models.Model):
     IMAGE_FOLDER = "images/article"
     IMAGE_EXTENSIONS = ['.jpg', '.jpeg', '.gif', '.png', '.tif', '.tiff']
 
-
     heading = models.CharField(_(u"tittel"), max_length=45)
     ingress_short = models.CharField(_(u"kort ingress"), max_length=100)
     ingress = models.TextField(_(u"ingress"))
     content = models.TextField(_(u"content"))
-    image = FileBrowseField(_(u"bilde"), 
+    image = FileBrowseField(_(u"bilde"),
         max_length=200, directory=IMAGE_FOLDER,
         extensions=IMAGE_EXTENSIONS, null=True)
     video = models.CharField(_("vimeo id"), max_length=200, blank=True)
@@ -26,21 +27,24 @@ class Article(models.Model):
     changed_date = models.DateTimeField(_(u"sist endret"), editable=False, auto_now=True)
     published_date = models.DateTimeField(_(u"publisert"))
 
-    created_by = models.ForeignKey(User, null=False, verbose_name=_(u"opprettet av"), related_name="created_by", editable=False)
+    created_by = models.ForeignKey(User, null=False,
+        verbose_name=_(u"opprettet av"),
+        related_name="created_by", editable=False)
     additional_authors = models.CharField(_(u'andre forfattere'), max_length=200, blank=True)
-    changed_by = models.ForeignKey(User, null=False, verbose_name=_(u"endret av"), related_name="changed_by", editable=False)
+    changed_by = models.ForeignKey(User, null=False,
+        verbose_name=_(u"endret av"), related_name="changed_by", editable=False)
     photographers = models.CharField(_(u'fotograf(er)'), max_length=200, blank=True)
     featured = models.BooleanField(_(u"featured artikkel"), default=False)
-    
+
     def __unicode__(self):
         return self.heading
-    
+
     def get_matchname(self):
         return re.findall(r"[0-9]+", self.video.lower())
 
     @property
     def slug(self):
-        return slugify(self.heading) 
+        return slugify(self.heading)
 
     @property
     def tags(self):
@@ -67,6 +71,9 @@ class Article(models.Model):
         ordering = ['published_date']
 
 
+reversion.register(Article)
+
+
 class Tag(models.Model):
     name = models.CharField(_(u"navn"), max_length=50)
     slug = models.CharField(_(u"kort navn"), max_length=30)
@@ -87,6 +94,9 @@ class Tag(models.Model):
         return self.name
 
 
+reversion.register(Tag)
+
+
 class ArticleTag(models.Model):
     article = models.ForeignKey(Article, verbose_name=_(u"artikkel"), related_name='article_tags')
     tag = models.ForeignKey(Tag, verbose_name=_(u"tag"), related_name='article_tags')
@@ -95,3 +105,5 @@ class ArticleTag(models.Model):
         unique_together = ('article', 'tag')
         verbose_name = _(u"tag")
         verbose_name_plural = _(u"tags")
+
+reversion.register(ArticleTag)

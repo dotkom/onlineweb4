@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import datetime
 import logging
 
@@ -9,17 +11,17 @@ from django.utils import timezone
 
 from apps.authentication.models import OnlineUser as User, AllowedUsername
 from apps.events.models import (Event, AttendanceEvent, Attendee,
-                                RuleBundle, FieldOfStudyRule, GradeRule, UserGroupRule)
+                                RuleBundle, FieldOfStudyRule, GradeRule, UserGroupRule,
+                                Reservation, Reservee)
 from apps.marks.models import Mark, UserEntry
+from apps.events.mommy import SetEventMarks
 
 class EventTest(TestCase):
 
     def setUp(self):
         self.event = G(Event, title='Sjakkturnering')
         self.attendance_event = G(AttendanceEvent, event=self.event)
-        self.user = G(User)
-        self.user.username = 'ola123'
-        self.user.ntnu_username = 'ola123ntnu'
+        self.user = G(User, username = 'ola123', ntnu_username = 'ola123ntnu', first_name = "ola", last_name = "nordmann")
         self.attendee = G(Attendee, event=self.attendance_event, user=self.user)
         self.logger = logging.getLogger(__name__)
         # Setting registration start 1 hour in the past, end one week in the future.
@@ -36,6 +38,54 @@ class EventTest(TestCase):
     def testAttendanceEventUnicodeIsCorrect(self):
         self.logger.debug("Testing testing on AttendanceEvent with dynamic fixtures")
         self.assertEqual(self.attendance_event.__unicode__(), u'Sjakkturnering')
+
+    #
+    # Event attendees, seats and wait list
+    # 
+
+    def testAttendeeAndWaitlistQS(self):
+        self.logger.debug("Testing attendee queryset")
+        user1 = G(User, username="jan", first_name="jan")
+        attendee = G(Attendee, event=self.attendance_event, user=user1) 
+        user2 = G(User, username="per", first_name="per")
+        attendee = G(Attendee, event=self.attendance_event, user=user2) 
+        user3 = G(User, username="gro", first_name="gro")
+        attendee = G(Attendee, event=self.attendance_event, user=user3) 
+        self.assertEqual(self.attendance_event.max_capacity, 2)
+        self.assertEqual(self.attendance_event.number_of_attendees, 2)
+        self.assertEqual(self.attendance_event.number_on_waitlist, 2)
+
+    def testReservedSeats(self):
+        self.logger.debug("Testing reserved seats")
+        reservation = G(Reservation, attendance_event=self.attendance_event, seats=2)
+        reservee1 = G(Reservee, reservation=reservation, name="jan", note="jan er kul", allergier="allergi1")
+        self.assertEqual(self.attendance_event.number_of_reserved_seats_taken, 1) 
+        reservee2 = G(Reservee, reservation=reservation, name="per", note="per er rå", allergier="allergi2")
+        self.assertEqual(self.attendance_event.number_of_reserved_seats_taken, 2) 
+
+    def testNumberOfTakenSeats(self):
+        # Increase event capacity so we have more room to test with
+        self.attendance_event.max_capacity = 5
+        self.assertEqual(self.attendance_event.number_of_attendees, 1)
+        # Make a reservation, for 2 seats
+        reservation = G(Reservation, attendance_event=self.attendance_event, seats=2)
+        reservee1 = G(Reservee, reservation=reservation, name="jan", note="jan er kul", allergier="allergi1")
+        self.assertEqual(self.attendance_event.max_capacity, 5)
+        self.assertEqual(self.attendance_event.number_of_attendees, 1)
+        self.assertEqual(self.attendance_event.number_of_reserved_seats_taken, 1) 
+        self.assertEqual(self.attendance_event.number_of_seats_taken, 3)
+        reservee2 = G(Reservee, reservation=reservation, name="per", note="per er rå", allergier="allergi2")
+        self.assertEqual(self.attendance_event.number_of_attendees, 1)
+        self.assertEqual(self.attendance_event.number_of_reserved_seats_taken, 2) 
+        self.assertEqual(self.attendance_event.number_of_seats_taken, 3)
+        user3 = G(User, username="gro", first_name="gro")
+        attendee = G(Attendee, event=self.attendance_event, user=user3) 
+        self.assertEqual(self.attendance_event.number_of_attendees, 2)
+        self.assertEqual(self.attendance_event.number_of_seats_taken, 4)
+        
+    #
+    # Rule Bundles
+    #
 
     def testAttendeeUnicodeIsCorrect(self):
         self.logger.debug("Testing testing on Attendee with dynamic fixtures")
@@ -190,3 +240,112 @@ class EventTest(TestCase):
         response = self.event.is_eligible_for_signup(self.user)
         self.assertFalse(response['status'])
         self.assertEqual(402, response['status_code'])
+
+    #
+    # Mommy Attandance mark tests
+    #
+
+    def testMommyNotAttended(self):
+        self.attendee.attended = False
+        self.attendee.save()
+        self.assertEqual([self.user], self.attendance_event.not_attended())
+        
+    def testMommyAttended(self):
+        self.attendee.attended = True
+        self.attendee.save()
+        self.assertEqual([], self.attendance_event.not_attended())
+
+    def testMommyActiveEvents(self):
+        self.attendance_event.event.event_end = timezone.now() - datetime.timedelta(days=1)
+        self.attendance_event.event.save()
+        
+        self.attendance_event.marks_has_been_set = False
+        self.attendance_event.automatically_set_marks = True
+        self.attendance_event.save()
+
+        self.assertEqual(self.attendance_event, SetEventMarks.active_events()[0])
+        
+    def testMommyMarksHasBeenSet(self):
+        self.attendance_event.marks_has_been_set = True
+        self.attendance_event.automatically_set_marks = True
+        self.event.event_end = timezone.now() - datetime.timedelta(days=1)
+        self.attendance_event.save()
+        self.event.save()
+
+        self.assertFalse(SetEventMarks.active_events())
+
+    
+    def testMommyDontAutmaticallySetMarks(self):
+        self.attendance_event.marks_has_been_set = False
+        self.attendance_event.automatically_set_marks = False
+        self.event.event_end = timezone.now() - datetime.timedelta(days=1)
+        self.attendance_event.save()
+        self.event.save()
+
+        self.assertFalse(SetEventMarks.active_events())
+
+    def testMommyEventNotDone(self):
+        self.attendance_event.marks_has_been_set = False
+        self.attendance_event.automatically_set_marks = True
+        self.event.event_end = timezone.now() + datetime.timedelta(days=1)
+        self.attendance_event.save()
+        self.event.save()
+
+        self.assertFalse(SetEventMarks.active_events())
+
+    def testMommySetMarks(self):
+        self.attendee.attended = False
+        self.attendee.save()
+        self.attendance_event.marks_has_been_set = False
+        self.attendance_event.automatically_set_marks = True
+        self.event.event_end = timezone.now() - datetime.timedelta(days=1)
+        self.attendance_event.save()
+        self.event.save()
+        
+        SetEventMarks.setMarks(self.attendance_event)
+
+        self.assertTrue(self.attendance_event.marks_has_been_set)
+        self.assertEqual(self.user, UserEntry.objects.get().user)
+        
+    def testMommyEveryoneAttendend(self):
+        self.attendee.attended = True
+        self.attendee.save()
+        self.attendance_event.marks_has_been_set = False
+        self.attendance_event.automatically_set_marks = True
+        self.event.event_end = timezone.now() - datetime.timedelta(days=1)
+        self.attendance_event.save()
+        self.event.save()
+        
+        SetEventMarks.setMarks(self.attendance_event)
+
+        self.assertTrue(self.attendance_event.marks_has_been_set)
+        self.assertFalse(UserEntry.objects.all())
+        
+    def testMommyGenerateEmptyMessage(self):
+        self.attendee.attended = True
+        self.attendee.save()
+        self.attendance_event.marks_has_been_set = False
+        self.attendance_event.automatically_set_marks = True
+        self.event.event_end = timezone.now() - datetime.timedelta(days=1)
+        self.attendance_event.save()
+        self.event.save()
+        
+        message = SetEventMarks.generate_message(self.attendance_event)
+
+        self.assertFalse(message.send)
+        self.assertFalse(message.results_message)
+        
+    def testMommyGenerateMessage(self):
+        self.attendee.attended = False
+        self.attendee.save()
+        self.attendance_event.marks_has_been_set = False
+        self.attendance_event.automatically_set_marks = True
+        self.event.event_end = timezone.now() - datetime.timedelta(days=1)
+        self.attendance_event.save()
+        self.event.save()
+        
+        message = SetEventMarks.generate_message(self.attendance_event)
+
+        self.assertTrue(message.send)
+        self.assertTrue(message.committee_message)
+        

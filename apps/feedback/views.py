@@ -1,4 +1,6 @@
 #-*- coding: utf-8 -*-
+import json
+
 from collections import namedtuple, defaultdict
 
 from django.http import Http404, HttpResponse
@@ -12,10 +14,9 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import SafeString
 
-import json
-
-from apps.feedback.models import FeedbackRelation, FieldOfStudyAnswer, RATING_CHOICES, TextAnswer, RegisterToken
+from apps.feedback.models import FeedbackRelation, FieldOfStudyAnswer, RATING_CHOICES, TextQuestion, TextAnswer, RegisterToken
 from apps.feedback.forms import create_answer_forms
+from apps.events.models import Event
 
 @login_required
 def feedback(request, applabel, appmodel, object_id, feedback_id):
@@ -56,12 +57,13 @@ def result(request, applabel, appmodel, object_id, feedback_id):
     return feedback_results(request, applabel, appmodel, object_id, feedback_id)
 
 def results_token(request, applabel, appmodel, object_id, feedback_id,  token):
+    fbr = _get_fbr_or_404(applabel, appmodel, object_id, feedback_id)
     rt = get_object_or_404(RegisterToken, token = token)
 
-    if rt.is_valid:
+    if rt.is_valid(fbr):
         return feedback_results(request, applabel, appmodel, object_id, feedback_id, True)
     else:
-        raise Http404
+        return HttpResponse('Unauthorized', status=401)
 
 def feedback_results(request, applabel, appmodel, object_id, feedback_id, token=False):
     fbr = _get_fbr_or_404(applabel, appmodel, object_id, feedback_id)
@@ -70,28 +72,35 @@ def feedback_results(request, applabel, appmodel, object_id, feedback_id, token=
     question_and_answers = []
 
     for question in fbr.questions:
-        if question.display or not token:
+        if (question.display or not token) and isinstance(question, TextQuestion):
             question_and_answers.append(Qa(question, fbr.answers_to_question(question)))
     
-    rt = get_object_or_404(RegisterToken, fbr = fbr)
+    info = None
+
+    if(fbr.feedback.display_info or not token):
+        info = fbr.content_info()
+        info[_(u'Besvarelser')] = fbr.answered.count()
+            
+    
+    rt = get_object_or_404(RegisterToken, fbr=fbr)
 
     token_url = u"%s%sresults/%s" % (request.META['HTTP_HOST'], fbr.get_absolute_url(), rt.token)
         
     return render(request, 'feedback/results.html',{'question_and_answers': question_and_answers, 
-        'description': fbr.description, 'token_url' : token_url, 'token': token, 'display_fos': fbr.feedback.display_field_of_study})
-
+        'description': fbr.description, 'token_url' : token_url,'token' : token, 'info': info})
 
 @staff_member_required
 def chart_data(request, applabel, appmodel, object_id, feedback_id):
     return get_chart_data(request, applabel, appmodel, object_id, feedback_id)
 
 def chart_data_token(request, applabel, appmodel, object_id, feedback_id, token):
+    fbr = _get_fbr_or_404(applabel, appmodel, object_id, feedback_id)
     rt = get_object_or_404(RegisterToken, token = token)
 
-    if rt.is_valid:
+    if rt.is_valid(fbr):
         return get_chart_data(request, applabel, appmodel, object_id, feedback_id, True)
     else:
-        raise Http404
+        return HttpResponse('Unauthorized', status=401)
 
 def get_chart_data(request, applabel, appmodel, object_id, feedback_id, token=False):
     fbr = _get_fbr_or_404(applabel, appmodel, object_id, feedback_id)
@@ -109,20 +118,33 @@ def get_chart_data(request, applabel, appmodel, object_id, feedback_id, token=Fa
             for answer in answers:
                 answer_count[int(answer.answer)] += 1
             rating_answers.append(answer_count[1:])
+
+    fos_answer_count = defaultdict(int)
         
     if fbr.feedback.display_field_of_study or not token:
         fos = fbr.field_of_study_answers.all()
-        answer_count = defaultdict(int)
         for answer in fos:
-            answer_count[str(answer)] += 1
+            fos_answer_count[str(answer)] += 1
         
-        answer_collection['replies']['fos'] = answer_count.items()
+
+    mc_questions = []
+    mc_answer_count = []
+    
+    for question in fbr.multiple_choice_question:
+        if question.display or not token:
+            mc_questions.append(unicode(question))
+            answer_count = defaultdict(int)
+            for answer in fbr.answers_to_question(question):
+                answer_count[str(answer)] += 1
+            mc_answer_count.append(answer_count.items())
 
     answer_collection['replies']['ratings'] = rating_answers
     answer_collection['replies']['titles'] = rating_titles
+    answer_collection['replies']['mc_questions'] = mc_questions
+    answer_collection['replies']['mc_answers'] = mc_answer_count
+    answer_collection['replies']['fos'] = fos_answer_count.items()
    
-    return HttpResponse(json.dumps(answer_collection), mimetype='application/json')
-
+    return HttpResponse(json.dumps(answer_collection), content_type='application/json')
 
 @staff_member_required
 def index(request):
@@ -136,7 +158,7 @@ def delete_answer(request):
         answer = get_object_or_404(TextAnswer, pk=answer_id)
         answer.delete()
         return HttpResponse(status = 200)
-    return HttpResponse(status=404)
+    return HttpResponse(status=401)
 
 def _get_fbr_or_404(app_label, app_model, object_id, feedback_id):
     """

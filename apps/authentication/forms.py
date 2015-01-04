@@ -17,7 +17,8 @@ class LoginForm(forms.Form):
     def clean(self):
         if self._errors:
             return
-    
+
+        self.cleaned_data['username'] = self.cleaned_data['username'].lower()
         user = auth.authenticate(username=self.cleaned_data['username'], password=self.cleaned_data['password'])
 
         if user:
@@ -30,17 +31,13 @@ class LoginForm(forms.Form):
         return self.cleaned_data
 
     def login(self, request):
-        try:
-            User.objects.get(username=request.POST['username'])
-        except:
-            return False
         if self.is_valid():
             auth.login(request, self.user)
             return True
         return False
 
 class RegisterForm(forms.Form):
-    username = forms.CharField(label=_("Brukernavn"), max_length=20, help_text=u'Valgfritt brukernavn')
+    username = forms.CharField(label=_("Brukernavn"), max_length=20, help_text=u'Valgfritt brukernavn. (Konverteres automatisk til små bokstaver.)')
     first_name = forms.CharField(label=_("Fornavn"), max_length=50, help_text=u'Mellomnavn inkluderer du etter fornavnet ditt')
     last_name = forms.CharField(label=_("Etternavn"), max_length=50)
     email = forms.EmailField(label=_("Epost"), max_length=50, help_text=u'Du kan legge til flere epostadresser senere i din profil.')
@@ -70,6 +67,13 @@ class RegisterForm(forms.Form):
             email = cleaned_data['email'].lower()
             if Email.objects.filter(email=email).count() > 0:
                 self._errors['email'] = self.error_class([_(u"Det fins allerede en bruker med denne epostadressen.")])
+
+            # Check if it's studmail and if someone else already has it in their profile
+            if re.match(r'[^@]+@stud\.ntnu\.no', email):
+                ntnu_username = email.split("@")[0]
+                user = User.objects.filter(ntnu_username = ntnu_username)
+                if user.count() == 1:
+                    self._errors['email'] = self.error_class([_(u"En bruker med dette NTNU-brukernavnet fins allerede.")])
 
             # ZIP code digits only
             zip_code = cleaned_data['zip_code']

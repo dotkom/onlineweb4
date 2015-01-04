@@ -9,7 +9,7 @@
     {% endcompress %}
 {% endblock %}
 {% block title %}
-    Profilen til {{ user.get_full_name }}
+    Profilen til {{ user_profile.get_full_name }}
 {% endblock title %}
 {% block content %}
     <section id="public-profile">
@@ -17,7 +17,7 @@
             <div class="row">
                 <div class="col-md-12">
                     <div class="page-header">
-                        <h2>Profil for {{ user.get_full_name|striptags }}</h2>
+                        <h2>Profil for {{ user_profile.get_full_name|striptags }}</h2>
                     </div>
                 </div>
             </div>
@@ -25,22 +25,22 @@
                 <div class="col-md-8">
                     <div class="row attribute-list">
                         <div class="col-md-4">
-                            <b>Navn</b><br />{{ user.get_full_name|striptags }}
+                            <b>Navn</b><br />{{ user_profile.get_full_name|striptags }}
                         </div>
                         <div class="col-md-4">
-                            <b>Studieretning</b><br />{{ user.get_field_of_study_display }}
+                            <b>Studieretning</b><br />{{ user_profile.get_field_of_study_display }}
                         </div>
                         <div class="col-md-4">
-                            <b>Klassetrinn</b><br />{{ user.year }}
+                            <b>Klassetrinn</b><br />{{ user_profile.year }}
                         </div>
                     </div>
                     <div class="row attribute-list">
                         <div class="col-md-4">
                             <b>Adresse</b><br />
-                            {% if user.privacy.expose_address %}
-                                {% if user.address %}
-                                    <div id="address">{{ user.address|striptags }}</div>
-                                    <div id="zip-code">{{ user.zip_code|striptags }}</div>
+                            {% if user_profile.privacy.expose_address %}
+                                {% if user_profile.address %}
+                                    <div id="address">{{ user_profile.address|striptags }}</div>
+                                    <div id="zip-code">{{ user_profile.zip_code|striptags }}</div>
                                     <div id="city"></div>
                                 {% else %}
                                     Ikke tilgjenglig
@@ -51,16 +51,16 @@
                         </div>
                         <div class="col-md-4">
                             <b>Telefonnummer</b><br />
-                            {% if user.privacy.expose_phone_number %}
-                                {% firstof user.phone_number|striptags 'Ikke tilgjengelig' %}
+                            {% if user_profile.privacy.expose_phone_number %}
+                                {% firstof user_profile.phone_number|striptags 'Ikke tilgjengelig' %}
                             {% else %}
                                 Ikke tilgjengelig
                             {% endif %}
                         </div>
                         <div class="col-md-4">
                             <b>Kallenavn</b><br />
-                            {% if user.privacy.expose_nickname %}
-                                {% firstof user.nickname|striptags 'Ikke tilgjengelig' %}
+                            {% if user_profile.privacy.expose_nickname %}
+                                {% firstof user_profile.nickname|striptags 'Ikke tilgjengelig' %}
                             {% else %}
                                 Ikke tilgjengelig
                             {% endif %}
@@ -69,26 +69,26 @@
                     <div class="row attribute-list">
                         <div class="col-md-4">
                             <b>E-Post</b><br />
-                            {% if user.privacy.expose_email %}
-                                {% firstof user.get_email|striptags 'Ikke tilgjengelig' %}
+                            {% if user_profile.privacy.expose_email %}
+                                {% firstof user_profile.get_email|striptags 'Ikke tilgjengelig' %}
                             {% else %}
                                 Ikke tilgjengelig
                             {% endif %}
                         </div>
                         <div class="col-md-4">
                             <b>NTNU-brukernavn</b><br />
-                            {{ user.ntnu_username }}
+                            {{ user_profile.ntnu_username }}
                         </div>
                     </div>
                     <div class="row" style="margin-bottom:40px;">
                         <div class="col-md-12">
-                        {% if user.positions.all %}
+                        {% if user_profile.positions.all %}
                             <div class="row">
                                 <div class="col-md-12" style="margin-bottom:10px;">
                                     <b>Verv i linjeforeningen</b>
                                 </div>
                             </div>
-                            {% for position in user.positions.all %}
+                            {% for position in user_profile.positions.all %}
                                 <div class="row">
                                     <div class="col-md-12">
                                         {{ position.period }}: {{ position.get_position_display }}, {{ position.get_committee_display }}
@@ -96,13 +96,13 @@
                                 </div>
                             {% endfor %}
                         {% endif %}
-                        {% if user.special_positions.all %}
+                        {% if user_profile.special_positions.all %}
                             <div class="row">
                                 <div class="col-md-12" style="margin:10px 0;">
                                     <b>Hedersposisjoner</b>
                                 </div>
                             </div>
-                            {% for position in user.special_positions.all %}
+                            {% for position in user_profile.special_positions.all %}
                                 <div class="row">
                                     <div class="col-md-12">
                                         Fra {{ position.since_year }}, {{ position.position }}
@@ -110,7 +110,7 @@
                                 </div>
                             {% endfor %}
                         {% endif %}
-                        {% if not user.positions and not user.special_positions %}
+                        {% if not user_profile.positions and not user_profile.special_positions %}
                             <div class="row">
                                 <div class="col-md-12">
                                     <em>Ingen verv registrert...</em>
@@ -121,12 +121,12 @@
                     </div>
                     <div class="row">
                         <div class="col-md-3">
-                            <a href="{% url 'profiles' %}" class="btn btn-primary"><i class="glyphicon glyphicon-chevron-left"></i> Tilbake til min side</a>
+                            <a href="{% url 'profiles' %}" class="btn btn-primary"><i class="glyphicon glyphicon-chevron-left"></i> Tilbake til profiloversikt</a>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-4">
-                    {% gravatar_url user 286 as gravatar_url2 %}
+                    {% gravatar_url user_profile 286 as gravatar_url2 %}
                     <img class="img-thumbnail pull-right" src="{{ gravatar_url2 }}" alt="" />
                 </div>
             </div>

@@ -1,6 +1,7 @@
 #-*- coding: utf-8 -*-
 
 from datetime import datetime, timedelta
+from collections import OrderedDict
 
 from django.conf import settings
 from django.contrib.auth.models import Group
@@ -10,12 +11,14 @@ from django.db import models
 from django.template.defaultfilters import slugify
 from django.utils import timezone
 from django.utils.translation import ugettext as _
-from filebrowser.fields import FileBrowseField
-import watson
 
 from apps.authentication.models import OnlineUser as User, FIELD_OF_STUDY_CHOICES
 from apps.companyprofile.models import Company
 from apps.marks.models import Mark
+
+import reversion
+import watson
+from filebrowser.fields import FileBrowseField
 
 class Event(models.Model):
     """
@@ -30,8 +33,9 @@ class Event(models.Model):
         (2, 'Bedriftspresentasjon'),
         (3, 'Kurs'),
         (4, 'Utflukt'),
-        (5, 'Internt'),
-        (6, 'Annet')
+        (5, 'Ekskursjon'),
+        (6, 'Internt'),
+        (7, 'Annet')
     )
 
     author = models.ForeignKey(User, related_name='oppretter')
@@ -58,26 +62,19 @@ class Event(models.Model):
             return users
 
     def feedback_date(self):
-        return self.event_start
+        return self.event_end
 
     def feedback_title(self):
         return self.title
 
-    @property
-    def number_of_attendees_on_waiting_list(self):
-        """
-        Sjekker antall på venteliste
-        """
-        waiting = self.attendance_event.attendees.count() - self.attendance_event.max_capacity
-        return 0 if waiting < 0 else waiting
+    def feedback_info(self):
+        info = OrderedDict()
+        if self.is_attendance_event():
+            info[_(u'Påmeldte')] = self.attendance_event.number_of_attendees
+            info[_(u'Oppmøtte')] = self.attendance_event.number_of_attendees - len(self.attendance_event.not_attended())
+            info[_(u'Venteliste')] = self.attendance_event.number_on_waitlist
 
-    @property
-    def number_of_attendees_not_on_waiting_list(self):
-        """
-        Sjekker hvor mange attendees som har meldt seg på innen max_grensa
-        """
-        not_waiting = self.attendance_event.attendees.count()
-        return not_waiting if not_waiting < self.attendance_event.max_capacity else self.attendance_event.max_capacity
+        return info
 
     def is_attendance_event(self):
         """ Returns true if the event is an attendance event """
@@ -177,18 +174,13 @@ class Event(models.Model):
         return response
 
     @property
-    def wait_list(self):
-        return self.attendance_event.attendees.all()[self.attendance_event.max_capacity:]
-        return [] if self.number_of_attendees_on_waiting_list is 0 else self.attendance_event.attendees[self.attendance_event.max_capacity:]
-
-    @property
     def attendees_not_paid(self):
         return self.attendance_event.attendees.filter(paid=False)
     
     def what_place_is_user_on_wait_list(self, user):
         if self.attendance_event:
             if self.attendance_event.waitlist:
-                waitlist = self.wait_list
+                waitlist = self.attendance_event.waitlist_qs
                 if waitlist:
                     for attendee_object in waitlist:
                         if attendee_object.user == user:
@@ -199,7 +191,7 @@ class Event(models.Model):
         if not self.is_attendance_event():
             return
         # Notify next user on waiting list
-        wait_list = self.wait_list
+        wait_list = self.attendance_event.waitlist_qs
         if wait_list:
             # Checking if user is on the wait list
             on_wait_list = False
@@ -220,15 +212,17 @@ http://%s%s
 """) % (self.title, host, self.get_absolute_url())
                 for attendee in attendees:
                     send_mail(_(u'Du har fått plass på et arrangement'), email_message,
-                              settings.DEFAULT_FROM_EMAIL, [attendee.user.get_email().email])
+                              settings.DEFAULT_FROM_EMAIL, [attendee.user.email])
 
     def feedback_mail(self):
-        if self.event_type == 1 or self.event_type == 4: #sosialt/utflukt
+        if self.event_type == 1 or self.event_type == 4: # Sosialt & Utflukt
             return settings.EMAIL_ARRKOM
         elif self.event_type == 2: #Bedpres
             return settings.EMAIL_BEDKOM
         elif self.event_type == 3: #Kurs
             return settings.EMAIL_FAGKOM
+        elif self.event_type == 5: # Ekskursjon
+            return settings.EMAIL_EKSKOM
         else:
             return settings.DEFAULT_FROM_EMAIL
 
@@ -246,6 +240,9 @@ http://%s%s
     class Meta:
         verbose_name = _('arrangement')
         verbose_name_plural = _('arrangement')
+
+
+reversion.register(Event)
 
 """
  BEGIN ACCESS RESTRICTION --------------------------------------------------------------------------
@@ -270,6 +267,9 @@ class Rule(models.Model):
 
     def __unicode__(self):
         return 'Rule'
+
+
+reversion.register(Rule)
 
 
 class FieldOfStudyRule(Rule):
@@ -299,6 +299,9 @@ class FieldOfStudyRule(Rule):
         return unicode(self.get_field_of_study_display())
 
 
+reversion.register(FieldOfStudyRule)
+
+
 class GradeRule(Rule):
     grade = models.SmallIntegerField(_(u'klassetrinn'), null=False)
 
@@ -326,6 +329,9 @@ class GradeRule(Rule):
         return _(u"%s. klasse") % self.grade
 
 
+reversion.register(GradeRule)
+
+
 class UserGroupRule(Rule):
     group = models.ForeignKey(Group, blank=False, null=False)
 
@@ -351,6 +357,9 @@ class UserGroupRule(Rule):
         return unicode(self.group)
 
 
+reversion.register(UserGroupRule)
+
+
 class RuleBundle(models.Model):
     """
     Access restriction rule object
@@ -360,44 +369,26 @@ class RuleBundle(models.Model):
     grade_rules = models.ManyToManyField(GradeRule, null=True, blank=True)
     user_group_rules = models.ManyToManyField(UserGroupRule, null=True, blank=True)
 
-    def get_rule_strings(self):
+    def get_all_rules(self):
         rules = []
-        for rule in self.field_of_study_rules.all():
-            rules.append(unicode(rule))
-        for rule in self.grade_rules.all():
-            rules.append(unicode(rule))
-        for rule in self.user_group_rules.all():
-            rules.append(unicode(rule))
+        rules.extend(self.field_of_study_rules.all())
+        rules.extend(self.grade_rules.all())
+        rules.extend(self.user_group_rules.all())
         return rules
         
+    def get_rule_strings(self):
+        return map(lambda r: unicode(r), self.get_all_rules())
         
     def satisfied(self, user, registration_start):
 
         errors = []
-
-        if self.grade_rules:
-            for grade_rule in self.grade_rules.all():
-                response = grade_rule.satisfied(user, registration_start)
-                if response['status']:
-                    return [response]
-                else:
-                    errors.append(response)
-
-        if self.field_of_study_rules:
-            for fos_rule in self.field_of_study_rules.all():
-                response = fos_rule.satisfied(user, registration_start)
-                if response['status']:
-                    return [response]
-                else:
-                    errors.append(response)
-
-        if self.user_group_rules:
-            for user_group_rule in self.user_group_rules.all():
-                response = user_group_rule.satisfied(user, registration_start)
-                if response['status']:
-                    return [response]
-                else:
-                    errors.append(response)
+        
+        for rule in self.get_all_rules():
+            response = rule.satisfied(user, registration_start)
+            if response['status']:
+                return [response]
+            else:
+                errors.append(response)
 
         return errors
         
@@ -409,6 +400,8 @@ class RuleBundle(models.Model):
         else:  
             return _(u"Tom rule bundle.")
 
+
+reversion.register(RuleBundle)
 
 
 """
@@ -431,17 +424,105 @@ class AttendanceEvent(models.Model):
     registration_start = models.DateTimeField(_(u'registrerings-start'), null=False, blank=False)
     unattend_deadline = models.DateTimeField(_(u'avmeldings-frist'), null=False, blank=False) 
     registration_end = models.DateTimeField(_(u'registrerings-slutt'), null=False, blank=False)
+    
+    #Automatic mark setting for not attending
+    automatically_set_marks = models.BooleanField(_(u'automatisk prikk'), default=False, help_text=_(u'Påmeldte som ikke har møtt vil automatisk få prikk'))
+    marks_has_been_set = models.BooleanField(default=False)
 
     #Access rules
     rule_bundles = models.ManyToManyField(RuleBundle, blank=True, null=True)
 
     @property
+    def has_reservation(self):
+        """ Returns whether this event has an attached reservation """
+        try:
+            return True if self.reserved_seats else False
+        except Reservation.DoesNotExist:
+            return False
+
+    @property
+    def attendees_qs(self):
+        """ Queryset with all attendees not on waiting list """
+        return self.attendees.all()[:self.max_capacity - self.number_of_reserved_seats]
+    
+    def not_attended(self):
+        """ Queryset with all attendees not attended """
+        # .filter does apperantly not work on sliced querysets
+        #return self.attendees_qs.filter(attended=False)
+
+        not_attended = []
+
+        for attendee in self.attendees_qs:
+            if not attendee.attended:
+                not_attended.append(attendee.user)
+
+        return not_attended
+
+    @property
+    def waitlist_qs(self):
+        """ Queryset with all attendees in waiting list """
+        return self.attendees.all()[self.max_capacity - self.number_of_reserved_seats:]
+
+    @property
+    def reservees_qs(self):
+        """ Queryset with all reserved seats which have been filled """
+        if self.has_reservation:
+            return self.reserved_seats.reservees.all()
+        return []
+
+    @property
+    def number_of_attendees(self):
+        """ Count of all attendees not in waiting list """
+        # We need to use len() instead of .count() here, because of the prefetched event archive
+        return len(self.attendees_qs)
+
+    @property
+    def number_on_waitlist(self):
+        """ Count of all attendees on waiting list """
+        # We need to use len() instead of .count() here, because of the prefetched event archive
+        return len(self.waitlist_qs)
+
+    @property
+    def number_of_reserved_seats(self):
+        """
+        Total number of seats for this event that are reserved
+        """
+        return self.reserved_seats.seats if self.has_reservation else 0
+
+    @property
+    def number_of_reserved_seats_taken(self):
+        """
+        Returns number of reserved seats which have been filled
+        """
+        return self.reserved_seats.number_of_seats_taken if self.has_reservation else 0
+
+    @property
+    def number_of_seats_taken(self):
+        """
+        Returns the total amount of taken seats for an attendance_event.
+        """
+        # This includes all attendees + reserved seats for the event, if any.
+        # Always use the total number of reserved seats here, because they are not
+        # available for regular users to claim.
+        return self.number_of_attendees + self.number_of_reserved_seats
+
+    @property
+    def free_seats(self):
+        """
+        Integer representing the number of free seats for an event
+        """
+        return 0 if self.number_of_seats_taken == self.max_capacity else self.max_capacity - self.number_of_seats_taken 
+
+    @property
     def room_on_event(self):
-        return True if (self.attendees.count() < self.max_capacity) or self.waitlist else False
+        """
+        Returns True if there are free seats or an open waiting list
+        """
+        return True if self.free_seats or self.waitlist else False
 
     @property
     def will_i_be_on_wait_list(self):
-        return True if (self.attendees.count() >= self.max_capacity) and self.waitlist else False
+        return True if self.free_seats == 0 and self.waitlist else False
 
     @property
     def waitlist_enabled(self):
@@ -498,12 +579,19 @@ class AttendanceEvent(models.Model):
     def is_attendee(self, user):
         return self.attendees.filter(user=user)
 
+    def is_on_waitlist(self, user):
+        return reduce(lambda x, y: x or y.user == user, self.waitlist_qs, False)
+
     def __unicode__(self):
         return self.event.title
 
     class Meta:
         verbose_name = _(u'påmelding')
         verbose_name_plural = _(u'påmeldinger')
+
+
+reversion.register(AttendanceEvent)
+
 
 class CompanyEvent(models.Model):
     """
@@ -515,6 +603,9 @@ class CompanyEvent(models.Model):
     class Meta:
         verbose_name =_('bedrift')
         verbose_name_plural = _('bedrifter')
+
+
+reversion.register(CompanyEvent)
 
 
 class Attendee(models.Model):
@@ -535,6 +626,51 @@ class Attendee(models.Model):
     class Meta:
         ordering = ['timestamp']
         unique_together = (('event', 'user'),)
+
+
+reversion.register(Attendee)
+
+
+class Reservation(models.Model):
+    attendance_event = models.OneToOneField(AttendanceEvent, related_name="reserved_seats")
+    seats = models.PositiveIntegerField(u"reserverte plasser", blank=False, null=False)
+
+    @property
+    def number_of_seats_taken(self):
+        return self.reservees.count()
+
+    def __unicode__(self):
+        return "Reservasjoner for %s" % self.attendance_event.event.title
+
+    class Meta:
+        verbose_name = _("reservasjon")
+        verbose_name_plural = _("reservasjoner")
+
+
+reversion.register(Reservation)
+
+
+class Reservee(models.Model):
+    """
+    Reservation entry
+    """
+    reservation = models.ForeignKey(Reservation, related_name='reservees')
+    # I 2014 var norges lengste navn på 69 tegn;
+    # julius andreas gimli arn macgyver chewbacka highlander elessar-jankov
+    name = models.CharField(u'navn', max_length=69)
+    note = models.CharField(u'notat', max_length=100)
+    allergies = models.CharField(u'allergier', max_length=200, blank=True, null=True)
+    
+    def __unicode__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = _("reservasjon")
+        verbose_name_plural = _("reservasjoner")
+        ordering = ['id']
+
+
+reversion.register(Reservee)
 
 
 # Registrations for watson indexing

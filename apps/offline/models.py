@@ -10,6 +10,8 @@ from filebrowser.fields import FileBrowseField
 from onlineweb4.settings.local import MEDIA_ROOT
 from chunks.models import Chunk
 
+import reversion
+
 THUMBNAIL_HEIGHT = 200  # Ønsket høyde på thumbnail
 IMAGE_FOLDER = "images/offline"
 
@@ -19,6 +21,9 @@ class ProxyChunk(Chunk):
         proxy = True
         verbose_name = 'Informasjonstekst'
         verbose_name_plural = 'Informasjonstekster'
+
+
+reversion.register(Chunk)
 
 
 class Issue(models.Model):
@@ -67,6 +72,9 @@ class Issue(models.Model):
         verbose_name = 'Utgivelse'
         verbose_name_plural = 'Utgivelser'
         ordering = ['-release_date']
+
+
+reversion.register(Issue)
 
 
 def create_thumbnail(sender, instance=None, **kwargs):
