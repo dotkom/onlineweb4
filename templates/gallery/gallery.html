@@ -1,4 +1,4 @@
-{#{% load thumbnail %}#}
+{% load responsive_image_url %}
 
 <div class="row">
     <div class="col-md-12">
@@ -7,13 +7,7 @@
                 <h2>Behandlede bilder</h2>
                 <div id="gallery">
                 {% for image in responsive_images %}
-                    <img id="yourImageId9"  class="bttrlazyloading"
-                         data-bttrlazyloading-xs-src="{{ image.image_xs.url }}"
-                         data-bttrlazyloading-sm-src="{{ image.image_sm.url }}"
-                         data-bttrlazyloading-md-src="{{ image.image_md.url }}"
-                         data-bttrlazyloading-lg-src="{{ image.image_lg.url }}"
-                         data-bttrlazyloading-transition="rotatedIn"
-                    />
+                    {{ image | get_responsive_image }}
                 {% endfor %}
                 </div>
             </div>
