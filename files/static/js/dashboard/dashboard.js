@@ -153,6 +153,24 @@ var Dashboard = (function ($) {
                 }
                 if (errors) return false
                 else return true
+            },
+            
+            toggleChecked: function(element) {
+
+                var checkedIcon = 'fa-check-square-o'
+                var uncheckedIcon = 'fa-square-o'
+                var allITags = $(element).find('i')
+                var ilen = allITags.length
+                
+                for (m = 0; m < ilen; m++) {
+                    icon = allITags[m]
+                    if ($(icon).hasClass('checked')) {
+                        $(icon).removeClass('checked').removeClass(checkedIcon).addClass(uncheckedIcon)
+                    }
+                    else {
+                        $(icon).addClass('checked').removeClass(uncheckedIcon).addClass(checkedIcon)
+                    }
+                }
             }
         }
     }

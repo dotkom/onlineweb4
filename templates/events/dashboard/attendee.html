@@ -1,0 +1,51 @@
+{% extends "dashboard_base.html" %}
+{% load compress %}
+
+{% block title %}
+Deltakerdetaljer - Dashboard - Online 
+{% endblock title %}
+
+{% block page-header %}
+Deltakerdetaljer
+{% endblock %}
+
+{% block breadcrumbs %}
+    <li><a href="{% url 'dashboard_event_index' %}">Events</a></li> 
+    <li><a href="{% url 'dashboard_event_details' attendee.event.event.id %}">{{ attendee.event }}</a></li>
+    <li>{{ attendee }}</li>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-12">
+        <h4>{{ attendee }}</h4>
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-6">
+        <div class="inline row">
+            <div class="col-md-3"><b>Arrangement:</b></div>
+            <div class="col-md-9">{{ attendee.event }}</div>
+        </div>
+        <div class="inline row">
+            <div class="col-md-3"><b>Påmeldt:</b></div>
+            <div class="col-md-9">{{ attendee.timestamp }}</div>
+        </div>
+        <div class="inline row">
+            <div class="col-md-3"><b>Betalt:</b></div>
+            <div class="col-md-9">{{ attendee.paid }}</div>
+        </div>
+        <div class="inline row">
+            <div class="col-md-3"><b>Oppmøtt:</b></div>
+            <div class="col-md-9">{{ attendee.attended }}</div>
+        </div>
+        <div class="inline row">
+            <div class="col-md-3"><b>Notat:</b></div>
+            <div class="col-md-9">{{ attendee.note }}</div>
+        </div>
+    </div>
+</div>
+    
+
+
+{% endblock content %}

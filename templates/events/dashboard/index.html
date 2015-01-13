@@ -1,0 +1,39 @@
+{% extends "dashboard_base.html" %}
+
+{% block title %}
+Event index - Dashboard - Online 
+{% endblock title %}
+
+{% block page-header %}
+Arrangementsoversikt
+{% endblock %}
+
+{% block styles %}
+    {{ block.super }}
+    {% compress css %}
+        <link rel="stylesheet" type="text/less" href="{{ STATIC_URL }}less/dashboard/events.less" />
+    {% endcompress %}
+{% endblock %}
+
+{% block breadcrumbs %}
+    <li>Events</li> 
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">
+                    Arrangement
+                </h3>
+            </div>
+            <div class="panel-body">
+            {% for event in events %}
+                <p><a href="{% url 'dashboard_event_details' event.id %}">{{ event }}</a></p>
+            {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
