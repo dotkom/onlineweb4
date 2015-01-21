@@ -3,7 +3,7 @@
     objects in the database, through AJAX POST.
 */
 
-var Group = (function ($, tools) {
+var Group = (function ($, tools) {
 
     // Perform self check, display error if missing deps
     var performSelfCheck = function () {
