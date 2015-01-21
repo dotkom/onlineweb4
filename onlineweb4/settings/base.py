@@ -229,6 +229,7 @@ INSTALLED_APPS = (
     'apps.genfors',
     'apps.resourcecenter',
     'apps.mailinglists',
+    'apps.inventory',
     'scripts',
 
     #External apps
