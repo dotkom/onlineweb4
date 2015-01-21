@@ -13,12 +13,12 @@ import reversion
 
 class ActiveMarksManager(models.Manager):
     def get_queryset(self):
-        return super(ActiveMarksManager, self).get_queryset().filter(expiration_date__gt=timezone.now())
+        return super(ActiveMarksManager, self).get_queryset().filter(given_to__expiration_date__gt=timezone.now())
 
 
 class InactiveMarksManager(models.Manager):
     def get_queryset(self):
-        return super(InactiveMarksManager, self).get_queryset().filter(expiration_date__lte=timezone.now())
+        return super(InactiveMarksManager, self).get_queryset().filter(given_to__expiration_date__lte=timezone.now())
 
 
 class Mark(models.Model):
@@ -32,9 +32,7 @@ class Mark(models.Model):
     )
 
     title = models.CharField(_(u"tittel"), max_length=155)
-    given_to = models.ManyToManyField(User, null=True, blank=True, through="UserEntry", verbose_name=_(u"gitt til"))
     added_date = models.DateField(_(u"utdelt dato"))
-    expiration_date = models.DateField(_(u"utløpsdato"), editable=False)
     given_by = models.ForeignKey(User, related_name="mark_given_by", verbose_name=_(u"gitt av"), editable=False, null=True, blank=True)
     last_changed_date = models.DateTimeField(_(u"sist redigert"), auto_now=True, editable=False)
     last_changed_by = models.ForeignKey(User, related_name="marks_last_changed_by",
@@ -74,12 +72,17 @@ class Mark(models.Model):
 reversion.register(Mark)
 
 
-class UserEntry(models.Model):
+class MarkUser(models.Model):
+    """
+    One entry for a user that has received a mark.
+    """
+    mark = models.ForeignKey(Mark, related_name="given_to")
     user = models.ForeignKey(User)
-    mark = models.ForeignKey(Mark)
+
+    expiration_date = models.DateField(_(u"utløpsdato"), editable=False)
 
     def __unicode__(self):
-        return _(u"UserEntry for %s") % self.user.get_full_name()
+        return _(u"Mark entry for user: %s") % self.user.get_full_name()
 
     class Meta:
         unique_together = ("user", "mark")
@@ -88,18 +91,17 @@ class UserEntry(models.Model):
         )
 
 
-reversion.register(UserEntry)
+reversion.register(MarkUser)
 
 
-def _get_expiration_date(added_date=timezone.now()):
+def _get_vacation_duration(added_date=timezone.now()):
     """
-    Calculates the datetime in the future when a mark will expire. 
+    Checks whether the span of a marks duration needs to have vacation durations added.
     """
 
     if type(added_date) == datetime:
         added_date = added_date.date()
 
-    DURATION = 60
     # summer starts 1st June, ends 15th August
     SUMMER = ((6, 1), (8, 15))
     # winter starts 1st December, ends 15th January

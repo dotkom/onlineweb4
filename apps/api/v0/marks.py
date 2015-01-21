@@ -9,7 +9,7 @@ from tastypie.authorization import DjangoAuthorization
 from tastypie.bundle import Bundle
 from tastypie.resources import ModelResource, ALL_WITH_RELATIONS
 
-from apps.marks.models import Mark, UserEntry
+from apps.marks.models import Mark, MarkUser
 from apps.api.v0.authentication import UserResource
 
 # TODO restrict access to this feature
@@ -37,7 +37,7 @@ class EntryResource(ModelResource):
     mark = fields.ToOneField(MarkResource, 'mark')
 
     class Meta:
-        queryset = UserEntry.objects.all()
+        queryset = MarkUser.objects.all()
         resource_name = 'marks/entry'
         excludes = ['id', ]
         authentication = BasicAuthentication()
@@ -108,7 +108,7 @@ class MyActiveMarksResource(ModelResource):
     def obj_create(self, bundle, request=None, **kwargs):
         return super(MyMarksResource, self).obj_create(bundle, request, given_to=request.user)
 
-    def apply_authorization_limits(self, request, object_list):
+    def apply_authorization_lawimits(self, request, object_list):
         return object_list.filter(given_to=request.user)
 
     def get_resource_uri(self, bundle_or_obj):
