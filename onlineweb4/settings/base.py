@@ -1,5 +1,6 @@
 import os
 import sys
+import wiki
 from django.contrib.messages import constants as messages
 
 # Directory that contains this file.
@@ -82,10 +83,13 @@ STATICFILES_FINDERS = (
     'compressor.finders.CompressorFinder',
 )
 
+# Including django-wiki static files so we can import the less files.
+DJANGO_WIKI_STATIC = os.path.join(os.path.dirname(wiki.__file__), 'static')
+
 COMPRESS_FILES = True
 COMPRESS_OUTPUT_DIR = 'cache'
 COMPRESS_PRECOMPILERS = (
-    ('text/less', 'lessc {infile} {outfile}'),
+    ('text/less', 'lessc --include-path=%s {infile} {outfile}' % DJANGO_WIKI_STATIC),
 )
 
 COMPRESS_CSS_FILTERS = [
