@@ -4,6 +4,11 @@
     // Note: change to @fa-font-path when upgrading to Font Awesome 4
     @FontAwesomePath: "/static/wiki/font-awesome/font";
 
+    // Temporary fix until we upgrade django-wiki to >0.0.23
+    .modal {
+        z-index: 1050;
+    }
+
     padding: 87px 0 0;
     .page-header {
         margin-top: 0px;
