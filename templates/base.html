@@ -45,9 +45,8 @@
             <ul class="mn-user-nav">
             {% if user.is_authenticated %}
                 <li>
-                    <a href="#login_menu" class="dropdown-toggle dropdown-signin login glyphicon glyphicon-user" data-toggle="dropdown">
-                        <span class="username_menu hidden-xs hidden-sm hidden-md">{{ user.username }}</span>
-                    </a>
+                    <a href="#login_menu" class="dropdown-toggle dropdown-signin login glyphicon glyphicon-user" data-toggle="dropdown"></a>
+                    <span class="username_menu hidden-xs hidden-sm hidden-md">{{ user.username }}</span>
 
                     <ul class="dropdown-menu login-box" role="menu">
                         
