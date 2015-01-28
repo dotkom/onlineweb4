@@ -122,7 +122,9 @@ var Group = (function ($, tools) {
         // User module, has add and remove functions
         user: {
             remove: function (user_id, cell) {
-                ajax_usermod(user_id, 'remove_user')
+                if (confirm('Er du sikker på at du vil fjerne brukeren fra gruppen?')) {
+                    ajax_usermod(user_id, 'remove_user')
+                }
             },
             
             add: function (user_id) {
