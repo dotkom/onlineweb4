@@ -119,6 +119,11 @@ MIDDLEWARE_CLASSES = (
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend', # this is default
+    'guardian.backends.ObjectPermissionBackend',
+)
+
 ROOT_URLCONF = 'onlineweb4.urls'
 
 # Python dotted path to the WSGI application used by Django's runserver.
@@ -147,6 +152,10 @@ WIKI_COMMITTEE_ACCESS_GROUP_ID = 3
 
 # Grappelli settings
 GRAPPELLI_ADMIN_TITLE = '<a href="/">Onlineweb</a>'
+
+# Guardian settings
+ANONYMOUS_USER_ID = None
+GUARDIAN_RENDER_403 = True
 
 # List of usergroups that should be listed under "Finn brukere" in user profile
 USER_SEARCH_GROUPS = [
@@ -206,6 +215,7 @@ INSTALLED_APPS = (
     'markdown_deux',
     'djangoformsetjs',
     'reversion',
+    'guardian',
 
     # Django apps
     'django.contrib.admin',
@@ -224,6 +234,7 @@ INSTALLED_APPS = (
     'apps.autoconfig',
     'apps.careeropportunity',
     'apps.companyprofile',
+    'apps.dashboard',
     'apps.events',
     'apps.marks',
     'apps.offline',

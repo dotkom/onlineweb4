@@ -48,3 +48,6 @@ class MembershipApproval(Approval):
     class Meta:
         verbose_name = _(u"medlemskapssøknad")
         verbose_name_plural = _(u"medlemskapssøknader")
+        permissions = (
+            ('view_membershipapproval', 'View membership approval'),
+        )

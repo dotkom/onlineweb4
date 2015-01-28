@@ -66,6 +66,9 @@ class Mark(models.Model):
     class Meta:
         verbose_name = _(u"Prikk")
         verbose_name_plural = _(u"Prikker")
+        permissions = (
+            ('view_mark', 'View Mark'),
+        )
 
 
 reversion.register(Mark)
@@ -80,6 +83,9 @@ class UserEntry(models.Model):
 
     class Meta:
         unique_together = ("user", "mark")
+        permissions = (
+            ('view_userentry', 'View UserEntry'),
+        )
 
 
 reversion.register(UserEntry)

@@ -1,0 +1,37 @@
+{% extends 'dashboard_base.html' %}
+{% load compress %}
+{% block title %}Dashboard{% endblock %}
+
+{% block styles %}
+    {{ block.super }}
+    {% compress css %}
+    {% endcompress %}
+{% endblock %}
+
+{% block breadcrumbs %}
+
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <p>Velkommen til Online Dashboard</p>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-4">
+        <p>Lorem ipsum triple bacon column text demonstration de la opel corsa del konde kinde. Mustachador fur gasolin und führ oktan.</p>
+    </div>
+    <div class="col-md-4">
+        <p>Lorem ipsum triple bacon column text demonstration de la opel corsa del konde kinde. Mustachador fur gasolin und führ oktan.</p>
+    </div>
+    <div class="col-md-4">
+        <p>Lorem ipsum triple bacon column text demonstration de la opel corsa del konde kinde. Mustachador fur gasolin und führ oktan.</p>
+    </div>
+</div>
+{% endblock %}
+
+{% block js %}
+    {{ block.super }}
+    <!-- Dashboard JS here -->
+{% endblock %}

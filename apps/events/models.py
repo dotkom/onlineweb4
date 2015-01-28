@@ -240,6 +240,9 @@ http://%s%s
     class Meta:
         verbose_name = _('arrangement')
         verbose_name_plural = _('arrangement')
+        permissions = (
+            ('view_event', 'View Event'),
+        )
 
 
 reversion.register(Event)
@@ -267,6 +270,11 @@ class Rule(models.Model):
 
     def __unicode__(self):
         return 'Rule'
+
+    class Meta:
+        permissions = (
+            ('view_rule', 'View Rule'),
+        )
 
 
 reversion.register(Rule)
@@ -298,6 +306,11 @@ class FieldOfStudyRule(Rule):
             return _("%s etter %d %s") % (unicode(self.get_field_of_study_display()), self.offset, time_unit)
         return unicode(self.get_field_of_study_display())
 
+    class Meta:
+        permissions = (
+            ('view_fieldofstudyrule', 'View FieldOfStudyRule'),
+        )
+
 
 reversion.register(FieldOfStudyRule)
 
@@ -328,6 +341,11 @@ class GradeRule(Rule):
             return _(u"%s. klasse etter %d %s") % (self.grade, self.offset, time_unit)
         return _(u"%s. klasse") % self.grade
 
+    class Meta:
+        permissions = (
+            ('view_graderule', 'View GradeRule'),
+        )
+
 
 reversion.register(GradeRule)
 
@@ -355,6 +373,11 @@ class UserGroupRule(Rule):
             time_unit = _(u'timer') if self.offset > 1 else _(u'time')
             return _(u"%s etter %d %s") % (unicode(self.group), self.offset, time_unit)
         return unicode(self.group)
+
+    class Meta:
+        permissions = (
+            ('view_usergrouprule', 'View UserGroupRule'),
+        )
 
 
 reversion.register(UserGroupRule)
@@ -399,6 +422,11 @@ class RuleBundle(models.Model):
             return ", ".join(self.get_rule_strings())
         else:  
             return _(u"Tom rule bundle.")
+
+    class Meta:
+        permissions = (
+            ('view_rulebundle', 'View RuleBundle'),
+        )
 
 
 reversion.register(RuleBundle)
@@ -588,6 +616,9 @@ class AttendanceEvent(models.Model):
     class Meta:
         verbose_name = _(u'påmelding')
         verbose_name_plural = _(u'påmeldinger')
+        permissions = (
+            ('view_attendanceevent', 'View AttendanceEvent'),
+        )
 
 
 reversion.register(AttendanceEvent)
@@ -603,6 +634,9 @@ class CompanyEvent(models.Model):
     class Meta:
         verbose_name =_('bedrift')
         verbose_name_plural = _('bedrifter')
+        permissions = (
+            ('view_companyevent', 'View CompanyEvent'),
+        )
 
 
 reversion.register(CompanyEvent)
@@ -626,6 +660,9 @@ class Attendee(models.Model):
     class Meta:
         ordering = ['timestamp']
         unique_together = (('event', 'user'),)
+        permissions = (
+            ('view_attendee', 'View Attendee'),
+        )
 
 
 reversion.register(Attendee)
@@ -645,6 +682,9 @@ class Reservation(models.Model):
     class Meta:
         verbose_name = _("reservasjon")
         verbose_name_plural = _("reservasjoner")
+        permissions = (
+            ('view_reservation', 'View Reservation'),
+        )
 
 
 reversion.register(Reservation)
@@ -668,6 +708,9 @@ class Reservee(models.Model):
         verbose_name = _("reservasjon")
         verbose_name_plural = _("reservasjoner")
         ordering = ['id']
+        permissions = (
+            ('view_reservee', 'View Reservee'),
+        )
 
 
 reversion.register(Reservee)
