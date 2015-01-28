@@ -25,8 +25,9 @@ from apps.authentication.forms import LoginForm
 
 class SimpleTest(TestCase):
 
-    #Feedback mail 
+    #Feedback mail
     def setUp(self):
+
         self.logger = logging.getLogger()
 
         #Setup users
@@ -37,7 +38,7 @@ class SimpleTest(TestCase):
 
         self.user1.set_password("Herpaderp123")
         self.user1.save()
-    
+
     def yesterday(self):
         return timezone.now() - timedelta(days=1)
 
@@ -45,21 +46,21 @@ class SimpleTest(TestCase):
         return timezone.now() + timedelta(days=1)
 
 
-    def create_feedback_relation(self, end_date=False, event_type=2, 
+    def create_feedback_relation(self, end_date=False, event_type=2,
                                  feedback=None, deadline= False):
         if not end_date:
             end_date = self.yesterday()
 
         if not deadline:
             deadline = timezone.now().date() + timedelta(days=4)
-        
-        event = Event.objects.create(title="-", event_start = self.yesterday(), 
+
+        event = Event.objects.create(title="-", event_start = self.yesterday(),
                                      event_end = end_date, event_type = event_type, author = self.user1)
 
-        attendance_event = AttendanceEvent.objects.create(registration_start = timezone.now(), 
-                                                        unattend_deadline = timezone.now(), 
-                                                        registration_end = timezone.now(), 
-                                                        event = event, 
+        attendance_event = AttendanceEvent.objects.create(registration_start = timezone.now(),
+                                                        unattend_deadline = timezone.now(),
+                                                        registration_end = timezone.now(),
+                                                        event = event,
                                                         max_capacity=30)
 
         feedback = Feedback.objects.create(author = self.user1)
@@ -78,7 +79,9 @@ class SimpleTest(TestCase):
 
     def test_users_mail_addresses(self):
         feedback_relation = self.create_feedback_relation()
-        user_mails = [user.email for user in User.objects.all()]
+
+        # The below if user.id check is due to Django Guardian middleware needing an AnonymousUser, that has ID -1
+        user_mails = [user.email for user in User.objects.all() if user.id >= 0]
 
         message = FeedbackMail.generate_message(feedback_relation, self.logger)
         self.assertEqual(set(message.attended_mails), set(user_mails))
@@ -144,13 +147,13 @@ class SimpleTest(TestCase):
 
         self.assertEqual(message.status, "No message generated")
         self.assertFalse(message.send)
-        
+
     def test_committee_mails(self):
         #Sosialt
         feedback_relation = self.create_feedback_relation(event_type=1)
         email = FeedbackMail.get_committee_email(feedback_relation)
         self.assertEqual(email, settings.EMAIL_ARRKOM)
-        
+
         #Bedkom
         feedback_relation = self.create_feedback_relation(event_type=2)
         email = FeedbackMail.get_committee_email(feedback_relation)
@@ -160,7 +163,7 @@ class SimpleTest(TestCase):
         feedback_relation = self.create_feedback_relation(event_type=3)
         email = FeedbackMail.get_committee_email(feedback_relation)
         self.assertEqual(email, settings.EMAIL_FAGKOM)
-        
+
         #Utflukt
         feedback_relation = self.create_feedback_relation(event_type=4)
         email = FeedbackMail.get_committee_email(feedback_relation)
@@ -170,17 +173,17 @@ class SimpleTest(TestCase):
         feedback_relation = self.create_feedback_relation(event_type=5)
         email = FeedbackMail.get_committee_email(feedback_relation)
         self.assertEqual(email, settings.EMAIL_EKSKOM)
-        
+
         #Default
         feedback_relation = self.create_feedback_relation(event_type=6)
         email = FeedbackMail.get_committee_email(feedback_relation)
         self.assertEqual(email, settings.DEFAULT_FROM_EMAIL)
-        
+
         #Not existing
         feedback_relation = self.create_void_feedback_relation()
         email = FeedbackMail.get_committee_email(feedback_relation)
         self.assertEqual(email, "missing mail")
- 
+
     def test_date(self):
         feedback_relation = self.create_feedback_relation()
         date = FeedbackMail.end_date(feedback_relation)
