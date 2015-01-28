@@ -154,7 +154,7 @@ WIKI_COMMITTEE_ACCESS_GROUP_ID = 3
 GRAPPELLI_ADMIN_TITLE = '<a href="/">Onlineweb</a>'
 
 # Guardian settings
-ANONYMOUS_USER_ID = None
+ANONYMOUS_USER_ID = -1
 GUARDIAN_RENDER_403 = True
 
 # List of usergroups that should be listed under "Finn brukere" in user profile
@@ -255,7 +255,7 @@ INSTALLED_APPS = (
     'wiki.plugins.notifications',
     'wiki.plugins.images',
     'wiki.plugins.macros',
-    
+
 )
 
 # A sample logging configuration. The only tangible logging
