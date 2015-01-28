@@ -188,7 +188,7 @@ INSTALLED_APPS = (
     'django.contrib.humanize',
     'django_nose',
     'south',
-    'django_notify', # Wiki
+    'django_nyt', # Wiki
     'mptt', # Wiki
     'sekizai', # Wiki
     'sorl.thumbnail', # Wiki
