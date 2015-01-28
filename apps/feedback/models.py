@@ -26,12 +26,12 @@ class FeedbackRelation(models.Model):
     """
     A many to many relation between a Generic Object and a Feedback schema.
     """
-    feedback = models.ForeignKey('Feedback')
+    feedback = models.ForeignKey('Feedback', verbose_name=_(u'Tilbakemeldingskjema'))
     content_type = models.ForeignKey(ContentType)
     object_id = models.PositiveIntegerField()
     content_object = generic.GenericForeignKey('content_type', 'object_id')
-    deadline = models.DateField()
-    gives_mark = models.BooleanField(default=True)
+    deadline = models.DateField(_(u'Tidsfrist'))
+    gives_mark = models.BooleanField(_(u'Gir Prikk'), default=True, help_text=_(u'Gir automatisk prikk til brukere som ikke har svart innen fristen'))
     active = models.BooleanField(default=True)
     created_date = models.DateTimeField(auto_now_add=True)
     first_mail_sent = models.BooleanField(default=False)
@@ -45,9 +45,13 @@ class FeedbackRelation(models.Model):
 
     class Meta:
         unique_together = ('feedback', 'content_type', 'object_id')
+
         permissions = (
             ('view_feedbackrelation', 'View FeedbackRelation'),
         )
+
+        verbose_name = _(u'tilbakemelding')
+        verbose_name_plural = _(u'tilbakemeldinger')
 
     @property
     def questions(self):
@@ -136,6 +140,12 @@ class FeedbackRelation(models.Model):
         else:
             return False
 
+    def content_info(self):
+        if hasattr(self.content_object, "feedback_info"):
+            return self.content_object.feedback_info()
+        else:
+            return dict()
+
     def save(self, *args, **kwargs):
         new_fbr = not self.pk
         super(FeedbackRelation, self).save(*args, **kwargs)
@@ -155,9 +165,11 @@ class Feedback(models.Model):
     feedback_id = models.AutoField(primary_key=True)
     author = models.ForeignKey(User)
     description = models.CharField(_(u'beskrivelse'), max_length=100)
-    display_field_of_study = models.BooleanField(_(u'Vis studie oversikt'), default=True, 
+    display_field_of_study = models.BooleanField(_(u'Vis studie oversikt'), default=True,
         help_text =_(u'Grafen over studiefelt vil bli vist til bedriften'))
- 
+    display_info = models.BooleanField(_('Vis extra informasjon'), default=True,
+        help_text=_(u'En boks med ekstra informasjon vil bli vist til bedriften'))
+
     @property
     def ratingquestions(self):
         rating_question = []
@@ -318,7 +330,7 @@ class RatingAnswer(models.Model):
 
 reversion.register(RatingAnswer)
 
-    
+
 class MultipleChoiceQuestion(models.Model):
     label = models.CharField(_(u'Spørsmål'), blank=False, max_length=256)
 
@@ -404,7 +416,7 @@ class RegisterToken(models.Model):
 
     def is_valid(self, feedback_relation):
         return self.token == RegisterToken.objects.get(fbr=feedback_relation).token
-        
+
         #valid_period = datetime.timedelta(days=365)#1 year
         #now = timezone.now()
         #return now < self.created + valid_period

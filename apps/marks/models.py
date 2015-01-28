@@ -12,13 +12,13 @@ from apps.authentication.models import OnlineUser as User
 import reversion
 
 class ActiveMarksManager(models.Manager):
-    def get_query_set(self):
-        return super(ActiveMarksManager, self).get_query_set().filter(expiration_date__gt=timezone.now())
+    def get_queryset(self):
+        return super(ActiveMarksManager, self).get_queryset().filter(expiration_date__gt=timezone.now())
 
 
 class InactiveMarksManager(models.Manager):
-    def get_query_set(self):
-        return super(InactiveMarksManager, self).get_query_set().filter(expiration_date__lte=timezone.now())
+    def get_queryset(self):
+        return super(InactiveMarksManager, self).get_queryset().filter(expiration_date__lte=timezone.now())
 
 
 class Mark(models.Model):

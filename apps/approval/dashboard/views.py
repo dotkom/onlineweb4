@@ -75,6 +75,8 @@ Om feilen vedvarer etter en refresh, kontakt dotkom@online.ntnu.no.""") % applic
                 if membership.count() == 1:
                     membership = membership[0]
                     membership.expiration_date = app.new_expiry_date
+                    if not membership.description:
+                        membership.description = ''
                     membership.description += """
 -------------------
 Updated by approvals app.

@@ -155,7 +155,7 @@ class Question(models.Model):
     A question is a wrapper to which all votes must be connected.
     '''
     meeting = models.ForeignKey(Meeting, help_text=_(u'Generalforsamling'), null=False)
-    anonymous = models.BooleanField(_(u'Hemmelig valg'), null=False, blank=False)
+    anonymous = models.BooleanField(_(u'Hemmelig valg'), default=False, null=False, blank=False)
     created_time = models.DateTimeField(_(u'added'), auto_now_add=True)
     locked = models.BooleanField(_(u'locked'), help_text=_(u'Steng avstemmingen'), null=False, blank=False, default=False)
     question_type = models.SmallIntegerField(_(u'Spørsmålstype'), choices=QUESTION_TYPES, null=False, default=0, blank=False)
