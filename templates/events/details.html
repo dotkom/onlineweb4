@@ -168,7 +168,9 @@
 
 
                 {% if attendance_event %}
-                    <p class="help-text" style="margin-top:20px">Avmeldingsfristen er {{ attendance_event.unattend_deadline|date:"H.i d. M Y" }}</p>
+                    <p class="help-text" style="margin-top:20px">
+                    Avmeldingsfristen {% if attendance_event.unattend_deadline > now %} er {% else %} var {% endif %} 
+                    {{ attendance_event.unattend_deadline|date:"H.i d. M Y" }}</p>
                 {% endif %}
             </div>
 
@@ -176,7 +178,8 @@
                 <div class="row">
                     <div class="col-md-12">
                         <div class="event-access">
-                            <p class="access-title">Dette arrangementet er åpent for</p>
+                            <p class="access-title">
+                            Dette arrangementet {% if attendance_event.registration_end > now %}er{% else %}var{% endif %} åpent for</p>
                             <div class="rules">
 
                                 {% if attendance_event.guest_attendance %}
