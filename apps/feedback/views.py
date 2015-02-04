@@ -23,7 +23,7 @@ def feedback(request, applabel, appmodel, object_id, feedback_id):
     fbr = _get_fbr_or_404(applabel, appmodel, object_id, feedback_id)
 
     if not fbr.can_answer(request.user):
-        messages.error(request, _(u"Du kan ikke svare på dette skjemaet."))
+        messages.error(request, fbr.answer_error_message(request.user))
         return redirect("home")
 
     if request.method == "POST":
@@ -40,10 +40,10 @@ def feedback(request, applabel, appmodel, object_id, feedback_id):
             fosa = FieldOfStudyAnswer(feedback_relation = fbr, answer = request.user.field_of_study)
             fosa.save()
 
-            messages.success(request, _(u"Takk for at du svarte"))
+            messages.success(request, _(u"Takk for at du svarte."))
             return redirect("home")
         else:
-            messages.error(request, _(u"Du må svare på alle påkrevde felt"))
+            messages.error(request, _(u"Du må svare på alle påkrevde felt."))
     else:
         answers = create_answer_forms(fbr)
 

@@ -116,6 +116,20 @@ class FeedbackRelation(models.Model):
                 return False
         return True
 
+    def answer_error_message(self, user):
+        if user in self.answered.all():
+            return _(u'Du har allerede svart på skjemaet.')
+
+        if hasattr(self.content_object, "feedback_users"):
+            if self.content_object.feedback_users():
+                if user not in self.content_object.feedback_users():
+                    return _(u'Du har ikke tilgang til å svare på dette skjemaet.')
+            else:
+                return _(u'Skjemaet har ingen brukere som kan svare på skjemaet.')
+
+        return _(u'Ukjent feil.')
+
+
     def not_answered(self):
         if hasattr(self.content_object, "feedback_users"):
             return set(self.content_object.feedback_users()).difference(set(self.answered.all()))

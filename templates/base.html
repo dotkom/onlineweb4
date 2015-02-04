@@ -1,4 +1,5 @@
 {% load compress %}
+{% load sekizai_tags %}
 <!DOCTYPE html>
 <html>
 <head>
@@ -13,6 +14,7 @@
         <link rel="stylesheet" type="text/less" href="{{ STATIC_URL }}less/core.less">
         {% endcompress %}
     {% endblock %}
+    {% render_block "css" %}
     {% block apple-webapp %}{% endblock %}
 </head>
 <body>
@@ -199,6 +201,8 @@
         <script src="{{ STATIC_URL }}js/libs/konami.js"></script>
         <script src="{{ STATIC_URL }}js/christmas.js"></script>
     {% endblock %}
+
+    {% render_block "js" %}
 
     {% if GOOGLE_ANALYTICS_KEY %}
         <script type="text/javascript">
