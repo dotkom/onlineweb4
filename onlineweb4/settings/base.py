@@ -245,6 +245,7 @@ INSTALLED_APPS = (
     'apps.resourcecenter',
     'apps.mailinglists',
     'apps.inventory',
+    'apps.payment',
     'scripts',
 
     #External apps

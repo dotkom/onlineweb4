@@ -1,3 +1,21 @@
 from django.contrib import admin
 
-# Register your models here.
+from django.contrib import admin
+from django.contrib.contenttypes import generic
+
+from apps.payment.models import Payment
+
+
+class PaymentInline(generic.GenericStackedInline):
+    model = Payment
+    extra = 0
+    classes = ('grp-collapse grp-open',)  # style
+    inline_classes = ('grp-collapse grp-open',)  # style
+    exclude = ("added_date", "last_changed_date", "last_changed_by")
+
+
+class PaymentAdmin(admin.ModelAdmin):
+	model = Payment
+
+
+admin.register(Payment, PaymentAdmin)

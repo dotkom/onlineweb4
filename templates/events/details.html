@@ -148,6 +148,18 @@
                                     <div class="action">
                                         <a href="#waitlist" role="button" class="btn btn-large btn-warning" data-toggle="modal">Sett meg på venteliste</a>
                                     </div>
+                                {% elif payment %}
+                                    <p class="status-text">Du må betale for dette arangementet.</p>
+                                    <form action="/charge" method="POST">
+                                      <script
+                                        src="https://checkout.stripe.com/checkout.js" class="stripe-button"
+                                        data-key="pk_test_6pRNASCoBOKtIshFeQd4XMUh"
+                                        data-image="/square-image.png"
+                                        data-name="Demo Site"
+                                        data-description="2 widgets ($20.00)"
+                                        data-amount="2000">
+                                      </script>
+                                    </form>
                                 {% else %}
                                     <p class="status-text">Du kan melde deg på dette arrangementet.</p>
                                     <div class="action"><a href="#attend" role="button" class="btn btn-large btn-success" data-toggle="modal">Meld meg på</a></div>
