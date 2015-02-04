@@ -13,9 +13,14 @@ class PaymentInline(generic.GenericStackedInline):
     inline_classes = ('grp-collapse grp-open',)  # style
     exclude = ("added_date", "last_changed_date", "last_changed_by")
 
+    #def save_model(self, request, obj, form, change):
+    #    obj.last_changed_by = request.user
+    #    obj.save()
+
 
 class PaymentAdmin(admin.ModelAdmin):
-	model = Payment
+    model = Payment
+    
 
 
-admin.register(Payment, PaymentAdmin)
+admin.site.register(Payment, PaymentAdmin)

@@ -13,12 +13,16 @@ class Payment(models.Model):
     content_object = generic.GenericForeignKey('content_type', 'object_id')
 
     price = models.IntegerField(_(u"pris"))
-    deadline = models.DateTimeField(_(u"frist"), editable=False)
+    deadline = models.DateTimeField(_(u"frist"), blank=True, null=True)
     instant_payment = models.BooleanField(_(u"betaling før påmelding"), help_text=_(u"krev betaling før påmelding"))
 
-    added_date = models.DateTimeField(_(u"opprettet dato"))
+    added_date = models.DateTimeField(_(u"opprettet dato"), auto_now=True)
     changed_date = models.DateTimeField(auto_now=True, editable=False)
-    last_changed_by = models.ForeignKey(User, editable=False)
+    last_changed_by = models.ForeignKey(User, editable=False, blank=True, null=True) #blank and null is temperarly
+
+    class Meta:
+        verbose_name = _(u"betaling")
+        verbose_name_plural = _(u"betalinger")
 
 class PaymentRelation(models.Model):
     payment = models.ForeignKey(Payment)
