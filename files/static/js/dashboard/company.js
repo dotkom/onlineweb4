@@ -1,8 +1,9 @@
 /*
-    The Authentication module exposes functionality directed towards user profiles, and the membership registry.
+    The Company module exposes functionality needed in the company section
+    of the dashboard.
 */
 
-var Authentication = (function ($, tools) {
+var Company = (function ($, tools) {
 
     // Perform self check, display error if missing deps
     var performSelfCheck = function () {
@@ -26,7 +27,7 @@ var Authentication = (function ($, tools) {
 
             if (!performSelfCheck()) return
             
-            $('#membership_list').tablesorter()
+            $('#company_list').tablesorter()
 
         }
 
@@ -35,5 +36,5 @@ var Authentication = (function ($, tools) {
 })(jQuery, Dashboard.tools)
 
 $(document).ready(function () {
-    Authentication.init()
+    Company.init()
 })
