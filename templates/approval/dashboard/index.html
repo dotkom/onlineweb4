@@ -110,7 +110,7 @@ Søknadsgodkjenning
                 {% for p in processed_applications %}
                     <tr>
                         <td>{{ p }}</td>
-                        <td>{{ p.processed_date }}</td>
+                        <td>{{ p.processed_date|date:'Y-m-d H:i:s' }}</td>
                         <td>{% if p.approved %}Godkjent{% else %}Avslått{% endif %}</td>
                         <td>{{ p.approver }}</td>
                     </tr>
