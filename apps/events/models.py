@@ -52,14 +52,9 @@ class Event(models.Model):
     event_type = models.SmallIntegerField(_(u'type'), choices=TYPE_CHOICES, null=False)
 
     def feedback_users(self):
-        users = []
-        try:
-            if self.attendance_event.attendees.all():
-                for attendee in self.attendance_event.attendees.filter(attended=True):
-                    users.append(attendee.user)
-            return users
-        except AttendanceEvent.DoesNotExist:
-            return users
+        if self.is_attendance_event:
+            return [a.user for a in self.attendance_event.attendees.filter(attended=True)]
+        return []
 
     def feedback_date(self):
         return self.event_end
