@@ -104,14 +104,23 @@ def groups_detail(request, pk):
 @login_required
 @permission_required("authentication.view_allowedusername", return_403=True)
 def members_index(request):
+    
     """
     Index overview for allowedusernames in dashboard
     """
+
     if not has_access(request):
         raise PermissionDenied
+    def merge_names(members):
+        for i in members:
+            user = list(User.objects.filter(ntnu_username=i.username))
+            if user:
+                i.full_name = user[0].get_full_name()
+        return members
 
     context = get_base_context(request)
-    context['members'] = AllowedUsername.objects.all()
+    members = AllowedUsername.objects.all()
+    context['members'] = merge_names(members)
 
     return render(request, 'auth/dashboard/members_index.html', context)
 
@@ -119,6 +128,7 @@ def members_index(request):
 @login_required
 @permission_required("authentication.view_allowedusername", return_403=True)
 def members_detail(request, pk):
+
     """
     Detail view for allowedusername with PK=pk
     """
