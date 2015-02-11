@@ -43,6 +43,12 @@ class Batch(models.Model):
     date_added = models.DateField(_(u"Dato lagt til"), editable = False, auto_now_add = True)
     expiration_date = models.DateField(_(u"Utløpsdato"), null=True, blank=True, editable = True)
 
+    @property
+    def is_expired(self):
+        if datetime.now() >= self.expiration_date:
+            return True
+        return False
+
 
     class Meta:
         verbose_name = _(u"Batch")
