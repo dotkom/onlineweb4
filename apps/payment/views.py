@@ -1,10 +1,10 @@
 from django.shortcuts import render
 
 from apps.payment.models import Payment, PaymentRelation
-from apps.event.models import Event
+from apps.events.models import Event
 
 
-def pay(request, event_id, payment_id):
+def payment(request, event_id, payment_id):
 	stripe.api_key = "sk_test_BQokikJOvBiI2HlWgH4olfQ2"
 
 	# Get the credit card details submitted by the form

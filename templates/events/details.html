@@ -151,14 +151,33 @@
                                 {% elif payment and payment.instant_payment %}
                                     <p class="status-text">Du må betale for dette arangementet.</p>
                                     <form action="/charge" method="POST">
-                                      <script
-                                        src="https://checkout.stripe.com/checkout.js" class="stripe-button"
-                                        data-key="pk_test_6pRNASCoBOKtIshFeQd4XMUh"
-                                        data-image="/square-image.png"
-                                        data-name="Demo Site"
-                                        data-description="2 widgets ($20.00)"
-                                        data-amount="2000">
-                                      </script>
+                                        <script src="https://checkout.stripe.com/checkout.js"></script>
+                                        <button id="customButton">Purchase</button>
+                                        <script>
+                                            var handler = StripeCheckout.configure({
+                                                key: 'pk_test_6pRNASCoBOKtIshFeQd4XMUh',
+                                                image: '/square-image.png',
+                                                token: function(token) {
+                                                    console.log(token)
+                                                  // Use the token to create the charge with a server-side script.
+                                                  // You can access the token ID with `token.id`
+                                                }
+                                            });
+
+                                            $('#customButton').on('click', function(e) {
+                                                // Open Checkout with further options
+                                                handler.open({
+                                                    name: 'Demo Site',
+                                                    description: '2 widgets ($20.00)',
+                                                    amount: 2000
+                                                });
+                                            e.preventDefault();
+                                            });
+                                        // Close Checkout on page navigation
+                                        $(window).on('popstate', function() {
+                                            handler.close();
+                                        });
+                                        </script>
                                     </form>
                                 {% else %}
                                     <p class="status-text">Du kan melde deg på dette arrangementet.</p>
