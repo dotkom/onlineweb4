@@ -9,15 +9,22 @@ class Item(models.Model):
     
     @property
     def oldest_expiration_date(self):
-        return self.batches.all().order_by("expiration_date")[0].expiration_date
+        try:
+            return self.batches.all().order_by("expiration_date")[0].expiration_date
+        except IndexError:
+            return '-'
 
     @property
     def last_added(self):
-        return self.batches.all().order_by("-date_added")[0].date_added
+        try:
+            return self.batches.all().order_by("-date_added")[0].date_added
+        except IndexError:
+            return '-'
 
     @property
     def total_amount(self):
         return sum([batch.amount for batch in self.batches.all()])
+        
 
     def __unicode__(self):
         return self.name
