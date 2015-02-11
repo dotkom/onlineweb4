@@ -23,14 +23,13 @@ def index(request):
     # Create the base context needed for the sidebar
     context = get_base_context(request)
 
-    context['items'] = Item.objects.all()
+    context['items'] = Item.objects.all().order_by('name')
 
     return render(request, 'inventory/dashboard/index.html', context)
 
 
 @login_required
-# TODO: change to inventory.edit_item
-@permission_required('inventory.view_item', return_403=True)
+@permission_required('inventory.change_item', return_403=True)
 def details(request, pk):
     # Generic check to see if user has access to dashboard. (In Komiteer or superuser)
     if not has_access(request):
