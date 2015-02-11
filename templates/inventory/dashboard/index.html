@@ -42,7 +42,7 @@ Varelager
             <tbody>
             {% for item in items %}
                 <tr>
-                    <td><a href="/dashboard/inventory/{{ item.id }}/">{{ item.name }}</a></td>
+                    <td><a href="/dashboard/inventory/item/{{ item.id }}/">{{ item.name }}</a></td>
                     <td>{{ item.total_amount }}</td>
                     <td {% if item.has_expired_batch %}class="red"{% endif %}>
                         {{ item.oldest_expiration_date|date:'Y-m-d' }}
