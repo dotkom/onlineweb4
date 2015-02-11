@@ -31,19 +31,19 @@
                             {% if mark_list|length == 0 %}
                                 Du har ingen {{ heading }}.
                             {% endif %}
-                            {% for mark in mark_list %}
+                            {% for mark_user in mark_list %}
                                 <div class="row row-space">
                                     <div class="col-md-12">
                                         <div class="mark">
                                             <div class="markheader">
-                                                {{ mark.title }}
+                                                {{ mark_user.mark.title }}
                                             </div>
                                             <div class="markbody">
                                                 <div class="inline">
                                                     <div class="row">
                                                         <div class="col-md-2"><b>Kategori:</b></div>
                                                         <div class="col-md-10">
-                                                            {{ mark.get_category_display }}
+                                                            {{ mark_user.mark.get_category_display }}
                                                         </div>
                                                     </div>
                                                 </div>
@@ -51,7 +51,7 @@
                                                     <div class="row">
                                                         <div class="col-md-2"><b>Beskrivelse:</b></div>
                                                         <div class="col-md-10">
-                                                            {{ mark.description }}
+                                                            {{ mark_user.mark.description }}
                                                         </div>
                                                     </div>
                                                 </div>
@@ -59,7 +59,7 @@
                                                     <div class="row">
                                                         <div class="col-md-2"><b>Utdelt:</b></div>
                                                         <div class="col-md-10">
-                                                            {{ mark.added_date }}
+                                                            {{ mark_user.mark.added_date }}
                                                         </div>
                                                     </div>
                                                 </div>
@@ -67,7 +67,7 @@
                                                     <div class="row">
                                                         <div class="col-md-2"><b>Utløpsdato:</b></div>
                                                         <div class="col-md-10">
-                                                            {{ mark.expiration_date }}
+                                                            {{ mark_user.expiration_date }}
                                                         </div>
                                                     </div>
                                                 </div>
