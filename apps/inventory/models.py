@@ -25,6 +25,9 @@ class Item(models.Model):
     class Meta:
         verbose_name = _(u"Vare")
         verbose_name_plural = _(u"Varer")
+        permissions = (
+            ("view_item", u"View Inventory Item"),
+        )
 
 class Batch(models.Model):
 
@@ -32,6 +35,7 @@ class Batch(models.Model):
     amount = models.IntegerField(_(u"Antall"), default = 0)
     date_added = models.DateField(_(u"Dato lagt til"), editable = False, auto_now_add = True)
     expiration_date = models.DateField(_(u"Utløpsdato"), null=True, blank=True, editable = True)
+
 
     class Meta:
         verbose_name = _(u"Batch")
