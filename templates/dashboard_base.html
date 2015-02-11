@@ -177,6 +177,12 @@
                         </ul>
                     </li>
                     {% endif %}
+                    {% if 'inventory.view_item' in user_permissions %}
+                    <li class="treeview">
+                        <a href="#">
+                            <i class="fa fa-archive blue"></i> <span>Varelager</span>
+                        </a>
+                    {% endif %}
                     <!--<li>
                         <a href="#">
                             <i class="fa fa-bell blue"></i> <span>Til oppfølging</span>

@@ -6,7 +6,7 @@ from django.utils.translation import ugettext as _
 class Item(models.Model):
 
     name = models.CharField(_(u"Varetype"), max_length=50)
-    
+
     @property
     def oldest_expiration_date(self):
         return self.batches.all().order_by("expiration_date")[0].expiration_date
