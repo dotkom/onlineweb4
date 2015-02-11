@@ -100,7 +100,7 @@ class MyActiveMarksResource(ModelResource):
     last_changed_by = fields.ForeignKey(UserResource, 'last_changed_by')
 
     class Meta:
-        queryset = Mark.active.all()
+        queryset = Mark.marks.all_active()
         resource_name = 'marks/active'
         authentication = BasicAuthentication()
         authorization = DjangoAuthorization()
