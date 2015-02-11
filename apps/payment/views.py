@@ -1,20 +1,25 @@
 from django.shortcuts import render
 
+from apps.payment.models import Payment, PaymentRelation
+from apps.event.models import Event
 
-def pay(request):
+
+def pay(request, event_id, payment_id):
 	stripe.api_key = "sk_test_BQokikJOvBiI2HlWgH4olfQ2"
 
 	# Get the credit card details submitted by the form
 	token = request.POST['stripeToken']
-	#TODO get paymentid from POST
+
+	event = Events.objects.get(id=event_id)
+	payment = Payment.objects.get(id=payment_id, content_type=ContentType.objects.get_for_model(Event), object_id=event_id)
 
 	# Create the charge on Stripe's servers - this will charge the user's card
 	try:
 	  charge = stripe.Charge.create(
-	      amount=1000, # amount in cents, again
+	      amount=payment.price, # amount in cents, again
 	      currency="nok",
 	      card=token,
-	      description="payinguser@example.com"
+	      description=request.user.email
 	  )
 	except stripe.CardError, e:
 	  # The card has been declined
