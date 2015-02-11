@@ -8,6 +8,7 @@ from django.shortcuts import render, get_object_or_404
 from guardian.decorators import permission_required
 
 from apps.dashboard.tools import has_access, get_base_context
+from apps.inventory.dashboard.forms import InventoryForm
 from apps.inventory.models import Item, Batch
 
 
@@ -41,3 +42,29 @@ def details(request, pk):
     context['item'] = get_object_or_404(Item, pk=pk)
 
     return render(request, 'inventory/dashboard/details.html', context)
+
+
+@login_required
+@permission_required('inventory.view_item', return_403=True)
+def edit(request, pk):
+    # Generic check to see if user has access to dashboard. (In Komiteer or superuser)
+    if not has_access(request):
+        raise PermissionDenied
+
+    # Create the base context needed for the sidebar
+    context = get_base_context(request)
+
+    context['item'] = get_object_or_404(Item, pk=pk)
+    
+    if request.method == 'POST':
+        inventory_form = InventoryForm(request.POST, instance=context['item'])
+        if not inventory_form.is_valid():
+            messages.error(request, u'Noen av de påkrevde feltene inneholder feil.')
+        else:
+            inventory_form.save()
+            messages.success(request, u'Varen ble oppdatert')
+        context['form'] = inventory_form
+    else:
+        context['form'] = InventoryForm(instance=context['item'])
+
+    return render(request, 'inventory/dashboard/edit_item.html', context)
