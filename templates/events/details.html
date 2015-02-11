@@ -148,7 +148,7 @@
                                     <div class="action">
                                         <a href="#waitlist" role="button" class="btn btn-large btn-warning" data-toggle="modal">Sett meg på venteliste</a>
                                     </div>
-                                {% elif payment %}
+                                {% elif payment and payment.instant_payment %}
                                     <p class="status-text">Du må betale for dette arangementet.</p>
                                     <form action="/charge" method="POST">
                                       <script

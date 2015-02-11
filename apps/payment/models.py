@@ -18,7 +18,7 @@ class Payment(models.Model):
 
     added_date = models.DateTimeField(_(u"opprettet dato"), auto_now=True)
     changed_date = models.DateTimeField(auto_now=True, editable=False)
-    last_changed_by = models.ForeignKey(User, editable=False, blank=True, null=True) #blank and null is temperarly
+    last_changed_by = models.ForeignKey(User, editable=False, null=True) #blank and null is temperarly
 
     class Meta:
         verbose_name = _(u"betaling")

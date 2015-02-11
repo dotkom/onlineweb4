@@ -15,6 +15,7 @@ from django.db.models import Q
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404, redirect
 from django.utils.translation import ugettext as _
+from django.contrib.contenttypes.models import ContentType
 
 import icalendar
 import watson
@@ -24,7 +25,7 @@ from apps.events.forms import CaptchaForm
 from apps.events.models import Event, AttendanceEvent, Attendee
 from apps.events.pdf_generator import EventPDF
 from apps.events.utils import get_group_restricted_events
-
+from apps.payment.models import Payment, PaymentRelation
 
 def index(request):
     context = {}
@@ -75,6 +76,8 @@ def details(request, event_id, event_slug):
     except AttendanceEvent.DoesNotExist:
         pass
 
+    payment = Payment.objects.filter(content_type=ContentType.objects.get_for_model(Event), object_id=event_id)[0]
+
     context = {'event': event, 'ics_path': request.build_absolute_uri(reverse('event_ics', args=(event.id,)))}
     if is_attendance_event:
         context.update({
@@ -89,6 +92,7 @@ def details(request, event_id, event_slug):
                 #'position_in_wait_list': position_in_wait_list,
                 'captcha_form': form,
                 'user_access_to_event': user_access_to_event,
+                'payment': payment,
         })
     return render(request, 'events/details.html', context)
 
