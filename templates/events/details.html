@@ -151,9 +151,33 @@
                                 {% elif payment and payment.instant_payment %}
                                     <p class="status-text">Du må betale for dette arangementet.</p>
                                     <button id="customButton" class="btn btn-large btn-success">Start betaling</button>
-                                    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+                                    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script> 
                                     <script src="https://checkout.stripe.com/checkout.js"></script>
                                     <script src="{{ STATIC_URL }}js/payment.js"></script>
+                                <!--
+                                <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script> 
+                                <form action="/payment/{{ payment.id }}/{{ event.id }}/" method="POST" id="test">
+                                  <script
+                                    src="https://checkout.stripe.com/checkout.js" class="stripe-button"
+                                    data-key="pk_test_ZfedVdXRhTnXE9Ge6CJxJTQ1"
+                                    data-image="/square-image.png"
+                                    data-name="Demo Site"
+                                    data-description="2 widgets ($20.00)"
+                                    data-amount="2000"
+                                    data-label="Betal">
+                                  </script>
+                                </form>
+                                <script>
+                                    //$("#test").html('<button class="btn btn-large btn-success">Test</button>');
+                                    $(document).ready(function () {
+                                        $(".stripe-button")[0].nextSibling.className = "";   
+                                        $(".stripe-button")[0].nextSibling.style.border = "0px";  
+                                        $(".stripe-button")[0].nextSibling.style.background = "transparent";  
+                                        $(".stripe-button")[0].nextSibling.style.padding = "0px";   
+                                        $(".stripe-button")[0].nextSibling.firstChild.className = "btn btn-success"; 
+                                    });
+                                </script>
+                            -->
                                 {% else %}
                                     <p class="status-text">Du kan melde deg på dette arrangementet.</p>
                                     <div class="action"><a href="#attend" role="button" class="btn btn-large btn-success" data-toggle="modal">Meld meg på</a></div>

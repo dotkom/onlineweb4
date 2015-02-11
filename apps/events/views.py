@@ -78,6 +78,10 @@ def details(request, event_id, event_slug):
 
     payment = Payment.objects.filter(content_type=ContentType.objects.get_for_model(Event), object_id=event_id)[0]
 
+    if payment:
+        request.session['payment_id'] = payment.id
+        request.session['event_id'] = event.id
+
     context = {'event': event, 'ics_path': request.build_absolute_uri(reverse('event_ics', args=(event.id,)))}
     if is_attendance_event:
         context.update({
