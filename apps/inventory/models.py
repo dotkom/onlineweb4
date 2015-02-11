@@ -2,6 +2,7 @@
 
 from django.db import models
 from django.utils.translation import ugettext as _
+import datetime 
 
 class Item(models.Model):
 
@@ -9,22 +10,29 @@ class Item(models.Model):
 
     @property
     def oldest_expiration_date(self):
-        try:
-            return self.batches.all().order_by("expiration_date")[0].expiration_date
-        except IndexError:
-            return '-'
+        batches = self.batches.all().order_by("expiration_date")
+        if batches: 
+            return batches[0].expiration_date
+        else:
+            return None
 
     @property
     def last_added(self):
-        try:
-            return self.batches.all().order_by("-date_added")[0].date_added
-        except IndexError:
-            return '-'
+        batches = self.batches.all().order_by("-date_added")
+        if batches: 
+            return batches[0].date_added
+        else:
+            return None
 
     @property
     def total_amount(self):
         return sum([batch.amount for batch in self.batches.all()])
         
+    @property
+    def has_expired_batch(self):
+        if datetime.now() >= self.oldest_expiration_date:
+            return True
+        return False
 
     def __unicode__(self):
         return self.name
@@ -43,11 +51,6 @@ class Batch(models.Model):
     date_added = models.DateField(_(u"Dato lagt til"), editable = False, auto_now_add = True)
     expiration_date = models.DateField(_(u"Utløpsdato"), null=True, blank=True, editable = True)
 
-    @property
-    def is_expired(self):
-        if datetime.now() >= self.expiration_date:
-            return True
-        return False
 
 
     class Meta:
