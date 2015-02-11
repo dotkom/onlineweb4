@@ -150,35 +150,10 @@
                                     </div>
                                 {% elif payment and payment.instant_payment %}
                                     <p class="status-text">Du må betale for dette arangementet.</p>
-                                    <form action="/charge" method="POST">
-                                        <script src="https://checkout.stripe.com/checkout.js"></script>
-                                        <button id="customButton">Purchase</button>
-                                        <script>
-                                            var handler = StripeCheckout.configure({
-                                                key: 'pk_test_6pRNASCoBOKtIshFeQd4XMUh',
-                                                image: '/square-image.png',
-                                                token: function(token) {
-                                                    console.log(token)
-                                                  // Use the token to create the charge with a server-side script.
-                                                  // You can access the token ID with `token.id`
-                                                }
-                                            });
-
-                                            $('#customButton').on('click', function(e) {
-                                                // Open Checkout with further options
-                                                handler.open({
-                                                    name: 'Demo Site',
-                                                    description: '2 widgets ($20.00)',
-                                                    amount: 2000
-                                                });
-                                            e.preventDefault();
-                                            });
-                                        // Close Checkout on page navigation
-                                        $(window).on('popstate', function() {
-                                            handler.close();
-                                        });
-                                        </script>
-                                    </form>
+                                    <button id="customButton">betal</button>
+                                    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+                                    <script src="https://checkout.stripe.com/checkout.js"></script>
+                                    <script src="{{ STATIC_URL }}js/payment.js"></script>
                                 {% else %}
                                     <p class="status-text">Du kan melde deg på dette arrangementet.</p>
                                     <div class="action"><a href="#attend" role="button" class="btn btn-large btn-success" data-toggle="modal">Meld meg på</a></div>
