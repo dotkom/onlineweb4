@@ -2,7 +2,7 @@
 
 from django.db import models
 from django.utils.translation import ugettext as _
-import datetime 
+from django.utils import timezone
 
 class Item(models.Model):
 
@@ -30,7 +30,7 @@ class Item(models.Model):
         
     @property
     def has_expired_batch(self):
-        if datetime.now() >= self.oldest_expiration_date:
+        if timezone.now().date() >= self.oldest_expiration_date:
             return True
         return False
 
