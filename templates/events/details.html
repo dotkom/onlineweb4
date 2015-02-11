@@ -152,7 +152,7 @@
                                     <p class="status-text">Du må betale for dette arangementet.</p>
                                     <form action="/charge" method="POST">
                                         <script src="https://checkout.stripe.com/checkout.js"></script>
-                                        <button id="customButton">Purchase</button>
+                                        <button id="customButton" class="btn btn-large btn-success">Start betaling</button>
                                         <script>
                                             var handler = StripeCheckout.configure({
                                                 key: 'pk_test_6pRNASCoBOKtIshFeQd4XMUh',
