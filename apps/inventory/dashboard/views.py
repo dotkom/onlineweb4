@@ -3,7 +3,7 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 
 from guardian.decorators import permission_required
 
@@ -25,3 +25,19 @@ def index(request):
     context['items'] = Item.objects.all()
 
     return render(request, 'inventory/dashboard/index.html', context)
+
+
+@login_required
+# TODO: change to inventory.edit_item
+@permission_required('inventory.view_item', return_403=True)
+def details(request, pk):
+    # Generic check to see if user has access to dashboard. (In Komiteer or superuser)
+    if not has_access(request):
+        raise PermissionDenied
+
+    # Create the base context needed for the sidebar
+    context = get_base_context(request)
+
+    context['item'] = get_object_or_404(Item, pk=pk)
+
+    return render(request, 'inventory/dashboard/details.html', context)
