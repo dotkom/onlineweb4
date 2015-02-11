@@ -19,11 +19,12 @@ Varelager - Online Dashboard
 {% endblock js %}
 
 {% block page-header %}
-Varelager
+{{ item.name }}
 {% endblock %}
 
 {% block breadcrumbs %}
-    <li>Varelager</li> 
+    <li><a href="/dashboard/inventory/">Varelager</a></li> 
+    <li>{{ item.name }}</li>
 {% endblock %}
 
 {% block content %}
