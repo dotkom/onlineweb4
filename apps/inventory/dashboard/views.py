@@ -1,13 +1,9 @@
 # -*- encoding: utf-8 -*-
 
-import json
-
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import Group
-from django.http import Http404, HttpResponse
-from django.core.exceptions import PermissionDenied, ObjectDoesNotExist
-from django.utils.translation import ugettext as _
+from django.core.exceptions import PermissionDenied
+from django.shortcuts import render
 
 from guardian.decorators import permission_required
 
