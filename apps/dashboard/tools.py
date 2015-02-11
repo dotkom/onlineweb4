@@ -1,9 +1,12 @@
 # -*- encoding: utf-8 -*-
 
+from datetime import date
+
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.models import Group
 
 from apps.approval.models import MembershipApproval
+from apps.inventory.models import Batch
 
 
 def has_access(request):
@@ -47,5 +50,10 @@ def get_base_context(request):
     if request.user.has_perm('approval.view_membershipapproval'):
         context['approval_pending'] = MembershipApproval.objects.filter(
             processed=False).count()
+
+    # Check if there exists a batch in inventory that has expired
+    if request.user.has_perm('inventory.view_item'):
+        if Batch.objects.filter(expiration_date__lt=date.today()):
+            context['inventory_expired'] = True
 
     return context
