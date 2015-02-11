@@ -97,7 +97,7 @@ Søknadsgodkjenning
     {% if processed_applications %}
     <div class="row row-space">
         <div class="col-md-12">
-            <table class="table table-striped table-condensed">
+            <table class="table table-striped table-condensed tablesorter" id="previous_approvals_list">
                 <thead>
                     <tr>
                         <th>Søknad</th>
@@ -110,7 +110,7 @@ Søknadsgodkjenning
                 {% for p in processed_applications %}
                     <tr>
                         <td>{{ p }}</td>
-                        <td>{{ p.processed_date }}</td>
+                        <td>{{ p.processed_date|date:'Y-m-d H:i:s' }}</td>
                         <td>{% if p.approved %}Godkjent{% else %}Avslått{% endif %}</td>
                         <td>{{ p.approver }}</td>
                     </tr>
