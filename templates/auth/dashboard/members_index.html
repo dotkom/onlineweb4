@@ -36,9 +36,9 @@ Medlemsregister
             {% for member in members %}
                 <tr>
                     <td><a href="/dashboard/auth/members/{{ member.id }}/">{{ member }}</a></td>
+                    <td>{{ member.full_name }}</td>
                     <td>{{ member.registered|date:'Y-m-d' }}</td>
                     <td>{{ member.expiration_date|date:'Y-m-d' }}</td>
-                    <td>{{ member.full_name }}</td>
                     <td>{{ member.note }}</td>
                     <td>{% if member.is_active %}Ja{% else %}Nei{% endif %}</td>
                 </tr>
