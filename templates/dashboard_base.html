@@ -181,6 +181,9 @@
                     <li class="treeview">
                         <a href="/dashboard/inventory/">
                             <i class="fa fa-archive blue"></i> <span>Varelager</span>
+                            {% if inventory_expired %}
+                            <span class="pull-right"><i class="fa fa-warning orange"></i>&nbsp;&nbsp;</span>
+                            {% endif %}
                         </a>
                     {% endif %}
                     <!--<li>
