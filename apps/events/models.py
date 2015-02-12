@@ -271,7 +271,7 @@ class RuleBundle(models.Model):
         return rules
         
     def get_rule_strings(self):
-        return map(lambda r: unicode(r), self.get_all_rules())
+        return [unicode(rule) for rule in self.get_all_rules()]
         
     def satisfied(self, user, registration_start):
 
