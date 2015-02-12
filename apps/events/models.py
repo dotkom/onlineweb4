@@ -371,7 +371,7 @@ class AttendanceEvent(models.Model):
 
     @property
     def attendees_not_paid(self):
-        return map(lambda a: a.paid == False, self.attendees_qs)
+        return [a for a in self.attendees_qs if a.paid == False]
 
     @property
     def number_of_attendees(self):
