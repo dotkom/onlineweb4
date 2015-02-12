@@ -20,7 +20,7 @@ class Migration(DataMigration):
                 mu = orm.MarkUser(mark = mark, user = user, expiration_date = mark.expiration_date)
                 mu.save()
 
-        for user in orm.OnlineUser.objects.all():
+        for user in orm['authentication.OnlineUser'].objects.all():
             user.mark_rules = False
             user.save()
             _fix_mark_history(user)
