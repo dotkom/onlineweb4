@@ -6,7 +6,7 @@
 {% load compress %}
 
 {% block title %}
-Varelager - Online Dashboard
+    {{ item.name }} - Online Dashboard
 {% endblock title %}
 
 {% block styles %}
@@ -23,32 +23,89 @@ Varelager - Online Dashboard
 {% endblock js %}
 
 {% block page-header %}
-Varelager
+    {{ item.name }}
 {% endblock %}
 
 {% block breadcrumbs %}
-    <li>Varelager</li> 
+<li><a href="/dashboard/inventory/">Varelager</a></li>
+<li>{{ item.name }}</li>
 {% endblock %}
 
 {% block content %}
 <div class="row">
-    <div class="col-md-9">
-        <form method="POST" action="">
-        {% csrf_token %}
-        {% for field in form %}
-        <div class="form-group {% if field.errors %}has-error{% endif %}">
-            <label for="{{ field.auto_id }}">{{ field.label }}</label>
-            {{ field|addclass:"form-control" }}
-            {% if field.errors %}
-            <p>{{ field.errors }}</p>
-            {% endif %}
-        </div>
-        {% endfor %}
-        <button type="submit" class="btn btn-primary">Lagre</button>
-        </form>
+    <div class="col-md-12">
+        <a href="#" class="btn btn-success"><i class="fa fa-save"></i> Lagre</a>
+        <a href="#" class="btn btn-primary"><i class="fa fa-plus"></i> Legg til batch</a>
+        <a href="#" class="btn btn-danger pull-right"><i class="fa fa-times fa-lg"></i> Slett</a>
     </div>
-    <div class="col-md-3">
-        <img class="pull-right" width="100%" src="{% version company.image 'companies_main' %}" alt="{{ company.name }}" title="{{ company.name }}" />
+</div>
+<br />
+<div class="row">
+    <div class="col-md-4">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">Vare</h3>
+            </div>
+            <div class="panel-body">
+                <form method="POST" action="">
+                {% csrf_token %}
+                {% for field in form %}
+                <div class="form-group {% if field.errors %}has-error{% endif %}">
+                    <label for="{{ field.auto_id }}">{{ field.label }}</label>
+                    {{ field|addclass:"form-control" }}
+                    {% if field.errors %}
+                    <p>{{ field.errors }}</p>
+                    {% endif %}
+                </div>
+                {% endfor %}
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-8">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">Batch</h3>
+            </div>
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-md-5">
+                        <label>Antall</label>
+                    </div>
+                    <div class="col-md-5">
+                        <label>Utløpsdato</label>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="pull-right">Fjern</label>
+                    </div>
+                </div>
+                <form method="POST" action="">
+                    {% csrf_token %}
+                    {% for batch in item.batches.all %}
+                        <div class="row">
+                            <div class="col-md-5">
+                                <div class="form-group">
+                                    <input class="form-control" type="number" value="{{ batch.amount }}"></input>
+
+                                </div>
+                            </div>
+                            <div class="col-md-5">
+                                <div class="form-group">
+                                    {% if batch.expiration_date %}
+                                    <input class="form-control" type="text" value="{{ batch.expiration_date|date:'Y-m-d' }}"></input>
+                                    {% else %}
+                                    <input class="form-control" type="text" value="Ingen utløpsdato" disabled></input>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <a href="#" class="btn btn-danger pull-right"><i class="fa fa-times fa-lg"></i></a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </form>
+            </div>
+        </div>
     </div>
 </div>
 {% endblock content %}

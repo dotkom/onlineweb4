@@ -29,7 +29,7 @@ def index(request):
 
 
 @login_required
-@permission_required('inventory.change_item', return_403=True)
+@permission_required('inventory.view_item', return_403=True)
 def details(request, pk):
     # Generic check to see if user has access to dashboard. (In Komiteer or superuser)
     if not has_access(request):
@@ -44,7 +44,7 @@ def details(request, pk):
 
 
 @login_required
-@permission_required('inventory.view_item', return_403=True)
+@permission_required('inventory.change_item', return_403=True)
 def edit(request, pk):
     # Generic check to see if user has access to dashboard. (In Komiteer or superuser)
     if not has_access(request):
@@ -54,7 +54,7 @@ def edit(request, pk):
     context = get_base_context(request)
 
     context['item'] = get_object_or_404(Item, pk=pk)
-    
+
     if request.method == 'POST':
         inventory_form = InventoryForm(request.POST, instance=context['item'])
         if not inventory_form.is_valid():

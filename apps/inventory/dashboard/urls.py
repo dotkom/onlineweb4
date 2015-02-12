@@ -5,6 +5,6 @@ from django.conf.urls import patterns, url
 urlpatterns = patterns('apps.inventory.dashboard.views',
     url(r'^$', 'index', name='inventory'),
     url(r'^item/(?P<pk>\d+)/$', 'details', name='details'),
-    url(r'^item/edit/(?P<pk>\d+)/$', 'edit', name='edit'),
+    url(r'^item/(?P<pk>\d+)/edit/$', 'edit', name='edit'),
 
 )
