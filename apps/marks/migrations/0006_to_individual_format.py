@@ -4,6 +4,8 @@ from south.db import db
 from south.v2 import DataMigration
 from django.db import models
 
+from apps.marks.models import _fix_mark_history
+
 class Migration(DataMigration):
 
     def forwards(self, orm):
@@ -11,12 +13,19 @@ class Migration(DataMigration):
         # Use orm.ModelName to refer to models in this application,
         # and orm['appname.ModelName'] for models in other applications.
         
-        marks = orm.Mark.objects.all()
+        marks = orm.Mark.objects.all().order_by(!
 
         for mark in marks:
             for user in mark.given_to.all():
                 mu = orm.MarkUser(mark = mark, user = user, expiration_date = mark.expiration_date)
                 mu.save()
+
+        for user in orm.OnlineUser.objects.all():
+            user.mark_rules = False
+            user.save()
+            _fix_mark_history(user)
+
+
 
     def backwards(self, orm):
         raise RuntimeError("Cannot reverse this migration.")
