@@ -72,7 +72,8 @@ class Mark(models.Model):
 
     def delete(self):
         super(Mark, self).delete()
-        _fix_mark_history(self.user)
+        for markuser in self.given_to.all():
+            _fix_mark_history(markuser.user)
 
     class Meta:
         verbose_name = _(u"Prikk")
