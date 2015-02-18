@@ -3,16 +3,16 @@
 from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
 
-from apps.marks.models import Mark, UserEntry
+from apps.marks.models import Mark, MarkUser
 
-class UserEntryInline(admin.TabularInline):
-    model = UserEntry
+class MarkUserInline(admin.TabularInline):
+    model = MarkUser
     extra = 1
     verbose_name = _(u"mottaker")
     verbose_name_plural = _(u"mottakere")
 
 class MarkAdmin(admin.ModelAdmin):
-    inlines = (UserEntryInline,)
+    inlines = (MarkUserInline,)
     search_fields = ('title',)
 
     def save_model(self, request, obj, form, change):
