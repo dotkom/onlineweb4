@@ -149,7 +149,8 @@
                                         <a href="#waitlist" role="button" class="btn btn-large btn-warning" data-toggle="modal">Sett meg på venteliste</a>
                                     </div>
                                 {% elif payment and payment.instant_payment %}
-                                    <p class="status-text">Du må betale for dette arangementet.</p>
+                                    <p class="status-text">Påmelding til arangementet krever betaling.</p>
+                                    <p class="status-text" style="margin-bottom:15px">Prisen er på {{ payment.price }} Kr.</p>
                                     <button id="customButton" class="btn btn-large btn-success">Start betaling</button>
                                     <script src="{{ STATIC_URL }}js/libs/jquery-2.1.3.min.js"></script>
                                     <script src="https://checkout.stripe.com/checkout.js"></script>

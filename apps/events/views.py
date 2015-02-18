@@ -76,9 +76,10 @@ def details(request, event_id, event_slug):
     except AttendanceEvent.DoesNotExist:
         pass
 
-    payment = Payment.objects.filter(content_type=ContentType.objects.get_for_model(Event), object_id=event_id)[0]
+    payment = Payment.objects.filter(content_type=ContentType.objects.get_for_model(Event), object_id=event_id)
 
     if payment:
+        payment = payment[0]
         request.session['payment_id'] = payment.id
         request.session['event_id'] = event.id
 
