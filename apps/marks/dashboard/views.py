@@ -1,11 +1,15 @@
 # -*- encoding: utf-8 -*-
 
+from django.core.exceptions import PermissionDenied
 from django.contrib.auth.decorators import login_required
 from guardian.decorators import permission_required
 from apps.dashboard.tools import has_access, get_base_context
 from django.shortcuts import render, get_object_or_404
 
+from apps.marks.models import Mark
+
 @login_required
+@permission_required('marks.can_view', return_403=True)
 def index(request):
     """
     Marks overview
@@ -16,15 +20,29 @@ def index(request):
 
     context = get_base_context(request)
 
+    marks_split = []
+    marks = list(Mark.objects.all())
+    for mark in marks:
+        marks_temp = mark
+        marks_temp.users_num = len(mark.given_to.all())
+        marks_temp.category_clean = mark.get_category_display()
+        
+        marks_split.append(marks_temp)
+
+    context['marks'] = marks_split
+
     return render(request, 'marks/dashboard/index.html', context)
 
 
 @login_required
-@permission_required('auth.change_group', return_403=True)
+@permission_required('marks.can_add', return_403=True)
 def marks_new(request):
     """
     Here
     """
+
+    if not has_access(request):
+        raise PermissionDenied
 
     context = get_base_context(request)
 
