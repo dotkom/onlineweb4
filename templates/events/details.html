@@ -137,7 +137,8 @@
                                 <p class="status-text">Du er meldt på dette arrangementet.</p>
                             {% endif %}
                             {% if payment_relation %}
-                                <label class="label label-warning">Du har betalt</label>
+                                <label class="label label-large label-success">Du har betalt</label>
+                                <p class="help-text" style="margin-top:20px">For å melde deg av må du sende mail til ansvarlig komiteé</p>
                             {% elif attendance_event.unattend_deadline > now or place_on_wait_list %}
                                 {% if event.event_start > now %}
                                     <div class="action"><a href="#unattend" role="button" class="btn btn-large btn-danger" data-toggle="modal">Meld meg av</a></div>

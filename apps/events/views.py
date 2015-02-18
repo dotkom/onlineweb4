@@ -84,7 +84,9 @@ def details(request, event_id, event_slug):
         request.session['payment_id'] = payment.id
         request.session['event_id'] = event.id
 
-        payment_relation = PaymentRelation.objects.get(payment=payment, user=request.user)
+        payment_relation = PaymentRelation.objects.filter(payment=payment, user=request.user)
+        if payment_relation:
+            payment_relation = payment_relation[0]
 
     context = {'event': event, 'ics_path': request.build_absolute_uri(reverse('event_ics', args=(event.id,)))}
     if is_attendance_event:
