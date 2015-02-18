@@ -501,25 +501,21 @@ http://%s%s
             if 'offset' not in response:
                 return response
         
-        # Do I have any marks that postpone my registration date? 
-        # We filter on the registration start to find marks relevant for this event.
-        num_active_marks = Mark.active.filter(given_to = user, expiration_date__gte = self.registration_start).count()
-        if num_active_marks > 0:
-            # Offset is currently 1 day per mark. 
-            mark_offset = timedelta(days=num_active_marks)
+        # Do I have any marks that postpone my registration date?
+        expiry_date = get_expiration_date(user)
+        if expiry_date and expiry_date > timezone.now().date():
+            # Offset is currently 1 day if you have marks, regardless of amount. 
+            mark_offset = timedelta(days=1)
+            postponed_registration_start = self.registration_start + mark_offset
 
-            if 'offset' in response:
-                response['offset'] += mark_offset
-                response['message'] += " %s" % _(u"Din påmelding er utsatt grunnet prikker.")
-                # All rule offsets have a corresponding code that is 'n + 10' meaning itself + marks offset.
-                response['status_code'] += 10
-            else:
-                postponed_registration_start = self.registration_start + mark_offset
-                if postponed_registration_start > timezone.now():
+            before_expiry = self.registration_start.date() < expiry_date
+
+            if postponed_registration_start > timezone.now() and before_expiry:
+                if 'offset' in response and response['offset'] < postponed_registration_start or 'offset' not in response:    
                     response['status'] = False
-                    response['offset'] = postponed_registration_start
-                    response['message'] = _(u"Din påmelding er utsatt grunnet prikker.")
                     response['status_code'] = 401
+                    response['message'] = _(u"Din påmelding er utsatt grunnet prikker.")
+                    response['offset'] = postponed_registration_start
 
         # Return response if offset was set.
         if 'offset' in response and response['offset'] > timezone.now():
