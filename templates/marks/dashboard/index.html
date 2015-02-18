@@ -1,0 +1,30 @@
+{% extends 'dashboard_base.html' %}
+{% load compress %}
+{% block title %}Prikker{% endblock %}
+
+{% block styles %}
+    {{ block.super }}
+    {% compress css %}
+    {% endcompress %}
+{% endblock %}
+
+{% block page-header %}
+Prikker
+{% endblock %}
+
+{% block breadcrumbs %}
+<li>Prikker</li>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <p>Her finner du prikkegreier</p>
+    </div>
+</div>
+{% endblock %}
+
+{% block js %}
+    {{ block.super }}
+    <!-- Dashboard JS here -->
+{% endblock %}

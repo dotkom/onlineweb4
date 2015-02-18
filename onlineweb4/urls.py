@@ -97,6 +97,11 @@ if 'apps.feedback' in settings.INSTALLED_APPS:
         url(r'^feedback/',          include('apps.feedback.urls')),
     )
 
+if 'apps.marks' in settings.INSTALLED_APPS:
+    urlpatterns += patterns('',
+        url(r'^dashboard/marks/',          include('apps.marks.dashboard.urls')),
+    )
+
 if 'apps.inventory' in settings.INSTALLED_APPS:
     urlpatterns += patterns('',
         url(r'^dashboard/inventory/',          include('apps.inventory.dashboard.urls')),
