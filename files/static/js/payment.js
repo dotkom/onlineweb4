@@ -1,7 +1,6 @@
 
-
-$(document).ready(function () {
-    /* AJAX SETUP FOR CSRF */
+var setupAjaxCSRF = function(){
+        /* AJAX SETUP FOR CSRF */
     $.ajaxSetup({
         crossDomain: false, // obviates need for sameOrigin test
         beforeSend: function(xhr, settings) {
@@ -15,13 +14,9 @@ $(document).ready(function () {
         return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
     }
     /* END AJAX SETUP */
+}
 
-    var data;
-
-    $.get( "/payment/payment_info/", function( json ) {
-      data = json;
-    });
-
+var setupButton = function(data, payment_id){
 
     var handler = StripeCheckout.configure({
         key: data['stripe_public_key'],
@@ -33,7 +28,7 @@ $(document).ready(function () {
                 data: {
                     'stripeToken': token.id,
                     'eventId': data['event_id'],
-                    'paymentId': data['payment_id']
+                    'paymentId': payment_id
                 },
                 //Reloads the page on error or success to show the message and update the site content.
                 success: function(){
@@ -46,12 +41,14 @@ $(document).ready(function () {
         }
     });
 
-    $('#customButton').on('click', function(e) {
+    var buttonId = "#customButton" + payment_id
+
+    $(buttonId).on('click', function(e) {
         // Open Checkout with further options
         handler.open({
             name: 'Online',
-            description: data['description'],
-            amount: data['stripe_price'],
+            description: data[payment_id]['description'],
+            amount: data[payment_id]['stripe_price'],
             email: data['email'],
             allowRememberMe: false,
             currency: "nok",
@@ -65,4 +62,22 @@ $(document).ready(function () {
     $(window).on('popstate', function() {
         handler.close();
     });
+}
+
+var getInfo = function(){
+    $.get( "/payment/payment_info/", function( data ) {
+        for(var i = 0; i < data['payment_ids'].length; i++){
+            setupButton(data, data['payment_ids'][i])
+        }
+    });
+}
+
+
+$(document).ready(function () {
+
+    setupAjaxCSRF();
+    var data = getInfo();
+
+    console.log(data);
+
 });

@@ -60,9 +60,14 @@ def payment_info(request):
         data['email'] = request.user.email
         data['description'] = event.title
 
-        payments = Payment.objects.filter(Payment, pk=request.session['payment_id'])
+        payments = Payment.objects.filter(id__in=request.session['payment_ids'])
+
+        data['payment_ids'] = request.session['payment_ids']
+
         for payment in payments:
+            data[payment.id] = dict()
             data[payment.id]['price'] = payment.price
+            #The price is in øre so it needs to be multiplied with 100
             data[payment.id]['stripe_price'] = payment.price * 100
             data[payment.id]['payment_id'] = payment.id
 
