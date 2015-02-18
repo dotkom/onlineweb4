@@ -10,16 +10,18 @@ from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import ugettext as _ 
 
 from apps.payment.models import Payment, PaymentRelation
-from apps.events.models import Event
+from apps.events.models import Event, Attendee
 
 
-def payment(request, event_id, payment_id):
+def payment(request):
     stripe.api_key = "sk_test_BQokikJOvBiI2HlWgH4olfQ2"
 
     # Check if ajax
 
     # Get the credit card details submitted by the form
     token = request.POST.get("stripeToken")
+    event_id = request.POST.get("eventId")
+    payment_id = request.POST.get("paymentId")
 
     event = Event.objects.get(id=event_id)
     payment = Payment.objects.get(id=payment_id, content_type=ContentType.objects.get_for_model(Event), object_id=event_id)
@@ -31,8 +33,12 @@ def payment(request, event_id, payment_id):
           card=token,
           description=request.user.email
         )
+
+        PaymentRelation.objects.create(payment=payment, user=request.user)
+        Attendee.objects.create(event=event.attendance_event, user=request.user)
+
         messages.success(request, _(u"Betaling utført."))
-        return HttpResponse("Betaling utført.", content_type="text/plain") 
+        return HttpResponse("Betaling utført.", content_type="text/plain", status=200) 
     except stripe.CardError, e:
         messages.error(request, _(u"Betaling feilet: ") + str(e))
         return HttpResponse(str(e), content_type="text/plain", status=500) 

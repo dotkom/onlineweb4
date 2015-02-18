@@ -4,6 +4,7 @@ from django.contrib import admin
 from django.contrib.contenttypes import generic
 
 from apps.payment.models import Payment
+from apps.payment.models import PaymentRelation
 
 
 class PaymentInline(generic.GenericStackedInline):
@@ -20,7 +21,13 @@ class PaymentInline(generic.GenericStackedInline):
 
 class PaymentAdmin(admin.ModelAdmin):
     model = Payment
+
+#TODO remove paymentRelation in prod
+
+class PaymentRelationAdmin(admin.ModelAdmin):
+    model = PaymentRelation
     
 
 
 admin.site.register(Payment, PaymentAdmin)
+admin.site.register(PaymentRelation, PaymentRelationAdmin)

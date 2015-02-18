@@ -77,11 +77,14 @@ def details(request, event_id, event_slug):
         pass
 
     payment = Payment.objects.filter(content_type=ContentType.objects.get_for_model(Event), object_id=event_id)
+    payment_relation = None
 
     if payment:
         payment = payment[0]
         request.session['payment_id'] = payment.id
         request.session['event_id'] = event.id
+
+        payment_relation = PaymentRelation.objects.get(payment=payment, user=request.user)
 
     context = {'event': event, 'ics_path': request.build_absolute_uri(reverse('event_ics', args=(event.id,)))}
     if is_attendance_event:
@@ -98,6 +101,7 @@ def details(request, event_id, event_slug):
                 'captcha_form': form,
                 'user_access_to_event': user_access_to_event,
                 'payment': payment,
+                'payment_relation': payment_relation,
         })
     return render(request, 'events/details.html', context)
 

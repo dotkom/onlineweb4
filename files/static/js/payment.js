@@ -29,9 +29,11 @@ $(document).ready(function () {
         token: function(token) {
             $.ajax({
                 type:"POST",
-                url:"/payment/" + data['event_id'] + "/" + data['payment_id'] + "/",
+                url:"/payment/",
                 data: {
-                    'stripeToken': token.id
+                    'stripeToken': token.id,
+                    'eventId': data['event_id'],
+                    'paymentId': data['payment_id']
                 },
                 //Reloads the page on error or success to show the message and update the site content.
                 success: function(){
