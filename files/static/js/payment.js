@@ -24,7 +24,7 @@ $(document).ready(function () {
 
 
     var handler = StripeCheckout.configure({
-        key: 'pk_test_6pRNASCoBOKtIshFeQd4XMUh',
+        key: data['stripe_public_key'],
         image: '',
         token: function(token) {
             $.ajax({

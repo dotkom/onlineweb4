@@ -83,6 +83,7 @@ def details(request, event_id, event_slug):
         payment = payment[0]
         request.session['payment_id'] = payment.id
         request.session['event_id'] = event.id
+        request.session['stripe_public_key'] = settings.STRIPE_PUBLIC_KEY
 
         payment_relation = PaymentRelation.objects.get(payment=payment, user=request.user)
 

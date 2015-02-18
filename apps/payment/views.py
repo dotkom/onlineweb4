@@ -3,18 +3,20 @@
 import json
 import stripe
 
+from django.conf import settings
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib import messages
 from django.contrib.contenttypes.models import ContentType
+from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext as _ 
 
 from apps.payment.models import Payment, PaymentRelation
 from apps.events.models import Event, Attendee
 
-
+@login_required
 def payment(request):
-    stripe.api_key = "sk_test_BQokikJOvBiI2HlWgH4olfQ2"
+    stripe.api_key = settings.STRIPE_PRIVATE_KEY
 
     # Check if ajax
 
@@ -37,12 +39,15 @@ def payment(request):
         PaymentRelation.objects.create(payment=payment, user=request.user)
         Attendee.objects.create(event=event.attendance_event, user=request.user)
 
+        #TODO send mail
+
         messages.success(request, _(u"Betaling utført."))
         return HttpResponse("Betaling utført.", content_type="text/plain", status=200) 
     except stripe.CardError, e:
         messages.error(request, _(u"Betaling feilet: ") + str(e))
         return HttpResponse(str(e), content_type="text/plain", status=500) 
 
+@login_required
 def payment_info(request):
     if 'payment_id' in request.session and 'event_id' in request.session:
 
