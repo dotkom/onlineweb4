@@ -1,206 +1,234 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
+import datetime
+from south.db import db
+from south.v2 import SchemaMigration
+from django.db import models
 
-from django.db import models, migrations
-from django.conf import settings
+
+class Migration(SchemaMigration):
+
+    depends_on = (
+        ("authentication", "0001_initial"),
+    )
+
+    def forwards(self, orm):
+        # Adding model 'FeedbackRelation'
+        db.create_table(u'feedback_feedbackrelation', (
+            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('feedback', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['feedback.Feedback'])),
+            ('content_type', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['contenttypes.ContentType'])),
+            ('object_id', self.gf('django.db.models.fields.PositiveIntegerField')()),
+        ))
+        db.send_create_signal(u'feedback', ['FeedbackRelation'])
+
+        # Adding unique constraint on 'FeedbackRelation', fields ['feedback', 'content_type', 'object_id']
+        db.create_unique(u'feedback_feedbackrelation', ['feedback_id', 'content_type_id', 'object_id'])
+
+        # Adding M2M table for field answered on 'FeedbackRelation'
+        db.create_table(u'feedback_feedbackrelation_answered', (
+            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
+            ('feedbackrelation', models.ForeignKey(orm[u'feedback.feedbackrelation'], null=False)),
+            ('onlineuser', models.ForeignKey(orm[u'authentication.onlineuser'], null=False))
+        ))
+        db.create_unique(u'feedback_feedbackrelation_answered', ['feedbackrelation_id', 'onlineuser_id'])
+
+        # Adding model 'Feedback'
+        db.create_table(u'feedback_feedback', (
+            ('feedback_id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('author', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['authentication.OnlineUser'])),
+            ('description', self.gf('django.db.models.fields.CharField')(max_length=100)),
+        ))
+        db.send_create_signal(u'feedback', ['Feedback'])
+
+        # Adding model 'FieldOfStudyQuestion'
+        db.create_table(u'feedback_fieldofstudyquestion', (
+            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('feedback', self.gf('django.db.models.fields.related.ForeignKey')(related_name='field_of_study_questions', to=orm['feedback.Feedback'])),
+            ('order', self.gf('django.db.models.fields.SmallIntegerField')(default=1)),
+        ))
+        db.send_create_signal(u'feedback', ['FieldOfStudyQuestion'])
+
+        # Adding model 'FieldOfStudyAnswer'
+        db.create_table(u'feedback_fieldofstudyanswer', (
+            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('feedback_relation', self.gf('django.db.models.fields.related.ForeignKey')(related_name='field_of_study_answers', to=orm['feedback.FeedbackRelation'])),
+            ('answer', self.gf('django.db.models.fields.SmallIntegerField')()),
+            ('question', self.gf('django.db.models.fields.related.ForeignKey')(related_name='answer', to=orm['feedback.FieldOfStudyQuestion'])),
+        ))
+        db.send_create_signal(u'feedback', ['FieldOfStudyAnswer'])
+
+        # Adding model 'TextQuestion'
+        db.create_table(u'feedback_textquestion', (
+            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('feedback', self.gf('django.db.models.fields.related.ForeignKey')(related_name='text_questions', to=orm['feedback.Feedback'])),
+            ('order', self.gf('django.db.models.fields.SmallIntegerField')(default=10)),
+            ('label', self.gf('django.db.models.fields.CharField')(max_length=256)),
+        ))
+        db.send_create_signal(u'feedback', ['TextQuestion'])
+
+        # Adding model 'TextAnswer'
+        db.create_table(u'feedback_textanswer', (
+            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('question', self.gf('django.db.models.fields.related.ForeignKey')(related_name='answer', to=orm['feedback.TextQuestion'])),
+            ('feedback_relation', self.gf('django.db.models.fields.related.ForeignKey')(related_name='text_answers', to=orm['feedback.FeedbackRelation'])),
+            ('answer', self.gf('django.db.models.fields.TextField')()),
+        ))
+        db.send_create_signal(u'feedback', ['TextAnswer'])
+
+        # Adding model 'RatingQuestion'
+        db.create_table(u'feedback_ratingquestion', (
+            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('feedback', self.gf('django.db.models.fields.related.ForeignKey')(related_name='rating_questions', to=orm['feedback.Feedback'])),
+            ('order', self.gf('django.db.models.fields.SmallIntegerField')(default=20)),
+            ('label', self.gf('django.db.models.fields.CharField')(max_length=256)),
+        ))
+        db.send_create_signal(u'feedback', ['RatingQuestion'])
+
+        # Adding model 'RatingAnswer'
+        db.create_table(u'feedback_ratinganswer', (
+            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('feedback_relation', self.gf('django.db.models.fields.related.ForeignKey')(related_name='rating_answers', to=orm['feedback.FeedbackRelation'])),
+            ('answer', self.gf('django.db.models.fields.SmallIntegerField')(default=0)),
+            ('question', self.gf('django.db.models.fields.related.ForeignKey')(related_name='answer', to=orm['feedback.RatingQuestion'])),
+        ))
+        db.send_create_signal(u'feedback', ['RatingAnswer'])
 
 
-class Migration(migrations.Migration):
+    def backwards(self, orm):
+        # Removing unique constraint on 'FeedbackRelation', fields ['feedback', 'content_type', 'object_id']
+        db.delete_unique(u'feedback_feedbackrelation', ['feedback_id', 'content_type_id', 'object_id'])
 
-    dependencies = [
-        migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('contenttypes', '0001_initial'),
-    ]
+        # Deleting model 'FeedbackRelation'
+        db.delete_table(u'feedback_feedbackrelation')
 
-    operations = [
-        migrations.CreateModel(
-            name='Choice',
-            fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('choice', models.CharField(max_length=256, verbose_name='valg')),
-            ],
-            options={
-                'permissions': (('view_choice', 'View Choice'),),
-            },
-            bases=(models.Model,),
-        ),
-        migrations.CreateModel(
-            name='Feedback',
-            fields=[
-                ('feedback_id', models.AutoField(serialize=False, primary_key=True)),
-                ('description', models.CharField(max_length=100, verbose_name='beskrivelse')),
-                ('display_field_of_study', models.BooleanField(default=True, help_text='Grafen over studiefelt vil bli vist til bedriften', verbose_name='Vis studie oversikt')),
-                ('display_info', models.BooleanField(default=True, help_text='En boks med ekstra informasjon vil bli vist til bedriften', verbose_name='Vis extra informasjon')),
-                ('author', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
-            ],
-            options={
-                'verbose_name': 'tilbakemeldingsskjema',
-                'verbose_name_plural': 'tilbakemeldingsskjemaer',
-                'permissions': (('view_feedback', 'View Feedback'),),
-            },
-            bases=(models.Model,),
-        ),
-        migrations.CreateModel(
-            name='FeedbackRelation',
-            fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('object_id', models.PositiveIntegerField()),
-                ('deadline', models.DateField(verbose_name='Tidsfrist')),
-                ('gives_mark', models.BooleanField(default=True, help_text='Gir automatisk prikk til brukere som ikke har svart innen fristen', verbose_name='Gir Prikk')),
-                ('active', models.BooleanField(default=True)),
-                ('created_date', models.DateTimeField(auto_now_add=True)),
-                ('first_mail_sent', models.BooleanField(default=False)),
-                ('answered', models.ManyToManyField(related_name='feedbacks', null=True, to=settings.AUTH_USER_MODEL, blank=True)),
-                ('content_type', models.ForeignKey(to='contenttypes.ContentType')),
-                ('feedback', models.ForeignKey(verbose_name='Tilbakemeldingskjema', to='feedback.Feedback')),
-            ],
-            options={
-                'verbose_name': 'tilbakemelding',
-                'verbose_name_plural': 'tilbakemeldinger',
-                'permissions': (('view_feedbackrelation', 'View FeedbackRelation'),),
-            },
-            bases=(models.Model,),
-        ),
-        migrations.CreateModel(
-            name='FieldOfStudyAnswer',
-            fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('answer', models.SmallIntegerField(verbose_name='Studieretning', choices=[(0, 'Gjest'), (1, 'Bachelor i Informatikk (BIT)'), (10, 'Software (SW)'), (11, 'Informasjonsforvaltning (DIF)'), (12, 'Komplekse Datasystemer (KDS)'), (13, 'Spillteknologi (SPT)'), (14, 'Intelligente Systemer (IRS)'), (15, 'Helseinformatikk (MSMEDTEK)'), (30, 'Annen mastergrad'), (80, 'PhD'), (90, 'International'), (100, 'Annet Onlinemedlem')])),
-                ('feedback_relation', models.ForeignKey(related_name='field_of_study_answers', to='feedback.FeedbackRelation')),
-            ],
-            options={
-                'permissions': (('view_fieldofstudyanswer', 'View FieldOfStudyAnswer'),),
-            },
-            bases=(models.Model,),
-        ),
-        migrations.CreateModel(
-            name='MultipleChoiceAnswer',
-            fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('answer', models.CharField(max_length=256, verbose_name='svar')),
-                ('feedback_relation', models.ForeignKey(related_name='multiple_choice_answers', to='feedback.FeedbackRelation')),
-            ],
-            options={
-                'permissions': (('view_multiplechoiceanswer', 'View MultipleChoiceAnswer'),),
-            },
-            bases=(models.Model,),
-        ),
-        migrations.CreateModel(
-            name='MultipleChoiceQuestion',
-            fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('label', models.CharField(max_length=256, verbose_name='Sp\xf8rsm\xe5l')),
-            ],
-            options={
-                'permissions': (('view_multiplechoicequestion', 'View MultipleChoiceQuestion'),),
-            },
-            bases=(models.Model,),
-        ),
-        migrations.CreateModel(
-            name='MultipleChoiceRelation',
-            fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('order', models.SmallIntegerField(default=30, verbose_name='Rekkef\xf8lge')),
-                ('display', models.BooleanField(default=True, verbose_name='Vis til bedrift')),
-                ('feedback', models.ForeignKey(related_name='multiple_choice_questions', to='feedback.Feedback')),
-                ('multiple_choice_relation', models.ForeignKey(to='feedback.MultipleChoiceQuestion')),
-            ],
-            options={
-                'permissions': (('view_multiplechoicerelation', 'View MultipleChoiceRelation'),),
-            },
-            bases=(models.Model,),
-        ),
-        migrations.CreateModel(
-            name='RatingAnswer',
-            fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('answer', models.SmallIntegerField(default=0, verbose_name='karakter', choices=[(1, b'1'), (2, b'2'), (3, b'3'), (4, b'4'), (5, b'5'), (6, b'6')])),
-                ('feedback_relation', models.ForeignKey(related_name='rating_answers', to='feedback.FeedbackRelation')),
-            ],
-            options={
-                'permissions': (('view_ratinganswer', 'View RatingAnswer'),),
-            },
-            bases=(models.Model,),
-        ),
-        migrations.CreateModel(
-            name='RatingQuestion',
-            fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('order', models.SmallIntegerField(default=20, verbose_name='Rekkef\xf8lge')),
-                ('label', models.CharField(max_length=256, verbose_name='Sp\xf8rsm\xe5l')),
-                ('display', models.BooleanField(default=True, verbose_name='Vis til bedrift')),
-                ('feedback', models.ForeignKey(related_name='rating_questions', to='feedback.Feedback')),
-            ],
-            options={
-                'permissions': (('view_ratingquestion', 'View RatingQuestion'),),
-            },
-            bases=(models.Model,),
-        ),
-        migrations.CreateModel(
-            name='RegisterToken',
-            fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('token', models.CharField(max_length=32, verbose_name='token')),
-                ('created', models.DateTimeField(auto_now_add=True, verbose_name='opprettet dato')),
-                ('fbr', models.ForeignKey(related_name='Feedback_relation', to='feedback.FeedbackRelation')),
-            ],
-            options={
-                'permissions': (('view_feedbackregistertoken', 'View FeedbackRegisterToken'),),
-            },
-            bases=(models.Model,),
-        ),
-        migrations.CreateModel(
-            name='TextAnswer',
-            fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('answer', models.TextField(verbose_name='svar')),
-                ('feedback_relation', models.ForeignKey(related_name='text_answers', to='feedback.FeedbackRelation')),
-            ],
-            options={
-                'permissions': (('view_textanswer', 'View TextAnswer'),),
-            },
-            bases=(models.Model,),
-        ),
-        migrations.CreateModel(
-            name='TextQuestion',
-            fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('order', models.SmallIntegerField(default=10, verbose_name='Rekkef\xf8lge')),
-                ('label', models.CharField(max_length=256, verbose_name='Sp\xf8rsm\xe5l')),
-                ('display', models.BooleanField(default=True, verbose_name='Vis til bedrift')),
-                ('feedback', models.ForeignKey(related_name='text_questions', to='feedback.Feedback')),
-            ],
-            options={
-                'permissions': (('view_textquestion', 'View TextQuestion'),),
-            },
-            bases=(models.Model,),
-        ),
-        migrations.AddField(
-            model_name='textanswer',
-            name='question',
-            field=models.ForeignKey(related_name='answer', to='feedback.TextQuestion'),
-            preserve_default=True,
-        ),
-        migrations.AddField(
-            model_name='ratinganswer',
-            name='question',
-            field=models.ForeignKey(related_name='answer', to='feedback.RatingQuestion'),
-            preserve_default=True,
-        ),
-        migrations.AddField(
-            model_name='multiplechoiceanswer',
-            name='question',
-            field=models.ForeignKey(related_name='answer', to='feedback.MultipleChoiceRelation'),
-            preserve_default=True,
-        ),
-        migrations.AlterUniqueTogether(
-            name='feedbackrelation',
-            unique_together=set([('feedback', 'content_type', 'object_id')]),
-        ),
-        migrations.AddField(
-            model_name='choice',
-            name='question',
-            field=models.ForeignKey(related_name='choices', to='feedback.MultipleChoiceQuestion'),
-            preserve_default=True,
-        ),
-    ]
+        # Removing M2M table for field answered on 'FeedbackRelation'
+        db.delete_table('feedback_feedbackrelation_answered')
+
+        # Deleting model 'Feedback'
+        db.delete_table(u'feedback_feedback')
+
+        # Deleting model 'FieldOfStudyQuestion'
+        db.delete_table(u'feedback_fieldofstudyquestion')
+
+        # Deleting model 'FieldOfStudyAnswer'
+        db.delete_table(u'feedback_fieldofstudyanswer')
+
+        # Deleting model 'TextQuestion'
+        db.delete_table(u'feedback_textquestion')
+
+        # Deleting model 'TextAnswer'
+        db.delete_table(u'feedback_textanswer')
+
+        # Deleting model 'RatingQuestion'
+        db.delete_table(u'feedback_ratingquestion')
+
+        # Deleting model 'RatingAnswer'
+        db.delete_table(u'feedback_ratinganswer')
+
+
+    models = {
+        u'auth.group': {
+            'Meta': {'object_name': 'Group'},
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '80'}),
+            'permissions': ('django.db.models.fields.related.ManyToManyField', [], {'to': u"orm['auth.Permission']", 'symmetrical': 'False', 'blank': 'True'})
+        },
+        u'auth.permission': {
+            'Meta': {'ordering': "(u'content_type__app_label', u'content_type__model', u'codename')", 'unique_together': "((u'content_type', u'codename'),)", 'object_name': 'Permission'},
+            'codename': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
+            'content_type': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['contenttypes.ContentType']"}),
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'name': ('django.db.models.fields.CharField', [], {'max_length': '50'})
+        },
+        u'authentication.onlineuser': {
+            'Meta': {'object_name': 'OnlineUser'},
+            'address': ('django.db.models.fields.CharField', [], {'max_length': '30', 'null': 'True', 'blank': 'True'}),
+            'allergies': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
+            'compiled': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'date_joined': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
+            'email': ('django.db.models.fields.EmailField', [], {'max_length': '75', 'blank': 'True'}),
+            'field_of_study': ('django.db.models.fields.SmallIntegerField', [], {'default': '0'}),
+            'first_name': ('django.db.models.fields.CharField', [], {'max_length': '30', 'blank': 'True'}),
+            'groups': ('django.db.models.fields.related.ManyToManyField', [], {'to': u"orm['auth.Group']", 'symmetrical': 'False', 'blank': 'True'}),
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'infomail': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
+            'is_active': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
+            'is_staff': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'is_superuser': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'last_login': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
+            'last_name': ('django.db.models.fields.CharField', [], {'max_length': '30', 'blank': 'True'}),
+            'mark_rules': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'ntnu_username': ('django.db.models.fields.CharField', [], {'max_length': '10', 'null': 'True', 'blank': 'True'}),
+            'password': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
+            'phone_number': ('django.db.models.fields.CharField', [], {'max_length': '20', 'null': 'True', 'blank': 'True'}),
+            'rfid': ('django.db.models.fields.CharField', [], {'max_length': '50', 'null': 'True', 'blank': 'True'}),
+            'started_date': ('django.db.models.fields.DateField', [], {'default': 'datetime.datetime(2013, 8, 22, 0, 0)'}),
+            'user_permissions': ('django.db.models.fields.related.ManyToManyField', [], {'to': u"orm['auth.Permission']", 'symmetrical': 'False', 'blank': 'True'}),
+            'username': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '30'}),
+            'zip_code': ('django.db.models.fields.CharField', [], {'max_length': '4', 'null': 'True', 'blank': 'True'})
+        },
+        u'contenttypes.contenttype': {
+            'Meta': {'ordering': "('name',)", 'unique_together': "(('app_label', 'model'),)", 'object_name': 'ContentType', 'db_table': "'django_content_type'"},
+            'app_label': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'model': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
+            'name': ('django.db.models.fields.CharField', [], {'max_length': '100'})
+        },
+        u'feedback.feedback': {
+            'Meta': {'object_name': 'Feedback'},
+            'author': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['authentication.OnlineUser']"}),
+            'description': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
+            'feedback_id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'})
+        },
+        u'feedback.feedbackrelation': {
+            'Meta': {'unique_together': "(('feedback', 'content_type', 'object_id'),)", 'object_name': 'FeedbackRelation'},
+            'answered': ('django.db.models.fields.related.ManyToManyField', [], {'blank': 'True', 'related_name': "'feedbacks'", 'null': 'True', 'symmetrical': 'False', 'to': u"orm['authentication.OnlineUser']"}),
+            'content_type': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['contenttypes.ContentType']"}),
+            'feedback': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['feedback.Feedback']"}),
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'object_id': ('django.db.models.fields.PositiveIntegerField', [], {})
+        },
+        u'feedback.fieldofstudyanswer': {
+            'Meta': {'object_name': 'FieldOfStudyAnswer'},
+            'answer': ('django.db.models.fields.SmallIntegerField', [], {}),
+            'feedback_relation': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'field_of_study_answers'", 'to': u"orm['feedback.FeedbackRelation']"}),
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'question': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'answer'", 'to': u"orm['feedback.FieldOfStudyQuestion']"})
+        },
+        u'feedback.fieldofstudyquestion': {
+            'Meta': {'object_name': 'FieldOfStudyQuestion'},
+            'feedback': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'field_of_study_questions'", 'to': u"orm['feedback.Feedback']"}),
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'order': ('django.db.models.fields.SmallIntegerField', [], {'default': '1'})
+        },
+        u'feedback.ratinganswer': {
+            'Meta': {'object_name': 'RatingAnswer'},
+            'answer': ('django.db.models.fields.SmallIntegerField', [], {'default': '0'}),
+            'feedback_relation': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'rating_answers'", 'to': u"orm['feedback.FeedbackRelation']"}),
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'question': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'answer'", 'to': u"orm['feedback.RatingQuestion']"})
+        },
+        u'feedback.ratingquestion': {
+            'Meta': {'object_name': 'RatingQuestion'},
+            'feedback': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'rating_questions'", 'to': u"orm['feedback.Feedback']"}),
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'label': ('django.db.models.fields.CharField', [], {'max_length': '256'}),
+            'order': ('django.db.models.fields.SmallIntegerField', [], {'default': '20'})
+        },
+        u'feedback.textanswer': {
+            'Meta': {'object_name': 'TextAnswer'},
+            'answer': ('django.db.models.fields.TextField', [], {}),
+            'feedback_relation': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'text_answers'", 'to': u"orm['feedback.FeedbackRelation']"}),
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'question': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'answer'", 'to': u"orm['feedback.TextQuestion']"})
+        },
+        u'feedback.textquestion': {
+            'Meta': {'object_name': 'TextQuestion'},
+            'feedback': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'text_questions'", 'to': u"orm['feedback.Feedback']"}),
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'label': ('django.db.models.fields.CharField', [], {'max_length': '256'}),
+            'order': ('django.db.models.fields.SmallIntegerField', [], {'default': '10'})
+        }
+    }
+
+    complete_apps = ['feedback']

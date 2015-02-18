@@ -1,46 +1,53 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
+from south.utils import datetime_utils as datetime
+from south.db import db
+from south.v2 import SchemaMigration
+from django.db import models
 
-from django.db import models, migrations
+
+class Migration(SchemaMigration):
+
+    def forwards(self, orm):
+        # Adding model 'Item'
+        db.create_table(u'inventory_item', (
+            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('name', self.gf('django.db.models.fields.CharField')(max_length=50)),
+        ))
+        db.send_create_signal(u'inventory', ['Item'])
+
+        # Adding model 'Batch'
+        db.create_table(u'inventory_batch', (
+            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('item', self.gf('django.db.models.fields.related.ForeignKey')(related_name='batches', to=orm['inventory.Item'])),
+            ('amount', self.gf('django.db.models.fields.IntegerField')(default=0)),
+            ('date_added', self.gf('django.db.models.fields.DateField')(auto_now_add=True, blank=True)),
+            ('expiration_date', self.gf('django.db.models.fields.DateField')(null=True)),
+        ))
+        db.send_create_signal(u'inventory', ['Batch'])
 
 
-class Migration(migrations.Migration):
+    def backwards(self, orm):
+        # Deleting model 'Item'
+        db.delete_table(u'inventory_item')
 
-    dependencies = [
-    ]
+        # Deleting model 'Batch'
+        db.delete_table(u'inventory_batch')
 
-    operations = [
-        migrations.CreateModel(
-            name='Batch',
-            fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('amount', models.IntegerField(default=0, verbose_name='Antall')),
-                ('date_added', models.DateField(auto_now_add=True, verbose_name='Dato lagt til')),
-                ('expiration_date', models.DateField(null=True, verbose_name='Utl\xf8psdato', blank=True)),
-            ],
-            options={
-                'verbose_name': 'Batch',
-                'verbose_name_plural': 'Batches',
-            },
-            bases=(models.Model,),
-        ),
-        migrations.CreateModel(
-            name='Item',
-            fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('name', models.CharField(max_length=50, verbose_name='Varetype')),
-            ],
-            options={
-                'verbose_name': 'Vare',
-                'verbose_name_plural': 'Varer',
-                'permissions': (('view_item', 'View Inventory Item'),),
-            },
-            bases=(models.Model,),
-        ),
-        migrations.AddField(
-            model_name='batch',
-            name='item',
-            field=models.ForeignKey(related_name='batches', verbose_name='Vare', to='inventory.Item'),
-            preserve_default=True,
-        ),
-    ]
+
+    models = {
+        u'inventory.batch': {
+            'Meta': {'object_name': 'Batch'},
+            'amount': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
+            'date_added': ('django.db.models.fields.DateField', [], {'auto_now_add': 'True', 'blank': 'True'}),
+            'expiration_date': ('django.db.models.fields.DateField', [], {'null': 'True'}),
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'item': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'batches'", 'to': u"orm['inventory.Item']"})
+        },
+        u'inventory.item': {
+            'Meta': {'object_name': 'Item'},
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'name': ('django.db.models.fields.CharField', [], {'max_length': '50'})
+        }
+    }
+
+    complete_apps = ['inventory']
