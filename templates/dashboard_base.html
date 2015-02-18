@@ -56,7 +56,16 @@
                         <ul class="treeview-menu">
                             <li><a href="#"><i class="fa fa-angle-double-right orange"></i> Ny artikkel</a></li>
                             <li><a href="#"><i class="fa fa-angle-double-right orange"></i> Oversikt</a></li>
-                            <li><a href="#"><i class="fa fa-angle-double-right orange"></i> Tags</a></li>
+                            <li>
+                                <a href="{% url 'dashboard_tag_create' %}">
+                                    <i class="fa fa-angle-double-right orange"></i> Ny tag
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{% url 'dashboard_tag_index' %}">
+                                    <i class="fa fa-angle-double-right orange"></i> Tags
+                                </a>
+                            </li>
                         </ul>
                     </li>
                     {% endif %}
