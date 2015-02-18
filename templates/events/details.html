@@ -156,6 +156,7 @@
                                     {% for payment in payments %} <!-- TODO check if any payment require instant -->
                                         <p class="status-text" style="margin-bottom:15px">Prisen er på {{ payment.price }} Kr.</p>
                                         <button id="customButton{{ payment.id }}" class="btn btn-large btn-success">Start betaling</button>
+                                        <p class="help-text" style="margin-bottom:20px">{{payment.description}}</p>
                                     {% endfor %}
 
                                     <script src="{{ STATIC_URL }}js/libs/jquery-2.1.3.min.js"></script>
