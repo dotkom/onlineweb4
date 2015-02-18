@@ -1,4 +1,20 @@
+
+
 $(document).ready(function () {
+    /* AJAX SETUP FOR CSRF */
+    $.ajaxSetup({
+        crossDomain: false, // obviates need for sameOrigin test
+        beforeSend: function(xhr, settings) {
+            if (!csrfSafeMethod(settings.type)) {
+                xhr.setRequestHeader("X-CSRFToken", $.cookie('csrftoken'));
+            }
+        }
+    });
+    function csrfSafeMethod(method) {
+        // these HTTP methods do not require CSRF protection
+        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+    }
+    /* END AJAX SETUP */
 
     var data;
 
@@ -9,13 +25,24 @@ $(document).ready(function () {
 
     var handler = StripeCheckout.configure({
         key: 'pk_test_6pRNASCoBOKtIshFeQd4XMUh',
-        image: '/square-image.png',
+        image: '',
         token: function(token) {
+            var jsonToken = {};
+            jsonToken.stripeToken = token
+
+            console.log(token)
+
             $.ajax({
-              type: "POST",
-              url: "/payment/" + data['event_id'] + "/" + data['payment_id'] + "/",
-              data: "{requestToken: " + token + "}"
+                 type:"POST",
+                 url:"/payment/" + data['event_id'] + "/" + data['payment_id'] + "/",
+                 data: {
+                        'stripeToken': JSON.stringify(token)
+                        },
+                 success: function(){
+                     //location.reload(true);
+                    }
             });
+            //$.post( "/payment/" + data['event_id'] + "/" + data['payment_id'] + "/", jsonToken.serialize());
         }
     });
 
@@ -24,11 +51,11 @@ $(document).ready(function () {
         handler.open({
             name: 'Online',
             description: data['description'],
-            amount: data['stripe_priec'],
+            amount: data['stripe_price'],
             email: data['email'],
             allowRememberMe: false,
             currency: "nok",
-            panelLabel: "Betal " + data['price'] + "kr"
+            panelLabel: "Betal "
 
         });
         e.preventDefault();
