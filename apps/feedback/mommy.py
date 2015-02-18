@@ -11,7 +11,7 @@ from django.core.mail import EmailMessage
 
 from apps.events.models import Event, AttendanceEvent, Attendee
 from apps.feedback.models import FeedbackRelation
-from apps.marks.models import Mark, UserEntry
+from apps.marks.models import Mark, MarkUser
 from apps.mommy import Task, schedule
 
 class FeedbackMail(Task):
@@ -184,7 +184,7 @@ class FeedbackMail(Task):
         mark.save()
         
         for user in not_responded:
-            user_entry = UserEntry()
+            user_entry = MarkUser()
             user_entry.user = user
             user_entry.mark = mark
             user_entry.save()

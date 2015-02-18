@@ -13,7 +13,7 @@ from apps.authentication.models import OnlineUser as User, AllowedUsername
 from apps.events.models import (Event, AttendanceEvent, Attendee,
                                 RuleBundle, FieldOfStudyRule, GradeRule, UserGroupRule,
                                 Reservation, Reservee)
-from apps.marks.models import Mark, UserEntry
+from apps.marks.models import Mark, MarkUser
 from apps.events.mommy import SetEventMarks
 
 class EventTest(TestCase):
@@ -115,7 +115,8 @@ class EventTest(TestCase):
 
         # Giving the user a mark to see if the status goes to False.
         mark1 = G(Mark, title='Testprikk12345')
-        userentry = G(UserEntry, user=self.user, mark=mark1)
+        userentry = G(MarkUser, user=self.user, mark=mark1)
+        print userentry.expiration_date
         response = self.event.is_eligible_for_signup(self.user)
         self.assertFalse(response['status'])
         self.assertEqual(401, response['status_code'])
@@ -305,7 +306,7 @@ class EventTest(TestCase):
         SetEventMarks.setMarks(self.attendance_event)
 
         self.assertTrue(self.attendance_event.marks_has_been_set)
-        self.assertEqual(self.user, UserEntry.objects.get().user)
+        self.assertEqual(self.user, MarkUser.objects.get().user)
         
     def testMommyEveryoneAttendend(self):
         self.attendee.attended = True
@@ -319,7 +320,7 @@ class EventTest(TestCase):
         SetEventMarks.setMarks(self.attendance_event)
 
         self.assertTrue(self.attendance_event.marks_has_been_set)
-        self.assertFalse(UserEntry.objects.all())
+        self.assertFalse(MarkUser.objects.all())
         
     def testMommyGenerateEmptyMessage(self):
         self.attendee.attended = True
