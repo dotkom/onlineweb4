@@ -1,7 +1,7 @@
 # -*- encoding: utf-8 -*-
 from django import forms
 
-from apps.article.models import Tag
+from apps.article.models import Tag, Article
 
 
 class TagForm(forms.ModelForm):
