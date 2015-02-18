@@ -76,16 +76,14 @@ def details(request, event_id, event_slug):
     except AttendanceEvent.DoesNotExist:
         pass
 
-    payment = Payment.objects.filter(content_type=ContentType.objects.get_for_model(Event), object_id=event_id)
+    payments = Payment.objects.filter(content_type=ContentType.objects.get_for_model(Event), object_id=event_id)
     payment_relation = None
 
-    if payment:
-        payment = payment[0]
-        request.session['payment_id'] = payment.id
+    if payments:
         request.session['event_id'] = event.id
-        request.session['stripe_public_key'] = settings.STRIPE_PUBLIC_KEY
+        request.session['payment_ids'] = [payment.id for payment in payments]
 
-        payment_relation = PaymentRelation.objects.filter(payment=payment, user=request.user)
+        payment_relation = PaymentRelation.objects.filter(payment__in=payments, user=request.user)
         if payment_relation:
             payment_relation = payment_relation[0]
 
@@ -103,7 +101,7 @@ def details(request, event_id, event_slug):
                 #'position_in_wait_list': position_in_wait_list,
                 'captcha_form': form,
                 'user_access_to_event': user_access_to_event,
-                'payment': payment,
+                'payments': payments,
                 'payment_relation': payment_relation,
         })
     return render(request, 'events/details.html', context)
