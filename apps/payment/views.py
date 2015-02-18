@@ -49,19 +49,21 @@ def payment(request):
 
 @login_required
 def payment_info(request):
-    if 'payment_id' in request.session and 'event_id' in request.session:
+    if 'payment_ids' in request.session and 'event_id' in request.session:
 
         data = dict()
 
-        payment = get_object_or_404(Payment, pk=request.session['payment_id'])
         event = get_object_or_404(Event, pk=request.session['event_id'])
 
-        data['price'] = payment.price
-        data['stripe_price'] = payment.price * 100
-        data['payment_id'] = payment.id
+        data['stripe_public_key'] = settings.STRIPE_PUBLIC_KEY
         data['event_id'] = event.id
         data['email'] = request.user.email
-
         data['description'] = event.title
+
+        payments = Payment.objects.filter(Payment, pk=request.session['payment_id'])
+        for payment in payments:
+            data[payment.id]['price'] = payment.price
+            data[payment.id]['stripe_price'] = payment.price * 100
+            data[payment.id]['payment_id'] = payment.id
 
         return HttpResponse(json.dumps(data), content_type="application/json")
