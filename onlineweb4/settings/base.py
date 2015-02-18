@@ -247,8 +247,8 @@ INSTALLED_APPS = (
     'scripts',
 
     #External apps
-    'redwine',
     'feedme',
+    'redwine',
 
     #Wiki
     'wiki',
