@@ -4,7 +4,7 @@ import json
 import stripe
 
 from django.shortcuts import render, get_object_or_404, redirect
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib import messages
 from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import ugettext as _ 
@@ -19,26 +19,23 @@ def payment(request, event_id, payment_id):
     # Check if ajax
 
     # Get the credit card details submitted by the form
-    token = json.loads(request.POST.get("stripeToken"))
+    token = request.POST.get("stripeToken")
 
     event = Event.objects.get(id=event_id)
     payment = Payment.objects.get(id=payment_id, content_type=ContentType.objects.get_for_model(Event), object_id=event_id)
-
-    print token["id"]
 
     try:
         charge = stripe.Charge.create(
           amount=payment.price * 100, #Price is multiplied with 100 because the amount is in øre
           currency="nok",
-          card=token["id"],
+          card=token,
           description=request.user.email
         )
         messages.success(request, _(u"Betaling utført."))
+        return HttpResponse("Betaling utført.", content_type="text/plain") 
     except stripe.CardError, e:
         messages.error(request, _(u"Betaling feilet: ") + str(e))
-        
-
-    return redirect(event.get_absolute_url())
+        return HttpResponse(str(e), content_type="text/plain", status=500) 
 
 def payment_info(request):
     if 'payment_id' in request.session and 'event_id' in request.session:
