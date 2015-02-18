@@ -34,9 +34,9 @@
 {% block content %}
 <div class="row">
     <div class="col-md-12">
-        <a href="#" class="btn btn-success"><i class="fa fa-save"></i> Lagre</a>
-        <a href="#" class="btn btn-primary"><i class="fa fa-plus"></i> Legg til batch</a>
-        <a href="#" class="btn btn-danger pull-right"><i class="fa fa-times fa-lg"></i> Slett</a>
+        <a href="#" id="inventory-save" class="btn btn-success"><i class="fa fa-save"></i> Lagre</a>
+        <a href="#" id="inventory-add-batch" class="btn btn-primary"><i class="fa fa-plus"></i> Legg til batch</a>
+        <a href="#" id="inventory-delete-item" class="btn btn-danger pull-right"><i class="fa fa-times fa-lg"></i> Slett</a>
     </div>
 </div>
 <br />
@@ -79,31 +79,27 @@
                         <label class="pull-right">Fjern</label>
                     </div>
                 </div>
-                <form method="POST" action="">
-                    {% csrf_token %}
-                    {% for batch in item.batches.all %}
-                        <div class="row">
-                            <div class="col-md-5">
-                                <div class="form-group">
-                                    <input class="form-control" type="number" value="{{ batch.amount }}"></input>
-
-                                </div>
-                            </div>
-                            <div class="col-md-5">
-                                <div class="form-group">
-                                    {% if batch.expiration_date %}
-                                    <input class="form-control" type="text" value="{{ batch.expiration_date|date:'Y-m-d' }}"></input>
-                                    {% else %}
-                                    <input class="form-control" type="text" value="Ingen utløpsdato" disabled></input>
-                                    {% endif %}
-                                </div>
-                            </div>
-                            <div class="col-md-2">
-                                <a href="#" class="btn btn-danger pull-right"><i class="fa fa-times fa-lg"></i></a>
+                {% for batch in item.batches.all %}
+                    <div class="row">
+                        <div class="col-md-5">
+                            <div class="form-group">
+                                <input class="form-control" type="number" value="{{ batch.amount }}"></input>
                             </div>
                         </div>
-                    {% endfor %}
-                </form>
+                        <div class="col-md-5">
+                            <div class="form-group">
+                                {% if batch.expiration_date %}
+                                <input class="form-control" type="text" value="{{ batch.expiration_date|date:'Y-m-d' }}"></input>
+                                {% else %}
+                                <input class="form-control disabled" type="text" value="Ingen utløpsdato" disabled></input>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <a href="#" id="inventory-delete-batch-{{ batch.id }}" class="btn btn-danger pull-right"><i class="fa fa-times fa-lg"></i></a>
+                        </div>
+                    </div>
+                {% endfor %}
             </div>
         </div>
     </div>
