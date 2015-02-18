@@ -54,7 +54,11 @@ def marks_details(request, pk):
 
     # Get object
     mark = get_object_or_404(Mark, pk=pk)
+    mark.category_clean = mark.get_category_display()
     context['mark'] = mark
+
+    # Get users connteted to the view
+    context['mark_users'] = mark.given_to.all()
 
     # Render view
     return render(request, 'marks/dashboard/marks_details.html', context)
