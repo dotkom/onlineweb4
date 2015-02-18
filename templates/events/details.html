@@ -136,7 +136,9 @@
                             {% else %}
                                 <p class="status-text">Du er meldt på dette arrangementet.</p>
                             {% endif %}
-                            {% if attendance_event.unattend_deadline > now or place_on_wait_list %}
+                            {% if payment_relation %}
+                                <label class="label label-warning">Du har betalt</label>
+                            {% elif attendance_event.unattend_deadline > now or place_on_wait_list %}
                                 {% if event.event_start > now %}
                                     <div class="action"><a href="#unattend" role="button" class="btn btn-large btn-danger" data-toggle="modal">Meld meg av</a></div>
                                 {% endif %}
@@ -152,6 +154,7 @@
                                     <p class="status-text">Påmelding til arangementet krever betaling.</p>
                                     <p class="status-text" style="margin-bottom:15px">Prisen er på {{ payment.price }} Kr.</p>
                                     <button id="customButton" class="btn btn-large btn-success">Start betaling</button>
+
                                     <script src="{{ STATIC_URL }}js/libs/jquery-2.1.3.min.js"></script>
                                     <script src="https://checkout.stripe.com/checkout.js"></script>
                                     <script src="{{ STATIC_URL }}js/payment.js"></script>
