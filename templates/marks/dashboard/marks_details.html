@@ -34,31 +34,31 @@ Detaljer om prikk: {{ mark.title }}
                 </h3>
             </div>
             <div class="panel-body">
-	            <table class="table" id="marks_details_info">
-	            	<tr>
-	            		<td><b>Tittel</b></td>
-	            		<td>{{ mark.title }}</td>
-	            		<td><b>Kategori</b></td>
-	            		<td>{{ mark.category_clean }}</td>
-	            		
-	            	</tr>
-	            	<tr>
-	            		<td><b>Gitt av</b></td>
-	            		<td>{{ mark.given_by.get_full_name }}</td>
-	            		<td><b>Gitt den</b></td>
-	            		<td>{{ mark.added_date|date:'Y-m-d' }}</td>
-	            	</tr>
-	            	<tr>
-	            		<td><b>Sist endret av</b></td>
-	            		<td>{{ mark.last_changed_by.get_full_name }}</td>
-	            		<td><b>Sist endret</b></td>
-	            		<td>{{ mark.last_changed_date|date:'Y-m-d' }}</td>
-	            	</tr>
-	            	<tr>
-	            		<td><b>Detaljer</b></td>
-	            		<td colspan="3">{{ mark.description }}</td>
-	            	</tr>
-		         </table>
+                <table class="table" id="marks_details_info">
+                    <tr>
+                        <td><b>Tittel</b></td>
+                        <td>{{ mark.title }}</td>
+                        <td><b>Kategori</b></td>
+                        <td>{{ mark.category_clean }}</td>
+                        
+                    </tr>
+                    <tr>
+                        <td><b>Gitt av</b></td>
+                        <td>{{ mark.given_by.get_full_name }}</td>
+                        <td><b>Gitt den</b></td>
+                        <td>{{ mark.added_date|date:'Y-m-d' }}</td>
+                    </tr>
+                    <tr>
+                        <td><b>Sist endret av</b></td>
+                        <td>{{ mark.last_changed_by.get_full_name }}</td>
+                        <td><b>Sist endret</b></td>
+                        <td>{{ mark.last_changed_date|date:'Y-m-d' }}</td>
+                    </tr>
+                    <tr>
+                        <td><b>Detaljer</b></td>
+                        <td colspan="3">{{ mark.description }}</td>
+                    </tr>
+                 </table>
             </div>
         </div>
     </div>
@@ -66,30 +66,30 @@ Detaljer om prikk: {{ mark.title }}
         <div class="panel panel-default">
             <div class="panel-heading">
                 <h3 class="panel-title">
-                	Gitt til
+                    Gitt til
                 </h3>
             </div>
             <div class="panel-body">
-            	<p>Oversikt over brukere som har fått denne prikken.</p>
+                <p>Oversikt over brukere som har fått denne prikken.</p>
                 <table class="table table-striped table-condensed" id="marks_details_user">
-	                <thead>
-	                    <tr>
-	                        <th>Navn</th>
-	                    </tr>
-	                </thead>
-	                <tbody id="userlist">
-	                {% for user in mark_users %}
-	                    <tr>
-	                        <td>
-	                            <a href="#">{{ user.user.get_full_name }}</a>
-	                            <a href="#" id="{{ user.id }}" class="remove-user">
-	                                <i class="fa fa-times fa-lg pull-right red"></i>
-	                            </a>
-	                        </td>
-	                    </tr>
-	                {% endfor %}
-	                </tbody>
-	            </table>
+                    <thead>
+                        <tr>
+                            <th>Navn</th>
+                        </tr>
+                    </thead>
+                    <tbody id="userlist">
+                    {% for user in mark_users %}
+                        <tr>
+                            <td>
+                                <a href="#">{{ user.user.get_full_name }}</a>
+                                <a href="#" id="{{ user.id }}" class="remove-user">
+                                    <i class="fa fa-times fa-lg pull-right red"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
