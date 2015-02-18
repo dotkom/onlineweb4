@@ -32,7 +32,7 @@ def payment(request, event_id, payment_id):
           description=request.user.email
         )
         messages.success(request, _(u"Betaling utført."))
-        return HttpResponse("hurr durr", content_type="text/plain", status=500) 
+        return HttpResponse("Betaling utført.", content_type="text/plain") 
     except stripe.CardError, e:
         messages.error(request, _(u"Betaling feilet: ") + str(e))
         return HttpResponse(str(e), content_type="text/plain", status=500) 
