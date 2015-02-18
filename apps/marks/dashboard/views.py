@@ -54,6 +54,7 @@ def marks_details(request, pk):
 
     # Get object
     mark = get_object_or_404(Mark, pk=pk)
+    context['mark'] = mark
 
     # Render view
     return render(request, 'marks/dashboard/marks_details.html', context)

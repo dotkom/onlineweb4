@@ -1,6 +1,6 @@
 {% extends 'dashboard_base.html' %}
 {% load compress %}
-{% block title %}Prikker{% endblock %}
+{% block title %}Prikker - Online Dashboard{% endblock %}
 
 {% block styles %}
     {{ block.super }}
@@ -9,11 +9,12 @@
 {% endblock %}
 
 {% block page-header %}
-Prikker
+Detaljer om prikk: {{ mark.title }}
 {% endblock %}
 
 {% block breadcrumbs %}
-<li>Prikker</li>
+<li><a href="/dashboard/marks">Prikker</a></li>
+<li>{{ mark.title }}</li>
 {% endblock %}
 
 {% block content %}
