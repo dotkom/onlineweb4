@@ -5,6 +5,7 @@
 {% block styles %}
     {{ block.super }}
     {% compress css %}
+        <link rel="stylesheet" type="text/less" href="{{ STATIC_URL }}less/dashboard/marks.less" />
     {% endcompress %}
 {% endblock %}
 
@@ -20,48 +21,13 @@ Detaljer om prikk: {{ mark.title }}
 {% block content %}
 <div class="row">
     <div class="col-md-12">
-        <a href="/dashboard/marks/{{ mark.id }}/edit" class="btn btn-warning"><i class="fa fa-cogs"></i> Rediger</a>
+        <a href="#" class="btn btn-primary" id="marks_details_users_button"><i class="fa fa-users"></i> Legg til</a>
+        <a href="/dashboard/marks/{{ mark.id }}/edit" class="btn btn-warning"><i class="fa fa-cogs"></i> Endre</a>
         <a href="/dashboard/marks/{{ mark.id }}/delete" class="btn btn-danger pull-right"><i class="fa fa-times"></i> Slett</a>
     </div>
 </div>
 <br />
 <div class="row">
-    <div class="col-md-6">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h3 class="panel-title">
-                    Detaljer
-                </h3>
-            </div>
-            <div class="panel-body">
-                <table class="table" id="marks_details_info">
-                    <tr>
-                        <td><b>Tittel</b></td>
-                        <td>{{ mark.title }}</td>
-                        <td><b>Kategori</b></td>
-                        <td>{{ mark.category_clean }}</td>
-                        
-                    </tr>
-                    <tr>
-                        <td><b>Gitt av</b></td>
-                        <td>{{ mark.given_by.get_full_name }}</td>
-                        <td><b>Gitt den</b></td>
-                        <td>{{ mark.added_date|date:'Y-m-d' }}</td>
-                    </tr>
-                    <tr>
-                        <td><b>Sist endret av</b></td>
-                        <td>{{ mark.last_changed_by.get_full_name }}</td>
-                        <td><b>Sist endret</b></td>
-                        <td>{{ mark.last_changed_date|date:'Y-m-d' }}</td>
-                    </tr>
-                    <tr>
-                        <td><b>Detaljer</b></td>
-                        <td colspan="3">{{ mark.description }}</td>
-                    </tr>
-                 </table>
-            </div>
-        </div>
-    </div>
     <div class="col-md-6">
         <div class="panel panel-default">
             <div class="panel-heading">
@@ -90,6 +56,42 @@ Detaljer om prikk: {{ mark.title }}
                     {% endfor %}
                     </tbody>
                 </table>
+            </div>
+        </div>
+    </div>
+        <div class="col-md-6">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">
+                    Detaljer
+                </h3>
+            </div>
+            <div class="panel-body">
+                <table class="table" id="marks_details_info">
+                    <tr>
+                        <td><b>Tittel</b></td>
+                        <td class="marks_table_splitter">{{ mark.title }}</td>
+                        <td><b>Kategori</b></td>
+                        <td>{{ mark.category_clean }}</td>
+                        
+                    </tr>
+                    <tr>
+                        <td><b>Gitt av</b></td>
+                        <td class="marks_table_splitter">{{ mark.given_by.get_full_name }}</td>
+                        <td><b>Gitt den</b></td>
+                        <td>{{ mark.added_date|date:'Y-m-d' }}</td>
+                    </tr>
+                    <tr>
+                        <td><b>Sist endret av</b></td>
+                        <td class="marks_table_splitter">{{ mark.last_changed_by.get_full_name }}</td>
+                        <td><b>Sist endret</b></td>
+                        <td>{{ mark.last_changed_date|date:'Y-m-d' }}</td>
+                    </tr>
+                    <tr>
+                        <td><b>Detaljer</b></td>
+                        <td colspan="3">{{ mark.description }}</td>
+                    </tr>
+                 </table>
             </div>
         </div>
     </div>
