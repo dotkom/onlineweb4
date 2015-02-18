@@ -1,33 +1,42 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
+import datetime
+from south.db import db
+from south.v2 import SchemaMigration
+from django.db import models
 
-from django.db import models, migrations
-import filebrowser.fields
+
+class Migration(SchemaMigration):
+
+    def forwards(self, orm):
+        # Adding model 'Company'
+        db.create_table(u'companyprofile_company', (
+            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('name', self.gf('django.db.models.fields.CharField')(max_length=100)),
+            ('short_description', self.gf('django.db.models.fields.TextField')(max_length=200)),
+            ('long_description', self.gf('django.db.models.fields.TextField')(null=True, blank=True)),
+            ('site', self.gf('django.db.models.fields.URLField')(max_length=200)),
+            ('email_address', self.gf('django.db.models.fields.EmailField')(max_length=75, null=True, blank=True)),
+            ('phone_number', self.gf('django.db.models.fields.IntegerField')(max_length=8, null=True, blank=True)),
+        ))
+        db.send_create_signal(u'companyprofile', ['Company'])
 
 
-class Migration(migrations.Migration):
+    def backwards(self, orm):
+        # Deleting model 'Company'
+        db.delete_table(u'companyprofile_company')
 
-    dependencies = [
-    ]
 
-    operations = [
-        migrations.CreateModel(
-            name='Company',
-            fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('name', models.CharField(max_length=100, verbose_name='bedriftsnavn')),
-                ('short_description', models.TextField(max_length=200, verbose_name='kort beskrivelse')),
-                ('long_description', models.TextField(null=True, verbose_name='utdypende beskrivelse', blank=True)),
-                ('image', filebrowser.fields.FileBrowseField(max_length=200, verbose_name='bilde')),
-                ('site', models.CharField(max_length=100, verbose_name='hjemmeside')),
-                ('email_address', models.EmailField(max_length=75, null=True, verbose_name='epostaddresse', blank=True)),
-                ('phone_number', models.CharField(max_length=20, null=True, verbose_name='telefonnummer', blank=True)),
-            ],
-            options={
-                'verbose_name': 'Bedrift',
-                'verbose_name_plural': 'Bedrifter',
-                'permissions': (('view_company', 'View Company'),),
-            },
-            bases=(models.Model,),
-        ),
-    ]
+    models = {
+        u'companyprofile.company': {
+            'Meta': {'object_name': 'Company'},
+            'email_address': ('django.db.models.fields.EmailField', [], {'max_length': '75', 'null': 'True', 'blank': 'True'}),
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'long_description': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
+            'name': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
+            'phone_number': ('django.db.models.fields.IntegerField', [], {'max_length': '8', 'null': 'True', 'blank': 'True'}),
+            'short_description': ('django.db.models.fields.TextField', [], {'max_length': '200'}),
+            'site': ('django.db.models.fields.URLField', [], {'max_length': '200'})
+        }
+    }
+
+    complete_apps = ['companyprofile']
