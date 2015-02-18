@@ -2,7 +2,7 @@
 
 from datetime import date
 
-from django.core.exceptions import ObjectDoesNotExist
+from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
 from django.contrib.auth.models import Group
 
 from apps.approval.models import MembershipApproval
@@ -29,6 +29,15 @@ def has_access(request):
         return True
 
     return False
+
+
+def check_access_or_403(request):
+    """
+    Checks if a user bundled in a request object has access using has_access
+    tool function, if not raise a 403 exception
+    """
+    if not has_access(request):
+        raise PermissionDenied
 
 
 def get_base_context(request):
