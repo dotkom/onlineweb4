@@ -7,7 +7,7 @@ urlpatterns = patterns('apps.article.dashboard.views',
     url(r'^create/$', 'article_create_or_edit', name='dashboard_article_create'),
     url(r'^edit/(?P<article_id>\d+)/(?P<article_slug>[a-zA-Z0-9_-]+)$', 'article_create_or_edit', name='dashboard_article_edit'),
 
-    url(r'^tag/$', 'tags_index', name='dashboard_tag_index'),
-    url(r'^tag/create^$', 'tags_create_or_edit', name='dashboard_tag_create'),
-    url(r'^tag/edit/(?P<name>[^\.]+)/(?P<slug>[^\.]+)$', 'tags_create_or_edit', name='dashboard_tag_edit'),
+    url(r'^tag/$', 'tag_index', name='dashboard_tag_index'),
+    url(r'^tag/create$', 'tag_create_or_edit', name='dashboard_tag_create'),
+    url(r'^tag/edit/(?P<name>[^\.]+)/(?P<slug>[^\.]+)$', 'tag_create_or_edit', name='dashboard_tag_edit'),
 )
