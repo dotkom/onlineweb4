@@ -27,22 +27,20 @@ $(document).ready(function () {
         key: 'pk_test_6pRNASCoBOKtIshFeQd4XMUh',
         image: '',
         token: function(token) {
-            var jsonToken = {};
-            jsonToken.stripeToken = token
-
-            console.log(token)
-
             $.ajax({
-                 type:"POST",
-                 url:"/payment/" + data['event_id'] + "/" + data['payment_id'] + "/",
-                 data: {
-                        'stripeToken': JSON.stringify(token)
-                        },
-                 success: function(){
-                     //location.reload(true);
-                    }
+                type:"POST",
+                url:"/payment/" + data['event_id'] + "/" + data['payment_id'] + "/",
+                data: {
+                    'stripeToken': token.id
+                },
+                //Reloads the page on error or success to show the message and update the site content.
+                success: function(){
+                    location.reload();
+                },
+                error: function(result){
+                    location.reload();
+                }
             });
-            //$.post( "/payment/" + data['event_id'] + "/" + data['payment_id'] + "/", jsonToken.serialize());
         }
     });
 
