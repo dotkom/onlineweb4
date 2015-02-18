@@ -10,11 +10,11 @@ var Inventory = (function ($, tools) {
         var errors = false
         if ($ == undefined) {
             console.error('jQuery missing!')
-            errors = !errors
+            errors = true
         }
         if (tools == undefined) {
             console.error('Dashboard tools missing!')
-            errors = !errors
+            errors = true
         }
         if (errors) return false
         return true
