@@ -5,6 +5,12 @@
         <h3>E-postadresser</h3>
     </div>
 </div>
+<div class="row">
+    <div class="col-xs-12 col-sm-12 col-md-10">
+        <p>Her er en oversikt over e-postadresser som er tilknyttet din konto. Adressen som er markert som primær brukes til alle våre epostlister, gjenoppretning av passord og andre varsler som sendes fra oss.</p>
+        <p>Etter at du har valgt en ny primæradresse kan det ta opptil én time før endringen er registert i alle mailinglister, mens adresse for andre varsler og gjenoppretning oppdateres umiddelbart.</p>
+    </div>
+</div>
 <div class="row emails">
     <div class="col-xs-12 col-sm-12 col-md-10">
         {% for email in user.get_emails %}
