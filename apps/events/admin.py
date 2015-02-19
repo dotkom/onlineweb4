@@ -127,7 +127,7 @@ class EventAdmin(admin.ModelAdmin):
                         if diff_capacity > old_waitlist_size:
                             diff_capacity = old_waitlist_size
                         # Using old_event because max_capacity has already been changed in obj
-                        old_event.notify_waiting_list(host=request.META['HTTP_HOST'], extra_capacity=diff_capacity)
+                        old_event.attendance_event.notify_waiting_list(host=request.META['HTTP_HOST'], extra_capacity=diff_capacity)
         obj.save()
 
     def save_formset(self, request, form, formset, change):
