@@ -12,13 +12,24 @@ from guardian.decorators import permission_required
 from apps.authentication.models import OnlineUser as User
 from apps.dashboard.tools import has_access, get_base_context
 from apps.events.models import Event, Attendee
+from apps.events.dashboard.forms import ChangeEventForm, ChangeAttendanceEventForm
 
 
 @login_required
 @permission_required('event.view_event', raise_403=True)
 def index(request):
     events = Event.objects.all() 
-    return render(request, 'events/dashboard/index.html', {'events': events})
+
+    context = get_base_context(request)
+    context['events'] = events
+
+    return render(request, 'events/dashboard/index.html', context)
+
+def create_event(request):
+    context = get_base_context(request)
+    return render(request, 'events/dashboard/details.html', context) 
+
+    
 
 @login_required
 @permission_required('event.view_event', raise_403=True)
