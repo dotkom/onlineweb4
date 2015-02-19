@@ -283,7 +283,7 @@ def mail_participants(request, event_id):
         messages.error(request, _(u'Du har ikke tilgang til å vise denne siden.'))
         return redirect(event)
 
-    all_attendees = list(event.attendance_event.attendees.attendee_qs)
+    all_attendees = list(event.attendance_event.attendees_qs)
     attendees_on_waitlist = list(event.attendance_event.waitlist_qs)
     attendees_not_paid = list(event.attendance_event.attendees_not_paid)
 
