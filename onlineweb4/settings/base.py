@@ -142,14 +142,6 @@ BEDKOM_GROUP_ID = 1
 FAGKOM_GROUP_ID = 2
 COMMON_GROUP_ID = 3
 
-# List of groups that should have edit access to Online wiki (public)
-WIKI_OPEN_EDIT_ACCESS = [1, 2]
-WIKI_OPEN_EDIT_ACCESS_GROUP_ID = 3
-
-# List of groups that should have access to the Komite wiki
-WIKI_COMMITTEE_ACCESS = [1, 2]
-WIKI_COMMITTEE_ACCESS_GROUP_ID = 3
-
 # Grappelli settings
 GRAPPELLI_ADMIN_TITLE = '<a href="/">Onlineweb</a>'
 
@@ -343,7 +335,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 )
 
 # Remember to keep 'local' last, so it can override any setting.
-for settings_module in ['filebrowser', 'local']:  # local last
+for settings_module in ['filebrowser', 'wiki', 'local']:  # local last
     if not os.path.exists(os.path.join(PROJECT_SETTINGS_DIRECTORY,
             settings_module + ".py")):
         sys.stderr.write("Could not find settings module '%s'.\n" %
