@@ -8,10 +8,10 @@ Arrangementsarkiv - Online
 {% endblock title %}
 
 {% block styles %}
-  {{ block.super }}
-  {% compress css %}
+    {{ block.super }}
+    {% compress css %}
     <link rel="stylesheet" type="text/less" href="{{ STATIC_URL }}less/event_archive.less">
-  {% endcompress %}
+    {% endcompress %}
 {% endblock %}
 
 {% block submenu %}
@@ -35,83 +35,87 @@ Arrangementsarkiv - Online
 {% block content %}
 
 <section>
-  <div class="container">
-
+<div class="container">
     <div class="row">
-      <div class="col-md-12">
-        <div class="page-header">
-          <h2>ARRANGEMENTER
-            <div class="btn-group pull-right">
-              <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-                <span class="glyphicon glyphicon-calendar"></span>
-                Eksporter
-                <span class="caret"></span>
-              </button>
-              <ul class="dropdown-menu">
-                <li><a href="{% url 'events_ics' %}">ICS</a></li>
-                <li><a href="http://www.google.com/calendar/render?cid={{ request.build_absolute_uri|unhttps|urlencode }}events.ics">Google Calendar</a></li>
-                {% if user.is_authenticated %}
-                  <li role="presentation" class="divider"></li>
-                  <li class="dropdown-header">Mine arrangementer</li>
-                  <li><a href="{% url 'events_personal_ics' user=signer_value %}">ICS</a></li>
-                  <li><a href="http://www.google.com/calendar/render?cid={{ personal_ics_path|unhttps|urlencode }}">Google Calendar</a></li>
-                  {% endif %}
-              </ul>
+        <div class="col-md-12">
+            <div class="page-header">
+                <div class="row">
+                    <div class="col-md-8">
+                        <h2>ARRANGEMENTER</h2>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="event-archive-dropdown btn-group pull-right">
+                            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                                <span class="glyphicon glyphicon-calendar"></span>
+                                Eksporter
+                                <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a href="{% url 'events_ics' %}">ICS</a></li>
+                                <li><a href="http://www.google.com/calendar/render?cid={{ request.build_absolute_uri|unhttps|urlencode }}events.ics">Google Calendar</a></li>
+                                {% if user.is_authenticated %}
+                                    <li role="presentation" class="divider"></li>
+                                    <li class="dropdown-header">Mine arrangementer</li>
+                                    <li><a href="{% url 'events_personal_ics' user=signer_value %}">ICS</a></li>
+                                    <li><a href="http://www.google.com/calendar/render?cid={{ personal_ics_path|unhttps|urlencode }}">Google Calendar</a></li>
+                                {% endif %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
             </div>
-          </h2>
         </div>
-      </div>
     </div>
-
     <div class="col-xs-12 col-sm-12 col-md-3 pull-right" id="filter">
-      <div class="row">
+        <div class="row">
         <div class="col-xs-12 col-sm-12 col-md-12">
-          <input type="text" class="form-control col-xs-12 col-sm-12" placeholder="Søk blant arrangementene" id="search">
+            <input type="text" class="form-control col-xs-12 col-sm-12" placeholder="Søk blant arrangementene" id="search">
         </div>
-      </div>
+        </div>
 
 
         <div class="checkbox col-xs-12 col-sm-12 col-md-12">
-          <label>
+            <label>
             <input type="checkbox" name="optionCheckboxs" value="option1" id="future" checked>
             Bare fremtidige arrangementer
-          </label>
+            </label>
         </div>
-	{% if user.is_authenticated %}
+    {% if user.is_authenticated %}
         <div class="checkbox col-xs-12 col-sm-12 col-md-12">
-          <label>
+            <label>
             <input type="checkbox" name="optionCheckboxs" value="option1" id="myevents">
             Mine arrangementer
-          </label>
+            </label>
         </div>
-	{% endif %}
+    {% endif %}
 
     </div> <!-- end col-md-3 -->
 
     <div class="col-xs-12 col-sm-12 col-md-9 pull-left" id="events">
 
     </div> <!-- end col-md-9 -->
+
 <!--
   {% if events %}
 
   {% else %}
     <p class="ingress">Ingen arrangementer funnet.</p>
-  {% endif %} -->
+    {% endif %} -->
 
-  </div>
+    </div>
 </section>
 {%endblock content %}
 
 {% block js %}
 
-  {{ block.super }}
-  {% compress js %}
-  <script type="text/javascript">
+    {{ block.super }}
+    {% compress js %}
+    <script type="text/javascript">
     var Filters = function () {
 
-      this.query = '';
-      this.future = true;
-      this.myevents = false;
+        this.query = '';
+        this.future = true;
+        this.myevents = false;
     };
 
     Filters.prototype.search = function () {
@@ -122,39 +126,34 @@ Arrangementsarkiv - Online
         filters     += '&myevents=' + this.myevents;
 
         $.get(url + query + filters, function (result) {
-          $('#events').empty();
-          $('#events').append(result);
+            $('#events').empty();
+            $('#events').append(result);
         });
-      };
+    };
 
     $(function () {
 
-      var filters = new Filters();
-      filters.search();
-
-
-      $('#search').keyup(function () {
-        filters.query = $(this).val();
+        var filters = new Filters();
         filters.search();
-      });
 
-      // This is a slight hack to avoid a difficult bug in jQuery where some browsers tend to preserve checkbox states
-      // without them being domready.
-      $(document).ready(function () {
-        $('#future').prop('checked', true);
-      });
 
-      $('#future').on('click', function () {
-        filters.future = !filters.future;
-        filters.search();
-      });
+        // This is a slight hack to avoid a difficult bug in jQuery where some browsers tend to preserve checkbox states
+        // without them being domready.
+        $(document).ready(function () {
+            $('#future').prop('checked', true);
+        });
 
-      $('#myevents').on('click', function () {
-        filters.myevents = !filters.myevents;
-        filters.search();
-      });
+        $('#future').on('click', function () {
+            filters.future = !filters.future;
+            filters.search();
+        });
+
+        $('#myevents').on('click', function () {
+            filters.myevents = !filters.myevents;
+            filters.search();
+        });
     });
-  </script>
-  {% endcompress %}
+    </script>
+    {% endcompress %}
 
 {% endblock %}
