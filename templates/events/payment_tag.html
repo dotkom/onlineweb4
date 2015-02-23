@@ -1,12 +1,7 @@
 {% for payment in payments %}
 	<p class="status-text" style="margin-bottom:15px">Prisen er på {{ payment.price }} Kr.</p>
-	<button id="customButton{{ payment.id }}" class="btn btn-large btn-success">Start betaling</button>
-	{% if payments|size > 1 %}
+	<button id="stripeButton{{ payment.id }}" class="btn btn-large btn-success">Start betaling</button>
+	{% if payments|length > 1 %}
 		<p class="help-text" style="margin-bottom:20px">{{payment.description}}</p>
 	{% endif %}
 {% endfor %}
-<br><br>
-
-<script src="{{ STATIC_URL }}js/libs/jquery-2.1.3.min.js"></script>
-<script src="https://checkout.stripe.com/checkout.js"></script>
-<script src="{{ STATIC_URL }}js/payment.js"></script>

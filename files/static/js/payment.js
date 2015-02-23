@@ -41,7 +41,7 @@ var setupButton = function(data, payment_id){
         }
     });
 
-    var buttonId = "#customButton" + payment_id
+    var buttonId = "#stripeButton" + payment_id
 
     $(buttonId).on('click', function(e) {
         // Open Checkout with further options
@@ -64,7 +64,7 @@ var setupButton = function(data, payment_id){
     });
 }
 
-var getInfo = function(){
+var setupPayment = function(){
     $.get( "/payment/payment_info/", function( data ) {
         for(var i = 0; i < data['payment_ids'].length; i++){
             setupButton(data, data['payment_ids'][i])
@@ -76,8 +76,5 @@ var getInfo = function(){
 $(document).ready(function () {
 
     setupAjaxCSRF();
-    var data = getInfo();
-
-    console.log(data);
-
+    setupPayment();
 });
