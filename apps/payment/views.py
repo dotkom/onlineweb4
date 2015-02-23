@@ -16,36 +16,37 @@ from apps.events.models import Event, Attendee
 
 @login_required
 def payment(request):
-    stripe.api_key = settings.STRIPE_PRIVATE_KEY
 
-    # Check if ajax
+    if request.is_ajax():
+        if request.method == "POST":
+            stripe.api_key = settings.STRIPE_PRIVATE_KEY
 
-    # Get the credit card details submitted by the form
-    token = request.POST.get("stripeToken")
-    event_id = request.POST.get("eventId")
-    payment_id = request.POST.get("paymentId")
+            # Get the credit card details submitted by the form
+            token = request.POST.get("stripeToken")
+            event_id = request.POST.get("eventId")
+            payment_id = request.POST.get("paymentId")
 
-    event = Event.objects.get(id=event_id)
-    payment = Payment.objects.get(id=payment_id, content_type=ContentType.objects.get_for_model(Event), object_id=event_id)
+            event = Event.objects.get(id=event_id)
+            payment = Payment.objects.get(id=payment_id, content_type=ContentType.objects.get_for_model(Event), object_id=event_id)
 
-    try:
-        charge = stripe.Charge.create(
-          amount=payment.price * 100, #Price is multiplied with 100 because the amount is in øre
-          currency="nok",
-          card=token,
-          description=request.user.email
-        )
+            try:
+                charge = stripe.Charge.create(
+                  amount=payment.price * 100, #Price is multiplied with 100 because the amount is in øre
+                  currency="nok",
+                  card=token,
+                  description=request.user.email
+                )
 
-        PaymentRelation.objects.create(payment=payment, user=request.user)
-        Attendee.objects.create(event=event.attendance_event, user=request.user)
+                PaymentRelation.objects.create(payment=payment, user=request.user)
+                Attendee.objects.create(event=event.attendance_event, user=request.user)
 
-        #TODO send mail
+                #TODO send mail
 
-        messages.success(request, _(u"Betaling utført."))
-        return HttpResponse("Betaling utført.", content_type="text/plain", status=200) 
-    except stripe.CardError, e:
-        messages.error(request, _(u"Betaling feilet: ") + str(e))
-        return HttpResponse(str(e), content_type="text/plain", status=500) 
+                messages.success(request, _(u"Betaling utført."))
+                return HttpResponse("Betaling utført.", content_type="text/plain", status=200) 
+            except stripe.CardError, e:
+                messages.error(request, _(u"Betaling feilet: ") + str(e))
+                return HttpResponse(str(e), content_type="text/plain", status=500) 
 
 @login_required
 def payment_info(request):
