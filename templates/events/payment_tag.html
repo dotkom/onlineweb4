@@ -1,6 +1,9 @@
 {% for payment in payments %}
-<p class="status-text" style="margin-bottom:15px">Prisen er på {{ payment.price }} Kr.</p>
-<button id="customButton{{ payment.id }}" class="btn btn-large btn-success">Start betaling</button>
+	<p class="status-text" style="margin-bottom:15px">Prisen er på {{ payment.price }} Kr.</p>
+	<button id="customButton{{ payment.id }}" class="btn btn-large btn-success">Start betaling</button>
+	{% if payments|size > 1 %}
+		<p class="help-text" style="margin-bottom:20px">{{payment.description}}</p>
+	{% endif %}
 {% endfor %}
 <br><br>
 
