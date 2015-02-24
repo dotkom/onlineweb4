@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+import uuid
+
 from django.db import models
 from django.utils.translation import ugettext as _
 from django.contrib.contenttypes import generic
@@ -31,3 +33,11 @@ class PaymentRelation(models.Model):
     payment = models.ForeignKey(Payment)
     user = models.ForeignKey(User)
     datetime = models.DateTimeField(auto_now=True)
+
+    unique_id = models.CharField(max_length=128, null=True, blank=True)
+
+    def save(self, *args, **kwargs):
+        if not self.unique_id:
+            self.unique_id = str(uuid.uuid4())
+        super(PaymentRelation, self).save(*args, **kwargs)
+
