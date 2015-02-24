@@ -279,7 +279,7 @@ def mail_participants(request, event_id):
         return redirect(event)
 
     # Check access
-    if not event in get_group_restricted_events(request.user):
+    if event not in get_group_restricted_events(request.user):
         messages.error(request, _(u'Du har ikke tilgang til å vise denne siden.'))
         return redirect(event)
 
