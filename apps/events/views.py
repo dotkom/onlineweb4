@@ -200,19 +200,15 @@ def generate_pdf(request, event_id):
 
     event = get_object_or_404(Event, pk=event_id)
 
-    groups = request.user.groups.all()
-    if not (groups.filter(name='dotKom').count() == 1 or groups.filter(name='Hovedstyret').count() == 1):
-        if event.event_type == 1 and not groups.filter(name='arrKom').count() == 1:
-            messages.error(request, _(u'Du har ikke tilgang til listen for dette arrangementet.'))
-            return redirect(event)
+    # If this is not an attendance event, redirect to event with error
+    if not event.attendance_event:
+        messages.error(request, _(u"Dette er ikke et påmeldingsarrangement."))
+        return redirect(event)
 
-        if event.event_type == 2 and not groups.filter(name='bedKom').count() == 1:
-            messages.error(request, _(u'Du har ikke tilgang til listen for dette arrangementet.'))
-            return redirect(event)
-
-        if event.event_type == 3 and not groups.filter(name='fagKom').count() == 1:
-            messages.error(request, _(u'Du har ikke tilgang til listen for dette arrangementet.'))  
-            return redirect(event)
+    # Check access
+    if event not in get_group_restricted_events(request.user):
+        messages.error(request, _(u'Du har ikke tilgang til listen for dette arrangementet.'))
+        return redirect(event)
 
     return EventPDF(event).render_pdf()
 
