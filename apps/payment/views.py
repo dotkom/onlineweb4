@@ -38,7 +38,7 @@ def payment(request):
                 )
 
                 PaymentRelation.objects.create(payment=payment, user=request.user)
-                Attendee.objects.create(event=event.attendance_event, user=request.user)
+                Attendee.objects.create(event=event.attendance_event, user=request.user, paid=True)
 
                 #TODO send mail
 

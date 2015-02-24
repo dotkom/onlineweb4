@@ -45,6 +45,7 @@ def details(request, event_id, event_slug):
     will_be_on_wait_list = False
     rules = []
     user_status = False
+    user_paid = False
 
     user_access_to_event = False
     if request.user:
@@ -77,7 +78,6 @@ def details(request, event_id, event_slug):
         pass
 
     payments = Payment.objects.filter(content_type=ContentType.objects.get_for_model(Event), object_id=event_id)
-    payment_relation = None
 
     if payments:
         request.session['event_id'] = event.id
@@ -85,7 +85,11 @@ def details(request, event_id, event_slug):
 
         payment_relation = PaymentRelation.objects.filter(payment__in=payments, user=request.user)
         if payment_relation:
-            payment_relation = payment_relation[0]
+            user_paid = True
+        elif user_attending:
+            attendee = Attendee.objects.filter(event=attendance_event, user=request.user)
+            if attendee:
+                user_paid = attendee[0].paid
 
     context = {'event': event, 'ics_path': request.build_absolute_uri(reverse('event_ics', args=(event.id,)))}
     if is_attendance_event:
@@ -102,7 +106,7 @@ def details(request, event_id, event_slug):
                 'captcha_form': form,
                 'user_access_to_event': user_access_to_event,
                 'payments': payments,
-                'payment_relation': payment_relation,
+                'user_paid': user_paid,
         })
     return render(request, 'events/details.html', context)
 
