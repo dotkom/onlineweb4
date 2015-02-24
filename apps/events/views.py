@@ -80,7 +80,6 @@ def details(request, event_id, event_slug):
     payments = Payment.objects.filter(content_type=ContentType.objects.get_for_model(Event), object_id=event_id)
 
     if payments:
-        request.session['event_id'] = event.id
         request.session['payment_ids'] = [payment.id for payment in payments]
 
         payment_relation = PaymentRelation.objects.filter(payment__in=payments, user=request.user)

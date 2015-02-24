@@ -23,62 +23,73 @@ def payment(request):
 
             # Get the credit card details submitted by the form
             token = request.POST.get("stripeToken")
-            event_id = request.POST.get("eventId")
             payment_id = request.POST.get("paymentId")
 
-            event = Event.objects.get(id=event_id)
-            payment = Payment.objects.get(id=payment_id, content_type=ContentType.objects.get_for_model(Event), object_id=event_id)
+            payment = Payment.objects.get(id=payment_id)
 
-            try:
-                charge = stripe.Charge.create(
-                  amount=payment.price * 100, #Price is multiplied with 100 because the amount is in øre
-                  currency="nok",
-                  card=token,
-                  description=request.user.email
-                )
+            if payment:
+                content_type = ContentType.objects.get_for_id(payment.content_type.id)
+                content_object = content_type.get_object_for_this_type(pk=payment.object_id)
 
-                PaymentRelation.objects.create(payment=payment, user=request.user)
+                try:
+                    charge = stripe.Charge.create(
+                      amount=payment.price * 100, #Price is multiplied with 100 because the amount is in øre
+                      currency="nok",
+                      card=token,
+                      description=payment_description(content_object) + " - " + request.user.email
+                    )
 
-                attendee = Attendee.objects.get(event=event.attendance_event, user=request.user)
+                    PaymentRelation.objects.create(payment=payment, user=request.user)
 
-                print "Attendee: " + str(attendee)
+                    handle_post_payment(content_object, request.user)
 
-                if attendee:
-                    attendee.paid = True
-                    attendee.save()
-                else:
-                    Attendee.objects.create(event=event.attendance_event, user=request.user, paid=True)
+                    #TODO send mail
 
-                #TODO send mail
+                    messages.success(request, _(u"Betaling utført."))
+                    return HttpResponse("Betaling utført.", content_type="text/plain", status=200) 
+                except stripe.CardError, e:
+                    messages.error(request, _(u"Betaling feilet: ") + str(e))
+                    return HttpResponse(str(e), content_type="text/plain", status=500) 
 
-                messages.success(request, _(u"Betaling utført."))
-                return HttpResponse("Betaling utført.", content_type="text/plain", status=200) 
-            except stripe.CardError, e:
-                messages.error(request, _(u"Betaling feilet: ") + str(e))
-                return HttpResponse(str(e), content_type="text/plain", status=500) 
+        #TODO return error messages
 
 @login_required
 def payment_info(request):
-    if 'payment_ids' in request.session and 'event_id' in request.session:
+    if 'payment_ids' in request.session:
 
         data = dict()
 
-        event = get_object_or_404(Event, pk=request.session['event_id'])
-
-        data['stripe_public_key'] = settings.STRIPE_PUBLIC_KEY
-        data['event_id'] = event.id
-        data['email'] = request.user.email
-        data['description'] = event.title
-
         payments = Payment.objects.filter(id__in=request.session['payment_ids'])
 
-        data['payment_ids'] = request.session['payment_ids']
+        if payments:
+            content_type = ContentType.objects.get_for_id(payments[0].content_type.id)
+            content_object = content_type.get_object_for_this_type(pk=payments[0].object_id)
 
-        for payment in payments:
-            data[payment.id] = dict()
-            data[payment.id]['price'] = payment.price
-            #The price is in øre so it needs to be multiplied with 100
-            data[payment.id]['stripe_price'] = payment.price * 100
-            data[payment.id]['payment_id'] = payment.id
+            data['stripe_public_key'] = settings.STRIPE_PUBLIC_KEY
+            data['email'] = request.user.email
+            data['description'] = payment_description(content_object)
 
-        return HttpResponse(json.dumps(data), content_type="application/json")
+
+            data['payment_ids'] = request.session['payment_ids']
+
+            for payment in payments:
+                data[payment.id] = dict()
+                data[payment.id]['price'] = payment.price
+                #The price is in øre so it needs to be multiplied with 100
+                data[payment.id]['stripe_price'] = payment.price * 100
+                data[payment.id]['payment_id'] = payment.id
+
+            return HttpResponse(json.dumps(data), content_type="application/json")
+
+    return HttpResponse("Failed to get info", content_type="text/plain", status=500) 
+
+
+def payment_description(content_object):
+    if hasattr(content_object, "payment_description"):
+        return content_object.payment_description()
+
+    return "payment description not implemented"
+
+def handle_post_payment(content_object, user):
+    if hasattr(content_object, "payment_complete"):
+        content_object.payment_complete(user)

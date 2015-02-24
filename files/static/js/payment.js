@@ -27,7 +27,6 @@ var setupButton = function(data, payment_id){
                 url:"/payment/",
                 data: {
                     'stripeToken': token.id,
-                    'eventId': data['event_id'],
                     'paymentId': payment_id
                 },
                 //Reloads the page on error or success to show the message and update the site content.
@@ -47,7 +46,7 @@ var setupButton = function(data, payment_id){
         // Open Checkout with further options
         handler.open({
             name: 'Online',
-            description: data[payment_id]['description'],
+            description: data['description'],
             amount: data[payment_id]['stripe_price'],
             email: data['email'],
             allowRememberMe: false,
