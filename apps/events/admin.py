@@ -73,7 +73,7 @@ class AttendeeAdmin(admin.ModelAdmin):
 
     def delete_model(self, request, obj):
         event = obj.event.event
-        event.attendace_event.notify_waiting_list(host=request.META['HTTP_HOST'], unattended_user=obj.user)
+        event.attendance_event.notify_waiting_list(host=request.META['HTTP_HOST'], unattended_user=obj.user)
         obj.delete()
 
 
