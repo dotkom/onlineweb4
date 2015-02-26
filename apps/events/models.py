@@ -80,13 +80,13 @@ class Event(models.Model):
         return self.title
 
     def payment_complete(self, user):
-        attendee = Attendee.objects.get(event=self.attendance_event, user=user)
+        attendee = Attendee.objects.filter(event=self.attendance_event, user=user)
 
         if attendee:
-            attendee.paid = True
-            attendee.save()
+            attendee[0].paid = True
+            attendee[0].save()
         else:
-            Attendee.objects.create(event=event.attendance_event, user=user, paid=True)
+            Attendee.objects.create(event=self.attendance_event, user=user, paid=True)
 
     def is_attendance_event(self):
         """ Returns true if the event is an attendance event """
