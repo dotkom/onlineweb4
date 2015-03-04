@@ -175,14 +175,18 @@ def search_events(request):
 def _search_indexed(request, query, filters):
     results = []
     kwargs = {}
+    order_by = 'event_start'
 
     if filters['future'] == 'true':
         kwargs['event_start__gte'] = timezone.now()
+    else:
+        # Reverse order when showing all events
+        order_by = '-' + order_by
 
     if filters['myevents'] == 'true':
         kwargs['attendance_event__attendees__user'] = request.user
 
-    events = Event.objects.filter(**kwargs).order_by('event_start').prefetch_related(
+    events = Event.objects.filter(**kwargs).order_by(order_by).prefetch_related(
             'attendance_event', 'attendance_event__attendees', 'attendance_event__reserved_seats',
             'attendance_event__reserved_seats__reservees')
     
