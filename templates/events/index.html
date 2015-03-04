@@ -121,9 +121,25 @@ Arrangementsarkiv - Online
         filters   += '&future=' + this.future;
         filters     += '&myevents=' + this.myevents;
 
+        var self = this;
         $.get(url + query + filters, function (result) {
           $('#events').empty();
           $('#events').append(result);
+          if(!self.future) {
+            // Calculate menu offset
+            var offset = $('nav.subnavbar').position().top+$('nav.subnavbar').outerHeight(true);
+            // Scroll to closest event
+            var articles = $('#events article');
+            var today = new Date();
+            articles.each(function(i, event) {
+              var event_date = new Date($(event).data('date'));
+              if(event_date < today) {
+                // Scroll animation
+                $('html, body').animate({scrollTop: $(event).offset().top - offset}, 250);
+                return false;
+              }
+            });
+          }
         });
       };
 
