@@ -90,6 +90,18 @@ class Event(models.Model):
         else:
             Attendee.objects.create(event=self.attendance_event, user=user, paid=True)
 
+    def payment_mail(self):
+        if self.event_type == 1 or self.event_type == 4: # Sosialt & Utflukt
+            return settings.EMAIL_ARRKOM
+        elif self.event_type == 2: #Bedpres
+            return settings.EMAIL_BEDKOM
+        elif self.event_type == 3: #Kurs
+            return settings.EMAIL_FAGKOM
+        elif self.event_type == 5: # Ekskursjon
+            return settings.EMAIL_EKSKOM
+        else:
+            return settings.DEFAULT_FROM_EMAIL
+
     def is_attendance_event(self):
         """ Returns true if the event is an attendance event """
         try:

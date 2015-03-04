@@ -9,6 +9,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib import messages
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.decorators import login_required
+from django.core.mail import EmailMessage
 from django.utils.translation import ugettext as _ 
 
 from apps.payment.models import Payment, PaymentRelation
@@ -39,19 +40,18 @@ def payment(request):
                       description=payment_description(content_object) + " - " + request.user.email
                     )
 
-                    PaymentRelation.objects.create(payment=payment, user=request.user)
+                    payment_relation = PaymentRelation.objects.create(payment=payment, user=request.user)
 
                     handle_post_payment(content_object, request.user)
 
-                    #TODO send mail
+                    send_payment_confirmation_mail(payment_relation, content_object)
 
                     messages.success(request, _(u"Betaling utført."))
                     return HttpResponse("Betaling utført.", content_type="text/plain", status=200) 
                 except stripe.CardError, e:
-                    messages.error(request, _(u"Betaling feilet: ") + str(e))
+                    messages.error(request, str(e))
                     return HttpResponse(str(e), content_type="text/plain", status=500) 
 
-        #TODO return error messages
 
 @login_required
 def payment_info(request):
@@ -90,6 +90,21 @@ def payment_description(content_object):
 
     return "payment description not implemented"
 
+def payment_mail(content_object):
+    if hasattr(content_object, "payment_mail"):
+        return content_object.payment_mail()
+
+    return settings.DEFAULT_FROM_EMAIL
+
 def handle_post_payment(content_object, user):
     if hasattr(content_object, "payment_complete"):
         content_object.payment_complete(user)
+
+def send_payment_confirmation_mail(payment_relation, content_object):
+    subject = "Kvitering: " + payment_description(content_object)
+    from_mail = payment_mail(content_object)
+    to_mails = [payment_relation.user.email] 
+
+    message = "test"
+
+    email = EmailMessage(subject, unicode(message), from_mail, [], to_mails).send()
