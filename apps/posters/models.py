@@ -30,7 +30,7 @@ class Poster(models.Model):
     # Order specific
     ordered_date = models.DateTimeField(auto_now_add=True, editable=False)
     ordered_by = models.ForeignKey(User, related_name=_(u"bestilt av"))
-    ordered_by_group = models.ForeignKey(Group, related_name=_(u'bestilt av komite'))
+    ordered_committee = models.ForeignKey(Group, related_name=_(u'bestilt av komite'))
     assigned_to = models.ForeignKey(User, related_name=_(u'tilordnet til'), blank=True, null=True)
     comments = models.TextField(_(u"kommentar"), max_length=500, blank=True, null=True)
 
@@ -43,3 +43,6 @@ class Poster(models.Model):
             ('overview_poster_order', 'View poster order overview'),
             ('view_poster_order', 'View poster orders'),
         )
+
+    def __str__(self):
+        return "Plakat for %(event)s" % {'event': self.title}

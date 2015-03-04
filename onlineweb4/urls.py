@@ -107,6 +107,11 @@ if 'apps.offline' in settings.INSTALLED_APPS:
         url(r'^offline/',           include('apps.offline.urls')),
     )
 
+if 'apps.posters' in settings.INSTALLED_APPS:
+    urlpatterns += patterns('',
+        url(r'^dashboard/posters/',          include('apps.posters.dashboard.urls')),
+    )
+
 if 'apps.profiles' in settings.INSTALLED_APPS:
     urlpatterns += patterns('',
         url(r'^profile/',           include('apps.profiles.urls')),

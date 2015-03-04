@@ -38,19 +38,23 @@ def add(request):
 
 @ensure_csrf_cookie
 @login_required
-@permission_required('posters.view_poster_order', return_403=True)
-def overview(request):
+@permission_required('posters.overview_poster_order', return_403=True)
+def index(request):
     if request.is_ajax():
         do_ajax_shit=True
+
+    context = get_base_context(request)
 
     return render(request, 'posters/dashboard/view.html', context)
 
 
 @ensure_csrf_cookie
 @login_required
-@permission_required('posters.overview_poster_order', return_403=True)
-def overview(request):
+@permission_required('posters.view_poster_order', return_403=True)
+def details(request):
     if request.is_ajax():
         do_ajax_shit=True
+
+    context = get_base_context(request)
 
     return render(request, 'posters/dashboard/overview.html', context)
