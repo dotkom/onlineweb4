@@ -1,7 +1,7 @@
 {% for payment in payments %}
-	<p class="status-text" style="margin-bottom:15px">Prisen er på {{ payment.price }} Kr.</p>
-	<button id="stripeButton{{ payment.id }}" class="btn btn-large btn-success">Betal med kort</button>
+	<p class="status-text payment-price-tag">Prisen er på {{ payment.price }} Kr.</p>
+	<button id="stripeButton{{ payment.id }}" class="btn btn-large btn-success payment-button">Betal med kort</button>
 	{% if payments|length > 1 %}
-		<p class="help-text" style="margin-bottom:20px">{{payment.description}}</p>
+		<p class="help-text row-space">{{payment.description}}</p>
 	{% endif %}
 {% endfor %}
