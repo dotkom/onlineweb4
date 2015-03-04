@@ -36,7 +36,7 @@ Vagrant.configure('2') do |config|
             onlineweb_config.vm.box_url = 'http://files.vagrantup.com/precise32.box'
             
             onlineweb_config.vm.network :forwarded_port, guest: 8000, host: 8001
-            onlineweb_config.vm.network :forwarded_port, guest: 80, host: 8080
+            onlineweb_config.vm.network :forwarded_port, guest: 80, host: 8081
             onlineweb_config.vm.network :forwarded_port, guest: 443, host: 8443
 
             onlineweb_config.ssh.forward_agent = true

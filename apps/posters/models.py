@@ -21,9 +21,9 @@ class Poster(models.Model):
     location = models.TextField(_(u"sted"), max_length=50)
     when = models.DateTimeField(_(u'event-start'))
     category = models.IntegerField(_(u"type"), choices=POSTER_TYPES)
-    amount = models.IntegerField(_(u'antall'), decimal_places=2, max_digits=10, blank=True, null=True)
+    amount = models.IntegerField(_(u'antall'), blank=True, null=True)
     description = models.TextField(_(u"beskrivelse"), max_length=1000)
-    price = models.DecimalField(_(u'pris'), blank=True, null=True)
+    price = models.DecimalField(_(u'pris'), max_digits=10, decimal_places=2, blank=True, null=True)
     display_from = models.DateField(_(u"vis fra"))
     display_to = models.DateField(_(u"vis til"))
 
