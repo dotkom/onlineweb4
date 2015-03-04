@@ -29,22 +29,19 @@ def payment(request):
             payment = Payment.objects.get(id=payment_id)
 
             if payment:
-                content_type = ContentType.objects.get_for_id(payment.content_type.id)
-                content_object = content_type.get_object_for_this_type(pk=payment.object_id)
-
                 try:
                     charge = stripe.Charge.create(
                       amount=payment.price * 100, #Price is multiplied with 100 because the amount is in øre
                       currency="nok",
                       card=token,
-                      description=payment_description(content_object) + " - " + request.user.email
+                      description=payment.content_object_description() + " - " + request.user.email
                     )
 
                     payment_relation = PaymentRelation.objects.create(payment=payment, user=request.user)
 
-                    handle_post_payment(content_object, request.user)
+                    payment.content_object_handle_payment(request.user)
 
-                    send_payment_confirmation_mail(payment_relation, content_object)
+                    send_payment_confirmation_mail(payment_relation)
 
                     messages.success(request, _(u"Betaling utført."))
                     return HttpResponse("Betaling utført.", content_type="text/plain", status=200) 
@@ -67,9 +64,7 @@ def payment_info(request):
 
             data['stripe_public_key'] = settings.STRIPE_PUBLIC_KEY
             data['email'] = request.user.email
-            data['description'] = payment_description(content_object)
-
-
+            data['description'] = payments[0].content_object_description()
             data['payment_ids'] = request.session['payment_ids']
 
             for payment in payments:
@@ -83,26 +78,9 @@ def payment_info(request):
 
     return HttpResponse("Failed to get info", content_type="text/plain", status=500) 
 
-
-def payment_description(content_object):
-    if hasattr(content_object, "payment_description"):
-        return content_object.payment_description()
-
-    return "payment description not implemented"
-
-def payment_mail(content_object):
-    if hasattr(content_object, "payment_mail"):
-        return content_object.payment_mail()
-
-    return settings.DEFAULT_FROM_EMAIL
-
-def handle_post_payment(content_object, user):
-    if hasattr(content_object, "payment_complete"):
-        content_object.payment_complete(user)
-
-def send_payment_confirmation_mail(payment_relation, content_object):
-    subject = "Kvitering: " + payment_description(content_object)
-    from_mail = payment_mail(content_object)
+def send_payment_confirmation_mail(payment_relation):
+    subject = _(u"Kvitering") + ": " + payment_relation.payment.content_object_description()
+    from_mail = payment_relation.payment.content_object_mail()
     to_mails = [payment_relation.user.email] 
 
     message = "test"

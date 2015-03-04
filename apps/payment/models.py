@@ -25,6 +25,23 @@ class Payment(models.Model):
     changed_date = models.DateTimeField(auto_now=True, editable=False)
     last_changed_by = models.ForeignKey(User, editable=False, null=True) #blank and null is temperarly
 
+
+    def content_object_description(self):
+        if hasattr(self.content_object, "payment_description"):
+            return self.content_object.payment_description()
+
+        return "payment description not implemented"
+
+    def content_object_mail(self):
+        if hasattr(self.content_object, "payment_mail"):
+            return self.content_object.payment_mail()
+
+        return settings.DEFAULT_FROM_EMAIL
+
+    def content_object_handle_payment(self, user):
+        if hasattr(self.content_object, "payment_complete"):
+            self.content_object.payment_complete(user)
+
     class Meta:
         verbose_name = _(u"betaling")
         verbose_name_plural = _(u"betalinger")
@@ -40,4 +57,11 @@ class PaymentRelation(models.Model):
         if not self.unique_id:
             self.unique_id = str(uuid.uuid4())
         super(PaymentRelation, self).save(*args, **kwargs)
+
+    def __unicode__(self):
+        return self.payment.content_object_description() + " - " + unicode(self.user)
+
+    class Meta:
+        verbose_name = _(u"betalingsrelasjon")
+        verbose_name_plural = _(u"betalingsrelasjoner")
 
