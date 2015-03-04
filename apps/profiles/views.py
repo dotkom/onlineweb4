@@ -11,7 +11,7 @@ from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Group
 from django.core.mail import send_mail
-from django.http import HttpResponse, Http404
+from django.http import HttpResponse, Http404, JsonResponse
 from django.shortcuts import redirect, render, get_object_or_404
 from django.utils.translation import ugettext as _
 
@@ -410,7 +410,7 @@ def search_for_users(query, limit=10):
 def api_plain_user_search(request):
     if request.GET.get('query'):
         users = search_for_plain_users(request.GET.get('query'))
-        return HttpResponse(json.dumps(users), status=200, content_type="application/json") 
+        return JsonResponse(users, safe=False) 
     return render_json(error=u'Mangler søkestreng')
 
 def search_for_plain_users(query, limit=10):
