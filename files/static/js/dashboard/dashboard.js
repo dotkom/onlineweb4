@@ -61,6 +61,48 @@ var Dashboard = (function ($) {
 
                 })
             })
+    
+            // Generic javascript to enable interactive tabs that do not require page reload
+            var switchTab = function(newActiveTab) {
+                if ($('#dashboard-tabs').length) {
+                    tabElement = $('#dashboard-tabs').find('[data-section="'+ newActiveTab + '"]')
+                    if (tabElement.length) {
+                        // Hide sections
+                        $('#tab-content section').hide()
+                        // Unmark currently active tab
+                        $('#dashboard-tabs').find('li.active').removeClass('active')
+                        // Update the active tab to the clicked tab and show that section
+                        tabElement.parent().addClass('active')
+                        $('#' + newActiveTab).show()
+                        // Update URL
+                        window.history.pushState({}, document.title, $(tabElement).attr('href'))
+                    }
+                }
+                else {
+                    console.log("No element with id #dashboard-tabs found.")
+                }
+            }
+
+            // Hide all other tabs and show the active one when the page loads
+            if ($('#dashboard-tabs').length) {
+                // Hide all sections 
+                $('#tab-content section').hide()
+                // Find the currently active tab and show it
+                activeTab = $('#dashboard-tabs').find('li.active a').data('section')    
+                $('#' + activeTab).show()
+
+                // Set up the tabs to show/hide when clicked
+                $('#dashboard-tabs').on('click', 'a', function (e) {
+                    e.preventDefault()
+                    newActiveTab = $(this).data('section')
+                    switchTab(newActiveTab);
+                })
+            }
+
+            // Fix for tabs when going 'back' in the browser history
+            window.addEventListener("popstate", function(e) {
+                // If you can figure out how to do this properly, be my guest.
+            });
 
             // Set up AJAX CSRF for Dashboard
             doAjaxSetup()
