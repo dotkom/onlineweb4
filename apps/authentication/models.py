@@ -88,7 +88,7 @@ class OnlineUser(AbstractUser):
     
     # Online related fields
     field_of_study = models.SmallIntegerField(_(u"studieretning"), choices=FIELD_OF_STUDY_CHOICES, default=0)
-    started_date = models.DateField(_(u"startet studie"), default=timezone.now().date())
+    started_date = models.DateField(_(u"startet studie"), default=timezone.now)
     compiled = models.BooleanField(_(u"kompilert"), default=False)
 
     # Infomail
