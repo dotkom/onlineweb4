@@ -15,25 +15,41 @@ from django.views.decorators.csrf import ensure_csrf_cookie
 from guardian.decorators import permission_required
 
 from apps.dashboard.tools import has_access, get_base_context
+from apps.dashboard.posters.models import PosterForm
 
 
 @ensure_csrf_cookie
 @login_required
 @permission_required('posters.add_poster_order', return_403=True)
 def add(request):
-    if request.is_ajax():
-        do_ajax_shit=True
-
     # Generic check to see if user has access to dashboard. (In Komiteer or superuser)
     if not has_access(request):
         raise PermissionDenied
 
     # Create the base context needed for the sidebar
     context = get_base_context(request)
+    if request.is_ajax():
+        do_ajax_shit=True
 
-    #context['poster_orders'] = 1
-    
-    return render(request, 'posters/dashboard/add.html', context)
+    if request.method == 'GET':
+            posterform = PosterForm()
+
+    else:
+        # A POST request: Handle Form Upload
+        form = PostForm(request.POST) # Bind data from request.POST into a PostForm
+ 
+        # If data is valid, proceeds to create a new post and redirect the user
+        if form.is_valid():
+            shit=True
+            #content = form.cleaned_data['content']
+            #created_at = form.cleaned_data['created_at']
+            #post = m.Post.objects.create(content=content,
+            #                             created_at=created_at)
+            #return HttpResponseRedirect(reverse('post_detail',
+            #                                    kwargs={'post_id': post.id}))
+
+    return render(request, 'posters/dashboard/add.html', {'PosterForm': posterform, context})
+
 
 
 @ensure_csrf_cookie

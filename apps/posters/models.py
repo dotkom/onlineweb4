@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from django.db import models
+from django.forms import ModelForm
 from django.utils.translation import ugettext as _
 
 from django.contrib.auth.models import Group
@@ -46,3 +47,8 @@ class Poster(models.Model):
 
     def __str__(self):
         return "Plakat for %(event)s" % {'event': self.title}
+
+
+class PosterForm(ModelForm):        
+    class Meta: 
+        model = Poster
