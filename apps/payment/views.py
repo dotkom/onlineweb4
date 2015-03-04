@@ -79,10 +79,15 @@ def payment_info(request):
     return HttpResponse("Failed to get info", content_type="text/plain", status=500) 
 
 def send_payment_confirmation_mail(payment_relation):
-    subject = _(u"Kvitering") + ": " + payment_relation.payment.content_object_description()
+    subject = _(u"kvittering") + ": " + payment_relation.payment.content_object_description()
     from_mail = payment_relation.payment.content_object_mail()
     to_mails = [payment_relation.user.email] 
 
-    message = "test"
+    message = _(u"Du har betalt for ") + payment_relation.payment.content_object_description()
+    message += "\n"
+    message += _(u"Ditt kvitteringsnummer er") + ": " + payment_relation.unique_id
+    message += "\n"
+    message += "\n"
+    message += _(u"Dersom du har problemer eller spørsmål, send mail til ") + ":" + payment_relation.payment.content_object_mail()
 
     email = EmailMessage(subject, unicode(message), from_mail, [], to_mails).send()
