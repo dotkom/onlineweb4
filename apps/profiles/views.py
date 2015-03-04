@@ -71,8 +71,8 @@ def _create_request_dictionary(request):
         'password_change_form' : PasswordChangeForm(request.user),
         'marks' : [
             # Tuple syntax ('title', list_of_marks, is_collapsed)
-            (_(u'aktive prikker'), Mark.active.filter(given_to=request.user), False),
-            (_(u'inaktive prikker'), Mark.inactive.filter(given_to=request.user), True),
+            (_(u'aktive prikker'), Mark.marks.active(request.user), False),
+            (_(u'inaktive prikker'), Mark.marks.inactive(request.user), True),
         ],
         'new_email' : NewEmailForm(),
         'has_active_approvals' : MembershipApproval.objects.filter(applicant=request.user, processed=False).count() > 0,

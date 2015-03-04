@@ -12,6 +12,7 @@
         {% compress css %}
         <link rel="stylesheet" type="text/less" href="{{ STATIC_URL }}less/font-awesome-4.2.0/font-awesome.less">
         <link rel="stylesheet" type="text/less" href="{{ STATIC_URL }}less/dashboard/main.less">
+        <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/jquery-tablesorter/tablesorter.css">
         {% endcompress %}
     {% endblock %}
 </head>
@@ -176,19 +177,28 @@
                         </ul>
                     </li>
                     {% endif %}
-                    <li>
+                    {% if 'inventory.view_item' in user_permissions %}
+                    <li class="treeview">
+                        <a href="/dashboard/inventory/">
+                            <i class="fa fa-archive blue"></i> <span>Varelager</span>
+                            {% if inventory_expired %}
+                            <span class="pull-right"><i class="fa fa-warning orange"></i>&nbsp;&nbsp;</span>
+                            {% endif %}
+                        </a>
+                    {% endif %}
+                    <!--<li>
                         <a href="#">
                             <i class="fa fa-bell blue"></i> <span>Til oppfølging</span>
                             <small class="badge pull-right">6</small>
                         </a>
-                    </li>
+                    </li>-->
                     {% endblock %}
                 </ul>
             </section>
             <!-- /.sidebar -->
         </aside>
 
-        <!-- Right side column. Contains the navbar and content of the page -->
+        <!-- Right side column. Contains the header, breadcrumbs and content of the page -->
         <aside class="right-side topspacing">
             <!-- Content Header (Page header) -->
             <section class="content-header">
@@ -235,6 +245,7 @@
         <script src="{{ STATIC_URL }}js/libs/moment.min.js"></script>
         <script src="{{ STATIC_URL }}js/libs/fastclick.js"></script>
         <script src="{{ STATIC_URL }}js/libs/jquery.cookie.js"></script>
+        <script src="{{ STATIC_URL }}js/libs/jquery.tablesorter.min.js"></script>
         <script src="{{ STATIC_URL }}js/dashboard/dashboard.js"></script>
     {% endblock %}
 

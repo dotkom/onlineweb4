@@ -4,7 +4,7 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.contrib import admin
 from django.http import HttpResponse
 from django.views.generic import TemplateView
-from django_notify.urls import get_pattern as get_notify_pattern
+from django_nyt.urls import get_pattern as get_notify_pattern
 
 from wiki.urls import get_pattern as get_wiki_pattern
 from filebrowser.sites import site
@@ -36,7 +36,7 @@ urlpatterns = patterns('',
     # Online Notifier Owner Verification (checked yearly or so by Google)
     url(r'^google79c0b331a83a53de\.html$', lambda r: HttpResponse(
         "google-site-verification: google79c0b331a83a53de.html", content_type="text/html")),
-    
+
     # Wiki
     (r'^notify/', get_notify_pattern()),
     (r'^wiki/', get_wiki_pattern())
@@ -95,6 +95,11 @@ if 'apps.events' in settings.INSTALLED_APPS:
 if 'apps.feedback' in settings.INSTALLED_APPS:
     urlpatterns += patterns('',
         url(r'^feedback/',          include('apps.feedback.urls')),
+    )
+
+if 'apps.inventory' in settings.INSTALLED_APPS:
+    urlpatterns += patterns('',
+        url(r'^dashboard/inventory/',          include('apps.inventory.dashboard.urls')),
     )
 
 if 'apps.offline' in settings.INSTALLED_APPS:

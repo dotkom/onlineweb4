@@ -69,4 +69,7 @@ $(document).ready(function() {
             crossDomain: false
         });
     }
+
+    // Bind tablesorter on the processed approvals list
+    $('#previous_approvals_list').tablesorter()
 });

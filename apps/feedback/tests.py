@@ -201,8 +201,8 @@ class SimpleTest(TestCase):
         FeedbackMail.set_marks("test_title", users)
         mark = Mark.objects.get()
 
-        self.assertEqual(set(users), set(mark.given_to.all()))
-        self.assertNotEqual(set(all_users), set(mark.given_to.all()))
+        self.assertEqual(set(users), set([mu.user for mu in mark.given_to.all()]))
+        self.assertNotEqual(set(all_users), set([mu.user for mu in mark.given_to.all()]))
 
     def test_login(self):
         client = Client()
