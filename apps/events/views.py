@@ -79,13 +79,14 @@ def details(request, event_id, event_slug):
         if payments:
             request.session['payment_ids'] = [payment.id for payment in payments]
 
-            payment_relation = PaymentRelation.objects.filter(payment__in=payments, user=request.user)
-            if payment_relation:
-                user_paid = True
-            elif user_attending:
-                attendee = Attendee.objects.filter(event=attendance_event, user=request.user)
-                if attendee:
-                    user_paid = attendee[0].paid
+            if not user_anonymous:
+                payment_relation = PaymentRelation.objects.filter(payment__in=payments, user=request.user)
+                if payment_relation:
+                    user_paid = True
+                elif user_attending:
+                    attendee = Attendee.objects.filter(event=attendance_event, user=request.user)
+                    if attendee:
+                        user_paid = attendee[0].paid
 
         context.update({
                 'now': timezone.now(),
