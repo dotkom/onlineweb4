@@ -393,7 +393,7 @@ def api_user_search(request):
     if request.GET.get('query'):
         users = search_for_users(request.GET.get('query'))
         return render_json(users)
-    return render_json(error='Mangler søkestreng')
+    return render_json(error=u'Mangler søkestreng')
 
 def search_for_users(query, limit=10):
     if not query:
@@ -405,6 +405,26 @@ def search_for_users(query, limit=10):
         results.append(result.object)
 
     return results[:limit]
+
+@login_required
+def api_plain_user_search(request):
+    if request.GET.get('query'):
+        users = search_for_plain_users(request.GET.get('query'))
+        return HttpResponse(json.dumps(users), status=200, content_type="application/json") 
+    return render_json(error=u'Mangler søkestreng')
+
+def search_for_plain_users(query, limit=10):
+    if not query:
+        return []
+
+    results = []
+
+    for result in watson.search(query, models=(User.objects.filter(is_active=True),)):
+        uobj = result.object
+        results.append({"id": uobj.id, "value": uobj.get_full_name()})
+
+    return results[:limit]
+
 
 @login_required
 def view_profile(request, username):
