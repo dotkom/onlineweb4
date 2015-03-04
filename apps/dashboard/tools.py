@@ -7,6 +7,7 @@ from django.contrib.auth.models import Group
 
 from apps.approval.models import MembershipApproval
 from apps.inventory.models import Batch
+from apps.posters.models import Poster
 
 
 def has_access(request):
@@ -55,5 +56,10 @@ def get_base_context(request):
     if request.user.has_perm('inventory.view_item'):
         if Batch.objects.filter(expiration_date__lt=date.today()):
             context['inventory_expired'] = True
+
+    if request.user.has_perm('posters.view_poster'):
+        if Poster.objects.filter(assigned_to=None) or Poster.objects.filter(assigned_to=request.user):
+            context['poster_orders'] = Poster.objects.filter(assigned_to=None).count() + \
+                                       Poster.objects.filter(assigned_to=request.user).count()
 
     return context

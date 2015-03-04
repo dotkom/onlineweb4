@@ -196,7 +196,7 @@ INSTALLED_APPS = (
     # Third party dependencies
     'django.contrib.humanize',
     'django_nose',
-    'south',
+    #'south',
     'django_nyt', # Wiki
     'mptt', # Wiki
     'sekizai', # Wiki
@@ -245,6 +245,7 @@ INSTALLED_APPS = (
     'apps.resourcecenter',
     'apps.mailinglists',
     'apps.inventory',
+    'apps.posters',
     'scripts',
 
     #External apps
