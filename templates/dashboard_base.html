@@ -138,6 +138,19 @@
                         </ul>
                     </li>
                     {% endif %}
+                    {% if 'posters.add_poster_order' in user_permissions %}
+                    <li class="treeview">
+                        <a href="#">
+                            <i class="fa fa-picture-o blue"></i> <span>Plakatbestilling</span>
+                            {% if poster_orders %}<small class="badge pull-right">{{ poster_orders }}</small>{% endif %}
+                            <i class="fa fa-angle-down pull-right"></i>
+                        </a>
+                        <ul class="treeview-menu">
+                            <li><a href="#"><i class="fa fa-angle-double-right orange"></i> Ny bestilling</a></li>
+                            <li><a href="#"><i class="fa fa-angle-double-right orange"></i> Oversikt</a></li>
+                        </ul>
+                    </li>
+                    {% endif %}
                     {% if 'marks.view_mark' in user_permissions %}
                     <li class="treeview">
                         <a href="#">
