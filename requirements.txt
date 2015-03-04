@@ -1,5 +1,4 @@
 Django==1.7.4
-South==1.0.2                    # DB migration tool.
 Pillow==2.7.0                   # pillow
 django-tastypie==0.12.1         # API
 python-memcached==1.53          # Memcache. Used by Mailinglists to fetch from Sympa.
