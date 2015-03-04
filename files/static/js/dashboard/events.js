@@ -14,7 +14,7 @@ var Event = (function ($, tools) {
         return true
     }
 
-    
+
     var draw_table = function (tbody, data) {
         var tbody_html = ''
         $(data.users).each(function (i) {
@@ -26,12 +26,12 @@ var Event = (function ($, tools) {
             var user = data.users[i]
             $('#user_' + user.id).on('click', function (e) {
                 e.preventDefault()
-                Group.user.remove(user.id)
+                Event.user.remove(user.id)
             })
         })
     }
 
-     
+
     var attendee_row = function(attendee_id) {
         var row = '<tr>' + 
                     '<td><a href="{% url dashboard_attendee_details attendee.id %}">{{ attendee }}</a></td>' +
@@ -55,6 +55,9 @@ var Event = (function ($, tools) {
         init: function () {
 
             if (!performSelfCheck()) return
+
+            $('#upcoming_events_list').tablesorter()
+            $('#event_attendee_list').tablesorter()
 
             // Bind add users button
             $('#event_users_button').on('click', function (e) {
@@ -89,12 +92,12 @@ var Event = (function ($, tools) {
 
             // Typeahead template
             var user_search_template =  [
-                '<span data-id="{{ id }}" class="user-meta"><h4>{{ name }}</h4>'
+                '<span data-id="{{ id }}" class="user-meta"><h4>{{ value }}</h4>'
             ].join('')
 
             // Bind the input field
             $('#usersearch').typeahead({
-                remote: "/profile/api_user_search/?query=%QUERY",
+                remote: "/profile/api_plain_user_search/?query=%QUERY",
                 updater: function (item) {
                     return item
                 },
@@ -131,7 +134,10 @@ var Event = (function ($, tools) {
             },
             add: function(user_id) {
                 var url = window.location.href.toString()
-                
+                var data = {
+                        "user_id": user_id,
+                        "action": "add"
+                }
             },
         }
 

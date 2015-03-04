@@ -6,6 +6,7 @@ from django.core.exceptions import PermissionDenied
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
+from django.utils import timezone
 
 from guardian.decorators import permission_required
 
@@ -18,7 +19,17 @@ from apps.events.dashboard.forms import ChangeEventForm, ChangeAttendanceEventFo
 @login_required
 @permission_required('event.view_event', raise_403=True)
 def index(request):
-    events = Event.objects.all() 
+    events = Event.objects.filter(event_start__gte=timezone.now().date()).order_by('event_start')
+
+    context = get_base_context(request)
+    context['events'] = events
+
+    return render(request, 'events/dashboard/index.html', context)
+
+@login_required
+@permission_required('event.view_event', raise_403=True)
+def past(request):
+    events = Event.objects.filter(event_start__lt=timezone.now().date()).order_by('-event_start')
 
     context = get_base_context(request)
     context['events'] = events
@@ -33,7 +44,7 @@ def create_event(request):
 
 @login_required
 @permission_required('event.view_event', raise_403=True)
-def details(request, event_id):
+def details(request, event_id, active_tab='attendees'):
     if not has_access(request):
         raise PermissionDenied
 
@@ -41,6 +52,9 @@ def details(request, event_id):
 
     event = get_object_or_404(Event, pk = event_id)
     context['event'] = event
+    context['active_tab'] = active_tab
+
+    context['change_event_form'] = ChangeEventForm(instance=event)
 
     # AJAX
     if request.method == 'POST':
