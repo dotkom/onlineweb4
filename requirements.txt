@@ -8,6 +8,7 @@ psycopg2                        # Postgres adapter
 pytz                            # Timezone lib. Obsolete?
 gunicorn==19.0
 icalendar==3.8.4
+stripe==1.20.2
 
 # third party deps
 django-filebrowser==3.5.4 		# File uploading

@@ -16,6 +16,7 @@ from apps.events.models import UserGroupRule
 from apps.events.models import Reservation
 from apps.events.models import Reservee
 from apps.feedback.admin import FeedbackRelationInline
+from apps.payment.admin import PaymentInline
 
 
 
@@ -109,7 +110,7 @@ class AttendanceEventInline(admin.StackedInline):
 
 
 class EventAdmin(admin.ModelAdmin):
-    inlines = (AttendanceEventInline, FeedbackRelationInline, CompanyInline)
+    inlines = (AttendanceEventInline, PaymentInline, FeedbackRelationInline, CompanyInline)
     exclude = ("author", )
     search_fields = ('title',)
 

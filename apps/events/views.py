@@ -15,6 +15,7 @@ from django.db.models import Q
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404, redirect
 from django.utils.translation import ugettext as _
+from django.contrib.contenttypes.models import ContentType 
 
 import icalendar
 import watson
@@ -24,7 +25,7 @@ from apps.events.forms import CaptchaForm
 from apps.events.models import Event, AttendanceEvent, Attendee
 from apps.events.pdf_generator import EventPDF
 from apps.events.utils import get_group_restricted_events
-
+from apps.payment.models import Payment, PaymentRelation
 
 def index(request):
     context = {}
@@ -43,6 +44,7 @@ def details(request, event_id, event_slug):
     will_be_on_wait_list = False
     rules = []
     user_status = False
+    user_paid = False
 
     user_access_to_event = False
     if request.user:
@@ -72,6 +74,20 @@ def details(request, event_id, event_slug):
             # Check if this user is on the waitlist
             place_on_wait_list = attendance_event.what_place_is_user_on_wait_list(request.user)
 
+        payments = Payment.objects.filter(content_type=ContentType.objects.get_for_model(Event), object_id=event_id)
+
+        if payments:
+            request.session['payment_ids'] = [payment.id for payment in payments]
+
+            if not user_anonymous:
+                payment_relation = PaymentRelation.objects.filter(payment__in=payments, user=request.user)
+                if payment_relation:
+                    user_paid = True
+                elif user_attending:
+                    attendee = Attendee.objects.filter(event=attendance_event, user=request.user)
+                    if attendee:
+                        user_paid = attendee[0].paid
+
         context.update({
                 'now': timezone.now(),
                 'attendance_event': attendance_event,
@@ -84,6 +100,8 @@ def details(request, event_id, event_slug):
                 #'position_in_wait_list': position_in_wait_list,
                 'captcha_form': form,
                 'user_access_to_event': user_access_to_event,
+                'payments': payments,
+                'user_paid': user_paid,
         })
 
     return render(request, 'events/details.html', context)
