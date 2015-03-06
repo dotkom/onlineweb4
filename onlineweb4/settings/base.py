@@ -215,6 +215,7 @@ INSTALLED_APPS = (
     'djangoformsetjs',
     'reversion',
     'guardian',
+    'stripe',
 
     # Django apps
     'django.contrib.admin',
