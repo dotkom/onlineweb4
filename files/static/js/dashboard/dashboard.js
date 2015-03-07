@@ -142,15 +142,21 @@ var Dashboard = (function ($) {
             // :param message: String message text
             // :param tags: String of Bootstrap Alert CSS classes
             showStatusMessage: function (message, tags) {
+                var id = new Date().getTime();
                 var wrapper = $('.messages')
-                var message = $('<div class="row"><div class="col-md-12">' + 
+                var message = $('<div class="row" id"'+ id +'"><div class="col-md-12">' + 
                                 '<div class="alert ' + tags + '">' + 
                                 message + '</div></div></div>')
 
-                wrapper.html(message)
-                setTimeout(function () {
-                    message.fadeOut(200)
-                }, 5000)
+                message.appendTo(wrapper)
+
+                // Fadeout and remove the alert
+                setTimeout(function() {
+                    $('[id=' + id +']').fadeOut();
+                    setTimeout(function() {
+                        $('[id=' + id +']').remove();
+                    }, 5000);
+                }, 5000);
             },
 
             // Sort a table body, given a column index
