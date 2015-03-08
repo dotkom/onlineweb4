@@ -144,7 +144,7 @@ var Dashboard = (function ($) {
             showStatusMessage: function (message, tags) {
                 var id = new Date().getTime();
                 var wrapper = $('.messages')
-                var message = $('<div class="row" id"'+ id +'"><div class="col-md-12">' + 
+                var message = $('<div class="row" id="'+ id +'"><div class="col-md-12">' + 
                                 '<div class="alert ' + tags + '">' + 
                                 message + '</div></div></div>')
 
