@@ -3,8 +3,8 @@
 from django.conf.urls import patterns, include, url
 
 urlpatterns = patterns('apps.events.dashboard.views',
-    url(r'^$', 'index', name='dashboard_event_index'),
-    url(r'^past$', 'past', name='dashboard_event_past'),
+    url(r'^$', 'index', name='dashboard_events_index'),
+    url(r'^past$', 'past', name='dashboard_events_past'),
 
     # details views
     url(r'^(?P<event_id>\d+)/$', 'details', name='dashboard_event_details'),
