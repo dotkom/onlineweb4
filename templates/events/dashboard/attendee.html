@@ -10,7 +10,7 @@ Deltakerdetaljer
 {% endblock %}
 
 {% block breadcrumbs %}
-    <li><a href="{% url 'dashboard_event_index' %}">Events</a></li> 
+    <li><a href="{% url 'dashboard_events_index' %}">Events</a></li> 
     <li><a href="{% url 'dashboard_event_details' attendee.event.event.id %}">{{ attendee.event }}</a></li>
     <li>{{ attendee }}</li>
 {% endblock %}
@@ -22,29 +22,65 @@ Deltakerdetaljer
     </div>
 </div>
 <div class="row">
-    <div class="col-lg-6">
-        <div class="inline row">
-            <div class="col-md-3"><b>Arrangement:</b></div>
-            <div class="col-md-9">{{ attendee.event }}</div>
-        </div>
-        <div class="inline row">
-            <div class="col-md-3"><b>Påmeldt:</b></div>
-            <div class="col-md-9">{{ attendee.timestamp }}</div>
-        </div>
-        <div class="inline row">
-            <div class="col-md-3"><b>Betalt:</b></div>
-            <div class="col-md-9">{{ attendee.paid }}</div>
-        </div>
-        <div class="inline row">
-            <div class="col-md-3"><b>Oppmøtt:</b></div>
-            <div class="col-md-9">{{ attendee.attended }}</div>
-        </div>
-        <div class="inline row">
-            <div class="col-md-3"><b>Notat:</b></div>
-            <div class="col-md-9">{{ attendee.note }}</div>
-        </div>
-    </div>
-</div>
+    <div class="col-lg-4">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">Brukerdetaljer</h3>
+            </div>
+            <div class="panel-body">
+                <div class="inline row">
+                    <div class="col-md-3"><b>Navn:</b></div>
+                    <div class="col-md-9">{{ attendee.user.get_full_name }}</div>
+                </div>
+                <div class="inline row">
+                    <div class="col-md-3"><b>Telefon:</b></div>
+                    <div class="col-md-9">{{ attendee.user.phone_number }}</div>
+                </div>
+                <div class="inline row">
+                    <div class="col-md-3"><b>Epost:</b></div>
+                    <div class="col-md-9">{{ attendee.user.email }}</div>
+                </div>
+                <div class="inline row">
+                    <div class="col-md-3"><b>Studieretn.:</b></div>
+                    <div class="col-md-9">{{ attendee.user.get_field_of_study_display }}</div>
+                </div>
+                <div class="inline row">
+                    <div class="col-md-3"><b>Klassetrinn:</b></div>
+                    <div class="col-md-9">{{ attendee.user.year }}</div>
+                </div>
+            </div><!-- panel-body -->
+        </div><!-- panel -->
+    </div><!-- col-lg-6 -->
+    <div class="col-lg-8">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">Påmeldingsdetaljer</h3>
+            </div>
+            <div class="panel-body">
+                <div class="inline row">
+                    <div class="col-md-3"><b>Arrangement:</b></div>
+                    <div class="col-md-9">{{ attendee.event }}</div>
+                </div>
+                <div class="inline row">
+                    <div class="col-md-3"><b>Påmeldt:</b></div>
+                    <div class="col-md-9">{{ attendee.timestamp }}</div>
+                </div>
+                <div class="inline row">
+                    <div class="col-md-3"><b>Betalt:</b></div>
+                    <div class="col-md-9">{% if attendee.paid %}Ja{% else %}Nei{% endif %}</div>
+                </div>
+                <div class="inline row">
+                    <div class="col-md-3"><b>Oppmøtt:</b></div>
+                    <div class="col-md-9">{% if attendee.attended %}Ja{% else %}Nei{% endif %}</div>
+                </div>
+                <div class="inline row">
+                    <div class="col-md-3"><b>Notat:</b></div>
+                    <div class="col-md-9">{{ attendee.note }}</div>
+                </div>
+            </div><!-- panel-body -->
+        </div><!-- panel -->
+    </div><!-- col-lg-6 -->
+</div><!-- row -->    
     
 
 
