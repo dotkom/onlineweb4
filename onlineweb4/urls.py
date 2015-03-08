@@ -90,7 +90,7 @@ if 'apps.dashboard' in settings.INSTALLED_APPS:
 if 'apps.events' in settings.INSTALLED_APPS:
     urlpatterns += patterns('',
         url(r'^events/',            include('apps.events.urls')),
-        url(r'^dashboard/events/',    include('apps.events.dashboard.urls')),
+        url(r'^dashboard/events/',  include('apps.events.dashboard.urls')),
     )
 
 if 'apps.feedback' in settings.INSTALLED_APPS:
