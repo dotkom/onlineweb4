@@ -408,6 +408,7 @@ def search_for_users(query, limit=10):
 
 @login_required
 def api_plain_user_search(request):
+    """ The difference between plain_user_search and the other is exposing only id and name. """
     if request.GET.get('query'):
         users = search_for_plain_users(request.GET.get('query'))
         return JsonResponse(users, safe=False) 
