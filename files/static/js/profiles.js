@@ -17,19 +17,20 @@ $(document).ready(function() {
 
     $('#userprofile-tabs > li > a').click(function(e) {
         e.preventDefault();
-        var tab = this.getAttribute('href').substr(1);
+        // Get hash without #_
+        var tab = this.getAttribute('href').substr(2);
         updateActiveTab(tab);
-        // Update url hash
-        document.location.hash='_' + tab;
+        // Update url hash, but remove the leading _
+        document.location.hash = tab;
         $(this).tab('show');
     });
 
     // Set correct tab based on hash (#_password etc)
     if(document.location.hash) {
         $('#userprofile-tabs > li').removeClass('active');
-        // Remove #_
-        var tab = document.location.hash.substr(2);
-        $('a[href="#' + tab + '"]').click();
+        // Remove #
+        var tab = document.location.hash.substr(1);
+        $('a[href="#_' + tab + '"]').click();
     }
 
     function updateActiveTab(activetab) {
