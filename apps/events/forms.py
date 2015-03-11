@@ -12,7 +12,7 @@ class CaptchaForm(forms.Form):
                                    u'tilleggsinformasjon som f.eks. hvem du ønsker å sitte med.'),
                                     error_messages={'required' : _(u'Du må fylle inn et notat!')},
                                     max_length = 100)
-    mark_rules = forms.BooleanField(label=_(u'Jeg godtar <a href="/profile/#marks" target="_blank">prikkreglene</a>'),
+    mark_rules = forms.BooleanField(label=_(u'Jeg godtar <a href="/profile/#_marks" target="_blank">prikkreglene</a>'),
                                     error_messages={'required' : _(u'Du må godta prikkereglene!')})
     captcha = CaptchaField(error_messages={'required' : _(u'Du klarte ikke captchaen! Er du en bot?'),
                                            'invalid': _(u'Du klarte ikke captchaen! Er du en bot?')})
