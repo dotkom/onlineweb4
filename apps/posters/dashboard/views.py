@@ -15,42 +15,8 @@ from django.views.decorators.csrf import ensure_csrf_cookie
 from guardian.decorators import permission_required
 
 from apps.dashboard.tools import has_access, get_base_context
-from apps.dashboard.posters.models import PosterForm
-
-
-@ensure_csrf_cookie
-@login_required
-@permission_required('posters.add_poster_order', return_403=True)
-def add(request):
-    # Generic check to see if user has access to dashboard. (In Komiteer or superuser)
-    if not has_access(request):
-        raise PermissionDenied
-
-    # Create the base context needed for the sidebar
-    #context = get_base_context(request)
-    if request.is_ajax():
-        do_ajax_shit=True
-
-    if request.method == 'GET':
-        posterform = PosterForm()
-
-    else:
-        # A POST request: Handle Form Upload
-        form = PostForm(request.POST) # Bind data from request.POST into a PostForm
- 
-        # If data is valid, proceeds to create a new post and redirect the user
-        if form.is_valid():
-            shit=True
-            #content = form.cleaned_data['content']
-            #created_at = form.cleaned_data['created_at']
-            #post = m.Post.objects.create(content=content,
-            #                             created_at=created_at)
-            #return HttpResponseRedirect(reverse('post_detail',
-            #                                    kwargs={'post_id': post.id}))
-
-    return render(request, 'posters/dashboard/add.html', {'PosterForm': posterform, context})
-
-
+from apps.posters.models import Poster
+from apps.posters.forms import AddPosterForm
 
 @ensure_csrf_cookie
 @login_required
@@ -59,9 +25,28 @@ def index(request):
     if request.is_ajax():
         do_ajax_shit=True
 
+    #posters = Poster.objects.filter()
     context = get_base_context(request)
 
-    return render(request, 'posters/dashboard/view.html', context)
+    return render(request, 'posters/dashboard/overview.html', context)
+
+
+@ensure_csrf_cookie
+@login_required
+@permission_required('posters.add_poster_order', return_403=True)
+def add(request):
+    context = get_base_context(request)
+    context['add_poster_form'] = AddPosterForm()
+    return render(request, 'posters/dashboard/add.html', context)
+
+
+@ensure_csrf_cookie
+@login_required
+@permission_required('posters.add_poster_order', return_403=True)
+def change(request):
+    context = get_base_context(request)
+    context['edit_poster_form'] = EditPosterForm()
+    return render(request, 'posters/dashboard/change.html', context)
 
 
 @ensure_csrf_cookie
@@ -73,4 +58,4 @@ def details(request):
 
     context = get_base_context(request)
 
-    return render(request, 'posters/dashboard/overview.html', context)
+    return render(request, 'posters/dashboard/details.html', context)
