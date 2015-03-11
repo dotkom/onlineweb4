@@ -133,7 +133,12 @@ $(function() {
 
     /* Menu element change
     --------------------------------------------------------------------------------- */
-    $(".mn-nav a[href='"+window.location.pathname+"']").parent().addClass('active');
+    var paths = window.location.pathname.split('/');
+    var activeTab = paths[1];
+    // Making sure that events don't highlight the archive menu
+    if(activeTab !== 'events' || paths.length === 3) {
+        $(".mn-nav a[href='/"+activeTab+"/']").parent().addClass('active');
+    }
 
     switch (window.location.pathname) {
         case "/article/archive":
