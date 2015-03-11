@@ -157,5 +157,11 @@ def details(request, event_id, active_tab='attendees'):
 @login_required
 @permission_required('events.view_attendee', raise_403=True)
 def attendee_details(request, attendee_id):
+
+    context = get_base_context(request)
+
     attendee = get_object_or_404(Attendee, pk = attendee_id)
-    return render(request, 'events/dashboard/attendee.html', {'attendee': attendee})
+
+    context['attendee'] = attendee
+    return render(request, 'events/dashboard/attendee.html', context)
+
