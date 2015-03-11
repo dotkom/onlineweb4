@@ -18,7 +18,7 @@ from apps.events.dashboard.forms import ChangeEventForm, ChangeAttendanceEventFo
 
 
 @login_required
-@permission_required('events.view_event', raise_403=True)
+@permission_required('events.view_event', return_403=True)
 def index(request):
     events = Event.objects.filter(event_start__gte=timezone.now().date()).order_by('event_start')
 
@@ -28,7 +28,7 @@ def index(request):
     return render(request, 'events/dashboard/index.html', context)
 
 @login_required
-@permission_required('events.view_event', raise_403=True)
+@permission_required('events.view_event', return_403=True)
 def past(request):
     events = Event.objects.filter(event_start__lt=timezone.now().date()).order_by('-event_start')
 
@@ -44,7 +44,7 @@ def create_event(request):
 
 
 @login_required
-@permission_required('events.view_event', raise_403=True)
+@permission_required('events.view_event', return_403=True)
 def details(request, event_id, active_tab='attendees'):
     if not has_access(request):
         raise PermissionDenied
@@ -155,7 +155,7 @@ def details(request, event_id, active_tab='attendees'):
     return render(request, 'events/dashboard/details.html', context)
 
 @login_required
-@permission_required('events.view_attendee', raise_403=True)
+@permission_required('events.view_attendee', return_403=True)
 def attendee_details(request, attendee_id):
 
     context = get_base_context(request)
