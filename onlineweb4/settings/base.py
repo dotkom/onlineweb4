@@ -175,6 +175,10 @@ USER_SEARCH_GROUPS = [
     9,   # velKom
 ]
 
+# Online stripe test keys
+STRIPE_PUBLIC_KEY = "pk_test_Ur8B7E5uvheMlpOUVu9SGGbn"
+STRIPE_PRIVATE_KEY = "sk_test_Hrp6EUUffY7Pc4xnqwmoyhPm"
+
 #List of mailing lists, used in update_sympa_memcache_from_sql.py
 PUBLIC_LISTS = [
     "foreninger",
