@@ -1,8 +1,12 @@
 {% extends "dashboard_base.html" %}
+{% load fb_versions %}
+{% load addcss %}
+{% load markdown_deux_tags %}
+{% load crispy_forms_tags %}
 {% load compress %}
 
 {% block title %}
-Varelager - Online Dashboard
+    {{ item.name }} - Online Dashboard
 {% endblock title %}
 
 {% block styles %}
@@ -19,33 +23,95 @@ Varelager - Online Dashboard
 {% endblock js %}
 
 {% block page-header %}
-Varelager
+    {{ item.name }}
 {% endblock %}
 
 {% block breadcrumbs %}
-    <li>Varelager</li> 
+<li><a href="/dashboard/inventory/">Varelager</a></li>
+<li>{{ item.name }}</li>
 {% endblock %}
 
 {% block content %}
 <div class="row">
     <div class="col-md-12">
-        <h3>{{ item.name }}</h3>
-        <table class="table table-striped table-condensed tablesorter" id="inventory_item_list">
-            <thead>
-                <tr>
-                    <th>Mengde</th>
-                    <th>Utløpsdato</th>
-                </tr>
-            </thead>
-            <tbody>
-            {% for batch in item.batches.all %}
-                <tr>
-                    <td>{{ batch.amount }}</td>
-                    <td>{{ batch.expiration_date|date:'Y-m-d' }}</td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
+        <form method="POST" action="">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-success"><i class="fa fa-save"></i> Lagre</button>
+        <a href="#" id="inventory-add-batch" class="btn btn-primary"><i class="fa fa-plus"></i> Legg til batch</a>
+        <a href="{% url 'dashboard_inventory_delete' item.id %}" id="inventory-delete-item" class="btn btn-danger pull-right"><i class="fa fa-times fa-lg"></i> Slett</a>
+    </div>
+    <div class="col-md-12" style="display:none" id="inventory-add-batch-form">
+        <br /><br />
+        <div class="row">
+            <div class="col-md-8">
+                <div class="form-group">
+                    <label for="inventory-batch-amount">Mengde</label>
+                    <input type="number" name="batch-amount" id="inventory-batch-amount" class="form-control">
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="inventory-batch-expiry">Utløpsdato</label>
+                    <input type="date" name="batch-expiry" id="inventory-batch-expiry" class="form-control">
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12"><a href="#" id="inventory-save-batch" class="btn btn-success"><i class="fa fa-save"></i> Legg til</i></a></div>
+        </div>
+    </div>
+</div>
+<br />
+<div class="row">
+    <div class="col-md-4">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">Vare</h3>
+            </div>
+            <div class="panel-body">
+                {% for field in form %}
+                <div class="form-group {% if field.errors %}has-error{% endif %}">
+                    <label for="{{ field.auto_id }}">{{ field.label }}</label>
+                    {{ field|addclass:"form-control" }}
+                    {% if field.errors %}
+                    <p>{{ field.errors }}</p>
+                    {% endif %}
+                </div>
+                {% endfor %}
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-8">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">Batch</h3>
+            </div>
+            <div class="panel-body">
+                <table class="table table-striped table-condensed" id="inventory-batch-list">
+                    <thead>
+                        <tr>
+                            <th>Mengde</th>
+                            <th>Utløpsdato</th>
+                            <th>Fjern</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for batch in item.batches.all %}
+                            <tr>
+                                <td>{{ batch.amount }}</td>
+                                <td>{{ batch.expiration_date|date:'Y-m-d' }}</td>
+                                <td>
+                                    <a href="#" class="delete-batch" id="{{ batch.id }}">
+                                        <i class="fa fa-times fa-lg red"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 </div>
 {% endblock content %}
