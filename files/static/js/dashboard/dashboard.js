@@ -61,6 +61,48 @@ var Dashboard = (function ($) {
 
                 })
             })
+    
+            // Generic javascript to enable interactive tabs that do not require page reload
+            var switchTab = function(newActiveTab) {
+                if ($('#dashboard-tabs').length) {
+                    tabElement = $('#dashboard-tabs').find('[data-section="'+ newActiveTab + '"]')
+                    if (tabElement.length) {
+                        // Hide sections
+                        $('#tab-content section').hide()
+                        // Unmark currently active tab
+                        $('#dashboard-tabs').find('li.active').removeClass('active')
+                        // Update the active tab to the clicked tab and show that section
+                        tabElement.parent().addClass('active')
+                        $('#' + newActiveTab).show()
+                        // Update URL
+                        window.history.pushState({}, document.title, $(tabElement).attr('href'))
+                    }
+                }
+                else {
+                    console.log("No element with id #dashboard-tabs found.")
+                }
+            }
+
+            // Hide all other tabs and show the active one when the page loads
+            if ($('#dashboard-tabs').length) {
+                // Hide all sections 
+                $('#tab-content section').hide()
+                // Find the currently active tab and show it
+                activeTab = $('#dashboard-tabs').find('li.active a').data('section')    
+                $('#' + activeTab).show()
+
+                // Set up the tabs to show/hide when clicked
+                $('#dashboard-tabs').on('click', 'a', function (e) {
+                    e.preventDefault()
+                    newActiveTab = $(this).data('section')
+                    switchTab(newActiveTab);
+                })
+            }
+
+            // Fix for tabs when going 'back' in the browser history
+            window.addEventListener("popstate", function(e) {
+                // If you can figure out how to do this properly, be my guest.
+            });
 
             // Set up AJAX CSRF for Dashboard
             doAjaxSetup()
@@ -100,15 +142,21 @@ var Dashboard = (function ($) {
             // :param message: String message text
             // :param tags: String of Bootstrap Alert CSS classes
             showStatusMessage: function (message, tags) {
+                var id = new Date().getTime();
                 var wrapper = $('.messages')
-                var message = $('<div class="row"><div class="col-md-12">' + 
+                var message = $('<div class="row" id="'+ id +'"><div class="col-md-12">' + 
                                 '<div class="alert ' + tags + '">' + 
                                 message + '</div></div></div>')
 
-                wrapper.html(message)
-                setTimeout(function () {
-                    message.fadeOut(200)
-                }, 5000)
+                message.appendTo(wrapper)
+
+                // Fadeout and remove the alert
+                setTimeout(function() {
+                    $('[id=' + id +']').fadeOut();
+                    setTimeout(function() {
+                        $('[id=' + id +']').remove();
+                    }, 5000);
+                }, 5000);
             },
 
             // Sort a table body, given a column index
@@ -153,6 +201,24 @@ var Dashboard = (function ($) {
                 }
                 if (errors) return false
                 else return true
+            },
+            
+            toggleChecked: function(element) {
+
+                var checkedIcon = 'fa-check-square-o'
+                var uncheckedIcon = 'fa-square-o'
+                var allITags = $(element).find('i')
+                var ilen = allITags.length
+                
+                for (m = 0; m < ilen; m++) {
+                    icon = allITags[m]
+                    if ($(icon).hasClass('checked')) {
+                        $(icon).removeClass('checked').removeClass(checkedIcon).addClass(uncheckedIcon)
+                    }
+                    else {
+                        $(icon).addClass('checked').removeClass(uncheckedIcon).addClass(checkedIcon)
+                    }
+                }
             }
         }
     }

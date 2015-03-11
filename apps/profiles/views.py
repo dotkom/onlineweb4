@@ -11,7 +11,7 @@ from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Group
 from django.core.mail import send_mail
-from django.http import HttpResponse, Http404
+from django.http import HttpResponse, Http404, JsonResponse
 from django.shortcuts import redirect, render, get_object_or_404
 from django.utils.translation import ugettext as _
 
@@ -71,8 +71,8 @@ def _create_request_dictionary(request):
         'password_change_form' : PasswordChangeForm(request.user),
         'marks' : [
             # Tuple syntax ('title', list_of_marks, is_collapsed)
-            (_(u'aktive prikker'), Mark.active.filter(given_to=request.user), False),
-            (_(u'inaktive prikker'), Mark.inactive.filter(given_to=request.user), True),
+            (_(u'aktive prikker'), Mark.marks.active(request.user), False),
+            (_(u'inaktive prikker'), Mark.marks.inactive(request.user), True),
         ],
         'new_email' : NewEmailForm(),
         'has_active_approvals' : MembershipApproval.objects.filter(applicant=request.user, processed=False).count() > 0,
@@ -393,7 +393,7 @@ def api_user_search(request):
     if request.GET.get('query'):
         users = search_for_users(request.GET.get('query'))
         return render_json(users)
-    return render_json(error='Mangler søkestreng')
+    return render_json(error=u'Mangler søkestreng')
 
 def search_for_users(query, limit=10):
     if not query:
@@ -405,6 +405,27 @@ def search_for_users(query, limit=10):
         results.append(result.object)
 
     return results[:limit]
+
+@login_required
+def api_plain_user_search(request):
+    """ The difference between plain_user_search and the other is exposing only id and name. """
+    if request.GET.get('query'):
+        users = search_for_plain_users(request.GET.get('query'))
+        return JsonResponse(users, safe=False) 
+    return render_json(error=u'Mangler søkestreng')
+
+def search_for_plain_users(query, limit=10):
+    if not query:
+        return []
+
+    results = []
+
+    for result in watson.search(query, models=(User.objects.filter(is_active=True),)):
+        uobj = result.object
+        results.append({"id": uobj.id, "value": uobj.get_full_name()})
+
+    return results[:limit]
+
 
 @login_required
 def view_profile(request, username):

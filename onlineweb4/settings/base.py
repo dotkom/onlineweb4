@@ -175,6 +175,10 @@ USER_SEARCH_GROUPS = [
     9,   # velKom
 ]
 
+# Online stripe test keys
+STRIPE_PUBLIC_KEY = "pk_test_Ur8B7E5uvheMlpOUVu9SGGbn"
+STRIPE_PRIVATE_KEY = "sk_test_Hrp6EUUffY7Pc4xnqwmoyhPm"
+
 #List of mailing lists, used in update_sympa_memcache_from_sql.py
 PUBLIC_LISTS = [
     "foreninger",
@@ -196,7 +200,6 @@ INSTALLED_APPS = (
     # Third party dependencies
     'django.contrib.humanize',
     'django_nose',
-    'south',
     'django_nyt', # Wiki
     'mptt', # Wiki
     'sekizai', # Wiki
@@ -216,6 +219,7 @@ INSTALLED_APPS = (
     'djangoformsetjs',
     'reversion',
     'guardian',
+    'stripe',
 
     # Django apps
     'django.contrib.admin',
@@ -245,6 +249,7 @@ INSTALLED_APPS = (
     'apps.resourcecenter',
     'apps.mailinglists',
     'apps.inventory',
+    'apps.payment',
     'scripts',
 
     #External apps

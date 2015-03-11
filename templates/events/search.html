@@ -2,7 +2,7 @@
 
 {% if events %}
   {% for event in events %}
-  <article class="row">
+  <article data-date="{{ event.event_start|date:"c" }}" class="row">
 
     <div class="col-xs-12 col-sm-4 col-md-4 left-box">
       <div class="row">

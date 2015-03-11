@@ -241,12 +241,15 @@ $(document).ready(function() {
   JS for membership  
 */
 
-    $(".hasDatePicker").datepicker({
-        yearRange: "2004:" + new Date().getFullYear(),
-        changeYear: true,
-        dateFormat: "yy-mm-dd"
-    });
-       
+    var hasDatePicker = $(".hasDatePicker");
+    if(hasDatePicker.size() > 0) {
+        hasDatePicker.datepicker({
+            yearRange: "2004:" + new Date().getFullYear(),
+            changeYear: true,
+            dateFormat: "yy-mm-dd"
+        });
+    }
+
     $(".delete-position").on('click', function(e) {
         var that = $(this);
         e.preventDefault();

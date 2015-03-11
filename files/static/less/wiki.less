@@ -10,7 +10,6 @@
         z-index: 1050;
     }
 
-    padding: 87px 0 0;
     .page-header {
         margin-top: 0px;
     }
@@ -42,13 +41,15 @@
             }
         }
     }
-    #article-breadcrumbs {
+    #topbar {
         border-bottom: 1px solid #EEEEEE;
         margin-bottom: 12px;
-        > div.pull-left {
-            margin-bottom: 9px;
+        #article-breadcrumbs > div.pull-left {
             margin-left: 0px !important;
             margin-right: 10px;
+        }
+        #article-breadcrumbs > div.pull-left, form {
+            margin-bottom: 9px;
         }
         .breadcrumb {
             margin-bottom: 8px;

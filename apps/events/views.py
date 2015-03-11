@@ -15,6 +15,7 @@ from django.db.models import Q
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404, redirect
 from django.utils.translation import ugettext as _
+from django.contrib.contenttypes.models import ContentType 
 
 import icalendar
 import watson
@@ -24,7 +25,7 @@ from apps.events.forms import CaptchaForm
 from apps.events.models import Event, AttendanceEvent, Attendee
 from apps.events.pdf_generator import EventPDF
 from apps.events.utils import get_group_restricted_events
-
+from apps.payment.models import Payment, PaymentRelation
 
 def index(request):
     context = {}
@@ -37,22 +38,23 @@ def index(request):
 def details(request, event_id, event_slug):
     event = get_object_or_404(Event, pk=event_id)
 
-    is_attendance_event = False
     user_anonymous = True
     user_attending = False
     place_on_wait_list = 0
     will_be_on_wait_list = False
     rules = []
     user_status = False
+    user_paid = False
 
     user_access_to_event = False
     if request.user:
         if event in get_group_restricted_events(request.user):
             user_access_to_event = True
 
-    try:
+    context = {'event': event, 'ics_path': request.build_absolute_uri(reverse('event_ics', args=(event.id,)))}
+
+    if event.is_attendance_event():
         attendance_event = AttendanceEvent.objects.get(pk=event_id)
-        is_attendance_event = True
         form = CaptchaForm(user=request.user)
 
         if attendance_event.rule_bundles:
@@ -67,16 +69,25 @@ def details(request, event_id, event_slug):
             
             will_be_on_wait_list = attendance_event.will_i_be_on_wait_list
 
-            user_status = event.is_eligible_for_signup(request.user)
+            user_status = event.attendance_event.is_eligible_for_signup(request.user)
 
             # Check if this user is on the waitlist
-            place_on_wait_list = event.what_place_is_user_on_wait_list(request.user)
+            place_on_wait_list = attendance_event.what_place_is_user_on_wait_list(request.user)
 
-    except AttendanceEvent.DoesNotExist:
-        pass
+        payments = Payment.objects.filter(content_type=ContentType.objects.get_for_model(Event), object_id=event_id)
 
-    context = {'event': event, 'ics_path': request.build_absolute_uri(reverse('event_ics', args=(event.id,)))}
-    if is_attendance_event:
+        if payments:
+            request.session['payment_ids'] = [payment.id for payment in payments]
+
+            if not user_anonymous:
+                payment_relation = PaymentRelation.objects.filter(payment__in=payments, user=request.user)
+                if payment_relation:
+                    user_paid = True
+                elif user_attending:
+                    attendee = Attendee.objects.filter(event=attendance_event, user=request.user)
+                    if attendee:
+                        user_paid = attendee[0].paid
+
         context.update({
                 'now': timezone.now(),
                 'attendance_event': attendance_event,
@@ -89,7 +100,10 @@ def details(request, event_id, event_slug):
                 #'position_in_wait_list': position_in_wait_list,
                 'captcha_form': form,
                 'user_access_to_event': user_access_to_event,
+                'payments': payments,
+                'user_paid': user_paid,
         })
+
     return render(request, 'events/details.html', context)
 
 def get_attendee(attendee_id):
@@ -99,6 +113,10 @@ def get_attendee(attendee_id):
 def attendEvent(request, event_id):
     
     event = get_object_or_404(Event, pk=event_id)
+
+    if not event.is_attendance_event():
+        messages.error(request, _(u"Dette er ikke et påmeldingsarrangement."))
+        return redirect(event)
 
     if not request.POST:
         messages.error(request, _(u'Vennligst fyll ut skjemaet.'))
@@ -117,7 +135,7 @@ def attendEvent(request, event_id):
     # If not, an error message will be present in the returned dict
     attendance_event = event.attendance_event
 
-    response = event.is_eligible_for_signup(request.user);
+    response = event.attendance_event.is_eligible_for_signup(request.user);
 
     if response['status']:   
         ae = Attendee(event=attendance_event, user=request.user)
@@ -155,7 +173,7 @@ def unattendEvent(request, event_id):
         messages.error(request, _(u"Dette arrangementet har allerede startet."))
         return redirect(event)
 
-    event.notify_waiting_list(host=request.META['HTTP_HOST'], unattended_user=request.user)
+    event.attendance_event.notify_waiting_list(host=request.META['HTTP_HOST'], unattended_user=request.user)
     Attendee.objects.get(event=attendance_event, user=request.user).delete()
 
     messages.success(request, _(u"Du ble meldt av arrangementet."))
@@ -175,14 +193,18 @@ def search_events(request):
 def _search_indexed(request, query, filters):
     results = []
     kwargs = {}
+    order_by = 'event_start'
 
     if filters['future'] == 'true':
         kwargs['event_start__gte'] = timezone.now()
+    else:
+        # Reverse order when showing all events
+        order_by = '-' + order_by
 
     if filters['myevents'] == 'true':
         kwargs['attendance_event__attendees__user'] = request.user
 
-    events = Event.objects.filter(**kwargs).order_by('event_start').prefetch_related(
+    events = Event.objects.filter(**kwargs).order_by(order_by).prefetch_related(
             'attendance_event', 'attendance_event__attendees', 'attendance_event__reserved_seats',
             'attendance_event__reserved_seats__reservees')
     
@@ -200,19 +222,15 @@ def generate_pdf(request, event_id):
 
     event = get_object_or_404(Event, pk=event_id)
 
-    groups = request.user.groups.all()
-    if not (groups.filter(name='dotKom').count() == 1 or groups.filter(name='Hovedstyret').count() == 1):
-        if event.event_type == 1 and not groups.filter(name='arrKom').count() == 1:
-            messages.error(request, _(u'Du har ikke tilgang til listen for dette arrangementet.'))
-            return redirect(event)
+    # If this is not an attendance event, redirect to event with error
+    if not event.attendance_event:
+        messages.error(request, _(u"Dette er ikke et påmeldingsarrangement."))
+        return redirect(event)
 
-        if event.event_type == 2 and not groups.filter(name='bedKom').count() == 1:
-            messages.error(request, _(u'Du har ikke tilgang til listen for dette arrangementet.'))
-            return redirect(event)
-
-        if event.event_type == 3 and not groups.filter(name='fagKom').count() == 1:
-            messages.error(request, _(u'Du har ikke tilgang til listen for dette arrangementet.'))  
-            return redirect(event)
+    # Check access
+    if event not in get_group_restricted_events(request.user):
+        messages.error(request, _(u'Du har ikke tilgang til listen for dette arrangementet.'))
+        return redirect(event)
 
     return EventPDF(event).render_pdf()
 
@@ -273,17 +291,19 @@ def mail_participants(request, event_id):
 
     event = get_object_or_404(Event, pk=event_id)
 
+    # If this is not an attendance event, redirect to event with error
     if not event.attendance_event:
-        return HttpResponse(status=503)
+        messages.error(request, _(u"Dette er ikke et påmeldingsarrangement."))
+        return redirect(event)
 
     # Check access
-    if not event in get_group_restricted_events(request.user):
+    if event not in get_group_restricted_events(request.user):
         messages.error(request, _(u'Du har ikke tilgang til å vise denne siden.'))
         return redirect(event)
 
-    all_attendees = event.attendance_event.attendees
-    attendees_on_waitlist = event.attendance_event.waitlist_qs
-    attendees_not_paid = event.attendees_not_paid
+    all_attendees = list(event.attendance_event.attendees_qs)
+    attendees_on_waitlist = list(event.attendance_event.waitlist_qs)
+    attendees_not_paid = list(event.attendance_event.attendees_not_paid)
 
     if request.method == 'POST':
 
@@ -307,19 +327,17 @@ def mail_participants(request, event_id):
         to_emails_value = request.POST.get('to_email')
 
         if to_emails_value == '1':
-            to_emails = [attendee.user.email for attendee in all_attendees.all()]
-            print to_emails
+            to_emails = [attendee.user.email for attendee in all_attendees]
         elif to_emails_value == '2':
-            to_emails = [attendee.user.email for attendee in attendees_on_waitlist.all()]
+            to_emails = [attendee.user.email for attendee in attendees_on_waitlist]
         else:
-            to_emails = [attendee.user.email for attendee in attendees_not_paid.all()]
+            to_emails = [attendee.user.email for attendee in attendees_not_paid]
 
         message = '%s%s' % (request.POST.get('message'), signature)
         subject = request.POST.get('subject')
 
         # Send mail
         try:
-
             if EmailMessage(unicode(subject), unicode(message), from_email, [], to_emails).send():
                 messages.success(request, _(u'Mailen ble sendt'))
                 return redirect(event)

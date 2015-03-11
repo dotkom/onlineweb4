@@ -90,6 +90,7 @@ if 'apps.dashboard' in settings.INSTALLED_APPS:
 if 'apps.events' in settings.INSTALLED_APPS:
     urlpatterns += patterns('',
         url(r'^events/',            include('apps.events.urls')),
+        url(r'^dashboard/events/',  include('apps.events.dashboard.urls')),
     )
 
 if 'apps.feedback' in settings.INSTALLED_APPS:
@@ -121,6 +122,11 @@ if 'apps.resourcecenter' in settings.INSTALLED_APPS and 'apps.mailinglists' in s
 if 'apps.genfors' in settings.INSTALLED_APPS:
     urlpatterns += patterns('',
         url(r'^genfors/',           include('apps.genfors.urls')),
+    )
+
+if 'apps.payment' in settings.INSTALLED_APPS:
+    urlpatterns += patterns('',
+        url(r'^payment/',           include('apps.payment.urls')),
     )
 
 # redwine
