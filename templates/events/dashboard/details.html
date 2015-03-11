@@ -1,0 +1,72 @@
+{% extends "dashboard_base.html" %}
+{% load compress %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+{{ event }} - Dashboard - Online 
+{% endblock title %}
+
+{% block page-header %}
+Arrangementsdetaljer
+{% endblock %}
+
+{% block styles %}
+    {{ block.super }}
+    {% compress css %}
+    <link rel="stylesheet" type="text/less" href="{{ STATIC_URL }}less/dashboard/events.less" />
+    {% endcompress %}
+{% endblock %}
+
+{% block breadcrumbs %}
+    <li><a href="{% url 'dashboard_events_index' %}">Events</a></li> 
+    <li>{{ event }}</li>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-12">
+        <h3>{{ event }}</h3>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <ul id="dashboard-tabs" class="nav nav-tabs">
+                    {% comment %}
+                    Hidden to put only attendee tab in production to start off.
+
+                    <li role="presentation"{% if active_tab == 'details' %} class="active"{% endif %}>
+                        <a data-section="details" href="{% url 'dashboard_event_details_active' event.id 'details' %}">Detaljer</a>
+                    </li>
+                    {% endcomment %}
+                    <li role="presentation"{% if active_tab == 'attendees' %} class="active"{% endif %}>
+                        <a data-section="attendees" href="{% url 'dashboard_event_details_active' event.id 'attendees' %}">Påmeldte</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="tab-content">
+    <section id="details">
+        {% include "events/dashboard/details_details.html" %}
+    </section>
+    {% if event.is_attendance_event %}
+    <section id="attendees">
+        {% include "events/dashboard/details_attendees.html" %}
+    </section>
+</div>
+{% endif %}
+{% endblock content %}
+
+{% block js %}
+    {{ block.super }}
+    {% compress js %}
+    <script type="text/javascript" src="{{ STATIC_URL }}js/libs/hogan-2.0.0.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/libs/typeahead.min.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/dashboard/events.js"></script>
+    {% endcompress %}
+{% endblock %}
