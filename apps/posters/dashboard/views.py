@@ -35,8 +35,21 @@ def index(request):
 @login_required
 @permission_required('posters.add_poster_order', return_403=True)
 def add(request):
+    if request.method == 'POST':
+        form = AddPosterForm(data=request.POST)
+        if form.is_valid():
+            poster=Poster(request.POST)
+            #poster.ordered_by = request.user
+            #poster.ordered_committee = request.user.groups.filter(name="dotKom")[:1].get();
+            poster.save()
+
+            print(saved, poster)
+            return HttpResponseRedirect('../')
+        else:
+            print("invalid form")
+
     context = get_base_context(request)
-    #context['add_poster_form'] = AddPosterForm()
+    context['add_poster_form'] = AddPosterForm()
     return render(request, 'posters/dashboard/add.html', context)
 
 
