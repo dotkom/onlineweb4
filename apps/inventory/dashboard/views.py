@@ -42,6 +42,18 @@ def details(request, pk):
 
     return render(request, 'inventory/dashboard/details.html', context)
 
+@login_required
+@premission_required('inventory.add_item', return_403=True)
+def new(request):
+
+    if not has_access(request):
+        raise PermissionDenied
+
+    # Get base context
+    context = get_base_context(request)
+
+    return render(request, 'inventory/dashboard/new.html', context)
+
 
 @login_required
 @permission_required('inventory.change_item', return_403=True)
