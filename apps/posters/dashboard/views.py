@@ -36,7 +36,7 @@ def index(request):
 @permission_required('posters.add_poster_order', return_403=True)
 def add(request):
     context = get_base_context(request)
-    context['add_poster_form'] = AddPosterForm()
+    #context['add_poster_form'] = AddPosterForm()
     return render(request, 'posters/dashboard/add.html', context)
 
 
