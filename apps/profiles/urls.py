@@ -18,6 +18,7 @@ urlpatterns = patterns('apps.profiles.views',
     url(r'^update_mark_rules/$', 'update_mark_rules', name='update_mark_rules'),
     
     url(r'^api_user_search/$', 'api_user_search', name='profiles_api_user_search'),
+    url(r'^api_plain_user_search/$', 'api_plain_user_search', name='profiles_api_plain_user_search'),
     url(r'^user_search/$', 'user_search', name='profiles_user_search'),
     url(r'^(?P<username>[a-zA-Z0-9_-]+)/$', 'view_profile', name='profiles_view'),
 )

@@ -27,12 +27,12 @@ def add(request):
         raise PermissionDenied
 
     # Create the base context needed for the sidebar
-    context = get_base_context(request)
+    #context = get_base_context(request)
     if request.is_ajax():
         do_ajax_shit=True
 
     if request.method == 'GET':
-            posterform = PosterForm()
+        posterform = PosterForm()
 
     else:
         # A POST request: Handle Form Upload
