@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from datetime import datetime, time, timedelta
 import json
 
 from django.core.exceptions import PermissionDenied
@@ -16,7 +17,7 @@ from guardian.decorators import permission_required
 from apps.authentication.models import OnlineUser as User
 from apps.dashboard.tools import has_access, get_base_context
 from apps.events.dashboard.forms import ChangeEventForm, ChangeAttendanceEventForm
-from apps.events.models import Event, Attendee
+from apps.events.models import Event, AttendanceEvent, Attendee
 from apps.events.utils import get_group_restricted_events, get_types_allowed
 
 
@@ -85,10 +86,12 @@ def create_event(request):
 
 
 @login_required
-@permission_required('event.view_event', raise_403=True)
+@permission_required('events.view_event', raise_403=True)
 def event_details(request, event_id, active_tab='details'):
     if not has_access(request):
         raise PermissionDenied
+
+    print "here"
 
     event = get_object_or_404(Event, pk = event_id)
 
@@ -204,6 +207,10 @@ def event_details(request, event_id, active_tab='details'):
         count_extras(extras, "attending", event.attendance_event.attendees_qs)
         count_extras(extras, "waits", event.attendance_event.waitlist_qs)
 
+    context['change_event_form'] = ChangeEventForm(instance=event)
+    if event.is_attendance_event():
+        context['change_attendance_form'] = ChangeAttendanceEventForm(instance=event.attendance_event)
+
     context['extras'] = extras
     context['change_event_form'] = ChangeEventForm(instance=event)
 
@@ -225,7 +232,34 @@ def count_extras(arr, inlist, atts):
 @login_required
 @permission_required('events.view_attendanceevent', raise_403=True)
 def event_change_attendance(request, event_id):
-    pass
+    event = get_object_or_404(Event, pk = event_id)
+
+    if not event.is_attendance_event():
+        registration_start = datetime.combine(event.event_start - timedelta(days=7), time(12, 0, 0))
+        timezone.make_aware(registration_start, timezone.get_current_timezone())
+        unattend_deadline = registration_start + timedelta(days=5)
+        registration_end = registration_start + timedelta(days=6)
+        print registration_start
+
+        attendance_event = AttendanceEvent(
+            event = event,
+            max_capacity = 0,
+            registration_start = registration_start,
+            unattend_deadline = unattend_deadline,
+            registration_end = registration_end
+        )
+        attendance_event.save()
+        return redirect('dashboard_event_details_active', event_id=event.id, active_tab='attendance')
+
+    else:
+        if request.method == 'POST':
+            form = ChangeAttendanceEventForm(request.POST)
+            if form.is_valid():
+                attendance_event = form.save(commit=False)
+                attendance_event.event = event
+                attendance_event.save()
+
+    return redirect('dashboard_event_details_active', event_id=event.id, active_tab='attendance')
 
 
 @login_required

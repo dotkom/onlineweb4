@@ -7,10 +7,11 @@ urlpatterns = patterns('apps.events.dashboard.views',
     url(r'^past$', 'past', name='dashboard_events_past'),
 
     url(r'^create/$', 'create_event', name='dashboard_event_create'),
-    url(r'^(?P<event_id>\d+)/attendance/$', 'event_change_attendance', name='dashboard_event_change_attendance'),
     # details views
     url(r'^(?P<event_id>\d+)/$', 'event_details', name='dashboard_event_details'),
     url(r'^(?P<event_id>\d+)/(?P<active_tab>\w+)/$', 'event_details', name='dashboard_event_details_active'),
+    # url endpoints for saving forms
+    url(r'^(?P<event_id>\d+)/change/attendance/$', 'event_change_attendance', name='dashboard_event_change_attendance'),
 
 
     url(r'^attendee/(?P<attendee_id>\d+)/$', 'attendee_details', name='dashboard_attendee_details'),
