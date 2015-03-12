@@ -212,6 +212,7 @@ INSTALLED_APPS = (
     'reversion',
     'guardian',
     'stripe',
+    'datetimewidget',
 
     # Django apps
     'django.contrib.admin',
