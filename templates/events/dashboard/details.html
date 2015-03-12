@@ -14,6 +14,7 @@ Arrangementsdetaljer
     {{ block.super }}
     {% compress css %}
     {{ change_event_form.media.css }}
+    {{ change_attendance_form.media.css }}
     <link rel="stylesheet" type="text/less" href="{{ STATIC_URL }}less/dashboard/events.less" />
     {% endcompress %}
 {% endblock %}
@@ -75,6 +76,7 @@ Arrangementsdetaljer
     {{ block.super }}
     {% compress js %}
     {{ change_event_form.media.js }}
+    {{ change_attendance_form.media.js }}
     <script type="text/javascript" src="{{ STATIC_URL }}js/libs/hogan-2.0.0.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}js/libs/typeahead.min.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}js/dashboard/events.js"></script>
