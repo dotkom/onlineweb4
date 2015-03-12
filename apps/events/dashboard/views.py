@@ -223,6 +223,12 @@ def count_extras(arr, inlist, atts):
 
 
 @login_required
+@permission_required('events.view_attendanceevent', raise_403=True)
+def event_change_attendance(request, event_id):
+    pass
+
+
+@login_required
 @permission_required('events.view_attendee', return_403=True)
 def attendee_details(request, attendee_id):
 
