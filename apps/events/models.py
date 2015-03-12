@@ -24,6 +24,17 @@ from filebrowser.fields import FileBrowseField
 
 User = settings.AUTH_USER_MODEL
 
+TYPE_CHOICES = (
+    (1, 'Sosialt'),
+    (2, 'Bedriftspresentasjon'),
+    (3, 'Kurs'),
+    (4, 'Utflukt'),
+    (5, 'Ekskursjon'),
+    (6, 'Internt'),
+    (7, 'Annet')
+)
+
+
 class Event(models.Model):
     """
     Base class for Event-objects.
@@ -31,16 +42,6 @@ class Event(models.Model):
 
     IMAGE_FOLDER = "images/events"
     IMAGE_EXTENSIONS = ['.jpg', '.jpeg', '.gif', '.png', '.tif', '.tiff']
-
-    TYPE_CHOICES = (
-        (1, 'Sosialt'),
-        (2, 'Bedriftspresentasjon'),
-        (3, 'Kurs'),
-        (4, 'Utflukt'),
-        (5, 'Ekskursjon'),
-        (6, 'Internt'),
-        (7, 'Annet')
-    )
 
     author = models.ForeignKey(User, related_name='oppretter')
     title = models.CharField(_(u'tittel'), max_length=60)
