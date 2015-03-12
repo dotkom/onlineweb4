@@ -13,6 +13,7 @@ Arrangementsdetaljer
 {% block styles %}
     {{ block.super }}
     {% compress css %}
+    {{ change_event_form.media.css }}
     <link rel="stylesheet" type="text/less" href="{{ STATIC_URL }}less/dashboard/events.less" />
     {% endcompress %}
 {% endblock %}
@@ -29,42 +30,51 @@ Arrangementsdetaljer
     </div>
 </div>
 
+{% if event.id %}
 <div class="row">
     <div class="col-lg-12">
         <div class="panel panel-default">
             <div class="panel-body">
                 <ul id="dashboard-tabs" class="nav nav-tabs">
-                    {% comment %}
-                    Hidden to put only attendee tab in production to start off.
-
                     <li role="presentation"{% if active_tab == 'details' %} class="active"{% endif %}>
                         <a data-section="details" href="{% url 'dashboard_event_details_active' event.id 'details' %}">Detaljer</a>
                     </li>
-                    {% endcomment %}
+                    <li role="presentation"{% if active_tab == 'attendance' %} class="active"{% endif %}>
+                        <a data-section="details" href="{% url 'dashboard_event_details_active' event.id 'details' %}">Påmelding</a>
+                    </li>
+                    {% if event.is_attendance_event %}
                     <li role="presentation"{% if active_tab == 'attendees' %} class="active"{% endif %}>
                         <a data-section="attendees" href="{% url 'dashboard_event_details_active' event.id 'attendees' %}">Påmeldte</a>
                     </li>
+                    {% endif %}
                 </ul>
             </div>
         </div>
     </div>
 </div>
+{% endif %}
 
 <div id="tab-content">
     <section id="details">
         {% include "events/dashboard/details_details.html" %}
     </section>
-    {% if event.is_attendance_event %}
-    <section id="attendees">
-        {% include "events/dashboard/details_attendees.html" %}
+    <section id="attendance">
+        {% include "events/dashboard/details_details.html" %}
     </section>
+    {% if event.id %}
+        {% if event.is_attendance_event %}
+        <section id="attendees">
+            {% include "events/dashboard/details_attendees.html" %}
+        </section>
+        {% endif %}
+    {% endif %}
 </div>
-{% endif %}
 {% endblock content %}
 
 {% block js %}
     {{ block.super }}
     {% compress js %}
+    {{ change_event_form.media.js }}
     <script type="text/javascript" src="{{ STATIC_URL }}js/libs/hogan-2.0.0.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}js/libs/typeahead.min.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}js/dashboard/events.js"></script>
