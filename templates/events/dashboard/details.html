@@ -40,7 +40,7 @@ Arrangementsdetaljer
                         <a data-section="details" href="{% url 'dashboard_event_details_active' event.id 'details' %}">Detaljer</a>
                     </li>
                     <li role="presentation"{% if active_tab == 'attendance' %} class="active"{% endif %}>
-                        <a data-section="details" href="{% url 'dashboard_event_details_active' event.id 'details' %}">Påmelding</a>
+                        <a data-section="attendance" href="{% url 'dashboard_event_details_active' event.id 'attendance' %}">Påmelding</a>
                     </li>
                     {% if event.is_attendance_event %}
                     <li role="presentation"{% if active_tab == 'attendees' %} class="active"{% endif %}>
@@ -59,7 +59,7 @@ Arrangementsdetaljer
         {% include "events/dashboard/details_details.html" %}
     </section>
     <section id="attendance">
-        {% include "events/dashboard/details_details.html" %}
+        {% include "events/dashboard/details_attendance.html" %}
     </section>
     {% if event.id %}
         {% if event.is_attendance_event %}
