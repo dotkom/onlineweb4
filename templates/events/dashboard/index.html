@@ -56,7 +56,7 @@ Arrangementsoversikt
                                 {% endif %}
                             </td>
                             <td>
-                                {{ event.event_start|date:'Y-m-d H:i' }}
+                                {{ event.event_start|date:"Y-m-d H:i" }}
                             </td>
                             <td>{{ event.get_event_type_display }}</td>
                         </tr>
