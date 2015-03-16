@@ -33,11 +33,6 @@ Methods redirect to this view on save
 """
 @login_required
 def index(request, active_tab='overview'):
-    """
-    This view is rendered for every request made to the userprofile pages,
-    due to the fact that it is a one-page view.
-    """
-
     context = _create_profile_context(request)
     context['active_tab'] = active_tab
 
