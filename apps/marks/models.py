@@ -98,10 +98,13 @@ class MarkUser(models.Model):
     expiration_date = models.DateField(_(u"utløpsdato"), editable=False)
 
     def save(self, *args, **kwargs):
+        run_history_update = False
         if not self.expiration_date:
-            expiration_date = timezone.now().date()
+            self.expiration_date = timezone.now().date()
+            run_history_update = True
         super(MarkUser, self).save(*args, **kwargs)
-        _fix_mark_history(self.user)
+        if run_history_update:
+            _fix_mark_history(self.user)
 
     def delete(self):
         super(MarkUser, self).delete()
@@ -122,6 +125,18 @@ reversion.register(MarkUser)
 
 
 def _fix_mark_history(user):
+    """
+    Goes through a users complete mark history and resets all expiration dates.
+
+    The reasons for doing it this way is that the mark rules now insist on marks building
+    on previous expiration dates if such exists. Instead of having the entire mark database
+    be a linked list structure, it can be simplified to guarantee the integrity of the
+    expiration dates by running this whenever;
+
+     * new Mark is saved or deleted
+     * a new MarkUser entry is made
+     * an existing MarkUser entry is deleted
+    """
     markusers = MarkUser.objects.filter(user=user).order_by('mark__added_date')
     last_expiry_date = None
     for entry in markusers:
