@@ -9,7 +9,7 @@
 <br />
 {% else %}
 <div class="row">
-    <div class="col-lg-12">
+    <div class="col-lg-6">
         <div class="panel panel-default">
             <div class="panel-heading">
                 <h3 class="panel-title">Påmeldingsdetaljer</h3>
@@ -20,15 +20,27 @@
                     {% csrf_token %}
                     {{ change_attendance_form|crispy }} 
                     </div>
+            </div>
+        </div><!-- panel -->
+    </div><!-- col-lg-4 -->
+    <div class="col-lg-6">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">Regler</h3>
+            </div>
+            <div class="panel-body">
+                    <div class="row row-space">
+                    {% csrf_token %}
+                    {{ change_rules_form|crispy }} 
+                    </div>
                     <div class="row row-space">
                         <div class="col-md-12" style="margin-left: 0px">
                             <button class="btn btn-success pull-right" type="submit">Lagre påmeldingsdetaljer</button>
                         </div>
                     </div>
                 </form>
-
             </div>
         </div><!-- panel -->
-    </div><!-- col-lg-6 -->
+    </div><!-- col-lg-8 -->
 </div><!-- row -->
 {% endif %}
