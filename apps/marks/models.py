@@ -69,6 +69,8 @@ class Mark(models.Model):
         if not self.added_date:
             self.added_date = timezone.now()
         super(Mark, self).save(*args, **kwargs)
+        for markuser in self.given_to.all():
+            _fix_mark_history(markuser.user)
 
     def delete(self):
         super(Mark, self).delete()
@@ -96,11 +98,10 @@ class MarkUser(models.Model):
     expiration_date = models.DateField(_(u"utløpsdato"), editable=False)
 
     def save(self, *args, **kwargs):
-        if not self.expiration_date or self.expiration_date - self.mark.added_date < timedelta(30):
-            expiration_date = get_expiration_date(self.user) or timezone.now().date()
-            expiration_date = _get_with_duration_and_vacation(expiration_date)
-            self.expiration_date = expiration_date
+        if not self.expiration_date:
+            expiration_date = timezone.now().date()
         super(MarkUser, self).save(*args, **kwargs)
+        _fix_mark_history(self.user)
 
     def delete(self):
         super(MarkUser, self).delete()
@@ -125,10 +126,11 @@ def _fix_mark_history(user):
     last_expiry_date = None
     for entry in markusers:
         # If there's a last_expiry date, it means a mark has been processed already.
-        # If f so build on it.
-        if last_expiry_date and last_expiry_date - entry.mark.added_date > timedelta(-DURATION):
+        # If that expiration date is within a DURATION of this added date, build on it.
+        if last_expiry_date and entry.mark.added_date - timedelta(days=DURATION) < last_expiry_date:
             entry.expiration_date = _get_with_duration_and_vacation(last_expiry_date)
-        # If the above is not true, then we add DURATIION days from the added date of the mark.
+        # If there is no last_expiry_date or the last expiry date is over a DURATION old
+        # we add DURATIION days from the added date of the mark.
         else:
             entry.expiration_date = _get_with_duration_and_vacation(entry.mark.added_date)
         entry.save()
