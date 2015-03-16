@@ -44,7 +44,7 @@ def past(request):
     return render(request, 'events/dashboard/index.html', context)
 
 @login_required
-@permission_required('events.view_event', raise_403=True)
+@permission_required('events.view_event', return_403=True)
 def create_event(request):
     if not has_access(request):
         raise PermissionDenied
@@ -86,7 +86,7 @@ def create_event(request):
 
 
 @login_required
-@permission_required('events.view_event', raise_403=True)
+@permission_required('events.view_event', return_403=True)
 def event_details(request, event_id, active_tab='details'):
     if not has_access(request):
         raise PermissionDenied
@@ -232,7 +232,7 @@ def count_extras(arr, inlist, atts):
 
 
 @login_required
-@permission_required('events.view_attendanceevent', raise_403=True)
+@permission_required('events.view_attendanceevent', return_403=True)
 def event_change_attendance(request, event_id):
     event = get_object_or_404(Event, pk = event_id)
 
@@ -262,7 +262,7 @@ def event_change_attendance(request, event_id):
 
 
 @login_required
-@permission_required('events.view_attendanceevent', raise_403=True)
+@permission_required('events.view_attendanceevent', return_403=True)
 def event_change_reservation(request, event_id):
     event = get_object_or_404(Event, pk = event_id)
 
