@@ -213,6 +213,8 @@ def event_details(request, event_id, active_tab='details'):
 
     context['extras'] = extras
     context['change_event_form'] = ChangeEventForm(instance=event)
+    if 'form_with_error' in request.session.keys():
+        print "zomg"
 
     return render(request, 'events/dashboard/details.html', context)
 
@@ -239,7 +241,6 @@ def event_change_attendance(request, event_id):
         timezone.make_aware(registration_start, timezone.get_current_timezone())
         unattend_deadline = registration_start + timedelta(days=5)
         registration_end = registration_start + timedelta(days=6)
-        print registration_start
 
         attendance_event = AttendanceEvent(
             event = event,
@@ -249,7 +250,25 @@ def event_change_attendance(request, event_id):
             registration_end = registration_end
         )
         attendance_event.save()
-        return redirect('dashboard_event_details_active', event_id=event.id, active_tab='attendance')
+
+    else:
+        if request.method == 'POST':
+            form = ChangeAttendanceEventForm(request.POST, instance=event.attendance_event)
+            if form.is_valid():
+                form.save()
+                messages.success(request, _(u"Påmeldingsdetaljer ble lagret."))
+
+    return redirect('dashboard_event_details_active', event_id=event.id, active_tab='attendance')
+
+
+@login_required
+@permission_required('events.view_attendanceevent', raise_403=True)
+def event_change_reservation(request, event_id):
+    event = get_object_or_404(Event, pk = event_id)
+
+    if not event.is_attendance_event():
+        messages.error(request, _(u"Dette er ikke et påmeldingsarrangement."))
+        return redirect('dashboard_event_details', event_id=event.id)
 
     else:
         if request.method == 'POST':
@@ -258,8 +277,11 @@ def event_change_attendance(request, event_id):
                 attendance_event = form.save(commit=False)
                 attendance_event.event = event
                 attendance_event.save()
+            else:
+                request.session['form_with_error'] = {'change_attendance_form': form}
 
     return redirect('dashboard_event_details_active', event_id=event.id, active_tab='attendance')
+
 
 
 @login_required

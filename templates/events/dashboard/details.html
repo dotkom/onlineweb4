@@ -15,6 +15,7 @@ Arrangementsdetaljer
     {% compress css %}
     {{ change_event_form.media.css }}
     {{ change_attendance_form.media.css }}
+    {{ change_rules_form.media.css }}
     <link rel="stylesheet" type="text/less" href="{{ STATIC_URL }}less/dashboard/events.less" />
     {% endcompress %}
 {% endblock %}
@@ -47,6 +48,9 @@ Arrangementsdetaljer
                     <li role="presentation"{% if active_tab == 'attendees' %} class="active"{% endif %}>
                         <a data-section="attendees" href="{% url 'dashboard_event_details_active' event.id 'attendees' %}">Påmeldte</a>
                     </li>
+                    <li role="presentation"{% if active_tab == 'reservation' %} class="active"{% endif %}>
+                        <a data-section="reservation" href="{% url 'dashboard_event_details_active' event.id 'reservation' %}">Reservasjon</a>
+                    </li>
                     {% endif %}
                 </ul>
             </div>
@@ -67,6 +71,9 @@ Arrangementsdetaljer
         <section id="attendees">
             {% include "events/dashboard/details_attendees.html" %}
         </section>
+        <section id="reservation">
+            {% include "events/dashboard/details_reservation.html" %}
+        </section>
         {% endif %}
     {% endif %}
 </div>
@@ -77,6 +84,7 @@ Arrangementsdetaljer
     {% compress js %}
     {{ change_event_form.media.js }}
     {{ change_attendance_form.media.js }}
+    {{ change_rules_form.media.js }}
     <script type="text/javascript" src="{{ STATIC_URL }}js/libs/hogan-2.0.0.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}js/libs/typeahead.min.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}js/dashboard/events.js"></script>
