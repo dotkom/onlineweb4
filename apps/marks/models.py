@@ -67,15 +67,14 @@ class Mark(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.added_date:
-            self.added_date = timezone.now()
+            self.added_date = timezone.now().date()
         super(Mark, self).save(*args, **kwargs)
-        for markuser in self.given_to.all():
-            _fix_mark_history(markuser.user)
 
     def delete(self):
+        given_to = [mu.user for mu in self.given_to.all()]
         super(Mark, self).delete()
-        for markuser in self.given_to.all():
-            _fix_mark_history(markuser.user)
+        for user in given_to:
+            _fix_mark_history(user)
 
     class Meta:
         verbose_name = _(u"Prikk")
