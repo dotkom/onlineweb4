@@ -15,7 +15,6 @@ Arrangementsdetaljer
     {% compress css %}
     {{ change_event_form.media.css }}
     {{ change_attendance_form.media.css }}
-    {{ change_rules_form.media.css }}
     <link rel="stylesheet" type="text/less" href="{{ STATIC_URL }}less/dashboard/events.less" />
     {% endcompress %}
 {% endblock %}
@@ -63,17 +62,17 @@ Arrangementsdetaljer
     <section id="details">
         {% include "events/dashboard/details_details.html" %}
     </section>
-    <section id="attendance">
-        {% include "events/dashboard/details_attendance.html" %}
-    </section>
     {% if event.id %}
+        <section id="attendance">
+            {% include "events/dashboard/details_attendance.html" %}
+        </section>
         {% if event.is_attendance_event %}
-        <section id="attendees">
-            {% include "events/dashboard/details_attendees.html" %}
-        </section>
-        <section id="reservation">
-            {% include "events/dashboard/details_reservation.html" %}
-        </section>
+            <section id="attendees">
+                {% include "events/dashboard/details_attendees.html" %}
+            </section>
+            <section id="reservation">
+                {% include "events/dashboard/details_reservation.html" %}
+            </section>
         {% endif %}
     {% endif %}
 </div>
@@ -84,7 +83,6 @@ Arrangementsdetaljer
     {% compress js %}
     {{ change_event_form.media.js }}
     {{ change_attendance_form.media.js }}
-    {{ change_rules_form.media.js }}
     <script type="text/javascript" src="{{ STATIC_URL }}js/libs/hogan-2.0.0.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}js/libs/typeahead.min.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}js/dashboard/events.js"></script>
