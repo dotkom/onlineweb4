@@ -47,7 +47,7 @@ class Poster(models.Model):
         )
 
     def __str__(self):
-        return "Plakat for %(event)s" % {'event': self.title}
+        return "Ordre for %(event)s" % {'category': self.POSTER_TYPES[self.category][1], 'event': self.title}
 
 
 class PosterForm(ModelForm):        
