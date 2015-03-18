@@ -91,8 +91,9 @@ class OnlineUser(AbstractUser):
     started_date = models.DateField(_(u"startet studie"), default=datetime.date.today)
     compiled = models.BooleanField(_(u"kompilert"), default=False)
 
-    # Infomail
+    # Mail
     infomail = models.BooleanField(_(u"vil ha infomail"), default=False)
+    online_mail = models.CharField(_(u"Online-epost"), max_length=50, blank=True, null=True)
 
     # Address
     phone_number = models.CharField(_(u"telefonnummer"), max_length=20, blank=True, null=True)
