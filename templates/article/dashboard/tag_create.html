@@ -1,0 +1,30 @@
+{% extends 'dashboard_base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+Tags - Online Dashboard
+{% endblock title %}
+
+{% block page-header %}
+Tags
+{% endblock %}
+
+{% block breadcrumbs %}
+	{% if edit %}
+		<li>Endre tag</li>
+	{% else %}
+    	<li>Ny Tag</li>
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-9">
+        <form method="POST" action="">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <button type="submit" class="btn btn-primary">Lagre</button>
+        </form>
+    </div>
+</div>
+{% endblock content %}
