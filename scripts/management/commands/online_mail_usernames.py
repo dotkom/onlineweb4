@@ -29,7 +29,7 @@ class Command(NoArgsCommand):
             name = unidecode(user.get_full_name()).lower()
 
             # Users which lack mail or a name are not considered
-            if not name or not email:
+            if not name or not user.email:
                 continue
 
             while True:
