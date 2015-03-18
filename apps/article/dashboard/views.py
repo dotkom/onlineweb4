@@ -19,12 +19,49 @@ def article_index(request):
     return render(request, 'article/dashboard/article_index.html', context)
 
 
-def article_create(request, article_id):
-    yield()
+def article_create(request):
+    check_access_or_403(request)
+
+    form = ArticleForm()
+
+    if request.method == 'POST':
+        form = ArticleForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, u'Tag ble opprettet.')
+            redirect('dashboard_article_index')
+        else:
+            print form.is_valid()
+            print form.errors
+            messages.error(request, u'Noen av de påkrevde feltene inneholder feil.')
+
+    context = get_base_context(request)
+    context['form'] = form
+
+    return render(request, 'article/dashboard/article_create.html', context)
 
 
 def article_change(request, article_id):
-    yield()
+    check_access_or_403(request)
+
+    article = get_object_or_404(Article, pk=article_id)
+
+    form = ArticleForm(instance=article)
+
+    if request.method == 'POST':
+        form = ArticleForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.sucess(request, u'Artikkelen ble lagret.')
+            redirect('dashboard_tag_index')
+        else:
+            messages.error(request, u'Noen av de påkrevde feltene inneholder feil.')
+
+    context = get_base_context(request)
+    context['form'] = form
+    context['edit'] = True
+    
+    return render(request, 'article/dashboard/article_create.html', context)
 
 
 @permission_required('article.view_tag')
