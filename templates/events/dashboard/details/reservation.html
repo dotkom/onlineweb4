@@ -1,0 +1,42 @@
+{% load crispy_forms_tags %}
+
+{% if not event.attendance_event.has_reservation %}
+<div class="row">
+    <div class="col-lg-12">
+        <form method="post" action="{% url 'dashbaord_event_change_reservation' %}">
+            <button type="submit" class ="btn btn-primary"><i class="fa fa-users"></i> Legg til reservasjon</button>
+        </form>
+    </div>
+</div>
+{% else %}
+<div class="row">
+    <div class="col-lg-8">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">Reservasjoner</h3>
+            </div>
+            <div class="panel-body">
+                <form class="edit-form" method="post" action="{% url 'dashboard_event_change_reservation' event.id %}" enctype="multipart/form-data">
+                    <div class="row row-space">
+                    {% csrf_token %}
+                    {{ change_reservation_form|crispy }} 
+                    </div>
+                    <div class="row row-space">
+                        <div class="col-md-12" style="margin-left: 0px">
+                            <button class="btn btn-success pull-right" type="submit">Lagre reservasjonsdetaljer</button>
+                        </div>
+                    </div>
+            </div><!-- panel-body -->
+        </div><!-- panel -->
+    </div><!-- col-lg-8 -->
+    <div class="col-lg-4">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">Hurr </h3>
+            </div>
+            <div class="panel-body">
+            </div><!-- panel-body -->
+        </div><!-- panel -->
+    </div><!-- col-lg-8 -->
+</div>
+{% endif %}

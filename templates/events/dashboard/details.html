@@ -60,18 +60,18 @@ Arrangementsdetaljer
 
 <div id="tab-content">
     <section id="details">
-        {% include "events/dashboard/details_details.html" %}
+        {% include "events/dashboard/details/details.html" %}
     </section>
     {% if event.id %}
         <section id="attendance">
-            {% include "events/dashboard/details_attendance.html" %}
+            {% include "events/dashboard/details/attendance.html" %}
         </section>
         {% if event.is_attendance_event %}
             <section id="attendees">
-                {% include "events/dashboard/details_attendees.html" %}
+                {% include "events/dashboard/details/attendees.html" %}
             </section>
             <section id="reservation">
-                {% include "events/dashboard/details_reservation.html" %}
+                {% include "events/dashboard/details/reservation.html" %}
             </section>
         {% endif %}
     {% endif %}
