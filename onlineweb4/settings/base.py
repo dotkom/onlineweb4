@@ -342,21 +342,6 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "onlineweb4.context_processors.analytics",
 )
 
-# Variables for group syncing script, overwritten in local.py
-GROUP_SYNCER = [
-    {
-        'name': 'foobar',
-        'source': [
-            1,
-            2,
-            3
-        ],
-        'destination': [
-            4
-        ]
-    }
-]
-
 # Remember to keep 'local' last, so it can override any setting.
 for settings_module in ['filebrowser', 'django_wiki', 'local']:  # local last
     if not os.path.exists(os.path.join(PROJECT_SETTINGS_DIRECTORY,
