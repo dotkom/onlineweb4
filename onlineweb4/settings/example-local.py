@@ -84,10 +84,54 @@ FILEBROWSER_MEDIA_ROOT = MEDIA_ROOT
 #   'django_extensions', # http://packages.python.org/django-extensions/
 # )
 
-# Variables for fagKom/bedKom-sync script
-BEDKOM_GROUP_ID = 3
-FAGKOM_GROUP_ID = 6
-COMMON_GROUP_ID = 17
+# Variables for group syncing script
+GROUP_SYNCER = [
+    {
+        'name': 'Komite-enkeltgrupper til gruppen Komiteer',
+        'source': [
+            1, # arrKom
+            2, # banKom
+            3, # bedKom
+            4, # dotKom
+            5, # eksKom
+            6, # fagKom
+            7, # proKom
+            8, # triKom
+            10, # pangKom
+            15 # appKom
+        ],
+        'destination': [
+            12 # Komiteer
+        ]
+    },{
+        'name': 'bedKom og fagKom til felles gruppe (bed&fagKom)',
+        'source': [
+            3, # bedKom
+            6, # fagKom
+        ],
+        'destination': [
+            17 # bed&fagKom
+        ]
+    },{
+        'name': 'Komiteer som kan redigere Online public wiki',
+        'source': [
+            12, # Komiteer
+            14 # Eldsteraadet
+        ],
+        'destination': [
+            22 # Wiki - Online edit permissions
+        ]
+    },{
+        'name': 'Komiteer som kan redigere Online Komiteer wiki',
+        'source': [
+            12, # Komiteer
+            18 # SeniorKom
+        ],
+        'destination': [
+            22 # Wiki - Komiteer access permissions
+        ]
+    }
+]
 
 GENFORS_ADMIN_PASSWORD = 'ADMIN_PASSWORD'
 
