@@ -77,6 +77,10 @@ var Event = (function ($, tools) {
                 }
             })
         })
+
+        // Refresh tablesorter
+        $('#attendees-table').trigger("update")
+        $('#waitlist-table').trigger("update")
     }
 
     return {

@@ -1,26 +1,30 @@
 # -*- coding: utf-8 -*-
 
+from datetime import datetime, time, timedelta
 import json
 
 from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import reverse
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
+from django.utils.translation import ugettext as _
 
 from guardian.decorators import permission_required
 
 from apps.authentication.models import OnlineUser as User
 from apps.dashboard.tools import has_access, get_base_context
-from apps.events.models import Event, Attendee
 from apps.events.dashboard.forms import ChangeEventForm, ChangeAttendanceEventForm
-
+from apps.events.models import Event, AttendanceEvent, Attendee
+from apps.events.utils import get_group_restricted_events, get_types_allowed
 
 @login_required
 @permission_required('events.view_event', return_403=True)
 def index(request):
-    events = Event.objects.filter(event_start__gte=timezone.now().date()).order_by('event_start')
+    allowed_events = get_group_restricted_events(request.user, True)
+    events = allowed_events.filter(event_start__gte=timezone.now().date()).order_by('event_start')
 
     context = get_base_context(request)
     context['events'] = events
@@ -30,63 +34,128 @@ def index(request):
 @login_required
 @permission_required('events.view_event', return_403=True)
 def past(request):
-    events = Event.objects.filter(event_start__lt=timezone.now().date()).order_by('-event_start')
+    allowed_events = get_group_restricted_events(request.user, True)
+    events = allowed_events.filter(event_start__lt=timezone.now().date()).order_by('-event_start')
 
     context = get_base_context(request)
     context['events'] = events
 
     return render(request, 'events/dashboard/index.html', context)
 
-def create_event(request):
-    context = get_base_context(request)
-    return render(request, 'events/dashboard/details.html', context)
-
-
-
 @login_required
 @permission_required('events.view_event', return_403=True)
-def details(request, event_id, active_tab='attendees'):
+def create_event(request):
     if not has_access(request):
         raise PermissionDenied
 
+    context = get_base_context(request)
+
+    if request.method == 'POST':
+        form = ChangeEventForm(request.POST)
+        if form.is_valid():
+            cleaned = form.cleaned_data
+
+            if cleaned['event_type'] not in get_types_allowed(request.user):
+                messages.error(request, _(u"Du har ikke tilgang til å lage arranngement av typen '%s'.") % cleaned['event_type'])
+                context['change_event_form'] = form
+
+            else:
+                # Create object, but do not commit to db. We need to add stuff.
+                event = form.save(commit=False)
+                # Add author
+                event.author = request.user
+                event.save()
+
+                messages.success(request, _(u"Arrangementet ble opprettet."))
+                return redirect('dashboard_event_details', event_id=event.id)
+
+        else:
+            context['change_event_form'] = form
+
+
+    if 'change_event_form' not in context.keys():
+        context['change_event_form'] = ChangeEventForm()
+
+    context['event'] = _('Nytt arrangement')
+    context['active_tab'] = 'details'
+
+    return render(request, 'events/dashboard/details.html', context) 
+
+def _create_details_context(request, event_id):
+    """
+    Prepare a context to be shared for all detail views.
+    """
+
     event = get_object_or_404(Event, pk = event_id)
+
+    # Start with adding base context and the event itself
+    context = get_base_context(request)
+    context['event'] = event
+
+    # Add forms
+    context['change_event_form'] = ChangeEventForm(instance=event)
+    if event.is_attendance_event():
+        context['change_attendance_form'] = ChangeAttendanceEventForm(instance=event.attendance_event)
+
+    return context
+
+@login_required
+@permission_required('events.view_event', return_403=True)
+def event_details(request, event_id, active_tab='details'):
+    if not has_access(request):
+        raise PermissionDenied
+
+    context = _create_details_context(request, event_id)
+    context['active_tab'] = active_tab
+    
+    return render(request, 'events/dashboard/details.html', context)
+
+@login_required
+@permission_required('events.view_event', return_403=True)
+def event_change_attendees(request, event_id):
+    if not has_access(request):
+        raise PermissionDenied
+
+    context = _create_details_context(request, event_id)
+    context['active_tab'] = 'attendees'
+
+    event = context['event']
 
     # AJAX
     if request.method == 'POST':
         if request.is_ajax and 'action' in request.POST:
+            if not event.is_attendance_event:
+                return HttpResponse(_(u'Dette er ikke et påmeldingsarrangement.'), status=400)
             resp = {}
             if request.POST['action'] == 'attended':
-                if not event.is_attendance_event:
-                    return HttpResponse(u'Dette er ikke et påmeldingsarrangement.', status=400)
                 attendee = Attendee.objects.filter(pk = request.POST['attendee_id'])
                 if attendee.count() != 1:
-                    return HttpResponse(u'Fant ingen påmeldte med oppgitt ID (%s).' % request.POST['attendee_id'], status=400)
+                    return HttpResponse(_(u'Fant ingen påmeldte med oppgitt ID (%s).') % request.POST['attendee_id'], status=400)
                 attendee = attendee[0]
                 attendee.attended = not attendee.attended
                 attendee.save()
                 return JsonResponse(resp)
             if request.POST['action'] == 'paid':
-                if not event.is_attendance_event:
-                    return HttpResponse(u'Dette er ikke et påmeldingsarrangement.', status=400)
                 attendee = Attendee.objects.filter(pk = request.POST['attendee_id'])
                 if attendee.count() != 1:
-                    return HttpResponse(u'Fant ingen påmeldte med oppgitt ID (%s).' % request.POST['attendee_id'], status=400)
+                    return HttpResponse(_(u'Fant ingen påmeldte med oppgitt ID (%s).') % request.POST['attendee_id'], status=400)
                 attendee = attendee[0]
                 attendee.paid = not attendee.paid
                 attendee.save()
                 return JsonResponse(resp)
             if request.POST['action'] == 'add_attendee':
-                if not event.is_attendance_event:
-                    return HttpResponse(u'Dette er ikke et påmeldingsarrangement.', status=400)
+                if event.attendance_event.number_of_seats_taken >= event.attendance_event.max_capacity:
+                    if not event.attendance_event.waitlist:
+                        return HttpResponse(_(u'Det er ingen ledige plasser på %s.') % event.title, status=400)
                 user = User.objects.filter(pk = request.POST['user_id'])
                 if user.count() != 1:
-                    return HttpResponse(u'Fant ingen bruker med oppgitt ID (%s).' % request.POST['user_id'], status=400)
-                user = user[0]
-                if Attendee.objects.filter(user=user).count() != 0:
-                    return HttpResponse(u'%s er allerede påmeldt %s.' % (user.get_full_name(), event.title), status=400)
+                    return HttpResponse(_(u'Fant ingen bruker med oppgitt ID (%s).') % request.POST['user_id'], status=400)
+                user = user[0] 
+                if Attendee.objects.filter(user=user, event=event.attendance_event).count() != 0:
+                    return HttpResponse(_(u'%s er allerede påmeldt %s.') % (user.get_full_name(), event.title), status=400)
                 attendee = Attendee(user = user, event = event.attendance_event)
                 attendee.save()
-                resp['message'] = u'%s ble meldt på %s' % (user.get_full_name(), event)
+                resp['message'] = _(u'%s ble meldt på %s') % (user.get_full_name(), event)
                 resp['attendees'] = []
                 for number, a in enumerate(attendee.event.attendees_qs):
                     resp['attendees'].append({
@@ -111,14 +180,12 @@ def details(request, event_id, active_tab='attendees'):
                     })
                 return JsonResponse(resp, safe=False)
             if request.POST['action'] == 'remove_attendee':
-                if not event.is_attendance_event:
-                    return HttpResponse(u'Dette er ikke et påmeldingsarrangement.', status=400)
                 attendee = Attendee.objects.filter(pk = request.POST['attendee_id'])
                 if attendee.count() != 1:
-                    return HttpResponse(u'Fant ingen påmeldte med oppgitt ID (%s).' % request.POST['attendee_id'], status=400)
+                    return HttpResponse(_(u'Fant ingen påmeldte med oppgitt ID (%s).') % request.POST['attendee_id'], status=400)
                 attendee = attendee[0]
                 attendee.delete()
-                resp['message'] = u'%s ble fjernet fra %s' % (attendee.user.get_full_name(), attendee.event)
+                resp['message'] = _(u'%s ble fjernet fra %s') % (attendee.user.get_full_name(), attendee.event)
                 resp['attendees'] = []
                 for number, a in enumerate(attendee.event.attendees_qs):
                     resp['attendees'].append({
@@ -143,16 +210,68 @@ def details(request, event_id, active_tab='attendees'):
                     })
                 return JsonResponse(resp)
 
-    # NON AJAX
-    context = get_base_context(request)
-
-    context['event'] = event
-    context['active_tab'] = active_tab
-
-    context['change_event_form'] = ChangeEventForm(instance=event)
-
 
     return render(request, 'events/dashboard/details.html', context)
+
+
+
+@login_required
+@permission_required('events.view_attendanceevent', return_403=True)
+def event_change_attendance(request, event_id):
+    context = _create_details_context(request, event_id)
+    context['active_tab'] = 'attendance'
+
+    event = context['event']
+
+    if not event.is_attendance_event():
+        registration_start = datetime.combine(event.event_start - timedelta(days=7), time(12, 0, 0))
+        timezone.make_aware(registration_start, timezone.get_current_timezone())
+        unattend_deadline = registration_start + timedelta(days=5)
+        registration_end = registration_start + timedelta(days=6)
+
+        attendance_event = AttendanceEvent(
+            event = event,
+            max_capacity = 0,
+            registration_start = registration_start,
+            unattend_deadline = unattend_deadline,
+            registration_end = registration_end
+        )
+        attendance_event.save()
+        context['change_attendance_form'] = ChangeAttendanceEventForm(instance=event.attendance_event)
+
+    else:
+        if request.method == 'POST':
+            form = ChangeAttendanceEventForm(request.POST, instance=event.attendance_event)
+            if form.is_valid():
+                form.save()
+                messages.success(request, _(u"Påmeldingsdetaljer ble lagret."))
+            context['change_attendance_form'] = form
+
+    return render(request, 'events/dashboard/details.html', context)
+
+
+@login_required
+@permission_required('events.view_attendanceevent', return_403=True)
+def event_change_reservation(request, event_id):
+    event = get_object_or_404(Event, pk = event_id)
+
+    if not event.is_attendance_event():
+        messages.error(request, _(u"Dette er ikke et påmeldingsarrangement."))
+        return redirect('dashboard_event_details', event_id=event.id)
+
+    else:
+        if request.method == 'POST':
+            form = ChangeAttendanceEventForm(request.POST)
+            if form.is_valid():
+                attendance_event = form.save(commit=False)
+                attendance_event.event = event
+                attendance_event.save()
+            else:
+                request.session['form_with_error'] = {'change_attendance_form': form}
+
+    return redirect('dashboard_event_details_active', event_id=event.id, active_tab='attendance')
+
+
 
 @login_required
 @permission_required('events.view_attendee', return_403=True)
