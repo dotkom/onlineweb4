@@ -5,6 +5,7 @@ from django.contrib.contenttypes.models import ContentType
 from apps.authentication.models import OnlineUser as User
 from apps.events.models import Event, AttendanceEvent, Attendee
 from apps.payment.models import Payment, PaymentRelation
+from apps.payment.mommy import PaymentReminder
 
 class PaymentTest(TestCase):
 
@@ -40,6 +41,26 @@ class PaymentTest(TestCase):
         attendee = Attendee.objects.all()[0]
 
         self.assertTrue(attendee.paid)
+
+
+
+    ### Mommy ###
+    
+    def testEventMommyNotPaid(self):
+        G(Attendee, event=self.attendance_event, user=self.user)
+        attendees = [attendee.user for attendee in Attendee.objects.all()]
+        not_paid = PaymentReminder.not_paid(self.event_payment)
+
+        self.assertEqual(attendees, not_paid)
+
+    def testEventMommyPaid(self):
+        G(Attendee, event=self.attendance_event, user=self.user)
+        G(PaymentRelation, payment=self.event_payment, user=self.user)
+        not_paid = PaymentReminder.not_paid(self.event_payment)
+
+        self.assertFalse(not_paid)
+
+
 
 
 
