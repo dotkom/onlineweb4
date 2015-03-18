@@ -107,7 +107,7 @@ GROUP_SYNCER = [
         'name': 'bedKom og fagKom til felles gruppe (bed&fagKom)',
         'source': [
             3, # bedKom
-            6, # fagKom
+            6 # fagKom
         ],
         'destination': [
             17 # bed&fagKom

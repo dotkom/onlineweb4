@@ -1,6 +1,4 @@
 # -*- coding: utf-8 -*-
-import datetime
-import socket
 import locale
 import logging
 
@@ -35,19 +33,19 @@ class SynchronizeGroups(Task):
             # Get all users in the source groups
             users_in_source = User.objects.filter(groups__id__in=sync.get('source')).all()
 
-            # If any users were found
+            # Check if any users were found
             if len(users_in_source) > 0:
                 # Loop all destination groups
                 for destination_group in sync.get('destination'):
                     # Create object for the current destination group
                     destination_group_object = Group.objects.get(id=destination_group)
 
-                    # Loop all the users in the source
+                    # Loop all the users in the source groups
                     for user in users_in_source:
                             # Get all groups for the current user
                             user_groups = user.groups.all()
 
-                            # Check if current group from the
+                            # Check if the user has the current destination group
                             if destination_group_object not in user_groups:
                                 # User is not in the current destination group, add
                                 destination_group_object.user_set.add(user)
@@ -57,10 +55,10 @@ class SynchronizeGroups(Task):
 
                 # Check if any changes were made and if there was, log it
                 if synced > 0:
-                    logger.info(str(synced) + ' users were synced to correct destination group(s).')
+                    logger.info(str(synced) + ' user(s) were synced to correct destination group(s).')
 
             # BACKWARDS SYNC
-            # Syncing users in the destination groups that don't have any of the source groups
+            # Removing users from destination group(s) if they are not in the source group(s)
 
             # Store number of synced users
             synced = 0
@@ -68,15 +66,14 @@ class SynchronizeGroups(Task):
             # Get all users in the destination groups
             users_in_destination = User.objects.filter(groups__id__in=sync.get('destination')).all()
 
-            # If any users were found
+            # Check if any users were found
             if len(users_in_destination) > 0:
-                # Loop all the users in the destination
+                # Loop all the users in the destination groups
                 for user in users_in_destination:
-                    # Keep track if user was found in any of the source groups
                     user_in_source_group = False
                     user_groups = user.groups.all()
 
-                    # Get all user groups
+                    # Get all groups the user is in
                     for user_group in user_groups:
                         # Check if the current user group is in the source list
                         if user_group.id in sync.get('source'):
@@ -92,7 +89,7 @@ class SynchronizeGroups(Task):
                         for user_group in user_groups:
                             # Check if current group is in destination groups
                             if user_group.id in sync.get('destination'):
-                                # This group is a destination group, remove
+                                # This group is a destination group, remove it from the user
                                 destination_group = Group.objects.filter(id=user_group.id).first()
                                 destination_group.user_set.remove(user)
 
@@ -101,7 +98,7 @@ class SynchronizeGroups(Task):
 
                 # Check if any changes were made and if there was, log it
                 if synced > 0:
-                    logger.info(str(synced) + ' users were removed from the destination group(s) because they were not in the source group(s).')
+                    logger.info(str(synced) + ' user(s) were removed from the destination group(s) because they were not in the source group(s).')
 
 
 # Register scheduler

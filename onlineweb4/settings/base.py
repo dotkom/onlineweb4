@@ -137,11 +137,6 @@ TEMPLATE_DIRS = (
 PIZZA_GROUP = 'dotkom'
 PIZZA_ADMIN_GROUP = 'pizzaadmin'
 
-# Variables for fagKom/bedKom-sync script, override in local.py
-BEDKOM_GROUP_ID = 1
-FAGKOM_GROUP_ID = 2
-COMMON_GROUP_ID = 3
-
 # Grappelli settings
 GRAPPELLI_ADMIN_TITLE = '<a href="/">Onlineweb</a>'
 
@@ -347,51 +342,17 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "onlineweb4.context_processors.analytics",
 )
 
-# Variables for group syncing script
+# Variables for group syncing script, overwritten in local.py
 GROUP_SYNCER = [
     {
-        'name': 'Komite-enkeltgrupper til gruppen Komiteer',
+        'name': 'foobar',
         'source': [
-            1, # arrKom
-            2, # banKom
-            3, # bedKom
-            4, # dotKom
-            5, # eksKom
-            6, # fagKom
-            7, # proKom
-            8, # triKom
-            10, # pangKom
-            15 # appKom
+            1,
+            2,
+            3
         ],
         'destination': [
-            12 # Komiteer
-        ]
-    },{
-        'name': 'bedKom og fagKom til felles gruppe (bed&fagKom)',
-        'source': [
-            3, # bedKom
-            6, # fagKom
-        ],
-        'destination': [
-            17 # bed&fagKom
-        ]
-    },{
-        'name': 'Komiteer som kan redigere Online public wiki',
-        'source': [
-            12, # Komiteer
-            14 # Eldsteraadet
-        ],
-        'destination': [
-            22 # Wiki - Online edit permissions
-        ]
-    },{
-        'name': 'Komiteer som kan redigere Online Komiteer wiki',
-        'source': [
-            12, # Komiteer
-            18 # SeniorKom
-        ],
-        'destination': [
-            23 # Wiki - Komiteer access permissions
+            4
         ]
     }
 ]
