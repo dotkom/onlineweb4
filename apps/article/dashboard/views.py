@@ -9,8 +9,14 @@ from apps.article.dashboard.forms import TagForm, ArticleForm
 from apps.dashboard.tools import check_access_or_403, get_base_context
 
 
+@permission_required('article.view_article')
 def article_index(request):
-    yield()
+    check_access_or_403(request)
+
+    context = get_base_context(request)
+    context['articles'] = Article.objects.all()
+
+    return render(request, 'article/dashboard/article_index.html', context)
 
 
 def article_create(request, article_id):
@@ -38,13 +44,15 @@ def tag_create(request):
     form = TagForm()
 
     if request.method == 'POST':
+        form = TagForm(request.POST)
         if form.is_valid():
             form.save()
-            messages.sucess(request, u'Tag ble opprettet.')
+            messages.success(request, u'Tag ble opprettet.')
             redirect('dashboard_tag_index')
         else:
+            print form.is_valid()
+            print form.errors
             messages.error(request, u'Noen av de påkrevde feltene inneholder feil.')
-            form = TagForm(request.POST)
 
     context = get_base_context(request)
     context['form'] = form
@@ -61,15 +69,16 @@ def tag_change(request, tag_id):
     form = TagForm(instance=tag)
 
     if request.method == 'POST':
+        form = TagForm(request.POST)
         if form.is_valid():
             form.save()
             messages.sucess(request, u'Tag ble opprettet.')
             redirect('dashboard_tag_index')
         else:
             messages.error(request, u'Noen av de påkrevde feltene inneholder feil.')
-            form = TagForm(request.POST)
 
     context = get_base_context(request)
     context['form'] = form
+    context['edit'] = True
     
     return render(request, 'article/dashboard/tag_create.html', context)
