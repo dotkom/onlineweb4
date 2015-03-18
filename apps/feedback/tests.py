@@ -196,7 +196,7 @@ class SimpleTest(TestCase):
 
 
     def test_mark_setting(self):
-        users = [User.objects.get(pk=1)]
+        users = [User.objects.get(username='user1')]
         all_users = User.objects.all()
         FeedbackMail.set_marks("test_title", users)
         mark = Mark.objects.get()

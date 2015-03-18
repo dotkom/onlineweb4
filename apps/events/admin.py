@@ -16,6 +16,7 @@ from apps.events.models import UserGroupRule
 from apps.events.models import Reservation
 from apps.events.models import Reservee
 from apps.feedback.admin import FeedbackRelationInline
+from apps.payment.admin import PaymentInline
 
 
 
@@ -73,7 +74,7 @@ class AttendeeAdmin(admin.ModelAdmin):
 
     def delete_model(self, request, obj):
         event = obj.event.event
-        event.notify_waiting_list(host=request.META['HTTP_HOST'], unattended_user=obj.user)
+        event.attendance_event.notify_waiting_list(host=request.META['HTTP_HOST'], unattended_user=obj.user)
         obj.delete()
 
 
@@ -109,7 +110,7 @@ class AttendanceEventInline(admin.StackedInline):
 
 
 class EventAdmin(admin.ModelAdmin):
-    inlines = (AttendanceEventInline, FeedbackRelationInline, CompanyInline)
+    inlines = (AttendanceEventInline, PaymentInline, FeedbackRelationInline, CompanyInline)
     exclude = ("author", )
     search_fields = ('title',)
 
@@ -127,7 +128,7 @@ class EventAdmin(admin.ModelAdmin):
                         if diff_capacity > old_waitlist_size:
                             diff_capacity = old_waitlist_size
                         # Using old_event because max_capacity has already been changed in obj
-                        old_event.notify_waiting_list(host=request.META['HTTP_HOST'], extra_capacity=diff_capacity)
+                        old_event.attendance_event.notify_waiting_list(host=request.META['HTTP_HOST'], extra_capacity=diff_capacity)
         obj.save()
 
     def save_formset(self, request, form, formset, change):

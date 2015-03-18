@@ -142,14 +142,6 @@ BEDKOM_GROUP_ID = 1
 FAGKOM_GROUP_ID = 2
 COMMON_GROUP_ID = 3
 
-# List of groups that should have edit access to Online wiki (public)
-WIKI_OPEN_EDIT_ACCESS = [1, 2]
-WIKI_OPEN_EDIT_ACCESS_GROUP_ID = 3
-
-# List of groups that should have access to the Komite wiki
-WIKI_COMMITTEE_ACCESS = [1, 2]
-WIKI_COMMITTEE_ACCESS_GROUP_ID = 3
-
 # Grappelli settings
 GRAPPELLI_ADMIN_TITLE = '<a href="/">Onlineweb</a>'
 
@@ -174,6 +166,10 @@ USER_SEARCH_GROUPS = [
     8,   # triKom
     9,   # velKom
 ]
+
+# Online stripe test keys
+STRIPE_PUBLIC_KEY = "pk_test_Ur8B7E5uvheMlpOUVu9SGGbn"
+STRIPE_PRIVATE_KEY = "sk_test_Hrp6EUUffY7Pc4xnqwmoyhPm"
 
 #List of mailing lists, used in update_sympa_memcache_from_sql.py
 PUBLIC_LISTS = [
@@ -215,6 +211,7 @@ INSTALLED_APPS = (
     'djangoformsetjs',
     'reversion',
     'guardian',
+    'stripe',
 
     # Django apps
     'django.contrib.admin',
@@ -244,6 +241,7 @@ INSTALLED_APPS = (
     'apps.resourcecenter',
     'apps.mailinglists',
     'apps.inventory',
+    'apps.payment',
     'scripts',
 
     #External apps
@@ -278,6 +276,10 @@ LOGGING = {
         },
     },
     'handlers': {
+        'null': {
+            'level': 'DEBUG',
+            'class': 'logging.NullHandler',
+        },
         'mail_admins': {
             'level': 'ERROR',
             'filters': ['require_debug_false'],
@@ -290,6 +292,10 @@ LOGGING = {
         }
     },
     'loggers': {
+        'django.security.DisallowedHost': {
+            'handlers': ['null'],
+            'propagate': False,
+        },
         'django.request': {
             'handlers': ['mail_admins'],
             'level': 'ERROR',
@@ -343,7 +349,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 )
 
 # Remember to keep 'local' last, so it can override any setting.
-for settings_module in ['filebrowser', 'feedme', 'local']:  # local last
+for settings_module in ['filebrowser', 'django_wiki', 'feedme', 'local']:  # local last
     if not os.path.exists(os.path.join(PROJECT_SETTINGS_DIRECTORY,
             settings_module + ".py")):
         sys.stderr.write("Could not find settings module '%s'.\n" %
