@@ -1,5 +1,7 @@
 {% extends "dashboard_base.html" %}
 {% load compress %}
+{% load addcss %}
+{% load crispy_forms_tags %}
 
 {% block title %}
 Ny plakatbestilling - Online
@@ -32,7 +34,13 @@ Bestill ny plakat
     <section>
     <form action="" method="POST">
         {{add_poster_form.non_field_errors }}
-        {{add_poster_form}}
+         {% for field in add_poster_form %}
+            <div class="form-group">
+                <div class="col-md-2">{{ field.label_tag }}</div>
+                <div class="col-md-{% if field.errors %}7{% else %}10{% endif %}">{{ field|addclass:"form-control"}}</div>
+                {% if field.errors %}<div class="col-md-2 error">{{ field.errors }}</div>{% endif %}
+            </div>
+          {% endfor %}
         <input type="submit">
         {% csrf_token %}
     </form>

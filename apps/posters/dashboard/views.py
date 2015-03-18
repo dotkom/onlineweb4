@@ -36,37 +36,23 @@ def index(request):
 @login_required
 @permission_required('posters.add_poster_order', return_403=True)
 def add(request):
+
+    context = get_base_context(request)
+
     if request.method == 'POST':
         form = AddPosterForm(data=request.POST)
         if form.is_valid():
             poster=Poster(request.POST)
-            #poster.ordered_by = request.user
-            #poster.ordered_committee = request.user.groups.filter(name="dotKom")[:1].get();
-            poster.save()
+            poster.ordered_by = request.user
+            poster.ordered_committee = request.user.groups.filter(name="dotKom")[:1].get();
+            #poster.save()
 
             return HttpResponseRedirect('../')
         else:
-            print("invalid form")
-#    if request.method == 'GET':
-#            posterform = PosterForm()
+            context['add_poster_form'] = form
+            return render(request, 'posters/dashboard/add.html', context)
 
-#    else:
-        # A POST request: Handle Form Upload
-        #form = PostForm(request.POST) # Bind data from request.POST into a PostForm
- 
-        # If data is valid, proceeds to create a new post and redirect the user
-        #if form.is_valid():
-     #       shit=True
-            #content = form.cleaned_data['content']
-            #created_at = form.cleaned_data['created_at']
-            #post = m.Post.objects.create(content=content,
-            #                             created_at=created_at)
-            #return HttpResponseRedirect(reverse('post_detail',
-            #                                    kwargs={'post_id': post.id}))
 
-    #return render(request, 'posters/dashboard/add.html', {'PosterForm': posterform, context})
-
-    context = get_base_context(request)
     context['add_poster_form'] = AddPosterForm()
     return render(request, 'posters/dashboard/add.html', context)
 

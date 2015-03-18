@@ -18,8 +18,8 @@ class Poster(models.Model):
 
     # Poster specific
     title = models.CharField(_(u"arrangementstittel"), max_length=50)
-    company = models.ForeignKey(Company, related_name=_(u"bedrift"))
-    location = models.CharField(_(u"sted"), max_length=50)
+    company = models.ForeignKey(Company, related_name=_(u"bedrift"), blank=True, null=True)
+    location = models.CharField(_(u"sted"), max_length=50, blank=True, null=True)
     when = models.DateTimeField(_(u'event-start'))
     category = models.IntegerField(_(u"type"), choices=POSTER_TYPES, default=0)
     amount = models.IntegerField(_(u'antall'), blank=True, null=True)
@@ -27,7 +27,6 @@ class Poster(models.Model):
     price = models.DecimalField(_(u'pris'), max_digits=10, decimal_places=2, blank=True, null=True)
     display_from = models.DateField(_(u"vis fra"))
     display_to = models.DateField(_(u"vis til"))
-    finished = models.BooleanField(_(u"ferdig"), default=False)
 
     # Order specific
     ordered_date = models.DateTimeField(auto_now_add=True, editable=False)
@@ -35,7 +34,7 @@ class Poster(models.Model):
     ordered_committee = models.ForeignKey(Group, related_name=_(u'bestilt av komite'))
     assigned_to = models.ForeignKey(User, related_name=_(u'tilordnet til'), blank=True, null=True)
     comments = models.TextField(_(u"kommentar"), max_length=500, blank=True, null=True)
-    done = models.BooleanField(_(u"ferdig"), default=False)
+    finished = models.BooleanField(_(u"ferdig"), default=False)
 
 
     class Meta:
