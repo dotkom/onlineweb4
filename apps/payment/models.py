@@ -17,6 +17,7 @@ class Payment(models.Model):
     price = models.IntegerField(_(u"pris"))
     deadline = models.DateTimeField(_(u"frist"), blank=True, null=True)
     instant_payment = models.BooleanField(_(u"betaling før påmelding"), help_text=_(u"krev betaling før påmelding"), default=False)
+    active = models.BooleanField(default=False)
 
     #title = models.CharField(_(u"tittel"), max_length=60)
     description = models.CharField(_(u"beskrivelse"), help_text=_(u"Dette feltet kreves kun dersom det er mer enn en betaling"), max_length=60, blank=True, null=True)
