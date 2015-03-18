@@ -57,6 +57,11 @@ class PaymentReminder(Task):
         message += _(u"Dersom du har spørsmål kan du sende mail til ") + payment.content_object_mail()
         message += _(u"\n\nMvh\nLinjeforeningen Online")
 
+    def send_atendees_not_paied_mail(payment):
+        subject = _(u"Ikke betalt for ") + payment.content_object_description()
+        message = _(u"Disse har ikke betalt for ") + payment.content_object_description()
+        message += not_paid(payment)
+
     @staticmethod
     def not_paid(payment):
         event = payment.content_object
