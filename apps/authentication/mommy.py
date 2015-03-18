@@ -31,7 +31,7 @@ class SynchronizeGroups(Task):
             synced = 0
 
             # Get all users in the source groups
-            users_in_source = User.objects.filter(groups__id__in=sync.get('source')).all()
+            users_in_source = User.objects.filter(groups__id__in=sync.get('source')).exclude(groups__id__in=sync.get('destination'))
 
             # Check if any users were found
             if len(users_in_source) > 0:
@@ -42,16 +42,16 @@ class SynchronizeGroups(Task):
 
                     # Loop all the users in the source groups
                     for user in users_in_source:
-                            # Get all groups for the current user
-                            user_groups = user.groups.all()
+                        # Get all groups for the current user
+                        user_groups = user.groups.all()
 
-                            # Check if the user has the current destination group
-                            if destination_group_object not in user_groups:
-                                # User is not in the current destination group, add
-                                destination_group_object.user_set.add(user)
+                        # Check if the user has the current destination group
+                        if destination_group_object not in user_groups:
+                            # User is not in the current destination group, add
+                            destination_group_object.user_set.add(user)
 
-                                # Increase syncs
-                                synced += 1
+                            # Increase syncs
+                            synced += 1
 
                 # Check if any changes were made and if there was, log it
                 if synced > 0:
@@ -64,7 +64,7 @@ class SynchronizeGroups(Task):
             synced = 0
 
             # Get all users in the destination groups
-            users_in_destination = User.objects.filter(groups__id__in=sync.get('destination')).all()
+            users_in_destination = User.objects.filter(groups__id__in=sync.get('destination')).all().exclude(groups__id__in=sync.get('source'))
 
             # Check if any users were found
             if len(users_in_destination) > 0:
