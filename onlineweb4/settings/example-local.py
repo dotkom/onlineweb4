@@ -172,7 +172,7 @@ LOGGING = {
             'level': 'ERROR',
             'propagate': True,
         },
-        'bedfagsyncer': {
+        'syncer': {
             'handlers': ['console'],
             'level': 'DEBUG',
             'propagate': True,

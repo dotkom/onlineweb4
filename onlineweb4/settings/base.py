@@ -391,7 +391,7 @@ GROUP_SYNCER = [
             18 # SeniorKom
         ],
         'destination': [
-            22 # Wiki - Komiteer access permissions
+            23 # Wiki - Komiteer access permissions
         ]
     }
 ]
