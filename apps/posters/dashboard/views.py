@@ -29,7 +29,7 @@ def index(request):
     #posters = Poster.objects.filter()
     context = get_base_context(request)
 
-    return render(request, 'posters/dashboard/overview.html', context)
+    return render(request, 'posters/dashboard/index.html', context)
 
 
 @ensure_csrf_cookie
