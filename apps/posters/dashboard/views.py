@@ -5,7 +5,7 @@ import json
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied, ObjectDoesNotExist
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, redirect, get_object_or_404, HttpResponseRedirect
 from django.utils import timezone
 from django.utils.translation import ugettext as _
 from django.views.decorators.csrf import ensure_csrf_cookie
@@ -13,14 +13,11 @@ from django.views.decorators.csrf import ensure_csrf_cookie
 from guardian.decorators import permission_required
 
 from apps.dashboard.tools import has_access, get_base_context
-<<<<<<< Updated upstream
 from apps.posters.models import Poster
-from apps.posters.forms import AddPosterForm
-=======
+from apps.posters.forms import AddPosterForm, EditPosterForm
 #from apps.dashboard.posters.models import PosterForm
 from apps.posters.models import Poster
 
->>>>>>> Stashed changes
 
 @ensure_csrf_cookie
 @login_required
@@ -29,7 +26,6 @@ def index(request):
     if request.is_ajax():
         do_ajax_shit=True
 
-<<<<<<< Updated upstream
     #posters = Poster.objects.filter()
     context = get_base_context(request)
 
@@ -48,11 +44,9 @@ def add(request):
             #poster.ordered_committee = request.user.groups.filter(name="dotKom")[:1].get();
             poster.save()
 
-            print(saved, poster)
             return HttpResponseRedirect('../')
         else:
             print("invalid form")
-=======
 #    if request.method == 'GET':
 #            posterform = PosterForm()
 
@@ -71,7 +65,6 @@ def add(request):
             #                                    kwargs={'post_id': post.id}))
 
     #return render(request, 'posters/dashboard/add.html', {'PosterForm': posterform, context})
->>>>>>> Stashed changes
 
     context = get_base_context(request)
     context['add_poster_form'] = AddPosterForm()
@@ -83,10 +76,7 @@ def add(request):
 @permission_required('posters.add_poster_order', return_403=True)
 def change(request):
     context = get_base_context(request)
-<<<<<<< Updated upstream
     context['edit_poster_form'] = EditPosterForm()
-    return render(request, 'posters/dashboard/change.html', context)
-=======
     context['new_orders'] = Poster.objects.filter(assigned_to=None)
     context['active_orders'] = Poster.objects.filter(done=False, assigned_to__isnull=False)
     context['inactive_orders'] = Poster.objects.filter(done=True).order_by('-id')[:10]
@@ -96,7 +86,6 @@ def change(request):
     context['inactive_orders'] = Poster.objects.filter(display_to__gte=today)[:5]
 
     return render(request, 'posters/dashboard/index.html', context)
->>>>>>> Stashed changes
 
 
 @ensure_csrf_cookie
@@ -108,8 +97,4 @@ def details(request):
 
     context = get_base_context(request)
 
-<<<<<<< Updated upstream
     return render(request, 'posters/dashboard/details.html', context)
-=======
-    return render(request, 'posters/dashboard/index.html', context)
->>>>>>> Stashed changes

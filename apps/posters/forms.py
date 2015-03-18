@@ -10,7 +10,7 @@ class AddPosterForm(forms.ModelForm):
         fields = ['title', 'company', 'location', 'when', 'category', 'amount', 'description', 
                   'price', 'display_to', 'display_from', 'comments']
 
-class ChangePosterForm(forms.ModelForm):
+class EditPosterForm(forms.ModelForm):
     
     class Meta:
         model = Poster
