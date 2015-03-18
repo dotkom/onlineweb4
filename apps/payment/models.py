@@ -17,7 +17,7 @@ class Payment(models.Model):
     price = models.IntegerField(_(u"pris"))
     deadline = models.DateTimeField(_(u"frist"), blank=True, null=True)
     instant_payment = models.BooleanField(_(u"betaling før påmelding"), help_text=_(u"krev betaling før påmelding"), default=False)
-    active = models.BooleanField(default=False)
+    active = models.BooleanField(default=True)
 
     #title = models.CharField(_(u"tittel"), max_length=60)
     description = models.CharField(_(u"beskrivelse"), help_text=_(u"Dette feltet kreves kun dersom det er mer enn en betaling"), max_length=60, blank=True, null=True)
@@ -25,6 +25,10 @@ class Payment(models.Model):
     added_date = models.DateTimeField(_(u"opprettet dato"), auto_now=True)
     changed_date = models.DateTimeField(auto_now=True, editable=False)
     last_changed_by = models.ForeignKey(User, editable=False, null=True) #blank and null is temperarly
+
+
+    def paid_users(self):
+        return [payment_relation.user for payment_relation in self.paymentrelation_set.all()]
 
 
     def content_object_description(self):

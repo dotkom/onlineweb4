@@ -6,8 +6,9 @@ from django.contrib.contenttypes.models import ContentType
 
 from apps.payment.models import Payment, PaymentRelation
 from apps.events.models import Event
+from apps.mommy import Task, schedule
 
-class PaymenReminder(Task):
+class PaymentReminder(Task):
 
     @staticmethod
     def run():
@@ -24,6 +25,7 @@ class PaymenReminder(Task):
             deadline_diff = (payment.deadline - today).days
 
             if deadline_diff <= 0:
+                i = 1
                 #TODO do stuff
             elif deadline_diff < 3:
                 send_remainder_mail(payment)
@@ -33,6 +35,7 @@ class PaymenReminder(Task):
         return Payment.objects.filter (instant_payment=False, active=True, content_type=ContentType.objects.get_for_model(Event))
 
     def send_remainder_mail(payment):
+        i = 1
         #TODO
         subject = _(u"Betaling: ") + payment.content_object_description()
         message = _(u"Hei, du har ikke betalt for arrangement ") + payment.content_object_description()
@@ -54,4 +57,13 @@ class PaymenReminder(Task):
         message += _(u"Dersom du har spørsmål kan du sende mail til ") + payment.content_object_mail()
         message += _(u"\n\nMvh\nLinjeforeningen Online")
 
-schedule.register(PaymenReminder, day_of_week='mon-sun', hour=7, minute=05)
+    @staticmethod
+    def not_paid(payment):
+        event = payment.content_object
+        attendees = [attendee.user for attendee in event.attendance_event.attendees_qs]
+        paid_users = payment.paid_users()
+
+        return [user for user in attendees if user not in paid_users]
+
+
+schedule.register(PaymentReminder, day_of_week='mon-sun', hour=7, minute=05)
