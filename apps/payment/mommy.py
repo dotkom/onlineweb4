@@ -27,9 +27,6 @@ class PaymenReminder(Task):
                 #TODO do stuff
             elif deadline_diff < 3:
                 send_remainder_mail(payment)
-            
-
-
 
     @staticmethod
     def active_event_payments():
@@ -37,6 +34,24 @@ class PaymenReminder(Task):
 
     def send_remainder_mail(payment):
         #TODO
+        subject = _(u"Betaling: ") + payment.content_object_description()
+        message = _(u"Hei, du har ikke betalt for arrangement ") + payment.content_object_description()
+        message += _(u"du må betale innen ") + payment.deadline
+        message += _(u"Dersom du har spørsmål kan du sende mail til ") + payment.content_object_mail()
+        message += _(u"\n\nMvh\nLinjeforeningen Online")
 
+    def send_deadline_passed_mail(payment):
+        subject = _(u"Betalingsfrist utgått: ") + payment.content_object_description()
+        message = _(u"Hei, du har ikke betalt for arrangement ") + payment.content_object_description()
+        message += _(u"fristen har utgått, og du får en prikk og 48 timer til å betale")
+        message += _(u"Dersom du har spørsmål kan du sende mail til ") + payment.content_object_mail()
+        message += _(u"\n\nMvh\nLinjeforeningen Online")
+
+    def send_missed_payment_mail(payment):
+        subject = _(u"Betalingsfrist utgått: ") + payment.content_object_description()
+        message = _(u"Hei, du har ikke betalt for arrangement ") + payment.content_object_description()
+        message += _(u"fristen har utgått, og du har mistet plassen din på arrangement")
+        message += _(u"Dersom du har spørsmål kan du sende mail til ") + payment.content_object_mail()
+        message += _(u"\n\nMvh\nLinjeforeningen Online")
 
 schedule.register(PaymenReminder, day_of_week='mon-sun', hour=7, minute=05)
