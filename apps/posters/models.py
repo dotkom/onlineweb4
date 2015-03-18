@@ -18,8 +18,8 @@ class Poster(models.Model):
 
     # Poster specific
     title = models.CharField(_(u"arrangementstittel"), max_length=50)
-    company = models.ForeignKey(Company, related_name=_(u"bedrift"))
-    location = models.CharField(_(u"sted"), max_length=50)
+    company = models.ForeignKey(Company, related_name=_(u"bedrift"), blank=True, null=True)
+    location = models.CharField(_(u"sted"), max_length=50, blank=True, null=True)
     when = models.DateTimeField(_(u'event-start'))
     category = models.IntegerField(_(u"type"), choices=POSTER_TYPES, default=0)
     amount = models.IntegerField(_(u'antall'), blank=True, null=True)
