@@ -1,0 +1,72 @@
+{% extends "dashboard_base.html" %}
+{% load compress %}
+
+{% block title %}
+Plakatbestillinger - Online
+{% endblock title %}
+
+{% block styles %}
+    {{ block.super }}
+    {% compress css %}
+        <link rel="stylesheet" type="text/less" href="{{ STATIC_URL }}less/dashboard/posters.less" />
+    {% endcompress %}
+{% endblock %}
+
+{% block js %}
+    {{ block.super }}
+    {% compress js %}
+        <script type="text/javascript" src="{{ STATIC_URL }}js/dashboard/posters.js"></script>
+    {% endcompress %}
+{% endblock js %}
+
+{% block page-header %}
+Plakatbestillinger
+{% endblock %}
+
+{% block breadcrumbs %}
+    <li>Plakatbestilling</li> 
+{% endblock %}
+
+{% block content %}
+    <h4>Nye plakatbestillinger</h4>
+    <section id="new-orders">
+        <div class="row row-space headings">
+            <div class="col-md-4">
+                <span><div class="visible-xs visible-sm">1. </div>Plakat</span>
+            </div>
+            <div class="col-md-2">
+                <span><div class="visible-xs visible-sm">2. </div>Utløpsdato for medlemskap</span>
+            </div>
+            <div class="col-md-2">
+                <span><div class="visible-xs visible-sm">3. </div>Detaljer for søknad om ny studieretning</span>
+            </div>
+            <div class="col-md-4">
+                <span><div class="visible-xs visible-sm">4. </div>Detaljer for søknad om ny studieretning</span>
+            </div>
+        </div>
+        {% for order in new_orders %}
+            <div class="row application">
+                <div class="col-md-3 cell">
+                    <div class="visible-xs visible-sm">1. </div>{{ order }}
+                </div>
+                <div class="col-md-3 cell">
+                    <div class="visible-xs visible-sm">2. </div>
+                        {{ order.category }}
+                </div>
+                <div class="col-md-4 cell">
+                    <div class="visible-xs visible-sm">3. </div>
+                        {{ order.display_from }}
+                </div>
+                <div class="col-md-2">
+                    <div class="visible-xs visible-sm">4. </div>
+                        {{ order.ordered_by }}
+                </div>
+            </div>
+            <!--<div class="col-md-4">{{ order }}</div>
+            <div class="col-md-2">{{ order.category }}</div>
+            <div class="col-md-2">{{ order.display_from }}</div>
+            <div class="col-md-4">{{ order.ordered_by }}</div>-->
+        {% endfor %}
+        </div>
+    </section>
+{% endblock content %}

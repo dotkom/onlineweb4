@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+
+{% block title %}
+FeedMe
+{% endblock title %}
+
+{% block styles %}
+{{ block.super }}
+<link href="{{ STATIC_URL }}css/feedme.css" rel="stylesheet">
+{% endblock styles %}
+
+{% load admin_tags %}
+
+{% block submenu %}
+{% include "nav.html" %}
+{% endblock submenu %}
+
+{% block content %}
+
+<section id="feedMeAdmin">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="page-header">
+          <h1>{{ form.name|title }}</h1>
+        </div>
+        <!--{% include "messages.html" %}-->
+        <form action="" method="post">
+          {% csrf_token %}
+          <div class="content">
+            {% admin_tabs form.name  %}
+            {% if form %}
+                {% for field in form %}
+                  <div class="fieldWrapper clearfix"{% if orderlines %} hidden{% endif %}>
+                    <label>{{ field.label_tag }}</label>
+                    <div class="input">{{ field }}</div>
+                    <div class="error">{{ field.errors }}</div>
+                  </div>
+                {% endfor %}
+            {% endif %}
+            {% if orderlines %}
+                <h2>
+                    {{ order }}: {{ total_price }} kr
+                    <form action="" method="post">
+                        <input type="input" name="act" value="set_active_order" hidden>
+                    {% if order.active %}
+                        <input type="input" name="set_active" value="False" hidden>
+                        <input type="submit" name="active_order_submit" value="Deactivate" class="btn btn-danger btn-lg">
+                    {% else %}
+                        <input type="input" name="set_active" value="True" hidden>
+                        <input type="submit" name="active_order_submit" value="Activate" class="btn btn-success btn-lg">
+                    {% endif %}
+                    </form>
+                    <span class="pull-right">Paid (-> inactive): <span class="glyphicon glyphicon-{% if order.active %}remove{% else %}ok{% endif %}"></span></span>
+                </h2>
+                <table class="table">
+                    <tr><th>Orderline</th><th>Menu item</th><th>Comments</th><th>User</th><th>To pay</th><th>Paid for</th><th></th></tr>
+                    {% for orderline in orderlines %}
+                        {% if orderline.users %}
+                            {% for user in orderline.users.all %}
+                                <tr>
+                                    <td>
+                                        {{ orderline.id }}
+                                        <span class="pull-right">
+                                            <input type="number" id="{{ orderline.id }}" name="edit_orderline_price-{{ orderline.id }}" id="{{ orderline.id}}" value="{{ orderline.price }}" min="0" max="999">
+                                    </td>
+                                    <td>{{ orderline.menu_item }}</td>
+                                    <td>{{ orderline.comments }}</td>
+                                    <td>{{ user }}</td>
+                                    <td>{{ orderline.each }}</td>
+                                    <td><span class="glyphicon glyphicon-{% if orderline.paid_for %}ok{% else %}remove{% endif %}"></span></td>
+                                </tr>
+                            {% endfor %}
+                        {% endif %}
+                    {% endfor %}
+                </table>
+            {% else %}
+                <h3>This order has no order lines yet.</h3>
+            {% endif %}
+          {% if not orderlines %}
+            <input name="act" class="btn btn-primary" type="submit" value="Load" />
+          {% else %}
+            <input name="act" class="btn btn-danger" type="submit" value="Edit" />
+            <input name="act" class="btn btn-primary" type="submit" value="Pay" />
+          {% endif %}
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock content %}

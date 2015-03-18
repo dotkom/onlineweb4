@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block title %}
+FeedMe
+{% endblock title %}
+
+{% block styles %}
+{{ block.super }}
+<link href="{{ STATIC_URL }}css/feedme.css" rel="stylesheet">
+{% endblock styles %}
+
+{% load admin_tags %}
+
+{% block submenu %}
+{% include "nav.html" %}
+{% endblock submenu %}
+
+{% block content %}
+
+<section id="feedMeAdmin">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="page-header">
+          <h1>{{ form.name|title }}</h1>
+        </div>
+        <!--{% include "messages.html" %}-->
+        <form action="" method="post">
+          {% csrf_token %}
+          <div class="content">
+            {% admin_tabs form.name %}
+
+            {% for field in form %}
+              <div class="fieldWrapper clearfix">
+                <label>{{ field.label_tag }}</label>
+                <div class="input">{{ field }}</div>
+                <div class="error">{{ field.errors }}</div>
+              </div>
+            {% endfor %}
+
+          <input class="btn btn-primary" type="submit" value="Save" />
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock content %}

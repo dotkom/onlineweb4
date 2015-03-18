@@ -35,6 +35,7 @@ class Poster(models.Model):
     ordered_committee = models.ForeignKey(Group, related_name=_(u'bestilt av komite'))
     assigned_to = models.ForeignKey(User, related_name=_(u'tilordnet til'), blank=True, null=True)
     comments = models.TextField(_(u"kommentar"), max_length=500, blank=True, null=True)
+    done = models.BooleanField(_(u"ferdig"), default=False)
 
 
     class Meta:
@@ -48,3 +49,8 @@ class Poster(models.Model):
 
     def __str__(self):
         return "Plakat for %(event)s" % {'event': self.title}
+
+
+class PosterForm(ModelForm):        
+    class Meta: 
+        model = Poster

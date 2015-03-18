@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+
+{% block title %}
+FeedMe
+{% endblock title %}
+
+{% block styles %}
+{{ block.super }}
+{% endblock styles %}
+
+{% block submenu %}
+{% include "nav.html" %}
+{% endblock submenu %}
+
+{% block content %}
+
+<section id="feedMe">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        {% if order %}
+          <div class="page-header">
+              <h1>
+                  {{ order }}
+                  (<a href="{{ order.restaurant.menu_url }}" target="_blank">Menu</a>) 
+                  {% if user.is_staff %}
+                    <span class="glyphicon glyphicon-phone-alt"></span> {{ order.restaurant.phone_number }}
+                  {% endif %}
+              </h1>
+          </div>
+          <div role="tabpanel">
+            <ul class="nav nav-tabs" role="tablist">
+              <li role="presentation" class="active">
+                <a href="#order" aria-controls="order" role="tab" data-toggle="tab">Overview</a>
+              </li>
+              <li role="presentation" {% if not user.is_staff %}class="disabled"{% endif %}>
+                <a href="#receipt" aria-controls="receipt" role="tab" data-toggle="tab">Receipt</a>
+              </li>
+            </ul>
+            <div class="tab-content">
+              <div role="tabpanel" class="tab-pane active" id="order">
+                  <table class="table table-striped table-bordered">
+                    <tr>
+                      <th>Menu item</th>
+                      <th>Soda</th>
+                      <th>Creator</th>
+                      <th>Extras/comment</th>
+                      <th>Buddies</th>
+                      <th>Administration</th>
+                    </tr>
+                    {% for order_line in order.orderline_set.all %}
+                      <tr>
+                    <td>{{ order_line.menu_item }} <span class="pull-right">{{ order_line.price }} kr</span></td>
+                    <td>{{ order_line.soda }}</td>
+                    <td>{{ order_line.creator.username }}</td>
+                    <td>{{ order_line.extras }}</td>
+                    <td>
+                      {% if order_line.users %}
+                        {% for user in order_line.users.all %}
+                          {% if user.nickname %}
+                            {% if not user.nickname == orderline.creator %}
+                                {{ user.nickname }}
+                            {% endif %}
+                          {% else %}
+                            {% if not user == order_line.creator %}
+                                {{ user.username }}
+                            {% endif %}
+                          {% endif %}
+                        {% endfor %}
+                      {% endif %}
+                    </td>
+                    <td>
+                      {% if user.is_authenticated %}
+                      {% if user == order_line.creator or user in order_line.users.all %}
+                        <a href="{% url "edit_orderline" order_line.id %}"><button class="btn btn-primary">edit</button></a>
+                      {% endif %}
+                      {% if user not in order_line.users.all and order.restaurant.buddy_system and can_join %}
+                        <a href={% url "join_orderline" order_line.id %}><button class="btn btn-primary">join</button></a>
+                        {% elif user in order_line.users.all and user != order_line.creator and order.restaurant.buddy_system %}
+                        <a href={% url "leave_orderline" order_line.id %}><button class="btn btn-danger">leave</button></a>
+                      {% endif %}
+                        {% if user == order_line.creator %}
+                        <a href="{% url "delete_orderline" order_line.id %}"><button class="btn btn-danger">delete</button></a>
+                        {% endif %}
+                    {% endif %}
+                    </td>
+                  </tr>
+                {% endfor %}
+              </table>
+              {% if can_join and user.is_authenticated %}
+                  <a href="{% url "new_orderline" %}"><button class="btn btn-primary">New order line</button></a>
+              {% endif %}
+            </div>
+            <div role="tabpanel" class="tab-pane" id="receipt">
+                <h3>Receipt</h3>
+                <h4>Menu items</h4>
+                <ul>
+                    {% for orderline in order.orderline_set.all %}
+                        {% if orderline.menu_item %}
+                        <li>{{ orderline.menu_item }}</li>
+                        {% endif %}
+                    {% empty %}
+                        No items from this category ordered.
+                    {% endfor %}
+                </ul>    
+                <h4>Soda</h4>
+                    <ul>
+                    {% for orderline in order.orderline_set.all %}
+                        {% if orderline.soda %}
+                        <li>{{ orderline.soda }}</li>
+                        {% endif %}
+                    {% empty %}
+                        No items from this category ordered.
+                    {% endfor %}
+                </ul>
+                <h4>Comments</h4>
+                    <ul>
+                    {% for orderline in order.orderline_set.all %}
+                        {% if orderline.extras %}
+                        <li>{{ orderline.extras }}</li>
+                        {% endif %}
+                    {% empty %}
+                        No items from this category ordered.
+                    {% endfor %}
+                </ul>
+            </div>
+          </div>
+        {% else %}
+          {% if poll %}
+            {% include 'poll.html' %}
+          {% else %}
+            <h3>No active poll.</h3>
+          {% endif %}
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock content %}
