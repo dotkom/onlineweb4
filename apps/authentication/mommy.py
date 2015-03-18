@@ -102,4 +102,4 @@ class SynchronizeGroups(Task):
 
 
 # Register scheduler
-schedule.register(SynchronizeGroups, day_of_week='mon-sun', hour=4, minute=00)
+schedule.register(SynchronizeGroups, day_of_week='mon-sun', minute='*/15')
