@@ -1,3 +1,5 @@
+#-*- coding: utf-8 -*-
+
 import locale
 import logging
 
@@ -28,20 +30,25 @@ class PaymentReminder(Task):
                 i = 1
                 #TODO do stuff
             elif deadline_diff < 3:
-                send_remainder_mail(payment)
+                if payment.not_paid():
+                    send_remainder_mail(payment)
 
     @staticmethod
     def active_event_payments():
         return Payment.objects.filter (instant_payment=False, active=True, content_type=ContentType.objects.get_for_model(Event))
 
     def send_remainder_mail(payment):
-        i = 1
-        #TODO
         subject = _(u"Betaling: ") + payment.content_object_description()
+        
         message = _(u"Hei, du har ikke betalt for arrangement ") + payment.content_object_description()
-        message += _(u"du må betale innen ") + payment.deadline
-        message += _(u"Dersom du har spørsmål kan du sende mail til ") + payment.content_object_mail()
+        message += _(u"\nFristen for og betale er ") + payment.deadline
+        #TODO add info about punishment for failed payments
+        message += _(u"\n\nDersom du har spørsmål kan du sende mail til ") + payment.content_object_mail()
         message += _(u"\n\nMvh\nLinjeforeningen Online")
+
+        receivers = [user.email for user in payment.not_paid]
+
+        EmailMessage(subject, unicode(message), payment.content_object_mail(), [], receivers).send()
 
     def send_deadline_passed_mail(payment):
         subject = _(u"Betalingsfrist utgått: ") + payment.content_object_description()
@@ -63,6 +70,7 @@ class PaymentReminder(Task):
         attendees = [attendee.user for attendee in event.attendance_event.attendees_qs]
         paid_users = payment.paid_users()
 
+        #Returns users in the list of attendees but not in the list of paid users
         return [user for user in attendees if user not in paid_users]
 
 
