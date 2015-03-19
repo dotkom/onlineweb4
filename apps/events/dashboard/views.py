@@ -82,7 +82,7 @@ def details(request, event_id, active_tab='attendees'):
                 if user.count() != 1:
                     return HttpResponse(u'Fant ingen bruker med oppgitt ID (%s).' % request.POST['user_id'], status=400)
                 user = user[0]
-                if Attendee.objects.filter(user=user).count() != 0:
+                if Attendee.objects.filter(user=user, event=event.attendance_event).count() != 0:
                     return HttpResponse(u'%s er allerede påmeldt %s.' % (user.get_full_name(), event.title), status=400)
                 attendee = Attendee(user = user, event = event.attendance_event)
                 attendee.save()
