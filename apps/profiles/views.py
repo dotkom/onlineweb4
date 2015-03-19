@@ -46,6 +46,7 @@ def _create_profile_context(request):
         # edit
         'position_form': PositionForm(),
         'user_profile_form': ProfileForm(instance=request.user),
+        # positions
         'groups': groups,
         # privacy
         'privacy_form': PrivacyForm(instance=request.user.privacy),
