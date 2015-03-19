@@ -100,7 +100,7 @@ var Group = (function ($, tools) {
 
             // Typeahead template
             var user_search_template =  [
-                '<span data-id="{{ id }}" class="user-meta"><h4>{{ name }}</h4>'
+                '<span data-id="{{ id }}" class="user-meta"><h4>{{ value }}</h4>'
             ].join('')
             
             // Bind the input field
