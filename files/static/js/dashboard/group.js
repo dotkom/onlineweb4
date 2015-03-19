@@ -105,7 +105,7 @@ var Group = (function ($, tools) {
             
             // Bind the input field
             $('#usersearch').typeahead({
-                remote: "/profile/api_user_search/?query=%QUERY",
+                remote: "/profile/api_plain_user_search/?query=%QUERY",
                 updater: function (item) {
                     return item
                 },
