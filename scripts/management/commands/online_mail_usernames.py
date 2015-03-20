@@ -35,7 +35,7 @@ class Command(NoArgsCommand):
             i = None
             while True:
                 # Start with a suggestion that is only lower case name replaced spaces with dots
-                suggestion = name.replace(" ", ".")
+                suggestion = re.sub("\s+", ".", name)
                 # Suggestion now contains only lowercase letters, dots and possibly other chars
                 # Like dashes. The following regex is a catch-all and removes them.
                 suggestion = re.sub(r'[^a-z.]', "", suggestion)
