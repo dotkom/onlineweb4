@@ -32,7 +32,8 @@ class Command(NoArgsCommand):
             if not name or not user.email:
                 continue
 
-            i = None
+            # set to empty string so nothing is appended if not needed
+            i = ''
             while True:
                 # Start with a suggestion that is only lower case name replaced spaces with dots
                 suggestion = re.sub("\s+", ".", name)
