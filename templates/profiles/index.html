@@ -29,65 +29,59 @@ Min side - Online
             </div>
             <div class="row">
                 <div class="col-md-2 col-sm-3 col-xs-12">
-                    <!-- Desktop menu -->
-                    <ul class="nav nav-pills nav-stacked hidden-xs" id="userprofile-tabs">
-                        <li class="{% ifequal 'dashboard' active_tab %}active{% endifequal %}">
-                            <a href="#_dashboard">Dashboard</a>
+                    <ul class="nav nav-pills nav-stacked" id="profile-tabs">
+                        <li class="{% ifequal 'overview' active_tab %}active{% endifequal %}">
+                            <a href="{% url 'profiles_active' 'overview' %}" data-section="overview">Oversikt</a>
                         </li>
-                        <li class="{% ifequal 'editprofile' active_tab %}active{% endifequal %}">
-                            <a href="#_editprofile">Rediger profil</a>
+                        <li class="{% ifequal 'edit' active_tab %}active{% endifequal %}">
+                            <a href="{% url 'profiles_active' 'edit' %}" data-section="edit">Rediger profil</a>
+                        </li>
+                        <li class="{% ifequal 'position' active_tab %}active{% endifequal %}">
+                            <a href="{% url 'profiles_active' 'position' %}" data-section="position">Legg til verv</a>
                         </li>
                         <li class="{% ifequal 'privacy' active_tab %}active{% endifequal %}">
-                            <a href="#_privacy">Personvern</a>
+                            <a href="{% url 'profiles_active' 'privacy' %}" data-section="privacy">Personvern</a>
                         </li>
                         <li class="{% ifequal 'marks' active_tab %}active{% endifequal %}">
-                            <a href="#_marks">Prikker</a>
+                            <a href="{% url 'profiles_active' 'marks' %}" data-section="marks">Prikker</a>
                         </li>
                         <li class="{% ifequal 'password' active_tab %}active{% endifequal %}">
-                            <a href="#_password">Passord</a>
+                            <a href="{% url 'profiles_active' 'password' %}" data-section="password">Passord</a>
                         </li>
-                        <li class="{% ifequal 'mail-settings' active_tab %}active{% endifequal %}">
-                            <a href="#_mail-settings">Epost-innstillinger</a>
+                        <li class="{% ifequal 'email' active_tab %}active{% endifequal %}">
+                            <a href="{% url 'profiles_active' 'email' %}" data-section="email">Epost-innstillinger</a>
                         </li>
                         <li class="{%ifequal 'membership' active_tab %}active{% endifequal %}">
-                            <a href="#_membership">Medlemskap</a>
+                            <a href="{% url 'profiles_active' 'membership' %}" data-section="membership">Medlemskap</a>
                         </li>
-                    </ul>
-                    <!-- End Desktop menu -->
-                    <!-- Mobile menu -->
-                    <ul class="nav nav-pills nav-stacked visible-xs-block" id="userprofile-tabs">
-                        <li class="{% ifequal 'dashboard' active_tab %}Dashboard{% endifequal %}"><a href="#_dashboard" data-toggle="tab">Dashboard</a></li>
-                        <li class="{% ifequal 'editprofile' active_tab %}active{% endifequal %}"><a href="#_editprofile" data-toggle="tab">Brukerinformasjon</a></li>
-                        <li class="{% ifequal 'privacy' active_tab %}active{% endifequal %}"><a href="#_privacy" data-toggle="tab">Personvern</a></li>
-                        <li class="{% ifequal 'marks' active_tab %}active{% endifequal %}"><a href="#_marks" data-toggle="tab">Prikker</a></li>
-                        <li class="{% ifequal 'password' active_tab %}active{% endifequal %}"><a href="#_password" data-toggle="tab">Passord</a></li>
-                        <li class="{% ifequal 'mail-settings' active_tab %}active{% endifequal %}"><a href="#_mail-settings" data-toggle="tab">Epost-innstillinger</a></li>
-                        <li class="{% ifequal 'membership' active_tab %}active{% endifequal %}"><a href="#_membership" data-toggle="tab">Medlemskap</a></li>
                     </ul>
                 </div>
                 <div class="col-md-10 col-sm-9 col-xs-12">
-                    <div class="tab-content">
-                        <div id="_dashboard" class="tab-pane {% ifequal 'dashboard' active_tab %}active{% endifequal %}">
-                            {% include "profiles/dashboard.html" %}
-                        </div>
-                        <div id="_editprofile" class="tab-pane {% ifequal 'editprofile' active_tab %}active{% endifequal %}">
-                            {% include "profiles/editprofile.html" %}
-                        </div>
-                        <div id="_privacy" class="tab-pane {% ifequal 'privacy' active_tab %}active{% endifequal %}">
+                    <div id="tab-content">
+                        <section id="overview">
+                            {% include "profiles/overview.html" %}
+                        </section>
+                        <section id="edit">
+                            {% include "profiles/edit.html" %}
+                        </section>
+                        <section id="position">
+                            {% include "profiles/positions.html" %}
+                        </section>
+                        <section id="privacy">
                             {% include "profiles/privacy.html" %}
-                        </div>
-                        <div id="_marks" class="tab-pane {% ifequal 'marks' active_tab %}active{% endifequal %}">
+                        </section>
+                        <section id="marks">
                             {% include "profiles/marks.html" %}
-                        </div>
-                        <div id="_password" class="tab-pane {% ifequal 'password' active_tab %}active{% endifequal %}">
+                        </section>
+                        <section id="password">
                             {% include "profiles/change_password.html" %}
-                        </div>
-                        <div id="_mail-settings" class="tab-pane {% ifequal 'mail-settings' active_tab %}active{% endifequal %}">
-                            {% include "profiles/mail_settings.html" %}
-                        </div>
-                        <div id="_membership" class="tab-pane {% ifequal 'membership' active_tab %}active{% endifequal %}">
+                        </section>
+                        <section id="email">
+                            {% include "profiles/email.html" %}
+                        </section>
+                        <section id="membership">
                             {% include "profiles/membership.html" %}
-                        </div>
+                        </section>
                     </div>
                 </div>
             </div>

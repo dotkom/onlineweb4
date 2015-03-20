@@ -2,10 +2,11 @@
 
 import pytz
 import datetime
+import re
 
 from django.contrib.auth.models import Group
-from django.db.utils import IntegrityError
 from django.core.management.base import NoArgsCommand, CommandError
+from django.db.models import Q
 from django.utils import timezone
 
 from unidecode import unidecode
@@ -19,12 +20,11 @@ class Command(NoArgsCommand):
         # We only sync in members of the Komiteer group
         group = Group.objects.get(name = "Komiteer")
         # Fetch all users that do not currently have an alias
-        nomail = group.user_set.filter(online_mail__isnull=True).order_by('id')
+        nomail = group.user_set.filter(Q(online_mail__isnull=True) | Q(online_mail__exact='')).order_by('id')
         # Find a list of all taken email aliases in the system already
-        taken_mails = [u.online_mail for u in OnlineUser.objects.filter(online_mail__isnull=False)]
+        taken_mails = [u.online_mail for u in OnlineUser.objects.filter(online_mail__isnull=False).exclude(online_mail__exact='')]
 
         for user in nomail:
-            i = ''
             # Decode the full name of the user to plain ascii
             name = unidecode(user.get_full_name()).lower()
 
@@ -32,9 +32,15 @@ class Command(NoArgsCommand):
             if not name or not user.email:
                 continue
 
+            i = None
             while True:
                 # Start with a suggestion that is only lower case name replaced spaces with dots
-                suggestion = name.replace(" ", ".") + str(i)
+                suggestion = re.sub("\s+", ".", name)
+                # Suggestion now contains only lowercase letters, dots and possibly other chars
+                # Like dashes. The following regex is a catch-all and removes them.
+                suggestion = re.sub(r'[^a-z.]', "", suggestion)
+                # Append the differentiation number
+                suggestion += str(i)
                 if suggestion not in taken_mails:
                     user.online_mail = suggestion
                     user.save()
