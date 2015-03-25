@@ -16,6 +16,10 @@ class Product(models.Model):
     price = models.DecimalField(max_digits=10, decimal_places=2)
     stock = models.PositiveSmallIntegerField()
 
+    class Meta:
+        verbose_name = 'Produkt'
+        verbose_name_plural = 'Produkter'
+
 
 class ProductImage(models.Model):
     IMAGE_FOLDER = "images/webshop"
@@ -28,6 +32,10 @@ class ProductImage(models.Model):
     # )
     image = models.ImageField()
 
+    class Meta:
+        verbose_name = 'Produktbilde'
+        verbose_name_plural = 'Produktbilder'
+
 
 class Category(models.Model):
     name = models.CharField(max_length=100)
@@ -38,9 +46,9 @@ class Category(models.Model):
     def get_absolute_url(self):
         return reverse('webshop_category', args=[str(self.id)])
 
-
     class Meta:
-        verbose_name_plural = 'Categories'
+        verbose_name = 'Kategori'
+        verbose_name_plural = 'Kategorier'
 
 
 class Order(models.Model):
@@ -50,6 +58,10 @@ class Order(models.Model):
     price = models.DecimalField(max_digits=10, decimal_places=2)
     # Number of products ordered
     number = models.PositiveIntegerField()
+
+    class Meta:
+        verbose_name = 'Bestilling'
+        verbose_name_plural = 'Bestillinger'
 
 
 class OrderLine(models.Model):
