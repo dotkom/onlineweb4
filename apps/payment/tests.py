@@ -62,6 +62,12 @@ class PaymentTest(TestCase):
 
         self.assertFalse(not_paid)
 
+    def testEventMommyNotPaidMailAddress(self):
+        G(Attendee, event=self.attendance_event, user=self.user)
+        not_paid_email = PaymentReminder.not_paid_mail_addresses(self.event_payment)
+
+        self.assertEqual([self.user.email], not_paid_email)
+
 
 
 
