@@ -83,4 +83,4 @@ class PaymentReminder(Task):
         return [user for user in attendees if user not in paid_users]
 
 
-schedule.register(PaymentReminder, day_of_week='mon-sun', hour=22, minute=28)
+schedule.register(PaymentReminder, day_of_week='mon-sun', hour=20, minute=29)
