@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% load compress %}
+{% load markdown_deux_tags %}
+
+{% block title %}Webshop - Online{% endblock title %}
+
+{% block content %}
+<section id="webshop">
+    <div class="container">
+        <ul>
+        {% for category in categories %}
+            <li><a href="{{ category.get_absolute_url }}">{{ category }}</a></li>
+        {% endfor %}
+        </ul>
+    </div>
+</section>
+{% endblock %}

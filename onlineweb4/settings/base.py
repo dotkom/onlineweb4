@@ -251,6 +251,7 @@ INSTALLED_APPS = (
     'apps.posters',
     'apps.sso',
     'apps.splash',
+    'apps.webshop',
     'scripts',
 
     #External apps
