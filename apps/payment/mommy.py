@@ -43,12 +43,12 @@ class PaymentReminder(Task):
         subject = _(u"Betaling: ") + payment.content_object_description()
         
         message = _(u"Hei, du har ikke betalt for arrangement ") + payment.content_object_description()
-        message += _(u"\nFristen for og betale er ") + payment.deadline
+        message += _(u"\nFristen for og betale er ") + str(payment.deadline)
         #TODO add info about punishment for failed payments
         message += _(u"\n\nDersom du har spørsmål kan du sende mail til ") + payment.content_object_mail()
         message += _(u"\n\nMvh\nLinjeforeningen Online")
 
-        receivers = [user.email for user in not_paid(payment)]
+        receivers = [user.email for user in PaymentReminder.not_paid(payment)]
 
         EmailMessage(subject, unicode(message), payment.content_object_mail(), [], receivers).send()
 
@@ -78,4 +78,4 @@ class PaymentReminder(Task):
         return [user for user in attendees if user not in paid_users]
 
 
-schedule.register(PaymentReminder, day_of_week='mon-sun', hour=23, minute=58)
+schedule.register(PaymentReminder, day_of_week='mon-sun', hour=18, minute=55)
