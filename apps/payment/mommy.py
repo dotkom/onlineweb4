@@ -78,10 +78,11 @@ class PaymentReminder(Task):
         message += _(u"Dersom du har spørsmål kan du sende mail til ") + payment.content_object_mail()
         message += _(u"\n\nMvh\nLinjeforeningen Online")
 
-    
+    @staticmethod
     def notify_committee(payment):
         subject = _(u"Manglende betaling: ") + payment.content_object_description()
         message = _(u"Følgende brukere mangler betaling på ") + payment.content_object_description()
+        message += u'\n'
         message += u'\n'.join([user.get_full_name() for user in PaymentReminder.not_paid(payment)])
 
         receivers = [payment.content_object_mail()]
@@ -107,4 +108,4 @@ class PaymentReminder(Task):
         return [user.email for user in attendees if user not in paid_users]
 
 
-schedule.register(PaymentReminder, day_of_week='mon-sun', hour=21, minute=12)
+schedule.register(PaymentReminder, day_of_week='mon-sun', hour=23, minute=03)
