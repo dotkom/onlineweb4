@@ -8,7 +8,7 @@ from filebrowser.fields import FileBrowseField
 
 
 class Product(models.Model):
-    category = models.ForeignKey('Category')
+    category = models.ForeignKey('Category', related_name='products')
     name = models.CharField(max_length=100)
     short = models.CharField(max_length=200)
     description = models.TextField()
@@ -56,7 +56,7 @@ class Category(models.Model):
 
 class Order(models.Model):
     product = models.ForeignKey('Product')
-    order_line = models.ForeignKey('OrderLine')
+    order_line = models.ForeignKey('OrderLine', related_name='orders')
     # Price of product when ordered
     price = models.DecimalField(max_digits=10, decimal_places=2)
     # Number of products ordered
