@@ -20,7 +20,7 @@ var setupButton = function(data, payment_id){
 
     var handler = StripeCheckout.configure({
         key: data['stripe_public_key'],
-        image: '/static/img/online_stripe_logo.png',
+        image: '/static/img/Online_stripe_logo.png',
         token: function(token) {
             $.ajax({
                 type:"POST",
