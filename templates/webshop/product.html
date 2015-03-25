@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% load compress %}
+{% load markdown_deux_tags %}
+
+{% block title %}Webshop {{ product }} - Online{% endblock title %}
+
+{% block content %}
+<section id="webshop">
+    <div class="container">
+        <h2>{{product }}</h2>
+    </div>
+</section>
+{% endblock %}
