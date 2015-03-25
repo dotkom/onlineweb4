@@ -10,6 +10,7 @@ from filebrowser.fields import FileBrowseField
 class Product(models.Model):
     category = models.ForeignKey('Category', related_name='products')
     name = models.CharField(max_length=100)
+    slug = models.SlugField(unique=True)
     short = models.CharField(max_length=200)
     description = models.TextField()
 
@@ -17,7 +18,7 @@ class Product(models.Model):
     stock = models.PositiveSmallIntegerField()
 
     def get_absolute_url(self):
-        return reverse('webshop_product', args=[str(self.id)])
+        return reverse('webshop_product', args=[str(self.slug)])
 
     def __unicode__(self):
         return self.name
@@ -45,12 +46,13 @@ class ProductImage(models.Model):
 
 class Category(models.Model):
     name = models.CharField(max_length=100)
+    slug = models.SlugField(unique=True)
 
     def __unicode__(self):
         return self.name
 
     def get_absolute_url(self):
-        return reverse('webshop_category', args=[str(self.id)])
+        return reverse('webshop_category', args=[str(self.slug)])
 
     class Meta:
         verbose_name = 'Kategori'

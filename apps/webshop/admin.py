@@ -4,7 +4,7 @@ from apps.webshop.models import Category, Product, ProductImage
 
 
 class CategoryAdmin(admin.ModelAdmin):
-    pass
+    prepopulated_fields = {"slug": ("name",)}
 
 
 class ProductImageInline(admin.TabularInline):
@@ -13,6 +13,7 @@ class ProductImageInline(admin.TabularInline):
 
 class ProductAdmin(admin.ModelAdmin):
     inlines = [ProductImageInline]
+    prepopulated_fields = {"slug": ("name",)}
 
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(Product, ProductAdmin)
