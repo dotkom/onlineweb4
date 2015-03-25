@@ -89,7 +89,7 @@ def groups_detail(request, pk):
 
         return HttpResponse('Ugyldig handling.', status=400)
 
-    if settings.GROUP_SYNCER:
+    if hasattr(settings, 'GROUP_SYNCER') and settings.GROUP_SYNCER:
         group_id = int(pk)
         # Groups that list this one as their destination
         context['sync_group_from'] = []
@@ -98,7 +98,7 @@ def groups_detail(request, pk):
 
         # Make a dict that simply maps {id: name} for all groups
         groups = {g.id: g.name for g in Group.objects.all().order_by('id')}
-        
+
         for job in settings.GROUP_SYNCER:
             if group_id in job['source']:
                 context['sync_group_to'].extend([groups[id] for id in job['destination']])
@@ -118,7 +118,7 @@ def groups_detail(request, pk):
 @login_required
 @permission_required("authentication.view_allowedusername", return_403=True)
 def members_index(request):
-    
+
     """
     Index overview for allowedusernames in dashboard
     """
