@@ -47,7 +47,7 @@ class PaymentReminder(Task):
         subject = _(u"Betaling: ") + payment.content_object_description()
         
         message = _(u"Hei, du har ikke betalt for arrangement ") + payment.content_object_description()
-        message += _(u"\nFristen for og betale er ") + str(payment.deadline)
+        message += _(u"\nFristen for å betale er ") + str(payment.deadline.strftime("%d-%m-%Y %H:%M"))
         #TODO add info about punishment for failed payments
         message += _(u"\n\nDersom du har spørsmål kan du sende mail til ") + payment.content_object_mail()
         message += _(u"\n\nMvh\nLinjeforeningen Online")
@@ -63,7 +63,7 @@ class PaymentReminder(Task):
         message = _(u"Hei, du har ikke betalt for arrangement ") + payment.content_object_description()
         #message += _(u"fristen har utgått, og du får en prikk og 48 timer til å betale")
         #TODO add info about punishment
-        message += _(u"Dersom du har spørsmål kan du sende mail til ") + payment.content_object_mail()
+        message += _(u"\nDersom du har spørsmål kan du sende mail til ") + payment.content_object_mail()
         message += _(u"\n\nMvh\nLinjeforeningen Online")
 
         receivers = PaymentReminder.not_paid_mail_addresses(payment)
@@ -78,8 +78,8 @@ class PaymentReminder(Task):
         message += _(u"Dersom du har spørsmål kan du sende mail til ") + payment.content_object_mail()
         message += _(u"\n\nMvh\nLinjeforeningen Online")
 
-    def send_atendees_not_paied_mail(payment):
-        subject = _(u"Ikke betalt for ") + payment.content_object_description()
+    def send_atendees_not_paid_mail(payment):
+        subject = _(u"Manglende betaling: ") + payment.content_object_description()
         message = _(u"Disse har ikke betalt for ") + payment.content_object_description()
         message += not_paid(payment)
 
@@ -102,4 +102,4 @@ class PaymentReminder(Task):
         return [user.email for user in attendees if user not in paid_users]
 
 
-schedule.register(PaymentReminder, day_of_week='mon-sun', hour=19, minute=58)
+schedule.register(PaymentReminder, day_of_week='mon-sun', hour=21, minute=12)
