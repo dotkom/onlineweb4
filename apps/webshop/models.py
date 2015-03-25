@@ -16,6 +16,9 @@ class Product(models.Model):
     price = models.DecimalField(max_digits=10, decimal_places=2)
     stock = models.PositiveSmallIntegerField()
 
+    def __unicode__(self):
+        return self.name
+
     class Meta:
         verbose_name = 'Produkt'
         verbose_name_plural = 'Produkter'
