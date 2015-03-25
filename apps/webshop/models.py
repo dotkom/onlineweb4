@@ -16,6 +16,9 @@ class Product(models.Model):
     price = models.DecimalField(max_digits=10, decimal_places=2)
     stock = models.PositiveSmallIntegerField()
 
+    def get_absolute_url(self):
+        return reverse('webshop_product', args=[str(self.id)])
+
     def __unicode__(self):
         return self.name
 
