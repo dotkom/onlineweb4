@@ -92,6 +92,20 @@ SYMPA_DB_NAME = ''
 SYMPA_DB_PORT = ''
 SYMPA_DB_HOST = ''
 
+# Variables for group syncing script
+GROUP_SYNCER = [
+    {
+        'name': 'Komite-enkeltgrupper til gruppen Komiteer',
+        'source': [
+            1, # Group ID 1
+            2, # Group ID 2
+        ],
+        'destination': [
+            3 # Group ID 3
+        ]
+    }
+]
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
