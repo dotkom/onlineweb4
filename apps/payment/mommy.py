@@ -37,7 +37,7 @@ class PaymentReminder(Task):
                     PaymentReminder.send_deadline_passed_mail(payment)
                     #TODO punish people
                     #TODO deactivate payment
-                    #TODO send mail to the responsible committee
+                    PaymentReminder.notify_committee(payment)
             elif deadline_diff < 3:
                 if PaymentReminder.not_paid(payment):
                     PaymentReminder.send_reminder_mail(payment)
@@ -78,10 +78,15 @@ class PaymentReminder(Task):
         message += _(u"Dersom du har spørsmål kan du sende mail til ") + payment.content_object_mail()
         message += _(u"\n\nMvh\nLinjeforeningen Online")
 
-    def send_atendees_not_paid_mail(payment):
+    
+    def notify_committee(payment):
         subject = _(u"Manglende betaling: ") + payment.content_object_description()
-        message = _(u"Disse har ikke betalt for ") + payment.content_object_description()
-        message += not_paid(payment)
+        message = _(u"Følgende brukere mangler betaling på ") + payment.content_object_description()
+        message += u'\n'.join([user.get_full_name() for user in PaymentReminder.not_paid(payment)])
+
+        receivers = [payment.content_object_mail()]
+
+        EmailMessage(subject, unicode(message), "online@online.ntnu.no", [], receivers).send()
 
     @staticmethod
     def not_paid(payment):
