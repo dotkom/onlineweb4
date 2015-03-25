@@ -237,6 +237,7 @@ INSTALLED_APPS = (
     'apps.mailinglists',
     'apps.inventory',
     'apps.payment',
+    'apps.webshop',
     'scripts',
 
     #External apps

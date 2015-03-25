@@ -129,6 +129,11 @@ if 'apps.payment' in settings.INSTALLED_APPS:
         url(r'^payment/',           include('apps.payment.urls')),
     )
 
+if 'apps.webshop' in settings.INSTALLED_APPS:
+    urlpatterns += patterns('',
+        url(r'^webshop/',           include('apps.webshop.urls')),
+    )
+
 # redwine
 if 'redwine' in settings.INSTALLED_APPS:
     urlpatterns += patterns('', url(r'^redwine/', include('redwine.urls')))
