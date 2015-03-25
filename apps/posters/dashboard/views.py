@@ -53,8 +53,9 @@ def add(request):
         form = AddPosterForm(data=request.POST)
         if form.is_valid():
             poster=Poster(request.POST)
+            #todo Poster(company=getfyuck)
             poster.ordered_by = request.user
-            poster.ordered_committee = request.user.groups.filter(name="dotKom")[:1].get();
+            poster.ordered_committee = request.user.groups.filter(name="dotKom")[:1].get()
             #poster.save()
 
             return HttpResponseRedirect('../')
