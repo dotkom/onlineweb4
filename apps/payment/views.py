@@ -5,7 +5,7 @@ import stripe
 
 from django.conf import settings
 from django.shortcuts import render, get_object_or_404, redirect
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.contrib import messages
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.decorators import login_required
@@ -48,6 +48,9 @@ def payment(request):
                 except stripe.CardError, e:
                     messages.error(request, str(e))
                     return HttpResponse(str(e), content_type="text/plain", status=500) 
+
+
+    raise Http404("Request not supported");
 
 
 @login_required
