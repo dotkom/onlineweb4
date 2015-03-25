@@ -3,6 +3,7 @@
 import json
 
 from django.core.exceptions import PermissionDenied
+from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Group
 from django.shortcuts import render, get_object_or_404
@@ -88,10 +89,23 @@ def groups_detail(request, pk):
 
         return HttpResponse('Ugyldig handling.', status=400)
 
+    if settings.GROUP_SYNCER:
+        group_id = int(pk)
+        # Groups that list this one as their destination
+        context['sync_group_from'] = []
+        # Groups that list this one as one of their sources
+        context['sync_group_to'] = []
+
+        # Make a dict that simply maps {id: name} for all groups
+        groups = {g.id: g.name for g in Group.objects.all().order_by('id')}
+        
+        for job in settings.GROUP_SYNCER:
+            if group_id in job['source']:
+                context['sync_group_to'].extend([groups[id] for id in job['destination']])
+            if group_id in job['destination']:
+                context['sync_group_from'].extend([groups[id] for id in job['source']])
+
     context['group_users'] = list(context['group'].user_set.all())
-    context['group_users_not_in_group'] = list(
-        User.objects.exclude(groups__name=context['group'].name)
-    )
 
     context['group_permissions'] = list(context['group'].permissions.all())
 
