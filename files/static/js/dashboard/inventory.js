@@ -20,58 +20,6 @@ var Inventory = (function ($, tools) {
         return true
     }
 
-    var add_batch_to_item = function () {
-        var url = window.location.href.toString() + 'batch/'
-        var data = {
-            "amount": $('#inventory-batch-amount').val(),
-            "expiry": $('#inventory-batch-expiry').val(),
-            "action": "add"
-        }
-        var success = function (data) {
-            $('#inventory-batch-list tbody').append(
-                $('<tr>').html(
-                    '<td>' + data['amount'] + '</td>' +
-                    '<td>' + data['expiry'] + '</td>' +
-                    '<td><a href="#" class="delete-batch" id="' +
-                    data['id'] + '">' + 
-                    '<i class="fa fa-times fa-lg red"></a>'
-                )
-            )
-
-            $('#inventory-batch-amount').val(0)
-            $('#inventory-batch-expiry').val('')
-
-            $('#' + data['id']).on('click', function (e) {
-                e.preventDefault()
-                delete_batch(data['id'], $(this).parent().parent())
-            })
-
-            tools.showStatusMessage('Batchen ble lagt til.', 'alert-success')
-        }
-        var error = function (xhr, txt, error) {
-            tools.showStatusMessage(xhr.responseText, 'alert-danger')
-        }
-
-        tools.ajax('POST', url, data, success, error, null)
-    }
-
-    var delete_batch = function (id, tr) {
-        var url = window.location.href.toString() + 'batch/'
-        var data = {
-            "action": "delete",
-            "id": id
-        }
-        var success = function (data) {
-            $(tr).remove()
-            tools.showStatusMessage('Batchen ble fjernet.', 'alert-success')
-        }
-        var error = function (xhr, txt, error) {
-            tools.showStatusMessage(xhr.responseText, 'alert-danger')
-        }
-
-        tools.ajax('POST', url, data, success, error, null)
-    }
-
     return {
 
         // Bind them buttons and other initial functionality here
@@ -95,14 +43,17 @@ var Inventory = (function ($, tools) {
                 $('#inventory-add-batch-form').slideToggle(200)
             })
 
-            $('#inventory-save-batch').on('click', function (e) {
-                e.preventDefault()
-                add_batch_to_item()
+            $('.deletebatch').on('click', function (e) {
+                if (confirm('Er du sikker på at du vil slette denne batchen?')) {
+                    // STUB
+                } else {
+                    e.preventDefault()
+                }
             })
 
-            $('.delete-batch').on('click', function (e) {
+            $('.datepicker').on('click', function (e) {
                 e.preventDefault()
-                delete_batch(this.id, $(this).parent().parent())
+                alert('Datepicker er ikke implementert enda. Kommer snart(tm)!')
             })
         }
 
