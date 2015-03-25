@@ -91,7 +91,6 @@ def groups_detail(request, pk):
 
     if settings.GROUP_SYNCER:
         group_id = int(pk)
-        print "syncer"
         # Groups that list this one as their destination
         context['sync_group_from'] = []
         # Groups that list this one as one of their sources
@@ -101,14 +100,9 @@ def groups_detail(request, pk):
         groups = {g.id: g.name for g in Group.objects.all().order_by('id')}
         
         for job in settings.GROUP_SYNCER:
-            print "job"
-            print job['source']
-            print job['destination']
             if group_id in job['source']:
-                print "is source for something"
                 context['sync_group_to'].extend([groups[id] for id in job['destination']])
             if group_id in job['destination']:
-                print "is destination for something"
                 context['sync_group_from'].extend([groups[id] for id in job['source']])
 
     context['group_users'] = list(context['group'].user_set.all())
