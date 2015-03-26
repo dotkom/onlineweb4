@@ -47,9 +47,9 @@ def new(request):
         if not inventory_form.is_valid():
             messages.error(request, u'Noen av de påkrevde feltene inneholder feil.')
         else:
-            inventory_form.save()
+            item = inventory_form.save()
             messages.success(request, u'Varen ble opprettet')
-            return redirect(index)
+            return redirect(details, item.id)
 
         context['form'] = inventory_form
 
@@ -111,18 +111,27 @@ def batch_new(request, item_pk):
     if not has_access(request):
         raise PermissionDenied
 
-    # Get base context
+    # Field mapper
+    fieldmap = {
+        'amount': u'Mengde',
+        'expiration_date': u'Utløpsdato',
+    }
 
     item = get_object_or_404(Item, pk=item_pk)
 
     if request.method == 'POST':
         batch_form = BatchForm(request.POST)
-        batch = batch_form.save(commit=False)
-        batch.item = item
 
         if not batch_form.is_valid():
-            messages.error(request, u'Noen av de påkrevde feltene inneholder feil.')
+            # Dirty hack to display errors since the form is not passed in redirect context
+            error_reply = u"Feil i felt:"
+            for field, error in batch_form.errors.items():
+                error_reply += ' ' + fieldmap[field] + ' (' + batch_form.error_class.as_text(error) + '),'
+
+            messages.error(request, error_reply.rstrip(','))
         else:
+            batch = batch_form.save(commit=False)
+            batch.item = item
             batch.save()
             messages.success(request, u'Batchen ble lagt til.')
 
