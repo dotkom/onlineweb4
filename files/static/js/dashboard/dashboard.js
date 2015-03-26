@@ -107,6 +107,15 @@ var Dashboard = (function ($) {
             // Set up AJAX CSRF for Dashboard
             doAjaxSetup()
 
+            // Check for existence of input fields that require bootstrap datetimepicker
+            // And activate it on these objects.
+            $('.dtp').each(function (i) {
+                $(this).datetimepicker({
+                    locale: 'nb',
+                    format: 'YYYY-MM-DD'
+                })
+            })
+
             console.log('Dashboard initiated.')
         },
 

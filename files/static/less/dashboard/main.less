@@ -105,11 +105,23 @@ nav#dashboard_main_nav {
 
 .content {
     padding: 15px;
+    z-index: 1;
+
+    display: block;
+
+    .main-content {
+        z-index: 2;
+        padding-bottom: 150px;
+    }
+
 }
 
 .content-header {
-    background-color: @header-bg;
 
+    
+
+    background-color: @header-bg;
+    z-index: 10;
     h2 {
         margin: 0px;
         padding-left: 15px;
@@ -243,7 +255,6 @@ body.fixed .wrapper {
 .content {
   padding: 20px 15px;
   background: @dash-bg;
-  overflow: auto;
 }
 /* Utility */
 
@@ -441,3 +452,11 @@ img {
   }
 }
 
+/*
+ * Bootstrap DatetimePicker
+ *
+ * Override to fix Z-index
+ *
+ */
+
+.datepicker { z-index: 1151 !imporatant; }
