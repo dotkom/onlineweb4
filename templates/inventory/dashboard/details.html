@@ -130,12 +130,14 @@
                         {% endifnotequal %}
                     {% endfor %}
                     <div class="col-md-2">
-                        <button type="submit" class="btn btn-success">
-                            <i class="fa fa-save fa-lg"></i>
-                        </button>
-                        <a href="{% url 'dashboard_inventory_batch_delete' item.id pk %}" class="btn btn-danger deletebatch">
-                            <i class="fa fa-times fa-lg"></i>
-                        </a>
+                        <div class="pull-right">
+                            <button type="submit" class="btn btn-success">
+                                <i class="fa fa-save fa-lg"></i>
+                            </button>
+                            <a href="{% url 'dashboard_inventory_batch_delete' item.id pk %}" class="btn btn-danger deletebatch">
+                                <i class="fa fa-times fa-lg"></i>
+                            </a>
+                        </div>
                     </div>
                     </form>
                 </div>
