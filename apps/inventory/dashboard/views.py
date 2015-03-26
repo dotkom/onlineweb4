@@ -99,11 +99,15 @@ def item_delete(request, item_pk):
 
     item = get_object_or_404(Item, pk=item_pk)
 
-    item.delete()
+    if request.method == 'POST':
 
-    messages.success(request, u'Varen %s ble slettet.' % item.name)
+        item.delete()
 
-    return redirect(index)
+        messages.success(request, u'Varen %s ble slettet.' % item.name)
+
+        return redirect(index)
+
+    raise PermissionDenied
 
 @login_required
 @permission_required('inventory.add_batch', return_403=True)
@@ -172,9 +176,12 @@ def batch_delete(request, item_pk, batch_pk):
 
     batch = get_object_or_404(Batch, pk=batch_pk)
 
-    batch.delete()
+    if request.method == 'POST':
 
-    messages.success(request, u'Batchen ble slettet.')
+        batch.delete()
+        messages.success(request, u'Batchen ble slettet.')
 
-    return redirect(details, item_pk=item_pk)
+        return redirect(details, item_pk=item_pk)
+
+    raise PermissionDenied
 
