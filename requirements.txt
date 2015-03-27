@@ -24,7 +24,7 @@ django-reversion==1.8.5         # Model version history with middleware hooks to
 django-guardian                 # Per Object permissions framework
 APScheduler==2.1.1              # Scheduler
 git+https://github.com/dotKom/redwine.git@1.1.5#egg=redwine==1.1.5
-feedme==1.6.22
+feedme==1.6.24
 reportlab==3.1.44
 pdfdocument==3.1
 django-markdown-deux==1.0.5
