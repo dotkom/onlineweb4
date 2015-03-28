@@ -39,7 +39,7 @@ def payment(request):
 
                     payment_relation = PaymentRelation.objects.create(payment=payment, user=request.user)
 
-                    payment.content_object_handle_payment(request.user)
+                    payment.handle_payment(request.user)
 
                     send_payment_confirmation_mail(payment_relation)
 
@@ -64,7 +64,7 @@ def payment_info(request):
 
             data['stripe_public_key'] = settings.STRIPE_PUBLIC_KEY
             data['email'] = request.user.email
-            data['description'] = payments[0].content_object_description()
+            data['description'] = payments[0].description()
             data['payment_ids'] = request.session['payment_ids']
 
             for payment in payments:
@@ -79,15 +79,15 @@ def payment_info(request):
     return HttpResponse("Failed to get info", content_type="text/plain", status=500) 
 
 def send_payment_confirmation_mail(payment_relation):
-    subject = _(u"kvittering") + ": " + payment_relation.payment.content_object_description()
-    from_mail = payment_relation.payment.content_object_mail()
+    subject = _(u"kvittering") + ": " + payment_relation.payment.description()
+    from_mail = payment_relation.payment.responsible_mail()
     to_mails = [payment_relation.user.email] 
 
-    message = _(u"Du har betalt for ") + payment_relation.payment.content_object_description()
+    message = _(u"Du har betalt for ") + payment_relation.payment.description()
     message += "\n"
     message += _(u"Ditt kvitteringsnummer er") + ": " + payment_relation.unique_id
     message += "\n"
     message += "\n"
-    message += _(u"Dersom du har problemer eller spørsmål, send mail til ") + ":" + payment_relation.payment.content_object_mail()
+    message += _(u"Dersom du har problemer eller spørsmål, send mail til") + ": " + from_mail
 
     email = EmailMessage(subject, unicode(message), from_mail, [], to_mails).send()

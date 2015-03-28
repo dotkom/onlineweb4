@@ -6,6 +6,6 @@
 		<br>
 	{% endif %}
 	{% if payments|length > 1 %}
-		<p class="help-text row-space">{{payment.description}}</p>
+		<p class="help-text row-space">{{payment.multiple_description}}</p>
 	{% endif %}
 {% endfor %}

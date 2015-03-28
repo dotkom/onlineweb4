@@ -8,7 +8,7 @@ from django.core.mail import EmailMessage
 from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import ugettext as _
 
-from apps.payment.models import Payment, PaymentRelation
+from apps.payment.models import Payment, PaymentRelation, PaymentDelay
 from apps.events.models import Event
 from apps.mommy import Task, schedule
 
@@ -28,9 +28,8 @@ class PaymentReminder(Task):
 
         for payment in event_payments:
 
+            #Number of days until the deadline
             deadline_diff = (payment.deadline.date() - today.date()).days
-
-            print "deadline diff: " + str(deadline_diff)
 
             if deadline_diff <= 0:
                 if PaymentReminder.not_paid(payment):
@@ -44,48 +43,48 @@ class PaymentReminder(Task):
 
     @staticmethod
     def send_reminder_mail(payment):
-        subject = _(u"Betaling: ") + payment.content_object_description()
+        subject = _(u"Betaling: ") + payment.description()
         
-        message = _(u"Hei, du har ikke betalt for arrangement ") + payment.content_object_description()
+        message = _(u"Hei, du har ikke betalt for arrangement ") + payment.description()
         message += _(u"\nFristen for å betale er ") + str(payment.deadline.strftime("%d-%m-%Y %H:%M"))
         #TODO add info about punishment for failed payments
-        message += _(u"\n\nDersom du har spørsmål kan du sende mail til ") + payment.content_object_mail()
+        message += _(u"\n\nDersom du har spørsmål kan du sende mail til ") + payment.responsible_mail()
         message += _(u"\n\nMvh\nLinjeforeningen Online")
 
         receivers = PaymentReminder.not_paid_mail_addresses(payment)
 
-        EmailMessage(subject, unicode(message), payment.content_object_mail(), [], receivers).send()
+        EmailMessage(subject, unicode(message), payment.responsible_mail(), [], receivers).send()
 
     @staticmethod
     def send_deadline_passed_mail(payment):
-        subject = _(u"Betalingsfrist utgått: ") + payment.content_object_description()
+        subject = _(u"Betalingsfrist utgått: ") + payment.description()
 
-        message = _(u"Hei, du har ikke betalt for arrangement ") + payment.content_object_description()
+        message = _(u"Hei, du har ikke betalt for arrangement ") + payment.description()
         #message += _(u"fristen har utgått, og du får en prikk og 48 timer til å betale")
         #TODO add info about punishment
-        message += _(u"\nDersom du har spørsmål kan du sende mail til ") + payment.content_object_mail()
+        message += _(u"\nDersom du har spørsmål kan du sende mail til ") + payment.responsible_mail()
         message += _(u"\n\nMvh\nLinjeforeningen Online")
 
         receivers = PaymentReminder.not_paid_mail_addresses(payment)
 
-        EmailMessage(subject, unicode(message), payment.content_object_mail(), [], receivers).send()
+        EmailMessage(subject, unicode(message), payment.responsible_mail(), [], receivers).send()
 
     @staticmethod
     def send_missed_payment_mail(payment):
-        subject = _(u"Betalingsfrist utgått: ") + payment.content_object_description()
-        message = _(u"Hei, du har ikke betalt for arrangement ") + payment.content_object_description()
+        subject = _(u"Betalingsfrist utgått: ") + payment.description()
+        message = _(u"Hei, du har ikke betalt for arrangement ") + payment.description()
         message += _(u"fristen har utgått, og du har mistet plassen din på arrangement")
-        message += _(u"Dersom du har spørsmål kan du sende mail til ") + payment.content_object_mail()
+        message += _(u"Dersom du har spørsmål kan du sende mail til ") + payment.responsible_mail()
         message += _(u"\n\nMvh\nLinjeforeningen Online")
 
     @staticmethod
     def notify_committee(payment):
-        subject = _(u"Manglende betaling: ") + payment.content_object_description()
-        message = _(u"Følgende brukere mangler betaling på ") + payment.content_object_description()
+        subject = _(u"Manglende betaling: ") + payment.description()
+        message = _(u"Følgende brukere mangler betaling på ") + payment.description()
         message += u'\n'
         message += u'\n'.join([user.get_full_name() for user in PaymentReminder.not_paid(payment)])
 
-        receivers = [payment.content_object_mail()]
+        receivers = [payment.responsible_mail()]
 
         EmailMessage(subject, unicode(message), "online@online.ntnu.no", [], receivers).send()
 
@@ -95,17 +94,47 @@ class PaymentReminder(Task):
         attendees = [attendee.user for attendee in event.attendance_event.attendees_qs]
         paid_users = payment.paid_users()
 
-        #Returns users in the list of attendees but not in the list of paid users
-        return [user for user in attendees if user not in paid_users]
+        #Creates a list of users in attendees but not in the list of paid users
+        not_paid_users = [user for user in attendees if user not in paid_users]
+
+        #Remves users with active payment delays from the list
+        return [user for user in not_paid_users if user not in payment.payment_delay_users()]
 
     @staticmethod
     def not_paid_mail_addresses(payment):
-        event = payment.content_object
-        attendees = [attendee.user for attendee in event.attendance_event.attendees_qs]
-        paid_users = payment.paid_users()
-
         #Returns users in the list of attendees but not in the list of paid users
-        return [user.email for user in attendees if user not in paid_users]
+        return [user.email for user PaymentReminder.not_paid(payment)]
+
+
+class PaymentDeadlineHandler(Task):
+
+    @staticmethod
+    def run():
+        logging.basicConfig()
+        # logger = logging.getLogger("feedback")
+        # logger.info("Event payment job started")
+        locale.setlocale(locale.LC_ALL, "nb_NO.UTF-8")
+
+        payment_delays = PaymentDelay.objects.filter(active=True)
+
+        for payment_delay in payment_delays:
+            if payment_delay.deadline > timezone.now():
+                #TODO punish user
+                PaymentDeadlineHandler.send_payment_missed_mail(payment_delay)
+
+
+        #TODO handle committee notifying
+
+    @staticmethod
+    def send_payment_missed_mail(payment_delay):
+
+        subject = "Manglende betaling: " + payment_delay.payment.description()
+        receivers = [payment_delay.user.email]
+
+        #TODO generate message
+
+        EmailMessage(subject, unicode(message), "online@online.ntnu.no", [], receivers).send()
 
 
 schedule.register(PaymentReminder, day_of_week='mon-sun', hour=23, minute=03)
+schedule.register(PaymentDeadlineHandler, day_of_week='mon-sun', hour=23, minute=03)

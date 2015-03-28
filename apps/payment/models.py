@@ -20,7 +20,7 @@ class Payment(models.Model):
     active = models.BooleanField(default=True)
 
     #title = models.CharField(_(u"tittel"), max_length=60)
-    description = models.CharField(_(u"beskrivelse"), help_text=_(u"Dette feltet kreves kun dersom det er mer enn en betaling"), max_length=60, blank=True, null=True)
+    multiple_description = models.CharField(_(u"beskrivelse"), help_text=_(u"Dette feltet kreves kun dersom det er mer enn en betaling"), max_length=60, blank=True, null=True)
 
     added_date = models.DateTimeField(_(u"opprettet dato"), auto_now=True)
     changed_date = models.DateTimeField(auto_now=True, editable=False)
@@ -30,20 +30,26 @@ class Payment(models.Model):
     def paid_users(self):
         return [payment_relation.user for payment_relation in self.paymentrelation_set.all()]
 
+    def payment_delays(self):
+        return self.paymentdelay_set.filter(active=True)
 
-    def content_object_description(self):
+    def payment_delay_users(self):
+        return [payment_delay.user for payment_delay in self.payment_delays()]
+
+
+    def description(self):
         if hasattr(self.content_object, "payment_description"):
             return self.content_object.payment_description()
 
         return "payment description not implemented"
 
-    def content_object_mail(self):
+    def responsible_mail(self):
         if hasattr(self.content_object, "payment_mail"):
             return self.content_object.payment_mail()
 
         return settings.DEFAULT_FROM_EMAIL
 
-    def content_object_handle_payment(self, user):
+    def handle_payment(self, user):
         if hasattr(self.content_object, "payment_complete"):
             self.content_object.payment_complete(user)
 
@@ -69,4 +75,12 @@ class PaymentRelation(models.Model):
     class Meta:
         verbose_name = _(u"betalingsrelasjon")
         verbose_name_plural = _(u"betalingsrelasjoner")
+
+
+class PaymentDelay(models.Model):
+    payment = models.ForeignKey(Payment)
+    user = models.ForeignKey(User)
+    valid_to = models.DateTimeField()
+
+    active = models.BooleanField(default=True)
 
