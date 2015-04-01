@@ -5,6 +5,7 @@ from django.contrib.contenttypes import generic
 
 from apps.payment.models import Payment
 from apps.payment.models import PaymentRelation
+from apps.payment.models import PaymentDelay
 
 
 class PaymentInline(generic.GenericStackedInline):
@@ -26,8 +27,12 @@ class PaymentAdmin(admin.ModelAdmin):
 
 class PaymentRelationAdmin(admin.ModelAdmin):
     model = PaymentRelation
+
+class PaymentDelayAdmin(admin.ModelAdmin):
+    model = PaymentDelay
     
 
 
 admin.site.register(Payment, PaymentAdmin)
 admin.site.register(PaymentRelation, PaymentRelationAdmin)
+admin.site.register(PaymentDelay, PaymentDelayAdmin)

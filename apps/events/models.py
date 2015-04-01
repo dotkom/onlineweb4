@@ -11,10 +11,12 @@ from django.db import models
 from django.template.defaultfilters import slugify
 from django.utils import timezone
 from django.utils.translation import ugettext as _
+from django.contrib.contenttypes.models import ContentType 
 
 from apps.authentication.models import OnlineUser as User, FIELD_OF_STUDY_CHOICES
 from apps.companyprofile.models import Company
 from apps.marks.models import Mark, get_expiration_date
+from apps.payment.models import Payment, PaymentDelay
 
 import reversion
 import watson
@@ -57,6 +59,8 @@ class Event(models.Model):
             return True if self.attendance_event else False
         except AttendanceEvent.DoesNotExist:
             return False
+
+    #TODO move payment and feedback stuff to attendance event when dasboard is done
 
     def feedback_users(self):
         if self.is_attendance_event:
@@ -455,6 +459,13 @@ class AttendanceEvent(models.Model):
     def waitlist_enabled(self):
         return self.waitlist
 
+    def payments(self):
+        payments =  Payment.objects.filter(content_type=ContentType.objects.get_for_model(Event), object_id=self.event.id)
+        print payments
+        return payments
+
+
+
     def notify_waiting_list(self, host, unattended_user=None, extra_capacity=1):
         # Notify next user on waiting list
         wait_list = self.waitlist_qs
@@ -469,7 +480,37 @@ class AttendanceEvent(models.Model):
             if not on_wait_list:
                 # Send mail to first user on waiting list
                 attendees = wait_list[:extra_capacity]
-                email_message = _(u"""
+
+                if self.payments():
+                    payment = self.payments()[0]
+                    payment_deadline = payment.deadline
+                    extended_deadline = timezone.now() + timedelta(days=2)
+                    
+                    #If there is less than 2 days to the deadline or the payment is instant
+                    #give the user a payment delay
+                    if payment_deadline < extended_deadline or payment.instant_payment:
+                        for attendee in attendees:
+                            PaymentDelay.objects.create(payment=payment, user=attendee.user, 
+                                valid_to=extended_deadline)
+                        email_message = _(u"""
+Du har stått på venteliste for arrangementet "%s" og har nå fått plass.
+Dette arrangementet krever betaling og du må betale innen 48 timer.
+Prisen for dette arrangementet er %skr.
+
+For mer info:
+http://%s%s
+""") % (self.event.title, payment.price, host, self.event.get_absolute_url())
+                    else: #The original deadline is longer than 2 days from now.
+                        email_message = _(u"""
+Du har stått på venteliste for arrangementet "%s" og har nå fått plass.
+Dette arrangementet krever betaling.
+Prisen er %skr og fristen for og betale er %s
+
+For mer info:
+http://%s%s
+""") % (self.event.title, payment.price, payment.deadline.strftime('%-d %B %Y kl%H:%M'), host, self.event.get_absolute_url())
+                else:
+                    email_message = _(u"""
 Du har stått på venteliste for arrangementet "%s" og har nå fått plass.
 Det kreves ingen ekstra handling fra deg med mindre du vil melde deg av.
 

@@ -53,6 +53,10 @@ class Payment(models.Model):
         if hasattr(self.content_object, "payment_complete"):
             self.content_object.payment_complete(user)
 
+
+    def __unicode__(self):
+        return self.description()
+
     class Meta:
         verbose_name = _(u"betaling")
         verbose_name_plural = _(u"betalinger")

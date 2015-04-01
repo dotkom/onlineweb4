@@ -1,13 +1,16 @@
 #-*- coding: utf-8 -*-
 
+from datetime import timedelta
+
 from django.test import TestCase
 from django_dynamic_fixture import G
 from django.contrib.contenttypes.models import ContentType
+from django.utils import timezone
 
 from apps.authentication.models import OnlineUser as User
 from apps.events.models import Event, AttendanceEvent, Attendee
-from apps.payment.models import Payment, PaymentRelation
-from apps.payment.mommy import PaymentReminder
+from apps.payment.models import Payment, PaymentRelation, PaymentDelay
+from apps.payment.mommy import PaymentReminder, PaymentDeadlineHandler
 
 class PaymentTest(TestCase):
 
@@ -26,10 +29,10 @@ class PaymentTest(TestCase):
         self.assertEqual(payment_relation.payment, self.event_payment)
 
     def testEventDescription(self):
-        self.assertEqual(self.event_payment.content_object_description(), "Sjakkturnering")
+        self.assertEqual(self.event_payment.description(), "Sjakkturnering")
 
     def testEventPostPaymentCreateAttendee(self):
-        self.event_payment.content_object_handle_payment(self.user)
+        self.event_payment.handle_payment(self.user)
 
         attendee = Attendee.objects.all()[0]
 
@@ -38,7 +41,7 @@ class PaymentTest(TestCase):
 
     def testEventPaymentCompleteModifyAttendee(self):
         G(Attendee, event=self.attendance_event, user=self.user)
-        self.event_payment.content_object_handle_payment(self.user)
+        self.event_payment.handle_payment(self.user)
 
         attendee = Attendee.objects.all()[0]
 
@@ -67,6 +70,20 @@ class PaymentTest(TestCase):
         not_paid_email = PaymentReminder.not_paid_mail_addresses(self.event_payment)
 
         self.assertEqual([self.user.email], not_paid_email)
+
+
+    def testMommyPaymentDelay(self):
+        G(Attendee, event=self.attendance_event, user=self.user)
+        payment_delay = G(PaymentDelay, payment=self.event_payment, user=self.user, valid_to=timezone.now() + timedelta(days=1))
+        
+        self.assertTrue(payment_delay.active)
+        
+        PaymentDeadlineHandler.handle_deadline_passed(payment_delay)
+
+        self.assertFalse(payment_delay.active)
+
+    #TODO test waitlist bump
+
 
 
 

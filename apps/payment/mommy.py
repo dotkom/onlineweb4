@@ -103,7 +103,7 @@ class PaymentReminder(Task):
     @staticmethod
     def not_paid_mail_addresses(payment):
         #Returns users in the list of attendees but not in the list of paid users
-        return [user.email for user PaymentReminder.not_paid(payment)]
+        return [user.email for user in PaymentReminder.not_paid(payment)]
 
 
 class PaymentDeadlineHandler(Task):
@@ -118,23 +118,36 @@ class PaymentDeadlineHandler(Task):
         payment_delays = PaymentDelay.objects.filter(active=True)
 
         for payment_delay in payment_delays:
-            if payment_delay.deadline > timezone.now():
-                #TODO punish user
-                PaymentDeadlineHandler.send_payment_missed_mail(payment_delay)
+            if payment_delay.valid_to < timezone.now():
+                handle_deadline_passed(payment_delay)
 
 
         #TODO handle committee notifying
 
     @staticmethod
-    def send_payment_missed_mail(payment_delay):
+    def handle_deadline_passed(payment_delay):
+        #TODO punish user
+        payment_delay.active = False
+        payment_delay.save()
+        PaymentDeadlineHandler.send_deadline_passed_mail(payment_delay)
 
-        subject = "Manglende betaling: " + payment_delay.payment.description()
+    @staticmethod
+    def send_deadline_passed_mail(payment_delay):
+        payment = payment_delay.payment
+        subject = _(u"Betalingsfrist utgått: ") + payment.description()
+
+        message = _(u"Hei, du har ikke betalt for arrangement ") + payment.description()
+
+        #message += _(u"fristen har utgått, og du får en prikk og 48 timer til å betale")
+        #TODO add info about punishment
+
+        message += _(u"\nDersom du har spørsmål kan du sende mail til ") + payment.responsible_mail()
+        message += _(u"\n\nMvh\nLinjeforeningen Online")
+
         receivers = [payment_delay.user.email]
 
-        #TODO generate message
-
-        EmailMessage(subject, unicode(message), "online@online.ntnu.no", [], receivers).send()
+        EmailMessage(subject, unicode(message), payment.responsible_mail(), [], receivers).send()
 
 
 schedule.register(PaymentReminder, day_of_week='mon-sun', hour=23, minute=03)
-schedule.register(PaymentDeadlineHandler, day_of_week='mon-sun', hour=23, minute=03)
+schedule.register(PaymentDeadlineHandler, day_of_week='mon-sun', hour=17, minute=39)
