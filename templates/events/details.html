@@ -138,8 +138,8 @@
                                 <p class="status-text">Du er meldt på dette arrangementet.</p>
                             {% endif %}
                             {% if user_paid %}
-                                <p class="status-text"><label class="label label-success row-space">Du har betalt</label></p>
-                                <p class="help-text">For å melde deg av må du sende mail til {{ payments.0.content_object_mail }}</p>
+                                <label class="label label-success payment-label">Du har betalt</label>
+                                <p class="help-text">For å melde deg av må du sende mail til {{ payments.0.responsible_mail }}</p>
                             {% elif payments and not place_on_wait_list and not user_paid %}
                                 {% display_payments payments %}
                                 <!-- TODO display payment deadline -->
