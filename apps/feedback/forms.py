@@ -43,6 +43,9 @@ class FieldOfStudyAnswerForm(AnswerForm):
 
 
 class TextAnswerForm(AnswerForm):
+    answer = forms.CharField(
+        widget=forms.Textarea(attrs={'class':'form-control', 'type': 'text', "rows": "3"}))
+
     class Meta:
         model = TextAnswer
         exclude = ("feedback_relation", "question",)
@@ -54,7 +57,9 @@ class MultipleChoiceForm(forms.ModelForm):
         self.helper.html5_required = False
         super(MultipleChoiceForm, self).__init__(*args, **kwargs)
 
-        self.fields['answer'] = forms.ModelChoiceField(queryset=Choice.objects.filter(question=self.instance.question.multiple_choice_relation))
+        self.fields['answer'] = forms.ModelChoiceField(
+            queryset=Choice.objects.filter(question=self.instance.question.multiple_choice_relation),
+            widget=forms.Select(attrs={'class': 'form-control'}))
         self.fields['answer'].label = self.instance.question.multiple_choice_relation.label
 
     class Meta:
