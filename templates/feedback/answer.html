@@ -15,9 +15,11 @@ Tilbakemeldinger - Svar - Online
             <form method="POST" role="form" class="feedback-answer-label" id="feedback"> 
                 {% csrf_token %}
 		            {% for f in answers %}
+                        <div class="rating-wrapper">
                         <div class="form-group {% if f.errors %} has-error {% endif %}">
                         {{ f }}
                         </div>
+                    </div>
                     {% endfor %}
                 <div class="form-group">
                     <button class="btn btn-success" type="submit">Send</button>
@@ -26,4 +28,16 @@ Tilbakemeldinger - Svar - Online
         </div>
     </div>
 </section>
+{% block js %}
+    {{ block.super }}
+    <script src="{{ STATIC_URL }}js/libs/jquery.barrating.min.js"></script>
+    <script type="text/javascript">
+       $(function () {
+          $('.rating').barrating('show',{
+            showValues:true,
+            showSelectedRating:false
+          });
+       });
+    </script>
+{% endblock %}
 {%endblock content %}

@@ -23,7 +23,7 @@ class AnswerForm(forms.ModelForm):
 
 
 class RatingAnswerForm(AnswerForm):
-    answer = forms.ChoiceField(widget=forms.RadioSelect,
+    answer = forms.ChoiceField(widget=forms.Select(attrs={"class": "rating", "name": "rating"}),
                                choices=RATING_CHOICES)
 
     class Meta:

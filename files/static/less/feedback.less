@@ -111,3 +111,48 @@
     color: #004b80;
     float: right;
 }
+
+@media (max-width:1000px) {
+
+    #feedback{
+        textarea{
+            width: 100%;
+        }
+        select{
+            width: 100%;
+        }
+    }
+}
+
+
+.rating-wrapper {
+    .br-widget {
+        height: 52px;
+    }
+    .br-widget {
+        a {
+            display: block;
+            width: 35px;
+            height: 35px;
+            float: left;
+            background-color: #e3e3e3;
+            margin: 2px;
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: 400;
+            line-height: 2.2;
+            text-align: center;
+            color: #b6b6b6;
+        }
+        a.br-active, a.br-selected {
+            background-color: #59a6d6;
+            color: white;
+        }
+    }
+}
+
+.rating-wrapper .br-widget a.br-active,
+.rating-wrapper .br-widget a.br-selected {
+    background-color: #59a6d6;
+    color: white;
+}
