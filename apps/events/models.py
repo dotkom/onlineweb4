@@ -16,7 +16,6 @@ from django.contrib.contenttypes.models import ContentType
 from apps.authentication.models import OnlineUser as User, FIELD_OF_STUDY_CHOICES
 from apps.companyprofile.models import Company
 from apps.marks.models import Mark, get_expiration_date
-from apps.payment.models import Payment, PaymentDelay
 
 import reversion
 import watson
@@ -81,30 +80,6 @@ class Event(models.Model):
             info[_(u'Venteliste')] = self.attendance_event.number_on_waitlist
 
         return info
-
-    def payment_description(self):
-        return self.title
-
-    def payment_complete(self, user):
-        attendee = Attendee.objects.filter(event=self.attendance_event, user=user)
-
-        if attendee:
-            attendee[0].paid = True
-            attendee[0].save()
-        else:
-            Attendee.objects.create(event=self.attendance_event, user=user, paid=True)
-
-    def payment_mail(self):
-        if self.event_type == 1 or self.event_type == 4: # Sosialt & Utflukt
-            return settings.EMAIL_ARRKOM
-        elif self.event_type == 2: #Bedpres
-            return settings.EMAIL_BEDKOM
-        elif self.event_type == 3: #Kurs
-            return settings.EMAIL_FAGKOM
-        elif self.event_type == 5: # Ekskursjon
-            return settings.EMAIL_EKSKOM
-        else:
-            return settings.DEFAULT_FROM_EMAIL
 
     def is_attendance_event(self):
         """ Returns true if the event is an attendance event """
@@ -460,13 +435,16 @@ class AttendanceEvent(models.Model):
         return self.waitlist
 
     def payments(self):
+        #Importing here to awoid circular dependency error
+        from apps.payment.models import Payment
         payments =  Payment.objects.filter(content_type=ContentType.objects.get_for_model(Event), object_id=self.event.id)
-        print payments
         return payments
 
 
 
     def notify_waiting_list(self, host, unattended_user=None, extra_capacity=1):
+        #Importing here to awoid circular dependency error
+        from apps.payment.models import Payment, PaymentDelay
         # Notify next user on waiting list
         wait_list = self.waitlist_qs
         if wait_list:

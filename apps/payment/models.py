@@ -6,8 +6,10 @@ from django.db import models
 from django.utils.translation import ugettext as _
 from django.contrib.contenttypes import generic
 from django.contrib.contenttypes.models import ContentType
+from django.conf import settings
 
 from apps.authentication.models import OnlineUser as User
+from apps.events.models import Event, Attendee
 
 class Payment(models.Model):
     content_type = models.ForeignKey(ContentType)
@@ -38,21 +40,37 @@ class Payment(models.Model):
 
 
     def description(self):
-        if hasattr(self.content_object, "payment_description"):
-            return self.content_object.payment_description()
-
-        return "payment description not implemented"
+        if ContentType.objects.get_for_model(Event) == self.content_type:
+            return self.content_object.title
+        else:
+            return "payment description not implemented"
 
     def responsible_mail(self):
-        if hasattr(self.content_object, "payment_mail"):
-            return self.content_object.payment_mail()
-
-        return settings.DEFAULT_FROM_EMAIL
+        if ContentType.objects.get_for_model(Event) == self.content_type:
+            event_type = self.content_object.event_type
+            if event_type == 1 or event_type == 4: # Sosialt & Utflukt
+                return settings.EMAIL_ARRKOM
+            elif event_type == 2: #Bedpres
+                return settings.EMAIL_BEDKOM
+            elif event_type == 3: #Kurs
+                return settings.EMAIL_FAGKOM
+            elif event_type == 5: # Ekskursjon
+                return settings.EMAIL_EKSKOM
+            else:
+                return settings.DEFAULT_FROM_EMAIL
+        else:
+            return settings.DEFAULT_FROM_EMAIL
 
     def handle_payment(self, user):
-        if hasattr(self.content_object, "payment_complete"):
-            self.content_object.payment_complete(user)
+        if ContentType.objects.get_for_model(Event) == self.content_type:
+            if self.content_object.is_attendance_event():
+                attendee = Attendee.objects.filter(event=self.content_object.attendance_event, user=user)
 
+                if attendee:
+                    attendee[0].paid = True
+                    attendee[0].save()
+                else:
+                    Attendee.objects.create(event=self.content_object.attendance_event, user=user, paid=True)
 
     def __unicode__(self):
         return self.description()
@@ -74,7 +92,7 @@ class PaymentRelation(models.Model):
         super(PaymentRelation, self).save(*args, **kwargs)
 
     def __unicode__(self):
-        return self.payment.content_object_description() + " - " + unicode(self.user)
+        return self.payment.description() + " - " + unicode(self.user)
 
     class Meta:
         verbose_name = _(u"betalingsrelasjon")

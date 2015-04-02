@@ -34,7 +34,7 @@ def payment(request):
                       amount=payment.price * 100, #Price is multiplied with 100 because the amount is in øre
                       currency="nok",
                       card=token,
-                      description=payment.content_object_description() + " - " + request.user.email
+                      description=payment.description() + " - " + request.user.email
                     )
 
                     payment_relation = PaymentRelation.objects.create(payment=payment, user=request.user)

@@ -10,6 +10,7 @@ from django.utils.translation import ugettext as _
 
 from apps.payment.models import Payment, PaymentRelation, PaymentDelay
 from apps.events.models import Event
+
 from apps.mommy import Task, schedule
 
 class PaymentReminder(Task):
