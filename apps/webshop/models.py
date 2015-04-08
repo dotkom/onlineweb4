@@ -32,12 +32,12 @@ class ProductImage(models.Model):
     IMAGE_FOLDER = "images/webshop"
     IMAGE_EXTENSIONS = ['.jpg', '.jpeg', '.gif', '.png', '.tif', '.tiff']
 
-    product = models.ForeignKey('Product')
+    product = models.ForeignKey('Product', related_name='images')
     # image = FileBrowseField(
     #     'bilde', max_length=200,
     #     directory=IMAGE_FOLDER, extensions=IMAGE_EXTENSIONS, null=True
     # )
-    image = models.ImageField()
+    image = models.ImageField(upload_to=IMAGE_FOLDER)
 
     class Meta:
         verbose_name = 'Produktbilde'
