@@ -8,6 +8,15 @@
 {% block content %}
 <section id="webshop">
     <div class="container">
+        <div class="row">
+            {% for image in product.images.all %}
+            <div class="col-xs-6 col-md-3">
+                <a href="{{ image.image.url }}" class="thumbnail">
+                    <img src="{{ image.image.url }}" />
+                </a>
+            </div>
+            {% endfor %}
+        </div>
         <h2>{{product }}</h2>
     </div>
 </section>
