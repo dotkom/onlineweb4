@@ -25,9 +25,7 @@ def genfors(request):
     if not meeting:
         return render(request, "genfors/index.html", context)
 
-    reg_voter = RegisteredVoter.objects.filter(user=request.user, meeting=meeting)
-    if reg_voter:
-        reg_voter = reg_voter[0]
+    reg_voter = RegisteredVoter.objects.filter(user=request.user, meeting=meeting).first()
 
     # Check for cookie voter hash
     if is_registered(request):
@@ -340,10 +338,8 @@ def vote(request):
         if is_registered(request):
             q = m.get_active_question()
             a = AnonymousVoter.objects.get(user_hash=request.COOKIES.get('anon_voter'), meeting=m)
-            r = RegisteredVoter.objects.filter(user=request.user, meeting=m)
-            if r:
-                r = r[0]
-            else:
+            r = RegisteredVoter.objects.filter(user=request.user, meeting=m).first()
+            if not r:
                 messages.error(request, u'Du er ikke registrert som oppmøtt, og kan derfor ikke avlegge stemme.')
                 return redirect('genfors_index')
             if not r.can_vote:
@@ -466,7 +462,7 @@ def api_user(request):
         m = get_active_meeting()
         q = m.get_active_question()
         genfors = {}
-        reg_voter = RegisteredVoter.objects.filter(user=request.user, meeting=m)[0]
+        reg_voter = RegisteredVoter.objects.filter(user=request.user, meeting=m).first()
         anon_voter = AnonymousVoter.objects.get(user_hash=request.COOKIES.get('anon_voter'), meeting=m)
 
         genfors["total_voters"] = m.num_can_vote()
@@ -526,17 +522,14 @@ def logout(request):
 def get_active_meeting():
     today = datetime.date.today()
     hour24 = datetime.timedelta(hours=24)
-    meetings = Meeting.objects.filter(start_date__lte=timezone.now(), ended=False,
-                                      start_date__range=[today - hour24, today + hour24]).order_by('-start_date')
-    if meetings:
-        return meetings[0]
+    return Meeting.objects.filter(
+        start_date__lte=timezone.now(), ended=False,
+        start_date__range=[today - hour24, today + hour24]
+    ).order_by('-start_date').first()
 
 
 def get_next_meeting():
-    today = datetime.date.today()
-    meetings = Meeting.objects.filter(ended=False).order_by('-start_date')
-    if meetings:
-        return meetings[0]
+    return Meeting.objects.filter(ended=False).order_by('-start_date').first()
 
 
 # Helper function
@@ -551,6 +544,7 @@ def is_registered(request):
     except AnonymousVoter.DoesNotExist:
         return False
     return True
+
 
 def question_validate(request, question_id):
     """Returns a HttpResponse if not passing validation"""
