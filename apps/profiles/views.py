@@ -32,164 +32,117 @@ Index for the entire user profile view
 Methods redirect to this view on save
 """
 @login_required
-def index(request):
+def index(request, active_tab='overview'):
+    context = _create_profile_context(request)
+    context['active_tab'] = active_tab
 
-    """
-    This view is rendered for ever request made to the userprofile pages,
-    due to the fact that it is a one-page view.
-    """
+    return render(request, 'profiles/index.html', context)
 
-    if not request.user.is_authenticated():
-        return render_home(request)
-
-    dict = _create_request_dictionary(request)
-
-    # If a user has made a post, a session value will be set for which tab the user posted from.
-    # This enables us to return the user to the correct tab when returning the view.
-    # If no session key is set, return the user to the default first tab
-
-    return render(request, 'profiles/index.html', dict)
-
-
-def render_home(request):
-    messages.error(request, _(u"Du er ikke logget inn, og kan ikke se din profil."))
-    return redirect('home')
-
-
-def _create_request_dictionary(request):
+def _create_profile_context(request):
 
     groups = Group.objects.all()
-    users_to_display = User.objects.filter(privacy__visible_for_other_users=True)
 
-    dict = {
-        'users' : users_to_display,
-        'groups' : groups,
-        'user' : request.user,
-        'position_form' : PositionForm(),
-        'privacy_form' : PrivacyForm(instance=request.user.privacy),
-        'user_profile_form' : ProfileForm(instance=request.user),
-        'password_change_form' : PasswordChangeForm(request.user),
-        'marks' : [
+    context = {
+        # edit
+        'position_form': PositionForm(),
+        'user_profile_form': ProfileForm(instance=request.user),
+        # positions
+        'groups': groups,
+        # privacy
+        'privacy_form': PrivacyForm(instance=request.user.privacy),
+        # marks
+        'mark_rules_accepted': request.user.mark_rules,
+        'marks': [
             # Tuple syntax ('title', list_of_marks, is_collapsed)
             (_(u'aktive prikker'), Mark.marks.active(request.user), False),
             (_(u'inaktive prikker'), Mark.marks.inactive(request.user), True),
         ],
-        'new_email' : NewEmailForm(),
-        'has_active_approvals' : MembershipApproval.objects.filter(applicant=request.user, processed=False).count() > 0,
+        # password
+        'password_change_form': PasswordChangeForm(request.user),
+        # email
+        'new_email': NewEmailForm(),
+        # approvals
+        'field_of_study_application': FieldOfStudyApplicationForm(),
+        'has_active_approvals': MembershipApproval.objects.filter(applicant=request.user, processed=False).count() > 0,
         'approvals': [
             # Tuple syntax ('title', list_of_approvals, is_collapsed)
             (_(u"aktive søknader"), MembershipApproval.objects.filter(applicant=request.user, processed=False), False),
             (_(u"avslåtte søknader"), MembershipApproval.objects.filter(applicant=request.user, processed=True, approved=False), True),
             (_(u"godkjente søknader"), MembershipApproval.objects.filter(applicant=request.user, processed=True), True),
         ],
-        'field_of_study_application': FieldOfStudyApplicationForm(),
-        'mark_rules_accepted' : request.user.mark_rules,
     }
 
-    if request.session.has_key('userprofile_active_tab'):
-        dict['active_tab'] = request.session['userprofile_active_tab']
-    else:
-        dict['active_tab'] = 'dashboard'
+    return context
 
-    return dict
-
-
-def updateActiveTab(request):
-
-    if request.is_ajax():
-        if request.method == 'POST':
-            value = json.loads(request.body)
-            request.session['userprofile_active_tab'] = value['active_tab']
-
-            return HttpResponse(status=200)
-    return HttpResponse(status=405)
-
-def saveUserProfile(request):
-
-    if not request.user.is_authenticated():
-        return render_home(request)
+@login_required
+def edit_profile(request):
+    context = _create_profile_context(request)
+    context['active_tab'] = 'edit'
 
     if request.method == 'POST':
-
-        user = request.user
-        dict = _create_request_dictionary(request)
-        user_profile_form = ProfileForm(request.POST)
-        dict['user_profile_form'] = user_profile_form
+        user_profile_form = ProfileForm(request.POST, instance=request.user)
+        context['user_profile_form'] = user_profile_form
 
         if not user_profile_form.is_valid():
             messages.error(request, _(u"Noen av de påkrevde feltene mangler"))
-            return render(request, 'profiles/index.html', dict)
+        else:
+            user_profile_form.save()
+            messages.success(request, _(u"Brukerprofilen din ble endret"))
 
-        cleaned = user_profile_form.cleaned_data
+    return render(request, 'profiles/index.html', context)
 
-        user.address = cleaned['address']
-        user.allergies = cleaned['allergies']
-        user.nickname = cleaned['nickname']
-        user.phone_number = cleaned['phone_number']
-        user.website = cleaned['website']
-        user.zip_code = cleaned['zip_code']
-        user.gender = cleaned['gender']
-
-        user.save()
-        messages.success(request, _(u"Brukerprofilen din ble endret"))
-
-    return redirect("profiles")
-
-
-def savePrivacy(request):
-    if not request.user.is_authenticated():
-        return render_home(request)
+@login_required
+def privacy(request):
+    context = _create_profile_context(request)
+    context['active_tab'] = 'privacy'
 
     if request.method == 'POST':
-        dict = _create_request_dictionary(request)
         privacy_form = PrivacyForm(request.POST, instance=request.user.privacy)
-        dict['privacy_form'] = privacy_form
+        context['privacy_form'] = privacy_form
 
         if not privacy_form.is_valid():
             messages.error(request, _(u"Noen av de påkrevde feltene mangler"))
-            return render(request, 'profiles/index.html', dict)
+        else:
+            privacy_form.save()
+            messages.success(request, _(u"Personvern ble endret"))
 
-        privacy_form.save()
-        messages.success(request, _(u"Personvern ble endret"))
+    return render(request, 'profiles/index.html', context)
 
-    return redirect("profiles")
-
-def savePassword(request):
-    if not request.user.is_authenticated():
-        return render_home(request)
+@login_required
+def password(request):
+    context = _create_profile_context(request)
+    context['active_tab'] = 'password'
 
     if request.method == 'POST':
-        dict = _create_request_dictionary(request)
         password_change_form = PasswordChangeForm(user=request.user, data=request.POST)
-        dict['password_change_form'] = password_change_form
+        context['password_change_form'] = password_change_form
 
         if not password_change_form.is_valid():
             messages.error(request, _(u"Passordet ditt ble ikke endret"))
-            return render(request, 'profiles/index.html', dict)
+        else:
+            password_change_form.save()
+            messages.success(request, _(u"Passordet ditt ble endret"))
 
-        password_change_form.save()
-        messages.success(request, _(u"Passordet ditt ble endret"))
-
-    return redirect("profiles")
+    return render(request, 'profiles/index.html', context)
 
 @login_required
-def save_position(request):
-    if request.method == 'POST':
+def position(request):
+    context = _create_profile_context(request)
+    context['active_tab'] = 'position'
 
+    if request.method == 'POST':
         form = PositionForm(request.POST)
-        dict = _create_request_dictionary(request)
-        dict['position_form'] = form
+        context['position_form'] = form
 
         if not form.is_valid():
             messages.error(request, _(u'Skjemaet inneholder feil'))
-            return render(request, 'profiles/index.html', dict)
+        else:
+            new_position = form.save(commit=False)
+            new_position.user = request.user
+            new_position.save()
+            messages.success(request, _(u'Posisjonen ble lagret'))
 
-        new_position = form.save(commit=False)
-        new_position.user = request.user
-        new_position.save()
-        messages.success(request, _(u'Posisjonen ble lagret'))
-        return redirect('profiles')
-
+    return render(request, 'profiles/index.html', context)
 
 @login_required
 def delete_position(request):
@@ -205,7 +158,6 @@ def delete_position(request):
                 return_status = json.dumps({'message': _(u"Du prøvde å slette en posisjon som ikke tilhørte deg selv.")})
             return HttpResponse(status=500, content=return_status)
         raise Http404
-
 
 @login_required
 def update_mark_rules(request):
@@ -225,10 +177,11 @@ def update_mark_rules(request):
         return HttpResponse(status=405)
     raise Http404
 
-
 @login_required
 def add_email(request):
-    dict = _create_request_dictionary(request)
+    context = _create_profile_context(request)
+    context['active_tab'] = 'email'
+
     if request.method == 'POST':
         form = NewEmailForm(request.POST)
         if form.is_valid():
@@ -257,9 +210,8 @@ def add_email(request):
             _send_verification_mail(request, email.email)
 
             messages.success(request, _(u"Eposten ble lagret. Du må sjekke din innboks for å verifisere den."))
-        
-    return redirect('profiles')
-    
+
+    return render(request, 'profiles/index.html', context)
 
 @login_required
 def delete_email(request):

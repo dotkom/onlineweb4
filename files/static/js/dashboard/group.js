@@ -100,12 +100,12 @@ var Group = (function ($, tools) {
 
             // Typeahead template
             var user_search_template =  [
-                '<span data-id="{{ id }}" class="user-meta"><h4>{{ name }}</h4>'
+                '<span data-id="{{ id }}" class="user-meta"><h4>{{ value }}</h4>'
             ].join('')
             
             // Bind the input field
             $('#usersearch').typeahead({
-                remote: "/profile/api_user_search/?query=%QUERY",
+                remote: "/profile/api_plain_user_search/?query=%QUERY",
                 updater: function (item) {
                     return item
                 },
