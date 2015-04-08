@@ -486,7 +486,7 @@ Prisen er %skr og fristen for og betale er %s
 
 For mer info:
 http://%s%s
-""") % (self.event.title, payment.price, payment.deadline.strftime('%-d %B %Y kl%H:%M'), host, self.event.get_absolute_url())
+""") % (self.event.title, payment.price, payment.deadline.strftime('%-d %B %Y kl: %H:%M'), host, self.event.get_absolute_url())
                 else:
                     email_message = _(u"""
 Du har stått på venteliste for arrangementet "%s" og har nå fått plass.

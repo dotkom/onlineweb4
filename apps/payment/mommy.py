@@ -7,6 +7,7 @@ from django.utils import timezone
 from django.core.mail import EmailMessage
 from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import ugettext as _
+from django.conf import settings
 
 from apps.payment.models import Payment, PaymentRelation, PaymentDelay
 from apps.events.models import Event
@@ -47,7 +48,9 @@ class PaymentReminder(Task):
         subject = _(u"Betaling: ") + payment.description()
         
         message = _(u"Hei, du har ikke betalt for arrangement ") + payment.description()
-        message += _(u"\nFristen for å betale er ") + str(payment.deadline.strftime("%d-%m-%Y %H:%M"))
+        message += _(u"\nFristen for å betale er ") + str(payment.deadline.strftime("%-d %B %Y kl: %H:%M"))
+        message += _(u"\nFor mer info om arrangement se:")
+        message += "\n" + str(settings.BASE_URL + payment.content_object.get_absolute_url())
         #TODO add info about punishment for failed payments
         message += _(u"\n\nDersom du har spørsmål kan du sende mail til ") + payment.responsible_mail()
         message += _(u"\n\nMvh\nLinjeforeningen Online")
@@ -63,6 +66,8 @@ class PaymentReminder(Task):
         message = _(u"Hei, du har ikke betalt for arrangement ") + payment.description()
         #message += _(u"fristen har utgått, og du får en prikk og 48 timer til å betale")
         #TODO add info about punishment
+        message += _(u"\nFor mer info om arrangement se:")
+        message += "\n" + str(settings.BASE_URL + payment.content_object.get_absolute_url())
         message += _(u"\nDersom du har spørsmål kan du sende mail til ") + payment.responsible_mail()
         message += _(u"\n\nMvh\nLinjeforeningen Online")
 
@@ -75,6 +80,8 @@ class PaymentReminder(Task):
         subject = _(u"Betalingsfrist utgått: ") + payment.description()
         message = _(u"Hei, du har ikke betalt for arrangement ") + payment.description()
         message += _(u"fristen har utgått, og du har mistet plassen din på arrangement")
+        message += _(u"\nFor mer info om arrangement se:")
+        message += "\n" + str(settings.BASE_URL + payment.content_object.get_absolute_url())
         message += _(u"Dersom du har spørsmål kan du sende mail til ") + payment.responsible_mail()
         message += _(u"\n\nMvh\nLinjeforeningen Online")
 
@@ -150,5 +157,5 @@ class PaymentDelayHandler(Task):
         EmailMessage(subject, unicode(message), payment.responsible_mail(), [], receivers).send()
 
 
-schedule.register(PaymentReminder, day_of_week='mon-sun', hour=23, minute=03)
+schedule.register(PaymentReminder, day_of_week='mon-sun', hour=21, minute=43)
 schedule.register(PaymentDelayHandler, day_of_week='mon-sun', hour=17, minute=39)
