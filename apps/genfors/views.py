@@ -82,9 +82,9 @@ def genfors(request):
             if form.is_valid():
                 # Creating hash
                 h = sha256()
-                h.update(settings.SECRET_KEY)
-                h.update(request.user.username)
-                h.update(form.cleaned_data['salt'])
+                h.update(settings.SECRET_KEY.encode('utf-8'))
+                h.update(request.user.username.encode('utf-8'))
+                h.update(form.cleaned_data['salt'].encode('utf-8'))
                 h = h.hexdigest()
                 # Create a registered voter object if it does not already exist
                 reg_voter = RegisteredVoter.objects.filter(meeting=meeting, user=request.user)
