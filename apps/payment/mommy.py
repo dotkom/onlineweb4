@@ -107,7 +107,7 @@ class PaymentReminder(Task):
         return [user.email for user in PaymentReminder.not_paid(payment)]
 
 
-class PaymentDeadlineHandler(Task):
+class PaymentDelayHandler(Task):
 
     @staticmethod
     def run():
@@ -120,7 +120,7 @@ class PaymentDeadlineHandler(Task):
 
         for payment_delay in payment_delays:
             if payment_delay.valid_to < timezone.now():
-                handle_deadline_passed(payment_delay)
+                PaymentDelayHandler.handle_deadline_passed(payment_delay)
 
 
         #TODO handle committee notifying
@@ -130,7 +130,7 @@ class PaymentDeadlineHandler(Task):
         #TODO punish user
         payment_delay.active = False
         payment_delay.save()
-        PaymentDeadlineHandler.send_deadline_passed_mail(payment_delay)
+        PaymentDelayHandler.send_deadline_passed_mail(payment_delay)
 
     @staticmethod
     def send_deadline_passed_mail(payment_delay):
@@ -151,4 +151,4 @@ class PaymentDeadlineHandler(Task):
 
 
 schedule.register(PaymentReminder, day_of_week='mon-sun', hour=23, minute=03)
-schedule.register(PaymentDeadlineHandler, day_of_week='mon-sun', hour=17, minute=39)
+schedule.register(PaymentDelayHandler, day_of_week='mon-sun', hour=17, minute=39)

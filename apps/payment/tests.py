@@ -10,7 +10,7 @@ from django.utils import timezone
 from apps.authentication.models import OnlineUser as User
 from apps.events.models import Event, AttendanceEvent, Attendee
 from apps.payment.models import Payment, PaymentRelation, PaymentDelay
-from apps.payment.mommy import PaymentReminder, PaymentDeadlineHandler
+from apps.payment.mommy import PaymentReminder, PaymentDelayHandler
 
 class PaymentTest(TestCase):
 
@@ -78,7 +78,7 @@ class PaymentTest(TestCase):
         
         self.assertTrue(payment_delay.active)
         
-        PaymentDeadlineHandler.handle_deadline_passed(payment_delay)
+        PaymentDelayHandler.handle_deadline_passed(payment_delay)
 
         self.assertFalse(payment_delay.active)
 
