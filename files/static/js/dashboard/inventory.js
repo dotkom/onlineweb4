@@ -20,6 +20,12 @@ var Inventory = (function ($, tools) {
         return true
     }
 
+    var postDeleteForm = function (url) {
+        $('<form method="POST" action="' + url + '">' +
+        '<input type="hidden" name="csrfmiddlewaretoken" value="' + 
+        $('input[name=csrfmiddlewaretoken]').val() + '"></form>').submit()
+    }
+
     return {
 
         // Bind them buttons and other initial functionality here
@@ -28,32 +34,32 @@ var Inventory = (function ($, tools) {
             if (!performSelfCheck()) return
             
             $('#inventory_item_list').tablesorter()
-
             $('#inventory-batch-list').tablesorter()
 
             $('#inventory-delete-item').on('click', function (e) {
                 e.preventDefault()
-                if (confirm('Er du sikker på at du vil slette denne varen?')) {
-                    window.location = this.href
-                }
+                $('.confirm-delete-item').data('id', $(this).data('id'))
+            })
+
+            $('.deletebatch').on('click', function (e) {
+                e.preventDefault()
+                $('.confirm-delete-batch').data('id', $(this).data('id'))
+            })
+
+            $('.confirm-delete-item').on('click', function (e) {
+                url = '/dashboard/inventory/item/' + $(this).data('id') + '/delete/'
+                postDeleteForm(url)
+            })
+
+            $('.confirm-delete-batch').on('click', function (e) {
+                url = '/dashboard/inventory/item/' +
+                    $('#item_id').val() + '/batch/' + $(this).data('id') + '/delete/'
+                postDeleteForm(url)
             })
 
             $('#inventory-add-batch').on('click', function (e) {
                 e.preventDefault()
                 $('#inventory-add-batch-form').slideToggle(200)
-            })
-
-            $('.deletebatch').on('click', function (e) {
-                if (confirm('Er du sikker på at du vil slette denne batchen?')) {
-                    // STUB
-                } else {
-                    e.preventDefault()
-                }
-            })
-
-            $('.datepicker').on('click', function (e) {
-                e.preventDefault()
-                alert('Datepicker er ikke implementert enda. Kommer snart(tm)!')
             })
         }
 

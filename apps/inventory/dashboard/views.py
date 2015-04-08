@@ -47,9 +47,9 @@ def new(request):
         if not inventory_form.is_valid():
             messages.error(request, u'Noen av de påkrevde feltene inneholder feil.')
         else:
-            inventory_form.save()
+            item = inventory_form.save()
             messages.success(request, u'Varen ble opprettet')
-            return redirect(index)
+            return redirect(details, item.id)
 
         context['form'] = inventory_form
 
@@ -99,11 +99,15 @@ def item_delete(request, item_pk):
 
     item = get_object_or_404(Item, pk=item_pk)
 
-    item.delete()
+    if request.method == 'POST':
 
-    messages.success(request, u'Varen %s ble slettet.' % item.name)
+        item.delete()
 
-    return redirect(index)
+        messages.success(request, u'Varen %s ble slettet.' % item.name)
+
+        return redirect(index)
+
+    raise PermissionDenied
 
 @login_required
 @permission_required('inventory.add_batch', return_403=True)
@@ -111,18 +115,27 @@ def batch_new(request, item_pk):
     if not has_access(request):
         raise PermissionDenied
 
-    # Get base context
+    # Field mapper
+    fieldmap = {
+        'amount': u'Mengde',
+        'expiration_date': u'Utløpsdato',
+    }
 
     item = get_object_or_404(Item, pk=item_pk)
 
     if request.method == 'POST':
         batch_form = BatchForm(request.POST)
-        batch = batch_form.save(commit=False)
-        batch.item = item
 
         if not batch_form.is_valid():
-            messages.error(request, u'Noen av de påkrevde feltene inneholder feil.')
+            # Dirty hack to display errors since the form is not passed in redirect context
+            error_reply = u"Feil i felt:"
+            for field, error in batch_form.errors.items():
+                error_reply += ' ' + fieldmap[field] + ' (' + batch_form.error_class.as_text(error) + '),'
+
+            messages.error(request, error_reply.rstrip(','))
         else:
+            batch = batch_form.save(commit=False)
+            batch.item = item
             batch.save()
             messages.success(request, u'Batchen ble lagt til.')
 
@@ -163,9 +176,12 @@ def batch_delete(request, item_pk, batch_pk):
 
     batch = get_object_or_404(Batch, pk=batch_pk)
 
-    batch.delete()
+    if request.method == 'POST':
 
-    messages.success(request, u'Batchen ble slettet.')
+        batch.delete()
+        messages.success(request, u'Batchen ble slettet.')
 
-    return redirect(details, item_pk=item_pk)
+        return redirect(details, item_pk=item_pk)
+
+    raise PermissionDenied
 
