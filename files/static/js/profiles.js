@@ -14,34 +14,47 @@ function csrfSafeMethod(method) {
 /* END AJAX SETUP */
 
 $(document).ready(function() {
+    // Generic javascript to enable interactive tabs that do not require page reload
+    var switchTab = function(newActiveTab) {
+        if ($('#profile-tabs').length) {
+            tabElement = $('#profile-tabs').find('[data-section="'+ newActiveTab + '"]')
+            if (tabElement.length) {
+                // Hide sections
+                $('#tab-content section').hide()
+                // Unmark currently active tab
+                $('#profile-tabs').find('li.active').removeClass('active')
+                // Update the active tab to the clicked tab and show that section
+                tabElement.parent().addClass('active')
+                $('#' + newActiveTab).show()
+                // Update URL
+                window.history.pushState({}, document.title, $(tabElement).attr('href'))
+            }
+        }
+        else {
+            console.log("No element with id #profile-tabs found.")
+        }
+    }
 
-    $('#userprofile-tabs > li > a').click(function(e) {
-        e.preventDefault();
-        // Get hash without #_
-        var tab = this.getAttribute('href').substr(2);
-        updateActiveTab(tab);
-        // Update url hash, but remove the leading _
-        document.location.hash = tab;
-        $(this).tab('show');
+    // Hide all other tabs and show the active one when the page loads
+    if ($('#profile-tabs').length) {
+        // Hide all sections 
+        $('#tab-content section').hide()
+        // Find the currently active tab and show it
+        activeTab = $('#profile-tabs').find('li.active a').data('section')    
+        $('#' + activeTab).show()
+
+        // Set up the tabs to show/hide when clicked
+        $('#profile-tabs').on('click', 'a', function (e) {
+            e.preventDefault()
+            newActiveTab = $(this).data('section')
+            switchTab(newActiveTab);
+        })
+    }
+
+    // Fix for tabs when going 'back' in the browser history
+    window.addEventListener("popstate", function(e) {
+        // If you can figure out how to do this properly, be my guest.
     });
-
-    // Set correct tab based on hash (#_password etc)
-    if(document.location.hash) {
-        $('#userprofile-tabs > li').removeClass('active');
-        // Remove #
-        var tab = document.location.hash.substr(1);
-        $('a[href="#_' + tab + '"]').click();
-    }
-
-    function updateActiveTab(activetab) {
-        var data = JSON.stringify({active_tab : activetab});
-        $.ajax({
-            method: 'POST',
-            data: data,
-            url: 'updateactivetab/',
-            crossDomain: false
-        });
-    }
 
     $('.privacybox').click(
         function() {
@@ -113,7 +126,7 @@ $(document).ready(function() {
                 $(".marks").attr('disabled', true);
             },
             error: function() {
-                utils.setStatusMessage('En uventet error ble oppdaget. Kontakt dotkom@online.ntnu.no for assistanse.', 'alert-danger');
+                utils.setStatusMessage('En uventet feil ble oppdaget. Kontakt dotkom@online.ntnu.no for assistanse.', 'alert-danger');
             },
             crossDomain: false
         });
@@ -166,7 +179,7 @@ $(document).ready(function() {
                     utils.setStatusMessage(res['message'], 'alert-danger');
                 }
                 else {
-                    utils.setStatusMessage('En uventet error ble oppdaget. Kontakt dotkom@online.ntnu.no for assistanse.', 'alert-danger');
+                    utils.setStatusMessage('En uventet feil ble oppdaget. Kontakt dotkom@online.ntnu.no for assistanse.', 'alert-danger');
                 }
             },
             crossDomain: false
@@ -191,7 +204,7 @@ $(document).ready(function() {
                     utils.setStatusMessage(res['message'], 'alert-danger');
                 }
                 else {
-                    utils.setStatusMessage('En uventet error ble oppdaget. Kontakt dotkom@online.ntnu.no for assistanse.', 'alert-danger');
+                    utils.setStatusMessage('En uventet feil ble oppdaget. Kontakt dotkom@online.ntnu.no for assistanse.', 'alert-danger');
                 }
             },
             crossDomain: false
@@ -214,7 +227,7 @@ $(document).ready(function() {
                     utils.setStatusMessage(res['message'], 'alert-danger');
                 }
                 else {
-                    utils.setStatusMessage('En uventet error ble oppdaget. Kontakt dotkom@online.ntnu.no for assistanse.', 'alert-danger');
+                    utils.setStatusMessage('En uventet feil ble oppdaget. Kontakt dotkom@online.ntnu.no for assistanse.', 'alert-danger');
                 }
             },
             crossDomain: false
@@ -248,19 +261,6 @@ $(document).ready(function() {
             crossDomain: false
         })
     });
-
-/*
-  JS for membership  
-*/
-
-    var hasDatePicker = $(".hasDatePicker");
-    if(hasDatePicker.size() > 0) {
-        hasDatePicker.datepicker({
-            yearRange: "2004:" + new Date().getFullYear(),
-            changeYear: true,
-            dateFormat: "yy-mm-dd"
-        });
-    }
 
     $(".delete-position").on('click', function(e) {
         var that = $(this);

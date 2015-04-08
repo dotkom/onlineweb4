@@ -1,7 +1,5 @@
 {% extends "dashboard_base.html" %}
-{% load fb_versions %}
 {% load addcss %}
-{% load markdown_deux_tags %}
 {% load crispy_forms_tags %}
 {% load compress %}
 
@@ -23,7 +21,7 @@
 {% endblock js %}
 
 {% block page-header %}
-    {{ item.name }}
+    Endre {{ item.name }}
 {% endblock %}
 
 {% block breadcrumbs %}
@@ -34,30 +32,40 @@
 {% block content %}
 <div class="row">
     <div class="col-md-12">
-        <form method="POST" action="">
-        {% csrf_token %}
-        <button type="submit" class="btn btn-success"><i class="fa fa-save"></i> Lagre</button>
         <a href="#" id="inventory-add-batch" class="btn btn-primary"><i class="fa fa-plus"></i> Legg til batch</a>
-        <a href="{% url 'dashboard_inventory_delete' item.id %}" id="inventory-delete-item" class="btn btn-danger pull-right"><i class="fa fa-times fa-lg"></i> Slett</a>
+        <a href="#modal-delete-item" id="inventory-delete-item" data-toggle="modal" data-id="{{ item.id }}" class="btn btn-danger pull-right">
+            <i class="fa fa-times fa-lg"></i> Slett vare
+        </a>
     </div>
     <div class="col-md-12" style="display:none" id="inventory-add-batch-form">
-        <br /><br />
-        <div class="row">
-            <div class="col-md-8">
-                <div class="form-group">
-                    <label for="inventory-batch-amount">Mengde</label>
-                    <input type="number" name="batch-amount" id="inventory-batch-amount" class="form-control">
+        <hr />
+        <p>Vennligst spesifiser vareantall og en eventuell utløspsdato (ikke påkrevet).</p>
+        <div class="row row-space">
+        <form method="POST" action="{% url 'dashboard_inventory_batch_new' item.id %}">
+            {% csrf_token %}
+            {% for field in new_batch_form %}
+                <div class="col-md-5">
+                    <div class="form-group">
+                        <div class="input-group {% if field.errors %}has-error{% endif %} {% ifequal field.name 'expiration_date' %}dtp{% endifequal %}">
+                            <span class="input-group-addon">{{ field.label }}</span>
+                            {{ field|addclass:"form-control" }}
+                            {% ifequal field.name 'expiration_date' %}
+                                <span class="input-group-btn">
+                                    <a href="#" class="btn btn-primary datepickerbutton">
+                                        <i class="fa fa-calendar fa-lg"></i>
+                                    </a>
+                                </span>
+                            {% endifequal %}
+                        </div>
+                    </div>
                 </div>
+            {% endfor %}
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-success pull-right">
+                    <i class="fa fa-save fa-lg"></i> Legg til</i>
+                </button>
             </div>
-            <div class="col-md-4">
-                <div class="form-group">
-                    <label for="inventory-batch-expiry">Utløpsdato</label>
-                    <input type="date" name="batch-expiry" id="inventory-batch-expiry" class="form-control">
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-12"><a href="#" id="inventory-save-batch" class="btn btn-success"><i class="fa fa-save"></i> Legg til</i></a></div>
+        </form>   
         </div>
     </div>
 </div>
@@ -69,16 +77,26 @@
                 <h3 class="panel-title">Vare</h3>
             </div>
             <div class="panel-body">
-                {% for field in form %}
-                <div class="form-group {% if field.errors %}has-error{% endif %}">
-                    <label for="{{ field.auto_id }}">{{ field.label }}</label>
-                    {{ field|addclass:"form-control" }}
-                    {% if field.errors %}
-                    <p>{{ field.errors }}</p>
-                    {% endif %}
+                <div class="col-md-12">
+                    <form method="POST" action="{% url 'dashboard_inventory_details' item.id %}">
+                        <div class="row row-space">
+                            {% csrf_token %}
+                            {% for field in item_form %}
+                            <div class="form-group">
+                                <div class="input-group">
+                                    <span class="input-group-addon">{{ field.label }}</span>
+                                    {{ field|addclass:"form-control" }}
+                                    <span class="input-group-btn">
+                                        <button type="submit" class="btn btn-success">
+                                            <i class="fa fa-save fa-lg"></i>
+                                        </button>
+                                    </span>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </form>
                 </div>
-                {% endfor %}
-                </form>
             </div>
         </div>
     </div>
@@ -88,28 +106,79 @@
                 <h3 class="panel-title">Batch</h3>
             </div>
             <div class="panel-body">
-                <table class="table table-striped table-condensed" id="inventory-batch-list">
-                    <thead>
-                        <tr>
-                            <th>Mengde</th>
-                            <th>Utløpsdato</th>
-                            <th>Fjern</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for batch in item.batches.all %}
-                            <tr>
-                                <td>{{ batch.amount }}</td>
-                                <td>{{ batch.expiration_date|date:'Y-m-d' }}</td>
-                                <td>
-                                    <a href="#" class="delete-batch" id="{{ batch.id }}">
-                                        <i class="fa fa-times fa-lg red"></i>
-                                    </a>
-                                </td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+                {% for pk, form in batch_forms %}
+                <div class="row row-space">
+                    <form method="POST" action="{% url 'dashboard_inventory_batch' item.id pk %}">
+                    {% csrf_token %}
+                    {% for field in form %}
+                        {% ifnotequal field.name 'item' %}
+                        <div class="col-md-5">
+                            <div class="form-group {% if field.errors %}has-error{% endif %}">
+                                <div class="input-group {% ifequal field.name 'expiration_date' %}dtp{% endifequal %}">
+                                    <span class="input-group-addon">{{ field.label }}</span>
+                                    {{ field|addclass:"form-control" }}
+                                    {% ifequal field.name 'expiration_date' %}
+                                    <span class="input-group-btn datepickerbutton">
+                                        <a href="#" class="btn btn-primary">
+                                            <i class="fa fa-calendar fa-lg"></i>
+                                        </a>
+                                    </span>
+                                    {% endifequal %}
+                                </div>
+                            </div>
+                        </div>
+                        {% else %}
+                        {{ field.as_hidden }}
+                        {% endifnotequal %}
+                    {% endfor %}
+                    <div class="col-md-2">
+                        <div class="pull-right">
+                            <button type="submit" class="btn btn-success">
+                                <i class="fa fa-save fa-lg"></i>
+                            </button>
+                            <a href="#modal-delete-batch" data-toggle="modal" data-id="{{ pk }}" class="btn btn-danger deletebatch">
+                                <i class="fa fa-times fa-lg"></i>
+                            </a>
+                        </div>
+                    </div>
+                    </form>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+<input type="hidden" id="item_id" value="{{ item.id }}" />
+<div id="modal-delete-batch" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h3>Bekreft sletting av batch!</h3>
+            </div>
+            <div class="modal-body">
+                <p>Er du sikker på at du vil fjerne batchen fra {{ item.name }}?</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" data-dismiss="modal" aria-hidden="true">Lukk</button>
+                <button class="btn btn-danger confirm-delete-batch" data-dismiss="modal" aria-hidden="true">Slett</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="modal-delete-item" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h3>Bekreft sletting av {{ item.name }}</h3>
+            </div>
+            <div class="modal-body">
+                <p>Er du sikker på at du vil slette {{ item.name }}? Alle tilknyttede batcher vil også bli slettet.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" data-dismiss="modal" aria-hidden="true">Lukk</button>
+                <button class="btn btn-danger confirm-delete-item" data-dismiss="modal" aria-hidden="true">Slett</button>
             </div>
         </div>
     </div>

@@ -11,7 +11,7 @@ from django.http import HttpResponseBadRequest, HttpResponse, JsonResponse
 from guardian.decorators import permission_required
 
 from apps.dashboard.tools import has_access, get_base_context
-from apps.inventory.dashboard.forms import InventoryForm, BatchForm
+from apps.inventory.dashboard.forms import ItemForm, BatchForm
 from apps.inventory.models import Item, Batch
 
 
@@ -42,26 +42,26 @@ def new(request):
     context = get_base_context(request)
 
     if request.method == 'POST':
-        inventory_form = InventoryForm(request.POST)
+        inventory_form = ItemForm(request.POST)
 
         if not inventory_form.is_valid():
             messages.error(request, u'Noen av de påkrevde feltene inneholder feil.')
         else:
-            inventory_form.save()
+            item = inventory_form.save()
             messages.success(request, u'Varen ble opprettet')
-            return redirect(index)
+            return redirect(details, item.id)
 
         context['form'] = inventory_form
 
     else:
-        context['form'] = InventoryForm()
+        context['form'] = ItemForm()
 
     return render(request, 'inventory/dashboard/new.html', context)
 
 
 @login_required
 @permission_required('inventory.view_item', return_403=True)
-def details(request, pk):
+def details(request, item_pk):
     # Generic check to see if user has access to dashboard. (In Komiteer or superuser)
     if not has_access(request):
         raise PermissionDenied
@@ -69,79 +69,119 @@ def details(request, pk):
     # Create the base context needed for the sidebar
     context = get_base_context(request)
 
-    context['item'] = get_object_or_404(Item, pk=pk)
+    context['item'] = get_object_or_404(Item, pk=item_pk)
 
     if request.method == 'POST':
         if 'inventory.change_item' not in context['user_permissions']:
             raise PermissionDenied
 
-        inventory_form = InventoryForm(request.POST, instance=context['item'])
-        if not inventory_form.is_valid():
+        item_form = ItemForm(request.POST, instance=context['item'])
+        if not item_form.is_valid():
             messages.error(request, u'Noen av de påkrevde feltene inneholder feil.')
         else:
-            inventory_form.save()
+            item_form.save()
             messages.success(request, u'Varen ble oppdatert')
-        context['form'] = inventory_form
+        context['item_form'] = item_form
     else:
-        context['form'] = InventoryForm(instance=context['item'])
+        context['item_form'] = ItemForm(instance=context['item'])
+
+    context['new_batch_form'] = BatchForm()
+
+    context['batch_forms'] = [(batch.id, BatchForm(instance=batch)) for batch in Batch.objects.filter(item=context['item'])]
 
     return render(request, 'inventory/dashboard/details.html', context)
 
 @login_required
 @permission_required('inventory.delete_item', return_403=True)
-def delete(request, pk):
+def item_delete(request, item_pk):
     if not has_access(request):
         raise PermissionDenied
 
-    # Get base context needed for sidebar, and permissions
-    context = get_base_context(request)
+    item = get_object_or_404(Item, pk=item_pk)
 
-    context['item'] = get_object_or_404(Item, pk=pk)
+    if request.method == 'POST':
 
-    messages.success(request, u'Varen %s ble slettet.' % context['item'].name)
+        item.delete()
 
-    context['item'].delete()
+        messages.success(request, u'Varen %s ble slettet.' % item.name)
 
-    return redirect(index)
+        return redirect(index)
+
+    raise PermissionDenied
 
 @login_required
 @permission_required('inventory.add_batch', return_403=True)
-def batch(request, pk):
+def batch_new(request, item_pk):
+    if not has_access(request):
+        raise PermissionDenied
+
+    # Field mapper
+    fieldmap = {
+        'amount': u'Mengde',
+        'expiration_date': u'Utløpsdato',
+    }
+
+    item = get_object_or_404(Item, pk=item_pk)
+
+    if request.method == 'POST':
+        batch_form = BatchForm(request.POST)
+
+        if not batch_form.is_valid():
+            # Dirty hack to display errors since the form is not passed in redirect context
+            error_reply = u"Feil i felt:"
+            for field, error in batch_form.errors.items():
+                error_reply += ' ' + fieldmap[field] + ' (' + batch_form.error_class.as_text(error) + '),'
+
+            messages.error(request, error_reply.rstrip(','))
+        else:
+            batch = batch_form.save(commit=False)
+            batch.item = item
+            batch.save()
+            messages.success(request, u'Batchen ble lagt til.')
+
+        return redirect(details, item_pk=item_pk)
+
+    raise PermissionDenied
+
+@login_required
+@permission_required('inventory.change_batch', return_403=True)
+def batch(request, item_pk, batch_pk):
     if not has_access(request):
         raise PermissionDenied
 
     # Get base context
 
-    item = get_object_or_404(Item, pk=pk)
+    item = get_object_or_404(Item, pk=item_pk)
+    batch = get_object_or_404(Batch, pk=batch_pk)
 
     if request.method == 'POST':
-        if request.is_ajax and 'action' in request.POST:
-            if request.POST['action'] == 'add':
-                if 'amount' not in request.POST:
-                    return HttpResponse(u'Du må spesifisere en gyldig mengde', status=400)
-                else:
-                    try:
-                        amount =  int(request.POST['amount'])
-                        if amount < 0:
-                            return HttpResponse(u'Mengde kan ikke være negativ', status=400)
-                        expiry = request.POST['expiry']
-                        if 'expiry' in request.POST:
-                            expiry = datetime.strptime(expiry, '%Y-%m-%d')
-                    except ValueError:
-                        return HttpResponse(u'Ugyldig format.', status=400)
+        batch_form = BatchForm(request.POST, instance=batch)
 
-                    if 'expiry' in request.POST:
-                        batch = Batch(amount=amount, expiration_date=expiry.date(), item=item)
-                    else:
-                        batch = Batch(amount=amount, item=item)
+        if not batch_form.is_valid():
+            messages.error(request, u'Noen av de påkrevde feltene inneholder feil.')
+        else:
+            batch_form.save()
+            messages.success(request, u'Batchen ble oppdatert.')
 
-                    batch.save()
-
-                    return JsonResponse({'id': batch.id, 'amount': batch.amount, 'expiry': batch.expiration_date}, status=200)
-
-            if request.POST['action'] == 'delete':
-                batch = get_object_or_404(Batch, pk=request.POST['id'])
-                batch.delete()
-                return HttpResponse(u'Batchen ble slettet')
+        return redirect(details, item_pk=item_pk)
 
     raise PermissionDenied
+
+
+@login_required
+@permission_required('inventory.delete_batch', return_403=True)
+def batch_delete(request, item_pk, batch_pk):
+    if not has_access(request):
+        raise PermissionDenied
+
+    batch = get_object_or_404(Batch, pk=batch_pk)
+
+    if request.method == 'POST':
+
+        batch.delete()
+        messages.success(request, u'Batchen ble slettet.')
+
+        return redirect(details, item_pk=item_pk)
+
+    raise PermissionDenied
+
