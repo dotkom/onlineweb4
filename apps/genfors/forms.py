@@ -1,7 +1,7 @@
 #-*- coding: utf-8 -*-
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, Submit, Button
-from crispy_forms.bootstrap import AppendedText, FormActions, Field
+from crispy_forms.layout import Layout, Submit
+from crispy_forms.bootstrap import FormActions, Field, StrictButton, FieldWithButtons
 
 from django import forms
 from django.conf import settings
@@ -58,6 +58,13 @@ class QuestionForm(forms.ModelForm):
 
 
 class AlternativeForm(forms.ModelForm):
+    helper = FormHelper()
+    button = StrictButton('<span class="glyphicon glyphicon-remove"></span>', data_formset_delete_button='')
+    helper.layout = Layout(
+        FieldWithButtons('description', button)
+    )
+    helper.form_tag = False
+
     class Meta:
         model = Alternative
         fields = ['description']

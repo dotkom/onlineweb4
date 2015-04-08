@@ -34,13 +34,10 @@ Generalforsamling logg inn- Online
                                 <div data-formset-body>
                                     {% for form in formset %}
                                         <div class="row" data-formset-form>
-                                            {{ form.id|as_crispy_field }}
-                                            <div class="col-lg-10">
-                                                {{ form.description|as_crispy_field }}
+                                            <div class="col-xs-12">
+                                                {% crispy form %}
                                             </div>
-                                            <div class="col-lg-2">
-                                                <button class="btn btn-lg btn-link pull-right" type="button" data-formset-delete-button><span class="glyphicon glyphicon-remove"></span></button>
-                                            </div>
+                                            {{ form.id }}
                                             <div class="hidden">{{ form.DELETE }}</div>
                                         </div>
                                     {% endfor %}
@@ -48,11 +45,8 @@ Generalforsamling logg inn- Online
                                 <script type="form-template" data-formset-empty-form>
                                     {% escapescript %}
                                         <div class="row" data-formset-form>
-                                            <div class="col-lg-10">
-                                                {{ formset.empty_form.description|as_crispy_field }}
-                                            </div>
-                                            <div class="col-lg-2">
-                                                <button class="btn btn-lg btn-link pull-right" type="button" data-formset-delete-button><span class="glyphicon glyphicon-remove"></span></button>
+                                            <div class="col-xs-12">
+                                                {% crispy formset.empty_form %}
                                             </div>
                                             <div class="hidden">{{ formset.empty_form.DELETE }}</div>
                                         </div>
