@@ -1,7 +1,7 @@
 {% load gravatar_url_resolver %}
 {% load crispy_forms_tags %}
+
 <div class="row">
-    
     <div class="col-md-12">
         <div class="row">
             <div class="col-md-6 col-sm-5">
@@ -10,7 +10,7 @@
                         <h3>Personlig informasjon</h3>
                     </div>
                 </div>
-                <form method="post" action="{% url 'save_user_profile' %}" enctype="multipart/form-data">
+                <form method="post" action="{% url 'profile_edit' %}" enctype="multipart/form-data">
                     <div class="row row-space">
                     {% csrf_token %}
                 {% for field in user_profile_form %}
@@ -28,34 +28,6 @@
                     <div class="row row-space">
                         <div class="col-md-12" style="margin-left: 0px">
                             <button class="btn btn-success pull-right" type="submit">Lagre brukerinformasjon</button>
-                        </div>
-                    </div>
-                </form>
-                <div class="row row-space">
-                    <div class="col-md-12">
-                        <h3>Posisjoner</h3>
-                        <p class="">
-                            Her kan du registrere verv du har hatt i linjeforeningen Online.
-                            En periode kan være på opptil et år. F.eks. fra høsten 2013 til våren 2014 vil skrives '2013-2014'.
-                        </p>
-                    </div>
-                </div>
-                <form action="{% url 'save_position' %}" method="post">
-                    <div class="row row-space">
-                        {% csrf_token %}
-                        {% for field in position_form %}
-                            <div class="inline">
-                                <div class="col-md-4">{{ field.label }}</div>
-                                <div class="col-md-8" style="margin-bottom:5px;">
-                                    {{ field }}
-                                    {{ field.errors }}
-                                </div>
-                            </div>
-                        {% endfor %}
-                    </div>
-                    <div class="row row-space">
-                        <div class="col-md-12">
-                            <input class="btn btn-success pull-right" type="submit" name="submit" value="Legg til stilling" />
                         </div>
                     </div>
                 </form>

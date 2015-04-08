@@ -1,4 +1,5 @@
 {% load crispy_forms_tags %}
+{% load group_membership %}
 
 <div class="row">
     <div class="col-xs-12 col-md-8">
@@ -55,6 +56,17 @@
         <button type="button" class="btn btn-success btn-sm add-new-email">Legg til ny epostadresse</button>
     </div>
 </div>
+{% in_group "Komiteer" as in_komiteer %}
+{% if in_komiteer and user.online_mail %}
+<div class="row">
+    <div class="col-xs-12 col-sm-12 col-md-10">
+        <h3>Online epost-alias</h3>
+        <p>Alle medlemmer av komiteer har et alias knyttet til sin konto. Aliaset videresender epost til din primæraddresse, som kan velges ovenfor. Ditt alias er:</p>
+        <p>{{ user.online_mail }}@online.ntnu.no</p>
+        <p>Disse aliasene er automatisk laget. Om du har <b>en god grunn</b> til å endre ditt alias, <a href="mailto:dotkom@online.ntnu.no">ta kontakt med dotKom</a></p>
+    </div>
+</div>
+{% endif %}
 <div class="row">
     <div class="col-xs-12 col-sm-12 col-md-10">
         <h3>Infomail</h3>
