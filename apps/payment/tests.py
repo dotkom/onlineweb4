@@ -74,13 +74,28 @@ class PaymentTest(TestCase):
 
     def testMommyPaymentDelay(self):
         G(Attendee, event=self.attendance_event, user=self.user)
-        payment_delay = G(PaymentDelay, payment=self.event_payment, user=self.user, valid_to=timezone.now() + timedelta(days=1))
+        payment_delay = G(PaymentDelay, payment=self.event_payment, user=self.user, 
+            valid_to=timezone.now() + timedelta(days=1))
         
         self.assertTrue(payment_delay.active)
         
         PaymentDelayHandler.handle_deadline_passed(payment_delay)
 
         self.assertFalse(payment_delay.active)
+
+
+    def testMommyPaymentDelayExcluding(self):
+        G(Attendee, event=self.attendance_event, user=self.user)
+        not_paid = PaymentReminder.not_paid(self.event_payment)
+
+        self.assertEqual([self.user], not_paid)
+
+        payment_delay = G(PaymentDelay, payment=self.event_payment, user=self.user, 
+            valid_to=timezone.now() + timedelta(days=1))
+
+        not_paid = PaymentReminder.not_paid(self.event_payment)
+
+        self.assertFalse(not_paid)
 
     #TODO test waitlist bump
 
