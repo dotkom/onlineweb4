@@ -29,7 +29,7 @@ reportlab==3.1.44
 pdfdocument==3.1
 Unidecode==0.4.17               # Translates every unicode symbol to the closest ascii. online_mail_usernames
 django-markdown-deux==1.0.5
-django-formset-js==0.4.2
+django-formset-js==0.4.3
 
 #test tools
 cov-core==1.7
