@@ -18,8 +18,8 @@ class PaymentReminder(Task):
     @staticmethod
     def run():
         logging.basicConfig()
-        # logger = logging.getLogger("feedback")
-        # logger.info("Event payment job started")
+        #logger = logging.getLogger()
+        #logger.info("Event payment job started")
         locale.setlocale(locale.LC_ALL, "nb_NO.UTF-8")
 
         event_payments = Payment.objects.filter(instant_payment=False, active=True, 
@@ -82,8 +82,7 @@ class PaymentReminder(Task):
     def notify_committee(payment):
         subject = _(u"Manglende betaling: ") + payment.description()
         message = _(u"Følgende brukere mangler betaling på ") + payment.description()
-        message += u'\n'
-        message += u'\n'.join([user.get_full_name() for user in PaymentReminder.not_paid(payment)])
+        message += u'\n\n'.join([user.get_full_name() for user in PaymentReminder.not_paid(payment)])
 
         receivers = [payment.responsible_mail()]
 
@@ -98,7 +97,7 @@ class PaymentReminder(Task):
         #Creates a list of users in attendees but not in the list of paid users
         not_paid_users = [user for user in attendees if user not in paid_users]
 
-        #Remves users with active payment delays from the list
+        #Removes users with active payment delays from the list
         return [user for user in not_paid_users if user not in payment.payment_delay_users()]
 
     @staticmethod
@@ -150,5 +149,5 @@ class PaymentDelayHandler(Task):
         EmailMessage(subject, unicode(message), payment.responsible_mail(), [], receivers).send()
 
 
-schedule.register(PaymentReminder, day_of_week='mon-sun', hour=23, minute=03)
+schedule.register(PaymentReminder, day_of_week='mon-sun', hour=20, minute=36)
 schedule.register(PaymentDelayHandler, day_of_week='mon-sun', hour=17, minute=39)
