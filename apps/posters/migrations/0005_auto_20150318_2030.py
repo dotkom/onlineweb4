@@ -11,11 +11,10 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.AddField(
+        migrations.RenameField(
             model_name='poster',
-            name='finished',
-            field=models.BooleanField(default=False, verbose_name='ferdig'),
-            preserve_default=True,
+            old_name='done',
+            new_name='finished',
         ),
         migrations.AlterField(
             model_name='poster',
@@ -26,7 +25,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='poster',
             name='location',
-            field=models.CharField(max_length=50, verbose_name='sted'),
+            field=models.CharField(max_length=50, null=True, verbose_name='sted', blank=True),
             preserve_default=True,
         ),
         migrations.AlterField(
