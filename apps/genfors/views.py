@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.utils.translation import ugettext as _
 from django.utils import timezone
-from django.http import HttpResponse, HttpResponseServerError
+from django.http import HttpResponse
 from django.views.decorators.http import require_http_methods
 from django.views.decorators.cache import cache_page
 from apps.genfors.forms import LoginForm, MeetingForm, QuestionForm, RegisterVoterForm, AlternativeFormSet
@@ -15,6 +15,7 @@ from hashlib import sha256
 import datetime
 import json
 import random
+
 
 @login_required
 def genfors(request):
@@ -89,6 +90,7 @@ def genfors(request):
                     anon_voter = AnonymousVoter(user_hash=h, meeting=meeting)
                     anon_voter.save()
                 else:
+                    # Trying to get anonymous voter object too, if not found the secret code was wrong
                     try:
                         anon_voter = AnonymousVoter.objects.get(user_hash=h, meeting=meeting)
                     except AnonymousVoter.DoesNotExist:
@@ -97,12 +99,15 @@ def genfors(request):
                 response = redirect('genfors_index')
                 if anon_voter:
                     # Anyonous voter hash stored in cookies for 1 day
-                    response.set_cookie('anon_voter', anon_voter.user_hash, expires=datetime.datetime.now() + datetime.timedelta(days=1))
+                    tomorrow = datetime.datetime.now() + datetime.timedelta(days=1)
+                    response.set_cookie('anon_voter', anon_voter.user_hash, expires=tomorrow)
                 elif 'anon_voter' in request.COOKIES:
+                    # Delete old hash
                     response.delete_cookie('anon_voter')
                 return response
             elif 'anon_voter' in request.COOKIES:
                 response = render(request, "genfors/index_login.html", context)
+                # Delete old hash
                 response.delete_cookie('anon_voter')
                 return response
         # Set registration_locked context and create login form
@@ -205,7 +210,7 @@ def question_admin(request, question_id=None):
                     messages.success(request, _(u'Spørsmål ble oppdatert'))
                 question.save()
                 if question.question_type == 1:
-                    alternatives = formset.save(commit=False)
+                    formset.save(commit=False)
                     # # Add new
                     for index, alternative in enumerate(formset.changed_objects + formset.new_objects):
                         if type(alternative) is tuple:
@@ -282,7 +287,10 @@ def question_close(request, question_id):
     m = get_active_meeting()
     if request.method == 'POST':
         q.total_voters = m.num_can_vote()
-        result = Result(meeting=m, question=q, result_private=json.dumps(q.get_admin_results()), result_public=json.dumps(q.get_results()))
+        result = Result(
+            meeting=m, question=q, result_private=json.dumps(q.get_admin_results()),
+            result_public=json.dumps(q.get_results())
+        )
         result.save()
         q.locked = True
         q.save()
@@ -367,7 +375,7 @@ def vote(request):
 
                     elif q.question_type is MULTIPLE_CHOICE:
                         alternatives = Alternative.objects.filter(question=q)
-                        valid = [a.alt_id for a in alternatives]
+                        valid = [alternative.alt_id for alternative in alternatives]
                         valid.append(0)
                         if alt in valid:
                             vote = None
