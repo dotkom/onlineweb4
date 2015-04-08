@@ -66,9 +66,6 @@ def genfors(request):
                     context['active_question']['multiple_choice']['Blankt'] = [0, 0]
                     for k, v in res['data'].items():
                         context['active_question']['multiple_choice'][k] = [v, v * 100 / total_votes]
-
-                    print context['active_question']
-
         return render(request, "genfors/index.html", context)
 
     # If user is not logged in
