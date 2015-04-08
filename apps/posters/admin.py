@@ -9,8 +9,8 @@ class PosterAdmin(admin.ModelAdmin):
     list_display = ('title', 'category', 'company', 'when', 'assigned_to', 'display_from', 'display_to',
                     'ordered_date', 'ordered_by', 'ordered_committee')
     fieldsets = (
-        (None, {'fields': ('username', 'registered', 'expiration_date')}),
-        (_(u'Notater'), {'fields': ('note', 'description')}),
+        (None, {'fields': ('title', 'assigned_to', 'when', 'display_from', 'display_to', 'ordered_by', 'ordered_committee')}),
+        (_(u'Notater'), {'fields': ('comments', 'description')}),
 
     )
     search_fields = ('title', 'category', 'company', 'when')
@@ -18,3 +18,4 @@ class PosterAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Poster, PosterAdmin)
+#username, expiration_date, registered, note
