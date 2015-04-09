@@ -13,6 +13,8 @@ from django.views.decorators.csrf import ensure_csrf_cookie
 
 from guardian.decorators import permission_required
 from guardian.models import UserObjectPermission
+# from guardian.core import ObjectPermissionChecker
+import guardian
 
 from datetime import datetime, timedelta
 
@@ -40,7 +42,9 @@ def index(request):
 
     # View to show if user not in committee, but wanting to see own orders
     if request.user not in group.user_set.all():
-        context['your_orders'] = Poster.objects.filter(ordered_by=request.user, display_to__gte=datetime.now())
+        context['your_orders'] = [x for x in Poster.objects.filter(
+                                  ordered_by=request.user, display_to__gte=datetime.now())
+                                  if request.user.has_perm('view_poster_order', x)]
         return render(request, 'posters/dashboard/index.html', context)
 
     context['new_orders'] = Poster.objects.filter(assigned_to=None)
