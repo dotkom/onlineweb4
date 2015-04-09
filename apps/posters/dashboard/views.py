@@ -76,7 +76,6 @@ def add(request):
             poster = form.save(commit=False)
             if request.POST.get('company'):
                 poster.company = Company.objects.get(pk=request.POST.get('company'))
-            print('ordered by:', request.user)
             poster.ordered_by = request.user
             # Should look for a more kosher solution
             poster.ordered_committee = request.user.groups.filter(name__contains="Kom")[0]
