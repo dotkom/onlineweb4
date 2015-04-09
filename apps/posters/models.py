@@ -4,6 +4,8 @@ from django.db import models
 from django.forms import ModelForm
 from django.utils.translation import ugettext as _
 
+from datetime import datetime, timedelta
+
 from django.contrib.auth.models import Group
 from apps.authentication.models import OnlineUser as User
 from apps.companyprofile.models import Company
@@ -25,8 +27,8 @@ class Poster(models.Model):
     amount = models.IntegerField(_(u'antall plakater'), blank=True, null=True)  # @ToDo: Rephrase. It's not necessarily posters!
     description = models.TextField(_(u"beskrivelse"), max_length=1000)
     price = models.DecimalField(_(u'pris'), max_digits=10, decimal_places=2, blank=True, null=True)
-    display_from = models.DateField(_(u"vis fra"))
-    display_to = models.DateField(_(u"vis til"))
+    display_from = models.DateField(_(u"vis fra"))  # @ToDo: Null & Blank = True, not all orders are posters (?)
+    display_to = models.DateField(_(u"vis til"))  # Could possibly create an Order mixin...
 
     # Order specific
     ordered_date = models.DateTimeField(auto_now_add=True, editable=False)
@@ -49,6 +51,8 @@ class Poster(models.Model):
     def __str__(self):
         return "Ordre for %(event)s" % {'category': self.POSTER_TYPES[self.category][1], 'event': self.title}
 
+    def poster_up(self):
+        return self.finished and self.display_from < datetime.now().date() < self.display_to
 
 class PosterForm(ModelForm):        
     class Meta: 

@@ -13,6 +13,8 @@ from django.views.decorators.csrf import ensure_csrf_cookie
 
 from guardian.decorators import permission_required
 
+from datetime import datetime, timedelta
+
 from apps.authentication.models import OnlineUser as User
 from apps.dashboard.tools import has_access, get_base_context
 from apps.posters.models import Poster
@@ -38,6 +40,13 @@ def index(request):
     context = get_base_context(request)
     context['new_orders'] = Poster.objects.filter(assigned_to=None).order_by('-id')
     context['active_orders'] = Poster.objects.filter(finished=False).order_by('-id').exclude(assigned_to=None)
+    context['hanging_orders'] = Poster.objects.filter(finished=True,
+                                                      display_to__lte=datetime.now()+timedelta(days=30000)).order_by('-id')
+    context['your_orders'] = Poster.objects.filter(assigned_to=request.user,
+                                                   finished=False,
+                                                   display_to__lte=datetime.now()+timedelta(days=3)).order_by('-id')
+
+
     context['workers'] = User.objects.filter(groups=Group.objects.get(name='proKom'))
 
     return render(request, 'posters/dashboard/index.html', context)
