@@ -40,6 +40,7 @@ class Poster(models.Model):
 
 
     class Meta:
+        ordering = ['-id']
         verbose_name = _(u"plakatbestilling")
         verbose_name_plural = _(u"plakatbestillinger")
         permissions = (

@@ -40,16 +40,16 @@ def index(request):
 
     # View to show if user not in committee, but wanting to see own orders
     if request.user not in group.user_set.all():
-        context['your_orders'] = Poster.objects.filter(ordered_by=request.user, display_to__gte=datetime.now()).order_by('-id')
+        context['your_orders'] = Poster.objects.filter(ordered_by=request.user, display_to__gte=datetime.now())
         return render(request, 'posters/dashboard/index.html', context)
 
-    context['new_orders'] = Poster.objects.filter(assigned_to=None).order_by('-id')
-    context['active_orders'] = Poster.objects.filter(finished=False).order_by('-id').exclude(assigned_to=None)
+    context['new_orders'] = Poster.objects.filter(assigned_to=None)
+    context['active_orders'] = Poster.objects.filter(finished=False).exclude(assigned_to=None)
     context['hanging_orders'] = Poster.objects.filter(finished=True,
-                                                      display_to__lte=datetime.now()+timedelta(days=3)).order_by('-id')
+                                                      display_to__lte=datetime.now()+timedelta(days=3))
     context['your_orders'] = Poster.objects.filter(assigned_to=request.user,
                                                    finished=False,
-                                                   display_to__gte=datetime.now()-timedelta(days=3)).order_by('-id')
+                                                   display_to__gte=datetime.now()-timedelta(days=3))
 
 
     context['workers'] = User.objects.filter(groups=Group.objects.get(name='proKom'))
@@ -100,7 +100,7 @@ def change(request):
     context['edit_poster_form'] = EditPosterForm()
     context['new_orders'] = Poster.objects.filter(assigned_to=None)
     context['active_orders'] = Poster.objects.filter(done=False, assigned_to__isnull=False)
-    context['inactive_orders'] = Poster.objects.filter(done=True).order_by('-id')[:10]
+    context['inactive_orders'] = Poster.objects.filter(done=True)[:10]
 
     today = timezone.now()
     context['active_posters'] = Poster.objects.filter(display_from__lte=today, display_to__gte=today)
