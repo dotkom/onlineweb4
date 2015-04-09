@@ -12,7 +12,7 @@ from django.utils.translation import ugettext as _
 from django.views.decorators.csrf import ensure_csrf_cookie
 
 from guardian.decorators import permission_required
-from guardian.managers import UserObjectPermissionManager
+from guardian.models import UserObjectPermission
 
 from datetime import datetime, timedelta
 
@@ -73,10 +73,10 @@ def add(request):
             # Should look for a more kosher solution
             poster.ordered_committee = request.user.groups.filter(name__contains="Kom")[0]
 
-            poster = poster.save()
+            poster.save()
 
             # Let this user have permissions to show this order
-            UserObjectPermissionManager.assign_perm('view_poster_order', obj=poster, user=request.user)
+            UserObjectPermission.objects.assign_perm('view_poster_order', obj=poster, user=request.user)
 
             return HttpResponseRedirect('../')
         else:
@@ -107,7 +107,7 @@ def change(request):
 
 @ensure_csrf_cookie
 @login_required
-@permission_required('posters.view_poster_order', return_403=True)
+@permission_required('view_poster_order', (Poster, 'pk', 'order_id'), return_403=True)
 def detail(request, order_id=None):
     if request.is_ajax():
         do_ajax_shit=True
