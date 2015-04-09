@@ -18,6 +18,7 @@ from apps.dashboard.tools import has_access, get_base_context
 from apps.posters.models import Poster
 from apps.posters.forms import AddPosterForm, EditPosterForm
 #from apps.dashboard.posters.models import PosterForm
+from apps.companyprofile.models import Company
 from apps.posters.models import Poster
 
 
@@ -36,7 +37,7 @@ def index(request):
 
     context = get_base_context(request)
     context['new_orders'] = Poster.objects.filter(assigned_to=None).order_by('-id')
-    context['active_orders'] = Poster.objects.filter(finished=False).order_by('-id')
+    context['active_orders'] = Poster.objects.filter(finished=False).order_by('-id').exclude(assigned_to=None)
     context['workers'] = User.objects.filter(groups=Group.objects.get(name='proKom'))
 
     return render(request, 'posters/dashboard/index.html', context)
@@ -52,10 +53,15 @@ def add(request):
     if request.method == 'POST':
         form = AddPosterForm(data=request.POST)
         if form.is_valid():
-            poster=Poster(request.POST)
-            #todo Poster(company=getfyuck)
+            poster = Poster(request.POST)
+            if request.POST.get('company'):
+                poster.company = Company.objects.get(pk=request.POST.get('company'))
             poster.ordered_by = request.user
-            poster.ordered_committee = request.user.groups.filter(name="dotKom")[:1].get()
+            # Should look for a more kosher solution
+            poster.ordered_committee = request.user.groups.filter(name__contains="Kom")[0]
+
+            print(poster.company)
+
             #poster.save()
 
             return HttpResponseRedirect('../')
