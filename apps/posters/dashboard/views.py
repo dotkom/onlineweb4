@@ -35,17 +35,21 @@ def index(request):
     # The group with members who should populate the dropdownlist
     group = Group.objects.get(name='proKom')
     users_to_populate = group.user_set.all()
-    print(users_to_populate)
-
 
     context = get_base_context(request)
+
+    # View to show if user not in committee, but wanting to see own orders
+    if request.user not in group.user_set.all():
+        context['your_orders'] = Poster.objects.filter(ordered_by=request.user, display_to__gte=datetime.now()).order_by('-id')
+        return render(request, 'posters/dashboard/index.html', context)
+
     context['new_orders'] = Poster.objects.filter(assigned_to=None).order_by('-id')
     context['active_orders'] = Poster.objects.filter(finished=False).order_by('-id').exclude(assigned_to=None)
     context['hanging_orders'] = Poster.objects.filter(finished=True,
-                                                      display_to__lte=datetime.now()+timedelta(days=30000)).order_by('-id')
+                                                      display_to__lte=datetime.now()+timedelta(days=3)).order_by('-id')
     context['your_orders'] = Poster.objects.filter(assigned_to=request.user,
                                                    finished=False,
-                                                   display_to__lte=datetime.now()+timedelta(days=3)).order_by('-id')
+                                                   display_to__gte=datetime.now()-timedelta(days=3)).order_by('-id')
 
 
     context['workers'] = User.objects.filter(groups=Group.objects.get(name='proKom'))
