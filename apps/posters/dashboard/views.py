@@ -50,12 +50,15 @@ def add(request):
 
     context = get_base_context(request)
 
+    poster = Poster()
+
     if request.method == 'POST':
-        form = AddPosterForm(data=request.POST)
+        form = AddPosterForm(data=request.POST, instance=poster)
         if form.is_valid():
-            poster = Poster(request.POST)
+            poster = form.save(commit=False)
             if request.POST.get('company'):
                 poster.company = Company.objects.get(pk=request.POST.get('company'))
+            print('ordered by:', request.user)
             poster.ordered_by = request.user
             # Should look for a more kosher solution
             poster.ordered_committee = request.user.groups.filter(name__contains="Kom")[0]
