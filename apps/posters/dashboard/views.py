@@ -12,6 +12,7 @@ from django.utils.translation import ugettext as _
 from django.views.decorators.csrf import ensure_csrf_cookie
 
 from guardian.decorators import permission_required
+from guardian.managers import UserObjectPermissionManager
 
 from datetime import datetime, timedelta
 
@@ -72,7 +73,10 @@ def add(request):
             # Should look for a more kosher solution
             poster.ordered_committee = request.user.groups.filter(name__contains="Kom")[0]
 
-            poster.save()
+            poster = poster.save()
+
+            # Let this user have permissions to show this order
+            UserObjectPermissionManager.assign_perm('view_poster_order', obj=poster, user=request.user)
 
             return HttpResponseRedirect('../')
         else:

@@ -43,7 +43,7 @@ class Poster(models.Model):
         verbose_name = _(u"plakatbestilling")
         verbose_name_plural = _(u"plakatbestillinger")
         permissions = (
-            ('add_poster_order', 'View poster orders'),
+            ('add_poster_order', 'Add poster orders'),
             ('overview_poster_order', 'View poster order overview'),
             ('view_poster_order', 'View poster orders'),
         )
