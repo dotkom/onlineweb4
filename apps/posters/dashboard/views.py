@@ -60,9 +60,7 @@ def add(request):
             # Should look for a more kosher solution
             poster.ordered_committee = request.user.groups.filter(name__contains="Kom")[0]
 
-            print(poster.company)
-
-            #poster.save()
+            poster.save()
 
             return HttpResponseRedirect('../')
         else:
