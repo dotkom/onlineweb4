@@ -211,7 +211,10 @@ def question_admin(request, question_id=None):
                 question.save()
                 if question.question_type == 1:
                     formset.save(commit=False)
-                    # # Add new
+                    # Delete forms marked for deletion
+                    for alternative in formset.deleted_objects:
+                        alternative.delete()
+                    # Add new
                     for index, alternative in enumerate(formset.changed_objects + formset.new_objects):
                         if type(alternative) is tuple:
                             # changed_objects come in the form of (object, 'changed_field')
