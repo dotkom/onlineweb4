@@ -61,6 +61,8 @@ class AlternativeForm(forms.ModelForm):
     helper = FormHelper()
     button = StrictButton('<span class="glyphicon glyphicon-remove"></span>', data_formset_delete_button='')
     helper.layout = Layout(
+        'id',
+        Field('DELETE', wrapper_class='hidden'),
         FieldWithButtons('description', button)
     )
     helper.form_tag = False
