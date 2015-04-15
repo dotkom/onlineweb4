@@ -6,6 +6,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Group
 from django.core.exceptions import PermissionDenied, ObjectDoesNotExist
+from django.forms.models import model_to_dict
 from django.shortcuts import render, redirect, get_object_or_404, HttpResponseRedirect, HttpResponse
 from django.utils import timezone
 from django.utils.translation import ugettext as _
@@ -120,6 +121,12 @@ def detail(request, order_id=None):
         do_ajax_shit=True
 
     context = get_base_context(request)
+    context['poster'] = Poster.objects.get(pk=order_id)
+    context['poster_iterator'] = model_to_dict(context['poster'],
+        exclude=["description", "ordered_date", "ordered_by", "ordered_committee", "assigned_to", "comments", "finished", "id"])
+
+    context['order_iterator'] = model_to_dict(context['poster'],
+        fields=["description", "ordered_date", "ordered_by", "ordered_committee", "assigned_to", "comments", "finished"])
 
     return render(request, 'posters/dashboard/details.html', context)
 
@@ -154,4 +161,3 @@ Om feilen vedvarer etter en refresh, kontakt dotkom@online.ntnu.no.""") % order_
             order.save()
 
             return HttpResponse(status=200)
-

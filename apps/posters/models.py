@@ -55,6 +55,7 @@ class Poster(models.Model):
     def poster_up(self):
         return self.finished and self.display_from < datetime.now().date() < self.display_to
 
-class PosterForm(ModelForm):        
-    class Meta: 
-        model = Poster
+
+class CustomText(models.Model):
+    field = models.CharField(max_length=50)
+    text = models.CharField(max_length=30)
