@@ -27,16 +27,16 @@ def genfors(request):
         return render(request, "genfors/index.html", context)
 
     reg_voter = RegisteredVoter.objects.filter(user=request.user, meeting=meeting).first()
+    anon_voter = anonymous_voter(request.COOKIES.get('anon_voter'), request.user.username)
 
     # Check for cookie voter hash
-    if is_registered(request):
+    if anon_voter:
         context['meeting'] = meeting
         context['registered_voter'] = reg_voter
 
         # If there is an active question
         aq = meeting.get_active_question()
         if aq:
-            anon_voter = AnonymousVoter.objects.get(user_hash=request.COOKIES.get('anon_voter'), meeting=meeting)
             if aq.anonymous:
                 context['already_voted'] = aq.already_voted(anon_voter)
             else:
@@ -87,20 +87,22 @@ def genfors(request):
                 if not reg_voter:
                     reg_voter = RegisteredVoter(user=request.user, meeting=meeting)
                     reg_voter.save()
-                    anon_voter = AnonymousVoter(user_hash=h, meeting=meeting)
+                    # Double hashing when saving while we store the original hash as a cookie
+                    h2 = sha256()
+                    h2.update(h)
+                    h2.update(request.user.username)
+                    anon_voter = AnonymousVoter(user_hash=h2.hexdigest(), meeting=meeting)
                     anon_voter.save()
                 else:
                     # Trying to get anonymous voter object too, if not found the secret code was wrong
-                    try:
-                        anon_voter = AnonymousVoter.objects.get(user_hash=h, meeting=meeting)
-                    except AnonymousVoter.DoesNotExist:
+                    anon_voter = anonymous_voter(h, request.user.username)
+                    if not anon_voter:
                         messages.error(request, _(u'Feil personlig kode'))
-                        anon_voter = None
                 response = redirect('genfors_index')
                 if anon_voter:
                     # Anyonous voter hash stored in cookies for 1 day
                     tomorrow = datetime.datetime.now() + datetime.timedelta(days=1)
-                    response.set_cookie('anon_voter', anon_voter.user_hash, expires=tomorrow)
+                    response.set_cookie('anon_voter', h, expires=tomorrow)
                 elif 'anon_voter' in request.COOKIES:
                     # Delete old hash
                     response.delete_cookie('anon_voter')
@@ -342,11 +344,13 @@ def question_delete(request, question_id):
 def vote(request):
     m = get_active_meeting()
     if m:
+        a = anonymous_voter(request.COOKIES.get('anon_voter'), request.user.username)
+        r = RegisteredVoter.objects.filter(user=request.user, meeting=m).first()
+
         # If user is logged in
-        if is_registered(request):
+        if a:
             q = m.get_active_question()
-            a = AnonymousVoter.objects.get(user_hash=request.COOKIES.get('anon_voter'), meeting=m)
-            r = RegisteredVoter.objects.filter(user=request.user, meeting=m).first()
+
             if not r:
                 messages.error(request, u'Du er ikke registrert som oppmøtt, og kan derfor ikke avlegge stemme.')
                 return redirect('genfors_index')
@@ -466,14 +470,15 @@ def api_admin(request):
 # Simple cached JSON Api-like endpoint to dynamically update stats via AJAX
 @cache_page(10)
 def api_user(request):
-    if is_registered(request):
-        m = get_active_meeting()
+    m = get_active_meeting()
+    reg_voter = RegisteredVoter.objects.filter(user=request.user, meeting=m).first()
+    anon_voter = anonymous_voter(request.COOKIES.get('anon_voter'), request.user.username)
+
+    if reg_voter and anon_voter:
         q = m.get_active_question()
         genfors = {}
-        reg_voter = RegisteredVoter.objects.filter(user=request.user, meeting=m).first()
-        anon_voter = AnonymousVoter.objects.get(user_hash=request.COOKIES.get('anon_voter'), meeting=m)
-
         genfors["total_voters"] = m.num_can_vote()
+
         if q:
             genfors["question"] = {}
             genfors["question"]["description"] = q.description
@@ -515,9 +520,8 @@ def api_user(request):
 def logout(request):
     if request.method == 'POST':
         response = redirect('home')
-        if is_registered(request):
-            response.delete_cookie('anon_voter')
-            messages.success(request, u'Du er nå logget ut av generalforsamlingen')
+        response.delete_cookie('anon_voter')
+        messages.success(request, u'Du er nå logget ut av generalforsamlingen')
         return response
     else:
         question = u'Er du sikker på at du vil logge ut?'
@@ -545,13 +549,17 @@ def is_admin(request):
     return request.session.get('genfors_admin') is True
 
 
-def is_registered(request):
+def anonymous_voter(anon_cookie, username):
+    """Returns anon voter object if found"""
+    if not anon_cookie:
+        # Empty cookie
+        return
     meeting = get_active_meeting()
-    try:
-        av = AnonymousVoter.objects.get(user_hash=request.COOKIES.get('anon_voter'), meeting=meeting)
-    except AnonymousVoter.DoesNotExist:
-        return False
-    return True
+    # Hashing with username before lookup
+    h = sha256()
+    h.update(anon_cookie.encode('utf-8'))
+    h.update(username.encode('utf-8'))
+    return AnonymousVoter.objects.filter(user_hash=h.hexdigest(), meeting=meeting).first()
 
 
 def question_validate(request, question_id):
