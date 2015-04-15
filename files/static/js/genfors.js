@@ -2,6 +2,8 @@ var Genfors;
 
 Genfors = (function () {
 
+    var DEBUG = true
+
     var ACTIVE_QUESTION = null
 
     return {
@@ -36,31 +38,44 @@ Genfors = (function () {
 
         update: function () {
             $.getJSON("/genfors/api/user", function (data) {
+                if (DEBUG) console.log("Update cycle...")
                 // Is this the first run after page load?
                 if (ACTIVE_QUESTION === null) {
+                    if (DEBUG) console.log("First run after pageload.")
                     // Is there an active question?
                     if (data.question !== null) {
                         // Set the flag to true
                         ACTIVE_QUESTION = true
+                        if (DEBUG) console.log("We have an active question, updating flag.")
                     }
                     else {
                         // We do not have an active question, set flag and return
                         ACTIVE_QUESTION = false
+                        if (DEBUG) console.log("We do not have an active question, updating flag.")
                         return
                     }
                 // Do we have an active question?
                 } else if (ACTIVE_QUESTION === true) {
                     // If we have an active question, but it has now been closed, reload
-                    if (data.question === null) window.location.reload()
+                    if (DEBUG) console.log("We have an active question.")
+                    if (data.question === null) {
+                        if (DEBUG) console.log("Question close detected, reloading page.")
+                        window.location.reload()
+                        return
+                    }
                 // We do not have an active question
                 } else if (ACTIVE_QUESTION === false) {
+                    if (DEBUG) console.log("We do not have an active question.")
                     // We did not have an active question, but now have one, reload
-                    if (data.question !== null) window.location.reload()
+                    if (data.question !== null) {
+                        if (DEBUG) console.log("New question detected, reloading page.")
+                        window.location.reload()
+                    }
                     // Else just return
                     else return
                 }
 
-                if ('total_voters' in data) {
+                if ('total_voter' in data.question) {
                     $('#total_voters').text(data.question.total_voters);
                 }
                 if ('current_votes' in data.question) {
