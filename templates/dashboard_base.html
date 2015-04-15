@@ -140,8 +140,8 @@
                     <li class="treeview">
                         <a href="#">
                             <i class="fa fa-picture-o blue"></i> <span>Plakatbestilling</span>
-                            {% if poster_orders %}<small class="badge pull-right">{{ poster_orders }}</small>{% endif %}
                             <i class="fa fa-angle-down pull-right"></i>
+                            {% if poster_orders %}<small class="badge pull-right">{{ poster_orders }}</small>{% endif %}
                         </a>
                         <ul class="treeview-menu">
                             <li><a href="{% url 'posters' %}"><i class="fa fa-angle-double-right orange"></i> Oversikt</a></li>
@@ -221,7 +221,7 @@
                 <ol class="breadcrumb">
                     <li><a href="/dashboard/">Dashboard</a></li>
                     {% block breadcrumbs %}
-                    
+
                     {% endblock %}
                 </ol>
             </section>
