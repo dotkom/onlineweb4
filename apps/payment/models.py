@@ -12,17 +12,24 @@ from apps.authentication.models import OnlineUser as User
 from apps.events.models import Event, Attendee
 
 class Payment(models.Model):
+
+    TYPE_CHOICES = (
+        (1, _('Umiddelbar')),
+        (2, _('Frist')),
+        (3, _('Utsettelse')),
+    )
+
     content_type = models.ForeignKey(ContentType)
     object_id = models.PositiveIntegerField()
     content_object = generic.GenericForeignKey('content_type', 'object_id')
 
     price = models.IntegerField(_(u"pris"))
-    deadline = models.DateTimeField(_(u"frist"), blank=True, null=True)
-    instant_payment = models.BooleanField(_(u"betaling før påmelding"), help_text=_(u"krev betaling før påmelding"), default=False)
-    active = models.BooleanField(default=True)
+    payment_type = models.SmallIntegerField(_('type'), choices=TYPE_CHOICES)
 
-    #title = models.CharField(_(u"tittel"), max_length=60)
-    multiple_description = models.CharField(_(u"beskrivelse"), help_text=_(u"Dette feltet kreves kun dersom det er mer enn en betaling"), max_length=60, blank=True, null=True)
+    #Optional fields depending on payment type
+    deadline = models.DateTimeField(_(u"frist"), blank=True, null=True)
+    active = models.BooleanField(default=True)
+    delay = models.SmallIntegerField(_('utsettelse'), blank=True, null=True)
 
     added_date = models.DateTimeField(_(u"opprettet dato"), auto_now=True)
     changed_date = models.DateTimeField(auto_now=True, editable=False)
