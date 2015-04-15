@@ -194,6 +194,16 @@ def unattendEvent(request, event_id):
     event.attendance_event.notify_waiting_list(host=request.META['HTTP_HOST'], unattended_user=request.user)
     Attendee.objects.get(event=attendance_event, user=request.user).delete()
 
+
+    payments = Payment.objects.filter(content_type=ContentType.objects.get_for_model(Event), object_id=event_id)
+
+    #Delete payment delays connected to the user and event
+    if payments:
+        delays = PaymentDelay.objects.filter(payment__in=payments, user=request.user)
+        for delay in delays:
+            delay.delete()
+
+
     messages.success(request, _(u"Du ble meldt av arrangementet."))
     return redirect(event)
 
