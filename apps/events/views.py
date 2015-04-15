@@ -1,6 +1,6 @@
 #-*- coding: utf-8 -*-
 
-import datetime
+from datetime import datetime, timedelta
 from collections import OrderedDict
 
 from django.utils import timezone
@@ -25,7 +25,7 @@ from apps.events.forms import CaptchaForm
 from apps.events.models import Event, AttendanceEvent, Attendee
 from apps.events.pdf_generator import EventPDF
 from apps.events.utils import get_group_restricted_events
-from apps.payment.models import Payment, PaymentRelation
+from apps.payment.models import Payment, PaymentRelation, PaymentDelay
 
 def index(request):
     context = {}
@@ -45,6 +45,7 @@ def details(request, event_id, event_slug):
     rules = []
     user_status = False
     user_paid = False
+    payment_delay = False
 
     user_access_to_event = False
     if request.user:
@@ -88,6 +89,11 @@ def details(request, event_id, event_slug):
                     if attendee:
                         user_paid = attendee[0].paid
 
+                if not user_paid:
+                    payment_delays = PaymentDelay.objects.filter(user=request.user, payment__in=payments)
+                    if payment_delays:
+                        payment_delay = payment_delays[0]
+
         context.update({
                 'now': timezone.now(),
                 'attendance_event': attendance_event,
@@ -102,6 +108,7 @@ def details(request, event_id, event_slug):
                 'user_access_to_event': user_access_to_event,
                 'payments': payments,
                 'user_paid': user_paid,
+                'payment_delay': payment_delay,
         })
 
     return render(request, 'events/details.html', context)
@@ -143,6 +150,17 @@ def attendEvent(request, event_id):
             ae.note = form.cleaned_data['note']
         ae.save()
         messages.success(request, _(u"Du er nå påmeldt på arrangementet!"))
+
+        payments = Payment.objects.filter(content_type=ContentType.objects.get_for_model(Event), object_id=event_id)
+
+        #If payment_type is delay, Create delay object
+        if payments:
+            payment = payments[0]
+            if payment.payment_type == 3:
+                deadline = timezone.now() + timedelta(days=payment.delay)
+                PaymentDelay.objects.create(payment=payment, user=request.user, valid_to=deadline)
+                #TODO send mail
+
         return redirect(event)
     else:
         messages.error(request, response['message'])

@@ -12,5 +12,5 @@ def contains_instant_payment(payments):
 
 
 @register.inclusion_tag('events/payment_tag.html')
-def display_payments(payments):
-    return {'payments': payments}
+def display_payments(payments, payment_delay):
+    return {'payments': payments, 'payment_delay': payment_delay}

@@ -29,7 +29,7 @@ class Payment(models.Model):
     #Optional fields depending on payment type
     deadline = models.DateTimeField(_(u"frist"), blank=True, null=True)
     active = models.BooleanField(default=True)
-    delay = models.SmallIntegerField(_('utsettelse'), blank=True, null=True)
+    delay = models.SmallIntegerField(_('utsettelse'), blank=True, null=True, default=2)
 
     added_date = models.DateTimeField(_(u"opprettet dato"), auto_now=True)
     changed_date = models.DateTimeField(auto_now=True, editable=False)

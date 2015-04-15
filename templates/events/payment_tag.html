@@ -1,7 +1,10 @@
 {% for payment in payments %}
 	<p class="status-text payment-price-tag">Prisen er på {{ payment.price }} Kr.</p>
 	<button id="stripeButton{{ payment.id }}" class="btn btn-large btn-success payment-button">Betal med kort</button>
-	{% if payment.deadline %}
+	{% if payment_delay %}
+		<p class="help-text row_space">Frist: {{ payment_delay.valid_to }}</p>
+		<br>
+	{% elif payment.deadline %}
 		<p class="help-text row_space">Frist: {{ payment.deadline }}</p>
 		<br>
 	{% endif %}

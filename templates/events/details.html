@@ -141,7 +141,7 @@
                                 <label class="label label-success payment-label">Du har betalt</label>
                                 <p class="help-text">For å melde deg av må du sende mail til {{ payments.0.responsible_mail }}</p>
                             {% elif payments and not place_on_wait_list and not user_paid %}
-                                {% display_payments payments %}
+                                {% display_payments payments payment_delay %}
                                 <!-- TODO display payment deadline -->
                                 <script src="{{ STATIC_URL }}js/libs/jquery-2.1.3.min.js"></script>
                                 <script src="https://checkout.stripe.com/checkout.js"></script>
@@ -163,7 +163,7 @@
                                     </div>
                                 {% elif payments and payments|contains_instant_payment %}
                                     <p class="status-text">Påmelding til arangementet krever betaling.</p>
-                                    {% display_payments payments %}
+                                    {% display_payments payments payment_delay %}
                                     <script src="{{ STATIC_URL }}js/libs/jquery-2.1.3.min.js"></script>
                                     <script src="https://checkout.stripe.com/checkout.js"></script>
                                     <script src="{{ STATIC_URL }}js/payment.js"></script>
