@@ -131,7 +131,7 @@ if 'apps.genfors' in settings.INSTALLED_APPS:
 
 # feedme
 if 'feedme' in settings.INSTALLED_APPS:
-    urlpatterns += patterns('', url(r'^feedme/', include('feedme.urls')))
+    urlpatterns += patterns('', url(r'^feedme/', include('feedme.urls', namespace='feedme')))
 
 if 'apps.payment' in settings.INSTALLED_APPS:
     urlpatterns += patterns('',
