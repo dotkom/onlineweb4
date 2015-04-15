@@ -57,6 +57,9 @@ Min side - Online
                         <li class="{%ifequal 'membership' active_tab %}active{% endifequal %}">
                             <a href="{% url 'profiles_active' 'membership' %}" data-section="membership">Medlemskap</a>
                         </li>
+                        <li class="{% ifequal 'payments' active_tab %}active{% endifequal %}">
+                            <a href="{% url 'profiles_active' 'payments' %}" data-selection="payments">Betalinger</a>
+                        </li>
                     </ul>
                 </div>
                 <div class="col-md-10 col-sm-9 col-xs-12">
@@ -87,6 +90,9 @@ Min side - Online
                         </section>
                         <section id="membership">
                             {% include "profiles/membership.html" %}
+                        </section>
+                        <section id="payments">
+                            {% include "profiles/payments.html" %}
                         </section>
                     </div>
                 </div>
