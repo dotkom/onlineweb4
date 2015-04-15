@@ -461,43 +461,48 @@ class AttendanceEvent(models.Model):
 
                 if self.payments():
                     payment = self.payments()[0]
-                    payment_deadline = payment.deadline
-                    extended_deadline = timezone.now() + timedelta(days=2)
-                    
-                    #If there is less than 2 days to the deadline or the payment is instant
-                    #give the user a payment delay
-                    if payment_deadline < extended_deadline or payment.instant_payment:
-                        for attendee in attendees:
-                            PaymentDelay.objects.create(payment=payment, user=attendee.user, 
-                                valid_to=extended_deadline)
-                        email_message = _(u"""
-Du har stått på venteliste for arrangementet "%s" og har nå fått plass.
-Dette arrangementet krever betaling og du må betale innen 48 timer.
-Prisen for dette arrangementet er %skr.
-
-For mer info:
-http://%s%s
-""") % (self.event.title, payment.price, host, self.event.get_absolute_url())
-                    else: #The original deadline is longer than 2 days from now.
-                        email_message = _(u"""
-Du har stått på venteliste for arrangementet "%s" og har nå fått plass.
-Dette arrangementet krever betaling.
-Prisen er %skr og fristen for og betale er %s
-
-For mer info:
-http://%s%s
-""") % (self.event.title, payment.price, payment.deadline.strftime('%-d %B %Y kl: %H:%M'), host, self.event.get_absolute_url())
+                    email_message = _handle_waitlist_bump(host, attendees, payment)
                 else:
-                    email_message = _(u"""
-Du har stått på venteliste for arrangementet "%s" og har nå fått plass.
-Det kreves ingen ekstra handling fra deg med mindre du vil melde deg av.
-
-For mer info:
-http://%s%s
-""") % (self.event.title, host, self.event.get_absolute_url())
+                    email_message = _handle_waitlist_bump(host, attendees)
+                    
                 for attendee in attendees:
                     send_mail(_(u'Du har fått plass på et arrangement'), email_message,
                               settings.DEFAULT_FROM_EMAIL, [attendee.user.email])
+
+
+    def _handle_waitlist_bump(host, attendees, payment=None):
+
+        extended_deadline = timezone.now() + timedelta(days=2)
+        message = 'Du har stått på venteliste for arrangementet "%s" og har nå fått plass.\n' % (self.event.title)
+
+        if payment:
+            if payment.payment_type == 1: #Instant
+                for attendee in attendees:
+                    PaymentDelay.objects.create(payment=payment, user=attendee.user, valid_to=extended_deadline)
+                message += "Dette arrangementet krever betaling og du må betale innen 48 timer."
+            
+            elif payment.payment_type == 2: #Deadline
+                if payment.deadline < extended_deadline: #More than 2 days left of payment deadline
+                    message += "Dette arrangementet krever betaling og fristen for og betale er %s" % (payment.deadline.strftime('%-d %B %Y kl: %H:%M'))
+                else: #The deadline is in less than 2 days
+                    for attendee in attendees:
+                        PaymentDelay.objects.create(payment=payment, user=attendee.user, valid_to=extended_deadline)
+                    message += "Dette arrangementet krever betaling og du har 48 timer på og betale"
+            
+            elif payment.payment_type == 3: #Delay
+                deadline = timezone.now() + timedelta(days=payment.delay)
+                for attendee in attendees:
+                    PaymentDelay.objects.create(payment=payment, user=attendee.user, valid_to=deadline)
+                message += "Dette arrangementet krever betaling og du må betale innen %d dager." % (payment.delay)
+
+            message += "\nPrisen for dette arrangementet er %skr."
+        else:
+            message += "Det kreves ingen ekstra handling fra deg med mindre du vil melde deg av."
+
+        message += "\n\nFor mer info:"
+        message += "\nhttp://%s%s" % (host, self.event.get_absolute_url())
+
+        return message
 
     def is_eligible_for_signup(self, user):
         """

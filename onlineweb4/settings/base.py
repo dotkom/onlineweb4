@@ -137,11 +137,6 @@ TEMPLATE_DIRS = (
 PIZZA_GROUP = 'dotkom'
 PIZZA_ADMIN_GROUP = 'pizzaadmin'
 
-# Variables for fagKom/bedKom-sync script, override in local.py
-BEDKOM_GROUP_ID = 1
-FAGKOM_GROUP_ID = 2
-COMMON_GROUP_ID = 3
-
 # Grappelli settings
 GRAPPELLI_ADMIN_TITLE = '<a href="/">Onlineweb</a>'
 
@@ -245,6 +240,7 @@ INSTALLED_APPS = (
     'scripts',
 
     #External apps
+    'feedme',
     'redwine',
 
     #Wiki
@@ -348,7 +344,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 )
 
 # Remember to keep 'local' last, so it can override any setting.
-for settings_module in ['filebrowser', 'django_wiki', 'local']:  # local last
+for settings_module in ['filebrowser', 'django_wiki', 'feedme', 'local']:  # local last
     if not os.path.exists(os.path.join(PROJECT_SETTINGS_DIRECTORY,
             settings_module + ".py")):
         sys.stderr.write("Could not find settings module '%s'.\n" %

@@ -24,7 +24,8 @@ class PaymentReminder(Task):
         #logger.info("Event payment job started")
         locale.setlocale(locale.LC_ALL, "nb_NO.UTF-8")
 
-        event_payments = Payment.objects.filter(instant_payment=False, active=True, 
+        #All payments using deadline
+        event_payments = Payment.objects.filter(payment_type=2, active=True, 
             content_type=ContentType.objects.get_for_model(Event))
 
         today = timezone.now()
@@ -46,6 +47,8 @@ class PaymentReminder(Task):
             elif deadline_diff < 3:
                 if PaymentReminder.not_paid(payment):
                     PaymentReminder.send_reminder_mail(payment)
+
+
 
     @staticmethod
     def send_reminder_mail(payment):
@@ -174,6 +177,5 @@ class PaymentDelayHandler(Task):
         EmailMessage(subject, unicode(message), payment.responsible_mail(), [], receivers).send()
 
 
-
-schedule.register(PaymentReminder, day_of_week='mon-sun', hour=23, minute=00)
-schedule.register(PaymentDelayHandler, day_of_week='mon-sun', hour=21, minute=54)
+schedule.register(PaymentReminder, day_of_week='mon-sun', hour=20, minute=36)
+schedule.register(PaymentDelayHandler, day_of_week='mon-sun', hour=17, minute=39)

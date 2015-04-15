@@ -1,12 +1,11 @@
 from django import template
-import re
 
 register = template.Library()
 
 @register.filter
 def contains_instant_payment(payments):
 	for payment in payments:
-		if payment.instant_payment:
+		if payment.payment_type == 1:
 			return True
 
 	return False

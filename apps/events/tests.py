@@ -13,7 +13,7 @@ from apps.authentication.models import OnlineUser as User, AllowedUsername
 from apps.events.models import (Event, AttendanceEvent, Attendee,
                                 RuleBundle, FieldOfStudyRule, GradeRule, UserGroupRule,
                                 Reservation, Reservee)
-from apps.marks.models import Mark, MarkUser
+from apps.marks.models import Mark, MarkUser, DURATION
 from apps.events.mommy import SetEventMarks
 
 class EventTest(TestCase):
@@ -115,7 +115,7 @@ class EventTest(TestCase):
 
         # Giving the user a mark to see if the status goes to False.
         mark1 = G(Mark, title='Testprikk12345')
-        userentry = G(MarkUser, user=self.user, mark=mark1)
+        userentry = G(MarkUser, user=self.user, mark=mark1, expiration_date=self.now+datetime.timedelta(days=DURATION))
         response = self.attendance_event.is_eligible_for_signup(self.user)
         self.assertFalse(response['status'])
         self.assertEqual(401, response['status_code'])

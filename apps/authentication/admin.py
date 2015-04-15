@@ -18,7 +18,7 @@ class OnlineUserAdmin(admin.ModelAdmin):
     list_filter = ('is_staff', 'is_superuser', 'is_active', 'groups__name')
     fieldsets = (
         (None, {'fields': ('username', 'password')}),
-        (_(u'Personlig info'), {'fields': ('first_name', 'last_name', 'phone_number', )}),
+        (_(u'Personlig info'), {'fields': ('first_name', 'last_name', 'phone_number', 'online_mail' )}),
         (_(u'Studieinformasjon'), {'fields': ('ntnu_username', 'field_of_study', 'started_date', 'compiled',)}),
         (_(u'Adresse'), {'fields': ('address', 'zip_code',)}), 
         (_(u'Viktige datoer'), {'fields': ('last_login', 'date_joined',)}),
