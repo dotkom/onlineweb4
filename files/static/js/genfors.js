@@ -1,6 +1,9 @@
 var Genfors;
 
 Genfors = (function () {
+
+    var ACTIVE_QUESTION = null
+
     return {
         vote: (function () {
             return {
@@ -33,6 +36,30 @@ Genfors = (function () {
 
         update: function () {
             $.getJSON("/genfors/api/user", function (data) {
+                // Is this the first run after page load?
+                if (ACTIVE_QUESTION === null) {
+                    // Is there an active question?
+                    if (data.question !== null) {
+                        // Set the flag to true
+                        ACTIVE_QUESTION = true
+                    }
+                    else {
+                        // We do not have an active question, set flag and return
+                        ACTIVE_QUESTION = false
+                        return
+                    }
+                // Do we have an active question?
+                } else if (ACTIVE_QUESTION === true) {
+                    // If we have an active question, but it has now been closed, reload
+                    if (data.question === null) window.location.reload()
+                // We do not have an active question
+                } else if (ACTIVE_QUESTION === false) {
+                    // We did not have an active question, but now have one, reload
+                    if (data.question !== null) window.location.reload()
+                    // Else just return
+                    else return
+                }
+
                 if ('total_voters' in data) {
                     $('#total_voters').text(data.question.total_voters);
                 }
