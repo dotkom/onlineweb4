@@ -86,7 +86,7 @@ Genfors = (function () {
                     for (var x = 0; x < data.question.votes.length; x++) {
                         votes_html += '<li>' + data.question.votes[x][0];
                         var v = data.question.votes[x][1];
-                        if (v == true || v == false || v == null) {
+                        if (v === true || v === false || v === null) {
                             if (v) {
                                 votes_html += '<span class="label label-success pull-right">Ja</span></li>';
                             }
