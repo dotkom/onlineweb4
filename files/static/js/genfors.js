@@ -2,7 +2,7 @@ var Genfors;
 
 Genfors = (function () {
 
-    var DEBUG = true
+    var DEBUG = false
 
     var ACTIVE_QUESTION = null
 
