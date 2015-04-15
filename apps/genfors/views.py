@@ -468,7 +468,7 @@ def api_admin(request):
     return HttpResponse(json.dumps({"error": "Du har ikke tilgang til dette endepunktet."}))
 
 # Simple cached JSON Api-like endpoint to dynamically update stats via AJAX
-@cache_page(10)
+@cache_page(5)
 def api_user(request):
     m = get_active_meeting()
     reg_voter = RegisteredVoter.objects.filter(user=request.user, meeting=m).first()
