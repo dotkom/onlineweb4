@@ -44,6 +44,7 @@ class Mark(models.Model):
         (3, _(u"Kurs")),
         (4, _(u"Tilbakemelding")),
         (5, _(u"Kontoret")),
+        (6, _(u"Betaling")),
     )
 
     title = models.CharField(_(u"tittel"), max_length=155)
