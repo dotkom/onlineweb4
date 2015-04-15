@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.utils.translation import ugettext as _
 from django.utils import timezone
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.views.decorators.http import require_http_methods
 from django.views.decorators.cache import cache_page
 from apps.genfors.forms import LoginForm, MeetingForm, QuestionForm, RegisterVoterForm, AlternativeFormSet
@@ -498,7 +498,7 @@ def api_user(request):
                         genfors["question"]["votes"] = [[unicode(v.voter.anonymousvoter), v.answer] for v in votes]
                     elif q.question_type == 1:
                         genfors["question"]["votes"] = [[unicode(v.voter.anonymousvoter), v.answer.description] if v.answer else [unicode(v.voter.anonymousvoter), "Blankt"] for v in votes]
-                    
+
                     # Shuffle the order of votes so you cannot infer who cast what vote when there are few voters left
                     random.shuffle(genfors['question']['votes'])
 
@@ -510,10 +510,10 @@ def api_user(request):
         else:
             genfors["question"] = None
 
-        return HttpResponse(json.dumps(genfors))
+        return JsonResponse(genfors)
 
     else:
-        return HttpResponse(json.dumps({"error": "Du har ikke tilgang til dette endepunktet."}))
+        return JsonResponse({"error": "Du har ikke tilgang til dette endepunktet."})
 
 
 # Logs out user of genfors removing the only link between that user and the anoymous votes
