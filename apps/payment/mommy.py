@@ -1,4 +1,4 @@
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 
 import locale
 import logging
@@ -10,7 +10,8 @@ from django.utils.translation import ugettext as _
 from django.conf import settings
 
 from apps.payment.models import Payment, PaymentRelation, PaymentDelay
-from apps.events.models import Event
+from apps.events.models import Event, AttendanceEvent
+from apps.marks.models import Mark, MarkUser
 
 from apps.mommy import Task, schedule
 
@@ -37,6 +38,9 @@ class PaymentReminder(Task):
             if deadline_diff <= 0:
                 if PaymentReminder.not_paid(payment):
                     PaymentReminder.send_deadline_passed_mail(payment)
+                    if payment.content_object.attendance_event.unattend_deadline > timezone.now():
+                        PaymentReminder.set_marks(payment)
+                        
                     #TODO punish people
                     #TODO deactivate payment
                     PaymentReminder.notify_committee(payment)
@@ -114,6 +118,20 @@ class PaymentReminder(Task):
     def not_paid_mail_addresses(payment):
         #Returns users in the list of attendees but not in the list of paid users
         return [user.email for user in PaymentReminder.not_paid(payment)]
+
+    @staticmethod
+    def set_marks (payment):
+        mark = Mark()
+        mark.title = _(u"Manglende betaling på %s") %(payment.description())
+        mark.category = 6 #Manglende betaling
+        mark.description = _(u"Du har fått en prikk fordi du ikke har betalt for arrangement.")
+        mark.save()
+
+        for user in PaymentReminder.not_paid(payment):
+            user_entry = MarkUser()
+            user_entry.user = user
+            user_entry.mark = mark
+            user_entry.save()
 
 
 class PaymentDelayHandler(Task):
