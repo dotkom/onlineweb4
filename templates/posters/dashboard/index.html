@@ -45,44 +45,11 @@ Plakatbestillinger
                 <span><div class="visible-xs visible-sm">4. </div>Bestilt av</span>
             </div>
             <div class="col-md-2">
-                <span><div class="visible-xs visible-sm">5. </div>Tilordnet til</span>
+                <span><div class="visible-xs visible-sm">5. </div>Tilordne til</span>
             </div>
         </div>
         {% for order in new_orders %}
-            <div class="row order">
-                <div class="col-md-4 cell">
-                    <div class="visible-xs visible-sm">1. </div>
-                        {{ order }}
-                </div>
-                <div class="col-md-2 cell">
-                    <div class="visible-xs visible-sm">2. </div>
-                        {{ order.display_from|date:'Y-m-d' }}
-                </div>
-                <div class="col-md-2 cell">
-                    <div class="visible-xs visible-sm">3. </div>
-                        {{ order.ordered_date|date:'Y-m-d H:i:s' }}
-                </div>
-                <div class="col-md-2">
-                    <div class="visible-xs visible-sm">4. </div>
-                        {{ order.ordered_committee }}
-                </div>
-                <div class="col-md-2">
-                    <div class="visible-xs visible-sm">5. </div>
-                        <form id="order-{{ order.id }}">
-                            <select>
-                                <option>------</option>
-                                {% for worker in workers %}
-                                    <option value="{{ worker.id }}">
-                                        {{ worker }}
-                                    </option>
-                                {% endfor %}
-                            </select>
-                            <button class="btn btn-primary btn-xs assign" style="margin: 5px;" value="{{ order.id }}">
-                                <span class="glyphicon glyphicon-ok"></span>
-                            </button>
-                        </form>
-                </div>
-            </div>
+            {% include 'posters/dashboard/order_template.html' %}
         {% endfor %}
     {% else %}
         <div class="row row-space">
