@@ -33,10 +33,11 @@
 {% block content %}
     <h4>Tittel: {{ poster.title }}</h4>
     <section>
+        {{poster.title.label}}
         {% for field in poster_iterator %}
         <div>
             <span style="font-weight:bold;">{{field}}</span>
-            {{field.value}}
+            {{field.related_name}}
         </div>
         {% endfor %}
     </section>
