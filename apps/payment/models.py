@@ -3,6 +3,7 @@
 import uuid
 
 from django.db import models
+from django.utils import timezone
 from django.utils.translation import ugettext as _
 from django.contrib.contenttypes import generic
 from django.contrib.contenttypes.models import ContentType
@@ -14,9 +15,9 @@ from apps.events.models import Event, Attendee
 class Payment(models.Model):
 
     TYPE_CHOICES = (
-        (1, _('Umiddelbar')),
-        (2, _('Frist')),
-        (3, _('Utsettelse')),
+        (1, _(u'Umiddelbar')),
+        (2, _(u'Frist')),
+        (3, _(u'Utsettelse')),
     )
 
     content_type = models.ForeignKey(ContentType)
@@ -24,12 +25,12 @@ class Payment(models.Model):
     content_object = generic.GenericForeignKey('content_type', 'object_id')
 
     price = models.IntegerField(_(u"pris"))
-    payment_type = models.SmallIntegerField(_('type'), choices=TYPE_CHOICES)
+    payment_type = models.SmallIntegerField(_(u'type'), choices=TYPE_CHOICES)
 
     #Optional fields depending on payment type
     deadline = models.DateTimeField(_(u"frist"), blank=True, null=True)
     active = models.BooleanField(default=True)
-    delay = models.SmallIntegerField(_('utsettelse'), blank=True, null=True, default=2)
+    delay = models.SmallIntegerField(_(u'utsettelse'), blank=True, null=True, default=2)
 
     added_date = models.DateTimeField(_(u"opprettet dato"), auto_now=True)
     changed_date = models.DateTimeField(auto_now=True, editable=False)
@@ -79,6 +80,29 @@ class Payment(models.Model):
                 else:
                     Attendee.objects.create(event=self.content_object.attendance_event, user=user, paid=True)
 
+    def handle_refund(self, host, payment_relation):
+        if ContentType.objects.get_for_model(Event) == self.content_type:
+
+            self.content_object.attendance_event.notify_waiting_list(
+                host=host, unattended_user=payment_relation.user)
+            Attendee.objects.get(event=self.content_object.attendance_event, 
+                user=payment_relation.user).delete()
+
+
+    def check_refund(self, payment_relation):
+        if ContentType.objects.get_for_model(Event) == self.content_type:
+            attendance_event = self.content_object.attendance_event
+            user = payment_relation.user
+            if attendance_event.unattend_deadline < timezone.now():
+                return (False, _(u"Fristen for og melde seg av har utgått"))
+            if len(Attendee.objects.filter(event=attendance_event, user=user)) == 0:
+                return (False, _(u"Du er ikke påmeldt dette arrangementet."))
+            if attendance_event.event.event_start < timezone.now():
+                return (False, _(u"Dette arrangementet har allerede startet."))
+
+            return (True, '')
+            
+
     def __unicode__(self):
         return self.description()
 
@@ -90,8 +114,10 @@ class PaymentRelation(models.Model):
     payment = models.ForeignKey(Payment)
     user = models.ForeignKey(User)
     datetime = models.DateTimeField(auto_now=True)
+    refunded = models.BooleanField(default=False)
 
     unique_id = models.CharField(max_length=128, null=True, blank=True)
+    stripe_id = models.CharField(max_length=128)
 
     def save(self, *args, **kwargs):
         if not self.unique_id:

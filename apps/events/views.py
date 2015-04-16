@@ -46,6 +46,7 @@ def details(request, event_id, event_slug):
     user_status = False
     user_paid = False
     payment_delay = False
+    payment_relation_id = False
 
     user_access_to_event = False
     if request.user:
@@ -81,13 +82,16 @@ def details(request, event_id, event_slug):
             request.session['payment_ids'] = [payment.id for payment in payments]
 
             if not user_anonymous:
-                payment_relation = PaymentRelation.objects.filter(payment__in=payments, user=request.user)
-                if payment_relation:
-                    user_paid = True
-                elif user_attending:
+                payment_relations = PaymentRelation.objects.filter(payment__in=payments, user=request.user)
+                for payment_relation in payment_relations:
+                    if not payment_relation.refunded:
+                        user_paid = True
+                        payment_relation_id = payment_relation.id
+                if user_attending:
                     attendee = Attendee.objects.filter(event=attendance_event, user=request.user)
                     if attendee:
-                        user_paid = attendee[0].paid
+                        if attendee[0].paid:
+                            user_paid = attendee[0].paid
 
                 if not user_paid:
                     payment_delays = PaymentDelay.objects.filter(user=request.user, payment__in=payments)
@@ -109,6 +113,7 @@ def details(request, event_id, event_slug):
                 'payments': payments,
                 'user_paid': user_paid,
                 'payment_delay': payment_delay,
+                'payment_relation_id': payment_relation_id,
         })
 
     return render(request, 'events/details.html', context)

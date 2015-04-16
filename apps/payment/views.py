@@ -37,11 +37,12 @@ def payment(request):
                       description=payment.description() + " - " + request.user.email
                     )
 
-                    payment_relation = PaymentRelation.objects.create(payment=payment, user=request.user)
+                    payment_relation = PaymentRelation.objects.create(payment=payment, 
+                        user=request.user, stripe_id=charge.id)
 
                     payment.handle_payment(request.user)
 
-                    send_payment_confirmation_mail(payment_relation)
+                    _send_payment_confirmation_mail(payment_relation)
 
                     messages.success(request, _(u"Betaling utført."))
                     return HttpResponse("Betaling utført.", content_type="text/plain", status=200) 
@@ -81,7 +82,40 @@ def payment_info(request):
 
     return HttpResponse("Failed to get info", content_type="text/plain", status=500) 
 
-def send_payment_confirmation_mail(payment_relation):
+@login_required
+def payment_refund(request, payment_relation_id):
+
+    payment_relation = get_object_or_404(PaymentRelation, pk=payment_relation_id)
+
+    if request.user != payment_relation.user:
+        return HttpResponse("Unauthorized user", content_type="text/plain", status=403)
+
+    status = payment_relation.payment.check_refund(payment_relation)
+
+    if not status[0]:
+        messages.error(request, status[1])
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
+    try:
+        stripe.api_key = settings.STRIPE_PRIVATE_KEY
+        ch = stripe.Charge.retrieve(payment_relation.stripe_id)
+        re = ch.refunds.create()
+
+        payment_relation.payment.handle_refund(request.META['HTTP_HOST'], payment_relation)
+
+        print re
+
+        payment_relation.refunded = True
+        payment_relation.save()
+        messages.success(request, _("Betalingen har blitt refundert."))
+    except stripe.InvalidRequestError, e:
+        messages.error(request, str(e))
+    
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
+ 
+
+def _send_payment_confirmation_mail(payment_relation):
     subject = _(u"kvittering") + ": " + payment_relation.payment.description()
     from_mail = payment_relation.payment.responsible_mail()
     to_mails = [payment_relation.user.email] 

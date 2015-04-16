@@ -138,8 +138,19 @@
                                 <p class="status-text">Du er meldt på dette arrangementet.</p>
                             {% endif %}
                             {% if user_paid %}
-                                <label class="label label-success payment-label">Du har betalt</label>
-                                <p class="help-text">For å melde deg av må du sende mail til {{ payments.0.responsible_mail }}</p>
+                                {% if attendance_event.unattend_deadline > now %}
+                                    {% if event.event_start > now %}
+                                        {% if payment_relation_id %}
+                                            <form action="/payment/refund/{{ payment_relation_id }}">
+                                                <input class="btn btn-large btn-danger" type="submit" value="Refunder og meld meg av">
+                                            </form>
+                                        {% else %} <!-- User has paid flag set but no payment_relation object -->
+                                            <p>Du har betalt og må kontakte ansvarlig komitee for og melde deg av</p>
+                                        {% endif %}
+                                    {% endif %}
+                                {% else %}
+                                    <label class="label label-success payment-label">Du har betalt</label>
+                                {% endif %}
                             {% elif payments and not place_on_wait_list and not user_paid %}
                                 {% display_payments payments payment_delay %}
                                 <!-- TODO display payment deadline -->

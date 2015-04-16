@@ -27,6 +27,7 @@ class PaymentAdmin(admin.ModelAdmin):
 
 class PaymentRelationAdmin(admin.ModelAdmin):
     model = PaymentRelation
+    #exclude = ('stripe_id',)
 
 class PaymentDelayAdmin(admin.ModelAdmin):
     model = PaymentDelay
