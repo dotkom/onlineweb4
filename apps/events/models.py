@@ -437,15 +437,17 @@ class AttendanceEvent(models.Model):
     def payment(self):
         #Importing here to awoid circular dependency error
         from apps.payment.models import Payment
-        payment =  Payment.objects.get(content_type=ContentType.objects.get_for_model(AttendanceEvent), 
-            object_id=self.event.id)
+        try:
+            payment = Payment.objects.get(content_type=ContentType.objects.get_for_model(AttendanceEvent), 
+                object_id=self.event.id)
+        except Payment.DoesNotExist:
+            payment = None
+        
         return payment
 
 
 
     def notify_waiting_list(self, host, unattended_user=None, extra_capacity=1):
-        #Importing here to awoid circular dependency error
-        from apps.payment.models import Payment, PaymentDelay
         # Notify next user on waiting list
         wait_list = self.waitlist_qs
         if wait_list:
@@ -460,51 +462,50 @@ class AttendanceEvent(models.Model):
                 # Send mail to first user on waiting list
                 attendees = wait_list[:extra_capacity]
 
-                if self.payment():
-                    email_message = _handle_waitlist_bump(host, attendees, self.payment())
-                else:
-                    email_message = _handle_waitlist_bump(host, attendees)
+                email_message = self._handle_waitlist_bump(host, attendees, self.payment())
                     
                 for attendee in attendees:
                     send_mail(_(u'Du har fått plass på et arrangement'), email_message,
                               settings.DEFAULT_FROM_EMAIL, [attendee.user.email])
 
 
-    def _handle_waitlist_bump(host, attendees, payment=None):
+    def _handle_waitlist_bump(self, host, attendees, payment=None):
+        #Importing here to awoid circular dependency error
+        from apps.payment.models import PaymentDelay
 
         extended_deadline = timezone.now() + timedelta(days=2)
-        message = 'Du har stått på venteliste for arrangementet "%s" og har nå fått plass.\n' % (self.event.title)
+        message = u'Du har stått på venteliste for arrangementet "%s" og har nå fått plass.\n' % (self.event.title)
 
         if payment:
             if payment.payment_type == 1: #Instant
                 for attendee in attendees:
                     PaymentDelay.objects.create(payment=payment, user=attendee.user, valid_to=extended_deadline)
-                message += "Dette arrangementet krever betaling og du må betale innen 48 timer."
+                message += u"Dette arrangementet krever betaling og du må betale innen 48 timer."
             
             elif payment.payment_type == 2: #Deadline
-                if payment.deadline < extended_deadline: #More than 2 days left of payment deadline
-                    message += "Dette arrangementet krever betaling og fristen for og betale er %s" % (payment.deadline.strftime('%-d %B %Y kl: %H:%M'))
+                if payment.deadline > extended_deadline: #More than 2 days left of payment deadline
+                    message += u"Dette arrangementet krever betaling og fristen for og betale er %s" % (payment.deadline.strftime('%-d %B %Y kl: %H:%M'))
                 else: #The deadline is in less than 2 days
                     for attendee in attendees:
                         PaymentDelay.objects.create(payment=payment, user=attendee.user, valid_to=extended_deadline)
-                    message += "Dette arrangementet krever betaling og du har 48 timer på og betale"
+                    message += u"Dette arrangementet krever betaling og du har 48 timer på og betale"
             
             elif payment.payment_type == 3: #Delay
                 deadline = timezone.now() + timedelta(days=payment.delay)
                 for attendee in attendees:
                     PaymentDelay.objects.create(payment=payment, user=attendee.user, valid_to=deadline)
-                message += "Dette arrangementet krever betaling og du må betale innen %d dager." % (payment.delay)
+                message += u"Dette arrangementet krever betaling og du må betale innen %d dager." % (payment.delay)
             if len(payment.prices()) == 1:
-                message += "\nPrisen for dette arrangementet er %skr." % (payment.prices()[0].price)
-            elif len(payment.prices()) >= 2:
-                message += "\nDette arrangementet har flere prisklasser:"
-                for payment_price in payment.prices():
-                    message += "\n%s: %skr" % (payment_price.description, payment_price.price)
+                message += u"\nPrisen for dette arrangementet er %skr." % (payment.prices()[0].price)
+            # elif len(payment.prices()) >= 2:
+            #     message += u"\nDette arrangementet har flere prisklasser:"
+            #     for payment_price in payment.prices():
+            #         message += "\n%s: %skr" % (payment_price.description, payment_price.price)
         else:
-            message += "Det kreves ingen ekstra handling fra deg med mindre du vil melde deg av."
+            message += u"Det kreves ingen ekstra handling fra deg med mindre du vil melde deg av."
 
-        message += "\n\nFor mer info:"
-        message += "\nhttp://%s%s" % (host, self.event.get_absolute_url())
+        message += u"\n\nFor mer info:"
+        message += u"\nhttp://%s%s" % (host, self.event.get_absolute_url())
 
         return message
 
