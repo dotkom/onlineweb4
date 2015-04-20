@@ -1,4 +1,5 @@
 {% load crispy_forms_tags %}
+{% load crispy_forms_field %}
 
 {% if not event.attendance_event.has_reservation %}
 <div class="row">
@@ -19,11 +20,26 @@
             <div class="panel-body">
                 <form class="edit-form" method="post" action="{% url 'dashboard_event_change_reservation' event.id %}" enctype="multipart/form-data">
                     <div class="row row-space">
-                    {% csrf_token %}
-                    {{ change_reservation_form|crispy }} 
+                        <div class="col-md-12">
+                            {% csrf_token %}
+                            {{ change_reservation_form|crispy }} 
+                        </div>
                     </div>
-                    <div class="row row-space row-inline">
-                    {% crispy change_reservees_formset %}
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="row">
+                                <div class="col-md-4">Navn</div>
+                                <div class="col-md-4">Notat</div>
+                                <div class="col-md-4">Allergier</div>
+                            </div>
+                            {% for form in change_reservees_formset %}
+                                <div class="row">
+                                {% for field in form %}
+                                    <div class="col-md-4">{% crispy_field field %}</div>
+                                {% endfor %}
+                                </div>
+                            {% endfor %}
+                        </div>
                     </div>
                     <div class="row row-space">
                         <div class="col-md-12" style="margin-left: 0px">

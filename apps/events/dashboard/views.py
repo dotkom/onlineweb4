@@ -104,10 +104,9 @@ def _create_details_context(request, event_id):
     if event.is_attendance_event():
         context['change_attendance_form'] = ChangeAttendanceEventForm(instance=event.attendance_event)
         if event.attendance_event.has_reservation:
-            seats = event.attendance_event.reserved_seats.seats
-            print seats
-            ReserveeFormSet = modelformset_factory(Reservee, max_num=seats, extra=seats)
             context['change_reservation_form'] = ChangeReservationForm(instance=event.attendance_event.reserved_seats)
+            seats = event.attendance_event.reserved_seats.seats
+            ReserveeFormSet = modelformset_factory(Reservee, max_num=seats, extra=seats, fields=['name', 'note', 'allergies'])
             context['change_reservees_formset'] = ReserveeFormSet(queryset=event.attendance_event.reserved_seats.reservees.all())
 
     return context
