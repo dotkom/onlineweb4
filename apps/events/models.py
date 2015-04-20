@@ -434,11 +434,12 @@ class AttendanceEvent(models.Model):
     def waitlist_enabled(self):
         return self.waitlist
 
-    def payments(self):
+    def payment(self):
         #Importing here to awoid circular dependency error
         from apps.payment.models import Payment
-        payments =  Payment.objects.filter(content_type=ContentType.objects.get_for_model(Event), object_id=self.event.id)
-        return payments
+        payment =  Payment.objects.get(content_type=ContentType.objects.get_for_model(AttendanceEvent), 
+            object_id=self.event.id)
+        return payment
 
 
 
@@ -459,9 +460,8 @@ class AttendanceEvent(models.Model):
                 # Send mail to first user on waiting list
                 attendees = wait_list[:extra_capacity]
 
-                if self.payments():
-                    payment = self.payments()[0]
-                    email_message = _handle_waitlist_bump(host, attendees, payment)
+                if self.payment():
+                    email_message = _handle_waitlist_bump(host, attendees, self.payment())
                 else:
                     email_message = _handle_waitlist_bump(host, attendees)
                     
@@ -494,8 +494,12 @@ class AttendanceEvent(models.Model):
                 for attendee in attendees:
                     PaymentDelay.objects.create(payment=payment, user=attendee.user, valid_to=deadline)
                 message += "Dette arrangementet krever betaling og du må betale innen %d dager." % (payment.delay)
-
-            message += "\nPrisen for dette arrangementet er %skr."
+            if len(payment.prices()) == 1:
+                message += "\nPrisen for dette arrangementet er %skr." % (payment.prices()[0].price)
+            elif len(payment.prices()) >= 2:
+                message += "\nDette arrangementet har flere prisklasser:"
+                for payment_price in payment.prices():
+                    message += "\n%s: %skr" % (payment_price.description, payment_price.price)
         else:
             message += "Det kreves ingen ekstra handling fra deg med mindre du vil melde deg av."
 
