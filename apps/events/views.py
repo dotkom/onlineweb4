@@ -76,26 +76,25 @@ def details(request, event_id, event_slug):
             # Check if this user is on the waitlist
             place_on_wait_list = attendance_event.what_place_is_user_on_wait_list(request.user)
 
-        payments = Payment.objects.filter(content_type=ContentType.objects.get_for_model(AttendanceEvent), 
+        payment = Payment.objects.get(content_type=ContentType.objects.get_for_model(AttendanceEvent), 
             object_id=event_id)
 
-        if payments:
-            request.session['payment_ids'] = [payment.id for payment in payments]
+        if payment:
+            request.session['payment_id'] = payment.id
 
             if not user_anonymous:
-                payment_relations = PaymentRelation.objects.filter(payment__in=payments, user=request.user)
+                payment_relations = PaymentRelation.objects.filter(payment=payment, user=request.user)
                 for payment_relation in payment_relations:
                     if not payment_relation.refunded:
                         user_paid = True
                         payment_relation_id = payment_relation.id
                 if user_attending:
-                    attendee = Attendee.objects.filter(event=attendance_event, user=request.user)
+                    attendee = Attendee.objects.get(event=attendance_event, user=request.user)
                     if attendee:
-                        if attendee[0].paid:
-                            user_paid = attendee[0].paid
+                        user_paid = attendee.paid
 
                 if not user_paid:
-                    payment_delays = PaymentDelay.objects.filter(user=request.user, payment__in=payments)
+                    payment_delays = PaymentDelay.objects.filter(user=request.user, payment=payment)
                     if payment_delays:
                         payment_delay = payment_delays[0]
 
@@ -111,7 +110,7 @@ def details(request, event_id, event_slug):
                 #'position_in_wait_list': position_in_wait_list,
                 'captcha_form': form,
                 'user_access_to_event': user_access_to_event,
-                'payments': payments,
+                'payment': payment,
                 'user_paid': user_paid,
                 'payment_delay': payment_delay,
                 'payment_relation_id': payment_relation_id,
@@ -157,13 +156,12 @@ def attendEvent(request, event_id):
         ae.save()
         messages.success(request, _(u"Du er nå påmeldt på arrangementet!"))
 
-        payments = Payment.objects.filter(content_type=ContentType.objects.get_for_model(AttendanceEvent), 
+        payment = Payment.objects.get(content_type=ContentType.objects.get_for_model(AttendanceEvent), 
             object_id=event_id)
 
 
         #If payment_type is delay, Create delay object
-        if payments:
-            payment = payments[0]
+        if payment:
             if payment.payment_type == 3:
                 deadline = timezone.now() + timedelta(days=payment.delay)
                 PaymentDelay.objects.create(payment=payment, user=request.user, valid_to=deadline)
@@ -203,12 +201,12 @@ def unattendEvent(request, event_id):
     Attendee.objects.get(event=attendance_event, user=request.user).delete()
 
 
-    payments = Payment.objects.filter(content_type=ContentType.objects.get_for_model(AttendanceEvent), 
+    payment = Payment.objects.get(content_type=ContentType.objects.get_for_model(AttendanceEvent), 
         object_id=event_id)
 
     #Delete payment delays connected to the user and event
-    if payments:
-        delays = PaymentDelay.objects.filter(payment__in=payments, user=request.user)
+    if payment:
+        delays = PaymentDelay.objects.filter(payment=payment, user=request.user)
         for delay in delays:
             delay.delete()
 

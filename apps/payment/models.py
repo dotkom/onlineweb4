@@ -24,7 +24,6 @@ class Payment(models.Model):
     object_id = models.PositiveIntegerField()
     content_object = generic.GenericForeignKey('content_type', 'object_id')
 
-    price = models.IntegerField(_(u"pris"))
     payment_type = models.SmallIntegerField(_(u'type'), choices=TYPE_CHOICES)
 
     #Optional fields depending on payment type
@@ -104,7 +103,9 @@ class Payment(models.Model):
                 return (False, _(u"Dette arrangementet har allerede startet."))
 
             return (True, '')
-            
+    
+    def prices(self):
+        return self.paymentprice_set.all()       
 
     def __unicode__(self):
         return self.description()
@@ -113,8 +114,22 @@ class Payment(models.Model):
         verbose_name = _(u"betaling")
         verbose_name_plural = _(u"betalinger")
 
+
+class PaymentPrice(models.Model):
+    payment = models.ForeignKey(Payment)
+    price = models.IntegerField(_(u"pris"))
+    description = models.CharField(max_length=128, null=True, blank=True)
+
+    def __unicode__(self):
+        return str(self.price)
+
+    class Meta:
+        verbose_name = _(u"pris")
+        verbose_name_plural = _(u"priser")
+
 class PaymentRelation(models.Model):
     payment = models.ForeignKey(Payment)
+    payment_price = models.ForeignKey(PaymentPrice)
     user = models.ForeignKey(User)
     datetime = models.DateTimeField(auto_now=True)
     refunded = models.BooleanField(default=False)

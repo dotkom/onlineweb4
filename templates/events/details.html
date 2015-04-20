@@ -144,9 +144,6 @@
                                             <div class="action">
                                                 <a href="#refund" role="button" class="btn btn-large btn-danger" data-toggle="modal">Refunder og meld meg av</a>
                                             </div>
-                                            <!-- <form action="/payment/refund/{{ payment_relation_id }}">
-                                                <input class="btn btn-large btn-danger" type="submit" value="Refunder og meld meg av">
-                                            </form> -->
                                         {% else %} <!-- User has paid flag set but no payment_relation object -->
                                             <p>Du har betalt og må kontakte ansvarlig komitee for og melde deg av</p>
                                         {% endif %}
@@ -154,8 +151,8 @@
                                 {% else %}
                                     <label class="label label-success payment-label">Du har betalt</label>
                                 {% endif %}
-                            {% elif payments and not place_on_wait_list and not user_paid %}
-                                {% display_payments payments payment_delay %}
+                            {% elif payment and not place_on_wait_list and not user_paid %}
+                                {% display_payments payment payment_delay %}
                                 <!-- TODO display payment deadline -->
                                 <script src="{{ STATIC_URL }}js/libs/jquery-2.1.3.min.js"></script>
                                 <script src="https://checkout.stripe.com/checkout.js"></script>
@@ -175,9 +172,9 @@
                                     <div class="action">
                                         <a href="#waitlist" role="button" class="btn btn-large btn-warning" data-toggle="modal">Sett meg på venteliste</a>
                                     </div>
-                                {% elif payments and payments|contains_instant_payment %}
+                                {% elif payment and payment.payment_type == 1 %} <!-- Instant payment -->
                                     <p class="status-text">Påmelding til arangementet krever betaling.</p>
-                                    {% display_payments payments payment_delay %}
+                                    {% display_payments payment payment_delay %}
                                     <script src="{{ STATIC_URL }}js/libs/jquery-2.1.3.min.js"></script>
                                     <script src="https://checkout.stripe.com/checkout.js"></script>
                                     <script src="{{ STATIC_URL }}js/payment.js"></script>

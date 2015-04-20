@@ -9,7 +9,7 @@ from django.utils import timezone
 
 from apps.authentication.models import OnlineUser as User
 from apps.events.models import Event, AttendanceEvent, Attendee
-from apps.payment.models import Payment, PaymentRelation, PaymentDelay
+from apps.payment.models import Payment, PaymentRelation, PaymentDelay, PaymentPrice
 from apps.payment.mommy import PaymentReminder, PaymentDelayHandler
 
 class PaymentTest(TestCase):
@@ -20,10 +20,12 @@ class PaymentTest(TestCase):
         self.user = G(User, username = 'ola123', ntnu_username = 'ola123ntnu', first_name = "ola", last_name = "nordmann")
 
         self.event_payment = G(Payment, object_id=self.event.id, 
-            content_type=ContentType.objects.get_for_model(AttendanceEvent), price=200 )
+            content_type=ContentType.objects.get_for_model(AttendanceEvent))
+        self.payment_price = G(PaymentPrice, price=200, payment=self.event_payment)
 
     def testPaymentCreation(self):
-        PaymentRelation.objects.create(payment=self.event_payment, user=self.user)
+        PaymentRelation.objects.create(payment=self.event_payment, 
+            payment_price=self.payment_price, user=self.user)
         payment_relation = PaymentRelation.objects.all()[0]
 
         self.assertEqual(payment_relation.user, self.user)
@@ -61,7 +63,7 @@ class PaymentTest(TestCase):
 
     def testEventMommyPaid(self):
         G(Attendee, event=self.attendance_event, user=self.user)
-        G(PaymentRelation, payment=self.event_payment, user=self.user)
+        G(PaymentRelation, payment=self.event_payment, user=self.user, payment_price=self.payment_price)
         not_paid = PaymentReminder.not_paid(self.event_payment)
 
         self.assertFalse(not_paid)

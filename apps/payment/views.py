@@ -12,7 +12,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.mail import EmailMessage
 from django.utils.translation import ugettext as _ 
 
-from apps.payment.models import Payment, PaymentRelation
+from apps.payment.models import Payment, PaymentRelation, PaymentPrice
 
 @login_required
 def payment(request):
@@ -24,20 +24,22 @@ def payment(request):
             # Get the credit card details submitted by the form
             token = request.POST.get("stripeToken")
             payment_id = request.POST.get("paymentId")
+            price_id = request.POST.get("priceId")
 
             payment = Payment.objects.get(id=payment_id)
+            payment_price = PaymentPrice.objects.get(id=price_id) 
 
             if payment:
                 try:
                     charge = stripe.Charge.create(
-                      amount=payment.price * 100, #Price is multiplied with 100 because the amount is in øre
+                      amount=payment_price.price * 100, #Price is multiplied with 100 because the amount is in øre
                       currency="nok",
                       card=token,
                       description=payment.description() + " - " + request.user.email
                     )
 
                     payment_relation = PaymentRelation.objects.create(payment=payment, 
-                        user=request.user, stripe_id=charge.id)
+                        payment_price=payment_price, user=request.user, stripe_id=charge.id)
 
                     payment.handle_payment(request.user)
 
@@ -55,27 +57,27 @@ def payment(request):
 
 @login_required
 def payment_info(request):
-    if 'payment_ids' in request.session:
+    if 'payment_id' in request.session:
 
         data = dict()
 
-        payments = Payment.objects.filter(id__in=request.session['payment_ids'])
+        payment = Payment.objects.get(id=request.session['payment_id'])
 
-        if payments:
-            content_type = ContentType.objects.get_for_id(payments[0].content_type.id)
-            content_object = content_type.get_object_for_this_type(pk=payments[0].object_id)
+        if payment:
+            content_type = ContentType.objects.get_for_id(payment.content_type.id)
+            content_object = content_type.get_object_for_this_type(pk=payment.object_id)
 
             data['stripe_public_key'] = settings.STRIPE_PUBLIC_KEY
             data['email'] = request.user.email
-            data['description'] = payments[0].description()
-            data['payment_ids'] = request.session['payment_ids']
+            data['description'] = payment.description()
+            data['payment_id'] = request.session['payment_id']
+            data['price_ids'] = [price.id for price in payment.prices()]
 
-            for payment in payments:
-                data[payment.id] = dict()
-                data[payment.id]['price'] = payment.price
+            for payment_price in payment.prices():
+                data[payment_price.id] = dict()
+                data[payment_price.id]['price'] = payment_price.price
                 #The price is in øre so it needs to be multiplied with 100
-                data[payment.id]['stripe_price'] = payment.price * 100
-                data[payment.id]['payment_id'] = payment.id
+                data[payment_price.id]['stripe_price'] = payment_price.price * 100
 
             return HttpResponse(json.dumps(data), content_type="application/json")
 
