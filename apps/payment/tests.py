@@ -16,8 +16,10 @@ class PaymentTest(TestCase):
 
     def setUp(self):
         self.event = G(Event, title='Sjakkturnering')
-        self.attendance_event = G(AttendanceEvent, event=self.event)
-        self.user = G(User, username = 'ola123', ntnu_username = 'ola123ntnu', first_name = "ola", last_name = "nordmann")
+        self.attendance_event = G(AttendanceEvent, event=self.event, 
+            unnatend_deadline=timezone.now() + timedelta(days=1))
+        self.user = G(User, username = 'ola123', ntnu_username = 'ola123ntnu', 
+            first_name = "ola", last_name = "nordmann")
 
         self.event_payment = G(Payment, object_id=self.event.id, 
             content_type=ContentType.objects.get_for_model(AttendanceEvent))
@@ -50,6 +52,55 @@ class PaymentTest(TestCase):
 
         self.assertTrue(attendee.paid)
 
+    def testEventPaymentRefundCheckUnatendDeadlinePassed(self):
+        G(Attendee, event=self.attendance_event, user=self.user)
+        payment_relation = G(PaymentRelation, payment=self.event_payment, 
+            user=self.user, payment_price=self.payment_price)
+
+        self.event_payment.unnatend_deadline = timezone.now() - timedelta(days=1)
+        self.event_payment.save()
+
+        self.assertFalse(self.event_payment.check_refund(payment_relation)[0])
+
+    def testEventPaymentRefundCheckAtendeeExists(self):
+        payment_relation = G(PaymentRelation, payment=self.event_payment, 
+            user=self.user, payment_price=self.payment_price)
+
+        self.assertFalse(self.event_payment.check_refund(payment_relation)[0])
+
+    def testEventPaymentRefundCheckEventStarted(self):
+        G(Attendee, event=self.attendance_event, user=self.user)
+        payment_relation = G(PaymentRelation, payment=self.event_payment, 
+            user=self.user, payment_price=self.payment_price)
+
+        self.event.event_start = timezone.now() - timedelta(days=1)
+        self.event.save()
+
+        self.assertFalse(self.event_payment.check_refund(payment_relation)[0])
+
+    def testEventPaymentRefundCheck(self):
+        G(Attendee, event=self.attendance_event, user=self.user)
+        payment_relation = G(PaymentRelation, payment=self.event_payment, 
+            user=self.user, payment_price=self.payment_price)
+
+        self.event_payment.unnatend_deadline = timezone.now() + timedelta(days=1)
+        self.event_payment.save()
+
+        self.assertTrue(self.event_payment.check_refund(payment_relation)[0])
+
+    def testEventPaymentRefund(self):
+        G(Attendee, event=self.attendance_event, user=self.user)
+        self.event_payment.handle_payment(self.user)
+
+        payment_relation = G(PaymentRelation, payment=self.event_payment, 
+            user=self.user, payment_price=self.payment_price)
+        self.assertFalse(payment_relation.refunded)
+
+        self.event_payment.handle_refund("host", payment_relation)
+        attendees = Attendee.objects.all()
+
+        self.assertTrue(payment_relation.refunded)
+        self.assertEqual(set([]), set(attendees))
 
 
     ### Mommy ###

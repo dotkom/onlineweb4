@@ -84,6 +84,9 @@ class Payment(models.Model):
                 Attendee.objects.create(event=self.content_object, user=user, paid=True)
 
     def handle_refund(self, host, payment_relation):
+        payment_relation.refunded = True
+        payment_relation.save()
+
         if ContentType.objects.get_for_model(AttendanceEvent) == self.content_type:
             self.content_object.notify_waiting_list(
                 host=host, unattended_user=payment_relation.user)
