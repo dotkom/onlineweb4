@@ -45,6 +45,16 @@ class Payment(models.Model):
     def payment_delay_users(self):
         return [payment_delay.user for payment_delay in self.payment_delays()]
 
+    def create_payment_delay(self, user, deadline):
+        payment_delays = self.paymentdelay_set.filter(user=user)
+
+        if payment_delays:
+            for payment_delay in payment_delays:
+                payment_delay.valid_to = deadline
+                payment_delay.save()
+        else:
+            PaymentDelay.objects.create(payment=self, user=user, valid_to=deadline)
+
 
     def description(self):
         if ContentType.objects.get_for_model(AttendanceEvent) == self.content_type:

@@ -462,24 +462,17 @@ class AttendanceEvent(models.Model):
                 # Send mail to first user on waiting list
                 attendees = wait_list[:extra_capacity]
 
-                email_message = self._handle_waitlist_bump(host, attendees, self.payment())
+                self._handle_waitlist_bump(host, attendees, self.payment())
                     
-                for attendee in attendees:
-                    send_mail(_(u'Du har fått plass på et arrangement'), email_message,
-                              settings.DEFAULT_FROM_EMAIL, [attendee.user.email])
-
 
     def _handle_waitlist_bump(self, host, attendees, payment=None):
-        #Importing here to awoid circular dependency error
-        from apps.payment.models import PaymentDelay
-
         extended_deadline = timezone.now() + timedelta(days=2)
         message = u'Du har stått på venteliste for arrangementet "%s" og har nå fått plass.\n' % (self.event.title)
 
         if payment:
             if payment.payment_type == 1: #Instant
                 for attendee in attendees:
-                    PaymentDelay.objects.create(payment=payment, user=attendee.user, valid_to=extended_deadline)
+                    payment.create_payment_delay(attendee.user, extended_deadline)
                 message += u"Dette arrangementet krever betaling og du må betale innen 48 timer."
             
             elif payment.payment_type == 2: #Deadline
@@ -487,13 +480,13 @@ class AttendanceEvent(models.Model):
                     message += u"Dette arrangementet krever betaling og fristen for og betale er %s" % (payment.deadline.strftime('%-d %B %Y kl: %H:%M'))
                 else: #The deadline is in less than 2 days
                     for attendee in attendees:
-                        PaymentDelay.objects.create(payment=payment, user=attendee.user, valid_to=extended_deadline)
+                        payment.create_payment_delay(attendee.user, extended_deadline)
                     message += u"Dette arrangementet krever betaling og du har 48 timer på og betale"
             
             elif payment.payment_type == 3: #Delay
                 deadline = timezone.now() + timedelta(days=payment.delay)
                 for attendee in attendees:
-                    PaymentDelay.objects.create(payment=payment, user=attendee.user, valid_to=deadline)
+                    payment.create_payment_delay(attendee.user, deadline)
                 message += u"Dette arrangementet krever betaling og du må betale innen %d dager." % (payment.delay)
             if len(payment.prices()) == 1:
                 message += u"\nPrisen for dette arrangementet er %skr." % (payment.prices()[0].price)
@@ -507,7 +500,9 @@ class AttendanceEvent(models.Model):
         message += u"\n\nFor mer info:"
         message += u"\nhttp://%s%s" % (host, self.event.get_absolute_url())
 
-        return message
+        for attendee in attendees:
+            send_mail(_(u'Du har fått plass på et arrangement'), message,
+                settings.DEFAULT_FROM_EMAIL, [attendee.user.email])
 
     def is_eligible_for_signup(self, user):
         """

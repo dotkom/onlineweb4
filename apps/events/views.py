@@ -169,7 +169,7 @@ def attendEvent(request, event_id):
         if payment:
             if payment.payment_type == 3:
                 deadline = timezone.now() + timedelta(days=payment.delay)
-                PaymentDelay.objects.create(payment=payment, user=request.user, valid_to=deadline)
+                payment.create_payment_delay(user=request.user, valid_to=deadline)
                 #TODO send mail
 
         return redirect(event)
