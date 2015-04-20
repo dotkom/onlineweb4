@@ -37,7 +37,7 @@ class Payment(models.Model):
 
 
     def paid_users(self):
-        return [payment_relation.user for payment_relation in self.paymentrelation_set.all()]
+        return [payment_relation.user for payment_relation in self.paymentrelation_set.filter(refunded=False)]
 
     def payment_delays(self):
         return self.paymentdelay_set.filter(active=True)
@@ -97,10 +97,9 @@ class Payment(models.Model):
     def check_refund(self, payment_relation):
         if ContentType.objects.get_for_model(AttendanceEvent) == self.content_type:
             attendance_event = self.content_object
-            user = payment_relation.user
             if attendance_event.unattend_deadline < timezone.now():
                 return (False, _(u"Fristen for og melde seg av har utgått"))
-            if len(Attendee.objects.filter(event=attendance_event, user=user)) == 0:
+            if len(Attendee.objects.filter(event=attendance_event, user=payment_relation.user)) == 0:
                 return (False, _(u"Du er ikke påmeldt dette arrangementet."))
             if attendance_event.event.event_start < timezone.now():
                 return (False, _(u"Dette arrangementet har allerede startet."))

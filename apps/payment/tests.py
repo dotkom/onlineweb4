@@ -57,8 +57,8 @@ class PaymentTest(TestCase):
         payment_relation = G(PaymentRelation, payment=self.event_payment, 
             user=self.user, payment_price=self.payment_price)
 
-        self.event_payment.unnatend_deadline = timezone.now() - timedelta(days=1)
-        self.event_payment.save()
+        self.attendance_event.unattend_deadline = timezone.now() - timedelta(days=1)
+        self.attendance_event.save()
 
         self.assertFalse(self.event_payment.check_refund(payment_relation)[0])
 
@@ -80,12 +80,16 @@ class PaymentTest(TestCase):
 
     def testEventPaymentRefundCheck(self):
         G(Attendee, event=self.attendance_event, user=self.user)
+        self.attendance_event.unattend_deadline = timezone.now() + timedelta(days=1)
+        self.attendance_event.save()
+
+        self.event.event_start = timezone.now() + timedelta(days=1)
+        self.event.save()
+
         payment_relation = G(PaymentRelation, payment=self.event_payment, 
             user=self.user, payment_price=self.payment_price)
 
-        self.event_payment.unnatend_deadline = timezone.now() + timedelta(days=1)
-        self.event_payment.save()
-
+        print self.event_payment.check_refund(payment_relation)
         self.assertTrue(self.event_payment.check_refund(payment_relation)[0])
 
     def testEventPaymentRefund(self):

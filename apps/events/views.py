@@ -76,8 +76,11 @@ def details(request, event_id, event_slug):
             # Check if this user is on the waitlist
             place_on_wait_list = attendance_event.what_place_is_user_on_wait_list(request.user)
 
-        payment = Payment.objects.get(content_type=ContentType.objects.get_for_model(AttendanceEvent), 
-            object_id=event_id)
+        try:
+            payment = Payment.objects.get(content_type=ContentType.objects.get_for_model(AttendanceEvent), 
+                object_id=event_id)
+        except Payment.DoesNotExist:
+            payment = None
 
         if payment:
             request.session['payment_id'] = payment.id
@@ -156,9 +159,11 @@ def attendEvent(request, event_id):
         ae.save()
         messages.success(request, _(u"Du er nå påmeldt på arrangementet!"))
 
-        payment = Payment.objects.get(content_type=ContentType.objects.get_for_model(AttendanceEvent), 
-            object_id=event_id)
-
+        try:
+            payment = Payment.objects.get(content_type=ContentType.objects.get_for_model(AttendanceEvent), 
+                object_id=event_id)
+        except Payment.DoesNotExist:
+            payment = None
 
         #If payment_type is delay, Create delay object
         if payment:
@@ -200,9 +205,11 @@ def unattendEvent(request, event_id):
     event.attendance_event.notify_waiting_list(host=request.META['HTTP_HOST'], unattended_user=request.user)
     Attendee.objects.get(event=attendance_event, user=request.user).delete()
 
-
-    payment = Payment.objects.get(content_type=ContentType.objects.get_for_model(AttendanceEvent), 
-        object_id=event_id)
+    try:
+        payment = Payment.objects.get(content_type=ContentType.objects.get_for_model(AttendanceEvent), 
+            object_id=event_id)
+    except Payment.DoesNotExist:
+        payment = None
 
     #Delete payment delays connected to the user and event
     if payment:
