@@ -102,7 +102,9 @@ Genfors = (function () {
                                 votes_html += '<span class="label label-warning pull-right">' + v + '</span></li>';
                             }
                             else {
-                                votes_html += '<span class="label label-primary pull-right">' + v + '</span></li>';
+                                votes_html += '<span title="'+ v +'" class="label label-primary pull-right">'+ v.substring(0,20);
+                                if (v.length > 20) votes_html += '…'
+                                votes_html += '</span></li>';
                             }
                         }
                     }

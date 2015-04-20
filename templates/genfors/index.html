@@ -232,7 +232,7 @@ Generalforsamling - Online
                                         {% endif %}
                                     {% else %}<!-- If question type is multiple choice -->
                                         {% if vote.answer %}
-                                            <span title="{{ vote.answer }}" class="label label-primary pull-right">{{ vote.answer.description|truncatechars:30 }}{% if vote.answer|length > 30 %}…{% endif %}</span>
+                                            <span title="{{ vote.answer }}" class="label label-primary pull-right">{{ vote.answer.description|truncatechars:20 }}{% if vote.answer|length > 20 %}…{% endif %}</span>
                                         {% else %}
                                             <span class="label label-warning pull-right">Blankt</span>
                                         {% endif %}
