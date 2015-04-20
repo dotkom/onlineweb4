@@ -191,7 +191,7 @@ Generalforsamling - Online
                                         {% endif %}
                                         {% for alt, votes in results.data.items %}
                                             {% if not question.only_show_winner %}
-                                                <span style="white-space: nowrap"><strong>{{ alt }}</strong>: {{ votes }} stemme{{ votes|pluralize:"r"}}.</span><br />
+                                                <span><strong>{{ alt }}</strong>: {{ votes }} stemme{{ votes|pluralize:"r"}}.</span><br />
                                             {% endif %}
                                         {% endfor %}
                                         {% endwith %}
