@@ -76,7 +76,8 @@ def details(request, event_id, event_slug):
             # Check if this user is on the waitlist
             place_on_wait_list = attendance_event.what_place_is_user_on_wait_list(request.user)
 
-        payments = Payment.objects.filter(content_type=ContentType.objects.get_for_model(Event), object_id=event_id)
+        payments = Payment.objects.filter(content_type=ContentType.objects.get_for_model(AttendanceEvent), 
+            object_id=event_id)
 
         if payments:
             request.session['payment_ids'] = [payment.id for payment in payments]
@@ -156,7 +157,9 @@ def attendEvent(request, event_id):
         ae.save()
         messages.success(request, _(u"Du er nå påmeldt på arrangementet!"))
 
-        payments = Payment.objects.filter(content_type=ContentType.objects.get_for_model(Event), object_id=event_id)
+        payments = Payment.objects.filter(content_type=ContentType.objects.get_for_model(AttendanceEvent), 
+            object_id=event_id)
+
 
         #If payment_type is delay, Create delay object
         if payments:
@@ -200,14 +203,14 @@ def unattendEvent(request, event_id):
     Attendee.objects.get(event=attendance_event, user=request.user).delete()
 
 
-    payments = Payment.objects.filter(content_type=ContentType.objects.get_for_model(Event), object_id=event_id)
+    payments = Payment.objects.filter(content_type=ContentType.objects.get_for_model(AttendanceEvent), 
+        object_id=event_id)
 
     #Delete payment delays connected to the user and event
     if payments:
         delays = PaymentDelay.objects.filter(payment__in=payments, user=request.user)
         for delay in delays:
             delay.delete()
-
 
     messages.success(request, _(u"Du ble meldt av arrangementet."))
     return redirect(event)

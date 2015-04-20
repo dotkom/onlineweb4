@@ -13,7 +13,6 @@ from django.core.mail import EmailMessage
 from django.utils.translation import ugettext as _ 
 
 from apps.payment.models import Payment, PaymentRelation
-from apps.events.models import Event, Attendee
 
 @login_required
 def payment(request):
@@ -102,8 +101,6 @@ def payment_refund(request, payment_relation_id):
         re = ch.refunds.create()
 
         payment_relation.payment.handle_refund(request.META['HTTP_HOST'], payment_relation)
-
-        print re
 
         payment_relation.refunded = True
         payment_relation.save()

@@ -10,7 +10,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.conf import settings
 
 from apps.authentication.models import OnlineUser as User
-from apps.events.models import Event, Attendee
+from apps.events.models import AttendanceEvent, Attendee
 
 class Payment(models.Model):
 
@@ -48,14 +48,14 @@ class Payment(models.Model):
 
 
     def description(self):
-        if ContentType.objects.get_for_model(Event) == self.content_type:
-            return self.content_object.title
+        if ContentType.objects.get_for_model(AttendanceEvent) == self.content_type:
+            return self.content_object.event.title
         else:
             return "payment description not implemented"
 
     def responsible_mail(self):
-        if ContentType.objects.get_for_model(Event) == self.content_type:
-            event_type = self.content_object.event_type
+        if ContentType.objects.get_for_model(AttendanceEvent) == self.content_type:
+            event_type = self.content_object.event.event_type
             if event_type == 1 or event_type == 4: # Sosialt & Utflukt
                 return settings.EMAIL_ARRKOM
             elif event_type == 2: #Bedpres
@@ -70,33 +70,31 @@ class Payment(models.Model):
             return settings.DEFAULT_FROM_EMAIL
 
     def handle_payment(self, user):
-        if ContentType.objects.get_for_model(Event) == self.content_type:
-            if self.content_object.is_attendance_event():
-                attendee = Attendee.objects.filter(event=self.content_object.attendance_event, user=user)
+        if ContentType.objects.get_for_model(AttendanceEvent) == self.content_type:
+            attendee = Attendee.objects.filter(event=self.content_object, user=user)
 
-                # Delete payment delay objects for the user if there are any
-                delays = PaymentDelay.objects.filter(payment=self, user=user)
-                for delay in delays:
-                    delay.delete()
+            # Delete payment delay objects for the user if there are any
+            delays = PaymentDelay.objects.filter(payment=self, user=user)
+            for delay in delays:
+                delay.delete()
 
-                if attendee:
-                    attendee[0].paid = True
-                    attendee[0].save()
-                else:
-                    Attendee.objects.create(event=self.content_object.attendance_event, user=user, paid=True)
+            if attendee:
+                attendee[0].paid = True
+                attendee[0].save()
+            else:
+                Attendee.objects.create(event=self.content_object, user=user, paid=True)
 
     def handle_refund(self, host, payment_relation):
-        if ContentType.objects.get_for_model(Event) == self.content_type:
-
-            self.content_object.attendance_event.notify_waiting_list(
+        if ContentType.objects.get_for_model(AttendanceEvent) == self.content_type:
+            self.content_object.notify_waiting_list(
                 host=host, unattended_user=payment_relation.user)
-            Attendee.objects.get(event=self.content_object.attendance_event, 
+            Attendee.objects.get(event=self.content_object, 
                 user=payment_relation.user).delete()
 
 
     def check_refund(self, payment_relation):
-        if ContentType.objects.get_for_model(Event) == self.content_type:
-            attendance_event = self.content_object.attendance_event
+        if ContentType.objects.get_for_model(AttendanceEvent) == self.content_type:
+            attendance_event = self.content_object
             user = payment_relation.user
             if attendance_event.unattend_deadline < timezone.now():
                 return (False, _(u"Fristen for og melde seg av har utgått"))
@@ -143,4 +141,7 @@ class PaymentDelay(models.Model):
     valid_to = models.DateTimeField()
 
     active = models.BooleanField(default=True)
+
+    def __unicode__(self):
+        return self.payment.description() + " - " + unicode(self.user)
 

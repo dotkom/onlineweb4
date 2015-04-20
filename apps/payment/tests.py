@@ -19,7 +19,8 @@ class PaymentTest(TestCase):
         self.attendance_event = G(AttendanceEvent, event=self.event)
         self.user = G(User, username = 'ola123', ntnu_username = 'ola123ntnu', first_name = "ola", last_name = "nordmann")
 
-        self.event_payment = G(Payment, object_id=self.event.id, content_type=ContentType.objects.get_for_model(Event), price=200 )
+        self.event_payment = G(Payment, object_id=self.event.id, 
+            content_type=ContentType.objects.get_for_model(AttendanceEvent), price=200 )
 
     def testPaymentCreation(self):
         PaymentRelation.objects.create(payment=self.event_payment, user=self.user)
