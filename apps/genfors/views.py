@@ -350,7 +350,9 @@ def vote(request):
         # If user is logged in
         if a:
             q = m.get_active_question()
-
+            if not q:
+                messages.error(request, u'Saken har blitt slettet')
+                return redirect('genfors_index')
             if not r:
                 messages.error(request, u'Du er ikke registrert som oppmøtt, og kan derfor ikke avlegge stemme.')
                 return redirect('genfors_index')
