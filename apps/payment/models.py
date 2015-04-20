@@ -74,6 +74,11 @@ class Payment(models.Model):
             if self.content_object.is_attendance_event():
                 attendee = Attendee.objects.filter(event=self.content_object.attendance_event, user=user)
 
+                # Delete payment delay objects for the user if there are any
+                delays = PaymentDelay.objects.filter(payment=self, user=user)
+                for delay in delays:
+                    delay.delete()
+
                 if attendee:
                     attendee[0].paid = True
                     attendee[0].save()
