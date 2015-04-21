@@ -26,7 +26,7 @@ class Event(models.Model):
     """
 
     IMAGE_FOLDER = "images/events"
-    IMAGE_EXTENSIONS = ['.jpg', '.jpeg', '.gif', '.png', '.tif', '.tiff']
+    IMAGE_EXTENSIONS = ['.jpg', '.jpeg', '.gif', '.png', '.tif', '.tiff', '.svg']
 
     TYPE_CHOICES = (
         (1, 'Sosialt'),
