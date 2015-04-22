@@ -48,10 +48,12 @@ def index(request):
                                   if request.user.has_perm('view_poster_order', x)]
         return render(request, 'posters/dashboard/index.html', context)
 
-    context['new_orders'] = Poster.objects.filter(assigned_to=None)
-    context['active_orders'] = Poster.objects.filter(finished=False).exclude(assigned_to=None)
-    context['hanging_orders'] = Poster.objects.filter(finished=True,
-                                                      display_to__lte=datetime.now()+timedelta(days=3))
+    orders = Poster.objects.all()
+
+    context['new_orders'] = orders.filter(assigned_to=None)
+    context['active_orders'] = orders.filter(finished=False).exclude(assigned_to=None)
+    context['hanging_orders'] = orders.filter(finished=True,
+                                              display_to__lte=datetime.now()+timedelta(days=3))
 
     context['workers'] = User.objects.filter(groups=Group.objects.get(name='proKom'))
 
