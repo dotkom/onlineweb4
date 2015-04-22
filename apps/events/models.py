@@ -445,8 +445,6 @@ class AttendanceEvent(models.Model):
         
         return payment
 
-
-
     def notify_waiting_list(self, host, unattended_user=None, extra_capacity=1):
         # Notify next user on waiting list
         wait_list = self.waitlist_qs
@@ -463,8 +461,7 @@ class AttendanceEvent(models.Model):
                 attendees = wait_list[:extra_capacity]
 
                 self._handle_waitlist_bump(host, attendees, self.payment())
-                    
-
+                       
     def _handle_waitlist_bump(self, host, attendees, payment=None):
         extended_deadline = timezone.now() + timedelta(days=2)
         message = u'Du har stått på venteliste for arrangementet "%s" og har nå fått plass.\n' % (self.event.title)

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import uuid
+import reversion
 
 from django.db import models
 from django.utils import timezone
@@ -11,6 +12,7 @@ from django.conf import settings
 
 from apps.authentication.models import OnlineUser as User
 from apps.events.models import AttendanceEvent, Attendee
+
 
 class Payment(models.Model):
 
@@ -61,7 +63,6 @@ class Payment(models.Model):
         else:
             PaymentDelay.objects.create(payment=self, user=user, valid_to=deadline)
 
-
     def description(self):
         if ContentType.objects.get_for_model(AttendanceEvent) == self.content_type:
             return self.content_object.event.title
@@ -109,7 +110,6 @@ class Payment(models.Model):
             Attendee.objects.get(event=self.content_object, 
                 user=payment_relation.user).delete()
 
-
     def check_refund(self, payment_relation):
         if ContentType.objects.get_for_model(AttendanceEvent) == self.content_type:
             attendance_event = self.content_object
@@ -134,6 +134,8 @@ class Payment(models.Model):
         verbose_name = _(u"betaling")
         verbose_name_plural = _(u"betalinger")
 
+reversion.register(Payment)
+
 
 class PaymentPrice(models.Model):
     payment = models.ForeignKey(Payment)
@@ -146,6 +148,9 @@ class PaymentPrice(models.Model):
     class Meta:
         verbose_name = _(u"pris")
         verbose_name_plural = _(u"priser")
+
+reversion.register(PaymentPrice)
+
 
 class PaymentRelation(models.Model):
     payment = models.ForeignKey(Payment)
@@ -169,6 +174,8 @@ class PaymentRelation(models.Model):
         verbose_name = _(u"betalingsrelasjon")
         verbose_name_plural = _(u"betalingsrelasjoner")
 
+reversion.register(PaymentRelation)
+
 
 class PaymentDelay(models.Model):
     payment = models.ForeignKey(Payment)
@@ -180,3 +187,10 @@ class PaymentDelay(models.Model):
     def __unicode__(self):
         return self.payment.description() + " - " + unicode(self.user)
 
+    class Meta:
+        unique_together = ('payment', 'user')
+
+        verbose_name = _(u'betalingsutsettelse')
+        verbose_name_plural = _(u'betalingsutsettelser')
+
+reversion.register(PaymentDelay)
