@@ -6,7 +6,6 @@ from apps.posters.models import Poster
 
 
 class AddPosterForm(forms.ModelForm):
-    when = forms.CharField(label=u"Event start", widget=forms.TextInput(attrs={'type': 'datetime-local'}))
     display_from = forms.CharField(label=u"Vis plakat fra", widget=forms.TextInput(attrs={'type': 'date'}))
     display_to = forms.CharField(label=u"Vis plakat til", widget=forms.TextInput(attrs={'type': 'date'}))
     class Meta:
