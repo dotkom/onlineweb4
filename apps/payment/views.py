@@ -19,7 +19,6 @@ def payment(request):
 
     if request.is_ajax():
         if request.method == "POST":
-            stripe.api_key = settings.STRIPE_PRIVATE_KEY
 
             # Get the credit card details submitted by the form
             token = request.POST.get("stripeToken")
@@ -31,6 +30,8 @@ def payment(request):
 
             if payment:
                 try:
+                    stripe.api_key = settings.STRIPE_PRIVATE_KEYS[payment.stripe_key_index]
+
                     charge = stripe.Charge.create(
                       amount=payment_price.price * 100, #Price is multiplied with 100 because the amount is in øre
                       currency="nok",
@@ -67,7 +68,7 @@ def payment_info(request):
             content_type = ContentType.objects.get_for_id(payment.content_type.id)
             content_object = content_type.get_object_for_this_type(pk=payment.object_id)
 
-            data['stripe_public_key'] = settings.STRIPE_PUBLIC_KEY
+            data['stripe_public_key'] = settings.STRIPE_PUBLIC_KEYS[payment.stripe_key_index]
             data['email'] = request.user.email
             data['description'] = payment.description()
             data['payment_id'] = request.session['payment_id']
@@ -98,7 +99,7 @@ def payment_refund(request, payment_relation_id):
         return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
     try:
-        stripe.api_key = settings.STRIPE_PRIVATE_KEY
+        stripe.api_key = settings.STRIPE_PRIVATE_KEYS[payment_relation.payment.stripe_key_index]
         ch = stripe.Charge.retrieve(payment_relation.stripe_id)
         re = ch.refunds.create()
 
