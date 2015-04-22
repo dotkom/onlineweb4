@@ -82,15 +82,15 @@
 
       <section class="cal-left">
         <ul>
-        	{% for event in splash_year.splash_events.all %}
-        		<li class="" data-date="{{ event.start_time.month }}{{ event.start_time.day }}">
-        			<span>{{ event.start_time|date:"F" }}<span>{{ event.start_time.day }}</span>
-        			<article>
-        				<h2>{{ event.title }}</h2>
-        				{{ event.content|striptags|markdown }}
-        			</article>
-        		</li>
-        	{% endfor %}
+          {% for event in splash_year.splash_events.all %}
+            <li class="" data-date="{{ event.start_time.month }}{{ event.start_time.day }}">
+              <span>{{ event.start_time|date:"F" }}<span>{{ event.start_time.day }}</span>
+              <article>
+                <h2>{{ event.title }}</h2>
+                {{ event.content|striptags|markdown }}
+              </article>
+            </li>
+          {% endfor %}
         </ul>
       </section>
 

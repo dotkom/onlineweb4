@@ -4,10 +4,10 @@ from apps.splash.models import SplashYear, SplashEvent
 
 
 class SplashYearAdmin(admin.ModelAdmin):
-	list_display = ('title', 'start_date',)
+    list_display = ('title', 'start_date',)
 
 class SplashEventAdmin(admin.ModelAdmin):
-	exclude = ('',)
+    exclude = ('',)
 
 
 admin.site.register(SplashYear, SplashYearAdmin)
