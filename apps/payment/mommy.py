@@ -147,6 +147,8 @@ class PaymentDelayHandler(Task):
         for payment_delay in payment_delays:
             if payment_delay.valid_to < timezone.now():
                 PaymentDelayHandler.handle_deadline_passed(payment_delay)
+            elif (payment_delay.valid_to.date() - timezone.now().date()).days <= 1:
+                PaymentDelayHandler.send_notify_mail(payment_delay)
 
 
         #TODO handle committee notifying
@@ -175,6 +177,19 @@ class PaymentDelayHandler(Task):
 
         EmailMessage(subject, unicode(message), payment.responsible_mail(), [], receivers).send()
 
+    @staticmethod
+    def send_notify_mail(payment_delay):
+        payment = payment_delay.payment
+        subject = _(u"Husk betaling for ") + payment.description()
 
-schedule.register(PaymentReminder, day_of_week='mon-sun', hour=20, minute=36)
-schedule.register(PaymentDelayHandler, day_of_week='mon-sun', hour=17, minute=39)
+        message = _(u"Hei, du har ikke betalt for ") + payment.description()
+        message += _(u"\nDu har frem til ") + payment_delay.valid_to()
+        message += _(u"\nDersom du har spørsmål kan du sende mail til ") + payment.responsible_mail()
+        message += _(u"\n\nMvh \nLinjeforeningen Online")
+
+        receivers = [payment_delay.user.email]
+
+        EmailMessage(subject, unicode(message), payment.responsible_mail(), [], receivers).send()
+
+schedule.register(PaymentReminder, day_of_week='mon-sun', hour=20, minute=21)
+schedule.register(PaymentDelayHandler, day_of_week='mon-sun', hour=20, minute=21)
