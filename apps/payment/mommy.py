@@ -156,13 +156,7 @@ class PaymentDelayHandler(Task):
         for payment_delay in payment_delays:
             unattend_deadline_passed = payment_delay.payment.content_object.unattend_deadline > payment_delay.valid_to
             if payment_delay.valid_to < timezone.now():
-                if unattend_deadline_passed:
-                    #TODO block people
-                    ting = True
-                else:
-                    PaymentReminder.set_marks(payment)
-                    PaymentReminder.unattend(payment)
-                PaymentDelayHandler.handle_deadline_passed(payment_delay)
+                PaymentDelayHandler.handle_deadline_passed(payment_delay, unattend_deadline_passed)
             elif (payment_delay.valid_to.date() - timezone.now().date()).days <= 2:
                 PaymentDelayHandler.send_notify_mail(payment_delay, unattend_deadline_passed)
 
@@ -170,8 +164,15 @@ class PaymentDelayHandler(Task):
         #TODO handle committee notifying
 
     @staticmethod
-    def handle_deadline_passed(payment_delay):
-        #TODO punish user
+    def handle_deadline_passed(payment_delay, unattend_deadline_passed):
+
+        if unattend_deadline_passed:
+            PaymentDelayHandler.set_mark(payment_delay)
+            #TODO block people
+        else:
+            PaymentDelayHandler.set_mark(payment_delay)
+            PaymentDelayHandler.unattend(payment_delay.user)
+
         payment_delay.active = False
         payment_delay.save()
         PaymentDelayHandler.send_deadline_passed_mail(payment_delay, unattend_deadline_passed)
@@ -218,6 +219,24 @@ class PaymentDelayHandler(Task):
         receivers = [payment_delay.user.email]
 
         EmailMessage(subject, unicode(message), payment.responsible_mail(), [], receivers).send()
+
+    @staticmethod
+    def set_mark(payment_relation):
+        mark = Mark()
+        mark.title = _(u"Manglende betaling på %s") %(payment_relation.payment.description())
+        mark.category = 6 #Manglende betaling
+        mark.description = _(u"Du har fått en prikk fordi du ikke har betalt for arrangement.")
+        mark.save()
+
+        user_entry = MarkUser()
+        user_entry.user = payment_relation.user
+        user_entry.mark = mark
+        user_entry.save()
+
+    @staticmethod
+    def unattend(user):
+        payment.content_object.notify_waiting_list(host=settings.BASE_URL, unattended_user=user)
+        Attendee.objects.get(event=payment.content_object, user=user).delete()
 
 schedule.register(PaymentReminder, day_of_week='mon-sun', hour=22, minute=41)
 schedule.register(PaymentDelayHandler, day_of_week='mon-sun', hour=23, minute=21)

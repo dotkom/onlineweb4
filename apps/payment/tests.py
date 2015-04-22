@@ -137,7 +137,7 @@ class PaymentTest(TestCase):
         
         self.assertTrue(payment_delay.active)
         
-        PaymentDelayHandler.handle_deadline_passed(payment_delay)
+        PaymentDelayHandler.handle_deadline_passed(payment_delay, False)
 
         self.assertFalse(payment_delay.active)
 
