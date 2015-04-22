@@ -20,9 +20,15 @@ class Payment(models.Model):
         (3, _(u'Utsettelse')),
     )
 
+    STRIPE_KEY_CHOICES = (
+        (0, "Arrkom"),
+        (1, "Prokom"),
+    )
+
     content_type = models.ForeignKey(ContentType)
     object_id = models.PositiveIntegerField()
     content_object = generic.GenericForeignKey('content_type', 'object_id')
+    stripe_key_index = models.SmallIntegerField(_(u'stripe key'), choices=STRIPE_KEY_CHOICES)
 
     payment_type = models.SmallIntegerField(_(u'type'), choices=TYPE_CHOICES)
 
@@ -115,6 +121,8 @@ class Payment(models.Model):
                 return (False, _(u"Dette arrangementet har allerede startet."))
 
             return (True, '')
+
+        return (False, 'Refund checks not implemented')
     
     def prices(self):
         return self.paymentprice_set.all()       
