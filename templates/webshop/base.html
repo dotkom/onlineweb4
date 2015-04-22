@@ -8,11 +8,13 @@
 {% block content %}
 <section id="webshop">
     <div class="container">
+        {% block webshop_content %}
         <ul>
         {% for category in categories %}
             <li><a href="{{ category.get_absolute_url }}">{{ category }}</a></li>
         {% endfor %}
         </ul>
+        {% endblock %}
     </div>
 </section>
 {% endblock %}
