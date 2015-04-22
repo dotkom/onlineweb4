@@ -26,20 +26,195 @@
 {% endblock %}
 
 {% block breadcrumbs %}
-    <li><a href="/dashboard/posters/">Plakatbestillinger</a></li>
+    <li><a href="/dashboard/posters/">Bestillinger</a></li>
     <li>Detaljer</li>
 {% endblock %}
 
 {% block content %}
-    <h4>Tittel: {{ poster.title }}</h4>
-    <section>
-        {{poster.title.label}}
-        {% for field in poster_iterator %}
-        <div>
-            <span style="font-weight:bold;">{{field}}</span>
-            {{field.related_name}}
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="page-header">
+                <h2 id="event-details-heading">
+                    {{poster.title}}
+                    <div class="btn-group pull-right">                    
+                        <div class="btn-group pull-right">
+                            <button type="button" class="btn btn-default dropdown-toggle">
+                                <a href="../edit/{{poster.id}}">
+                                    Rediger
+                                </a>
+                            </button>
+                        </div>
+                    </div>
+                </h2>
+            </div>
         </div>
-        {% endfor %}
-    </section>
+    </div>
+    <div class="row row-space">
+        <div class="col-md-7">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="event-hero-meta">
+                        <div class="row row-space">
+                            <div class="event-hero-meta-info">
+                                <div class="col-xs-12 col-sm-4 col-md-4">
+                                    <div class="event-hero-title">Fra</div>
+                                    <div class="event-hero-large-text">
+                                        <span class="break">{{poster.when}}</span>
+                                    </div>
+                                </div>
+                                <div class="col-xs-12 col-sm-4 col-md-4">
+                                    <div class="event-hero-title">Pris</div>
+                                    <div class="event-hero-large-text">
+                                        <span class="break">{{poster.price}}</span>
+                                    </div>
+                                </div>
+                                <div class="col-xs-12 col-sm-4 col-md-4">
+                                    <div class="event-hero-title">Lokasjon</div>
+                                    <div class="event-hero-small-text">{{poster.location}}</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                            <div class="row">
+                                <div class="event-hero-meta-info">
+                                    <div class="col-xs-12 col-sm-4 col-md-4">
+                                        <div class="event-hero-title">Påmeldte</div>
+                                        <div class="event-hero-large-text">
+                                            0/20
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-12 col-sm-4 col-md-4">
+                                        
+                                            <div class="event-hero-title">Antall på venteliste</div>
+                                            <div class="event-hero-large-text">0</div>
+                                        
+                                    </div>
+                                    <div class="col-xs-12 col-sm-4 col-md-4">
+                                         
+                                            <div class="event-hero-title">Påmeldingsstart</div>
+                                            <div class="event-hero-large-text">
+                                                <div class="event-hero-large-text">
+                                                    <span class="break">12.00</span>
+                                                    <span class="date-small">27. Apr 2015</span>
+                                                </div>
+                                            </div>
+                                        
+                                    </div>
+                                </div>
+                            </div>
+                        
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="col-md-5">
+            <div class="col-md-12 event-status row-space">
+                                <p class="status-text">Påmeldingen er ikke åpnet enda.</p>
+                            
+                    <p class="help-text" style="margin-top:20px">Avmeldingsfristen 
+                        
+                            er
+                        
+                        12.00 03. Mai 2015
+                    </p>
+                
+            </div>            
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-7">
+            <div class="ingress">
+                <p>{{poster.description}}</p>
+            </div>
+            
+            <hr>
+            <p>
+                <h5>Kommentarer</h5>
+                {{poster.comments}}
+            </p>
+        </div>
+    </div>
+
+
+    <!-- MODALS -->
+
+
+    <div id="attend" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h3 class="modal-title">Meld deg på Studentaften, Sikkerhet og Sårbarhet</h3>
+                </div>
+                <form action="/events/133/attend/" method="POST">
+                    <div class="modal-body">
+                        <input type="hidden" name="csrfmiddlewaretoken" value="WySFl3nApWjitupvx8z4YgemfDhWwhgB">
+                        
+
+<div id="div_id_captcha" class="form-group"><label for="id_captcha_1" class="control-label  requiredField">
+                Captcha<span class="asteriskField">*</span></label><div class="controls "><img src="/captcha/image/7b1327e80d4f7e549f892b37ef7b234175f0b62f/" alt="captcha" class="captcha"> <input class="hiddeninput form-control" id="id_captcha_0" name="captcha_0" type="hidden" value="7b1327e80d4f7e549f892b37ef7b234175f0b62f"> <input autocomplete="off" class="textinput textInput form-control" id="id_captcha_1" name="captcha_1" type="text"> </div></div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Valider</button>
+                        <button class="btn" data-dismiss="modal" aria-hidden="true">Lukk</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div id="waitlist" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h3 class="modal-title">Sett meg på venteliste på Studentaften, Sikkerhet og Sårbarhet</h3>
+                </div>
+                <form action="/events/133/attend/" method="POST">
+                    <div class="modal-body">
+                        <p>Ved å sette deg på venteliste godtar du at du automatisk får plass om
+                            arrangementet utvides med flere plasser, eller andre påmeldte melder seg av, slik at du rykker frem i køen.
+                        </p>
+                        <p>Ved å melde deg på, godtar du prikkereglene.</p>
+                        <input type="hidden" name="csrfmiddlewaretoken" value="WySFl3nApWjitupvx8z4YgemfDhWwhgB">
+                        
+
+<div id="div_id_captcha" class="form-group"><label for="id_captcha_1" class="control-label  requiredField">
+                Captcha<span class="asteriskField">*</span></label><div class="controls "><img src="/captcha/image/a1e3eab984294d8e83800cfcf22f1e943030f1cd/" alt="captcha" class="captcha"> <input class="hiddeninput form-control form-control" id="id_captcha_0" name="captcha_0" type="hidden" value="a1e3eab984294d8e83800cfcf22f1e943030f1cd"> <input autocomplete="off" class="textinput textInput form-control form-control" id="id_captcha_1" name="captcha_1" type="text"> </div></div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Valider</button>
+                        <button class="btn" data-dismiss="modal" aria-hidden="true">Lukk</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div id="unattend" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h3>Meld deg av Studentaften, Sikkerhet og Sårbarhet </h3>
+                </div>
+                <form action="/events/133/unattend/" method="POST">
+                    <div class="modal-body">
+                        <input type="hidden" name="csrfmiddlewaretoken" value="WySFl3nApWjitupvx8z4YgemfDhWwhgB">
+                        <p>Er du sikker på at du vil melde deg av?</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn" data-dismiss="modal" aria-hidden="true">Lukk</button>
+                        <button type="submit" class="btn btn-danger">Meld meg av</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    </div>
 
 {% endblock content %}
