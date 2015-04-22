@@ -52,10 +52,6 @@ def index(request):
     context['active_orders'] = Poster.objects.filter(finished=False).exclude(assigned_to=None)
     context['hanging_orders'] = Poster.objects.filter(finished=True,
                                                       display_to__lte=datetime.now()+timedelta(days=3))
-    context['your_orders'] = Poster.objects.filter(assigned_to=request.user,
-                                                   finished=False,
-                                                   display_to__gte=datetime.now()-timedelta(days=3))
-
 
     context['workers'] = User.objects.filter(groups=Group.objects.get(name='proKom'))
 

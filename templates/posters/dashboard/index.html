@@ -28,9 +28,9 @@ Plakatbestillinger
 {% endblock %}
 
 {% block content %}
-    <h4>Nye bestillinger</h4>
-    <section id="new-orders">
     {% if new_orders %}
+    <section id="new-orders">
+        <h4>Nye bestillinger</h4>
         <div class="row row-space headings">
             <div class="col-md-4">
                 <span><div class="visible-xs visible-sm">1. </div>Tittel</span>
@@ -50,21 +50,17 @@ Plakatbestillinger
         </div>
         {% for order in new_orders %}
             {% include 'posters/dashboard/order_template.html' %}
-        {% endfor %}
-    {% else %}
-        <div class="row row-space">
-            <div class="col-md-12">
-                <p>Ingen nye bestillinger.</p>
+        {% empty %}
+            <div class="col-md-6">
+                Ingen nye bestillinger.
             </div>
-        </div>
-    {% endif %}
+        {% endfor %}
     </section>
+    {% endif %}
 
-    <hr>
-
-    <h4>Aktive bestillinger</h4>
+    {% if active_orders %}
     <section id="active_orders">
-        {% if active_orders %}
+            <h4>Aktive bestillinger</h4>
             <div class="row row-space">
                 <div class="col-md-12">
                     <table class="table table-striped table-condensed tablesorter" id="active_orders_list">
@@ -92,25 +88,21 @@ Plakatbestillinger
                                 <td>{{ order.assigned_to }}</td>
                                 <td>{{ order.finished }}</td>
                             </tr>
+                        {% empty %}
+                            <div class="col-md-6">
+                                Ingen aktive bestillinger.
+                            </div>
                         {% endfor %}
                         </tbody>
                     </table>
                 </div>
             </div>
-        {% else %}
-        <div class="row row-space">
-            <div class="col-md-12">
-                <p>Ingen aktive bestillinger.</p>
-            </div>
-        </div>
-        {% endif %}
     </section>
+    {% endif %}
 
-    <hr>
-
-    <h4>Hengende bestillinger</h4>
+    {% if hanging_orders %}
     <section id="hanging_orders">
-        {% if hanging_orders %}
+            <h4>Hengende bestillinger</h4>
             <div class="row row-space">
                 <div class="col-md-12">
                     <table class="table table-striped table-condensed tablesorter" id="active_orders_list">
@@ -138,23 +130,21 @@ Plakatbestillinger
                                 <td>{{ order.assigned_to }}</td>
                                 <td>{{ order.finished }}</td>
                             </tr>
+                        {% empty %}
+                            <div class="col-md-6">
+                                Ingen hengte bestillinger.
+                            </div>
                         {% endfor %}
                         </tbody>
                     </table>
                 </div>
             </div>
-        {% else %}
-        <div class="row row-space">
-            <div class="col-md-12">
-                <p>Ingen hengende bestillinger.</p>
-            </div>
-        </div>
-        {% endif %}
     </section>
+    {% endif %}
 
-    <h4>Dine bestillinger</h4>
-    <section id="hanging_orders">
+    <section id="your_orders">
         {% if your_orders %}
+            <h4>Dine bestillinger</h4>
             <div class="row row-space">
                 <div class="col-md-12">
                     <table class="table table-striped table-condensed tablesorter" id="active_orders_list">
@@ -182,17 +172,15 @@ Plakatbestillinger
                                 <td>{{ order.assigned_to }}</td>
                                 <td>{{ order.finished }}</td>
                             </tr>
+                        {% empty %}
+                            <div class="col-md-6">
+                                Du har ingen aktive bestillinger.
+                            </div>
                         {% endfor %}
                         </tbody>
                     </table>
                 </div>
             </div>
-        {% else %}
-        <div class="row row-space">
-            <div class="col-md-12">
-                <p>Du har ingen aktive bestillinger.</p>
-            </div>
-        </div>
-        {% endif %}
     </section>
+    {% endif %}
 {% endblock content %}
