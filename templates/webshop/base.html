@@ -8,6 +8,9 @@
 {% block content %}
 <section id="webshop">
     <div class="container">
+        <div class="webshop-cart pull-right">
+            <a href="#"><span class="glyphicon glyphicon-shopping-cart"></span> 0 varer i handlevognen.</a>
+        </div>
         {% block webshop_content %}
         <ul>
         {% for category in categories %}
