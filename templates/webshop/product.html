@@ -5,19 +5,52 @@
 
 {% block title %}Webshop {{ product }} - Online{% endblock title %}
 
-{% block content %}
-<section id="webshop">
-    <div class="container">
-        <div class="row">
+{% block webshop_content %}
+<h2>{{product }}</h2>
+<div class="row">
+    <div class="col-sm-7">
+        <div id="carousel-product" class="carousel slide" data-ride="carousel">
+          <ol class="carousel-indicators">
             {% for image in product.images.all %}
-            <div class="col-xs-6 col-md-3">
-                <a href="{{ image.image.url }}" class="thumbnail">
-                    <img src="{{ image.image.url }}" />
-                </a>
+            <li data-target="#carousel-product" data-slide-to="{{ forloop.counter0 }}" {% if forloop.first %}class="active"{% endif %}></li>
+            {% endfor %}
+          </ol>
+
+          <div class="carousel-inner">
+            {% for image in product.images.all %}
+            <div class="item{% if forloop.first %} active{% endif %}">
+              <img src="{{ image.image.url }}" alt="Produktbilde">
             </div>
             {% endfor %}
+          </div>
+
+          <a class="left carousel-control" href="#carousel-product" data-slide="prev">
+            <span class="glyphicon glyphicon-chevron-left"></span>
+          </a>
+          <a class="right carousel-control" href="#carousel-product" data-slide="next">
+            <span class="glyphicon glyphicon-chevron-right"></span>
+          </a>
         </div>
-        <h2>{{product }}</h2>
     </div>
-</section>
+    <div class="col-sm-5">
+        {{ product.price|default:0|floatformat:2 }},-
+        <button class="btn btn-lg btn-default">Kjøp</button>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-7">
+        {{ product.description }}
+    </div>
+    <div class="col-sm-5">
+        {% for product in product.category.products.all %}
+        <div class="thumbnail">
+            <img src="{{ product.images.first.image.url }}">
+            <div class="caption">
+                <h3>{{ product }}</h3>
+                <p>{{ product.short }}</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
 {% endblock %}
