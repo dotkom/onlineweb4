@@ -11,12 +11,12 @@ class AddPosterForm(forms.ModelForm):
     display_to = forms.CharField(label=u"Vis plakat til", widget=forms.TextInput(attrs={'type': 'date'}))
     class Meta:
         model = Poster
-        fields = ['title', 'company', 'location', 'when', 'category', 'amount', 'description', 
+        fields = ['event', 'amount', 'description',
                   'price', 'display_from', 'display_to', 'comments']
 
 class EditPosterForm(forms.ModelForm):
     
     class Meta:
         model = Poster
-        fields = ['title', 'company', 'location', 'when', 'category', 'amount', 'description', 
+        fields = ['event', 'amount', 'description',
                   'price', 'display_to', 'display_from', 'comments', 'finished']
