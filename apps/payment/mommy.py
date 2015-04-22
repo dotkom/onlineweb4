@@ -10,7 +10,7 @@ from django.utils.translation import ugettext as _
 from django.conf import settings
 
 from apps.payment.models import Payment, PaymentRelation, PaymentDelay
-from apps.events.models import AttendanceEvent
+from apps.events.models import AttendanceEvent, Attendee
 from apps.marks.models import Mark, MarkUser
 
 from apps.mommy import Task, schedule
@@ -38,12 +38,12 @@ class PaymentReminder(Task):
             if deadline_diff <= 0:
                 if PaymentReminder.not_paid(payment):
                     PaymentReminder.send_deadline_passed_mail(payment)
+                    PaymentReminder.notify_committee(payment)
                     if payment.content_object.unattend_deadline > timezone.now():
                         PaymentReminder.set_marks(payment)
-                        
-                    #TODO punish people
+                        PaymentReminder.unattend(payment)
+
                     #TODO deactivate payment
-                    PaymentReminder.notify_committee(payment)
             elif deadline_diff < 3:
                 if PaymentReminder.not_paid(payment):
                     PaymentReminder.send_reminder_mail(payment)
@@ -132,6 +132,15 @@ class PaymentReminder(Task):
             user_entry.mark = mark
             user_entry.save()
 
+    @staticmethod
+    def unattend (payment):
+        for user in PaymentReminder.not_paid(payment):
+            payment.content_object.notify_waiting_list(
+                host=settings.BASE_URL, unattended_user=user)
+
+            Attendee.objects.get(event=payment.content_object, 
+                    user=user).delete()
+
 
 class PaymentDelayHandler(Task):
 
@@ -191,5 +200,5 @@ class PaymentDelayHandler(Task):
 
         EmailMessage(subject, unicode(message), payment.responsible_mail(), [], receivers).send()
 
-schedule.register(PaymentReminder, day_of_week='mon-sun', hour=20, minute=21)
-schedule.register(PaymentDelayHandler, day_of_week='mon-sun', hour=20, minute=21)
+schedule.register(PaymentReminder, day_of_week='mon-sun', hour=21, minute=41)
+schedule.register(PaymentDelayHandler, day_of_week='mon-sun', hour=20, minute=27)
