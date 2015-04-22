@@ -1,7 +1,9 @@
 <div class="row order">
     <div class="col-md-4 cell">
         <div class="visible-xs visible-sm">1. </div>
-        {{ order }}
+        <a href={% url 'posters_detail' order.id %}>
+            {{ order }}
+        </a>
     </div>
     <div class="col-md-2 cell">
         <div class="visible-xs visible-sm">2. </div>
