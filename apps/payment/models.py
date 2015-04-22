@@ -61,7 +61,6 @@ class Payment(models.Model):
         else:
             PaymentDelay.objects.create(payment=self, user=user, valid_to=deadline)
 
-
     def description(self):
         if ContentType.objects.get_for_model(AttendanceEvent) == self.content_type:
             return self.content_object.event.title
@@ -108,7 +107,6 @@ class Payment(models.Model):
                 host=host, unattended_user=payment_relation.user)
             Attendee.objects.get(event=self.content_object, 
                 user=payment_relation.user).delete()
-
 
     def check_refund(self, payment_relation):
         if ContentType.objects.get_for_model(AttendanceEvent) == self.content_type:
@@ -180,3 +178,8 @@ class PaymentDelay(models.Model):
     def __unicode__(self):
         return self.payment.description() + " - " + unicode(self.user)
 
+    class Meta:
+        unique_together = ('payment', 'user')
+
+        verbose_name = _(u'betalingsutsettelse')
+        verbose_name_plural = _(u'betalingsutsettelser')
