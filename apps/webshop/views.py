@@ -3,7 +3,7 @@ from apps.webshop.models import Category, Product
 
 
 class Home(TemplateView):
-    template_name = 'webshop/webshop.html'
+    template_name = 'webshop/base.html'
 
     def get_context_data(self, **kwargs):
         context = super(Home, self).get_context_data(**kwargs)
