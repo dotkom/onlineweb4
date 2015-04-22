@@ -10,7 +10,7 @@ from django.utils.translation import ugettext as _
 from django.conf import settings
 
 from apps.payment.models import Payment, PaymentRelation, PaymentDelay
-from apps.events.models import Event, AttendanceEvent
+from apps.events.models import AttendanceEvent
 from apps.marks.models import Mark, MarkUser
 
 from apps.mommy import Task, schedule
@@ -26,7 +26,7 @@ class PaymentReminder(Task):
 
         #All payments using deadline
         event_payments = Payment.objects.filter(payment_type=2, active=True, 
-            content_type=ContentType.objects.get_for_model(Event))
+            content_type=ContentType.objects.get_for_model(AttendanceEvent))
 
         today = timezone.now()
 
@@ -38,7 +38,7 @@ class PaymentReminder(Task):
             if deadline_diff <= 0:
                 if PaymentReminder.not_paid(payment):
                     PaymentReminder.send_deadline_passed_mail(payment)
-                    if payment.content_object.attendance_event.unattend_deadline > timezone.now():
+                    if payment.content_object.unattend_deadline > timezone.now():
                         PaymentReminder.set_marks(payment)
                         
                     #TODO punish people
@@ -57,7 +57,7 @@ class PaymentReminder(Task):
         message = _(u"Hei, du har ikke betalt for arrangement ") + payment.description()
         message += _(u"\nFristen for å betale er ") + str(payment.deadline.strftime("%-d %B %Y kl: %H:%M"))
         message += _(u"\nFor mer info om arrangement se:")
-        message += "\n" + str(settings.BASE_URL + payment.content_object.get_absolute_url())
+        message += "\n" + str(settings.BASE_URL + payment.content_object.event.get_absolute_url())
         #TODO add info about punishment for failed payments
         message += _(u"\n\nDersom du har spørsmål kan du sende mail til ") + payment.responsible_mail()
         message += _(u"\n\nMvh\nLinjeforeningen Online")
@@ -74,7 +74,7 @@ class PaymentReminder(Task):
         #message += _(u"fristen har utgått, og du får en prikk og 48 timer til å betale")
         #TODO add info about punishment
         message += _(u"\nFor mer info om arrangement se:")
-        message += "\n" + str(settings.BASE_URL + payment.content_object.get_absolute_url())
+        message += "\n" + str(settings.BASE_URL + payment.content_object.event.get_absolute_url())
         message += _(u"\nDersom du har spørsmål kan du sende mail til ") + payment.responsible_mail()
         message += _(u"\n\nMvh\nLinjeforeningen Online")
 
@@ -88,7 +88,7 @@ class PaymentReminder(Task):
         message = _(u"Hei, du har ikke betalt for arrangement ") + payment.description()
         message += _(u"fristen har utgått, og du har mistet plassen din på arrangement")
         message += _(u"\nFor mer info om arrangement se:")
-        message += "\n" + str(settings.BASE_URL + payment.content_object.get_absolute_url())
+        message += "\n" + str(settings.BASE_URL + payment.content_object.event.get_absolute_url())
         message += _(u"Dersom du har spørsmål kan du sende mail til ") + payment.responsible_mail()
         message += _(u"\n\nMvh\nLinjeforeningen Online")
 
@@ -104,8 +104,7 @@ class PaymentReminder(Task):
 
     @staticmethod
     def not_paid(payment):
-        event = payment.content_object
-        attendees = [attendee.user for attendee in event.attendance_event.attendees_qs]
+        attendees = [attendee.user for attendee in payment.content_object.attendees_qs]
         paid_users = payment.paid_users()
 
         #Creates a list of users in attendees but not in the list of paid users

@@ -16,7 +16,7 @@ var setupAjaxCSRF = function(){
     /* END AJAX SETUP */
 }
 
-var setupButton = function(data, payment_id){
+var setupButton = function(data, price_id){
 
     var handler = StripeCheckout.configure({
         key: data['stripe_public_key'],
@@ -27,7 +27,8 @@ var setupButton = function(data, payment_id){
                 url:"/payment/",
                 data: {
                     'stripeToken': token.id,
-                    'paymentId': payment_id
+                    'paymentId': data['payment_id'],
+                    'priceId': price_id
                 },
                 //Reloads the page on error or success to show the message and update the site content.
                 success: function(){
@@ -40,14 +41,14 @@ var setupButton = function(data, payment_id){
         }
     });
 
-    var buttonId = "#stripeButton" + payment_id
+    var buttonId = "#stripeButton" + price_id
 
     $(buttonId).on('click', function(e) {
         // Open Checkout with further options
         handler.open({
             name: 'Online',
             description: data['description'],
-            amount: data[payment_id]['stripe_price'],
+            amount: data[price_id]['stripe_price'],
             email: data['email'],
             allowRememberMe: false,
             currency: "nok",
@@ -65,8 +66,8 @@ var setupButton = function(data, payment_id){
 
 var setupPayment = function(){
     $.get( "/payment/payment_info/", function( data ) {
-        for(var i = 0; i < data['payment_ids'].length; i++){
-            setupButton(data, data['payment_ids'][i])
+        for(var i = 0; i < data['price_ids'].length; i++){
+            setupButton(data, data['price_ids'][i])
         }
     });
 }

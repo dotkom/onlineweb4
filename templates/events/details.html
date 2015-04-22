@@ -138,10 +138,21 @@
                                 <p class="status-text">Du er meldt på dette arrangementet.</p>
                             {% endif %}
                             {% if user_paid %}
-                                <label class="label label-success payment-label">Du har betalt</label>
-                                <p class="help-text">For å melde deg av må du sende mail til {{ payments.0.responsible_mail }}</p>
-                            {% elif payments and not place_on_wait_list and not user_paid %}
-                                {% display_payments payments %}
+                                {% if attendance_event.unattend_deadline > now %}
+                                    {% if event.event_start > now %}
+                                        {% if payment_relation_id %}
+                                            <div class="action">
+                                                <a href="#refund" role="button" class="btn btn-large btn-danger" data-toggle="modal">Refunder og meld meg av</a>
+                                            </div>
+                                        {% else %} <!-- User has paid flag set but no payment_relation object -->
+                                            <p>Du har betalt og må kontakte ansvarlig komitee for og melde deg av</p>
+                                        {% endif %}
+                                    {% endif %}
+                                {% else %}
+                                    <label class="label label-success payment-label">Du har betalt</label>
+                                {% endif %}
+                            {% elif payment and not place_on_wait_list and not user_paid %}
+                                {% display_payments payment payment_delay %}
                                 <!-- TODO display payment deadline -->
                                 <script src="{{ STATIC_URL }}js/libs/jquery-2.1.3.min.js"></script>
                                 <script src="https://checkout.stripe.com/checkout.js"></script>
@@ -161,9 +172,9 @@
                                     <div class="action">
                                         <a href="#waitlist" role="button" class="btn btn-large btn-warning" data-toggle="modal">Sett meg på venteliste</a>
                                     </div>
-                                {% elif payments and payments|contains_instant_payment %}
+                                {% elif payment and payment.payment_type == 1 %} <!-- Instant payment -->
                                     <p class="status-text">Påmelding til arangementet krever betaling.</p>
-                                    {% display_payments payments %}
+                                    {% display_payments payment payment_delay %}
                                     <script src="{{ STATIC_URL }}js/libs/jquery-2.1.3.min.js"></script>
                                     <script src="https://checkout.stripe.com/checkout.js"></script>
                                     <script src="{{ STATIC_URL }}js/payment.js"></script>
@@ -328,6 +339,30 @@
             </div>
         </div>
     </div>
+
+    {% if payment_relation_id %}
+    <div id="refund" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h3>Refunder og meld deg av {{ event.title }} </h3>
+                </div>
+                <form action="{% url 'payment_refund' payment_relation_id %}" method="POST">
+                    <div class="modal-body">
+                        {% csrf_token %}
+                        <p>Er du sikker på at du vil refundere og melde deg av?</p>
+                        <p><b>Merk:</b> Det kan ta opptil 10 dager før pengene kommer tilbake på din konto.</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn" data-dismiss="modal" aria-hidden="true">Lukk</button>
+                        <button type="submit" class="btn btn-danger">Refunder</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% endif %}
     </div>
     </div>
     </section>

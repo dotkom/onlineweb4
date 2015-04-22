@@ -6,6 +6,7 @@ from django.contrib.contenttypes import generic
 from apps.payment.models import Payment
 from apps.payment.models import PaymentRelation
 from apps.payment.models import PaymentDelay
+from apps.payment.models import PaymentPrice
 
 
 class PaymentInline(generic.GenericStackedInline):
@@ -20,18 +21,24 @@ class PaymentInline(generic.GenericStackedInline):
     #    obj.save()
 
 
+class PaymentPriceInline(admin.StackedInline):
+    model = PaymentPrice
+    extra = 0
+    classes = ('grp-collapse grp-open',)  # style
+    inline_classes = ('grp-collapse grp-open',)  # style
+
 class PaymentAdmin(admin.ModelAdmin):
+    inlines = (PaymentPriceInline, )
     model = Payment
 
 #TODO remove paymentRelation in prod
 
 class PaymentRelationAdmin(admin.ModelAdmin):
     model = PaymentRelation
+    #exclude = ('stripe_id',)
 
 class PaymentDelayAdmin(admin.ModelAdmin):
     model = PaymentDelay
-    
-
 
 admin.site.register(Payment, PaymentAdmin)
 admin.site.register(PaymentRelation, PaymentRelationAdmin)

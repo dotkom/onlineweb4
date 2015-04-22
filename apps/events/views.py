@@ -1,6 +1,6 @@
 #-*- coding: utf-8 -*-
 
-import datetime
+from datetime import datetime, timedelta
 from collections import OrderedDict
 
 from django.utils import timezone
@@ -25,7 +25,7 @@ from apps.events.forms import CaptchaForm
 from apps.events.models import Event, AttendanceEvent, Attendee
 from apps.events.pdf_generator import EventPDF
 from apps.events.utils import get_group_restricted_events
-from apps.payment.models import Payment, PaymentRelation
+from apps.payment.models import Payment, PaymentRelation, PaymentDelay
 
 def index(request):
     context = {}
@@ -45,6 +45,8 @@ def details(request, event_id, event_slug):
     rules = []
     user_status = False
     user_paid = False
+    payment_delay = False
+    payment_relation_id = False
 
     user_access_to_event = False
     if request.user:
@@ -74,19 +76,30 @@ def details(request, event_id, event_slug):
             # Check if this user is on the waitlist
             place_on_wait_list = attendance_event.what_place_is_user_on_wait_list(request.user)
 
-        payments = Payment.objects.filter(content_type=ContentType.objects.get_for_model(Event), object_id=event_id)
+        try:
+            payment = Payment.objects.get(content_type=ContentType.objects.get_for_model(AttendanceEvent), 
+                object_id=event_id)
+        except Payment.DoesNotExist:
+            payment = None
 
-        if payments:
-            request.session['payment_ids'] = [payment.id for payment in payments]
+        if payment:
+            request.session['payment_id'] = payment.id
 
             if not user_anonymous:
-                payment_relation = PaymentRelation.objects.filter(payment__in=payments, user=request.user)
-                if payment_relation:
-                    user_paid = True
-                elif user_attending:
-                    attendee = Attendee.objects.filter(event=attendance_event, user=request.user)
+                payment_relations = PaymentRelation.objects.filter(payment=payment, user=request.user)
+                for payment_relation in payment_relations:
+                    if not payment_relation.refunded:
+                        user_paid = True
+                        payment_relation_id = payment_relation.id
+                if user_attending:
+                    attendee = Attendee.objects.get(event=attendance_event, user=request.user)
                     if attendee:
-                        user_paid = attendee[0].paid
+                        user_paid = attendee.paid
+
+                if not user_paid:
+                    payment_delays = PaymentDelay.objects.filter(user=request.user, payment=payment)
+                    if payment_delays:
+                        payment_delay = payment_delays[0]
 
         context.update({
                 'now': timezone.now(),
@@ -100,8 +113,10 @@ def details(request, event_id, event_slug):
                 #'position_in_wait_list': position_in_wait_list,
                 'captcha_form': form,
                 'user_access_to_event': user_access_to_event,
-                'payments': payments,
+                'payment': payment,
                 'user_paid': user_paid,
+                'payment_delay': payment_delay,
+                'payment_relation_id': payment_relation_id,
         })
 
     return render(request, 'events/details.html', context)
@@ -143,6 +158,20 @@ def attendEvent(request, event_id):
             ae.note = form.cleaned_data['note']
         ae.save()
         messages.success(request, _(u"Du er nå påmeldt på arrangementet!"))
+
+        try:
+            payment = Payment.objects.get(content_type=ContentType.objects.get_for_model(AttendanceEvent), 
+                object_id=event_id)
+        except Payment.DoesNotExist:
+            payment = None
+
+        #If payment_type is delay, Create delay object
+        if payment:
+            if payment.payment_type == 3:
+                deadline = timezone.now() + timedelta(days=payment.delay)
+                payment.create_payment_delay(user=request.user, valid_to=deadline)
+                #TODO send mail
+
         return redirect(event)
     else:
         messages.error(request, response['message'])
@@ -175,6 +204,18 @@ def unattendEvent(request, event_id):
 
     event.attendance_event.notify_waiting_list(host=request.META['HTTP_HOST'], unattended_user=request.user)
     Attendee.objects.get(event=attendance_event, user=request.user).delete()
+
+    try:
+        payment = Payment.objects.get(content_type=ContentType.objects.get_for_model(AttendanceEvent), 
+            object_id=event_id)
+    except Payment.DoesNotExist:
+        payment = None
+
+    #Delete payment delays connected to the user and event
+    if payment:
+        delays = PaymentDelay.objects.filter(payment=payment, user=request.user)
+        for delay in delays:
+            delay.delete()
 
     messages.success(request, _(u"Du ble meldt av arrangementet."))
     return redirect(event)
