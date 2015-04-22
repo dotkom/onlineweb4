@@ -13,6 +13,7 @@ static/*
 collected_static
 sqlite/
 local.py
+feedme.py
 *.coverage
 .sass-cache/
 .bundle
