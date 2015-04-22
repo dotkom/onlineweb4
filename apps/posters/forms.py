@@ -6,6 +6,7 @@ from apps.posters.models import Poster
 
 
 class AddPosterForm(forms.ModelForm):
+    # @ToDo: Look at using event field as datalist
     display_from = forms.CharField(label=u"Vis plakat fra", widget=forms.TextInput(attrs={'type': 'date'}))
     display_to = forms.CharField(label=u"Vis plakat til", widget=forms.TextInput(attrs={'type': 'date'}))
     class Meta:
