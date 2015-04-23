@@ -18,7 +18,7 @@ class OrderMixin(models.Model):
     ordered_committee = models.ForeignKey(Group, related_name=_(u'bestilt av komite'))
     assigned_to = models.ForeignKey(User, related_name=_(u'tilordnet til'), blank=True, null=True)
     comments = models.TextField(_(u"kommentar"), max_length=500, blank=True, null=True)
-    amount = models.IntegerField(_(u'antall'), blank=True, null=True)
+    amount = models.IntegerField(_(u'antall opplag'), blank=True, null=True)
     finished = models.BooleanField(_(u"ferdig"), default=False)
 
 
