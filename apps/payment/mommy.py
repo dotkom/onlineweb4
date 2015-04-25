@@ -147,8 +147,8 @@ class PaymentDelayHandler(Task):
     @staticmethod
     def run():
         logging.basicConfig()
-        # logger = logging.getLogger("feedback")
-        # logger.info("Event payment job started")
+        logger = logging.getLogger("feedback")
+        logger.info("Paymet delay handler started")
         locale.setlocale(locale.LC_ALL, "nb_NO.UTF-8")
 
         payment_delays = PaymentDelay.objects.filter(active=True)
@@ -157,8 +157,10 @@ class PaymentDelayHandler(Task):
             unattend_deadline_passed = payment_delay.payment.content_object.unattend_deadline > payment_delay.valid_to
             if payment_delay.valid_to < timezone.now():
                 PaymentDelayHandler.handle_deadline_passed(payment_delay, unattend_deadline_passed)
+                logger.info("Deadline passed: " + unicode(payment_delay))
             elif (payment_delay.valid_to.date() - timezone.now().date()).days <= 2:
-                PaymentDelayHandler.send_notify_mail(payment_delay, unattend_deadline_passed)
+                PaymentDelayHandler.send_notification_mail(payment_delay, unattend_deadline_passed)
+                logger.info("Notification sent to: " + unicode(payment_delay.user))
 
 
         #TODO handle committee notifying
@@ -171,7 +173,7 @@ class PaymentDelayHandler(Task):
             #TODO block people
         else:
             PaymentDelayHandler.set_mark(payment_delay)
-            PaymentDelayHandler.unattend(payment_delay.user)
+            PaymentDelayHandler.unattend(payment_delay)
 
         payment_delay.active = False
         payment_delay.save()
@@ -183,13 +185,14 @@ class PaymentDelayHandler(Task):
         subject = _(u"Betalingsfrist utgått: ") + payment.description()
 
         message = _(u"Hei, du har ikke betalt for arrangement ") + payment.description()
+        message += _(u" og fristen har gått ut.")
 
         if unattend_deadline_passed:
-            message += _(u"\nDu vil bli meldt av arrangement og du får en prikk.")
+            message += _(u"\n\nDu har fått en prikk og vil ikke kunne melde deg på nye arrangemang før du har betalt.")
         else:
-            message += _(u"\nDu vil få en prikk og ikke kunne melde deg på andre arrangement før du har betalt.")
+            message += _(u"\n\nDu har fått en prikk og blitt meldt av arrangementet.")
 
-        message += _(u"\nDersom du har spørsmål kan du sende mail til ") + payment.responsible_mail()
+        message += _(u"\n\nDersom du har spørsmål kan du sende mail til ") + payment.responsible_mail()
         message += _(u"\n\nMvh\nLinjeforeningen Online")
 
         receivers = [payment_delay.user.email]
@@ -197,22 +200,24 @@ class PaymentDelayHandler(Task):
         EmailMessage(subject, unicode(message), payment.responsible_mail(), [], receivers).send()
 
     @staticmethod
-    def send_notify_mail(payment_delay, unattend_deadline_passed):
+    def send_notification_mail(payment_delay, unattend_deadline_passed):
         payment = payment_delay.payment
         subject = _(u"Husk betaling for ") + payment.description()
 
-        message = _(u"Hei, du har ikke betalt for ") + payment.description()
+        message = _(u"Hei, du er påmeldt men har ikke betalt for ") + payment.description()
         message += _(u"\nDu har frem til ") + unicode(payment_delay.valid_to.strftime("%-d %B %Y kl: %H:%M"))
 
 
         #If event unattend deadline has not passed when payment deadline passes, then the user will be automatically unattended, and given a mark.
         #Else, the unattend deadlline has passed, and the user will not be unattended, but given a mark, and can't attend any other events untill payment is recived.
         if unattend_deadline_passed:
-            message += _(u"\n\nHvis du ikke betaler innen fristen vil du bli meldt av arrangement og du får en prikk.")
+            message += _(u"\n\nHvis du ikke betaler innen fristen vil du få en prikk og bli meldt av arrangement.")
         else:
             message += _(u"\n\nHvis du ikke betaler innen fristen vil du få en prikk og du vil ")
-            message += _(u"\nikke kunne melde deg på andre arrangement før du har betalt.")
+            message += _(u"\nikke ha mulighet til og melde deg på andre arrangemang før du har betalt.")
 
+        message += "\n\nInfo:"
+        message += "\n" + str(settings.BASE_URL + payment_delay.payment.content_object.event.get_absolute_url())
         message += _(u"\n\nDersom du har spørsmål kan du sende mail til ") + payment.responsible_mail()
         message += _(u"\n\nMvh \nLinjeforeningen Online")
 
@@ -221,22 +226,23 @@ class PaymentDelayHandler(Task):
         EmailMessage(subject, unicode(message), payment.responsible_mail(), [], receivers).send()
 
     @staticmethod
-    def set_mark(payment_relation):
+    def set_mark(payment_delay):
         mark = Mark()
-        mark.title = _(u"Manglende betaling på %s") %(payment_relation.payment.description())
+        mark.title = _(u"Manglende betaling på %s") %(payment_delay.payment.description())
         mark.category = 6 #Manglende betaling
         mark.description = _(u"Du har fått en prikk fordi du ikke har betalt for arrangement.")
         mark.save()
 
         user_entry = MarkUser()
-        user_entry.user = payment_relation.user
+        user_entry.user = payment_delay.user
         user_entry.mark = mark
         user_entry.save()
 
     @staticmethod
-    def unattend(user):
-        payment.content_object.notify_waiting_list(host=settings.BASE_URL, unattended_user=user)
-        Attendee.objects.get(event=payment.content_object, user=user).delete()
+    def unattend(payment_delay):
+        payment_delay.payment.content_object.notify_waiting_list(host=settings.BASE_URL, 
+            unattended_user=payment_delay.user)
+        Attendee.objects.get(event=payment_delay.payment.content_object, user=payment_delay.user).delete()
 
-schedule.register(PaymentReminder, day_of_week='mon-sun', hour=22, minute=41)
-schedule.register(PaymentDelayHandler, day_of_week='mon-sun', hour=23, minute=21)
+#schedule.register(PaymentReminder, day_of_week='mon-sun', hour=22, minute=41)
+schedule.register(PaymentDelayHandler, day_of_week='mon-sun', hour=16, minute=32)

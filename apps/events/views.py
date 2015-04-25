@@ -86,11 +86,10 @@ def details(request, event_id, event_slug):
             request.session['payment_id'] = payment.id
 
             if not user_anonymous:
-                payment_relations = PaymentRelation.objects.filter(payment=payment, user=request.user)
+                payment_relations = PaymentRelation.objects.filter(payment=payment, user=request.user, refunded=False)
                 for payment_relation in payment_relations:
-                    if not payment_relation.refunded:
-                        user_paid = True
-                        payment_relation_id = payment_relation.id
+                    user_paid = True
+                    payment_relation_id = payment_relation.id
                 if user_attending:
                     attendee = Attendee.objects.get(event=attendance_event, user=request.user)
                     if attendee:

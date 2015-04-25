@@ -39,6 +39,7 @@ class PaymentRelationAdmin(admin.ModelAdmin):
 
 class PaymentDelayAdmin(admin.ModelAdmin):
     model = PaymentDelay
+    #fields = ('valid_to', )
 
 admin.site.register(Payment, PaymentAdmin)
 admin.site.register(PaymentRelation, PaymentRelationAdmin)
