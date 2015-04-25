@@ -217,7 +217,7 @@ class PaymentDelayHandler(Task):
             message += _(u"\nikke ha mulighet til og melde deg på andre arrangemang før du har betalt.")
 
         message += "\n\nInfo:"
-        message += "\n" + str(settings.BASE_URL + payment_delay.payment.content_object.event.get_absolute_url())
+        message += "\n" + str(settings.BASE_URL + payment.content_object.event.get_absolute_url())
         message += _(u"\n\nDersom du har spørsmål kan du sende mail til ") + payment.responsible_mail()
         message += _(u"\n\nMvh \nLinjeforeningen Online")
 

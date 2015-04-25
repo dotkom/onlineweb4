@@ -39,6 +39,7 @@ class Payment(models.Model):
     active = models.BooleanField(default=True)
     delay = models.SmallIntegerField(_(u'utsettelse'), blank=True, null=True, default=2)
 
+    #For logging and history
     added_date = models.DateTimeField(_(u"opprettet dato"), auto_now=True)
     changed_date = models.DateTimeField(auto_now=True, editable=False)
     last_changed_by = models.ForeignKey(User, editable=False, null=True) #blank and null is temperarly
@@ -64,13 +65,13 @@ class Payment(models.Model):
             PaymentDelay.objects.create(payment=self, user=user, valid_to=deadline)
 
     def description(self):
-        if ContentType.objects.get_for_model(AttendanceEvent) == self.content_type:
+        if self._is_type(AttendanceEvent):
             return self.content_object.event.title
         else:
             return "payment description not implemented"
 
     def responsible_mail(self):
-        if ContentType.objects.get_for_model(AttendanceEvent) == self.content_type:
+        if self._is_type(AttendanceEvent):
             event_type = self.content_object.event.event_type
             if event_type == 1 or event_type == 4: # Sosialt & Utflukt
                 return settings.EMAIL_ARRKOM
@@ -86,7 +87,7 @@ class Payment(models.Model):
             return settings.DEFAULT_FROM_EMAIL
 
     def handle_payment(self, user):
-        if ContentType.objects.get_for_model(AttendanceEvent) == self.content_type:
+        if self._is_type(AttendanceEvent):
             attendee = Attendee.objects.filter(event=self.content_object, user=user)
 
             # Delete payment delay objects for the user if there are any
@@ -104,14 +105,14 @@ class Payment(models.Model):
         payment_relation.refunded = True
         payment_relation.save()
 
-        if ContentType.objects.get_for_model(AttendanceEvent) == self.content_type:
+        if self._is_type(AttendanceEvent):
             self.content_object.notify_waiting_list(
                 host=host, unattended_user=payment_relation.user)
             Attendee.objects.get(event=self.content_object, 
                 user=payment_relation.user).delete()
 
     def check_refund(self, payment_relation):
-        if ContentType.objects.get_for_model(AttendanceEvent) == self.content_type:
+        if self._is_type(AttendanceEvent):
             attendance_event = self.content_object
             if attendance_event.unattend_deadline < timezone.now():
                 return (False, _(u"Fristen for og melde seg av har utgått"))
@@ -125,12 +126,17 @@ class Payment(models.Model):
         return (False, 'Refund checks not implemented')
     
     def prices(self):
-        return self.paymentprice_set.all()       
+        return self.paymentprice_set.all()
+
+    def _is_type(self, model_type):
+        return ContentType.objects.get_for_model(model_type) == self.content_type
 
     def __unicode__(self):
         return self.description()
 
     class Meta:
+        unique_together = ('content_type', 'object_id')
+
         verbose_name = _(u"betaling")
         verbose_name_plural = _(u"betalinger")
 

@@ -90,7 +90,7 @@ def details(request, event_id, event_slug):
                 for payment_relation in payment_relations:
                     user_paid = True
                     payment_relation_id = payment_relation.id
-                if user_attending:
+                if not user_paid and user_attending:
                     attendee = Attendee.objects.get(event=attendance_event, user=request.user)
                     if attendee:
                         user_paid = attendee.paid
@@ -201,9 +201,6 @@ def unattendEvent(request, event_id):
         messages.error(request, _(u"Dette arrangementet har allerede startet."))
         return redirect(event)
 
-    event.attendance_event.notify_waiting_list(host=request.META['HTTP_HOST'], unattended_user=request.user)
-    Attendee.objects.get(event=attendance_event, user=request.user).delete()
-
     try:
         payment = Payment.objects.get(content_type=ContentType.objects.get_for_model(AttendanceEvent), 
             object_id=event_id)
@@ -212,9 +209,21 @@ def unattendEvent(request, event_id):
 
     #Delete payment delays connected to the user and event
     if payment:
+
+        payments = PaymentRelation.objects.filter(payment=payment, user=request.user, refunded=False)
+
+        #Return if someone is trying to unatend without refunding
+        if payments:
+            messages.error(request, _(u'Du har betalt for arrangementet og må refundere før du kan melde deg av'))
+            return redirect(event)
+
         delays = PaymentDelay.objects.filter(payment=payment, user=request.user)
         for delay in delays:
             delay.delete()
+
+
+    event.attendance_event.notify_waiting_list(host=request.META['HTTP_HOST'], unattended_user=request.user)
+    Attendee.objects.get(event=attendance_event, user=request.user).delete()
 
     messages.success(request, _(u"Du ble meldt av arrangementet."))
     return redirect(event)

@@ -58,31 +58,30 @@ def payment(request):
 
 @login_required
 def payment_info(request):
-    if 'payment_id' in request.session:
 
-        data = dict()
+    if request.is_ajax():
+        if 'payment_id' in request.session:
 
-        payment = Payment.objects.get(id=request.session['payment_id'])
+            data = dict()
 
-        if payment:
-            content_type = ContentType.objects.get_for_id(payment.content_type.id)
-            content_object = content_type.get_object_for_this_type(pk=payment.object_id)
+            payment = Payment.objects.get(id=request.session['payment_id'])
 
-            data['stripe_public_key'] = settings.STRIPE_PUBLIC_KEYS[payment.stripe_key_index]
-            data['email'] = request.user.email
-            data['description'] = payment.description()
-            data['payment_id'] = request.session['payment_id']
-            data['price_ids'] = [price.id for price in payment.prices()]
+            if payment:
+                data['stripe_public_key'] = settings.STRIPE_PUBLIC_KEYS[payment.stripe_key_index]
+                data['email'] = request.user.email
+                data['description'] = payment.description()
+                data['payment_id'] = request.session['payment_id']
+                data['price_ids'] = [price.id for price in payment.prices()]
 
-            for payment_price in payment.prices():
-                data[payment_price.id] = dict()
-                data[payment_price.id]['price'] = payment_price.price
-                #The price is in øre so it needs to be multiplied with 100
-                data[payment_price.id]['stripe_price'] = payment_price.price * 100
+                for payment_price in payment.prices():
+                    data[payment_price.id] = dict()
+                    data[payment_price.id]['price'] = payment_price.price
+                    #The price is in øre so it needs to be multiplied with 100
+                    data[payment_price.id]['stripe_price'] = payment_price.price * 100
 
-            return HttpResponse(json.dumps(data), content_type="application/json")
+                return HttpResponse(json.dumps(data), content_type="application/json")
 
-    return HttpResponse("Failed to get info", content_type="text/plain", status=500) 
+    raise Http404("Request not supported");
 
 @login_required
 def payment_refund(request, payment_relation_id):
