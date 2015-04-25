@@ -191,7 +191,7 @@ Generalforsamling - Online
                                         {% endif %}
                                         {% for alt, votes in results.data.items %}
                                             {% if not question.only_show_winner %}
-                                                <span style="white-space: nowrap"><strong>{{ alt }}</strong>: {{ votes }} stemme{{ votes|pluralize:"r"}}.</span><br />
+                                                <span><strong>{{ alt }}</strong>: {{ votes }} stemme{{ votes|pluralize:"r"}}.</span><br />
                                             {% endif %}
                                         {% endfor %}
                                         {% endwith %}
@@ -232,7 +232,7 @@ Generalforsamling - Online
                                         {% endif %}
                                     {% else %}<!-- If question type is multiple choice -->
                                         {% if vote.answer %}
-                                            <span class="label label-primary pull-right">{{ vote.answer.description }}</span>
+                                            <span title="{{ vote.answer }}" class="label label-primary pull-right">{{ vote.answer.description|truncatechars:20 }}{% if vote.answer|length > 20 %}…{% endif %}</span>
                                         {% else %}
                                             <span class="label label-warning pull-right">Blankt</span>
                                         {% endif %}

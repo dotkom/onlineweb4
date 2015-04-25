@@ -351,7 +351,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 )
 
 # Remember to keep 'local' last, so it can override any setting.
-for settings_module in ['filebrowser', 'django_wiki', 'feedme', 'local']:  # local last
+for settings_module in ['filebrowser', 'django_wiki', 'local']:  # local last
     if not os.path.exists(os.path.join(PROJECT_SETTINGS_DIRECTORY,
             settings_module + ".py")):
         sys.stderr.write("Could not find settings module '%s'.\n" %
