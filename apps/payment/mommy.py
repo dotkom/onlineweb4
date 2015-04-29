@@ -245,4 +245,4 @@ class PaymentDelayHandler(Task):
         Attendee.objects.get(event=payment_delay.payment.content_object, user=payment_delay.user).delete()
 
 #schedule.register(PaymentReminder, day_of_week='mon-sun', hour=22, minute=41)
-schedule.register(PaymentDelayHandler, day_of_week='mon-sun', hour=16, minute=32)
+schedule.register(PaymentDelayHandler, day_of_week='mon-sun', hour=07, minute=45)
