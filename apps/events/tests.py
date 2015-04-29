@@ -13,7 +13,7 @@ from apps.authentication.models import OnlineUser as User, AllowedUsername
 from apps.events.models import (Event, AttendanceEvent, Attendee,
                                 RuleBundle, FieldOfStudyRule, GradeRule, UserGroupRule,
                                 Reservation, Reservee)
-from apps.marks.models import Mark, UserEntry
+from apps.marks.models import Mark, MarkUser, DURATION
 from apps.events.mommy import SetEventMarks
 
 class EventTest(TestCase):
@@ -58,9 +58,9 @@ class EventTest(TestCase):
     def testReservedSeats(self):
         self.logger.debug("Testing reserved seats")
         reservation = G(Reservation, attendance_event=self.attendance_event, seats=2)
-        reservee1 = G(Reservee, reservation=reservation, name="jan", note="jan er kul", allergier="allergi1")
+        reservee1 = G(Reservee, reservation=reservation, name="jan", note="jan er kul", allergies="allergi1")
         self.assertEqual(self.attendance_event.number_of_reserved_seats_taken, 1) 
-        reservee2 = G(Reservee, reservation=reservation, name="per", note="per er rå", allergier="allergi2")
+        reservee2 = G(Reservee, reservation=reservation, name="per", note="per er rå", allergies="allergi2")
         self.assertEqual(self.attendance_event.number_of_reserved_seats_taken, 2) 
 
     def testNumberOfTakenSeats(self):
@@ -69,12 +69,12 @@ class EventTest(TestCase):
         self.assertEqual(self.attendance_event.number_of_attendees, 1)
         # Make a reservation, for 2 seats
         reservation = G(Reservation, attendance_event=self.attendance_event, seats=2)
-        reservee1 = G(Reservee, reservation=reservation, name="jan", note="jan er kul", allergier="allergi1")
+        reservee1 = G(Reservee, reservation=reservation, name="jan", note="jan er kul", allergies="allergi1")
         self.assertEqual(self.attendance_event.max_capacity, 5)
         self.assertEqual(self.attendance_event.number_of_attendees, 1)
         self.assertEqual(self.attendance_event.number_of_reserved_seats_taken, 1) 
         self.assertEqual(self.attendance_event.number_of_seats_taken, 3)
-        reservee2 = G(Reservee, reservation=reservation, name="per", note="per er rå", allergier="allergi2")
+        reservee2 = G(Reservee, reservation=reservation, name="per", note="per er rå", allergies="allergi2")
         self.assertEqual(self.attendance_event.number_of_attendees, 1)
         self.assertEqual(self.attendance_event.number_of_reserved_seats_taken, 2) 
         self.assertEqual(self.attendance_event.number_of_seats_taken, 3)
@@ -96,7 +96,7 @@ class EventTest(TestCase):
         self.logger.debug("Testing signup with no rules and no marks.")
        
         # The user should be able to attend now, since the event has no rule bundles.
-        response = self.event.is_eligible_for_signup(self.user)
+        response = self.attendance_event.is_eligible_for_signup(self.user)
         self.assertTrue(response['status'])
         self.assertEqual(200, response['status_code'])
         
@@ -106,7 +106,7 @@ class EventTest(TestCase):
         self.allowed_username.delete()
         # The user should not be able to attend, since the event has no rule bundles 
         # and they are not a member.
-        response = self.event.is_eligible_for_signup(self.user)
+        response = self.attendance_event.is_eligible_for_signup(self.user)
         self.assertFalse(response['status'])
         self.assertEqual(400, response['status_code'])
         
@@ -115,8 +115,8 @@ class EventTest(TestCase):
 
         # Giving the user a mark to see if the status goes to False.
         mark1 = G(Mark, title='Testprikk12345')
-        userentry = G(UserEntry, user=self.user, mark=mark1)
-        response = self.event.is_eligible_for_signup(self.user)
+        userentry = G(MarkUser, user=self.user, mark=mark1, expiration_date=self.now+datetime.timedelta(days=DURATION))
+        response = self.attendance_event.is_eligible_for_signup(self.user)
         self.assertFalse(response['status'])
         self.assertEqual(401, response['status_code'])
 
@@ -134,13 +134,13 @@ class EventTest(TestCase):
         self.attendance_event.rule_bundles.add(self.rulebundle)
         
         # Status should be negative, and indicate that the restriction is a grade rule
-        response = self.event.is_eligible_for_signup(self.user)
+        response = self.attendance_event.is_eligible_for_signup(self.user)
         self.assertFalse(response['status'])
         self.assertEqual(410, response['status_code'])
 
         # Make the user a bachelor and try again. Should get message about offset.
         self.user.field_of_study = 1
-        response = self.event.is_eligible_for_signup(self.user)
+        response = self.attendance_event.is_eligible_for_signup(self.user)
         self.assertFalse(response['status'])
         self.assertEqual(420, response['status_code'])
 
@@ -148,7 +148,7 @@ class EventTest(TestCase):
         self.fosrule2 = G(FieldOfStudyRule, field_of_study=1, offset=0)
         self.rulebundle.field_of_study_rules.add(self.fosrule2)
 
-        response = self.event.is_eligible_for_signup(self.user)
+        response = self.attendance_event.is_eligible_for_signup(self.user)
         self.assertTrue(response['status'])
         self.assertEqual(210, response['status_code'])
 
@@ -166,14 +166,14 @@ class EventTest(TestCase):
         self.attendance_event.rule_bundles.add(self.rulebundle)
         
         # Status should be negative, and indicate that the restriction is a grade rule
-        response = self.event.is_eligible_for_signup(self.user)
+        response = self.attendance_event.is_eligible_for_signup(self.user)
         self.assertFalse(response['status'])
         self.assertEqual(411, response['status_code'])
 
         # Make the user a grade 1 and try again. Should get message about offset.
         self.user.field_of_study = 1
         self.user.started_date = self.now.date()
-        response = self.event.is_eligible_for_signup(self.user)
+        response = self.attendance_event.is_eligible_for_signup(self.user)
         self.assertFalse(response['status'])
         self.assertEqual(421, response['status_code'])
 
@@ -181,7 +181,7 @@ class EventTest(TestCase):
         self.graderule2 = G(GradeRule, grade=1, offset=0)
         self.rulebundle.grade_rules.add(self.graderule2)
 
-        response = self.event.is_eligible_for_signup(self.user)
+        response = self.attendance_event.is_eligible_for_signup(self.user)
         self.assertTrue(response['status'])
         self.assertEqual(211, response['status_code'])
 
@@ -200,13 +200,13 @@ class EventTest(TestCase):
         self.attendance_event.rule_bundles.add(self.rulebundle)
         
         # Status should be negative, and indicate that the restriction is a grade rule
-        response = self.event.is_eligible_for_signup(self.user)
+        response = self.attendance_event.is_eligible_for_signup(self.user)
         self.assertFalse(response['status'])
         self.assertEqual(412, response['status_code'])
 
         # Make the user a grade 1 and try again. Should get message about offset
         self.user.groups.add(self.group)
-        response = self.event.is_eligible_for_signup(self.user)
+        response = self.attendance_event.is_eligible_for_signup(self.user)
         self.assertFalse(response['status'])
         self.assertEqual(422, response['status_code'])
 
@@ -214,7 +214,7 @@ class EventTest(TestCase):
         self.grouprule2 = G(UserGroupRule, group=self.group, offset=0)
         self.rulebundle.user_group_rules.add(self.grouprule2)
 
-        response = self.event.is_eligible_for_signup(self.user)
+        response = self.attendance_event.is_eligible_for_signup(self.user)
         self.assertTrue(response['status'])
         self.assertEqual(212, response['status_code'])
 
@@ -237,7 +237,7 @@ class EventTest(TestCase):
         self.attendance_event.rule_bundles.add(self.rulebundle)
         # Move registration start into the future
         self.attendance_event.registration_start = self.now + datetime.timedelta(hours=1)
-        response = self.event.is_eligible_for_signup(self.user)
+        response = self.attendance_event.is_eligible_for_signup(self.user)
         self.assertFalse(response['status'])
         self.assertEqual(402, response['status_code'])
 
@@ -305,7 +305,7 @@ class EventTest(TestCase):
         SetEventMarks.setMarks(self.attendance_event)
 
         self.assertTrue(self.attendance_event.marks_has_been_set)
-        self.assertEqual(self.user, UserEntry.objects.get().user)
+        self.assertEqual(self.user, MarkUser.objects.get().user)
         
     def testMommyEveryoneAttendend(self):
         self.attendee.attended = True
@@ -319,7 +319,7 @@ class EventTest(TestCase):
         SetEventMarks.setMarks(self.attendance_event)
 
         self.assertTrue(self.attendance_event.marks_has_been_set)
-        self.assertFalse(UserEntry.objects.all())
+        self.assertFalse(MarkUser.objects.all())
         
     def testMommyGenerateEmptyMessage(self):
         self.attendee.attended = True

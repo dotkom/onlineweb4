@@ -65,12 +65,12 @@
 <hr />
 <div class="row">
     <div class="col-md-12">
-        <p>
-            Du har aktive søknader. 
-        </p>
-        <p>
-            Dersom du oppdager feil eller mangler i en aktiv søknad kan du slette den og sende inn en ny.
-        </p>
+        {%  if has_active_approvals %}
+            <p>Du har aktive søknader.</p>
+            <p>Dersom du oppdager feil eller mangler i en aktiv søknad kan du slette den og sende inn en ny.</p>
+        {% else %}
+            <p>Du har ingen aktive søknader.</p>
+        {% endif %}
     </div>
 </div>
 <div class="row row-space-sm">

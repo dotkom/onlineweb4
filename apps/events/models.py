@@ -14,7 +14,7 @@ from django.utils.translation import ugettext as _
 
 from apps.authentication.models import OnlineUser as User, FIELD_OF_STUDY_CHOICES
 from apps.companyprofile.models import Company
-from apps.marks.models import Mark
+from apps.marks.models import Mark, get_expiration_date
 
 import reversion
 import watson
@@ -51,15 +51,17 @@ class Event(models.Model):
         extensions=IMAGE_EXTENSIONS, null=True, blank=True)
     event_type = models.SmallIntegerField(_(u'type'), choices=TYPE_CHOICES, null=False)
 
-    def feedback_users(self):
-        users = []
+    def is_attendance_event(self):
+        """ Returns true if the event is an attendance event """
         try:
-            if self.attendance_event.attendees.all():
-                for attendee in self.attendance_event.attendees.filter(attended=True):
-                    users.append(attendee.user)
-            return users
+            return True if self.attendance_event else False
         except AttendanceEvent.DoesNotExist:
-            return users
+            return False
+
+    def feedback_users(self):
+        if self.is_attendance_event:
+            return [a.user for a in self.attendance_event.attendees.filter(attended=True)]
+        return []
 
     def feedback_date(self):
         return self.event_end
@@ -76,143 +78,36 @@ class Event(models.Model):
 
         return info
 
+    def payment_description(self):
+        return self.title
+
+    def payment_complete(self, user):
+        attendee = Attendee.objects.filter(event=self.attendance_event, user=user)
+
+        if attendee:
+            attendee[0].paid = True
+            attendee[0].save()
+        else:
+            Attendee.objects.create(event=self.attendance_event, user=user, paid=True)
+
+    def payment_mail(self):
+        if self.event_type == 1 or self.event_type == 4: # Sosialt & Utflukt
+            return settings.EMAIL_ARRKOM
+        elif self.event_type == 2: #Bedpres
+            return settings.EMAIL_BEDKOM
+        elif self.event_type == 3: #Kurs
+            return settings.EMAIL_FAGKOM
+        elif self.event_type == 5: # Ekskursjon
+            return settings.EMAIL_EKSKOM
+        else:
+            return settings.DEFAULT_FROM_EMAIL
+
     def is_attendance_event(self):
         """ Returns true if the event is an attendance event """
         try:
             return True if self.attendance_event else False
         except AttendanceEvent.DoesNotExist:
             return False
-
-    def is_eligible_for_signup(self, user):
-        """
-        Checks if a user can attend a specific event
-        This method checks for:
-            AttendanceEvent
-            Waitlist
-            Room on event
-            Rules
-            Marks
-        @param User object
-        The returned dict contains a key called 'status_code'. These codes follow the HTTP
-        standard in terms of overlying scheme.
-        2XX = successful
-        4XX = client error (user related)
-        5XX = server error (event related)
-        These codes are meant as a debugging tool only. The eligibility checking is quite
-        extensive, and tracking where it's going wrong is much needed.
-        TODO:
-            Exception handling
-            Message handling (Return what went wrong. Tuple? (False, message))
-        """
-
-        response = {'status' : False, 'message' : '', 'status_code': None}
-
-        # Check first if this is an attendance event
-        if not self.is_attendance_event():
-            response['message'] = _(u"Dette er ikke et påmeldingsarrangement.")
-            response['status_code'] = 500
-            return response
-
-        # Registration closed
-        if timezone.now() > self.attendance_event.registration_end:
-            response['message'] = _(u'Påmeldingen er ikke lenger åpen.')
-            response['status_code'] = 502 
-            return response
-
-        #Room for me on the event?
-        if not self.attendance_event.room_on_event:
-            response['message'] = _(u"Det er ikke mer plass på dette arrangementet.")
-            response['status_code'] = 503 
-            return response
-
-        #
-        # Offset calculations.
-        #
-
-        # Are there any rules preventing me from attending?
-        # This should be checked last of the offsets, because it can completely deny you access.
-        response = self.attendance_event.rules_satisfied(user)
-        if not response['status']:
-            if 'offset' not in response:
-                return response
-        
-        # Do I have any marks that postpone my registration date?
-        active_marks = Mark.active.filter(given_to = user)
-        num_active_marks = active_marks.count()
-
-        if num_active_marks > 0:
-            # Offset is currently 1 day per mark. 
-            mark_offset = timedelta(days=num_active_marks)
-            postponed_registration_start = self.attendance_event.registration_start + mark_offset
-
-            before_expiry = self.attendance_event.registration_start.date() < active_marks.aggregate(models.Max('expiration_date'))['expiration_date__max']
-
-            if postponed_registration_start > timezone.now() and before_expiry:
-                if 'offset' in response and response['offset'] < postponed_registration_start or 'offset' not in response:    
-                    response['status'] = False
-                    response['status_code'] = 401
-                    response['message'] = _(u"Din påmelding er utsatt grunnet prikker.")
-                    response['offset'] = postponed_registration_start
-            
-        # Return response if offset was set.
-        if 'offset' in response and response['offset'] > timezone.now():
-            return response 
-
-        #
-        # Offset calculations end
-        #
-
-        #Registration not open  
-        if timezone.now() < self.attendance_event.registration_start:
-            response['status'] = False
-            response['message'] = _(u'Påmeldingen har ikke åpnet enda.')
-            response['status_code'] = 501 
-            return response
-
-        # No objections, set eligible.
-        response['status'] = True
-        return response
-
-    @property
-    def attendees_not_paid(self):
-        return self.attendance_event.attendees.filter(paid=False)
-    
-    def what_place_is_user_on_wait_list(self, user):
-        if self.attendance_event:
-            if self.attendance_event.waitlist:
-                waitlist = self.attendance_event.waitlist_qs
-                if waitlist:
-                    for attendee_object in waitlist:
-                        if attendee_object.user == user:
-                            return list(waitlist).index(attendee_object) + 1
-        return 0
-
-    def notify_waiting_list(self, host, unattended_user=None, extra_capacity=1):
-        if not self.is_attendance_event():
-            return
-        # Notify next user on waiting list
-        wait_list = self.attendance_event.waitlist_qs
-        if wait_list:
-            # Checking if user is on the wait list
-            on_wait_list = False
-            if unattended_user:
-                for waiting_user in wait_list:
-                    if waiting_user.user == unattended_user:
-                        on_wait_list = True
-                        break
-            if not on_wait_list:
-                # Send mail to first user on waiting list
-                attendees = wait_list[:extra_capacity]
-                email_message = _(u"""
-Du har stått på venteliste for arrangementet "%s" og har nå fått plass.
-Det kreves ingen ekstra handling fra deg med mindre du vil melde deg av.
-
-For mer info:
-http://%s%s
-""") % (self.title, host, self.get_absolute_url())
-                for attendee in attendees:
-                    send_mail(_(u'Du har fått plass på et arrangement'), email_message,
-                              settings.DEFAULT_FROM_EMAIL, [attendee.user.email])
 
     def feedback_mail(self):
         if self.event_type == 1 or self.event_type == 4: # Sosialt & Utflukt
@@ -240,6 +135,9 @@ http://%s%s
     class Meta:
         verbose_name = _('arrangement')
         verbose_name_plural = _('arrangement')
+        permissions = (
+            ('view_event', 'View Event'),
+        )
 
 
 reversion.register(Event)
@@ -267,6 +165,11 @@ class Rule(models.Model):
 
     def __unicode__(self):
         return 'Rule'
+
+    class Meta:
+        permissions = (
+            ('view_rule', 'View Rule'),
+        )
 
 
 reversion.register(Rule)
@@ -298,6 +201,11 @@ class FieldOfStudyRule(Rule):
             return _("%s etter %d %s") % (unicode(self.get_field_of_study_display()), self.offset, time_unit)
         return unicode(self.get_field_of_study_display())
 
+    class Meta:
+        permissions = (
+            ('view_fieldofstudyrule', 'View FieldOfStudyRule'),
+        )
+
 
 reversion.register(FieldOfStudyRule)
 
@@ -328,6 +236,11 @@ class GradeRule(Rule):
             return _(u"%s. klasse etter %d %s") % (self.grade, self.offset, time_unit)
         return _(u"%s. klasse") % self.grade
 
+    class Meta:
+        permissions = (
+            ('view_graderule', 'View GradeRule'),
+        )
+
 
 reversion.register(GradeRule)
 
@@ -356,6 +269,11 @@ class UserGroupRule(Rule):
             return _(u"%s etter %d %s") % (unicode(self.group), self.offset, time_unit)
         return unicode(self.group)
 
+    class Meta:
+        permissions = (
+            ('view_usergrouprule', 'View UserGroupRule'),
+        )
+
 
 reversion.register(UserGroupRule)
 
@@ -377,7 +295,7 @@ class RuleBundle(models.Model):
         return rules
         
     def get_rule_strings(self):
-        return map(lambda r: unicode(r), self.get_all_rules())
+        return [unicode(rule) for rule in self.get_all_rules()]
         
     def satisfied(self, user, registration_start):
 
@@ -399,6 +317,11 @@ class RuleBundle(models.Model):
             return ", ".join(self.get_rule_strings())
         else:  
             return _(u"Tom rule bundle.")
+
+    class Meta:
+        permissions = (
+            ('view_rulebundle', 'View RuleBundle'),
+        )
 
 
 reversion.register(RuleBundle)
@@ -471,6 +394,10 @@ class AttendanceEvent(models.Model):
         return []
 
     @property
+    def attendees_not_paid(self):
+        return [a for a in self.attendees_qs if a.paid == False]
+
+    @property
     def number_of_attendees(self):
         """ Count of all attendees not in waiting list """
         # We need to use len() instead of .count() here, because of the prefetched event archive
@@ -518,7 +445,7 @@ class AttendanceEvent(models.Model):
         """
         Returns True if there are free seats or an open waiting list
         """
-        return True if self.free_seats or self.waitlist else False
+        return True if self.free_seats > 0 or self.waitlist else False
 
     @property
     def will_i_be_on_wait_list(self):
@@ -527,6 +454,111 @@ class AttendanceEvent(models.Model):
     @property
     def waitlist_enabled(self):
         return self.waitlist
+
+    def notify_waiting_list(self, host, unattended_user=None, extra_capacity=1):
+        # Notify next user on waiting list
+        wait_list = self.waitlist_qs
+        if wait_list:
+            # Checking if user is on the wait list
+            on_wait_list = False
+            if unattended_user:
+                for waiting_user in wait_list:
+                    if waiting_user.user == unattended_user:
+                        on_wait_list = True
+                        break
+            if not on_wait_list:
+                # Send mail to first user on waiting list
+                attendees = wait_list[:extra_capacity]
+                email_message = _(u"""
+Du har stått på venteliste for arrangementet "%s" og har nå fått plass.
+Det kreves ingen ekstra handling fra deg med mindre du vil melde deg av.
+
+For mer info:
+http://%s%s
+""") % (self.event.title, host, self.event.get_absolute_url())
+                for attendee in attendees:
+                    send_mail(_(u'Du har fått plass på et arrangement'), email_message,
+                              settings.DEFAULT_FROM_EMAIL, [attendee.user.email])
+
+    def is_eligible_for_signup(self, user):
+        """
+        Checks if a user can attend a specific event
+        This method checks for:
+            Waitlist
+            Room on event
+            Rules
+            Marks
+        @param User object
+        The returned dict contains a key called 'status_code'. These codes follow the HTTP
+        standard in terms of overlying scheme.
+        2XX = successful
+        4XX = client error (user related)
+        5XX = server error (event related)
+        These codes are meant as a debugging tool only. The eligibility checking is quite
+        extensive, and tracking where it's going wrong is much needed.
+        TODO:
+            Exception handling
+        """
+
+        response = {'status' : False, 'message' : '', 'status_code': None}
+
+        # Registration closed
+        if timezone.now() > self.registration_end:
+            response['message'] = _(u'Påmeldingen er ikke lenger åpen.')
+            response['status_code'] = 502 
+            return response
+
+        #Room for me on the event?
+        if not self.room_on_event:
+            response['message'] = _(u"Det er ikke mer plass på dette arrangementet.")
+            response['status_code'] = 503 
+            return response
+
+        #
+        # Offset calculations.
+        #
+
+        # Are there any rules preventing me from attending?
+        # This should be checked last of the offsets, because it can completely deny you access.
+        response = self.rules_satisfied(user)
+        if not response['status']:
+            if 'offset' not in response:
+                return response
+        
+        # Do I have any marks that postpone my registration date?
+        expiry_date = get_expiration_date(user)
+        if expiry_date and expiry_date > timezone.now().date():
+            # Offset is currently 1 day if you have marks, regardless of amount. 
+            mark_offset = timedelta(days=1)
+            postponed_registration_start = self.registration_start + mark_offset
+
+            before_expiry = self.registration_start.date() < expiry_date
+
+            if postponed_registration_start > timezone.now() and before_expiry:
+                if 'offset' in response and response['offset'] < postponed_registration_start or 'offset' not in response:    
+                    response['status'] = False
+                    response['status_code'] = 401
+                    response['message'] = _(u"Din påmelding er utsatt grunnet prikker.")
+                    response['offset'] = postponed_registration_start
+
+        # Return response if offset was set.
+        if 'offset' in response and response['offset'] > timezone.now():
+            return response 
+
+        #
+        # Offset calculations end
+        #
+
+        #Registration not open  
+        if timezone.now() < self.registration_start:
+            response['status'] = False
+            response['message'] = _(u'Påmeldingen har ikke åpnet enda.')
+            response['status_code'] = 501 
+            return response
+
+        # No objections, set eligible.
+        response['status'] = True
+        return response
 
     def rules_satisfied(self, user):
         """
@@ -582,12 +614,24 @@ class AttendanceEvent(models.Model):
     def is_on_waitlist(self, user):
         return reduce(lambda x, y: x or y.user == user, self.waitlist_qs, False)
 
+    def what_place_is_user_on_wait_list(self, user):
+        if self.waitlist:
+            waitlist = self.waitlist_qs
+            if waitlist:
+                for attendee_object in waitlist:
+                    if attendee_object.user == user:
+                        return list(waitlist).index(attendee_object) + 1
+        return 0
+
     def __unicode__(self):
         return self.event.title
 
     class Meta:
         verbose_name = _(u'påmelding')
         verbose_name_plural = _(u'påmeldinger')
+        permissions = (
+            ('view_attendanceevent', 'View AttendanceEvent'),
+        )
 
 
 reversion.register(AttendanceEvent)
@@ -603,6 +647,9 @@ class CompanyEvent(models.Model):
     class Meta:
         verbose_name =_('bedrift')
         verbose_name_plural = _('bedrifter')
+        permissions = (
+            ('view_companyevent', 'View CompanyEvent'),
+        )
 
 
 reversion.register(CompanyEvent)
@@ -626,6 +673,9 @@ class Attendee(models.Model):
     class Meta:
         ordering = ['timestamp']
         unique_together = (('event', 'user'),)
+        permissions = (
+            ('view_attendee', 'View Attendee'),
+        )
 
 
 reversion.register(Attendee)
@@ -645,6 +695,9 @@ class Reservation(models.Model):
     class Meta:
         verbose_name = _("reservasjon")
         verbose_name_plural = _("reservasjoner")
+        permissions = (
+            ('view_reservation', 'View Reservation'),
+        )
 
 
 reversion.register(Reservation)
@@ -668,6 +721,9 @@ class Reservee(models.Model):
         verbose_name = _("reservasjon")
         verbose_name_plural = _("reservasjoner")
         ordering = ['id']
+        permissions = (
+            ('view_reservee', 'View Reservee'),
+        )
 
 
 reversion.register(Reservee)

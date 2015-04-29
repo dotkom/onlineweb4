@@ -54,6 +54,9 @@ EMAIL_TRIKOM = DEVELOPMENT_EMAIL
 #EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'  # real
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # prints
 
+STRIPE_PUBLIC_KEY = "pk_test_6pRNASCoBOKtIshFeQd4XMUh"
+STRIPE_PRIVATE_KEY = "sk_test_BQokikJOvBiI2HlWgH4olfQ2"
+
 # GOOGLE_ANALYTICS_KEY = 'UA-XXXX-Y'
 
 #MEDIA_ROOT = '/var/websites/prod/onlineweb_uploads'
@@ -81,11 +84,6 @@ FILEBROWSER_MEDIA_ROOT = MEDIA_ROOT
 #   'django_extensions', # http://packages.python.org/django-extensions/
 # )
 
-# Variables for fagKom/bedKom-sync script
-BEDKOM_GROUP_ID = 3
-FAGKOM_GROUP_ID = 6
-COMMON_GROUP_ID = 17
-
 GENFORS_ADMIN_PASSWORD = 'ADMIN_PASSWORD'
 
 SYMPA_DB_PASSWD = ''
@@ -93,6 +91,20 @@ SYMPA_DB_USER = ''
 SYMPA_DB_NAME = ''
 SYMPA_DB_PORT = ''
 SYMPA_DB_HOST = ''
+
+# Variables for group syncing script
+#GROUP_SYNCER = [
+#    {
+#        'name': 'Komite-enkeltgrupper til gruppen Komiteer',
+#        'source': [
+#            1, # Group ID 1
+#            2, # Group ID 2
+#        ],
+#        'destination': [
+#            3 # Group ID 3
+#        ]
+#    }
+#]
 
 LOGGING = {
     'version': 1,
@@ -125,7 +137,7 @@ LOGGING = {
             'level': 'ERROR',
             'propagate': True,
         },
-        'bedfagsyncer': {
+        'syncer': {
             'handlers': ['console'],
             'level': 'DEBUG',
             'propagate': True,

@@ -88,11 +88,12 @@ class OnlineUser(AbstractUser):
     
     # Online related fields
     field_of_study = models.SmallIntegerField(_(u"studieretning"), choices=FIELD_OF_STUDY_CHOICES, default=0)
-    started_date = models.DateField(_(u"startet studie"), default=timezone.now().date())
+    started_date = models.DateField(_(u"startet studie"), default=datetime.date.today)
     compiled = models.BooleanField(_(u"kompilert"), default=False)
 
-    # Infomail
+    # Mail
     infomail = models.BooleanField(_(u"vil ha infomail"), default=False)
+    online_mail = models.CharField(_(u"Online-epost"), max_length=50, blank=True, null=True)
 
     # Address
     phone_number = models.CharField(_(u"telefonnummer"), max_length=20, blank=True, null=True)
@@ -219,6 +220,9 @@ class OnlineUser(AbstractUser):
         ordering = ['first_name', 'last_name']
         verbose_name = _(u"brukerprofil")
         verbose_name_plural = _(u"brukerprofiler")
+        permissions = (
+            ('view_onlineuser', 'View OnlineUser'),
+        )
 
 
 reversion.register(OnlineUser)
@@ -248,6 +252,9 @@ class Email(models.Model):
     class Meta:
         verbose_name = _(u"epostadresse")
         verbose_name_plural = _(u"epostadresser")
+        permissions = (
+            ('view_email', 'View Email'),
+        )
 
 
 reversion.register(Email)
@@ -263,7 +270,12 @@ class RegisterToken(models.Model):
     def is_valid(self):
         valid_period = datetime.timedelta(days=1)
         now = timezone.now()
-        return now < self.created + valid_period 
+        return now < self.created + valid_period
+
+    class Meta:
+        permissions = (
+            ('view_registertoken', 'View RegisterToken'),
+        )
 
 
 reversion.register(RegisterToken)
@@ -294,6 +306,9 @@ class AllowedUsername(models.Model):
         verbose_name = _(u"medlem")
         verbose_name_plural = _(u"medlemsregister")
         ordering = (u"username",)
+        permissions = (
+            ('view_allowedusername', 'View AllowedUsername'),
+        )
 
 
 reversion.register(AllowedUsername)
@@ -319,6 +334,9 @@ class Position(models.Model):
         verbose_name = _(u'posisjon')
         verbose_name_plural = _(u'posisjoner')
         ordering = ('user', 'period', )
+        permissions = (
+            ('view_position', 'View Position'),
+        )
 
 
 reversion.register(Position)
@@ -339,6 +357,9 @@ class SpecialPosition(models.Model):
         verbose_name = _(u'spesialposisjon')
         verbose_name_plural = _(u'spesialposisjoner')
         ordering = ('user', 'since_year',)
+        permissions = (
+            ('view_specialposition', 'View SpecialPosition'),
+        )
 
 
 reversion.register(SpecialPosition)

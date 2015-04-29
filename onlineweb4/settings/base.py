@@ -1,5 +1,6 @@
 import os
 import sys
+import wiki
 from django.contrib.messages import constants as messages
 
 # Directory that contains this file.
@@ -82,10 +83,13 @@ STATICFILES_FINDERS = (
     'compressor.finders.CompressorFinder',
 )
 
+# Including django-wiki static files so we can import the less files.
+DJANGO_WIKI_STATIC = os.path.join(os.path.dirname(wiki.__file__), 'static')
+
 COMPRESS_FILES = True
 COMPRESS_OUTPUT_DIR = 'cache'
 COMPRESS_PRECOMPILERS = (
-    ('text/less', 'lessc {infile} {outfile}'),
+    ('text/less', 'lessc --include-path=%s {infile} {outfile}' % DJANGO_WIKI_STATIC),
 )
 
 COMPRESS_CSS_FILTERS = [
@@ -115,6 +119,11 @@ MIDDLEWARE_CLASSES = (
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend', # this is default
+    'guardian.backends.ObjectPermissionBackend',
+)
+
 ROOT_URLCONF = 'onlineweb4.urls'
 
 # Python dotted path to the WSGI application used by Django's runserver.
@@ -128,21 +137,12 @@ TEMPLATE_DIRS = (
 PIZZA_GROUP = 'dotkom'
 PIZZA_ADMIN_GROUP = 'pizzaadmin'
 
-# Variables for fagKom/bedKom-sync script, override in local.py
-BEDKOM_GROUP_ID = 1
-FAGKOM_GROUP_ID = 2
-COMMON_GROUP_ID = 3
-
-# List of groups that should have edit access to Online wiki (public)
-WIKI_OPEN_EDIT_ACCESS = [1, 2]
-WIKI_OPEN_EDIT_ACCESS_GROUP_ID = 3
-
-# List of groups that should have access to the Komite wiki
-WIKI_COMMITTEE_ACCESS = [1, 2]
-WIKI_COMMITTEE_ACCESS_GROUP_ID = 3
-
 # Grappelli settings
 GRAPPELLI_ADMIN_TITLE = '<a href="/">Onlineweb</a>'
+
+# Guardian settings
+ANONYMOUS_USER_ID = -1
+GUARDIAN_RENDER_403 = True
 
 # List of usergroups that should be listed under "Finn brukere" in user profile
 USER_SEARCH_GROUPS = [
@@ -161,6 +161,10 @@ USER_SEARCH_GROUPS = [
     8,   # triKom
     9,   # velKom
 ]
+
+# Online stripe test keys
+STRIPE_PUBLIC_KEY = "pk_test_Ur8B7E5uvheMlpOUVu9SGGbn"
+STRIPE_PRIVATE_KEY = "sk_test_Hrp6EUUffY7Pc4xnqwmoyhPm"
 
 #List of mailing lists, used in update_sympa_memcache_from_sql.py
 PUBLIC_LISTS = [
@@ -183,8 +187,7 @@ INSTALLED_APPS = (
     # Third party dependencies
     'django.contrib.humanize',
     'django_nose',
-    'south',
-    'django_notify', # Wiki
+    'django_nyt', # Wiki
     'mptt', # Wiki
     'sekizai', # Wiki
     'sorl.thumbnail', # Wiki
@@ -202,6 +205,8 @@ INSTALLED_APPS = (
     'markdown_deux',
     'djangoformsetjs',
     'reversion',
+    'guardian',
+    'stripe',
 
     # Django apps
     'django.contrib.admin',
@@ -220,6 +225,8 @@ INSTALLED_APPS = (
     'apps.autoconfig',
     'apps.careeropportunity',
     'apps.companyprofile',
+    'apps.dashboard',
+    'apps.gallery',
     'apps.events',
     'apps.marks',
     'apps.offline',
@@ -229,10 +236,12 @@ INSTALLED_APPS = (
     'apps.genfors',
     'apps.resourcecenter',
     'apps.mailinglists',
-    'apps.gallery',
+    'apps.inventory',
+    'apps.payment',
     'scripts',
 
     #External apps
+    'feedme',
     'redwine',
 
     #Wiki
@@ -241,7 +250,7 @@ INSTALLED_APPS = (
     'wiki.plugins.notifications',
     'wiki.plugins.images',
     'wiki.plugins.macros',
-    
+
 )
 
 # A sample logging configuration. The only tangible logging
@@ -263,6 +272,10 @@ LOGGING = {
         },
     },
     'handlers': {
+        'null': {
+            'level': 'DEBUG',
+            'class': 'logging.NullHandler',
+        },
         'mail_admins': {
             'level': 'ERROR',
             'filters': ['require_debug_false'],
@@ -275,6 +288,10 @@ LOGGING = {
         }
     },
     'loggers': {
+        'django.security.DisallowedHost': {
+            'handlers': ['null'],
+            'propagate': False,
+        },
         'django.request': {
             'handlers': ['mail_admins'],
             'level': 'ERROR',
@@ -328,7 +345,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 )
 
 # Remember to keep 'local' last, so it can override any setting.
-for settings_module in ['filebrowser', 'local']:  # local last
+for settings_module in ['filebrowser', 'django_wiki', 'local']:  # local last
     if not os.path.exists(os.path.join(PROJECT_SETTINGS_DIRECTORY,
             settings_module + ".py")):
         sys.stderr.write("Could not find settings module '%s'.\n" %

@@ -95,13 +95,22 @@ class Meeting(models.Model):
     class Meta:
         verbose_name = _(u'Generalforsamling')
         verbose_name_plural = _(u'Generalforsamlinger')
+        permissions = (
+            ('view_meeting', 'View Meeting'),
+        )
 
-# User related models
+
+# USER RELATED MODELS
 
 
 class AbstractVoter(models.Model):
     meeting = models.ForeignKey(Meeting, null=False)
     timestamp = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        permissions = (
+            ('view_abstractvoter', 'View AbstractVoter'),
+        )
 
 
 class RegisteredVoter(AbstractVoter):
@@ -115,6 +124,11 @@ class RegisteredVoter(AbstractVoter):
     def __unicode__(self):
         return self.user.get_full_name()
 
+    class Meta:
+        permissions = (
+            ('view_registeredvoter', 'View RegisteredVoter'),
+        )
+
 
 class AnonymousVoter(AbstractVoter):
     '''
@@ -126,6 +140,11 @@ class AnonymousVoter(AbstractVoter):
 
     def __unicode__(self):
         return self.user_hash[:12]
+
+    class Meta:
+        permissions = (
+            ('view_anonymousvoter', 'View AnonymousVoter'),
+        )
 
 
 # Question wrapper
@@ -259,6 +278,12 @@ class Question(models.Model):
     def __unicode__(self):
         return u'[%d] %s' % (self.id - self.meeting.num_questions(), self.description)
 
+    class Meta:
+        permissions = (
+            ('view_question', 'View Question'),
+        )
+
+
 # Individual abstract vote and vote types
 
 
@@ -273,12 +298,22 @@ class AbstractVote(models.Model):
     def get_voter_name(self):
         return unicode(self.voter)
 
+    class Meta:
+        permissions = (
+            ('view_abstractvote', 'View AbstractVote'),
+        )
+
 
 class BooleanVote(AbstractVote):
     '''
     The BooleanVote model holds the yes/no/blank answer to a specific question held in superclass
     '''
     answer = models.NullBooleanField(_(u'answer'), help_text=_(u'Ja/Nei'), null=True, blank=True)
+
+    class Meta:
+        permissions = (
+            ('view_booleanvote', 'View BooleanVote'),
+        )
 
 
 class Alternative(models.Model):
@@ -292,12 +327,22 @@ class Alternative(models.Model):
     def __unicode__(self):
         return self.description
 
+    class Meta:
+        permissions = (
+            ('view_alternative', 'View Alternative'),
+        )
+
 
 class MultipleChoice(AbstractVote):
     '''
     The MultipleChoice model holds the answered alternative to a specific question held in superclass
     '''
     answer = models.ForeignKey(Alternative, null=True, blank=True, help_text=_(u'Alternativ'))
+
+    class Meta:
+        permissions = (
+            ('view_multiplechoice', 'View MultipleChoice'),
+        )
 
 class Result(models.Model):
     '''
@@ -307,3 +352,8 @@ class Result(models.Model):
     question = models.ForeignKey(Question, null=False, help_text=(u'Meeting'))
     result_public = models.TextField(null=False, max_length=2000)
     result_private = models.TextField(null=False, max_length=2000)
+
+    class Meta:
+        permissions = (
+            ('view_result', 'View Result'),
+        )

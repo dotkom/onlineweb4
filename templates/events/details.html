@@ -4,6 +4,7 @@
 {% load crispy_forms_tags %}
 {% load group_membership %}
 {% load calendar_filters %}
+{% load payment_tag %}
 
 {% block title %}
 {{ event.title }} - Online
@@ -136,9 +137,21 @@
                             {% else %}
                                 <p class="status-text">Du er meldt på dette arrangementet.</p>
                             {% endif %}
-                            {% if attendance_event.unattend_deadline > now or place_on_wait_list %}
-                                {% if event.event_start > now %}
-                                    <div class="action"><a href="#unattend" role="button" class="btn btn-large btn-danger" data-toggle="modal">Meld meg av</a></div>
+                            {% if user_paid %}
+                                <p class="status-text"><label class="label label-success row-space">Du har betalt</label></p>
+                                <p class="help-text">For å melde deg av må du sende mail til {{ payments.0.content_object_mail }}</p>
+                            {% elif payments and not place_on_wait_list and not user_paid %}
+                                {% display_payments payments %}
+                                <!-- TODO display payment deadline -->
+                                <script src="{{ STATIC_URL }}js/libs/jquery-2.1.3.min.js"></script>
+                                <script src="https://checkout.stripe.com/checkout.js"></script>
+                                <script src="{{ STATIC_URL }}js/payment.js"></script>
+                            {% endif %}
+                            {% if not user_paid %}
+                                {% if attendance_event.unattend_deadline > now or place_on_wait_list %}
+                                    {% if event.event_start > now %}
+                                        <div class="action"><a href="#unattend" role="button" class="btn btn-large btn-danger" data-toggle="modal">Meld meg av</a></div>
+                                    {% endif %}
                                 {% endif %}
                             {% endif %}
                         {% else %}
@@ -148,6 +161,12 @@
                                     <div class="action">
                                         <a href="#waitlist" role="button" class="btn btn-large btn-warning" data-toggle="modal">Sett meg på venteliste</a>
                                     </div>
+                                {% elif payments and payments|contains_instant_payment %}
+                                    <p class="status-text">Påmelding til arangementet krever betaling.</p>
+                                    {% display_payments payments %}
+                                    <script src="{{ STATIC_URL }}js/libs/jquery-2.1.3.min.js"></script>
+                                    <script src="https://checkout.stripe.com/checkout.js"></script>
+                                    <script src="{{ STATIC_URL }}js/payment.js"></script>
                                 {% else %}
                                     <p class="status-text">Du kan melde deg på dette arrangementet.</p>
                                     <div class="action"><a href="#attend" role="button" class="btn btn-large btn-success" data-toggle="modal">Meld meg på</a></div>
@@ -168,7 +187,14 @@
 
 
                 {% if attendance_event %}
-                    <p class="help-text" style="margin-top:20px">Avmeldingsfristen er {{ attendance_event.unattend_deadline|date:"H.i d. M Y" }}</p>
+                    <p class="help-text" style="margin-top:20px">Avmeldingsfristen 
+                        {% if attendance_event.unattend_deadline > now %}
+                            er
+                        {% else %}
+                            var
+                        {% endif %}
+                        {{ attendance_event.unattend_deadline|date:"H.i d. M Y" }}
+                    </p>
                 {% endif %}
             </div>
 
@@ -176,7 +202,15 @@
                 <div class="row">
                     <div class="col-md-12">
                         <div class="event-access">
-                            <p class="access-title">Dette arrangementet er åpent for</p>
+                            <p class="access-title">
+                                Dette arrangementet
+                                {% if attendance_event.registration_end > now %}
+                                    er
+                                {% else %}
+                                    var
+                                {% endif %}
+                                åpent for
+                            </p>
                             <div class="rules">
 
                                 {% if attendance_event.guest_attendance %}
@@ -297,4 +331,4 @@
     </div>
     </div>
     </section>
-{%endblock content %}
+{% endblock content %}

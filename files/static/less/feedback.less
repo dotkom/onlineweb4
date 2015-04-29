@@ -4,17 +4,14 @@
 }
 
 #feedbackanswer {
-	h2 {
-		text-transform: uppercase;
-	}
+    h2 {
+        text-transform: uppercase;
+    }
 }
 
 #feedback{
     textarea{
-        width: 100%;
-	border: 1px solid #aaa;
-	border-radius: 4px;
-    margin-bottom: 30px;
+        width: 50%;
     }
     label {
         display: block;
@@ -22,27 +19,16 @@
     }
 
     ul {
-	margin-left: 0px;
-	padding-left: 0px;
+        margin-left: 0px;
+        padding-left: 0px;
     }
     li {
-	list-style: none;
-	float: left;
-	margin-left: 0px;
-    }
-    input[type=radio] {
-        padding-top: 0px;
-        margin-left: 20px;
-        float:left;
-	margin-right: 10px;
-	display: inline-block;
-	font-size: 12px;
-    margin-bottom: 30px;
+        list-style: none;
+        float: left;
+        margin-left: 0px;
     }
     select {
-	display: block;
-	border-radius: 4px;
-	border: 1px solid #aaa;
+        width: 50%;
     }
     div{ /*TODO, create clearfix mixin*/
         *zoom: 1;
@@ -72,6 +58,7 @@
     .rating-chart
     {
         margin-bottom: 25px;
+        margin-left: -10px;
     }
     .panel-heading
     {
@@ -110,8 +97,53 @@
 
 .infonumber
 {
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 600;
-    color: green;
+    color: #004b80;
     float: right;
+}
+
+@media (max-width:1000px) {
+
+    #feedback{
+        textarea{
+            width: 100%;
+        }
+        select{
+            width: 100%;
+        }
+    }
+}
+
+
+.rating-wrapper {
+    .br-widget {
+        height: 52px;
+    }
+    .br-widget {
+        a {
+            display: block;
+            width: 35px;
+            height: 35px;
+            float: left;
+            background-color: #e3e3e3;
+            margin: 2px;
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: 400;
+            line-height: 2.2;
+            text-align: center;
+            color: #b6b6b6;
+        }
+        a.br-active, a.br-selected {
+            background-color: #59a6d6;
+            color: white;
+        }
+    }
+}
+
+.rating-wrapper .br-widget a.br-active,
+.rating-wrapper .br-widget a.br-selected {
+    background-color: #59a6d6;
+    color: white;
 }

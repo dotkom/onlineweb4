@@ -4,7 +4,7 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.contrib import admin
 from django.http import HttpResponse
 from django.views.generic import TemplateView
-from django_notify.urls import get_pattern as get_notify_pattern
+from django_nyt.urls import get_pattern as get_notify_pattern
 
 from wiki.urls import get_pattern as get_wiki_pattern
 from filebrowser.sites import site
@@ -36,7 +36,7 @@ urlpatterns = patterns('',
     # Online Notifier Owner Verification (checked yearly or so by Google)
     url(r'^google79c0b331a83a53de\.html$', lambda r: HttpResponse(
         "google-site-verification: google79c0b331a83a53de.html", content_type="text/html")),
-    
+
     # Wiki
     (r'^notify/', get_notify_pattern()),
     (r'^wiki/', get_wiki_pattern())
@@ -60,21 +60,6 @@ if 'apps.article' in settings.INSTALLED_APPS:
         url(r'^article/',           include('apps.article.urls')),
     )
 
-if 'apps.careeropportunity' in settings.INSTALLED_APPS:
-    urlpatterns += patterns('',
-        url(r'^careeropportunity/', include('apps.careeropportunity.urls')),
-    )
-
-if 'apps.companyprofile' in settings.INSTALLED_APPS:
-    urlpatterns += patterns('',
-        url(r'^company/',           include('apps.companyprofile.urls')),
-    )
-
-if 'apps.events' in settings.INSTALLED_APPS:
-    urlpatterns += patterns('',
-        url(r'^events/',            include('apps.events.urls')),
-    )
-
 if 'apps.autoconfig' in settings.INSTALLED_APPS:
     urlpatterns += patterns('',
         url(r'^mail/',              include('apps.autoconfig.urls')),
@@ -83,11 +68,39 @@ if 'apps.autoconfig' in settings.INSTALLED_APPS:
 if 'apps.authentication' in settings.INSTALLED_APPS:
     urlpatterns += patterns('',
         url(r'^auth/',              include('apps.authentication.urls')),
+        url(r'^dashboard/auth/',    include('apps.authentication.dashboard.urls')),
+    )
+
+if 'apps.careeropportunity' in settings.INSTALLED_APPS:
+    urlpatterns += patterns('',
+        url(r'^careeropportunity/', include('apps.careeropportunity.urls')),
+    )
+
+if 'apps.companyprofile' in settings.INSTALLED_APPS:
+    urlpatterns += patterns('',
+        url(r'^company/',           include('apps.companyprofile.urls')),
+        url(r'^dashboard/company/', include('apps.companyprofile.dashboard.urls')),
+    )
+
+if 'apps.dashboard' in settings.INSTALLED_APPS:
+    urlpatterns += patterns('',
+        url(r'^dashboard/',         include('apps.dashboard.urls')),
+    )
+
+if 'apps.events' in settings.INSTALLED_APPS:
+    urlpatterns += patterns('',
+        url(r'^events/',            include('apps.events.urls')),
+        url(r'^dashboard/events/',  include('apps.events.dashboard.urls')),
     )
 
 if 'apps.feedback' in settings.INSTALLED_APPS:
     urlpatterns += patterns('',
         url(r'^feedback/',          include('apps.feedback.urls')),
+    )
+
+if 'apps.inventory' in settings.INSTALLED_APPS:
+    urlpatterns += patterns('',
+        url(r'^dashboard/inventory/',          include('apps.inventory.dashboard.urls')),
     )
 
 if 'apps.offline' in settings.INSTALLED_APPS:
@@ -111,10 +124,20 @@ if 'apps.genfors' in settings.INSTALLED_APPS:
         url(r'^genfors/',           include('apps.genfors.urls')),
     )
 
+
 if 'apps.gallery' in settings.INSTALLED_APPS:
     urlpatterns += patterns('',
         url(r'^gallery/',           include('apps.gallery.urls')),
     )
+
+if 'apps.payment' in settings.INSTALLED_APPS:
+    urlpatterns += patterns('',
+        url(r'^payment/',           include('apps.payment.urls')),
+    )
+
+# feedme
+if 'feedme' in settings.INSTALLED_APPS:
+    urlpatterns += patterns('', url(r'^feedme/', include('feedme.urls', namespace='feedme')))
 
 # redwine
 if 'redwine' in settings.INSTALLED_APPS:

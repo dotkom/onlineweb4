@@ -11,16 +11,12 @@
 
 {% block js %}
     {{ block.super }}
-    <script type="text/javascript" src="/static/wiki/js/editor.js"></script>
-    <script type="text/javascript" src="/static/wiki/markitup/frontend.init.js"></script>
-    <script type="text/javascript" src="/static/wiki/markitup/jquery.markitup.js"></script>
-    <script type="text/javascript" src="/static/wiki/markitup/sets/frontend/set.js"></script>
+    {% compress js %}
+    <script src="{{ STATIC_URL }}wiki/js/core.js"></script>
+    {% endcompress %}
 {% endblock %}
 
 {% block styles %}
-    <link href="{{ STATIC_URL }}wiki/bootstrap/css/wiki-bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" media="all" href="/static/wiki/markitup/skins/simple/style.css" />
-    <link rel="stylesheet" media="all" href="/static/wiki/markitup/sets/frontend/style.css" />
     {{ block.super }}
     {% compress css %}
         <link rel="stylesheet" type="text/less" href="{{ STATIC_URL }}less/wiki.less" />
@@ -31,8 +27,21 @@
     <section id="wiki">
         {% block wiki_body %}
             <div class="container">
-                {% block wiki_breadcrumbs %}{% endblock %}
-
+                <div class="row" id="topbar">
+                    <div class="col-xs-8">
+                        {% block wiki_breadcrumbs %}{% endblock %}
+                    </div>
+                    <div class="col-xs-4">
+                        <form action="/wiki/_search">
+                            <div class="input-group">
+                                <input name="q" type="text" class="form-control" placeholder="Søk...">
+                                <span class="input-group-btn">
+                                    <button class="btn btn-default"><span class="fa fa-search"></button>
+                                </span>
+                            </div>
+                        </form>
+                    </div>
+                </div>
                 {% block wiki_contents %}{% endblock %}
             </div>
         {% endblock %}

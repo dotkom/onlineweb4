@@ -1,0 +1,105 @@
+{% load crispy_forms_tags %}
+{% load group_membership %}
+
+<div class="row">
+    <div class="col-xs-12 col-md-8">
+        <h3>E-postadresser</h3>
+    </div>
+</div>
+<div class="row">
+    <div class="col-xs-12 col-sm-12 col-md-10">
+        <p>Her er en oversikt over e-postadresser som er tilknyttet din konto. Adressen som er markert som primær brukes til alle våre e-postlister, gjenoppretning av passord og andre varsler som sendes fra oss.</p>
+        <p>Etter at du har valgt en ny primæradresse kan det ta opptil én time før endringen er registert i alle mailinglister, mens adresse for andre varsler og gjenoppretning oppdateres umiddelbart.</p>
+    </div>
+</div>
+<div class="row emails">
+    <div class="col-xs-12 col-sm-12 col-md-10">
+        {% for email in user.get_emails %}
+        <div class="row email-row">
+            <div class="col-xs-4 col-sm-8 col-md-8">
+                <p class="email">{{ email }}</p>
+            </div>
+            <div class="col-sm-4 col-md-4">
+                <div class="btn-group pull-right">
+                {% if email.verified %}
+                    {% if email.primary %}
+                        <button type="button" class="btn btn-sm btn-success primary active" disabled>
+                    {% else %}
+                        <button type="button" class="btn btn-sm btn-default primary">
+                    {% endif %}
+                        {% if email.primary %}Primær{% else %}Sett primær{% endif %}
+                    </button>
+                {% endif %}
+                {% if not email.verified %}
+                    <button type="button" class="btn btn-sm btn-primary verify">Send ny lenke</button>
+                {% endif %}
+                    <button type="button" class="btn btn-sm btn-danger delete">Slett</button>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+<div class="row new-email">
+    <div class="col-xs-12 col-sm-12 col-md-10">
+        <div class="new-email-form" style="display:none;">
+            <form method="post" action="{% url 'profile_add_email' %}">
+            <div class="col-sm-8 col-md-8">
+                {% csrf_token %}
+                <input type="text" name="new_email" value="Ny Epostadresse" id="addnewemailinput" class="emptyonclick" />
+            </div>
+            <div class="col-sm-4 col-md-4">
+                <button type="submit" class="btn btn-success btn-sm add pull-right">Legg til</button>
+            </div>
+            </form>
+        </div>
+        <button type="button" class="btn btn-success btn-sm add-new-email">Legg til ny epostadresse</button>
+    </div>
+</div>
+{% in_group "Komiteer" as in_komiteer %}
+{% if in_komiteer and user.online_mail %}
+<div class="row">
+    <div class="col-xs-12 col-sm-12 col-md-10">
+        <h3>Online epost-alias</h3>
+        <p>Alle medlemmer av komiteer har et alias knyttet til sin konto. Aliaset videresender epost til din primæraddresse, som kan velges ovenfor. Ditt alias er:</p>
+        <p>{{ user.online_mail }}@online.ntnu.no</p>
+        <p>Disse aliasene er automatisk laget. Om du har <b>en god grunn</b> til å endre ditt alias, <a href="mailto:dotkom@online.ntnu.no">ta kontakt med dotKom</a></p>
+    </div>
+</div>
+{% endif %}
+<div class="row">
+    <div class="col-xs-12 col-sm-12 col-md-10">
+        <h3>Infomail</h3>
+        <p>Her velger du om du ønsker/ikke ønsker å motta periodiske oppdateringer om hva som skjer i Online fremover.</p>
+    </div>
+</div>
+<div class="row">
+    <div class="col-xs-12 col-sm-12 col-md-10">
+        <form method="post" action="{% url 'profile_toggle_infomail' %}">
+            {% csrf_token %}
+            <button type="submit" id="toggle_infomail" class="btn btn-sm {{ user.infomail|yesno:"btn-danger,btn-success" }}">
+            {{ user.infomail|yesno:"Deaktivér,Aktivér" }}
+            </button>
+        </form>
+    </div>
+</div>
+
+{% comment %}
+This block is redundant as long as mailinglists aren't being synced with onlinwweb4.
+If we want to use this, the form has to be added to the dictionary again in the view.
+This is related to issue #595
+<div class="row-space"></div>
+<div class="row">
+    <div class="col-xs-12 col-sm-12 col-md-8">
+        <h3>Listealternativer</h3>        
+    </div>
+</div>
+<div class="row">
+    <div class="col-xs-12">
+        <form method="post" action="{% url 'profile' %}">
+            {{ mail_settings|crispy }}
+            <button type="submit" class="btn btn-success">Lagre</button>
+        </form>
+    </div>
+</div>
+{% endcomment %}

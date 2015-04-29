@@ -144,7 +144,7 @@ def verify(request, token):
                 return redirect('auth_login')
             else:
                 messages.success(request, _(u'Eposten %s er nå verifisert.') % email)
-                return redirect('profiles')
+                return redirect('profile_add_email')
 
         except IntegrityError:
             email_message = u"""

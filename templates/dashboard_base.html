@@ -1,0 +1,266 @@
+{% load compress %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>{% block title %}{% endblock %}</title>
+    <meta name="description" content="Online er linjeforeningen for informatikkstudentene ved NTNU. Våre studenter går Bachelor- eller Mastergradstudium i informatikk.">
+    <link rel="icon" href="{{ STATIC_URL }}img/favicon.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% block styles %}
+        {% compress css %}
+        <link rel="stylesheet" type="text/less" href="{{ STATIC_URL }}less/font-awesome-4.2.0/font-awesome.less">
+        <link rel="stylesheet" type="text/less" href="{{ STATIC_URL }}less/dashboard/main.less">
+        <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/jquery-tablesorter/tablesorter.css">
+        <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/bootstrap-datetimepicker.min.css">
+        {% endcompress %}
+    {% endblock %}
+</head>
+<body>
+    <nav id="dashboard_main_nav">
+        <span class="sidebar-center">
+            <a href="/"><img src="{{ STATIC_URL }}img/online_logo.svg" alt="Online" id="online-logo"></a>
+        </span>
+        <span class="pull-right" id="sidebar_toggle" data-toggle="offcanvas"><i class="fa fa-bars fa-lg"></i></span>
+    </nav>
+    <div class="wrapper row-offcanvas row-offcanvas-left">
+        <aside class="left-side sidebar-offcanvas">
+            <section class="sidebar topspacing">
+                <br />
+                <h4 class="center-text"><small>Velkommen</small><br />{{ request.user.first_name }}</h4>
+                <ul class="sidebar-menu">
+                    {% block sidebar %}
+                    {% if 'events.view_event' in user_permissions %}
+                    <li class="treeview">
+                        <a href="#">
+                            <i class="fa fa-wheelchair blue"></i>
+                            <span>Arrangement</span>
+                            <i class="fa fa-angle-down pull-right"></i>
+                        </a>
+                        <ul class="treeview-menu">
+                            <li><a href="{% url 'dashboard_events_index' %}"><i class="fa fa-angle-double-right orange"></i> Kommende arrangement</a></li>
+                            <li><a href="{% url 'dashboard_events_past' %}"><i class="fa fa-angle-double-right orange"></i> Tidligere arrangement</a></li>
+                        </ul>
+                    </li>
+                    {% endif %}
+                    {% if 'article.view_article' in user_permissions %}
+                    <li class="treeview">
+                        <a href="#">
+                            <i class="fa fa-file-text-o blue"></i>
+                            <span>Artikler</span>
+                            <i class="fa fa-angle-down pull-right"></i>
+                        </a>
+                        <ul class="treeview-menu">
+                            <li><a href="#"><i class="fa fa-angle-double-right orange"></i> Ny artikkel</a></li>
+                            <li><a href="#"><i class="fa fa-angle-double-right orange"></i> Oversikt</a></li>
+                            <li><a href="#"><i class="fa fa-angle-double-right orange"></i> Tags</a></li>
+                        </ul>
+                    </li>
+                    {% endif %}
+                    {% if 'authentication.view_onlineuser' in user_permissions %}
+                    <li class="treeview">
+                        <a href="#">
+                            <i class="fa fa-user blue"></i>
+                            <span>Autentisering</span>
+                            <i class="fa fa-angle-down pull-right"></i>
+                        </a>
+                        <ul class="treeview-menu">
+                            <li><a href="#"><i class="fa fa-angle-double-right orange"></i> Brukerprofiler</a></li>
+                            <li><a href="/dashboard/auth/members/"><i class="fa fa-angle-double-right orange"></i> Medlemsregister</a></li>
+                            <li><a href="#"><i class="fa fa-angle-double-right orange"></i> Posisjoner</a></li>
+                            <li><a href="#"><i class="fa fa-angle-double-right orange"></i> Spesialposisjoner</a></li>
+                        </ul>
+                    </li>
+                    {% endif %}
+                    {% if 'companyprofile.view_company' in user_permissions %}
+                    <li class="treeview">
+                        <a href="#">
+                            <i class="fa fa-money blue"></i> <span>Bedrifter</span>
+                            <i class="fa fa-angle-down pull-right"></i>
+                        </a>
+                        <ul class="treeview-menu">
+                            {% if 'companyprofile.add_company' in user_permissions %}
+                                <li><a href="/dashboard/company/new/"><i class="fa fa-angle-double-right orange"></i> Ny bedrift</a></li>
+                            {% endif %}
+                            <li><a href="/dashboard/company/"><i class="fa fa-angle-double-right orange"></i> Oversikt</a></li>
+                        </ul>
+                    </li>
+                    {% endif %}
+                    {% if 'chunks.add_chunk' in user_permissions %}
+                    <li class="treeview">
+                        <a href="#">
+                            <i class="fa fa-file-o blue"></i> <span>Chunks</span>
+                            <i class="fa fa-angle-down pull-right"></i>
+                        </a>
+                        <ul class="treeview-menu">
+                            <li><a href="#"><i class="fa fa-angle-double-right orange"></i> Ny Chunk</a></li>
+                            <li><a href="#"><i class="fa fa-angle-double-right orange"></i> Oversikt</a></li>
+                        </ul>
+                    </li>
+                    {% endif %}
+                    {% if request.user.is_superuser %}
+                    <li class="treeview">
+                        <a href="#">
+                            <i class="fa fa-group blue"></i> <span>Grupper</span>
+                            <i class="fa fa-angle-down pull-right"></i>
+                        </a>
+                        <ul class="treeview-menu">
+                            <li><a href="/admin/auth/group/add/"><i class="fa fa-angle-double-right orange"></i> Ny gruppe</a></li>
+                            <li><a href="/dashboard/auth/groups/"><i class="fa fa-angle-double-right orange"></i> Oversikt</a></li>
+                        </ul>
+                    </li>
+                    {% endif %}
+                    {% if 'careeropportunity.view_careeropportunity' in user_permissions %}
+                    <li class="treeview">
+                        <a href="#">
+                            <i class="fa fa-suitcase blue"></i> <span>Karrieremuligheter</span>
+                            <i class="fa fa-angle-down pull-right"></i>
+                        </a>
+                        <ul class="treeview-menu">
+                            <li><a href="#"><i class="fa fa-angle-double-right orange"></i> Ny karrieremulighet</a></li>
+                            <li><a href="#"><i class="fa fa-angle-double-right orange"></i> Oversikt</a></li>
+                        </ul>
+                    </li>
+                    {% endif %}
+                    {% if 'offline.view_issue' in user_permissions %}
+                    <li class="treeview">
+                        <a href="#">
+                            <i class="fa fa-plug blue"></i> <span>Offline</span>
+                            <i class="fa fa-angle-down pull-right"></i>
+                        </a>
+                        <ul class="treeview-menu">
+                            <li><a href="#"><i class="fa fa-angle-double-right orange"></i> Informasjonstekster</a></li>
+                            <li><a href="#"><i class="fa fa-angle-double-right orange"></i> Ny utgivelse</a></li>
+                            <li><a href="#"><i class="fa fa-angle-double-right orange"></i> Oversikt</a></li>
+                        </ul>
+                    </li>
+                    {% endif %}
+                    {% if 'marks.view_mark' in user_permissions %}
+                    <li class="treeview">
+                        <a href="#">
+                            <i class="fa fa-times-circle blue"></i> <span>Prikker</span>
+                            <i class="fa fa-angle-down pull-right"></i>
+                        </a>
+                        <ul class="treeview-menu">
+                            <li><a href="#"><i class="fa fa-angle-double-right orange"></i> Ny prikk</a></li>
+                            <li><a href="#"><i class="fa fa-angle-double-right orange"></i> Oversikt</a></li>
+                        </ul>
+                    </li>
+                    {% endif %}
+                    {% if request.user.is_superuser %}
+                    <li>
+                        <a href="#">
+                            <i class="fa fa-trophy blue"></i> <span>Redwine</span>
+                        </a>
+                    </li>
+                    {% endif %}
+                    {% if 'approval.view_membershipapproval' in user_permissions %}
+                    <li>
+                        <a href="/dashboard/approval/">
+                            <i class="fa fa-envelope-o blue"></i> <span>Søknader</span>
+                            {% if approval_pending %}<small class="badge pull-right">{{ approval_pending }}</small>{% endif %}
+                        </a>
+                    </li>
+                    {% endif %}
+                    {% if 'feedback.view_feedback' in user_permissions %}
+                    <li class="treeview">
+                        <a href="#">
+                            <i class="fa fa-envelope blue"></i> <span>Tilbakemelding</span>
+                            <i class="fa fa-angle-down pull-right"></i>
+                        </a>
+                        <ul class="treeview-menu">
+                            <li><a href="#"><i class="fa fa-angle-double-right orange"></i> Flervalgsspørsmål</a></li>
+                            <li><a href="#"><i class="fa fa-angle-double-right orange"></i> Tilbakemeldingsskjema</a></li>
+                        </ul>
+                    </li>
+                    {% endif %}
+                    {% if 'inventory.view_item' in user_permissions %}
+                    <li class="treeview">
+                        <a href="/dashboard/inventory/">
+                            <i class="fa fa-archive blue"></i> <span>Varelager</span>
+                            {% if inventory_expired %}
+                            <span class="pull-right"><i class="fa fa-warning orange"></i>&nbsp;&nbsp;</span>
+                            {% endif %}
+                        </a>
+                    {% endif %}
+                    <!--<li>
+                        <a href="#">
+                            <i class="fa fa-bell blue"></i> <span>Til oppfølging</span>
+                            <small class="badge pull-right">6</small>
+                        </a>
+                    </li>-->
+                    {% endblock %}
+                </ul>
+            </section>
+            <!-- /.sidebar -->
+        </aside>
+
+        <!-- Right side column. Contains the header, breadcrumbs and content of the page -->
+        <aside class="right-side topspacing">
+            <!-- Content Header (Page header) -->
+            <section class="content-header">
+                <h2>
+                    {% block page-header %}
+                        Dashboard
+                    {% endblock %}
+                </h2>
+                <ol class="breadcrumb">
+                    <li><a href="/dashboard/">Dashboard</a></li>
+                    {% block breadcrumbs %}
+                    
+                    {% endblock %}
+                </ol>
+            </section>
+            <!-- Main content -->
+            <section class="content">
+                <div class="messages">
+                    <div class="row">
+                        {% if messages %}
+                        <div class="message-container col-md-12">
+                            {% for message in messages %}
+                                <div class="alert {% if message.tags %}
+                                    {% if message.tags == 'alert-error' %} alert-danger {% else %}
+                                    {{ message.tags }}{% endif %}{% endif %}">
+                                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                                    {{ message }}
+                                </div>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                <section class="main-content">
+                {% block content %}
+
+                {% endblock %}
+                </section>
+            </section><!-- /.content -->
+        </aside><!-- /.right-side -->
+    </div><!-- ./wrapper -->
+
+    {% block js %}
+        <script src="{{ STATIC_URL}}js/libs/jquery-2.1.3.min.js"></script>
+        <script src="{{ STATIC_URL }}js/libs/bootstrap.min.js"></script>
+        <script src="{{ STATIC_URL }}js/libs/moment-2.9.0-with-locales.min.js"></script>
+        <script src="{{ STATIC_URL }}js/libs/fastclick.js"></script>
+        <script src="{{ STATIC_URL }}js/libs/jquery.cookie.js"></script>
+        <script src="{{ STATIC_URL }}js/libs/jquery.tablesorter.min.js"></script>
+        <script src="{{ STATIC_URL }}js/libs/bootstrap-datetimepicker.min.js"></script>
+        <script src="{{ STATIC_URL }}js/dashboard/dashboard.js"></script>
+    {% endblock %}
+
+    {% if GOOGLE_ANALYTICS_KEY %}
+        <script type="text/javascript">
+            var _gaq = _gaq || [];
+            _gaq.push(['_setAccount', '{{ GOOGLE_ANALYTICS_KEY }}']);
+            _gaq.push(['_trackPageview']);
+            (function() {
+                var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+                ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+                var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+            })();
+        </script>
+    {% endif %}
+    </body>
+</html>

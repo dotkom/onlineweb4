@@ -45,6 +45,11 @@ class FeedbackRelation(models.Model):
 
     class Meta:
         unique_together = ('feedback', 'content_type', 'object_id')
+
+        permissions = (
+            ('view_feedbackrelation', 'View FeedbackRelation'),
+        )
+
         verbose_name = _(u'tilbakemelding')
         verbose_name_plural = _(u'tilbakemeldinger')
 
@@ -111,6 +116,20 @@ class FeedbackRelation(models.Model):
                 return False
         return True
 
+    def answer_error_message(self, user):
+        if user in self.answered.all():
+            return _(u'Du har allerede svart på skjemaet.')
+
+        if hasattr(self.content_object, "feedback_users"):
+            if self.content_object.feedback_users():
+                if user not in self.content_object.feedback_users():
+                    return _(u'Du har ikke tilgang til å svare på dette skjemaet.')
+            else:
+                return _(u'Skjemaet har ingen brukere som kan svare på skjemaet.')
+
+        return _(u'Ukjent feil.')
+
+
     def not_answered(self):
         if hasattr(self.content_object, "feedback_users"):
             return set(self.content_object.feedback_users()).difference(set(self.answered.all()))
@@ -160,11 +179,11 @@ class Feedback(models.Model):
     feedback_id = models.AutoField(primary_key=True)
     author = models.ForeignKey(User)
     description = models.CharField(_(u'beskrivelse'), max_length=100)
-    display_field_of_study = models.BooleanField(_(u'Vis studie oversikt'), default=True, 
+    display_field_of_study = models.BooleanField(_(u'Vis studie oversikt'), default=True,
         help_text =_(u'Grafen over studiefelt vil bli vist til bedriften'))
     display_info = models.BooleanField(_('Vis extra informasjon'), default=True,
         help_text=_(u'En boks med ekstra informasjon vil bli vist til bedriften'))
- 
+
     @property
     def ratingquestions(self):
         rating_question = []
@@ -199,6 +218,9 @@ class Feedback(models.Model):
     class Meta:
         verbose_name = _(u'tilbakemeldingsskjema')
         verbose_name_plural = _(u'tilbakemeldingsskjemaer')
+        permissions = (
+            ('view_feedback', 'View Feedback'),
+        )
 
 
 reversion.register(Feedback)
@@ -214,6 +236,11 @@ class FieldOfStudyAnswer(models.Model):
 
     def __unicode__(self):
         return self.get_answer_display()
+
+    class Meta:
+        permissions = (
+            ('view_fieldofstudyanswer', 'View FieldOfStudyAnswer'),
+        )
 
 
 reversion.register(FieldOfStudyAnswer)
@@ -231,6 +258,11 @@ class TextQuestion(models.Model):
 
     def __unicode__(self):
         return self.label
+
+    class Meta:
+        permissions = (
+            ('view_textquestion', 'View TextQuestion'),
+        )
 
 
 reversion.register(TextQuestion)
@@ -252,11 +284,16 @@ class TextAnswer(models.Model):
     def order(self):
         return self.question.order
 
+    class Meta:
+        permissions = (
+            ('view_textanswer', 'View TextAnswer'),
+        )
+
 
 reversion.register(TextAnswer)
 
-
 RATING_CHOICES = [(k, str(k)) for k in range(1, 7)]  # 1 to 6
+RATING_CHOICES.insert(0, ("", "")) # Adds a blank field to prevent 1 from beeing selected by default
 
 
 class RatingQuestion(models.Model):
@@ -270,6 +307,11 @@ class RatingQuestion(models.Model):
 
     def __unicode__(self):
         return self.label
+
+    class Meta:
+        permissions = (
+            ('view_ratingquestion', 'View RatingQuestion'),
+        )
 
 
 reversion.register(RatingQuestion)
@@ -294,10 +336,15 @@ class RatingAnswer(models.Model):
     def order(self):
         return self.question.order
 
+    class Meta:
+        permissions = (
+            ('view_ratinganswer', 'View RatingAnswer'),
+        )
+
 
 reversion.register(RatingAnswer)
 
-    
+
 class MultipleChoiceQuestion(models.Model):
     label = models.CharField(_(u'Spørsmål'), blank=False, max_length=256)
 
@@ -307,6 +354,11 @@ class MultipleChoiceQuestion(models.Model):
 
     def __unicode__(self):
         return self.label
+
+    class Meta:
+        permissions = (
+            ('view_multiplechoicequestion', 'View MultipleChoiceQuestion'),
+        )
 
 
 reversion.register(MultipleChoiceQuestion)
@@ -321,6 +373,11 @@ class MultipleChoiceRelation(models.Model):
     def __unicode__(self):
         return self.multiple_choice_relation.label
 
+    class Meta:
+        permissions = (
+            ('view_multiplechoicerelation', 'View MultipleChoiceRelation'),
+        )
+
 
 reversion.register(MultipleChoiceRelation)
 
@@ -331,6 +388,11 @@ class Choice(models.Model):
 
     def __unicode__(self):
         return self.choice
+
+    class Meta:
+        permissions = (
+            ('view_choice', 'View Choice'),
+        )
 
 
 reversion.register(Choice)
@@ -351,6 +413,11 @@ class MultipleChoiceAnswer(models.Model):
     def order(self):
         return self.question.order
 
+    class Meta:
+        permissions = (
+            ('view_multiplechoiceanswer', 'View MultipleChoiceAnswer'),
+        )
+
 
 reversion.register(MultipleChoiceAnswer)
 
@@ -363,10 +430,15 @@ class RegisterToken(models.Model):
 
     def is_valid(self, feedback_relation):
         return self.token == RegisterToken.objects.get(fbr=feedback_relation).token
-        
+
         #valid_period = datetime.timedelta(days=365)#1 year
         #now = timezone.now()
         #return now < self.created + valid_period
+
+    class Meta:
+        permissions = (
+            ('view_feedbackregistertoken', 'View FeedbackRegisterToken'),
+        )
 
 
 reversion.register(RegisterToken)

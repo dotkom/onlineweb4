@@ -1,304 +1,215 @@
 # -*- coding: utf-8 -*-
-import datetime
-from south.db import db
-from south.v2 import SchemaMigration
-from django.db import models
+from __future__ import unicode_literals
+
+from django.db import models, migrations
+from django.conf import settings
+import filebrowser.fields
 
 
-class Migration(SchemaMigration):
+class Migration(migrations.Migration):
 
-    depends_on = (
-        ("authentication", "0001_initial"),
-        ("companyprofile", "0001_initial"),
-    )
+    dependencies = [
+        ('auth', '0001_initial'),
+        migrations.swappable_dependency(settings.AUTH_USER_MODEL),
+        ('companyprofile', '0001_initial'),
+    ]
 
-    def forwards(self, orm):
-        # Adding model 'Event'
-        db.create_table(u'events_event', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('author', self.gf('django.db.models.fields.related.ForeignKey')(related_name='oppretter', to=orm['authentication.OnlineUser'])),
-            ('title', self.gf('django.db.models.fields.CharField')(max_length=45)),
-            ('event_start', self.gf('django.db.models.fields.DateTimeField')()),
-            ('event_end', self.gf('django.db.models.fields.DateTimeField')()),
-            ('location', self.gf('django.db.models.fields.CharField')(max_length=100)),
-            ('ingress_short', self.gf('django.db.models.fields.CharField')(max_length=150)),
-            ('ingress', self.gf('django.db.models.fields.TextField')()),
-            ('description', self.gf('django.db.models.fields.TextField')()),
-            ('image', self.gf('filebrowser.fields.FileBrowseField')(max_length=200)),
-            ('event_type', self.gf('django.db.models.fields.SmallIntegerField')()),
-        ))
-        db.send_create_signal(u'events', ['Event'])
-
-        # Adding model 'Rule'
-        db.create_table(u'events_rule', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('offset', self.gf('django.db.models.fields.PositiveSmallIntegerField')(default=0)),
-        ))
-        db.send_create_signal(u'events', ['Rule'])
-
-        # Adding model 'FieldOfStudyRule'
-        db.create_table(u'events_fieldofstudyrule', (
-            (u'rule_ptr', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['events.Rule'], unique=True, primary_key=True)),
-            ('field_of_study', self.gf('django.db.models.fields.SmallIntegerField')()),
-        ))
-        db.send_create_signal(u'events', ['FieldOfStudyRule'])
-
-        # Adding model 'GradeRule'
-        db.create_table(u'events_graderule', (
-            (u'rule_ptr', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['events.Rule'], unique=True, primary_key=True)),
-            ('grade', self.gf('django.db.models.fields.SmallIntegerField')()),
-        ))
-        db.send_create_signal(u'events', ['GradeRule'])
-
-        # Adding model 'UserGroupRule'
-        db.create_table(u'events_usergrouprule', (
-            (u'rule_ptr', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['events.Rule'], unique=True, primary_key=True)),
-            ('group', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.Group'])),
-        ))
-        db.send_create_signal(u'events', ['UserGroupRule'])
-
-        # Adding model 'RuleBundle'
-        db.create_table(u'events_rulebundle', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('description', self.gf('django.db.models.fields.CharField')(max_length=100, null=True, blank=True)),
-        ))
-        db.send_create_signal(u'events', ['RuleBundle'])
-
-        # Adding M2M table for field field_of_study_rules on 'RuleBundle'
-        db.create_table(u'events_rulebundle_field_of_study_rules', (
-            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
-            ('rulebundle', models.ForeignKey(orm[u'events.rulebundle'], null=False)),
-            ('fieldofstudyrule', models.ForeignKey(orm[u'events.fieldofstudyrule'], null=False))
-        ))
-        db.create_unique(u'events_rulebundle_field_of_study_rules', ['rulebundle_id', 'fieldofstudyrule_id'])
-
-        # Adding M2M table for field grade_rules on 'RuleBundle'
-        db.create_table(u'events_rulebundle_grade_rules', (
-            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
-            ('rulebundle', models.ForeignKey(orm[u'events.rulebundle'], null=False)),
-            ('graderule', models.ForeignKey(orm[u'events.graderule'], null=False))
-        ))
-        db.create_unique(u'events_rulebundle_grade_rules', ['rulebundle_id', 'graderule_id'])
-
-        # Adding M2M table for field user_group_rules on 'RuleBundle'
-        db.create_table(u'events_rulebundle_user_group_rules', (
-            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
-            ('rulebundle', models.ForeignKey(orm[u'events.rulebundle'], null=False)),
-            ('usergrouprule', models.ForeignKey(orm[u'events.usergrouprule'], null=False))
-        ))
-        db.create_unique(u'events_rulebundle_user_group_rules', ['rulebundle_id', 'usergrouprule_id'])
-
-        # Adding model 'AttendanceEvent'
-        db.create_table(u'events_attendanceevent', (
-            ('event', self.gf('django.db.models.fields.related.OneToOneField')(related_name='attendance_event', unique=True, primary_key=True, to=orm['events.Event'])),
-            ('max_capacity', self.gf('django.db.models.fields.PositiveIntegerField')()),
-            ('waitlist', self.gf('django.db.models.fields.BooleanField')(default=False)),
-            ('registration_start', self.gf('django.db.models.fields.DateTimeField')()),
-            ('registration_end', self.gf('django.db.models.fields.DateTimeField')()),
-        ))
-        db.send_create_signal(u'events', ['AttendanceEvent'])
-
-        # Adding M2M table for field rule_bundles on 'AttendanceEvent'
-        db.create_table(u'events_attendanceevent_rule_bundles', (
-            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
-            ('attendanceevent', models.ForeignKey(orm[u'events.attendanceevent'], null=False)),
-            ('rulebundle', models.ForeignKey(orm[u'events.rulebundle'], null=False))
-        ))
-        db.create_unique(u'events_attendanceevent_rule_bundles', ['attendanceevent_id', 'rulebundle_id'])
-
-        # Adding model 'CompanyEvent'
-        db.create_table(u'events_companyevent', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('company', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['companyprofile.Company'])),
-            ('event', self.gf('django.db.models.fields.related.ForeignKey')(related_name='companies', to=orm['events.Event'])),
-        ))
-        db.send_create_signal(u'events', ['CompanyEvent'])
-
-        # Adding model 'Attendee'
-        db.create_table(u'events_attendee', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('event', self.gf('django.db.models.fields.related.ForeignKey')(related_name='attendees', to=orm['events.AttendanceEvent'])),
-            ('user', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['authentication.OnlineUser'])),
-            ('timestamp', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
-            ('attended', self.gf('django.db.models.fields.BooleanField')(default=False)),
-        ))
-        db.send_create_signal(u'events', ['Attendee'])
-
-        # Adding unique constraint on 'Attendee', fields ['event', 'user']
-        db.create_unique(u'events_attendee', ['event_id', 'user_id'])
-
-
-    def backwards(self, orm):
-        # Removing unique constraint on 'Attendee', fields ['event', 'user']
-        db.delete_unique(u'events_attendee', ['event_id', 'user_id'])
-
-        # Deleting model 'Event'
-        db.delete_table(u'events_event')
-
-        # Deleting model 'Rule'
-        db.delete_table(u'events_rule')
-
-        # Deleting model 'FieldOfStudyRule'
-        db.delete_table(u'events_fieldofstudyrule')
-
-        # Deleting model 'GradeRule'
-        db.delete_table(u'events_graderule')
-
-        # Deleting model 'UserGroupRule'
-        db.delete_table(u'events_usergrouprule')
-
-        # Deleting model 'RuleBundle'
-        db.delete_table(u'events_rulebundle')
-
-        # Removing M2M table for field field_of_study_rules on 'RuleBundle'
-        db.delete_table('events_rulebundle_field_of_study_rules')
-
-        # Removing M2M table for field grade_rules on 'RuleBundle'
-        db.delete_table('events_rulebundle_grade_rules')
-
-        # Removing M2M table for field user_group_rules on 'RuleBundle'
-        db.delete_table('events_rulebundle_user_group_rules')
-
-        # Deleting model 'AttendanceEvent'
-        db.delete_table(u'events_attendanceevent')
-
-        # Removing M2M table for field rule_bundles on 'AttendanceEvent'
-        db.delete_table('events_attendanceevent_rule_bundles')
-
-        # Deleting model 'CompanyEvent'
-        db.delete_table(u'events_companyevent')
-
-        # Deleting model 'Attendee'
-        db.delete_table(u'events_attendee')
-
-
-    models = {
-        u'auth.group': {
-            'Meta': {'object_name': 'Group'},
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '80'}),
-            'permissions': ('django.db.models.fields.related.ManyToManyField', [], {'to': u"orm['auth.Permission']", 'symmetrical': 'False', 'blank': 'True'})
-        },
-        u'auth.permission': {
-            'Meta': {'ordering': "(u'content_type__app_label', u'content_type__model', u'codename')", 'unique_together': "((u'content_type', u'codename'),)", 'object_name': 'Permission'},
-            'codename': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
-            'content_type': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['contenttypes.ContentType']"}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '50'})
-        },
-        u'authentication.onlineuser': {
-            'Meta': {'ordering': "['first_name', 'last_name']", 'object_name': 'OnlineUser'},
-            'address': ('django.db.models.fields.CharField', [], {'max_length': '30', 'null': 'True', 'blank': 'True'}),
-            'allergies': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
-            'compiled': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'date_joined': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
-            'email': ('django.db.models.fields.EmailField', [], {'max_length': '75', 'blank': 'True'}),
-            'field_of_study': ('django.db.models.fields.SmallIntegerField', [], {'default': '0'}),
-            'first_name': ('django.db.models.fields.CharField', [], {'max_length': '30', 'blank': 'True'}),
-            'groups': ('django.db.models.fields.related.ManyToManyField', [], {'to': u"orm['auth.Group']", 'symmetrical': 'False', 'blank': 'True'}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'image': ('django.db.models.fields.files.ImageField', [], {'default': "'/static/img/profile_default.png'", 'max_length': '200', 'null': 'True', 'blank': 'True'}),
-            'infomail': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
-            'is_active': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
-            'is_staff': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'is_superuser': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'last_login': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
-            'last_name': ('django.db.models.fields.CharField', [], {'max_length': '30', 'blank': 'True'}),
-            'mark_rules': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'nickname': ('django.db.models.fields.CharField', [], {'max_length': '50', 'null': 'True', 'blank': 'True'}),
-            'ntnu_username': ('django.db.models.fields.CharField', [], {'max_length': '10', 'null': 'True', 'blank': 'True'}),
-            'password': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
-            'phone_number': ('django.db.models.fields.CharField', [], {'max_length': '20', 'null': 'True', 'blank': 'True'}),
-            'rfid': ('django.db.models.fields.CharField', [], {'max_length': '50', 'null': 'True', 'blank': 'True'}),
-            'started_date': ('django.db.models.fields.DateField', [], {'default': 'datetime.datetime(2013, 11, 10, 0, 0)'}),
-            'user_permissions': ('django.db.models.fields.related.ManyToManyField', [], {'to': u"orm['auth.Permission']", 'symmetrical': 'False', 'blank': 'True'}),
-            'username': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '30'}),
-            'website': ('django.db.models.fields.URLField', [], {'max_length': '200', 'null': 'True', 'blank': 'True'}),
-            'zip_code': ('django.db.models.fields.CharField', [], {'max_length': '4', 'null': 'True', 'blank': 'True'})
-        },
-        u'companyprofile.company': {
-            'Meta': {'object_name': 'Company'},
-            'email_address': ('django.db.models.fields.EmailField', [], {'max_length': '75', 'null': 'True', 'blank': 'True'}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'image': ('filebrowser.fields.FileBrowseField', [], {'max_length': '200'}),
-            'long_description': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
-            'phone_number': ('django.db.models.fields.IntegerField', [], {'max_length': '8', 'null': 'True', 'blank': 'True'}),
-            'short_description': ('django.db.models.fields.TextField', [], {'max_length': '200'}),
-            'site': ('django.db.models.fields.URLField', [], {'max_length': '200'})
-        },
-        u'contenttypes.contenttype': {
-            'Meta': {'ordering': "('name',)", 'unique_together': "(('app_label', 'model'),)", 'object_name': 'ContentType', 'db_table': "'django_content_type'"},
-            'app_label': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'model': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '100'})
-        },
-        u'events.attendanceevent': {
-            'Meta': {'object_name': 'AttendanceEvent'},
-            'event': ('django.db.models.fields.related.OneToOneField', [], {'related_name': "'attendance_event'", 'unique': 'True', 'primary_key': 'True', 'to': u"orm['events.Event']"}),
-            'max_capacity': ('django.db.models.fields.PositiveIntegerField', [], {}),
-            'registration_end': ('django.db.models.fields.DateTimeField', [], {}),
-            'registration_start': ('django.db.models.fields.DateTimeField', [], {}),
-            'rule_bundles': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'to': u"orm['events.RuleBundle']", 'null': 'True', 'blank': 'True'}),
-            'waitlist': ('django.db.models.fields.BooleanField', [], {'default': 'False'})
-        },
-        u'events.attendee': {
-            'Meta': {'ordering': "['timestamp']", 'unique_together': "(('event', 'user'),)", 'object_name': 'Attendee'},
-            'attended': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'event': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'attendees'", 'to': u"orm['events.AttendanceEvent']"}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'timestamp': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
-            'user': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['authentication.OnlineUser']"})
-        },
-        u'events.companyevent': {
-            'Meta': {'object_name': 'CompanyEvent'},
-            'company': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['companyprofile.Company']"}),
-            'event': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'companies'", 'to': u"orm['events.Event']"}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'})
-        },
-        u'events.event': {
-            'Meta': {'object_name': 'Event'},
-            'author': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'oppretter'", 'to': u"orm['authentication.OnlineUser']"}),
-            'description': ('django.db.models.fields.TextField', [], {}),
-            'event_end': ('django.db.models.fields.DateTimeField', [], {}),
-            'event_start': ('django.db.models.fields.DateTimeField', [], {}),
-            'event_type': ('django.db.models.fields.SmallIntegerField', [], {}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'image': ('filebrowser.fields.FileBrowseField', [], {'max_length': '200'}),
-            'ingress': ('django.db.models.fields.TextField', [], {}),
-            'ingress_short': ('django.db.models.fields.CharField', [], {'max_length': '150'}),
-            'location': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
-            'title': ('django.db.models.fields.CharField', [], {'max_length': '45'})
-        },
-        u'events.fieldofstudyrule': {
-            'Meta': {'object_name': 'FieldOfStudyRule', '_ormbases': [u'events.Rule']},
-            'field_of_study': ('django.db.models.fields.SmallIntegerField', [], {}),
-            u'rule_ptr': ('django.db.models.fields.related.OneToOneField', [], {'to': u"orm['events.Rule']", 'unique': 'True', 'primary_key': 'True'})
-        },
-        u'events.graderule': {
-            'Meta': {'object_name': 'GradeRule', '_ormbases': [u'events.Rule']},
-            'grade': ('django.db.models.fields.SmallIntegerField', [], {}),
-            u'rule_ptr': ('django.db.models.fields.related.OneToOneField', [], {'to': u"orm['events.Rule']", 'unique': 'True', 'primary_key': 'True'})
-        },
-        u'events.rule': {
-            'Meta': {'object_name': 'Rule'},
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'offset': ('django.db.models.fields.PositiveSmallIntegerField', [], {'default': '0'})
-        },
-        u'events.rulebundle': {
-            'Meta': {'object_name': 'RuleBundle'},
-            'description': ('django.db.models.fields.CharField', [], {'max_length': '100', 'null': 'True', 'blank': 'True'}),
-            'field_of_study_rules': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'to': u"orm['events.FieldOfStudyRule']", 'null': 'True', 'blank': 'True'}),
-            'grade_rules': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'to': u"orm['events.GradeRule']", 'null': 'True', 'blank': 'True'}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'user_group_rules': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'to': u"orm['events.UserGroupRule']", 'null': 'True', 'blank': 'True'})
-        },
-        u'events.usergrouprule': {
-            'Meta': {'object_name': 'UserGroupRule', '_ormbases': [u'events.Rule']},
-            'group': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['auth.Group']"}),
-            u'rule_ptr': ('django.db.models.fields.related.OneToOneField', [], {'to': u"orm['events.Rule']", 'unique': 'True', 'primary_key': 'True'})
-        }
-    }
-
-    complete_apps = ['events']
+    operations = [
+        migrations.CreateModel(
+            name='Attendee',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('timestamp', models.DateTimeField(auto_now_add=True)),
+                ('attended', models.BooleanField(default=False, verbose_name='var tilstede')),
+                ('paid', models.BooleanField(default=False, verbose_name='har betalt')),
+                ('note', models.CharField(default=b'', max_length=100, verbose_name='notat', blank=True)),
+            ],
+            options={
+                'ordering': ['timestamp'],
+                'permissions': (('view_attendee', 'View Attendee'),),
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='CompanyEvent',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('company', models.ForeignKey(verbose_name='bedrifter', to='companyprofile.Company')),
+            ],
+            options={
+                'verbose_name': 'bedrift',
+                'verbose_name_plural': 'bedrifter',
+                'permissions': (('view_companyevent', 'View CompanyEvent'),),
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='Event',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('title', models.CharField(max_length=60, verbose_name='tittel')),
+                ('event_start', models.DateTimeField(verbose_name='start-dato')),
+                ('event_end', models.DateTimeField(verbose_name='slutt-dato')),
+                ('location', models.CharField(max_length=100, verbose_name='lokasjon')),
+                ('ingress_short', models.CharField(max_length=150, verbose_name='kort ingress')),
+                ('ingress', models.TextField(verbose_name='ingress')),
+                ('description', models.TextField(verbose_name='beskrivelse')),
+                ('image', filebrowser.fields.FileBrowseField(max_length=200, null=True, verbose_name='bilde', blank=True)),
+                ('event_type', models.SmallIntegerField(verbose_name='type', choices=[(1, b'Sosialt'), (2, b'Bedriftspresentasjon'), (3, b'Kurs'), (4, b'Utflukt'), (5, b'Ekskursjon'), (6, b'Internt'), (7, b'Annet')])),
+            ],
+            options={
+                'verbose_name': 'arrangement',
+                'verbose_name_plural': 'arrangement',
+                'permissions': (('view_event', 'View Event'),),
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='AttendanceEvent',
+            fields=[
+                ('event', models.OneToOneField(related_name='attendance_event', primary_key=True, serialize=False, to='events.Event')),
+                ('max_capacity', models.PositiveIntegerField(verbose_name='maks-kapasitet')),
+                ('waitlist', models.BooleanField(default=False, verbose_name='venteliste')),
+                ('guest_attendance', models.BooleanField(default=False, verbose_name='gjestep\xe5melding')),
+                ('registration_start', models.DateTimeField(verbose_name='registrerings-start')),
+                ('unattend_deadline', models.DateTimeField(verbose_name='avmeldings-frist')),
+                ('registration_end', models.DateTimeField(verbose_name='registrerings-slutt')),
+                ('automatically_set_marks', models.BooleanField(default=False, help_text='P\xe5meldte som ikke har m\xf8tt vil automatisk f\xe5 prikk', verbose_name='automatisk prikk')),
+                ('marks_has_been_set', models.BooleanField(default=False)),
+            ],
+            options={
+                'verbose_name': 'p\xe5melding',
+                'verbose_name_plural': 'p\xe5meldinger',
+                'permissions': (('view_attendanceevent', 'View AttendanceEvent'),),
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='Reservation',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('seats', models.PositiveIntegerField(verbose_name='reserverte plasser')),
+                ('attendance_event', models.OneToOneField(related_name='reserved_seats', to='events.AttendanceEvent')),
+            ],
+            options={
+                'verbose_name': 'reservasjon',
+                'verbose_name_plural': 'reservasjoner',
+                'permissions': (('view_reservation', 'View Reservation'),),
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='Reservee',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('name', models.CharField(max_length=69, verbose_name='navn')),
+                ('note', models.CharField(max_length=100, verbose_name='notat')),
+                ('allergies', models.CharField(max_length=200, null=True, verbose_name='allergier', blank=True)),
+                ('reservation', models.ForeignKey(related_name='reservees', to='events.Reservation')),
+            ],
+            options={
+                'ordering': ['id'],
+                'verbose_name': 'reservasjon',
+                'verbose_name_plural': 'reservasjoner',
+                'permissions': (('view_reservee', 'View Reservee'),),
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='Rule',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('offset', models.PositiveSmallIntegerField(default=0, help_text='utsettelse oppgis i timer', verbose_name='utsettelse')),
+            ],
+            options={
+                'permissions': (('view_rule', 'View Rule'),),
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='GradeRule',
+            fields=[
+                ('rule_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='events.Rule')),
+                ('grade', models.SmallIntegerField(verbose_name='klassetrinn')),
+            ],
+            options={
+                'permissions': (('view_graderule', 'View GradeRule'),),
+            },
+            bases=('events.rule',),
+        ),
+        migrations.CreateModel(
+            name='FieldOfStudyRule',
+            fields=[
+                ('rule_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='events.Rule')),
+                ('field_of_study', models.SmallIntegerField(verbose_name='studieretning', choices=[(0, 'Gjest'), (1, 'Bachelor i Informatikk (BIT)'), (10, 'Software (SW)'), (11, 'Informasjonsforvaltning (DIF)'), (12, 'Komplekse Datasystemer (KDS)'), (13, 'Spillteknologi (SPT)'), (14, 'Intelligente Systemer (IRS)'), (15, 'Helseinformatikk (MSMEDTEK)'), (30, 'Annen mastergrad'), (80, 'PhD'), (90, 'International'), (100, 'Annet Onlinemedlem')])),
+            ],
+            options={
+                'permissions': (('view_fieldofstudyrule', 'View FieldOfStudyRule'),),
+            },
+            bases=('events.rule',),
+        ),
+        migrations.CreateModel(
+            name='RuleBundle',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('description', models.CharField(max_length=100, null=True, verbose_name='beskrivelse', blank=True)),
+                ('field_of_study_rules', models.ManyToManyField(to='events.FieldOfStudyRule', null=True, blank=True)),
+                ('grade_rules', models.ManyToManyField(to='events.GradeRule', null=True, blank=True)),
+            ],
+            options={
+                'permissions': (('view_rulebundle', 'View RuleBundle'),),
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='UserGroupRule',
+            fields=[
+                ('rule_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='events.Rule')),
+                ('group', models.ForeignKey(to='auth.Group')),
+            ],
+            options={
+                'permissions': (('view_usergrouprule', 'View UserGroupRule'),),
+            },
+            bases=('events.rule',),
+        ),
+        migrations.AddField(
+            model_name='rulebundle',
+            name='user_group_rules',
+            field=models.ManyToManyField(to='events.UserGroupRule', null=True, blank=True),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='event',
+            name='author',
+            field=models.ForeignKey(related_name='oppretter', to=settings.AUTH_USER_MODEL),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='companyevent',
+            name='event',
+            field=models.ForeignKey(related_name='companies', verbose_name='arrangement', to='events.Event'),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='attendee',
+            name='event',
+            field=models.ForeignKey(related_name='attendees', to='events.AttendanceEvent'),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='attendee',
+            name='user',
+            field=models.ForeignKey(to=settings.AUTH_USER_MODEL),
+            preserve_default=True,
+        ),
+        migrations.AlterUniqueTogether(
+            name='attendee',
+            unique_together=set([('event', 'user')]),
+        ),
+        migrations.AddField(
+            model_name='attendanceevent',
+            name='rule_bundles',
+            field=models.ManyToManyField(to='events.RuleBundle', null=True, blank=True),
+            preserve_default=True,
+        ),
+    ]

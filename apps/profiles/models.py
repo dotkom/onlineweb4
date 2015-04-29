@@ -23,6 +23,9 @@ class Privacy(models.Model):
     class Meta:
         verbose_name = _(u"personvern")
         verbose_name_plural = _(u"personvern")
+        permissions = (
+            ('view_privacy', 'View Privacy'),
+        )
 
 
 reversion.register(Privacy)

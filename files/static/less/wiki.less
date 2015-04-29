@@ -1,5 +1,15 @@
+@import "colors.less";
+
 #wiki {
-    padding: 87px 0 0;
+    @import "wiki/bootstrap/less/wiki/wiki-bootstrap.less";
+    @fa-font-path: "/static/wiki/font-awesome/font";
+    @icon-font-path: "/static/fonts/";
+
+    // Temporary fix until we upgrade django-wiki to >0.0.23
+    .modal {
+        z-index: 1050;
+    }
+
     .page-header {
         margin-top: 0px;
     }
@@ -31,13 +41,15 @@
             }
         }
     }
-    #article-breadcrumbs {
+    #topbar {
         border-bottom: 1px solid #EEEEEE;
         margin-bottom: 12px;
-        > div.pull-left {
-            margin-bottom: 9px;
+        #article-breadcrumbs > div.pull-left {
             margin-left: 0px !important;
             margin-right: 10px;
+        }
+        #article-breadcrumbs > div.pull-left, form {
+            margin-bottom: 9px;
         }
         .breadcrumb {
             margin-bottom: 8px;
@@ -85,73 +97,8 @@
             width: auto;
             border: 0px;
         }
-    }    
-    #article-menu {
-        border-bottom: none;
-        margin-bottom: 8px;
-        li {
-            padding-top: 0px;
-            a {
-                padding-bottom: 9px;
-            }
-        }
     }
-    #article-breadcrumbs {
-        border-bottom: 1px solid #EEEEEE;
-        margin-bottom: 12px;
-        > div.pull-left {
-            margin-bottom: 9px;
-            margin-left: 0px !important;
-            margin-right: 10px;
-        }
-        .breadcrumb {
-            margin-bottom: 8px;
-            margin-right: 10px;
-        }
-    }
-}
-.navbar-fixed-top {
-    .login-btn {
-        border-radius: 5px;
-    }
-}
-.navbar.navbar-fixed-top > .container .navbar-brand {
-    margin-right: 0px;
-}
-.navbar-fixed-top {
-	padding-left: 0px;
-	padding-right: 0px;
-}
-
-@media all and (max-width: 768px) {
-    #wiki {
-        #article-menu {
-            float: left !important;
-            margin-bottom: 7px;
-            li {
-                padding-top: 0px;
-
-                a {
-                    background-color: #5BC0DE;
-                    border-color: #5BC0DE;
-                    color: #FFFFFF;
-                    margin-left: 10px;
-                    padding-top: 13px;
-                    padding-bottom: 11px;
-                    margin-left: 0px;
-                    margin-right: 10px;
-                }
-                span {
-                    display: block;
-                }
-                span.hideme {
-                    display: none;
-                }
-            }
-            li.active a {
-                background-color: #428BCA;
-                color: #fff;
-            }
-        }
+    h1 {
+        color: @heading;
     }
 }

@@ -11,15 +11,30 @@ from apps.authentication.models import OnlineUser as User
 
 import reversion
 
-class ActiveMarksManager(models.Manager):
-    def get_queryset(self):
-        return super(ActiveMarksManager, self).get_queryset().filter(expiration_date__gt=timezone.now())
+
+DURATION = 30
+# summer starts 1st June, ends 15th August
+SUMMER = ((6, 1), (8, 15))
+# winter starts 1st December, ends 15th January
+WINTER = ((12, 1), (1, 15))
+
+def get_expiration_date(user):
+    if user:
+        marks = MarkUser.objects.filter(user = user).order_by('-expiration_date')
+        if marks:
+            return marks[0].expiration_date
+    return None
 
 
-class InactiveMarksManager(models.Manager):
-    def get_queryset(self):
-        return super(InactiveMarksManager, self).get_queryset().filter(expiration_date__lte=timezone.now())
+class MarksManager(models.Manager):
+    def all_active(self):
+        return Mark.objects.filter(given_to__expiration_date__gt=timezone.now().date())
 
+    def active(self, user):
+        return MarkUser.objects.filter(user=user).filter(expiration_date__gt=timezone.now().date())
+
+    def inactive(self, user=None):
+        return MarkUser.objects.filter(user=user).filter(expiration_date__lte=timezone.now().date())
 
 class Mark(models.Model):
     CATEGORY_CHOICES = (
@@ -32,9 +47,7 @@ class Mark(models.Model):
     )
 
     title = models.CharField(_(u"tittel"), max_length=155)
-    given_to = models.ManyToManyField(User, null=True, blank=True, through="UserEntry", verbose_name=_(u"gitt til"))
     added_date = models.DateField(_(u"utdelt dato"))
-    expiration_date = models.DateField(_(u"utløpsdato"), editable=False)
     given_by = models.ForeignKey(User, related_name="mark_given_by", verbose_name=_(u"gitt av"), editable=False, null=True, blank=True)
     last_changed_date = models.DateTimeField(_(u"sist redigert"), auto_now=True, editable=False)
     last_changed_by = models.ForeignKey(User, related_name="marks_last_changed_by",
@@ -47,57 +60,103 @@ class Mark(models.Model):
 
     # managers
     objects = models.Manager()  # default manager
-    active = ActiveMarksManager()  # active marks manager
-    inactive = InactiveMarksManager()  #inactive marks manager
-
-    @property
-    def is_active(self):
-        return self.expiration_date > timezone.now()
+    marks = MarksManager()  # active marks manager
 
     def __unicode__(self):
         return _(u"Prikk for %s") % self.title
 
     def save(self, *args, **kwargs):
         if not self.added_date:
-            self.added_date = timezone.now()
-        self.expiration_date = _get_expiration_date(self.added_date) 
+            self.added_date = timezone.now().date()
         super(Mark, self).save(*args, **kwargs)
+
+    def delete(self):
+        given_to = [mu.user for mu in self.given_to.all()]
+        super(Mark, self).delete()
+        for user in given_to:
+            _fix_mark_history(user)
 
     class Meta:
         verbose_name = _(u"Prikk")
         verbose_name_plural = _(u"Prikker")
+        permissions = (
+            ('view_mark', 'View Mark'),
+        )
 
 
 reversion.register(Mark)
 
 
-class UserEntry(models.Model):
+class MarkUser(models.Model):
+    """
+    One entry for a user that has received a mark.
+    """
+    mark = models.ForeignKey(Mark, related_name="given_to")
     user = models.ForeignKey(User)
-    mark = models.ForeignKey(Mark)
+
+    expiration_date = models.DateField(_(u"utløpsdato"), editable=False)
+
+    def save(self, *args, **kwargs):
+        run_history_update = False
+        if not self.expiration_date:
+            self.expiration_date = timezone.now().date()
+            run_history_update = True
+        super(MarkUser, self).save(*args, **kwargs)
+        if run_history_update:
+            _fix_mark_history(self.user)
+
+    def delete(self):
+        super(MarkUser, self).delete()
+        _fix_mark_history(self.user)
 
     def __unicode__(self):
-        return _(u"UserEntry for %s") % self.user.get_full_name()
+        return _(u"Mark entry for user: %s") % self.user.get_full_name()
 
     class Meta:
         unique_together = ("user", "mark")
+        ordering = ('expiration_date',)
+        permissions = (
+            ('view_userentry', 'View UserEntry'),
+        )
 
 
-reversion.register(UserEntry)
+reversion.register(MarkUser)
 
 
-def _get_expiration_date(added_date=timezone.now()):
+def _fix_mark_history(user):
     """
-    Calculates the datetime in the future when a mark will expire. 
+    Goes through a users complete mark history and resets all expiration dates.
+
+    The reasons for doing it this way is that the mark rules now insist on marks building
+    on previous expiration dates if such exists. Instead of having the entire mark database
+    be a linked list structure, it can be simplified to guarantee the integrity of the
+    expiration dates by running this whenever;
+
+     * new Mark is saved or deleted
+     * a new MarkUser entry is made
+     * an existing MarkUser entry is deleted
+    """
+    markusers = MarkUser.objects.filter(user=user).order_by('mark__added_date')
+    last_expiry_date = None
+    for entry in markusers:
+        # If there's a last_expiry date, it means a mark has been processed already.
+        # If that expiration date is within a DURATION of this added date, build on it.
+        if last_expiry_date and entry.mark.added_date - timedelta(days=DURATION) < last_expiry_date:
+            entry.expiration_date = _get_with_duration_and_vacation(last_expiry_date)
+        # If there is no last_expiry_date or the last expiry date is over a DURATION old
+        # we add DURATIION days from the added date of the mark.
+        else:
+            entry.expiration_date = _get_with_duration_and_vacation(entry.mark.added_date)
+        entry.save()
+        last_expiry_date = entry.expiration_date
+
+def _get_with_duration_and_vacation(added_date=timezone.now()):
+    """
+    Checks whether the span of a marks duration needs to have vacation durations added.
     """
 
     if type(added_date) == datetime:
         added_date = added_date.date()
-
-    DURATION = 60
-    # summer starts 1st June, ends 15th August
-    SUMMER = ((6, 1), (8, 15))
-    # winter starts 1st December, ends 15th January
-    WINTER = ((12, 1), (1, 15))
 
     # Add the duration
     expiry_date = added_date + timedelta(days=DURATION)
@@ -125,5 +184,4 @@ def _get_expiration_date(added_date=timezone.now()):
     elif second_winter_end_date > added_date:
         expiry_date += timedelta(days=(second_winter_end_date - added_date).days)
 
-    # The returned value is a timezone aware datetime object
-    return timezone.make_aware(datetime.combine(expiry_date, time()), timezone.get_current_timezone())
+    return expiry_date

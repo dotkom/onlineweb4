@@ -1,4 +1,5 @@
 {% load compress %}
+{% load sekizai_tags %}
 <!DOCTYPE html>
 <html>
 <head>
@@ -13,6 +14,7 @@
         <link rel="stylesheet" type="text/less" href="{{ STATIC_URL }}less/core.less">
         {% endcompress %}
     {% endblock %}
+    {% render_block "css" %}
     {% block apple-webapp %}{% endblock %}
 </head>
 <body>
@@ -45,9 +47,8 @@
             <ul class="mn-user-nav">
             {% if user.is_authenticated %}
                 <li>
-                    <a href="#login_menu" class="dropdown-toggle dropdown-signin login glyphicon glyphicon-user" data-toggle="dropdown">
-                        <span class="username_menu hidden-xs hidden-sm hidden-md">{{ user.username }}</span>
-                    </a>
+                    <a href="#login_menu" class="dropdown-toggle dropdown-signin login glyphicon glyphicon-user" data-toggle="dropdown"></a>
+                    <span class="username_menu hidden-xs hidden-sm hidden-md">{{ user.username }}</span>
 
                     <ul class="dropdown-menu login-box" role="menu">
                         
@@ -188,9 +189,10 @@
 
     {% block js %}
         <script src="https://maps.googleapis.com/maps/api/js?v=3&amp;sensor=true"></script>
-        <script src="{{ STATIC_URL }}js/libs/jquery-1.9.1.min.js"></script>
+        <script src="{{ STATIC_URL }}js/libs/jquery-2.1.3.min.js"></script>
         <script src="{{ STATIC_URL }}js/libs/bootstrap.min.js"></script>
         <script src="{{ STATIC_URL }}js/libs/moment.min.js"></script>
+        <script src="{{ STATIC_URL }}js/libs/jquery.cookie.js"></script>
         {% compress js %}
         <script src="{{ STATIC_URL }}js/libs/jquery.debouncedresize.js"></script>
         <script src="{{ STATIC_URL }}js/libs/fastclick.js"></script>
@@ -199,6 +201,8 @@
         <script src="{{ STATIC_URL }}js/libs/konami.js"></script>
         <script src="{{ STATIC_URL }}js/christmas.js"></script>
     {% endblock %}
+
+    {% render_block "js" %}
 
     {% if GOOGLE_ANALYTICS_KEY %}
         <script type="text/javascript">
