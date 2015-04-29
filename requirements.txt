@@ -1,4 +1,4 @@
-Django==1.7.4
+Django==1.7.7
 Pillow==2.7.0                   # pillow
 django-tastypie==0.12.1         # API
 python-memcached==1.53          # Memcache. Used by Mailinglists to fetch from Sympa.
@@ -15,7 +15,7 @@ django-filebrowser==3.5.4 		# File uploading
 django-grappelli==2.6.3         # Admin template set
 git+git://github.com/clintecker/django-chunks.git@0.2# Chunks, or reusable key:content for templates.
 django-crispy-forms==1.4.0      # nice forms
-django-extensions==1.5.0        # nice extra commands for debugging, etc
+django-extensions==1.5.2        # nice extra commands for debugging, etc
 django-dynamic-fixture==1.8.1   # Dynamic fixtures for models
 django-simple-captcha==0.4.4    # Simple captcha
 django_compressor==1.4          # Compiles less and minifies js
@@ -30,6 +30,7 @@ pdfdocument==3.1
 Unidecode==0.4.17               # Translates every unicode symbol to the closest ascii. online_mail_usernames
 django-markdown-deux==1.0.5
 django-formset-js==0.4.3
+werkzeug==0.10.4
 
 #test tools
 cov-core==1.7
@@ -46,6 +47,6 @@ git+https://github.com/django-wiki/django-wiki.git@adb4e2ea21745da40d8c123ce7a36
 
 # non-pip
 # imagemagick                   # From package repository. Tested with version == 8:6.7.7.10.
-# libjpeg-dev					# From package repository. 
+# libjpeg-dev					# From package repository.
 # libpq-dev						# From package repository.
 
