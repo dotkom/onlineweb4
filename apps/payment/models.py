@@ -3,12 +3,12 @@
 import uuid
 import reversion
 
+from django.conf import settings
+from django.contrib.contenttypes.models import ContentType
+from django.contrib.contenttypes import generic
 from django.db import models
 from django.utils import timezone
 from django.utils.translation import ugettext as _
-from django.contrib.contenttypes import generic
-from django.contrib.contenttypes.models import ContentType
-from django.conf import settings
 
 from apps.authentication.models import OnlineUser as User
 from apps.events.models import AttendanceEvent, Attendee
@@ -55,7 +55,7 @@ class Payment(models.Model):
         return [payment_delay.user for payment_delay in self.payment_delays()]
 
     def create_payment_delay(self, user, deadline):
-        payment_delays = self.paymentdelay_set.filter(user=user)
+        payment_delays = self.paymentdelay_set.filter(payment=self, user=user)
 
         if payment_delays:
             for payment_delay in payment_delays:
@@ -67,8 +67,7 @@ class Payment(models.Model):
     def description(self):
         if self._is_type(AttendanceEvent):
             return self.content_object.event.title
-        else:
-            return "payment description not implemented"
+
 
     def responsible_mail(self):
         if self._is_type(AttendanceEvent):

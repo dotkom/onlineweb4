@@ -463,6 +463,9 @@ class AttendanceEvent(models.Model):
                 self._handle_waitlist_bump(host, attendees, self.payment())
                        
     def _handle_waitlist_bump(self, host, attendees, payment=None):
+
+        title = 'Du har fått plass på %s' % (self.event.title)
+
         extended_deadline = timezone.now() + timedelta(days=2)
         message = u'Du har stått på venteliste for arrangementet "%s" og har nå fått plass.\n' % (self.event.title)
 
@@ -478,7 +481,7 @@ class AttendanceEvent(models.Model):
                 else: #The deadline is in less than 2 days
                     for attendee in attendees:
                         payment.create_payment_delay(attendee.user, extended_deadline)
-                    message += u"Dette arrangementet krever betaling og du har 48 timer på og betale"
+                    message += u"Dette arrangementet krever betaling og du har 48 timer på å betale"
             
             elif payment.payment_type == 3: #Delay
                 deadline = timezone.now() + timedelta(days=payment.delay)
@@ -498,8 +501,7 @@ class AttendanceEvent(models.Model):
         message += u"\nhttp://%s%s" % (host, self.event.get_absolute_url())
 
         for attendee in attendees:
-            send_mail(_(u'Du har fått plass på et arrangement'), message,
-                settings.DEFAULT_FROM_EMAIL, [attendee.user.email])
+            send_mail(title, message, settings.DEFAULT_FROM_EMAIL, [attendee.user.email])
 
     def is_eligible_for_signup(self, user):
         """
