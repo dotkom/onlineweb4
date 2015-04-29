@@ -4,7 +4,7 @@
 {% load crispy_forms_tags %}
 
 {% block title %}
-Ny plakatbestilling - Online
+Ny bestilling - Online
 {% endblock title %}
 
 {% block styles %}
@@ -22,15 +22,15 @@ Ny plakatbestilling - Online
 {% endblock js %}
 
 {% block page-header %}
-Bestill ny plakat
+Ny bestilling
 {% endblock %}
 
 {% block breadcrumbs %}
-    <li>Plakatbestilling</li> 
+    <li>Bestilling</li> 
 {% endblock %}
 
 {% block content %}
-    <h4>Fyll ut info om ny plakatbestilling</h4>
+    <h4>Fyll ut info om bestillingen</h4>
     <section>
     <form action="" method="POST">
         {{add_poster_form.non_field_errors }}

@@ -4,7 +4,7 @@ from django.conf.urls import patterns, url
 
 urlpatterns = patterns('apps.posters.dashboard.views',
     url(r'^$', 'index', name='posters'),
-    url(r'^add/$', 'add', name='posters_add'),
+    url(r'^add/(?P<order_type>\d+)$', 'add', name='posters_add'),
     url(r'^detail/(?P<order_id>\d+)$', 'detail', name='posters_detail'),
     # Ajax
     url(r'^assign_person/$', 'assign_person', name='assign_person'),

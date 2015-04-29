@@ -22,7 +22,7 @@ from datetime import datetime, timedelta
 from apps.authentication.models import OnlineUser as User
 from apps.dashboard.tools import has_access, get_base_context
 from apps.posters.models import Poster
-from apps.posters.forms import AddPosterForm, EditPosterForm
+from apps.posters.forms import AddPosterForm, AddBongForm, AddOtherForm, EditPosterForm
 #from apps.dashboard.posters.models import PosterForm
 from apps.companyprofile.models import Company
 from apps.posters.models import Poster
@@ -63,7 +63,7 @@ def index(request):
 @ensure_csrf_cookie
 @login_required
 @permission_required('posters.add_poster_order', return_403=True)
-def add(request):
+def add(request, order_type=0):
 
     context = get_base_context(request)
 

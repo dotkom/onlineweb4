@@ -13,6 +13,7 @@ from apps.events.models import Event
 
 
 class OrderMixin(models.Model):
+    order_type = models.TextField(_(u"type"), max_length=20, default="plakat")
     ordered_date = models.DateTimeField(auto_now_add=True, editable=False)
     ordered_by = models.ForeignKey(User, related_name=_(u"bestilt av"))
     ordered_committee = models.ForeignKey(Group, related_name=_(u'bestilt av komite'))

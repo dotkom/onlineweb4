@@ -139,13 +139,15 @@
                     {% if 'posters.add_poster_order' in user_permissions %}
                     <li class="treeview">
                         <a href="#">
-                            <i class="fa fa-picture-o blue"></i> <span>Plakatbestilling</span>
+                            <i class="fa fa-picture-o blue"></i> <span>Bestilling</span>
                             <i class="fa fa-angle-down pull-right"></i>
                             {% if poster_orders %}<small class="badge pull-right">{{ poster_orders }}</small>{% endif %}
                         </a>
                         <ul class="treeview-menu">
                             <li><a href="{% url 'posters' %}"><i class="fa fa-angle-double-right orange"></i> Oversikt</a></li>
-                            <li><a href="{% url 'posters_add' %}"><i class="fa fa-angle-double-right orange"></i> Ny bestilling</a></li>
+                            <li><a href="{% url 'posters_add' 1 %}"><i class="fa fa-angle-double-right orange"></i> Ny plakatbestilling</a></li>
+                            <li><a href="{% url 'posters_add' 2 %}"><i class="fa fa-angle-double-right orange"></i> Ny bongbestilling</a></li>
+                            <li><a href="{% url 'posters_add' 3 %}"><i class="fa fa-angle-double-right orange"></i> Ny generell bestilling</a></li>
                         </ul>
                     </li>
                     {% endif %}
