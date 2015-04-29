@@ -88,6 +88,7 @@ def payment_refund(request, payment_relation_id):
 
     payment_relation = get_object_or_404(PaymentRelation, pk=payment_relation_id)
 
+    #Prevents users from refunding others
     if request.user != payment_relation.user:
         return HttpResponse("Unauthorized user", content_type="text/plain", status=403)
 
