@@ -18,8 +18,14 @@ class LoginForm(forms.Form):
         if self._errors:
             return
 
-        self.cleaned_data['username'] = self.cleaned_data['username'].lower()
-        user = auth.authenticate(username=self.cleaned_data['username'], password=self.cleaned_data['password'])
+        username = self.cleaned_data['username'].lower()
+
+        if '@' in username:
+            email = Email.objects.filter(email=username)
+            if email:
+                username = email[0].user.username
+
+        user = auth.authenticate(username=username, password=self.cleaned_data['password'])
 
         if user:
             if user.is_active:
