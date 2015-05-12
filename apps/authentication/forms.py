@@ -33,6 +33,7 @@ class LoginForm(forms.Form):
             else:
                 self._errors['username'] = self.error_class([_(u"Din konto er ikke aktiv. Forsøk gjenoppretning av passord.")])
         else:
+            # This error will also be produced if the email supplied does not exist.
             self._errors['username'] = self.error_class([_(u"Kontoen eksisterer ikke, eller kombinasjonen av brukernavn og passord er feil.")])
         return self.cleaned_data
 
