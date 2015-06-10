@@ -109,7 +109,7 @@ def get_chart_data(request, applabel, appmodel, object_id, feedback_id, token=Fa
     rating_titles = []
     answer_collection = dict()
     answer_collection['replies'] = dict()
-    answer_length = int(len(RATING_CHOICES) +1)
+    answer_length = int(len(RATING_CHOICES))
     for question in fbr.ratingquestion:
         if question.display or not token:
             rating_titles.append(str(question))

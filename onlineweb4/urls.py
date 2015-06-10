@@ -124,6 +124,11 @@ if 'apps.genfors' in settings.INSTALLED_APPS:
         url(r'^genfors/',           include('apps.genfors.urls')),
     )
 
+if 'apps.splash' in settings.INSTALLED_APPS:
+    urlpatterns += patterns('',
+        url(r'^splash/',           include('apps.splash.urls')),
+    )
+
 # feedme
 if 'feedme' in settings.INSTALLED_APPS:
     urlpatterns += patterns('', url(r'^feedme/', include('feedme.urls', namespace='feedme')))
