@@ -40,7 +40,7 @@ class Payment(models.Model):
     delay = models.SmallIntegerField(_(u'utsettelse'), blank=True, null=True, default=2)
 
     #For logging and history
-    added_date = models.DateTimeField(_(u"opprettet dato"), auto_now=True)
+    added_date = models.DateTimeField(_(u"opprettet dato"), auto_now=True, auto_now_add=True)
     changed_date = models.DateTimeField(auto_now=True, editable=False)
     last_changed_by = models.ForeignKey(User, editable=False, null=True) #blank and null is temperarly
 
@@ -67,7 +67,6 @@ class Payment(models.Model):
     def description(self):
         if self._is_type(AttendanceEvent):
             return self.content_object.event.title
-
 
     def responsible_mail(self):
         if self._is_type(AttendanceEvent):
