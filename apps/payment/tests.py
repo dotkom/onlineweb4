@@ -2,10 +2,10 @@
 
 from datetime import timedelta
 
-from django.test import TestCase
-from django_dynamic_fixture import G
 from django.contrib.contenttypes.models import ContentType
+from django.test import TestCase
 from django.utils import timezone
+from django_dynamic_fixture import G
 
 from apps.authentication.models import OnlineUser as User
 from apps.events.models import Event, AttendanceEvent, Attendee

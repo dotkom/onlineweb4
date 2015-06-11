@@ -8,6 +8,7 @@ from django.utils import timezone
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.contenttypes.models import ContentType 
 from django.core.mail import EmailMessage
 from django.core.signing import Signer, BadSignature
 from django.core.urlresolvers import reverse
@@ -15,7 +16,6 @@ from django.db.models import Q
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404, redirect
 from django.utils.translation import ugettext as _
-from django.contrib.contenttypes.models import ContentType 
 
 import icalendar
 import watson

@@ -4,9 +4,9 @@ from django.contrib import admin
 from django.contrib.contenttypes import generic
 
 from apps.payment.models import Payment
-from apps.payment.models import PaymentRelation
 from apps.payment.models import PaymentDelay
 from apps.payment.models import PaymentPrice
+from apps.payment.models import PaymentRelation
 
 
 class PaymentInline(generic.GenericStackedInline):
