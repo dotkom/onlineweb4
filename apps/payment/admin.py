@@ -16,6 +16,7 @@ class PaymentInline(generic.GenericStackedInline):
     inline_classes = ('grp-collapse grp-open',)  # style
     exclude = ("added_date", "last_changed_date", "last_changed_by")
 
+    #TODO add proper history updates in dashboard
     #def save_model(self, request, obj, form, change):
     #    obj.last_changed_by = request.user
     #    obj.save()
@@ -30,16 +31,16 @@ class PaymentPriceInline(admin.StackedInline):
 class PaymentAdmin(admin.ModelAdmin):
     inlines = (PaymentPriceInline, )
     model = Payment
-
-#TODO remove paymentRelation in prod
+    list_display = ('__unicode__', 'stripe_key_index', 'payment_type')
 
 class PaymentRelationAdmin(admin.ModelAdmin):
     model = PaymentRelation
-    #exclude = ('stripe_id',)
+    list_display = ('__unicode__', 'refunded')
+    exclude = ('stripe_id',)
 
 class PaymentDelayAdmin(admin.ModelAdmin):
     model = PaymentDelay
-    #fields = ('valid_to', )
+    list_display = ('__unicode__', 'valid_to', 'active')
 
 admin.site.register(Payment, PaymentAdmin)
 admin.site.register(PaymentRelation, PaymentRelationAdmin)
