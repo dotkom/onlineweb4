@@ -197,6 +197,7 @@ INSTALLED_APPS = (
     'crispy_forms',
     'django_extensions',
     'django_dynamic_fixture',
+    'oauth2_provider',
     'captcha',
     'compressor',
     'pdfdocument',
@@ -238,6 +239,7 @@ INSTALLED_APPS = (
     'apps.inventory',
     'apps.payment',
     'apps.splash',
+    'apps.sso',
     'scripts',
 
     #External apps
