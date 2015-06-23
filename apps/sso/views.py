@@ -3,7 +3,7 @@
 import logging
 
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 from django.views.decorators.debug import sensitive_post_parameters
 from django.views.generic import View, FormView
@@ -16,14 +16,19 @@ from braces.views import LoginRequiredMixin, CsrfExemptMixin
 
 from oauth2_provider.settings import oauth2_settings
 from oauth2_provider.backends import OAuth2Backend
+from oauth2_provider.decorators import protected_resource
 from oauth2_provider.oauth2_validators import OAuth2Validator
 from oauth2_provider.exceptions import OAuthToolkitError
 from oauth2_provider.forms import AllowForm
 from oauth2_provider.http import HttpResponseUriRedirect
 from oauth2_provider.models import get_application_model
 from oauth2_provider.views.mixins import OAuthLibMixin
+from oauth2_provider.models import AccessToken
+
+from apps.authentication.models import FIELD_OF_STUDY_CHOICES
 
 log = logging.getLogger('SSO')
+
 
 @login_required
 def index(request):
@@ -34,6 +39,34 @@ def index(request):
     context = {}
 
     return render(request, 'sso/index.html', context)
+
+
+@protected_resource()
+def userinfo(request):
+    """
+    Basic user information provided based on the Bearer Token provided by an SSO application
+    :param request: The Django Request object
+    :return: An HTTP response
+    """
+
+    userdata = {}
+
+    try:
+        bearer = request.META.get('HTTP_AUTHORIZATION', '')
+        bearer = bearer.split(' ')
+        if len(bearer) != 2:
+            return JsonResponse(status=403, data={'error': 'Unauthorized'})
+        bearer = bearer[1]
+        tokenobject = AccessToken.objects.get(token=bearer)
+        userdata['first_name'] = tokenobject.user.first_name
+        userdata['last_name'] = tokenobject.user.last_name
+        userdata['email'] = tokenobject.user.get_email().email
+        userdata['nickname'] = tokenobject.user.nickname
+        userdata['image'] = tokenobject.user.get_image_url()
+        userdata['field_of_study'] = FIELD_OF_STUDY_CHOICES[tokenobject.user.field_of_study][1]
+        return JsonResponse(status=200, data=userdata)
+    except AccessToken.DoesNotExist:
+        return JsonResponse(status=403, data={'error': 'Unauthorized'})
 
 
 class BaseAuthorizationView(LoginRequiredMixin, OAuthLibMixin, View):

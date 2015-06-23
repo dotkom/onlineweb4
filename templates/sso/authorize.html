@@ -1,11 +1,11 @@
 {% extends "sso/index.html" %}
 {% block content %}
     {% if not error %}
-        <form id="authorization-form" method="post">
+        <form id="sso-authorization-form" method="post">
             <h2>Autorisér {{ application.name }}</h2>
             {% csrf_token %}
 
-            {% for field in fields %}
+            {% for field in form %}
                 {% if field.is_hidden %}
                     {{ field }}
                 {% endif %}
@@ -13,7 +13,7 @@
 
             <p>Tjenesten behøver følgende tilganger:</p>
             <ul class="sso-permissions">
-                {% for scope in scope_descriptions %}
+                {% for scope in scopes_descriptions %}
                 <li>{{ scope }}</li>
                 {% endfor %}
             </ul>
