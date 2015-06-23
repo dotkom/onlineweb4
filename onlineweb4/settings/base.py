@@ -62,7 +62,7 @@ BASE_URL = 'https://online.ntnu.no'
 AUTH_USER_MODEL = 'authentication.OnlineUser'
 LOGIN_URL = '/auth/login/'
 
-MEDIA_ROOT = os.path.join(PROJECT_ROOT_DIRECTORY, 'uploaded_media') # Override this in local.py in prod.
+MEDIA_ROOT = os.path.join(PROJECT_ROOT_DIRECTORY, 'uploaded_media')  # Override this in local.py in prod.
 MEDIA_URL = '/media/'
 
 STATIC_ROOT = os.path.join(PROJECT_ROOT_DIRECTORY, 'static')
