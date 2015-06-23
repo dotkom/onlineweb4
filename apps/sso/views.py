@@ -49,21 +49,24 @@ def userinfo(request):
     :return: An HTTP response
     """
 
-    userdata = {}
-
     try:
         bearer = request.META.get('HTTP_AUTHORIZATION', '')
         bearer = bearer.split(' ')
         if len(bearer) != 2:
             return JsonResponse(status=403, data={'error': 'Unauthorized'})
+
         bearer = bearer[1]
         tokenobject = AccessToken.objects.get(token=bearer)
-        userdata['first_name'] = tokenobject.user.first_name
-        userdata['last_name'] = tokenobject.user.last_name
-        userdata['email'] = tokenobject.user.get_email().email
-        userdata['nickname'] = tokenobject.user.nickname
-        userdata['image'] = tokenobject.user.get_image_url()
-        userdata['field_of_study'] = FIELD_OF_STUDY_CHOICES[tokenobject.user.field_of_study][1]
+        userdata = {
+            'first_name': tokenobject.user.first_name,
+            'last_name': tokenobject.user.last_name,
+            'username': tokenobject.user.username,
+            'email': tokenobject.user.get_email().email,
+            'nickname': tokenobject.user.nickname,
+            'image': tokenobject.user.get_image_url(),
+            'field_of_study': FIELD_OF_STUDY_CHOICES[tokenobject.user.field_of_study][1]
+        }
+
         return JsonResponse(status=200, data=userdata)
     except AccessToken.DoesNotExist:
         return JsonResponse(status=403, data={'error': 'Unauthorized'})

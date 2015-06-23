@@ -100,13 +100,75 @@
         </div>
     </nav>
     <section id="sso-container">
-    {% block content %}
-
-    {% endblock %}
+    {% block content %}{% endblock %}
     </section>
+    <section id="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-xs-12 col-sm-6 col-md-4">
+                    <div class="row row-space">
+                        <div class="col-md-12 footer-social">
+                            <a href="http://facebook.com/LinjeforeningenOnline"><img src="{{ STATIC_URL }}img/facebook-64.png" alt="Facebook" /></a>
+                            <a href="http://twitter.com/Online_NTNU"><img src="{{ STATIC_URL }}img/twitter-64.png" alt="Twitter" /></a>
+                            <a href="https://plus.google.com/107294836198591872251"><img src="{{ STATIC_URL }}img/googleplus-64.png" alt="Google Plus" /></a>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <p>Har du funnet en feil på nettsiden?<br>Ta kontakt med <a href="mailto:dotkom@online.ntnu.no">Utviklingsteamet</a></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-12 col-sm-6 col-md-4">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="contact-info">
+                                 <div class="contact-item">
+                                    <span class="glyphicon glyphicon-briefcase"></span>992 548 045 (OrgNr)
+                                </div>
+                                <div class="contact-item">
+                                    <span class="glyphicon glyphicon-envelope"></span>kontakt@online.ntnu.no
+                                </div>
+                                <div class="contact-item">
+                                    <span class="glyphicon glyphicon-phone"></span>73 59 64 89
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-6 col-sm-6 col-md-6">
+                            <div class="address">
+                                <div class="address-heading">Besøksadresse <span class="glyphicon glyphicon-map-marker"></span></div>
+                                <div class="address-info">
+                                    Rom 303<br>
+                                    Høgskoleringen 3<br>
+                                    NTNU Gløshaugen
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-6 col-sm-6 col-md-6">
+                            <div class="address">
+                                <div class="address-heading">Postadresse <span class="glyphicon glyphicon-map-marker"></span></div>
+                                <div class="address-info">
+                                    Online Linjeforening<br>
+                                    Sem Sælandsv. 7-9<br>
+                                    7034 Trondheim<br>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-12 col-md-4">
+                    <div id="footer-map"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
     {% block js %}
-        <script src="{{ STATIC_URL}}js/libs/jquery-2.1.3.min.js"></script>
+        <script src="{{ STATIC_URL }}js/libs/jquery-2.1.3.min.js"></script>
         <script src="{{ STATIC_URL }}js/libs/bootstrap.min.js"></script>
+        <script src="https://maps.googleapis.com/maps/api/js?v=3&amp;sensor=true"></script>
     {% endblock %}
 
     {% if GOOGLE_ANALYTICS_KEY %}

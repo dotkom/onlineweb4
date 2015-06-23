@@ -1,32 +1,35 @@
 {% extends "sso/index.html" %}
 {% block content %}
-    {% if not error %}
+{% if not error %}
+<div id="sso-panel">
+    <div id="sso-panel-header">
+        <h3>Ekstern autentisering</h3>
+    </div>
+    <div id="sso-panel-body">
+        <h4>Tjenesten {{ application.name }} ønsker innloggingsinformasjon.</h4>
         <form id="sso-authorization-form" method="post">
-            <h2>Autorisér {{ application.name }}</h2>
             {% csrf_token %}
-
             {% for field in form %}
                 {% if field.is_hidden %}
                     {{ field }}
                 {% endif %}
             {% endfor %}
-
             <p>Tjenesten behøver følgende tilganger:</p>
             <ul class="sso-permissions">
-                {% for scope in scopes_descriptions %}
-                <li>{{ scope }}</li>
-                {% endfor %}
+                <li>Brukernavn</li>
+                <li>Fornavn</li>
+                <li>Etternavn</li>
+                <li>Primær E-postaddresse</li>
+                <li>Studieretning</li>
+                <li>Kallenavn</li>
             </ul>
-
-            {{ form.errors }}
-            {{ form.non_field_errors }}
-
+            <br />
             <div id="sso-control-buttons">
-                <input type="submit" class="btn btn-large btn-danger" value="Avbryt" />
                 <input type="submit" class="btn btn-large btn-success" name="allow" value="Godta" />
+                <input type="submit" class="btn btn-large btn-danger pull-right" value="Avbryt" />
             </div>
         </form>
-    {% else %}
-
-    {% endif %}
+    </div>
+</div>
+{% endif %}
 {% endblock %}
