@@ -238,8 +238,8 @@ INSTALLED_APPS = (
     'apps.mailinglists',
     'apps.inventory',
     'apps.payment',
-    'apps.splash',
     'apps.sso',
+    'apps.splash',
     'scripts',
 
     #External apps

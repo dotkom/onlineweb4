@@ -131,7 +131,7 @@ if 'apps.splash' in settings.INSTALLED_APPS:
 
 if 'apps.sso' in settings.INSTALLED_APPS:
     urlpatterns += patterns('',
-        url(r'^sso/',               include('apps.splash.urls')),
+        url(r'^sso/',               include('apps.sso.urls')),
     )
 
 # feedme
