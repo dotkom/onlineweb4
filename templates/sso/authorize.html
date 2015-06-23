@@ -1,0 +1,32 @@
+{% extends "sso/index.html" %}
+{% block content %}
+    {% if not error %}
+        <form id="authorization-form" method="post">
+            <h2>Autorisér {{ application.name }}</h2>
+            {% csrf_token %}
+
+            {% for field in fields %}
+                {% if field.is_hidden %}
+                    {{ field }}
+                {% endif %}
+            {% endfor %}
+
+            <p>Tjenesten behøver følgende tilganger:</p>
+            <ul class="sso-permissions">
+                {% for scope in scope_descriptions %}
+                <li>{{ scope }}</li>
+                {% endfor %}
+            </ul>
+
+            {{ form.errors }}
+            {{ form.non_field_errors }}
+
+            <div id="sso-control-buttons">
+                <input type="submit" class="btn btn-large btn-danger" value="Avbryt" />
+                <input type="submit" class="btn btn-large btn-success" name="allow" value="Godta" />
+            </div>
+        </form>
+    {% else %}
+
+    {% endif %}
+{% endblock %}

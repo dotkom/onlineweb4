@@ -15,6 +15,8 @@ from oauthlib.oauth2 import Server
 from braces.views import LoginRequiredMixin, CsrfExemptMixin
 
 from oauth2_provider.settings import oauth2_settings
+from oauth2_provider.backends import OAuth2Backend
+from oauth2_provider.oauth2_validators import OAuth2Validator
 from oauth2_provider.exceptions import OAuthToolkitError
 from oauth2_provider.forms import AllowForm
 from oauth2_provider.http import HttpResponseUriRedirect
@@ -42,9 +44,6 @@ class BaseAuthorizationView(LoginRequiredMixin, OAuthLibMixin, View):
     * Authorization code
     * Implicit grant
     """
-    def __init__(self):
-        super(BaseAuthorizationView, self)
-        self.oauth2_data = None
 
     def dispatch(self, request, *args, **kwargs):
         self.oauth2_data = {}
@@ -85,8 +84,8 @@ class AuthorizationView(BaseAuthorizationView, FormView):
     form_class = AllowForm
 
     server_class = Server
-    validator_class = oauth2_settings.OAUTH2_VALIDATOR_CLASS
-    oauthlib_backend_class = oauth2_settings.OAUTH2_BACKEND_CLASS
+    validator_class = OAuth2Validator
+    oauthlib_backend_class = OAuth2Backend
 
     skip_authorization_completely = False
 
@@ -175,8 +174,8 @@ class TokenView(CsrfExemptMixin, OAuthLibMixin, View):
     * Client credentials
     """
     server_class = Server
-    validator_class = oauth2_settings.OAUTH2_VALIDATOR_CLASS
-    oauthlib_backend_class = oauth2_settings.OAUTH2_BACKEND_CLASS
+    validator_class = OAuth2Validator
+    oauthlib_backend_class = OAuth2Backend
 
     @method_decorator(sensitive_post_parameters('password'))
     def post(self, request, *args, **kwargs):
@@ -193,8 +192,8 @@ class RevokeTokenView(CsrfExemptMixin, OAuthLibMixin, View):
     Implements an endpoint to revoke access or refresh tokens
     """
     server_class = Server
-    validator_class = oauth2_settings.OAUTH2_VALIDATOR_CLASS
-    oauthlib_backend_class = oauth2_settings.OAUTH2_BACKEND_CLASS
+    validator_class = OAuth2Validator
+    oauthlib_backend_class = OAuth2Backend
 
     def post(self, request, *args, **kwargs):
         url, headers, body, status = self.create_revocation_response(request)

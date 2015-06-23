@@ -1,3 +1,4 @@
+# -*- coding: utf8 -*-
 import os
 import sys
 import wiki
@@ -143,6 +144,14 @@ GRAPPELLI_ADMIN_TITLE = '<a href="/">Onlineweb</a>'
 # Guardian settings
 ANONYMOUS_USER_ID = -1
 GUARDIAN_RENDER_403 = True
+
+# SSO / OAuth2 settings
+ACCESS_TOKEN_EXPIRE_SECONDS = 3600
+AUTHORIZATION_CODE_EXPIRE_SECONDS = 60
+SCOPES = {
+    'sso': u'Single Sign-On',
+    'basic': u'Grunnleggende brukerdata'
+}
 
 # List of usergroups that should be listed under "Finn brukere" in user profile
 USER_SEARCH_GROUPS = [
