@@ -26,6 +26,7 @@ from oauth2_provider.views.mixins import OAuthLibMixin
 from oauth2_provider.models import AccessToken
 
 from apps.authentication.models import FIELD_OF_STUDY_CHOICES
+from apps.sso.models import Client
 
 log = logging.getLogger('SSO')
 
@@ -41,7 +42,14 @@ def index(request):
     return render(request, 'sso/index.html', context)
 
 
-@protected_resource()
+@protected_resource([
+    u'authentication.onlineuser.username.read',
+    u'authentication.onlineuser.first_name.read',
+    u'authentication.onlineuser.last_name.read',
+    u'authentication.onlineuser.email.read',
+    u'authentication.onlineuser.field_of_study.read',
+    u'authentication.onlineuser.nickname.read',
+])
 def userinfo(request):
     """
     Basic user information provided based on the Bearer Token provided by an SSO application
@@ -145,7 +153,7 @@ class AuthorizationView(BaseAuthorizationView, FormView):
                 'state': form.cleaned_data.get('state', None),
             }
 
-            scopes = form.cleaned_data.get('scope')
+            scopes = ' '.join(Client.objects.get(client_id=credentials['client_id']).get_scopes())
             allow = form.cleaned_data.get('allow')
             uri, headers, body, status = self.create_authorization_response(
                 request=self.request, scopes=scopes, credentials=credentials, allow=allow)

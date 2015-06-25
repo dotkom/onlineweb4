@@ -16,17 +16,14 @@
             {% endfor %}
             <p>Tjenesten behøver følgende tilganger:</p>
             <ul class="sso-permissions">
-                <li>Brukernavn</li>
-                <li>Fornavn</li>
-                <li>Etternavn</li>
-                <li>Primær E-postaddresse</li>
-                <li>Studieretning</li>
-                <li>Kallenavn</li>
+                {% for scope in scopes_descriptions %}
+                    <li>{{ scope }}</li>
+                {% endfor %}
             </ul>
             <br />
             <div id="sso-control-buttons">
-                <input type="submit" class="btn btn-large btn-success" name="allow" value="Godta" />
-                <input type="submit" class="btn btn-large btn-danger pull-right" value="Avbryt" />
+                <input type="submit" class="btn btn-large btn-success" name="allow">
+                <input type="submit" class="btn btn-large btn-danger pull-right">
             </div>
         </form>
     </div>

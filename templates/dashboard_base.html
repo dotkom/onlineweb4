@@ -28,7 +28,7 @@
         <aside class="left-side sidebar-offcanvas">
             <section class="sidebar topspacing">
                 <br />
-                <h4 class="center-text"><small>Velkommen</small><br />{{ request.user.first_name }}</h4>
+                <h4 class="center-text"><small>Velkommen</small><br />{{ request.user.first_name }}</h4>
                 <ul class="sidebar-menu">
                     {% block sidebar %}
                     {% if 'events.view_event' in user_permissions %}
@@ -67,6 +67,9 @@
                         </a>
                         <ul class="treeview-menu">
                             <li><a href="#"><i class="fa fa-angle-double-right orange"></i> Brukerprofiler</a></li>
+                            {% if request.user.is_superuser %}
+                            <li><a href="/dashboard/auth/sso/"><i class="fa fa-angle-double-right orange"></i> Ekstern tilgang</a></li>
+                            {% endif %}
                             <li><a href="/dashboard/auth/members/"><i class="fa fa-angle-double-right orange"></i> Medlemsregister</a></li>
                             <li><a href="#"><i class="fa fa-angle-double-right orange"></i> Posisjoner</a></li>
                             <li><a href="#"><i class="fa fa-angle-double-right orange"></i> Spesialposisjoner</a></li>
@@ -247,7 +250,7 @@
         <script src="{{ STATIC_URL }}js/libs/jquery.cookie.js"></script>
         <script src="{{ STATIC_URL }}js/libs/jquery.tablesorter.min.js"></script>
         <script src="{{ STATIC_URL }}js/libs/bootstrap-datetimepicker.min.js"></script>
-        <script src="{{ STATIC_URL }}js/dashboard/dashboard.js"></script>
+        <script src="{{ STATIC_URL }}js/dashboard/dashboard.js"></script>
     {% endblock %}
 
     {% if GOOGLE_ANALYTICS_KEY %}

@@ -130,8 +130,10 @@ if 'apps.splash' in settings.INSTALLED_APPS:
     )
 
 if 'apps.sso' in settings.INSTALLED_APPS:
-    urlpatterns += patterns('',
-        url(r'^sso/',               include('apps.sso.urls')),
+    urlpatterns += patterns(
+        '',
+        url(r'^sso/',           include('apps.sso.urls', namespace='sso')),
+        url(r'^dashboard/auth/sso/', include('apps.sso.dashboard.urls', namespace='sso')),
     )
 
 # feedme

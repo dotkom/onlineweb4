@@ -146,12 +146,19 @@ ANONYMOUS_USER_ID = -1
 GUARDIAN_RENDER_403 = True
 
 # SSO / OAuth2 settings
-ACCESS_TOKEN_EXPIRE_SECONDS = 3600
-AUTHORIZATION_CODE_EXPIRE_SECONDS = 60
-SCOPES = {
-    'sso': u'Single Sign-On',
-    'basic': u'Grunnleggende brukerdata'
+OAUTH2_PROVIDER = {
+    'SCOPES': {
+        'authentication.onlineuser.username.read': 'Brukernavn (Lesetilgang)',
+        'authentication.onlineuser.first_name.read': 'Fornavn (Lesetilgang)',
+        'authentication.onlineuser.last_name.read': 'Etternavn (Lesetilgang)',
+        'authentication.onlineuser.email.read': 'Primær E-postaddresse (Lesetilgang)',
+        'authentication.onlineuser.field_of_study.read': 'Studieretning (Lesetilgang)',
+        'authentication.onlineuser.nickname.read': 'Kallenavn (Lesetilgang)'
+    },
+    'ACCESS_TOKEN_EXPIRE_SECONDS': 3600,
+    'AUTHORIZATION_CODE_EXPIRE_SECONDS': 60,
 }
+OAUTH2_PROVIDER_APPLICATION_MODEL = 'sso.Client'
 
 # List of usergroups that should be listed under "Finn brukere" in user profile
 USER_SEARCH_GROUPS = [
