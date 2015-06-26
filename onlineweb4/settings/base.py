@@ -148,6 +148,7 @@ GUARDIAN_RENDER_403 = True
 # SSO / OAuth2 settings
 OAUTH2_PROVIDER = {
     'SCOPES': {
+        'null': 'Ingen datatilgang',
         'authentication.onlineuser.username.read': 'Brukernavn (Lesetilgang)',
         'authentication.onlineuser.first_name.read': 'Fornavn (Lesetilgang)',
         'authentication.onlineuser.last_name.read': 'Etternavn (Lesetilgang)',

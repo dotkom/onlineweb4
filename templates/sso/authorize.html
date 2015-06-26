@@ -22,11 +22,15 @@
             </ul>
             <br />
             <div id="sso-control-buttons">
-                <input type="submit" class="btn btn-large btn-success" name="allow">
-                <input type="submit" class="btn btn-large btn-danger pull-right">
+                <input type="submit" class="btn btn-large btn-success" name="allow" value="Godta" />
+                <input type="submit" class="btn btn-large btn-danger pull-right" value="Avslå" />
             </div>
         </form>
     </div>
+    <p class="text-center"><small><i class="fa fa-lock"></i> Ekstern autentisering benytter OAuth 2.0 gjennom TLS</small></p>
 </div>
+<br />
+<br />
+<p class="text-center">Les mer om bruken av <i><a href="/wiki/">Ekstern Autentisering</a></i> på wikien.</p>
 {% endif %}
 {% endblock %}

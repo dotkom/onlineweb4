@@ -153,7 +153,9 @@ class AuthorizationView(BaseAuthorizationView, FormView):
                 'state': form.cleaned_data.get('state', None),
             }
 
-            scopes = ' '.join(Client.objects.get(client_id=credentials['client_id']).get_scopes())
+            scopes = Client.objects.get(client_id=credentials['client_id']).scopes
+            if not scopes:
+                scopes = 'null'
             allow = form.cleaned_data.get('allow')
             uri, headers, body, status = self.create_authorization_response(
                 request=self.request, scopes=scopes, credentials=credentials, allow=allow)
@@ -167,6 +169,9 @@ class AuthorizationView(BaseAuthorizationView, FormView):
     def get(self, request, *args, **kwargs):
         try:
             scopes, credentials = self.validate_authorization_request(request)
+            scopes = Client.objects.get(client_id=credentials['client_id']).get_scopes()
+            if not scopes:
+                scopes = ['null']
             kwargs['scopes_descriptions'] = [oauth2_settings.SCOPES[scope] for scope in scopes]
             kwargs['scopes'] = scopes
             # at this point we know an Application instance with such client_id exists in the database
