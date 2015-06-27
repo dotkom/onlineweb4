@@ -27,6 +27,7 @@ def index(request):
     :return: An HttpResponse
     """
 
+    # Force only the almighty dotKom to access this view
     if not request.user.is_superuser:
         return PermissionDenied
 
@@ -49,6 +50,7 @@ def new_app(request):
     :return: An HttpResponse
     """
 
+    # Force only the almighty dotKom to access this view
     if not request.user.is_superuser:
         return PermissionDenied
 
@@ -93,6 +95,7 @@ def app_details(request, app_pk):
     :return: An HttpResponse
     """
 
+    # Force only the almighty dotKom to access this view
     if not request.user.is_superuser:
         return PermissionDenied
 

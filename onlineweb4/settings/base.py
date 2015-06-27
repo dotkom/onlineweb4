@@ -148,13 +148,15 @@ GUARDIAN_RENDER_403 = True
 # SSO / OAuth2 settings
 OAUTH2_PROVIDER = {
     'SCOPES': {
-        'null': 'Ingen datatilgang',
-        'authentication.onlineuser.username.read': 'Brukernavn (Lesetilgang)',
-        'authentication.onlineuser.first_name.read': 'Fornavn (Lesetilgang)',
-        'authentication.onlineuser.last_name.read': 'Etternavn (Lesetilgang)',
-        'authentication.onlineuser.email.read': 'Primær E-postaddresse (Lesetilgang)',
-        'authentication.onlineuser.field_of_study.read': 'Studieretning (Lesetilgang)',
-        'authentication.onlineuser.nickname.read': 'Kallenavn (Lesetilgang)'
+        'null': u'Ingen datatilgang',
+        'authentication.onlineuser.username.read': u'Brukernavn (Lesetilgang)',
+        'authentication.onlineuser.first_name.read': u'Fornavn (Lesetilgang)',
+        'authentication.onlineuser.last_name.read': u'Etternavn (Lesetilgang)',
+        'authentication.onlineuser.email.read': u'Primær E-postaddresse (Lesetilgang)',
+        'authentication.onlineuser.field_of_study.read': u'Studieretning (Lesetilgang)',
+        'authentication.onlineuser.nickname.read': u'Kallenavn (Lesetilgang)',
+        'authentication.onlineuser.rfid.read': u'RFID (Lesetilgang)',
+        'authentication.onlineuser.rfid.write': u'RFID (Skrivetilgang)',
     },
     'ACCESS_TOKEN_EXPIRE_SECONDS': 3600,
     'AUTHORIZATION_CODE_EXPIRE_SECONDS': 60,
