@@ -31,9 +31,16 @@
 {% block content %}
 <div class="row">
     <div class="col-md-12">
-        <a href="{% url 'sso:new_app' %}" class="btn btn-primary">
+        <a href="{% url 'sso:new_app' %}" class="btn btn-primary pull-left">
             <i class="fa fa-plus"></i> Ny App-klient
         </a>
+        <form method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="delete">
+            <button type="submit" class="btn btn-danger pull-right">
+                <i class="fa fa-times"></i> Slett
+            </button>
+        </form>
     </div>
 </div>
 <br />

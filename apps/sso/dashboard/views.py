@@ -100,4 +100,12 @@ def app_details(request, app_pk):
 
     context['app'] = get_object_or_404(Client, pk=app_pk)
 
+    # If we have some action to perform
+    if request.method == 'POST':
+        if 'action' in request.POST:
+            if request.POST['action'] == 'delete':
+                context['app'].delete()
+                messages.success(request, u'App-klienten ble slettet')
+                return redirect(reverse('sso:index'))
+
     return render(request, 'sso/dashboard/app_details.html', context)
