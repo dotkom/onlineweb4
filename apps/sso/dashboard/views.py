@@ -101,7 +101,8 @@ def app_details(request, app_pk):
 
     context = get_base_context(request)
 
-    context['app'] = get_object_or_404(Client, pk=app_pk)
+    client = get_object_or_404(Client, pk=app_pk)
+    context['app'] = client
 
     # If we have some action to perform
     if request.method == 'POST':
@@ -110,5 +111,10 @@ def app_details(request, app_pk):
                 context['app'].delete()
                 messages.success(request, u'App-klienten ble slettet')
                 return redirect(reverse('sso:index'))
+
+    # Add the registered scopes for the client to the context as a list of scope:description tuples
+    scopes_available = oauth2_settings.user_settings['SCOPES']
+    scopes = [(s, scopes_available[s]) for s in client.get_scopes()]
+    context['scopes'] = scopes
 
     return render(request, 'sso/dashboard/app_details.html', context)

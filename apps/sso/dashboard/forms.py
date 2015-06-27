@@ -36,7 +36,7 @@ class NewClientForm(forms.ModelForm):
             try:
                 validate_uris(redirect_uris)
             except ValidationError:
-                self.add_error('redirect_uris', u'Feltet inneholder ugyldige URIer')
+                self.add_error('redirect_uris', u'Feltet inneholder ugyldige URIer.')
 
     class Meta(object):
         """
