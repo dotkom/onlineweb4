@@ -4,9 +4,11 @@
 
 from django.conf.urls import patterns, url
 
+from views import index, new_app, app_details
+
 urlpatterns = patterns(
     'apps.sso.dashboard.views',
-    url(r'^$', 'index', name='dashboard_sso_index'),
-    url(r'^new/$', 'new', name='dashboard_sso_new'),
-    url(r'^app/(?P<app_pk>\d+)/$', 'application', name='dashboard_sso_application'),
+    url(r'^$', index, name='index'),
+    url(r'^app/new/', new_app, name='new_app'),
+    url(r'^app/(?P<app_pk>\d+)/', app_details, name='app_details'),
 )
