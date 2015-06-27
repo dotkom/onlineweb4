@@ -139,7 +139,7 @@ def connected_apps(request):
                 token.delete()
                 messages.success(request, _(u'Tilgangsnøkkelen ble slettet.'))
             except ValueError:
-                messages.error(request, _(u'Tilgangsnøkkelen du forsøkte å slette eksisterer ikke lenger.'))
+                messages.error(request, _(u'Tilgangsnøkkelen inneholdt en ugyldig verdi.'))
 
     return render(request, 'profiles/index.html', context)
 
