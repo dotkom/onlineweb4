@@ -15,6 +15,7 @@ from apps.authentication.models import FIELD_OF_STUDY_CHOICES
     u'authentication.onlineuser.first_name.read',
     u'authentication.onlineuser.last_name.read',
     u'authentication.onlineuser.email.read',
+    u'authentication.onlineuser.is_member.read',
     u'authentication.onlineuser.field_of_study.read',
     u'authentication.onlineuser.nickname.read',
     u'authentication.onlineuser.rfid.read'
@@ -39,6 +40,7 @@ def user(request):
             'last_name': tokenobject.user.last_name,
             'username': tokenobject.user.username,
             'email': tokenobject.user.get_email().email,
+            'member': tokenobject.user.is_member,
             'nickname': tokenobject.user.nickname,
             'rfid': tokenobject.user.rfid,
             'image': tokenobject.user.get_image_url(),
