@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from datetime
+from django.utils import datetime
 from apps.splash.models import SplashEvent, SplashYear
 
 
