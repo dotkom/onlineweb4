@@ -250,6 +250,10 @@ article.cal {
   font-weight: 100;
   font-family: helvetica, sans-serif;
 }
+.subtext {
+  float: right;
+  font-size: 12px;
+}
 .cal-right {
   margin: 50px 0;
   box-sizing: border-box;

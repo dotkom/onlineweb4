@@ -91,7 +91,7 @@
 
               <article>
                 {% for event in events %}
-                  <h2>{{ event.title }} - kl {{ event.start_time|date:"H:s" }}</h2>
+                  <h2>{{ event.title }} <small class="subtext"> {{ event.start_time|date:"H:s" }} - {{ event.end_time|date:"H:s" }}</small></h2>
                   {{ event.content|striptags|markdown }}
                 {% endfor %}
               </article>
@@ -118,8 +118,8 @@
       <div class="join">
       <article>
         <h1>Bli med i linjeforeningen!</h1>
-        <p>Har du lyst til å gjøre studietiden til informatikere enda bedre?</p>
-        <p>Som komitémedlem i Online blir du del av en familie du aldri vil glemme. Vi tilbyr utfordrende og spennende verv i et meget sosialt miljø med stor takhøyde.</p>
+        <p>Alle informatikere er med i linjeforeningen. Gå videre til <a href="https://online.ntnu.no/">hovedsiden</a> for å lage din brukerkonto på Online sine systemer.</p>
+        <p>Har du lyst til å gjøre studietiden til informatikere enda bedre? Som komitémedlem i Online blir du del av en familie du aldri vil glemme. Vi tilbyr utfordrende og spennende verv i et meget sosialt miljø med stor takhøyde.</p>
         <p>Les mer om de ulike komiteene, linjeforeningen og mye mer på vår <a href="https://online.ntnu.no/wiki" target="_blank">Wiki</a>.</p>
         <p><a href="#" onclick="open_window('#verv'); return false;">Se søknadsinfo og ulike verv</a></p>
       </article>
@@ -143,6 +143,7 @@
         <h3>Bedrifter</h3>
         <p>Er du bedrift på jakt etter bedriftspresentasjon eller kurs? Klikk <a href="#" onclick="open_window('#bedrifter'); return false;">her</a> for mer informasjon.</p>
       </div>
+      
 
       <div class="right" id="social">
 
