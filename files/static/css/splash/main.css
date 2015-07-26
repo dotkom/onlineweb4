@@ -441,7 +441,7 @@ article.cal h4 {
 #partners h1 {
   font-size: 11px;
   font-weight: 100;
-  margin: 0 0 -10px 0;
+  margin: 0 0 20px 0;
   text-decoration: underline;
 }
 #partners img {
@@ -458,21 +458,29 @@ article.cal h4 {
   position: relative;
   top: -15px;
 }
+.gold-partner img {
+  height: 50px;
+}
+.partners_steria {
+  margin-bottom: -8px;
+}
+
 .partners {
   position: relative;
   top: -20px;
   margin-bottom: -20px;
 }
 
+.partners img {
+  height: 120px;
+}
+
 .partners_knowit {
-  height: 50px;
+  height: 30px;
 }
 .partners_computas {
-  height: 50px;
+  height: 40px;
 }
-.partners_steria {
-  height: 90px;
-}
-.partners_cxense{
-  height: 60px;
+.partners_makingwaves{
+  height: 30px;
 }
