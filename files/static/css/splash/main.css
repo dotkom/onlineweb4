@@ -462,7 +462,7 @@ article.cal h4 {
   height: 50px;
 }
 .partners_steria {
-  height: 40px;
+  height: 40px!important;
   margin-bottom: -8px;
 }
 
