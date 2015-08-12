@@ -1,12 +1,21 @@
 from django.db import models
 
 from django_extensions.db.models import TimeStampedModel
+import datetime
 import reversion
+
+
+class SplashYearManager(models.Manager):
+    def current(self):
+        # I'm really sorry ...
+        return self.get(start_date__gt=str(datetime.date.today() - datetime.timedelta(180)))
 
 
 class SplashYear(models.Model):
     title = models.CharField(u'title', max_length=100)
     start_date = models.DateField(u'start_date')
+
+    objects = SplashYearManager()
 
     def __unicode__(self):
         return self.title

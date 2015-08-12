@@ -25,7 +25,7 @@ from apps.events.models import Event, AttendanceEvent, Attendee
 from apps.events.pdf_generator import EventPDF
 from apps.events.utils import get_group_restricted_events
 from apps.payment.models import Payment, PaymentRelation
-from utils import Calendar
+from utils import EventCalendar
 
 
 def index(request):
@@ -238,7 +238,7 @@ def generate_pdf(request, event_id):
 
 
 def calendar_export(request, event_id=None, user=None):
-    calendar = Calendar()
+    calendar = EventCalendar()
     if event_id:
         # Single event
         calendar.event(event_id)

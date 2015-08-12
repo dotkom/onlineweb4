@@ -4,6 +4,7 @@ from django.utils import timezone
 
 from apps.authentication.models import OnlineUser as User
 from apps.events.models import Event
+from apps.splash.models import SplashYear
 
 import icalendar
 
@@ -40,14 +41,26 @@ class Calendar(object):
         self.cal.add('prodid', '-//Online//Onlineweb//EN')
         self.cal.add('version', '2.0')
 
-    def event(self, event_id):
-        """Single event"""
-        try:
-            self.add_event(Event.objects.get(id=event_id))
-        except Event.DoesNotExist:
-            pass
-        self.filename = str(event_id)
+    def add_event(self, event):
+        raise NotImplementedError
 
+    def add_events(self, events):
+        for event in events:
+            self.add_event(event)
+
+    def output(self):
+        """Return icalendar as text"""
+        return self.cal.to_ical()
+
+    def response(self):
+        """Returns a response object"""
+        response = HttpResponse(self.cal.to_ical(), content_type='text/calendar')
+        response['Content-Type'] = 'text/calendar; charset=utf-8'
+        response['Content-Disposition'] = 'attachment; filename=' + self.filename + '.ics'
+        return response
+
+
+class EventCalendar(Calendar):
     def user(self, user):
         """
             Personalized calendar
@@ -68,6 +81,14 @@ class Calendar(object):
             ))
             self.filename = username
 
+    def event(self, event_id):
+        """Single event"""
+        try:
+            self.add_event(Event.objects.get(id=event_id))
+        except Event.DoesNotExist:
+            pass
+        self.filename = str(event_id)
+
     def events(self):
         """All events that haven't ended yet"""
         self.add_events(Event.objects.filter(event_end__gt=timezone.now()).order_by('event_start'))
@@ -85,17 +106,18 @@ class Calendar(object):
 
         self.cal.add_component(cal_event)
 
-    def add_events(self, events):
-        for event in events:
-            self.add_event(event)
 
-    def output(self):
-        """Return icalendar as text"""
-        return self.cal.to_ical()
+class SplashCalendar(Calendar):
+    def add_event(self, event):
+        cal_event = icalendar.Event()
+        cal_event.add('dtstart', event.start_time)
+        cal_event.add('dtend', event.end_time)
+        cal_event.add('summary', event.title)
+        cal_event.add('description', event.content)
+        cal_event.add('uid', 'splash-' + str(event.id) + '@online.ntnu.no')
 
-    def response(self):
-        """Returns a response object"""
-        response = HttpResponse(self.cal.to_ical(), content_type='text/calendar')
-        response['Content-Type'] = 'text/calendar; charset=utf-8'
-        response['Content-Disposition'] = 'attachment; filename=' + self.filename + '.ics'
-        return response
+        self.cal.add_component(cal_event)
+
+    def events(self):
+        self.add_events(SplashYear.objects.current().splash_events.all())
+        self.filename = 'events'
