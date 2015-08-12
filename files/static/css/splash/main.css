@@ -335,6 +335,16 @@ article.cal h4 {
   color: #ff7800;
 }
 
+/* Calendar export */
+#export {
+  position: absolute;
+  margin-top: 5px;
+}
+
+#export a {
+  margin: 3px;
+}
+
 
 #guide_background {
   font: 11px/18px;

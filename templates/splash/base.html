@@ -1,4 +1,6 @@
 {% load markdown_deux_tags %}
+{% load calendar_filters %}
+
 <!DOCTYPE html>
 <!-- Er du interessert i kode? Har du lyst å lære en hel del og bli med i en awesome gjeng? DotKom er kanskje stedet for deg! Sjekk ut info om opptak på siden. -->
 <html>
@@ -80,6 +82,10 @@
 
   <section id="cal" class="hidden">
     <article class="cal">
+      <div id="export">
+        <a href="{% url 'splash_calendar' %}">iCalendar</a>
+        <a href="http://www.google.com/calendar/render?cid={{ request.build_absolute_uri|unhttps|urlencode }}events.ics">Google Calendar</a>
+      </div>
       <h1>{{ splash_year.title }}</h1>
 
       <section class="cal-left">
