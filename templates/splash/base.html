@@ -97,7 +97,7 @@
 
               <article>
                 {% for event in events %}
-                  <h2>{{ event.title }} <small class="subtext"> {{ event.start_time|date:"H:s" }} - {{ event.end_time|date:"H:s" }}</small></h2>
+                  <h2>{{ event.title }} <small class="subtext"> {{ event.start_time|date:"H:i" }} - {{ event.end_time|date:"H:i" }}</small></h2>
                   {{ event.content|striptags|markdown }}
                 {% endfor %}
               </article>
