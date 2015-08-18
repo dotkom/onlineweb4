@@ -15,13 +15,13 @@ from django.db.models import Q
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404, redirect
 from django.utils.translation import ugettext as _
-from django.contrib.contenttypes.models import ContentType 
+from django.contrib.contenttypes.models import ContentType
 
 import watson
 
 from apps.authentication.models import OnlineUser as User
 from apps.events.forms import CaptchaForm
-from apps.events.models import Event, AttendanceEvent, Attendee
+from apps.events.models import Event, AttendanceEvent, Attendee, CompanyEvent
 from apps.events.pdf_generator import EventPDF
 from apps.events.utils import get_group_restricted_events
 from apps.payment.models import Payment, PaymentRelation
@@ -68,7 +68,7 @@ def details(request, event_id, event_slug):
             if attendance_event.is_attendee(request.user):
                 user_attending = True
 
-            
+
             will_be_on_wait_list = attendance_event.will_i_be_on_wait_list
 
             user_status = event.attendance_event.is_eligible_for_signup(request.user)
@@ -113,7 +113,7 @@ def get_attendee(attendee_id):
 
 @login_required
 def attendEvent(request, event_id):
-    
+
     event = get_object_or_404(Event, pk=event_id)
 
     if not event.is_attendance_event():
@@ -139,7 +139,7 @@ def attendEvent(request, event_id):
 
     response = event.attendance_event.is_eligible_for_signup(request.user);
 
-    if response['status']:   
+    if response['status']:
         ae = Attendee(event=attendance_event, user=request.user)
         if 'note' in form.cleaned_data:
             ae.note = form.cleaned_data['note']
@@ -209,7 +209,7 @@ def _search_indexed(request, query, filters):
     events = Event.objects.filter(**kwargs).order_by(order_by).prefetch_related(
             'attendance_event', 'attendance_event__attendees', 'attendance_event__reserved_seats',
             'attendance_event__reserved_seats__reservees')
-    
+
     if query:
         for result in watson.search(query, models=(events,)):
             results.append(result.object)
@@ -287,7 +287,7 @@ def mail_participants(request, event_id):
 
         signature = u'\n\nVennlig hilsen Linjeforeningen Online.\n(Denne eposten kan besvares til %s)' % from_email
 
-        # Decide who to send mail to 
+        # Decide who to send mail to
         to_emails = []
         to_emails_value = request.POST.get('to_email')
 
@@ -315,3 +315,26 @@ def mail_participants(request, event_id):
 
     return render(request, 'events/mail_participants.html', {
         'all_attendees' : all_attendees, 'attendees_on_waitlist': attendees_on_waitlist, 'attendees_not_paid': attendees_not_paid, 'event' : event})
+
+
+# API v1
+from rest_framework import viewsets, mixins
+from rest_framework.permissions import AllowAny
+from apps.events.serializers import EventSerializer, AttendanceEventSerializer, CompanyEventSerializer
+
+class EventViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.ListModelMixin):
+    queryset = Event.objects.all()
+    serializer_class = EventSerializer
+    permission_classes = (AllowAny,)
+
+
+class AttendanceEventViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.ListModelMixin):
+    queryset = AttendanceEvent.objects.all()
+    serializer_class = AttendanceEventSerializer
+    permission_classes = (AllowAny,)
+
+
+class CompanyEventViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.ListModelMixin):
+    queryset = CompanyEvent.objects.all()
+    serializer_class = CompanyEventSerializer
+    permission_classes = (AllowAny,)
