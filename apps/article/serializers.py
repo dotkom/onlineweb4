@@ -1,10 +1,11 @@
 from rest_framework import serializers
 
 from apps.article.models import Article, Tag
+from apps.authentication.serializers import UserSerializer
 
 
 class ArticleSerializer(serializers.ModelSerializer):
-    author = serializers.StringRelatedField(source='created_by')
+    author = UserSerializer(source='created_by')  # serializers.StringRelatedField(source='created_by')
     absolute_url = serializers.CharField(source='get_absolute_url', read_only=True)
 
     class Meta:
