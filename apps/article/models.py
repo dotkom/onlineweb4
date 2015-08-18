@@ -65,6 +65,10 @@ class Article(models.Model):
     def get_absolute_url(self):
         return ('article_details', None, {'article_id': self.id, 'article_slug': self.slug})
 
+    def images(self):
+        from apps.article.utils import find_image_versions
+        return find_image_versions(self)
+
     class Meta:
         verbose_name = _(u"artikkel")
         verbose_name_plural = _(u"artikler")
