@@ -1,6 +1,8 @@
 from django.core.signing import Signer, BadSignature
 from django.http import HttpResponse
 from django.utils import timezone
+from filebrowser.base import FileObject
+from filebrowser.settings import VERSIONS
 
 from apps.authentication.models import OnlineUser as User
 from apps.events.models import Event
@@ -20,11 +22,11 @@ def get_group_restricted_events(user):
 
     for group in groups:
         if group.name == 'arrKom':
-            types_allowed.append(1) # sosialt 
+            types_allowed.append(1) # sosialt
             types_allowed.append(4) # utflukt
 
         if group.name == 'bedKom':
-            types_allowed.append(2) # bedriftspresentasjon 
+            types_allowed.append(2) # bedriftspresentasjon
 
         if group.name == 'fagKom':
             types_allowed.append(3) # kurs
@@ -121,3 +123,16 @@ class SplashCalendar(Calendar):
     def events(self):
         self.add_events(SplashYear.objects.current().splash_events.all())
         self.filename = 'events'
+
+
+def find_image_versions(event):
+    img = event.image
+    img_strings = []
+    print("gnna find sm imgs")
+
+    for ver in VERSIONS.keys():
+        if ver.startswith('events_'):
+            print(ver)
+            img_strings.append(img.version_generate(ver).url)
+
+    return img_strings
