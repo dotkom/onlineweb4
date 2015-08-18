@@ -207,6 +207,7 @@ INSTALLED_APPS = (
     'reversion',
     'guardian',
     'stripe',
+    'rest_framework',
 
     # Django apps
     'django.contrib.admin',

@@ -1,6 +1,7 @@
 Django==1.7.7
 Pillow==2.7.0                   # pillow
 django-tastypie==0.12.1         # API
+djangorestframework==3.2.2      # API v2
 python-memcached==1.53          # Memcache. Used by Mailinglists to fetch from Sympa.
 wsgiref==0.1.2
 markdown2==2.3.0                # textarea text formatting
