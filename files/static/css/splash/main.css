@@ -250,6 +250,10 @@ article.cal {
   font-weight: 100;
   font-family: helvetica, sans-serif;
 }
+.subtext {
+  float: right;
+  font-size: 12px;
+}
 .cal-right {
   margin: 50px 0;
   box-sizing: border-box;
@@ -329,6 +333,16 @@ article.cal h1 {
 
 article.cal h4 {
   color: #ff7800;
+}
+
+/* Calendar export */
+#export {
+  position: absolute;
+  margin-top: 5px;
+}
+
+#export a {
+  margin: 3px;
 }
 
 
@@ -441,8 +455,7 @@ article.cal h4 {
 #partners h1 {
   font-size: 11px;
   font-weight: 100;
-  margin: 0 0 -10px 0;
-  text-decoration: underline;
+  margin: 0 0 20px 0;
 }
 #partners img {
   padding: 0 20px;
@@ -458,21 +471,30 @@ article.cal h4 {
   position: relative;
   top: -15px;
 }
+.gold-partner img {
+  height: 50px;
+}
+.partners_steria {
+  height: 35px!important;
+  margin-bottom: -5px;
+}
+
 .partners {
   position: relative;
   top: -20px;
   margin-bottom: -20px;
 }
 
+.partners img {
+  height: 120px;
+}
+
 .partners_knowit {
-  height: 50px;
+  height: 30px;
 }
 .partners_computas {
-  height: 50px;
+  height: 40px;
 }
-.partners_steria {
-  height: 90px;
-}
-.partners_cxense{
-  height: 60px;
+.partners_makingwaves{
+  height: 30px;
 }

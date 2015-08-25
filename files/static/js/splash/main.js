@@ -14,7 +14,7 @@ open_window = function (section_id) {
   , guide_close           = document.createElement('div');
 
   guide_inner.innerHTML   = $(section_id).html();
-  guide_close.innerHTML   = '<img src="graphics/close.png" alt="close">';
+  guide_close.innerHTML   = '<img src="/static/img/splash/close.png" alt="close">';
 
   guide_background.setAttribute('id', 'guide_background');
   guide.setAttribute('id', 'guide');

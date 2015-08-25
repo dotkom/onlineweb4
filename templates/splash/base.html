@@ -1,4 +1,6 @@
 {% load markdown_deux_tags %}
+{% load calendar_filters %}
+
 <!DOCTYPE html>
 <!-- Er du interessert i kode? Har du lyst å lære en hel del og bli med i en awesome gjeng? DotKom er kanskje stedet for deg! Sjekk ut info om opptak på siden. -->
 <html>
@@ -10,6 +12,7 @@
   <meta name="keywords" content="linjeforening, online, ntnu, informatikk, student, data, studie, linux, windows, programmering, utvikling, kurs, bedpres">
   <meta name="referrer" content="always">
 
+  <link rel="icon" href="{{ STATIC_URL }}img/favicon.png">
   <link href="https://fonts.googleapis.com/css?family=Ubuntu:400,300" rel="stylesheet" type="text/css">
   <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/splash/reset.css">
   <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/splash/main.css">
@@ -35,17 +38,18 @@
     </nav>
 
     <footer>
-      <a class="visma" href="http://visma.no/consulting"><img id="main-partner" src="{{ STATIC_URL }}img/splash/visma.png"></a>
 
       <div id="partners">
         <h1>Samarbeidspartnere</h1>
         <div class="gold-partner">
-          <a href="http://steria.no/"><img src="{{ STATIC_URL }}img/splash/partners/steria.png" alt="Steria" class="partners_steria"></a><br>
+          <a href="http://steria.no/"><img src="{{ STATIC_URL }}img/splash/partners/soprasteria_white.png" alt="Steria" class="partners_steria"></a>
+          <a href="http://mesan.no//"><img src="{{ STATIC_URL }}img/splash/partners/mesan_white.png" alt="Mesan" class="partners_mesan"></a><br>
         </div>
+        <br/>
         <div class="partners">
-          <a href="http://knowit.no/"><img src="{{ STATIC_URL }}img/splash/partners/knowit.png" alt="knowit" class="partners_knowit"></a>
           <a href="http://computas.no/"><img src="{{ STATIC_URL }}img/splash/partners/computas_white.png" alt="Computas" class="partners_computas"></a>
-          <a href="http://www.cxense.com/"><img src="{{ STATIC_URL }}img/splash/partners/cxense.png" alt="Cxense" class="partners_cxense"></a>
+          <a href="http://knowit.no/"><img src="{{ STATIC_URL }}img/splash/partners/knowit_white.png" alt="knowit" class="partners_knowit"></a>
+          <a href="http://www.makingwaves.no/"><img src="{{ STATIC_URL }}img/splash/partners/makingwaves_white.png" alt="Making Waves" class="partners_makingwaves"></a>
         </div>
       </div>
     </footer>
@@ -59,7 +63,7 @@
         <h1>Hvem er Online?</h1>
         <p>Velkommen til Online, linjeforeningen for informatikkstudenter ved <a href="http://ntnu.no/">NTNU</a>.</p>
         <p>Det er vi som sørger for at studietiden blir den beste tiden i ditt liv! Vi i Online arrangerer utflukter, turer, fester, holder kurs og bedriftspresentasjoner gjennom hele året.</p>
-        <p>Har du tenkt å studere informatikk? Gå videre for å finne ut mer!</p>
+        <p>Starter du på informatikk til høsten? Gå videre for å finne ut mer!</p>
       </article>
     </div>
   </section>
@@ -69,7 +73,7 @@
     <article>
       <h1>Fadderukene</h1>
       <p>I fadderukene skal du få bli kjent med både linjeforeningen, NTNU og mange medstudenter. Dette er den viktigste portalen for å stifte bekjentskaper som varer studietiden ut. Vi i Online anbefaler alle å ta del i det supre fadderopplegget vårt!</p>
-      <p>Fadderukene starter etter immatrikuleringen den 12. august.</p>
+      <p>Fadderukene starter etter immatrikuleringen den 11. august.</p>
 
       <p>Se også vår <a href="#" onclick="open_window('#student101'); return false;">Ny i Trondheim</a>-guide.</p>
     </article>
@@ -78,18 +82,27 @@
 
   <section id="cal" class="hidden">
     <article class="cal">
+      <div id="export">
+        <a href="{% url 'splash_calendar' %}">iCalendar</a>
+        <a href="http://www.google.com/calendar/render?cid={{ request.build_absolute_uri|unhttps|urlencode }}events.ics">Google Calendar</a>
+      </div>
       <h1>{{ splash_year.title }}</h1>
 
       <section class="cal-left">
         <ul>
-          {% for event in splash_year.splash_events.all %}
-            <li class="" data-date="{{ event.start_time.month }}{{ event.start_time.day }}">
-              <span>{{ event.start_time|date:"F" }}<span>{{ event.start_time.day }}</span>
+          {% for events in splash_year.events %}
+            {% with events|first as firstElement %}
+            <li class="" data-date="{{ firstElement.start_time.month }}{{ firstElement.start_time.day }}">
+              <span>{{ firstElement.start_time|date:"F" }}<span>{{ firstElement.start_time.day }}</span>
+
               <article>
-                <h2>{{ event.title }}</h2>
-                {{ event.content|striptags|markdown }}
+                {% for event in events %}
+                  <h2>{{ event.title }} <small class="subtext"> {{ event.start_time|date:"H:i" }} - {{ event.end_time|date:"H:i" }}</small></h2>
+                  {{ event.content|striptags|markdown }}
+                {% endfor %}
               </article>
             </li>
+            {% endwith %}
           {% endfor %}
         </ul>
       </section>
@@ -111,8 +124,8 @@
       <div class="join">
       <article>
         <h1>Bli med i linjeforeningen!</h1>
-        <p>Har du lyst til å gjøre studietiden til informatikere enda bedre?</p>
-        <p>Som komitémedlem i Online blir du del av en familie du aldri vil glemme. Vi tilbyr utfordrende og spennende verv i et meget sosialt miljø med stor takhøyde.</p>
+        <p>Alle informatikere er med i linjeforeningen. Gå videre til <a href="https://online.ntnu.no/">hovedsiden</a> for å lage din brukerkonto på Online sine systemer.</p>
+        <p>Har du lyst til å gjøre studietiden til informatikere enda bedre? Som komitemedlem i Online blir du del av en familie du aldri vil glemme. Vi tilbyr utfordrende og spennende verv i et meget sosialt miljø med stor takhøyde.</p>
         <p>Les mer om de ulike komiteene, linjeforeningen og mye mer på vår <a href="https://online.ntnu.no/wiki" target="_blank">Wiki</a>.</p>
         <p><a href="#" onclick="open_window('#verv'); return false;">Se søknadsinfo og ulike verv</a></p>
       </article>
@@ -126,16 +139,17 @@
 
       <div class="left">
         <h3>Wiki</h3>
-        <p>Vil du lese om linjeforeningens historie? Vil du vite mer om komiteene, NTNU, emner, sekkemannen, ugleKom og mye mer? Besøk vår wiki, den utimate kilden til nyttig og unyttig kunnskap! <a href="https://wiki.online.ntnu.no/projects/online/wiki" target="_blank">Gå til wikien</a>.</p>
+        <p>Vil du lese om linjeforeningens historie? Vil du vite mer om komiteene, NTNU, emner, sekkemannen, ugleKom og mye mer? Besøk vår wiki, den utimate kilden til nyttig og unyttig kunnskap! <a href="https://online.ntnu.no/wiki" target="_blank">Gå til wikien</a>.</p>
       </div>
 
       <div class="mid">
-        <h3>IRC</h3>
-        <p>Join <a href="irc://irc.freenode.net/online">#online</a> på irc.freenode.net, eller <a href="http://webchat.freenode.net/?channels=online">start webchat</a>.</p>
+        <h3>Slack</h3>
+        <p>Bli med oss på Slack. Send en epost til <a href="mailto:dotkom@online.ntnu.no">dotkom@online.ntnu.no</a> så sender vi deg en invitasjon! </p>
 
         <h3>Bedrifter</h3>
         <p>Er du bedrift på jakt etter bedriftspresentasjon eller kurs? Klikk <a href="#" onclick="open_window('#bedrifter'); return false;">her</a> for mer informasjon.</p>
       </div>
+      
 
       <div class="right" id="social">
 
@@ -159,10 +173,10 @@
   <section id="verv" class="hidden">
     <h2>Søknadsinfo og verv</h2>
     <p>Som komitemedlem i Online får du en unik mulighet til å gjøre studietiden din og andres enda bedre. Ta en titt på de ulike komiteene under og finn ut hva akkurat du kan bidra med!
-    Send inn en søknad til <a href="mailto:opptak@online.ntnu.no">opptak@online.ntnu.no</a> hvor du skriver hvem du er, hvorfor du er motivert for vervet og hvofor vi skal velge akkurat deg. Lykke til!</p>
+    Send inn en søknad til <a href="mailto:opptak@online.ntnu.no">opptak@online.ntnu.no</a> hvor du skriver hvem du er, hvorfor du er motivert for vervet og hvofor vi skal velge akkurat deg. Skriv gjerne dine topp tre prioriteringer da noen komitéer har flere søkere enn andre. Det viktigste er å være med å bidra. Lykke til!</p>
 
     <h5>Arrangementskomiteen</h5>
-    <p>Arrangementskomitéen jobber for at informatikkstudentene skal ha sosiale
+    <p>Arrangementskomiteen jobber for at informatikkstudentene skal ha sosiale
     tilbud gjennom hele året. Vi arrangerer velkjente arrangement som
     immatrikuleringsball, blåtur, Åre-tur, kryssfest, filmkvelder og mye
     mer! Liker du at andre skal ha det kult? Er du en sosial og sprudlende
@@ -192,13 +206,7 @@
     Ingen forkunnskaper er påkrevd annet enn stor lærevilje!</p>
 
     <h5>Fag- og kurskomiteen</h5>
-    <p>Fag- og kurskomiteen tilbyr kunnskap om ny og spennende teknologi,
-    gjennom blant annet kurs og foredrag. Vår jobb er å stimulere
-    studentenes faglige interesser. Vi oppsøker kompetansen i
-    næringslivet, og samarbeider tett med bedriftskomiteen for å komme i
-    kontakt med de aktuelle bedriftene. Som medlem av Fag- og kurskomiteen
-    vil du få god innsikt i emner utenfor skolen, og samtidig knytte
-    tettere bånd til din fremtidige arbeidsgiver.</p>
+    <p>Fag- og kurskomitten tilbyr kunnskap om ny og spennende teknologi, gjennom blant annet kurs og foredrag. Disse blir i hovedsak holdt av bedrifter, men også av studenter selv. Vår jobb er å stimulere studentenes faglige interesser. Vi oppsøker kompetansen i næringslivet, og samarbeider tett med bedriftskomiteen for å komme i kontakt med de aktuelle bedriftene. Etter et kurs tar gjerne bedriften med studentene ut for å mingle og bli kjent. Som medlem av Fag- og kurskomiteen vil du få god innsikt i emner utenfor skolen, og samtidig knytte tettere bånd til din fremtidige arbeidsgiver.</p>
 
     <h5>Profil- og aviskomiteen</h5>
     <p>Profil- og aviskomiteen sørger for at Onlines ansikt utad er
@@ -207,7 +215,7 @@
     lages av oss. Vi har også en redaksjon som er ansvarlig for
     linjeforeningens tidsskrift, Offline. Har du en designerspire eller en
     skribent i magen? Vi leter etter deg som er interessert i design,
-    markedsføring, journalisme eller skriving!</p>
+    markedsføring, journalistikk eller skriving!</p>
 
     <h5>Trivselskomiteen</h5>
     <p>Trivselelskomiteen har ansvaret for trivsel blant informatikkstudentene.
@@ -217,7 +225,7 @@
     kontorvakter, møter, administrere tilganger og passe på at det er tilstrekkelig med mat, drikke, rekvisitter og lignende.
     Så hvis du har en gledesspreder i deg og liker å spre trivsel til dine medelever er trikom komiteen for deg.
     </p>
-    <p style="color:#F00;">Søknadsfrist er søndag 24. august kl. 23:59!</p>
+    <p style="color:#F00;">Søknadsfrist er søndag 23. august kl. 23:59!</p>
   </section>
 
   <!--[mod:Samarbeid med næringslivet]-->
@@ -292,9 +300,9 @@
     <p>Litt lenger vekk fra Gløshaugen finner du steder som Midtbyen, Solsiden, Møllenberg, Rosenborg, Moholt og Tempe. Disse ligger litt lengre borte, men man kan fint komme seg til og fra skolen enten med apostlenes hester, sykkel eller buss.</p>
 
 
-    <h5>Betal semesteravgiften og meld opp i fag</h5>
+    <h5>Betal semesteravgiften og meld deg opp i fag</h5>
 
-    <p>Det er mange som bommer på å få betalt semesteravgiften så tidlig som mulig, og så oppdager at det stikker en planke i hjulet for det meste man har lyst til å foreta seg de første par ukene som ny student i byen. Semesteravgiften er på 450 kr, og før denne er innbetalt får man ikke utbetalt penger fra lånekassen, man får ikke studiebevis eller semesterkort, som igjen fører til at man ikke får studentrabatt på forskjellige ting. Semesteravgiften betales over nettbank, og kontonummer og KID-nummer finner du på <a href="https://studentweb.ntnu.no">studentweb.ntnu.no</a>. For å komme inn her, trenger du fødselsnummeret ditt og en PINkode som du har fått i et av brevene fra NTNU. Slik gjør du:</p>
+    <p>Det er mange som bommer på å få betalt semesteravgiften så tidlig som mulig, og så oppdager at det stikker en planke i hjulet for det meste man har lyst til å foreta seg de første par ukene som ny student i byen. Semesteravgiften er på 510 kr, og før denne er innbetalt får man ikke utbetalt penger fra lånekassen, man får ikke studiebevis eller semesterkort, som igjen fører til at man ikke får studentrabatt på forskjellige ting. Semesteravgiften betales over nettbank, og kontonummer og KID-nummer finner du på <a href="https://studentweb.ntnu.no">studentweb.ntnu.no</a>. For å komme inn her, trenger du fødselsnummeret ditt og en PINkode som du har fått i et av brevene fra NTNU. Slik gjør du:</p>
 
     <ul>
       <li>Bekreft utdanningsplanen (slapp av, fagvalgene kan du endre på helt frem til 15. september).</li>

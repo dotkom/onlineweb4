@@ -17,7 +17,6 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404, redirect
 from django.utils.translation import ugettext as _
 
-import icalendar
 import watson
 
 from apps.authentication.models import OnlineUser as User
@@ -27,6 +26,8 @@ from apps.events.pdf_generator import EventPDF
 from apps.events.utils import get_group_restricted_events
 from apps.payment.models import Payment, PaymentRelation, PaymentDelay
 
+from utils import EventCalendar
+
 def index(request):
     context = {}
     if request.user and request.user.is_authenticated():
@@ -34,6 +35,7 @@ def index(request):
         context['signer_value'] = signer.sign(request.user.username)
         context['personal_ics_path'] = request.build_absolute_uri(reverse('events_personal_ics', args=(context['signer_value'],)))
     return render(request, 'events/index.html', context)
+
 
 def details(request, event_id, event_slug):
     event = get_object_or_404(Event, pk=event_id)
@@ -283,56 +285,19 @@ def generate_pdf(request, event_id):
 
     return EventPDF(event).render_pdf()
 
+
 def calendar_export(request, event_id=None, user=None):
-    cal = icalendar.Calendar()
-    cal.add('prodid', '-//Online//Onlineweb//EN')
-    cal.add('version', '2.0')
-    filename = 'online'
+    calendar = EventCalendar()
     if event_id:
         # Single event
-        try:
-            events = [Event.objects.get(id=event_id)]
-        except Event.DoesNotExist:
-            events = []
-        filename = str(event_id)
+        calendar.event(event_id)
     elif user:
         # Personalized calendar
-        # This calendar is publicly available, but the url is not guessable so data should not be leaked to everyone
-        signer = Signer()
-        try:
-            username = signer.unsign(user)
-            user = User.objects.get(username=username)
-        except (BadSignature, User.DoesNotExist):
-            user = None
-        if user:
-            # Getting all events that the user has/is participating in
-            events = Event.objects.filter(attendance_event__attendees__user=user).order_by('event_start').prefetch_related(
-            'attendance_event', 'attendance_event__attendees')
-            filename = username
-        else:
-            events = []
+        calendar.user(user)
     else:
         # All events that haven't ended yet
-        events = Event.objects.filter(event_end__gt=timezone.now()).order_by('event_start')
-        filename = 'events'
-
-    for event in events:
-        cal_event = icalendar.Event()
-
-        cal_event.add('dtstart', event.event_start)
-        cal_event.add('dtend', event.event_end)
-        cal_event.add('location', event.location)
-        cal_event.add('summary', event.title)
-        cal_event.add('description', event.ingress_short)
-        cal_event.add('uid', 'event-' + str(event.id) + '@online.ntnu.no')
-
-        cal.add_component(cal_event)
-
-    response = HttpResponse(cal.to_ical(), content_type='text/calendar')
-    response['Content-Type'] = 'text/calendar; charset=utf-8';
-    response['Content-Disposition'] = 'attachment; filename=' + filename + '.ics'
-
-    return response
+        calendar.events()
+    return calendar.response()
 
 
 @login_required
