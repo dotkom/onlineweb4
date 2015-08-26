@@ -4,7 +4,7 @@
 {% load crispy_forms_tags %}
 
 {% block title %}
-{{poster.category}}: {{poster.title}} - Online
+{{poster.order_type}}: {{poster.event.title}} - Online
 {% endblock title %}
 
 {% block styles %}
@@ -22,7 +22,7 @@
 {% endblock js %}
 
 {% block page-header %}
-{{poster.category}}: {{poster.title}}
+{{poster.order_type}}: {{poster.event.title}}
 {% endblock %}
 
 {% block breadcrumbs %}
@@ -59,9 +59,9 @@
                         <div class="row row-space">
                             <div class="event-hero-meta-info">
                                 <div class="col-xs-12 col-sm-4 col-md-4">
-                                    <div class="event-hero-title">Fra</div>
+                                    <div class="event-hero-title">Vises fra</div>
                                     <div class="event-hero-large-text">
-                                        <span class="break">{{poster.when}}</span>
+                                        <span class="break">{{poster.display_from}}</span>
                                     </div>
                                 </div>
                                 <div class="col-xs-12 col-sm-4 col-md-4">
@@ -71,8 +71,8 @@
                                     </div>
                                 </div>
                                 <div class="col-xs-12 col-sm-4 col-md-4">
-                                    <div class="event-hero-title">Lokasjon</div>
-                                    <div class="event-hero-small-text">{{poster.location}}</div>
+                                    <div class="event-hero-title">Bestilt av</div>
+                                    <div class="event-hero-small-text"><a href="mailto:{{poster.ordered_by.email}}">{{poster.ordered_by}}</a> i <a href="mailto:{{poster.ordered_committee}}@online.ntnu.no">{{poster.ordered_committee}}</a></div>
                                 </div>
                             </div>
                         </div>
@@ -80,24 +80,25 @@
                             <div class="row">
                                 <div class="event-hero-meta-info">
                                     <div class="col-xs-12 col-sm-4 col-md-4">
-                                        <div class="event-hero-title">Påmeldte</div>
+                                        <div class="event-hero-title">Vises til</div>
                                         <div class="event-hero-large-text">
-                                            0/20
+                                            {{poster.display_to}}
                                         </div>
                                     </div>
                                     <div class="col-xs-12 col-sm-4 col-md-4">
                                         
-                                            <div class="event-hero-title">Antall på venteliste</div>
-                                            <div class="event-hero-large-text">0</div>
+                                            <div class="event-hero-title">Antall opplag</div>
+                                            <div class="event-hero-large-text">{{poster.amount}}</div>
                                         
                                     </div>
                                     <div class="col-xs-12 col-sm-4 col-md-4">
                                          
-                                            <div class="event-hero-title">Påmeldingsstart</div>
+                                            <div class="event-hero-title">Event</div>
                                             <div class="event-hero-large-text">
                                                 <div class="event-hero-large-text">
-                                                    <span class="break">12.00</span>
-                                                    <span class="date-small">27. Apr 2015</span>
+                                                    <a href="{{poster.event.get_absolute_url}}">{{poster.event}}</a>
+                                                    <br>
+                                                    <span class="date-small">{{poster.event.event_start}}</span>
                                                 </div>
                                             </div>
                                         
@@ -126,6 +127,7 @@
     </div>
     <div class="row">
         <div class="col-md-7">
+            <h5>Beskrivelse</h5>
             <div class="ingress">
                 <p>{{poster.description}}</p>
             </div>

@@ -35,13 +35,14 @@ Ny {{order_type_name | lower}}bestilling
     <form action="" method="POST">
         {{add_poster_form.non_field_errors }}
          {% for field in add_poster_form %}
-            <div class="form-group">
-                <div class="col-md-2">{{ field.label_tag }}</div>
-                <div class="col-md-{% if field.errors %}7{% else %}10{% endif %}">{{ field|addclass:"form-control"}}</div>
-                {% if field.errors %}<div class="col-md-2 error">{{ field.errors }}</div>{% endif %}
+            <div class="row">
+                <div class="form-group">
+                    <div class="col-md-2">{{ field.label_tag }}{% if field.field.required %}*{% endif %}</div>
+                    <div class="col-md-{% if field.errors %}7{% else %}10{% endif %}">{{ field|addclass:"form-control"}}</div>
+                    {% if field.errors %}<div class="col-md-2 error">{{ field.errors }}</div>{% endif %}
+                </div>
             </div>
           {% endfor %}
-        <input type="hidden" name="order_type" value="{{order_type}}">
         <input type="submit">
         {% csrf_token %}
     </form>

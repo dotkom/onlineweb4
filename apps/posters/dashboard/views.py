@@ -78,7 +78,7 @@ def add(request, order_type=0):
             poster.ordered_by = request.user
             # Should look for a more kosher solution
             poster.ordered_committee = request.user.groups.filter(name__contains="Kom")[0]
-
+            poster.order_type = order_type
             poster.save()
 
             # Let this user have permissions to show this order
