@@ -89,7 +89,10 @@ def add(request, order_type=0):
             context['add_poster_form'] = form
             return render(request, 'posters/dashboard/add.html', context)
 
-
+    type_names = ("Plakat", "Bong", "Generell ")
+    type_name = type_names[int(order_type)-1]
+    context["order_type_name"] = type_name
+    context['order_type'] = order_type
     context['add_poster_form'] = AddPosterForm()
     return render(request, 'posters/dashboard/add.html', context)
 
@@ -116,15 +119,10 @@ def change(request):
 @permission_required('view_poster_order', (Poster, 'pk', 'order_id'), return_403=True)
 def detail(request, order_id=None):
     if request.is_ajax():
-        do_ajax_shit=True
+        do_ajax_shit = True
 
     context = get_base_context(request)
     context['poster'] = Poster.objects.get(pk=order_id)
-    context['poster_iterator'] = model_to_dict(context['poster'],
-        exclude=["description", "ordered_date", "ordered_by", "ordered_committee", "assigned_to", "comments", "finished", "id"])
-
-    context['order_iterator'] = model_to_dict(context['poster'],
-        fields=["description", "ordered_date", "ordered_by", "ordered_committee", "assigned_to", "comments", "finished"])
 
     return render(request, 'posters/dashboard/details.html', context)
 

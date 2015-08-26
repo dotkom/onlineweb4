@@ -22,7 +22,7 @@ Ny bestilling - Online
 {% endblock js %}
 
 {% block page-header %}
-Ny bestilling
+Ny {{order_type_name | lower}}bestilling
 {% endblock %}
 
 {% block breadcrumbs %}
@@ -41,6 +41,7 @@ Ny bestilling
                 {% if field.errors %}<div class="col-md-2 error">{{ field.errors }}</div>{% endif %}
             </div>
           {% endfor %}
+        <input type="hidden" name="order_type" value="{{order_type}}">
         <input type="submit">
         {% csrf_token %}
     </form>
