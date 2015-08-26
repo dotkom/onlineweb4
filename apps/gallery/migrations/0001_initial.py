@@ -1,59 +1,41 @@
 # -*- coding: utf-8 -*-
-from south.utils import datetime_utils as datetime
-from south.db import db
-from south.v2 import SchemaMigration
-from django.db import models
+from __future__ import unicode_literals
+
+from django.db import models, migrations
 
 
-class Migration(SchemaMigration):
+class Migration(migrations.Migration):
 
-    def forwards(self, orm):
-        # Adding model 'UnhandledImage'
-        db.create_table(u'gallery_unhandledimage', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('image', self.gf('django.db.models.fields.files.ImageField')(max_length=100)),
-            ('thumbnail', self.gf('django.db.models.fields.files.ImageField')(max_length=100)),
-        ))
-        db.send_create_signal(u'gallery', ['UnhandledImage'])
+    dependencies = [
+    ]
 
-        # Adding model 'ResponsiveImage'
-        db.create_table(u'gallery_responsiveimage', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('image_original', self.gf('django.db.models.fields.files.FileField')(max_length=100)),
-            ('image_lg', self.gf('django.db.models.fields.files.ImageField')(max_length=100)),
-            ('image_md', self.gf('django.db.models.fields.files.ImageField')(max_length=100)),
-            ('image_sm', self.gf('django.db.models.fields.files.ImageField')(max_length=100)),
-            ('image_xs', self.gf('django.db.models.fields.files.ImageField')(max_length=100)),
-            ('thumbnail', self.gf('django.db.models.fields.files.ImageField')(max_length=100)),
-        ))
-        db.send_create_signal(u'gallery', ['ResponsiveImage'])
-
-
-    def backwards(self, orm):
-        # Deleting model 'UnhandledImage'
-        db.delete_table(u'gallery_unhandledimage')
-
-        # Deleting model 'ResponsiveImage'
-        db.delete_table(u'gallery_responsiveimage')
-
-
-    models = {
-        u'gallery.responsiveimage': {
-            'Meta': {'object_name': 'ResponsiveImage'},
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'image_lg': ('django.db.models.fields.files.ImageField', [], {'max_length': '100'}),
-            'image_md': ('django.db.models.fields.files.ImageField', [], {'max_length': '100'}),
-            'image_original': ('django.db.models.fields.files.FileField', [], {'max_length': '100'}),
-            'image_sm': ('django.db.models.fields.files.ImageField', [], {'max_length': '100'}),
-            'image_xs': ('django.db.models.fields.files.ImageField', [], {'max_length': '100'}),
-            'thumbnail': ('django.db.models.fields.files.ImageField', [], {'max_length': '100'})
-        },
-        u'gallery.unhandledimage': {
-            'Meta': {'object_name': 'UnhandledImage'},
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'image': ('django.db.models.fields.files.ImageField', [], {'max_length': '100'}),
-            'thumbnail': ('django.db.models.fields.files.ImageField', [], {'max_length': '100'})
-        }
-    }
-
-    complete_apps = ['gallery']
+    operations = [
+        migrations.CreateModel(
+            name='ResponsiveImage',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('name', models.CharField(max_length=200, verbose_name='Navn')),
+                ('date', models.DateField(auto_now_add=True)),
+                ('image_original', models.FileField(upload_to=b'images/responsive', verbose_name='Originalbilde')),
+                ('image_lg', models.ImageField(upload_to=b'images/responsive', verbose_name='LG Bilde')),
+                ('image_md', models.ImageField(upload_to=b'images/responsive', verbose_name='MD Bilde')),
+                ('image_sm', models.ImageField(upload_to=b'images/responsive', verbose_name='SM Bilde')),
+                ('image_xs', models.ImageField(upload_to=b'images/responsive', verbose_name='XS Bilde')),
+                ('thumbnail', models.ImageField(upload_to=b'images/responsive/thumbnails', verbose_name='Thumbnail')),
+            ],
+            options={
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='UnhandledImage',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('image', models.ImageField(upload_to=b'images/non-edited')),
+                ('thumbnail', models.ImageField(upload_to=b'images/non-edited/thumbnails')),
+            ],
+            options={
+            },
+            bases=(models.Model,),
+        ),
+    ]

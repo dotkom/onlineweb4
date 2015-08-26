@@ -6,12 +6,12 @@ import uuid
 from django.db import models
 from django.db.models.signals import post_delete
 
-from apps.gallery import settings as gallerySettings
+from apps.gallery import settings as gallery_settings
 
 
 class UnhandledImage(models.Model):
-    image = models.ImageField(upload_to=gallerySettings.UNHANDLED_IMAGES_PATH)
-    thumbnail = models.ImageField(upload_to=gallerySettings.UNHANDLED_THUMBNAIL_PATH)
+    image = models.ImageField(upload_to=gallery_settings.UNHANDLED_IMAGES_PATH)
+    thumbnail = models.ImageField(upload_to=gallery_settings.UNHANDLED_THUMBNAIL_PATH)
 
     @property
     def filename(self):
@@ -33,12 +33,14 @@ post_delete.connect(receiver=unhandled_image_delete, dispatch_uid=uuid.uuid1(), 
 
 # TODO: Introduce tags to images
 class ResponsiveImage(models.Model):
-    image_original = models.FileField(upload_to = gallerySettings.RESPONSIVE_IMAGES_PATH)
-    image_lg = models.ImageField(upload_to = gallerySettings.RESPONSIVE_IMAGES_PATH)
-    image_md = models.ImageField(upload_to = gallerySettings.RESPONSIVE_IMAGES_PATH)
-    image_sm = models.ImageField(upload_to = gallerySettings.RESPONSIVE_IMAGES_PATH)
-    image_xs = models.ImageField(upload_to = gallerySettings.RESPONSIVE_IMAGES_PATH)
-    thumbnail = models.ImageField(upload_to = gallerySettings.RESPONSIVE_THUMBNAIL_PATH)
+    name = models.CharField(u'Navn', max_length=200, null=False)
+    date = models.DateField(auto_now_add=True, editable=False, null=False, blank=False)
+    image_original = models.FileField(u'Originalbilde', upload_to=gallery_settings.RESPONSIVE_IMAGES_PATH)
+    image_lg = models.ImageField(u'LG Bilde', upload_to=gallery_settings.RESPONSIVE_IMAGES_PATH)
+    image_md = models.ImageField(u'MD Bilde', upload_to=gallery_settings.RESPONSIVE_IMAGES_PATH)
+    image_sm = models.ImageField(u'SM Bilde', upload_to=gallery_settings.RESPONSIVE_IMAGES_PATH)
+    image_xs = models.ImageField(u'XS Bilde', upload_to=gallery_settings.RESPONSIVE_IMAGES_PATH)
+    thumbnail = models.ImageField(u'Thumbnail', upload_to=gallery_settings.RESPONSIVE_THUMBNAIL_PATH)
 
 
 # If we delete an image, we don't want to keep the actual images

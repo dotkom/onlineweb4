@@ -2,6 +2,7 @@
 
 import os
 import shutil
+import uuid
 
 from PIL import Image
 from django.conf import settings as django_settings
@@ -11,7 +12,13 @@ from apps.gallery import settings as gallery_settings
 
 def save_unhandled_file(uploaded_file):
 
-    filepath = os.path.join(django_settings.MEDIA_ROOT, gallery_settings.UNHANDLED_IMAGES_PATH, uploaded_file.name)
+    filename, extension = os.path.splitext(uploaded_file.name)
+
+    filepath = os.path.join(
+        django_settings.MEDIA_ROOT,
+        gallery_settings.UNHANDLED_IMAGES_PATH,
+        '%s%s' % (uuid.uuid4(), extension.lower())
+    )
 
     try:
         with open(filepath, 'wb+') as destination:
@@ -26,7 +33,11 @@ def save_unhandled_file(uploaded_file):
 def save_responsive_image(unhandled_image, crop_data):
 
     source_path = os.path.join(django_settings.MEDIA_ROOT, unhandled_image.image.name)
-    destination_path = os.path.join(django_settings.MEDIA_ROOT, gallery_settings.RESPONSIVE_IMAGES_PATH, os.path.basename(unhandled_image.image.name))
+    destination_path = os.path.join(
+        django_settings.MEDIA_ROOT,
+        gallery_settings.RESPONSIVE_IMAGES_PATH,
+        os.path.basename(unhandled_image.image.name)
+    )
 
     crop_image(source_path, destination_path, crop_data)
 
@@ -45,17 +56,33 @@ def create_thumbnail_for_unhandled_images(unhandled_image_path):
     errors = create_thumbnail(unhandled_image_path, thumbnail_path, gallery_settings.UNHANDLED_THUMBNAIL_SIZE)
 
     if 'error' in errors:
-        return { 'error': errors['error'] }
+        return {'error': errors['error']}
     else:
-        return { 'thumbnail_path': thumbnail_path }
+        return {'thumbnail_path': thumbnail_path}
 
 
 def create_responsive_images(source_path):
 
-    lg_destination_path = os.path.join(django_settings.MEDIA_ROOT, gallery_settings.RESPONSIVE_IMAGES_LG_PATH, os.path.basename(source_path))
-    md_destination_path = os.path.join(django_settings.MEDIA_ROOT, gallery_settings.RESPONSIVE_IMAGES_MD_PATH, os.path.basename(source_path))
-    sm_destination_path = os.path.join(django_settings.MEDIA_ROOT, gallery_settings.RESPONSIVE_IMAGES_SM_PATH, os.path.basename(source_path))
-    xs_destination_path = os.path.join(django_settings.MEDIA_ROOT, gallery_settings.RESPONSIVE_IMAGES_XS_PATH, os.path.basename(source_path))
+    lg_destination_path = os.path.join(
+        django_settings.MEDIA_ROOT,
+        gallery_settings.RESPONSIVE_IMAGES_LG_PATH,
+        os.path.basename(source_path)
+    )
+    md_destination_path = os.path.join(
+        django_settings.MEDIA_ROOT,
+        gallery_settings.RESPONSIVE_IMAGES_MD_PATH,
+        os.path.basename(source_path)
+    )
+    sm_destination_path = os.path.join(
+        django_settings.MEDIA_ROOT,
+        gallery_settings.RESPONSIVE_IMAGES_SM_PATH,
+        os.path.basename(source_path)
+    )
+    xs_destination_path = os.path.join(
+        django_settings.MEDIA_ROOT,
+        gallery_settings.RESPONSIVE_IMAGES_XS_PATH,
+        os.path.basename(source_path)
+    )
 
     lg_status = resize_image(source_path, lg_destination_path, gallery_settings.RESPONSIVE_IMAGES_LG_SIZE)
     md_status = resize_image(source_path, md_destination_path, gallery_settings.RESPONSIVE_IMAGES_MD_SIZE)
@@ -64,9 +91,19 @@ def create_responsive_images(source_path):
 
     # TODO: Do something with the statuses, they implicate success or error messages
 
+    print lg_status, md_status, sm_status, xs_stauts
+
     unhandled_thumbnail_name = os.path.basename(source_path)
-    unhandled_thumbnail_path = os.path.join(django_settings.MEDIA_ROOT, gallery_settings.UNHANDLED_THUMBNAIL_PATH, unhandled_thumbnail_name)
-    responsive_thumbnail_path = os.path.join(django_settings.MEDIA_ROOT, gallery_settings.RESPONSIVE_THUMBNAIL_PATH, unhandled_thumbnail_name)
+    unhandled_thumbnail_path = os.path.join(
+        django_settings.MEDIA_ROOT,
+        gallery_settings.UNHANDLED_THUMBNAIL_PATH,
+        unhandled_thumbnail_name
+    )
+    responsive_thumbnail_path = os.path.join(
+        django_settings.MEDIA_ROOT,
+        gallery_settings.RESPONSIVE_THUMBNAIL_PATH,
+        unhandled_thumbnail_name
+    )
 
     shutil.copy2(unhandled_thumbnail_path, responsive_thumbnail_path)
 
@@ -74,53 +111,51 @@ def create_responsive_images(source_path):
 def create_thumbnail(source_image_path, destination_thumbnail_path, size):
 
     try:
-        image = Image.open(source_image_path, 'r')
+        image = Image.open(source_image_path)
     except IOError:
-        return { 'success': False, 'error': 'File was not an image file, or could not be found.' }
+        return {'success': False, 'error': 'File was not an image file, or could not be found.'}
 
     # If necessary, convert the image to RGB mode
     if image.mode not in ('L', 'RGB', 'RGBA'):
-       image = image.convert('RGB')
+        image = image.convert('RGB')
 
     file_name, file_extension = os.path.splitext(source_image_path)
 
     if not file_extension:
-        return { 'success': False, 'error': 'File must have an extension.' }
+        return {'success': False, 'error': 'File must have an extension.'}
 
     try:
         # Convert our image to a thumbnail
         image.thumbnail(size, Image.ANTIALIAS)
     except IOError:
-        return { 'success': False, 'error': 'Image is truncated.' }
+        return {'success': False, 'error': 'Image is truncated.'}
 
     quality = 90
     # Save the image to file
     #Have not tried setting file extension to png, but I guess PIL would fuck you in the ass for it
     image.save(destination_thumbnail_path, file_extension[1:], quality=quality, optimize=True)
 
-    return { 'success': True }
+    return {'success': True}
 
 
 def resize_image(source_image_path, destination_thumbnail_path, size):
 
     try:
-        image = Image.open(source_image_path, 'r')
+        image = Image.open(source_image_path)
     except IOError:
-        return { 'success': False, 'error': 'File was not an image file, or could not be found.' }
+        return {'success': False, 'error': 'File was not an image file, or could not be found.'}
 
     # If necessary, convert the image to RGB mode
     if image.mode not in ('L', 'RGB', 'RGBA'):
-       image = image.convert('RGB')
+        image = image.convert('RGB')
 
     file_name, file_extension = os.path.splitext(source_image_path)
 
     if not file_extension:
-        return { 'success': False, 'error': 'File must have an extension.' }
-
+        return {'success': False, 'error': 'File must have an extension.'}
 
     image_width, image_height = image.size
     target_width, target_height = size
-
 
     if image_width < target_width:
         target_width = image_width
@@ -129,44 +164,45 @@ def resize_image(source_image_path, destination_thumbnail_path, size):
         target_height = image_height
 
     # Give an epsilon of 0.01 because calculations.
-    if float(image_width) / float(image_height) < float(16)/float(9) - 0.01 or float(image_width) / float(image_height) > float(16)/float(9) + 0.01:
-        return { 'success': False, 'error': 'Image has invalid dimensions.' }
+    if float(image_width) / float(image_height) < float(16)/float(9) - 0.01 \
+            or float(image_width) / float(image_height) > float(16)/float(9) + 0.01:
+
+        return {'success': False, 'error': 'Image has invalid dimensions.'}
 
     try:
         # Convert our image to a thumbnail
         image = image.resize((target_width, target_height), Image.ANTIALIAS)
     except IOError:
-        return {'success': False, 'error': 'Image is truncated.' }
+        return {'success': False, 'error': 'Image is truncated.'}
 
     quality = 90
 
     try:
         #Have not tried setting file extension to png, but I guess PIL would fuck you in the ass for it
         image.save(destination_thumbnail_path, file_extension[1:], quality=quality, optimize=True)
-    except KeyError as key_error:
-        return { 'success': False, 'error': 'Unknown extension.' }
+    except KeyError:
+        return {'success': False, 'error': 'Unknown extension.'}
     except IOError:
-        return { 'success': False, 'error': 'Image could not be saved.' }
+        return {'success': False, 'error': 'Image could not be saved.'}
 
-    return { 'success': True }
+    return {'success': True}
 
 
 def crop_image(source_image_path, destination_path, crop_data):
 
     try:
-        image = Image.open(source_image_path, 'r')
+        image = Image.open(source_image_path)
     except IOError:
-        return { 'success': False, 'error': "File was not an image file, or could not be found." }
+        return {'success': False, 'error': "File was not an image file, or could not be found."}
 
     # If necessary, convert the image to RGB mode
     if image.mode not in ('L', 'RGB', 'RGBA'):
-       image = image.convert('RGB')
+        image = image.convert('RGB')
 
     file_name, file_extension = os.path.splitext(source_image_path)
 
     if not file_extension:
-        return {'success': False, 'error': 'File must have an extension.' }
-
+        return {'success': False, 'error': 'File must have an extension.'}
 
     crop_x = float(crop_data['x'])
     crop_y = float(crop_data['y'])
@@ -178,20 +214,25 @@ def crop_image(source_image_path, destination_path, crop_data):
     # Check all the dimension and size things \o/
     # Give an epsilon of 0.01 because calculations.
     if crop_width / crop_height < float(16)/float(9) - 0.01 or crop_width / crop_height > float(16)/float(9) + 0.01:
-        return { 'success': False, 'error': 'Cropping ratio was not 16:9.'}
+        return {'success': False, 'error': 'Cropping ratio was not 16:9.'}
 
-    if (crop_x < 0) or (crop_y < 0) or (crop_x > image_width) or (crop_y > image_height) or (crop_x + crop_width > image_width) or (crop_y + crop_height > image_height):
-        return { 'success': False, 'error': 'Crop bounds are illegal!' }
+    if (crop_x < 0) \
+            or (crop_y < 0) \
+            or (crop_x > image_width) \
+            or (crop_y > image_height) \
+            or (crop_x + crop_width > image_width) \
+            or (crop_y + crop_height > image_height):
+
+        return {'success': False, 'error': 'Crop bounds are illegal!'}
 
     # All is OK, crop the crop
-
     image = image.crop((int(crop_x), int(crop_y), int(crop_x) + int(crop_width), int(crop_y) + int(crop_height)))
 
     quality = 90
     #Have not tried setting file extension to png, but I guess PIL would fuck you in the ass for it
     image.save(destination_path, file_extension[1:], quality=quality, optimize=True)
 
-    return { 'success': True }
+    return {'success': True}
 
 
 def get_unhandled_media_path(unhandled_file_path):

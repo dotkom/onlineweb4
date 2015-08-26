@@ -1,11 +1,13 @@
 #-*- coding: utf-8 -*-
 
 import json
-from django.shortcuts import HttpResponse, get_object_or_404, redirect, render
+from django.shortcuts import get_object_or_404, redirect, render
+from django.http import JsonResponse, HttpResponse
 
 from apps.gallery.models import UnhandledImage, ResponsiveImage
 from apps.gallery.forms import DocumentForm
 from apps.gallery import util
+
 
 def _create_request_dictionary(request):
 
@@ -14,6 +16,7 @@ def _create_request_dictionary(request):
         'responsive_images': ResponsiveImage.objects.all(),
     }
     return dictionary
+
 
 #TODO: Remove this, only for testing
 def delete_all(request):
@@ -42,7 +45,6 @@ def upload(request):
     return HttpResponse(status=500)
 
 
-
 # If something goes wrong, all files will have to be deleted, this is not handled now
 def _handle_upload(uploaded_file):
 
@@ -58,7 +60,7 @@ def _handle_upload(uploaded_file):
     unhandled_thumbnail_media = util.get_unhandled_thumbnail_media_path(thumbnail_result['thumbnail_path'])
 
     #try catch this and delete files on exception
-    UnhandledImage(image = unhandle_media, thumbnail = unhandled_thumbnail_media).save()
+    UnhandledImage(image=unhandle_media, thumbnail=unhandled_thumbnail_media).save()
 
     return HttpResponse(status=200)
 
@@ -78,9 +80,9 @@ def get_all_untreated(request):
 
             for image in UnhandledImage.objects.all():
                 images.append({
-                    'id' : image.id,
+                    'id': image.id,
                     'thumbnail': image.thumbnail.url,
-                    'image' : image.image.url
+                    'image': image.image.url
                 })
 
             return HttpResponse(status=200, content=json.dumps({'untreated': images}))
@@ -94,7 +96,9 @@ def crop_image(request):
             crop_data = request.POST
 
             if not _verify_crop_data(crop_data):
-                return HttpResponse(status=404, content=json.dumps({'error': 'Json must contain id, x, y, height and width.'}))
+                return JsonResponse(status=404, data=json.dumps(
+                    {'error': 'Json must contain id, x, y, height and width.'}
+                ))
 
             image = get_object_or_404(UnhandledImage, pk=crop_data['id'])
             responsive_image_path = util.save_responsive_image(image, crop_data)
@@ -109,7 +113,15 @@ def crop_image(request):
             xs_media = util.get_responsive_xs_path(responsive_image_path)
             thumbnail = util.get_responsive_thumbnail_path(responsive_image_path)
 
-            ResponsiveImage(image_original=original_media, image_lg=lg_media, image_md=md_media, image_sm=sm_media, image_xs=xs_media, thumbnail=thumbnail).save()
+            ResponsiveImage(
+                image_original=original_media,
+                image_lg=lg_media,
+                image_md=md_media,
+                image_sm=sm_media,
+                image_xs=xs_media,
+                thumbnail=thumbnail
+            ).save()
+
             image.delete()
 
             return HttpResponse(status=200, content=json.dumps({'cropData': crop_data}))
@@ -118,4 +130,5 @@ def crop_image(request):
 
 
 def _verify_crop_data(crop_data):
-    return 'id' in crop_data and 'x' in crop_data and 'y' in crop_data and 'height' in crop_data and 'width' in crop_data
+    return \
+        'id' in crop_data and 'x' in crop_data and 'y' in crop_data and 'height' in crop_data and 'width' in crop_data
