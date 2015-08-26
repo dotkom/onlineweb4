@@ -2,6 +2,7 @@
 
 {% load compress %}
 {% load markdown_deux_tags %}
+{% load crispy_forms_tags %}
 
 {% block title %}Webshop {{ product }} - Online{% endblock title %}
 
@@ -34,7 +35,16 @@
     </div>
     <div class="col-sm-5">
         {{ product.price|default:0|floatformat:2 }},-
-        <button class="btn btn-lg btn-default">Kjøp</button>
+        <form method="post">
+          {% csrf_token %}
+          <div class="form-group">
+            <label class="control-label">
+              Antall
+              <input class="form-control" min="0" name="number" type="number">
+            </label>
+          </div>
+          <input type="submit" class="btn btn-lg btn-default" value="Kjøp">
+        </form>
     </div>
 </div>
 <div class="row">
