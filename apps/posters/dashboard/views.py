@@ -118,8 +118,18 @@ def detail(request, order_id=None):
     if request.is_ajax():
         do_ajax_shit=True
 
+    if not order_id:
+        return HttpResponse(status=400)
+
     context = get_base_context(request)
-    context['poster'] = Poster.objects.get(pk=order_id)
+    poster = get_object_or_404(Poster, pk=order_id)
+    context['poster'] = poster
+
+    if request.method == 'POST':
+        if request.POST.get('completed', 'false') == 'true':
+            poster.finished = True
+            poster.save()
+
     context['poster_iterator'] = model_to_dict(context['poster'],
         exclude=["description", "ordered_date", "ordered_by", "ordered_committee", "assigned_to", "comments", "finished", "id"])
 

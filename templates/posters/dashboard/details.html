@@ -135,6 +135,13 @@
                 <h5>Kommentarer</h5>
                 {{poster.comments}}
             </p>
+            <p>
+                <form method="POST">
+                    {% csrf_token %}
+                    <input type="text" name="completed" value="true" hidden>
+                    <input type="submit" value="Ferdigstill">
+                </form>
+            </p>
         </div>
     </div>
 
