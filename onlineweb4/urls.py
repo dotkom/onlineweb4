@@ -130,14 +130,19 @@ if 'apps.gallery' in settings.INSTALLED_APPS:
         url(r'^gallery/',           include('apps.gallery.urls')),
     )
 
-if 'apps.payment' in settings.INSTALLED_APPS:
+if 'apps.splash' in settings.INSTALLED_APPS:
     urlpatterns += patterns('',
-        url(r'^payment/',           include('apps.payment.urls')),
+        url(r'^splash/',           include('apps.splash.urls')),
     )
 
 # feedme
 if 'feedme' in settings.INSTALLED_APPS:
     urlpatterns += patterns('', url(r'^feedme/', include('feedme.urls', namespace='feedme')))
+
+if 'apps.payment' in settings.INSTALLED_APPS:
+    urlpatterns += patterns('',
+        url(r'^payment/',           include('apps.payment.urls')),
+    )
 
 # redwine
 if 'redwine' in settings.INSTALLED_APPS:
