@@ -129,8 +129,12 @@ def detail(request, order_id=None):
     context['poster'] = poster
 
     if request.method == 'POST':
-        if request.POST.get('completed', 'false') == 'true':
+        poster_status = request.POST.get('completed')
+        if poster_status == 'true':
             poster.finished = True
+            poster.save()
+        elif poster_status == 'false':
+            poster.finished = False
             poster.save()
 
     return render(request, 'posters/dashboard/details.html', context)

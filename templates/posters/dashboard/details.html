@@ -138,10 +138,12 @@
                 {{poster.comments}}
             </p>
             <p>
+            poster is {% if poster.finished == "true" %} done {% else %} not done {% endif %}
+            <br> poster.finished: {{ poster.finished }}
                 <form method="POST">
                     {% csrf_token %}
-                    <input type="text" name="completed" value="true" hidden>
-                    <input type="submit" value="Ferdigstill">
+                    <input type="text" name="completed" value="{% if poster.finished == "true" %}false{% else %}true{% endif %}" hidden>
+                    <input type="submit" value="{% if poster.finished == "true" %}Uf{% else %}F{% endif %}erdigstill">
                 </form>
             </p>
         </div>
