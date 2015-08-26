@@ -52,46 +52,54 @@
         </div>
     </div>
     <div class="row row-space">
-        <div class="col-md-7">
+        <div class="col-md-12">
             <div class="row">
                 <div class="col-md-12">
                     <div class="event-hero-meta">
                         <div class="row row-space">
                             <div class="event-hero-meta-info">
-                                <div class="col-xs-12 col-sm-4 col-md-4">
+                                <div class="col-xs-12 col-sm-3 col-md-3">
                                     <div class="event-hero-title">Vises fra</div>
                                     <div class="event-hero-large-text">
                                         <span class="break">{{poster.display_from}}</span>
                                     </div>
                                 </div>
-                                <div class="col-xs-12 col-sm-4 col-md-4">
+                                <div class="col-xs-12 col-sm-3 col-md-3">
                                     <div class="event-hero-title">Pris</div>
                                     <div class="event-hero-large-text">
                                         <span class="break">{{poster.price}}</span>
                                     </div>
                                 </div>
-                                <div class="col-xs-12 col-sm-4 col-md-4">
+                                <div class="col-xs-12 col-sm-3 col-md-3">
                                     <div class="event-hero-title">Bestilt av</div>
                                     <div class="event-hero-small-text"><a href="mailto:{{poster.ordered_by.email}}">{{poster.ordered_by}}</a> i <a href="mailto:{{poster.ordered_committee}}@online.ntnu.no">{{poster.ordered_committee}}</a></div>
+                                </div>
+                                <div class="col-xs-12 col-sm-3 col-md-3">
+                                    <div class="event-hero-title">Status</div>
+                                    <div class="event-hero-large-text">
+                                        {%if poster.finished %}Ferdig
+                                        {%else %}Uferdig
+                                        {%endif %}
+                                    </div>
                                 </div>
                             </div>
                         </div>
                         
                             <div class="row">
                                 <div class="event-hero-meta-info">
-                                    <div class="col-xs-12 col-sm-4 col-md-4">
+                                    <div class="col-xs-12 col-sm-3 col-md-3">
                                         <div class="event-hero-title">Vises til</div>
                                         <div class="event-hero-large-text">
                                             {{poster.display_to}}
                                         </div>
                                     </div>
-                                    <div class="col-xs-12 col-sm-4 col-md-4">
+                                    <div class="col-xs-12 col-sm-3 col-md-3">
                                         
                                             <div class="event-hero-title">Antall opplag</div>
                                             <div class="event-hero-large-text">{{poster.amount}}</div>
                                         
                                     </div>
-                                    <div class="col-xs-12 col-sm-4 col-md-4">
+                                    <div class="col-xs-12 col-sm-3 col-md-3">
                                          
                                             <div class="event-hero-title">Event</div>
                                             <div class="event-hero-large-text">
@@ -103,6 +111,20 @@
                                             </div>
                                         
                                     </div>
+
+                                    <div class="col-xs-12 col-sm-3 col-md-3">
+                                         
+                                            <div class="event-hero-title">Tilordnet til</div>
+                                            <div class="event-hero-large-text">
+                                                <div class="event-hero-large-text">
+                                                {%if poster.assigned_to %}{{poster.assigned_to}}
+                                                {%else %}Ingen!
+                                                {%endif %}
+                                                    
+                                                </div>
+                                            </div>
+                                        
+                                    </div>
                                 </div>
                             </div>
                         
@@ -110,19 +132,6 @@
                 </div>
             </div>
 
-        </div>
-        <div class="col-md-5">
-            <div class="col-md-12 event-status row-space">
-                                <p class="status-text">Påmeldingen er ikke åpnet enda.</p>
-                            
-                    <p class="help-text" style="margin-top:20px">Avmeldingsfristen 
-                        
-                            er
-                        
-                        12.00 03. Mai 2015
-                    </p>
-                
-            </div>            
         </div>
     </div>
     <div class="row">
@@ -149,75 +158,6 @@
         </div>
     </div>
 
-
-    <!-- MODALS -->
-
-
-    <div id="attend" class="modal fade">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                    <h3 class="modal-title">Meld deg på Studentaften, Sikkerhet og Sårbarhet</h3>
-                </div>
-                <form action="/events/133/attend/" method="POST">
-                    <div class="modal-body">
-                        <input type="hidden" name="csrfmiddlewaretoken" value="WySFl3nApWjitupvx8z4YgemfDhWwhgB">
-
-                    </div>
-                    <div class="modal-footer">
-                        <button type="submit" class="btn btn-primary">Valider</button>
-                        <button class="btn" data-dismiss="modal" aria-hidden="true">Lukk</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-    <div id="waitlist" class="modal fade">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                    <h3 class="modal-title">Sett meg på venteliste på Studentaften, Sikkerhet og Sårbarhet</h3>
-                </div>
-                <form action="/events/133/attend/" method="POST">
-                    <div class="modal-body">
-                        <p>Ved å sette deg på venteliste godtar du at du automatisk får plass om
-                            arrangementet utvides med flere plasser, eller andre påmeldte melder seg av, slik at du rykker frem i køen.
-                        </p>
-                        <p>Ved å melde deg på, godtar du prikkereglene.</p>
-                        <input type="hidden" name="csrfmiddlewaretoken" value="WySFl3nApWjitupvx8z4YgemfDhWwhgB">
-
-                    </div>
-                    <div class="modal-footer">
-                        <button type="submit" class="btn btn-primary">Valider</button>
-                        <button class="btn" data-dismiss="modal" aria-hidden="true">Lukk</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <div id="unattend" class="modal fade">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                    <h3>Meld deg av Studentaften, Sikkerhet og Sårbarhet </h3>
-                </div>
-                <form action="/events/133/unattend/" method="POST">
-                    <div class="modal-body">
-                        <input type="hidden" name="csrfmiddlewaretoken" value="WySFl3nApWjitupvx8z4YgemfDhWwhgB">
-                        <p>Er du sikker på at du vil melde deg av?</p>
-                    </div>
-                    <div class="modal-footer">
-                        <button class="btn" data-dismiss="modal" aria-hidden="true">Lukk</button>
-                        <button type="submit" class="btn btn-danger">Meld meg av</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
     </div>
 
 {% endblock content %}
