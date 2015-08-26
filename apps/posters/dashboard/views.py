@@ -23,7 +23,7 @@ from apps.authentication.models import OnlineUser as User
 from apps.dashboard.tools import has_access, get_base_context
 from apps.posters.models import Poster
 from apps.posters.forms import AddPosterForm, AddBongForm, AddOtherForm, EditPosterForm
-#from apps.dashboard.posters.models import PosterForm
+# from apps.dashboard.posters.models import PosterForm
 from apps.companyprofile.models import Company
 from apps.posters.models import Poster
 
@@ -33,7 +33,7 @@ from apps.posters.models import Poster
 @permission_required('posters.overview_poster_order', return_403=True)
 def index(request):
     if request.is_ajax():
-        do_ajax_shit=True
+        do_ajax_shit = True
 
     # The group with members who should populate the dropdownlist
     group = Group.objects.get(name='proKom')
@@ -121,8 +121,17 @@ def detail(request, order_id=None):
     if request.is_ajax():
         do_ajax_shit = True
 
+    if not order_id:
+        return HttpResponse(status=400)
+
     context = get_base_context(request)
-    context['poster'] = Poster.objects.get(pk=order_id)
+    poster = get_object_or_404(Poster, pk=order_id)
+    context['poster'] = poster
+
+    if request.method == 'POST':
+        if request.POST.get('completed', 'false') == 'true':
+            poster.finished = True
+            poster.save()
 
     return render(request, 'posters/dashboard/details.html', context)
 
