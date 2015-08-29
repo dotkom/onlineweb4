@@ -167,7 +167,7 @@ def attendEvent(request, event_id):
             payment = None
 
         #If payment_type is delay, Create delay object
-        if payment:
+        if payment and not event.attendance_event.is_on_waitlist(request.user):
             if payment.payment_type == 3:
                 deadline = timezone.now() + timedelta(days=payment.delay)
                 payment.create_payment_delay(request.user, deadline)
