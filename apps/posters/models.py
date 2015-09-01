@@ -26,6 +26,10 @@ class OrderMixin(models.Model):
     amount = models.IntegerField(_(u'antall opplag'), blank=True, null=True)
     finished = models.BooleanField(_(u"ferdig"), default=False)
 
+    def toggle_finished(self):
+        self.finished = not self.finished
+        self.save()
+
 
 class EventMixin(OrderMixin):
     event = models.ForeignKey(Event, related_name=u'Arrangement')
