@@ -9,7 +9,7 @@
 {% block webshop_content %}
 <ul>
 {% for order in order_line.orders.all %}
-    <li>{{ order.number }}x - {{ order.product }}
+    <li>{{ order.quantity }}x - {{ order.product }}
 {% endfor %}
 </ul>
 {% endblock %}

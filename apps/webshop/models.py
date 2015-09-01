@@ -64,8 +64,8 @@ class Order(models.Model):
     order_line = models.ForeignKey('OrderLine', related_name='orders')
     # Price of product when ordered
     price = models.DecimalField(max_digits=10, decimal_places=2)
-    # Number of products ordered
-    number = models.PositiveIntegerField()
+    # Quantity of products ordered
+    quantity = models.PositiveIntegerField()
 
     class Meta:
         verbose_name = 'Bestilling'
