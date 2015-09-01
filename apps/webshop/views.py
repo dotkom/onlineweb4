@@ -57,5 +57,5 @@ class ProductDetail(CartMixin, DetailView):
         return super(ProductDetail, self).get(request, *args, **kwargs)
 
 
-class Checkout(TemplateView):
-    pass
+class Checkout(CartMixin, TemplateView):
+    template_name = 'webshop/checkout.html'

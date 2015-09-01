@@ -9,7 +9,7 @@
 <section id="webshop">
     <div class="container">
         <div class="webshop-cart pull-right">
-            <a href="#"><span class="glyphicon glyphicon-shopping-cart"></span>
+            <a href="{% url 'webshop_checkout' %}"><span class="glyphicon glyphicon-shopping-cart"></span>
             {% with count=order_line.orders.count %}
             {{ count }} ordre{{ count|pluralize:'r' }} i handlevognen.</a>
             {% endwith %}
