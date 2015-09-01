@@ -1,0 +1,15 @@
+{% extends 'webshop/base.html' %}
+
+{% load compress %}
+{% load markdown_deux_tags %}
+{% load crispy_forms_tags %}
+
+{% block title %}Webshop - Online{% endblock title %}
+
+{% block webshop_content %}
+<ul>
+{% for order in order_line.orders.all %}
+    <li>{{ order.number }}x - {{ order.product }}
+{% endfor %}
+</ul>
+{% endblock %}
