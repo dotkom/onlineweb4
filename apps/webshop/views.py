@@ -51,17 +51,17 @@ class ProductDetail(CartMixin, DetailView):
             order = order_line.orders.filter(product=product).first()
             if order:
                 # Adding to existing order
-                order.number += form.cleaned_data['number']
+                order.quantity += form.cleaned_data['quantity']
                 messages.info(
                     request,
-                    'Produktet \'{product}\' var allerede i handlekurven din. Antall har blitt oppdatert til {number}.'
-                    .format(product=product, number=order.number)
+                    'Produktet \'{product}\' var allerede i handlekurven din. Antall har blitt oppdatert til {quantity}.'
+                    .format(product=product, quantity=order.quantity)
                 )
             else:
                 # Creating new order
                 order = Order(
                     product=product, price=product.price,
-                    number=form.cleaned_data['number'],
+                    quantity=form.cleaned_data['quantity'],
                     order_line=order_line)
             order.save()
         else:
