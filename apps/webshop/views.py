@@ -46,11 +46,23 @@ class ProductDetail(CartMixin, DetailView):
         product = self.get_object()
         form = OrderForm(request.POST)
         if form.is_valid():
-            # Creating new order
-            order = Order(
-                product=product, price=product.price,
-                number=form.cleaned_data['number'],
-                order_line=self.current_order_line())
+            order_line = self.current_order_line()
+            # Checking if product has already been added to cart
+            order = order_line.orders.filter(product=product).first()
+            if order:
+                # Adding to existing order
+                order.number += form.cleaned_data['number']
+                messages.info(
+                    request,
+                    'Produktet \'{product}\' var allerede i handlekurven din. Antall har blitt oppdatert til {number}.'
+                    .format(product=product, number=order.number)
+                )
+            else:
+                # Creating new order
+                order = Order(
+                    product=product, price=product.price,
+                    number=form.cleaned_data['number'],
+                    order_line=order_line)
             order.save()
         else:
             messages.error(request, 'Vennligst oppgi et gyldig antall')
