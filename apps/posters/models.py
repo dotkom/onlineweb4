@@ -57,6 +57,13 @@ class Poster(EventMixin):
     def poster_up(self):
         return self.finished and self.display_from < datetime.now().date() < self.display_to
 
+    @models.permalink
+    def get_absolute_url(self):
+        return ('posters_details', None, {'order_id': self.id})
+
+    def get_dashboard_url(self):
+        return '/dashboard%s' % self.get_absolute_url()
+
 
 class Freestyle(OrderMixin):
     description = models.TextField(_(u'beskrivelse'), max_length=1000)
