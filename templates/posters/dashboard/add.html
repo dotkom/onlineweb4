@@ -37,13 +37,16 @@ Ny {{order_type_name | lower}}bestilling
          {% for field in form %}
             <div class="row">
                 <div class="form-group">
-                    <div class="col-md-2">{{ field.label_tag }}{% if field.field.required %}*{% endif %}</div>
+                    <div class="col-md-2">
+                        {{ field.label_tag }}
+                        {% if field.field.required %}<span style="color:red;" title="Dette feltet kreves">*</span>{% endif %}
+                    </div>
                     <div class="col-md-{% if field.errors %}7{% else %}10{% endif %}">{{ field|addclass:"form-control"}}</div>
                     {% if field.errors %}<div class="col-md-2 error">{{ field.errors }}</div>{% endif %}
                 </div>
             </div>
           {% endfor %}
-        <input type="submit">
+        <button type="submit" class="btn btn-lg btn-success dropdown-toggle">Submit</button>
         {% csrf_token %}
     </form>
         

@@ -38,8 +38,8 @@ class EventMixin(OrderMixin):
 class Poster(EventMixin):
     description = models.TextField(_(u"beskrivelse"), max_length=1000)
     price = models.DecimalField(_(u'pris'), max_digits=10, decimal_places=2, blank=True, null=True)
-    display_from = models.DateField(_(u"vis fra"))
-    display_to = models.DateField(_(u"vis til"))
+    display_from = models.DateField(_(u"vis fra"), blank=True, null=True)
+    display_to = models.DateField(_(u"vis til"), blank=True, null=True)
 
     class Meta:
         ordering = ['-id']
