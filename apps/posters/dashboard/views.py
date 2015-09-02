@@ -8,6 +8,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Group
 from django.core.mail import EmailMessage
 from django.core.exceptions import PermissionDenied, ObjectDoesNotExist
+from django.core.urlresolvers import reverse
 from django.forms.models import model_to_dict
 from django.shortcuts import render, redirect, get_object_or_404, HttpResponseRedirect, HttpResponse
 from django.utils import timezone
@@ -24,7 +25,7 @@ from datetime import datetime, timedelta
 from apps.authentication.models import OnlineUser as User
 from apps.dashboard.tools import has_access, get_base_context
 from apps.posters.models import Poster
-from apps.posters.forms import AddPosterForm, AddBongForm, AddOtherForm, EditPosterForm
+from apps.posters.forms import AddForm, AddPosterForm, AddBongForm, AddOtherForm, EditPosterForm
 # from apps.dashboard.posters.models import PosterForm
 from apps.companyprofile.models import Company
 from apps.posters.models import Poster
@@ -104,7 +105,7 @@ def add(request, order_type=0):
             else:
                 messages.error(request, 'Klarte ikke å sende epost, men bestillingen din ble fortsatt opprettet')
 
-            return redirect(poster)
+            return HttpResponseRedirect(reverse(detail, args=poster.id))
         else:
             context['add_poster_form'] = form
             return render(request, 'posters/dashboard/add.html', context)
@@ -119,19 +120,25 @@ def add(request, order_type=0):
 
 @ensure_csrf_cookie
 @login_required
-@permission_required('posters.add_poster_order', return_403=True)
-def change(request):
+@permission_required('posters.change_poster_order', return_403=True)
+def edit(request, order_id=None):
     context = get_base_context(request)
-    context['edit_poster_form'] = EditPosterForm()
-    context['new_orders'] = Poster.objects.filter(assigned_to=None)
-    context['active_orders'] = Poster.objects.filter(done=False, assigned_to__isnull=False)
-    context['inactive_orders'] = Poster.objects.filter(done=True)[:10]
+    context['add_poster_form'] = EditPosterForm()
+    if order_id:
+        poster = get_object_or_404(Poster, pk=order_id)
 
-    today = timezone.now()
-    context['active_posters'] = Poster.objects.filter(display_from__lte=today, display_to__gte=today)
-    context['inactive_orders'] = Poster.objects.filter(display_to__gte=today)[:5]
+    if request.POST:
+        form = AddForm(request.POST, instance=poster)
+        if form.is_valid():
+            form.save()
+            redirect_url = reverse(detail, args=order_id)
+            return HttpResponseRedirect(redirect_url)
 
-    return render(request, 'posters/dashboard/index.html', context)
+    else:
+        context["form"] = AddForm(instance=poster)
+
+
+    return render(request, 'posters/dashboard/add.html', context)
 
 
 @ensure_csrf_cookie
