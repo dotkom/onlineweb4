@@ -87,7 +87,7 @@ def add(request, order_type=0):
 
             return HttpResponseRedirect(reverse(detail, args=poster.id))
         else:
-            context['add_poster_form'] = form
+            context['form'] = form
             return render(request, 'posters/dashboard/add.html', context)
 
     type_names = ("Plakat", "Bong", "Generell ")

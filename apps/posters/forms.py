@@ -10,7 +10,7 @@ class AddForm(forms.ModelForm):
     # @ToDo: Look at using event field as datalist
     display_from = forms.CharField(label=u"Vis plakat fra", widget=forms.TextInput(attrs={'type': 'date'}))
     display_to = forms.CharField(label=u"Vis plakat til", widget=forms.TextInput(attrs={'type': 'date'}))
-
+    comments = forms.CharField(label='comments', widget=forms.TextInput(attrs={'placeholder': 'Ekstra info om bestillingen, og evt. antall bonger'}))
     class Meta:
         model = Poster
         fields = ['event', 'amount', 'description',

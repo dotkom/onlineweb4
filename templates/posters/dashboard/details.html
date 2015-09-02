@@ -137,9 +137,8 @@
                 <h5>Kommentarer</h5>
                 {{poster.comments}}
             </p>
+            <hr>
             <p>
-                poster is {% if poster.finished == "true" %} done {% else %} not done {% endif %}
-                <br> poster.finished: {{ poster.finished }}
                 <div class="btn-group pull-left">                    
                     <div class="btn-group pull-left">
                         <button type="button" class="btn btn-default dropdown-toggle">
@@ -147,11 +146,11 @@
                                 Rediger
                             </a>
                         </button>
-                        <br>
+                        
                         <form method="POST">
                             {% csrf_token %}
                             <input type="text" name="completed" value="{% if poster.finished == "true" %}false{% else %}true{% endif %}" hidden>
-                            <button type="submit" class="btn btn-info dropdown-toggle">{% if poster.finished == "true" %}Uf{% else %}F{% endif %}erdigstill</button>
+                            <button type="submit" class="btn btn-default dropdown-toggle">{% if poster.finished %}Uf{% else %}F{% endif %}erdigstill</button>
                         </form>
                     </div>
                 </div>
