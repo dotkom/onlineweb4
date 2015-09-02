@@ -2,9 +2,11 @@
 
 import json
 
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Group
+from django.core.mail import EmailMessage
 from django.core.exceptions import PermissionDenied, ObjectDoesNotExist
 from django.forms.models import model_to_dict
 from django.shortcuts import render, redirect, get_object_or_404, HttpResponseRedirect, HttpResponse
@@ -84,7 +86,25 @@ def add(request, order_type=0):
             # Let this user have permissions to show this order
             UserObjectPermission.objects.assign_perm('view_poster_order', obj=poster, user=request.user)
 
-            return HttpResponseRedirect('../')
+            # The great sending of emails
+            email_message = '%(message)s%(signature)s' % {
+                    'message': '',
+                    'signature': '\n\nVennlig hilsen Linjeforeningen Online'
+            }
+
+            to_emails = [settings.EMAIL_PROKOM, request.user.get_email()]
+
+            try:
+                email_sent = EmailMessage(unicode(subject), unicode(message), from_email, to_emails, [])
+            except:
+                email_sent = False
+
+            if email_sent:
+                messages.success(request, 'Opprettet bestilling')
+            else:
+                messages.error(request, 'Klarte ikke å sende epost, men bestillingen din ble fortsatt opprettet')
+
+            return redirect(poster)
         else:
             context['add_poster_form'] = form
             return render(request, 'posters/dashboard/add.html', context)
