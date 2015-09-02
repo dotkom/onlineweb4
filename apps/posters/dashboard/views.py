@@ -114,7 +114,7 @@ def add(request, order_type=0):
     type_name = type_names[int(order_type)-1]
     context["order_type_name"] = type_name
     context['order_type'] = order_type
-    context['add_poster_form'] = AddPosterForm()
+    context['form'] = AddPosterForm()
     return render(request, 'posters/dashboard/add.html', context)
 
 
