@@ -88,14 +88,35 @@ def add(request, order_type=0):
             UserObjectPermission.objects.assign_perm('view_poster_order', obj=poster, user=request.user)
 
             # The great sending of emails
+            subject = '[proKom] Ny bestilling for %s' % poster.event.title
             email_message = '%(message)s%(signature)s' % {
-                    'message': '',
+                    'message': '''
+                    Det har blitt registrert en ny %(order_type)s på %(site)s. Dette er bestilling nummer %(id)s som har blitt registrert.
+                    \n
+                    Antall og type: %(num)s * %(order_type)s\n
+                    Arrangement: %(event_name)s\n
+                    Bestilt av: %(ordered_by)s i %(ordered_by_committee)s\n
+                    Bestilt dato: %(ordered_date)s\n
+                    \n
+                    For mer informasjon, sjekk ut bestillingen her: %(absolute_url)s
+                    '''
+                    % {
+                        'site': '',
+                        'order_type': poster.order_type,
+                        'ordered_by': poster.ordered_by,
+                        'ordered_by_committee': poster.ordered_committee,
+                        'id': poster.id,
+                        'event_name': poster.event.title,
+                        'ordered_date': poster.ordered_date,
+                        'absolute_url': poster.get_dashboard_url()
+                        },
                     'signature': '\n\nVennlig hilsen Linjeforeningen Online'
             }
-
+            from_email = settings.EMAIL_PROKOM
             to_emails = [settings.EMAIL_PROKOM, request.user.get_email()]
 
             try:
+                print(email_message)
                 email_sent = EmailMessage(unicode(subject), unicode(message), from_email, to_emails, [])
             except:
                 email_sent = False
