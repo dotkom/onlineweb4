@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from django.db import models
+from django.core.urlresolvers import reverse
 from django.forms import ModelForm
 from django.utils.translation import ugettext as _
 
@@ -56,6 +57,12 @@ class Poster(EventMixin):
 
     def poster_up(self):
         return self.finished and self.display_from < datetime.now().date() < self.display_to
+
+    def get_absolute_url(self):
+        return reverse('posters_detail', args=[str(self.id)])
+
+    def get_dashboard_url(self):
+        return self.get_absolute_url()
 
 
 class Freestyle(OrderMixin):

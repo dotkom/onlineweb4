@@ -69,6 +69,8 @@ def index(request):
 def add(request, order_type=0):
     order_type = int(order_type)
     context = get_base_context(request)
+    type_names = ("Plakat", "Bong", "Generell ")
+    type_name = type_names[int(order_type)-1]
 
     poster = Poster()
     form = None
@@ -95,14 +97,37 @@ def add(request, order_type=0):
             UserObjectPermission.objects.assign_perm('view_poster_order', obj=poster, user=request.user)
 
             # The great sending of emails
+            subject = '[proKom] Ny bestilling for %s' % poster.event.title
             email_message = '%(message)s%(signature)s' % {
-                    'message': '',
-                    'signature': '\n\nVennlig hilsen Linjeforeningen Online'
+                    'message': _('''
+                    Det har blitt registrert en ny %(order_type)sbestilling pa Online sine nettsider. Dette er bestilling nummer %(id)s.
+                    \n
+                    Antall og type: %(num)s * %(order_type)s\n
+                    Arrangement: %(event_name)s\n
+                    Bestilt av: %(ordered_by)s i %(ordered_by_committee)s\n
+                    Bestilt dato: %(ordered_date)s\n
+                    \n
+                    For mer informasjon, sjekk ut bestillingen her: %(absolute_url)s
+                    '''
+                    % {
+                        'site': '',
+                        'order_type': type_name.lower(),
+                        'num': poster.amount,
+                        'ordered_by': poster.ordered_by,
+                        'ordered_by_committee': poster.ordered_committee,
+                        'id': poster.id,
+                        'event_name': poster.event.title,
+                        'ordered_date': poster.ordered_date,
+                        'absolute_url': request.build_absolute_uri(poster.get_dashboard_url())
+                        }
+                    ),
+                    'signature': _('\n\nVennlig hilsen Linjeforeningen Online')
             }
-
+            from_email = settings.EMAIL_PROKOM
             to_emails = [settings.EMAIL_PROKOM, request.user.get_email()]
 
             try:
+                print(email_message)
                 email_sent = EmailMessage(unicode(subject), unicode(message), from_email, to_emails, [])
             except:
                 email_sent = False
@@ -112,13 +137,11 @@ def add(request, order_type=0):
             else:
                 messages.error(request, 'Klarte ikke å sende epost, men bestillingen din ble fortsatt opprettet')
 
-            return HttpResponseRedirect(reverse(detail, args=poster.id))
+            return redirect(poster.get_absolute_url())
         else:
             context['form'] = form
             return render(request, 'posters/dashboard/add.html', context)
 
-    type_names = ("Plakat", "Bong", "Generell ")
-    type_name = type_names[int(order_type)-1]
     context["order_type_name"] = type_name
     context['order_type'] = order_type
 
