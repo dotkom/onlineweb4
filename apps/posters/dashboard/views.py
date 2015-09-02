@@ -67,13 +67,20 @@ def index(request):
 @login_required
 @permission_required('posters.add_poster_order', return_403=True)
 def add(request, order_type=0):
-
+    order_type = int(order_type)
     context = get_base_context(request)
 
     poster = Poster()
+    form = None
 
     if request.method == 'POST':
-        form = AddPosterForm(data=request.POST, instance=poster)
+        if order_type == 1:
+            form = AddPosterForm(data=request.POST, instance=poster)
+        elif order_type == 2:
+            form = AddBongForm(data=request.POST, instance=poster)
+        elif order_type == 3:
+            form = AddOtherForm(data=request.POST, instance=poster)
+
         if form.is_valid():
             poster = form.save(commit=False)
             if request.POST.get('company'):
@@ -114,7 +121,16 @@ def add(request, order_type=0):
     type_name = type_names[int(order_type)-1]
     context["order_type_name"] = type_name
     context['order_type'] = order_type
-    context['form'] = AddPosterForm()
+
+    if order_type == 1:
+        form = AddPosterForm()
+    elif order_type == 2:
+        form = AddBongForm()
+    elif order_type == 3:
+        form = AddOtherForm()
+
+    context['form'] = form
+
     return render(request, 'posters/dashboard/add.html', context)
 
 
