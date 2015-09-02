@@ -75,3 +75,6 @@ class Order(models.Model):
 class OrderLine(models.Model):
     user = models.ForeignKey(User)
     datetime = models.DateTimeField(auto_now_add=True)
+
+    def count_orders(self):
+        return sum((order.quantity for order in self.orders.all()))
