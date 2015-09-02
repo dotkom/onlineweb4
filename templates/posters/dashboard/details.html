@@ -38,15 +38,6 @@
             <div class="page-header">
                 <h2 id="event-details-heading">
                     {{poster.title}}
-                    <div class="btn-group pull-right">                    
-                        <div class="btn-group pull-right">
-                            <button type="button" class="btn btn-default dropdown-toggle">
-                                <a href="../edit/{{poster.id}}">
-                                    Rediger
-                                </a>
-                            </button>
-                        </div>
-                    </div>
                 </h2>
             </div>
         </div>
@@ -147,13 +138,24 @@
                 {{poster.comments}}
             </p>
             <p>
-            poster is {% if poster.finished == "true" %} done {% else %} not done {% endif %}
-            <br> poster.finished: {{ poster.finished }}
-                <form method="POST">
-                    {% csrf_token %}
-                    <input type="text" name="completed" value="{% if poster.finished == "true" %}false{% else %}true{% endif %}" hidden>
-                    <input type="submit" value="{% if poster.finished == "true" %}Uf{% else %}F{% endif %}erdigstill">
-                </form>
+                poster is {% if poster.finished == "true" %} done {% else %} not done {% endif %}
+                <br> poster.finished: {{ poster.finished }}
+                <div class="btn-group pull-left">                    
+                    <div class="btn-group pull-left">
+                        <button type="button" class="btn btn-default dropdown-toggle">
+                            <a href="../edit/{{poster.id}}">
+                                Rediger
+                            </a>
+                        </button>
+                        <br>
+                        <form method="POST">
+                            {% csrf_token %}
+                            <input type="text" name="completed" value="{% if poster.finished == "true" %}false{% else %}true{% endif %}" hidden>
+                            <button type="submit" class="btn btn-info dropdown-toggle">{% if poster.finished == "true" %}Uf{% else %}F{% endif %}erdigstill</button>
+                        </form>
+                    </div>
+                </div>
+                
             </p>
         </div>
     </div>
