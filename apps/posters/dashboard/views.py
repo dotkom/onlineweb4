@@ -70,7 +70,7 @@ def add(request, order_type=0):
     order_type = int(order_type)
     context = get_base_context(request)
     type_names = ("Plakat", "Bong", "Generell ")
-    type_name = type_names[int(order_type)-1]
+    type_name = type_names[order_type-1]
 
     poster = Poster()
     form = None
@@ -152,7 +152,9 @@ def add(request, order_type=0):
     elif order_type == 3:
         form = AddOtherForm()
 
-    context['form'] = form
+    forms = (AddPosterForm(), AddBongForm(), AddOtherForm())
+
+    context['form'] = forms[order_type-1]
 
     return render(request, 'posters/dashboard/add.html', context)
 
