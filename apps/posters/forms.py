@@ -16,12 +16,17 @@ class AddForm(forms.ModelForm):
     class Meta:
         model = Poster
         fields = ['event', 'amount', 'description',
-                  'price', 'display_from', 'display_to', 'comments']
+                  'price', 'comments']
 
 
 class AddPosterForm(AddForm):
     display_from = forms.CharField(label=u"Vis plakat fra", required=False, widget=forms.TextInput(attrs={'type': 'date'}))
     display_to = forms.CharField(label=u"Vis plakat til", required=False,  widget=forms.TextInput(attrs={'type': 'date'}))
+
+    class Meta:
+        model = Poster
+        fields = ['event', 'amount', 'description',
+                  'price', 'display_from', 'display_to', 'comments']
 
 
 class AddBongForm(AddForm):
