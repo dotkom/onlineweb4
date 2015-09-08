@@ -154,7 +154,7 @@ class PaymentDelayHandler(Task):
         payment_delays = PaymentDelay.objects.filter(active=True)
 
         for payment_delay in payment_delays:
-            unattend_deadline_passed = payment_delay.payment.content_object.unattend_deadline > payment_delay.valid_to
+            unattend_deadline_passed = payment_delay.payment.content_object.unattend_deadline < payment_delay.valid_to
             if payment_delay.valid_to < timezone.now():
                 PaymentDelayHandler.handle_deadline_passed(payment_delay, unattend_deadline_passed)
                 logger.info("Deadline passed: " + unicode(payment_delay))
