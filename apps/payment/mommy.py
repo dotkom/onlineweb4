@@ -2,6 +2,7 @@
 
 import locale
 import logging
+from pytz import timezone as tz
 
 from django.utils import timezone
 from django.core.mail import EmailMessage
@@ -204,8 +205,10 @@ class PaymentDelayHandler(Task):
         payment = payment_delay.payment
         subject = _(u"Husk betaling for ") + payment.description()
 
+        valid_to = payment_delay.valid_to.astimezone(tz('Europe/Oslo'))
+
         message = _(u"Hei, du er påmeldt men har ikke betalt for ") + payment.description()
-        message += _(u"\nDu har frem til ") + unicode(payment_delay.valid_to.strftime("%-d %B %Y kl: %H:%M"))
+        message += _(u"\nDu har frem til ") + unicode(valid_to.strftime("%-d %B %Y kl: %H:%M"))
 
 
         #If event unattend deadline has not passed when payment deadline passes, then the user will be automatically unattended, and given a mark.
