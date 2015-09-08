@@ -22,7 +22,7 @@ from apps.approval.models import MembershipApproval
 from apps.authentication.forms import NewEmailForm
 from apps.authentication.models import Email, RegisterToken, Position
 from apps.authentication.models import OnlineUser as User
-from apps.marks.models import Mark
+from apps.marks.models import Mark, Suspension
 from apps.profiles.forms import (MailSettingsForm, PrivacyForm,
                                 ProfileForm, MembershipSettingsForm, PositionForm)
 from utils.shortcuts import render_json
@@ -56,6 +56,11 @@ def _create_profile_context(request):
             # Tuple syntax ('title', list_of_marks, is_collapsed)
             (_(u'aktive prikker'), Mark.marks.active(request.user), False),
             (_(u'inaktive prikker'), Mark.marks.inactive(request.user), True),
+        ],
+        'suspensions': [
+            # Tuple syntax ('title', list_of_marks, is_collapsed)
+            (_(u'aktive suspanderinger'), Suspension.objects.filter(user=request.user, active=True), False),
+            (_(u'inaktive suspanderinger'), Suspension.objects.filter(user=request.user, active=False), True),
         ],
         # password
         'password_change_form': PasswordChangeForm(request.user),

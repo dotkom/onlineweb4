@@ -186,3 +186,18 @@ def _get_with_duration_and_vacation(added_date=timezone.now()):
         expiry_date += timedelta(days=(second_winter_end_date - added_date).days)
 
     return expiry_date
+
+
+class Suspension(models.Model):
+
+    user = models.ForeignKey(User)
+    description = models.CharField(_(u"beskrivelse"), max_length=255)
+    active = models.BooleanField(default=True)
+    added_date = models.DateTimeField(auto_now=True, editable=False)
+    expiration_date = models.DateField(_(u"utløpsdato"), editable=False, null=True, blank=True)
+
+
+    def __unicode__(self):
+        return "Suspension: " + unicode(self.user)
+
+    #TODO URL

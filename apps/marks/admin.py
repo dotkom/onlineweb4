@@ -3,7 +3,7 @@
 from django.contrib import admin
 from django.utils.translation import ugettext as _
 
-from apps.marks.models import Mark, MarkUser
+from apps.marks.models import Mark, MarkUser, Suspension
 
 class MarkUserInline(admin.TabularInline):
     model = MarkUser
@@ -32,4 +32,10 @@ class MarkAdmin(admin.ModelAdmin):
         obj.last_changed_by = request.user
         obj.save()
 
+
+class SuspensionAdmin(admin.ModelAdmin):
+    model = Suspension
+
+
 admin.site.register(Mark, MarkAdmin)
+admin.site.register(Suspension, SuspensionAdmin)
