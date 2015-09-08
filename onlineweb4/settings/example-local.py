@@ -54,9 +54,6 @@ EMAIL_TRIKOM = DEVELOPMENT_EMAIL
 #EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'  # real
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # prints
 
-STRIPE_PUBLIC_KEY = "pk_test_6pRNASCoBOKtIshFeQd4XMUh"
-STRIPE_PRIVATE_KEY = "sk_test_BQokikJOvBiI2HlWgH4olfQ2"
-
 # GOOGLE_ANALYTICS_KEY = 'UA-XXXX-Y'
 
 #MEDIA_ROOT = '/var/websites/prod/onlineweb_uploads'

@@ -4,44 +4,47 @@ import json
 import stripe
 
 from django.conf import settings
-from django.shortcuts import render, get_object_or_404, redirect
-from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.contrib import messages
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.decorators import login_required
 from django.core.mail import EmailMessage
+from django.http import HttpResponse, HttpResponseRedirect, Http404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.utils.translation import ugettext as _ 
 
-from apps.payment.models import Payment, PaymentRelation
-from apps.events.models import Event, Attendee
+from apps.payment.models import Payment, PaymentRelation, PaymentPrice
 
 @login_required
 def payment(request):
 
     if request.is_ajax():
         if request.method == "POST":
-            stripe.api_key = settings.STRIPE_PRIVATE_KEY
 
             # Get the credit card details submitted by the form
             token = request.POST.get("stripeToken")
             payment_id = request.POST.get("paymentId")
+            price_id = request.POST.get("priceId")
 
             payment = Payment.objects.get(id=payment_id)
+            payment_price = PaymentPrice.objects.get(id=price_id) 
 
             if payment:
                 try:
+                    stripe.api_key = settings.STRIPE_PRIVATE_KEYS[payment.stripe_key_index]
+
                     charge = stripe.Charge.create(
-                      amount=payment.price * 100, #Price is multiplied with 100 because the amount is in øre
+                      amount=payment_price.price * 100, #Price is multiplied with 100 because the amount is in øre
                       currency="nok",
                       card=token,
-                      description=payment.content_object_description() + " - " + request.user.email
+                      description=payment.description() + " - " + request.user.email
                     )
 
-                    payment_relation = PaymentRelation.objects.create(payment=payment, user=request.user)
+                    payment_relation = PaymentRelation.objects.create(payment=payment, 
+                        payment_price=payment_price, user=request.user, stripe_id=charge.id)
 
-                    payment.content_object_handle_payment(request.user)
+                    payment.handle_payment(request.user)
 
-                    send_payment_confirmation_mail(payment_relation)
+                    _send_payment_confirmation_mail(payment_relation)
 
                     messages.success(request, _(u"Betaling utført."))
                     return HttpResponse("Betaling utført.", content_type="text/plain", status=200) 
@@ -55,42 +58,70 @@ def payment(request):
 
 @login_required
 def payment_info(request):
-    if 'payment_ids' in request.session:
 
-        data = dict()
+    if request.is_ajax():
+        if 'payment_id' in request.session:
 
-        payments = Payment.objects.filter(id__in=request.session['payment_ids'])
+            data = dict()
 
-        if payments:
-            content_type = ContentType.objects.get_for_id(payments[0].content_type.id)
-            content_object = content_type.get_object_for_this_type(pk=payments[0].object_id)
+            payment = Payment.objects.get(id=request.session['payment_id'])
 
-            data['stripe_public_key'] = settings.STRIPE_PUBLIC_KEY
-            data['email'] = request.user.email
-            data['description'] = payments[0].content_object_description()
-            data['payment_ids'] = request.session['payment_ids']
+            if payment:
+                data['stripe_public_key'] = settings.STRIPE_PUBLIC_KEYS[payment.stripe_key_index]
+                data['email'] = request.user.email
+                data['description'] = payment.description()
+                data['payment_id'] = request.session['payment_id']
+                data['price_ids'] = [price.id for price in payment.prices()]
 
-            for payment in payments:
-                data[payment.id] = dict()
-                data[payment.id]['price'] = payment.price
-                #The price is in øre so it needs to be multiplied with 100
-                data[payment.id]['stripe_price'] = payment.price * 100
-                data[payment.id]['payment_id'] = payment.id
+                for payment_price in payment.prices():
+                    data[payment_price.id] = dict()
+                    data[payment_price.id]['price'] = payment_price.price
+                    #The price is in øre so it needs to be multiplied with 100
+                    data[payment_price.id]['stripe_price'] = payment_price.price * 100
 
-            return HttpResponse(json.dumps(data), content_type="application/json")
+                return HttpResponse(json.dumps(data), content_type="application/json")
 
-    return HttpResponse("Failed to get info", content_type="text/plain", status=500) 
+    raise Http404("Request not supported");
 
-def send_payment_confirmation_mail(payment_relation):
-    subject = _(u"kvittering") + ": " + payment_relation.payment.content_object_description()
-    from_mail = payment_relation.payment.content_object_mail()
+@login_required
+def payment_refund(request, payment_relation_id):
+
+    payment_relation = get_object_or_404(PaymentRelation, pk=payment_relation_id)
+
+    #Prevents users from refunding others
+    if request.user != payment_relation.user:
+        return HttpResponse("Unauthorized user", content_type="text/plain", status=403)
+
+    status = payment_relation.payment.check_refund(payment_relation)
+
+    if not status[0]:
+        messages.error(request, status[1])
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
+    try:
+        stripe.api_key = settings.STRIPE_PRIVATE_KEYS[payment_relation.payment.stripe_key_index]
+        ch = stripe.Charge.retrieve(payment_relation.stripe_id)
+        re = ch.refunds.create()
+
+        payment_relation.payment.handle_refund(request.META['HTTP_HOST'], payment_relation)
+        messages.success(request, _("Betalingen har blitt refundert."))
+    except stripe.InvalidRequestError, e:
+        messages.error(request, str(e))
+    
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
+ 
+
+def _send_payment_confirmation_mail(payment_relation):
+    subject = _(u"kvittering") + ": " + payment_relation.payment.description()
+    from_mail = payment_relation.payment.responsible_mail()
     to_mails = [payment_relation.user.email] 
 
-    message = _(u"Du har betalt for ") + payment_relation.payment.content_object_description()
+    message = _(u"Du har betalt for ") + payment_relation.payment.description()
     message += "\n"
     message += _(u"Ditt kvitteringsnummer er") + ": " + payment_relation.unique_id
     message += "\n"
     message += "\n"
-    message += _(u"Dersom du har problemer eller spørsmål, send mail til ") + ":" + payment_relation.payment.content_object_mail()
+    message += _(u"Dersom du har problemer eller spørsmål, send mail til") + ": " + from_mail
 
     email = EmailMessage(subject, unicode(message), from_mail, [], to_mails).send()

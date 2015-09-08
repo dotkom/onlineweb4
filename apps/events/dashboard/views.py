@@ -117,6 +117,7 @@ def details(request, event_id, active_tab='attendees'):
                 if attendee.count() != 1:
                     return HttpResponse(u'Fant ingen påmeldte med oppgitt ID (%s).' % request.POST['attendee_id'], status=400)
                 attendee = attendee[0]
+                event.attendance_event.notify_waiting_list(host=request.META['HTTP_HOST'], unattended_user=attendee.user)
                 attendee.delete()
                 resp['message'] = u'%s ble fjernet fra %s' % (attendee.user.get_full_name(), attendee.event)
                 resp['attendees'] = []
