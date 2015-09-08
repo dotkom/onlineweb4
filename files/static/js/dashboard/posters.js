@@ -1,5 +1,4 @@
 $(document).ready(function() {
-    console.log("waowoaowoa");
     $("div.order").each(function(i, row) {
         $(row).find("button.assign").click(function() {
             assignToJob($(this).val(), row);

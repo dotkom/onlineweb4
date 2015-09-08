@@ -144,7 +144,7 @@ def add(request, order_type=0):
 
     context["order_type_name"] = type_name
     context['order_type'] = order_type
-    context['can_edit'] = request.user.has_perm('posters.change_poster')
+    context['can_edit'] = true # request.user.has_perm('posters.view_poster')
 
     if order_type == 1:
         form = AddPosterForm()
@@ -173,8 +173,8 @@ def edit(request, order_id=None):
         form = AddForm(request.POST, instance=poster)
         if form.is_valid():
             form.save()
-            redirect_url = reverse(detail, args=order_id)
-            return HttpResponseRedirect(redirect_url)
+            # redirect_url = redirect(poster.get_absolute_url())
+            return HttpResponseRedirect("../detail/"+str(poster.id))
 
     else:
         context["form"] = AddForm(instance=poster)
@@ -196,6 +196,12 @@ def detail(request, order_id=None):
     context = get_base_context(request)
     poster = get_object_or_404(Poster, pk=order_id)
     context['poster'] = poster
+
+    order_type = poster.order_type
+    type_names = ("Plakat", "Bong", "Generell ")
+    type_name = type_names[order_type-1]
+    context["order_type_name"] = type_name
+    print(type_name)
 
     if request.method == 'POST':
         poster_status = request.POST.get('completed')

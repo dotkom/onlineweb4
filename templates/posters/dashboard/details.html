@@ -4,7 +4,7 @@
 {% load crispy_forms_tags %}
 
 {% block title %}
-{{poster.order_type}}: {{poster.event.title}} - Online
+{{order_type_name}}: {{poster.event.title}} - Online
 {% endblock title %}
 
 {% block styles %}
@@ -22,7 +22,7 @@
 {% endblock js %}
 
 {% block page-header %}
-{{poster.order_type}}: {{poster.event.title}}
+{{order_type_name}}: {{poster.event.title}}
 {% endblock %}
 
 {% block breadcrumbs %}
@@ -33,15 +33,6 @@
 {% block content %}
 
 <div class="container">
-    <div class="row">
-        <div class="col-md-12">
-            <div class="page-header">
-                <h2 id="event-details-heading">
-                    {{poster.title}}
-                </h2>
-            </div>
-        </div>
-    </div>
     <div class="row row-space">
         <div class="col-md-12">
             <div class="row">
@@ -60,12 +51,12 @@
                                 <div class="col-xs-12 col-sm-3 col-md-3">
                                     <div class="event-hero-title">Pris</div>
                                     <div class="event-hero-large-text">
-                                        <span class="break">{{poster.price}}</span>
+                                        <span class="break">{{poster.price}},-</span>
                                     </div>
                                 </div>
                                 <div class="col-xs-12 col-sm-3 col-md-3">
                                     <div class="event-hero-title">Bestilt av</div>
-                                    <div class="event-hero-small-text"><a href="mailto:{{poster.ordered_by.email}}">{{poster.ordered_by}}</a> i <a href="mailto:{{poster.ordered_committee}}@online.ntnu.no">{{poster.ordered_committee}}</a></div>
+                                    <div class="event-hero-large-text"><a href="mailto:{{poster.ordered_by.email}}">{{poster.ordered_by}}</a> i <a href="mailto:{{poster.ordered_committee}}@online.ntnu.no">{{poster.ordered_committee}}</a></div>
                                 </div>
                                 <div class="col-xs-12 col-sm-3 col-md-3">
                                     <div class="event-hero-title">Status</div>
@@ -91,18 +82,16 @@
                                     <div class="col-xs-12 col-sm-3 col-md-3">
                                         
                                             <div class="event-hero-title">Antall opplag</div>
-                                            <div class="event-hero-large-text">{{poster.amount}}</div>
+                                            <div class="event-hero-large-text">{{poster.amount}} stk</div>
                                         
                                     </div>
                                     <div class="col-xs-12 col-sm-3 col-md-3">
                                          
                                             <div class="event-hero-title">Event</div>
                                             <div class="event-hero-large-text">
-                                                <div class="event-hero-large-text">
-                                                    <a href="{{poster.event.get_absolute_url}}">{{poster.event}}</a>
-                                                    <br>
-                                                    <span class="date-small">{{poster.event.event_start}}</span>
-                                                </div>
+                                                <a href="{{poster.event.get_absolute_url}}">{{poster.event}}</a>
+                                                <br>
+                                                <span class="date-small">{{poster.event.event_start}}</span>
                                             </div>
                                         
                                     </div>
@@ -111,12 +100,9 @@
                                          
                                             <div class="event-hero-title">Tilordnet til</div>
                                             <div class="event-hero-large-text">
-                                                <div class="event-hero-large-text">
                                                 {%if poster.assigned_to %}{{poster.assigned_to}}
                                                 {%else %}Ingen!
                                                 {%endif %}
-                                                    
-                                                </div>
                                             </div>
                                         
                                     </div>
@@ -142,7 +128,7 @@
                 {{poster.comments}}
             </p>
             <hr>
-            {% if can_edit %}
+            
             <p>
                 <div class="btn-group pull-left">                    
                     <div class="btn-group pull-left">
@@ -160,7 +146,7 @@
                     </div>
                 </div>
             </p>
-            {% endif %}
+            
         </div>
     </div>
 
