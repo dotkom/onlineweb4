@@ -3,6 +3,7 @@
 import json
 from django.shortcuts import get_object_or_404, redirect, render
 from django.http import JsonResponse, HttpResponse
+from django.views.generic import View
 
 from apps.gallery.models import UnhandledImage, ResponsiveImage
 from apps.gallery.forms import DocumentForm
@@ -33,6 +34,18 @@ def index(request):
 
     request_dict = _create_request_dictionary(request)
     return render(request, "gallery/index.html", request_dict)
+
+
+def all_images(request):
+    """
+    Returns a rendered view that displays all images
+    uploaded through the gallery app
+    """
+
+    template = 'gallery/list.html'
+    images = ResponsiveImage.objects.all()
+
+    return render(request, template, {'images': images})
 
 
 def upload(request):
