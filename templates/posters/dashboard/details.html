@@ -138,6 +138,7 @@
                 {{poster.comments}}
             </p>
             <hr>
+            {% if can_edit %}
             <p>
                 <div class="btn-group pull-left">                    
                     <div class="btn-group pull-left">
@@ -154,8 +155,8 @@
                         </form>
                     </div>
                 </div>
-                
             </p>
+            {% endif %}
         </div>
     </div>
 

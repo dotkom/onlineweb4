@@ -138,6 +138,7 @@ def add(request, order_type=0):
     context["order_type_name"] = type_name
     context['order_type'] = order_type
     context['form'] = AddPosterForm()
+    context['can_edit'] = request.user.has_perm('posters.change_poster')
     return render(request, 'posters/dashboard/add.html', context)
 
 
