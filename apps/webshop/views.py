@@ -63,6 +63,11 @@ class ProductDetail(CartMixin, DetailView):
                     product=product, price=product.price,
                     quantity=form.cleaned_data['quantity'],
                     order_line=order_line)
+                messages.success(
+                    request,
+                    '\'{product}\' x {quantity} har blitt lagt til i handlekurven.'
+                    .format(product=product, quantity=order.quantity)
+                )
             order.save()
         else:
             messages.error(request, 'Vennligst oppgi et gyldig antall')
