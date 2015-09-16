@@ -51,7 +51,11 @@
                                 <div class="col-xs-12 col-sm-3 col-md-3">
                                     <div class="event-hero-title">Pris</div>
                                     <div class="event-hero-large-text">
-                                        <span class="break">{{poster.price}},-</span>
+                                        <span class="break">
+                                            {%if poster.price %}{{poster.price}},-
+                                            {%else %}Ikke oppgitt
+                                            {%endif %}
+                                        </span>
                                     </div>
                                 </div>
                                 <div class="col-xs-12 col-sm-3 col-md-3">
@@ -126,7 +130,7 @@
     </div>
     <div class="row">
         <div class="col-md-7">
-            <h5>Beskrivelse</h5>
+            <h5>Plakattekst</h5>
             <div class="ingress">
                 <p>{{poster.description}}</p>
             </div>

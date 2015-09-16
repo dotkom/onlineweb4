@@ -29,6 +29,6 @@ $(document).ready(function() {
         });
     }
 
-    // Bind tablesorter on the processed approvals list
-    $('#previous_approvals_list').tablesorter()
+    // Bind tablesorter on the lists
+    $('.tablesorter').tablesorter();
 });

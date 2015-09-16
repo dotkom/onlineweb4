@@ -2,7 +2,7 @@ from django.contrib import admin
 
 from django.utils.translation import ugettext as _
 
-from apps.posters.models import Poster
+from apps.posters.models import Poster, GeneralOrder
 
 class PosterAdmin(admin.ModelAdmin):
     model = Poster
@@ -18,4 +18,5 @@ class PosterAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Poster, PosterAdmin)
+admin.site.register(GeneralOrder)
 #username, expiration_date, registered, note

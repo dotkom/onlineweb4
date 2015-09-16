@@ -77,11 +77,6 @@ Plakatbestillinger
                         </thead>
                         <tbody>
                         {% for order in active_orders %}
-                        {% if order.poster_up %}
-                            <tr class="success">
-                        {% else %}
-                            <tr>
-                        {% endif %}
                                 <td><a href={% url 'posters_detail' order.id %}>{{ order }}</a></td>
                                 <td>{{ order.display_from|date:'Y-m-d' }}</td>
                                 <td>{{ order.display_to|date:'Y-m-d' }}</td>

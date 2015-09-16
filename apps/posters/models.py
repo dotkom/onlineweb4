@@ -27,6 +27,11 @@ class OrderMixin(models.Model):
         (2, 'Bong'),
         (3, 'Annet'),
     ))
+    permissions = (
+        ('add_poster_order', 'Add poster orders'),
+        ('overview_poster_order', 'View poster order overview'),
+        ('view_poster_order', 'View poster orders'),
+    )
     ordered_date = models.DateTimeField(auto_now_add=True, editable=False)
     ordered_by = models.ForeignKey(User, related_name=_(u"bestilt av"))
     ordered_committee = models.ForeignKey(Group, related_name=_(u'bestilt av komite'))
@@ -34,6 +39,7 @@ class OrderMixin(models.Model):
     description = models.TextField(_(u"beskrivelse"), max_length=1000, blank=True, null=True)
     amount = models.IntegerField(_(u'antall opplag'), blank=True, null=True)
     finished = models.BooleanField(_(u"ferdig"), default=False)
+    display_from = models.DateField(_(u"vis fra"), blank=True, null=True, default=None)
 
     def toggle_finished(self):
         self.finished = not self.finished
@@ -53,37 +59,31 @@ class GeneralOrder(OrderMixin):
     """
     title = models.CharField(_(u'arrangementstittel'), max_length=60)
 
+    class Meta:
+        ordering = ['-id']
+        verbose_name = _(u"generell bestilling")
+        verbose_name_plural = _(u"generelle bestillinger")
+
+    def __str__(self):
+        return "Generell bestilling: %(event)s" % {'event': self.event}
+
 
 class Poster(EventMixin):
     """
     Poster order
     """
     price = models.DecimalField(_(u'pris'), max_digits=10, decimal_places=2, blank=True, null=True)
-    display_from = models.DateField(_(u"vis fra"), blank=True, null=True)
-    display_to = models.DateField(_(u"vis til"), blank=True, null=True)
+    display_to = models.DateField(_(u"vis til"), blank=True, null=True, default=None)
     bong = models.IntegerField(_(u'bonger'), blank=True, null=True)
 
     class Meta:
         ordering = ['-id']
         verbose_name = _(u"plakatbestilling")
         verbose_name_plural = _(u"plakatbestillinger")
-        permissions = (
-            ('add_poster_order', 'Add poster orders'),
-            ('overview_poster_order', 'View poster order overview'),
-            ('view_poster_order', 'View poster orders'),
-        )
 
     def __str__(self):
         return "Plakatbestilling: %(event)s" % {'event': self.event}
 
-    def poster_up(self):
-        return self.finished and self.display_from < datetime.now().date() < self.display_to
-
-    def get_absolute_url(self):
-        return reverse('posters_detail', args=[str(self.id)])
-
-    def get_dashboard_url(self):
-        return self.get_absolute_url()
 
 
 class CustomText(models.Model):

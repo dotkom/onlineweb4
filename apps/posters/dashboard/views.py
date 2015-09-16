@@ -28,7 +28,7 @@ from apps.posters.models import Poster
 from apps.posters.forms import AddForm, AddPosterForm, AddBongForm, AddOtherForm, EditPosterForm
 # from apps.dashboard.posters.models import PosterForm
 from apps.companyprofile.models import Company
-from apps.posters.models import Poster
+from apps.posters.models import Poster, GeneralOrder
 
 
 @ensure_csrf_cookie
@@ -81,6 +81,7 @@ def add(request, order_type=0):
         elif order_type == 2:
             form = AddBongForm(data=request.POST, instance=poster)
         elif order_type == 3:
+            poster = GeneralOrder()
             form = AddOtherForm(data=request.POST, instance=poster)
 
         if form.is_valid():
@@ -91,6 +92,7 @@ def add(request, order_type=0):
             # Should look for a more kosher solution
             poster.ordered_committee = request.user.groups.filter(name__contains="Kom")[0]
             poster.order_type = order_type
+
             poster.save()
 
             # Let this user have permissions to show this order
@@ -163,12 +165,15 @@ def add(request, order_type=0):
 
 @ensure_csrf_cookie
 @login_required
-@permission_required('posters.change_poster_order', return_403=True)
 def edit(request, order_id=None):
     context = get_base_context(request)
     context['add_poster_form'] = EditPosterForm()
+
     if order_id:
         poster = get_object_or_404(Poster, pk=order_id)
+
+    if request.user != poster.ordered_by and 'proKom' not in request.user.groups:
+        raise PermissionDenied
 
     if request.POST:
         form = AddForm(request.POST, instance=poster)
@@ -179,7 +184,6 @@ def edit(request, order_id=None):
 
     else:
         context["form"] = AddForm(instance=poster)
-
 
     return render(request, 'posters/dashboard/add.html', context)
 
