@@ -14,6 +14,14 @@ from apps.events.models import Event
 
 
 class OrderMixin(models.Model):
+    """
+    A mixin for all orders.
+    Handles most fields, and brings some basic functionality.
+
+    ordered_by and ordered_committee will get set automatically based on submitting user.
+    amount and description is optional, but should exist in all orders.
+    assigned_to and finished will be set by ProKom.
+    """
     order_type = models.IntegerField( choices=(
         (1, 'Plakat'),
         (2, 'Bong'),
@@ -23,7 +31,7 @@ class OrderMixin(models.Model):
     ordered_by = models.ForeignKey(User, related_name=_(u"bestilt av"))
     ordered_committee = models.ForeignKey(Group, related_name=_(u'bestilt av komite'))
     assigned_to = models.ForeignKey(User, related_name=_(u'tilordnet til'), blank=True, null=True)
-    comments = models.TextField(_(u"kommentar"), max_length=500, blank=True, null=True)
+    description = models.TextField(_(u"beskrivelse"), max_length=1000, blank=True, null=True)
     amount = models.IntegerField(_(u'antall opplag'), blank=True, null=True)
     finished = models.BooleanField(_(u"ferdig"), default=False)
 
@@ -33,11 +41,23 @@ class OrderMixin(models.Model):
 
 
 class EventMixin(OrderMixin):
+    """
+    Mixin for all orders requring an event.
+    """
     event = models.ForeignKey(Event, related_name=u'Arrangement')
 
 
+class GeneralOrder(OrderMixin):
+    """
+    General order, basically an order that does not have a corresponding event.
+    """
+    title = models.CharField(_(u'arrangementstittel'), max_length=60)
+
+
 class Poster(EventMixin):
-    description = models.TextField(_(u"beskrivelse"), max_length=1000)
+    """
+    Poster order
+    """
     price = models.DecimalField(_(u'pris'), max_digits=10, decimal_places=2, blank=True, null=True)
     display_from = models.DateField(_(u"vis fra"), blank=True, null=True)
     display_to = models.DateField(_(u"vis til"), blank=True, null=True)
@@ -64,13 +84,6 @@ class Poster(EventMixin):
 
     def get_dashboard_url(self):
         return self.get_absolute_url()
-
-
-class Freestyle(OrderMixin):
-    description = models.TextField(_(u'beskrivelse'), max_length=1000)
-
-    def __str__(self):
-        return "Freestyle: %s..." % self.description[:15]
 
 
 class CustomText(models.Model):
