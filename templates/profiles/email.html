@@ -83,6 +83,22 @@
         </form>
     </div>
 </div>
+<div class="row">
+    <div class="col-xs-12 col-sm-12 col-md-10">
+        <h3>Oppdragsmail</h3>
+        <p>Her kan du velge å få info om diverse oppdrag og småjobber reltart til informatikkstuiet.</p>
+    </div>
+</div>
+<div class="row">
+    <div class="col-xs-12 col-sm-12 col-md-10">
+        <form method="post" action="{% url 'profile_toggle_jobmail' %}">
+            {% csrf_token %}
+            <button type="submit" id="toggle_jobmail" class="btn btn-sm {{ user.jobmail|yesno:"btn-danger,btn-success" }}">
+            {{ user.jobmail|yesno:"Deaktivér,Aktivér" }}
+            </button>
+        </form>
+    </div>
+</div>
 
 {% comment %}
 This block is redundant as long as mailinglists aren't being synced with onlinwweb4.
