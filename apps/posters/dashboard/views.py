@@ -144,7 +144,7 @@ def add(request, order_type=0):
 
     context["order_type_name"] = type_name
     context['order_type'] = order_type
-    context['can_edit'] = true # request.user.has_perm('posters.view_poster')
+    context['can_edit'] = True # request.user.has_perm('posters.view_poster')
 
     if order_type == 1:
         form = AddPosterForm()
