@@ -7,9 +7,46 @@
 {% block title %}Webshop - Online{% endblock title %}
 
 {% block webshop_content %}
-<ul>
+{% if order_line.orders.all %}
+<table class="table">
+<thead>
+    <tr>
+        <th></th>
+        <th></th>
+        <th>Pris</th>
+        <th>Antall</th>
+    </tr>
+</thead>
 {% for order in order_line.orders.all %}
-    <li>{{ order.quantity }}x - {{ order.product }}
+    <tr>
+        <td>
+            {% if order.product.images.all %}
+            <img width="200" src="{{ order.product.images.first.image.url }}">
+            {% endif %}
+        </td>
+        <td>
+            <p>{{ order.product }}</p>
+            <p>{{ order.product.short }}</p>
+            <p><a href="#">Fjern</a></p>
+        </td>
+        <td>
+            {{ order.product.price }},-
+        <td>
+            {{ order.quantity }}
+        </td>
+    </tr>
 {% endfor %}
-</ul>
+</table>
+{% else %}
+Handlekurven din er tom
+{% endif %}
+
+{% with count=order_line.count_orders %}
+<p><b>Delsum ({{ count }} ordre{{ count|pluralize:'r' }})</b>: {{ order_line.subtotal }},-</p>
+{% endwith %}
+
+<p><a class="btn btn-lg btn-success" href="#">Betal</a></p>
+
+<p><a class="btn btn-primary" href="#">Tøm handlekurv</a></p>
 {% endblock %}
+</div>
