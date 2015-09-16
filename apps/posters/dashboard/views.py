@@ -16,7 +16,7 @@ from django.utils.translation import ugettext as _
 from django.views.decorators.csrf import ensure_csrf_cookie
 
 from guardian.decorators import permission_required
-from guardian.models import UserObjectPermission
+from guardian.models import UserObjectPermission, GroupObjectPermission
 # from guardian.core import ObjectPermissionChecker
 import guardian
 
@@ -95,6 +95,7 @@ def add(request, order_type=0):
 
             # Let this user have permissions to show this order
             UserObjectPermission.objects.assign_perm('view_poster_order', obj=poster, user=request.user)
+            GroupObjectPermission.objects.assign_perm('view_poster_order', obj=poster, group=Group.objects.get(name='proKom'))
 
             # The great sending of emails
             subject = '[proKom] Ny bestilling for %s' % poster.event.title
