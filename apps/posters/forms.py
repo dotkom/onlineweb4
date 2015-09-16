@@ -22,10 +22,11 @@ class AddForm(forms.ModelForm):
 class AddPosterForm(AddForm):
     display_from = forms.CharField(label=u"Vis plakat fra", required=False, widget=forms.TextInput(attrs={'type': 'date'}))
     display_to = forms.CharField(label=u"Vis plakat til", required=False,  widget=forms.TextInput(attrs={'type': 'date'}))
+    bong = forms.IntegerField(label='Bonger', required=False, widget=forms.NumberInput(attrs={'placeholder': 'Antall bonger du vil ha. La feltet stå tomt hvis du ikke ønsker noen.'}))
 
     class Meta:
         model = Poster
-        fields = ['event', 'amount', 'description',
+        fields = ['event', 'amount', 'bong', 'description',
                   'price', 'display_from', 'display_to', 'comments']
 
 
@@ -40,5 +41,5 @@ class AddOtherForm(AddForm):
 class EditPosterForm(AddForm):
     class Meta:
         model = Poster
-        fields = ['event', 'amount', 'description',
+        fields = ['event', 'amount', 'bong', 'description',
                   'price', 'display_to', 'display_from', 'comments', 'finished']
