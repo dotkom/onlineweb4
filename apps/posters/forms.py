@@ -11,7 +11,7 @@ class AddForm(forms.ModelForm):
     description = forms.CharField(label='Beskrivelse', required=True, widget=forms.Textarea(attrs={'placeholder': 'Detaljert beskrivelse av det som bestilles'}))
     comments = forms.CharField(label='Kommentarer', required=False, widget=forms.Textarea(attrs={'placeholder': 'Ekstra info om bestillingen, og evt. antall bonger'}))
     price = forms.IntegerField(label='Pris', required=False, widget=forms.NumberInput(attrs={'placeholder': 'Pris på event'}))
-    amount = forms.IntegerField(label='Antall', required=False, widget=forms.NumberInput(attrs={'placeholder': 'Hvor mange vil du ha?'}))
+    amount = forms.IntegerField(label='Antall', required=False, widget=forms.NumberInput(attrs={'placeholder': 'Hvor mange vil du ha?', "value" : "10"}))
 
     class Meta:
         model = Poster
@@ -27,7 +27,7 @@ class AddPosterForm(AddForm):
     class Meta:
         model = Poster
         fields = ['event', 'amount', 'bong', 'description',
-                  'price', 'display_from', 'display_to', 'comments']
+                  'price', 'display_from', 'comments']
 
 
 class AddBongForm(AddForm):
@@ -38,7 +38,7 @@ class AddOtherForm(AddForm):
     pass
 
 
-class EditPosterForm(AddForm):
+class EditPosterForm(AddPosterForm):
     class Meta:
         model = Poster
         fields = ['event', 'amount', 'bong', 'description',

@@ -81,9 +81,18 @@
                                     {% endif %}
                                     <div class="col-xs-12 col-sm-3 col-md-3">
                                         
-                                            <div class="event-hero-title">Antall opplag</div>
-                                            <div class="event-hero-large-text">{{poster.amount}} stk</div>
-                                        
+                                            <div class="event-hero-title">Antall</div>
+                                            <div class="event-hero-large-text">
+                                                {% if poster.bong %}
+                                                <b>{{poster.amount}}</b> plakater
+                                                {% else %}
+                                                    Ikke oppgitt antall plakater
+                                                {% endif %}
+                                                {% if poster.bong %}
+                                                <br>
+                                                <span class="date-small"><b>{{poster.bong}}</b> bonger</span>
+                                                {% endif %}
+                                            </div>
                                     </div>
                                     <div class="col-xs-12 col-sm-3 col-md-3">
                                          
@@ -101,7 +110,7 @@
                                             <div class="event-hero-title">Tilordnet til</div>
                                             <div class="event-hero-large-text">
                                                 {%if poster.assigned_to %}{{poster.assigned_to}}
-                                                {%else %}Ingen!
+                                                {%else %}<b>Ingen!</b>
                                                 {%endif %}
                                             </div>
                                         
