@@ -12,6 +12,7 @@ from django.utils.translation import ugettext as _
 
 from apps.authentication.models import OnlineUser as User
 from apps.events.models import AttendanceEvent, Attendee
+from apps.marks.models import Suspension
 
 
 class Payment(models.Model):
@@ -88,10 +89,16 @@ class Payment(models.Model):
         if self._is_type(AttendanceEvent):
             attendee = Attendee.objects.filter(event=self.content_object, user=user)
 
-            # Delete payment delay objects for the user if there are any
+            #Delete payment delay objects for the user if there are any
             delays = PaymentDelay.objects.filter(payment=self, user=user)
             for delay in delays:
                 delay.delete()
+
+            #If the user is suspended because of a lack of payment the suspension is deactivated.
+            suspensions = Suspension.objects.filter(payment_id=self.id, user=user)
+            for suspension in suspensions:
+                suspension.active = False
+                suspension.save()
 
             if attendee:
                 attendee[0].paid = True

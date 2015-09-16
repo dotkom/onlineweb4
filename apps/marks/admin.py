@@ -36,6 +36,8 @@ class MarkAdmin(admin.ModelAdmin):
 class SuspensionAdmin(admin.ModelAdmin):
     model = Suspension
 
+    exclude = ('payment_id',)
+
 
 admin.site.register(Mark, MarkAdmin)
 admin.site.register(Suspension, SuspensionAdmin)

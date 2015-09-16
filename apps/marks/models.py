@@ -197,6 +197,9 @@ class Suspension(models.Model):
     added_date = models.DateTimeField(auto_now=True, editable=False)
     expiration_date = models.DateField(_(u"utløpsdato"), null=True, blank=True)
 
+    #Using id because foreign key to Payment caused circular dependencies
+    payment_id = models.IntegerField(null=True, blank=True)
+
 
     def __unicode__(self):
         return "Suspension: " + unicode(self.user)

@@ -35,7 +35,7 @@
                                 <div class="row row-space">
                                     <div class="col-md-12">
                                         <h4>{{ mark_user.mark.title }} <span class="pull-right">{{ mark_user.mark.added_date }}</span></h4>
-                                        <p>{{ mark_user.mark.description }}</p>
+                                        <p>{{ mark_user.mark.description}}</p>
                                         <p><b>Katogori: </b>{{ mark_user.mark.get_category_display }}</p>
                                         <p><b>Utløpsdato: </b>{{ mark_user.expiration_date }}</p>
                                     </div>
@@ -70,7 +70,7 @@
                                 <div class="row row-space">
                                     <div class="col-md-12">
                                         <h4>{{ suspension.title }} <span class="pull-right">{{ suspension.added_date }}</span></h4>
-                                        <p>{{ suspension.description }}</p>
+                                        <p>{{ suspension.description|urlize }}</p>
                                         {% if suspension.expiration_date %}
                                             <p><b>Utløpsdato: </b>{{ suspension.expiration_date }}</p>
                                         {% endif %}
