@@ -544,7 +544,7 @@ class AttendanceEvent(models.Model):
         #Is suspended
         suspensions = Suspension.objects.filter(user=user, active=True)
         for suspension in suspensions:
-            if not suspension.expiration_date or suspension.expiration_date > timezone.now():
+            if not suspension.expiration_date or suspension.expiration_date > timezone.now().date():
                 response['status'] = False
                 response['message'] = _(u"Du er suspandert og kan ikke melde deg på.")
                 response['status_code'] = 501

@@ -191,10 +191,11 @@ def _get_with_duration_and_vacation(added_date=timezone.now()):
 class Suspension(models.Model):
 
     user = models.ForeignKey(User)
+    title = models.CharField(_(u'tittel'), max_length=64)
     description = models.CharField(_(u"beskrivelse"), max_length=255)
     active = models.BooleanField(default=True)
     added_date = models.DateTimeField(auto_now=True, editable=False)
-    expiration_date = models.DateField(_(u"utløpsdato"), editable=False, null=True, blank=True)
+    expiration_date = models.DateField(_(u"utløpsdato"), null=True, blank=True)
 
 
     def __unicode__(self):
