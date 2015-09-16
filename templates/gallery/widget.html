@@ -1,0 +1,31 @@
+<!-- IMAGE UPLOAD TEMPLATE FRAGMENT -->
+
+{% load compress %}
+
+<p>WELL FUCK ME WITH A DICK.</p>
+
+<br />
+<a href="#" class="btn btn-primary" id="add-responsive-image">
+    <i class="fa fa-plus fa-lg"></i> Velg
+</a>
+<a href="#" class="btn btn-primary" id="upload-responsive-image">
+    <i class="fa fa-image fa-lg"></i> Last opp
+</a>
+
+<div id="image-selection-wrapper">
+    IMG Selection Area
+</div>
+<div id="image-upload-wrapper">
+    IMG Upload Area
+</div>
+
+<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/libs/dropzone/dropzone.min.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/libs/blazy/blazy.min.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/libs/cropper/cropper.min.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/libs/bttrlazyloading/jquery.bttrlazyloading.min.js"></script>
+{% compress js %}
+    <script type="text/javascript" src="{{ STATIC_URL }}js/libs/jquery.cookie.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/gallery.js"></script>
+{% endcompress %}
+

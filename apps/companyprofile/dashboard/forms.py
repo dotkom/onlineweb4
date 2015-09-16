@@ -4,8 +4,9 @@ from django.utils.translation import ugettext as _
 
 from apps.companyprofile.models import Company
 
+
 class CompanyForm(forms.ModelForm):
     
-    class Meta:
+    class Meta(object):
         model = Company
 

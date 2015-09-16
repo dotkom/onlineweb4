@@ -1,5 +1,6 @@
 {% extends "dashboard_base.html" %}
 {% load compress %}
+{% load addcss %}
 
 {% block title %}
 Legg til ny bedrift - Online Dashboard
@@ -29,7 +30,23 @@ Ny bedrift
 {% block content %}
 <div class="row">
     <div class="col-md-12">
-        <p>Test</p>
+        <form method="POST">
+            {% csrf_token %}
+            {% for field in form %}
+            <div class="form-group {% if field.errors %}has-error{% endif %}">
+                <label for="{{ field.auto_id }}"{% if field.errors %} class="red"{% endif %}>{{ field.label }}</label>
+                {% ifequal field.name 'image' %}
+                    <input type="hidden" id="{{ field.auto_id }}" name="image" value="0">
+                    {% include 'gallery/widget.html' %}
+                {% else %}
+                    {{ field|addclass:"form-control" }}
+                {% endifequal %}
+            </div>
+            {% endfor %}
+            <button class="btn btn-success">
+                <i class="fa fa-save fa-lg"></i> Lagre
+            </button>
+        </form>
     </div>
 </div>
 {% endblock content %}

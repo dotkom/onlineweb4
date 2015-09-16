@@ -30,9 +30,9 @@
             {% for image in images %}
             <div class="col-md-3">
                 <a href="{{ MEDIA_URL}}{{ image.image_original.name }}">
-                    <img src="{{ MEDIA_URL }}{{ image.thumbnail.name }}" alt="{{ image.name }}" title="{{ image.name }}" /></a>
+                    <img src="{{ MEDIA_URL }}{{ image.thumbnail.name }}" alt="{{ image.name }}" title="{{ image.name }}" /></a>
                 <br />
-                <p>Uploaded at {{ image.date }}</p>
+                <p>Uploaded at {{ image.timestamp }}</p>
             </div>
             {% endfor %}
        </div>
