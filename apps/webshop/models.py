@@ -68,6 +68,10 @@ class Order(models.Model):
     # Quantity of products ordered
     quantity = models.PositiveIntegerField(default=1, validators=[MinValueValidator(1)])
 
+    @property
+    def price(self):
+        return self.product.price * self.quantity
+
     class Meta:
         verbose_name = 'Bestilling'
         verbose_name_plural = 'Bestillinger'
@@ -79,3 +83,6 @@ class OrderLine(models.Model):
 
     def count_orders(self):
         return sum((order.quantity for order in self.orders.all()))
+
+    def subtotal(self):
+        return sum((order.price for order in self.orders.all()))
