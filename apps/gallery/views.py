@@ -110,10 +110,11 @@ def crop_image(request):
 
             if not _verify_crop_data(crop_data):
                 return JsonResponse(status=404, data=json.dumps(
-                    {'error': 'Json must contain id, x, y, height and width.'}
+                    {'error': 'Json must contain id, x, y, height and width, and name.'}
                 ))
 
             image = get_object_or_404(UnhandledImage, pk=crop_data['id'])
+            image_name = crop_data['name']
             responsive_image_path = util.save_responsive_image(image, crop_data)
 
             # SAMLE ERRORZ PLZ
@@ -127,6 +128,7 @@ def crop_image(request):
             thumbnail = util.get_responsive_thumbnail_path(responsive_image_path)
 
             ResponsiveImage(
+                name=image_name,
                 image_original=original_media,
                 image_lg=lg_media,
                 image_md=md_media,
@@ -144,4 +146,5 @@ def crop_image(request):
 
 def _verify_crop_data(crop_data):
     return \
-        'id' in crop_data and 'x' in crop_data and 'y' in crop_data and 'height' in crop_data and 'width' in crop_data
+        'id' in crop_data and 'x' in crop_data and 'y' in crop_data and 'height' in crop_data \
+        and 'width' in crop_data and 'name' in crop_data

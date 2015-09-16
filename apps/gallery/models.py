@@ -34,7 +34,7 @@ post_delete.connect(receiver=unhandled_image_delete, dispatch_uid=uuid.uuid1(), 
 # TODO: Introduce tags to images
 class ResponsiveImage(models.Model):
     name = models.CharField(u'Navn', max_length=200, null=False)
-    date = models.DateField(auto_now_add=True, editable=False, null=False, blank=False)
+    timestamp = models.DateTimeField(auto_now_add=True, editable=False, null=False, blank=False)
     image_original = models.FileField(u'Originalbilde', upload_to=gallery_settings.RESPONSIVE_IMAGES_PATH)
     image_lg = models.ImageField(u'LG Bilde', upload_to=gallery_settings.RESPONSIVE_IMAGES_PATH)
     image_md = models.ImageField(u'MD Bilde', upload_to=gallery_settings.RESPONSIVE_IMAGES_PATH)

@@ -242,6 +242,16 @@ var imageEditingSuccessful = function() {
 var crop_image = function() {
     var image = $('#editing-image');
     var cropData = image.cropper("getData");
+    var name = $('#image-name').val();
+    cropData.name = name;
+
+    if (name.length < 2) {
+        return alert('Du må gi bildet et navn!');
+    }
+    if (cropData.height < 768 || cropData.width < 1024) {
+        return alert('Utsnittet er for lite. Det må være minst 1024x768');
+    }
+
     cropData.id = image.attr("data-image-id");
 
     setCropSpin();
