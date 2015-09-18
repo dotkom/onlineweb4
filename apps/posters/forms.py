@@ -8,6 +8,7 @@ from apps.posters.models import Poster, GeneralOrder
 class AddForm(forms.ModelForm):
     required_css_class = 'required'
     # @ToDo: Look at using event field as datalist
+    event = forms.ModelChoiceField(label='Event', required=True, queryset=Event.objects.all())
     description = forms.CharField(label='Plakattekst', required=False, widget=forms.Textarea(attrs={'placeholder': 'Detaljert hva du vil ha av tekst på plakaten'}))
     comments = forms.CharField(label='Kommentarer', required=False, widget=forms.Textarea(attrs={'placeholder': 'Eventuell informasjon, kommentarer, lenker til bilder, osv...'}))
     price = forms.IntegerField(label='Pris', required=False, widget=forms.NumberInput(attrs={'placeholder': 'Pris på event'}))
@@ -35,8 +36,10 @@ class AddBongForm(AddForm):
 
 
 class AddOtherForm(AddForm):
+    title = forms.CharField(label='Tittel', required=True, widget=forms.TextInput(attrs={'placeholder': 'Tittelen til det du bestiller, vanligvis event navn'}))
+
     class Meta:
-        model = GeneralOrder
+        model = Poster
         fields = ['title', 'amount', 'price', 'description',
                   'display_from', 'comments']
 

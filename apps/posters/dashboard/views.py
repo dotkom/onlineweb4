@@ -203,8 +203,12 @@ def detail(request, order_id=None):
         return HttpResponse(status=400)
 
     context = get_base_context(request)
+
     poster = get_object_or_404(Poster, pk=order_id)
     context['poster'] = poster
+
+    if request.user != poster.ordered_by and 'proKom' not in request.user.groups:
+        raise PermissionDenied
 
     order_type = poster.order_type
     type_names = ("Plakat", "Bong", "Generell ")

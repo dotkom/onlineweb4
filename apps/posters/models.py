@@ -77,7 +77,7 @@ class Poster(OrderMixin):
 
     def __str__(self):
         if self.order_type == 1:
-            return "Plakatbestilling: %(event)s" % {'event': self.event}
+            return "Plakatbestilling: %(event)s" % {'event': self.event.title}
         else:
             return "Generell bestilling: %(title)s" % {'title': self.title}
 
