@@ -47,7 +47,7 @@ def index(request):
     # View to show if user not in committee, but wanting to see own orders
     if request.user not in group.user_set.all():
         context['your_orders'] = [x for x in Poster.objects.filter(
-                                  ordered_by=request.user, display_to__gte=datetime.now())
+                                  ordered_by=request.user, event__event_start__gte=datetime.now())
                                   if request.user.has_perm('view_poster_order', x)]
         return render(request, 'posters/dashboard/index.html', context)
 
