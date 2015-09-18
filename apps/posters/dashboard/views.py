@@ -194,7 +194,7 @@ def edit(request, order_id=None):
 
 @ensure_csrf_cookie
 @login_required
-@permission_required('view_poster_order', (Poster, 'pk', 'order_id'), return_403=True)
+# @permission_required('view_poster_order', (Poster, 'pk', 'order_id'), return_403=True)
 def detail(request, order_id=None):
     if request.is_ajax():
         do_ajax_shit = True
@@ -203,7 +203,16 @@ def detail(request, order_id=None):
         return HttpResponse(status=400)
 
     context = get_base_context(request)
-    poster = get_object_or_404(Poster, pk=order_id)
+
+    print("getting poster object")
+    try:
+        poster = Poster.objects.get(pk=order_id)
+        print(poster)
+
+    except(ObjectDoesNotExist):
+        print("id is not a poster. try to get generalorder object")
+        poster = get_object_or_404(GeneralOrder, pk=order_id)
+
     context['poster'] = poster
 
     order_type = poster.order_type
