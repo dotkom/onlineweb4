@@ -28,7 +28,7 @@ from apps.posters.models import Poster
 from apps.posters.forms import AddForm, AddPosterForm, AddBongForm, AddOtherForm, EditPosterForm
 # from apps.dashboard.posters.models import PosterForm
 from apps.companyprofile.models import Company
-from apps.posters.models import Poster, GeneralOrder, OrderMixin
+from apps.posters.models import Poster, OrderMixin
 
 
 @ensure_csrf_cookie
@@ -81,7 +81,7 @@ def add(request, order_type=0):
         elif order_type == 2:
             form = AddBongForm(data=request.POST, instance=poster)
         elif order_type == 3:
-            poster = GeneralOrder()
+            # poster = GeneralOrder()
             form = AddOtherForm(data=request.POST, instance=poster)
 
         if form.is_valid():
@@ -151,7 +151,7 @@ def add(request, order_type=0):
 
     context["order_type_name"] = type_name
     context['order_type'] = order_type
-    context['can_edit'] = True # request.user.has_perm('posters.view_poster')
+    context['can_edit'] = True  # request.user.has_perm('posters.view_poster')
 
     if order_type == 1:
         form = AddPosterForm()
@@ -194,7 +194,7 @@ def edit(request, order_id=None):
 
 @ensure_csrf_cookie
 @login_required
-# @permission_required('view_poster_order', (Poster, 'pk', 'order_id'), return_403=True)
+@permission_required('view_poster_order', (Poster, 'pk', 'order_id'), return_403=True)
 def detail(request, order_id=None):
     if request.is_ajax():
         do_ajax_shit = True
@@ -203,16 +203,7 @@ def detail(request, order_id=None):
         return HttpResponse(status=400)
 
     context = get_base_context(request)
-
-    print("getting poster object")
-    try:
-        poster = Poster.objects.get(pk=order_id)
-        print(poster)
-
-    except(ObjectDoesNotExist):
-        print("id is not a poster. try to get generalorder object")
-        poster = get_object_or_404(GeneralOrder, pk=order_id)
-
+    poster = get_object_or_404(Poster, pk=order_id)
     context['poster'] = poster
 
     order_type = poster.order_type

@@ -55,51 +55,20 @@ class OrderMixin(models.Model):
         )
 
 
-class EventMixin(OrderMixin):
-    """
-    Mixin for all orders requring an event.
-    """
-    event = models.ForeignKey(Event, related_name=u'Arrangement')
-
-    def get_title(self):
-        return self.event.title
-
-
-class GeneralOrder(OrderMixin):
-    """
-    General order, basically an order that does not have a corresponding event.
-    """
-    title = models.CharField(_(u'arrangementstittel'), max_length=60)
-
-    class Meta:
-        ordering = ['-id']
-        verbose_name = _(u"generell bestilling")
-        verbose_name_plural = _(u"generelle bestillinger")
-        permissions = (
-            ('add_poster_order', 'Add poster orders'),
-            ('overview_poster_order', 'View poster order overview'),
-            ('view_poster_order', 'View poster orders'),
-        )
-
-    def __str__(self):
-        return "Generell bestilling: %(event)s" % {'event': self.event}
-
-    def get_title(self):
-        return self.title
-
-
-class Poster(EventMixin):
+class Poster(OrderMixin):
     """
     Poster order
     """
+    title = models.CharField(_(u'arrangementstittel'), max_length=60, blank=True, null=True)
+    event = models.ForeignKey(Event, related_name=u'Arrangement', blank=True, null=True)
     price = models.DecimalField(_(u'pris'), max_digits=10, decimal_places=2, blank=True, null=True)
     display_to = models.DateField(_(u"vis til"), blank=True, null=True, default=None)
     bong = models.IntegerField(_(u'bonger'), blank=True, null=True)
 
     class Meta:
         ordering = ['-id']
-        verbose_name = _(u"plakatbestilling")
-        verbose_name_plural = _(u"plakatbestillinger")
+        verbose_name = _(u"bestilling")
+        verbose_name_plural = _(u"bestillinger")
         permissions = (
             ('add_poster_order', 'Add poster orders'),
             ('overview_poster_order', 'View poster order overview'),
@@ -107,7 +76,10 @@ class Poster(EventMixin):
         )
 
     def __str__(self):
-        return "Plakatbestilling: %(event)s" % {'event': self.event}
+        if self.order_type == 1:
+            return "Plakatbestilling: %(event)s" % {'event': self.event}
+        else:
+            return "Generell bestilling: %(title)s" % {'title': self.title}
 
 
 class CustomText(models.Model):
