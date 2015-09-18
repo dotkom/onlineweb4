@@ -2,7 +2,8 @@
 
 from django import forms
 
-from apps.posters.models import Poster, GeneralOrder
+from apps.posters.models import Poster
+from apps.events.models import Event
 
 
 class AddForm(forms.ModelForm):
@@ -53,6 +54,6 @@ class EditPosterForm(AddPosterForm):
 
 class EditOtherForm(AddPosterForm):
     class Meta:
-        model = GeneralOrder
+        model = Poster
         fields = ['title', 'amount', 'price', 'description',
                   'display_from', 'comments', 'finished']

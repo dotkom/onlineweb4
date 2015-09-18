@@ -29,50 +29,35 @@ class Migration(migrations.Migration):
             name='OrderMixin',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('order_type', models.IntegerField(choices=[(1, b'Plakat'), (2, b'Bong'), (3, b'Annet')])),
                 ('ordered_date', models.DateTimeField(auto_now_add=True)),
-                ('comments', models.TextField(max_length=500, null=True, verbose_name='kommentar', blank=True)),
-                ('amount', models.IntegerField(null=True, verbose_name='antall', blank=True)),
+                ('description', models.TextField(max_length=1000, null=True, verbose_name='beskrivelse', blank=True)),
+                ('amount', models.IntegerField(null=True, verbose_name='antall opplag', blank=True)),
                 ('finished', models.BooleanField(default=False, verbose_name='ferdig')),
+                ('display_from', models.DateField(default=None, null=True, verbose_name='vis fra', blank=True)),
             ],
             options={
+                'permissions': (('add_poster_order', 'Add poster orders'), ('overview_poster_order', 'View poster order overview'), ('view_poster_order', 'View poster orders')),
             },
             bases=(models.Model,),
         ),
         migrations.CreateModel(
-            name='Freestyle',
-            fields=[
-                ('ordermixin_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='posters.OrderMixin')),
-                ('description', models.TextField(max_length=1000, verbose_name='beskrivelse')),
-            ],
-            options={
-            },
-            bases=('posters.ordermixin',),
-        ),
-        migrations.CreateModel(
-            name='EventMixin',
-            fields=[
-                ('ordermixin_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='posters.OrderMixin')),
-            ],
-            options={
-            },
-            bases=('posters.ordermixin',),
-        ),
-        migrations.CreateModel(
             name='Poster',
             fields=[
-                ('eventmixin_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='posters.EventMixin')),
-                ('description', models.TextField(max_length=1000, verbose_name='beskrivelse')),
+                ('ordermixin_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='posters.OrderMixin')),
+                ('title', models.CharField(max_length=60, null=True, verbose_name='arrangementstittel', blank=True)),
                 ('price', models.DecimalField(null=True, verbose_name='pris', max_digits=10, decimal_places=2, blank=True)),
-                ('display_from', models.DateField(verbose_name='vis fra')),
-                ('display_to', models.DateField(verbose_name='vis til')),
+                ('display_to', models.DateField(default=None, null=True, verbose_name='vis til', blank=True)),
+                ('bong', models.IntegerField(null=True, verbose_name='bonger', blank=True)),
+                ('event', models.ForeignKey(related_name='Arrangement', blank=True, to='events.Event', null=True)),
             ],
             options={
                 'ordering': ['-id'],
-                'verbose_name': 'plakatbestilling',
-                'verbose_name_plural': 'plakatbestillinger',
+                'verbose_name': 'bestilling',
+                'verbose_name_plural': 'bestillinger',
                 'permissions': (('add_poster_order', 'Add poster orders'), ('overview_poster_order', 'View poster order overview'), ('view_poster_order', 'View poster orders')),
             },
-            bases=('posters.eventmixin',),
+            bases=('posters.ordermixin',),
         ),
         migrations.AddField(
             model_name='ordermixin',
@@ -90,12 +75,6 @@ class Migration(migrations.Migration):
             model_name='ordermixin',
             name='ordered_committee',
             field=models.ForeignKey(related_name='bestilt av komite', to='auth.Group'),
-            preserve_default=True,
-        ),
-        migrations.AddField(
-            model_name='eventmixin',
-            name='event',
-            field=models.ForeignKey(related_name='Arrangement', to='events.Event'),
             preserve_default=True,
         ),
     ]

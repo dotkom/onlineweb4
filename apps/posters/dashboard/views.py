@@ -203,7 +203,6 @@ def detail(request, order_id=None):
         return HttpResponse(status=400)
 
     context = get_base_context(request)
-
     poster = get_object_or_404(Poster, pk=order_id)
     context['poster'] = poster
 
