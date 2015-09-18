@@ -27,11 +27,6 @@ class OrderMixin(models.Model):
         (2, 'Bong'),
         (3, 'Annet'),
     ))
-    permissions = (
-        ('add_poster_order', 'Add poster orders'),
-        ('overview_poster_order', 'View poster order overview'),
-        ('view_poster_order', 'View poster orders'),
-    )
     ordered_date = models.DateTimeField(auto_now_add=True, editable=False)
     ordered_by = models.ForeignKey(User, related_name=_(u"bestilt av"))
     ordered_committee = models.ForeignKey(Group, related_name=_(u'bestilt av komite'))
@@ -45,12 +40,29 @@ class OrderMixin(models.Model):
         self.finished = not self.finished
         self.save()
 
+    def get_absolute_url(self):
+        return reverse('posters_detail', args=[str(self.id)])
+
+    def get_dashboard_url(self):
+        return self.get_absolute_url()
+
+    class Meta:
+
+        permissions = (
+            ('add_poster_order', 'Add poster orders'),
+            ('overview_poster_order', 'View poster order overview'),
+            ('view_poster_order', 'View poster orders'),
+        )
+
 
 class EventMixin(OrderMixin):
     """
     Mixin for all orders requring an event.
     """
     event = models.ForeignKey(Event, related_name=u'Arrangement')
+
+    def get_title(self):
+        return self.event.title
 
 
 class GeneralOrder(OrderMixin):
@@ -63,9 +75,17 @@ class GeneralOrder(OrderMixin):
         ordering = ['-id']
         verbose_name = _(u"generell bestilling")
         verbose_name_plural = _(u"generelle bestillinger")
+        permissions = (
+            ('add_poster_order', 'Add poster orders'),
+            ('overview_poster_order', 'View poster order overview'),
+            ('view_poster_order', 'View poster orders'),
+        )
 
     def __str__(self):
         return "Generell bestilling: %(event)s" % {'event': self.event}
+
+    def get_title(self):
+        return self.title
 
 
 class Poster(EventMixin):
@@ -80,10 +100,14 @@ class Poster(EventMixin):
         ordering = ['-id']
         verbose_name = _(u"plakatbestilling")
         verbose_name_plural = _(u"plakatbestillinger")
+        permissions = (
+            ('add_poster_order', 'Add poster orders'),
+            ('overview_poster_order', 'View poster order overview'),
+            ('view_poster_order', 'View poster orders'),
+        )
 
     def __str__(self):
         return "Plakatbestilling: %(event)s" % {'event': self.event}
-
 
 
 class CustomText(models.Model):

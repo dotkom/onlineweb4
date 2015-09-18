@@ -28,7 +28,7 @@ from apps.posters.models import Poster
 from apps.posters.forms import AddForm, AddPosterForm, AddBongForm, AddOtherForm, EditPosterForm
 # from apps.dashboard.posters.models import PosterForm
 from apps.companyprofile.models import Company
-from apps.posters.models import Poster, GeneralOrder
+from apps.posters.models import Poster, GeneralOrder, OrderMixin
 
 
 @ensure_csrf_cookie
@@ -95,12 +95,16 @@ def add(request, order_type=0):
 
             poster.save()
 
+            # for b in poster.__class__.__bases__:
+            # poster_mixin = OrderMixin.objects.get(id=poster.id)
             # Let this user have permissions to show this order
             UserObjectPermission.objects.assign_perm('view_poster_order', obj=poster, user=request.user)
             GroupObjectPermission.objects.assign_perm('view_poster_order', obj=poster, group=Group.objects.get(name='proKom'))
 
+            title = poster.get_title()
+
             # The great sending of emails
-            subject = '[proKom] Ny bestilling for %s' % poster.event.title
+            subject = '[ProKom] Ny bestilling for %s' % title
             email_message = '%(message)s%(signature)s' % {
                     'message': _('''
                     Det har blitt registrert en ny %(order_type)sbestilling pa Online sine nettsider. Dette er bestilling nummer %(id)s.
@@ -119,7 +123,7 @@ def add(request, order_type=0):
                         'ordered_by': poster.ordered_by,
                         'ordered_by_committee': poster.ordered_committee,
                         'id': poster.id,
-                        'event_name': poster.event.title,
+                        'event_name': title,
                         'ordered_date': poster.ordered_date,
                         'absolute_url': request.build_absolute_uri(poster.get_dashboard_url())
                         }
@@ -221,7 +225,6 @@ def detail(request, order_id=None):
 
 # @ensure_csrf_cookie
 @login_required
-@permission_required('posters.view_poster_order', return_403=True)
 def assign_person(request):
     if request.is_ajax():
         if request.method == 'POST':
