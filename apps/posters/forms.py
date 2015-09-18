@@ -9,7 +9,6 @@ from apps.events.models import Event
 class AddForm(forms.ModelForm):
     required_css_class = 'required'
     # @ToDo: Look at using event field as datalist
-    event = forms.ModelChoiceField(label='Event', required=True, queryset=Event.objects.all())
     description = forms.CharField(label='Plakattekst', required=False, widget=forms.Textarea(attrs={'placeholder': 'Detaljert hva du vil ha av tekst på plakaten'}))
     comments = forms.CharField(label='Kommentarer', required=False, widget=forms.Textarea(attrs={'placeholder': 'Eventuell informasjon, kommentarer, lenker til bilder, osv...'}))
     price = forms.IntegerField(label='Pris', required=False, widget=forms.NumberInput(attrs={'placeholder': 'Pris på event'}))
@@ -18,13 +17,14 @@ class AddForm(forms.ModelForm):
     
     class Meta:
         model = Poster
-        fields = ['event', 'amount', 'description',
+        fields = ['amount', 'description',
                   'price', 'comments']
 
 
 class AddPosterForm(AddForm):
-    #display_to = forms.DateField(label=u"Vis plakat til", required=False,  widget=forms.TextInput(attrs={'type': 'date'}))
+    # display_to = forms.DateField(label=u"Vis plakat til", required=False,  widget=forms.TextInput(attrs={'type': 'date'}))
     bong = forms.IntegerField(label='Bonger', required=False, widget=forms.NumberInput(attrs={'placeholder': 'Antall bonger du vil ha. La feltet stå tomt hvis du ikke ønsker noen.'}))
+    event = forms.ModelChoiceField(label='Event', required=True, queryset=Event.objects.all())
 
     class Meta:
         model = Poster
@@ -37,7 +37,7 @@ class AddBongForm(AddForm):
 
 
 class AddOtherForm(AddForm):
-    title = forms.CharField(label='Tittel', required=True, widget=forms.TextInput(attrs={'placeholder': 'Tittelen til det du bestiller, vanligvis event navn'}))
+    title = forms.CharField(label='Tittel', required=True, widget=forms.TextInput(attrs={'placeholder': 'Tittelen til det du bestiller, vanligvis arrangementnavn'}))
 
     class Meta:
         model = Poster

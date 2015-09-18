@@ -101,7 +101,7 @@ def add(request, order_type=0):
             UserObjectPermission.objects.assign_perm('view_poster_order', obj=poster, user=request.user)
             GroupObjectPermission.objects.assign_perm('view_poster_order', obj=poster, group=Group.objects.get(name='proKom'))
 
-            title = poster.get_title()
+            title = unicode(poster)
 
             # The great sending of emails
             subject = '[ProKom] Ny bestilling for %s' % title

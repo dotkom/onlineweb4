@@ -77,9 +77,12 @@ class Poster(OrderMixin):
 
     def __str__(self):
         if self.order_type == 1:
-            return "Plakatbestilling: %(event)s" % {'event': self.event.title}
+            return _(u"Plakatbestilling: %(event)s" % {'event': self.event.title})
         else:
-            return "Generell bestilling: %(title)s" % {'title': self.title}
+            return _(u"Generell bestilling: %(title)s" % {'title': self.title})
+
+    def __unicode__(self):
+        return self.__str__()
 
 
 class CustomText(models.Model):
