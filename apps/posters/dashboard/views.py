@@ -204,16 +204,15 @@ def detail(request, order_id=None):
 
     context = get_base_context(request)
 
-    print("getting poster object")
     try:
         poster = Poster.objects.get(pk=order_id)
-        print(poster)
-
-    except(ObjectDoesNotExist):
-        print("id is not a poster. try to get generalorder object")
+    except Poster.DoesNotExist:
         poster = get_object_or_404(GeneralOrder, pk=order_id)
 
     context['poster'] = poster
+
+    if request.user != poster.ordered_by and 'proKom' not in request.user.groups:
+        raise PermissionDenied
 
     order_type = poster.order_type
     type_names = ("Plakat", "Bong", "Generell ")
