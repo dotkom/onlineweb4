@@ -10,6 +10,7 @@ urlpatterns = patterns('apps.profiles.views',
 
     url(r'^edit/$', 'edit_profile', name='profile_edit'),
     url(r'^privacy/$', 'privacy', name='profile_privacy'),
+    url(r'^connected_apps/$', 'connected_apps', name='profile_connected_apps'),
     url(r'^password/$', 'password', name='profile_password'),
     url(r'^position/$', 'position', name='profile_position'),
     url(r'^email/$', 'add_email', name='profile_add_email'),

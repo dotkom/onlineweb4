@@ -129,6 +129,13 @@ if 'apps.splash' in settings.INSTALLED_APPS:
         url(r'^splash/',           include('apps.splash.urls')),
     )
 
+if 'apps.sso' in settings.INSTALLED_APPS:
+    urlpatterns += patterns(
+        '',
+        url(r'^sso/', include('apps.sso.urls')),
+        url(r'^dashboard/auth/sso/', include('apps.sso.dashboard.urls', namespace='dashboard', app_name='sso')),
+    )
+
 # feedme
 if 'feedme' in settings.INSTALLED_APPS:
     urlpatterns += patterns('', url(r'^feedme/', include('feedme.urls', namespace='feedme')))

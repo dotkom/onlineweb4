@@ -14,6 +14,9 @@ from django.core.mail import send_mail
 from django.http import HttpResponse, Http404, JsonResponse
 from django.shortcuts import redirect, render, get_object_or_404
 from django.utils.translation import ugettext as _
+from django.utils import timezone
+
+from oauth2_provider.models import AccessToken
 
 import watson
 
@@ -50,6 +53,11 @@ def _create_profile_context(request):
         'groups': groups,
         # privacy
         'privacy_form': PrivacyForm(instance=request.user.privacy),
+
+        # SSO / OAuth2 approved apps
+        'connected_apps': AccessToken.objects.filter(user=request.user, expires__gte=timezone.now())
+        .order_by('expires'),
+
         # marks
         'mark_rules_accepted': request.user.mark_rules,
         'marks': [
@@ -73,6 +81,7 @@ def _create_profile_context(request):
     }
 
     return context
+
 
 @login_required
 def edit_profile(request):
@@ -107,6 +116,33 @@ def privacy(request):
             messages.success(request, _(u"Personvern ble endret"))
 
     return render(request, 'profiles/index.html', context)
+
+
+@login_required()
+def connected_apps(request):
+    """
+    Tab controller for the connected 3rd party apps pane
+    :param request: Django request object
+    :return: An HttpResponse
+    """
+
+    context = _create_profile_context(request)
+    context['active_tab'] = 'connected_apps'
+
+    if request.method == 'POST':
+        if not 'token_id' in request.POST:
+            messages.error(request, _(u'Det ble ikke oppgitt noen tilgangsnøkkel i forespørselen.'))
+        else:
+            try:
+                pk = int(request.POST['token_id'])
+                token = get_object_or_404(AccessToken, pk=pk)
+                token.delete()
+                messages.success(request, _(u'Tilgangsnøkkelen ble slettet.'))
+            except ValueError:
+                messages.error(request, _(u'Tilgangsnøkkelen inneholdt en ugyldig verdi.'))
+
+    return render(request, 'profiles/index.html', context)
+
 
 @login_required
 def password(request):

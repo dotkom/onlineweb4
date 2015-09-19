@@ -1,3 +1,4 @@
+# -*- coding: utf8 -*-
 import os
 import sys
 import wiki
@@ -62,7 +63,7 @@ BASE_URL = 'https://online.ntnu.no'
 AUTH_USER_MODEL = 'authentication.OnlineUser'
 LOGIN_URL = '/auth/login/'
 
-MEDIA_ROOT = os.path.join(PROJECT_ROOT_DIRECTORY, 'uploaded_media') # Override this in local.py in prod.
+MEDIA_ROOT = os.path.join(PROJECT_ROOT_DIRECTORY, 'uploaded_media')  # Override this in local.py in prod.
 MEDIA_URL = '/media/'
 
 STATIC_ROOT = os.path.join(PROJECT_ROOT_DIRECTORY, 'static')
@@ -144,6 +145,25 @@ GRAPPELLI_ADMIN_TITLE = '<a href="/">Onlineweb</a>'
 ANONYMOUS_USER_ID = -1
 GUARDIAN_RENDER_403 = True
 
+# SSO / OAuth2 settings
+OAUTH2_PROVIDER = {
+    'SCOPES': {
+        'null': u'Ingen datatilgang',
+        'authentication.onlineuser.username.read': u'Brukernavn (Lesetilgang)',
+        'authentication.onlineuser.first_name.read': u'Fornavn (Lesetilgang)',
+        'authentication.onlineuser.last_name.read': u'Etternavn (Lesetilgang)',
+        'authentication.onlineuser.email.read': u'Primær E-postaddresse (Lesetilgang)',
+        'authentication.onlineuser.is_member.read': u'Medlemskapsstatus (Lesetilgang)',
+        'authentication.onlineuser.field_of_study.read': u'Studieretning (Lesetilgang)',
+        'authentication.onlineuser.nickname.read': u'Kallenavn (Lesetilgang)',
+        'authentication.onlineuser.rfid.read': u'RFID (Lesetilgang)',
+        'authentication.onlineuser.rfid.write': u'RFID (Skrivetilgang)',
+    },
+    'ACCESS_TOKEN_EXPIRE_SECONDS': 3600,
+    'AUTHORIZATION_CODE_EXPIRE_SECONDS': 60,
+}
+OAUTH2_PROVIDER_APPLICATION_MODEL = 'sso.Client'
+
 # List of usergroups that should be listed under "Finn brukere" in user profile
 USER_SEARCH_GROUPS = [
     16,  # appKom
@@ -204,6 +224,7 @@ INSTALLED_APPS = (
     'crispy_forms',
     'django_extensions',
     'django_dynamic_fixture',
+    'oauth2_provider',
     'captcha',
     'compressor',
     'pdfdocument',
@@ -244,6 +265,7 @@ INSTALLED_APPS = (
     'apps.mailinglists',
     'apps.inventory',
     'apps.payment',
+    'apps.sso',
     'apps.splash',
     'scripts',
 
