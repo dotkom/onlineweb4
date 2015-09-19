@@ -234,32 +234,43 @@ $(document).ready(function() {
         });
     }
 
-    infomail = $('#toggle_infomail')
-    infomail.on('click', function (e) {
-        e.preventDefault()
+    var toggleSubscription = function(list) {
+        listID = $('#toggle_' + list)
         $.ajax({
             method: 'POST',
-            url: 'toggle_infomail/',
+            url: 'toggle_' + list + '/',
             data: {},
             success: function (data) {
                 res = JSON.parse(data)
                 if (res['state'] === true) {
-                    infomail.removeClass('btn-success')
-                    infomail.addClass('btn-danger')
-                    infomail.text('Deaktivér')
+                    listID.removeClass('btn-success')
+                    listID.addClass('btn-danger')
+                    listID.text('Deaktivér')
                 }
                 else {
-                    infomail.removeClass('btn-danger')
-                    infomail.addClass('btn-success')
-                    infomail.text('Aktivér')
+                    listID.removeClass('btn-danger')
+                    listID.addClass('btn-success')
+                    listID.text('Aktivér')
                 }
             },
             error: function (e, s, xhr) {
                 var utils = new Utils()
-                utils.setStatusMessage('Det oppstod en uventet feil under endring av infomail.', 'alert-danger')
+                utils.setStatusMessage('Det oppstod en uventet feil under endring.', 'alert-danger')
             },
             crossDomain: false
         })
+    }
+
+    infomail = $('#toggle_infomail')
+    infomail.on('click', function (e) {
+        e.preventDefault()
+        toggleSubscription('infomail')        
+    });
+
+    jobmail = $('#toggle_jobmail')
+    jobmail.on('click', function (e) {
+        e.preventDefault()
+        toggleSubscription('jobmail')        
     });
 
     $(".delete-position").on('click', function(e) {

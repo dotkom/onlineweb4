@@ -21,6 +21,7 @@ urlpatterns = patterns('apps.profiles.views',
     url(r'^email/set_primary/$', 'set_primary', name='profile_set_primary'),
     url(r'^email/verify_email/$', 'verify_email', name='profile_verify_email'),
     url(r'^email/toggle_infomail/$', 'toggle_infomail', name='profile_toggle_infomail'),
+    url(r'^email/toggle_jobmail/$', 'toggle_jobmail', name='profile_toggle_jobmail'),
     url(r'^marks/update_mark_rules/$', 'update_mark_rules', name='profile_update_mark_rules'),
     
     # Endpoint that exposes a json lump of all users but only id and name. 

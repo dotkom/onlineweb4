@@ -370,6 +370,19 @@ def toggle_infomail(request):
     raise Http404
 
 @login_required
+def toggle_jobmail(request):
+    """
+    Toggles the jobmail field in Onlineuser object
+    """
+    if request.is_ajax():
+        if request.method == 'POST':
+            request.user.jobmail = not request.user.jobmail
+            request.user.save()
+
+            return HttpResponse(status=200, content=json.dumps({'state': request.user.jobmail}))
+    raise Http404
+
+@login_required
 def user_search(request):
     groups_to_include = settings.USER_SEARCH_GROUPS
     groups = Group.objects.filter(pk__in=groups_to_include).order_by('name')
