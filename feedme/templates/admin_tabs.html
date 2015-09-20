@@ -1,0 +1,15 @@
+<nav class="subnavbar navbar-default navbar-fixed-top">
+    <div class="container">
+        <div class="collapse navbar-collapse navbar-ex1-collapse">
+            <ul class="nav navbar-nav">
+
+<!--<ul class="nav nav-tabs">-->
+    <li{% if active == 'feedme_index' %} class="active"{% endif %}><a href="{% url "feedme_index" %}">FeedMe</a></li>
+    <li{% if active == 'new order' %} class="active"{% endif %}><a href="{% url "new_order" %}">New order</a></li>
+    <li{% if active == 'orders' %} class="active"{% endif %}><a href="{% url "manage_order" %}">Manage orders</a></li>
+    <li{% if active == 'users' %} class="active"{% endif %}><a href="{% url "manage_users" %}">Manage users</a></li>
+    <li{% if active == 'order limit' %} class="active"{% endif %}><a href="{% url "set_order_limit" %}">Order limit</a></li>
+    <li{% if active == 'new restaurant' %} class="active"{% endif %}><a href="{% url "new_restaurant" %}">New restaurant</a></li>
+    <li{% if active == 'new poll' %} class="active"{% endif %}><a href="{% url "new_poll" %}">New poll</a></li>
+</ul>
+</div></div></nav>

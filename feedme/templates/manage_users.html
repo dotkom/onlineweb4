@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %}
+FeedMe
+{% endblock title %}
+
+{% block styles %}
+{{ block.super }}
+<link href="{{ STATIC_URL }}css/feedme.css" rel="stylesheet">
+{% endblock styles %}
+
+{% load admin_tags %}
+
+{% block submenu %}
+{% include "nav.html" %}
+{% endblock submenu %}
+
+{% block content %}
+
+<section id="feedMeAdmin">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="page-header">
+          <h1>{{ form.name|title }}</h1>
+        </div>
+        <h3>HER KAN DU OPPPPPDATERE BRUKERES BALANSE</h3>
+        <!--{% include "messages.html" %}-->
+        <form action="" method="post">
+          {% csrf_token %}
+          <div class="content">
+            {% admin_tabs form.name  %}
+          </div>
+          <div class="content">
+        </form>
+        {% if users %}
+            <table class="table">
+                <tr><th>User</th><th>Balance</th><th>Amount</th><th></th></tr>
+                {% for user in users %}
+                <form action="" method="POST">{% csrf_token %}<tr>
+                    <input type="text" name="act" value="deposit-table" hidden>
+                    <td><input type="text" name="user" value="{{ user.id }}" hidden required> {{ user }}</td>
+                    <td>{{ user.balance.get_balance_string }}
+                    <td>{{ form.amount }}</td>
+                    <td><input type="submit" name="submit" value="Deposit" class="btn btn-primary"></td>
+                </tr></form>
+                {% endfor %}
+            </table>
+        {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock content %}

@@ -246,6 +246,7 @@ INSTALLED_APPS = (
     'apps.mailinglists',
     'apps.inventory',
     'apps.payment',
+    'apps.posters',
     'apps.sso',
     'apps.splash',
     'scripts',
