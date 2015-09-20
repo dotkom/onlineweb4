@@ -1,12 +1,5 @@
-@import "core.less";
-@import "bootstrap/buttons.less";
-
 #image-input {
     display: none;
-}
-
-.row-space {
-    margin-top: 20px;
 }
 
 .space-right {
@@ -17,8 +10,11 @@ a.menu-button {
     text-decoration: none;
 }
 
-.langfaen {
-    min-height: 2000px;
+#gallery {
+  position: relative;
+  width: 100%;
+  min-height:600px;
+  overflow: scroll;
 }
 
 .menu-button {
@@ -47,16 +43,8 @@ a.menu-button {
     font-size: 14px;
 }
 
-#gallery-button {
-    .pretty-buttons(white, #00c0ef);
-}
-
-#upload-button {
-    .pretty-buttons(white, #00a65a);
-}
-
-#edit-button {
-    .pretty-buttons(white, #ffa800);
+.langfaen {
+  min-height: 3000px;
 }
 
 #thumbheadtitle {
@@ -65,10 +53,6 @@ a.menu-button {
 
 #fetchallimages {
     display: inline-block;
-}
-
-#image-upload-button {
-    .pretty-buttons(@btn-primary-color, @btn-primary-bg)
 }
 
 .hidden-input {
@@ -116,41 +100,6 @@ div#datavalues > div.input-group > span.input-group-addon:first-child {
 div#datavalues > div.input-group > span.input-group-addon:last-child {
     width: 40px;
     margin-bottom: 0px;
-}
-
-@media all and (max-width: @screen-sm-max) {
-}
-
-@media all and (min-width: @screen-sm-max) {
-}
-
-.pretty-buttons(@color, @background, @text-shadow: none) {
-
-    color: @color;
-    background-color: @background;
-    text-shadow: @text-shadow;
-
-    .box-shadow(inset 0 1px 0 rgba(255, 255, 255, .1));
-
-    &:hover,
-    &:focus,
-    &:active,
-    &.active {
-        background-color: darken(@background, 10%);
-        color: @color;
-    }
-
-    &.disabled,
-    &[disabled],
-    fieldset[disabled] & {
-        &,
-        &:hover,
-        &:focus,
-        &:active,
-        &.active {
-            background-color: @background;
-        }
-    }
 }
 
 .gallery-message {
