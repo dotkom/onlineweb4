@@ -39,7 +39,8 @@
                                 <span class="caret"></span>
                             </button>
                             <ul class="dropdown-menu" role="menu">
-                                <li><a href="{% url 'admin:events_event_change' event.id %}">Rediger</a></li>
+                                <li><a href="{% url 'admin:events_event_change' event.id %}">Rediger i administrasjonspanelet</a></li>
+                                <li><a href="{% url 'dashboard_event_details' event.id %}">Åpne i dashboardet</a></li>
                                 {% if event.is_attendance_event %}
                                     <li><a href="{% url 'event_attendees_pdf' event.id %}">Påmeldingsliste</a></li>
                                     <li><a href="{% url 'event_mail_participants' event.id %}">Send epost til deltakere</a></li>
@@ -134,6 +135,8 @@
                         {% if user_attending %}
                             {% if place_on_wait_list %}
                                 <p class="status-text">Du er nummer {{ place_on_wait_list }} på ventelisten.</p>
+                            {% elif payment_relation_id %}
+                                <p class="status-text">Du er meldt på dette arrangementet, og du har betalt.</p>
                             {% else %}
                                 <p class="status-text">Du er meldt på dette arrangementet.</p>
                             {% endif %}
@@ -148,8 +151,6 @@
                                             <p>Du har betalt og må kontakte ansvarlig komitee for og melde deg av</p>
                                         {% endif %}
                                     {% endif %}
-                                {% else %}
-                                    <label class="label label-success payment-label">Du har betalt</label>
                                 {% endif %}
                             {% elif payment and not place_on_wait_list and not user_paid %}
                                 {% display_payments payment payment_delay %}

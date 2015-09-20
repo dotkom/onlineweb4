@@ -42,8 +42,11 @@ Min side - Online
                         <li class="{% ifequal 'privacy' active_tab %}active{% endifequal %}">
                             <a href="{% url 'profiles_active' 'privacy' %}" data-section="privacy">Personvern</a>
                         </li>
+                        <li class="{% ifequal 'connected_apps' active_tab %}active{% endifequal %}">
+                            <a href="{% url 'profiles_active' 'connected_apps' %}" data-section="connected_apps">Apptilkoblinger</a>
+                        </li>
                         <li class="{% ifequal 'marks' active_tab %}active{% endifequal %}">
-                            <a href="{% url 'profiles_active' 'marks' %}" data-section="marks">Prikker</a>
+                            <a href="{% url 'profiles_active' 'marks' %}" data-section="marks">Prikker & Suspansjoner</a>
                         </li>
                         <li class="{% ifequal 'password' active_tab %}active{% endifequal %}">
                             <a href="{% url 'profiles_active' 'password' %}" data-section="password">Passord</a>
@@ -69,6 +72,9 @@ Min side - Online
                         </section>
                         <section id="privacy">
                             {% include "profiles/privacy.html" %}
+                        </section>
+                        <section id="connected_apps">
+                            {% include "profiles/connected_apps.html" %}
                         </section>
                         <section id="marks">
                             {% include "profiles/marks.html" %}

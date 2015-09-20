@@ -2,6 +2,7 @@
 
 import locale
 import logging
+from pytz import timezone as tz
 
 from django.utils import timezone
 from django.core.mail import EmailMessage
@@ -11,7 +12,7 @@ from django.conf import settings
 
 from apps.payment.models import Payment, PaymentRelation, PaymentDelay
 from apps.events.models import AttendanceEvent, Attendee
-from apps.marks.models import Mark, MarkUser
+from apps.marks.models import Mark, MarkUser, Suspension
 
 from apps.mommy import Task, schedule
 
@@ -154,7 +155,7 @@ class PaymentDelayHandler(Task):
         payment_delays = PaymentDelay.objects.filter(active=True)
 
         for payment_delay in payment_delays:
-            unattend_deadline_passed = payment_delay.payment.content_object.unattend_deadline > payment_delay.valid_to
+            unattend_deadline_passed = payment_delay.payment.content_object.unattend_deadline < payment_delay.valid_to
             if payment_delay.valid_to < timezone.now():
                 PaymentDelayHandler.handle_deadline_passed(payment_delay, unattend_deadline_passed)
                 logger.info("Deadline passed: " + unicode(payment_delay))
@@ -170,7 +171,7 @@ class PaymentDelayHandler(Task):
 
         if unattend_deadline_passed:
             PaymentDelayHandler.set_mark(payment_delay)
-            #TODO block people
+            PaymentDelayHandler.handle_suspensions(payment_delay)
         else:
             PaymentDelayHandler.set_mark(payment_delay)
             PaymentDelayHandler.unattend(payment_delay)
@@ -178,6 +179,20 @@ class PaymentDelayHandler(Task):
         payment_delay.active = False
         payment_delay.save()
         PaymentDelayHandler.send_deadline_passed_mail(payment_delay, unattend_deadline_passed)
+
+
+    @staticmethod
+    def handle_suspensions(payment_delay):
+        suspension = Suspension()
+
+        suspension.title = "Manglende betaling"
+        suspension.user = payment_delay.user
+        suspension.payment_id = payment_delay.payment.id
+        suspension.description = "Du har ikke betalt for ett arangement du har vært med på. For og fjerne denne suspansjonen må du betale.\n " 
+        suspension.description += "Mer informasjon om betalingen finner du her: " + str(settings.BASE_URL + payment_delay.payment.content_object.event.get_absolute_url())
+
+        suspension.save()
+
 
     @staticmethod
     def send_deadline_passed_mail(payment_delay, unattend_deadline_passed):
@@ -204,8 +219,10 @@ class PaymentDelayHandler(Task):
         payment = payment_delay.payment
         subject = _(u"Husk betaling for ") + payment.description()
 
+        valid_to = payment_delay.valid_to.astimezone(tz('Europe/Oslo'))
+
         message = _(u"Hei, du er påmeldt men har ikke betalt for ") + payment.description()
-        message += _(u"\nDu har frem til ") + unicode(payment_delay.valid_to.strftime("%-d %B %Y kl: %H:%M"))
+        message += _(u"\nDu har frem til ") + unicode(valid_to.strftime("%-d %B %Y kl: %H:%M"))
 
 
         #If event unattend deadline has not passed when payment deadline passes, then the user will be automatically unattended, and given a mark.

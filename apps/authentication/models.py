@@ -93,6 +93,7 @@ class OnlineUser(AbstractUser):
 
     # Mail
     infomail = models.BooleanField(_(u"vil ha infomail"), default=False)
+    jobmail = models.BooleanField(_(u"vil ha oppdragsmail"), default=False)
     online_mail = models.CharField(_(u"Online-epost"), max_length=50, blank=True, null=True)
 
     # Address

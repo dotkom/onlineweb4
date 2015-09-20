@@ -14,6 +14,9 @@ from django.core.mail import send_mail
 from django.http import HttpResponse, Http404, JsonResponse
 from django.shortcuts import redirect, render, get_object_or_404
 from django.utils.translation import ugettext as _
+from django.utils import timezone
+
+from oauth2_provider.models import AccessToken
 
 import watson
 
@@ -22,7 +25,7 @@ from apps.approval.models import MembershipApproval
 from apps.authentication.forms import NewEmailForm
 from apps.authentication.models import Email, RegisterToken, Position
 from apps.authentication.models import OnlineUser as User
-from apps.marks.models import Mark
+from apps.marks.models import Mark, Suspension
 from apps.profiles.forms import (MailSettingsForm, PrivacyForm,
                                 ProfileForm, MembershipSettingsForm, PositionForm)
 from utils.shortcuts import render_json
@@ -50,12 +53,22 @@ def _create_profile_context(request):
         'groups': groups,
         # privacy
         'privacy_form': PrivacyForm(instance=request.user.privacy),
+
+        # SSO / OAuth2 approved apps
+        'connected_apps': AccessToken.objects.filter(user=request.user, expires__gte=timezone.now())
+        .order_by('expires'),
+
         # marks
         'mark_rules_accepted': request.user.mark_rules,
         'marks': [
             # Tuple syntax ('title', list_of_marks, is_collapsed)
             (_(u'aktive prikker'), Mark.marks.active(request.user), False),
             (_(u'inaktive prikker'), Mark.marks.inactive(request.user), True),
+        ],
+        'suspensions': [
+            # Tuple syntax ('title', list_of_marks, is_collapsed)
+            (_(u'aktive suspansjoner'), Suspension.objects.filter(user=request.user, active=True), False),
+            (_(u'inaktive suspansjoner'), Suspension.objects.filter(user=request.user, active=False), True),
         ],
         # password
         'password_change_form': PasswordChangeForm(request.user),
@@ -73,6 +86,7 @@ def _create_profile_context(request):
     }
 
     return context
+
 
 @login_required
 def edit_profile(request):
@@ -107,6 +121,33 @@ def privacy(request):
             messages.success(request, _(u"Personvern ble endret"))
 
     return render(request, 'profiles/index.html', context)
+
+
+@login_required()
+def connected_apps(request):
+    """
+    Tab controller for the connected 3rd party apps pane
+    :param request: Django request object
+    :return: An HttpResponse
+    """
+
+    context = _create_profile_context(request)
+    context['active_tab'] = 'connected_apps'
+
+    if request.method == 'POST':
+        if not 'token_id' in request.POST:
+            messages.error(request, _(u'Det ble ikke oppgitt noen tilgangsnøkkel i forespørselen.'))
+        else:
+            try:
+                pk = int(request.POST['token_id'])
+                token = get_object_or_404(AccessToken, pk=pk)
+                token.delete()
+                messages.success(request, _(u'Tilgangsnøkkelen ble slettet.'))
+            except ValueError:
+                messages.error(request, _(u'Tilgangsnøkkelen inneholdt en ugyldig verdi.'))
+
+    return render(request, 'profiles/index.html', context)
+
 
 @login_required
 def password(request):
@@ -326,6 +367,19 @@ def toggle_infomail(request):
             request.user.save()
 
             return HttpResponse(status=200, content=json.dumps({'state': request.user.infomail}))
+    raise Http404
+
+@login_required
+def toggle_jobmail(request):
+    """
+    Toggles the jobmail field in Onlineuser object
+    """
+    if request.is_ajax():
+        if request.method == 'POST':
+            request.user.jobmail = not request.user.jobmail
+            request.user.save()
+
+            return HttpResponse(status=200, content=json.dumps({'state': request.user.jobmail}))
     raise Http404
 
 @login_required

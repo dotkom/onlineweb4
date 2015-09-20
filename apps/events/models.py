@@ -14,7 +14,7 @@ from django.contrib.contenttypes.models import ContentType
 
 from apps.authentication.models import OnlineUser as User, FIELD_OF_STUDY_CHOICES
 from apps.companyprofile.models import Company
-from apps.marks.models import Mark, get_expiration_date
+from apps.marks.models import Mark, get_expiration_date, Suspension
 
 import reversion
 import watson
@@ -471,6 +471,7 @@ class AttendanceEvent(models.Model):
             Room on event
             Rules
             Marks
+            Suspension
         @param User object
         The returned dict contains a key called 'status_code'. These codes follow the HTTP
         standard in terms of overlying scheme.
@@ -538,6 +539,18 @@ class AttendanceEvent(models.Model):
             response['message'] = _(u'Påmeldingen har ikke åpnet enda.')
             response['status_code'] = 501 
             return response
+
+
+        #Is suspended
+        suspensions = Suspension.objects.filter(user=user, active=True)
+        for suspension in suspensions:
+            if not suspension.expiration_date or suspension.expiration_date > timezone.now().date():
+                response['status'] = False
+                response['message'] = _(u"Du er suspandert og kan ikke melde deg på.")
+                response['status_code'] = 501
+
+                return response
+
 
         # No objections, set eligible.
         response['status'] = True
