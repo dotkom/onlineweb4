@@ -145,25 +145,6 @@ GRAPPELLI_ADMIN_TITLE = '<a href="/">Onlineweb</a>'
 ANONYMOUS_USER_ID = -1
 GUARDIAN_RENDER_403 = True
 
-# SSO / OAuth2 settings
-OAUTH2_PROVIDER = {
-    'SCOPES': {
-        'null': u'Ingen datatilgang',
-        'authentication.onlineuser.username.read': u'Brukernavn (Lesetilgang)',
-        'authentication.onlineuser.first_name.read': u'Fornavn (Lesetilgang)',
-        'authentication.onlineuser.last_name.read': u'Etternavn (Lesetilgang)',
-        'authentication.onlineuser.email.read': u'Primær E-postaddresse (Lesetilgang)',
-        'authentication.onlineuser.is_member.read': u'Medlemskapsstatus (Lesetilgang)',
-        'authentication.onlineuser.field_of_study.read': u'Studieretning (Lesetilgang)',
-        'authentication.onlineuser.nickname.read': u'Kallenavn (Lesetilgang)',
-        'authentication.onlineuser.rfid.read': u'RFID (Lesetilgang)',
-        'authentication.onlineuser.rfid.write': u'RFID (Skrivetilgang)',
-    },
-    'ACCESS_TOKEN_EXPIRE_SECONDS': 3600,
-    'AUTHORIZATION_CODE_EXPIRE_SECONDS': 60,
-}
-OAUTH2_PROVIDER_APPLICATION_MODEL = 'sso.Client'
-
 # List of usergroups that should be listed under "Finn brukere" in user profile
 USER_SEARCH_GROUPS = [
     16,  # appKom
@@ -281,6 +262,17 @@ INSTALLED_APPS = (
     'wiki.plugins.macros',
 
 )
+
+
+# SSO / OAuth2 settings
+if 'apps.sso' in INSTALLED_APPS:
+    from apps.sso.settings import OAUTH2_SCOPES
+    OAUTH2_PROVIDER = {
+        'SCOPES': OAUTH2_SCOPES,
+        'ACCESS_TOKEN_EXPIRE_SECONDS': 3600,
+        'AUTHORIZATION_CODE_EXPIRE_SECONDS': 60,
+    }
+    OAUTH2_PROVIDER_APPLICATION_MODEL = 'sso.Client'
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
