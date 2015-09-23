@@ -2,6 +2,7 @@
 
 import json
 
+import django.utils.timezone
 from django.core.exceptions import PermissionDenied
 from django.contrib.auth.decorators import login_required
 from guardian.decorators import permission_required
@@ -68,6 +69,7 @@ def marks_details(request, pk):
     if request.method == 'POST':
         if request.is_ajax and 'action' in request.POST:
             resp = {'status': 200}
+
             if request.POST['action'] == 'remove_user':
                 # Get the correct user
                 user = get_object_or_404(User, pk=int(request.POST['user_id']))
@@ -81,12 +83,16 @@ def marks_details(request, pk):
                     else:
                         mark_users_filtered.append(mark_user)
 
+                # Update mark
+                context['mark'].last_changed_date = django.utils.timezone.now()
+                context['mark'].last_changed_by = request.user
+                context['mark'].save()
+
                 # Set information to resp
                 resp['message'] = '%s ble fjernet fra %s' % (user.get_full_name(), context['mark'].title)
                 resp['mark_users'] = [{'user': mu.user.get_full_name(), 'id': mu.user.id} for mu in mark_users_filtered]
 
-                # Return ajax
-                return HttpResponse(json.dumps(resp), status=200)
+
             elif request.POST['action'] == 'add_user':
                 user = get_object_or_404(User, pk=int(request.POST['user_id']))
 
@@ -98,6 +104,11 @@ def marks_details(request, pk):
 
                         # Return ajax
                         return HttpResponse(json.dumps(resp), status=500)
+
+                # Update mark
+                context['mark'].last_changed_date = django.utils.timezone.now()
+                context['mark'].last_changed_by = request.user
+                context['mark'].save()
 
                 # New MarkUser
                 mark_user = MarkUser()
@@ -118,8 +129,12 @@ def marks_details(request, pk):
                 # Set information to resp
                 resp['message'] = '%s ble tildelt prikken %s.' % (user.get_full_name(), context['mark'].title)
 
-                # Return ajax
-                return HttpResponse(json.dumps(resp), status=200)
+            # Set mark
+            resp['mark'] = {'last_changed_date': context['mark'].last_changed_date.strftime("%Y-%m-%d"),
+                            'last_changed_by': context['mark'].last_changed_by.get_full_name()}
+
+            # Return ajax
+            return HttpResponse(json.dumps(resp), status=resp['status'])
 
     # Render view
     return render(request, 'marks/dashboard/marks_details.html', context)

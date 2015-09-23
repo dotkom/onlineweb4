@@ -52,6 +52,11 @@ var Marks = (function ($, tools) {
                 draw_table('userlist', data);
                 tools.showStatusMessage(data.message, 'alert-success');
             }
+
+            if (action == 'remove_user' || action == 'add_user') {
+                $('#dashboard-marks-changed-by').html(data.mark.last_changed_by);
+                $('#dashboard-marks-changed-time').html(data.mark.last_changed_date);
+            }
         };
         var error = function (xhr, txt, error) {
             var response = jQuery.parseJSON(xhr.responseText);

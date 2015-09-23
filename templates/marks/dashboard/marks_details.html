@@ -88,9 +88,9 @@ Detaljer om prikk: {{ mark.title }}
                     </tr>
                     <tr>
                         <td><b>Sist endret av</b></td>
-                        <td class="marks_table_splitter">{{ mark.last_changed_by.get_full_name }}</td>
+                        <td id="dashboard-marks-changed-by" class="marks_table_splitter">{{ mark.last_changed_by.get_full_name }}</td>
                         <td><b>Sist endret</b></td>
-                        <td>{{ mark.last_changed_date|date:'Y-m-d' }}</td>
+                        <td id="dashboard-marks-changed-time">{{ mark.last_changed_date|date:'Y-m-d' }}</td>
                     </tr>
                     <tr>
                         <td><b>Detaljer</b></td>
