@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from django.conf import settings
 from django.db import models
 from django.core.urlresolvers import reverse
 from django.forms import ModelForm
@@ -8,10 +9,11 @@ from django.utils.translation import ugettext as _
 from datetime import datetime, timedelta
 
 from django.contrib.auth.models import Group
-from apps.authentication.models import OnlineUser as User
 from apps.companyprofile.models import Company
 from apps.events.models import Event
 
+
+User = settings.AUTH_USER_MODEL
 
 class OrderMixin(models.Model):
     """
@@ -28,9 +30,9 @@ class OrderMixin(models.Model):
         (3, 'Annet'),
     ))
     ordered_date = models.DateTimeField(auto_now_add=True, editable=False)
-    ordered_by = models.ForeignKey(User, related_name=_(u"bestilt av"))
-    ordered_committee = models.ForeignKey(Group, related_name=_(u'bestilt av komite'))
-    assigned_to = models.ForeignKey(User, related_name=_(u'tilordnet til'), blank=True, null=True)
+    ordered_by = models.ForeignKey(User, verbose_name=_(u"bestilt av"), related_name='ordered_by')
+    ordered_committee = models.ForeignKey(Group, verbose_name=_(u'bestilt av komite'), related_name='ordered_committee')
+    assigned_to = models.ForeignKey(User, verbose_name=_(u'tilordnet til'), related_name='assigned_to', blank=True, null=True)
     description = models.TextField(_(u"beskrivelse"), max_length=1000, blank=True, null=True)
     amount = models.IntegerField(_(u'antall opplag'), blank=True, null=True)
     finished = models.BooleanField(_(u"ferdig"), default=False)

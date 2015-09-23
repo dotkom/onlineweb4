@@ -363,7 +363,7 @@ class SpecialPosition(models.Model):
     Special object to represent special positions that typically lasts for life.
     """
     position   = models.CharField(_(u'Posisjon'), max_length=50, blank=False)
-    since_year = models.IntegerField(_(u'Medlem siden'), max_length=4, blank=False)
+    since_year = models.IntegerField(_(u'Medlem siden'), blank=False)
     user       = models.ForeignKey(OnlineUser, related_name='special_positions', blank=False)
 
     def __unicode__(self):

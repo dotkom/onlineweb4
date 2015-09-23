@@ -28,6 +28,7 @@ from apps.authentication.models import OnlineUser as User
 from apps.marks.models import Mark, Suspension
 from apps.profiles.forms import (MailSettingsForm, PrivacyForm,
                                 ProfileForm, MembershipSettingsForm, PositionForm)
+from apps.profiles.models import Privacy
 from utils.shortcuts import render_json
 
 """
@@ -44,6 +45,12 @@ def index(request, active_tab='overview'):
 def _create_profile_context(request):
 
     groups = Group.objects.all()
+
+    Privacy.objects.get_or_create(user=request.user)  # This is a hack
+    """
+    ... to make sure a privacy exists when visiting /profiles/privacy/. Until now, it has been generated upon loading models.py,
+    which is a bit hacky. The code is refactored to use Django signals, so whenever a user is created, a privacy-property is set up.
+    """
 
     context = {
         # edit

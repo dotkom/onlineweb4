@@ -8,6 +8,9 @@ logger = logging.getLogger(__name__)
 
 from django.conf import settings
 
+
+default_app_config = 'apps.mommy.appconfig.MommyConfig'
+
 schedule = Schedule()
 
 def autodiscover():

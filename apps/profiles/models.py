@@ -1,12 +1,14 @@
 # -*- coding: utf-8 -*-
 
+from django.conf import settings
 from django.db import models
 from django.utils.translation import ugettext as _
 
-from apps.authentication.models import OnlineUser as User
 
 import reversion
 
+
+User = settings.AUTH_USER_MODEL
 
 class Privacy(models.Model):
     visible_for_other_users = models.BooleanField(_(u"profil synlig for andre brukere"), default=True)
@@ -15,7 +17,7 @@ class Privacy(models.Model):
     expose_phone_number = models.BooleanField(_(u"vis telefonnummer"), default=True)
     expose_address = models.BooleanField(_(u"vis addresse"), default=True)
 
-    user = models.ForeignKey(User, unique=True, related_name="privacy")
+    user = models.OneToOneField(User, related_name="privacy")
 
     def __unicode__(self):
         return self.user.get_full_name()
@@ -29,6 +31,3 @@ class Privacy(models.Model):
 
 
 reversion.register(Privacy)
-
-
-User.privacy = property(lambda u: Privacy.objects.get_or_create(user=u)[0])

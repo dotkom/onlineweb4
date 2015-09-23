@@ -7,10 +7,10 @@ from django.db import models
 from django.utils import timezone
 from django.utils.translation import ugettext as _
 
-from apps.authentication.models import OnlineUser as User
-
 import reversion
 
+
+User = settings.AUTH_USER_MODEL
 
 DURATION = 30
 # summer starts 1st June, ends 15th August

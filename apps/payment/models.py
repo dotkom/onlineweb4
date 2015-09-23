@@ -4,16 +4,17 @@ import uuid
 import reversion
 
 from django.conf import settings
-from django.contrib.contenttypes import generic
+from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.utils import timezone
 from django.utils.translation import ugettext as _
 
-from apps.authentication.models import OnlineUser as User
 from apps.events.models import AttendanceEvent, Attendee
 from apps.marks.models import Suspension
 
+
+User = settings.AUTH_USER_MODEL
 
 class Payment(models.Model):
 
@@ -30,7 +31,7 @@ class Payment(models.Model):
 
     content_type = models.ForeignKey(ContentType)
     object_id = models.PositiveIntegerField()
-    content_object = generic.GenericForeignKey('content_type', 'object_id')
+    content_object = GenericForeignKey('content_type', 'object_id')
     stripe_key_index = models.SmallIntegerField(_(u'stripe key'), choices=STRIPE_KEY_CHOICES)
 
     payment_type = models.SmallIntegerField(_(u'type'), choices=TYPE_CHOICES)
@@ -41,7 +42,7 @@ class Payment(models.Model):
     delay = models.SmallIntegerField(_(u'utsettelse'), blank=True, null=True, default=2)
 
     #For logging and history
-    added_date = models.DateTimeField(_(u"opprettet dato"), auto_now=True, auto_now_add=True)
+    added_date = models.DateTimeField(_(u"opprettet dato"), auto_now=True)
     changed_date = models.DateTimeField(auto_now=True, editable=False)
     last_changed_by = models.ForeignKey(User, editable=False, null=True) #blank and null is temperarly
 
@@ -113,7 +114,7 @@ class Payment(models.Model):
         if self._is_type(AttendanceEvent):
             self.content_object.notify_waiting_list(
                 host=host, unattended_user=payment_relation.user)
-            Attendee.objects.get(event=self.content_object, 
+            Attendee.objects.get(event=self.content_object,
                 user=payment_relation.user).delete()
 
     def check_refund(self, payment_relation):
@@ -129,7 +130,7 @@ class Payment(models.Model):
             return (True, '')
 
         return (False, 'Refund checks not implemented')
-    
+
     def prices(self):
         return self.paymentprice_set.all()
 

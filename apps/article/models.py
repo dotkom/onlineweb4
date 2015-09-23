@@ -2,12 +2,13 @@
 
 import re
 
+from django.conf import settings
 from django.db import models
 from django.db.models import permalink, SET_NULL
 from django.template.defaultfilters import slugify
 from django.utils.translation import ugettext as _
 
-from apps.authentication.models import OnlineUser as User
+
 from apps.gallery.models import ResponsiveImage
 from filebrowser.fields import FileBrowseField
 
@@ -15,6 +16,8 @@ import reversion
 from pytz import timezone
 import watson
 
+
+User = settings.AUTH_USER_MODEL
 
 class Article(models.Model):
     IMAGE_FOLDER = "images/article"
