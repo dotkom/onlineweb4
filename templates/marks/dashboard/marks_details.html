@@ -50,11 +50,11 @@ Detaljer om prikk: {{ mark.title }}
                         </tr>
                     </thead>
                     <tbody id="userlist">
-                    {% for user in mark_users %}
+                    {% for m_user in mark_users %}
                         <tr>
                             <td>
-                                <a href="#">{{ user.user.get_full_name }}</a>
-                                <a href="#" id="{{ user.id }}" class="remove-user">
+                                <a href="#">{{ m_user.user.get_full_name }}</a>
+                                <a href="#" id="{{ m_user.user.id }}" class="remove-user">
                                     <i class="fa fa-times fa-lg pull-right red"></i>
                                 </a>
                             </td>

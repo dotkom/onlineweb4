@@ -9,6 +9,28 @@ var Marks = (function ($, tools) {
         return true
     };
 
+    // Private helper method to draw the user table
+    //
+    // :param tbody: the ID of the <tbody> element of the table
+    // :param data: the JSON parsed data returned by the server
+    var draw_table = function (tbody, data) {
+        var tbody_html = '';
+        $(data.mark_users).each(function (i) {
+            tbody_html += '<tr><td><a href="#">' + data.mark_users[i].user + '</a>' +
+                          '<a href="#" id="user_' + data.mark_users[i].id + '" class="remove-user">' +
+                          '<i class="fa fa-times fa-lg pull-right red">' + '</i></a></td></tr>';
+        });
+        $('#' + tbody).html(tbody_html);
+
+        $(data.mark_users).each(function (i) {
+            var user = data.mark_users[i];
+            $('#user_' + user.id).on('click', function (e) {
+                e.preventDefault();
+                Marks.user.remove(user.id);
+            })
+        })
+    };
+
     // Private generic ajax handler.
     // 
     // :param id: user ID in database
@@ -23,19 +45,21 @@ var Marks = (function ($, tools) {
             if (action === 'remove_user') {
                 data = JSON.parse(data);
                 draw_table('userlist', data);
+                tools.showStatusMessage(data.message, 'alert-success');
             }
             else if (action === 'add_user') {
                 data = JSON.parse(data);
                 draw_table('userlist', data);
+                tools.showStatusMessage(data.message, 'alert-success');
             }
         };
         var error = function (xhr, txt, error) {
-            tools.showStatusMessage(error, 'alert-danger')
+            var response = jQuery.parseJSON(xhr.responseText);
+            tools.showStatusMessage(response.message, 'alert-danger');
         };
 
         // Make an AJAX request using the Dashboard tools module
-        tools.ajax('POST', url, data, success, error, null)
-
+        tools.ajax('POST', url, data, success, error, null);
     };
 
     return {
@@ -43,7 +67,7 @@ var Marks = (function ($, tools) {
         // Bind them buttons here
         init: function () {
 
-            if (!performSelfCheck()) return
+            if (!performSelfCheck()) return;
 
             // Bind add users button
             $('#marks_details_users_button').on('click', function (e) {
