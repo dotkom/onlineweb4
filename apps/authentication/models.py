@@ -6,7 +6,7 @@ import urllib
 import hashlib
 
 from django.conf import settings
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractUser, Group
 from django.db import models
 from django.utils.translation import ugettext as _
 from django.utils import timezone
@@ -62,7 +62,7 @@ POSITIONS = [
 ]
 
 def get_length_of_field_of_study(field_of_study):
-    """ 
+    """
     Returns length of a field of study
     """
     if field_of_study == 0 or field_of_study == 100:  # others
@@ -85,7 +85,7 @@ class OnlineUser(AbstractUser):
 
     IMAGE_FOLDER = "images/profiles"
     IMAGE_EXTENSIONS = ['.jpg', '.jpeg', '.gif', '.png']
-    
+
     # Online related fields
     field_of_study = models.SmallIntegerField(_(u"studieretning"), choices=FIELD_OF_STUDY_CHOICES, default=0)
     started_date = models.DateField(_(u"startet studie"), default=datetime.date.today)
@@ -123,6 +123,16 @@ class OnlineUser(AbstractUser):
             if AllowedUsername.objects.filter(username=self.ntnu_username.lower()).filter(expiration_date__gte=timezone.now()).count() > 0:
                 return True
         return False
+
+    @property
+    def is_committee(self):
+        committeee_group = None
+        try:
+            committeee_group = Group.objects.get(name='Komiteer')
+        except Group.DoesNotExist:
+            # This probably means that a developer does not have the Komiteer group set up, so let's fail silently
+            return False
+        return self in committeee_group.user_set.all() or self.is_staff()
 
     @property
     def has_expiring_membership(self):
