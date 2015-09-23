@@ -29,6 +29,7 @@ from apps.posters.forms import AddForm, AddPosterForm, AddBongForm, AddOtherForm
 # from apps.dashboard.posters.models import PosterForm
 from apps.companyprofile.models import Company
 from apps.posters.models import Poster, OrderMixin
+from apps.posters.permissions import has_view_perms, has_view_all_perms
 
 
 @ensure_csrf_cookie
@@ -45,10 +46,9 @@ def index(request):
     context = get_base_context(request)
 
     # View to show if user not in committee, but wanting to see own orders
-    if request.user not in group.user_set.all():
-        context['your_orders'] = [x for x in Poster.objects.filter(
-                                  ordered_by=request.user, event__event_start__gte=datetime.now())
-                                  if request.user.has_perm('view_poster_order', x)]
+    if not has_view_all_perms(request.user):
+        print('has not view all perms')
+        context['your_orders'] = [x for x in Poster.objects.filter(ordered_by=request.user) if request.user.has_perm('view_poster_order', x)]
         return render(request, 'posters/dashboard/index.html', context)
 
     orders = Poster.objects.all()
@@ -90,7 +90,7 @@ def add(request, order_type=0):
                 poster.company = Company.objects.get(pk=request.POST.get('company'))
             poster.ordered_by = request.user
             # Should look for a more kosher solution
-            poster.ordered_committee = request.user.groups.filter(name__contains="Kom")[0]
+            poster.ordered_committee = request.user.groups.exclude(name='Komiteer').filter(name__contains="Kom")[0]
             poster.order_type = order_type
 
             poster.save()
@@ -206,7 +206,7 @@ def detail(request, order_id=None):
     poster = get_object_or_404(Poster, pk=order_id)
     context['poster'] = poster
 
-    if request.user != poster.ordered_by and 'proKom' not in request.user.groups:
+    if not has_view_perms(request.user, poster):
         raise PermissionDenied
 
     order_type = poster.order_type
