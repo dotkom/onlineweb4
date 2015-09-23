@@ -47,7 +47,6 @@ def index(request):
 
     # View to show if user not in committee, but wanting to see own orders
     if not has_view_all_perms(request.user):
-        print('has not view all perms')
         context['your_orders'] = [x for x in Poster.objects.filter(ordered_by=request.user) if request.user.has_perm('view_poster_order', x)]
         return render(request, 'posters/dashboard/index.html', context)
 
@@ -134,7 +133,6 @@ def add(request, order_type=0):
             to_emails = [settings.EMAIL_PROKOM, request.user.get_email()]
 
             try:
-                print(email_message)
                 email_sent = EmailMessage(unicode(subject), unicode(message), from_email, to_emails, []).send()
             except:
                 email_sent = False
@@ -213,7 +211,6 @@ def detail(request, order_id=None):
     type_names = ("Plakat", "Bong", "Generell ")
     type_name = type_names[order_type-1]
     context["order_type_name"] = type_name
-    print(type_name)
 
     if request.method == 'POST':
         poster_status = request.POST.get('completed')
