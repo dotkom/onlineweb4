@@ -6,11 +6,13 @@ import django.utils.timezone
 from django.core.exceptions import PermissionDenied
 from django.contrib.auth.decorators import login_required
 from guardian.decorators import permission_required
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse
+from django.contrib import messages
 
 from apps.dashboard.tools import has_access, get_base_context
 from apps.marks.models import Mark, MarkUser
+from apps.marks.dashboard.forms import MarkForm
 from apps.authentication.models import OnlineUser as User
 
 @login_required
@@ -45,7 +47,7 @@ def index(request):
 
 @login_required
 @permission_required('marks.can_add', return_403=True)
-def marks_details(request, pk):
+def mark_details(request, pk):
     """
     Display details for a given Mark
     """
@@ -142,13 +144,54 @@ def marks_details(request, pk):
 @login_required
 @permission_required('marks.can_add', return_403=True)
 def marks_new(request):
-    """
-    Here
-    """
-
     if not has_access(request):
         raise PermissionDenied
 
     context = get_base_context(request)
 
+    if request.method == 'POST':
+        mark_form = MarkForm(request.POST)
+        if not mark_form.is_valid():
+            messages.error(request, u'Noen av de påkrevde feltene inneholder feil.')
+        else:
+            # Save the form data
+            new_mark = mark_form.save()
+
+            # Save the additional mark data
+            new_mark.given_by = request.user
+            new_mark.last_changed_by = request.user
+            new_mark.save()
+
+            # Add news
+            messages.success(request, u'Prikken ble lagret.')
+
+            return redirect(mark_details, pk=new_mark.id)
+    else:
+        context['form'] = MarkForm()
+
     return render(request, 'marks/dashboard/marks_new.html', context)
+
+@login_required
+@permission_required('marks.can_delete', return_403=True)
+def mark_delete(request, pk):
+    """
+    Display details for a given Mark
+    """
+
+    # Check permission
+    if not has_access(request):
+        raise PermissionDenied
+
+    # Get object
+    mark = get_object_or_404(Mark, pk=pk)
+
+    # Save message
+    messages.success(request, '%s er ble slettet.' % (mark.title))
+
+    # Delete the mark
+    mark.delete()
+
+    # Redirect user
+    return redirect(index)
+
+
