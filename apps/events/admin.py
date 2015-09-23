@@ -15,6 +15,7 @@ from apps.events.models import GradeRule
 from apps.events.models import UserGroupRule
 from apps.events.models import Reservation
 from apps.events.models import Reservee
+from apps.events.models import Extras
 from apps.feedback.admin import FeedbackRelationInline
 
 
@@ -41,25 +42,37 @@ class RuleBundleInline(admin.TabularInline):
     inline_classes = ('grp-collapse grp-open',)  # style
 
 
+class ExtrasInline(admin.TabularInline):
+    model = Extras
+    extra = 1
+    max_num = 20
+    classes = ('grp-collapse grp-open',)  # style
+    inline_classes = ('grp-collapse grp-open',)  # style
+
+
 def mark_paid(modeladmin, request, queryset):
     queryset.update(paid=True)
 mark_paid.short_description = "Merk som betalt"
+
 
 def mark_not_paid(modeladmin, request, queryset):
     queryset.update(paid=False)
 mark_not_paid.short_description = "Merk som ikke betalt"
 
+
 def mark_attended(modeladmin, request, queryset):
     queryset.update(attended=True)
 mark_attended.short_description = "Merk som møtt"
+
 
 def mark_not_attended(modeladmin, request, queryset):
     queryset.update(attended=False)
 mark_not_attended.short_description = "Merk som ikke møtt"
 
+
 class AttendeeAdmin(admin.ModelAdmin):
     model = Attendee
-    list_display = ('user', 'event', 'paid', 'attended', 'note')
+    list_display = ('user', 'event', 'paid', 'attended', 'note', 'extras')
     list_filter = ('event__event__title',)
     actions = [mark_paid, mark_attended, mark_not_paid, mark_not_attended]
 
@@ -79,6 +92,12 @@ class AttendeeAdmin(admin.ModelAdmin):
 class CompanyEventAdmin(admin.ModelAdmin):
     model = CompanyEvent
     inlines = (CompanyInline,)
+
+
+class ExtrasAdmin(admin.ModelAdmin):
+    model = Extras
+    fk_name = 'choice'
+    # inlines = (ExtrasInline,)
 
 
 class RuleBundleAdmin(admin.ModelAdmin):
@@ -183,6 +202,7 @@ class ReservationAdmin(admin.ModelAdmin):
 admin.site.register(Event, EventAdmin)
 admin.site.register(Attendee, AttendeeAdmin)
 admin.site.register(RuleBundle, RuleBundleAdmin)
+admin.site.register(Extras, ExtrasAdmin)
 admin.site.register(GradeRule, GradeRuleAdmin)
 admin.site.register(UserGroupRule, UserGroupRuleAdmin)
 admin.site.register(FieldOfStudyRule, FieldOfStudyRuleAdmin)

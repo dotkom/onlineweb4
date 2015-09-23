@@ -1,0 +1,13 @@
+{% if attendance_event.extras %}
+    <div class="dropdown extras">
+      <button class="btn btn-default dropdown-toggle" type="button" id="choose-extras" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+        Velg et alternativ
+        <span class="caret"></span>
+      </button>
+      <ul class="dropdown-menu" aria-labelledby="choose-extras">
+        {% for choice in attendance_event.extras.all %}
+            <li><a href="#" onclick="Event.sendChoice({{ forloop.counter0 }})">{{ choice }}</a></li>
+        {% endfor %}
+      </ul>
+    </div>
+{% endif %}

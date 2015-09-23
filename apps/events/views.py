@@ -13,7 +13,7 @@ from django.core.mail import EmailMessage
 from django.core.signing import Signer, BadSignature
 from django.core.urlresolvers import reverse
 from django.db.models import Q
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.utils.translation import ugettext as _
 
@@ -54,6 +54,25 @@ def details(request, event_id, event_slug):
     if request.user:
         if event in get_group_restricted_events(request.user):
             user_access_to_event = True
+
+    if request.method == 'POST':
+        if request.is_ajax and 'action' in request.POST:
+            resp = {'message': "Feil!"}
+            if request.POST['action'] == 'extras':
+                if not event.is_attendance_event:
+                    return HttpResponse(u'Dette er ikke et påmeldingsarrangement.', status=400)
+
+                attendance_event = AttendanceEvent.objects.get(pk=event_id)
+
+                if not attendance_event.is_attendee(request.user):
+                    return HttpResponse(u'Du er ikke påmeldt dette arrangementet.', status=401)
+
+                attendee = Attendee.objects.get(event=attendance_event, user=request.user)
+                print(attendance_event.extras.all())
+                attendee.extras = attendance_event.extras.all()[int(request.POST['extras_id'])]
+                attendee.save()
+                resp['message'] = "Lagret!"
+                return JsonResponse(resp)
 
     context = {'event': event, 'ics_path': request.build_absolute_uri(reverse('event_ics', args=(event.id,)))}
 
