@@ -5,12 +5,18 @@ from django import forms
 
 ALLOWED_FILE_TYPES = [".jpg", ".jpeg", ".png", ".bmp"]
 
+
 class DocumentForm(forms.Form):
 
     file = forms.ImageField()
 
     def clean(self):
-        form_data = self.cleaned_data['file']
+
+        if 'file' not in self.cleaned_data:
+            self._errors['file'] = "File attribute missing."
+            return self
+        else:
+            form_data = self.cleaned_data['file']
 
         # Because PIL is a fucking idiot
         correct_file_name = _get_correct_file_name(form_data)
@@ -20,6 +26,7 @@ class DocumentForm(forms.Form):
 
         if file_extension not in ALLOWED_FILE_TYPES:
             self._errors['file'] = "File type not allowed (jpg, jpeg, png, bmp)"
+
         return form_data
 
 

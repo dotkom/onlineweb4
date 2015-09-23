@@ -1,6 +1,8 @@
 <div class="row">
     <div class="col-md-12">
-        <form id="image-upload" action="{% url 'gallery_upload' %}" class="dropzone dz-clickable" enctype="multipart/form-data">
+        <h2>Last opp bilder</h2>
+        <form method="POST" id="image-upload" action="/gallery/upload"
+              class="dropzone dz-clickable" enctype="multipart/form-data">
             {% csrf_token %}
         </form>
     </div>

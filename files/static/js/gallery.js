@@ -7,11 +7,14 @@
 
 var Gallery = (function ($, tools) {
 
+    var currentPage = 1;
+    var currentImages = [];
+
     // Binds all buttons and event listeners as well as
     // lazyloading for images
     var bindEventListeners = function () {
 
-        $("#image-input").change(function(){
+        $("#image-input").change(function() {
             readURL(this);
         });
 
@@ -43,7 +46,8 @@ var Gallery = (function ($, tools) {
             );
         });
 
-        $("#accept-crop-button").click(function() {
+        $("#accept-crop-button").on('click', function(e) {
+            e.preventDefault();
             crop_image();
         });
 
@@ -53,12 +57,42 @@ var Gallery = (function ($, tools) {
 
         $('#add-responsive-image').on('click', function (e) {
             e.preventDefault()
-            $('#image-selection-wrapper').slideToggle(200)
+            $('#image-selection-wrapper').slideToggle(200, function () {
+                window.location.href = '#image-selection-title'
+                $('#image-gallery-search').focus()
+            })
         })
 
         $('#upload-responsive-image').on('click', function (e) {
             e.preventDefault()
-            $('#image-upload-wrapper').slideToggle(200)
+            $('#image-upload-wrapper').slideToggle(200, function () {
+                window.location.href = '#image-gallery-title'
+            })
+        })
+
+        var searchImages = function (query) {
+            payload = { query: query }
+            tools.ajax('GET', '/gallery/search/', payload, function (data) {
+                console.log(data)
+                var html = '';
+                for (var i = 0; i < data.images.length; i++) {
+                    html += '<div class="col-md-4">'
+                    html += '<p>' + JSON.stringify(data.images) + '</p>'
+                    html += '</div>'
+                }
+                $('#image-gallery-serach-results').html(html)
+            }, function (xhr, thrownError, statusText) {
+                alert(thrownError)
+            })
+        }
+        $('#image-gallery-search').on('keyup', function (e) {
+            if (e.keyCode === 13) {
+                searchImages($(this).val())
+            }
+        })
+        $('#image-gallery-search-button').on('click', function(e) {
+            e.preventDefault()
+            searchImages($('#image-gallery-search').val())
         })
     }
 
@@ -234,7 +268,7 @@ var Gallery = (function ($, tools) {
 
         var imageName = getCurrentEditImageName();
         var imageId = getCurrentEditImageId();
-        var message = "Image '" + imageName + "' with id " + imageId + " was edited successfully!";
+        var message = "Bilde '" + imageName + "' med id " + imageId + " ble lagret!";
 
         setSuccessMessage(message);
         clearEditView();
@@ -250,7 +284,7 @@ var Gallery = (function ($, tools) {
         var image_name = $('#image-name');
         cropData.name = image_name.val();
 
-        if (name.length < 2) {
+        if (cropData.name.length < 2) {
             alert('Du må gi bildet et navn!');
             image_name.focus();
             return;
@@ -263,7 +297,7 @@ var Gallery = (function ($, tools) {
 
         setCropSpin();
 
-        $.post("crop_image", cropData, function() {
+        $.post("/gallery/crop_image", cropData, function() {
             imageEditingSuccessful();
         }).fail(function($xhr) {
             setErrorMessage($xhr.responseJSON);
@@ -274,7 +308,7 @@ var Gallery = (function ($, tools) {
 
     return {
         init: function () {
-            if ($('#image-upload-wrapper').length || $('#image-selection-wrapper')) {
+            if ($('#image-upload-wrapper').length || $('#image-selection-wrapper').length) {
 
                 $.ajaxSetup({
                     crossDomain: false, // obviates need for sameOrigin test
@@ -293,6 +327,8 @@ var Gallery = (function ($, tools) {
                 setInterval(function() {
                     updateUneditedFiles();
                 }, 3000);
+
+                $('#image-widget')
             }
         },
         widget: {

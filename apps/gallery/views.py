@@ -1,9 +1,9 @@
 #-*- coding: utf-8 -*-
 
 import json
+from django.conf import settings
 from django.shortcuts import get_object_or_404, redirect, render
 from django.http import JsonResponse, HttpResponse
-from django.views.generic import View
 
 from apps.gallery.models import UnhandledImage, ResponsiveImage
 from apps.gallery.forms import DocumentForm
@@ -55,7 +55,7 @@ def upload(request):
         if form.is_valid():
             return _handle_upload(request.FILES['file'])
 
-    return HttpResponse(status=500)
+    return HttpResponse(status=400, content=json.dumps({'success': False, 'message': 'Bad request or invalid type.'}))
 
 
 # If something goes wrong, all files will have to be deleted, this is not handled now
@@ -148,3 +148,33 @@ def _verify_crop_data(crop_data):
     return \
         'id' in crop_data and 'x' in crop_data and 'y' in crop_data and 'height' in crop_data \
         and 'width' in crop_data and 'name' in crop_data
+
+
+def search(request):
+    """
+    Performs a search request and returns a JSON response
+    :param request: Django Request object
+    :return: JsonResponse
+    """
+
+    if request.method != 'GET' or 'query' not in request.GET:
+        return JsonResponse(status=400, data={'error': 'Bad Request', 'status': 400})
+
+    query = request.GET['query']
+    matches = ResponsiveImage.objects.filter(name__icontains=query)
+
+    results = {
+        'total': len(matches),
+        'images': [{
+            'name': image.name,
+            'id': image.id,
+            'original': settings.MEDIA_URL + str(image.image_original),
+            'xs': settings.MEDIA_URL + str(image.image_xs),
+            'sm': settings.MEDIA_URL + str(image.image_sm),
+            'md': settings.MEDIA_URL + str(image.image_md),
+            'lg': settings.MEDIA_URL + str(image.image_lg),
+            'timestamp': image.timestamp.strftime('%Y-%M-%DT%H:%m:%s%Z')
+        } for image in matches]
+    }
+
+    return JsonResponse(data=results, status=200, safe=False)
