@@ -135,7 +135,7 @@ def add(request, order_type=0):
 
             try:
                 print(email_message)
-                email_sent = EmailMessage(unicode(subject), unicode(message), from_email, to_emails, [])
+                email_sent = EmailMessage(unicode(subject), unicode(message), from_email, to_emails, []).send()
             except:
                 email_sent = False
 
