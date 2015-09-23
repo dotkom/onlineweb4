@@ -1,0 +1,10 @@
+# Django
+Django==1.7.1
+django-dynamic-fixture==1.8.0
+
+# API
+django-tastypie==0.12.1
+
+# Testing
+django-nose==1.2
+coveralls==0.4.4

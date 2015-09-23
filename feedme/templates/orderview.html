@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}
+FeedMe
+{% endblock title %}
+
+{% block styles %}
+{{ block.super }}
+<link href="{{ STATIC_URL }}css/feedme.css" rel="stylesheet">
+{% endblock styles %}
+
+{% load admin_tags %}
+{% load css_stuff %}
+
+{% block submenu %}
+{% include "nav.html" %}
+{% endblock submenu %}
+
+{% block content %}
+
+<section id="feedMeAdmin">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="page-header">
+          <h1>{{ form.name|title }}</h1>
+        </div>
+        <!--{% include "messages.html" %}-->
+        <form action="" method="post" class="form-horizontal">
+        {% csrf_token %}
+        <fieldset>
+          {% for field in form %}
+            <div class="form-group">
+                <div class="col-md-2">{{ field.label_tag }}</div>
+                <div class="col-md-{% if field.errors %}7{% else %}10{% endif %}">{{ field|addcss:"form-control" }}</div>
+                {% if field.errors %}<div class="col-md-3 error">{{ field.errors }}</div>{% endif %}
+            </div>
+          {% endfor %}
+          <datalist id="extras_tags">
+              <option value="Hvitløksdressing">
+              <option value="Rømmedressing">
+          </datalist>
+          </fieldset>
+        <p>Remember to add price of soda/extras to the <em>total</em> price</p>
+        <input type="submit" class="btn btn-primary" value="Save" />
+      </div>
+    </div>
+  </div>
+</section>
+<script>
+    var username = "{{ user.username }}";
+</script>
+{% endblock content %}

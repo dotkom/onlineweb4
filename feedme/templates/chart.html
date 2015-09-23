@@ -1,0 +1,32 @@
+<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+<script type="text/javascript">
+    google.load('visualization', '1', {packages: ['corechart']});
+    google.setOnLoadCallback(drawChart);
+
+    function drawChart() {
+        var data = google.visualization.arrayToDataTable([
+            ['Restaurant', 'Votes'],
+            {% for answer, result in results.items %}
+                ['{{ answer }}', {{ result }}],
+            {% endfor %}
+        ]);
+
+        var maxValue = data.getColumnRange(1)['max'];
+
+        var options = {
+            title: 'Poll results',
+            hAxis: {title: 'Restaurant', titleTextStyle: {color: 'blue'}},
+            vAxis: {minValue: 0, maxValue: maxValue, format: '#'}
+        };
+
+        var chart = new google.visualization.ColumnChart(document.getElementById('chart_div'));
+
+        chart.draw(data, options);
+
+    }
+window.addEventListener('resize', function(){
+    drawChart();
+});
+</script>
+
+<div id="chart_div" style='width: 100%; height: 500px;'></div>
