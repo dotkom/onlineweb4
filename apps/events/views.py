@@ -266,6 +266,15 @@ def _search_indexed(request, query, filters):
     events = Event.objects.filter(**kwargs).order_by(order_by).prefetch_related(
             'attendance_event', 'attendance_event__attendees', 'attendance_event__reserved_seats',
             'attendance_event__reserved_seats__reservees')
+
+    #Filters events that are restricted
+    display_events = set()
+
+    for event in events:
+        if can_display_event(event, request.user):
+            display_events.add(event.pk)
+
+    events = events.filter(pk__in=display_events)
     
     if query:
         for result in watson.search(query, models=(events,)):

@@ -49,7 +49,6 @@ def can_display_event(event, user):
         return True
 
     if not user:
-        #Redirect to login
         return False
 
     groups = restriction[0].groups

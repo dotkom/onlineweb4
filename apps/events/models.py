@@ -472,6 +472,7 @@ class AttendanceEvent(models.Model):
             Rules
             Marks
             Suspension
+            GroupRestriction
         @param User object
         The returned dict contains a key called 'status_code'. These codes follow the HTTP
         standard in terms of overlying scheme.
@@ -550,6 +551,16 @@ class AttendanceEvent(models.Model):
                 response['status_code'] = 501
 
                 return response
+
+
+        #Checks if the event is group restricted and if the user is in the right group
+        from apps.events.utils import can_display_event
+        if not can_display_event(self.event, user):
+            response['status'] = False
+            response['message'] = _(u"Du har ikke tilgang til og melde deg på dette arrangementet.")
+            response['status_code'] = 501
+
+            return response
 
 
         # No objections, set eligible.
