@@ -712,5 +712,10 @@ class Reservee(models.Model):
 reversion.register(Reservee)
 
 
+class GroupRestriction(models.Model):
+    event = models.ForeignKey(Event)
+    groups = models.ManyToManyField(Group, null=True, blank=True)
+
+
 # Registrations for watson indexing
 watson.register(Event)
