@@ -5,16 +5,16 @@ from collections import OrderedDict
 
 from django.conf import settings
 from django.contrib.auth.models import Group
-from django.core.mail import send_mail
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.template.defaultfilters import slugify
 from django.utils import timezone
 from django.utils.translation import ugettext as _
+from django.contrib.contenttypes.models import ContentType
 
 from apps.authentication.models import OnlineUser as User, FIELD_OF_STUDY_CHOICES
 from apps.companyprofile.models import Company
-from apps.marks.models import Mark, get_expiration_date
+from apps.marks.models import Mark, get_expiration_date, Suspension
 
 import reversion
 import watson
@@ -64,6 +64,8 @@ class Event(models.Model):
         from apps.events.utils import find_image_versions
         return find_image_versions(self)
 
+    #TODO move payment and feedback stuff to attendance event when dasboard is done
+
     def feedback_users(self):
         if self.is_attendance_event:
             return [a.user for a in self.attendance_event.attendees.filter(attended=True)]
@@ -83,30 +85,6 @@ class Event(models.Model):
             info[_(u'Venteliste')] = self.attendance_event.number_on_waitlist
 
         return info
-
-    def payment_description(self):
-        return self.title
-
-    def payment_complete(self, user):
-        attendee = Attendee.objects.filter(event=self.attendance_event, user=user)
-
-        if attendee:
-            attendee[0].paid = True
-            attendee[0].save()
-        else:
-            Attendee.objects.create(event=self.attendance_event, user=user, paid=True)
-
-    def payment_mail(self):
-        if self.event_type == 1 or self.event_type == 4: # Sosialt & Utflukt
-            return settings.EMAIL_ARRKOM
-        elif self.event_type == 2: #Bedpres
-            return settings.EMAIL_BEDKOM
-        elif self.event_type == 3: #Kurs
-            return settings.EMAIL_FAGKOM
-        elif self.event_type == 5: # Ekskursjon
-            return settings.EMAIL_EKSKOM
-        else:
-            return settings.DEFAULT_FROM_EMAIL
 
     def is_attendance_event(self):
         """ Returns true if the event is an attendance event """
@@ -461,7 +439,19 @@ class AttendanceEvent(models.Model):
     def waitlist_enabled(self):
         return self.waitlist
 
+    def payment(self):
+        #Importing here to awoid circular dependency error
+        from apps.payment.models import Payment
+        try:
+            payment = Payment.objects.get(content_type=ContentType.objects.get_for_model(AttendanceEvent),
+                object_id=self.event.id)
+        except Payment.DoesNotExist:
+            payment = None
+
+        return payment
+
     def notify_waiting_list(self, host, unattended_user=None, extra_capacity=1):
+        from apps.events.utils import handle_waitlist_bump #Imported here to avoid circular import
         # Notify next user on waiting list
         wait_list = self.waitlist_qs
         if wait_list:
@@ -475,16 +465,9 @@ class AttendanceEvent(models.Model):
             if not on_wait_list:
                 # Send mail to first user on waiting list
                 attendees = wait_list[:extra_capacity]
-                email_message = _(u"""
-Du har stått på venteliste for arrangementet "%s" og har nå fått plass.
-Det kreves ingen ekstra handling fra deg med mindre du vil melde deg av.
 
-For mer info:
-http://%s%s
-""") % (self.event.title, host, self.event.get_absolute_url())
-                for attendee in attendees:
-                    send_mail(_(u'Du har fått plass på et arrangement'), email_message,
-                              settings.DEFAULT_FROM_EMAIL, [attendee.user.email])
+                handle_waitlist_bump(self.event, host, attendees, self.payment())
+
 
     def is_eligible_for_signup(self, user):
         """
@@ -494,6 +477,7 @@ http://%s%s
             Room on event
             Rules
             Marks
+            Suspension
         @param User object
         The returned dict contains a key called 'status_code'. These codes follow the HTTP
         standard in terms of overlying scheme.
@@ -561,6 +545,18 @@ http://%s%s
             response['message'] = _(u'Påmeldingen har ikke åpnet enda.')
             response['status_code'] = 501
             return response
+
+
+        #Is suspended
+        suspensions = Suspension.objects.filter(user=user, active=True)
+        for suspension in suspensions:
+            if not suspension.expiration_date or suspension.expiration_date > timezone.now().date():
+                response['status'] = False
+                response['message'] = _(u"Du er suspandert og kan ikke melde deg på.")
+                response['status_code'] = 501
+
+                return response
+
 
         # No objections, set eligible.
         response['status'] = True

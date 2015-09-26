@@ -1,3 +1,4 @@
+# -*- coding: utf8 -*-
 import os
 import sys
 import wiki
@@ -62,7 +63,7 @@ BASE_URL = 'https://online.ntnu.no'
 AUTH_USER_MODEL = 'authentication.OnlineUser'
 LOGIN_URL = '/auth/login/'
 
-MEDIA_ROOT = os.path.join(PROJECT_ROOT_DIRECTORY, 'uploaded_media') # Override this in local.py in prod.
+MEDIA_ROOT = os.path.join(PROJECT_ROOT_DIRECTORY, 'uploaded_media')  # Override this in local.py in prod.
 MEDIA_URL = '/media/'
 
 STATIC_ROOT = os.path.join(PROJECT_ROOT_DIRECTORY, 'static')
@@ -163,8 +164,15 @@ USER_SEARCH_GROUPS = [
 ]
 
 # Online stripe test keys
-STRIPE_PUBLIC_KEY = "pk_test_Ur8B7E5uvheMlpOUVu9SGGbn"
-STRIPE_PRIVATE_KEY = "sk_test_Hrp6EUUffY7Pc4xnqwmoyhPm"
+STRIPE_PUBLIC_KEYS = [
+    "pk_test_SDGGPO6MQSMAwlwySCzNJTw9",
+    "pk_test_1BjvVBYc0pdZLlC8EN1JY0Ur"
+]
+
+STRIPE_PRIVATE_KEYS = [
+    "sk_test_i1AL1Z4An77TMZMpgA9d4KEM",
+    "sk_test_F4wQkOgKHb8OI92tJeZmjDxg"
+]
 
 #List of mailing lists, used in update_sympa_memcache_from_sql.py
 PUBLIC_LISTS = [
@@ -197,6 +205,7 @@ INSTALLED_APPS = (
     'crispy_forms',
     'django_extensions',
     'django_dynamic_fixture',
+    'oauth2_provider',
     'captcha',
     'compressor',
     'pdfdocument',
@@ -238,6 +247,8 @@ INSTALLED_APPS = (
     'apps.mailinglists',
     'apps.inventory',
     'apps.payment',
+    'apps.posters',
+    'apps.sso',
     'apps.splash',
     'scripts',
 
@@ -253,6 +264,17 @@ INSTALLED_APPS = (
     'wiki.plugins.macros',
 
 )
+
+
+# SSO / OAuth2 settings
+if 'apps.sso' in INSTALLED_APPS:
+    from apps.sso.settings import OAUTH2_SCOPES
+    OAUTH2_PROVIDER = {
+        'SCOPES': OAUTH2_SCOPES,
+        'ACCESS_TOKEN_EXPIRE_SECONDS': 3600,
+        'AUTHORIZATION_CODE_EXPIRE_SECONDS': 60,
+    }
+    OAUTH2_PROVIDER_APPLICATION_MODEL = 'sso.Client'
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to

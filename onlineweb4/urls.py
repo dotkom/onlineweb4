@@ -108,6 +108,11 @@ if 'apps.offline' in settings.INSTALLED_APPS:
         url(r'^offline/',           include('apps.offline.urls')),
     )
 
+if 'apps.posters' in settings.INSTALLED_APPS:
+    urlpatterns += patterns('',
+        url(r'^dashboard/posters/',          include('apps.posters.dashboard.urls')),
+    )
+
 if 'apps.profiles' in settings.INSTALLED_APPS:
     urlpatterns += patterns('',
         url(r'^profile/',           include('apps.profiles.urls')),
@@ -127,6 +132,13 @@ if 'apps.genfors' in settings.INSTALLED_APPS:
 if 'apps.splash' in settings.INSTALLED_APPS:
     urlpatterns += patterns('',
         url(r'^splash/',           include('apps.splash.urls')),
+    )
+
+if 'apps.sso' in settings.INSTALLED_APPS:
+    urlpatterns += patterns(
+        '',
+        url(r'^sso/', include('apps.sso.urls')),
+        url(r'^dashboard/auth/sso/', include('apps.sso.dashboard.urls', namespace='dashboard', app_name='sso')),
     )
 
 # feedme
