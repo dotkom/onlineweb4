@@ -130,13 +130,9 @@ def add(request, order_type=0):
                     'signature': _('\n\nVennlig hilsen Linjeforeningen Online')
             }
             from_email = settings.EMAIL_PROKOM
-            to_emails = [settings.EMAIL_PROKOM, request.user.get_email()]
+            to_emails = [settings.EMAIL_PROKOM, request.user.get_email().email]
 
-            try:
-                email_sent = EmailMessage(unicode(subject), unicode(message), from_email, to_emails, []).send()
-            except:
-                email_sent = False
-
+            email_sent = EmailMessage(unicode(subject), unicode(email_message), from_email, to_emails, []).send()
             if email_sent:
                 messages.success(request, 'Opprettet bestilling')
             else:
