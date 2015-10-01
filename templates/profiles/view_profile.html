@@ -2,6 +2,8 @@
 {% load gravatar_url_resolver %}
 {% load crispy_forms_tags %}
 {% load compress %}
+{% load firstof from future %}
+
 {% block styles %}
     {{ block.super }}
     {% compress css %}
