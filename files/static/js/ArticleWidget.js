@@ -21,7 +21,6 @@ function ArticleWidget (Utils){
                         if (!articles[i].image) {
                             articles[i].image = ''
                         }
-                        
                         if (i <= 1) {
                             output_featured += '<div class="col-md-6"><a href="/article/'+articles[i].id+'/'+articles[i].slug+'"><img src="'+articles[i].image.sm+'" alt="'+articles[i].heading+'"><h3>'+articles[i].heading+'</h3></a><p>'+articles[i].ingress_short+'</p></div>';
                         }

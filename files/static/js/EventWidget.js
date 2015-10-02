@@ -14,8 +14,9 @@ function EventWidget (Utils){
             'data': {},
             success: function (data) {
                 var events = data.results;
+                var len = (events.length > 8) ? 8 : events.length;
 
-                if (events.length > 0) {
+                if (len > 0) {
 
                     // Fragment to append and global rowNode
                     var fragment = document.createDocumentFragment();
@@ -25,6 +26,7 @@ function EventWidget (Utils){
                     $.each(events, function (index) {
                         // If the index is even, create a row and append item. Else just append item to row.
                         // (This is to distribute items left and right)
+                        if (index >= 8) { return } // stop adding events if we're past 8
                         if (index < 2) {
                             if (index % 2 === 0) {
                                 var htmlRow = '<div class="row clearfix hero"></div>';
@@ -71,9 +73,9 @@ function EventWidget (Utils){
      * @return string
      */
     function createEventItem(item) {
-        var event_image = item.image_events_thumb;
+        var event_image = item.images[0];
         if ($(window).innerWidth() < 768) {
-            event_image = item.image_events_main;
+            event_image = item.images[1];
         }
         html = '<div><div class="col-sm-8 col-md-4" id="eventdescription">';
         html +=     '<div class="hero-title">';
@@ -88,7 +90,7 @@ function EventWidget (Utils){
         html += '<div class="col-sm-4 col-md-2" id="eventimage">';
         html +=     '<div id="event-carousel" class="carousel slide">';
         html +=         '<div class="carousel-inner">';
-        if(item.image_events_thumb) {
+        if(item.images.length > 0) {
             html +=             '<div class="item active">';
             html +=                 '<a href="events/' + item.id + '/' + item.slug + '">';
             html +=                         '<img src="' + event_image + '" width="100%" alt="" >';
