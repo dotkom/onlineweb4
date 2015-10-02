@@ -195,35 +195,37 @@ function ArticleArchive (Utils) {
         if (is_more_elements) {
             // The api-call
             Utils.makeApiRequest({
-                'url': '/api/v0/article/all/?format=json&offset='+((page-1)*elm_per_page)+'&limit='+elm_per_page+q, // Calcuating the offset, grabbing the limit and supplying the query from the settings
+                'url': '/api/v1/articles/?format=json&page='+page,
                 'method': 'GET',
                 'data': {},
                 success: function(data) {
                     // Variables
                     var num = 1;
                     var output = '';
+                    var articles = data.results;
+                    var len = (articles.length > 8) ? 8 : articles.length; // Set length of loop to 8 if num articles is more than 8.
 
                     // The loop
-                    for (var i = 0; i < data.articles.length; i++) {
+                    for (var i = 0; i < len; i++) {
                         // The markup
                         output += '<div class="row">';
                         output += '<div class="col-md-12 article'+((page == 1 && !overwrite)?'':' article-hidden')+'">';
                         output += '  <div class="row">';
                         output += '    <div class="col-md-4">';
                         output += '      <div class="row">';
-                        output += '        <a href="/article/'+data.articles[i].id+'/'+data.articles[i].slug+'">';
-                        output += '          <img src="'+data.articles[i].image.sm+'" width="100%" alt="'+data.articles[i].heading+'" />';
+                        output += '        <a href="/article/'+articles[i].id+'/'+articles[i].slug+'">';
+                        output += '          <img src="'+articles[i].image.sm+'" width="100%" alt="'+articles[i].heading+'" />';
                         output += '        </a>';
                         output += '      </div><!-- end row -->';
                         output += '    </div><!-- end col-md-4 -->';
                         output += '    <div class="col-md-8">';
                         output += '      <div class="pull-right article-detail-meta">';
-                        output += '        <span>'+moment(data.articles[i].published_date).format('DD.MM.YYYY')+'</span>';
+                        output += '        <span>'+moment(articles[i].published_date).format('DD.MM.YYYY')+'</span>';
                         output += '      </div>';
-                        output += '      <a href="'+data.articles[i].id+'/'+data.articles[i].slug+'"><h3>'+data.articles[i].heading+'</h3></a>';
-                        output += '      <p>'+data.articles[i].ingress_short+'</p>';
+                        output += '      <a href="'+articles[i].id+'/'+articles[i].slug+'"><h3>'+articles[i].heading+'</h3></a>';
+                        output += '      <p>'+articles[i].ingress_short+'</p>';
                         output += '      <div class="meta"><div class="row"><div class="col-md-12">';
-                        output += '        <p><strong>Publisert av: </strong>' + data.articles[i].author.first_name + ' ' + data.articles[i].author.last_name + '</p>';
+                        output += '        <p><strong>Publisert av: </strong>' + articles[i].author.first_name + ' ' + articles[i].author.last_name + '</p>';
                         output += '      </div></div></div>';
                         output += '    </div><!-- end col-md-8 -->';
                         output += '  </div><!-- end row -->';

@@ -9,18 +9,20 @@ function EventWidget (Utils){
         var now = moment();
 
         Utils.makeApiRequest({
-            'url':'/api/v0/events/?event_end__gte=' + now.format('YYYY-MM-DD') + '&order_by=event_start&limit=10&format=json',
+            'url':'/api/v1/events/?event_end__gte=' + now.format('YYYY-MM-DD') + '&ordering=event_start&format=json',
             'method' : 'GET',
             'data': {},
             success: function (data) {
-                if (data.events.length > 0) {
+                var events = data.results;
+
+                if (events.length > 0) {
 
                     // Fragment to append and global rowNode
                     var fragment = document.createDocumentFragment();
                     var eventList = $('<ul class="event-list clearfix"></ul>');
                     var rowNode;
 
-                    $.each(data.events, function (index) {
+                    $.each(events, function (index) {
                         // If the index is even, create a row and append item. Else just append item to row.
                         // (This is to distribute items left and right)
                         if (index < 2) {
@@ -94,7 +96,7 @@ function EventWidget (Utils){
             html +=             '</div>';
         }
         for(var i=0; i < item.company_event.length; i++){
-            html +=         '<div class="item ' + (!item.image_events_thumb && i === 0 ? 'active' : '') + '">';
+            html +=         '<div class="item ' + (!item.images[0] && i === 0 ? 'active' : '') + '">';
             html +=             '<a href="events/' + item.id + '/' + item.slug + '">';
             html +=                 '<img src="' + item.company_event[i].companies.old_image_companies_thumb + '" width="100%" alt="" />';
             html +=             '</a>';
