@@ -9,12 +9,13 @@ function ArticleWidget (Utils){
             'data': {},
             success: function(data) {
                 var articles = data.results;
-                if (articles.length > 0) {
+                var len = (articles.length > 8) ? 8 : articles.length;
+                if (len > 0) {
                     var output_featured = '';
                     var output_normal = '';
 
                     // The loop
-                    for (var i = 0; i < articles.length; i++) {
+                    for (var i = 0; i < len; i++) {
                         if (i <= 1) {
                             output_featured += '<div class="col-md-6"><a href="/article/'+articles[i].id+'/'+articles[i].slug+'"><img src="'+articles[i].images[1]+'" alt="'+articles[i].heading+'"><h3>'+articles[i].heading+'</h3></a><p>'+articles[i].ingress_short+'</p></div>';
                         }
