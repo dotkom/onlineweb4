@@ -217,6 +217,7 @@ INSTALLED_APPS = (
     'guardian',
     'stripe',
     'rest_framework',
+    'django_filters',
 
     # Django apps
     'django.contrib.admin',
@@ -357,6 +358,10 @@ IMPORT_DDF_MODELS = False
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.SessionAuthentication',  # Allows users to be logged in to browsable API
+    ),
+    'DEFAULT_FILTER_BACKENDS': (
+        'rest_framework.filters.DjangoFilterBackend',
+        'rest_framework.filters.OrderingFilter',
     ),
     'DEFAULT_PARSER_CLASSES': (
         'rest_framework.parsers.JSONParser',

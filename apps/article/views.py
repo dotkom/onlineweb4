@@ -120,7 +120,7 @@ class ArticleViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.
     queryset = Article.objects.filter(published_date__lte=timezone.now()).order_by('-published_date')
     serializer_class = ArticleSerializer
     permission_classes = (AllowAny,)
-    filter_fields = ('year', 'month', 'article_tags',)
+    filter_fields = ('article_tags',)
 
     def get_queryset(self):
         queryset = self.queryset

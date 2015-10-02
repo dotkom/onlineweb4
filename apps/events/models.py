@@ -93,6 +93,13 @@ class Event(models.Model):
         except AttendanceEvent.DoesNotExist:
             return False
 
+    @property
+    def company_event(self):
+        try:
+            return CompanyEvent.objects.filter(event=self)
+        except CompanyEvent.DoesNotExist:
+            return None
+
     def feedback_mail(self):
         if self.event_type == 1 or self.event_type == 4: # Sosialt & Utflukt
             return settings.EMAIL_ARRKOM
