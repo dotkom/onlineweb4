@@ -53,7 +53,7 @@ def handle_waitlist_bump(event, host, attendees, payment=None):
             for attendee in attendees:
                 payment.create_payment_delay(attendee.user, extended_deadline)
             message += u"Dette arrangementet krever betaling og du må betale innen 48 timer."
-        
+
         elif payment.payment_type == 2: #Deadline
             if payment.deadline > extended_deadline: #More than 2 days left of payment deadline
                 message += u"Dette arrangementet krever betaling og fristen for og betale er %s" % (payment.deadline.strftime('%-d %B %Y kl: %H:%M'))
@@ -61,7 +61,7 @@ def handle_waitlist_bump(event, host, attendees, payment=None):
                 for attendee in attendees:
                     payment.create_payment_delay(attendee.user, extended_deadline)
                 message += u"Dette arrangementet krever betaling og du har 48 timer på å betale"
-        
+
         elif payment.payment_type == 3: #Delay
             deadline = timezone.now() + timedelta(days=payment.delay)
             for attendee in attendees:
@@ -177,11 +177,9 @@ class SplashCalendar(Calendar):
 def find_image_versions(event):
     img = event.image
     img_strings = []
-    print("gnna find sm imgs")
 
     for ver in VERSIONS.keys():
         if ver.startswith('events_'):
-            print(ver)
             img_strings.append(img.version_generate(ver).url)
 
     return img_strings
