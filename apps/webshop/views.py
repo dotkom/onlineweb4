@@ -1,10 +1,18 @@
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.views.generic import TemplateView, DetailView
 from apps.webshop.models import Category, Product, Order, OrderLine
 from apps.webshop.forms import OrderForm
 
 
-class CartMixin(object):
+class LoginRequiredMixin(object):
+    @classmethod
+    def as_view(cls, **initkwargs):
+        view = super(LoginRequiredMixin, cls).as_view(**initkwargs)
+        return login_required(view)
+
+
+class CartMixin(LoginRequiredMixin):
     def get_context_data(self, **kwargs):
         context = super(CartMixin, self).get_context_data(**kwargs)
         context['order_line'] = self.current_order_line()
