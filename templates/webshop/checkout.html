@@ -47,7 +47,11 @@
 <p><b>Delsum ({{ count }} ordre{{ count|pluralize:'r' }})</b>: {{ order_line.subtotal }},-</p>
 {% endwith %}
 
-<p><a class="btn btn-lg btn-success" href="#">Betal</a></p>
+<form method="POST">
+    {% csrf_token %}
+    <p><button class="btn btn-lg btn-success" type="submit">Betal</button></p>
+</form>
+
 <form method="POST" action="{% url 'webshop_remove_orders' %}">
     {% csrf_token %}
     <p><button class="btn btn-primary" type="submit">Tøm handlekurv</button></p>
