@@ -106,14 +106,14 @@ def add(request, order_type=0):
             subject = '[ProKom] Ny bestilling for %s' % title
             email_message = '%(message)s%(signature)s' % {
                     'message': _('''
-                    Det har blitt registrert en ny %(order_type)sbestilling pa Online sine nettsider. Dette er bestilling nummer %(id)s.
-                    \n
-                    Antall og type: %(num)s * %(order_type)s\n
-                    Arrangement: %(event_name)s\n
-                    Bestilt av: %(ordered_by)s i %(ordered_by_committee)s\n
-                    Bestilt dato: %(ordered_date)s\n
-                    \n
-                    For mer informasjon, sjekk ut bestillingen her: %(absolute_url)s
+Det har blitt registrert en ny %(order_type)sbestilling pa Online sine nettsider. Dette er bestilling nummer %(id)s.
+\n
+Antall og type: %(num)s * %(order_type)s\n
+Arrangement: %(event_name)s\n
+Bestilt av: %(ordered_by)s i %(ordered_by_committee)s\n
+Bestilt dato: %(ordered_date)s\n
+\n
+For mer informasjon, sjekk ut bestillingen her: %(absolute_url)s
                     '''
                     % {
                         'site': '',
@@ -130,13 +130,9 @@ def add(request, order_type=0):
                     'signature': _('\n\nVennlig hilsen Linjeforeningen Online')
             }
             from_email = settings.EMAIL_PROKOM
-            to_emails = [settings.EMAIL_PROKOM, request.user.get_email()]
+            to_emails = [settings.EMAIL_PROKOM, request.user.get_email().email]
 
-            try:
-                email_sent = EmailMessage(unicode(subject), unicode(message), from_email, to_emails, []).send()
-            except:
-                email_sent = False
-
+            email_sent = EmailMessage(unicode(subject), unicode(email_message), from_email, to_emails, []).send()
             if email_sent:
                 messages.success(request, 'Opprettet bestilling')
             else:
