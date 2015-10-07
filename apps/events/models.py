@@ -737,7 +737,11 @@ reversion.register(Reservee)
 
 
 class GroupRestriction(models.Model):
-    event = models.ForeignKey(Event)
+    event = models.OneToOneField(
+        Event,
+        primary_key=True,
+        related_name='group_restriction')
+    
     groups = models.ManyToManyField(Group, null=True, blank=True)
 
 
