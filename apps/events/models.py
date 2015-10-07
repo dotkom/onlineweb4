@@ -741,8 +741,15 @@ class GroupRestriction(models.Model):
         Event,
         primary_key=True,
         related_name='group_restriction')
-    
+
     groups = models.ManyToManyField(Group, null=True, blank=True)
+
+    class Meta:
+        verbose_name = _("restriksjon")
+        verbose_name_plural = _("restriksjoner")
+        permissions = (
+            ('view_restriction', 'View Restriction'),
+        )
 
 
 # Registrations for watson indexing
