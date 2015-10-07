@@ -1,6 +1,6 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.views.generic import TemplateView, DetailView
+from django.views.generic import TemplateView, DetailView, RedirectView
 from apps.webshop.models import Category, Product, Order, OrderLine
 from apps.webshop.forms import OrderForm
 
@@ -84,3 +84,16 @@ class ProductDetail(CartMixin, DetailView):
 
 class Checkout(CartMixin, TemplateView):
     template_name = 'webshop/checkout.html'
+
+
+class RemoveOrder(CartMixin, RedirectView):
+    pattern_name = 'webshop_checkout'
+
+    def post(self, request, *args, **kwargs):
+        order_line = self.current_order_line()
+        order_id = request.POST.get('id')
+        if order_id:
+            Order.objects.filter(order_line=order_line, id=order_id).delete()
+        else:
+            Order.objects.filter(order_line=order_line).delete()
+        return super(RemoveOrder, self).post(request, *args, **kwargs)

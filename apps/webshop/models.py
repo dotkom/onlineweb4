@@ -64,12 +64,12 @@ class Order(models.Model):
     product = models.ForeignKey('Product')
     order_line = models.ForeignKey('OrderLine', related_name='orders')
     # Price of product when ordered
-    price = models.DecimalField(max_digits=10, decimal_places=2)
+    price = models.DecimalField(max_digits=10, decimal_places=2, blank=True)
     # Quantity of products ordered
     quantity = models.PositiveIntegerField(default=1, validators=[MinValueValidator(1)])
 
     @property
-    def price(self):
+    def calculate_price(self):
         return self.product.price * self.quantity
 
     class Meta:

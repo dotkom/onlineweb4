@@ -27,7 +27,12 @@
         <td>
             <p>{{ order.product }}</p>
             <p>{{ order.product.short }}</p>
-            <p><a href="#">Fjern</a></p>
+            <form method="POST" action="{% url 'webshop_remove_orders' %}">
+                {% csrf_token %}
+                <input type="hidden" name="id" value="{{ order.id }}">
+                <p><button class="btn btn-primary" type="submit">Fjern</button></p>
+            </form>
+            <p>
         </td>
         <td>
             {{ order.product.price }},-
@@ -37,16 +42,20 @@
     </tr>
 {% endfor %}
 </table>
-{% else %}
-Handlekurven din er tom
-{% endif %}
 
 {% with count=order_line.count_orders %}
 <p><b>Delsum ({{ count }} ordre{{ count|pluralize:'r' }})</b>: {{ order_line.subtotal }},-</p>
 {% endwith %}
 
 <p><a class="btn btn-lg btn-success" href="#">Betal</a></p>
+<form method="POST" action="{% url 'webshop_remove_orders' %}">
+    {% csrf_token %}
+    <p><button class="btn btn-primary" type="submit">Tøm handlekurv</button></p>
+</form>
 
-<p><a class="btn btn-primary" href="#">Tøm handlekurv</a></p>
+{% else %}
+Handlekurven din er tom
+{% endif %}
+
 {% endblock %}
 </div>
