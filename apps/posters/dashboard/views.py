@@ -19,6 +19,7 @@ from guardian.decorators import permission_required
 from guardian.models import UserObjectPermission, GroupObjectPermission
 # from guardian.core import ObjectPermissionChecker
 import guardian
+from pytz import timezone as tz
 
 from datetime import datetime, timedelta
 
@@ -29,7 +30,7 @@ from apps.posters.forms import AddForm, AddPosterForm, AddBongForm, AddOtherForm
 # from apps.dashboard.posters.models import PosterForm
 from apps.companyprofile.models import Company
 from apps.posters.models import Poster, OrderMixin
-from apps.posters.permissions import has_view_perms, has_view_all_perms
+from apps.posters.permissions import has_view_perms, has_view_all_perms, has_edit_perms
 
 
 @ensure_csrf_cookie
@@ -54,8 +55,7 @@ def index(request):
 
     context['new_orders'] = orders.filter(assigned_to=None)
     context['active_orders'] = orders.filter(finished=False).exclude(assigned_to=None)
-    context['hanging_orders'] = orders.filter(finished=True,
-                                              display_to__lte=datetime.now()+timedelta(days=3))
+    context['old_orders'] = orders.filter(finished=True)
 
     context['workers'] = User.objects.filter(groups=Group.objects.get(name='proKom'))
 
@@ -102,28 +102,35 @@ def add(request, order_type=0):
 
             title = unicode(poster)
 
+            # Prettify and localize dates
+            event_date = \
+                poster.event.event_start.astimezone(tz('Europe/Oslo')).strftime("%-d %B %Y kl %H:%M") \
+                if poster.event else poster.display_from
+            ordered_date = poster.ordered_date.astimezone(tz('Europe/Oslo')).strftime("%-d %B %Y kl %H:%M")
+
             # The great sending of emails
             subject = '[ProKom] Ny bestilling for %s' % title
             email_message = '%(message)s%(signature)s' % {
                     'message': _('''
 Det har blitt registrert en ny %(order_type)sbestilling pa Online sine nettsider. Dette er bestilling nummer %(id)s.
 \n
-Antall og type: %(num)s * %(order_type)s\n
-Arrangement: %(event_name)s\n
-Bestilt av: %(ordered_by)s i %(ordered_by_committee)s\n
-Bestilt dato: %(ordered_date)s\n
+Antall og type(r): %(num)s x %(order_type)s%(bongs)s\n
+%(poster_order)s (%(event_date)s)\n
+Bestilt av %(ordered_by)s i %(ordered_by_committee)s den %(ordered_date)s.\n
 \n
 For mer informasjon, sjekk ut bestillingen her: %(absolute_url)s
                     '''
                     % {
                         'site': '',
-                        'order_type': type_name.lower(),
-                        'num': poster.amount,
+                        'order_type': type_name.lower().rstrip(),
+                        'num': '%s' % poster.amount,
+                        'bongs': ', %s x bong' % poster.bong if poster.bong > 0 else '' if poster.bong > 0 else '',
                         'ordered_by': poster.ordered_by,
                         'ordered_by_committee': poster.ordered_committee,
                         'id': poster.id,
-                        'event_name': title,
-                        'ordered_date': poster.ordered_date,
+                        'poster_order': title,
+                        'event_date': event_date,
+                        'ordered_date': ordered_date,
                         'absolute_url': request.build_absolute_uri(poster.get_dashboard_url())
                         }
                     ),
@@ -170,7 +177,7 @@ def edit(request, order_id=None):
     if order_id:
         poster = get_object_or_404(Poster, pk=order_id)
 
-    if request.user != poster.ordered_by and 'proKom' not in request.user.groups:
+    if request.user != poster.ordered_by and 'proKom' not in request.user.groups.all():
         raise PermissionDenied
 
     if request.POST:
@@ -209,6 +216,8 @@ def detail(request, order_id=None):
     context["order_type_name"] = type_name
 
     if request.method == 'POST':
+        if not has_edit_perms(request.user, poster):
+            raise PermissionDenied
         poster_status = request.POST.get('completed')
         if poster_status == 'true' or poster_status == 'false':
             poster.toggle_finished()
