@@ -52,12 +52,12 @@
         {{ product.description }}
     </div>
     <div class="col-sm-5">
-        {% for product in product.category.products.all %}
+        {% for related_product in product.related_products %}
         <div class="thumbnail">
-            <img src="{{ product.images.first.image.url }}">
+            <img src="{{ related_product.images.first.image.url }}">
             <div class="caption">
-                <h3>{{ product }}</h3>
-                <p>{{ product.short }}</p>
+                <h3>{{ related_product }}</h3>
+                <p>{{ related_product.short }}</p>
             </div>
         </div>
         {% endfor %}

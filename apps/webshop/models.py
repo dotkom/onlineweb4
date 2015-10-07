@@ -21,6 +21,9 @@ class Product(models.Model):
     def get_absolute_url(self):
         return reverse('webshop_product', args=[str(self.slug)])
 
+    def related_products(self):
+        return self.category.products.exclude(id=self.id)
+
     def __unicode__(self):
         return self.name
 
