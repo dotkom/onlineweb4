@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.views.generic import TemplateView, DetailView, RedirectView
@@ -19,7 +20,7 @@ class CartMixin(LoginRequiredMixin):
         return context
 
     def current_order_line(self):
-        order_line = OrderLine.objects.filter(user=self.request.user).first()
+        order_line = OrderLine.objects.filter(user=self.request.user, paid=False).first()
         if not order_line:
             order_line = OrderLine.objects.create(user=self.request.user)
         return order_line
@@ -84,6 +85,15 @@ class ProductDetail(CartMixin, DetailView):
 
 class Checkout(CartMixin, TemplateView):
     template_name = 'webshop/checkout.html'
+
+    def post(self, request, *args, **kwargs):
+        order_line = self.current_order_line()
+        if order_line.count_orders() > 0:
+            order_line.pay()
+            messages.success(request, 'Kjøp fullført!')
+        else:
+            messages.error(request, 'Ingen varer valgt')
+        return super(Checkout, self).get(request, *args, **kwargs)
 
 
 class RemoveOrder(CartMixin, RedirectView):
