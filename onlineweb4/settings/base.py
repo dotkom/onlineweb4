@@ -156,6 +156,7 @@ USER_SEARCH_GROUPS = [
     14,  # Eldsteradet
     6,   # fagKom
     11,  # Hovedstyret
+    19,  # jubKom
     10,  # pangKom
     7,   # proKom
     18,  # seniorKom
