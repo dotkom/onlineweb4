@@ -2,9 +2,10 @@
 from datetime import datetime
 
 from django import forms
+from django.contrib.auth.models import Group
 
-from apps.posters.models import Poster
 from apps.events.models import Event
+from apps.posters.models import Poster
 
 
 class AddForm(forms.ModelForm):
@@ -15,11 +16,11 @@ class AddForm(forms.ModelForm):
     price = forms.IntegerField(label='Pris', required=False, widget=forms.NumberInput(attrs={'placeholder': 'Pris på event'}))
     amount = forms.IntegerField(label='Antall', required=False, widget=forms.NumberInput(attrs={'placeholder': 'Hvor mange vil du ha?', "value" : "10"}))
     display_from = forms.DateField(label=u"Vis plakat fra", required=False, widget=forms.TextInput(attrs={'type': 'date', 'placeholder': 'YYYY-MM-DD'}))
+    ordered_committee = forms.ModelChoiceField(queryset=Group.objects.all(), empty_label=None)
 
     class Meta:
         model = Poster
-        fields = ['amount', 'description',
-                  'price', 'comments']
+        fields = ['ordered_committee', 'amount', 'description', 'price', 'comments']
 
 
 class AddPosterForm(AddForm):
@@ -29,7 +30,7 @@ class AddPosterForm(AddForm):
 
     class Meta:
         model = Poster
-        fields = ['event', 'amount', 'bong', 'description',
+        fields = ['ordered_committee', 'event', 'amount', 'bong', 'description',
                   'price', 'display_from', 'comments']
 
 
@@ -42,7 +43,7 @@ class AddOtherForm(AddForm):
 
     class Meta:
         model = Poster
-        fields = ['title', 'amount', 'price', 'description',
+        fields = ['ordered_committee', 'title', 'amount', 'price', 'description',
                   'display_from', 'comments']
 
 
