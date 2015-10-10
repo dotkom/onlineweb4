@@ -19,7 +19,7 @@ return {
             if (!performSelfCheck()) return
     },
 
-    sendChoice: function(id) {
+    sendChoice: function(id, text) {
         var url = window.location.href.toString()
         var data = {
             "extras_id": id,
@@ -28,6 +28,8 @@ return {
         var success = function (data) {
             //var line = $('#' + attendee_id > i)
             tools.showStatusMessage(data.message, 'alert-success')
+            var message = "Valgt ekstra: ";
+            $("#choose-extras > .text").text(message + text);
         }
         var error = function (xhr, txt, error) {
             tools.showStatusMessage(error, 'alert-danger')
@@ -44,4 +46,9 @@ return {
 
 $(document).ready(function () {
     Event.init()
+    $(".extras-choice").click(function() {
+        var id = $(this).attr("data");
+        var text = $(this).text();
+        Event.sendChoice(id, text);
+    });
 })

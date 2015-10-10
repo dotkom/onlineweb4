@@ -42,6 +42,7 @@ def details(request, event_id, event_slug):
 
     user_anonymous = True
     user_attending = False
+    attendee = False
     place_on_wait_list = 0
     will_be_on_wait_list = False
     rules = []
@@ -88,6 +89,8 @@ def details(request, event_id, event_slug):
             user_anonymous = False
             if attendance_event.is_attendee(request.user):
                 user_attending = True
+                attendee = Attendee.objects.get(event=attendance_event, user=request.user)
+
 
             
             will_be_on_wait_list = attendance_event.will_i_be_on_wait_list
@@ -125,6 +128,7 @@ def details(request, event_id, event_slug):
                 'now': timezone.now(),
                 'attendance_event': attendance_event,
                 'user_anonymous': user_anonymous,
+                'attendee': attendee,
                 'user_attending': user_attending,
                 'will_be_on_wait_list': will_be_on_wait_list,
                 'rules': rules,
