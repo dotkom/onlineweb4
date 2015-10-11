@@ -155,7 +155,13 @@
                                     {{ extra.waits }}
                                 </td>
                                 <td>
-                                    {{ extra.allergics }}
+                                    {% if extra.allergics %}
+                                    <ul>
+                                        {% for att in extra.allergics %}
+                                        <li><small>{{ att.user.get_full_name }} ({{att.list}}): {{att.user.allergies}}</small></li>
+                                        {% endfor %}
+                                    </ul>
+                                    {% endif %}
                                 </td>
                             </tr>
                         {% endfor %}

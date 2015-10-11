@@ -170,11 +170,12 @@ def count_extras(arr, inlist, atts):
     for att in atts:
         choice = "Ikke valgt" if att.extras is None else att.extras
         if att.extras not in arr:
-            arr[choice] = {"type": choice, "attending": 0, "waits": 0, "allergics": 0}
+            arr[choice] = {"type": choice, "attending": 0, "waits": 0, "allergics": []}
         ex = arr[choice]
         ex[inlist] += 1
         if att.user.allergies:
-            ex["allergics"] += 1
+            whatList = "påmeldt" if inlist is "attending" else "venteliste"
+            ex["allergics"].append({"user": att.user, "list": whatList})
 
 
 
