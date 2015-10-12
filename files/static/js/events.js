@@ -32,8 +32,8 @@ return {
             $("#choose-extras > .text").text(message + text);
         }
         var error = function (xhr, txt, error) {
-            var message = "Det skjedde en feil! Refresh siden og prøv igjen, eller kontakt de ansvarlige hvis det fortsatt ikke går."
-            tools.showStatusMessage(message, 'alert-danger')
+            var message = "Det skjedde en feil! Refresh siden og prøv igjen, eller kontakt de ansvarlige hvis det fortsatt ikke går. "
+            tools.showStatusMessage(message+error, 'alert-danger')
         }
 
         // Make an AJAX request using the Dashboard tools module

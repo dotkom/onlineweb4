@@ -160,7 +160,6 @@ var Dashboard = (function ($) {
                 if(wrapper.length == 0){
                     wrapper = $('section:first > .container:first')
                 }
-                console.log(wrapper)
                 message.prependTo(wrapper)
 
                 // Fadeout and remove the alert

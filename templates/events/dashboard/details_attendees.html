@@ -84,6 +84,7 @@
                                 <th>Etternavn</th>
                                 <th>Betalt</th>
                                 <th>Møtt</th>
+                                <th>Extra</th>
                                 <th>Fjern</th>
                             </tr>
                         </thead>
@@ -102,6 +103,9 @@
                                     <a href="#" data-id="{{ attendee.id }}" class="toggle-attendee attended">
                                     <i class="fa fa-lg {% if attendee.attended %}fa-check-square-o checked{% else %}fa-square-o{% endif %}"></i>
                                     </a>
+                                </td>
+                                <td>
+                                    {{ attendee.extras }}
                                 </td>
                                 <td>
                                     <a href="#modal-delete-attendee" data-toggle="modal" data-id="{{ attendee.id }}" data-name="{{ attendee.user.get_full_name }}" class="remove-user">
