@@ -14,7 +14,7 @@ function EventWidget (Utils){
             'data': {},
             success: function (data) {
                 var events = data.results;
-                var len = (events.length > 8) ? 8 : events.length;
+                var len = (events.length > 10) ? 10 : events.length;
 
                 if (len > 0) {
 
@@ -26,7 +26,7 @@ function EventWidget (Utils){
                     $.each(events, function (index) {
                         // If the index is even, create a row and append item. Else just append item to row.
                         // (This is to distribute items left and right)
-                        if (index >= 8) { return } // stop adding events if we're past 8
+                        if (index >= 10) { return } // stop adding events if we're past 8
                         if (index < 2) {
                             if (index % 2 === 0) {
                                 var htmlRow = '<div class="row clearfix hero"></div>';
