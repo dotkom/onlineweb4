@@ -90,6 +90,18 @@ class EventResource(ModelResource):
         # Returning washed object 
         return bundle
         
+    def get_object_list(self, request):
+
+        events = Event.objects.all()
+        filtered_events = set()
+
+        #Removes restricted events if the user does not belong to the right group
+        for event in events:
+            if event.can_display(request.user):
+                filtered_events.add(event.pk)
+
+        return Event.objects.filter(pk__in = filtered_events)
+        
 
     class Meta:
         queryset = Event.objects.all()

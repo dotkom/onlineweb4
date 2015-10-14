@@ -1,0 +1,185 @@
+{% extends "dashboard_base.html" %}
+{% load compress %}
+
+{% block title %}
+Plakatbestillinger - Online
+{% endblock title %}
+
+{% block styles %}
+    {{ block.super }}
+    {% compress css %}
+        <link rel="stylesheet" type="text/less" href="{{ STATIC_URL }}less/dashboard/posters.less" />
+    {% endcompress %}
+{% endblock %}
+
+{% block js %}
+    {{ block.super }}
+    {% compress js %}
+        <script type="text/javascript" src="{{ STATIC_URL }}js/dashboard/posters.js"></script>
+    {% endcompress %}
+{% endblock js %}
+
+{% block page-header %}
+Plakatbestillinger
+{% endblock %}
+
+{% block breadcrumbs %}
+    <li>Bestillinger</li>
+{% endblock %}
+
+{% block content %}
+    {% if new_orders %}
+    <section id="new-orders">
+        <h4>Nye bestillinger</h4>
+        <div class="row row-space headings">
+            <div class="col-md-4">
+                <span><div class="visible-xs visible-sm">1. </div>Tittel</span>
+            </div>
+            <div class="col-md-2">
+                <span><div class="visible-xs visible-sm">2. </div>Frist</span>
+            </div>
+            <div class="col-md-2">
+                <span><div class="visible-xs visible-sm">3. </div>Bestilt</span>
+            </div>
+            <div class="col-md-2">
+                <span><div class="visible-xs visible-sm">4. </div>Bestilt av</span>
+            </div>
+            <div class="col-md-2">
+                <span><div class="visible-xs visible-sm">5. </div>Tilordne til</span>
+            </div>
+        </div>
+        {% for order in new_orders %}
+            {% include 'posters/dashboard/order_template.html' %}
+        {% empty %}
+            <div class="col-md-6">
+                Ingen nye bestillinger.
+            </div>
+        {% endfor %}
+    </section>
+    <hr>
+    {% endif %}
+
+    {% if active_orders %}
+    <section id="active_orders">
+            <h4>Aktive bestillinger</h4>
+            <div class="row row-space">
+                <div class="col-md-12">
+                    <table class="table table-striped table-condensed tablesorter" id="active_orders_list">
+                        <thead>
+                            <tr>
+                                <th>Tittel</th>
+                                <th>Vises fra</th>
+                                <th>Vises til</th>
+                                <th>Bestilt av</th>
+                                <th>Tilordnet til</th>
+                                <th>Ferdigstilt</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for order in active_orders %}
+                                <td><a href={% url 'posters_detail' order.id %}>{{ order }}</a></td>
+                                <td>{{ order.display_from|date:'Y-m-d' }}</td>
+                                <td>{{ order.display_to|date:'Y-m-d' }}</td>
+                                <td>{{ order.ordered_committee }}</td>
+                                <td>{{ order.assigned_to }}</td>
+                                <td>{{ order.finished }}</td>
+                            </tr>
+                        {% empty %}
+                            <div class="col-md-6">
+                                Ingen aktive bestillinger.
+                            </div>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+    </section>
+    <hr>
+    {% endif %}
+
+    {% if old_orders %}
+    <section id="old_orders">
+            <h4>Gamle bestillinger</h4>
+            <div class="row row-space">
+                <div class="col-md-12">
+                    <table class="table table-striped table-condensed tablesorter" id="active_orders_list">
+                        <thead>
+                            <tr>
+                                <th>Tittel</th>
+                                <th>Vises fra</th>
+                                <th>Vises til</th>
+                                <th>Bestilt av</th>
+                                <th>Tilordnet til</th>
+                                <th>Ferdigstilt</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for order in old_orders %}
+                        {% if order.poster_up %}
+                            <tr class="success">
+                        {% else %}
+                            <tr>
+                        {% endif %}
+                                <td><a href={% url 'posters_detail' order.id %}>{{ order }}</a></td>
+                                <td>{{ order.display_from|date:'Y-m-d' }}</td>
+                                <td>{{ order.display_to|date:'Y-m-d' }}</td>
+                                <td>{{ order.ordered_committee }}</td>
+                                <td>{{ order.assigned_to }}</td>
+                                <td>{{ order.finished }}</td>
+                            </tr>
+                        {% empty %}
+                            <div class="col-md-6">
+                                Ingen hengte bestillinger.
+                            </div>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+    </section>
+    <hr>
+    {% endif %}
+
+    <section id="your_orders">
+        {% if your_orders %}
+            <h4>Dine bestillinger</h4>
+            <div class="row row-space">
+                <div class="col-md-12">
+                    <table class="table table-striped table-condensed tablesorter" id="active_orders_list">
+                        <thead>
+                            <tr>
+                                <th>Tittel</th>
+                                <th>Vises fra</th>
+                                <th>Vises til</th>
+                                <th>Bestilt av</th>
+                                <th>Tilordnet til</th>
+                                <th>Ferdigstilt</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for order in your_orders %}
+                        {% if order.poster_up %}
+                            <tr class="success">
+                        {% else %}
+                            <tr>
+                        {% endif %}
+                                <td><a href={% url 'posters_detail' order.id %}>{{ order }}</a></td>
+                                <td>{{ order.display_from|date:'Y-m-d' }}</td>
+                                <td>{{ order.display_to|date:'Y-m-d' }}</td>
+                                <td>{{ order.ordered_committee }}</td>
+                                <td>{{ order.assigned_to }}</td>
+                                <td>{{ order.finished }}</td>
+                            </tr>
+                        {% empty %}
+                            <div class="col-md-6">
+                                Du har ingen aktive bestillinger.
+                            </div>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+    </section>
+    <hr>
+    {% endif %}
+{% endblock content %}

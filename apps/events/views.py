@@ -8,7 +8,7 @@ from django.utils import timezone
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
-from django.contrib.contenttypes.models import ContentType 
+from django.contrib.contenttypes.models import ContentType
 from django.core.mail import EmailMessage
 from django.core.signing import Signer, BadSignature
 from django.core.urlresolvers import reverse
@@ -16,12 +16,13 @@ from django.db.models import Q
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404, redirect
 from django.utils.translation import ugettext as _
+from django.contrib.contenttypes.models import ContentType
 
 import watson
 
 from apps.authentication.models import OnlineUser as User
 from apps.events.forms import CaptchaForm
-from apps.events.models import Event, AttendanceEvent, Attendee
+from apps.events.models import Event, AttendanceEvent, Attendee, CompanyEvent
 from apps.events.pdf_generator import EventPDF
 from apps.events.utils import get_group_restricted_events
 from apps.payment.models import Payment, PaymentRelation, PaymentDelay
@@ -39,6 +40,11 @@ def index(request):
 
 def details(request, event_id, event_slug):
     event = get_object_or_404(Event, pk=event_id)
+
+    #Restricts access to the event if it is group restricted
+    if not event.can_display(request.user):
+        messages.error(request, "Du har ikke tilgang til denne eventen.")
+        return index(request)
 
     user_anonymous = True
     user_attending = False
@@ -70,7 +76,7 @@ def details(request, event_id, event_slug):
             if attendance_event.is_attendee(request.user):
                 user_attending = True
 
-            
+
             will_be_on_wait_list = attendance_event.will_i_be_on_wait_list
 
             user_status = event.attendance_event.is_eligible_for_signup(request.user)
@@ -79,7 +85,7 @@ def details(request, event_id, event_slug):
             place_on_wait_list = attendance_event.what_place_is_user_on_wait_list(request.user)
 
         try:
-            payment = Payment.objects.get(content_type=ContentType.objects.get_for_model(AttendanceEvent), 
+            payment = Payment.objects.get(content_type=ContentType.objects.get_for_model(AttendanceEvent),
                 object_id=event_id)
         except Payment.DoesNotExist:
             payment = None
@@ -127,7 +133,7 @@ def get_attendee(attendee_id):
 
 @login_required
 def attendEvent(request, event_id):
-    
+
     event = get_object_or_404(Event, pk=event_id)
 
     if not event.is_attendance_event():
@@ -153,7 +159,7 @@ def attendEvent(request, event_id):
 
     response = event.attendance_event.is_eligible_for_signup(request.user);
 
-    if response['status']:   
+    if response['status']:
         ae = Attendee(event=attendance_event, user=request.user)
         if 'note' in form.cleaned_data:
             ae.note = form.cleaned_data['note']
@@ -161,7 +167,7 @@ def attendEvent(request, event_id):
         messages.success(request, _(u"Du er nå påmeldt på arrangementet!"))
 
         try:
-            payment = Payment.objects.get(content_type=ContentType.objects.get_for_model(AttendanceEvent), 
+            payment = Payment.objects.get(content_type=ContentType.objects.get_for_model(AttendanceEvent),
                 object_id=event_id)
         except Payment.DoesNotExist:
             payment = None
@@ -204,7 +210,7 @@ def unattendEvent(request, event_id):
         return redirect(event)
 
     try:
-        payment = Payment.objects.get(content_type=ContentType.objects.get_for_model(AttendanceEvent), 
+        payment = Payment.objects.get(content_type=ContentType.objects.get_for_model(AttendanceEvent),
             object_id=event_id)
     except Payment.DoesNotExist:
         payment = None
@@ -258,6 +264,15 @@ def _search_indexed(request, query, filters):
     events = Event.objects.filter(**kwargs).order_by(order_by).prefetch_related(
             'attendance_event', 'attendance_event__attendees', 'attendance_event__reserved_seats',
             'attendance_event__reserved_seats__reservees')
+
+    #Filters events that are restricted
+    display_events = set()
+
+    for event in events:
+        if event.can_display(request.user):
+            display_events.add(event.pk)
+
+    events = events.filter(pk__in=display_events)
     
     if query:
         for result in watson.search(query, models=(events,)):
@@ -336,7 +351,7 @@ def mail_participants(request, event_id):
 
         signature = u'\n\nVennlig hilsen Linjeforeningen Online.\n(Denne eposten kan besvares til %s)' % from_email
 
-        # Decide who to send mail to 
+        # Decide who to send mail to
         to_emails = []
         to_emails_value = request.POST.get('to_email')
 
@@ -364,3 +379,32 @@ def mail_participants(request, event_id):
 
     return render(request, 'events/mail_participants.html', {
         'all_attendees' : all_attendees, 'attendees_on_waitlist': attendees_on_waitlist, 'attendees_not_paid': attendees_not_paid, 'event' : event})
+
+
+# API v1
+import django_filters
+from rest_framework import viewsets, mixins
+from rest_framework.permissions import AllowAny
+from apps.events.serializers import EventSerializer, AttendanceEventSerializer, CompanyEventSerializer
+from apps.events.filters import EventDateFilter
+
+class EventViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.ListModelMixin):
+    queryset = Event.objects.all()
+    serializer_class = EventSerializer
+    permission_classes = (AllowAny,)
+    filter_class = EventDateFilter
+    filter_fields = ('event_start', 'event_end', 'id',)
+    ordering_fields = ('event_start', 'event_end', 'id',)
+    ordering = ('id',)
+
+
+class AttendanceEventViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.ListModelMixin):
+    queryset = AttendanceEvent.objects.all()
+    serializer_class = AttendanceEventSerializer
+    permission_classes = (AllowAny,)
+
+
+class CompanyEventViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.ListModelMixin):
+    queryset = CompanyEvent.objects.all()
+    serializer_class = CompanyEventSerializer
+    permission_classes = (AllowAny,)
