@@ -76,11 +76,24 @@ var Gallery = (function ($, tools) {
                 console.log(data)
                 var html = '';
                 for (var i = 0; i < data.images.length; i++) {
-                    html += '<div class="col-md-4">'
-                    html += '<p>' + JSON.stringify(data.images) + '</p>'
+
+                    // New row if we have drawn 4 thumbnails
+                    if (i > 0 && i % 4 === 0) {
+                        console.log(i)
+                        html += '</div><div class="row">'
+                    }
+
+                    html += '<div class="col-md-3">'
+                    html +=   '<div class="thumbnail image-selection-thumbnail">'
+                    html +=     '<img src="' + data.images[i].thumbnail + '" title="' + data.images[i].name + '">'
+                    html +=     '<div class="caption">'
+                    html +=       '<h3>' + data.images[i].name + '</h3>'
+                    html +=       '<small>' + data.images[i].timestamp + '</small>'
+                    html +=     '</div>'
+                    html +=   '</div>'
                     html += '</div>'
                 }
-                $('#image-gallery-serach-results').html(html)
+                $('#image-gallery-search-results').html(html)
             }, function (xhr, thrownError, statusText) {
                 alert(thrownError)
             })

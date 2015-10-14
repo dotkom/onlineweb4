@@ -42,6 +42,16 @@ class ResponsiveImage(models.Model):
     image_xs = models.ImageField(u'XS Bilde', upload_to=gallery_settings.RESPONSIVE_IMAGES_PATH)
     thumbnail = models.ImageField(u'Thumbnail', upload_to=gallery_settings.RESPONSIVE_THUMBNAIL_PATH)
 
+    def __str__(self):
+        """
+        Returns the string representation of this ResponsiveImage object, which is set to be the
+        LG version of the image path.
+
+        :return: The RELATIVE path to the LG image version
+        """
+
+        return str(self.image_lg)
+
 
 # If we delete an image, we don't want to keep the actual images
 # This signal makes sure that the images along with the thumbnails are deleted from disk

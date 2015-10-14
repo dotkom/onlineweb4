@@ -132,7 +132,7 @@ def create_thumbnail(source_image_path, destination_thumbnail_path, size):
 
     quality = 90
     # Save the image to file
-    #Have not tried setting file extension to png, but I guess PIL would fuck you in the ass for it
+    # Have not tried setting file extension to png, but I guess PIL would fuck you in the ass for it
     image.save(destination_thumbnail_path, file_extension[1:], quality=quality, optimize=True)
 
     return {'success': True}

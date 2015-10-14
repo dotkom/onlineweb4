@@ -169,11 +169,12 @@ def search(request):
             'name': image.name,
             'id': image.id,
             'original': settings.MEDIA_URL + str(image.image_original),
+            'thumbnail': settings.MEDIA_URL + str(image.thumbnail),
             'xs': settings.MEDIA_URL + str(image.image_xs),
             'sm': settings.MEDIA_URL + str(image.image_sm),
             'md': settings.MEDIA_URL + str(image.image_md),
             'lg': settings.MEDIA_URL + str(image.image_lg),
-            'timestamp': image.timestamp.strftime('%Y-%M-%DT%H:%m:%s%Z')
+            'timestamp': image.timestamp.strftime('%Y-%m-%d %H:%M:%S')
         } for image in matches]
     }
 
