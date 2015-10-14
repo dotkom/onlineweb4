@@ -21,11 +21,11 @@ FIELD_OF_STUDY_CHOICES = [
     (0, _(u'Gjest')),
     (1, _(u'Bachelor i Informatikk (BIT)')),
     # master degrees take up the interval [10,30]
-    (10, _(u'Software (SW)')),
-    (11, _(u'Informasjonsforvaltning (DIF)')),
-    (12, _(u'Komplekse Datasystemer (KDS)')),
-    (13, _(u'Spillteknologi (SPT)')),
-    (14, _(u'Intelligente Systemer (IRS)')),
+    (10, _(u'Programvaresystemer (P)')),
+    (11, _(u'Databaser og søk (DS)')),
+    (12, _(u'Algoritmer og datamaskiner (AD)')),
+    (13, _(u'Spillteknologi (S)')),
+    (14, _(u'Kunstig intelligens (KI)')),
     (15, _(u'Helseinformatikk (MSMEDTEK)')),
     (30, _(u'Annen mastergrad')),
     (80, _(u'PhD')),
@@ -110,6 +110,7 @@ class OnlineUser(AbstractUser):
     nickname = models.CharField(_(u"nickname"), max_length=50, blank=True, null=True)
     website = models.URLField(_(u"hjemmeside"), blank=True, null=True)
     gender = models.CharField(_(u"kjønn"), max_length=10, choices=GENDER_CHOICES, default="male")
+    bio = models.TextField(_(u"bio"), blank=True, null=True)
 
     # NTNU credentials
     ntnu_username = models.CharField(_(u"NTNU-brukernavn"), max_length=10, blank=True, null=True, unique=True)

@@ -120,6 +120,15 @@
                             </div>
                         {% endif %}
                         </div>
+                        <div class="col-md-4" id="bio">
+                            <b>Bio</b><br />
+                            {% if user_profile.bio %}
+                                {{ user_profile.bio|striptags }}
+                            {% else %}
+                                Ikke tiljengelig
+                            {% endif %}
+
+                        </div>
                     </div>
                     <div class="row">
                         <div class="col-md-3">
