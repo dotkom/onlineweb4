@@ -5,6 +5,8 @@ from filebrowser.fields import FileBrowseField
 
 import reversion
 
+from apps.gallery.models import ResponsiveImage
+
 
 class Company(models.Model):
 
@@ -16,6 +18,7 @@ class Company(models.Model):
     long_description = models.TextField(_(u"utdypende beskrivelse"), blank=True, null=True)
     old_image = FileBrowseField(_(u"bilde"), max_length=200, directory=IMAGE_FOLDER,
                                 extensions=IMAGE_EXTENSIONS, null=False, blank=False)
+    image = models.ForeignKey(ResponsiveImage, _(u'Bilde'), blank=False, default=None)
     site = models.CharField(_(u"hjemmeside"), max_length=100)
     email_address = models.EmailField(_(u"epostaddresse"), max_length=75, blank=True, null=True)
     phone_number = models.CharField(_(u"telefonnummer"), max_length=20, blank=True, null=True)

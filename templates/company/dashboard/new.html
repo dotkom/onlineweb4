@@ -35,18 +35,7 @@ Ny bedrift
             {% for field in form %}
             <div class="form-group {% if field.errors %}has-error{% endif %}">
                 <label for="{{ field.auto_id }}"{% if field.errors %} class="red"{% endif %}>{{ field.label }}</label>
-                {% ifequal field.name 'image' %}
-                    <input type="hidden" id="{{ field.auto_id }}" name="image" value="0">
-                        <br />
-                        <a href="#" class="btn btn-primary" id="add-responsive-image">
-                            <i class="fa fa-plus fa-lg"></i> Velg
-                        </a>
-                        <a href="#" class="btn btn-primary" id="upload-responsive-image">
-                            <i class="fa fa-image fa-lg"></i> Last opp
-                        </a>
-                {% else %}
-                    {{ field|addclass:"form-control" }}
-                {% endifequal %}
+                {{ field|addclass:"form-control" }}
             </div>
             {% endfor %}
             <button class="btn btn-success">
