@@ -262,5 +262,5 @@ class PaymentDelayHandler(Task):
             unattended_user=payment_delay.user)
         Attendee.objects.get(event=payment_delay.payment.content_object, user=payment_delay.user).delete()
 
-schedule.register(PaymentReminder, day_of_week='mon-sun', hour=20, minute=56)
+schedule.register(PaymentReminder, day_of_week='mon-sun', hour=07, minute=30)
 schedule.register(PaymentDelayHandler, day_of_week='mon-sun', hour=07, minute=45)
