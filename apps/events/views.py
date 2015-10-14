@@ -23,6 +23,7 @@ from apps.authentication.models import OnlineUser as User
 from apps.events.forms import CaptchaForm
 from apps.events.models import Event, AttendanceEvent, Attendee
 from apps.events.pdf_generator import EventPDF
+from apps.events.utils import can_display_event
 from apps.events.utils import get_group_restricted_events
 from apps.payment.models import Payment, PaymentRelation, PaymentDelay
 
@@ -39,6 +40,13 @@ def index(request):
 
 def details(request, event_id, event_slug):
     event = get_object_or_404(Event, pk=event_id)
+
+    can_display = can_display_event(event, request.user)
+
+    #Restricts access to the event if it is group restricted
+    if not can_display:
+        messages.error(request, "Du har ikke tilgang til denne eventen.")
+        return index(request)
 
     user_anonymous = True
     user_attending = False
@@ -258,6 +266,15 @@ def _search_indexed(request, query, filters):
     events = Event.objects.filter(**kwargs).order_by(order_by).prefetch_related(
             'attendance_event', 'attendance_event__attendees', 'attendance_event__reserved_seats',
             'attendance_event__reserved_seats__reservees')
+
+    #Filters events that are restricted
+    display_events = set()
+
+    for event in events:
+        if can_display_event(event, request.user):
+            display_events.add(event.pk)
+
+    events = events.filter(pk__in=display_events)
     
     if query:
         for result in watson.search(query, models=(events,)):
