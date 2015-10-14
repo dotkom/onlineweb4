@@ -93,40 +93,55 @@
 		<div class="row row-space">
 			<div class="col-md-12">
                 <div class="row">
-                    <div class="col-md-12">
+                    <div class="col-md-4">
                         <b>Verv i linjeforeningen</b>
+                    </div>
+                    <div class="col-md-8">
+                        <b>Bio</b><br/>
                     </div>
                 </div>
             {% if not user.positions.all and not user.special_positions.all %}
                 <div class="row">
-                    <div class="col-md-12">
+                    <div class="col-md-4">
                         <em>Ingen posisjoner registrert...</em>
+                    </div>
+                    <div class="col-md-8" id="bio">
+                        {% firstof user.bio|striptags 'Ikke tiljengelig...' %}
                     </div>
                 </div>
             {% else %}
                 {% for position in user.positions.all %}
                     <div class="row row-small-space">
-                        <div class="col-md-12 position">
+                        <div class="col-md-4 position">
                             <span class="glyphicon glyphicon-remove delete-position" data-position-id="{{ position.id }}"></span>
                             <p>{{ position.period }}: {{ position.get_position_display }}, {{ position.get_committee_display }}</p>
+                        </div>
+                        <div class="col-md-8" id="bio">
+                            {% firstof user.bio|striptags 'Ikke tiljengelig...' %}
                         </div>
                     </div>
                 {% endfor %}
                 {% if user.special_positions.all %}
                     <div class="row">
-                        <div class="col-md-12" style="margin-top:10px;">
+                        <div class="col-md-4" style="margin-top:10px;">
                             <b>Hedersposisjoner</b>
+                        </div>
+                        <div class="col-md-8" id="bio">
+                            {% firstof user.bio|striptags 'Ikke tiljengelig...' %}
                         </div>
                     </div>
                     {% for position in user.special_positions.all %}
                         <div class="row row-small-space">
-                            <div class="col-md-12">
+                            <div class="col-md-4">
                                 Fra {{ position.since_year }}, {{ position.position }}
+                            </div>
+                            <div class="col-md-8" id="bio">
+                                {% firstof user.bio|striptags 'Ikke tiljengelig...' %}
                             </div>
                         </div>
                     {% endfor %}
                 {% endif %}
-            {% endif %}
+            {% endif %} 
             </div>
 		</div>
 	</div>
