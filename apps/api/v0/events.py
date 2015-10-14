@@ -11,7 +11,6 @@ from apps.events.models import Event
 from apps.events.models import Attendee
 from apps.events.models import AttendanceEvent
 from apps.events.models import CompanyEvent
-from apps.events.utils import can_display_event
 
 from apps.companyprofile.models import Company
 
@@ -104,7 +103,7 @@ class EventResource(ModelResource):
 
         #Removes restricted events if the user does not belong to the right group
         for event in events:
-            if can_display_event(event, request.user):
+            if event.can_display(request.user):
                 filtered_events.add(event.pk)
 
         return Event.objects.filter(pk__in = filtered_events)

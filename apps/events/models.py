@@ -99,6 +99,21 @@ class Event(models.Model):
         else:
             return settings.DEFAULT_FROM_EMAIL
 
+
+    def can_display(self, user):
+        restriction = GroupRestriction.objects.filter(event=self)
+
+        if not restriction:
+            return True
+
+        if not user:
+            return False
+
+        groups = restriction[0].groups
+
+        # returns True if any of the users groups are in one of the accepted groups
+        return any(group in user.groups.all() for group in groups.all())
+
     @property
     def slug(self):
         return slugify(self.title)    
@@ -554,8 +569,7 @@ class AttendanceEvent(models.Model):
 
 
         #Checks if the event is group restricted and if the user is in the right group
-        from apps.events.utils import can_display_event
-        if not can_display_event(self.event, user):
+        if not self.event.can_display(user):
             response['status'] = False
             response['message'] = _(u"Du har ikke tilgang til og melde deg på dette arrangementet.")
             response['status_code'] = 501
@@ -742,7 +756,7 @@ class GroupRestriction(models.Model):
         primary_key=True,
         related_name='group_restriction')
 
-    groups = models.ManyToManyField(Group, null=True, blank=True)
+    groups = models.ManyToManyField(Group, null=True, blank=True, help_text=_(u'Legg til de gruppene som skal ha tilgang til arrangementet'))
 
     class Meta:
         verbose_name = _("restriksjon")

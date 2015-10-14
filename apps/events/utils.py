@@ -40,23 +40,6 @@ def get_group_restricted_events(user):
     return Event.objects.filter(attendance_event__isnull=False, event_type__in=types_allowed)
 
 
-def can_display_event(event, user):
-    """ Returns False if the event have a restriction and the user is not in one of the right group """
-
-    restriction = GroupRestriction.objects.filter(event=event)
-
-    if not restriction:
-        return True
-
-    if not user:
-        return False
-
-    groups = restriction[0].groups
-
-    # returns True if any of the users groups are in one of the accepted groups
-    return any(group in user.groups.all() for group in groups.all())
-
-
 def handle_waitlist_bump(event, host, attendees, payment=None):
 
     title = u'Du har fått plass på %s' % (event.title)
