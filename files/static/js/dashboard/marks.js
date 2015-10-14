@@ -74,6 +74,8 @@ var Marks = (function ($, tools) {
 
             if (!performSelfCheck()) return;
 
+            $('#marks_list').tablesorter();
+
             // Bind add users button
             $('#marks_details_users_button').on('click', function (e) {
                 e.preventDefault();

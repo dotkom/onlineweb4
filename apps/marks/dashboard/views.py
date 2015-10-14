@@ -172,6 +172,38 @@ def marks_new(request):
     return render(request, 'marks/dashboard/marks_new.html', context)
 
 @login_required
+@permission_required('marks.can_add', return_403=True)
+def mark_edit(request, pk):
+    if not has_access(request):
+        raise PermissionDenied
+
+    context = get_base_context(request)
+
+    if request.method == 'POST':
+        mark = get_object_or_404(Mark, pk=pk)
+        mark_form = MarkForm(request.POST, instance=mark)
+        if not mark_form.is_valid():
+            messages.error(request, u'Noen av de påkrevde feltene inneholder feil.')
+        else:
+            # Save the form data
+            new_mark = mark_form.save()
+
+            # Save the additional mark data
+            new_mark.last_changed_by = request.user
+            new_mark.last_changed_date = django.utils.timezone.now()
+            new_mark.save()
+
+            # Add news
+            messages.success(request, u'Prikken ble endret.')
+
+            return redirect(mark_details, pk=new_mark.id)
+    else:
+        mark = get_object_or_404(Mark, pk=pk)
+        context['form'] = MarkForm(instance=mark)
+
+    return render(request, 'marks/dashboard/marks_edit.html', context)
+
+@login_required
 @permission_required('marks.can_delete', return_403=True)
 def mark_delete(request, pk):
     """
