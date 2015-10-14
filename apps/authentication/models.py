@@ -50,6 +50,7 @@ COMMITTEES = [
     ('jubkom', _(u'Jubileumskomiteen')),
     ('pangkom', _(u'Pensjonistkomiteen')),
     ('prokom', _(u'Profil-og aviskomiteen')),
+    ('redaksjonen', _(u'Redaksjonen')),
     ('trikom', _(u'Trivselskomiteen')),
     ('velkom', _(u'Velkomstkomiteen')),
 ]
@@ -58,6 +59,7 @@ POSITIONS = [
     ('medlem', _(u'Medlem')),
     ('leder', _(u'Leder')),
     ('nestleder', _(u'Nestleder')),
+    ('redaktor', _(u'Redaktør')),
     ('okoans', _(u'Økonomiansvarlig')),
 ]
 
