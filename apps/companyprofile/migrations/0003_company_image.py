@@ -7,7 +7,7 @@ from django.db import models, migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('gallery', '0002_auto_20150916_1953'),
+        ('gallery', '0003_auto_20151015_0010'),
         ('companyprofile', '0002_auto_20151014_2132'),
     ]
 
@@ -15,7 +15,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='company',
             name='image',
-            field=models.ForeignKey(to='gallery.ResponsiveImage', default=None, to_field='Bilde'),
+            field=models.ForeignKey(default=None, to='gallery.ResponsiveImage'),
             preserve_default=True,
         ),
     ]

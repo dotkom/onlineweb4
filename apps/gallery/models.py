@@ -61,7 +61,7 @@ class ResponsiveImage(models.Model):
         verbose_name = _(u'Responsivt Bilde')
         verbose_name_plural = _(u'Responsive Bilder')
         permissions = (
-            ('view_responsiveimage', _(u'View ResponsiveImage'))
+            ('view_responsiveimage', _(u'View ResponsiveImage')),
         )
 
 

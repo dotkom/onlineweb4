@@ -13,6 +13,6 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AlterModelOptions(
             name='responsiveimage',
-            options={'verbose_name': 'Responsivt Bilde', 'verbose_name_plural': 'Responsive Bilder', 'permissions': ('view_responsiveimage', 'View ResponsiveImage')},
+            options={'verbose_name': 'Responsivt Bilde', 'verbose_name_plural': 'Responsive Bilder', 'permissions': (('view_responsiveimage', 'View ResponsiveImage'),)},
         ),
     ]
