@@ -11,12 +11,10 @@ from apps.events.models import Event
 from apps.events.models import Attendee
 from apps.events.models import AttendanceEvent
 from apps.events.models import CompanyEvent
-from apps.events.utils import can_display_event
 
 from apps.companyprofile.models import Company
 
 from apps.api.v0.authentication import UserResource
-
 
 class AttendeeResource(ModelResource):
     user = fields.ToOneField(UserResource, 'user', full=True)
@@ -25,21 +23,17 @@ class AttendeeResource(ModelResource):
         queryset = Attendee.objects.all()
         resource_name = 'attendees'
 
-
 class CompanyResource(ModelResource):
     
     class Meta:
         queryset = Company.objects.all()
         resource_name = 'company'
         fields = ['image']
-
-
 class CompanyEventResource(ModelResource):
     companies = fields.ToOneField(CompanyResource, 'company', full=True)
     class Meta:
         queryset = CompanyEvent.objects.all()
         resource_name ='companies'
-
 
 class AttendanceEventResource(ModelResource):
     users = fields.ToManyField(AttendeeResource, 'attendees', full=False)
@@ -50,7 +44,6 @@ class AttendanceEventResource(ModelResource):
 
         # XXX: Noop authorization is probably not safe for producion
         authorization = Authorization()
-
 
 class EventResource(ModelResource):
     author = fields.ToOneField(UserResource, 'author', full=True)
@@ -66,7 +59,7 @@ class EventResource(ModelResource):
 
     # Making multiple images for the events
     def dehydrate(self, bundle):
-
+        
         # Setting sluyg-field
         bundle.data['slug'] = slugify(bundle.data['title'])
         
@@ -96,18 +89,6 @@ class EventResource(ModelResource):
 
         # Returning washed object 
         return bundle
-
-    def get_object_list(self, request):
-
-        events = Event.objects.all()
-        filtered_events = set()
-
-        #Removes restricted events if the user does not belong to the right group
-        for event in events:
-            if can_display_event(event, request.user):
-                filtered_events.add(event.pk)
-
-        return Event.objects.filter(pk__in = filtered_events)
         
 
     class Meta:
