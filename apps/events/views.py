@@ -41,6 +41,11 @@ def index(request):
 def details(request, event_id, event_slug):
     event = get_object_or_404(Event, pk=event_id)
 
+    #Restricts access to the event if it is group restricted
+    if not event.can_display(request.user):
+        messages.error(request, "Du har ikke tilgang til denne eventen.")
+        return index(request)
+
     user_anonymous = True
     user_attending = False
     place_on_wait_list = 0
@@ -260,6 +265,15 @@ def _search_indexed(request, query, filters):
             'attendance_event', 'attendance_event__attendees', 'attendance_event__reserved_seats',
             'attendance_event__reserved_seats__reservees')
 
+    #Filters events that are restricted
+    display_events = set()
+
+    for event in events:
+        if event.can_display(request.user):
+            display_events.add(event.pk)
+
+    events = events.filter(pk__in=display_events)
+    
     if query:
         for result in watson.search(query, models=(events,)):
             results.append(result.object)
