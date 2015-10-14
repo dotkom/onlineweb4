@@ -154,6 +154,17 @@ if 'apps.payment' in settings.INSTALLED_APPS:
 if 'redwine' in settings.INSTALLED_APPS:
     urlpatterns += patterns('', url(r'^redwine/', include('redwine.urls')))
 
+if 'rest_framework' in settings.INSTALLED_APPS:
+    from apps.api.utils import SharedAPIRootRouter
+    # API
+    def api_urls():
+        return SharedAPIRootRouter.shared_router.urls
+
+    urlpatterns += patterns(
+        '',
+        url(r'^api/v1/', include(api_urls())),
+    )
+
 #Captcha url
 if 'captcha' in settings.INSTALLED_APPS:
     urlpatterns += patterns('', url(r'^captcha/', include('captcha.urls')))

@@ -102,3 +102,44 @@ def details(request, article_id, article_slug):
     related_articles = Article.objects.filter(article_tags__tag__in=article.tags).distinct().annotate(num_tags=Count('article_tags__tag')).order_by('-num_tags', '-published_date').exclude(id=article.id)[:4]
 
     return render(request, 'article/details.html', {'article': article, 'related_articles': related_articles})
+
+
+# API v1 Views
+
+from rest_framework import mixins, viewsets
+from rest_framework.permissions import AllowAny
+from apps.article.serializers import ArticleSerializer
+
+class ArticleViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.ListModelMixin):
+    """
+    Article viewset. Can be filtered on 'year', 'month', 'tags'
+
+    Filtering on tags is only supported if the tags are supplied exactly as the stored tags.
+    """
+
+    queryset = Article.objects.filter(published_date__lte=timezone.now()).order_by('-published_date')
+    serializer_class = ArticleSerializer
+    permission_classes = (AllowAny,)
+    filter_fields = ('article_tags',)
+
+    def get_queryset(self):
+        queryset = self.queryset
+        month = self.request.query_params.get('month', None)
+        year = self.request.query_params.get('year', None)
+        tags = self.request.query_params.get('tags', None)
+
+        if tags:
+            # Filtering on tags is only supported if the tag is typed exactly the same as the stored tag
+            actual_tags = Tag.objects.filter(name=tags)
+            at = ArticleTag.objects.filter(tag=actual_tags).values('article_id')
+            queryset = queryset.filter(id__in=at)
+
+        if year:
+            if month:
+                # Filtering on year and month
+                queryset = queryset.filter(published_date__year=year, published_date__month=month, published_date__lte=timezone.now()).order_by('-published_date')
+            else:
+                # Filtering only on year
+                queryset = queryset.filter(published_date__year=year, published_date__lte=timezone.now()).order_by('-published_date')
+
+        return queryset
