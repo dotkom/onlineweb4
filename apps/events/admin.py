@@ -15,6 +15,7 @@ from apps.events.models import GradeRule
 from apps.events.models import UserGroupRule
 from apps.events.models import Reservation
 from apps.events.models import Reservee
+from apps.events.models import GroupRestriction
 from apps.feedback.admin import FeedbackRelationInline
 
 
@@ -39,6 +40,15 @@ class RuleBundleInline(admin.TabularInline):
     max_num = 20
     classes = ('grp-collapse grp-open',)  # style
     inline_classes = ('grp-collapse grp-open',)  # style
+
+
+class GroupRestrictionInline(admin.TabularInline):
+    model = GroupRestriction
+    extra = 0
+    max_num = 1
+    classes = ('grp-collapse grp-open',)  # style
+    inline_classes = ('grp-collapse grp-open',)  # style
+    filter_horizontal = ('groups',)
 
 
 def mark_paid(modeladmin, request, queryset):
@@ -108,7 +118,7 @@ class AttendanceEventInline(admin.StackedInline):
 
 
 class EventAdmin(admin.ModelAdmin):
-    inlines = (AttendanceEventInline, FeedbackRelationInline, CompanyInline)
+    inlines = (AttendanceEventInline, FeedbackRelationInline, CompanyInline, GroupRestrictionInline)
     exclude = ("author", )
     search_fields = ('title',)
 
