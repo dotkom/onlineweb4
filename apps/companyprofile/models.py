@@ -24,6 +24,12 @@ class Company(models.Model):
     def __unicode__(self):
         return self.name
 
+    def images(self):
+        if not self.image:
+            return []
+        from apps.companyprofile.utils import find_image_versions
+        return find_image_versions(self)
+
     class Meta:
         verbose_name = _(u"Bedrift")
         verbose_name_plural = _(u"Bedrifter")
