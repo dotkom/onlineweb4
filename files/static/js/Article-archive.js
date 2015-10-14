@@ -116,7 +116,7 @@ $(function() {
             e.stop();
 
          // Checking to see if buzy
-        if (!is_loading_new_content) {
+        if (!is_loading_new_content || true) {
             // Set buzy to true so we don't load multiple articles at once
             is_loading_new_content = true;
 
@@ -129,6 +129,7 @@ $(function() {
             articleSettings.year = null;
             articleSettings.month = null;
             articleSettings.tag = url[url.length-2];
+            articleSettings.tagPage = 1;
 
             
             page = 1;
@@ -226,8 +227,10 @@ function ArticleArchive (Utils) {
         }
         
 
+        console.log('imma load')
         // Only call the method if we have more elements
         if (is_more_elements) {
+            console.log('loading')
             // The api-call
             Utils.makeApiRequest({
                 'url': '/api/v1/articles/' + _url_params,
