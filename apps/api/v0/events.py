@@ -16,7 +16,6 @@ from apps.companyprofile.models import Company
 
 from apps.api.v0.authentication import UserResource
 
-
 class AttendeeResource(ModelResource):
     user = fields.ToOneField(UserResource, 'user', full=True)
 
@@ -24,21 +23,17 @@ class AttendeeResource(ModelResource):
         queryset = Attendee.objects.all()
         resource_name = 'attendees'
 
-
 class CompanyResource(ModelResource):
     
     class Meta:
         queryset = Company.objects.all()
         resource_name = 'company'
         fields = ['image']
-
-
 class CompanyEventResource(ModelResource):
     companies = fields.ToOneField(CompanyResource, 'company', full=True)
     class Meta:
         queryset = CompanyEvent.objects.all()
         resource_name ='companies'
-
 
 class AttendanceEventResource(ModelResource):
     users = fields.ToManyField(AttendeeResource, 'attendees', full=False)
@@ -49,7 +44,6 @@ class AttendanceEventResource(ModelResource):
 
         # XXX: Noop authorization is probably not safe for producion
         authorization = Authorization()
-
 
 class EventResource(ModelResource):
     author = fields.ToOneField(UserResource, 'author', full=True)
@@ -65,7 +59,7 @@ class EventResource(ModelResource):
 
     # Making multiple images for the events
     def dehydrate(self, bundle):
-
+        
         # Setting sluyg-field
         bundle.data['slug'] = slugify(bundle.data['title'])
         
@@ -95,7 +89,7 @@ class EventResource(ModelResource):
 
         # Returning washed object 
         return bundle
-
+        
     def get_object_list(self, request):
 
         events = Event.objects.all()
