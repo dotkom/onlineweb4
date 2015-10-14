@@ -332,8 +332,8 @@ class Position(models.Model):
     Contains a users position in the organization from a given year
     """
     period     = models.CharField(_(u'periode'), max_length=9, default="2013-2014", blank=False)
-    committee  = models.CharField(_(u"komite"), max_length=10, choices=COMMITTEES, default="hs")
-    position   = models.CharField(_(u"stilling"), max_length=10, choices=POSITIONS, default="medlem")
+    committee  = models.CharField(_(u"komite"), max_length=20, choices=COMMITTEES, default="hs")
+    position   = models.CharField(_(u"stilling"), max_length=20, choices=POSITIONS, default="medlem")
     user       = models.ForeignKey(OnlineUser, related_name='positions', blank=False)
 
     @property
