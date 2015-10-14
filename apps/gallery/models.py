@@ -5,6 +5,7 @@ import uuid
 
 from django.db import models
 from django.db.models.signals import post_delete
+from django.utils.translation import ugettext_lazy as _
 
 from apps.gallery import settings as gallery_settings
 
@@ -51,6 +52,17 @@ class ResponsiveImage(models.Model):
         """
 
         return str(self.image_lg)
+
+    class Meta(object):
+        """
+        ResponsiveImage Metaclass
+        """
+
+        verbose_name = _(u'Responsivt Bilde')
+        verbose_name_plural = _(u'Responsive Bilder')
+        permissions = (
+            ('view_responsiveimage', _(u'View ResponsiveImage'))
+        )
 
 
 # If we delete an image, we don't want to keep the actual images
