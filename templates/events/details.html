@@ -375,6 +375,9 @@
 {% block js %}
     {{ block.super }}
     {% compress js %}
+    <script>
+        var selected_extra = "{{ attendee.extras }}";
+    </script>
     <script type="text/javascript" src="{{ STATIC_URL }}js/dashboard/dashboard.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}js/events.js"></script>
     {% endcompress %}

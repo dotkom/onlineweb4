@@ -16,7 +16,19 @@ var Event = (function ($, tools) {
 
 return {
     init: function () {
-            if (!performSelfCheck()) return
+        if (!performSelfCheck()) return;
+
+        $(".extras-choice").click(function() {
+            var id = $(this).attr("data");
+            var text = $(this).text();
+            Event.sendChoice(id, text);
+        });
+
+        console.log(selected_extra);
+        if(selected_extra == "None"){
+            message = "Vennligst velg et alternativ for extra bestilling. (Over avmeldingsknappen)";
+            tools.showStatusMessage(message, 'alert-warning')
+        }
     },
 
     sendChoice: function(id, text) {
@@ -47,9 +59,4 @@ return {
 
 $(document).ready(function () {
     Event.init()
-    $(".extras-choice").click(function() {
-        var id = $(this).attr("data");
-        var text = $(this).text();
-        Event.sendChoice(id, text);
-    });
 })
