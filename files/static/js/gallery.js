@@ -10,6 +10,8 @@ var Gallery = (function ($, tools) {
     var currentPage = 1;
     var currentImages = [];
 
+    var singleSelectedImage = null;
+
     // Binds all buttons and event listeners as well as
     // lazyloading for images
     var bindEventListeners = function () {
@@ -57,6 +59,7 @@ var Gallery = (function ($, tools) {
 
         $('#add-responsive-image').on('click', function (e) {
             e.preventDefault()
+            $('#image-upload-wrapper').hide()
             $('#image-selection-wrapper').slideToggle(200, function () {
                 window.location.href = '#image-selection-title'
                 $('#image-gallery-search').focus()
@@ -65,6 +68,7 @@ var Gallery = (function ($, tools) {
 
         $('#upload-responsive-image').on('click', function (e) {
             e.preventDefault()
+            $('#image-selection-wrapper').hide()
             $('#image-upload-wrapper').slideToggle(200, function () {
                 window.location.href = '#image-gallery-title'
             })
@@ -84,16 +88,20 @@ var Gallery = (function ($, tools) {
                     }
 
                     html += '<div class="col-md-3">'
-                    html +=   '<div class="thumbnail image-selection-thumbnail">'
+                    html +=   '<div class="thumbnail image-selection-thumbnail" data-id="' + data.images[i].id + '">'
                     html +=     '<img src="' + data.images[i].thumbnail + '" title="' + data.images[i].name + '">'
                     html +=     '<div class="caption">'
-                    html +=       '<h3>' + data.images[i].name + '</h3>'
+                    html +=       '<h4>' + data.images[i].name + '</h4>'
                     html +=       '<small>' + data.images[i].timestamp + '</small>'
                     html +=     '</div>'
                     html +=   '</div>'
                     html += '</div>'
                 }
                 $('#image-gallery-search-results').html(html)
+
+                // Creates click listeners for all the newly added image tiles
+                bindSingleImageSelectionListeners();
+
             }, function (xhr, thrownError, statusText) {
                 alert(thrownError)
             })
@@ -106,6 +114,19 @@ var Gallery = (function ($, tools) {
         $('#image-gallery-search-button').on('click', function(e) {
             e.preventDefault()
             searchImages($('#image-gallery-search').val())
+        })
+    }
+
+    /**
+     * Binds click selection listeners to all responsive image thumbnails for single image
+     * selection. On click, the selectSingleImage call on the widget module will
+     * fetch the ID from the data attribute on the DOM element, and update the hidden form field
+     * containing the value.
+     */
+    function bindSingleImageSelectionListeners() {
+        $('.image-selection-thumbnail').on('click', function (e) {
+            console.log("YAY")
+            Gallery.widget.selectSingleImage($(this))
         })
     }
 
@@ -340,12 +361,20 @@ var Gallery = (function ($, tools) {
                 setInterval(function() {
                     updateUneditedFiles();
                 }, 3000);
-
-                $('#image-widget')
             }
         },
         widget: {
-
+            selectSingleImage: function (imageDOMelement) {
+                if (singleSelectedImage) singleSelectedImage.removeClass('image-selection-thumbnail-active')
+                singleSelectedImage = imageDOMelement;
+                singleSelectedImage.addClass('image-selection-thumbnail-active')
+                inputValue = $('#responsive-image-id')
+                thumbnailWrapper = $('#single-image-field-thumbnail')
+                if (inputValue.length) {
+                    inputValue.val(singleSelectedImage.attr('data-id'))
+                    thumbnailWrapper.html('<img src="' + singleSelectedImage.children('img').attr('src') + '" alt>')
+                }
+            }
         }
     }
 })(jQuery, Dashboard.tools)

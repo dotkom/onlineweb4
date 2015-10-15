@@ -1,7 +1,5 @@
 # -*- encoding: utf-8 -*-
 
-import json
-
 from django.core.exceptions import PermissionDenied
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -49,10 +47,10 @@ def new(request):
         if not company_form.is_valid():
             messages.error(request, u'Noen av de påkrevde feltene inneholder feil.')
         else:
-            company_form.save()
-            messages.success(request, u'Bedriften ble oppdatert')
+            company = company_form.save()
+            messages.success(request, u'Bedriften ble opprettet.')
 
-            return redirect(detail, company_form.id)
+            return redirect(detail, company.id)
 
         context['form'] = company_form
     else:
@@ -81,7 +79,7 @@ def detail(request, pk):
             messages.error(request, u'Noen av de påkrevde feltene inneholder feil.')
         else:
             company_form.save()
-            messages.success(request, u'Bedriften ble oppdatert')
+            messages.success(request, u'Bedriften ble oppdatert.')
         context['form'] = company_form
     else:
         context['form'] = CompanyForm(instance=context['company'])
