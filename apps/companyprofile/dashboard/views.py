@@ -47,10 +47,10 @@ def new(request):
         if not company_form.is_valid():
             messages.error(request, u'Noen av de påkrevde feltene inneholder feil.')
         else:
-            company = company_form.save()
+            company_form.save()
             messages.success(request, u'Bedriften ble opprettet.')
 
-            return redirect(detail, company.id)
+            return redirect(index)
 
         context['form'] = company_form
     else:
