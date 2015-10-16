@@ -86,13 +86,12 @@ var Gallery = (function ($, tools) {
                         html += '</div><div class="row">'
                     }
 
-                    html += '<div class="col-md-3">'
-                    html +=   '<div class="thumbnail image-selection-thumbnail" data-id="' + data.images[i].id + '">'
+                    html += '<div class="col-md-2 col-sm-4 col-xs-6">'
+                    html +=   '<div class="image-selection-thumbnail" data-id="' + data.images[i].id + '">'
                     html +=     '<img src="' + data.images[i].thumbnail + '" title="' + data.images[i].name + '">'
-                    html +=     '<div class="caption">'
-                    html +=       '<h4>' + data.images[i].name + '</h4>'
-                    html +=       '<small>' + data.images[i].timestamp + '</small>'
-                    html +=     '</div>'
+                    html +=     '<h4 class="image-title">' + data.images[i].name + '</h4>'
+                    html +=     '<span class="image-timestamp">' + data.images[i].timestamp + '</span>'
+                    html +=     '<p class="image-description">Soon there will be an enormous amount of tada here. And some description. And other stuffz.</p>'
                     html +=   '</div>'
                     html += '</div>'
                 }
@@ -229,8 +228,10 @@ var Gallery = (function ($, tools) {
     };
 
     var clearEditView = function() {
-        var editPane = $('#image-edit-content');
-        var imageEditPreview = $("#image-edit-preview");
+        var editPane = $('#image-edit-content')
+        var imageEditPreview = $("#image-edit-preview")
+        var editName = $('#image-edit-name')
+        var editDescription = $('#image-edit-description')
         editPane.empty();
         imageEditPreview.empty();
     };

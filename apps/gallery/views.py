@@ -111,6 +111,7 @@ def crop_image(request):
 
             image = get_object_or_404(UnhandledImage, pk=crop_data['id'])
             image_name = crop_data['name']
+            image_description = crop_data['description']
             responsive_image_path = util.save_responsive_image(image, crop_data)
 
             # SAMLE ERRORZ PLZ
@@ -125,6 +126,7 @@ def crop_image(request):
 
             ResponsiveImage(
                 name=image_name,
+                description=image_description,
                 image_original=original_media,
                 image_lg=lg_media,
                 image_md=md_media,
