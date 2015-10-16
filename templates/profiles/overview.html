@@ -110,19 +110,17 @@
                     </div>
                 </div>
             {% else %}
-                {% for position in user.positions.all %}
-                    <div class="row row-small-space">
-                        <div class="col-md-4 position">
-                            <span class="glyphicon glyphicon-remove delete-position" data-position-id="{{ position.id }}"></span>
-                            <p>{{ position.period }}: {{ position.get_position_display }}, {{ position.get_committee_display }}</p>
-                        </div>
-                        {% if forloop.first %}
-                            <div class="col-md-8" class="bio">
-                                {% firstof user.bio|striptags '' %}
-                            </div>
-                        {% endif %}
+                <div class="row row-small-space">
+                    <div class="col-md-4 position">
+                    {% for position in user.positions.all %}
+                        <span class="glyphicon glyphicon-remove delete-position" data-position-id="{{ position.id }}"></span>
+                        <p>{{ position.period }}: {{ position.get_position_display }}, {{ position.get_committee_display }}</p><br\>
+                    {% endfor %}
                     </div>
-                {% endfor %}
+                    <div class="col-md-8" class="bio">
+                        {% firstof user.bio|striptags '' %}
+                    </div>
+                </div>
                 {% if user.special_positions.all %}
                     <div class="row">
                         <div class="col-md-4" style="margin-top:10px;">
