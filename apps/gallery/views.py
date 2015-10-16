@@ -1,9 +1,12 @@
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 
 import json
 from django.conf import settings
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
 from django.http import JsonResponse, HttpResponse
+
+from guardian.decorators import permission_required
 
 from apps.gallery.models import UnhandledImage, ResponsiveImage
 from apps.gallery.forms import DocumentForm
@@ -19,23 +22,8 @@ def _create_request_dictionary(request):
     return dictionary
 
 
-#TODO: Remove this, only for testing
-def delete_all(request):
-    for image in UnhandledImage.objects.all():
-        image.delete()
-
-    for image in ResponsiveImage.objects.all():
-        image.delete()
-
-    return redirect('gallery_index')
-
-
-def index(request):
-
-    request_dict = _create_request_dictionary(request)
-    return render(request, "gallery/index.html", request_dict)
-
-
+@login_required
+@permission_required('gallery.view_responsiveimage')
 def all_images(request):
     """
     Returns a rendered view that displays all images
@@ -48,6 +36,8 @@ def all_images(request):
     return render(request, template, {'images': images})
 
 
+@login_required
+@permission_required('gallery.add_responsiveimage')
 def upload(request):
 
     if request.method == "POST":
@@ -65,19 +55,21 @@ def _handle_upload(uploaded_file):
     thumbnail_result = util.create_thumbnail_for_unhandled_images(unhandled_file_path)
 
     if 'error' in thumbnail_result:
-        #delete files
+        # Delete files
         return HttpResponse(status=500, content=json.dumps(thumbnail_result['error']))
 
     # Image objects need to be created with relative paths, create media paths to please django (fuck you, django)
     unhandle_media = util.get_unhandled_media_path(unhandled_file_path)
     unhandled_thumbnail_media = util.get_unhandled_thumbnail_media_path(thumbnail_result['thumbnail_path'])
 
-    #try catch this and delete files on exception
+    # Try catch this and delete files on exception
     UnhandledImage(image=unhandle_media, thumbnail=unhandled_thumbnail_media).save()
 
     return HttpResponse(status=200)
 
 
+@login_required
+@permission_required('gallery.add_responsiveimage')
 def number_of_untreated(request):
     if request.is_ajax():
         if request.method == 'GET':
@@ -85,6 +77,8 @@ def number_of_untreated(request):
     return HttpResponse(status=405)
 
 
+@login_required
+@permission_required('gallery.add_responsiveimage')
 def get_all_untreated(request):
     if request.is_ajax():
         if request.method == 'GET':
@@ -103,6 +97,8 @@ def get_all_untreated(request):
 
 
 # Same here, delete all files if something goes wrong, not yet handled
+@login_required
+@permission_required('gallery.add_responsiveimage')
 def crop_image(request):
     if request.is_ajax():
         if request.method == 'POST':
@@ -150,6 +146,8 @@ def _verify_crop_data(crop_data):
         and 'width' in crop_data and 'name' in crop_data
 
 
+@login_required
+@permission_required('gallery.view_responsiveimage')
 def search(request):
     """
     Performs a search request and returns a JSON response

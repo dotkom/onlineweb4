@@ -8,6 +8,28 @@ from django.forms.utils import flatatt, format_html, force_text
 
 from apps.gallery.models import ResponsiveImage
 
+WIDGET_STRING = """<br /><input{} />\r\n
+<div id="single-image-field-thumbnail">{}</div>
+<a href="#" class="btn btn-primary" id="add-responsive-image">\r\n
+<i class="fa fa-plus fa-lg"></i> Velg</a>\r\n
+<a href="#" class="btn btn-primary" id="upload-responsive-image">\r\n
+<i class="fa fa-image fa-lg"></i> Last opp</a><br>\r\n
+<div id="image-selection-wrapper">\r\n
+<h2 id="image-selection-title">Velg bilde</h2>\r\n
+<div class="row">\r\n
+<div class="col-md-12">\r\n
+<div class="input-group">\r\n
+<input type="text" id="image-gallery-search" class="form-control" placeholder="Skriv inn søkeord...">\r\n
+<span class="input-group-btn">\r\n
+<button class="btn btn-primary" id="image-gallery-search-button" type="button">Søk!</button>\r\n
+</span>\r\n
+</div>\r\n
+</div>\r\n
+</div>\r\n
+<hr />\r\n
+<div class="row" id="image-gallery-search-results"></div>\r\n
+</div>\r\n"""
+
 
 class SingleImageInput(HiddenInput):
     """
@@ -42,14 +64,7 @@ class SingleImageInput(HiddenInput):
                 img.name
             )
 
-        widget_string = """<br /><input{} />\r\n
-<div id="single-image-field-thumbnail">{}</div>
-<a href="#" class="btn btn-primary" id="add-responsive-image">\r\n
-<i class="fa fa-plus fa-lg"></i> Velg</a>\r\n
-<a href="#" class="btn btn-primary" id="upload-responsive-image">\r\n
-<i class="fa fa-image fa-lg"></i> Last opp</a>\r\n"""
-
-        return format_html(widget_string, flatatt(final_attrs), img_thumb)
+        return format_html(WIDGET_STRING, flatatt(final_attrs), img_thumb)
 
 
 class SingleImageInputMixin(object):

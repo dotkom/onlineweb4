@@ -61,7 +61,6 @@ var Gallery = (function ($, tools) {
             e.preventDefault()
             $('#image-upload-wrapper').hide()
             $('#image-selection-wrapper').slideToggle(200, function () {
-                window.location.href = '#image-selection-title'
                 $('#image-gallery-search').focus()
             })
         })
@@ -97,6 +96,7 @@ var Gallery = (function ($, tools) {
                     html +=   '</div>'
                     html += '</div>'
                 }
+                if (!data.images.length) html = '<div class="col-md-12"><p>Ingen bilder matchet søket...</p></div></div>'
                 $('#image-gallery-search-results').html(html)
 
                 // Creates click listeners for all the newly added image tiles
@@ -106,8 +106,10 @@ var Gallery = (function ($, tools) {
                 alert(thrownError)
             })
         }
-        $('#image-gallery-search').on('keyup', function (e) {
+        $('#image-gallery-search').on('keypress', function (e) {
             if (e.keyCode === 13) {
+                e.preventDefault();
+                e.stopPropagation();
                 searchImages($(this).val())
             }
         })
