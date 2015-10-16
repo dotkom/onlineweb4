@@ -18,6 +18,7 @@ class TagAdmin(admin.ModelAdmin):
     def save_model(self, request, obj, form, change):
         obj.changed_by = request.user
         if not change:
+            obj.name = obj.name.replace('.', '')
             obj.created_by = request.user
         obj.save()
 

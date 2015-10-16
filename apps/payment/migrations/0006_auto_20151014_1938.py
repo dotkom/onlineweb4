@@ -7,14 +7,14 @@ from django.db import models, migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('feedme', '0004_auto_20150203_2036'),
+        ('payment', '0005_auto_20150429_1758'),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='orderline',
-            name='menu_item',
-            field=models.CharField(max_length=50, verbose_name='menu item'),
+            model_name='payment',
+            name='added_date',
+            field=models.DateTimeField(auto_now=True, verbose_name='opprettet dato', auto_now_add=True),
             preserve_default=True,
         ),
     ]

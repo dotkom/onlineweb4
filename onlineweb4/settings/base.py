@@ -156,6 +156,7 @@ USER_SEARCH_GROUPS = [
     14,  # Eldsteradet
     6,   # fagKom
     11,  # Hovedstyret
+    19,  # jubKom
     10,  # pangKom
     7,   # proKom
     18,  # seniorKom
@@ -216,6 +217,8 @@ INSTALLED_APPS = (
     'reversion',
     'guardian',
     'stripe',
+    'rest_framework',
+    'django_filters',
 
     # Django apps
     'django.contrib.admin',
@@ -351,6 +354,30 @@ MESSAGE_TAGS = {messages.DEBUG: 'alert-debug',
 # Not really sure what this does.
 # Has something to do with django-dynamic-fixture bumped from 1.6.4 to 1.6.5 in order to run a syncdb with mysql/postgres (OptimusCrime)
 IMPORT_DDF_MODELS = False
+
+# Django REST framework
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.SessionAuthentication',  # Allows users to be logged in to browsable API
+    ),
+    'DEFAULT_FILTER_BACKENDS': (
+        'rest_framework.filters.DjangoFilterBackend',
+        'rest_framework.filters.OrderingFilter',
+    ),
+    'DEFAULT_PARSER_CLASSES': (
+        'rest_framework.parsers.JSONParser',
+        'rest_framework.parsers.FormParser',
+        'rest_framework.parsers.MultiPartParser',
+        'rest_framework.parsers.FileUploadParser',
+    ),
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',
+        'rest_framework.renderers.BrowsableAPIRenderer',
+        'rest_framework.renderers.AdminRenderer',
+    ],
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 10
+}
 
 # Required by the Wiki
 TEMPLATE_CONTEXT_PROCESSORS = (

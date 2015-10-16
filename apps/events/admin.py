@@ -16,6 +16,7 @@ from apps.events.models import UserGroupRule
 from apps.events.models import Reservation
 from apps.events.models import Reservee
 from apps.events.models import Extras
+from apps.events.models import GroupRestriction
 from apps.feedback.admin import FeedbackRelationInline
 
 
@@ -48,6 +49,15 @@ class ExtrasInline(admin.TabularInline):
     max_num = 20
     classes = ('grp-collapse grp-open',)  # style
     inline_classes = ('grp-collapse grp-open',)  # style
+
+
+class GroupRestrictionInline(admin.TabularInline):
+    model = GroupRestriction
+    extra = 0
+    max_num = 1
+    classes = ('grp-collapse grp-open',)  # style
+    inline_classes = ('grp-collapse grp-open',)  # style
+    filter_horizontal = ('groups',)
 
 
 def mark_paid(modeladmin, request, queryset):
@@ -127,7 +137,7 @@ class AttendanceEventInline(admin.StackedInline):
 
 
 class EventAdmin(admin.ModelAdmin):
-    inlines = (AttendanceEventInline, FeedbackRelationInline, CompanyInline)
+    inlines = (AttendanceEventInline, FeedbackRelationInline, CompanyInline, GroupRestrictionInline)
     exclude = ("author", )
     search_fields = ('title',)
 
@@ -156,9 +166,9 @@ class EventAdmin(admin.ModelAdmin):
 
     def get_form(self, request, obj=None, **kwargs):
         form = super(EventAdmin, self).get_form(request, obj, **kwargs)
-        form.base_fields['ingress_short'].validators=[validators.MinLengthValidator(50)]
-        form.base_fields['ingress'].validators=[validators.MinLengthValidator(75)]
-        form.base_fields['description'].validators=[validators.MinLengthValidator(140)]
+        form.base_fields['ingress_short'].validators = [validators.MinLengthValidator(50)]
+        form.base_fields['ingress'].validators = [validators.MinLengthValidator(75)]
+        form.base_fields['description'].validators = [validators.MinLengthValidator(140)]
         return form
 
 
