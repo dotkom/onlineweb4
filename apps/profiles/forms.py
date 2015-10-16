@@ -16,6 +16,7 @@ class ProfileForm(forms.ModelForm):
         widgets = {
             'allergies' : forms.Textarea(attrs={'id' : 'allergies'}),
             'gender' : forms.Select(attrs={'class' : 'form-control'}),
+            'bio' : forms.Textarea(attrs={'id' : 'bio'}),
         }
 
     def clean(self):
