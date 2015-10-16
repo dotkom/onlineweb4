@@ -1,20 +1,20 @@
 {% if attendance_event.extras %}
     <div class="dropdown extras">
       <span class="extra-text"></span>
-      <button class="btn btn-default dropdown-toggle" type="button" id="choose-extras" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-        <span class="text">
-          {%if attendee.extras %}
-            Valgt ekstra: {{attendee.extras}}
-          {% else %}
-            Velg et alternativ
-          {% endif %}
-        </span>
-        <span class="caret"></span>
-      </button>
-      <ul class="dropdown-menu" aria-labelledby="choose-extras">
+      <select class="form-control extras-choice">
+        {% if not attendee.extras %}
+          <option value="" disabled selected>Velg et alternativ</option>
+        {% endif %}
         {% for choice in attendance_event.extras.all %}
-            <li><a href="#" class="extras-choice" data="{{ forloop.counter0 }}">{{ choice }}</a></li>
+            <option value="{{ forloop.counter0 }}" 
+              {%if attendee.extras == choice %}
+                selected="selected">
+                Valgt ekstra: {{choice}}
+              {%else%}
+                >{{ choice }}
+              {%endif%}
+            </option>
         {% endfor %}
-      </ul>
+      </select>
     </div>
 {% endif %}

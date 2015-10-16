@@ -148,6 +148,7 @@
                         </thead>
                         <tbody id="attendeelist">
                         {% for type, extra in extras.items %}
+                            {% if extra.attending or extra.waits %}
                             <tr>
                                 <td>
                                     {{ extra.type }}
@@ -168,6 +169,7 @@
                                     {% endif %}
                                 </td>
                             </tr>
+                            {% endif %}
                         {% endfor %}
                         </tbody>
                     </table>

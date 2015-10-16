@@ -69,10 +69,9 @@ def details(request, event_id, event_slug):
                     return HttpResponse(u'Du er ikke påmeldt dette arrangementet.', status=401)
 
                 attendee = Attendee.objects.get(event=attendance_event, user=request.user)
-                print(attendance_event.extras.all())
                 attendee.extras = attendance_event.extras.all()[int(request.POST['extras_id'])]
                 attendee.save()
-                resp['message'] = "Lagret!"
+                resp['message'] = "Lagret ditt valg"
                 return JsonResponse(resp)
 
     context = {'event': event, 'ics_path': request.build_absolute_uri(reverse('event_ics', args=(event.id,)))}

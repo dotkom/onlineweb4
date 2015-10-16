@@ -18,15 +18,18 @@ return {
     init: function () {
         if (!performSelfCheck()) return;
 
-        $(".extras-choice").click(function() {
-            var id = $(this).attr("data");
+        $(".extras-choice").on('change', function() {
+            var id = $(this).val();
             var text = $(this).text();
             Event.sendChoice(id, text);
         });
 
-        console.log(selected_extra);
         if(selected_extra == "None"){
             message = "Vennligst velg et alternativ for extra bestilling. (Over avmeldingsknappen)";
+            tools.showStatusMessage(message, 'alert-warning')
+        }
+        else if(jQuery.inArray(selected_extra, all_extras) == -1){
+            message = "Ditt valg til ekstra bestilling er ikke lenger gyldig! Velg et nytt.";
             tools.showStatusMessage(message, 'alert-warning')
         }
     },
@@ -39,13 +42,23 @@ return {
         }
         var success = function (data) {
             //var line = $('#' + attendee_id > i)
-            tools.showStatusMessage(data.message, 'alert-success')
-            var message = "Valgt ekstra: ";
-            $("#choose-extras > .text").text(message + text);
+            tools.showStatusMessage(data.message, 'alert-success');
+            
+            var chosen_text = "Valgt ekstra: ";            
+            var options = $(".extras-choice option");
+            for (var i = options.length - 1; i >= 0; i--) {
+                if(options[i].text.indexOf(chosen_text) >= 0){
+                    options[i].text = all_extras[i];
+                    break;
+                }
+            };
+
+            var selected = $(".extras-choice option:selected");
+            selected.text(chosen_text + selected.text())
         }
         var error = function (xhr, txt, error) {
             var message = "Det skjedde en feil! Refresh siden og prøv igjen, eller kontakt de ansvarlige hvis det fortsatt ikke går. "
-            tools.showStatusMessage(message+error, 'alert-danger')
+            tools.showStatusMessage(message+error, 'alert-danger');
         }
 
         // Make an AJAX request using the Dashboard tools module

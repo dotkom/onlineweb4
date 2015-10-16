@@ -156,11 +156,13 @@ def details(request, event_id, active_tab='attendees'):
 
     extras = {}
     if event.is_attendance_event and event.attendance_event.extras:
+        for extra in event.attendance_event.extras.all():
+            extras[extra] = {"type": extra, "attending": 0, "waits": 0, "allergics": []}
+
         count_extras(extras, "attending", event.attendance_event.attendees_qs)
         count_extras(extras, "waits", event.attendance_event.waitlist_qs)
-    context['extras'] = extras
-    print extras
 
+    context['extras'] = extras
     context['change_event_form'] = ChangeEventForm(instance=event)
 
     return render(request, 'events/dashboard/details.html', context)
