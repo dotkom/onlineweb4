@@ -18,6 +18,8 @@ from apps.events.models import Reservee
 from apps.events.models import GroupRestriction
 from apps.feedback.admin import FeedbackRelationInline
 
+from reversion.admin import VersionAdmin
+
 
 class AttendeeInline(admin.TabularInline):
     model = Attendee
@@ -67,7 +69,7 @@ def mark_not_attended(modeladmin, request, queryset):
     queryset.update(attended=False)
 mark_not_attended.short_description = "Merk som ikke møtt"
 
-class AttendeeAdmin(admin.ModelAdmin):
+class AttendeeAdmin(VersionAdmin):
     model = Attendee
     list_display = ('user', 'event', 'paid', 'attended', 'note')
     list_filter = ('event__event__title',)
@@ -86,24 +88,24 @@ class AttendeeAdmin(admin.ModelAdmin):
         obj.delete()
 
 
-class CompanyEventAdmin(admin.ModelAdmin):
+class CompanyEventAdmin(VersionAdmin):
     model = CompanyEvent
     inlines = (CompanyInline,)
 
 
-class RuleBundleAdmin(admin.ModelAdmin):
+class RuleBundleAdmin(VersionAdmin):
     model = RuleBundle
 
 
-class FieldOfStudyRuleAdmin(admin.ModelAdmin):
+class FieldOfStudyRuleAdmin(VersionAdmin):
     model = FieldOfStudyRule
 
 
-class GradeRuleAdmin(admin.ModelAdmin):
+class GradeRuleAdmin(VersionAdmin):
     model = GradeRule
 
 
-class UserGroupRuleAdmin(admin.ModelAdmin):
+class UserGroupRuleAdmin(VersionAdmin):
     model = UserGroupRule
 
 
@@ -117,7 +119,7 @@ class AttendanceEventInline(admin.StackedInline):
     exclude = ("marks_has_been_set",)
 
 
-class EventAdmin(admin.ModelAdmin):
+class EventAdmin(VersionAdmin):
     inlines = (AttendanceEventInline, FeedbackRelationInline, CompanyInline, GroupRestrictionInline)
     exclude = ("author", )
     search_fields = ('title',)
@@ -160,7 +162,7 @@ class ReserveeInline(admin.TabularInline):
     inline_classes = ('grp-collapse grp-open',)  # style
 
 
-class ReservationAdmin(admin.ModelAdmin):
+class ReservationAdmin(VersionAdmin):
     model = Reservation
     inlines = (ReserveeInline,)
     max_num = 1
