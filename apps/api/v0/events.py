@@ -38,7 +38,7 @@ class CompanyEventResource(ModelResource):
 
     class Meta(object):
         queryset = CompanyEvent.objects.all()
-        resource_name ='companies'
+        resource_name = 'companies'
 
 
 class AttendanceEventResource(ModelResource):
