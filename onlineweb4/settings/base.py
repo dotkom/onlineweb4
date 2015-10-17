@@ -10,7 +10,7 @@ PROJECT_SETTINGS_DIRECTORY = os.path.dirname(globals()['__file__'])
 PROJECT_ROOT_DIRECTORY = os.path.join(PROJECT_SETTINGS_DIRECTORY, '..', '..')
 
 TEST_RUNNER = "django_nose.NoseTestSuiteRunner"
-NOSE_ARGS = ['--with-coverage', '--teamcity', '--cover-package=apps']
+NOSE_ARGS = ['--with-coverage', '--cover-package=apps']
 
 DEBUG = False
 TEMPLATE_DEBUG = DEBUG
