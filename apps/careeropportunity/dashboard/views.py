@@ -13,7 +13,6 @@ from apps.careeropportunity.models import CareerOpportunity
 from apps.dashboard.tools import has_access, get_base_context
 
 
-@ensure_csrf_cookie
 @login_required
 @permission_required('careeropportunity.view_careeropportunity', return_403=True)
 def index(request):
@@ -32,7 +31,6 @@ def index(request):
     return render(request, 'careeropportunity/dashboard/index.html', context)
 
 
-@ensure_csrf_cookie
 @login_required
 @permission_required('careeropportunity.change_careeropportunity', return_403=True)
 def detail(request, opportunity_id=None):
@@ -67,7 +65,6 @@ def detail(request, opportunity_id=None):
     return render(request, 'careeropportunity/dashboard/detail.html', context)
 
 
-@ensure_csrf_cookie
 @login_required
 @permission_required('careeropportunity.change_careeropportunity', return_403=True)
 def delete(request, opportunity_id=None):
