@@ -13,6 +13,7 @@ from django.utils.translation import ugettext as _
 from apps.authentication.models import OnlineUser as User
 from apps.events.models import AttendanceEvent, Attendee
 from apps.marks.models import Suspension
+from apps.inventory.models import Item
 
 
 class Payment(models.Model):
@@ -205,3 +206,31 @@ class PaymentDelay(models.Model):
         verbose_name_plural = _(u'betalingsutsettelser')
 
 reversion.register(PaymentDelay)
+
+
+class PaymentTransaction(models.Model):
+    user = models.ForeignKey(User)
+    amount = models.IntegerField(null=True, blank=True)
+
+    datetime = models.DateTimeField(auto_now=True)
+
+    def __unicode__(self):
+        if self.item:
+            return unicode(self.user) + " - " + unicode(self.item)
+        else:
+            return unicode(self.user) + " - " + unicode(self.amount)
+
+    class Meta:
+        ordering = ['-datetime']
+        verbose_name = _(u'transaksjon')
+        verbose_name_plural = _(u'transaksjoner')
+
+reversion.register(PaymentTransaction)
+
+
+class ItemRelation(models.Model):
+    item = models.ForeignKey(Item)
+    transaction = models.ForeignKey(PaymentTransaction, related_name="items")
+
+
+reversion.register(ItemRelation)

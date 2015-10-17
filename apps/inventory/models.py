@@ -4,9 +4,17 @@ from django.db import models
 from django.utils.translation import ugettext as _
 from django.utils import timezone
 
+
+class ItemCategory(models.Model):
+    name = models.CharField(_(u"Kategori"), max_length=50)
+
+
 class Item(models.Model):
 
     name = models.CharField(_(u"Varetype"), max_length=50)
+    price = models.IntegerField(_(u"Pris"), null=True, blank=True)
+    avalible = models.BooleanField(_(u"Til salgs"), default=False)
+    category = models.ForeignKey(ItemCategory, verbose_name=_(u"Kategori"), related_name="category", null=True, blank=True)
 
     @property
     def oldest_expiration_date(self):
@@ -43,6 +51,7 @@ class Item(models.Model):
         permissions = (
             ("view_item", u"View Inventory Item"),
         )
+
 
 class Batch(models.Model):
 

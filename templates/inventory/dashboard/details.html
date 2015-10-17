@@ -86,14 +86,12 @@
                                 <div class="input-group">
                                     <span class="input-group-addon">{{ field.label }}</span>
                                     {{ field|addclass:"form-control" }}
-                                    <span class="input-group-btn">
-                                        <button type="submit" class="btn btn-success">
-                                            <i class="fa fa-save fa-lg"></i>
-                                        </button>
-                                    </span>
                                 </div>
                             </div>
                             {% endfor %}
+                            <button type="submit" class="btn btn-success">
+                                <i class="fa fa-save fa-lg"></i>  Lagre
+                            </button>
                         </div>
                     </form>
                 </div>
