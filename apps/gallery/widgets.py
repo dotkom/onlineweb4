@@ -52,7 +52,7 @@ class SingleImageInput(HiddenInput):
         if value is None:
             value = ''
 
-        img_thumb = ''
+        img_thumb = 'Det er ikke valgt noe bilde.'
         final_attrs = self.build_attrs(attrs, type=self.input_type, name=name)
         if value != '':
             # Only add the value attribute if the value is non-empty
@@ -72,8 +72,11 @@ class SingleImageInputMixin(object):
     The SingleImageFieldMixin is intended for ModelForm metaclasses that use SingleImageField
     """
 
+    # Subclasses must override this if they use different field name for the ResponsiveImage FK
+    image_field_name = 'image'
+
     widgets = {
-        'image': SingleImageInput(attrs={
+        image_field_name: SingleImageInput(attrs={
             'id': 'responsive-image-id',
         })
     }

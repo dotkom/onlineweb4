@@ -1,14 +1,15 @@
 /*
- TODO: Automatically update the list of thumbnails when new images are uploaded, try to make it so that only the edited image is loaded to avoid unnecessary data traffic
- TODO: Add ajax method to fetch new images that are cropped and put them in the gallery, example in gallery.html
- TODO: Add support for tagging images
- TODO: Make the gallery prettier by framing stuff and allowing previews of different sizes
+ * Gallery.js is included in Dashboard by default.
+ *
+ * To utilize, either include gallery/formwidget.html for ModelForms,
+ * or gallery/widget.html for use outside forms.
  */
 
 var Gallery = (function ($, tools) {
 
     var currentPage = 1;
     var currentImages = [];
+    var minResolution = [1280, 720];
 
     var singleSelectedImage = null;
 
@@ -80,22 +81,21 @@ var Gallery = (function ($, tools) {
                 var html = '';
                 for (var i = 0; i < data.images.length; i++) {
 
-                    // New row if we have drawn 4 thumbnails
-                    if (i > 0 && i % 4 === 0) {
-                        console.log(i)
-                        html += '</div><div class="row">'
-                    }
-
-                    html += '<div class="col-md-2 col-sm-4 col-xs-6">'
+                    html += '<div class="col-md-6 col-sm-12 col-xs-12">'
                     html +=   '<div class="image-selection-thumbnail" data-id="' + data.images[i].id + '">'
-                    html +=     '<img src="' + data.images[i].thumbnail + '" title="' + data.images[i].name + '">'
-                    html +=     '<h4 class="image-title">' + data.images[i].name + '</h4>'
-                    html +=     '<span class="image-timestamp">' + data.images[i].timestamp + '</span>'
-                    html +=     '<p class="image-description">Soon there will be an enormous amount of tada here. And some description. And other stuffz.</p>'
+                    html +=     '<div class="image-selection-thumbnail-image">'
+                    html +=       '<img src="' + data.images[i].thumbnail + '" title="' + data.images[i].name + '">'
+                    html +=     '</div>'
+                    html +=     '<div class="image-selection-thumbnail-text">'
+                    html +=       '<h4 class="image-title">' + data.images[i].name + '</h4>'
+                    html +=       '<span class="image-timestamp">' + data.images[i].timestamp + '</span>'
+                    html +=       '<p class="image-description">' + data.images[i].description +'</p>'
+                    html +=     '</div>'
                     html +=   '</div>'
                     html += '</div>'
                 }
                 if (!data.images.length) html = '<div class="col-md-12"><p>Ingen bilder matchet søket...</p></div></div>'
+                else html += '</div>'
                 $('#image-gallery-search-results').html(html)
 
                 // Creates click listeners for all the newly added image tiles
@@ -126,7 +126,6 @@ var Gallery = (function ($, tools) {
      */
     function bindSingleImageSelectionListeners() {
         $('.image-selection-thumbnail').on('click', function (e) {
-            console.log("YAY")
             Gallery.widget.selectSingleImage($(this))
         })
     }
@@ -256,7 +255,7 @@ var Gallery = (function ($, tools) {
         setTimeout(function() {
             image.cropper({
                 aspectRatio: 16/9,
-                preview: "div > #image-edit-preview",
+                preview: ".image-edit-preview",
                 autoCrop: true,
                 dragCrop: true,
                 modal: true,
@@ -318,15 +317,17 @@ var Gallery = (function ($, tools) {
     var crop_image = function() {
         var image = $('#editing-image');
         var cropData = image.cropper("getData");
-        var image_name = $('#image-name');
+        var image_name = $('#image-edit-name');
+        var image_description = $('#image-edit-description');
         cropData.name = image_name.val();
+        cropData.description = image_description.val();
 
         if (cropData.name.length < 2) {
             alert('Du må gi bildet et navn!');
             image_name.focus();
             return;
         }
-        if (cropData.height < 768 || cropData.width < 1024) {
+        if (cropData.width < minResolution[0] || cropData.height < minResolution[1]) {
             return alert('Utsnittet er for lite. Det må være minst 1024x768');
         }
 
@@ -375,7 +376,7 @@ var Gallery = (function ($, tools) {
                 thumbnailWrapper = $('#single-image-field-thumbnail')
                 if (inputValue.length) {
                     inputValue.val(singleSelectedImage.attr('data-id'))
-                    thumbnailWrapper.html('<img src="' + singleSelectedImage.children('img').attr('src') + '" alt>')
+                    thumbnailWrapper.html('<img src="' + singleSelectedImage.find('img').attr('src') + '" alt>')
                 }
             }
         }

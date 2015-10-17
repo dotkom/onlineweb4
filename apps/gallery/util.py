@@ -4,7 +4,7 @@ import os
 import shutil
 import uuid
 
-from PIL import Image
+from PIL import Image, ImageOps
 from django.conf import settings as django_settings
 
 from apps.gallery import settings as gallery_settings
@@ -24,7 +24,7 @@ def save_unhandled_file(uploaded_file):
         with open(filepath, 'wb+') as destination:
             for chunk in uploaded_file.chunks():
                 destination.write(chunk)
-    except Exception:
+    except IOError:
         return False
 
     return filepath
@@ -90,22 +90,18 @@ def create_responsive_images(source_path):
     xs_stauts = resize_image(source_path, xs_destination_path, gallery_settings.RESPONSIVE_IMAGES_XS_SIZE)
 
     # TODO: Do something with the statuses, they implicate success or error messages
-
-    print lg_status, md_status, sm_status, xs_stauts
+    # lg_status, md_status, sm_status, xs_stauts
 
     unhandled_thumbnail_name = os.path.basename(source_path)
-    unhandled_thumbnail_path = os.path.join(
-        django_settings.MEDIA_ROOT,
-        gallery_settings.UNHANDLED_THUMBNAIL_PATH,
-        unhandled_thumbnail_name
-    )
     responsive_thumbnail_path = os.path.join(
         django_settings.MEDIA_ROOT,
         gallery_settings.RESPONSIVE_THUMBNAIL_PATH,
         unhandled_thumbnail_name
     )
 
-    shutil.copy2(unhandled_thumbnail_path, responsive_thumbnail_path)
+    # Create a new thumbnail, since we now have cropped the image and its a different cutout from
+    # the preview provided by the unhandled image
+    create_thumbnail(xs_destination_path, responsive_thumbnail_path, gallery_settings.RESPONSIVE_THUMBNAIL_SIZE)
 
 
 def create_thumbnail(source_image_path, destination_thumbnail_path, size):
@@ -126,7 +122,7 @@ def create_thumbnail(source_image_path, destination_thumbnail_path, size):
 
     try:
         # Convert our image to a thumbnail
-        image.thumbnail(size, Image.ANTIALIAS)
+        image = ImageOps.fit(image, size, Image.ANTIALIAS)
     except IOError:
         return {'success': False, 'error': 'Image is truncated.'}
 
@@ -178,7 +174,7 @@ def resize_image(source_image_path, destination_thumbnail_path, size):
     quality = 90
 
     try:
-        #Have not tried setting file extension to png, but I guess PIL would fuck you in the ass for it
+        # Have not tried setting file extension to png, but I guess PIL would fuck you in the ass for it
         image.save(destination_thumbnail_path, file_extension[1:], quality=quality, optimize=True)
     except KeyError:
         return {'success': False, 'error': 'Unknown extension.'}
@@ -229,7 +225,7 @@ def crop_image(source_image_path, destination_path, crop_data):
     image = image.crop((int(crop_x), int(crop_y), int(crop_x) + int(crop_width), int(crop_y) + int(crop_height)))
 
     quality = 90
-    #Have not tried setting file extension to png, but I guess PIL would fuck you in the ass for it
+    # Have not tried setting file extension to png, but I guess PIL would fuck you in the ass for it
     image.save(destination_path, file_extension[1:], quality=quality, optimize=True)
 
     return {'success': True}

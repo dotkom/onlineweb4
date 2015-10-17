@@ -7,13 +7,13 @@ from django.conf import settings as django_settings
 # Unhandled images
 UNHANDLED_IMAGES_PATH = os.path.join('images', 'non-edited')
 UNHANDLED_THUMBNAIL_PATH = os.path.join(UNHANDLED_IMAGES_PATH, 'thumbnails')
-UNHANDLED_THUMBNAIL_SIZE = (200, 200)
+UNHANDLED_THUMBNAIL_SIZE = (200, 112)
 
 
 # Responsive images
 RESPONSIVE_IMAGES_PATH = os.path.join('images', 'responsive')
 RESPONSIVE_THUMBNAIL_PATH = os.path.join(RESPONSIVE_IMAGES_PATH, 'thumbnails')
-RESPONSIVE_THUMBNAIL_SIZE = (200, 200)
+RESPONSIVE_THUMBNAIL_SIZE = (200, 112)
 RESPONSIVE_IMAGES_LG_PATH = os.path.join(RESPONSIVE_IMAGES_PATH, 'lg')
 RESPONSIVE_IMAGES_LG_SIZE = (1280, 720)
 RESPONSIVE_IMAGES_MD_PATH = os.path.join(RESPONSIVE_IMAGES_PATH, 'md')

@@ -85,3 +85,24 @@ def detail(request, pk):
         context['form'] = CompanyForm(instance=context['company'])
 
     return render(request, 'company/dashboard/detail.html', context)
+
+
+@login_required
+@permission_required('companyprofile.delete_company')
+def delete(request, pk):
+    """
+    Deletes the Company associated with the provided primary key
+    :param request: Django request object
+    :param pk: The Primary Key of the company
+    :return: An HttpResponse
+    """
+
+    context = get_base_context(request)
+
+    context['company'] = get_object_or_404(Company, pk=pk)
+
+    if request.method == 'POST':
+        context['company'].delete()
+        return redirect(index)
+
+    raise PermissionDenied

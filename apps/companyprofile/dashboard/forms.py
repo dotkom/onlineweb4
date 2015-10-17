@@ -9,5 +9,6 @@ from apps.gallery.widgets import SingleImageInputMixin
 class CompanyForm(ModelForm):
 
     class Meta(SingleImageInputMixin):
+        image_field_name = 'image'
         model = Company
         exclude = ['old_image']

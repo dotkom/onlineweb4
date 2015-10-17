@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import json
+from django.db.models import Q
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
@@ -161,12 +162,16 @@ def search(request):
         return JsonResponse(status=400, data={'error': 'Bad Request', 'status': 400})
 
     query = request.GET['query']
-    matches = ResponsiveImage.objects.filter(name__icontains=query)
+
+    # Field filters are normally AND'ed together. Q objects circumvent this, treating each field result like a set.
+    # This allows us to use set operators like | (union), & (intersect) and ~ (negation)
+    matches = ResponsiveImage.objects.filter(Q(name__icontains=query) | Q(description__icontains=query))[:10]
 
     results = {
         'total': len(matches),
         'images': [{
             'name': image.name,
+            'description': image.description,
             'id': image.id,
             'original': settings.MEDIA_URL + str(image.image_original),
             'thumbnail': settings.MEDIA_URL + str(image.thumbnail),
