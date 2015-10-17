@@ -24,11 +24,11 @@ return {
             Event.sendChoice(id, text);
         });
 
-        if(selected_extra == "None"){
+        if(all_extras.length >0 && selected_extra == "None"){
             message = "Vennligst velg et alternativ for extra bestilling. (Over avmeldingsknappen)";
             tools.showStatusMessage(message, 'alert-warning')
         }
-        else if(jQuery.inArray(selected_extra, all_extras) == -1){
+        else if(all_extras.length >0 && jQuery.inArray(selected_extra, all_extras) == -1){
             message = "Ditt valg til ekstra bestilling er ikke lenger gyldig! Velg et nytt.";
             tools.showStatusMessage(message, 'alert-warning')
         }
