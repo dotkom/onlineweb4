@@ -38,6 +38,7 @@ class ResponsiveImage(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True, editable=False, null=False, blank=False)
     description = models.TextField(u'Beskrivelse', blank=True, default='', max_length=2048)
     image_original = models.FileField(u'Originalbilde', upload_to=gallery_settings.RESPONSIVE_IMAGES_PATH)
+    image_wide = models.FileField(u'Bredformat', upload_to=gallery_settings.RESPONSIVE_IMAGES_WIDE_PATH)
     image_lg = models.ImageField(u'LG Bilde', upload_to=gallery_settings.RESPONSIVE_IMAGES_PATH)
     image_md = models.ImageField(u'MD Bilde', upload_to=gallery_settings.RESPONSIVE_IMAGES_PATH)
     image_sm = models.ImageField(u'SM Bilde', upload_to=gallery_settings.RESPONSIVE_IMAGES_PATH)
@@ -72,6 +73,8 @@ def responsive_image_delete(sender, instance, **kwargs):
     # Pass false so FileField doesn't save the model.
     if instance.image_original:
         instance.image_original.delete(False)
+    if instance.image_wide:
+        instance.image_wide.delete(False)
     if instance.image_lg:
         instance.image_lg.delete(False)
     if instance.image_md:

@@ -63,6 +63,11 @@ def create_thumbnail_for_unhandled_images(unhandled_image_path):
 
 def create_responsive_images(source_path):
 
+    wide_destination_path = os.path.join(
+        django_settings.MEDIA_ROOT,
+        gallery_settings.RESPONSIVE_IMAGES_WIDE_PATH,
+        os.path.basename(source_path)
+    )
     lg_destination_path = os.path.join(
         django_settings.MEDIA_ROOT,
         gallery_settings.RESPONSIVE_IMAGES_LG_PATH,
@@ -84,6 +89,7 @@ def create_responsive_images(source_path):
         os.path.basename(source_path)
     )
 
+    lg_status = resize_image(source_path, wide_destination_path, gallery_settings.RESPONSIVE_IMAGES_WIDE_SIZE)
     lg_status = resize_image(source_path, lg_destination_path, gallery_settings.RESPONSIVE_IMAGES_LG_SIZE)
     md_status = resize_image(source_path, md_destination_path, gallery_settings.RESPONSIVE_IMAGES_MD_SIZE)
     sm_status = resize_image(source_path, sm_destination_path, gallery_settings.RESPONSIVE_IMAGES_SM_SIZE)
@@ -167,7 +173,7 @@ def resize_image(source_image_path, destination_thumbnail_path, size):
 
     try:
         # Convert our image to a thumbnail
-        image = image.resize((target_width, target_height), Image.ANTIALIAS)
+        image = ImageOps.fit(image, (target_width, target_height), Image.ANTIALIAS)
     except IOError:
         return {'success': False, 'error': 'Image is truncated.'}
 
@@ -241,6 +247,10 @@ def get_unhandled_thumbnail_media_path(unhandled_thumbnail_path):
 
 def get_responsive_original_path(responsive_path):
     return os.path.join(gallery_settings.RESPONSIVE_IMAGES_PATH, os.path.basename(responsive_path))
+
+
+def get_responsive_wide_path(responsive_path):
+    return os.path.join(gallery_settings.RESPONSIVE_IMAGES_WIDE_PATH, os.path.basename(responsive_path))
 
 
 def get_responsive_lg_path(responsive_path):

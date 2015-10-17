@@ -119,6 +119,7 @@ def crop_image(request):
             util.create_responsive_images(responsive_image_path)
 
             original_media = util.get_responsive_original_path(responsive_image_path)
+            wide_media = util.get_responsive_wide_path(responsive_image_path)
             lg_media = util.get_responsive_lg_path(responsive_image_path)
             md_media = util.get_responsive_md_path(responsive_image_path)
             sm_media = util.get_responsive_sm_path(responsive_image_path)
@@ -133,6 +134,7 @@ def crop_image(request):
                 image_md=md_media,
                 image_sm=sm_media,
                 image_xs=xs_media,
+                image_wide=wide_media,
                 thumbnail=thumbnail
             ).save()
 
@@ -175,6 +177,7 @@ def search(request):
             'id': image.id,
             'original': settings.MEDIA_URL + str(image.image_original),
             'thumbnail': settings.MEDIA_URL + str(image.thumbnail),
+            'wide': settings.MEDIA_URL + str(image.image_wide),
             'xs': settings.MEDIA_URL + str(image.image_xs),
             'sm': settings.MEDIA_URL + str(image.image_sm),
             'md': settings.MEDIA_URL + str(image.image_md),
