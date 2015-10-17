@@ -27,7 +27,7 @@ class Company(models.Model):
         return self.name
 
     def images(self):
-        if not self.image:
+        if not self.old_image:
             return []
         from apps.companyprofile.utils import find_image_versions
         return find_image_versions(self)
