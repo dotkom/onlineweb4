@@ -15,8 +15,6 @@ NOSE_ARGS = ['--with-coverage', '--cover-package=apps']
 DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 
-TEST_RUNNER = "django_nose.NoseTestSuiteRunner"
-
 ADMINS = (
     ('dotKom', 'dotkom@online.ntnu.no'),
 )
@@ -238,6 +236,7 @@ INSTALLED_APPS = (
     'apps.careeropportunity',
     'apps.companyprofile',
     'apps.dashboard',
+    'apps.gallery',
     'apps.events',
     'apps.marks',
     'apps.offline',

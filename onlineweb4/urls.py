@@ -130,6 +130,12 @@ if 'apps.genfors' in settings.INSTALLED_APPS:
         url(r'^genfors/',           include('apps.genfors.urls')),
     )
 
+
+if 'apps.gallery' in settings.INSTALLED_APPS:
+    urlpatterns += patterns('',
+        url(r'^gallery/',           include('apps.gallery.urls')),
+    )
+
 if 'apps.splash' in settings.INSTALLED_APPS:
     urlpatterns += patterns('',
         url(r'^splash/',           include('apps.splash.urls')),
