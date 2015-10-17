@@ -6,7 +6,7 @@ from django.db.models import Q
 from reversion.admin import VersionAdmin
 
 
-class ProxyChunkAdmin(aVersionAdmin):
+class ProxyChunkAdmin(VersionAdmin):
 
     readonly_fields = ['key']
 
