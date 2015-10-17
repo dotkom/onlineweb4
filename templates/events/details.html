@@ -5,7 +5,6 @@
 {% load group_membership %}
 {% load calendar_filters %}
 {% load payment_tag %}
-{% load compress %}
 
 {% block title %}
 {{ event.title }} - Online
@@ -147,7 +146,6 @@
                             {% if user_paid %}
                                 {% if attendance_event.unattend_deadline > now %}
                                     {% if event.event_start > now %}
-                                        {% include 'events/extras.html' %}
                                         {% if payment_relation_id %}
                                             <div class="action">
                                                 <a href="#refund" role="button" class="btn btn-large btn-danger" data-toggle="modal">Refunder og meld meg av</a>
@@ -167,7 +165,6 @@
                             {% if not user_paid %}
                                 {% if attendance_event.unattend_deadline > now or place_on_wait_list %}
                                     {% if event.event_start > now %}
-                                        {% include 'events/extras.html' %}
                                         <div class="action"><a href="#unattend" role="button" class="btn btn-large btn-danger" data-toggle="modal">Meld meg av</a></div>
                                     {% endif %}
                                 {% endif %}
@@ -374,15 +371,3 @@
     </div>
     </section>
 {% endblock content %}
-
-{% block js %}
-    {{ block.super }}
-    {% compress js %}
-    <script>
-        var selected_extra = "{{ attendee.extras }}";
-        var all_extras = [{% for e in attendance_event.extras.all %}"{{e}}", {%endfor%}];
-    </script>
-    <script type="text/javascript" src="{{ STATIC_URL }}js/dashboard/dashboard.js"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}js/events.js"></script>
-    {% endcompress %}
-{% endblock %}
