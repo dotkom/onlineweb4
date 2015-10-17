@@ -27,7 +27,7 @@ django-reversion==1.8.5         # Model version history with middleware hooks to
 django-guardian                 # Per Object permissions framework
 APScheduler==2.1.1              # Scheduler
 feedme==1.8.3
-git+https://github.com/dotKom/redwine.git@1.1.8#egg=redwine==1.1.8
+git+https://github.com/dotKom/redwine.git@1.2.2#egg=redwine==1.2.2
 reportlab==3.1.44
 pdfdocument==3.1
 Unidecode==0.4.17               # Translates every unicode symbol to the closest ascii. online_mail_usernames
