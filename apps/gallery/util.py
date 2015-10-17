@@ -288,7 +288,7 @@ def verify_directory_structure():
         logging.getLogger(__name__).info(
             '%s directory did not exist, creating it...' % gallery_settings.UNHANDLED_THUMBNAIL_PATH
         )
-        os.makedirs(os.path.join(django_settings.MEDIA_ROOT, gallery_settings.RESPONSIVE_THUMBNAIL_PATH))
+        os.makedirs(os.path.join(django_settings.MEDIA_ROOT, gallery_settings.UNHANDLED_THUMBNAIL_PATH))
     if not os.path.exists(os.path.join(django_settings.MEDIA_ROOT, gallery_settings.RESPONSIVE_THUMBNAIL_PATH)):
         logging.getLogger(__name__).info(
             '%s directory did not exist, creating it...' % gallery_settings.RESPONSIVE_THUMBNAIL_PATH
