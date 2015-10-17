@@ -115,8 +115,6 @@ $(function() {
         else
             e.stop();
 
-         // Checking to see if buzy
-        if (!is_loading_new_content || true) {
             // Set buzy to true so we don't load multiple articles at once
             is_loading_new_content = true;
 
@@ -140,7 +138,6 @@ $(function() {
                 is_loading_new_content = false;
                 articleSettings.tagPage++
             });
-        }
     });
 
     //
