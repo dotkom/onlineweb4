@@ -5,13 +5,15 @@ from django.utils.translation import ugettext as _
 
 from apps.marks.models import Mark, MarkUser, Suspension
 
+from reversion.admin import VersionAdmin
+
 class MarkUserInline(admin.TabularInline):
     model = MarkUser
     extra = 1
     verbose_name = _(u"mottaker")
     verbose_name_plural = _(u"mottakere")
 
-class MarkAdmin(admin.ModelAdmin):
+class MarkAdmin(VersionAdmin):
     inlines = (MarkUserInline,)
     search_fields = ('title',)
 
@@ -33,7 +35,7 @@ class MarkAdmin(admin.ModelAdmin):
         obj.save()
 
 
-class SuspensionAdmin(admin.ModelAdmin):
+class SuspensionAdmin(VersionAdmin):
     model = Suspension
 
     exclude = ('payment_id',)
