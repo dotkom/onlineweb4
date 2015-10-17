@@ -9,16 +9,16 @@
     <link rel="icon" href="{{ STATIC_URL }}img/favicon.png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     {% block styles %}
+        <link rel="stylesheet" type="text/less" href="{{ STATIC_URL }}css/font-awesome.min.css">
+        <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/bootstrap-datetimepicker.min.css">
+        <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/cropper/cropper.min.css"/>
         {% compress css %}
-        <link rel="stylesheet" type="text/less" href="{{ STATIC_URL }}less/font-awesome-4.2.0/font-awesome.less">
         <link rel="stylesheet" type="text/less" href="{{ STATIC_URL }}less/dashboard/main.less">
         <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/jquery-tablesorter/tablesorter.css">
-        <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/bootstrap-datetimepicker.min.css">
         <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/dropzone/dropzone.css" />
         <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/bttrlazyloading/bttrlazyloading.css" />
         <link rel="stylesheet" type="text/less" href="{{ STATIC_URL }}less/gallery.less" />
         {% endcompress %}
-        <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/cropper/cropper.min.css"/>
     {% endblock %}
 </head>
 <body>
