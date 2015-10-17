@@ -21,11 +21,10 @@ class Migration(migrations.Migration):
                 ('name', models.CharField(max_length=100, verbose_name='bedriftsnavn')),
                 ('short_description', models.TextField(max_length=200, verbose_name='kort beskrivelse')),
                 ('long_description', models.TextField(null=True, verbose_name='utdypende beskrivelse', blank=True)),
-                ('old_image', filebrowser.fields.FileBrowseField(max_length=200, verbose_name='bilde')),
                 ('site', models.CharField(max_length=100, verbose_name='hjemmeside')),
                 ('email_address', models.EmailField(max_length=75, null=True, verbose_name='epostaddresse', blank=True)),
                 ('phone_number', models.CharField(max_length=20, null=True, verbose_name='telefonnummer', blank=True)),
-                ('image', models.ForeignKey(default=None, to='gallery.ResponsiveImage')),
+                ('image', models.ForeignKey(null=True, default=None, to='gallery.ResponsiveImage')),
             ],
             options={
                 'verbose_name': 'Bedrift',
