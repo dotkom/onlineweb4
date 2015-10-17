@@ -88,11 +88,11 @@ class EventResource(ModelResource):
         # Do the same thing for the company image
         if bundle.data['company_event']:
             for company in bundle.data['company_event']:
-                temp_image = FileObject(company.data['companies'].data['image'])
+                temp_image = FileObject(company.data['companies'].data['old_image'])
                 for ver in VERSIONS.keys():
                     if ver.startswith('companies_thumb'):
-                        company.data['companies'].data['image_'+ver] = temp_image.version_generate(ver).url
-                del(company.data['companies'].data['image'])
+                        company.data['companies'].data['old_image_'+ver] = temp_image.version_generate(ver).url
+                del(company.data['companies'].data['old_image'])
 
         # Returning washed object 
         return bundle
