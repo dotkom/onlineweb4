@@ -67,6 +67,8 @@ def create_thumbnail_for_unhandled_images(unhandled_image_path):
 
 def create_responsive_images(source_path):
 
+    log = logging.getLogger(__name__)
+
     wide_destination_path = os.path.join(
         django_settings.MEDIA_ROOT,
         gallery_settings.RESPONSIVE_IMAGES_WIDE_PATH,
@@ -93,14 +95,19 @@ def create_responsive_images(source_path):
         os.path.basename(source_path)
     )
 
-    lg_status = resize_image(source_path, wide_destination_path, gallery_settings.RESPONSIVE_IMAGES_WIDE_SIZE)
+    wide_status = resize_image(source_path, wide_destination_path, gallery_settings.RESPONSIVE_IMAGES_WIDE_SIZE)
     lg_status = resize_image(source_path, lg_destination_path, gallery_settings.RESPONSIVE_IMAGES_LG_SIZE)
     md_status = resize_image(source_path, md_destination_path, gallery_settings.RESPONSIVE_IMAGES_MD_SIZE)
     sm_status = resize_image(source_path, sm_destination_path, gallery_settings.RESPONSIVE_IMAGES_SM_SIZE)
     xs_stauts = resize_image(source_path, xs_destination_path, gallery_settings.RESPONSIVE_IMAGES_XS_SIZE)
 
-    # TODO: Do something with the statuses, they implicate success or error messages
-    # lg_status, md_status, sm_status, xs_stauts
+    # Filter status results based on state, and log if any error
+    errors = filter(
+        lambda s, v: status['success'],
+        [(wide_status, 'wide'), (lg_status, 'lg'), (md_status, 'md'), (sm_status, 'sm'), (xs_stauts, 'sm')]
+    )
+    for status, version in errors:
+        log.error('Failed to resize image %s' % version)
 
     unhandled_thumbnail_name = os.path.basename(source_path)
     responsive_thumbnail_path = os.path.join(
