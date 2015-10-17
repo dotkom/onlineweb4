@@ -16,6 +16,7 @@ class Company(models.Model):
     name = models.CharField(_(u"bedriftsnavn"), max_length=100)
     short_description = models.TextField(_(u"kort beskrivelse"), max_length=200)
     long_description = models.TextField(_(u"utdypende beskrivelse"), blank=True, null=True)
+                                extensions=IMAGE_EXTENSIONS, null=False, blank=False)
     image = models.ForeignKey(ResponsiveImage, null=True, blank=False, default=None)
     site = models.CharField(_(u"hjemmeside"), max_length=100)
     email_address = models.EmailField(_(u"epostaddresse"), max_length=75, blank=True, null=True)
