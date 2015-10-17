@@ -1,3 +1,4 @@
+# -*- coding: utf8 -*-
 import os
 import sys
 import wiki
@@ -13,8 +14,6 @@ NOSE_ARGS = ['--with-coverage', '--cover-package=apps']
 
 DEBUG = False
 TEMPLATE_DEBUG = DEBUG
-
-TEST_RUNNER = "django_nose.NoseTestSuiteRunner"
 
 ADMINS = (
     ('dotKom', 'dotkom@online.ntnu.no'),
@@ -62,7 +61,7 @@ BASE_URL = 'https://online.ntnu.no'
 AUTH_USER_MODEL = 'authentication.OnlineUser'
 LOGIN_URL = '/auth/login/'
 
-MEDIA_ROOT = os.path.join(PROJECT_ROOT_DIRECTORY, 'uploaded_media') # Override this in local.py in prod.
+MEDIA_ROOT = os.path.join(PROJECT_ROOT_DIRECTORY, 'uploaded_media')  # Override this in local.py in prod.
 MEDIA_URL = '/media/'
 
 STATIC_ROOT = os.path.join(PROJECT_ROOT_DIRECTORY, 'static')
@@ -137,19 +136,6 @@ TEMPLATE_DIRS = (
 PIZZA_GROUP = 'dotkom'
 PIZZA_ADMIN_GROUP = 'pizzaadmin'
 
-# Variables for fagKom/bedKom-sync script, override in local.py
-BEDKOM_GROUP_ID = 1
-FAGKOM_GROUP_ID = 2
-COMMON_GROUP_ID = 3
-
-# List of groups that should have edit access to Online wiki (public)
-WIKI_OPEN_EDIT_ACCESS = [1, 2]
-WIKI_OPEN_EDIT_ACCESS_GROUP_ID = 3
-
-# List of groups that should have access to the Komite wiki
-WIKI_COMMITTEE_ACCESS = [1, 2]
-WIKI_COMMITTEE_ACCESS_GROUP_ID = 3
-
 # Grappelli settings
 GRAPPELLI_ADMIN_TITLE = '<a href="/">Onlineweb</a>'
 
@@ -168,11 +154,23 @@ USER_SEARCH_GROUPS = [
     14,  # Eldsteradet
     6,   # fagKom
     11,  # Hovedstyret
+    19,  # jubKom
     10,  # pangKom
     7,   # proKom
     18,  # seniorKom
     8,   # triKom
     9,   # velKom
+]
+
+# Online stripe test keys
+STRIPE_PUBLIC_KEYS = [
+    "pk_test_SDGGPO6MQSMAwlwySCzNJTw9",
+    "pk_test_1BjvVBYc0pdZLlC8EN1JY0Ur"
+]
+
+STRIPE_PRIVATE_KEYS = [
+    "sk_test_i1AL1Z4An77TMZMpgA9d4KEM",
+    "sk_test_F4wQkOgKHb8OI92tJeZmjDxg"
 ]
 
 #List of mailing lists, used in update_sympa_memcache_from_sql.py
@@ -196,7 +194,6 @@ INSTALLED_APPS = (
     # Third party dependencies
     'django.contrib.humanize',
     'django_nose',
-    'south',
     'django_nyt', # Wiki
     'mptt', # Wiki
     'sekizai', # Wiki
@@ -207,6 +204,7 @@ INSTALLED_APPS = (
     'crispy_forms',
     'django_extensions',
     'django_dynamic_fixture',
+    'oauth2_provider',
     'captcha',
     'compressor',
     'pdfdocument',
@@ -216,6 +214,9 @@ INSTALLED_APPS = (
     'djangoformsetjs',
     'reversion',
     'guardian',
+    'stripe',
+    'rest_framework',
+    'django_filters',
 
     # Django apps
     'django.contrib.admin',
@@ -235,6 +236,7 @@ INSTALLED_APPS = (
     'apps.careeropportunity',
     'apps.companyprofile',
     'apps.dashboard',
+    'apps.gallery',
     'apps.events',
     'apps.marks',
     'apps.offline',
@@ -245,9 +247,14 @@ INSTALLED_APPS = (
     'apps.resourcecenter',
     'apps.mailinglists',
     'apps.inventory',
+    'apps.payment',
+    'apps.posters',
+    'apps.sso',
+    'apps.splash',
     'scripts',
 
     #External apps
+    'feedme',
     'redwine',
 
     #Wiki
@@ -258,6 +265,17 @@ INSTALLED_APPS = (
     'wiki.plugins.macros',
 
 )
+
+
+# SSO / OAuth2 settings
+if 'apps.sso' in INSTALLED_APPS:
+    from apps.sso.settings import OAUTH2_SCOPES
+    OAUTH2_PROVIDER = {
+        'SCOPES': OAUTH2_SCOPES,
+        'ACCESS_TOKEN_EXPIRE_SECONDS': 3600,
+        'AUTHORIZATION_CODE_EXPIRE_SECONDS': 60,
+    }
+    OAUTH2_PROVIDER_APPLICATION_MODEL = 'sso.Client'
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
@@ -278,6 +296,10 @@ LOGGING = {
         },
     },
     'handlers': {
+        'null': {
+            'level': 'DEBUG',
+            'class': 'logging.NullHandler',
+        },
         'mail_admins': {
             'level': 'ERROR',
             'filters': ['require_debug_false'],
@@ -290,6 +312,10 @@ LOGGING = {
         }
     },
     'loggers': {
+        'django.security.DisallowedHost': {
+            'handlers': ['null'],
+            'propagate': False,
+        },
         'django.request': {
             'handlers': ['mail_admins'],
             'level': 'ERROR',
@@ -328,6 +354,30 @@ MESSAGE_TAGS = {messages.DEBUG: 'alert-debug',
 # Has something to do with django-dynamic-fixture bumped from 1.6.4 to 1.6.5 in order to run a syncdb with mysql/postgres (OptimusCrime)
 IMPORT_DDF_MODELS = False
 
+# Django REST framework
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.SessionAuthentication',  # Allows users to be logged in to browsable API
+    ),
+    'DEFAULT_FILTER_BACKENDS': (
+        'rest_framework.filters.DjangoFilterBackend',
+        'rest_framework.filters.OrderingFilter',
+    ),
+    'DEFAULT_PARSER_CLASSES': (
+        'rest_framework.parsers.JSONParser',
+        'rest_framework.parsers.FormParser',
+        'rest_framework.parsers.MultiPartParser',
+        'rest_framework.parsers.FileUploadParser',
+    ),
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',
+        'rest_framework.renderers.BrowsableAPIRenderer',
+        'rest_framework.renderers.AdminRenderer',
+    ],
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 10
+}
+
 # Required by the Wiki
 TEMPLATE_CONTEXT_PROCESSORS = (
     "django.contrib.auth.context_processors.auth",
@@ -343,7 +393,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 )
 
 # Remember to keep 'local' last, so it can override any setting.
-for settings_module in ['filebrowser', 'local']:  # local last
+for settings_module in ['filebrowser', 'django_wiki', 'local']:  # local last
     if not os.path.exists(os.path.join(PROJECT_SETTINGS_DIRECTORY,
             settings_module + ".py")):
         sys.stderr.write("Could not find settings module '%s'.\n" %

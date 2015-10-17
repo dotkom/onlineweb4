@@ -44,6 +44,7 @@ class Mark(models.Model):
         (3, _(u"Kurs")),
         (4, _(u"Tilbakemelding")),
         (5, _(u"Kontoret")),
+        (6, _(u"Betaling")),
     )
 
     title = models.CharField(_(u"tittel"), max_length=155)
@@ -67,13 +68,14 @@ class Mark(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.added_date:
-            self.added_date = timezone.now()
+            self.added_date = timezone.now().date()
         super(Mark, self).save(*args, **kwargs)
 
     def delete(self):
+        given_to = [mu.user for mu in self.given_to.all()]
         super(Mark, self).delete()
-        for markuser in self.given_to.all():
-            _fix_mark_history(markuser.user)
+        for user in given_to:
+            _fix_mark_history(user)
 
     class Meta:
         verbose_name = _(u"Prikk")
@@ -96,11 +98,13 @@ class MarkUser(models.Model):
     expiration_date = models.DateField(_(u"utløpsdato"), editable=False)
 
     def save(self, *args, **kwargs):
-        if not self.expiration_date or self.expiration_date - self.mark.added_date < timedelta(30):
-            expiration_date = get_expiration_date(self.user) or timezone.now().date()
-            expiration_date = _get_with_duration_and_vacation(expiration_date)
-            self.expiration_date = expiration_date
+        run_history_update = False
+        if not self.expiration_date:
+            self.expiration_date = timezone.now().date()
+            run_history_update = True
         super(MarkUser, self).save(*args, **kwargs)
+        if run_history_update:
+            _fix_mark_history(self.user)
 
     def delete(self):
         super(MarkUser, self).delete()
@@ -121,14 +125,27 @@ reversion.register(MarkUser)
 
 
 def _fix_mark_history(user):
+    """
+    Goes through a users complete mark history and resets all expiration dates.
+
+    The reasons for doing it this way is that the mark rules now insist on marks building
+    on previous expiration dates if such exists. Instead of having the entire mark database
+    be a linked list structure, it can be simplified to guarantee the integrity of the
+    expiration dates by running this whenever;
+
+     * new Mark is saved or deleted
+     * a new MarkUser entry is made
+     * an existing MarkUser entry is deleted
+    """
     markusers = MarkUser.objects.filter(user=user).order_by('mark__added_date')
     last_expiry_date = None
     for entry in markusers:
         # If there's a last_expiry date, it means a mark has been processed already.
-        # If f so build on it.
-        if last_expiry_date and last_expiry_date - entry.mark.added_date > timedelta(-DURATION):
+        # If that expiration date is within a DURATION of this added date, build on it.
+        if last_expiry_date and entry.mark.added_date - timedelta(days=DURATION) < last_expiry_date:
             entry.expiration_date = _get_with_duration_and_vacation(last_expiry_date)
-        # If the above is not true, then we add DURATIION days from the added date of the mark.
+        # If there is no last_expiry_date or the last expiry date is over a DURATION old
+        # we add DURATIION days from the added date of the mark.
         else:
             entry.expiration_date = _get_with_duration_and_vacation(entry.mark.added_date)
         entry.save()
@@ -169,3 +186,22 @@ def _get_with_duration_and_vacation(added_date=timezone.now()):
         expiry_date += timedelta(days=(second_winter_end_date - added_date).days)
 
     return expiry_date
+
+
+class Suspension(models.Model):
+
+    user = models.ForeignKey(User)
+    title = models.CharField(_(u'tittel'), max_length=64)
+    description = models.CharField(_(u"beskrivelse"), max_length=255)
+    active = models.BooleanField(default=True)
+    added_date = models.DateTimeField(auto_now=True, editable=False)
+    expiration_date = models.DateField(_(u"utløpsdato"), null=True, blank=True)
+
+    #Using id because foreign key to Payment caused circular dependencies
+    payment_id = models.IntegerField(null=True, blank=True)
+
+
+    def __unicode__(self):
+        return "Suspension: " + unicode(self.user)
+
+    #TODO URL

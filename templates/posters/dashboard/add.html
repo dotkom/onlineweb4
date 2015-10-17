@@ -1,0 +1,56 @@
+{% extends "dashboard_base.html" %}
+{% load compress %}
+{% load addcss %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+Ny bestilling - Online
+{% endblock title %}
+
+{% block styles %}
+    {{ block.super }}
+    {% compress css %}
+        <link rel="stylesheet" type="text/less" href="{{ STATIC_URL }}less/dashboard/posters.less" />
+    {% endcompress %}
+{% endblock %}
+
+{% block js %}
+    {{ block.super }}
+    {% compress js %}
+        <script type="text/javascript" src="{{ STATIC_URL }}js/dashboard/posters.js"></script>
+    {% endcompress %}
+{% endblock js %}
+
+{% block page-header %}
+Ny {{order_type_name | lower}}bestilling
+{% endblock %}
+
+{% block breadcrumbs %}
+    <li>Bestilling</li> 
+{% endblock %}
+
+{% block content %}
+    <h4>Fyll ut info om bestillingen. Fyll kun ut de feltene du er sikre på.</h4>
+    <p>Det tas forbehold om at bestillinger laget mindre enn 14 dager før plakaten skal vises ikke blir klare til da.</p>
+    <section>
+    <form action="" method="POST">
+        {{form.non_field_errors }}
+         {% for field in form %}
+            <div class="row">
+                <div class="form-group">
+                    <div class="col-md-2">
+                        {{ field.label_tag }}
+                        {% if field.field.required %}<span style="color:red;" title="Dette feltet kreves">*</span>{% endif %}
+                    </div>
+                    <div class="col-md-{% if field.errors %}7{% else %}10{% endif %}">{{ field|addclass:"form-control"}}</div>
+                    {% if field.errors %}<div class="col-md-2 error">{{ field.errors }}</div>{% endif %}
+                </div>
+            </div>
+          {% endfor %}
+        <button type="submit" class="btn btn-lg btn-success dropdown-toggle">Submit</button>
+        {% csrf_token %}
+    </form>
+        
+    </section>
+
+{% endblock content %}

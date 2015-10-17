@@ -94,9 +94,9 @@ function EventWidget (Utils){
             html +=             '</div>';
         }
         for(var i=0; i < item.company_event.length; i++){
-            html +=         '<div class="item ' + (item.image_events_thumb ? '' : 'active') + '">';
+            html +=         '<div class="item ' + (!item.image_events_thumb && i === 0 ? 'active' : '') + '">';
             html +=             '<a href="events/' + item.id + '/' + item.slug + '">';
-            html +=                 '<img src="' + item.company_event[i].companies.image_companies_thumb + '" width="100%" alt="" />';
+            html +=                 '<img src="' + item.company_event[i].companies.old_image_companies_thumb + '" width="100%" alt="" />';
             html +=             '</a>';
             html +=         '</div>';
         }

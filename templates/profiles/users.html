@@ -2,6 +2,7 @@
 {% load gravatar_url_resolver %}
 {% load crispy_forms_tags %}
 {% load compress %}
+{% load firstof from future %}
 
 
 {% block styles %}
@@ -128,7 +129,7 @@
                 template: user_search_template,
                 engine: Hogan
             }).on('typeahead:selected typeahead:autocompleted', function(e, datum) {
-                window.location = '/profile/' + datum.username;
+                window.location = '/profile/view/' + datum.username;
             });
 
             // Spin until everything is ready

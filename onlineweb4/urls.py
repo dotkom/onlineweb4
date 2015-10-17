@@ -75,6 +75,7 @@ if 'apps.authentication' in settings.INSTALLED_APPS:
 if 'apps.careeropportunity' in settings.INSTALLED_APPS:
     urlpatterns += patterns('',
         url(r'^careeropportunity/', include('apps.careeropportunity.urls')),
+        url(r'^dashboard/careeropportunity/', include('apps.careeropportunity.dashboard.urls')),
     )
 
 if 'apps.companyprofile' in settings.INSTALLED_APPS:
@@ -91,6 +92,7 @@ if 'apps.dashboard' in settings.INSTALLED_APPS:
 if 'apps.events' in settings.INSTALLED_APPS:
     urlpatterns += patterns('',
         url(r'^events/',            include('apps.events.urls')),
+        url(r'^dashboard/events/',  include('apps.events.dashboard.urls')),
     )
 
 if 'apps.feedback' in settings.INSTALLED_APPS:
@@ -106,6 +108,11 @@ if 'apps.inventory' in settings.INSTALLED_APPS:
 if 'apps.offline' in settings.INSTALLED_APPS:
     urlpatterns += patterns('',
         url(r'^offline/',           include('apps.offline.urls')),
+    )
+
+if 'apps.posters' in settings.INSTALLED_APPS:
+    urlpatterns += patterns('',
+        url(r'^dashboard/posters/',          include('apps.posters.dashboard.urls')),
     )
 
 if 'apps.profiles' in settings.INSTALLED_APPS:
@@ -124,9 +131,47 @@ if 'apps.genfors' in settings.INSTALLED_APPS:
         url(r'^genfors/',           include('apps.genfors.urls')),
     )
 
+
+if 'apps.gallery' in settings.INSTALLED_APPS:
+    urlpatterns += patterns('',
+        url(r'^gallery/',           include('apps.gallery.urls')),
+    )
+
+if 'apps.splash' in settings.INSTALLED_APPS:
+    urlpatterns += patterns('',
+        url(r'^splash/',           include('apps.splash.urls')),
+    )
+
+if 'apps.sso' in settings.INSTALLED_APPS:
+    urlpatterns += patterns(
+        '',
+        url(r'^sso/', include('apps.sso.urls')),
+        url(r'^dashboard/auth/sso/', include('apps.sso.dashboard.urls', namespace='dashboard', app_name='sso')),
+    )
+
+# feedme
+if 'feedme' in settings.INSTALLED_APPS:
+    urlpatterns += patterns('', url(r'^feedme/', include('feedme.urls', namespace='feedme')))
+
+if 'apps.payment' in settings.INSTALLED_APPS:
+    urlpatterns += patterns('',
+        url(r'^payment/',           include('apps.payment.urls')),
+    )
+
 # redwine
 if 'redwine' in settings.INSTALLED_APPS:
     urlpatterns += patterns('', url(r'^redwine/', include('redwine.urls')))
+
+if 'rest_framework' in settings.INSTALLED_APPS:
+    from apps.api.utils import SharedAPIRootRouter
+    # API
+    def api_urls():
+        return SharedAPIRootRouter.shared_router.urls
+
+    urlpatterns += patterns(
+        '',
+        url(r'^api/v1/', include(api_urls())),
+    )
 
 #Captcha url
 if 'captcha' in settings.INSTALLED_APPS:

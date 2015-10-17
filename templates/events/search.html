@@ -2,14 +2,14 @@
 
 {% if events %}
   {% for event in events %}
-  <article class="row">
+  <article data-date="{{ event.event_start|date:"c" }}" class="row">
 
     <div class="col-xs-12 col-sm-4 col-md-4 left-box">
       <div class="row">
         {% if event.companies.all %}
             {% for company_relation in event.companies.all %}
                 <a href="{{ event.get_absolute_url }}">
-                    <img src="{% version company_relation.company.image 'companies_archive' %}" alt="" />
+                    <img src="{% version company_relation.company.old_image 'companies_archive' %}" alt="" />
                 </a>
             {% endfor %} 
         {% else %}
@@ -41,13 +41,14 @@
 
       <div class="meta">
         {% if event.is_attendance_event %}
+          {% ifequal event.attendance_event.number_of_seats_taken event.attendance_event.max_capacity %}
+		  <div class="col-md-3">
+		    <p>Venteliste: {{ event.attendance_event.number_on_waitlist }} </p>
+		  </div>
+		  {% else %}
           <div class="col-md-3">
             <p>Påmeldte: {{ event.attendance_event.number_of_seats_taken }} / {{ event.attendance_event.max_capacity }}</p>
           </div>
-          {% ifequal event.attendance_event.number_of_seats_taken event.attendance_event.max_capacity %}
-            <div class="col-md-3">
-              <p>Venteliste: {{ event.attendance_event.number_on_waitlist }} </p>
-            </div>
           {% endifequal %}
           <div class="col-md-3">
             <p>Sted: {{ event.location }}</p>

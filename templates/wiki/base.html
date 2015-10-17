@@ -27,8 +27,21 @@
     <section id="wiki">
         {% block wiki_body %}
             <div class="container">
-                {% block wiki_breadcrumbs %}{% endblock %}
-
+                <div class="row" id="topbar">
+                    <div class="col-xs-8">
+                        {% block wiki_breadcrumbs %}{% endblock %}
+                    </div>
+                    <div class="col-xs-4">
+                        <form action="/wiki/_search">
+                            <div class="input-group">
+                                <input name="q" type="text" class="form-control" placeholder="Søk...">
+                                <span class="input-group-btn">
+                                    <button class="btn btn-default"><span class="fa fa-search"></button>
+                                </span>
+                            </div>
+                        </form>
+                    </div>
+                </div>
                 {% block wiki_contents %}{% endblock %}
             </div>
         {% endblock %}

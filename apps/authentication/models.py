@@ -6,7 +6,7 @@ import urllib
 import hashlib
 
 from django.conf import settings
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractUser, Group
 from django.db import models
 from django.utils.translation import ugettext as _
 from django.utils import timezone
@@ -21,11 +21,11 @@ FIELD_OF_STUDY_CHOICES = [
     (0, _(u'Gjest')),
     (1, _(u'Bachelor i Informatikk (BIT)')),
     # master degrees take up the interval [10,30]
-    (10, _(u'Software (SW)')),
-    (11, _(u'Informasjonsforvaltning (DIF)')),
-    (12, _(u'Komplekse Datasystemer (KDS)')),
-    (13, _(u'Spillteknologi (SPT)')),
-    (14, _(u'Intelligente Systemer (IRS)')),
+    (10, _(u'Programvaresystemer (P)')),
+    (11, _(u'Databaser og søk (DS)')),
+    (12, _(u'Algoritmer og datamaskiner (AD)')),
+    (13, _(u'Spillteknologi (S)')),
+    (14, _(u'Kunstig intelligens (KI)')),
     (15, _(u'Helseinformatikk (MSMEDTEK)')),
     (30, _(u'Annen mastergrad')),
     (80, _(u'PhD')),
@@ -50,6 +50,7 @@ COMMITTEES = [
     ('jubkom', _(u'Jubileumskomiteen')),
     ('pangkom', _(u'Pensjonistkomiteen')),
     ('prokom', _(u'Profil-og aviskomiteen')),
+    ('redaksjonen', _(u'Redaksjonen')),
     ('trikom', _(u'Trivselskomiteen')),
     ('velkom', _(u'Velkomstkomiteen')),
 ]
@@ -58,11 +59,12 @@ POSITIONS = [
     ('medlem', _(u'Medlem')),
     ('leder', _(u'Leder')),
     ('nestleder', _(u'Nestleder')),
+    ('redaktor', _(u'Redaktør')),
     ('okoans', _(u'Økonomiansvarlig')),
 ]
 
 def get_length_of_field_of_study(field_of_study):
-    """ 
+    """
     Returns length of a field of study
     """
     if field_of_study == 0 or field_of_study == 100:  # others
@@ -85,14 +87,16 @@ class OnlineUser(AbstractUser):
 
     IMAGE_FOLDER = "images/profiles"
     IMAGE_EXTENSIONS = ['.jpg', '.jpeg', '.gif', '.png']
-    
+
     # Online related fields
     field_of_study = models.SmallIntegerField(_(u"studieretning"), choices=FIELD_OF_STUDY_CHOICES, default=0)
-    started_date = models.DateField(_(u"startet studie"), default=timezone.now().date())
+    started_date = models.DateField(_(u"startet studie"), default=datetime.date.today)
     compiled = models.BooleanField(_(u"kompilert"), default=False)
 
-    # Infomail
+    # Mail
     infomail = models.BooleanField(_(u"vil ha infomail"), default=False)
+    jobmail = models.BooleanField(_(u"vil ha oppdragsmail"), default=False)
+    online_mail = models.CharField(_(u"Online-epost"), max_length=50, blank=True, null=True)
 
     # Address
     phone_number = models.CharField(_(u"telefonnummer"), max_length=20, blank=True, null=True)
@@ -106,6 +110,7 @@ class OnlineUser(AbstractUser):
     nickname = models.CharField(_(u"nickname"), max_length=50, blank=True, null=True)
     website = models.URLField(_(u"hjemmeside"), blank=True, null=True)
     gender = models.CharField(_(u"kjønn"), max_length=10, choices=GENDER_CHOICES, default="male")
+    bio = models.TextField(_(u"bio"), blank=True)
 
     # NTNU credentials
     ntnu_username = models.CharField(_(u"NTNU-brukernavn"), max_length=10, blank=True, null=True, unique=True)
@@ -121,6 +126,16 @@ class OnlineUser(AbstractUser):
             if AllowedUsername.objects.filter(username=self.ntnu_username.lower()).filter(expiration_date__gte=timezone.now()).count() > 0:
                 return True
         return False
+
+    @property
+    def is_committee(self):
+        committeee_group = None
+        try:
+            committeee_group = Group.objects.get(name='Komiteer')
+        except Group.DoesNotExist:
+            # This probably means that a developer does not have the Komiteer group set up, so let's fail silently
+            return False
+        return self in committeee_group.user_set.all() or self.is_staff()
 
     @property
     def has_expiring_membership(self):
@@ -318,8 +333,8 @@ class Position(models.Model):
     Contains a users position in the organization from a given year
     """
     period     = models.CharField(_(u'periode'), max_length=9, default="2013-2014", blank=False)
-    committee  = models.CharField(_(u"komite"), max_length=10, choices=COMMITTEES, default="hs")
-    position   = models.CharField(_(u"stilling"), max_length=10, choices=POSITIONS, default="medlem")
+    committee  = models.CharField(_(u"komite"), max_length=20, choices=COMMITTEES, default="hs")
+    position   = models.CharField(_(u"stilling"), max_length=20, choices=POSITIONS, default="medlem")
     user       = models.ForeignKey(OnlineUser, related_name='positions', blank=False)
 
     @property

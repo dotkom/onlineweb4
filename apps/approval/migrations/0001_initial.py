@@ -1,113 +1,42 @@
 # -*- coding: utf-8 -*-
-from south.utils import datetime_utils as datetime
-from south.db import db
-from south.v2 import SchemaMigration
-from django.db import models
+from __future__ import unicode_literals
+
+from django.db import models, migrations
 
 
-class Migration(SchemaMigration):
+class Migration(migrations.Migration):
 
-    def forwards(self, orm):
-        # Adding model 'Approval'
-        db.create_table(u'approval_approval', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('applicant', self.gf('django.db.models.fields.related.ForeignKey')(related_name='applicant', to=orm['authentication.OnlineUser'])),
-            ('approver', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='approver', null=True, to=orm['authentication.OnlineUser'])),
-            ('created', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
-            ('processed', self.gf('django.db.models.fields.BooleanField')(default=False)),
-            ('processed_date', self.gf('django.db.models.fields.DateTimeField')(null=True, blank=True)),
-            ('approved', self.gf('django.db.models.fields.BooleanField')(default=False)),
-            ('message', self.gf('django.db.models.fields.TextField')()),
-        ))
-        db.send_create_signal(u'approval', ['Approval'])
+    dependencies = [
+    ]
 
-        # Adding model 'MembershipApproval'
-        db.create_table(u'approval_membershipapproval', (
-            (u'approval_ptr', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['approval.Approval'], unique=True, primary_key=True)),
-            ('new_expiry_date', self.gf('django.db.models.fields.DateField')(null=True, blank=True)),
-            ('field_of_study', self.gf('django.db.models.fields.SmallIntegerField')(default=0)),
-            ('started_date', self.gf('django.db.models.fields.DateField')(null=True, blank=True)),
-        ))
-        db.send_create_signal(u'approval', ['MembershipApproval'])
-
-
-    def backwards(self, orm):
-        # Deleting model 'Approval'
-        db.delete_table(u'approval_approval')
-
-        # Deleting model 'MembershipApproval'
-        db.delete_table(u'approval_membershipapproval')
-
-
-    models = {
-        u'approval.approval': {
-            'Meta': {'object_name': 'Approval'},
-            'applicant': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'applicant'", 'to': u"orm['authentication.OnlineUser']"}),
-            'approved': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'approver': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'approver'", 'null': 'True', 'to': u"orm['authentication.OnlineUser']"}),
-            'created': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'message': ('django.db.models.fields.TextField', [], {}),
-            'processed': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'processed_date': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'})
-        },
-        u'approval.membershipapproval': {
-            'Meta': {'object_name': 'MembershipApproval', '_ormbases': [u'approval.Approval']},
-            u'approval_ptr': ('django.db.models.fields.related.OneToOneField', [], {'to': u"orm['approval.Approval']", 'unique': 'True', 'primary_key': 'True'}),
-            'field_of_study': ('django.db.models.fields.SmallIntegerField', [], {'default': '0'}),
-            'new_expiry_date': ('django.db.models.fields.DateField', [], {'null': 'True', 'blank': 'True'}),
-            'started_date': ('django.db.models.fields.DateField', [], {'null': 'True', 'blank': 'True'})
-        },
-        u'auth.group': {
-            'Meta': {'object_name': 'Group'},
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '80'}),
-            'permissions': ('django.db.models.fields.related.ManyToManyField', [], {'to': u"orm['auth.Permission']", 'symmetrical': 'False', 'blank': 'True'})
-        },
-        u'auth.permission': {
-            'Meta': {'ordering': "(u'content_type__app_label', u'content_type__model', u'codename')", 'unique_together': "((u'content_type', u'codename'),)", 'object_name': 'Permission'},
-            'codename': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
-            'content_type': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['contenttypes.ContentType']"}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '50'})
-        },
-        u'authentication.onlineuser': {
-            'Meta': {'ordering': "['first_name', 'last_name']", 'object_name': 'OnlineUser'},
-            'address': ('django.db.models.fields.CharField', [], {'max_length': '100', 'null': 'True', 'blank': 'True'}),
-            'allergies': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
-            'compiled': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'date_joined': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
-            'email': ('django.db.models.fields.EmailField', [], {'max_length': '75', 'blank': 'True'}),
-            'field_of_study': ('django.db.models.fields.SmallIntegerField', [], {'default': '0'}),
-            'first_name': ('django.db.models.fields.CharField', [], {'max_length': '30', 'blank': 'True'}),
-            'gender': ('django.db.models.fields.CharField', [], {'default': "'male'", 'max_length': '10'}),
-            'groups': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'related_name': "u'user_set'", 'blank': 'True', 'to': u"orm['auth.Group']"}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'infomail': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
-            'is_active': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
-            'is_staff': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'is_superuser': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'last_login': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
-            'last_name': ('django.db.models.fields.CharField', [], {'max_length': '30', 'blank': 'True'}),
-            'mark_rules': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'nickname': ('django.db.models.fields.CharField', [], {'max_length': '50', 'null': 'True', 'blank': 'True'}),
-            'ntnu_username': ('django.db.models.fields.CharField', [], {'max_length': '10', 'unique': 'True', 'null': 'True', 'blank': 'True'}),
-            'password': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
-            'phone_number': ('django.db.models.fields.CharField', [], {'max_length': '20', 'null': 'True', 'blank': 'True'}),
-            'rfid': ('django.db.models.fields.CharField', [], {'max_length': '50', 'null': 'True', 'blank': 'True'}),
-            'started_date': ('django.db.models.fields.DateField', [], {'default': 'datetime.datetime(2014, 9, 24, 0, 0)'}),
-            'user_permissions': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'related_name': "u'user_set'", 'blank': 'True', 'to': u"orm['auth.Permission']"}),
-            'username': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '30'}),
-            'website': ('django.db.models.fields.URLField', [], {'max_length': '200', 'null': 'True', 'blank': 'True'}),
-            'zip_code': ('django.db.models.fields.CharField', [], {'max_length': '4', 'null': 'True', 'blank': 'True'})
-        },
-        u'contenttypes.contenttype': {
-            'Meta': {'ordering': "('name',)", 'unique_together': "(('app_label', 'model'),)", 'object_name': 'ContentType', 'db_table': "'django_content_type'"},
-            'app_label': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'model': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '100'})
-        }
-    }
-
-    complete_apps = ['approval']
+    operations = [
+        migrations.CreateModel(
+            name='Approval',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('created', models.DateTimeField(auto_now_add=True, verbose_name='opprettet')),
+                ('processed', models.BooleanField(default=False, verbose_name='behandlet', editable=False)),
+                ('processed_date', models.DateTimeField(null=True, verbose_name='behandlet dato', blank=True)),
+                ('approved', models.BooleanField(default=False, verbose_name='godkjent', editable=False)),
+                ('message', models.TextField(verbose_name='melding')),
+            ],
+            options={
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='MembershipApproval',
+            fields=[
+                ('approval_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='approval.Approval')),
+                ('new_expiry_date', models.DateField(null=True, verbose_name='ny utl\xf8psdato', blank=True)),
+                ('field_of_study', models.SmallIntegerField(default=0, verbose_name='studieretning', choices=[(0, 'Gjest'), (1, 'Bachelor i Informatikk (BIT)'), (10, 'Software (SW)'), (11, 'Informasjonsforvaltning (DIF)'), (12, 'Komplekse Datasystemer (KDS)'), (13, 'Spillteknologi (SPT)'), (14, 'Intelligente Systemer (IRS)'), (15, 'Helseinformatikk (MSMEDTEK)'), (30, 'Annen mastergrad'), (80, 'PhD'), (90, 'International'), (100, 'Annet Onlinemedlem')])),
+                ('started_date', models.DateField(null=True, verbose_name='startet dato', blank=True)),
+            ],
+            options={
+                'verbose_name': 'medlemskapss\xf8knad',
+                'verbose_name_plural': 'medlemskapss\xf8knader',
+                'permissions': (('view_membershipapproval', 'View membership approval'),),
+            },
+            bases=('approval.approval',),
+        ),
+    ]

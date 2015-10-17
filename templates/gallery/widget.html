@@ -1,0 +1,80 @@
+<!-- IMAGE UPLOAD TEMPLATE FRAGMENT -->
+
+{% load responsive_image_url %}
+
+<div id="image-widget">
+    <a href="#" class="btn btn-primary" id="add-responsive-image"><i class="fa fa-plus fa-lg"></i> Velg</a>
+    <a href="#" class="btn btn-primary" id="upload-responsive-image"><i class="fa fa-image fa-lg"></i> Last opp</a>
+    <br />
+    <div id="image-selection-wrapper">
+        <h2 id="image-selection-title">Velg bilde</h2>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="input-group">
+                    <input type="text" id="image-gallery-search" class="form-control" placeholder="Skriv inn søkeord...">
+                    <span class="input-group-btn">
+                        <button class="btn btn-primary" id="image-gallery-search-button" type="button">Søk!</button>
+                    </span>
+                </div>
+            </div>
+        </div>
+        <hr />
+        <div class="row" id="image-gallery-search-results"></div>
+    </div>
+    <div id="image-upload-wrapper">
+    <section id="gallery">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="page-header">
+                    <h2 id="image-gallery-title">Bildegalleri</h2>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="col-md-6">
+                    <a href="#upload-pane" class="menu-button" id="upload-button" data-toggle="tab">
+                        <div class="row">
+                            <i class="fa fa-upload fa-3x fa-align-center"></i>
+                        </div>
+                        <div class="row caption">
+                            Last opp
+                        </div>
+                    </a>
+                </div>
+                <div class="col-md-6">
+                    <a href="#manage-pane" class="menu-button" id="edit-button" data-toggle="tab">
+                        <div class="row">
+                            <i class="fa fa-edit fa-3x fa-align-center"></i>
+                        </div>
+                        <div class="row caption">
+                            Behandle
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <hr />
+        <div class="row">
+            <div class="col-md-12">
+                <div id="messages"></div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="tab-content">
+                    <div class="tab-pane fade" id="gallery-pane">
+                        {% include "gallery/gallery.html" %}
+                    </div>
+                    <div class="tab-pane fade in active" id="upload-pane">
+                        {% include "gallery/upload.html" %}
+                    </div>
+                    <div class="tab-pane fade" id="manage-pane">
+                        {% include "gallery/edit.html" %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+</div>

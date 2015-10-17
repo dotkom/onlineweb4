@@ -1,7 +1,8 @@
-Django==1.6.10
-South==1.0.2                    # DB migration tool.
+Django==1.7.7
 Pillow==2.7.0                   # pillow
 django-tastypie==0.12.1         # API
+djangorestframework==3.2.2      # API v2
+django-filter==0.11.0           # Filtering for DRF
 python-memcached==1.53          # Memcache. Used by Mailinglists to fetch from Sympa.
 wsgiref==0.1.2
 markdown2==2.3.0                # textarea text formatting
@@ -9,26 +10,30 @@ psycopg2                        # Postgres adapter
 pytz                            # Timezone lib. Obsolete?
 gunicorn==19.0
 icalendar==3.8.4
+stripe==1.20.2
 
 # third party deps
 django-filebrowser==3.5.4 		# File uploading
-django-grappelli==2.5.6         # Admin template set
+django-grappelli==2.6.3         # Admin template set
 git+git://github.com/clintecker/django-chunks.git@0.2# Chunks, or reusable key:content for templates.
 django-crispy-forms==1.4.0      # nice forms
-django-extensions==1.5.0        # nice extra commands for debugging, etc
+django-extensions==1.5.2        # nice extra commands for debugging, etc
 django-dynamic-fixture==1.8.1   # Dynamic fixtures for models
 django-simple-captcha==0.4.4    # Simple captcha
-django_compressor==1.3          # Compiles less and minifies js
+django-oauth-toolkit==0.8.1      # OAuth2 authentication support
+django_compressor==1.4          # Compiles less and minifies js
 django-watson==1.1.5            # Indexed model search lib
 django-reversion==1.8.5         # Model version history with middleware hooks to all post_save signals
 django-guardian                 # Per Object permissions framework
 APScheduler==2.1.1              # Scheduler
-git+https://github.com/dotKom/redwine.git@1.1.4#egg=redwine==1.1.4
-#git+https://github.com/dotKom/feedme.git@#egg=feedme==1.0.5
+feedme==1.8.3
+git+https://github.com/dotKom/redwine.git@1.2.2#egg=redwine==1.2.2
 reportlab==3.1.44
 pdfdocument==3.1
+Unidecode==0.4.17               # Translates every unicode symbol to the closest ascii. online_mail_usernames
 django-markdown-deux==1.0.5
-django-formset-js==0.4.2
+django-formset-js==0.4.3
+werkzeug==0.10.4
 
 #test tools
 cov-core==1.7
@@ -38,12 +43,14 @@ factory-boy==1.1.3
 lettuce==0.2.20
 nose==1.3.4
 nose-cov==1.6
+teamcity-messages==1.16
 
 # Wiki
-wiki==0.0.24.2
+git+https://github.com/django-wiki/django-wiki.git@adb4e2ea21745da40d8c123ce7a369ab3acab5d2#egg=wiki==0.1.dev0
+
 
 # non-pip
 # imagemagick                   # From package repository. Tested with version == 8:6.7.7.10.
-# libjpeg-dev					# From package repository. 
+# libjpeg-dev					# From package repository.
 # libpq-dev						# From package repository.
 

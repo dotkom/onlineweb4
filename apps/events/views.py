@@ -1,6 +1,6 @@
 #-*- coding: utf-8 -*-
 
-import datetime
+from datetime import datetime, timedelta
 from collections import OrderedDict
 
 from django.utils import timezone
@@ -8,23 +8,26 @@ from django.utils import timezone
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.contenttypes.models import ContentType
 from django.core.mail import EmailMessage
 from django.core.signing import Signer, BadSignature
 from django.core.urlresolvers import reverse
 from django.db.models import Q
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.utils.translation import ugettext as _
+from django.contrib.contenttypes.models import ContentType
 
-import icalendar
 import watson
 
 from apps.authentication.models import OnlineUser as User
 from apps.events.forms import CaptchaForm
-from apps.events.models import Event, AttendanceEvent, Attendee
+from apps.events.models import Event, AttendanceEvent, Attendee, CompanyEvent
 from apps.events.pdf_generator import EventPDF
 from apps.events.utils import get_group_restricted_events
+from apps.payment.models import Payment, PaymentRelation, PaymentDelay
 
+from utils import EventCalendar
 
 def index(request):
     context = {}
@@ -34,25 +37,53 @@ def index(request):
         context['personal_ics_path'] = request.build_absolute_uri(reverse('events_personal_ics', args=(context['signer_value'],)))
     return render(request, 'events/index.html', context)
 
+
 def details(request, event_id, event_slug):
     event = get_object_or_404(Event, pk=event_id)
 
-    is_attendance_event = False
+    #Restricts access to the event if it is group restricted
+    if not event.can_display(request.user):
+        messages.error(request, "Du har ikke tilgang til denne eventen.")
+        return index(request)
+
     user_anonymous = True
     user_attending = False
+    attendee = False
     place_on_wait_list = 0
     will_be_on_wait_list = False
     rules = []
     user_status = False
+    user_paid = False
+    payment_delay = False
+    payment_relation_id = False
 
     user_access_to_event = False
     if request.user:
         if event in get_group_restricted_events(request.user):
             user_access_to_event = True
 
-    try:
+    if request.method == 'POST':
+        if request.is_ajax and 'action' in request.POST:
+            resp = {'message': "Feil!"}
+            if request.POST['action'] == 'extras':
+                if not event.is_attendance_event:
+                    return HttpResponse(u'Dette er ikke et påmeldingsarrangement.', status=400)
+
+                attendance_event = AttendanceEvent.objects.get(pk=event_id)
+
+                if not attendance_event.is_attendee(request.user):
+                    return HttpResponse(u'Du er ikke påmeldt dette arrangementet.', status=401)
+
+                attendee = Attendee.objects.get(event=attendance_event, user=request.user)
+                attendee.extras = attendance_event.extras.all()[int(request.POST['extras_id'])]
+                attendee.save()
+                resp['message'] = "Lagret ditt valg"
+                return JsonResponse(resp)
+
+    context = {'event': event, 'ics_path': request.build_absolute_uri(reverse('event_ics', args=(event.id,)))}
+
+    if event.is_attendance_event():
         attendance_event = AttendanceEvent.objects.get(pk=event_id)
-        is_attendance_event = True
         form = CaptchaForm(user=request.user)
 
         if attendance_event.rule_bundles:
@@ -63,24 +94,46 @@ def details(request, event_id, event_slug):
             user_anonymous = False
             if attendance_event.is_attendee(request.user):
                 user_attending = True
+                attendee = Attendee.objects.get(event=attendance_event, user=request.user)
 
-            
+
+
             will_be_on_wait_list = attendance_event.will_i_be_on_wait_list
 
-            user_status = event.is_eligible_for_signup(request.user)
+            user_status = event.attendance_event.is_eligible_for_signup(request.user)
 
             # Check if this user is on the waitlist
-            place_on_wait_list = event.what_place_is_user_on_wait_list(request.user)
+            place_on_wait_list = attendance_event.what_place_is_user_on_wait_list(request.user)
 
-    except AttendanceEvent.DoesNotExist:
-        pass
+        try:
+            payment = Payment.objects.get(content_type=ContentType.objects.get_for_model(AttendanceEvent),
+                object_id=event_id)
+        except Payment.DoesNotExist:
+            payment = None
 
-    context = {'event': event, 'ics_path': request.build_absolute_uri(reverse('event_ics', args=(event.id,)))}
-    if is_attendance_event:
+        if payment:
+            request.session['payment_id'] = payment.id
+
+            if not user_anonymous:
+                payment_relations = PaymentRelation.objects.filter(payment=payment, user=request.user, refunded=False)
+                for payment_relation in payment_relations:
+                    user_paid = True
+                    payment_relation_id = payment_relation.id
+                if not user_paid and user_attending:
+                    attendee = Attendee.objects.get(event=attendance_event, user=request.user)
+                    if attendee:
+                        user_paid = attendee.paid
+
+                if not user_paid:
+                    payment_delays = PaymentDelay.objects.filter(user=request.user, payment=payment)
+                    if payment_delays:
+                        payment_delay = payment_delays[0]
+
         context.update({
                 'now': timezone.now(),
                 'attendance_event': attendance_event,
                 'user_anonymous': user_anonymous,
+                'attendee': attendee,
                 'user_attending': user_attending,
                 'will_be_on_wait_list': will_be_on_wait_list,
                 'rules': rules,
@@ -89,7 +142,12 @@ def details(request, event_id, event_slug):
                 #'position_in_wait_list': position_in_wait_list,
                 'captcha_form': form,
                 'user_access_to_event': user_access_to_event,
+                'payment': payment,
+                'user_paid': user_paid,
+                'payment_delay': payment_delay,
+                'payment_relation_id': payment_relation_id,
         })
+
     return render(request, 'events/details.html', context)
 
 def get_attendee(attendee_id):
@@ -97,8 +155,12 @@ def get_attendee(attendee_id):
 
 @login_required
 def attendEvent(request, event_id):
-    
+
     event = get_object_or_404(Event, pk=event_id)
+
+    if not event.is_attendance_event():
+        messages.error(request, _(u"Dette er ikke et påmeldingsarrangement."))
+        return redirect(event)
 
     if not request.POST:
         messages.error(request, _(u'Vennligst fyll ut skjemaet.'))
@@ -117,14 +179,28 @@ def attendEvent(request, event_id):
     # If not, an error message will be present in the returned dict
     attendance_event = event.attendance_event
 
-    response = event.is_eligible_for_signup(request.user);
+    response = event.attendance_event.is_eligible_for_signup(request.user);
 
-    if response['status']:   
+    if response['status']:
         ae = Attendee(event=attendance_event, user=request.user)
         if 'note' in form.cleaned_data:
             ae.note = form.cleaned_data['note']
         ae.save()
         messages.success(request, _(u"Du er nå påmeldt på arrangementet!"))
+
+        try:
+            payment = Payment.objects.get(content_type=ContentType.objects.get_for_model(AttendanceEvent),
+                object_id=event_id)
+        except Payment.DoesNotExist:
+            payment = None
+
+        #If payment_type is delay, Create delay object
+        if payment and not event.attendance_event.is_on_waitlist(request.user):
+            if payment.payment_type == 3:
+                deadline = timezone.now() + timedelta(days=payment.delay)
+                payment.create_payment_delay(request.user, deadline)
+                #TODO send mail
+
         return redirect(event)
     else:
         messages.error(request, response['message'])
@@ -155,7 +231,28 @@ def unattendEvent(request, event_id):
         messages.error(request, _(u"Dette arrangementet har allerede startet."))
         return redirect(event)
 
-    event.notify_waiting_list(host=request.META['HTTP_HOST'], unattended_user=request.user)
+    try:
+        payment = Payment.objects.get(content_type=ContentType.objects.get_for_model(AttendanceEvent),
+            object_id=event_id)
+    except Payment.DoesNotExist:
+        payment = None
+
+    #Delete payment delays connected to the user and event
+    if payment:
+
+        payments = PaymentRelation.objects.filter(payment=payment, user=request.user, refunded=False)
+
+        #Return if someone is trying to unatend without refunding
+        if payments:
+            messages.error(request, _(u'Du har betalt for arrangementet og må refundere før du kan melde deg av'))
+            return redirect(event)
+
+        delays = PaymentDelay.objects.filter(payment=payment, user=request.user)
+        for delay in delays:
+            delay.delete()
+
+
+    event.attendance_event.notify_waiting_list(host=request.META['HTTP_HOST'], unattended_user=request.user)
     Attendee.objects.get(event=attendance_event, user=request.user).delete()
 
     messages.success(request, _(u"Du ble meldt av arrangementet."))
@@ -175,16 +272,29 @@ def search_events(request):
 def _search_indexed(request, query, filters):
     results = []
     kwargs = {}
+    order_by = 'event_start'
 
     if filters['future'] == 'true':
         kwargs['event_start__gte'] = timezone.now()
+    else:
+        # Reverse order when showing all events
+        order_by = '-' + order_by
 
     if filters['myevents'] == 'true':
         kwargs['attendance_event__attendees__user'] = request.user
 
-    events = Event.objects.filter(**kwargs).order_by('event_start').prefetch_related(
+    events = Event.objects.filter(**kwargs).order_by(order_by).prefetch_related(
             'attendance_event', 'attendance_event__attendees', 'attendance_event__reserved_seats',
             'attendance_event__reserved_seats__reservees')
+
+    #Filters events that are restricted
+    display_events = set()
+
+    for event in events:
+        if event.can_display(request.user):
+            display_events.add(event.pk)
+
+    events = events.filter(pk__in=display_events)
     
     if query:
         for result in watson.search(query, models=(events,)):
@@ -200,72 +310,31 @@ def generate_pdf(request, event_id):
 
     event = get_object_or_404(Event, pk=event_id)
 
-    groups = request.user.groups.all()
-    if not (groups.filter(name='dotKom').count() == 1 or groups.filter(name='Hovedstyret').count() == 1):
-        if event.event_type == 1 and not groups.filter(name='arrKom').count() == 1:
-            messages.error(request, _(u'Du har ikke tilgang til listen for dette arrangementet.'))
-            return redirect(event)
+    # If this is not an attendance event, redirect to event with error
+    if not event.attendance_event:
+        messages.error(request, _(u"Dette er ikke et påmeldingsarrangement."))
+        return redirect(event)
 
-        if event.event_type == 2 and not groups.filter(name='bedKom').count() == 1:
-            messages.error(request, _(u'Du har ikke tilgang til listen for dette arrangementet.'))
-            return redirect(event)
-
-        if event.event_type == 3 and not groups.filter(name='fagKom').count() == 1:
-            messages.error(request, _(u'Du har ikke tilgang til listen for dette arrangementet.'))  
-            return redirect(event)
+    # Check access
+    if event not in get_group_restricted_events(request.user):
+        messages.error(request, _(u'Du har ikke tilgang til listen for dette arrangementet.'))
+        return redirect(event)
 
     return EventPDF(event).render_pdf()
 
+
 def calendar_export(request, event_id=None, user=None):
-    cal = icalendar.Calendar()
-    cal.add('prodid', '-//Online//Onlineweb//EN')
-    cal.add('version', '2.0')
-    filename = 'online'
+    calendar = EventCalendar()
     if event_id:
         # Single event
-        try:
-            events = [Event.objects.get(id=event_id)]
-        except Event.DoesNotExist:
-            events = []
-        filename = str(event_id)
+        calendar.event(event_id)
     elif user:
         # Personalized calendar
-        # This calendar is publicly available, but the url is not guessable so data should not be leaked to everyone
-        signer = Signer()
-        try:
-            username = signer.unsign(user)
-            user = User.objects.get(username=username)
-        except (BadSignature, User.DoesNotExist):
-            user = None
-        if user:
-            # Getting all events that the user has/is participating in
-            events = Event.objects.filter(attendance_event__attendees__user=user).order_by('event_start').prefetch_related(
-            'attendance_event', 'attendance_event__attendees')
-            filename = username
-        else:
-            events = []
+        calendar.user(user)
     else:
         # All events that haven't ended yet
-        events = Event.objects.filter(event_end__gt=timezone.now()).order_by('event_start')
-        filename = 'events'
-
-    for event in events:
-        cal_event = icalendar.Event()
-
-        cal_event.add('dtstart', event.event_start)
-        cal_event.add('dtend', event.event_end)
-        cal_event.add('location', event.location)
-        cal_event.add('summary', event.title)
-        cal_event.add('description', event.ingress_short)
-        cal_event.add('uid', 'event-' + str(event.id) + '@online.ntnu.no')
-
-        cal.add_component(cal_event)
-
-    response = HttpResponse(cal.to_ical(), content_type='text/calendar')
-    response['Content-Type'] = 'text/calendar; charset=utf-8';
-    response['Content-Disposition'] = 'attachment; filename=' + filename + '.ics'
-
-    return response
+        calendar.events()
+    return calendar.response()
 
 
 @login_required
@@ -273,17 +342,19 @@ def mail_participants(request, event_id):
 
     event = get_object_or_404(Event, pk=event_id)
 
+    # If this is not an attendance event, redirect to event with error
     if not event.attendance_event:
-        return HttpResponse(status=503)
+        messages.error(request, _(u"Dette er ikke et påmeldingsarrangement."))
+        return redirect(event)
 
     # Check access
-    if not event in get_group_restricted_events(request.user):
+    if event not in get_group_restricted_events(request.user):
         messages.error(request, _(u'Du har ikke tilgang til å vise denne siden.'))
         return redirect(event)
 
-    all_attendees = event.attendance_event.attendees
-    attendees_on_waitlist = event.attendance_event.waitlist_qs
-    attendees_not_paid = event.attendees_not_paid
+    all_attendees = list(event.attendance_event.attendees_qs)
+    attendees_on_waitlist = list(event.attendance_event.waitlist_qs)
+    attendees_not_paid = list(event.attendance_event.attendees_not_paid)
 
     if request.method == 'POST':
 
@@ -302,24 +373,22 @@ def mail_participants(request, event_id):
 
         signature = u'\n\nVennlig hilsen Linjeforeningen Online.\n(Denne eposten kan besvares til %s)' % from_email
 
-        # Decide who to send mail to 
+        # Decide who to send mail to
         to_emails = []
         to_emails_value = request.POST.get('to_email')
 
         if to_emails_value == '1':
-            to_emails = [attendee.user.email for attendee in all_attendees.all()]
-            print to_emails
+            to_emails = [attendee.user.email for attendee in all_attendees]
         elif to_emails_value == '2':
-            to_emails = [attendee.user.email for attendee in attendees_on_waitlist.all()]
+            to_emails = [attendee.user.email for attendee in attendees_on_waitlist]
         else:
-            to_emails = [attendee.user.email for attendee in attendees_not_paid.all()]
+            to_emails = [attendee.user.email for attendee in attendees_not_paid]
 
         message = '%s%s' % (request.POST.get('message'), signature)
         subject = request.POST.get('subject')
 
         # Send mail
         try:
-
             if EmailMessage(unicode(subject), unicode(message), from_email, [], to_emails).send():
                 messages.success(request, _(u'Mailen ble sendt'))
                 return redirect(event)
@@ -332,3 +401,32 @@ def mail_participants(request, event_id):
 
     return render(request, 'events/mail_participants.html', {
         'all_attendees' : all_attendees, 'attendees_on_waitlist': attendees_on_waitlist, 'attendees_not_paid': attendees_not_paid, 'event' : event})
+
+
+# API v1
+import django_filters
+from rest_framework import viewsets, mixins
+from rest_framework.permissions import AllowAny
+from apps.events.serializers import EventSerializer, AttendanceEventSerializer, CompanyEventSerializer
+from apps.events.filters import EventDateFilter
+
+class EventViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.ListModelMixin):
+    queryset = Event.objects.all()
+    serializer_class = EventSerializer
+    permission_classes = (AllowAny,)
+    filter_class = EventDateFilter
+    filter_fields = ('event_start', 'event_end', 'id',)
+    ordering_fields = ('event_start', 'event_end', 'id',)
+    ordering = ('id',)
+
+
+class AttendanceEventViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.ListModelMixin):
+    queryset = AttendanceEvent.objects.all()
+    serializer_class = AttendanceEventSerializer
+    permission_classes = (AllowAny,)
+
+
+class CompanyEventViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.ListModelMixin):
+    queryset = CompanyEvent.objects.all()
+    serializer_class = CompanyEventSerializer
+    permission_classes = (AllowAny,)

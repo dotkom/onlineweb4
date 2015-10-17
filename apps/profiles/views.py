@@ -11,9 +11,12 @@ from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Group
 from django.core.mail import send_mail
-from django.http import HttpResponse, Http404
+from django.http import HttpResponse, Http404, JsonResponse
 from django.shortcuts import redirect, render, get_object_or_404
 from django.utils.translation import ugettext as _
+from django.utils import timezone
+
+from oauth2_provider.models import AccessToken
 
 import watson
 
@@ -22,7 +25,7 @@ from apps.approval.models import MembershipApproval
 from apps.authentication.forms import NewEmailForm
 from apps.authentication.models import Email, RegisterToken, Position
 from apps.authentication.models import OnlineUser as User
-from apps.marks.models import Mark
+from apps.marks.models import Mark, Suspension
 from apps.profiles.forms import (MailSettingsForm, PrivacyForm,
                                 ProfileForm, MembershipSettingsForm, PositionForm)
 from utils.shortcuts import render_json
@@ -32,164 +35,155 @@ Index for the entire user profile view
 Methods redirect to this view on save
 """
 @login_required
-def index(request):
+def index(request, active_tab='overview'):
+    context = _create_profile_context(request)
+    context['active_tab'] = active_tab
 
-    """
-    This view is rendered for ever request made to the userprofile pages,
-    due to the fact that it is a one-page view.
-    """
+    return render(request, 'profiles/index.html', context)
 
-    if not request.user.is_authenticated():
-        return render_home(request)
-
-    dict = _create_request_dictionary(request)
-
-    # If a user has made a post, a session value will be set for which tab the user posted from.
-    # This enables us to return the user to the correct tab when returning the view.
-    # If no session key is set, return the user to the default first tab
-
-    return render(request, 'profiles/index.html', dict)
-
-
-def render_home(request):
-    messages.error(request, _(u"Du er ikke logget inn, og kan ikke se din profil."))
-    return redirect('home')
-
-
-def _create_request_dictionary(request):
+def _create_profile_context(request):
 
     groups = Group.objects.all()
-    users_to_display = User.objects.filter(privacy__visible_for_other_users=True)
 
-    dict = {
-        'users' : users_to_display,
-        'groups' : groups,
-        'user' : request.user,
-        'position_form' : PositionForm(),
-        'privacy_form' : PrivacyForm(instance=request.user.privacy),
-        'user_profile_form' : ProfileForm(instance=request.user),
-        'password_change_form' : PasswordChangeForm(request.user),
-        'marks' : [
+    context = {
+        # edit
+        'position_form': PositionForm(),
+        'user_profile_form': ProfileForm(instance=request.user),
+        # positions
+        'groups': groups,
+        # privacy
+        'privacy_form': PrivacyForm(instance=request.user.privacy),
+
+        # SSO / OAuth2 approved apps
+        'connected_apps': AccessToken.objects.filter(user=request.user, expires__gte=timezone.now())
+        .order_by('expires'),
+
+        # marks
+        'mark_rules_accepted': request.user.mark_rules,
+        'marks': [
             # Tuple syntax ('title', list_of_marks, is_collapsed)
             (_(u'aktive prikker'), Mark.marks.active(request.user), False),
             (_(u'inaktive prikker'), Mark.marks.inactive(request.user), True),
         ],
-        'new_email' : NewEmailForm(),
-        'has_active_approvals' : MembershipApproval.objects.filter(applicant=request.user, processed=False).count() > 0,
+        'suspensions': [
+            # Tuple syntax ('title', list_of_marks, is_collapsed)
+            (_(u'aktive suspansjoner'), Suspension.objects.filter(user=request.user, active=True), False),
+            (_(u'inaktive suspansjoner'), Suspension.objects.filter(user=request.user, active=False), True),
+        ],
+        # password
+        'password_change_form': PasswordChangeForm(request.user),
+        # email
+        'new_email': NewEmailForm(),
+        # approvals
+        'field_of_study_application': FieldOfStudyApplicationForm(),
+        'has_active_approvals': MembershipApproval.objects.filter(applicant=request.user, processed=False).count() > 0,
         'approvals': [
             # Tuple syntax ('title', list_of_approvals, is_collapsed)
             (_(u"aktive søknader"), MembershipApproval.objects.filter(applicant=request.user, processed=False), False),
             (_(u"avslåtte søknader"), MembershipApproval.objects.filter(applicant=request.user, processed=True, approved=False), True),
             (_(u"godkjente søknader"), MembershipApproval.objects.filter(applicant=request.user, processed=True), True),
         ],
-        'field_of_study_application': FieldOfStudyApplicationForm(),
-        'mark_rules_accepted' : request.user.mark_rules,
     }
 
-    if request.session.has_key('userprofile_active_tab'):
-        dict['active_tab'] = request.session['userprofile_active_tab']
-    else:
-        dict['active_tab'] = 'dashboard'
-
-    return dict
+    return context
 
 
-def updateActiveTab(request):
-
-    if request.is_ajax():
-        if request.method == 'POST':
-            value = json.loads(request.body)
-            request.session['userprofile_active_tab'] = value['active_tab']
-
-            return HttpResponse(status=200)
-    return HttpResponse(status=405)
-
-def saveUserProfile(request):
-
-    if not request.user.is_authenticated():
-        return render_home(request)
+@login_required
+def edit_profile(request):
+    context = _create_profile_context(request)
+    context['active_tab'] = 'edit'
 
     if request.method == 'POST':
-
-        user = request.user
-        dict = _create_request_dictionary(request)
-        user_profile_form = ProfileForm(request.POST)
-        dict['user_profile_form'] = user_profile_form
+        user_profile_form = ProfileForm(request.POST, instance=request.user)
+        context['user_profile_form'] = user_profile_form
 
         if not user_profile_form.is_valid():
             messages.error(request, _(u"Noen av de påkrevde feltene mangler"))
-            return render(request, 'profiles/index.html', dict)
+        else:
+            user_profile_form.save()
+            messages.success(request, _(u"Brukerprofilen din ble endret"))
 
-        cleaned = user_profile_form.cleaned_data
+    return render(request, 'profiles/index.html', context)
 
-        user.address = cleaned['address']
-        user.allergies = cleaned['allergies']
-        user.nickname = cleaned['nickname']
-        user.phone_number = cleaned['phone_number']
-        user.website = cleaned['website']
-        user.zip_code = cleaned['zip_code']
-        user.gender = cleaned['gender']
-
-        user.save()
-        messages.success(request, _(u"Brukerprofilen din ble endret"))
-
-    return redirect("profiles")
-
-
-def savePrivacy(request):
-    if not request.user.is_authenticated():
-        return render_home(request)
+@login_required
+def privacy(request):
+    context = _create_profile_context(request)
+    context['active_tab'] = 'privacy'
 
     if request.method == 'POST':
-        dict = _create_request_dictionary(request)
         privacy_form = PrivacyForm(request.POST, instance=request.user.privacy)
-        dict['privacy_form'] = privacy_form
+        context['privacy_form'] = privacy_form
 
         if not privacy_form.is_valid():
             messages.error(request, _(u"Noen av de påkrevde feltene mangler"))
-            return render(request, 'profiles/index.html', dict)
+        else:
+            privacy_form.save()
+            messages.success(request, _(u"Personvern ble endret"))
 
-        privacy_form.save()
-        messages.success(request, _(u"Personvern ble endret"))
+    return render(request, 'profiles/index.html', context)
 
-    return redirect("profiles")
 
-def savePassword(request):
-    if not request.user.is_authenticated():
-        return render_home(request)
+@login_required()
+def connected_apps(request):
+    """
+    Tab controller for the connected 3rd party apps pane
+    :param request: Django request object
+    :return: An HttpResponse
+    """
+
+    context = _create_profile_context(request)
+    context['active_tab'] = 'connected_apps'
 
     if request.method == 'POST':
-        dict = _create_request_dictionary(request)
+        if not 'token_id' in request.POST:
+            messages.error(request, _(u'Det ble ikke oppgitt noen tilgangsnøkkel i forespørselen.'))
+        else:
+            try:
+                pk = int(request.POST['token_id'])
+                token = get_object_or_404(AccessToken, pk=pk)
+                token.delete()
+                messages.success(request, _(u'Tilgangsnøkkelen ble slettet.'))
+            except ValueError:
+                messages.error(request, _(u'Tilgangsnøkkelen inneholdt en ugyldig verdi.'))
+
+    return render(request, 'profiles/index.html', context)
+
+
+@login_required
+def password(request):
+    context = _create_profile_context(request)
+    context['active_tab'] = 'password'
+
+    if request.method == 'POST':
         password_change_form = PasswordChangeForm(user=request.user, data=request.POST)
-        dict['password_change_form'] = password_change_form
+        context['password_change_form'] = password_change_form
 
         if not password_change_form.is_valid():
             messages.error(request, _(u"Passordet ditt ble ikke endret"))
-            return render(request, 'profiles/index.html', dict)
+        else:
+            password_change_form.save()
+            messages.success(request, _(u"Passordet ditt ble endret"))
 
-        password_change_form.save()
-        messages.success(request, _(u"Passordet ditt ble endret"))
-
-    return redirect("profiles")
+    return render(request, 'profiles/index.html', context)
 
 @login_required
-def save_position(request):
-    if request.method == 'POST':
+def position(request):
+    context = _create_profile_context(request)
+    context['active_tab'] = 'position'
 
+    if request.method == 'POST':
         form = PositionForm(request.POST)
-        dict = _create_request_dictionary(request)
-        dict['position_form'] = form
+        context['position_form'] = form
 
         if not form.is_valid():
             messages.error(request, _(u'Skjemaet inneholder feil'))
-            return render(request, 'profiles/index.html', dict)
+        else:
+            new_position = form.save(commit=False)
+            new_position.user = request.user
+            new_position.save()
+            messages.success(request, _(u'Posisjonen ble lagret'))
 
-        new_position = form.save(commit=False)
-        new_position.user = request.user
-        new_position.save()
-        messages.success(request, _(u'Posisjonen ble lagret'))
-        return redirect('profiles')
-
+    return render(request, 'profiles/index.html', context)
 
 @login_required
 def delete_position(request):
@@ -205,7 +199,6 @@ def delete_position(request):
                 return_status = json.dumps({'message': _(u"Du prøvde å slette en posisjon som ikke tilhørte deg selv.")})
             return HttpResponse(status=500, content=return_status)
         raise Http404
-
 
 @login_required
 def update_mark_rules(request):
@@ -225,10 +218,11 @@ def update_mark_rules(request):
         return HttpResponse(status=405)
     raise Http404
 
-
 @login_required
 def add_email(request):
-    dict = _create_request_dictionary(request)
+    context = _create_profile_context(request)
+    context['active_tab'] = 'email'
+
     if request.method == 'POST':
         form = NewEmailForm(request.POST)
         if form.is_valid():
@@ -257,9 +251,8 @@ def add_email(request):
             _send_verification_mail(request, email.email)
 
             messages.success(request, _(u"Eposten ble lagret. Du må sjekke din innboks for å verifisere den."))
-        
-    return redirect('profiles')
-    
+
+    return render(request, 'profiles/index.html', context)
 
 @login_required
 def delete_email(request):
@@ -377,6 +370,19 @@ def toggle_infomail(request):
     raise Http404
 
 @login_required
+def toggle_jobmail(request):
+    """
+    Toggles the jobmail field in Onlineuser object
+    """
+    if request.is_ajax():
+        if request.method == 'POST':
+            request.user.jobmail = not request.user.jobmail
+            request.user.save()
+
+            return HttpResponse(status=200, content=json.dumps({'state': request.user.jobmail}))
+    raise Http404
+
+@login_required
 def user_search(request):
     groups_to_include = settings.USER_SEARCH_GROUPS
     groups = Group.objects.filter(pk__in=groups_to_include).order_by('name')
@@ -393,7 +399,7 @@ def api_user_search(request):
     if request.GET.get('query'):
         users = search_for_users(request.GET.get('query'))
         return render_json(users)
-    return render_json(error='Mangler søkestreng')
+    return render_json(error=u'Mangler søkestreng')
 
 def search_for_users(query, limit=10):
     if not query:
@@ -405,6 +411,27 @@ def search_for_users(query, limit=10):
         results.append(result.object)
 
     return results[:limit]
+
+@login_required
+def api_plain_user_search(request):
+    """ The difference between plain_user_search and the other is exposing only id and name. """
+    if request.GET.get('query'):
+        users = search_for_plain_users(request.GET.get('query'))
+        return JsonResponse(users, safe=False) 
+    return render_json(error=u'Mangler søkestreng')
+
+def search_for_plain_users(query, limit=10):
+    if not query:
+        return []
+
+    results = []
+
+    for result in watson.search(query, models=(User.objects.filter(is_active=True),)):
+        uobj = result.object
+        results.append({"id": uobj.id, "value": uobj.get_full_name()})
+
+    return results[:limit]
+
 
 @login_required
 def view_profile(request, username):

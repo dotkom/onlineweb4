@@ -1,0 +1,69 @@
+{% extends "dashboard_base.html" %}
+{% load addcss %}
+
+{% block title %}
+Ny karrieremulighet - Online
+{% endblock title %}
+
+
+{% block page-header %}
+Ny karrieremulighet
+{% endblock %}
+
+{% block breadcrumbs %}
+    <li><a href="{% url 'careeropportunity_dashboard_index' %}">Karrieremuligheter</a></li>
+    <li>Detalj</li>
+{% endblock %}
+
+{% block content %}
+    <section>
+        <div class="row">
+            <div class="col-md-12">
+                {% if cop %}
+                    <div class="pull-right">
+                        <a href="{% url 'careeropportunity_dashboard_delete' cop.id %}" class="btn btn-danger">Slett karrieremulighet</a>
+                    </div>
+                {% endif %}
+                <h4>Fyll ut informasjon om karriemuligheten</h4>
+            </div>
+        </div>
+    </section>
+    <br>
+    <section>
+      <form action="" method="POST">
+        {{ form.non_field_errors }}
+         {% for field in form %}
+            <div class="row">
+                <div class="form-group">
+                    <div class="col-md-2">
+                        {{ field.label_tag }}
+                        {% if field.field.required %}<span style="color:red;" title="Dette feltet kreves">*</span>{% endif %}
+                    </div>
+                    <div class="col-md-9">
+                        {% if field.name == 'start' or field.name == 'end' %}
+                            <div class="input-group {% if field.errors %}has-error{% endif %} {% if field.name == 'start' or field.name == 'end' %}dtp{% endif %}">
+                            {{ field|addclass:"form-control"}}
+                                <span class="input-group-btn">
+                                    <a href="#" class="btn btn-primary datepickerbutton">
+                                        <i class="fa fa-calendar fa-lg"></i>
+                                    </a>
+                                </span>
+                            </div>
+                        {% else %}
+                            {{ field|addclass:"form-control"}}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <br>
+          {% endfor %}
+        <div class="btn-group">
+            <button type="submit" class="btn btn-success">Lagre</button>
+            {% if cop %}<a href="{% url 'careeropportunity_dashboard_index' %}" class="btn btn-danger">Avbryt</a>{% endif %}
+        </div>
+        {% csrf_token %}
+      </form>
+        
+    </section>
+
+{% endblock content %}

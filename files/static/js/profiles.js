@@ -14,22 +14,47 @@ function csrfSafeMethod(method) {
 /* END AJAX SETUP */
 
 $(document).ready(function() {
-
-    $('#userprofile-tabs > li > a').click(function(e) {
-        e.preventDefault();
-        updateActiveTab(this.getAttribute('href').substr(1));
-        $(this).tab('show');
-    })
-
-    function updateActiveTab(activetab) {
-        var data = JSON.stringify({active_tab : activetab});
-        $.ajax({
-            method: 'POST',
-            data: data,
-            url: 'updateactivetab/',
-            crossDomain: false
-        });
+    // Generic javascript to enable interactive tabs that do not require page reload
+    var switchTab = function(newActiveTab) {
+        if ($('#profile-tabs').length) {
+            tabElement = $('#profile-tabs').find('[data-section="'+ newActiveTab + '"]')
+            if (tabElement.length) {
+                // Hide sections
+                $('#tab-content section').hide()
+                // Unmark currently active tab
+                $('#profile-tabs').find('li.active').removeClass('active')
+                // Update the active tab to the clicked tab and show that section
+                tabElement.parent().addClass('active')
+                $('#' + newActiveTab).show()
+                // Update URL
+                window.history.pushState({}, document.title, $(tabElement).attr('href'))
+            }
+        }
+        else {
+            console.log("No element with id #profile-tabs found.")
+        }
     }
+
+    // Hide all other tabs and show the active one when the page loads
+    if ($('#profile-tabs').length) {
+        // Hide all sections 
+        $('#tab-content section').hide()
+        // Find the currently active tab and show it
+        activeTab = $('#profile-tabs').find('li.active a').data('section')    
+        $('#' + activeTab).show()
+
+        // Set up the tabs to show/hide when clicked
+        $('#profile-tabs').on('click', 'a', function (e) {
+            e.preventDefault()
+            newActiveTab = $(this).data('section')
+            switchTab(newActiveTab);
+        })
+    }
+
+    // Fix for tabs when going 'back' in the browser history
+    window.addEventListener("popstate", function(e) {
+        // If you can figure out how to do this properly, be my guest.
+    });
 
     $('.privacybox').click(
         function() {
@@ -101,7 +126,7 @@ $(document).ready(function() {
                 $(".marks").attr('disabled', true);
             },
             error: function() {
-                utils.setStatusMessage('En uventet error ble oppdaget. Kontakt dotkom@online.ntnu.no for assistanse.', 'alert-danger');
+                utils.setStatusMessage('En uventet feil ble oppdaget. Kontakt dotkom@online.ntnu.no for assistanse.', 'alert-danger');
             },
             crossDomain: false
         });
@@ -154,7 +179,7 @@ $(document).ready(function() {
                     utils.setStatusMessage(res['message'], 'alert-danger');
                 }
                 else {
-                    utils.setStatusMessage('En uventet error ble oppdaget. Kontakt dotkom@online.ntnu.no for assistanse.', 'alert-danger');
+                    utils.setStatusMessage('En uventet feil ble oppdaget. Kontakt dotkom@online.ntnu.no for assistanse.', 'alert-danger');
                 }
             },
             crossDomain: false
@@ -179,7 +204,7 @@ $(document).ready(function() {
                     utils.setStatusMessage(res['message'], 'alert-danger');
                 }
                 else {
-                    utils.setStatusMessage('En uventet error ble oppdaget. Kontakt dotkom@online.ntnu.no for assistanse.', 'alert-danger');
+                    utils.setStatusMessage('En uventet feil ble oppdaget. Kontakt dotkom@online.ntnu.no for assistanse.', 'alert-danger');
                 }
             },
             crossDomain: false
@@ -202,51 +227,52 @@ $(document).ready(function() {
                     utils.setStatusMessage(res['message'], 'alert-danger');
                 }
                 else {
-                    utils.setStatusMessage('En uventet error ble oppdaget. Kontakt dotkom@online.ntnu.no for assistanse.', 'alert-danger');
+                    utils.setStatusMessage('En uventet feil ble oppdaget. Kontakt dotkom@online.ntnu.no for assistanse.', 'alert-danger');
                 }
             },
             crossDomain: false
         });
     }
 
-    infomail = $('#toggle_infomail')
-    infomail.on('click', function (e) {
-        e.preventDefault()
+    var toggleSubscription = function(list) {
+        listID = $('#toggle_' + list)
         $.ajax({
             method: 'POST',
-            url: 'toggle_infomail/',
+            url: 'toggle_' + list + '/',
             data: {},
             success: function (data) {
                 res = JSON.parse(data)
                 if (res['state'] === true) {
-                    infomail.removeClass('btn-success')
-                    infomail.addClass('btn-danger')
-                    infomail.text('Deaktivér')
+                    listID.removeClass('btn-success')
+                    listID.addClass('btn-danger')
+                    listID.text('Deaktivér')
                 }
                 else {
-                    infomail.removeClass('btn-danger')
-                    infomail.addClass('btn-success')
-                    infomail.text('Aktivér')
+                    listID.removeClass('btn-danger')
+                    listID.addClass('btn-success')
+                    listID.text('Aktivér')
                 }
             },
             error: function (e, s, xhr) {
                 var utils = new Utils()
-                utils.setStatusMessage('Det oppstod en uventet feil under endring av infomail.', 'alert-danger')
+                utils.setStatusMessage('Det oppstod en uventet feil under endring.', 'alert-danger')
             },
             crossDomain: false
         })
+    }
+
+    infomail = $('#toggle_infomail')
+    infomail.on('click', function (e) {
+        e.preventDefault()
+        toggleSubscription('infomail')        
     });
 
-/*
-  JS for membership  
-*/
-
-    $(".hasDatePicker").datepicker({
-        yearRange: "2004:" + new Date().getFullYear(),
-        changeYear: true,
-        dateFormat: "yy-mm-dd"
+    jobmail = $('#toggle_jobmail')
+    jobmail.on('click', function (e) {
+        e.preventDefault()
+        toggleSubscription('jobmail')        
     });
-       
+
     $(".delete-position").on('click', function(e) {
         var that = $(this);
         e.preventDefault();

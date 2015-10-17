@@ -9,10 +9,15 @@
     <link rel="icon" href="{{ STATIC_URL }}img/favicon.png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     {% block styles %}
+        <link rel="stylesheet" type="text/less" href="{{ STATIC_URL }}css/font-awesome.min.css">
+        <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/bootstrap-datetimepicker.min.css">
+        <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/cropper/cropper.min.css"/>
         {% compress css %}
-        <link rel="stylesheet" type="text/less" href="{{ STATIC_URL }}less/font-awesome-4.2.0/font-awesome.less">
         <link rel="stylesheet" type="text/less" href="{{ STATIC_URL }}less/dashboard/main.less">
         <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/jquery-tablesorter/tablesorter.css">
+        <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/dropzone/dropzone.css" />
+        <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/bttrlazyloading/bttrlazyloading.css" />
+        <link rel="stylesheet" type="text/less" href="{{ STATIC_URL }}less/gallery.less" />
         {% endcompress %}
     {% endblock %}
 </head>
@@ -27,7 +32,7 @@
         <aside class="left-side sidebar-offcanvas">
             <section class="sidebar topspacing">
                 <br />
-                <h4 class="center-text"><small>Velkommen</small><br />{{ request.user.first_name }}</h4>
+                <h4 class="center-text"><small>Velkommen</small><br />{{ request.user.first_name }}</h4>
                 <ul class="sidebar-menu">
                     {% block sidebar %}
                     {% if 'events.view_event' in user_permissions %}
@@ -38,11 +43,8 @@
                             <i class="fa fa-angle-down pull-right"></i>
                         </a>
                         <ul class="treeview-menu">
-                            <li><a href="#"><i class="fa fa-angle-double-right orange"></i> Adgangsregler</a></li>
-                            <li><a href="#"><i class="fa fa-angle-double-right orange"></i> Deltakere</a></li>
-                            <li><a href="#"><i class="fa fa-angle-double-right orange"></i> Opprett</a></li>
-                            <li><a href="#"><i class="fa fa-angle-double-right orange"></i> Oversikt</a></li>
-                            <li><a href="#"><i class="fa fa-angle-double-right orange"></i> Reservasjoner</a></li>
+                            <li><a href="{% url 'dashboard_events_index' %}"><i class="fa fa-angle-double-right orange"></i> Kommende arrangement</a></li>
+                            <li><a href="{% url 'dashboard_events_past' %}"><i class="fa fa-angle-double-right orange"></i> Tidligere arrangement</a></li>
                         </ul>
                     </li>
                     {% endif %}
@@ -86,6 +88,9 @@
                         </a>
                         <ul class="treeview-menu">
                             <li><a href="#"><i class="fa fa-angle-double-right orange"></i> Brukerprofiler</a></li>
+                            {% if request.user.is_superuser %}
+                            <li><a href="/dashboard/auth/sso/"><i class="fa fa-angle-double-right orange"></i> Ekstern tilgang</a></li>
+                            {% endif %}
                             <li><a href="/dashboard/auth/members/"><i class="fa fa-angle-double-right orange"></i> Medlemsregister</a></li>
                             <li><a href="#"><i class="fa fa-angle-double-right orange"></i> Posisjoner</a></li>
                             <li><a href="#"><i class="fa fa-angle-double-right orange"></i> Spesialposisjoner</a></li>
@@ -137,8 +142,8 @@
                             <i class="fa fa-angle-down pull-right"></i>
                         </a>
                         <ul class="treeview-menu">
-                            <li><a href="#"><i class="fa fa-angle-double-right orange"></i> Ny karrieremulighet</a></li>
-                            <li><a href="#"><i class="fa fa-angle-double-right orange"></i> Oversikt</a></li>
+                            <li><a href="{% url 'careeropportunity_dashboard_add' %}"><i class="fa fa-angle-double-right orange"></i> Ny karrieremulighet</a></li>
+                            <li><a href="{% url 'careeropportunity_dashboard_index' %}"><i class="fa fa-angle-double-right orange"></i> Oversikt</a></li>
                         </ul>
                     </li>
                     {% endif %}
@@ -152,6 +157,21 @@
                             <li><a href="#"><i class="fa fa-angle-double-right orange"></i> Informasjonstekster</a></li>
                             <li><a href="#"><i class="fa fa-angle-double-right orange"></i> Ny utgivelse</a></li>
                             <li><a href="#"><i class="fa fa-angle-double-right orange"></i> Oversikt</a></li>
+                        </ul>
+                    </li>
+                    {% endif %}
+                    {% if 'posters.add_poster_order' in user_permissions %}
+                    <li class="treeview">
+                        <a href="#">
+                            <i class="fa fa-picture-o blue"></i> <span>Plakatbestillinger</span>
+                            <i class="fa fa-angle-down pull-right"></i>
+                            {% if poster_orders %}<small class="badge pull-right">{{ poster_orders }}</small>{% endif %}
+                        </a>
+                        <ul class="treeview-menu">
+                            <li><a href="{% url 'posters' %}"><i class="fa fa-angle-double-right orange"></i> Oversikt</a></li>
+                            <li><a href="{% url 'posters_add' 1 %}"><i class="fa fa-angle-double-right orange"></i> Ny plakatbestilling</a></li>
+                            <!--<li><a href="{% url 'posters_add' 2 %}"><i class="fa fa-angle-double-right orange"></i> Ny bongbestilling</a></li>-->
+                            <li><a href="{% url 'posters_add' 3 %}"><i class="fa fa-angle-double-right orange"></i> Ny generell bestilling</a></li>
                         </ul>
                     </li>
                     {% endif %}
@@ -227,7 +247,7 @@
                 <ol class="breadcrumb">
                     <li><a href="/dashboard/">Dashboard</a></li>
                     {% block breadcrumbs %}
-                    
+
                     {% endblock %}
                 </ol>
             </section>
@@ -249,21 +269,30 @@
                         {% endif %}
                     </div>
                 </div>
+                <section class="main-content">
                 {% block content %}
 
                 {% endblock %}
+                </section>
             </section><!-- /.content -->
         </aside><!-- /.right-side -->
     </div><!-- ./wrapper -->
 
     {% block js %}
-        <script src="{{ STATIC_URL}}js/libs/jquery-1.9.1.min.js"></script>
+        <script src="{{ STATIC_URL }}js/libs/jquery-2.1.3.min.js"></script>
         <script src="{{ STATIC_URL }}js/libs/bootstrap.min.js"></script>
-        <script src="{{ STATIC_URL }}js/libs/moment.min.js"></script>
+        <script src="{{ STATIC_URL }}js/libs/moment-2.9.0-with-locales.min.js"></script>
         <script src="{{ STATIC_URL }}js/libs/fastclick.js"></script>
         <script src="{{ STATIC_URL }}js/libs/jquery.cookie.js"></script>
         <script src="{{ STATIC_URL }}js/libs/jquery.tablesorter.min.js"></script>
-        <script src="{{ STATIC_URL }}js/dashboard/dashboard.js"></script>
+        <script src="{{ STATIC_URL }}js/libs/bootstrap-datetimepicker.min.js"></script>
+        <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
+        <script type="text/javascript" src="{{ STATIC_URL }}js/libs/blazy/blazy.min.js"></script>
+        <script type="text/javascript" src="{{ STATIC_URL }}js/libs/cropper/cropper.min.js"></script>
+        <script type="text/javascript" src="{{ STATIC_URL }}js/libs/bttrlazyloading/jquery.bttrlazyloading.min.js"></script>
+        <script type="text/javascript" src="{{ STATIC_URL }}js/libs/dropzone/dropzone.min.js"></script>
+        <script src="{{ STATIC_URL }}js/dashboard/dashboard.js"></script>
+        <script type="text/javascript" src="{{ STATIC_URL }}js/gallery.js"></script>
     {% endblock %}
 
     {% if GOOGLE_ANALYTICS_KEY %}
