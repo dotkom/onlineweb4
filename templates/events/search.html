@@ -2,14 +2,14 @@
 
 {% if events %}
   {% for event in events %}
-  <article data-date="{{ event.event_start|date:"c" }}" class="row">
+  <article data-date="{{ event.event_start|date:"c" }}" class="row">
 
     <div class="col-xs-12 col-sm-4 col-md-4 left-box">
       <div class="row">
         {% if event.companies.all %}
             {% for company_relation in event.companies.all %}
                 <a href="{{ event.get_absolute_url }}">
-                    <img src="{% version company_relation.company.image 'companies_archive' %}" alt="" />
+                    <img src="{% version company_relation.company.old_image 'companies_archive' %}" alt="" />
                 </a>
             {% endfor %} 
         {% else %}
