@@ -14,7 +14,6 @@ from guardian.decorators import permission_required
 from apps.gallery.models import UnhandledImage, ResponsiveImage
 from apps.gallery.forms import DocumentForm
 from apps.gallery import util
-from apps.gallery.settings import *
 
 
 def _create_request_dictionary(request):
