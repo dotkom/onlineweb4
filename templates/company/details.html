@@ -27,7 +27,7 @@
 				</div>
 			</div>
 			<div class="col-lg-4 col-md-4 col-sm-5 col-xs-12">
-				<img src="{% version company.image 'companies_main' %}" width="100%" alt="" />
+				<img src="{% version company.old_image 'companies_main' %}" width="100%" alt="" />
                 {% if company.site or company.email_address or company.phone_number %}
                 <div class="contactinfo">
                     {% if company.site %}

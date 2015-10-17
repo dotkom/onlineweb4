@@ -12,10 +12,12 @@ class ProfileForm(forms.ModelForm):
     class Meta:
         model = OnlineUser
 
-        fields = ['nickname', 'website', 'phone_number', 'address', 'zip_code', 'allergies', 'bio', 'gender', ]
+        fields = ['nickname', 'website', 'phone_number', 'address', 'zip_code', 'allergies', 'compiled', 'bio', 'gender', ]
         widgets = {
             'allergies' : forms.Textarea(attrs={'id' : 'allergies'}),
             'gender' : forms.Select(attrs={'class' : 'form-control'}),
+            'bio' : forms.Textarea(attrs={'id' : 'bio'}),
+            'compiled' : forms.CheckboxInput(attrs={'id' : 'compiled'}),
         }
 
     def clean(self):

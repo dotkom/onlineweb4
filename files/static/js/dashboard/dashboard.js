@@ -157,7 +157,10 @@ var Dashboard = (function ($) {
                                 '<div class="alert ' + tags + '">' + 
                                 message + '</div></div></div>')
 
-                message.appendTo(wrapper)
+                if(wrapper.length == 0){
+                    wrapper = $('section:first > .container:first')
+                }
+                message.prependTo(wrapper)
 
                 // Fadeout and remove the alert
                 setTimeout(function() {
