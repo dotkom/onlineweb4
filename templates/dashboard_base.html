@@ -121,8 +121,8 @@
                             <i class="fa fa-angle-down pull-right"></i>
                         </a>
                         <ul class="treeview-menu">
-                            <li><a href="#"><i class="fa fa-angle-double-right orange"></i> Ny karrieremulighet</a></li>
-                            <li><a href="#"><i class="fa fa-angle-double-right orange"></i> Oversikt</a></li>
+                            <li><a href="{% url 'careeropportunity_dashboard_add' %}"><i class="fa fa-angle-double-right orange"></i> Ny karrieremulighet</a></li>
+                            <li><a href="{% url 'careeropportunity_dashboard_index' %}"><i class="fa fa-angle-double-right orange"></i> Oversikt</a></li>
                         </ul>
                     </li>
                     {% endif %}
