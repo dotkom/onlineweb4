@@ -7,7 +7,7 @@ from django.db import models, migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('companyprofile', '0001_squashed_0003_company_image'),
+        ('companyprofile', '0001_initial'),
     ]
 
     operations = [
