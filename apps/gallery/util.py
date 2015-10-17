@@ -1,17 +1,19 @@
 # -*- coding: utf-8 -*-
 
+import logging
 import os
 import shutil
 import uuid
 
 from PIL import Image, ImageOps
 from django.conf import settings as django_settings
-from django.utils.log import getLogger
 
 from apps.gallery import settings as gallery_settings
 
 
 def save_unhandled_file(uploaded_file):
+
+    log = logging.getLogger(__name__)
 
     filename, extension = os.path.splitext(uploaded_file.name)
 
@@ -25,7 +27,8 @@ def save_unhandled_file(uploaded_file):
         with open(filepath, 'wb+') as destination:
             for chunk in uploaded_file.chunks():
                 destination.write(chunk)
-    except IOError:
+    except IOError as e:
+        log.error('Failed to save uploaded unhandled file! %s' % repr(e))
         return False
 
     return filepath
@@ -272,3 +275,42 @@ def get_responsive_xs_path(responsive_path):
 
 def get_responsive_thumbnail_path(responsive_path):
     return os.path.join(gallery_settings.RESPONSIVE_THUMBNAIL_PATH, os.path.basename(responsive_path))
+
+
+def verify_directory_structure():
+    """
+    Verifies that the necessary directory structure is in place. If not, it will create them.
+    :return: None
+    """
+
+    # Verify that the directories exist on current platform, create if not
+    if not os.path.exists(os.path.join(django_settings.MEDIA_ROOT, gallery_settings.RESPONSIVE_THUMBNAIL_PATH)):
+        logging.getLogger(__name__).info(
+            '%s directory did not exist, creating it...' % gallery_settings.RESPONSIVE_THUMBNAIL_PATH
+        )
+        os.makedirs(os.path.join(django_settings.MEDIA_ROOT, gallery_settings.RESPONSIVE_THUMBNAIL_PATH))
+    if not os.path.exists(os.path.join(django_settings.MEDIA_ROOT, gallery_settings.RESPONSIVE_IMAGES_XS_PATH)):
+        logging.getLogger(__name__).info(
+            '%s directory did not exist, creating it...' % gallery_settings.RESPONSIVE_IMAGES_XS_PATH
+        )
+        os.makedirs(os.path.join(django_settings.MEDIA_ROOT, gallery_settings.RESPONSIVE_IMAGES_XS_PATH))
+    if not os.path.exists(os.path.join(django_settings.MEDIA_ROOT, gallery_settings.RESPONSIVE_IMAGES_SM_PATH)):
+        logging.getLogger(__name__).info(
+            '%s directory did not exist, creating it...' % gallery_settings.RESPONSIVE_IMAGES_SM_PATH
+        )
+        os.makedirs(os.path.join(django_settings.MEDIA_ROOT, gallery_settings.RESPONSIVE_IMAGES_SM_PATH))
+    if not os.path.exists(os.path.join(django_settings.MEDIA_ROOT, gallery_settings.RESPONSIVE_IMAGES_MD_PATH)):
+        logging.getLogger(__name__).info(
+            '%s directory did not exist, creating it...' % gallery_settings.RESPONSIVE_IMAGES_MD_PATH
+        )
+        os.makedirs(os.path.join(django_settings.MEDIA_ROOT, gallery_settings.RESPONSIVE_IMAGES_MD_PATH))
+    if not os.path.exists(os.path.join(django_settings.MEDIA_ROOT, gallery_settings.RESPONSIVE_IMAGES_LG_PATH)):
+        logging.getLogger(__name__).info(
+            '%s directory did not exist, creating it...' % gallery_settings.RESPONSIVE_IMAGES_LG_PATH
+        )
+        os.makedirs(os.path.join(django_settings.MEDIA_ROOT, gallery_settings.RESPONSIVE_IMAGES_LG_PATH))
+    if not os.path.exists(os.path.join(django_settings.MEDIA_ROOT, gallery_settings.RESPONSIVE_IMAGES_WIDE_PATH)):
+        logging.getLogger(__name__).info(
+            '%s directory did not exist, creating it...' % gallery_settings.RESPONSIVE_IMAGES_WIDE_PATH
+        )
+        os.makedirs(os.path.join(django_settings.MEDIA_ROOT, gallery_settings.RESPONSIVE_IMAGES_WIDE_PATH))
