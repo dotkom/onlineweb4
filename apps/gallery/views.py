@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
 import json
+import logging
+
 from django.db.models import Q
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
@@ -52,10 +54,16 @@ def upload(request):
 # If something goes wrong, all files will have to be deleted, this is not handled now
 def _handle_upload(uploaded_file):
 
+    log = logging.getLogger(__name__)
+    log.debug('Handling upload of file: %s' % uploaded_file)
+
     unhandled_file_path = util.save_unhandled_file(uploaded_file)
+    log.debug('Unhandled file was saved at: %s' + unhandled_file_path)
+
     thumbnail_result = util.create_thumbnail_for_unhandled_images(unhandled_file_path)
 
     if 'error' in thumbnail_result:
+        log.error('Error while creating thumbnail for %s' % unhandled_file_path)
         # Delete files
         return HttpResponse(status=500, content=json.dumps(thumbnail_result['error']))
 
@@ -63,6 +71,7 @@ def _handle_upload(uploaded_file):
     unhandle_media = util.get_unhandled_media_path(unhandled_file_path)
     unhandled_thumbnail_media = util.get_unhandled_thumbnail_media_path(thumbnail_result['thumbnail_path'])
 
+    log.debug('Creating an UnhandledImage for %s' % unhandled_file_path)
     # Try catch this and delete files on exception
     UnhandledImage(image=unhandle_media, thumbnail=unhandled_thumbnail_media).save()
 

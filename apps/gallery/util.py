@@ -6,6 +6,7 @@ import uuid
 
 from PIL import Image, ImageOps
 from django.conf import settings as django_settings
+from django.utils.log import getLogger
 
 from apps.gallery import settings as gallery_settings
 
