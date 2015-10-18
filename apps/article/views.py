@@ -1,4 +1,5 @@
 import random
+import watson
 
 from django.db.models import Count
 from django.utils import timezone
@@ -125,6 +126,7 @@ class ArticleViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.
         month = self.request.query_params.get('month', None)
         year = self.request.query_params.get('year', None)
         tags = self.request.query_params.get('tags', None)
+        query = self.request.query_params.get('query', None)
 
         if tags:
             # Filtering on tags is only supported if the tag is typed exactly the same as the stored tag
@@ -135,9 +137,19 @@ class ArticleViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.
         if year:
             if month:
                 # Filtering on year and month
-                queryset = queryset.filter(published_date__year=year, published_date__month=month, published_date__lte=timezone.now()).order_by('-published_date')
+                queryset = queryset.filter(
+                    published_date__year=year,
+                    published_date__month=month,
+                    published_date__lte=timezone.now()
+                ).order_by('-published_date')
             else:
                 # Filtering only on year
-                queryset = queryset.filter(published_date__year=year, published_date__lte=timezone.now()).order_by('-published_date')
+                queryset = queryset.filter(
+                    published_date__year=year,
+                    published_date__lte=timezone.now()
+                ).order_by('-published_date')
+
+        if query and query != '':
+            queryset = watson.filter(queryset, query)
 
         return queryset

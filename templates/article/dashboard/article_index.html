@@ -1,4 +1,5 @@
 {% extends "dashboard_base.html" %}
+{% load compress %}
 
 {% block title %}
 Artikler - Online Dashboard
@@ -6,6 +7,11 @@ Artikler - Online Dashboard
 
 {% block page-header %}
 Artikler
+{% endblock %}
+
+{% block js %}
+    {{ block.super }}
+    <script src="{{ STATIC_URL }}js/dashboard/article.js" type="text/javascript"></script>
 {% endblock %}
 
 {% block breadcrumbs %}
@@ -31,7 +37,7 @@ Artikler
     <div class="col-md-12 col-lg-6">
         <div class="button-group">
             {% for year in years %}
-                <a href="#" class="btn btn-primary">{{ year }}</a>
+                <a href="#" class="btn btn-primary dashboard-article-year">{{ year }}</a>
             {% endfor %}
         </div>
     </div>
@@ -53,7 +59,7 @@ Artikler
                             <th>Endre</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="dashboard-article-table">
                     {% for article in articles %}
                         <tr>
                             <td><a href="{% url 'dashboard_article_detail' article.pk %}">{{ article }}</a></td>
@@ -68,21 +74,6 @@ Artikler
                     {% endfor %}
                     </tbody>
                 </table>
-                <nav class="text-center">
-                    <ul class="pagination">
-                        <li class="disabled"><a href="#" aria-label="Previous">
-                            <span aria-hidden="true">&laquo;</span>
-                        </a></li>
-                        {% for p in pages %}
-                            <li{% if forloop.counter == 1 %} class="active"{% endif %}>
-                                <a href="#" data-page="{{ p }}">{{ p }}</a>
-                            </li>
-                        {% endfor %}
-                        <li><a href="#" aria-label="Next">
-                            <span aria-hidden="true">&raquo;</span>
-                        </a></li>
-                    </ul>
-                </nav>
             </div>
         </div>
     </div>
