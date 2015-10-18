@@ -49,7 +49,7 @@ def index(request):
 
 @login_required
 @permission_required('marks.change_mark', return_403=True)
-def mark_details(request, pk):
+def marks_details(request, pk):
     """
     Display details for a given Mark
     """
@@ -167,7 +167,7 @@ def marks_new(request):
             # Add news
             messages.success(request, u'Prikken ble lagret.')
 
-            return redirect(mark_details, pk=new_mark.id)
+            return redirect(marks_details, pk=new_mark.id)
     else:
         context['form'] = MarkForm()
 
@@ -176,7 +176,7 @@ def marks_new(request):
 
 @login_required
 @permission_required('marks.change_mark', return_403=True)
-def mark_edit(request, pk):
+def marks_edit(request, pk):
     if not has_access(request):
         raise PermissionDenied
 
@@ -199,7 +199,7 @@ def mark_edit(request, pk):
             # Add news
             messages.success(request, u'Prikken ble endret.')
 
-            return redirect(mark_details, pk=new_mark.id)
+            return redirect(marks_details, pk=new_mark.id)
     else:
         mark = get_object_or_404(Mark, pk=pk)
         context['form'] = MarkForm(instance=mark)
@@ -209,7 +209,7 @@ def mark_edit(request, pk):
 
 @login_required
 @permission_required('marks.delete_mark', return_403=True)
-def mark_delete(request, pk):
+def marks_delete(request, pk):
     """
     Display details for a given Mark
     """

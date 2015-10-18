@@ -3,18 +3,18 @@
 {% block title %}Prikker - Online Dashboard{% endblock %}
 
 {% block styles %}
-    {{ block.super }}
+    {{ block.super }}
     {% compress css %}
         <link rel="stylesheet" type="text/less" href="{{ STATIC_URL }}less/dashboard/marks.less" />
     {% endcompress %}
 {% endblock %}
 
 {% block page-header %}
-Detaljer om prikk: {{ mark.title }}
+{{ mark.title }}
 {% endblock %}
 
 {% block breadcrumbs %}
-<li><a href="/dashboard/marks">Prikker</a></li>
+<li><a href="{% url 'marks_index' %}">Prikker</a></li>
 <li>{{ mark.title }}</li>
 {% endblock %}
 
@@ -22,7 +22,7 @@ Detaljer om prikk: {{ mark.title }}
 <div class="row">
     <div class="col-md-12">
         <a href="#" class="btn btn-primary" id="marks_details_users_button"><i class="fa fa-users"></i> Legg til</a>
-        <a href="{% url 'marks_edit' mark.id %} class="btn btn-warning"><i class="fa fa-cogs"></i> Endre</a>
+        <a href="{% url 'marks_edit' mark.id %}" class="btn btn-warning"><i class="fa fa-cogs"></i> Endre</a>
         <a href="{% url 'marks_delete' mark.id %}" class="btn btn-danger pull-right"><i class="fa fa-times"></i> Slett</a>
         <div id="marks_details_users" style="display: none;">
             <hr />
