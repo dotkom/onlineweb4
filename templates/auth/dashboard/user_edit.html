@@ -1,0 +1,69 @@
+{% extends 'dashboard_base.html' %}
+{% load compress %}
+{% load addcss %}
+
+{% block title %}Medlemsregister - {{ user }}{% endblock %}
+
+{% block styles %}
+    {{ block.super }}
+    {% compress css %}
+    {% endcompress %}
+{% endblock %}
+
+{% block page-header %}
+    {{ user }}
+{% endblock %}
+
+{% block breadcrumbs %}
+<li><a href="{% url 'members_index' %}">Medlemsregister</a></li>
+<li><a href="{% url 'dashboard_user_detail' user.id %}">{{ user }}</a></li>
+<li>Endre</li>
+{% endblock %}
+
+{% block content %}
+<form method="POST" action="">
+{% csrf_token %}
+{% for field in form %}
+    {% if field.name != 'compiled' and field.name != 'infomail' and field.name != 'jobmail' and field.name != 'mark_rules' %}{# booleans #}
+    <div class="col-sm-6">
+        <label for="{{ field.auto_id }}">{{ field.label }}</label>
+        <div class="form-group {% if field.errors %}has-error{% endif %}">
+            {% if field.name != 'started_date' %}
+            {{ field|addclass:"form-control" }}
+            {% if field.errors %}
+            <p>{{ field.errors }}</p>
+            {% endif %}
+            {% else %}
+            <div class="input-group dtp">
+                {{ field|addclass:"form-control" }}
+                <span class="input-group-btn datepickerbutton">
+                    <a href="#" class="btn btn-primary">
+                        <i class="fa fa-calendar fa-lg"></i>
+                    </a>
+                </span>
+                {% if field.errors %}
+                <p>{{ field.errors }}</p>
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    {% else %}
+    <div class="col-sm-3">
+        {{ field }} {{ field.label }}
+    </div>
+    {% endif %}
+{% empty %}
+    <p>Noe gikk galt. Vennligst kontakt <a href="mailto:dotkom@online.ntnu.no">DotKom</a> dersom problemet vedvarer.</p>
+{% endfor %}
+    <div class="btn-group col-md-12">
+        <button class="btn btn-success">Lagre</button>
+        <a href="{% url 'dashboard_user_detail' user.id %}" class="btn btn-danger">Avbryt</a>
+    </div>
+</form>
+{% endblock %}
+
+{% block js %}
+    {{ block.super }}
+    <!-- Dashboard JS here -->
+{% endblock %}

@@ -6,14 +6,17 @@ from django.core.exceptions import PermissionDenied
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Group
+from django.core.urlresolvers import reverse, reverse_lazy
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse
+from django.views.generic import UpdateView, DetailView, DeleteView
 
 from guardian.decorators import permission_required
 
 from apps.authentication.models import OnlineUser as User
 from apps.authentication.models import AllowedUsername
-from apps.dashboard.tools import has_access, get_base_context
+from apps.authentication.forms import UserUpdateForm
+from apps.dashboard.tools import has_access, get_base_context, DashboardPermissionMixin
 
 
 @login_required
@@ -150,7 +153,35 @@ def members_detail(request, pk):
 
     context = get_base_context(request)
 
-    return render(request, 'auth/dashboard/members_detail.html', context)
+    user = get_object_or_404(User, pk=pk)
+    context['user'] = user
+
+    return render(request, 'auth/dashboard/user_detail.html', context)
+
+
+class UserDetailView(DashboardPermissionMixin, DetailView):
+    model = User
+    permission_required = 'authentication.view_onlineuser'
+    pk_url_kwarg = 'user_id'
+    template_name = 'auth/dashboard/user_detail.html'
+
+
+class UserUpdateView(DashboardPermissionMixin, UpdateView):
+    form_class = UserUpdateForm
+    model = User
+    permission_required = 'authentication.change_onlineuser'
+    pk_url_kwarg = 'user_id'
+    template_name = 'auth/dashboard/user_edit.html'
+
+    def get_success_url(self):
+        return reverse('dashboard_user_detail', kwargs={'user_id': self.kwargs.get('user_id')})
+
+
+class UserDeleteView(DashboardPermissionMixin, DeleteView):
+    model = User
+    permission_required = 'authentication.delete_onlineuser'
+    pk_url_kwarg = 'user_id'
+    success_url = reverse_lazy('auth_index')
 
 
 @login_required
