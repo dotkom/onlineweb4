@@ -205,9 +205,9 @@ def search(request):
 
 class ResponsiveImageViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.ListModelMixin):
     """
-    Article viewset. Can be filtered on 'year', 'month', 'tags'
+    Image viewset. Can be filtered on 'year', 'month', and free text search using 'query'.
 
-    Filtering on tags is only supported if the tags are supplied exactly as the stored tags.
+    The 'query' filter performs a case-insensitive OR match on either image name or description.
     """
 
     queryset = ResponsiveImage.objects.filter().order_by('-timestamp')
@@ -218,6 +218,7 @@ class ResponsiveImageViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin,
         queryset = self.queryset
         month = self.request.query_params.get('month', None)
         year = self.request.query_params.get('year', None)
+        query = self.request.query_params.get('search', None)
 
         if year:
             if month:
@@ -231,5 +232,9 @@ class ResponsiveImageViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin,
                 queryset = queryset.filter(
                     timestamp__year=year,
                 ).order_by('-timestamp')
+
+        if query:
+            # Restrict results based off of search
+            queryset = queryset.filter(Q(name__icontains=query) | Q(description__icontains=query))
 
         return queryset
