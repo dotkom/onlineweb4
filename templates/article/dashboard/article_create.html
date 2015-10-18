@@ -1,0 +1,41 @@
+{% extends 'dashboard_base.html' %}
+{% load markdown_deux_tags %}
+{% load addcss %}
+
+{% block title %}
+    {% if edit %}
+		Endre artikkel - Online Dashboard
+	{% else %}
+    	Ny artikkel - Online Dashboard
+    {% endif %}
+{% endblock title %}
+
+{% block page-header %}
+Artikler
+{% endblock %}
+
+{% block breadcrumbs %}
+    <li><a href="{% url 'dashboard_article_index' %}">Artikler</a></li>
+	{% if edit %}
+		<li>Endre artikkel</li>
+	{% else %}
+    	<li>Ny artikkel</li>
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-12">
+            <a href="{% url 'dashboard_article_index' %}" class="btn btn-warning">Tilbake</a>
+        </div>
+    </div>
+    <br />
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">Artikkeldetaljer</h3>
+        </div>
+        <div class="panel-body">
+            {% include 'article/dashboard/edit.html' %}
+        </div>
+    </div>
+{% endblock content %}

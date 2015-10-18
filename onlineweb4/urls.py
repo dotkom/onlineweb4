@@ -58,6 +58,7 @@ if 'apps.approval' in settings.INSTALLED_APPS:
 if 'apps.article' in settings.INSTALLED_APPS:
     urlpatterns += patterns('',
         url(r'^article/',           include('apps.article.urls')),
+        url(r'^dashboard/article/', include('apps.article.dashboard.urls')),
     )
 
 if 'apps.autoconfig' in settings.INSTALLED_APPS:
@@ -74,6 +75,7 @@ if 'apps.authentication' in settings.INSTALLED_APPS:
 if 'apps.careeropportunity' in settings.INSTALLED_APPS:
     urlpatterns += patterns('',
         url(r'^careeropportunity/', include('apps.careeropportunity.urls')),
+        url(r'^dashboard/careeropportunity/', include('apps.careeropportunity.dashboard.urls')),
     )
 
 if 'apps.companyprofile' in settings.INSTALLED_APPS:
@@ -134,6 +136,12 @@ if 'apps.genfors' in settings.INSTALLED_APPS:
         url(r'^genfors/',           include('apps.genfors.urls')),
     )
 
+
+if 'apps.gallery' in settings.INSTALLED_APPS:
+    urlpatterns += patterns('',
+        url(r'^gallery/',           include('apps.gallery.urls')),
+    )
+
 if 'apps.splash' in settings.INSTALLED_APPS:
     urlpatterns += patterns('',
         url(r'^splash/',           include('apps.splash.urls')),
@@ -158,6 +166,17 @@ if 'apps.payment' in settings.INSTALLED_APPS:
 # redwine
 if 'redwine' in settings.INSTALLED_APPS:
     urlpatterns += patterns('', url(r'^redwine/', include('redwine.urls')))
+
+if 'rest_framework' in settings.INSTALLED_APPS:
+    from apps.api.utils import SharedAPIRootRouter
+    # API
+    def api_urls():
+        return SharedAPIRootRouter.shared_router.urls
+
+    urlpatterns += patterns(
+        '',
+        url(r'^api/v1/', include(api_urls())),
+    )
 
 #Captcha url
 if 'captcha' in settings.INSTALLED_APPS:

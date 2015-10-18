@@ -97,9 +97,9 @@ Plakatbestillinger
     <hr>
     {% endif %}
 
-    {% if hanging_orders %}
-    <section id="hanging_orders">
-            <h4>Hengende bestillinger</h4>
+    {% if old_orders %}
+    <section id="old_orders">
+            <h4>Gamle bestillinger</h4>
             <div class="row row-space">
                 <div class="col-md-12">
                     <table class="table table-striped table-condensed tablesorter" id="active_orders_list">
@@ -114,7 +114,7 @@ Plakatbestillinger
                             </tr>
                         </thead>
                         <tbody>
-                        {% for order in hanging_orders %}
+                        {% for order in old_orders %}
                         {% if order.poster_up %}
                             <tr class="success">
                         {% else %}

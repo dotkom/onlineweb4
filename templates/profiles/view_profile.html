@@ -2,6 +2,8 @@
 {% load gravatar_url_resolver %}
 {% load crispy_forms_tags %}
 {% load compress %}
+{% load firstof from future %}
+
 {% block styles %}
     {{ block.super }}
     {% compress css %}
@@ -117,6 +119,15 @@
                                 </div>
                             </div>
                         {% endif %}
+                        </div>
+                        <div class="col-md-12" id="bio">
+                            <b>Bio</b><br />
+                            {% if user_profile.bio %}
+                                {{ user_profile.bio|striptags }}
+                            {% else %}
+                                Ikke tiljengelig
+                            {% endif %}
+
                         </div>
                     </div>
                     <div class="row">

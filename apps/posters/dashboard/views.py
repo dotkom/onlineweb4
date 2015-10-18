@@ -19,6 +19,7 @@ from guardian.decorators import permission_required
 from guardian.models import UserObjectPermission, GroupObjectPermission
 # from guardian.core import ObjectPermissionChecker
 import guardian
+from pytz import timezone as tz
 
 from datetime import datetime, timedelta
 
@@ -29,6 +30,7 @@ from apps.posters.forms import AddForm, AddPosterForm, AddBongForm, AddOtherForm
 # from apps.dashboard.posters.models import PosterForm
 from apps.companyprofile.models import Company
 from apps.posters.models import Poster, OrderMixin
+from apps.posters.permissions import has_view_perms, has_view_all_perms, has_edit_perms
 
 
 @ensure_csrf_cookie
@@ -45,18 +47,15 @@ def index(request):
     context = get_base_context(request)
 
     # View to show if user not in committee, but wanting to see own orders
-    if request.user not in group.user_set.all():
-        context['your_orders'] = [x for x in Poster.objects.filter(
-                                  ordered_by=request.user, event__event_start__gte=datetime.now())
-                                  if request.user.has_perm('view_poster_order', x)]
+    if not has_view_all_perms(request.user):
+        context['your_orders'] = [x for x in Poster.objects.filter(ordered_by=request.user) if request.user.has_perm('view_poster_order', x)]
         return render(request, 'posters/dashboard/index.html', context)
 
     orders = Poster.objects.all()
 
     context['new_orders'] = orders.filter(assigned_to=None)
     context['active_orders'] = orders.filter(finished=False).exclude(assigned_to=None)
-    context['hanging_orders'] = orders.filter(finished=True,
-                                              display_to__lte=datetime.now()+timedelta(days=3))
+    context['old_orders'] = orders.filter(finished=True)
 
     context['workers'] = User.objects.filter(groups=Group.objects.get(name='proKom'))
 
@@ -90,7 +89,7 @@ def add(request, order_type=0):
                 poster.company = Company.objects.get(pk=request.POST.get('company'))
             poster.ordered_by = request.user
             # Should look for a more kosher solution
-            poster.ordered_committee = request.user.groups.filter(name__contains="Kom")[0]
+            poster.ordered_committee = request.user.groups.exclude(name='Komiteer').filter(name__contains="Kom")[0]
             poster.order_type = order_type
 
             poster.save()
@@ -103,42 +102,44 @@ def add(request, order_type=0):
 
             title = unicode(poster)
 
+            # Prettify and localize dates
+            event_date = \
+                poster.event.event_start.astimezone(tz('Europe/Oslo')).strftime("%-d %B %Y kl %H:%M") \
+                if poster.event else poster.display_from
+            ordered_date = poster.ordered_date.astimezone(tz('Europe/Oslo')).strftime("%-d %B %Y kl %H:%M")
+
             # The great sending of emails
             subject = '[ProKom] Ny bestilling for %s' % title
             email_message = '%(message)s%(signature)s' % {
                     'message': _('''
-                    Det har blitt registrert en ny %(order_type)sbestilling pa Online sine nettsider. Dette er bestilling nummer %(id)s.
-                    \n
-                    Antall og type: %(num)s * %(order_type)s\n
-                    Arrangement: %(event_name)s\n
-                    Bestilt av: %(ordered_by)s i %(ordered_by_committee)s\n
-                    Bestilt dato: %(ordered_date)s\n
-                    \n
-                    For mer informasjon, sjekk ut bestillingen her: %(absolute_url)s
+Det har blitt registrert en ny %(order_type)sbestilling pa Online sine nettsider. Dette er bestilling nummer %(id)s.
+\n
+Antall og type(r): %(num)s x %(order_type)s%(bongs)s\n
+%(poster_order)s (%(event_date)s)\n
+Bestilt av %(ordered_by)s i %(ordered_by_committee)s den %(ordered_date)s.\n
+\n
+For mer informasjon, sjekk ut bestillingen her: %(absolute_url)s
                     '''
                     % {
                         'site': '',
-                        'order_type': type_name.lower(),
-                        'num': poster.amount,
+                        'order_type': type_name.lower().rstrip(),
+                        'num': '%s' % poster.amount,
+                        'bongs': ', %s x bong' % poster.bong if poster.bong > 0 else '' if poster.bong > 0 else '',
                         'ordered_by': poster.ordered_by,
                         'ordered_by_committee': poster.ordered_committee,
                         'id': poster.id,
-                        'event_name': title,
-                        'ordered_date': poster.ordered_date,
+                        'poster_order': title,
+                        'event_date': event_date,
+                        'ordered_date': ordered_date,
                         'absolute_url': request.build_absolute_uri(poster.get_dashboard_url())
                         }
                     ),
                     'signature': _('\n\nVennlig hilsen Linjeforeningen Online')
             }
             from_email = settings.EMAIL_PROKOM
-            to_emails = [settings.EMAIL_PROKOM, request.user.get_email()]
+            to_emails = [settings.EMAIL_PROKOM, request.user.get_email().email]
 
-            try:
-                print(email_message)
-                email_sent = EmailMessage(unicode(subject), unicode(message), from_email, to_emails, [])
-            except:
-                email_sent = False
-
+            email_sent = EmailMessage(unicode(subject), unicode(email_message), from_email, to_emails, []).send()
             if email_sent:
                 messages.success(request, 'Opprettet bestilling')
             else:
@@ -176,7 +177,7 @@ def edit(request, order_id=None):
     if order_id:
         poster = get_object_or_404(Poster, pk=order_id)
 
-    if request.user != poster.ordered_by and 'proKom' not in request.user.groups:
+    if request.user != poster.ordered_by and 'proKom' not in request.user.groups.all():
         raise PermissionDenied
 
     if request.POST:
@@ -206,16 +207,17 @@ def detail(request, order_id=None):
     poster = get_object_or_404(Poster, pk=order_id)
     context['poster'] = poster
 
-    if request.user != poster.ordered_by and 'proKom' not in request.user.groups:
+    if not has_view_perms(request.user, poster):
         raise PermissionDenied
 
     order_type = poster.order_type
     type_names = ("Plakat", "Bong", "Generell ")
     type_name = type_names[order_type-1]
     context["order_type_name"] = type_name
-    print(type_name)
 
     if request.method == 'POST':
+        if not has_edit_perms(request.user, poster):
+            raise PermissionDenied
         poster_status = request.POST.get('completed')
         if poster_status == 'true' or poster_status == 'false':
             poster.toggle_finished()

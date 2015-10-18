@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from datetime import datetime
 
 from django import forms
 
@@ -14,7 +15,7 @@ class AddForm(forms.ModelForm):
     price = forms.IntegerField(label='Pris', required=False, widget=forms.NumberInput(attrs={'placeholder': 'Pris på event'}))
     amount = forms.IntegerField(label='Antall', required=False, widget=forms.NumberInput(attrs={'placeholder': 'Hvor mange vil du ha?', "value" : "10"}))
     display_from = forms.DateField(label=u"Vis plakat fra", required=False, widget=forms.TextInput(attrs={'type': 'date', 'placeholder': 'YYYY-MM-DD'}))
-    
+
     class Meta:
         model = Poster
         fields = ['amount', 'description',
@@ -24,7 +25,7 @@ class AddForm(forms.ModelForm):
 class AddPosterForm(AddForm):
     # display_to = forms.DateField(label=u"Vis plakat til", required=False,  widget=forms.TextInput(attrs={'type': 'date'}))
     bong = forms.IntegerField(label='Bonger', required=False, widget=forms.NumberInput(attrs={'placeholder': 'Antall bonger du vil ha. La feltet stå tomt hvis du ikke ønsker noen.'}))
-    event = forms.ModelChoiceField(label='Event', required=True, queryset=Event.objects.all())
+    event = forms.ModelChoiceField(label='Event', required=True, queryset=Event.objects.order_by('-id').exclude(event_start__lte=datetime.now()))
 
     class Meta:
         model = Poster

@@ -14,7 +14,7 @@ from django.utils.translation import ugettext as _
 from django.views.decorators.debug import sensitive_post_parameters
 
 from django.conf import settings
-from apps.authentication.forms import (LoginForm, RegisterForm, 
+from apps.authentication.forms import (LoginForm, RegisterForm,
                             RecoveryForm, ChangePasswordForm)
 from apps.authentication.models import OnlineUser as User, RegisterToken, Email
 
@@ -56,8 +56,8 @@ def register(request):
 
                 # Create user
                 user = User(
-                    username=cleaned['username'], 
-                    first_name=cleaned['first_name'].title(), 
+                    username=cleaned['username'],
+                    first_name=cleaned['first_name'].title(),
                     last_name=cleaned['last_name'].title(),
                 )
                 # Set remaining fields
@@ -76,7 +76,7 @@ def register(request):
                     email=cleaned['email'].lower(),
                 )
                 email.primary = True
-                email.save()    
+                email.save()
 
                 # Create the registration token
                 token = uuid.uuid4().hex
@@ -103,7 +103,7 @@ kan dette gjøres med funksjonen for å gjenopprette passord.
 
                 messages.success(request, _(u'Registreringen var vellykket. Se tilsendt epost for verifiseringsinstrukser.'))
 
-                return HttpResponseRedirect('/')        
+                return HttpResponseRedirect('/')
             else:
                 form = RegisterForm(request.POST, auto_id=True)
         else:
@@ -114,18 +114,18 @@ kan dette gjøres med funksjonen for å gjenopprette passord.
 
 def verify(request, token):
     rt = get_object_or_404(RegisterToken, token=token)
-    
+
     if rt.is_valid:
         email = get_object_or_404(Email, email=rt.email)
         email.verified = True
         email.save()
-         
+
         user = getattr(rt, 'user')
 
         # If it is a stud email, set the ntnu_username for user
         if re.match(r'[^@]+@stud\.ntnu\.no', rt.email):
             user.ntnu_username = rt.email.split("@")[0]
-            
+
             # Check if Online-member, and set Infomail to True is he/she is
             if user.is_member:
                 user.infomail = True
@@ -148,8 +148,8 @@ def verify(request, token):
 
     else:
         messages.error(request, _(u'Denne lenken er utløpt. Bruk gjenopprett passord for å få tilsendt en ny lenke.'))
-        return HttpResponseRedirect('/')        
-            
+        return HttpResponseRedirect('/')
+
 
 def recover(request):
     if request.user.is_authenticated():
@@ -164,10 +164,10 @@ def recover(request):
 
                 if len(emails) == 0:
                     messages.error(request, _(u'Denne eposten er ikke registrert i våre systemer.'))
-                    return HttpResponseRedirect('/')        
+                    return HttpResponseRedirect('/')
 
                 email = emails[0]
-    
+
                 # Create the registration token
                 token = uuid.uuid4().hex
                 rt = RegisterToken(user=email.user, email=email.email, token=token)
@@ -191,7 +191,7 @@ kan dette gjøres med funksjonen for å gjenopprette passord.
 
                 messages.success(request, _(u'En lenke for gjenoppretning har blitt sendt til %s.') % email.email)
 
-                return HttpResponseRedirect('/')        
+                return HttpResponseRedirect('/')
             else:
                 form = RecoveryForm(request.POST, auto_id=True)
         else:
@@ -201,12 +201,12 @@ kan dette gjøres med funksjonen for å gjenopprette passord.
 
 
 @sensitive_post_parameters()
-def set_password(request, token=None): 
+def set_password(request, token=None):
     if request.user.is_authenticated():
         return HttpResponseRedirect('/')
     else:
         tokens = RegisterToken.objects.filter(token=token)
-       
+
         if tokens.count() == 1:
             rt = tokens[0]
             if rt.is_valid:
@@ -218,12 +218,12 @@ def set_password(request, token=None):
                         user.is_active = True
                         user.set_password(form.cleaned_data['new_password'])
                         user.save()
-                        
+
                         rt.delete()
 
                         messages.success(request, _(u'Bruker %s har gjennomført vellykket gjenoppretning av passord. Du kan nå logge inn.') % user.username)
-                        
-                        return HttpResponseRedirect('/')        
+
+                        return HttpResponseRedirect('/')
                 else:
                     form = ChangePasswordForm()
 
@@ -233,4 +233,20 @@ def set_password(request, token=None):
 
         else:
             messages.error(request, _(u'Lenken er ugyldig. Vennligst bruk gjenoppretning av passord for å få tilsendt en ny lenke.'))
-            return HttpResponseRedirect('/')        
+            return HttpResponseRedirect('/')
+
+# API v1
+from rest_framework import viewsets, mixins
+from rest_framework.permissions import AllowAny
+from apps.authentication.serializers import UserSerializer
+
+
+class UserViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.ListModelMixin):
+    """
+    Viewset for User serializer. Supports filtering on 'username', 'first_name', 'last_name', 'email'
+    """
+
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = (AllowAny,)
+    filter_fields = ('username', 'first_name', 'last_name', 'email')
