@@ -55,6 +55,8 @@ class DatetimePickerInput(TextInput):
         final_attrs = self.build_attrs(attrs, type=self.input_type, name=name)
         if value != '':
             final_attrs['value'] = format_html('value="{}"', force_text(self._format_value(value)))
+        else:
+            final_attrs['value'] = ''
 
         return format_html(
             DATETIMEPICKER_WIDGET_STRING,
