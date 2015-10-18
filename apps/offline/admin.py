@@ -3,8 +3,10 @@ from chunks.models import Chunk
 from django.contrib import admin
 from django.db.models import Q
 
+from reversion.admin import VersionAdmin
 
-class ProxyChunkAdmin(admin.ModelAdmin):
+
+class ProxyChunkAdmin(VersionAdmin):
 
     readonly_fields = ['key']
 
