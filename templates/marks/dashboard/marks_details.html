@@ -22,8 +22,8 @@ Detaljer om prikk: {{ mark.title }}
 <div class="row">
     <div class="col-md-12">
         <a href="#" class="btn btn-primary" id="marks_details_users_button"><i class="fa fa-users"></i> Legg til</a>
-        <a href="/dashboard/marks/{{ mark.id }}/edit" class="btn btn-warning"><i class="fa fa-cogs"></i> Endre</a>
-        <a href="/dashboard/marks/{{ mark.id }}/delete" class="btn btn-danger pull-right"><i class="fa fa-times"></i> Slett</a>
+        <a href="{% url 'marks_edit' mark.id %} class="btn btn-warning"><i class="fa fa-cogs"></i> Endre</a>
+        <a href="{% url 'marks_delete' mark.id %}" class="btn btn-danger pull-right"><i class="fa fa-times"></i> Slett</a>
         <div id="marks_details_users" style="display: none;">
             <hr />
             <h4>Legg til brukere</h4>
