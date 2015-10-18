@@ -1,4 +1,5 @@
 {% extends "dashboard_base.html" %}
+{% load compress %}
 
 {% block title %}
 Artikler - Online Dashboard
@@ -6,6 +7,11 @@ Artikler - Online Dashboard
 
 {% block page-header %}
 Artikler
+{% endblock %}
+
+{% block js %}
+    {{ block.super }}
+    <script src="{{ STATIC_URL }}js/dashboard/article.js" type="text/javascript"></script>
 {% endblock %}
 
 {% block breadcrumbs %}
@@ -22,14 +28,16 @@ Artikler
             <span class="input-group-addon">Søk</span>
             <input type="text" class="form-control" placeholder="Søkeord..." id="dashboard-article-search-query">
             <span class="input-group-btn">
-                <a href="#" class="btn btn-success"><i class="fa fa-search fa-lg"></i></a>
+                <a href="#" id="dashboard-article-search-button" class="btn btn-success">
+                    <i class="fa fa-search fa-lg"></i>
+                </a>
             </span>
         </div>
     </div>
     <div class="col-md-12 col-lg-6">
         <div class="button-group">
             {% for year in years %}
-                <a href="#" class="btn btn-primary">{{ year }}</a>
+                <a href="#" class="btn btn-primary dashboard-article-year">{{ year }}</a>
             {% endfor %}
         </div>
     </div>
@@ -51,7 +59,7 @@ Artikler
                             <th>Endre</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="dashboard-article-table">
                     {% for article in articles %}
                         <tr>
                             <td><a href="{% url 'dashboard_article_detail' article.pk %}">{{ article }}</a></td>
