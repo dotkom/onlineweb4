@@ -72,7 +72,7 @@ var Article = (function ($, tools) {
                     var t = moment(item.published_date)
 
                     html += '<tr>'
-                    html += '<td>' + item.heading + '</td>'
+                    html += '<td><a href="' + item.id + '">' + item.heading + '</a></td>'
                     html += '<td>' + item.author.first_name + ' ' + item.author.last_name + '</td>'
                     html += '<td>' + t.format('YYYY-MM-DD HH:MM:SS') + '</td>'
                     html += '<td><a href="/dashboard/article/' + item.id + '/edit/">'

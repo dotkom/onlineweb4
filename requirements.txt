@@ -22,7 +22,7 @@ django-dynamic-fixture==1.8.1   # Dynamic fixtures for models
 django-simple-captcha==0.4.4    # Simple captcha
 django-oauth-toolkit==0.8.1      # OAuth2 authentication support
 django_compressor==1.4          # Compiles less and minifies js
-django-watson==1.1.5            # Indexed model search lib
+django-watson==1.1.8            # Indexed model search lib
 django-reversion==1.8.5         # Model version history with middleware hooks to all post_save signals
 django-guardian                 # Per Object permissions framework
 APScheduler==2.1.1              # Scheduler
