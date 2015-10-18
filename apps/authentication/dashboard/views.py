@@ -9,7 +9,7 @@ from django.contrib.auth.models import Group
 from django.core.urlresolvers import reverse, reverse_lazy
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse
-from django.views.generic import UpdateView, DetailView, DeleteView
+from django.views.generic import UpdateView, DetailView, DeleteView, ListView
 
 from guardian.decorators import permission_required
 
@@ -138,25 +138,14 @@ def members_index(request):
     members = AllowedUsername.objects.all()
     context['members'] = merge_names(members)
 
-    return render(request, 'auth/dashboard/members_index.html', context)
+    return render(request, 'auth/dashboard/user_list.html', context)
 
 
-@login_required
-@permission_required("authentication.view_allowedusername", return_403=True)
-def members_detail(request, pk):
-
-    """
-    Detail view for allowedusername with PK=pk
-    """
-    if not has_access(request):
-        raise PermissionDenied
-
-    context = get_base_context(request)
-
-    user = get_object_or_404(User, pk=pk)
-    context['user'] = user
-
-    return render(request, 'auth/dashboard/user_detail.html', context)
+class UserListView(DashboardPermissionMixin, ListView):
+    model = User
+    queryset = User.objects.all().exclude(id=-1)
+    permission_required = 'authentication.view_onlineuser'
+    template_name = 'auth/dashboard/user_list.html'
 
 
 class UserDetailView(DashboardPermissionMixin, DetailView):

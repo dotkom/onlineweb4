@@ -1,6 +1,6 @@
 {% extends 'dashboard_base.html' %}
 {% load compress %}
-{% block title %}Medlemsregister{% endblock %}
+{% block title %}Brukerprofiler{% endblock %}
 
 {% block styles %}
     {{ block.super }}
@@ -9,18 +9,17 @@
 {% endblock %}
 
 {% block page-header %}
-Medlemsregister
+Brukerprofiler
 {% endblock %}
 
 {% block breadcrumbs %}
 <li><a href="/dashboard/auth/">Autentisering</a></li>
-<li>Medlemsregister</li>
+<li>Brukerprofiler</li>
 {% endblock %}
 
 {% block content %}
 <div class="row">
     <div class="col-md-12">
-        <p>Her finner du en oversikt over alle gyldige NTNU-brukernavn i medlemsregisteret.</p>
         <table class="table table-striped table-condensed tablesorter" id="membership_list">
             <thead>
             <tr>
@@ -33,9 +32,19 @@ Medlemsregister
             </tr>
             </thead>
             <tbody>
-            {% for member in members %}
+            {% for user in object_list %}
                 <tr>
-                    <td><a href="/dashboard/auth/members/{{ member.id }}/">{{ member }}</a></td>
+                    <td>{{ user.ntnu_username }}</td>
+                    <td><a href="{% url 'dashboard_user_detail' user.id %}/">{{ user.get_full_name }}</a></td>
+                    <td>{{ member.registered|date:'Y-m-d' }}</td>
+                    <td>{{ member.expiration_date|date:'Y-m-d' }}</td>
+                    <td>{{ member.note }}</td>
+                    <td>{% if member.is_active %}Ja{% else %}Nei{% endif %}</td>
+                </tr>
+            {% endfor %}
+            {% for member in members %}{# backwards compatability for medlemsregister for the time being #}
+                <tr>
+                    <td>{{ member }}</td>
                     <td>{{ member.full_name }}</td>
                     <td>{{ member.registered|date:'Y-m-d' }}</td>
                     <td>{{ member.expiration_date|date:'Y-m-d' }}</td>
