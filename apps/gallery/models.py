@@ -38,7 +38,7 @@ class ResponsiveImage(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True, editable=False, null=False, blank=False)
     description = models.TextField(u'Beskrivelse', blank=True, default='', max_length=2048)
     image_original = models.FileField(u'Originalbilde', upload_to=gallery_settings.RESPONSIVE_IMAGES_PATH)
-    image_wide = models.FileField(u'Bredformat', upload_to=gallery_settings.RESPONSIVE_IMAGES_WIDE_PATH)
+    image_wide = models.ImageField(u'Bredformat', upload_to=gallery_settings.RESPONSIVE_IMAGES_WIDE_PATH)
     image_lg = models.ImageField(u'LG Bilde', upload_to=gallery_settings.RESPONSIVE_IMAGES_PATH)
     image_md = models.ImageField(u'MD Bilde', upload_to=gallery_settings.RESPONSIVE_IMAGES_PATH)
     image_sm = models.ImageField(u'SM Bilde', upload_to=gallery_settings.RESPONSIVE_IMAGES_PATH)
@@ -54,6 +54,34 @@ class ResponsiveImage(models.Model):
         """
 
         return str(self.image_lg)
+
+    @property
+    def original(self):
+        return str(self.image_original)
+
+    @property
+    def wide(self):
+        return str(self.image_wide)
+
+    @property
+    def lg(self):
+        return str(self.image_lg)
+
+    @property
+    def md(self):
+        return str(self.image_md)
+
+    @property
+    def sm(self):
+        return str(self.image_sm)
+
+    @property
+    def xs(self):
+        return str(self.image_xs)
+
+    @property
+    def thumb(self):
+        return str(self.thumbnail)
 
     class Meta(object):
         """

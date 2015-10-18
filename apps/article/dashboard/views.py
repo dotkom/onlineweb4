@@ -27,8 +27,11 @@ def article_create(request):
     if request.method == 'POST':
         form = ArticleForm(request.POST)
         if form.is_valid():
-            form.save()
-            messages.success(request, u'Tag ble opprettet.')
+            instance = form.save(commit=False)
+            instance.changed_by = request.user
+            instance.created_by = request.user
+            instance.save()
+            messages.success(request, u'Artikkelen ble opprettet.')
             redirect('dashboard_article_index')
         else:
             print form.is_valid()
@@ -51,8 +54,10 @@ def article_change(request, article_id):
     if request.method == 'POST':
         form = ArticleForm(request.POST)
         if form.is_valid():
-            form.save()
-            messages.sucess(request, u'Artikkelen ble lagret.')
+            instance = form.save(commit=False)
+            instance.changed_by = request.user
+            instance.save()
+            messages.success(request, u'Artikkelen ble lagret.')
             redirect('dashboard_tag_index')
         else:
             messages.error(request, u'Noen av de påkrevde feltene inneholder feil.')

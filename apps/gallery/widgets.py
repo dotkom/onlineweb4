@@ -65,18 +65,3 @@ class SingleImageInput(HiddenInput):
             )
 
         return format_html(WIDGET_STRING, flatatt(final_attrs), img_thumb)
-
-
-class SingleImageInputMixin(object):
-    """
-    The SingleImageFieldMixin is intended for ModelForm metaclasses that use SingleImageField
-    """
-
-    # Subclasses must override this if they use different field name for the ResponsiveImage FK
-    image_field_name = 'image'
-
-    widgets = {
-        image_field_name: SingleImageInput(attrs={
-            'id': 'responsive-image-id',
-        })
-    }
