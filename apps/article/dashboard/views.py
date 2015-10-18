@@ -14,7 +14,7 @@ def article_index(request):
     check_access_or_403(request)
 
     context = get_base_context(request)
-    context['articles'] = Article.objects.all()
+    context['articles'] = Article.objects.all().order_by('-published_date')
     context['years'] = sorted(list(set(a.published_date.year for a in context['articles'])), reverse=True)
 
     return render(request, 'article/dashboard/article_index.html', context)
