@@ -2,7 +2,7 @@
 {% load compress %}
 {% load gravatar_url_resolver %}
 
-{% block title %}Medlemsregister - {{ user }}{% endblock %}
+{% block title %}Brukerprofiler - {{ user }}{% endblock %}
 
 {% block styles %}
     {{ block.super }}
@@ -15,7 +15,7 @@
 {% endblock %}
 
 {% block breadcrumbs %}
-<li><a href="{% url 'members_index' %}">Medlemsregister</a></li>
+<li><a href="{% url 'members_index' %}">Brukerprofiler</a></li>
 <li>{{ user }}</li>
 {% endblock %}
 
