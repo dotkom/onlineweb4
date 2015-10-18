@@ -1,0 +1,50 @@
+{% extends "dashboard_base.html" %}
+
+{% block title %}
+{{ article }} - Online Dashboard
+{% endblock title %}
+
+{% block page-header %}
+Artikler
+{% endblock %}
+
+{% block breadcrumbs %}
+    <li><a href="{% url 'dashboard_article_index' %}">Artikler</a></li>
+    <li>{{ article }}</li>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <a href="{% url 'dashboard_article_edit' article.pk %}" class="btn btn-primary">
+            <i class="fa fa-edit fa-lg"></i> Endre
+        </a>
+        <a href="{{ article.get_absolute_url }}" class="btn btn-info">
+            <i class="fa fa-play fa-lg"></i> Vis
+        </a>
+        <a href="#modal-article-delete" class="btn btn-danger pull-right">
+            <i class="fa fa-times fa-lg"></i> Slett
+        </a>
+    </div>
+</div>
+<br />
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">Oversikt</h3>
+            </div>
+            <div class="panel-body">
+                <div class="col-sm-12 col-md-4 pull-right">
+                    <img src="{{ article.image.thumnbail }}" alt title="{{ article.name }}" />
+                </div>
+                <div class="col-sm-12 col-md-8">
+                    <dl class="dl-horizontal">
+
+                    </dl>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

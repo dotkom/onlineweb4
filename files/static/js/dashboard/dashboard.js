@@ -116,6 +116,9 @@ var Dashboard = (function ($) {
                 })
             })
 
+            // Activate tablesorter on all tablesorter class tables
+            $('.tablesorter').tablesorter()
+
             console.log('Dashboard initiated.')
         },
 

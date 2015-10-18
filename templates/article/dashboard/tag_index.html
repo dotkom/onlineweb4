@@ -25,7 +25,7 @@ Tags
             <tbody>
             {% for tag in tags %}
                 <tr>
-                    <td><a href="{% url 'dashboard_tag_change' tag.pk %}">{{ tag.name }}</a></td>
+                    <td><a href="{% url 'dashboard_tag_edit' tag.pk %}">{{ tag.name }}</a></td>
                 </tr>
             {% endfor %}
             </tbody>

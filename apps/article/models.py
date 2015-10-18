@@ -27,7 +27,7 @@ class Article(models.Model):
         max_length=200, directory=IMAGE_FOLDER,
         extensions=IMAGE_EXTENSIONS, null=True
     )
-    image = models.ForeignKey(ResponsiveImage, null=True, default=None)
+    image = models.ForeignKey(ResponsiveImage, null=True, default=None, blank=True)
     video = models.CharField(_("vimeo id"), max_length=200, blank=True)
     created_date = models.DateTimeField(_(u"opprettet-dato"), auto_now_add=True, editable=False)
     changed_date = models.DateTimeField(_(u"sist endret"), editable=False, auto_now=True)

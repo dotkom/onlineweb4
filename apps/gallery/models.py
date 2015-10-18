@@ -3,6 +3,7 @@
 import os
 import uuid
 
+from django.conf import settings
 from django.db import models
 from django.db.models.signals import post_delete
 from django.utils.translation import ugettext_lazy as _
@@ -53,35 +54,35 @@ class ResponsiveImage(models.Model):
         :return: The RELATIVE path to the LG image version
         """
 
-        return str(self.image_lg)
+        return '%s%s' % (settings.MEDIA_URL, self.image_lg)
 
     @property
     def original(self):
-        return str(self.image_original)
+        return '%s%s' % (settings.MEDIA_URL, self.image_original)
 
     @property
     def wide(self):
-        return str(self.image_wide)
+        return '%s%s' % (settings.MEDIA_URL, self.image_wide)
 
     @property
     def lg(self):
-        return str(self.image_lg)
+        return '%s%s' % (settings.MEDIA_URL, self.image_lg)
 
     @property
     def md(self):
-        return str(self.image_md)
+        return '%s%s' % (settings.MEDIA_URL, self.image_md)
 
     @property
     def sm(self):
-        return str(self.image_sm)
+        return '%s%s' % (settings.MEDIA_URL, self.image_sm)
 
     @property
     def xs(self):
-        return str(self.image_xs)
+        return '%s%s' % (settings.MEDIA_URL, self.image_xs)
 
     @property
     def thumb(self):
-        return str(self.thumbnail)
+        return '%s%s' % (settings.MEDIA_URL, self.thumbnail)
 
     class Meta(object):
         """

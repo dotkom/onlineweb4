@@ -15,10 +15,12 @@ def article_index(request):
 
     context = get_base_context(request)
     context['articles'] = Article.objects.all()
+    context['years'] = sorted(list(set(a.published_date.year for a in context['articles'])), reverse=True)
 
     return render(request, 'article/dashboard/article_index.html', context)
 
 
+@permission_required('article.add_article')
 def article_create(request):
     check_access_or_403(request)
 
@@ -32,10 +34,8 @@ def article_create(request):
             instance.created_by = request.user
             instance.save()
             messages.success(request, u'Artikkelen ble opprettet.')
-            redirect('dashboard_article_index')
+            redirect(article_detail(instance.pk))
         else:
-            print form.is_valid()
-            print form.errors
             messages.error(request, u'Noen av de påkrevde feltene inneholder feil.')
 
     context = get_base_context(request)
@@ -44,7 +44,20 @@ def article_create(request):
     return render(request, 'article/dashboard/article_create.html', context)
 
 
-def article_change(request, article_id):
+@permission_required('article.view_article')
+def article_detail(request, article_id):
+    check_access_or_403(request)
+
+    article = get_object_or_404(Article, pk=article_id)
+
+    context = get_base_context(request)
+    context['article'] = article
+
+    return render(request, 'article/dashboard/article_detail.html', context)
+
+
+@permission_required('article.change_article')
+def article_edit(request, article_id):
     check_access_or_403(request)
 
     article = get_object_or_404(Article, pk=article_id)
@@ -58,7 +71,7 @@ def article_change(request, article_id):
             instance.changed_by = request.user
             instance.save()
             messages.success(request, u'Artikkelen ble lagret.')
-            redirect('dashboard_tag_index')
+            redirect(article_index)
         else:
             messages.error(request, u'Noen av de påkrevde feltene inneholder feil.')
 
@@ -79,7 +92,7 @@ def tag_index(request):
     return render(request, 'article/dashboard/tag_index.html', context)
 
 
-@permission_required('article.tag_create')
+@permission_required('article.add_tag')
 def tag_create(request):
     check_access_or_403(request)
 
@@ -90,10 +103,8 @@ def tag_create(request):
         if form.is_valid():
             form.save()
             messages.success(request, u'Tag ble opprettet.')
-            redirect('dashboard_tag_index')
+            redirect(tag_index)
         else:
-            print form.is_valid()
-            print form.errors
             messages.error(request, u'Noen av de påkrevde feltene inneholder feil.')
 
     context = get_base_context(request)
@@ -102,8 +113,8 @@ def tag_create(request):
     return render(request, 'article/dashboard/tag_create.html', context)
 
 
-@permission_required('article.change')
-def tag_change(request, tag_id):
+@permission_required('article.change_tag')
+def tag_edit(request, tag_id):
     check_access_or_403(request)
 
     tag = get_object_or_404(Tag, pk=tag_id)
@@ -114,8 +125,8 @@ def tag_change(request, tag_id):
         form = TagForm(request.POST)
         if form.is_valid():
             form.save()
-            messages.sucess(request, u'Tag ble opprettet.')
-            redirect('dashboard_tag_index')
+            messages.success(request, u'Tag ble opprettet.')
+            redirect(tag_index)
         else:
             messages.error(request, u'Noen av de påkrevde feltene inneholder feil.')
 

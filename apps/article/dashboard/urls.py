@@ -2,12 +2,14 @@
 
 from django.conf.urls import patterns, url
 
-urlpatterns = patterns('apps.article.dashboard.views',
+urlpatterns = patterns(
+    'apps.article.dashboard.views',
     url(r'^$', 'article_index', name='dashboard_article_index'),
-    url(r'^create/$', 'article_create', name='dashboard_article_create'),
-    url(r'^change/(?P<article_id>\d+)/$', 'article_change', name='dashboard_article_change'),
+    url(r'^new/$', 'article_create', name='dashboard_article_create'),
+    url(r'^(?P<article_id>\d+)/$', 'article_detail', name='dashboard_article_detail'),
+    url(r'^(?P<article_id>\d+)/edit/$', 'article_edit', name='dashboard_article_edit'),
 
     url(r'^tag/$', 'tag_index', name='dashboard_tag_index'),
-    url(r'^tag/create/$', 'tag_create', name='dashboard_tag_create'),
-    url(r'^tag/change/(?P<tag_id>\d+)/$', 'tag_change', name='dashboard_tag_change'),
+    url(r'^tag/new/$', 'tag_create', name='dashboard_tag_create'),
+    url(r'^tag/(?P<tag_id>\d+)/$', 'tag_edit', name='dashboard_tag_edit'),
 )

@@ -1,25 +1,4 @@
-{% extends 'dashboard_base.html' %}
-{% load markdown_deux_tags %}
 {% load addcss %}
-
-{% block title %}
-Tags - Online Dashboard
-{% endblock title %}
-
-{% block page-header %}
-Tags
-{% endblock %}
-
-{% block breadcrumbs %}
-    <li><a href="{% url 'dashboard_tag_index' %}">Tags</a></li>
-	{% if edit %}
-		<li>Endre tag</li>
-	{% else %}
-    	<li>Ny Tag</li>
-    {% endif %}
-{% endblock %}
-
-{% block content %}
 <div class="row">
     <div class="col-md-12">
         <form method="POST">
@@ -27,13 +6,19 @@ Tags
             {% for field in form %}
             <div class="form-group {% if field.errors %}has-error{% endif %}">
                 <label for="{{ field.auto_id }}"{% if field.errors %} class="red"{% endif %}>{{ field.label }}</label>
-                {{ field|addclass:"form-control" }}
+                {% if field.name != 'featured' %}
+                    {{ field|addclass:"form-control" }}
+                {% else %}
+                    <div class="checkbox">
+                        <label>{{ field }} Fremhev denne artikkelen</label>
+                    </div>
+                {% endif %}
             </div>
             {% endfor %}
             <button class="btn btn-success" type="submit">
                 <i class="fa fa-save fa-lg"></i> Lagre
             </button>
         </form>
+        {% include 'gallery/formwidget.html' %}
     </div>
 </div>
-{% endblock content %}
