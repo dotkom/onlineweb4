@@ -104,6 +104,11 @@ if 'apps.inventory' in settings.INSTALLED_APPS:
         url(r'^dashboard/inventory/',          include('apps.inventory.dashboard.urls')),
     )
 
+if 'apps.webshop' in settings.INSTALLED_APPS:
+    urlpatterns += patterns('',
+        url(r'^dashboard/webshop/',          include('apps.webshop.dashboard.urls')),
+    )
+
 if 'apps.offline' in settings.INSTALLED_APPS:
     urlpatterns += patterns('',
         url(r'^offline/',           include('apps.offline.urls')),
