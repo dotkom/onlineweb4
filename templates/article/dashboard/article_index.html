@@ -56,7 +56,7 @@ Artikler
                         <tr>
                             <td><a href="{% url 'dashboard_article_detail' article.pk %}">{{ article }}</a></td>
                             <td>{{ article.created_by }}</td>
-                            <td>{{ article.published_date }}</td>
+                            <td>{{ article.published_date|date:'Y-m-d H:i:s' }}</td>
                             <td>
                                 <a href="{% url 'dashboard_article_edit' article.pk %}">
                                     <i class="fa fa-edit fa-lg"></i>

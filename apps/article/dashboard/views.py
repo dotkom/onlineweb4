@@ -34,7 +34,7 @@ def article_create(request):
             instance.created_by = request.user
             instance.save()
             messages.success(request, u'Artikkelen ble opprettet.')
-            redirect(article_detail(instance.pk))
+            return redirect(article_detail(instance.pk))
         else:
             messages.error(request, u'Noen av de påkrevde feltene inneholder feil.')
 
@@ -65,13 +65,13 @@ def article_edit(request, article_id):
     form = ArticleForm(instance=article)
 
     if request.method == 'POST':
-        form = ArticleForm(request.POST)
+        form = ArticleForm(request.POST, instance=article)
         if form.is_valid():
             instance = form.save(commit=False)
             instance.changed_by = request.user
             instance.save()
             messages.success(request, u'Artikkelen ble lagret.')
-            redirect(article_index)
+            return redirect(article_index)
         else:
             messages.error(request, u'Noen av de påkrevde feltene inneholder feil.')
 
@@ -103,7 +103,7 @@ def tag_create(request):
         if form.is_valid():
             form.save()
             messages.success(request, u'Tag ble opprettet.')
-            redirect(tag_index)
+            return redirect(tag_index)
         else:
             messages.error(request, u'Noen av de påkrevde feltene inneholder feil.')
 
@@ -126,7 +126,7 @@ def tag_edit(request, tag_id):
         if form.is_valid():
             form.save()
             messages.success(request, u'Tag ble opprettet.')
-            redirect(tag_index)
+            return redirect(tag_index)
         else:
             messages.error(request, u'Noen av de påkrevde feltene inneholder feil.')
 
