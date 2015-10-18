@@ -2,6 +2,9 @@
 
 from django.conf.urls import patterns, url
 
+from apps.api.utils import SharedAPIRootRouter
+from apps.gallery.views import ResponsiveImageViewSet
+
 urlpatterns = patterns(
     'apps.gallery.views',
     url(r'^upload$', 'upload', name='gallery_upload'),
@@ -11,3 +14,8 @@ urlpatterns = patterns(
     url(r'^all_images/', 'all_images', name='all_images'),
     url(r'^search/', 'search', name='search'),
 )
+
+# API v1
+
+router = SharedAPIRootRouter()
+router.register(r'images', ResponsiveImageViewSet)
