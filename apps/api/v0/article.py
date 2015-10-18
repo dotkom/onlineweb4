@@ -14,7 +14,7 @@ from apps.article.models import Article, ArticleTag, Tag
 
 class ArticleResource(ModelResource):
     author = fields.ToOneField(UserResource, 'created_by', full=True)
-    image = fields.ToOneField(ImageResource, 'image', full=True)
+    image = fields.ToOneField(ImageResource, 'image', full=True, null=True)
     
     def alter_list_data_to_serialize(self, request, data):
         # Renames list data 'object' to 'articles'.
