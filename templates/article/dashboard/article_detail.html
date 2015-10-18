@@ -36,18 +36,6 @@ Artikler
                 <h3 class="panel-title">Oversikt</h3>
             </div>
             <div class="panel-body">
-                <div class="col-sm-12 col-md-4 pull-right">
-                    <img src="{{ article.image.sm }}" alt title="{{ article.heading }}" width="100%" />
-                    <small class="center"><i>{{ article.image.description }}</i></small>
-                    <p>
-                        <dl class="dl-horizontal">
-                            <dt>Navn</dt>
-                            <dd>{{ article.image.name }}</dd>
-                            <dt>Fotograf(er)</dt>
-                            <dd>{{ article.photographers }}</dd>
-                        </dl>
-                    </p>
-                </div>
                 <div class="col-sm-12 col-md-8">
                     <dl class="dl-horizontal">
                         <dt></dt>
@@ -60,6 +48,8 @@ Artikler
                         <dd>{{ article.additional_authors|striptags }}</dd>
                         <dt>Sist endret</dt>
                         <dd>{{ article.changed_date }}</dd>
+                        <dt>Fremhevet</dt>
+                        <dd>{% if article.featured %}Ja{% else %}Nei{% endif %}</dd>
                         <hr />
                         <dt>Ingress</dt>
                         <dd>{{ article.ingress|striptags|markdown }}</dd>
@@ -67,6 +57,30 @@ Artikler
                         <dt>Innhold</dt>
                         <dd>{{ article.content|striptags|markdown }}</dd>
                     </dl>
+                </div>
+                <div class="col-sm-12 col-md-4">
+                    <img src="{{ article.image.sm }}" alt title="{{ article.heading|striptags }}" width="100%" />
+                    <small class="center"><i>{{ article.image.description|striptags }}</i></small>
+                    <p>
+                        <dl class="dl-horizontal">
+                            <dt>Navn</dt>
+                            <dd>{{ article.image.name|striptags }}</dd>
+                            <dt>Fotograf(er)</dt>
+                            <dd>{{ article.photographers|striptags }}</dd>
+                            <dt>Vimeo ID</dt>
+                            <dd>
+                                {% if article.vimeo %}
+                                    {{ article.vimeo|striptags }}
+                                {% else %}
+                                    <i>Ingen</i>
+                                {% endif %}
+                            </dd>
+                        </dl>
+                    </p>
+                    <h3>Tags</h3>
+                    {% for tag in tags %}
+                        <a href="{{ tag.tag.absolute_url }}" class="btn btn-default">{{ tag.tag.name }}</a>
+                    {% endfor %}
                 </div>
             </div>
         </div>

@@ -4,7 +4,7 @@ from django.contrib import messages
 
 from guardian.decorators import permission_required
 
-from apps.article.models import Article, Tag
+from apps.article.models import Article, Tag, ArticleTag
 from apps.article.dashboard.forms import TagForm, ArticleForm
 from apps.dashboard.tools import check_access_or_403, get_base_context
 
@@ -50,9 +50,11 @@ def article_detail(request, article_id):
     check_access_or_403(request)
 
     article = get_object_or_404(Article, pk=article_id)
+    tags = ArticleTag.objects.filter(article=article)
 
     context = get_base_context(request)
     context['article'] = article
+    context['tags'] = tags
 
     return render(request, 'article/dashboard/article_detail.html', context)
 
