@@ -22,7 +22,9 @@ Artikler
             <span class="input-group-addon">Søk</span>
             <input type="text" class="form-control" placeholder="Søkeord..." id="dashboard-article-search-query">
             <span class="input-group-btn">
-                <a href="#" class="btn btn-success"><i class="fa fa-search fa-lg"></i></a>
+                <a href="#" id="dashboard-article-search-button" class="btn btn-success">
+                    <i class="fa fa-search fa-lg"></i>
+                </a>
             </span>
         </div>
     </div>
@@ -66,6 +68,21 @@ Artikler
                     {% endfor %}
                     </tbody>
                 </table>
+                <nav class="text-center">
+                    <ul class="pagination">
+                        <li class="disabled"><a href="#" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a></li>
+                        {% for p in pages %}
+                            <li{% if forloop.counter == 1 %} class="active"{% endif %}>
+                                <a href="#" data-page="{{ p }}">{{ p }}</a>
+                            </li>
+                        {% endfor %}
+                        <li><a href="#" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a></li>
+                    </ul>
+                </nav>
             </div>
         </div>
     </div>
