@@ -218,7 +218,7 @@ class ResponsiveImageViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin,
         queryset = self.queryset
         month = self.request.query_params.get('month', None)
         year = self.request.query_params.get('year', None)
-        query = self.request.query_params.get('search', None)
+        query = self.request.query_params.get('query', None)
 
         if year:
             if month:
