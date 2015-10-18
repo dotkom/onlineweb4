@@ -1,0 +1,61 @@
+{% extends 'dashboard_base.html' %}
+{% load compress %}
+{% block title %}Prikker - Online Dashboard{% endblock %}
+
+{% block styles %}
+    {{ block.super }}
+    {% compress css %}
+        <link rel="stylesheet" type="text/less" href="{{ STATIC_URL }}less/dashboard/marks.less" />
+    {% endcompress %}
+{% endblock %}
+
+{% block page-header %}
+Prikker
+{% endblock %}
+
+{% block breadcrumbs %}
+<li>Prikker</li>
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-12">
+            <a href="{% url 'marks_new' %}" class="btn btn-primary"><i class="fa fa-plus"></i> Ny prikk</a>
+        </div>
+    </div>
+    <br />
+    <div class="row">
+        <div class="col-md-12">
+            <p>Her finner du en oversikt over alle utdelte prikker.</p>
+            <table class="table table-striped table-condensed tablesorter" id="marks_list">
+                <thead>
+                <tr>
+                    <th>Tittel</th>
+                    <th>Antall mottakere</th>
+                    <th>Gitt</th>
+                    <th>Kategori</th>
+                    <th>Beskrivelse</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for mark in marks %}
+                    <tr>
+                        <td><a href="{% url 'marks_details' mark.id %}">{{ mark.title }}</a></td>
+                        <td>{{ mark.users_num }}</td>
+                        <td>{{ mark.added_date|date:'Y-m-d' }}</td>
+                        <td>{{ mark.category_clean }}</td>
+                        <td>{{ mark.description }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}
+
+{% block js %}
+    {{ block.super }}
+    <script type="text/javascript" src="{{ STATIC_URL }}js/libs/hogan-2.0.0.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/libs/typeahead.min.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/dashboard/marks.js"></script>
+{% endblock %}
