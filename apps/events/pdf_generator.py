@@ -6,6 +6,8 @@ from reportlab.platypus import TableStyle, Paragraph
 from reportlab.lib import colors
 from reportlab.lib.styles import getSampleStyleSheet
 
+from textwrap import wrap
+
 class EventPDF(object):
 
     event = None
@@ -53,7 +55,9 @@ class EventPDF(object):
                 i += 1
                 self.full_span_attendee_lines.append(i) 
             if user.allergies:
-                self.allergies_table_data.append((user.allergies, user.get_full_name(),))
+                # Breaks the line every 60th character
+                allergies = "\n".join(wrap(user.allergies, width=60))
+                self.allergies_table_data.append((allergies, user.get_full_name(),))
 
             i += 1
 
@@ -75,7 +79,9 @@ class EventPDF(object):
                 i += 1
                 self.full_span_waiters_lines.append(i) 
             if user.allergies:
-                self.allergies_table_data.append((user.allergies, user.get_full_name(),))
+                # Breaks the line every 60th character
+                allergies = "\n".join(wrap(user.allergies, width=60))
+                self.allergies_table_data.append((allergies, user.get_full_name(),))
 
             i += 1
 

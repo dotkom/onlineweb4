@@ -4,8 +4,10 @@ from django.utils.translation import ugettext as _
 
 from apps.posters.models import Poster
 
+from reversion.admin import VersionAdmin
 
-class PosterAdmin(admin.ModelAdmin):
+
+class PosterAdmin(VersionAdmin):
     model = Poster
     list_display = ('event', 'title', 'assigned_to', 'display_from',
                     'ordered_date', 'ordered_by', 'ordered_committee')
