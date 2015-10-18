@@ -15,19 +15,24 @@ logger = logging.getLogger(__name__)
 
 class Overview(DashboardPermissionMixin, TemplateView):
     template_name = 'webshop/dashboard/index.html'
-    permission_required = 'webshop.view_orderline'
+    permission_required = 'webshop.?'
+
+
+class Categories(DashboardPermissionMixin, TemplateView):
+    model = Category
+    template_name = 'webshop/dashboard/categories.html'
+    permission_required = 'webshop.change_category'
 
     def get_context_data(self, *args, **kwargs):
-        context = super(Overview, self).get_context_data(*args, **kwargs)
+        context = super(Categories, self).get_context_data(*args, **kwargs)
         context['categories'] = Category.objects.all().prefetch_related('products')
         return context
-
 
 class CategoryEdit(DashboardPermissionMixin, UpdateView):
     model = Category
     template_name = 'webshop/dashboard/category.html'
     context_object_name = 'category'
-    permission_required = 'webshop.change_cateogry'
+    permission_required = 'webshop.change_category'
 
 
 class CategoryAdd(DashboardPermissionMixin, TemplateView):

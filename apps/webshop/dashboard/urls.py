@@ -6,6 +6,7 @@ from apps.webshop.dashboard import views
 
 urlpatterns = patterns('apps.webshop.dashboard.views',
     url(r'^$', views.Overview.as_view(), name='dashboard_webshop'),
+    url(r'^categories/$', views.Categories.as_view(), name='dashboard_webshop_categories'),
     url(r'^category/(?P<slug>\w+)$', views.CategoryEdit.as_view(), name='dashboard_webshop_category'),
     url(r'^category/$', views.CategoryAdd.as_view(), name='dashboard_webshop_category_new'),
 
