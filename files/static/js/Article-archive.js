@@ -212,7 +212,7 @@ function ArticleArchive (Utils) {
                         output += '    <div class="col-md-4">';
                         output += '      <div class="row">';
                         output += '        <a href="/article/'+data.articles[i].id+'/'+data.articles[i].slug+'">';
-                        output += '          <img src="'+data.articles[i].image_article_front_featured+'" width="100%" alt="'+data.articles[i].heading+'" />';
+                        output += '          <img src="'+data.articles[i].image.sm+'" width="100%" alt="'+data.articles[i].heading+'" />';
                         output += '        </a>';
                         output += '      </div><!-- end row -->';
                         output += '    </div><!-- end col-md-4 -->';

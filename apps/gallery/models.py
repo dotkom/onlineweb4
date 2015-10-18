@@ -3,6 +3,7 @@
 import os
 import uuid
 
+from django.conf import settings
 from django.db import models
 from django.db.models.signals import post_delete
 from django.utils.translation import ugettext_lazy as _
@@ -38,7 +39,7 @@ class ResponsiveImage(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True, editable=False, null=False, blank=False)
     description = models.TextField(u'Beskrivelse', blank=True, default='', max_length=2048)
     image_original = models.FileField(u'Originalbilde', upload_to=gallery_settings.RESPONSIVE_IMAGES_PATH)
-    image_wide = models.FileField(u'Bredformat', upload_to=gallery_settings.RESPONSIVE_IMAGES_WIDE_PATH)
+    image_wide = models.ImageField(u'Bredformat', upload_to=gallery_settings.RESPONSIVE_IMAGES_WIDE_PATH)
     image_lg = models.ImageField(u'LG Bilde', upload_to=gallery_settings.RESPONSIVE_IMAGES_PATH)
     image_md = models.ImageField(u'MD Bilde', upload_to=gallery_settings.RESPONSIVE_IMAGES_PATH)
     image_sm = models.ImageField(u'SM Bilde', upload_to=gallery_settings.RESPONSIVE_IMAGES_PATH)
@@ -53,7 +54,35 @@ class ResponsiveImage(models.Model):
         :return: The RELATIVE path to the LG image version
         """
 
-        return str(self.image_lg)
+        return '%s%s' % (settings.MEDIA_URL, self.image_lg)
+
+    @property
+    def original(self):
+        return '%s%s' % (settings.MEDIA_URL, self.image_original)
+
+    @property
+    def wide(self):
+        return '%s%s' % (settings.MEDIA_URL, self.image_wide)
+
+    @property
+    def lg(self):
+        return '%s%s' % (settings.MEDIA_URL, self.image_lg)
+
+    @property
+    def md(self):
+        return '%s%s' % (settings.MEDIA_URL, self.image_md)
+
+    @property
+    def sm(self):
+        return '%s%s' % (settings.MEDIA_URL, self.image_sm)
+
+    @property
+    def xs(self):
+        return '%s%s' % (settings.MEDIA_URL, self.image_xs)
+
+    @property
+    def thumb(self):
+        return '%s%s' % (settings.MEDIA_URL, self.thumbnail)
 
     class Meta(object):
         """

@@ -22,7 +22,7 @@
                 {% else %}
                         <div class="col-md-12">
                            <div>
-                               <img width="100%" src="{% version article.image 'article_full' %}" alt="{{ article.heading }}"/>
+                               <img width="100%" src="{{ article.image.wide }}" alt="{{ article.heading }}"/>
                                <div class="col-md-12 photograph-detail-meta">
                                    <span class="meta-caption">{% if article.photographers %} Fotograf</span> {{ article.photographers|striptags|markdown }} {% endif %}
                                </div>

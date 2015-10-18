@@ -58,6 +58,7 @@ if 'apps.approval' in settings.INSTALLED_APPS:
 if 'apps.article' in settings.INSTALLED_APPS:
     urlpatterns += patterns('',
         url(r'^article/',           include('apps.article.urls')),
+        url(r'^dashboard/article/', include('apps.article.dashboard.urls')),
     )
 
 if 'apps.autoconfig' in settings.INSTALLED_APPS:
