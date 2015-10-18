@@ -10,10 +10,13 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.http import JsonResponse, HttpResponse
 
 from guardian.decorators import permission_required
+from rest_framework import mixins, viewsets
+from rest_framework.permissions import AllowAny
 
+from apps.gallery import util
 from apps.gallery.models import UnhandledImage, ResponsiveImage
 from apps.gallery.forms import DocumentForm
-from apps.gallery import util
+from apps.gallery.serializers import ResponsiveImageSerializer
 
 
 def _create_request_dictionary(request):
@@ -196,3 +199,37 @@ def search(request):
     }
 
     return JsonResponse(data=results, status=200, safe=False)
+
+
+# REST Framework
+
+class ResponsiveImageViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.ListModelMixin):
+    """
+    Article viewset. Can be filtered on 'year', 'month', 'tags'
+
+    Filtering on tags is only supported if the tags are supplied exactly as the stored tags.
+    """
+
+    queryset = ResponsiveImage.objects.filter().order_by('-timestamp')
+    serializer_class = ResponsiveImageSerializer
+    permission_classes = (AllowAny,)
+
+    def get_queryset(self):
+        queryset = self.queryset
+        month = self.request.query_params.get('month', None)
+        year = self.request.query_params.get('year', None)
+
+        if year:
+            if month:
+                # Filtering on year and month
+                queryset = queryset.filter(
+                    timestamp__year=year,
+                    timestamp__month=month,
+                ).order_by('-timestamp')
+            else:
+                # Filtering only on year
+                queryset = queryset.filter(
+                    timestamp__year=year,
+                ).order_by('-timestamp')
+
+        return queryset

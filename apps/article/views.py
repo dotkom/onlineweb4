@@ -1,12 +1,13 @@
 import random
 
-from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.db.models import Count
-from django.http import HttpResponse
 from django.utils import timezone
 from django.shortcuts import render, get_object_or_404
-from django.template import Template, Context, loader, RequestContext
 
+from rest_framework import mixins, viewsets
+from rest_framework.permissions import AllowAny
+
+from apps.article.serializers import ArticleSerializer
 from apps.article.models import Article, Tag, ArticleTag
 
 
@@ -106,9 +107,6 @@ def details(request, article_id, article_slug):
 
 # API v1 Views
 
-from rest_framework import mixins, viewsets
-from rest_framework.permissions import AllowAny
-from apps.article.serializers import ArticleSerializer
 
 class ArticleViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.ListModelMixin):
     """
