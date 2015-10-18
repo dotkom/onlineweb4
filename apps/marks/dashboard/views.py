@@ -15,8 +15,9 @@ from apps.marks.models import Mark, MarkUser
 from apps.marks.dashboard.forms import MarkForm
 from apps.authentication.models import OnlineUser as User
 
+
 @login_required
-@permission_required('marks.can_view', return_403=True)
+@permission_required('marks.view_mark', return_403=True)
 def index(request):
     """
     Marks overview
@@ -45,8 +46,9 @@ def index(request):
     # Render view
     return render(request, 'marks/dashboard/index.html', context)
 
+
 @login_required
-@permission_required('marks.can_add', return_403=True)
+@permission_required('marks.change_mark', return_403=True)
 def mark_details(request, pk):
     """
     Display details for a given Mark
@@ -94,7 +96,6 @@ def mark_details(request, pk):
                 resp['message'] = '%s ble fjernet fra %s' % (user.get_full_name(), context['mark'].title)
                 resp['mark_users'] = [{'user': mu.user.get_full_name(), 'id': mu.user.id} for mu in mark_users_filtered]
 
-
             elif request.POST['action'] == 'add_user':
                 user = get_object_or_404(User, pk=int(request.POST['user_id']))
 
@@ -141,8 +142,9 @@ def mark_details(request, pk):
     # Render view
     return render(request, 'marks/dashboard/marks_details.html', context)
 
+
 @login_required
-@permission_required('marks.can_add', return_403=True)
+@permission_required('marks.add_mark', return_403=True)
 def marks_new(request):
     if not has_access(request):
         raise PermissionDenied
@@ -171,8 +173,9 @@ def marks_new(request):
 
     return render(request, 'marks/dashboard/marks_new.html', context)
 
+
 @login_required
-@permission_required('marks.can_add', return_403=True)
+@permission_required('marks.change_mark', return_403=True)
 def mark_edit(request, pk):
     if not has_access(request):
         raise PermissionDenied
@@ -203,8 +206,9 @@ def mark_edit(request, pk):
 
     return render(request, 'marks/dashboard/marks_edit.html', context)
 
+
 @login_required
-@permission_required('marks.can_delete', return_403=True)
+@permission_required('marks.delete_mark', return_403=True)
 def mark_delete(request, pk):
     """
     Display details for a given Mark
@@ -218,12 +222,10 @@ def mark_delete(request, pk):
     mark = get_object_or_404(Mark, pk=pk)
 
     # Save message
-    messages.success(request, '%s er ble slettet.' % (mark.title))
+    messages.success(request, '%s er ble slettet.' % mark.title)
 
     # Delete the mark
     mark.delete()
 
     # Redirect user
     return redirect(index)
-
-
