@@ -3,7 +3,11 @@
 {% load addcss %}
 
 {% block title %}
-Ny artikkel - Online Dashboard
+    {% if edit %}
+		Endre artikkel - Online Dashboard
+	{% else %}
+    	Ny artikkel - Online Dashboard
+    {% endif %}
 {% endblock title %}
 
 {% block page-header %}
