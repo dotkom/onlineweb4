@@ -21,6 +21,7 @@ Nytt produkt - Online Dashboard
 {% block js %}
     {{ block.super }}
     {% compress js %}
+    <script src="{{ STATIC_URL }}js/dashboard/webshop.js"></script>
     {% endcompress %}
 {% endblock js %}
 
@@ -39,9 +40,11 @@ Webshop - {{ product|default:"Legg til" }}
     <form method="POST" action="">
     <div class="col-md-12">
         <button type="submit" class="btn btn-success"><i class="fa fa-save"></i> Lagre</button>
-        <a href="#modal-delete-product" id="webshop-delete-product" data-toggle="modal" data-id="{{ product.id }}" class="btn btn-danger pull-right">
+        {% if product %}
+        <a href="#modal-delete-product" id="webshop-delete-product" data-toggle="modal" data-slug="{{ product.slug }}" class="btn btn-danger pull-right">
             <i class="fa fa-times fa-lg"></i> Slett produkt
         </a>
+        {% endif %}
     </div>
 </div>
 <div class="panel panel-default">
@@ -75,7 +78,7 @@ Webshop - {{ product|default:"Legg til" }}
             </div>
             <div class="modal-footer">
                 <button class="btn" data-dismiss="modal" aria-hidden="true">Lukk</button>
-                <button class="btn btn-danger confirm-delete-delete" data-dismiss="modal" aria-hidden="true">Slett</button>
+                <button class="btn btn-danger confirm-delete-product" data-dismiss="modal" aria-hidden="true">Slett</button>
             </div>
         </div>
     </div>
