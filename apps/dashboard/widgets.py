@@ -31,6 +31,37 @@ def widget_generator(klass, fields):
     return widgets
 
 
+def multiple_widget_generator(klass_field_tuples):
+    """
+    The multiple widget generator takes in a list of tuples consisting of a field widget class and
+    a list of field and attribute tuples for each field.
+
+    Example usage:
+
+    dtp_fields = [
+        ('published', {'class': 'highlighted'}),
+        ('updated', {})
+    ]
+    responsive_img_fields = [
+        ('article_image', {'id': 'article-image'})
+    ]
+
+    widgetlist = [(DatetimePickerInput, dtp_fields), (SingleImageInput, responsive_img_fields)]
+    widgets = multiple_widget_generator(widgetlist)
+
+    :param klass_field_tuples:
+    :return: A final dictionary containing all field name to field widget mappings for use in ModelForms
+    """
+
+    widgets = {}
+
+    for klass, fields in klass_field_tuples:
+        for field, widget in widget_generator(klass, fields).items():
+            widgets[field] = widget
+
+    return widgets
+
+
 class DatetimePickerInput(TextInput):
     """
     This form widget metaclass mixin activates Bootstrap Datetimepicker

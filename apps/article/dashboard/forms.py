@@ -2,7 +2,7 @@
 from django import forms
 
 from apps.article.models import Tag, Article
-from apps.dashboard.widgets import DatetimePickerInput, widget_generator
+from apps.dashboard.widgets import DatetimePickerInput, multiple_widget_generator
 from apps.gallery.widgets import SingleImageInput
 
 
@@ -26,10 +26,10 @@ class ArticleForm(forms.ModelForm):
         # Fields should be a mapping between field name and an attribute dictionary
         img_fields = [('image', {'id': 'responsive-image-id'})]
         dtp_fields = [('published_date', {})]
+        widgetlist = [
+            (DatetimePickerInput, dtp_fields),
+            (SingleImageInput, img_fields)
+        ]
 
-        widgets = {}
-
-        for field, widget in widget_generator(SingleImageInput, img_fields).items():
-            widgets[field] = widget
-        for field, widget in widget_generator(DatetimePickerInput, dtp_fields).items():
-            widgets[field] = widget
+        # Multiple widget generator merges results from regular widget_generator into a single widget dict
+        widgets = multiple_widget_generator(widgetlist)
