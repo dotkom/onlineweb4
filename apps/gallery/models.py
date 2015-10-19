@@ -2,6 +2,7 @@
 
 import os
 import uuid
+import watson
 
 from django.conf import settings
 from django.db import models
@@ -94,6 +95,10 @@ class ResponsiveImage(models.Model):
         permissions = (
             ('view_responsiveimage', _(u'View ResponsiveImage')),
         )
+
+
+# Hook up ResponsiveImage to Watson
+watson.register(ResponsiveImage)
 
 
 # If we delete an image, we don't want to keep the actual images

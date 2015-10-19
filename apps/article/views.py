@@ -73,7 +73,9 @@ def archive(request, name=None, slug=None, year=None, month=None):
         dates[year] = sorted_months
 
     # Get the 30 most used tags, then randomize them
-    tags = Tag.objects.filter(article_tags__isnull=False).distinct().annotate(num_tags=Count('article_tags__tag')).order_by('-num_tags')
+    tags = Tag.objects.filter(
+        article_tags__isnull=False
+    ).distinct().annotate(num_tags=Count('article_tags__tag')).order_by('-num_tags')
     tags = list(tags[:30])
     random.shuffle(tags)
 
@@ -111,7 +113,7 @@ def details(request, article_id, article_slug):
 
 class ArticleViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.ListModelMixin):
     """
-    Article viewset. Can be filtered on 'year', 'month', 'tags'
+    Article viewset. Can be filtered on 'year', 'month', 'tags' and free text search using 'query'.
 
     Filtering on tags is only supported if the tags are supplied exactly as the stored tags.
     """
