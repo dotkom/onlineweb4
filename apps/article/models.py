@@ -12,6 +12,7 @@ from apps.gallery.models import ResponsiveImage
 from filebrowser.fields import FileBrowseField
 
 import reversion
+import watson
 
 
 class Article(models.Model):
@@ -88,6 +89,7 @@ class Article(models.Model):
 
 
 reversion.register(Article)
+watson.register(Article)
 
 
 class Tag(models.Model):
