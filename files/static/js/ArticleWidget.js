@@ -14,6 +14,12 @@ function ArticleWidget (Utils){
 
                     // The loop
                     for (var i = 0; i < data.articles.length; i++) {
+
+                        // Temporary replacement during the transition from Filebrowser to ResponsiveImage
+                        if (!data.articles[i].image) {
+                            data.articles[i].image = ''
+                        }
+
                         if (i <= 1) {
                             output_featured += '<div class="col-md-6"><a href="/article/'+data.articles[i].id+'/'+data.articles[i].slug+'"><img src="'+data.articles[i].image.sm+'" alt="'+data.articles[i].heading+'"><h3>'+data.articles[i].heading+'</h3></a><p>'+data.articles[i].ingress_short+'</p></div>';
                         }

@@ -31,4 +31,5 @@ class ArticleForm(forms.ModelForm):
             (SingleImageInput, img_fields)
         ]
 
+        # Multiple widget generator merges results from regular widget_generator into a single widget dict
         widgets = multiple_widget_generator(widgetlist)
