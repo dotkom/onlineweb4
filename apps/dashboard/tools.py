@@ -75,6 +75,7 @@ def get_base_context(request):
 
     return context
 
+
 # Mixin for Class Based Views
 class DashboardMixin(object):
     def dispatch(self, request, *args, **kwargs):
