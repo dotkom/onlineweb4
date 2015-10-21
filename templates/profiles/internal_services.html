@@ -1,0 +1,33 @@
+{% load crispy_forms_tags %}
+<div class="row">
+    <div class="col-md-12">
+        <h3>Tilgang til interne tjenester</h3>
+        <p>Her kan du redigere tilganger til interne tjenester som brukes i Online utenfor nettsidene. Dette gjelder følgende tjenester:</p>
+        <ul>
+            <li>Tilgang til filområdet</li>
+            <li>SSH-tilgang</li>
+        </ul>
+        <hr />
+        <h3>Endre passord</h3>
+        <p>Her kan du endre passord for å få tilgang til tjenestene nevnt ovenfor.</p>
+        
+        <hr />
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-6">
+        <h3>Tilgang til filområdet</h3>
+        <p>TODO forklaring</p>
+    </div>
+    <div class="col-md-6">
+        <h3>SSH-tilgang</h3>
+        <p>For å få tilgang til serverne via SSH trenger du en SSH-klient. På Mac OS X og de fleste Linux-distribusjoner følger
+            dette med som standard. Hvis du er på Windows anbefaler vi
+            enten <a href="http://www.chiark.greenend.org.uk/~sgtatham/putty/download.html" target="_blank">PuTTY</a>
+            eller <a href="https://www.cygwin.com/" target="_blank">Cygwin</a>.</p>
+        <p>
+            <strong>Server:</strong> login.online.ntnu.no<br />
+            <strong>Brukernavn:</strong> {{ user.username }}
+        </p>
+    </div>
+</div>
