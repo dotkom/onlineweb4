@@ -61,7 +61,7 @@ def _handle_upload(uploaded_file):
     log.debug('Handling upload of file: %s' % uploaded_file)
 
     unhandled_file_path = util.save_unhandled_file(uploaded_file)
-    log.debug('Unhandled file was saved at: %s' + unhandled_file_path)
+    log.debug('Unhandled file was saved at: %s' % unhandled_file_path)
 
     thumbnail_result = util.create_thumbnail_for_unhandled_images(unhandled_file_path)
 
