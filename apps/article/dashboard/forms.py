@@ -15,6 +15,12 @@ class TagForm(forms.ModelForm):
 
 class ArticleForm(forms.ModelForm):
 
+    tags = forms.ModelMultipleChoiceField(
+        queryset=Tag.objects.all(),
+        label=u'Tags',
+        help_text=u'Legg til kategori',
+    )
+
     class Meta(object):
         """
         Add fields that should have DTP activated in the datetimepicker_fields list
