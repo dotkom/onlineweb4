@@ -1,0 +1,112 @@
+{% extends 'dashboard_base.html' %}
+{% load compress %}
+{% block title %}Prikker - Online Dashboard{% endblock %}
+
+{% block styles %}
+    {{ block.super }}
+    {% compress css %}
+        <link rel="stylesheet" type="text/less" href="{{ STATIC_URL }}less/dashboard/marks.less" />
+    {% endcompress %}
+{% endblock %}
+
+{% block page-header %}
+{{ mark.title }}
+{% endblock %}
+
+{% block breadcrumbs %}
+<li><a href="{% url 'marks_index' %}">Prikker</a></li>
+<li>{{ mark.title }}</li>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <a href="#" class="btn btn-primary" id="marks_details_users_button"><i class="fa fa-users"></i> Legg til</a>
+        <a href="{% url 'marks_edit' mark.id %}" class="btn btn-warning"><i class="fa fa-cogs"></i> Endre</a>
+        <a href="{% url 'marks_delete' mark.id %}" class="btn btn-danger pull-right"><i class="fa fa-times"></i> Slett</a>
+        <div id="marks_details_users" style="display: none;">
+            <hr />
+            <h4>Legg til brukere</h4>
+            <p>Klikk på den aktuelle brukeren for å gi han/hun denne prikken.</p>
+            <input type="text" class="form-control" maxlength="50" autocomplete=off name="usersearch" id="usersearch" placeholder="Søk..." />
+        </div>
+    </div>
+</div>
+<br />
+<div class="row">
+    <div class="col-md-6">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">
+                    Gitt til
+                </h3>
+            </div>
+            <div class="panel-body">
+                <p>Oversikt over brukere som har fått denne prikken.</p>
+                <table class="table table-striped table-condensed" id="marks_details_user">
+                    <thead>
+                        <tr>
+                            <th>Navn</th>
+                        </tr>
+                    </thead>
+                    <tbody id="userlist">
+                    {% for m_user in mark_users %}
+                        <tr>
+                            <td>
+                                <a href="#">{{ m_user.user.get_full_name }}</a>
+                                <a href="#" id="{{ m_user.user.id }}" class="remove-user">
+                                    <i class="fa fa-times fa-lg pull-right red"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">
+                    Detaljer
+                </h3>
+            </div>
+            <div class="panel-body">
+                <table class="table" id="marks_details_info">
+                    <tr>
+                        <td><b>Tittel</b></td>
+                        <td class="marks_table_splitter">{{ mark.title }}</td>
+                        <td><b>Kategori</b></td>
+                        <td>{{ mark.category_clean }}</td>
+                    </tr>
+                    <tr>
+                        <td><b>Gitt av</b></td>
+                        <td class="marks_table_splitter">{{ mark.given_by.get_full_name }}</td>
+                        <td><b>Gitt den</b></td>
+                        <td>{{ mark.added_date|date:'Y-m-d' }}</td>
+                    </tr>
+                    <tr>
+                        <td><b>Sist endret av</b></td>
+                        <td id="dashboard-marks-changed-by" class="marks_table_splitter">{{ mark.last_changed_by.get_full_name }}</td>
+                        <td><b>Sist endret</b></td>
+                        <td id="dashboard-marks-changed-time">{{ mark.last_changed_date|date:'Y-m-d' }}</td>
+                    </tr>
+                    <tr>
+                        <td><b>Detaljer</b></td>
+                        <td colspan="3">{{ mark.description }}</td>
+                    </tr>
+                 </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block js %}
+    {{ block.super }}
+    <script type="text/javascript" src="{{ STATIC_URL }}js/libs/hogan-2.0.0.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/libs/typeahead.min.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/dashboard/marks.js"></script>
+{% endblock %}

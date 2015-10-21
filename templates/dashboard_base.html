@@ -9,11 +9,15 @@
     <link rel="icon" href="{{ STATIC_URL }}img/favicon.png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     {% block styles %}
+        <link rel="stylesheet" type="text/less" href="{{ STATIC_URL }}css/font-awesome.min.css">
+        <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/bootstrap-datetimepicker.min.css">
+        <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/cropper/cropper.min.css"/>
         {% compress css %}
-        <link rel="stylesheet" type="text/less" href="{{ STATIC_URL }}less/font-awesome-4.2.0/font-awesome.less">
         <link rel="stylesheet" type="text/less" href="{{ STATIC_URL }}less/dashboard/main.less">
         <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/jquery-tablesorter/tablesorter.css">
-        <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/bootstrap-datetimepicker.min.css">
+        <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/dropzone/dropzone.css" />
+        <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/bttrlazyloading/bttrlazyloading.css" />
+        <link rel="stylesheet" type="text/less" href="{{ STATIC_URL }}less/gallery.less" />
         {% endcompress %}
     {% endblock %}
 </head>
@@ -52,9 +56,26 @@
                             <i class="fa fa-angle-down pull-right"></i>
                         </a>
                         <ul class="treeview-menu">
-                            <li><a href="#"><i class="fa fa-angle-double-right orange"></i> Ny artikkel</a></li>
-                            <li><a href="#"><i class="fa fa-angle-double-right orange"></i> Oversikt</a></li>
-                            <li><a href="#"><i class="fa fa-angle-double-right orange"></i> Tags</a></li>
+                            <li>
+                                <a href="{% url 'dashboard_article_create' %}">
+                                    <i class="fa fa-angle-double-right orange"></i> Ny artikkel
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{% url 'dashboard_article_index' %}">
+                                    <i class="fa fa-angle-double-right orange"></i> Oversikt
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{% url 'dashboard_tag_create' %}">
+                                    <i class="fa fa-angle-double-right orange"></i> Ny tag
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{% url 'dashboard_tag_index' %}">
+                                    <i class="fa fa-angle-double-right orange"></i> Tags
+                                </a>
+                            </li>
                         </ul>
                     </li>
                     {% endif %}
@@ -121,8 +142,8 @@
                             <i class="fa fa-angle-down pull-right"></i>
                         </a>
                         <ul class="treeview-menu">
-                            <li><a href="#"><i class="fa fa-angle-double-right orange"></i> Ny karrieremulighet</a></li>
-                            <li><a href="#"><i class="fa fa-angle-double-right orange"></i> Oversikt</a></li>
+                            <li><a href="{% url 'careeropportunity_dashboard_add' %}"><i class="fa fa-angle-double-right orange"></i> Ny karrieremulighet</a></li>
+                            <li><a href="{% url 'careeropportunity_dashboard_index' %}"><i class="fa fa-angle-double-right orange"></i> Oversikt</a></li>
                         </ul>
                     </li>
                     {% endif %}
@@ -161,8 +182,8 @@
                             <i class="fa fa-angle-down pull-right"></i>
                         </a>
                         <ul class="treeview-menu">
-                            <li><a href="#"><i class="fa fa-angle-double-right orange"></i> Ny prikk</a></li>
-                            <li><a href="#"><i class="fa fa-angle-double-right orange"></i> Oversikt</a></li>
+                            <li><a href="/dashboard/marks/new"><i class="fa fa-angle-double-right orange"></i> Ny prikk</a></li>
+                            <li><a href="/dashboard/marks"><i class="fa fa-angle-double-right orange"></i> Oversikt</a></li>
                         </ul>
                     </li>
                     {% endif %}
@@ -258,14 +279,20 @@
     </div><!-- ./wrapper -->
 
     {% block js %}
-        <script src="{{ STATIC_URL}}js/libs/jquery-2.1.3.min.js"></script>
+        <script src="{{ STATIC_URL }}js/libs/jquery-2.1.3.min.js"></script>
         <script src="{{ STATIC_URL }}js/libs/bootstrap.min.js"></script>
         <script src="{{ STATIC_URL }}js/libs/moment-2.9.0-with-locales.min.js"></script>
         <script src="{{ STATIC_URL }}js/libs/fastclick.js"></script>
         <script src="{{ STATIC_URL }}js/libs/jquery.cookie.js"></script>
         <script src="{{ STATIC_URL }}js/libs/jquery.tablesorter.min.js"></script>
         <script src="{{ STATIC_URL }}js/libs/bootstrap-datetimepicker.min.js"></script>
+        <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
+        <script type="text/javascript" src="{{ STATIC_URL }}js/libs/blazy/blazy.min.js"></script>
+        <script type="text/javascript" src="{{ STATIC_URL }}js/libs/cropper/cropper.min.js"></script>
+        <script type="text/javascript" src="{{ STATIC_URL }}js/libs/bttrlazyloading/jquery.bttrlazyloading.min.js"></script>
+        <script type="text/javascript" src="{{ STATIC_URL }}js/libs/dropzone/dropzone.min.js"></script>
         <script src="{{ STATIC_URL }}js/dashboard/dashboard.js"></script>
+        <script type="text/javascript" src="{{ STATIC_URL }}js/gallery.js"></script>
     {% endblock %}
 
     {% if GOOGLE_ANALYTICS_KEY %}

@@ -29,6 +29,7 @@ var Event = (function ($, tools) {
 
 
     var attendee_row = function(attendee) {
+        console.log(attendee)
         var row = '<tr>'
             row += '<td>'+ attendee.number +'</td>'
             row += '<td><a href="'+ attendee.link +'">'+ attendee.first_name +'</td>'
@@ -47,6 +48,8 @@ var Event = (function ($, tools) {
             else 
                 row += '<i class="fa fa-lg fa-square-o"></i>'
             row += '</a></td>'
+            // Extras cell
+            row += '<td>' + attendee.extras +'</td>'
             // Delete cell
             row += '<td><a href="#modal-delete-attendee" data-toggle="modal" data-id="'+ attendee.id +'" class="remove-user">'
             row += '<i class="fa fa-times fa-lg pull-right red"></i>'
@@ -89,6 +92,7 @@ var Event = (function ($, tools) {
             $('#upcoming_events_list').tablesorter()
             $('#attendees-table').tablesorter()
             $('#waitlist-table').tablesorter()
+            $('#extras-table').tablesorter()
 
             // Bind add users button
             $('#event_users_button').on('click', function (e) {

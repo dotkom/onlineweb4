@@ -116,6 +116,9 @@ var Dashboard = (function ($) {
                 })
             })
 
+            // Activate tablesorter on all tablesorter class tables
+            $('.tablesorter').tablesorter()
+
             console.log('Dashboard initiated.')
         },
 
@@ -157,7 +160,10 @@ var Dashboard = (function ($) {
                                 '<div class="alert ' + tags + '">' + 
                                 message + '</div></div></div>')
 
-                message.appendTo(wrapper)
+                if(wrapper.length == 0){
+                    wrapper = $('section:first > .container:first')
+                }
+                message.prependTo(wrapper)
 
                 // Fadeout and remove the alert
                 setTimeout(function() {

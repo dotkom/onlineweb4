@@ -50,6 +50,7 @@ COMMITTEES = [
     ('jubkom', _(u'Jubileumskomiteen')),
     ('pangkom', _(u'Pensjonistkomiteen')),
     ('prokom', _(u'Profil-og aviskomiteen')),
+    ('redaksjonen', _(u'Redaksjonen')),
     ('trikom', _(u'Trivselskomiteen')),
     ('velkom', _(u'Velkomstkomiteen')),
 ]
@@ -58,6 +59,7 @@ POSITIONS = [
     ('medlem', _(u'Medlem')),
     ('leder', _(u'Leder')),
     ('nestleder', _(u'Nestleder')),
+    ('redaktor', _(u'Redaktør')),
     ('okoans', _(u'Økonomiansvarlig')),
 ]
 
@@ -108,7 +110,7 @@ class OnlineUser(AbstractUser):
     nickname = models.CharField(_(u"nickname"), max_length=50, blank=True, null=True)
     website = models.URLField(_(u"hjemmeside"), blank=True, null=True)
     gender = models.CharField(_(u"kjønn"), max_length=10, choices=GENDER_CHOICES, default="male")
-    bio = models.TextField(_(u"bio"), blank=True, null=True)
+    bio = models.TextField(_(u"bio"), blank=True)
 
     # NTNU credentials
     ntnu_username = models.CharField(_(u"NTNU-brukernavn"), max_length=10, blank=True, null=True, unique=True)
@@ -331,8 +333,8 @@ class Position(models.Model):
     Contains a users position in the organization from a given year
     """
     period     = models.CharField(_(u'periode'), max_length=9, default="2013-2014", blank=False)
-    committee  = models.CharField(_(u"komite"), max_length=10, choices=COMMITTEES, default="hs")
-    position   = models.CharField(_(u"stilling"), max_length=10, choices=POSITIONS, default="medlem")
+    committee  = models.CharField(_(u"komite"), max_length=20, choices=COMMITTEES, default="hs")
+    position   = models.CharField(_(u"stilling"), max_length=20, choices=POSITIONS, default="medlem")
     user       = models.ForeignKey(OnlineUser, related_name='positions', blank=False)
 
     @property

@@ -8,6 +8,8 @@ from apps.payment.models import PaymentDelay
 from apps.payment.models import PaymentPrice
 from apps.payment.models import PaymentRelation
 
+from reversion.admin import VersionAdmin
+
 
 class PaymentInline(generic.GenericStackedInline):
     model = Payment
@@ -28,17 +30,17 @@ class PaymentPriceInline(admin.StackedInline):
     classes = ('grp-collapse grp-open',)  # style
     inline_classes = ('grp-collapse grp-open',)  # style
 
-class PaymentAdmin(admin.ModelAdmin):
+class PaymentAdmin(VersionAdmin):
     inlines = (PaymentPriceInline, )
     model = Payment
     list_display = ('__unicode__', 'stripe_key_index', 'payment_type')
 
-class PaymentRelationAdmin(admin.ModelAdmin):
+class PaymentRelationAdmin(VersionAdmin):
     model = PaymentRelation
     list_display = ('__unicode__', 'refunded')
     exclude = ('stripe_id',)
 
-class PaymentDelayAdmin(admin.ModelAdmin):
+class PaymentDelayAdmin(VersionAdmin):
     model = PaymentDelay
     list_display = ('__unicode__', 'valid_to', 'active')
 

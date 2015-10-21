@@ -1,14 +1,18 @@
 # -*- coding: utf-8 -*-
 
+import re
+
 from django.db import models
 from django.db.models import permalink
 from django.template.defaultfilters import slugify
 from django.utils.translation import ugettext as _
 
 from apps.authentication.models import OnlineUser as User
+from apps.gallery.models import ResponsiveImage
 from filebrowser.fields import FileBrowseField
 
 import reversion
+import watson
 
 
 class Article(models.Model):
@@ -19,20 +23,26 @@ class Article(models.Model):
     ingress_short = models.CharField(_(u"kort ingress"), max_length=100)
     ingress = models.TextField(_(u"ingress"))
     content = models.TextField(_(u"content"))
-    image = FileBrowseField(_(u"bilde"),
+    old_image = FileBrowseField(
+        _(u"bilde"),
         max_length=200, directory=IMAGE_FOLDER,
-        extensions=IMAGE_EXTENSIONS, null=True)
+        extensions=IMAGE_EXTENSIONS, null=True
+    )
+    image = models.ForeignKey(ResponsiveImage, null=True, default=None, blank=True)
     video = models.CharField(_("vimeo id"), max_length=200, blank=True)
     created_date = models.DateTimeField(_(u"opprettet-dato"), auto_now_add=True, editable=False)
     changed_date = models.DateTimeField(_(u"sist endret"), editable=False, auto_now=True)
     published_date = models.DateTimeField(_(u"publisert"))
 
-    created_by = models.ForeignKey(User, null=False,
+    created_by = models.ForeignKey(
+        User, null=False,
         verbose_name=_(u"opprettet av"),
-        related_name="created_by", editable=False)
+        related_name="created_by", editable=False
+    )
     additional_authors = models.CharField(_(u'andre forfattere'), max_length=200, blank=True)
-    changed_by = models.ForeignKey(User, null=False,
-        verbose_name=_(u"endret av"), related_name="changed_by", editable=False)
+    changed_by = models.ForeignKey(
+        User, null=False, verbose_name=_(u"endret av"), related_name="changed_by", editable=False
+    )
     photographers = models.CharField(_(u'fotograf(er)'), max_length=200, blank=True)
     featured = models.BooleanField(_(u"featured artikkel"), default=False)
 
@@ -63,13 +73,13 @@ class Article(models.Model):
 
     @permalink
     def get_absolute_url(self):
-        return ('article_details', None, {'article_id': self.id, 'article_slug': self.slug})
+        return 'article_details', None, {'article_id': self.id, 'article_slug': self.slug}
 
     def images(self):
         from apps.article.utils import find_image_versions
         return find_image_versions(self)
 
-    class Meta:
+    class Meta(object):
         verbose_name = _(u"artikkel")
         verbose_name_plural = _(u"artikler")
         ordering = ['published_date']
@@ -79,6 +89,7 @@ class Article(models.Model):
 
 
 reversion.register(Article)
+watson.register(Article)
 
 
 class Tag(models.Model):
@@ -95,12 +106,12 @@ class Tag(models.Model):
 
     @permalink
     def get_absolute_url(self):
-        return ('view_article_tag', None, {'name': self.name, 'slug': self.slug})
+        return 'view_article_tag', None, {'name': self.name, 'slug': self.slug}
 
     def __unicode__(self):
         return self.name
 
-    class Meta:
+    class Meta(object):
         permissions = (
             ('view_tag', 'View Tag'),
         )
@@ -113,7 +124,7 @@ class ArticleTag(models.Model):
     article = models.ForeignKey(Article, verbose_name=_(u"artikkel"), related_name='article_tags')
     tag = models.ForeignKey(Tag, verbose_name=_(u"tag"), related_name='article_tags')
 
-    class Meta:
+    class Meta(object):
         unique_together = ('article', 'tag')
         verbose_name = _(u"tag")
         verbose_name_plural = _(u"tags")

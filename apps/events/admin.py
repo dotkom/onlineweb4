@@ -15,8 +15,11 @@ from apps.events.models import GradeRule
 from apps.events.models import UserGroupRule
 from apps.events.models import Reservation
 from apps.events.models import Reservee
+from apps.events.models import Extras
 from apps.events.models import GroupRestriction
 from apps.feedback.admin import FeedbackRelationInline
+
+from reversion.admin import VersionAdmin
 
 
 class AttendeeInline(admin.TabularInline):
@@ -42,6 +45,14 @@ class RuleBundleInline(admin.TabularInline):
     inline_classes = ('grp-collapse grp-open',)  # style
 
 
+class ExtrasInline(admin.TabularInline):
+    model = Extras
+    extra = 1
+    max_num = 20
+    classes = ('grp-collapse grp-open',)  # style
+    inline_classes = ('grp-collapse grp-open',)  # style
+
+
 class GroupRestrictionInline(admin.TabularInline):
     model = GroupRestriction
     extra = 0
@@ -55,21 +66,25 @@ def mark_paid(modeladmin, request, queryset):
     queryset.update(paid=True)
 mark_paid.short_description = "Merk som betalt"
 
+
 def mark_not_paid(modeladmin, request, queryset):
     queryset.update(paid=False)
 mark_not_paid.short_description = "Merk som ikke betalt"
+
 
 def mark_attended(modeladmin, request, queryset):
     queryset.update(attended=True)
 mark_attended.short_description = "Merk som møtt"
 
+
 def mark_not_attended(modeladmin, request, queryset):
     queryset.update(attended=False)
 mark_not_attended.short_description = "Merk som ikke møtt"
 
-class AttendeeAdmin(admin.ModelAdmin):
+
+class AttendeeAdmin(VersionAdmin):
     model = Attendee
-    list_display = ('user', 'event', 'paid', 'attended', 'note')
+    list_display = ('user', 'event', 'paid', 'attended', 'note', 'extras')
     list_filter = ('event__event__title',)
     actions = [mark_paid, mark_attended, mark_not_paid, mark_not_attended]
 
@@ -86,24 +101,28 @@ class AttendeeAdmin(admin.ModelAdmin):
         obj.delete()
 
 
-class CompanyEventAdmin(admin.ModelAdmin):
+class CompanyEventAdmin(VersionAdmin):
     model = CompanyEvent
     inlines = (CompanyInline,)
 
+class ExtrasAdmin(VersionAdmin):
+    model = Extras
+    fk_name = 'choice'
+    # inlines = (ExtrasInline,)
 
-class RuleBundleAdmin(admin.ModelAdmin):
+class RuleBundleAdmin(VersionAdmin):
     model = RuleBundle
 
 
-class FieldOfStudyRuleAdmin(admin.ModelAdmin):
+class FieldOfStudyRuleAdmin(VersionAdmin):
     model = FieldOfStudyRule
 
 
-class GradeRuleAdmin(admin.ModelAdmin):
+class GradeRuleAdmin(VersionAdmin):
     model = GradeRule
 
 
-class UserGroupRuleAdmin(admin.ModelAdmin):
+class UserGroupRuleAdmin(VersionAdmin):
     model = UserGroupRule
 
 
@@ -117,7 +136,7 @@ class AttendanceEventInline(admin.StackedInline):
     exclude = ("marks_has_been_set",)
 
 
-class EventAdmin(admin.ModelAdmin):
+class EventAdmin(VersionAdmin):
     inlines = (AttendanceEventInline, FeedbackRelationInline, CompanyInline, GroupRestrictionInline)
     exclude = ("author", )
     search_fields = ('title',)
@@ -147,9 +166,9 @@ class EventAdmin(admin.ModelAdmin):
 
     def get_form(self, request, obj=None, **kwargs):
         form = super(EventAdmin, self).get_form(request, obj, **kwargs)
-        form.base_fields['ingress_short'].validators=[validators.MinLengthValidator(50)]
-        form.base_fields['ingress'].validators=[validators.MinLengthValidator(75)]
-        form.base_fields['description'].validators=[validators.MinLengthValidator(140)]
+        form.base_fields['ingress_short'].validators = [validators.MinLengthValidator(50)]
+        form.base_fields['ingress'].validators = [validators.MinLengthValidator(75)]
+        form.base_fields['description'].validators = [validators.MinLengthValidator(140)]
         return form
 
 
@@ -160,7 +179,7 @@ class ReserveeInline(admin.TabularInline):
     inline_classes = ('grp-collapse grp-open',)  # style
 
 
-class ReservationAdmin(admin.ModelAdmin):
+class ReservationAdmin(VersionAdmin):
     model = Reservation
     inlines = (ReserveeInline,)
     max_num = 1
@@ -193,6 +212,7 @@ class ReservationAdmin(admin.ModelAdmin):
 admin.site.register(Event, EventAdmin)
 admin.site.register(Attendee, AttendeeAdmin)
 admin.site.register(RuleBundle, RuleBundleAdmin)
+admin.site.register(Extras, ExtrasAdmin)
 admin.site.register(GradeRule, GradeRuleAdmin)
 admin.site.register(UserGroupRule, UserGroupRuleAdmin)
 admin.site.register(FieldOfStudyRule, FieldOfStudyRuleAdmin)

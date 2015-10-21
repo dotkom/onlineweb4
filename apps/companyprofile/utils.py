@@ -2,7 +2,7 @@ from filebrowser.settings import VERSIONS
 
 
 def find_image_versions(company):
-    img = company.image
+    img = company.old_image
     img_strings = []
 
     for ver in VERSIONS.keys():

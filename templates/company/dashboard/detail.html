@@ -1,8 +1,4 @@
 {% extends "dashboard_base.html" %}
-{% load fb_versions %}
-{% load addcss %}
-{% load markdown_deux_tags %}
-{% load crispy_forms_tags %}
 {% load compress %}
 
 {% block title %}
@@ -34,23 +30,50 @@
 
 {% block content %}
 <div class="row">
-    <div class="col-md-9">
-        <form method="POST" action="">
-        {% csrf_token %}
-        {% for field in form %}
-        <div class="form-group {% if field.errors %}has-error{% endif %}">
-            <label for="{{ field.auto_id }}">{{ field.label }}</label>
-            {{ field|addclass:"form-control" }}
-            {% if field.errors %}
-            <p>{{ field.errors }}</p>
-            {% endif %}
-        </div>
-        {% endfor %}
-        <button type="submit" class="btn btn-primary">Lagre</button>
-        </form>
+    <div class="col-md-12">
+        <!-- Todo replace with namespaced reverse url lookup -->
+        <a href="/company/{{ company.id }}/" class="btn btn-primary"><i class="fa fa-play"></i> Vis</a>
+        <a href="#modal-delete-company" id="inventory-delete-item" data-toggle="modal" class="btn btn-danger pull-right">
+            <i class="fa fa-times fa-lg"></i> Slett
+        </a>
     </div>
-    <div class="col-md-3">
-        <img class="pull-right" width="100%" src="{% version company.image 'companies_main' %}" alt="{{ company.name }}" title="{{ company.name }}" />
+</div>
+<br />
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">Rediger bedrift</h3>
+            </div>
+            <div class="panel-body">
+                {% include "company/dashboard/edit.html" %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modals -->
+
+<div id="modal-delete-company" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h3>Bekreft sletting av bedrift!</h3>
+            </div>
+            <div class="modal-body">
+                <p>Er du sikker på at du vil fjerne bedriften?</p>
+            </div>
+            <div class="modal-footer">
+                <form method="POST" action="delete/">
+                    {% csrf_token %}
+                    <button class="btn btn-danger confirm-delete-company pull-left" aria-hidden="true">
+                        <i class="fa fa-times"></i> Slett
+                    </button>
+                </form>
+                <button class="btn" data-dismiss="modal" aria-hidden="true">Lukk</button>
+            </div>
+        </div>
     </div>
 </div>
 {% endblock content %}

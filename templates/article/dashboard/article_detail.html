@@ -1,0 +1,89 @@
+{% extends "dashboard_base.html" %}
+{% load markdown_deux_tags %}
+
+{% block title %}
+{{ article }} - Online Dashboard
+{% endblock title %}
+
+{% block page-header %}
+Artikler
+{% endblock %}
+
+{% block breadcrumbs %}
+    <li><a href="{% url 'dashboard_article_index' %}">Artikler</a></li>
+    <li>{{ article }}</li>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <a href="{% url 'dashboard_article_edit' article.pk %}" class="btn btn-primary">
+            <i class="fa fa-edit fa-lg"></i> Endre
+        </a>
+        <a href="{{ article.get_absolute_url }}" class="btn btn-info">
+            <i class="fa fa-play fa-lg"></i> Vis
+        </a>
+        <a href="#modal-article-delete" class="btn btn-danger pull-right">
+            <i class="fa fa-times fa-lg"></i> Slett
+        </a>
+    </div>
+</div>
+<br />
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">Oversikt</h3>
+            </div>
+            <div class="panel-body">
+                <div class="col-sm-12 col-md-8">
+                    <dl class="dl-horizontal">
+                        <dt></dt>
+                        <dd><h2>{{ article.heading|striptags }}</h2></dd>
+                        <dt>Publisert</dt>
+                        <dd>{{ article.published_date }}</dd>
+                        <dt>Forfatter</dt>
+                        <dd>{{ article.created_by|striptags }}</dd>
+                        <dt>Medforfattere</dt>
+                        <dd>{{ article.additional_authors|striptags }}</dd>
+                        <dt>Sist endret</dt>
+                        <dd>{{ article.changed_date }}</dd>
+                        <dt>Fremhevet</dt>
+                        <dd>{% if article.featured %}Ja{% else %}Nei{% endif %}</dd>
+                        <hr />
+                        <dt>Ingress</dt>
+                        <dd>{{ article.ingress|striptags|markdown }}</dd>
+                        <hr />
+                        <dt>Innhold</dt>
+                        <dd>{{ article.content|striptags|markdown }}</dd>
+                    </dl>
+                </div>
+                <div class="col-sm-12 col-md-4">
+                    <img src="{{ article.image.sm }}" alt title="{{ article.heading|striptags }}" width="100%" />
+                    <small class="center"><i>{{ article.image.description|striptags }}</i></small>
+                    <p>
+                        <dl class="dl-horizontal">
+                            <dt>Navn</dt>
+                            <dd>{{ article.image.name|striptags }}</dd>
+                            <dt>Fotograf(er)</dt>
+                            <dd>{{ article.photographers|striptags }}</dd>
+                            <dt>Vimeo ID</dt>
+                            <dd>
+                                {% if article.vimeo %}
+                                    {{ article.vimeo|striptags }}
+                                {% else %}
+                                    <i>Ingen</i>
+                                {% endif %}
+                            </dd>
+                        </dl>
+                    </p>
+                    <h3>Tags</h3>
+                    {% for tag in tags %}
+                        <a href="{{ tag.tag.absolute_url }}" class="btn btn-default">{{ tag.tag.name }}</a>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

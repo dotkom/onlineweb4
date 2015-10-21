@@ -58,6 +58,7 @@ if 'apps.approval' in settings.INSTALLED_APPS:
 if 'apps.article' in settings.INSTALLED_APPS:
     urlpatterns += patterns('',
         url(r'^article/',           include('apps.article.urls')),
+        url(r'^dashboard/article/', include('apps.article.dashboard.urls')),
     )
 
 if 'apps.autoconfig' in settings.INSTALLED_APPS:
@@ -74,6 +75,7 @@ if 'apps.authentication' in settings.INSTALLED_APPS:
 if 'apps.careeropportunity' in settings.INSTALLED_APPS:
     urlpatterns += patterns('',
         url(r'^careeropportunity/', include('apps.careeropportunity.urls')),
+        url(r'^dashboard/careeropportunity/', include('apps.careeropportunity.dashboard.urls')),
     )
 
 if 'apps.companyprofile' in settings.INSTALLED_APPS:
@@ -96,6 +98,11 @@ if 'apps.events' in settings.INSTALLED_APPS:
 if 'apps.feedback' in settings.INSTALLED_APPS:
     urlpatterns += patterns('',
         url(r'^feedback/',          include('apps.feedback.urls')),
+    )
+
+if 'apps.marks' in settings.INSTALLED_APPS:
+    urlpatterns += patterns('',
+        url(r'^dashboard/marks/',          include('apps.marks.dashboard.urls')),
     )
 
 if 'apps.inventory' in settings.INSTALLED_APPS:
@@ -127,6 +134,12 @@ if 'apps.resourcecenter' in settings.INSTALLED_APPS and 'apps.mailinglists' in s
 if 'apps.genfors' in settings.INSTALLED_APPS:
     urlpatterns += patterns('',
         url(r'^genfors/',           include('apps.genfors.urls')),
+    )
+
+
+if 'apps.gallery' in settings.INSTALLED_APPS:
+    urlpatterns += patterns('',
+        url(r'^gallery/',           include('apps.gallery.urls')),
     )
 
 if 'apps.splash' in settings.INSTALLED_APPS:

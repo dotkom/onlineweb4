@@ -16,34 +16,41 @@ from apps.companyprofile.models import Company
 
 from apps.api.v0.authentication import UserResource
 
+
 class AttendeeResource(ModelResource):
     user = fields.ToOneField(UserResource, 'user', full=True)
 
-    class Meta:
+    class Meta(object):
         queryset = Attendee.objects.all()
         resource_name = 'attendees'
 
+
 class CompanyResource(ModelResource):
     
-    class Meta:
+    class Meta(object):
         queryset = Company.objects.all()
         resource_name = 'company'
-        fields = ['image']
+        fields = ['old_image']
+
+
 class CompanyEventResource(ModelResource):
     companies = fields.ToOneField(CompanyResource, 'company', full=True)
-    class Meta:
+
+    class Meta(object):
         queryset = CompanyEvent.objects.all()
-        resource_name ='companies'
+        resource_name = 'companies'
+
 
 class AttendanceEventResource(ModelResource):
     users = fields.ToManyField(AttendeeResource, 'attendees', full=False)
 
-    class Meta:
+    class Meta(object):
         queryset = AttendanceEvent.objects.all()
         resource_name = 'attendance_event'
 
         # XXX: Noop authorization is probably not safe for producion
         authorization = Authorization()
+
 
 class EventResource(ModelResource):
     author = fields.ToOneField(UserResource, 'author', full=True)
@@ -81,11 +88,11 @@ class EventResource(ModelResource):
         # Do the same thing for the company image
         if bundle.data['company_event']:
             for company in bundle.data['company_event']:
-                temp_image = FileObject(company.data['companies'].data['image'])
+                temp_image = FileObject(company.data['companies'].data['old_image'])
                 for ver in VERSIONS.keys():
                     if ver.startswith('companies_thumb'):
-                        company.data['companies'].data['image_'+ver] = temp_image.version_generate(ver).url
-                del(company.data['companies'].data['image'])
+                        company.data['companies'].data['old_image_'+ver] = temp_image.version_generate(ver).url
+                del(company.data['companies'].data['old_image'])
 
         # Returning washed object 
         return bundle
@@ -95,15 +102,14 @@ class EventResource(ModelResource):
         events = Event.objects.all()
         filtered_events = set()
 
-        #Removes restricted events if the user does not belong to the right group
+        # Removes restricted events if the user does not belong to the right group
         for event in events:
             if event.can_display(request.user):
                 filtered_events.add(event.pk)
 
         return Event.objects.filter(pk__in = filtered_events)
-        
 
-    class Meta:
+    class Meta(object):
         queryset = Event.objects.all()
         resource_name = 'events'
         # XXX: Noop authorization is probably not safe for producion
@@ -112,5 +118,5 @@ class EventResource(ModelResource):
         include_absolute_url = True
         ordering = ['event_start']
         filtering = {
-            'event_end' : ('gte',)
+            'event_end': ('gte',)
         }

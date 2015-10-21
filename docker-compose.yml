@@ -1,0 +1,28 @@
+dbdata:
+  image: postgres:latest
+  volumes:
+    - /var/lib/postgresql
+  command: /bin/true
+db:
+  image: aidanlister/postgres-hstore
+  volumes_from:
+    - dbdata
+  ports:
+    - "5432"
+# lessc:
+#   image: ewoutp/lessc
+web:
+  build: .
+  command: python manage.py runserver 0.0.0.0:8000
+  volumes:
+    - .:/srv/onlineweb4
+  ports:
+    - "8000:8000"
+  links:
+    - db
+    # - lessc
+  environment:
+    - INSTANCE_TYPE=web
+    - DEBUG=1
+    - DJANGO_SETTINGS_MODULE=onlineweb4.settings
+    - DATABASE_URL=postgres://postgres@db/postgres

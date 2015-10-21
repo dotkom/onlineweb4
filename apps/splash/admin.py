@@ -2,11 +2,13 @@ from django.contrib import admin
 
 from apps.splash.models import SplashYear, SplashEvent
 
+from reversion.admin import VersionAdmin
 
-class SplashYearAdmin(admin.ModelAdmin):
+
+class SplashYearAdmin(VersionAdmin):
     list_display = ('title', 'start_date',)
 
-class SplashEventAdmin(admin.ModelAdmin):
+class SplashEventAdmin(VersionAdmin):
     exclude = ('',)
 
 

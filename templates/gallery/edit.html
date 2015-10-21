@@ -1,0 +1,98 @@
+<div class="row">
+    <div class="col-md-12">
+        <div id="thumbview-header" class="row">
+            <div class="col-md-12">
+                <h2>Ubehandlede bilder</h2>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div id="edit-tab" class="tab-content">
+                    <div class="tab-pane fade in active" id="thumbnail-pane" role="tabpanel">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <a id="fetchallimages"><i class="fa fa-refresh"></i> Oppdater</a>
+                                <hr>
+                            </div>
+                        </div>
+                        <div class="row-fluid">
+                            <div id="thumbnail-view" class="row">
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="edit-pane" role="tabpanel">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <a id="showthumbnailpane" href="#thumbnail-pane" data-toggle="tab" role="tab"><i class="fa fa-angle-double-left"></i> Gå tilbake</a>
+                                <hr>
+                            </div>
+                            <hr>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-8">
+                                <div id="image-edit-content">
+                                </div>
+                                <br />
+                                <div class="form-group">
+                                    <label for="image-edit-name">Navn</label>
+                                    <input id="image-edit-name" type="text" placeholder="Bildenavn..." class="form-control">
+                                </div>
+                                <div class="form-group">
+                                    <label for="image-edit-description">Beskrivelse</label>
+                                    <textarea id="image-edit-description" placeholder="Skriv inn en beskrivelse av bildet her..." class="form-control" rows="6"></textarea>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                                                <div id="datavalues" class="row row-space">
+                                    <div class="input-group">
+                                        <span class="input-group-addon">X</span>
+                                        <input id="cropperDataX" type="text" class="form-control">
+                                        <span class="input-group-addon">px</span>
+                                    </div>
+                                    <div class="input-group">
+                                        <span class="input-group-addon">Y</span>
+                                        <input id="cropperDataY" type="text" class="form-control">
+                                        <span class="input-group-addon">px</span>
+                                    </div>
+                                    <div class="input-group">
+                                        <span class="input-group-addon">Høyde</span>
+                                        <input id="cropperDataHeight" type="text" class="form-control">
+                                        <span class="input-group-addon">px</span>
+                                    </div>
+                                    <div class="input-group">
+                                        <span class="input-group-addon">Bredde</span>
+                                        <input id="cropperDataWidth" type="text" class="form-control">
+                                        <span class="input-group-addon">px</span>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="btn-group" role="group" aria-label="...">
+                                        <button id="zoominbutton" type="button" class="btn btn-primary"><i class="fa fa-search-plus"></i></button>
+                                        <button id="zoomoutbutton" type="button" class="btn btn-primary"><i class="fa fa-search-minus"></i></button>
+                                        <button id="resetbutton" type="button" class="btn btn-primary"><i class="fa fa-refresh"></i> Reset</button>
+                                        <button id="originalimagebutton" type="button" class="btn btn-primary"><i class="fa fa-picture-o"></i> Original</button>
+                                    </div>
+                                </div>
+                                <br />
+                                <div class="row">
+                                    <label for="image-edit-preview-standard">Standard (16:9)</label>
+                                    <div id="image-edit-preview-standard" class="image-edit-preview"></div>
+                                </div>
+                                <div class="row">
+                                    <label for="image-edit-preview-article">Bredform (19:7)</label>
+                                    <div id="image-edit-preview-wide" class="image-edit-preview"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <button id="accept-crop-button" class="btn btn-success"><i class="fa fa-check"></i> Godta crop av bilde</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

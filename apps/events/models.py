@@ -338,6 +338,25 @@ reversion.register(RuleBundle)
 """
 
 
+class Extras(models.Model):
+    """
+    Choices for events
+    """
+
+    choice = models.CharField(u'valg', max_length=69)
+    note = models.CharField(u'notat', max_length=200, blank=True, null=True)
+    
+    def __unicode__(self):
+        return self.choice
+
+    class Meta:
+        verbose_name = _("ekstra valg")
+        verbose_name_plural = _("ekstra valg")
+        ordering = ['choice']
+
+reversion.register(Extras)
+
+
 class AttendanceEvent(models.Model):
     """
     Events that require special considerations regarding attendance.
@@ -360,6 +379,9 @@ class AttendanceEvent(models.Model):
 
     #Access rules
     rule_bundles = models.ManyToManyField(RuleBundle, blank=True, null=True)
+
+    # Extra choices
+    extras = models.ManyToManyField(Extras, blank=True, null=True)
 
     @property
     def has_reservation(self):
@@ -697,6 +719,7 @@ class Attendee(models.Model):
     attended = models.BooleanField(_(u'var tilstede'), default=False)
     paid = models.BooleanField(_(u'har betalt'), default=False)
     note = models.CharField(_(u'notat'), max_length=100, blank=True, default='')
+    extras = models.ForeignKey(Extras, blank=True, null=True)
 
     def __unicode__(self):
         return self.user.get_full_name()

@@ -10,12 +10,10 @@ PROJECT_SETTINGS_DIRECTORY = os.path.dirname(globals()['__file__'])
 PROJECT_ROOT_DIRECTORY = os.path.join(PROJECT_SETTINGS_DIRECTORY, '..', '..')
 
 TEST_RUNNER = "django_nose.NoseTestSuiteRunner"
-NOSE_ARGS = ['--with-coverage', '--cover-package=apps']
+NOSE_ARGS = ['--with-coverage', '--cover-package=apps', '--cover-html-dir=coverage', '--cover-html']
 
 DEBUG = False
 TEMPLATE_DEBUG = DEBUG
-
-TEST_RUNNER = "django_nose.NoseTestSuiteRunner"
 
 ADMINS = (
     ('dotKom', 'dotkom@online.ntnu.no'),
@@ -238,6 +236,7 @@ INSTALLED_APPS = (
     'apps.careeropportunity',
     'apps.companyprofile',
     'apps.dashboard',
+    'apps.gallery',
     'apps.events',
     'apps.marks',
     'apps.offline',

@@ -1,23 +1,20 @@
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 from copy import copy
 
-from django.conf import settings
 from django.template.defaultfilters import slugify
 from django.utils import timezone
 
-from filebrowser.base import FileObject
-from filebrowser.settings import VERSIONS
 from tastypie import fields
 from tastypie.resources import ModelResource
 
+from apps.api.v0.image import ImageResource
 from apps.api.v0.authentication import UserResource
 from apps.article.models import Article, ArticleTag, Tag
 
 
-
-
 class ArticleResource(ModelResource):
     author = fields.ToOneField(UserResource, 'created_by', full=True)
+    image = fields.ToOneField(ImageResource, 'image', full=True, null=True)
     
     def alter_list_data_to_serialize(self, request, data):
         # Renames list data 'object' to 'articles'.
@@ -31,23 +28,8 @@ class ArticleResource(ModelResource):
         
         # Setting slug-field
         bundle.data['slug'] = slugify(bundle.data['heading'])
-        
-        # If image is set
-        if bundle.data['image']:
-            # Parse to FileObject used by Filebrowser
-            temp_image = FileObject(bundle.data['image'])
             
-            # Itterate the different versions (by key)
-            for ver in VERSIONS.keys():
-                # Check if the key start with article_ (if it does, we want to crop to that size)
-                if ver.startswith('article_'):
-                    # Adding the new image to the object
-                    bundle.data['image_'+ver] = temp_image.version_generate(ver).url
-            
-            # Unset the image-field
-            del(bundle.data['image'])
-            
-            # Returning washed object
+        # Returning washed object
         return bundle
     
     def get_object_list(self, request):
@@ -68,40 +50,46 @@ class ArticleResource(ModelResource):
             request_month = None
         
         # Check filtering here
-        if (request_year is not None):
-            if (request_month is not None):
+        if request_year is not None:
+            if request_month is not None:
                 # Filtering on both year and month
-                queryset = Article.objects.filter(published_date__year=request_year, published_date__month=request_month, published_date__lte=timezone.now()).order_by('-published_date')
+                queryset = Article.objects.filter(
+                    published_date__year=request_year, published_date__month=request_month,
+                    published_date__lte=timezone.now()).order_by('-published_date')
             else:
                 # Filtering on only year
-                queryset = Article.objects.filter(published_date__year=request_year, published_date__lte=timezone.now()).order_by('-published_date')
+                queryset = Article.objects.filter(
+                    published_date__year=request_year,
+                    published_date__lte=timezone.now()).order_by('-published_date')
         else:
             # Not filtering on year, check if filtering on slug (tag) or return default query
-            if (request_tag is not None):
+            if request_tag is not None:
                 # Filtering on slug
-                slug_query = Tag.objects.filter(slug = request_tag)
-                slug_connect = ArticleTag.objects.filter(tag = slug_query).values('article_id')
-                queryset = Article.objects.filter(id__in = slug_connect, published_date__lte=timezone.now()).order_by('-published_date')
+                slug_query = Tag.objects.filter(slug=request_tag)
+                slug_connect = ArticleTag.objects.filter(tag=slug_query).values('article_id')
+                queryset = Article.objects.filter(
+                    id__in=slug_connect, published_date__lte=timezone.now()).order_by('-published_date')
             else:
                 # No filtering at all, return default query
                 queryset = Article.objects.filter(published_date__lte=timezone.now()).order_by('-published_date')
         return queryset
     
-    class Meta:     
+    class Meta(object):
         API_LIMIT_PER_PAGE = 9
         queryset = Article.objects.filter(published_date__lte=timezone.now())
         resource_name = 'article/all'
         ordering = ['-published_date']
         include_absolute_url = True
         filtering = {
-            'featured' : ('exact',),
-            'published_date' : ('gte',),
+            'featured': ('exact',),
+            'published_date': ('gte',),
         }
+
 
 class ArticleLatestResource(ModelResource):
     author = fields.ToOneField(UserResource, 'created_by')
     
-    class Meta:
+    class Meta(object):
         queryset = Article.objects.filter(published_date__lte=timezone.now())
         
         resource_name = 'article/latest'
@@ -110,12 +98,14 @@ class ArticleLatestResource(ModelResource):
         }
         ordering = ['-published_date']
         max_limit = 25
+
     def alter_list_data_to_serialize(self, request, data):
         # Renames list data 'object' to 'articles'.
         if isinstance(data, dict): 
             data['articles'] = copy(data['objects'])
             del(data['objects'])
         return data
+
     def dehydrate(self, bundle):
         bundle.data['slug'] = slugify(bundle.data['heading'])
         return bundle

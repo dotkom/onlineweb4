@@ -3,8 +3,10 @@ from apps.article.models import Article, Tag, ArticleTag
 from django.conf import settings
 from filebrowser.settings import VERSIONS, ADMIN_THUMBNAIL
 
+from reversion.admin import VersionAdmin
 
-class ArticleTagAdmin(admin.ModelAdmin):
+
+class ArticleTagAdmin(VersionAdmin):
     model = ArticleTag
 
 
@@ -14,7 +16,7 @@ class ArticleTagInline(admin.TabularInline):
     extra = 0
 
 
-class TagAdmin(admin.ModelAdmin):
+class TagAdmin(VersionAdmin):
     def save_model(self, request, obj, form, change):
         obj.changed_by = request.user
         if not change:
@@ -23,20 +25,12 @@ class TagAdmin(admin.ModelAdmin):
         obj.save()
 
 
-class ArticleAdmin(admin.ModelAdmin):
+class ArticleAdmin(VersionAdmin):
     inlines = (ArticleTagInline,)
     list_display = ("heading", "created_by", "changed_by")
 
     # set the created and changed by fields
     def save_model(self, request, obj, form, change):
-        if (obj.image):
-            obj.image.version_generate(ADMIN_THUMBNAIL).url
-
-            # Itterate the different versions (by key)
-            for ver in VERSIONS.keys():
-                # Check if the key start with article_ (if it does, we want to crop to that size)
-                if ver.startswith('article_'):
-                    obj.image.version_generate(ver).url
 
         obj.changed_by = request.user
 

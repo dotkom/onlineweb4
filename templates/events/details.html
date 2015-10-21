@@ -5,6 +5,7 @@
 {% load group_membership %}
 {% load calendar_filters %}
 {% load payment_tag %}
+{% load compress %}
 
 {% block title %}
 {{ event.title }} - Online
@@ -17,8 +18,11 @@
         <div class="col-md-12">
             <div class="page-header">
                 <h2 id="event-details-heading">
+                    {% if user.is_authenticated %}
+                        {% in_group "Komiteer" as in_komiteer %}
+                    {% endif %}
                     {{ event.title }}
-                    <div class="btn-group pull-right">
+                    <div class="{% if user.is_authenticated and in_komiteer %}btn-group {% endif %}pull-right">
                         <div class="btn-group">
                           <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
                             <span class="glyphicon glyphicon-calendar"></span>
@@ -30,8 +34,8 @@
                             <li><a href="http://www.google.com/calendar/render?cid={{ ics_path|unhttps|urlencode }}">Google Calendar</a></li>
                           </ul>
                         </div>
+                    
                     {% if user.is_authenticated %}
-                        {% in_group "Komiteer" as in_komiteer %}
                         {% if in_komiteer %}
                         <div class="btn-group pull-right">
                             <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
@@ -143,6 +147,7 @@
                             {% if user_paid %}
                                 {% if attendance_event.unattend_deadline > now %}
                                     {% if event.event_start > now %}
+                                        {% include 'events/extras.html' %}
                                         {% if payment_relation_id %}
                                             <div class="action">
                                                 <a href="#refund" role="button" class="btn btn-large btn-danger" data-toggle="modal">Refunder og meld meg av</a>
@@ -162,6 +167,7 @@
                             {% if not user_paid %}
                                 {% if attendance_event.unattend_deadline > now or place_on_wait_list %}
                                     {% if event.event_start > now %}
+                                        {% include 'events/extras.html' %}
                                         <div class="action"><a href="#unattend" role="button" class="btn btn-large btn-danger" data-toggle="modal">Meld meg av</a></div>
                                     {% endif %}
                                 {% endif %}
@@ -258,7 +264,7 @@
                                 <a href="{% url 'company_details' company_relation.company.pk %}">
                                     <div class="title">{{ company_relation.company.name }}</div>
                                     <div class="image">
-                                        <img src="{% version company_relation.company.image 'companies_thumb' %}" alt="" />
+                                        <img src="{% version company_relation.company.old_image 'companies_thumb' %}" alt="" />
                                     </div>
                                 </a>
                             </div>
@@ -368,3 +374,15 @@
     </div>
     </section>
 {% endblock content %}
+
+{% block js %}
+    {{ block.super }}
+    {% compress js %}
+    <script>
+        var selected_extra = "{{ attendee.extras }}";
+        var all_extras = [{% for e in attendance_event.extras.all %}"{{e}}", {%endfor%}];
+    </script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/dashboard/dashboard.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/events.js"></script>
+    {% endcompress %}
+{% endblock %}

@@ -5,13 +5,15 @@ from django.utils.translation import ugettext as _
 
 from apps.authentication.models import AllowedUsername, Email, OnlineUser, Position, SpecialPosition
 
+from reversion.admin import VersionAdmin
+
 
 class EmailInline(admin.TabularInline):
     model = Email
     extra = 1 
 
 
-class OnlineUserAdmin(admin.ModelAdmin):
+class OnlineUserAdmin(VersionAdmin):
     model = OnlineUser
     inlines = (EmailInline,)
     list_display = ['username', 'first_name', 'last_name', 'ntnu_username', 'field_of_study', 'is_member',]
@@ -32,7 +34,7 @@ class OnlineUserAdmin(admin.ModelAdmin):
 admin.site.register(OnlineUser, OnlineUserAdmin)
 
 
-class AllowedUsernameAdmin(admin.ModelAdmin):
+class AllowedUsernameAdmin(VersionAdmin):
     model = AllowedUsername
     list_display = ('username', 'registered', 'expiration_date', 'note')
     fieldsets = (
@@ -59,13 +61,13 @@ class AllowedUsernameAdmin(admin.ModelAdmin):
 admin.site.register(AllowedUsername, AllowedUsernameAdmin)
 
 
-class PositionAdmin(admin.ModelAdmin):
+class PositionAdmin(VersionAdmin):
     model = Position
 
 admin.site.register(Position, PositionAdmin)
 
 
-class SpecialPositionAdmin(admin.ModelAdmin):
+class SpecialPositionAdmin(VersionAdmin):
     model = SpecialPosition
 
 admin.site.register(SpecialPosition, SpecialPositionAdmin)

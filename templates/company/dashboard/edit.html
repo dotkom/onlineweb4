@@ -1,0 +1,19 @@
+{% load markdown_deux_tags %}
+{% load addcss %}
+<div class="row">
+    <div class="col-md-12">
+        <form method="POST">
+            {% csrf_token %}
+            {% for field in form %}
+            <div class="form-group {% if field.errors %}has-error{% endif %}">
+                <label for="{{ field.auto_id }}"{% if field.errors %} class="red"{% endif %}>{{ field.label }}</label>
+                {{ field|addclass:"form-control" }}
+            </div>
+            {% endfor %}
+            <button class="btn btn-success" type="submit">
+                <i class="fa fa-save fa-lg"></i> Lagre
+            </button>
+        </form>
+        {% include 'gallery/formwidget.html' %}
+    </div>
+</div>

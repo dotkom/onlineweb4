@@ -10,7 +10,7 @@ $(function() {
             
             // The loop
             for (var i = 0; i < len; i++) {
-                output += '<div class="row-fluid"><div class="span12"><a href="/article/'+articles[i].id+'"><img src="'+articles[i].images[3]+'" alt="'+articles[i].heading+'"></a><br /><h4>'+articles[i].heading+'</h4></div></div>';
+                output += '<div class="row-fluid"><div class="span12"><a href="/article/'+articles[i].id+'"><img src="'+articles[i].image.thumb+'" alt="'+articles[i].heading+'"></a><br /><h4>'+articles[i].heading+'</h4></div></div>';
             }
             
             // Appending

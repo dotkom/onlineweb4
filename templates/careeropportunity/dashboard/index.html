@@ -1,0 +1,93 @@
+{% extends "dashboard_base.html" %}
+{% load compress %}
+
+{% block title %}
+Karrieremuligheter - Online
+{% endblock title %}
+
+{% block page-header %}
+Karrieremuligheter
+{% endblock %}
+
+{% block breadcrumbs %}
+    <li>Karrieremulighet</li>
+{% endblock %}
+
+{% block content %}
+    <h4>Aktive karriereting</h4>
+    <section id="approval-list">
+    {% if cops %}
+    <div class="row row-space headings">
+        <div class="col-md-3">
+            <span><div class="visible-xs visible-sm">1. </div>Bedrift</span>
+        </div>
+        <div class="col-md-3">
+            <span><div class="visible-xs visible-sm">2. </div>Tittel</span>
+        </div>
+        <div class="col-md-6">
+            <span><div class="visible-xs visible-sm">3. </div>Aktiv til (dager til)</span>
+        </div>
+    </div>
+    {% for cop in cops %}
+    <div class="row application">
+        <div class="col-md-3 cell">
+            <div class="visible-xs visible-sm">1. </div>{{ cop.company.name }}
+        </div>
+        <div class="col-md-3 cell">
+            <div class="visible-xs visible-sm">2. </div>{{ cop.title }}
+        </div>
+        <div class="col-md-3 cell">
+            <div class="visible-xs visible-sm">3. </div>{{ cop.end }} ({# fancy moment.js #})
+        </div>
+        <div class="col-md-3">
+            <div class="btn-group">
+                <a href="{% url 'careeropportunity_details' cop.id %}" type="button" class="btn btn-success">Se på</a>
+                <a href="{% url 'careeropportunity_dashboard_edit' cop.id %}" type="button" class="btn btn-warning">Endre</a>
+                <a href="{% url 'careeropportunity_dashboard_delete' cop.id %}" type="button" class="btn btn-danger">Slett</a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+    </section>
+    {% else %}
+    <div class="row">
+        <div class="col-md-12">
+            <p>Ingen aktive karrieremuligheter.</p>
+        </div>
+    </div>
+    {% endif %}
+    <br />
+    <h4>Arkiv</h4>
+    {% if archive %}
+    <div class="row row-space">
+        <div class="col-md-12">
+            <table class="table table-striped table-condensed tablesorter" id="cops_archive">
+                <thead>
+                    <tr>
+                        <th>Bedrift</th>
+                        <th>Tittel</th>
+                        <th>Vist fra</th>
+                        <th>Vist til</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for cop in archive %}
+                    <tr>
+                        <td>{{ cop.company }}</td>
+                        <td>{{ cop.title }}</td>
+                        <td>{{ cop.start|date:'Y-m-d H:i:s' }}</td>
+                        <td>{{ cop.end|date:'Y-m-d H:i:s' }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% else %}
+    <div class="row row-space">
+        <div class="col-md-12">
+            <p>Ingen karrieremuligheter i arkivet.</p>
+        </div>
+    </div>
+    {% endif %}
+{% endblock content %}

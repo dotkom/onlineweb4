@@ -24,7 +24,7 @@
                                             <span class="caret"></span>
                                         </button>
                                         <ul class="dropdown-menu" role="menu">
-                                            <li><a href="{% url 'admin:careeropportunity_careeropportunity_change' opportunity.id %}">Edit</a></li>
+                                            <li><a href="{% url 'careeropportunity_dashboard_edit' opportunity.id %}">Edit</a></li>
                                         </ul>
                                     </div>
                             {% endif %}
@@ -41,7 +41,7 @@
                 <div class="row">
                     <div class="col-md-12">
                         <a href="{% url 'company_details' opportunity.company.id %}">
-                            <img width="100%" src="{% version opportunity.company.image 'companies_medium'     %}" alt="" />
+                            <img width="100%" src="{% version opportunity.company.old_image 'companies_medium'     %}" alt="" />
                         </a>
                     </div>
                 </div>

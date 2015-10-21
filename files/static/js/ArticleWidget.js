@@ -16,11 +16,16 @@ function ArticleWidget (Utils){
 
                     // The loop
                     for (var i = 0; i < len; i++) {
+
+                        // Temporary replacement during the transition from Filebrowser to ResponsiveImage
+                        if (!articles[i].image) {
+                            articles[i].image = ''
+                        }
                         if (i <= 1) {
-                            output_featured += '<div class="col-md-6"><a href="/article/'+articles[i].id+'/'+articles[i].slug+'"><img src="'+articles[i].images[1]+'" alt="'+articles[i].heading+'"><h3>'+articles[i].heading+'</h3></a><p>'+articles[i].ingress_short+'</p></div>';
+                            output_featured += '<div class="col-md-6"><a href="/article/'+articles[i].id+'/'+articles[i].slug+'"><img src="'+articles[i].image.sm+'" alt="'+articles[i].heading+'"><h3>'+articles[i].heading+'</h3></a><p>'+articles[i].ingress_short+'</p></div>';
                         }
                         else {
-                            output_normal += '<div class="col-xs-6 col-md-2"><a href="/article/'+articles[i].id+'/'+articles[i].slug+'"><img src="'+articles[i].images[3]+'" alt="'+articles[i].heading+'"><br /><h4>'+articles[i].heading+'</h4></a></div>';
+                            output_normal += '<div class="col-xs-6 col-md-2"><a href="/article/'+articles[i].id+'/'+articles[i].slug+'"><img src="'+articles[i].image.thumb+'" alt="'+articles[i].heading+'"><br /><h4>'+articles[i].heading+'</h4></a></div>';
 
                             // adds a separator to clear the floats in movile view
                             // #article-frontpage-normal @media (max-width: 991px) { div:nth-child(even) { .clearfix(); } }
