@@ -4,6 +4,7 @@ from datetime import datetime
 from django import forms
 from django.contrib.auth.models import Group
 
+from apps.dashboard.widgets import DatetimePickerInput, multiple_widget_generator
 from apps.events.models import Event
 from apps.posters.models import Poster
 
@@ -15,16 +16,22 @@ class AddForm(forms.ModelForm):
     comments = forms.CharField(label='Kommentarer', required=False, widget=forms.Textarea(attrs={'placeholder': 'Eventuell informasjon, kommentarer, lenker til bilder, osv...'}))
     price = forms.IntegerField(label='Pris', required=False, widget=forms.NumberInput(attrs={'placeholder': 'Pris på event'}))
     amount = forms.IntegerField(label='Antall', required=False, widget=forms.NumberInput(attrs={'placeholder': 'Hvor mange vil du ha?', "value" : "10"}))
-    display_from = forms.DateField(label=u"Vis plakat fra", required=False, widget=forms.TextInput(attrs={'type': 'date', 'placeholder': 'YYYY-MM-DD'}))
     ordered_committee = forms.ModelChoiceField(queryset=Group.objects.all(), empty_label=None)
 
     class Meta:
         model = Poster
-        fields = ['ordered_committee', 'amount', 'description', 'price', 'comments']
+        fields = ['ordered_committee', 'amount', 'description', 'price', 'comments', 'display_from']
+        dtp_fields = [('display_from', {})]
+
+        widgetlist = [
+            (DatetimePickerInput, dtp_fields),
+        ]
+
+        # Multiple widget generator merges results from regular widget_generator into a single widget dict
+        widgets = multiple_widget_generator(widgetlist)
 
 
 class AddPosterForm(AddForm):
-    # display_to = forms.DateField(label=u"Vis plakat til", required=False,  widget=forms.TextInput(attrs={'type': 'date'}))
     bong = forms.IntegerField(label='Bonger', required=False, widget=forms.NumberInput(attrs={'placeholder': 'Antall bonger du vil ha. La feltet stå tomt hvis du ikke ønsker noen.'}))
     event = forms.ModelChoiceField(label='Event', required=True, queryset=Event.objects.order_by('-id').exclude(event_start__lte=datetime.now()))
 
@@ -32,6 +39,15 @@ class AddPosterForm(AddForm):
         model = Poster
         fields = ['ordered_committee', 'event', 'amount', 'bong', 'description',
                   'price', 'display_from', 'comments']
+
+        dtp_fields = [('display_from', {})]
+
+        widgetlist = [
+            (DatetimePickerInput, dtp_fields),
+        ]
+
+        # Multiple widget generator merges results from regular widget_generator into a single widget dict
+        widgets = multiple_widget_generator(widgetlist)
 
 
 class AddBongForm(AddForm):
@@ -45,6 +61,15 @@ class AddOtherForm(AddForm):
         model = Poster
         fields = ['ordered_committee', 'title', 'amount', 'price', 'description',
                   'display_from', 'comments']
+
+        dtp_fields = [('display_from', {})]
+
+        widgetlist = [
+            (DatetimePickerInput, dtp_fields),
+        ]
+
+        # Multiple widget generator merges results from regular widget_generator into a single widget dict
+        widgets = multiple_widget_generator(widgetlist)
 
 
 class EditPosterForm(AddPosterForm):
