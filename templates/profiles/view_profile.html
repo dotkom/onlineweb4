@@ -61,37 +61,21 @@
                         </div>
                         <div class="col-md-4">
                             <b>Kallenavn</b><br />
-                            {% if user_profile.privacy.expose_nickname %}
-                                {% firstof user_profile.nickname|striptags 'Ikke tilgjengelig' %}
-                            {% else %}
-                                Ikke tilgjengelig
-                            {% endif %}
+                            {% firstof user_profile.nickname|striptags 'Ikke tilgjengelig' %}
                         </div>
                     </div>
                     <div class="row attribute-list">
                         <div class="col-md-4">
                             <b>Hjemmeside</b><br />
-                            {% if user_profile.privacy.expose_phone_number %}
-                                {% firstof user_profile.website|striptags 'Ikke tilgjengelig' %}
-                            {% else %}
-                                Ikke tilgjengelig
-                            {% endif %}
+                            {% firstof user_profile.website|striptags 'Ikke tilgjengelig' %}
                         </div>
                         <div class="col-md-4">
                             <b>Github</b><br />
-                            {% if user_profile.privacy.expose_phone_number %}
-                                {% firstof user_profile.github|striptags 'Ikke tilgjengelig' %}
-                            {% else %}
-                                Ikke tilgjengelig
-                            {% endif %}
+                            {% firstof user_profile.github|striptags 'Ikke tilgjengelig' %}
                         </div>
                         <div class="col-md-4">
                             <b>LinkedIn</b><br />
-                            {% if user_profile.privacy.expose_nickname %}
-                                {% firstof user_profile.linkedin|striptags 'Ikke tilgjengelig' %}
-                            {% else %}
-                                Ikke tilgjengelig
-                            {% endif %}
+                            {% firstof user_profile.linkedin|striptags 'Ikke tilgjengelig' %}
                         </div>
                     </div>
                     <div class="row attribute-list">
