@@ -109,6 +109,8 @@ class OnlineUser(AbstractUser):
     rfid = models.CharField(_(u"RFID"), max_length=50, blank=True, null=True)
     nickname = models.CharField(_(u"nickname"), max_length=50, blank=True, null=True)
     website = models.URLField(_(u"hjemmeside"), blank=True, null=True)
+    github = models.URLField(_(u"github"), blank=True, null=True)
+    linkedin = models.URLField(_(u"linkedin"), blank=True, null=True)
     gender = models.CharField(_(u"kjønn"), max_length=10, choices=GENDER_CHOICES, default="male")
     bio = models.TextField(_(u"bio"), blank=True)
 
