@@ -7,7 +7,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Group
 from django.core.mail import EmailMessage
-from django.core.exceptions import PermissionDenied
+from django.core.exceptions import PermissionDenied, ImproperlyConfigured
 from django.shortcuts import render, redirect, get_object_or_404, HttpResponseRedirect, HttpResponse
 from django.utils.translation import ugettext as _
 from django.views.decorators.csrf import ensure_csrf_cookie
@@ -124,7 +124,10 @@ For mer informasjon, sjekk ut bestillingen her: %(absolute_url)s
             from_email = settings.EMAIL_PROKOM
             to_emails = [settings.EMAIL_PROKOM, request.user.get_email().email]
 
-            email_sent = EmailMessage(unicode(subject), unicode(email_message), from_email, to_emails, []).send()
+            try:
+                email_sent = EmailMessage(unicode(subject), unicode(email_message), from_email, to_emails, []).send()
+            except ImproperlyConfigured:
+                email_sent = False
             if email_sent:
                 messages.success(request, 'Opprettet bestilling')
             else:
