@@ -5,6 +5,10 @@
 {% load crispy_forms_tags %}
 
 {% block title %}Webshop - Online{% endblock title %}
+{% block header %}
+<a href="..">Webshop /</a> 
+Checkout
+{% endblock header %}
 
 {% block webshop_content %}
 {% if order_line.orders.all %}
@@ -21,11 +25,11 @@
     <tr>
         <td>
             {% if order.product.images.all %}
-            <img width="200" src="{{ order.product.images.first.image.url }}">
+            <img width="100" src="{{ order.product.images.first.image.url }}">
             {% endif %}
         </td>
         <td>
-            <p>{{ order.product }}</p>
+            <p><a href="{{order.product.get_absolute_url}}">{{ order.product }}</a></p>
             <p>{{ order.product.short }}</p>
             <form method="POST" action="{% url 'webshop_remove_orders' %}">
                 {% csrf_token %}

@@ -5,9 +5,14 @@
 {% load crispy_forms_tags %}
 
 {% block title %}Webshop {{ product }} - Online{% endblock title %}
+{% block header %}
+<a href="../..">Webshop /</a> 
+<a href="..">{{ product.category }}</a> / 
+{{product}}
+{% endblock header %}
 
 {% block webshop_content %}
-<h2>{{product }}</h2>
+
 <div class="row">
     <div class="col-sm-7">
         <div id="carousel-product" class="carousel slide" data-ride="carousel">
