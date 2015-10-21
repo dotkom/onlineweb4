@@ -251,7 +251,6 @@ function ArticleArchive (Utils) {
                         output += '    <div class="col-md-4">';
                         output += '      <div class="row">';
                         output += '        <a href="/article/'+articles[i].id+'/'+articles[i].slug+'">';
-                        output += '          <img src="'+articles[i].images[1]+'" width="100%" alt="'+articles[i].heading+'" />';
                         output += '          <img src="'+articles[i].image.sm+'" width="100%" alt="'+articles[i].heading+'" />';
                         output += '        </a>';
                         output += '      </div><!-- end row -->';
