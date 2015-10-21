@@ -70,6 +70,32 @@
                     </div>
                     <div class="row attribute-list">
                         <div class="col-md-4">
+                            <b>Hjemmeside</b><br />
+                            {% if user_profile.privacy.expose_phone_number %}
+                                {% firstof user_profile.website|striptags 'Ikke tilgjengelig' %}
+                            {% else %}
+                                Ikke tilgjengelig
+                            {% endif %}
+                        </div>
+                        <div class="col-md-4">
+                            <b>Github</b><br />
+                            {% if user_profile.privacy.expose_phone_number %}
+                                {% firstof user_profile.github|striptags 'Ikke tilgjengelig' %}
+                            {% else %}
+                                Ikke tilgjengelig
+                            {% endif %}
+                        </div>
+                        <div class="col-md-4">
+                            <b>LinkedIn</b><br />
+                            {% if user_profile.privacy.expose_nickname %}
+                                {% firstof user_profile.linkedin|striptags 'Ikke tilgjengelig' %}
+                            {% else %}
+                                Ikke tilgjengelig
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="row attribute-list">
+                        <div class="col-md-4">
                             <b>E-Post</b><br />
                             {% if user_profile.privacy.expose_email %}
                                 {% firstof user_profile.get_email|striptags 'Ikke tilgjengelig' %}
@@ -82,11 +108,11 @@
                             {{ user_profile.ntnu_username }}
                         </div>
                     </div>
-                    <div class="row" style="margin-bottom:40px;">
+                    <div class="row attribute-list">
                         <div class="col-md-12">
                         {% if user_profile.positions.all %}
                             <div class="row">
-                                <div class="col-md-12" style="margin-bottom:10px;">
+                                <div class="col-md-12">
                                     <b>Verv i linjeforeningen</b>
                                 </div>
                             </div>
@@ -120,6 +146,8 @@
                             </div>
                         {% endif %}
                         </div>
+                    </div>
+                    <div class="row attribute-list">
                         <div class="col-md-12" id="bio">
                             <b>Bio</b><br />
                             {% if user_profile.bio %}
@@ -127,7 +155,6 @@
                             {% else %}
                                 Ikke tiljengelig
                             {% endif %}
-
                         </div>
                     </div>
                     <div class="row">
