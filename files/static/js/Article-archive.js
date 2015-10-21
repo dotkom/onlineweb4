@@ -245,6 +245,13 @@ function ArticleArchive (Utils) {
                     // The loop
                     for (var i = 0; i < len; i++) {
                         // The markup
+
+                        // Because not all images are responsiveimage yet,
+                        // will be removed later
+                        if (!articles[i].image) {
+                            articles[i].image = ''
+                        }
+
                         output += '<div class="row">';
                         output += '<div class="col-md-12 article'+((page == 1 && !overwrite)?'':' article-hidden')+'">';
                         output += '  <div class="row">';
