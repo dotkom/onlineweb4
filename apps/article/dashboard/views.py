@@ -35,7 +35,7 @@ def article_create(request):
             instance.created_by = request.user
             instance.save()
             messages.success(request, u'Artikkelen ble opprettet.')
-            return redirect(article_detail(instance.pk))
+            return redirect(article_detail, article_id=instance.pk)
         else:
             messages.error(request, u'Noen av de påkrevde feltene inneholder feil.')
 

@@ -103,7 +103,11 @@ def details(request, article_id, article_slug):
     else:
         article.is_changed = False
 
-    related_articles = Article.objects.filter(article_tags__tag__in=article.tags).distinct().annotate(num_tags=Count('article_tags__tag')).order_by('-num_tags', '-published_date').exclude(id=article.id)[:4]
+    related_articles = Article.objects.filter(
+        article_tags__tag__in=article.tags
+    ).distinct().annotate(
+        num_tags=Count('article_tags__tag')
+    ).order_by('-num_tags', '-published_date').exclude(id=article.id)[:4]
 
     return render(request, 'article/details.html', {'article': article, 'related_articles': related_articles})
 
