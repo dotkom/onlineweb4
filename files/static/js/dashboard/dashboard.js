@@ -31,7 +31,47 @@ var Dashboard = (function ($) {
                 $(".right-side").toggleClass("strech")   
             }
        })
-    }
+    };
+
+    // Check if we should auto expand the sidebar
+    var sidebar_auto_expand = function () {
+        if (typeof(localStorage) !== 'undefined') {
+            var sidebar_value = localStorage.getItem('ow4_dashboard_sidebar');
+
+            if (sidebar_value !== null && sidebar_value.length > 2) {
+                var expanded = false;
+                $('.sidebar a').each(function () {
+                    if (!expanded && $(this).attr('href') == sidebar_value) {
+                        $(this).parent().parent().show();
+
+                        // Avoid collision with identical urls (#)
+                        expanded = true;
+                    }
+                });
+            }
+        }
+    };
+
+    // Listeners used to store what
+    var bind_sidebar_expand = function () {
+        $('.sidebar-menu a').on('click', function () {
+            var url = $(this).attr('href');
+
+            if (url.length > 2) {
+                localStorage.setItem('ow4_dashboard_sidebar', url);
+            }
+            else {
+                var $parent = $(this).parent();
+                
+                if ($parent.hasClass('treeview') && $parent.find('ul').is(':hidden')) {
+                    localStorage.setItem('ow4_dashboard_sidebar', $parent.find('ul li:first-child a').attr('href'));
+                }
+                else {
+                    localStorage.setItem('ow4_dashboard_sidebar', null);
+                }
+            }
+        });
+    };
 
     // PUBLIC methods below
     return {
@@ -42,8 +82,12 @@ var Dashboard = (function ($) {
             // Perform self-check
             if (!Dashboard.tools.performSelfCheck()) return
 
+            // Methods for sidebar expand
+            sidebar_auto_expand();
+            bind_sidebar_expand();
+
             // Bind toggling of sidebar
-            bind_sidebar_toggle()
+            bind_sidebar_toggle();
 
             var expanded = null
 

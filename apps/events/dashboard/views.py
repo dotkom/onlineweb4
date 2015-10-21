@@ -155,7 +155,7 @@ def details(request, event_id, active_tab='attendees'):
     context['active_tab'] = active_tab
 
     extras = {}
-    if event.is_attendance_event and event.attendance_event.extras:
+    if event.is_attendance_event() and event.attendance_event.extras:
         for extra in event.attendance_event.extras.all():
             extras[extra] = {"type": extra, "attending": 0, "waits": 0, "allergics": []}
 

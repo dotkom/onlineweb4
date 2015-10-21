@@ -90,6 +90,32 @@
                 {% endif %}
             </div>
         </div>
+        <div class="row attribute-list">
+            <div class="col-md-4">
+                <b>Hjemmeside</b><br />
+                {% if user.website %}
+                    {{ user.website }}
+                {% else %}
+                    Ikke tilgjengelig
+                {% endif %}
+            </div>
+            <div class="col-md-4">
+                <b>Github</b><br />
+                {% if user.github %}
+                    {{ user.github }}
+                {% else %}
+                    Ikke tilgjengelig
+                {% endif %}
+            </div>
+            <div class="col-md-4">
+                <b>LinkedIn</b><br />
+                {% if user.linkedin %}
+                    {{ user.linkedin }}
+                {% else %}
+                    Ikke tilgjengelig
+                {% endif %}
+            </div>
+        </div>
 		<div class="row row-space">
 			<div class="col-md-12">
                 <div class="row">

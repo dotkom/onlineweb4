@@ -7,38 +7,26 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Group
 from django.core.mail import EmailMessage
-from django.core.exceptions import PermissionDenied, ObjectDoesNotExist
-from django.core.urlresolvers import reverse
-from django.forms.models import model_to_dict
+from django.core.exceptions import PermissionDenied, ImproperlyConfigured
 from django.shortcuts import render, redirect, get_object_or_404, HttpResponseRedirect, HttpResponse
-from django.utils import timezone
 from django.utils.translation import ugettext as _
 from django.views.decorators.csrf import ensure_csrf_cookie
 
 from guardian.decorators import permission_required
 from guardian.models import UserObjectPermission, GroupObjectPermission
-# from guardian.core import ObjectPermissionChecker
-import guardian
 from pytz import timezone as tz
 
-from datetime import datetime, timedelta
-
 from apps.authentication.models import OnlineUser as User
-from apps.dashboard.tools import has_access, get_base_context
-from apps.posters.models import Poster
+from apps.dashboard.tools import get_base_context
 from apps.posters.forms import AddForm, AddPosterForm, AddBongForm, AddOtherForm, EditPosterForm
-# from apps.dashboard.posters.models import PosterForm
 from apps.companyprofile.models import Company
-from apps.posters.models import Poster, OrderMixin
+from apps.posters.models import Poster
 from apps.posters.permissions import has_view_perms, has_view_all_perms, has_edit_perms
 
 
-@ensure_csrf_cookie
 @login_required
 @permission_required('posters.overview_poster_order', return_403=True)
 def index(request):
-    if request.is_ajax():
-        do_ajax_shit = True
 
     # The group with members who should populate the dropdownlist
     group = Group.objects.get(name='proKom')
@@ -48,7 +36,8 @@ def index(request):
 
     # View to show if user not in committee, but wanting to see own orders
     if not has_view_all_perms(request.user):
-        context['your_orders'] = [x for x in Poster.objects.filter(ordered_by=request.user) if request.user.has_perm('view_poster_order', x)]
+        context['your_orders'] = [x for x in Poster.objects.filter(ordered_by=request.user)
+                                  if request.user.has_perm('view_poster_order', x)]
         return render(request, 'posters/dashboard/index.html', context)
 
     orders = Poster.objects.all()
@@ -57,12 +46,11 @@ def index(request):
     context['active_orders'] = orders.filter(finished=False).exclude(assigned_to=None)
     context['old_orders'] = orders.filter(finished=True)
 
-    context['workers'] = User.objects.filter(groups=Group.objects.get(name='proKom'))
+    context['workers'] = users_to_populate
 
     return render(request, 'posters/dashboard/index.html', context)
 
 
-@ensure_csrf_cookie
 @login_required
 @permission_required('posters.add_poster_order', return_403=True)
 def add(request, order_type=0):
@@ -88,17 +76,14 @@ def add(request, order_type=0):
             if request.POST.get('company'):
                 poster.company = Company.objects.get(pk=request.POST.get('company'))
             poster.ordered_by = request.user
-            # Should look for a more kosher solution
-            poster.ordered_committee = request.user.groups.exclude(name='Komiteer').filter(name__contains="Kom")[0]
             poster.order_type = order_type
 
             poster.save()
 
-            # for b in poster.__class__.__bases__:
-            # poster_mixin = OrderMixin.objects.get(id=poster.id)
             # Let this user have permissions to show this order
             UserObjectPermission.objects.assign_perm('view_poster_order', obj=poster, user=request.user)
-            GroupObjectPermission.objects.assign_perm('view_poster_order', obj=poster, group=Group.objects.get(name='proKom'))
+            GroupObjectPermission.objects.assign_perm('view_poster_order',
+                                                      obj=poster, group=Group.objects.get(name='proKom'))
 
             title = unicode(poster)
 
@@ -139,7 +124,10 @@ For mer informasjon, sjekk ut bestillingen her: %(absolute_url)s
             from_email = settings.EMAIL_PROKOM
             to_emails = [settings.EMAIL_PROKOM, request.user.get_email().email]
 
-            email_sent = EmailMessage(unicode(subject), unicode(email_message), from_email, to_emails, []).send()
+            try:
+                email_sent = EmailMessage(unicode(subject), unicode(email_message), from_email, to_emails, []).send()
+            except ImproperlyConfigured:
+                email_sent = False
             if email_sent:
                 messages.success(request, 'Opprettet bestilling')
             else:
@@ -148,11 +136,12 @@ For mer informasjon, sjekk ut bestillingen her: %(absolute_url)s
             return redirect(poster.get_absolute_url())
         else:
             context['form'] = form
+            context['form'].fields['ordered_committee'].queryset = request.user.groups.all()
             return render(request, 'posters/dashboard/add.html', context)
 
     context["order_type_name"] = type_name
     context['order_type'] = order_type
-    context['can_edit'] = True  # request.user.has_perm('posters.view_poster')
+    context['can_edit'] = request.user.has_perm('posters.view_poster')
 
     if order_type == 1:
         form = AddPosterForm()
@@ -164,6 +153,7 @@ For mer informasjon, sjekk ut bestillingen her: %(absolute_url)s
     forms = (AddPosterForm(), AddBongForm(), AddOtherForm())
 
     context['form'] = forms[order_type-1]
+    context['form'].fields['ordered_committee'].queryset = request.user.groups.all()
 
     return render(request, 'posters/dashboard/add.html', context)
 
@@ -184,7 +174,6 @@ def edit(request, order_id=None):
         form = AddForm(request.POST, instance=poster)
         if form.is_valid():
             form.save()
-            # redirect_url = redirect(poster.get_absolute_url())
             return HttpResponseRedirect("../detail/"+str(poster.id))
 
     else:
@@ -197,8 +186,6 @@ def edit(request, order_id=None):
 @login_required
 @permission_required('view_poster_order', (Poster, 'pk', 'order_id'), return_403=True)
 def detail(request, order_id=None):
-    if request.is_ajax():
-        do_ajax_shit = True
 
     if not order_id:
         return HttpResponse(status=400)
@@ -228,7 +215,6 @@ def detail(request, order_id=None):
 # Ajax
 
 
-# @ensure_csrf_cookie
 @login_required
 def assign_person(request):
     if request.is_ajax():
