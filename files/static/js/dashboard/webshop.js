@@ -40,6 +40,16 @@ var Webshop = (function ($, tools) {
                 url = '/dashboard/webshop/product/' + $(this).data('slug') + '/delete';
                 postDeleteForm(url);
             });
+
+            $('#webshop-delete-category').on('click', function (e) {
+                e.preventDefault();
+                $('.confirm-delete-category').data('slug', $(this).data('slug'));
+            });
+
+            $('.confirm-delete-category').on('click', function (e) {
+                url = '/dashboard/webshop/category/' + $(this).data('slug') + '/delete';
+                postDeleteForm(url);
+            });
         }
 
     };

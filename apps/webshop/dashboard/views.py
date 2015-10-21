@@ -28,22 +28,51 @@ class Categories(DashboardPermissionMixin, TemplateView):
         context['categories'] = Category.objects.all().prefetch_related('products')
         return context
 
-class CategoryEdit(DashboardPermissionMixin, UpdateView):
+class CategoryView(DashboardPermissionMixin, DetailView):
     model = Category
     template_name = 'webshop/dashboard/category.html'
-    context_object_name = 'category'
-    permission_required = 'webshop.change_category'
+    permission_required = 'webshop.view_category'
 
-
-class CategoryAdd(DashboardPermissionMixin, TemplateView):
-    template_name = 'webshop/dashboard/category.html'
+class CategoryCreate(DashboardPermissionMixin, CreateView):
+    model = Category
+    fields = ['name', 'slug']
+    template_name = 'webshop/dashboard/category_update.html'
     permission_required = 'webshop.add_category'
 
+    def get_object(self, *args, **kwargs):
+        # django-guardian hack https://github.com/django-guardian/django-guardian/issues/195
+        return None
+
+    def get_success_url(self):
+        return reverse('dashboard_webshop_categories')
+
+class CategoryUpdate(DashboardPermissionMixin, UpdateView):
+    model = Category
+    fields = ['name', 'slug']
+    template_name = 'webshop/dashboard/category_update.html'
+    context_object_name = 'category'
+    permission_required = 'webshop.change_product'
+
+    def get_success_url(self):
+        return reverse('dashboard_webshop_category', kwargs={'slug': self.object.slug})
+
+class CategoryDelete(DashboardPermissionMixin, DeleteView):
+    model = Category
+    template_name = 'webshop/dashboard/delete.html'
+    permission_required = 'webshop.delete_category'
+
+    def get_success_url(self):
+        return reverse('dashboard_webshop_categories')
+
+class ProductView(DashboardPermissionMixin, DetailView):
+    model = Product
+    template_name = 'webshop/dashboard/product.html'
+    permission_required = 'webshop.view_product'
 
 class ProductCreate(DashboardPermissionMixin, CreateView):
     model = Product
     fields = ['name', 'slug', 'short', 'description', 'price', 'stock']
-    template_name = 'webshop/dashboard/product.html'
+    template_name = 'webshop/dashboard/product_update.html'
     permission_required = 'webshop.add_product'
 
     def get_context_data(self, *args, **kwargs):
@@ -65,11 +94,10 @@ class ProductCreate(DashboardPermissionMixin, CreateView):
     def get_success_url(self):
         return reverse('dashboard_webshop_category', kwargs={'slug': self.kwargs.get('category_slug')})
 
-
 class ProductUpdate(DashboardPermissionMixin, UpdateView):
     model = Product
     fields = ['name', 'slug', 'short', 'description', 'price', 'stock']
-    template_name = 'webshop/dashboard/product.html'
+    template_name = 'webshop/dashboard/product_update.html'
     context_object_name = 'product'
     permission_required = 'webshop.change_product'
 
@@ -79,8 +107,7 @@ class ProductUpdate(DashboardPermissionMixin, UpdateView):
         return context
 
     def get_success_url(self):
-        return reverse('dashboard_webshop_category', kwargs={'slug': self.object.category.slug})
-
+        return reverse('dashboard_webshop_product', kwargs={'slug': self.object.slug})
 
 class ProductDelete(DashboardPermissionMixin, DeleteView):
     model = Product
