@@ -16,6 +16,7 @@ class ImageResource(ModelResource):
         bundle.data['md'] = bundle.data['image_md']
         bundle.data['sm'] = bundle.data['image_sm']
         bundle.data['xs'] = bundle.data['image_xs']
+        bundle.data['thumb'] = bundle.data['thumbnail']
 
         del(bundle.data['image_original'])
         del(bundle.data['image_wide'])
@@ -23,6 +24,7 @@ class ImageResource(ModelResource):
         del(bundle.data['image_md'])
         del(bundle.data['image_sm'])
         del(bundle.data['image_xs'])
+        del(bundle.data['thumbnail'])
 
         return bundle
 
@@ -34,7 +36,7 @@ class ImageResource(ModelResource):
             'description',
             'timestamp',
             'image_original',
-            'image_thumbnail',
+            'thumbnail',
             'image_wide',
             'image_lg',
             'image_md',

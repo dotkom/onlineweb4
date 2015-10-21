@@ -19,12 +19,12 @@ function ArticleWidget (Utils){
                         if (!data.articles[i].image) {
                             data.articles[i].image = ''
                         }
-
+                        console.log(data.articles[i])
                         if (i <= 1) {
                             output_featured += '<div class="col-md-6"><a href="/article/'+data.articles[i].id+'/'+data.articles[i].slug+'"><img src="'+data.articles[i].image.sm+'" alt="'+data.articles[i].heading+'"><h3>'+data.articles[i].heading+'</h3></a><p>'+data.articles[i].ingress_short+'</p></div>';
                         }
                         else {
-                            output_normal += '<div class="col-xs-6 col-md-2"><a href="/article/'+data.articles[i].id+'/'+data.articles[i].slug+'"><img src="'+data.articles[i].image.thumbnail+'" alt="'+data.articles[i].heading+'"><br /><h4>'+data.articles[i].heading+'</h4></a></div>';
+                            output_normal += '<div class="col-xs-6 col-md-2"><a href="/article/'+data.articles[i].id+'/'+data.articles[i].slug+'"><img src="'+data.articles[i].image.thumb+'" alt="'+data.articles[i].heading+'"><br /><h4>'+data.articles[i].heading+'</h4></a></div>';
 
                             // adds a separator to clear the floats in movile view
                             // #article-frontpage-normal @media (max-width: 991px) { div:nth-child(even) { .clearfix(); } }
