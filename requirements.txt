@@ -45,7 +45,7 @@ nose==1.3.4
 nose-cov==1.6
 teamcity-messages==1.16
 flake8==2.4.1
-pepper8>=1.0.2                  # Transforms flake8 output to HTML report + TC messages
+pepper8>=1.0.4                  # Transforms flake8 output to HTML report + TC messages
 
 # Wiki
 git+https://github.com/django-wiki/django-wiki.git@adb4e2ea21745da40d8c123ce7a369ab3acab5d2#egg=wiki==0.1.dev0
