@@ -6,4 +6,3 @@ nose-cov==1.6
 teamcity-messages==1.16
 flake8==2.4.1
 pepper8>=1.0.4                  # Transforms flake8 output to HTML report + TC messages
-psycopg2                        # Postgres adapter
