@@ -1,8 +1,13 @@
+# -*- coding: utf-8 -*-
+
+import logging
 from copy import copy
+
 from django.template.defaultfilters import slugify
+from django.core.exceptions import PermissionDenied
 from tastypie import fields
 from tastypie.authorization import Authorization
-from tastypie.resources import ModelResource, ALL, ALL_WITH_RELATIONS
+from tastypie.resources import ModelResource, ALL_WITH_RELATIONS
 from filebrowser.base import FileObject
 from filebrowser.settings import VERSIONS
 from apps.events.models import Event
@@ -13,10 +18,11 @@ from apps.companyprofile.models import Company
 from apps.api.rfid.user import UserResource
 from apps.api.rfid.auth import RfidAuthentication
 
+
 class AttendeeResource(ModelResource):
     user = fields.ToOneField(UserResource, 'user', full=True)
 
-    class Meta:
+    class Meta(object):
         queryset = Attendee.objects.all()
         resource_name = 'attendees'
         allowed_methods = ['get']
@@ -33,37 +39,44 @@ class AttendeeResource(ModelResource):
         Override to restrict modification of object fields to those set in allowed_update_fields
         """
         if set(new_data.keys()) - set(self._meta.allowed_update_fields):
-            raise BadRequest(
+            raise PermissionDenied(
                 'Kun oppdatering av %s er tillatt.' % ', '.join(self._meta.allowed_update_fields)
             )
 
+        logging.getLogger(__name__).debug('Attendee created: %s' % repr(original_bundle))
+
         return super(AttendeeResource, self).update_in_place(request, original_bundle, new_data)
+
 
 class CompanyResource(ModelResource):
     
-    class Meta:
+    class Meta(object):
         queryset = Company.objects.all()
         resource_name = 'company'
         allowed_methods = ['get']
-        fields = ['image']
+        fields = ['old_image']
+
 
 class CompanyEventResource(ModelResource):
     companies = fields.ToOneField(CompanyResource, 'company', full=True)
-    class Meta:
+
+    class Meta(object):
         queryset = CompanyEvent.objects.all()
-        resource_name ='companies'
+        resource_name = 'companies'
         allowed_methods = ['get']
+
 
 class AttendanceEventResource(ModelResource):
     users = fields.ToManyField(AttendeeResource, 'attendees', full=True)
 
-    class Meta:
+    class Meta(object):
         queryset = AttendanceEvent.objects.all()
         resource_name = 'attendance_event'
         allowed_methods = ['get']
         filtering = {
             'users': ALL_WITH_RELATIONS,
         }
+
 
 class EventResource(ModelResource):
     author = fields.ToOneField(UserResource, 'author', full=True)
@@ -93,7 +106,7 @@ class EventResource(ModelResource):
                 # Check if the key start with article_ (if it does, we want to crop to that size)
                 if ver.startswith('events_'):
                     # Adding the new image to the object
-                    bundle.data['image_'+ver] = temp_image.version_generate(ver).url
+                    bundle.data['image_' + ver] = temp_image.version_generate(ver).url
             
             # Unset the image-field
             del(bundle.data['image'])
@@ -101,17 +114,17 @@ class EventResource(ModelResource):
         # Do the same thing for the company image
         if bundle.data['company_event']:
             for company in bundle.data['company_event']:
-                temp_image = FileObject(company.data['companies'].data['image'])
+                temp_image = FileObject(company.data['companies'].data['old_image'])
                 for ver in VERSIONS.keys():
                     if ver.startswith('companies_thumb'):
-                        company.data['companies'].data['image_'+ver] = temp_image.version_generate(ver).url
-                del(company.data['companies'].data['image'])
+                        company.data['companies'].data['old_image_' + ver] = temp_image.version_generate(ver).url
+                del(company.data['companies'].data['old_image'])
 
         # Returning washed object 
         return bundle
         
 
-    class Meta:
+    class Meta(object):
         queryset = Event.objects.all()
         resource_name = 'events'
         allowed_methods = ['get']
@@ -120,6 +133,6 @@ class EventResource(ModelResource):
         
         ordering = ['event_start']
         filtering = {
-            'event_end' : ['gte'],
+            'event_end': ['gte'],
             'attendance_event': ALL_WITH_RELATIONS,
         }

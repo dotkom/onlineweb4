@@ -34,7 +34,7 @@ def index(request):
 
 # GROUP MODULE VIEWS
 @login_required
-@permission_required('auth.change_group', return_403=True)
+@permission_required('authentication.change_onlineuser', return_403=True)
 def groups_index(request):
     """
     Group module in dashboard that lists groups.
@@ -52,7 +52,7 @@ def groups_index(request):
 
 
 @login_required
-@permission_required('auth.change_group', return_403=True)
+@permission_required('authentication.change_onlineuser', return_403=True)
 def groups_detail(request, pk):
     """
     Group module in dashboard that lists groups.
