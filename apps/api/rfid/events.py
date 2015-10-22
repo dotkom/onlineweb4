@@ -1,4 +1,8 @@
+# -*- coding: utf-8 -*-
+
+import logging
 from copy import copy
+
 from django.template.defaultfilters import slugify
 from django.core.exceptions import PermissionDenied
 from tastypie import fields
@@ -39,6 +43,8 @@ class AttendeeResource(ModelResource):
                 'Kun oppdatering av %s er tillatt.' % ', '.join(self._meta.allowed_update_fields)
             )
 
+        logging.getLogger(__name__).debug('Attendee created: %s' % repr(original_bundle))
+
         return super(AttendeeResource, self).update_in_place(request, original_bundle, new_data)
 
 
@@ -56,7 +62,7 @@ class CompanyEventResource(ModelResource):
 
     class Meta(object):
         queryset = CompanyEvent.objects.all()
-        resource_name ='companies'
+        resource_name = 'companies'
         allowed_methods = ['get']
 
 
@@ -100,7 +106,7 @@ class EventResource(ModelResource):
                 # Check if the key start with article_ (if it does, we want to crop to that size)
                 if ver.startswith('events_'):
                     # Adding the new image to the object
-                    bundle.data['image_'+ver] = temp_image.version_generate(ver).url
+                    bundle.data['image_' + ver] = temp_image.version_generate(ver).url
             
             # Unset the image-field
             del(bundle.data['image'])
@@ -111,7 +117,7 @@ class EventResource(ModelResource):
                 temp_image = FileObject(company.data['companies'].data['old_image'])
                 for ver in VERSIONS.keys():
                     if ver.startswith('companies_thumb'):
-                        company.data['companies'].data['old_image_'+ver] = temp_image.version_generate(ver).url
+                        company.data['companies'].data['old_image_' + ver] = temp_image.version_generate(ver).url
                 del(company.data['companies'].data['old_image'])
 
         # Returning washed object 
