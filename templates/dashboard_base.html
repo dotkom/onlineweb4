@@ -184,7 +184,9 @@
                             <i class="fa fa-angle-down pull-right"></i>
                         </a>
                         <ul class="treeview-menu">
+                            {% if 'marks.add_mark' in user_permissions %}
                             <li><a href="/dashboard/marks/new"><i class="fa fa-angle-double-right orange"></i> Ny prikk</a></li>
+                            {% endif %}
                             <li><a href="/dashboard/marks"><i class="fa fa-angle-double-right orange"></i> Oversikt</a></li>
                         </ul>
                     </li>
