@@ -34,6 +34,9 @@ def article_create(request):
             instance.changed_by = request.user
             instance.created_by = request.user
             instance.save()
+            for tag in instance.tags:
+                ArticleTag(article=instance, tag=tag).save()
+            print(instance.tags)
             messages.success(request, u'Artikkelen ble opprettet.')
             return redirect(article_detail, article_id=instance.pk)
         else:
@@ -73,6 +76,8 @@ def article_edit(request, article_id):
             instance = form.save(commit=False)
             instance.changed_by = request.user
             instance.save()
+            for tag in instance.tags:
+                ArticleTag(article=instance, tag=tag).save()
             messages.success(request, u'Artikkelen ble lagret.')
             return redirect(article_index)
         else:

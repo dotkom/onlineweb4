@@ -16,9 +16,10 @@ class TagForm(forms.ModelForm):
 class ArticleForm(forms.ModelForm):
 
     tags = forms.ModelMultipleChoiceField(
-        queryset=Tag.objects.all(),
+        queryset=Tag.objects.all().order_by('name'),
         label=u'Tags',
         help_text=u'Legg til kategori',
+        required=False
     )
 
     class Meta(object):
