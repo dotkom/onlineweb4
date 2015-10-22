@@ -123,14 +123,16 @@
                         </ul>
                     </li>
                     {% endif %}
-                    {% if request.user.is_superuser %}
+                    {% if 'authentication.change_onlineuser' in user_permissions %}
                     <li class="treeview">
                         <a href="#">
                             <i class="fa fa-group blue"></i> <span>Grupper</span>
                             <i class="fa fa-angle-down pull-right"></i>
                         </a>
                         <ul class="treeview-menu">
-                            <li><a href="/admin/auth/group/add/"><i class="fa fa-angle-double-right orange"></i> Ny gruppe</a></li>
+                            {% if 'authentication.add_onlineuser' in user_permissions %}
+                                <li><a href="/admin/auth/group/add/"><i class="fa fa-angle-double-right orange"></i> Ny gruppe</a></li>
+                            {% endif %}
                             <li><a href="/dashboard/auth/groups/"><i class="fa fa-angle-double-right orange"></i> Oversikt</a></li>
                         </ul>
                     </li>
