@@ -411,7 +411,6 @@ from apps.events.serializers import EventSerializer, AttendanceEventSerializer, 
 from apps.events.filters import EventDateFilter
 
 class EventViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.ListModelMixin):
-    queryset = Event.objects.all()
     serializer_class = EventSerializer
     permission_classes = (AllowAny,)
     filter_class = EventDateFilter
