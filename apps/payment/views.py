@@ -165,7 +165,7 @@ def saldo(request):
                   description="Saldo deposit - " + request.user.email
                 )
 
-                PaymentTransaction.objects.create(user=request.user, amount=amount)
+                PaymentTransaction.objects.create(user=request.user, amount=amount, used_stripe=True)
 
                 request.user.saldo += amount
                 request.user.save()

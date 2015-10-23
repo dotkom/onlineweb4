@@ -1,14 +1,14 @@
 from rest_framework import serializers
 from apps.inventory.models import Item
 from apps.authentication.models import OnlineUser as User
-from apps.payment.models import PaymentTransaction, ItemRelation
+from apps.payment.models import PaymentTransaction
 
 
 class ItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = Item
         fields = (
-                'pk', 'name', 'price',
+                'pk', 'name', 'price', 'description',
             )
 
 
@@ -19,20 +19,9 @@ class UserSerializer(serializers.ModelSerializer):
                 'pk','first_name', 'last_name', 'saldo',
             )
 
-
-class ItemRelationSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ItemRelation
-        fields = (
-                'item', 'transaction',
-            )
-
-
-
 class TransactionSerializer(serializers.ModelSerializer):
     class Meta:
         model = PaymentTransaction
-        items = ItemSerializer()
         fields = (
-                'user', 'amount', 'items'
+                'user', 'amount', 
             )

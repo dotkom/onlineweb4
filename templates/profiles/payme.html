@@ -1,13 +1,10 @@
 <div class="row">
     <div class="col-md-12">
-        <h3>Din Saldo</h3>
+        <h3>Din Saldo: {{ request.user.saldo }}kr</h3>
     </div>
 </div>
 <div class="row-space"></div>
 <div class="row">
-    <div class="col-md-12">
-	   <p>Saldo: kr {{ request.user.saldo }}</P>
-    </div>
     <div class="col-md-6">
         <select id="amount" class="form-control">
             <option value="100">100</option>
@@ -33,16 +30,16 @@
     <div class="col-md-12">
         <table class="table">
             <thead>
-                <th>Vare</th>
-                <th>Transaksjon</th>
+                <th>Beløp</th>
                 <th>Tidspunkt</th>
+                <th>Stripe</th>
             </thead>
             <tbody>
                 {% for transaction in transactions %}
-                    <tr {% if transaction.amount > 0 %} class="success" {% endif %}>
-                        <td>{{ transaction.product }}</td>
-                        <td>{{ transaction.amount }}</td>
+                    <tr>
+                        <td>{{ transaction.amount }}kr</td>
                         <td>{{ transaction.datetime }}</td>
+                        <td>{{ transaction.used_stripe }}</td>
                     </tr>
                 {% endfor %}
             </tbody>
