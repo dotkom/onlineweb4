@@ -410,14 +410,19 @@ from rest_framework.permissions import AllowAny
 from apps.events.serializers import EventSerializer, AttendanceEventSerializer, CompanyEventSerializer
 from apps.events.filters import EventDateFilter
 
+
 class EventViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.ListModelMixin):
-    queryset = Event.objects.all()
+    queryset = Event.objects.all()  # To automate name generation, is overridden in get_queryset
     serializer_class = EventSerializer
     permission_classes = (AllowAny,)
     filter_class = EventDateFilter
     filter_fields = ('event_start', 'event_end', 'id',)
     ordering_fields = ('event_start', 'event_end', 'id',)
     ordering = ('id',)
+
+    def get_queryset(self):
+        return Event.objects.filter(
+            Q(group_restriction__isnull=True) | Q(group_restriction__groups__in=self.request.user.groups.all()))
 
 
 class AttendanceEventViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.ListModelMixin):
