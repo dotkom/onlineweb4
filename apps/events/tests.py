@@ -348,4 +348,14 @@ class EventTest(TestCase):
 
         self.assertTrue(message.send)
         self.assertTrue(message.committee_message)
-        
+
+    def testRestrictedEvents(self):
+        allowed_groups = [G(Group), G(Group)]
+        allowed_user = G(User, groups=allowed_groups[0])
+        denied_user = G(User)
+        restricted_event = G(Event, group_restriction=allowed_groups)
+
+        self.assertTrue(restricted_event.can_display(allowed_user),
+                        "User should be able to view restricted event if in allowed group")
+        self.assertFalse(restricted_event.can_display(denied_user),
+                         "User should not be able to display event if not in allowed group")
