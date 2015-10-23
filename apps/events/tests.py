@@ -12,7 +12,7 @@ from django.utils import timezone
 from apps.authentication.models import OnlineUser as User, AllowedUsername
 from apps.events.models import (Event, AttendanceEvent, Attendee,
                                 RuleBundle, FieldOfStudyRule, GradeRule, UserGroupRule,
-                                Reservation, Reservee)
+                                Reservation, Reservee, GroupRestriction)
 from apps.marks.models import Mark, MarkUser, DURATION
 from apps.events.mommy import SetEventMarks
 
@@ -351,12 +351,21 @@ class EventTest(TestCase):
 
     def testRestrictedEvents(self):
         allowed_groups = [G(Group), G(Group)]
-        allowed_user = G(User)
-        allowed_groups[0].user_set.add(allowed_user)
-        denied_user = G(User)
-        restricted_event = G(Event, group_restriction=allowed_groups)
+        allowed_user = G(User, groups=[allowed_groups[0], ])
+
+        denied_groups = [G(Group), ]
+        denied_user = G(User, groups=[denied_groups[0], ])
+
+        unrestricted_event = G(Event)
+        restricted_event = G(Event)
+        gr = G(GroupRestriction, event=restricted_event, groups=allowed_groups)
+        # restricted_event.group_restriction.add(allowed_groups)
 
         self.assertTrue(restricted_event.can_display(allowed_user),
                         "User should be able to view restricted event if in allowed group")
         self.assertFalse(restricted_event.can_display(denied_user),
                          "User should not be able to display event if not in allowed group")
+        self.assertTrue(unrestricted_event.can_display(allowed_user),
+                        "Any user should be able to see unrestricted events")
+        self.assertTrue(unrestricted_event.can_display(denied_user),
+                        "Any user should be able to see unrestricted events")
