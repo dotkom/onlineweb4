@@ -138,8 +138,24 @@ if 'apps.genfors' in settings.INSTALLED_APPS:
 
 
 if 'apps.gallery' in settings.INSTALLED_APPS:
-    urlpatterns += patterns('',
-        url(r'^gallery/',           include('apps.gallery.urls')),
+    urlpatterns += patterns(
+        '',
+        url(
+            r'^gallery/',
+            include(
+                'apps.gallery.urls',
+                namespace='gallery',
+                app_name='gallery'
+            )
+        ),
+        url(
+            r'^dashboard/gallery/',
+            include(
+                'apps.gallery.dashboard.urls',
+                namespace='gallery_dashboard',
+                app_name='gallery'
+            )
+        )
     )
 
 if 'apps.splash' in settings.INSTALLED_APPS:

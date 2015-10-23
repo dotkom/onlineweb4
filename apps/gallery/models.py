@@ -20,6 +20,17 @@ class UnhandledImage(models.Model):
     def filename(self):
         return os.path.basename(self.image.name)
 
+    class Meta(object):
+        """
+        UnhandledImage Metaclass
+        """
+
+        verbose_name = _(u'Ubehandlet bilde')
+        verbose_name_plural = _(u'Ubehandlede bilder')
+        permissions = (
+            ('view_unhandledimage', _(u'View UnhandledImage')),
+        )
+
 
 # If we delete an image, we don't want to keep the actual images
 # This signal makes sure that the images along with the thumbnails are deleted from disk
