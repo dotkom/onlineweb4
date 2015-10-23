@@ -351,7 +351,8 @@ class EventTest(TestCase):
 
     def testRestrictedEvents(self):
         allowed_groups = [G(Group), G(Group)]
-        allowed_user = G(User, groups=allowed_groups[0])
+        allowed_user = G(User)
+        allowed_groups[0].user_set.add(allowed_user)
         denied_user = G(User)
         restricted_event = G(Event, group_restriction=allowed_groups)
 
