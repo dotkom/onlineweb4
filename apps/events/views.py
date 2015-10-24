@@ -295,7 +295,7 @@ def _search_indexed(request, query, filters):
             display_events.add(event.pk)
 
     events = events.filter(pk__in=display_events)
-    
+
     if query:
         for result in watson.search(query, models=(events,)):
             results.append(result.object)
@@ -410,14 +410,19 @@ from rest_framework.permissions import AllowAny
 from apps.events.serializers import EventSerializer, AttendanceEventSerializer, CompanyEventSerializer
 from apps.events.filters import EventDateFilter
 
+
 class EventViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.ListModelMixin):
-    queryset = Event.objects.all()
     serializer_class = EventSerializer
     permission_classes = (AllowAny,)
     filter_class = EventDateFilter
     filter_fields = ('event_start', 'event_end', 'id',)
     ordering_fields = ('event_start', 'event_end', 'id',)
     ordering = ('id',)
+
+    def get_queryset(self):
+        return Event.objects.filter(
+            Q(group_restriction__isnull=True) | Q(group_restriction__groups__in=self.request.user.groups.all())).\
+            distinct()
 
 
 class AttendanceEventViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.ListModelMixin):

@@ -222,19 +222,19 @@ class PaymentDelayHandler(Task):
 
         valid_to = payment_delay.valid_to.astimezone(tz('Europe/Oslo'))
 
-        message = _(u"Hei, du er påmeldt men har ikke betalt for ") + payment.description()
-        message += _(u"\nDu har frem til ") + unicode(valid_to.strftime("%-d %B %Y kl: %H:%M"))
+        message = _(u"Hei, du er påmeldt, men har ikke betalt for ") + payment.description()
+        message += _(u".\nFristen for å betale er ") + unicode(valid_to.strftime("%-d. %B %Y kl: %H:%M").encode("utf-8")) + "."
 
 
         #If event unattend deadline has not passed when payment deadline passes, then the user will be automatically unattended, and given a mark.
         #Else, the unattend deadlline has passed, and the user will not be unattended, but given a mark, and can't attend any other events untill payment is recived.
         if unattend_deadline_passed:
-            message += _(u"\n\nHvis du ikke betaler innen fristen vil du få en prikk og bli meldt av arrangement.")
-        else:
             message += _(u"\n\nHvis du ikke betaler innen fristen vil du få en prikk og du vil ")
-            message += _(u"\nikke ha mulighet til og melde deg på andre arrangemang før du har betalt.")
+            message += _(u"\nikke ha mulighet til å melde deg på andre arrangement før du har betalt.")
+        else:
+            message += _(u"\n\nHvis du ikke betaler innen fristen vil du få en prikk og du vil bli meldt av arrangement.")        
 
-        message += "\n\nInfo:"
+        message += "\n\nFor mer informasjon, se:"
         message += "\n" + str(settings.BASE_URL + payment.content_object.event.get_absolute_url())
         message += _(u"\n\nDersom du har spørsmål kan du sende mail til ") + payment.responsible_mail()
         message += _(u"\n\nMvh \nLinjeforeningen Online")
