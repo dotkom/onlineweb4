@@ -44,18 +44,18 @@ var GalleryDashboard = (function ($, tools) {
                 if (e.keyCode === 13) {
                     e.preventDefault()
                     e.stopPropagation()
-                    Gallery.search($(this).val())
+                    GalleryDashboard.search($(this).val())
                 }
             })
 
             search_button.on('click', function(e) {
                 e.preventDefault()
-                Gallery.search(search_field.val())
+                GalleryDashboard.search(search_field.val())
             })
 
             years.on('click', function (e) {
                 e.preventDefault()
-                Gallery.filter($(this).text())
+                GalleryDashboard.filter($(this).text())
             })
         },
 
