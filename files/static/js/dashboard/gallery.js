@@ -24,7 +24,7 @@ var GalleryDashboard = (function ($, tools) {
         last_request = uri
 
         var success = function (data) {
-            Gallery.draw(data)
+            GalleryDashboard.draw(data)
         }
         var error = function (xhr, statusText, thrownError) {
             tools.showStatusMessage('Det oppstod en uventet feil: ' + statusText, 'alert-danger')
