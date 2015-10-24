@@ -124,6 +124,13 @@
                             {% endif %}
                         </a>
                         <ul class="treeview-menu">
+                            {% if 'gallery.add_responsiveimage' in user_permissions %}
+                            <li>
+                                <a href="{% url 'gallery_dashboard:upload' %}">
+                                    <i class="fa fa-angle-double-right orange"></i> Last opp
+                                </a>
+                            </li>
+                            {% endif %}
                             <li>
                                 <a href="{% url 'gallery_dashboard:index' %}">
                                     <i class="fa fa-angle-double-right orange"></i> Oversikt

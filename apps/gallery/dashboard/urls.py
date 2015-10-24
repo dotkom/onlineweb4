@@ -4,7 +4,12 @@
 
 from django.conf.urls import patterns, url
 
-from apps.gallery.dashboard.views import GalleryIndex, GalleryDetail, GalleryUnhandledIndex
+from apps.gallery.dashboard.views import (
+    GalleryIndex,
+    GalleryDetail,
+    GalleryUnhandledIndex,
+    GalleryUpload
+)
 
 urlpatterns = patterns(
     'apps.gallery.dashboard',
@@ -17,6 +22,11 @@ urlpatterns = patterns(
         '^(?P<pk>\d+)/$',
         GalleryDetail.as_view(),
         name='detail'
+    ),
+    url(
+        '^upload/$',
+        GalleryUpload.as_view(),
+        name='upload'
     ),
     url(
         '^unhandled/$',

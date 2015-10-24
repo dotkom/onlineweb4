@@ -2,13 +2,13 @@
 #
 # Created by 'myth' on 10/24/15
 
-from django.views.generic import ListView, DetailView
+from django.views.generic import DetailView, ListView, TemplateView
 
 from apps.dashboard.tools import DashboardPermissionMixin
 from apps.gallery.models import UnhandledImage, ResponsiveImage
 
 
-class GalleryIndex(ListView, DashboardPermissionMixin):
+class GalleryIndex(DashboardPermissionMixin, ListView):
     """
     GalleryIndex renders the dashboard start page for the Gallery app,
     which allows administrators and staff to upload, edit and delete
@@ -17,7 +17,7 @@ class GalleryIndex(ListView, DashboardPermissionMixin):
 
     permission_required = 'gallery.view_responsiveimage'
     template_name = 'gallery/dashboard/index.html'
-    queryset = ResponsiveImage.objects.all()
+    queryset = ResponsiveImage.objects.all().order_by('-timestamp')
     context_object_name = 'images'
 
     def get_context_data(self, **kwargs):
@@ -43,6 +43,16 @@ class GalleryDetail(DetailView, DashboardPermissionMixin):
     template_name = 'gallery/dashboard/detail.html'
     model = ResponsiveImage
     context_object_name = 'image'
+
+
+class GalleryUpload(TemplateView, DashboardPermissionMixin):
+    """
+    GalleryUpload renders the dashboard upload page for the Gallery app,
+    which facilitates upload, cropping and version generation of images.
+    """
+
+    permission_required = 'gallery.add_responsiveimage'
+    template_name = 'gallery/dashboard/upload.html'
 
 
 class GalleryUnhandledIndex(GalleryIndex):
