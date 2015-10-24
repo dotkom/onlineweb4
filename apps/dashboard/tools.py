@@ -8,6 +8,7 @@ from django.contrib.auth.models import Group
 from guardian.mixins import PermissionRequiredMixin
 
 from apps.approval.models import MembershipApproval
+from apps.gallery.models import UnhandledImage
 from apps.inventory.models import Batch
 from apps.posters.models import Poster
 
@@ -70,8 +71,12 @@ def get_base_context(request):
 
     if request.user.has_perm('posters.view_poster'):
         if Poster.objects.filter(assigned_to=None) or Poster.objects.filter(assigned_to=request.user):
-            context['poster_orders'] = Poster.objects.filter(assigned_to=None).count() + \
-                                       Poster.objects.filter(assigned_to=request.user, finished=False).count()
+            context['poster_orders'] = Poster.objects.filter(assigned_to=None).count()
+            context['poster_orders'] += Poster.objects.filter(assigned_to=request.user, finished=False).count()
+
+    # Check if we have any unhandled images pending crop and save
+    if request.user.has_perm('gallery.view_unhandledimage'):
+        context['unhandled_images'] = UnhandledImage.objects.all()
 
     return context
 

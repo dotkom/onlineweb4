@@ -100,11 +100,28 @@
                         </ul>
                     </li>
                     {% endif %}
+                    {% if 'companyprofile.view_company' in user_permissions %}
+                    <li class="treeview">
+                        <a href="#">
+                            <i class="fa fa-money blue"></i> <span>Bedrifter</span>
+                            <i class="fa fa-angle-down pull-right"></i>
+                        </a>
+                        <ul class="treeview-menu">
+                            {% if 'companyprofile.add_company' in user_permissions %}
+                                <li><a href="/dashboard/company/new/"><i class="fa fa-angle-double-right orange"></i> Ny bedrift</a></li>
+                            {% endif %}
+                            <li><a href="/dashboard/company/"><i class="fa fa-angle-double-right orange"></i> Oversikt</a></li>
+                        </ul>
+                    </li>
+                    {% endif %}
                     {% if 'gallery.view_responsiveimage' in user_permissions %}
                     <li class="treeview">
                         <a href="#">
                             <i class="fa fa-image blue"></i> <span>Bilder</span>
                             <i class="fa fa-angle-down pull-right"></i>
+                            {% if unhandled_images %}
+                                <small class="badge pull-right">{{ unhandled_images.count }}</small>
+                            {% endif %}
                         </a>
                         <ul class="treeview-menu">
                             <li>
@@ -119,20 +136,6 @@
                                 </a>
                             </li>
                             {% endif %}
-                        </ul>
-                    </li>
-                    {% endif %}
-                    {% if 'companyprofile.view_company' in user_permissions %}
-                    <li class="treeview">
-                        <a href="#">
-                            <i class="fa fa-money blue"></i> <span>Bedrifter</span>
-                            <i class="fa fa-angle-down pull-right"></i>
-                        </a>
-                        <ul class="treeview-menu">
-                            {% if 'companyprofile.add_company' in user_permissions %}
-                                <li><a href="/dashboard/company/new/"><i class="fa fa-angle-double-right orange"></i> Ny bedrift</a></li>
-                            {% endif %}
-                            <li><a href="/dashboard/company/"><i class="fa fa-angle-double-right orange"></i> Oversikt</a></li>
                         </ul>
                     </li>
                     {% endif %}

@@ -21,7 +21,10 @@ Bilder
 {% block content %}
 <div class="row">
     <div class="col-md-12">
-        <p>Her finner du en oversikt over alle artikler. Benytt søkefeltet for å filtrere artiklene.</p>
+        <p>Bildegalleriet lar det søke gjennom alle bildene som er lastet opp til nettsiden.
+        Her kan du laste opp nye bilder, redigere eksisterende bilder, eller slette bilder.</p>
+        <p>Man kan også fjerne opplastede bilder som ikke oppfyller kravene og har blitt
+        liggende fra menyen <a href="{% url 'gallery_dashboard:unhandled' %}">Ubehandlet</a>.</p>
     </div>
     <div class="col-md-12 col-lg-6">
         <div class="input-group">
@@ -62,8 +65,12 @@ Bilder
                     <tbody id="dashboard-gallery-table">
                     {% for img in images %}
                         <tr>
-                            <td><a href="{{ img.original.get_url }}">{{ img.original }}</a></td>
-                            <td><a href="{% url 'gallery_dashboard_detail' img.pk %}">{{ img.name }}</a></td>
+                            <td>
+                                <a href="{{ img.original }}">
+                                    <img src="{{ img.thumb }}" alt title="{{ img.name }}">
+                                </a>
+                            </td>
+                            <td><a href="{% url 'gallery_dashboard:detail' img.pk %}">{{ img.name }}</a></td>
                             <td>{{ img.description }}</td>
                             <td>{{ img.timestamp|date:'Y-m-d H:i:s' }}</td>
                         </tr>

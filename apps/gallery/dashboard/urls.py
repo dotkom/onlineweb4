@@ -3,20 +3,24 @@
 # Created by 'myth' on 10/24/15
 
 from django.conf.urls import patterns, url
-from guardian.decorators import permission_required
 
-from apps.gallery.dashboard.views import GalleryIndex, GalleryUnhandledIndex
+from apps.gallery.dashboard.views import GalleryIndex, GalleryDetail, GalleryUnhandledIndex
 
 urlpatterns = patterns(
     'apps.gallery.dashboard',
     url(
         '^$',
-        (permission_required('gallery.view_responsiveimage'))(GalleryIndex.as_view()),
+        GalleryIndex.as_view(),
         name='index'
     ),
     url(
+        '^(?P<pk>\d+)/$',
+        GalleryDetail.as_view(),
+        name='detail'
+    ),
+    url(
         '^unhandled/$',
-        (permission_required('gallery.view_unhandledimage'))(GalleryUnhandledIndex.as_view()),
-        name='unhandled_index'
+        GalleryUnhandledIndex.as_view(),
+        name='unhandled'
     )
 )
