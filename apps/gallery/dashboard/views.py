@@ -75,7 +75,7 @@ class GalleryDetail(DashboardPermissionMixin, UpdateView):
         """
 
         messages.success(self.request, u'Bildet ble oppdatert.')
-        getLogger(__name__).success('%s updated ResponsiveImage %d' % (self.request.user, self.object.id))
+        getLogger(__name__).info('%s updated ResponsiveImage %d' % (self.request.user, self.object.id))
 
         return super(GalleryDetail, self).form_valid(form)
 
