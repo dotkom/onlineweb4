@@ -22,3 +22,18 @@ class JsonHelper(json.JSONEncoder):
             return list(obj)
 
         return json.JSONEncoder.default(self, obj)
+
+
+def humanize_filesize(size, suffix='B'):
+    """
+    Converts an integer of bytes to a properly scaled human readable
+    string. Example: 12.4MB
+    :param size: The size of the object in bytes as an integer
+    :return: A string of the formatted file size
+    """
+
+    for unit in ['', 'K', 'M', 'G', 'T', 'P', 'E', 'Z']:
+        if abs(size) < 1024.0:
+            return '%.1f%s%s' % (size, unit, suffix)
+        size /= 1024.0
+    return '%.1f%s%s' % (size, '', suffix)

@@ -4,7 +4,7 @@
 
 from django.core.urlresolvers import reverse
 from django.contrib import messages
-from django.http import JsonResponse
+from django.http import HttpResponseBadRequest, HttpResponseNotAllowed
 from django.shortcuts import redirect
 from django.views.generic import DetailView, ListView, TemplateView
 
@@ -72,6 +72,18 @@ class GalleryUnhandledIndex(DashboardPermissionMixin, ListView):
     queryset = UnhandledImage.objects.all()
     context_object_name = 'images'
 
+    def post(self, request, *args, **kwargs):
+        if 'action' in request.POST and request.POST['action'] == 'delete_all':
+            if self.queryset:
+                self.queryset.delete()
+                messages.success(request, u'Alle bilder ble slettet')
+                return redirect(reverse('gallery_dashboard:unhandled'))
+            else:
+                messages.warning(request, u'Fant ingen bilder. Ingen operasjon utført.')
+                return redirect(reverse('gallery_dashboard:unhandled'))
+        else:
+            return HttpResponseBadRequest()
+
 
 class GalleryDelete(DashboardPermissionMixin, DetailView):
     """
@@ -87,13 +99,10 @@ class GalleryDelete(DashboardPermissionMixin, DetailView):
         :param request: Django Request instance
         :param args: Positional arguments
         :param kwargs: Keyword arguments
-        :return: HttpMethodNotAllowed
+        :return: 405 Method Not Allowed
         """
 
-        return JsonResponse(code=405, data={
-            'status': 405,
-            'message': u'Method not allowed'
-        })
+        return HttpResponseNotAllowed(permitted_methods=['POST'])
 
     def post(self, request, *args, **kwargs):
         img = self.get_object(queryset=self.model.objects.all())
@@ -124,7 +133,6 @@ class GalleryUnhandledDelete(GalleryDetail):
             image_id = img.id
             img.delete()
             messages.success(request, u'Ubehandlet bilde %d ble slettet.' % image_id)
-
             return redirect(reverse('gallery_dashboard:unhandled'))
         else:
             messages.error(request, u'Det oppstod en feil, klarte ikke slette bildet.')

@@ -22,10 +22,10 @@ Ubehandlede bilder
 {% block content %}
 <div class="row">
     <div class="col-md-12">
-        <a href="#" class="btn btn-danger pull-right">
+        <a href="#modal-delete-all" data-toggle="modal" class="btn btn-danger pull-right">
             <i class="fa fa-times"></i> Slett alt
         </a>
-        <p>Her finnes en oversikt over ubehandlede bilder som ikke enda er croppet og lagret.</p>
+        <p>Her finnes en oversikt over ubehandlede bilder som ikke enda er utskjært og lagret i alle størrelser.</p>
     </div>
 </div>
 <br />
@@ -40,19 +40,23 @@ Ubehandlede bilder
                     <thead>
                         <tr>
                             <th>Bilde</th>
+                            <th>Oppløsning</th>
+                            <th>Filstørrelse</th>
                             <th>Slett</th>
                         </tr>
                     </thead>
                     <tbody id="dashboard-gallery-table">
-                    {% for img in images %}
+                    {% for uh in images %}
                         <tr>
                             <td>
-                                <a href="{{ img.original.url }}">
-                                    <img src="{{ img.thumbnail.url }}">
+                                <a href="{{ uh.image.url }}">
+                                    <img src="{{ uh.thumbnail.url }}">
                                 </a>
                             </td>
+                            <td>{{ uh.resolution }}</td>
+                            <td>{{ uh.sizeof_total }}</td>
                             <td>
-                                <form action="{% url 'gallery_dashboard:unhandled_delete' img.pk %}" method="POST">
+                                <form action="{% url 'gallery_dashboard:unhandled_delete' uh.pk %}" method="POST">
                                     {% csrf_token %}
                                     <button type="submit" class="btn btn-danger pull-right">
                                         <i class="fa fa-times"></i> Slett
@@ -63,6 +67,27 @@ Ubehandlede bilder
                     {% endfor %}
                     </tbody>
                 </table>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="modal-delete-all" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h3>Bekreft sletting av alle ubehandlede bilder</h3>
+            </div>
+            <div class="modal-body">
+                <p>Er du sikker på at du vil slette alle ubehandlede bilder?</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn pull-left" data-dismiss="modal" aria-hidden="true">Lukk</button>
+                <form method="POST" action="{% url 'gallery_dashboard:unhandled' %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="delete_all">
+                    <button type="submit" class="btn btn-danger" aria-hidden="true">Slett</button>
+                </form>
             </div>
         </div>
     </div>

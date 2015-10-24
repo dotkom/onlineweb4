@@ -10,6 +10,7 @@ from django.db.models.signals import post_delete
 from django.utils.translation import ugettext_lazy as _
 
 from apps.gallery import settings as gallery_settings
+from utils.helpers import humanize_filesize
 
 
 class UnhandledImage(models.Model):
@@ -19,6 +20,18 @@ class UnhandledImage(models.Model):
     @property
     def filename(self):
         return os.path.basename(self.image.name)
+
+    @property
+    def sizeof_original(self):
+        return humanize_filesize(self.image.size)
+
+    @property
+    def sizeof_total(self):
+        return humanize_filesize(self.image.size + self.thumbnail.size)
+
+    @property
+    def resolution(self):
+        return '%sx%s' % (self.image.width, self.image.height)
 
     class Meta(object):
         """
