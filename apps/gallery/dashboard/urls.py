@@ -8,7 +8,9 @@ from apps.gallery.dashboard.views import (
     GalleryIndex,
     GalleryDetail,
     GalleryUnhandledIndex,
-    GalleryUpload
+    GalleryUpload,
+    GalleryDelete,
+    GalleryUnhandledDelete
 )
 
 urlpatterns = patterns(
@@ -29,8 +31,18 @@ urlpatterns = patterns(
         name='upload'
     ),
     url(
+        '^(?P<pk>\d+)/delete/$',
+        GalleryDelete.as_view(),
+        name='delete'
+    ),
+    url(
         '^unhandled/$',
         GalleryUnhandledIndex.as_view(),
         name='unhandled'
+    ),
+    url(
+        '^unhandled/(?P<pk>\d+)/delete/$',
+        GalleryUnhandledDelete.as_view(),
+        name='unhandled_delete'
     )
 )

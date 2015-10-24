@@ -2,7 +2,12 @@
 #
 # Created by 'myth' on 10/24/15
 
+from django.core.urlresolvers import reverse
+from django.contrib import messages
+from django.http import JsonResponse
+from django.shortcuts import redirect
 from django.views.generic import DetailView, ListView, TemplateView
+
 
 from apps.dashboard.tools import DashboardPermissionMixin
 from apps.gallery.models import UnhandledImage, ResponsiveImage
@@ -45,7 +50,7 @@ class GalleryDetail(DetailView, DashboardPermissionMixin):
     context_object_name = 'image'
 
 
-class GalleryUpload(TemplateView, DashboardPermissionMixin):
+class GalleryUpload(DashboardPermissionMixin, TemplateView):
     """
     GalleryUpload renders the dashboard upload page for the Gallery app,
     which facilitates upload, cropping and version generation of images.
@@ -55,7 +60,7 @@ class GalleryUpload(TemplateView, DashboardPermissionMixin):
     template_name = 'gallery/dashboard/upload.html'
 
 
-class GalleryUnhandledIndex(GalleryIndex):
+class GalleryUnhandledIndex(DashboardPermissionMixin, ListView):
     """
     GalleryUnhandledIndex renders the dashboard list page for the Gallery app's
     list view of images that have not yet been cropped and stored after upload.
@@ -63,6 +68,64 @@ class GalleryUnhandledIndex(GalleryIndex):
     """
 
     permission_required = 'gallery.view_unhandledimage'
-    template_name = 'gallery/dashboard/unhandled_index.html'
+    template_name = 'gallery/dashboard/unhandled.html'
     queryset = UnhandledImage.objects.all()
     context_object_name = 'images'
+
+
+class GalleryDelete(DashboardPermissionMixin, DetailView):
+    """
+    GalleryDelete facilitates removal of ResponsiveImages
+    """
+
+    permission_required = 'gallery.delete_responsiveimage'
+    model = ResponsiveImage
+
+    def get(self, request, *args, **kwargs):
+        """
+        GET request are forbidden on delete views
+        :param request: Django Request instance
+        :param args: Positional arguments
+        :param kwargs: Keyword arguments
+        :return: HttpMethodNotAllowed
+        """
+
+        return JsonResponse(code=405, data={
+            'status': 405,
+            'message': u'Method not allowed'
+        })
+
+    def post(self, request, *args, **kwargs):
+        img = self.get_object(queryset=self.model.objects.all())
+        if img:
+            image_name = img.name
+            image_id = img.id
+            img.delete()
+            messages.error(request, u'%s (%d) ble slettet.' % (image_name, image_id))
+
+            return redirect(reverse('gallery_dashboard:index'))
+        else:
+            messages.error(request, u'Det oppstod en feil, klarte ikke slette bildet.')
+
+            return redirect(reverse('gallery_dashboard:index'))
+
+
+class GalleryUnhandledDelete(GalleryDetail):
+    """
+    GalleryUnhandledDelete facilitates removal of UnhandledImages
+    """
+
+    permission_required = 'gallery.delete_unhandledimage'
+    model = UnhandledImage
+
+    def post(self, request, *args, **kwargs):
+        img = self.get_object(queryset=self.model.objects.all())
+        if img:
+            image_id = img.id
+            img.delete()
+            messages.success(request, u'Ubehandlet bilde %d ble slettet.' % image_id)
+
+            return redirect(reverse('gallery_dashboard:unhandled'))
+        else:
+            messages.error(request, u'Det oppstod en feil, klarte ikke slette bildet.')
+            return redirect(reverse('gallery_dashboard:unhandled'))
