@@ -89,7 +89,7 @@ var GalleryDashboard = (function ($, tools) {
                     var t = moment(data.results[i].timestamp)
 
                     html += '<tr><td>'
-                    html +=   '<a href="' + data.results[i].original + '">'
+                    html +=   '<a href="' + data.results[i].id + '/">'
                     html +=     '<img src="' + data.results[i].thumb + '" alt title="' + data.results[i].name + '">'
                     html += '</a></td><td>'
                     html +=   '<a href="' + data.results[i].id + '/">' + data.results[i].name + '</a>'
