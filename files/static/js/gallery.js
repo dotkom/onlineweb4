@@ -150,10 +150,10 @@ var Gallery = (function ($, tools) {
     var clearMessage = function(id) {
         setTimeout(function() {
             var message = $('#' + id);
-            message.fadeOut(1000, function() {
+            message.fadeOut(200, function() {
                 $(this).remove();
             })
-        }, 6000);
+        }, 5000);
     }
 
     var createMessage = function(message) {
@@ -182,7 +182,7 @@ var Gallery = (function ($, tools) {
     var updateUneditedFiles = function() {
         $.ajax({
             method: 'GET',
-            url: '/gallery/number_of_untreated',
+            url: '/gallery/number_of_untreated/',
             success: function(res) {
                 var res = jQuery.parseJSON(res);
                 var text = "Behandle (" + res['untreated'] + ")";
@@ -197,7 +197,7 @@ var Gallery = (function ($, tools) {
 
         $.ajax({
             method: 'GET',
-            url: '/gallery/get_all_untreated',
+            url: '/gallery/get_all_untreated/',
             success: function(res) {
                 res = jQuery.parseJSON(res);
                 updateAllUnhandledImages(res['untreated']);
@@ -233,6 +233,8 @@ var Gallery = (function ($, tools) {
         var editDescription = $('#image-edit-description')
         editPane.empty();
         imageEditPreview.empty();
+        editName.val('');
+        editDescription.val('');
     };
 
     var showEditView = function() {
@@ -335,7 +337,7 @@ var Gallery = (function ($, tools) {
 
         setCropSpin();
 
-        $.post("/gallery/crop_image", cropData, function() {
+        $.post("/gallery/crop_image/", cropData, function() {
             imageEditingSuccessful();
         }).fail(function($xhr) {
             setErrorMessage($xhr.responseJSON);
@@ -365,6 +367,10 @@ var Gallery = (function ($, tools) {
                 setInterval(function() {
                     updateUneditedFiles();
                 }, 3000);
+
+                if (window.location.href.indexOf('#manage-pane') != -1) {
+                    $('#edit-button').click()
+                }
             }
         },
         widget: {

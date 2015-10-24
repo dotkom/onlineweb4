@@ -9,9 +9,9 @@ from apps.gallery.models import ResponsiveImage
 
 class ResponsiveImageSerializer(serializers.ModelSerializer):
 
-    class Meta:
+    class Meta(object):
         model = ResponsiveImage
         fields = (
             'id', 'name', 'timestamp', 'description', 'thumb',
-            'wide', 'lg', 'md', 'sm', 'xs'
+            'original', 'wide', 'lg', 'md', 'sm', 'xs'
         )
