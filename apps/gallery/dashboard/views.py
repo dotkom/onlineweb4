@@ -11,6 +11,7 @@ from django.views.generic import DetailView, ListView, TemplateView
 
 from apps.dashboard.tools import DashboardPermissionMixin
 from apps.gallery.models import UnhandledImage, ResponsiveImage
+from utils.helpers import humanize_size
 
 
 class GalleryIndex(DashboardPermissionMixin, ListView):
@@ -32,12 +33,21 @@ class GalleryIndex(DashboardPermissionMixin, ListView):
 
         # We would like to add years to our index to enable filterbuttons
         context = super(GalleryIndex, self).get_context_data(**kwargs)
-        context['years'] = set(img.timestamp.year for img in self.queryset)
+
+        years = set()
+        total_disk_usage = 0
+
+        for img in self.queryset:
+            years.add(img.timestamp.year)
+            total_disk_usage += img.sizeof_total_raw()
+
+        context['years'] = years
+        context['disk_usage'] = humanize_size(total_disk_usage)
 
         return context
 
 
-class GalleryDetail(DetailView, DashboardPermissionMixin):
+class GalleryDetail(DashboardPermissionMixin, DetailView):
     """
     GalleryDetail renders the dashboard detail page for the Gallery app,
     which allows administrators to upload, edit and delete
@@ -76,7 +86,7 @@ class GalleryUnhandledIndex(DashboardPermissionMixin, ListView):
         if 'action' in request.POST and request.POST['action'] == 'delete_all':
             if self.queryset:
                 self.queryset.delete()
-                messages.success(request, u'Alle bilder ble slettet')
+                messages.success(request, u'Alle ubehandlede bilder ble slettet')
                 return redirect(reverse('gallery_dashboard:unhandled'))
             else:
                 messages.warning(request, u'Fant ingen bilder. Ingen operasjon utført.')

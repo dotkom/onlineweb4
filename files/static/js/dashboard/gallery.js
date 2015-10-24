@@ -2,7 +2,7 @@
  * Created by myth on 10/24/15.
  */
 
-var Gallery = (function ($, tools) {
+var GalleryDashboard = (function ($, tools) {
 
     /* Private fields */
 
@@ -82,6 +82,7 @@ var Gallery = (function ($, tools) {
          */
         draw: function (data) {
             var html = '';
+
             if (!data.results.length) html = '<tr><td colspan="4">Ingen bilder matchet søket...</td></tr>'
             else {
                 for (var i = 0; i < data.results.length; i++) {
@@ -104,4 +105,4 @@ var Gallery = (function ($, tools) {
     }
 })(jQuery, Dashboard.tools)
 
-Gallery.init()
+GalleryDashboard.init()

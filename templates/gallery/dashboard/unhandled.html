@@ -49,7 +49,7 @@ Ubehandlede bilder
                     {% for uh in images %}
                         <tr>
                             <td>
-                                <a href="{{ uh.image.url }}">
+                                <a href="{% url 'gallery_dashboard:upload' %}#manage-pane">
                                     <img src="{{ uh.thumbnail.url }}">
                                 </a>
                             </td>

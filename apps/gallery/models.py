@@ -10,7 +10,7 @@ from django.db.models.signals import post_delete
 from django.utils.translation import ugettext_lazy as _
 
 from apps.gallery import settings as gallery_settings
-from utils.helpers import humanize_filesize
+from utils.helpers import humanize_size
 
 
 class UnhandledImage(models.Model):
@@ -23,11 +23,11 @@ class UnhandledImage(models.Model):
 
     @property
     def sizeof_original(self):
-        return humanize_filesize(self.image.size)
+        return humanize_size(self.image.size)
 
     @property
     def sizeof_total(self):
-        return humanize_filesize(self.image.size + self.thumbnail.size)
+        return humanize_size(self.image.size + self.thumbnail.size)
 
     @property
     def resolution(self):
@@ -81,6 +81,21 @@ class ResponsiveImage(models.Model):
 
         return '%s%s' % (settings.MEDIA_URL, self.image_lg)
 
+    def sizeof_total_raw(self):
+        """
+        Sums up the total filesize of all the different image versions.
+        """
+
+        total = self.thumbnail.size
+        total += self.image_xs.size
+        total += self.image_sm.size
+        total += self.image_md.size
+        total += self.image_lg.size
+        total += self.image_wide.size
+        total += self.image_original.size
+
+        return total
+
     @property
     def original(self):
         return '%s%s' % (settings.MEDIA_URL, self.image_original)
@@ -108,6 +123,16 @@ class ResponsiveImage(models.Model):
     @property
     def thumb(self):
         return '%s%s' % (settings.MEDIA_URL, self.thumbnail)
+
+    @property
+    def sizeof_total(self):
+        """
+        Returns a human readable string representation of the total disk usage.
+        """
+
+        total = self.sizeof_total_raw()
+
+        return humanize_size(total)
 
     class Meta(object):
         """

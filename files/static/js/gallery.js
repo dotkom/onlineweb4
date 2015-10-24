@@ -150,10 +150,10 @@ var Gallery = (function ($, tools) {
     var clearMessage = function(id) {
         setTimeout(function() {
             var message = $('#' + id);
-            message.fadeOut(1000, function() {
+            message.fadeOut(200, function() {
                 $(this).remove();
             })
-        }, 6000);
+        }, 5000);
     }
 
     var createMessage = function(message) {
@@ -182,7 +182,7 @@ var Gallery = (function ($, tools) {
     var updateUneditedFiles = function() {
         $.ajax({
             method: 'GET',
-            url: '/gallery/number_of_untreated',
+            url: '/gallery/number_of_untreated/',
             success: function(res) {
                 var res = jQuery.parseJSON(res);
                 var text = "Behandle (" + res['untreated'] + ")";
@@ -365,6 +365,10 @@ var Gallery = (function ($, tools) {
                 setInterval(function() {
                     updateUneditedFiles();
                 }, 3000);
+
+                if (window.location.href.indexOf('#manage-pane') != -1) {
+                    $('#edit-button').click()
+                }
             }
         },
         widget: {
