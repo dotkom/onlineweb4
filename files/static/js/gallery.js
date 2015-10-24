@@ -197,7 +197,7 @@ var Gallery = (function ($, tools) {
 
         $.ajax({
             method: 'GET',
-            url: '/gallery/get_all_untreated',
+            url: '/gallery/get_all_untreated/',
             success: function(res) {
                 res = jQuery.parseJSON(res);
                 updateAllUnhandledImages(res['untreated']);
@@ -233,6 +233,8 @@ var Gallery = (function ($, tools) {
         var editDescription = $('#image-edit-description')
         editPane.empty();
         imageEditPreview.empty();
+        editName.val('');
+        editDescription.val('');
     };
 
     var showEditView = function() {
@@ -335,7 +337,7 @@ var Gallery = (function ($, tools) {
 
         setCropSpin();
 
-        $.post("/gallery/crop_image", cropData, function() {
+        $.post("/gallery/crop_image/", cropData, function() {
             imageEditingSuccessful();
         }).fail(function($xhr) {
             setErrorMessage($xhr.responseJSON);

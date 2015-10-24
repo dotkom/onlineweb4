@@ -68,12 +68,12 @@ Bilder
                     {% for img in images %}
                         <tr>
                             <td>
-                                <a href="{{ img.original }}">
-                                    <img src="{{ img.thumb }}" alt title="{{ img.name }}">
+                                <a href="{% url 'gallery_dashboard:detail' img.pk %}">
+                                    <img src="{{ img.thumb }}" alt title="{{ img.name|striptags }}">
                                 </a>
                             </td>
-                            <td><a href="{% url 'gallery_dashboard:detail' img.pk %}">{{ img.name }}</a></td>
-                            <td>{{ img.description }}</td>
+                            <td><a href="{% url 'gallery_dashboard:detail' img.pk %}">{{ img.name|striptags }}</a></td>
+                            <td>{{ img.description|striptags }}</td>
                             <td>{{ img.timestamp|date:'Y-m-d H:i:s' }}</td>
                         </tr>
                     {% endfor %}

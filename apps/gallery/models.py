@@ -63,7 +63,7 @@ class ResponsiveImage(models.Model):
     name = models.CharField(u'Navn', max_length=200, null=False)
     timestamp = models.DateTimeField(auto_now_add=True, editable=False, null=False, blank=False)
     description = models.TextField(u'Beskrivelse', blank=True, default='', max_length=2048)
-    image_original = models.FileField(u'Originalbilde', upload_to=gallery_settings.RESPONSIVE_IMAGES_PATH)
+    image_original = models.ImageField(u'Originalbilde', upload_to=gallery_settings.RESPONSIVE_IMAGES_PATH)
     image_wide = models.ImageField(u'Bredformat', upload_to=gallery_settings.RESPONSIVE_IMAGES_WIDE_PATH)
     image_lg = models.ImageField(u'LG Bilde', upload_to=gallery_settings.RESPONSIVE_IMAGES_PATH)
     image_md = models.ImageField(u'MD Bilde', upload_to=gallery_settings.RESPONSIVE_IMAGES_PATH)
