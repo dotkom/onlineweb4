@@ -1,4 +1,7 @@
 # -*- encoding: utf-8 -*-
+
+from logging import getLogger
+
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
 
@@ -34,9 +37,10 @@ def article_create(request):
             instance.changed_by = request.user
             instance.created_by = request.user
             instance.save()
-            for tag in instance.tags:
-                ArticleTag(article=instance, tag=tag).save()
-            print(instance.tags)
+
+            for tag in request.POST.getlist('tags'):
+                ArticleTag.objects.create(article=instance, tag=tag)
+
             messages.success(request, u'Artikkelen ble opprettet.')
             return redirect(article_detail, article_id=instance.pk)
         else:
@@ -71,14 +75,36 @@ def article_edit(request, article_id):
     form = ArticleForm(instance=article)
 
     if request.method == 'POST':
+        if 'action' in request.POST and request.POST['action'] == 'delete':
+            instance = get_object_or_404(Article, pk=article_id)
+            article_heading = instance.heading
+            instance.delete()
+            messages.success(request, u'%s ble slettet.' % article_heading)
+            getLogger(__name__).info('%s deleted article %d (%s)' % (request.user, article_id, article_heading))
+
+            return redirect(article_index)
+
         form = ArticleForm(request.POST, instance=article)
         if form.is_valid():
             instance = form.save(commit=False)
             instance.changed_by = request.user
             instance.save()
-            for tag in instance.tags:
-                ArticleTag(article=instance, tag=tag).save()
+
+            # Prepare for Tags M2M handling
+            form_tags = map(int, request.POST.getlist('tags'))
+            existing_tags = ArticleTag.objects.filter(article=instance)
+
+            # Clear previous tags and update with tags from form if we have a change
+            if set(t.tag.pk for t in existing_tags) & set(form_tags) != form_tags:
+                getLogger(__name__).debug('Article tags state changed, new set is %s' % repr(form_tags))
+                ArticleTag.objects.filter(article=instance).delete()
+                for tag in Tag.objects.filter(pk__in=map(int, request.POST.getlist('tags'))):
+                    ArticleTag(article=instance, tag=tag).save()
+
             messages.success(request, u'Artikkelen ble lagret.')
+
+            getLogger(__name__).info('%s edited article %d (%s)' % (request.user, instance.id, instance.heading))
+
             return redirect(article_index)
         else:
             messages.error(request, u'Noen av de påkrevde feltene inneholder feil.')

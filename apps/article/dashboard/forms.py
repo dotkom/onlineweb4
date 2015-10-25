@@ -1,7 +1,7 @@
 # -*- encoding: utf-8 -*-
 from django import forms
 
-from apps.article.models import Tag, Article
+from apps.article.models import Tag, Article, ArticleTag
 from apps.dashboard.widgets import DatetimePickerInput, multiple_widget_generator
 from apps.gallery.widgets import SingleImageInput
 
