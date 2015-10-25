@@ -59,6 +59,10 @@ Artikler
                 {% endif %}
             </div>
             {% endfor %}
+            <button class="btn btn-success" type="submit">
+                <i class="fa fa-save fa-lg"></i> Lagre
+            </button>
+            </form>
             <br />
             <form action="{% url 'dashboard_tag_create' %}" method="POST" id="dashboard-article-inline-tag-form">
                 {% csrf_token %}
@@ -87,10 +91,6 @@ Artikler
                     </div>
                 </div>
             </form>
-            <button class="btn btn-success" type="submit">
-                <i class="fa fa-save fa-lg"></i> Lagre
-            </button>
-        </form>
         {% include 'gallery/formwidget.html' %}
     </div>
 </div>

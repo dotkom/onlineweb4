@@ -61,7 +61,6 @@ var Article = (function ($, tools) {
                 e.preventDefault()
                 $.ajax({
                     method: 'POST',
-                    dataType: 'json',
                     url: '/dashboard/article/tag/new/',
                     data: tagform.serialize(),
                     success: function (data) {

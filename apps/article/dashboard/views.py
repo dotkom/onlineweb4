@@ -140,6 +140,9 @@ def tag_create(request):
         form = TagForm(request.POST)
         if form.is_valid():
             instance = form.save()
+
+            getLogger(__name__).info('%s created tag %s' % (request.user, instance.name))
+
             if request.is_ajax():
                 return JsonResponse(data={
                     'id': instance.id,
@@ -168,7 +171,10 @@ def tag_edit(request, tag_id):
     if request.method == 'POST':
         form = TagForm(request.POST)
         if form.is_valid():
-            form.save()
+            instance = form.save()
+
+            getLogger(__name__).info('%s updated tag %s' % (request.user, instance.name))
+
             messages.success(request, u'Tag ble opprettet.')
             return redirect(tag_index)
         else:
