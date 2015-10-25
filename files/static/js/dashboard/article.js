@@ -35,6 +35,7 @@ var Article = (function ($, tools) {
             searchButton = $('#dashboard-article-search-button')
             results = $('#dashboard-article-table')
             years = $('.dashboard-article-year')
+            tagform = $('#dashboard-article-inline-tag-form')
 
             // Bind click listener for search button
             searchButton.on('click', function (e) {
@@ -53,6 +54,26 @@ var Article = (function ($, tools) {
             years.on('click', function (e) {
                 e.preventDefault()
                 Article.filter($(this).text())
+            })
+
+            // Intercept inline tag form posting and update tags list
+            $('#article-inline-tag-submit').on('click', function (e) {
+                e.preventDefault()
+                $.ajax({
+                    method: 'POST',
+                    dataType: 'json',
+                    url: '/dashboard/article/tag/new/',
+                    data: tagform.serialize(),
+                    success: function (data) {
+                        $('#article-inline-tag-error').hide()
+                        $('#id_tags').append('<option value="' + data.id + '">' + data.name + '</option>')
+                        $('#article-tag-name').val('')
+                        $('#article-tag-slug').val('')
+                    },
+                    error: function (xhr, statusText, thrownError) {
+                        $('#article-inline-tag-error').text('Klarte ikke legge til ny tag: ' + statusText).show()
+                    }
+                })
             })
         },
 

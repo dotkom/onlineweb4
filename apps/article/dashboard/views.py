@@ -2,6 +2,7 @@
 
 from logging import getLogger
 
+from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
 
@@ -72,7 +73,10 @@ def article_edit(request, article_id):
 
     article = get_object_or_404(Article, pk=article_id)
 
-    form = ArticleForm(instance=article)
+    form = ArticleForm(
+        instance=article,
+        initial={'tags': [t.tag.pk for t in ArticleTag.objects.filter(article=article)]}
+    )
 
     if request.method == 'POST':
         if 'action' in request.POST and request.POST['action'] == 'delete':
@@ -135,7 +139,13 @@ def tag_create(request):
     if request.method == 'POST':
         form = TagForm(request.POST)
         if form.is_valid():
-            form.save()
+            instance = form.save()
+            if request.is_ajax():
+                return JsonResponse(data={
+                    'id': instance.id,
+                    'name': instance.name,
+                    'slug': instance.slug
+                })
             messages.success(request, u'Tag ble opprettet.')
             return redirect(tag_index)
         else:
