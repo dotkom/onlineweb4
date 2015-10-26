@@ -43,13 +43,13 @@ class AttendeeResource(ModelResource):
                 'Kun oppdatering av %s er tillatt.' % ', '.join(self._meta.allowed_update_fields)
             )
 
-        logging.getLogger(__name__).debug('Attendee created: %s' % repr(original_bundle))
+        logging.getLogger(__name__).debug('Attendee created: %s' % self.user)
 
         return super(AttendeeResource, self).update_in_place(request, original_bundle, new_data)
 
 
 class CompanyResource(ModelResource):
-    
+
     class Meta(object):
         queryset = Company.objects.all()
         resource_name = 'company'
@@ -92,25 +92,25 @@ class EventResource(ModelResource):
 
     # Making multiple images for the events
     def dehydrate(self, bundle):
-        
+
         # Setting sluyg-field
         bundle.data['slug'] = slugify(bundle.data['title'])
-        
+
         # If image is set
         if bundle.data['image']:
             # Parse to FileObject used by Filebrowser
             temp_image = FileObject(bundle.data['image'])
-            
+
             # Itterate the different versions (by key)
             for ver in VERSIONS.keys():
                 # Check if the key start with article_ (if it does, we want to crop to that size)
                 if ver.startswith('events_'):
                     # Adding the new image to the object
                     bundle.data['image_' + ver] = temp_image.version_generate(ver).url
-            
+
             # Unset the image-field
             del(bundle.data['image'])
-        
+
         # Do the same thing for the company image
         if bundle.data['company_event']:
             for company in bundle.data['company_event']:
@@ -120,9 +120,9 @@ class EventResource(ModelResource):
                         company.data['companies'].data['old_image_' + ver] = temp_image.version_generate(ver).url
                 del(company.data['companies'].data['old_image'])
 
-        # Returning washed object 
+        # Returning washed object
         return bundle
-        
+
 
     class Meta(object):
         queryset = Event.objects.all()
@@ -130,7 +130,7 @@ class EventResource(ModelResource):
         allowed_methods = ['get']
         authorization = Authorization()
         authentication = RfidAuthentication()
-        
+
         ordering = ['event_start']
         filtering = {
             'event_end': ['gte'],
