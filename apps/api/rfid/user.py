@@ -35,6 +35,6 @@ class UserResource(ModelResource):
                 'Kun oppdatering av %s er tillatt.' % ', '.join(self._meta.allowed_update_fields)
             )
 
-        logging.getLogger(__name__).debug('User patched: %s' % repr(original_bundle))
+        # logging.getLogger(__name__).debug('User patched: %s' % unicode(original_bundle))
 
         return super(UserResource, self).update_in_place(request, original_bundle, new_data)
