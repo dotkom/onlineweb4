@@ -9,7 +9,6 @@ var Event = (function ($) {
     var performSelfCheck = function () {
         var errors = false
         if ($ == undefined) console.error('jQuery missing!')
-        if (Utils == undefined) console.error('Utils.js module is missing!')
         if (errors) return false
         return true
     }
@@ -61,7 +60,7 @@ return {
             Event.showFlashMessage(message+error, 'alert-danger');
         }
 
-        // Make an AJAX request using the Utils module
+        // Make an AJAX request
         Event.ajaxRequest({'method': 'POST', 'url': url, 'data': data, success: success, error: error});
     },
 
