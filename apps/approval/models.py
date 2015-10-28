@@ -1,11 +1,14 @@
 #-*- coding: utf-8 -*-
 
+from django.conf import settings
 from django.db import models
 from django.utils import timezone
 from django.utils.translation import ugettext as _
 
-from apps.authentication.models import OnlineUser as User, FIELD_OF_STUDY_CHOICES
+from apps.authentication.models import FIELD_OF_STUDY_CHOICES
 
+
+User = settings.AUTH_USER_MODEL
 
 class Approval(models.Model):
     applicant = models.ForeignKey(User, verbose_name=_(u"søker"), related_name="applicant", editable=False)
