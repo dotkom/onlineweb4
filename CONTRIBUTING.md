@@ -31,4 +31,4 @@ successful for you pull request. We will not merge any branches that breaks the 
 Other notices
 =============
 
-Note that dotKom and Online reserves the right to reject any issue or pull request without having to give a explanation.
+Note that dotKom and Online reserves the right to reject any issue or pull request without having to give an explanation.
