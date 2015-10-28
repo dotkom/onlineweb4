@@ -4,6 +4,7 @@ import logging
 from copy import copy
 
 from django.template.defaultfilters import slugify
+from unidecode import unidecode
 from django.core.exceptions import PermissionDenied
 from tastypie import fields
 from tastypie.authorization import Authorization
@@ -94,7 +95,7 @@ class EventResource(ModelResource):
     def dehydrate(self, bundle):
 
         # Setting sluyg-field
-        bundle.data['slug'] = slugify(bundle.data['title'])
+        bundle.data['slug'] = unidecode(bundle.data['title'])
 
         # If image is set
         if bundle.data['image']:
