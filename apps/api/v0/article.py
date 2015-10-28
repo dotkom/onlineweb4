@@ -28,7 +28,7 @@ class ArticleResource(ModelResource):
     def dehydrate(self, bundle):
         
         # Setting slug-field
-        bundle.data['slug'] = unidecode(slugify(bundle.data['heading']))
+        bundle.data['slug'] = slugify(unidecode(bundle.data['heading']))
             
         # Returning washed object
         return bundle
@@ -108,5 +108,5 @@ class ArticleLatestResource(ModelResource):
         return data
 
     def dehydrate(self, bundle):
-        bundle.data['slug'] = unidecode(slugify(bundle.data['heading']))
+        bundle.data['slug'] = slugify(unidecode(bundle.data['heading']))
         return bundle
