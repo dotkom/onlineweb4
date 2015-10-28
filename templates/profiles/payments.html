@@ -14,7 +14,11 @@
                     <div id="collapse-{{ heading|slugify }}" class="panel-collapse collapse {% if not is_collapsed %}in{% endif %}">
                         <div class="panel-body">
                             {% if payment_list|length == 0 %}
-                                Du har ikke noen {{ heading }}e betalinger.
+                                {% if heading == 'betalt' %}
+                                    Du har ikke betalt noe enda.
+                                {% else %}
+                                    Du har ikke noe ubetalt
+                                {% endif %}
                             {% endif %}
                             {% for payment_event in payment_list %}
                                 <div class="row row-space">
