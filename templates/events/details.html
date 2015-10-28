@@ -189,7 +189,24 @@
                                     <p class="status-text">{{ user_status.message }}</p>
                                 {% endif %}
                             {% else %}
-                                <p class="status-text">{{ user_status.message }}</p>
+                                <p class="status-text">{{ user_status.message }}
+									<br><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">Info</button></p>
+									<div id="myModal" class="modal fade" role="dialog" style="color:#666;">
+										<div class="modal-dialog">
+											<div class="modal-content">
+												<div class="modal-header">
+													<button type="button" class="close" data-dismiss="modal">&times;</button>
+													<h4 class="modal-title">Info om medlemsstatus</h4>
+												</div>
+												<div class="modal-body">
+													<p style="color:#666;">Du kan oppdatere din medlemsstatus på <a href='https://online.ntnu.no/profile/membership/'>online.ntnu.no/profile/membership</a></p>
+												</div>
+												<div class="modal-footer">
+													<button type="button" class="btn btn-default" data-dismiss="modal">Lukk</button>
+												</div>
+											</div>
+										</div>
+									</div>
                             {% endif %}
                         {% endif %}
                     {% endif %}
