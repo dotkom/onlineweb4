@@ -32,7 +32,7 @@ def index(request):
 
     # Find all marks and do additional fixes
     marks_collection = []
-    marks = list(Mark.objects.all())
+    marks = Mark.objects.all().order_by('-added_date')
     for mark in marks:
         marks_temp = mark
         marks_temp.users_num = len(mark.given_to.all())
