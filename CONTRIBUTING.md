@@ -24,7 +24,7 @@ If you do changes to the Python code base, please follow the PEP8 standard as de
 Make sure all tests are successful
 ----------------------------------
 
-We use TeamCity to run the test suit and build the project for every new pull request. Make sure all tests are
+We use TeamCity to run the test suite and build the project for every new pull request. Make sure all tests are
 successful for you pull request. We will not merge any branches that breaks the build. You can see the tests 
 [here](https://online.ntnu.no/tc/).
 
