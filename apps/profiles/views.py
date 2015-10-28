@@ -29,6 +29,7 @@ from apps.marks.models import Mark, Suspension
 from apps.profiles.forms import (MailSettingsForm, PrivacyForm,
                                 ProfileForm, MembershipSettingsForm, PositionForm)
 from apps.profiles.models import Privacy
+from apps.payment.models import PaymentRelation, PaymentDelay
 from utils.shortcuts import render_json
 
 """
@@ -89,6 +90,10 @@ def _create_profile_context(request):
             (_(u"aktive søknader"), MembershipApproval.objects.filter(applicant=request.user, processed=False), False),
             (_(u"avslåtte søknader"), MembershipApproval.objects.filter(applicant=request.user, processed=True, approved=False), True),
             (_(u"godkjente søknader"), MembershipApproval.objects.filter(applicant=request.user, processed=True), True),
+        ],
+        'payments': [
+            (_(u'ubetalt'), PaymentDelay.objects.all().filter(user=request.user, active=True), False),
+            (_(u'betalt'), PaymentRelation.objects.all().filter(user=request.user), True),
         ],
     }
 

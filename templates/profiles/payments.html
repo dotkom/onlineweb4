@@ -1,70 +1,38 @@
 <div class="row">
     <div class="col-md-12">
-        <h3>Godkjenning av prikkeregler</h3>
-    </div>
-</div>
-<div class="row-space"></div>
-<hr>
-<div class="row">
-    <div class="col-md-12">
-        <h3>Mine prikker</h3>
+        <h3>Betalinger</h3>
     </div>
 </div>
 <div class="row">
     <div class="col-md-12">
-        <div class="panel-group" id="marksaccordion">
-            {% for heading, mark_list, is_collapsed in marks %}
+        <div class="panel-group">
+            {% for heading, payment_list, is_collapsed in payments %}
                 <div class="panel panel-default">
-                    <div class="panel-heading accordion-toggle" data-toggle="collapse" data-parent="#marksaccordion" href="#collapse-{{ heading|slugify }}">
+                    <div class="panel-heading accordion-toggle" data-toggle="collapse" href="#collapse-{{ heading|slugify }}">
                         <h5>{{ heading|capfirst }}</h5>
                     </div>
                     <div id="collapse-{{ heading|slugify }}" class="panel-collapse collapse {% if not is_collapsed %}in{% endif %}">
                         <div class="panel-body">
-                            {% if mark_list|length == 0 %}
-                                Du har ingen {{ heading }}.
+                            {% if payment_list|length == 0 %}
+                                Du har ikke noen {{ heading }}e betalinger.
                             {% endif %}
-                            {% for mark_user in mark_list %}
+                            {% for payment_event in payment_list %}
                                 <div class="row row-space">
                                     <div class="col-md-12">
-                                        <div class="mark">
-                                            <div class="markheader">
-                                                {{ mark_user.mark.title }}
-                                            </div>
-                                            <div class="markbody">
-                                                <div class="inline">
-                                                    <div class="row">
-                                                        <div class="col-md-2"><b>Kategori:</b></div>
-                                                        <div class="col-md-10">
-                                                            {{ mark_user.mark.get_category_display }}
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="inline">
-                                                    <div class="row">
-                                                        <div class="col-md-2"><b>Beskrivelse:</b></div>
-                                                        <div class="col-md-10">
-                                                            {{ mark_user.mark.description }}
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="inline">
-                                                    <div class="row">
-                                                        <div class="col-md-2"><b>Utdelt:</b></div>
-                                                        <div class="col-md-10">
-                                                            {{ mark_user.mark.added_date }}
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="inline">
-                                                    <div class="row">
-                                                        <div class="col-md-2"><b>Utløpsdato:</b></div>
-                                                        <div class="col-md-10">
-                                                            {{ mark_user.expiration_date }}
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
+                                        <h4><a href="{{ payment_event.payment.content_object.event.get_absolute_url }}">{{ payment_event.payment.description }} </a>
+                                        {% for price in payment_event.payment.prices %}
+                                            <span class="pull-right">{{ price }} Kr.</span></h4>
+                                        {% endfor %}
+                                        {% if heading == 'ubetalt' %}
+                                            <p>du har ikke beatalt, frist: {{ payment_event.valid_to }}</p>
+                                        {% elif user in payment_event.payment.payment_delay_users and payment_event.deadline > 0 %}
+                                            <p>Du har ikke betalt, frist: {{ payment_event.deadline }}</p>
+                                        {% else %}
+                                            <p>Du betalte den {{ payment_event.datetime }}</p>
+                                            {% if payment_event.refunded %}
+                                                <p>Betalingen har blitt refundert</p>
+                                            {% endif %}
+                                        {% endif %}
                                     </div>
                                 </div>
                             {% endfor %}
