@@ -69,7 +69,7 @@ class EventResource(ModelResource):
     def dehydrate(self, bundle):
         
         # Setting sluyg-field
-        bundle.data['slug'] = unidecode(bundle.data['title'])
+        bundle.data['slug'] = unidecode(slugify(bundle.data['title']))
         
         # If image is set
         if bundle.data['image']:

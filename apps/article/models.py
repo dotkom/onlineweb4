@@ -59,7 +59,7 @@ class Article(models.Model):
 
     @property
     def slug(self):
-        return unidecode(self.heading)
+        return unidecode(slugify(self.heading))
 
     @property
     def tags(self):
