@@ -382,7 +382,7 @@
         var selected_extra = "{{ attendee.extras }}";
         var all_extras = [{% for e in attendance_event.extras.all %}"{{e}}", {%endfor%}];
     </script>
-    <script type="text/javascript" src="{{ STATIC_URL }}js/dashboard/dashboard.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/Utils.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}js/events.js"></script>
     {% endcompress %}
 {% endblock %}
