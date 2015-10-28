@@ -43,7 +43,7 @@ Webshop
             <tbody>
             {% for category in categories %}
                 <tr>
-                    <td><a href="{% url 'dashboard_webshop_category' slug=category.slug %}">{{ category }}</a></td>
+                    <td><a href="{% url 'dashboard-webshop:category' slug=category.slug %}">{{ category }}</a></td>
                     <td>{{ category.products.count }}</td>
                 </tr>
             {% endfor %}

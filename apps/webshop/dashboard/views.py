@@ -44,7 +44,7 @@ class CategoryCreate(DashboardPermissionMixin, CreateView):
         return None
 
     def get_success_url(self):
-        return reverse('dashboard_webshop_categories')
+        return reverse('dashboard-webshop:categories')
 
 class CategoryUpdate(DashboardPermissionMixin, UpdateView):
     model = Category
@@ -54,7 +54,7 @@ class CategoryUpdate(DashboardPermissionMixin, UpdateView):
     permission_required = 'webshop.change_product'
 
     def get_success_url(self):
-        return reverse('dashboard_webshop_category', kwargs={'slug': self.object.slug})
+        return reverse('dashboard-webshop:category', kwargs={'slug': self.object.slug})
 
 class CategoryDelete(DashboardPermissionMixin, DeleteView):
     model = Category
@@ -62,7 +62,7 @@ class CategoryDelete(DashboardPermissionMixin, DeleteView):
     permission_required = 'webshop.delete_category'
 
     def get_success_url(self):
-        return reverse('dashboard_webshop_categories')
+        return reverse('dashboard-webshop:categories')
 
 class ProductView(DashboardPermissionMixin, DetailView):
     model = Product
@@ -92,7 +92,7 @@ class ProductCreate(DashboardPermissionMixin, CreateView):
         return None
 
     def get_success_url(self):
-        return reverse('dashboard_webshop_category', kwargs={'slug': self.kwargs.get('category_slug')})
+        return reverse('dashboard-webshop:category', kwargs={'slug': self.kwargs.get('category_slug')})
 
 class ProductUpdate(DashboardPermissionMixin, UpdateView):
     model = Product
@@ -107,7 +107,7 @@ class ProductUpdate(DashboardPermissionMixin, UpdateView):
         return context
 
     def get_success_url(self):
-        return reverse('dashboard_webshop_product', kwargs={'slug': self.object.slug})
+        return reverse('dashboard-webshop:product', kwargs={'slug': self.object.slug})
 
 class ProductDelete(DashboardPermissionMixin, DeleteView):
     model = Product
@@ -115,4 +115,4 @@ class ProductDelete(DashboardPermissionMixin, DeleteView):
     permission_required = 'webshop.delete_product'
 
     def get_success_url(self):
-        return reverse('dashboard_webshop_category', kwargs={'slug': self.object.category.slug})
+        return reverse('dashboard-webshop:category', kwargs={'slug': self.object.category.slug})

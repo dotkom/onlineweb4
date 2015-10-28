@@ -110,11 +110,6 @@ if 'apps.inventory' in settings.INSTALLED_APPS:
         url(r'^dashboard/inventory/',          include('apps.inventory.dashboard.urls')),
     )
 
-if 'apps.webshop' in settings.INSTALLED_APPS:
-    urlpatterns += patterns('',
-        url(r'^dashboard/webshop/',          include('apps.webshop.dashboard.urls')),
-    )
-
 if 'apps.offline' in settings.INSTALLED_APPS:
     urlpatterns += patterns('',
         url(r'^offline/',           include('apps.offline.urls')),
@@ -175,6 +170,12 @@ if 'apps.sso' in settings.INSTALLED_APPS:
         url(r'^dashboard/auth/sso/', include('apps.sso.dashboard.urls', namespace='dashboard', app_name='sso')),
     )
 
+if 'apps.webshop' in settings.INSTALLED_APPS:
+    urlpatterns += patterns('',
+        url(r'^webshop/',           include('apps.webshop.urls')),
+        url(r'^dashboard/webshop/', include('apps.webshop.dashboard.urls', namespace='dashboard-webshop', app_name='webshop')),
+    )
+
 # feedme
 if 'feedme' in settings.INSTALLED_APPS:
     urlpatterns += patterns('', url(r'^feedme/', include('feedme.urls', namespace='feedme')))
@@ -182,11 +183,6 @@ if 'feedme' in settings.INSTALLED_APPS:
 if 'apps.payment' in settings.INSTALLED_APPS:
     urlpatterns += patterns('',
         url(r'^payment/',           include('apps.payment.urls')),
-    )
-
-if 'apps.webshop' in settings.INSTALLED_APPS:
-    urlpatterns += patterns('',
-        url(r'^webshop/',           include('apps.webshop.urls')),
     )
 
 # redwine

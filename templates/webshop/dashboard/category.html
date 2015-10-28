@@ -23,12 +23,12 @@ Webshop
 {% endblock %}
 
 {% block breadcrumbs %}
-    <li><a href="{% url 'dashboard_webshop' %}">Webshop</a></li>
+    <li><a href="{% url 'dashboard-webshop:index' %}">Webshop</a></li>
     <li>{{ category }}</li>
 {% endblock %}
 
 {% block content %}
-<a href="{% url 'dashboard_webshop_product_new' category_slug=category.slug %}" class="btn btn-primary"><i class="fa fa-plus"></i> Nytt produkt</a>
+<a href="{% url 'dashboard-webshop:product_new' category_slug=category.slug %}" class="btn btn-primary"><i class="fa fa-plus"></i> Nytt produkt</a>
 <div class="panel panel-default">
     <div class="panel-heading">
         <h3 class="panel-title"></h3>
@@ -46,7 +46,7 @@ Webshop
             <tbody>
             {% for product in category.products.all %}
                 <tr>
-                    <td><a href="{% url 'dashboard_webshop_product' product.slug %}">{{ product }}</a></td>
+                    <td><a href="{% url 'dashboard-webshop:product' product.slug %}">{{ product }}</a></td>
                     <td>{{ product.short }}</td>
                     <td>{{ product.stock }}</td>
                 </tr>
