@@ -1,5 +1,6 @@
 from copy import copy
 from django.template.defaultfilters import slugify
+from unidecode import unidecode
 from tastypie import fields
 from tastypie.resources import ModelResource
 from tastypie.authorization import Authorization
@@ -67,8 +68,8 @@ class EventResource(ModelResource):
     # Making multiple images for the events
     def dehydrate(self, bundle):
         
-        # Setting sluyg-field
-        bundle.data['slug'] = slugify(bundle.data['title'])
+        # Setting slug-field
+        bundle.data['slug'] = slugify(unidecode(bundle.data['title']))
         
         # If image is set
         if bundle.data['image']:

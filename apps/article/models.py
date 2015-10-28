@@ -6,6 +6,7 @@ from django.conf import settings
 from django.db import models
 from django.db.models import permalink, SET_NULL
 from django.template.defaultfilters import slugify
+from unidecode import unidecode
 from django.utils.translation import ugettext as _
 
 
@@ -58,7 +59,7 @@ class Article(models.Model):
 
     @property
     def slug(self):
-        return slugify(self.heading)
+        return slugify(unidecode(self.heading))
 
     @property
     def tags(self):
