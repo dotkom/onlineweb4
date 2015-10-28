@@ -727,6 +727,17 @@ class Attendee(models.Model):
     def __unicode__(self):
         return self.user.get_full_name()
 
+    def delete(self):
+        #Importing here to prevent circular dependencies
+        from apps.payment.models import PaymentDelay
+        try:
+            PaymentDelay.objects.filter(user=self.user, payment=self.event.payment).delete()
+        except PaymentDelay.DoesNotExist:
+            #Do nothing
+            False
+
+        super(Attendee, self).delete()
+
     class Meta:
         ordering = ['timestamp']
         unique_together = (('event', 'user'),)
