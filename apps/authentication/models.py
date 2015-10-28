@@ -172,6 +172,11 @@ class OnlineUser(AbstractUser):
     def in_group(self, group_name):
         return reduce(lambda x, y: x or y.name == group_name, self.groups.all(), False)
 
+    def member(self):
+        if not self.is_member:
+            return None
+        return AllowedUsername.objects.get(username=self.ntnu_username.lower())
+
     @property
     def year(self):
         today = timezone.now().date()

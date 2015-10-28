@@ -130,8 +130,8 @@ class UserUpdateForm(forms.ModelForm):
         fields = (
             'username', 'nickname', 'first_name', 'last_name',
             'address', 'zip_code', 'ntnu_username', 'online_mail',
-            'phone_number', 'rfid', 'started_date', 'website', 'bio', 'allergies',
-            'compiled', 'mark_rules', 'infomail', 'jobmail'
+            'phone_number', 'rfid', 'started_date', 'website', 'github', 'linkedin',
+            'bio', 'allergies', 'compiled', 'mark_rules', 'infomail', 'jobmail',
         )
 
 

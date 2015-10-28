@@ -23,8 +23,8 @@ Brukerprofiler
         <table class="table table-striped table-condensed tablesorter" id="membership_list">
             <thead>
             <tr>
-                <th>NTNU-brukernavn</th>
                 <th>Navn</th>
+                <th>NTNU-brukernavn</th>
                 <th>Ble medlem</th>
                 <th>Medlemskap utløper</th>
                 <th>Notat</th>
@@ -34,22 +34,21 @@ Brukerprofiler
             <tbody>
             {% for user in object_list %}
                 <tr>
-                    <td>{{ user.ntnu_username }}</td>
-                    <td><a href="{% url 'dashboard_user_detail' user.id %}/">{{ user.get_full_name }}</a></td>
-                    <td>{{ member.registered|date:'Y-m-d' }}</td>
-                    <td>{{ member.expiration_date|date:'Y-m-d' }}</td>
-                    <td>{{ member.note }}</td>
-                    <td>{% if member.is_active %}Ja{% else %}Nei{% endif %}</td>
-                </tr>
-            {% endfor %}
-            {% for member in members %}{# backwards compatability for medlemsregister for the time being #}
-                <tr>
-                    <td>{{ member }}</td>
-                    <td>{{ member.full_name }}</td>
-                    <td>{{ member.registered|date:'Y-m-d' }}</td>
-                    <td>{{ member.expiration_date|date:'Y-m-d' }}</td>
-                    <td>{{ member.note }}</td>
-                    <td>{% if member.is_active %}Ja{% else %}Nei{% endif %}</td>
+                    <td><a href="{% url 'dashboard_user_detail' user.id %}">{{ user.get_full_name }}</a></td>
+                    <td>{% if user.ntnu_username %}{{ user.ntnu_username }}{% else %}-{% endif %}</td>
+                    {% if user.member %}
+                    <td>{{ user.member.registered|date:'Y-m-d' }}</td>
+                    <td>{% if user.member.is_active %}{{ user.member.expiration_date|date:'Y-m-d' }}
+                        {% else %}<i>{{ user.member.expiration_date|date:'T-m-d' }}</i>{% endif %}
+                    </td>
+                    <td>{{ user.member.note }}</td>
+                    <td>{% if user.member.is_active %}Ja{% else %}Nei{% endif %}</td>
+                    {% else %}
+                    <td>-</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>-</td>
+                    {% endif %}
                 </tr>
             {% endfor %}
             </tbody>

@@ -34,7 +34,11 @@
                 <div class="col-md-4">Telefonnummer</div>
                 <div class="col-md-8">{% if user.phone_number %}{{ user.phone_number }}{% else %}Ikke oppgitt{% endif %}</div>
                 <div class="col-md-4">Nettside</div>
-                <div class="col-md-8"><a href="{{ user.website }}">{{ user.website }}</a></div>
+                <div class="col-md-8">
+                    {% if user.webiste %}<a href="{{ user.website }}" target="_blank">{{ user.website }}</a>{% endif %}
+                    {% if user.github %}<a href="{{ user.github }}" target="_blank"><i class="fa fa-lg fa-github"></i></a>{% endif %}
+                    {% if user.linkedin %}<a href="{{ user.linkedin }}" target="_blank"><i class="fa fa-lg fa-linkedin"></i></a>{% endif %}
+                </div>
                 <br>
             </div>
         </div>
@@ -110,7 +114,7 @@
             <div class="panel-body">
                 {% gravatar_url user 286 as gravatar_url2 %}
                 <div class="col-sm-12">
-                    <img class="img-thumbnail" src="{{ gravatar_url2 }}" alt="" />
+                    <div class="col-sm-12"><img class="img-thumbnail visible-md visible-lg" src="{{ gravatar_url2 }}" alt="" /></div>
                     <div class="btn-group col-sm-12" style="margin-top: 5px;">{# don't do this #}
                         <a href="{{ user.get_absolute_url }}" class="btn btn-success col-sm-4">Vis</a>
                         <a href="{% url 'dashboard_user_edit' user.id %}" class="btn btn-warning col-sm-4">Endre</a>
