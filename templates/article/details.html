@@ -22,7 +22,7 @@
                 {% else %}
                         <div class="col-md-12">
                            <div>
-                               <img width="100%" src="{% version article.image 'article_full' %}" alt="{{ article.heading }}"/>
+                               <img width="100%" src="{{ article.image.wide }}" alt="{{ article.heading }}"/>
                                <div class="col-md-12 photograph-detail-meta">
                                    <span class="meta-caption">{% if article.photographers %} Fotograf</span> {{ article.photographers|striptags|markdown }} {% endif %}
                                </div>
@@ -96,8 +96,8 @@
                                                 <div class="row row-space">
                                             {% endif %}
                                                 <div class="col-md-6 bilde">
-                                                    <a href="{{ related_article.get_absolute_url }}">
-                                                        <img src="{% version related_article.image 'article_related' %}" 
+                                                    <a href="{{ related_article.get_absolute_url }}">
+                                                        <img src="{{ related_article.image.thumb }}"
                                                             alt="{{ related_article.heading }}"/>
                                                         <h4>{{ related_article.heading }}</h4>
                                                     </a>

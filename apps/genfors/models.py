@@ -1,7 +1,6 @@
 #-*- coding: utf-8 -*-
 from datetime import datetime
 from django.db import models
-from apps.authentication.models import OnlineUser as User
 from django.utils.translation import ugettext as _
 from django.conf import settings
 from django.utils.timezone import localtime
@@ -9,6 +8,9 @@ import operator
 from hashlib import sha256
 import random
 import json
+
+
+User = settings.AUTH_USER_MODEL
 
 # Statics
 

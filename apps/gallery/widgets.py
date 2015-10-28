@@ -8,7 +8,7 @@ from django.forms.utils import flatatt, format_html, force_text
 
 from apps.gallery.models import ResponsiveImage
 
-WIDGET_STRING = """<br /><input{} />\r\n
+WIDGET_STRING = u"""<br /><input{} />\r\n
 <div id="single-image-field-thumbnail">{}</div>
 <a href="#" class="btn btn-primary" id="add-responsive-image">\r\n
 <i class="fa fa-plus fa-lg"></i> Velg</a>\r\n
@@ -50,33 +50,19 @@ class SingleImageInput(HiddenInput):
         """
 
         if value is None:
-            value = ''
+            value = u''
 
-        img_thumb = 'Det er ikke valgt noe bilde.'
+        img_thumb = u'Det er ikke valgt noe bilde.'
         final_attrs = self.build_attrs(attrs, type=self.input_type, name=name)
-        if value != '':
+        if value != u'':
             # Only add the value attribute if the value is non-empty
             final_attrs['value'] = force_text(self._format_value(value))
             img = ResponsiveImage.objects.get(pk=value)
             img_thumb = format_html(
-                '<img src="{}" alt title="{}"/>',
+                u'<img src="{}" alt title="{}"/>',
                 settings.MEDIA_URL + str(img.thumbnail),
-                img.name
+                unicode(img.name),
+                encoding='utf-8'
             )
 
         return format_html(WIDGET_STRING, flatatt(final_attrs), img_thumb)
-
-
-class SingleImageInputMixin(object):
-    """
-    The SingleImageFieldMixin is intended for ModelForm metaclasses that use SingleImageField
-    """
-
-    # Subclasses must override this if they use different field name for the ResponsiveImage FK
-    image_field_name = 'image'
-
-    widgets = {
-        image_field_name: SingleImageInput(attrs={
-            'id': 'responsive-image-id',
-        })
-    }

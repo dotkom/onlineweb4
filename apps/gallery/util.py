@@ -103,7 +103,7 @@ def create_responsive_images(source_path):
 
     # Filter status results based on state, and log if any error
     errors = filter(
-        lambda s, v: status['success'],
+        lambda s: s[0]['success'],
         [(wide_status, 'wide'), (lg_status, 'lg'), (md_status, 'md'), (sm_status, 'sm'), (xs_stauts, 'sm')]
     )
     for status, version in errors:

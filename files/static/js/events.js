@@ -3,13 +3,12 @@
     such as saving user selection on event extras
 */
 
-var Event = (function ($, tools) {
+var Event = (function ($) {
 
     // Perform self check, display error if missing deps
     var performSelfCheck = function () {
         var errors = false
         if ($ == undefined) console.error('jQuery missing!')
-        if (tools == undefined) console.error('Dashboard tools missing!')
         if (errors) return false
         return true
     }
@@ -26,11 +25,11 @@ return {
 
         if(all_extras.length >0 && selected_extra == "None"){
             message = "Vennligst velg et alternativ for extra bestilling. (Over avmeldingsknappen)";
-            tools.showStatusMessage(message, 'alert-warning')
+            Event.showFlashMessage(message, 'alert-warning')
         }
         else if(all_extras.length >0 && jQuery.inArray(selected_extra, all_extras) == -1){
             message = "Ditt valg til ekstra bestilling er ikke lenger gyldig! Velg et nytt.";
-            tools.showStatusMessage(message, 'alert-warning')
+            Event.showFlashMessage(message, 'alert-warning')
         }
     },
 
@@ -42,7 +41,7 @@ return {
         }
         var success = function (data) {
             //var line = $('#' + attendee_id > i)
-            tools.showStatusMessage(data.message, 'alert-success');
+            Event.showFlashMessage(data.message, 'alert-success');
             
             var chosen_text = "Valgt ekstra: ";            
             var options = $(".extras-choice option");
@@ -58,18 +57,59 @@ return {
         }
         var error = function (xhr, txt, error) {
             var message = "Det skjedde en feil! Refresh siden og prøv igjen, eller kontakt de ansvarlige hvis det fortsatt ikke går. "
-            tools.showStatusMessage(message+error, 'alert-danger');
+            Event.showFlashMessage(message+error, 'alert-danger');
         }
 
-        // Make an AJAX request using the Dashboard tools module
-        tools.ajax('POST', url, data, success, error, null)
-    }   
+        // Make an AJAX request
+        Event.ajaxRequest({'method': 'POST', 'url': url, 'data': data, success: success, error: error});
+    },
+
+    ajaxRequest: function(request) {
+        $.ajax({
+            url: request.url,
+            type: "POST",
+            data: request.data,
+            headers: {'X-CSRFToken':$.cookie('csrftoken')},
+            error: (function(error){
+                return function(e){
+                    error(e);
+                }
+            })(request.error),
+            success: (function(success){
+                return function(data){
+                    success(data);
+                }
+            })(request.success)
+        });
+    },
+
+    showFlashMessage: function (message, tags) {
+        var id = new Date().getTime();
+        var wrapper = $('.messages')
+        var message = $('<div class="row" id="'+ id +'"><div class="col-md-12">' + 
+                        '<div class="alert ' + tags + '">' + 
+                        message + '</div></div></div>')
+
+        if(wrapper.length == 0){
+            wrapper = $('section:first > .container:first')
+        }
+        message.prependTo(wrapper)
+
+        // Fadeout and remove the alert
+        setTimeout(function() {
+            $('[id=' + id +']').fadeOut();
+            setTimeout(function() {
+                $('[id=' + id +']').remove();
+            }, 5000);
+        }, 5000);
+    }
 }
 
 
     
-})(jQuery, Dashboard.tools)
+})(jQuery)
 
 $(document).ready(function () {
     Event.init()
 })
+

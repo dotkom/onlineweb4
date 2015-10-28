@@ -10,7 +10,7 @@ PROJECT_SETTINGS_DIRECTORY = os.path.dirname(globals()['__file__'])
 PROJECT_ROOT_DIRECTORY = os.path.join(PROJECT_SETTINGS_DIRECTORY, '..', '..')
 
 TEST_RUNNER = "django_nose.NoseTestSuiteRunner"
-NOSE_ARGS = ['--with-coverage', '--cover-package=apps']
+NOSE_ARGS = ['--with-coverage', '--cover-package=apps', '--cover-html-dir=coverage', '--cover-html']
 
 DEBUG = False
 TEMPLATE_DEBUG = DEBUG
@@ -162,17 +162,6 @@ USER_SEARCH_GROUPS = [
     9,   # velKom
 ]
 
-# Online stripe test keys
-STRIPE_PUBLIC_KEYS = [
-    "pk_test_SDGGPO6MQSMAwlwySCzNJTw9",
-    "pk_test_1BjvVBYc0pdZLlC8EN1JY0Ur"
-]
-
-STRIPE_PRIVATE_KEYS = [
-    "sk_test_i1AL1Z4An77TMZMpgA9d4KEM",
-    "sk_test_F4wQkOgKHb8OI92tJeZmjDxg"
-]
-
 #List of mailing lists, used in update_sympa_memcache_from_sql.py
 PUBLIC_LISTS = [
     "foreninger",
@@ -261,9 +250,10 @@ INSTALLED_APPS = (
     #Wiki
     'wiki',
     'wiki.plugins.attachments',
-    'wiki.plugins.notifications',
     'wiki.plugins.images',
     'wiki.plugins.macros',
+    'wiki.plugins.help',
+    'wiki.plugins.links',
 
 )
 

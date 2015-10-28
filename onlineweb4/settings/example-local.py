@@ -141,3 +141,16 @@ LOGGING = {
         },
     }
 }
+
+# Online stripe keys. 
+# For development replace with https://online.ntnu.no/wiki/komiteer/dotkom/aktuelt/onlineweb4/stripe/
+# For production login to Stripe
+STRIPE_PUBLIC_KEYS = [
+    "pk_test_replace_this", # arrKom
+    "pk_test_replace_this"  # proKom
+]
+
+STRIPE_PRIVATE_KEYS = [
+    "sk_test_replace_this", # arrKom
+    "sk_test_replace_this"  # proKom
+]

@@ -5,11 +5,14 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <title>{% block title %}{% endblock %}</title>
-    <meta name="description" content="Online er linjeforeningen for informatikkstudentene ved NTNU. Våre studenter går Bachelor- eller Mastergradstudium i informatikk.">
+    <meta name="description" content="
+    {% block meta_description %}
+    Online er linjeforeningen for informatikkstudentene ved NTNU. Våre studenter går Bachelor- eller Mastergradstudium i informatikk.
+    {% endblock %}">
     <link rel="icon" href="{{ STATIC_URL }}img/favicon.png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     {% block styles %}
-        <link rel="stylesheet" type="text/less" href="{{ STATIC_URL }}css/font-awesome.min.css">
+        <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/font-awesome.min.css">
         <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/bootstrap-datetimepicker.min.css">
         <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/cropper/cropper.min.css"/>
         {% compress css %}
@@ -56,9 +59,26 @@
                             <i class="fa fa-angle-down pull-right"></i>
                         </a>
                         <ul class="treeview-menu">
-                            <li><a href="#"><i class="fa fa-angle-double-right orange"></i> Ny artikkel</a></li>
-                            <li><a href="#"><i class="fa fa-angle-double-right orange"></i> Oversikt</a></li>
-                            <li><a href="#"><i class="fa fa-angle-double-right orange"></i> Tags</a></li>
+                            <li>
+                                <a href="{% url 'dashboard_article_create' %}">
+                                    <i class="fa fa-angle-double-right orange"></i> Ny artikkel
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{% url 'dashboard_article_index' %}">
+                                    <i class="fa fa-angle-double-right orange"></i> Oversikt
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{% url 'dashboard_tag_create' %}">
+                                    <i class="fa fa-angle-double-right orange"></i> Ny tag
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{% url 'dashboard_tag_index' %}">
+                                    <i class="fa fa-angle-double-right orange"></i> Tags
+                                </a>
+                            </li>
                         </ul>
                     </li>
                     {% endif %}
@@ -94,6 +114,38 @@
                         </ul>
                     </li>
                     {% endif %}
+                    {% if 'gallery.view_responsiveimage' in user_permissions %}
+                    <li class="treeview">
+                        <a href="#">
+                            <i class="fa fa-image blue"></i> <span>Bilder</span>
+                            <i class="fa fa-angle-down pull-right"></i>
+                        </a>
+                        <ul class="treeview-menu">
+                            {% if 'gallery.add_responsiveimage' in user_permissions %}
+                            <li>
+                                <a href="{% url 'gallery_dashboard:upload' %}">
+                                    <i class="fa fa-angle-double-right orange"></i> Last opp
+                                </a>
+                            </li>
+                            {% endif %}
+                            <li>
+                                <a href="{% url 'gallery_dashboard:index' %}">
+                                    <i class="fa fa-angle-double-right orange"></i> Oversikt
+                                </a>
+                            </li>
+                            {% if 'gallery.view_unhandledimage' in user_permissions %}
+                            <li>
+                                <a href="{% url 'gallery_dashboard:unhandled' %}">
+                                    <i class="fa fa-angle-double-right orange"></i> Ubehandlet
+                                    {% if unhandled_images %}
+                                        <small class="badge">{{ unhandled_images.count }}</small>
+                                    {% endif %}
+                                </a>
+                            </li>
+                            {% endif %}
+                        </ul>
+                    </li>
+                    {% endif %}
                     {% if 'chunks.add_chunk' in user_permissions %}
                     <li class="treeview">
                         <a href="#">
@@ -106,14 +158,16 @@
                         </ul>
                     </li>
                     {% endif %}
-                    {% if request.user.is_superuser %}
+                    {% if 'authentication.change_onlineuser' in user_permissions %}
                     <li class="treeview">
                         <a href="#">
                             <i class="fa fa-group blue"></i> <span>Grupper</span>
                             <i class="fa fa-angle-down pull-right"></i>
                         </a>
                         <ul class="treeview-menu">
-                            <li><a href="/admin/auth/group/add/"><i class="fa fa-angle-double-right orange"></i> Ny gruppe</a></li>
+                            {% if 'authentication.add_onlineuser' in user_permissions %}
+                                <li><a href="/admin/auth/group/add/"><i class="fa fa-angle-double-right orange"></i> Ny gruppe</a></li>
+                            {% endif %}
                             <li><a href="/dashboard/auth/groups/"><i class="fa fa-angle-double-right orange"></i> Oversikt</a></li>
                         </ul>
                     </li>
@@ -165,8 +219,10 @@
                             <i class="fa fa-angle-down pull-right"></i>
                         </a>
                         <ul class="treeview-menu">
-                            <li><a href="#"><i class="fa fa-angle-double-right orange"></i> Ny prikk</a></li>
-                            <li><a href="#"><i class="fa fa-angle-double-right orange"></i> Oversikt</a></li>
+                            {% if 'marks.add_mark' in user_permissions %}
+                            <li><a href="/dashboard/marks/new"><i class="fa fa-angle-double-right orange"></i> Ny prikk</a></li>
+                            {% endif %}
+                            <li><a href="/dashboard/marks"><i class="fa fa-angle-double-right orange"></i> Oversikt</a></li>
                         </ul>
                     </li>
                     {% endif %}
@@ -276,19 +332,19 @@
     </div><!-- ./wrapper -->
 
     {% block js %}
-        <script src="{{ STATIC_URL }}js/libs/jquery-2.1.3.min.js"></script>
-        <script src="{{ STATIC_URL }}js/libs/bootstrap.min.js"></script>
-        <script src="{{ STATIC_URL }}js/libs/moment-2.9.0-with-locales.min.js"></script>
-        <script src="{{ STATIC_URL }}js/libs/fastclick.js"></script>
-        <script src="{{ STATIC_URL }}js/libs/jquery.cookie.js"></script>
-        <script src="{{ STATIC_URL }}js/libs/jquery.tablesorter.min.js"></script>
-        <script src="{{ STATIC_URL }}js/libs/bootstrap-datetimepicker.min.js"></script>
+        <script type="text/javascript" src="{{ STATIC_URL }}js/libs/jquery-2.1.3.min.js"></script>
+        <script type="text/javascript" src="{{ STATIC_URL }}js/libs/bootstrap.min.js"></script>
+        <script type="text/javascript" src="{{ STATIC_URL }}js/libs/moment-2.9.0-with-locales.min.js"></script>
+        <script type="text/javascript" src="{{ STATIC_URL }}js/libs/fastclick.js"></script>
+        <script type="text/javascript" src="{{ STATIC_URL }}js/libs/jquery.cookie.js"></script>
+        <script type="text/javascript" src="{{ STATIC_URL }}js/libs/jquery.tablesorter.min.js"></script>
+        <script type="text/javascript" src="{{ STATIC_URL }}js/libs/bootstrap-datetimepicker.min.js"></script>
         <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
         <script type="text/javascript" src="{{ STATIC_URL }}js/libs/blazy/blazy.min.js"></script>
         <script type="text/javascript" src="{{ STATIC_URL }}js/libs/cropper/cropper.min.js"></script>
         <script type="text/javascript" src="{{ STATIC_URL }}js/libs/bttrlazyloading/jquery.bttrlazyloading.min.js"></script>
         <script type="text/javascript" src="{{ STATIC_URL }}js/libs/dropzone/dropzone.min.js"></script>
-        <script src="{{ STATIC_URL }}js/dashboard/dashboard.js"></script>
+        <script type="text/javascript" src="{{ STATIC_URL }}js/dashboard/dashboard.js"></script>
         <script type="text/javascript" src="{{ STATIC_URL }}js/gallery.js"></script>
     {% endblock %}
 

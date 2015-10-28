@@ -1,0 +1,122 @@
+{% extends 'dashboard_base.html' %}
+{% load markdown_deux_tags %}
+{% load addcss %}
+
+{% block title %}
+    {% if edit %}
+		Endre artikkel - Online Dashboard
+	{% else %}
+    	Ny artikkel - Online Dashboard
+    {% endif %}
+{% endblock title %}
+
+{% block page-header %}
+Artikler
+{% endblock %}
+
+{% block js %}
+    {{ block.super }}
+    <script src="{{ STATIC_URL }}js/dashboard/article.js" type="text/javascript"></script>
+{% endblock %}
+
+{% block breadcrumbs %}
+    <li><a href="{% url 'dashboard_article_index' %}">Artikler</a></li>
+	{% if edit %}
+		<li>Endre artikkel</li>
+	{% else %}
+    	<li>Ny artikkel</li>
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <a href="{% url 'dashboard_article_index' %}" class="btn btn-warning">Tilbake</a>
+        {% if edit %}
+        <a href="#modal-delete" class="btn btn-danger pull-right" data-toggle="modal">
+            <i class="fa fa-times fa-lg"></i> Slett
+        </a>
+        {% endif %}
+    </div>
+</div>
+<br />
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">Artikkeldetaljer</h3>
+    </div>
+    <div class="panel-body">
+        <form method="POST">
+            {% csrf_token %}
+            {% for field in form %}
+            <div class="form-group {% if field.errors %}has-error{% endif %}">
+                <label for="{{ field.auto_id }}"{% if field.errors %} class="red"{% endif %}>{{ field.label }}</label>
+                {% if field.name != 'featured' %}
+                    {{ field|addclass:"form-control" }}
+                {% else %}
+                    <div class="checkbox">
+                        <label>{{ field }} Fremhev denne artikkelen</label>
+                    </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+            <button class="btn btn-success" type="submit">
+                <i class="fa fa-save fa-lg"></i> Lagre
+            </button>
+            </form>
+            <br />
+            <form action="{% url 'dashboard_tag_create' %}" method="POST" id="dashboard-article-inline-tag-form">
+                {% csrf_token %}
+                <h4>Legg til ny Tag</h4>
+                <div class="alert alert-danger" style="display:none" id="article-inline-tag-error"></div>
+                <div class="row">
+                    <div class="col-md-5">
+                        <div class="form-group">
+                            <label for="article-tag-name">Navn</label>
+                            <input name="name" placeholder="Fullt navn" id="article-tag-name" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="col-md-5">
+                        <div class="form-group">
+                            <label for="article-tag-slug">Slug</label>
+                            <input name="slug" placeholder="Kort navn" id="article-tag-slug" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label>Lagre</label><br />
+                            <a class="btn btn-primary" href="#" id="article-inline-tag-submit">
+                                <i class="fa fa-plus fa-lg"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        {% include 'gallery/formwidget.html' %}
+    </div>
+</div>
+{% if edit %}
+<div id="modal-delete" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h3>Bekreft sletting av artikkel</h3>
+            </div>
+            <div class="modal-body">
+                <p>Er du sikker på at du vil slette artikkelen?</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn pull-left" data-dismiss="modal" aria-hidden="true">Lukk</button>
+                <form action="" method="POST">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="delete" />
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fa fa-times fa-lg"></i> Slett
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock content %}

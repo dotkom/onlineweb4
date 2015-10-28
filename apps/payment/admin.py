@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 from django.contrib import admin
-from django.contrib.contenttypes import generic
+from django.contrib.contenttypes.admin import GenericStackedInline
 
 from apps.payment.models import Payment
 from apps.payment.models import PaymentDelay
@@ -11,7 +11,7 @@ from apps.payment.models import PaymentRelation
 from reversion.admin import VersionAdmin
 
 
-class PaymentInline(generic.GenericStackedInline):
+class PaymentInline(GenericStackedInline):
     model = Payment
     extra = 0
     classes = ('grp-collapse grp-open',)  # style

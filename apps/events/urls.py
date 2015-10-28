@@ -20,4 +20,4 @@ urlpatterns = patterns('apps.events.views',
 from apps.api.utils import SharedAPIRootRouter
 from apps.events import views
 router = SharedAPIRootRouter()
-router.register('events', views.EventViewSet)
+router.register('events', views.EventViewSet, base_name='events')

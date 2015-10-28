@@ -109,6 +109,8 @@ class OnlineUser(AbstractUser):
     rfid = models.CharField(_(u"RFID"), max_length=50, blank=True, null=True)
     nickname = models.CharField(_(u"nickname"), max_length=50, blank=True, null=True)
     website = models.URLField(_(u"hjemmeside"), blank=True, null=True)
+    github = models.URLField(_(u"github"), blank=True, null=True)
+    linkedin = models.URLField(_(u"linkedin"), blank=True, null=True)
     gender = models.CharField(_(u"kjønn"), max_length=10, choices=GENDER_CHOICES, default="male")
     bio = models.TextField(_(u"bio"), blank=True)
 
@@ -361,7 +363,7 @@ class SpecialPosition(models.Model):
     Special object to represent special positions that typically lasts for life.
     """
     position   = models.CharField(_(u'Posisjon'), max_length=50, blank=False)
-    since_year = models.IntegerField(_(u'Medlem siden'), max_length=4, blank=False)
+    since_year = models.IntegerField(_(u'Medlem siden'), blank=False)
     user       = models.ForeignKey(OnlineUser, related_name='special_positions', blank=False)
 
     def __unicode__(self):

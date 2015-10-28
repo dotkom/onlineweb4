@@ -31,14 +31,6 @@ class ArticleAdmin(VersionAdmin):
 
     # set the created and changed by fields
     def save_model(self, request, obj, form, change):
-        if (obj.image):
-            obj.image.version_generate(ADMIN_THUMBNAIL).url
-
-            # Itterate the different versions (by key)
-            for ver in VERSIONS.keys():
-                # Check if the key start with article_ (if it does, we want to crop to that size)
-                if ver.startswith('article_'):
-                    obj.image.version_generate(ver).url
 
         obj.changed_by = request.user
 

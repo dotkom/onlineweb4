@@ -11,16 +11,19 @@ very many database lookups.
 '''
 import uuid
 
+from django.conf import settings
 from django.db import models
 from django.utils.translation import ugettext as _
 from django.contrib.contenttypes.models import ContentType
-from django.contrib.contenttypes import generic
+from django.contrib.contenttypes.fields import GenericForeignKey
 from django.core.urlresolvers import reverse
 
-from apps.authentication.models import OnlineUser as User
 from apps.authentication.models import FIELD_OF_STUDY_CHOICES
 
 import reversion
+
+
+User = settings.AUTH_USER_MODEL
 
 class FeedbackRelation(models.Model):
     """
@@ -29,7 +32,7 @@ class FeedbackRelation(models.Model):
     feedback = models.ForeignKey('Feedback', verbose_name=_(u'Tilbakemeldingskjema'))
     content_type = models.ForeignKey(ContentType)
     object_id = models.PositiveIntegerField()
-    content_object = generic.GenericForeignKey('content_type', 'object_id')
+    content_object = GenericForeignKey('content_type', 'object_id')
     deadline = models.DateField(_(u'Tidsfrist'))
     gives_mark = models.BooleanField(_(u'Gir Prikk'), default=True, help_text=_(u'Gir automatisk prikk til brukere som ikke har svart innen fristen'))
     active = models.BooleanField(default=True)
@@ -40,8 +43,7 @@ class FeedbackRelation(models.Model):
     answered = models.ManyToManyField(
         User,
         related_name='feedbacks',
-        blank=True,
-        null=True)
+        blank=True)
 
     class Meta:
         unique_together = ('feedback', 'content_type', 'object_id')

@@ -10,13 +10,13 @@ from apps.feedback.models import MultipleChoiceRelation
 
 from django.forms.models import ModelForm
 from django.contrib import admin
-from django.contrib.contenttypes import generic
+from django.contrib.contenttypes.admin import GenericStackedInline
 
 from reversion.admin import VersionAdmin
 
 
 class AlwaysChangedModelForm(ModelForm):
-   
+
    def has_changed(self):
         """
         Should return True if data differs from initial.
@@ -26,7 +26,7 @@ class AlwaysChangedModelForm(ModelForm):
         return True
 
 
-class FeedbackRelationInline(generic.GenericStackedInline):
+class FeedbackRelationInline(GenericStackedInline):
     model = FeedbackRelation
     extra = 0
     classes = ('grp-collapse grp-open',)  # style

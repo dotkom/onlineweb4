@@ -1,12 +1,14 @@
 import random
+import watson
 
-from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.db.models import Count
-from django.http import HttpResponse
 from django.utils import timezone
 from django.shortcuts import render, get_object_or_404
-from django.template import Template, Context, loader, RequestContext
 
+from rest_framework import mixins, viewsets
+from rest_framework.permissions import AllowAny
+
+from apps.article.serializers import ArticleSerializer
 from apps.article.models import Article, Tag, ArticleTag
 
 
@@ -71,7 +73,9 @@ def archive(request, name=None, slug=None, year=None, month=None):
         dates[year] = sorted_months
 
     # Get the 30 most used tags, then randomize them
-    tags = Tag.objects.filter(article_tags__isnull=False).distinct().annotate(num_tags=Count('article_tags__tag')).order_by('-num_tags')
+    tags = Tag.objects.filter(
+        article_tags__isnull=False
+    ).distinct().annotate(num_tags=Count('article_tags__tag')).order_by('-num_tags')
     tags = list(tags[:30])
     random.shuffle(tags)
 
@@ -99,20 +103,21 @@ def details(request, article_id, article_slug):
     else:
         article.is_changed = False
 
-    related_articles = Article.objects.filter(article_tags__tag__in=article.tags).distinct().annotate(num_tags=Count('article_tags__tag')).order_by('-num_tags', '-published_date').exclude(id=article.id)[:4]
+    related_articles = Article.objects.filter(
+        article_tags__tag__in=article.tags
+    ).distinct().annotate(
+        num_tags=Count('article_tags__tag')
+    ).order_by('-num_tags', '-published_date').exclude(id=article.id)[:4]
 
     return render(request, 'article/details.html', {'article': article, 'related_articles': related_articles})
 
 
 # API v1 Views
 
-from rest_framework import mixins, viewsets
-from rest_framework.permissions import AllowAny
-from apps.article.serializers import ArticleSerializer
 
 class ArticleViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.ListModelMixin):
     """
-    Article viewset. Can be filtered on 'year', 'month', 'tags'
+    Article viewset. Can be filtered on 'year', 'month', 'tags' and free text search using 'query'.
 
     Filtering on tags is only supported if the tags are supplied exactly as the stored tags.
     """
@@ -127,6 +132,7 @@ class ArticleViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.
         month = self.request.query_params.get('month', None)
         year = self.request.query_params.get('year', None)
         tags = self.request.query_params.get('tags', None)
+        query = self.request.query_params.get('query', None)
 
         if tags:
             # Filtering on tags is only supported if the tag is typed exactly the same as the stored tag
@@ -137,9 +143,19 @@ class ArticleViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.
         if year:
             if month:
                 # Filtering on year and month
-                queryset = queryset.filter(published_date__year=year, published_date__month=month, published_date__lte=timezone.now()).order_by('-published_date')
+                queryset = queryset.filter(
+                    published_date__year=year,
+                    published_date__month=month,
+                    published_date__lte=timezone.now()
+                ).order_by('-published_date')
             else:
                 # Filtering only on year
-                queryset = queryset.filter(published_date__year=year, published_date__lte=timezone.now()).order_by('-published_date')
+                queryset = queryset.filter(
+                    published_date__year=year,
+                    published_date__lte=timezone.now()
+                ).order_by('-published_date')
+
+        if query and query != '':
+            queryset = watson.filter(queryset, query)
 
         return queryset

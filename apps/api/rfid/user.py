@@ -1,14 +1,18 @@
 # -*- coding: utf-8 -*-
 
-from tastypie import fields
+import logging
+
+from django.core.exceptions import PermissionDenied
 from tastypie.resources import ModelResource, ALL
+from tastypie.authorization import Authorization
+
 from apps.authentication.models import OnlineUser as User
 from apps.api.rfid.auth import RfidAuthentication
-from tastypie.authorization import Authorization
+
 
 class UserResource(ModelResource):
 
-    class Meta:
+    class Meta(object):
         queryset = User.objects.all()
         resource_name = 'user'
         fields = ['username', 'first_name', 'last_name', 'rfid', ]
@@ -27,8 +31,10 @@ class UserResource(ModelResource):
         Override to restrict patching of user fields to those specified in allowed_update_fields
         """
         if set(new_data.keys()) - set(self._meta.allowed_update_fields):
-            raise BadRequest(
+            raise PermissionDenied(
                 'Kun oppdatering av %s er tillatt.' % ', '.join(self._meta.allowed_update_fields)
             )
+
+        # logging.getLogger(__name__).debug('User patched: %s' % unicode(original_bundle))
 
         return super(UserResource, self).update_in_place(request, original_bundle, new_data)
