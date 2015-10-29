@@ -42,10 +42,10 @@ Artikler
                         <dd><h2>{{ article.heading|striptags }}</h2></dd>
                         <dt>Publisert</dt>
                         <dd>{{ article.published_date }}</dd>
-                        <dt>Forfatter</dt>
+                        <dt>Opprettet av</dt>
                         <dd>{{ article.created_by|striptags }}</dd>
-                        <dt>Medforfattere</dt>
-                        <dd>{{ article.additional_authors|striptags }}</dd>
+                        <dt>Forfatter(e)</dt>
+                        <dd>{{ article.authors|striptags }}</dd>
                         <dt>Sist endret</dt>
                         <dd>{{ article.changed_date }}</dd>
                         <dt>Fremhevet</dt>
