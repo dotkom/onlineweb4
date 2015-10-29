@@ -8,17 +8,15 @@ from django.db.models import permalink, SET_NULL
 from django.template.defaultfilters import slugify
 from unidecode import unidecode
 from django.utils.translation import ugettext as _
-
+import reversion
+import watson
 
 from apps.gallery.models import ResponsiveImage
 from filebrowser.fields import FileBrowseField
 
-import reversion
-from pytz import timezone
-import watson
-
 
 User = settings.AUTH_USER_MODEL
+
 
 class Article(models.Model):
     IMAGE_FOLDER = "images/article"
@@ -44,7 +42,7 @@ class Article(models.Model):
         verbose_name=_(u"opprettet av"),
         related_name="created_by", editable=False
     )
-    additional_authors = models.CharField(_(u'andre forfattere'), max_length=200, blank=True)
+    authors = models.CharField(_(u'forfatter(e)'), max_length=200, blank=True)
     changed_by = models.ForeignKey(
         User, null=False, verbose_name=_(u"endret av"), related_name="changed_by", editable=False
     )

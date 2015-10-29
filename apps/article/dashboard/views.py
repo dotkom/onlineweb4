@@ -39,7 +39,8 @@ def article_create(request):
             instance.created_by = request.user
             instance.save()
 
-            for tag in request.POST.getlist('tags'):
+            tag_list = Tag.objects.filter(id__in=map(int, request.POST.getlist('tags')))
+            for tag in tag_list:
                 ArticleTag.objects.create(article=instance, tag=tag)
 
             messages.success(request, u'Artikkelen ble opprettet.')
