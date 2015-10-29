@@ -42,7 +42,7 @@ class Article(models.Model):
         verbose_name=_(u"opprettet av"),
         related_name="created_by", editable=False
     )
-    authors = models.CharField(_(u'forfatter(e)'), max_length=200, blank=True)
+    authors = models.CharField(_(u'andre forfattere'), max_length=200, blank=True)
     changed_by = models.ForeignKey(
         User, null=False, verbose_name=_(u"endret av"), related_name="changed_by", editable=False
     )
