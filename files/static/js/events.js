@@ -27,7 +27,7 @@ return {
             message = "Vennligst velg et alternativ for extra bestilling. (Over avmeldingsknappen)";
             Event.showFlashMessage(message, 'alert-warning')
         }
-        else if(all_extras.length >0 && jQuery.inArray(selected_extra, all_extras) == -1){
+        else if(all_extras.length >0 && selected_extra != "" && jQuery.inArray(selected_extra, all_extras) == -1){
             message = "Ditt valg til ekstra bestilling er ikke lenger gyldig! Velg et nytt.";
             Event.showFlashMessage(message, 'alert-warning')
         }
