@@ -53,7 +53,7 @@
                         </div>
                     </div>
                     <div class="col-md-12 article-detail-meta">
-                        <span class="meta-caption">Av</span> {% if article.additional_authors %} {{ article.additional_authors }} og {% endif %} {{ article.created_by.get_full_name }} |
+                        <span class="meta-caption">Av</span> {{ article.authors }} |
                         <span class="meta-caption">Publisert</span> {{ article.published_date }}
                         {% if article.is_changed %} |
                             <span class="meta-caption">Endret</span> {{ article.changed_date }}
