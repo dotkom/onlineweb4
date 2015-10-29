@@ -19,7 +19,7 @@ git+git://github.com/clintecker/django-chunks.git@0.2# Chunks, or reusable key:c
 django-crispy-forms==1.4.0      # nice forms
 django-extensions==1.5.2        # nice extra commands for debugging, etc
 django-dynamic-fixture==1.8.1   # Dynamic fixtures for models
-django-simple-captcha==0.4.4    # Simple captcha
+django-recaptcha==1.0.4         # Google ReCaptcha
 django-oauth-toolkit==0.8.1     # OAuth2 authentication support
 django_compressor==1.4          # Compiles less and minifies js
 django-watson==1.1.8            # Indexed model search lib
