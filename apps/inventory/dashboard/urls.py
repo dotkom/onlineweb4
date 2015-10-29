@@ -11,13 +11,3 @@ urlpatterns = patterns('apps.inventory.dashboard.views',
     url(r'^item/(?P<item_pk>\d+)/batch/(?P<batch_pk>\d+)/$', 'batch', name='dashboard_inventory_batch'),
     url(r'^item/(?P<item_pk>\d+)/batch/(?P<batch_pk>\d+)/delete/$', 'batch_delete', name='dashboard_inventory_batch_delete'),
 )
-
-# API v1
-from apps.api.utils import SharedAPIRootRouter
-from apps.inventory import views
-
-router = SharedAPIRootRouter()
-router.register('inventory', views.InventoryViewSet)
-router.register('transactions', views.TransactionViewSet)
-router.register('usersaldo', views.UserViewSet)
-#router.register('inventory/user/(?P<rfid>\d+)/$', views.user_info)

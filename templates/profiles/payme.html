@@ -32,14 +32,18 @@
             <thead>
                 <th>Beløp</th>
                 <th>Tidspunkt</th>
-                <th>Stripe</th>
+                <th>Betalingsmetode</th>
             </thead>
             <tbody>
                 {% for transaction in transactions %}
                     <tr>
                         <td>{{ transaction.amount }}kr</td>
                         <td>{{ transaction.datetime }}</td>
-                        <td>{{ transaction.used_stripe }}</td>
+                        {% if transaction.used_stripe %}
+                            <td>Web</td>
+                        {% else %}
+                            <td>Kontant</td>
+                        {% endif %}
                     </tr>
                 {% endfor %}
             </tbody>

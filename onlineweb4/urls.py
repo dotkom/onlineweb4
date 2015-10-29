@@ -101,6 +101,12 @@ if 'apps.feedback' in settings.INSTALLED_APPS:
 if 'apps.inventory' in settings.INSTALLED_APPS:
     urlpatterns += patterns('',
         url(r'^dashboard/inventory/',          include('apps.inventory.dashboard.urls')),
+        url(r'^inventory/',          include('apps.inventory.urls')),
+    )
+
+if 'apps.shop' in settings.INSTALLED_APPS:
+    urlpatterns += patterns('',
+        url(r'^shop/',          include('apps.shop.urls')),
     )
 
 if 'apps.offline' in settings.INSTALLED_APPS:

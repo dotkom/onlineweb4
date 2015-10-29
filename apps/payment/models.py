@@ -216,7 +216,7 @@ class PaymentTransaction(models.Model):
     datetime = models.DateTimeField(auto_now=True)
 
     def __unicode__(self):
-        return unicode(self.user) + " - " + unicode(self.amount) + "(" + unicode(datetime) + ")"
+        return unicode(self.user) + " - " + unicode(self.amount) + "(" + unicode(self.datetime) + ")"
 
     class Meta:
         ordering = ['-datetime']

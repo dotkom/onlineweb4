@@ -7,7 +7,9 @@ urlpatterns = patterns('',
 
 # API v1
 from apps.api.utils import SharedAPIRootRouter
-from apps.inventory import views
+from apps.shop import views
 
 router = SharedAPIRootRouter()
-router.register('inventory', views.InventoryViewSet)
+router.register('orderline', views.OrderLineViewSet)
+router.register('transactions', views.TransactionViewSet)
+router.register('usersaldo', views.UserViewSet)

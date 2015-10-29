@@ -33,6 +33,13 @@ class Item(models.Model):
         else:
             return None
 
+    def oldest_batch(self):
+        batches = self.batches.filter(amount__gt=0).order_by("date_added")
+        if batches: 
+            return batches[0]
+        else:
+            return None
+
     @property
     def total_amount(self):
         return sum([batch.amount for batch in self.batches.all()])
@@ -42,6 +49,26 @@ class Item(models.Model):
         if timezone.now().date() >= self.oldest_expiration_date:
             return True
         return False
+
+    def reduce_stock(self, amount):
+        """
+        Makes an assumption that the oldes batches are sold first and reduce them first.
+        """
+
+        oldest_batch = self.oldest_batch()
+
+        if oldest_batch:
+            if oldest_batch.amount > amount:
+                oldest_batch.amount = oldest_batch.amount - amount
+                oldest_batch.save()
+            else:
+                diff = amount - oldest_batch.amount
+                oldest_batch.amount = 0
+                oldest_batch.save()
+                self.reduce_stock(diff)
+
+        #TODO notification on low stock
+
 
     def __unicode__(self):
         return self.name
