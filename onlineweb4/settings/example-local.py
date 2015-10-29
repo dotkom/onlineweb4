@@ -1,10 +1,11 @@
 import os
 import sys
 
+from base import PROJECT_ROOT_DIRECTORY
+
 # Prevent python from making .pyc files
 sys.dont_write_bytecode = True
 
-from base import PROJECT_ROOT_DIRECTORY
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
