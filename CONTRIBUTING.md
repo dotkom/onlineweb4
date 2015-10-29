@@ -10,7 +10,7 @@ to keep track of everything.
 Write informative commits and pull requests
 -------------------------------------------
 
-This is important for us to understand what you like to change or fix. Commit messages should follow the form explained 
+This is important for us to understand what you would like to change or fix. Commit messages should follow the form explained 
 [here](https://robots.thoughtbot.com/5-useful-tips-for-a-better-commit-message).
 
 The pull requests should be as detailed as possible.
