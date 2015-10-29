@@ -194,11 +194,6 @@ if 'rest_framework' in settings.INSTALLED_APPS:
         url(r'^api/v1/', include(api_urls())),
     )
 
-#Captcha url
-#if 'captcha' in settings.INSTALLED_APPS:
-#    urlpatterns += patterns('', url(r'^captcha/', include('captcha.urls')))
-
-
 
 # http://docs.djangoproject.com/en/1.3/howto/static-files/#staticfiles-development
 if settings.DEBUG:
