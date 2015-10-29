@@ -195,8 +195,8 @@ if 'rest_framework' in settings.INSTALLED_APPS:
     )
 
 #Captcha url
-if 'captcha' in settings.INSTALLED_APPS:
-    urlpatterns += patterns('', url(r'^captcha/', include('captcha.urls')))
+#if 'captcha' in settings.INSTALLED_APPS:
+#    urlpatterns += patterns('', url(r'^captcha/', include('captcha.urls')))
 
 
 
