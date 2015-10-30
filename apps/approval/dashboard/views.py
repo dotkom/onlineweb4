@@ -2,12 +2,10 @@
 
 import json
 
-from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import Group
 from django.http import Http404, HttpResponse
-from django.core.exceptions import PermissionDenied, ObjectDoesNotExist
-from django.shortcuts import render, redirect, get_object_or_404
+from django.core.exceptions import PermissionDenied
+from django.shortcuts import render
 from django.utils import timezone
 from django.utils.translation import ugettext as _
 from django.views.decorators.csrf import ensure_csrf_cookie

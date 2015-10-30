@@ -1,4 +1,4 @@
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 
 from django.conf import settings
 from django.db import models
@@ -10,15 +10,18 @@ from apps.authentication.models import FIELD_OF_STUDY_CHOICES
 
 User = settings.AUTH_USER_MODEL
 
+
 class Approval(models.Model):
-    applicant = models.ForeignKey(User, verbose_name=_(u"søker"), related_name="applicant", editable=False)
-    approver = models.ForeignKey(User, verbose_name=_(u"godkjenner"), related_name="approver", blank=True, null=True, editable=False)
+    applicant = models.ForeignKey(User, verbose_name=_(u"søker"),
+        related_name="applicant", editable=False)
+    approver = models.ForeignKey(User, verbose_name=_(u"godkjenner"),
+        related_name="approver", blank=True, null=True, editable=False)
     created = models.DateTimeField(_(u"opprettet"), auto_now_add=True)
     processed = models.BooleanField(_(u"behandlet"), default=False, editable=False)
     processed_date = models.DateTimeField(_(u"behandlet dato"), blank=True, null=True)
     approved = models.BooleanField(_(u"godkjent"), default=False, editable=False)
     message = models.TextField(_(u"melding"))
-    
+
 
 class MembershipApproval(Approval):
     new_expiry_date = models.DateField(_(u"ny utløpsdato"), blank=True, null=True)

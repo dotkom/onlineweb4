@@ -9,10 +9,11 @@ from django.utils import timezone
 from apps.approval.models import MembershipApproval
 from apps.authentication.models import OnlineUser as User
 
+
 class ApprovalTest(TestCase):
-    
+
     def setUp(self):
-        self.applicant = G(User, username=u"sokeren", first_name=u"Søker", last_name=u"Søkersen") 
+        self.applicant = G(User, username=u"sokeren", first_name=u"Søker", last_name=u"Søkersen")
         self.approval = G(MembershipApproval, applicant=self.applicant)
         self.approval.new_expiry_date = None
         self.approval.field_of_study = 0
@@ -62,4 +63,4 @@ class ApprovalTest(TestCase):
         self.assertEqual(self.approval.is_fos_application(), False)
         self.approval.new_expiry_date = None
         self.assertEqual(self.approval.is_fos_application(), False)
-        
+
