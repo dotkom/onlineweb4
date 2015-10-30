@@ -3,7 +3,7 @@
 import logging
 
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse
 from django.shortcuts import render
 from django.views.decorators.debug import sensitive_post_parameters
 from django.views.generic import View, FormView
@@ -16,19 +16,16 @@ from braces.views import LoginRequiredMixin, CsrfExemptMixin
 
 from oauth2_provider.settings import oauth2_settings
 from oauth2_provider.backends import OAuth2Backend
-from oauth2_provider.decorators import protected_resource
 from oauth2_provider.oauth2_validators import OAuth2Validator
 from oauth2_provider.exceptions import OAuthToolkitError
 from oauth2_provider.forms import AllowForm
 from oauth2_provider.http import HttpResponseUriRedirect
 from oauth2_provider.models import get_application_model
 from oauth2_provider.views.mixins import OAuthLibMixin
-from oauth2_provider.models import AccessToken
 
-from apps.authentication.models import FIELD_OF_STUDY_CHOICES
 from apps.sso.models import Client
 
-log = logging.getLogger('SSO')
+_log = logging.getLogger('SSO')
 
 
 @login_required
@@ -122,7 +119,7 @@ class AuthorizationView(BaseAuthorizationView, FormView):
             uri, headers, body, status = self.create_authorization_response(
                 request=self.request, scopes=scopes, credentials=credentials, allow=allow)
             self.success_url = uri
-            log.debug("Success url for the request: {0}".format(self.success_url))
+            _log.debug("Success url for the request: {0}".format(self.success_url))
             return HttpResponseUriRedirect(self.success_url)
 
         except OAuthToolkitError as error:
