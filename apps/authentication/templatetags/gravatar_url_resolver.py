@@ -1,7 +1,10 @@
+import urllib
+import hashlib
+
 from django import template
 from django.conf import settings
-import urllib, hashlib
- 
+
+
 register = template.Library()
 
 @register.assignment_tag(takes_context=True)

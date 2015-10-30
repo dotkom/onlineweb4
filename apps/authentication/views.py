@@ -7,7 +7,6 @@ from smtplib import SMTPException
 from django.contrib import auth
 from django.contrib import messages
 from django.core.mail import send_mail
-from django.db.utils import IntegrityError
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponseRedirect
 from django.utils.translation import ugettext as _
@@ -29,11 +28,12 @@ def login(request):
             if redirect_url:
                 return HttpResponseRedirect(redirect_url)
             return HttpResponseRedirect('/')
-        else: form = LoginForm(request.POST, auto_id=True)
+        else:
+            form = LoginForm(request.POST, auto_id=True)
     else:
         form = LoginForm()
 
-    response_dict = { 'form' : form, 'next' : redirect_url}
+    response_dict = {'form': form, 'next': redirect_url}
     return render(request, 'auth/login.html', response_dict)
 
 
@@ -61,9 +61,9 @@ def register(request):
                     last_name=cleaned['last_name'].title(),
                 )
                 # Set remaining fields
-                user.phone_number=cleaned['phone']
-                user.address=cleaned['address'].title()
-                user.zip_code=cleaned['zip_code']
+                user.phone_number = cleaned['phone']
+                user.address = cleaned['address'].title()
+                user.zip_code = cleaned['zip_code']
                 # Store password properly
                 user.set_password(cleaned['password'])
                 # Users need to be manually activated
@@ -96,12 +96,14 @@ Denne lenken vil være gyldig i 24 timer. Dersom du behøver å få tilsendt en 
 kan dette gjøres med funksjonen for å gjenopprette passord.
 """) % (request.META['HTTP_HOST'], token)
                 try:
-                    send_mail(_(u'Verifiser din konto'), email_message, settings.DEFAULT_FROM_EMAIL, [email.email,])
+                    send_mail(_(u'Verifiser din konto'), email_message, settings.DEFAULT_FROM_EMAIL, [email.email, ])
                 except SMTPException:
                     messages.error(request, u'Det oppstod en kritisk feil, epostadressen er ugyldig!')
                     return redirect('home')
 
-                messages.success(request, _(u'Registreringen var vellykket. Se tilsendt epost for verifiseringsinstrukser.'))
+                messages.success(request,
+                    _(u'Registreringen var vellykket. Se tilsendt epost for verifiseringsinstrukser.')
+                    )
 
                 return HttpResponseRedirect('/')
             else:
@@ -187,7 +189,7 @@ Denne lenken vil være gyldig i 24 timer. Dersom du behøver å få tilsendt en 
 kan dette gjøres med funksjonen for å gjenopprette passord.
 """) % (email.email, email.user.username, request.META['HTTP_HOST'], token)
 
-                send_mail(_(u'Gjenoppretning av passord'), email_message, settings.DEFAULT_FROM_EMAIL, [email.email,])
+                send_mail(_(u'Gjenoppretning av passord'), email_message, settings.DEFAULT_FROM_EMAIL, [email.email, ])
 
                 messages.success(request, _(u'En lenke for gjenoppretning har blitt sendt til %s.') % email.email)
 

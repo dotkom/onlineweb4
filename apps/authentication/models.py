@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 import datetime
-import socket
 import urllib
 import hashlib
 
@@ -62,6 +61,7 @@ POSITIONS = [
     ('redaktor', _(u'Redaktør')),
     ('okoans', _(u'Økonomiansvarlig')),
 ]
+
 
 def get_length_of_field_of_study(field_of_study):
     """
@@ -125,7 +125,9 @@ class OnlineUser(AbstractUser):
         Returns true if the User object is associated with Online.
         """
         if self.ntnu_username:
-            if AllowedUsername.objects.filter(username=self.ntnu_username.lower()).filter(expiration_date__gte=timezone.now()).count() > 0:
+            if AllowedUsername.objects.filter(
+                username=self.ntnu_username.lower()).filter(
+                expiration_date__gte=timezone.now()).count() > 0:
                 return True
         return False
 
@@ -155,16 +157,16 @@ class OnlineUser(AbstractUser):
         return full_name.strip()
 
     def get_email(self):
-        email = self.get_emails().filter(primary = True)
+        email = self.get_emails().filter(primary=True)
         if email:
             return email[0]
         return None
 
     def get_emails(self):
-        return Email.objects.all().filter(user = self)
+        return Email.objects.all().filter(user=self)
 
     def in_group(self, group_name):
-        return reduce(lambda x,y: x or y.name == group_name, self.groups.all(), False)
+        return reduce(lambda x, y: x or y.name == group_name, self.groups.all(), False)
 
     @property
     def year(self):
@@ -229,7 +231,7 @@ class OnlineUser(AbstractUser):
                                    settings.DEFAULT_PROFILE_PICTURE_PREFIX, self.gender)
 
         gravatar_url = "https://www.gravatar.com/avatar/" + hashlib.md5(self.email).hexdigest() + "?"
-        gravatar_url += urllib.urlencode({'d': default, 's':str(size)})
+        gravatar_url += urllib.urlencode({'d': default, 's': str(size)})
         return gravatar_url
 
     class Meta:

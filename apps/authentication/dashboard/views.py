@@ -8,10 +8,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Group
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse
-from django.views.decorators.csrf import ensure_csrf_cookie
 
 from guardian.decorators import permission_required
-from reversion import get_for_object as get_history_for_object
 
 from apps.authentication.models import OnlineUser as User
 from apps.authentication.models import AllowedUsername
@@ -125,6 +123,7 @@ def members_index(request):
 
     if not has_access(request):
         raise PermissionDenied
+
     def merge_names(members):
         for i in members:
             user = list(User.objects.filter(ntnu_username=i.username))
