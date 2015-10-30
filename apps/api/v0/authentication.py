@@ -2,9 +2,9 @@
 
 from tastypie import fields
 from tastypie.resources import ModelResource
-from tastypie.authorization import Authorization
 
 from apps.authentication.models import OnlineUser as User
+
 
 class UserResource(ModelResource):
 
