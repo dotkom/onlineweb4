@@ -83,6 +83,7 @@ def article_edit(request, article_id):
         if 'action' in request.POST and request.POST['action'] == 'delete':
             instance = get_object_or_404(Article, pk=article_id)
             article_heading = instance.heading
+            article_id = instance.id
             instance.delete()
             messages.success(request, u'%s ble slettet.' % article_heading)
             getLogger(__name__).info('%s deleted article %d (%s)' % (request.user, article_id, article_heading))

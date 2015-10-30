@@ -98,7 +98,7 @@ Artikler
             </div>
             <div class="modal-footer">
                 <button class="btn pull-left" data-dismiss="modal" aria-hidden="true">Lukk</button>
-                <form action="" method="POST">
+                <form action="edit/" method="POST">
                     {% csrf_token %}
                     <input type="hidden" name="action" value="delete" />
                     <button type="submit" class="btn btn-danger">
