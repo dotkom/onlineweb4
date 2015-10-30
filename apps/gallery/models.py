@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import logging
 import os
 import uuid
 import watson
@@ -81,20 +82,60 @@ class ResponsiveImage(models.Model):
 
         return '%s%s' % (settings.MEDIA_URL, self.image_lg)
 
+    def file_status_ok(self):
+        """
+        Iterates through all the ImageField references, attempting to trigger either an OSError or IOError.
+
+        :return: True if all files are present and correct, False otherwise
+        """
+
+        log = logging.getLogger(__name__)
+
+        try:
+            assert self.thumbnail.width is not None
+            assert self.image_original.width is not None
+            assert self.image_wide.width is not None
+            assert self.image_lg.width is not None
+            assert self.image_md.width is not None
+            assert self.image_sm.width is not None
+            assert self.image_xs.width is not None
+        except OSError:
+            log.error('Caught OSError for image file reference for ResponsiveImage %d (%s)' % (
+                self.id,
+                self.filename
+            ))
+            return False
+        except IOError:
+            log.error('Caught OSError for image file reference for ResponsiveImage %d (%s)' % (
+                self.id,
+                self.filename
+            ))
+            return False
+
+        return True
+
     def sizeof_total_raw(self):
         """
         Sums up the total filesize of all the different image versions.
         """
 
-        total = self.thumbnail.size
-        total += self.image_xs.size
-        total += self.image_sm.size
-        total += self.image_md.size
-        total += self.image_lg.size
-        total += self.image_wide.size
-        total += self.image_original.size
+        total = 0
+        try:
+            total = self.thumbnail.size
+            total += self.image_xs.size
+            total += self.image_sm.size
+            total += self.image_md.size
+            total += self.image_lg.size
+            total += self.image_wide.size
+            total += self.image_original.size
+        except OSError:
+            logging.getLogger(__name__).error('Orphaned ResponsiveImage object: %d (%s)' % (self.id, self.filename))
 
         return total
+
+    @property
+    def filename(self):
+        return os.path.basename(self.image_original.name)
 
     @property
     def original(self):
@@ -149,10 +190,17 @@ class ResponsiveImage(models.Model):
 # Hook up ResponsiveImage to Watson
 watson.register(ResponsiveImage)
 
+# Preset our dispatch UUID, so we can re-use it in the orphan removal part
+# of the post_delete signal.
+resp_img_uuid = uuid.uuid1()
+
 
 # If we delete an image, we don't want to keep the actual images
 # This signal makes sure that the images along with the thumbnails are deleted from disk
 def responsive_image_delete(sender, instance, **kwargs):
+
+    log = logging.getLogger(__name__)
+
     # Pass false so FileField doesn't save the model.
     if instance.image_original:
         instance.image_original.delete(False)
@@ -169,4 +217,25 @@ def responsive_image_delete(sender, instance, **kwargs):
     if instance.thumbnail:
         instance.thumbnail.delete(False)
 
-post_delete.connect(receiver=responsive_image_delete, dispatch_uid=uuid.uuid1(), sender=ResponsiveImage)
+    # Automatically delete all related objects that for some insane reason had a ref to the
+    # same image. This is bat country. Really only happens if there has been an exception
+    # after file upload, after cropping is complete but before the response has been sent.
+
+    # Start by temporarily disabling the post_delete signal, so we dont have a large branching factor of
+    # delete signals. We have already pre-set the UUID used by the initial connect, so we know
+    # what to disconnect.
+    log.debug('Detaching post_delete signal before removing possible orphan ResponsiveImage')
+    post_delete.disconnect(dispatch_uid=resp_img_uuid, sender=sender)
+
+    # Next we iterate over all the responsive images and check file status. If an orphan exists, it is deleted.
+    for resp_img in ResponsiveImage.objects.all():
+        if not resp_img.file_status_ok():
+            log.info('ResponsiveImage delete signal hook detected orphaned objets, deleting (ID: %d)' % resp_img.id)
+            resp_img.delete()
+
+    # Now we re-attach the post_delete signal, and issue a new UUID as dispatch ID.
+    log.debug('Re-attaching post_delete signal for ResponsiveImage')
+    post_delete.connect(receiver=responsive_image_delete, dispatch_uid=uuid.uuid1(), sender=ResponsiveImage)
+
+# Listen for ResponsiveImage.delete() signals, so we can remove the image files accordingly.
+post_delete.connect(receiver=responsive_image_delete, dispatch_uid=resp_img_uuid, sender=ResponsiveImage)

@@ -28,7 +28,7 @@ def save_unhandled_file(uploaded_file):
             for chunk in uploaded_file.chunks():
                 destination.write(chunk)
     except IOError as e:
-        log.error('Failed to save uploaded unhandled file! %s' % repr(e))
+        log.error('Failed to save uploaded unhandled file! "%s"' % repr(e))
         return False
 
     return filepath
@@ -103,8 +103,8 @@ def create_responsive_images(source_path):
 
     # Filter status results based on state, and log if any error
     errors = filter(
-        lambda s: s[0]['success'],
-        [(wide_status, 'wide'), (lg_status, 'lg'), (md_status, 'md'), (sm_status, 'sm'), (xs_stauts, 'sm')]
+        lambda s: not s[0]['success'],
+        [(wide_status, 'wide'), (lg_status, 'lg'), (md_status, 'md'), (sm_status, 'sm'), (xs_stauts, 'xs')]
     )
     for status, version in errors:
         log.error('Failed to resize image %s' % version)

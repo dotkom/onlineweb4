@@ -339,8 +339,8 @@ var Gallery = (function ($, tools) {
 
         $.post("/gallery/crop_image/", cropData, function() {
             imageEditingSuccessful();
-        }).fail(function($xhr) {
-            setErrorMessage($xhr.responseJSON);
+        }).fail(function(xhr, thrownError, statusText) {
+            setErrorMessage('En uventet feil har oppstått: ' + statusText);
         }).always(function() {
             setCropDefault();
         });
