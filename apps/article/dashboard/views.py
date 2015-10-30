@@ -118,7 +118,7 @@ def article_edit(request, article_id):
     context = get_base_context(request)
     context['form'] = form
     context['edit'] = True
-    
+
     return render(request, 'article/dashboard/article_create.html', context)
 
 
@@ -185,5 +185,5 @@ def tag_edit(request, tag_id):
     context = get_base_context(request)
     context['form'] = form
     context['edit'] = True
-    
+
     return render(request, 'article/dashboard/tag_create.html', context)
