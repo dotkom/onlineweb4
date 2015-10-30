@@ -77,7 +77,7 @@ def new_app(request):
 
             client.save()
 
-            _log.info(u'%s created new external auth client with ID %d' % (request.user, client.id))
+            _log.info(u'%s created external auth client %s (%d)' % (request.user, client.name, client.id))
             messages.success(request, u'App-klienten ble opprettet')
             return redirect(reverse('sso:app_details', kwargs={'app_pk': client.id}))
 
@@ -112,8 +112,10 @@ def app_details(request, app_pk):
     if request.method == 'POST':
         if 'action' in request.POST:
             if request.POST['action'] == 'delete':
+                app_id = context['app'].id
+                app_name = context['app'].name
                 context['app'].delete()
-                _log.info(u'%s created new external auth client with ID %d' % (request.user, client.id))
+                _log.info(u'%s deleted external auth client %s (%d)' % (request.user, app_name, app_id))
                 messages.success(request, u'App-klienten ble slettet')
                 return redirect(reverse('sso:index'))
 
