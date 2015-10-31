@@ -50,7 +50,7 @@ flake8==2.4.1
 pepper8>=1.0.4                  # Transforms flake8 output to HTML report + TC messages
 
 # Wiki
-git+https://github.com/django-wiki/django-wiki.git@b1fba36c8b7cce9b023f4d05dda80a70a932617b#egg=wiki==0.1.dev1
+git+https://github.com/django-wiki/django-wiki.git@e28776af87580740fb67488329c86dd58313d531#egg=wiki==0.1.dev1
 
 
 # non-pip
