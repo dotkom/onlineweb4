@@ -220,7 +220,8 @@ def search(request):
             'sm': settings.MEDIA_URL + str(image.image_sm),
             'md': settings.MEDIA_URL + str(image.image_md),
             'lg': settings.MEDIA_URL + str(image.image_lg),
-            'timestamp': image.timestamp.strftime('%Y-%m-%d %H:%M:%S')
+            'timestamp': image.timestamp.strftime('%Y-%m-%d %H:%M:%S'),
+            'tags': [str(tag) for tag in image.tags.all()]
         } for image in matches]
     }
 
