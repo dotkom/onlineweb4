@@ -9,11 +9,12 @@ from apps.authentication.models import OnlineUser as User
 from apps.marks.models import Mark, MarkUser
 from apps.marks.models import _get_with_duration_and_vacation
 
+
 class MarksTest(TestCase):
 
     def setUp(self):
         self.logger = logging.getLogger(__name__)
-        self.user=G(User)
+        self.user = G(User)
         self.mark = G(Mark, title="Testprikk", added_date=timezone.now().date())
         self.userentry = G(MarkUser, user=self.user, mark=self.mark)
 
@@ -28,7 +29,7 @@ class MarksTest(TestCase):
         
     def testMarkUser(self):
         self.logger.debug("Testing MarkUser unicode with dynamic fixtures")
-        self.assertEqual(unicode(self.userentry), ("Mark entry for user: %s") % self.user.get_full_name())
+        self.assertEqual(unicode(self.userentry), "Mark entry for user: %s" % self.user.get_full_name())
 
     def testGettingExpirationDateWithNoVacationInSpring(self):
         self.logger.debug("Testing expiration date with no vacation span in the spring")
