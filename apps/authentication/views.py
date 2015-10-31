@@ -4,6 +4,7 @@ import uuid
 import re
 from smtplib import SMTPException
 
+from django.conf import settings
 from django.contrib import auth
 from django.contrib import messages
 from django.core.mail import send_mail
@@ -12,9 +13,17 @@ from django.http import HttpResponseRedirect
 from django.utils.translation import ugettext as _
 from django.views.decorators.debug import sensitive_post_parameters
 
-from django.conf import settings
-from apps.authentication.forms import (LoginForm, RegisterForm,
-                            RecoveryForm, ChangePasswordForm)
+# API v1
+from rest_framework import viewsets, mixins
+from rest_framework.permissions import AllowAny
+from apps.authentication.serializers import UserSerializer
+
+from apps.authentication.forms import (
+    LoginForm,
+    RegisterForm,
+    RecoveryForm,
+    ChangePasswordForm
+)
 from apps.authentication.models import OnlineUser as User, RegisterToken, Email
 
 
@@ -101,9 +110,10 @@ kan dette gjøres med funksjonen for å gjenopprette passord.
                     messages.error(request, u'Det oppstod en kritisk feil, epostadressen er ugyldig!')
                     return redirect('home')
 
-                messages.success(request,
+                messages.success(
+                    request,
                     _(u'Registreringen var vellykket. Se tilsendt epost for verifiseringsinstrukser.')
-                    )
+                )
 
                 return HttpResponseRedirect('/')
             else:
@@ -223,7 +233,11 @@ def set_password(request, token=None):
 
                         rt.delete()
 
-                        messages.success(request, _(u'Bruker %s har gjennomført vellykket gjenoppretning av passord. Du kan nå logge inn.') % user.username)
+                        messages.success(
+                            request,
+                            _(u'Bruker %s har gjennomført vellykket gjenoppretning av passord.' +
+                              'Du kan nå logge inn.') % user.username
+                        )
 
                         return HttpResponseRedirect('/')
                 else:
@@ -234,13 +248,11 @@ def set_password(request, token=None):
                 return render(request, 'auth/set_password.html', {'form': form, 'token': token})
 
         else:
-            messages.error(request, _(u'Lenken er ugyldig. Vennligst bruk gjenoppretning av passord for å få tilsendt en ny lenke.'))
+            messages.error(
+                request,
+                _(u'Lenken er ugyldig. Vennligst bruk gjenoppretning av passord for å få tilsendt en ny lenke.')
+            )
             return HttpResponseRedirect('/')
-
-# API v1
-from rest_framework import viewsets, mixins
-from rest_framework.permissions import AllowAny
-from apps.authentication.serializers import UserSerializer
 
 
 class UserViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.ListModelMixin):
