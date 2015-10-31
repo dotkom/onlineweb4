@@ -34,8 +34,7 @@ def _get_correct_file_name(uploaded_file):
 
     file_name, file_extension = os.path.splitext(uploaded_file.name)
 
-    # PIL can actually not recognize that JPG is a JPEG, fuck all the things and hours of debugging PIL source code to find this out
-    if file_extension.upper() == ".JPG":
-        file_extension = ".JPEG"
+    if file_extension.lower() == ".jpg":
+        file_extension = ".jpeg"
 
     return "{0}{1}".format(file_name, file_extension)

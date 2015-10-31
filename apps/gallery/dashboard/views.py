@@ -6,9 +6,12 @@ from logging import getLogger
 
 from django.core.urlresolvers import reverse
 from django.contrib import messages
+from django.contrib.contenttypes.models import ContentType
 from django.http import HttpResponseBadRequest, HttpResponseNotAllowed
 from django.shortcuts import redirect
 from django.views.generic import DetailView, UpdateView, ListView, TemplateView
+
+from taggit.models import TaggedItem
 
 
 from apps.dashboard.tools import DashboardPermissionMixin
@@ -55,6 +58,9 @@ class GalleryIndex(DashboardPermissionMixin, ListView):
 
         # Add query filters and some statistics on disk usage
         context['years'] = years
+        context['tags'] = [tag.tag.name for tag in TaggedItem.objects.filter(
+            content_type=ContentType.objects.get_for_model(ResponsiveImage)
+        ).order_by('tag__name')]
         context['disk_usage'] = humanize_size(total_disk_usage)
 
         return context

@@ -321,8 +321,10 @@ var Gallery = (function ($, tools) {
         var cropData = image.cropper("getData");
         var image_name = $('#image-edit-name');
         var image_description = $('#image-edit-description');
+        var image_tags = $('#image-edit-tags');
         cropData.name = image_name.val();
         cropData.description = image_description.val();
+        cropData.tags = image_tags.val();
 
         if (cropData.name.length < 2) {
             alert('Du må gi bildet et navn!');

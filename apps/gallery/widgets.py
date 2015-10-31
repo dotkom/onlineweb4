@@ -3,7 +3,7 @@
 # Created by 'myth' on 10/14/15
 
 from django.conf import settings
-from django.forms import HiddenInput
+from django.forms import HiddenInput, TextInput
 from django.forms.utils import flatatt, format_html, force_text
 
 from apps.gallery.models import ResponsiveImage
@@ -66,3 +66,15 @@ class SingleImageInput(HiddenInput):
             )
 
         return format_html(WIDGET_STRING, flatatt(final_attrs), img_thumb)
+
+
+class TagInputField(TextInput):
+    """
+    Adds some extras to a TextInputField to support space or comma separated tagging
+    """
+
+    def __init__(self, attrs=None):
+        super(TagInputField, self).__init__(attrs=attrs)
+
+    def render(self, name, value, attrs=None):
+        return super(TagInputField, self).render(name, value, attrs=attrs)

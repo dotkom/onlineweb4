@@ -13,6 +13,7 @@ from django.http import JsonResponse, HttpResponse
 from guardian.decorators import permission_required
 from rest_framework import mixins, viewsets
 from rest_framework.permissions import AllowAny
+from taggit.utils import parse_tags
 
 from apps.gallery import util
 from apps.gallery.models import UnhandledImage, ResponsiveImage
@@ -135,6 +136,7 @@ def crop_image(request):
             image = get_object_or_404(UnhandledImage, pk=crop_data['id'])
             image_name = crop_data['name']
             image_description = crop_data['description']
+            image_tags = crop_data['tags']
             responsive_image_path = util.save_responsive_image(image, crop_data)
 
             # Error / Status collection is performed in the utils create_responsive_images function
@@ -160,6 +162,9 @@ def crop_image(request):
                 thumbnail=thumbnail
             )
             resp_image.save()
+            # Unpack and add any potential tags
+            if image_tags:
+                resp_image.tags.add(*parse_tags(image_tags))
 
             log.debug(
                 '%s cropped and saved ResponsiveImage %d (%s)' % (
@@ -200,7 +205,11 @@ def search(request):
 
     # Field filters are normally AND'ed together. Q objects circumvent this, treating each field result like a set.
     # This allows us to use set operators like | (union), & (intersect) and ~ (negation)
-    matches = ResponsiveImage.objects.filter(Q(name__icontains=query) | Q(description__icontains=query))[:10]
+    matches = ResponsiveImage.objects.filter(
+        Q(name__icontains=query) |
+        Q(description__icontains=query) |
+        Q(tags__name__in=query.split(' '))
+    ).distinct()[:10]
 
     results = {
         'total': len(matches),
@@ -215,7 +224,8 @@ def search(request):
             'sm': settings.MEDIA_URL + str(image.image_sm),
             'md': settings.MEDIA_URL + str(image.image_md),
             'lg': settings.MEDIA_URL + str(image.image_lg),
-            'timestamp': image.timestamp.strftime('%Y-%m-%d %H:%M:%S')
+            'timestamp': image.timestamp.strftime('%Y-%m-%d %H:%M:%S'),
+            'tags': [str(tag) for tag in image.tags.all()]
         } for image in matches]
     }
 
@@ -256,6 +266,10 @@ class ResponsiveImageViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin,
 
         if query:
             # Restrict results based off of search
-            queryset = queryset.filter(Q(name__icontains=query) | Q(description__icontains=query))
+            queryset = queryset.filter(
+                Q(name__icontains=query) |
+                Q(description__icontains=query) |
+                Q(tags__name__in=query.split())
+            ).distinct()
 
         return queryset
