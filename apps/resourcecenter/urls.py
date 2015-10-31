@@ -2,9 +2,8 @@
 
 from django.conf.urls import patterns, url 
 
-urlpatterns = patterns('apps.resourcecenter.views',
-	# Index page
+urlpatterns = patterns(
+    'apps.resourcecenter.views',
     url(r'^$', 'index', name='resourcecenter_index'),
-    # Subpages
     url(r'^gameservers/$', 'gameservers', name='resourcecenter_gameservers'),
 )
