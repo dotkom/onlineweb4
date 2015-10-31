@@ -305,7 +305,7 @@ def delete_email(request):
                         'message': _(u"Kan ikke slette primær-epostadresse.")
                     })
                 )
-            
+
             email.delete()
             return HttpResponse(status=200)
     return HttpResponse(status=404)

@@ -115,7 +115,7 @@ class Payment(models.Model):
             self.content_object.notify_waiting_list(
                 host=host, unattended_user=payment_relation.user)
             Attendee.objects.get(event=self.content_object,
-                user=payment_relation.user).delete()
+                                 user=payment_relation.user).delete()
 
     def check_refund(self, payment_relation):
         if self._is_type(AttendanceEvent):

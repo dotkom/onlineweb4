@@ -102,7 +102,7 @@ class EventTest(TestCase):
         
     def testSignUpWithNoRulesNoMarksNoMembership(self):
         self.logger.debug("Testing signup with no rules, no marks and user not member.")
-        
+
         self.allowed_username.delete()
         # The user should not be able to attend, since the event has no rule bundles 
         # and they are not a member.

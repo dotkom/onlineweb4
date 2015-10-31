@@ -140,8 +140,8 @@ class PaymentReminder(Task):
             payment.content_object.notify_waiting_list(
                 host=settings.BASE_URL, unattended_user=user)
 
-            Attendee.objects.get(event=payment.content_object, 
-                    user=user).delete()
+            Attendee.objects.get(event=payment.content_object,
+                                 user=user).delete()
 
 
 class PaymentDelayHandler(Task):
