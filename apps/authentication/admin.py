@@ -25,8 +25,13 @@ class OnlineUserAdmin(VersionAdmin):
         (_(u'Adresse'), {'fields': ('address', 'zip_code',)}),
         (_(u'Viktige datoer'), {'fields': ('last_login', 'date_joined',)}),
         (_(u'Annen info'), {'fields': ('infomail', 'jobmail', 'mark_rules', 'rfid', 'nickname', 'website',)}),
-        (_(u'Tilganger'), {'fields': ('is_active', 'is_staff', 'is_superuser',
-                                       'groups', 'user_permissions')}),
+        (_(u'Tilganger'), {'fields': (
+            'is_active',
+            'is_staff',
+            'is_superuser',
+            'groups',
+            'user_permissions'
+        )}),
     )
     filter_horizontal = ('groups', 'user_permissions',)
     search_fields = ('first_name', 'last_name', 'username', 'ntnu_username',)
