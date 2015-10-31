@@ -11,4 +11,3 @@ class CompanyAdmin(VersionAdmin):
     search_fields = ('name',)
 
 admin.site.register(Company, CompanyAdmin)
-

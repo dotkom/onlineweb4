@@ -12,8 +12,8 @@ class CompanyTests(TestCase):
 
     def setUp(self):
         self.logger = logging.getLogger(__name__)
-        self.company = G(Company, name="testname") 
+        self.company = G(Company, name="testname")
 
     def testCompanyUniqodeIsCorrect(self):
         self.logger.debug("Company __unicode__() should return correct name")
-        self.assertEqual(self.company.__unicode__(), "testname")    
+        self.assertEqual(self.company.__unicode__(), "testname")
