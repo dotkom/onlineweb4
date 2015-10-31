@@ -126,26 +126,30 @@ class OnlineUser(AbstractUser):
         """
         if self.ntnu_username:
             if AllowedUsername.objects.filter(
-                username=self.ntnu_username.lower()).filter(
-                expiration_date__gte=timezone.now()).count() > 0:
+                username=self.ntnu_username.lower()
+            ).filter(
+                expiration_date__gte=timezone.now()
+            ).count() > 0:
                 return True
         return False
 
     @property
     def is_committee(self):
-        committeee_group = None
         try:
-            committeee_group = Group.objects.get(name='Komiteer')
+            committee_group = Group.objects.get(name='Komiteer')
+            return self in committee_group.user_set.all() or self.is_staff()
         except Group.DoesNotExist:
             # This probably means that a developer does not have the Komiteer group set up, so let's fail silently
             return False
-        return self in committeee_group.user_set.all() or self.is_staff()
 
     @property
     def has_expiring_membership(self):
         if self.ntnu_username:
             expiration_threshold = timezone.now() + datetime.timedelta(days=60)
-            if AllowedUsername.objects.filter(username=self.ntnu_username.lower(), expiration_date__lt=expiration_threshold).count() > 0:
+            if AllowedUsername.objects.filter(
+                    username=self.ntnu_username.lower(),
+                    expiration_date__lt=expiration_threshold
+            ).count() > 0:
                 return True
         return False
 
@@ -200,7 +204,7 @@ class OnlineUser(AbstractUser):
 
     @models.permalink
     def get_absolute_url(self):
-        return ('profiles_view', None, {'username': self.username})
+        return 'profiles_view', None, {'username': self.username}
 
     def __unicode__(self):
         return self.get_full_name()
@@ -234,7 +238,7 @@ class OnlineUser(AbstractUser):
         gravatar_url += urllib.urlencode({'d': default, 's': str(size)})
         return gravatar_url
 
-    class Meta:
+    class Meta(object):
         ordering = ['first_name', 'last_name']
         verbose_name = _(u"brukerprofil")
         verbose_name_plural = _(u"brukerprofiler")
@@ -267,7 +271,7 @@ class Email(models.Model):
     def __unicode__(self):
         return self.email
 
-    class Meta:
+    class Meta(object):
         verbose_name = _(u"epostadresse")
         verbose_name_plural = _(u"epostadresser")
         permissions = (
@@ -290,7 +294,7 @@ class RegisterToken(models.Model):
         now = timezone.now()
         return now < self.created + valid_period
 
-    class Meta:
+    class Meta(object):
         permissions = (
             ('view_registertoken', 'View RegisterToken'),
         )
@@ -336,10 +340,10 @@ class Position(models.Model):
     """
     Contains a users position in the organization from a given year
     """
-    period     = models.CharField(_(u'periode'), max_length=9, default="2013-2014", blank=False)
-    committee  = models.CharField(_(u"komite"), max_length=20, choices=COMMITTEES, default="hs")
-    position   = models.CharField(_(u"stilling"), max_length=20, choices=POSITIONS, default="medlem")
-    user       = models.ForeignKey(OnlineUser, related_name='positions', blank=False)
+    period = models.CharField(_(u'periode'), max_length=9, default="2013-2014", blank=False)
+    committee = models.CharField(_(u"komite"), max_length=20, choices=COMMITTEES, default="hs")
+    position = models.CharField(_(u"stilling"), max_length=20, choices=POSITIONS, default="medlem")
+    user = models.ForeignKey(OnlineUser, related_name='positions', blank=False)
 
     @property
     def print_string(self):
@@ -348,7 +352,7 @@ class Position(models.Model):
     def __unicode__(self):
         return self.print_string
 
-    class Meta:
+    class Meta(object):
         verbose_name = _(u'posisjon')
         verbose_name_plural = _(u'posisjoner')
         ordering = ('user', 'period', )
@@ -364,14 +368,14 @@ class SpecialPosition(models.Model):
     """
     Special object to represent special positions that typically lasts for life.
     """
-    position   = models.CharField(_(u'Posisjon'), max_length=50, blank=False)
-    since_year = models.IntegerField(_(u'Medlem siden'), blank=False)
-    user       = models.ForeignKey(OnlineUser, related_name='special_positions', blank=False)
+    position = models.CharField(_(u'Posisjon'), max_length=50, blank=False)
+    since_year = models.IntegerField(_(u'Medlem siden'))
+    user = models.ForeignKey(OnlineUser, related_name='special_positions', blank=False)
 
     def __unicode__(self):
         return '%s, %s' % (self.user.get_full_name(), self.position)
 
-    class Meta:
+    class Meta(object):
         verbose_name = _(u'spesialposisjon')
         verbose_name_plural = _(u'spesialposisjoner')
         ordering = ('user', 'since_year',)
