@@ -7,4 +7,3 @@ class ProfilesConfig(AppConfig):
 
     def ready(self):
         super(ProfilesConfig, self).ready()
-        from apps.profiles import signals

@@ -1,4 +1,4 @@
-from django.contrib import admin
+# -*- encoding: utf-8 -*-
 
 from django.contrib import admin
 from django.contrib.contenttypes.admin import GenericStackedInline
@@ -18,8 +18,8 @@ class PaymentInline(GenericStackedInline):
     inline_classes = ('grp-collapse grp-open',)  # style
     exclude = ("added_date", "last_changed_date", "last_changed_by")
 
-    #TODO add proper history updates in dashboard
-    #def save_model(self, request, obj, form, change):
+    # TODO add proper history updates in dashboard
+    # def save_model(self, request, obj, form, change):
     #    obj.last_changed_by = request.user
     #    obj.save()
 
@@ -30,15 +30,18 @@ class PaymentPriceInline(admin.StackedInline):
     classes = ('grp-collapse grp-open',)  # style
     inline_classes = ('grp-collapse grp-open',)  # style
 
+
 class PaymentAdmin(VersionAdmin):
     inlines = (PaymentPriceInline, )
     model = Payment
     list_display = ('__unicode__', 'stripe_key_index', 'payment_type')
 
+
 class PaymentRelationAdmin(VersionAdmin):
     model = PaymentRelation
     list_display = ('__unicode__', 'refunded')
     exclude = ('stripe_id',)
+
 
 class PaymentDelayAdmin(VersionAdmin):
     model = PaymentDelay

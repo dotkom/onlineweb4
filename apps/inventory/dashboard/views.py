@@ -1,12 +1,9 @@
 # -*- encoding: utf-8 -*-
 
-from datetime import datetime
-
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import render, get_object_or_404, redirect
-from django.http import HttpResponseBadRequest, HttpResponse, JsonResponse
 
 from guardian.decorators import permission_required
 
@@ -87,9 +84,12 @@ def details(request, item_pk):
 
     context['new_batch_form'] = BatchForm()
 
-    context['batch_forms'] = [(batch.id, BatchForm(instance=batch)) for batch in Batch.objects.filter(item=context['item'])]
+    context['batch_forms'] = [
+        (b.id, BatchForm(instance=batch)) for b in Batch.objects.filter(item=context['item'])
+    ]
 
     return render(request, 'inventory/dashboard/details.html', context)
+
 
 @login_required
 @permission_required('inventory.delete_item', return_403=True)
@@ -108,6 +108,7 @@ def item_delete(request, item_pk):
         return redirect(index)
 
     raise PermissionDenied
+
 
 @login_required
 @permission_required('inventory.add_batch', return_403=True)
@@ -134,14 +135,15 @@ def batch_new(request, item_pk):
 
             messages.error(request, error_reply.rstrip(','))
         else:
-            batch = batch_form.save(commit=False)
-            batch.item = item
-            batch.save()
+            b = batch_form.save(commit=False)
+            b.item = item
+            b.save()
             messages.success(request, u'Batchen ble lagt til.')
 
         return redirect(details, item_pk=item_pk)
 
     raise PermissionDenied
+
 
 @login_required
 @permission_required('inventory.change_batch', return_403=True)
@@ -151,11 +153,11 @@ def batch(request, item_pk, batch_pk):
 
     # Get base context
 
-    item = get_object_or_404(Item, pk=item_pk)
-    batch = get_object_or_404(Batch, pk=batch_pk)
+    get_object_or_404(Item, pk=item_pk)
+    b = get_object_or_404(Batch, pk=batch_pk)
 
     if request.method == 'POST':
-        batch_form = BatchForm(request.POST, instance=batch)
+        batch_form = BatchForm(request.POST, instance=b)
 
         if not batch_form.is_valid():
             messages.error(request, u'Noen av de påkrevde feltene inneholder feil.')
@@ -174,14 +176,13 @@ def batch_delete(request, item_pk, batch_pk):
     if not has_access(request):
         raise PermissionDenied
 
-    batch = get_object_or_404(Batch, pk=batch_pk)
+    b = get_object_or_404(Batch, pk=batch_pk)
 
     if request.method == 'POST':
 
-        batch.delete()
+        b.delete()
         messages.success(request, u'Batchen ble slettet.')
 
         return redirect(details, item_pk=item_pk)
 
     raise PermissionDenied
-

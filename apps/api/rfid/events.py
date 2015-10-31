@@ -124,7 +124,6 @@ class EventResource(ModelResource):
         # Returning washed object
         return bundle
 
-
     class Meta(object):
         queryset = Event.objects.all()
         resource_name = 'events'

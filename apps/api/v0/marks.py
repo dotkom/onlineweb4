@@ -1,30 +1,29 @@
-#-*- coding: utf-8 -*-
-
-from django.conf.urls import url
-from django.core.urlresolvers import reverse
+# -*- coding: utf-8 -*-
 
 from tastypie import fields
-from tastypie.authentication import Authentication, BasicAuthentication#, SessionAuthentication
+from tastypie.authentication import BasicAuthentication
 from tastypie.authorization import DjangoAuthorization
 from tastypie.bundle import Bundle
-from tastypie.resources import ModelResource, ALL_WITH_RELATIONS
+from tastypie.resources import ModelResource
 
 from apps.marks.models import Mark, MarkUser
 from apps.api.v0.authentication import UserResource
+
 
 # TODO restrict access to this feature
 class MarkResource(ModelResource):
     """
     Displays all marks, with all linked resources exposed by api end-points.
     """
-    given_by = fields.ForeignKey(UserResource, 'given_by') 
+    given_by = fields.ForeignKey(UserResource, 'given_by')
     last_changed_by = fields.ForeignKey(UserResource, 'last_changed_by')
     given_to = fields.ToManyField(UserResource, 'given_to')
 
-    class Meta:
+    class Meta(object):
         queryset = Mark.objects.all()
         resource_name = 'marks/marks'
         excludes = ['id', ]
+
 
 class EntryResource(ModelResource):
     """
@@ -36,7 +35,7 @@ class EntryResource(ModelResource):
     user = fields.ToOneField(UserResource, 'user')
     mark = fields.ToOneField(MarkResource, 'mark')
 
-    class Meta:
+    class Meta(object):
         queryset = MarkUser.objects.all()
         resource_name = 'marks/entry'
         excludes = ['id', ]
@@ -49,17 +48,18 @@ class EntryResource(ModelResource):
     def apply_authorization_limits(self, request, object_list):
         return object_list.filter(user=request.user)
 
+
 class MyMarksResource(ModelResource):
     """
     Lists all of an authenticated users' marks.
 
-    given_to is excluded, both because users should not be able to see this, 
+    given_to is excluded, both because users should not be able to see this,
     it's redundant and it avoids loops.
     """
-    given_by = fields.ForeignKey(UserResource, 'given_by') 
+    given_by = fields.ForeignKey(UserResource, 'given_by')
     last_changed_by = fields.ForeignKey(UserResource, 'last_changed_by')
 
-    class Meta:
+    class Meta(object):
         queryset = Mark.objects.all()
         resource_name = 'marks/mine'
         excludes = ['id', ]
@@ -72,7 +72,7 @@ class MyMarksResource(ModelResource):
     def apply_authorization_limits(self, request, object_list):
         return object_list.filter(given_to=request.user)
 
-    def get_resource_uri(self, bundle_or_obj):
+    def get_resource_uri(self, bundle_or_obj, **kwargs):
         """
         Overrides the standard uri rendering to expose marks by their proper endpoint.
 
@@ -92,14 +92,15 @@ class MyMarksResource(ModelResource):
 
         return self._build_reverse_url("api_dispatch_detail", kwargs=kwargs)
 
+
 class MyActiveMarksResource(ModelResource):
     """
     Supplies a list of an authenticated users' active marks.
     """
-    given_by = fields.ForeignKey(UserResource, 'given_by') 
+    given_by = fields.ForeignKey(UserResource, 'given_by')
     last_changed_by = fields.ForeignKey(UserResource, 'last_changed_by')
 
-    class Meta:
+    class Meta(object):
         queryset = Mark.marks.all_active()
         resource_name = 'marks/active'
         authentication = BasicAuthentication()

@@ -4,18 +4,26 @@ import uuid
 import re
 from smtplib import SMTPException
 
+from django.conf import settings
 from django.contrib import auth
 from django.contrib import messages
 from django.core.mail import send_mail
-from django.db.utils import IntegrityError
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponseRedirect
 from django.utils.translation import ugettext as _
 from django.views.decorators.debug import sensitive_post_parameters
 
-from django.conf import settings
-from apps.authentication.forms import (LoginForm, RegisterForm,
-                            RecoveryForm, ChangePasswordForm)
+# API v1
+from rest_framework import viewsets, mixins
+from rest_framework.permissions import AllowAny
+from apps.authentication.serializers import UserSerializer
+
+from apps.authentication.forms import (
+    LoginForm,
+    RegisterForm,
+    RecoveryForm,
+    ChangePasswordForm
+)
 from apps.authentication.models import OnlineUser as User, RegisterToken, Email
 
 
@@ -29,11 +37,12 @@ def login(request):
             if redirect_url:
                 return HttpResponseRedirect(redirect_url)
             return HttpResponseRedirect('/')
-        else: form = LoginForm(request.POST, auto_id=True)
+        else:
+            form = LoginForm(request.POST, auto_id=True)
     else:
         form = LoginForm()
 
-    response_dict = { 'form' : form, 'next' : redirect_url}
+    response_dict = {'form': form, 'next': redirect_url}
     return render(request, 'auth/login.html', response_dict)
 
 
@@ -61,9 +70,9 @@ def register(request):
                     last_name=cleaned['last_name'].title(),
                 )
                 # Set remaining fields
-                user.phone_number=cleaned['phone']
-                user.address=cleaned['address'].title()
-                user.zip_code=cleaned['zip_code']
+                user.phone_number = cleaned['phone']
+                user.address = cleaned['address'].title()
+                user.zip_code = cleaned['zip_code']
                 # Store password properly
                 user.set_password(cleaned['password'])
                 # Users need to be manually activated
@@ -96,12 +105,15 @@ Denne lenken vil være gyldig i 24 timer. Dersom du behøver å få tilsendt en 
 kan dette gjøres med funksjonen for å gjenopprette passord.
 """) % (request.META['HTTP_HOST'], token)
                 try:
-                    send_mail(_(u'Verifiser din konto'), email_message, settings.DEFAULT_FROM_EMAIL, [email.email,])
+                    send_mail(_(u'Verifiser din konto'), email_message, settings.DEFAULT_FROM_EMAIL, [email.email, ])
                 except SMTPException:
                     messages.error(request, u'Det oppstod en kritisk feil, epostadressen er ugyldig!')
                     return redirect('home')
 
-                messages.success(request, _(u'Registreringen var vellykket. Se tilsendt epost for verifiseringsinstrukser.'))
+                messages.success(
+                    request,
+                    _(u'Registreringen var vellykket. Se tilsendt epost for verifiseringsinstrukser.')
+                )
 
                 return HttpResponseRedirect('/')
             else:
@@ -187,7 +199,7 @@ Denne lenken vil være gyldig i 24 timer. Dersom du behøver å få tilsendt en 
 kan dette gjøres med funksjonen for å gjenopprette passord.
 """) % (email.email, email.user.username, request.META['HTTP_HOST'], token)
 
-                send_mail(_(u'Gjenoppretning av passord'), email_message, settings.DEFAULT_FROM_EMAIL, [email.email,])
+                send_mail(_(u'Gjenoppretning av passord'), email_message, settings.DEFAULT_FROM_EMAIL, [email.email, ])
 
                 messages.success(request, _(u'En lenke for gjenoppretning har blitt sendt til %s.') % email.email)
 
@@ -221,7 +233,11 @@ def set_password(request, token=None):
 
                         rt.delete()
 
-                        messages.success(request, _(u'Bruker %s har gjennomført vellykket gjenoppretning av passord. Du kan nå logge inn.') % user.username)
+                        messages.success(
+                            request,
+                            _(u'Bruker %s har gjennomført vellykket gjenoppretning av passord.' +
+                              'Du kan nå logge inn.') % user.username
+                        )
 
                         return HttpResponseRedirect('/')
                 else:
@@ -232,13 +248,11 @@ def set_password(request, token=None):
                 return render(request, 'auth/set_password.html', {'form': form, 'token': token})
 
         else:
-            messages.error(request, _(u'Lenken er ugyldig. Vennligst bruk gjenoppretning av passord for å få tilsendt en ny lenke.'))
+            messages.error(
+                request,
+                _(u'Lenken er ugyldig. Vennligst bruk gjenoppretning av passord for å få tilsendt en ny lenke.')
+            )
             return HttpResponseRedirect('/')
-
-# API v1
-from rest_framework import viewsets, mixins
-from rest_framework.permissions import AllowAny
-from apps.authentication.serializers import UserSerializer
 
 
 class UserViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.ListModelMixin):

@@ -1,7 +1,5 @@
 from django.contrib import admin
 from apps.article.models import Article, Tag, ArticleTag
-from django.conf import settings
-from filebrowser.settings import VERSIONS, ADMIN_THUMBNAIL
 
 from reversion.admin import VersionAdmin
 

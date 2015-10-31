@@ -1,7 +1,4 @@
-from filebrowser.base import FileObject
 from filebrowser.settings import VERSIONS
-
-from apps.article.models import Article
 
 
 def find_image_versions(article):

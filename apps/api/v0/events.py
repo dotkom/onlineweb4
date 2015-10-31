@@ -27,7 +27,7 @@ class AttendeeResource(ModelResource):
 
 
 class CompanyResource(ModelResource):
-    
+
     class Meta(object):
         queryset = Company.objects.all()
         resource_name = 'company'
@@ -67,25 +67,25 @@ class EventResource(ModelResource):
 
     # Making multiple images for the events
     def dehydrate(self, bundle):
-        
+
         # Setting slug-field
         bundle.data['slug'] = slugify(unidecode(bundle.data['title']))
-        
+
         # If image is set
         if bundle.data['image']:
             # Parse to FileObject used by Filebrowser
             temp_image = FileObject(bundle.data['image'])
-            
+
             # Itterate the different versions (by key)
             for ver in VERSIONS.keys():
                 # Check if the key start with article_ (if it does, we want to crop to that size)
                 if ver.startswith('events_'):
                     # Adding the new image to the object
                     bundle.data['image_'+ver] = temp_image.version_generate(ver).url
-            
+
             # Unset the image-field
             del(bundle.data['image'])
-        
+
         # Do the same thing for the company image
         if bundle.data['company_event']:
             for company in bundle.data['company_event']:
@@ -95,9 +95,9 @@ class EventResource(ModelResource):
                         company.data['companies'].data['old_image_'+ver] = temp_image.version_generate(ver).url
                 del(company.data['companies'].data['old_image'])
 
-        # Returning washed object 
+        # Returning washed object
         return bundle
-        
+
     def get_object_list(self, request):
 
         events = Event.objects.all()
@@ -108,14 +108,14 @@ class EventResource(ModelResource):
             if event.can_display(request.user):
                 filtered_events.add(event.pk)
 
-        return Event.objects.filter(pk__in = filtered_events)
+        return Event.objects.filter(pk__in=filtered_events)
 
     class Meta(object):
         queryset = Event.objects.all()
         resource_name = 'events'
         # XXX: Noop authorization is probably not safe for producion
         authorization = Authorization()
-        
+
         include_absolute_url = True
         ordering = ['event_start']
         filtering = {

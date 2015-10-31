@@ -17,7 +17,7 @@ from reversion.admin import VersionAdmin
 
 class AlwaysChangedModelForm(ModelForm):
 
-   def has_changed(self):
+    def has_changed(self):
         """
         Should return True if data differs from initial.
         By always returning true even unchanged inlines will get

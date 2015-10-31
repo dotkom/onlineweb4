@@ -1,4 +1,4 @@
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Submit
 from crispy_forms.bootstrap import FormActions, Field, StrictButton, FieldWithButtons
@@ -14,7 +14,7 @@ import datetime
 
 
 class LoginForm(forms.Form):
-    password = forms.CharField(widget=forms.PasswordInput(render_value=False), label=_(u"Passord"))
+    password = forms.CharField(widget=forms.PasswordInput(), label=_(u"Passord"))
 
     def __init__(self, *args, **kwargs):
         super(LoginForm, self).__init__(*args, **kwargs)
@@ -76,19 +76,31 @@ AlternativeFormSet = modelformset_factory(Alternative, form=AlternativeForm, can
 
 
 class RegisterVoterForm(forms.Form):
-    password = forms.CharField(widget=forms.PasswordInput(render_value=False), label=_(u"Pinkode"), help_text='Kode oppgitt under generalforsamling')
-    salt = forms.CharField(widget=forms.PasswordInput(render_value=False),
-                           label=_(u'Personlig kode'), help_text=_(u'''
-                            Personlig kode brukes for å lage en unik hash som brukes til hemmelige valg.
-                            Denne lagres ikke og det er derfor ytterst viktig at du ikke glemmer den.'''))
-    salt2 = forms.CharField(widget=forms.PasswordInput(render_value=False), label=_(u'Gjenta personlig kode'))
+    password = forms.CharField(
+        widget=forms.PasswordInput(),
+        label=_(u"Pinkode"),
+        help_text='Kode oppgitt under generalforsamling'
+    )
+    salt = forms.CharField(
+        widget=forms.PasswordInput(),
+        label=_(u'Personlig kode'),
+        help_text=_(
+            u"""Personlig kode brukes for å lage en unik hash som brukes til hemmelige valg.
+            Denne lagres ikke og det er derfor ytterst viktig at du ikke glemmer den."""
+        )
+    )
+    salt2 = forms.CharField(widget=forms.PasswordInput(), label=_(u'Gjenta personlig kode'))
 
-    def get_active_meeting(self):
+    @staticmethod
+    def get_active_meeting():
         today = datetime.date.today()
         hour24 = datetime.timedelta(hours=24)
-        meetings = Meeting.objects.filter(start_date__lte=timezone.now(), ended=False,
-            start_date__range=[today - hour24, today + hour24]).order_by('-start_date')
-        
+        meetings = Meeting.objects.filter(
+            start_date__lte=timezone.now(),
+            ended=False,
+            start_date__range=[today - hour24, today + hour24]
+        ).order_by('-start_date')
+
         if meetings:
             return meetings[0]
 

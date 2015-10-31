@@ -1,10 +1,11 @@
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
 from apps.companyprofile.models import Company
 
 import reversion
+
 
 class CareerOpportunity(models.Model):
     """
@@ -22,7 +23,7 @@ class CareerOpportunity(models.Model):
     def __unicode__(self):
         return self.title
 
-    class Meta:
+    class Meta(object):
         verbose_name = _('karrieremulighet')
         verbose_name_plural = _('karrieremuligheter')
         permissions = (

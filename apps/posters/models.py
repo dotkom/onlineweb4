@@ -3,17 +3,14 @@
 from django.conf import settings
 from django.db import models
 from django.core.urlresolvers import reverse
-from django.forms import ModelForm
 from django.utils.translation import ugettext as _
 
-from datetime import datetime, timedelta
-
 from django.contrib.auth.models import Group
-from apps.companyprofile.models import Company
 from apps.events.models import Event
 
 
 User = settings.AUTH_USER_MODEL
+
 
 class OrderMixin(models.Model):
     """
@@ -24,15 +21,25 @@ class OrderMixin(models.Model):
     amount and description is optional, but should exist in all orders.
     assigned_to and finished will be set by ProKom.
     """
-    order_type = models.IntegerField( choices=(
+    order_type = models.IntegerField(choices=(
         (1, 'Plakat'),
         (2, 'Bong'),
         (3, 'Annet'),
     ))
     ordered_date = models.DateTimeField(auto_now_add=True, editable=False)
     ordered_by = models.ForeignKey(User, verbose_name=_(u"bestilt av"), related_name='ordered_by')
-    ordered_committee = models.ForeignKey(Group, verbose_name=_(u'bestilt av komite'), related_name='ordered_committee')
-    assigned_to = models.ForeignKey(User, verbose_name=_(u'tilordnet til'), related_name='assigned_to', blank=True, null=True)
+    ordered_committee = models.ForeignKey(
+        Group,
+        verbose_name=_(u'bestilt av komite'),
+        related_name='ordered_committee'
+    )
+    assigned_to = models.ForeignKey(
+        User,
+        verbose_name=_(u'tilordnet til'),
+        related_name='assigned_to',
+        blank=True,
+        null=True
+    )
     description = models.TextField(_(u"beskrivelse"), max_length=1000, blank=True, null=True)
     amount = models.IntegerField(_(u'antall opplag'), blank=True, null=True)
     finished = models.BooleanField(_(u"ferdig"), default=False)
@@ -48,7 +55,7 @@ class OrderMixin(models.Model):
     def get_dashboard_url(self):
         return self.get_absolute_url()
 
-    class Meta:
+    class Meta(object):
 
         permissions = (
             ('add_poster_order', 'Add poster orders'),
@@ -67,7 +74,7 @@ class Poster(OrderMixin):
     display_to = models.DateField(_(u"vis til"), blank=True, null=True, default=None)
     bong = models.IntegerField(_(u'bonger'), blank=True, null=True)
 
-    class Meta:
+    class Meta(object):
         ordering = ['-id']
         verbose_name = _(u"bestilling")
         verbose_name_plural = _(u"bestillinger")

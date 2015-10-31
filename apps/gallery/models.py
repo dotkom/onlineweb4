@@ -53,9 +53,9 @@ class UnhandledImage(models.Model):
 def unhandled_image_delete(sender, instance, **kwargs):
     # Pass false so FileField doesn't save the model.
     if instance.image:
-        instance.image.delete(False)
+        instance.image.delete()
     if instance.thumbnail:
-        instance.thumbnail.delete(False)
+        instance.thumbnail.delete()
 
 # Connect post_delete event with
 post_delete.connect(receiver=unhandled_image_delete, dispatch_uid=uuid.uuid1(), sender=UnhandledImage)
@@ -208,19 +208,19 @@ def responsive_image_delete(sender, instance, **kwargs):
 
     # Pass false so FileField doesn't save the model.
     if instance.image_original:
-        instance.image_original.delete(False)
+        instance.image_original.delete()
     if instance.image_wide:
-        instance.image_wide.delete(False)
+        instance.image_wide.delete()
     if instance.image_lg:
-        instance.image_lg.delete(False)
+        instance.image_lg.delete()
     if instance.image_md:
-        instance.image_md.delete(False)
+        instance.image_md.delete()
     if instance.image_sm:
-        instance.image_sm.delete(False)
+        instance.image_sm.delete()
     if instance.image_xs:
-        instance.image_xs.delete(False)
+        instance.image_xs.delete()
     if instance.thumbnail:
-        instance.thumbnail.delete(False)
+        instance.thumbnail.delete()
 
     # Automatically delete all related objects that for some insane reason had a ref to the
     # same image. This is bat country. Really only happens if there has been an exception

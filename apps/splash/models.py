@@ -20,7 +20,7 @@ class SplashYear(models.Model):
     def __unicode__(self):
         return self.title
 
-    class Meta:
+    class Meta(object):
         ordering = ('-start_date',)
 
 
@@ -34,7 +34,7 @@ class SplashEvent(TimeStampedModel, models.Model):
     def __unicode__(self):
         return self.title
 
-    class Meta:
+    class Meta(object):
         ordering = ('start_time',)
 
 reversion.register(SplashYear)
