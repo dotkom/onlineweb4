@@ -8,6 +8,7 @@ from reversion.admin import VersionAdmin
 class SplashYearAdmin(VersionAdmin):
     list_display = ('title', 'start_date',)
 
+
 class SplashEventAdmin(VersionAdmin):
     exclude = ('',)
 
