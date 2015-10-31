@@ -58,9 +58,9 @@ class GalleryIndex(DashboardPermissionMixin, ListView):
 
         # Add query filters and some statistics on disk usage
         context['years'] = years
-        context['tags'] = set([tag.tag.name for tag in TaggedItem.objects.filter(
+        context['tags'] = sorted(set(tag.tag.name for tag in TaggedItem.objects.filter(
             content_type=ContentType.objects.get_for_model(ResponsiveImage)
-        ).order_by('tag__name')])
+        ).order_by('tag__name')))
         context['disk_usage'] = humanize_size(total_disk_usage)
 
         return context
