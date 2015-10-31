@@ -100,7 +100,7 @@ class Mark(models.Model):
         for user in given_to:
             _fix_mark_history(user)
 
-    class Meta(objects):
+    class Meta(object):
         verbose_name = _(u"Prikk")
         verbose_name_plural = _(u"Prikker")
         permissions = (
