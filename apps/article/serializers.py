@@ -10,17 +10,31 @@ class ArticleSerializer(serializers.ModelSerializer):
     image = ResponsiveImageSerializer()
     absolute_url = serializers.CharField(source='get_absolute_url', read_only=True)
 
-    class Meta:
+    class Meta(object):
         model = Article
         fields = (
-                'absolute_url', 'authors', 'created_by', 'changed_date', 'content', 'created_date',
-                'featured', 'heading', 'id',
-                'ingress', 'ingress_short', 'photographers', 'published_date', 'slug', 'video', 'image', 'article_tags',
+            'absolute_url',
+            'authors',
+            'created_by',
+            'changed_date',
+            'content',
+            'created_date',
+            'featured',
+            'heading',
+            'id',
+            'ingress',
+            'ingress_short',
+            'photographers',
+            'published_date',
+            'slug',
+            'video',
+            'image',
+            'article_tags',
         )
 
 
 class TagSerializer(serializers.ModelSerializer):
 
-    class Meta:
+    class Meta(object):
         model = Tag
         fields = ('name', 'short_name')
