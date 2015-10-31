@@ -16,7 +16,7 @@ class OfflineTest(TestCase):
         try:
             check_call(['which', 'convert'])
             return True
-        except (OSError, CalledProcessError) as e:
+        except (OSError, CalledProcessError):
             self.logger.error('Missing dependency imagemagick.')
             return False
 
