@@ -50,6 +50,10 @@ class GalleryIndex(DashboardPermissionMixin, ListView):
                 except OSError as e:
                     getLogger(__name__).error('GalleryIndex file summation on missing file: %s' % e)
 
+        # Filter out potential ResponsiveImage objects that have orphan file references
+        context['images'] = filter(lambda i: i.file_status_ok(), context['images'])
+
+        # Add query filters and some statistics on disk usage
         context['years'] = years
         context['disk_usage'] = humanize_size(total_disk_usage)
 
@@ -163,13 +167,13 @@ class GalleryDelete(DashboardPermissionMixin, DetailView):
             img.delete()
             messages.success(request, u'%s (%d) ble slettet.' % (image_name, image_id))
 
-            getLogger(__name__).info('%s deleted ResponsiveImage %d' % (self.request.user, image_id))
+            getLogger(__name__).info(u'%s deleted ResponsiveImage %d' % (self.request.user, image_id))
 
             return redirect(reverse('gallery_dashboard:index'))
         else:
             messages.error(request, u'Det oppstod en feil, klarte ikke slette bildet.')
             getLogger(__name__).error(
-                '%s attempted to delete image with ID %d, but failed as queryset was empty.' % (
+                u'%s attempted to delete image with ID %d, but failed as queryset was empty.' % (
                     self.request.user,
                     kwargs['pk']
                 )

@@ -2,11 +2,12 @@
 
 import json
 import logging
+import os
 
 from django.db.models import Q
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import get_object_or_404, redirect, render
+from django.shortcuts import get_object_or_404, render
 from django.http import JsonResponse, HttpResponse
 
 from guardian.decorators import permission_required
@@ -19,12 +20,13 @@ from apps.gallery.forms import DocumentForm
 from apps.gallery.serializers import ResponsiveImageSerializer
 
 
-def _create_request_dictionary(request):
+def _create_request_dictionary():
 
     dictionary = {
         'unhandled_images': UnhandledImage.objects.all(),
         'responsive_images': ResponsiveImage.objects.all(),
     }
+
     return dictionary
 
 
@@ -46,10 +48,14 @@ def all_images(request):
 @permission_required('gallery.add_responsiveimage')
 def upload(request):
 
+    log = logging.getLogger(__name__)
+
     if request.method == "POST":
         form = DocumentForm(request.POST, request.FILES)
         if form.is_valid():
-            return _handle_upload(request.FILES['file'])
+            log.info('%s uploaded image "%s"' % (request.user, os.path.abspath(str(request.FILES['file']))))
+            response = _handle_upload(request.FILES['file'])
+            return response
 
     return HttpResponse(status=400, content=json.dumps({'success': False, 'message': 'Bad request or invalid type.'}))
 
@@ -58,15 +64,15 @@ def upload(request):
 def _handle_upload(uploaded_file):
 
     log = logging.getLogger(__name__)
-    log.debug('Handling upload of file: %s' % uploaded_file)
+    log.debug('Handling upload of file: "%s"' % os.path.abspath(str(uploaded_file)))
 
     unhandled_file_path = util.save_unhandled_file(uploaded_file)
-    log.debug('Unhandled file was saved at: %s' % unhandled_file_path)
+    log.debug('Unhandled file was saved at: "%s"' % os.path.abspath(str(unhandled_file_path)))
 
     thumbnail_result = util.create_thumbnail_for_unhandled_images(unhandled_file_path)
 
     if 'error' in thumbnail_result:
-        log.error('Error while creating thumbnail for %s' % unhandled_file_path)
+        log.error('Error while creating thumbnail for "%s"' % os.path.abspath(str(unhandled_file_path)))
         # Delete files
         return HttpResponse(status=500, content=json.dumps(thumbnail_result['error']))
 
@@ -74,7 +80,7 @@ def _handle_upload(uploaded_file):
     unhandle_media = util.get_unhandled_media_path(unhandled_file_path)
     unhandled_thumbnail_media = util.get_unhandled_thumbnail_media_path(thumbnail_result['thumbnail_path'])
 
-    log.debug('Creating an UnhandledImage for %s' % unhandled_file_path)
+    log.debug('Creating an UnhandledImage for "%s"' % os.path.abspath(str(unhandled_file_path)))
     # Try catch this and delete files on exception
     UnhandledImage(image=unhandle_media, thumbnail=unhandled_thumbnail_media).save()
 
@@ -113,11 +119,15 @@ def get_all_untreated(request):
 @login_required
 @permission_required('gallery.add_responsiveimage')
 def crop_image(request):
+
+    log = logging.getLogger(__name__)
+
     if request.is_ajax():
         if request.method == 'POST':
             crop_data = request.POST
 
             if not _verify_crop_data(crop_data):
+                log.info('%s attempted image crop with incomplete dimension payload' % request.user)
                 return JsonResponse(status=404, data=json.dumps(
                     {'error': 'Json must contain id, x, y, height and width, and name.'}
                 ))
@@ -127,7 +137,7 @@ def crop_image(request):
             image_description = crop_data['description']
             responsive_image_path = util.save_responsive_image(image, crop_data)
 
-            # SAMLE ERRORZ PLZ
+            # Error / Status collection is performed in the utils create_responsive_images function
             util.create_responsive_images(responsive_image_path)
 
             original_media = util.get_responsive_original_path(responsive_image_path)
@@ -138,7 +148,7 @@ def crop_image(request):
             xs_media = util.get_responsive_xs_path(responsive_image_path)
             thumbnail = util.get_responsive_thumbnail_path(responsive_image_path)
 
-            ResponsiveImage(
+            resp_image = ResponsiveImage(
                 name=image_name,
                 description=image_description,
                 image_original=original_media,
@@ -148,9 +158,20 @@ def crop_image(request):
                 image_xs=xs_media,
                 image_wide=wide_media,
                 thumbnail=thumbnail
-            ).save()
+            )
+            resp_image.save()
 
+            log.debug(
+                '%s cropped and saved ResponsiveImage %d (%s)' % (
+                    request.user,
+                    resp_image.id,
+                    resp_image.filename
+                )
+            )
+
+            unhandled_image_name = image.filename
             image.delete()
+            log.debug('UnhandledImage %s was deleted' % unhandled_image_name)
 
             return HttpResponse(status=200, content=json.dumps({'cropData': crop_data}))
 
