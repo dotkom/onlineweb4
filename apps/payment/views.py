@@ -9,7 +9,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.mail import EmailMessage
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import get_object_or_404
-from django.utils.translation import ugettext as _ 
+from django.utils.translation import ugettext as _
 
 from apps.payment.models import Payment, PaymentRelation, PaymentPrice
 
@@ -26,17 +26,17 @@ def payment(request):
             price_id = request.POST.get("priceId")
 
             payment_object = Payment.objects.get(id=payment_id)
-            payment_price = PaymentPrice.objects.get(id=price_id) 
+            payment_price = PaymentPrice.objects.get(id=price_id)
 
             if payment_object:
                 try:
                     stripe.api_key = settings.STRIPE_PRIVATE_KEYS[payment_object.stripe_key_index]
 
                     charge = stripe.Charge.create(
-                      amount=payment_price.price * 100,  # Price is multiplied with 100 because the amount is in øre
-                      currency="nok",
-                      card=token,
-                      description=payment_object.description() + " - " + request.user.email
+                        amount=payment_price.price * 100,  # Price is multiplied with 100 because the amount is in øre
+                        currency="nok",
+                        card=token,
+                        description=payment_object.description() + " - " + request.user.email
                     )
 
                     payment_relation = PaymentRelation.objects.create(
@@ -51,10 +51,10 @@ def payment(request):
                     _send_payment_confirmation_mail(payment_relation)
 
                     messages.success(request, _(u"Betaling utført."))
-                    return HttpResponse("Betaling utført.", content_type="text/plain", status=200) 
+                    return HttpResponse("Betaling utført.", content_type="text/plain", status=200)
                 except stripe.CardError, e:
                     messages.error(request, str(e))
-                    return HttpResponse(str(e), content_type="text/plain", status=500) 
+                    return HttpResponse(str(e), content_type="text/plain", status=500)
 
     raise Http404("Request not supported")
 
@@ -111,14 +111,14 @@ def payment_refund(request, payment_relation_id):
         messages.success(request, _("Betalingen har blitt refundert."))
     except stripe.InvalidRequestError, e:
         messages.error(request, str(e))
-    
+
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 
 def _send_payment_confirmation_mail(payment_relation):
     subject = _(u"kvittering") + ": " + payment_relation.payment.description()
     from_mail = payment_relation.payment.responsible_mail()
-    to_mails = [payment_relation.user.email] 
+    to_mails = [payment_relation.user.email]
 
     message = _(u"Du har betalt for ") + payment_relation.payment.description()
     message += "\n"

@@ -100,7 +100,7 @@ class RegisterVoterForm(forms.Form):
             ended=False,
             start_date__range=[today - hour24, today + hour24]
         ).order_by('-start_date')
-        
+
         if meetings:
             return meetings[0]
 

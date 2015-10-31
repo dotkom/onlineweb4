@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import datetime
+
 import locale
 import logging
 
@@ -50,7 +50,6 @@ class FeedbackMail(Task):
         logger.info('Processing: "' + feedback.content_title() + '"')
 
         today = timezone.now().date()
-        yesterday = today - datetime.timedelta(days=1)
         end_date = feedback.content_end_date()
 
         message = Message()
@@ -155,7 +154,7 @@ class FeedbackMail(Task):
         else:
             message_date = ""
 
-        return message_date   
+        return message_date
 
     @staticmethod
     def get_users(feedback):
@@ -194,7 +193,7 @@ class FeedbackMail(Task):
         mark.category = 4  # Missed feedback
         mark.description = u"Du har fått en prikk fordi du ikke har levert tilbakemelding."
         mark.save()
-        
+
         for user in not_responded:
             user_entry = MarkUser()
             user_entry.user = user
@@ -220,13 +219,14 @@ class Message(object):
 
     def __unicode__(self):
         message = "%s %s %s %s %s %s %s" % (
-            self.intro, 
-            self.date, 
-            self.link, 
-            self.deadline, 
-            self.mark, 
-            self.contact, 
-            self.end)
+            self.intro,
+            self.date,
+            self.link,
+            self.deadline,
+            self.mark,
+            self.contact,
+            self.end
+        )
         return message
 
 schedule.register(FeedbackMail, day_of_week='mon-sun', hour=8, minute=00)

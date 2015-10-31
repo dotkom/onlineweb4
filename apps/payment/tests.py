@@ -142,7 +142,7 @@ class PaymentTest(TestCase):
         self.assertEqual(set([]), set(attendees))
 
     # Mommy
-    
+
     def testEventMommyNotPaid(self):
         G(Attendee, event=self.attendance_event, user=self.user)
         attendees = [attendee.user for attendee in Attendee.objects.all()]
@@ -171,9 +171,9 @@ class PaymentTest(TestCase):
             user=self.user,
             valid_to=timezone.now() + timedelta(days=1)
         )
-        
+
         self.assertTrue(payment_delay.active)
-        
+
         PaymentDelayHandler.handle_deadline_passed(payment_delay, False)
 
         self.assertFalse(payment_delay.active)
@@ -184,7 +184,7 @@ class PaymentTest(TestCase):
 
         self.assertEqual([self.user], not_paid)
 
-        payment_delay = G(
+        G(
             PaymentDelay,
             payment=self.event_payment,
             user=self.user,
@@ -196,9 +196,3 @@ class PaymentTest(TestCase):
         self.assertFalse(not_paid)
 
     # TODO Test waislist bump
-
-
-
-
-
-

@@ -16,6 +16,7 @@ from apps.marks.models import Suspension
 
 User = settings.AUTH_USER_MODEL
 
+
 class Payment(models.Model):
 
     TYPE_CHOICES = (
@@ -31,21 +32,20 @@ class Payment(models.Model):
 
     content_type = models.ForeignKey(ContentType)
     object_id = models.PositiveIntegerField()
-    content_object = GenericForeignKey('content_type', 'object_id')
+    content_object = GenericForeignKey()
     stripe_key_index = models.SmallIntegerField(_(u'stripe key'), choices=STRIPE_KEY_CHOICES)
 
     payment_type = models.SmallIntegerField(_(u'type'), choices=TYPE_CHOICES)
 
-    #Optional fields depending on payment type
+    # Optional fields depending on payment type
     deadline = models.DateTimeField(_(u"frist"), blank=True, null=True)
     active = models.BooleanField(default=True)
     delay = models.SmallIntegerField(_(u'utsettelse'), blank=True, null=True, default=2)
 
-    #For logging and history
+    # For logging and history
     added_date = models.DateTimeField(_(u"opprettet dato"), auto_now=True)
     changed_date = models.DateTimeField(auto_now=True, editable=False)
-    last_changed_by = models.ForeignKey(User, editable=False, null=True) #blank and null is temperarly
-
+    last_changed_by = models.ForeignKey(User, editable=False, null=True)  # Blank and null is temperarly
 
     def paid_users(self):
         return [payment_relation.user for payment_relation in self.paymentrelation_set.filter(refunded=False)]
@@ -73,13 +73,13 @@ class Payment(models.Model):
     def responsible_mail(self):
         if self._is_type(AttendanceEvent):
             event_type = self.content_object.event.event_type
-            if event_type == 1 or event_type == 4: # Sosialt & Utflukt
+            if event_type == 1 or event_type == 4:  # Sosialt & Utflukt
                 return settings.EMAIL_ARRKOM
-            elif event_type == 2: #Bedpres
+            elif event_type == 2:  # Bedpres
                 return settings.EMAIL_BEDKOM
-            elif event_type == 3: #Kurs
+            elif event_type == 3:  # Kurs
                 return settings.EMAIL_FAGKOM
-            elif event_type == 5: # Ekskursjon
+            elif event_type == 5:  # Ekskursjon
                 return settings.EMAIL_EKSKOM
             else:
                 return settings.DEFAULT_FROM_EMAIL
@@ -90,12 +90,12 @@ class Payment(models.Model):
         if self._is_type(AttendanceEvent):
             attendee = Attendee.objects.filter(event=self.content_object, user=user)
 
-            #Delete payment delay objects for the user if there are any
+            # Delete payment delay objects for the user if there are any
             delays = PaymentDelay.objects.filter(payment=self, user=user)
             for delay in delays:
                 delay.delete()
 
-            #If the user is suspended because of a lack of payment the suspension is deactivated.
+            # If the user is suspended because of a lack of payment the suspension is deactivated.
             suspensions = Suspension.objects.filter(payment_id=self.id, user=user)
             for suspension in suspensions:
                 suspension.active = False
@@ -121,15 +121,15 @@ class Payment(models.Model):
         if self._is_type(AttendanceEvent):
             attendance_event = self.content_object
             if attendance_event.unattend_deadline < timezone.now():
-                return (False, _(u"Fristen for og melde seg av har utgått"))
+                return False, _(u"Fristen for og melde seg av har utgått")
             if len(Attendee.objects.filter(event=attendance_event, user=payment_relation.user)) == 0:
-                return (False, _(u"Du er ikke påmeldt dette arrangementet."))
+                return False, _(u"Du er ikke påmeldt dette arrangementet.")
             if attendance_event.event.event_start < timezone.now():
-                return (False, _(u"Dette arrangementet har allerede startet."))
+                return False, _(u"Dette arrangementet har allerede startet.")
 
-            return (True, '')
+            return True, ''
 
-        return (False, 'Refund checks not implemented')
+        return False, 'Refund checks not implemented'
 
     def prices(self):
         return self.paymentprice_set.all()
@@ -140,7 +140,7 @@ class Payment(models.Model):
     def __unicode__(self):
         return self.description()
 
-    class Meta:
+    class Meta(object):
         unique_together = ('content_type', 'object_id')
 
         verbose_name = _(u"betaling")
@@ -157,7 +157,7 @@ class PaymentPrice(models.Model):
     def __unicode__(self):
         return str(self.price)
 
-    class Meta:
+    class Meta(object):
         verbose_name = _(u"pris")
         verbose_name_plural = _(u"priser")
 
@@ -182,7 +182,7 @@ class PaymentRelation(models.Model):
     def __unicode__(self):
         return self.payment.description() + " - " + unicode(self.user)
 
-    class Meta:
+    class Meta(object):
         verbose_name = _(u"betalingsrelasjon")
         verbose_name_plural = _(u"betalingsrelasjoner")
 
@@ -199,7 +199,7 @@ class PaymentDelay(models.Model):
     def __unicode__(self):
         return self.payment.description() + " - " + unicode(self.user)
 
-    class Meta:
+    class Meta(object):
         unique_together = ('payment', 'user')
 
         verbose_name = _(u'betalingsutsettelse')

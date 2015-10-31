@@ -57,7 +57,7 @@ class PaymentReminder(Task):
         subject = _(u"Betaling: ") + payment.description()
 
         deadline = payment.deadline.astimezone(tz('Europe/Oslo'))
-        
+
         message = _(u"Hei, du har ikke betalt for ") + payment.description()
         message += _(u".\n\nFristen for å betale er ") + str(deadline.strftime("%-d %B %Y kl: %H:%M"))
         message += _(u".\nHvis du ikke betaler før fristen går ut vil du få en prikk.")
@@ -95,6 +95,10 @@ class PaymentReminder(Task):
         message += "\n" + str(settings.BASE_URL + payment.content_object.event.get_absolute_url())
         message += _(u"Dersom du har spørsmål kan du sende mail til ") + payment.responsible_mail()
         message += _(u"\n\nMvh\nLinjeforeningen Online")
+
+        logging.getLogger(__name__).warn(
+            u'Call to method that does nothing. Should it send a mail? Subject: %s' % subject
+        )
 
     @staticmethod
     def notify_committee(payment):
