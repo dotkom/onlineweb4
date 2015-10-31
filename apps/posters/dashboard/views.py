@@ -104,8 +104,7 @@ Antall og type(r): %(num)s x %(order_type)s%(bongs)s\n
 Bestilt av %(ordered_by)s i %(ordered_by_committee)s den %(ordered_date)s.\n
 \n
 For mer informasjon, sjekk ut bestillingen her: %(absolute_url)s
-                    '''
-                    % {
+                    ''' % {
                         'site': '',
                         'order_type': type_name.lower().rstrip(),
                         'num': '%s' % poster.amount,
@@ -144,11 +143,11 @@ For mer informasjon, sjekk ut bestillingen her: %(absolute_url)s
     context['can_edit'] = request.user.has_perm('posters.view_poster')
 
     if order_type == 1:
-        form = AddPosterForm()
+        AddPosterForm()
     elif order_type == 2:
-        form = AddBongForm()
+        AddBongForm()
     elif order_type == 3:
-        form = AddOtherForm()
+        AddOtherForm()
 
     forms = (AddPosterForm(), AddBongForm(), AddOtherForm())
 
@@ -166,8 +165,10 @@ def edit(request, order_id=None):
 
     if order_id:
         poster = get_object_or_404(Poster, pk=order_id)
+    else:
+        poster = order_id
 
-    if request.user != poster.ordered_by and 'proKom' not in request.user.groups.all():
+    if order_id and request.user != poster.ordered_by and 'proKom' not in request.user.groups.all():
         raise PermissionDenied
 
     if request.POST:
