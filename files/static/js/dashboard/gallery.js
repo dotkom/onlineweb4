@@ -7,9 +7,10 @@ var GalleryDashboard = (function ($, tools) {
     /* Private fields */
 
     var SEARCH_ENDPOINT = '/api/v1/images/'
-    var search_field, search_button, result_table, years
+    var search_field, search_button, result_table, years, tags
 
     years = $('.dashboard-gallery-year')
+    tags = $('.dashboard-gallery-tag')
     search_field = $('#dashboard-gallery-search-query')
     search_button = $('#dashboard-gallery-search-button')
     result_table = $('#dashboard-gallery-table')
@@ -56,6 +57,11 @@ var GalleryDashboard = (function ($, tools) {
             years.on('click', function (e) {
                 e.preventDefault()
                 GalleryDashboard.filter($(this).text())
+            })
+
+            tags.on('click', function (e) {
+                e.preventDefault();
+                GalleryDashboard.search($(this).text())
             })
         },
 

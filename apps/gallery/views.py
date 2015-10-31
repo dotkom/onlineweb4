@@ -205,7 +205,11 @@ def search(request):
 
     # Field filters are normally AND'ed together. Q objects circumvent this, treating each field result like a set.
     # This allows us to use set operators like | (union), & (intersect) and ~ (negation)
-    matches = ResponsiveImage.objects.filter(Q(name__icontains=query) | Q(description__icontains=query))[:10]
+    matches = ResponsiveImage.objects.filter(
+        Q(name__icontains=query) |
+        Q(description__icontains=query) |
+        Q(tags__name__in=query.split(' '))
+    ).distinct()[:10]
 
     results = {
         'total': len(matches),
@@ -262,6 +266,10 @@ class ResponsiveImageViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin,
 
         if query:
             # Restrict results based off of search
-            queryset = queryset.filter(Q(name__icontains=query) | Q(description__icontains=query))
+            queryset = queryset.filter(
+                Q(name__icontains=query) |
+                Q(description__icontains=query) |
+                Q(tags__name__in=query.split())
+            ).distinct()
 
         return queryset
