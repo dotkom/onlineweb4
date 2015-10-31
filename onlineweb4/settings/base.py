@@ -206,6 +206,7 @@ INSTALLED_APPS = (
     'stripe',
     'rest_framework',
     'django_filters',
+    'taggit',
 
     # Django apps
     'django.contrib.admin',
