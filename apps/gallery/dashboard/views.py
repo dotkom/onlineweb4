@@ -6,9 +6,12 @@ from logging import getLogger
 
 from django.core.urlresolvers import reverse
 from django.contrib import messages
+from django.contrib.contenttypes.models import ContentType
 from django.http import HttpResponseBadRequest, HttpResponseNotAllowed
 from django.shortcuts import redirect
 from django.views.generic import DetailView, UpdateView, ListView, TemplateView
+
+from taggit.models import TaggedItem
 
 
 from apps.dashboard.tools import DashboardPermissionMixin
@@ -26,7 +29,7 @@ class GalleryIndex(DashboardPermissionMixin, ListView):
 
     permission_required = 'gallery.view_responsiveimage'
     template_name = 'gallery/dashboard/index.html'
-    queryset = ResponsiveImage.objects.all().order_by('-timestamp')
+    queryset = ResponsiveImage.objects.all().order_by('-timestamp')[:15]
     context_object_name = 'images'
 
     def get_context_data(self, **kwargs):
@@ -50,7 +53,14 @@ class GalleryIndex(DashboardPermissionMixin, ListView):
                 except OSError as e:
                     getLogger(__name__).error('GalleryIndex file summation on missing file: %s' % e)
 
+        # Filter out potential ResponsiveImage objects that have orphan file references
+        context['images'] = filter(lambda i: i.file_status_ok(), context['images'])
+
+        # Add query filters and some statistics on disk usage
         context['years'] = years
+        context['tags'] = sorted(set(tag.tag.name for tag in TaggedItem.objects.filter(
+            content_type=ContentType.objects.get_for_model(ResponsiveImage)
+        ).order_by('tag__name')))
         context['disk_usage'] = humanize_size(total_disk_usage)
 
         return context
@@ -64,6 +74,7 @@ class GalleryDetail(DashboardPermissionMixin, UpdateView):
     """
 
     permission_required = 'gallery.change_responsiveimage'
+    accept_global_perms = True
     template_name = 'gallery/dashboard/detail.html'
     model = ResponsiveImage
     context_object_name = 'image'
@@ -163,13 +174,13 @@ class GalleryDelete(DashboardPermissionMixin, DetailView):
             img.delete()
             messages.success(request, u'%s (%d) ble slettet.' % (image_name, image_id))
 
-            getLogger(__name__).info('%s deleted ResponsiveImage %d' % (self.request.user, image_id))
+            getLogger(__name__).info(u'%s deleted ResponsiveImage %d' % (self.request.user, image_id))
 
             return redirect(reverse('gallery_dashboard:index'))
         else:
             messages.error(request, u'Det oppstod en feil, klarte ikke slette bildet.')
             getLogger(__name__).error(
-                '%s attempted to delete image with ID %d, but failed as queryset was empty.' % (
+                u'%s attempted to delete image with ID %d, but failed as queryset was empty.' % (
                     self.request.user,
                     kwargs['pk']
                 )

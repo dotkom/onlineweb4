@@ -1,7 +1,7 @@
 Onlineweb 4
 ==========
 
-[![Build Status](https://online.ntnu.no/tc/app/rest/builds/buildType%3A%28Onlineweb4_Build%29/statusIcon)](https://online.ntnu.no/tc/viewType.html?buildTypeId=Onlineweb4_Build&guest=1)
+[![Build Status](https://online.ntnu.no/tc/app/rest/builds/buildType%3A%28Onlineweb4_Build%29/statusIcon)](https://online.ntnu.no/tc/viewType.html?buildTypeId=Onlineweb4_Build&tab=buildTypeStatusDiv&branch_Onlineweb4=__all_branches__&guest=1)
 
 Requirements
 ------------

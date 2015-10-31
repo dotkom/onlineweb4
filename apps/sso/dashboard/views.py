@@ -16,8 +16,6 @@ from apps.dashboard.tools import get_base_context
 from apps.sso.models import Client
 from apps.sso.dashboard.forms import NewClientForm
 
-log = logging.getLogger('SSO')
-
 
 @login_required()
 def index(request):
@@ -29,7 +27,7 @@ def index(request):
 
     # Force only the almighty dotKom to access this view
     if not request.user.is_superuser:
-        return PermissionDenied
+        raise PermissionDenied
 
     context = get_base_context(request)
 
@@ -50,9 +48,11 @@ def new_app(request):
     :return: An HttpResponse
     """
 
+    _log = logging.getLogger('%s.%s' % (__name__, new_app.__name__))
+
     # Force only the almighty dotKom to access this view
     if not request.user.is_superuser:
-        return PermissionDenied
+        raise PermissionDenied
 
     context = get_base_context(request)
 
@@ -76,6 +76,8 @@ def new_app(request):
             client.skip_authorization = False
 
             client.save()
+
+            _log.info(u'%s created external auth client %s (%d)' % (request.user, client.name, client.id))
             messages.success(request, u'App-klienten ble opprettet')
             return redirect(reverse('sso:app_details', kwargs={'app_pk': client.id}))
 
@@ -95,9 +97,11 @@ def app_details(request, app_pk):
     :return: An HttpResponse
     """
 
+    _log = logging.getLogger('%s.%s' % (__name__, app_details.__name__))
+
     # Force only the almighty dotKom to access this view
     if not request.user.is_superuser:
-        return PermissionDenied
+        raise PermissionDenied
 
     context = get_base_context(request)
 
@@ -108,7 +112,10 @@ def app_details(request, app_pk):
     if request.method == 'POST':
         if 'action' in request.POST:
             if request.POST['action'] == 'delete':
+                app_id = context['app'].id
+                app_name = context['app'].name
                 context['app'].delete()
+                _log.info(u'%s deleted external auth client %s (%d)' % (request.user, app_name, app_id))
                 messages.success(request, u'App-klienten ble slettet')
                 return redirect(reverse('sso:index'))
 

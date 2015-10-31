@@ -321,8 +321,10 @@ var Gallery = (function ($, tools) {
         var cropData = image.cropper("getData");
         var image_name = $('#image-edit-name');
         var image_description = $('#image-edit-description');
+        var image_tags = $('#image-edit-tags');
         cropData.name = image_name.val();
         cropData.description = image_description.val();
+        cropData.tags = image_tags.val();
 
         if (cropData.name.length < 2) {
             alert('Du må gi bildet et navn!');
@@ -339,8 +341,8 @@ var Gallery = (function ($, tools) {
 
         $.post("/gallery/crop_image/", cropData, function() {
             imageEditingSuccessful();
-        }).fail(function($xhr) {
-            setErrorMessage($xhr.responseJSON);
+        }).fail(function(xhr, thrownError, statusText) {
+            setErrorMessage('En uventet feil har oppstått: ' + statusText);
         }).always(function() {
             setCropDefault();
         });
