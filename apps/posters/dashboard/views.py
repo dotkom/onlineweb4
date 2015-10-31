@@ -108,22 +108,22 @@ Bestilt av %(ordered_by)s i %(ordered_by_committee)s den %(ordered_date)s.\n
 For mer informasjon, sjekk ut bestillingen her: %(absolute_url)s
 """
             email_message = '%(message)s%(signature)s' % {
-                    'message': _(
-                        email_template % {
-                            'site': '',
-                            'order_type': type_name.lower().rstrip(),
-                            'num': '%s' % poster.amount,
-                            'bongs': ', %s x bong' % poster.bong if poster.bong > 0 else '' if poster.bong > 0 else '',
-                            'ordered_by': poster.ordered_by,
-                            'ordered_by_committee': poster.ordered_committee,
-                            'id': poster.id,
-                            'poster_order': title,
-                            'event_date': event_date,
-                            'ordered_date': ordered_date,
-                            'absolute_url': request.build_absolute_uri(poster.get_dashboard_url())
-                        }
-                    ),
-                    'signature': _('\n\nVennlig hilsen Linjeforeningen Online')
+                'message': _(
+                    email_template % {
+                        'site': '',
+                        'order_type': type_name.lower().rstrip(),
+                        'num': '%s' % poster.amount,
+                        'bongs': ', %s x bong' % poster.bong if poster.bong > 0 else '' if poster.bong > 0 else '',
+                        'ordered_by': poster.ordered_by,
+                        'ordered_by_committee': poster.ordered_committee,
+                        'id': poster.id,
+                        'poster_order': title,
+                        'event_date': event_date,
+                        'ordered_date': ordered_date,
+                        'absolute_url': request.build_absolute_uri(poster.get_dashboard_url())
+                    }
+                ),
+                'signature': _('\n\nVennlig hilsen Linjeforeningen Online')
             }
             from_email = settings.EMAIL_PROKOM
             to_emails = [settings.EMAIL_PROKOM, request.user.get_email().email]
