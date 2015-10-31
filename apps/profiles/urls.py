@@ -2,7 +2,8 @@
 
 from django.conf.urls import patterns, url
 
-urlpatterns = patterns('apps.profiles.views',
+urlpatterns = patterns(
+    'apps.profiles.views',
     url(r'^$', 'index', name='profiles'),
 
     # Show a specific profile.
