@@ -12,7 +12,7 @@ class Item(models.Model):
     @property
     def oldest_expiration_date(self):
         batches = self.batches.all().order_by("expiration_date")
-        if batches: 
+        if batches:
             return batches[0].expiration_date
         else:
             return None
@@ -20,7 +20,7 @@ class Item(models.Model):
     @property
     def last_added(self):
         batches = self.batches.all().order_by("-date_added")
-        if batches: 
+        if batches:
             return batches[0].date_added
         else:
             return None
@@ -28,7 +28,7 @@ class Item(models.Model):
     @property
     def total_amount(self):
         return sum([batch.amount for batch in self.batches.all()])
-        
+
     @property
     def has_expired_batch(self):
         if timezone.now().date() >= self.oldest_expiration_date:

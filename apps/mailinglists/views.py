@@ -229,4 +229,4 @@ def index(request):
             ]}
         ]
 
-    return render(request, 'mailinglists/index.html', {'lists': lists}) 
+    return render(request, 'mailinglists/index.html', {'lists': lists})
