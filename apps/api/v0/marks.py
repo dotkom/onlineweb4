@@ -19,7 +19,7 @@ class MarkResource(ModelResource):
     last_changed_by = fields.ForeignKey(UserResource, 'last_changed_by')
     given_to = fields.ToManyField(UserResource, 'given_to')
 
-    class Meta:
+    class Meta(object):
         queryset = Mark.objects.all()
         resource_name = 'marks/marks'
         excludes = ['id', ]
@@ -35,7 +35,7 @@ class EntryResource(ModelResource):
     user = fields.ToOneField(UserResource, 'user')
     mark = fields.ToOneField(MarkResource, 'mark')
 
-    class Meta:
+    class Meta(object):
         queryset = MarkUser.objects.all()
         resource_name = 'marks/entry'
         excludes = ['id', ]
@@ -48,6 +48,7 @@ class EntryResource(ModelResource):
     def apply_authorization_limits(self, request, object_list):
         return object_list.filter(user=request.user)
 
+
 class MyMarksResource(ModelResource):
     """
     Lists all of an authenticated users' marks.
@@ -58,8 +59,7 @@ class MyMarksResource(ModelResource):
     given_by = fields.ForeignKey(UserResource, 'given_by')
     last_changed_by = fields.ForeignKey(UserResource, 'last_changed_by')
 
-
-    class Meta:
+    class Meta(object):
         queryset = Mark.objects.all()
         resource_name = 'marks/mine'
         excludes = ['id', ]
@@ -72,7 +72,7 @@ class MyMarksResource(ModelResource):
     def apply_authorization_limits(self, request, object_list):
         return object_list.filter(given_to=request.user)
 
-    def get_resource_uri(self, bundle_or_obj):
+    def get_resource_uri(self, bundle_or_obj, **kwargs):
         """
         Overrides the standard uri rendering to expose marks by their proper endpoint.
 
@@ -100,7 +100,7 @@ class MyActiveMarksResource(ModelResource):
     given_by = fields.ForeignKey(UserResource, 'given_by')
     last_changed_by = fields.ForeignKey(UserResource, 'last_changed_by')
 
-    class Meta:
+    class Meta(object):
         queryset = Mark.marks.all_active()
         resource_name = 'marks/active'
         authentication = BasicAuthentication()

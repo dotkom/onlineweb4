@@ -5,7 +5,6 @@ from django.conf.urls import patterns, url, include
 from tastypie.api import Api
 
 from apps.api.v0.article import ArticleResource, ArticleLatestResource
-from apps.api.v0.authentication import UserResource
 from apps.api.v0.events import EventResource, AttendanceEventResource, CompanyResource, CompanyEventResource
 from apps.api.v0.offline import IssueResource
 
@@ -28,6 +27,7 @@ v0_api.register(ArticleLatestResource())
 v0_api.register(IssueResource())
 
 # Set the urls to be included.
-urlpatterns = patterns('',
+urlpatterns = patterns(
+    '',
     url(r'^',       include(v0_api.urls)),
 )
