@@ -210,6 +210,7 @@ INSTALLED_APPS = (
     'rest_framework',
     'django_filters',
     'taggit',
+    'taggit_serializer',
 
     # Django apps
     'django.contrib.admin',
