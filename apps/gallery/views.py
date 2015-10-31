@@ -13,6 +13,7 @@ from django.http import JsonResponse, HttpResponse
 from guardian.decorators import permission_required
 from rest_framework import mixins, viewsets
 from rest_framework.permissions import AllowAny
+from taggit.utils import parse_tags
 
 from apps.gallery import util
 from apps.gallery.models import UnhandledImage, ResponsiveImage
@@ -135,6 +136,7 @@ def crop_image(request):
             image = get_object_or_404(UnhandledImage, pk=crop_data['id'])
             image_name = crop_data['name']
             image_description = crop_data['description']
+            image_tags = crop_data['tags']
             responsive_image_path = util.save_responsive_image(image, crop_data)
 
             # Error / Status collection is performed in the utils create_responsive_images function
@@ -160,6 +162,9 @@ def crop_image(request):
                 thumbnail=thumbnail
             )
             resp_image.save()
+            # Unpack and add any potential tags
+            if image_tags:
+                resp_image.tags.add(*parse_tags(image_tags))
 
             log.debug(
                 '%s cropped and saved ResponsiveImage %d (%s)' % (

@@ -74,7 +74,7 @@ class ResponsiveImage(models.Model):
     image_xs = models.ImageField(u'XS Bilde', upload_to=gallery_settings.RESPONSIVE_IMAGES_PATH)
     thumbnail = models.ImageField(u'Thumbnail', upload_to=gallery_settings.RESPONSIVE_THUMBNAIL_PATH)
 
-    tags = TaggableManager()
+    tags = TaggableManager(help_text="En komma eller mellomrom-separert liste med tags.")
 
     def __str__(self):
         """
