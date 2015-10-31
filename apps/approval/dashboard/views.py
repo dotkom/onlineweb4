@@ -30,7 +30,9 @@ def index(request):
     context = get_base_context(request)
 
     context['membership_applications'] = MembershipApproval.objects.filter(processed=False)
-    context['processed_applications'] = MembershipApproval.objects.filter(processed=True).order_by('-processed_date')[:10]
+    context['processed_applications'] = MembershipApproval.objects.filter(
+        processed=True
+    ).order_by('-processed_date')[:10]
 
     return render(request, 'approval/dashboard/index.html', context)
 
