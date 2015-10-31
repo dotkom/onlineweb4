@@ -74,6 +74,7 @@ class GalleryDetail(DashboardPermissionMixin, UpdateView):
     """
 
     permission_required = 'gallery.change_responsiveimage'
+    accept_global_perms = True
     template_name = 'gallery/dashboard/detail.html'
     model = ResponsiveImage
     context_object_name = 'image'
