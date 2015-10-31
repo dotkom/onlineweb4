@@ -29,7 +29,7 @@ class GalleryIndex(DashboardPermissionMixin, ListView):
 
     permission_required = 'gallery.view_responsiveimage'
     template_name = 'gallery/dashboard/index.html'
-    queryset = ResponsiveImage.objects.all().order_by('-timestamp')
+    queryset = ResponsiveImage.objects.all().order_by('-timestamp')[:15]
     context_object_name = 'images'
 
     def get_context_data(self, **kwargs):

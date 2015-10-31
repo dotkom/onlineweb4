@@ -209,7 +209,7 @@ def search(request):
         Q(name__icontains=query) |
         Q(description__icontains=query) |
         Q(tags__name__in=query.split(' '))
-    ).distinct()[:10]
+    ).distinct()[:15]
 
     results = {
         'total': len(matches),
