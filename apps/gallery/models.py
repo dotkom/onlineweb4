@@ -10,6 +10,8 @@ from django.db import models
 from django.db.models.signals import post_delete
 from django.utils.translation import ugettext_lazy as _
 
+from taggit.managers import TaggableManager
+
 from apps.gallery import settings as gallery_settings
 from utils.helpers import humanize_size
 
@@ -71,6 +73,8 @@ class ResponsiveImage(models.Model):
     image_sm = models.ImageField(u'SM Bilde', upload_to=gallery_settings.RESPONSIVE_IMAGES_PATH)
     image_xs = models.ImageField(u'XS Bilde', upload_to=gallery_settings.RESPONSIVE_IMAGES_PATH)
     thumbnail = models.ImageField(u'Thumbnail', upload_to=gallery_settings.RESPONSIVE_THUMBNAIL_PATH)
+
+    tags = TaggableManager()
 
     def __str__(self):
         """

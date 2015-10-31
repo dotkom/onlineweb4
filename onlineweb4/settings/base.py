@@ -143,6 +143,9 @@ GRAPPELLI_ADMIN_TITLE = '<a href="/">Onlineweb</a>'
 ANONYMOUS_USER_ID = -1
 GUARDIAN_RENDER_403 = True
 
+# Django-Taggit settings
+TAGGIT_CASE_INSENSITIVE = True
+
 # List of usergroups that should be listed under "Finn brukere" in user profile
 USER_SEARCH_GROUPS = [
     16,  # appKom
