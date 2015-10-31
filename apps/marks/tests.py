@@ -1,4 +1,4 @@
-from datetime import datetime, time, timedelta, date
+from datetime import date
 import logging
 
 from django_dynamic_fixture import G
@@ -22,11 +22,11 @@ class MarksTest(TestCase):
 #    def testMarksActive(self):
 #        self.logger.debug("Testing if Mark is active")
 #        self.assertTrue(self.mark.is_active)
-        
-    def testMarkUnicode(self):    
+
+    def testMarkUnicode(self):
         self.logger.debug("Testing Mark unicode with dynamic fixtures")
         self.assertEqual(unicode(self.mark), u"Prikk for Testprikk")
-        
+
     def testMarkUser(self):
         self.logger.debug("Testing MarkUser unicode with dynamic fixtures")
         self.assertEqual(unicode(self.userentry), "Mark entry for user: %s" % self.user.get_full_name())

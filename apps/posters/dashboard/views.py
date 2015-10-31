@@ -82,8 +82,11 @@ def add(request, order_type=0):
 
             # Let this user have permissions to show this order
             UserObjectPermission.objects.assign_perm('view_poster_order', obj=poster, user=request.user)
-            GroupObjectPermission.objects.assign_perm('view_poster_order',
-                                                      obj=poster, group=Group.objects.get(name='proKom'))
+            GroupObjectPermission.objects.assign_perm(
+                'view_poster_order',
+                obj=poster,
+                group=Group.objects.get(name='proKom')
+            )
 
             title = unicode(poster)
 
@@ -95,8 +98,7 @@ def add(request, order_type=0):
 
             # The great sending of emails
             subject = '[ProKom] Ny bestilling for %s' % title
-            email_message = '%(message)s%(signature)s' % {
-                    'message': _('''
+            email_template = """
 Det har blitt registrert en ny %(order_type)sbestilling pa Online sine nettsider. Dette er bestilling nummer %(id)s.
 \n
 Antall og type(r): %(num)s x %(order_type)s%(bongs)s\n
@@ -104,18 +106,21 @@ Antall og type(r): %(num)s x %(order_type)s%(bongs)s\n
 Bestilt av %(ordered_by)s i %(ordered_by_committee)s den %(ordered_date)s.\n
 \n
 For mer informasjon, sjekk ut bestillingen her: %(absolute_url)s
-                    ''' % {
-                        'site': '',
-                        'order_type': type_name.lower().rstrip(),
-                        'num': '%s' % poster.amount,
-                        'bongs': ', %s x bong' % poster.bong if poster.bong > 0 else '' if poster.bong > 0 else '',
-                        'ordered_by': poster.ordered_by,
-                        'ordered_by_committee': poster.ordered_committee,
-                        'id': poster.id,
-                        'poster_order': title,
-                        'event_date': event_date,
-                        'ordered_date': ordered_date,
-                        'absolute_url': request.build_absolute_uri(poster.get_dashboard_url())
+"""
+            email_message = '%(message)s%(signature)s' % {
+                    'message': _(
+                        email_template % {
+                            'site': '',
+                            'order_type': type_name.lower().rstrip(),
+                            'num': '%s' % poster.amount,
+                            'bongs': ', %s x bong' % poster.bong if poster.bong > 0 else '' if poster.bong > 0 else '',
+                            'ordered_by': poster.ordered_by,
+                            'ordered_by_committee': poster.ordered_committee,
+                            'id': poster.id,
+                            'poster_order': title,
+                            'event_date': event_date,
+                            'ordered_date': ordered_date,
+                            'absolute_url': request.build_absolute_uri(poster.get_dashboard_url())
                         }
                     ),
                     'signature': _('\n\nVennlig hilsen Linjeforeningen Online')

@@ -24,8 +24,8 @@ urlpatterns = patterns(
     url(r'^email/toggle_infomail/$', 'toggle_infomail', name='profile_toggle_infomail'),
     url(r'^email/toggle_jobmail/$', 'toggle_jobmail', name='profile_toggle_jobmail'),
     url(r'^marks/update_mark_rules/$', 'update_mark_rules', name='profile_update_mark_rules'),
-    
-    # Endpoint that exposes a json lump of all users but only id and name. 
+
+    # Endpoint that exposes a json lump of all users but only id and name.
     url(r'^api_plain_user_search/$', 'api_plain_user_search', name='profiles_api_plain_user_search'),
 
     # Endpoint that exposes a json lump of all users which have set their profile to public.

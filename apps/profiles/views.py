@@ -287,7 +287,7 @@ def delete_email(request):
         if request.method == 'POST':
             email_string = request.POST.get('email')
             email = get_object_or_404(Email, email=email_string)
-            
+
             # Check if the email belongs to the registered user
             if email.user != request.user:
                 return HttpResponse(
@@ -473,7 +473,7 @@ def api_plain_user_search(request):
     """ The difference between plain_user_search and the other is exposing only id and name. """
     if request.GET.get('query'):
         users = search_for_plain_users(request.GET.get('query'))
-        return JsonResponse(users, safe=False) 
+        return JsonResponse(users, safe=False)
     return render_json(error=u'Mangler søkestreng')
 
 

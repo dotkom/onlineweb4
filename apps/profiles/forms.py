@@ -75,7 +75,7 @@ class PositionForm(forms.ModelForm):
 
         range_compiler = re.compile(r'\d{4}-\d{4}')
         year_range = self.cleaned_data['period']
-        
+
         # If it doesn't match the format YYYY-YYYY
         if not range_compiler.match(year_range):
             self._errors['period'] = self.error_class(
