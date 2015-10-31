@@ -96,7 +96,7 @@ class FeedbackMail(Task):
             message.status = "Deadine passed"
 
             if feedback.gives_mark:
-                FeedbackMail.set_marks(title, not_responded)    
+                FeedbackMail.set_marks(title, not_responded)
 
                 message.intro = u"Fristen for å svare på \"%s\" har gått ut og du har fått en prikk." % title
                 message.mark = ""
