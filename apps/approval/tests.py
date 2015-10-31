@@ -63,4 +63,3 @@ class ApprovalTest(TestCase):
         self.assertEqual(self.approval.is_fos_application(), False)
         self.approval.new_expiry_date = None
         self.assertEqual(self.approval.is_fos_application(), False)
-

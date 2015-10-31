@@ -12,6 +12,7 @@ SEMESTER_CHOICES = [
     ("v", _(u"Vår")),
 ]
 
+
 def _year_choices():
     now = timezone.now()
     years = range(now.year-10, now.year+1)

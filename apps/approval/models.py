@@ -2,7 +2,6 @@
 
 from django.conf import settings
 from django.db import models
-from django.utils import timezone
 from django.utils.translation import ugettext as _
 
 from apps.authentication.models import FIELD_OF_STUDY_CHOICES
@@ -12,10 +11,20 @@ User = settings.AUTH_USER_MODEL
 
 
 class Approval(models.Model):
-    applicant = models.ForeignKey(User, verbose_name=_(u"søker"),
-        related_name="applicant", editable=False)
-    approver = models.ForeignKey(User, verbose_name=_(u"godkjenner"),
-        related_name="approver", blank=True, null=True, editable=False)
+    applicant = models.ForeignKey(
+        User,
+        verbose_name=_(u"søker"),
+        related_name="applicant",
+        editable=False
+    )
+    approver = models.ForeignKey(
+        User,
+        verbose_name=_(u"godkjenner"),
+        related_name="approver",
+        blank=True,
+        null=True,
+        editable=False
+    )
     created = models.DateTimeField(_(u"opprettet"), auto_now_add=True)
     processed = models.BooleanField(_(u"behandlet"), default=False, editable=False)
     processed_date = models.DateTimeField(_(u"behandlet dato"), blank=True, null=True)
@@ -51,7 +60,7 @@ class MembershipApproval(Approval):
             return _(u"Tom søknad for %s") % self.applicant.get_full_name()
         return output + "for " + self.applicant.get_full_name()
 
-    class Meta:
+    class Meta(object):
         verbose_name = _(u"medlemskapssøknad")
         verbose_name_plural = _(u"medlemskapssøknader")
         permissions = (
