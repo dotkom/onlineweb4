@@ -100,13 +100,13 @@ class ResponsiveImage(models.Model):
             assert self.image_sm.width is not None
             assert self.image_xs.width is not None
         except OSError:
-            log.error('Caught OSError for image file reference for ResponsiveImage %d (%s)' % (
+            log.warning('Caught OSError for image file reference for ResponsiveImage %d (%s)' % (
                 self.id,
                 self.filename
             ))
             return False
         except IOError:
-            log.error('Caught OSError for image file reference for ResponsiveImage %d (%s)' % (
+            log.warning('Caught OSError for image file reference for ResponsiveImage %d (%s)' % (
                 self.id,
                 self.filename
             ))
@@ -200,6 +200,7 @@ resp_img_uuid = uuid.uuid1()
 def responsive_image_delete(sender, instance, **kwargs):
 
     log = logging.getLogger(__name__)
+    filename = str(instance.image_original)
 
     # Pass false so FileField doesn't save the model.
     if instance.image_original:
@@ -228,7 +229,7 @@ def responsive_image_delete(sender, instance, **kwargs):
     post_delete.disconnect(dispatch_uid=resp_img_uuid, sender=sender)
 
     # Next we iterate over all the responsive images and check file status. If an orphan exists, it is deleted.
-    for resp_img in ResponsiveImage.objects.all():
+    for resp_img in ResponsiveImage.objects.filter(image_original=filename):
         if not resp_img.file_status_ok():
             log.info('ResponsiveImage delete signal hook detected orphaned objets, deleting (ID: %d)' % resp_img.id)
             resp_img.delete()
