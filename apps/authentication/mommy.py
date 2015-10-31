@@ -101,8 +101,11 @@ class SynchronizeGroups(Task):
 
                 # Check if any changes were made and if there was, log it
                 if synced > 0:
-                    logger.info(str(synced) +
-                        ' user(s) were removed from the destination group(s) because they were not in the source group(s).')
+                    logger.info(
+                        str(synced) +
+                        ' user(s) were removed from the destination group(s) ' +
+                        ' because they were not in the source group(s).'
+                    )
 
 
 # Register scheduler
