@@ -13,6 +13,7 @@ from django.core.mail import EmailMessage
 from django.core.signing import Signer, BadSignature
 from django.core.urlresolvers import reverse
 from django.db.models import Q
+from django.template.loader import render_to_string
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.utils.translation import ugettext as _
@@ -371,8 +372,6 @@ def mail_participants(request, event_id):
         elif from_email_value == '5':
             from_email = settings.EMAIL_EKSKOM
 
-        signature = u'\n\nVennlig hilsen Linjeforeningen Online.\n(Denne eposten kan besvares til %s)' % from_email
-
         # Decide who to send mail to
         to_emails = []
         to_emails_value = request.POST.get('to_email')
@@ -384,7 +383,10 @@ def mail_participants(request, event_id):
         else:
             to_emails = [attendee.user.email for attendee in attendees_not_paid]
 
-        message = '%s%s' % (request.POST.get('message'), signature)
+        context = {}
+        context['message'] = request.POST.get('message')
+        context['signature'] = u'Vennlig hilsen Linjeforeningen Online.\n(Denne eposten kan besvares til %s)' % from_email
+        message = render_to_string('events/email/mail_participants_tpl.txt', context)
         subject = request.POST.get('subject')
 
         # Send mail

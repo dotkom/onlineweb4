@@ -1,0 +1,8 @@
+Hei
+
+På grunn av manglende oppmøte på "{{ title }}" har du fått en prikk.
+
+Eventuelle spørsmål sendes til {{ contact }}.
+
+Mvh
+Linjeforeningen Online

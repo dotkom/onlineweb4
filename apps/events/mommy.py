@@ -4,17 +4,19 @@ import logging
 
 from django.utils import timezone
 from django.core.mail import EmailMessage
+from django.template.loader import render_to_string
 
 from apps.events.models import Event, AttendanceEvent
 from apps.marks.models import Mark, MarkUser
 from apps.mommy import schedule
 from apps.mommy.registry import Task
 
+
 class SetEventMarks(Task):
 
     @staticmethod
     def run():
-        logger = logging.getLogger()
+        logger = logging.getLogger(__name__)
         logger.info("Attendance mark setting started")
         locale.setlocale(locale.LC_ALL, "nb_NO.UTF-8")
 
@@ -23,17 +25,15 @@ class SetEventMarks(Task):
 
         for attendance_event in attendance_events:
             SetEventMarks.setMarks(attendance_event, logger)
-            message = SetEventMarks.generate_message(attendance_event)
 
-            if message.send:
-                EmailMessage(message.subject, unicode(message), message.committee_mail, [], message.not_attended_mails).send()
-                logger.info("Emails sent to: " + str(message.not_attended_mails))
+            not_met = attendance_event.not_attended()
+
+            if len(not_met) > 0:
+                SetEventMarks.send_mark_notification(attendance_event)
+                SetEventMarks.send_mark_summary(attendance_event)
+                logger.info("Marks notifications done")
             else:
                 logger.info("Everyone met. No mails sent to users")
-
-            if message.committee_message:
-                EmailMessage(message.subject, message.committee_message, "online@online.ntnu.no", [message.committee_mail]).send() 
-                logger.info("Email sent to: " + message.committee_mail)
 
     @staticmethod
     def setMarks(attendance_event, logger=logging.getLogger()):
@@ -54,54 +54,38 @@ class SetEventMarks(Task):
         
         attendance_event.marks_has_been_set = True
         attendance_event.save()
-        
+
     @staticmethod
-    def generate_message(attendance_event):
-        message = Message()
+    def send_mark_notification(attendance_event):
+        logger = logging.getLogger(__name__)
 
-        not_attended = attendance_event.not_attended()
-        event = attendance_event.event
-        title = unicode(event.title)    
+        context = {}
+        context['title'] = attendance_event.event.title
+        context['contact'] = attendance_event.event.feedback_mail()
 
-        #return if everyone attended
-        if not not_attended:
-            return message
-        
-        message.not_attended_mails = [user.email for user in not_attended]
+        not_met_emails = [user.email for user in attendance_event.not_attended()]
 
-        message.committee_mail = event.feedback_mail()
-        not_attended_string = u'\n'.join([user.get_full_name() for user in not_attended])
+        subject = attendance_event.event.title
+        message = render_to_string('events/email/marks_notification.txt', context)
 
-        message.subject = title
-        message.intro = u"Hei\n\nPå grunn av manglende oppmøte på \"%s\" har du fått en prikk" % (title)
-        message.contact = u"\n\nEventuelle spørsmål sendes til %s " % (message.committee_mail)
-        message.send = True
-        message.committee_message = u"På grunn av manglende oppmøte på \"%s\" har følgende brukere fått en prikk:\n" % (event.title)
-        message.committee_message += not_attended_string
-        return message
+        EmailMessage(subject, unicode(message), context['contact'], [], not_met_emails).send()
+         
+        logger.info("Mark notification emails sent to: " + str(not_met_emails))
+
+    @staticmethod
+    def send_mark_summary(attendance_event):
+        context = {}
+        context['title'] = attendance_event.event.title
+        context['not_met'] = [user for user in attendance_event.not_attended()]
+
+        subject = attendance_event.event.title
+        message = render_to_string('events/email/marks_summary_notification.txt', context)
+
+        EmailMessage(subject, unicode(message), "online@online.ntnu.no", [attendance_event.event.feedback_mail()]).send()
 
     @staticmethod
     def active_events():
         return AttendanceEvent.objects.filter(automatically_set_marks=True, marks_has_been_set=False, event__event_end__lt=timezone.now())
 
-
-class Message():
-    subject = ""
-    intro = ""
-    contact = ""
-    not_attended_mails = ""
-    send = False
-    end = u"\n\nMvh\nLinjeforeningen Online"
-    results_message = False
-
-    committee_mail = ""
-    committee_message = False
-
-    def __unicode__(self):
-        message = "%s %s %s" % (
-            self.intro,
-            self.contact,
-            self.end)
-        return message
 
 schedule.register(SetEventMarks, day_of_week='mon-sun', hour=8, minute=05)

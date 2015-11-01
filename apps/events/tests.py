@@ -320,34 +320,6 @@ class EventTest(TestCase):
 
         self.assertTrue(self.attendance_event.marks_has_been_set)
         self.assertFalse(MarkUser.objects.all())
-        
-    def testMommyGenerateEmptyMessage(self):
-        self.attendee.attended = True
-        self.attendee.save()
-        self.attendance_event.marks_has_been_set = False
-        self.attendance_event.automatically_set_marks = True
-        self.event.event_end = timezone.now() - datetime.timedelta(days=1)
-        self.attendance_event.save()
-        self.event.save()
-        
-        message = SetEventMarks.generate_message(self.attendance_event)
-
-        self.assertFalse(message.send)
-        self.assertFalse(message.results_message)
-        
-    def testMommyGenerateMessage(self):
-        self.attendee.attended = False
-        self.attendee.save()
-        self.attendance_event.marks_has_been_set = False
-        self.attendance_event.automatically_set_marks = True
-        self.event.event_end = timezone.now() - datetime.timedelta(days=1)
-        self.attendance_event.save()
-        self.event.save()
-        
-        message = SetEventMarks.generate_message(self.attendance_event)
-
-        self.assertTrue(message.send)
-        self.assertTrue(message.committee_message)
 
     def testRestrictedEvents(self):
         allowed_groups = [G(Group), G(Group)]

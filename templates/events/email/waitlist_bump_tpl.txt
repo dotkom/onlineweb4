@@ -1,0 +1,12 @@
+Du har stått på venteliste for arrangementet "{{ title }}" og har nå fått plass.
+
+{% if payment %}Dette arrangementet krever betaling og du må betale innen {{ my_payment.deadline|date:"Y-m-d \k\l\. H:i" }}.
+  {% if payment_prices %}
+Prisklassen(e) for dette arrangementet er:
+{% for price in payment_prices %}- "{{ price.description }}" for {{ price.price }} kr.
+{% endfor %}{# Ugly layout because of not stripping newlines containing code blocks #}
+  {% endif %}
+{% else %}{# No payment #}
+Det kreves ingen ekstra handling fra deg med mindre du vil melde deg av.
+{% endif %}
+For mer informasjon, se {{ uri }}

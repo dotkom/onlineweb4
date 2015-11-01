@@ -3,6 +3,7 @@ from datetime import timedelta
 
 from django.conf import settings
 from django.core.mail import send_mail
+from django.template.loader import render_to_string
 from django.utils import timezone
 
 from django.core.signing import Signer, BadSignature
@@ -13,6 +14,7 @@ from filebrowser.settings import VERSIONS
 
 from apps.authentication.models import OnlineUser as User
 from apps.events.models import Event
+from apps.payment.models import PaymentDelay
 from apps.splash.models import SplashYear
 
 import icalendar
@@ -46,41 +48,40 @@ def handle_waitlist_bump(event, host, attendees, payment=None):
     title = u'Du har fått plass på %s' % (event.title)
 
     extended_deadline = timezone.now() + timedelta(days=2)
-    message = u'Du har stått på venteliste for arrangementet "%s" og har nå fått plass.\n' % (unicode(event.title))
+
+    context = {}
+    context['title'] = event.title
 
     if payment:
+        context['payment'] = payment
         if payment.payment_type == 1: #Instant
             for attendee in attendees:
                 payment.create_payment_delay(attendee.user, extended_deadline)
-            message += u"Dette arrangementet krever betaling og du må betale innen 48 timer."
 
         elif payment.payment_type == 2: #Deadline
-            if payment.deadline > extended_deadline: #More than 2 days left of payment deadline
-                message += u"Dette arrangementet krever betaling og fristen for og betale er %s" % (payment.deadline.strftime('%-d %B %Y kl: %H:%M'))
-            else: #The deadline is in less than 2 days
+            if extended_deadline > payment.deadline:  # The deadline is in less than 2 days
                 for attendee in attendees:
                     payment.create_payment_delay(attendee.user, extended_deadline)
-                message += u"Dette arrangementet krever betaling og du har 48 timer på å betale"
 
         elif payment.payment_type == 3: #Delay
             deadline = timezone.now() + timedelta(days=payment.delay)
             for attendee in attendees:
                 payment.create_payment_delay(attendee.user, deadline)
-            message += u"Dette arrangementet krever betaling og du må betale innen %d dager." % (payment.delay)
-        if len(payment.prices()) == 1:
-            message += u"\nPrisen for dette arrangementet er %skr." % (payment.prices()[0].price)
-        # elif len(payment.prices()) >= 2:
-        #     message += u"\nDette arrangementet har flere prisklasser:"
-        #     for payment_price in payment.prices():
-        #         message += "\n%s: %skr" % (payment_price.description, payment_price.price)
-    else:
-        message += u"Det kreves ingen ekstra handling fra deg med mindre du vil melde deg av."
 
-    message += u"\n\nFor mer info:"
-    message += u"\nhttp://%s%s" % (host, event.get_absolute_url())
+        if payment.prices():
+            context['payment_prices'] = payment.prices()
+
+    context['uri'] = u"http://%(host)s%(abs_url)s" % {'host': host, 'abs_url': event.get_absolute_url()}
 
     for attendee in attendees:
-        send_mail(title, message, settings.DEFAULT_FROM_EMAIL, [attendee.user.email])
+        context['my_payment'] = None
+        try:
+            delay = PaymentDelay.objects.get(payment=payment, user=attendee.user)
+            delay.deadline = delay.valid_to
+            context['my_payment'] = delay
+        except PaymentDelay.DoesNotExist:
+            context['my_payment'] = context['payment']
+        send_mail(title, render_to_string('events/email/waitlist_bump_tpl.txt', context), settings.DEFAULT_FROM_EMAIL, [attendee.user.email])
 
 
 class Calendar(object):
