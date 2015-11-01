@@ -1,0 +1,13 @@
+Det har blitt registrert en ny bestilling på Online sine nettsider. Dette er bestilling nummer {{ poster.id }}.
+
+{% if poster.event %}Arrangement: {{ poster.event }} ({{ poster.event.event_start|date:"Y-m-d H:i" }}){% else %}Tittel: {{ poster.title }}{% endif %}
+Antall og type(r):
+{% if poster.amount %}- {{ poster.amount }} stk. plakat{% endif %}
+{% if poster.bong %}- {{ poster.bong }} stk. bong{% endif %}
+
+Bestilt av {{ poster.ordered_by }} i {{ poster.ordered_committee }} {{ poster.ordered_date|date:"Y-m-d H:i" }}.
+
+
+For mer informasjon, sjekk ut bestillingen her: {{ poster.absolute_url }}
+
+Vennlig hilsen Linjeforeningen Online
