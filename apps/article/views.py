@@ -3,6 +3,7 @@
 from collections import Counter
 
 from django.contrib.contenttypes.models import ContentType
+from django.db.models import Q
 from django.utils import timezone
 from django.shortcuts import render, get_object_or_404
 
@@ -134,7 +135,7 @@ class ArticleViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.
         query = self.request.query_params.get('query', None)
 
         if tags:
-            queryset = queryset.filter(tags__name__in=[tags])
+            queryset = queryset.filter(Q(tags__name__in=[tags]) | Q(tags__slug__in=[tags]))
 
         if year:
             if month:
