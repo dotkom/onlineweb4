@@ -62,35 +62,8 @@ Artikler
             <button class="btn btn-success" type="submit">
                 <i class="fa fa-save fa-lg"></i> Lagre
             </button>
-            </form>
-            <br />
-            <form action="{% url 'dashboard_tag_create' %}" method="POST" id="dashboard-article-inline-tag-form">
-                {% csrf_token %}
-                <h4>Legg til ny Tag</h4>
-                <div class="alert alert-danger" style="display:none" id="article-inline-tag-error"></div>
-                <div class="row">
-                    <div class="col-md-5">
-                        <div class="form-group">
-                            <label for="article-tag-name">Navn</label>
-                            <input name="name" placeholder="Fullt navn" id="article-tag-name" class="form-control" />
-                        </div>
-                    </div>
-                    <div class="col-md-5">
-                        <div class="form-group">
-                            <label for="article-tag-slug">Slug</label>
-                            <input name="slug" placeholder="Kort navn" id="article-tag-slug" class="form-control" />
-                        </div>
-                    </div>
-                    <div class="col-md-2">
-                        <div class="form-group">
-                            <label>Lagre</label><br />
-                            <a class="btn btn-primary" href="#" id="article-inline-tag-submit">
-                                <i class="fa fa-plus fa-lg"></i>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </form>
+        </form>
+        <br />
         {% include 'gallery/formwidget.html' %}
     </div>
 </div>

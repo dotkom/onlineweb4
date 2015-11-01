@@ -1,15 +1,19 @@
-import random
-import watson
+# -*- coding: utf-8 -*-
 
-from django.db.models import Count
+from collections import Counter
+
+from django.contrib.contenttypes.models import ContentType
 from django.utils import timezone
 from django.shortcuts import render, get_object_or_404
 
 from rest_framework import mixins, viewsets
 from rest_framework.permissions import AllowAny
 
+from taggit.models import TaggedItem
+import watson
+
 from apps.article.serializers import ArticleSerializer
-from apps.article.models import Article, Tag, ArticleTag
+from apps.article.models import Article
 
 
 def archive(request, name=None, slug=None, year=None, month=None):
@@ -72,12 +76,11 @@ def archive(request, name=None, slug=None, year=None, month=None):
             del sorted_months[i]
         dates[year] = sorted_months
 
-    # Get the 30 most used tags, then randomize them
-    tags = Tag.objects.filter(
-        article_tags__isnull=False
-    ).distinct().annotate(num_tags=Count('article_tags__tag')).order_by('-num_tags')
-    tags = list(tags[:30])
-    random.shuffle(tags)
+    # Fetch 30 most popular tags from the Django-taggit registry, using a Counter
+    queryset = TaggedItem.objects.filter(content_type=ContentType.objects.get_for_model(Article))
+    if name and slug:
+        queryset = queryset.filter(tag__name=name)
+    tags = Counter(map(lambda item: item.tag, queryset)).most_common(30)
 
     return render(request, 'article/archive.html', {'tags': tags, 'dates': dates})
 
@@ -103,11 +106,7 @@ def details(request, article_id, article_slug):
     else:
         article.is_changed = False
 
-    related_articles = Article.objects.filter(
-        article_tags__tag__in=article.tags
-    ).distinct().annotate(
-        num_tags=Count('article_tags__tag')
-    ).order_by('-num_tags', '-published_date').exclude(id=article.id)[:4]
+    related_articles = article.tags.similar_objects()[:4]
 
     return render(request, 'article/details.html', {'article': article, 'related_articles': related_articles})
 
@@ -125,7 +124,7 @@ class ArticleViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.
     queryset = Article.objects.filter(published_date__lte=timezone.now()).order_by('-published_date')
     serializer_class = ArticleSerializer
     permission_classes = (AllowAny,)
-    filter_fields = ('article_tags',)
+    filter_fields = ('tags',)
 
     def get_queryset(self):
         queryset = self.queryset
@@ -135,10 +134,7 @@ class ArticleViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.
         query = self.request.query_params.get('query', None)
 
         if tags:
-            # Filtering on tags is only supported if the tag is typed exactly the same as the stored tag
-            actual_tags = Tag.objects.filter(name=tags)
-            at = ArticleTag.objects.filter(tag=actual_tags).values('article_id')
-            queryset = queryset.filter(id__in=at)
+            queryset = queryset.filter(tags__name__in=[tags])
 
         if year:
             if month:

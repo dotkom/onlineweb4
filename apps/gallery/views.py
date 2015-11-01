@@ -137,6 +137,7 @@ def crop_image(request):
             image_name = crop_data['name']
             image_description = crop_data['description']
             image_tags = crop_data['tags']
+            image_photographer = crop_data['photographer']
             responsive_image_path = util.save_responsive_image(image, crop_data)
 
             # Error / Status collection is performed in the utils create_responsive_images function
@@ -153,6 +154,7 @@ def crop_image(request):
             resp_image = ResponsiveImage(
                 name=image_name,
                 description=image_description,
+                photographer=image_photographer,
                 image_original=original_media,
                 image_lg=lg_media,
                 image_md=md_media,
@@ -217,6 +219,7 @@ def search(request):
             'name': image.name,
             'description': image.description,
             'id': image.id,
+            'photographer': image.photographer,
             'original': settings.MEDIA_URL + str(image.image_original),
             'thumbnail': settings.MEDIA_URL + str(image.thumbnail),
             'wide': settings.MEDIA_URL + str(image.image_wide),

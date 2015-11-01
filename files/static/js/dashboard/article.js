@@ -7,7 +7,7 @@ var Article = (function ($, tools) {
 
     var SEARCH_ENDPOINT = '/api/v1/articles/'
 
-    var page, query, searchButton, results, paginator, years;
+    var page, query, searchButton, results, paginator, years, tags;
 
     /**
      * Generic API helper function that only takes on an URI
@@ -35,7 +35,7 @@ var Article = (function ($, tools) {
             searchButton = $('#dashboard-article-search-button')
             results = $('#dashboard-article-table')
             years = $('.dashboard-article-year')
-            tagform = $('#dashboard-article-inline-tag-form')
+            tags = $('.dashboard-article-tag')
 
             // Bind click listener for search button
             searchButton.on('click', function (e) {
@@ -56,23 +56,10 @@ var Article = (function ($, tools) {
                 Article.filter($(this).text())
             })
 
-            // Intercept inline tag form posting and update tags list
-            $('#article-inline-tag-submit').on('click', function (e) {
-                e.preventDefault()
-                $.ajax({
-                    method: 'POST',
-                    url: '/dashboard/article/tag/new/',
-                    data: tagform.serialize(),
-                    success: function (data) {
-                        $('#article-inline-tag-error').hide()
-                        $('#id_tags').append('<option value="' + data.id + '">' + data.name + '</option>')
-                        $('#article-tag-name').val('')
-                        $('#article-tag-slug').val('')
-                    },
-                    error: function (xhr, statusText, thrownError) {
-                        $('#article-inline-tag-error').text('Klarte ikke legge til ny tag: ' + statusText).show()
-                    }
-                })
+            // Bind click listener to tags filter buttons
+            tags.on('click', function (e) {
+                e.preventDefault();
+                Article.tags($(this).text())
             })
         },
 
@@ -84,6 +71,10 @@ var Article = (function ($, tools) {
             doRequest(SEARCH_ENDPOINT + '?year=' + year)
         },
 
+        tags: function (tag) {
+            doRequest(SEARCH_ENDPOINT + '?tags=' + tag)
+        },
+
         table: {
             draw: function (items) {
                 var html = ''
@@ -93,7 +84,7 @@ var Article = (function ($, tools) {
 
                     html += '<tr>'
                     html += '<td><a href="' + item.id + '">' + item.heading + '</a></td>'
-                    html += '<td>' + item.author.first_name + ' ' + item.author.last_name + '</td>'
+                    html += '<td>' + item.authors + '</td>'
                     html += '<td>' + t.format('YYYY-MM-DD HH:MM:SS') + '</td>'
                     html += '<td><a href="/dashboard/article/' + item.id + '/edit/">'
                     html += '<i class="fa fa-edit fa-lg"></i></a></td></tr>'

@@ -24,7 +24,7 @@
                            <div>
                                <img width="100%" src="{{ article.image.wide }}" alt="{{ article.heading }}"/>
                                <div class="col-md-12 photograph-detail-meta">
-                                   <span class="meta-caption">{% if article.photographers %} Fotograf</span> {{ article.photographers|striptags|markdown }} {% endif %}
+                                   <span class="meta-caption">{% if article.image.photographer %} Fotograf</span> {{ article.image.photographer|striptags|markdown }} {% endif %}
                                </div>
                            </div>
                        </div>
@@ -123,7 +123,7 @@
                         </div>
                         <div class="tag-cloud">
                             {% if article.tags %}
-                                {% for tag in article.tags %}
+                                {% for tag in article.tags.all %}
                                     <a href="{% url 'view_article_tag' tag.name tag.slug %}"><span class="tag">{{ tag }}</span></a>
                                 {% endfor %}
                             {% else %}

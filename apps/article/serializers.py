@@ -1,13 +1,16 @@
 from rest_framework import serializers
 
-from apps.article.models import Article, Tag
+from apps.article.models import Article
 from apps.authentication.serializers import UserSerializer
 from apps.gallery.serializers import ResponsiveImageSerializer
 
+from taggit_serializer.serializers import TaggitSerializer, TagListSerializerField
 
-class ArticleSerializer(serializers.ModelSerializer):
+
+class ArticleSerializer(TaggitSerializer, serializers.ModelSerializer):
     created_by = UserSerializer()
     image = ResponsiveImageSerializer()
+    tags = TagListSerializerField()
     absolute_url = serializers.CharField(source='get_absolute_url', read_only=True)
 
     class Meta(object):
@@ -24,17 +27,9 @@ class ArticleSerializer(serializers.ModelSerializer):
             'id',
             'ingress',
             'ingress_short',
-            'photographers',
             'published_date',
             'slug',
+            'tags',
             'video',
-            'image',
-            'article_tags',
+            'image'
         )
-
-
-class TagSerializer(serializers.ModelSerializer):
-
-    class Meta(object):
-        model = Tag
-        fields = ('name', 'short_name')
