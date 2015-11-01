@@ -86,8 +86,8 @@ def archive(request, name=None, slug=None, year=None, month=None):
     return render(request, 'article/archive.html', {'tags': tags, 'dates': dates})
 
 
-def archive_tag(request, name, slug):
-    return archive(request, name=name, slug=slug)
+def archive_tag(request, slug):
+    return archive(request, slug=slug)
 
 
 def archive_year(request, year):
