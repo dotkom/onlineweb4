@@ -79,7 +79,7 @@ Artikler
                     </p>
                     <h3>Tags</h3>
                     {% for tag in article.tags.all %}
-                        <a href="#" class="btn btn-default">{{ tag }}</a>
+                        <a href="/article/tag/{{ tag.name }}/{{ tag.slug }}" class="btn btn-default">{{ tag }}</a>
                     {% endfor %}
                 </div>
             </div>

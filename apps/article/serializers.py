@@ -27,7 +27,6 @@ class ArticleSerializer(TaggitSerializer, serializers.ModelSerializer):
             'id',
             'ingress',
             'ingress_short',
-            'photographers',
             'published_date',
             'slug',
             'tags',
