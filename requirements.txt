@@ -1,7 +1,7 @@
 Django>=1.8.0,<1.9.0
 Pillow==2.7.0                   # pillow
-django-tastypie==0.12.2         # API
-djangorestframework==3.2.2      # API v2
+django-tastypie==0.12.2         # API v0
+djangorestframework>=3.3.0,<3.4.0 # API v1
 django-filter==0.11.0           # Filtering for DRF
 python-memcached==1.53          # Memcache. Used by Mailinglists to fetch from Sympa.
 wsgiref==0.1.2
