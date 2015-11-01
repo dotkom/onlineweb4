@@ -1,30 +1,10 @@
 from django.contrib import admin
-from apps.article.models import Article, Tag, ArticleTag
+from apps.article.models import Article
 
 from reversion.admin import VersionAdmin
 
 
-class ArticleTagAdmin(VersionAdmin):
-    model = ArticleTag
-
-
-class ArticleTagInline(admin.TabularInline):
-    model = ArticleTag
-    max_num = 99
-    extra = 0
-
-
-class TagAdmin(VersionAdmin):
-    def save_model(self, request, obj, form, change):
-        obj.changed_by = request.user
-        if not change:
-            obj.name = obj.name.replace('.', '')
-            obj.created_by = request.user
-        obj.save()
-
-
 class ArticleAdmin(VersionAdmin):
-    inlines = (ArticleTagInline,)
     list_display = ("heading", "created_by", "changed_by")
 
     # set the created and changed by fields
@@ -42,4 +22,3 @@ class ArticleAdmin(VersionAdmin):
             instances.save()
 
 admin.site.register(Article, ArticleAdmin)
-admin.site.register(Tag, TagAdmin)

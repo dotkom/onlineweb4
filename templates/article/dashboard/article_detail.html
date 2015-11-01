@@ -66,7 +66,7 @@ Artikler
                             <dt>Navn</dt>
                             <dd>{{ article.image.name|striptags }}</dd>
                             <dt>Fotograf(er)</dt>
-                            <dd>{{ article.photographers|striptags }}</dd>
+                            <dd>{{ article.image.photographer|striptags }}</dd>
                             <dt>Vimeo ID</dt>
                             <dd>
                                 {% if article.vimeo %}
@@ -78,8 +78,8 @@ Artikler
                         </dl>
                     </p>
                     <h3>Tags</h3>
-                    {% for tag in tags %}
-                        <a href="{{ tag.tag.absolute_url }}" class="btn btn-default">{{ tag.tag.name }}</a>
+                    {% for tag in article.tags.all %}
+                        <a href="#" class="btn btn-default">{{ tag }}</a>
                     {% endfor %}
                 </div>
             </div>

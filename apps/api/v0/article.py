@@ -10,7 +10,7 @@ from tastypie.resources import ModelResource
 
 from apps.api.v0.image import ImageResource
 from apps.api.v0.authentication import UserResource
-from apps.article.models import Article, ArticleTag, Tag
+from apps.article.models import Article
 
 
 class ArticleResource(ModelResource):
@@ -66,10 +66,10 @@ class ArticleResource(ModelResource):
             # Not filtering on year, check if filtering on slug (tag) or return default query
             if request_tag is not None:
                 # Filtering on slug
-                slug_query = Tag.objects.filter(slug=request_tag)
-                slug_connect = ArticleTag.objects.filter(tag=slug_query).values('article_id')
                 queryset = Article.objects.filter(
-                    id__in=slug_connect, published_date__lte=timezone.now()).order_by('-published_date')
+                    tags__name__in=[request_tag],
+                    published_date__lte=timezone.now()
+                ).order_by('-published_date')
             else:
                 # No filtering at all, return default query
                 queryset = Article.objects.filter(published_date__lte=timezone.now()).order_by('-published_date')

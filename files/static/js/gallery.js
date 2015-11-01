@@ -322,9 +322,11 @@ var Gallery = (function ($, tools) {
         var image_name = $('#image-edit-name');
         var image_description = $('#image-edit-description');
         var image_tags = $('#image-edit-tags');
+        var image_photographer = $('#image-edit-photographer');
         cropData.name = image_name.val();
         cropData.description = image_description.val();
-        cropData.tags = image_tags.val();
+        cropData.tags = image_tags.val() || '';
+        cropData.photographer = image_photographer.val() || '';
 
         if (cropData.name.length < 2) {
             alert('Du må gi bildet et navn!');

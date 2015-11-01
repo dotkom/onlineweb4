@@ -15,7 +15,5 @@ urlpatterns = patterns(
     url(r'^year/(?P<year>\d+)/month/(?P<month>[^\.]+)/$', 'archive_month', name='article_archive_month'),
 )
 
-# API v1
-
 router = SharedAPIRootRouter()
 router.register(r'articles', views.ArticleViewSet)

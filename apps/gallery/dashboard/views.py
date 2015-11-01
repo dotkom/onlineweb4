@@ -153,6 +153,7 @@ class GalleryDelete(DashboardPermissionMixin, DetailView):
     """
 
     permission_required = 'gallery.delete_responsiveimage'
+    accept_global_perms = True
     model = ResponsiveImage
 
     def get(self, request, *args, **kwargs):
@@ -195,6 +196,7 @@ class GalleryUnhandledDelete(DashboardPermissionMixin, DetailView):
     """
 
     permission_required = 'gallery.delete_unhandledimage'
+    accept_global_perms = True
     model = UnhandledImage
 
     def get(self, request, *args, **kwargs):

@@ -16,5 +16,6 @@ class ResponsiveImageSerializer(TaggitSerializer, serializers.ModelSerializer):
         model = ResponsiveImage
         fields = (
             'id', 'name', 'timestamp', 'description', 'thumb',
-            'original', 'wide', 'lg', 'md', 'sm', 'xs', 'tags'
+            'original', 'wide', 'lg', 'md', 'sm', 'xs', 'tags',
+            'photographer'
         )

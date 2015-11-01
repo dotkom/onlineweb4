@@ -267,7 +267,7 @@ function ArticleArchive (Utils) {
                         output += '      <a href="'+articles[i].id+'/'+articles[i].slug+'"><h3>'+articles[i].heading+'</h3></a>';
                         output += '      <p>'+articles[i].ingress_short+'</p>';
                         output += '      <div class="meta"><div class="row"><div class="col-md-12">';
-                        output += '        <p><strong>Publisert av: </strong>' + articles[i].authors + '</p>';
+                        output += '        <p><strong>Skrevet av: </strong>' + articles[i].authors + '</p>';
                         output += '      </div></div></div>';
                         output += '    </div><!-- end col-md-8 -->';
                         output += '  </div><!-- end row -->';
