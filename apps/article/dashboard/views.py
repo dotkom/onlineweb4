@@ -1,11 +1,14 @@
 # -*- encoding: utf-8 -*-
 
+from collections import Counter
 from logging import getLogger
 
+from django.contrib.contenttypes.models import ContentType
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
 
 from guardian.decorators import permission_required
+from taggit.models import TaggedItem
 
 from apps.article.models import Article
 from apps.article.dashboard.forms import ArticleForm
@@ -20,6 +23,10 @@ def article_index(request):
     context['articles'] = Article.objects.all().order_by('-published_date')
     context['years'] = sorted(list(set(a.published_date.year for a in context['articles'])), reverse=True)
     context['pages'] = range(1, context['articles'].count() / 10 + 2)
+
+    # Fetch 30 most popular tags from the Django-taggit registry, using a Counter
+    queryset = TaggedItem.objects.filter(content_type=ContentType.objects.get_for_model(Article))
+    context['tags'] = Counter(map(lambda item: item.tag, queryset)).most_common(30)
 
     return render(request, 'article/dashboard/article_index.html', context)
 
