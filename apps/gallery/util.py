@@ -177,8 +177,8 @@ def resize_image(source_image_path, destination_thumbnail_path, size):
         target_height = image_height
 
     # Give an epsilon of 0.01 because calculations.
-    if float(image_width) / float(image_height) < float(16)/float(9) - 0.01 \
-            or float(image_width) / float(image_height) > float(16)/float(9) + 0.01:
+    if image_width / image_height < 16/9 - 0.01 \
+            or image_width / image_height > 16/9 + 0.01:
 
         return {'success': False, 'error': 'Image has invalid dimensions.'}
 

@@ -254,16 +254,15 @@ class Question(models.Model):
 
                 # Normal
                 if self.majority_type == 0:
-                    minimum = 1 / float(2)
+                    minimum = 1 / 2
 
                 # Qualitative
                 elif self.majority_type == 1:
-                    minimum = 2 / float(3)
-
+                    minimum = 2 / 3
                 res = {'valid': False, 'data': {}}
 
                 if total_votes != 0:
-                    res['valid'] = winner_votes / float(total_votes) > minimum
+                    res['valid'] = winner_votes / total_votes > minimum
 
                 # Admins should see all info regardless of only show winner
                 if admin or not self.only_show_winner:

@@ -66,9 +66,9 @@ def genfors(request):
 
             if total_votes != 0 and not aq.only_show_winner:
                 if aq.question_type is BOOLEAN_VOTE:
-                    context['active_question']['yes_percent'] = res['data']['Ja'] * 100 / total_votes
-                    context['active_question']['no_percent'] = res['data']['Nei'] * 100 / total_votes
-                    context['active_question']['blank_percent'] = res['data']['Blankt'] * 100 / total_votes
+                    context['active_question']['yes_percent'] = res['data']['Ja'] * 100 // total_votes
+                    context['active_question']['no_percent'] = res['data']['Nei'] * 100 // total_votes
+                    context['active_question']['blank_percent'] = res['data']['Blankt'] * 100 // total_votes
 
                 elif aq.question_type is MULTIPLE_CHOICE and total_votes != 0:
                     context['active_question']['multiple_choice'] = {}
@@ -76,7 +76,7 @@ def genfors(request):
                         context['active_question']['multiple_choice'][a.description] = [0, 0]
                     context['active_question']['multiple_choice']['Blankt'] = [0, 0]
                     for k, v in res['data'].items():
-                        context['active_question']['multiple_choice'][k] = [v, v * 100 / total_votes]
+                        context['active_question']['multiple_choice'][k] = [v, v * 100 // total_votes]
         return render(request, "genfors/index.html", context)
 
     # If user is not logged in

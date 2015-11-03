@@ -186,7 +186,7 @@ class OnlineUser(AbstractUser):
 
         # We say that a year is 360 days incase we are a bit slower to
         # add users one year.
-        year = ((today - started).days / 360) + 1
+        year = ((today - started).days // 360) + 1
 
         if self.field_of_study == 0 or self.field_of_study == 100:  # others
             return 0
