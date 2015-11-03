@@ -3,8 +3,7 @@ Pillow==2.7.0                   # pillow
 django-tastypie==0.12.2         # API v0
 djangorestframework>=3.3.0,<3.4.0 # API v1
 django-filter==0.11.0           # Filtering for DRF
-python-memcached==1.53          # Memcache. Used by Mailinglists to fetch from Sympa.
-wsgiref==0.1.2
+python-memcached==1.57          # Memcache. Used by Mailinglists to fetch from Sympa.
 markdown2==2.3.0                # textarea text formatting
 psycopg2                        # Postgres adapter
 pytz                            # Timezone lib. Obsolete?
@@ -15,7 +14,7 @@ stripe==1.20.2
 # third party deps
 django-filebrowser==3.5.4 		# File uploading
 django-grappelli==2.6.3         # Admin template set
-git+git://github.com/clintecker/django-chunks.git@0.2# Chunks, or reusable key:content for templates.
+git+git://github.com/leonh/django-chunks.git@master# Chunks, or reusable key:content for templates.
 django-crispy-forms==1.4.0      # nice forms
 django-extensions==1.5.9        # nice extra commands for debugging, etc
 django-dynamic-fixture==1.8.1   # Dynamic fixtures for models
