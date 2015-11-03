@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import logging
 import uuid
 import re
 from smtplib import SMTPException
@@ -10,6 +11,7 @@ from django.contrib import messages
 from django.core.mail import send_mail
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponseRedirect
+from django.template.loader import render_to_string
 from django.utils.translation import ugettext as _
 from django.views.decorators.debug import sensitive_post_parameters
 
@@ -25,6 +27,9 @@ from apps.authentication.forms import (
     ChangePasswordForm
 )
 from apps.authentication.models import OnlineUser as User, RegisterToken, Email
+
+
+logger = logging.getLogger(__name__)
 
 
 @sensitive_post_parameters()
@@ -92,20 +97,14 @@ def register(request):
                 rt = RegisterToken(user=user, email=email.email, token=token)
                 rt.save()
 
-                email_message = _(u"""
-En konto har blitt registrert på online.ntnu.no med denne epostadressen. Dersom du ikke
-har utført denne handlingen ber vi deg se bort fra denne eposten.
+                email_context = {}
+                email_context['verify_url'] = request.build_absolute_uri('/auth/verify/%s/' % token)
+                logger.debug('auth url: %s' % email_context['verify_url'])
 
-For å bruke denne kontoen kreves det at du verifiserer epostadressen. Du kan gjøre
-dette ved å besøke linken under.
+                message = render_to_string('auth/email/welcome_tpl.txt', email_context)
 
-http://%s/auth/verify/%s/
-
-Denne lenken vil være gyldig i 24 timer. Dersom du behøver å få tilsendt en ny lenke
-kan dette gjøres med funksjonen for å gjenopprette passord.
-""") % (request.META['HTTP_HOST'], token)
                 try:
-                    send_mail(_(u'Verifiser din konto'), email_message, settings.DEFAULT_FROM_EMAIL, [email.email, ])
+                    send_mail(_(u'Verifiser din konto'), message, settings.DEFAULT_FROM_EMAIL, [email.email, ])
                 except SMTPException:
                     messages.error(request, u'Det oppstod en kritisk feil, epostadressen er ugyldig!')
                     return redirect('home')
@@ -185,23 +184,16 @@ def recover(request):
                 rt = RegisterToken(user=email.user, email=email.email, token=token)
                 rt.save()
 
-                email_message = _(u"""
-Vi har mottat forespørsel om å gjenopprette passordet for kontoen bundet til %s.
-Dersom du ikke har bedt om denne handlingen ber vi deg se bort fra denne eposten.
+                email_context = {}
+                email_context['email'] = email.email
+                email_context['username'] = email.user.username
+                email_context['reset_url'] = request.build_absolute_uri("/auth/set_password/%s/" % token)
 
-Brukernavn: %s
+                email_message = render_to_string('auth/email/password_reset_tpl.txt', email_context)
 
-Hvis du ønsker å gjennomføre en gjenoppretning av passord, bruk lenken under.
+                send_mail(_(u'Gjenoppretting av passord'), email_message, settings.DEFAULT_FROM_EMAIL, [email.email, ])
 
-http://%s/auth/set_password/%s/
-
-Denne lenken vil være gyldig i 24 timer. Dersom du behøver å få tilsendt en ny lenke
-kan dette gjøres med funksjonen for å gjenopprette passord.
-""") % (email.email, email.user.username, request.META['HTTP_HOST'], token)
-
-                send_mail(_(u'Gjenoppretning av passord'), email_message, settings.DEFAULT_FROM_EMAIL, [email.email, ])
-
-                messages.success(request, _(u'En lenke for gjenoppretning har blitt sendt til %s.') % email.email)
+                messages.success(request, _(u'En lenke for gjenoppretting har blitt sendt til %s.') % email.email)
 
                 return HttpResponseRedirect('/')
             else:
