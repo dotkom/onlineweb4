@@ -236,7 +236,7 @@ def set_password(request, token=None):
                         messages.success(
                             request,
                             _(u'Bruker %s har gjennomført vellykket gjenoppretning av passord.' +
-                              'Du kan nå logge inn.') % user.username
+                              u'Du kan nå logge inn.') % user.username
                         )
 
                         return HttpResponseRedirect('/')
