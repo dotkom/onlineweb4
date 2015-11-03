@@ -6,7 +6,7 @@ from django.db import models, migrations
 
 class Migration(migrations.Migration):
 
-    replaces = [(b'careeropportunity', '0001_initial'), (b'careeropportunity', '0002_auto_20151017_0250'), (b'careeropportunity', '0003_auto_20151017_2258')]
+    replaces = [('careeropportunity', '0001_initial'), ('careeropportunity', '0002_auto_20151017_0250'), ('careeropportunity', '0003_auto_20151017_2258')]
 
     dependencies = [
         ('companyprofile', '0001_initial'),
