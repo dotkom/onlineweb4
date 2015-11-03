@@ -1,7 +1,7 @@
 import os
 import sys
 
-from base import PROJECT_ROOT_DIRECTORY
+from .base import PROJECT_ROOT_DIRECTORY
 
 # Prevent python from making .pyc files
 sys.dont_write_bytecode = True

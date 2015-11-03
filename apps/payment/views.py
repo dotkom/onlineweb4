@@ -52,9 +52,9 @@ def payment(request):
 
                     _send_payment_confirmation_mail(payment_relation)
 
-                    messages.success(request, _(u"Betaling utført."))
-                    return HttpResponse("Betaling utført.", content_type="text/plain", status=200)
-                except stripe.CardError, e:
+                    messages.success(request, _("Betaling utført."))
+                    return HttpResponse("Betaling utført.", content_type="text/plain", status=200) 
+                except stripe.CardError as e:
                     messages.error(request, str(e))
                     return HttpResponse(str(e), content_type="text/plain", status=500)
 
@@ -173,25 +173,25 @@ def payment_refund(request, payment_relation_id):
 
         payment_relation.payment.handle_refund(request.META['HTTP_HOST'], payment_relation)
         messages.success(request, _("Betalingen har blitt refundert."))
-    except stripe.InvalidRequestError, e:
+    except stripe.InvalidRequestError as e:
         messages.error(request, str(e))
 
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 
 def _send_payment_confirmation_mail(payment_relation):
-    subject = _(u"kvittering") + ": " + payment_relation.payment.description()
+    subject = _("kvittering") + ": " + payment_relation.payment.description()
     from_mail = payment_relation.payment.responsible_mail()
     to_mails = [payment_relation.user.email]
 
-    message = _(u"Du har betalt for ") + payment_relation.payment.description()
+    message = _("Du har betalt for ") + payment_relation.payment.description()
     message += "\n"
-    message += _(u"Ditt kvitteringsnummer er") + ": " + payment_relation.unique_id
+    message += _("Ditt kvitteringsnummer er") + ": " + payment_relation.unique_id
     message += "\n"
     message += "\n"
-    message += _(u"Dersom du har problemer eller spørsmål, send mail til") + ": " + from_mail
+    message += _("Dersom du har problemer eller spørsmål, send mail til") + ": " + from_mail
 
-    EmailMessage(subject, unicode(message), from_mail, [], to_mails).send()
+    EmailMessage(subject, str(message), from_mail, [], to_mails).send()
 
 
 def _send_webshop_mail(order_line):
@@ -205,15 +205,15 @@ def _send_webshop_mail(order_line):
     )
 
     logging.getLogger(__name__).debug(u"Logging for send webshop mail")
-    logging.getLogger(__name__).info(unicode(order_line))
+    logging.getLogger(__name__).info(str(order_line))
 
     message += u"\nDine produkter:"
     products = u""
     for o in order_line.orders.all():
-        products += u"\n " + unicode(o)
+        products += u"\n " + str(o)
     message += products
     message += u"\n\nDin betalingsreferanse er " + order_line.stripe_id
     message += u"\n\n"
     message += _(u"Dersom du har problemer eller spørsmål, send mail til") + u": " + settings.EMAIL_PROKOM
 
-    EmailMessage(subject, unicode(message), from_mail, to_mails).send()
+    EmailMessage(subject, str(message), from_mail, to_mails).send()

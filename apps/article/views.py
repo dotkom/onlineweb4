@@ -34,21 +34,21 @@ def archive(request, name=None, slug=None, year=None, month=None):
     articles = Article.objects.filter(published_date__lte=timezone.now()).order_by('-published_date')
 
     month_strings = {
-        '1': u'Januar',
-        '2': u'Februar',
-        '3': u'Mars',
-        '4': u'April',
-        '5': u'Mai',
-        '6': u'Juni',
-        '7': u'Juli',
-        '8': u'August',
-        '9': u'September',
-        '10': u'Oktober',
-        '11': u'November',
-        '12': u'Desember',
+        '1': 'Januar',
+        '2': 'Februar',
+        '3': 'Mars',
+        '4': 'April',
+        '5': 'Mai',
+        '6': 'Juni',
+        '7': 'Juli',
+        '8': 'August',
+        '9': 'September',
+        '10': 'Oktober',
+        '11': 'November',
+        '12': 'Desember',
     }
 
-    rev_month_strings = dict((v, k) for k, v in month_strings.iteritems())
+    rev_month_strings = dict((v, k) for k, v in month_strings.items())
 
     # HERE BE DRAGONS
     # TODO: Fix all these for loops...

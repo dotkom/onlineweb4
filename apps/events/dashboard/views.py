@@ -57,36 +57,36 @@ def details(request, event_id, active_tab='attendees'):
             resp = {}
             if request.POST['action'] == 'attended':
                 if not event.is_attendance_event:
-                    return HttpResponse(u'Dette er ikke et påmeldingsarrangement.', status=400)
+                    return HttpResponse('Dette er ikke et påmeldingsarrangement.', status=400)
                 attendee = Attendee.objects.filter(pk = request.POST['attendee_id'])
                 if attendee.count() != 1:
-                    return HttpResponse(u'Fant ingen påmeldte med oppgitt ID (%s).' % request.POST['attendee_id'], status=400)
+                    return HttpResponse('Fant ingen påmeldte med oppgitt ID (%s).' % request.POST['attendee_id'], status=400)
                 attendee = attendee[0]
                 attendee.attended = not attendee.attended
                 attendee.save()
                 return JsonResponse(resp)
             if request.POST['action'] == 'paid':
                 if not event.is_attendance_event:
-                    return HttpResponse(u'Dette er ikke et påmeldingsarrangement.', status=400)
+                    return HttpResponse('Dette er ikke et påmeldingsarrangement.', status=400)
                 attendee = Attendee.objects.filter(pk = request.POST['attendee_id'])
                 if attendee.count() != 1:
-                    return HttpResponse(u'Fant ingen påmeldte med oppgitt ID (%s).' % request.POST['attendee_id'], status=400)
+                    return HttpResponse('Fant ingen påmeldte med oppgitt ID (%s).' % request.POST['attendee_id'], status=400)
                 attendee = attendee[0]
                 attendee.paid = not attendee.paid
                 attendee.save()
                 return JsonResponse(resp)
             if request.POST['action'] == 'add_attendee':
                 if not event.is_attendance_event:
-                    return HttpResponse(u'Dette er ikke et påmeldingsarrangement.', status=400)
+                    return HttpResponse('Dette er ikke et påmeldingsarrangement.', status=400)
                 user = User.objects.filter(pk = request.POST['user_id'])
                 if user.count() != 1:
-                    return HttpResponse(u'Fant ingen bruker med oppgitt ID (%s).' % request.POST['user_id'], status=400)
+                    return HttpResponse('Fant ingen bruker med oppgitt ID (%s).' % request.POST['user_id'], status=400)
                 user = user[0]
                 if Attendee.objects.filter(user=user, event=event.attendance_event).count() != 0:
-                    return HttpResponse(u'%s er allerede påmeldt %s.' % (user.get_full_name(), event.title), status=400)
+                    return HttpResponse('%s er allerede påmeldt %s.' % (user.get_full_name(), event.title), status=400)
                 attendee = Attendee(user = user, event = event.attendance_event)
                 attendee.save()
-                resp['message'] = u'%s ble meldt på %s' % (user.get_full_name(), event)
+                resp['message'] = '%s ble meldt på %s' % (user.get_full_name(), event)
                 resp['attendees'] = []
                 for number, a in enumerate(attendee.event.attendees_qs):
                     resp['attendees'].append({
@@ -114,14 +114,14 @@ def details(request, event_id, active_tab='attendees'):
                 return JsonResponse(resp, safe=False)
             if request.POST['action'] == 'remove_attendee':
                 if not event.is_attendance_event:
-                    return HttpResponse(u'Dette er ikke et påmeldingsarrangement.', status=400)
+                    return HttpResponse('Dette er ikke et påmeldingsarrangement.', status=400)
                 attendee = Attendee.objects.filter(pk = request.POST['attendee_id'])
                 if attendee.count() != 1:
-                    return HttpResponse(u'Fant ingen påmeldte med oppgitt ID (%s).' % request.POST['attendee_id'], status=400)
+                    return HttpResponse('Fant ingen påmeldte med oppgitt ID (%s).' % request.POST['attendee_id'], status=400)
                 attendee = attendee[0]
                 event.attendance_event.notify_waiting_list(host=request.META['HTTP_HOST'], unattended_user=attendee.user)
                 attendee.delete()
-                resp['message'] = u'%s ble fjernet fra %s' % (attendee.user.get_full_name(), attendee.event)
+                resp['message'] = '%s ble fjernet fra %s' % (attendee.user.get_full_name(), attendee.event)
                 resp['attendees'] = []
                 for number, a in enumerate(attendee.event.attendees_qs):
                     resp['attendees'].append({

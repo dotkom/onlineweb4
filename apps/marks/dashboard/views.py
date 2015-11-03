@@ -156,7 +156,7 @@ def marks_new(request):
     if request.method == 'POST':
         mark_form = MarkForm(request.POST)
         if not mark_form.is_valid():
-            messages.error(request, u'Noen av de påkrevde feltene inneholder feil.')
+            messages.error(request, 'Noen av de påkrevde feltene inneholder feil.')
         else:
             # Save the form data
             new_mark = mark_form.save()
@@ -167,7 +167,7 @@ def marks_new(request):
             new_mark.save()
 
             # Add news
-            messages.success(request, u'Prikken ble lagret.')
+            messages.success(request, 'Prikken ble lagret.')
 
             return redirect(marks_details, pk=new_mark.id)
     else:
@@ -188,7 +188,7 @@ def marks_edit(request, pk):
         mark = get_object_or_404(Mark, pk=pk)
         mark_form = MarkForm(request.POST, instance=mark)
         if not mark_form.is_valid():
-            messages.error(request, u'Noen av de påkrevde feltene inneholder feil.')
+            messages.error(request, 'Noen av de påkrevde feltene inneholder feil.')
         else:
             # Save the form data
             new_mark = mark_form.save()
@@ -199,7 +199,7 @@ def marks_edit(request, pk):
             new_mark.save()
 
             # Add news
-            messages.success(request, u'Prikken ble endret.')
+            messages.success(request, 'Prikken ble endret.')
 
             return redirect(marks_details, pk=new_mark.id)
     else:

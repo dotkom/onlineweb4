@@ -12,8 +12,8 @@ class SplashYearManager(models.Manager):
 
 
 class SplashYear(models.Model):
-    title = models.CharField(u'title', max_length=100)
-    start_date = models.DateField(u'start_date')
+    title = models.CharField('title', max_length=100)
+    start_date = models.DateField('start_date')
 
     objects = SplashYearManager()
 
@@ -25,8 +25,8 @@ class SplashYear(models.Model):
 
 
 class SplashEvent(TimeStampedModel, models.Model):
-    title = models.CharField(u'title', max_length=100)
-    content = models.TextField(u'content')
+    title = models.CharField('title', max_length=100)
+    content = models.TextField('content')
     start_time = models.DateTimeField()
     end_time = models.DateTimeField()
     splash_year = models.ForeignKey('SplashYear', related_name='splash_events')

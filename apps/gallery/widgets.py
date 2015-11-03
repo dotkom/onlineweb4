@@ -8,7 +8,7 @@ from django.forms.utils import flatatt, format_html, force_text
 
 from apps.gallery.models import ResponsiveImage
 
-WIDGET_STRING = u"""<br /><input{} />\r\n
+WIDGET_STRING = """<br /><input{} />\r\n
 <div id="single-image-field-thumbnail">{}</div>
 <a href="#" class="btn btn-primary" id="add-responsive-image">\r\n
 <i class="fa fa-plus fa-lg"></i> Velg</a>\r\n
@@ -50,18 +50,18 @@ class SingleImageInput(HiddenInput):
         """
 
         if value is None:
-            value = u''
+            value = ''
 
-        img_thumb = u'Det er ikke valgt noe bilde.'
+        img_thumb = 'Det er ikke valgt noe bilde.'
         final_attrs = self.build_attrs(attrs, type=self.input_type, name=name)
-        if value != u'':
+        if value != '':
             # Only add the value attribute if the value is non-empty
             final_attrs['value'] = force_text(self._format_value(value))
             img = ResponsiveImage.objects.get(pk=value)
             img_thumb = format_html(
-                u'<img src="{}" alt title="{}"/>',
+                '<img src="{}" alt title="{}"/>',
                 settings.MEDIA_URL + str(img.thumbnail),
-                unicode(img.name),
+                str(img.name),
                 encoding='utf-8'
             )
 

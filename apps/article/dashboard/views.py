@@ -22,7 +22,7 @@ def article_index(request):
     context = get_base_context(request)
     context['articles'] = Article.objects.all().order_by('-published_date')
     context['years'] = sorted(list(set(a.published_date.year for a in context['articles'])), reverse=True)
-    context['pages'] = range(1, context['articles'].count() / 10 + 2)
+    context['pages'] = list(range(1, context['articles'].count() / 10 + 2))
 
     # Fetch 30 most popular tags from the Django-taggit registry, using a Counter
     queryset = TaggedItem.objects.filter(content_type=ContentType.objects.get_for_model(Article))
@@ -46,10 +46,10 @@ def article_create(request):
             instance.save()
             form.save_m2m()
 
-            messages.success(request, u'Artikkelen ble opprettet.')
+            messages.success(request, 'Artikkelen ble opprettet.')
             return redirect(article_detail, article_id=instance.pk)
         else:
-            messages.error(request, u'Noen av de påkrevde feltene inneholder feil.')
+            messages.error(request, 'Noen av de påkrevde feltene inneholder feil.')
 
     context = get_base_context(request)
     context['form'] = form
@@ -83,8 +83,8 @@ def article_edit(request, article_id):
             article_heading = instance.heading
             article_id = instance.id
             instance.delete()
-            messages.success(request, u'%s ble slettet.' % article_heading)
-            getLogger(__name__).info(u'%s deleted article %d (%s)' % (request.user, article_id, article_heading))
+            messages.success(request, '%s ble slettet.' % article_heading)
+            getLogger(__name__).info('%s deleted article %d (%s)' % (request.user, article_id, article_heading))
 
             return redirect(article_index)
 
@@ -95,12 +95,12 @@ def article_edit(request, article_id):
             instance.save()
             form.save_m2m()
 
-            messages.success(request, u'Artikkelen ble lagret.')
-            getLogger(__name__).info(u'%s edited article %d (%s)' % (request.user, instance.id, instance.heading))
+            messages.success(request, 'Artikkelen ble lagret.')
+            getLogger(__name__).info('%s edited article %d (%s)' % (request.user, instance.id, instance.heading))
 
             return redirect(article_index)
         else:
-            messages.error(request, u'Noen av de påkrevde feltene inneholder feil.')
+            messages.error(request, 'Noen av de påkrevde feltene inneholder feil.')
 
     context = get_base_context(request)
     context['form'] = form

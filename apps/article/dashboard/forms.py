@@ -9,7 +9,6 @@ from taggit.forms import TagWidget
 
 
 class ArticleForm(forms.ModelForm):
-
     class Meta(object):
         """
         Add fields that should have DTP activated in the datetimepicker_fields list

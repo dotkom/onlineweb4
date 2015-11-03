@@ -4,7 +4,6 @@ import hashlib
 from django import template
 from django.conf import settings
 
-
 register = template.Library()
 
 
@@ -19,6 +18,6 @@ def gravatar_url(context, user, size):
     )
 
     grav_url = "https://www.gravatar.com/avatar/" + hashlib.md5(user.email).hexdigest() + "?"
-    grav_url += urllib.urlencode({'d': default, 's': str(size)})
+    grav_url += urllib.parse.urlencode({'d': default, 's': str(size)})
 
     return grav_url

@@ -85,8 +85,8 @@ class GalleryDetail(DashboardPermissionMixin, UpdateView):
         Add success message
         """
 
-        messages.success(self.request, u'Bildet ble oppdatert.')
-        getLogger(__name__).info(u'%s updated ResponsiveImage %d' % (self.request.user, self.object.id))
+        messages.success(self.request, 'Bildet ble oppdatert.')
+        getLogger(__name__).info('%s updated ResponsiveImage %d' % (self.request.user, self.object.id))
 
         return super(GalleryDetail, self).form_valid(form)
 
@@ -95,7 +95,7 @@ class GalleryDetail(DashboardPermissionMixin, UpdateView):
         Add error message
         """
 
-        messages.error(self.request, u'Noen av feltene inneholder feil.')
+        messages.error(self.request, 'Noen av feltene inneholder feil.')
 
         return super(GalleryDetail, self).form_invalid(form)
 
@@ -135,13 +135,13 @@ class GalleryUnhandledIndex(DashboardPermissionMixin, ListView):
         if 'action' in request.POST and request.POST['action'] == 'delete_all':
             if self.queryset:
                 self.queryset.delete()
-                messages.success(request, u'Alle ubehandlede bilder ble slettet')
+                messages.success(request, 'Alle ubehandlede bilder ble slettet')
 
                 getLogger(__name__).info(u'%s deleted all UnhandledImage instances' % self.request.user)
 
                 return redirect(reverse('gallery_dashboard:unhandled'))
             else:
-                messages.warning(request, u'Fant ingen bilder. Ingen operasjon utført.')
+                messages.warning(request, 'Fant ingen bilder. Ingen operasjon utført.')
                 return redirect(reverse('gallery_dashboard:unhandled'))
         else:
             return HttpResponseBadRequest('Bad request')
@@ -173,13 +173,13 @@ class GalleryDelete(DashboardPermissionMixin, DetailView):
             image_name = img.name
             image_id = img.id
             img.delete()
-            messages.success(request, u'%s (%d) ble slettet.' % (image_name, image_id))
+            messages.success(request, '%s (%d) ble slettet.' % (image_name, image_id))
 
             getLogger(__name__).info(u'%s deleted ResponsiveImage %d' % (self.request.user, image_id))
 
             return redirect(reverse('gallery_dashboard:index'))
         else:
-            messages.error(request, u'Det oppstod en feil, klarte ikke slette bildet.')
+            messages.error(request, 'Det oppstod en feil, klarte ikke slette bildet.')
             getLogger(__name__).error(
                 u'%s attempted to delete image with ID %d, but failed as queryset was empty.' % (
                     self.request.user,
@@ -215,14 +215,14 @@ class GalleryUnhandledDelete(DashboardPermissionMixin, DetailView):
         if img:
             image_id = img.id
             img.delete()
-            messages.success(request, u'Ubehandlet bilde %d ble slettet.' % image_id)
+            messages.success(request, 'Ubehandlet bilde %d ble slettet.' % image_id)
 
             getLogger(__name__).info(u'%s deleted UnhandledImage %d' % (self.request.user, image_id))
 
             return redirect(reverse('gallery_dashboard:unhandled'))
         else:
-            messages.error(request, u'Det oppstod en feil, klarte ikke slette bildet.')
-            getLogger(__name__).error(u'%s attempted to delete image with ID %d, but failed as queryset was empty.' % (
+            messages.error(request, 'Det oppstod en feil, klarte ikke slette bildet.')
+            getLogger(__name__).error('%s attempted to delete image with ID %d, but failed as queryset was empty.' % (
                 self.request.user,
                 kwargs['pk']
             ))

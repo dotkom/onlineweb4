@@ -102,10 +102,10 @@ def create_responsive_images(source_path):
     xs_stauts = resize_image(source_path, xs_destination_path, gallery_settings.RESPONSIVE_IMAGES_XS_SIZE)
 
     # Filter status results based on state, and log if any error
-    errors = filter(
-        lambda s: not s[0]['success'],
-        [(wide_status, 'wide'), (lg_status, 'lg'), (md_status, 'md'), (sm_status, 'sm'), (xs_stauts, 'xs')]
-    )
+    errors = [
+        s for s in [(wide_status, 'wide'), (lg_status, 'lg'), (md_status, 'md'), (sm_status, 'sm'), (xs_stauts, 'sm')]
+        if s[0]['success']
+    ]
     for status, version in errors:
         log.error(u'Failed to resize image %s' % version)
 

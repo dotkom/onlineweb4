@@ -12,9 +12,9 @@ class PosterAdmin(VersionAdmin):
     list_display = ('event', 'title', 'assigned_to', 'display_from',
                     'ordered_date', 'ordered_by', 'ordered_committee')
     fieldsets = (
-        (_(u'Event info'), {'fields': ('event', 'title', 'price', 'description', 'comments')}),
-        (_(u'Order info'), {'fields': ('amount',)}),
-        (_(u'proKom'), {'fields': ('display_from', 'assigned_to', 'ordered_by', 'ordered_committee', 'finished')}),
+        (_('Event info'), {'fields': ('event', 'title', 'price', 'description', 'comments')}),
+        (_('Order info'), {'fields': ('amount',)}),
+        (_('proKom'), {'fields': ('display_from', 'assigned_to', 'ordered_by', 'ordered_committee', 'finished')}),
     )
     search_fields = ('title', 'category', 'company', 'when')
 

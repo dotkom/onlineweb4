@@ -11,8 +11,8 @@ from reversion.admin import VersionAdmin
 class MarkUserInline(admin.TabularInline):
     model = MarkUser
     extra = 1
-    verbose_name = _(u"mottaker")
-    verbose_name_plural = _(u"mottakere")
+    verbose_name = _("mottaker")
+    verbose_name_plural = _("mottakere")
 
 
 class MarkAdmin(VersionAdmin):
