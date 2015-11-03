@@ -96,7 +96,7 @@ class FeedbackRelation(models.Model):
     def answers_to_question(self, question):
         return question.answer.filter(feedback_relation=self)
 
-    def __unicode__(self):
+    def __str__(self):
         return str(self.feedback_id) + ': ' + str(self.content_object)
 
     def get_absolute_url(self):
@@ -222,7 +222,7 @@ class Feedback(models.Model):
         questions.extend(self.multiple_choice_questions.all())
         return sorted(questions, key=lambda x: x.order)  # sort by order
 
-    def __unicode__(self):
+    def __str__(self):
         return self.description
 
     class Meta:
@@ -244,7 +244,7 @@ class FieldOfStudyAnswer(models.Model):
     answer = models.SmallIntegerField(
         _('Studieretning'), choices=FIELD_OF_STUDY_CHOICES)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.get_answer_display()
 
     class Meta(object):
@@ -265,7 +265,7 @@ class TextQuestion(models.Model):
     label = models.CharField(_('Spørsmål'), blank=False, max_length=256)
     display = models.BooleanField(_('Vis til bedrift'), default=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.label
 
     class Meta(object):
@@ -286,7 +286,7 @@ class TextAnswer(models.Model):
 
     answer = models.TextField(_('svar'))
 
-    def __unicode__(self):
+    def __str__(self):
         return self.answer
 
     @property
@@ -314,7 +314,7 @@ class RatingQuestion(models.Model):
     label = models.CharField(_('Spørsmål'), blank=False, max_length=256)
     display = models.BooleanField(_('Vis til bedrift'), default=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.label
 
     class Meta(object):
@@ -338,7 +338,7 @@ class RatingAnswer(models.Model):
 
     question = models.ForeignKey(RatingQuestion, related_name='answer')
 
-    def __unicode__(self):
+    def __str__(self):
         return self.get_answer_display()
 
     @property
@@ -364,7 +364,7 @@ class MultipleChoiceQuestion(models.Model):
             ('view_multiplechoicequestion', 'View MultipleChoiceQuestion'),
         )
 
-    def __unicode__(self):
+    def __str__(self):
         return self.label
 
 
@@ -377,7 +377,7 @@ class MultipleChoiceRelation(models.Model):
     display = models.BooleanField(_('Vis til bedrift'), default=True)
     feedback = models.ForeignKey(Feedback, related_name='multiple_choice_questions')
 
-    def __unicode__(self):
+    def __str__(self):
         return self.multiple_choice_relation.label
 
     class Meta(object):
@@ -393,7 +393,7 @@ class Choice(models.Model):
     question = models.ForeignKey(MultipleChoiceQuestion, related_name="choices")
     choice = models.CharField(_('valg'), max_length=256, blank=False)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.choice
 
     class Meta(object):
@@ -413,7 +413,7 @@ class MultipleChoiceAnswer(models.Model):
     answer = models.CharField(_('svar'), blank=False, max_length=256)
     question = models.ForeignKey(MultipleChoiceRelation, related_name='answer')
 
-    def __unicode__(self):
+    def __str__(self):
         return self.answer
 
     @property

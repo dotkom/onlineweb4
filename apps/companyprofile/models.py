@@ -23,7 +23,7 @@ class Company(models.Model):
     email_address = models.EmailField(_("epostaddresse"), max_length=75, blank=True, null=True)
     phone_number = models.CharField(_("telefonnummer"), max_length=20, blank=True, null=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     def images(self):

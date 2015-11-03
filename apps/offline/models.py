@@ -49,7 +49,7 @@ class Issue(models.Model):
         }
         return month[self.release_date.month]
 
-    def __unicode__(self):
+    def __str__(self):
         return self.title
 
     @property

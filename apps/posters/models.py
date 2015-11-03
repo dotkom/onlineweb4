@@ -91,7 +91,7 @@ class Poster(OrderMixin):
         else:
             return _("Generell bestilling: %(title)s" % {'title': self.title})
 
-    def __unicode__(self):
+    def __str__(self):
         return self.__str__()
 
 

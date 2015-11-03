@@ -97,7 +97,7 @@ class Message():
     committee_mail = ""
     committee_message = False
 
-    def __unicode__(self):
+    def __str__(self):
         message = "%s %s %s" % (
             self.intro,
             self.contact,

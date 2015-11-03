@@ -217,7 +217,7 @@ class Message(object):
     committee_mail = ""
     attended_mails = False
 
-    def __unicode__(self):
+    def __str__(self):
         message = "%s %s %s %s %s %s %s" % (
             self.intro,
             self.date,

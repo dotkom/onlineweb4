@@ -137,7 +137,7 @@ class Payment(models.Model):
     def _is_type(self, model_type):
         return ContentType.objects.get_for_model(model_type) == self.content_type
 
-    def __unicode__(self):
+    def __str__(self):
         return self.description()
 
     class Meta(object):
@@ -154,7 +154,7 @@ class PaymentPrice(models.Model):
     price = models.IntegerField(_("pris"))
     description = models.CharField(max_length=128, null=True, blank=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return str(self.price)
 
     class Meta(object):
@@ -179,7 +179,7 @@ class PaymentRelation(models.Model):
             self.unique_id = str(uuid.uuid4())
         super(PaymentRelation, self).save(*args, **kwargs)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.payment.description() + " - " + str(self.user)
 
     class Meta(object):
@@ -196,7 +196,7 @@ class PaymentDelay(models.Model):
 
     active = models.BooleanField(default=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.payment.description() + " - " + str(self.user)
 
     class Meta(object):

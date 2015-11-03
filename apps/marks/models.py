@@ -86,7 +86,7 @@ class Mark(models.Model):
     objects = models.Manager()  # default manager
     marks = MarksManager()  # active marks manager
 
-    def __unicode__(self):
+    def __str__(self):
         return _("Prikk for %s") % self.title
 
     def save(self, *args, **kwargs):
@@ -133,7 +133,7 @@ class MarkUser(models.Model):
         super(MarkUser, self).delete()
         _fix_mark_history(self.user)
 
-    def __unicode__(self):
+    def __str__(self):
         return _("Mark entry for user: %s") % self.user.get_full_name()
 
     class Meta:
@@ -224,7 +224,7 @@ class Suspension(models.Model):
     # Using id because foreign key to Payment caused circular dependencies
     payment_id = models.IntegerField(null=True, blank=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return "Suspension: " + str(self.user)
 
     # TODO URL

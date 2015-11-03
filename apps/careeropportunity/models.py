@@ -20,7 +20,7 @@ class CareerOpportunity(models.Model):
     end = models.DateTimeField(_('aktiv til'))
     featured = models.BooleanField(_('fremhevet'), default=False, blank=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.title
 
     class Meta(object):

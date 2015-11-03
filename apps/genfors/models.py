@@ -52,7 +52,7 @@ class Meeting(models.Model):
     )
     pin = models.CharField(_('Pinkode'), max_length=8, null=False, default='stub')
 
-    def __unicode__(self):
+    def __str__(self):
         return self.title + ' (' + localtime(self.start_date).strftime("%d/%m/%y %H:%M") + ')'
 
     def get_pin_code(self):
@@ -137,7 +137,7 @@ class RegisteredVoter(AbstractVoter):
     user = models.ForeignKey(User, null=False)
     can_vote = models.BooleanField(_('voting_right'), help_text=_('Har stemmerett'), null=False, default=False)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.user.get_full_name()
 
     class Meta(object):
@@ -155,7 +155,7 @@ class AnonymousVoter(AbstractVoter):
     # sha256
     user_hash = models.CharField(null=False, max_length=64)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.user_hash[:12]
 
     class Meta(object):
@@ -311,7 +311,7 @@ class Question(models.Model):
         elif self.question_type is MULTIPLE_CHOICE:
             return MultipleChoice.objects.filter(question=self, voter=v).count()
 
-    def __unicode__(self):
+    def __str__(self):
         return '[%d] %s' % (self.id - self.meeting.num_questions(), self.description)
 
     class Meta:
@@ -364,7 +364,7 @@ class Alternative(models.Model):
     question = models.ForeignKey(Question, null=False, help_text=_('Question'))
     description = models.CharField(_('Beskrivelse'), null=True, blank=True, max_length=150)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.description
 
     class Meta(object):

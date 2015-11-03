@@ -47,7 +47,7 @@ class MembershipApproval(Approval):
             return True
         return False
 
-    def __unicode__(self):
+    def __str__(self):
         output = ""
         if self.is_fos_application():
             output = _("studieretningssøknad ")

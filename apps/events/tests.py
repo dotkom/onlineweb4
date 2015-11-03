@@ -33,11 +33,11 @@ class EventTest(TestCase):
 
     def testEventUnicodeIsCorrect(self):
         self.logger.debug("Testing testing on Event with dynamic fixtures")
-        self.assertEqual(self.event.__unicode__(), 'Sjakkturnering')
+        self.assertEqual(self.event.__str__(), 'Sjakkturnering')
 
     def testAttendanceEventUnicodeIsCorrect(self):
         self.logger.debug("Testing testing on AttendanceEvent with dynamic fixtures")
-        self.assertEqual(self.attendance_event.__unicode__(), 'Sjakkturnering')
+        self.assertEqual(self.attendance_event.__str__(), 'Sjakkturnering')
 
     #
     # Event attendees, seats and wait list
@@ -89,8 +89,8 @@ class EventTest(TestCase):
 
     def testAttendeeUnicodeIsCorrect(self):
         self.logger.debug("Testing testing on Attendee with dynamic fixtures")
-        self.assertEqual(self.attendee.__unicode__(), self.user.get_full_name())
-        self.assertNotEqual(self.attendee.__unicode__(), 'Ola Normann')
+        self.assertEqual(self.attendee.__str__(), self.user.get_full_name())
+        self.assertNotEqual(self.attendee.__str__(), 'Ola Normann')
 
     def testSignUpWithNoRulesNoMarks(self):
         self.logger.debug("Testing signup with no rules and no marks.")

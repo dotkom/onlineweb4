@@ -22,17 +22,17 @@ class ApprovalTest(TestCase):
 
     def testUnicodeMethod(self):
         self.logger.debug("Testing unicode output for approval")
-        self.assertEqual(self.approval.__unicode__(), "Tom søknad for Søker Søkersen")
+        self.assertEqual(self.approval.__str__(), "Tom søknad for Søker Søkersen")
 
         self.approval.new_expiry_date = timezone.now().date()
-        self.assertEqual(self.approval.__unicode__(), "Medlemskapssøknad for Søker Søkersen")
+        self.assertEqual(self.approval.__str__(), "Medlemskapssøknad for Søker Søkersen")
 
         self.approval.field_of_study = 1
         self.approval.started_date = timezone.now().date()
-        self.assertEqual(self.approval.__unicode__(), "Medlemskaps- og studieretningssøknad for Søker Søkersen")
+        self.assertEqual(self.approval.__str__(), "Medlemskaps- og studieretningssøknad for Søker Søkersen")
 
         self.approval.new_expiry_date = None
-        self.assertEqual(self.approval.__unicode__(), "studieretningssøknad for Søker Søkersen")
+        self.assertEqual(self.approval.__str__(), "studieretningssøknad for Søker Søkersen")
 
     def testIsMembershipApplication(self):
         self.logger.debug("Testing method to see if application is for membership")

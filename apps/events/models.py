@@ -140,7 +140,7 @@ class Event(models.Model):
     def get_absolute_url(self):
         return ('events_details', None, {'event_id': self.id, 'event_slug': self.slug})
 
-    def __unicode__(self):
+    def __str__(self):
         return self.title
 
     class Meta:
@@ -174,7 +174,7 @@ class Rule(models.Model):
         """ Checks if a user satisfies the rules """
         return True
 
-    def __unicode__(self):
+    def __str__(self):
         return 'Rule'
 
     class Meta:
@@ -206,7 +206,7 @@ class FieldOfStudyRule(Rule):
                 return {"status": False, "message": _("Din studieretning har utsatt påmelding."), "offset": offset_datetime, "status_code": 420}
         return {"status": False, "message": _("Din studieretning er en annen enn de som har tilgang til dette arrangementet."), "status_code": 410}
 
-    def __unicode__(self):
+    def __str__(self):
         if self.offset > 0:
             time_unit = _('timer') if self.offset > 1 else _('time')
             return _("%s etter %d %s") % (str(self.get_field_of_study_display()), self.offset, time_unit)
@@ -241,7 +241,7 @@ class GradeRule(Rule):
                 return {"status": False, "message": _("Ditt klassetrinn har utsatt påmelding."), "offset": offset_datetime, "status_code": 421}
         return {"status": False, "message": _("Du er ikke i et klassetrinn som har tilgang til dette arrangementet."), "status_code": 411}
 
-    def __unicode__(self):
+    def __str__(self):
         if self.offset > 0:
             time_unit = _('timer') if self.offset > 1 else _('time')
             return _("%s. klasse etter %d %s") % (self.grade, self.offset, time_unit)
@@ -274,7 +274,7 @@ class UserGroupRule(Rule):
                 return {"status": False, "message": _("%s har utsatt påmelding.") % self.group, "offset": offset_datetime, "status_code": 422}
         return {"status": False, "message": _("Du er ikke i en brukergruppe som har tilgang til dette arrangmentet."), "status_code": 412}
 
-    def __unicode__(self):
+    def __str__(self):
         if self.offset > 0:
             time_unit = _('timer') if self.offset > 1 else _('time')
             return _("%s etter %d %s") % (str(self.group), self.offset, time_unit)
@@ -321,7 +321,7 @@ class RuleBundle(models.Model):
 
         return errors
 
-    def __unicode__(self):
+    def __str__(self):
         if self.description:
             return self.description
         elif self.get_rule_strings():
@@ -351,7 +351,7 @@ class Extras(models.Model):
     choice = models.CharField('valg', max_length=69)
     note = models.CharField('notat', max_length=200, blank=True, null=True)
     
-    def __unicode__(self):
+    def __str__(self):
         return self.choice
 
     class Meta:
@@ -681,7 +681,7 @@ class AttendanceEvent(models.Model):
                         return list(waitlist).index(attendee_object) + 1
         return 0
 
-    def __unicode__(self):
+    def __str__(self):
         return self.event.title
 
     class Meta:
@@ -726,7 +726,7 @@ class Attendee(models.Model):
     note = models.CharField(_('notat'), max_length=100, blank=True, default='')
     extras = models.ForeignKey(Extras, blank=True, null=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.user.get_full_name()
 
     def delete(self):
@@ -759,7 +759,7 @@ class Reservation(models.Model):
     def number_of_seats_taken(self):
         return self.reservees.count()
 
-    def __unicode__(self):
+    def __str__(self):
         return "Reservasjoner for %s" % self.attendance_event.event.title
 
     class Meta:
@@ -784,7 +784,7 @@ class Reservee(models.Model):
     note = models.CharField('notat', max_length=100)
     allergies = models.CharField('allergier', max_length=200, blank=True, null=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     class Meta:

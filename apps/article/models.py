@@ -46,7 +46,7 @@ class Article(models.Model):
 
     tags = TaggableManager(blank=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.heading
 
     def get_matchname(self):

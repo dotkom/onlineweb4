@@ -20,7 +20,7 @@ class Privacy(models.Model):
 
     user = models.OneToOneField(User, related_name="privacy")
 
-    def __unicode__(self):
+    def __str__(self):
         return self.user.get_full_name()
 
     class Meta(object):

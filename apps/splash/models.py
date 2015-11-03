@@ -17,7 +17,7 @@ class SplashYear(models.Model):
 
     objects = SplashYearManager()
 
-    def __unicode__(self):
+    def __str__(self):
         return self.title
 
     class Meta(object):
@@ -31,7 +31,7 @@ class SplashEvent(TimeStampedModel, models.Model):
     end_time = models.DateTimeField()
     splash_year = models.ForeignKey('SplashYear', related_name='splash_events')
 
-    def __unicode__(self):
+    def __str__(self):
         return self.title
 
     class Meta(object):

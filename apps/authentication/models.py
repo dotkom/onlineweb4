@@ -213,7 +213,7 @@ class OnlineUser(AbstractUser):
     def get_absolute_url(self):
         return 'profiles_view', None, {'username': self.username}
 
-    def __unicode__(self):
+    def __str__(self):
         return self.get_full_name()
 
     def save(self, *args, **kwargs):
@@ -275,7 +275,7 @@ class Email(models.Model):
             self.user.save()
         super(Email, self).save(*args, **kwargs)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.email
 
     class Meta(object):
@@ -328,7 +328,7 @@ class AllowedUsername(models.Model):
         self.username = self.username.lower()
         super(AllowedUsername, self).save(*args, **kwargs)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.username
 
     class Meta:
@@ -356,7 +356,7 @@ class Position(models.Model):
     def print_string(self):
         return '%s: %s(%s)' % (self.period, self.committee, self.position)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.print_string
 
     class Meta(object):
@@ -379,7 +379,7 @@ class SpecialPosition(models.Model):
     since_year = models.IntegerField(_('Medlem siden'))
     user = models.ForeignKey(OnlineUser, related_name='special_positions', blank=False)
 
-    def __unicode__(self):
+    def __str__(self):
         return '%s, %s' % (self.user.get_full_name(), self.position)
 
     class Meta(object):
