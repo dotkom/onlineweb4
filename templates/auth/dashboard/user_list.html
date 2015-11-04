@@ -30,6 +30,29 @@ Brukerprofiler
             </span>
         </div>
     </div>
+    {% if is_paginated %}
+    <div class="col-md-12 col-lg-6">
+        <div class="btn-group pull-right">
+            {% if page_obj.has_previous %}
+                <a href="{% url "user_list" %}?page={{ page_obj.previous_page_number }}" class="btn btn-default">
+                    {{ page_obj.previous_page_number }}
+                </a>
+            {% endif %}
+            {# Current page #}
+            <a href="{% url "user_list" %}?page={{ page_obj.number }}" class="btn btn-default active">{{ page_obj.number }}</a>
+            {% if page_obj.has_next %}
+                <a href="{% url "user_list" %}?page={{ page_obj.next_page_number }}" class="btn btn-default">
+                    {{ page_obj.next_page_number }}
+                </a>
+            {% endif %}
+            {% if page_obj.next_page_number < page_obj.paginator.num_pages %}
+                <a href="{% url "user_list" %}?page={{ page_obj.paginator.num_pages }}" class="btn btn-default">
+                    ... {{ page_obj.paginator.num_pages }}
+                </a>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
 </div>
 <div class="row">
     <div class="col-md-12">

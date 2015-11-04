@@ -3,6 +3,7 @@
 import json
 
 from django.core.exceptions import PermissionDenied
+from django.core.paginator import Paginator
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Group
@@ -144,6 +145,8 @@ def members_index(request):
 class UserListView(DashboardPermissionMixin, ListView):
     model = User
     queryset = User.objects.all().exclude(id=-1)
+    paginate_by = 25
+    paginator_class = Paginator
     permission_required = 'authentication.view_onlineuser'
     template_name = 'auth/dashboard/user_list.html'
 
