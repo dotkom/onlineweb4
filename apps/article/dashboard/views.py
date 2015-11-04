@@ -84,7 +84,7 @@ def article_edit(request, article_id):
             article_id = instance.id
             instance.delete()
             messages.success(request, u'%s ble slettet.' % article_heading)
-            getLogger(__name__).info('%s deleted article %d (%s)' % (request.user, article_id, article_heading))
+            getLogger(__name__).info(u'%s deleted article %d (%s)' % (request.user, article_id, article_heading))
 
             return redirect(article_index)
 
@@ -96,7 +96,7 @@ def article_edit(request, article_id):
             form.save_m2m()
 
             messages.success(request, u'Artikkelen ble lagret.')
-            getLogger(__name__).info('%s edited article %d (%s)' % (request.user, instance.id, instance.heading))
+            getLogger(__name__).info(u'%s edited article %d (%s)' % (request.user, instance.id, instance.heading))
 
             return redirect(article_index)
         else:

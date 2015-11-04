@@ -51,7 +51,7 @@ class GalleryIndex(DashboardPermissionMixin, ListView):
                 try:
                     total_disk_usage += img.sizeof_total_raw()
                 except OSError as e:
-                    getLogger(__name__).error('GalleryIndex file summation on missing file: %s' % e)
+                    getLogger(__name__).error(u'GalleryIndex file summation on missing file: %s' % e)
 
         # Filter out potential ResponsiveImage objects that have orphan file references
         context['images'] = filter(lambda i: i.file_status_ok(), context['images'])
@@ -86,7 +86,7 @@ class GalleryDetail(DashboardPermissionMixin, UpdateView):
         """
 
         messages.success(self.request, u'Bildet ble oppdatert.')
-        getLogger(__name__).info('%s updated ResponsiveImage %d' % (self.request.user, self.object.id))
+        getLogger(__name__).info(u'%s updated ResponsiveImage %d' % (self.request.user, self.object.id))
 
         return super(GalleryDetail, self).form_valid(form)
 
@@ -137,7 +137,7 @@ class GalleryUnhandledIndex(DashboardPermissionMixin, ListView):
                 self.queryset.delete()
                 messages.success(request, u'Alle ubehandlede bilder ble slettet')
 
-                getLogger(__name__).info('%s deleted all UnhandledImage instances' % self.request.user)
+                getLogger(__name__).info(u'%s deleted all UnhandledImage instances' % self.request.user)
 
                 return redirect(reverse('gallery_dashboard:unhandled'))
             else:
@@ -217,12 +217,12 @@ class GalleryUnhandledDelete(DashboardPermissionMixin, DetailView):
             img.delete()
             messages.success(request, u'Ubehandlet bilde %d ble slettet.' % image_id)
 
-            getLogger(__name__).info('%s deleted UnhandledImage %d' % (self.request.user, image_id))
+            getLogger(__name__).info(u'%s deleted UnhandledImage %d' % (self.request.user, image_id))
 
             return redirect(reverse('gallery_dashboard:unhandled'))
         else:
             messages.error(request, u'Det oppstod en feil, klarte ikke slette bildet.')
-            getLogger(__name__).error('%s attempted to delete image with ID %d, but failed as queryset was empty.' % (
+            getLogger(__name__).error(u'%s attempted to delete image with ID %d, but failed as queryset was empty.' % (
                 self.request.user,
                 kwargs['pk']
             ))
