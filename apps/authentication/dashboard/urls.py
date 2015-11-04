@@ -8,7 +8,6 @@ urlpatterns = patterns(
     url(r'^$', 'index', name='auth_index'),
     url(r'^groups/$', 'groups_index', name='groups_index'),
     url(r'^groups/(?P<pk>\d+)/$', 'groups_detail', name='groups_detail'),
-    url(r'^members/$', 'members_index', name='members_index'),
     url(r'^user/$', UserListView.as_view(), name='user_list'),
     url(r'^user/(?P<user_id>\d+)/$', UserDetailView.as_view(), name='dashboard_user_detail'),
     url(r'^user/(?P<user_id>\d+)/edit$', UserUpdateView.as_view(), name='dashboard_user_edit'),

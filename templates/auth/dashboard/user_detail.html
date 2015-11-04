@@ -15,7 +15,7 @@
 {% endblock %}
 
 {% block breadcrumbs %}
-<li><a href="{% url 'members_index' %}">Brukerprofiler</a></li>
+<li><a href="{% url 'user_list' %}">Brukerprofiler</a></li>
 <li>{{ user }}</li>
 {% endblock %}
 
@@ -35,7 +35,7 @@
                 <div class="col-md-8">{% if user.phone_number %}{{ user.phone_number }}{% else %}Ikke oppgitt{% endif %}</div>
                 <div class="col-md-4">Nettside</div>
                 <div class="col-md-8">
-                    {% if user.webiste %}<a href="{{ user.website }}" target="_blank">{{ user.website }}</a>{% endif %}
+                    {% if user.website %}<a href="{{ user.website }}" target="_blank">{{ user.website }}</a>{% endif %}
                     {% if user.github %}<a href="{{ user.github }}" target="_blank"><i class="fa fa-lg fa-github"></i></a>{% endif %}
                     {% if user.linkedin %}<a href="{{ user.linkedin }}" target="_blank"><i class="fa fa-lg fa-linkedin"></i></a>{% endif %}
                 </div>

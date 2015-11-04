@@ -153,6 +153,7 @@ class UserListView(DashboardPermissionMixin, ListView):
 
 class UserDetailView(DashboardPermissionMixin, DetailView):
     model = User
+    context_object_name = 'user'
     permission_required = 'authentication.view_onlineuser'
     pk_url_kwarg = 'user_id'
     template_name = 'auth/dashboard/user_detail.html'
