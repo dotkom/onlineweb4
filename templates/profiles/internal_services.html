@@ -9,15 +9,19 @@
         </ul>
         <hr />
         <h3>Endre passord</h3>
-        <p>Her kan du endre passord for å få tilgang til tjenestene nevnt ovenfor.</p>
-        
+        <p>Her kan du endre passord for å få tilgang til tjenestene nevnt ovenfor. Legg merke til at du må fylle ut passordet du bruker for å logge inn til Onlineweb4 (online.ntnu.no) for å kunne endre ditt ønskede passord til interne tjenester. Dette er gjort av sikkerhetsmessige årsaker.</p>
+        <form method="post" action="{% url 'profile_internal_services' %}">
+            {% csrf_token %}
+            {{ internal_services_form|crispy }}
+            <button type="submit" class="btn btn-success add">Lagre</button>
+        </form>
         <hr />
     </div>
 </div>
 <div class="row">
     <div class="col-md-6">
         <h3>Tilgang til filområdet</h3>
-        <p>TODO forklaring</p>
+        <p>TODO</p>
     </div>
     <div class="col-md-6">
         <h3>SSH-tilgang</h3>

@@ -17,8 +17,6 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from django.utils.translation import ugettext as _
 from oauth2_provider.models import AccessToken
-from utils.shortcuts import render_json
-from watson import search as watson
 
 from apps.approval.forms import FieldOfStudyApplicationForm
 from apps.approval.models import MembershipApproval
@@ -27,7 +25,7 @@ from apps.authentication.models import OnlineUser as User
 from apps.authentication.models import Email, Position, RegisterToken
 from apps.marks.models import Mark, Suspension
 from apps.payment.models import PaymentDelay, PaymentRelation, PaymentTransaction
-from apps.profiles.forms import PositionForm, PrivacyForm, ProfileForm
+from apps.profiles.forms import InternalServicesForm, PositionForm, PrivacyForm, ProfileForm
 from apps.profiles.models import Privacy
 from apps.shop.models import Order
 
@@ -106,6 +104,7 @@ def _create_profile_context(request):
             (_('ubetalt'), PaymentDelay.objects.all().filter(user=request.user, active=True), False),
             (_('betalt'), PaymentRelation.objects.all().filter(user=request.user), True),
         ],
+        'internal_services_form': InternalServicesForm(),
     }
 
     return context
@@ -440,6 +439,32 @@ def toggle_jobmail(request):
             return HttpResponse(status=200, content=json.dumps({'state': request.user.jobmail}))
     raise Http404
 
+@login_required
+def internal_services(request):
+    context = _create_profile_context(request)
+    context['active_tab'] = 'internal_services'
+
+    if request.method == 'POST':
+        internal_service_form = InternalServicesForm(data=request.POST)
+        internal_service_form.current_user = request.user
+        context['internal_services_form'] = internal_service_form
+
+        # Validate the form
+        if internal_service_form.is_valid():
+            # Add message
+            messages.success(request, _(u"Passordet for interne tjenester er oppdater. Legg merke til at det kan ta noen minutter før endringene trer i kraft."))
+
+            # Clean data
+            cleaned = internal_service_form.cleaned_data
+
+            # TODO do stuff with external services data
+            print cleaned['services_password']
+
+        else:
+            # User fucked up
+            messages.error(request, _(u"Passordet for interne tjenester ble ikke endret. Vennligst prøv igjen."))
+
+    return render(request, 'profiles/index.html', context)
 
 @login_required
 def user_search(request):
