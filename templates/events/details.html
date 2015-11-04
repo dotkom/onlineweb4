@@ -177,7 +177,7 @@
                                 {% if will_be_on_wait_list %}
                                     <p class="status-text">Du kan sette deg på venteliste.</p>
                                     <div class="action">
-                                        <a href="#waitlist" role="button" class="btn btn-large btn-warning" data-toggle="modal">Sett meg på venteliste</a>
+                                        <a href="#attend" role="button" class="btn btn-large btn-warning" data-toggle="modal">Sett meg på venteliste</a>
                                     </div>
                                 {% elif payment and payment.payment_type == 1 %} <!-- Instant payment -->
                                     <p class="status-text">Påmelding til arangementet krever betaling.</p>
@@ -286,34 +286,23 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <h3 class="modal-title">Meld deg på {{event.title}}</h3>
+                    <h3 class="modal-title">
+                    {% if will_be_on_wait_list %}
+                        Sett meg på venteliste på
+                    {% else %}
+                        Meld deg på
+                    {% endif %}
+                    {{ event.title }}
+                    </h3>
                 </div>
                 <form action="{% url 'attend_event' event.id %}" method="POST">
                     <div class="modal-body">
-                        {% csrf_token %}
-                        {{ captcha_form|crispy }}
-                    </div>
-                    <div class="modal-footer">
-                        <button type="submit" class="btn btn-primary">Valider</button>
-                        <button class="btn" data-dismiss="modal" aria-hidden="true">Lukk</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-    <div id="waitlist" class="modal fade">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <h3 class="modal-title">Sett meg på venteliste på {{event.title}}</h3>
-                </div>
-                <form action="{% url 'attend_event' event.id %}" method="POST">
-                    <div class="modal-body">
+                        {% if will_be_on_wait_list %}
                         <p>Ved å sette deg på venteliste godtar du at du automatisk får plass om
                             arrangementet utvides med flere plasser, eller andre påmeldte melder seg av, slik at du rykker frem i køen.
                         </p>
                         <p>Ved å melde deg på, godtar du prikkereglene.</p>
+                        {% endif %}
                         {% csrf_token %}
                         {{ captcha_form|crispy }}
                     </div>
@@ -325,7 +314,6 @@
             </div>
         </div>
     </div>
-
     <div id="unattend" class="modal fade">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -377,11 +365,11 @@
 
 {% block js %}
     {{ block.super }}
-    {% compress js %}
     <script>
         var selected_extra = "{{ attendee.extras }}";
         var all_extras = [{% for e in attendance_event.extras.all %}"{{e}}", {%endfor%}];
     </script>
+    {% compress js %}
     <script type="text/javascript" src="{{ STATIC_URL }}js/Utils.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}js/events.js"></script>
     {% endcompress %}

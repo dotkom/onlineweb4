@@ -9,7 +9,7 @@ def index(request):
 
     splash_year.events = _merge_events(splash_year.splash_events.all())
 
-    return render(request, 'splash/base.html', {'splash_year': splash_year })
+    return render(request, 'splash/base.html', {'splash_year': splash_year})
 
 
 def calendar_export(request):

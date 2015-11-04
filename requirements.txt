@@ -19,12 +19,14 @@ git+git://github.com/clintecker/django-chunks.git@0.2# Chunks, or reusable key:c
 django-crispy-forms==1.4.0      # nice forms
 django-extensions==1.5.2        # nice extra commands for debugging, etc
 django-dynamic-fixture==1.8.1   # Dynamic fixtures for models
-django-simple-captcha==0.4.4    # Simple captcha
+django-recaptcha==1.0.4         # Google ReCaptcha
 django-oauth-toolkit==0.8.1     # OAuth2 authentication support
 django_compressor==1.4          # Compiles less and minifies js
 django-watson==1.1.8            # Indexed model search lib
 django-reversion==1.9.3         # Model version history with middleware hooks to all post_save signals
 django-guardian==1.3            # Per Object permissions framework
+django-taggit==0.17.3           # Generic multi-model tagging library
+django-taggit-serializer==0.1.5 # REST Framework serializers for Django-taggit
 APScheduler==2.1.1              # Scheduler
 feedme==1.8.5
 git+https://github.com/dotKom/redwine.git@1.2.2#egg=redwine==1.2.2
@@ -48,7 +50,7 @@ flake8==2.4.1
 pepper8>=1.0.4                  # Transforms flake8 output to HTML report + TC messages
 
 # Wiki
-git+https://github.com/django-wiki/django-wiki.git@b1fba36c8b7cce9b023f4d05dda80a70a932617b#egg=wiki==0.1.dev1
+git+https://github.com/django-wiki/django-wiki.git@e28776af87580740fb67488329c86dd58313d531#egg=wiki==0.1.dev1
 
 
 # non-pip

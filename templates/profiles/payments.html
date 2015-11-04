@@ -1,0 +1,49 @@
+<div class="row">
+    <div class="col-md-12">
+        <h3>Betalinger</h3>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel-group">
+            {% for heading, payment_list, is_collapsed in payments %}
+                <div class="panel panel-default">
+                    <div class="panel-heading accordion-toggle" data-toggle="collapse" href="#collapse-{{ heading|slugify }}">
+                        <h5>{{ heading|capfirst }}</h5>
+                    </div>
+                    <div id="collapse-{{ heading|slugify }}" class="panel-collapse collapse {% if not is_collapsed %}in{% endif %}">
+                        <div class="panel-body">
+                            {% if payment_list|length == 0 %}
+                                {% if heading == 'betalt' %}
+                                    Du har ikke betalt noe enda.
+                                {% else %}
+                                    Du har ikke noe ubetalt
+                                {% endif %}
+                            {% endif %}
+                            {% for payment_event in payment_list %}
+                                <div class="row row-space">
+                                    <div class="col-md-12">
+                                        <h4><a href="{{ payment_event.payment.content_object.event.get_absolute_url }}">{{ payment_event.payment.description }} </a>
+                                        {% for price in payment_event.payment.prices %}
+                                            <span class="pull-right">{{ price }} Kr.</span></h4>
+                                        {% endfor %}
+                                        {% if heading == 'ubetalt' %}
+                                            <p>du har ikke beatalt, frist: {{ payment_event.valid_to }}</p>
+                                        {% elif user in payment_event.payment.payment_delay_users and payment_event.deadline > 0 %}
+                                            <p>Du har ikke betalt, frist: {{ payment_event.deadline }}</p>
+                                        {% else %}
+                                            <p>Du betalte den {{ payment_event.datetime }}</p>
+                                            {% if payment_event.refunded %}
+                                                <p>Betalingen har blitt refundert</p>
+                                            {% endif %}
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>

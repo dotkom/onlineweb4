@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import datetime
 import re
 
 from django import forms
@@ -9,9 +8,10 @@ from django.utils.translation import ugettext as _
 
 from apps.authentication.models import OnlineUser as User, Email
 
+
 class LoginForm(forms.Form):
     username = forms.CharField(widget=forms.TextInput(), label=_("Brukernavn"), max_length=50)
-    password = forms.CharField(widget=forms.PasswordInput(render_value=False), label=_(u"Passord"))
+    password = forms.CharField(widget=forms.PasswordInput(), label=_(u"Passord"))
     user = None
 
     def clean(self):
@@ -31,10 +31,14 @@ class LoginForm(forms.Form):
             if user.is_active:
                 self.user = user
             else:
-                self._errors['username'] = self.error_class([_(u"Din konto er ikke aktiv. Forsøk gjenoppretning av passord.")])
+                self._errors['username'] = self.error_class(
+                    [_(u"Din konto er ikke aktiv. Forsøk gjenoppretning av passord.")]
+                )
         else:
             # This error will also be produced if the email supplied does not exist.
-            self._errors['username'] = self.error_class([_(u"Kontoen eksisterer ikke, eller kombinasjonen av brukernavn og passord er feil.")])
+            self._errors['username'] = self.error_class(
+                [_(u"Kontoen eksisterer ikke, eller kombinasjonen av brukernavn og passord er feil.")]
+            )
         return self.cleaned_data
 
     def login(self, request):
@@ -43,17 +47,40 @@ class LoginForm(forms.Form):
             return True
         return False
 
+
 class RegisterForm(forms.Form):
-    username = forms.CharField(label=_("Brukernavn"), max_length=20, help_text=u'Valgfritt brukernavn. (Konverteres automatisk til små bokstaver.)')
-    first_name = forms.CharField(label=_("Fornavn"), max_length=50, help_text=u'Mellomnavn inkluderer du etter fornavnet ditt')
+    username = forms.CharField(
+        label=_("Brukernavn"),
+        max_length=20,
+        help_text=u'Valgfritt brukernavn. (Konverteres automatisk til små bokstaver.)'
+    )
+    first_name = forms.CharField(
+        label=_("Fornavn"),
+        max_length=50,
+        help_text=u'Mellomnavn inkluderer du etter fornavnet ditt'
+    )
     last_name = forms.CharField(label=_("Etternavn"), max_length=50)
-    email = forms.EmailField(label=_("Epost"), max_length=50, help_text=u'Du kan legge til flere epostadresser senere i din profil.')
-    password = forms.CharField(widget=forms.PasswordInput(render_value=False), label=_("Passord"))
-    repeat_password = forms.CharField(widget=forms.PasswordInput(render_value=False), label=_("Gjenta passord"))
-    address = forms.CharField(label=_("Adresse"), max_length=100, required=False, widget=forms.Textarea(attrs={'rows':3}))
-    zip_code = forms.CharField(label=_("Postnummer"), max_length=4, required=False, help_text=u'Vi henter by basert på postnummer')
+    email = forms.EmailField(
+        label=_("Epost"),
+        max_length=50,
+        help_text=u'Du kan legge til flere epostadresser senere i din profil.'
+    )
+    password = forms.CharField(widget=forms.PasswordInput(), label=_("Passord"))
+    repeat_password = forms.CharField(widget=forms.PasswordInput(), label=_("Gjenta passord"))
+    address = forms.CharField(
+        label=_("Adresse"),
+        max_length=100,
+        required=False,
+        widget=forms.Textarea(attrs={'rows': 3})
+    )
+    zip_code = forms.CharField(
+        label=_("Postnummer"),
+        max_length=4,
+        required=False,
+        help_text=u'Vi henter by basert på postnummer'
+    )
     phone = forms.CharField(label=_("Telefon"), max_length=20, required=False)
-    
+
     def clean(self):
         super(RegisterForm, self).clean()
         if self.is_valid():
@@ -68,7 +95,9 @@ class RegisterForm(forms.Form):
             if User.objects.filter(username=username).count() > 0:
                 self._errors['username'] = self.error_class([_(u"Brukernavnet er allerede registrert.")])
             if not re.match("^[a-zA-Z0-9_-]+$", username):
-                self._errors['username'] = self.error_class([_(u"Ditt brukernavn inneholdt ulovlige tegn. Lovlige tegn: a-Z 0-9 - _")])
+                self._errors['username'] = self.error_class([
+                    _(u"Ditt brukernavn inneholdt ulovlige tegn. Lovlige tegn: a-Z 0-9 - _")
+                ])
 
             # Check email
             email = cleaned_data['email'].lower()
@@ -78,9 +107,11 @@ class RegisterForm(forms.Form):
             # Check if it's studmail and if someone else already has it in their profile
             if re.match(r'[^@]+@stud\.ntnu\.no', email):
                 ntnu_username = email.split("@")[0]
-                user = User.objects.filter(ntnu_username = ntnu_username)
+                user = User.objects.filter(ntnu_username=ntnu_username)
                 if user.count() == 1:
-                    self._errors['email'] = self.error_class([_(u"En bruker med dette NTNU-brukernavnet fins allerede.")])
+                    self._errors['email'] = self.error_class([
+                        _(u"En bruker med dette NTNU-brukernavnet fins allerede.")
+                    ])
 
             # ZIP code digits only
             zip_code = cleaned_data['zip_code']
@@ -88,14 +119,16 @@ class RegisterForm(forms.Form):
                 if len(zip_code) != 4 or not zip_code.isdigit():
                     self._errors['zip_code'] = self.error_class([_(u"Postnummer må bestå av fire siffer.")])
 
-            return cleaned_data 
+            return cleaned_data
+
 
 class RecoveryForm(forms.Form):
     email = forms.EmailField(label="Email", max_length=50)
 
+
 class ChangePasswordForm(forms.Form):
-    new_password = forms.CharField(widget=forms.PasswordInput(render_value=False), label=_(u"Nytt passord"))
-    repeat_password = forms.CharField(widget=forms.PasswordInput(render_value=False), label=_(u"Gjenta passord"))
+    new_password = forms.CharField(widget=forms.PasswordInput(), label=_(u"Nytt passord"))
+    repeat_password = forms.CharField(widget=forms.PasswordInput(), label=_(u"Gjenta passord"))
 
     def clean(self):
         super(ChangePasswordForm, self).clean()

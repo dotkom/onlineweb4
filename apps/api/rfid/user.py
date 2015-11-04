@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import logging
-
 from django.core.exceptions import PermissionDenied
 from tastypie.resources import ModelResource, ALL
 from tastypie.authorization import Authorization

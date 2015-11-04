@@ -2,7 +2,7 @@
 
 from django.conf.urls import patterns, url
 
-from . import  views, endpoints
+from apps.sso import views, endpoints
 
 urlpatterns = patterns(
     'apps.sso.views',

@@ -1,4 +1,5 @@
-# encoding: utf-8
+# -*- encoding: utf-8 -*-
+
 
 class Task(object):
 
@@ -12,6 +13,7 @@ class Task(object):
     def __str__(self):
         return self.task_name
 
+
 class Schedule(object):
     """
     A Schedule containing tasks
@@ -22,11 +24,10 @@ class Schedule(object):
         self._tasks = {}
 
     def register(self, task, **kwargs):
-        if(task in self._tasks):
+        if task in self._tasks:
             raise ValueError("Could not register %s, already registered", task.__name__)
-        if(task.__name__ in self._tasks):
+        if task.__name__ in self._tasks:
             raise ValueError("Could not register %s, a task with the same name already registered")
-
 
         self._tasks[task] = kwargs
 

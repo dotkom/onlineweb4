@@ -1,4 +1,5 @@
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
+
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -9,7 +10,16 @@ from django.http import HttpResponse, JsonResponse
 from django.views.decorators.http import require_http_methods
 from django.views.decorators.cache import cache_page
 from apps.genfors.forms import LoginForm, MeetingForm, QuestionForm, RegisterVoterForm, AlternativeFormSet
-from apps.genfors.models import Meeting, Question, RegisteredVoter, AnonymousVoter, Alternative, BooleanVote, MultipleChoice, Result
+from apps.genfors.models import (
+    Meeting,
+    Question,
+    RegisteredVoter,
+    AnonymousVoter,
+    Alternative,
+    BooleanVote,
+    MultipleChoice,
+    Result
+)
 from apps.genfors.models import BOOLEAN_VOTE, MULTIPLE_CHOICE
 from hashlib import sha256
 import datetime
@@ -236,8 +246,6 @@ def question_admin(request, question_id=None):
                 q = Question.objects.get(id=question_id, locked=False)
                 if q:
                     q_alt = q.get_alternatives()
-                    form = QuestionForm(instance=q)
-                    formset = AlternativeFormSet(queryset=q.get_alternatives())
                 else:
                     messages.error(request, u'Spørsmålet finnes ikke eller har allerede blitt stengt.')
                     return redirect('genfors_admin')
@@ -371,14 +379,14 @@ def vote(request):
                     if q.question_type is BOOLEAN_VOTE:
                         valid = [0, 1, 2]
                         if alt in valid:
-                            vote = None
+                            the_vote = None
                             if alt == 0:
-                                vote = BooleanVote(voter=v, question=q, answer=None)
+                                the_vote = BooleanVote(voter=v, question=q, answer=None)
                             elif alt == 1:
-                                vote = BooleanVote(voter=v, question=q, answer=True)
+                                the_vote = BooleanVote(voter=v, question=q, answer=True)
                             elif alt == 2:
-                                vote = BooleanVote(voter=v, question=q, answer=False)
-                            vote.save()
+                                the_vote = BooleanVote(voter=v, question=q, answer=False)
+                            the_vote.save()
                             messages.success(request, u'Din stemme ble registrert!')
                             return redirect('genfors_index')
 
@@ -387,21 +395,23 @@ def vote(request):
                         valid = [alternative.alt_id for alternative in alternatives]
                         valid.append(0)
                         if alt in valid:
-                            vote = None
                             if alt == 0:
-                                vote = MultipleChoice(voter=v, question=q, answer=None)
-                                vote.save()
+                                the_vote = MultipleChoice(voter=v, question=q, answer=None)
+                                the_vote.save()
                                 messages.success(request, u'Din stemme ble registrert!')
                                 return redirect('genfors_index')
                             else:
                                 choice = Alternative.objects.get(alt_id=alt, question=q)
                                 if choice:
-                                    vote = MultipleChoice(voter=v, question=q, answer=choice)
-                                    vote.save()
+                                    the_vote = MultipleChoice(voter=v, question=q, answer=choice)
+                                    the_vote.save()
                                     messages.success(request, u'Din stemme ble registrert!')
                                     return redirect('genfors_index')
 
-                messages.error(request, u'Det ble forsøkt å stemme på et ugyldig alternativ, stemmen ble ikke registrert.')
+                messages.error(
+                    request,
+                    u'Det ble forsøkt å stemme på et ugyldig alternativ, stemmen ble ikke registrert.'
+                )
                 return redirect('genfors_index')
 
         # Else forbid
@@ -439,7 +449,11 @@ def genfors_open_registration(request):
                 meeting.generate_pin_code()
             else:
                 question = u'Er du sikker på at du vil åpne registrering for nye brukere?'
-                description = u'Vær oppmerksom på at når man åpner registrering vil pinkoden for registrering av oppmøte forandre seg. Du vil se den oppdaterte koden i administrasjonspanelet.'
+                description = u"""
+Vær oppmerksom på at når man åpner registrering vil pinkoden for registrering av oppmøte forandre seg.
+Du vil se den oppdaterte koden i administrasjonspanelet.
+"""
+
                 return render(request, 'genfors/confirm.html', {'question': question, 'description': description})
         else:
             messages.error(request, u'Ingen aktiv generalforsamling')
@@ -466,8 +480,10 @@ def genfors_end(request):
         messages.error(request, u'Du har ikke tilgang til dette')
     return redirect('genfors_admin')
 
+
 def api_admin(request):
     return HttpResponse(json.dumps({"error": "Du har ikke tilgang til dette endepunktet."}))
+
 
 # Simple cached JSON Api-like endpoint to dynamically update stats via AJAX
 @cache_page(5)
@@ -478,20 +494,19 @@ def api_user(request):
 
     if reg_voter and anon_voter:
         q = m.get_active_question()
-        genfors = {}
-        genfors["total_voters"] = m.num_can_vote()
+        context = {"total_voters": m.num_can_vote()}
 
         if q:
-            genfors["question"] = {}
-            genfors["question"]["description"] = q.description
+            context["question"] = {}
+            context["question"]["description"] = q.description
             if q.anonymous:
                 already_voted = q.already_voted(anon_voter)
             else:
                 already_voted = q.already_voted(reg_voter)
             if already_voted:
                 if not q.only_show_winner:
-                    genfors["question"]["results"] = q.get_results()
-            genfors["question"]["current_votes"] = q.get_votes().count()
+                    context["question"]["results"] = q.get_results()
+            context["question"]["current_votes"] = q.get_votes().count()
 
             if not q.only_show_winner:
                 votes = q.get_votes()
@@ -499,7 +514,15 @@ def api_user(request):
                     if q.question_type == 0:
                         genfors["question"]["votes"] = [[unicode(v.voter.anonymousvoter), v.answer] for v in votes]
                     elif q.question_type == 1:
-                        genfors["question"]["votes"] = [[unicode(v.voter.anonymousvoter), v.answer.description] if v.answer else [unicode(v.voter.anonymousvoter), "Blankt"] for v in votes]
+                        genfors["question"]["votes"] = [
+                            [
+                                unicode(v.voter.anonymousvoter),
+                                v.answer.description
+                            ] if v.answer else [
+                                unicode(v.voter.anonymousvoter),
+                                "Blankt"
+                            ] for v in votes
+                        ]
 
                     # Shuffle the order of votes so you cannot infer who cast what vote when there are few voters left
                     random.shuffle(genfors['question']['votes'])
@@ -508,7 +531,15 @@ def api_user(request):
                     if q.question_type == 0:
                         genfors["question"]["votes"] = [[unicode(v.voter.registeredvoter), v.answer] for v in votes]
                     elif q.question_type == 1:
-                        genfors["question"]["votes"] = [[unicode(v.voter.registeredvoter), v.answer.description] if v.answer else [unicode(v.voter.registeredvoter), "Blankt"] for v in votes]
+                        genfors["question"]["votes"] = [
+                            [
+                                unicode(v.voter.registeredvoter),
+                                v.answer.description
+                            ] if v.answer else [
+                                unicode(v.voter.registeredvoter),
+                                "Blankt"
+                            ] for v in votes
+                        ]
         else:
             genfors["question"] = None
 
@@ -565,10 +596,12 @@ def anonymous_voter(anon_cookie, username):
 
 
 def question_validate(request, question_id):
-    """Returns a HttpResponse if not passing validation"""
+    """
+    Returns a HttpResponse if not passing validation
+    """
     if is_admin(request):
         try:
-            q = Question.objects.get(id=question_id)
+            Question.objects.get(id=question_id)
         except Question.DoesNotExist:
             messages.error(request, u'Spørsmålet finnes ikke')
             return redirect('genfors_admin')

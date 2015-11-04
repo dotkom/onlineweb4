@@ -102,8 +102,10 @@ def marks_details(request, pk):
                 # Check if user already is the lucky owner of this prikk
                 for context_mark_user in context['mark_users']:
                     if context_mark_user.user == user:
-                        resp = {'status': 500}
-                        resp['message'] = '%s har allerede prikken %s.' % (user.get_full_name(), context['mark'].title)
+                        resp = {
+                            'status': 500,
+                            'message': '%s har allerede prikken %s.' % (user.get_full_name(), context['mark'].title)
+                        }
 
                         # Return ajax
                         return HttpResponse(json.dumps(resp), status=500)

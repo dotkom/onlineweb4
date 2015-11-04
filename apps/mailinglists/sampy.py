@@ -19,7 +19,7 @@ NSMAP = {"soap": NAMESPACE_SOAP,
          "wsdl": NAMESPACE_WSDL}
 
 
-def soapWrap(messagetype, elements, parameters=None):
+def soap_wrap(messagetype, elements, parameters=None):
     envelope_attributes = {"soap:encodingStyle": NAMESPACE_SOAPENC,
                            "xmlns:soap": NAMESPACE_SOAP,
                            "xmlns:sympa": NAMESPACE_SYMPA,
@@ -29,31 +29,36 @@ def soapWrap(messagetype, elements, parameters=None):
                            "xmlns:wsdl": NAMESPACE_WSDL}
     envelope = etree.Element("soap:Envelope", attrib=envelope_attributes)
     body = etree.SubElement(envelope, "soap:Body")
-    type = etree.SubElement(body, "sympa:" + messagetype)
+    nodetype = etree.SubElement(body, "sympa:" + messagetype)
 
     for key, value in elements:
-        etree.SubElement(type, key).text = value
+        etree.SubElement(nodetype, key).text = value
 
     if parameters:
         attribs = {"xsi:type": "wsdl:ArrayOfString",
                    "soapenc:arrayType": "xsd:string[%i]" % len(parameters)}
-        param = etree.SubElement(type, "parameters", attrib=attribs)
+        param = etree.SubElement(nodetype, "parameters", attrib=attribs)
         for p in parameters:
-            etree.SubElement(param, "item",
-                    attrib={"xsi:type": "xsd:string"}).text = p
+            etree.SubElement(
+                param,
+                "item",
+                attrib={"xsi:type": "xsd:string"}).text = p
 
     return etree.tostring(envelope, encoding="UTF-8")
 
 
-class Sampy:
+class Sampy(object):
+
     def __init__(self, url, appname=None, password=None, admin_account=None):
         self.url = url
         self.appname = appname
         self.password = password
         self.admin_account = admin_account
+        self.cookie = None
+        self.email = None
 
     def login(self, email, password):
-        xml = soapWrap("login", (("email", email), ("password", password)))
+        xml = soap_wrap("login", (("email", email), ("password", password)))
         request = Request(self.url)
         request.add_header("Content-Type", "text/xml")
         request.add_data(xml)
@@ -64,15 +69,15 @@ class Sampy:
 
     def lists(self, topic=None, subtopic=None):
         if not self.appname:
-            lists = self.authenticateAndRun(self.email, "lists")
+            returnlists = self.authenticate_and_run(self.email, "lists")
         else:
-            lists = self.authenticateRemoteAppAndRun("USER_EMAIL=" + self.admin_account, "lists")
+            returnlists = self.authenticate_remote_app_and_run("USER_EMAIL=" + self.admin_account, "lists")
 
         ret = []
-        for l in lists:
+        for l in returnlists:
             element = {}
-            vars = l.split(";")
-            for v in vars:
+            variables = l.split(";")
+            for v in variables:
                 key, value = v.split("=")
                 element[key] = value
             ret.append(element)
@@ -80,23 +85,23 @@ class Sampy:
 
     def review(self, listname):
         if not self.appname:
-            review = self.authenticateAndRun(self.email, "review", [listname])
+            review = self.authenticate_and_run(self.email, "review", [listname])
         else:
-            review = self.authenticateRemoteAppAndRun("USER_EMAIL=" + self.admin_account, "review", [listname])
+            review = self.authenticate_remote_app_and_run("USER_EMAIL=" + self.admin_account, "review", [listname])
         return [r for r in review]
 
     def which(self):
         if not self.appname:
-            which = self.authenticateAndRun(self.email, "which")
+            which = self.authenticate_and_run(self.email, "which")
         else:
-            which = self.authenticateRemoteAppAndRun("USER_EMAIL=" + self.admin_account, "which")
+            which = self.authenticate_remote_app_and_run("USER_EMAIL=" + self.admin_account, "which")
         return which
 
-    def authenticateAndRun(self, email, service, parameters=None):
+    def authenticate_and_run(self, email, service, parameters=None):
         arguments = (("email", email),
                      ("cookie", self.cookie),
                      ("service", service))
-        xml = soapWrap("authenticateAndRun", arguments, parameters)
+        xml = soap_wrap("authenticateAndRun", arguments, parameters)
         request = Request(self.url)
         request.add_header("Content-Type", "text/xml")
         request.add_data(xml)
@@ -108,12 +113,12 @@ class Sampy:
         responsetree = etree.fromstring(response.read())
         return [r.text for r in responsetree[0][0][0]]
 
-    def authenticateRemoteAppAndRun(self, vars, service, parameters=None):
+    def authenticate_remote_app_and_run(self, variables, service, parameters=None):
         arguments = (("appname", self.appname),
                      ("apppassword", self.password),
-                     ("vars", vars),
+                     ("vars", variables),
                      ("service", service))
-        xml = soapWrap("authenticateRemoteAppAndRun", arguments, parameters)
+        xml = soap_wrap("authenticateRemoteAppAndRun", arguments, parameters)
         request = Request(self.url)
         request.add_header("Content-Type", "text/xml")
         request.add_data(xml)
@@ -124,5 +129,5 @@ class Sampy:
             return
         responsetree = etree.fromstring(response.read())
 
-        #TODO: Dette er den styggeste hacken in the history of mankind. Finn ut av encoding her.
+        # TODO: Dette er den styggeste hacken in the history of mankind. Finn ut av encoding her.
         return [r.text.encode("iso-8859-1").replace("Ã¥", "å") for r in responsetree[0][0][0]]

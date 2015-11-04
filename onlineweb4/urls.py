@@ -9,12 +9,11 @@ from django_nyt.urls import get_pattern as get_notify_pattern
 from wiki.urls import get_pattern as get_wiki_pattern
 from filebrowser.sites import site
 
-from apps import mommy
-
 # URL config
 admin.autodiscover()
 
-urlpatterns = patterns('',
+urlpatterns = patterns(
+    '',
     # Filebrowser must be above all admin-urls
     url(r'^admin/filebrowser/',     include(site.urls)),
     url(r'^grappelli/',             include('grappelli.urls')),
@@ -45,94 +44,111 @@ urlpatterns = patterns('',
 
 # Onlineweb app urls
 if 'apps.api' in settings.INSTALLED_APPS:
-    urlpatterns += patterns('',
+    urlpatterns += patterns(
+        '',
         url(r'^api/',               include('apps.api.urls')),
     )
 
 if 'apps.approval' in settings.INSTALLED_APPS:
-    urlpatterns += patterns('',
-        url(r'^approval/',          include('apps.approval.urls')),
-        url(r'^dashboard/approval/',include('apps.approval.dashboard.urls')),
+    urlpatterns += patterns(
+        '',
+        url(r'^approval/',              include('apps.approval.urls')),
+        url(r'^dashboard/approval/',    include('apps.approval.dashboard.urls')),
     )
 
 if 'apps.article' in settings.INSTALLED_APPS:
-    urlpatterns += patterns('',
+    urlpatterns += patterns(
+        '',
         url(r'^article/',           include('apps.article.urls')),
         url(r'^dashboard/article/', include('apps.article.dashboard.urls')),
     )
 
 if 'apps.autoconfig' in settings.INSTALLED_APPS:
-    urlpatterns += patterns('',
+    urlpatterns += patterns(
+        '',
         url(r'^mail/',              include('apps.autoconfig.urls')),
     )
 
 if 'apps.authentication' in settings.INSTALLED_APPS:
-    urlpatterns += patterns('',
+    urlpatterns += patterns(
+        '',
         url(r'^auth/',              include('apps.authentication.urls')),
         url(r'^dashboard/auth/',    include('apps.authentication.dashboard.urls')),
     )
 
 if 'apps.careeropportunity' in settings.INSTALLED_APPS:
-    urlpatterns += patterns('',
+    urlpatterns += patterns(
+        '',
         url(r'^careeropportunity/', include('apps.careeropportunity.urls')),
         url(r'^dashboard/careeropportunity/', include('apps.careeropportunity.dashboard.urls')),
     )
 
 if 'apps.companyprofile' in settings.INSTALLED_APPS:
-    urlpatterns += patterns('',
+    urlpatterns += patterns(
+        '',
         url(r'^company/',           include('apps.companyprofile.urls')),
         url(r'^dashboard/company/', include('apps.companyprofile.dashboard.urls')),
     )
 
 if 'apps.dashboard' in settings.INSTALLED_APPS:
-    urlpatterns += patterns('',
+    urlpatterns += patterns(
+        '',
         url(r'^dashboard/',         include('apps.dashboard.urls')),
     )
 
 if 'apps.events' in settings.INSTALLED_APPS:
-    urlpatterns += patterns('',
+    urlpatterns += patterns(
+        '',
         url(r'^events/',            include('apps.events.urls')),
         url(r'^dashboard/events/',  include('apps.events.dashboard.urls')),
     )
 
 if 'apps.feedback' in settings.INSTALLED_APPS:
-    urlpatterns += patterns('',
+    urlpatterns += patterns(
+        '',
         url(r'^feedback/',          include('apps.feedback.urls')),
     )
 
 if 'apps.marks' in settings.INSTALLED_APPS:
-    urlpatterns += patterns('',
+    urlpatterns += patterns(
+        '',
         url(r'^dashboard/marks/',          include('apps.marks.dashboard.urls')),
     )
 
 if 'apps.inventory' in settings.INSTALLED_APPS:
-    urlpatterns += patterns('',
+    urlpatterns += patterns(
+        '',
         url(r'^dashboard/inventory/',          include('apps.inventory.dashboard.urls')),
     )
 
 if 'apps.offline' in settings.INSTALLED_APPS:
-    urlpatterns += patterns('',
+    urlpatterns += patterns(
+        '',
         url(r'^offline/',           include('apps.offline.urls')),
     )
 
 if 'apps.posters' in settings.INSTALLED_APPS:
-    urlpatterns += patterns('',
+    urlpatterns += patterns(
+        '',
         url(r'^dashboard/posters/',          include('apps.posters.dashboard.urls')),
     )
 
 if 'apps.profiles' in settings.INSTALLED_APPS:
-    urlpatterns += patterns('',
+    urlpatterns += patterns(
+        '',
         url(r'^profile/',           include('apps.profiles.urls')),
     )
 
 if 'apps.resourcecenter' in settings.INSTALLED_APPS and 'apps.mailinglists' in settings.INSTALLED_APPS:
-    urlpatterns += patterns('',
-        url(r'^resourcecenter/mailinglists/', include('apps.mailinglists.urls')), # leave in this order because...
-        url(r'^resourcecenter/',    include('apps.resourcecenter.urls')), # ...resourcecenter has catch-all on subpages
+    urlpatterns += patterns(
+        '',
+        url(r'^resourcecenter/mailinglists/', include('apps.mailinglists.urls')),  # leave in this order because...
+        url(r'^resourcecenter/',    include('apps.resourcecenter.urls')),  # Resourcecenter has catch-all on subpages
     )
 
 if 'apps.genfors' in settings.INSTALLED_APPS:
-    urlpatterns += patterns('',
+    urlpatterns += patterns(
+        '',
         url(r'^genfors/',           include('apps.genfors.urls')),
     )
 
@@ -159,7 +175,8 @@ if 'apps.gallery' in settings.INSTALLED_APPS:
     )
 
 if 'apps.splash' in settings.INSTALLED_APPS:
-    urlpatterns += patterns('',
+    urlpatterns += patterns(
+        '',
         url(r'^splash/',           include('apps.splash.urls')),
     )
 
@@ -181,7 +198,8 @@ if 'feedme' in settings.INSTALLED_APPS:
     urlpatterns += patterns('', url(r'^feedme/', include('feedme.urls', namespace='feedme')))
 
 if 'apps.payment' in settings.INSTALLED_APPS:
-    urlpatterns += patterns('',
+    urlpatterns += patterns(
+        '',
         url(r'^payment/',           include('apps.payment.urls')),
     )
 
@@ -191,6 +209,7 @@ if 'redwine' in settings.INSTALLED_APPS:
 
 if 'rest_framework' in settings.INSTALLED_APPS:
     from apps.api.utils import SharedAPIRootRouter
+
     # API
     def api_urls():
         return SharedAPIRootRouter.shared_router.urls
@@ -200,17 +219,13 @@ if 'rest_framework' in settings.INSTALLED_APPS:
         url(r'^api/v1/', include(api_urls())),
     )
 
-#Captcha url
-if 'captcha' in settings.INSTALLED_APPS:
-    urlpatterns += patterns('', url(r'^captcha/', include('captcha.urls')))
-
-
 
 # http://docs.djangoproject.com/en/1.3/howto/static-files/#staticfiles-development
 if settings.DEBUG:
     urlpatterns += staticfiles_urlpatterns()
 
-    urlpatterns += patterns('',
+    urlpatterns += patterns(
+        '',
         url(r'^media/(?P<path>.*)$', 'django.views.static.serve', {
             'document_root': settings.MEDIA_ROOT,
             'show_indexes': True

@@ -2,12 +2,10 @@
 
 import json
 
-from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import Group
 from django.http import Http404, HttpResponse
-from django.core.exceptions import PermissionDenied, ObjectDoesNotExist
-from django.shortcuts import render, redirect, get_object_or_404
+from django.core.exceptions import PermissionDenied
+from django.shortcuts import render
 from django.utils import timezone
 from django.utils.translation import ugettext as _
 from django.views.decorators.csrf import ensure_csrf_cookie
@@ -32,7 +30,9 @@ def index(request):
     context = get_base_context(request)
 
     context['membership_applications'] = MembershipApproval.objects.filter(processed=False)
-    context['processed_applications'] = MembershipApproval.objects.filter(processed=True).order_by('-processed_date')[:10]
+    context['processed_applications'] = MembershipApproval.objects.filter(
+        processed=True
+    ).order_by('-processed_date')[:10]
 
     return render(request, 'approval/dashboard/index.html', context)
 

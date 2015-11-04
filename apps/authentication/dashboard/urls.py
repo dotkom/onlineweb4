@@ -2,7 +2,8 @@
 
 from django.conf.urls import patterns, url
 
-urlpatterns = patterns('apps.authentication.dashboard.views',
+urlpatterns = patterns(
+    'apps.authentication.dashboard.views',
     url(r'^$', 'index', name='auth_index'),
     url(r'^members/$', 'members_index', name='members_index'),
     url(r'^members/(?P<pk>\d+)/$', 'members_detail', name='members_detail'),
