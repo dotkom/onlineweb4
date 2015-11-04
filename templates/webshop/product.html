@@ -47,8 +47,16 @@
               Antall
               <input class="form-control" min="1" name="quantity" type="number" value="1">
             </label>
+            {% if sizes %}
+              <select id="size" name="size" class="form-control">
+                {% for size in sizes %}
+                  <option value="{{ size.pk }}">{{ size.size }} {% if size.description %} - {{size.description }} {% endif %}</option>
+                {% endfor %}
+              </select>
+            {% endif %}
+
           </div>
-          <input type="submit" class="btn btn-lg btn-default" value="Kjøp">
+          <input type="submit" class="btn btn-lg btn-default" value="Legg til">
         </form>
     </div>
 </div>

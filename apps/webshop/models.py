@@ -62,6 +62,19 @@ class Category(models.Model):
         verbose_name = 'Kategori'
         verbose_name_plural = 'Kategorier'
 
+class ProductSize(models.Model):
+    product = models.ForeignKey(Product)
+    size = models.CharField(u'Størelse', max_length=25)
+    description = models.CharField(u'Beskrivelse', max_length=50, null=True, blank=True)
+    stock = models.PositiveSmallIntegerField(null=True, blank=True)
+
+    def __unicode__(self):
+        return self.size
+
+    class Meta:
+        verbose_name = 'Størrelse'
+        verbose_name_plural = 'Størrelser'
+
 
 class Order(models.Model):
     product = models.ForeignKey('Product')
@@ -70,6 +83,7 @@ class Order(models.Model):
     price = models.DecimalField(max_digits=10, decimal_places=2, blank=True)
     # Quantity of products ordered
     quantity = models.PositiveIntegerField(default=1, validators=[MinValueValidator(1)])
+    size = models.ForeignKey(ProductSize, null=True, blank=False)
 
     def calculate_price(self):
         return self.product.price * self.quantity
@@ -99,3 +113,4 @@ class OrderLine(models.Model):
             order.save()
         self.paid = True
         self.save()
+

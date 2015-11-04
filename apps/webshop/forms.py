@@ -6,4 +6,4 @@ from apps.webshop import models
 class OrderForm(forms.ModelForm):
     class Meta:
         model = models.Order
-        fields = ['quantity']
+        fields = ['quantity', 'size']

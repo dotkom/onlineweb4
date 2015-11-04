@@ -29,7 +29,7 @@ Checkout
             {% endif %}
         </td>
         <td>
-            <p><a href="{{order.product.get_absolute_url}}">{{ order.product }}</a></p>
+            <p><a href="{{order.product.get_absolute_url}}">{{ order.product }} ({{ order.size }})</a></p>
             <p>{{ order.product.short }}</p>
             <form method="POST" action="{% url 'webshop_remove_orders' %}">
                 {% csrf_token %}
