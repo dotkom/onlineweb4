@@ -6,6 +6,7 @@ from django.contrib import admin
 
 from reversion.admin import VersionAdmin
 
+
 class CareerOpportunityAdmin(VersionAdmin):
     model = CareerOpportunity
 

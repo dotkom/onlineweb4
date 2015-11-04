@@ -33,7 +33,7 @@ $(function() {
     } else if (url[url.length-2] === 'year') {
         articleSettings.year = url[url.length-1];
     } else if (url[url.length-3] === 'tag') {
-        articleSettings.tag = url[url.length-1];
+        articleSettings.tag = url[url.length-2];
     }
     articleWidget.render(1,false,articleSettings);
 
@@ -224,10 +224,8 @@ function ArticleArchive (Utils) {
         }
         
 
-        console.log('imma load')
         // Only call the method if we have more elements
         if (is_more_elements) {
-            console.log('loading')
             // The api-call
             Utils.makeApiRequest({
                 'url': '/api/v1/articles/' + _url_params,
@@ -266,10 +264,10 @@ function ArticleArchive (Utils) {
                         output += '      <div class="pull-right article-detail-meta">';
                         output += '        <span>'+moment(articles[i].published_date).format('DD.MM.YYYY')+'</span>';
                         output += '      </div>';
-                        output += '      <a href="'+articles[i].id+'/'+articles[i].slug+'"><h3>'+articles[i].heading+'</h3></a>';
+                        output += '      <a href="/article/'+articles[i].id+'/'+articles[i].slug+'"><h3>'+articles[i].heading+'</h3></a>';
                         output += '      <p>'+articles[i].ingress_short+'</p>';
                         output += '      <div class="meta"><div class="row"><div class="col-md-12">';
-                        output += '        <p><strong>Publisert av: </strong>' + articles[i].author.first_name + ' ' + articles[i].author.last_name + '</p>';
+                        output += '        <p><strong>Skrevet av: </strong>' + articles[i].authors + '</p>';
                         output += '      </div></div></div>';
                         output += '    </div><!-- end col-md-8 -->';
                         output += '  </div><!-- end row -->';

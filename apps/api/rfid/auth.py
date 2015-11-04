@@ -1,6 +1,7 @@
 from tastypie.authentication import Authentication
 from django.conf import settings
 
+
 class RfidAuthentication(Authentication):
     """
     This custom authentication model is used only for the RFID app, allowing a static API KEY

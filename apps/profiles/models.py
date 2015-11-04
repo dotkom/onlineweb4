@@ -10,6 +10,7 @@ import reversion
 
 User = settings.AUTH_USER_MODEL
 
+
 class Privacy(models.Model):
     visible_for_other_users = models.BooleanField(_(u"profil synlig for andre brukere"), default=True)
     expose_nickname = models.BooleanField(_(u"vis kallenavn"), default=True)
@@ -22,7 +23,7 @@ class Privacy(models.Model):
     def __unicode__(self):
         return self.user.get_full_name()
 
-    class Meta:
+    class Meta(object):
         verbose_name = _(u"personvern")
         verbose_name_plural = _(u"personvern")
         permissions = (

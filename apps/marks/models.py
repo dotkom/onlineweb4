@@ -1,6 +1,6 @@
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 
-from datetime import date, datetime, time, timedelta
+from datetime import date, datetime, timedelta
 
 from django.conf import settings
 from django.db import models
@@ -18,23 +18,29 @@ SUMMER = ((6, 1), (8, 15))
 # winter starts 1st December, ends 15th January
 WINTER = ((12, 1), (1, 15))
 
+
 def get_expiration_date(user):
     if user:
-        marks = MarkUser.objects.filter(user = user).order_by('-expiration_date')
+        marks = MarkUser.objects.filter(user=user).order_by('-expiration_date')
         if marks:
             return marks[0].expiration_date
     return None
 
 
 class MarksManager(models.Manager):
-    def all_active(self):
+
+    @staticmethod
+    def all_active():
         return Mark.objects.filter(given_to__expiration_date__gt=timezone.now().date())
 
-    def active(self, user):
+    @staticmethod
+    def active(user):
         return MarkUser.objects.filter(user=user).filter(expiration_date__gt=timezone.now().date())
 
-    def inactive(self, user=None):
+    @staticmethod
+    def inactive(user=None):
         return MarkUser.objects.filter(user=user).filter(expiration_date__lte=timezone.now().date())
+
 
 class Mark(models.Model):
     CATEGORY_CHOICES = (
@@ -49,14 +55,31 @@ class Mark(models.Model):
 
     title = models.CharField(_(u"tittel"), max_length=155)
     added_date = models.DateField(_(u"utdelt dato"))
-    given_by = models.ForeignKey(User, related_name="mark_given_by", verbose_name=_(u"gitt av"), editable=False, null=True, blank=True)
+    given_by = models.ForeignKey(
+        User,
+        related_name="mark_given_by",
+        verbose_name=_(u"gitt av"),
+        editable=False,
+        null=True,
+        blank=True
+    )
     last_changed_date = models.DateTimeField(_(u"sist redigert"), auto_now=True, editable=False)
-    last_changed_by = models.ForeignKey(User, related_name="marks_last_changed_by",
-        verbose_name=_(u"sist redigert av"), editable=False, null=True, blank=False)
-    description = models.CharField(_(u"beskrivelse"), max_length=255,
-                                   help_text=_(u"Hvis dette feltet etterlates blankt vil det fylles med "
-                                               "en standard grunn for typen prikk som er valgt."),
-                                   blank=True)
+    last_changed_by = models.ForeignKey(
+        User,
+        related_name="marks_last_changed_by",
+        verbose_name=_(u"sist redigert av"),
+        editable=False,
+        null=True,
+        blank=False
+    )
+    description = models.CharField(
+        _(u"beskrivelse"),
+        max_length=255,
+        help_text=_(
+            u"Hvis dette feltet etterlates blankt vil det fylles med en standard grunn for typen prikk som er valgt."
+        ),
+        blank=True
+    )
     category = models.SmallIntegerField(_(u"kategori"), choices=CATEGORY_CHOICES, default=0)
 
     # managers
@@ -71,13 +94,13 @@ class Mark(models.Model):
             self.added_date = timezone.now().date()
         super(Mark, self).save(*args, **kwargs)
 
-    def delete(self):
+    def delete(self, **kwargs):
         given_to = [mu.user for mu in self.given_to.all()]
         super(Mark, self).delete()
         for user in given_to:
             _fix_mark_history(user)
 
-    class Meta:
+    class Meta(object):
         verbose_name = _(u"Prikk")
         verbose_name_plural = _(u"Prikker")
         permissions = (
@@ -151,6 +174,7 @@ def _fix_mark_history(user):
         entry.save()
         last_expiry_date = entry.expiration_date
 
+
 def _get_with_duration_and_vacation(added_date=timezone.now()):
     """
     Checks whether the span of a marks duration needs to have vacation durations added.
@@ -197,11 +221,10 @@ class Suspension(models.Model):
     added_date = models.DateTimeField(auto_now=True, editable=False)
     expiration_date = models.DateField(_(u"utløpsdato"), null=True, blank=True)
 
-    #Using id because foreign key to Payment caused circular dependencies
+    # Using id because foreign key to Payment caused circular dependencies
     payment_id = models.IntegerField(null=True, blank=True)
-
 
     def __unicode__(self):
         return "Suspension: " + unicode(self.user)
 
-    #TODO URL
+    # TODO URL

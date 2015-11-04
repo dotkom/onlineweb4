@@ -7,7 +7,8 @@ from django.core.mail import EmailMessage
 
 from apps.events.models import Event, AttendanceEvent
 from apps.marks.models import Mark, MarkUser
-from apps.mommy import Task, schedule
+from apps.mommy import schedule
+from apps.mommy.registry import Task
 
 class SetEventMarks(Task):
 

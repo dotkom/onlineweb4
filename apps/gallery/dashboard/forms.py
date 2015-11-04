@@ -4,6 +4,8 @@
 
 from django import forms
 
+from taggit.forms import TagWidget
+
 from apps.gallery.models import ResponsiveImage
 
 
@@ -11,4 +13,13 @@ class ResponsiveImageForm(forms.ModelForm):
 
     class Meta(object):
         model = ResponsiveImage
-        fields = ['name', 'description']
+        fields = ['name', 'description', 'photographer', 'tags']
+        widgets = {
+            'tags': TagWidget(attrs={
+                'placeholder': u'Eksempel: kontoret, kjelleren, åre',
+            }),
+            'photographer': forms.TextInput(attrs={'placeholder': u'Eventuell(e) fotograf(er)...'})
+        }
+        labels = {
+            'tags': u'Tags'
+        }

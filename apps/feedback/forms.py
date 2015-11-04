@@ -6,7 +6,6 @@ from apps.feedback.models import Choice
 from apps.feedback.models import RATING_CHOICES
 from apps.feedback.models import FieldOfStudyAnswer
 from apps.feedback.models import TextAnswer
-from django.utils.translation import ugettext_lazy as _
 from crispy_forms.helper import FormHelper
 
 
@@ -26,7 +25,7 @@ class RatingAnswerForm(AnswerForm):
     answer = forms.ChoiceField(widget=forms.Select(attrs={"class": "rating", "name": "rating"}),
                                choices=RATING_CHOICES)
 
-    class Meta:
+    class Meta(object):
         model = RatingAnswer
         exclude = ("feedback_relation", "question",)
 
@@ -37,18 +36,19 @@ class FieldOfStudyAnswerForm(AnswerForm):
         data = self.cleaned_data['answer']
         return data
 
-    class Meta:
+    class Meta(object):
         model = FieldOfStudyAnswer
         exclude = ("feedback_relation", "question",)
 
 
 class TextAnswerForm(AnswerForm):
     answer = forms.CharField(
-        widget=forms.Textarea(attrs={'class':'form-control', 'type': 'text', "rows": "3"}))
+        widget=forms.Textarea(attrs={'class': 'form-control', 'type': 'text', "rows": "3"}))
 
-    class Meta:
+    class Meta(object):
         model = TextAnswer
         exclude = ("feedback_relation", "question",)
+
 
 class MultipleChoiceForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
@@ -62,9 +62,10 @@ class MultipleChoiceForm(forms.ModelForm):
             widget=forms.Select(attrs={'class': 'form-control'}))
         self.fields['answer'].label = self.instance.question.multiple_choice_relation.label
 
-    class Meta:
+    class Meta(object):
         model = MultipleChoiceAnswer
         exclude = ("feedback_relation", "question", "choice")
+
 
 def create_answer_forms(fbr, post_data=None):
     """

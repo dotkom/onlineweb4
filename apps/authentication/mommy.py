@@ -6,7 +6,9 @@ from django.conf import settings
 from django.contrib.auth.models import Group
 
 from apps.authentication.models import OnlineUser as User
-from apps.mommy import Task, schedule
+from apps.mommy import schedule
+from apps.mommy.registry import Task
+
 
 class SynchronizeGroups(Task):
 
@@ -31,7 +33,8 @@ class SynchronizeGroups(Task):
             synced = 0
 
             # Get all users in the source groups
-            users_in_source = User.objects.filter(groups__id__in=sync.get('source')).exclude(groups__id__in=sync.get('destination'))
+            users_in_source = User.objects.filter(
+                groups__id__in=sync.get('source')).exclude(groups__id__in=sync.get('destination'))
 
             # Check if any users were found
             if len(users_in_source) > 0:
@@ -64,7 +67,8 @@ class SynchronizeGroups(Task):
             synced = 0
 
             # Get all users in the destination groups
-            users_in_destination = User.objects.filter(groups__id__in=sync.get('destination')).all().exclude(groups__id__in=sync.get('source'))
+            users_in_destination = User.objects.filter(
+                groups__id__in=sync.get('destination')).all().exclude(groups__id__in=sync.get('source'))
 
             # Check if any users were found
             if len(users_in_destination) > 0:
@@ -98,7 +102,11 @@ class SynchronizeGroups(Task):
 
                 # Check if any changes were made and if there was, log it
                 if synced > 0:
-                    logger.info(str(synced) + ' user(s) were removed from the destination group(s) because they were not in the source group(s).')
+                    logger.info(
+                        str(synced) +
+                        ' user(s) were removed from the destination group(s) ' +
+                        ' because they were not in the source group(s).'
+                    )
 
 
 # Register scheduler

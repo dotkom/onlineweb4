@@ -69,16 +69,6 @@
                                     <i class="fa fa-angle-double-right orange"></i> Oversikt
                                 </a>
                             </li>
-                            <li>
-                                <a href="{% url 'dashboard_tag_create' %}">
-                                    <i class="fa fa-angle-double-right orange"></i> Ny tag
-                                </a>
-                            </li>
-                            <li>
-                                <a href="{% url 'dashboard_tag_index' %}">
-                                    <i class="fa fa-angle-double-right orange"></i> Tags
-                                </a>
-                            </li>
                         </ul>
                     </li>
                     {% endif %}
@@ -228,7 +218,7 @@
                     {% endif %}
                     {% if request.user.is_superuser %}
                     <li>
-                        <a href="#">
+                        <a href="/redwine/">
                             <i class="fa fa-trophy blue"></i> <span>Redwine</span>
                         </a>
                     </li>

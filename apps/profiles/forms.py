@@ -5,19 +5,32 @@ from django import forms
 from django.utils.translation import ugettext as _
 
 from apps.profiles.models import Privacy
-from apps.authentication.models import OnlineUser, FIELD_OF_STUDY_CHOICES, Position
+from apps.authentication.models import OnlineUser, Position
+
 
 class ProfileForm(forms.ModelForm):
 
-    class Meta:
+    class Meta(object):
         model = OnlineUser
 
-        fields = ['nickname', 'website', 'phone_number', 'address', 'zip_code', 'allergies', 'compiled', 'bio', 'gender', 'github','linkedin']
+        fields = [
+            'nickname',
+            'website',
+            'phone_number',
+            'address',
+            'zip_code',
+            'allergies',
+            'compiled',
+            'bio',
+            'gender',
+            'github',
+            'linkedin'
+        ]
         widgets = {
-            'allergies' : forms.Textarea(attrs={'id' : 'allergies'}),
-            'gender' : forms.Select(attrs={'class' : 'form-control', 'id' : 'gender'}),
-            'bio' : forms.Textarea(attrs={'id' : 'bio'}),
-            'compiled' : forms.CheckboxInput(attrs={'id' : 'compiled'}),
+            'allergies': forms.Textarea(attrs={'id': 'allergies'}),
+            'gender': forms.Select(attrs={'class': 'form-control', 'id': 'gender'}),
+            'bio': forms.Textarea(attrs={'id': 'bio'}),
+            'compiled': forms.CheckboxInput(attrs={'id': 'compiled'}),
         }
 
     def clean(self):
@@ -35,25 +48,26 @@ class ProfileForm(forms.ModelForm):
 
 class PrivacyForm(forms.ModelForm):
 
-    class Meta:
+    class Meta(object):
         model = Privacy
         exclude = ['user', 'expose_nickname']
 
 
 class MailSettingsForm(forms.ModelForm):
 
-    class Meta:
+    class Meta(object):
         model = OnlineUser
         fields = ['infomail', ]
 
+
 class PositionForm(forms.ModelForm):
 
-    class Meta:
+    class Meta(object):
         model = Position
         exclude = ['user']
         widgets = {
-            'committee' : forms.Select(attrs={'class' : 'form-control'}),
-            'position' : forms.Select(attrs={'class' : 'form-control'}),
+            'committee': forms.Select(attrs={'class': 'form-control'}),
+            'position': forms.Select(attrs={'class': 'form-control'}),
         }
 
     def clean(self):
@@ -61,10 +75,12 @@ class PositionForm(forms.ModelForm):
 
         range_compiler = re.compile(r'\d{4}-\d{4}')
         year_range = self.cleaned_data['period']
-        
+
         # If it doesn't match the format YYYY-YYYY
         if not range_compiler.match(year_range):
-            self._errors['period'] = self.error_class([_(u'Feil format. Dobbelsjekk at input er på formatet YYYY-YYYY.')])
+            self._errors['period'] = self.error_class(
+                [_(u'Feil format. Dobbelsjekk at input er på formatet YYYY-YYYY.')]
+            )
             return self.cleaned_data
 
         years = year_range.split('-')
@@ -87,10 +103,10 @@ class MembershipSettingsForm(forms.ModelForm):
         super(MembershipSettingsForm, self).__init__(*args, **kwargs)
         self.fields['started_date'].widget.attrs['class'] = 'hasDatePicker'
 
-    class Meta:
+    class Meta(object):
         model = OnlineUser
-        fields = ['field_of_study', 'started_date', ]
+        fields = ['field_of_study', 'started_date']
 
         widgets = {
-            'started_date' : forms.TextInput(attrs={'placeholder' : 'YYYY-MM-DD'}),
+            'started_date': forms.TextInput(attrs={'placeholder': 'YYYY-MM-DD'}),
         }

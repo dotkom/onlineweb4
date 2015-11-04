@@ -31,6 +31,7 @@ def count_fos(value):
         ordered_answers.append([x, answer_count[x]])
     return ordered_answers
 
+
 @register.filter
 def count_rating(value):
     """

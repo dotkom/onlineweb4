@@ -1,6 +1,5 @@
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 import json
-import os
 import re
 import uuid
 from smtplib import SMTPException
@@ -26,15 +25,21 @@ from apps.authentication.forms import NewEmailForm
 from apps.authentication.models import Email, RegisterToken, Position
 from apps.authentication.models import OnlineUser as User
 from apps.marks.models import Mark, Suspension
-from apps.profiles.forms import (MailSettingsForm, PrivacyForm,
-                                ProfileForm, MembershipSettingsForm, PositionForm)
+from apps.profiles.forms import (
+    PrivacyForm,
+    ProfileForm,
+    PositionForm
+)
 from apps.profiles.models import Privacy
+from apps.payment.models import PaymentRelation, PaymentDelay
 from utils.shortcuts import render_json
 
 """
 Index for the entire user profile view
 Methods redirect to this view on save
 """
+
+
 @login_required
 def index(request, active_tab='overview'):
     context = _create_profile_context(request)
@@ -42,14 +47,16 @@ def index(request, active_tab='overview'):
 
     return render(request, 'profiles/index.html', context)
 
+
 def _create_profile_context(request):
 
     groups = Group.objects.all()
 
     Privacy.objects.get_or_create(user=request.user)  # This is a hack
     """
-    ... to make sure a privacy exists when visiting /profiles/privacy/. Until now, it has been generated upon loading models.py,
-    which is a bit hacky. The code is refactored to use Django signals, so whenever a user is created, a privacy-property is set up.
+    To make sure a privacy exists when visiting /profiles/privacy/.
+    Until now, it has been generated upon loading models.py, which is a bit hacky.
+    The code is refactored to use Django signals, so whenever a user is created, a privacy-property is set up.
     """
 
     context = {
@@ -87,8 +94,16 @@ def _create_profile_context(request):
         'approvals': [
             # Tuple syntax ('title', list_of_approvals, is_collapsed)
             (_(u"aktive søknader"), MembershipApproval.objects.filter(applicant=request.user, processed=False), False),
-            (_(u"avslåtte søknader"), MembershipApproval.objects.filter(applicant=request.user, processed=True, approved=False), True),
+            (_(u"avslåtte søknader"), MembershipApproval.objects.filter(
+                applicant=request.user,
+                processed=True,
+                approved=False
+            ), True),
             (_(u"godkjente søknader"), MembershipApproval.objects.filter(applicant=request.user, processed=True), True),
+        ],
+        'payments': [
+            (_(u'ubetalt'), PaymentDelay.objects.all().filter(user=request.user, active=True), False),
+            (_(u'betalt'), PaymentRelation.objects.all().filter(user=request.user), True),
         ],
     }
 
@@ -111,6 +126,7 @@ def edit_profile(request):
             messages.success(request, _(u"Brukerprofilen din ble endret"))
 
     return render(request, 'profiles/index.html', context)
+
 
 @login_required
 def privacy(request):
@@ -142,7 +158,7 @@ def connected_apps(request):
     context['active_tab'] = 'connected_apps'
 
     if request.method == 'POST':
-        if not 'token_id' in request.POST:
+        if 'token_id' not in request.POST:
             messages.error(request, _(u'Det ble ikke oppgitt noen tilgangsnøkkel i forespørselen.'))
         else:
             try:
@@ -173,6 +189,7 @@ def password(request):
 
     return render(request, 'profiles/index.html', context)
 
+
 @login_required
 def position(request):
     context = _create_profile_context(request)
@@ -192,38 +209,40 @@ def position(request):
 
     return render(request, 'profiles/index.html', context)
 
+
 @login_required
 def delete_position(request):
     if request.is_ajax():
         if request.method == 'POST':
             position_id = request.POST.get('position_id')
-            position = get_object_or_404(Position, pk=position_id)
-            if position.user == request.user:
-                position.delete()
+            pos = get_object_or_404(Position, pk=position_id)
+            if pos.user == request.user:
+                pos.delete()
                 return_status = json.dumps({'message': _(u"Posisjonen ble slettet.")})
                 return HttpResponse(status=200, content=return_status)
             else:
-                return_status = json.dumps({'message': _(u"Du prøvde å slette en posisjon som ikke tilhørte deg selv.")})
+                return_status = json.dumps({
+                    'message': _(u"Du prøvde å slette en posisjon som ikke tilhørte deg selv.")
+                })
             return HttpResponse(status=500, content=return_status)
         raise Http404
+
 
 @login_required
 def update_mark_rules(request):
     if request.is_ajax():
         if request.method == 'POST':
             accepted = request.POST.get('rules_accepted') == "true"
-
             if accepted:
                 return_status = json.dumps({'message': _(u"Du har valgt å akseptere prikkereglene.")})
                 request.user.mark_rules = True
                 request.user.save()
             else:
                 return_status = json.dumps({'message': _(u"Du kan ikke endre din godkjenning av prikkereglene.")})
-		return HttpResponse(status=403, content=return_status)
-
+                return HttpResponse(status=403, content=return_status)
             return HttpResponse(status=212, content=return_status)
-        return HttpResponse(status=405)
-    raise Http404
+    return HttpResponse(status=405)
+
 
 @login_required
 def add_email(request):
@@ -244,7 +263,7 @@ def add_email(request):
             # Check if it's studmail and if someone else already has it in their profile
             if re.match(r'[^@]+@stud\.ntnu\.no', email_string):
                 ntnu_username = email_string.split("@")[0]
-                user = User.objects.filter(ntnu_username = ntnu_username)
+                user = User.objects.filter(ntnu_username=ntnu_username)
                 if user.count() == 1:
                     if user != request.user:
                         messages.error(request, _(u"En bruker med dette NTNU-brukernavnet fins allerede."))
@@ -261,26 +280,36 @@ def add_email(request):
 
     return render(request, 'profiles/index.html', context)
 
+
 @login_required
 def delete_email(request):
     if request.is_ajax():
         if request.method == 'POST':
             email_string = request.POST.get('email')
             email = get_object_or_404(Email, email=email_string)
-            
+
             # Check if the email belongs to the registered user
             if email.user != request.user:
-                return HttpResponse(status=412, content=json.dumps(
-                                                    {'message': _(u"%s er ikke en eksisterende epostaddresse på din profil.") % email.email}
-                                                ))
+                return HttpResponse(
+                    status=412,
+                    content=json.dumps({
+                        'message': _(u"%s er ikke en eksisterende epostaddresse på din profil.") % email.email
+                    })
+                )
 
             # Users cannot delete their primary email, to avoid them deleting all their emails
             if email.primary:
-                return HttpResponse(status=412, content=json.dumps({'message': _(u"Kan ikke slette primær-epostadresse.")}))
-            
+                return HttpResponse(
+                    status=412,
+                    content=json.dumps({
+                        'message': _(u"Kan ikke slette primær-epostadresse.")
+                    })
+                )
+
             email.delete()
             return HttpResponse(status=200)
     return HttpResponse(status=404)
+
 
 @login_required
 def set_primary(request):
@@ -291,15 +320,21 @@ def set_primary(request):
 
             # Check if the email belongs to the registered user
             if email.user != request.user:
-                return HttpResponse(status=412, content=json.dumps(
-                                                    {'message': _(u"%s er ikke en eksisterende epostaddresse på din profil.") % email.email}
-                                                ))
+                return HttpResponse(
+                    status=412,
+                    content=json.dumps({
+                        'message': _(u"%s er ikke en eksisterende epostaddresse på din profil.") % email.email}
+                    )
+                )
 
             # Check if it was already primary
             if email.primary:
-                return HttpResponse(status=412, content=json.dumps(
-                                                    {'message': _(u"%s er allerede satt som primær-epostaddresse.") % email.email}
-                                                ))
+                return HttpResponse(
+                    status=412,
+                    content=json.dumps({
+                        'message': _(u"%s er allerede satt som primær-epostaddresse.") % email.email}
+                    )
+                )
 
             # Deactivate the old primary, if there was one
             primary_email = request.user.get_email()
@@ -313,6 +348,7 @@ def set_primary(request):
             return HttpResponse(status=200)
     raise Http404
 
+
 @login_required
 def verify_email(request):
     if request.is_ajax():
@@ -322,21 +358,28 @@ def verify_email(request):
 
             # Check if the email belongs to the registered user
             if email.user != request.user:
-                return HttpResponse(status=412, content=json.dumps(
-                                                    {'message': _(u"%s er ikke en eksisterende epostaddresse på din profil.") % email.email}
-                                                ))
+                return HttpResponse(
+                    status=412,
+                    content=json.dumps({
+                        'message': _(u"%s er ikke en eksisterende epostaddresse på din profil.") % email.email}
+                    )
+                )
 
             # Check if it was already verified
             if email.verified:
-                return HttpResponse(status=412, content=json.dumps(
-                                                    {'message': _(u"%s er allerede verifisert.") % email.email}
-                                                ))
+                return HttpResponse(
+                    status=412,
+                    content=json.dumps({
+                        'message': _(u"%s er allerede verifisert.") % email.email}
+                    )
+                )
 
             # Send the verification mail
             _send_verification_mail(request, email.email)
 
             return HttpResponse(status=200)
     raise Http404
+
 
 def _send_verification_mail(request, email):
 
@@ -358,10 +401,11 @@ kan dette gjøres ved å klikke på knappen for verifisering på din profil.
 """) % (request.META['HTTP_HOST'], token)
 
     try:
-        send_mail(_(u'Verifiser din epost %s') % email, email_message, settings.DEFAULT_FROM_EMAIL, [email,])
+        send_mail(_(u'Verifiser din epost %s') % email, email_message, settings.DEFAULT_FROM_EMAIL, [email])
     except SMTPException:
         messages.error(request, u'Det oppstod en kritisk feil, epostadressen er ugyldig!')
         return redirect('home')
+
 
 @login_required
 def toggle_infomail(request):
@@ -376,6 +420,7 @@ def toggle_infomail(request):
             return HttpResponse(status=200, content=json.dumps({'state': request.user.infomail}))
     raise Http404
 
+
 @login_required
 def toggle_jobmail(request):
     """
@@ -389,6 +434,7 @@ def toggle_jobmail(request):
             return HttpResponse(status=200, content=json.dumps({'state': request.user.jobmail}))
     raise Http404
 
+
 @login_required
 def user_search(request):
     groups_to_include = settings.USER_SEARCH_GROUPS
@@ -396,10 +442,11 @@ def user_search(request):
     users_to_display = User.objects.filter(privacy__visible_for_other_users=True)
 
     context = {
-        'users' : users_to_display,
-        'groups' : groups,
+        'users': users_to_display,
+        'groups': groups,
     }
     return render(request, 'profiles/users.html', context)
+
 
 @login_required
 def api_user_search(request):
@@ -407,6 +454,7 @@ def api_user_search(request):
         users = search_for_users(request.GET.get('query'))
         return render_json(users)
     return render_json(error=u'Mangler søkestreng')
+
 
 def search_for_users(query, limit=10):
     if not query:
@@ -419,13 +467,15 @@ def search_for_users(query, limit=10):
 
     return results[:limit]
 
+
 @login_required
 def api_plain_user_search(request):
     """ The difference between plain_user_search and the other is exposing only id and name. """
     if request.GET.get('query'):
         users = search_for_plain_users(request.GET.get('query'))
-        return JsonResponse(users, safe=False) 
+        return JsonResponse(users, safe=False)
     return render_json(error=u'Mangler søkestreng')
+
 
 def search_for_plain_users(query, limit=10):
     if not query:
