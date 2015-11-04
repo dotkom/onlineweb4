@@ -5,7 +5,7 @@ from django.core.urlresolvers import reverse
 from django.core.validators import MinValueValidator
 
 from apps.authentication.models import OnlineUser as User
-from filebrowser.fields import FileBrowseField
+from apps.gallery.models import ResponsiveImage
 
 
 class Product(models.Model):
@@ -14,6 +14,7 @@ class Product(models.Model):
     slug = models.SlugField(unique=True)
     short = models.CharField(max_length=200)
     description = models.TextField()
+    images = models.ManyToManyField(ResponsiveImage, default=None, blank=True)
 
     price = models.DecimalField(max_digits=10, decimal_places=2)
     stock = models.PositiveSmallIntegerField()
@@ -30,22 +31,6 @@ class Product(models.Model):
     class Meta:
         verbose_name = 'Produkt'
         verbose_name_plural = 'Produkter'
-
-
-class ProductImage(models.Model):
-    IMAGE_FOLDER = "images/webshop"
-    IMAGE_EXTENSIONS = ['.jpg', '.jpeg', '.gif', '.png', '.tif', '.tiff']
-
-    product = models.ForeignKey('Product', related_name='images')
-    # image = FileBrowseField(
-    #     'bilde', max_length=200,
-    #     directory=IMAGE_FOLDER, extensions=IMAGE_EXTENSIONS, null=True
-    # )
-    image = models.ImageField(upload_to=IMAGE_FOLDER)
-
-    class Meta:
-        verbose_name = 'Produktbilde'
-        verbose_name_plural = 'Produktbilder'
 
 
 class Category(models.Model):
