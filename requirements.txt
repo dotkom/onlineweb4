@@ -37,9 +37,6 @@ django-formset-js==0.4.3
 django-nose>=1.4,<1.5           # We use this test runner locally
 nose==1.3.4                     # We use this test runner locally
 
-# Frigg
-requests[security]==2.8.0
-
 # Wiki
 git+https://github.com/django-wiki/django-wiki.git@e28776af87580740fb67488329c86dd58313d531#egg=wiki==0.1.dev1
 
