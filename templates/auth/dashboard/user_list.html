@@ -14,21 +14,28 @@ Brukerprofiler
 
 {% block breadcrumbs %}
 <li><a href="/dashboard/auth/">Autentisering</a></li>
+{% if not search_results %}
 <li>Brukerprofiler</li>
+{% else %}
+<li><a href="{% url 'user_list' %}">Brukerprofiler</a></li>
+<li>Søk på "{{ query }}"</li>
+{% endif %}
 {% endblock %}
 
 {% block content %}
 <div class="row">
     <div class="col-md-12 col-lg-6">
-        <div class="input-group">
-            <span class="input-group-addon">Søk</span>
-            <input type="text" class="form-control" placeholder="Søkeord..." id="search_input">
-            <span class="input-group-btn">
-                <a href="#" class="btn btn-success">
-                    <i class="fa fa-search fa-lg"></i>
-                </a>
-            </span>
-        </div>
+        <form class="form" method="get" action="{% url 'user_search' %}">
+            <div class="input-group">
+                <span class="input-group-addon">Søk</span>
+                <input type="text" class="form-control" placeholder="Søkeord..." name="q">
+                <span class="input-group-btn">
+                    <a href="#" class="btn btn-success">
+                        <i class="fa fa-search fa-lg"></i>
+                    </a>
+                </span>
+            </div>
+        </form>
     </div>
     {% if is_paginated %}
     <div class="col-md-12 col-lg-6">
@@ -69,6 +76,7 @@ Brukerprofiler
             </thead>
             <tbody id="userlist_body">
             {% for user in object_list %}
+            {% if query %}{% with user=user.object %}
                 <tr>
                     <td><a href="{% url 'dashboard_user_detail' user.id %}">{{ user.get_full_name }}</a></td>
                     <td>{% if user.ntnu_username %}{{ user.ntnu_username }}{% else %}-{% endif %}</td>
@@ -86,6 +94,25 @@ Brukerprofiler
                     <td>-</td>
                     {% endif %}
                 </tr>
+            {% endwith %}{% else %}
+                <tr>
+                    <td><a href="{% url 'dashboard_user_detail' user.id %}">{{ user.get_full_name }}</a></td>
+                    <td>{% if user.ntnu_username %}{{ user.ntnu_username }}{% else %}-{% endif %}</td>
+                    {% if user.member %}
+                    <td>{{ user.member.registered|date:'Y-m-d' }}</td>
+                    <td>{% if user.member.is_active %}{{ user.member.expiration_date|date:'Y-m-d' }}
+                        {% else %}<i>{{ user.member.expiration_date|date:'T-m-d' }}</i>{% endif %}
+                    </td>
+                    <td>{{ user.member.note }}</td>
+                    <td>{% if user.member.is_active %}Ja{% else %}Nei{% endif %}</td>
+                    {% else %}
+                    <td>-</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>-</td>
+                    {% endif %}
+                </tr>
+            {% endif %}
             {% endfor %}
             </tbody>
         </table>

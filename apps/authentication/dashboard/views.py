@@ -8,11 +8,13 @@ from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Group
 from django.core.urlresolvers import reverse, reverse_lazy
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import get_object_or_404, render, redirect
 from django.http import HttpResponse
 from django.views.generic import UpdateView, DetailView, DeleteView, ListView
+from django.views.generic.list import BaseListView
 
 from guardian.decorators import permission_required
+from watson.views import SearchMixin, SearchView
 
 from apps.authentication.models import OnlineUser as User
 from apps.authentication.models import AllowedUsername
@@ -149,6 +151,16 @@ class UserListView(DashboardPermissionMixin, ListView):
     paginator_class = Paginator
     permission_required = 'authentication.view_onlineuser'
     template_name = 'auth/dashboard/user_list.html'
+
+
+class UserSearchView(DashboardPermissionMixin, SearchView):
+    model = User
+    queryset = User.objects.all().exclude(id=-1)
+    paginate_by = 25
+    paginator_class = Paginator
+    permission_required = 'authentication.view_onlineuser'
+    template_name = 'auth/dashboard/user_list.html'
+    empty_query_redirect = reverse_lazy('user_list')
 
 
 class UserDetailView(DashboardPermissionMixin, DetailView):
