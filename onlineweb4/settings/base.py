@@ -1,6 +1,7 @@
 # -*- coding: utf8 -*-
 import os
 import sys
+
 import wiki
 from django.contrib.messages import constants as messages
 
