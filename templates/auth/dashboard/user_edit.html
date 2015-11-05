@@ -15,7 +15,7 @@
 {% endblock %}
 
 {% block breadcrumbs %}
-<li><a href="{% url 'members_index' %}">Brukerprofiler</a></li>
+<li><a href="{% url 'user_list' %}">Brukerprofiler</a></li>
 <li><a href="{% url 'dashboard_user_detail' user.id %}">{{ user }}</a></li>
 <li>Endre</li>
 {% endblock %}
