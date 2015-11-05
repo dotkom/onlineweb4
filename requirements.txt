@@ -17,7 +17,7 @@ django-filebrowser==3.5.4 		# File uploading
 django-grappelli==2.6.3         # Admin template set
 git+git://github.com/clintecker/django-chunks.git@0.2# Chunks, or reusable key:content for templates.
 django-crispy-forms==1.4.0      # nice forms
-django-extensions==1.5.2        # nice extra commands for debugging, etc
+django-extensions==1.5.9        # nice extra commands for debugging, etc
 django-dynamic-fixture==1.8.1   # Dynamic fixtures for models
 django-recaptcha==1.0.4         # Google ReCaptcha
 django-oauth-toolkit==0.8.1     # OAuth2 authentication support
@@ -48,6 +48,9 @@ nose-cov==1.6
 teamcity-messages==1.16
 flake8==2.4.1
 pepper8>=1.0.4                  # Transforms flake8 output to HTML report + TC messages
+
+# Frigg
+requests[security]==2.8.0
 
 # Wiki
 git+https://github.com/django-wiki/django-wiki.git@e28776af87580740fb67488329c86dd58313d531#egg=wiki==0.1.dev1
