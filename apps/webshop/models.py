@@ -17,7 +17,7 @@ class Product(models.Model):
     images_csv = models.CommaSeparatedIntegerField(max_length=200, default=None, blank=True, null=True)
 
     price = models.DecimalField(max_digits=10, decimal_places=2)
-    stock = models.PositiveSmallIntegerField()
+    stock = models.PositiveSmallIntegerField(null=True, blank=True)
 
     def get_absolute_url(self):
         return reverse('webshop_product', args=[str(self.slug)])
