@@ -56,7 +56,7 @@ class Category(models.Model):
 
 class ProductSize(models.Model):
     product = models.ForeignKey(Product)
-    size = models.CharField(u'Størelse', max_length=25)
+    size = models.CharField(u'Størrelse', max_length=25)
     description = models.CharField(u'Beskrivelse', max_length=50, null=True, blank=True)
     stock = models.PositiveSmallIntegerField(null=True, blank=True)
 

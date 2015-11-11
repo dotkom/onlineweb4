@@ -46,7 +46,7 @@
         {{ product.price|default:0|floatformat:2 }},-
         <form method="post">
           {% csrf_token %}
-          <div class="form-group">
+          <div class="form-group order-form">
             <label class="control-label">
               Antall
               <input class="form-control" min="1" name="quantity" type="number" value="1">
