@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from django.utils import timezone
+
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect
@@ -32,7 +34,7 @@ class Home(CartMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(Home, self).get_context_data(**kwargs)
-        context['categories'] = Category.objects.all()
+        context['products'] = Product.objects.filter(active=True)
         return context
 
 
@@ -55,6 +57,12 @@ class ProductDetail(CartMixin, DetailView):
 
     def post(self, request, *args, **kwargs):
         product = self.get_object()
+
+        if product.deadline and product.deadline < timezone.now():
+            messages.error(request, "Dette produktet er ikke lenger tilgjengelig.")
+            return super(ProductDetail, self).get(request, *args, **kwargs)
+
+
         form = OrderForm(request.POST)
         if form.is_valid():
             order_line = self.current_order_line()
@@ -82,15 +90,6 @@ class ProductDetail(CartMixin, DetailView):
 
 class Checkout(CartMixin, TemplateView):
     template_name = 'webshop/checkout.html'
-
-    def post(self, request, *args, **kwargs):
-        order_line = self.current_order_line()
-        if order_line.count_orders() > 0:
-            order_line.pay()
-            messages.success(request, 'Kjøp fullført!')
-        else:
-            messages.error(request, 'Ingen varer valgt')
-        return super(Checkout, self).get(request, *args, **kwargs)
 
 
 class RemoveOrder(CartMixin, RedirectView):

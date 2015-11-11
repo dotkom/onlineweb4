@@ -4,7 +4,7 @@
 {% load markdown_deux_tags %}
 
 {% block title %}Webshop {{ category }} - Online{% endblock title %}
-{% block header %}<a href="../..">Webshop</a> / {{ category }}{% endblock header %}
+{% block header %}<a href="{% url 'webshop_home' %}">Webshop</a>  / {{ category }}{% endblock header %}
 
 {% block webshop_content %}
     {% for product in category.products.all %}

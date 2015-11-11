@@ -6,8 +6,8 @@
 
 {% block title %}Webshop {{ product }} - Online{% endblock title %}
 {% block header %}
-<a href="../..">Webshop /</a> 
-<a href="..">{{ product.category }}</a> / 
+<a href="{% url 'webshop_home' %}">Webshop /</a> 
+<a href="{% url 'webshop_category' slug=product.category.slug %}">{{ product.category }}</a> / 
 {{product}}
 {% endblock header %}
 
