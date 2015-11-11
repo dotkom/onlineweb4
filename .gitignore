@@ -33,3 +33,6 @@ _tmp
 uploaded_media/*
 build/*
 node_modules/*
+.tox
+coverage
+coverage.xml

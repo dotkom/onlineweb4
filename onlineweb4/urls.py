@@ -1,13 +1,13 @@
+from apps import mommy
 from django.conf import settings
-from django.conf.urls import patterns, include, url
-from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+from django.conf.urls import include, patterns, url
 from django.contrib import admin
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.http import HttpResponse
 from django.views.generic import TemplateView
 from django_nyt.urls import get_pattern as get_notify_pattern
-
-from wiki.urls import get_pattern as get_wiki_pattern
 from filebrowser.sites import site
+from wiki.urls import get_pattern as get_wiki_pattern
 
 # URL config
 admin.autodiscover()
