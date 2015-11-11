@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.shortcuts import redirect
 from django.views.generic import TemplateView, DetailView, RedirectView
 from apps.webshop.models import Category, Product, Order, OrderLine, ProductSize
 from apps.webshop.forms import OrderForm
@@ -65,11 +66,6 @@ class ProductDetail(CartMixin, DetailView):
             if order:
                 # Adding to existing order
                 order.quantity += form.cleaned_data['quantity']
-                messages.info(
-                    request,
-                    'Produktet \'{product}\' var allerede i handlekurven din. Antall har blitt oppdatert til {quantity}.'
-                    .format(product=product, quantity=order.quantity)
-                )
             else:
                 # Creating new order
                 order = Order(
@@ -77,12 +73,8 @@ class ProductDetail(CartMixin, DetailView):
                     quantity=form.cleaned_data['quantity'],
                     size=size,
                     order_line=order_line)
-                messages.success(
-                    request,
-                    '\'{product}\' x {quantity} har blitt lagt til i handlekurven.'
-                    .format(product=product, quantity=order.quantity)
-                )
             order.save()
+            return redirect('webshop_checkout')
         else:
             messages.error(request, 'Vennligst oppgi et gyldig antall')
         return super(ProductDetail, self).get(request, *args, **kwargs)
