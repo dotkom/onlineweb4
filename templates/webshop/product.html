@@ -43,7 +43,12 @@
         </div>
     </div>
     <div class="col-sm-5">
+      <div class="product-name">
+        {{ product.name }}
+      </div>
+      <div class="product-price">
         {{ product.price|default:0|floatformat:2 }},-
+      </div>
         <form method="post">
           {% csrf_token %}
           <div class="form-group order-form">
@@ -62,23 +67,17 @@
           </div>
           <input type="submit" class="btn btn-lg btn-default" value="Legg til">
         </form>
+        {% if product.deadline %}
+          <hr>
+          <p>Dette produktet er kun tilgjengelig frem til </p>
+          <b>{{ product.deadline }}</b>
+        {% endif %}
     </div>
 </div>
 <div class="row">
     <div class="col-sm-7 description">
         <p class="short">{{ product.short }}</p>
         {{ product.description }}
-    </div>
-    <div class="col-sm-5">
-        {% for related_product in product.related_products %}
-        <div class="thumbnail">
-            <img src="{{ related_product.images.first.image.url }}">
-            <div class="caption">
-                <h3>{{ related_product }}</h3>
-                <p>{{ related_product.short }}</p>
-            </div>
-        </div>
-        {% endfor %}
     </div>
 </div>
 {% endblock %}
