@@ -1,12 +1,16 @@
 from django.contrib import messages
+from django.contrib.contenttypes.models import ContentType
 from django.core.urlresolvers import reverse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponseBadRequest, HttpResponse, JsonResponse
 from django.views.generic import TemplateView, DetailView, RedirectView, UpdateView, CreateView, DeleteView
 
 from apps.dashboard.tools import DashboardMixin, DashboardPermissionMixin
+from apps.gallery.models import ResponsiveImage
 from apps.webshop.dashboard.forms import CategoryForm, ProductForm
 from apps.webshop.models import Category, Product
+
+from taggit.models import TaggedItem
 
 import logging
 
@@ -116,3 +120,24 @@ class ProductDelete(DashboardPermissionMixin, DeleteView):
 
     def get_success_url(self):
         return reverse('dashboard-webshop:category', kwargs={'slug': self.object.category.slug})
+
+
+class ProductImage(DashboardPermissionMixin, DetailView):
+    model = Product
+    template_name = 'webshop/dashboard/image.html'
+    permission_required = 'webshop.change_product'
+
+    def get_context_data(self, *args, **kwargs):
+        context = super(ProductImage, self).get_context_data(*args, **kwargs)
+        # Filter out potential ResponsiveImage objects that have orphan file references
+        images = ResponsiveImage.objects.all().order_by('-timestamp')[:15]
+        context['images'] = filter(lambda i: i.file_status_ok(), images)
+
+        context['tags'] = sorted(set(tag.tag.name for tag in TaggedItem.objects.filter(
+            content_type=ContentType.objects.get_for_model(ResponsiveImage)
+        ).order_by('tag__name')))
+
+        return context
+
+    def post(self, request, *args, **kwargs):
+        pass

@@ -14,7 +14,7 @@ class Product(models.Model):
     slug = models.SlugField(unique=True)
     short = models.CharField(max_length=200)
     description = models.TextField()
-    images = models.ManyToManyField(ResponsiveImage, default=None, blank=True)
+    images_csv = models.CommaSeparatedIntegerField(max_length=200, default=None, blank=True, null=True)
 
     price = models.DecimalField(max_digits=10, decimal_places=2)
     stock = models.PositiveSmallIntegerField()
@@ -24,6 +24,11 @@ class Product(models.Model):
 
     def related_products(self):
         return self.category.products.exclude(id=self.id)
+
+    @property
+    def images(self):
+        id_tuple = self.images_csv.split(',')
+        return ResponsiveImage.query.filter(id__in=id_tuple)
 
     def __unicode__(self):
         return self.name

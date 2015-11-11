@@ -1,0 +1,89 @@
+{% extends "dashboard_base.html" %}
+{% load compress %}
+
+{% block title %}
+Webshop - Online Dashboard
+{% endblock title %}
+
+{% block styles %}
+    {{ block.super }}
+    {% compress css %}
+    <link rel="stylesheet" type="text/less" href="{{ STATIC_URL }}less/webshop.less">
+    {% endcompress %}
+{% endblock %}
+
+{% block js %}
+    {{ block.super }}
+    {% compress js %}
+    <script src="{{ STATIC_URL }}js/dashboard/webshop.js"></script>
+    <script src="{{ STATIC_URL }}js/dashboard/gallery.js"></script>
+    {% endcompress %}
+{% endblock js %}
+
+{% block page-header %}
+Webshop
+{% endblock %}
+
+{% block breadcrumbs %}
+    <li><a href="{% url 'dashboard-webshop:index' %}">Webshop</a></li>
+    <li><a href="{% url 'dashboard-webshop:category' slug=product.category.slug %}">{{ product.category }}</a></li>
+    <li>{{ product }}</li>
+{% endblock %}
+
+{% block content %}
+{# Clean up and make this dynamic. Sorry #}
+<p>Velg produktbilder</p>
+<p>
+    <a href="{% url 'gallery_dashboard:upload' %}" class="btn btn-primary">
+        <i class="fa fa-image fa-lg"></i> Last opp
+    </a>
+</p>
+<div class="input-group">
+    <span class="input-group-addon">Søk</span>
+    <input type="text" class="form-control" placeholder="Søkeord..." id="dashboard-gallery-search-query">
+    <span class="input-group-btn">
+        <a href="#" id="dashboard-gallery-search-button" class="btn btn-success">
+            <i class="fa fa-search fa-lg"></i>
+        </a>
+    </span>
+</div>
+<div>
+    {% for tag in tags %}
+    <a href="#" class="label label-warning dashboard-gallery-tag">{{ tag }}</a>
+    {% endfor %}
+</div>
+<p>Valgte bilder:</p>
+<div id="webshop-chosen-list"></div>
+<br />
+<div class="panel panel-default" id="webshop-image-list">
+    <div class="panel-heading">
+        <h3 class="panel-title">Bilder</h3>
+    </div>
+    <div class="panel-body">
+        <table class="table table-striped table-condensed tablesorter">
+            <thead>
+                <tr>
+                    <th>Bilde</th>
+                    <th>Navn</th>
+                    <th>Beskrivelse</th>
+                    <th>Tidspunkt</th>
+                </tr>
+            </thead>
+            <tbody id="dashboard-gallery-table">
+            {% for img in images %}
+                <tr>
+                    <td>
+                        <a href="{% url 'gallery_dashboard:detail' img.pk %}" data-id="{{ img.pk }}" class="webshop-image">
+                            <img src="{{ img.thumb }}" alt title="{{ img.name|striptags }}">
+                        </a>
+                    </td>
+                    <td><a href="{% url 'gallery_dashboard:detail' img.pk %}">{{ img.name|striptags }}</a></td>
+                    <td>{{ img.description|striptags }}</td>
+                    <td>{{ img.timestamp|date:'Y-m-d H:i:s' }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock content %}

@@ -1,4 +1,5 @@
 var Webshop = (function ($, tools) {
+    var images;
 
     // Perform self check, display error if missing deps
     var performSelfCheck = function () {
@@ -56,6 +57,73 @@ var Webshop = (function ($, tools) {
 
 })(jQuery, Dashboard.tools);
 
+var WebshopGallery = (function ($, tools) {
+    var images = [];
+    var chosenList;
+
+    var updateListImages = function() {
+        chosenList.empty();
+        for (var i = 0; i < images.length; i++) {
+            var clone = $(images[i]).clone();
+            // Remove on click
+            clone.on('click', function() {
+                removeImage(clone.context);
+                
+            });
+            chosenList.append(clone);
+        }
+    };
+
+    var addImage = function(image) {
+        var $image = $(image);
+        images.push(image);
+        updateListImages();
+        $image.addClass('image-selected');
+    };
+
+    var removeImage = function(image) {
+        var $image = $(image);
+        // Remove from list
+        var index = images.indexOf(image);
+        if(index > -1) {
+            images.splice(index, 1);
+        }
+        updateListImages();
+        $image.removeClass('image-selected');
+    };
+
+    var toggleImage = function(image) {
+        var $image = $(image); // we php now
+        var selected = $image.hasClass('image-selected');
+        if(!selected) {
+            addImage(image);
+        }
+        else {
+            removeImage(image);
+        }
+        console.log(images);
+    };
+
+    return {
+        init: function() {
+            chosenList = $('#webshop-chosen-list');
+            $('#webshop-image-list').on('click', 'img', function(e) {
+                e.preventDefault();
+                toggleImage(this);
+            });
+            chosenList.on('click', 'img', function(e) {
+                e.preventDefault();
+                removeImage(this);
+            });
+        }
+    };
+})(jQuery, Dashboard.tools);
+
 $(document).ready(function () {
     Webshop.init();
+
+    // Gallery image chooser
+    if($('#webshop-image-list').size() > 0) {
+        WebshopGallery.init();
+    }
 });
