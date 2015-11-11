@@ -138,7 +138,9 @@ def webshop_pay(request):
 
                 order_line.pay()
 
-                return HttpResponse("Inskudd utført.", content_type="text/plain", status=200) 
+                messages.success(request, "Betaling utført")
+
+                return HttpResponse("Betaling utført.", content_type="text/plain", status=200) 
             except stripe.CardError, e:
                 messages.error(request, str(e))
                 return HttpResponse(str(e), content_type="text/plain", status=500) 

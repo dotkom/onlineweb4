@@ -6,7 +6,7 @@
 
 {% block title %}Webshop - Online{% endblock title %}
 {% block header %}
-<a href="..">Webshop /</a> 
+<a href="{% url 'webshop_home' %}">Webshop /</a> 
 Checkout
 {% endblock header %}
 
@@ -19,47 +19,52 @@ Checkout
         <th></th>
         <th>Pris</th>
         <th>Antall</th>
+        <th></th>
     </tr>
 </thead>
 {% for order in order_line.orders.all %}
     <tr>
         <td>
-            {% if order.product.images.all %}
-            <img width="100" src="{{ order.product.images.first.image.url }}">
-            {% endif %}
+            {% with order.product.images.all|first as thumb %}
+                <div class="col-md-5 item-bg hidden-xs" style="background-image: url('{{ thumb.image_xs.url }}');">
+                </div>
+            {% endwith %}
         </td>
         <td>
-            <p><a href="{{order.product.get_absolute_url}}">{{ order.product }} ({{ order.size }})</a></p>
+            <p><a href="{{order.product.get_absolute_url}}">{{ order.product }} {% if order.size %} ({{ order.size }}) {% endif %}</a></p>
             <p>{{ order.product.short }}</p>
-            <form method="POST" action="{% url 'webshop_remove_orders' %}">
-                {% csrf_token %}
-                <input type="hidden" name="id" value="{{ order.id }}">
-                <p><button class="btn btn-primary" type="submit">Fjern</button></p>
-            </form>
-            <p>
         </td>
         <td>
             {{ order.product.price }},-
         <td>
             {{ order.quantity }}
         </td>
+        <td>
+            <form method="POST" action="{% url 'webshop_remove_orders' %}">
+                {% csrf_token %}
+                <input type="hidden" name="id" value="{{ order.id }}">
+                <button class="btn btn-danger" type="submit">
+                    <span class="glyphicon glyphicon-remove"></span>
+                </button>
+            </form>
+        </td>
     </tr>
 {% endfor %}
+    {% with count=order_line.count_orders %}
+    <tr class="order-total">
+        <td>Total</td>
+        <td></td>
+        <td>{{ order_line.subtotal }}</td>
+        <td>{{ count }}</td>
+        <td>
+            <button id="stripe-button" class="btn btn-success">Betal</button>
+            <script src="{{ STATIC_URL }}js/libs/jquery-2.1.3.min.js"></script>
+            <script src="https://checkout.stripe.com/checkout.js"></script>
+            <script src="{{ STATIC_URL }}js/webshop.js"></script>
+        </td>
+    </tr>
+    {% endwith %}
 </table>
-
-{% with count=order_line.count_orders %}
-<p><b>Delsum ({{ count }} ordre{{ count|pluralize:'r' }})</b>: {{ order_line.subtotal }},-</p>
-{% endwith %}
-
-<button id="stripe-button" class="btn btn-success">Betal</button>
-<script src="{{ STATIC_URL }}js/libs/jquery-2.1.3.min.js"></script>
-<script src="https://checkout.stripe.com/checkout.js"></script>
-<script src="{{ STATIC_URL }}js/webshop.js"></script>
-
-<form method="POST" action="{% url 'webshop_remove_orders' %}">
-    {% csrf_token %}
-    <p><button class="btn btn-primary" type="submit">Tøm handlekurv</button></p>
-</form>
 
 {% else %}
 Handlekurven din er tom

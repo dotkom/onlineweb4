@@ -22,7 +22,7 @@
             <div class="webshop-cart pull-right">
                 <a href="{% url 'webshop_checkout' %}"><span class="glyphicon glyphicon-shopping-cart"></span>
                 {% with count=order_line.count_orders %}
-                {{ count }} ordre i handlevognen.</a>
+                    {{ count }} varer i handlevognen.</a>
                 {% endwith %}
             </div>
         </div>
@@ -30,35 +30,34 @@
 
         {% block webshop_content %}
     
-        {% for category in categories %}
-            {% if forloop.counter|divisibleby:2 %}
-            <div class="row">   
-            {% endif %}
-                <div class="col-xs-12 col-sm-6 col-md-6">
-                    
-                    {% with category.products.all|first as shown_product %}
-                        {% with shown_product.images.all|first as thumb %}
-                        <div class="col-md-5 item-bg" style="background-image: url('{{ thumb.image_xs.url }}');">
+            {% for product in products %}
+
+                {% if forloop.counter|divisibleby:2 %}
+                <div class="row">   
+                {% endif %}
+                    <div class="col-xs-12 col-sm-6 col-md-6">
+                        <div class="col-md-5">
+                            {% with product.images.all|first as thumb %}
+                            <!-- TODO: MAKE IT SHOW resourcecenter/github.jpg if not found -->
+                            <a href="{{ product.get_absolute_url }}">
+                                <div class="col-md-5 item-bg" style="background-image: url('{{ thumb.image_xs.url }}');">
+                                </div>
+                            </a>
+                            {% endwith %}
                         </div>
-                        {% endwith %}
-                    {%endwith%}
-                    
-                    <div class="col-md-7 itemdescription">
-                        <h3><a href="{{ category.get_absolute_url }}">{{ category }}</a></h3>
-                        <p>
-                            Category description, like what it contains and why you should buy
-                            <ul>
-                                {% for product in category.products.all %}
-                                    <li><a href="{{ product.get_absolute_url }}">{{ product }}</a></li>
-                                {% endfor %}
-                            </ul>
-                        </p>
+                        <div class="col-md-7 resourcedescription">
+                            <h3><a href="{{ product.get_absolute_url }}">{{ product }}</a></h3>
+                            <p>
+                            {{ product.short }}
+                            </p>
+                        </div>
                     </div>
+                {% if forloop.counter|divisibleby:2 %}
                 </div>
-            {% if forloop.counter|divisibleby:2 %}
-            </div>
-            {% endif %}
-        {% endfor %}
+                {% endif %}
+                {% empty %}
+                    <li>Fant ingen produkter</li>
+            {% endfor %}
 
         {% endblock %}
 
