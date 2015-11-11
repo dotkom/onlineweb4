@@ -1,0 +1,44 @@
+{% extends "dashboard_base.html" %}
+{% load compress %}
+{% load addcss %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+{{ product }} - Online Dashboard
+{% endblock title %}
+
+{% block styles %}
+    {{ block.super }}
+    {% compress css %}
+    {% endcompress %}
+{% endblock %}
+
+{% block js %}
+    {{ block.super }}
+    {% compress js %}
+    <script src="{{ STATIC_URL }}js/dashboard/webshop.js"></script>
+    {% endcompress %}
+{% endblock js %}
+
+{% block page-header %}
+Webshop - {{ product }}
+{% endblock %}
+
+{% block breadcrumbs %}
+    <li><a href="{% url 'dashboard-webshop:index' %}">Webshop</a></li>
+    <li><a href="{% url 'dashboard-webshop:category' slug=product.category.slug %}">{{ product.category }}</a></li>
+    <li>{{ product }}</li>
+{% endblock %}
+
+{% block content %}
+<a href="{% url 'dashboard-webshop:product_update' slug=product.slug %}" class="btn btn-primary"><i class="fa fa-save"></i> Rediger</a>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">Produkt</h3>
+    </div>
+    <div class="panel-body">
+    {{ product }}
+    </div>
+</div>
+{% endblock content %}

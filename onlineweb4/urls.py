@@ -187,6 +187,12 @@ if 'apps.sso' in settings.INSTALLED_APPS:
         url(r'^dashboard/auth/sso/', include('apps.sso.dashboard.urls', namespace='dashboard', app_name='sso')),
     )
 
+if 'apps.webshop' in settings.INSTALLED_APPS:
+    urlpatterns += patterns('',
+        url(r'^webshop/',           include('apps.webshop.urls')),
+        url(r'^dashboard/webshop/', include('apps.webshop.dashboard.urls', namespace='dashboard-webshop', app_name='webshop')),
+    )
+
 # feedme
 if 'feedme' in settings.INSTALLED_APPS:
     urlpatterns += patterns('', url(r'^feedme/', include('feedme.urls', namespace='feedme')))

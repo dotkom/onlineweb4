@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+{% load compress %}
+{% load markdown_deux_tags %}
+
+{% block title %}Webshop - Online{% endblock title %}
+
+{% block styles %}
+    {{ block.super }}
+    {% compress css %}
+    <link rel="stylesheet" type="text/less" href="{{ STATIC_URL }}less/webshop.less">
+    {% endcompress %}
+{% endblock %}
+
+{% block content %}
+<section id="webshop">
+    <div class="container">
+        <div class="col-md-12">
+            <div class="page-header">
+                <h2 id="heading">{% block header%}Webshop{% endblock %}</h2>
+            </div>
+            <div class="webshop-cart pull-right">
+                <a href="{% url 'webshop_checkout' %}"><span class="glyphicon glyphicon-shopping-cart"></span>
+                {% with count=order_line.count_orders %}
+                    {{ count }} varer i handlevognen.</a>
+                {% endwith %}
+            </div>
+        </div>
+        
+
+        {% block webshop_content %}
+    
+            {% for product in products %}
+
+                {% if forloop.counter|divisibleby:2 %}
+                <div class="row">   
+                {% endif %}
+                    <div class="col-xs-12 col-sm-6 col-md-6">
+                        <div class="col-md-5">
+                            {% with product.images.all|first as thumb %}
+                            <!-- TODO: MAKE IT SHOW resourcecenter/github.jpg if not found -->
+                            <a href="{{ product.get_absolute_url }}">
+                                <div class="col-md-5 item-bg" style="background-image: url('{{ thumb.image_xs.url }}');">
+                                </div>
+                            </a>
+                            {% endwith %}
+                        </div>
+                        <div class="col-md-7 resourcedescription">
+                            <h3><a href="{{ product.get_absolute_url }}">{{ product }}</a></h3>
+                            <p>
+                            {{ product.short }}
+                            </p>
+                        </div>
+                    </div>
+                {% if forloop.counter|divisibleby:2 %}
+                </div>
+                {% endif %}
+                {% empty %}
+                    <li>Fant ingen produkter</li>
+            {% endfor %}
+
+        {% endblock %}
+
+
+    </div>
+</section>
+{% endblock %}

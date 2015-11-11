@@ -1,0 +1,86 @@
+{% extends "dashboard_base.html" %}
+{% load compress %}
+{% load addcss %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+{% if form.instance %}
+Rediger kategori - Online Dashboard
+{% else %}
+Ny kategori - Online Dashboard
+{% endif %}
+
+{% endblock title %}
+
+{% block styles %}
+    {{ block.super }}
+    {% compress css %}
+    {% endcompress %}
+{% endblock %}
+
+{% block js %}
+    {{ block.super }}
+    {% compress js %}
+    <script src="{{ STATIC_URL }}js/dashboard/webshop.js"></script>
+    {% endcompress %}
+{% endblock js %}
+
+{% block page-header %}
+Webshop - {{ category|default:"Legg til" }}
+{% endblock %}
+
+{% block breadcrumbs %}
+    <li><a href="{% url 'dashboard-webshop:index' %}">Webshop</a></li>
+    <li>{{ category|default:"Legg til" }}</li>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <form method="POST" action="">
+    <div class="col-md-12">
+        <button type="submit" class="btn btn-success"><i class="fa fa-save"></i> Lagre</button>
+        {% if category %}
+        <a href="#modal-delete-category" id="webshop-delete-category" data-toggle="modal" data-slug="{{ category.slug }}" class="btn btn-danger pull-right">
+            <i class="fa fa-times fa-lg"></i> Slett kategori
+        </a>
+        {% endif %}
+    </div>
+</div>
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">Produkt</h3>
+    </div>
+    <div class="panel-body">
+            {% csrf_token %}
+            {% for field in form %}
+            <div class="form-group {% if field.errors %}has-error{% endif %}">
+                <label for="{{field.auto_id }}">{{ field.label }}</label>
+                {{ field|addclass:"form-control" }}
+                {% if field.errors %}
+                <p>{{ field.errors }}</p>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </form>
+    </div>
+</div>
+{% if category %}
+<div id="modal-delete-category" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h3>Bekreft sletting av {{ category }}</h3>
+            </div>
+            <div class="modal-body">
+                <p>Er du sikker på at du vil slette {{ category }}?</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" data-dismiss="modal" aria-hidden="true">Lukk</button>
+                <button class="btn btn-danger confirm-delete-category" data-dismiss="modal" aria-hidden="true">Slett</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock content %}

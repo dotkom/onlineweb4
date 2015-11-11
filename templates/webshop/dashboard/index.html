@@ -1,0 +1,31 @@
+{% extends "dashboard_base.html" %}
+{% load compress %}
+
+{% block title %}
+Webshop - Online Dashboard
+{% endblock title %}
+
+{% block styles %}
+    {{ block.super }}
+    {% compress css %}
+    {% endcompress %}
+{% endblock %}
+
+{% block js %}
+    {{ block.super }}
+    {% compress js %}
+    <script src="{{ STATIC_URL }}js/dashboard/webshop.js"></script>
+    {% endcompress %}
+{% endblock js %}
+
+{% block page-header %}
+Webshop
+{% endblock %}
+
+{% block breadcrumbs %}
+    <li>Webshop</li>
+{% endblock %}
+
+{% block content %}
+Webshop shits here
+{% endblock content %}

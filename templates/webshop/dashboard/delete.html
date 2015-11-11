@@ -1,0 +1,37 @@
+{% extends "dashboard_base.html" %}
+{% load compress %}
+{% load addcss %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+Slett - Online Dashboard
+{% endblock title %}
+
+{% block styles %}
+    {{ block.super }}
+    {% compress css %}
+    {% endcompress %}
+{% endblock %}
+
+{% block js %}
+    {{ block.super }}
+    {% compress js %}
+    {% endcompress %}
+{% endblock js %}
+
+{% block page-header %}
+Webshop - Slett
+{% endblock %}
+
+{% block breadcrumbs %}
+    <li><a href="{% url 'dashboard-webshop:index' %}">Webshop</a></li>
+    <li>Slett</li>
+{% endblock %}
+
+{% block content %}
+<form method="POST">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger"><i class="fa fa-times"></i> Slett</button>
+    <a href="javascript:history.back()" class="btn btn-primary">Gå tilbake</a>
+</form>
+{% endblock content %}
