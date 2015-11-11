@@ -85,7 +85,7 @@ def details(request, item_pk):
     context['new_batch_form'] = BatchForm()
 
     context['batch_forms'] = [
-        (b.id, BatchForm(instance=batch)) for b in Batch.objects.filter(item=context['item'])
+        (b.id, BatchForm(instance=b)) for b in Batch.objects.filter(item=context['item'])
     ]
 
     return render(request, 'inventory/dashboard/details.html', context)

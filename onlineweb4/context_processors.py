@@ -1,5 +1,6 @@
 from django.conf import settings
 
+
 def analytics(request):
 	context_extras = {}
 	if hasattr(settings, 'GOOGLE_ANALYTICS_KEY'):

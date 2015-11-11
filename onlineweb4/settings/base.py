@@ -1,6 +1,7 @@
 # -*- coding: utf8 -*-
 import os
 import sys
+
 import wiki
 from django.contrib.messages import constants as messages
 
@@ -10,7 +11,7 @@ PROJECT_SETTINGS_DIRECTORY = os.path.dirname(globals()['__file__'])
 PROJECT_ROOT_DIRECTORY = os.path.join(PROJECT_SETTINGS_DIRECTORY, '..', '..')
 
 TEST_RUNNER = "django_nose.NoseTestSuiteRunner"
-NOSE_ARGS = ['--with-coverage', '--cover-package=apps', '--cover-html-dir=coverage', '--cover-html']
+NOSE_ARGS = ['--with-coverage', '--cover-package=apps', '--cover-html-dir=coverage', '--cover-xml', '--cover-html']
 
 DEBUG = False
 TEMPLATE_DEBUG = DEBUG
