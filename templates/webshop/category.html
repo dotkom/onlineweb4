@@ -15,7 +15,7 @@
                 <div class="col-md-5">
                     {% with product.images.all|first as thumb %}
                     <!-- TODO: MAKE IT SHOW resourcecenter/github.jpg if not found -->
-                    <div class="col-md-5 item-bg" style="background-image: url('{{ thumb.image.url }}');">
+                    <div class="col-md-5 item-bg" style="background-image: url('{{ thumb.image_xs.url }}');">
                     </div>
                     {%endwith%}
                 </div>

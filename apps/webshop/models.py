@@ -27,8 +27,10 @@ class Product(models.Model):
 
     @property
     def images(self):
-        id_tuple = self.images_csv.split(',')
-        return ResponsiveImage.query.filter(id__in=id_tuple)
+        if self.images_csv:
+            id_tuple = self.images_csv.split(',')
+            return ResponsiveImage.objects.filter(id__in=id_tuple)
+        return ResponsiveImage.objects.none()
 
     def __unicode__(self):
         return self.name

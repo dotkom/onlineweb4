@@ -38,7 +38,7 @@
                     
                     {% with category.products.all|first as shown_product %}
                         {% with shown_product.images.all|first as thumb %}
-                        <div class="col-md-5 item-bg" style="background-image: url('{{ thumb.image.url }}');">
+                        <div class="col-md-5 item-bg" style="background-image: url('{{ thumb.image_xs.url }}');">
                         </div>
                         {% endwith %}
                     {%endwith%}
