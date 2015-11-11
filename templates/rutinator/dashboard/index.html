@@ -1,5 +1,12 @@
 {% extends 'dashboard_base.html' %}
 
+{% block title  %}Rutinator{% endblock %}
+{% block page-header %}Rutinator{% endblock %}
+
+{% block breadcrumbs %}
+<li>Rutinator</li>
+{% endblock %}
+
 {% block content %}
 {% for task in object_list %}
 <li> {{ task.title }}, {{ task.description }} </li>
