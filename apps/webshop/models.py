@@ -78,7 +78,7 @@ class Order(models.Model):
     price = models.DecimalField(max_digits=10, decimal_places=2, blank=True)
     # Quantity of products ordered
     quantity = models.PositiveIntegerField(default=1, validators=[MinValueValidator(1)])
-    size = models.ForeignKey(ProductSize, null=True, blank=False)
+    size = models.ForeignKey(ProductSize, null=True, blank=True)
 
     def calculate_price(self):
         return self.product.price * self.quantity
