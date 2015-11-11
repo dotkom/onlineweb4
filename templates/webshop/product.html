@@ -16,11 +16,13 @@
 <div class="row">
     <div class="col-sm-7">
         <div id="carousel-product" class="carousel slide" data-ride="carousel">
+          {% if product.images.count > 1 %}
           <ol class="carousel-indicators">
             {% for image in product.images.all %}
             <li data-target="#carousel-product" data-slide-to="{{ forloop.counter0 }}" {% if forloop.first %}class="active"{% endif %}></li>
             {% endfor %}
           </ol>
+          {% endif %}
 
           <div class="carousel-inner">
             {% for image in product.images.all %}
@@ -30,12 +32,14 @@
             {% endfor %}
           </div>
 
+          {% if product.images.count > 1 %}
           <a class="left carousel-control" href="#carousel-product" data-slide="prev">
             <span class="glyphicon glyphicon-chevron-left"></span>
           </a>
           <a class="right carousel-control" href="#carousel-product" data-slide="next">
             <span class="glyphicon glyphicon-chevron-right"></span>
           </a>
+        {% endif %}
         </div>
     </div>
     <div class="col-sm-5">
