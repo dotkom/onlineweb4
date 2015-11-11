@@ -1,1 +1,9 @@
 {% extends 'dashboard_base.html' %}
+
+{% block content %}
+{% for task in object_list %}
+<li> {{ task.title }}, {{ task.description }} </li>
+{% empty %}
+Her var det tomt!
+{% endfor %}
+{% endblock %}
