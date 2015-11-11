@@ -2,7 +2,7 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.views.generic import TemplateView, DetailView, RedirectView
-from apps.webshop.models import Category, Product, Order, OrderLine
+from apps.webshop.models import Category, Product, Order, OrderLine, ProductSize
 from apps.webshop.forms import OrderForm
 
 
@@ -49,6 +49,7 @@ class ProductDetail(CartMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super(ProductDetail, self).get_context_data(**kwargs)
         context['orderform'] = OrderForm
+        context['sizes'] = ProductSize.objects.filter(product=self.get_object())
         return context
 
     def post(self, request, *args, **kwargs):
@@ -56,8 +57,11 @@ class ProductDetail(CartMixin, DetailView):
         form = OrderForm(request.POST)
         if form.is_valid():
             order_line = self.current_order_line()
+
+            size = form.cleaned_data['size']
+
             # Checking if product has already been added to cart
-            order = order_line.orders.filter(product=product).first()
+            order = order_line.orders.filter(product=product, size=size).first()
             if order:
                 # Adding to existing order
                 order.quantity += form.cleaned_data['quantity']
@@ -71,6 +75,7 @@ class ProductDetail(CartMixin, DetailView):
                 order = Order(
                     product=product, price=product.price,
                     quantity=form.cleaned_data['quantity'],
+                    size=size,
                     order_line=order_line)
                 messages.success(
                     request,
