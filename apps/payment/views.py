@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import json
+import logging
 import stripe
 
 from django.conf import settings
@@ -110,6 +111,7 @@ def webshop_info(request):
 
 @login_required
 def webshop_pay(request):
+    logger = logging.getLogger(__name__)
 
     if request.is_ajax():
         if request.method == "POST":
@@ -140,6 +142,7 @@ def webshop_pay(request):
                 _send_webshop_mail(order_line)
 
                 messages.success(request, "Betaling utført")
+                logger.info(u"%s bought %s for %.2f kr" % (request.user, order_line, order_line.subtotal()))
 
                 return HttpResponse("Betaling utført.", content_type="text/plain", status=200) 
             except stripe.CardError, e:
