@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from apps.webshop.models import Category, Product, ProductSize, Order
+from apps.webshop.models import Category, Product, ProductSize, Order, OrderLine
 
 
 class CategoryAdmin(admin.ModelAdmin):
@@ -27,3 +27,4 @@ class OrderAdmin(admin.ModelAdmin):
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(Product, ProductAdmin)
 admin.site.register(Order, OrderAdmin)
+admin.site.register(OrderLine)
