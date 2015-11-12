@@ -137,6 +137,7 @@ def webshop_pay(request):
                 )
 
                 order_line.pay()
+                _send_webshop_mail(order_line)
 
                 messages.success(request, "Betaling utført")
 
@@ -189,3 +190,18 @@ def _send_payment_confirmation_mail(payment_relation):
     message += _(u"Dersom du har problemer eller spørsmål, send mail til") + ": " + from_mail
 
     EmailMessage(subject, unicode(message), from_mail, [], to_mails).send()
+
+
+def _send_webshop_mail(order_line):
+    subject = _(u"Kvittering Webshop Online")
+    from_mail = settings.EMAIL_PROKOM
+    to_mails = [order_line.user.email]
+
+    message = _(
+        u"Hei, du har bestilt ting i Online sin webshop. Ordren din kom på totalt %.2f kroner."
+        % order_line.subtotal()
+    )
+    message += "\n"
+    message += _(u"Dersom du har problemer eller spørsmål, send mail til") + u": " + settings.EMAIL_PROKOM
+
+    EmailMessage(subject, unicode(message), from_mail, to_mails).send()
