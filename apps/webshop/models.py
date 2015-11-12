@@ -57,6 +57,7 @@ class Category(models.Model):
         verbose_name = 'Kategori'
         verbose_name_plural = 'Kategorier'
 
+
 class ProductSize(models.Model):
     product = models.ForeignKey(Product)
     size = models.CharField(u'Størrelse', max_length=25)
