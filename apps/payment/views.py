@@ -139,10 +139,11 @@ def webshop_pay(request):
                 )
 
                 order_line.pay()
+                order_line.stripe_id = charge.id
+                order_line.save()
                 _send_webshop_mail(order_line)
 
-                messages.success(request, "Betaling utført")
-                logger.info(u"%s bought %s for %.2f kr" % (request.user, order_line, order_line.subtotal()))
+                messages.success(request, u"Betaling utført")
 
                 return HttpResponse("Betaling utført.", content_type="text/plain", status=200) 
             except stripe.CardError, e:
@@ -204,7 +205,17 @@ def _send_webshop_mail(order_line):
         u"Hei, du har bestilt ting i Online sin webshop. Ordren din kom på totalt %.2f kroner."
         % order_line.subtotal()
     )
-    message += "\n"
+
+    logging.getLogger(__name__).debug(u"Logging for send webshop mail")
+    logging.getLogger(__name__).info(unicode(order_line))
+
+    message += u"\nDine produkter:"
+    products = u""
+    for o in order_line.orders.all():
+        products += u"\n " + unicode(o)
+    message += products
+    message += u"\n\nDin betalingsreferanse er " + order_line.stripe_id
+    message += u"\n\n"
     message += _(u"Dersom du har problemer eller spørsmål, send mail til") + u": " + settings.EMAIL_PROKOM
 
     EmailMessage(subject, unicode(message), from_mail, to_mails).send()
