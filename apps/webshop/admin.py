@@ -20,6 +20,16 @@ class ProductAdmin(admin.ModelAdmin):
     prepopulated_fields = {"slug": ("name",)}
 
 
+class OrderInline(admin.TabularInline):
+    model = Order
+    extra = 1
+
+
+class OrderLineAdmin(admin.ModelAdmin):
+    model = OrderLine
+    inlines = [OrderInline,]
+
+
 class OrderAdmin(admin.ModelAdmin):
     model = Order
 
@@ -27,4 +37,4 @@ class OrderAdmin(admin.ModelAdmin):
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(Product, ProductAdmin)
 admin.site.register(Order, OrderAdmin)
-admin.site.register(OrderLine)
+admin.site.register(OrderLine, OrderLineAdmin)

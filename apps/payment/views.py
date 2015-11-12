@@ -126,7 +126,7 @@ def webshop_pay(request):
             #Check if the user has added or removed items since reloading the checkout page
             if int(order_line.subtotal() * 100) != amount:
                 messages.error(request, u"Det har skjedd endringer på bestillingen. Prøv igjen")
-                return HttpResponse("Invalid input", content_type="text/plain", status=500) 
+                return HttpResponse("Invalid input", content_type="text/plain", status=500)
 
             try:
                 stripe.api_key = settings.STRIPE_PRIVATE_KEYS[1] #Prokom
