@@ -57,6 +57,7 @@ class Category(models.Model):
         verbose_name = 'Kategori'
         verbose_name_plural = 'Kategorier'
 
+
 class ProductSize(models.Model):
     product = models.ForeignKey(Product)
     size = models.CharField(u'Størrelse', max_length=25)
@@ -95,6 +96,7 @@ class OrderLine(models.Model):
     user = models.ForeignKey(User)
     datetime = models.DateTimeField(auto_now_add=True)
     paid = models.BooleanField(default=False)
+    stripe_id = models.CharField(max_length=50, null=True, blank=True)
 
     def count_orders(self):
         return sum((order.quantity for order in self.orders.all()))

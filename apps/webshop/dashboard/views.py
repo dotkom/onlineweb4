@@ -1,13 +1,10 @@
-from django.contrib import messages
 from django.contrib.contenttypes.models import ContentType
 from django.core.urlresolvers import reverse
-from django.shortcuts import render, get_object_or_404, redirect
-from django.http import HttpResponseBadRequest, HttpResponse, JsonResponse
-from django.views.generic import TemplateView, DetailView, RedirectView, UpdateView, CreateView, DeleteView
+from django.shortcuts import get_object_or_404
+from django.views.generic import TemplateView, DetailView, UpdateView, CreateView, DeleteView
 
-from apps.dashboard.tools import DashboardMixin, DashboardPermissionMixin
+from apps.dashboard.tools import DashboardPermissionMixin
 from apps.gallery.models import ResponsiveImage
-from apps.webshop.dashboard.forms import CategoryForm, ProductForm
 from apps.webshop.models import Category, Product
 
 from taggit.models import TaggedItem
@@ -32,10 +29,12 @@ class Categories(DashboardPermissionMixin, TemplateView):
         context['categories'] = Category.objects.all().prefetch_related('products')
         return context
 
+
 class CategoryView(DashboardPermissionMixin, DetailView):
     model = Category
     template_name = 'webshop/dashboard/category.html'
     permission_required = 'webshop.view_category'
+
 
 class CategoryCreate(DashboardPermissionMixin, CreateView):
     model = Category
@@ -50,6 +49,7 @@ class CategoryCreate(DashboardPermissionMixin, CreateView):
     def get_success_url(self):
         return reverse('dashboard-webshop:categories')
 
+
 class CategoryUpdate(DashboardPermissionMixin, UpdateView):
     model = Category
     fields = ['name', 'slug']
@@ -60,6 +60,7 @@ class CategoryUpdate(DashboardPermissionMixin, UpdateView):
     def get_success_url(self):
         return reverse('dashboard-webshop:category', kwargs={'slug': self.object.slug})
 
+
 class CategoryDelete(DashboardPermissionMixin, DeleteView):
     model = Category
     template_name = 'webshop/dashboard/delete.html'
@@ -68,10 +69,12 @@ class CategoryDelete(DashboardPermissionMixin, DeleteView):
     def get_success_url(self):
         return reverse('dashboard-webshop:categories')
 
+
 class ProductView(DashboardPermissionMixin, DetailView):
     model = Product
     template_name = 'webshop/dashboard/product.html'
     permission_required = 'webshop.view_product'
+
 
 class ProductCreate(DashboardPermissionMixin, CreateView):
     model = Product
@@ -98,6 +101,7 @@ class ProductCreate(DashboardPermissionMixin, CreateView):
     def get_success_url(self):
         return reverse('dashboard-webshop:category', kwargs={'slug': self.kwargs.get('category_slug')})
 
+
 class ProductUpdate(DashboardPermissionMixin, UpdateView):
     model = Product
     fields = ['name', 'slug', 'short', 'description', 'price', 'stock']
@@ -112,6 +116,7 @@ class ProductUpdate(DashboardPermissionMixin, UpdateView):
 
     def get_success_url(self):
         return reverse('dashboard-webshop:product', kwargs={'slug': self.object.slug})
+
 
 class ProductDelete(DashboardPermissionMixin, DeleteView):
     model = Product
