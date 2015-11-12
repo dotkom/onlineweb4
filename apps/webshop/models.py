@@ -83,6 +83,9 @@ class Order(models.Model):
     def calculate_price(self):
         return self.product.price * self.quantity
 
+    def __unicode__(self):
+        return u"%sx %s" % (self.quantity, self.product)
+
     class Meta:
         verbose_name = 'Bestilling'
         verbose_name_plural = 'Bestillinger'
@@ -109,3 +112,5 @@ class OrderLine(models.Model):
         self.paid = True
         self.save()
 
+    def __unicode__(self):
+        return u"Webshop purchase %s by %s" % (self.datetime, self.user)
