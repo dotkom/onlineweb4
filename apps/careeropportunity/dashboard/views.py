@@ -24,8 +24,8 @@ def index(request):
     # "cops" is short for "careeropportunities" which is a fucking long word
     # "cop" is short for "careeropportunity" which also is a fucking long word
     cops = CareerOpportunity.objects.all()
-    context['cops'] = cops.filter(end__gte=timezone.now())
-    context['archive'] = cops.filter(end__lte=timezone.now())
+    context['cops'] = cops.filter(end__gte=timezone.now()).order_by('end')
+    context['archive'] = cops.filter(end__lte=timezone.now()).order_by('-id')
 
     return render(request, 'careeropportunity/dashboard/index.html', context)
 
