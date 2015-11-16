@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from django.contrib import admin
+from django.contrib.auth.admin import UserAdmin
 from django.utils.translation import ugettext as _
 
 from apps.authentication.models import AllowedUsername, Email, OnlineUser, Position, SpecialPosition
@@ -13,7 +14,7 @@ class EmailInline(admin.TabularInline):
     extra = 1
 
 
-class OnlineUserAdmin(VersionAdmin):
+class OnlineUserAdmin(UserAdmin, VersionAdmin):
     model = OnlineUser
     inlines = (EmailInline,)
     list_display = ['username', 'first_name', 'last_name', 'ntnu_username', 'field_of_study', 'is_member', ]
