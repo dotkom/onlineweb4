@@ -18,3 +18,7 @@ class AuthenticationConfig(AppConfig):
 
         reversion.register(RegisterToken)
         watson.register(OnlineUser, fields=('first_name', 'last_name', 'ntnu_username', 'nickname'))
+
+        # The following stops pycharm from nagging about unused import statement
+        # noinspection PyUnresolvedReferences
+        import apps.authentication.signals
