@@ -20,8 +20,6 @@ from django.core.urlresolvers import reverse
 
 from apps.authentication.models import FIELD_OF_STUDY_CHOICES
 
-import reversion
-
 
 User = settings.AUTH_USER_MODEL
 
@@ -173,9 +171,6 @@ class FeedbackRelation(models.Model):
             rt.save()
 
 
-reversion.register(FeedbackRelation)
-
-
 class Feedback(models.Model):
     """
     A customizable Feedback schema.
@@ -233,9 +228,6 @@ class Feedback(models.Model):
         )
 
 
-reversion.register(Feedback)
-
-
 class FieldOfStudyAnswer(models.Model):
     feedback_relation = models.ForeignKey(
         FeedbackRelation,
@@ -251,9 +243,6 @@ class FieldOfStudyAnswer(models.Model):
         permissions = (
             ('view_fieldofstudyanswer', 'View FieldOfStudyAnswer'),
         )
-
-
-reversion.register(FieldOfStudyAnswer)
 
 
 class TextQuestion(models.Model):
@@ -272,9 +261,6 @@ class TextQuestion(models.Model):
         permissions = (
             ('view_textquestion', 'View TextQuestion'),
         )
-
-
-reversion.register(TextQuestion)
 
 
 class TextAnswer(models.Model):
@@ -298,9 +284,6 @@ class TextAnswer(models.Model):
             ('view_textanswer', 'View TextAnswer'),
         )
 
-
-reversion.register(TextAnswer)
-
 RATING_CHOICES = [(k, str(k)) for k in range(1, 7)]  # 1 to 6
 RATING_CHOICES.insert(0, ("", ""))  # Adds a blank field to prevent 1 from beeing selected by default
 
@@ -321,9 +304,6 @@ class RatingQuestion(models.Model):
         permissions = (
             ('view_ratingquestion', 'View RatingQuestion'),
         )
-
-
-reversion.register(RatingQuestion)
 
 
 class RatingAnswer(models.Model):
@@ -351,9 +331,6 @@ class RatingAnswer(models.Model):
         )
 
 
-reversion.register(RatingAnswer)
-
-
 class MultipleChoiceQuestion(models.Model):
     label = models.CharField(_(u'Spørsmål'), blank=False, max_length=256)
 
@@ -366,9 +343,6 @@ class MultipleChoiceQuestion(models.Model):
 
     def __unicode__(self):
         return self.label
-
-
-reversion.register(MultipleChoiceQuestion)
 
 
 class MultipleChoiceRelation(models.Model):
@@ -386,9 +360,6 @@ class MultipleChoiceRelation(models.Model):
         )
 
 
-reversion.register(MultipleChoiceRelation)
-
-
 class Choice(models.Model):
     question = models.ForeignKey(MultipleChoiceQuestion, related_name="choices")
     choice = models.CharField(_(u'valg'), max_length=256, blank=False)
@@ -400,9 +371,6 @@ class Choice(models.Model):
         permissions = (
             ('view_choice', 'View Choice'),
         )
-
-
-reversion.register(Choice)
 
 
 class MultipleChoiceAnswer(models.Model):
@@ -426,9 +394,6 @@ class MultipleChoiceAnswer(models.Model):
         )
 
 
-reversion.register(MultipleChoiceAnswer)
-
-
 # For creating a link for others(companies) to see the results page
 class RegisterToken(models.Model):
     fbr = models.ForeignKey(FeedbackRelation, related_name="Feedback_relation")
@@ -447,5 +412,3 @@ class RegisterToken(models.Model):
             ('view_feedbackregistertoken', 'View FeedbackRegisterToken'),
         )
 
-
-reversion.register(RegisterToken)

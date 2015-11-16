@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 import uuid
-import reversion
 
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey
@@ -146,8 +145,6 @@ class Payment(models.Model):
         verbose_name = _(u"betaling")
         verbose_name_plural = _(u"betalinger")
 
-reversion.register(Payment)
-
 
 class PaymentPrice(models.Model):
     payment = models.ForeignKey(Payment)
@@ -160,8 +157,6 @@ class PaymentPrice(models.Model):
     class Meta(object):
         verbose_name = _(u"pris")
         verbose_name_plural = _(u"priser")
-
-reversion.register(PaymentPrice)
 
 
 class PaymentRelation(models.Model):
@@ -186,8 +181,6 @@ class PaymentRelation(models.Model):
         verbose_name = _(u"betalingsrelasjon")
         verbose_name_plural = _(u"betalingsrelasjoner")
 
-reversion.register(PaymentRelation)
-
 
 class PaymentDelay(models.Model):
     payment = models.ForeignKey(Payment)
@@ -204,5 +197,3 @@ class PaymentDelay(models.Model):
 
         verbose_name = _(u'betalingsutsettelse')
         verbose_name_plural = _(u'betalingsutsettelser')
-
-reversion.register(PaymentDelay)

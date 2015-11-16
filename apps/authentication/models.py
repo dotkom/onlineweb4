@@ -11,9 +11,6 @@ from django.utils.translation import ugettext as _
 from django.utils import timezone
 from django.utils.html import strip_tags
 
-import watson
-import reversion
-
 # If this list is changed, remember to check that the year property on
 # OnlineUser is still correct!
 FIELD_OF_STUDY_CHOICES = [
@@ -255,9 +252,6 @@ class OnlineUser(AbstractUser):
         )
 
 
-reversion.register(OnlineUser)
-
-
 class Email(models.Model):
     user = models.ForeignKey(OnlineUser, related_name="email_user")
     email = models.EmailField(_(u"epostadresse"), unique=True)
@@ -287,9 +281,6 @@ class Email(models.Model):
         )
 
 
-reversion.register(Email)
-
-
 class RegisterToken(models.Model):
     user = models.ForeignKey(OnlineUser, related_name="register_user")
     email = models.EmailField(_(u"epost"), max_length=254)
@@ -306,9 +297,6 @@ class RegisterToken(models.Model):
         permissions = (
             ('view_registertoken', 'View RegisterToken'),
         )
-
-
-reversion.register(RegisterToken)
 
 
 class AllowedUsername(models.Model):
@@ -341,9 +329,6 @@ class AllowedUsername(models.Model):
         )
 
 
-reversion.register(AllowedUsername)
-
-
 class Position(models.Model):
     """
     Contains a users position in the organization from a given year
@@ -369,9 +354,6 @@ class Position(models.Model):
         )
 
 
-reversion.register(Position)
-
-
 class SpecialPosition(models.Model):
     """
     Special object to represent special positions that typically lasts for life.
@@ -391,9 +373,3 @@ class SpecialPosition(models.Model):
             ('view_specialposition', 'View SpecialPosition'),
         )
 
-
-reversion.register(SpecialPosition)
-
-
-# Register OnlineUser in watson index for searching
-watson.register(OnlineUser, fields=('first_name', 'last_name', 'ntnu_username', 'nickname'))

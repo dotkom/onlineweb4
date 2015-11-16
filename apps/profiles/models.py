@@ -30,5 +30,3 @@ class Privacy(models.Model):
             ('view_privacy', 'View Privacy'),
         )
 
-
-reversion.register(Privacy)
