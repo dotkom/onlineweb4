@@ -116,9 +116,16 @@
                 <div class="col-sm-12">
                     <div class="col-sm-12"><img class="img-thumbnail visible-md visible-lg" src="{{ gravatar_url2 }}" alt="" /></div>
                     <div class="btn-group col-sm-12" style="margin-top: 5px;">{# don't do this #}
+                        {% if request.user.is_superuser %}
+                        <a href="{{ user.get_absolute_url }}" class="btn btn-success col-sm-3">Vis</a>
+                        <a href="{% url 'dashboard_user_edit' user.id %}" class="btn btn-warning col-sm-3"><i class="fa fa-pencil"></i> Endre</a>
+                        <a href="{% url 'admin:authentication_onlineuser_change' user.id %}" class="btn btn-warning col-sm-3"><i class="fa fa-pencil"></i> Admin</a>
+                        <a href="#modal-delete-user" data-toggle="modal" class="btn btn-danger col-sm-3">Slett</a>
+                        {% else %}
                         <a href="{{ user.get_absolute_url }}" class="btn btn-success col-sm-4">Vis</a>
-                        <a href="{% url 'dashboard_user_edit' user.id %}" class="btn btn-warning col-sm-4">Endre</a>
+                        <a href="{% url 'dashboard_user_edit' user.id %}" class="btn btn-warning col-sm-4"><i class="fa fa-pencil"></i> Endre</a>
                         <a href="#modal-delete-user" data-toggle="modal" class="btn btn-danger col-sm-4">Slett</a>
+                        {% endif %}
                     </div>
                 </div>
             </div>
@@ -137,7 +144,7 @@
             </div>
             <div class="modal-footer">
                 <div class="btn-group">
-                    <a href="{% url 'dashboard_user_delete' user.id %}" class="btn btn-danger confirm-delete-batch" data-dismiss="modal" aria-hidden="true">Slett</a>
+                    <a href="{% url 'dashboard_user_delete' user.id %}" class="btn btn-danger" data-dismiss="modal" aria-hidden="true">Slett</a>
                     <button class="btn" data-dismiss="modal" aria-hidden="true">Lukk</button>
                 </div>
             </div>
