@@ -1,10 +1,10 @@
 # -*- encoding: utf-8 -*-
-
 from django.conf.urls import patterns, url
 
 from apps.webshop.dashboard import views
 
-urlpatterns = patterns('apps.webshop.dashboard.views',
+urlpatterns = patterns(
+    'apps.webshop.dashboard.views',
     url(r'^$', views.Overview.as_view(), name='index'),
     url(r'^categories/$', views.Categories.as_view(), name='categories'),
     url(r'^category/new$', views.CategoryCreate.as_view(), name='category_new'),
