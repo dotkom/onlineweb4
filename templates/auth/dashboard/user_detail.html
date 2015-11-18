@@ -1,0 +1,161 @@
+{% extends 'dashboard_base.html' %}
+{% load compress %}
+{% load gravatar_url_resolver %}
+
+{% block title %}Brukerprofiler - {{ user }}{% endblock %}
+
+{% block styles %}
+    {{ block.super }}
+    {% compress css %}
+    {% endcompress %}
+{% endblock %}
+
+{% block page-header %}
+    {{ user }}
+{% endblock %}
+
+{% block breadcrumbs %}
+<li><a href="{% url 'user_list' %}">Brukerprofiler</a></li>
+<li>{{ user }}</li>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4>Personalia</h4>
+            </div>
+            <div class="panel-body">
+                <div class="col-md-4">Fullt navn</div>
+                <div class="col-md-8"><i class="fa fa-{{ user.gender }}"></i> {{ user.get_full_name }}</div>
+                <div class="col-md-4">Adresse</div>
+                <div class="col-md-8">{{ user.address }}, <span id="zip-code">{{ user.zip_code }}</span><span id="city">{{ user.city }}</span></div>
+                <div class="col-md-4">Telefonnummer</div>
+                <div class="col-md-8">{% if user.phone_number %}{{ user.phone_number }}{% else %}Ikke oppgitt{% endif %}</div>
+                <div class="col-md-4">Nettside</div>
+                <div class="col-md-8">
+                    {% if user.website %}<a href="{{ user.website }}" target="_blank">{{ user.website }}</a>{% endif %}
+                    {% if user.github %}<a href="{{ user.github }}" target="_blank"><i class="fa fa-lg fa-github"></i></a>{% endif %}
+                    {% if user.linkedin %}<a href="{{ user.linkedin }}" target="_blank"><i class="fa fa-lg fa-linkedin"></i></a>{% endif %}
+                </div>
+                <br>
+            </div>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4>Linjeforeningen Online</h4>
+            </div>
+            <div class="panel-body">
+                <div class="col-md-4">Web-brukernavn</div>
+                <div class="col-md-8">{{ user.username }}</div>
+                <div class="col-md-4">Online-mailalias</div>
+                <div class="col-md-8"><a href="mailto:{{ user.online_mail }}@online.ntnu.no">{{ user.online_mail }}@online.ntnu.no</a></div>
+                <div class="col-md-4">RFID</div>
+                <div class="col-md-8">{{ user.rfid }}</div>
+                <div class="col-md-12"><br>
+                    <table class="table">
+                        <tr>
+                            <th>Aktiv</th>
+                            <th>Kompilert</th>
+                            <th>Godtatt prikkeregler</th>
+                            <th>Infomail</th>
+                            <th>Jobbmail</th>
+                            <th>Komitémedlem</th>
+                        </tr>
+                        <tr>
+                            <td>{% if user.is_member %}<i class="fa fa-check"></i>{% else %}<i class="fa fa-remove"></i>{% endif %}</td>
+                            <td>{% if user.compiled %}<i class="fa fa-check"></i>{% else %}<i class="fa fa-remove"></i>{% endif %}</td>
+                            <td>{% if user.mark_rules %}<i class="fa fa-check"></i>{% else %}<i class="fa fa-remove"></i>{% endif %}</td>
+                            <td>{% if user.infomail %}<i class="fa fa-check"></i>{% else %}<i class="fa fa-remove"></i>{% endif %}</td>
+                            <td>{% if user.jobmail %}<i class="fa fa-check"></i>{% else %}<i class="fa fa-remove"></i>{% endif %}</td>
+                            <td>{% if user.is_committee %}<i class="fa fa-check"></i>{% else %}<i class="fa fa-remove"></i>{% endif %}</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4>NTNU</h4>
+            </div>
+            <div class="panel-body">
+                {% if user.ntnu_username %}
+                <div class="col-md-4">NTNU-brukernavn</div>
+                <div class="col-md-8">{{ user.ntnu_username }}</div>
+                <div class="col-md-4">Studie (start)</div>
+                <div class="col-md-8">{{ user.year }}. år {{ user.get_field_of_study_display }} ({{ user.started_date }})</div>
+                {% else %}
+                <div class="col-md-12"><p>Brukerprofilen har ikke oppgitt NTNU-brukernavn.</p></div>
+                {% endif %}
+            </div>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4>Annen informasjon</h4>
+            </div>
+            <div class="panel-body">
+                <div class="col-md-6">
+                    <h4>Allergier</h4>
+                    <p>{{ user.allergies }}</p>
+                </div>
+                <div class="col-md-6">
+                    <h4>Bio</h4>
+                    <p>{{ user.bio }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4>&nbsp;</h4>
+            </div>
+            <div class="panel-body">
+                {% gravatar_url user 286 as gravatar_url2 %}
+                <div class="col-sm-12">
+                    <div class="col-sm-12"><img class="img-thumbnail visible-md visible-lg" src="{{ gravatar_url2 }}" alt="" /></div>
+                    <div class="btn-group col-sm-12" style="margin-top: 5px;">{# don't do this #}
+                        {% if request.user.is_superuser %}
+                        <a href="{{ user.get_absolute_url }}" class="btn btn-success col-sm-3">Vis</a>
+                        <a href="{% url 'dashboard_user_edit' user.id %}" class="btn btn-warning col-sm-3"><i class="fa fa-pencil"></i> Endre</a>
+                        <a href="{% url 'admin:authentication_onlineuser_change' user.id %}" class="btn btn-warning col-sm-3"><i class="fa fa-pencil"></i> Admin</a>
+                        <a href="#modal-delete-user" data-toggle="modal" class="btn btn-danger col-sm-3">Slett</a>
+                        {% else %}
+                        <a href="{{ user.get_absolute_url }}" class="btn btn-success col-sm-4">Vis</a>
+                        <a href="{% url 'dashboard_user_edit' user.id %}" class="btn btn-warning col-sm-4"><i class="fa fa-pencil"></i> Endre</a>
+                        <a href="#modal-delete-user" data-toggle="modal" class="btn btn-danger col-sm-4">Slett</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="modal-delete-user" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h3>Bekreft sletting av brukerprofil</h3>
+            </div>
+            <div class="modal-body">
+                <p>Er du sikker på at du vil brukerprofilen til {{ user }} og dermed alle tilhørende relasjoner?</p>
+            </div>
+            <div class="modal-footer">
+                <div class="btn-group">
+                    <a href="{% url 'dashboard_user_delete' user.id %}" class="btn btn-danger" data-dismiss="modal" aria-hidden="true">Slett</a>
+                    <button class="btn" data-dismiss="modal" aria-hidden="true">Lukk</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block js %}
+    {{ block.super }}
+    {% compress js %}
+        <script type="text/javascript" src="{{ STATIC_URL }}js/zipcodecity.js"></script>
+    {% endcompress %}
+{% endblock %}
