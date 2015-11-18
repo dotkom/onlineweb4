@@ -51,7 +51,7 @@
         {{ product.name }}
       </div>
       <div class="product-price">
-        {{ product.price|default:0|floatformat:2 }},-
+        {{ product.price|default:0|floatformat:2 }}
       </div>
         <form method="post">
           {% csrf_token %}
