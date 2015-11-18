@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 
 class Overview(DashboardPermissionMixin, TemplateView):
     template_name = 'webshop/dashboard/index.html'
-    permission_required = 'webshop.?'
+    permission_required = 'webshop.view_category'
 
 
 class Categories(DashboardPermissionMixin, TemplateView):

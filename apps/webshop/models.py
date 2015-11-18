@@ -41,6 +41,9 @@ class Product(models.Model):
     class Meta:
         verbose_name = 'Produkt'
         verbose_name_plural = 'Produkter'
+        permissions = (
+            ('view_product', 'View Product'),
+        )
 
 
 class Category(models.Model):
@@ -56,6 +59,9 @@ class Category(models.Model):
     class Meta:
         verbose_name = 'Kategori'
         verbose_name_plural = 'Kategorier'
+        permissions = (
+            ('view_category', 'View Category'),
+        )
 
 
 class ProductSize(models.Model):
@@ -90,6 +96,9 @@ class Order(models.Model):
     class Meta:
         verbose_name = 'Bestilling'
         verbose_name_plural = 'Bestillinger'
+        permissions = (
+            ('view_order', 'View Order'),
+        )
 
 
 class OrderLine(models.Model):
@@ -116,3 +125,8 @@ class OrderLine(models.Model):
 
     def __unicode__(self):
         return u"Webshop purchase %s by %s" % (self.datetime, self.user)
+
+    class Meta:
+        permissions = (
+            ('view_order_line', 'View Order Line'),
+        )
