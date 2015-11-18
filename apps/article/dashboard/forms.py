@@ -22,6 +22,7 @@ class ArticleForm(forms.ModelForm):
             'ingress',
             'content',
             'image',
+            'video',
             'published_date',
             'authors',
             'tags',
