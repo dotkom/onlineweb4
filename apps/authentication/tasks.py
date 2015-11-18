@@ -15,9 +15,14 @@ class SynchronizeGroups(Task):
     @staticmethod
     def run():
         logger = logging.getLogger('syncer')
-        locale.setlocale(locale.LC_ALL, 'en_US.utf8')
 
-        SynchronizeGroups.do_sync(logger)
+        if not hasattr(settings, "GROUP_SYNCER"):
+            # Make sure to only run the group syncer if we have the settings for it
+            logger.info("GROUP_SYNCER setting not set, not syncing groups")
+        else:
+            locale.setlocale(locale.LC_ALL, 'en_US.utf8')
+
+            SynchronizeGroups.do_sync(logger)
 
     @staticmethod
     def do_sync(logger):
@@ -108,6 +113,3 @@ class SynchronizeGroups(Task):
                         ' because they were not in the source group(s).'
                     )
 
-
-# Register scheduler
-schedule.register(SynchronizeGroups, day_of_week='mon-sun', minute='*/15')
