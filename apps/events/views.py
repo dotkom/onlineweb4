@@ -421,7 +421,8 @@ class EventViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.Li
 
     def get_queryset(self):
         return Event.objects.filter(
-            Q(group_restriction__isnull=True) | Q(group_restriction__groups__in=self.request.user.groups.all())).\
+            Q(group_restriction__isnull=True) | Q(group_restriction__groups__in=self.request.user.groups.all()) |
+            (Q(attendance_event__isnull=False) & Q(attendance_event__attendees__user=self.request.user))).\
             distinct()
 
 
