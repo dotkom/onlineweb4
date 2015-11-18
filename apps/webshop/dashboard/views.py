@@ -1,11 +1,11 @@
 from django.contrib.contenttypes.models import ContentType
 from django.core.urlresolvers import reverse
 from django.shortcuts import get_object_or_404
-from django.views.generic import TemplateView, DetailView, UpdateView, CreateView, DeleteView
+from django.views.generic import TemplateView, DetailView, UpdateView, CreateView, DeleteView, ListView
 
 from apps.dashboard.tools import DashboardPermissionMixin
 from apps.gallery.models import ResponsiveImage
-from apps.webshop.models import Category, Product
+from apps.webshop.models import Category, Product, OrderLine
 
 from taggit.models import TaggedItem
 
@@ -146,3 +146,11 @@ class ProductImage(DashboardPermissionMixin, DetailView):
 
     def post(self, request, *args, **kwargs):
         pass
+
+
+class Orders(DashboardPermissionMixin, ListView):
+    model = Category
+    template_name = 'webshop/dashboard/orders.html'
+    permission_required = 'webshop.view_order'
+    queryset = OrderLine.objects.filter(paid=True)
+    context_object_name = 'orders'

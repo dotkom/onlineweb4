@@ -1,0 +1,55 @@
+{% extends "dashboard_base.html" %}
+{% load compress %}
+
+{% block title %}
+Webshop - Online Dashboard
+{% endblock title %}
+
+{% block styles %}
+    {{ block.super }}
+    {% compress css %}
+    {% endcompress %}
+{% endblock %}
+
+{% block page-header %}
+Webshop
+{% endblock %}
+
+{% block breadcrumbs %}
+    <li>Webshop</li>
+{% endblock %}
+
+{% block content %}
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title"></h3>
+    </div>
+    <div class="panel-body">
+        <p>Liste over bestillinger</p>
+        <table class="table table-striped table-condensed tablesorter" id="webshop_order_list">
+            <thead>
+                <tr>
+                    <th>Kjøper</th>
+                    <th>Antall produkter</th>
+                    <th>Kostnad</th>
+                    <th>Tidspunkt</th>
+                    <th>Stripe ID</th>
+                    <th>Utlevert</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for order in orders %}
+                <tr>
+                    <td>{{ order.user }}</td>
+                    <td>{{ order.count_orders }}</td>
+                    <td>{{ order.subtotal }}</td>
+                    <td>{{ order.datetime }}</td>
+                    <td>{{ order.stripe_id|default:"" }}</td>
+                    <td>{{ order.delivered|yesno:"Ja,Nei" }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock content %}

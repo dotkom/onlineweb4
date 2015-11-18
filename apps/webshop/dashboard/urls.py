@@ -17,4 +17,5 @@ urlpatterns = patterns('apps.webshop.dashboard.views',
     url(r'^product/(?P<slug>\w+)/update$', views.ProductUpdate.as_view(), name='product_update'),
     url(r'^product/(?P<slug>\w+)/delete$', views.ProductDelete.as_view(), name='product_delete'),
     url(r'^product/(?P<slug>\w+)/image$', views.ProductImage.as_view(), name='product_image'),
+    url(r'^orders/$', views.Orders.as_view(), name='orders'),
 )
