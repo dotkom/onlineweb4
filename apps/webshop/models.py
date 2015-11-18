@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from django.db import models
+from django.utils import timezone
 from django.core.urlresolvers import reverse
 from django.core.validators import MinValueValidator
 
@@ -103,7 +104,7 @@ class Order(models.Model):
 
 class OrderLine(models.Model):
     user = models.ForeignKey(User)
-    datetime = models.DateTimeField(auto_now_add=True)
+    datetime = models.DateTimeField(null=True, blank=True)
     paid = models.BooleanField(default=False)
     stripe_id = models.CharField(max_length=50, null=True, blank=True)
     delivered = models.BooleanField(default=False)
@@ -122,6 +123,7 @@ class OrderLine(models.Model):
             order.price = order.calculate_price()
             order.save()
         self.paid = True
+        self.datetime = timezone.now()
         self.save()
 
     def __unicode__(self):
