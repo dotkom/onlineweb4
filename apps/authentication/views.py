@@ -227,7 +227,7 @@ def set_password(request, token=None):
 
                         messages.success(
                             request,
-                            _(u'Bruker %s har gjennomført vellykket gjenoppretning av passord.' +
+                            _(u'Bruker %s har gjennomført vellykket gjenoppretning av passord. ' +
                               u'Du kan nå logge inn.') % user.username
                         )
 

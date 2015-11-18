@@ -1,0 +1,4 @@
+Hei, siste purremail på feedback skjema har blitt sendt til alle gjenværende deltagere på "{{ title }}".
+
+
+Dere kan se feedback-resultatene her: {{ feedback_url }}.

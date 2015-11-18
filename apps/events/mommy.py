@@ -69,7 +69,7 @@ class SetEventMarks(Task):
         message = render_to_string('events/email/marks_notification.txt', context)
 
         EmailMessage(subject, unicode(message), context['contact'], [], not_met_emails).send()
-         
+        
         logger.info("Mark notification emails sent to: " + str(not_met_emails))
 
     @staticmethod
