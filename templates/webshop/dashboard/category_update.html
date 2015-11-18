@@ -4,7 +4,7 @@
 {% load crispy_forms_tags %}
 
 {% block title %}
-{% if form.instance %}
+{% if category %}
 Rediger kategori - Online Dashboard
 {% else %}
 Ny kategori - Online Dashboard
@@ -31,6 +31,7 @@ Webshop - {{ category|default:"Legg til" }}
 
 {% block breadcrumbs %}
     <li><a href="{% url 'dashboard-webshop:index' %}">Webshop</a></li>
+    <li><a href="{% url 'dashboard-webshop:categories' %}">Kategorier</a></li>
     <li>{{ category|default:"Legg til" }}</li>
 {% endblock %}
 
@@ -46,6 +47,7 @@ Webshop - {{ category|default:"Legg til" }}
         {% endif %}
     </div>
 </div>
+<br>
 <div class="panel panel-default">
     <div class="panel-heading">
         <h3 class="panel-title">Produkt</h3>
