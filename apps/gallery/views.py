@@ -247,6 +247,7 @@ class ResponsiveImageViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin,
     queryset = ResponsiveImage.objects.filter().order_by('-timestamp')
     serializer_class = ResponsiveImageSerializer
     permission_classes = (AllowAny,)
+    filter_fields = ('id', 'name', 'timestamp')
 
     def get_queryset(self):
         queryset = self.queryset
