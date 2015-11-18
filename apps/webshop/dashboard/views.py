@@ -1,6 +1,6 @@
 from django.contrib.contenttypes.models import ContentType
 from django.core.urlresolvers import reverse
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, redirect
 from django.views.generic import TemplateView, DetailView, UpdateView, CreateView, DeleteView, ListView
 
 from apps.dashboard.tools import DashboardPermissionMixin
@@ -149,8 +149,30 @@ class ProductImage(DashboardPermissionMixin, DetailView):
 
 
 class Orders(DashboardPermissionMixin, ListView):
-    model = Category
     template_name = 'webshop/dashboard/orders.html'
     permission_required = 'webshop.view_order'
     queryset = OrderLine.objects.filter(paid=True)
     context_object_name = 'orders'
+
+
+class Order(DashboardPermissionMixin, DetailView):
+    model = OrderLine
+    template_name = 'webshop/dashboard/order.html'
+    permission_required = 'webshop.change_order_line'
+    context_object_name = 'order'
+
+
+class OrderDeliver(DashboardPermissionMixin, DetailView):
+    model = OrderLine
+    permission_required = 'webshop.change_order_line'
+
+    def post(self, *args, **kwargs):
+        super(OrderDeliver, self).get(*args, **kwargs)
+        if not self.object.delivered:
+            self.object.delivered = True
+            self.object.save()
+        return self.get(*args, **kwargs)
+
+    def get(self, *args, **kwargs):
+        super(OrderDeliver, self).get(*args, **kwargs)
+        return redirect('dashboard-webshop:order', pk=self.object.pk)

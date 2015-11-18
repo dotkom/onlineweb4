@@ -18,4 +18,6 @@ urlpatterns = patterns('apps.webshop.dashboard.views',
     url(r'^product/(?P<slug>[-_\w]+)/delete$', views.ProductDelete.as_view(), name='product_delete'),
     url(r'^product/(?P<slug>[-_\w]+)/image$', views.ProductImage.as_view(), name='product_image'),
     url(r'^orders/$', views.Orders.as_view(), name='orders'),
+    url(r'^order/(?P<pk>\d+)$', views.Order.as_view(), name='order'),
+    url(r'^order/(?P<pk>\d+)/deliver$', views.OrderDeliver.as_view(), name='order-deliver'),
 )

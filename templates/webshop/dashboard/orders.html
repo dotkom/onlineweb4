@@ -29,6 +29,7 @@ Webshop
         <table class="table table-striped table-condensed tablesorter" id="webshop_order_list">
             <thead>
                 <tr>
+                    <th>Produkter</th>
                     <th>Kunde</th>
                     <th>Antall produkter</th>
                     <th>Pris</th>
@@ -40,6 +41,11 @@ Webshop
             <tbody>
             {% for order in orders %}
                 <tr>
+                    <td><a href="{% url 'dashboard-webshop:order' pk=order.pk %}">
+                    {% for product in order.orders.all %}
+                        {{ product }}
+                    {% endfor%}
+                    </a></td>
                     <td>{{ order.user }}</td>
                     <td>{{ order.count_orders }}</td>
                     <td>{{ order.subtotal }}</td>
