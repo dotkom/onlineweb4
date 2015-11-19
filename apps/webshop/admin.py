@@ -27,7 +27,7 @@ class OrderInline(admin.TabularInline):
 
 class OrderLineAdmin(admin.ModelAdmin):
     model = OrderLine
-    inlines = [OrderInline,]
+    inlines = [OrderInline, ]
 
 
 class OrderAdmin(admin.ModelAdmin):

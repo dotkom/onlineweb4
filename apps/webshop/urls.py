@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-
 from django.conf.urls import patterns, url
 from apps.webshop.views import Home, CategoryDetail, ProductDetail, Checkout, RemoveOrder
 
-urlpatterns = patterns('apps.webshop.views',
+urlpatterns = patterns(
+    'apps.webshop.views',
     url(r'^$', Home.as_view(), name='webshop_home'),
     url(r'^category/(?P<slug>[-\w]+)/$', CategoryDetail.as_view(), name='webshop_category'),
     url(r'^product/(?P<slug>[-\w]+)/$', ProductDetail.as_view(), name='webshop_product'),

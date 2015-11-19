@@ -62,7 +62,6 @@ class ProductDetail(CartMixin, DetailView):
             messages.error(request, "Dette produktet er ikke lenger tilgjengelig.")
             return super(ProductDetail, self).get(request, *args, **kwargs)
 
-
         form = OrderForm(request.POST)
         if form.is_valid():
             order_line = self.current_order_line()

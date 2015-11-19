@@ -143,10 +143,10 @@ def webshop_pay(request):
 
                 messages.success(request, u"Betaling utført")
 
-                return HttpResponse("Betaling utført.", content_type="text/plain", status=200) 
+                return HttpResponse("Betaling utført.", content_type="text/plain", status=200)
             except stripe.CardError, e:
                 messages.error(request, str(e))
-                return HttpResponse(str(e), content_type="text/plain", status=500) 
+                return HttpResponse(str(e), content_type="text/plain", status=500)
 
     raise Http404("Request not supported")
 
