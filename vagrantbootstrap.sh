@@ -52,6 +52,11 @@ function update_packages() {
     progress sudo apt-get update
 }
 
+function install_curl() {
+    echo "installing curl"
+    progress sudo apt-get install curl
+}
+
 function install_packages() {
     echo "installing packages"
     progress sudo apt-get install -y \
