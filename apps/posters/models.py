@@ -40,8 +40,8 @@ class OrderMixin(models.Model):
         blank=True,
         null=True
     )
-    description = models.TextField(_(u"beskrivelse"), max_length=1000, blank=True, null=True)
-    comments = models.TextField(_(u"kommentar"), max_length=1000, blank=True, null=True)
+    description = models.TextField(_(u"beskrivelse"), blank=True, null=True)
+    comments = models.TextField(_(u"kommentar"), blank=True, null=True)
     amount = models.IntegerField(_(u'antall opplag'), blank=True, null=True)
     finished = models.BooleanField(_(u"ferdig"), default=False)
     display_from = models.DateField(_(u"vis fra"), blank=True, null=True, default=None)
