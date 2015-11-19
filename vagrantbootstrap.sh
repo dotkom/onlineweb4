@@ -64,7 +64,8 @@ function install_packages() {
         tmux screen git-core build-essential openssl \
         libjpeg8 libjpeg8-dev zlib-bin libtiff4-dev libfreetype6 libfreetype6-dev libpq-dev libssl-dev\
         python-psycopg2 imagemagick \
-        nodejs # from custom ppa:chris-lea/node.js
+        nodejs \
+        libffi-dev
 }
 
 function setup_virtualenv() {
