@@ -109,6 +109,7 @@ function prepare_and_run_onlineweb() {
 
 init
 update_packages
+install_curl
 add_custom_repos
 update_packages
 install_packages
