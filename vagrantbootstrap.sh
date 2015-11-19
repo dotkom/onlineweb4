@@ -41,10 +41,10 @@ function progress() {
     fi
 }
 
+
 function add_custom_repos() {
     echo "adding custom repositories for nodejs"
-    progress sudo apt-get install -y python-software-properties
-    progress sudo add-apt-repository -y ppa:chris-lea/node.js
+    progress curl -sL https://deb.nodesource.com/setup_4.x | sudo -E bash -
 }
 
 function update_packages() {
