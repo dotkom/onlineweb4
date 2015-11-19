@@ -41,17 +41,13 @@
           </a>
         {% endif %}
         </div>
-        <div class="description">
-            <p class="short">{{ product.short }}</p>
-            {{ product.description }}
-        </div>
     </div>
     <div class="col-sm-5">
       <div class="product-name">
         {{ product.name }}
       </div>
       <div class="product-price">
-        {{ product.price|default:0|floatformat:2 }},-
+        {{ product.price|default:0|floatformat:2 }}
       </div>
         <form method="post">
           {% csrf_token %}
