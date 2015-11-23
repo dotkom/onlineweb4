@@ -99,7 +99,7 @@ function prepare_and_run_onlineweb() {
     cd /vagrant
     cp onlineweb4/settings/example-local.py onlineweb4/settings/local.py
     echo "creating tables"
-    progress python manage.py syncdb
+    progress python manage.py migrate
     if $RUNSERVER
     then
         echo "starting dev server"
