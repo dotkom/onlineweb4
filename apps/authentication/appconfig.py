@@ -1,8 +1,5 @@
 from django.apps import AppConfig
 
-import reversion
-import watson
-
 
 class AuthenticationConfig(AppConfig):
     name = 'apps.authentication'
@@ -13,6 +10,9 @@ class AuthenticationConfig(AppConfig):
         # The following stops pycharm from nagging about unused import statement
         # noinspection PyUnresolvedReferences
         import apps.authentication.signals  # flake8: noqa
+
+        from reversion import revisions as reversion
+        from watson import search as watson
 
         from apps.authentication.models import OnlineUser, RegisterToken
 

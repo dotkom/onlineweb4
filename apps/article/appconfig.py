@@ -1,7 +1,5 @@
 from django.apps import AppConfig
 
-import watson
-
 
 class ArticleConfig(AppConfig):
     name = 'apps.article'
@@ -9,6 +7,8 @@ class ArticleConfig(AppConfig):
 
     def ready(self):
         super(ArticleConfig, self).ready()
+
+        from watson import search as watson
 
         from apps.article.models import Article
 

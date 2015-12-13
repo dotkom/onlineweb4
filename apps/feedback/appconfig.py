@@ -1,7 +1,5 @@
 from django.apps import AppConfig
 
-import reversion
-
 
 class FeedbackConfig(AppConfig):
     name = 'apps.feedback'
@@ -9,6 +7,8 @@ class FeedbackConfig(AppConfig):
 
     def ready(self):
         super(FeedbackConfig, self).ready()
+
+        from reversion import revisions as reversion
 
         from apps.feedback.models import (
             FieldOfStudyAnswer, MultipleChoiceAnswer, RatingAnswer, RegisterToken, TextAnswer)

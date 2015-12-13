@@ -1,7 +1,5 @@
 from django.apps import AppConfig
 
-import watson
-
 
 class EventsConfig(AppConfig):
     name = 'apps.events'
@@ -9,6 +7,8 @@ class EventsConfig(AppConfig):
 
     def ready(self):
         super(EventsConfig, self).ready()
+
+        from watson import search as watson
 
         from apps.events.models import Event
 

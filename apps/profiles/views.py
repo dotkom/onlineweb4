@@ -17,7 +17,7 @@ from django.utils import timezone
 
 from oauth2_provider.models import AccessToken
 
-import watson
+from watson import search as watson
 
 from apps.approval.forms import FieldOfStudyApplicationForm
 from apps.approval.models import MembershipApproval

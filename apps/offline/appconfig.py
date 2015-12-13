@@ -1,7 +1,5 @@
 from django.apps import AppConfig
 
-import reversion
-
 
 class OfflineConfig(AppConfig):
     name = 'apps.offline'
@@ -9,6 +7,9 @@ class OfflineConfig(AppConfig):
 
     def ready(self):
         super(OfflineConfig, self).ready()
+
+        from reversion import revisions as reversion
+
         # The following stops pycharm from nagging about unused import statement
         # noinspection PyUnresolvedReferences
         import apps.offline.signals

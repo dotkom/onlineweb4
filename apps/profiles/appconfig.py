@@ -1,7 +1,5 @@
 from django.apps import AppConfig
 
-import reversion
-
 
 class ProfilesConfig(AppConfig):
     name = 'apps.profiles'
@@ -9,6 +7,8 @@ class ProfilesConfig(AppConfig):
 
     def ready(self):
         super(ProfilesConfig, self).ready()
+
+        from reversion import revisions as reversion
 
         from apps.profiles.models import Privacy
 
