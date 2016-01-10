@@ -1,0 +1,36 @@
+{% extends 'webshop/base.html' %}
+
+{% load compress %}
+{% load markdown_deux_tags %}
+
+{% block title %}Webshop {{ category }} - Online{% endblock title %}
+{% block header %}<a href="{% url 'webshop_home' %}">Webshop</a>  / {{ category }}{% endblock header %}
+
+{% block webshop_content %}
+    {% for product in category.products.all %}
+        {% if forloop.counter|divisibleby:2 %}
+        <div class="row">   
+        {% endif %}
+            <div class="col-xs-12 col-sm-6 col-md-6">
+                <div class="col-md-5">
+                    {% with product.images.all|first as thumb %}
+                    <!-- TODO: MAKE IT SHOW resourcecenter/github.jpg if not found -->
+                    <div class="col-md-5 item-bg" style="background-image: url('{{ thumb.image_xs.url }}');">
+                    </div>
+                    {%endwith%}
+                </div>
+                <div class="col-md-7 resourcedescription">
+                    <h3><a href="{{ product.get_absolute_url }}">{{ product }}</a></h3>
+                    <p>
+                    {{ product.short }}
+                    </p>
+                </div>
+            </div>
+        {% if forloop.counter|divisibleby:2 %}
+        </div>
+        {% endif %}
+        {% empty %}
+            <li>Fant ingen produkter</li>
+    {% endfor %}
+
+{% endblock %}

@@ -1,5 +1,6 @@
 from copy import copy
 from django.template.defaultfilters import slugify
+from unidecode import unidecode
 from tastypie import fields
 from tastypie.resources import ModelResource
 from tastypie.authorization import Authorization
@@ -16,34 +17,41 @@ from apps.companyprofile.models import Company
 
 from apps.api.v0.authentication import UserResource
 
+
 class AttendeeResource(ModelResource):
     user = fields.ToOneField(UserResource, 'user', full=True)
 
-    class Meta:
+    class Meta(object):
         queryset = Attendee.objects.all()
         resource_name = 'attendees'
 
+
 class CompanyResource(ModelResource):
-    
-    class Meta:
+
+    class Meta(object):
         queryset = Company.objects.all()
         resource_name = 'company'
-        fields = ['image']
+        fields = ['old_image']
+
+
 class CompanyEventResource(ModelResource):
     companies = fields.ToOneField(CompanyResource, 'company', full=True)
-    class Meta:
+
+    class Meta(object):
         queryset = CompanyEvent.objects.all()
-        resource_name ='companies'
+        resource_name = 'companies'
+
 
 class AttendanceEventResource(ModelResource):
     users = fields.ToManyField(AttendeeResource, 'attendees', full=False)
 
-    class Meta:
+    class Meta(object):
         queryset = AttendanceEvent.objects.all()
         resource_name = 'attendance_event'
 
         # XXX: Noop authorization is probably not safe for producion
         authorization = Authorization()
+
 
 class EventResource(ModelResource):
     author = fields.ToOneField(UserResource, 'author', full=True)
@@ -59,58 +67,57 @@ class EventResource(ModelResource):
 
     # Making multiple images for the events
     def dehydrate(self, bundle):
-        
-        # Setting sluyg-field
-        bundle.data['slug'] = slugify(bundle.data['title'])
-        
+
+        # Setting slug-field
+        bundle.data['slug'] = slugify(unidecode(bundle.data['title']))
+
         # If image is set
         if bundle.data['image']:
             # Parse to FileObject used by Filebrowser
             temp_image = FileObject(bundle.data['image'])
-            
+
             # Itterate the different versions (by key)
             for ver in VERSIONS.keys():
                 # Check if the key start with article_ (if it does, we want to crop to that size)
                 if ver.startswith('events_'):
                     # Adding the new image to the object
                     bundle.data['image_'+ver] = temp_image.version_generate(ver).url
-            
+
             # Unset the image-field
             del(bundle.data['image'])
-        
+
         # Do the same thing for the company image
         if bundle.data['company_event']:
             for company in bundle.data['company_event']:
-                temp_image = FileObject(company.data['companies'].data['image'])
+                temp_image = FileObject(company.data['companies'].data['old_image'])
                 for ver in VERSIONS.keys():
                     if ver.startswith('companies_thumb'):
-                        company.data['companies'].data['image_'+ver] = temp_image.version_generate(ver).url
-                del(company.data['companies'].data['image'])
+                        company.data['companies'].data['old_image_'+ver] = temp_image.version_generate(ver).url
+                del(company.data['companies'].data['old_image'])
 
-        # Returning washed object 
+        # Returning washed object
         return bundle
-        
+
     def get_object_list(self, request):
 
         events = Event.objects.all()
         filtered_events = set()
 
-        #Removes restricted events if the user does not belong to the right group
+        # Removes restricted events if the user does not belong to the right group
         for event in events:
             if event.can_display(request.user):
                 filtered_events.add(event.pk)
 
-        return Event.objects.filter(pk__in = filtered_events)
-        
+        return Event.objects.filter(pk__in=filtered_events)
 
-    class Meta:
+    class Meta(object):
         queryset = Event.objects.all()
         resource_name = 'events'
         # XXX: Noop authorization is probably not safe for producion
         authorization = Authorization()
-        
+
         include_absolute_url = True
         ordering = ['event_start']
         filtering = {
-            'event_end' : ('gte',)
+            'event_end': ('gte',)
         }

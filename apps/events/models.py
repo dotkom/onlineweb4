@@ -8,17 +8,21 @@ from django.contrib.auth.models import Group
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.template.defaultfilters import slugify
+from unidecode import unidecode
 from django.utils import timezone
 from django.utils.translation import ugettext as _
 from django.contrib.contenttypes.models import ContentType
 
-from apps.authentication.models import OnlineUser as User, FIELD_OF_STUDY_CHOICES
+from apps.authentication.models import FIELD_OF_STUDY_CHOICES
 from apps.companyprofile.models import Company
 from apps.marks.models import Mark, get_expiration_date, Suspension
 
 import reversion
 import watson
 from filebrowser.fields import FileBrowseField
+
+
+User = settings.AUTH_USER_MODEL
 
 class Event(models.Model):
     """
@@ -129,7 +133,7 @@ class Event(models.Model):
 
     @property
     def slug(self):
-        return slugify(self.title)
+        return slugify(unidecode(self.title))
 
     @models.permalink
     def get_absolute_url(self):
@@ -289,9 +293,9 @@ class RuleBundle(models.Model):
     Access restriction rule object
     """
     description = models.CharField(_(u'beskrivelse'), max_length=100, blank=True, null=True)
-    field_of_study_rules = models.ManyToManyField(FieldOfStudyRule, null=True, blank=True)
-    grade_rules = models.ManyToManyField(GradeRule, null=True, blank=True)
-    user_group_rules = models.ManyToManyField(UserGroupRule, null=True, blank=True)
+    field_of_study_rules = models.ManyToManyField(FieldOfStudyRule, blank=True)
+    grade_rules = models.ManyToManyField(GradeRule, blank=True)
+    user_group_rules = models.ManyToManyField(UserGroupRule, blank=True)
 
     def get_all_rules(self):
         rules = []
@@ -338,6 +342,25 @@ reversion.register(RuleBundle)
 """
 
 
+class Extras(models.Model):
+    """
+    Choices for events
+    """
+
+    choice = models.CharField(u'valg', max_length=69)
+    note = models.CharField(u'notat', max_length=200, blank=True, null=True)
+    
+    def __unicode__(self):
+        return self.choice
+
+    class Meta:
+        verbose_name = _("ekstra valg")
+        verbose_name_plural = _("ekstra valg")
+        ordering = ['choice']
+
+reversion.register(Extras)
+
+
 class AttendanceEvent(models.Model):
     """
     Events that require special considerations regarding attendance.
@@ -359,7 +382,10 @@ class AttendanceEvent(models.Model):
     marks_has_been_set = models.BooleanField(default=False)
 
     #Access rules
-    rule_bundles = models.ManyToManyField(RuleBundle, blank=True, null=True)
+    rule_bundles = models.ManyToManyField(RuleBundle, blank=True)
+
+    # Extra choices
+    extras = models.ManyToManyField(Extras, blank=True)
 
     @property
     def has_reservation(self):
@@ -697,9 +723,21 @@ class Attendee(models.Model):
     attended = models.BooleanField(_(u'var tilstede'), default=False)
     paid = models.BooleanField(_(u'har betalt'), default=False)
     note = models.CharField(_(u'notat'), max_length=100, blank=True, default='')
+    extras = models.ForeignKey(Extras, blank=True, null=True)
 
     def __unicode__(self):
         return self.user.get_full_name()
+
+    def delete(self):
+        #Importing here to prevent circular dependencies
+        from apps.payment.models import PaymentDelay
+        try:
+            PaymentDelay.objects.filter(user=self.user, payment=self.event.payment).delete()
+        except PaymentDelay.DoesNotExist:
+            #Do nothing
+            False
+
+        super(Attendee, self).delete()
 
     class Meta:
         ordering = ['timestamp']
@@ -766,7 +804,7 @@ class GroupRestriction(models.Model):
         primary_key=True,
         related_name='group_restriction')
 
-    groups = models.ManyToManyField(Group, null=True, blank=True, help_text=_(u'Legg til de gruppene som skal ha tilgang til arrangementet'))
+    groups = models.ManyToManyField(Group, blank=True, help_text=_(u'Legg til de gruppene som skal ha tilgang til arrangementet'))
 
     class Meta:
         verbose_name = _("restriksjon")

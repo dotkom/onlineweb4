@@ -1,0 +1,83 @@
+{% extends 'webshop/base.html' %}
+
+{% load compress %}
+{% load markdown_deux_tags %}
+{% load crispy_forms_tags %}
+
+{% block title %}Webshop {{ product }} - Online{% endblock title %}
+{% block header %}
+<a href="{% url 'webshop_home' %}">Webshop /</a> 
+<a href="{% url 'webshop_category' slug=product.category.slug %}">{{ product.category }}</a> / 
+{{product}}
+{% endblock header %}
+
+{% block webshop_content %}
+
+<div class="row">
+    <div class="col-sm-7">
+        <div id="carousel-product" class="carousel slide" data-ride="carousel">
+          {% if product.images.count > 1 %}
+          <ol class="carousel-indicators">
+            {% for image in product.images.all %}
+            <li data-target="#carousel-product" data-slide-to="{{ forloop.counter0 }}" {% if forloop.first %}class="active"{% endif %}></li>
+            {% endfor %}
+          </ol>
+          {% endif %}
+
+          <div class="carousel-inner">
+            {% for image in product.images.all %}
+            <div class="item{% if forloop.first %} active{% endif %}">
+              <img src="{{ image.image_lg.url }}" alt="{{ image.name }}">
+            </div>
+            {% endfor %}
+          </div>
+
+          {% if product.images.count > 1 %}
+          <a class="left carousel-control" href="#carousel-product" data-slide="prev">
+            <span class="glyphicon glyphicon-chevron-left"></span>
+          </a>
+          <a class="right carousel-control" href="#carousel-product" data-slide="next">
+            <span class="glyphicon glyphicon-chevron-right"></span>
+          </a>
+        {% endif %}
+        </div>
+    </div>
+    <div class="col-sm-5">
+      <div class="product-name">
+        {{ product.name }}
+      </div>
+      <div class="product-price">
+        {{ product.price|default:0|floatformat:2 }}
+      </div>
+        <form method="post">
+          {% csrf_token %}
+          <div class="form-group order-form">
+            <label class="control-label">
+              Antall
+              <input class="form-control" min="1" name="quantity" type="number" value="1">
+            </label>
+            {% if sizes %}
+              <select id="size" name="size" class="form-control">
+                {% for size in sizes %}
+                  <option value="{{ size.pk }}">{{ size.size }} {% if size.description %} - {{size.description }} {% endif %}</option>
+                {% endfor %}
+              </select>
+            {% endif %}
+
+          </div>
+          <input type="submit" class="btn btn-lg btn-default" value="Legg til">
+        </form>
+        {% if product.deadline %}
+          <hr>
+          <p>Dette produktet er kun tilgjengelig frem til </p>
+          <b>{{ product.deadline }}</b>
+        {% endif %}
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-7 description">
+        <p class="short">{{ product.short }}</p>
+        {{ product.description }}
+    </div>
+</div>
+{% endblock %}

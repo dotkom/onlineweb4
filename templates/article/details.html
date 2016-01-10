@@ -22,9 +22,9 @@
                 {% else %}
                         <div class="col-md-12">
                            <div>
-                               <img width="100%" src="{% version article.image 'article_full' %}" alt="{{ article.heading }}"/>
+                               <img width="100%" src="{{ article.image.wide }}" alt="{{ article.heading }}"/>
                                <div class="col-md-12 photograph-detail-meta">
-                                   <span class="meta-caption">{% if article.photographers %} Fotograf</span> {{ article.photographers|striptags|markdown }} {% endif %}
+                                   <span class="meta-caption">{% if article.image.photographer %} Fotograf</span> {{ article.image.photographer|striptags|markdown }} {% endif %}
                                </div>
                            </div>
                        </div>
@@ -44,7 +44,7 @@
                                                 <span class="caret"></span>
                                             </button>
                                             <ul class="dropdown-menu" role="menu">
-                                                <li><a href="{% url 'admin:article_article_change' article.id %}">Edit</a></li>
+                                                <li><a href="{% url 'dashboard_article_edit' article.id %}">Endre</a></li>
                                             </ul>
                                         </div>
                                     {% endif %}
@@ -53,7 +53,7 @@
                         </div>
                     </div>
                     <div class="col-md-12 article-detail-meta">
-                        <span class="meta-caption">Av</span> {% if article.additional_authors %} {{ article.additional_authors }} og {% endif %} {{ article.created_by.get_full_name }} |
+                        <span class="meta-caption">Av</span> {{ article.authors }} |
                         <span class="meta-caption">Publisert</span> {{ article.published_date }}
                         {% if article.is_changed %} |
                             <span class="meta-caption">Endret</span> {{ article.changed_date }}
@@ -96,8 +96,8 @@
                                                 <div class="row row-space">
                                             {% endif %}
                                                 <div class="col-md-6 bilde">
-                                                    <a href="{{ related_article.get_absolute_url }}">
-                                                        <img src="{% version related_article.image 'article_related' %}" 
+                                                    <a href="{{ related_article.get_absolute_url }}">
+                                                        <img src="{{ related_article.image.thumb }}"
                                                             alt="{{ related_article.heading }}"/>
                                                         <h4>{{ related_article.heading }}</h4>
                                                     </a>
@@ -123,8 +123,8 @@
                         </div>
                         <div class="tag-cloud">
                             {% if article.tags %}
-                                {% for tag in article.tags %}
-                                    <a href="{% url 'view_article_tag' tag.name tag.slug %}"><span class="tag">{{ tag }}</span></a>
+                                {% for tag in article.tags.all %}
+                                    <a href="{% url 'view_article_tag' tag.slug %}"><span class="tag">{{ tag }}</span></a>
                                 {% endfor %}
                             {% else %}
                                 <p>Denne artikkelen har ingen tags.</p>

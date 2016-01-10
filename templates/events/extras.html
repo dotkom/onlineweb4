@@ -1,0 +1,20 @@
+{% if attendance_event.extras.all %}
+    <div class="dropdown extras">
+      <span class="extra-text"></span>
+      <select class="form-control extras-choice">
+        {% if not attendee.extras %}
+          <option value="" disabled selected>Velg et alternativ</option>
+        {% endif %}
+        {% for choice in attendance_event.extras.all %}
+            <option value="{{ forloop.counter0 }}" 
+              {%if attendee.extras == choice %}
+                selected="selected">
+                Valgt ekstra: {{choice}}
+              {%else%}
+                >{{ choice }}
+              {%endif%}
+            </option>
+        {% endfor %}
+      </select>
+    </div>
+{% endif %}

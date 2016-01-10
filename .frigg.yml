@@ -1,0 +1,13 @@
+tasks:
+  - tox -e flake8
+  - tox -e isort
+  - tox -e tests
+  - tox -e coverage
+
+verbose_tasks:
+  - tox -e coverage
+
+coverage:
+  path: coverage.xml
+  parser: python
+

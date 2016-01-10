@@ -1,6 +1,7 @@
 # -*- coding: utf8 -*-
 import os
 import sys
+
 import wiki
 from django.contrib.messages import constants as messages
 
@@ -10,12 +11,10 @@ PROJECT_SETTINGS_DIRECTORY = os.path.dirname(globals()['__file__'])
 PROJECT_ROOT_DIRECTORY = os.path.join(PROJECT_SETTINGS_DIRECTORY, '..', '..')
 
 TEST_RUNNER = "django_nose.NoseTestSuiteRunner"
-NOSE_ARGS = ['--with-coverage', '--cover-package=apps']
+NOSE_ARGS = ['--with-coverage', '--cover-package=apps', '--cover-html-dir=coverage', '--cover-xml', '--cover-html']
 
 DEBUG = False
 TEMPLATE_DEBUG = DEBUG
-
-TEST_RUNNER = "django_nose.NoseTestSuiteRunner"
 
 ADMINS = (
     ('dotKom', 'dotkom@online.ntnu.no'),
@@ -145,6 +144,9 @@ GRAPPELLI_ADMIN_TITLE = '<a href="/">Onlineweb</a>'
 ANONYMOUS_USER_ID = -1
 GUARDIAN_RENDER_403 = True
 
+# Django-Taggit settings
+TAGGIT_CASE_INSENSITIVE = True
+
 # List of usergroups that should be listed under "Finn brukere" in user profile
 USER_SEARCH_GROUPS = [
     16,  # appKom
@@ -162,17 +164,6 @@ USER_SEARCH_GROUPS = [
     18,  # seniorKom
     8,   # triKom
     9,   # velKom
-]
-
-# Online stripe test keys
-STRIPE_PUBLIC_KEYS = [
-    "pk_test_SDGGPO6MQSMAwlwySCzNJTw9",
-    "pk_test_1BjvVBYc0pdZLlC8EN1JY0Ur"
-]
-
-STRIPE_PRIVATE_KEYS = [
-    "sk_test_i1AL1Z4An77TMZMpgA9d4KEM",
-    "sk_test_F4wQkOgKHb8OI92tJeZmjDxg"
 ]
 
 #List of mailing lists, used in update_sympa_memcache_from_sql.py
@@ -219,6 +210,8 @@ INSTALLED_APPS = (
     'stripe',
     'rest_framework',
     'django_filters',
+    'taggit',
+    'taggit_serializer',
 
     # Django apps
     'django.contrib.admin',
@@ -238,6 +231,7 @@ INSTALLED_APPS = (
     'apps.careeropportunity',
     'apps.companyprofile',
     'apps.dashboard',
+    'apps.gallery',
     'apps.events',
     'apps.marks',
     'apps.offline',
@@ -253,6 +247,7 @@ INSTALLED_APPS = (
     'apps.sso',
     'apps.splash',
     'apps.shop',
+    'apps.webshop',
     'scripts',
 
     #External apps
@@ -262,9 +257,10 @@ INSTALLED_APPS = (
     #Wiki
     'wiki',
     'wiki.plugins.attachments',
-    'wiki.plugins.notifications',
     'wiki.plugins.images',
     'wiki.plugins.macros',
+    'wiki.plugins.help',
+    'wiki.plugins.links',
 
 )
 

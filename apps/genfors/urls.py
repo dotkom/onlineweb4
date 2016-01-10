@@ -1,6 +1,7 @@
-from django.conf.urls import patterns, include, url
+from django.conf.urls import patterns, url
 
-urlpatterns = patterns('apps.genfors.views',
+urlpatterns = patterns(
+    'apps.genfors.views',
     url(r'^$', 'genfors', name='genfors_index'),
     url(r'^logout$', 'logout', name='genfors_logout'),
     url(r'^admin/$', 'admin', name='genfors_admin'),

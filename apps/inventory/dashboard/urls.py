@@ -2,7 +2,8 @@
 
 from django.conf.urls import patterns, url
 
-urlpatterns = patterns('apps.inventory.dashboard.views',
+urlpatterns = patterns(
+    'apps.inventory.dashboard.views',
     url(r'^$', 'index', name='dashboard_inventory_index'),
     url(r'^new/$', 'new', name='dashboard_inventory_new'),
     url(r'^item/(?P<item_pk>\d+)/$', 'details', name='dashboard_inventory_details'),
@@ -11,3 +12,4 @@ urlpatterns = patterns('apps.inventory.dashboard.views',
     url(r'^item/(?P<item_pk>\d+)/batch/(?P<batch_pk>\d+)/$', 'batch', name='dashboard_inventory_batch'),
     url(r'^item/(?P<item_pk>\d+)/batch/(?P<batch_pk>\d+)/delete/$', 'batch_delete', name='dashboard_inventory_batch_delete'),
 )
+

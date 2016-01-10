@@ -17,7 +17,7 @@ IMAGE_FOLDER = "images/offline"
 
 
 class ProxyChunk(Chunk):
-    class Meta:
+    class Meta(object):
         proxy = True
         verbose_name = 'Informasjonstekst'
         verbose_name_plural = 'Informasjonstekster'
@@ -68,7 +68,7 @@ class Issue(models.Model):
     def thumbnail_exists(self):
         return path.exists(self.thumbnail)
 
-    class Meta:
+    class Meta(object):
         verbose_name = 'Utgivelse'
         verbose_name_plural = 'Utgivelser'
         ordering = ['-release_date']
@@ -101,10 +101,10 @@ def create_thumbnail(sender, instance=None, **kwargs):
         except (OSError, CalledProcessError) as e:
             logger.debug("ERROR: {0}".format(e))
 
-        logger.debug('Thumbnail created, and is located at: %s' % (t.thumbnail))
+        logger.debug('Thumbnail created, and is located at: %s' % t.thumbnail)
 
     else:
-        logger.debug('Thumbnail already exists, and is located at: %s' % (t.thumbnail))
+        logger.debug('Thumbnail already exists, and is located at: %s' % t.thumbnail)
 
 
 post_save.connect(create_thumbnail, sender=Issue)

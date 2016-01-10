@@ -3,6 +3,7 @@ from apps.companyprofile.models import Company
 
 
 class CompanySerializer(serializers.ModelSerializer):
-    class Meta:
+
+    class Meta(object):
         model = Company
         fields = ('name', 'site', 'images')

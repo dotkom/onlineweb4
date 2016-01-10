@@ -95,6 +95,7 @@ def details(request, event_id, active_tab='attendees'):
                         'first_name': a.user.first_name,
                         'last_name': a.user.last_name,
                         'paid': a.paid,
+                        'extras': str(a.extras),
                         'attended': a.attended,
                         'link': reverse('dashboard_attendee_details', kwargs={'attendee_id': a.id})
                     })
@@ -106,6 +107,7 @@ def details(request, event_id, active_tab='attendees'):
                         'first_name': a.user.first_name,
                         'last_name': a.user.last_name,
                         'paid': a.paid,
+                        'extras': str(a.extras),
                         'attended': a.attended,
                         'link': reverse('dashboard_attendee_details', kwargs={'attendee_id': a.id})
                     })
@@ -128,6 +130,7 @@ def details(request, event_id, active_tab='attendees'):
                         'first_name': a.user.first_name,
                         'last_name': a.user.last_name,
                         'paid': a.paid,
+                        'extras': str(a.extras),
                         'attended': a.attended,
                         'link': reverse('dashboard_attendee_details', kwargs={'attendee_id': a.id})
                     })
@@ -139,6 +142,7 @@ def details(request, event_id, active_tab='attendees'):
                         'first_name': a.user.first_name,
                         'last_name': a.user.last_name,
                         'paid': a.paid,
+                        'extras': str(a.extras),
                         'attended': a.attended,
                         'link': reverse('dashboard_attendee_details', kwargs={'attendee_id': a.id})
                     })
@@ -150,10 +154,32 @@ def details(request, event_id, active_tab='attendees'):
     context['event'] = event
     context['active_tab'] = active_tab
 
+    extras = {}
+    if event.is_attendance_event() and event.attendance_event.extras:
+        for extra in event.attendance_event.extras.all():
+            extras[extra] = {"type": extra, "attending": 0, "waits": 0, "allergics": []}
+
+        count_extras(extras, "attending", event.attendance_event.attendees_qs)
+        count_extras(extras, "waits", event.attendance_event.waitlist_qs)
+
+    context['extras'] = extras
     context['change_event_form'] = ChangeEventForm(instance=event)
 
-
     return render(request, 'events/dashboard/details.html', context)
+
+
+def count_extras(arr, inlist, atts):
+    for att in atts:
+        choice = "Ikke valgt" if att.extras is None else att.extras
+        if att.extras not in arr:
+            arr[choice] = {"type": choice, "attending": 0, "waits": 0, "allergics": []}
+        ex = arr[choice]
+        ex[inlist] += 1
+        if att.user.allergies:
+            whatList = "påmeldt" if inlist is "attending" else "venteliste"
+            ex["allergics"].append({"user": att.user, "list": whatList})
+
+
 
 @login_required
 @permission_required('events.view_attendee', return_403=True)

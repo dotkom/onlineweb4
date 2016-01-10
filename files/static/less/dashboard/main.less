@@ -124,7 +124,7 @@ nav#dashboard_main_nav {
 
 .content-header {
 
-    
+
 
     background-color: @header-bg;
     z-index: 10;
@@ -172,7 +172,7 @@ tr, td, th {
 
 /* GENERAL TEMPLATE CODE BELOW */
 
-/*! 
+/*!
  *   AdminLTE v1.2
  *   Author: AlmsaeedStudio.com
  *   License: Open source - MIT
@@ -205,20 +205,18 @@ body {
 /* Define 2 column template */
 .right-side,
 .left-side {
-  min-height: 100%;
   display: block;
 }
 /*right side - contins main content*/
 .right-side {
   margin-left: 220px;
-  min-height: 100%;
-  overflow: auto;
 }
 /*left side - contains sidebar*/
 .left-side {
   position: absolute;
   width: 220px;
   top: 0;
+  bottom: 0;
   background-color: @sidebar-bg;
 }
 @media screen and (min-width: 992px) {
@@ -276,7 +274,7 @@ body.fixed .wrapper {
 }
 /* All images should be responsive */
 img {
-  max-width: 100%important;
+  max-width: 100% !important;
 }
 /* 10px padding and margins */
 .pad {
@@ -465,4 +463,4 @@ img {
  *
  */
 
-.datepicker { z-index: 1151 !imporatant; }
+.datepicker { z-index: 1151; }

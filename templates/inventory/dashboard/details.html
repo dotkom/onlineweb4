@@ -4,7 +4,7 @@
 {% load compress %}
 
 {% block title %}
-    {{ item.name }} - Online Dashboard
+    {{ item.name }} - Online Dashboard
 {% endblock title %}
 
 {% block styles %}
@@ -16,12 +16,12 @@
 {% block js %}
     {{ block.super }}
     {% compress js %}
-    <script src="{{ STATIC_URL }}js/dashboard/inventory.js"></script>
+    <script src="{{ STATIC_URL }}js/dashboard/inventory.js"></script>
     {% endcompress %}
 {% endblock js %}
 
 {% block page-header %}
-    Endre {{ item.name }}
+    Endre {{ item.name }}
 {% endblock %}
 
 {% block breadcrumbs %}
@@ -146,7 +146,7 @@
         </div>
     </div>
 </div>
-<input type="hidden" id="item_id" value="{{ item.id }}" />
+<input type="hidden" id="item_id" value="{{ item.id }}" />
 <div id="modal-delete-batch" class="modal fade">
     <div class="modal-dialog">
         <div class="modal-content">

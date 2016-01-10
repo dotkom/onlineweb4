@@ -26,7 +26,8 @@ Ny {{order_type_name | lower}}bestilling
 {% endblock %}
 
 {% block breadcrumbs %}
-    <li>Bestilling</li> 
+    <li><a href="{% url 'posters' %}">Bestilling</a></li>
+    <li>Ny {{order_type_name | lower}}bestilling</li>
 {% endblock %}
 
 {% block content %}
@@ -50,7 +51,7 @@ Ny {{order_type_name | lower}}bestilling
         <button type="submit" class="btn btn-lg btn-success dropdown-toggle">Submit</button>
         {% csrf_token %}
     </form>
-        
+
     </section>
 
 {% endblock content %}

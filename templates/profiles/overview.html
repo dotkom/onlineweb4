@@ -90,6 +90,32 @@
                 {% endif %}
             </div>
         </div>
+        <div class="row attribute-list">
+            <div class="col-md-4">
+                <b>Hjemmeside</b><br />
+                {% if user.website %}
+                    {{ user.website }}
+                {% else %}
+                    Ikke tilgjengelig
+                {% endif %}
+            </div>
+            <div class="col-md-4">
+                <b>Github</b><br />
+                {% if user.github %}
+                    {{ user.github }}
+                {% else %}
+                    Ikke tilgjengelig
+                {% endif %}
+            </div>
+            <div class="col-md-4">
+                <b>LinkedIn</b><br />
+                {% if user.linkedin %}
+                    {{ user.linkedin }}
+                {% else %}
+                    Ikke tilgjengelig
+                {% endif %}
+            </div>
+        </div>
 		<div class="row row-space">
 			<div class="col-md-12">
                 <div class="row">
@@ -105,29 +131,29 @@
                     <div class="col-md-4">
                         <em>Ingen posisjoner registrert...</em>
                     </div>
-                    <div class="col-md-8" id="bio">
-                        {% firstof user.bio|striptags 'Ikke tiljengelig...' %}
+                    <div class="col-md-8" class="bio">
+                        {% firstof user.bio|striptags '' %}
                     </div>
                 </div>
             {% else %}
-                {% for position in user.positions.all %}
-                    <div class="row row-small-space">
-                        <div class="col-md-4 position">
-                            <span class="glyphicon glyphicon-remove delete-position" data-position-id="{{ position.id }}"></span>
-                            <p>{{ position.period }}: {{ position.get_position_display }}, {{ position.get_committee_display }}</p>
-                        </div>
-                        <div class="col-md-8" id="bio">
-                            {% firstof user.bio|striptags 'Ikke tiljengelig...' %}
-                        </div>
+                <div class="row row-small-space">
+                    <div class="col-md-4 position">
+                    {% for position in user.positions.all %}
+                        <span class="glyphicon glyphicon-remove delete-position" data-position-id="{{ position.id }}"></span>
+                        <p>{{ position.period }}: {{ position.get_position_display }}, {{ position.get_committee_display }}</p><br\>
+                    {% endfor %}
                     </div>
-                {% endfor %}
+                    <div class="col-md-8" class="bio">
+                        {% firstof user.bio|striptags '' %}
+                    </div>
+                </div>
                 {% if user.special_positions.all %}
                     <div class="row">
                         <div class="col-md-4" style="margin-top:10px;">
                             <b>Hedersposisjoner</b>
                         </div>
-                        <div class="col-md-8" id="bio">
-                            {% firstof user.bio|striptags 'Ikke tiljengelig...' %}
+                        <div class="col-md-8" class="bio">
+                            {% firstof user.bio|striptags '' %}
                         </div>
                     </div>
                     {% for position in user.special_positions.all %}
@@ -135,9 +161,11 @@
                             <div class="col-md-4">
                                 Fra {{ position.since_year }}, {{ position.position }}
                             </div>
-                            <div class="col-md-8" id="bio">
-                                {% firstof user.bio|striptags 'Ikke tiljengelig...' %}
-                            </div>
+                            {% if forloop.first %}
+                                <div class="col-md-8" class="bio">
+                                    {% firstof user.bio|striptags '' %}
+                                </div>
+                            {% endif %}
                         </div>
                     {% endfor %}
                 {% endif %}

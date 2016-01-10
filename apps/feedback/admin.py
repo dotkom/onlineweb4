@@ -10,12 +10,14 @@ from apps.feedback.models import MultipleChoiceRelation
 
 from django.forms.models import ModelForm
 from django.contrib import admin
-from django.contrib.contenttypes import generic
+from django.contrib.contenttypes.admin import GenericStackedInline
+
+from reversion.admin import VersionAdmin
 
 
 class AlwaysChangedModelForm(ModelForm):
-   
-   def has_changed(self):
+
+    def has_changed(self):
         """
         Should return True if data differs from initial.
         By always returning true even unchanged inlines will get
@@ -24,7 +26,7 @@ class AlwaysChangedModelForm(ModelForm):
         return True
 
 
-class FeedbackRelationInline(generic.GenericStackedInline):
+class FeedbackRelationInline(GenericStackedInline):
     model = FeedbackRelation
     extra = 0
     classes = ('grp-collapse grp-open',)  # style
@@ -32,7 +34,7 @@ class FeedbackRelationInline(generic.GenericStackedInline):
     exclude = ("answered", "active", "first_mail_sent")
 
 
-class FeedbackRelationAdmin(admin.ModelAdmin):
+class FeedbackRelationAdmin(VersionAdmin):
     model = FeedbackRelation
     related_lookup_fields = {
         'generic': [['content_type', 'object_id']],
@@ -60,7 +62,7 @@ class ChoiceInline(admin.StackedInline):
     extra = 0
 
 
-class MultipleChoiceAdmin(admin.ModelAdmin):
+class MultipleChoiceAdmin(VersionAdmin):
     model = MultipleChoiceRelation
     inlines = (ChoiceInline, )
     classes = ('grp-collapse grp-open',)  # style
@@ -75,7 +77,7 @@ class MultipleChoiceInline(admin.StackedInline):
     extra = 0
 
 
-class FeedbackAdmin(admin.ModelAdmin):
+class FeedbackAdmin(VersionAdmin):
     list_display = ('description', 'author')
 
     inlines = (TextInline, RatingInline, MultipleChoiceInline)

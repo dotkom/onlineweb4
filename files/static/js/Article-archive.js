@@ -2,24 +2,27 @@ $(function() {
     //
     // Varables
     //
-    
+
     var justInited = false;
     var utils = new Utils(); // Class for the Widget
     var is_loading_new_content = false; // Indicating if we are currently loading something
     var page = 1; // What page we are on
     var months = {januar:1,februar:2,mars:3,april:4,mai:5,juni:6,juli:7,august:8,september:9,oktober:10,november:11,desember:12}; // Should be selfexplaining what this is
     var articleSettings = {
+        archive: true,
         year: null,
         month: null,
-        tag: null};  // Object that holds the settings we are building an query from
-    
+        tag: null,
+        tagPage: 1
+    };  // Object that holds the settings we are building an query from
+
     //
     // Here goes the code
     //
-    
+
     // New ArticleWidget-class
     var articleWidget = new ArticleArchive(utils);
-    
+
     // The initial rendgering (loading from ajax)
     // Build settings by url
     var pathname = window.location.pathname;
@@ -30,14 +33,16 @@ $(function() {
     } else if (url[url.length-2] === 'year') {
         articleSettings.year = url[url.length-1];
     } else if (url[url.length-3] === 'tag') {
-        articleSettings.tag = url[url.length-1];
+        articleSettings.tag = url[url.length-2];
     }
     articleWidget.render(1,false,articleSettings);
-    
+
     //
     // Method for infinite scrolling
     //
-    
+
+    var is_more_elements = true;
+
     $(document).on('scroll',function() {
         // If we are 10px from the bottom, execute new render
         if ($(window).scrollTop() >= $(document).height() - $(window).height() - 10) {
@@ -45,40 +50,42 @@ $(function() {
             if (!is_loading_new_content) {
                 // Set buzy to true so we don't load multiple articles at once
                 is_loading_new_content = true;
-                
+
                 // Increasing page
                 page++;
-                
+
                 // Do the actuall call with supplied callback
-                articleWidget.render(page,false,articleSettings,function () {
+                is_more_elements = articleWidget.render(page,false,articleSettings,function () {
                     // Setting loading to false, so we can load another round later
                     is_loading_new_content = false;
+                    if (articleSettings.tag)
+                        articleSettings.tagPage++
                 });
             }
         }
     });
-    
+
     //
     // Filtering articles on year (and perhaps month)
     //
-    
+
     $('#article_archive_filter a').on('click',function(e) {
         // We don't want to rederect!!
         if (e.preventDefault)
             e.preventDefault();
         else
             e.stop();
-        
+
         // Checking to see if buzy
         if (!is_loading_new_content) {
             // Set buzy to true so we don't load multiple articles at once
             is_loading_new_content = true;
-            
+
             var $obj = $(this);
-            
+
             // Setting page to 1 again
             page = 1;
-            
+
             // Updating the settings
             articleSettings.tag = null;
             if ($obj.data('year') != '' && typeof $obj.data('year') != 'undefined')
@@ -89,7 +96,7 @@ $(function() {
                 articleSettings.month = months[$obj.data('month').toLowerCase()];
             else
                 articleSettings.month = null;
-            
+
             // Render!
             articleWidget.render(1,true,articleSettings,function () {
                 // Setting loading to false, so we can load another round later
@@ -97,68 +104,71 @@ $(function() {
             });
         }
     });
-    
+
     //
     // Filtering articles on tags
     //
-    
+
     $('#article_archive_tagcloud a').on('click',function(e) {
         if (e.preventDefault)
             e.preventDefault();
         else
             e.stop();
-        
-         // Checking to see if buzy
-        if (!is_loading_new_content) {
+
             // Set buzy to true so we don't load multiple articles at once
             is_loading_new_content = true;
-            
+
             var $obj = $(this);
-            
+
             // Getting the tag-slug (had to be done using the url…
             var url = $obj.attr('href').split('/');
-            
+
             // Updating the settings
             articleSettings.year = null;
             articleSettings.month = null;
-            articleSettings.tag = url[url.length-1];
-            page = 1;
+            articleSettings.tag = url[url.length-2];
+            articleSettings.tagPage = 1;
+
             
+            page = 1;
+
             // Render!
             articleWidget.render(1,true,articleSettings,function () {
                 // Setting loading to false, so we can load another round later
                 is_loading_new_content = false;
+                articleSettings.tagPage++
             });
-        }
     });
-    
+
     //
     // Resetting tag-filter
     //
-    
-    $('#article_archive_tag_reset').on('click',function(e) {
+
+    $('#article_archive_filter_reset').on('click',function(e) {
+        
         if (e.preventDefault)
             e.preventDefault();
         else
             e.stop();
+
+
+        // Set buzy to true so we don't load multiple articles at once
+        is_loading_new_content = true;
+
+        // Updating the settings
+        articleSettings.year = null;
+        articleSettings.month = null;
+        articleSettings.tag = null;
+        articleSettings.tagPage = 1;
+        page = 1;
+
         
-         // Checking to see if buzy
-        if (!is_loading_new_content) {
-            // Set buzy to true so we don't load multiple articles at once
-            is_loading_new_content = true;
-            
-            // Updating the settings
-            articleSettings.year = null;
-            articleSettings.month = null;
-            articleSettings.tag = null;
-            page = 1;
-            
-            // Render!
-            articleWidget.render(1,true,articleSettings,function () {
-                // Setting loading to false, so we can load another round later
-                is_loading_new_content = false;
-            });
-        }
+
+        // Render!
+        articleWidget.render(1,true,articleSettings,function () {
+            // Setting loading to false, so we can load another round later
+            is_loading_new_content = false;
+        });
     });
 });
 
@@ -173,75 +183,110 @@ function ArticleArchive (Utils) {
             "januar", "februar", "mars", "april", "mai", "juni", "juli", "august", "september", "oktober", "november", "desember"
         ]
     });
-    
+
     /* Render the widget */
     ArticleArchive.prototype.render = function(page, overwrite, settings, callback_func) {
+        is_more_elements = true;
+        
+        
+
         // Building the query
         var q = '';
         if (settings.year != null)
             q += '&year='+settings.year;
         if (settings.month != null)
             q += '&month='+settings.month;
-        if (settings.tag != null)
-            q += '&tag='+settings.tag;
-        
+
+
         // We got a new query! Set new query and reset more_elements
+        
         if (q != pre_query) {
+            
             pre_query = q;
             is_more_elements = true;
         }
+
+        
+
+        var _url_params = "?format=json";
+        if (settings.tag) {
+            
+            _url_params += '&tags=' + settings.tag;
+            _url_params += '&page=' + settings.tagPage
+        }
+        if (settings.year != null || settings.month != null) {
+            _url_params += q
+        }
+
+        if (!settings.tag && !settings.year && !settings.month) {
+            // If no filtering, use page supplied
+            _url_params += '&page=' + page
+        }
+        
 
         // Only call the method if we have more elements
         if (is_more_elements) {
             // The api-call
             Utils.makeApiRequest({
-                'url': '/api/v0/article/all/?format=json&offset='+((page-1)*elm_per_page)+'&limit='+elm_per_page+q, // Calcuating the offset, grabbing the limit and supplying the query from the settings
+                'url': '/api/v1/articles/' + _url_params,
                 'method': 'GET',
                 'data': {},
                 success: function(data) {
+                    
                     // Variables
                     var num = 1;
                     var output = '';
+                    var articles = data.results;
+                    var _len = (settings.archive) ? 10 : 8;
+                    var len = (articles.length > _len) ? _len : articles.length; // Set length of loop to 8 if num articles is more than 8.
 
                     // The loop
-                    for (var i = 0; i < data.articles.length; i++) {
+                    for (var i = 0; i < len; i++) {
                         // The markup
+
+                        // Because not all images are responsiveimage yet,
+                        // will be removed later
+                        if (!articles[i].image) {
+                            articles[i].image = ''
+                        }
+
                         output += '<div class="row">';
                         output += '<div class="col-md-12 article'+((page == 1 && !overwrite)?'':' article-hidden')+'">';
                         output += '  <div class="row">';
                         output += '    <div class="col-md-4">';
                         output += '      <div class="row">';
-                        output += '        <a href="/article/'+data.articles[i].id+'/'+data.articles[i].slug+'">';
-                        output += '          <img src="'+data.articles[i].image_article_front_featured+'" width="100%" alt="'+data.articles[i].heading+'" />';
+                        output += '        <a href="/article/'+articles[i].id+'/'+articles[i].slug+'">';
+                        output += '          <img src="'+articles[i].image.sm+'" width="100%" alt="'+articles[i].heading+'" />';
                         output += '        </a>';
                         output += '      </div><!-- end row -->';
                         output += '    </div><!-- end col-md-4 -->';
                         output += '    <div class="col-md-8">';
                         output += '      <div class="pull-right article-detail-meta">';
-                        output += '        <span>'+moment(data.articles[i].published_date).format('DD.MM.YYYY')+'</span>';
+                        output += '        <span>'+moment(articles[i].published_date).format('DD.MM.YYYY')+'</span>';
                         output += '      </div>';
-                        output += '      <a href="'+data.articles[i].id+'/'+data.articles[i].slug+'"><h3>'+data.articles[i].heading+'</h3></a>';
-                        output += '      <p>'+data.articles[i].ingress_short+'</p>';
+                        output += '      <a href="/article/'+articles[i].id+'/'+articles[i].slug+'"><h3>'+articles[i].heading+'</h3></a>';
+                        output += '      <p>'+articles[i].ingress_short+'</p>';
                         output += '      <div class="meta"><div class="row"><div class="col-md-12">';
-                        output += '        <p><strong>Publisert av: </strong>' + data.articles[i].author.first_name + ' ' + data.articles[i].author.last_name + '</p>';
+                        output += '        <p><strong>Skrevet av: </strong>' + articles[i].authors + '</p>';
                         output += '      </div></div></div>';
                         output += '    </div><!-- end col-md-8 -->';
                         output += '  </div><!-- end row -->';
                         output += '</div><!-- end col-md-12 -->';
                         output += '</div><!-- end row -->';
-                    
-                        // Increasing num!    
+
+                        // Increasing num!
                         num++;
                     }
                     
+
                     // Checking to see if we have no more elements
-                    if (i != elm_per_page) {
-                        is_more_elements = false;
-                    }
-                
+                    
+                    is_more_elements = data.next != null;
+                    
+
                     // Wrapping up the chunk
                     output += '</div>';
-                    
+
                     // Appending the content. Either appending content or replacing it based on parameters supplied
                     if (overwrite) {
                         // We are overwriting existing articles

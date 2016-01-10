@@ -3,6 +3,12 @@
 from apps.offline.models import Issue
 from django.shortcuts import render
 
+# API v1
+from rest_framework import viewsets, mixins
+from rest_framework.permissions import AllowAny
+from apps.offline.serializers import OfflineIssueSerializer
+
+
 def main(request):
     issues = Issue.objects.all()
     years = set()
@@ -19,13 +25,8 @@ def main(request):
     return render(request, "offline/offline.html", ctx)
 
 
-# API v1
-from rest_framework import viewsets, mixins
-from rest_framework.permissions import AllowAny
-from apps.offline.serializers import OfflineIssueSerializer
-
-
 class OfflineIssueViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.ListModelMixin):
     queryset = Issue.objects.all()
     serializer_class = OfflineIssueSerializer
     permission_classes = (AllowAny,)
+    filter_fields = ('id', 'issue', 'release_date', 'title')

@@ -1,7 +1,7 @@
-from django.contrib import admin
+# -*- encoding: utf-8 -*-
 
 from django.contrib import admin
-from django.contrib.contenttypes import generic
+from django.contrib.contenttypes.admin import GenericStackedInline
 
 from apps.payment.models import Payment
 from apps.payment.models import PaymentDelay
@@ -9,16 +9,18 @@ from apps.payment.models import PaymentPrice
 from apps.payment.models import PaymentRelation
 from apps.payment.models import PaymentTransaction
 
+from reversion.admin import VersionAdmin
 
-class PaymentInline(generic.GenericStackedInline):
+
+class PaymentInline(GenericStackedInline):
     model = Payment
     extra = 0
     classes = ('grp-collapse grp-open',)  # style
     inline_classes = ('grp-collapse grp-open',)  # style
     exclude = ("added_date", "last_changed_date", "last_changed_by")
 
-    #TODO add proper history updates in dashboard
-    #def save_model(self, request, obj, form, change):
+    # TODO add proper history updates in dashboard
+    # def save_model(self, request, obj, form, change):
     #    obj.last_changed_by = request.user
     #    obj.save()
 
@@ -29,17 +31,20 @@ class PaymentPriceInline(admin.StackedInline):
     classes = ('grp-collapse grp-open',)  # style
     inline_classes = ('grp-collapse grp-open',)  # style
 
-class PaymentAdmin(admin.ModelAdmin):
+
+class PaymentAdmin(VersionAdmin):
     inlines = (PaymentPriceInline, )
     model = Payment
     list_display = ('__unicode__', 'stripe_key_index', 'payment_type')
 
-class PaymentRelationAdmin(admin.ModelAdmin):
+
+class PaymentRelationAdmin(VersionAdmin):
     model = PaymentRelation
     list_display = ('__unicode__', 'refunded')
     exclude = ('stripe_id',)
 
-class PaymentDelayAdmin(admin.ModelAdmin):
+
+class PaymentDelayAdmin(VersionAdmin):
     model = PaymentDelay
     list_display = ('__unicode__', 'valid_to', 'active')
 

@@ -2,9 +2,10 @@
 
 from middleware.http import Http403
 
+
 def need_membership(view_func):
     """
-    Simple decorator to show whether or not a user is a 
+    Simple decorator to show whether or not a user is a
     valid member of Online.
     """
     def check_membership(request, *args, **kwargs):

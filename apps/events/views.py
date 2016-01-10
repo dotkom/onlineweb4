@@ -13,7 +13,7 @@ from django.core.mail import EmailMessage
 from django.core.signing import Signer, BadSignature
 from django.core.urlresolvers import reverse
 from django.db.models import Q
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.utils.translation import ugettext as _
 from django.contrib.contenttypes.models import ContentType
@@ -48,6 +48,7 @@ def details(request, event_id, event_slug):
 
     user_anonymous = True
     user_attending = False
+    attendee = False
     place_on_wait_list = 0
     will_be_on_wait_list = False
     rules = []
@@ -60,6 +61,24 @@ def details(request, event_id, event_slug):
     if request.user:
         if event in get_group_restricted_events(request.user):
             user_access_to_event = True
+
+    if request.method == 'POST':
+        if request.is_ajax and 'action' in request.POST:
+            resp = {'message': "Feil!"}
+            if request.POST['action'] == 'extras':
+                if not event.is_attendance_event:
+                    return HttpResponse(u'Dette er ikke et påmeldingsarrangement.', status=400)
+
+                attendance_event = AttendanceEvent.objects.get(pk=event_id)
+
+                if not attendance_event.is_attendee(request.user):
+                    return HttpResponse(u'Du er ikke påmeldt dette arrangementet.', status=401)
+
+                attendee = Attendee.objects.get(event=attendance_event, user=request.user)
+                attendee.extras = attendance_event.extras.all()[int(request.POST['extras_id'])]
+                attendee.save()
+                resp['message'] = "Lagret ditt valg"
+                return JsonResponse(resp)
 
     context = {'event': event, 'ics_path': request.build_absolute_uri(reverse('event_ics', args=(event.id,)))}
 
@@ -75,6 +94,8 @@ def details(request, event_id, event_slug):
             user_anonymous = False
             if attendance_event.is_attendee(request.user):
                 user_attending = True
+                attendee = Attendee.objects.get(event=attendance_event, user=request.user)
+
 
 
             will_be_on_wait_list = attendance_event.will_i_be_on_wait_list
@@ -112,6 +133,7 @@ def details(request, event_id, event_slug):
                 'now': timezone.now(),
                 'attendance_event': attendance_event,
                 'user_anonymous': user_anonymous,
+                'attendee': attendee,
                 'user_attending': user_attending,
                 'will_be_on_wait_list': will_be_on_wait_list,
                 'rules': rules,
@@ -273,7 +295,7 @@ def _search_indexed(request, query, filters):
             display_events.add(event.pk)
 
     events = events.filter(pk__in=display_events)
-    
+
     if query:
         for result in watson.search(query, models=(events,)):
             results.append(result.object)
@@ -388,14 +410,19 @@ from rest_framework.permissions import AllowAny
 from apps.events.serializers import EventSerializer, AttendanceEventSerializer, CompanyEventSerializer
 from apps.events.filters import EventDateFilter
 
+
 class EventViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.ListModelMixin):
-    queryset = Event.objects.all()
     serializer_class = EventSerializer
     permission_classes = (AllowAny,)
     filter_class = EventDateFilter
     filter_fields = ('event_start', 'event_end', 'id',)
     ordering_fields = ('event_start', 'event_end', 'id',)
     ordering = ('id',)
+
+    def get_queryset(self):
+        return Event.objects.filter(
+            Q(group_restriction__isnull=True) | Q(group_restriction__groups__in=self.request.user.groups.all())).\
+            distinct()
 
 
 class AttendanceEventViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.ListModelMixin):

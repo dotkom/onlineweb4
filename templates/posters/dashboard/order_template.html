@@ -1,5 +1,5 @@
 <div class="row order">
-    <div class="col-md-4 cell">
+    <div class="col-md-3 cell">
         <div class="visible-xs visible-sm">1. </div>
         <a href={% url 'posters_detail' order.id %}>
             {{ order }}
@@ -13,11 +13,11 @@
         <div class="visible-xs visible-sm">3. </div>
         {{ order.ordered_date|date:'Y-m-d H:i:s' }}
     </div>
-    <div class="col-md-2">
+    <div class="col-md-1">
         <div class="visible-xs visible-sm">4. </div>
         {{ order.ordered_committee }}
     </div>
-    <div class="col-md-2">
+    <div class="col-md-4">
         <div class="visible-xs visible-sm">5. </div>
         <form id="order-{{ order.id }}">
             <select>

@@ -3,11 +3,11 @@ import logging
 from datetime import timedelta
 
 from django_dynamic_fixture import G
-from django.conf import settings
 from django.test import TestCase
 from django.utils import timezone
 
 from apps.authentication.models import RegisterToken, OnlineUser, Email
+
 
 class AuthenticationTest(TestCase):
     def setUp(self):
@@ -17,12 +17,12 @@ class AuthenticationTest(TestCase):
 
     def testTokenActive(self):
         self.logger.debug("Testing that the token is active, with dynamic fixtures")
-        self.registertoken=G(RegisterToken, created=self.now)
+        self.registertoken = G(RegisterToken, created=self.now)
         self.assertTrue(self.registertoken.is_valid)
 
     def testTokenNotActive(self):
         self.logger.debug("Testing that the token is not active, with dynamic fixtures")
-        self.registertoken=G(RegisterToken, created=self.now - timedelta(days=1))
+        self.registertoken = G(RegisterToken, created=self.now - timedelta(days=1))
         self.assertFalse(self.registertoken.is_valid)
 
     def testYearZeroIfNoFieldOfStudy(self):
@@ -84,7 +84,7 @@ class AuthenticationTest(TestCase):
         self.user.field_of_study = 90
         self.assertEqual(1, self.user.year)
 
-    def testInternational(self):
+    def testInternational2(self):
         self.user.started_date = self.now.date() - timedelta(days=365)
         self.user.field_of_study = 90
         self.assertEqual(4, self.user.year)
