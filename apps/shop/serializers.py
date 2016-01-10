@@ -56,3 +56,11 @@ class TransactionSerializer(serializers.ModelSerializer):
         fields = (
                 'user', 'amount', 
             )
+
+
+class ItemSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Item
+        fields = (
+                'pk', 'name', 'price', 'description',
+            )

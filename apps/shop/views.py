@@ -9,6 +9,7 @@ from apps.authentication.models import OnlineUser as User
 from apps.payment.models import PaymentTransaction
 from apps.shop.models import OrderLine
 from apps.shop.serializers import OrderLineSerializer, UserSerializer, TransactionSerializer
+from apps.shop.serializers import ItemSerializer
 
 
 class OrderLineViewSet(viewsets.GenericViewSet, mixins.CreateModelMixin):
@@ -47,3 +48,10 @@ class UserViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.Lis
     serializer_class = UserSerializer
     permission_classes = (AllowAny,)
     filter_fields = ('rfid',)
+
+
+class InventoryViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.ListModelMixin):
+    queryset = Item.objects.filter(avalible=True)
+    serializer_class = ItemSerializer
+    permission_classes = (AllowAny,)
+
