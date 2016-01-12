@@ -53,7 +53,7 @@ pepper8>=1.0.4                  # Transforms flake8 output to HTML report + TC m
 requests[security]==2.8.0
 
 # Wiki
-git+https://github.com/django-wiki/django-wiki.git@e28776af87580740fb67488329c86dd58313d531#egg=wiki==0.1.dev1
+git+https://github.com/django-wiki/django-wiki.git@525cf620200b92ba63df5639b5279a2ec8375c20#egg=wiki==0.1.dev2
 
 
 # non-pip
