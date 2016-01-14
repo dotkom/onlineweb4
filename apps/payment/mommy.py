@@ -97,7 +97,7 @@ class PaymentReminder(Task):
         message += _("\n\nMvh\nLinjeforeningen Online")
 
         logging.getLogger(__name__).warn(
-            u'Call to method that does nothing. Should it send a mail? Subject: %s' % subject
+            'Call to method that does nothing. Should it send a mail? Subject: %s' % subject
         )
 
     @staticmethod
@@ -230,7 +230,7 @@ class PaymentDelayHandler(Task):
         valid_to = payment_delay.valid_to.astimezone(tz('Europe/Oslo'))
 
         message = _("Hei, du er påmeldt, men har ikke betalt for ") + payment.description()
-        message += _(".\nFristen for å betale er ") + unicode(
+        message += _(".\nFristen for å betale er ") + str(
             valid_to.strftime("%-d. %B %Y kl: %H:%M").encode("utf-8")
         ) + "."
 
@@ -276,5 +276,5 @@ class PaymentDelayHandler(Task):
         )
         Attendee.objects.get(event=payment_delay.payment.content_object, user=payment_delay.user).delete()
 
-schedule.register(PaymentReminder, day_of_week='mon-sun', hour=07, minute=30)
-schedule.register(PaymentDelayHandler, day_of_week='mon-sun', hour=07, minute=45)
+schedule.register(PaymentReminder, day_of_week='mon-sun', hour=7, minute=30)
+schedule.register(PaymentDelayHandler, day_of_week='mon-sun', hour=7, minute=45)

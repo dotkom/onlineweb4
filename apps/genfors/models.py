@@ -243,7 +243,7 @@ class Question(models.Model):
                         results['Blankt'] += 1
 
             if results:
-                winner = max(iter(results.keys()), key=(lambda key: results[key]))
+                winner = max(results.keys(), key=(lambda key: results[key]))
                 winner_votes = results[winner]
 
                 minimum = 0
@@ -281,7 +281,7 @@ class Question(models.Model):
     def get_leader(self):
         results = self.get_results()
         if results:
-            return max(iter(results['data'].keys()), key=lambda key: results['data'][key])
+            return max(results['data'].keys(), key=lambda key: results['data'][key])
         else:
             return None
 

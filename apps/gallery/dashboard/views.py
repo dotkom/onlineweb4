@@ -51,10 +51,10 @@ class GalleryIndex(DashboardPermissionMixin, ListView):
                 try:
                     total_disk_usage += img.sizeof_total_raw()
                 except OSError as e:
-                    getLogger(__name__).error(u'GalleryIndex file summation on missing file: %s' % e)
+                    getLogger(__name__).error('GalleryIndex file summation on missing file: %s' % e)
 
         # Filter out potential ResponsiveImage objects that have orphan file references
-        context['images'] = filter(lambda i: i.file_status_ok(), context['images'])
+        context['images'] = [i for i in context['images'] if i.file_status_ok()]
 
         # Add query filters and some statistics on disk usage
         context['years'] = years
@@ -137,7 +137,7 @@ class GalleryUnhandledIndex(DashboardPermissionMixin, ListView):
                 self.queryset.delete()
                 messages.success(request, 'Alle ubehandlede bilder ble slettet')
 
-                getLogger(__name__).info(u'%s deleted all UnhandledImage instances' % self.request.user)
+                getLogger(__name__).info('%s deleted all UnhandledImage instances' % self.request.user)
 
                 return redirect(reverse('gallery_dashboard:unhandled'))
             else:
@@ -175,13 +175,13 @@ class GalleryDelete(DashboardPermissionMixin, DetailView):
             img.delete()
             messages.success(request, '%s (%d) ble slettet.' % (image_name, image_id))
 
-            getLogger(__name__).info(u'%s deleted ResponsiveImage %d' % (self.request.user, image_id))
+            getLogger(__name__).info('%s deleted ResponsiveImage %d' % (self.request.user, image_id))
 
             return redirect(reverse('gallery_dashboard:index'))
         else:
             messages.error(request, 'Det oppstod en feil, klarte ikke slette bildet.')
             getLogger(__name__).error(
-                u'%s attempted to delete image with ID %d, but failed as queryset was empty.' % (
+                '%s attempted to delete image with ID %d, but failed as queryset was empty.' % (
                     self.request.user,
                     kwargs['pk']
                 )
@@ -217,7 +217,7 @@ class GalleryUnhandledDelete(DashboardPermissionMixin, DetailView):
             img.delete()
             messages.success(request, 'Ubehandlet bilde %d ble slettet.' % image_id)
 
-            getLogger(__name__).info(u'%s deleted UnhandledImage %d' % (self.request.user, image_id))
+            getLogger(__name__).info('%s deleted UnhandledImage %d' % (self.request.user, image_id))
 
             return redirect(reverse('gallery_dashboard:unhandled'))
         else:

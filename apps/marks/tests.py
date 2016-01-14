@@ -25,7 +25,7 @@ class MarksTest(TestCase):
 
     def testMarkUnicode(self):
         self.logger.debug("Testing Mark unicode with dynamic fixtures")
-        self.assertEqual(str(self.mark), u"Prikk for Testprikk")
+        self.assertEqual(str(self.mark), "Prikk for Testprikk")
 
     def testMarkUser(self):
         self.logger.debug("Testing MarkUser unicode with dynamic fixtures")

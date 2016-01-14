@@ -67,8 +67,8 @@ class Category(models.Model):
 
 class ProductSize(models.Model):
     product = models.ForeignKey(Product)
-    size = models.CharField(u'Størrelse', max_length=25)
-    description = models.CharField(u'Beskrivelse', max_length=50, null=True, blank=True)
+    size = models.CharField('Størrelse', max_length=25)
+    description = models.CharField('Beskrivelse', max_length=50, null=True, blank=True)
     stock = models.PositiveSmallIntegerField(null=True, blank=True)
 
     def __unicode__(self):
@@ -92,7 +92,7 @@ class Order(models.Model):
         return self.product.price * self.quantity
 
     def __unicode__(self):
-        return u"%sx %s" % (self.quantity, self.product)
+        return "%sx %s" % (self.quantity, self.product)
 
     class Meta:
         verbose_name = 'Bestilling'
@@ -127,7 +127,7 @@ class OrderLine(models.Model):
         self.save()
 
     def __unicode__(self):
-        return u"Webshop purchase %s by %s" % (self.datetime, self.user)
+        return "Webshop purchase %s by %s" % (self.datetime, self.user)
 
     class Meta:
         permissions = (

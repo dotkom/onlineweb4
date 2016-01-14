@@ -40,5 +40,5 @@ class ArticleForm(forms.ModelForm):
         widgets = multiple_widget_generator(widgetlist)
         widgets.update({'tags': TagWidget(attrs={'placeholder': 'Eksempel: åre, online, kjelleren'})})
         labels = {
-            'tags': u'Tags'
+            'tags': 'Tags'
         }
