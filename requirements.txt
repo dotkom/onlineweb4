@@ -3,7 +3,9 @@ Pillow==2.7.0                   # pillow
 django-tastypie==0.12.2         # API v0
 djangorestframework>=3.3.0,<3.4.0 # API v1
 django-filter==0.11.0           # Filtering for DRF
-python-memcached==1.57          # Memcache. Used by Mailinglists to fetch from Sympa.
+# python-memcached==1.57          # Memcache. Used by Mailinglists to fetch from Sympa.
+# Upstream is missing Python 3 patches
+git+https://github.com/JelteF/python-memcached@patch-1#egg=python-memcached==1.57.0
 markdown2==2.3.0                # textarea text formatting
 psycopg2                        # Postgres adapter
 pytz                            # Timezone lib. Obsolete?
