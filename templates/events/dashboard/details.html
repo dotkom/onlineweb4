@@ -37,17 +37,17 @@ Arrangementsdetaljer
         <div class="panel panel-default">
             <div class="panel-body">
                 <ul id="dashboard-tabs" class="nav nav-tabs">
-                    <li role="presentation"{% if active_tab == 'details' %} class="active"{% endif %}>
+                    <li role="presentation" class="hidden {% if active_tab == 'attendance' %} active{% endif %}">
                         <a data-section="details" href="{% url 'dashboard_event_details_active' event.id 'details' %}">Detaljer</a>
                     </li>
-                    <li role="presentation"{% if active_tab == 'attendance' %} class="active"{% endif %}>
+                    <li role="presentation" class="hidden{% if active_tab == 'attendance' %} active{% endif %}">
                         <a data-section="attendance" href="{% url 'dashboard_event_details_active' event.id 'attendance' %}">Påmelding</a>
                     </li>
                     {% if event.is_attendance_event %}
-                    <li role="presentation"{% if active_tab == 'attendees' %} class="active"{% endif %}>
+                    <li role="presentation" class="{% if active_tab == 'attendance' %} active{% endif %}">
                         <a data-section="attendees" href="{% url 'dashboard_event_details_active' event.id 'attendees' %}">Påmeldte</a>
                     </li>
-                    <li role="presentation"{% if active_tab == 'reservation' %} class="active"{% endif %}>
+                    <li role="presentation" class="hidden{% if active_tab == 'attendance' %} active{% endif %}">
                         <a data-section="reservation" href="{% url 'dashboard_event_details_active' event.id 'reservation' %}">Reservasjon</a>
                     </li>
                     {% endif %}
