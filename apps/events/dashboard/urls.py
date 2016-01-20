@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 
-from django.conf.urls import patterns, include, url
+from django.conf.urls import patterns, url
 
-urlpatterns = patterns('apps.events.dashboard.views',
+urlpatterns = patterns(
+    'apps.events.dashboard.views',
     url(r'^$', 'index', name='dashboard_events_index'),
     url(r'^past$', 'past', name='dashboard_events_past'),
 

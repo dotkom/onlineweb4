@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-from django import forms
 from django.contrib import admin, messages
 from django.core import validators
 from django.utils.translation import ugettext as _
@@ -105,10 +104,12 @@ class CompanyEventAdmin(VersionAdmin):
     model = CompanyEvent
     inlines = (CompanyInline,)
 
+
 class ExtrasAdmin(VersionAdmin):
     model = Extras
     fk_name = 'choice'
     # inlines = (ExtrasInline,)
+
 
 class RuleBundleAdmin(VersionAdmin):
     model = RuleBundle
@@ -205,7 +206,10 @@ class ReservationAdmin(VersionAdmin):
         number_of_free_seats = attendance_event.max_capacity - attendance_event.number_of_attendees
         if number_of_free_seats < obj.seats:
             obj.seats = number_of_free_seats
-            self.message_user(request, _(u"Du har valgt et antall reserverte plasser som overskrider antallet ledige plasser for dette arrangementet. Antallet ble automatisk justert til %d (alle ledige plasser).") % number_of_free_seats, messages.WARNING)
+            self.message_user(request, _(
+                u"Du har valgt et antall reserverte plasser som overskrider antallet ledige plasser for dette "
+                u"arrangementet. Antallet ble automatisk justert til %d (alle ledige plasser)."
+            ) % number_of_free_seats, messages.WARNING)
         obj.save()
             
     

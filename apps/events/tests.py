@@ -4,7 +4,6 @@ import datetime
 import logging
 
 from django_dynamic_fixture import G
-from django.conf import settings
 from django.contrib.auth.models import Group
 from django.test import TestCase
 from django.utils import timezone
@@ -16,12 +15,13 @@ from apps.events.models import (Event, AttendanceEvent, Attendee,
 from apps.marks.models import Mark, MarkUser, DURATION
 from apps.events.mommy import SetEventMarks
 
+
 class EventTest(TestCase):
 
     def setUp(self):
         self.event = G(Event, title='Sjakkturnering')
         self.attendance_event = G(AttendanceEvent, event=self.event)
-        self.user = G(User, username = 'ola123', ntnu_username = 'ola123ntnu', first_name = "ola", last_name = "nordmann")
+        self.user = G(User, username='ola123', ntnu_username='ola123ntnu', first_name="ola", last_name="nordmann")
         self.attendee = G(Attendee, event=self.attendance_event, user=self.user)
         self.logger = logging.getLogger(__name__)
         # Setting registration start 1 hour in the past, end one week in the future.
@@ -29,7 +29,8 @@ class EventTest(TestCase):
         self.attendance_event.registration_start = self.now - datetime.timedelta(hours=1)
         self.attendance_event.registration_end = self.now + datetime.timedelta(days=7)
         # Making the user a member.
-        self.allowed_username = G(AllowedUsername, username='ola123ntnu', expiration_date = self.now + datetime.timedelta(weeks=1))
+        self.allowed_username = G(AllowedUsername, username='ola123ntnu',
+                                  expiration_date=self.now + datetime.timedelta(weeks=1))
 
     def testEventUnicodeIsCorrect(self):
         self.logger.debug("Testing testing on Event with dynamic fixtures")
@@ -274,7 +275,6 @@ class EventTest(TestCase):
 
         self.assertFalse(SetEventMarks.active_events())
 
-    
     def testMommyDontAutmaticallySetMarks(self):
         self.attendance_event.marks_has_been_set = False
         self.attendance_event.automatically_set_marks = False

@@ -3,14 +3,17 @@
 from django import forms
 
 from apps.dashboard.widgets import DatetimePickerInput, multiple_widget_generator
-from apps.events.models import Event, AttendanceEvent, RuleBundle, Reservation
+from apps.events.models import Event, AttendanceEvent, Reservation
 
 
 class ChangeEventForm(forms.ModelForm):
 
     class Meta:
         model = Event
-        fields = ['title', 'event_type', 'event_start', 'event_end', 'location', 'ingress_short', 'ingress', 'description', 'image']
+        fields = (
+            'title', 'event_type', 'event_start', 'event_end', 'location', 'ingress_short', 'ingress', 'description',
+            'image'
+        )
 
         dtp_fields = [('event_start', {}), ('event_end', {})]
 
@@ -26,10 +29,10 @@ class ChangeAttendanceEventForm(forms.ModelForm):
     class Meta:
         model = AttendanceEvent
         fields = (
-                'event', 'max_capacity', 'waitlist', 'guest_attendance',
-                'registration_start', 'registration_end', 'unattend_deadline',
-                'automatically_set_marks', 'marks_has_been_set', 'rule_bundles',
-                )
+            'event', 'max_capacity', 'waitlist', 'guest_attendance',
+            'registration_start', 'registration_end', 'unattend_deadline',
+            'automatically_set_marks', 'marks_has_been_set', 'rule_bundles',
+        )
 
         dtp_fields = [('registration_start', {}), ('registration_end', {}), ('unattend_deadline', {})]
 
@@ -44,4 +47,4 @@ class ChangeAttendanceEventForm(forms.ModelForm):
 class ChangeReservationForm(forms.ModelForm):
     class Meta:
         model = Reservation
-        exclude = ['attendance_event',]
+        exclude = ['attendance_event', ]
