@@ -8,7 +8,14 @@ import reversion
 class SplashYearManager(models.Manager):
     def current(self):
         # I'm really sorry ...
-        return self.get(start_date__gt=str(datetime.date.today() - datetime.timedelta(180)))
+        half_a_year_ago = str(datetime.date.today() - datetime.timedelta(180))
+        return self.filter(start_date__gt=half_a_year_ago).first()
+
+    def current_events(self):
+        current_splash = self.current()
+        if current_splash:
+            return current_splash.events()
+        return self.none()
 
 
 class SplashYear(models.Model):
@@ -16,6 +23,9 @@ class SplashYear(models.Model):
     start_date = models.DateField(u'start_date')
 
     objects = SplashYearManager()
+
+    def events(self):
+        return self.splash_events.all()
 
     def __unicode__(self):
         return self.title
