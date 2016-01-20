@@ -41,10 +41,10 @@ function progress() {
     fi
 }
 
+
 function add_custom_repos() {
     echo "adding custom repositories for nodejs"
-    progress sudo apt-get install -y python-software-properties
-    progress sudo add-apt-repository -y ppa:chris-lea/node.js
+    progress curl -sL https://deb.nodesource.com/setup_4.x | sudo -E bash -
 }
 
 function update_packages() {
@@ -52,14 +52,20 @@ function update_packages() {
     progress sudo apt-get update
 }
 
+function install_curl() {
+    echo "installing curl"
+    progress sudo apt-get install curl
+}
+
 function install_packages() {
     echo "installing packages"
     progress sudo apt-get install -y \
         python-dev python-setuptools python-virtualenv vim \
-        tmux screen git-core curl build-essential openssl \
+        tmux screen git-core build-essential openssl \
         libjpeg8 libjpeg8-dev zlib-bin libtiff4-dev libfreetype6 libfreetype6-dev libpq-dev libssl-dev\
         python-psycopg2 imagemagick \
-        nodejs # from custom ppa:chris-lea/node.js
+        nodejs \
+        libffi-dev
 }
 
 function setup_virtualenv() {
@@ -93,7 +99,7 @@ function prepare_and_run_onlineweb() {
     cd /vagrant
     cp onlineweb4/settings/example-local.py onlineweb4/settings/local.py
     echo "creating tables"
-    progress python manage.py syncdb
+    progress python manage.py migrate
     if $RUNSERVER
     then
         echo "starting dev server"
@@ -104,6 +110,7 @@ function prepare_and_run_onlineweb() {
 
 init
 update_packages
+install_curl
 add_custom_repos
 update_packages
 install_packages

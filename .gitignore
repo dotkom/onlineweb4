@@ -36,3 +36,4 @@ node_modules/*
 .tox
 coverage
 coverage.xml
+setuptools-*.zip
