@@ -52,5 +52,5 @@ class CaptchaForm(forms.Form):
                 if phone_number:
                     self.user.phone_number = phone_number
                     self.user.save()
-        
+
         return cleaned_data

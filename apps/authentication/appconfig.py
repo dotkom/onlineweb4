@@ -9,4 +9,4 @@ class AuthenticationConfig(AppConfig):
         super(AuthenticationConfig, self).ready()
         # The following stops pycharm from nagging about unused import statement
         # noinspection PyUnresolvedReferences
-        import apps.authentication.signals
+        import apps.authentication.signals  # flake8: noqa

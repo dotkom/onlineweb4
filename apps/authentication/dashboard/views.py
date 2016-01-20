@@ -8,13 +8,12 @@ from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Group
 from django.core.urlresolvers import reverse, reverse_lazy
-from django.shortcuts import get_object_or_404, render, redirect
+from django.shortcuts import get_object_or_404, render
 from django.http import HttpResponse
 from django.views.generic import UpdateView, DetailView, DeleteView, ListView
-from django.views.generic.list import BaseListView
 
 from guardian.decorators import permission_required
-from watson.views import SearchMixin, SearchView
+from watson.views import SearchView
 
 from apps.authentication.models import OnlineUser as User
 from apps.authentication.models import AllowedUsername
@@ -105,9 +104,9 @@ def groups_detail(request, pk):
 
         for job in settings.GROUP_SYNCER:
             if group_id in job['source']:
-                context['sync_group_to'].extend([groups[id] for id in job['destination']])
+                context['sync_group_to'].extend([groups[group_id] for group_id in job['destination']])
             if group_id in job['destination']:
-                context['sync_group_from'].extend([groups[id] for id in job['source']])
+                context['sync_group_from'].extend([groups[group_id] for group_id in job['source']])
 
     context['group_users'] = list(context['group'].user_set.all())
 

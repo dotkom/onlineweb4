@@ -122,7 +122,6 @@ class RegisterForm(forms.Form):
             return cleaned_data
 
 
-
 class UserUpdateForm(forms.ModelForm):
 
     class Meta:

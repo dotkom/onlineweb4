@@ -14,7 +14,7 @@ from django.contrib.contenttypes.models import ContentType
 
 from apps.authentication.models import FIELD_OF_STUDY_CHOICES
 from apps.companyprofile.models import Company
-from apps.marks.models import get_expiration_date, Suspension
+from apps.marks.models import get_expiration_date
 
 import reversion
 import watson
@@ -88,13 +88,6 @@ class Event(models.Model):
             info[_(u'Venteliste')] = self.attendance_event.number_on_waitlist
 
         return info
-
-    def is_attendance_event(self):
-        """ Returns true if the event is an attendance event """
-        try:
-            return True if self.attendance_event else False
-        except AttendanceEvent.DoesNotExist:
-            return False
 
     @property
     def company_event(self):
@@ -489,6 +482,34 @@ class AttendanceEvent(models.Model):
         return True if self.free_seats > 0 or self.waitlist else False
 
     @property
+    def registration_open(self):
+        return timezone.now() < self.registration_start
+
+    def has_delayed_signup(self, user):
+        pass
+
+    def is_marked(self, user):
+        expiry_date = get_expiration_date(user)
+        return expiry_date and expiry_date > timezone.now().date()
+
+    def has_postponed_registration(self, user):
+        expiry_date = get_expiration_date(user)
+        mark_offset = timedelta(days=1)
+        postponed_registration_start = self.registration_start + mark_offset
+
+        before_expiry = self.registration_start.date() < expiry_date
+
+        if postponed_registration_start > timezone.now() and before_expiry:
+            return None
+
+    def is_suspended(self, user):
+        for suspension in user.get_active_suspensions():
+            if not suspension.expiration_date or suspension.expiration_date > timezone.now().date():
+                return True
+
+        return False
+
+    @property
     def will_i_be_on_wait_list(self):
         return True if self.free_seats == 0 and self.waitlist else False
 
@@ -572,21 +593,13 @@ class AttendanceEvent(models.Model):
                 return response
 
         # Do I have any marks that postpone my registration date?
-        expiry_date = get_expiration_date(user)
-        if expiry_date and expiry_date > timezone.now().date():
-            # Offset is currently 1 day if you have marks, regardless of amount.
+        if self.has_postponed_registration(user):
             mark_offset = timedelta(days=1)
-            postponed_registration_start = self.registration_start + mark_offset
 
-            before_expiry = self.registration_start.date() < expiry_date
-
-            if postponed_registration_start > timezone.now() and before_expiry:
-                if 'offset' in response and response['offset'] < postponed_registration_start \
-                        or 'offset' not in response:
-                    response['status'] = False
-                    response['status_code'] = 401
-                    response['message'] = _(u"Din påmelding er utsatt grunnet prikker.")
-                    response['offset'] = postponed_registration_start
+            response['status'] = False
+            response['status_code'] = 401
+            response['message'] = _(u"Din påmelding er utsatt grunnet prikker.")
+            response['offset'] = self.registration_start + mark_offset
 
         # Return response if offset was set.
         if 'offset' in response and response['offset'] > timezone.now():
@@ -596,22 +609,18 @@ class AttendanceEvent(models.Model):
         # Offset calculations end
         #
 
-        # Registration not open
-        if timezone.now() < self.registration_start:
+        if not self.registration_open:
             response['status'] = False
             response['message'] = _(u'Påmeldingen har ikke åpnet enda.')
             response['status_code'] = 501
             return response
 
-        # Is suspended
-        suspensions = Suspension.objects.filter(user=user, active=True)
-        for suspension in suspensions:
-            if not suspension.expiration_date or suspension.expiration_date > timezone.now().date():
-                response['status'] = False
-                response['message'] = _(u"Du er suspandert og kan ikke melde deg på.")
-                response['status_code'] = 501
+        if self.is_suspended(user):
+            response['status'] = False
+            response['message'] = _(u"Du er suspandert og kan ikke melde deg på.")
+            response['status_code'] = 501
 
-                return response
+            return response
 
         # Checks if the event is group restricted and if the user is in the right group
         if not self.event.can_display(user):
@@ -624,6 +633,32 @@ class AttendanceEvent(models.Model):
         # No objections, set eligible.
         response['status'] = True
         return response
+
+    def _process_rulebundle_satisfaction_responses(self, responses):
+        # Put the smallest offset faaar into the future.
+        smallest_offset = timezone.now() + timedelta(days=365)
+        offset_response = {}
+        future_response = {}
+        errors = []
+
+        for response in responses:
+            if response['status']:
+                return response
+            elif 'offset' in response:
+                if response['offset'] < smallest_offset:
+                    smallest_offset = response['offset']
+                    offset_response = response
+            elif response['status_code'] == 402:
+                future_response = response
+            else:
+                errors.append(response)
+
+        if future_response:
+            return future_response
+        if smallest_offset > timezone.now() and offset_response:
+            return offset_response
+        if errors:
+            return errors[0]
 
     def rules_satisfied(self, user):
         """
@@ -644,36 +679,14 @@ class AttendanceEvent(models.Model):
         if not self.rule_bundles.exists() and user.is_member:
             return {'status': True, 'status_code': 200}
 
-        # Put the smallest offset faaar into the future.
-        smallest_offset = timezone.now() + timedelta(days=365)
-        offset_response = {}
-        future_response = {}
-        responses = []
-        errors = []
-
         # Check all rule bundles
+        responses = []
+
         # If one satisfies, return true, else append to the error list
         for rule_bundle in self.rule_bundles.all():
             responses.extend(rule_bundle.satisfied(user, self.registration_start))
 
-        for response in responses:
-            if response['status']:
-                return response
-            elif 'offset' in response:
-                if response['offset'] < smallest_offset:
-                    smallest_offset = response['offset']
-                    offset_response = response
-            elif response['status_code'] == 402:
-                future_response = response
-            else:
-                errors.append(response)
-
-        if future_response:
-            return future_response
-        if smallest_offset > timezone.now() and offset_response:
-            return offset_response
-        if errors:
-            return errors[0]
+        return self._process_rulebundle_satisfaction_responses(responses)
 
     def is_attendee(self, user):
         return self.attendees.filter(user=user)

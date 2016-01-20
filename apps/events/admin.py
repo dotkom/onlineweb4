@@ -156,7 +156,8 @@ class EventAdmin(VersionAdmin):
                         if diff_capacity > old_waitlist_size:
                             diff_capacity = old_waitlist_size
                         # Using old_event because max_capacity has already been changed in obj
-                        old_event.attendance_event.notify_waiting_list(host=request.META['HTTP_HOST'], extra_capacity=diff_capacity)
+                        old_event.attendance_event.notify_waiting_list(host=request.META['HTTP_HOST'],
+                                                                       extra_capacity=diff_capacity)
         obj.save()
 
     def save_formset(self, request, form, formset, change):
@@ -211,8 +212,8 @@ class ReservationAdmin(VersionAdmin):
                 u"arrangementet. Antallet ble automatisk justert til %d (alle ledige plasser)."
             ) % number_of_free_seats, messages.WARNING)
         obj.save()
-            
-    
+
+
 admin.site.register(Event, EventAdmin)
 admin.site.register(Attendee, AttendeeAdmin)
 admin.site.register(RuleBundle, RuleBundleAdmin)
