@@ -1,4 +1,3 @@
-import os
 from .base import MEDIA_ROOT
 
 FILEBROWSER_MEDIA_ROOT = MEDIA_ROOT
