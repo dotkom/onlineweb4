@@ -11,6 +11,7 @@ PROJECT_SETTINGS_DIRECTORY = os.path.dirname(globals()['__file__'])
 PROJECT_ROOT_DIRECTORY = os.path.join(PROJECT_SETTINGS_DIRECTORY, '..', '..')
 
 TEST_RUNNER = "django_nose.NoseTestSuiteRunner"
+
 NOSE_ARGS = ['--with-coverage', '--cover-package=apps', '--cover-html-dir=coverage', '--cover-xml', '--cover-html']
 
 DEBUG = False
@@ -401,7 +402,7 @@ for settings_module in ['filebrowser', 'django_wiki', 'local']:  # local last
                              "'onlineweb4/settings/local.py'.\n")
         sys.exit(1)
     try:
-        exec('from %s import *' % settings_module)
-    except ImportError, e:
-        print "Could not import settings for '%s' : %s" % (settings_module,
-                str(e))
+        exec('from .%s import *' % settings_module)
+    except ImportError as e:
+        print("Could not import settings for '%s' : %s" % (settings_module,
+                str(e)))

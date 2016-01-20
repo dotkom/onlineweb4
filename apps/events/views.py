@@ -27,7 +27,7 @@ from apps.events.pdf_generator import EventPDF
 from apps.events.utils import get_group_restricted_events
 from apps.payment.models import Payment, PaymentRelation, PaymentDelay
 
-from utils import EventCalendar
+from .utils import EventCalendar
 
 def index(request):
     context = {}
@@ -67,12 +67,12 @@ def details(request, event_id, event_slug):
             resp = {'message': "Feil!"}
             if request.POST['action'] == 'extras':
                 if not event.is_attendance_event:
-                    return HttpResponse(u'Dette er ikke et påmeldingsarrangement.', status=400)
+                    return HttpResponse('Dette er ikke et påmeldingsarrangement.', status=400)
 
                 attendance_event = AttendanceEvent.objects.get(pk=event_id)
 
                 if not attendance_event.is_attendee(request.user):
-                    return HttpResponse(u'Du er ikke påmeldt dette arrangementet.', status=401)
+                    return HttpResponse('Du er ikke påmeldt dette arrangementet.', status=401)
 
                 attendee = Attendee.objects.get(event=attendance_event, user=request.user)
                 attendee.extras = attendance_event.extras.all()[int(request.POST['extras_id'])]
@@ -159,11 +159,11 @@ def attendEvent(request, event_id):
     event = get_object_or_404(Event, pk=event_id)
 
     if not event.is_attendance_event():
-        messages.error(request, _(u"Dette er ikke et påmeldingsarrangement."))
+        messages.error(request, _("Dette er ikke et påmeldingsarrangement."))
         return redirect(event)
 
     if not request.POST:
-        messages.error(request, _(u'Vennligst fyll ut skjemaet.'))
+        messages.error(request, _('Vennligst fyll ut skjemaet.'))
         return redirect(event)
 
     form = CaptchaForm(request.POST, user=request.user)
@@ -186,7 +186,7 @@ def attendEvent(request, event_id):
         if 'note' in form.cleaned_data:
             ae.note = form.cleaned_data['note']
         ae.save()
-        messages.success(request, _(u"Du er nå påmeldt på arrangementet!"))
+        messages.success(request, _("Du er nå påmeldt på arrangementet!"))
 
         try:
             payment = Payment.objects.get(content_type=ContentType.objects.get_for_model(AttendanceEvent),
@@ -212,23 +212,23 @@ def unattendEvent(request, event_id):
     event = get_object_or_404(Event, pk=event_id)
 
     if not event.is_attendance_event():
-        messages.error(request, _(u"Dette er ikke et påmeldingsarrangement."))
+        messages.error(request, _("Dette er ikke et påmeldingsarrangement."))
         return redirect(event)
 
     attendance_event = event.attendance_event
 
     # Check if user is attending
     if len(Attendee.objects.filter(event=attendance_event, user=request.user)) == 0:
-        messages.error(request, _(u"Du er ikke påmeldt dette arrangementet."))
+        messages.error(request, _("Du er ikke påmeldt dette arrangementet."))
         return redirect(event)
 
     # Check if the deadline for unattending has passed
     if attendance_event.unattend_deadline < timezone.now() and not attendance_event.is_on_waitlist(request.user):
-        messages.error(request, _(u"Avmeldingsfristen for dette arrangementet har utløpt."))
+        messages.error(request, _("Avmeldingsfristen for dette arrangementet har utløpt."))
         return redirect(event)
 
     if attendance_event.event.event_start < timezone.now():
-        messages.error(request, _(u"Dette arrangementet har allerede startet."))
+        messages.error(request, _("Dette arrangementet har allerede startet."))
         return redirect(event)
 
     try:
@@ -244,7 +244,7 @@ def unattendEvent(request, event_id):
 
         #Return if someone is trying to unatend without refunding
         if payments:
-            messages.error(request, _(u'Du har betalt for arrangementet og må refundere før du kan melde deg av'))
+            messages.error(request, _('Du har betalt for arrangementet og må refundere før du kan melde deg av'))
             return redirect(event)
 
         delays = PaymentDelay.objects.filter(payment=payment, user=request.user)
@@ -255,7 +255,7 @@ def unattendEvent(request, event_id):
     event.attendance_event.notify_waiting_list(host=request.META['HTTP_HOST'], unattended_user=request.user)
     Attendee.objects.get(event=attendance_event, user=request.user).delete()
 
-    messages.success(request, _(u"Du ble meldt av arrangementet."))
+    messages.success(request, _("Du ble meldt av arrangementet."))
     return redirect(event)
 
 def search_events(request):
@@ -312,12 +312,12 @@ def generate_pdf(request, event_id):
 
     # If this is not an attendance event, redirect to event with error
     if not event.attendance_event:
-        messages.error(request, _(u"Dette er ikke et påmeldingsarrangement."))
+        messages.error(request, _("Dette er ikke et påmeldingsarrangement."))
         return redirect(event)
 
     # Check access
     if event not in get_group_restricted_events(request.user):
-        messages.error(request, _(u'Du har ikke tilgang til listen for dette arrangementet.'))
+        messages.error(request, _('Du har ikke tilgang til listen for dette arrangementet.'))
         return redirect(event)
 
     return EventPDF(event).render_pdf()
@@ -344,12 +344,12 @@ def mail_participants(request, event_id):
 
     # If this is not an attendance event, redirect to event with error
     if not event.attendance_event:
-        messages.error(request, _(u"Dette er ikke et påmeldingsarrangement."))
+        messages.error(request, _("Dette er ikke et påmeldingsarrangement."))
         return redirect(event)
 
     # Check access
     if event not in get_group_restricted_events(request.user):
-        messages.error(request, _(u'Du har ikke tilgang til å vise denne siden.'))
+        messages.error(request, _('Du har ikke tilgang til å vise denne siden.'))
         return redirect(event)
 
     all_attendees = list(event.attendance_event.attendees_qs)
@@ -371,7 +371,7 @@ def mail_participants(request, event_id):
         elif from_email_value == '5':
             from_email = settings.EMAIL_EKSKOM
 
-        signature = u'\n\nVennlig hilsen Linjeforeningen Online.\n(Denne eposten kan besvares til %s)' % from_email
+        signature = '\n\nVennlig hilsen Linjeforeningen Online.\n(Denne eposten kan besvares til %s)' % from_email
 
         # Decide who to send mail to
         to_emails = []
@@ -389,13 +389,13 @@ def mail_participants(request, event_id):
 
         # Send mail
         try:
-            if EmailMessage(unicode(subject), unicode(message), from_email, [], to_emails).send():
-                messages.success(request, _(u'Mailen ble sendt'))
+            if EmailMessage(str(subject), str(message), from_email, [], to_emails).send():
+                messages.success(request, _('Mailen ble sendt'))
                 return redirect(event)
             else:
-                messages.error(request, _(u'Vi klarte ikke å sende mailene dine. Prøv igjen'))
+                messages.error(request, _('Vi klarte ikke å sende mailene dine. Prøv igjen'))
                 return redirect(event)
-        except Exception, e:
+        except Exception as e:
             messages.error(request, str(e))
             return redirect(event)
 

@@ -52,9 +52,9 @@ def payment(request):
 
                     _send_payment_confirmation_mail(payment_relation)
 
-                    messages.success(request, _(u"Betaling utført."))
-                    return HttpResponse("Betaling utført.", content_type="text/plain", status=200)
-                except stripe.CardError, e:
+                    messages.success(request, _("Betaling utført."))
+                    return HttpResponse("Betaling utført.", content_type="text/plain", status=200) 
+                except stripe.CardError as e:
                     messages.error(request, str(e))
                     return HttpResponse(str(e), content_type="text/plain", status=500)
 
@@ -123,7 +123,7 @@ def webshop_pay(request):
 
             # Check if the user has added or removed items since reloading the checkout page
             if int(order_line.subtotal() * 100) != amount:
-                messages.error(request, u"Det har skjedd endringer på bestillingen. Prøv igjen")
+                messages.error(request, "Det har skjedd endringer på bestillingen. Prøv igjen")
                 return HttpResponse("Invalid input", content_type="text/plain", status=500)
 
             try:
@@ -141,10 +141,10 @@ def webshop_pay(request):
                 order_line.save()
                 _send_webshop_mail(order_line)
 
-                messages.success(request, u"Betaling utført")
+                messages.success(request, "Betaling utført")
 
                 return HttpResponse("Betaling utført.", content_type="text/plain", status=200)
-            except stripe.CardError, e:
+            except stripe.CardError as e:
                 messages.error(request, str(e))
                 return HttpResponse(str(e), content_type="text/plain", status=500)
 
@@ -173,47 +173,47 @@ def payment_refund(request, payment_relation_id):
 
         payment_relation.payment.handle_refund(request.META['HTTP_HOST'], payment_relation)
         messages.success(request, _("Betalingen har blitt refundert."))
-    except stripe.InvalidRequestError, e:
+    except stripe.InvalidRequestError as e:
         messages.error(request, str(e))
 
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 
 def _send_payment_confirmation_mail(payment_relation):
-    subject = _(u"kvittering") + ": " + payment_relation.payment.description()
+    subject = _("kvittering") + ": " + payment_relation.payment.description()
     from_mail = payment_relation.payment.responsible_mail()
     to_mails = [payment_relation.user.email]
 
-    message = _(u"Du har betalt for ") + payment_relation.payment.description()
+    message = _("Du har betalt for ") + payment_relation.payment.description()
     message += "\n"
-    message += _(u"Ditt kvitteringsnummer er") + ": " + payment_relation.unique_id
+    message += _("Ditt kvitteringsnummer er") + ": " + payment_relation.unique_id
     message += "\n"
     message += "\n"
-    message += _(u"Dersom du har problemer eller spørsmål, send mail til") + ": " + from_mail
+    message += _("Dersom du har problemer eller spørsmål, send mail til") + ": " + from_mail
 
-    EmailMessage(subject, unicode(message), from_mail, [], to_mails).send()
+    EmailMessage(subject, str(message), from_mail, [], to_mails).send()
 
 
 def _send_webshop_mail(order_line):
-    subject = _(u"Kvittering Webshop Online")
+    subject = _("Kvittering Webshop Online")
     from_mail = settings.EMAIL_PROKOM
     to_mails = [order_line.user.email]
 
     message = _(
-        u"Hei, du har bestilt ting i Online sin webshop. Ordren din kom på totalt %.2f kroner."
+        "Hei, du har bestilt ting i Online sin webshop. Ordren din kom på totalt %.2f kroner."
         % order_line.subtotal()
     )
 
-    logging.getLogger(__name__).debug(u"Logging for send webshop mail")
-    logging.getLogger(__name__).info(unicode(order_line))
+    logging.getLogger(__name__).debug("Logging for send webshop mail")
+    logging.getLogger(__name__).info(str(order_line))
 
-    message += u"\nDine produkter:"
-    products = u""
+    message += "\nDine produkter:"
+    products = ""
     for o in order_line.orders.all():
-        products += u"\n " + unicode(o)
+        products += "\n " + str(o)
     message += products
-    message += u"\n\nDin betalingsreferanse er " + order_line.stripe_id
-    message += u"\n\n"
-    message += _(u"Dersom du har problemer eller spørsmål, send mail til") + u": " + settings.EMAIL_PROKOM
+    message += "\n\nDin betalingsreferanse er " + order_line.stripe_id
+    message += "\n\n"
+    message += _("Dersom du har problemer eller spørsmål, send mail til") + ": " + settings.EMAIL_PROKOM
 
-    EmailMessage(subject, unicode(message), from_mail, to_mails).send()
+    EmailMessage(subject, str(message), from_mail, to_mails).send()

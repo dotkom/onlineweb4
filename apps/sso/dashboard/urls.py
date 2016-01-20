@@ -4,7 +4,7 @@
 
 from django.conf.urls import patterns, url
 
-from views import index, new_app, app_details
+from .views import index, new_app, app_details
 
 urlpatterns = patterns(
     'apps.sso.dashboard.views',

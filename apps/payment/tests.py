@@ -120,7 +120,7 @@ class PaymentTest(TestCase):
             payment_price=self.payment_price
         )
 
-        print self.event_payment.check_refund(payment_relation)
+        print(self.event_payment.check_refund(payment_relation))
         self.assertTrue(self.event_payment.check_refund(payment_relation)[0])
 
     def testEventPaymentRefund(self):

@@ -16,10 +16,10 @@ class ResponsiveImageForm(forms.ModelForm):
         fields = ['name', 'description', 'photographer', 'tags']
         widgets = {
             'tags': TagWidget(attrs={
-                'placeholder': u'Eksempel: kontoret, kjelleren, åre',
+                'placeholder': 'Eksempel: kontoret, kjelleren, åre',
             }),
-            'photographer': forms.TextInput(attrs={'placeholder': u'Eventuell(e) fotograf(er)...'})
+            'photographer': forms.TextInput(attrs={'placeholder': 'Eventuell(e) fotograf(er)...'})
         }
         labels = {
-            'tags': u'Tags'
+            'tags': 'Tags'
         }

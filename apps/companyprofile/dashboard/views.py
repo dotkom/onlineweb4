@@ -45,10 +45,10 @@ def new(request):
     if request.method == 'POST':
         company_form = CompanyForm(request.POST)
         if not company_form.is_valid():
-            messages.error(request, u'Noen av de påkrevde feltene inneholder feil.')
+            messages.error(request, 'Noen av de påkrevde feltene inneholder feil.')
         else:
             company_form.save()
-            messages.success(request, u'Bedriften ble opprettet.')
+            messages.success(request, 'Bedriften ble opprettet.')
 
             return redirect(index)
 
@@ -76,10 +76,10 @@ def detail(request, pk):
     if request.method == 'POST':
         company_form = CompanyForm(request.POST, instance=context['company'])
         if not company_form.is_valid():
-            messages.error(request, u'Noen av de påkrevde feltene inneholder feil.')
+            messages.error(request, 'Noen av de påkrevde feltene inneholder feil.')
         else:
             company_form.save()
-            messages.success(request, u'Bedriften ble oppdatert.')
+            messages.success(request, 'Bedriften ble oppdatert.')
         context['form'] = company_form
     else:
         context['form'] = CompanyForm(instance=context['company'])

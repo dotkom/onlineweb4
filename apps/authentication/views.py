@@ -33,7 +33,7 @@ def login(request):
     if request.method == 'POST':
         form = LoginForm(request.POST)
         if form.login(request):
-            messages.success(request, _(u'Du er nå logget inn.'))
+            messages.success(request, _('Du er nå logget inn.'))
             if redirect_url:
                 return HttpResponseRedirect(redirect_url)
             return HttpResponseRedirect('/')
@@ -48,14 +48,14 @@ def login(request):
 
 def logout(request):
     auth.logout(request)
-    messages.success(request, _(u'Du er nå logget ut.'))
+    messages.success(request, _('Du er nå logget ut.'))
     return HttpResponseRedirect('/')
 
 
 @sensitive_post_parameters()
 def register(request):
     if request.user.is_authenticated():
-        messages.error(request, _(u'Registrering av ny konto krever at du er logget ut.'))
+        messages.error(request, _('Registrering av ny konto krever at du er logget ut.'))
         return HttpResponseRedirect('/')
     else:
         if request.method == 'POST':
@@ -92,7 +92,7 @@ def register(request):
                 rt = RegisterToken(user=user, email=email.email, token=token)
                 rt.save()
 
-                email_message = _(u"""
+                email_message = _("""
 En konto har blitt registrert på online.ntnu.no med denne epostadressen. Dersom du ikke
 har utført denne handlingen ber vi deg se bort fra denne eposten.
 
@@ -105,14 +105,14 @@ Denne lenken vil være gyldig i 24 timer. Dersom du behøver å få tilsendt en 
 kan dette gjøres med funksjonen for å gjenopprette passord.
 """) % (request.META['HTTP_HOST'], token)
                 try:
-                    send_mail(_(u'Verifiser din konto'), email_message, settings.DEFAULT_FROM_EMAIL, [email.email, ])
+                    send_mail(_('Verifiser din konto'), email_message, settings.DEFAULT_FROM_EMAIL, [email.email, ])
                 except SMTPException:
-                    messages.error(request, u'Det oppstod en kritisk feil, epostadressen er ugyldig!')
+                    messages.error(request, 'Det oppstod en kritisk feil, epostadressen er ugyldig!')
                     return redirect('home')
 
                 messages.success(
                     request,
-                    _(u'Registreringen var vellykket. Se tilsendt epost for verifiseringsinstrukser.')
+                    _('Registreringen var vellykket. Se tilsendt epost for verifiseringsinstrukser.')
                 )
 
                 return HttpResponseRedirect('/')
@@ -152,20 +152,20 @@ def verify(request, token):
         rt.delete()
 
         if user_activated:
-            messages.success(request, _(u'Bruker %s ble aktivert. Du kan nå logge inn.') % user.username)
+            messages.success(request, _('Bruker %s ble aktivert. Du kan nå logge inn.') % user.username)
             return redirect('auth_login')
         else:
-            messages.success(request, _(u'Eposten %s er nå verifisert.') % email)
+            messages.success(request, _('Eposten %s er nå verifisert.') % email)
             return redirect('profile_add_email')
 
     else:
-        messages.error(request, _(u'Denne lenken er utløpt. Bruk gjenopprett passord for å få tilsendt en ny lenke.'))
+        messages.error(request, _('Denne lenken er utløpt. Bruk gjenopprett passord for å få tilsendt en ny lenke.'))
         return HttpResponseRedirect('/')
 
 
 def recover(request):
     if request.user.is_authenticated():
-        messages.error(request, _(u'Gjenoppretning av passord krever at du er logget ut.'))
+        messages.error(request, _('Gjenoppretning av passord krever at du er logget ut.'))
         return HttpResponseRedirect('/')
     else:
         if request.method == 'POST':
@@ -175,7 +175,7 @@ def recover(request):
                 emails = Email.objects.filter(email=email_string)
 
                 if len(emails) == 0:
-                    messages.error(request, _(u'Denne eposten er ikke registrert i våre systemer.'))
+                    messages.error(request, _('Denne eposten er ikke registrert i våre systemer.'))
                     return HttpResponseRedirect('/')
 
                 email = emails[0]
@@ -185,7 +185,7 @@ def recover(request):
                 rt = RegisterToken(user=email.user, email=email.email, token=token)
                 rt.save()
 
-                email_message = _(u"""
+                email_message = _("""
 Vi har mottat forespørsel om å gjenopprette passordet for kontoen bundet til %s.
 Dersom du ikke har bedt om denne handlingen ber vi deg se bort fra denne eposten.
 
@@ -199,9 +199,9 @@ Denne lenken vil være gyldig i 24 timer. Dersom du behøver å få tilsendt en 
 kan dette gjøres med funksjonen for å gjenopprette passord.
 """) % (email.email, email.user.username, request.META['HTTP_HOST'], token)
 
-                send_mail(_(u'Gjenoppretning av passord'), email_message, settings.DEFAULT_FROM_EMAIL, [email.email, ])
+                send_mail(_('Gjenoppretning av passord'), email_message, settings.DEFAULT_FROM_EMAIL, [email.email, ])
 
-                messages.success(request, _(u'En lenke for gjenoppretning har blitt sendt til %s.') % email.email)
+                messages.success(request, _('En lenke for gjenoppretning har blitt sendt til %s.') % email.email)
 
                 return HttpResponseRedirect('/')
             else:
@@ -235,22 +235,22 @@ def set_password(request, token=None):
 
                         messages.success(
                             request,
-                            _(u'Bruker %s har gjennomført vellykket gjenoppretning av passord.' +
-                              u'Du kan nå logge inn.') % user.username
+                            _('Bruker %s har gjennomført vellykket gjenoppretning av passord.' +
+                              'Du kan nå logge inn.') % user.username
                         )
 
                         return HttpResponseRedirect('/')
                 else:
                     form = ChangePasswordForm()
 
-                    messages.success(request, _(u'Lenken er akseptert. Vennligst skriv inn ønsket passord.'))
+                    messages.success(request, _('Lenken er akseptert. Vennligst skriv inn ønsket passord.'))
 
                 return render(request, 'auth/set_password.html', {'form': form, 'token': token})
 
         else:
             messages.error(
                 request,
-                _(u'Lenken er ugyldig. Vennligst bruk gjenoppretning av passord for å få tilsendt en ny lenke.')
+                _('Lenken er ugyldig. Vennligst bruk gjenoppretning av passord for å få tilsendt en ny lenke.')
             )
             return HttpResponseRedirect('/')
 

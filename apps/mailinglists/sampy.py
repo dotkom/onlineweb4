@@ -2,7 +2,8 @@
 # -*- coding: utf-8 -*-
 
 import xml.etree.ElementTree as etree
-from urllib2 import urlopen, Request, HTTPError
+from urllib.request import urlopen, Request
+from urllib.error import HTTPError
 
 NAMESPACE_SOAP = "http://schemas.xmlsoap.org/soap/envelope/"
 NAMESPACE_SYMPA = "urn:sympasoap"
@@ -107,8 +108,8 @@ class Sampy(object):
         request.add_data(xml)
         try:
             response = urlopen(request)
-        except HTTPError, e:
-            print e.read()
+        except HTTPError as e:
+            print(e.read())
             return
         responsetree = etree.fromstring(response.read())
         return [r.text for r in responsetree[0][0][0]]
@@ -124,8 +125,8 @@ class Sampy(object):
         request.add_data(xml)
         try:
             response = urlopen(request)
-        except HTTPError, e:
-            print e.read()
+        except HTTPError as e:
+            print(e.read())
             return
         responsetree = etree.fromstring(response.read())
 

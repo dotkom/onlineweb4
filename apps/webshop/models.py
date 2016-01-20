@@ -36,7 +36,7 @@ class Product(models.Model):
             return ResponsiveImage.objects.filter(id__in=id_tuple)
         return ResponsiveImage.objects.none()
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     class Meta:
@@ -51,7 +51,7 @@ class Category(models.Model):
     name = models.CharField(max_length=100)
     slug = models.SlugField(unique=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     def get_absolute_url(self):
@@ -67,11 +67,11 @@ class Category(models.Model):
 
 class ProductSize(models.Model):
     product = models.ForeignKey(Product)
-    size = models.CharField(u'Størrelse', max_length=25)
-    description = models.CharField(u'Beskrivelse', max_length=50, null=True, blank=True)
+    size = models.CharField('Størrelse', max_length=25)
+    description = models.CharField('Beskrivelse', max_length=50, null=True, blank=True)
     stock = models.PositiveSmallIntegerField(null=True, blank=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.size
 
     class Meta:
@@ -91,8 +91,8 @@ class Order(models.Model):
     def calculate_price(self):
         return self.product.price * self.quantity
 
-    def __unicode__(self):
-        return u"%sx %s" % (self.quantity, self.product)
+    def __str__(self):
+        return "%sx %s" % (self.quantity, self.product)
 
     class Meta:
         verbose_name = 'Bestilling'
@@ -126,8 +126,8 @@ class OrderLine(models.Model):
         self.datetime = timezone.now()
         self.save()
 
-    def __unicode__(self):
-        return u"Webshop purchase %s by %s" % (self.datetime, self.user)
+    def __str__(self):
+        return "Webshop purchase %s by %s" % (self.datetime, self.user)
 
     class Meta:
         permissions = (

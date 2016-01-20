@@ -88,7 +88,7 @@ def add(request, order_type=0):
                 group=Group.objects.get(name='proKom')
             )
 
-            title = unicode(poster)
+            title = str(poster)
 
             # Prettify and localize dates
             event_date = \
@@ -129,7 +129,7 @@ For mer informasjon, sjekk ut bestillingen her: %(absolute_url)s
             to_emails = [settings.EMAIL_PROKOM, request.user.get_email().email]
 
             try:
-                email_sent = EmailMessage(unicode(subject), unicode(email_message), from_email, to_emails, []).send()
+                email_sent = EmailMessage(str(subject), str(email_message), from_email, to_emails, []).send()
             except ImproperlyConfigured:
                 email_sent = False
             if email_sent:
@@ -232,14 +232,14 @@ def assign_person(request):
 
             if orders.count() == 0:
                 response_text = json.dumps({'message': _(
-                    u"""Kan ikke finne en ordre med denne IDen (%s).
+                    """Kan ikke finne en ordre med denne IDen (%s).
 Om feilen vedvarer etter en refresh, kontakt dotkom@online.ntnu.no.""") % order_id})
                 return HttpResponse(status=412, content=response_text)
 
             order = orders[0]
 
             if order.finished or order.assigned_to is not None:
-                response_text = json.dumps({'message': _(u"Denne ordren er allerede behandlet.")})
+                response_text = json.dumps({'message': _("Denne ordren er allerede behandlet.")})
                 return HttpResponse(status=412, content=response_text)
 
             order.assigned_to = assign_to

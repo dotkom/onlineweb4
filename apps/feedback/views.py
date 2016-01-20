@@ -45,10 +45,10 @@ def feedback(request, applabel, appmodel, object_id, feedback_id):
             fosa = FieldOfStudyAnswer(feedback_relation=fbr, answer=request.user.field_of_study)
             fosa.save()
 
-            messages.success(request, _(u"Takk for at du svarte."))
+            messages.success(request, _("Takk for at du svarte."))
             return redirect("home")
         else:
-            messages.error(request, _(u"Du må svare på alle påkrevde felt."))
+            messages.error(request, _("Du må svare på alle påkrevde felt."))
     else:
         answers = create_answer_forms(fbr)
 
@@ -90,11 +90,11 @@ def feedback_results(request, applabel, appmodel, object_id, feedback_id, token=
 
     if fbr.feedback.display_info or not token:
         info = fbr.content_info()
-        info[_(u'Besvarelser')] = fbr.answered.count()
+        info[_('Besvarelser')] = fbr.answered.count()
 
     rt = get_object_or_404(RegisterToken, fbr=fbr)
 
-    token_url = u"%s%sresults/%s" % (request.META['HTTP_HOST'], fbr.get_absolute_url(), rt.token)
+    token_url = "%s%sresults/%s" % (request.META['HTTP_HOST'], fbr.get_absolute_url(), rt.token)
 
     return render(
         request,
@@ -153,17 +153,17 @@ def get_chart_data(request, applabel, appmodel, object_id, feedback_id, token=Fa
 
     for question in fbr.multiple_choice_question:
         if question.display or not token:
-            mc_questions.append(unicode(question))
+            mc_questions.append(str(question))
             answer_count = defaultdict(int)
             for answer in fbr.answers_to_question(question):
                 answer_count[str(answer)] += 1
-            mc_answer_count.append(answer_count.items())
+            mc_answer_count.append(list(answer_count.items()))
 
     answer_collection['replies']['ratings'] = rating_answers
     answer_collection['replies']['titles'] = rating_titles
     answer_collection['replies']['mc_questions'] = mc_questions
     answer_collection['replies']['mc_answers'] = mc_answer_count
-    answer_collection['replies']['fos'] = fos_answer_count.items()
+    answer_collection['replies']['fos'] = list(fos_answer_count.items())
 
     return HttpResponse(json.dumps(answer_collection), content_type='application/json')
 

@@ -26,7 +26,7 @@ class SetEventMarks(Task):
             message = SetEventMarks.generate_message(attendance_event)
 
             if message.send:
-                EmailMessage(message.subject, unicode(message), message.committee_mail, [], message.not_attended_mails).send()
+                EmailMessage(message.subject, str(message), message.committee_mail, [], message.not_attended_mails).send()
                 logger.info("Emails sent to: " + str(message.not_attended_mails))
             else:
                 logger.info("Everyone met. No mails sent to users")
@@ -40,9 +40,9 @@ class SetEventMarks(Task):
         event = attendance_event.event
         logger.info('Proccessing "' + event.title + '"')
         mark = Mark()
-        mark.title = u"Manglende oppmøte på %s" % (event.title)
+        mark.title = "Manglende oppmøte på %s" % (event.title)
         mark.category = event.event_type
-        mark.description = u"Du har fått en prikk på grunn av manglende oppmøte på %s." % (event.title)
+        mark.description = "Du har fått en prikk på grunn av manglende oppmøte på %s." % (event.title)
         mark.save()
         
         for user in attendance_event.not_attended():
@@ -61,7 +61,7 @@ class SetEventMarks(Task):
 
         not_attended = attendance_event.not_attended()
         event = attendance_event.event
-        title = unicode(event.title)    
+        title = str(event.title)    
 
         #return if everyone attended
         if not not_attended:
@@ -70,13 +70,13 @@ class SetEventMarks(Task):
         message.not_attended_mails = [user.email for user in not_attended]
 
         message.committee_mail = event.feedback_mail()
-        not_attended_string = u'\n'.join([user.get_full_name() for user in not_attended])
+        not_attended_string = '\n'.join([user.get_full_name() for user in not_attended])
 
         message.subject = title
-        message.intro = u"Hei\n\nPå grunn av manglende oppmøte på \"%s\" har du fått en prikk" % (title)
-        message.contact = u"\n\nEventuelle spørsmål sendes til %s " % (message.committee_mail)
+        message.intro = "Hei\n\nPå grunn av manglende oppmøte på \"%s\" har du fått en prikk" % (title)
+        message.contact = "\n\nEventuelle spørsmål sendes til %s " % (message.committee_mail)
         message.send = True
-        message.committee_message = u"På grunn av manglende oppmøte på \"%s\" har følgende brukere fått en prikk:\n" % (event.title)
+        message.committee_message = "På grunn av manglende oppmøte på \"%s\" har følgende brukere fått en prikk:\n" % (event.title)
         message.committee_message += not_attended_string
         return message
 
@@ -91,17 +91,17 @@ class Message():
     contact = ""
     not_attended_mails = ""
     send = False
-    end = u"\n\nMvh\nLinjeforeningen Online"
+    end = "\n\nMvh\nLinjeforeningen Online"
     results_message = False
 
     committee_mail = ""
     committee_message = False
 
-    def __unicode__(self):
+    def __str__(self):
         message = "%s %s %s" % (
             self.intro,
             self.contact,
             self.end)
         return message
 
-schedule.register(SetEventMarks, day_of_week='mon-sun', hour=8, minute=05)
+schedule.register(SetEventMarks, day_of_week='mon-sun', hour=8, minute=0o5)

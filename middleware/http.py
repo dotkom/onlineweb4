@@ -13,7 +13,7 @@ class Http403(Exception):
 
 class Http403Middleware(object):
     def process_exception(self, request, exception):
-        from http import Http403
+        from .http import Http403
 
         if not isinstance(exception, Http403):
             # Return None so django doesn't re-raise the exception

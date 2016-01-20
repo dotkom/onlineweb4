@@ -14,7 +14,7 @@ import datetime
 
 
 class LoginForm(forms.Form):
-    password = forms.CharField(widget=forms.PasswordInput(), label=_(u"Passord"))
+    password = forms.CharField(widget=forms.PasswordInput(), label=_("Passord"))
 
     def __init__(self, *args, **kwargs):
         super(LoginForm, self).__init__(*args, **kwargs)
@@ -24,9 +24,9 @@ class LoginForm(forms.Form):
         if self._errors:
             return
         if not hasattr(settings, 'GENFORS_ADMIN_PASSWORD'):
-            self._errors['password'] = self.error_class([_(u"Admin passord har ikke blitt satt")])
+            self._errors['password'] = self.error_class([_("Admin passord har ikke blitt satt")])
         elif self.cleaned_data['password'] != settings.GENFORS_ADMIN_PASSWORD:
-            self._errors['password'] = self.error_class([_(u"Feil passord")])
+            self._errors['password'] = self.error_class([_("Feil passord")])
         return self.cleaned_data
 
 
@@ -36,7 +36,7 @@ class MeetingForm(forms.ModelForm):
         'title',
         Field('start_date', data_date_format="DD.MM.YY HH:mm "),
         FormActions(
-            Submit('create', _(u'Opprett nytt møte'), css_class="btn-success"),
+            Submit('create', _('Opprett nytt møte'), css_class="btn-success"),
         )
     )
 
@@ -47,7 +47,7 @@ class MeetingForm(forms.ModelForm):
     def clean_start_date(self):
         date = self.cleaned_data['start_date']
         if date.date() < datetime.date.today():
-            raise forms.ValidationError(_(u'Datoen må være i dag eller senere'))
+            raise forms.ValidationError(_('Datoen må være i dag eller senere'))
         return date
 
 
@@ -78,18 +78,18 @@ AlternativeFormSet = modelformset_factory(Alternative, form=AlternativeForm, can
 class RegisterVoterForm(forms.Form):
     password = forms.CharField(
         widget=forms.PasswordInput(),
-        label=_(u"Pinkode"),
+        label=_("Pinkode"),
         help_text='Kode oppgitt under generalforsamling'
     )
     salt = forms.CharField(
         widget=forms.PasswordInput(),
-        label=_(u'Personlig kode'),
+        label=_('Personlig kode'),
         help_text=_(
-            u"""Personlig kode brukes for å lage en unik hash som brukes til hemmelige valg.
+            """Personlig kode brukes for å lage en unik hash som brukes til hemmelige valg.
             Denne lagres ikke og det er derfor ytterst viktig at du ikke glemmer den."""
         )
     )
-    salt2 = forms.CharField(widget=forms.PasswordInput(), label=_(u'Gjenta personlig kode'))
+    salt2 = forms.CharField(widget=forms.PasswordInput(), label=_('Gjenta personlig kode'))
 
     @staticmethod
     def get_active_meeting():
@@ -108,7 +108,7 @@ class RegisterVoterForm(forms.Form):
         if self._errors:
             return
         elif self.cleaned_data['password'] != self.get_active_meeting().pin:
-            self._errors['password'] = self.error_class([_(u'Feil PIN-kode')])
+            self._errors['password'] = self.error_class([_('Feil PIN-kode')])
         elif self.cleaned_data['salt'] != self.cleaned_data['salt2']:
-            self._errors['salt'] = self.error_class([_(u'De personlige kodene er ikke like')])
+            self._errors['salt'] = self.error_class([_('De personlige kodene er ikke like')])
         return self.cleaned_data
