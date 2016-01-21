@@ -170,7 +170,7 @@ class OnlineUser(AbstractUser):
         return Email.objects.all().filter(user=self)
 
     def get_active_suspensions(self):
-        return self.suspension_set().filter(active=True)
+        return self.suspension_set.filter(active=True)
 
     def in_group(self, group_name):
         return reduce(lambda x, y: x or y.name == group_name, self.groups.all(), False)
