@@ -1,3 +1,4 @@
+from django.http import Http404
 from django.shortcuts import render
 from apps.splash.models import SplashYear
 
@@ -6,8 +7,10 @@ from apps.events.utils import SplashCalendar
 
 def index(request):
     splash_year = SplashYear.objects.current()
+    if not splash_year:
+        raise Http404
 
-    splash_year.events = _merge_events(splash_year.splash_events.all())
+    splash_year.events = _merge_events(splash_year.events())
 
     return render(request, 'splash/base.html', {'splash_year': splash_year})
 

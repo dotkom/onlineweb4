@@ -616,15 +616,15 @@ class AttendanceEvent(models.Model):
         if self.is_suspended(user):
             response['status'] = False
             response['message'] = _(u"Du er suspandert og kan ikke melde deg på.")
-            response['status_code'] = 501
+            response['status_code'] = 402
 
             return response
 
         # Checks if the event is group restricted and if the user is in the right group
         if not self.event.can_display(user):
             response['status'] = False
-            response['message'] = _(u"Du har ikke tilgang til og melde deg på dette arrangementet.")
-            response['status_code'] = 501
+            response['message'] = _(u"Du har ikke tilgang til å melde deg på dette arrangementet.")
+            response['status_code'] = 403
 
             return response
 

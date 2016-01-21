@@ -186,7 +186,7 @@ class SplashCalendar(Calendar):
         self.cal.add_component(cal_event)
 
     def events(self):
-        self.add_events(SplashYear.objects.current().splash_events.all())
+        self.add_events(SplashYear.objects.current_events())
         self.filename = 'events'
 
 
