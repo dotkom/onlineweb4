@@ -1,0 +1,4 @@
+På grunn av manglende oppmøte på "{{ title }}" har følgende brukere fått en prikk:
+
+{% for user in not_met %}- {{ user }}
+{% endfor %}

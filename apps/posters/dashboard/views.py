@@ -1,6 +1,7 @@
 # -*- encoding: utf-8 -*-
 
 import json
+import logging
 
 from django.conf import settings
 from django.contrib import messages
@@ -9,6 +10,7 @@ from django.contrib.auth.models import Group
 from django.core.mail import EmailMessage
 from django.core.exceptions import PermissionDenied, ImproperlyConfigured
 from django.shortcuts import render, redirect, get_object_or_404, HttpResponseRedirect, HttpResponse
+from django.template.loader import render_to_string
 from django.utils.translation import ugettext as _
 from django.views.decorators.csrf import ensure_csrf_cookie
 
@@ -54,6 +56,8 @@ def index(request):
 @login_required
 @permission_required('posters.add_poster_order', return_403=True)
 def add(request, order_type=0):
+    logger = logging.getLogger(__name__)
+
     order_type = int(order_type)
     context = get_base_context(request)
     type_names = ("Plakat", "Bong", "Generell ")
@@ -79,6 +83,7 @@ def add(request, order_type=0):
             poster.order_type = order_type
 
             poster.save()
+            logger.info("Saved order %s from %s (%s)." % (poster, poster.ordered_by, poster.ordered_committee))
 
             # Let this user have permissions to show this order
             UserObjectPermission.objects.assign_perm('view_poster_order', obj=poster, user=request.user)
@@ -90,48 +95,22 @@ def add(request, order_type=0):
 
             title = unicode(poster)
 
-            # Prettify and localize dates
-            event_date = \
-                poster.event.event_start.astimezone(tz('Europe/Oslo')).strftime("%-d %B %Y kl %H:%M") \
-                if poster.event else poster.display_from
-            ordered_date = poster.ordered_date.astimezone(tz('Europe/Oslo')).strftime("%-d %B %Y kl %H:%M")
-
             # The great sending of emails
-            subject = '[ProKom] Ny bestilling for %s' % title
-            email_template = """
-Det har blitt registrert en ny %(order_type)sbestilling pa Online sine nettsider. Dette er bestilling nummer %(id)s.
-\n
-Antall og type(r): %(num)s x %(order_type)s%(bongs)s\n
-%(poster_order)s (%(event_date)s)\n
-Bestilt av %(ordered_by)s i %(ordered_by_committee)s den %(ordered_date)s.\n
-\n
-For mer informasjon, sjekk ut bestillingen her: %(absolute_url)s
-"""
-            email_message = '%(message)s%(signature)s' % {
-                'message': _(
-                    email_template % {
-                        'site': '',
-                        'order_type': type_name.lower().rstrip(),
-                        'num': '%s' % poster.amount,
-                        'bongs': ', %s x bong' % poster.bong if poster.bong > 0 else '' if poster.bong > 0 else '',
-                        'ordered_by': poster.ordered_by,
-                        'ordered_by_committee': poster.ordered_committee,
-                        'id': poster.id,
-                        'poster_order': title,
-                        'event_date': event_date,
-                        'ordered_date': ordered_date,
-                        'absolute_url': request.build_absolute_uri(poster.get_dashboard_url())
-                    }
-                ),
-                'signature': _('\n\nVennlig hilsen Linjeforeningen Online')
-            }
+            subject = '[ProKom] Ny bestilling | %s' % title
+
+            poster.absolute_url = request.build_absolute_uri(poster.get_dashboard_url())
+            context = {}
+            context['poster'] = poster
+            message = render_to_string('posters/email/new_order_notification.txt', context)
+
             from_email = settings.EMAIL_PROKOM
             to_emails = [settings.EMAIL_PROKOM, request.user.get_email().email]
 
             try:
-                email_sent = EmailMessage(unicode(subject), unicode(email_message), from_email, to_emails, []).send()
+                email_sent = EmailMessage(unicode(subject), unicode(message), from_email, to_emails, []).send()
             except ImproperlyConfigured:
                 email_sent = False
+                logger.warn("Failed to send email for new order")
             if email_sent:
                 messages.success(request, 'Opprettet bestilling')
             else:
@@ -231,6 +210,7 @@ def assign_person(request):
             assign_to = User.objects.get(pk=assign_to_id)
 
             if orders.count() == 0:
+                logging.debug("Trying to assign to non-existing order \"%s\" (user: %s)." % (order_id, request.user))
                 response_text = json.dumps({'message': _(
                     u"""Kan ikke finne en ordre med denne IDen (%s).
 Om feilen vedvarer etter en refresh, kontakt dotkom@online.ntnu.no.""") % order_id})
