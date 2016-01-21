@@ -15,6 +15,7 @@ import watson
 
 from apps.article.serializers import ArticleSerializer
 from apps.article.models import Article
+from apps.article.utils import create_article_filters
 
 
 def archive(request, name=None, slug=None, year=None, month=None):
@@ -33,49 +34,7 @@ def archive(request, name=None, slug=None, year=None, month=None):
 
     articles = Article.objects.filter(published_date__lte=timezone.now()).order_by('-published_date')
 
-    month_strings = {
-        '1': u'Januar',
-        '2': u'Februar',
-        '3': u'Mars',
-        '4': u'April',
-        '5': u'Mai',
-        '6': u'Juni',
-        '7': u'Juli',
-        '8': u'August',
-        '9': u'September',
-        '10': u'Oktober',
-        '11': u'November',
-        '12': u'Desember',
-    }
-
-    rev_month_strings = dict((v, k) for k, v in month_strings.iteritems())
-
-    # HERE BE DRAGONS
-    # TODO: Fix all these for loops...
-    # --------------------------------
-    # For creating the date filters.
-    dates = {}
-    for article in articles:
-        d_year = str(article.published_date.year)
-        d_month = str(article.published_date.month)
-        if d_year not in dates:
-            dates[d_year] = []
-        for y in dates:
-            if d_year == y:
-                if month_strings[d_month] not in dates[d_year]:
-                    dates[d_year].append(month_strings[d_month])
-    # Now sort months
-    for year in dates:
-        sorted_months = ['' for x in range(1, 13)]
-        for month in dates[year]:
-            sorted_months[int(rev_month_strings[month]) - 1] = month
-        remove_these = []
-        for n, m in enumerate(sorted_months):
-            if m == '':
-                remove_these.append(n)
-        for i in reversed(remove_these):
-            del sorted_months[i]
-        dates[year] = sorted_months
+    dates = create_article_filters(articles)
 
     # Fetch 30 most popular tags from the Django-taggit registry, using a Counter
     queryset = TaggedItem.objects.filter(content_type=ContentType.objects.get_for_model(Article))

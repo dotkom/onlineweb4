@@ -104,9 +104,9 @@ def groups_detail(request, pk):
 
         for job in settings.GROUP_SYNCER:
             if group_id in job['source']:
-                context['sync_group_to'].extend([groups[group_id] for group_id in job['destination']])
+                context['sync_group_to'].extend([groups[g_id] for g_id in job['destination']])
             if group_id in job['destination']:
-                context['sync_group_from'].extend([groups[group_id] for group_id in job['source']])
+                context['sync_group_from'].extend([groups[g_id] for g_id in job['source']])
 
     context['group_users'] = list(context['group'].user_set.all())
 

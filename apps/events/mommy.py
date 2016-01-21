@@ -47,29 +47,29 @@ class SetEventMarks(Task):
         mark.category = event.event_type
         mark.description = u"Du har fått en prikk på grunn av manglende oppmøte på %s." % event.title
         mark.save()
-        
+
         for user in attendance_event.not_attended():
             user_entry = MarkUser()
             user_entry.user = user
             user_entry.mark = mark
             user_entry.save()
             logger.info("Mark given to: " + str(user_entry.user))
-        
+
         attendance_event.marks_has_been_set = True
         attendance_event.save()
-        
+
     @staticmethod
     def generate_message(attendance_event):
         message = Message()
 
         not_attended = attendance_event.not_attended()
         event = attendance_event.event
-        title = unicode(event.title)    
+        title = unicode(event.title)
 
         # return if everyone attended
         if not not_attended:
             return message
-        
+
         message.not_attended_mails = [user.email for user in not_attended]
 
         message.committee_mail = event.feedback_mail()

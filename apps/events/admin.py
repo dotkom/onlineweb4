@@ -199,7 +199,7 @@ class ReservationAdmin(VersionAdmin):
     _attendees.short_description = _("Antall deltakere")
 
     def _max_capacity(self, obj):
-        return obj.attendance_event.max_capacity 
+        return obj.attendance_event.max_capacity
     _max_capacity.short_description = _("Arrangementets maks-kapasitet")
 
     def save_model(self, request, obj, form, change):

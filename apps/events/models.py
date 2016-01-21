@@ -350,7 +350,7 @@ class Extras(models.Model):
 
     choice = models.CharField(u'valg', max_length=69)
     note = models.CharField(u'notat', max_length=200, blank=True, null=True)
-    
+
     def __unicode__(self):
         return self.choice
 
@@ -493,6 +493,8 @@ class AttendanceEvent(models.Model):
         return expiry_date and expiry_date > timezone.now().date()
 
     def has_postponed_registration(self, user):
+        if not self.is_marked(user):
+            return False
         expiry_date = get_expiration_date(user)
         mark_offset = timedelta(days=1)
         postponed_registration_start = self.registration_start + mark_offset
@@ -500,7 +502,7 @@ class AttendanceEvent(models.Model):
         before_expiry = self.registration_start.date() < expiry_date
 
         if postponed_registration_start > timezone.now() and before_expiry:
-            return None
+            return postponed_registration_start
 
     def is_suspended(self, user):
         for suspension in user.get_active_suspensions():
@@ -593,13 +595,7 @@ class AttendanceEvent(models.Model):
                 return response
 
         # Do I have any marks that postpone my registration date?
-        if self.has_postponed_registration(user):
-            mark_offset = timedelta(days=1)
-
-            response['status'] = False
-            response['status_code'] = 401
-            response['message'] = _(u"Din påmelding er utsatt grunnet prikker.")
-            response['offset'] = self.registration_start + mark_offset
+        response = self._check_marks(response, user)
 
         # Return response if offset was set.
         if 'offset' in response and response['offset'] > timezone.now():
@@ -609,12 +605,14 @@ class AttendanceEvent(models.Model):
         # Offset calculations end
         #
 
-        if not self.registration_open:
+        # Registration not open
+        if timezone.now() < self.registration_start:
             response['status'] = False
             response['message'] = _(u'Påmeldingen har ikke åpnet enda.')
             response['status_code'] = 501
             return response
 
+        # Is suspended
         if self.is_suspended(user):
             response['status'] = False
             response['message'] = _(u"Du er suspandert og kan ikke melde deg på.")
@@ -632,6 +630,24 @@ class AttendanceEvent(models.Model):
 
         # No objections, set eligible.
         response['status'] = True
+        return response
+
+    def _check_marks(self, response, user):
+        expiry_date = get_expiration_date(user)
+        if expiry_date and expiry_date > timezone.now().date():
+            # Offset is currently 1 day if you have marks, regardless of amount.
+            mark_offset = timedelta(days=1)
+            postponed_registration_start = self.registration_start + mark_offset
+
+            before_expiry = self.registration_start.date() < expiry_date
+
+            if postponed_registration_start > timezone.now() and before_expiry:
+                if 'offset' in response and response['offset'] < postponed_registration_start \
+                        or 'offset' not in response:
+                    response['status'] = False
+                    response['status_code'] = 401
+                    response['message'] = _(u"Din påmelding er utsatt grunnet prikker.")
+                    response['offset'] = postponed_registration_start
         return response
 
     def _process_rulebundle_satisfaction_responses(self, responses):

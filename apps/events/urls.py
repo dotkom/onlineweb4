@@ -2,6 +2,9 @@
 
 from django.conf.urls import patterns, url
 
+from apps.api.utils import SharedAPIRootRouter
+from apps.events import views
+
 urlpatterns = patterns(
     'apps.events.views',
     url(r'^$', 'index', name='events_index'),
@@ -18,7 +21,5 @@ urlpatterns = patterns(
 )
 
 # API v1
-from apps.api.utils import SharedAPIRootRouter
-from apps.events import views
 router = SharedAPIRootRouter()
 router.register('events', views.EventViewSet, base_name='events')

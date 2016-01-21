@@ -24,7 +24,7 @@ class EventPDF(object):
         attendee_qs = event.attendance_event.attendees_qs
         self.attendees = sorted(attendee_qs, key=lambda attendee: attendee.user.last_name)
         self.waiters = event.attendance_event.waitlist_qs
-        self.reservees = event.attendance_event.reservees_qs 
+        self.reservees = event.attendance_event.reservees_qs
         self.attendee_table_data = [(u'Navn', u'Klasse', u'Studie', u'Telefon'), ]
         self.waiters_table_data = [(u'Navn', u'Klasse', u'Studie', u'Telefon'), ]
         self.reservee_table_data = [(u'Navn', u'Notat'), ]
@@ -44,7 +44,7 @@ class EventPDF(object):
             user = attendee.user
             self.attendee_table_data.append((
                                             create_body_text("%s, %s" % (user.last_name, user.first_name)),
-                                            user.year, 
+                                            user.year,
                                             create_body_text(user.get_field_of_study_display()),
                                             user.phone_number
                                             ))
@@ -53,7 +53,7 @@ class EventPDF(object):
                 self.attendee_table_data.append(
                     (create_body_text(u'Notat for %s: ' % attendee.user.first_name + attendee.note),))
                 i += 1
-                self.full_span_attendee_lines.append(i) 
+                self.full_span_attendee_lines.append(i)
             if user.allergies:
                 # Breaks the line every 60th character
                 allergies = "\n".join(wrap(user.allergies, width=60))
@@ -73,12 +73,12 @@ class EventPDF(object):
                 create_body_text(user.get_field_of_study_display()),
                 user.phone_number
             ))
-                
+
             if attendee.note:
                 self.waiters_table_data.append(
                     (create_body_text(u'Notat for %s: ' % attendee.user.first_name + attendee.note),))
                 i += 1
-                self.full_span_waiters_lines.append(i) 
+                self.full_span_waiters_lines.append(i)
             if user.allergies:
                 # Breaks the line every 60th character
                 allergies = "\n".join(wrap(user.allergies, width=60))
@@ -124,15 +124,15 @@ class EventPDF(object):
         pdf.table(self.attendee_table_data, self.attendee_column_widths(),
                   style=get_table_style(self.full_span_attendee_lines))
         pdf.spacer(height=25)
-        
+
         if self.waiters.count() > 0:
             pdf.p(u"Venteliste", style=create_paragraph_style(font_size=14))
             pdf.spacer(height=20)
             pdf.table(self.waiters_table_data, self.attendee_column_widths(),
                       style=get_table_style(self.full_span_waiters_lines))
             pdf.spacer(height=25)
-    
-        if self.reservees and self.reservees.count() > 0: 
+
+        if self.reservees and self.reservees.count() > 0:
             pdf.p(u"Reservasjoner", style=create_paragraph_style(font_size=14))
             pdf.spacer(height=20)
             pdf.table(self.reservee_table_data, self.reservee_column_widths(), style=get_table_style())
