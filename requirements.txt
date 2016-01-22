@@ -36,6 +36,7 @@ Unidecode==0.4.17               # Translates every unicode symbol to the closest
 django-markdown-deux==1.0.5
 django-formset-js==0.4.3
 werkzeug==0.10.4
+django-cors-headers==1.1.0      # Enable CORS for Nibble
 
 #test tools
 cov-core==1.7
