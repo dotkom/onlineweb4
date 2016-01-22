@@ -14,7 +14,7 @@ class Item(models.Model):
     name = models.CharField(_(u"Varetype"), max_length=50)
     description = models.CharField(_(u"Beskrivelse"), max_length=50, null=True, blank=True)
     price = models.IntegerField(_(u"Pris"), null=True, blank=True)
-    avalible = models.BooleanField(_(u"Til salgs"), default=False)
+    available = models.BooleanField(_(u"Til salgs"), default=False)
     category = models.ForeignKey(ItemCategory, verbose_name=_(u"Kategori"), related_name="category", null=True, blank=True)
 
     @property

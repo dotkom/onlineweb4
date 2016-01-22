@@ -27,7 +27,7 @@ class Order(models.Model):
 
 
 class OrderLine(models.Model):
-    user = models.ForeignKey(User)
+    user = models.ForeignKey(User, related_name="u")
     datetime = models.DateTimeField(auto_now_add=True)
     paid = models.BooleanField(default=False)
 

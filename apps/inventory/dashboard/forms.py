@@ -8,7 +8,7 @@ class ItemForm(forms.ModelForm):
 
     class Meta(object):
         model = Item
-        fields = ('name',)
+        fields = ('name', 'description', 'available', 'price')
 
 
 class BatchForm(forms.ModelForm):

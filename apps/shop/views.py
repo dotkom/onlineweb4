@@ -1,11 +1,17 @@
 # API v1
 import django_filters
+
+from oauth2_provider.ext.rest_framework import OAuth2Authentication
+from oauth2_provider.ext.rest_framework import TokenHasScope
+
 from rest_framework import viewsets, mixins, status
 from rest_framework.permissions import AllowAny
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from apps.authentication.models import OnlineUser as User
+from apps.inventory.models import Item
 from apps.payment.models import PaymentTransaction
 from apps.shop.models import OrderLine
 from apps.shop.serializers import OrderLineSerializer, UserSerializer, TransactionSerializer
@@ -43,15 +49,17 @@ class TransactionViewSet(viewsets.GenericViewSet, mixins.CreateModelMixin):
         serializer.save()
 
 
-class UserViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.ListModelMixin):
+class UserViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.ListModelMixin, APIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = (AllowAny,)
+    authentication_classes = [OAuth2Authentication,]
+    permission_classes = [TokenHasScope,]
+    required_scopes = ['shop.readwrite',]
     filter_fields = ('rfid',)
 
 
 class InventoryViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.ListModelMixin):
-    queryset = Item.objects.filter(avalible=True)
+    queryset = Item.objects.filter(available=True)
     serializer_class = ItemSerializer
     permission_classes = (AllowAny,)
 
