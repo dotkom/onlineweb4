@@ -1,16 +1,17 @@
 # API v1
 import django_filters
 
+from django.contrib import auth
+
 from oauth2_provider.ext.rest_framework import OAuth2Authentication
 from oauth2_provider.ext.rest_framework import TokenHasScope
 
 from rest_framework import viewsets, mixins, status
 from rest_framework.permissions import AllowAny
-from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from apps.authentication.models import OnlineUser as User
+from apps.authentication.models import OnlineUser as User, Email
 from apps.inventory.models import Item
 from apps.payment.models import PaymentTransaction
 from apps.shop.models import OrderLine
@@ -62,4 +63,29 @@ class InventoryViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixin
     queryset = Item.objects.filter(available=True)
     serializer_class = ItemSerializer
     permission_classes = (AllowAny,)
+
+
+class SetRFIDView(APIView):
+    authentication_classes = [OAuth2Authentication,]
+    permission_classes = [TokenHasScope,]
+    required_scopes = ['shop.readwrite',]
+
+    def post(self, request, format=None):
+        username = request.data["username"].lower()
+        password = request.data["password"]
+
+        if '@' in username:
+            email = Email.objects.filter(email=username)
+            if email:
+                username = email[0].user.username
+
+        user = auth.authenticate(username=username, password=password)
+
+        if user:
+            user.rfid = request.data["rfid"]
+            user.save()
+            return Response("OK", status=status.HTTP_200_OK)
+
+
+        return Response("Invalid user credentials", status=status.HTTP_401_UNAUTHORIZED)
 
