@@ -12,7 +12,7 @@ class OfflineConfig(AppConfig):
 
         # The following stops pycharm from nagging about unused import statement
         # noinspection PyUnresolvedReferences
-        import apps.offline.signals
+        import apps.offline.signals  # flake8: noqa
 
         from chunks.models import Chunk
         from apps.offline.models import Issue

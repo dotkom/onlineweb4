@@ -411,4 +411,3 @@ class RegisterToken(models.Model):
         permissions = (
             ('view_feedbackregistertoken', 'View FeedbackRegisterToken'),
         )
-

@@ -5,9 +5,6 @@ from django.db import models
 from django.utils.translation import ugettext as _
 
 
-import reversion
-
-
 User = settings.AUTH_USER_MODEL
 
 
@@ -29,4 +26,3 @@ class Privacy(models.Model):
         permissions = (
             ('view_privacy', 'View Privacy'),
         )
-

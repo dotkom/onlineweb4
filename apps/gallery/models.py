@@ -2,7 +2,6 @@
 
 import logging
 import os
-import watson
 
 from django.conf import settings
 from django.db import models

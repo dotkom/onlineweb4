@@ -372,4 +372,3 @@ class SpecialPosition(models.Model):
         permissions = (
             ('view_specialposition', 'View SpecialPosition'),
         )
-

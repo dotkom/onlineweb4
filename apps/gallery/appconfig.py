@@ -12,7 +12,7 @@ class GalleryConfig(AppConfig):
 
         # The following stops pycharm from nagging about unused import statement
         # noinspection PyUnresolvedReferences
-        import apps.gallery.signals
+        import apps.gallery.signals  # flake8: noqa
         from apps.gallery.models import ResponsiveImage
 
         watson.register(ResponsiveImage)
