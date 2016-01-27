@@ -107,7 +107,7 @@ def details(request, article_id, article_slug):
     else:
         article.is_changed = False
 
-    related_articles = Article.objects.filter(tags__in=article.tags.all()).distinct()[:4]
+    related_articles = Article.objects.exclude(pk=article_id).filter(tags__in=article.tags.all()).distinct()[:4]
 
     return render(request, 'article/details.html', {'article': article, 'related_articles': related_articles})
 
