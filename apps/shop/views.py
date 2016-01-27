@@ -1,6 +1,4 @@
 # API v1
-import django_filters
-
 from django.contrib import auth
 
 from oauth2_provider.ext.rest_framework import OAuth2Authentication
@@ -22,7 +20,9 @@ from apps.shop.serializers import ItemSerializer
 class OrderLineViewSet(viewsets.GenericViewSet, mixins.CreateModelMixin):
     queryset = OrderLine.objects.all()
     serializer_class = OrderLineSerializer
-    permission_classes = (AllowAny,)
+    authentication_classes = [OAuth2Authentication,]
+    permission_classes = [TokenHasScope,]
+    required_scopes = ['shop.readwrite',]
 
     def create(self, request):
         serializer = OrderLineSerializer(data=request.data)
@@ -38,7 +38,9 @@ class OrderLineViewSet(viewsets.GenericViewSet, mixins.CreateModelMixin):
 class TransactionViewSet(viewsets.GenericViewSet, mixins.CreateModelMixin):
     queryset = PaymentTransaction.objects.all()
     serializer_class = TransactionSerializer
-    permission_classes = (AllowAny,)
+    authentication_classes = [OAuth2Authentication,]
+    permission_classes = [TokenHasScope,]
+    required_scopes = ['shop.readwrite',]
 
     def create(self, request):
         serializer = TransactionSerializer(data=request.data)
@@ -87,5 +89,5 @@ class SetRFIDView(APIView):
             return Response("OK", status=status.HTTP_200_OK)
 
 
-        return Response("Invalid user credentials", status=status.HTTP_401_UNAUTHORIZED)
+        return Response("Invalid user credentials", status=status.HTTP_409_CONFLICT)
 

@@ -52,7 +52,7 @@ class Item(models.Model):
 
     def reduce_stock(self, amount):
         """
-        Makes an assumption that the oldes batches are sold first and reduce them first.
+        Makes an assumption that the oldest batches are sold first and reduce them first.
         """
 
         oldest_batch = self.oldest_batch()

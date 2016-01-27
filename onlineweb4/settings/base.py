@@ -378,8 +378,8 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 10
 }
 
-CORS_ORIGIN_ALLOW_ALL = True # TODO change to Nibbles hostname
-# CORS_URLS_REGEX = r'^/api/v1/usersaldo/$' # Enables CORS on all API endpoints
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_URLS_REGEX = r'^/api/v1/.*$' # Enables CORS on /api/v1/ endpoints only
 
 # Required by the Wiki
 TEMPLATE_CONTEXT_PROCESSORS = (

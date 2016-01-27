@@ -1,14 +1,13 @@
 # -*- encoding: utf-8 -*-
 
 from django.conf.urls import patterns, url
-from apps.shop import views
 
 urlpatterns = patterns('',
-        url(r'^rfid/$', views.SetRFIDView.as_view(), name='set_rfid')
 )
 
 # API v1
 from apps.api.utils import SharedAPIRootRouter
+from apps.shop import views
 
 router = SharedAPIRootRouter()
 router.register('orderline', views.OrderLineViewSet)

@@ -1,7 +1,11 @@
+# -*- coding: utf-8 -*-
+
 from django.contrib.contenttypes import generic
 from django.contrib.contenttypes.models import ContentType
 from django.core.validators import MinValueValidator
 from django.db import models
+
+from rest_framework.exceptions import NotAcceptable
 
 from apps.authentication.models import OnlineUser as User
 
@@ -40,11 +44,21 @@ class OrderLine(models.Model):
     def pay(self):
         if self.paid:
             return
+
+        if self.subtotal() > self.user.saldo:
+            self.delete()
+            raise NotAcceptable("Insufficient funds")
+
+
         # Setting price for orders in case product price changes later
         for order in self.orders.all():
             order.price = order.total_price()
             order.save()
             order.reduce_stock()
+
+        self.user.saldo = self.user.saldo - self.subtotal()
+        self.user.save()
+
         self.paid = True
         self.save()
 

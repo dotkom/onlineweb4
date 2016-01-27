@@ -1,11 +1,11 @@
-from rest_framework import serializers
-
-from django.contrib.contenttypes.models import ContentType
+# -*- coding: utf-8 -*-
 
 from apps.authentication.models import OnlineUser as User
 from apps.payment.models import PaymentTransaction
 from apps.inventory.models import Item
 from apps.shop.models import Order, OrderLine
+
+from rest_framework import serializers
 
 
 class OrderSerializer(serializers.ModelSerializer):
@@ -16,13 +16,10 @@ class OrderSerializer(serializers.ModelSerializer):
             )
 
 
-class OrderLineSerializer(serializers.ModelSerializer): 
+class OrderLineSerializer(serializers.ModelSerializer):
     orders = OrderSerializer(many=True)
 
     def create(self, validated_data):
-
-        object_type = ContentType.objects.get_for_model(Item)
-
         order_list = validated_data.pop("orders")
         order_line = OrderLine.objects.create(**validated_data)
         while len(order_list) > 0:
@@ -54,7 +51,7 @@ class TransactionSerializer(serializers.ModelSerializer):
     class Meta:
         model = PaymentTransaction
         fields = (
-                'user', 'amount', 
+                'user', 'amount',
             )
 
 

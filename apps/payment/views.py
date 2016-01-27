@@ -200,7 +200,7 @@ def saldo_info(request):
 
         data = dict()
 
-        data['stripe_public_key'] = settings.STRIPE_PUBLIC_KEYS[1] #TODO fix right key
+        data['stripe_public_key'] = settings.STRIPE_PUBLIC_KEYS[2] # triKom
         data['email'] = request.user.email
         return HttpResponse(json.dumps(data), content_type="application/json")
 
@@ -222,7 +222,7 @@ def saldo(request):
                 return HttpResponse("Invalid input", content_type="text/plain", status=500)
 
             try:
-                stripe.api_key = settings.STRIPE_PRIVATE_KEYS[1] #TODO fix index
+                stripe.api_key = settings.STRIPE_PRIVATE_KEYS[2] # triKom
 
                 charge = stripe.Charge.create(
                   amount=amount * 100, #Price is multiplied with 100 because the amount is in øre
@@ -233,9 +233,7 @@ def saldo(request):
 
                 PaymentTransaction.objects.create(user=request.user, amount=amount, used_stripe=True)
 
-                request.user.saldo += amount
-                request.user.save()
-                _send_saldo_confirmation_mail(request.user.email, amount)
+                # _send_saldo_confirmation_mail(request.user.email, amount)
 
                 messages.success(request, _(u"Inskudd utført."))
                 return HttpResponse("Inskudd utført.", content_type="text/plain", status=200)
@@ -250,13 +248,13 @@ def _send_saldo_confirmation_mail(email, amount):
     subject = _(u"kvittering saldo inskudd")
     from_mail = settings.EMAIL_TRIKOM
 
-    message = _(u"Kvitering på saldo inskudd på ") + amount
+    message = _(u"Kvitering på saldo inskudd på ") + unicode(amount)
     message += _(u" til din Online saldo.")
     message += "\n"
     message += "\n"
     message += _(u"Dersom du har problemer eller spørsmål, send mail til") + ": " + from_mail
 
-    EmailMessage(subject, unicode(message), from_mail, [], to_mails).send()
+    EmailMessage(subject, unicode(message), from_mail, [], [email]).send()
 
 
 def _send_webshop_mail(order_line):
