@@ -62,6 +62,7 @@ wiki==0.1b0
 sorl-thumbnail>12.2
 django-appconf>=1.0
 django-mptt>=0.8.0
+django-sekizai>=0.9
 
 # non-pip
 # imagemagick                   # From package repository. Tested with version == 8:6.7.7.10.
