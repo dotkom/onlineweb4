@@ -744,7 +744,7 @@ class Attendee(models.Model):
         # Importing here to prevent circular dependencies
         from apps.payment.models import PaymentDelay
         try:
-            PaymentDelay.objects.filter(user=self.user, payment=self.event.payment).delete()
+            PaymentDelay.objects.filter(user=self.user, payment=self.event.payment()).delete()
         except PaymentDelay.DoesNotExist:
             # Do nothing
             False
