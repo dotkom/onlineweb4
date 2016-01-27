@@ -601,7 +601,7 @@ class AttendanceEvent(models.Model):
             if not suspension.expiration_date or suspension.expiration_date > timezone.now().date():
                 response['status'] = False
                 response['message'] = _(u"Du er suspandert og kan ikke melde deg på.")
-                response['status_code'] = 501
+                response['status_code'] = 402
 
                 return response
 
@@ -609,7 +609,7 @@ class AttendanceEvent(models.Model):
         if not self.event.can_display(user):
             response['status'] = False
             response['message'] = _(u"Du har ikke tilgang til og melde deg på dette arrangementet.")
-            response['status_code'] = 501
+            response['status_code'] = 403
 
             return response
 
