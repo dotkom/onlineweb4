@@ -195,7 +195,12 @@ if 'apps.webshop' in settings.INSTALLED_APPS:
 
 # feedme
 if 'feedme' in settings.INSTALLED_APPS:
-    urlpatterns += patterns('', url(r'^feedme/', include('feedme.urls', namespace='feedme')))
+    feedme_urls = [
+        url(r'^feedme/', include('feedme.urls', namespace='feedme')),
+        url(r'^feedme-api/', include('feedme.api.urls', namespace='feedmeapi')),
+        url(r'^feedme-react/', include('feedme.react.urls', namespace='feedmereact'))
+    ]
+    urlpatterns += feedme_urls
 
 if 'apps.payment' in settings.INSTALLED_APPS:
     urlpatterns += patterns(
