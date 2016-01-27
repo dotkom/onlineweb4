@@ -48,10 +48,10 @@ def new(request):
             messages.success(request, u'Varen ble opprettet')
             return redirect(details, item.id)
 
-        context['form'] = inventory_form
+        context['item_form'] = inventory_form
 
     else:
-        context['form'] = ItemForm()
+        context['item_form'] = ItemForm()
 
     return render(request, 'inventory/dashboard/new.html', context)
 

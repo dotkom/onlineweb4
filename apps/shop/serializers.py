@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
 
 from apps.authentication.models import OnlineUser as User
+from apps.gallery.serializers import ResponsiveImageSerializer
 from apps.payment.models import PaymentTransaction
 from apps.inventory.models import Item
 from apps.shop.models import Order, OrderLine
 
 from rest_framework import serializers
+
 
 
 class OrderSerializer(serializers.ModelSerializer):
@@ -56,8 +58,10 @@ class TransactionSerializer(serializers.ModelSerializer):
 
 
 class ItemSerializer(serializers.ModelSerializer):
+    image = ResponsiveImageSerializer()
+
     class Meta:
         model = Item
         fields = (
-                'pk', 'name', 'price', 'description',
+                'pk', 'name', 'price', 'description', 'image',
             )

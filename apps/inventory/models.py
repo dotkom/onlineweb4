@@ -4,6 +4,8 @@ from django.db import models
 from django.utils.translation import ugettext as _
 from django.utils import timezone
 
+from apps.gallery.models import ResponsiveImage
+
 
 class ItemCategory(models.Model):
     name = models.CharField(_(u"Kategori"), max_length=50)
@@ -16,6 +18,7 @@ class Item(models.Model):
     price = models.IntegerField(_(u"Pris"), null=True, blank=True)
     available = models.BooleanField(_(u"Til salgs"), default=False)
     category = models.ForeignKey(ItemCategory, verbose_name=_(u"Kategori"), related_name="category", null=True, blank=True)
+    image = models.ForeignKey(ResponsiveImage, null=True, blank=True, default=None)
 
     @property
     def oldest_expiration_date(self):

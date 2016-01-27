@@ -65,7 +65,7 @@
                     <i class="fa fa-save fa-lg"></i> Legg til</i>
                 </button>
             </div>
-        </form>   
+        </form>
         </div>
     </div>
 </div>
@@ -78,22 +78,7 @@
             </div>
             <div class="panel-body">
                 <div class="col-md-12">
-                    <form method="POST" action="{% url 'dashboard_inventory_details' item.id %}">
-                        <div class="row row-space">
-                            {% csrf_token %}
-                            {% for field in item_form %}
-                            <div class="form-group">
-                                <div class="input-group">
-                                    <span class="input-group-addon">{{ field.label }}</span>
-                                    {{ field|addclass:"form-control" }}
-                                </div>
-                            </div>
-                            {% endfor %}
-                            <button type="submit" class="btn btn-success">
-                                <i class="fa fa-save fa-lg"></i>  Lagre
-                            </button>
-                        </div>
-                    </form>
+                    {% include "inventory/dashboard/edit.html" %}
                 </div>
             </div>
         </div>

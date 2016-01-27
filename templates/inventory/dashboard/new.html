@@ -30,36 +30,9 @@ Ny vare
 {% endblock %}
 
 {% block content %}
-    <form method="POST" action="">
-    {% csrf_token %}
-        <div class="row">
-            <div class="col-md-12">
-                <button type="submit" class="btn btn-success"><i class="fa fa-save"></i> Lagre</button>
-            </div>
+    <div class="row">
+        <div class="col-md-12">
+            {% include "inventory/dashboard/edit.html" %}
         </div>
-        <br />
-        <div class="row">
-            <div class="col-md-12">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h3 class="panel-title">Varedetaljer</h3>
-                    </div>
-                    <div class="panel-body">
-                        {% for field in form %}
-                            <div class="form-group {% if field.errors %}has-error{% endif %}">
-                                <label for="{{ field.auto_id }}">{{ field.label }}</label>
-                                <div class="input-group">
-                                    <span class="input-group-addon">Navn</span>
-                                    {{ field|addclass:"form-control" }}
-                                    {% if field.errors %}
-                                    <p>{{ field.errors }}</p>
-                                    {% endif %}
-                                </div>
-                            </div>
-                        {% endfor %}
-                    </div>
-                </div>
-            </div>
-        </div>
-    </form>
+    </div>
 {% endblock content %}
