@@ -108,6 +108,7 @@ TEMPLATE_LOADERS = (
 )
 
 MIDDLEWARE_CLASSES = (
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -212,6 +213,7 @@ INSTALLED_APPS = (
     'django_filters',
     'taggit',
     'taggit_serializer',
+    'corsheaders',
     'datetimewidget',
 
     # Django apps
@@ -247,6 +249,7 @@ INSTALLED_APPS = (
     'apps.posters',
     'apps.sso',
     'apps.splash',
+    'apps.shop',
     'apps.webshop',
     'scripts',
 
@@ -375,6 +378,9 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 10
 }
+
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_URLS_REGEX = r'^/api/v1/.*$' # Enables CORS on /api/v1/ endpoints only
 
 # Required by the Wiki
 TEMPLATE_CONTEXT_PROCESSORS = (

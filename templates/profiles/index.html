@@ -36,6 +36,9 @@ Min side - Online
                         <li class="{% ifequal 'edit' active_tab %}active{% endifequal %}">
                             <a href="{% url 'profiles_active' 'edit' %}" data-section="edit">Rediger profil</a>
                         </li>
+                        <li class="{% ifequal 'payme' active_tab %}active{% endifequal %}">
+                            <a href="{% url 'profiles_active' 'payme' %}" data-section="payme">Saldo</a>
+                        </li>
                         <li class="{% ifequal 'position' active_tab %}active{% endifequal %}">
                             <a href="{% url 'profiles_active' 'position' %}" data-section="position">Legg til verv</a>
                         </li>
@@ -69,6 +72,9 @@ Min side - Online
                         </section>
                         <section id="edit">
                             {% include "profiles/edit.html" %}
+                        </section>
+                        <section id="payme">
+                            {% include "profiles/payme.html" %}
                         </section>
                         <section id="position">
                             {% include "profiles/positions.html" %}

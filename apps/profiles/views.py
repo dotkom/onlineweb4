@@ -24,6 +24,7 @@ from apps.approval.models import MembershipApproval
 from apps.authentication.forms import NewEmailForm
 from apps.authentication.models import Email, RegisterToken, Position
 from apps.authentication.models import OnlineUser as User
+from apps.payment.models import PaymentTransaction
 from apps.marks.models import Mark, Suspension
 from apps.profiles.forms import (
     PrivacyForm,
@@ -67,6 +68,7 @@ def _create_profile_context(request):
         'groups': groups,
         # privacy
         'privacy_form': PrivacyForm(instance=request.user.privacy),
+        'transactions': PaymentTransaction.objects.filter(user=request.user),
 
         # SSO / OAuth2 approved apps
         'connected_apps': AccessToken.objects.filter(user=request.user, expires__gte=timezone.now())
