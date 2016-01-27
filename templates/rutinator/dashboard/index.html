@@ -9,8 +9,9 @@
 
 {% block content %}
 {% for task in object_list %}
-<li> {{ task.title }}, {{ task.description }} </li>
+<li><a href="{% url 'dashboard:task_edit' pk=task.id %}">{{ task.title }}</a></li>
 {% empty %}
 Her var det tomt!
 {% endfor %}
 {% endblock %}
+
