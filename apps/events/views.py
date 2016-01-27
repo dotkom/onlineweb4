@@ -1,61 +1,53 @@
-#-*- coding: utf-8 -*-
-
-from datetime import datetime, timedelta
-from collections import OrderedDict
+# -*- coding: utf-8 -*-
 
 from django.utils import timezone
 
-from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
-from django.contrib.contenttypes.models import ContentType
-from django.core.mail import EmailMessage
-from django.core.signing import Signer, BadSignature
+from django.core.signing import Signer
 from django.core.urlresolvers import reverse
 from django.db.models import Q
-from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
+from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.utils.translation import ugettext as _
 from django.contrib.contenttypes.models import ContentType
 
 import watson
 
-from apps.authentication.models import OnlineUser as User
 from apps.events.forms import CaptchaForm
 from apps.events.models import Event, AttendanceEvent, Attendee, CompanyEvent
 from apps.events.pdf_generator import EventPDF
-from apps.events.utils import get_group_restricted_events
+from apps.events.utils import \
+    get_group_restricted_events, handle_attend_event_payment, handle_attendance_event_detail, handle_event_ajax, \
+    handle_event_payment, handle_mail_participants
 from apps.payment.models import Payment, PaymentRelation, PaymentDelay
 
 from utils import EventCalendar
+
+# API v1
+from rest_framework import viewsets, mixins
+from rest_framework.permissions import AllowAny
+from apps.events.serializers import EventSerializer, AttendanceEventSerializer, CompanyEventSerializer
+from apps.events.filters import EventDateFilter
+
 
 def index(request):
     context = {}
     if request.user and request.user.is_authenticated():
         signer = Signer()
         context['signer_value'] = signer.sign(request.user.username)
-        context['personal_ics_path'] = request.build_absolute_uri(reverse('events_personal_ics', args=(context['signer_value'],)))
+        context['personal_ics_path'] = request.build_absolute_uri(
+            reverse('events_personal_ics', args=(context['signer_value'],)))
     return render(request, 'events/index.html', context)
 
 
 def details(request, event_id, event_slug):
     event = get_object_or_404(Event, pk=event_id)
 
-    #Restricts access to the event if it is group restricted
+    # Restricts access to the event if it is group restricted
     if not event.can_display(request.user):
         messages.error(request, "Du har ikke tilgang til denne eventen.")
         return index(request)
-
-    user_anonymous = True
-    user_attending = False
-    attendee = False
-    place_on_wait_list = 0
-    will_be_on_wait_list = False
-    rules = []
-    user_status = False
-    user_paid = False
-    payment_delay = False
-    payment_relation_id = False
 
     user_access_to_event = False
     if request.user:
@@ -64,94 +56,34 @@ def details(request, event_id, event_slug):
 
     if request.method == 'POST':
         if request.is_ajax and 'action' in request.POST:
-            resp = {'message': "Feil!"}
-            if request.POST['action'] == 'extras':
-                if not event.is_attendance_event:
-                    return HttpResponse(u'Dette er ikke et påmeldingsarrangement.', status=400)
+            return JsonResponse(handle_event_ajax(event, request.user, request.POST['action']))
 
-                attendance_event = AttendanceEvent.objects.get(pk=event_id)
-
-                if not attendance_event.is_attendee(request.user):
-                    return HttpResponse(u'Du er ikke påmeldt dette arrangementet.', status=401)
-
-                attendee = Attendee.objects.get(event=attendance_event, user=request.user)
-                attendee.extras = attendance_event.extras.all()[int(request.POST['extras_id'])]
-                attendee.save()
-                resp['message'] = "Lagret ditt valg"
-                return JsonResponse(resp)
-
-    context = {'event': event, 'ics_path': request.build_absolute_uri(reverse('event_ics', args=(event.id,)))}
+    form = CaptchaForm(user=request.user)
+    context = {
+        'captcha_form': form,
+        'event': event,
+        'ics_path': request.build_absolute_uri(reverse('event_ics', args=(event.id,))),
+        'user_access_to_event': user_access_to_event,
+    }
 
     if event.is_attendance_event():
-        attendance_event = AttendanceEvent.objects.get(pk=event_id)
-        form = CaptchaForm(user=request.user)
-
-        if attendance_event.rule_bundles:
-            for rule_bundle in attendance_event.rule_bundles.all():
-                rules.append(rule_bundle.get_rule_strings)
-
-        if request.user.is_authenticated():
-            user_anonymous = False
-            if attendance_event.is_attendee(request.user):
-                user_attending = True
-                attendee = Attendee.objects.get(event=attendance_event, user=request.user)
-
-
-
-            will_be_on_wait_list = attendance_event.will_i_be_on_wait_list
-
-            user_status = event.attendance_event.is_eligible_for_signup(request.user)
-
-            # Check if this user is on the waitlist
-            place_on_wait_list = attendance_event.what_place_is_user_on_wait_list(request.user)
-
         try:
             payment = Payment.objects.get(content_type=ContentType.objects.get_for_model(AttendanceEvent),
-                object_id=event_id)
+                                          object_id=event_id)
         except Payment.DoesNotExist:
             payment = None
 
+        context = handle_attendance_event_detail(event, request.user, context)
         if payment:
             request.session['payment_id'] = payment.id
-
-            if not user_anonymous:
-                payment_relations = PaymentRelation.objects.filter(payment=payment, user=request.user, refunded=False)
-                for payment_relation in payment_relations:
-                    user_paid = True
-                    payment_relation_id = payment_relation.id
-                if not user_paid and user_attending:
-                    attendee = Attendee.objects.get(event=attendance_event, user=request.user)
-                    if attendee:
-                        user_paid = attendee.paid
-
-                if not user_paid:
-                    payment_delays = PaymentDelay.objects.filter(user=request.user, payment=payment)
-                    if payment_delays:
-                        payment_delay = payment_delays[0]
-
-        context.update({
-                'now': timezone.now(),
-                'attendance_event': attendance_event,
-                'user_anonymous': user_anonymous,
-                'attendee': attendee,
-                'user_attending': user_attending,
-                'will_be_on_wait_list': will_be_on_wait_list,
-                'rules': rules,
-                'user_status': user_status,
-                'place_on_wait_list': int(place_on_wait_list),
-                #'position_in_wait_list': position_in_wait_list,
-                'captcha_form': form,
-                'user_access_to_event': user_access_to_event,
-                'payment': payment,
-                'user_paid': user_paid,
-                'payment_delay': payment_delay,
-                'payment_relation_id': payment_relation_id,
-        })
+            context = handle_event_payment(event, request.user, payment, context)
 
     return render(request, 'events/details.html', context)
 
+
 def get_attendee(attendee_id):
     return get_object_or_404(Attendee, pk=attendee_id)
+
 
 @login_required
 def attendEvent(request, event_id):
@@ -169,7 +101,7 @@ def attendEvent(request, event_id):
     form = CaptchaForm(request.POST, user=request.user)
 
     if not form.is_valid():
-        for field,errors in form.errors.items():
+        for field, errors in form.errors.items():
             for error in errors:
                 messages.error(request, error)
 
@@ -179,7 +111,7 @@ def attendEvent(request, event_id):
     # If not, an error message will be present in the returned dict
     attendance_event = event.attendance_event
 
-    response = event.attendance_event.is_eligible_for_signup(request.user);
+    response = event.attendance_event.is_eligible_for_signup(request.user)
 
     if response['status']:
         ae = Attendee(event=attendance_event, user=request.user)
@@ -188,23 +120,14 @@ def attendEvent(request, event_id):
         ae.save()
         messages.success(request, _(u"Du er nå påmeldt på arrangementet!"))
 
-        try:
-            payment = Payment.objects.get(content_type=ContentType.objects.get_for_model(AttendanceEvent),
-                object_id=event_id)
-        except Payment.DoesNotExist:
-            payment = None
-
-        #If payment_type is delay, Create delay object
-        if payment and not event.attendance_event.is_on_waitlist(request.user):
-            if payment.payment_type == 3:
-                deadline = timezone.now() + timedelta(days=payment.delay)
-                payment.create_payment_delay(request.user, deadline)
-                #TODO send mail
+        if ae.payment():
+            handle_attend_event_payment(event, request.user)
 
         return redirect(event)
     else:
         messages.error(request, response['message'])
         return redirect(event)
+
 
 @login_required
 def unattendEvent(request, event_id):
@@ -233,16 +156,16 @@ def unattendEvent(request, event_id):
 
     try:
         payment = Payment.objects.get(content_type=ContentType.objects.get_for_model(AttendanceEvent),
-            object_id=event_id)
+                                      object_id=event_id)
     except Payment.DoesNotExist:
         payment = None
 
-    #Delete payment delays connected to the user and event
+    # Delete payment delays connected to the user and event
     if payment:
 
         payments = PaymentRelation.objects.filter(payment=payment, user=request.user, refunded=False)
 
-        #Return if someone is trying to unatend without refunding
+        # Return if someone is trying to unatend without refunding
         if payments:
             messages.error(request, _(u'Du har betalt for arrangementet og må refundere før du kan melde deg av'))
             return redirect(event)
@@ -251,18 +174,18 @@ def unattendEvent(request, event_id):
         for delay in delays:
             delay.delete()
 
-
     event.attendance_event.notify_waiting_list(host=request.META['HTTP_HOST'], unattended_user=request.user)
     Attendee.objects.get(event=attendance_event, user=request.user).delete()
 
     messages.success(request, _(u"Du ble meldt av arrangementet."))
     return redirect(event)
 
+
 def search_events(request):
     query = request.GET.get('query')
     filters = {
-        'future' : request.GET.get('future'),
-        'myevents' : request.GET.get('myevents')
+        'future': request.GET.get('future'),
+        'myevents': request.GET.get('myevents')
     }
     events = _search_indexed(request, query, filters)
 
@@ -284,10 +207,10 @@ def _search_indexed(request, query, filters):
         kwargs['attendance_event__attendees__user'] = request.user
 
     events = Event.objects.filter(**kwargs).order_by(order_by).prefetch_related(
-            'attendance_event', 'attendance_event__attendees', 'attendance_event__reserved_seats',
-            'attendance_event__reserved_seats__reservees')
+        'attendance_event', 'attendance_event__attendees', 'attendance_event__reserved_seats',
+        'attendance_event__reserved_seats__reservees')
 
-    #Filters events that are restricted
+    # Filters events that are restricted
     display_events = set()
 
     for event in events:
@@ -339,7 +262,6 @@ def calendar_export(request, event_id=None, user=None):
 
 @login_required
 def mail_participants(request, event_id):
-
     event = get_object_or_404(Event, pk=event_id)
 
     # If this is not an attendance event, redirect to event with error
@@ -357,58 +279,21 @@ def mail_participants(request, event_id):
     attendees_not_paid = list(event.attendance_event.attendees_not_paid)
 
     if request.method == 'POST':
-
-        # Decide from email
-        from_email = 'kontakt@online.ntnu.no'
-        from_email_value = request.POST.get('from_email')
-
-        if from_email_value == '1' or from_email_value == '4':
-            from_email = settings.EMAIL_ARRKOM
-        elif from_email_value == '2':
-            from_email = settings.EMAIL_BEDKOM
-        elif from_email_value == '3':
-            from_email = settings.EMAIL_FAGKOM
-        elif from_email_value == '5':
-            from_email = settings.EMAIL_EKSKOM
-
-        signature = u'\n\nVennlig hilsen Linjeforeningen Online.\n(Denne eposten kan besvares til %s)' % from_email
-
-        # Decide who to send mail to
-        to_emails = []
-        to_emails_value = request.POST.get('to_email')
-
-        if to_emails_value == '1':
-            to_emails = [attendee.user.email for attendee in all_attendees]
-        elif to_emails_value == '2':
-            to_emails = [attendee.user.email for attendee in attendees_on_waitlist]
-        else:
-            to_emails = [attendee.user.email for attendee in attendees_not_paid]
-
-        message = '%s%s' % (request.POST.get('message'), signature)
         subject = request.POST.get('subject')
+        message = request.POST.get('message')
 
-        # Send mail
-        try:
-            if EmailMessage(unicode(subject), unicode(message), from_email, [], to_emails).send():
-                messages.success(request, _(u'Mailen ble sendt'))
-                return redirect(event)
-            else:
-                messages.error(request, _(u'Vi klarte ikke å sende mailene dine. Prøv igjen'))
-                return redirect(event)
-        except Exception, e:
-            messages.error(request, str(e))
-            return redirect(event)
+        mail_sent = handle_mail_participants(event, request.POST.get('from_email'), request.POST.get('to_email'),
+                                             subject, message, all_attendees, attendees_on_waitlist, attendees_not_paid)
+
+        if mail_sent:
+            messages.success(request, _(u'Mailen ble sendt'))
+        else:
+            messages.error(request, _(u'Vi klarte ikke å sende mailene dine. Prøv igjen'))
 
     return render(request, 'events/mail_participants.html', {
-        'all_attendees' : all_attendees, 'attendees_on_waitlist': attendees_on_waitlist, 'attendees_not_paid': attendees_not_paid, 'event' : event})
-
-
-# API v1
-import django_filters
-from rest_framework import viewsets, mixins
-from rest_framework.permissions import AllowAny
-from apps.events.serializers import EventSerializer, AttendanceEventSerializer, CompanyEventSerializer
-from apps.events.filters import EventDateFilter
+        'all_attendees': all_attendees, 'attendees_on_waitlist': attendees_on_waitlist,
+        'attendees_not_paid': attendees_not_paid, 'event': event
+    })
 
 
 class EventViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.ListModelMixin):

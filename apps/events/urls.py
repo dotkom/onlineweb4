@@ -1,8 +1,12 @@
 # -*- coding: utf-8 -*-
 
-from django.conf.urls import patterns, include, url
+from django.conf.urls import patterns, url
 
-urlpatterns = patterns('apps.events.views',
+from apps.api.utils import SharedAPIRootRouter
+from apps.events import views
+
+urlpatterns = patterns(
+    'apps.events.views',
     url(r'^$', 'index', name='events_index'),
     url(r'^(?P<event_id>\d+)/attendees/$', 'generate_pdf', name='event_attendees_pdf'),
     url(r'^(?P<event_id>\d+)/attend/$', 'attendEvent', name='attend_event'),
@@ -17,7 +21,5 @@ urlpatterns = patterns('apps.events.views',
 )
 
 # API v1
-from apps.api.utils import SharedAPIRootRouter
-from apps.events import views
 router = SharedAPIRootRouter()
 router.register('events', views.EventViewSet, base_name='events')

@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 
 from django.conf.urls import patterns, url
-from apps.authentication.dashboard.views import UserDeleteView, UserDetailView, UserListView, UserUpdateView, UserSearchView
+from apps.authentication.dashboard.views import \
+    UserDeleteView, UserDetailView, UserListView, UserUpdateView, UserSearchView
 
 urlpatterns = patterns(
     'apps.authentication.dashboard.views',

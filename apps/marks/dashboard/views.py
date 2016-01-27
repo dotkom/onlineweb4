@@ -74,65 +74,7 @@ def marks_details(request, pk):
         if request.is_ajax and 'action' in request.POST:
             resp = {'status': 200}
 
-            if request.POST['action'] == 'remove_user':
-                # Get the correct user
-                user = get_object_or_404(User, pk=int(request.POST['user_id']))
-
-                # Remove from the set
-                mark_users_filtered = []
-                for mark_user in context['mark_users']:
-                    if mark_user.user == user:
-                        # Delete the object in the database
-                        mark_user.delete()
-                    else:
-                        mark_users_filtered.append(mark_user)
-
-                # Update mark
-                context['mark'].last_changed_date = django.utils.timezone.now()
-                context['mark'].last_changed_by = request.user
-                context['mark'].save()
-
-                # Set information to resp
-                resp['message'] = '%s ble fjernet fra %s' % (user.get_full_name(), context['mark'].title)
-                resp['mark_users'] = [{'user': mu.user.get_full_name(), 'id': mu.user.id} for mu in mark_users_filtered]
-
-            elif request.POST['action'] == 'add_user':
-                user = get_object_or_404(User, pk=int(request.POST['user_id']))
-
-                # Check if user already is the lucky owner of this prikk
-                for context_mark_user in context['mark_users']:
-                    if context_mark_user.user == user:
-                        resp = {
-                            'status': 500,
-                            'message': '%s har allerede prikken %s.' % (user.get_full_name(), context['mark'].title)
-                        }
-
-                        # Return ajax
-                        return HttpResponse(json.dumps(resp), status=500)
-
-                # Update mark
-                context['mark'].last_changed_date = django.utils.timezone.now()
-                context['mark'].last_changed_by = request.user
-                context['mark'].save()
-
-                # New MarkUser
-                mark_user = MarkUser()
-                mark_user.mark = context['mark']
-                mark_user.user = user
-                mark_user.save()
-
-                # Build new list of users
-                mark_users_list = []
-                for context_mark_user in context['mark_users']:
-                    mark_users_list.append(context_mark_user)
-                mark_users_list.append(mark_user)
-
-                # Sort the list of mark users
-                resp['mark_users'] = [{'user': mu.user.get_full_name(), 'id': mu.user.id} for mu in mark_users_list]
-                resp['mark_users'].sort(key=lambda x: x['user'])
-
-                # Set information to resp
-                resp['message'] = '%s ble tildelt prikken %s.' % (user.get_full_name(), context['mark'].title)
+            context, resp = _handle_mark_detail(request, context, resp)
 
             # Set mark
             resp['mark'] = {'last_changed_date': context['mark'].last_changed_date.strftime("%Y-%m-%d"),
@@ -231,3 +173,67 @@ def marks_delete(request, pk):
 
     # Redirect user
     return redirect(index)
+
+
+def _handle_mark_detail(request, context, resp):
+    if request.POST['action'] == 'remove_user':
+        # Get the correct user
+        user = get_object_or_404(User, pk=int(request.POST['user_id']))
+
+        # Remove from the set
+        mark_users_filtered = []
+        for mark_user in context['mark_users']:
+            if mark_user.user == user:
+                # Delete the object in the database
+                mark_user.delete()
+            else:
+                mark_users_filtered.append(mark_user)
+
+        # Update mark
+        context['mark'].last_changed_date = django.utils.timezone.now()
+        context['mark'].last_changed_by = request.user
+        context['mark'].save()
+
+        # Set information to resp
+        resp['message'] = '%s ble fjernet fra %s' % (user.get_full_name(), context['mark'].title)
+        resp['mark_users'] = [{'user': mu.user.get_full_name(), 'id': mu.user.id} for mu in mark_users_filtered]
+
+    elif request.POST['action'] == 'add_user':
+        user = get_object_or_404(User, pk=int(request.POST['user_id']))
+
+        # Check if user already is the lucky owner of this prikk
+        for context_mark_user in context['mark_users']:
+            if context_mark_user.user == user:
+                resp = {
+                    'status': 500,
+                    'message': '%s har allerede prikken %s.' % (user.get_full_name(), context['mark'].title)
+                }
+
+                # Return ajax
+                return HttpResponse(json.dumps(resp), status=500)
+
+        # Update mark
+        context['mark'].last_changed_date = django.utils.timezone.now()
+        context['mark'].last_changed_by = request.user
+        context['mark'].save()
+
+        # New MarkUser
+        mark_user = MarkUser()
+        mark_user.mark = context['mark']
+        mark_user.user = user
+        mark_user.save()
+
+        # Build new list of users
+        mark_users_list = []
+        for context_mark_user in context['mark_users']:
+            mark_users_list.append(context_mark_user)
+        mark_users_list.append(mark_user)
+
+        # Sort the list of mark users
+        resp['mark_users'] = [{'user': mu.user.get_full_name(), 'id': mu.user.id} for mu in mark_users_list]
+        resp['mark_users'].sort(key=lambda x: x['user'])
+
+        # Set information to resp
+        resp['message'] = '%s ble tildelt prikken %s.' % (user.get_full_name(), context['mark'].title)
+
+    return context, resp

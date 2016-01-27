@@ -1,21 +1,22 @@
-#-*- coding: utf-8 -*-
-
+# -*- coding: utf-8 -*-
 from django import forms
 from captcha.fields import ReCaptchaField
 from django.utils.translation import ugettext as _
 
+
 class CaptchaForm(forms.Form):
 
     phone_number = forms.CharField(label=_(u'Telefonnummer er påkrevd for å være påmeldt et arrangement.'),
-                                   error_messages={'required' : _(u'Telefonnummer er påkrevd!')})
-    note = forms.CharField(label=_(u'Som gjest ønsker vi at du oppgir din tilhørighet til Online og annen ' \
-                                   u'tilleggsinformasjon som f.eks. hvem du ønsker å sitte med.'),
-                                    error_messages={'required' : _(u'Du må fylle inn et notat!')},
-                                    max_length = 100)
+                                   error_messages={'required': _(u'Telefonnummer er påkrevd!')})
+    note = forms.CharField(label=_(
+        u'Som gjest ønsker vi at du oppgir din tilhørighet til Online og annen tilleggsinformasjon som f.eks. '
+        u'hvem du ønsker å sitte med.'),
+        error_messages={'required': _(u'Du må fylle inn et notat!')},
+        max_length=100)
     mark_rules = forms.BooleanField(label=_(u'Jeg godtar <a href="/profile/#marks" target="_blank">prikkreglene</a>'),
-                                    error_messages={'required' : _(u'Du må godta prikkereglene!')})
-    captcha = ReCaptchaField(error_messages={'required' : _(u'Du klarte ikke captchaen! Er du en bot?'),
-                                           'invalid': _(u'Du klarte ikke captchaen! Er du en bot?')})
+                                    error_messages={'required': _(u'Du må godta prikkereglene!')})
+    captcha = ReCaptchaField(error_messages={'required': _(u'Du klarte ikke captchaen! Er du en bot?'),
+                                             'invalid': _(u'Du klarte ikke captchaen! Er du en bot?')})
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user', None)
@@ -31,7 +32,6 @@ class CaptchaForm(forms.Form):
 
             if self.user.is_member:
                 del self.fields['note']
-
 
     def clean(self):
         super(CaptchaForm, self).clean()
@@ -52,5 +52,5 @@ class CaptchaForm(forms.Form):
                 if phone_number:
                     self.user.phone_number = phone_number
                     self.user.save()
-        
+
         return cleaned_data

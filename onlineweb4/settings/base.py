@@ -214,6 +214,7 @@ INSTALLED_APPS = (
     'taggit',
     'taggit_serializer',
     'corsheaders',
+    'datetimewidget',
 
     # Django apps
     'django.contrib.admin',
