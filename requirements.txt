@@ -56,10 +56,12 @@ pepper8>=1.0.4                  # Transforms flake8 output to HTML report + TC m
 requests[security]==2.8.0
 
 # Wiki
-git+https://github.com/django-wiki/django-wiki.git@525cf620200b92ba63df5639b5279a2ec8375c20#egg=wiki==0.1.dev2
-# django-mptt - Use git master until django 1.9 release
-git+https://github.com/django-mptt/django-mptt.git@0199fa61bc4561952905f8f4279281cee6c52d74#egg=mptt==0.7.4.1
+wiki==0.1b0
 
+# Django 1.9 support
+sorl-thumbnail>12.2
+django-appconf>=1.0
+django-mptt>=0.8.0
 
 # non-pip
 # imagemagick                   # From package repository. Tested with version == 8:6.7.7.10.
