@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from django.conf.urls import patterns, include, url
+from django.conf.urls import patterns, url
 
 urlpatterns = patterns('apps.payment.views',
     url(r'^$', 'payment', name='payment'),
