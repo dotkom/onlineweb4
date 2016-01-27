@@ -212,6 +212,7 @@ INSTALLED_APPS = (
     'django_filters',
     'taggit',
     'taggit_serializer',
+    'datetimewidget',
 
     # Django apps
     'django.contrib.admin',

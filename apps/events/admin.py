@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-from django import forms
 from django.contrib import admin, messages
 from django.core import validators
 from django.utils.translation import ugettext as _
@@ -105,10 +104,12 @@ class CompanyEventAdmin(VersionAdmin):
     model = CompanyEvent
     inlines = (CompanyInline,)
 
+
 class ExtrasAdmin(VersionAdmin):
     model = Extras
     fk_name = 'choice'
     # inlines = (ExtrasInline,)
+
 
 class RuleBundleAdmin(VersionAdmin):
     model = RuleBundle
@@ -155,7 +156,8 @@ class EventAdmin(VersionAdmin):
                         if diff_capacity > old_waitlist_size:
                             diff_capacity = old_waitlist_size
                         # Using old_event because max_capacity has already been changed in obj
-                        old_event.attendance_event.notify_waiting_list(host=request.META['HTTP_HOST'], extra_capacity=diff_capacity)
+                        old_event.attendance_event.notify_waiting_list(host=request.META['HTTP_HOST'],
+                                                                       extra_capacity=diff_capacity)
         obj.save()
 
     def save_formset(self, request, form, formset, change):
@@ -197,7 +199,7 @@ class ReservationAdmin(VersionAdmin):
     _attendees.short_description = _("Antall deltakere")
 
     def _max_capacity(self, obj):
-        return obj.attendance_event.max_capacity 
+        return obj.attendance_event.max_capacity
     _max_capacity.short_description = _("Arrangementets maks-kapasitet")
 
     def save_model(self, request, obj, form, change):
@@ -205,10 +207,13 @@ class ReservationAdmin(VersionAdmin):
         number_of_free_seats = attendance_event.max_capacity - attendance_event.number_of_attendees
         if number_of_free_seats < obj.seats:
             obj.seats = number_of_free_seats
-            self.message_user(request, _(u"Du har valgt et antall reserverte plasser som overskrider antallet ledige plasser for dette arrangementet. Antallet ble automatisk justert til %d (alle ledige plasser).") % number_of_free_seats, messages.WARNING)
+            self.message_user(request, _(
+                u"Du har valgt et antall reserverte plasser som overskrider antallet ledige plasser for dette "
+                u"arrangementet. Antallet ble automatisk justert til %d (alle ledige plasser)."
+            ) % number_of_free_seats, messages.WARNING)
         obj.save()
-            
-    
+
+
 admin.site.register(Event, EventAdmin)
 admin.site.register(Attendee, AttendeeAdmin)
 admin.site.register(RuleBundle, RuleBundleAdmin)

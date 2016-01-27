@@ -1,78 +1,63 @@
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 from datetime import timedelta
 
 from django.conf import settings
-from django.core.mail import send_mail
-from django.utils import timezone
+from django.core.mail import EmailMessage, send_mail
 
 from django.core.signing import Signer, BadSignature
 from django.http import HttpResponse
 from django.utils import timezone
-from filebrowser.base import FileObject
 from filebrowser.settings import VERSIONS
 
 from apps.authentication.models import OnlineUser as User
-from apps.events.models import Event
+from apps.events.models import Attendee, Event, TYPE_CHOICES
+from apps.payment.models import PaymentDelay, PaymentRelation
 from apps.splash.models import SplashYear
 
 import icalendar
+import logging
 
 
-def get_group_restricted_events(user):
+def get_group_restricted_events(user, all_events=False):
     """ Returns a queryset of events with attendance_event that a user has access to """
+    types_allowed = get_types_allowed(user)
+
+    if all_events:
+        return Event.objects.filter(event_type__in=types_allowed)
+    else:
+        return Event.objects.filter(attendance_event__isnull=False, event_type__in=types_allowed)
+
+
+def get_types_allowed(user):
     types_allowed = []
 
     groups = user.groups.all()
 
     if reduce(lambda r, g: g.name in ['Hovedstyret', 'dotKom'] or r, groups, False):
-        return Event.objects.filter(attendance_event__isnull=False)
+        return [t[0] for t in TYPE_CHOICES]
 
     for group in groups:
         if group.name == 'arrKom':
-            types_allowed.append(1) # sosialt
-            types_allowed.append(4) # utflukt
+            types_allowed.append(1)  # sosialt
+            types_allowed.append(4)  # utflukt
 
         if group.name == 'bedKom':
-            types_allowed.append(2) # bedriftspresentasjon
+            types_allowed.append(2)  # bedriftspresentasjon
 
         if group.name == 'fagKom':
-            types_allowed.append(3) # kurs
+            types_allowed.append(3)  # kurs
 
     return Event.objects.filter(attendance_event__isnull=False, event_type__in=types_allowed)
 
 
 def handle_waitlist_bump(event, host, attendees, payment=None):
 
-    title = u'Du har fått plass på %s' % (event.title)
+    title = u'Du har fått plass på %s' % event.title
 
-    extended_deadline = timezone.now() + timedelta(days=2)
     message = u'Du har stått på venteliste for arrangementet "%s" og har nå fått plass.\n' % (unicode(event.title))
 
     if payment:
-        if payment.payment_type == 1: #Instant
-            for attendee in attendees:
-                payment.create_payment_delay(attendee.user, extended_deadline)
-            message += u"Dette arrangementet krever betaling og du må betale innen 48 timer."
-
-        elif payment.payment_type == 2: #Deadline
-            if payment.deadline > extended_deadline: #More than 2 days left of payment deadline
-                message += u"Dette arrangementet krever betaling og fristen for og betale er %s" % (payment.deadline.strftime('%-d %B %Y kl: %H:%M'))
-            else: #The deadline is in less than 2 days
-                for attendee in attendees:
-                    payment.create_payment_delay(attendee.user, extended_deadline)
-                message += u"Dette arrangementet krever betaling og du har 48 timer på å betale"
-
-        elif payment.payment_type == 3: #Delay
-            deadline = timezone.now() + timedelta(days=payment.delay)
-            for attendee in attendees:
-                payment.create_payment_delay(attendee.user, deadline)
-            message += u"Dette arrangementet krever betaling og du må betale innen %d dager." % (payment.delay)
-        if len(payment.prices()) == 1:
-            message += u"\nPrisen for dette arrangementet er %skr." % (payment.prices()[0].price)
-        # elif len(payment.prices()) >= 2:
-        #     message += u"\nDette arrangementet har flere prisklasser:"
-        #     for payment_price in payment.prices():
-        #         message += "\n%s: %skr" % (payment_price.description, payment_price.price)
+        message += _handle_waitlist_bump_payment(payment, attendees, message)
     else:
         message += u"Det kreves ingen ekstra handling fra deg med mindre du vil melde deg av."
 
@@ -81,6 +66,37 @@ def handle_waitlist_bump(event, host, attendees, payment=None):
 
     for attendee in attendees:
         send_mail(title, message, settings.DEFAULT_FROM_EMAIL, [attendee.user.email])
+
+
+def _handle_waitlist_bump_payment(payment, attendees, message):
+    extended_deadline = timezone.now() + timedelta(days=2)
+
+    if payment.payment_type == 1:  # Instant
+        for attendee in attendees:
+            payment.create_payment_delay(attendee.user, extended_deadline)
+        message += u"Dette arrangementet krever betaling og du må betale innen 48 timer."
+
+    elif payment.payment_type == 2:  # Deadline
+        if payment.deadline > extended_deadline:  # More than 2 days left of payment deadline
+            message += u"Dette arrangementet krever betaling og fristen for og betale er %s" \
+                       % (payment.deadline.strftime('%-d %B %Y kl: %H:%M'))
+        else:  # The deadline is in less than 2 days
+            for attendee in attendees:
+                payment.create_payment_delay(attendee.user, extended_deadline)
+            message += u"Dette arrangementet krever betaling og du har 48 timer på å betale"
+
+    elif payment.payment_type == 3:  # Delay
+        deadline = timezone.now() + timedelta(days=payment.delay)
+        for attendee in attendees:
+            payment.create_payment_delay(attendee.user, deadline)
+        message += u"Dette arrangementet krever betaling og du må betale innen %d dager." % payment.delay
+    if len(payment.prices()) == 1:
+        message += u"\nPrisen for dette arrangementet er %skr." % payment.prices()[0].price
+    # elif len(payment.prices()) >= 2:
+    #     message += u"\nDette arrangementet har flere prisklasser:"
+    #     for payment_price in payment.prices():
+    #         message += "\n%s: %skr" % (payment_price.description, payment_price.price)
+    return message
 
 
 class Calendar(object):
@@ -183,3 +199,159 @@ def find_image_versions(event):
             img_strings.append(img.version_generate(ver).url)
 
     return img_strings
+
+
+def handle_event_signup():
+    pass
+
+
+def handle_attendance_event_detail(event, user, context):
+    attendance_event = event.attendance_event
+
+    user_anonymous = True
+    user_attending = False
+    attendee = False
+    place_on_wait_list = 0
+    will_be_on_wait_list = False
+    rules = []
+    user_status = False
+
+    if attendance_event.rule_bundles:
+        for rule_bundle in attendance_event.rule_bundles.all():
+            rules.append(rule_bundle.get_rule_strings)
+
+    if user.is_authenticated():
+        user_anonymous = False
+        if attendance_event.is_attendee(user):
+            user_attending = True
+            attendee = Attendee.objects.get(event=attendance_event, user=user)
+
+        will_be_on_wait_list = attendance_event.will_i_be_on_wait_list
+
+        user_status = event.attendance_event.is_eligible_for_signup(user)
+
+        # Check if this user is on the waitlist
+        place_on_wait_list = attendance_event.what_place_is_user_on_wait_list(user)
+
+    context.update({
+        'now': timezone.now(),
+        'attendance_event': attendance_event,
+        'user_anonymous': user_anonymous,
+        'attendee': attendee,
+        'user_attending': user_attending,
+        'will_be_on_wait_list': will_be_on_wait_list,
+        'rules': rules,
+        'user_status': user_status,
+        'place_on_wait_list': int(place_on_wait_list),
+        # 'position_in_wait_list': position_in_wait_list,
+    })
+    return context
+
+
+def handle_event_payment(event, user, payment, context):
+    user_paid = False
+    payment_delay = False
+    payment_relation_id = False
+
+    payment_relations = PaymentRelation.objects.filter(payment=payment, user=user, refunded=False)
+    for payment_relation in payment_relations:
+        user_paid = True
+        payment_relation_id = payment_relation.id
+    if not user_paid and context['user_attending']:
+        attendee = Attendee.objects.get(event=event.attendance_event, user=user)
+        if attendee:
+            user_paid = attendee.paid
+
+    if not user_paid:
+        payment_delays = PaymentDelay.objects.filter(user=user, payment=payment)
+        if payment_delays:
+            payment_delay = payment_delays[0]
+
+    context.update({
+        'payment': payment,
+        'user_paid': user_paid,
+        'payment_delay': payment_delay,
+        'payment_relation_id': payment_relation_id,
+    })
+
+    return context
+
+
+def handle_event_ajax(event, user, action):
+    if action == 'extras':
+        handle_event_extras(event, user)
+    else:
+        raise NotImplementedError
+
+
+def handle_event_extras(event, user, extras_id):
+    resp = {'message': "Feil!"}
+
+    if not event.is_attendance_event:
+        return u'Dette er ikke et påmeldingsarrangement.'
+
+    attendance_event = event.attendance_event
+
+    if not attendance_event.is_attendee(user):
+        return u'Du er ikke påmeldt dette arrangementet.'
+
+    attendee = Attendee.objects.get(event=attendance_event, user=user)
+    attendee.extras = attendance_event.extras.all()[int(extras_id)]
+    attendee.save()
+    resp['message'] = "Lagret ditt valg"
+    return resp
+
+
+def handle_attend_event(event, user):
+    pass
+
+
+def handle_attend_event_payment(event, user):
+    attendance_event = event.attendance_event
+    payment = attendance_event.payment()
+
+    if payment and not event.attendance_event.is_on_waitlist(user):
+        if payment.payment_type == 3:
+            deadline = timezone.now() + timedelta(days=payment.delay)
+            payment.create_payment_delay(user, deadline)
+            # TODO send mail
+
+
+def handle_mail_participants(event, _from_email, _to_email_value, subject, _message,
+                             all_attendees, attendees_on_waitlist, attendees_not_paid):
+    logger = logging.getLogger(__name__)
+
+    _to_email_options = {
+        '1': (all_attendees, 'all attendees'),
+        '2': (attendees_on_waitlist, 'attendees on waitlist'),
+        '3': (attendees_not_paid, 'attendees not paid')
+    }
+
+    # Decide from email
+    from_email = 'kontakt@online.ntnu.no'
+    from_email_value = _from_email
+
+    if from_email_value == '1' or from_email_value == '4':
+        from_email = settings.EMAIL_ARRKOM
+    elif from_email_value == '2':
+        from_email = settings.EMAIL_BEDKOM
+    elif from_email_value == '3':
+        from_email = settings.EMAIL_FAGKOM
+    elif from_email_value == '5':
+        from_email = settings.EMAIL_EKSKOM
+
+    # Who to send emails to
+    to_emails = _to_email_options[_to_email_value][0]
+
+    signature = u'\n\nVennlig hilsen Linjeforeningen Online.\n(Denne eposten kan besvares til %s)' % from_email
+
+    message = '%s%s' % (_message, signature)
+
+    # Send mail
+    try:
+        _email_sent = EmailMessage(unicode(subject), unicode(message), from_email, [], to_emails).send()
+        logger.info(u'Sent mail to %s for event "%s".' % (_to_email_options[_to_email_value][1], event))
+        return _email_sent, all_attendees, attendees_on_waitlist, attendees_not_paid
+    except Exception, e:
+        logger.error(u'Something went wrong while trying to send mail to %s for event "%s"\n%s' %
+                     (_to_email_options[_to_email_value][1], event, e))
