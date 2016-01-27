@@ -71,8 +71,7 @@ class Item(models.Model):
                 oldest_batch.save()
                 self.reduce_stock(diff)
 
-        #TODO notification on low stock
-
+        # TODO notification on low stock
 
     def __unicode__(self):
         return self.name

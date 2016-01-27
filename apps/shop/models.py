@@ -9,6 +9,7 @@ from rest_framework.exceptions import NotAcceptable
 
 from apps.authentication.models import OnlineUser as User
 
+
 class Order(models.Model):
     content_type = models.ForeignKey(ContentType)
     object_id = models.PositiveIntegerField()
@@ -24,7 +25,7 @@ class Order(models.Model):
         return self.content_object.price * self.quantity
 
     def reduce_stock(self):
-    	self.content_object.reduce_stock(self.quantity)
+        self.content_object.reduce_stock(self.quantity)
 
     def __unicode__(self):
         return unicode(self.content_object)
@@ -49,7 +50,6 @@ class OrderLine(models.Model):
             self.delete()
             raise NotAcceptable("Insufficient funds")
 
-
         # Setting price for orders in case product price changes later
         for order in self.orders.all():
             order.price = order.total_price()
@@ -63,4 +63,4 @@ class OrderLine(models.Model):
         self.save()
 
     def __unicode__(self):
-    	return unicode(self.pk)
+        return unicode(self.pk)

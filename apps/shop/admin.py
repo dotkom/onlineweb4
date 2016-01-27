@@ -8,7 +8,6 @@ class OrderAdmin(admin.ModelAdmin):
     list_display = ('__unicode__', 'price', 'quantity')
 
 
-
 class OrderLineAdmin(admin.ModelAdmin):
     model = OrderLine
     list_display = ('__unicode__', 'user', 'datetime')

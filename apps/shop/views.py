@@ -18,9 +18,9 @@ from rest_framework.views import APIView
 class OrderLineViewSet(viewsets.GenericViewSet, mixins.CreateModelMixin):
     queryset = OrderLine.objects.all()
     serializer_class = OrderLineSerializer
-    authentication_classes = [OAuth2Authentication,]
-    permission_classes = [TokenHasScope,]
-    required_scopes = ['shop.readwrite',]
+    authentication_classes = [OAuth2Authentication]
+    permission_classes = [TokenHasScope]
+    required_scopes = ['shop.readwrite']
 
     def create(self, request):
         serializer = OrderLineSerializer(data=request.data)
@@ -36,9 +36,9 @@ class OrderLineViewSet(viewsets.GenericViewSet, mixins.CreateModelMixin):
 class TransactionViewSet(viewsets.GenericViewSet, mixins.CreateModelMixin):
     queryset = PaymentTransaction.objects.all()
     serializer_class = TransactionSerializer
-    authentication_classes = [OAuth2Authentication,]
-    permission_classes = [TokenHasScope,]
-    required_scopes = ['shop.readwrite',]
+    authentication_classes = [OAuth2Authentication]
+    permission_classes = [TokenHasScope]
+    required_scopes = ['shop.readwrite']
 
     def create(self, request):
         serializer = TransactionSerializer(data=request.data)
@@ -53,9 +53,9 @@ class TransactionViewSet(viewsets.GenericViewSet, mixins.CreateModelMixin):
 class UserViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.ListModelMixin, APIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    authentication_classes = [OAuth2Authentication,]
-    permission_classes = [TokenHasScope,]
-    required_scopes = ['shop.readwrite',]
+    authentication_classes = [OAuth2Authentication]
+    permission_classes = [TokenHasScope]
+    required_scopes = ['shop.readwrite']
     filter_fields = ('rfid',)
 
 
@@ -66,9 +66,9 @@ class InventoryViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixin
 
 
 class SetRFIDView(APIView):
-    authentication_classes = [OAuth2Authentication,]
-    permission_classes = [TokenHasScope,]
-    required_scopes = ['shop.readwrite',]
+    authentication_classes = [OAuth2Authentication]
+    permission_classes = [TokenHasScope]
+    required_scopes = ['shop.readwrite']
 
     def post(self, request, format=None):
         username = request.data["username"].lower()
@@ -86,6 +86,4 @@ class SetRFIDView(APIView):
             user.save()
             return Response("OK", status=status.HTTP_200_OK)
 
-
         return Response("Invalid user credentials", status=status.HTTP_409_CONFLICT)
-

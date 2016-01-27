@@ -48,6 +48,7 @@ class PaymentDelayAdmin(VersionAdmin):
     model = PaymentDelay
     list_display = ('__unicode__', 'valid_to', 'active')
 
+
 class PaymentTransactionAdmin(admin.ModelAdmin):
     model = PaymentTransaction
     list_display = ('__unicode__', 'user', 'datetime')

@@ -14,4 +14,3 @@ urlpatterns = patterns(
         'batch_delete',
         name='dashboard_inventory_batch_delete'),
 )
-

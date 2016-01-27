@@ -15,6 +15,7 @@ from django.utils.translation import ugettext as _
 from apps.payment.models import Payment, PaymentRelation, PaymentPrice, PaymentTransaction
 from apps.webshop.models import OrderLine
 
+
 @login_required
 def payment(request):
 
@@ -190,7 +191,7 @@ def _send_payment_confirmation_mail(payment_relation):
     message += "\n"
     message += _(u"Dersom du har problemer eller spørsmål, send mail til") + ": " + from_mail
 
-    email = EmailMessage(subject, unicode(message), from_mail, [], to_mails).send()
+    EmailMessage(subject, unicode(message), from_mail, [], to_mails).send()
 
 
 @login_required
@@ -200,11 +201,11 @@ def saldo_info(request):
 
         data = dict()
 
-        data['stripe_public_key'] = settings.STRIPE_PUBLIC_KEYS[2] # triKom
+        data['stripe_public_key'] = settings.STRIPE_PUBLIC_KEYS[2]  # triKom
         data['email'] = request.user.email
         return HttpResponse(json.dumps(data), content_type="application/json")
 
-    raise Http404("Request not supported");
+    raise Http404("Request not supported")
 
 
 @login_required
@@ -217,18 +218,18 @@ def saldo(request):
             token = request.POST.get("stripeToken")
             amount = int(request.POST.get("amount"))
 
-            if not amount in (100, 200, 500):
+            if amount not in (100, 200, 500):
                 messages.error(request, "Invalid input")
                 return HttpResponse("Invalid input", content_type="text/plain", status=500)
 
             try:
-                stripe.api_key = settings.STRIPE_PRIVATE_KEYS[2] # triKom
+                stripe.api_key = settings.STRIPE_PRIVATE_KEYS[2]  # triKom
 
-                charge = stripe.Charge.create(
-                  amount=amount * 100, #Price is multiplied with 100 because the amount is in øre
-                  currency="nok",
-                  card=token,
-                  description="Saldo deposit - " + request.user.email
+                stripe.Charge.create(
+                    amount=amount * 100,  # Price is multiplied with 100 because the amount is in øre
+                    currency="nok",
+                    card=token,
+                    description="Saldo deposit - " + request.user.email
                 )
 
                 PaymentTransaction.objects.create(user=request.user, amount=amount, used_stripe=True)
@@ -241,8 +242,8 @@ def saldo(request):
                 messages.error(request, str(e))
                 return HttpResponse(str(e), content_type="text/plain", status=500)
 
+    raise Http404("Request not supported")
 
-    raise Http404("Request not supported");
 
 def _send_saldo_confirmation_mail(email, amount):
     subject = _(u"kvittering saldo inskudd")

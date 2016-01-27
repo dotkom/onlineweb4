@@ -9,13 +9,12 @@ from apps.shop.models import Order, OrderLine
 from rest_framework import serializers
 
 
-
 class OrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
         fields = (
-                'object_id', 'quantity',
-            )
+            'object_id', 'quantity',
+        )
 
 
 class OrderLineSerializer(serializers.ModelSerializer):
@@ -39,22 +38,24 @@ class OrderLineSerializer(serializers.ModelSerializer):
     class Meta:
         model = OrderLine
         fields = (
-                'user','orders',
-            )
+            'user', 'orders',
+        )
+
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = (
-                'pk','first_name', 'last_name', 'saldo',
-            )
+            'pk', 'first_name', 'last_name', 'saldo',
+        )
+
 
 class TransactionSerializer(serializers.ModelSerializer):
     class Meta:
         model = PaymentTransaction
         fields = (
-                'user', 'amount',
-            )
+            'user', 'amount',
+        )
 
 
 class ItemSerializer(serializers.ModelSerializer):
@@ -63,5 +64,5 @@ class ItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = Item
         fields = (
-                'pk', 'name', 'price', 'description', 'image',
-            )
+            'pk', 'name', 'price', 'description', 'image',
+        )

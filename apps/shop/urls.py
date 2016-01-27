@@ -1,9 +1,8 @@
 # -*- encoding: utf-8 -*-
 
-from django.conf.urls import patterns, url
+from django.conf.urls import patterns
 
-urlpatterns = patterns('',
-)
+urlpatterns = patterns('',)
 
 # API v1
 from apps.api.utils import SharedAPIRootRouter
