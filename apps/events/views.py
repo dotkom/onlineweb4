@@ -56,7 +56,7 @@ def details(request, event_id, event_slug):
 
     if request.method == 'POST':
         if request.is_ajax and 'action' in request.POST:
-            if 'extras_id' in request.POST
+            if 'extras_id' in request.POST:
                 return JsonResponse(handle_event_ajax(event, \
                     request.user, request.POST['action'], request.POST['extras_id']))
 
