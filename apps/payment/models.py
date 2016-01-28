@@ -12,6 +12,8 @@ from django.utils.translation import ugettext as _
 from apps.events.models import AttendanceEvent, Attendee
 from apps.marks.models import Suspension
 
+from rest_framework.exceptions import NotAcceptable
+
 
 User = settings.AUTH_USER_MODEL
 
@@ -27,6 +29,7 @@ class Payment(models.Model):
     STRIPE_KEY_CHOICES = (
         (0, "Arrkom"),
         (1, "Prokom"),
+        (2, "Trikom"),
     )
 
     content_type = models.ForeignKey(ContentType)
@@ -197,3 +200,29 @@ class PaymentDelay(models.Model):
 
         verbose_name = _(u'betalingsutsettelse')
         verbose_name_plural = _(u'betalingsutsettelser')
+
+
+class PaymentTransaction(models.Model):
+    user = models.ForeignKey(User)
+    amount = models.IntegerField(null=True, blank=True)
+    used_stripe = models.BooleanField(default=False)
+
+    datetime = models.DateTimeField(auto_now=True)
+
+    def __unicode__(self):
+        return unicode(self.user) + " - " + unicode(self.amount) + "(" + unicode(self.datetime) + ")"
+
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            self.user.saldo = self.user.saldo + self.amount
+
+            if self.user.saldo < 0:
+                raise NotAcceptable("Insufficient funds")
+
+            self.user.save()
+        super(PaymentTransaction, self).save(*args, **kwargs)
+
+    class Meta:
+        ordering = ['-datetime']
+        verbose_name = _(u'transaksjon')
+        verbose_name_plural = _(u'transaksjoner')
