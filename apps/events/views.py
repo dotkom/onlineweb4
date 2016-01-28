@@ -55,10 +55,9 @@ def details(request, event_id, event_slug):
             user_access_to_event = True
 
     if request.method == 'POST':
-        if request.is_ajax and 'action' in request.POST:
-            if 'extras_id' in request.POST:
-                return JsonResponse(handle_event_ajax(event, \
-                    request.user, request.POST['action'], request.POST['extras_id']))
+        if request.is_ajax and 'action' in request.POST and 'extras_id' in request.POST:
+            return JsonResponse(handle_event_ajax(event, request.user,
+                                request.POST['action'], request.POST['extras_id']))
 
     form = CaptchaForm(user=request.user)
     context = {
