@@ -277,9 +277,9 @@ def handle_event_payment(event, user, payment, context):
     return context
 
 
-def handle_event_ajax(event, user, action):
+def handle_event_ajax(event, user, action, extras_id):
     if action == 'extras':
-        handle_event_extras(event, user)
+        handle_event_extras(event, user, extras_id)
     else:
         raise NotImplementedError
 
