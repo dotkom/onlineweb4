@@ -114,13 +114,13 @@ def attendEvent(request, event_id):
     response = event.attendance_event.is_eligible_for_signup(request.user)
 
     if response['status']:
-        ae = Attendee(event=attendance_event, user=request.user)
+        attendee = Attendee(event=attendance_event, user=request.user)
         if 'note' in form.cleaned_data:
-            ae.note = form.cleaned_data['note']
-        ae.save()
+            attendee.note = form.cleaned_data['note']
+        attendee.save()
         messages.success(request, _(u"Du er nå påmeldt på arrangementet!"))
 
-        if ae.payment():
+        if attendance_event.payment():
             handle_attend_event_payment(event, request.user)
 
         return redirect(event)
