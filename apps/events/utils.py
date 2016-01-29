@@ -33,8 +33,8 @@ def get_types_allowed(user):
 
     groups = user.groups.all()
 
-    if reduce(lambda r, g: g.name in ['Hovedstyret', 'dotKom'] or r, groups, False):
-        return [t[0] for t in TYPE_CHOICES]
+    if 'Hovedstyret' or 'dotKom' in groups:
+        return Event.objects.filter(attendance_event__isnull=False)
 
     for group in groups:
         if group.name == 'arrKom':
