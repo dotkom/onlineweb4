@@ -33,10 +33,10 @@ def get_types_allowed(user):
 
     groups = user.groups.all()
 
-    if reduce(lambda r, g: g.name in ['Hovedstyret', 'dotKom'] or r, groups, False):
-        return [t[0] for t in TYPE_CHOICES]
-
     for group in groups:
+        if group.name == 'Hovedstyret' or group.name == 'dotKom':
+            types_allowed = [i + 1 for i in range(len(TYPE_CHOICES))]  # full access
+            return types_allowed
         if group.name == 'arrKom':
             types_allowed.append(1)  # sosialt
             types_allowed.append(4)  # utflukt
@@ -47,7 +47,7 @@ def get_types_allowed(user):
         if group.name == 'fagKom':
             types_allowed.append(3)  # kurs
 
-    return Event.objects.filter(attendance_event__isnull=False, event_type__in=types_allowed)
+    return types_allowed
 
 
 def handle_waitlist_bump(event, host, attendees, payment=None):
