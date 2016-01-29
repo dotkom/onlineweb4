@@ -10,7 +10,7 @@ from django.utils import timezone
 from filebrowser.settings import VERSIONS
 
 from apps.authentication.models import OnlineUser as User
-from apps.events.models import Attendee, Event, TYPE_CHOICES
+from apps.events.models import Attendee, Event
 from apps.payment.models import PaymentDelay, PaymentRelation
 from apps.splash.models import SplashYear
 
