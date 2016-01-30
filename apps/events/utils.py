@@ -2,6 +2,7 @@
 from datetime import timedelta
 
 from django.conf import settings
+from django.core.exceptions import ImproperlyConfigured
 from django.core.mail import EmailMessage, send_mail
 
 from django.core.signing import Signer, BadSignature
@@ -341,7 +342,7 @@ def handle_mail_participants(event, _from_email, _to_email_value, subject, _mess
         from_email = settings.EMAIL_EKSKOM
 
     # Who to send emails to
-    to_emails = _to_email_options[_to_email_value][0]
+    send_to_users = _to_email_options[_to_email_value][0]
 
     signature = u'\n\nVennlig hilsen Linjeforeningen Online.\n(Denne eposten kan besvares til %s)' % from_email
 
@@ -349,9 +350,10 @@ def handle_mail_participants(event, _from_email, _to_email_value, subject, _mess
 
     # Send mail
     try:
-        _email_sent = EmailMessage(unicode(subject), unicode(message), from_email, [], to_emails).send()
+        email_addresses = [a.user.get_email().email for a in send_to_users]
+        _email_sent = EmailMessage(unicode(subject), unicode(message), from_email, [], email_addresses).send()
         logger.info(u'Sent mail to %s for event "%s".' % (_to_email_options[_to_email_value][1], event))
         return _email_sent, all_attendees, attendees_on_waitlist, attendees_not_paid
-    except Exception, e:
+    except ImproperlyConfigured, e:
         logger.error(u'Something went wrong while trying to send mail to %s for event "%s"\n%s' %
                      (_to_email_options[_to_email_value][1], event, e))
