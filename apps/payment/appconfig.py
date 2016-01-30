@@ -10,7 +10,6 @@ class PaymentConfig(AppConfig):
 
         from reversion import revisions as reversion
 
-        from apps.payment.models import PaymentPrice, PaymentTransaction
+        from apps.payment.models import PaymentTransaction
 
-        reversion.register(PaymentPrice)
         reversion.register(PaymentTransaction)
