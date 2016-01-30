@@ -7,6 +7,7 @@ from apps.payment.models import Payment
 from apps.payment.models import PaymentDelay
 from apps.payment.models import PaymentPrice
 from apps.payment.models import PaymentRelation
+from apps.payment.models import PaymentTransaction
 
 from reversion.admin import VersionAdmin
 
@@ -47,6 +48,12 @@ class PaymentDelayAdmin(VersionAdmin):
     model = PaymentDelay
     list_display = ('__unicode__', 'valid_to', 'active')
 
+
+class PaymentTransactionAdmin(admin.ModelAdmin):
+    model = PaymentTransaction
+    list_display = ('__unicode__', 'user', 'datetime')
+
 admin.site.register(Payment, PaymentAdmin)
 admin.site.register(PaymentRelation, PaymentRelationAdmin)
 admin.site.register(PaymentDelay, PaymentDelayAdmin)
+admin.site.register(PaymentTransaction, PaymentTransactionAdmin)

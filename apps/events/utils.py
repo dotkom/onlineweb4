@@ -2,6 +2,7 @@
 from datetime import timedelta
 
 from django.conf import settings
+from django.core.exceptions import ImproperlyConfigured
 from django.core.mail import EmailMessage, send_mail
 
 from django.core.signing import Signer, BadSignature
@@ -33,10 +34,10 @@ def get_types_allowed(user):
 
     groups = user.groups.all()
 
-    if reduce(lambda r, g: g.name in ['Hovedstyret', 'dotKom'] or r, groups, False):
-        return [t[0] for t in TYPE_CHOICES]
-
     for group in groups:
+        if group.name == 'Hovedstyret' or group.name == 'dotKom':
+            types_allowed = [i + 1 for i in range(len(TYPE_CHOICES))]  # full access
+            return types_allowed
         if group.name == 'arrKom':
             types_allowed.append(1)  # sosialt
             types_allowed.append(4)  # utflukt
@@ -47,7 +48,7 @@ def get_types_allowed(user):
         if group.name == 'fagKom':
             types_allowed.append(3)  # kurs
 
-    return Event.objects.filter(attendance_event__isnull=False, event_type__in=types_allowed)
+    return types_allowed
 
 
 def handle_waitlist_bump(event, host, attendees, payment=None):
@@ -277,9 +278,9 @@ def handle_event_payment(event, user, payment, context):
     return context
 
 
-def handle_event_ajax(event, user, action):
+def handle_event_ajax(event, user, action, extras_id):
     if action == 'extras':
-        handle_event_extras(event, user)
+        return handle_event_extras(event, user, extras_id)
     else:
         raise NotImplementedError
 
@@ -341,7 +342,7 @@ def handle_mail_participants(event, _from_email, _to_email_value, subject, _mess
         from_email = settings.EMAIL_EKSKOM
 
     # Who to send emails to
-    to_emails = _to_email_options[_to_email_value][0]
+    send_to_users = _to_email_options[_to_email_value][0]
 
     signature = u'\n\nVennlig hilsen Linjeforeningen Online.\n(Denne eposten kan besvares til %s)' % from_email
 
@@ -349,9 +350,10 @@ def handle_mail_participants(event, _from_email, _to_email_value, subject, _mess
 
     # Send mail
     try:
-        _email_sent = EmailMessage(unicode(subject), unicode(message), from_email, [], to_emails).send()
+        email_addresses = [a.user.get_email().email for a in send_to_users]
+        _email_sent = EmailMessage(unicode(subject), unicode(message), from_email, [], email_addresses).send()
         logger.info(u'Sent mail to %s for event "%s".' % (_to_email_options[_to_email_value][1], event))
         return _email_sent, all_attendees, attendees_on_waitlist, attendees_not_paid
-    except Exception, e:
+    except ImproperlyConfigured, e:
         logger.error(u'Something went wrong while trying to send mail to %s for event "%s"\n%s' %
                      (_to_email_options[_to_email_value][1], event, e))
