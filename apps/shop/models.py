@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from django.contrib.contenttypes import generic
+from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.core.validators import MinValueValidator
 from django.db import models
@@ -13,7 +13,7 @@ from apps.authentication.models import OnlineUser as User
 class Order(models.Model):
     content_type = models.ForeignKey(ContentType)
     object_id = models.PositiveIntegerField()
-    content_object = generic.GenericForeignKey('content_type', 'object_id')
+    content_object = GenericForeignKey('content_type', 'object_id')
 
     order_line = models.ForeignKey('OrderLine', related_name='orders')
     # Price of product when paid
