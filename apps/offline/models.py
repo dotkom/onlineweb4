@@ -7,7 +7,7 @@ from django.db import models
 from django.db.models.signals import post_save
 from django.utils.translation import ugettext_lazy as _
 from filebrowser.fields import FileBrowseField
-from onlineweb4.settings.local import MEDIA_ROOT
+from onlineweb4.settings import MEDIA_ROOT
 from chunks.models import Chunk
 
 import reversion
