@@ -123,7 +123,7 @@ LOGGING = {
             'filters': ['require_debug_false'],
             'class': 'django.utils.log.AdminEmailHandler'
         },
-        'console':{
+        'console': {
             'level': 'DEBUG',
             'class': 'logging.StreamHandler',
             'formatter': 'standard'
@@ -133,6 +133,11 @@ LOGGING = {
         'django.request': {
             'handlers': ['mail_admins'],
             'level': 'ERROR',
+            'propagate': True,
+        },
+        'apps': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
             'propagate': True,
         },
         'syncer': {

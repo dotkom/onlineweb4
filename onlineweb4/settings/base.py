@@ -1,6 +1,6 @@
 # -*- coding: utf8 -*-
+import logging
 import os
-import sys
 
 import wiki
 from django.contrib.messages import constants as messages
@@ -16,12 +16,34 @@ NOSE_ARGS = ['--with-coverage', '--cover-package=apps', '--cover-html-dir=covera
 DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 
+ALLOWED_HOSTS = '*'
+
+DATABASES = {
+    #'default': {
+        #'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        #'NAME': 'django',
+        #'USER': 'django',
+        #'PASSWORD': 'django',
+        #'HOST': '127.0.0.1',
+        #'PORT': '',
+    #},
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': 'db.db',
+        'USER': '',
+        'PASSWORD': '',
+        'HOST': '',
+        'PORT': '',
+    },
+}
+
 ADMINS = (
     ('dotKom', 'dotkom@online.ntnu.no'),
 )
 MANAGERS = ADMINS
 
 # Email settings
+DEVELOPMENT_EMAIL = 'your_preferred_adress_here'  # Used for sending email during development
 DEFAULT_FROM_EMAIL = 'online@online.ntnu.no'
 EMAIL_ARRKOM = 'arrkom@online.ntnu.no'
 EMAIL_BEDKOM = 'bedkom@online.ntnu.no'
@@ -30,6 +52,8 @@ EMAIL_EKSKOM = 'ekskom@online.ntnu.no'
 EMAIL_FAGKOM = 'fagkom@online.ntnu.no'
 EMAIL_PROKOM = 'prokom@online.ntnu.no'
 EMAIL_TRIKOM = 'trikom@online.ntnu.no'
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 # We will receive errors and other django messages from this email
 SERVER_EMAIL = 'onlineweb4-error@online.ntnu.no'
@@ -70,6 +94,7 @@ STATIC_URL = '/static/'
 
 # Prefix for default profile picture
 DEFAULT_PROFILE_PICTURE_PREFIX = os.path.join(STATIC_URL, "img", "profile_default")
+DEFAULT_PROFILE_PICTURE_URL = os.path.join(STATIC_URL, "img", "profile_default.png")
 
 # Additional locations of static files
 STATICFILES_DIRS = (
@@ -267,6 +292,7 @@ INSTALLED_APPS = (
 
 )
 
+FILEBROWSER_MEDIA_ROOT = MEDIA_ROOT
 
 # SSO / OAuth2 settings
 if 'apps.sso' in INSTALLED_APPS:
@@ -277,6 +303,37 @@ if 'apps.sso' in INSTALLED_APPS:
         'AUTHORIZATION_CODE_EXPIRE_SECONDS': 60,
     }
     OAUTH2_PROVIDER_APPLICATION_MODEL = 'sso.Client'
+
+# Other OW4 settings
+# Genfors
+GENFORS_ADMIN_PASSWORD = 'ADMIN_PASSWORD'
+
+# Sympa
+SYMPA_DB_PASSWD = ''
+SYMPA_DB_USER = ''
+SYMPA_DB_NAME = ''
+SYMPA_DB_PORT = ''
+SYMPA_DB_HOST = ''
+
+# Stripe Keys
+STRIPE_PUBLIC_KEYS = [
+    "pk_test_replace_this", # arrKom
+    "pk_test_replace_this"  # proKom
+    "pk_test_replace_this"  # triKom
+]
+
+STRIPE_PRIVATE_KEYS = [
+    "sk_test_replace_this", # arrKom
+    "sk_test_replace_this"  # proKom
+    "sk_test_replace_this"  # triKom
+]
+
+# Google reCaptcha settings
+# Keys are found here: https://online.ntnu.no/wiki/komiteer/dotkom/aktuelt/onlineweb4/keys/
+RECAPTCHA_PUBLIC_KEY = 'replace this'
+RECAPTCHA_PRIVATE_KEY = 'replace this'
+NOCAPTCHA = True
+RECAPTCHA_USE_SSL = True
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
@@ -398,17 +455,16 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 
 # Remember to keep 'local' last, so it can override any setting.
 for settings_module in ['filebrowser', 'django_wiki', 'local']:  # local last
+    logger = logging.getLogger(__name__)
     if not os.path.exists(os.path.join(PROJECT_SETTINGS_DIRECTORY,
-            settings_module + ".py")):
-        sys.stderr.write("Could not find settings module '%s'.\n" %
-                settings_module)
+                          settings_module + ".py")):
+        logger.warn("Could not find settings module '%s'.\n" %
+                    settings_module)
         if settings_module == 'local':
-            sys.stderr.write("You need to copy the settings file "
-                             "'onlineweb4/settings/example-local.py' to "
-                             "'onlineweb4/settings/local.py'.\n")
-        sys.exit(1)
+            logger.warn("You need to copy the settings file "
+                        "'onlineweb4/settings/example-local.py' to "
+                        "'onlineweb4/settings/local.py'.\n")
     try:
         exec('from %s import *' % settings_module)
     except ImportError, e:
-        print "Could not import settings for '%s' : %s" % (settings_module,
-                str(e))
+        logger.warn("Could not import settings for '%s' : %s" % (settings_module, str(e)))
