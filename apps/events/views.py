@@ -46,7 +46,7 @@ def details(request, event_id, event_slug):
 
     # Restricts access to the event if it is group restricted
     if not event.can_display(request.user):
-        messages.error(request, "Du har ikke tilgang til denne eventen.")
+        messages.error(request, "Du har ikke tilgang til dette arrangementet.")
         return index(request)
 
     user_access_to_event = False
