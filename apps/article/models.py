@@ -10,11 +10,8 @@ from django.template.defaultfilters import slugify
 from django.utils.translation import ugettext as _
 
 from taggit.managers import TaggableManager
-import reversion
-import watson
 
 from apps.gallery.models import ResponsiveImage
-
 
 User = settings.AUTH_USER_MODEL
 
@@ -67,7 +64,3 @@ class Article(models.Model):
         permissions = (
             ('view_article', 'View Article'),
         )
-
-
-reversion.register(Article)
-watson.register(Article)

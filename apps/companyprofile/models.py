@@ -3,8 +3,6 @@ from django.utils.translation import ugettext_lazy as _
 
 from filebrowser.fields import FileBrowseField
 
-import reversion
-
 from apps.gallery.models import ResponsiveImage
 
 
@@ -38,5 +36,3 @@ class Company(models.Model):
         permissions = (
             ('view_company', 'View Company'),
         )
-
-reversion.register(Company)

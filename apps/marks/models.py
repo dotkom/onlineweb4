@@ -7,8 +7,6 @@ from django.db import models
 from django.utils import timezone
 from django.utils.translation import ugettext as _
 
-import reversion
-
 
 User = settings.AUTH_USER_MODEL
 
@@ -108,9 +106,6 @@ class Mark(models.Model):
         )
 
 
-reversion.register(Mark)
-
-
 class MarkUser(models.Model):
     """
     One entry for a user that has received a mark.
@@ -142,9 +137,6 @@ class MarkUser(models.Model):
         permissions = (
             ('view_userentry', 'View UserEntry'),
         )
-
-
-reversion.register(MarkUser)
 
 
 def _fix_mark_history(user):

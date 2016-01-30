@@ -2,7 +2,6 @@ from django.db import models
 
 from django_extensions.db.models import TimeStampedModel
 import datetime
-import reversion
 
 
 class SplashYearManager(models.Manager):
@@ -46,6 +45,3 @@ class SplashEvent(TimeStampedModel, models.Model):
 
     class Meta(object):
         ordering = ('start_time',)
-
-reversion.register(SplashYear)
-reversion.register(SplashEvent)

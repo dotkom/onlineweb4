@@ -8,7 +8,6 @@ sys.dont_write_bytecode = True
 
 
 DEBUG = True
-TEMPLATE_DEBUG = DEBUG
 
 # Change this to the host in production
 ALLOWED_HOSTS = '*'

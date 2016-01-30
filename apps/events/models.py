@@ -16,8 +16,6 @@ from apps.authentication.models import FIELD_OF_STUDY_CHOICES
 from apps.companyprofile.models import Company
 from apps.marks.models import get_expiration_date
 
-import reversion
-import watson
 from filebrowser.fields import FileBrowseField
 
 
@@ -141,8 +139,6 @@ class Event(models.Model):
         )
 
 
-reversion.register(Event)
-
 """
  BEGIN ACCESS RESTRICTION --------------------------------------------------------------------------
 """
@@ -171,9 +167,6 @@ class Rule(models.Model):
         permissions = (
             ('view_rule', 'View Rule'),
         )
-
-
-reversion.register(Rule)
 
 
 class FieldOfStudyRule(Rule):
@@ -209,9 +202,6 @@ class FieldOfStudyRule(Rule):
         permissions = (
             ('view_fieldofstudyrule', 'View FieldOfStudyRule'),
         )
-
-
-reversion.register(FieldOfStudyRule)
 
 
 class GradeRule(Rule):
@@ -250,9 +240,6 @@ class GradeRule(Rule):
         )
 
 
-reversion.register(GradeRule)
-
-
 class UserGroupRule(Rule):
     group = models.ForeignKey(Group, blank=False, null=False)
 
@@ -284,9 +271,6 @@ class UserGroupRule(Rule):
         permissions = (
             ('view_usergrouprule', 'View UserGroupRule'),
         )
-
-
-reversion.register(UserGroupRule)
 
 
 class RuleBundle(models.Model):
@@ -335,9 +319,6 @@ class RuleBundle(models.Model):
         )
 
 
-reversion.register(RuleBundle)
-
-
 """
  END ACCESS RESTRICTION --------------------------------------------------------------------------
 """
@@ -358,8 +339,6 @@ class Extras(models.Model):
         verbose_name = _("ekstra valg")
         verbose_name_plural = _("ekstra valg")
         ordering = ['choice']
-
-reversion.register(Extras)
 
 
 class AttendanceEvent(models.Model):
@@ -730,9 +709,6 @@ class AttendanceEvent(models.Model):
         )
 
 
-reversion.register(AttendanceEvent)
-
-
 class CompanyEvent(models.Model):
     """
     Company relation to AttendanceEvent
@@ -746,9 +722,6 @@ class CompanyEvent(models.Model):
         permissions = (
             ('view_companyevent', 'View CompanyEvent'),
         )
-
-
-reversion.register(CompanyEvent)
 
 
 class Attendee(models.Model):
@@ -771,7 +744,7 @@ class Attendee(models.Model):
         # Importing here to prevent circular dependencies
         from apps.payment.models import PaymentDelay
         try:
-            PaymentDelay.objects.filter(user=self.user, payment=self.event.payment).delete()
+            PaymentDelay.objects.filter(user=self.user, payment=self.event.payment()).delete()
         except PaymentDelay.DoesNotExist:
             # Do nothing
             False
@@ -784,9 +757,6 @@ class Attendee(models.Model):
         permissions = (
             ('view_attendee', 'View Attendee'),
         )
-
-
-reversion.register(Attendee)
 
 
 class Reservation(models.Model):
@@ -806,9 +776,6 @@ class Reservation(models.Model):
         permissions = (
             ('view_reservation', 'View Reservation'),
         )
-
-
-reversion.register(Reservation)
 
 
 class Reservee(models.Model):
@@ -834,9 +801,6 @@ class Reservee(models.Model):
         )
 
 
-reversion.register(Reservee)
-
-
 class GroupRestriction(models.Model):
     event = models.OneToOneField(
         Event,
@@ -852,7 +816,3 @@ class GroupRestriction(models.Model):
         permissions = (
             ('view_restriction', 'View Restriction'),
         )
-
-
-# Registrations for watson indexing
-watson.register(Event)

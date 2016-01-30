@@ -4,8 +4,6 @@ from django.utils.translation import ugettext_lazy as _
 
 from apps.companyprofile.models import Company
 
-import reversion
-
 
 class CareerOpportunity(models.Model):
     """
@@ -29,6 +27,3 @@ class CareerOpportunity(models.Model):
         permissions = (
             ('view_careeropportunity', 'View CareerOpportunity'),
         )
-
-
-reversion.register(CareerOpportunity)
