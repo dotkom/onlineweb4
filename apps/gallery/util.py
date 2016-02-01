@@ -157,8 +157,6 @@ def create_thumbnail(source_image_path, destination_thumbnail_path, size):
 def resize_image(source_image_path, destination_thumbnail_path, size):
     status = _open_image_file(source_image_path)
 
-    print status
-
     if not status['success']:
         return status['error']
 
