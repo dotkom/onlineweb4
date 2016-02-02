@@ -63,6 +63,7 @@ class InventoryViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixin
     queryset = Item.objects.filter(available=True)
     serializer_class = ItemSerializer
     permission_classes = (AllowAny,)
+    pagination_class = None
 
 
 class SetRFIDView(APIView):
