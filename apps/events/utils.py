@@ -251,8 +251,18 @@ def handle_attendance_event_detail(event, user, context):
 
 def handle_event_payment(event, user, payment, context):
     user_paid = False
-    payment_delay = False
-    payment_relation_id = False
+    payment_delay = None
+    payment_relation_id = None
+
+    context.update({
+        'payment': payment,
+        'user_paid': user_paid,
+        'payment_delay': payment_delay,
+        'payment_relation_id': payment_relation_id,
+    })
+
+    if not user.is_authenticated():  # Return early if user not logged in, can't filter payment relations against no one
+        return context
 
     payment_relations = PaymentRelation.objects.filter(payment=payment, user=user, refunded=False)
     for payment_relation in payment_relations:
@@ -269,7 +279,6 @@ def handle_event_payment(event, user, payment, context):
             payment_delay = payment_delays[0]
 
     context.update({
-        'payment': payment,
         'user_paid': user_paid,
         'payment_delay': payment_delay,
         'payment_relation_id': payment_relation_id,
