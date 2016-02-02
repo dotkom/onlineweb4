@@ -14,7 +14,7 @@ stripe==1.20.2
 
 # third party deps
 django-filebrowser==3.5.4 		# File uploading
-django-grappelli==2.6.3         # Admin template set
+django-grappelli==2.7.3         # Admin template set
 git+git://github.com/clintecker/django-chunks.git@0.2# Chunks, or reusable key:content for templates.
 django-crispy-forms==1.4.0      # nice forms
 django-extensions==1.5.9        # nice extra commands for debugging, etc
