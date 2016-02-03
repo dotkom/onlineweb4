@@ -206,8 +206,6 @@ def event_change_attendees(request, event_id, active_tab='attendees'):
 
     context['extras'] = extras
     context['change_event_form'] = ChangeEventForm(instance=event)
-    if 'form_with_error' in request.session.keys():
-        print "zomg"
 
     return render(request, 'events/dashboard/details.html', context)
 
