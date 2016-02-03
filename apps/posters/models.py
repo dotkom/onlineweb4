@@ -91,9 +91,6 @@ class Poster(OrderMixin):
         else:
             return _("Generell bestilling: %(title)s" % {'title': self.title})
 
-    def __str__(self):
-        return self.__str__()
-
 
 class CustomText(models.Model):
     field = models.CharField(max_length=50)

@@ -17,7 +17,6 @@ from apps.splash.models import SplashYear
 
 import icalendar
 import logging
-from functools import reduce
 
 
 def get_group_restricted_events(user, all_events=False):
