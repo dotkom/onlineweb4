@@ -34,11 +34,11 @@ class EventTest(TestCase):
 
     def testEventUnicodeIsCorrect(self):
         self.logger.debug("Testing testing on Event with dynamic fixtures")
-        self.assertEqual(self.event.__unicode__(), u'Sjakkturnering')
+        self.assertEqual(self.event.__str__(), 'Sjakkturnering')
 
     def testAttendanceEventUnicodeIsCorrect(self):
         self.logger.debug("Testing testing on AttendanceEvent with dynamic fixtures")
-        self.assertEqual(self.attendance_event.__unicode__(), u'Sjakkturnering')
+        self.assertEqual(self.attendance_event.__str__(), 'Sjakkturnering')
 
     #
     # Event attendees, seats and wait list
@@ -90,8 +90,8 @@ class EventTest(TestCase):
 
     def testAttendeeUnicodeIsCorrect(self):
         self.logger.debug("Testing testing on Attendee with dynamic fixtures")
-        self.assertEqual(self.attendee.__unicode__(), self.user.get_full_name())
-        self.assertNotEqual(self.attendee.__unicode__(), 'Ola Normann')
+        self.assertEqual(self.attendee.__str__(), self.user.get_full_name())
+        self.assertNotEqual(self.attendee.__str__(), 'Ola Normann')
 
     def testSignUpWithNoRulesNoMarks(self):
         self.logger.debug("Testing signup with no rules and no marks.")
@@ -128,10 +128,10 @@ class EventTest(TestCase):
         self.fosrule = G(FieldOfStudyRule, field_of_study=1, offset=24)
         self.assertEqual(self.fosrule.field_of_study, 1)
         self.assertEqual(self.fosrule.offset, 24)
-        self.assertEqual(unicode(self.fosrule), u"Bachelor i Informatikk (BIT) etter 24 timer")
+        self.assertEqual(str(self.fosrule), "Bachelor i Informatikk (BIT) etter 24 timer")
         self.rulebundle = G(RuleBundle, description='')
         self.rulebundle.field_of_study_rules.add(self.fosrule)
-        self.assertEqual(unicode(self.rulebundle), "Bachelor i Informatikk (BIT) etter 24 timer")
+        self.assertEqual(str(self.rulebundle), "Bachelor i Informatikk (BIT) etter 24 timer")
         self.attendance_event.rule_bundles.add(self.rulebundle)
 
         # Status should be negative, and indicate that the restriction is a grade rule
@@ -160,10 +160,10 @@ class EventTest(TestCase):
         self.graderule = G(GradeRule, grade=1, offset=24)
         self.assertEqual(self.graderule.grade, 1)
         self.assertEqual(self.graderule.offset, 24)
-        self.assertEqual(unicode(self.graderule), u"1. klasse etter 24 timer")
+        self.assertEqual(str(self.graderule), "1. klasse etter 24 timer")
         self.rulebundle = G(RuleBundle, description='')
         self.rulebundle.grade_rules.add(self.graderule)
-        self.assertEqual(unicode(self.rulebundle), u"1. klasse etter 24 timer")
+        self.assertEqual(str(self.rulebundle), "1. klasse etter 24 timer")
         self.attendance_event.rule_bundles.add(self.rulebundle)
 
         # Status should be negative, and indicate that the restriction is a grade rule
@@ -194,10 +194,10 @@ class EventTest(TestCase):
         self.grouprule = G(UserGroupRule, group=self.group, offset=24)
         self.assertEqual(self.grouprule.group, self.group)
         self.assertEqual(self.grouprule.offset, 24)
-        self.assertEqual(unicode(self.grouprule), u"Testgroup etter 24 timer")
+        self.assertEqual(str(self.grouprule), "Testgroup etter 24 timer")
         self.rulebundle = G(RuleBundle, description='')
         self.rulebundle.user_group_rules.add(self.grouprule)
-        self.assertEqual(unicode(self.rulebundle), u"Testgroup etter 24 timer")
+        self.assertEqual(str(self.rulebundle), "Testgroup etter 24 timer")
         self.attendance_event.rule_bundles.add(self.rulebundle)
 
         # Status should be negative, and indicate that the restriction is a grade rule

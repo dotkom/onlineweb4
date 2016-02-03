@@ -54,7 +54,7 @@ def upload(request):
     if request.method == "POST":
         form = DocumentForm(request.POST, request.FILES)
         if form.is_valid():
-            log.info(u'%s uploaded image "%s"' % (request.user, os.path.abspath(unicode(request.FILES['file']))))
+            log.info('%s uploaded image "%s"' % (request.user, os.path.abspath(str(request.FILES['file']))))
             response = _handle_upload(request.FILES['file'])
             return response
 
@@ -65,15 +65,15 @@ def upload(request):
 def _handle_upload(uploaded_file):
 
     log = logging.getLogger(__name__)
-    log.debug(u'Handling upload of file: "%s"' % os.path.abspath(unicode(uploaded_file)))
+    log.debug('Handling upload of file: "%s"' % os.path.abspath(str(uploaded_file)))
 
     unhandled_file_path = util.save_unhandled_file(uploaded_file)
-    log.debug(u'Unhandled file was saved at: "%s"' % os.path.abspath(unicode(unhandled_file_path)))
+    log.debug('Unhandled file was saved at: "%s"' % os.path.abspath(str(unhandled_file_path)))
 
     thumbnail_result = util.create_thumbnail_for_unhandled_images(unhandled_file_path)
 
     if 'error' in thumbnail_result:
-        log.error('Error while creating thumbnail for "%s"' % os.path.abspath(unicode(unhandled_file_path)))
+        log.error('Error while creating thumbnail for "%s"' % os.path.abspath(str(unhandled_file_path)))
         # Delete files
         return HttpResponse(status=500, content=json.dumps(thumbnail_result['error']))
 
@@ -81,7 +81,7 @@ def _handle_upload(uploaded_file):
     unhandle_media = util.get_unhandled_media_path(unhandled_file_path)
     unhandled_thumbnail_media = util.get_unhandled_thumbnail_media_path(thumbnail_result['thumbnail_path'])
 
-    log.debug(u'Creating an UnhandledImage for "%s"' % os.path.abspath(unicode(unhandled_file_path)))
+    log.debug('Creating an UnhandledImage for "%s"' % os.path.abspath(str(unhandled_file_path)))
     # Try catch this and delete files on exception
     UnhandledImage(image=unhandle_media, thumbnail=unhandled_thumbnail_media).save()
 
@@ -128,7 +128,7 @@ def crop_image(request):
             crop_data = request.POST
 
             if not _verify_crop_data(crop_data):
-                log.info(u'%s attempted image crop with incomplete dimension payload' % request.user)
+                log.info('%s attempted image crop with incomplete dimension payload' % request.user)
                 return JsonResponse(status=404, data=json.dumps(
                     {'error': 'Json must contain id, x, y, height and width, and name.'}
                 ))
@@ -169,7 +169,7 @@ def crop_image(request):
                 resp_image.tags.add(*parse_tags(image_tags))
 
             log.debug(
-                u'%s cropped and saved ResponsiveImage %d (%s)' % (
+                '%s cropped and saved ResponsiveImage %d (%s)' % (
                     request.user,
                     resp_image.id,
                     resp_image.filename
@@ -178,7 +178,7 @@ def crop_image(request):
 
             unhandled_image_name = image.filename
             image.delete()
-            log.debug(u'UnhandledImage %s was deleted' % unhandled_image_name)
+            log.debug('UnhandledImage %s was deleted' % unhandled_image_name)
 
             return HttpResponse(status=200, content=json.dumps({'cropData': crop_data}))
 

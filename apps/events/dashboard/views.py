@@ -182,7 +182,7 @@ def event_change_attendees(request, event_id, active_tab='attendees'):
     if request.method == 'POST':
         if request.is_ajax and 'action' in request.POST:
             if not event.is_attendance_event:
-                return HttpResponse(_(u'Dette er ikke et påmeldingsarrangement.'), status=400)
+                return HttpResponse(_('Dette er ikke et påmeldingsarrangement.'), status=400)
 
             return JsonResponse(event_ajax_handler(event, request))
 

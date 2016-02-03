@@ -217,7 +217,7 @@ class SimpleTest(TestCase):
         response = client.post(feedback_relation.get_absolute_url())
         for i in range(len(response.context['answers'])):
             self.assertIn(
-                unicode(_(u'This field is required.')),
+                str(_('This field is required.')),
                 response.context['answers'][i].errors['answer']
             )
 

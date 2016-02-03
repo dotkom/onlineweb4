@@ -8,7 +8,7 @@ register = template.Library()
 def addclass(field, css):
 
     attrs = {
-        u"class": css
+        "class": css
     }
 
     return field.as_widget(attrs=attrs)

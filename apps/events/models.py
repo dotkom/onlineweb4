@@ -17,6 +17,7 @@ from apps.companyprofile.models import Company
 from apps.marks.models import get_expiration_date
 
 from filebrowser.fields import FileBrowseField
+from functools import reduce
 
 
 User = settings.AUTH_USER_MODEL
@@ -41,16 +42,16 @@ class Event(models.Model):
     IMAGE_EXTENSIONS = ['.jpg', '.jpeg', '.gif', '.png', '.tif', '.tiff']
 
     author = models.ForeignKey(User, related_name='oppretter')
-    title = models.CharField(_(u'tittel'), max_length=60)
-    event_start = models.DateTimeField(_(u'start-dato'))
-    event_end = models.DateTimeField(_(u'slutt-dato'))
-    location = models.CharField(_(u'lokasjon'), max_length=100)
-    ingress_short = models.CharField(_(u"kort ingress"), max_length=150)
-    ingress = models.TextField(_(u'ingress'))
-    description = models.TextField(_(u'beskrivelse'))
-    image = FileBrowseField(_(u"bilde"), max_length=200,
+    title = models.CharField(_('tittel'), max_length=60)
+    event_start = models.DateTimeField(_('start-dato'))
+    event_end = models.DateTimeField(_('slutt-dato'))
+    location = models.CharField(_('lokasjon'), max_length=100)
+    ingress_short = models.CharField(_("kort ingress"), max_length=150)
+    ingress = models.TextField(_('ingress'))
+    description = models.TextField(_('beskrivelse'))
+    image = FileBrowseField(_("bilde"), max_length=200,
                             directory=IMAGE_FOLDER, extensions=IMAGE_EXTENSIONS, null=True, blank=True)
-    event_type = models.SmallIntegerField(_(u'type'), choices=TYPE_CHOICES, null=False)
+    event_type = models.SmallIntegerField(_('type'), choices=TYPE_CHOICES, null=False)
 
     def is_attendance_event(self):
         """ Returns true if the event is an attendance event """
@@ -81,9 +82,9 @@ class Event(models.Model):
     def feedback_info(self):
         info = OrderedDict()
         if self.is_attendance_event():
-            info[_(u'Påmeldte')] = self.attendance_event.number_of_attendees
-            info[_(u'Oppmøtte')] = self.attendance_event.number_of_attendees - len(self.attendance_event.not_attended())
-            info[_(u'Venteliste')] = self.attendance_event.number_on_waitlist
+            info[_('Påmeldte')] = self.attendance_event.number_of_attendees
+            info[_('Oppmøtte')] = self.attendance_event.number_of_attendees - len(self.attendance_event.not_attended())
+            info[_('Venteliste')] = self.attendance_event.number_on_waitlist
 
         return info
 
@@ -128,7 +129,7 @@ class Event(models.Model):
     def get_absolute_url(self):
         return 'events_details', None, {'event_id': self.id, 'event_slug': self.slug}
 
-    def __unicode__(self):
+    def __str__(self):
         return self.title
 
     class Meta:
@@ -148,7 +149,7 @@ class Rule(models.Model):
     """
     Super class for a rule object
     """
-    offset = models.PositiveSmallIntegerField(_(u'utsettelse'), help_text=_(u'utsettelse oppgis i timer'), default=0)
+    offset = models.PositiveSmallIntegerField(_('utsettelse'), help_text=_('utsettelse oppgis i timer'), default=0)
 
     def get_offset_time(self, time):
         if type(time) is not datetime:
@@ -160,7 +161,7 @@ class Rule(models.Model):
         """ Checks if a user satisfies the rules """
         return True
 
-    def __unicode__(self):
+    def __str__(self):
         return 'Rule'
 
     class Meta:
@@ -170,7 +171,7 @@ class Rule(models.Model):
 
 
 class FieldOfStudyRule(Rule):
-    field_of_study = models.SmallIntegerField(_(u'studieretning'), choices=FIELD_OF_STUDY_CHOICES)
+    field_of_study = models.SmallIntegerField(_('studieretning'), choices=FIELD_OF_STUDY_CHOICES)
 
     def satisfied(self, user, registration_start):
         """ Override method """
@@ -183,20 +184,20 @@ class FieldOfStudyRule(Rule):
                 return {"status": True, "message": None, "status_code": 210}
             # If there is no offset, the signup just hasn't started yet
             elif self.offset == 0:
-                return {"status": False, "message": _(u"Påmeldingen er ikke åpnet enda."), "status_code": 402}
+                return {"status": False, "message": _("Påmeldingen er ikke åpnet enda."), "status_code": 402}
             # In the last case there is a delayed signup
             else:
-                return {"status": False, "message": _(u"Din studieretning har utsatt påmelding."),
+                return {"status": False, "message": _("Din studieretning har utsatt påmelding."),
                         "offset": offset_datetime, "status_code": 420}
         return {
             "status": False, "message":
-            _(u"Din studieretning er en annen enn de som har tilgang til dette arrangementet."), "status_code": 410}
+            _("Din studieretning er en annen enn de som har tilgang til dette arrangementet."), "status_code": 410}
 
-    def __unicode__(self):
+    def __str__(self):
         if self.offset > 0:
-            time_unit = _(u'timer') if self.offset > 1 else _(u'time')
-            return _("%s etter %d %s") % (unicode(self.get_field_of_study_display()), self.offset, time_unit)
-        return unicode(self.get_field_of_study_display())
+            time_unit = _('timer') if self.offset > 1 else _('time')
+            return _("%s etter %d %s") % (str(self.get_field_of_study_display()), self.offset, time_unit)
+        return str(self.get_field_of_study_display())
 
     class Meta:
         permissions = (
@@ -205,7 +206,7 @@ class FieldOfStudyRule(Rule):
 
 
 class GradeRule(Rule):
-    grade = models.SmallIntegerField(_(u'klassetrinn'), null=False)
+    grade = models.SmallIntegerField(_('klassetrinn'), null=False)
 
     def satisfied(self, user, registration_start):
         """ Override method """
@@ -218,21 +219,21 @@ class GradeRule(Rule):
                 return {"status": True, "message": None, "status_code": 211}
             # If there is no offset, the signup just hasn't started yet
             elif self.offset == 0:
-                return {"status": False, "message": _(u"Påmeldingen er ikke åpnet enda."), "status_code": 402}
+                return {"status": False, "message": _("Påmeldingen er ikke åpnet enda."), "status_code": 402}
             # In the last case there is a delayed signup
             else:
                 return {
                     "status": False, "message":
-                    _(u"Ditt klassetrinn har utsatt påmelding."), "offset": offset_datetime, "status_code": 421}
+                    _("Ditt klassetrinn har utsatt påmelding."), "offset": offset_datetime, "status_code": 421}
         return {
             "status": False, "message":
-                _(u"Du er ikke i et klassetrinn som har tilgang til dette arrangementet."), "status_code": 411}
+                _("Du er ikke i et klassetrinn som har tilgang til dette arrangementet."), "status_code": 411}
 
-    def __unicode__(self):
+    def __str__(self):
         if self.offset > 0:
-            time_unit = _(u'timer') if self.offset > 1 else _(u'time')
-            return _(u"%s. klasse etter %d %s") % (self.grade, self.offset, time_unit)
-        return _(u"%s. klasse") % self.grade
+            time_unit = _('timer') if self.offset > 1 else _('time')
+            return _("%s. klasse etter %d %s") % (self.grade, self.offset, time_unit)
+        return _("%s. klasse") % self.grade
 
     class Meta:
         permissions = (
@@ -252,20 +253,20 @@ class UserGroupRule(Rule):
                 return {"status": True, "message": None, "status_code": 212}
             # If there is no offset, the signup just hasn't started yet
             elif self.offset == 0:
-                return {"status": False, "message": _(u"Påmeldingen er ikke åpnet enda."), "status_code": 402}
+                return {"status": False, "message": _("Påmeldingen er ikke åpnet enda."), "status_code": 402}
             # In the last case there is a delayed signup
             else:
-                return {"status": False, "message": _(u"%s har utsatt påmelding.") % self.group,
+                return {"status": False, "message": _("%s har utsatt påmelding.") % self.group,
                         "offset": offset_datetime, "status_code": 422}
         return {
             "status": False, "message":
-            _(u"Du er ikke i en brukergruppe som har tilgang til dette arrangmentet."), "status_code": 412}
+            _("Du er ikke i en brukergruppe som har tilgang til dette arrangmentet."), "status_code": 412}
 
-    def __unicode__(self):
+    def __str__(self):
         if self.offset > 0:
-            time_unit = _(u'timer') if self.offset > 1 else _(u'time')
-            return _(u"%s etter %d %s") % (unicode(self.group), self.offset, time_unit)
-        return unicode(self.group)
+            time_unit = _('timer') if self.offset > 1 else _('time')
+            return _("%s etter %d %s") % (str(self.group), self.offset, time_unit)
+        return str(self.group)
 
     class Meta:
         permissions = (
@@ -277,7 +278,7 @@ class RuleBundle(models.Model):
     """
     Access restriction rule object
     """
-    description = models.CharField(_(u'beskrivelse'), max_length=100, blank=True, null=True)
+    description = models.CharField(_('beskrivelse'), max_length=100, blank=True, null=True)
     field_of_study_rules = models.ManyToManyField(FieldOfStudyRule, blank=True)
     grade_rules = models.ManyToManyField(GradeRule, blank=True)
     user_group_rules = models.ManyToManyField(UserGroupRule, blank=True)
@@ -290,7 +291,7 @@ class RuleBundle(models.Model):
         return rules
 
     def get_rule_strings(self):
-        return [unicode(rule) for rule in self.get_all_rules()]
+        return [str(rule) for rule in self.get_all_rules()]
 
     def satisfied(self, user, registration_start):
 
@@ -305,13 +306,13 @@ class RuleBundle(models.Model):
 
         return errors
 
-    def __unicode__(self):
+    def __str__(self):
         if self.description:
             return self.description
         elif self.get_rule_strings():
             return ", ".join(self.get_rule_strings())
         else:
-            return _(u"Tom rule bundle.")
+            return _("Tom rule bundle.")
 
     class Meta:
         permissions = (
@@ -329,10 +330,10 @@ class Extras(models.Model):
     Choices for events
     """
 
-    choice = models.CharField(u'valg', max_length=69)
-    note = models.CharField(u'notat', max_length=200, blank=True, null=True)
+    choice = models.CharField('valg', max_length=69)
+    note = models.CharField('notat', max_length=200, blank=True, null=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.choice
 
     class Meta:
@@ -350,16 +351,16 @@ class AttendanceEvent(models.Model):
         primary_key=True,
         related_name='attendance_event')
 
-    max_capacity = models.PositiveIntegerField(_(u'maks-kapasitet'), null=False, blank=False)
-    waitlist = models.BooleanField(_(u'venteliste'), default=False)
-    guest_attendance = models.BooleanField(_(u'gjestepåmelding'), null=False, blank=False, default=False)
-    registration_start = models.DateTimeField(_(u'registrerings-start'), null=False, blank=False)
-    unattend_deadline = models.DateTimeField(_(u'avmeldings-frist'), null=False, blank=False)
-    registration_end = models.DateTimeField(_(u'registrerings-slutt'), null=False, blank=False)
+    max_capacity = models.PositiveIntegerField(_('maks-kapasitet'), null=False, blank=False)
+    waitlist = models.BooleanField(_('venteliste'), default=False)
+    guest_attendance = models.BooleanField(_('gjestepåmelding'), null=False, blank=False, default=False)
+    registration_start = models.DateTimeField(_('registrerings-start'), null=False, blank=False)
+    unattend_deadline = models.DateTimeField(_('avmeldings-frist'), null=False, blank=False)
+    registration_end = models.DateTimeField(_('registrerings-slutt'), null=False, blank=False)
 
     # Automatic mark setting for not attending
-    automatically_set_marks = models.BooleanField(_(u'automatisk prikk'), default=False,
-                                                  help_text=_(u'Påmeldte som ikke har møtt vil automatisk få prikk'))
+    automatically_set_marks = models.BooleanField(_('automatisk prikk'), default=False,
+                                                  help_text=_('Påmeldte som ikke har møtt vil automatisk få prikk'))
     marks_has_been_set = models.BooleanField(default=False)
 
     # Access rules
@@ -552,13 +553,13 @@ class AttendanceEvent(models.Model):
 
         # Registration closed
         if timezone.now() > self.registration_end:
-            response['message'] = _(u'Påmeldingen er ikke lenger åpen.')
+            response['message'] = _('Påmeldingen er ikke lenger åpen.')
             response['status_code'] = 502
             return response
 
         # Room for me on the event?
         if not self.room_on_event:
-            response['message'] = _(u"Det er ikke mer plass på dette arrangementet.")
+            response['message'] = _("Det er ikke mer plass på dette arrangementet.")
             response['status_code'] = 503
             return response
 
@@ -587,7 +588,7 @@ class AttendanceEvent(models.Model):
         # Registration not open
         if timezone.now() < self.registration_start:
             response['status'] = False
-            response['message'] = _(u'Påmeldingen har ikke åpnet enda.')
+            response['message'] = _('Påmeldingen har ikke åpnet enda.')
             response['status_code'] = 501
             return response
 
@@ -602,7 +603,7 @@ class AttendanceEvent(models.Model):
         # Checks if the event is group restricted and if the user is in the right group
         if not self.event.can_display(user):
             response['status'] = False
-            response['message'] = _(u"Du har ikke tilgang til å melde deg på dette arrangementet.")
+            response['message'] = _("Du har ikke tilgang til å melde deg på dette arrangementet.")
             response['status_code'] = 403
 
             return response
@@ -698,12 +699,12 @@ class AttendanceEvent(models.Model):
                         return list(waitlist).index(attendee_object) + 1
         return 0
 
-    def __unicode__(self):
+    def __str__(self):
         return self.event.title
 
     class Meta:
-        verbose_name = _(u'påmelding')
-        verbose_name_plural = _(u'påmeldinger')
+        verbose_name = _('påmelding')
+        verbose_name_plural = _('påmeldinger')
         permissions = (
             ('view_attendanceevent', 'View AttendanceEvent'),
         )
@@ -713,8 +714,8 @@ class CompanyEvent(models.Model):
     """
     Company relation to AttendanceEvent
     """
-    company = models.ForeignKey(Company, verbose_name=_(u'bedrifter'))
-    event = models.ForeignKey(Event, verbose_name=_(u'arrangement'), related_name='companies')
+    company = models.ForeignKey(Company, verbose_name=_('bedrifter'))
+    event = models.ForeignKey(Event, verbose_name=_('arrangement'), related_name='companies')
 
     class Meta:
         verbose_name = _('bedrift')
@@ -732,12 +733,12 @@ class Attendee(models.Model):
     user = models.ForeignKey(User)
 
     timestamp = models.DateTimeField(auto_now_add=True, editable=False)
-    attended = models.BooleanField(_(u'var tilstede'), default=False)
-    paid = models.BooleanField(_(u'har betalt'), default=False)
-    note = models.CharField(_(u'notat'), max_length=100, blank=True, default='')
+    attended = models.BooleanField(_('var tilstede'), default=False)
+    paid = models.BooleanField(_('har betalt'), default=False)
+    note = models.CharField(_('notat'), max_length=100, blank=True, default='')
     extras = models.ForeignKey(Extras, blank=True, null=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.user.get_full_name()
 
     def delete(self):
@@ -761,13 +762,13 @@ class Attendee(models.Model):
 
 class Reservation(models.Model):
     attendance_event = models.OneToOneField(AttendanceEvent, related_name="reserved_seats")
-    seats = models.PositiveIntegerField(u"reserverte plasser", blank=False, null=False)
+    seats = models.PositiveIntegerField("reserverte plasser", blank=False, null=False)
 
     @property
     def number_of_seats_taken(self):
         return self.reservees.count()
 
-    def __unicode__(self):
+    def __str__(self):
         return "Reservasjoner for %s" % self.attendance_event.event.title
 
     class Meta:
@@ -785,11 +786,11 @@ class Reservee(models.Model):
     reservation = models.ForeignKey(Reservation, related_name='reservees')
     # I 2014 var norges lengste navn på 69 tegn;
     # julius andreas gimli arn macgyver chewbacka highlander elessar-jankov
-    name = models.CharField(u'navn', max_length=69)
-    note = models.CharField(u'notat', max_length=100)
-    allergies = models.CharField(u'allergier', max_length=200, blank=True, null=True)
+    name = models.CharField('navn', max_length=69)
+    note = models.CharField('notat', max_length=100)
+    allergies = models.CharField('allergier', max_length=200, blank=True, null=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     class Meta:
@@ -808,7 +809,7 @@ class GroupRestriction(models.Model):
         related_name='group_restriction')
 
     groups = models.ManyToManyField(Group, blank=True,
-                                    help_text=_(u'Legg til de gruppene som skal ha tilgang til arrangementet'))
+                                    help_text=_('Legg til de gruppene som skal ha tilgang til arrangementet'))
 
     class Meta:
         verbose_name = _("restriksjon")

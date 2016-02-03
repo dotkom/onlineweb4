@@ -19,10 +19,10 @@ class ProxyChunk(Chunk):
 
 
 class Issue(models.Model):
-    title = models.CharField(_(u"tittel"), max_length=50)
-    release_date = models.DateField(_(u"utgivelsesdato"))
-    description = models.TextField(_(u"beskrivelse"), blank=True, null=True)
-    issue = FileBrowseField(_(u"pdf"), directory=IMAGE_FOLDER, max_length=500, extensions=['.pdf'])
+    title = models.CharField(_("tittel"), max_length=50)
+    release_date = models.DateField(_("utgivelsesdato"))
+    description = models.TextField(_("beskrivelse"), blank=True, null=True)
+    issue = FileBrowseField(_("pdf"), directory=IMAGE_FOLDER, max_length=500, extensions=['.pdf'])
 
     def release_date_to_string(self):
         month = {
@@ -41,7 +41,7 @@ class Issue(models.Model):
         }
         return month[self.release_date.month]
 
-    def __unicode__(self):
+    def __str__(self):
         return self.title
 
     @property

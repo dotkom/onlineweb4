@@ -6,17 +6,17 @@ from django.utils.translation import ugettext as _
 
 class CaptchaForm(forms.Form):
 
-    phone_number = forms.CharField(label=_(u'Telefonnummer er påkrevd for å være påmeldt et arrangement.'),
-                                   error_messages={'required': _(u'Telefonnummer er påkrevd!')})
+    phone_number = forms.CharField(label=_('Telefonnummer er påkrevd for å være påmeldt et arrangement.'),
+                                   error_messages={'required': _('Telefonnummer er påkrevd!')})
     note = forms.CharField(label=_(
-        u'Som gjest ønsker vi at du oppgir din tilhørighet til Online og annen tilleggsinformasjon som f.eks. '
-        u'hvem du ønsker å sitte med.'),
-        error_messages={'required': _(u'Du må fylle inn et notat!')},
+        'Som gjest ønsker vi at du oppgir din tilhørighet til Online og annen tilleggsinformasjon som f.eks. '
+        'hvem du ønsker å sitte med.'),
+        error_messages={'required': _('Du må fylle inn et notat!')},
         max_length=100)
-    mark_rules = forms.BooleanField(label=_(u'Jeg godtar <a href="/profile/#marks" target="_blank">prikkreglene</a>'),
-                                    error_messages={'required': _(u'Du må godta prikkereglene!')})
-    captcha = ReCaptchaField(error_messages={'required': _(u'Du klarte ikke captchaen! Er du en bot?'),
-                                             'invalid': _(u'Du klarte ikke captchaen! Er du en bot?')})
+    mark_rules = forms.BooleanField(label=_('Jeg godtar <a href="/profile/#marks" target="_blank">prikkreglene</a>'),
+                                    error_messages={'required': _('Du må godta prikkereglene!')})
+    captcha = ReCaptchaField(error_messages={'required': _('Du klarte ikke captchaen! Er du en bot?'),
+                                             'invalid': _('Du klarte ikke captchaen! Er du en bot?')})
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user', None)

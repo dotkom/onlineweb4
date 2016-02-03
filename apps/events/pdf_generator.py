@@ -25,10 +25,10 @@ class EventPDF(object):
         self.attendees = sorted(attendee_qs, key=lambda attendee: attendee.user.last_name)
         self.waiters = event.attendance_event.waitlist_qs
         self.reservees = event.attendance_event.reservees_qs
-        self.attendee_table_data = [(u'Navn', u'Klasse', u'Studie', u'Telefon'), ]
-        self.waiters_table_data = [(u'Navn', u'Klasse', u'Studie', u'Telefon'), ]
-        self.reservee_table_data = [(u'Navn', u'Notat'), ]
-        self.allergies_table_data = [(u'Allergisk mot', u'Navn'), ]
+        self.attendee_table_data = [('Navn', 'Klasse', 'Studie', 'Telefon'), ]
+        self.waiters_table_data = [('Navn', 'Klasse', 'Studie', 'Telefon'), ]
+        self.reservee_table_data = [('Navn', 'Notat'), ]
+        self.allergies_table_data = [('Allergisk mot', 'Navn'), ]
 
         self.full_span_attendee_lines = []
         self.full_span_waiters_lines = []
@@ -51,7 +51,7 @@ class EventPDF(object):
 
             if attendee.note:
                 self.attendee_table_data.append(
-                    (create_body_text(u'Notat for %s: ' % attendee.user.first_name + attendee.note),))
+                    (create_body_text('Notat for %s: ' % attendee.user.first_name + attendee.note),))
                 i += 1
                 self.full_span_attendee_lines.append(i)
             if user.allergies:
@@ -76,7 +76,7 @@ class EventPDF(object):
 
             if attendee.note:
                 self.waiters_table_data.append(
-                    (create_body_text(u'Notat for %s: ' % attendee.user.first_name + attendee.note),))
+                    (create_body_text('Notat for %s: ' % attendee.user.first_name + attendee.note),))
                 i += 1
                 self.full_span_waiters_lines.append(i)
             if user.allergies:
@@ -111,7 +111,7 @@ class EventPDF(object):
         return 285, 185
 
     def render_pdf(self):
-        pdf, response = pdf_response(self.event.title + u" attendees")
+        pdf, response = pdf_response(self.event.title + " attendees")
         pdf.init_report()
 
         pdf.p(self.event.title, style=create_paragraph_style(font_size=18))
@@ -119,27 +119,27 @@ class EventPDF(object):
         pdf.p(self.event.event_start.strftime('%d. %B %Y'), create_paragraph_style(font_size=9))
         pdf.spacer(height=25)
 
-        pdf.p(u"Påmeldte", style=create_paragraph_style(font_size=14))
+        pdf.p("Påmeldte", style=create_paragraph_style(font_size=14))
         pdf.spacer(height=20)
         pdf.table(self.attendee_table_data, self.attendee_column_widths(),
                   style=get_table_style(self.full_span_attendee_lines))
         pdf.spacer(height=25)
 
         if self.waiters.count() > 0:
-            pdf.p(u"Venteliste", style=create_paragraph_style(font_size=14))
+            pdf.p("Venteliste", style=create_paragraph_style(font_size=14))
             pdf.spacer(height=20)
             pdf.table(self.waiters_table_data, self.attendee_column_widths(),
                       style=get_table_style(self.full_span_waiters_lines))
             pdf.spacer(height=25)
 
         if self.reservees and self.reservees.count() > 0:
-            pdf.p(u"Reservasjoner", style=create_paragraph_style(font_size=14))
+            pdf.p("Reservasjoner", style=create_paragraph_style(font_size=14))
             pdf.spacer(height=20)
             pdf.table(self.reservee_table_data, self.reservee_column_widths(), style=get_table_style())
             pdf.spacer(height=25)
 
         if self.allergies_table_data:
-            pdf.p(u"Allergier", style=create_paragraph_style(font_size=14))
+            pdf.p("Allergier", style=create_paragraph_style(font_size=14))
             pdf.spacer(height=20)
             pdf.table(self.allergies_table_data, self.allergies_column_widths(), style=get_table_style())
             pdf.spacer(height=25)

@@ -38,26 +38,26 @@ class UnhandledImage(models.Model):
         UnhandledImage Metaclass
         """
 
-        verbose_name = _(u'Ubehandlet bilde')
-        verbose_name_plural = _(u'Ubehandlede bilder')
+        verbose_name = _('Ubehandlet bilde')
+        verbose_name_plural = _('Ubehandlede bilder')
         permissions = (
-            ('view_unhandledimage', _(u'View UnhandledImage')),
+            ('view_unhandledimage', _('View UnhandledImage')),
         )
 
 
 # TODO: Introduce tags to images
 class ResponsiveImage(models.Model):
-    name = models.CharField(u'Navn', max_length=200, null=False)
+    name = models.CharField('Navn', max_length=200, null=False)
     timestamp = models.DateTimeField(auto_now_add=True, editable=False, null=False, blank=False)
-    description = models.TextField(u'Beskrivelse', blank=True, default='', max_length=2048)
-    image_original = models.ImageField(u'Originalbilde', upload_to=gallery_settings.RESPONSIVE_IMAGES_PATH)
-    image_wide = models.ImageField(u'Bredformat', upload_to=gallery_settings.RESPONSIVE_IMAGES_WIDE_PATH)
-    image_lg = models.ImageField(u'LG Bilde', upload_to=gallery_settings.RESPONSIVE_IMAGES_PATH)
-    image_md = models.ImageField(u'MD Bilde', upload_to=gallery_settings.RESPONSIVE_IMAGES_PATH)
-    image_sm = models.ImageField(u'SM Bilde', upload_to=gallery_settings.RESPONSIVE_IMAGES_PATH)
-    image_xs = models.ImageField(u'XS Bilde', upload_to=gallery_settings.RESPONSIVE_IMAGES_PATH)
-    thumbnail = models.ImageField(u'Thumbnail', upload_to=gallery_settings.RESPONSIVE_THUMBNAIL_PATH)
-    photographer = models.CharField(u'Fotograf', max_length=100, null=False, blank=True, default='')
+    description = models.TextField('Beskrivelse', blank=True, default='', max_length=2048)
+    image_original = models.ImageField('Originalbilde', upload_to=gallery_settings.RESPONSIVE_IMAGES_PATH)
+    image_wide = models.ImageField('Bredformat', upload_to=gallery_settings.RESPONSIVE_IMAGES_WIDE_PATH)
+    image_lg = models.ImageField('LG Bilde', upload_to=gallery_settings.RESPONSIVE_IMAGES_PATH)
+    image_md = models.ImageField('MD Bilde', upload_to=gallery_settings.RESPONSIVE_IMAGES_PATH)
+    image_sm = models.ImageField('SM Bilde', upload_to=gallery_settings.RESPONSIVE_IMAGES_PATH)
+    image_xs = models.ImageField('XS Bilde', upload_to=gallery_settings.RESPONSIVE_IMAGES_PATH)
+    thumbnail = models.ImageField('Thumbnail', upload_to=gallery_settings.RESPONSIVE_THUMBNAIL_PATH)
+    photographer = models.CharField('Fotograf', max_length=100, null=False, blank=True, default='')
     tags = TaggableManager(help_text="En komma eller mellomrom-separert liste med tags.")
 
     def __str__(self):
@@ -88,13 +88,13 @@ class ResponsiveImage(models.Model):
             assert self.image_sm.width is not None
             assert self.image_xs.width is not None
         except OSError:
-            log.warning(u'Caught OSError for image file reference for ResponsiveImage %d (%s)' % (
+            log.warning('Caught OSError for image file reference for ResponsiveImage %d (%s)' % (
                 self.id,
                 self.filename
             ))
             return False
         except IOError:
-            log.warning(u'Caught OSError for image file reference for ResponsiveImage %d (%s)' % (
+            log.warning('Caught OSError for image file reference for ResponsiveImage %d (%s)' % (
                 self.id,
                 self.filename
             ))
@@ -117,7 +117,7 @@ class ResponsiveImage(models.Model):
             total += self.image_wide.size
             total += self.image_original.size
         except OSError:
-            logging.getLogger(__name__).error(u'Orphaned ResponsiveImage object: %d (%s)' % (self.id, self.filename))
+            logging.getLogger(__name__).error('Orphaned ResponsiveImage object: %d (%s)' % (self.id, self.filename))
 
         return total
 
@@ -168,8 +168,8 @@ class ResponsiveImage(models.Model):
         ResponsiveImage Metaclass
         """
 
-        verbose_name = _(u'Responsivt Bilde')
-        verbose_name_plural = _(u'Responsive Bilder')
+        verbose_name = _('Responsivt Bilde')
+        verbose_name_plural = _('Responsive Bilder')
         permissions = (
-            ('view_responsiveimage', _(u'View ResponsiveImage')),
+            ('view_responsiveimage', _('View ResponsiveImage')),
         )

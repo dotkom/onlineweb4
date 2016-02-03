@@ -16,6 +16,7 @@ from apps.splash.models import SplashYear
 
 import icalendar
 import logging
+from functools import reduce
 
 
 def get_group_restricted_events(user, all_events=False):
@@ -52,17 +53,17 @@ def get_types_allowed(user):
 
 def handle_waitlist_bump(event, host, attendees, payment=None):
 
-    title = u'Du har fått plass på %s' % event.title
+    title = 'Du har fått plass på %s' % (event.title)
 
-    message = u'Du har stått på venteliste for arrangementet "%s" og har nå fått plass.\n' % (unicode(event.title))
+    message = 'Du har stått på venteliste for arrangementet "%s" og har nå fått plass.\n' % (str(event.title))
 
     if payment:
         message += _handle_waitlist_bump_payment(payment, attendees, message)
     else:
-        message += u"Det kreves ingen ekstra handling fra deg med mindre du vil melde deg av."
+        message += "Det kreves ingen ekstra handling fra deg med mindre du vil melde deg av."
 
-    message += u"\n\nFor mer info:"
-    message += u"\nhttp://%s%s" % (host, event.get_absolute_url())
+    message += "\n\nFor mer info:"
+    message += "\nhttp://%s%s" % (host, event.get_absolute_url())
 
     for attendee in attendees:
         send_mail(title, message, settings.DEFAULT_FROM_EMAIL, [attendee.user.email])
@@ -349,9 +350,9 @@ def handle_mail_participants(event, _from_email, _to_email_value, subject, _mess
 
     # Send mail
     try:
-        _email_sent = EmailMessage(unicode(subject), unicode(message), from_email, [], to_emails).send()
-        logger.info(u'Sent mail to %s for event "%s".' % (_to_email_options[_to_email_value][1], event))
+        _email_sent = EmailMessage(str(subject), str(message), from_email, [], to_emails).send()
+        logger.info('Sent mail to %s for event "%s".' % (_to_email_options[_to_email_value][1], event))
         return _email_sent, all_attendees, attendees_on_waitlist, attendees_not_paid
-    except Exception, e:
-        logger.error(u'Something went wrong while trying to send mail to %s for event "%s"\n%s' %
+    except Exception as e:
+        logger.error('Something went wrong while trying to send mail to %s for event "%s"\n%s' %
                      (_to_email_options[_to_email_value][1], event, e))

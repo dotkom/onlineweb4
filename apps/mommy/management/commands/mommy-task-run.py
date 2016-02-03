@@ -9,9 +9,9 @@ class Command(BaseCommand):
     @staticmethod
     def print_job_names():
         possible_jobs = []
-        for task, _ in mommy.schedule.tasks.iteritems():
+        for task, _ in mommy.schedule.tasks.items():
             possible_jobs.append(task.__name__)
-        print "possible jobs:" + str(possible_jobs)
+        print("possible jobs:" + str(possible_jobs))
 
     def handle(self, *args, **options):
         mommy.autodiscover()
@@ -22,8 +22,8 @@ class Command(BaseCommand):
 
         # run shit
         do_name = args[0]
-        for task, _ in mommy.schedule.tasks.iteritems():
+        for task, _ in mommy.schedule.tasks.items():
             if task.__name__ == do_name:
                 task.run()
                 return
-        print "could not find job:" + do_name
+        print("could not find job:" + do_name)

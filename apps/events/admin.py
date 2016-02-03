@@ -208,8 +208,8 @@ class ReservationAdmin(VersionAdmin):
         if number_of_free_seats < obj.seats:
             obj.seats = number_of_free_seats
             self.message_user(request, _(
-                u"Du har valgt et antall reserverte plasser som overskrider antallet ledige plasser for dette "
-                u"arrangementet. Antallet ble automatisk justert til %d (alle ledige plasser)."
+                "Du har valgt et antall reserverte plasser som overskrider antallet ledige plasser for dette "
+                "arrangementet. Antallet ble automatisk justert til %d (alle ledige plasser)."
             ) % number_of_free_seats, messages.WARNING)
         obj.save()
 

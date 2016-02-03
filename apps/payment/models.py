@@ -21,9 +21,9 @@ User = settings.AUTH_USER_MODEL
 class Payment(models.Model):
 
     TYPE_CHOICES = (
-        (1, _(u'Umiddelbar')),
-        (2, _(u'Frist')),
-        (3, _(u'Utsettelse')),
+        (1, _('Umiddelbar')),
+        (2, _('Frist')),
+        (3, _('Utsettelse')),
     )
 
     STRIPE_KEY_CHOICES = (
@@ -35,17 +35,17 @@ class Payment(models.Model):
     content_type = models.ForeignKey(ContentType)
     object_id = models.PositiveIntegerField()
     content_object = GenericForeignKey()
-    stripe_key_index = models.SmallIntegerField(_(u'stripe key'), choices=STRIPE_KEY_CHOICES)
+    stripe_key_index = models.SmallIntegerField(_('stripe key'), choices=STRIPE_KEY_CHOICES)
 
-    payment_type = models.SmallIntegerField(_(u'type'), choices=TYPE_CHOICES)
+    payment_type = models.SmallIntegerField(_('type'), choices=TYPE_CHOICES)
 
     # Optional fields depending on payment type
-    deadline = models.DateTimeField(_(u"frist"), blank=True, null=True)
+    deadline = models.DateTimeField(_("frist"), blank=True, null=True)
     active = models.BooleanField(default=True)
-    delay = models.SmallIntegerField(_(u'utsettelse'), blank=True, null=True, default=2)
+    delay = models.SmallIntegerField(_('utsettelse'), blank=True, null=True, default=2)
 
     # For logging and history
-    added_date = models.DateTimeField(_(u"opprettet dato"), auto_now=True)
+    added_date = models.DateTimeField(_("opprettet dato"), auto_now=True)
     changed_date = models.DateTimeField(auto_now=True, editable=False)
     last_changed_by = models.ForeignKey(User, editable=False, null=True)  # Blank and null is temperarly
 
@@ -123,11 +123,11 @@ class Payment(models.Model):
         if self._is_type(AttendanceEvent):
             attendance_event = self.content_object
             if attendance_event.unattend_deadline < timezone.now():
-                return False, _(u"Fristen for og melde seg av har utgått")
+                return False, _("Fristen for og melde seg av har utgått")
             if len(Attendee.objects.filter(event=attendance_event, user=payment_relation.user)) == 0:
-                return False, _(u"Du er ikke påmeldt dette arrangementet.")
+                return False, _("Du er ikke påmeldt dette arrangementet.")
             if attendance_event.event.event_start < timezone.now():
-                return False, _(u"Dette arrangementet har allerede startet.")
+                return False, _("Dette arrangementet har allerede startet.")
 
             return True, ''
 
@@ -139,27 +139,27 @@ class Payment(models.Model):
     def _is_type(self, model_type):
         return ContentType.objects.get_for_model(model_type) == self.content_type
 
-    def __unicode__(self):
+    def __str__(self):
         return self.description()
 
     class Meta(object):
         unique_together = ('content_type', 'object_id')
 
-        verbose_name = _(u"betaling")
-        verbose_name_plural = _(u"betalinger")
+        verbose_name = _("betaling")
+        verbose_name_plural = _("betalinger")
 
 
 class PaymentPrice(models.Model):
     payment = models.ForeignKey(Payment)
-    price = models.IntegerField(_(u"pris"))
+    price = models.IntegerField(_("pris"))
     description = models.CharField(max_length=128, null=True, blank=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return str(self.price)
 
     class Meta(object):
-        verbose_name = _(u"pris")
-        verbose_name_plural = _(u"priser")
+        verbose_name = _("pris")
+        verbose_name_plural = _("priser")
 
 
 class PaymentRelation(models.Model):
@@ -177,12 +177,12 @@ class PaymentRelation(models.Model):
             self.unique_id = str(uuid.uuid4())
         super(PaymentRelation, self).save(*args, **kwargs)
 
-    def __unicode__(self):
-        return self.payment.description() + " - " + unicode(self.user)
+    def __str__(self):
+        return self.payment.description() + " - " + str(self.user)
 
     class Meta(object):
-        verbose_name = _(u"betalingsrelasjon")
-        verbose_name_plural = _(u"betalingsrelasjoner")
+        verbose_name = _("betalingsrelasjon")
+        verbose_name_plural = _("betalingsrelasjoner")
 
 
 class PaymentDelay(models.Model):
@@ -192,14 +192,14 @@ class PaymentDelay(models.Model):
 
     active = models.BooleanField(default=True)
 
-    def __unicode__(self):
-        return self.payment.description() + " - " + unicode(self.user)
+    def __str__(self):
+        return self.payment.description() + " - " + str(self.user)
 
     class Meta(object):
         unique_together = ('payment', 'user')
 
-        verbose_name = _(u'betalingsutsettelse')
-        verbose_name_plural = _(u'betalingsutsettelser')
+        verbose_name = _('betalingsutsettelse')
+        verbose_name_plural = _('betalingsutsettelser')
 
 
 class PaymentTransaction(models.Model):

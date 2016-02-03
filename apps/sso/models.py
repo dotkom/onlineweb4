@@ -15,7 +15,7 @@ class Client(AbstractApplication):
     scopes on a per-client basis.
     """
 
-    scopes = TextField(verbose_name=_(u'Tilganger'), blank=True)
+    scopes = TextField(verbose_name=_('Tilganger'), blank=True)
 
     def get_scopes(self):
         """

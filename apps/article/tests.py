@@ -13,5 +13,5 @@ class ArticleTests(TestCase):
         self.article = G(Article, heading="test_heading")
 
     def testArticleUnicodeIsCorrect(self):
-        self.logger.debug("Article __unicode__() should return correct heading")
-        self.assertEqual(self.article.__unicode__(), "test_heading")
+        self.logger.debug("Article __str__() should return correct heading")
+        self.assertEqual(self.article.__str__(), "test_heading")

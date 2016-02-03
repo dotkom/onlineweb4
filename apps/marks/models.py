@@ -42,50 +42,50 @@ class MarksManager(models.Manager):
 
 class Mark(models.Model):
     CATEGORY_CHOICES = (
-        (0, _(u"Ingen")),
-        (1, _(u"Sosialt")),
-        (2, _(u"Bedriftspresentasjon")),
-        (3, _(u"Kurs")),
-        (4, _(u"Tilbakemelding")),
-        (5, _(u"Kontoret")),
-        (6, _(u"Betaling")),
+        (0, _("Ingen")),
+        (1, _("Sosialt")),
+        (2, _("Bedriftspresentasjon")),
+        (3, _("Kurs")),
+        (4, _("Tilbakemelding")),
+        (5, _("Kontoret")),
+        (6, _("Betaling")),
     )
 
-    title = models.CharField(_(u"tittel"), max_length=155)
-    added_date = models.DateField(_(u"utdelt dato"))
+    title = models.CharField(_("tittel"), max_length=155)
+    added_date = models.DateField(_("utdelt dato"))
     given_by = models.ForeignKey(
         User,
         related_name="mark_given_by",
-        verbose_name=_(u"gitt av"),
+        verbose_name=_("gitt av"),
         editable=False,
         null=True,
         blank=True
     )
-    last_changed_date = models.DateTimeField(_(u"sist redigert"), auto_now=True, editable=False)
+    last_changed_date = models.DateTimeField(_("sist redigert"), auto_now=True, editable=False)
     last_changed_by = models.ForeignKey(
         User,
         related_name="marks_last_changed_by",
-        verbose_name=_(u"sist redigert av"),
+        verbose_name=_("sist redigert av"),
         editable=False,
         null=True,
         blank=False
     )
     description = models.CharField(
-        _(u"beskrivelse"),
+        _("beskrivelse"),
         max_length=255,
         help_text=_(
-            u"Hvis dette feltet etterlates blankt vil det fylles med en standard grunn for typen prikk som er valgt."
+            "Hvis dette feltet etterlates blankt vil det fylles med en standard grunn for typen prikk som er valgt."
         ),
         blank=True
     )
-    category = models.SmallIntegerField(_(u"kategori"), choices=CATEGORY_CHOICES, default=0)
+    category = models.SmallIntegerField(_("kategori"), choices=CATEGORY_CHOICES, default=0)
 
     # managers
     objects = models.Manager()  # default manager
     marks = MarksManager()  # active marks manager
 
-    def __unicode__(self):
-        return _(u"Prikk for %s") % self.title
+    def __str__(self):
+        return _("Prikk for %s") % self.title
 
     def save(self, *args, **kwargs):
         if not self.added_date:
@@ -99,8 +99,8 @@ class Mark(models.Model):
             _fix_mark_history(user)
 
     class Meta(object):
-        verbose_name = _(u"Prikk")
-        verbose_name_plural = _(u"Prikker")
+        verbose_name = _("Prikk")
+        verbose_name_plural = _("Prikker")
         permissions = (
             ('view_mark', 'View Mark'),
         )
@@ -113,7 +113,7 @@ class MarkUser(models.Model):
     mark = models.ForeignKey(Mark, related_name="given_to")
     user = models.ForeignKey(User)
 
-    expiration_date = models.DateField(_(u"utløpsdato"), editable=False)
+    expiration_date = models.DateField(_("utløpsdato"), editable=False)
 
     def save(self, *args, **kwargs):
         run_history_update = False
@@ -128,8 +128,8 @@ class MarkUser(models.Model):
         super(MarkUser, self).delete()
         _fix_mark_history(self.user)
 
-    def __unicode__(self):
-        return _(u"Mark entry for user: %s") % self.user.get_full_name()
+    def __str__(self):
+        return _("Mark entry for user: %s") % self.user.get_full_name()
 
     class Meta:
         unique_together = ("user", "mark")
@@ -207,16 +207,16 @@ def _get_with_duration_and_vacation(added_date=timezone.now()):
 class Suspension(models.Model):
 
     user = models.ForeignKey(User)
-    title = models.CharField(_(u'tittel'), max_length=64)
-    description = models.CharField(_(u"beskrivelse"), max_length=255)
+    title = models.CharField(_('tittel'), max_length=64)
+    description = models.CharField(_("beskrivelse"), max_length=255)
     active = models.BooleanField(default=True)
     added_date = models.DateTimeField(auto_now=True, editable=False)
-    expiration_date = models.DateField(_(u"utløpsdato"), null=True, blank=True)
+    expiration_date = models.DateField(_("utløpsdato"), null=True, blank=True)
 
     # Using id because foreign key to Payment caused circular dependencies
     payment_id = models.IntegerField(null=True, blank=True)
 
-    def __unicode__(self):
-        return "Suspension: " + unicode(self.user)
+    def __str__(self):
+        return "Suspension: " + str(self.user)
 
     # TODO URL

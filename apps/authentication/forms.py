@@ -11,7 +11,7 @@ from apps.authentication.models import OnlineUser as User, Email
 
 class LoginForm(forms.Form):
     username = forms.CharField(widget=forms.TextInput(), label=_("Brukernavn"), max_length=50)
-    password = forms.CharField(widget=forms.PasswordInput(), label=_(u"Passord"))
+    password = forms.CharField(widget=forms.PasswordInput(), label=_("Passord"))
     user = None
 
     def clean(self):
@@ -32,12 +32,12 @@ class LoginForm(forms.Form):
                 self.user = user
             else:
                 self._errors['username'] = self.error_class(
-                    [_(u"Din konto er ikke aktiv. Forsøk gjenoppretning av passord.")]
+                    [_("Din konto er ikke aktiv. Forsøk gjenoppretning av passord.")]
                 )
         else:
             # This error will also be produced if the email supplied does not exist.
             self._errors['username'] = self.error_class(
-                [_(u"Kontoen eksisterer ikke, eller kombinasjonen av brukernavn og passord er feil.")]
+                [_("Kontoen eksisterer ikke, eller kombinasjonen av brukernavn og passord er feil.")]
             )
         return self.cleaned_data
 
@@ -52,18 +52,18 @@ class RegisterForm(forms.Form):
     username = forms.CharField(
         label=_("Brukernavn"),
         max_length=20,
-        help_text=u'Valgfritt brukernavn. (Konverteres automatisk til små bokstaver.)'
+        help_text='Valgfritt brukernavn. (Konverteres automatisk til små bokstaver.)'
     )
     first_name = forms.CharField(
         label=_("Fornavn"),
         max_length=50,
-        help_text=u'Mellomnavn inkluderer du etter fornavnet ditt'
+        help_text='Mellomnavn inkluderer du etter fornavnet ditt'
     )
     last_name = forms.CharField(label=_("Etternavn"), max_length=50)
     email = forms.EmailField(
         label=_("Epost"),
         max_length=50,
-        help_text=u'Du kan legge til flere epostadresser senere i din profil.'
+        help_text='Du kan legge til flere epostadresser senere i din profil.'
     )
     password = forms.CharField(widget=forms.PasswordInput(), label=_("Passord"))
     repeat_password = forms.CharField(widget=forms.PasswordInput(), label=_("Gjenta passord"))
@@ -77,7 +77,7 @@ class RegisterForm(forms.Form):
         label=_("Postnummer"),
         max_length=4,
         required=False,
-        help_text=u'Vi henter by basert på postnummer'
+        help_text='Vi henter by basert på postnummer'
     )
     phone = forms.CharField(label=_("Telefon"), max_length=20, required=False)
 
@@ -88,21 +88,21 @@ class RegisterForm(forms.Form):
 
             # Check passwords
             if cleaned_data['password'] != cleaned_data['repeat_password']:
-                self._errors['repeat_password'] = self.error_class([_(u"Passordene er ikke like.")])
+                self._errors['repeat_password'] = self.error_class([_("Passordene er ikke like.")])
 
             # Check username
             username = cleaned_data['username']
             if User.objects.filter(username=username).count() > 0:
-                self._errors['username'] = self.error_class([_(u"Brukernavnet er allerede registrert.")])
+                self._errors['username'] = self.error_class([_("Brukernavnet er allerede registrert.")])
             if not re.match("^[a-zA-Z0-9_-]+$", username):
                 self._errors['username'] = self.error_class([
-                    _(u"Ditt brukernavn inneholdt ulovlige tegn. Lovlige tegn: a-Z 0-9 - _")
+                    _("Ditt brukernavn inneholdt ulovlige tegn. Lovlige tegn: a-Z 0-9 - _")
                 ])
 
             # Check email
             email = cleaned_data['email'].lower()
             if Email.objects.filter(email=email).count() > 0:
-                self._errors['email'] = self.error_class([_(u"Det fins allerede en bruker med denne epostadressen.")])
+                self._errors['email'] = self.error_class([_("Det fins allerede en bruker med denne epostadressen.")])
 
             # Check if it's studmail and if someone else already has it in their profile
             if re.match(r'[^@]+@stud\.ntnu\.no', email):
@@ -110,14 +110,14 @@ class RegisterForm(forms.Form):
                 user = User.objects.filter(ntnu_username=ntnu_username)
                 if user.count() == 1:
                     self._errors['email'] = self.error_class([
-                        _(u"En bruker med dette NTNU-brukernavnet fins allerede.")
+                        _("En bruker med dette NTNU-brukernavnet fins allerede.")
                     ])
 
             # ZIP code digits only
             zip_code = cleaned_data['zip_code']
             if len(zip_code) != 0:
                 if len(zip_code) != 4 or not zip_code.isdigit():
-                    self._errors['zip_code'] = self.error_class([_(u"Postnummer må bestå av fire siffer.")])
+                    self._errors['zip_code'] = self.error_class([_("Postnummer må bestå av fire siffer.")])
 
             return cleaned_data
 
@@ -139,8 +139,8 @@ class RecoveryForm(forms.Form):
 
 
 class ChangePasswordForm(forms.Form):
-    new_password = forms.CharField(widget=forms.PasswordInput(), label=_(u"Nytt passord"))
-    repeat_password = forms.CharField(widget=forms.PasswordInput(), label=_(u"Gjenta passord"))
+    new_password = forms.CharField(widget=forms.PasswordInput(), label=_("Nytt passord"))
+    repeat_password = forms.CharField(widget=forms.PasswordInput(), label=_("Gjenta passord"))
 
     def clean(self):
         super(ChangePasswordForm, self).clean()
@@ -149,10 +149,10 @@ class ChangePasswordForm(forms.Form):
 
             # Check passwords
             if cleaned_data['new_password'] != cleaned_data['repeat_password']:
-                self._errors['repeat_password'] = self.error_class([_(u"Passordene er ikke like.")])
+                self._errors['repeat_password'] = self.error_class([_("Passordene er ikke like.")])
 
             return cleaned_data
 
 
 class NewEmailForm(forms.Form):
-    new_email = forms.EmailField(label=_(u"ny epostadresse"))
+    new_email = forms.EmailField(label=_("ny epostadresse"))
