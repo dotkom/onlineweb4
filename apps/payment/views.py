@@ -249,13 +249,13 @@ def _send_saldo_confirmation_mail(email, amount):
     subject = _("kvittering saldo inskudd")
     from_mail = settings.EMAIL_TRIKOM
 
-    message = _("Kvitering på saldo inskudd på ") + unicode(amount)
+    message = _("Kvitering på saldo inskudd på ") + str(amount)
     message += _(" til din Online saldo.")
     message += "\n"
     message += "\n"
     message += _("Dersom du har problemer eller spørsmål, send mail til") + ": " + from_mail
 
-    EmailMessage(subject, unicode(message), from_mail, [], [email]).send()
+    EmailMessage(subject, str(message), from_mail, [], [email]).send()
 
 
 def _send_webshop_mail(order_line):

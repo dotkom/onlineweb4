@@ -51,7 +51,7 @@ class PaymentDelayAdmin(VersionAdmin):
 
 class PaymentTransactionAdmin(VersionAdmin):
     model = PaymentTransaction
-    list_display = ('__unicode__', 'user', 'datetime')
+    list_display = ('__str__', 'user', 'datetime')
 
 admin.site.register(Payment, PaymentAdmin)
 admin.site.register(PaymentRelation, PaymentRelationAdmin)
