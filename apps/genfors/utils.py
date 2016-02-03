@@ -89,7 +89,7 @@ def handle_not_locked(self, admin):
         raise NotImplementedError
 
     if results:
-        winner = max(results.iterkeys(), key=(lambda key: results[key]))
+        winner = max(results.keys(), key=(lambda key: results[key]))
         winner_votes = results[winner]
 
         minimum = 0
@@ -188,7 +188,7 @@ def _handle_user_login(request, form):
         # Trying to get anonymous voter object too, if not found the secret code was wrong
         anon_voter = anonymous_voter(h, request.user.username)
         if not anon_voter:
-            messages.error(request, u'Feil personlig kode')
+            messages.error(request, 'Feil personlig kode')
 
     response = redirect('genfors_index')
     if anon_voter:

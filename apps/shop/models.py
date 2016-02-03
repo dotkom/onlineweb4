@@ -27,8 +27,8 @@ class Order(models.Model):
     def reduce_stock(self):
         self.content_object.reduce_stock(self.quantity)
 
-    def __unicode__(self):
-        return unicode(self.content_object)
+    def __str__(self):
+        return str(self.content_object)
 
 
 class OrderLine(models.Model):
@@ -62,5 +62,5 @@ class OrderLine(models.Model):
         self.paid = True
         self.save()
 
-    def __unicode__(self):
-        return unicode(self.pk)
+    def __str__(self):
+        return str(self.pk)

@@ -209,8 +209,8 @@ class PaymentTransaction(models.Model):
 
     datetime = models.DateTimeField(auto_now=True)
 
-    def __unicode__(self):
-        return unicode(self.user) + " - " + unicode(self.amount) + "(" + unicode(self.datetime) + ")"
+    def __str__(self):
+        return str(self.user) + " - " + str(self.amount) + "(" + str(self.datetime) + ")"
 
     def save(self, *args, **kwargs):
         if not self.pk:
@@ -224,5 +224,5 @@ class PaymentTransaction(models.Model):
 
     class Meta:
         ordering = ['-datetime']
-        verbose_name = _(u'transaksjon')
-        verbose_name_plural = _(u'transaksjoner')
+        verbose_name = _('transaksjon')
+        verbose_name_plural = _('transaksjoner')

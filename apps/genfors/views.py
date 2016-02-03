@@ -373,9 +373,9 @@ def question_validate(request, question_id):
 
 def _handle_inactive_meeting(request):
     if get_next_meeting():
-        messages.error(request, _(u'Den gjeldende generalforsamlingen er ikke aktiv enda eller har utgått'))
+        messages.error(request, _('Den gjeldende generalforsamlingen er ikke aktiv enda eller har utgått'))
     else:
-        messages.error(request, _(u'Det finnes ingen aktiv generalforsamling'))
+        messages.error(request, _('Det finnes ingen aktiv generalforsamling'))
     return redirect('genfors_admin')
 
 
@@ -395,11 +395,11 @@ def handle_question_admin_update(request, context, question_id):
         question = form.save(commit=False)
         if not question.pk:
             question.meeting = meeting
-            messages.success(request, _(u'Nytt spørsmål lagt til'))
+            messages.success(request, _('Nytt spørsmål lagt til'))
         else:
             # Resetting question votes
             question.reset_question()
-            messages.success(request, _(u'Spørsmål ble oppdatert'))
+            messages.success(request, _('Spørsmål ble oppdatert'))
         question.save()
 
         if question.question_type == 1:
@@ -430,7 +430,7 @@ def handle_question_admin_detail(request, context, question_id):
         if q:
             q_alt = q.get_alternatives()
         else:
-            messages.error(request, u'Spørsmålet finnes ikke eller har allerede blitt stengt.')
+            messages.error(request, 'Spørsmålet finnes ikke eller har allerede blitt stengt.')
             return redirect('genfors_admin')
     else:
         context['create'] = True
@@ -454,18 +454,18 @@ def handle_user_vote(request, m, a, r):
     """
     q = m.get_active_question()
     if not q:
-        messages.error(request, u'Saken har blitt slettet')
+        messages.error(request, 'Saken har blitt slettet')
         return redirect('genfors_index')
     if not r:
-        messages.error(request, u'Du er ikke registrert som oppmøtt, og kan derfor ikke avlegge stemme.')
+        messages.error(request, 'Du er ikke registrert som oppmøtt, og kan derfor ikke avlegge stemme.')
         return redirect('genfors_index')
     if not r.can_vote:
-        messages.error(request, u'Du har ikke tilgang til å avlegge stemme')
+        messages.error(request, 'Du har ikke tilgang til å avlegge stemme')
         return redirect('genfors_index')
     # v(ote) is either AnonymousVoter or RegisterVoter
     v = a if q.anonymous else r
     if q.already_voted(v):
-        messages.error(request, u'Du har allerede avlagt en stemme i denne saken.')
+        messages.error(request, 'Du har allerede avlagt en stemme i denne saken.')
         return redirect('genfors_index')
     # If user is registered and has not cast a vote on the active question
     else:
@@ -484,7 +484,7 @@ def _handle_actual_user_voting(request, q, v):
 
     messages.error(
         request,
-        u'Det ble forsøkt å stemme på et ugyldig alternativ, stemmen ble ikke registrert.'
+        'Det ble forsøkt å stemme på et ugyldig alternativ, stemmen ble ikke registrert.'
     )
     return redirect('genfors_index')
 
@@ -500,7 +500,7 @@ def _handle_boolean_vote(request, alt, q, v):
         elif alt == 2:
             the_vote = BooleanVote(voter=v, question=q, answer=False)
         the_vote.save()
-        messages.success(request, u'Din stemme ble registrert!')
+        messages.success(request, 'Din stemme ble registrert!')
         return redirect('genfors_index')
 
 
@@ -512,14 +512,14 @@ def _handle_multiple_choice_vote(request, alt, q, v):
         if alt == 0:
             the_vote = MultipleChoice(voter=v, question=q, answer=None)
             the_vote.save()
-            messages.success(request, u'Din stemme ble registrert!')
+            messages.success(request, 'Din stemme ble registrert!')
             return redirect('genfors_index')
         else:
             choice = Alternative.objects.get(alt_id=alt, question=q)
             if choice:
                 the_vote = MultipleChoice(voter=v, question=q, answer=choice)
                 the_vote.save()
-                messages.success(request, u'Din stemme ble registrert!')
+                messages.success(request, 'Din stemme ble registrert!')
                 return redirect('genfors_index')
 
 
@@ -539,14 +539,14 @@ def _handle_q(context, anon_voter, reg_voter, q):
         votes = q.get_votes()
         if q.anonymous:
             if q.question_type == 0:
-                genfors["question"]["votes"] = [[unicode(v.voter.anonymousvoter), v.answer] for v in votes]
+                genfors["question"]["votes"] = [[str(v.voter.anonymousvoter), v.answer] for v in votes]
             elif q.question_type == 1:
                 genfors["question"]["votes"] = [
                     [
-                        unicode(v.voter.anonymousvoter),
+                        str(v.voter.anonymousvoter),
                         v.answer.description
                     ] if v.answer else [
-                        unicode(v.voter.anonymousvoter),
+                        str(v.voter.anonymousvoter),
                         "Blankt"
                     ] for v in votes
                 ]
@@ -556,14 +556,14 @@ def _handle_q(context, anon_voter, reg_voter, q):
 
         else:
             if q.question_type == 0:
-                genfors["question"]["votes"] = [[unicode(v.voter.registeredvoter), v.answer] for v in votes]
+                genfors["question"]["votes"] = [[str(v.voter.registeredvoter), v.answer] for v in votes]
             elif q.question_type == 1:
                 genfors["question"]["votes"] = [
                     [
-                        unicode(v.voter.registeredvoter),
+                        str(v.voter.registeredvoter),
                         v.answer.description
                     ] if v.answer else [
-                        unicode(v.voter.registeredvoter),
+                        str(v.voter.registeredvoter),
                         "Blankt"
                     ] for v in votes
                 ]

@@ -54,17 +54,17 @@ def responsive_image_delete(sender, instance, **kwargs):
     # Start by temporarily disabling the post_delete signal, so we dont have a large branching factor of
     # delete signals. We have already pre-set the UUID used by the initial connect, so we know
     # what to disconnect.
-    log.debug(u'Detaching post_delete signal before removing possible orphan ResponsiveImage')
+    log.debug('Detaching post_delete signal before removing possible orphan ResponsiveImage')
     post_delete.disconnect(dispatch_uid=resp_img_uuid, sender=sender)
 
     # Next we iterate over all the responsive images and check file status. If an orphan exists, it is deleted.
     for resp_img in ResponsiveImage.objects.filter(image_original=filename):
         if not resp_img.file_status_ok():
-            log.info(u'ResponsiveImage delete signal hook detected orphaned objets, deleting (ID: %d)' % resp_img.id)
+            log.info('ResponsiveImage delete signal hook detected orphaned objets, deleting (ID: %d)' % resp_img.id)
             resp_img.delete()
 
     # Now we re-attach the post_delete signal, and issue a new UUID as dispatch ID.
-    log.debug(u'Re-attaching post_delete signal for ResponsiveImage')
+    log.debug('Re-attaching post_delete signal for ResponsiveImage')
     post_delete.connect(receiver=responsive_image_delete, dispatch_uid=uuid.uuid1(), sender=ResponsiveImage)
 
 # Listen for ResponsiveImage.delete() signals, so we can remove the image files accordingly.

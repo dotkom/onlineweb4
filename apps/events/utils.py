@@ -76,26 +76,26 @@ def _handle_waitlist_bump_payment(payment, attendees, message):
     if payment.payment_type == 1:  # Instant
         for attendee in attendees:
             payment.create_payment_delay(attendee.user, extended_deadline)
-        message += u"Dette arrangementet krever betaling og du må betale innen 48 timer."
+        message += "Dette arrangementet krever betaling og du må betale innen 48 timer."
 
     elif payment.payment_type == 2:  # Deadline
         if payment.deadline > extended_deadline:  # More than 2 days left of payment deadline
-            message += u"Dette arrangementet krever betaling og fristen for og betale er %s" \
+            message += "Dette arrangementet krever betaling og fristen for og betale er %s" \
                        % (payment.deadline.strftime('%-d %B %Y kl: %H:%M'))
         else:  # The deadline is in less than 2 days
             for attendee in attendees:
                 payment.create_payment_delay(attendee.user, extended_deadline)
-            message += u"Dette arrangementet krever betaling og du har 48 timer på å betale"
+            message += "Dette arrangementet krever betaling og du har 48 timer på å betale"
 
     elif payment.payment_type == 3:  # Delay
         deadline = timezone.now() + timedelta(days=payment.delay)
         for attendee in attendees:
             payment.create_payment_delay(attendee.user, deadline)
-        message += u"Dette arrangementet krever betaling og du må betale innen %d dager." % payment.delay
+        message += "Dette arrangementet krever betaling og du må betale innen %d dager." % payment.delay
     if len(payment.prices()) == 1:
-        message += u"\nPrisen for dette arrangementet er %skr." % payment.prices()[0].price
+        message += "\nPrisen for dette arrangementet er %skr." % payment.prices()[0].price
     # elif len(payment.prices()) >= 2:
-    #     message += u"\nDette arrangementet har flere prisklasser:"
+    #     message += "\nDette arrangementet har flere prisklasser:"
     #     for payment_price in payment.prices():
     #         message += "\n%s: %skr" % (payment_price.description, payment_price.price)
     return message

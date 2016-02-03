@@ -595,7 +595,7 @@ class AttendanceEvent(models.Model):
         # Is suspended
         if self.is_suspended(user):
             response['status'] = False
-            response['message'] = _(u"Du er suspandert og kan ikke melde deg på.")
+            response['message'] = _("Du er suspandert og kan ikke melde deg på.")
             response['status_code'] = 402
 
             return response
@@ -626,7 +626,7 @@ class AttendanceEvent(models.Model):
                         or 'offset' not in response:
                     response['status'] = False
                     response['status_code'] = 401
-                    response['message'] = _(u"Din påmelding er utsatt grunnet prikker.")
+                    response['message'] = _("Din påmelding er utsatt grunnet prikker.")
                     response['offset'] = postponed_registration_start
         return response
 
@@ -669,7 +669,7 @@ class AttendanceEvent(models.Model):
         if not user.is_member:
             return {
                 'status': False, 'message':
-                _(u"Dette arrangementet er kun åpent for medlemmer."), 'status_code': 400}
+                _("Dette arrangementet er kun åpent for medlemmer."), 'status_code': 400}
 
         # If there are no rule_bundles on this object, all members of Online are allowed.
         if not self.rule_bundles.exists() and user.is_member:

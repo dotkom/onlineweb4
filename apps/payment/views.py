@@ -53,7 +53,7 @@ def payment(request):
                     _send_payment_confirmation_mail(payment_relation)
 
                     messages.success(request, _("Betaling utført."))
-                    return HttpResponse("Betaling utført.", content_type="text/plain", status=200) 
+                    return HttpResponse("Betaling utført.", content_type="text/plain", status=200)
                 except stripe.CardError as e:
                     messages.error(request, str(e))
                     return HttpResponse(str(e), content_type="text/plain", status=500)
@@ -236,9 +236,9 @@ def saldo(request):
 
                 # _send_saldo_confirmation_mail(request.user.email, amount)
 
-                messages.success(request, _(u"Inskudd utført."))
+                messages.success(request, _("Inskudd utført."))
                 return HttpResponse("Inskudd utført.", content_type="text/plain", status=200)
-            except stripe.CardError, e:
+            except stripe.CardError as e:
                 messages.error(request, str(e))
                 return HttpResponse(str(e), content_type="text/plain", status=500)
 
@@ -246,14 +246,14 @@ def saldo(request):
 
 
 def _send_saldo_confirmation_mail(email, amount):
-    subject = _(u"kvittering saldo inskudd")
+    subject = _("kvittering saldo inskudd")
     from_mail = settings.EMAIL_TRIKOM
 
-    message = _(u"Kvitering på saldo inskudd på ") + unicode(amount)
-    message += _(u" til din Online saldo.")
+    message = _("Kvitering på saldo inskudd på ") + unicode(amount)
+    message += _(" til din Online saldo.")
     message += "\n"
     message += "\n"
-    message += _(u"Dersom du har problemer eller spørsmål, send mail til") + ": " + from_mail
+    message += _("Dersom du har problemer eller spørsmål, send mail til") + ": " + from_mail
 
     EmailMessage(subject, unicode(message), from_mail, [], [email]).send()
 

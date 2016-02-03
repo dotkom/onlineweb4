@@ -287,9 +287,9 @@ def mail_participants(request, event_id):
                                              subject, message, all_attendees, attendees_on_waitlist, attendees_not_paid)
 
         if mail_sent:
-            messages.success(request, _(u'Mailen ble sendt'))
+            messages.success(request, _('Mailen ble sendt'))
         else:
-            messages.error(request, _(u'Vi klarte ikke å sende mailene dine. Prøv igjen'))
+            messages.error(request, _('Vi klarte ikke å sende mailene dine. Prøv igjen'))
 
     return render(request, 'events/mail_participants.html', {
         'all_attendees': all_attendees, 'attendees_on_waitlist': attendees_on_waitlist,
