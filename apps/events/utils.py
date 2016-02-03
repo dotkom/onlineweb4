@@ -2,6 +2,7 @@
 from datetime import timedelta
 
 from django.conf import settings
+from django.core.exceptions import ImproperlyConfigured
 from django.core.mail import EmailMessage, send_mail
 
 from django.core.signing import Signer, BadSignature
@@ -34,10 +35,10 @@ def get_types_allowed(user):
 
     groups = user.groups.all()
 
-    if reduce(lambda r, g: g.name in ['Hovedstyret', 'dotKom'] or r, groups, False):
-        return [t[0] for t in TYPE_CHOICES]
-
     for group in groups:
+        if group.name == 'Hovedstyret' or group.name == 'dotKom':
+            types_allowed = [i + 1 for i in range(len(TYPE_CHOICES))]  # full access
+            return types_allowed
         if group.name == 'arrKom':
             types_allowed.append(1)  # sosialt
             types_allowed.append(4)  # utflukt
@@ -48,7 +49,7 @@ def get_types_allowed(user):
         if group.name == 'fagKom':
             types_allowed.append(3)  # kurs
 
-    return Event.objects.filter(attendance_event__isnull=False, event_type__in=types_allowed)
+    return types_allowed
 
 
 def handle_waitlist_bump(event, host, attendees, payment=None):
@@ -251,8 +252,18 @@ def handle_attendance_event_detail(event, user, context):
 
 def handle_event_payment(event, user, payment, context):
     user_paid = False
-    payment_delay = False
-    payment_relation_id = False
+    payment_delay = None
+    payment_relation_id = None
+
+    context.update({
+        'payment': payment,
+        'user_paid': user_paid,
+        'payment_delay': payment_delay,
+        'payment_relation_id': payment_relation_id,
+    })
+
+    if not user.is_authenticated():  # Return early if user not logged in, can't filter payment relations against no one
+        return context
 
     payment_relations = PaymentRelation.objects.filter(payment=payment, user=user, refunded=False)
     for payment_relation in payment_relations:
@@ -269,7 +280,6 @@ def handle_event_payment(event, user, payment, context):
             payment_delay = payment_delays[0]
 
     context.update({
-        'payment': payment,
         'user_paid': user_paid,
         'payment_delay': payment_delay,
         'payment_relation_id': payment_relation_id,
@@ -278,9 +288,9 @@ def handle_event_payment(event, user, payment, context):
     return context
 
 
-def handle_event_ajax(event, user, action):
+def handle_event_ajax(event, user, action, extras_id):
     if action == 'extras':
-        handle_event_extras(event, user)
+        return handle_event_extras(event, user, extras_id)
     else:
         raise NotImplementedError
 
@@ -289,12 +299,12 @@ def handle_event_extras(event, user, extras_id):
     resp = {'message': "Feil!"}
 
     if not event.is_attendance_event:
-        return u'Dette er ikke et påmeldingsarrangement.'
+        return 'Dette er ikke et påmeldingsarrangement.'
 
     attendance_event = event.attendance_event
 
     if not attendance_event.is_attendee(user):
-        return u'Du er ikke påmeldt dette arrangementet.'
+        return 'Du er ikke påmeldt dette arrangementet.'
 
     attendee = Attendee.objects.get(event=attendance_event, user=user)
     attendee.extras = attendance_event.extras.all()[int(extras_id)]
@@ -342,17 +352,18 @@ def handle_mail_participants(event, _from_email, _to_email_value, subject, _mess
         from_email = settings.EMAIL_EKSKOM
 
     # Who to send emails to
-    to_emails = _to_email_options[_to_email_value][0]
+    send_to_users = _to_email_options[_to_email_value][0]
 
-    signature = u'\n\nVennlig hilsen Linjeforeningen Online.\n(Denne eposten kan besvares til %s)' % from_email
+    signature = '\n\nVennlig hilsen Linjeforeningen Online.\n(Denne eposten kan besvares til %s)' % from_email
 
     message = '%s%s' % (_message, signature)
 
     # Send mail
     try:
-        _email_sent = EmailMessage(str(subject), str(message), from_email, [], to_emails).send()
+        email_addresses = [a.user.get_email().email for a in send_to_users]
+        _email_sent = EmailMessage(str(subject), str(message), from_email, [], email_addresses).send()
         logger.info('Sent mail to %s for event "%s".' % (_to_email_options[_to_email_value][1], event))
         return _email_sent, all_attendees, attendees_on_waitlist, attendees_not_paid
-    except Exception as e:
+    except ImproperlyConfigured as e:
         logger.error('Something went wrong while trying to send mail to %s for event "%s"\n%s' %
                      (_to_email_options[_to_email_value][1], event, e))

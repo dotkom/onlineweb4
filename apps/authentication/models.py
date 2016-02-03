@@ -113,7 +113,7 @@ class OnlineUser(AbstractUser):
     linkedin = models.URLField(_("linkedin"), blank=True, null=True)
     gender = models.CharField(_("kjønn"), max_length=10, choices=GENDER_CHOICES, default="male")
     bio = models.TextField(_("bio"), blank=True)
-    saldo = models.PositiveSmallIntegerField(_("saldo"), default=0)
+    saldo = models.PositiveSmallIntegerField(_("saldo"), default=0, null=True)
 
     # NTNU credentials
     ntnu_username = models.CharField(_("NTNU-brukernavn"), max_length=10, blank=True, null=True, unique=True)

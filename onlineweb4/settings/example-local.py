@@ -146,15 +146,15 @@ LOGGING = {
 # For development replace with https://online.ntnu.no/wiki/komiteer/dotkom/aktuelt/onlineweb4/keys/
 # For production login to Stripe
 STRIPE_PUBLIC_KEYS = [
-    "pk_test_replace_this", # arrKom
-    "pk_test_replace_this"  # proKom
-    "pk_test_replace_this"  # triKom
+    "pk_test_replace_this",  # arrKom
+    "pk_test_replace_this",  # proKom
+    "pk_test_replace_this",  # triKom
 ]
 
 STRIPE_PRIVATE_KEYS = [
-    "sk_test_replace_this", # arrKom
-    "sk_test_replace_this"  # proKom
-    "sk_test_replace_this"  # triKom
+    "sk_test_replace_this",  # arrKom
+    "sk_test_replace_this",  # proKom
+    "sk_test_replace_this",  # triKom
 ]
 
 # Google reCaptcha settings

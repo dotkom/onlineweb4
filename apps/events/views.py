@@ -46,7 +46,7 @@ def details(request, event_id, event_slug):
 
     # Restricts access to the event if it is group restricted
     if not event.can_display(request.user):
-        messages.error(request, "Du har ikke tilgang til denne eventen.")
+        messages.error(request, "Du har ikke tilgang til dette arrangementet.")
         return index(request)
 
     user_access_to_event = False
@@ -55,8 +55,9 @@ def details(request, event_id, event_slug):
             user_access_to_event = True
 
     if request.method == 'POST':
-        if request.is_ajax and 'action' in request.POST:
-            return JsonResponse(handle_event_ajax(event, request.user, request.POST['action']))
+        if request.is_ajax and 'action' in request.POST and 'extras_id' in request.POST:
+            return JsonResponse(handle_event_ajax(event, request.user,
+                                request.POST['action'], request.POST['extras_id']))
 
     form = CaptchaForm(user=request.user)
     context = {
@@ -114,13 +115,13 @@ def attendEvent(request, event_id):
     response = event.attendance_event.is_eligible_for_signup(request.user)
 
     if response['status']:
-        ae = Attendee(event=attendance_event, user=request.user)
+        attendee = Attendee(event=attendance_event, user=request.user)
         if 'note' in form.cleaned_data:
-            ae.note = form.cleaned_data['note']
-        ae.save()
+            attendee.note = form.cleaned_data['note']
+        attendee.save()
         messages.success(request, _("Du er nå påmeldt på arrangementet!"))
 
-        if ae.payment():
+        if attendance_event.payment():
             handle_attend_event_payment(event, request.user)
 
         return redirect(event)
