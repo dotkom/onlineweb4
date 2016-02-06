@@ -72,7 +72,7 @@ def add(request, order_type=0):
             form = AddOtherForm(data=request.POST, instance=poster)
 
         if form.is_valid():
-            _handle_poster_add()
+            _handle_poster_add(request, form, order_type)
             return redirect(poster.get_absolute_url())
         else:
             context['form'] = form
