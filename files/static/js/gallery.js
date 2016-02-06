@@ -9,7 +9,8 @@ var Gallery = (function ($, tools) {
 
     var currentPage = 1;
     var currentImages = [];
-    var minResolution = [1280, 720];
+    var minResolution = [225, 225];
+    var ratio = [5, 6];
 
     var singleSelectedImage = null;
 
@@ -256,7 +257,7 @@ var Gallery = (function ($, tools) {
         // Probably because the DOM hasn't been redrawn, and styles set
         setTimeout(function() {
             image.cropper({
-                aspectRatio: 16/9,
+                aspectRatio: ratio[0] / ratio[1],
                 preview: ".image-edit-preview",
                 autoCrop: true,
                 dragCrop: true,

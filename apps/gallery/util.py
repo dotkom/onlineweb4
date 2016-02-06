@@ -10,6 +10,9 @@ from django.conf import settings as django_settings
 
 from apps.gallery import settings as gallery_settings
 
+ratio_x = 5
+ratio_y = 6
+
 
 def save_unhandled_file(uploaded_file):
 
@@ -153,6 +156,7 @@ def create_thumbnail(source_image_path, destination_thumbnail_path, size):
 
 def resize_image(source_image_path, destination_thumbnail_path, size):
     status = _open_image_file(source_image_path)
+
     if not status['success']:
         return status['error']
 
@@ -219,8 +223,8 @@ def _validate_image_dinosaurs(width, height):
     :return: boolean
     """
     # Give an epsilon of 0.01 because calculations.
-    return float(width) / float(height) < float(16)/float(9) - 0.01 \
-        or float(width) / float(height) > float(16)/float(9) + 0.01
+    return float(width) / float(height) < float(ratio_x)/float(ratio_y) - 0.01 \
+        or float(width) / float(height) > float(ratio_x)/float(ratio_y) + 0.01
 
 
 def crop_image(source_image_path, destination_path, crop_data):
@@ -248,7 +252,7 @@ def crop_image(source_image_path, destination_path, crop_data):
 
     # Check all the dimension and size things \o/
     # Give an epsilon of 0.01 because calculations.
-    if crop_width / crop_height < float(16)/float(9) - 0.01 or crop_width / crop_height > float(16)/float(9) + 0.01:
+    if crop_width / crop_height < float(ratio_x)/float(ratio_y) - 0.01 or crop_width / crop_height > float(ratio_x)/float(ratio_y) + 0.01:
         return {'success': False, 'error': 'Cropping ratio was not 16:9.'}
 
     if (crop_x < 0) \
