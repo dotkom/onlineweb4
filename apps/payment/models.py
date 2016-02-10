@@ -33,11 +33,12 @@ class Payment(models.Model):
     content_type = models.ForeignKey(ContentType)
     object_id = models.PositiveIntegerField()
     content_object = GenericForeignKey()
-    stripe_key = models.CharField(_(u'stripe key'),
-                                  max_length=10,
-                                  choices=STRIPE_KEY_CHOICES,
-                                  default="arrkom"
-                                  )
+    stripe_key = models.CharField(
+        _(u'stripe key'),
+        max_length=10,
+        choices=STRIPE_KEY_CHOICES,
+        default="arrkom"
+    )
 
     payment_type = models.SmallIntegerField(_(u'type'), choices=TYPE_CHOICES)
 
