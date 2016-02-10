@@ -27,16 +27,16 @@ class Payment(models.Model):
         (3, _(u'Utsettelse')),
     )
 
-    STRIPE_KEY_CHOICES = (
-        (0, "Arrkom"),
-        (1, "Prokom"),
-        (2, "Trikom"),
-    )
+    #creates tuples used as key choices.
+    STRIPE_KEY_CHOICES = zip(settings.STRIPE_PUBLIC_KEYS.keys(),settings.STRIPE_PUBLIC_KEYS.keys())
 
     content_type = models.ForeignKey(ContentType)
     object_id = models.PositiveIntegerField()
     content_object = GenericForeignKey()
-    stripe_key_index = models.SmallIntegerField(_(u'stripe key'), choices=STRIPE_KEY_CHOICES)
+    stripe_key = models.CharField(_(u'stripe key'),
+                                       max_length=10,
+                                       choices= STRIPE_KEY_CHOICES,
+                                       default="arrkom")
 
     payment_type = models.SmallIntegerField(_(u'type'), choices=TYPE_CHOICES)
 
