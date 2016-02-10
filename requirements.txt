@@ -18,7 +18,7 @@ stripe==1.20.2
 django-filebrowser==3.5.4 		# File uploading
 django-grappelli==2.7.3         # Admin template set
 # git+git://github.com/clintecker/django-chunks.git@0.2# Chunks, or reusable key:content for templates.
-git+https://github.com/dotKom/django-chunks.git@6659244949332405c6109e5c55ed9f17771b04c5#egg=chunks==0.3
+git+https://github.com/dotKom/django-chunks.git@68cf551f08cfd8c40de9d82318e4fd20b814df7a#egg=chunks==0.3
 django-crispy-forms==1.5.2      # nice forms
 django-extensions==1.5.9        # nice extra commands for debugging, etc
 django-dynamic-fixture==1.8.5   # Dynamic fixtures for models
