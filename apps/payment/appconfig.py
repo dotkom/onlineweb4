@@ -7,9 +7,3 @@ class PaymentConfig(AppConfig):
 
     def ready(self):
         super(PaymentConfig, self).ready()
-
-        from reversion import revisions as reversion
-
-        from apps.payment.models import PaymentTransaction
-
-        reversion.register(PaymentTransaction)
