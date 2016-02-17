@@ -1,8 +1,8 @@
 from apps import mommy
 from django.conf import settings
 from django.conf.urls import include, patterns, url
+from django.conf.urls.static import static
 from django.contrib import admin
-from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.http import HttpResponse
 from django.views.generic import TemplateView
 from django_nyt.urls import get_pattern as get_notify_pattern
@@ -232,13 +232,9 @@ if 'rest_framework' in settings.INSTALLED_APPS:
 
 # http://docs.djangoproject.com/en/1.3/howto/static-files/#staticfiles-development
 if settings.DEBUG:
-    urlpatterns += staticfiles_urlpatterns()
-
-    urlpatterns += patterns(
-        '',
-        url(r'^media/(?P<path>.*)$', 'django.views.static.serve', {
-            'document_root': settings.MEDIA_ROOT,
-            'show_indexes': True
-        }),
-        (r'^500/$', 'django.views.defaults.server_error'),
-    )
+    # Media
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    # 500
+    urlpatterns += [
+        url(r'^500/$', 'django.views.defaults.server_error'),
+    ]
