@@ -3,7 +3,7 @@
 {% load crispy_forms_tags %}
 
 {% block title %}
-{{ event }} - Dashboard - Online 
+{{ event }} - Dashboard - Online
 {% endblock title %}
 
 {% block page-header %}
@@ -20,7 +20,7 @@ Arrangementsdetaljer
 {% endblock %}
 
 {% block breadcrumbs %}
-    <li><a href="{% url 'dashboard_events_index' %}">Events</a></li> 
+    <li><a href="{% url 'dashboard_events_index' %}">Events</a></li>
     <li>{{ event }}</li>
 {% endblock %}
 
@@ -37,17 +37,17 @@ Arrangementsdetaljer
         <div class="panel panel-default">
             <div class="panel-body">
                 <ul id="dashboard-tabs" class="nav nav-tabs">
-                    <li role="presentation" class="hidden {% if active_tab == 'attendance' %} active{% endif %}">
+                    <li role="presentation" class="hidden {% if active_tab == 'details' %} active{% endif %}">
                         <a data-section="details" href="{% url 'dashboard_event_details_active' event.id 'details' %}">Detaljer</a>
                     </li>
                     <li role="presentation" class="hidden{% if active_tab == 'attendance' %} active{% endif %}">
                         <a data-section="attendance" href="{% url 'dashboard_event_details_active' event.id 'attendance' %}">Påmelding</a>
                     </li>
                     {% if event.is_attendance_event %}
-                    <li role="presentation" class="{% if active_tab == 'attendance' %} active{% endif %}">
+                    <li role="presentation" class="{% if active_tab == 'attendees' %} active{% endif %}">
                         <a data-section="attendees" href="{% url 'dashboard_event_details_active' event.id 'attendees' %}">Påmeldte</a>
                     </li>
-                    <li role="presentation" class="hidden{% if active_tab == 'attendance' %} active{% endif %}">
+                    <li role="presentation" class="hidden{% if active_tab == 'reservation' %} active{% endif %}">
                         <a data-section="reservation" href="{% url 'dashboard_event_details_active' event.id 'reservation' %}">Reservasjon</a>
                     </li>
                     {% endif %}
