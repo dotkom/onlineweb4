@@ -2,7 +2,7 @@
 {% load compress %}
 
 {% block title %}
-Event index - Dashboard - Online 
+Event index - Dashboard - Online
 {% endblock title %}
 
 {% block page-header %}
@@ -24,7 +24,7 @@ Arrangementsoversikt
 {% endblock js %}
 
 {% block breadcrumbs %}
-    <li>Events</li> 
+    <li>Events</li>
 {% endblock %}
 
 {% block content %}
@@ -47,7 +47,7 @@ Arrangementsoversikt
                     <tbody>
                     {% for event in events %}
                         <tr>
-                            <td><a href="{% url 'dashboard_event_details' event.id %}">{{ event }}</a></td>
+                            <td><a href="{% url 'dashboard_event_change_attendees' event.id %}">{{ event }}</a></td>
                             <td>
                                 {% if event.is_attendance_event %}
                                     {{ event.attendance_event.number_of_seats_taken }}/{{ event.attendance_event.max_capacity }}
