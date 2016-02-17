@@ -81,8 +81,7 @@ class Item(models.Model):
         if self.total_amount <= 10 and self.total_amount + amount > 10:
             message = u"Det er kun " + unicode(self.total_amount) + u" igjen av " + unicode(self.name) + \
                       u" på kontoret.\n\n" \
-                      u"Dette er en automatisk generert melding og antallet kan være noe feil.\n" \
-                      u"Heil Hitler!"
+                      u"Dette er en automatisk generert melding og antallet kan være noe feil."
 
             EmailMessage(
                 u"[Nibble] Lav stock på " + self.name,
