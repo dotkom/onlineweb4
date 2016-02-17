@@ -35,7 +35,7 @@ class PaymentPriceInline(admin.StackedInline):
 class PaymentAdmin(VersionAdmin):
     inlines = (PaymentPriceInline, )
     model = Payment
-    list_display = ('__unicode__', 'stripe_key_index', 'payment_type')
+    list_display = ('__unicode__', 'stripe_key', 'payment_type')
 
 
 class PaymentRelationAdmin(VersionAdmin):

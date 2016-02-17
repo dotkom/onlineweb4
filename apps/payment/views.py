@@ -32,7 +32,7 @@ def payment(request):
 
             if payment_object:
                 try:
-                    stripe.api_key = settings.STRIPE_PRIVATE_KEYS[payment_object.stripe_key_index]
+                    stripe.api_key = settings.STRIPE_PRIVATE_KEYS[payment_object.stripe_key]
 
                     charge = stripe.Charge.create(
                         amount=payment_price.price * 100,  # Price is multiplied with 100 because the amount is in øre
@@ -72,7 +72,7 @@ def payment_info(request):
             payment_object = Payment.objects.get(id=request.session['payment_id'])
 
             if payment_object:
-                data['stripe_public_key'] = settings.STRIPE_PUBLIC_KEYS[payment_object.stripe_key_index]
+                data['stripe_public_key'] = settings.STRIPE_PUBLIC_KEYS[payment_object.stripe_key]
                 data['email'] = request.user.email
                 data['description'] = payment_object.description()
                 data['payment_id'] = request.session['payment_id']
@@ -98,7 +98,7 @@ def webshop_info(request):
         order_line = OrderLine.objects.filter(user=request.user, paid=False).first()
 
         if order_line:
-            data['stripe_public_key'] = settings.STRIPE_PUBLIC_KEYS[1]  # Prokom
+            data['stripe_public_key'] = settings.STRIPE_PUBLIC_KEYS["prokom"]
             data['email'] = request.user.email
             data['order_line_id'] = order_line.pk
             data['price'] = int(order_line.subtotal() * 100)
@@ -127,7 +127,7 @@ def webshop_pay(request):
                 return HttpResponse("Invalid input", content_type="text/plain", status=500)
 
             try:
-                stripe.api_key = settings.STRIPE_PRIVATE_KEYS[1]  # Prokom
+                stripe.api_key = settings.STRIPE_PRIVATE_KEYS["prokom"]
 
                 charge = stripe.Charge.create(
                     amount=amount,
@@ -167,7 +167,7 @@ def payment_refund(request, payment_relation_id):
         return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
     try:
-        stripe.api_key = settings.STRIPE_PRIVATE_KEYS[payment_relation.payment.stripe_key_index]
+        stripe.api_key = settings.STRIPE_PRIVATE_KEYS[payment_relation.payment.stripe_key]
         ch = stripe.Charge.retrieve(payment_relation.stripe_id)
         ch.refunds.create()
 
@@ -201,7 +201,7 @@ def saldo_info(request):
 
         data = dict()
 
-        data['stripe_public_key'] = settings.STRIPE_PUBLIC_KEYS[2]  # triKom
+        data['stripe_public_key'] = settings.STRIPE_PUBLIC_KEYS["trikom"]
         data['email'] = request.user.email
         return HttpResponse(json.dumps(data), content_type="application/json")
 
@@ -223,7 +223,7 @@ def saldo(request):
                 return HttpResponse("Invalid input", content_type="text/plain", status=500)
 
             try:
-                stripe.api_key = settings.STRIPE_PRIVATE_KEYS[2]  # triKom
+                stripe.api_key = settings.STRIPE_PRIVATE_KEYS["trikom"]
 
                 stripe.Charge.create(
                     amount=amount * 100,  # Price is multiplied with 100 because the amount is in øre
