@@ -154,8 +154,8 @@ STRIPE_PUBLIC_KEYS = {
 
 STRIPE_PRIVATE_KEYS = {
     "arrkom": "sk_test_replace_this",
-    "prokom": "pk_test_replace_this",
-    "trikom": "pk_test_replace_this"
+    "prokom": "sk_test_replace_this",
+    "trikom": "sk_test_replace_this"
 }
 
 # Google reCaptcha settings
