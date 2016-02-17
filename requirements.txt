@@ -1,12 +1,11 @@
 Django>=1.9.0,<1.10.0
 Pillow==2.7.0                   # pillow
-# django-tastypie==0.12.2       # API v0 - Use git master until django 1.9 release   v
-git+https://github.com/django-tastypie/django-tastypie.git@f0d07abd12432df7c77f9527f5d3d211e7a68797#egg=tastypie==0.12.2.1
+django-tastypie==0.13.1         # API v0 - Use git master until django 1.9 release   v
 djangorestframework>=3.3.0,<3.4.0 # API v1
 django-filter==0.11.0           # Filtering for DRF
 # python-memcached==1.57          # Memcache. Used by Mailinglists to fetch from Sympa.
 # Upstream is missing Python 3 patches
-git+https://github.com/JelteF/python-memcached@patch-1#egg=python-memcached==1.57.0
+git+https://github.com/JelteF/python-memcached@patch-1#egg=python-memcached==1.58
 markdown2==2.3.0                # textarea text formatting
 psycopg2                        # Postgres adapter
 pytz                            # Timezone lib. Obsolete?
@@ -18,7 +17,7 @@ stripe==1.20.2
 django-filebrowser==3.5.4 		# File uploading
 django-grappelli==2.7.3         # Admin template set
 # git+git://github.com/clintecker/django-chunks.git@0.2# Chunks, or reusable key:content for templates.
-git+https://github.com/dotKom/django-chunks.git@68cf551f08cfd8c40de9d82318e4fd20b814df7a#egg=chunks==0.3
+git+https://github.com/dotKom/django-chunks.git@68cf551f08cfd8c40de9d82318e4fd20b814df7a#egg=django-chunks==0.3
 django-crispy-forms==1.5.2      # nice forms
 django-extensions==1.5.9        # nice extra commands for debugging, etc
 django-dynamic-fixture==1.8.5   # Dynamic fixtures for models
