@@ -187,7 +187,7 @@ def event_change_attendees(request, event_id, active_tab='attendees'):
             # Temp fix since event_ajax_handler can return either a dict with proper data
             # or just a string with an error message
             resp = event_ajax_handler(event, request)
-            if not isinstance(dict, resp):
+            if not isinstance(resp, dict):
                 return HttpResponse(_(unicode(resp)), status=400)
             else:
                 return JsonResponse(resp)
