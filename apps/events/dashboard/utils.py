@@ -42,6 +42,8 @@ def handle_attended(attendee):
     attendee.attended = not attendee.attended
     attendee.save()
 
+    return {'message': 'OK', 'status': 200}
+
 
 def handle_paid(attendee):
     """
@@ -51,6 +53,8 @@ def handle_paid(attendee):
     """
     attendee.paid = not attendee.paid
     attendee.save()
+
+    return {'message': 'OK', 'status': 200}
 
 
 def handle_add_attendee(event, user_id):
