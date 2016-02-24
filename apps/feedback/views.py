@@ -98,7 +98,11 @@ def feedback_results(request, feedback_relation, token=False):
 
     register_token = get_object_or_404(RegisterToken, fbr=feedback_relation)
 
-    token_url = u"%s%sresults/%s" % (request.META['HTTP_HOST'], feedback_relation.get_absolute_url(), register_token.token)
+    token_url = u"%s%sresults/%s" % (
+        request.META['HTTP_HOST'],
+        feedback_relation.get_absolute_url(),
+        register_token.token
+    )
 
     return render(
         request,
