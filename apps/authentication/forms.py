@@ -91,7 +91,7 @@ class RegisterForm(forms.Form):
                 self._errors['repeat_password'] = self.error_class([_(u"Passordene er ikke like.")])
 
             # Check username
-            username = cleaned_data['username']
+            username = cleaned_data['username'].lower()
             if User.objects.filter(username=username).count() > 0:
                 self._errors['username'] = self.error_class([_(u"Brukernavnet er allerede registrert.")])
             if not re.match("^[a-zA-Z0-9_-]+$", username):
@@ -102,7 +102,9 @@ class RegisterForm(forms.Form):
             # Check email
             email = cleaned_data['email'].lower()
             if Email.objects.filter(email=email).count() > 0:
-                self._errors['email'] = self.error_class([_(u"Det fins allerede en bruker med denne epostadressen.")])
+                self._errors['email'] = self.error_class([_(
+                    u"Det eksisterer allerede en bruker med denne epostadressen."
+                )])
 
             # Check if it's studmail and if someone else already has it in their profile
             if re.match(r'[^@]+@stud\.ntnu\.no', email):
@@ -110,13 +112,14 @@ class RegisterForm(forms.Form):
                 user = User.objects.filter(ntnu_username=ntnu_username)
                 if user.count() == 1:
                     self._errors['email'] = self.error_class([
-                        _(u"En bruker med dette NTNU-brukernavnet fins allerede.")
+                        _(u"En bruker med dette NTNU-brukernavnet eksisterer allerede.")
                     ])
 
             # ZIP code digits only
             zip_code = cleaned_data['zip_code']
             if len(zip_code) != 0:
-                if len(zip_code) != 4 or not zip_code.isdigit():
+                # Check if zip_code is 4 digits long
+                if re.match(r'\d{4}', zip_code):
                     self._errors['zip_code'] = self.error_class([_(u"Postnummer må bestå av fire siffer.")])
 
             return cleaned_data
