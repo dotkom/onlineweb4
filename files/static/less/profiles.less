@@ -60,6 +60,10 @@ label > i.btn-icon {
     margin: 0px 20px 20px 0px;
     padding: 0px 5px 5px 0px;
     font-size: 1.5em;
+    border-style: solid;
+    border-width: 1px;
+    border-radius: 4px;
+    
     /* Make text non-selectable */
 
     -webkit-touch-callout: none;
@@ -75,10 +79,14 @@ label > i.btn-icon {
         line-height: normal;
     }
     &.on {
-        opacity: 1.0;
+        .button-variant(@btn-success-color;
+        @btn-success-bg;
+        @btn-success-border);
     }
     &.off {
-        opacity: 0.30;
+        .button-variant(@btn-warning-color;
+        @btn-warning-bg;
+        @btn-warning-border);
     }
     input[type="checkbox"] {
         display: none;
