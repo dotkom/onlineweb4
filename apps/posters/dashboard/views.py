@@ -18,7 +18,7 @@ from pytz import timezone as tz
 
 from apps.authentication.models import OnlineUser as User
 from apps.dashboard.tools import get_base_context
-from apps.posters.forms import AddForm, AddPosterForm, AddBongForm, AddOtherForm, EditPosterForm, EditOtherForm
+from apps.posters.forms import AddPosterForm, AddBongForm, AddOtherForm, EditPosterForm, EditOtherForm
 from apps.companyprofile.models import Company
 from apps.posters.models import Poster
 from apps.posters.permissions import has_view_perms, has_view_all_perms, has_edit_perms
