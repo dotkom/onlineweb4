@@ -19,7 +19,7 @@ from apps.feedback.models import (
     TextAnswer,
     RegisterToken
 )
-from apps.feedback.forms import create_answer_forms
+from apps.feedback.forms import create_forms
 from apps.feedback.utils import has_permission, can_delete, get_group_restricted_feedback_relations
 
 
@@ -32,10 +32,10 @@ def feedback(request, applabel, appmodel, object_id, feedback_id):
         return redirect("home")
 
     if request.method == "POST":
-        answers = create_answer_forms(feedback_relation, post_data=request.POST)
-        if all([a.is_valid() for a in answers]):
-            for a in answers:
-                a.save()
+        questions = create_forms(feedback_relation, post_data=request.POST)
+        if all([answer.is_valid() for answer in questions]):
+            for answer in questions:
+                answer.save()
 
             # mark that the user has answered
             feedback_relation.answered.add(request.user)
@@ -50,14 +50,14 @@ def feedback(request, applabel, appmodel, object_id, feedback_id):
         else:
             messages.error(request, _(u"Du må svare på alle påkrevde felt."))
     else:
-        answers = create_answer_forms(feedback_relation)
+        questions = create_forms(feedback_relation)
 
     description = feedback_relation.description
 
     return render(
         request,
         'feedback/answer.html',
-        {'answers': answers, 'description': description}
+        {'questions': questions, 'description': description}
     )
 
 

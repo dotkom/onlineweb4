@@ -12,12 +12,18 @@ Tilbakemeldinger - Svar - Online
             <div class="page-header">
                 <h2>{{ description }}</h2>
             </div>
-            <form method="POST" role="form" class="feedback-answer-label" id="feedback"> 
+            <form method="POST" role="form" class="feedback-answer-label" id="feedback">
                 {% csrf_token %}
-		            {% for f in answers %}
+		            {% for question in questions %}
                         <div class="rating-wrapper">
-                            <div class="form-group {% if f.errors %} has-error {% endif %}">
-                            {{ f }}
+                            {%  if question.display %}
+                                <span class="label label-info test" data-toggle="tooltip" data-placement="left"
+                                      title="Ditt svar på dette spørsmålet vil vises til bedriften">
+                                    Vises til bedrift
+                                </span>
+                            {%  endif %}
+                            <div class="form-group test {% if question.errors %} has-error {% endif %}">
+                            {{ question}}
                             </div>
                         </div>
                     {% endfor %}
