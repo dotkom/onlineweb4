@@ -10,7 +10,7 @@ DATETIMEPICKER_WIDGET_STRING = """
 <span class="input-group-btn datepickerbutton">\r\n
 <a href="#" class="btn btn-primary">\r\n
 <i class="fa fa-calendar fa-lg"></i></a></span>\r\n
-<input class="form-control" id="{}" name="{}" type="text" {} placeholder="Artikkel skal vises fra ..." />\r\n
+<input class="form-control" id="{}" name="{}" type="text" {} placeholder="Den skal vises fra ..." />\r\n
 </div>\r\n
 """
 
