@@ -184,13 +184,7 @@ def event_change_attendees(request, event_id, active_tab='attendees'):
             if not event.is_attendance_event:
                 return HttpResponse(_(u'Dette er ikke et påmeldingsarrangement.'), status=400)
 
-            # Temp fix since event_ajax_handler can return either a dict with proper data
-            # or just a string with an error message
-            resp = event_ajax_handler(event, request)
-            if not isinstance(resp, dict):
-                return HttpResponse(_(unicode(resp)), status=400)
-            else:
-                return JsonResponse(resp)
+            return JsonResponse(event_ajax_handler(event, request))
 
     # NON AJAX
     context = get_base_context(request)

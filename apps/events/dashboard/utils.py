@@ -18,12 +18,14 @@ def event_ajax_handler(event, request):
     if action == 'attended':
         attendee = _get_attendee(request.POST['attendee_id'])
         if not attendee:
-            return u'Fant ingen påmeldte med oppgitt ID (%s).' % request.POST['attendee_id']
+            return {'message': u'Fant ingen påmeldte med oppgitt ID (%s).' % request.POST['attendee_id'],
+                    'status': 400}
         return handle_attended(attendee)
     elif action == 'paid':
         attendee = _get_attendee(request.POST['attendee_id'])
         if not attendee:
-            return u'Fant ingen påmeldte med oppgitt ID (%s).' % request.POST['attendee_id']
+            return {'message': u'Fant ingen påmeldte med oppgitt ID (%s).' % request.POST['attendee_id'],
+                    'status': 400}
         return handle_paid(attendee)
     elif action == 'add_attendee':
         return handle_add_attendee(event, request.POST['user_id'])
