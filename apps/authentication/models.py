@@ -16,19 +16,19 @@ from functools import reduce
 # If this list is changed, remember to check that the year property on
 # OnlineUser is still correct!
 FIELD_OF_STUDY_CHOICES = [
-    (0, _(u'Gjest')),
-    (1, _(u'Bachelor i Informatikk')),
+    (0, _('Gjest')),
+    (1, _('Bachelor i Informatikk')),
     # master degrees take up the interval [10,30]
-    (10, _(u'Programvaresystemer')),
-    (11, _(u'Databaser og søk')),
-    (12, _(u'Algoritmer og datamaskiner')),
-    (13, _(u'Spillteknologi')),
-    (14, _(u'Kunstig intelligens')),
-    (15, _(u'Helseinformatikk')),
-    (30, _(u'Annen mastergrad')),
-    (80, _(u'PhD')),
-    (90, _(u'International')),
-    (100, _(u'Annet Onlinemedlem')),
+    (10, _('Programvaresystemer')),
+    (11, _('Databaser og søk')),
+    (12, _('Algoritmer og datamaskiner')),
+    (13, _('Spillteknologi')),
+    (14, _('Kunstig intelligens')),
+    (15, _('Helseinformatikk')),
+    (30, _('Annen mastergrad')),
+    (80, _('PhD')),
+    (90, _('International')),
+    (100, _('Annet Onlinemedlem')),
 ]
 
 GENDER_CHOICES = [

@@ -66,7 +66,7 @@ def result(request, applabel, appmodel, object_id, feedback_id):
     feedback_relation = _get_fbr_or_404(applabel, appmodel, object_id, feedback_id)
 
     if not has_permission(feedback_relation, request.user):
-        messages.error(request, _(u"Du har ikke tilgang til dette skjemaet."))
+        messages.error(request, _("Du har ikke tilgang til dette skjemaet."))
         return redirect("home")
 
     return feedback_results(request, feedback_relation)
@@ -122,7 +122,7 @@ def chart_data(request, applabel, appmodel, object_id, feedback_id):
     feedback_relation = _get_fbr_or_404(applabel, appmodel, object_id, feedback_id)
 
     if not has_permission(feedback_relation, request.user):
-        messages.error(request, _(u"Du har ikke tilgang til denne dataen."))
+        messages.error(request, _("Du har ikke tilgang til denne dataen."))
         return redirect("home")
 
     return get_chart_data(request, feedback_relation)
@@ -196,7 +196,7 @@ def delete_answer(request):
             answer.delete()
             return HttpResponse(status=200)
 
-    return HttpResponse(_(u"Du har ikke tilgang til å slette dette svaret", status=401))
+    return HttpResponse(_("Du har ikke tilgang til å slette dette svaret", status=401))
 
 
 def _get_fbr_or_404(app_label, app_model, object_id, feedback_id):

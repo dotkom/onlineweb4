@@ -79,14 +79,14 @@ class Item(models.Model):
 
         # Send one notification when the stock goes to or below 10
         if self.total_amount <= 10 and self.total_amount + amount > 10:
-            message = u"Det er kun " + unicode(self.total_amount) + u" igjen av " + unicode(self.name) + \
-                      u" på kontoret.\n\n" \
-                      u"Dette er en automatisk generert melding og antallet kan være noe feil."
+            message = "Det er kun " + str(self.total_amount) + " igjen av " + str(self.name) + \
+                      " på kontoret.\n\n" \
+                      "Dette er en automatisk generert melding og antallet kan være noe feil."
 
             EmailMessage(
-                u"[Nibble] Lav stock på " + self.name,
-                unicode(message),
-                u"online@online.ntnu.no",
+                "[Nibble] Lav stock på " + self.name,
+                str(message),
+                "online@online.ntnu.no",
                 [],
                 [settings.EMAIL_TRIKOM]
             ).send()
