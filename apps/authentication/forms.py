@@ -102,7 +102,7 @@ class RegisterForm(forms.Form):
             # Check email
             email = cleaned_data['email'].lower()
             if Email.objects.filter(email=email).count() > 0:
-                self._errors['email'] = self.error_class([_(u"Det fins allerede en bruker med denne epostadressen.")])
+                self._errors['email'] = self.error_class([_(u"Det eksisterer allerede en bruker med denne epostadressen.")])
 
             # Check if it's studmail and if someone else already has it in their profile
             if re.match(r'[^@]+@stud\.ntnu\.no', email):
@@ -110,7 +110,7 @@ class RegisterForm(forms.Form):
                 user = User.objects.filter(ntnu_username=ntnu_username)
                 if user.count() == 1:
                     self._errors['email'] = self.error_class([
-                        _(u"En bruker med dette NTNU-brukernavnet fins allerede.")
+                        _(u"En bruker med dette NTNU-brukernavnet eksisterer allerede.")
                     ])
 
             # ZIP code digits only
