@@ -180,6 +180,7 @@ USER_SEARCH_GROUPS = [
     18,  # seniorKom
     8,   # triKom
     9,   # velKom
+    24,  # itex
 ]
 
 #List of mailing lists, used in update_sympa_memcache_from_sql.py

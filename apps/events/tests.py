@@ -128,10 +128,10 @@ class EventTest(TestCase):
         self.fosrule = G(FieldOfStudyRule, field_of_study=1, offset=24)
         self.assertEqual(self.fosrule.field_of_study, 1)
         self.assertEqual(self.fosrule.offset, 24)
-        self.assertEqual(str(self.fosrule), "Bachelor i Informatikk (BIT) etter 24 timer")
+        self.assertEqual(str(self.fosrule), "Bachelor i Informatikk etter 24 timer")
         self.rulebundle = G(RuleBundle, description='')
         self.rulebundle.field_of_study_rules.add(self.fosrule)
-        self.assertEqual(str(self.rulebundle), "Bachelor i Informatikk (BIT) etter 24 timer")
+        self.assertEqual(str(self.rulebundle), "Bachelor i Informatikk etter 24 timer")
         self.attendance_event.rule_bundles.add(self.rulebundle)
 
         # Status should be negative, and indicate that the restriction is a grade rule

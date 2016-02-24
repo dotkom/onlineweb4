@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from django.conf import settings
+from django.core.mail import EmailMessage
 from django.db import models
 from django.utils.translation import ugettext as _
 from django.utils import timezone
@@ -71,7 +73,23 @@ class Item(models.Model):
                 oldest_batch.save()
                 self.reduce_stock(diff)
 
-        # TODO notification on low stock
+        self.handle_notifications(amount)
+
+    def handle_notifications(self, amount):
+
+        # Send one notification when the stock goes to or below 10
+        if self.total_amount <= 10 and self.total_amount + amount > 10:
+            message = u"Det er kun " + unicode(self.total_amount) + u" igjen av " + unicode(self.name) + \
+                      u" på kontoret.\n\n" \
+                      u"Dette er en automatisk generert melding og antallet kan være noe feil."
+
+            EmailMessage(
+                u"[Nibble] Lav stock på " + self.name,
+                unicode(message),
+                u"online@online.ntnu.no",
+                [],
+                [settings.EMAIL_TRIKOM]
+            ).send()
 
     def __str__(self):
         return self.name

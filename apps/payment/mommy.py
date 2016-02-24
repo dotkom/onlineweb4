@@ -59,7 +59,7 @@ class PaymentReminder(Task):
         deadline = payment.deadline.astimezone(tz('Europe/Oslo'))
 
         message = _("Hei, du har ikke betalt for ") + payment.description()
-        message += _(".\n\nFristen for å betale er ") + str(deadline.strftime("%-d %B %Y kl: %H:%M"))
+        message += _(".\n\nFristen for å betale er ") + str(deadline.strftime("%-d %B %Y kl. %H:%M"))
         message += _(".\nHvis du ikke betaler før fristen går ut vil du få en prikk.")
         message += _("\n\nFor mer informasjon se:")
         message += "\n" + str(settings.BASE_URL + payment.content_object.event.get_absolute_url())
@@ -77,7 +77,7 @@ class PaymentReminder(Task):
         message = _("Hei, du har ikke betalt for ") + payment.description()
         message += _(".\nFristen har gått ut og du har fått en prikk.")
 
-        message += _("\n\nFor mer info om arrangement se:")
+        message += _("\n\nFor mer info om arrangementet se:")
         message += "\n" + str(settings.BASE_URL + payment.content_object.event.get_absolute_url())
         message += _("\n\nDersom du har spørsmål kan du sende mail til ") + payment.responsible_mail()
         message += _("\n\nMvh\nLinjeforeningen Online")
@@ -89,9 +89,9 @@ class PaymentReminder(Task):
     @staticmethod
     def send_missed_payment_mail(payment):
         subject = _("Betalingsfrist utgått: ") + payment.description()
-        message = _("Hei, du har ikke betalt for arrangement ") + payment.description()
-        message += _("fristen har utgått, og du har mistet plassen din på arrangement")
-        message += _("\nFor mer info om arrangement se:")
+        message = _("Hei, du har ikke betalt for følgende arrangement: ") + payment.description()
+        message += _("Fristen har utgått, og du har mistet plassen din på arrangementet")
+        message += _("\nFor mer info om arrangementet se:")
         message += "\n" + str(settings.BASE_URL + payment.content_object.event.get_absolute_url())
         message += _("Dersom du har spørsmål kan du sende mail til ") + payment.responsible_mail()
         message += _("\n\nMvh\nLinjeforeningen Online")
@@ -131,7 +131,7 @@ class PaymentReminder(Task):
         mark = Mark()
         mark.title = _("Manglende betaling på %s") % payment.description()
         mark.category = 6  # Manglende betaling
-        mark.description = _("Du har fått en prikk fordi du ikke har betalt for arrangement.")
+        mark.description = _("Du har fått en prikk fordi du ikke har betalt for et arrangement.")
         mark.save()
 
         for user in PaymentReminder.not_paid(payment):
@@ -156,7 +156,7 @@ class PaymentDelayHandler(Task):
     def run():
         logging.basicConfig()
         logger = logging.getLogger("feedback")
-        logger.info("Paymet delay handler started")
+        logger.info("Payment delay handler started")
         locale.setlocale(locale.LC_ALL, "nb_NO.UTF-8")
 
         payment_delays = PaymentDelay.objects.filter(active=True)
@@ -194,7 +194,7 @@ class PaymentDelayHandler(Task):
         suspension.user = payment_delay.user
         suspension.payment_id = payment_delay.payment.id
         suspension.description = """
-        Du har ikke betalt for ett arangement du har vært med på. For og fjerne denne suspansjonen må du betale.\n
+        Du har ikke betalt for et arangement du har vært med på. For å fjerne denne suspensjonen må du betale.\n
         Mer informasjon om betalingen finner du her: """
         suspension.description += str(
             settings.BASE_URL + payment_delay.payment.content_object.event.get_absolute_url()
@@ -207,11 +207,12 @@ class PaymentDelayHandler(Task):
         payment = payment_delay.payment
         subject = _("Betalingsfrist utgått: ") + payment.description()
 
-        message = _("Hei, du har ikke betalt for arrangement ") + payment.description()
-        message += _(" og fristen har gått ut.")
+        message = _("Hei, du har ikke betalt for følgende arrangement: ") + payment.description()
+        message += _("Fristen for betaling har gått ut.")
 
         if unattend_deadline_passed:
-            message += _("\n\nDu har fått en prikk og vil ikke kunne melde deg på nye arrangemang før du har betalt.")
+            message += _("\n\nDu har fått en prikk "
+                         "og vil ikke kunne melde deg på nye arrangementer før du har betalt.")
         else:
             message += _("\n\nDu har fått en prikk og blitt meldt av arrangementet.")
 
@@ -231,7 +232,7 @@ class PaymentDelayHandler(Task):
 
         message = _("Hei, du er påmeldt, men har ikke betalt for ") + payment.description()
         message += _(".\nFristen for å betale er ") + str(
-            valid_to.strftime("%-d. %B %Y kl: %H:%M").encode("utf-8")
+            valid_to.strftime("%-d. %B %Y kl. %H:%M").encode("utf-8")
         ) + "."
 
         # If event unattend deadline has not passed when payment deadline passes,
@@ -240,10 +241,10 @@ class PaymentDelayHandler(Task):
         #  but given a mark, and can't attend any other events untill payment is recived.
         if unattend_deadline_passed:
             message += _("\n\nHvis du ikke betaler innen fristen vil du få en prikk og du vil ")
-            message += _("\nikke ha mulighet til å melde deg på andre arrangement før du har betalt.")
+            message += _("\nikke ha mulighet til å melde deg på andre arrangementer før du har betalt.")
         else:
             message += _(
-                "\n\nHvis du ikke betaler innen fristen vil du få en prikk og du vil bli meldt av arrangement."
+                "\n\nHvis du ikke betaler innen fristen vil du få en prikk og du vil bli meldt av arrangementet."
             )
 
         message += "\n\nFor mer informasjon, se:"
@@ -260,7 +261,7 @@ class PaymentDelayHandler(Task):
         mark = Mark()
         mark.title = _("Manglende betaling på %s") % payment_delay.payment.description()
         mark.category = 6  # Manglende betaling
-        mark.description = _("Du har fått en prikk fordi du ikke har betalt for arrangement.")
+        mark.description = _("Du har fått en prikk fordi du ikke har betalt for et arrangement.")
         mark.save()
 
         user_entry = MarkUser()

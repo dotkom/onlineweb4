@@ -215,10 +215,10 @@ class SimpleTest(TestCase):
         client.login(username="user1", password="Herpaderp123")
         feedback_relation = self.create_feedback_relation()
         response = client.post(feedback_relation.get_absolute_url())
-        for i in range(len(response.context['answers'])):
+        for i in range(len(response.context['questions'])):
             self.assertIn(
                 str(_('This field is required.')),
-                response.context['answers'][i].errors['answer']
+                response.context['questions'][i].errors['answer']
             )
 
     """

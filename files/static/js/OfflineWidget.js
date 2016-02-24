@@ -49,7 +49,7 @@ function OfflineWidget (Utils){
         
         $("#offlineCarousel .carousel-inner").html(insertMe);
         $("#offlineCarousel .carousel-inner div.item:first").addClass("active");
-        $("#offlineCarousel").carousel('pause');
+        $("#offlineCarousel").carousel({interval: false});
     };
 
     // Recreate DOM on resize
