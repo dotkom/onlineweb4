@@ -4,7 +4,7 @@
 {% load crispy_forms_tags %}
 
 {% block title %}
-Ny bestilling - Online
+{%if poster %}Endre{% else %}Ny{% endif %} bestilling - Online
 {% endblock title %}
 
 {% block styles %}
@@ -22,12 +22,16 @@ Ny bestilling - Online
 {% endblock js %}
 
 {% block page-header %}
-Ny {{order_type_name | lower}}bestilling
+{%if poster %}Endre{% else %}Ny{% endif %} {{order_type_name | lower}}bestilling
 {% endblock %}
 
 {% block breadcrumbs %}
     <li><a href="{% url 'posters' %}">Bestilling</a></li>
-    <li>Ny {{order_type_name | lower}}bestilling</li>
+    <li>
+        {%if poster %}Endre{% else %}Ny{% endif %}
+        {{order_type_name | lower}}bestilling
+
+    </li>
 {% endblock %}
 
 {% block content %}

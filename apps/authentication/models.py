@@ -18,14 +18,14 @@ import reversion
 # OnlineUser is still correct!
 FIELD_OF_STUDY_CHOICES = [
     (0, _(u'Gjest')),
-    (1, _(u'Bachelor i Informatikk (BIT)')),
+    (1, _(u'Bachelor i Informatikk')),
     # master degrees take up the interval [10,30]
-    (10, _(u'Programvaresystemer (P)')),
-    (11, _(u'Databaser og søk (DS)')),
-    (12, _(u'Algoritmer og datamaskiner (AD)')),
-    (13, _(u'Spillteknologi (S)')),
-    (14, _(u'Kunstig intelligens (KI)')),
-    (15, _(u'Helseinformatikk (MSMEDTEK)')),
+    (10, _(u'Programvaresystemer')),
+    (11, _(u'Databaser og søk')),
+    (12, _(u'Algoritmer og datamaskiner')),
+    (13, _(u'Spillteknologi')),
+    (14, _(u'Kunstig intelligens')),
+    (15, _(u'Helseinformatikk')),
     (30, _(u'Annen mastergrad')),
     (80, _(u'PhD')),
     (90, _(u'International')),

@@ -18,7 +18,7 @@ from pytz import timezone as tz
 
 from apps.authentication.models import OnlineUser as User
 from apps.dashboard.tools import get_base_context
-from apps.posters.forms import AddForm, AddPosterForm, AddBongForm, AddOtherForm, EditPosterForm
+from apps.posters.forms import AddPosterForm, AddBongForm, AddOtherForm, EditPosterForm, EditOtherForm
 from apps.companyprofile.models import Company
 from apps.posters.models import Poster
 from apps.posters.permissions import has_view_perms, has_view_all_perms, has_edit_perms
@@ -102,7 +102,7 @@ def add(request, order_type=0):
 @login_required
 def edit(request, order_id=None):
     context = get_base_context(request)
-    context['add_poster_form'] = EditPosterForm()
+    context['add_poster_form'] = AddPosterForm()
 
     if order_id:
         poster = get_object_or_404(Poster, pk=order_id)
@@ -113,13 +113,23 @@ def edit(request, order_id=None):
         raise PermissionDenied
 
     if request.POST:
-        form = AddForm(request.POST, instance=poster)
+        if poster.title:
+            SelectedForm = EditOtherForm
+        form = SelectedForm(request.POST, instance=poster)
         if form.is_valid():
             form.save()
             return HttpResponseRedirect("../detail/"+str(poster.id))
+        else:
+            context["form"] = form
+            context["poster"] = poster
 
     else:
-        context["form"] = AddForm(instance=poster)
+        SelectedForm = EditPosterForm
+        if poster.title:
+            SelectedForm = EditOtherForm
+
+        context["form"] = SelectedForm(instance=poster)
+        context["poster"] = poster
 
     return render(request, 'posters/dashboard/add.html', context)
 
