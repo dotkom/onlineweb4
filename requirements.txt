@@ -14,7 +14,9 @@ icalendar==3.8.4
 stripe==1.20.2
 
 # third party deps
-django-filebrowser==3.5.4 		# File uploading
+# django-filebrowser==3.5.4 		# File uploading
+# Missing django 1.9 patches
+git+https://github.com/cXhristian/django-filebrowser.git@django-1.9#egg=django-filebrowser==3.6.2
 django-grappelli==2.7.3         # Admin template set
 # git+git://github.com/clintecker/django-chunks.git@0.2# Chunks, or reusable key:content for templates.
 git+https://github.com/dotKom/django-chunks.git@68cf551f08cfd8c40de9d82318e4fd20b814df7a#egg=django-chunks==0.3
