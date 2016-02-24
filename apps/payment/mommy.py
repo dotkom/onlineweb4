@@ -211,7 +211,8 @@ class PaymentDelayHandler(Task):
         message += _(u"Fristen for betaling har gått ut.")
 
         if unattend_deadline_passed:
-            message += _(u"\n\nDu har fått en prikk og vil ikke kunne melde deg på nye arrangementer før du har betalt.")
+            message += _(u"\n\nDu har fått en prikk "
+                         u"og vil ikke kunne melde deg på nye arrangementer før du har betalt.")
         else:
             message += _(u"\n\nDu har fått en prikk og blitt meldt av arrangementet.")
 
