@@ -20,29 +20,29 @@ from apps.feedback.models import (
     TextAnswer,
     RegisterToken
 )
-from apps.feedback.forms import create_answer_forms
+from apps.feedback.forms import create_forms
 
 
 @login_required
 def feedback(request, applabel, appmodel, object_id, feedback_id):
-    fbr = _get_fbr_or_404(applabel, appmodel, object_id, feedback_id)
+    feedback_relation = _get_fbr_or_404(applabel, appmodel, object_id, feedback_id)
 
-    if not fbr.can_answer(request.user):
-        messages.error(request, fbr.answer_error_message(request.user))
+    if not feedback_relation.can_answer(request.user):
+        messages.error(request, feedback_relation.answer_error_message(request.user))
         return redirect("home")
 
     if request.method == "POST":
-        answers = create_answer_forms(fbr, post_data=request.POST)
-        if all([a.is_valid() for a in answers]):
-            for a in answers:
-                a.save()
+        questions = create_forms(feedback_relation, post_data=request.POST)
+        if all([answer.is_valid() for answer in questions]):
+            for answer in questions:
+                answer.save()
 
             # mark that the user has answered
-            fbr.answered.add(request.user)
-            fbr.save()
+            feedback_relation.answered.add(request.user)
+            feedback_relation.save()
 
             # Set field of study automaticly
-            fosa = FieldOfStudyAnswer(feedback_relation=fbr, answer=request.user.field_of_study)
+            fosa = FieldOfStudyAnswer(feedback_relation=feedback_relation, answer=request.user.field_of_study)
             fosa.save()
 
             messages.success(request, _(u"Takk for at du svarte."))
@@ -50,14 +50,14 @@ def feedback(request, applabel, appmodel, object_id, feedback_id):
         else:
             messages.error(request, _(u"Du må svare på alle påkrevde felt."))
     else:
-        answers = create_answer_forms(fbr)
+        questions = create_forms(feedback_relation)
 
-    description = fbr.description
+    description = feedback_relation.description
 
     return render(
         request,
         'feedback/answer.html',
-        {'answers': answers, 'description': description}
+        {'questions': questions, 'description': description}
     )
 
 
