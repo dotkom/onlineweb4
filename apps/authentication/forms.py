@@ -91,7 +91,7 @@ class RegisterForm(forms.Form):
                 self._errors['repeat_password'] = self.error_class([_(u"Passordene er ikke like.")])
 
             # Check username
-            username = cleaned_data['username']
+            username = cleaned_data['username'].lower()
             if User.objects.filter(username=username).count() > 0:
                 self._errors['username'] = self.error_class([_(u"Brukernavnet er allerede registrert.")])
             if not re.match("^[a-zA-Z0-9_-]+$", username):
