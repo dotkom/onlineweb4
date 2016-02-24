@@ -52,7 +52,7 @@
                                     <div class="event-hero-title">Pris</div>
                                     <div class="event-hero-large-text">
                                         <span class="break">
-                                            {%if poster.price %}{{poster.price}},-
+                                            {%if poster.price %}{{poster.price}}
                                             {%else %}Ikke oppgitt
                                             {%endif %}
                                         </span>
@@ -87,7 +87,7 @@
                                         
                                             <div class="event-hero-title">Antall</div>
                                             <div class="event-hero-large-text">
-                                                {% if poster.bong %}
+                                                {% if poster.amount %}
                                                 <b>{{poster.amount}}</b> plakater
                                                 {% else %}
                                                     Ikke oppgitt antall plakater

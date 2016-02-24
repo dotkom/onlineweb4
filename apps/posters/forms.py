@@ -22,7 +22,7 @@ class AddForm(forms.ModelForm):
         required=False,
         widget=forms.Textarea(attrs={'placeholder': 'Eventuell informasjon, kommentarer, lenker til bilder, osv...'})
     )
-    price = forms.IntegerField(
+    price = forms.DecimalField(
         label='Pris',
         required=False,
         widget=forms.NumberInput(attrs={'placeholder': 'Pris på event'})
@@ -109,11 +109,11 @@ class EditPosterForm(AddPosterForm):
     class Meta(object):
         model = Poster
         fields = ['event', 'amount', 'bong', 'description',
-                  'price', 'display_to', 'display_from', 'comments', 'finished']
+                  'price', 'display_from', 'comments']
 
 
-class EditOtherForm(AddPosterForm):
+class EditOtherForm(AddOtherForm):
     class Meta(object):
         model = Poster
         fields = ['title', 'amount', 'price', 'description',
-                  'display_from', 'comments', 'finished']
+                  'display_from', 'comments']
