@@ -116,7 +116,8 @@ class RegisterForm(forms.Form):
             # ZIP code digits only
             zip_code = cleaned_data['zip_code']
             if len(zip_code) != 0:
-                if len(zip_code) != 4 or not zip_code.isdigit():
+                # Check if zip_code is 4 digits long
+                if re.match(r'\d{4}', zip_code):
                     self._errors['zip_code'] = self.error_class([_(u"Postnummer må bestå av fire siffer.")])
 
             return cleaned_data
