@@ -49,10 +49,11 @@ label > i.btn-icon {
     line-height: 75px;
     text-align: center;
     margin: 0px 20px 20px 0px;
-    padding: 0px 5px 5px 0px;
-    font-size: 1.5em;
+    padding: 0px 6px 6px 0px;
+    border-radius: 4px;
+    border-width:  1px;
+    border-style: solid;
     /* Make text non-selectable */
-
     -webkit-touch-callout: none;
     -webkit-user-select: none;
     -khtml-user-select: none;
@@ -62,18 +63,22 @@ label > i.btn-icon {
     span {
         display: inline-block;
         vertical-align: middle;
-        color: 111;
         line-height: normal;
     }
     &.on {
-        opacity: 1.0;
+    .button-variant(@btn-success-color;
+        @btn-success-bg;
+        @btn-success-border);
     }
     &.off {
-        opacity: 0.30;
+        .button-variant(@btn-warning-color;
+        @btn-warning-bg;
+        @btn-warning-border);
     }
     input[type="checkbox"] {
         display: none;
     }
+    font-size: 1.5em;
 }
 .privacybox:hover {
     cursor: pointer;
