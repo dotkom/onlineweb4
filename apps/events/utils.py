@@ -53,17 +53,17 @@ def get_types_allowed(user):
 
 def handle_waitlist_bump(event, host, attendees, payment=None):
 
-    title = u'Du har fått plass på %s' % event.title
+    title = 'Du har fått plass på %s' % (event.title)
 
-    message = u'Du har stått på venteliste for arrangementet "%s" og har nå fått plass.\n' % (unicode(event.title))
+    message = 'Du har stått på venteliste for arrangementet "%s" og har nå fått plass.\n' % (str(event.title))
 
     if payment:
         message += _handle_waitlist_bump_payment(payment, attendees, message)
     else:
-        message += u"Det kreves ingen ekstra handling fra deg med mindre du vil melde deg av."
+        message += "Det kreves ingen ekstra handling fra deg med mindre du vil melde deg av."
 
-    message += u"\n\nFor mer info:"
-    message += u"\nhttp://%s%s" % (host, event.get_absolute_url())
+    message += "\n\nFor mer info:"
+    message += "\nhttp://%s%s" % (host, event.get_absolute_url())
 
     for attendee in attendees:
         send_mail(title, message, settings.DEFAULT_FROM_EMAIL, [attendee.user.email])
@@ -75,26 +75,26 @@ def _handle_waitlist_bump_payment(payment, attendees, message):
     if payment.payment_type == 1:  # Instant
         for attendee in attendees:
             payment.create_payment_delay(attendee.user, extended_deadline)
-        message += u"Dette arrangementet krever betaling og du må betale innen 48 timer."
+        message += "Dette arrangementet krever betaling og du må betale innen 48 timer."
 
     elif payment.payment_type == 2:  # Deadline
         if payment.deadline > extended_deadline:  # More than 2 days left of payment deadline
-            message += u"Dette arrangementet krever betaling og fristen for og betale er %s" \
+            message += "Dette arrangementet krever betaling og fristen for og betale er %s" \
                        % (payment.deadline.strftime('%-d %B %Y kl: %H:%M'))
         else:  # The deadline is in less than 2 days
             for attendee in attendees:
                 payment.create_payment_delay(attendee.user, extended_deadline)
-            message += u"Dette arrangementet krever betaling og du har 48 timer på å betale"
+            message += "Dette arrangementet krever betaling og du har 48 timer på å betale"
 
     elif payment.payment_type == 3:  # Delay
         deadline = timezone.now() + timedelta(days=payment.delay)
         for attendee in attendees:
             payment.create_payment_delay(attendee.user, deadline)
-        message += u"Dette arrangementet krever betaling og du må betale innen %d dager." % payment.delay
+        message += "Dette arrangementet krever betaling og du må betale innen %d dager." % payment.delay
     if len(payment.prices()) == 1:
-        message += u"\nPrisen for dette arrangementet er %skr." % payment.prices()[0].price
+        message += "\nPrisen for dette arrangementet er %skr." % payment.prices()[0].price
     # elif len(payment.prices()) >= 2:
-    #     message += u"\nDette arrangementet har flere prisklasser:"
+    #     message += "\nDette arrangementet har flere prisklasser:"
     #     for payment_price in payment.prices():
     #         message += "\n%s: %skr" % (payment_price.description, payment_price.price)
     return message
@@ -298,12 +298,12 @@ def handle_event_extras(event, user, extras_id):
     resp = {'message': "Feil!"}
 
     if not event.is_attendance_event:
-        return u'Dette er ikke et påmeldingsarrangement.'
+        return 'Dette er ikke et påmeldingsarrangement.'
 
     attendance_event = event.attendance_event
 
     if not attendance_event.is_attendee(user):
-        return u'Du er ikke påmeldt dette arrangementet.'
+        return 'Du er ikke påmeldt dette arrangementet.'
 
     attendee = Attendee.objects.get(event=attendance_event, user=user)
     attendee.extras = attendance_event.extras.all()[int(extras_id)]
@@ -353,16 +353,16 @@ def handle_mail_participants(event, _from_email, _to_email_value, subject, _mess
     # Who to send emails to
     send_to_users = _to_email_options[_to_email_value][0]
 
-    signature = u'\n\nVennlig hilsen Linjeforeningen Online.\n(Denne eposten kan besvares til %s)' % from_email
+    signature = '\n\nVennlig hilsen Linjeforeningen Online.\n(Denne eposten kan besvares til %s)' % from_email
 
     message = '%s%s' % (_message, signature)
 
     # Send mail
     try:
         email_addresses = [a.user.get_email().email for a in send_to_users]
-        _email_sent = EmailMessage(unicode(subject), unicode(message), from_email, [], email_addresses).send()
-        logger.info(u'Sent mail to %s for event "%s".' % (_to_email_options[_to_email_value][1], event))
+        _email_sent = EmailMessage(str(subject), str(message), from_email, [], email_addresses).send()
+        logger.info('Sent mail to %s for event "%s".' % (_to_email_options[_to_email_value][1], event))
         return _email_sent, all_attendees, attendees_on_waitlist, attendees_not_paid
-    except ImproperlyConfigured, e:
-        logger.error(u'Something went wrong while trying to send mail to %s for event "%s"\n%s' %
+    except ImproperlyConfigured as e:
+        logger.error('Something went wrong while trying to send mail to %s for event "%s"\n%s' %
                      (_to_email_options[_to_email_value][1], event, e))

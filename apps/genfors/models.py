@@ -13,13 +13,13 @@ User = settings.AUTH_USER_MODEL
 # Statics
 
 QUESTION_TYPES = [
-    (0, _(u'Ja/Nei')),
-    (1, _(u'Multiple Choice')),
+    (0, _('Ja/Nei')),
+    (1, _('Multiple Choice')),
 ]
 
 MAJORITY_TYPES = [
-    (0, _(u'Alminnelig flertall (1/2)')),
-    (1, _(u'Kvalifisert flertall (2/3)')),
+    (0, _('Alminnelig flertall (1/2)')),
+    (1, _('Kvalifisert flertall (2/3)')),
 ]
 
 BOOLEAN_VOTE = 0
@@ -33,25 +33,25 @@ class Meeting(models.Model):
     The Meeting model encapsulates a single Generalforsamling with all cascading one-to-many relationships
     """
 
-    start_date = models.DateTimeField(_(u'Tidspunkt'), help_text=_('Tidspunkt for arrangementsstart'), null=False)
-    title = models.CharField(_(u'Tittel'), max_length=150, null=False)
+    start_date = models.DateTimeField(_('Tidspunkt'), help_text=_('Tidspunkt for arrangementsstart'), null=False)
+    title = models.CharField(_('Tittel'), max_length=150, null=False)
     registration_locked = models.BooleanField(
-        _(u'registration_lock'),
-        help_text=_(u'Steng registrering'),
+        _('registration_lock'),
+        help_text=_('Steng registrering'),
         default=True,
         blank=False,
         null=False
     )
     ended = models.BooleanField(
-        _(u'event_lockdown'),
-        help_text=_(u'Avslutt generalforsamlingen'),
+        _('event_lockdown'),
+        help_text=_('Avslutt generalforsamlingen'),
         default=False,
         blank=False,
         null=False
     )
-    pin = models.CharField(_(u'Pinkode'), max_length=8, null=False, default='stub')
+    pin = models.CharField(_('Pinkode'), max_length=8, null=False, default='stub')
 
-    def __unicode__(self):
+    def __str__(self):
         return self.title + ' (' + localtime(self.start_date).strftime("%d/%m/%y %H:%M") + ')'
 
     def get_pin_code(self):
@@ -107,8 +107,8 @@ class Meeting(models.Model):
         return question.get_results()
 
     class Meta(object):
-        verbose_name = _(u'Generalforsamling')
-        verbose_name_plural = _(u'Generalforsamlinger')
+        verbose_name = _('Generalforsamling')
+        verbose_name_plural = _('Generalforsamlinger')
         permissions = (
             ('view_meeting', 'View Meeting'),
         )
@@ -134,9 +134,9 @@ class RegisteredVoter(AbstractVoter):
     """
 
     user = models.ForeignKey(User, null=False)
-    can_vote = models.BooleanField(_(u'voting_right'), help_text=_(u'Har stemmerett'), null=False, default=False)
+    can_vote = models.BooleanField(_('voting_right'), help_text=_('Har stemmerett'), null=False, default=False)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.user.get_full_name()
 
     class Meta(object):
@@ -154,7 +154,7 @@ class AnonymousVoter(AbstractVoter):
     # sha256
     user_hash = models.CharField(null=False, max_length=64)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.user_hash[:12]
 
     class Meta(object):
@@ -171,34 +171,34 @@ class Question(models.Model):
     A question is a wrapper to which all votes must be connected.
     """
 
-    meeting = models.ForeignKey(Meeting, help_text=_(u'Generalforsamling'), null=False)
-    anonymous = models.BooleanField(_(u'Hemmelig valg'), default=False, null=False, blank=False)
-    created_time = models.DateTimeField(_(u'added'), auto_now_add=True)
+    meeting = models.ForeignKey(Meeting, help_text=_('Generalforsamling'), null=False)
+    anonymous = models.BooleanField(_('Hemmelig valg'), default=False, null=False, blank=False)
+    created_time = models.DateTimeField(_('added'), auto_now_add=True)
     locked = models.BooleanField(
-        _(u'locked'),
-        help_text=_(u'Steng avstemmingen'),
+        _('locked'),
+        help_text=_('Steng avstemmingen'),
         null=False,
         blank=False,
         default=False
     )
     question_type = models.SmallIntegerField(
-        _(u'Spørsmålstype'),
+        _('Spørsmålstype'),
         choices=QUESTION_TYPES,
         default=0,
     )
     description = models.TextField(
-        _(u'Beskrivelse'),
-        help_text=_(u'Beskrivelse av saken som skal stemmes over'),
+        _('Beskrivelse'),
+        help_text=_('Beskrivelse av saken som skal stemmes over'),
         max_length=500,
         blank=True
     )
     majority_type = models.SmallIntegerField(
-        _(u'Flertallstype'),
+        _('Flertallstype'),
         choices=MAJORITY_TYPES,
         default=0,
     )
-    only_show_winner = models.BooleanField(_(u'Vis kun vinner'), null=False, blank=False, default=False)
-    total_voters = models.IntegerField(_(u'Stemmeberettigede'), null=True)
+    only_show_winner = models.BooleanField(_('Vis kun vinner'), null=False, blank=False, default=False)
+    total_voters = models.IntegerField(_('Stemmeberettigede'), null=True)
 
     # Returns results as a dictionary, either by alternative or boolean-ish types
     def get_results(self, admin=False):
@@ -212,7 +212,7 @@ class Question(models.Model):
     def get_leader(self):
         results = self.get_results()
         if results:
-            return max(results['data'].iterkeys(), key=lambda key: results['data'][key])
+            return max(results['data'].keys(), key=lambda key: results['data'][key])
         else:
             return None
 
@@ -242,8 +242,8 @@ class Question(models.Model):
         elif self.question_type is MULTIPLE_CHOICE:
             return MultipleChoice.objects.filter(question=self, voter=v).count()
 
-    def __unicode__(self):
-        return u'[%d] %s' % (self.id - self.meeting.num_questions(), self.description)
+    def __str__(self):
+        return '[%d] %s' % (self.id - self.meeting.num_questions(), self.description)
 
     class Meta:
         permissions = (
@@ -259,12 +259,12 @@ class AbstractVote(models.Model):
     The AbstractVote model holds some key components of a vote to a specific question
     """
 
-    time = models.DateTimeField(_(u'timestamp'), auto_now_add=True)
-    voter = models.ForeignKey(AbstractVoter, help_text=_(u'Bruker'), null=False)
+    time = models.DateTimeField(_('timestamp'), auto_now_add=True)
+    voter = models.ForeignKey(AbstractVoter, help_text=_('Bruker'), null=False)
     question = models.ForeignKey(Question, null=False)
 
     def get_voter_name(self):
-        return unicode(self.voter)
+        return str(self.voter)
 
     class Meta(object):
         permissions = (
@@ -277,7 +277,7 @@ class BooleanVote(AbstractVote):
     The BooleanVote model holds the yes/no/blank answer to a specific question held in superclass
     """
 
-    answer = models.NullBooleanField(_(u'answer'), help_text=_(u'Ja/Nei'), null=True, blank=True)
+    answer = models.NullBooleanField(_('answer'), help_text=_('Ja/Nei'), null=True, blank=True)
 
     class Meta(object):
         permissions = (
@@ -291,11 +291,11 @@ class Alternative(models.Model):
     is connected to a particular multiple choice type question
     """
 
-    alt_id = models.PositiveIntegerField(help_text=_(u'Alternativ ID'))
-    question = models.ForeignKey(Question, null=False, help_text=_(u'Question'))
-    description = models.CharField(_(u'Beskrivelse'), null=True, blank=True, max_length=150)
+    alt_id = models.PositiveIntegerField(help_text=_('Alternativ ID'))
+    question = models.ForeignKey(Question, null=False, help_text=_('Question'))
+    description = models.CharField(_('Beskrivelse'), null=True, blank=True, max_length=150)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.description
 
     class Meta(object):
@@ -309,7 +309,7 @@ class MultipleChoice(AbstractVote):
     The MultipleChoice model holds the answered alternative to a specific question held in superclass
     """
 
-    answer = models.ForeignKey(Alternative, null=True, blank=True, help_text=_(u'Alternativ'))
+    answer = models.ForeignKey(Alternative, null=True, blank=True, help_text=_('Alternativ'))
 
     class Meta(object):
         permissions = (
@@ -322,8 +322,8 @@ class Result(models.Model):
     Result string container to reduce serverload
     """
 
-    meeting = models.ForeignKey(Meeting, null=False, help_text=u'Meeting')
-    question = models.ForeignKey(Question, null=False, help_text=u'Meeting')
+    meeting = models.ForeignKey(Meeting, null=False, help_text='Meeting')
+    question = models.ForeignKey(Question, null=False, help_text='Meeting')
     result_public = models.TextField(max_length=2000)
     result_private = models.TextField(max_length=2000)
 

@@ -45,10 +45,10 @@ def feedback(request, applabel, appmodel, object_id, feedback_id):
             fosa = FieldOfStudyAnswer(feedback_relation=feedback_relation, answer=request.user.field_of_study)
             fosa.save()
 
-            messages.success(request, _(u"Takk for at du svarte."))
+            messages.success(request, _("Takk for at du svarte."))
             return redirect("home")
         else:
-            messages.error(request, _(u"Du må svare på alle påkrevde felt."))
+            messages.error(request, _("Du må svare på alle påkrevde felt."))
     else:
         questions = create_forms(feedback_relation)
 
@@ -66,7 +66,7 @@ def result(request, applabel, appmodel, object_id, feedback_id):
     feedback_relation = _get_fbr_or_404(applabel, appmodel, object_id, feedback_id)
 
     if not has_permission(feedback_relation, request.user):
-        messages.error(request, _(u"Du har ikke tilgang til dette skjemaet."))
+        messages.error(request, _("Du har ikke tilgang til dette skjemaet."))
         return redirect("home")
 
     return feedback_results(request, feedback_relation)
@@ -94,11 +94,11 @@ def feedback_results(request, feedback_relation, token=False):
 
     if feedback_relation.feedback.display_info or not token:
         info = feedback_relation.content_info()
-        info[_(u'Besvarelser')] = feedback_relation.answered.count()
+        info[_('Besvarelser')] = feedback_relation.answered.count()
 
     register_token = get_object_or_404(RegisterToken, fbr=feedback_relation)
 
-    token_url = u"%s%sresults/%s" % (
+    token_url = "%s%sresults/%s" % (
         request.META['HTTP_HOST'],
         feedback_relation.get_absolute_url(),
         register_token.token
@@ -122,7 +122,7 @@ def chart_data(request, applabel, appmodel, object_id, feedback_id):
     feedback_relation = _get_fbr_or_404(applabel, appmodel, object_id, feedback_id)
 
     if not has_permission(feedback_relation, request.user):
-        messages.error(request, _(u"Du har ikke tilgang til denne dataen."))
+        messages.error(request, _("Du har ikke tilgang til denne dataen."))
         return redirect("home")
 
     return get_chart_data(request, feedback_relation)
@@ -165,17 +165,17 @@ def get_chart_data(request, feedback_relation, token=False):
 
     for question in feedback_relation.multiple_choice_question:
         if question.display or not token:
-            mc_questions.append(unicode(question))
+            mc_questions.append(str(question))
             answer_count = defaultdict(int)
             for answer in feedback_relation.answers_to_question(question):
                 answer_count[str(answer)] += 1
-            mc_answer_count.append(answer_count.items())
+            mc_answer_count.append(list(answer_count.items()))
 
     answer_collection['replies']['ratings'] = rating_answers
     answer_collection['replies']['titles'] = rating_titles
     answer_collection['replies']['mc_questions'] = mc_questions
     answer_collection['replies']['mc_answers'] = mc_answer_count
-    answer_collection['replies']['fos'] = fos_answer_count.items()
+    answer_collection['replies']['fos'] = list(fos_answer_count.items())
 
     return HttpResponse(json.dumps(answer_collection), content_type='application/json')
 
@@ -196,7 +196,7 @@ def delete_answer(request):
             answer.delete()
             return HttpResponse(status=200)
 
-    return HttpResponse(_(u"Du har ikke tilgang til å slette dette svaret", status=401))
+    return HttpResponse(_("Du har ikke tilgang til å slette dette svaret", status=401))
 
 
 def _get_fbr_or_404(app_label, app_model, object_id, feedback_id):

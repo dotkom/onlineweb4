@@ -27,24 +27,24 @@ class OrderMixin(models.Model):
         (3, 'Annet'),
     ))
     ordered_date = models.DateTimeField(auto_now_add=True, editable=False)
-    ordered_by = models.ForeignKey(User, verbose_name=_(u"bestilt av"), related_name='ordered_by')
+    ordered_by = models.ForeignKey(User, verbose_name=_("bestilt av"), related_name='ordered_by')
     ordered_committee = models.ForeignKey(
         Group,
-        verbose_name=_(u'bestilt av komite'),
+        verbose_name=_('bestilt av komite'),
         related_name='ordered_committee'
     )
     assigned_to = models.ForeignKey(
         User,
-        verbose_name=_(u'tilordnet til'),
+        verbose_name=_('tilordnet til'),
         related_name='assigned_to',
         blank=True,
         null=True
     )
-    description = models.TextField(_(u"beskrivelse"), blank=True, null=True)
-    comments = models.TextField(_(u"kommentar"), blank=True, null=True)
-    amount = models.IntegerField(_(u'antall opplag'), blank=True, null=True)
-    finished = models.BooleanField(_(u"ferdig"), default=False)
-    display_from = models.DateField(_(u"vis fra"), blank=True, null=True, default=None)
+    description = models.TextField(_("beskrivelse"), blank=True, null=True)
+    comments = models.TextField(_("kommentar"), blank=True, null=True)
+    amount = models.IntegerField(_('antall opplag'), blank=True, null=True)
+    finished = models.BooleanField(_("ferdig"), default=False)
+    display_from = models.DateField(_("vis fra"), blank=True, null=True, default=None)
 
     def toggle_finished(self):
         self.finished = not self.finished
@@ -69,16 +69,16 @@ class Poster(OrderMixin):
     """
     Poster order
     """
-    title = models.CharField(_(u'arrangementstittel'), max_length=60, blank=True, null=True)
-    event = models.ForeignKey(Event, related_name=u'Arrangement', blank=True, null=True)
-    price = models.DecimalField(_(u'pris'), max_digits=10, decimal_places=2, blank=True, null=True)
-    display_to = models.DateField(_(u"vis til"), blank=True, null=True, default=None)
-    bong = models.IntegerField(_(u'bonger'), blank=True, null=True)
+    title = models.CharField(_('arrangementstittel'), max_length=60, blank=True, null=True)
+    event = models.ForeignKey(Event, related_name='Arrangement', blank=True, null=True)
+    price = models.DecimalField(_('pris'), max_digits=10, decimal_places=2, blank=True, null=True)
+    display_to = models.DateField(_("vis til"), blank=True, null=True, default=None)
+    bong = models.IntegerField(_('bonger'), blank=True, null=True)
 
     class Meta(object):
         ordering = ['-id']
-        verbose_name = _(u"bestilling")
-        verbose_name_plural = _(u"bestillinger")
+        verbose_name = _("bestilling")
+        verbose_name_plural = _("bestillinger")
         permissions = (
             ('add_poster_order', 'Add poster orders'),
             ('overview_poster_order', 'View poster order overview'),
@@ -87,12 +87,9 @@ class Poster(OrderMixin):
 
     def __str__(self):
         if self.order_type == 1:
-            return _(u"Plakatbestilling: %(event)s" % {'event': self.event.title})
+            return _("Plakatbestilling: %(event)s" % {'event': self.event.title})
         else:
-            return _(u"Generell bestilling: %(title)s" % {'title': self.title})
-
-    def __unicode__(self):
-        return self.__str__()
+            return _("Generell bestilling: %(title)s" % {'title': self.title})
 
 
 class CustomText(models.Model):

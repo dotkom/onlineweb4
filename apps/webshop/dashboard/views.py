@@ -136,7 +136,7 @@ class ProductImage(DashboardPermissionMixin, DetailView):
         context = super(ProductImage, self).get_context_data(*args, **kwargs)
         # Filter out potential ResponsiveImage objects that have orphan file references
         images = ResponsiveImage.objects.all().order_by('-timestamp')[:15]
-        context['images'] = filter(lambda i: i.file_status_ok(), images)
+        context['images'] = [i for i in images if i.file_status_ok()]
 
         context['tags'] = sorted(set(tag.tag.name for tag in TaggedItem.objects.filter(
             content_type=ContentType.objects.get_for_model(ResponsiveImage)

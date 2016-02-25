@@ -30,13 +30,13 @@ class NewClientForm(forms.ModelForm):
             # Split the scopes and check that the requested scopes are a subset of the available ones
             scopes_list = scopes.split(' ')
             if not set(scopes_list) <= set([s for s, k in oauth2_settings.user_settings['SCOPES'].items()]):
-                self.add_error('scopes', u'Feltet inneholder ugyldige tilganger.')
+                self.add_error('scopes', 'Feltet inneholder ugyldige tilganger.')
 
             # Validate the uris
             try:
                 validate_uris(redirect_uris)
             except ValidationError:
-                self.add_error('redirect_uris', u'Feltet inneholder ugyldige URIer.')
+                self.add_error('redirect_uris', 'Feltet inneholder ugyldige URIer.')
 
     class Meta(object):
         """

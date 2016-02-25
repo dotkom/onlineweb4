@@ -15,5 +15,5 @@ class CompanyTests(TestCase):
         self.company = G(Company, name="testname")
 
     def testCompanyUniqodeIsCorrect(self):
-        self.logger.debug("Company __unicode__() should return correct name")
-        self.assertEqual(self.company.__unicode__(), "testname")
+        self.logger.debug("Company __str__() should return correct name")
+        self.assertEqual(self.company.__str__(), "testname")

@@ -17,7 +17,7 @@ from django.utils import timezone
 
 from oauth2_provider.models import AccessToken
 
-import watson
+from watson import search as watson
 
 from apps.approval.forms import FieldOfStudyApplicationForm
 from apps.approval.models import MembershipApproval
@@ -78,13 +78,13 @@ def _create_profile_context(request):
         'mark_rules_accepted': request.user.mark_rules,
         'marks': [
             # Tuple syntax ('title', list_of_marks, is_collapsed)
-            (_(u'aktive prikker'), Mark.marks.active(request.user), False),
-            (_(u'inaktive prikker'), Mark.marks.inactive(request.user), True),
+            (_('aktive prikker'), Mark.marks.active(request.user), False),
+            (_('inaktive prikker'), Mark.marks.inactive(request.user), True),
         ],
         'suspensions': [
             # Tuple syntax ('title', list_of_marks, is_collapsed)
-            (_(u'aktive suspansjoner'), Suspension.objects.filter(user=request.user, active=True), False),
-            (_(u'inaktive suspansjoner'), Suspension.objects.filter(user=request.user, active=False), True),
+            (_('aktive suspansjoner'), Suspension.objects.filter(user=request.user, active=True), False),
+            (_('inaktive suspansjoner'), Suspension.objects.filter(user=request.user, active=False), True),
         ],
         # password
         'password_change_form': PasswordChangeForm(request.user),
@@ -95,17 +95,17 @@ def _create_profile_context(request):
         'has_active_approvals': MembershipApproval.objects.filter(applicant=request.user, processed=False).count() > 0,
         'approvals': [
             # Tuple syntax ('title', list_of_approvals, is_collapsed)
-            (_(u"aktive søknader"), MembershipApproval.objects.filter(applicant=request.user, processed=False), False),
-            (_(u"avslåtte søknader"), MembershipApproval.objects.filter(
+            (_("aktive søknader"), MembershipApproval.objects.filter(applicant=request.user, processed=False), False),
+            (_("avslåtte søknader"), MembershipApproval.objects.filter(
                 applicant=request.user,
                 processed=True,
                 approved=False
             ), True),
-            (_(u"godkjente søknader"), MembershipApproval.objects.filter(applicant=request.user, processed=True), True),
+            (_("godkjente søknader"), MembershipApproval.objects.filter(applicant=request.user, processed=True), True),
         ],
         'payments': [
-            (_(u'ubetalt'), PaymentDelay.objects.all().filter(user=request.user, active=True), False),
-            (_(u'betalt'), PaymentRelation.objects.all().filter(user=request.user), True),
+            (_('ubetalt'), PaymentDelay.objects.all().filter(user=request.user, active=True), False),
+            (_('betalt'), PaymentRelation.objects.all().filter(user=request.user), True),
         ],
     }
 
@@ -122,10 +122,10 @@ def edit_profile(request):
         context['user_profile_form'] = user_profile_form
 
         if not user_profile_form.is_valid():
-            messages.error(request, _(u"Noen av de påkrevde feltene mangler"))
+            messages.error(request, _("Noen av de påkrevde feltene mangler"))
         else:
             user_profile_form.save()
-            messages.success(request, _(u"Brukerprofilen din ble endret"))
+            messages.success(request, _("Brukerprofilen din ble endret"))
 
     return render(request, 'profiles/index.html', context)
 
@@ -140,10 +140,10 @@ def privacy(request):
         context['privacy_form'] = privacy_form
 
         if not privacy_form.is_valid():
-            messages.error(request, _(u"Noen av de påkrevde feltene mangler"))
+            messages.error(request, _("Noen av de påkrevde feltene mangler"))
         else:
             privacy_form.save()
-            messages.success(request, _(u"Personvern ble endret"))
+            messages.success(request, _("Personvern ble endret"))
 
     return render(request, 'profiles/index.html', context)
 
@@ -161,15 +161,15 @@ def connected_apps(request):
 
     if request.method == 'POST':
         if 'token_id' not in request.POST:
-            messages.error(request, _(u'Det ble ikke oppgitt noen tilgangsnøkkel i forespørselen.'))
+            messages.error(request, _('Det ble ikke oppgitt noen tilgangsnøkkel i forespørselen.'))
         else:
             try:
                 pk = int(request.POST['token_id'])
                 token = get_object_or_404(AccessToken, pk=pk)
                 token.delete()
-                messages.success(request, _(u'Tilgangsnøkkelen ble slettet.'))
+                messages.success(request, _('Tilgangsnøkkelen ble slettet.'))
             except ValueError:
-                messages.error(request, _(u'Tilgangsnøkkelen inneholdt en ugyldig verdi.'))
+                messages.error(request, _('Tilgangsnøkkelen inneholdt en ugyldig verdi.'))
 
     return render(request, 'profiles/index.html', context)
 
@@ -184,10 +184,10 @@ def password(request):
         context['password_change_form'] = password_change_form
 
         if not password_change_form.is_valid():
-            messages.error(request, _(u"Passordet ditt ble ikke endret"))
+            messages.error(request, _("Passordet ditt ble ikke endret"))
         else:
             password_change_form.save()
-            messages.success(request, _(u"Passordet ditt ble endret"))
+            messages.success(request, _("Passordet ditt ble endret"))
 
     return render(request, 'profiles/index.html', context)
 
@@ -202,12 +202,12 @@ def position(request):
         context['position_form'] = form
 
         if not form.is_valid():
-            messages.error(request, _(u'Skjemaet inneholder feil'))
+            messages.error(request, _('Skjemaet inneholder feil'))
         else:
             new_position = form.save(commit=False)
             new_position.user = request.user
             new_position.save()
-            messages.success(request, _(u'Posisjonen ble lagret'))
+            messages.success(request, _('Posisjonen ble lagret'))
 
     return render(request, 'profiles/index.html', context)
 
@@ -220,11 +220,11 @@ def delete_position(request):
             pos = get_object_or_404(Position, pk=position_id)
             if pos.user == request.user:
                 pos.delete()
-                return_status = json.dumps({'message': _(u"Posisjonen ble slettet.")})
+                return_status = json.dumps({'message': _("Posisjonen ble slettet.")})
                 return HttpResponse(status=200, content=return_status)
             else:
                 return_status = json.dumps({
-                    'message': _(u"Du prøvde å slette en posisjon som ikke tilhørte deg selv.")
+                    'message': _("Du prøvde å slette en posisjon som ikke tilhørte deg selv.")
                 })
             return HttpResponse(status=500, content=return_status)
         raise Http404
@@ -236,11 +236,11 @@ def update_mark_rules(request):
         if request.method == 'POST':
             accepted = request.POST.get('rules_accepted') == "true"
             if accepted:
-                return_status = json.dumps({'message': _(u"Du har valgt å akseptere prikkereglene.")})
+                return_status = json.dumps({'message': _("Du har valgt å akseptere prikkereglene.")})
                 request.user.mark_rules = True
                 request.user.save()
             else:
-                return_status = json.dumps({'message': _(u"Du kan ikke endre din godkjenning av prikkereglene.")})
+                return_status = json.dumps({'message': _("Du kan ikke endre din godkjenning av prikkereglene.")})
                 return HttpResponse(status=403, content=return_status)
             return HttpResponse(status=212, content=return_status)
     return HttpResponse(status=405)
@@ -259,7 +259,7 @@ def add_email(request):
 
             # Check if the email already exists
             if Email.objects.filter(email=cleaned['new_email']).count() > 0:
-                messages.error(request, _(u"Eposten %s er allerede registrert.") % email_string)
+                messages.error(request, _("Eposten %s er allerede registrert.") % email_string)
                 return redirect('profiles')
 
             # Check if it's studmail and if someone else already has it in their profile
@@ -268,7 +268,7 @@ def add_email(request):
                 user = User.objects.filter(ntnu_username=ntnu_username)
                 if user.count() == 1:
                     if user != request.user:
-                        messages.error(request, _(u"En bruker med dette NTNU-brukernavnet eksisterer allerede."))
+                        messages.error(request, _("En bruker med dette NTNU-brukernavnet eksisterer allerede."))
                         return redirect('profiles')
 
             # Create the email
@@ -278,7 +278,7 @@ def add_email(request):
             # Send the verification mail
             _send_verification_mail(request, email.email)
 
-            messages.success(request, _(u"Eposten ble lagret. Du må sjekke din innboks for å verifisere den."))
+            messages.success(request, _("Eposten ble lagret. Du må sjekke din innboks for å verifisere den."))
 
     return render(request, 'profiles/index.html', context)
 
@@ -295,7 +295,7 @@ def delete_email(request):
                 return HttpResponse(
                     status=412,
                     content=json.dumps({
-                        'message': _(u"%s er ikke en eksisterende epostaddresse på din profil.") % email.email
+                        'message': _("%s er ikke en eksisterende epostaddresse på din profil.") % email.email
                     })
                 )
 
@@ -304,7 +304,7 @@ def delete_email(request):
                 return HttpResponse(
                     status=412,
                     content=json.dumps({
-                        'message': _(u"Kan ikke slette primær-epostadresse.")
+                        'message': _("Kan ikke slette primær-epostadresse.")
                     })
                 )
 
@@ -325,7 +325,7 @@ def set_primary(request):
                 return HttpResponse(
                     status=412,
                     content=json.dumps({
-                        'message': _(u"%s er ikke en eksisterende epostaddresse på din profil.") % email.email}
+                        'message': _("%s er ikke en eksisterende epostaddresse på din profil.") % email.email}
                     )
                 )
 
@@ -334,7 +334,7 @@ def set_primary(request):
                 return HttpResponse(
                     status=412,
                     content=json.dumps({
-                        'message': _(u"%s er allerede satt som primær-epostaddresse.") % email.email}
+                        'message': _("%s er allerede satt som primær-epostaddresse.") % email.email}
                     )
                 )
 
@@ -363,7 +363,7 @@ def verify_email(request):
                 return HttpResponse(
                     status=412,
                     content=json.dumps({
-                        'message': _(u"%s er ikke en eksisterende epostaddresse på din profil.") % email.email}
+                        'message': _("%s er ikke en eksisterende epostaddresse på din profil.") % email.email}
                     )
                 )
 
@@ -372,7 +372,7 @@ def verify_email(request):
                 return HttpResponse(
                     status=412,
                     content=json.dumps({
-                        'message': _(u"%s er allerede verifisert.") % email.email}
+                        'message': _("%s er allerede verifisert.") % email.email}
                     )
                 )
 
@@ -390,7 +390,7 @@ def _send_verification_mail(request, email):
     rt = RegisterToken(user=request.user, email=email, token=token)
     rt.save()
 
-    email_message = _(u"""
+    email_message = _("""
 En ny epost har blitt registrert på din profil på online.ntnu.no.
 
 For å kunne ta eposten i bruk kreves det at du verifiserer den. Du kan gjore dette
@@ -403,9 +403,9 @@ kan dette gjøres ved å klikke på knappen for verifisering på din profil.
 """) % (request.META['HTTP_HOST'], token)
 
     try:
-        send_mail(_(u'Verifiser din epost %s') % email, email_message, settings.DEFAULT_FROM_EMAIL, [email])
+        send_mail(_('Verifiser din epost %s') % email, email_message, settings.DEFAULT_FROM_EMAIL, [email])
     except SMTPException:
-        messages.error(request, u'Det oppstod en kritisk feil, epostadressen er ugyldig!')
+        messages.error(request, 'Det oppstod en kritisk feil, epostadressen er ugyldig!')
         return redirect('home')
 
 
@@ -455,7 +455,7 @@ def api_user_search(request):
     if request.GET.get('query'):
         users = search_for_users(request.GET.get('query'))
         return render_json(users)
-    return render_json(error=u'Mangler søkestreng')
+    return render_json(error='Mangler søkestreng')
 
 
 def search_for_users(query, limit=10):
@@ -476,7 +476,7 @@ def api_plain_user_search(request):
     if request.GET.get('query'):
         users = search_for_plain_users(request.GET.get('query'))
         return JsonResponse(users, safe=False)
-    return render_json(error=u'Mangler søkestreng')
+    return render_json(error='Mangler søkestreng')
 
 
 def search_for_plain_users(query, limit=10):
@@ -498,5 +498,5 @@ def view_profile(request, username):
     if user.privacy.visible_for_other_users or user == request.user:
         return render(request, 'profiles/view_profile.html', {'user_profile': user})
 
-    messages.error(request, _(u'Du har ikke tilgang til denne profilen'))
+    messages.error(request, _('Du har ikke tilgang til denne profilen'))
     return redirect('profiles')

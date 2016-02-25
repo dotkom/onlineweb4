@@ -1,11 +1,10 @@
 # -*- encoding: utf-8 -*-
 
-from django.conf.urls import patterns
 # API v1
 from apps.api.utils import SharedAPIRootRouter
 from apps.shop import views
 
-urlpatterns = patterns('',)
+urlpatterns = []
 
 
 router = SharedAPIRootRouter()

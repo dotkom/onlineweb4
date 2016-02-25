@@ -48,21 +48,21 @@ def approve_application(request):
 
             if apps.count() == 0:
                 response_text = json.dumps({'message': _(
-                    u"""Kan ikke finne en søknad med denne IDen (%s).
+                    """Kan ikke finne en søknad med denne IDen (%s).
 Om feilen vedvarer etter en refresh, kontakt dotkom@online.ntnu.no.""") % application_id})
                 return HttpResponse(status=412, content=response_text)
 
             app = apps[0]
 
             if app.processed:
-                response_text = json.dumps({'message': _(u"Denne søknaden er allerede behandlet.")})
+                response_text = json.dumps({'message': _("Denne søknaden er allerede behandlet.")})
                 return HttpResponse(status=412, content=response_text)
 
             user = app.applicant
 
             if not user.ntnu_username:
                 response_text = json.dumps({'message': _(
-                    u"""Brukeren (%s) har ikke noe lagret ntnu brukernavn.""") % user.get_full_name()})
+                    """Brukeren (%s) har ikke noe lagret ntnu brukernavn.""") % user.get_full_name()})
                 return HttpResponse(status=412, content=response_text)
 
             if app.is_fos_application():
@@ -94,7 +94,7 @@ Old notes:
                     membership.expiration_date = app.new_expiry_date
                     membership.registered = timezone.now().date()
                     membership.note = user.get_field_of_study_display() + " " + str(user.started_date)
-                    membership.description = u"""Added by approvals app.
+                    membership.description = """Added by approvals app.
 
 Approved by %s on %s.""" % (request.user.get_full_name(), str(timezone.now().date()))
                     membership.save()
@@ -120,7 +120,7 @@ def decline_application(request):
             apps = MembershipApproval.objects.filter(pk=application_id)
 
             if apps.count() == 0:
-                response_text = json.dumps({'message': _(u"""
+                response_text = json.dumps({'message': _("""
 Kan ikke finne en søknad med denne IDen (%s).
 Om feilen vedvarer etter en refresh, kontakt dotkom@online.ntnu.no.""") % application_id})
                 return HttpResponse(status=412, content=response_text)
@@ -128,7 +128,7 @@ Om feilen vedvarer etter en refresh, kontakt dotkom@online.ntnu.no.""") % applic
             app = apps[0]
 
             if app.processed:
-                response_text = json.dumps({'message': _(u"Denne søknaden er allerede behandlet.")})
+                response_text = json.dumps({'message': _("Denne søknaden er allerede behandlet.")})
                 return HttpResponse(status=412, content=response_text)
 
             message = request.POST.get('message')

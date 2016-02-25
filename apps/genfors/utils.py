@@ -89,7 +89,7 @@ def handle_not_locked(self, admin):
         raise NotImplementedError
 
     if results:
-        winner = max(results.iterkeys(), key=(lambda key: results[key]))
+        winner = max(results.keys(), key=(lambda key: results[key]))
         winner_votes = results[winner]
 
         minimum = 0
@@ -188,7 +188,7 @@ def _handle_user_login(request, form):
         # Trying to get anonymous voter object too, if not found the secret code was wrong
         anon_voter = anonymous_voter(h, request.user.username)
         if not anon_voter:
-            messages.error(request, u'Feil personlig kode')
+            messages.error(request, 'Feil personlig kode')
 
     response = redirect('genfors_index')
     if anon_voter:
@@ -231,9 +231,9 @@ def count_votes(context, aq, res):
     alternatives = context['active_question']['alternatives']
 
     if aq.question_type is BOOLEAN_VOTE:
-        context['active_question']['yes_percent'] = res['data']['Ja'] * 100 / total_votes
-        context['active_question']['no_percent'] = res['data']['Nei'] * 100 / total_votes
-        context['active_question']['blank_percent'] = res['data']['Blankt'] * 100 / total_votes
+        context['active_question']['yes_percent'] = res['data']['Ja'] * 100 // total_votes
+        context['active_question']['no_percent'] = res['data']['Nei'] * 100 // total_votes
+        context['active_question']['blank_percent'] = res['data']['Blankt'] * 100 // total_votes
 
     elif aq.question_type is MULTIPLE_CHOICE and total_votes != 0:
         context['active_question']['multiple_choice'] = {}
@@ -241,4 +241,4 @@ def count_votes(context, aq, res):
             context['active_question']['multiple_choice'][a.description] = [0, 0]
         context['active_question']['multiple_choice']['Blankt'] = [0, 0]
         for k, v in res['data'].items():
-            context['active_question']['multiple_choice'][k] = [v, v * 100 / total_votes]
+            context['active_question']['multiple_choice'][k] = [v, v * 100 // total_votes]

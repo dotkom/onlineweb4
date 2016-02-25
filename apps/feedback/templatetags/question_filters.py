@@ -1,5 +1,5 @@
 from django import template
-from django.utils.importlib import import_module
+from importlib import import_module
 from apps.feedback.models import FIELD_OF_STUDY_CHOICES
 from apps.feedback.models import RATING_CHOICES
 from collections import defaultdict

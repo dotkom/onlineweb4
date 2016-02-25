@@ -29,7 +29,7 @@ class FeedbackMail(Task):
             if message.send:
                 EmailMessage(
                     message.subject,
-                    unicode(message),
+                    str(message),
                     message.committee_mail,
                     [],
                     message.attended_mails
@@ -78,15 +78,15 @@ class FeedbackMail(Task):
         message.committee_mail = FeedbackMail.get_committee_email(feedback)
         deadline = feedback.deadline.strftime("%d. %B").encode("utf-8")
         title = FeedbackMail.get_title(feedback)
-        message.link = str(u"\n\n" + FeedbackMail.get_link(feedback)).encode()
+        message.link = str("\n\n" + FeedbackMail.get_link(feedback)).encode()
         results_link = str(FeedbackMail.get_link(feedback) + "results").encode()
 
         deadline_diff = (feedback.deadline - today).days
 
-        message.subject = u"Feedback: " + title
-        message.intro = u"Hei, vi ønsker tilbakemelding på \"" + title + "\""
+        message.subject = "Feedback: " + title
+        message.intro = "Hei, vi ønsker tilbakemelding på \"" + title + "\""
         message.mark = FeedbackMail.mark_message(feedback)
-        message.contact = u"\n\nEventuelle spørsmål sendes til %s " % message.committee_mail
+        message.contact = "\n\nEventuelle spørsmål sendes til %s " % message.committee_mail
         message.date = FeedbackMail.date_message(end_date)
 
         if deadline_diff < 0:  # Deadline passed
@@ -98,7 +98,7 @@ class FeedbackMail(Task):
             if feedback.gives_mark:
                 FeedbackMail.set_marks(title, not_responded)
 
-                message.intro = u"Fristen for å svare på \"%s\" har gått ut og du har fått en prikk." % title
+                message.intro = "Fristen for å svare på \"%s\" har gått ut og du har fått en prikk." % title
                 message.mark = ""
                 message.date = ""
                 message.link = ""
@@ -107,22 +107,22 @@ class FeedbackMail(Task):
             logger.info("Marks given to: " + str(not_responded))
 
         elif deadline_diff < 1:  # Last warning
-            message.deadline = u"\n\nI dag innen 23:59 er siste frist til å svare på skjemaet."
+            message.deadline = "\n\nI dag innen 23:59 er siste frist til å svare på skjemaet."
 
-            message.results_message = u"""
+            message.results_message = """
             Hei, siste purremail på feedback skjema har blitt sendt til alle
             gjenværende deltagere på \"{}\".\nDere kan se feedback-resultatene på:\n{}\n
             """.format(title, results_link)
             message.send = True
             message.status = "Last warning"
         elif deadline_diff < 3 and feedback.gives_mark:  # 3 days from the deadline
-            message.deadline = u"\n\nFristen for å svare på skjema er %s innen kl 23:59." % deadline
+            message.deadline = "\n\nFristen for å svare på skjema er %s innen kl 23:59." % deadline
             message.send = True
             message.status = "Warning message"
         elif not feedback.first_mail_sent:
-            message.deadline = u"\n\nFristen for å svare på skjema er %s innen kl 23:59." % deadline
+            message.deadline = "\n\nFristen for å svare på skjema er %s innen kl 23:59." % deadline
 
-            message.results_message = u"""
+            message.results_message = """
             Hei, nå har feedbackmail blitt sendt til alle
             deltagere på \"{}\".\nDere kan se feedback-resultatene på:\n{}\n
             """.format(title, results_link)
@@ -150,7 +150,7 @@ class FeedbackMail(Task):
         # The first notification the day after the feedbackrelation is made
         if date:
             date_string = date.strftime("%d. %B").encode("utf-8")
-            message_date = u"som du var med på den %s:" % date_string
+            message_date = "som du var med på den %s:" % date_string
         else:
             message_date = ""
 
@@ -170,7 +170,7 @@ class FeedbackMail(Task):
 
     @staticmethod
     def get_title(feedback):
-        return unicode(feedback.content_title())
+        return str(feedback.content_title())
 
     @staticmethod
     def get_committee_email(feedback):
@@ -179,7 +179,7 @@ class FeedbackMail(Task):
     @staticmethod
     def mark_message(feedback):
         if feedback.gives_mark:
-            return u"""
+            return """
             \nVær oppmerksom på at du får prikk dersom du ikke svarer
             på disse spørsmålene innen fristen.
             """
@@ -189,9 +189,9 @@ class FeedbackMail(Task):
     @staticmethod
     def set_marks(title, not_responded):
         mark = Mark()
-        mark.title = u"Manglende tilbakemelding på %s" % title
+        mark.title = "Manglende tilbakemelding på %s" % title
         mark.category = 4  # Missed feedback
-        mark.description = u"Du har fått en prikk fordi du ikke har levert tilbakemelding."
+        mark.description = "Du har fått en prikk fordi du ikke har levert tilbakemelding."
         mark.save()
 
         for user in not_responded:
@@ -210,14 +210,14 @@ class Message(object):
     contact = ""
     link = ""
     send = False
-    end = u"\n\nMvh\nLinjeforeningen Online"
+    end = "\n\nMvh\nLinjeforeningen Online"
     results_message = False
     status = "-"
 
     committee_mail = ""
     attended_mails = False
 
-    def __unicode__(self):
+    def __str__(self):
         message = "%s %s %s %s %s %s %s" % (
             self.intro,
             self.date,

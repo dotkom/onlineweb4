@@ -11,14 +11,14 @@ from apps.authentication.models import FIELD_OF_STUDY_CHOICES
 
 
 @protected_resource([
-    u'authentication.onlineuser.username.read',
-    u'authentication.onlineuser.first_name.read',
-    u'authentication.onlineuser.last_name.read',
-    u'authentication.onlineuser.email.read',
-    u'authentication.onlineuser.is_member.read',
-    u'authentication.onlineuser.field_of_study.read',
-    u'authentication.onlineuser.nickname.read',
-    u'authentication.onlineuser.rfid.read'
+    'authentication.onlineuser.username.read',
+    'authentication.onlineuser.first_name.read',
+    'authentication.onlineuser.last_name.read',
+    'authentication.onlineuser.email.read',
+    'authentication.onlineuser.is_member.read',
+    'authentication.onlineuser.field_of_study.read',
+    'authentication.onlineuser.nickname.read',
+    'authentication.onlineuser.rfid.read'
 ])
 def user(request):
     """

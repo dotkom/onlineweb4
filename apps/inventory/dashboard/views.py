@@ -42,10 +42,10 @@ def new(request):
         inventory_form = ItemForm(request.POST)
 
         if not inventory_form.is_valid():
-            messages.error(request, u'Noen av de påkrevde feltene inneholder feil.')
+            messages.error(request, 'Noen av de påkrevde feltene inneholder feil.')
         else:
             item = inventory_form.save()
-            messages.success(request, u'Varen ble opprettet')
+            messages.success(request, 'Varen ble opprettet')
             return redirect(details, item.id)
 
         context['item_form'] = inventory_form
@@ -74,10 +74,10 @@ def details(request, item_pk):
 
         item_form = ItemForm(request.POST, instance=context['item'])
         if not item_form.is_valid():
-            messages.error(request, u'Noen av de påkrevde feltene inneholder feil.')
+            messages.error(request, 'Noen av de påkrevde feltene inneholder feil.')
         else:
             item_form.save()
-            messages.success(request, u'Varen ble oppdatert')
+            messages.success(request, 'Varen ble oppdatert')
         context['item_form'] = item_form
     else:
         context['item_form'] = ItemForm(instance=context['item'])
@@ -103,7 +103,7 @@ def item_delete(request, item_pk):
 
         item.delete()
 
-        messages.success(request, u'Varen %s ble slettet.' % item.name)
+        messages.success(request, 'Varen %s ble slettet.' % item.name)
 
         return redirect(index)
 
@@ -118,8 +118,8 @@ def batch_new(request, item_pk):
 
     # Field mapper
     fieldmap = {
-        'amount': u'Mengde',
-        'expiration_date': u'Utløpsdato',
+        'amount': 'Mengde',
+        'expiration_date': 'Utløpsdato',
     }
 
     item = get_object_or_404(Item, pk=item_pk)
@@ -129,7 +129,7 @@ def batch_new(request, item_pk):
 
         if not batch_form.is_valid():
             # Dirty hack to display errors since the form is not passed in redirect context
-            error_reply = u"Feil i felt:"
+            error_reply = "Feil i felt:"
             for field, error in batch_form.errors.items():
                 error_reply += ' ' + fieldmap[field] + ' (' + batch_form.error_class.as_text(error) + '),'
 
@@ -138,7 +138,7 @@ def batch_new(request, item_pk):
             b = batch_form.save(commit=False)
             b.item = item
             b.save()
-            messages.success(request, u'Batchen ble lagt til.')
+            messages.success(request, 'Batchen ble lagt til.')
 
         return redirect(details, item_pk=item_pk)
 
@@ -160,10 +160,10 @@ def batch(request, item_pk, batch_pk):
         batch_form = BatchForm(request.POST, instance=b)
 
         if not batch_form.is_valid():
-            messages.error(request, u'Noen av de påkrevde feltene inneholder feil.')
+            messages.error(request, 'Noen av de påkrevde feltene inneholder feil.')
         else:
             batch_form.save()
-            messages.success(request, u'Batchen ble oppdatert.')
+            messages.success(request, 'Batchen ble oppdatert.')
 
         return redirect(details, item_pk=item_pk)
 
@@ -181,7 +181,7 @@ def batch_delete(request, item_pk, batch_pk):
     if request.method == 'POST':
 
         b.delete()
-        messages.success(request, u'Batchen ble slettet.')
+        messages.success(request, 'Batchen ble slettet.')
 
         return redirect(details, item_pk=item_pk)
 

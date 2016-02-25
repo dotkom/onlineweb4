@@ -17,7 +17,7 @@ from apps.authentication.models import AllowedUsername, get_length_of_field_of_s
 def create_fos_application(request):
     if request.method == 'POST':
         if not request.user.ntnu_username:
-            messages.error(request, _(u"Du må knytte et NTNU-brukernavn til kontoen din."))
+            messages.error(request, _("Du må knytte et NTNU-brukernavn til kontoen din."))
             return redirect('profiles_active', active_tab='membership')
 
         form = FieldOfStudyApplicationForm(request.POST)
@@ -27,7 +27,7 @@ def create_fos_application(request):
             field_of_study = int(cleaned['field_of_study'])
 
             if field_of_study == 0:
-                messages.warning(request, _(u"Denne studieretningen (Gjest) er ikke et gyldig alternativ."))
+                messages.warning(request, _("Denne studieretningen (Gjest) er ikke et gyldig alternativ."))
                 return redirect('profiles_active', active_tab='membership')
 
             started_day = 1
@@ -47,7 +47,7 @@ def create_fos_application(request):
                 if request.user.started_date == started_date and request.user.field_of_study == field_of_study:
                     messages.error(
                         request,
-                        _(u"Du er allerede registrert med denne studieretningen og denne startdatoen.")
+                        _("Du er allerede registrert med denne studieretningen og denne startdatoen.")
                     )
                     return redirect('profiles_active', active_tab='membership')
 
@@ -64,7 +64,7 @@ def create_fos_application(request):
                     started_year, 9, 16) + datetime.timedelta(days=365*length_of_fos)
             application.save()
 
-            messages.success(request, _(u"Søknad om bytte av studieretning er sendt."))
+            messages.success(request, _("Søknad om bytte av studieretning er sendt."))
 
         return redirect('profiles_active', active_tab='membership')
     raise Http404
@@ -74,11 +74,11 @@ def create_fos_application(request):
 def create_membership_application(request):
     if request.method == 'POST':
         if not request.user.has_expiring_membership:
-            messages.error(request, _(u"Din bruker har ikke et utløpende medlemskap."))
+            messages.error(request, _("Din bruker har ikke et utløpende medlemskap."))
             return redirect('profiles_active', active_tab='membership')
 
         if not request.user.ntnu_username:
-            messages.error(request, _(u"Du må knytte et NTNU-brukernavn til kontoen din."))
+            messages.error(request, _("Du må knytte et NTNU-brukernavn til kontoen din."))
             return redirect('profiles_active', active_tab='membership')
 
         # Extend length of membership by 1 year
@@ -91,7 +91,7 @@ def create_membership_application(request):
         )
         application.save()
 
-        messages.success(request, _(u"Søknad om ett års forlenget medlemskap er sendt."))
+        messages.success(request, _("Søknad om ett års forlenget medlemskap er sendt."))
 
         return redirect('profiles_active', active_tab='membership')
     raise Http404
@@ -102,11 +102,11 @@ def cancel_application(request, application_id):
     app = get_object_or_404(MembershipApproval, pk=application_id)
 
     if app.applicant != request.user:
-        messages.error(request, _(u"Bare søkeren selv kan slette en søknad."))
+        messages.error(request, _("Bare søkeren selv kan slette en søknad."))
         return redirect('profiles_active', active_tab='membership')
 
     if app.processed:
-        messages.error(request, _(u"Denne søknaden er behandlet og kan ikke slettes."))
+        messages.error(request, _("Denne søknaden er behandlet og kan ikke slettes."))
         return redirect('profiles_active', active_tab='membership')
 
     app.delete()

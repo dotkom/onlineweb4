@@ -65,7 +65,7 @@ def create_event(request):
 
             if cleaned['event_type'] not in get_types_allowed(request.user):
                 messages.error(request, _(
-                    u"Du har ikke tilgang til å lage arranngement av typen '%s'.") % cleaned['event_type'])
+                    "Du har ikke tilgang til å lage arranngement av typen '%s'.") % cleaned['event_type'])
                 context['change_event_form'] = form
 
             else:
@@ -75,7 +75,7 @@ def create_event(request):
                 event.author = request.user
                 event.save()
 
-                messages.success(request, _(u"Arrangementet ble opprettet."))
+                messages.success(request, _("Arrangementet ble opprettet."))
                 return redirect('dashboard_event_details', event_id=event.id)
 
         else:
@@ -157,7 +157,7 @@ def event_change_attendance(request, event_id):
             form = ChangeAttendanceEventForm(request.POST, instance=event.attendance_event)
             if form.is_valid():
                 form.save()
-                messages.success(request, _(u"Påmeldingsdetaljer ble lagret."))
+                messages.success(request, _("Påmeldingsdetaljer ble lagret."))
             context['change_attendance_form'] = form
 
     return render(request, 'events/dashboard/details.html', context)
@@ -175,14 +175,14 @@ def event_change_attendees(request, event_id, active_tab='attendees'):
     event = context['event']
 
     if not event.is_attendance_event():
-        messages.error(request, _(u"Dette er ikke et påmeldingsarrangement."))
+        messages.error(request, _("Dette er ikke et påmeldingsarrangement."))
         return redirect('dashboard_event_details_active', event_id=event.id, active_tab='details')
 
     # AJAX
     if request.method == 'POST':
         if request.is_ajax and 'action' in request.POST:
             if not event.is_attendance_event:
-                return HttpResponse(_(u'Dette er ikke et påmeldingsarrangement.'), status=400)
+                return HttpResponse(_('Dette er ikke et påmeldingsarrangement.'), status=400)
 
             return JsonResponse(event_ajax_handler(event, request))
 
@@ -206,8 +206,6 @@ def event_change_attendees(request, event_id, active_tab='attendees'):
 
     context['extras'] = extras
     context['change_event_form'] = ChangeEventForm(instance=event)
-    if 'form_with_error' in request.session.keys():
-        print "zomg"
 
     return render(request, 'events/dashboard/details.html', context)
 
@@ -236,7 +234,7 @@ def event_change_reservation(request, event_id):
     event = context['event']
 
     if not event.is_attendance_event():
-        messages.error(request, _(u"Dette er ikke et påmeldingsarrangement."))
+        messages.error(request, _("Dette er ikke et påmeldingsarrangement."))
         return redirect('dashboard_event_details_active', event_id=event.id, active_tab='details')
 
     if request.method == 'POST':
@@ -250,7 +248,7 @@ def event_change_reservation(request, event_id):
         else:
             form = ChangeReservationForm(request.POST, instance=event.attendance_event.reserved_seats)
             if form.is_valid():
-                messages.success(request, _(u"Reservasjonen ble lagret."))
+                messages.success(request, _("Reservasjonen ble lagret."))
                 form.save()
             context['change_reservation_form'] = form
 

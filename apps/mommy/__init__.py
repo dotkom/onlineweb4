@@ -1,5 +1,5 @@
 # encoding: utf-8
-from registry import Schedule
+from .registry import Schedule
 
 import logging
 
@@ -36,7 +36,7 @@ def run(**kwargs):
 
     sched = Scheduler(**kwargs)
 
-    for task, kwargs in schedule.tasks.iteritems():
+    for task, kwargs in schedule.tasks.items():
         sched.add_cron_job(task.run, name=task.__name__, **kwargs)
 
     sched.start()  # main loop

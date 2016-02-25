@@ -35,7 +35,7 @@ def index(request):
     context['apps'] = Client.objects.all().order_by('name')
 
     # Add all available scopes from settings dict (sorted)
-    context['available_scopes'] = sorted((k, v) for k, v in oauth2_settings.user_settings['SCOPES'].items())
+    context['available_scopes'] = sorted((k, v) for k, v in list(oauth2_settings.user_settings['SCOPES'].items()))
 
     return render(request, 'sso/dashboard/index.html', context)
 
@@ -61,7 +61,7 @@ def new_app(request):
         client_form = NewClientForm(request.POST)
 
         if not client_form.is_valid():
-            messages.error(request, u'Noen av de påkrevde feltene inneholder feil.')
+            messages.error(request, 'Noen av de påkrevde feltene inneholder feil.')
         else:
             # We save but not commit to get a Client instance
             client = client_form.save(commit=False)
@@ -77,8 +77,8 @@ def new_app(request):
 
             client.save()
 
-            _log.info(u'%s created external auth client %s (%d)' % (request.user, client.name, client.id))
-            messages.success(request, u'App-klienten ble opprettet')
+            _log.info('%s created external auth client %s (%d)' % (request.user, client.name, client.id))
+            messages.success(request, 'App-klienten ble opprettet')
             return redirect(reverse('sso:app_details', kwargs={'app_pk': client.id}))
 
         context['form'] = client_form
@@ -115,8 +115,8 @@ def app_details(request, app_pk):
                 app_id = context['app'].id
                 app_name = context['app'].name
                 context['app'].delete()
-                _log.info(u'%s deleted external auth client %s (%d)' % (request.user, app_name, app_id))
-                messages.success(request, u'App-klienten ble slettet')
+                _log.info('%s deleted external auth client %s (%d)' % (request.user, app_name, app_id))
+                messages.success(request, 'App-klienten ble slettet')
                 return redirect(reverse('sso:index'))
 
     # Add the registered scopes for the client to the context as a list of scope:description tuples
