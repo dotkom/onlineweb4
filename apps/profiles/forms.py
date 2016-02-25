@@ -40,7 +40,7 @@ class ProfileForm(forms.ModelForm):
 
         # ZIP code digits only
         zip_code = cleaned_data['zip_code']
-        if len(zip_code) != 0 and (len(zip_code) != 4 or not zip_code.isdigit()):
+        if len(zip_code) != 0 and not re.match(r'\d{4}', zip_code):
             self._errors['zip_code'] = self.error_class([_("Postnummer må bestå av fire siffer.")])
 
         return cleaned_data
