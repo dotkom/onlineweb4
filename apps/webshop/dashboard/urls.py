@@ -1,10 +1,9 @@
 # -*- encoding: utf-8 -*-
-from django.conf.urls import patterns, url
+from django.conf.urls import url
 
 from apps.webshop.dashboard import views
 
-urlpatterns = patterns(
-    'apps.webshop.dashboard.views',
+urlpatterns = [
     url(r'^$', views.Overview.as_view(), name='index'),
     url(r'^categories/$', views.Categories.as_view(), name='categories'),
     url(r'^category/new$', views.CategoryCreate.as_view(), name='category_new'),
@@ -20,4 +19,4 @@ urlpatterns = patterns(
     url(r'^orders/$', views.Orders.as_view(), name='orders'),
     url(r'^order/(?P<pk>\d+)$', views.Order.as_view(), name='order'),
     url(r'^order/(?P<pk>\d+)/deliver$', views.OrderDeliver.as_view(), name='order-deliver'),
-)
+]

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from django.conf.urls import patterns, url, include
+from django.conf.urls import url, include
 from tastypie.api import Api
 from apps.api.rfid.user import UserResource
 from apps.api.rfid.events import AttendeeResource, EventResource, AttendanceEventResource
@@ -12,7 +12,6 @@ rfid_api.register(AttendeeResource())
 rfid_api.register(AttendanceEventResource())
 rfid_api.register(EventResource())
 
-urlpatterns = patterns(
-    '',
+urlpatterns = [
     url(r'^', include(rfid_api.urls)),
-)
+]

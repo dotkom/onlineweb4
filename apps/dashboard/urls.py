@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 
-from django.conf.urls import patterns, url
+from django.conf.urls import url
 
-urlpatterns = patterns(
-    'apps.dashboard.views',
-    url(r'^$', 'index', name='dashboard_index'),
-)
+from apps.dashboard import views
+
+urlpatterns = [
+    url(r'^$', views.index, name='dashboard_index'),
+]
