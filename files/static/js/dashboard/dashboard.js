@@ -157,14 +157,21 @@ var Dashboard = (function ($) {
                 $(this).datetimepicker({
                     locale: 'nb',
                     format: 'YYYY-MM-DD HH:mm:ss'
-                })
+                });
             });
             
             $('.dp').each(function (i) {
                 $(this).datetimepicker({
                     locale: 'nb',
                     format: 'YYYY-MM-DD'
-                })
+                });
+            });
+            
+            $('.tp').each(function (i) {
+                $(this).datetimepicker({
+                    locale: 'nb',
+                    format: 'HH:mm:ss'
+                });
             });
 
             // Activate tablesorter on all tablesorter class tables
