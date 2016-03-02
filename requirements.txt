@@ -33,7 +33,7 @@ django-taggit==0.17.6           # Generic multi-model tagging library
 django-taggit-serializer==0.1.5 # REST Framework serializers for Django-taggit
 APScheduler==2.1.1              # Scheduler
 feedme==1.9.4
-git+https://github.com/dotKom/redwine.git@1.2.2#egg=redwine==1.2.2
+git+https://github.com/dotKom/redwine.git@1.2.3#egg=redwine==1.2.3
 reportlab==3.1.44
 pdfdocument==3.1
 Unidecode==0.4.17               # Translates every unicode symbol to the closest ascii. online_mail_usernames
