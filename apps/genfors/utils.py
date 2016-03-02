@@ -180,8 +180,8 @@ def _handle_user_login(request, form):
         reg_voter.save()
         # Double hashing when saving while we store the original hash as a cookie
         h2 = sha256()
-        h2.update(h)
-        h2.update(request.user.username)
+        h2.update(h.encode('utf-8'))
+        h2.update(request.user.username.encode('utf-8'))
         anon_voter = AnonymousVoter(user_hash=h2.hexdigest(), meeting=meeting)
         anon_voter.save()
     else:
