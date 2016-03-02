@@ -148,7 +148,7 @@ def question_admin(request, question_id=None):
     meeting = get_active_meeting()
     if is_admin(request):
         if not meeting:
-            _handle_inactive_meeting(request)
+            return _handle_inactive_meeting(request)
 
         if question_id is None and meeting.get_active_question():
             messages.error(request, _('Kan ikke legge til et nytt spørsmål når det allerede er et aktivt et'))
@@ -257,12 +257,8 @@ def vote(request):
 
         # If user is logged in
         if a:
-            handle_user_vote(request, m, a, r)
-
-        # Else forbid
-        return HttpResponse(status_code=403, reason_phrase='Forbidden')
-    else:
-        return HttpResponse(status_code=403, reason_phrase='Forbidden')
+            return handle_user_vote(request, m, a, r)
+    return HttpResponseForbidden()
 
 
 @login_required
@@ -480,8 +476,7 @@ def handle_user_vote(request, m, a, r):
         return redirect('genfors_index')
     # If user is registered and has not cast a vote on the active question
     else:
-        _handle_actual_user_voting(request, q, v)
-        return redirect('genfors_index')
+        return _handle_actual_user_voting(request, q, v)
 
 
 def _handle_actual_user_voting(request, q, v):

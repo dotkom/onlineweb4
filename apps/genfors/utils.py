@@ -223,7 +223,7 @@ def generate_genfors_context(aq, context, anon_voter, reg_voter):
     res = aq.get_results()
 
     if total_votes != 0 and not aq.only_show_winner:
-        count_votes(context, aq, total_votes, res)
+        count_votes(context, aq, res)
 
     return context
 
