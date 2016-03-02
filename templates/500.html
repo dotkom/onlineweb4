@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Internal server error - Online</title>
+    <meta name="description" content="Online er linjeforeningen for informatikkstudentene ved NTNU. Våre studenter går Bachelor- eller Mastergradstudium i informatikk."> 
+    <style type="text/css">
+
+
+@font-face {
+  font-family: 'Open Sans', arial, 'sans-serif';
+  font-style: normal;
+  font-weight: 300;
+  src: url('/static/fonts/open-sans-300-webfont.eot');
+  src: url('/static/fonts/open-sans-300-webfont.eot?#iefix') format('embedded-opentype'), url('/static/fonts/open-sans-300-webfont.woff') format('woff'), url('/static/fonts/open-sans-300-webfont.ttf') format('truetype'), url('/static/fonts/open-sans-300-webfont.svg#open_sanslight') format('svg');
+  /*src: local('Open Sans Light'), local('OpenSans-Light'), url(/static/fonts/open-sans-300.woff) format('woff');*/
+}
+
+* {
+    text-align: center;
+}
+
+body {
+    margin: 0px;
+    padding: 0px;
+}
+
+#error-heading {
+    color: #FFF;
+}
+
+
+#error-message {
+    margin-top: 5em;
+}
+
+#mainnav {
+  width: 100%;
+  background: #004b80;
+  height: 57px;
+  z-index: 10;
+  display: inline-block;
+}
+
+    </style>
+</head>
+<body>
+    <nav id="mainnav">
+        <h2 id="error-heading">500 Error: Internal Server Error</h2>
+    </nav>
+
+    <section id="error">
+        <div class="container-fluid">
+            <div id="error-message">
+            <img class="panel-body" src="/static/img/404Balloon.gif">
+                <p><b>Uff da, noe gikk galt.</b></p>
+                <p>Vi får tilsendt feilmelding automatisk, men vi setter pris på om du vil sende oss en mail og fortelle oss hvordan du havnet her. 
+                <div class="col-md-8">
+                    <span>
+                        <a href="mailto:dotkom@online.ntnu.no" title="dotkom@online.ntnu.no">Fortell oss hvordan du kom hit</a>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </section>
+    </body>
+</html>
