@@ -160,7 +160,7 @@ def handle_login(request, context):
 
     reg_voter = RegisteredVoter.objects.filter(user=request.user, meeting=meeting).first()
     if reg_voter or not meeting.registration_locked:
-        _handle_user_login(request, context['form'])
+        return _handle_user_login(request, context['form'])
 
 
 def _handle_user_login(request, form):

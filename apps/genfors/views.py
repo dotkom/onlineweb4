@@ -65,13 +65,13 @@ def genfors(request):
             form = RegisterVoterForm(request.POST)
             context['form'] = form
             if form.is_valid():
-                handle_login(request, context)
+                response = handle_login(request, context)
 
             elif 'anon_voter' in request.COOKIES:
                 response = render(request, "genfors/index_login.html", context)
                 # Delete old hash
                 response.delete_cookie('anon_voter')
-                return response
+            return response
 
         # Set registration_locked context and create login form
         else:
