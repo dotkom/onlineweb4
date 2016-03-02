@@ -39,13 +39,13 @@ def genfors(request):
         anon_voter = anonymous_voter(request.COOKIES['anon_voter'], request.user.username)
     except KeyError:
         anon_voter = None
-        print "key error"
+        print ("key error")
 
     if 'anon_voter' in request.COOKIES:
-        print 'annon is here'
+        print ('annon is here')
 
-    print reg_voter
-    print anon_voter
+    print (reg_voter)
+    print (anon_voter)
     # Check for cookie voter hash
     if anon_voter:
         context['meeting'] = meeting
