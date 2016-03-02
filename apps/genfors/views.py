@@ -35,8 +35,17 @@ def genfors(request):
         return render(request, "genfors/index.html", context)
 
     reg_voter = RegisteredVoter.objects.filter(user=request.user, meeting=meeting).first()
-    anon_voter = anonymous_voter(request.COOKIES.get('anon_voter'), request.user.username)
+    try:
+        anon_voter = anonymous_voter(request.COOKIES['anon_voter'], request.user.username)
+    except KeyError:
+        anon_voter = None
+        print "key error"
 
+    if 'anon_voter' in request.COOKIES:
+        print 'annon is here'
+
+    print reg_voter
+    print anon_voter
     # Check for cookie voter hash
     if anon_voter:
         context['meeting'] = meeting
@@ -70,6 +79,8 @@ def genfors(request):
             if not reg_voter:
                 context['registration_locked'] = meeting.registration_locked
 
+    aq = meeting.get_active_question()
+    context = generate_genfors_context(aq, context, anon_voter, reg_voter)
     return render(request, "genfors/index_login.html", context)
 
 

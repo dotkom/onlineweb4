@@ -155,12 +155,12 @@ def handle_multiple_choice_voting(self):
 
 
 # other stuff
-def handle_login(request):
+def handle_login(request, context):
     meeting = get_active_meeting()
 
     reg_voter = RegisteredVoter.objects.filter(user=request.user, meeting=meeting).first()
     if reg_voter or not meeting.registration_locked:
-        _handle_user_login()
+        _handle_user_login(request, context['form'])
 
 
 def _handle_user_login(request, form):
@@ -194,7 +194,7 @@ def _handle_user_login(request, form):
     if anon_voter:
         # Anyonous voter hash stored in cookies for 1 day
         tomorrow = datetime.datetime.now() + datetime.timedelta(days=1)
-        response.set_cookie('anon_voter', h, expires=tomorrow)
+        response.set_cookie(key='anon_voter', value=h, expires=tomorrow)
     elif 'anon_voter' in request.COOKIES:
         # Delete old hash
         response.delete_cookie('anon_voter')
@@ -225,6 +225,7 @@ def generate_genfors_context(aq, context, anon_voter, reg_voter):
     if total_votes != 0 and not aq.only_show_winner:
         count_votes(context, aq, total_votes, res)
 
+    return context
 
 def count_votes(context, aq, res):
     total_votes = context['active_question']['total_votes']
