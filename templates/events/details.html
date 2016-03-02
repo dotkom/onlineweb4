@@ -13,375 +13,375 @@
 
 {% block content %}
     <section id="event-details">
-    <div class="container">
-    <div class="row">
-        <div class="col-md-12">
-            <div class="page-header">
-                <h2 id="event-details-heading">
-                    {% if user.is_authenticated %}
-                        {% in_group "Komiteer" as in_komiteer %}
-                    {% endif %}
-                    {{ event.title }}
-                    <div class="{% if user.is_authenticated and in_komiteer %}btn-group {% endif %}pull-right">
-                        <div class="btn-group">
-                          <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-                            <span class="glyphicon glyphicon-calendar"></span>
-                            Eksporter
-                            <span class="caret"></span>
-                          </button>
-                          <ul class="dropdown-menu">
-                            <li><a href="{{ ics_path }}">ICS</a></li>
-                            <li><a href="http://www.google.com/calendar/render?cid={{ ics_path|unhttps|urlencode }}">Google Calendar</a></li>
-                          </ul>
-                        </div>
-                    
-                    {% if user.is_authenticated %}
-                        {% if in_komiteer %}
-                        <div class="btn-group pull-right">
-                            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-                                Administrasjon
-                                <span class="caret"></span>
-                            </button>
-                            <ul class="dropdown-menu" role="menu">
-                                <li><a href="{% url 'admin:events_event_change' event.id %}">Rediger i administrasjonspanelet</a></li>
-                                <li><a href="{% url 'dashboard_event_details' event.id %}">Åpne i dashboardet</a></li>
-                                {% if event.is_attendance_event %}
-                                    <li><a href="{% url 'event_attendees_pdf' event.id %}">Påmeldingsliste</a></li>
-                                    <li><a href="{% url 'event_mail_participants' event.id %}">Send epost til deltakere</a></li>
-                                {% endif %}
-                            </ul>
-                        </div>
-                        {% endif %}
-                    {% endif %}
-                    </div>
-                </h2>
-            </div>
-        </div>
-    </div>
-    <div class="row row-space">
-        <div class="col-md-7">
+        <div class="container">
             <div class="row">
                 <div class="col-md-12">
-                    <div class="event-hero-meta">
-                        <div class="row row-space">
-                            <div class="event-hero-meta-info">
-                                <div class="col-xs-12 col-sm-4 col-md-4">
-                                    <div class="event-hero-title">Fra</div>
-                                    <div class="event-hero-large-text">
-                                        <span class="break">{{ event.event_start|date:"H.i" }}</span>
-                                        <span class="date-small">{{ event.event_start|date:"d. M Y" }}</span>
+                    <div class="page-header">
+                        <h2 id="event-details-heading">
+                            {% if user.is_authenticated %}
+                                {% in_group "Komiteer" as in_komiteer %}
+                            {% endif %}
+                            {{ event.title }}
+                            <div class="{% if user.is_authenticated and in_komiteer %}btn-group {% endif %}pull-right">
+                                <div class="btn-group">
+                                  <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                                    <span class="glyphicon glyphicon-calendar"></span>
+                                    Eksporter
+                                    <span class="caret"></span>
+                                  </button>
+                                  <ul class="dropdown-menu">
+                                    <li><a href="{{ ics_path }}">ICS</a></li>
+                                    <li><a href="http://www.google.com/calendar/render?cid={{ ics_path|unhttps|urlencode }}">Google Calendar</a></li>
+                                  </ul>
+                                </div>
+
+                            {% if user.is_authenticated %}
+                                {% if in_komiteer %}
+                                <div class="btn-group pull-right">
+                                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                                        Administrasjon
+                                        <span class="caret"></span>
+                                    </button>
+                                    <ul class="dropdown-menu" role="menu">
+                                        <li><a href="{% url 'admin:events_event_change' event.id %}">Rediger i administrasjonspanelet</a></li>
+                                        <li><a href="{% url 'dashboard_event_details' event.id %}">Åpne i dashboardet</a></li>
+                                        {% if event.is_attendance_event %}
+                                            <li><a href="{% url 'event_attendees_pdf' event.id %}">Påmeldingsliste</a></li>
+                                            <li><a href="{% url 'event_mail_participants' event.id %}">Send epost til deltakere</a></li>
+                                        {% endif %}
+                                    </ul>
+                                </div>
+                                {% endif %}
+                            {% endif %}
+                            </div>
+                        </h2>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-7">
+                    <div class="row row-space">
+                        <div class="col-md-12">
+                            <div class="event-hero-meta">
+                                <div class="row row-space">
+                                    <div class="event-hero-meta-info">
+                                        <div class="col-xs-12 col-sm-4 col-md-4">
+                                            <div class="event-hero-title">Fra</div>
+                                            <div class="event-hero-large-text">
+                                                <span class="break">{{ event.event_start|date:"H.i" }}</span>
+                                                <span class="date-small">{{ event.event_start|date:"d. M Y" }}</span>
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-12 col-sm-4 col-md-4">
+                                            <div class="event-hero-title">Til</div>
+                                            <div class="event-hero-large-text">
+                                                <span class="break">{{ event.event_end|date:"H.i" }}</span>
+                                                <span class="date-small">{{ event.event_end|date:"d. M Y" }}</span>
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-12 col-sm-4 col-md-4">
+                                            <div class="event-hero-title">Lokasjon</div>
+                                            <div class="event-hero-small-text">{{ event.location }}</div>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="col-xs-12 col-sm-4 col-md-4">
-                                    <div class="event-hero-title">Til</div>
-                                    <div class="event-hero-large-text">
-                                        <span class="break">{{ event.event_end|date:"H.i" }}</span>
-                                        <span class="date-small">{{ event.event_end|date:"d. M Y" }}</span>
+                                {% if attendance_event %}
+                                    <div class="row">
+                                        <div class="event-hero-meta-info">
+                                            <div class="col-xs-12 col-sm-4 col-md-4">
+                                                <div class="event-hero-title">Påmeldte</div>
+                                                <div class="event-hero-large-text">
+                                                    {{ attendance_event.number_of_seats_taken }}/{{ attendance_event.max_capacity }}
+                                                </div>
+                                            </div>
+                                            <div class="col-xs-12 col-sm-4 col-md-4">
+                                                {% if attendance_event.waitlist_enabled %}
+                                                    <div class="event-hero-title">Antall på venteliste</div>
+                                                    <div class="event-hero-large-text">{{ attendance_event.number_on_waitlist }}</div>
+                                                {% else %}
+                                                    <div class="event-hero-title">Venteliste</div>
+                                                    <div class="event-hero-small-text">Utilgjengelig</div>
+                                                {% endif %}
+                                            </div>
+                                            <div class="col-xs-12 col-sm-4 col-md-4">
+                                                 {% if attendance_event.registration_start > now %}
+                                                    <div class="event-hero-title">Påmeldingsstart</div>
+                                                    <div class="event-hero-large-text">
+                                                        <div class="event-hero-large-text">
+                                                            <span class="break">{{ attendance_event.registration_start|date:"H.i" }}</span>
+                                                            <span class="date-small">{{ attendance_event.registration_start|date:"d. M Y" }}</span>
+                                                        </div>
+                                                    </div>
+                                                {% else %}
+                                                    <div class="event-hero-title">Påmeldingsslutt</div>
+                                                    <div class="event-hero-large-text">
+                                                        <div class="event-hero-large-text">
+                                                            <span class="break">{{ attendance_event.registration_end|date:"H.i" }}</span>
+                                                            <span class="date-small">{{ attendance_event.registration_end|date:"d. M Y" }}</span>
+                                                        </div>
+                                                    </div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="col-xs-12 col-sm-4 col-md-4">
-                                    <div class="event-hero-title">Lokasjon</div>
-                                    <div class="event-hero-small-text">{{ event.location }}</div>
-                                </div>
+                                {% endif %}
                             </div>
                         </div>
+                    </div>
+                </div>
+                <div class="col-md-5 event-status-container">
+                    <div>
+                        <div class="col-md-12 event-status row-space">
+                            {% if attendance_event %}
+                                {% if user_anonymous %}
+                                    <p class="status-text">Du må være logget inn for å se din status.</p>
+                                {% else %}
+                                    {% if user_attending %}
+                                        {% if place_on_wait_list %}
+                                            <p class="status-text">Du er nummer {{ place_on_wait_list }} på ventelisten.</p>
+                                        {% elif payment_relation_id %}
+                                            <p class="status-text">Du er meldt på dette arrangementet, og du har betalt.</p>
+                                        {% else %}
+                                            <p class="status-text">Du er meldt på dette arrangementet.</p>
+                                        {% endif %}
+                                        {% if user_paid %}
+                                            {% if attendance_event.unattend_deadline > now %}
+                                                {% if event.event_start > now %}
+                                                    {% include 'events/extras.html' %}
+                                                    {% if payment_relation_id %}
+                                                        <div class="action">
+                                                            <a href="#refund" role="button" class="btn btn-large btn-danger" data-toggle="modal">Refunder og meld meg av</a>
+                                                        </div>
+                                                    {% else %} <!-- User has paid flag set but no payment_relation object -->
+                                                        <p>Du har betalt og må kontakte ansvarlig komitee for og melde deg av</p>
+                                                    {% endif %}
+                                                {% endif %}
+                                            {% endif %}
+                                        {% elif payment and not place_on_wait_list and not user_paid %}
+                                            {% display_payments payment payment_delay %}
+                                            <!-- TODO display payment deadline -->
+                                            <script src="{{ STATIC_URL }}js/libs/jquery-2.1.3.min.js"></script>
+                                            <script src="https://checkout.stripe.com/checkout.js"></script>
+                                            <script src="{{ STATIC_URL }}js/payment.js"></script>
+                                        {% endif %}
+                                        {% if not user_paid %}
+                                            {% if attendance_event.unattend_deadline > now or place_on_wait_list %}
+                                                {% if event.event_start > now %}
+                                                    {% include 'events/extras.html' %}
+                                                    <div class="action"><a href="#unattend" role="button" class="btn btn-large btn-danger" data-toggle="modal">Meld meg av</a></div>
+                                                {% endif %}
+                                            {% endif %}
+                                        {% endif %}
+                                    {% else %}
+                                        {% if user_status.status %}
+                                            {% if will_be_on_wait_list %}
+                                                <p class="status-text">Du kan sette deg på venteliste.</p>
+                                                <div class="action">
+                                                    <a href="#attend" role="button" class="btn btn-large btn-warning" data-toggle="modal">Sett meg på venteliste</a>
+                                                </div>
+                                            {% elif payment and payment.payment_type == 1 %} <!-- Instant payment -->
+                                                <p class="status-text">Påmelding til arangementet krever betaling.</p>
+                                                {% display_payments payment payment_delay %}
+                                                <script src="{{ STATIC_URL }}js/libs/jquery-2.1.3.min.js"></script>
+                                                <script src="https://checkout.stripe.com/checkout.js"></script>
+                                                <script src="{{ STATIC_URL }}js/payment.js"></script>
+                                            {% else %}
+                                                <p class="status-text">Du kan melde deg på dette arrangementet.</p>
+                                                <div class="action"><a href="#attend" role="button" class="btn btn-large btn-success" data-toggle="modal">Meld meg på</a></div>
+                                            {% endif %}
+                                        {% elif user_status.offset %}
+                                            <p class="status-text">Du kan melde deg på {{ user_status.offset }}.</p>
+                                            {% if not user_status.status and user_status.message %}
+                                                <p class="status-text">{{ user_status.message }}</p>
+                                            {% endif %}
+                                        {% else %}
+                                            <p class="status-text">{{ user_status.message }}</p>
+                                            {% if user_status.status_code == 403 %}
+                                                <p><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#user-status-modal">Mer info</button></p>
+                                                <div id="user-status-modal" class="modal fade" role="dialog">
+                                                    <div class="modal-dialog">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                                                <h4 class="modal-title text-muted">Info om medlemsstatus</h4>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                <p>
+                                                                    <span class="text-muted">Du kan oppdatere din medlemsstatus på <a href='https://online.ntnu.no/profile/membership/'>online.ntnu.no/profile/membership</a></span>
+                                                                </p>
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-default" data-dismiss="modal">Lukk</button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            {% endif %}
+                                        {% endif %}
+                                    {% endif %}
+                                {% endif %}
+                            {% else %}
+                                <p class="status-text">Dette er ikke et påmeldingsarrangement.</p>
+                            {% endif %}
+
+
+                            {% if attendance_event %}
+                                <p class="help-text" style="margin-top:20px">Avmeldingsfristen 
+                                    {% if attendance_event.unattend_deadline > now %}
+                                        er
+                                    {% else %}
+                                        var
+                                    {% endif %}
+                                    {{ attendance_event.unattend_deadline|date:"H.i d. M Y" }}
+                                </p>
+                            {% endif %}
+                        </div>
+
                         {% if attendance_event %}
                             <div class="row">
-                                <div class="event-hero-meta-info">
-                                    <div class="col-xs-12 col-sm-4 col-md-4">
-                                        <div class="event-hero-title">Påmeldte</div>
-                                        <div class="event-hero-large-text">
-                                            {{ attendance_event.number_of_seats_taken }}/{{ attendance_event.max_capacity }}
+                                <div class="col-md-12">
+                                    <div class="event-access">
+                                        <p class="access-title">
+                                            Dette arrangementet
+                                            {% if attendance_event.registration_end > now %}
+                                                er
+                                            {% else %}
+                                                var
+                                            {% endif %}
+                                            åpent for
+                                        </p>
+                                        <div class="rules">
+
+                                            {% if attendance_event.guest_attendance %}
+                                                <span class="label label-info">Alle</span>
+                                            {% elif rules %}
+                                                {% for rule_bundle in rules %}
+                                                    {% for rule in rule_bundle %}
+                                                        <span class="label label-info">{{ rule }}</span>
+                                                    {% endfor %}
+                                                {% endfor %}
+                                            {% else %}
+                                                <span class="label label-info">Alle medlemmer</span>
+                                            {% endif %}
                                         </div>
-                                    </div>
-                                    <div class="col-xs-12 col-sm-4 col-md-4">
-                                        {% if attendance_event.waitlist_enabled %}
-                                            <div class="event-hero-title">Antall på venteliste</div>
-                                            <div class="event-hero-large-text">{{ attendance_event.number_on_waitlist }}</div>
-                                        {% else %}
-                                            <div class="event-hero-title">Venteliste</div>
-                                            <div class="event-hero-small-text">Utilgjengelig</div>
-                                        {% endif %}
-                                    </div>
-                                    <div class="col-xs-12 col-sm-4 col-md-4">
-                                         {% if attendance_event.registration_start > now %}
-                                            <div class="event-hero-title">Påmeldingsstart</div>
-                                            <div class="event-hero-large-text">
-                                                <div class="event-hero-large-text">
-                                                    <span class="break">{{ attendance_event.registration_start|date:"H.i" }}</span>
-                                                    <span class="date-small">{{ attendance_event.registration_start|date:"d. M Y" }}</span>
-                                                </div>
-                                            </div>
-                                        {% else %}
-                                            <div class="event-hero-title">Påmeldingsslutt</div>
-                                            <div class="event-hero-large-text">
-                                                <div class="event-hero-large-text">
-                                                    <span class="break">{{ attendance_event.registration_end|date:"H.i" }}</span>
-                                                    <span class="date-small">{{ attendance_event.registration_end|date:"d. M Y" }}</span>
-                                                </div>
-                                            </div>
-                                        {% endif %}
                                     </div>
                                 </div>
                             </div>
                         {% endif %}
                     </div>
                 </div>
-            </div>
-
-        </div>
-        <div class="col-md-5">
-            <div class="col-md-12 event-status row-space">
-                {% if attendance_event %}
-                    {% if user_anonymous %}
-                        <p class="status-text">Du må være logget inn for å se din status.</p>
-                    {% else %}
-                        {% if user_attending %}
-                            {% if place_on_wait_list %}
-                                <p class="status-text">Du er nummer {{ place_on_wait_list }} på ventelisten.</p>
-                            {% elif payment_relation_id %}
-                                <p class="status-text">Du er meldt på dette arrangementet, og du har betalt.</p>
-                            {% else %}
-                                <p class="status-text">Du er meldt på dette arrangementet.</p>
-                            {% endif %}
-                            {% if user_paid %}
-                                {% if attendance_event.unattend_deadline > now %}
-                                    {% if event.event_start > now %}
-                                        {% include 'events/extras.html' %}
-                                        {% if payment_relation_id %}
-                                            <div class="action">
-                                                <a href="#refund" role="button" class="btn btn-large btn-danger" data-toggle="modal">Refunder og meld meg av</a>
-                                            </div>
-                                        {% else %} <!-- User has paid flag set but no payment_relation object -->
-                                            <p>Du har betalt og må kontakte ansvarlig komitee for og melde deg av</p>
-                                        {% endif %}
-                                    {% endif %}
-                                {% endif %}
-                            {% elif payment and not place_on_wait_list and not user_paid %}
-                                {% display_payments payment payment_delay %}
-                                <!-- TODO display payment deadline -->
-                                <script src="{{ STATIC_URL }}js/libs/jquery-2.1.3.min.js"></script>
-                                <script src="https://checkout.stripe.com/checkout.js"></script>
-                                <script src="{{ STATIC_URL }}js/payment.js"></script>
-                            {% endif %}
-                            {% if not user_paid %}
-                                {% if attendance_event.unattend_deadline > now or place_on_wait_list %}
-                                    {% if event.event_start > now %}
-                                        {% include 'events/extras.html' %}
-                                        <div class="action"><a href="#unattend" role="button" class="btn btn-large btn-danger" data-toggle="modal">Meld meg av</a></div>
-                                    {% endif %}
-                                {% endif %}
-                            {% endif %}
-                        {% else %}
-                            {% if user_status.status %}
-                                {% if will_be_on_wait_list %}
-                                    <p class="status-text">Du kan sette deg på venteliste.</p>
-                                    <div class="action">
-                                        <a href="#attend" role="button" class="btn btn-large btn-warning" data-toggle="modal">Sett meg på venteliste</a>
-                                    </div>
-                                {% elif payment and payment.payment_type == 1 %} <!-- Instant payment -->
-                                    <p class="status-text">Påmelding til arangementet krever betaling.</p>
-                                    {% display_payments payment payment_delay %}
-                                    <script src="{{ STATIC_URL }}js/libs/jquery-2.1.3.min.js"></script>
-                                    <script src="https://checkout.stripe.com/checkout.js"></script>
-                                    <script src="{{ STATIC_URL }}js/payment.js"></script>
-                                {% else %}
-                                    <p class="status-text">Du kan melde deg på dette arrangementet.</p>
-                                    <div class="action"><a href="#attend" role="button" class="btn btn-large btn-success" data-toggle="modal">Meld meg på</a></div>
-                                {% endif %}
-                            {% elif user_status.offset %}
-                                <p class="status-text">Du kan melde deg på {{ user_status.offset }}.</p>
-                                {% if not user_status.status and user_status.message %}
-                                    <p class="status-text">{{ user_status.message }}</p>
-                                {% endif %}
-                            {% else %}
-                                <p class="status-text">{{ user_status.message }}</p>
-                                {% if user_status.status_code == 403 %}
-                                    <p><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#user-status-modal">Mer info</button></p>
-                                    <div id="user-status-modal" class="modal fade" role="dialog">
-                                        <div class="modal-dialog">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                                    <h4 class="modal-title text-muted">Info om medlemsstatus</h4>
+                <div class="col-md-7">
+                    <div>
+                        <div class="ingress">{{ event.ingress|striptags|markdown }}</div>
+                        {{ event.description|striptags|markdown }}
+                    </div>
+                </div>
+                <div class="col-md-5">
+                    <div>
+                        {% if event.companies.all %}
+                            <div class="row">
+                                <div class="col-md-12 event-status-companies">
+                                    <div class="title">Medarrangører</div>
+                                    {% for company_relation in event.companies.all %}
+                                        <div class="heading clearfix row-space">
+                                            <a href="{% url 'company_details' company_relation.company.pk %}">
+                                                <div class="title">{{ company_relation.company.name }}</div>
+                                                <div class="image">
+                                                    <img src="{% version company_relation.company.old_image 'companies_thumb' %}" alt="" />
                                                 </div>
-                                                <div class="modal-body">
-                                                    <p>
-                                                        <span class="text-muted">Du kan oppdatere din medlemsstatus på <a href='https://online.ntnu.no/profile/membership/'>online.ntnu.no/profile/membership</a></span>
-                                                    </p>
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-default" data-dismiss="modal">Lukk</button>
-                                                </div>
-                                            </div>
+                                            </a>
                                         </div>
-                                    </div>
-                                {% endif %}
-                            {% endif %}
-                        {% endif %}
-                    {% endif %}
-                {% else %}
-                    <p class="status-text">Dette er ikke et påmeldingsarrangement.</p>
-                {% endif %}
-
-
-                {% if attendance_event %}
-                    <p class="help-text" style="margin-top:20px">Avmeldingsfristen 
-                        {% if attendance_event.unattend_deadline > now %}
-                            er
-                        {% else %}
-                            var
-                        {% endif %}
-                        {{ attendance_event.unattend_deadline|date:"H.i d. M Y" }}
-                    </p>
-                {% endif %}
-            </div>
-
-            {% if attendance_event %}
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="event-access">
-                            <p class="access-title">
-                                Dette arrangementet
-                                {% if attendance_event.registration_end > now %}
-                                    er
-                                {% else %}
-                                    var
-                                {% endif %}
-                                åpent for
-                            </p>
-                            <div class="rules">
-
-                                {% if attendance_event.guest_attendance %}
-                                    <span class="label label-info">Alle</span>
-                                {% elif rules %}
-                                    {% for rule_bundle in rules %}
-                                        {% for rule in rule_bundle %}
-                                            <span class="label label-info">{{ rule }}</span>
-                                        {% endfor %}
                                     {% endfor %}
-                                {% else %}
-                                    <span class="label label-info">Alle medlemmer</span>
-                                {% endif %}
+                                </div>
                             </div>
-                        </div>
-                    </div>
-                </div>
-            {% endif %}
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-7">
-            <div class="ingress">{{ event.ingress|striptags|markdown }}</div>
-            {{ event.description|striptags|markdown }}
-        </div>
-        <div class="col-md-5">
-            {% if event.companies.all %}
-                <div class="row">
-                    <div class="col-md-12 event-status-companies">
-                        <div class="title">Medarrangører</div>
-                        {% for company_relation in event.companies.all %}
-                            <div class="heading clearfix row-space">
-                                <a href="{% url 'company_details' company_relation.company.pk %}">
-                                    <div class="title">{{ company_relation.company.name }}</div>
-                                    <div class="image">
-                                        <img src="{% version company_relation.company.old_image 'companies_thumb' %}" alt="" />
-                                    </div>
-                                </a>
-                            </div>
-                        {% endfor %}
-                    </div>
-                </div>
-            {% else %}
-                <img width="100%" src="{% version event.image 'events_main' %}" alt="{{ event.title }}"/>
-            {% endif %}
-        </div>
-    </div>
-
-
-    <!-- MODALS -->
-
-
-    <div id="attend" class="modal fade">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <h3 class="modal-title">
-                    {% if will_be_on_wait_list %}
-                        Sett meg på venteliste på
-                    {% else %}
-                        Meld deg på
-                    {% endif %}
-                    {{ event.title }}
-                    </h3>
-                </div>
-                <form action="{% url 'attend_event' event.id %}" method="POST">
-                    <div class="modal-body">
-                        {% if will_be_on_wait_list %}
-                        <p>Ved å sette deg på venteliste godtar du at du automatisk får plass om
-                            arrangementet utvides med flere plasser, eller andre påmeldte melder seg av, slik at du rykker frem i køen.
-                        </p>
-                        <p>Ved å melde deg på, godtar du prikkereglene.</p>
+                        {% else %}
+                            <img width="100%" src="{% version event.image 'events_main' %}" alt="{{ event.title }}"/>
                         {% endif %}
-                        {% csrf_token %}
-                        {{ captcha_form|crispy }}
                     </div>
-                    <div class="modal-footer">
-                        <button type="submit" class="btn btn-primary">Valider</button>
-                        <button class="btn" data-dismiss="modal" aria-hidden="true">Lukk</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-    <div id="unattend" class="modal fade">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <h3>Meld deg av {{ event.title }} </h3>
                 </div>
-                <form action="{% url 'unattend_event' event.id %}" method="POST">
-                    <div class="modal-body">
-                        {% csrf_token %}
-                        <p>Er du sikker på at du vil melde deg av?</p>
-                    </div>
-                    <div class="modal-footer">
-                        <button class="btn" data-dismiss="modal" aria-hidden="true">Lukk</button>
-                        <button type="submit" class="btn btn-danger">Meld meg av</button>
-                    </div>
-                </form>
             </div>
-        </div>
-    </div>
 
-    {% if payment_relation_id %}
-    <div id="refund" class="modal fade">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <h3>Refunder og meld deg av {{ event.title }} </h3>
+            <!-- MODALS -->
+            <div id="attend" class="modal fade">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                            <h3 class="modal-title">
+                            {% if will_be_on_wait_list %}
+                                Sett meg på venteliste på
+                            {% else %}
+                                Meld deg på
+                            {% endif %}
+                            {{ event.title }}
+                            </h3>
+                        </div>
+                        <form action="{% url 'attend_event' event.id %}" method="POST">
+                            <div class="modal-body">
+                                {% if will_be_on_wait_list %}
+                                <p>Ved å sette deg på venteliste godtar du at du automatisk får plass om
+                                    arrangementet utvides med flere plasser, eller andre påmeldte melder seg av, slik at du rykker frem i køen.
+                                </p>
+                                <p>Ved å melde deg på, godtar du prikkereglene.</p>
+                                {% endif %}
+                                {% csrf_token %}
+                                {{ captcha_form|crispy }}
+                            </div>
+                            <div class="modal-footer">
+                                <button type="submit" class="btn btn-primary">Valider</button>
+                                <button class="btn" data-dismiss="modal" aria-hidden="true">Lukk</button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
-                <form action="{% url 'payment_refund' payment_relation_id %}" method="POST">
-                    <div class="modal-body">
-                        {% csrf_token %}
-                        <p>Er du sikker på at du vil refundere og melde deg av?</p>
-                        <p><b>Merk:</b> Det kan ta opptil 10 dager før pengene kommer tilbake på din konto.</p>
-                    </div>
-                    <div class="modal-footer">
-                        <button class="btn" data-dismiss="modal" aria-hidden="true">Lukk</button>
-                        <button type="submit" class="btn btn-danger">Refunder</button>
-                    </div>
-                </form>
             </div>
+            <div id="unattend" class="modal fade">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                            <h3>Meld deg av {{ event.title }} </h3>
+                        </div>
+                        <form action="{% url 'unattend_event' event.id %}" method="POST">
+                            <div class="modal-body">
+                                {% csrf_token %}
+                                <p>Er du sikker på at du vil melde deg av?</p>
+                            </div>
+                            <div class="modal-footer">
+                                <button class="btn" data-dismiss="modal" aria-hidden="true">Lukk</button>
+                                <button type="submit" class="btn btn-danger">Meld meg av</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            {% if payment_relation_id %}
+            <div id="refund" class="modal fade">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                            <h3>Refunder og meld deg av {{ event.title }} </h3>
+                        </div>
+                        <form action="{% url 'payment_refund' payment_relation_id %}" method="POST">
+                            <div class="modal-body">
+                                {% csrf_token %}
+                                <p>Er du sikker på at du vil refundere og melde deg av?</p>
+                                <p><b>Merk:</b> Det kan ta opptil 10 dager før pengene kommer tilbake på din konto.</p>
+                            </div>
+                            <div class="modal-footer">
+                                <button class="btn" data-dismiss="modal" aria-hidden="true">Lukk</button>
+                                <button type="submit" class="btn btn-danger">Refunder</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
         </div>
     </div>
-    {% endif %}
-    </div>
-    </div>
-    </section>
+</section>
 {% endblock content %}
 
 {% block js %}
