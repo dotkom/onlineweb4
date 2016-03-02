@@ -340,9 +340,9 @@ def api_user(request):
         if q:
             context = _handle_q(context, anon_voter, reg_voter, q)
         else:
-            genfors["question"] = None
+            context["question"] = None
 
-        return JsonResponse(genfors)
+        return JsonResponse(context)
 
     else:
         return JsonResponse({"error": "Du har ikke tilgang til dette endepunktet."})
@@ -545,9 +545,9 @@ def _handle_q(context, anon_voter, reg_voter, q):
         votes = q.get_votes()
         if q.anonymous:
             if q.question_type == 0:
-                genfors["question"]["votes"] = [[str(v.voter.anonymousvoter), v.answer] for v in votes]
+                context["question"]["votes"] = [[str(v.voter.anonymousvoter), v.answer] for v in votes]
             elif q.question_type == 1:
-                genfors["question"]["votes"] = [
+                context["question"]["votes"] = [
                     [
                         str(v.voter.anonymousvoter),
                         v.answer.description
@@ -558,13 +558,13 @@ def _handle_q(context, anon_voter, reg_voter, q):
                 ]
 
             # Shuffle the order of votes so you cannot infer who cast what vote when there are few voters left
-            random.shuffle(genfors['question']['votes'])
+            random.shuffle(context['question']['votes'])
 
         else:
             if q.question_type == 0:
-                genfors["question"]["votes"] = [[str(v.voter.registeredvoter), v.answer] for v in votes]
+                context["question"]["votes"] = [[str(v.voter.registeredvoter), v.answer] for v in votes]
             elif q.question_type == 1:
-                genfors["question"]["votes"] = [
+                context["question"]["votes"] = [
                     [
                         str(v.voter.registeredvoter),
                         v.answer.description
