@@ -7,31 +7,266 @@ import uuid
 
 from PIL import Image, ImageOps
 from django.conf import settings as django_settings
+from django.core.files.uploadedfile import InMemoryUploadedFile
 
+from apps.gallery.models import UnhandledImage
 from apps.gallery import settings as gallery_settings
 
 
-def save_unhandled_file(uploaded_file):
+class GalleryStatus(object):
+    """
+    Status container for gallery processes
+    """
 
-    log = logging.getLogger(__name__)
+    def __init__(self, status=False, message='No message', data=None):
+        """
+        Constructor for the GalleryStatus object contains a success flag, message text
+        and reference to a data object of some sort, if it is relevant.
+        """
 
-    filename, extension = os.path.splitext(uploaded_file.name)
+        self.status = status
+        self.message = message
+        self.data = data
 
-    filepath = os.path.join(
-        django_settings.MEDIA_ROOT,
-        gallery_settings.UNHANDLED_IMAGES_PATH,
-        '%s%s' % (uuid.uuid4(), extension.lower())
-    )
+    @property
+    def success(self):
+        return self.status
 
-    try:
-        with open(filepath, 'wb+') as destination:
-            for chunk in uploaded_file.chunks():
-                destination.write(chunk)
-    except IOError as e:
-        log.error('Failed to save uploaded unhandled file! "%s"' % repr(e))
-        return False
+    def __bool__(self):
+        return self.success
 
-    return filepath
+    def __str__(self):
+        return 'Status: %s (%s): %s' % (self.status, self.message, self.data)
+
+
+class BaseImageHandler(object):
+    """
+    Abstract base handler for gallery images
+    """
+
+    def __init__(self, image):
+        self.image = image
+        self._log = logging.getLogger(__name__)
+        self.status = GalleryStatus()
+
+    def create_thumbnail(self):
+        """
+        Creates a thumbnail from the current image and this object type
+
+        :return: A GalleryStatus object
+        """
+
+        # If this object is an UploadImageHandler instance, create thumbnail for non-edited view
+        if isinstance(self, UploadImageHandler):
+            filename = os.path.basename(self.image)
+
+            # Generate the full thumbnail path
+            thumbnail_path = os.path.join(
+                django_settings.MEDIA_ROOT,
+                gallery_settings.UNHANDLED_THUMBNAIL_PATH,
+                filename
+            )
+            thumbnail_path = os.path.abspath(thumbnail_path)
+
+            # Generate the full path to the origin image
+            original_path = os.path.join(
+                django_settings.MEDIA_ROOT,
+                gallery_settings.UNHANDLED_IMAGES_PATH,
+                filename
+            )
+            original_path = os.path.abspath(original_path)
+
+            # Generate the thumbnail and return the result
+            result = self._generate_thumbnail_from_source(
+                original_path,
+                thumbnail_path,
+                gallery_settings.UNHANDLED_THUMBNAIL_SIZE
+            )
+
+            return result
+
+        # If this object is a ResponsiveImageHandler instance, create thumbnails for the responsive image
+        elif isinstance(self, ResponsiveImageHandler):
+            return GalleryStatus()
+        else:
+            # If we have been provided an unsupported object, return unsuccessfully
+            return GalleryStatus(
+                False,
+                'Could not decide what thumbnail to generate, since "self" is %s' % type(self),
+                None
+            )
+
+    @staticmethod
+    def copy_image(from_path, to_path):
+        """
+        Copies an image from A to B
+        """
+
+        _log = logging.getLogger(__name__)
+        _log.debug('Copying image %s to %s' % (from_path, to_path))
+        try:
+            shutil.copy2(from_path, to_path)
+        except OSError as os_error:
+            _log('An OSError occurred: %s' % os_error)
+
+    def __bool__(self):
+        """
+        We override the truthness evaluation in order to quickly assess the state of the handler
+        object in different parts of the system
+        """
+
+        return bool(self.status)
+
+    @staticmethod
+    def _generate_thumbnail_from_source(source, dest, thumb_size):
+        """
+        Helper method that creates thumbnail to 'dest' of size 'thumb-size' given a 'source' image
+
+        :return: A GalleryStatus object
+        """
+
+        try:
+            img = Image.open(source)
+        except IOError as e:
+            logging.getLogger(__name__).error('Could not open %s' % source)
+            return GalleryStatus(False, 'File was not an image file, or could not be found.', e)
+
+        # If necessary, convert the image to RGB mode
+        if img.mode not in ('L', 'RGB', 'RGBA'):
+            img = img.convert('RGB')
+
+        file_name, file_extension = os.path.splitext(source)
+        if not file_extension:
+            return GalleryStatus(False, 'File must have an extension.', source)
+
+        try:
+            # Convert our image to a thumbnail
+            img = ImageOps.fit(img, thumb_size, Image.ANTIALIAS)
+        except IOError as e:
+            return GalleryStatus(False, 'Image is truncated.', e)
+
+        # Save the image to file
+        quality = 90
+        img.save(dest, file_extension[1:], quality=quality, optimize=True)
+
+        return GalleryStatus(True, 'success', source)
+
+
+class UploadImageHandler(BaseImageHandler):
+    """
+    The ImageUploadHandler is a container encapsulating the state and workflow during file upload,
+    sanitazion, initial thumbnail generation and model creation. The state of this object after
+    it has completed the initialization process should be bool(self) yielding True, and self.image
+    is an instance of UnhandledImage. If bool(self) is False, an error has occured and error information
+    is accessible through the self.status.message and self.status.data fields.
+    """
+
+    def __init__(self, image):
+        """
+        Constructor accepting an instance of a generic uploaded file, or an
+        UnhandledImage object from gallery models.
+
+        :param image: Either an UnhandledImage object or an InMemoryUploadedFile object
+        """
+
+        super().__init__(image)
+
+        # Do we already have an UnhandledImage stored in the database?
+        if isinstance(image, UnhandledImage):
+            self._log.debug('ImageUploadHandler instanced with %s' % image)
+        # Or are we performing a new upload?
+        elif isinstance(image, InMemoryUploadedFile):
+            self._log.debug('ImageUploadHandler instanced with in-memory file data')
+
+            # Handle the upload of the image
+            self._handle_upload(image)
+            if not self.status:
+                self._log.error('Image upload failed: %s' % self.status)
+
+        else:
+            self._log.error('ImageUploadHandler instanced with non-valid type: %s' % type(image))
+
+            raise ValueError('ImageUploadHandler can only be instanced with UnhandledImage or InMemoryUploadedFile')
+
+    def _handle_upload(self, memory_object):
+        """
+        Helper method that handles the high level operations of processing the uploaded image.
+
+        :param memory_object: A django InMemoryUploadedFile object
+        """
+
+        # Save image to disk or break early on failure
+        original = self._save_in_memory_file_data(memory_object)
+        if not original:
+            self.status = original
+            return
+
+        # Save the path to where the image was stored
+        self.image = os.path.abspath(original.data)
+        self._log.debug('Unhandled file was saved at: "%s"' % self.image)
+
+        # Generate a thumbnail image or break early on failure
+        thumbnail = self.create_thumbnail()  # From superclass
+        if not thumbnail:
+            self._log.error('Failed to create thumbnail for %s' % self.image)
+            self.status = thumbnail
+            return
+
+        self._log.debug('Creating an UnhandledImage for "%s"' % self.image)
+
+        # Translate the relative paths to Django Media paths
+        full_path = get_unhandled_media_path(os.path.abspath(original.data))
+        thumb_path = get_unhandled_thumbnail_media_path(os.path.abspath(thumbnail.data))
+
+        # Create an UnhandledImage object and save it
+        self.image = UnhandledImage(image=full_path, thumbnail=thumb_path)
+        self.image.save()
+
+        # Update our status
+        self._log.debug('Successfully created UnhandledImage %s' % self.image)
+        self.status = GalleryStatus(True, 'success', self.image)
+
+    def _save_in_memory_file_data(self, memory_object):
+        """
+        Helper method that stores data from an uploaded image from memory onto disk
+
+        :param memory_object: A Django InMemoryUploadedFile object
+        """
+
+        # Fetch the name and extension to generate the final file path using uuid's
+        filename, extension = os.path.splitext(memory_object.name)
+        filepath = os.path.join(
+            django_settings.MEDIA_ROOT,
+            gallery_settings.UNHANDLED_IMAGES_PATH,
+            '%s%s' % (uuid.uuid4(), extension.lower())
+        )
+        filepath = os.path.abspath(filepath)
+
+        self._log.debug('_save_in_memory_file_data: Attempting to store in-memory image at %s' % filepath)
+        # Open a file pointer in binary mode and write the image data chunks from memory
+        try:
+            with open(filepath, 'wb+') as destination:
+                for chunk in memory_object.chunks():
+                    destination.write(chunk)
+        except IOError as e:
+            self._log.error('_save_in_memory_file_data: Failed to save in memory image! "%s"' % repr(e))
+
+            return GalleryStatus(False, str(e), memory_object)
+
+        self._log.debug('_save_in_memory_file_data: Stored in-memory image successfully')
+
+        return GalleryStatus(True, 'success', filepath)
+
+
+class ResponsiveImageHandler(BaseImageHandler):
+    """
+    The ImageHandler works as a container for uploaded images, and maintains
+    state, file references and methods to perform all actions needed in the workflow of transitioning
+    from an unedited uploaded image to the finished, cropped responsiveimage formats.
+    """
+
+    def __init__(self, image):
+        super(ResponsiveImageHandler, self).__init__(image)
 
 
 def save_responsive_image(unhandled_image, crop_data):
@@ -46,10 +281,6 @@ def save_responsive_image(unhandled_image, crop_data):
     crop_image(source_path, destination_path, crop_data)
 
     return destination_path
-
-
-def copy_file(source_path, destination_path):
-    shutil.copy2(source_path, destination_path)
 
 
 def create_thumbnail_for_unhandled_images(unhandled_image_path):
@@ -192,11 +423,12 @@ def resize_image(source_image_path, destination_thumbnail_path, size):
 
 
 def _open_image_file(source_image_path):
+
     d = {'success': True, 'error': '', 'image': None}
     try:
         d['image'] = Image.open(source_image_path)
     except IOError:
-        d = {'success': False, 'error': 'File was not an image file, or could not be found.'}
+        d = {'success': False, 'error': 'IOError: File was not an image file, or could not be found.'}
 
     file_name, file_extension = os.path.splitext(source_image_path)
 
@@ -269,6 +501,8 @@ def crop_image(source_image_path, destination_path, crop_data):
 
     return {'success': True}
 
+
+# Path translation functions
 
 def get_unhandled_media_path(unhandled_file_path):
     return os.path.join(gallery_settings.UNHANDLED_IMAGES_PATH, os.path.basename(unhandled_file_path))

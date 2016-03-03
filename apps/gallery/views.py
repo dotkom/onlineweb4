@@ -15,7 +15,18 @@ from rest_framework import mixins, viewsets
 from rest_framework.permissions import AllowAny
 from taggit.utils import parse_tags
 
-from apps.gallery import util
+from apps.gallery.util import UploadImageHandler
+from apps.gallery.util import (
+    create_responsive_images,
+    get_responsive_xs_path,
+    get_responsive_sm_path,
+    get_responsive_md_path,
+    get_responsive_lg_path,
+    get_responsive_wide_path,
+    get_responsive_original_path,
+    get_responsive_thumbnail_path,
+    save_responsive_image,
+)
 from apps.gallery.models import UnhandledImage, ResponsiveImage
 from apps.gallery.forms import DocumentForm
 from apps.gallery.serializers import ResponsiveImageSerializer
@@ -55,37 +66,16 @@ def upload(request):
         form = DocumentForm(request.POST, request.FILES)
         if form.is_valid():
             log.info('%s uploaded image "%s"' % (request.user, os.path.abspath(str(request.FILES['file']))))
-            response = _handle_upload(request.FILES['file'])
-            return response
 
-    return HttpResponse(status=400, content=json.dumps({'success': False, 'message': 'Bad request or invalid type.'}))
+            # Check if we successfully generate an UnhandledImage object
+            result = UploadImageHandler(request.FILES['file']).status
+            if not result:
+                return JsonResponse({'success': False, 'message': result.message}, status=500)
 
+            # Return OK if all good
+            return JsonResponse({'success': True, 'message': 'OK'}, status=200)
 
-# If something goes wrong, all files will have to be deleted, this is not handled now
-def _handle_upload(uploaded_file):
-
-    log = logging.getLogger(__name__)
-    log.debug('Handling upload of file: "%s"' % os.path.abspath(str(uploaded_file)))
-
-    unhandled_file_path = util.save_unhandled_file(uploaded_file)
-    log.debug('Unhandled file was saved at: "%s"' % os.path.abspath(str(unhandled_file_path)))
-
-    thumbnail_result = util.create_thumbnail_for_unhandled_images(unhandled_file_path)
-
-    if 'error' in thumbnail_result:
-        log.error('Error while creating thumbnail for "%s"' % os.path.abspath(str(unhandled_file_path)))
-        # Delete files
-        return HttpResponse(status=500, content=json.dumps(thumbnail_result['error']))
-
-    # Image objects need to be created with relative paths, create media paths to please django (fuck you, django)
-    unhandle_media = util.get_unhandled_media_path(unhandled_file_path)
-    unhandled_thumbnail_media = util.get_unhandled_thumbnail_media_path(thumbnail_result['thumbnail_path'])
-
-    log.debug('Creating an UnhandledImage for "%s"' % os.path.abspath(str(unhandled_file_path)))
-    # Try catch this and delete files on exception
-    UnhandledImage(image=unhandle_media, thumbnail=unhandled_thumbnail_media).save()
-
-    return HttpResponse(status=200)
+    return JsonResponse({'success': False, 'message': 'Bad request or invalid type.'}, status=400)
 
 
 @login_required
@@ -138,18 +128,18 @@ def crop_image(request):
             image_description = crop_data['description']
             image_tags = crop_data['tags']
             image_photographer = crop_data['photographer']
-            responsive_image_path = util.save_responsive_image(image, crop_data)
+            responsive_image_path = save_responsive_image(image, crop_data)
 
             # Error / Status collection is performed in the utils create_responsive_images function
-            util.create_responsive_images(responsive_image_path)
+            create_responsive_images(responsive_image_path)
 
-            original_media = util.get_responsive_original_path(responsive_image_path)
-            wide_media = util.get_responsive_wide_path(responsive_image_path)
-            lg_media = util.get_responsive_lg_path(responsive_image_path)
-            md_media = util.get_responsive_md_path(responsive_image_path)
-            sm_media = util.get_responsive_sm_path(responsive_image_path)
-            xs_media = util.get_responsive_xs_path(responsive_image_path)
-            thumbnail = util.get_responsive_thumbnail_path(responsive_image_path)
+            original_media = get_responsive_original_path(responsive_image_path)
+            wide_media = get_responsive_wide_path(responsive_image_path)
+            lg_media = get_responsive_lg_path(responsive_image_path)
+            md_media = get_responsive_md_path(responsive_image_path)
+            sm_media = get_responsive_sm_path(responsive_image_path)
+            xs_media = get_responsive_xs_path(responsive_image_path)
+            thumbnail = get_responsive_thumbnail_path(responsive_image_path)
 
             resp_image = ResponsiveImage(
                 name=image_name,

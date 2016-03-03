@@ -15,4 +15,9 @@ class GalleryConfig(AppConfig):
         import apps.gallery.signals  # flake8: noqa
         from apps.gallery.models import ResponsiveImage
 
+        # Perform checks that necessary directories exist on the disk
+        from apps.gallery.util import verify_directory_structure
+        verify_directory_structure()
+
+        # Register the ResponsiveImage model for watson indexing
         watson.register(ResponsiveImage)
