@@ -25,11 +25,11 @@ class MarksTest(TestCase):
 
     def testMarkUnicode(self):
         self.logger.debug("Testing Mark unicode with dynamic fixtures")
-        self.assertEqual(unicode(self.mark), u"Prikk for Testprikk")
+        self.assertEqual(str(self.mark), "Prikk for Testprikk")
 
     def testMarkUser(self):
         self.logger.debug("Testing MarkUser unicode with dynamic fixtures")
-        self.assertEqual(unicode(self.userentry), "Mark entry for user: %s" % self.user.get_full_name())
+        self.assertEqual(str(self.userentry), "Mark entry for user: %s" % self.user.get_full_name())
 
     def testGettingExpirationDateWithNoVacationInSpring(self):
         self.logger.debug("Testing expiration date with no vacation span in the spring")

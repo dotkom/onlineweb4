@@ -3,7 +3,7 @@
 {% load crispy_forms_tags %}
 
 {% block title %}
-{{ event }} - Dashboard - Online 
+{{ event }} - Dashboard - Online
 {% endblock title %}
 
 {% block page-header %}
@@ -13,12 +13,14 @@ Arrangementsdetaljer
 {% block styles %}
     {{ block.super }}
     {% compress css %}
+    {{ change_event_form.media.css }}
+    {{ change_attendance_form.media.css }}
     <link rel="stylesheet" type="text/less" href="{{ STATIC_URL }}less/dashboard/events.less" />
     {% endcompress %}
 {% endblock %}
 
 {% block breadcrumbs %}
-    <li><a href="{% url 'dashboard_events_index' %}">Events</a></li> 
+    <li><a href="{% url 'dashboard_events_index' %}">Events</a></li>
     <li>{{ event }}</li>
 {% endblock %}
 
@@ -29,42 +31,58 @@ Arrangementsdetaljer
     </div>
 </div>
 
+{% if event.id %}
 <div class="row">
     <div class="col-lg-12">
         <div class="panel panel-default">
             <div class="panel-body">
                 <ul id="dashboard-tabs" class="nav nav-tabs">
-                    {% comment %}
-                    Hidden to put only attendee tab in production to start off.
-
-                    <li role="presentation"{% if active_tab == 'details' %} class="active"{% endif %}>
+                    <li role="presentation" class="hidden {% if active_tab == 'details' %} active{% endif %}">
                         <a data-section="details" href="{% url 'dashboard_event_details_active' event.id 'details' %}">Detaljer</a>
                     </li>
-                    {% endcomment %}
-                    <li role="presentation"{% if active_tab == 'attendees' %} class="active"{% endif %}>
+                    <li role="presentation" class="hidden{% if active_tab == 'attendance' %} active{% endif %}">
+                        <a data-section="attendance" href="{% url 'dashboard_event_details_active' event.id 'attendance' %}">Påmelding</a>
+                    </li>
+                    {% if event.is_attendance_event %}
+                    <li role="presentation" class="{% if active_tab == 'attendees' %} active{% endif %}">
                         <a data-section="attendees" href="{% url 'dashboard_event_details_active' event.id 'attendees' %}">Påmeldte</a>
                     </li>
+                    <li role="presentation" class="hidden{% if active_tab == 'reservation' %} active{% endif %}">
+                        <a data-section="reservation" href="{% url 'dashboard_event_details_active' event.id 'reservation' %}">Reservasjon</a>
+                    </li>
+                    {% endif %}
                 </ul>
             </div>
         </div>
     </div>
 </div>
+{% endif %}
 
 <div id="tab-content">
     <section id="details">
-        {% include "events/dashboard/details_details.html" %}
+        {% include "events/dashboard/details/details.html" %}
     </section>
-    {% if event.is_attendance_event %}
-    <section id="attendees">
-        {% include "events/dashboard/details_attendees.html" %}
-    </section>
+    {% if event.id %}
+        <section id="attendance">
+            {% include "events/dashboard/details/attendance.html" %}
+        </section>
+        {% if event.is_attendance_event %}
+            <section id="attendees">
+                {% include "events/dashboard/details/attendees.html" %}
+            </section>
+            <section id="reservation">
+                {% include "events/dashboard/details/reservation.html" %}
+            </section>
+        {% endif %}
+    {% endif %}
 </div>
-{% endif %}
 {% endblock content %}
 
 {% block js %}
     {{ block.super }}
     {% compress js %}
+    {{ change_event_form.media.js }}
+    {{ change_attendance_form.media.js }}
     <script type="text/javascript" src="{{ STATIC_URL }}js/libs/hogan-2.0.0.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}js/libs/typeahead.min.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}js/dashboard/events.js"></script>

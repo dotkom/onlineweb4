@@ -2,47 +2,39 @@
 #
 # Created by 'myth' on 10/24/15
 
-from django.conf.urls import patterns, url
+from django.conf.urls import url
 
-from apps.gallery.dashboard.views import (
-    GalleryIndex,
-    GalleryDetail,
-    GalleryUnhandledIndex,
-    GalleryUpload,
-    GalleryDelete,
-    GalleryUnhandledDelete
-)
+from apps.gallery.dashboard import views
 
-urlpatterns = patterns(
-    'apps.gallery.dashboard',
+urlpatterns = [
     url(
         '^$',
-        GalleryIndex.as_view(),
+        views.GalleryIndex.as_view(),
         name='index'
     ),
     url(
         '^(?P<pk>\d+)/$',
-        GalleryDetail.as_view(),
+        views.GalleryDetail.as_view(),
         name='detail'
     ),
     url(
         '^upload/$',
-        GalleryUpload.as_view(),
+        views.GalleryUpload.as_view(),
         name='upload'
     ),
     url(
         '^(?P<pk>\d+)/delete/$',
-        GalleryDelete.as_view(),
+        views.GalleryDelete.as_view(),
         name='delete'
     ),
     url(
         '^unhandled/$',
-        GalleryUnhandledIndex.as_view(),
+        views.GalleryUnhandledIndex.as_view(),
         name='unhandled'
     ),
     url(
         '^unhandled/(?P<pk>\d+)/delete/$',
-        GalleryUnhandledDelete.as_view(),
+        views.GalleryUnhandledDelete.as_view(),
         name='unhandled_delete'
     )
-)
+]

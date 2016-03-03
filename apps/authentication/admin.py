@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from django.contrib import admin
+from django.contrib.auth.admin import UserAdmin
 from django.utils.translation import ugettext as _
 
 from apps.authentication.models import AllowedUsername, Email, OnlineUser, Position, SpecialPosition
@@ -13,19 +14,19 @@ class EmailInline(admin.TabularInline):
     extra = 1
 
 
-class OnlineUserAdmin(VersionAdmin):
+class OnlineUserAdmin(UserAdmin, VersionAdmin):
     model = OnlineUser
     inlines = (EmailInline,)
     list_display = ['username', 'first_name', 'last_name', 'ntnu_username', 'field_of_study', 'is_member', ]
     list_filter = ('is_staff', 'is_superuser', 'is_active', 'groups__name')
     fieldsets = (
         (None, {'fields': ('username', 'password')}),
-        (_(u'Personlig info'), {'fields': ('first_name', 'last_name', 'phone_number', 'online_mail')}),
-        (_(u'Studieinformasjon'), {'fields': ('ntnu_username', 'field_of_study', 'started_date', 'compiled',)}),
-        (_(u'Adresse'), {'fields': ('address', 'zip_code',)}),
-        (_(u'Viktige datoer'), {'fields': ('last_login', 'date_joined',)}),
-        (_(u'Annen info'), {'fields': ('infomail', 'jobmail', 'mark_rules', 'rfid', 'nickname', 'website',)}),
-        (_(u'Tilganger'), {'fields': (
+        (_('Personlig info'), {'fields': ('first_name', 'last_name', 'phone_number', 'online_mail')}),
+        (_('Studieinformasjon'), {'fields': ('ntnu_username', 'field_of_study', 'started_date', 'compiled',)}),
+        (_('Adresse'), {'fields': ('address', 'zip_code',)}),
+        (_('Viktige datoer'), {'fields': ('last_login', 'date_joined',)}),
+        (_('Annen info'), {'fields': ('infomail', 'jobmail', 'mark_rules', 'rfid', 'nickname', 'website',)}),
+        (_('Tilganger'), {'fields': (
             'is_active',
             'is_staff',
             'is_superuser',
@@ -44,7 +45,7 @@ class AllowedUsernameAdmin(VersionAdmin):
     list_display = ('username', 'registered', 'expiration_date', 'note')
     fieldsets = (
         (None, {'fields': ('username', 'registered', 'expiration_date')}),
-        (_(u'Notater'), {'fields': ('note', 'description')}),
+        (_('Notater'), {'fields': ('note', 'description')}),
 
     )
     search_fields = ('username',)

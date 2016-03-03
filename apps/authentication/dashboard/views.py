@@ -3,17 +3,22 @@
 import json
 
 from django.core.exceptions import PermissionDenied
+from django.core.paginator import Paginator
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Group
-from django.shortcuts import render, get_object_or_404
+from django.core.urlresolvers import reverse, reverse_lazy
+from django.shortcuts import get_object_or_404, render
 from django.http import HttpResponse
+from django.views.generic import UpdateView, DetailView, DeleteView, ListView
 
 from guardian.decorators import permission_required
+from watson.views import SearchView
 
 from apps.authentication.models import OnlineUser as User
 from apps.authentication.models import AllowedUsername
-from apps.dashboard.tools import has_access, get_base_context
+from apps.authentication.forms import UserUpdateForm
+from apps.dashboard.tools import has_access, get_base_context, DashboardPermissionMixin
 
 
 @login_required
@@ -99,9 +104,9 @@ def groups_detail(request, pk):
 
         for job in settings.GROUP_SYNCER:
             if group_id in job['source']:
-                context['sync_group_to'].extend([groups[id] for id in job['destination']])
+                context['sync_group_to'].extend([groups[g_id] for g_id in job['destination']])
             if group_id in job['destination']:
-                context['sync_group_from'].extend([groups[id] for id in job['source']])
+                context['sync_group_from'].extend([groups[g_id] for g_id in job['source']])
 
     context['group_users'] = list(context['group'].user_set.all())
 
@@ -135,22 +140,52 @@ def members_index(request):
     members = AllowedUsername.objects.all()
     context['members'] = merge_names(members)
 
-    return render(request, 'auth/dashboard/members_index.html', context)
+    return render(request, 'auth/dashboard/user_list.html', context)
 
 
-@login_required
-@permission_required("authentication.view_allowedusername", return_403=True)
-def members_detail(request, pk):
+class UserListView(DashboardPermissionMixin, ListView):
+    model = User
+    queryset = User.objects.all().exclude(id=-1)
+    paginate_by = 25
+    paginator_class = Paginator
+    permission_required = 'authentication.view_onlineuser'
+    template_name = 'auth/dashboard/user_list.html'
 
-    """
-    Detail view for allowedusername with PK=pk
-    """
-    if not has_access(request):
-        raise PermissionDenied
 
-    context = get_base_context(request)
+class UserSearchView(DashboardPermissionMixin, SearchView):
+    model = User
+    queryset = User.objects.all().exclude(id=-1)
+    paginate_by = 25
+    paginator_class = Paginator
+    permission_required = 'authentication.view_onlineuser'
+    template_name = 'auth/dashboard/user_list.html'
+    empty_query_redirect = reverse_lazy('user_list')
 
-    return render(request, 'auth/dashboard/members_detail.html', context)
+
+class UserDetailView(DashboardPermissionMixin, DetailView):
+    model = User
+    context_object_name = 'user'
+    permission_required = 'authentication.view_onlineuser'
+    pk_url_kwarg = 'user_id'
+    template_name = 'auth/dashboard/user_detail.html'
+
+
+class UserUpdateView(DashboardPermissionMixin, UpdateView):
+    form_class = UserUpdateForm
+    model = User
+    permission_required = 'authentication.change_onlineuser'
+    pk_url_kwarg = 'user_id'
+    template_name = 'auth/dashboard/user_edit.html'
+
+    def get_success_url(self):
+        return reverse('dashboard_user_detail', kwargs={'user_id': self.kwargs.get('user_id')})
+
+
+class UserDeleteView(DashboardPermissionMixin, DeleteView):
+    model = User
+    permission_required = 'authentication.delete_onlineuser'
+    pk_url_kwarg = 'user_id'
+    success_url = reverse_lazy('auth_index')
 
 
 @login_required

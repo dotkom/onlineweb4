@@ -1,9 +1,8 @@
-cov-core==1.7
-coverage==4.0.1
-factory-boy==1.1.3
-lettuce==0.2.20
-nose-cov==1.6
-teamcity-messages==1.16
-flake8==2.4.1
+cov-core>=1.7
+coverage>=4.0.1
+factory-boy>=1.1.3
+lettuce>=0.2.20
+nose-cov>=1.6
+teamcity-messages>=1.16
+flake8>=2.4.1
 pepper8>=1.0.4                  # Transforms flake8 output to HTML report + TC messages
-requests[security]==2.8.0       # Frigg.io requires this

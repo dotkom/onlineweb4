@@ -1,0 +1,65 @@
+{% extends "dashboard_base.html" %}
+{% load compress %}
+
+{% block title %}
+{{ category }} - Online Dashboard
+{% endblock title %}
+
+{% block styles %}
+    {{ block.super }}
+    {% compress css %}
+    {% endcompress %}
+{% endblock %}
+
+{% block js %}
+    {{ block.super }}
+    {% compress js %}
+    <script src="{{ STATIC_URL }}js/dashboard/webshop.js"></script>
+    {% endcompress %}
+{% endblock js %}
+
+{% block page-header %}
+Webshop
+{% endblock %}
+
+{% block breadcrumbs %}
+    <li><a href="{% url 'dashboard-webshop:index' %}">Webshop</a></li>
+    <li><a href="{% url 'dashboard-webshop:categories' %}">Kategorier</a></li>
+    <li>{{ category }}</li>
+{% endblock %}
+
+{% block content %}
+<p>
+    <a href="{% url 'dashboard-webshop:category_update' slug=category.slug %}" class="btn btn-primary">
+        <i class="fa fa-edit"></i> Rediger
+    </a>
+    <a href="{% url 'dashboard-webshop:product_new' category_slug=category.slug %}" class="btn btn-success">
+        <i class="fa fa-plus"></i> Nytt produkt
+    </a>
+</p>
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">{{ category }}</h3>
+    </div>
+    <div class="panel-body">
+        <table class="table table-striped table-condensed tablesorter" id="webshop_product_list">
+            <thead>
+                <tr>
+                    <th>Produkt</th>
+                    <th>Kort beskrivelse</th>
+                    <th>Lager</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for product in category.products.all %}
+                <tr>
+                    <td><a href="{% url 'dashboard-webshop:product' product.slug %}">{{ product }}</a></td>
+                    <td>{{ product.short }}</td>
+                    <td>{{ product.stock }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock content %}

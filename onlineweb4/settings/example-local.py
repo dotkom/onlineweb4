@@ -1,14 +1,13 @@
 import os
 import sys
 
-from base import PROJECT_ROOT_DIRECTORY
+from .base import PROJECT_ROOT_DIRECTORY
 
 # Prevent python from making .pyc files
 sys.dont_write_bytecode = True
 
 
 DEBUG = True
-TEMPLATE_DEBUG = DEBUG
 
 # Change this to the host in production
 ALLOWED_HOSTS = '*'
@@ -143,18 +142,20 @@ LOGGING = {
     }
 }
 
-# Online stripe keys. 
+# Online stripe keys.
 # For development replace with https://online.ntnu.no/wiki/komiteer/dotkom/aktuelt/onlineweb4/keys/
 # For production login to Stripe
-STRIPE_PUBLIC_KEYS = [
-    "pk_test_replace_this", # arrKom
-    "pk_test_replace_this"  # proKom
-]
+STRIPE_PUBLIC_KEYS = {
+    "arrkom": "pk_test_replace_this",
+    "prokom": "pk_test_replace_this",
+    "trikom": "pk_test_replace_this"
+}
 
-STRIPE_PRIVATE_KEYS = [
-    "sk_test_replace_this", # arrKom
-    "sk_test_replace_this"  # proKom
-]
+STRIPE_PRIVATE_KEYS = {
+    "arrkom": "sk_test_replace_this",
+    "prokom": "sk_test_replace_this",
+    "trikom": "sk_test_replace_this"
+}
 
 # Google reCaptcha settings
 # Keys are found here: https://online.ntnu.no/wiki/komiteer/dotkom/aktuelt/onlineweb4/keys/

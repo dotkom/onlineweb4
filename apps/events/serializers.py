@@ -8,16 +8,16 @@ class AttendeeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Attendee
         fields = (
-                '',
-            )
+            '',
+        )
 
 
 class RuleBundleSerializer(serializers.ModelSerializer):
     class Meta:
         model = RuleBundle
         fields = (
-                'description', 'field_of_study_rules', 'grade_rules', 'user_group_rules',
-            )
+            'description', 'field_of_study_rules', 'grade_rules', 'user_group_rules',
+        )
 
 
 class AttendanceEventSerializer(serializers.ModelSerializer):
@@ -26,10 +26,10 @@ class AttendanceEventSerializer(serializers.ModelSerializer):
     class Meta:
         model = AttendanceEvent
         fields = (
-                'max_capacity', 'waitlist', 'guest_attendance',
-                'registration_start', 'registration_end', 'unattend_deadline',
-                'automatically_set_marks', 'rule_bundles',
-            )
+            'max_capacity', 'waitlist', 'guest_attendance',
+            'registration_start', 'registration_end', 'unattend_deadline',
+            'automatically_set_marks', 'rule_bundles',
+        )
 
 
 class CompanyEventSerializer(serializers.ModelSerializer):
@@ -38,8 +38,8 @@ class CompanyEventSerializer(serializers.ModelSerializer):
     class Meta:
         model = CompanyEvent
         fields = (
-                'company', 'event',
-            )
+            'company', 'event',
+        )
 
 
 class EventSerializer(serializers.ModelSerializer):
@@ -51,6 +51,6 @@ class EventSerializer(serializers.ModelSerializer):
     class Meta:
         model = Event
         fields = (
-                'absolute_url', 'attendance_event', 'company_event', 'author', 'description', 'event_start', 'event_end',
-                'event_type', 'id', 'images', 'ingress', 'ingress_short', 'location', 'slug', 'title',
-            )
+            'absolute_url', 'attendance_event', 'company_event', 'author', 'description', 'event_start', 'event_end',
+            'event_type', 'id', 'images', 'ingress', 'ingress_short', 'location', 'slug', 'title',
+        )

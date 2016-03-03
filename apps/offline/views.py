@@ -29,3 +29,4 @@ class OfflineIssueViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mi
     queryset = Issue.objects.all()
     serializer_class = OfflineIssueSerializer
     permission_classes = (AllowAny,)
+    filter_fields = ('id', 'issue', 'release_date', 'title')

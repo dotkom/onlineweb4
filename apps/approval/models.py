@@ -13,29 +13,29 @@ User = settings.AUTH_USER_MODEL
 class Approval(models.Model):
     applicant = models.ForeignKey(
         User,
-        verbose_name=_(u"søker"),
+        verbose_name=_("søker"),
         related_name="applicant",
         editable=False
     )
     approver = models.ForeignKey(
         User,
-        verbose_name=_(u"godkjenner"),
+        verbose_name=_("godkjenner"),
         related_name="approver",
         blank=True,
         null=True,
         editable=False
     )
-    created = models.DateTimeField(_(u"opprettet"), auto_now_add=True)
-    processed = models.BooleanField(_(u"behandlet"), default=False, editable=False)
-    processed_date = models.DateTimeField(_(u"behandlet dato"), blank=True, null=True)
-    approved = models.BooleanField(_(u"godkjent"), default=False, editable=False)
-    message = models.TextField(_(u"melding"))
+    created = models.DateTimeField(_("opprettet"), auto_now_add=True)
+    processed = models.BooleanField(_("behandlet"), default=False, editable=False)
+    processed_date = models.DateTimeField(_("behandlet dato"), blank=True, null=True)
+    approved = models.BooleanField(_("godkjent"), default=False, editable=False)
+    message = models.TextField(_("melding"))
 
 
 class MembershipApproval(Approval):
-    new_expiry_date = models.DateField(_(u"ny utløpsdato"), blank=True, null=True)
-    field_of_study = models.SmallIntegerField(_(u"studieretning"), choices=FIELD_OF_STUDY_CHOICES, default=0)
-    started_date = models.DateField(_(u"startet dato"), blank=True, null=True)
+    new_expiry_date = models.DateField(_("ny utløpsdato"), blank=True, null=True)
+    field_of_study = models.SmallIntegerField(_("studieretning"), choices=FIELD_OF_STUDY_CHOICES, default=0)
+    started_date = models.DateField(_("startet dato"), blank=True, null=True)
 
     def is_membership_application(self):
         if self.new_expiry_date:
@@ -47,22 +47,22 @@ class MembershipApproval(Approval):
             return True
         return False
 
-    def __unicode__(self):
+    def __str__(self):
         output = ""
         if self.is_fos_application():
-            output = _(u"studieretningssøknad ")
+            output = _("studieretningssøknad ")
         if self.is_membership_application():
             if not output:
-                output = _(u"Medlemskapssøknad ")
+                output = _("Medlemskapssøknad ")
             else:
-                output = _(u"Medlemskaps- og ") + output
+                output = _("Medlemskaps- og ") + output
         if not output:
-            return _(u"Tom søknad for %s") % self.applicant.get_full_name()
+            return _("Tom søknad for %s") % self.applicant.get_full_name()
         return output + "for " + self.applicant.get_full_name()
 
-    class Meta(object):
-        verbose_name = _(u"medlemskapssøknad")
-        verbose_name_plural = _(u"medlemskapssøknader")
+    class Meta:
+        verbose_name = _("medlemskapssøknad")
+        verbose_name_plural = _("medlemskapssøknader")
         permissions = (
             ('view_membershipapproval', 'View membership approval'),
         )

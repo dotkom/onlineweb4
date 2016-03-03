@@ -1,0 +1,71 @@
+{% extends "dashboard_base.html" %}
+{% load compress %}
+{% load addcss %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+Bestilling #{{ order.id }} - Online Dashboard
+{% endblock title %}
+
+{% block styles %}
+    {{ block.super }}
+    {% compress css %}
+    {% endcompress %}
+{% endblock %}
+
+{% block js %}
+    {{ block.super }}
+    {% compress js %}
+    <script src="{{ STATIC_URL }}js/dashboard/webshop.js"></script>
+    {% endcompress %}
+{% endblock js %}
+
+{% block page-header %}
+Webshop - {{ product }}
+{% endblock %}
+
+{% block breadcrumbs %}
+    <li><a href="{% url 'dashboard-webshop:index' %}">Webshop</a></li>
+    <li><a href="{% url 'dashboard-webshop:orders' %}">Bestillinger</a></li>
+    <li>Bestilling #{{ order.id }}</li>
+{% endblock %}
+
+{% block content %}
+{% if not order.delivered %}
+<form method="post" action="{% url 'dashboard-webshop:order-deliver' pk=order.pk %}">
+{% csrf_token %}
+<p><input type="submit" class="btn btn-success" value="Merk som levert"></p>
+</form>
+{% else %}
+<p>Bestillingen har blitt levert</p>
+{% endif %}
+<br>
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">Bestilling</h3>
+    </div>
+    <div class="panel-body">
+    <p>Bestilt av {{ order.user }}, {{ order.datetime }}.</p>
+    <table class="table table-striped table-condensed tablesorter">
+        <thead>
+            <tr>
+                <th>Navn</th>
+                <th>Antall</th>
+                <th>Pris</th>
+                <th>Størrelse</th>
+            </th>
+        </thead>
+        <tbody>
+            {% for order_line in order.orders.all %}
+            <tr>
+                <td>{{ order_line.product }}</td>
+                <td>{{ order_line.quantity }}</td>
+                <td>{{ order_line.price }}</td>
+                <td>{{ order_line.size }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    </div>
+</div>
+{% endblock content %}

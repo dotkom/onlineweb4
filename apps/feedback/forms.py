@@ -19,11 +19,14 @@ class AnswerForm(forms.ModelForm):
         self.helper.html5_required = False
         super(AnswerForm, self).__init__(*args, **kwargs)
         self.fields['answer'].label = self.instance.question.label
+        self.display = self.instance.question.display
 
 
 class RatingAnswerForm(AnswerForm):
-    answer = forms.ChoiceField(widget=forms.Select(attrs={"class": "rating", "name": "rating"}),
-                               choices=RATING_CHOICES)
+    answer = forms.ChoiceField(
+        widget=forms.Select(attrs={"class": "rating", "name": "rating"}),
+        choices=RATING_CHOICES
+    )
 
     class Meta(object):
         model = RatingAnswer
@@ -43,7 +46,7 @@ class FieldOfStudyAnswerForm(AnswerForm):
 
 class TextAnswerForm(AnswerForm):
     answer = forms.CharField(
-        widget=forms.Textarea(attrs={'class': 'form-control', 'type': 'text', "rows": "3"}))
+        widget=forms.Textarea(attrs={'class': 'form-control', 'type': 'text'}))
 
     class Meta(object):
         model = TextAnswer
@@ -67,7 +70,7 @@ class MultipleChoiceForm(forms.ModelForm):
         exclude = ("feedback_relation", "question", "choice")
 
 
-def create_answer_forms(fbr, post_data=None):
+def create_forms(fbr, post_data=None):
     """
     Prefix magic to identify forms from post_data.
     """
@@ -81,8 +84,7 @@ def answer_form_factory(question, feedback_relation, prefix, post_data=None):
     data = {"question": question, "feedback_relation": feedback_relation}
     instance = question.answer.model(**data)
     if question.answer.model == FieldOfStudyAnswer:
-        return FieldOfStudyAnswerForm(post_data, instance=instance,
-                                      prefix=prefix)
+        return FieldOfStudyAnswerForm(post_data, instance=instance, prefix=prefix)
 
     elif question.answer.model == RatingAnswer:
         return RatingAnswerForm(post_data, instance=instance, prefix=prefix)

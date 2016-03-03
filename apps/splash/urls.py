@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 
-from django.conf.urls import patterns, url
+from django.conf.urls import url
 
-urlpatterns = patterns(
-    'apps.splash.views',
-    url(r'^$', 'index', name='splash_index'),
-    url(r'^events.ics$', 'calendar_export', name='splash_calendar'),
-)
+from apps.splash import views
+
+urlpatterns = [
+    url(r'^$', views.index, name='splash_index'),
+    url(r'^events.ics$', views.calendar_export, name='splash_calendar'),
+]

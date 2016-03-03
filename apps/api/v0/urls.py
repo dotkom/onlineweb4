@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from django.conf.urls import patterns, url, include
+from django.conf.urls import url, include
 
 from tastypie.api import Api
 
@@ -27,7 +27,6 @@ v0_api.register(ArticleLatestResource())
 v0_api.register(IssueResource())
 
 # Set the urls to be included.
-urlpatterns = patterns(
-    '',
-    url(r'^',       include(v0_api.urls)),
-)
+urlpatterns = [
+    url(r'^', include(v0_api.urls)),
+]

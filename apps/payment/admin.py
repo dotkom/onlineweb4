@@ -7,6 +7,7 @@ from apps.payment.models import Payment
 from apps.payment.models import PaymentDelay
 from apps.payment.models import PaymentPrice
 from apps.payment.models import PaymentRelation
+from apps.payment.models import PaymentTransaction
 
 from reversion.admin import VersionAdmin
 
@@ -34,19 +35,25 @@ class PaymentPriceInline(admin.StackedInline):
 class PaymentAdmin(VersionAdmin):
     inlines = (PaymentPriceInline, )
     model = Payment
-    list_display = ('__unicode__', 'stripe_key_index', 'payment_type')
+    list_display = ('__str__', 'stripe_key', 'payment_type')
 
 
 class PaymentRelationAdmin(VersionAdmin):
     model = PaymentRelation
-    list_display = ('__unicode__', 'refunded')
+    list_display = ('__str__', 'refunded')
     exclude = ('stripe_id',)
 
 
 class PaymentDelayAdmin(VersionAdmin):
     model = PaymentDelay
-    list_display = ('__unicode__', 'valid_to', 'active')
+    list_display = ('__str__', 'valid_to', 'active')
+
+
+class PaymentTransactionAdmin(VersionAdmin):
+    model = PaymentTransaction
+    list_display = ('__str__', 'user', 'datetime')
 
 admin.site.register(Payment, PaymentAdmin)
 admin.site.register(PaymentRelation, PaymentRelationAdmin)
 admin.site.register(PaymentDelay, PaymentDelayAdmin)
+admin.site.register(PaymentTransaction, PaymentTransactionAdmin)

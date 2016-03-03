@@ -28,7 +28,7 @@ def save_unhandled_file(uploaded_file):
             for chunk in uploaded_file.chunks():
                 destination.write(chunk)
     except IOError as e:
-        log.error(u'Failed to save uploaded unhandled file! "%s"' % repr(e))
+        log.error('Failed to save uploaded unhandled file! "%s"' % repr(e))
         return False
 
     return filepath
@@ -102,12 +102,12 @@ def create_responsive_images(source_path):
     xs_stauts = resize_image(source_path, xs_destination_path, gallery_settings.RESPONSIVE_IMAGES_XS_SIZE)
 
     # Filter status results based on state, and log if any error
-    errors = filter(
-        lambda s: not s[0]['success'],
-        [(wide_status, 'wide'), (lg_status, 'lg'), (md_status, 'md'), (sm_status, 'sm'), (xs_stauts, 'xs')]
-    )
+    errors = [
+        s for s in [(wide_status, 'wide'), (lg_status, 'lg'), (md_status, 'md'), (sm_status, 'sm'), (xs_stauts, 'sm')]
+        if s[0]['success']
+    ]
     for status, version in errors:
-        log.error(u'Failed to resize image %s' % version)
+        log.error('Failed to resize image %s' % version)
 
     unhandled_thumbnail_name = os.path.basename(source_path)
     responsive_thumbnail_path = os.path.join(
@@ -152,34 +152,24 @@ def create_thumbnail(source_image_path, destination_thumbnail_path, size):
 
 
 def resize_image(source_image_path, destination_thumbnail_path, size):
+    status = _open_image_file(source_image_path)
+    if not status['success']:
+        return status['error']
 
-    try:
-        image = Image.open(source_image_path)
-    except IOError:
-        return {'success': False, 'error': 'File was not an image file, or could not be found.'}
+    image = status['image']
+    file_extension = status['file_extension']
 
     # If necessary, convert the image to RGB mode
     if image.mode not in ('L', 'RGB', 'RGBA'):
         image = image.convert('RGB')
 
-    file_name, file_extension = os.path.splitext(source_image_path)
-
-    if not file_extension:
-        return {'success': False, 'error': 'File must have an extension.'}
-
     image_width, image_height = image.size
     target_width, target_height = size
 
-    if image_width < target_width:
-        target_width = image_width
+    image_width = _match_target(image_width, target_width)
+    image_height = _match_target(image_height, target_height)
 
-    if image_height < target_height:
-        target_height = image_height
-
-    # Give an epsilon of 0.01 because calculations.
-    if float(image_width) / float(image_height) < float(16)/float(9) - 0.01 \
-            or float(image_width) / float(image_height) > float(16)/float(9) + 0.01:
-
+    if _validate_image_dinosaurs(image_width, image_height):
         return {'success': False, 'error': 'Image has invalid dimensions.'}
 
     try:
@@ -199,6 +189,38 @@ def resize_image(source_image_path, destination_thumbnail_path, size):
         return {'success': False, 'error': 'Image could not be saved.'}
 
     return {'success': True}
+
+
+def _open_image_file(source_image_path):
+    d = {'success': True, 'error': '', 'image': None}
+    try:
+        d['image'] = Image.open(source_image_path)
+    except IOError:
+        d = {'success': False, 'error': 'File was not an image file, or could not be found.'}
+
+    file_name, file_extension = os.path.splitext(source_image_path)
+
+    if file_extension:
+        d['file_extension'] = file_extension
+    else:
+        d = {'success': False, 'error': 'File must have an extension.'}
+    return d
+
+
+def _match_target(source, target):
+    return source if source < target else target
+
+
+def _validate_image_dinosaurs(width, height):
+    """
+    Validates the dimensions (width and height) of an image object
+    :param width: width of an image
+    :param height: height of an image
+    :return: boolean
+    """
+    # Give an epsilon of 0.01 because calculations.
+    return float(width) / float(height) < float(16)/float(9) - 0.01 \
+        or float(width) / float(height) > float(16)/float(9) + 0.01
 
 
 def crop_image(source_image_path, destination_path, crop_data):
@@ -293,36 +315,36 @@ def verify_directory_structure():
     # Verify that the directories exist on current platform, create if not
     if not os.path.exists(os.path.join(django_settings.MEDIA_ROOT, gallery_settings.UNHANDLED_THUMBNAIL_PATH)):
         logging.getLogger(__name__).info(
-            u'%s directory did not exist, creating it...' % gallery_settings.UNHANDLED_THUMBNAIL_PATH
+            '%s directory did not exist, creating it...' % gallery_settings.UNHANDLED_THUMBNAIL_PATH
         )
         os.makedirs(os.path.join(django_settings.MEDIA_ROOT, gallery_settings.UNHANDLED_THUMBNAIL_PATH))
     if not os.path.exists(os.path.join(django_settings.MEDIA_ROOT, gallery_settings.RESPONSIVE_THUMBNAIL_PATH)):
         logging.getLogger(__name__).info(
-            u'%s directory did not exist, creating it...' % gallery_settings.RESPONSIVE_THUMBNAIL_PATH
+            '%s directory did not exist, creating it...' % gallery_settings.RESPONSIVE_THUMBNAIL_PATH
         )
         os.makedirs(os.path.join(django_settings.MEDIA_ROOT, gallery_settings.RESPONSIVE_THUMBNAIL_PATH))
     if not os.path.exists(os.path.join(django_settings.MEDIA_ROOT, gallery_settings.RESPONSIVE_IMAGES_XS_PATH)):
         logging.getLogger(__name__).info(
-            u'%s directory did not exist, creating it...' % gallery_settings.RESPONSIVE_IMAGES_XS_PATH
+            '%s directory did not exist, creating it...' % gallery_settings.RESPONSIVE_IMAGES_XS_PATH
         )
         os.makedirs(os.path.join(django_settings.MEDIA_ROOT, gallery_settings.RESPONSIVE_IMAGES_XS_PATH))
     if not os.path.exists(os.path.join(django_settings.MEDIA_ROOT, gallery_settings.RESPONSIVE_IMAGES_SM_PATH)):
         logging.getLogger(__name__).info(
-            u'%s directory did not exist, creating it...' % gallery_settings.RESPONSIVE_IMAGES_SM_PATH
+            '%s directory did not exist, creating it...' % gallery_settings.RESPONSIVE_IMAGES_SM_PATH
         )
         os.makedirs(os.path.join(django_settings.MEDIA_ROOT, gallery_settings.RESPONSIVE_IMAGES_SM_PATH))
     if not os.path.exists(os.path.join(django_settings.MEDIA_ROOT, gallery_settings.RESPONSIVE_IMAGES_MD_PATH)):
         logging.getLogger(__name__).info(
-            u'%s directory did not exist, creating it...' % gallery_settings.RESPONSIVE_IMAGES_MD_PATH
+            '%s directory did not exist, creating it...' % gallery_settings.RESPONSIVE_IMAGES_MD_PATH
         )
         os.makedirs(os.path.join(django_settings.MEDIA_ROOT, gallery_settings.RESPONSIVE_IMAGES_MD_PATH))
     if not os.path.exists(os.path.join(django_settings.MEDIA_ROOT, gallery_settings.RESPONSIVE_IMAGES_LG_PATH)):
         logging.getLogger(__name__).info(
-            u'%s directory did not exist, creating it...' % gallery_settings.RESPONSIVE_IMAGES_LG_PATH
+            '%s directory did not exist, creating it...' % gallery_settings.RESPONSIVE_IMAGES_LG_PATH
         )
         os.makedirs(os.path.join(django_settings.MEDIA_ROOT, gallery_settings.RESPONSIVE_IMAGES_LG_PATH))
     if not os.path.exists(os.path.join(django_settings.MEDIA_ROOT, gallery_settings.RESPONSIVE_IMAGES_WIDE_PATH)):
         logging.getLogger(__name__).info(
-            u'%s directory did not exist, creating it...' % gallery_settings.RESPONSIVE_IMAGES_WIDE_PATH
+            '%s directory did not exist, creating it...' % gallery_settings.RESPONSIVE_IMAGES_WIDE_PATH
         )
         os.makedirs(os.path.join(django_settings.MEDIA_ROOT, gallery_settings.RESPONSIVE_IMAGES_WIDE_PATH))

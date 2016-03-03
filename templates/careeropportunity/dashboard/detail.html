@@ -21,7 +21,7 @@ Ny karrieremulighet
             <div class="col-md-12">
                 {% if cop %}
                     <div class="pull-right">
-                        <a href="{% url 'careeropportunity_dashboard_delete' cop.id %}" class="btn btn-danger">Slett karrieremulighet</a>
+                        <a href="#modal-delete-careeropportunity" data-toggle="modal" class="btn btn-danger">Slett karrieremulighet</a>
                     </div>
                 {% endif %}
                 <h4>Fyll ut informasjon om karriemuligheten</h4>
@@ -49,6 +49,8 @@ Ny karrieremulighet
                                     </a>
                                 </span>
                             </div>
+                        {% elif field.name == 'featured' %}
+                            {{ field }}
                         {% else %}
                             {{ field|addclass:"form-control"}}
                         {% endif %}
@@ -65,5 +67,24 @@ Ny karrieremulighet
       </form>
         
     </section>
+    {% if cop %}
+    <div id="modal-delete-careeropportunity" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h3>Bekreft sletting av karrieremulighet!</h3>
+                </div>
+                <div class="modal-body">
+                    <p>Er du sikker på at du vil slette denne karrieremuligheten?</p>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn" data-dismiss="modal" aria-hidden="true">Lukk</button>
+                    <a href="{% url 'careeropportunity_dashboard_delete' cop.id %}" class="btn btn-danger" data-dismiss="modal" aria-hidden="true">Slett</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
 
 {% endblock content %}

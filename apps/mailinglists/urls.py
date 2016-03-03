@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 
-from django.conf.urls import patterns, url
+from django.conf.urls import url
 
-urlpatterns = patterns(
-    'apps.mailinglists.views',
-    url(r'^$', 'index', name='mailinglists_index')
-)
+from apps.mailinglists import views
+
+urlpatterns = [
+    url(r'^$', views.index, name='mailinglists_index')
+]

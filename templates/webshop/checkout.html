@@ -1,0 +1,74 @@
+{% extends 'webshop/base.html' %}
+
+{% load compress %}
+{% load markdown_deux_tags %}
+{% load crispy_forms_tags %}
+
+{% block title %}Webshop - Online{% endblock title %}
+{% block header %}
+<a href="{% url 'webshop_home' %}">Webshop /</a> 
+Checkout
+{% endblock header %}
+
+{% block webshop_content %}
+{% if order_line.orders.all %}
+<table class="table">
+<thead>
+    <tr>
+        <th></th>
+        <th></th>
+        <th>Pris</th>
+        <th>Antall</th>
+        <th></th>
+    </tr>
+</thead>
+{% for order in order_line.orders.all %}
+    <tr>
+        <td>
+            {% with order.product.images.all|first as thumb %}
+                <div class="col-md-5 item-bg hidden-xs" style="background-image: url('{{ thumb.image_xs.url }}');">
+                </div>
+            {% endwith %}
+        </td>
+        <td>
+            <p><a href="{{order.product.get_absolute_url}}">{{ order.product }} {% if order.size %} ({{ order.size }}) {% endif %}</a></p>
+            <p>{{ order.product.short }}</p>
+        </td>
+        <td>
+            {{ order.product.price }}
+        <td>
+            {{ order.quantity }}
+        </td>
+        <td>
+            <form method="POST" action="{% url 'webshop_remove_orders' %}">
+                {% csrf_token %}
+                <input type="hidden" name="id" value="{{ order.id }}">
+                <button class="btn btn-danger" type="submit">
+                    <span class="glyphicon glyphicon-remove"></span>
+                </button>
+            </form>
+        </td>
+    </tr>
+{% endfor %}
+    {% with count=order_line.count_orders %}
+    <tr class="order-total">
+        <td>Total</td>
+        <td></td>
+        <td>{{ order_line.subtotal }}</td>
+        <td>{{ count }}</td>
+        <td>
+            <button id="stripe-button" class="btn btn-success">Betal</button>
+            <script src="{{ STATIC_URL }}js/libs/jquery-2.1.3.min.js"></script>
+            <script src="https://checkout.stripe.com/checkout.js"></script>
+            <script src="{{ STATIC_URL }}js/webshop.js"></script>
+        </td>
+    </tr>
+    {% endwith %}
+</table>
+
+{% else %}
+Handlekurven din er tom
+{% endif %}
+
+{% endblock %}
+</div>

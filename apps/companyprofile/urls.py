@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 
-from django.conf.urls import patterns, url
+from django.conf.urls import url
 
-urlpatterns = patterns(
-    'apps.companyprofile.views',
-    url(r'^(?P<company_id>\d+)/$', 'details', name='company_details'),
-)
+from apps.companyprofile import views
+
+urlpatterns = [
+    url(r'^(?P<company_id>\d+)/$', views.details, name='company_details'),
+]

@@ -8,11 +8,19 @@
     <title>{% block title %}{% endblock %}</title>
     <meta name="description" content="Online er linjeforeningen for informatikkstudentene ved NTNU. Våre studenter går Bachelor- eller Mastergradstudium i informatikk.">
     <link rel="icon" href="{{ STATIC_URL }}img/favicon.png">
+    <link rel="icon" type="image/png" href="{{ STATIC_URL }}mimg/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="{{ STATIC_URL }}mimg/favicon-194x194.png" sizes="194x194">
+    <link rel="icon" type="image/png" href="{{ STATIC_URL }}mimg/favicon-96x96.png" sizes="96x96">
+    <link rel="icon" type="image/png" href="{{ STATIC_URL }}mimg/android-chrome-192x192.png" sizes="192x192">
+    <link rel="icon" type="image/png" href="{{ STATIC_URL }}mimg/favicon-16x16.png" sizes="16x16">
+    <meta name="theme-color" content="#005fa2">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     {% block styles %}
         {% compress css %}
         <link rel="stylesheet" type="text/less" href="{{ STATIC_URL }}less/core.less">
         {% endcompress %}
+    {% endblock %}
+    {% block scripts %}
     {% endblock %}
     {% render_block "css" %}
     {% block apple-webapp %}{% endblock %}
@@ -43,6 +51,7 @@
                 <li><a href="{% url 'careeropportunity_index' %}">Karrieremuligheter</a></li>
                 <li><a href="{% url 'resourcecenter_index' %}">Ressurser</a></li>
                 <li><a href="/wiki/">Wiki</a></li>
+                <li><a href="/webshop/">Webshop</a></li>
             </ul>
             <ul class="mn-user-nav">
             {% if user.is_authenticated %}
@@ -51,7 +60,7 @@
                     <span class="username_menu hidden-xs hidden-sm hidden-md">{{ user.username }}</span>
 
                     <ul class="dropdown-menu login-box" role="menu">
-                        
+
                         {% if user.is_staff %}
                             <li><a href="/admin/">Administrasjon</a></li>
                         {% endif %}

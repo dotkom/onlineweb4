@@ -9,7 +9,6 @@ from taggit.forms import TagWidget
 
 
 class ArticleForm(forms.ModelForm):
-
     class Meta(object):
         """
         Add fields that should have DTP activated in the datetimepicker_fields list
@@ -22,6 +21,7 @@ class ArticleForm(forms.ModelForm):
             'ingress',
             'content',
             'image',
+            'video',
             'published_date',
             'authors',
             'tags',
@@ -40,5 +40,5 @@ class ArticleForm(forms.ModelForm):
         widgets = multiple_widget_generator(widgetlist)
         widgets.update({'tags': TagWidget(attrs={'placeholder': 'Eksempel: åre, online, kjelleren'})})
         labels = {
-            'tags': u'Tags'
+            'tags': 'Tags'
         }

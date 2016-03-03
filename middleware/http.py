@@ -1,19 +1,21 @@
 from django.conf import settings
 from django.http import HttpResponseForbidden
 from django.template import RequestContext,Template,loader,TemplateDoesNotExist
-from django.utils.importlib import import_module
+from importlib import import_module
 
 """
 # Middleware to allow the display of a 403.html template when a
 # 403 error is raised.
 """
 
+
 class Http403(Exception):
     pass
 
+
 class Http403Middleware(object):
     def process_exception(self, request, exception):
-        from http import Http403
+        from .http import Http403
 
         if not isinstance(exception, Http403):
             # Return None so django doesn't re-raise the exception

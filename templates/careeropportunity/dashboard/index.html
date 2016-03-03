@@ -5,12 +5,19 @@
 Karrieremuligheter - Online
 {% endblock title %}
 
+{% block styles %}
+    {{ block.super }}
+    {% compress css %}
+        <link rel="stylesheet" type="text/less" href="{{ STATIC_URL }}less/dashboard/careeropportunity.less" />
+    {% endcompress %}
+{% endblock %}
+
 {% block page-header %}
 Karrieremuligheter
 {% endblock %}
 
 {% block breadcrumbs %}
-    <li>Karrieremulighet</li>
+    <li>Karrieremuligheter</li>
 {% endblock %}
 
 {% block content %}
@@ -24,8 +31,8 @@ Karrieremuligheter
         <div class="col-md-3">
             <span><div class="visible-xs visible-sm">2. </div>Tittel</span>
         </div>
-        <div class="col-md-6">
-            <span><div class="visible-xs visible-sm">3. </div>Aktiv til (dager til)</span>
+        <div class="col-md-3">
+            <span><div class="visible-xs visible-sm">3. </div>Aktiv til (dager)</span>
         </div>
     </div>
     {% for cop in cops %}
@@ -36,14 +43,31 @@ Karrieremuligheter
         <div class="col-md-3 cell">
             <div class="visible-xs visible-sm">2. </div>{{ cop.title }}
         </div>
-        <div class="col-md-3 cell">
-            <div class="visible-xs visible-sm">3. </div>{{ cop.end }} ({# fancy moment.js #})
+        <div class="col-md-4 cell">
+            <div class="visible-xs visible-sm">3. </div>{{ cop.end }} ({{ cop.end|timeuntil }})
         </div>
-        <div class="col-md-3">
+        <div class="col-lg-2">
             <div class="btn-group">
                 <a href="{% url 'careeropportunity_details' cop.id %}" type="button" class="btn btn-success">Se på</a>
-                <a href="{% url 'careeropportunity_dashboard_edit' cop.id %}" type="button" class="btn btn-warning">Endre</a>
-                <a href="{% url 'careeropportunity_dashboard_delete' cop.id %}" type="button" class="btn btn-danger">Slett</a>
+                <a href="{% url 'careeropportunity_dashboard_edit' cop.id %}" type="button" class="btn btn-warning"><i class="fa fa-pencil"></i></a>
+                <a href="#modal-delete-careeropportunity-{{ cop.id }}" data-toggle="modal" type="button" class="btn btn-danger"><i class="fa fa-trash"></i></a>
+            </div>
+        </div>
+    </div>
+    <div id="modal-delete-careeropportunity-{{ cop.id }}" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h3>Bekreft sletting av karrieremulighet!</h3>
+                </div>
+                <div class="modal-body">
+                    <p>Er du sikker på at du vil slette karrieremuligheten "{{ cop.title }}" fra {{ cop.company }}?</p>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn" data-dismiss="modal" aria-hidden="true">Lukk</button>
+                    <a href="{% url 'careeropportunity_dashboard_delete' cop.id %}" class="btn btn-danger" data-dismiss="modal" aria-hidden="true">Slett</a>
+                </div>
             </div>
         </div>
     </div>

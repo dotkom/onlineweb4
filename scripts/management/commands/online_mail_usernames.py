@@ -53,4 +53,4 @@ class Command(NoArgsCommand):
         # Then produce a list of "alias: email" for all users in Komiteer
         for user in group.user_set.all():
             if user.online_mail and user.email:
-                print "%s: %s" % (user.online_mail, user.email)
+                print("%s: %s" % (user.online_mail, user.email))

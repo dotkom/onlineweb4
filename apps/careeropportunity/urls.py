@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 
-from django.conf.urls import patterns, url
+from django.conf.urls import url
 
-urlpatterns = patterns(
-    'apps.careeropportunity.views',
-    url(r'^$', 'index', name='careeropportunity_index'),
-    url(r'^(?P<opportunity_id>\d+)/$', 'details', name='careeropportunity_details'),
-)
+from apps.careeropportunity import views
+
+urlpatterns = [
+    url(r'^$', views.index, name='careeropportunity_index'),
+    url(r'^(?P<opportunity_id>\d+)/$', views.details, name='careeropportunity_details'),
+]
