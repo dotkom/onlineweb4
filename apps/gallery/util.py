@@ -22,6 +22,10 @@ class GalleryStatus(object):
         """
         Constructor for the GalleryStatus object contains a success flag, message text
         and reference to a data object of some sort, if it is relevant.
+
+        :param status: True or Fails, depending on the success of the operation in question
+        :param message: A string message representing the outcome of the operation
+        :param data: An optional data argument, for returning successful data, or error/exception object
         """
 
         self.status = status
@@ -45,6 +49,11 @@ class BaseImageHandler(object):
     """
 
     def __init__(self, image):
+        """
+        Constructor for BaseImageHandler.
+        :param image: An instance of UnhandledImage, ResponsiveImage or InMemoryUploadedFile
+        """
+
         self.image = image
         self._log = logging.getLogger(__name__)
         self.status = GalleryStatus()
@@ -52,7 +61,6 @@ class BaseImageHandler(object):
     def create_thumbnail(self):
         """
         Creates a thumbnail from the current image and this object type
-
         :return: A GalleryStatus object
         """
 
@@ -100,6 +108,8 @@ class BaseImageHandler(object):
     def copy_image(from_path, to_path):
         """
         Copies an image from A to B
+        :param from_path: The absolute path to the source file
+        :param to_path: The absolute path to the destination file
         """
 
         _log = logging.getLogger(__name__)
@@ -109,31 +119,46 @@ class BaseImageHandler(object):
         except OSError as os_error:
             _log('An OSError occurred: %s' % os_error)
 
-    def __bool__(self):
+    @staticmethod
+    def _open_image(source):
         """
-        We override the truthness evaluation in order to quickly assess the state of the handler
-        object in different parts of the system
+        Helper method that attempts to load an image from disk using PIL.
+
+        :param source: The absolute path to an image stored on disk.
+        :return: A GalleryStatus object with results and attached Image object as data
         """
 
-        return bool(self.status)
+        file_name, file_extension = os.path.splitext(source)
+        if not file_extension:
+            return GalleryStatus(False, 'File must have an extension', source)
+
+        try:
+            img = Image.open(source)
+        except IOError as e:
+            return GalleryStatus(False, 'IOError: File was not an image file, or could not be found.', e)
+
+        # If necessary, convert the image to RGB mode
+        if img.mode not in ('L', 'RGB', 'RGBA'):
+            img = img.convert('RGB')
+
+        return GalleryStatus(True, 'success', img)
 
     @staticmethod
     def _generate_thumbnail_from_source(source, dest, thumb_size):
         """
         Helper method that creates thumbnail to 'dest' of size 'thumb-size' given a 'source' image
-
+        :param source: An absolute path to a source image file.
+        :param dest: An absolute path to where the thumbnail should be generated.
+        :param thumb_size: A tuple of the form (width, height) in pixels.
         :return: A GalleryStatus object
         """
 
-        try:
-            img = Image.open(source)
-        except IOError as e:
+        img = BaseImageHandler._open_image(source)
+        if not img:
             logging.getLogger(__name__).error('Could not open %s' % source)
-            return GalleryStatus(False, 'File was not an image file, or could not be found.', e)
-
-        # If necessary, convert the image to RGB mode
-        if img.mode not in ('L', 'RGB', 'RGBA'):
-            img = img.convert('RGB')
+            return img
+        else:
+            img = img.data
 
         file_name, file_extension = os.path.splitext(source)
         if not file_extension:
@@ -151,6 +176,14 @@ class BaseImageHandler(object):
 
         return GalleryStatus(True, 'success', source)
 
+    def __bool__(self):
+        """
+        We override the truthness evaluation in order to quickly assess the state of the handler
+        object in different parts of the system
+        """
+
+        return bool(self.status)
+
 
 class UploadImageHandler(BaseImageHandler):
     """
@@ -165,7 +198,6 @@ class UploadImageHandler(BaseImageHandler):
         """
         Constructor accepting an instance of a generic uploaded file, or an
         UnhandledImage object from gallery models.
-
         :param image: Either an UnhandledImage object or an InMemoryUploadedFile object
         """
 
@@ -191,7 +223,6 @@ class UploadImageHandler(BaseImageHandler):
     def _handle_upload(self, memory_object):
         """
         Helper method that handles the high level operations of processing the uploaded image.
-
         :param memory_object: A django InMemoryUploadedFile object
         """
 
@@ -229,7 +260,6 @@ class UploadImageHandler(BaseImageHandler):
     def _save_in_memory_file_data(self, memory_object):
         """
         Helper method that stores data from an uploaded image from memory onto disk
-
         :param memory_object: A Django InMemoryUploadedFile object
         """
 
@@ -267,6 +297,48 @@ class ResponsiveImageHandler(BaseImageHandler):
 
     def __init__(self, image):
         super(ResponsiveImageHandler, self).__init__(image)
+        if not isinstance(image, UnhandledImage):
+            self._log.error('Attempt to instance ResponsiveImageHandler with non-UnhandledImage object')
+            raise ValueError('ResponsiveImageHandler can only be instanced with UnhandledImage objects')
+
+        self._config = None
+
+    def configure(self, config):
+        """
+        Updates this ResponsiveImageHandler object with a new configuration dictionary, that must contain
+        the appropriate crop data before transformation can occur.
+        :param config: A configuration dictionary containing necessary crop data.
+        """
+
+        self._log.debug('Configuring ResponsiveImageHandler with %s' % repr(config))
+        self._config = config
+        self.status = self._verify_config_data()
+        self._log.debug('Configuration status: %s' % self.status)
+
+        return self.status
+
+    def _verify_config_data(self):
+        """
+        Performs a self-check to verify that the currently set configuration dict (self._config) contains
+        all necessary values, and that they are valid.
+        """
+
+        if not self._config:
+            return GalleryStatus(False, 'Configuration dict is missing!')
+
+        valid = 'id' in self._config
+        valid &= 'preset' in self._config
+        valid &= 'name' in self._config
+        valid &= 'x' in self._config and 'y' in self._config
+        valid &= 'width' in self._config and 'height' in self._config
+
+        if not valid:
+            return GalleryStatus(False, 'Configuration dict is missing one or more attributes', self._config)
+
+        return GalleryStatus(valid, 'success', self._config)
+
+    def __str__(self):
+        return 'ResponsiveImageHandler: %s (Status: %s)' % (self.image, self.status)
 
 
 def save_responsive_image(unhandled_image, crop_data):
@@ -281,19 +353,6 @@ def save_responsive_image(unhandled_image, crop_data):
     crop_image(source_path, destination_path, crop_data)
 
     return destination_path
-
-
-def create_thumbnail_for_unhandled_images(unhandled_image_path):
-
-    filename = os.path.basename(unhandled_image_path)
-    thumbnail_path = os.path.join(django_settings.MEDIA_ROOT, gallery_settings.UNHANDLED_THUMBNAIL_PATH, filename)
-
-    errors = create_thumbnail(unhandled_image_path, thumbnail_path, gallery_settings.UNHANDLED_THUMBNAIL_SIZE)
-
-    if 'error' in errors:
-        return {'error': errors['error']}
-    else:
-        return {'thumbnail_path': thumbnail_path}
 
 
 def create_responsive_images(source_path):
@@ -349,37 +408,11 @@ def create_responsive_images(source_path):
 
     # Create a new thumbnail, since we now have cropped the image and its a different cutout from
     # the preview provided by the unhandled image
-    create_thumbnail(xs_destination_path, responsive_thumbnail_path, gallery_settings.RESPONSIVE_THUMBNAIL_SIZE)
-
-
-def create_thumbnail(source_image_path, destination_thumbnail_path, size):
-
-    try:
-        image = Image.open(source_image_path)
-    except IOError:
-        return {'success': False, 'error': 'File was not an image file, or could not be found.'}
-
-    # If necessary, convert the image to RGB mode
-    if image.mode not in ('L', 'RGB', 'RGBA'):
-        image = image.convert('RGB')
-
-    file_name, file_extension = os.path.splitext(source_image_path)
-
-    if not file_extension:
-        return {'success': False, 'error': 'File must have an extension.'}
-
-    try:
-        # Convert our image to a thumbnail
-        image = ImageOps.fit(image, size, Image.ANTIALIAS)
-    except IOError:
-        return {'success': False, 'error': 'Image is truncated.'}
-
-    quality = 90
-    # Save the image to file
-    # Have not tried setting file extension to png, but I guess PIL would fuck you in the ass for it
-    image.save(destination_thumbnail_path, file_extension[1:], quality=quality, optimize=True)
-
-    return {'success': True}
+    BaseImageHandler._generate_thumbnail_from_source(
+        xs_destination_path,
+        responsive_thumbnail_path,
+        gallery_settings.RESPONSIVE_THUMBNAIL_SIZE
+    )
 
 
 def resize_image(source_image_path, destination_thumbnail_path, size):
@@ -505,44 +538,144 @@ def crop_image(source_image_path, destination_path, crop_data):
 # Path translation functions
 
 def get_unhandled_media_path(unhandled_file_path):
+    """
+    Retrieve the relative path to an UnhandledImage in original size, provided a path to the image in any size or form.
+
+    Example:
+    >>> get_unhandled_media_path('/some/path/to/img/ac3c-f312-13f4.png')
+    'images/non-edited/ac3c-f312-13f4.png'
+
+    :param unhandled_file_path: A full or relative path to either full or thumnbail sized UnhandledImage
+    :return: The relative path to the full size version of the UnhandledImage in question
+    """
+
     return os.path.join(gallery_settings.UNHANDLED_IMAGES_PATH, os.path.basename(unhandled_file_path))
 
 
 def get_unhandled_thumbnail_media_path(unhandled_thumbnail_path):
+    """
+    Retrieve the relative path to an UnhandledImage in thumbnail size, provided a path to the image in any size or form.
+
+    Example:
+    >>> get_unhandled_thumbnail_media_path('/some/path/to/img/ac3c-f312-13f4.png')
+    'images/non-edited/thumbnails/ac3c-f312-13f4.png'
+
+    :param unhandled_thumbnail_path: A full or relative path to either full or thumnbail sized UnhandledImage
+    :return: The relative path to the thumbnail size version of the UnhandledImage in question
+    """
+
     return os.path.join(gallery_settings.UNHANDLED_THUMBNAIL_PATH, os.path.basename(unhandled_thumbnail_path))
 
 
 def get_responsive_original_path(responsive_path):
+    """
+    Retrieve the relative path to a ResponsiveImage in original size, provided a path to the image in any size or form.
+
+    Example:
+    >>> get_responsive_original_path('/some/path/to/img/ac3c-f312-13f4.png')
+    'images/responsive/ac3c-f312-13f4.png'
+
+    :param responsive_path: A full or relative path to any size version of a ResponsiveImage
+    :return: The relative path to the original size version of the ResponsiveImage in question
+    """
+
     return os.path.join(gallery_settings.RESPONSIVE_IMAGES_PATH, os.path.basename(responsive_path))
 
 
 def get_responsive_wide_path(responsive_path):
+    """
+    Retrieve the relative path to a ResponsiveImage in wide size, provided a path to the image in any size or form.
+
+    Example:
+    >>> get_responsive_wide_path('/some/path/to/img/ac3c-f312-13f4.png')
+    'images/responsive/wide/ac3c-f312-13f4.png'
+
+    :param responsive_path: A full or relative path to any size version of a ResponsiveImage
+    :return: The relative path to the wide size version of the ResponsiveImage in question
+    """
+
     return os.path.join(gallery_settings.RESPONSIVE_IMAGES_WIDE_PATH, os.path.basename(responsive_path))
 
 
 def get_responsive_lg_path(responsive_path):
+    """
+    Retrieve the relative path to a ResponsiveImage in LG size, provided a path to the image in any size or form.
+
+    Example:
+    >>> get_responsive_lg_path('/some/path/to/img/ac3c-f312-13f4.png')
+    'images/responsive/lg/ac3c-f312-13f4.png'
+
+    :param responsive_path: A full or relative path to any size version of a ResponsiveImage
+    :return: The relative path to the LG size version of the ResponsiveImage in question
+    """
+
     return os.path.join(gallery_settings.RESPONSIVE_IMAGES_LG_PATH, os.path.basename(responsive_path))
 
 
 def get_responsive_md_path(responsive_path):
+    """
+    Retrieve the relative path to a ResponsiveImage in MD size, provided a path to the image in any size or form.
+
+    Example:
+    >>> get_responsive_md_path('/some/path/to/img/ac3c-f312-13f4.png')
+    'images/responsive/md/ac3c-f312-13f4.png'
+
+    :param responsive_path: A full or relative path to any size version of a ResponsiveImage
+    :return: The relative path to the MD size version of the ResponsiveImage in question
+    """
+
     return os.path.join(gallery_settings.RESPONSIVE_IMAGES_MD_PATH, os.path.basename(responsive_path))
 
 
 def get_responsive_sm_path(responsive_path):
+    """
+    Retrieve the relative path to a ResponsiveImage in SM size, provided a path to the image in any size or form.
+
+    Example:
+    >>> get_responsive_sm_path('/some/path/to/img/ac3c-f312-13f4.png')
+    'images/responsive/sm/ac3c-f312-13f4.png'
+
+    :param responsive_path: A full or relative path to any size version of a ResponsiveImage
+    :return: The relative path to the SM size version of the ResponsiveImage in question
+    """
+
     return os.path.join(gallery_settings.RESPONSIVE_IMAGES_SM_PATH, os.path.basename(responsive_path))
 
 
 def get_responsive_xs_path(responsive_path):
+    """
+    Retrieve the relative path to a ResponsiveImage in XS size, provided a path to the image in any size or form.
+
+    Example:
+    >>> get_responsive_xs_path('/some/path/to/img/ac3c-f312-13f4.png')
+    'images/responsive/xs/ac3c-f312-13f4.png'
+
+    :param responsive_path: A full or relative path to any size version of a ResponsiveImage
+    :return: The relative path to the xs size version of the ResponsiveImage in question
+    """
+
     return os.path.join(gallery_settings.RESPONSIVE_IMAGES_XS_PATH, os.path.basename(responsive_path))
 
 
 def get_responsive_thumbnail_path(responsive_path):
+    """
+    Retrieve the relative path to a ResponsiveImage in thumbnail size, provided a path to the image in any size or form.
+
+    Example:
+    >>> get_responsive_thumbnail_path('/some/path/to/img/ac3c-f312-13f4.png')
+    'images/responsive/thumbnails/ac3c-f312-13f4.png'
+
+    :param responsive_path: A full or relative path to any size version of a ResponsiveImage
+    :return: The relative path to the thumbnail size version of the ResponsiveImage in question
+    """
+
     return os.path.join(gallery_settings.RESPONSIVE_THUMBNAIL_PATH, os.path.basename(responsive_path))
 
 
 def verify_directory_structure():
     """
     Verifies that the necessary directory structure is in place. If not, it will create them.
+
     :return: None
     """
 

@@ -83,8 +83,8 @@ def upload(request):
 def number_of_untreated(request):
     if request.is_ajax():
         if request.method == 'GET':
-            return HttpResponse(status=200, content=json.dumps({'untreated': UnhandledImage.objects.all().count()}))
-    return HttpResponse(status=405)
+            return JsonResponse({'untreated': UnhandledImage.objects.all().count()}, status=200)
+    return JsonResponse({}, status=405)
 
 
 @login_required
@@ -102,8 +102,8 @@ def get_all_untreated(request):
                     'image': image.image.url
                 })
 
-            return HttpResponse(status=200, content=json.dumps({'untreated': images}))
-    return HttpResponse(status=405)
+            return JsonResponse({'untreated': images}, status=200)
+    return JsonResponse({}, status=405)
 
 
 # Same here, delete all files if something goes wrong, not yet handled
@@ -119,9 +119,7 @@ def crop_image(request):
 
             if not _verify_crop_data(crop_data):
                 log.info('%s attempted image crop with incomplete dimension payload' % request.user)
-                return JsonResponse(status=404, data=json.dumps(
-                    {'error': 'Json must contain id, x, y, height and width, and name.'}
-                ))
+                return JsonResponse({'error': 'Json must contain id, x, y, height and width, and name.'}, status=400)
 
             image = get_object_or_404(UnhandledImage, pk=crop_data['id'])
             image_name = crop_data['name']
