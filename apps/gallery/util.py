@@ -333,12 +333,97 @@ class ResponsiveImageHandler(BaseImageHandler):
         valid &= 'width' in self._config and 'height' in self._config
 
         if not valid:
-            return GalleryStatus(False, 'Configuration dict is missing one or more attributes', self._config)
+            return GalleryStatus(False, 'Configuration is missing one or more attributes', self._config)
+
+        preset = self._config['preset']
+        anchor = (self._config['x'], self._config['y'])
+        size = (self._config['width'], self._config['height'])
+        max_size = (self.image.image.width, self.image.image.height)  # self.image is an UnhandledImage object
+
+        if preset in ('article', 'event'):
+            model = gallery_settings.ARTICLE
+        elif preset in ('company',):
+            model = gallery_settings.COMPANY
+        elif preset in ('offline',):
+            model = gallery_settings.OFFLINE
+        elif preset in ('product',):
+            model = gallery_settings.PRODUCT
+        else:
+            return GalleryStatus(False, 'Config contained illegal value for "preset"')
+
+        min_size = (model['min_width'], model['min_size'])
+
+        # Do bounds check on the provided data from the cropper.js front-end
+        bounds_status = check_crop_bounds(anchor, size, min_size, max_size)
+        if not bounds_status:
+            return bounds_status
+
+        # If the preset uses fixed aspect ratio, verify that the provided crop data conforms to the aspect ratio
+        if model['aspect_ratio']:
+            aspect_ratio_status = check_aspect_ratio(size, (model['aspect_ratio_x'], model['aspect_ratio_y']))
+            if not aspect_ratio_status:
+                return aspect_ratio_status
 
         return GalleryStatus(valid, 'success', self._config)
 
     def __str__(self):
         return 'ResponsiveImageHandler: %s (Status: %s)' % (self.image, self.status)
+
+
+# Support functions
+def check_crop_bounds(crop_anchor, crop_size, min_size, max_size):
+    """
+    Check whether or not the crop bounds exceed the image size
+    :param crop_anchor: An (x, y) tuple containing the top-left anchor of the crop
+    :param crop_size: An (x, y) tuple containing the width and height of the crop
+    :param min_size: An (x, y) tuple containint the minimum width and height defined by for example a preset
+    :param max_size: An (x, y) tuple containing the width and height of the original image
+    :return: A GalleryStatus object
+    """
+
+    x, y = crop_anchor
+    width, height = crop_size
+    min_width, min_height = min_size
+    max_width, max_height = max_size
+
+    valid = x >= 0 and y >= 0
+    valid &= width > 0 and height > 0
+    valid &= width >= min_width and height >= min_height
+    valid &= max_width > 0 and max_height > 0
+    valid &= width <= max_width and height <= max_height
+    valid &= x + width <= max_width and y + height <= max_height
+
+    if not valid:
+        return GalleryStatus(
+            False,
+            'The provided crop attributes provided out of bounds values',
+            (crop_anchor, crop_size)
+        )
+
+    return GalleryStatus(True, 'success')
+
+
+def check_aspect_ratio(size, aspect_ratio):
+    """
+    Checks whether a specified image size conforms to a given aspect ratio.
+    :param size: An (x, y) tuple in pixels
+    :param aspect_ratio: An (x, y) tuple
+    :return: A GalleryStatus object
+    """
+
+    epsilon = 0.01
+
+    width, height = size
+    aspect_x, aspect_y = aspect_ratio
+
+    actual = width / height
+    given = aspect_x / aspect_y
+
+    valid = actual - given < epsilon
+    if not valid:
+        return GalleryStatus(False, 'The provided size and aspect ratio did not match', (size, aspect_ratio))
+
+    return GalleryStatus(True, 'success')
 
 
 def save_responsive_image(unhandled_image, crop_data):

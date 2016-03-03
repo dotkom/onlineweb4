@@ -83,7 +83,7 @@ def upload(request):
 def number_of_untreated(request):
     if request.is_ajax():
         if request.method == 'GET':
-            return JsonResponse({'untreated': UnhandledImage.objects.all().count()}, status=200)
+            return JsonResponse(data={'untreated': UnhandledImage.objects.all().count()}, status=200)
     return JsonResponse({}, status=405)
 
 

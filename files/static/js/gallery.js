@@ -184,7 +184,6 @@ var Gallery = (function ($, tools) {
             method: 'GET',
             url: '/gallery/number_of_untreated/',
             success: function(res) {
-                var res = jQuery.parseJSON(res);
                 var text = "Behandle (" + res['untreated'] + ")";
                 $("#edit-button > div.caption").text(text);
             },
@@ -199,7 +198,6 @@ var Gallery = (function ($, tools) {
             method: 'GET',
             url: '/gallery/get_all_untreated/',
             success: function(res) {
-                res = jQuery.parseJSON(res);
                 updateAllUnhandledImages(res['untreated']);
                 setUpdateRefresh();
             },
