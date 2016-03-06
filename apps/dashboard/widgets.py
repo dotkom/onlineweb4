@@ -5,8 +5,25 @@
 from django.forms.widgets import TextInput
 from django.forms.utils import force_text, format_html
 
+DATEPICKER_WIDGET_STRING = """
+<div class="input-group dp">\r\n
+<span class="input-group-btn datepickerbutton">\r\n
+<a href="#" class="btn btn-primary">\r\n
+<i class="fa fa-calendar fa-lg"></i></a></span>\r\n
+<input class="form-control" id="{}" name="{}" type="text" {} placeholder="Den skal vises fra ..." />\r\n
+</div>\r\n
+"""
 DATETIMEPICKER_WIDGET_STRING = """
 <div class="input-group dtp">\r\n
+<span class="input-group-btn datepickerbutton">\r\n
+<a href="#" class="btn btn-primary">\r\n
+<i class="fa fa-calendar fa-lg"></i></a></span>\r\n
+<input class="form-control" id="{}" name="{}" type="text" {} placeholder="Den skal vises fra ..." />\r\n
+</div>\r\n
+"""
+
+TIMEPICKER_WIDGET_STRING = """
+<div class="input-group tp">\r\n
 <span class="input-group-btn datepickerbutton">\r\n
 <a href="#" class="btn btn-primary">\r\n
 <i class="fa fa-calendar fa-lg"></i></a></span>\r\n
@@ -62,6 +79,41 @@ def multiple_widget_generator(klass_field_tuples):
     return widgets
 
 
+class DatePickerInput(TextInput):
+    """
+    This form widget metaclass mixin activates Bootstrap Datetimepicker
+    """
+
+    def __init__(self, attrs=None):
+        super(DatePickerInput, self).__init__(attrs)
+        self.input_type = 'text'
+
+    def render(self, name, value, attrs=None):
+        """
+        Renders this widget
+        :param name: Name attribute of the input type
+        :param value: Value, if any
+        :param attrs: Dictionary of additional attributes and their values
+        :return: HTML
+        """
+
+        if value is None:
+            value = ''
+
+        final_attrs = self.build_attrs(attrs, type=self.input_type, name=name)
+        if value != '':
+            final_attrs['value'] = format_html('value="{}"', force_text(self._format_value(value)))
+        else:
+            final_attrs['value'] = ''
+
+        return format_html(
+            DATEPICKER_WIDGET_STRING,
+            force_text(final_attrs['id']),
+            force_text(final_attrs['name']),
+            final_attrs['value']
+        )
+
+
 class DatetimePickerInput(TextInput):
     """
     This form widget metaclass mixin activates Bootstrap Datetimepicker
@@ -91,6 +143,41 @@ class DatetimePickerInput(TextInput):
 
         return format_html(
             DATETIMEPICKER_WIDGET_STRING,
+            force_text(final_attrs['id']),
+            force_text(final_attrs['name']),
+            final_attrs['value']
+        )
+
+
+class TimePickerInput(TextInput):
+    """
+    This form widget metaclass mixin activates Bootstrap Datetimepicker
+    """
+
+    def __init__(self, attrs=None):
+        super(TimePickerInput, self).__init__(attrs)
+        self.input_type = 'text'
+
+    def render(self, name, value, attrs=None):
+        """
+        Renders this widget
+        :param name: Name attribute of the input type
+        :param value: Value, if any
+        :param attrs: Dictionary of additional attributes and their values
+        :return: HTML
+        """
+
+        if value is None:
+            value = ''
+
+        final_attrs = self.build_attrs(attrs, type=self.input_type, name=name)
+        if value != '':
+            final_attrs['value'] = format_html('value="{}"', force_text(self._format_value(value)))
+        else:
+            final_attrs['value'] = ''
+
+        return format_html(
+            TIMEPICKER_WIDGET_STRING,
             force_text(final_attrs['id']),
             force_text(final_attrs['name']),
             final_attrs['value']
