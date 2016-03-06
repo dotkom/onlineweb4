@@ -25,11 +25,11 @@ urlpatterns = [
     url(r'^$', TemplateView.as_view(template_name='frontpage.html'), name='home'),
 
     # nav-bar menu urls
-    url(r'^#events$', TemplateView.as_view(template_name='frontpage.html#events'), name='events-link'),
-    url(r'^#articles$', TemplateView.as_view(template_name='frontpage.html#articles'), name='articles-link'),
-    url(r'^#about$', TemplateView.as_view(template_name='frontpage.html#about'), name='about-link'),
-    url(r'^#business$', TemplateView.as_view(template_name='frontpage.html#business'), name='business-link'),
-    url(r'^#offline$', TemplateView.as_view(template_name='frontpage.html#offline'), name='offline-link'),
+    url(r'^#events$', TemplateView.as_view(template_name='frontpage.html'), name='events-link'),
+    url(r'^#articles$', TemplateView.as_view(template_name='frontpage.html'), name='articles-link'),
+    url(r'^#about$', TemplateView.as_view(template_name='frontpage.html'), name='about-link'),
+    url(r'^#business$', TemplateView.as_view(template_name='frontpage.html'), name='business-link'),
+    url(r'^#offline$', TemplateView.as_view(template_name='frontpage.html'), name='offline-link'),
 
     # Online Notifier Owner Verification (checked yearly or so by Google)
     url(r'^google79c0b331a83a53de\.html$', lambda r: HttpResponse(
