@@ -46,7 +46,7 @@
             {% for field in new_batch_form %}
                 <div class="col-md-5">
                     <div class="form-group">
-                        <div class="input-group {% if field.errors %}has-error{% endif %} {% ifequal field.name 'expiration_date' %}dtp{% endifequal %}">
+                        <div class="input-group {% if field.errors %}has-error{% endif %} {% ifequal field.name 'expiration_date' %}dp{% endifequal %}">
                             <span class="input-group-addon">{{ field.label }}</span>
                             {{ field|addclass:"form-control" }}
                             {% ifequal field.name 'expiration_date' %}
@@ -97,7 +97,7 @@
                         {% ifnotequal field.name 'item' %}
                         <div class="col-md-5">
                             <div class="form-group {% if field.errors %}has-error{% endif %}">
-                                <div class="input-group {% ifequal field.name 'expiration_date' %}dtp{% endifequal %}">
+                                <div class="input-group {% ifequal field.name 'expiration_date' %}dp{% endifequal %}">
                                     <span class="input-group-addon">{{ field.label }}</span>
                                     {{ field|addclass:"form-control" }}
                                     {% ifequal field.name 'expiration_date' %}
