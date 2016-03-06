@@ -15,7 +15,7 @@ from rest_framework import mixins, viewsets
 from rest_framework.permissions import AllowAny
 from taggit.utils import parse_tags
 
-from apps.gallery.util import UploadImageHandler
+from apps.gallery.util import UploadImageHandler, ResponsiveImageHandler
 from apps.gallery.util import (
     create_responsive_images,
     get_responsive_xs_path,
@@ -127,6 +127,14 @@ def crop_image(request):
             image_tags = crop_data['tags']
             image_photographer = crop_data['photographer']
             responsive_image_path = save_responsive_image(image, crop_data)
+
+            # TODO: New implementation
+            config = {key: crop_data.get(key) for key in crop_data.keys()}
+            config['preset'] = 'product'
+            handler = ResponsiveImageHandler(image)
+            status = handler.configure(config)
+            if not status:
+                return HttpResponse(status.message, status=400)
 
             # Error / Status collection is performed in the utils create_responsive_images function
             create_responsive_images(responsive_image_path)

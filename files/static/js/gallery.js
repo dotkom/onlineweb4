@@ -153,7 +153,7 @@ var Gallery = (function ($, tools) {
             message.fadeOut(200, function() {
                 $(this).remove();
             })
-        }, 5000);
+        }, 10000);
     }
 
     var createMessage = function(message) {
@@ -170,12 +170,14 @@ var Gallery = (function ($, tools) {
         var messageElement = createMessage(message);
         messageElement.className += " " + 'text-danger' + " " + 'bg-danger';
         $('div#messages').append(messageElement);
+        document.getElementById('gallery').scrollIntoView();
     }
 
     var setSuccessMessage = function(message) {
         var messageElement = createMessage(message);
         messageElement.className += " " + 'text-success' + " " + 'bg-success';
         $('div#messages').append(messageElement);
+        document.getElementById('gallery').scrollIntoView();
     }
 
 
@@ -342,7 +344,7 @@ var Gallery = (function ($, tools) {
         $.post("/gallery/crop_image/", cropData, function() {
             imageEditingSuccessful();
         }).fail(function(xhr, thrownError, statusText) {
-            setErrorMessage('En uventet feil har oppstått: ' + statusText);
+            setErrorMessage('En feil har oppstått: ' + xhr.responseText);
         }).always(function() {
             setCropDefault();
         });

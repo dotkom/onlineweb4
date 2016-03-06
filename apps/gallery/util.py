@@ -351,7 +351,7 @@ class ResponsiveImageHandler(BaseImageHandler):
         else:
             return GalleryStatus(False, 'Config contained illegal value for "preset"')
 
-        min_size = (model['min_width'], model['min_size'])
+        min_size = (model['min_width'], model['min_height'])
 
         # Do bounds check on the provided data from the cropper.js front-end
         bounds_status = check_crop_bounds(anchor, size, min_size, max_size)
@@ -381,10 +381,10 @@ def check_crop_bounds(crop_anchor, crop_size, min_size, max_size):
     :return: A GalleryStatus object
     """
 
-    x, y = crop_anchor
-    width, height = crop_size
-    min_width, min_height = min_size
-    max_width, max_height = max_size
+    x, y = map(int, crop_anchor)
+    width, height = map(int, crop_size)
+    min_width, min_height = map(int, min_size)
+    max_width, max_height = map(int, max_size)
 
     valid = x >= 0 and y >= 0
     valid &= width > 0 and height > 0
@@ -413,8 +413,8 @@ def check_aspect_ratio(size, aspect_ratio):
 
     epsilon = 0.01
 
-    width, height = size
-    aspect_x, aspect_y = aspect_ratio
+    width, height = map(int, size)
+    aspect_x, aspect_y = map(int, aspect_ratio)
 
     actual = width / height
     given = aspect_x / aspect_y
