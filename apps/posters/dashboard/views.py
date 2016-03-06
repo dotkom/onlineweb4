@@ -211,7 +211,7 @@ For mer informasjon, sjekk ut bestillingen her: %(absolute_url)s
                 'site': '',
                 'order_type': type_name.lower().rstrip(),
                 'num': '%s' % poster.amount,
-                'bongs': ', %s x bong' % poster.bong if poster.bong > 0 else '' if poster.bong > 0 else '',
+                'bongs': ', %s x bong' % poster.bong if poster.bong else '',
                 'ordered_by': poster.ordered_by,
                 'ordered_by_committee': poster.ordered_committee,
                 'id': poster.id,
