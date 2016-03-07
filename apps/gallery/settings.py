@@ -22,6 +22,10 @@ RESPONSIVE_IMAGES_SM_SIZE = (864, 486)
 RESPONSIVE_IMAGES_XS_PATH = os.path.join(RESPONSIVE_IMAGES_PATH, 'xs')
 RESPONSIVE_IMAGES_XS_SIZE = (640, 360)
 
+# Quality settings
+THUMBNAIL_QUALITY = 70
+RESPONSIVE_IMAGE_QUALITY = 100
+
 # Presets and aspect ratios
 ARTICLE = {
     'aspect_ratio': True,

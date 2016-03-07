@@ -95,7 +95,26 @@ class BaseImageHandler(object):
 
         # If this object is a ResponsiveImageHandler instance, create thumbnails for the responsive image
         elif isinstance(self, ResponsiveImageHandler):
-            return GalleryStatus()
+
+            filename = os.path.basename(self.image.image)
+
+            # Generate the full thumbnail path for the unhandled image
+            thumbnail_source = os.path.join(
+                django_settings.MEDIA_ROOT,
+                gallery_settings.UNHANDLED_THUMBNAIL_PATH,
+                filename
+            )
+            thumbnail_source = os.path.abspath(thumbnail_source)
+
+            # Generate the full thumbnail path for the unhandled image
+            thumbnail_dest = os.path.join(
+                django_settings.MEDIA_ROOT,
+                gallery_settings.RESPONSIVE_THUMBNAIL_PATH,
+                filename
+            )
+            thumbnail_dest = os.path.abspath(thumbnail_dest)
+
+            return self._copy_file(thumbnail_source, thumbnail_dest)
         else:
             # If we have been provided an unsupported object, return unsuccessfully
             return GalleryStatus(
@@ -105,7 +124,7 @@ class BaseImageHandler(object):
             )
 
     @staticmethod
-    def copy_image(from_path, to_path):
+    def _copy_file(from_path, to_path):
         """
         Copies an image from A to B
         :param from_path: The absolute path to the source file
@@ -116,8 +135,14 @@ class BaseImageHandler(object):
         _log.debug('Copying image %s to %s' % (from_path, to_path))
         try:
             shutil.copy2(from_path, to_path)
+            return GalleryStatus(True, 'sucess', to_path)
         except OSError as os_error:
             _log('An OSError occurred: %s' % os_error)
+            return GalleryStatus(
+                False,
+                'Failed to copy image from %s to %s: %s' % (from_path, to_path, os_error),
+                os_error
+            )
 
     @staticmethod
     def _open_image(source):
@@ -171,8 +196,7 @@ class BaseImageHandler(object):
             return GalleryStatus(False, 'Image is truncated.', e)
 
         # Save the image to file
-        quality = 90
-        img.save(dest, file_extension[1:], quality=quality, optimize=True)
+        img.save(dest, file_extension.replace('.', ''), quality=gallery_settings.THUMBNAIL_QUALITY, optimize=True)
 
         return GalleryStatus(True, 'success', source)
 
@@ -384,7 +408,7 @@ class ResponsiveImageHandler(BaseImageHandler):
         crop_width = int(self._config['width'])
 
         # All is OK, let PIL crop the image
-        quality = 100
+        quality = gallery_settings.RESPONSIVE_IMAGE_QUALITY
         image = image.crop((crop_x, crop_y, crop_x + crop_width, crop_y + crop_height))
         image.save(destination_path, file_extension.replace('.', ''), quality=quality, optimize=True)
 
@@ -443,15 +467,13 @@ class ResponsiveImageHandler(BaseImageHandler):
         if not self._config:
             return GalleryStatus(False, 'Configuration dict is missing!')
 
-        valid = 'id' in self._config
-        valid &= 'preset' in self._config
-        valid &= 'name' in self._config
-        valid &= 'description' in self._config
-        valid &= 'x' in self._config and 'y' in self._config
-        valid &= 'width' in self._config and 'height' in self._config
+        required = {'id', 'preset', 'name', 'description', 'x', 'y', 'width', 'height'}
+        provided = set(self._config.keys())
+        valid = required == required & provided
 
         if not valid:
-            return GalleryStatus(False, 'Configuration is missing one or more attributes', self._config)
+            missing = required - provided
+            return GalleryStatus(False, 'Configuration is missing the following attributes %s' % missing, self._config)
 
         preset = self._config['preset']
         anchor = (self._config['x'], self._config['y'])
