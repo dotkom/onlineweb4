@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import json
 import logging
 import os
 
@@ -16,17 +15,6 @@ from rest_framework.permissions import AllowAny
 from taggit.utils import parse_tags
 
 from apps.gallery.util import UploadImageHandler, ResponsiveImageHandler
-from apps.gallery.util import (
-    create_responsive_images,
-    get_responsive_xs_path,
-    get_responsive_sm_path,
-    get_responsive_md_path,
-    get_responsive_lg_path,
-    get_responsive_wide_path,
-    get_responsive_original_path,
-    get_responsive_thumbnail_path,
-    save_responsive_image,
-)
 from apps.gallery.models import UnhandledImage, ResponsiveImage
 from apps.gallery.forms import DocumentForm
 from apps.gallery.serializers import ResponsiveImageSerializer
