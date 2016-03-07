@@ -12,7 +12,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.utils.translation import ugettext as _
 from django.contrib.contenttypes.models import ContentType
 
-import watson
+from watson import search as watson
 
 from apps.events.forms import CaptchaForm
 from apps.events.models import Event, AttendanceEvent, Attendee, CompanyEvent
