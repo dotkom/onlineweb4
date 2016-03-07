@@ -9,7 +9,7 @@ from PIL import Image, ImageOps
 from django.conf import settings as django_settings
 from django.core.files.uploadedfile import InMemoryUploadedFile
 
-from apps.gallery.models import UnhandledImage
+from apps.gallery.models import UnhandledImage, ResponsiveImage
 from apps.gallery import settings as gallery_settings
 
 
@@ -51,7 +51,7 @@ class BaseImageHandler(object):
     def __init__(self, image):
         """
         Constructor for BaseImageHandler.
-        :param image: An instance of UnhandledImage, ResponsiveImage or InMemoryUploadedFile
+        :param image: An instance of UnhandledImage, InMemoryUploadedFile
         """
 
         self.image = image
@@ -96,7 +96,7 @@ class BaseImageHandler(object):
         # If this object is a ResponsiveImageHandler instance, create thumbnails for the responsive image
         elif isinstance(self, ResponsiveImageHandler):
 
-            filename = os.path.basename(self.image.image)
+            filename = os.path.basename(get_absolute_path_to_original(self.image))
 
             # Generate the full thumbnail path for the unhandled image
             thumbnail_source = os.path.join(
@@ -369,11 +369,15 @@ class ResponsiveImageHandler(BaseImageHandler):
             self._log.error(self.status)
             return self.status
 
+        responsive_image = self.status.data
         self._log.debug('generate: cleaning up')
 
         # Clean up
+        unhandled_image_name = self.image.image.name
+        self.image.delete()
+        self._log.debug('UnhandledImage %s was deleted' % unhandled_image_name)
 
-        return GalleryStatus(True, 'success', self.image)
+        return GalleryStatus(True, 'success', responsive_image)
 
     def _crop_image(self):
         """
@@ -416,6 +420,43 @@ class ResponsiveImageHandler(BaseImageHandler):
 
         return GalleryStatus(True, 'success', image)
 
+    def _resize_image(self, image, destination_path, size):
+        """
+        Resize an image, given a source image path, a destination path and a size tuple (x, y)
+        :param image: An absolute path to the original source image
+        :param destination_path: An absolute path to where the image should be saved
+        :param size: An (x, y) tuple of the final size of the image in pixels
+        :return: A GalleryStatus object containing the path to the resized image, or error information
+        """
+
+        # Open the file and fetch the data, or return with error information
+        filename = os.path.basename(image)
+        result = self._open_image(image)
+        if not result:
+            return result
+        else:
+            image = result.data
+
+        # Extract necessary data
+        file_name, file_extension = os.path.splitext(filename)
+        target_width, target_height = size
+
+        try:
+            image = ImageOps.fit(image, (target_width, target_height), Image.ANTIALIAS)
+        except IOError as io_error:
+            self._log.error('Critical error while resizing %s to %s (Image truncation)' % (filename, size))
+            return GalleryStatus(False, 'Image source is truncated (%s)' % io_error, io_error)
+
+        quality = gallery_settings.RESPONSIVE_IMAGE_QUALITY
+        try:
+            image.save(destination_path, file_extension.replace('.', ''), quality=quality, optimize=True)
+            self._log.debug('Successsfully resized %s to %s' % (filename, (target_width, target_height)))
+        except IOError as io_error:
+            self._log.error('Critical error while saving image %s: %s' % (filename, io_error))
+            return GalleryStatus
+
+        return GalleryStatus(True, 'success', destination_path)
+
     def _generate_downsized_versions(self):
         """
         Helper that generates the different responsive image versions from the cropped version of the UnhandledImage.
@@ -424,23 +465,60 @@ class ResponsiveImageHandler(BaseImageHandler):
         :return: A GalleryStatus object
         """
 
-        """
+        source_path = get_absolute_path_to_original(self.image)
 
-        # Error / Status collection is performed in the utils create_responsive_images function
-        create_responsive_images(responsive_image_path)
+        wide_destination_path = os.path.join(
+            django_settings.MEDIA_ROOT,
+            gallery_settings.RESPONSIVE_IMAGES_WIDE_PATH,
+            os.path.basename(source_path)
+        )
+        lg_destination_path = os.path.join(
+            django_settings.MEDIA_ROOT,
+            gallery_settings.RESPONSIVE_IMAGES_LG_PATH,
+            os.path.basename(source_path)
+        )
+        md_destination_path = os.path.join(
+            django_settings.MEDIA_ROOT,
+            gallery_settings.RESPONSIVE_IMAGES_MD_PATH,
+            os.path.basename(source_path)
+        )
+        sm_destination_path = os.path.join(
+            django_settings.MEDIA_ROOT,
+            gallery_settings.RESPONSIVE_IMAGES_SM_PATH,
+            os.path.basename(source_path)
+        )
+        xs_destination_path = os.path.join(
+            django_settings.MEDIA_ROOT,
+            gallery_settings.RESPONSIVE_IMAGES_XS_PATH,
+            os.path.basename(source_path)
+        )
 
-        original_media = get_responsive_original_path(responsive_image_path)
-        wide_media = get_responsive_wide_path(responsive_image_path)
-        lg_media = get_responsive_lg_path(responsive_image_path)
-        md_media = get_responsive_md_path(responsive_image_path)
-        sm_media = get_responsive_sm_path(responsive_image_path)
-        xs_media = get_responsive_xs_path(responsive_image_path)
-        thumbnail = get_responsive_thumbnail_path(responsive_image_path)
+        wide = self._resize_image(source_path, wide_destination_path, gallery_settings.RESPONSIVE_IMAGES_WIDE_SIZE)
+        lg = self._resize_image(source_path, lg_destination_path, gallery_settings.RESPONSIVE_IMAGES_LG_SIZE)
+        md = self._resize_image(source_path, md_destination_path, gallery_settings.RESPONSIVE_IMAGES_MD_SIZE)
+        sm = self._resize_image(source_path, sm_destination_path, gallery_settings.RESPONSIVE_IMAGES_SM_SIZE)
+        xs = self._resize_image(source_path, xs_destination_path, gallery_settings.RESPONSIVE_IMAGES_XS_SIZE)
 
+        # Aggregate statuses
+        self.status = wide and lg and md and sm and xs
+
+        # Create responsive thumbnail
+        self.create_thumbnail()
+
+        # Retrieve all file paths needed by the ResponsiveImage model
+        original_media = get_responsive_original_path(source_path)
+        wide_media = get_responsive_wide_path(source_path)
+        lg_media = get_responsive_lg_path(source_path)
+        md_media = get_responsive_md_path(source_path)
+        sm_media = get_responsive_sm_path(source_path)
+        xs_media = get_responsive_xs_path(source_path)
+        thumbnail = get_responsive_thumbnail_path(source_path)
+
+        # Create and save the actual ResponsiveImage object
         resp_image = ResponsiveImage(
-            name=image_name,
-            description=image_description,
-            photographer=image_photographer,
+            name=self._config['name'],
+            description=self._config['description'],
+            photographer=self._config['photographer'],
             image_original=original_media,
             image_lg=lg_media,
             image_md=md_media,
@@ -451,12 +529,14 @@ class ResponsiveImageHandler(BaseImageHandler):
         )
         resp_image.save()
 
-        unhandled_image_name = image.filename
-        image.delete()
-        log.debug('UnhandledImage %s was deleted' % unhandled_image_name)
-        """
+        # If we had any errors during any of the resizing operations, we let the ResponsiveImage clean the disk
+        # for orphaned images
+        if not self.status:
+            self._log.debug('An error occured during responsive image generation, performing cleanup')
+            resp_image.delete()
+            return self.status
 
-        return GalleryStatus(True, 'success', self.image)
+        return GalleryStatus(True, 'success', resp_image)
 
     def _verify_config_data(self):
         """
@@ -511,6 +591,7 @@ class ResponsiveImageHandler(BaseImageHandler):
 
 
 # Support functions
+
 
 def check_crop_bounds(crop_anchor, crop_size, min_size, max_size):
     """
@@ -567,201 +648,33 @@ def check_aspect_ratio(size, aspect_ratio):
     return GalleryStatus(True, 'success')
 
 
-def save_responsive_image(unhandled_image, crop_data):
-
-    source_path = os.path.join(django_settings.MEDIA_ROOT, unhandled_image.image.name)
-    destination_path = os.path.join(
-        django_settings.MEDIA_ROOT,
-        gallery_settings.RESPONSIVE_IMAGES_PATH,
-        os.path.basename(unhandled_image.image.name)
-    )
-
-    crop_image(source_path, destination_path, crop_data)
-
-    return destination_path
-
-
-def create_responsive_images(source_path):
-
-    log = logging.getLogger(__name__)
-
-    wide_destination_path = os.path.join(
-        django_settings.MEDIA_ROOT,
-        gallery_settings.RESPONSIVE_IMAGES_WIDE_PATH,
-        os.path.basename(source_path)
-    )
-    lg_destination_path = os.path.join(
-        django_settings.MEDIA_ROOT,
-        gallery_settings.RESPONSIVE_IMAGES_LG_PATH,
-        os.path.basename(source_path)
-    )
-    md_destination_path = os.path.join(
-        django_settings.MEDIA_ROOT,
-        gallery_settings.RESPONSIVE_IMAGES_MD_PATH,
-        os.path.basename(source_path)
-    )
-    sm_destination_path = os.path.join(
-        django_settings.MEDIA_ROOT,
-        gallery_settings.RESPONSIVE_IMAGES_SM_PATH,
-        os.path.basename(source_path)
-    )
-    xs_destination_path = os.path.join(
-        django_settings.MEDIA_ROOT,
-        gallery_settings.RESPONSIVE_IMAGES_XS_PATH,
-        os.path.basename(source_path)
-    )
-
-    wide_status = resize_image(source_path, wide_destination_path, gallery_settings.RESPONSIVE_IMAGES_WIDE_SIZE)
-    lg_status = resize_image(source_path, lg_destination_path, gallery_settings.RESPONSIVE_IMAGES_LG_SIZE)
-    md_status = resize_image(source_path, md_destination_path, gallery_settings.RESPONSIVE_IMAGES_MD_SIZE)
-    sm_status = resize_image(source_path, sm_destination_path, gallery_settings.RESPONSIVE_IMAGES_SM_SIZE)
-    xs_stauts = resize_image(source_path, xs_destination_path, gallery_settings.RESPONSIVE_IMAGES_XS_SIZE)
-
-    # Filter status results based on state, and log if any error
-    errors = [
-        s for s in [(wide_status, 'wide'), (lg_status, 'lg'), (md_status, 'md'), (sm_status, 'sm'), (xs_stauts, 'sm')]
-        if s[0]['success']
-    ]
-    for status, version in errors:
-        log.error('Failed to resize image %s' % version)
-
-    unhandled_thumbnail_name = os.path.basename(source_path)
-    responsive_thumbnail_path = os.path.join(
-        django_settings.MEDIA_ROOT,
-        gallery_settings.RESPONSIVE_THUMBNAIL_PATH,
-        unhandled_thumbnail_name
-    )
-
-    # Create a new thumbnail, since we now have cropped the image and its a different cutout from
-    # the preview provided by the unhandled image
-    BaseImageHandler._generate_thumbnail_from_source(
-        xs_destination_path,
-        responsive_thumbnail_path,
-        gallery_settings.RESPONSIVE_THUMBNAIL_SIZE
-    )
-
-
-def resize_image(source_image_path, destination_thumbnail_path, size):
-    status = _open_image_file(source_image_path)
-    if not status['success']:
-        return status['error']
-
-    image = status['image']
-    file_extension = status['file_extension']
-
-    # If necessary, convert the image to RGB mode
-    if image.mode not in ('L', 'RGB', 'RGBA'):
-        image = image.convert('RGB')
-
-    image_width, image_height = image.size
-    target_width, target_height = size
-
-    image_width = _match_target(image_width, target_width)
-    image_height = _match_target(image_height, target_height)
-
-    if _validate_image_dinosaurs(image_width, image_height):
-        return {'success': False, 'error': 'Image has invalid dimensions.'}
-
-    try:
-        # Convert our image to a thumbnail
-        image = ImageOps.fit(image, (target_width, target_height), Image.ANTIALIAS)
-    except IOError:
-        return {'success': False, 'error': 'Image is truncated.'}
-
-    quality = 90
-
-    try:
-        # Have not tried setting file extension to png, but I guess PIL would fuck you in the ass for it
-        image.save(destination_thumbnail_path, file_extension[1:], quality=quality, optimize=True)
-    except KeyError:
-        return {'success': False, 'error': 'Unknown extension.'}
-    except IOError:
-        return {'success': False, 'error': 'Image could not be saved.'}
-
-    return {'success': True}
-
-
-def _open_image_file(source_image_path):
-
-    d = {'success': True, 'error': '', 'image': None}
-    try:
-        d['image'] = Image.open(source_image_path)
-    except IOError:
-        d = {'success': False, 'error': 'IOError: File was not an image file, or could not be found.'}
-
-    file_name, file_extension = os.path.splitext(source_image_path)
-
-    if file_extension:
-        d['file_extension'] = file_extension
-    else:
-        d = {'success': False, 'error': 'File must have an extension.'}
-    return d
-
-
-def _match_target(source, target):
-    return source if source < target else target
-
-
-def _validate_image_dinosaurs(width, height):
-    """
-    Validates the dimensions (width and height) of an image object
-    :param width: width of an image
-    :param height: height of an image
-    :return: boolean
-    """
-    # Give an epsilon of 0.01 because calculations.
-    return float(width) / float(height) < float(16)/float(9) - 0.01 \
-        or float(width) / float(height) > float(16)/float(9) + 0.01
-
-
-def crop_image(source_image_path, destination_path, crop_data):
-
-    try:
-        image = Image.open(source_image_path)
-    except IOError:
-        return {'success': False, 'error': "File was not an image file, or could not be found."}
-
-    # If necessary, convert the image to RGB mode
-    if image.mode not in ('L', 'RGB', 'RGBA'):
-        image = image.convert('RGB')
-
-    file_name, file_extension = os.path.splitext(source_image_path)
-
-    if not file_extension:
-        return {'success': False, 'error': 'File must have an extension.'}
-
-    crop_x = float(crop_data['x'])
-    crop_y = float(crop_data['y'])
-    crop_height = float(crop_data['height'])
-    crop_width = float(crop_data['width'])
-
-    image_width, image_height = image.size
-
-    # Check all the dimension and size things \o/
-    # Give an epsilon of 0.01 because calculations.
-    if crop_width / crop_height < float(16)/float(9) - 0.01 or crop_width / crop_height > float(16)/float(9) + 0.01:
-        return {'success': False, 'error': 'Cropping ratio was not 16:9.'}
-
-    if (crop_x < 0) \
-            or (crop_y < 0) \
-            or (crop_x > image_width) \
-            or (crop_y > image_height) \
-            or (crop_x + crop_width > image_width) \
-            or (crop_y + crop_height > image_height):
-
-        return {'success': False, 'error': 'Crop bounds are illegal!'}
-
-    # All is OK, crop the crop
-    image = image.crop((int(crop_x), int(crop_y), int(crop_x) + int(crop_width), int(crop_y) + int(crop_height)))
-
-    quality = 90
-    # Have not tried setting file extension to png, but I guess PIL would fuck you in the ass for it
-    image.save(destination_path, file_extension[1:], quality=quality, optimize=True)
-
-    return {'success': True}
-
-
 # Path translation functions
+
+def get_absolute_path_to_original(image):
+    """
+    Returns the absolute path to the original version of an UnhandledImage or ResponsiveImage object
+    :param image: An UnhandledImage or Responsive image instance
+    :return: An absolute path to an image file on disk
+    """
+
+    path = django_settings.MEDIA_ROOT
+    if isinstance(image, UnhandledImage):
+        path = os.path.abspath(
+            os.path.join(
+                django_settings.MEDIA_ROOT,
+                image.image.name
+            )
+        )
+    elif isinstance(image, ResponsiveImage):
+        path = os.path.abspath(
+            os.path.join(
+                django_settings.MEDIA_ROOT,
+                image.image_original.name
+            )
+        )
+
+    return path
+
 
 def get_unhandled_media_path(unhandled_file_path):
     """

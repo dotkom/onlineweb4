@@ -112,7 +112,7 @@ def crop_image(request):
             config = {key: crop_data.get(key) for key in crop_data.keys()}
             config['preset'] = 'article'
 
-            # Invoke a responsive image handler and configure it using the provided request data
+            # Construct a responsive image handler and configure it using the provided request data
             handler = ResponsiveImageHandler(image)
             status = handler.configure(config)
             if not status:
@@ -130,23 +130,17 @@ def crop_image(request):
                 resp_image.tags.add(*parse_tags(tags))
 
             # Log who performed the crop operation
-            log.debug(
+            log.info(
                 '%s cropped and saved ResponsiveImage %d (%s)' % (
                     request.user,
                     resp_image.id,
-                    resp_image.filename
+                    config.get('name')
                 )
             )
 
-            return JsonResponse(data={'cropData': crop_data})
+            return JsonResponse(data={'name': config['name'], 'id': resp_image.id})
 
     return HttpResponse(status=405)
-
-
-def _verify_crop_data(crop_data):
-    return \
-        'id' in crop_data and 'x' in crop_data and 'y' in crop_data and 'height' in crop_data \
-        and 'width' in crop_data and 'name' in crop_data
 
 
 @login_required

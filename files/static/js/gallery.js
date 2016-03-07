@@ -302,10 +302,9 @@ var Gallery = (function ($, tools) {
         return $('#editing-image').attr('data-image-id');
     };
 
-    var imageEditingSuccessful = function() {
-
-        var imageName = getCurrentEditImageName();
-        var imageId = getCurrentEditImageId();
+    var imageEditingSuccessful = function(response) {
+        var imageName = response.name;
+        var imageId = response.id;
         var message = "Bilde '" + imageName + "' med id " + imageId + " ble lagret!";
 
         setSuccessMessage(message);
@@ -341,8 +340,8 @@ var Gallery = (function ($, tools) {
 
         setCropSpin();
 
-        $.post("/gallery/crop_image/", cropData, function() {
-            imageEditingSuccessful();
+        $.post("/gallery/crop_image/", cropData, function(response) {
+            imageEditingSuccessful(response);
         }).fail(function(xhr, thrownError, statusText) {
             setErrorMessage('En feil har oppstått: ' + xhr.responseText);
         }).always(function() {
