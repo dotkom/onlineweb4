@@ -117,53 +117,31 @@ def crop_image(request):
         if request.method == 'POST':
             crop_data = request.POST
 
-            if not _verify_crop_data(crop_data):
-                log.info('%s attempted image crop with incomplete dimension payload' % request.user)
-                return JsonResponse({'error': 'Json must contain id, x, y, height and width, and name.'}, status=400)
-
+            # Check that the image ID exists
             image = get_object_or_404(UnhandledImage, pk=crop_data['id'])
-            image_name = crop_data['name']
-            image_description = crop_data['description']
-            image_tags = crop_data['tags']
-            image_photographer = crop_data['photographer']
-            responsive_image_path = save_responsive_image(image, crop_data)
 
-            # TODO: New implementation
+            # Fetch values from Django's immutable MultiValueDict
             config = {key: crop_data.get(key) for key in crop_data.keys()}
-            config['preset'] = 'product'
+            config['preset'] = 'article'
+
+            # Invoke a responsive image handler and configure it using the provided request data
             handler = ResponsiveImageHandler(image)
             status = handler.configure(config)
             if not status:
                 return HttpResponse(status.message, status=400)
 
-            # Error / Status collection is performed in the utils create_responsive_images function
-            create_responsive_images(responsive_image_path)
+            # Generate the responsive versions based on the provided request data
+            status = handler.generate()
+            if not status:
+                return HttpResponse(status.message, status=500)
 
-            original_media = get_responsive_original_path(responsive_image_path)
-            wide_media = get_responsive_wide_path(responsive_image_path)
-            lg_media = get_responsive_lg_path(responsive_image_path)
-            md_media = get_responsive_md_path(responsive_image_path)
-            sm_media = get_responsive_sm_path(responsive_image_path)
-            xs_media = get_responsive_xs_path(responsive_image_path)
-            thumbnail = get_responsive_thumbnail_path(responsive_image_path)
+            # Add Taggit tags if provided
+            resp_image = status.data
+            tags = crop_data.get('tags')
+            if tags:
+                resp_image.tags.add(*parse_tags(tags))
 
-            resp_image = ResponsiveImage(
-                name=image_name,
-                description=image_description,
-                photographer=image_photographer,
-                image_original=original_media,
-                image_lg=lg_media,
-                image_md=md_media,
-                image_sm=sm_media,
-                image_xs=xs_media,
-                image_wide=wide_media,
-                thumbnail=thumbnail
-            )
-            resp_image.save()
-            # Unpack and add any potential tags
-            if image_tags:
-                resp_image.tags.add(*parse_tags(image_tags))
-
+            # Log who performed the crop operation
             log.debug(
                 '%s cropped and saved ResponsiveImage %d (%s)' % (
                     request.user,
@@ -172,11 +150,7 @@ def crop_image(request):
                 )
             )
 
-            unhandled_image_name = image.filename
-            image.delete()
-            log.debug('UnhandledImage %s was deleted' % unhandled_image_name)
-
-            return HttpResponse(status=200, content=json.dumps({'cropData': crop_data}))
+            return JsonResponse(data={'cropData': crop_data})
 
     return HttpResponse(status=405)
 

@@ -317,6 +317,123 @@ class ResponsiveImageHandler(BaseImageHandler):
 
         return self.status
 
+    def generate(self):
+        """
+        Copy the original UnhandledImage into the "responsive" folder on disk, create a ResponsiveImage object
+        for the image file, and generate cropped and downsized versions of the image for the various size profiles
+        listed in Gallery "settings.py". This method must be called after ".configure()" has been invoked
+        with a valid configuration file containing image metadata and cropping data.
+        :return: A GalleryStatus object
+        """
+
+        if not self._config or not self.status:
+            return self.status
+
+        self._log.debug('generate: cropping %s' % self.image)
+
+        # Crop the image
+        self.status = self._crop_image()
+        if not self.status:
+            self._log.error(self.status)
+            return self.status
+
+        self._log.debug('generate: creating responsive image versions')
+
+        # Create downsized versions
+        self.status = self._generate_downsized_versions()
+        if not self.status:
+            self._log.error(self.status)
+            return self.status
+
+        self._log.debug('generate: cleaning up')
+
+        # Clean up
+
+        return GalleryStatus(True, 'success', self.image)
+
+    def _crop_image(self):
+        """
+        Helper that performs the initial cropping of the image, given the current configuration.
+        This method assumes that all provided crop data are valid, as this is invoked through the generate method,
+        which is run post-configure.
+        :return: A GalleryStatus object
+        """
+
+        # Define the paths we're going to need
+        relative_source_path = self.image.image.name
+        source_path = os.path.join(django_settings.MEDIA_ROOT, relative_source_path)
+        file_name, file_extension = os.path.splitext(source_path)
+        destination_path = os.path.join(
+            django_settings.MEDIA_ROOT,
+            gallery_settings.RESPONSIVE_IMAGES_PATH,
+            os.path.basename(relative_source_path)
+        )
+
+        # Attempt to open the image with PIL
+        self.status = self._open_image(source_path)
+        if not self.status:
+            return self.status
+
+        # If all is good, we can reference the PIL.Image object
+        image = self.status.data
+
+        # Extract the data we need from config
+        crop_x = int(self._config['x'])
+        crop_y = int(self._config['y'])
+        crop_height = int(self._config['height'])
+        crop_width = int(self._config['width'])
+
+        # All is OK, let PIL crop the image
+        quality = 100
+        image = image.crop((crop_x, crop_y, crop_x + crop_width, crop_y + crop_height))
+        image.save(destination_path, file_extension.replace('.', ''), quality=quality, optimize=True)
+
+        self._log.debug('_crop_image: successfully cropped %s' % get_responsive_original_path(destination_path))
+
+        return GalleryStatus(True, 'success', image)
+
+    def _generate_downsized_versions(self):
+        """
+        Helper that generates the different responsive image versions from the cropped version of the UnhandledImage.
+        This method also performs cleanup afterwards, deleting the UnhandledImage containing the original
+        uploaded image, after all ResponsiveImage versions have been generated.
+        :return: A GalleryStatus object
+        """
+
+        """
+
+        # Error / Status collection is performed in the utils create_responsive_images function
+        create_responsive_images(responsive_image_path)
+
+        original_media = get_responsive_original_path(responsive_image_path)
+        wide_media = get_responsive_wide_path(responsive_image_path)
+        lg_media = get_responsive_lg_path(responsive_image_path)
+        md_media = get_responsive_md_path(responsive_image_path)
+        sm_media = get_responsive_sm_path(responsive_image_path)
+        xs_media = get_responsive_xs_path(responsive_image_path)
+        thumbnail = get_responsive_thumbnail_path(responsive_image_path)
+
+        resp_image = ResponsiveImage(
+            name=image_name,
+            description=image_description,
+            photographer=image_photographer,
+            image_original=original_media,
+            image_lg=lg_media,
+            image_md=md_media,
+            image_sm=sm_media,
+            image_xs=xs_media,
+            image_wide=wide_media,
+            thumbnail=thumbnail
+        )
+        resp_image.save()
+
+        unhandled_image_name = image.filename
+        image.delete()
+        log.debug('UnhandledImage %s was deleted' % unhandled_image_name)
+        """
+
+        return GalleryStatus(True, 'success', self.image)
+
     def _verify_config_data(self):
         """
         Performs a self-check to verify that the currently set configuration dict (self._config) contains
@@ -329,6 +446,7 @@ class ResponsiveImageHandler(BaseImageHandler):
         valid = 'id' in self._config
         valid &= 'preset' in self._config
         valid &= 'name' in self._config
+        valid &= 'description' in self._config
         valid &= 'x' in self._config and 'y' in self._config
         valid &= 'width' in self._config and 'height' in self._config
 
@@ -371,6 +489,7 @@ class ResponsiveImageHandler(BaseImageHandler):
 
 
 # Support functions
+
 def check_crop_bounds(crop_anchor, crop_size, min_size, max_size):
     """
     Check whether or not the crop bounds exceed the image size
