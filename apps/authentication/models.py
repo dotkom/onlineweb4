@@ -243,7 +243,7 @@ class OnlineUser(AbstractUser):
         default = "%s%s_%s.png" % (settings.BASE_URL,
                                    settings.DEFAULT_PROFILE_PICTURE_PREFIX, self.gender)
 
-        gravatar_url = "https://www.gravatar.com/avatar/" + hashlib.md5(self.email).hexdigest() + "?"
+        gravatar_url = "https://www.gravatar.com/avatar/" + hashlib.md5(self.email.encode('utf-8')).hexdigest() + "?"
         gravatar_url += urllib.parse.urlencode({'d': default, 's': str(size)})
         return gravatar_url
 
