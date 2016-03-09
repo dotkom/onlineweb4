@@ -35,8 +35,17 @@ def genfors(request):
         return render(request, "genfors/index.html", context)
 
     reg_voter = RegisteredVoter.objects.filter(user=request.user, meeting=meeting).first()
-    anon_voter = anonymous_voter(request.COOKIES.get('anon_voter'), request.user.username)
+    try:
+        anon_voter = anonymous_voter(request.COOKIES['anon_voter'], request.user.username)
+    except KeyError:
+        anon_voter = None
+        print ("key error")
 
+    if 'anon_voter' in request.COOKIES:
+        print ('annon is here')
+
+    print (reg_voter)
+    print (anon_voter)
     # Check for cookie voter hash
     if anon_voter:
         context['meeting'] = meeting
@@ -56,13 +65,13 @@ def genfors(request):
             form = RegisterVoterForm(request.POST)
             context['form'] = form
             if form.is_valid():
-                handle_login(request, context)
+                response = handle_login(request, context)
 
             elif 'anon_voter' in request.COOKIES:
                 response = render(request, "genfors/index_login.html", context)
                 # Delete old hash
                 response.delete_cookie('anon_voter')
-                return response
+            return response
 
         # Set registration_locked context and create login form
         else:
@@ -70,6 +79,8 @@ def genfors(request):
             if not reg_voter:
                 context['registration_locked'] = meeting.registration_locked
 
+    aq = meeting.get_active_question()
+    context = generate_genfors_context(aq, context, anon_voter, reg_voter)
     return render(request, "genfors/index_login.html", context)
 
 
@@ -137,7 +148,7 @@ def question_admin(request, question_id=None):
     meeting = get_active_meeting()
     if is_admin(request):
         if not meeting:
-            _handle_inactive_meeting(request)
+            return _handle_inactive_meeting(request)
 
         if question_id is None and meeting.get_active_question():
             messages.error(request, _('Kan ikke legge til et nytt spørsmål når det allerede er et aktivt et'))
@@ -246,12 +257,8 @@ def vote(request):
 
         # If user is logged in
         if a:
-            handle_user_vote(request, m, a, r)
-
-        # Else forbid
-        return HttpResponse(status_code=403, reason_phrase='Forbidden')
-    else:
-        return HttpResponse(status_code=403, reason_phrase='Forbidden')
+            return handle_user_vote(request, m, a, r)
+    return HttpResponseForbidden()
 
 
 @login_required
@@ -333,9 +340,9 @@ def api_user(request):
         if q:
             context = _handle_q(context, anon_voter, reg_voter, q)
         else:
-            genfors["question"] = None
+            context["question"] = None
 
-        return JsonResponse(genfors)
+        return JsonResponse(context)
 
     else:
         return JsonResponse({"error": "Du har ikke tilgang til dette endepunktet."})
@@ -469,8 +476,7 @@ def handle_user_vote(request, m, a, r):
         return redirect('genfors_index')
     # If user is registered and has not cast a vote on the active question
     else:
-        _handle_actual_user_voting(request, q, v)
-        return redirect('genfors_index')
+        return _handle_actual_user_voting(request, q, v)
 
 
 def _handle_actual_user_voting(request, q, v):
@@ -539,9 +545,9 @@ def _handle_q(context, anon_voter, reg_voter, q):
         votes = q.get_votes()
         if q.anonymous:
             if q.question_type == 0:
-                genfors["question"]["votes"] = [[str(v.voter.anonymousvoter), v.answer] for v in votes]
+                context["question"]["votes"] = [[str(v.voter.anonymousvoter), v.answer] for v in votes]
             elif q.question_type == 1:
-                genfors["question"]["votes"] = [
+                context["question"]["votes"] = [
                     [
                         str(v.voter.anonymousvoter),
                         v.answer.description
@@ -552,13 +558,13 @@ def _handle_q(context, anon_voter, reg_voter, q):
                 ]
 
             # Shuffle the order of votes so you cannot infer who cast what vote when there are few voters left
-            random.shuffle(genfors['question']['votes'])
+            random.shuffle(context['question']['votes'])
 
         else:
             if q.question_type == 0:
-                genfors["question"]["votes"] = [[str(v.voter.registeredvoter), v.answer] for v in votes]
+                context["question"]["votes"] = [[str(v.voter.registeredvoter), v.answer] for v in votes]
             elif q.question_type == 1:
-                genfors["question"]["votes"] = [
+                context["question"]["votes"] = [
                     [
                         str(v.voter.registeredvoter),
                         v.answer.description

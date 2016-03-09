@@ -32,6 +32,11 @@ Genfors = (function () {
                             self.text('Vis stemmekode');
                         }
                     });
+                    $('input[name=choice]:radio').change(function (e) {
+                        e.preventDefault();
+                        $('.voteverification').slideUp(200);
+                        $('#verify_vote').removeClass('disabled');
+                    });
                 },
             }
         }()),
