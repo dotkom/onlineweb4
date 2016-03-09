@@ -45,7 +45,6 @@ class UnhandledImage(models.Model):
         )
 
 
-# TODO: Introduce tags to images
 class ResponsiveImage(models.Model):
     name = models.CharField('Navn', max_length=200, null=False)
     timestamp = models.DateTimeField(auto_now_add=True, editable=False, null=False, blank=False)
@@ -88,12 +87,6 @@ class ResponsiveImage(models.Model):
             assert self.image_sm.width is not None
             assert self.image_xs.width is not None
         except OSError:
-            log.warning('Caught OSError for image file reference for ResponsiveImage %d (%s)' % (
-                self.id,
-                self.filename
-            ))
-            return False
-        except IOError:
             log.warning('Caught OSError for image file reference for ResponsiveImage %d (%s)' % (
                 self.id,
                 self.filename
