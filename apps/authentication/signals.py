@@ -1,13 +1,17 @@
 # -*- coding: utf-8 -*-
+from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
-from django.db.models.signals import post_save
+from django.db.models.signals import m2m_changed, post_save
 from django.dispatch import receiver
 
 from apps.authentication.tasks import SynchronizeGroups
 
 
+User = get_user_model()
+
+
 @receiver(post_save, sender=Group)
-def trigger_group_syncer(sender, instance, created, **kwargs):
+def trigger_group_syncer(sender, instance, created=False, **kwargs):
     """
     :param sender: The model that triggered this hook
     :param instance: The model instance triggering this hook
@@ -21,3 +25,5 @@ def trigger_group_syncer(sender, instance, created, **kwargs):
         pass
     else:
         SynchronizeGroups.run()
+
+m2m_changed.connect(trigger_group_syncer, sender=User.groups.through)

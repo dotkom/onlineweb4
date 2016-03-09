@@ -112,10 +112,12 @@ def edit(request, order_id=None):
     if order_id and request.user != poster.ordered_by and 'proKom' not in request.user.groups.all():
         raise PermissionDenied
 
+    selected_form = EditPosterForm
+
     if request.POST:
         if poster.title:
-            SelectedForm = EditOtherForm
-        form = SelectedForm(request.POST, instance=poster)
+            selected_form = EditOtherForm
+        form = selected_form(request.POST, instance=poster)
         if form.is_valid():
             form.save()
             return HttpResponseRedirect("../detail/"+str(poster.id))
@@ -124,11 +126,11 @@ def edit(request, order_id=None):
             context["poster"] = poster
 
     else:
-        SelectedForm = EditPosterForm
+        selected_form = EditPosterForm
         if poster.title:
-            SelectedForm = EditOtherForm
+            selected_form = EditOtherForm
 
-        context["form"] = SelectedForm(instance=poster)
+        context["form"] = selected_form(instance=poster)
         context["poster"] = poster
 
     return render(request, 'posters/dashboard/add.html', context)
@@ -209,7 +211,7 @@ For mer informasjon, sjekk ut bestillingen her: %(absolute_url)s
                 'site': '',
                 'order_type': type_name.lower().rstrip(),
                 'num': '%s' % poster.amount,
-                'bongs': ', %s x bong' % poster.bong if poster.bong > 0 else '' if poster.bong > 0 else '',
+                'bongs': ', %s x bong' % poster.bong if poster.bong else '',
                 'ordered_by': poster.ordered_by,
                 'ordered_by_committee': poster.ordered_committee,
                 'id': poster.id,

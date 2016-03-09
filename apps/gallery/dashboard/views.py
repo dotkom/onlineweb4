@@ -92,7 +92,7 @@ class GalleryDetail(DashboardPermissionMixin, UpdateView):
 
     def form_invalid(self, form):
         """
-        Add error message
+        Add error message if invalid
         """
 
         messages.error(self.request, 'Noen av feltene inneholder feil.')
@@ -107,6 +107,20 @@ class GalleryDetail(DashboardPermissionMixin, UpdateView):
         """
 
         return reverse('gallery_dashboard:detail', kwargs={'pk': self.object.id})
+
+    def get_object(self, queryset=None):
+        """
+        We override the get_object to inject an extra health-check on the status of the files toe
+        ResponsiveImage objects's ImageField point to. This to be able to insert error messages
+        to the user, prompting them to delete broken objects.
+        """
+
+        obj = super().get_object(queryset=queryset)
+
+        if not obj.file_status_ok():
+            messages.error(self.request, 'Dette bildeobjektet er korrupt/ødelagt og bør slettes!')
+
+        return obj
 
 
 class GalleryUpload(DashboardPermissionMixin, TemplateView):

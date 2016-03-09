@@ -25,6 +25,7 @@ FIELD_OF_STUDY_CHOICES = [
     (13, _('Spillteknologi')),
     (14, _('Kunstig intelligens')),
     (15, _('Helseinformatikk')),
+    (16, _('Interaksjonsdesign, spill- og læringsteknologi')),
     (30, _('Annen mastergrad')),
     (80, _('PhD')),
     (90, _('International')),
@@ -242,7 +243,7 @@ class OnlineUser(AbstractUser):
         default = "%s%s_%s.png" % (settings.BASE_URL,
                                    settings.DEFAULT_PROFILE_PICTURE_PREFIX, self.gender)
 
-        gravatar_url = "https://www.gravatar.com/avatar/" + hashlib.md5(self.email).hexdigest() + "?"
+        gravatar_url = "https://www.gravatar.com/avatar/" + hashlib.md5(self.email.encode('utf-8')).hexdigest() + "?"
         gravatar_url += urllib.parse.urlencode({'d': default, 's': str(size)})
         return gravatar_url
 

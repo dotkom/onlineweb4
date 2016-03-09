@@ -153,7 +153,7 @@ var Gallery = (function ($, tools) {
             message.fadeOut(200, function() {
                 $(this).remove();
             })
-        }, 5000);
+        }, 10000);
     }
 
     var createMessage = function(message) {
@@ -170,12 +170,14 @@ var Gallery = (function ($, tools) {
         var messageElement = createMessage(message);
         messageElement.className += " " + 'text-danger' + " " + 'bg-danger';
         $('div#messages').append(messageElement);
+        document.getElementById('gallery').scrollIntoView();
     }
 
     var setSuccessMessage = function(message) {
         var messageElement = createMessage(message);
         messageElement.className += " " + 'text-success' + " " + 'bg-success';
         $('div#messages').append(messageElement);
+        document.getElementById('gallery').scrollIntoView();
     }
 
 
@@ -184,7 +186,6 @@ var Gallery = (function ($, tools) {
             method: 'GET',
             url: '/gallery/number_of_untreated/',
             success: function(res) {
-                var res = jQuery.parseJSON(res);
                 var text = "Behandle (" + res['untreated'] + ")";
                 $("#edit-button > div.caption").text(text);
             },
@@ -199,7 +200,6 @@ var Gallery = (function ($, tools) {
             method: 'GET',
             url: '/gallery/get_all_untreated/',
             success: function(res) {
-                res = jQuery.parseJSON(res);
                 updateAllUnhandledImages(res['untreated']);
                 setUpdateRefresh();
             },
@@ -302,10 +302,9 @@ var Gallery = (function ($, tools) {
         return $('#editing-image').attr('data-image-id');
     };
 
-    var imageEditingSuccessful = function() {
-
-        var imageName = getCurrentEditImageName();
-        var imageId = getCurrentEditImageId();
+    var imageEditingSuccessful = function(response) {
+        var imageName = response.name;
+        var imageId = response.id;
         var message = "Bilde '" + imageName + "' med id " + imageId + " ble lagret!";
 
         setSuccessMessage(message);
@@ -341,10 +340,10 @@ var Gallery = (function ($, tools) {
 
         setCropSpin();
 
-        $.post("/gallery/crop_image/", cropData, function() {
-            imageEditingSuccessful();
+        $.post("/gallery/crop_image/", cropData, function(response) {
+            imageEditingSuccessful(response);
         }).fail(function(xhr, thrownError, statusText) {
-            setErrorMessage('En uventet feil har oppstått: ' + statusText);
+            setErrorMessage('En feil har oppstått: ' + xhr.responseText);
         }).always(function() {
             setCropDefault();
         });
