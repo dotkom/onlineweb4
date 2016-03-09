@@ -25,7 +25,6 @@ FIELD_OF_STUDY_CHOICES = [
     (13, _('Spillteknologi')),
     (14, _('Kunstig intelligens')),
     (15, _('Helseinformatikk')),
-    (16, _('Interaksjonsdesign, spill- og læringsteknologi')),
     (30, _('Annen mastergrad')),
     (80, _('PhD')),
     (90, _('International')),

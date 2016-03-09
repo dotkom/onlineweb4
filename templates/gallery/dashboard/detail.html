@@ -52,6 +52,7 @@ Bilder
                         </form>
                     </div>
                     <div class="col-sm-12 col-md-4">
+                        {% if image.file_status_ok %}
                         <a href="{{ image.original }}">
                             <img class="responsive-image" src="{{ image.xs }}" alt title="{{ image.name|striptags }}" />
                         </a>
@@ -88,6 +89,7 @@ Bilder
                                 {{ image.thumbnail.width }}x{{ image.thumbnail.height }}
                             </a></dd>
                         </dl>
+                        {% endif %}
                     </div>
                 </div>
             </div>
