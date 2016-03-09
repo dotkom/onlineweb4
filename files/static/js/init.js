@@ -104,15 +104,15 @@ $(function() {
         if ($('.mn-nav').first().hasClass('open')) {
             removeAnimation()
             $('.mn-nav').removeClass('open')
-                        .removeClass('animation-complete')
+                        .addClass('animation-in-process')
         } else {
             addAnimation()
             $('.mn-nav').addClass('open')
-                        .removeClass('animation-complete')
+                        .addClass('animation-in-process')
         }
         
         setTimeout(function () {
-            $('.mn-nav').addClass('animation-complete')
+            $('.mn-nav').removeClass('animation-in-process')
         }, 300)
     })
 
