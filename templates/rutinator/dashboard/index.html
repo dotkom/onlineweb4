@@ -1,0 +1,17 @@
+{% extends 'dashboard_base.html' %}
+
+{% block title  %}Rutinator{% endblock %}
+{% block page-header %}Rutinator{% endblock %}
+
+{% block breadcrumbs %}
+<li>Rutinator</li>
+{% endblock %}
+
+{% block content %}
+{% for task in object_list %}
+<li><a href="{% url 'dashboard:task_edit' pk=task.id %}">{{ task.title }}</a></li>
+{% empty %}
+Her var det tomt!
+{% endfor %}
+{% endblock %}
+
