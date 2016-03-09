@@ -26,6 +26,7 @@ from apps.authentication.models import Email, RegisterToken, Position
 from apps.authentication.models import OnlineUser as User
 from apps.payment.models import PaymentTransaction
 from apps.marks.models import Mark, Suspension
+from apps.shop.models import Order
 from apps.profiles.forms import (
     PrivacyForm,
     ProfileForm,
@@ -68,7 +69,9 @@ def _create_profile_context(request):
         'groups': groups,
         # privacy
         'privacy_form': PrivacyForm(instance=request.user.privacy),
+        # nibble information
         'transactions': PaymentTransaction.objects.filter(user=request.user),
+        'orders': Order.objects.filter(order_line__user=request.user).order_by('-order_line__datetime'),
 
         # SSO / OAuth2 approved apps
         'connected_apps': AccessToken.objects.filter(user=request.user, expires__gte=timezone.now())

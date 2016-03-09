@@ -1,0 +1,86 @@
+<div class="row">
+    <div class="col-md-12">
+        <h3>Din Saldo: {{ request.user.saldo }}kr</h3>
+    </div>
+</div>
+<div class="row-space"></div>
+<div class="row">
+    <div class="col-md-6">
+        <select id="amount" class="form-control">
+            <option value="100">100</option>
+            <option value="200">200</option>
+            <option value="500">500</option>
+        </select>
+    </div>
+
+    <div class="col-md-6">
+        <button id="stripeButton{{ payment_price.id }}" class="btn btn-primary payment-button">Fyll på saldo</button>
+        <script src="{{ STATIC_URL }}js/libs/jquery-2.1.3.min.js"></script>
+        <script src="https://checkout.stripe.com/checkout.js"></script>
+        <script src="{{ STATIC_URL }}js/saldo.js"></script>
+    </div>
+</div>
+<hr>
+<div class="row">
+    <div class="col-md-12">
+        <h2>Historikk</h2>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+    <div>
+          <ul class="nav nav-tabs" role="tablist">
+            <li role="presentation" class="active">
+                <a href="#orders" aria-controls="orders" role="tab" data-toggle="tab">Ordre</a>
+            </li>
+            <li role="presentation">
+                <a href="#transactions" aria-controls="transactions" role="tab" data-toggle="tab">Transaksjoner</a>
+            </li>
+          </ul>
+
+          <!-- Tab panes -->
+          <div class="tab-content">
+            <div role="tabpanel" class="tab-pane active" id="orders">
+                    <table class="table">
+                        <thead>
+                            <th>Tidspunkt</th>
+                            <th>Vare</th>
+                            <th>Beløp</th>
+                        </thead>
+                        <tbody>
+                            {% for order in orders %}
+                                <tr>
+                                    <td>{{ order.order_line.datetime }}</td>
+                                    <td>{{ order.content_object }}</td>
+                                    <td>{{ order.price }} kr</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+            </div>
+            <div role="tabpanel" class="tab-pane" id="transactions">
+                <table class="table">
+                    <thead>
+                        <th>Tidspunkt</th>
+                        <th>Betalingsmetode</th>
+                        <th>Beløp</th>
+                    </thead>
+                    <tbody>
+                        {% for transaction in transactions %}
+                            <tr>
+                                <td>{{ transaction.datetime }}</td>
+                                {% if transaction.used_stripe %}
+                                    <td>Web</td>
+                                {% else %}
+                                    <td>Kontant</td>
+                                {% endif %}
+                            <td>{{ transaction.amount }} kr</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+      </div>
+    </div>
+</div>
