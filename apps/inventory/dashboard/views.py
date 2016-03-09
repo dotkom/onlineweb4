@@ -186,3 +186,13 @@ def batch_delete(request, item_pk, batch_pk):
         return redirect(details, item_pk=item_pk)
 
     raise PermissionDenied
+
+@login_required
+# @permission_required('inventory.delete_batch', return_403=True)
+def statistics(request):
+    # if not has_access(request):
+    #     raise PermissionDenied
+
+    context = get_base_context(request)
+
+    return render(request, 'inventory/dashboard/statistics.html', context)

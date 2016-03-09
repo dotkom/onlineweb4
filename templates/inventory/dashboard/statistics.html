@@ -1,0 +1,35 @@
+{% extends "dashboard_base.html" %}
+{% load compress %}
+
+{% block title %}
+Varelager statistikk - Online Dashboard
+{% endblock title %}
+
+{% block styles %}
+    {{ block.super }}
+    {% compress css %}
+    {% endcompress %}
+{% endblock %}
+
+{% block page-header %}
+Varelager statistikk
+{% endblock %}
+
+{% block breadcrumbs %}
+<li><a href="/dashboard/inventory/">Varelager</a></li>
+<li>Statistikk</li>
+{% endblock %}
+
+{% block js %}
+    {{ block.super }}
+    {% compress js %}
+    {% endcompress %}
+{% endblock js %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <p>graphs</p>
+    </div>
+</div>
+{%  endblock %}
