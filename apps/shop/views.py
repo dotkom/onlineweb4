@@ -7,7 +7,6 @@ from apps.shop.models import OrderLine
 from apps.shop.serializers import (ItemSerializer, OrderLineSerializer, TransactionSerializer,
                                    UserSerializer)
 from django.contrib import auth
-
 from oauth2_provider.ext.rest_framework import OAuth2Authentication, TokenHasScope
 from rest_framework import mixins, status, viewsets
 from rest_framework.permissions import AllowAny
