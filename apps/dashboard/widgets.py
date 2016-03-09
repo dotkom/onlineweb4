@@ -2,8 +2,9 @@
 #
 # Created by 'myth' on 10/18/15
 
-from django.forms.widgets import TextInput
 from django.forms.utils import force_text, format_html
+from django.forms.widgets import TextInput
+
 
 DATEPICKER_WIDGET_STRING = """
 <div class="input-group dp">\r\n

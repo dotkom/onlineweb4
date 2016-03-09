@@ -3,6 +3,7 @@
 from django.shortcuts import render
 from memcache import Client
 
+
 # dotKom: To manually see the mailinglists in memcache, do this:
 #
 # $ ssh you@morgan.online.ntnu.no               # connect to morgan

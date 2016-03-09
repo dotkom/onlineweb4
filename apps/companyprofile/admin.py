@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
 from django.contrib import admin
-from .models import Company
-
 from reversion.admin import VersionAdmin
+
+from .models import Company
 
 
 class CompanyAdmin(VersionAdmin):

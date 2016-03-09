@@ -1,8 +1,7 @@
-from apps.offline.models import ProxyChunk, Issue
+from apps.offline.models import Issue, ProxyChunk
 from chunks.models import Chunk
 from django.contrib import admin
 from django.db.models import Q
-
 from reversion.admin import VersionAdmin
 
 

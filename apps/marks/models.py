@@ -7,7 +7,6 @@ from django.db import models
 from django.utils import timezone
 from django.utils.translation import ugettext as _
 
-
 User = settings.AUTH_USER_MODEL
 
 DURATION = 30

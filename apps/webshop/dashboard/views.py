@@ -1,15 +1,14 @@
-from django.contrib.contenttypes.models import ContentType
-from django.core.urlresolvers import reverse
-from django.shortcuts import get_object_or_404, redirect
-from django.views.generic import TemplateView, DetailView, UpdateView, CreateView, DeleteView, ListView
+import logging
 
 from apps.dashboard.tools import DashboardPermissionMixin
 from apps.gallery.models import ResponsiveImage
-from apps.webshop.models import Category, Product, OrderLine
-
+from apps.webshop.models import Category, OrderLine, Product
+from django.contrib.contenttypes.models import ContentType
+from django.core.urlresolvers import reverse
+from django.shortcuts import get_object_or_404, redirect
+from django.views.generic import (CreateView, DeleteView, DetailView, ListView, TemplateView,
+                                  UpdateView)
 from taggit.models import TaggedItem
-
-import logging
 
 logger = logging.getLogger(__name__)
 

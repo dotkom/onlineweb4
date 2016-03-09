@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
-from django.forms import ModelForm
-
 from apps.companyprofile.models import Company
 from apps.dashboard.widgets import widget_generator
 from apps.gallery.widgets import SingleImageInput
+from django.forms import ModelForm
 
 
 class CompanyForm(ModelForm):

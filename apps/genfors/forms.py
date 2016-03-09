@@ -1,16 +1,15 @@
 # -*- coding: utf-8 -*-
+import datetime
+
+from apps.genfors.models import Alternative, Meeting, Question
+from crispy_forms.bootstrap import Field, FieldWithButtons, FormActions, StrictButton
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Submit
-from crispy_forms.bootstrap import FormActions, Field, StrictButton, FieldWithButtons
-
 from django import forms
 from django.conf import settings
 from django.forms.models import modelformset_factory
-from django.utils.translation import ugettext as _
 from django.utils import timezone
-from apps.genfors.models import Alternative, Meeting, Question
-
-import datetime
+from django.utils.translation import ugettext as _
 
 
 class LoginForm(forms.Form):

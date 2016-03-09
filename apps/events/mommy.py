@@ -2,13 +2,12 @@
 import locale
 import logging
 
-from django.utils import timezone
-from django.core.mail import EmailMessage
-
 from apps.events.models import AttendanceEvent
 from apps.marks.models import Mark, MarkUser
 from apps.mommy import schedule
 from apps.mommy.registry import Task
+from django.core.mail import EmailMessage
+from django.utils import timezone
 
 
 class SetEventMarks(Task):

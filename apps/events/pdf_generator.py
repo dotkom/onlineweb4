@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 
+from textwrap import wrap
+
 from pdfdocument.utils import pdf_response
-from reportlab.platypus import TableStyle, Paragraph
 from reportlab.lib import colors
 from reportlab.lib.styles import getSampleStyleSheet
-
-from textwrap import wrap
+from reportlab.platypus import Paragraph, TableStyle
 
 
 class EventPDF(object):

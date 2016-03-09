@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from tastypie.resources import ModelResource
-
 from apps.authentication.models import OnlineUser as User
+from tastypie.resources import ModelResource
 
 
 class UserResource(ModelResource):

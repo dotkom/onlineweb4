@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-from django.conf.urls import url
 from apps.webshop import views
+from django.conf.urls import url
 
 urlpatterns = [
     url(r'^$', views.Home.as_view(), name='webshop_home'),

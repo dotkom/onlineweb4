@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from django.conf.urls import url
-
 from apps.article.dashboard import views
+from django.conf.urls import url
 
 urlpatterns = [
     url(r'^$', views.article_index, name='dashboard_article_index'),

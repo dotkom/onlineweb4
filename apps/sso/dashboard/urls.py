@@ -4,7 +4,7 @@
 
 from django.conf.urls import url
 
-from .views import index, new_app, app_details
+from .views import app_details, index, new_app
 
 urlpatterns = [
     url(r'^$', index, name='index'),

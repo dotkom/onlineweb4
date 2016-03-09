@@ -1,12 +1,11 @@
 # -*- coding: utf-8 -*-
 
+from apps.gallery.models import ResponsiveImage
 from django.conf import settings
 from django.core.mail import EmailMessage
 from django.db import models
-from django.utils.translation import ugettext as _
 from django.utils import timezone
-
-from apps.gallery.models import ResponsiveImage
+from django.utils.translation import ugettext as _
 
 
 class ItemCategory(models.Model):

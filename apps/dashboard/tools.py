@@ -2,15 +2,13 @@
 
 from datetime import date
 
-from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
-from django.contrib.auth.models import Group
-
-from guardian.mixins import PermissionRequiredMixin
-
 from apps.approval.models import MembershipApproval
 from apps.gallery.models import UnhandledImage
 from apps.inventory.models import Batch
 from apps.posters.models import Poster
+from django.contrib.auth.models import Group
+from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
+from guardian.mixins import PermissionRequiredMixin
 
 
 def has_access(request):

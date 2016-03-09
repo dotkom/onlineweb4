@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 
-from django.conf.urls import url
-
 from apps.api.utils import SharedAPIRootRouter
 from apps.events import views
+from django.conf.urls import url
 
 urlpatterns = [
     url(r'^$', views.index, name='events_index'),
