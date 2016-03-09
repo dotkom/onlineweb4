@@ -22,14 +22,16 @@ Varelager statistikk
 
 {% block js %}
     {{ block.super }}
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     {% compress js %}
+        <script src="{{ STATIC_URL }}js/dashboard/InventoryStats.js"></script>
     {% endcompress %}
 {% endblock js %}
 
 {% block content %}
 <div class="row">
     <div class="col-md-12">
-        <p>graphs</p>
+        <div id="columnchart_values" style="width: 1600px; height: 300px;"></div>
     </div>
 </div>
 {%  endblock %}

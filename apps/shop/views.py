@@ -4,7 +4,7 @@ from django.contrib import auth
 from apps.authentication.models import OnlineUser as User, Email
 from apps.inventory.models import Item
 from apps.payment.models import PaymentTransaction
-from apps.shop.models import OrderLine
+from apps.shop.models import Order, OrderLine
 from apps.shop.serializers import OrderLineSerializer, UserSerializer, TransactionSerializer
 from apps.shop.serializers import ItemSerializer
 
@@ -88,3 +88,4 @@ class SetRFIDView(APIView):
             return Response("OK", status=status.HTTP_200_OK)
 
         return Response("Invalid user credentials", status=status.HTTP_409_CONFLICT)
+

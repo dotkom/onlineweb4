@@ -1,8 +1,13 @@
 # -*- encoding: utf-8 -*-
 
+import json
+
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import PermissionDenied
+from django.db.models import Count
+from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
 
 from guardian.decorators import permission_required
@@ -10,6 +15,7 @@ from guardian.decorators import permission_required
 from apps.dashboard.tools import has_access, get_base_context
 from apps.inventory.dashboard.forms import ItemForm, BatchForm
 from apps.inventory.models import Item, Batch
+from apps.shop.models import Order
 
 
 @login_required
@@ -196,3 +202,22 @@ def statistics(request):
     context = get_base_context(request)
 
     return render(request, 'inventory/dashboard/statistics.html', context)
+
+def order_statistics(request):
+    #TODO check permissions
+
+    context = get_base_context(request)
+
+    statistics = dict()
+
+    counts = Order.objects.all().values('object_id', 'content_type').annotate(total=Count('object_id')).order_by('total')
+    item_type = ContentType.objects.get_for_model(Item)
+
+    for count in counts:
+        print(count)
+        if item_type.id == count['content_type']:
+            item = Item.objects.get(pk=count['object_id'])
+            statistics[item.name] = count['total']
+
+    return JsonResponse(statistics)
+
