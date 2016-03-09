@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
-from django import forms
-
 from apps.webshop.models import Category, Product
+from django import forms
 
 
 class CategoryForm(forms.ModelForm):

@@ -1,11 +1,9 @@
 # -*- coding: utf-8 -*-
 
-from django.shortcuts import render_to_response
-from django.shortcuts import get_object_or_404
+from apps.careeropportunity.models import CareerOpportunity
+from django.shortcuts import get_object_or_404, render_to_response
 from django.template import RequestContext
 from django.utils import timezone
-
-from apps.careeropportunity.models import CareerOpportunity
 
 
 def index(request):

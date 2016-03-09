@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from django import forms
-
 from apps.marks.models import Mark
+from django import forms
 
 
 class MarkForm(forms.ModelForm):

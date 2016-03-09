@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 
 import xml.etree.ElementTree as etree
-from urllib.request import urlopen, Request
 from urllib.error import HTTPError
+from urllib.request import Request, urlopen
 
 NAMESPACE_SOAP = "http://schemas.xmlsoap.org/soap/envelope/"
 NAMESPACE_SYMPA = "urn:sympasoap"

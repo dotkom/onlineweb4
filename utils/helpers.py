@@ -1,13 +1,12 @@
 # -*- coding: utf8 -*-
-from datetime import datetime, date
 import json
+from datetime import date, datetime
 
-from django.utils.timezone import make_aware
-from django.db.models.query import QuerySet
-from django.db import models
 import pytz
-
 from django.conf import settings
+from django.db import models
+from django.db.models.query import QuerySet
+from django.utils.timezone import make_aware
 
 
 class JsonHelper(json.JSONEncoder):

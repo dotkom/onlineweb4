@@ -1,20 +1,18 @@
 # -*- encoding: utf-8 -*-
 import logging
-
-from django.utils import timezone as timezone
 from datetime import timedelta
 
-from django.test import TestCase
-from django.utils.translation import ugettext_lazy as _
-from django.conf import settings
-from django.test.client import Client
-
-from apps.feedback.mommy import FeedbackMail
-from apps.feedback.models import Feedback, FeedbackRelation, TextQuestion, RatingQuestion
-from apps.events.models import Event, AttendanceEvent, Attendee
-from apps.marks.models import Mark
 from apps.authentication.models import OnlineUser as User
 from apps.authentication.models import Email
+from apps.events.models import AttendanceEvent, Attendee, Event
+from apps.feedback.models import Feedback, FeedbackRelation, RatingQuestion, TextQuestion
+from apps.feedback.mommy import FeedbackMail
+from apps.marks.models import Mark
+from django.conf import settings
+from django.test import TestCase
+from django.test.client import Client
+from django.utils import timezone as timezone
+from django.utils.translation import ugettext_lazy as _
 
 
 class SimpleTest(TestCase):
@@ -85,7 +83,7 @@ class SimpleTest(TestCase):
         feedback_relation = self.create_feedback_relation()
 
         # The below if user.id check is due to Django Guardian middleware needing an AnonymousUser, that has ID -1
-        user_mails = [user.email for user in User.objects.all() if user.id >= 0]
+        user_mails = [user.email for user in User.objects.all() if user.username != settings.ANONYMOUS_USER_NAME]
 
         message = FeedbackMail.generate_message(feedback_relation, self.logger)
         self.assertEqual(set(message.attended_mails), set(user_mails))

@@ -3,21 +3,19 @@
 import logging
 import os
 
-from django.db.models import Q
+from apps.gallery.forms import DocumentForm
+from apps.gallery.models import ResponsiveImage, UnhandledImage
+from apps.gallery.serializers import ResponsiveImageSerializer
+from apps.gallery.util import ResponsiveImageHandler, UploadImageHandler
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
+from django.db.models import Q
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, render
-from django.http import JsonResponse, HttpResponse
-
 from guardian.decorators import permission_required
 from rest_framework import mixins, viewsets
 from rest_framework.permissions import AllowAny
 from taggit.utils import parse_tags
-
-from apps.gallery.util import UploadImageHandler, ResponsiveImageHandler
-from apps.gallery.models import UnhandledImage, ResponsiveImage
-from apps.gallery.forms import DocumentForm
-from apps.gallery.serializers import ResponsiveImageSerializer
 
 
 def _create_request_dictionary():

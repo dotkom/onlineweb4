@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
 
 from os import path
+
+from chunks.models import Chunk
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from filebrowser.fields import FileBrowseField
+
 from onlineweb4.settings.local import MEDIA_ROOT
-from chunks.models import Chunk
 
 THUMBNAIL_HEIGHT = 200  # Ønsket høyde på thumbnail
 IMAGE_FOLDER = "images/offline"

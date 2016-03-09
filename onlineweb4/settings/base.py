@@ -157,7 +157,7 @@ PIZZA_ADMIN_GROUP = 'pizzaadmin'
 GRAPPELLI_ADMIN_TITLE = 'Onlineweb'
 
 # Guardian settings
-ANONYMOUS_USER_ID = -1
+ANONYMOUS_USER_NAME = 'anonymoususer'
 GUARDIAN_RENDER_403 = True
 
 # Django-Taggit settings
@@ -262,7 +262,7 @@ INSTALLED_APPS = (
     'apps.inventory',
     'apps.payment',
     'apps.posters',
-    'apps.rutinator',
+    #'apps.rutinator',
     'apps.sso',
     'apps.splash',
     'apps.shop',

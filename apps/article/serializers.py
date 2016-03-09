@@ -1,9 +1,7 @@
-from rest_framework import serializers
-
 from apps.article.models import Article
 from apps.authentication.serializers import UserSerializer
 from apps.gallery.serializers import ResponsiveImageSerializer
-
+from rest_framework import serializers
 from taggit_serializer.serializers import TaggitSerializer, TagListSerializerField
 
 

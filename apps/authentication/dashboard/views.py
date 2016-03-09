@@ -2,23 +2,21 @@
 
 import json
 
-from django.core.exceptions import PermissionDenied
-from django.core.paginator import Paginator
+from apps.authentication.forms import UserUpdateForm
+from apps.authentication.models import OnlineUser as User
+from apps.authentication.models import AllowedUsername
+from apps.dashboard.tools import DashboardPermissionMixin, get_base_context, has_access
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Group
+from django.core.exceptions import PermissionDenied
+from django.core.paginator import Paginator
 from django.core.urlresolvers import reverse, reverse_lazy
-from django.shortcuts import get_object_or_404, render
 from django.http import HttpResponse
-from django.views.generic import UpdateView, DetailView, DeleteView, ListView
-
+from django.shortcuts import get_object_or_404, render
+from django.views.generic import DeleteView, DetailView, ListView, UpdateView
 from guardian.decorators import permission_required
 from watson.views import SearchView
-
-from apps.authentication.models import OnlineUser as User
-from apps.authentication.models import AllowedUsername
-from apps.authentication.forms import UserUpdateForm
-from apps.dashboard.tools import has_access, get_base_context, DashboardPermissionMixin
 
 
 @login_required

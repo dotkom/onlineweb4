@@ -1,17 +1,16 @@
 # -*- coding: utf-8 -*-
 
 import datetime
-import urllib
 import hashlib
+import urllib
+from functools import reduce
 
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser, Group
 from django.db import models
-from django.utils.translation import ugettext as _
 from django.utils import timezone
 from django.utils.html import strip_tags
-
-from functools import reduce
+from django.utils.translation import ugettext as _
 
 # If this list is changed, remember to check that the year property on
 # OnlineUser is still correct!

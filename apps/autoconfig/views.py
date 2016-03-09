@@ -1,7 +1,7 @@
 # -*- encoding: utf-8 -*-
 
-from django.shortcuts import render
 from django.http import HttpResponseBadRequest
+from django.shortcuts import render
 
 
 def autoconfig(request):

@@ -1,5 +1,4 @@
-from django.contrib import admin
 from apps.rutinator.models import Task
-
+from django.contrib import admin
 
 admin.site.register(Task)

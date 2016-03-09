@@ -1,5 +1,5 @@
-from rest_framework import serializers
 from apps.offline.models import Issue
+from rest_framework import serializers
 
 
 class OfflineIssueSerializer(serializers.ModelSerializer):
