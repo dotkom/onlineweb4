@@ -72,20 +72,27 @@
   left: 0;
   bottom: 0;
   width: @carousel-control-width;
+  .opacity(@carousel-control-opacity);
   font-size: @carousel-control-font-size;
   color: @carousel-control-color;
   text-align: center;
+  text-shadow: @carousel-text-shadow;
   // We can't have this transition here because WebKit cancels the carousel
   // animation if you trip this while in the middle of another animation.
 
-  // Set location for right arrow
+  // Set gradients for backgrounds
+  &.left {
+    #gradient > .horizontal(@start-color: rgba(0,0,0,.5); @end-color: rgba(0,0,0,.0001));
+  }
   &.right {
     left: auto;
     right: 0;
+    #gradient > .horizontal(@start-color: rgba(0,0,0,.0001); @end-color: rgba(0,0,0,.5));
   }
 
   // Hover/focus state
-  &:hover{
+  &:hover,
+  &:focus {
     outline: 0;
     color: @carousel-control-color;
     text-decoration: none;
@@ -191,6 +198,7 @@
   padding-bottom: 20px;
   color: @carousel-caption-color;
   text-align: center;
+  text-shadow: @carousel-text-shadow;
   & .btn {
     text-shadow: none; // No shadow for button elements in carousel-caption
   }
