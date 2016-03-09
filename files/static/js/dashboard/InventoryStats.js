@@ -1,38 +1,42 @@
 
-var jsonData
+var inventoryGraphs = function(){
+    var jsonData
 
-function drawChart() {
+    function drawChart() {
 
-    console.log(jsonData)
+        console.log(jsonData)
 
-    var data = new google.visualization.DataTable();
+        var data = new google.visualization.DataTable();
 
-    data.addColumn('string', "Vare")
-    data.addColumn('number', "Antall")
+        data.addColumn('string', "Vare")
+        data.addColumn('number', "Antall")
 
-    for (var key in jsonData) {
-      if (jsonData.hasOwnProperty(key)) {
-        data.addRow([key, jsonData[key]])
-      }
+        for (var key in jsonData) {
+          if (jsonData.hasOwnProperty(key)) {
+            data.addRow([key, jsonData[key]])
+          }
+        }
+
+      var view = new google.visualization.DataView(data);
+
+      var options = {
+        title: "Varesalg",
+        width: 1600,
+        height: 400,
+        bar: {groupWidth: "95%"},
+        legend: { position: "none" },
+      };
+      var chart = new google.visualization.ColumnChart(document.getElementById("columnchart_values"));
+      chart.draw(view, options);
     }
 
-  var view = new google.visualization.DataView(data);
-
-  var options = {
-    title: "Varesalg",
-    width: 1600,
-    height: 400,
-    bar: {groupWidth: "95%"},
-    legend: { position: "none" },
-  };
-  var chart = new google.visualization.ColumnChart(document.getElementById("columnchart_values"));
-  chart.draw(view, options);
+    $.getJSON( "orders/", function( data ) {
+        jsonData = data
+        google.charts.load("current", {packages:['corechart']});
+        google.charts.setOnLoadCallback(drawChart);
+    });
 }
 
-$.getJSON( "orders/", function( data ) {
-    jsonData = data
-    google.charts.load("current", {packages:['corechart']});
-    google.charts.setOnLoadCallback(drawChart);
-});
+inventoryGraphs()
 
 
