@@ -28,7 +28,7 @@ var GalleryDashboard = (function ($, tools) {
             GalleryDashboard.draw(data)
         }
         var error = function (xhr, statusText, thrownError) {
-            tools.showStatusMessage('Det oppstod en uventet feil: ' + statusText, 'alert-danger')
+            tools.showStatusMessage('Det oppstod en uventet feil: ' + xhr.responseText, 'alert-danger')
         }
         // Trigger AJAX request with query
         tools.ajax('GET', uri, null, success, error, 'json')
