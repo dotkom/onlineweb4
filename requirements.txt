@@ -7,9 +7,7 @@ django-filter==0.11.0           # Filtering for DRF
 # Upstream is missing Python 3 patches
 git+https://github.com/JelteF/python-memcached@patch-1#egg=python-memcached==1.58
 markdown2==2.3.0                # textarea text formatting
-psycopg2                        # Postgres adapter
-pytz                            # Timezone lib. Obsolete?
-gunicorn==19.0
+pytz                            # Timezone lib
 icalendar==3.8.4
 stripe==1.20.2
 
@@ -39,21 +37,12 @@ pdfdocument==3.1
 Unidecode==0.4.17               # Translates every unicode symbol to the closest ascii. online_mail_usernames
 django-markdown-deux==1.0.5
 django-formset-js==0.4.3
-werkzeug==0.10.4
 django-cors-headers==1.1.0      # Enable CORS for Nibble
 django-datetime-widget==0.9.3   # Datetime widget for forms
 
 #test tools
-cov-core==1.7
-coverage==4.0.1
-django-nose>=1.4,<1.5
-factory-boy==1.1.3
-lettuce==0.2.20
-nose==1.3.4
-nose-cov==1.6
-teamcity-messages==1.16
-flake8==2.4.1
-pepper8>=1.0.4                  # Transforms flake8 output to HTML report + TC messages
+django-nose>=1.4,<1.5           # We use this test runner locally
+nose==1.3.4                     # We use this test runner locally
 
 # Frigg
 requests[security]==2.8.0
@@ -71,4 +60,3 @@ django-sekizai>=0.9
 # imagemagick                   # From package repository. Tested with version == 8:6.7.7.10.
 # libjpeg-dev					# From package repository.
 # libpq-dev						# From package repository.
-
