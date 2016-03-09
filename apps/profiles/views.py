@@ -26,6 +26,7 @@ from apps.authentication.models import Email, RegisterToken, Position
 from apps.authentication.models import OnlineUser as User
 from apps.payment.models import PaymentTransaction
 from apps.marks.models import Mark, Suspension
+from apps.shop.models import Order
 from apps.profiles.forms import (
     PrivacyForm,
     ProfileForm,
