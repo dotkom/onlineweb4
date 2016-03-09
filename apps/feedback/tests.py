@@ -85,7 +85,7 @@ class SimpleTest(TestCase):
         feedback_relation = self.create_feedback_relation()
 
         # The below if user.id check is due to Django Guardian middleware needing an AnonymousUser, that has ID -1
-        user_mails = [user.email for user in User.objects.all() if user.id >= 0]
+        user_mails = [user.email for user in User.objects.all() if user.username != settings.ANONYMOUS_USER_NAME]
 
         message = FeedbackMail.generate_message(feedback_relation, self.logger)
         self.assertEqual(set(message.attended_mails), set(user_mails))

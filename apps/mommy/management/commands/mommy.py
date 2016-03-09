@@ -7,4 +7,4 @@ class Command(NoArgsCommand):
     def handle_noargs(self, **options):
         from apps import mommy
         mommy.autodiscover()
-        mommy.run(standalone=True)
+        mommy.run()
