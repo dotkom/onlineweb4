@@ -101,13 +101,13 @@ $(function() {
     /* nav bar toggle
     ---------------------------------------------------------------------------*/
     $('#mainnav-button').click(function (e) {
-        if ($('.mn-nav').first().hasClass('open')) {
+        if ($('.mn-nav').first().hasClass('mn-nav-open')) {
             removeAnimation()
-            $('.mn-nav').removeClass('open')
+            $('.mn-nav').removeClass('mn-nav-open')
                         .addClass('animation-in-process')
         } else {
             addAnimation()
-            $('.mn-nav').addClass('open')
+            $('.mn-nav').addClass('mn-nav-open')
                         .addClass('animation-in-process')
         }
         
