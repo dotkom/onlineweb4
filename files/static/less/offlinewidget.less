@@ -6,13 +6,32 @@
     .carousel-control {
         text-align: center;
 
-        background: #333;
-        border: #FFF 5px solid;
+        color: #428bca;
         border-radius: 50%;
         height: 40px;
         width:  40px;
 
         margin: auto auto;
+
+        // override base opacity
+        opacity: 1;
+
+        // override text-shadow
+        text-shadow: none;        
+
+        // override hover and focus
+        &:hover{
+            color: #2A6496;
+        }
+        &:focus {
+            .opacity(1);
+        }
+
+        // override mixin gradient
+        &.left,
+        &.right {
+            background-image: none;
+        }
     }
 
     .item {
