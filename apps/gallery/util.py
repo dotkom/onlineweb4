@@ -5,12 +5,11 @@ import os
 import shutil
 import uuid
 
-from PIL import Image, ImageOps
+from apps.gallery import settings as gallery_settings
+from apps.gallery.models import ResponsiveImage, UnhandledImage
 from django.conf import settings as django_settings
 from django.core.files.uploadedfile import InMemoryUploadedFile
-
-from apps.gallery.models import UnhandledImage, ResponsiveImage
-from apps.gallery import settings as gallery_settings
+from PIL import Image, ImageOps
 
 
 class GalleryStatus(object):

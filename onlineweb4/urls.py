@@ -160,6 +160,11 @@ if 'apps.gallery' in settings.INSTALLED_APPS:
         )
     ]
 
+if 'apps.rutinator' in settings.INSTALLED_APPS:
+    urlpatterns += [
+        url(r'^dashboard/rutinator/', include('apps.rutinator.dashboard.urls', namespace='dashboard', app_name='rutinator')),
+    ]
+
 if 'apps.splash' in settings.INSTALLED_APPS:
     urlpatterns += [
         url(r'^splash/',           include('apps.splash.urls')),

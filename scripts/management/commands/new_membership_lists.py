@@ -1,25 +1,17 @@
 # -*- coding: utf-8 -*-
 
-import pytz
 import datetime
 
-from django.db.utils import IntegrityError
-from django.core.management.base import BaseCommand, CommandError
-from django.utils import timezone
-
+import pytz
 from apps.authentication.models import AllowedUsername
+from django.core.management.base import BaseCommand
+from django.db.utils import IntegrityError
+from django.utils import timezone
 
 
 class Command(BaseCommand):
-
     def handle(self, *args, **kwargs):
-        now = timezone.now()
-        now = datetime.datetime(now.year, 9, 15, 0, 0)
-        # subtract a year if we're adding people with this script in the spring
-        if now.month < 6:
-            now = now - datetime.timedelta(days=365)
-        pytz.timezone(timezone.get_default_timezone_name()).localize(now)
-
+        now = self.now()
         expiration_date = now
         note = ''
 
@@ -46,29 +38,33 @@ class Command(BaseCommand):
                 expiration_date = now + datetime.timedelta(days=365*3)
                 note = 'Bachelor %d' % now.year
                 continue
-            
-            
+
             try:
                 entry = AllowedUsername(
-                                        username = line, 
-                                        registered = now,
-                                        note = note,
-                                        description = "Added by script.",
-                                        expiration_date = expiration_date
-                                        )
+                    username=line, registered=now,
+                    note=note, description="Added by script.",
+                    expiration_date=expiration_date
+                )
                 entry.save()
 
                 new_count = new_count + 1
             except IntegrityError:
-                au = AllowedUsername.objects.get(username = line)
+                au = AllowedUsername.objects.get(username=line)
                 au.expiration_date = expiration_date
                 au.save()
 
                 update_count = update_count + 1
-
 
         if new_count > 0:
             self.stdout.write("%d new memberships added" % new_count)
         if update_count > 0:
             self.stdout.write("%d memberships updated" % update_count)
 
+    def now(self):
+        now = timezone.now()
+        now = datetime.datetime(now.year, 9, 15, 0, 0)
+        # subtract a year if we're adding people with this script in the spring
+        if now.month < 6:
+            now = now - datetime.timedelta(days=365)
+        pytz.timezone(timezone.get_default_timezone_name()).localize(now)
+        return now

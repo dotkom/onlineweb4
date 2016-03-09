@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
+from apps.companyprofile.models import Company
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-
-from apps.companyprofile.models import Company
 
 
 class CareerOpportunity(models.Model):

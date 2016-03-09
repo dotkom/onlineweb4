@@ -1,12 +1,11 @@
 # -*- coding: utf-8 -*-
-from django.utils import timezone
-
+from apps.webshop.forms import OrderForm
+from apps.webshop.models import Category, Order, OrderLine, Product, ProductSize
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect
-from django.views.generic import TemplateView, DetailView, RedirectView
-from apps.webshop.models import Category, Product, Order, OrderLine, ProductSize
-from apps.webshop.forms import OrderForm
+from django.utils import timezone
+from django.views.generic import DetailView, RedirectView, TemplateView
 
 
 class LoginRequiredMixin(object):

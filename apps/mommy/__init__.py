@@ -13,7 +13,7 @@ def autodiscover():
     imports mommy.py modules from all INSTALLED_APPS.
     """
 
-    from django.utils.importlib import import_module
+    from importlib import import_module
     from django.conf import settings
     from django.utils.module_loading import module_has_submodule
 
@@ -32,11 +32,11 @@ def run(**kwargs):
     """
     imports apscheduler, registers scheduled jobs, runs the scheduler
     """
-    from apscheduler.scheduler import Scheduler
+    from apscheduler.schedulers.blocking import BlockingScheduler
 
-    sched = Scheduler(**kwargs)
+    sched = BlockingScheduler(**kwargs)
 
     for task, kwargs in schedule.tasks.items():
-        sched.add_cron_job(task.run, name=task.__name__, **kwargs)
+        sched.add_job(task.run, trigger='cron', name=task.__name__, **kwargs)
 
     sched.start()  # main loop

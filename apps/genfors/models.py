@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 
-from django.db import models
-from django.utils.translation import ugettext as _
-from django.conf import settings
-from django.utils.timezone import localtime
-from hashlib import sha256
 import random
+from hashlib import sha256
 
+from django.conf import settings
+from django.db import models
+from django.utils.timezone import localtime
+from django.utils.translation import ugettext as _
 
 User = settings.AUTH_USER_MODEL
 

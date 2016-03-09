@@ -223,6 +223,13 @@
                         </a>
                     </li>
                     {% endif %}
+                    {% if request.user.is_superuser %}
+                    <li>
+                        <a href="/dashboard/rutinator/">
+                            <i class="fa fa-trophy blue"></i> <span>Rutinator</span>
+                        </a>
+                    </li>
+                    {% endif %}
                     {% if 'approval.view_membershipapproval' in user_permissions %}
                     <li>
                         <a href="/dashboard/approval/">

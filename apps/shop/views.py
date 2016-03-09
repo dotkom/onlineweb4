@@ -1,15 +1,15 @@
 # API v1
-from django.contrib import auth
-
-from apps.authentication.models import OnlineUser as User, Email
+from apps.authentication.models import OnlineUser as User
+from apps.authentication.models import Email
 from apps.inventory.models import Item
 from apps.payment.models import PaymentTransaction
-from apps.shop.models import Order, OrderLine
-from apps.shop.serializers import OrderLineSerializer, UserSerializer, TransactionSerializer
-from apps.shop.serializers import ItemSerializer
+from apps.shop.models import OrderLine
+from apps.shop.serializers import (ItemSerializer, OrderLineSerializer, TransactionSerializer,
+                                   UserSerializer)
+from django.contrib import auth
 
 from oauth2_provider.ext.rest_framework import OAuth2Authentication, TokenHasScope
-from rest_framework import viewsets, mixins, status
+from rest_framework import mixins, status, viewsets
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView

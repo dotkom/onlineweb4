@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 
 
-from django.db import models, migrations
 import datetime
+
+import django.core.validators
 import django.utils.timezone
 from django.conf import settings
-import django.core.validators
+from django.db import migrations, models
 
 
 class Migration(migrations.Migration):

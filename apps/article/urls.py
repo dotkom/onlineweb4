@@ -1,10 +1,8 @@
 # -*- coding: utf-8 -*-
 
-from django.conf.urls import url
-
 from apps.api.utils import SharedAPIRootRouter
 from apps.article import views
-
+from django.conf.urls import url
 
 urlpatterns = [
     url(r'^archive/$', views.archive, name='article_archive'),

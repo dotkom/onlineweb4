@@ -1,11 +1,9 @@
 # -*- coding: utf-8 -*-
 
+from apps.authentication.models import FIELD_OF_STUDY_CHOICES
 from django.conf import settings
 from django.db import models
 from django.utils.translation import ugettext as _
-
-from apps.authentication.models import FIELD_OF_STUDY_CHOICES
-
 
 User = settings.AUTH_USER_MODEL
 

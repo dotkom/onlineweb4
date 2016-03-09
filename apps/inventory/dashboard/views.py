@@ -1,5 +1,8 @@
 # -*- encoding: utf-8 -*-
 
+from apps.dashboard.tools import get_base_context, has_access
+from apps.inventory.dashboard.forms import BatchForm, ItemForm
+from apps.inventory.models import Batch, Item
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.contenttypes.models import ContentType
@@ -14,7 +17,6 @@ from apps.dashboard.tools import has_access, get_base_context
 from apps.inventory.dashboard.forms import ItemForm, BatchForm
 from apps.inventory.models import Item, Batch
 from apps.shop.models import Order
-
 
 @login_required
 @permission_required('inventory.view_item', return_403=True)

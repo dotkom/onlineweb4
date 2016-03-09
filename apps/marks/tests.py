@@ -1,13 +1,11 @@
-from datetime import date
 import logging
-
-from django_dynamic_fixture import G
-from django.utils import timezone
-from django.test import TestCase
+from datetime import date
 
 from apps.authentication.models import OnlineUser as User
-from apps.marks.models import Mark, MarkUser
-from apps.marks.models import _get_with_duration_and_vacation
+from apps.marks.models import Mark, MarkUser, _get_with_duration_and_vacation
+from django.test import TestCase
+from django.utils import timezone
+from django_dynamic_fixture import G
 
 
 class MarksTest(TestCase):

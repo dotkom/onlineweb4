@@ -3,16 +3,14 @@
 from collections import Counter
 from logging import getLogger
 
-from django.contrib.contenttypes.models import ContentType
-from django.shortcuts import render, get_object_or_404, redirect
+from apps.article.dashboard.forms import ArticleForm
+from apps.article.models import Article
+from apps.dashboard.tools import check_access_or_403, get_base_context
 from django.contrib import messages
-
+from django.contrib.contenttypes.models import ContentType
+from django.shortcuts import get_object_or_404, redirect, render
 from guardian.decorators import permission_required
 from taggit.models import TaggedItem
-
-from apps.article.models import Article
-from apps.article.dashboard.forms import ArticleForm
-from apps.dashboard.tools import check_access_or_403, get_base_context
 
 
 @permission_required('article.view_article')

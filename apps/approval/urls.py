@@ -1,8 +1,7 @@
 # -*- encoding: utf-8 -*-
 
-from django.conf.urls import url
-
 from apps.approval import views
+from django.conf.urls import url
 
 urlpatterns = [
     url(

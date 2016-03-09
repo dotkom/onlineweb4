@@ -1,11 +1,9 @@
 # -*- coding: utf-8 -*-
 
+from apps.authentication.models import AllowedUsername, Email, OnlineUser, Position, SpecialPosition
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.utils.translation import ugettext as _
-
-from apps.authentication.models import AllowedUsername, Email, OnlineUser, Position, SpecialPosition
-
 from reversion.admin import VersionAdmin
 
 

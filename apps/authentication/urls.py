@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from django.conf.urls import url
-
 from apps.authentication import views
+from django.conf.urls import url
 
 urlpatterns = [
     url(r'^login/$', views.login, name='auth_login'),

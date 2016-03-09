@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 import logging
-
-from subprocess import check_call, CalledProcessError
+from subprocess import CalledProcessError, check_call
 
 from apps.offline.models import THUMBNAIL_HEIGHT
 

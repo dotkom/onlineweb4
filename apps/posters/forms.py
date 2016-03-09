@@ -1,12 +1,11 @@
 # -*- coding: utf-8 -*-
 
-from django import forms
-from django.contrib.auth.models import Group
-from django.utils import timezone
-
 from apps.dashboard.widgets import DatePickerInput, multiple_widget_generator
 from apps.events.models import Event
 from apps.posters.models import Poster
+from django import forms
+from django.contrib.auth.models import Group
+from django.utils import timezone
 
 
 class AddForm(forms.ModelForm):

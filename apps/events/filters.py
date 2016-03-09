@@ -1,5 +1,4 @@
 import django_filters
-
 from apps.events.models import Event
 
 
