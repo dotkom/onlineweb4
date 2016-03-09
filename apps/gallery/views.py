@@ -68,16 +68,7 @@ def upload(request):
 
 @login_required
 @permission_required('gallery.add_responsiveimage')
-def number_of_untreated(request):
-    if request.is_ajax():
-        if request.method == 'GET':
-            return JsonResponse(data={'untreated': UnhandledImage.objects.all().count()}, status=200)
-    return JsonResponse({}, status=405)
-
-
-@login_required
-@permission_required('gallery.add_responsiveimage')
-def get_all_untreated(request):
+def untreated(request):
     if request.is_ajax():
         if request.method == 'GET':
 
@@ -91,13 +82,13 @@ def get_all_untreated(request):
                 })
 
             return JsonResponse({'untreated': images}, status=200)
-    return JsonResponse({}, status=405)
+    return JsonResponse({'status': 405, 'message': 'Method not allowed'}, status=405)
 
 
 # Same here, delete all files if something goes wrong, not yet handled
 @login_required
 @permission_required('gallery.add_responsiveimage')
-def crop_image(request):
+def crop(request):
 
     log = logging.getLogger(__name__)
 

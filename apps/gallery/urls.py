@@ -6,11 +6,10 @@ from apps.api.utils import SharedAPIRootRouter
 from apps.gallery import views
 
 urlpatterns = [
-    url(r'^upload/$', views.upload, name='gallery_upload'),
-    url(r'^number_of_untreated/$', views.number_of_untreated, name='number_of_untreated'),
-    url(r'^get_all_untreated/$', views.get_all_untreated, name='get_all_untreated'),
-    url(r'^crop_image/$', views.crop_image, name='crop_image'),
-    url(r'^all_images/', views.all_images, name='all_images'),
+    url(r'^upload/$', views.upload, name='upload'),
+    url(r'^untreated/$', views.untreated, name='untreated'),
+    url(r'^crop/$', views.crop, name='crop'),
+    url(r'^all/', views.all_images, name='all'),
     url(r'^search/', views.search, name='search'),
 ]
 
