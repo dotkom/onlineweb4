@@ -4,7 +4,6 @@
 
 from django.db.models import TextField
 from django.utils.translation import ugettext as _
-
 from oauth2_provider.models import AbstractApplication
 
 

@@ -1,7 +1,9 @@
+from importlib import import_module
+
 from django.conf import settings
 from django.http import HttpResponseForbidden
-from django.template import RequestContext, Template, loader, TemplateDoesNotExist
-from importlib import import_module
+from django.template import RequestContext, Template, TemplateDoesNotExist, loader
+
 
 """
 # Middleware to allow the display of a 403.html template when a

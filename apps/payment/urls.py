@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
-from django.conf.urls import url
-
 from apps.payment import views
+from django.conf.urls import url
 
 urlpatterns = [
     url(r'^$', views.payment, name='payment'),

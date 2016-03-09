@@ -1,8 +1,7 @@
 # -*- encoding: utf-8 -*-
 
-from django.conf.urls import url
-
 from apps.careeropportunity.dashboard import views
+from django.conf.urls import url
 
 urlpatterns = [
     url(r'^$', views.index, name='careeropportunity_dashboard_index'),

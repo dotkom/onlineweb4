@@ -1,15 +1,13 @@
 # -*- encoding: utf-8 -*-
 
+from apps.dashboard.tools import get_base_context, has_access
+from apps.inventory.dashboard.forms import BatchForm, ItemForm
+from apps.inventory.models import Batch, Item
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
-from django.shortcuts import render, get_object_or_404, redirect
-
+from django.shortcuts import get_object_or_404, redirect, render
 from guardian.decorators import permission_required
-
-from apps.dashboard.tools import has_access, get_base_context
-from apps.inventory.dashboard.forms import ItemForm, BatchForm
-from apps.inventory.models import Item, Batch
 
 
 @login_required

@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 
-from django import forms
-
 from apps.dashboard.widgets import DatetimePickerInput, multiple_widget_generator
-from apps.events.models import Event, AttendanceEvent, Reservation
+from apps.events.models import AttendanceEvent, Event, Reservation
+from django import forms
 
 
 class ChangeEventForm(forms.ModelForm):

@@ -2,15 +2,14 @@
 
 from datetime import timedelta
 
+from apps.authentication.models import OnlineUser as User
+from apps.events.models import AttendanceEvent, Attendee, Event
+from apps.payment.models import Payment, PaymentDelay, PaymentPrice, PaymentRelation
+from apps.payment.mommy import PaymentDelayHandler, PaymentReminder
 from django.contrib.contenttypes.models import ContentType
 from django.test import TestCase
 from django.utils import timezone
 from django_dynamic_fixture import G
-
-from apps.authentication.models import OnlineUser as User
-from apps.events.models import Event, AttendanceEvent, Attendee
-from apps.payment.models import Payment, PaymentRelation, PaymentDelay, PaymentPrice
-from apps.payment.mommy import PaymentReminder, PaymentDelayHandler
 
 
 class PaymentTest(TestCase):

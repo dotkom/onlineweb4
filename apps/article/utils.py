@@ -1,6 +1,5 @@
 from filebrowser.settings import VERSIONS
 
-
 MONTH_STRINGS = {
     '1': 'Januar',
     '2': 'Februar',

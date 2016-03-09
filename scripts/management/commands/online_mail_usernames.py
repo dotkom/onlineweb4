@@ -2,13 +2,11 @@
 
 import re
 
+from apps.authentication.models import OnlineUser
 from django.contrib.auth.models import Group
 from django.core.management.base import NoArgsCommand
 from django.db.models import Q
-
 from unidecode import unidecode
-
-from apps.authentication.models import OnlineUser
 
 
 class Command(NoArgsCommand):

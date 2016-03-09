@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-from django.conf.urls import url, include
-from tastypie.api import Api
+from apps.api.rfid.events import AttendanceEventResource, AttendeeResource, EventResource
 from apps.api.rfid.user import UserResource
-from apps.api.rfid.events import AttendeeResource, EventResource, AttendanceEventResource
+from django.conf.urls import include, url
+from tastypie.api import Api
 
 rfid_api = Api(api_name='rfid')
 

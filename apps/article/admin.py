@@ -1,6 +1,5 @@
-from django.contrib import admin
 from apps.article.models import Article
-
+from django.contrib import admin
 from reversion.admin import VersionAdmin
 
 

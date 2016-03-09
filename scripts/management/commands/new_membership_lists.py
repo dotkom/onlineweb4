@@ -1,13 +1,12 @@
 # -*- coding: utf-8 -*-
 
-import pytz
 import datetime
 
-from django.db.utils import IntegrityError
-from django.core.management.base import BaseCommand
-from django.utils import timezone
-
+import pytz
 from apps.authentication.models import AllowedUsername
+from django.core.management.base import BaseCommand
+from django.db.utils import IntegrityError
+from django.utils import timezone
 
 
 class Command(BaseCommand):

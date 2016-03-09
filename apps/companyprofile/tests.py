@@ -2,10 +2,9 @@
 
 import logging
 
+from apps.companyprofile.models import Company
 from django.test import TestCase
 from django_dynamic_fixture import G
-
-from apps.companyprofile.models import Company
 
 
 class CompanyTests(TestCase):

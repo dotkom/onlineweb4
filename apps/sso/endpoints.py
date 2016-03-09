@@ -2,12 +2,10 @@
 #
 # Created by 'myth' on 6/27/15
 
+from apps.authentication.models import FIELD_OF_STUDY_CHOICES
 from django.http import JsonResponse
-
 from oauth2_provider.decorators import protected_resource
 from oauth2_provider.models import AccessToken
-
-from apps.authentication.models import FIELD_OF_STUDY_CHOICES
 
 
 @protected_resource([

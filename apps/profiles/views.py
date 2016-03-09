@@ -4,37 +4,29 @@ import re
 import uuid
 from smtplib import SMTPException
 
-from django.conf import settings
-from django.contrib import messages
-from django.contrib.auth.forms import PasswordChangeForm
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import Group
-from django.core.mail import send_mail
-from django.http import HttpResponse, Http404, JsonResponse
-from django.shortcuts import redirect, render, get_object_or_404
-from django.utils.translation import ugettext as _
-from django.utils import timezone
-
-from oauth2_provider.models import AccessToken
-
-from watson import search as watson
-
 from apps.approval.forms import FieldOfStudyApplicationForm
 from apps.approval.models import MembershipApproval
 from apps.authentication.forms import NewEmailForm
-from apps.authentication.models import Email, RegisterToken, Position
 from apps.authentication.models import OnlineUser as User
-from apps.payment.models import PaymentTransaction
+from apps.authentication.models import Email, Position, RegisterToken
 from apps.marks.models import Mark, Suspension
 from apps.shop.models import Order
-from apps.profiles.forms import (
-    PrivacyForm,
-    ProfileForm,
-    PositionForm
-)
+from apps.payment.models import PaymentDelay, PaymentRelation, PaymentTransaction
+from apps.profiles.forms import PositionForm, PrivacyForm, ProfileForm
 from apps.profiles.models import Privacy
-from apps.payment.models import PaymentRelation, PaymentDelay
+from django.conf import settings
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.forms import PasswordChangeForm
+from django.contrib.auth.models import Group
+from django.core.mail import send_mail
+from django.http import Http404, HttpResponse, JsonResponse
+from django.shortcuts import get_object_or_404, redirect, render
+from django.utils import timezone
+from django.utils.translation import ugettext as _
+from oauth2_provider.models import AccessToken
 from utils.shortcuts import render_json
+from watson import search as watson
 
 """
 Index for the entire user profile view

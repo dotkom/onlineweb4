@@ -2,28 +2,24 @@
 
 import logging
 
+from apps.sso.models import Client
+from braces.views import CsrfExemptMixin, LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.shortcuts import render
-from django.views.decorators.debug import sensitive_post_parameters
-from django.views.generic import View, FormView
 from django.utils import timezone
 from django.utils.decorators import method_decorator
-
-from oauthlib.oauth2 import Server
-
-from braces.views import LoginRequiredMixin, CsrfExemptMixin
-
-from oauth2_provider.settings import oauth2_settings
+from django.views.decorators.debug import sensitive_post_parameters
+from django.views.generic import FormView, View
 from oauth2_provider.backends import OAuth2Backend
-from oauth2_provider.oauth2_validators import OAuth2Validator
 from oauth2_provider.exceptions import OAuthToolkitError
 from oauth2_provider.forms import AllowForm
 from oauth2_provider.http import HttpResponseUriRedirect
 from oauth2_provider.models import get_application_model
+from oauth2_provider.oauth2_validators import OAuth2Validator
+from oauth2_provider.settings import oauth2_settings
 from oauth2_provider.views.mixins import OAuthLibMixin
-
-from apps.sso.models import Client
+from oauthlib.oauth2 import Server
 
 _log = logging.getLogger('SSO')
 

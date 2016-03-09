@@ -1,5 +1,5 @@
-from tastypie.authentication import Authentication
 from django.conf import settings
+from tastypie.authentication import Authentication
 
 
 class RfidAuthentication(Authentication):

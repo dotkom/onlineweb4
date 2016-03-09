@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
 
-from django.contrib.contenttypes.models import ContentType
-
 from apps.events.models import Event
 from apps.events.utils import get_group_restricted_events
 from apps.feedback.models import FeedbackRelation
+from django.contrib.contenttypes.models import ContentType
 
 
 def has_permission(feedback_relation, user):

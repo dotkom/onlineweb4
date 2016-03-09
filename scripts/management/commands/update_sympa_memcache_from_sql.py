@@ -2,12 +2,11 @@
 # -*- coding: utf-8 -*-
 
 import psycopg2
+from django.core.management.base import NoArgsCommand
 from memcache import Client
 
-from django.core.management.base import NoArgsCommand
-
-from onlineweb4.settings import SYMPA_DB_PASSWD, SYMPA_DB_USER, SYMPA_DB_NAME, SYMPA_DB_PORT, SYMPA_DB_HOST
-from onlineweb4.settings import PUBLIC_LISTS
+from onlineweb4.settings import (PUBLIC_LISTS, SYMPA_DB_HOST, SYMPA_DB_NAME, SYMPA_DB_PASSWD,
+                                 SYMPA_DB_PORT, SYMPA_DB_USER)
 
 
 class Command(NoArgsCommand):
