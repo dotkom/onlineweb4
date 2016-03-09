@@ -68,7 +68,9 @@ def _create_profile_context(request):
         'groups': groups,
         # privacy
         'privacy_form': PrivacyForm(instance=request.user.privacy),
+        # nibble information
         'transactions': PaymentTransaction.objects.filter(user=request.user),
+        'orders': Order.objects.filter(order_line__user=request.user).order_by('-order_line__datetime'),
 
         # SSO / OAuth2 approved apps
         'connected_apps': AccessToken.objects.filter(user=request.user, expires__gte=timezone.now())
