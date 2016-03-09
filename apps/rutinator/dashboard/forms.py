@@ -1,5 +1,5 @@
-from django import forms
 from apps.rutinator.models import Task
+from django import forms
 
 
 class NewTaskForm(forms.ModelForm):
