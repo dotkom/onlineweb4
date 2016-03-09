@@ -7,4 +7,3 @@ urlpatterns = patterns(
     url(r'^create/$', CreateTaskView.as_view(), name='task_create'),
     url(r'^edit/(?P<pk>\d+)/$', EditTaskView.as_view(), name='task_edit')
 )
-
