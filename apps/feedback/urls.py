@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 
-from apps.feedback import views
 from django.conf.urls import url
+
+from apps.feedback import views
 
 base_url = r'^(?P<applabel>\w+)/(?P<appmodel>\w+)/(?P<object_id>\d+)/(?P<feedback_id>\d+)/'
 

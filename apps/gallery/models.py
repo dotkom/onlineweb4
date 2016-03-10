@@ -3,12 +3,13 @@
 import logging
 import os
 
-from apps.gallery import settings as gallery_settings
 from django.conf import settings
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from taggit.managers import TaggableManager
 from utils.helpers import humanize_size
+
+from apps.gallery import settings as gallery_settings
 
 
 class UnhandledImage(models.Model):

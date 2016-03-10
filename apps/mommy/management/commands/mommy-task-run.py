@@ -1,5 +1,6 @@
-from apps import mommy
 from django.core.management.base import BaseCommand
+
+from apps import mommy
 
 
 class Command(BaseCommand):

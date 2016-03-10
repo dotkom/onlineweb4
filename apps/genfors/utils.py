@@ -3,12 +3,13 @@ import datetime
 import json
 from hashlib import sha256
 
-from apps.genfors.models import (Alternative, AnonymousVoter, BooleanVote, Meeting, MultipleChoice,
-                                 RegisteredVoter, Result)
 from django.conf import settings
 from django.contrib import messages
 from django.shortcuts import redirect
 from django.utils import timezone
+
+from apps.genfors.models import (Alternative, AnonymousVoter, BooleanVote, Meeting, MultipleChoice,
+                                 RegisteredVoter, Result)
 
 BOOLEAN_VOTE = 0
 MULTIPLE_CHOICE = 1

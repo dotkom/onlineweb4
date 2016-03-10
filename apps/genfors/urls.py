@@ -1,5 +1,6 @@
-from apps.genfors import views
 from django.conf.urls import url
+
+from apps.genfors import views
 
 urlpatterns = [
     url(r'^$', views.genfors, name='genfors_index'),

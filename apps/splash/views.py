@@ -1,7 +1,8 @@
-from apps.events.utils import SplashCalendar
-from apps.splash.models import SplashYear
 from django.http import Http404
 from django.shortcuts import render
+
+from apps.events.utils import SplashCalendar
+from apps.splash.models import SplashYear
 
 
 def index(request):

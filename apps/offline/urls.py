@@ -1,8 +1,9 @@
 # -*- encoding: utf-8 -*-
 
+from django.conf.urls import url
+
 from apps.api.utils import SharedAPIRootRouter
 from apps.offline import views
-from django.conf.urls import url
 
 # API v1
 urlpatterns = [

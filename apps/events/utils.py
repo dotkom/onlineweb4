@@ -3,10 +3,6 @@ import logging
 from datetime import timedelta
 
 import icalendar
-from apps.authentication.models import OnlineUser as User
-from apps.events.models import TYPE_CHOICES, Attendee, Event
-from apps.payment.models import PaymentDelay, PaymentRelation
-from apps.splash.models import SplashYear
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.core.mail import EmailMessage, send_mail
@@ -14,6 +10,11 @@ from django.core.signing import BadSignature, Signer
 from django.http import HttpResponse
 from django.utils import timezone
 from filebrowser.settings import VERSIONS
+
+from apps.authentication.models import OnlineUser as User
+from apps.events.models import TYPE_CHOICES, Attendee, Event
+from apps.payment.models import PaymentDelay, PaymentRelation
+from apps.splash.models import SplashYear
 
 
 def get_group_restricted_events(user, all_events=False):

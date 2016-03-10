@@ -1,13 +1,14 @@
 # -*- coding: utf-8 -*-
 
-from apps.events.models import (AttendanceEvent, Attendee, CompanyEvent, Event, Extras,
-                                FieldOfStudyRule, GradeRule, GroupRestriction, Reservation,
-                                Reservee, RuleBundle, UserGroupRule)
-from apps.feedback.admin import FeedbackRelationInline
 from django.contrib import admin, messages
 from django.core import validators
 from django.utils.translation import ugettext as _
 from reversion.admin import VersionAdmin
+
+from apps.events.models import (AttendanceEvent, Attendee, CompanyEvent, Event, Extras,
+                                FieldOfStudyRule, GradeRule, GroupRestriction, Reservation,
+                                Reservee, RuleBundle, UserGroupRule)
+from apps.feedback.admin import FeedbackRelationInline
 
 
 class AttendeeInline(admin.TabularInline):

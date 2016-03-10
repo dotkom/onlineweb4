@@ -1,7 +1,8 @@
 # -*- encoding: utf-8 -*-
 
-from apps.inventory.dashboard import views
 from django.conf.urls import url
+
+from apps.inventory.dashboard import views
 
 urlpatterns = [
     url(r'^$', views.index, name='dashboard_inventory_index'),

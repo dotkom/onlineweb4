@@ -1,15 +1,5 @@
 # -*- coding: utf-8 -*-
 
-from apps.events.filters import EventDateFilter
-from apps.events.forms import CaptchaForm
-from apps.events.models import AttendanceEvent, Attendee, CompanyEvent, Event
-from apps.events.pdf_generator import EventPDF
-from apps.events.serializers import (AttendanceEventSerializer, CompanyEventSerializer,
-                                     EventSerializer)
-from apps.events.utils import (get_group_restricted_events, handle_attend_event_payment,
-                               handle_attendance_event_detail, handle_event_ajax,
-                               handle_event_payment, handle_mail_participants)
-from apps.payment.models import Payment, PaymentDelay, PaymentRelation
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.contenttypes.models import ContentType
@@ -24,6 +14,17 @@ from django.utils.translation import ugettext as _
 from rest_framework import mixins, viewsets
 from rest_framework.permissions import AllowAny
 from watson import search as watson
+
+from apps.events.filters import EventDateFilter
+from apps.events.forms import CaptchaForm
+from apps.events.models import AttendanceEvent, Attendee, CompanyEvent, Event
+from apps.events.pdf_generator import EventPDF
+from apps.events.serializers import (AttendanceEventSerializer, CompanyEventSerializer,
+                                     EventSerializer)
+from apps.events.utils import (get_group_restricted_events, handle_attend_event_payment,
+                               handle_attendance_event_detail, handle_event_ajax,
+                               handle_event_payment, handle_mail_participants)
+from apps.payment.models import Payment, PaymentDelay, PaymentRelation
 
 from .utils import EventCalendar
 

@@ -3,16 +3,17 @@
 import json
 
 import django.utils.timezone
-from apps.authentication.models import OnlineUser as User
-from apps.dashboard.tools import get_base_context, has_access
-from apps.marks.dashboard.forms import MarkForm
-from apps.marks.models import Mark, MarkUser
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from guardian.decorators import permission_required
+
+from apps.authentication.models import OnlineUser as User
+from apps.dashboard.tools import get_base_context, has_access
+from apps.marks.dashboard.forms import MarkForm
+from apps.marks.models import Mark, MarkUser
 
 
 @login_required

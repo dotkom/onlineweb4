@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 
-from apps.offline.models import Issue
 from tastypie.resources import ModelResource
+
+from apps.offline.models import Issue
 
 
 class IssueResource(ModelResource):

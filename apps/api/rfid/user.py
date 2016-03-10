@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 
-from apps.api.rfid.auth import RfidAuthentication
-from apps.authentication.models import OnlineUser as User
 from django.core.exceptions import PermissionDenied
 from tastypie.authorization import Authorization
 from tastypie.resources import ALL, ModelResource
+
+from apps.api.rfid.auth import RfidAuthentication
+from apps.authentication.models import OnlineUser as User
 
 
 class UserResource(ModelResource):

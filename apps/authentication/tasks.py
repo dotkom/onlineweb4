@@ -2,10 +2,11 @@
 import locale
 import logging
 
-from apps.authentication.models import OnlineUser as User
-from apps.mommy.registry import Task
 from django.conf import settings
 from django.contrib.auth.models import Group
+
+from apps.authentication.models import OnlineUser as User
+from apps.mommy.registry import Task
 
 
 class SynchronizeGroups(Task):

@@ -2,8 +2,9 @@
 #
 # Created by 'myth' on 10/24/15
 
-from apps.gallery.dashboard import views
 from django.conf.urls import url
+
+from apps.gallery.dashboard import views
 
 urlpatterns = [
     url(

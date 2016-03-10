@@ -3,9 +3,6 @@
 from collections import Counter
 
 import watson
-from apps.article.models import Article
-from apps.article.serializers import ArticleSerializer
-from apps.article.utils import create_article_filters
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, render
@@ -13,6 +10,10 @@ from django.utils import timezone
 from rest_framework import mixins, viewsets
 from rest_framework.permissions import AllowAny
 from taggit.models import TaggedItem
+
+from apps.article.models import Article
+from apps.article.serializers import ArticleSerializer
+from apps.article.utils import create_article_filters
 
 
 def archive(request, name=None, slug=None, year=None, month=None):

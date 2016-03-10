@@ -1,14 +1,15 @@
 # -*- coding: utf-8 -*-
 from copy import copy
 
-from apps.api.v0.authentication import UserResource
-from apps.api.v0.image import ImageResource
-from apps.article.models import Article
 from django.template.defaultfilters import slugify
 from django.utils import timezone
 from tastypie import fields
 from tastypie.resources import ModelResource
 from unidecode import unidecode
+
+from apps.api.v0.authentication import UserResource
+from apps.api.v0.image import ImageResource
+from apps.article.models import Article
 
 
 class ArticleResource(ModelResource):
