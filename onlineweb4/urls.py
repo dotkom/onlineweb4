@@ -161,7 +161,11 @@ if 'apps.resourcecenter' in settings.INSTALLED_APPS and 'apps.mailinglists' in s
 
 if 'apps.rutinator' in settings.INSTALLED_APPS:
     urlpatterns += [
-        url(r'^dashboard/rutinator/', include('apps.rutinator.dashboard.urls', namespace='dashboard', app_name='rutinator')),
+        url(r'^dashboard/rutinator/', include(
+            'apps.rutinator.dashboard.urls',
+            namespace='dashboard',
+            app_name='rutinator'
+        )),
     ]
 
 if 'apps.splash' in settings.INSTALLED_APPS:
@@ -178,7 +182,11 @@ if 'apps.sso' in settings.INSTALLED_APPS:
 if 'apps.webshop' in settings.INSTALLED_APPS:
     urlpatterns += [
         url(r'^webshop/',           include('apps.webshop.urls')),
-        url(r'^dashboard/webshop/', include('apps.webshop.dashboard.urls', namespace='dashboard-webshop', app_name='webshop')),
+        url(r'^dashboard/webshop/', include(
+            'apps.webshop.dashboard.urls',
+            namespace='dashboard-webshop',
+            app_name='webshop'
+        )),
     ]
 
 # feedme

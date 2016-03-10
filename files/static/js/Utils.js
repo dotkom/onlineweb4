@@ -1,4 +1,3 @@
-
 function Utils() {
 
     var that = this;
@@ -113,5 +112,15 @@ function Utils() {
                 $('[id=' + id +']').remove();
             }, 5000);
         }, 5000);
+    }
+}
+
+// Inject String format method if not defined
+if (!String.prototype.format) {
+    String.prototype.format = function() {
+        var args = arguments
+        return this.replace(/{(\d+)}/g, function(match, number) {
+            return typeof args[number] != 'undefined' ? args[number] : match
+        })
     }
 }

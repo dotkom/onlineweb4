@@ -6,7 +6,7 @@ from django.conf.urls import url
 
 urlpatterns = [
     url(r'^upload/$', views.upload, name='upload'),
-    url(r'^untreated/$', views.untreated, name='untreated'),
+    url(r'^unhandled/$', views.unhandled, name='unhandled'),
     url(r'^crop/$', views.crop, name='crop'),
     url(r'^all/', views.all_images, name='all'),
     url(r'^search/', views.search, name='search'),

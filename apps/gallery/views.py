@@ -66,7 +66,7 @@ def upload(request):
 
 @login_required
 @permission_required('gallery.add_responsiveimage')
-def untreated(request):
+def unhandled(request):
     if request.is_ajax():
         if request.method == 'GET':
 
@@ -79,7 +79,7 @@ def untreated(request):
                     'image': image.image.url
                 })
 
-            return JsonResponse({'untreated': images}, status=200)
+            return JsonResponse({'unhandled': images}, status=200)
     return JsonResponse({'status': 405, 'message': 'Method not allowed'}, status=405)
 
 
