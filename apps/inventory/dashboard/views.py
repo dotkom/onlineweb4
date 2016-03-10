@@ -1,5 +1,7 @@
 # -*- encoding: utf-8 -*-
 
+from logging import getLogger
+
 from apps.dashboard.tools import get_base_context, has_access
 from apps.inventory.dashboard.forms import BatchForm, ItemForm
 from apps.inventory.models import Batch, Item
@@ -213,7 +215,12 @@ def order_statistics(request):
     for count in counts:
         print(count)
         if item_type.id == count['content_type']:
-            item = Item.objects.get(pk=count['object_id'])
+            try:
+                item = Item.objects.get(pk=count['object_id'])
+            except Item.DoesNotExist:
+                getLogger(__name__).error('Item with pk %s does not exist (DoesNotExist error)' % count['object_id'])
+            except KeyError:
+                getLogger(__name__).error('Key "object_id" does not exist')
             if count['total'] > 0:
                 statistics[item.name] = count['total']
 
