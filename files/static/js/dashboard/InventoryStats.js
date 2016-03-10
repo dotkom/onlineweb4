@@ -21,8 +21,7 @@ var inventoryGraphs = function(){
 
       var options = {
         title: "Varesalg",
-        width: 1600,
-        height: 400,
+        height: 500,
         bar: {groupWidth: "95%"},
         legend: { position: "none" },
       };
