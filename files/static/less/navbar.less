@@ -299,11 +299,11 @@ svg, rect {
         opacity: 0;
         transition: opacity .3s ease-in-out;
         
-        &.open {
+        &.mn-nav-open {
             opacity: 1;
         }
         
-        &.animation-complete:not(.open) {
+        &:not(.animation-in-process):not(.mn-nav-open) {
             display: none;
         }
     }

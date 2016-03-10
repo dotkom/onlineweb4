@@ -59,7 +59,7 @@ class UserViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.Lis
 
 
 class InventoryViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.ListModelMixin):
-    queryset = Item.objects.filter(available=True)
+    queryset = Item.objects.filter(available=True).order_by('pk')
     serializer_class = ItemSerializer
     permission_classes = (AllowAny,)
     pagination_class = None
