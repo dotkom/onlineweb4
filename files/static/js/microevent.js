@@ -2,6 +2,7 @@
  * Created by myth on 3/10/16.
  */
 
+
 var MicroEvent = function () {
 
     var debug = true;
@@ -9,7 +10,10 @@ var MicroEvent = function () {
     self.events = {}
 
     return {
-        // Fire an event
+        /**
+         * Fire an event of type "event" to all registered listeners for that type.
+         * @param {string} event
+         */
         fire: function (event) {
 
             if (debug) console.log('Firing event: ' + event)
@@ -20,7 +24,11 @@ var MicroEvent = function () {
             for (var i = 0; i < listeners.length; i++) listeners[i]()
         },
 
-        // Register as an event listener
+        /**
+         * Register a callback on a given event type, that will invoke the callback function once the event fires.
+         * @param {string} event
+         * @param {function} callback
+         */
         on: function (event, callback) {
 
             if (debug) console.log('Registering callback on event: ' + event)
