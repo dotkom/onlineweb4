@@ -26,7 +26,7 @@ class SynchronizeGroups(Task):
     def do_sync(logger):
         # Loop all the syncs
         for job in settings.GROUP_SYNCER:
-            # Log that jober we are running
+            # Log what job we are running
             logger.info('Started: ' + job.get('name'))
 
             SynchronizeGroups.add_users(job, logger)
