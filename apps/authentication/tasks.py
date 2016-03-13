@@ -25,21 +25,18 @@ class SynchronizeGroups(Task):
     @staticmethod
     def do_sync(logger):
         # Loop all the syncs
-        for sync in settings.GROUP_SYNCER:
-            # Log that syncer we are running
-            logger.info('Started: ' + sync.get('name'))
+        for job in settings.GROUP_SYNCER:
+            # Log that jober we are running
+            logger.info('Started: ' + job.get('name'))
 
-            SynchronizeGroups.add_users(sync, logger)
-            SynchronizeGroups.remove_users(sync, logger)
+            SynchronizeGroups.add_users(job, logger)
+            SynchronizeGroups.remove_users(job, logger)
 
     @staticmethod
     def add_users(sync, logger):
 
         # FORWARD SYNC
         # Syncing users from source groups to destination groups
-
-        # Store number of synced users
-        synced = 0
 
         # Get all users in the source groups
         users_in_source = User.objects.filter(
@@ -63,22 +60,11 @@ class SynchronizeGroups(Task):
                         destination_group_object.user_set.add(user)
                         logger.info('%s added to group %s' % (user, destination_group_object.name))
 
-                        # Increase syncs
-                        synced += 1
-
-            # Check if any changes were made and if there was, log it
-            if synced > 0:
-                logger.info('%s user(s) were synced to correct destination group(s).' % synced)
-                pass
-
     @staticmethod
     def remove_users(sync, logger):
 
         # BACKWARDS SYNC
         # Removing users from destination group(s) if they are not in the source group(s)
-
-        # Store number of synced users
-        synced = 0
 
         # Get all users in the destination groups
         users_in_destination = User.objects.filter(
@@ -110,13 +96,4 @@ class SynchronizeGroups(Task):
                             # This group is a destination group, remove it from the user
                             destination_group = Group.objects.filter(id=user_group.id).first()
                             destination_group.user_set.remove(user)
-                            logger.info('%s removed from group %s' % (user, destination_group_object.name))
-
-                            # Increase syncs
-                            synced += 1
-
-            # Check if any changes were made and if there was, log it
-            if synced > 0:
-                logger.info('%s user(s) were removed from the destination group(s) '
-                            'because they were not in the source group(s).' % synced
-                            )
+                            logger.info('%s removed from group %s' % (user, destination_group.name))
