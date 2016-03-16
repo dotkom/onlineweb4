@@ -17,6 +17,8 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from django.utils.translation import ugettext as _
 from oauth2_provider.models import AccessToken
+from utils.shortcuts import render_json
+from watson import search as watson
 
 from apps.approval.forms import FieldOfStudyApplicationForm
 from apps.approval.models import MembershipApproval
@@ -458,8 +460,7 @@ def internal_services(request):
             cleaned = internal_service_form.cleaned_data
 
             # TODO do stuff with external services data
-            print cleaned['services_password']
-
+            print(cleaned['services_password'])
         else:
             # User fucked up
             messages.error(request, _(u"Passordet for interne tjenester ble ikke endret. Vennligst prøv igjen."))
