@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}Internal Server Error - Online{% endblock title %}
+
+{% block content %}
+    <section id="error">
+        <div class="container-fluid">
+            <div class="row-fluid">
+                <div class="col-md-12">
+                    <div class="page-header">
+                        <h2 id="error-heading">500 Error: Internal server error</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="row row-space">
+                <p>Uff da, det har oppstått en feil.</p>
+                <p>Vi blir varslet om dette automatisk, men vi setter pris på om du vil legge igjen en beskjed for hvordan du kom hit. </p>
+            </div>
+            <div class="error-items centered">
+                <form action="" method="post" >
+                    <div class="row row-space">
+                        {% csrf_token %}
+                        <div class="col-md-12">
+                            {% for field in error_form %}
+                                <b>{{ field.label }}</b>
+                                <div class="row row-space">
+                                    {{ field }}
+                                </div>
+                            {% endfor %}
+                        </div>
+                        <button class="btn btn-success" type="submit">Send mail</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+{% endblock content %}

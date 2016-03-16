@@ -8,6 +8,7 @@ from django.views.generic import TemplateView
 from django_nyt.urls import get_pattern as get_notify_pattern
 from filebrowser.sites import site
 from wiki.urls import get_pattern as get_wiki_pattern
+from onlineweb4 import views
 
 # URL config
 admin.autodiscover()
@@ -213,6 +214,8 @@ if 'rest_framework' in settings.INSTALLED_APPS:
         url(r'^api/v1/', include(api_urls()))
     ]
 
+#500 view
+handler500 = views.server_error
 
 # http://docs.djangoproject.com/en/1.3/howto/static-files/#staticfiles-development
 if settings.DEBUG:
@@ -220,5 +223,5 @@ if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
     # 500
     urlpatterns += [
-        url(r'^500/$', server_error),
+        url(r'^500/$', views.server_error),
     ]
