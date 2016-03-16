@@ -122,7 +122,7 @@ class InternalServicesForm(forms.Form):
         if self.is_valid():
             cleaned_data = self.cleaned_data
 
-            # FUck
+            # User object relation here
             user = auth.authenticate(username=self.current_user.username, password=cleaned_data['ow4_password'])
 
             if user is None or user.id != self.current_user.id:
