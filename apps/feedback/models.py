@@ -161,12 +161,18 @@ class FeedbackRelation(models.Model):
             return dict()
 
     def save(self, *args, **kwargs):
+        log = logging.getLogger(__name__)
         new_fbr = not self.pk
         super(FeedbackRelation, self).save(*args, **kwargs)
         if new_fbr:
             token = uuid.uuid4().hex
-            rt = RegisterToken(fbr=self, token=token)
-            rt.save()
+            try: 
+                rt = RegisterToken(fbr=self, token=token)
+                rt.save()
+                log.info('Successfully registered token for %s' % request.user)
+            except:
+                log.error('Failed to register token for %s' % request.user)
+
 
 
 class Feedback(models.Model):
