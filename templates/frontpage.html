@@ -3,6 +3,7 @@
 {% load compress %}
 {% load markdown_deux_tags %}
 
+
 {% block title %}Online, linjeforeningen for informatikk ved NTNU{% endblock title %}
 
 {% block js %}
@@ -287,11 +288,6 @@
 {% chunk 'om_fagkom' %}
 {% endfilter %}
                         </div>
-                        <div class="tab-pane" id="pankom">
-{% filter markdown %}
-{% chunk 'om_pankom' %}
-{% endfilter %}
-                        </div>
                         <div class="tab-pane" id="prokom">
 {% filter markdown %}
 {% chunk 'om_prokom' %}
@@ -307,24 +303,9 @@
 {% chunk 'om_trikom' %}
 {% endfilter %}
                         </div>
-                        <div class="tab-pane" id="appkom">
+                        <div class="tab-pane" id="noder">
 {% filter markdown %}
-{% chunk 'om_appkom' %}
-{% endfilter %}
-                        </div>
-                        <div class="tab-pane" id="ekskom">
-{% filter markdown %}
-{% chunk 'om_ekskom' %}
-{% endfilter %}
-                        </div>
-                        <div class="tab-pane" id="jubkom">
-{% filter markdown %}
-{% chunk 'om_jubkom' %}
-{% endfilter %}
-                        </div>
-                        <div class="tab-pane" id="velkom">
-{% filter markdown %}
-{% chunk 'om_velkom' %}
+{% chunk 'om_noder' %}
 {% endfilter %}
                         </div>
                         <div class="tab-pane" id="kjelleren">
@@ -356,16 +337,11 @@
                         <li><a href="#bedkom">BedKom</a></li>
                         <li><a href="#dotkom">DotKom</a></li>
                         <li><a href="#fagkom">Fagkom</a></li>
-                        <li><a href="#pankom">Pankom</a></li>
                         <li><a href="#prokom">ProKom</a></li>
                         <li><a href="#senkom">SenKom</a></li>
                         <li><a href="#trikom">TriKom</a></li>
-                        <li class="nav-header">Nodekomiteer</li>
-                        <li><a href="#appkom">AppKom</a></li>
-                        <li><a href="#ekskom">EksKom</a></li>
-                        <li><a href="#jubkom">JubKom</a></li>
-                        <li><a href="#velkom">VelKom</a></li>
                         <li class="nav-header">Annet</li>
+                        <li><a href="#noder">Nodekomiteer</a></li>
                         <li><a href="#kjelleren">Realfagskjelleren</a></li>
                         <li><a href="#datakameratene">Datakameratene FK</a></li>
                         <li><a href="#cag">Casual Gaming</a></li>

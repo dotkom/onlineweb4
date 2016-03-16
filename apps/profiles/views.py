@@ -264,7 +264,7 @@ def add_email(request):
                 ntnu_username = email_string.split("@")[0]
                 user = User.objects.filter(ntnu_username=ntnu_username)
                 if user.count() == 1:
-                    if user != request.user:
+                    if user[0] != request.user:
                         messages.error(request, _("En bruker med dette NTNU-brukernavnet eksisterer allerede."))
                         return redirect('profiles')
 
