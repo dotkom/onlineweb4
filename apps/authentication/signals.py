@@ -2,7 +2,6 @@
 import logging
 import uuid
 
-from apps.authentication.tasks import SynchronizeGroups
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.db.models.signals import m2m_changed, post_save
