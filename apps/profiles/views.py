@@ -4,16 +4,6 @@ import re
 import uuid
 from smtplib import SMTPException
 
-from apps.approval.forms import FieldOfStudyApplicationForm
-from apps.approval.models import MembershipApproval
-from apps.authentication.forms import NewEmailForm
-from apps.authentication.models import OnlineUser as User
-from apps.authentication.models import Email, Position, RegisterToken
-from apps.marks.models import Mark, Suspension
-from apps.payment.models import PaymentDelay, PaymentRelation, PaymentTransaction
-from apps.profiles.forms import PositionForm, PrivacyForm, ProfileForm
-from apps.profiles.models import Privacy
-from apps.shop.models import Order
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -27,6 +17,17 @@ from django.utils.translation import ugettext as _
 from oauth2_provider.models import AccessToken
 from utils.shortcuts import render_json
 from watson import search as watson
+
+from apps.approval.forms import FieldOfStudyApplicationForm
+from apps.approval.models import MembershipApproval
+from apps.authentication.forms import NewEmailForm
+from apps.authentication.models import OnlineUser as User
+from apps.authentication.models import Email, Position, RegisterToken
+from apps.marks.models import Mark, Suspension
+from apps.payment.models import PaymentDelay, PaymentRelation, PaymentTransaction
+from apps.profiles.forms import PositionForm, PrivacyForm, ProfileForm
+from apps.profiles.models import Privacy
+from apps.shop.models import Order
 
 
 """

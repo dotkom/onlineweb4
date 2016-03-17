@@ -3,12 +3,6 @@
 import json
 import random
 
-from apps.genfors.forms import (AlternativeFormSet, LoginForm, MeetingForm, QuestionForm,
-                                RegisterVoterForm)
-from apps.genfors.models import (BOOLEAN_VOTE, MULTIPLE_CHOICE, Alternative, BooleanVote, Meeting,
-                                 MultipleChoice, Question, RegisteredVoter, Result)
-from apps.genfors.utils import (anonymous_voter, generate_genfors_context, get_active_meeting,
-                                get_next_meeting, handle_login, is_admin)
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, JsonResponse
@@ -16,6 +10,13 @@ from django.shortcuts import redirect, render
 from django.utils.translation import ugettext as _
 from django.views.decorators.cache import cache_page
 from django.views.decorators.http import require_http_methods
+
+from apps.genfors.forms import (AlternativeFormSet, LoginForm, MeetingForm, QuestionForm,
+                                RegisterVoterForm)
+from apps.genfors.models import (BOOLEAN_VOTE, MULTIPLE_CHOICE, Alternative, BooleanVote, Meeting,
+                                 MultipleChoice, Question, RegisteredVoter, Result)
+from apps.genfors.utils import (anonymous_voter, generate_genfors_context, get_active_meeting,
+                                get_next_meeting, handle_login, is_admin)
 
 
 @login_required

@@ -6,7 +6,6 @@ from chunks.models import Chunk
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from filebrowser.fields import FileBrowseField
-
 from onlineweb4.settings.local import MEDIA_ROOT
 
 THUMBNAIL_HEIGHT = 200  # Ønsket høyde på thumbnail

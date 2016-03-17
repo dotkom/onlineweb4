@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 
-from apps.authentication.models import OnlineUser as User
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.core.validators import MinValueValidator
 from django.db import models
 from rest_framework.exceptions import NotAcceptable
+
+from apps.authentication.models import OnlineUser as User
 
 
 class Order(models.Model):

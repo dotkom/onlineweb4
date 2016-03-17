@@ -1,8 +1,5 @@
 from copy import copy
 
-from apps.api.v0.authentication import UserResource
-from apps.companyprofile.models import Company
-from apps.events.models import AttendanceEvent, Attendee, CompanyEvent, Event
 from django.template.defaultfilters import slugify
 from filebrowser.base import FileObject
 from filebrowser.settings import VERSIONS
@@ -10,6 +7,10 @@ from tastypie import fields
 from tastypie.authorization import Authorization
 from tastypie.resources import ModelResource
 from unidecode import unidecode
+
+from apps.api.v0.authentication import UserResource
+from apps.companyprofile.models import Company
+from apps.events.models import AttendanceEvent, Attendee, CompanyEvent, Event
 
 
 class AttendeeResource(ModelResource):

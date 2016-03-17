@@ -1,9 +1,10 @@
 # -*- encoding: utf-8 -*-
 
-from apps.dashboard.tools import get_base_context, has_access
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import render
+
+from apps.dashboard.tools import get_base_context, has_access
 
 
 @login_required

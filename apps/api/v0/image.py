@@ -2,8 +2,9 @@
 #
 # Created by 'myth' on 10/18/15
 
-from apps.gallery.models import ResponsiveImage
 from tastypie.resources import ModelResource
+
+from apps.gallery.models import ResponsiveImage
 
 
 class ImageResource(ModelResource):

@@ -1,7 +1,8 @@
-from apps.posters.models import Poster
 from django.contrib import admin
 from django.utils.translation import ugettext as _
 from reversion.admin import VersionAdmin
+
+from apps.posters.models import Poster
 
 
 class PosterAdmin(VersionAdmin):

@@ -1,5 +1,6 @@
-from apps.webshop.models import Category, Order, OrderLine, Product, ProductSize
 from django.contrib import admin
+
+from apps.webshop.models import Category, Order, OrderLine, Product, ProductSize
 
 
 class CategoryAdmin(admin.ModelAdmin):

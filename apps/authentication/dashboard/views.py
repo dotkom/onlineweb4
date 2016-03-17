@@ -2,10 +2,6 @@
 
 import json
 
-from apps.authentication.forms import UserUpdateForm
-from apps.authentication.models import OnlineUser as User
-from apps.authentication.models import AllowedUsername
-from apps.dashboard.tools import DashboardPermissionMixin, get_base_context, has_access
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Group
@@ -17,6 +13,11 @@ from django.shortcuts import get_object_or_404, render
 from django.views.generic import DeleteView, DetailView, ListView, UpdateView
 from guardian.decorators import permission_required
 from watson.views import SearchView
+
+from apps.authentication.forms import UserUpdateForm
+from apps.authentication.models import OnlineUser as User
+from apps.authentication.models import AllowedUsername
+from apps.dashboard.tools import DashboardPermissionMixin, get_base_context, has_access
 
 
 @login_required

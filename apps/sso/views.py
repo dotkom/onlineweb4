@@ -2,7 +2,6 @@
 
 import logging
 
-from apps.sso.models import Client
 from braces.views import CsrfExemptMixin, LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
@@ -20,6 +19,8 @@ from oauth2_provider.oauth2_validators import OAuth2Validator
 from oauth2_provider.settings import oauth2_settings
 from oauth2_provider.views.mixins import OAuthLibMixin
 from oauthlib.oauth2 import Server
+
+from apps.sso.models import Client
 
 _log = logging.getLogger('SSO')
 

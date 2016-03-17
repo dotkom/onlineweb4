@@ -1,14 +1,12 @@
 # -*- coding: utf-8 -*-
 import logging
-
 from smtplib import SMTPException
 
-from onlineweb4.forms import ErrorForm
+from django.conf import settings
 from django.contrib import messages
 from django.core.mail import send_mail
 from django.shortcuts import redirect, render
-from django.conf import settings
-
+from onlineweb4.forms import ErrorForm
 
 
 def server_error(request):
@@ -34,5 +32,3 @@ def server_error(request):
             return redirect('home')
 
     return render(request, '500.html', {'error_form': ErrorForm})
-
-

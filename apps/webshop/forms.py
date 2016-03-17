@@ -1,5 +1,6 @@
-from apps.webshop import models
 from django import forms
+
+from apps.webshop import models
 
 
 class OrderForm(forms.ModelForm):

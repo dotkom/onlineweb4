@@ -1,5 +1,6 @@
-from apps.rutinator.dashboard.views import CreateTaskView, EditTaskView, TaskListView
 from django.conf.urls import patterns, url
+
+from apps.rutinator.dashboard.views import CreateTaskView, EditTaskView, TaskListView
 
 urlpatterns = patterns(
     'apps.rutinator.dashboard.views',

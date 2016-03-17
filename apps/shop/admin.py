@@ -1,5 +1,6 @@
-from apps.shop.models import Order, OrderLine
 from django.contrib import admin
+
+from apps.shop.models import Order, OrderLine
 
 
 class OrderAdmin(admin.ModelAdmin):

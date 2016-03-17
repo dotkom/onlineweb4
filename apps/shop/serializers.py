@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 
+from rest_framework import serializers
+
 from apps.authentication.models import OnlineUser as User
 from apps.gallery.serializers import ResponsiveImageSerializer
 from apps.inventory.models import Item
 from apps.payment.models import PaymentTransaction
 from apps.shop.models import Order, OrderLine
-from rest_framework import serializers
 
 
 class OrderSerializer(serializers.ModelSerializer):

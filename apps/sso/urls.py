@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 
-from apps.sso import endpoints, views
 from django.conf.urls import url
+
+from apps.sso import endpoints, views
 
 urlpatterns = [
     url(r'^$', views.index, name='sso_index'),

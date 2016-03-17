@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
+from django import forms
+
 from apps.dashboard.widgets import widget_generator
 from apps.gallery.widgets import SingleImageInput
 from apps.inventory.models import Batch, Item
-from django import forms
 
 
 class ItemForm(forms.ModelForm):
