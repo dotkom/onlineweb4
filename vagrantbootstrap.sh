@@ -80,7 +80,7 @@ function setup_virtualenv() {
     fi
 
     echo "creating virtualenv"
-    progress mkvirtualenv onlineweb
+    progress mkvirtualenv -p `which python3` onlineweb
 }
 
 function install_onlineweb_requirements() {
