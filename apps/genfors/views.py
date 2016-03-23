@@ -1,28 +1,22 @@
 # -*- coding: utf-8 -*-
 
-from django.contrib import messages
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect
-from django.utils.translation import ugettext as _
-from django.http import HttpResponse, JsonResponse
-from django.views.decorators.http import require_http_methods
-from django.views.decorators.cache import cache_page
-from apps.genfors.forms import LoginForm, MeetingForm, QuestionForm, RegisterVoterForm, AlternativeFormSet
-from apps.genfors.models import (
-    Meeting,
-    Question,
-    RegisteredVoter,
-    Alternative,
-    BooleanVote,
-    MultipleChoice,
-    Result
-)
-from apps.genfors.utils import generate_genfors_context, handle_login, get_active_meeting, is_admin, anonymous_voter, \
-    get_next_meeting
-from apps.genfors.models import BOOLEAN_VOTE, MULTIPLE_CHOICE
-
 import json
 import random
+
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.http import HttpResponse, JsonResponse
+from django.shortcuts import redirect, render
+from django.utils.translation import ugettext as _
+from django.views.decorators.cache import cache_page
+from django.views.decorators.http import require_http_methods
+
+from apps.genfors.forms import (AlternativeFormSet, LoginForm, MeetingForm, QuestionForm,
+                                RegisterVoterForm)
+from apps.genfors.models import (BOOLEAN_VOTE, MULTIPLE_CHOICE, Alternative, BooleanVote, Meeting,
+                                 MultipleChoice, Question, RegisteredVoter, Result)
+from apps.genfors.utils import (anonymous_voter, generate_genfors_context, get_active_meeting,
+                                get_next_meeting, handle_login, is_admin)
 
 
 @login_required

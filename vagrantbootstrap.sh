@@ -60,7 +60,7 @@ function install_curl() {
 function install_packages() {
     echo "installing packages"
     progress sudo apt-get install -y \
-        python-dev python-setuptools python-virtualenv vim \
+        python-dev python3-dev python-setuptools python-virtualenv vim \
         tmux screen git-core build-essential openssl \
         libjpeg8 libjpeg8-dev zlib-bin libtiff4-dev libfreetype6 libfreetype6-dev libpq-dev libssl-dev\
         python-psycopg2 imagemagick \

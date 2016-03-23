@@ -1,7 +1,7 @@
 from django.contrib import admin
-from apps.article.models import Article
-
 from reversion.admin import VersionAdmin
+
+from apps.article.models import Article
 
 
 class ArticleAdmin(VersionAdmin):

@@ -1,30 +1,24 @@
 # -*- coding: utf-8 -*-
 
-import uuid
 import re
+import uuid
 from smtplib import SMTPException
 
 from django.conf import settings
-from django.contrib import auth
-from django.contrib import messages
+from django.contrib import auth, messages
 from django.core.mail import send_mail
-from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponseRedirect
+from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.translation import ugettext as _
 from django.views.decorators.debug import sensitive_post_parameters
-
 # API v1
-from rest_framework import viewsets, mixins
+from rest_framework import mixins, viewsets
 from rest_framework.permissions import AllowAny
-from apps.authentication.serializers import UserSerializer
 
-from apps.authentication.forms import (
-    LoginForm,
-    RegisterForm,
-    RecoveryForm,
-    ChangePasswordForm
-)
-from apps.authentication.models import OnlineUser as User, RegisterToken, Email
+from apps.authentication.forms import ChangePasswordForm, LoginForm, RecoveryForm, RegisterForm
+from apps.authentication.models import OnlineUser as User
+from apps.authentication.models import Email, RegisterToken
+from apps.authentication.serializers import UserSerializer
 
 
 @sensitive_post_parameters()

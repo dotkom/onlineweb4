@@ -2,10 +2,9 @@
 
 from django.contrib import admin
 from django.utils.translation import ugettext as _
+from reversion.admin import VersionAdmin
 
 from apps.marks.models import Mark, MarkUser, Suspension
-
-from reversion.admin import VersionAdmin
 
 
 class MarkUserInline(admin.TabularInline):

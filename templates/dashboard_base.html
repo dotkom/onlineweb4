@@ -223,6 +223,13 @@
                         </a>
                     </li>
                     {% endif %}
+                    {% if request.user.is_superuser %}
+                    <li>
+                        <a href="/dashboard/rutinator/">
+                            <i class="fa fa-trophy blue"></i> <span>Rutinator</span>
+                        </a>
+                    </li>
+                    {% endif %}
                     {% if 'approval.view_membershipapproval' in user_permissions %}
                     <li>
                         <a href="/dashboard/approval/">
@@ -245,12 +252,17 @@
                     {% endif %}
                     {% if 'inventory.view_item' in user_permissions %}
                     <li class="treeview">
-                        <a href="/dashboard/inventory/">
+                        <a href="#">
                             <i class="fa fa-archive blue"></i> <span>Varelager</span>
+                            <i class="fa fa-angle-down pull-right"></i>
                             {% if inventory_expired %}
                             <span class="pull-right"><i class="fa fa-warning orange"></i>&nbsp;&nbsp;</span>
                             {% endif %}
                         </a>
+                        <ul class="treeview-menu">
+                            <li><a href="/dashboard/inventory/"><i class="fa fa-angle-double-right orange"></i> Administrere varelager</a></li>
+                            <li><a href="/dashboard/inventory/statistics/"><i class="fa fa-angle-double-right orange"></i> Statistikk</a></li>
+                        </ul>
                     </li>
                     {% endif %}
                     <li class="treeview">

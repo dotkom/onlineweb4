@@ -1,15 +1,20 @@
 # -*- encoding: utf-8 -*-
 
+from logging import getLogger
+
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import PermissionDenied
-from django.shortcuts import render, get_object_or_404, redirect
-
+from django.db.models import Count
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404, redirect, render
 from guardian.decorators import permission_required
 
-from apps.dashboard.tools import has_access, get_base_context
-from apps.inventory.dashboard.forms import ItemForm, BatchForm
-from apps.inventory.models import Item, Batch
+from apps.dashboard.tools import get_base_context, has_access
+from apps.inventory.dashboard.forms import BatchForm, ItemForm
+from apps.inventory.models import Batch, Item
+from apps.shop.models import Order
 
 
 @login_required
@@ -186,3 +191,38 @@ def batch_delete(request, item_pk, batch_pk):
         return redirect(details, item_pk=item_pk)
 
     raise PermissionDenied
+
+
+@login_required
+# @permission_required('inventory.delete_batch', return_403=True)
+def statistics(request):
+    # if not has_access(request):
+    #     raise PermissionDenied
+
+    context = get_base_context(request)
+
+    return render(request, 'inventory/dashboard/statistics.html', context)
+
+
+@login_required
+def order_statistics(request):
+    # TODO check permissions
+
+    statistics = dict()
+
+    counts = Order.objects.all().values('object_id', 'content_type').annotate(total=Count('object_id'))
+    item_type = ContentType.objects.get_for_model(Item)
+
+    for count in counts:
+        print(count)
+        if item_type.id == count['content_type']:
+            try:
+                item = Item.objects.get(pk=count['object_id'])
+            except Item.DoesNotExist:
+                getLogger(__name__).error('Item with pk %s does not exist (DoesNotExist error)' % count['object_id'])
+            except KeyError:
+                getLogger(__name__).error('Key "object_id" does not exist')
+            if count['total'] > 0:
+                statistics[item.name] = count['total']
+
+    return JsonResponse(statistics)

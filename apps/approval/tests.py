@@ -2,9 +2,9 @@
 
 import logging
 
-from django_dynamic_fixture import G
 from django.test import TestCase
 from django.utils import timezone
+from django_dynamic_fixture import G
 
 from apps.approval.models import MembershipApproval
 from apps.authentication.models import OnlineUser as User

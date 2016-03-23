@@ -1,6 +1,5 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-
 from filebrowser.fields import FileBrowseField
 
 from apps.gallery.models import ResponsiveImage

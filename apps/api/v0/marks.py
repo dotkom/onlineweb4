@@ -6,8 +6,8 @@ from tastypie.authorization import DjangoAuthorization
 from tastypie.bundle import Bundle
 from tastypie.resources import ModelResource
 
-from apps.marks.models import Mark, MarkUser
 from apps.api.v0.authentication import UserResource
+from apps.marks.models import Mark, MarkUser
 
 
 # TODO restrict access to this feature

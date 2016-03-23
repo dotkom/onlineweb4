@@ -2,9 +2,8 @@
 
 from datetime import date
 
-from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
 from django.contrib.auth.models import Group
-
+from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
 from guardian.mixins import PermissionRequiredMixin
 
 from apps.approval.models import MembershipApproval

@@ -3,9 +3,9 @@
 import locale
 import logging
 
-from django.utils import timezone
 from django.conf import settings
 from django.core.mail import EmailMessage
+from django.utils import timezone
 
 from apps.feedback.models import FeedbackRelation
 from apps.marks.models import Mark, MarkUser

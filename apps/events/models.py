@@ -1,24 +1,22 @@
 # -*- coding: utf-8 -*-
 
-from datetime import datetime, timedelta
 from collections import OrderedDict
+from datetime import datetime, timedelta
+from functools import reduce
 
 from django.conf import settings
 from django.contrib.auth.models import Group
+from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.template.defaultfilters import slugify
-from unidecode import unidecode
 from django.utils import timezone
 from django.utils.translation import ugettext as _
-from django.contrib.contenttypes.models import ContentType
+from filebrowser.fields import FileBrowseField
+from unidecode import unidecode
 
 from apps.authentication.models import FIELD_OF_STUDY_CHOICES
 from apps.companyprofile.models import Company
 from apps.marks.models import get_expiration_date
-
-from filebrowser.fields import FileBrowseField
-from functools import reduce
-
 
 User = settings.AUTH_USER_MODEL
 

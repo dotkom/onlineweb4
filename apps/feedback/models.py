@@ -12,14 +12,13 @@ very many database lookups.
 import uuid
 
 from django.conf import settings
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.models import ContentType
+from django.core.urlresolvers import reverse
 from django.db import models
 from django.utils.translation import ugettext as _
-from django.contrib.contenttypes.models import ContentType
-from django.contrib.contenttypes.fields import GenericForeignKey
-from django.core.urlresolvers import reverse
 
 from apps.authentication.models import FIELD_OF_STUDY_CHOICES
-
 
 User = settings.AUTH_USER_MODEL
 

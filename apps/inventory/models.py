@@ -3,8 +3,8 @@
 from django.conf import settings
 from django.core.mail import EmailMessage
 from django.db import models
-from django.utils.translation import ugettext as _
 from django.utils import timezone
+from django.utils.translation import ugettext as _
 
 from apps.gallery.models import ResponsiveImage
 

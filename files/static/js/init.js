@@ -100,16 +100,20 @@ $(function() {
 
     /* nav bar toggle
     ---------------------------------------------------------------------------*/
-    var mainnav_button = document.getElementById('mainnav-button')
-    mainnav_button.addEventListener('click', function (e) {
-        if (/(^|\s)rotate-button(\s|$)/.test(document.querySelectorAll('.mn-svg')[0].getAttribute('class'))) {
+    $('#mainnav-button').click(function (e) {
+        if ($('.mn-nav').first().hasClass('mn-nav-open')) {
             removeAnimation()
-            $('.mn-nav').fadeOut(300)
-        }
-        else {
+            $('.mn-nav').removeClass('mn-nav-open')
+                        .addClass('animation-in-process')
+        } else {
             addAnimation()
-            $('.mn-nav').fadeIn(300)
+            $('.mn-nav').addClass('mn-nav-open')
+                        .addClass('animation-in-process')
         }
+        
+        setTimeout(function () {
+            $('.mn-nav').removeClass('animation-in-process')
+        }, 300)
     })
 
     function addAnimation() {

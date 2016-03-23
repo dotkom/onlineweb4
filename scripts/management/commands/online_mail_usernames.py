@@ -1,28 +1,24 @@
 # -*- coding: utf-8 -*-
 
-import pytz
-import datetime
 import re
 
 from django.contrib.auth.models import Group
-from django.core.management.base import NoArgsCommand, CommandError
+from django.core.management.base import NoArgsCommand
 from django.db.models import Q
-from django.utils import timezone
-
 from unidecode import unidecode
 
 from apps.authentication.models import OnlineUser
 
 
 class Command(NoArgsCommand):
-
     def handle_noargs(self, *args, **kwargs):
         # We only sync in members of the Komiteer group
-        group = Group.objects.get(name = "Komiteer")
+        group = Group.objects.get(name="Komiteer")
         # Fetch all users that do not currently have an alias
         nomail = group.user_set.filter(Q(online_mail__isnull=True) | Q(online_mail__exact='')).order_by('id')
         # Find a list of all taken email aliases in the system already
-        taken_mails = [u.online_mail for u in OnlineUser.objects.filter(online_mail__isnull=False).exclude(online_mail__exact='')]
+        online_mails = OnlineUser.objects.filter(online_mail__isnull=False).exclude(online_mail__exact='')
+        taken_mails = [u.online_mail for u in online_mails]
 
         for user in nomail:
             # Decode the full name of the user to plain ascii

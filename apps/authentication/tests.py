@@ -1,12 +1,11 @@
 import logging
-
 from datetime import timedelta
 
-from django_dynamic_fixture import G
 from django.test import TestCase
 from django.utils import timezone
+from django_dynamic_fixture import G
 
-from apps.authentication.models import RegisterToken, OnlineUser, Email
+from apps.authentication.models import Email, OnlineUser, RegisterToken
 
 
 class AuthenticationTest(TestCase):

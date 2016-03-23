@@ -1,34 +1,32 @@
 # -*- coding: utf-8 -*-
 
-from django.utils import timezone
-
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.contenttypes.models import ContentType
 from django.core.signing import Signer
 from django.core.urlresolvers import reverse
 from django.db.models import Q
 from django.http import JsonResponse
-from django.shortcuts import render, get_object_or_404, redirect
+from django.shortcuts import get_object_or_404, redirect, render
+from django.utils import timezone
 from django.utils.translation import ugettext as _
-from django.contrib.contenttypes.models import ContentType
-
+# API v1
+from rest_framework import mixins, viewsets
+from rest_framework.permissions import AllowAny
 from watson import search as watson
 
+from apps.events.filters import EventDateFilter
 from apps.events.forms import CaptchaForm
-from apps.events.models import Event, AttendanceEvent, Attendee, CompanyEvent
+from apps.events.models import AttendanceEvent, Attendee, CompanyEvent, Event
 from apps.events.pdf_generator import EventPDF
-from apps.events.utils import \
-    get_group_restricted_events, handle_attend_event_payment, handle_attendance_event_detail, handle_event_ajax, \
-    handle_event_payment, handle_mail_participants
-from apps.payment.models import Payment, PaymentRelation, PaymentDelay
+from apps.events.serializers import (AttendanceEventSerializer, CompanyEventSerializer,
+                                     EventSerializer)
+from apps.events.utils import (get_group_restricted_events, handle_attend_event_payment,
+                               handle_attendance_event_detail, handle_event_ajax,
+                               handle_event_payment, handle_mail_participants)
+from apps.payment.models import Payment, PaymentDelay, PaymentRelation
 
 from .utils import EventCalendar
-
-# API v1
-from rest_framework import viewsets, mixins
-from rest_framework.permissions import AllowAny
-from apps.events.serializers import EventSerializer, AttendanceEventSerializer, CompanyEventSerializer
-from apps.events.filters import EventDateFilter
 
 
 def index(request):

@@ -3,7 +3,7 @@
 from django import forms
 
 from apps.dashboard.widgets import DatetimePickerInput, multiple_widget_generator
-from apps.events.models import Event, AttendanceEvent, Reservation
+from apps.events.models import AttendanceEvent, Event, Reservation
 
 
 class ChangeEventForm(forms.ModelForm):

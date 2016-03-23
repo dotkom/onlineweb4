@@ -3,17 +3,17 @@
 import datetime
 import logging
 
-from django_dynamic_fixture import G
 from django.contrib.auth.models import Group
 from django.test import TestCase
 from django.utils import timezone
+from django_dynamic_fixture import G
 
-from apps.authentication.models import OnlineUser as User, AllowedUsername
-from apps.events.models import (Event, AttendanceEvent, Attendee,
-                                RuleBundle, FieldOfStudyRule, GradeRule, UserGroupRule,
-                                Reservation, Reservee, GroupRestriction)
-from apps.marks.models import Mark, MarkUser, DURATION
+from apps.authentication.models import OnlineUser as User
+from apps.authentication.models import AllowedUsername
+from apps.events.models import (AttendanceEvent, Attendee, Event, FieldOfStudyRule, GradeRule,
+                                GroupRestriction, Reservation, Reservee, RuleBundle, UserGroupRule)
 from apps.events.mommy import SetEventMarks
+from apps.marks.models import DURATION, Mark, MarkUser
 
 
 class EventTest(TestCase):

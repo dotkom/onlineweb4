@@ -8,12 +8,10 @@ from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.utils import timezone
 from django.utils.translation import ugettext as _
+from rest_framework.exceptions import NotAcceptable
 
 from apps.events.models import AttendanceEvent, Attendee
 from apps.marks.models import Suspension
-
-from rest_framework.exceptions import NotAcceptable
-
 
 User = settings.AUTH_USER_MODEL
 

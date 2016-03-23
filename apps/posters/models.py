@@ -1,13 +1,12 @@
 # -*- coding: utf-8 -*-
 
 from django.conf import settings
-from django.db import models
+from django.contrib.auth.models import Group
 from django.core.urlresolvers import reverse
+from django.db import models
 from django.utils.translation import ugettext as _
 
-from django.contrib.auth.models import Group
 from apps.events.models import Event
-
 
 User = settings.AUTH_USER_MODEL
 

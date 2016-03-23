@@ -6,7 +6,6 @@ from django.utils.translation import ugettext as _
 
 from apps.authentication.models import FIELD_OF_STUDY_CHOICES
 
-
 User = settings.AUTH_USER_MODEL
 
 

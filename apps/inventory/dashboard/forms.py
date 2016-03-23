@@ -3,7 +3,7 @@ from django import forms
 
 from apps.dashboard.widgets import widget_generator
 from apps.gallery.widgets import SingleImageInput
-from apps.inventory.models import Item, Batch
+from apps.inventory.models import Batch, Item
 
 
 class ItemForm(forms.ModelForm):

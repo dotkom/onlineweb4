@@ -4,9 +4,10 @@
 
 from django.conf import settings
 from django.forms import HiddenInput, TextInput
-from django.forms.utils import flatatt, format_html, force_text
+from django.forms.utils import flatatt, force_text, format_html
 
 from apps.gallery.models import ResponsiveImage
+
 
 WIDGET_STRING = """<br /><input{} />\r\n
 <div id="single-image-field-thumbnail">{}</div>
