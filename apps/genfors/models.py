@@ -60,7 +60,7 @@ class Meeting(models.Model):
     # Pincode generator for a particular meeting
     def generate_pin_code(self):
         h = sha256()
-        h.update(str(random.randint(0, 100000)))
+        h.update(str(random.randint(0, 100000)).encode('utf-8'))
         h = h.hexdigest()
         self.pin = h[:6]
         self.save()
