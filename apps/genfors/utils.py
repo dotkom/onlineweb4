@@ -247,8 +247,6 @@ def count_votes(context, aq, res):
             context['active_question']['multiple_choice'][a.description] = [0, 0]
         context['active_question']['multiple_choice']['Blankt'] = [0, 0]
         for k, v in res['data'].items():
-            print (k)
-            print (v)
             if k == 'Blankt':
                 context['active_question']['multiple_choice'][k] = [v, v * 100 // total_votes]
             elif votes_for_alternative > 0:
