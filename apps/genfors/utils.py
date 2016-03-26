@@ -225,6 +225,7 @@ def generate_genfors_context(aq, context, anon_voter, reg_voter):
 
     return context
 
+
 def count_votes(context, aq, res):
     total_votes = context['active_question']['total_votes']
     votes_for_alternative = context['active_question']['total_votes'] - res['data']['Blankt']
@@ -237,7 +238,7 @@ def count_votes(context, aq, res):
         else:
             context['active_question']['yes_percent'] = res['data']['Ja'] * 100 // votes_for_alternative
             context['active_question']['no_percent'] = res['data']['Nei'] * 100 // votes_for_alternative
-            
+
         context['active_question']['blank_percent'] = res['data']['Blankt'] * 100 // total_votes
 
     elif aq.question_type is MULTIPLE_CHOICE and total_votes != 0:
