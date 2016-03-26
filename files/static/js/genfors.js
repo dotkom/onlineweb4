@@ -187,15 +187,13 @@ Genfors = (function () {
         },
 
         get_percent: function (votes, total) {
-            return Math.floor(votes * 100 / total);
+            return Math.floor(votes * 100 / total) || 0;
         },
 
         blank_at_top: function (alternatives) {
             for (var i = 0; i < alternatives.length; i++) {
                 if (alternatives[i] == 'Blankt') {
-                    var blank = alternatives[i];
-                    alternatives.splice(i, 1);
-                    alternatives.unshift(blank);
+                    alternatives.unshift(alternatives.splice(i, 1));
                     return alternatives;
                 }
             }
