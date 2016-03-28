@@ -4,9 +4,12 @@ import datetime
 import logging
 
 from django.contrib.auth.models import Group
+from django.core.urlresolvers import reverse
 from django.test import TestCase
 from django.utils import timezone
 from django_dynamic_fixture import G
+from rest_framework import status
+from rest_framework.test import APITestCase
 
 from apps.authentication.models import OnlineUser as User
 from apps.authentication.models import AllowedUsername
@@ -14,6 +17,15 @@ from apps.events.models import (AttendanceEvent, Attendee, Event, FieldOfStudyRu
                                 GroupRestriction, Reservation, Reservee, RuleBundle, UserGroupRule)
 from apps.events.mommy import SetEventMarks
 from apps.marks.models import DURATION, Mark, MarkUser
+
+
+def create_generic_event():
+        future = timezone.now() + datetime.timedelta(days=1)
+        event_start = future
+        event_end = future + datetime.timedelta(days=1)
+        event = G(Event, event_start=event_start, event_end=event_end)
+
+        return event
 
 
 class EventTest(TestCase):
@@ -369,3 +381,81 @@ class EventTest(TestCase):
                         "Any user should be able to see unrestricted events")
         self.assertTrue(unrestricted_event.can_display(denied_user),
                         "Any user should be able to see unrestricted events")
+
+
+class EventsURLTestCase(TestCase):
+    def test_events_index_empty(self):
+        url = reverse('events_index')
+
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_events_index_exists(self):
+        create_generic_event()
+
+        url = reverse('events_index')
+
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_events_detail(self):
+        event = create_generic_event()
+
+        url = reverse('events_details', args=(event.id, event.slug))
+
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_search_events(self):
+        query = ''
+
+        _url_pre_get_param = reverse('search_events')
+        url = _url_pre_get_param + '?query=%s' % query
+
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_events_ics_all(self):
+        url = reverse('events_ics')
+
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_events_ics_specific_event(self):
+        event = create_generic_event()
+
+        url = reverse('event_ics', args=(event.id,))
+
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+
+class EventsAPIURLTestCase(APITestCase):
+    def test_events_list_empty(self):
+        url = reverse('events-list')
+
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_events_list_exists(self):
+        create_generic_event()
+        url = reverse('events-list')
+
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_events_detail(self):
+        event = create_generic_event()
+        url = reverse('events-detail', args=(event.id,))
+
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
