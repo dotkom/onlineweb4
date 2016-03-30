@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-import logging
 import json
+import logging
 import re
 import uuid
 from smtplib import SMTPException
