@@ -2,10 +2,6 @@
 import json
 from collections import defaultdict, namedtuple
 
-from apps.feedback.forms import create_forms
-from apps.feedback.models import (RATING_CHOICES, FeedbackRelation, FieldOfStudyAnswer,
-                                  RegisterToken, TextAnswer, TextQuestion)
-from apps.feedback.utils import can_delete, get_group_restricted_feedback_relations, has_permission
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.contenttypes.models import ContentType
@@ -13,6 +9,11 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.translation import ugettext_lazy as _
+
+from apps.feedback.forms import create_forms
+from apps.feedback.models import (RATING_CHOICES, FeedbackRelation, FieldOfStudyAnswer,
+                                  RegisterToken, TextAnswer, TextQuestion)
+from apps.feedback.utils import can_delete, get_group_restricted_feedback_relations, has_permission
 
 
 @login_required

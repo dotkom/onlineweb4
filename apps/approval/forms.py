@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 
-from apps.authentication.models import FIELD_OF_STUDY_CHOICES
 from django import forms
 from django.utils import timezone
 from django.utils.translation import ugettext as _
+
+from apps.authentication.models import FIELD_OF_STUDY_CHOICES
 
 SEMESTER_CHOICES = [
     ("h", _("Høst")),

@@ -3,13 +3,14 @@
 import locale
 import logging
 
+from django.conf import settings
+from django.core.mail import EmailMessage
+from django.utils import timezone
+
 from apps.feedback.models import FeedbackRelation
 from apps.marks.models import Mark, MarkUser
 from apps.mommy import schedule
 from apps.mommy.registry import Task
-from django.conf import settings
-from django.core.mail import EmailMessage
-from django.utils import timezone
 
 
 class FeedbackMail(Task):

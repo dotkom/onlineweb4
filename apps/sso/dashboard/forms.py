@@ -2,11 +2,12 @@
 #
 # Created by 'myth' on 6/27/15
 
-from apps.sso.models import Client
 from django import forms
 from django.core.exceptions import ValidationError
 from oauth2_provider.settings import oauth2_settings
 from oauth2_provider.validators import validate_uris
+
+from apps.sso.models import Client
 
 
 class NewClientForm(forms.ModelForm):

@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 import re
 
-from apps.authentication.models import OnlineUser, Position
-from apps.profiles.models import Privacy
 from django import forms
 from django.utils.translation import ugettext as _
+
+from apps.authentication.models import OnlineUser, Position
+from apps.profiles.models import Privacy
 
 
 class ProfileForm(forms.ModelForm):

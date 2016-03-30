@@ -3,10 +3,6 @@
 import logging
 from copy import copy
 
-from apps.api.rfid.auth import RfidAuthentication
-from apps.api.rfid.user import UserResource
-from apps.companyprofile.models import Company
-from apps.events.models import AttendanceEvent, Attendee, CompanyEvent, Event
 from django.core.exceptions import PermissionDenied
 from django.template.defaultfilters import slugify
 from filebrowser.base import FileObject
@@ -15,6 +11,11 @@ from tastypie import fields
 from tastypie.authorization import Authorization
 from tastypie.resources import ALL_WITH_RELATIONS, ModelResource
 from unidecode import unidecode
+
+from apps.api.rfid.auth import RfidAuthentication
+from apps.api.rfid.user import UserResource
+from apps.companyprofile.models import Company
+from apps.events.models import AttendanceEvent, Attendee, CompanyEvent, Event
 
 
 class AttendeeResource(ModelResource):

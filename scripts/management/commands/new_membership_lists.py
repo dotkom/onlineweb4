@@ -3,10 +3,11 @@
 import datetime
 
 import pytz
-from apps.authentication.models import AllowedUsername
 from django.core.management.base import BaseCommand
 from django.db.utils import IntegrityError
 from django.utils import timezone
+
+from apps.authentication.models import AllowedUsername
 
 
 class Command(BaseCommand):

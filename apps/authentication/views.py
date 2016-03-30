@@ -4,10 +4,6 @@ import re
 import uuid
 from smtplib import SMTPException
 
-from apps.authentication.forms import ChangePasswordForm, LoginForm, RecoveryForm, RegisterForm
-from apps.authentication.models import OnlineUser as User
-from apps.authentication.models import Email, RegisterToken
-from apps.authentication.serializers import UserSerializer
 from django.conf import settings
 from django.contrib import auth, messages
 from django.core.mail import send_mail
@@ -18,6 +14,11 @@ from django.views.decorators.debug import sensitive_post_parameters
 # API v1
 from rest_framework import mixins, viewsets
 from rest_framework.permissions import AllowAny
+
+from apps.authentication.forms import ChangePasswordForm, LoginForm, RecoveryForm, RegisterForm
+from apps.authentication.models import OnlineUser as User
+from apps.authentication.models import Email, RegisterToken
+from apps.authentication.serializers import UserSerializer
 
 
 @sensitive_post_parameters()

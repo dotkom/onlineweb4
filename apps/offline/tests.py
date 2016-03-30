@@ -2,9 +2,10 @@ import logging
 from os import remove
 from subprocess import CalledProcessError, check_call
 
-from apps.offline.models import IMAGE_FOLDER, Issue
 from django.test import TestCase
 from django_dynamic_fixture import G
+
+from apps.offline.models import IMAGE_FOLDER, Issue
 
 
 class OfflineTest(TestCase):

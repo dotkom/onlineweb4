@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
-from apps.offline.models import Issue
-from apps.offline.tasks import create_thumbnail
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+
+from apps.offline.models import Issue
+from apps.offline.tasks import create_thumbnail
 
 
 @receiver(post_save, sender=Issue)

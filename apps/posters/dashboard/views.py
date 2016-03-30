@@ -2,13 +2,6 @@
 
 import json
 
-from apps.authentication.models import OnlineUser as User
-from apps.companyprofile.models import Company
-from apps.dashboard.tools import get_base_context
-from apps.posters.forms import (AddBongForm, AddOtherForm, AddPosterForm, EditOtherForm,
-                                EditPosterForm)
-from apps.posters.models import Poster
-from apps.posters.permissions import has_edit_perms, has_view_all_perms, has_view_perms
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -21,6 +14,14 @@ from django.views.decorators.csrf import ensure_csrf_cookie
 from guardian.decorators import permission_required
 from guardian.models import GroupObjectPermission, UserObjectPermission
 from pytz import timezone as tz
+
+from apps.authentication.models import OnlineUser as User
+from apps.companyprofile.models import Company
+from apps.dashboard.tools import get_base_context
+from apps.posters.forms import (AddBongForm, AddOtherForm, AddPosterForm, EditOtherForm,
+                                EditPosterForm)
+from apps.posters.models import Poster
+from apps.posters.permissions import has_edit_perms, has_view_all_perms, has_view_perms
 
 
 @login_required

@@ -4,15 +4,16 @@
 
 import logging
 
-from apps.dashboard.tools import get_base_context
-from apps.sso.dashboard.forms import NewClientForm
-from apps.sso.models import Client
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import reverse
 from django.shortcuts import get_object_or_404, redirect, render
 from oauth2_provider.settings import oauth2_settings
+
+from apps.dashboard.tools import get_base_context
+from apps.sso.dashboard.forms import NewClientForm
+from apps.sso.models import Client
 
 
 @login_required()

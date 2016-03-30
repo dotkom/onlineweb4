@@ -2,12 +2,6 @@
 
 from datetime import datetime, time, timedelta
 
-from apps.dashboard.tools import get_base_context, has_access
-from apps.events.dashboard.forms import (ChangeAttendanceEventForm, ChangeEventForm,
-                                         ChangeReservationForm)
-from apps.events.dashboard.utils import event_ajax_handler
-from apps.events.models import AttendanceEvent, Attendee, Event, Reservation, Reservee
-from apps.events.utils import get_group_restricted_events, get_types_allowed
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
@@ -17,6 +11,13 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from django.utils.translation import ugettext as _
 from guardian.decorators import permission_required
+
+from apps.dashboard.tools import get_base_context, has_access
+from apps.events.dashboard.forms import (ChangeAttendanceEventForm, ChangeEventForm,
+                                         ChangeReservationForm)
+from apps.events.dashboard.utils import event_ajax_handler
+from apps.events.models import AttendanceEvent, Attendee, Event, Reservation, Reservee
+from apps.events.utils import get_group_restricted_events, get_types_allowed
 
 
 @login_required

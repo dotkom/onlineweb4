@@ -1,5 +1,6 @@
-from apps.inventory.models import Batch, Item
 from django.contrib import admin
+
+from apps.inventory.models import Batch, Item
 
 
 class BatchInline(admin.TabularInline):

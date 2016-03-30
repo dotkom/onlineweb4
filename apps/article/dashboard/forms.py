@@ -1,9 +1,10 @@
 # -*- encoding: utf-8 -*-
+from django import forms
+from taggit.forms import TagWidget
+
 from apps.article.models import Article
 from apps.dashboard.widgets import DatetimePickerInput, multiple_widget_generator
 from apps.gallery.widgets import SingleImageInput
-from django import forms
-from taggit.forms import TagWidget
 
 
 class ArticleForm(forms.ModelForm):

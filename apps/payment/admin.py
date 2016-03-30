@@ -1,10 +1,11 @@
 # -*- encoding: utf-8 -*-
 
-from apps.payment.models import (Payment, PaymentDelay, PaymentPrice, PaymentRelation,
-                                 PaymentTransaction)
 from django.contrib import admin
 from django.contrib.contenttypes.admin import GenericStackedInline
 from reversion.admin import VersionAdmin
+
+from apps.payment.models import (Payment, PaymentDelay, PaymentPrice, PaymentRelation,
+                                 PaymentTransaction)
 
 
 class PaymentInline(GenericStackedInline):

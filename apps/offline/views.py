@@ -1,11 +1,12 @@
 # -*- encoding: utf-8 -*-
 
-from apps.offline.models import Issue
-from apps.offline.serializers import OfflineIssueSerializer
 from django.shortcuts import render
 # API v1
 from rest_framework import mixins, viewsets
 from rest_framework.permissions import AllowAny
+
+from apps.offline.models import Issue
+from apps.offline.serializers import OfflineIssueSerializer
 
 
 def main(request):
