@@ -155,7 +155,7 @@ Generalforsamling - Online
                                                 </div>
                                             {% endif %}
                                             
-                                        {% endfor %}
+                                        {% endfor %}|
                                         </div>
                                     {% endif %}
                                 {% endif %}<!-- End if question_type -->
@@ -181,36 +181,38 @@ Generalforsamling - Online
                                 <p>Her vises avsluttede saker og deres resultat. I visse saker vil kun vinneren vises, eventuelt ingenting dersom det ikke var flertall.</p>
                             </div>
                             <table class="table table-striped table-hover table-responsive">
-                                <tr>
+                                <tr data-toggle="collapse" data-target="#collapse1">
                                     <th>Sak</th>
                                     <th>Flertallskrav</th>
                                     <th>Resultat</th>
                                 </tr>
-                                {% for question in meeting.get_locked_questions %}
-                                    <tr>
-                                        <td>{{ question.description }}</td>
-                                        <td>{% if question.majority_type == 0 %}Alminnelig (1/2){% else %}Kvalitativt (2/3){% endif %}</td>
-                                        <td>
-                                        {% with question.get_results as results %}
-                                        {% if results.valid %}
-                                            Resultat: <strong>{{ question.get_leader }}</strong><br />
-                                            <span class="label label-success">Flertall</span><br /><br />
-                                        {% else %}
-                                            <span class="label label-danger">Ikke flertall</span><br /><br />
-                                        {% endif %}
-                                        {% for alt, votes in results.data.items %}
-                                            {% if not question.only_show_winner %}
-                                                <span><strong>{{ alt }}</strong>: {{ votes }} stemme{{ votes|pluralize:"r"}}.</span><br />
+                                <table class="collapse collapseable" id="collapse1">
+                                    {% for question in meeting.get_locked_questions %}
+                                        <tr>
+                                            <td>{{ question.description }}</td>
+                                            <td>{% if question.majority_type == 0 %}Alminnelig (1/2){% else %}Kvalitativt (2/3){% endif %}</td>
+                                            <td>
+                                            {% with question.get_results as results %}
+                                            {% if results.valid %}
+                                                Resultat: <strong>{{ question.get_leader }}</strong><br />
+                                                <span class="label label-success">Flertall</span><br /><br />
+                                            {% else %}
+                                                <span class="label label-danger">Ikke flertall</span><br /><br />
                                             {% endif %}
-                                        {% endfor %}
-                                        {% endwith %}
-                                        </td>
-                                    </tr>
-                                {% empty %}
-                                    <tr>
-                                        <td colspan="3">Ingen avsluttede saker.</td>
-                                    </tr>
-                                {% endfor %}
+                                            {% for alt, votes in results.data.items %}
+                                                {% if not question.only_show_winner %}
+                                                    <span><strong>{{ alt }}</strong>: {{ votes }} stemme{{ votes|pluralize:"r"}}.</span><br />
+                                                {% endif %}
+                                            {% endfor %}
+                                            {% endwith %}
+                                            </td>
+                                        </tr>
+                                    {% empty %}
+                                        <tr>
+                                            <td colspan="3">Ingen avsluttede saker.</td>
+                                        </tr>
+                                    {% endfor %}
+                                </table>
                             </table>
                         </div>
                     </div>
