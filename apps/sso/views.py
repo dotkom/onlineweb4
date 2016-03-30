@@ -10,7 +10,6 @@ from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views.decorators.debug import sensitive_post_parameters
 from django.views.generic import FormView, View
-from oauth2_provider.backends import OAuth2Backend
 from oauth2_provider.exceptions import OAuthToolkitError
 from oauth2_provider.forms import AllowForm
 from oauth2_provider.http import HttpResponseUriRedirect
@@ -85,7 +84,6 @@ class AuthorizationView(BaseAuthorizationView, FormView):
 
     server_class = Server
     validator_class = OAuth2Validator
-    oauthlib_backend_class = OAuth2Backend
 
     skip_authorization_completely = False
 
@@ -180,7 +178,6 @@ class TokenView(CsrfExemptMixin, OAuthLibMixin, View):
     """
     server_class = Server
     validator_class = OAuth2Validator
-    oauthlib_backend_class = OAuth2Backend
 
     @method_decorator(sensitive_post_parameters('password'))
     def post(self, request, *args, **kwargs):
@@ -198,7 +195,6 @@ class RevokeTokenView(CsrfExemptMixin, OAuthLibMixin, View):
     """
     server_class = Server
     validator_class = OAuth2Validator
-    oauthlib_backend_class = OAuth2Backend
 
     def post(self, request, *args, **kwargs):
         url, headers, body, status = self.create_revocation_response(request)
