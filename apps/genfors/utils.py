@@ -216,6 +216,7 @@ def generate_genfors_context(aq, context, anon_voter, reg_voter):
     context['active_question'] = {}
     context['active_question']['total_votes'] = total_votes
     context['active_question']['alternatives'] = alternatives
+    context['active_question']['count_blank_votes'] = aq.count_blank_votes
 
     context['registered_voter'] = reg_voter
     context['anonymous_voter'] = anon_voter
@@ -233,25 +234,40 @@ def count_votes(context, aq, res):
     votes_for_alternative = context['active_question']['total_votes'] - res['data']['Blankt']
     alternatives = context['active_question']['alternatives']
 
-    if aq.question_type is BOOLEAN_VOTE:
-        if votes_for_alternative == 0:
-            context['active_question']['yes_percent'] = res['data']['Ja'] * 100 // 1
-            context['active_question']['no_percent'] = res['data']['Nei'] * 100 // 1
-        else:
-            context['active_question']['yes_percent'] = res['data']['Ja'] * 100 // votes_for_alternative
-            context['active_question']['no_percent'] = res['data']['Nei'] * 100 // votes_for_alternative
+    if aq.count_blank_votes:
+        if aq.question_type is BOOLEAN_VOTE:
+            context['active_question']['yes_percent'] = res['data']['Ja'] * 100 // total_votes
+            context['active_question']['no_percent'] = res['data']['Nei'] * 100 // total_votes
+            context['active_question']['blank_percent'] = res['data']['Blankt'] * 100 // total_votes
 
-        context['active_question']['blank_percent'] = res['data']['Blankt'] * 100 // total_votes
-
-    elif aq.question_type is MULTIPLE_CHOICE and total_votes != 0:
-        context['active_question']['multiple_choice'] = {}
-        for a in alternatives:
-            context['active_question']['multiple_choice'][a.description] = [0, 0]
-        context['active_question']['multiple_choice']['Blankt'] = [0, 0]
-        for k, v in res['data'].items():
-            if k == 'Blankt':
+        elif aq.question_type is MULTIPLE_CHOICE and total_votes != 0:
+            context['active_question']['multiple_choice'] = {}
+            for a in alternatives:
+                context['active_question']['multiple_choice'][a.description] = [0, 0]
+            context['active_question']['multiple_choice']['Blankt'] = [0, 0]
+            for k, v in res['data'].items():
                 context['active_question']['multiple_choice'][k] = [v, v * 100 // total_votes]
-            elif votes_for_alternative > 0:
-                context['active_question']['multiple_choice'][k] = [v, v * 100 // votes_for_alternative]
+
+    else:
+        if aq.question_type is BOOLEAN_VOTE:
+            if votes_for_alternative == 0:
+                context['active_question']['yes_percent'] = res['data']['Ja'] * 100 // 1
+                context['active_question']['no_percent'] = res['data']['Nei'] * 100 // 1
             else:
-                context['active_question']['multiple_choice'][k] = [v, 0]
+                context['active_question']['yes_percent'] = res['data']['Ja'] * 100 // votes_for_alternative
+                context['active_question']['no_percent'] = res['data']['Nei'] * 100 // votes_for_alternative
+
+            context['active_question']['blank_percent'] = res['data']['Blankt'] * 100 // total_votes
+
+        elif aq.question_type is MULTIPLE_CHOICE and total_votes != 0:
+            context['active_question']['multiple_choice'] = {}
+            for a in alternatives:
+                context['active_question']['multiple_choice'][a.description] = [0, 0]
+            context['active_question']['multiple_choice']['Blankt'] = [0, 0]
+            for k, v in res['data'].items():
+                if k == 'Blankt':
+                    context['active_question']['multiple_choice'][k] = [v, v * 100 // total_votes]
+                elif votes_for_alternative > 0:
+                    context['active_question']['multiple_choice'][k] = [v, v * 100 // votes_for_alternative]
+                else:
+                    context['active_question']['multiple_choice'][k] = [v, 0]
