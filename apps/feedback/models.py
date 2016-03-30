@@ -9,6 +9,7 @@ An Answer is related to an Object and a Question.
 This implementation is not very database friendly however, as it does
 very many database lookups.
 """
+import logging
 import uuid
 
 from django.conf import settings
@@ -162,12 +163,17 @@ class FeedbackRelation(models.Model):
             return dict()
 
     def save(self, *args, **kwargs):
+        log = logging.getLogger(__name__)
         new_fbr = not self.pk
         super(FeedbackRelation, self).save(*args, **kwargs)
         if new_fbr:
             token = uuid.uuid4().hex
-            rt = RegisterToken(fbr=self, token=token)
-            rt.save()
+            try:
+                rt = RegisterToken(fbr=self, token=token)
+                rt.save()
+                log.info('Successfully registered token for fbr %s with token %s' % (self, token))
+            except:
+                log.error('Failed to register token for fbr %s with token %s' % (self, token))
 
 
 class Feedback(models.Model):

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import json
+import logging
 import re
 import uuid
 from smtplib import SMTPException
@@ -381,11 +382,15 @@ def verify_email(request):
 
 
 def _send_verification_mail(request, email):
-
+    log = logging.getLogger(__name__)
     # Create the registration token
     token = uuid.uuid4().hex
-    rt = RegisterToken(user=request.user, email=email, token=token)
-    rt.save()
+    try:
+        rt = RegisterToken(user=request.user, email=email.email, token=token)
+        rt.save()
+        log.info('Successfully registered token for %s' % request.user)
+    except:
+        log.error('Failed to register token for %s' % request.user)
 
     email_message = _("""
 En ny epost har blitt registrert på din profil på online.ntnu.no.
