@@ -10,6 +10,7 @@ This implementation is not very database friendly however, as it does
 very many database lookups.
 """
 import uuid
+import logging
 
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey
@@ -167,13 +168,12 @@ class FeedbackRelation(models.Model):
         super(FeedbackRelation, self).save(*args, **kwargs)
         if new_fbr:
             token = uuid.uuid4().hex
-            try: 
+            try:
                 rt = RegisterToken(fbr=self, token=token)
                 rt.save()
-                log.info('Successfully registered token for %s' % request.user)
+                log.info('Successfully registered token for %s' % rt.user)
             except:
-                log.error('Failed to register token for %s' % request.user)
-
+                log.error('Failed to register token for %s' % rt.user)
 
 
 class Feedback(models.Model):

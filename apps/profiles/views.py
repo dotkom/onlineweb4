@@ -2,6 +2,7 @@
 import json
 import re
 import uuid
+import logging
 from smtplib import SMTPException
 
 from django.conf import settings
@@ -384,8 +385,8 @@ def _send_verification_mail(request, email):
     log = logging.getLogger(__name__)
     # Create the registration token
     token = uuid.uuid4().hex
-    try: 
-        rt = RegisterToken(user=user, email=email.email, token=token)
+    try:
+        rt = RegisterToken(user=request.user, email=email.email, token=token)
         rt.save()
         log.info('Successfully registered token for %s' % request.user)
     except:

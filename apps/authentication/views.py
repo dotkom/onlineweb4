@@ -2,6 +2,7 @@
 
 import re
 import uuid
+import logging
 from smtplib import SMTPException
 
 from django.conf import settings
@@ -85,7 +86,7 @@ def register(request):
 
                 # Create the registration token
                 token = uuid.uuid4().hex
-                try: 
+                try:
                     rt = RegisterToken(user=user, email=email.email, token=token)
                     rt.save()
                     log.info('Successfully registered token for %s' % request.user)
@@ -187,13 +188,12 @@ def recover(request):
 
                 # Create the registration token
                 token = uuid.uuid4().hex
-                try: 
+                try:
                     rt = RegisterToken(user=email.user, email=email.email, token=token)
                     rt.save()
                     log.info('Successfully registered token for %s' % request.user)
                 except:
                     log.error('Failed to register token for %s' % request.user)
-                
                 email_message = _("""
 Vi har mottat forespørsel om å gjenopprette passordet for kontoen bundet til %s.
 Dersom du ikke har bedt om denne handlingen ber vi deg se bort fra denne eposten.
@@ -227,7 +227,7 @@ def set_password(request, token=None):
     if request.user.is_authenticated():
         return HttpResponseRedirect('/')
     else:
-        try: 
+        try:
             rt = RegisterToken.objects.filter(token=token)[0]
             if rt.is_valid:
                 if request.method == 'POST':
@@ -259,7 +259,7 @@ def set_password(request, token=None):
                     _('Lenken er ugyldig. Vennligst bruk gjenoppretning av passord for å få tilsendt en ny lenke.')
                 )
                 return HttpResponseRedirect('/')
-        except: 
+        except:
             log.debug('User %s failed to recover password with token %s' % (request.user, rt))
             messages.error(
                 request, 'Noe gikk galt med gjenoppretning av passord. Vennligst prøv igjen.')

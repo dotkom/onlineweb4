@@ -14,7 +14,7 @@ TEST_RUNNER = "django_nose.NoseTestSuiteRunner"
 
 NOSE_ARGS = ['--with-coverage', '--cover-package=apps', '--cover-html-dir=coverage', '--cover-xml', '--cover-html']
 
-DEBUG = True
+DEBUG = False
 
 ADMINS = (
     ('dotKom', 'dotkom@online.ntnu.no'),
@@ -143,16 +143,6 @@ AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend', # this is default
     'guardian.backends.ObjectPermissionBackend',
 )
-
-#Django 1.9 passwordvalidation
-AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-        'OPTIONS': {
-            'min_length': 6,
-        }
-    },
-]
 
 ROOT_URLCONF = 'onlineweb4.urls'
 
