@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
-
+import logging
 import re
 import uuid
-import logging
 from smtplib import SMTPException
 
 from django.conf import settings
