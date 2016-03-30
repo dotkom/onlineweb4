@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 
-from apps.marks.models import Mark, MarkUser, Suspension
 from django.contrib import admin
 from django.utils.translation import ugettext as _
 from reversion.admin import VersionAdmin
+
+from apps.marks.models import Mark, MarkUser, Suspension
 
 
 class MarkUserInline(admin.TabularInline):

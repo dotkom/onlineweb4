@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
-from apps.careeropportunity.models import Company
 from django.shortcuts import get_object_or_404, render
+
+from apps.careeropportunity.models import Company
 
 
 def details(request, company_id):

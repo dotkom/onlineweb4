@@ -4,9 +4,6 @@ from collections import OrderedDict
 from datetime import datetime, timedelta
 from functools import reduce
 
-from apps.authentication.models import FIELD_OF_STUDY_CHOICES
-from apps.companyprofile.models import Company
-from apps.marks.models import get_expiration_date
 from django.conf import settings
 from django.contrib.auth.models import Group
 from django.contrib.contenttypes.models import ContentType
@@ -16,6 +13,10 @@ from django.utils import timezone
 from django.utils.translation import ugettext as _
 from filebrowser.fields import FileBrowseField
 from unidecode import unidecode
+
+from apps.authentication.models import FIELD_OF_STUDY_CHOICES
+from apps.companyprofile.models import Company
+from apps.marks.models import get_expiration_date
 
 User = settings.AUTH_USER_MODEL
 

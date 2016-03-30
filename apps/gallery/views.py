@@ -3,10 +3,6 @@
 import logging
 import os
 
-from apps.gallery.forms import DocumentForm
-from apps.gallery.models import ResponsiveImage, UnhandledImage
-from apps.gallery.serializers import ResponsiveImageSerializer
-from apps.gallery.util import ResponsiveImageHandler, UploadImageHandler
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
@@ -16,6 +12,11 @@ from guardian.decorators import permission_required
 from rest_framework import mixins, viewsets
 from rest_framework.permissions import AllowAny
 from taggit.utils import parse_tags
+
+from apps.gallery.forms import DocumentForm
+from apps.gallery.models import ResponsiveImage, UnhandledImage
+from apps.gallery.serializers import ResponsiveImageSerializer
+from apps.gallery.util import ResponsiveImageHandler, UploadImageHandler
 
 
 def _create_request_dictionary():

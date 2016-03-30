@@ -1,6 +1,7 @@
-from apps.splash.models import SplashEvent, SplashYear
 from django.contrib import admin
 from reversion.admin import VersionAdmin
+
+from apps.splash.models import SplashEvent, SplashYear
 
 
 class SplashYearAdmin(VersionAdmin):

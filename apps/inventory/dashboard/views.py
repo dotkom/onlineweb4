@@ -2,10 +2,6 @@
 
 from logging import getLogger
 
-from apps.dashboard.tools import get_base_context, has_access
-from apps.inventory.dashboard.forms import BatchForm, ItemForm
-from apps.inventory.models import Batch, Item
-from apps.shop.models import Order
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.contenttypes.models import ContentType
@@ -14,6 +10,11 @@ from django.db.models import Count
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from guardian.decorators import permission_required
+
+from apps.dashboard.tools import get_base_context, has_access
+from apps.inventory.dashboard.forms import BatchForm, ItemForm
+from apps.inventory.models import Batch, Item
+from apps.shop.models import Order
 
 
 @login_required

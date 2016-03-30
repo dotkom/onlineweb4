@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 
+from django.conf.urls import include, url
+
 from apps.shop import views as shop_views
 from apps.sso import views as auth_views
-from django.conf.urls import include, url
 
 urlpatterns = [
     url(r'^',       include('apps.api.v0.urls')),

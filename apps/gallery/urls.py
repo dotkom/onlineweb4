@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 
+from django.conf.urls import url
+
 from apps.api.utils import SharedAPIRootRouter
 from apps.gallery import views
-from django.conf.urls import url
 
 urlpatterns = [
     url(r'^upload/$', views.upload, name='upload'),

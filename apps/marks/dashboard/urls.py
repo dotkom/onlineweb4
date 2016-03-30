@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 
-from apps.marks.dashboard import views
 from django.conf.urls import url
+
+from apps.marks.dashboard import views
 
 urlpatterns = [
     url(r'^$', views.index, name='marks_index'),

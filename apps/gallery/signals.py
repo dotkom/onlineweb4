@@ -2,8 +2,9 @@
 import logging
 import uuid
 
-from apps.gallery.models import ResponsiveImage, UnhandledImage
 from django.db.models.signals import post_delete
+
+from apps.gallery.models import ResponsiveImage, UnhandledImage
 
 
 # If we delete an image, we don't want to keep the actual images

@@ -4,9 +4,6 @@
 
 from logging import getLogger
 
-from apps.dashboard.tools import DashboardPermissionMixin
-from apps.gallery.dashboard.forms import ResponsiveImageForm
-from apps.gallery.models import ResponsiveImage, UnhandledImage
 from django.contrib import messages
 from django.contrib.contenttypes.models import ContentType
 from django.core.urlresolvers import reverse
@@ -15,6 +12,10 @@ from django.shortcuts import redirect
 from django.views.generic import DetailView, ListView, TemplateView, UpdateView
 from taggit.models import TaggedItem
 from utils.helpers import humanize_size
+
+from apps.dashboard.tools import DashboardPermissionMixin
+from apps.gallery.dashboard.forms import ResponsiveImageForm
+from apps.gallery.models import ResponsiveImage, UnhandledImage
 
 
 class GalleryIndex(DashboardPermissionMixin, ListView):

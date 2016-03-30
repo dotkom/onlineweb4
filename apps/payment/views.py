@@ -4,8 +4,6 @@ import json
 import logging
 
 import stripe
-from apps.payment.models import Payment, PaymentPrice, PaymentRelation, PaymentTransaction
-from apps.webshop.models import OrderLine
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -13,6 +11,9 @@ from django.core.mail import EmailMessage
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext as _
+
+from apps.payment.models import Payment, PaymentPrice, PaymentRelation, PaymentTransaction
+from apps.webshop.models import OrderLine
 
 
 @login_required

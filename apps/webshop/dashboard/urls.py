@@ -1,6 +1,7 @@
 # -*- encoding: utf-8 -*-
-from apps.webshop.dashboard import views
 from django.conf.urls import url
+
+from apps.webshop.dashboard import views
 
 urlpatterns = [
     url(r'^$', views.Overview.as_view(), name='index'),

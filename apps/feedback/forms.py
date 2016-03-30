@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
-from apps.feedback.models import (RATING_CHOICES, Choice, FieldOfStudyAnswer, MultipleChoiceAnswer,
-                                  RatingAnswer, TextAnswer)
 from crispy_forms.helper import FormHelper
 from django import forms
+
+from apps.feedback.models import (RATING_CHOICES, Choice, FieldOfStudyAnswer, MultipleChoiceAnswer,
+                                  RatingAnswer, TextAnswer)
 
 
 class AnswerForm(forms.ModelForm):

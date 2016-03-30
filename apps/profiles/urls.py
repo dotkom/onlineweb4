@@ -1,7 +1,8 @@
 # -*- encoding: utf-8 -*-
 
-from apps.profiles import views
 from django.conf.urls import url
+
+from apps.profiles import views
 
 urlpatterns = [
     url(r'^$', views.index, name='profiles'),

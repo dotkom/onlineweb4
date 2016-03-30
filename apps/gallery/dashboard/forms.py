@@ -2,9 +2,10 @@
 #
 # Created by 'myth' on 10/24/15
 
-from apps.gallery.models import ResponsiveImage
 from django import forms
 from taggit.forms import TagWidget
+
+from apps.gallery.models import ResponsiveImage
 
 
 class ResponsiveImageForm(forms.ModelForm):

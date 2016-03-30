@@ -1,8 +1,9 @@
 from collections import defaultdict
 from importlib import import_module
 
-from apps.feedback.models import FIELD_OF_STUDY_CHOICES, RATING_CHOICES
 from django import template
+
+from apps.feedback.models import FIELD_OF_STUDY_CHOICES, RATING_CHOICES
 
 register = template.Library()
 

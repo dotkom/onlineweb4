@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 
-from apps.authentication.models import OnlineUser as User
-from apps.gallery.models import ResponsiveImage
 from django.core.urlresolvers import reverse
 from django.core.validators import MinValueValidator
 from django.db import models
 from django.utils import timezone
+
+from apps.authentication.models import OnlineUser as User
+from apps.gallery.models import ResponsiveImage
 
 
 class Product(models.Model):

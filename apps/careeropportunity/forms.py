@@ -1,5 +1,6 @@
-from apps.careeropportunity.models import CareerOpportunity
 from django import forms
+
+from apps.careeropportunity.models import CareerOpportunity
 
 
 class AddCareerOpportunityForm(forms.ModelForm):
