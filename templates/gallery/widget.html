@@ -1,27 +1,27 @@
 <!-- IMAGE UPLOAD TEMPLATE FRAGMENT -->
 
 {% load responsive_image_url %}
-<div id="image-widget">
-    <div id="image-upload-wrapper" style="display:block">
+<div id="gallery__image-widget">
+    <div id="gallery__image-upload-wrapper" style="display:block">
     <section id="gallery">
         <div class="row">
             <div class="col-md-12">
                 <div class="col-md-6">
-                    <a href="#upload-pane" class="menu-button" id="upload-button" data-toggle="tab">
+                    <a href="#gallery__upload-pane" class="menu-button" id="gallery__upload-button" data-toggle="tab">
                         <div class="row">
                             <i class="fa fa-upload fa-3x fa-align-center"></i>
                         </div>
-                        <div class="row caption" id="dashboard-gallery__upload-button-text">
+                        <div class="row caption" id="gallery__upload-button-text">
                             Last opp
                         </div>
                     </a>
                 </div>
                 <div class="col-md-6">
-                    <a href="#manage-pane" class="menu-button" id="edit-button" data-toggle="tab">
+                    <a href="#gallery__manage-pane" class="menu-button" id="gallery__edit-button" data-toggle="tab">
                         <div class="row">
                             <i class="fa fa-edit fa-3x fa-align-center"></i>
                         </div>
-                        <div class="row caption" id="dashboard-gallery__manage-button-text">
+                        <div class="row caption" id="gallery__manage-button-text">
                             Behandle
                         </div>
                     </a>
@@ -37,10 +37,10 @@
         <div class="row">
             <div class="col-md-12">
                 <div class="tab-content">
-                    <div class="tab-pane fade in active" id="upload-pane">
+                    <div class="tab-pane fade in active" id="gallery__upload-pane">
                         {% include "gallery/upload.html" %}
                     </div>
-                    <div class="tab-pane fade" id="manage-pane">
+                    <div class="tab-pane fade" id="gallery__manage-pane">
                         {% include "gallery/edit.html" %}
                     </div>
                 </div>

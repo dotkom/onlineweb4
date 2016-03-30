@@ -16,7 +16,13 @@ a.menu-button {
 
 #gallery {
   width: 100%;
-  min-height: 600px;
+}
+
+.dropzone {
+  border: 0;
+}
+.dz-message:hover {
+  color: #004B80;
 }
 
 .menu-button {
@@ -45,10 +51,6 @@ a.menu-button {
     font-size: 14px;
 }
 
-.langfaen {
-  min-height: 3000px;
-}
-
 #thumbheadtitle {
     display: inline-block;
 }
@@ -69,7 +71,7 @@ a.menu-button {
     max-width: 100%;
 }
 
-a#fetchallimages {
+#gallery__thumbnail-view img {
     cursor: pointer;
 }
 
@@ -195,4 +197,9 @@ div#datavalues > div.input-group > span.input-group-addon:last-child {
 .image-selection-thumbnail-active {
     border-color: #66afe9;
     box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(102, 175, 233, 0.6);
+}
+
+.gallery__unhandled-image {
+  margin-right: 15px;
+  margin-bottom: 15px;
 }

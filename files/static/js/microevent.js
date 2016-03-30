@@ -2,7 +2,7 @@
  * Created by myth on 3/10/16.
  */
 
-var MicroEvent = (function () {
+var MicroEvent = function () {
   var debug = true
   var self = this
   self.events = {}
@@ -35,4 +35,4 @@ var MicroEvent = (function () {
       self.events[event].push(callback)
     }
   }
-})()
+}

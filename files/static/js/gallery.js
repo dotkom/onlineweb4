@@ -24,14 +24,16 @@ var GalleryCrop = (function ($) {
   }
 })(window.jQuery)
 
-var Gallery = (function ($, Utils, MicroEvent) {
-  var _timers = []
+var Gallery = (function ($, Utils, MicroEvent, Dropzone) {
   var _events = new MicroEvent()
 
   // DOM references
-  var MANAGE_BUTTON = $('#dashboard-gallery__manage-button-text')
-  var MANAGE_PANE = $('#dashboard-gallery__manage-pane')
-  var UPLOAD_PANE = $('#dashboard-gallery__upload-pane')
+  var MANAGE_BUTTON_TEXT = $('#gallery__manage-button-text')
+  var MANAGE_BUTTON = $('#gallery__edit-button')
+  var MANAGE_PANE = $('#gallery__manage-pane')
+  var UPLOAD_FORM = $('#gallery__image-upload-form')
+  var UPLOAD_PANE = $('#gallery__upload-pane')
+  var THUMBNAIL_VIEW = $('#gallery__thumbnail-view')
 
   /**
    * Set up AJAX such that Django receives its much needed CSRF token
@@ -52,12 +54,37 @@ var Gallery = (function ($, Utils, MicroEvent) {
   }
 
   /**
+   * Create the HTML wrapper for the thumbnail of an UnhandledImage wrapper as a jQuery DOM object.
+   * @param {object} image A JavaScript object containing id, link to original image as well as link to thumbnail
+   */
+  var createUnhandledImageThumbnails = function (images) {
+    // Clear the unhandled image thumbnail view
+    THUMBNAIL_VIEW.html('')
+
+    // Add each thumbnail and bind event listener
+    for (var i = 0; i < images.length; i++) {
+      var img = $('<img></img>')
+      img.attr({
+        'class': 'gallery__unhandled-image',
+        'data-id': images[i].id,
+        'src': images[i].thumbnail
+      })
+      THUMBNAIL_VIEW.append(img)
+
+      // Add event listener
+      img.on('click', function (e) {
+        console.log('Clicked image {0}'.format(img))
+      })
+    }
+  }
+
+  /**
    * Retrieve an array of all UnhandledImage objects currently in the database
    */
   var fetchUnhandledImages = function () {
     var success = function (images) {
-      MANAGE_BUTTON.text('Behandle ({0})'.format(images.unhandled.length))
-      console.log(images)
+      MANAGE_BUTTON_TEXT.text('Behandle ({0})'.format(images.unhandled.length))
+      createUnhandledImageThumbnails(images.unhandled)
     }
     var error = function (xhr, errorMessage, responseText) {
       console.log('Received error: ' + xhr.responseText + ' ' + errorMessage)
@@ -80,6 +107,22 @@ var Gallery = (function ($, Utils, MicroEvent) {
 
       // Fire an initial "newUnhandledImage" event
       this.events.fire('gallery-newUnhandledImage')
+
+      // Check if we are rendering the manage-pane directly
+      if (MANAGE_PANE.length && window.location.href.indexOf('#gallery__manage-pane') !== -1) {
+        MANAGE_BUTTON.click()
+      }
+
+      // Fetch unhandled images on dropzone upload queue complete
+      if (UPLOAD_PANE.length) {
+        Dropzone.options.galleryImageUploadForm = {
+          init: function () {
+            this.on('queuecomplete', function (e) {
+              fetchUnhandledImages()
+            })
+          }
+        }
+      }
     },
 
     /**
@@ -131,7 +174,7 @@ var Gallery = (function ($, Utils, MicroEvent) {
       }
     }
   }
-})(window.jQuery, window.Utils, window.MicroEvent)
+})(window.jQuery, window.Utils, window.MicroEvent, window.Dropzone)
 
 // Initialise the Gallery module
 Gallery.init()

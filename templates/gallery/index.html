@@ -28,7 +28,7 @@
             <div class="row">
                 <div class="col-md-12">
                     <div class="col-md-6">
-                        <a href="#upload-pane" class="menu-button" id="upload-button" data-toggle="tab">
+                        <a href="#gallery__upload-pane" class="menu-button" id="gallery__upload-button" data-toggle="tab">
                             <div class="row">
                                 <i class="fa fa-upload fa-3x fa-align-center"></i>
                             </div>
@@ -38,7 +38,7 @@
                         </a>
                     </div>
                     <div class="col-md-6">
-                        <a href="#manage-pane" class="menu-button" id="edit-button" data-toggle="tab">
+                        <a href="#gallery__manage-pane" class="menu-button" id="gallery__manage-button" data-toggle="tab">
                             <div class="row">
                                 <i class="fa fa-edit fa-3x fa-align-center"></i>
                             </div>
@@ -52,20 +52,16 @@
             <hr />
             <div class="row">
                 <div class="col-md-12">
-                    <div id="messages">
-                    </div>
+                    <div id="messages"></div>
                 </div>
             </div>
             <div class="row">
                 <div class="col-md-12">
                     <div class="tab-content">
-                        <div class="tab-pane fade" id="gallery-pane">
-                            {% include "gallery/gallery.html" %}
-                        </div>
-                        <div class="tab-pane fade" id="upload-pane">
+                        <div class="tab-pane fade" id="gallery__upload-pane">
                             {% include "gallery/upload.html" %}
                         </div>
-                        <div class="tab-pane fade in active" id="manage-pane">
+                        <div class="tab-pane fade in active" id="gallery__manage-pane">
                             {% include "gallery/edit.html" %}
                         </div>
                     </div>
