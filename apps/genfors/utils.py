@@ -260,11 +260,10 @@ def count_votes(context, aq, res):
             else:
                 context['active_question']['multiple_choice'][k] = [v, 0]
 
-def count_blank_votes (context, aq, res):
-    total_votes = context['active_question']['total_votes']
-    votes_for_alternative = context['active_question']['total_votes'] - res['data']['Blankt']
-    alternatives = context['active_question']['alternatives']
 
+def count_blank_votes(context, aq, res):
+    total_votes = context['active_question']['total_votes']
+    alternatives = context['active_question']['alternatives']
 
     if aq.question_type is BOOLEAN_VOTE:
             context['active_question']['yes_percent'] = res['data']['Ja'] * 100 // total_votes
