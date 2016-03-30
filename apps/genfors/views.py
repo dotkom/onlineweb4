@@ -519,6 +519,7 @@ def _handle_multiple_choice_vote(request, alt, q, v):
 def _handle_q(context, anon_voter, reg_voter, q):
     context["question"] = {}
     context["question"]["description"] = q.description
+    context["question"]["count_blank_votes"] = q.count_blank_votes
     if q.anonymous:
         already_voted = q.already_voted(anon_voter)
     else:
