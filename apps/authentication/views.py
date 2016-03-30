@@ -124,6 +124,7 @@ kan dette gjøres med funksjonen for å gjenopprette passord.
 
 
 def verify(request, token):
+    log = logging.getLogger(__name__)
     rt = get_object_or_404(RegisterToken, token=token)
 
     if rt.is_valid:
@@ -136,6 +137,7 @@ def verify(request, token):
         # If it is a stud email, set the ntnu_username for user
         if re.match(r'[^@]+@stud\.ntnu\.no', rt.email):
             user.ntnu_username = rt.email.split("@")[0]
+            log.info('Set ntnu_username for user %s to %s' % (user, rt.email))
 
             # Check if Online-member, and set Infomail to True is he/she is
             if user.is_member:
@@ -151,13 +153,16 @@ def verify(request, token):
         rt.delete()
 
         if user_activated:
+            log.info('New user %s was activated' % user)
             messages.success(request, _('Bruker %s ble aktivert. Du kan nå logge inn.') % user.username)
             return redirect('auth_login')
         else:
+            log.info('New email %s was verified for user %s' % (email, user))
             messages.success(request, _('Eposten %s er nå verifisert.') % email)
             return redirect('profile_add_email')
 
     else:
+        log.debug('Failed to verify email due to invalid register token')
         messages.error(request, _('Denne lenken er utløpt. Bruk gjenopprett passord for å få tilsendt en ny lenke.'))
         return HttpResponseRedirect('/')
 
