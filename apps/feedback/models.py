@@ -171,9 +171,9 @@ class FeedbackRelation(models.Model):
             try:
                 rt = RegisterToken(fbr=self, token=token)
                 rt.save()
-                log.info('Successfully registered token for fbr %s with token %s' % (self, rt))
+                log.info('Successfully registered token for fbr %s with token %s' % (self, token))
             except:
-                log.error('Failed to register token for fbr %s with token %s' % (self, rt))
+                log.error('Failed to register token for fbr %s with token %s' % (self, token))
 
 
 class Feedback(models.Model):
