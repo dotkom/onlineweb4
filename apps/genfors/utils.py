@@ -96,6 +96,8 @@ def handle_not_locked(self, admin):
         else:
             total_votes = len(self.meeting.get_can_vote())
 
+        votes_for_alternative = total_votes - results['Blankt']
+
         # Normal
         if self.majority_type == 0:
             minimum = 1 / float(2)
@@ -107,7 +109,7 @@ def handle_not_locked(self, admin):
         res = {'valid': False, 'data': {}}
 
         if total_votes != 0:
-            res['valid'] = winner_votes / float(total_votes) > minimum
+            res['valid'] = winner_votes / float(votes_for_alternative) > minimum
 
         # Admins should see all info regardless of only show winner
         if admin or not self.only_show_winner:
