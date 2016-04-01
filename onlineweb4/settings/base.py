@@ -144,6 +144,16 @@ AUTHENTICATION_BACKENDS = (
     'guardian.backends.ObjectPermissionBackend',
 )
 
+#Django 1.9 passwordvalidation
+AUTH_PASSWORD_VALIDATORS = [
+    {
+        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        'OPTIONS': {
+           'min_length': 6,
+        }
+    },
+]
+
 ROOT_URLCONF = 'onlineweb4.urls'
 
 # Python dotted path to the WSGI application used by Django's runserver.
