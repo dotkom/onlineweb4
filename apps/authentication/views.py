@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-
+import logging
 import re
 import uuid
 from smtplib import SMTPException
@@ -48,6 +48,8 @@ def logout(request):
 
 @sensitive_post_parameters()
 def register(request):
+    log = logging.getLogger(__name__)
+
     if request.user.is_authenticated():
         messages.error(request, _('Registrering av ny konto krever at du er logget ut.'))
         return HttpResponseRedirect('/')
@@ -83,9 +85,12 @@ def register(request):
 
                 # Create the registration token
                 token = uuid.uuid4().hex
-                rt = RegisterToken(user=user, email=email.email, token=token)
-                rt.save()
-
+                try:
+                    rt = RegisterToken(user=user, email=email.email, token=token)
+                    rt.save()
+                    log.info('Successfully registered token for %s' % request.user)
+                except:
+                    log.error('Failed to register token for %s' % request.user)
                 email_message = _("""
 En konto har blitt registrert på online.ntnu.no med denne epostadressen. Dersom du ikke
 har utført denne handlingen ber vi deg se bort fra denne eposten.
@@ -119,6 +124,7 @@ kan dette gjøres med funksjonen for å gjenopprette passord.
 
 
 def verify(request, token):
+    log = logging.getLogger(__name__)
     rt = get_object_or_404(RegisterToken, token=token)
 
     if rt.is_valid:
@@ -131,6 +137,7 @@ def verify(request, token):
         # If it is a stud email, set the ntnu_username for user
         if re.match(r'[^@]+@stud\.ntnu\.no', rt.email):
             user.ntnu_username = rt.email.split("@")[0]
+            log.info('Set ntnu_username for user %s to %s' % (user, rt.email))
 
             # Check if Online-member, and set Infomail to True is he/she is
             if user.is_member:
@@ -146,18 +153,22 @@ def verify(request, token):
         rt.delete()
 
         if user_activated:
+            log.info('New user %s was activated' % user)
             messages.success(request, _('Bruker %s ble aktivert. Du kan nå logge inn.') % user.username)
             return redirect('auth_login')
         else:
+            log.info('New email %s was verified for user %s' % (email, user))
             messages.success(request, _('Eposten %s er nå verifisert.') % email)
             return redirect('profile_add_email')
 
     else:
+        log.debug('Failed to verify email due to invalid register token')
         messages.error(request, _('Denne lenken er utløpt. Bruk gjenopprett passord for å få tilsendt en ny lenke.'))
         return HttpResponseRedirect('/')
 
 
 def recover(request):
+    log = logging.getLogger(__name__)
     if request.user.is_authenticated():
         messages.error(request, _('Gjenoppretning av passord krever at du er logget ut.'))
         return HttpResponseRedirect('/')
@@ -176,9 +187,12 @@ def recover(request):
 
                 # Create the registration token
                 token = uuid.uuid4().hex
-                rt = RegisterToken(user=email.user, email=email.email, token=token)
-                rt.save()
-
+                try:
+                    rt = RegisterToken(user=email.user, email=email.email, token=token)
+                    rt.save()
+                    log.info('Successfully registered token for %s' % request.user)
+                except:
+                    log.error('Failed to register token for %s' % request.user)
                 email_message = _("""
 Vi har mottat forespørsel om å gjenopprette passordet for kontoen bundet til %s.
 Dersom du ikke har bedt om denne handlingen ber vi deg se bort fra denne eposten.
@@ -208,13 +222,12 @@ kan dette gjøres med funksjonen for å gjenopprette passord.
 
 @sensitive_post_parameters()
 def set_password(request, token=None):
+    log = logging.getLogger(__name__)
     if request.user.is_authenticated():
         return HttpResponseRedirect('/')
     else:
-        tokens = RegisterToken.objects.filter(token=token)
-
-        if tokens.count() == 1:
-            rt = tokens[0]
+        try:
+            rt = RegisterToken.objects.filter(token=token)[0]
             if rt.is_valid:
                 if request.method == 'POST':
                     form = ChangePasswordForm(request.POST, auto_id=True)
@@ -232,20 +245,23 @@ def set_password(request, token=None):
                             _('Bruker %s har gjennomført vellykket gjenoppretning av passord.' +
                               'Du kan nå logge inn.') % user.username
                         )
-
+                        log.info('User %s successfully recovered password.' % request.user)
                         return HttpResponseRedirect('/')
                 else:
                     form = ChangePasswordForm()
-
                     messages.success(request, _('Lenken er akseptert. Vennligst skriv inn ønsket passord.'))
-
                 return render(request, 'auth/set_password.html', {'form': form, 'token': token})
-
-        else:
+            else:
+                log.debug('User %s failed to recover password with token %s' % (request.user, rt))
+                messages.error(
+                    request,
+                    _('Lenken er ugyldig. Vennligst bruk gjenoppretning av passord for å få tilsendt en ny lenke.')
+                )
+                return HttpResponseRedirect('/')
+        except:
+            log.debug('User %s failed to recover password with token %s' % (request.user, rt))
             messages.error(
-                request,
-                _('Lenken er ugyldig. Vennligst bruk gjenoppretning av passord for å få tilsendt en ny lenke.')
-            )
+                request, 'Noe gikk galt med gjenoppretning av passord. Vennligst prøv igjen.')
             return HttpResponseRedirect('/')
 
 
