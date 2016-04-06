@@ -127,9 +127,15 @@ Generalforsamling - Online
                                     </div>
                                     <strong>Blankt</strong>: <span id="boolean_blank">{{ res.Blankt }}</span> stemme{{ res.Blankt|pluralize:"r" }}<p />
                                     <div class="progress" id="blank_progress">
-                                        <div class="progress-bar progress-bar-warning" id="boolean_blank_progress" role="progressbar" aria-valuenow="{{ active_question.blank_percent }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ active_question.blank_percent }}%">
-                                            {{ res.Blankt }} av {{ q.get_votes.count }} stemme{{ q.get_votes.count|pluralize:"r" }}
-                                        </div>
+                                        {% if q.count_blank_votes %}
+                                                <div class="progress-bar progress-bar-warning" id="boolean_blank_progress" role="progressbar" aria-valuenow="{{ active_question.blank_percent }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ active_question.blank_percent }}%">
+                                                    {{ active_question.blank_percent }}%
+                                                </div>
+                                        {% else %}
+                                            <div class="progress-bar progress-bar-warning" id="boolean_blank_progress" role="progressbar" aria-valuenow="{{ active_question.blank_percent }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ active_question.blank_percent }}%">
+                                                    {{ res.Blankt }} av {{ q.get_votes.count }} stemme{{ q.get_votes.count|pluralize:"r" }}
+                                                </div>
+                                        {% endif %}
                                     </div>
                                 </div>
                                 {% else %}
@@ -139,7 +145,7 @@ Generalforsamling - Online
                                         <div id="mc_progress">
                                         {% for alt, votes in active_question.multiple_choice.items %}
 
-                                            {% if alt == 'Blankt' %}
+                                            {% if alt == 'Blankt' and not q.count_blank_votes %}
                                                 <strong>Blankt</strong>: <span id="{{ alt }}_votes">{{ votes.0 }}</span> stemme{{ votes.0|pluralize:"r" }}<p />
                                                 <div class="progress" id="blank_progress">
                                                     <div class="progress-bar progress-bar-warning" id="boolean_blank_progress" role="progressbar" aria-valuenow="{{ votes.1 }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ votes.1 }}%">
