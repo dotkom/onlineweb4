@@ -134,34 +134,42 @@ Generalforsamling logg inn- Online
                                 Her vises alle avsluttede saker og deres komplette resultat, uavhengig av anonymitetsatributtene på spørsmålene.
                             </div>
                             <table class="table table-striped table-hover">
-                                <tr>
+                                <tr data-toggle="collapse" data-target="#collapse1">
                                     <th>Sak</th>
                                     <th>Flertallskrav</th>
                                     <th>Resultat</th>
                                 </tr>
-                                {% for question in meeting.get_locked_questions %}
                                 <tr>
-                                    <td>{{ question.description }}</td>
-                                    <td style="white-space: nowrap">{% if question.majority_type == 0 %}Alminnelig{% else %}Kvalitativt{% endif %}</td>
-                                    <td>
-                                    {% with question.get_admin_results as results %}
-                                        Resultat: <strong>{{ question.get_leader }}</strong><br />
-                                        {% if results.valid %}
-                                             <span class="label label-success">Flertall</span><br /><br />
-                                        {% else %}
-                                             <span class="label label-danger">Ikke flertall</span><br /><br />
-                                        {% endif %}
-                                        {% for alt, votes in results.data.items %}
-                                             <span style="white-space: nowrap"><strong>{{ alt }}</strong>: {{ votes }} stemme{{ votes|pluralize:"r"}}.</span><br />
-                                        {% endfor %}
-                                    {% endwith %}
+                                    <td colspan="3" class="panel-bottom">
+                                        <div class="collapse collapseable" id="collapse1">
+                                            <table>
+                                                {% for question in meeting.get_locked_questions %}
+                                                <tr>
+                                                    <td>{{ question.description }}</td>
+                                                    <td style="white-space: nowrap">{% if question.majority_type == 0 %}Alminnelig{% else %}Kvalitativt{% endif %}</td>
+                                                    <td>
+                                                    {% with question.get_admin_results as results %}
+                                                        Resultat: <strong>{{ question.get_leader }}</strong><br />
+                                                        {% if results.valid %}
+                                                             <span class="label label-success">Flertall</span><br /><br />
+                                                        {% else %}
+                                                             <span class="label label-danger">Ikke flertall</span><br /><br />
+                                                        {% endif %}
+                                                        {% for alt, votes in results.data.items %}
+                                                             <span style="white-space: nowrap"><strong>{{ alt }}</strong>: {{ votes }} stemme{{ votes|pluralize:"r"}}.</span><br />
+                                                        {% endfor %}
+                                                    {% endwith %}
+                                                    </td>
+                                                </tr>
+                                                {% empty %}
+                                                <tr>
+                                                    <td colspan="3">Ingen avsluttede saker.</td>
+                                                </tr>
+                                                {% endfor %}
+                                            </table>
+                                        </div>
                                     </td>
                                 </tr>
-                                {% empty %}
-                                <tr>
-                                    <td colspan="3">Ingen avsluttede saker.</td>
-                                </tr>
-                                {% endfor %}
                             </table>
                         </div>
                     </div>
