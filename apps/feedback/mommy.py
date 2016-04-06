@@ -110,7 +110,7 @@ class FeedbackMail(Task):
             message.deadline = "\n\nI dag innen 23:59 er siste frist til å svare på skjemaet."
 
             message.results_message = "Hei, siste purremail på feedback skjema har blitt sendt til alle gjenværende " \
-            "deltagere på \"{}\".\nDere kan se feedback-resultatene på:\n{}\n".format(title, results_link)
+                "deltagere på \"{}\".\nDere kan se feedback-resultatene på:\n{}\n".format(title, results_link)
             message.send = True
             message.status = "Last warning"
         elif deadline_diff < 3 and feedback.gives_mark:  # 3 days from the deadline
@@ -120,8 +120,8 @@ class FeedbackMail(Task):
         elif not feedback.first_mail_sent:
             message.deadline = "\n\nFristen for å svare på skjema er %s innen kl 23:59." % deadline
 
-            message.results_message = "Hei, nå har feedbackmail blitt sendt til alle deltagere på \"{}\"."
-            "\nDere kan se resultatene på:\n{}\n".format(title, results_link)
+            message.results_message = "Hei, nå har feedbackmail blitt sendt til alle deltagere på \"{}\"." \
+                "\nDere kan se resultatene på:\n{}\n".format(title, results_link)
             message.send = True
             message.status = "First message"
 
