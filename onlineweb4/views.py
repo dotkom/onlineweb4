@@ -14,7 +14,7 @@ def server_error(request):
 
     if request.method == 'POST':
         message = request.POST.get('reason')
-        if message:
+        if not message:
             return redirect('home')
         try:
             log.error('%s triggered a 500 server error and provided the following description: %s' % (
