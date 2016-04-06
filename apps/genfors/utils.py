@@ -96,6 +96,8 @@ def handle_not_locked(self, admin):
         else:
             total_votes = len(self.meeting.get_can_vote())
 
+        votes_for_alternative = total_votes - results['Blankt']
+
         # Normal
         if self.majority_type == 0:
             minimum = 1 / float(2)
@@ -107,7 +109,7 @@ def handle_not_locked(self, admin):
         res = {'valid': False, 'data': {}}
 
         if total_votes != 0:
-            res['valid'] = winner_votes / float(total_votes) > minimum
+            res['valid'] = winner_votes / float(votes_for_alternative) > minimum
 
         # Admins should see all info regardless of only show winner
         if admin or not self.only_show_winner:
@@ -153,12 +155,12 @@ def handle_multiple_choice_voting(self):
 
 
 # other stuff
-def handle_login(request):
+def handle_login(request, context):
     meeting = get_active_meeting()
 
     reg_voter = RegisteredVoter.objects.filter(user=request.user, meeting=meeting).first()
     if reg_voter or not meeting.registration_locked:
-        _handle_user_login()
+        return _handle_user_login(request, context['form'])
 
 
 def _handle_user_login(request, form):
@@ -178,8 +180,8 @@ def _handle_user_login(request, form):
         reg_voter.save()
         # Double hashing when saving while we store the original hash as a cookie
         h2 = sha256()
-        h2.update(h)
-        h2.update(request.user.username)
+        h2.update(h.encode('utf-8'))
+        h2.update(request.user.username.encode('utf-8'))
         anon_voter = AnonymousVoter(user_hash=h2.hexdigest(), meeting=meeting)
         anon_voter.save()
     else:
@@ -192,7 +194,7 @@ def _handle_user_login(request, form):
     if anon_voter:
         # Anyonous voter hash stored in cookies for 1 day
         tomorrow = datetime.datetime.now() + datetime.timedelta(days=1)
-        response.set_cookie('anon_voter', h, expires=tomorrow)
+        response.set_cookie(key='anon_voter', value=h, expires=tomorrow)
     elif 'anon_voter' in request.COOKIES:
         # Delete old hash
         response.delete_cookie('anon_voter')
@@ -221,16 +223,24 @@ def generate_genfors_context(aq, context, anon_voter, reg_voter):
     res = aq.get_results()
 
     if total_votes != 0 and not aq.only_show_winner:
-        count_votes(context, aq, total_votes, res)
+        count_votes(context, aq, res)
+
+    return context
 
 
 def count_votes(context, aq, res):
     total_votes = context['active_question']['total_votes']
+    votes_for_alternative = context['active_question']['total_votes'] - res['data']['Blankt']
     alternatives = context['active_question']['alternatives']
 
     if aq.question_type is BOOLEAN_VOTE:
-        context['active_question']['yes_percent'] = res['data']['Ja'] * 100 // total_votes
-        context['active_question']['no_percent'] = res['data']['Nei'] * 100 // total_votes
+        if votes_for_alternative == 0:
+            context['active_question']['yes_percent'] = res['data']['Ja'] * 100 // 1
+            context['active_question']['no_percent'] = res['data']['Nei'] * 100 // 1
+        else:
+            context['active_question']['yes_percent'] = res['data']['Ja'] * 100 // votes_for_alternative
+            context['active_question']['no_percent'] = res['data']['Nei'] * 100 // votes_for_alternative
+
         context['active_question']['blank_percent'] = res['data']['Blankt'] * 100 // total_votes
 
     elif aq.question_type is MULTIPLE_CHOICE and total_votes != 0:
@@ -239,4 +249,9 @@ def count_votes(context, aq, res):
             context['active_question']['multiple_choice'][a.description] = [0, 0]
         context['active_question']['multiple_choice']['Blankt'] = [0, 0]
         for k, v in res['data'].items():
-            context['active_question']['multiple_choice'][k] = [v, v * 100 // total_votes]
+            if k == 'Blankt':
+                context['active_question']['multiple_choice'][k] = [v, v * 100 // total_votes]
+            elif votes_for_alternative > 0:
+                context['active_question']['multiple_choice'][k] = [v, v * 100 // votes_for_alternative]
+            else:
+                context['active_question']['multiple_choice'][k] = [v, 0]
