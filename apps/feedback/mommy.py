@@ -176,7 +176,7 @@ class FeedbackMail(Task):
     def mark_message(feedback):
         if feedback.gives_mark:
             return "\nVær oppmerksom på at du får prikk dersom du ikke svarer " \
-            "på disse spørsmålene innen fristen."
+                "på disse spørsmålene innen fristen."
         else:
             return ""
 
