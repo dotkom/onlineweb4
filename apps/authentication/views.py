@@ -227,7 +227,7 @@ def set_password(request, token=None):
         return HttpResponseRedirect('/')
     else:
         try:
-            rt = RegisterToken.objects.get(token=token)
+            rt = RegisterToken.objects.filter(token=token)[0]
             if rt.is_valid:
                 if request.method == 'POST':
                     form = ChangePasswordForm(request.POST, auto_id=True)
