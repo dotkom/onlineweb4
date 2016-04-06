@@ -91,10 +91,16 @@ def admin(request):
     if is_admin(request):
         meeting = get_next_meeting()
         if meeting:
+            aq = meeting.get_active_question()
+            a = anonymous_voter(request.COOKIES.get('anon_voter'), request.user.username)
+            r = RegisteredVoter.objects.filter(user=request.user, meeting=meeting).first()
+            v = a if aq.anonymous else r
+
             context['meeting'] = meeting
             context['question'] = meeting.get_active_question()
             context['questions'] = meeting.get_locked_questions()
             context['pin_code'] = meeting.get_pin_code()
+            context['already_voted'] = aq.already_voted(v)
         elif request.method == 'POST':
             form = MeetingForm(request.POST)
             context['form'] = form
