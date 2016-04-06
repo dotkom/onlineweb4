@@ -2,45 +2,98 @@
  * Created by myth on 3/9/16.
  */
 
-var GalleryUpload = (function ($) {
+var GalleryUpload = (function ($, Dropzone) {
+  // DOM references
+  var UPLOAD_PANE = $('#gallery__upload-pane')
+
   return {
     /**
      * Initialize the GalleryUpload module
      */
     init: function () {
-      // TODO: Maek stuff happen
+      // Fetch unhandled images on dropzone upload queue complete
+      if (UPLOAD_PANE.length) {
+        // Sadly, since the Dropzone instance event bind (.on()) did not work, and dynamic generation of Dropzones
+        // without the class="dropzone" attribute fails to append the dropzone class, we must use the autoDiscover
+        // aproach, but disable the autodiscover, so we get the styling, while being able to hook into onqueuecomplete
+        // event.
+        Dropzone.autoDiscover = false
+
+        // Transform the upload form to a dropzone instance
+        return new Dropzone('#gallery__image-upload-form', {
+          action: '/gallery/upload',
+          clickable: true,
+          init: function (e) {
+            this.on('queuecomplete', function (e) {
+              Gallery.events.fire('gallery-newUnhandledImage')
+            })
+          }
+        })
+      }
     }
   }
-})(window.jQuery)
+})(window.jQuery, window.Dropzone)
 
-var GalleryCrop = (function ($) {
+var GalleryCrop = (function ($, Cropper) {
+  var _cropper
+
+  // DOM References
+  var MANAGE_BUTTON = $('#gallery__edit-button')
+  var MANAGE_PANE = $('#gallery__manage-pane')
+
   return {
     /**
      * Initialize the GalleryCrop module
      */
     init: function () {
-      // TODO: Maek stuff happen
+      // Check if we are rendering the manage-pane directly
+      if (MANAGE_PANE.length && window.location.href.indexOf('#gallery__manage-pane') !== -1) {
+        MANAGE_BUTTON.click()
+      }
+    },
+
+    /**
+     * Opens the image crop and manage view, given some image data
+     * @param {object} img An object containing at least an image ID, and full original size url
+     */
+    manage: function (img) {
+      var imageDOM = $('<img></img>')
+      var imageData = Gallery.images.get(img)
+
+      imageDOM.attr({
+        'src': imageData.image,
+        'id': 'gallery__image-active'
+      })
+
+      $('#gallery__image-edit-container').html(imageDOM)
+      // Cropperjs sadly fails if provided a jQuery wrapped DOM Node in the constructor...
+      var image = document.getElementById('gallery__image-active')
+      _cropper = new Cropper(image, {
+        aspectRatio: 16 / 9
+      })
     }
   }
-})(window.jQuery)
+})(window.jQuery, window.Cropper)
 
 var Gallery = (function ($, Utils, MicroEvent, Dropzone) {
   var _events = new MicroEvent()
+  var _images = {}
 
   // DOM references
   var MANAGE_BUTTON_TEXT = $('#gallery__manage-button-text')
-  var MANAGE_BUTTON = $('#gallery__edit-button')
-  var MANAGE_PANE = $('#gallery__manage-pane')
-  var UPLOAD_FORM = $('#gallery__image-upload-form')
-  var UPLOAD_PANE = $('#gallery__upload-pane')
   var THUMBNAIL_VIEW = $('#gallery__thumbnail-view')
 
   /**
    * Set up AJAX such that Django receives its much needed CSRF token
    */
   var doAjaxSetup = function () {
+    /**
+     * Checks whether an HTTP method is considered CSRF safe or not
+     * @param {string} method An HTTP method as string
+     * @returns {boolean} true if the provided HTTP method is CSRF-safe. False otherwise.
+     */
     var csrfSafeMethod = function (method) {
-      return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method))
+      return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method.toUpperCase()))
     }
 
     $.ajaxSetup({
@@ -64,16 +117,25 @@ var Gallery = (function ($, Utils, MicroEvent, Dropzone) {
     // Add each thumbnail and bind event listener
     for (var i = 0; i < images.length; i++) {
       var img = $('<img></img>')
+      var imgLink = $('<a></a>').html(img)
+      var imageID = images[i].id
+
       img.attr({
         'class': 'gallery__unhandled-image',
-        'data-id': images[i].id,
+        'data-id': imageID,
         'src': images[i].thumbnail
       })
-      THUMBNAIL_VIEW.append(img)
+      imgLink.attr({
+        'data-toggle': 'tab',
+        'href': '#gallery__edit-pane',
+        'role': 'tab'
+      })
+
+      THUMBNAIL_VIEW.append(imgLink)
 
       // Add event listener
       img.on('click', function (e) {
-        console.log('Clicked image {0}'.format(img))
+        GalleryCrop.manage($(this).attr('data-id'))
       })
     }
   }
@@ -83,8 +145,15 @@ var Gallery = (function ($, Utils, MicroEvent, Dropzone) {
    */
   var fetchUnhandledImages = function () {
     var success = function (images) {
-      MANAGE_BUTTON_TEXT.text('Behandle ({0})'.format(images.unhandled.length))
-      createUnhandledImageThumbnails(images.unhandled)
+      // Update the local image cache with current data
+      images = images.unhandled
+      for (var i = 0; i < images.length; i++) {
+        _images[images[i].id] = images[i]
+      }
+
+      // Update the manage button text and create thumbnails for the manage unhandled images view
+      MANAGE_BUTTON_TEXT.text('Behandle ({0})'.format(images.length))
+      createUnhandledImageThumbnails(images)
     }
     var error = function (xhr, errorMessage, responseText) {
       console.log('Received error: ' + xhr.responseText + ' ' + errorMessage)
@@ -108,21 +177,9 @@ var Gallery = (function ($, Utils, MicroEvent, Dropzone) {
       // Fire an initial "newUnhandledImage" event
       this.events.fire('gallery-newUnhandledImage')
 
-      // Check if we are rendering the manage-pane directly
-      if (MANAGE_PANE.length && window.location.href.indexOf('#gallery__manage-pane') !== -1) {
-        MANAGE_BUTTON.click()
-      }
-
-      // Fetch unhandled images on dropzone upload queue complete
-      if (UPLOAD_PANE.length) {
-        Dropzone.options.galleryImageUploadForm = {
-          init: function () {
-            this.on('queuecomplete', function (e) {
-              fetchUnhandledImages()
-            })
-          }
-        }
-      }
+      // Initialize the support modules
+      GalleryCrop.init()
+      GalleryUpload.init()
     },
 
     /**
@@ -171,6 +228,20 @@ var Gallery = (function ($, Utils, MicroEvent, Dropzone) {
        */
       on: function (event, callback) {
         _events.on(event, callback)
+      }
+    },
+
+    /**
+     * The images submodule exposes helper methods for accessing the images
+     */
+    images: {
+      /**
+       * Retrieve the image with the provided ID.
+       * @param {number} id The ID (in the database (primary key)) the image is stored with
+       * @returns {*} An object containing basic unhandled image data (id, thumb_url and orig_url)
+       */
+      get: function (id) {
+        return _images[id]
       }
     }
   }

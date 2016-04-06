@@ -1,22 +1,14 @@
 <div class="row">
     <div class="col-md-12">
-        <div id="thumbview-header" class="row">
+        <div class="row">
             <div class="col-md-12">
                 <h2>Ubehandlede bilder</h2>
             </div>
         </div>
-        <div class="row">
+        <div class="row tabbable">
             <div class="col-md-12">
                 <div id="gallery__edit-tab" class="tab-content">
                     <div class="tab-pane fade in active" id="gallery__thumbnail-pane" role="tabpanel">
-                        <div class="row">
-                            <div class="col-md-12">
-                                <a id="gallery__thumbnail-pane--fetch-all-button">
-                                    <i class="fa fa-refresh"></i> Oppdater
-                                </a>
-                                <hr>
-                            </div>
-                        </div>
                         <div class="row">
                             <div class="col-md-12" id="gallery__thumbnail-view"></div>
                         </div>
@@ -24,80 +16,23 @@
                     <div class="tab-pane fade" id="gallery__edit-pane" role="tabpanel">
                         <div class="row">
                             <div class="col-md-12">
-                                <a id="gallery__thumbnail-pane-button" href="#gallery__thumbnail-pane" data-toggle="tab" role="tab">
-                                    <i class="fa fa-angle-double-left"></i> Gå tilbake
+                                <a href="#gallery__thumbnail-pane" class="btn btn-primary" role="tab" data-toggle="tab">
+                                    <i class="fa fa-chevron-left"></i> Tilbake
                                 </a>
-                                <hr>
-                            </div>
-                            <hr>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-8">
-                                <div id="gallery__image-edit-content"></div>
-                                <br />
-                                <div class="form-group">
-                                    <label for="gallery__image-edit-name">Navn</label>
-                                    <input id="gallery__image-edit-name" type="text" placeholder="Bildenavn..." class="form-control">
-                                </div>
-                                <div class="form-group">
-                                    <label for="gallery__image-edit-description">Beskrivelse</label>
-                                    <textarea id="gallery__image-edit-description" placeholder="Skriv inn en beskrivelse av bildet her..." class="form-control" rows="6"></textarea>
-                                </div>
-                                <div class="form-group">
-                                    <label for="gallery__image-edit-photographer">Fotograf</label>
-                                    <input id="gallery__image-edit-photographer" type="text" class="form-control" placeholder="Kan stå blank...">
-                                </div>
-                                <div class="form-group">
-                                    <label for="gallery__image-edit-tags">Tags</label>
-                                    <input id="gallery__image-edit-tags" placeholder="Eksempel: kontoret, kjelleren, åre" class="form-control">
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div id="gallery__image-edit__datavalues" class="row row-space">
-                                    <div class="input-group">
-                                        <span class="input-group-addon">X</span>
-                                        <input id="gallery__image-edit--cropperDataX" type="text" class="form-control">
-                                        <span class="input-group-addon">px</span>
-                                    </div>
-                                    <div class="input-group">
-                                        <span class="input-group-addon">Y</span>
-                                        <input id="gallery__image-edit--cropperDataY" type="text" class="form-control">
-                                        <span class="input-group-addon">px</span>
-                                    </div>
-                                    <div class="input-group">
-                                        <span class="input-group-addon">Høyde</span>
-                                        <input id="gallery__image-edit--cropperDataHeight" type="text" class="form-control">
-                                        <span class="input-group-addon">px</span>
-                                    </div>
-                                    <div class="input-group">
-                                        <span class="input-group-addon">Bredde</span>
-                                        <input id="gallery__image-edit--cropperDataWidth" type="text" class="form-control">
-                                        <span class="input-group-addon">px</span>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="btn-group" role="group" aria-label="...">
-                                        <button id="gallery__image-edit--zoominbutton" type="button" class="btn btn-primary"><i class="fa fa-search-plus"></i></button>
-                                        <button id="gallery__image-edit--zoomoutbutton" type="button" class="btn btn-primary"><i class="fa fa-search-minus"></i></button>
-                                        <button id="gallery__image-edit--resetbutton" type="button" class="btn btn-primary"><i class="fa fa-refresh"></i> Reset</button>
-                                        <button id="gallery__image-edit--originalimagebutton" type="button" class="btn btn-primary"><i class="fa fa-picture-o"></i> Original</button>
-                                    </div>
-                                </div>
-                                <br />
-                                <div class="row">
-                                    <label for="gallery__image-edit-preview-standard">Standard (16:9)</label>
-                                    <div id="gallery__image-edit-preview-standard" class="image-edit-preview"></div>
-                                </div>
-                                <div class="row">
-                                    <label for="gallery__image-edit-preview-article">Bredform (19:7)</label>
-                                    <div id="gallery__image-edit-preview-wide" class="image-edit-preview"></div>
-                                </div>
                             </div>
                         </div>
+                        <br />
                         <div class="row">
-                            <div class="col-md-12">
-                                <button id="gallery__image-edit--accept-crop-button" class="btn btn-success"><i class="fa fa-check"></i> Godta crop av bilde</button>
+                            <div class="col-lg-8 col-md-9 col-md-12 col-xs-12">
+                                <div id="gallery__image-edit-container"></div>
                             </div>
+                            <div class="col-lg-2 col-md-3 col-md-12 col-xs-12">
+                                RIGHT SIDE MENU
+                            </div>
+                        </div>
+                        <br />
+                        <div class="row">
+                            <div class="col-md-12">Bottom side stuff</div>
                         </div>
                     </div>
                 </div>
