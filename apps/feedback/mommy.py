@@ -119,7 +119,6 @@ class FeedbackMail(Task):
             message.status = "Warning message"
         elif not feedback.first_mail_sent:
             message.deadline = "\n\nFristen for å svare på skjema er %s innen kl 23:59." % deadline
-
             message.results_message = "Hei, nå har feedbackmail blitt sendt til alle deltagere på \"{}\"." \
                 "\nDere kan se resultatene på:\n{}\n".format(title, results_link)
             message.send = True
