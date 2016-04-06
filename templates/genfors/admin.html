@@ -57,6 +57,7 @@ Generalforsamling logg inn- Online
                                 Stemmer: <strong>{% if v%}{{ v }}{% else %}0{% endif %}</strong> av <strong>{{ meeting.num_can_vote }}</strong>
                                 {% endwith %}
                             </div>
+
                             {% if question.only_show_winner %}
                                 <div class="panel-body">
                                     Resultatet blir vist etter avsluttet sak.
@@ -84,9 +85,19 @@ Generalforsamling logg inn- Online
                                         <td colspan="2">Ingen stemmer.</td>
                                     </tr>
                                     {% endfor %}
+<<<<<<< HEAD
+                                {% else %}
+                                    <div class="panel-body">
+                                        <strong>Du må stemme før du kan se resultatet</strong>
+                                    </div>
+                                {% endif %}
+                                </tbody>
+                            </table>
+=======
                                     </tbody>
                                 </table>
                             {% endif %}
+>>>>>>> 68e5f9e2c16eacb2e5909ee79f1e3cf8d15f5ce8
                         </div>
                     </div>
                 </div>
