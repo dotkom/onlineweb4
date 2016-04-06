@@ -108,7 +108,9 @@ def handle_not_locked(self, admin):
 
         res = {'valid': False, 'data': {}}
 
-        if total_votes != 0:
+        if total_votes != 0 and self.count_blank_votes:
+            res['valid'] = winner_votes / float(total_votes) > minimum
+        elif total_votes != 0 and not self.count_blank_votes:
             res['valid'] = winner_votes / float(votes_for_alternative) > minimum
 
         # Admins should see all info regardless of only show winner
@@ -216,6 +218,7 @@ def generate_genfors_context(aq, context, anon_voter, reg_voter):
     context['active_question'] = {}
     context['active_question']['total_votes'] = total_votes
     context['active_question']['alternatives'] = alternatives
+    context['active_question']['count_blank_votes'] = aq.count_blank_votes
 
     context['registered_voter'] = reg_voter
     context['anonymous_voter'] = anon_voter
@@ -223,7 +226,10 @@ def generate_genfors_context(aq, context, anon_voter, reg_voter):
     res = aq.get_results()
 
     if total_votes != 0 and not aq.only_show_winner:
-        count_votes(context, aq, res)
+        if aq.count_blank_votes:
+            count_blank_votes(context, aq, res)
+        else:
+            count_votes(context, aq, res)
 
     return context
 
@@ -255,3 +261,21 @@ def count_votes(context, aq, res):
                 context['active_question']['multiple_choice'][k] = [v, v * 100 // votes_for_alternative]
             else:
                 context['active_question']['multiple_choice'][k] = [v, 0]
+
+
+def count_blank_votes(context, aq, res):
+    total_votes = context['active_question']['total_votes']
+    alternatives = context['active_question']['alternatives']
+
+    if aq.question_type is BOOLEAN_VOTE:
+            context['active_question']['yes_percent'] = res['data']['Ja'] * 100 // total_votes
+            context['active_question']['no_percent'] = res['data']['Nei'] * 100 // total_votes
+            context['active_question']['blank_percent'] = res['data']['Blankt'] * 100 // total_votes
+
+    elif aq.question_type is MULTIPLE_CHOICE and total_votes != 0:
+        context['active_question']['multiple_choice'] = {}
+        for a in alternatives:
+            context['active_question']['multiple_choice'][a.description] = [0, 0]
+        context['active_question']['multiple_choice']['Blankt'] = [0, 0]
+        for k, v in res['data'].items():
+            context['active_question']['multiple_choice'][k] = [v, v * 100 // total_votes]
