@@ -110,8 +110,6 @@ def handle_not_locked(self, admin):
 
         if total_votes != 0 and self.count_blank_votes:
             res['valid'] = winner_votes / float(total_votes) > minimum
-
-
         elif total_votes != 0 and not self.count_blank_votes:
             res['valid'] = winner_votes / float(votes_for_alternative) > minimum
 
