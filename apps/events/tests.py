@@ -32,7 +32,7 @@ class EventTest(TestCase):
 
     def setUp(self):
         self.event = G(Event, title='Sjakkturnering')
-        self.attendance_event = G(AttendanceEvent, event=self.event)
+        self.attendance_event = G(AttendanceEvent, event=self.event, max_capacity=2)
         self.user = G(User, username='ola123', ntnu_username='ola123ntnu', first_name="ola", last_name="nordmann")
         self.attendee = G(Attendee, event=self.attendance_event, user=self.user)
         self.logger = logging.getLogger(__name__)
