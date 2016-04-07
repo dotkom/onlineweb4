@@ -3,9 +3,10 @@
 import datetime
 import logging
 
+from django.conf import settings
 from django.contrib.auth.models import Group
 from django.core.urlresolvers import reverse
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from django.utils import timezone
 from django_dynamic_fixture import G
 from rest_framework import status
@@ -384,6 +385,12 @@ class EventTest(TestCase):
 
 
 class EventOrderedByRegistrationTestCase(TestCase):
+    def setUp(self):
+        self.FEATURED_TIMEDELTA_SETTINGS = settings
+        # Override settings so that the tests will work even if we update the default delta
+        self.FEATURED_TIMEDELTA_SETTINGS.OW4_SETTINGS['events']['OW4_EVENTS_FEATURED_DAYS_FUTURE'] = 7
+        self.FEATURED_TIMEDELTA_SETTINGS.OW4_SETTINGS['events']['OW4_EVENTS_FEATURED_DAYS_PAST'] = 7
+
     def test_registration_no_push_forward(self):
         """
         Tests that an AttendanceEvent with registration date far in the future is sorted by its event end date,
@@ -399,7 +406,8 @@ class EventOrderedByRegistrationTestCase(TestCase):
 
         expected_order = [normal_event, pushed_event]
 
-        self.assertEqual(list(Event.by_registration.all()), expected_order)
+        with override_settings(settings=self.FEATURED_TIMEDELTA_SETTINGS):
+            self.assertEqual(list(Event.by_registration.all()), expected_order)
 
     def test_registration_start_pushed_forward(self):
         """
@@ -416,7 +424,8 @@ class EventOrderedByRegistrationTestCase(TestCase):
 
         expected_order = [pushed_event, normal_event]
 
-        self.assertEqual(list(Event.by_registration.all()), expected_order)
+        with override_settings(settings=self.FEATURED_TIMEDELTA_SETTINGS):
+            self.assertEqual(list(Event.by_registration.all()), expected_order)
 
     def test_registration_past_push_forward(self):
         """
@@ -433,7 +442,8 @@ class EventOrderedByRegistrationTestCase(TestCase):
 
         expected_order = [normal_event, pushed_event]
 
-        self.assertEqual(list(Event.by_registration.all()), expected_order)
+        with override_settings(settings=self.FEATURED_TIMEDELTA_SETTINGS):
+            self.assertEqual(list(Event.by_registration.all()), expected_order)
 
 
 class EventsURLTestCase(TestCase):
