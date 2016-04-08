@@ -63,7 +63,7 @@ Generalforsamling logg inn- Online
                                     Resultatet blir vist etter avsluttet sak.
                                     Se vinner i avsluttede saker.
                                 </div>
-                            {% else %}
+                            {% elif already_voted %}
                                 <div class="panel-body">
                                     Live status
                                 </div>
@@ -75,29 +75,23 @@ Generalforsamling logg inn- Online
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    {% for alt, votes in question.get_admin_results.data.items %}
-                                    <tr>
-                                        <td><strong>{{ alt }}</strong></td>
-                                        <td>{{ votes }} stemme{{ votes|pluralize:"r"}}.</td>
-                                    </tr>
-                                    {% empty %}
-                                    <tr>
-                                        <td colspan="2">Ingen stemmer.</td>
-                                    </tr>
-                                    {% endfor %}
-<<<<<<< HEAD
-                                {% else %}
-                                    <div class="panel-body">
-                                        <strong>Du må stemme før du kan se resultatet</strong>
-                                    </div>
-                                {% endif %}
-                                </tbody>
-                            </table>
-=======
+                                        {% for alt, votes in question.get_admin_results.data.items %}
+                                        <tr>
+                                            <td><strong>{{ alt }}</strong></td>
+                                            <td>{{ votes }} stemme{{ votes|pluralize:"r"}}.</td>
+                                        </tr>
+                                        {% empty %}
+                                        <tr>
+                                            <td colspan="2">Ingen stemmer.</td>
+                                        </tr>
+                                        {% endfor %}
                                     </tbody>
                                 </table>
+                            {% else %}
+                                <div class="panel-body">
+                                    <strong>Du må stemme før du kan se resultatet</strong>
+                                </div>
                             {% endif %}
->>>>>>> 68e5f9e2c16eacb2e5909ee79f1e3cf8d15f5ce8
                         </div>
                     </div>
                 </div>
