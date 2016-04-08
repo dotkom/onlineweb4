@@ -255,7 +255,8 @@ def set_password(request, token=None):
                     return HttpResponseRedirect('/')
                 else:
                     messages.error(request, 'Noe gikk galt med gjenoppretting av passord. Vennligst prøv igjen.')
-                    log.debug('User %s failed to recover password with token %s. [form.is_valid => False]' % (request.user, rt))
+                    log.debug('User %s failed to recover password with token %s. '
+                              '[form.is_valid => False]' % (request.user, rt))
                     return HttpResponseRedirect('/')
             else:
                 form = ChangePasswordForm()
