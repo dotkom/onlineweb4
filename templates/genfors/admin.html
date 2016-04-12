@@ -57,7 +57,6 @@ Generalforsamling logg inn- Online
                                 Stemmer: <strong>{% if v%}{{ v }}{% else %}0{% endif %}</strong> av <strong>{{ meeting.num_can_vote }}</strong>
                                 {% endwith %}
                             </div>
-
                             {% if question.only_show_winner %}
                                 <div class="panel-body">
                                     Resultatet blir vist etter avsluttet sak.
@@ -87,14 +86,40 @@ Generalforsamling logg inn- Online
                                         {% endfor %}
                                     </tbody>
                                 </table>
+                            {% elif question %}
+                                <div class="panel-body">
+                                    Du må stemme før du kan se resultatet
+                                </div>
                             {% else %}
                                 <div class="panel-body">
-                                    <strong>Du må stemme før du kan se resultatet</strong>
+                                    Ingen status å vise
                                 </div>
                             {% endif %}
                         </div>
                     </div>
                 </div>
+                {% if question and not question.anonymous %}
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                Har ikke stemt:
+                            </div>
+                            <table class="table">
+                            {% for person in not_voted %}
+                                <tr>
+                                    <td>{{ person }}</td>
+                                </tr>
+                            {% empty %}
+                                <tr>
+                                    <td>Alle har stemt</td>
+                                </tr>
+                            {% endfor %}
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
             </div>
             <div class="col-sm-8 col-sm-pull-4">
                 <div class="row">
