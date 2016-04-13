@@ -172,6 +172,7 @@ class UserDetailView(DashboardPermissionMixin, DetailView):
 class UserUpdateView(DashboardPermissionMixin, UpdateView):
     form_class = UserUpdateForm
     model = User
+    context_object_name = 'user'
     permission_required = 'authentication.change_onlineuser'
     pk_url_kwarg = 'user_id'
     template_name = 'auth/dashboard/user_edit.html'
@@ -184,7 +185,7 @@ class UserDeleteView(DashboardPermissionMixin, DeleteView):
     model = User
     permission_required = 'authentication.delete_onlineuser'
     pk_url_kwarg = 'user_id'
-    success_url = reverse_lazy('auth_index')
+    success_url = reverse_lazy('user_list')
 
 
 @login_required
