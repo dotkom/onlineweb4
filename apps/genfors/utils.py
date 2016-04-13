@@ -77,26 +77,15 @@ def get_locked_results(self, admin):
 
 def handle_not_locked(self, admin):
     results = None
-    result_no_blank = None
     if self.question_type is BOOLEAN_VOTE:
         results = handle_boolean_voting(self)
-        if not self.count_blank_votes:
-            result_no_blank = handle_boolean_voting(self)
-            result_no_blank.pop('Blankt', None)
-
     elif self.question_type is MULTIPLE_CHOICE:
         results = handle_multiple_choice_voting(self)
-        if not self.count_blank_votes:
-            result_no_blank = handle_multiple_choice_voting(self)
-            result_no_blank.pop('Blankt', None)
     else:
         raise NotImplementedError
 
     if results:
-        if not self.count_blank_votes:
-            winner = max(result_no_blank.keys(), key=(lambda key: results[key]))
-        else:
-            winner = max(results.keys(), key=(lambda key: results[key]))
+        winner = get_winner(self)
         winner_votes = results[winner]
 
         minimum = 0
@@ -132,6 +121,17 @@ def handle_not_locked(self, admin):
     else:
         return None
 
+def get_winner(self):
+    result_no_blank = None
+    if self.question_type is BOOLEAN_VOTE and not self.count_blank_votes:
+        result = handle_boolean_voting(self)
+        result.pop('Blankt', None)
+    elif self.question_type is MULTIPLE_CHOICE and not self.count_blank_votes:
+        result = handle_multiple_choice_voting(self)
+        result.pop('Blankt', None)
+    else:
+        result = handle_boolean_voting(self)
+    return max(result.keys(), key=(lambda key: result[key]))
 
 def handle_boolean_voting(self):
     results = {'Ja': 0, 'Nei': 0, 'Blankt': 0}
