@@ -125,18 +125,6 @@
                                         </div>
                                     </div>
                                 {% endif %}
-                                {% if payment %}
-                                    <div class="row">
-                                        <div class="event-hero-meta-info">
-                                            <div class="col-xs-12 col-sm-4 col-md-4 col-md-offset-4 col-sm-offset-4">
-                                                <div class="event-hero-title">Pris</div>
-                                                <div class="event-hero-large-text">
-                                                    {{  payment.price }},-
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                {% endif %}
                             </div>
                         </div>
                     </div>
@@ -230,12 +218,16 @@
                                                 </div>
                                             {% endif %}
                                         {% endif %}
+
+                                        {%  if payment %}
+                                            <p class="status-text status-price">Pris: {{ payment.price }},-</p>
+                                        {%  endif %}
+
                                     {% endif %}
                                 {% endif %}
                             {% else %}
                                 <p class="status-text">Dette er ikke et påmeldingsarrangement.</p>
                             {% endif %}
-
 
                             {% if attendance_event %}
                                 <p class="help-text" style="margin-top:20px">Avmeldingsfristen
