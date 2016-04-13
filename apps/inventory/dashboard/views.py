@@ -12,7 +12,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from guardian.decorators import permission_required
 
 from apps.dashboard.tools import get_base_context, has_access
-from apps.inventory.dashboard.forms import BatchForm, ItemForm, CategoryForm
+from apps.inventory.dashboard.forms import BatchForm, CategoryForm, ItemForm
 from apps.inventory.models import Batch, Item, ItemCategory
 from apps.shop.models import Order
 
