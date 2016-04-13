@@ -185,7 +185,7 @@ class UserDeleteView(DashboardPermissionMixin, DeleteView):
     model = User
     permission_required = 'authentication.delete_onlineuser'
     pk_url_kwarg = 'user_id'
-    success_url = reverse_lazy('auth_index')
+    success_url = reverse_lazy('user_list')
 
 
 @login_required
