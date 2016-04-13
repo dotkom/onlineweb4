@@ -133,7 +133,7 @@ def get_winner(self):
     else:
         result = handle_boolean_voting(self)
     return max(result.keys(), key=(lambda key: result[key]))
-    
+
 
 def handle_boolean_voting(self):
     results = {'Ja': 0, 'Nei': 0, 'Blankt': 0}
