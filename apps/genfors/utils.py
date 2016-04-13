@@ -79,15 +79,13 @@ def handle_not_locked(self, admin):
     results = None
     if self.question_type is BOOLEAN_VOTE:
         results = handle_boolean_voting(self)
-
     elif self.question_type is MULTIPLE_CHOICE:
         results = handle_multiple_choice_voting(self)
-
     else:
         raise NotImplementedError
 
     if results:
-        winner = max(results.keys(), key=(lambda key: results[key]))
+        winner = get_winner(self)
         winner_votes = results[winner]
 
         minimum = 0
@@ -110,7 +108,7 @@ def handle_not_locked(self, admin):
 
         if total_votes != 0 and self.count_blank_votes:
             res['valid'] = winner_votes / float(total_votes) > minimum
-        elif total_votes != 0 and not self.count_blank_votes:
+        elif votes_for_alternative != 0 and not self.count_blank_votes:
             res['valid'] = winner_votes / float(votes_for_alternative) > minimum
 
         # Admins should see all info regardless of only show winner
@@ -122,6 +120,19 @@ def handle_not_locked(self, admin):
             return res
     else:
         return None
+
+
+def get_winner(self):
+    result = None
+    if self.question_type is BOOLEAN_VOTE and not self.count_blank_votes:
+        result = handle_boolean_voting(self)
+        result.pop('Blankt', None)
+    elif self.question_type is MULTIPLE_CHOICE and not self.count_blank_votes:
+        result = handle_multiple_choice_voting(self)
+        result.pop('Blankt', None)
+    else:
+        result = handle_boolean_voting(self)
+    return max(result.keys(), key=(lambda key: result[key]))
 
 
 def handle_boolean_voting(self):
