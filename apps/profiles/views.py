@@ -11,6 +11,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.models import Group
 from django.core.mail import send_mail
+from django.db import IntegrityError
 from django.http import Http404, HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
@@ -386,11 +387,12 @@ def _send_verification_mail(request, email):
     # Create the registration token
     token = uuid.uuid4().hex
     try:
-        rt = RegisterToken(user=request.user, email=email.email, token=token)
+        rt = RegisterToken(user=request.user, email=email, token=token)
         rt.save()
         log.info('Successfully registered token for %s' % request.user)
-    except:
-        log.error('Failed to register token for %s' % request.user)
+    except IntegrityError as ie:
+        log.error('Failed to register token for %s due to %s' % (request.user, ie))
+        raise ie
 
     email_message = _("""
 En ny epost har blitt registrert på din profil på online.ntnu.no.

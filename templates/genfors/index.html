@@ -127,9 +127,15 @@ Generalforsamling - Online
                                     </div>
                                     <strong>Blankt</strong>: <span id="boolean_blank">{{ res.Blankt }}</span> stemme{{ res.Blankt|pluralize:"r" }}<p />
                                     <div class="progress" id="blank_progress">
-                                        <div class="progress-bar progress-bar-warning" id="boolean_blank_progress" role="progressbar" aria-valuenow="{{ active_question.blank_percent }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ active_question.blank_percent }}%">
-                                            {{ active_question.blank_percent }}%
-                                        </div>
+                                        {% if q.count_blank_votes %}
+                                                <div class="progress-bar progress-bar-warning" id="boolean_blank_progress" role="progressbar" aria-valuenow="{{ active_question.blank_percent }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ active_question.blank_percent }}%">
+                                                    {{ active_question.blank_percent }}%
+                                                </div>
+                                        {% else %}
+                                            <div class="progress-bar progress-bar-warning" id="boolean_blank_progress" role="progressbar" aria-valuenow="{{ active_question.blank_percent }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ active_question.blank_percent }}%">
+                                                    {{ res.Blankt }} av {{ q.get_votes.count }} stemme{{ q.get_votes.count|pluralize:"r" }}
+                                                </div>
+                                        {% endif %}
                                     </div>
                                 </div>
                                 {% else %}
@@ -138,15 +144,24 @@ Generalforsamling - Online
                                     {% else %}
                                         <div id="mc_progress">
                                         {% for alt, votes in active_question.multiple_choice.items %}
-                                            
-                                            <strong id="{{ alt }}">{{ alt }}</strong>: <span id="{{ alt }}_votes">{{ votes.0 }}</span> stemme{{ votes.0|pluralize:"r" }}<p />
-                                            <div class="progress">
-                                                <div class="progress-bar progress-bar-primary" id="{{ alt }}_progress" role="progressbar" aria-valuenow="{{ votes.1 }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ votes.1 }}%">
-                                                     {{ votes.1 }}%
+
+                                            {% if alt == 'Blankt' and not q.count_blank_votes %}
+                                                <strong>Blankt</strong>: <span id="{{ alt }}_votes">{{ votes.0 }}</span> stemme{{ votes.0|pluralize:"r" }}<p />
+                                                <div class="progress" id="blank_progress">
+                                                    <div class="progress-bar progress-bar-warning" id="boolean_blank_progress" role="progressbar" aria-valuenow="{{ votes.1 }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ votes.1 }}%">
+                                                        {{ votes.0 }} av {{ q.get_votes.count }} stemme{{ q.get_votes.count|pluralize:"r" }}
+                                                    </div>
                                                 </div>
-                                            </div>
+                                            {% else %}
+                                                <strong id="{{ alt }}">{{ alt }}</strong>: <span id="{{ alt }}_votes">{{ votes.0 }}</span> stemme{{ votes.0|pluralize:"r" }}<p />
+                                                <div class="progress">
+                                                    <div class="progress-bar progress-bar-primary" id="{{ alt }}_progress" role="progressbar" aria-valuenow="{{ votes.1 }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ votes.1 }}%">
+                                                         {{ votes.1 }}%
+                                                    </div>
+                                                </div>
+                                            {% endif %}
                                             
-                                        {% endfor %}
+                                        {% endfor %}|
                                         </div>
                                     {% endif %}
                                 {% endif %}<!-- End if question_type -->
@@ -172,36 +187,44 @@ Generalforsamling - Online
                                 <p>Her vises avsluttede saker og deres resultat. I visse saker vil kun vinneren vises, eventuelt ingenting dersom det ikke var flertall.</p>
                             </div>
                             <table class="table table-striped table-hover table-responsive">
-                                <tr>
+                                <tr data-toggle="collapse" data-target="#collapse1">
                                     <th>Sak</th>
                                     <th>Flertallskrav</th>
                                     <th>Resultat</th>
                                 </tr>
-                                {% for question in meeting.get_locked_questions %}
-                                    <tr>
-                                        <td>{{ question.description }}</td>
-                                        <td>{% if question.majority_type == 0 %}Alminnelig (1/2){% else %}Kvalitativt (2/3){% endif %}</td>
-                                        <td>
-                                        {% with question.get_results as results %}
-                                        {% if results.valid %}
-                                            Resultat: <strong>{{ question.get_leader }}</strong><br />
-                                            <span class="label label-success">Flertall</span><br /><br />
-                                        {% else %}
-                                            <span class="label label-danger">Ikke flertall</span><br /><br />
-                                        {% endif %}
-                                        {% for alt, votes in results.data.items %}
-                                            {% if not question.only_show_winner %}
-                                                <span><strong>{{ alt }}</strong>: {{ votes }} stemme{{ votes|pluralize:"r"}}.</span><br />
-                                            {% endif %}
-                                        {% endfor %}
-                                        {% endwith %}
-                                        </td>
-                                    </tr>
-                                {% empty %}
-                                    <tr>
-                                        <td colspan="3">Ingen avsluttede saker.</td>
-                                    </tr>
-                                {% endfor %}
+                                <tr>
+                                    <td colspan="3" class="panel-bottom">
+                                        <div class="collapse collapseable" id="collapse1">
+                                            <table class="table">
+                                                {% for question in meeting.get_locked_questions %}
+                                                    <tr>
+                                                        <td>{{ question.description }}</td>
+                                                        <td>{% if question.majority_type == 0 %}Alminnelig (1/2){% else %}Kvalitativt (2/3){% endif %}</td>
+                                                        <td>
+                                                        {% with question.get_results as results %}
+                                                        {% if results.valid %}
+                                                            Resultat: <strong>{{ question.get_leader }}</strong><br />
+                                                            <span class="label label-success">Flertall</span><br /><br />
+                                                        {% else %}
+                                                            <span class="label label-danger">Ikke flertall</span><br /><br />
+                                                        {% endif %}
+                                                        {% for alt, votes in results.data.items %}
+                                                            {% if not question.only_show_winner %}
+                                                                <span><strong>{{ alt }}</strong>: {{ votes }} stemme{{ votes|pluralize:"r"}}.</span><br />
+                                                            {% endif %}
+                                                        {% endfor %}
+                                                        {% endwith %}
+                                                        </td>
+                                                    </tr>
+                                                {% empty %}
+                                                    <tr>
+                                                        <td colspan="3">Ingen avsluttede saker.</td>
+                                                    </tr>
+                                                {% endfor %}
+                                            </table>
+                                        </div>
+                                    </td>
+                                </tr>
                             </table>
                         </div>
                     </div>

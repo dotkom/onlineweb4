@@ -30,7 +30,7 @@ django-guardian==1.4.2          # Per Object permissions framework
 django-taggit==0.18.0           # Generic multi-model tagging library
 django-taggit-serializer==0.1.5 # REST Framework serializers for Django-taggit
 APScheduler==3.0.5              # Scheduler
-feedme==1.9.4
+feedme==1.9.5
 git+https://github.com/dotKom/redwine.git@1.2.4#egg=redwine==1.2.4
 reportlab==3.3.0
 pdfdocument==3.1

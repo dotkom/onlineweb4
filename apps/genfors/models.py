@@ -60,7 +60,7 @@ class Meeting(models.Model):
     # Pincode generator for a particular meeting
     def generate_pin_code(self):
         h = sha256()
-        h.update(str(random.randint(0, 100000)))
+        h.update(str(random.randint(0, 100000)).encode('utf-8'))
         h = h.hexdigest()
         self.pin = h[:6]
         self.save()
@@ -199,6 +199,7 @@ class Question(models.Model):
     )
     only_show_winner = models.BooleanField(_('Vis kun vinner'), null=False, blank=False, default=False)
     total_voters = models.IntegerField(_('Stemmeberettigede'), null=True)
+    count_blank_votes = models.BooleanField(_('Tellende blanke stemmer'), null=False, blank=False, default=False)
 
     # Returns results as a dictionary, either by alternative or boolean-ish types
     def get_results(self, admin=False):

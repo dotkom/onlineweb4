@@ -32,6 +32,11 @@ Genfors = (function () {
                             self.text('Vis stemmekode');
                         }
                     });
+                    $('input[name=choice]:radio').change(function (e) {
+                        e.preventDefault();
+                        $('.voteverification').slideUp(200);
+                        $('#verify_vote').removeClass('disabled');
+                    });
                 },
             }
         }()),
@@ -112,10 +117,11 @@ Genfors = (function () {
                 }
                 if ('results' in data.question) {
                     var r = data.question.results.data;
+                    var blank = r['Blankt'];
+                    var votes_for_alternative = data.question.current_votes - blank;
                     if ('Ja' in r || 'Nei' in r) {
-                        var yes = r['Ja']
-                        var no = r['Nei']
-                        var blank = r['Blankt']
+                        var yes = r['Ja'];
+                        var no = r['Nei'];
                         var current_votes = data.question.current_votes;
                         var options = Object.keys(r);
                         options.sort(function(a,b) {return r[b]-r[a]});
@@ -123,40 +129,81 @@ Genfors = (function () {
                         for (var x = 0; x < options.length; x++) {
                             var key = options[x];
                             var value = r[key];
-                            var percent = Genfors.get_percent(value, current_votes);
-                            html += '<strong>' + key + '</strong>: ' + value + ' stemme';
-                            if (value != 1) {
-                                html += 'r';
-                            }
-                            type = "";
-                            if (key == 'Ja') {
-                                type = 'success';
-                            }
-                            else if (key == 'Nei') {
-                                type = 'danger';
+                            var percent;
+                            if (data.question.count_blank_votes) {
+                                percent = Genfors.get_percent(value, current_votes);
                             }
                             else {
-                                type = 'warning';
+                                if (key == 'Blankt') {
+                                    percent = Genfors.get_percent(value, current_votes);
+                                }
+                                else{
+                                    percent = Genfors.get_percent(value, votes_for_alternative);
+                                }
                             }
-                            html += '<p /><div class="progress"><div class="progress-bar progress-bar-' + type +'" role="progressbar" aria-valuenow="' + percent + '" aria-valuemin="0" aria-valuemax="100" style="width: ' + percent + '%">' + percent + '%</div></div>';
+                            html += '<p><strong>' + key + '</strong>: ' + value + ' stemme' + ((value>1)?'r':'') + '</p>';
+                            type = "";
+                            if (data.question.count_blank_votes) {
+                                if (key == 'Ja') {
+                                    type = 'success';
+                                }
+                                else if (key == 'Nei') {
+                                    type = 'danger';
+                                }
+                                else {
+                                    type = 'warning';
+                                }
+                                html += '<div class="progress"><div class="progress-bar progress-bar-' + type +'" role="progressbar" aria-valuenow="' + percent + '" aria-valuemin="0" aria-valuemax="100" style="width: ' + percent + '%">' + percent + '%</div></div>';
+                            }
+                            else {
+                                if (key == 'Blankt') { 
+                                    type = 'warning';
+                                    html += '<div class="progress"><div class="progress-bar progress-bar-' + type + '" role="progressbar" aria-valuenow="' + percent + 
+                                        '" aria-valuemin="0" aria-valuemax="100" style="width: ' + percent + '%">' + value + ' av ' + current_votes + 
+                                        ' stemme' + ((current_votes>1)?'r':'') + '</div></div>';
+                                }
+                                else {
+                                    if (key == 'Ja') {
+                                        type = 'success';
+                                    }
+                                    else if (key == 'Nei') {
+                                        type = 'danger';
+                                    }
+                                    html += '<div class="progress"><div class="progress-bar progress-bar-' + type +'" role="progressbar" aria-valuenow="' + percent + '" aria-valuemin="0" aria-valuemax="100" style="width: ' + percent + '%">' + percent + '%</div></div>';
+                                }
+                            }
                         }
                         $('#bool_progress').html(html);
                     }
                     else {
                         var alternatives = Object.keys(r);
                         alternatives.sort(function(a,b){return r[b]-r[a]});
+                        alternatives = Genfors.blank_at_top(alternatives);
                         var current_votes = data.question.current_votes;
                         var html = "";
                         for (var x = 0; x < alternatives.length; x++) {
                             var key = alternatives[x];
                             var value = r[key];
-                            var percent = Genfors.get_percent(value, current_votes);
-                            html += '<strong>' + key + '</strong>: ' + value + ' stemme';
-                            if (value != 1) {
-                                html += 'r';
+                            var percent;
+                            html += '<p><strong>' + key + '</strong>: ' + value + ' stemme' + ((value>1)?'r':'') + '</p>';
+                            if (data.question.count_blank_votes) {
+                                percent = Genfors.get_percent(value, current_votes);
+                                type = "primary";
+                                html += '<div class="progress"><div class="progress-bar progress-bar-' + type + '" role="progressbar" aria-valuenow="' + percent + '" aria-valuemin="0" aria-valuemax="100" style="width: ' + percent + '%">' + percent + '%</div></div>';
                             }
-                            type = "primary";
-                            html += '<p /><div class="progress"><div class="progress-bar progress-bar-"' + type + ' role="progressbar" aria-valuenow="' + percent + '" aria-valuemin="0" aria-valuemax="100" style="width: ' + percent + '%">' + percent + '%</div></div>';
+                            else {
+                                if (key == 'Blankt') {
+                                    percent = Genfors.get_percent(value, current_votes);
+                                    type = "warning";
+                                    html += '<div class="progress"><div class="progress-bar progress-bar-' + type + '" role="progressbar" aria-valuenow="' + percent + '" aria-valuemin="0" aria-valuemax="100" style="width: ' + percent + '%">' + value + ' av ' + current_votes + ' stemme' + ((current_votes>1)?'r':'') + 
+                                        '</div></div>';
+                                }
+                                else {
+                                    percent = Genfors.get_percent(value, votes_for_alternative);
+                                    type = "primary";
+                                    html += '<div class="progress"><div class="progress-bar progress-bar-' + type + '" role="progressbar" aria-valuenow="' + percent + '" aria-valuemin="0" aria-valuemax="100" style="width: ' + percent + '%">' + percent + '%</div></div>';
+                                }
+                            }
                         }
                         $('#mc_progress').html(html);
                     }
@@ -166,7 +213,17 @@ Genfors = (function () {
         },
 
         get_percent: function (votes, total) {
-            return Math.floor(votes * 100 / total);
+            return Math.floor(votes * 100 / total) || 0;
+        },
+
+        blank_at_top: function (alternatives) {
+            for (var i = 0; i < alternatives.length; i++) {
+                if (alternatives[i] == 'Blankt') {
+                    alternatives.unshift(alternatives.splice(i, 1));
+                    return alternatives;
+                }
+            }
+            return null;
         }
     }
 }());
