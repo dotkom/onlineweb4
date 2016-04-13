@@ -59,9 +59,16 @@ def create_fos_application(request):
 
             length_of_fos = get_length_of_field_of_study(field_of_study)
             if length_of_fos > 0:
-                # Expiry dates should be 15th September, so that we have tiem to get new lists from NTNU
+                # Expiry dates should be 15th September, so that we have time to get new lists from NTNU
                 application.new_expiry_date = datetime.date(
                     started_year, 9, 16) + datetime.timedelta(days=365*length_of_fos)
+                # Expiry dates in the past sets the expiry date to next september
+                if application.new_expiry_date < datetime.date.today():
+                    if datetime.date.today() < datetime.date(datetime.date.today().year, 9, 16):
+                        application.new_expiry_date = datetime.date(datetime.date.today().year, 9, 16)
+                    else:
+                        application.new_expiry_date = datetime.date(
+                            datetime.date.today().year, 9, 16) + datetime.timedelta(days=365)
             application.save()
 
             messages.success(request, _("Søknad om bytte av studieretning er sendt."))
