@@ -47,7 +47,7 @@
                                     </a>
                                 </td>
                                 <td>
-                                    {{ attendee.extras }}
+                                    {% if attendee.extras %}{{ attendee.extras }}{% else %}-{% endif %}
                                 </td>
                                 <td>
                                     <a href="#modal-delete-attendee" data-toggle="modal" data-id="{{ attendee.id }}" data-name="{{ attendee.user.get_full_name }}" class="remove-user">
@@ -104,7 +104,7 @@
                                     </a>
                                 </td>
                                 <td>
-                                    {{ attendee.extras }}
+                                    {% if attendee.extras %}{{ attendee.extras }}{% else %}-{% endif %}
                                 </td>
                                 <td>
                                     <a href="#modal-delete-attendee" data-toggle="modal" data-id="{{ attendee.id }}" data-name="{{ attendee.user.get_full_name }}" class="remove-user">
@@ -115,7 +115,7 @@
                         {% endfor %}
                         </tbody>
                     </table>
-                </div> 
+                </div>
                 <div id="no-waitlist-content"{% if event.attendance_event.waitlist_qs %} style="display: none;"{% endif %}>
                     <p>Dette arrangementet har ingen på venteliste.</p>
                 </div>
@@ -150,7 +150,7 @@
                             {% if extra.attending or extra.waits %}
                             <tr>
                                 <td>
-                                    {{ extra.type }}
+                                    {% if extra.type %}{{ extra.type }}{% else %}Ikke valgt{% endif %}
                                 </td>
                                 <td>
                                     {{ extra.attending }}
