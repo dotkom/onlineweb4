@@ -141,7 +141,6 @@ def verify(request, token):
             # Check if Online-member, and set Infomail to True is he/she is
             if user.is_member:
                 user.infomail = True
-                user.jobmail = True
 
         user_activated = False
         if not user.is_active:
