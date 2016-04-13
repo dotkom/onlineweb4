@@ -8,6 +8,7 @@ from django.conf import settings
 from django.contrib.auth.models import Group
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
+from django.db.models import Case, Q, When
 from django.template.defaultfilters import slugify
 from django.utils import timezone
 from django.utils.translation import ugettext as _
@@ -31,6 +32,29 @@ TYPE_CHOICES = (
 )
 
 
+# Managers
+
+class EventOrderedByRegistration(models.Manager):
+    """
+    Order events by registration start if registration start is within 7 days of today.
+    """
+    def get_queryset(self):
+        DELTA_FUTURE = settings.OW4_SETTINGS.get('events').get('OW4_EVENTS_FEATURED_DAYS_FUTURE')
+        DELTA_PAST = settings.OW4_SETTINGS.get('events').get('OW4_EVENTS_FEATURED_DAYS_PAST')
+        week_back = timezone.now() - timedelta(days=DELTA_PAST)
+        week_in_future = timezone.now() + timedelta(days=DELTA_FUTURE)
+
+        return super(EventOrderedByRegistration, self).get_queryset().\
+            annotate(registration_filtered=Case(
+                When(Q(attendance_event__registration_start__gte=week_back) &
+                     Q(attendance_event__registration_start__lte=week_in_future),
+                     then='attendance_event__registration_start'),
+                default='event_end',
+                output_field=models.DateTimeField()
+            )
+        ).order_by('registration_filtered')
+
+
 class Event(models.Model):
     """
     Base class for Event-objects.
@@ -38,6 +62,10 @@ class Event(models.Model):
 
     IMAGE_FOLDER = "images/events"
     IMAGE_EXTENSIONS = ['.jpg', '.jpeg', '.gif', '.png', '.tif', '.tiff']
+
+    # Managers
+    objects = models.Manager()
+    by_registration = EventOrderedByRegistration()
 
     author = models.ForeignKey(User, related_name='oppretter')
     title = models.CharField(_('tittel'), max_length=60)

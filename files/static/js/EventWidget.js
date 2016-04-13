@@ -9,7 +9,7 @@ function EventWidget (Utils){
         var now = moment();
 
         Utils.makeApiRequest({
-            'url':'/api/v1/events/?event_end__gte=' + now.format('YYYY-MM-DD') + '&ordering=event_start&format=json',
+            'url':'/api/v1/events/?event_end__gte=' + now.format('YYYY-MM-DD') + '&ordering=registration_filtered&format=json',
             'method' : 'GET',
             'data': {},
             success: function (data) {
