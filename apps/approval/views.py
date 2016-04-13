@@ -59,22 +59,27 @@ def create_fos_application(request):
 
             length_of_fos = get_length_of_field_of_study(field_of_study)
             if length_of_fos > 0:
-                # Expiry dates should be 15th September, so that we have time to get new lists from NTNU
-                application.new_expiry_date = datetime.date(
-                    started_year, 9, 16) + datetime.timedelta(days=365*length_of_fos)
-                # Expiry dates in the past sets the expiry date to next september
-                if application.new_expiry_date < datetime.date.today():
-                    if datetime.date.today() < datetime.date(datetime.date.today().year, 9, 16):
-                        application.new_expiry_date = datetime.date(datetime.date.today().year, 9, 16)
-                    else:
-                        application.new_expiry_date = datetime.date(
-                            datetime.date.today().year, 9, 16) + datetime.timedelta(days=365)
+                application.new_expiry_date = get_expiry_date(started_year, length_of_fos)
             application.save()
 
             messages.success(request, _("Søknad om bytte av studieretning er sendt."))
 
         return redirect('profiles_active', active_tab='membership')
     raise Http404
+
+
+def get_expiry_date(started_year, length_of_fos):
+    # Expiry dates should be 15th September, so that we have time to get new lists from NTNU
+    new_expiry_date = datetime.date(
+        started_year, 9, 16) + datetime.timedelta(days=365*length_of_fos)
+    # Expiry dates in the past sets the expiry date to next september
+    if new_expiry_date < datetime.date.today():
+        if datetime.date.today() < datetime.date(datetime.date.today().year, 9, 15):
+            new_expiry_date = datetime.date(datetime.date.today().year, 9, 15)
+        else:
+            new_expiry_date = datetime.date(
+                datetime.date.today().year, 9, 16) + datetime.timedelta(days=365)
+    return new_expiry_date
 
 
 @login_required
