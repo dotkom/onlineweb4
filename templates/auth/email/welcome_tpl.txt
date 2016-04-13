@@ -1,0 +1,10 @@
+En konto har blitt registrert på online.ntnu.no med denne epostadressen. Dersom du ikke
+har utført denne handlingen ber vi deg se bort fra denne eposten.
+
+For å bruke denne kontoen kreves det at du verifiserer epostadressen. Du kan gjøre
+dette ved å besøke linken under.
+
+{{ verify_url }}
+
+Denne lenken vil være gyldig i 24 timer. Dersom du behøver å få tilsendt en ny lenke
+kan dette gjøres med funksjonen for å gjenopprette passord.
