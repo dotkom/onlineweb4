@@ -212,7 +212,7 @@ def event_change_attendees(request, event_id, active_tab='attendees'):
 
 def count_extras(arr, inlist, atts):
     for att in atts:
-        choice = "Ikke valgt" if att.extras is None else att.extras
+        choice = "Ikke valgt" if not att.extras else att.extras
         if att.extras not in arr:
             arr[choice] = {"type": choice, "attending": 0, "waits": 0, "allergics": []}
         ex = arr[choice]
