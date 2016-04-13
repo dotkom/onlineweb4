@@ -11,13 +11,6 @@ Varelager - Online Dashboard
     {% endcompress %}
 {% endblock %}
 
-{% block js %}
-    {{ block.super }}
-    {% compress js %}
-    <script src="{{ STATIC_URL }}js/dashboard/inventory.js"></script>
-    {% endcompress %}
-{% endblock js %}
-
 {% block page-header %}
 Kategorier
 {% endblock %}

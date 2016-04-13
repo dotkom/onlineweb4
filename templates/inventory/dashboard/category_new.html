@@ -4,7 +4,7 @@
 {% load crispy_forms_tags %}
 
 {% block title %}
-Ny vare - Online Dashboard
+Kategori - Online Dashboard
 {% endblock title %}
 
 {% block styles %}
@@ -13,15 +13,8 @@ Ny vare - Online Dashboard
     {% endcompress %}
 {% endblock %}
 
-{% block js %}
-    {{ block.super }}
-    {% compress js %}
-{#    <script src="{{ STATIC_URL }}js/dashboard/inventory.js"></script>#}
-    {% endcompress %}
-{% endblock js %}
-
 {% block page-header %}
-Kategory
+Kategori
 {% endblock %}
 
 {% block breadcrumbs %}
