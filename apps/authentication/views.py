@@ -141,7 +141,6 @@ def verify(request, token):
             # Check if Online-member, and set Infomail to True is he/she is
             if user.is_member:
                 user.infomail = True
-                user.jobmail = True
 
         user_activated = False
         if not user.is_active:
@@ -153,8 +152,12 @@ def verify(request, token):
 
         if user_activated:
             log.info('New user %s was activated' % user)
-            messages.success(request, _('Bruker %s ble aktivert. Du kan nå logge inn.') % user.username)
-            return redirect('auth_login')
+            user.backend = "django.contrib.auth.backends.ModelBackend"
+            auth.login(request, user)
+            messages.success(request, _(
+                'Bruker %s ble aktivert. Du er nå logget inn. '
+                'Kikk rundt på "Min Side" for å oppdatere profilinnstillinger.') % user.username)
+            return redirect('profiles')
         else:
             log.info('New email %s was verified for user %s' % (email, user))
             messages.success(request, _('Eposten %s er nå verifisert.') % email)
