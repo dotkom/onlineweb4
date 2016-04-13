@@ -1,7 +1,7 @@
 {% load addcss %}
 <form method="POST">
     {% csrf_token %}
-    {% for field in item_form %}
+    {% for field in form %}
     <div class="form-group {% if field.errors %}has-error{% endif %}">
         <label for="{{ field.auto_id }}"{% if field.errors %} class="red"{% endif %}>{{ field.label }}</label>
         {{ field|addclass:"form-control" }}

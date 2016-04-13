@@ -1,0 +1,48 @@
+{% extends "dashboard_base.html" %}
+{% load compress %}
+{% load addcss %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+Ny vare - Online Dashboard
+{% endblock title %}
+
+{% block styles %}
+    {{ block.super }}
+    {% compress css %}
+    {% endcompress %}
+{% endblock %}
+
+{% block js %}
+    {{ block.super }}
+    {% compress js %}
+{#    <script src="{{ STATIC_URL }}js/dashboard/inventory.js"></script>#}
+    {% endcompress %}
+{% endblock js %}
+
+{% block page-header %}
+Kategory
+{% endblock %}
+
+{% block breadcrumbs %}
+    <li><a href="/dashboard/inventory/category/">Kategorier</a></li>
+    <li>Kategori</li>
+{% endblock %}
+
+{% block content %}
+    {%  if category.id %}
+        <div class="row">
+            <div class="col-md-12">
+                <a href="/dashboard/inventory/category/{{ category.id }}/delete/" class="btn btn-danger pull-right">
+                    <i class="fa fa-times fa-lg"></i> Slett kategori
+                </a>
+            </div>
+        </div>
+    {%  endif %}
+
+    <div class="row">
+        <div class="col-md-12">
+            {% include "inventory/dashboard/edit.html" %}
+        </div>
+    </div>
+{% endblock content %}

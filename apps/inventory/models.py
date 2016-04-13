@@ -12,6 +12,9 @@ from apps.gallery.models import ResponsiveImage
 class ItemCategory(models.Model):
     name = models.CharField(_("Kategori"), max_length=50)
 
+    def __str__(self):
+        return self.name
+
 
 class Item(models.Model):
 

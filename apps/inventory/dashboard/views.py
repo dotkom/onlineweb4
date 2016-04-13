@@ -12,8 +12,8 @@ from django.shortcuts import get_object_or_404, redirect, render
 from guardian.decorators import permission_required
 
 from apps.dashboard.tools import get_base_context, has_access
-from apps.inventory.dashboard.forms import BatchForm, ItemForm
-from apps.inventory.models import Batch, Item
+from apps.inventory.dashboard.forms import BatchForm, ItemForm, CategoryForm
+from apps.inventory.models import Batch, Item, ItemCategory
 from apps.shop.models import Order
 
 
@@ -53,10 +53,10 @@ def new(request):
             messages.success(request, 'Varen ble opprettet')
             return redirect(details, item.id)
 
-        context['item_form'] = inventory_form
+        context['form'] = inventory_form
 
     else:
-        context['item_form'] = ItemForm()
+        context['form'] = ItemForm()
 
     return render(request, 'inventory/dashboard/new.html', context)
 
@@ -83,9 +83,9 @@ def details(request, item_pk):
         else:
             item_form.save()
             messages.success(request, 'Varen ble oppdatert')
-        context['item_form'] = item_form
+        context['form'] = item_form
     else:
-        context['item_form'] = ItemForm(instance=context['item'])
+        context['form'] = ItemForm(instance=context['item'])
 
     context['new_batch_form'] = BatchForm()
 
@@ -189,6 +189,100 @@ def batch_delete(request, item_pk, batch_pk):
         messages.success(request, 'Batchen ble slettet.')
 
         return redirect(details, item_pk=item_pk)
+
+    raise PermissionDenied
+
+
+@login_required
+@permission_required('inventory.view_itemcategory', return_403=True)
+def category_index(request):
+
+    # Generic check to see if user has access to dashboard. (In Komiteer or superuser)
+    if not has_access(request):
+        raise PermissionDenied
+
+    # Create the base context needed for the sidebar
+    context = get_base_context(request)
+
+    context['categories'] = ItemCategory.objects.all()
+
+    return render(request, 'inventory/dashboard/category_index.html', context)
+
+
+@login_required
+@permission_required('inventory.view_itemcategory', return_403=True)
+def category_details(request, category_pk):
+    # Generic check to see if user has access to dashboard. (In Komiteer or superuser)
+    if not has_access(request):
+        raise PermissionDenied
+
+    # Create the base context needed for the sidebar
+    context = get_base_context(request)
+
+    context['category'] = get_object_or_404(ItemCategory, pk=category_pk)
+
+    if request.method == 'POST':
+
+        form = CategoryForm(request.POST, instance=context['category'])
+        if not form.is_valid():
+            messages.error(request, 'Noen av de påkrevde feltene inneholder feil.')
+        else:
+            form.save()
+            messages.success(request, 'Kategorien ble oppdatert')
+            return redirect(category_index)
+
+        context['form'] = form
+    else:
+        context['form'] = CategoryForm(instance=context['category'])
+
+    return render(request, 'inventory/dashboard/category_new.html', context)
+
+
+@login_required
+@permission_required('inventory.add_itemcategory', return_403=True)
+def category_new(request):
+
+    if not has_access(request):
+        raise PermissionDenied
+
+    # Get base context
+    context = get_base_context(request)
+
+    if request.method == 'POST':
+        form = CategoryForm(request.POST)
+
+        if not form.is_valid():
+            messages.error(request, 'Noen av de påkrevde feltene inneholder feil.')
+        else:
+            form.save()
+            messages.success(request, 'Kategorien ble opprettet')
+            return redirect(category_index)
+
+        context['form'] = form
+    else:
+        context['form'] = CategoryForm()
+
+    return render(request, 'inventory/dashboard/category_new.html', context)
+
+
+@login_required
+@permission_required('inventory.delete_itemcategory', return_403=True)
+def category_delete(request, category_pk):
+    if not has_access(request):
+        raise PermissionDenied
+
+    category = get_object_or_404(ItemCategory, pk=category_pk)
+
+    items = Item.objects.filter(category=category)
+
+    # Removes the category binding to prevent cascading delete
+    for item in items:
+        item.category = None
+        item.save()
+
+    category.delete()
+    messages.success(request, 'Kategorien %s ble slettet.' % category.name)
+    return redirect(category_index)
 
     raise PermissionDenied
 
