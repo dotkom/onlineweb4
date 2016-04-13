@@ -7,6 +7,7 @@ from smtplib import SMTPException
 from django.conf import settings
 from django.contrib import auth, messages
 from django.core.mail import send_mail
+from django.core.urlresolvers import reverse
 from django.db import IntegrityError
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render
@@ -21,8 +22,6 @@ from apps.authentication.forms import ChangePasswordForm, LoginForm, RecoveryFor
 from apps.authentication.models import OnlineUser as User
 from apps.authentication.models import Email, RegisterToken
 from apps.authentication.serializers import UserSerializer
-
-logger = logging.getLogger(__name__)
 
 
 @sensitive_post_parameters()
@@ -98,9 +97,8 @@ def register(request):
                     log.error('Failed to register token for "%s" due to "%s"' % (request.user, ie))
 
                 email_context = {}
-                email_context['verify_url'] = request.build_absolute_uri('/auth/verify/%s/' % token)
-
-                # logger.debug('auth url: %s' % email_context['verify_url'])
+                verify_url = reverse('auth_verify', args=(token,))
+                email_context['verify_url'] = request.build_absolute_uri(verify_url)
 
                 message = render_to_string('auth/email/welcome_tpl.txt', email_context)
 
@@ -199,7 +197,8 @@ def recover(request):
                 email_context = {}
                 email_context['email'] = email.email
                 email_context['username'] = email.user.username
-                email_context['reset_url'] = request.build_absolute_uri("/auth/set_password/%s/" % token)
+                set_password_url = reverse('auth_set_password', args=(token,))
+                email_context['reset_url'] = request.build_absolute_uri(set_password_url)
 
                 email_message = render_to_string('auth/email/password_reset_tpl.txt', email_context)
 
