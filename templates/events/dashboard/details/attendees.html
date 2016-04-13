@@ -24,9 +24,13 @@
                                 <th>#</th>
                                 <th>Fornavn</th>
                                 <th>Etternavn</th>
+                                {% if event.attendance_event.payment %}
                                 <th>Betalt</th>
+                                {% endif %}
                                 <th>Møtt</th>
+                                {% if event.attendance_event.has_extras %}
                                 <th>Extra</th>
+                                {% endif %}
                                 <th>Fjern</th>
                             </tr>
                         </thead>
@@ -36,22 +40,26 @@
                                 <td>{{ forloop.counter }}</td>
                                 <td><a href="{% url 'dashboard_attendee_details' attendee.id %}">{{ attendee.user.first_name }}</a></td>
                                 <td><a href="{% url 'dashboard_attendee_details' attendee.id %}">{{ attendee.user.last_name }}</a></td>
+                                {% if event.attendance_event.payment %}
                                 <td>
                                     <a href="#" data-id="{{ attendee.id }}" class="toggle-attendee paid">
                                     <i class="fa fa-lg {% if attendee.paid %}fa-check-square-o checked{% else %}fa-square-o{% endif %}"></i>
                                     </a>
                                 </td>
+                                {% endif %}
                                 <td>
                                     <a href="#" data-id="{{ attendee.id }}" class="toggle-attendee attended">
                                     <i class="fa fa-lg {% if attendee.attended %}fa-check-square-o checked{% else %}fa-square-o{% endif %}"></i>
                                     </a>
                                 </td>
+                                {% if event.attendance_event.has_extras %}
                                 <td>
                                     {% if attendee.extras %}{{ attendee.extras }}{% else %}-{% endif %}
                                 </td>
+                                {% endif %}
                                 <td>
                                     <a href="#modal-delete-attendee" data-toggle="modal" data-id="{{ attendee.id }}" data-name="{{ attendee.user.get_full_name }}" class="remove-user">
-                                        <i class="fa fa-times fa-lg pull-right red"></i>
+                                        <i class="fa fa-times fa-lg red"></i>
                                     </a>
                                 </td>
                             </tr>
@@ -81,9 +89,13 @@
                                 <th>#</th>
                                 <th>Fornavn</th>
                                 <th>Etternavn</th>
+                                {% if event.attendance_event.payment %}
                                 <th>Betalt</th>
+                                {% endif %}
                                 <th>Møtt</th>
+                                {% if event.attendance_event.has_extras %}
                                 <th>Extra</th>
+                                {% endif %}
                                 <th>Fjern</th>
                             </tr>
                         </thead>
@@ -93,22 +105,26 @@
                                 <td>{{ forloop.counter }}</td>
                                 <td><a href="{% url 'dashboard_attendee_details' attendee.id %}">{{ attendee.user.first_name }}</a></td>
                                 <td><a href="{% url 'dashboard_attendee_details' attendee.id %}">{{ attendee.user.last_name }}</a></td>
+                                {% if event.attendance_event.payment %}
                                 <td>
                                     <a href="#" data-id="{{ attendee.id }}" class="toggle-attendee paid">
                                     <i class="fa fa-lg {% if attendee.paid %}fa-check-square-o checked{% else %}fa-square-o{% endif %}"></i>
                                     </a>
                                 </td>
+                                {% endif %}
                                 <td>
                                     <a href="#" data-id="{{ attendee.id }}" class="toggle-attendee attended">
                                     <i class="fa fa-lg {% if attendee.attended %}fa-check-square-o checked{% else %}fa-square-o{% endif %}"></i>
                                     </a>
                                 </td>
+                                {% if event.attendance_event.has_extras %}
                                 <td>
                                     {% if attendee.extras %}{{ attendee.extras }}{% else %}-{% endif %}
                                 </td>
+                                {% endif %}
                                 <td>
                                     <a href="#modal-delete-attendee" data-toggle="modal" data-id="{{ attendee.id }}" data-name="{{ attendee.user.get_full_name }}" class="remove-user">
-                                        <i class="fa fa-times fa-lg pull-right red"></i>
+                                        <i class="fa fa-times fa-lg red"></i>
                                     </a>
                                 </td>
                             </tr>
@@ -127,7 +143,7 @@
 <br />
 
 <!-- extras -->
-{% if event.attendance_event.extras %}
+{% if event.attendance_event.has_extras %}
 <div class="row">
     <div class="col-lg-12">
         <div class="panel panel-default">

@@ -404,6 +404,10 @@ class AttendanceEvent(models.Model):
             return False
 
     @property
+    def has_extras(self):
+        return bool(self.extras.exists())
+
+    @property
     def attendees_qs(self):
         """ Queryset with all attendees not on waiting list """
         return self.attendees.all()[:self.max_capacity - self.number_of_reserved_seats]
