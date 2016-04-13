@@ -121,8 +121,9 @@ def handle_not_locked(self, admin):
     else:
         return None
 
+
 def get_winner(self):
-    result_no_blank = None
+    result = None
     if self.question_type is BOOLEAN_VOTE and not self.count_blank_votes:
         result = handle_boolean_voting(self)
         result.pop('Blankt', None)
@@ -132,6 +133,7 @@ def get_winner(self):
     else:
         result = handle_boolean_voting(self)
     return max(result.keys(), key=(lambda key: result[key]))
+    
 
 def handle_boolean_voting(self):
     results = {'Ja': 0, 'Nei': 0, 'Blankt': 0}
