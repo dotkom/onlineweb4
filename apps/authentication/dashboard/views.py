@@ -172,6 +172,7 @@ class UserDetailView(DashboardPermissionMixin, DetailView):
 class UserUpdateView(DashboardPermissionMixin, UpdateView):
     form_class = UserUpdateForm
     model = User
+    context_object_name = 'user'
     permission_required = 'authentication.change_onlineuser'
     pk_url_kwarg = 'user_id'
     template_name = 'auth/dashboard/user_edit.html'
