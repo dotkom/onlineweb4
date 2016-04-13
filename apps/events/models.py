@@ -39,8 +39,8 @@ class EventOrderedByRegistration(models.Manager):
     Order events by registration start if registration start is within 7 days of today.
     """
     def get_queryset(self):
-        DELTA_FUTURE = settings.OW4_SETTINGS.get('events').get('OW4_EVENTS_FEATURED_DAYS_FUTURE')
-        DELTA_PAST = settings.OW4_SETTINGS.get('events').get('OW4_EVENTS_FEATURED_DAYS_PAST')
+        DELTA_FUTURE = settings.OW4_SETTINGS.get('events').get('FEATURED_DAYS_FUTURE')
+        DELTA_PAST = settings.OW4_SETTINGS.get('events').get('FEATURED_DAYS_PAST')
         week_back = timezone.now() - timedelta(days=DELTA_PAST)
         week_in_future = timezone.now() + timedelta(days=DELTA_FUTURE)
 
