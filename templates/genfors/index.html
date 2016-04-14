@@ -133,7 +133,7 @@ Generalforsamling - Online
                                             </div>
                                         </div>
                                     {% else %}
-                                        <p style="margin-top: 50px"><strong>Blankt (ikke tellende)</strong>: <span id="boolean_blank">{{ res.Blankt }}</span> stemme{{ res.Blankt|pluralize:"r" }}<p />
+                                        <p class="p-blank"><strong>Blankt (ikke tellende)</strong>: <span id="boolean_blank">{{ res.Blankt }}</span> stemme{{ res.Blankt|pluralize:"r" }}<p />
                                         <div class="progress" id="blank_progress">
                                             <div class="progress-bar progress-bar-warning" id="boolean_blank_progress" role="progressbar" aria-valuenow="{{ active_question.blank_percent }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ active_question.blank_percent }}%">
                                                 {{ res.Blankt }} av {{ q.get_votes.count }} stemme{{ q.get_votes.count|pluralize:"r" }}

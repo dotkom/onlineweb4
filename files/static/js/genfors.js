@@ -139,7 +139,7 @@ Genfors = (function () {
                             else {
                                 if (key == 'Blankt') {
                                     percent = Genfors.get_percent(value, current_votes);
-                                    html += '<p style="margin-top: 50px;"><strong>' + key + ' (ikke tellende)</strong>: ' + value + ' stemme' + ((value>1)?'r':'') + '</p>';
+                                    html += '<p class="p-blank"><strong>' + key + ' (ikke tellende)</strong>: ' + value + ' stemme' + ((value>1)?'r':'') + '</p>';
                                 }
                                 else{
                                     percent = Genfors.get_percent(value, votes_for_alternative);
@@ -191,7 +191,7 @@ Genfors = (function () {
                             var percent;
                             if (key == 'Blankt' && !data.question.count_blank_votes) {
                                 percent = Genfors.get_percent(value, current_votes);
-                                html += '<p style="margin-top: 50px;"><strong>' + key + ' (ikke tellende)</strong>: ' + value + ' stemme' + ((value>1)?'r':'') + '</p>';
+                                html += '<p class="p-blank"><strong>' + key + ' (ikke tellende)</strong>: ' + value + ' stemme' + ((value>1)?'r':'') + '</p>';
                             }
                             else{
                                 percent = Genfors.get_percent(value, votes_for_alternative);
