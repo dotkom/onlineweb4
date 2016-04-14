@@ -8,7 +8,7 @@ from django.conf import settings
 from django.contrib.auth.models import Group
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
-from django.db.models import Case, Q, When
+from django.db.models import Case, Q, Value, When
 from django.template.defaultfilters import slugify
 from django.utils import timezone
 from django.utils.translation import ugettext as _
@@ -39,6 +39,7 @@ class EventOrderedByRegistration(models.Manager):
     Order events by registration start if registration start is within 7 days of today.
     """
     def get_queryset(self):
+        today = timezone.now()
         DELTA_FUTURE = settings.OW4_SETTINGS.get('events').get('FEATURED_DAYS_FUTURE')
         DELTA_PAST = settings.OW4_SETTINGS.get('events').get('FEATURED_DAYS_PAST')
         week_back = timezone.now() - timedelta(days=DELTA_PAST)
@@ -52,7 +53,13 @@ class EventOrderedByRegistration(models.Manager):
                 default='event_end',
                 output_field=models.DateTimeField()
             )
-        ).order_by('registration_filtered')
+        ).annotate(is_today=Case(
+            When(event_end__date=today.date(),
+                 then=Value(1)),
+            default=Value(0),
+            output_field=models.IntegerField()
+        )
+        ).order_by('-is_today', 'registration_filtered')
 
 
 class Event(models.Model):

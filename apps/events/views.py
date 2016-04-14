@@ -300,8 +300,8 @@ class EventViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.Li
     permission_classes = (AllowAny,)
     filter_class = EventDateFilter
     filter_fields = ('event_start', 'event_end', 'id',)
-    ordering_fields = ('event_start', 'event_end', 'id', 'registration_filtered',)
-    ordering = ('id', 'registration_filtered',)
+    ordering_fields = ('event_start', 'event_end', 'id', 'is_today', 'registration_filtered')
+    ordering = ('-is_today', 'registration_filtered', 'id')
 
     def get_queryset(self):
         """
