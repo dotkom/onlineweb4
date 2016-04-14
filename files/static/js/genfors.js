@@ -87,6 +87,7 @@ Genfors = (function () {
                     $('#current_vote_count').text(data.question.current_votes);
                 }
                 var votes_html = "";
+                data.question.votes.sort();
                 if ('votes' in data.question) {
                     for (var x = 0; x < data.question.votes.length; x++) {
                         votes_html += '<li>' + data.question.votes[x][0];
@@ -124,7 +125,7 @@ Genfors = (function () {
                         var no = r['Nei'];
                         var current_votes = data.question.current_votes;
                         var options = Object.keys(r);
-                        options.sort(function(a,b) {return r[b]-r[a]});
+                        options.sort(function(a,b) {return r[b]-r[a]}).reverse();
                         var html = "";
                         for (var x = 0; x < options.length; x++) {
                             var key = options[x];
@@ -132,16 +133,22 @@ Genfors = (function () {
                             var percent;
                             if (data.question.count_blank_votes) {
                                 percent = Genfors.get_percent(value, current_votes);
+                                html += '<p><strong>' + key + '</strong>: ' + value + ' stemme' + ((value>1)?'r':'') + '</p>';
                             }
                             else {
-                                if (key == 'Blankt') {
+                                if (key == 'Blankt' && !data.question.count_blank_votes) {
                                     percent = Genfors.get_percent(value, current_votes);
+                                    html += '<p style="margin-top: 50px;"><strong>' + key + ' (ikke tellende)</strong>: ' + value + ' stemme' + ((value>1)?'r':'') + '</p>';
+                                }
+                                else if (key == 'Blankt'){
+                                    percent = Genfors.get_percent(value, current_votes);
+                                    html += '<p><strong>' + key + '</strong>: ' + value + ' stemme' + ((value>1)?'r':'') + '</p>';
                                 }
                                 else{
                                     percent = Genfors.get_percent(value, votes_for_alternative);
+                                    html += '<p><strong>' + key + '</strong>: ' + value + ' stemme' + ((value>1)?'r':'') + '</p>';
                                 }
                             }
-                            html += '<p><strong>' + key + '</strong>: ' + value + ' stemme' + ((value>1)?'r':'') + '</p>';
                             type = "";
                             if (data.question.count_blank_votes) {
                                 if (key == 'Ja') {
@@ -178,14 +185,21 @@ Genfors = (function () {
                     else {
                         var alternatives = Object.keys(r);
                         alternatives.sort(function(a,b){return r[b]-r[a]});
-                        alternatives = Genfors.blank_at_top(alternatives);
+                        alternatives = Genfors.blank_at_bottom(alternatives);
                         var current_votes = data.question.current_votes;
                         var html = "";
                         for (var x = 0; x < alternatives.length; x++) {
                             var key = alternatives[x];
                             var value = r[key];
                             var percent;
-                            html += '<p><strong>' + key + '</strong>: ' + value + ' stemme' + ((value>1)?'r':'') + '</p>';
+                            if (key == 'Blankt' && !data.question.count_blank_votes) {
+                                percent = Genfors.get_percent(value, current_votes);
+                                html += '<p style="margin-top: 50px;"><strong>' + key + ' (ikke tellende)</strong>: ' + value + ' stemme' + ((value>1)?'r':'') + '</p>';
+                            }
+                            else{
+                                percent = Genfors.get_percent(value, votes_for_alternative);
+                                html += '<p><strong>' + key + '</strong>: ' + value + ' stemme' + ((value>1)?'r':'') + '</p>';
+                            }
                             if (data.question.count_blank_votes) {
                                 percent = Genfors.get_percent(value, current_votes);
                                 type = "primary";
@@ -216,11 +230,11 @@ Genfors = (function () {
             return Math.floor(votes * 100 / total) || 0;
         },
 
-        blank_at_top: function (alternatives) {
+        blank_at_bottom: function (alternatives) {
             for (var i = 0; i < alternatives.length; i++) {
                 if (alternatives[i] == 'Blankt') {
                     alternatives.unshift(alternatives.splice(i, 1));
-                    return alternatives;
+                    return alternatives.reverse();
                 }
             }
             return null;
@@ -230,5 +244,5 @@ Genfors = (function () {
 
 $(document).ready(function () {
     Genfors.vote.bind_buttons();
-    setInterval(Genfors.update, 10000);
+    setInterval(Genfors.update, 1000);
 });
