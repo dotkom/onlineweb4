@@ -300,11 +300,15 @@ class EventViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.Li
     permission_classes = (AllowAny,)
     filter_class = EventDateFilter
     filter_fields = ('event_start', 'event_end', 'id',)
-    ordering_fields = ('event_start', 'event_end', 'id',)
-    ordering = ('id',)
+    ordering_fields = ('event_start', 'event_end', 'id', 'is_today', 'registration_filtered')
+    ordering = ('-is_today', 'registration_filtered', 'id')
 
     def get_queryset(self):
-        return Event.objects.filter(
+        """
+        :return: Queryset filtered by these requirements:
+        - event has NO group restriction OR user having access to restricted event
+        """
+        return Event.by_registration.filter(
             Q(group_restriction__isnull=True) | Q(group_restriction__groups__in=self.request.user.groups.all())).\
             distinct()
 

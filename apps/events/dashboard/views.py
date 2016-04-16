@@ -210,16 +210,16 @@ def event_change_attendees(request, event_id, active_tab='attendees'):
     return render(request, 'events/dashboard/details.html', context)
 
 
-def count_extras(arr, inlist, atts):
-    for att in atts:
-        choice = "Ikke valgt" if att.extras is None else att.extras
-        if att.extras not in arr:
-            arr[choice] = {"type": choice, "attending": 0, "waits": 0, "allergics": []}
-        ex = arr[choice]
-        ex[inlist] += 1
-        if att.user.allergies:
-            what_list = "påmeldt" if inlist is "attending" else "venteliste"
-            ex["allergics"].append({"user": att.user, "list": what_list})
+def count_extras(event_extras, attendance_list, attendees):
+    for attendee in attendees:
+        choice = attendee.extras
+        if attendee.extras not in event_extras:
+            event_extras[choice] = {"type": choice, "attending": 0, "waits": 0, "allergics": []}
+        ex = event_extras[choice]
+        ex[attendance_list] += 1
+        if attendee.user.allergies:
+            what_list = "påmeldt" if attendance_list is "attending" else "venteliste"
+            ex["allergics"].append({"user": attendee.user, "list": what_list})
 
 
 @login_required
