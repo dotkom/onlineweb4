@@ -296,18 +296,18 @@ class UploadImageHandler(BaseImageHandler):
         )
         filepath = os.path.abspath(filepath)
 
-        self._log.debug('_save_temp_uploaded_file_data: Attempting to store in-memory image at %s' % filepath)
+        self._log.debug('_save_temp_uploaded_file_data: Attempting to store uploaded image at %s' % filepath)
         # Open a file pointer in binary mode and write the image data chunks from memory
         try:
             with open(filepath, 'wb+') as destination:
                 for chunk in memory_object.chunks():
                     destination.write(chunk)
         except IOError as e:
-            self._log.error('_save_temp_uploaded_file_data: Failed to save in memory image! "%s"' % repr(e))
+            self._log.error('_save_temp_uploaded_file_data: Failed to save uploaded image! "%s"' % repr(e))
 
             return GalleryStatus(False, str(e), memory_object)
 
-        self._log.debug('_save_temp_uploaded_data: Stored in-memory image successfully')
+        self._log.debug('_save_temp_uploaded_data: Stored uploaded image successfully')
 
         return GalleryStatus(True, 'success', filepath)
 
