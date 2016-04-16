@@ -130,6 +130,8 @@ def get_winner(self):
     elif self.question_type is MULTIPLE_CHOICE and not self.count_blank_votes:
         result = handle_multiple_choice_voting(self)
         del result['Blankt']
+    elif self.question_type is MULTIPLE_CHOICE:
+        result = handle_multiple_choice_voting(self)
     else:
         result = handle_boolean_voting(self)
     return max(result.keys(), key=(lambda key: result[key]))
