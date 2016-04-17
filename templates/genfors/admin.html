@@ -172,7 +172,7 @@ Generalforsamling logg inn- Online
                                 {% for question in meeting.get_locked_questions %}
                                 <tr>
                                     <td>{{ question.description }}</td>
-                                    <td style="white-space: nowrap">{% if question.majority_type == 0 %}Alminnelig{% else %}Kvalitativt{% endif %}</td>
+                                    <td class="avsluttede-saker">{% if question.majority_type == 0 %}Alminnelig{% else %}Kvalitativt{% endif %}</td>
                                     <td>
                                     {% with question.get_admin_results as results %}
                                         Resultat: <strong>{{ question.get_leader }}</strong><br />
@@ -182,7 +182,7 @@ Generalforsamling logg inn- Online
                                              <span class="label label-danger">Ikke flertall</span><br /><br />
                                         {% endif %}
                                         {% for alt, votes in results.data.items %}
-                                             <span style="white-space: nowrap"><strong>{{ alt }}</strong>: {{ votes }} stemme{{ votes|pluralize:"r"}}.</span><br />
+                                             <span class="avsluttede-saker"><strong>{{ alt }}</strong>: {{ votes }} stemme{{ votes|pluralize:"r"}}.</span><br />
                                         {% endfor %}
                                     {% endwith %}
                                     </td>
@@ -230,7 +230,7 @@ Generalforsamling logg inn- Online
                                     {% for question in meeting.get_locked_questions %}
                                     <tr>
                                         <td>{{ question.description }}</td>
-                                        <td style="white-space: nowrap">{% if question.majority_type == 0 %}Alminnelig{% else %}Kvalitativt{% endif %}</td>
+                                        <td class="avsluttede-saker">{% if question.majority_type == 0 %}Alminnelig{% else %}Kvalitativt{% endif %}</td>
                                         <td>
                                         {% with question.get_admin_results as results %}
                                             Resultat: <strong>{{ question.get_leader }}</strong><br />
@@ -240,7 +240,7 @@ Generalforsamling logg inn- Online
                                                  <span class="label label-danger">Ikke flertall</span><br /><br />
                                             {% endif %}
                                             {% for alt, votes in results.data.items %}
-                                                 <span style="white-space: nowrap"><strong>{{ alt }}</strong>: {{ votes }} stemme{{ votes|pluralize:"r"}}.</span><br />
+                                                 <span class="avsluttede-saker"><strong>{{ alt }}</strong>: {{ votes }} stemme{{ votes|pluralize:"r"}}.</span><br />
                                             {% endfor %}
                                         {% endwith %}
                                         </td>
