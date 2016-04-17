@@ -212,8 +212,15 @@ class Question(models.Model):
     # Gets the name of the alt with the most votes
     def get_leader(self):
         results = self.get_results()
-        if results:
+        if results and self.count_blank_votes:
             return max(results['data'].keys(), key=lambda key: results['data'][key])
+        elif results and not self.count_blank_votes:
+            if 'Blankt' in results['data']:
+                results['data'].pop('Blankt', None)
+            try:
+                return max(results['data'].keys(), key=lambda key: results['data'][key])
+            except ValueError:
+                return None
         else:
             return None
 
