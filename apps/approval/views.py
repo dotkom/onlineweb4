@@ -6,6 +6,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect
+from django.utils import timezone
 from django.utils.translation import ugettext as _
 
 from apps.approval.forms import FieldOfStudyApplicationForm
@@ -69,16 +70,17 @@ def create_fos_application(request):
 
 
 def get_expiry_date(started_year, length_of_fos):
+    today = timzone.now().date.today()
     # Expiry dates should be 15th September, so that we have time to get new lists from NTNU
     new_expiry_date = datetime.date(
         started_year, 9, 16) + datetime.timedelta(days=365*length_of_fos)
     # Expiry dates in the past sets the expiry date to next september
-    if new_expiry_date < datetime.date.today():
-        if datetime.date.today() < datetime.date(datetime.date.today().year, 9, 15):
-            new_expiry_date = datetime.date(datetime.date.today().year, 9, 15)
+    if new_expiry_date < today:
+        if today < datetime.date(today.year, 9, 15):
+            new_expiry_date = datetime.date(today.year, 9, 15)
         else:
             new_expiry_date = datetime.date(
-                datetime.date.today().year, 9, 16) + datetime.timedelta(days=365)
+                today.year, 9, 16) + datetime.timedelta(days=365)
     return new_expiry_date
 
 
