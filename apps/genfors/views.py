@@ -51,6 +51,7 @@ def genfors(request):
         if request.method == 'POST':
             form = RegisterVoterForm(request.POST)
             context['form'] = form
+            response = []
             if form.is_valid():
                 response = handle_login(request, context)
 
