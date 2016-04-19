@@ -86,6 +86,7 @@ if 'apps.companyprofile' in settings.INSTALLED_APPS:
 if 'apps.dashboard' in settings.INSTALLED_APPS:
     urlpatterns += [
         url(r'^dashboard/',         include('apps.dashboard.urls')),
+        url(r'^dashboard/chunks/', include('apps.dashboard.chunks.dashboard.urls', namespace='chunk-dashboard')),
     ]
 
 if 'apps.events' in settings.INSTALLED_APPS:

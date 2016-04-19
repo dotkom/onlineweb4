@@ -1,0 +1,50 @@
+{% extends 'dashboard_base.html' %}
+{% load addcss %}
+{% load chunks %}
+{% load compress %}
+
+{% block breadcrumbs %}
+  <li><a href="{% url 'chunk-dashboard:list' %}">Chunks</a></li>
+  <li>{{ chunk.key }}</li>
+{% endblock %}
+
+{% block content %}
+<div class="col-md-8">
+  <form method="POST">
+    {% csrf_token %}
+    {% for field in form %}
+      <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+      {{ field|addclass:"form-control" }}
+    {% endfor %}
+    <button type="submit" class="btn btn-success">Lagre</button>
+  </form>
+</div>
+<div class="col-md-4">
+  <h1>{{ chunk.key }}</h1>
+  <h2>{{ chunk.description }}</h2>
+  <p id="chunk-content">{{ chunk.content }}</p>
+
+</div>
+{% endblock %}
+
+{% block js %}
+  {{ block.super }}
+  {% compress js %}
+    <script type="text/javascript" src="{{ STATIC_URL }}js/libs/showdown.min.js"></script>
+    <script>
+      function run() {
+        var previousSourceText = sourceText | ''
+        var sourceText = document.getElementById('id_content').value
+        if (previousSourceText === sourceText) return
+        var target = document.getElementById('chunk-content')
+        var converter = new showdown.Converter()
+        var output = converter.makeHtml(sourceText)
+        target.innerHTML = output
+      }
+      // Run once initially to render it first time.
+      run()
+      // Render for changes to the data
+      $('#id_content').on('change keyup', run)
+    </script>
+  {% endcompress %}
+{% endblock %}

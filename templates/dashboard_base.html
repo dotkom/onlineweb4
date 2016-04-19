@@ -143,8 +143,8 @@
                             <i class="fa fa-angle-down pull-right"></i>
                         </a>
                         <ul class="treeview-menu">
-                            <li><a href="#"><i class="fa fa-angle-double-right orange"></i> Ny Chunk</a></li>
-                            <li><a href="#"><i class="fa fa-angle-double-right orange"></i> Oversikt</a></li>
+                            <li><a href="{% url 'chunk-dashboard:create' %}"><i class="fa fa-angle-double-right orange"></i> Ny Chunk</a></li>
+                            <li><a href="{% url 'chunk-dashboard:list' %}"><i class="fa fa-angle-double-right orange"></i> Oversikt</a></li>
                         </ul>
                     </li>
                     {% endif %}
