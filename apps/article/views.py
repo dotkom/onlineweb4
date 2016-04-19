@@ -85,7 +85,7 @@ class ArticleViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.
     filter_fields = ('tags',)
 
     def get_queryset(self):
-        queryset = self.queryset.all()
+        queryset = Article.objects.filter(published_date__lte=timezone.now()).order_by('-published_date')
         month = self.request.query_params.get('month', None)
         year = self.request.query_params.get('year', None)
         tags = self.request.query_params.get('tags', None)
