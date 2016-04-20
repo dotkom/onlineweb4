@@ -5,10 +5,15 @@
 
 {% block breadcrumbs %}
   <li><a href="{% url 'chunk-dashboard:list' %}">Chunks</a></li>
-  <li>{{ chunk.key }}</li>
+  <li>{% if chunk %}{{ chunk.key }}{% else %}Ny Chunk{% endif %}</li>
 {% endblock %}
 
 {% block content %}
+{% if chunk %}
+<div class="col-sm-12">
+  <a class="btn btn-danger pull-right" href="#modal-delete-chunk" data-toggle="modal">Slett</a>
+</div>
+{% endif %}
 <div class="col-md-8">
   <form method="POST">
     {% csrf_token %}
@@ -25,6 +30,36 @@
   <p id="chunk-content">{{ chunk.content }}</p>
 
 </div>
+
+{% if chunk %}
+<div id="modal-delete-chunk" class="modal fade">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+       <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+       <h3>Bekreft sletting av Chunk</h3>
+      </div>
+      <div class="modal-body">
+        <p>Er du sikker på at du vil slette chunken {{ chunk.key }}?</p>
+        <p>
+            Vær obs på at dersom denne vises et sted på nettsiden vil den ikke vises lengre, men
+            lenker som peker til den vil fortsatt eksistere. Ta kontakt med <a href="mailto:dotkom@online.ntnu.no">dotkom</a>
+            for å fjernet eventuelle slike lenker.
+        </p>
+      </div>
+      <div class="modal-footer">
+        <form action="{% url 'chunk-dashboard:delete' chunk.id %}" method="POST">
+          {% csrf_token %}
+          <div class="btn-group">
+            <button type="submit" class="btn btn-danger">Slett</button>
+            <button class="btn" data-dismiss="modal" aria-hidden="true">Lukk</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
 {% endblock %}
 
 {% block js %}
