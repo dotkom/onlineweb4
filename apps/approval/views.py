@@ -70,7 +70,7 @@ def create_fos_application(request):
 
 
 def get_expiry_date(started_year, length_of_fos):
-    today = timzone.now().date.today()
+    today = timezone.now().date()
     # Expiry dates should be 15th September, so that we have time to get new lists from NTNU
     new_expiry_date = datetime.date(
         started_year, 9, 16) + datetime.timedelta(days=365*length_of_fos)
