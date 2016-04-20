@@ -18,7 +18,7 @@ Kategori
 {% endblock %}
 
 {% block breadcrumbs %}
-    <li><a href="/dashboard/inventory/category/">Kategorier</a></li>
+    <li><a href="{% url 'dashboard_category_index' %}">Kategorier</a></li>
     <li>Kategori</li>
 {% endblock %}
 
@@ -26,7 +26,7 @@ Kategori
     {%  if category.id %}
         <div class="row">
             <div class="col-md-12">
-                <a href="/dashboard/inventory/category/{{ category.id }}/delete/" class="btn btn-danger pull-right">
+                <a href="{% url 'dashboard_category_delete' category.id %}" class="btn btn-danger pull-right">
                     <i class="fa fa-times fa-lg"></i> Slett kategori
                 </a>
             </div>
