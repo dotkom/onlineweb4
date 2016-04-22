@@ -27,17 +27,17 @@
     <div class="col-md-4">
         <p><b>Nylig aktiverte moduler</b></p>
         <ul>
-            <li><a href="auth/members/">Medlemsregister</a></li>
-            <li><a href="auth/groups/">Grupper</a></li>
-            <li><a href="approval/">Søknader</a></li>
-            <li><a href="company/">Bedrifter</a></li>
-            <li><a href="inventory/">Varelager</a></li>
-            <li><a href="events/">Arrangement</a></li>
-            <li><a href="auth/sso/">Ekstern tilgang</a></li>
-            <li><a href="careeropportunity/">Karrieremuligheter</a></li>
-            <li><a href="article/">Artikler</a></li>
-            <li><a href="posters/">Plakatbestilling</a></li>
-            <li><a href="marks/">Prikker</a></li>
+            <li><a href="{% url 'user_list' %}">Medlemsregister</a></li>
+            <li><a href="{% url 'groups_index' %}">Grupper</a></li>
+            <li><a href="{% url 'approvals' %}">Søknader</a></li>
+            <li><a href="{% url 'companyprofiles' %}/">Bedrifter</a></li>
+            <li><a href="{% url 'dashboard_inventory_index' %}">Varelager</a></li>
+            <li><a href="{% url 'dashboard_events_index' %}">Arrangement</a></li>
+            <li><a href="{% url 'dashboard:index' %}">Ekstern tilgang</a></li>
+            <li><a href="{% url 'careeropportunity_dashboard_index' %}">Karrieremuligheter</a></li>
+            <li><a href="{% url 'dashboard_article_index' %}">Artikler</a></li>
+            <li><a href="{% url 'posters' %}">Plakatbestilling</a></li>
+            <li><a href="{% url 'marks_index' %}">Prikker</a></li>
         </ul>
     </div>
 </div>
