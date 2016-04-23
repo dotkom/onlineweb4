@@ -3,6 +3,14 @@
 {% load chunks %}
 {% load compress %}
 
+{% block title %}
+  Chunks - Online Dashboard
+{% endblock %}
+
+{% block page-header %}
+  Chunks
+{% endblock %}
+
 {% block breadcrumbs %}
   <li><a href="{% url 'chunk-dashboard:list' %}">Chunks</a></li>
   <li>{% if chunk %}{{ chunk.key }}{% else %}Ny Chunk{% endif %}</li>
