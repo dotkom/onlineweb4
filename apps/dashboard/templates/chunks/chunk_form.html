@@ -22,7 +22,7 @@
   <a class="btn btn-danger pull-right" href="#modal-delete-chunk" data-toggle="modal">Slett</a>
 </div>
 {% endif %}
-<div class="col-md-8">
+<div class="col-lg-6 col-md-12">
   <form method="POST">
     {% csrf_token %}
     {% for field in form %}
@@ -32,7 +32,7 @@
     <button type="submit" class="btn btn-success">Lagre</button>
   </form>
 </div>
-<div class="col-md-4">
+<div class="col-lg-6 col-md-12">
   <h1>{{ chunk.key }}</h1>
   <h2>{{ chunk.description }}</h2>
   <p id="chunk-content">{{ chunk.content }}</p>
