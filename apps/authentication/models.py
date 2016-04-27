@@ -11,8 +11,6 @@ from django.db import models
 from django.utils import timezone
 from django.utils.html import strip_tags
 from django.utils.translation import ugettext as _
-from django.db.models.signals import post_save
-from utils.ldap import upsert_user_ldap
 
 
 # If this list is changed, remember to check that the year property on
@@ -263,9 +261,6 @@ class OnlineUser(AbstractUser):
         permissions = (
             ('view_onlineuser', 'View OnlineUser'),
         )
-
-
-post_save.connect(ldap_sync, sender=OnlineUser)
 
 
 class Email(models.Model):

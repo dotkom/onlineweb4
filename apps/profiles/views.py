@@ -30,7 +30,7 @@ from apps.payment.models import PaymentDelay, PaymentRelation, PaymentTransactio
 from apps.profiles.forms import InternalServicesForm, PositionForm, PrivacyForm, ProfileForm
 from apps.profiles.models import Privacy
 from apps.shop.models import Order
-
+from apps.ldap.ldap import upsert_user_ldap
 
 """
 Index for the entire user profile view
@@ -453,14 +453,17 @@ def internal_services(request):
 
         # Validate the form
         if internal_service_form.is_valid():
-            # Add message
-            messages.success(request, _(u"Passordet for interne tjenester er oppdater. Legg merke til at det kan ta noen minutter før endringene trer i kraft."))
-
             # Clean data
-            cleaned = internal_service_form.cleaned_data
+            cleaned_pwd = internal_service_form.cleaned_data['services_password']
 
-            # TODO do stuff with external services data
-            print(cleaned['services_password'])
+            # Update ldap
+            if upsert_user_ldap(request.user, cleaned_pwd):
+                # Add message
+                messages.success(request, _(u"Passordet for interne tjenester er oppdater. Legg merke til at det kan ta noen minutter før endringene trer i kraft."))
+            else:
+                # User fucked up
+                messages.error(request, _(u"Passordet for interne tjenester ble ikke endret. Vennligst prøv igjen."))
+
         else:
             # User fucked up
             messages.error(request, _(u"Passordet for interne tjenester ble ikke endret. Vennligst prøv igjen."))

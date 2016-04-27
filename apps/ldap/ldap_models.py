@@ -4,7 +4,7 @@ from ldapdb.models.fields import (CharField, DateField, ImageField, ListField,
                                   IntegerField, FloatField)
 import ldapdb.models
 from passlib.hash import ldap_sha512_crypt
-from local import LDAP_BASE_DN
+from onlineweb4.settings.local import LDAP_BASE_DN
 
 class LdapOrgUnit(ldapdb.models.Model):
     """
