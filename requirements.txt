@@ -51,6 +51,9 @@ requests[security]==2.8.0
 # Wiki
 wiki==0.1
 
+# django-ldapdb
+git+https://github.com/django-ldapdb/django-ldapdb.git@py3
+
 # Django 1.9 support
 sorl-thumbnail>12.2
 django-appconf>=1.0
