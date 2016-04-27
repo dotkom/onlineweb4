@@ -144,8 +144,12 @@
                                         {% else %}
                                             <p class="status-text">Du er meldt på dette arrangementet.</p>
                                         {% endif %}
-                                        {% if attendance_event.registration_end > now or attendance_event.unattend_deadline > now %}
+                                        {% if attendance_event.extras.all %}
+                                          {% if attendance_event.registration_end > now or attendance_event.unattend_deadline > now %}
                                             {% include 'events/extras.html' %}
+                                          {% else %}
+                                            <p class="status-text">Valgt extra: {{ attendee.extras }}</p>
+                                          {% endif %}
                                         {% endif %}
                                         {% if user_paid %}
                                             {% if attendance_event.unattend_deadline > now %}
