@@ -83,7 +83,7 @@
                         <ul class="treeview-menu">
                             <li><a href="{% url 'user_list' %}"><i class="fa fa-angle-double-right orange"></i> Brukerprofiler</a></li>
                             {% if request.user.is_superuser %}
-                            <li><a href="/dashboard/auth/sso/"><i class="fa fa-angle-double-right orange"></i> Ekstern tilgang</a></li>
+                            <li><a href="{% url 'dashboard:index' %}"><i class="fa fa-angle-double-right orange"></i> Ekstern tilgang</a></li>
                             {% endif %}
                             <li><a href="#"><i class="fa fa-angle-double-right orange"></i> Posisjoner</a></li>
                             <li><a href="#"><i class="fa fa-angle-double-right orange"></i> Spesialposisjoner</a></li>
@@ -98,9 +98,9 @@
                         </a>
                         <ul class="treeview-menu">
                             {% if 'companyprofile.add_company' in user_permissions %}
-                                <li><a href="/dashboard/company/new/"><i class="fa fa-angle-double-right orange"></i> Ny bedrift</a></li>
+                                <li><a href="{% url 'companyprofile_new' %}"><i class="fa fa-angle-double-right orange"></i> Ny bedrift</a></li>
                             {% endif %}
-                            <li><a href="/dashboard/company/"><i class="fa fa-angle-double-right orange"></i> Oversikt</a></li>
+                            <li><a href="{% url 'companyprofiles' %}"><i class="fa fa-angle-double-right orange"></i> Oversikt</a></li>
                         </ul>
                     </li>
                     {% endif %}
@@ -156,9 +156,9 @@
                         </a>
                         <ul class="treeview-menu">
                             {% if 'authentication.add_onlineuser' in user_permissions %}
-                                <li><a href="/admin/auth/group/add/"><i class="fa fa-angle-double-right orange"></i> Ny gruppe</a></li>
+                                <li><a href="{% url 'admin:auth_group_add' %}"><i class="fa fa-angle-double-right orange"></i> Ny gruppe</a></li>
                             {% endif %}
-                            <li><a href="/dashboard/auth/groups/"><i class="fa fa-angle-double-right orange"></i> Oversikt</a></li>
+                            <li><a href="{% url 'groups_index' %}"><i class="fa fa-angle-double-right orange"></i> Oversikt</a></li>
                         </ul>
                     </li>
                     {% endif %}
@@ -210,9 +210,9 @@
                         </a>
                         <ul class="treeview-menu">
                             {% if 'marks.add_mark' in user_permissions %}
-                            <li><a href="/dashboard/marks/new"><i class="fa fa-angle-double-right orange"></i> Ny prikk</a></li>
+                            <li><a href="{% url 'marks_new' %}"><i class="fa fa-angle-double-right orange"></i> Ny prikk</a></li>
                             {% endif %}
-                            <li><a href="/dashboard/marks"><i class="fa fa-angle-double-right orange"></i> Oversikt</a></li>
+                            <li><a href="{% url 'marks_index' %}"><i class="fa fa-angle-double-right orange"></i> Oversikt</a></li>
                         </ul>
                     </li>
                     {% endif %}
@@ -232,7 +232,7 @@
                     {% endif %}
                     {% if 'approval.view_membershipapproval' in user_permissions %}
                     <li>
-                        <a href="/dashboard/approval/">
+                        <a href="{% url 'approvals' %}">
                             <i class="fa fa-envelope-o blue"></i> <span>Søknader</span>
                             {% if approval_pending %}<small class="badge pull-right">{{ approval_pending }}</small>{% endif %}
                         </a>
@@ -298,7 +298,7 @@
                     {% endblock %}
                 </h2>
                 <ol class="breadcrumb">
-                    <li><a href="/dashboard/">Dashboard</a></li>
+                    <li><a href="{% url 'dashboard_index' %}">Dashboard</a></li>
                     {% block breadcrumbs %}
 
                     {% endblock %}
