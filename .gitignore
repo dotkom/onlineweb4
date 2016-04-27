@@ -1,6 +1,7 @@
 .ropeproject/
 *.pyc
 *.swp
+*.cache
 *.project
 *.settings
 *.pydevproject
