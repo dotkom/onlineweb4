@@ -5,11 +5,6 @@
 {% load crispy_forms_tags %}
 
 {% block title %}Webshop {{ product }} - Online{% endblock title %}
-{% block header %}
-<a href="{% url 'webshop_home' %}">Webshop /</a> 
-<a href="{% url 'webshop_category' slug=product.category.slug %}">{{ product.category }}</a> / 
-{{product}}
-{% endblock header %}
 
 {% block webshop_content %}
 

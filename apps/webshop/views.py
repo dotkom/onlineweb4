@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.core.urlresolvers import reverse_lazy
 from django.shortcuts import redirect
 from django.utils import timezone
 from django.views.generic import DetailView, RedirectView, TemplateView
@@ -29,8 +30,26 @@ class CartMixin(LoginRequiredMixin):
         return order_line
 
 
-class Home(CartMixin, TemplateView):
+class BreadCrumb(object):
+    def get_breadcrumbs(self):
+        breadcrumbs = [{'name': 'Webshop', 'url': reverse_lazy('webshop_home')}]
+        return breadcrumbs
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['breadcrumbs'] = self.get_breadcrumbs()
+        return context
+
+
+class WebshopMixin(CartMixin, BreadCrumb):
+    pass
+
+
+class Home(WebshopMixin, TemplateView):
     template_name = 'webshop/base.html'
+
+    def get_breadcrumbs(self):
+        return None
 
     def get_context_data(self, **kwargs):
         context = super(Home, self).get_context_data(**kwargs)
@@ -38,16 +57,26 @@ class Home(CartMixin, TemplateView):
         return context
 
 
-class CategoryDetail(CartMixin, DetailView):
+class CategoryDetail(WebshopMixin, DetailView):
     model = Category
     context_object_name = 'category'
     template_name = 'webshop/category.html'
 
+    def get_breadcrumbs(self):
+        breadcrumbs = super().get_breadcrumbs()
+        breadcrumbs.append({'name': self.get_object()})
+        return breadcrumbs
 
-class ProductDetail(CartMixin, DetailView):
+
+class ProductDetail(WebshopMixin, DetailView):
     model = Product
     context_object_name = 'product'
     template_name = 'webshop/product.html'
+
+    def get_breadcrumbs(self):
+        breadcrumbs = super().get_breadcrumbs()
+        breadcrumbs.append({'name': self.get_object()})
+        return breadcrumbs
 
     def get_context_data(self, **kwargs):
         context = super(ProductDetail, self).get_context_data(**kwargs)
@@ -87,11 +116,16 @@ class ProductDetail(CartMixin, DetailView):
         return super(ProductDetail, self).get(request, *args, **kwargs)
 
 
-class Checkout(CartMixin, TemplateView):
+class Checkout(WebshopMixin, TemplateView):
     template_name = 'webshop/checkout.html'
 
+    def get_breadcrumbs(self):
+        breadcrumbs = super().get_breadcrumbs()
+        breadcrumbs.append({'name': 'Sjekk ut'})
+        return breadcrumbs
 
-class RemoveOrder(CartMixin, RedirectView):
+
+class RemoveOrder(WebshopMixin, RedirectView):
     pattern_name = 'webshop_checkout'
 
     def post(self, request, *args, **kwargs):
