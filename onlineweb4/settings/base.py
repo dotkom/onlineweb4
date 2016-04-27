@@ -243,6 +243,9 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.staticfiles',
 
+    # LDAP
+    'ldapdb',
+
     # Onlineweb 4 apps
     'apps.api',
     'apps.approval',
@@ -270,6 +273,7 @@ INSTALLED_APPS = (
     'apps.splash',
     'apps.shop',
     'apps.webshop',
+    'apps.ldap',
     'scripts',
 
     #External apps
