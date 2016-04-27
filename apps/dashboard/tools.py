@@ -124,4 +124,12 @@ class DashboardPermissionMixin(DashboardMixin, PermissionRequiredMixin):
     permissions to access a certain view.
     """
 
+    def get_permission_object(self, *args, **kwargs):
+        """
+        By default PermissionRequiredMixin works with object permissions.
+        By returning None we force guardian to only check if the user
+        has the proper permission.
+        """
+        return None
+
     return_403 = True
