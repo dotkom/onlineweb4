@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import locale
 import logging
 
 from django.conf import settings
