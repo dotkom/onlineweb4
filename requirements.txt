@@ -1,15 +1,15 @@
 Django>=1.9.0,<1.10.0
-Pillow==3.1.1                   # PIL fork (Python Imaging Library)
+Pillow==3.2.0                   # PIL fork (Python Imaging Library)
 django-tastypie==0.13.3         # API v0 - Use git master until django 1.9 release   v
 djangorestframework>=3.3.0,<3.4.0 # API v1
-django-filter==0.12.0           # Filtering for DRF
+django-filter==0.13.0           # Filtering for DRF
 # python-memcached==1.57          # Memcache. Used by Mailinglists to fetch from Sympa.
 # Upstream is missing Python 3 patches
 git+https://github.com/JelteF/python-memcached@patch-1#egg=python-memcached==1.58
-markdown2==2.3.0                # textarea text formatting
+markdown2==2.3.1                # textarea text formatting
 pytz                            # Timezone lib
 icalendar==3.9.2                # iCalendar generation
-stripe==1.30.0                  # Stripe payment
+stripe==1.32.2                  # Stripe payment
 
 # third party deps
 # django-filebrowser==3.5.4     # File uploading
@@ -22,14 +22,14 @@ django-crispy-forms==1.6.0      # nice forms
 django-extensions==1.6.1        # nice extra commands for debugging, etc
 django-dynamic-fixture==1.8.5   # Dynamic fixtures for models
 django-recaptcha==1.0.5         # Google ReCaptcha
-django-oauth-toolkit==0.8.1    # OAuth2 authentication support
+django-oauth-toolkit==0.10.0    # OAuth2 authentication support
 django_compressor==2.0          # Compiles less and minifies js
 django-watson==1.2.1            # Indexed model search lib
-django-reversion==1.10.1        # Model version history with middleware hooks to all post_save signals
-django-guardian==1.4.2          # Per Object permissions framework
-django-taggit==0.18.0           # Generic multi-model tagging library
+django-reversion==1.10.2        # Model version history with middleware hooks to all post_save signals
+django-guardian==1.4.4          # Per Object permissions framework
+django-taggit==0.18.1           # Generic multi-model tagging library
 django-taggit-serializer==0.1.5 # REST Framework serializers for Django-taggit
-APScheduler==3.0.5              # Scheduler
+APScheduler==3.1.0              # Scheduler
 feedme==1.9.5
 git+https://github.com/dotKom/redwine.git@1.2.4#egg=redwine==1.2.4
 reportlab==3.3.0
@@ -45,7 +45,7 @@ django-nose>=1.4,<1.5           # We use this test runner locally
 nose==1.3.7                     # We use this test runner locally
 
 # Frigg
-requests[security]==2.8.0
+requests[security]==2.9.1
 
 # Wiki
 wiki==0.1
