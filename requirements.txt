@@ -22,7 +22,7 @@ django-crispy-forms==1.6.0      # nice forms
 django-extensions==1.6.1        # nice extra commands for debugging, etc
 django-dynamic-fixture==1.8.5   # Dynamic fixtures for models
 django-recaptcha==1.0.5         # Google ReCaptcha
-django-oauth-toolkit==0.10.0    # OAuth2 authentication support
+django-oauth-toolkit==0.8.1     # OAuth2 authentication support
 django_compressor==2.0          # Compiles less and minifies js
 django-watson==1.2.1            # Indexed model search lib
 django-reversion==1.10.2        # Model version history with middleware hooks to all post_save signals
