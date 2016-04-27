@@ -55,7 +55,7 @@ class EventOrderedByRegistration(models.Manager):
                 output_field=models.DateTimeField()
             )
         ).annotate(is_today=Case(
-            When(Q(event_end__date=now.date()),
+            When(event_end__date=now.date(),
                  then=Value(1)),
             default=Value(0),
             output_field=models.IntegerField()
