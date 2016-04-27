@@ -41,6 +41,7 @@ Arrangementsoversikt
                             <th>Tittel</th>
                             <th>Plasser</th>
                             <th>Starttid</th>
+                            <th>Påmeldingsstart</th>
                             <th>Type</th>
                         </tr>
                     </thead>
@@ -57,6 +58,13 @@ Arrangementsoversikt
                             </td>
                             <td>
                                 {{ event.event_start|date:"Y-m-d H:i" }}
+                            </td>
+                            <td>
+                                {% if event.is_attendance_event %}
+                                    {{ event.attendance_event.registration_start|date:"Y-m-d H:i" }}
+                                {% else %}
+                                    -
+                                {% endif %}
                             </td>
                             <td>{{ event.get_event_type_display }}</td>
                         </tr>
