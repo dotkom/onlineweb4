@@ -1,6 +1,11 @@
 {% load crispy_forms_tags %}
 <div class="row">
     <div class="col-md-12">
+        {% if not user.ntnu_username %}
+
+        <p>Du må være gyldig onlinemedlem for å benytte interne tjenester.</p>
+
+        {% else %}
         <h3>Tilgang til interne tjenester</h3>
         <p>Her kan du redigere tilganger til interne tjenester som brukes i Online utenfor nettsidene. Dette gjelder følgende tjenester:</p>
         <ul>
@@ -26,5 +31,6 @@
             <strong>Server:</strong> login.online.ntnu.no<br />
             <strong>Brukernavn:</strong> {{ user.ntnu_username }}
         </p>
+        {% endif %}
     </div>
 </div>
