@@ -1,19 +1,11 @@
 # -*- coding: utf8 -*-
 
-import logging
-from ldap3.utils.log import set_library_log_activation_level, EXTENDED, PROTOCOL, set_library_log_detail_level
-from ldap3 import Server, Connection, ALL, SIMPLE, SYNC, ALL, NTLM, MODIFY_REPLACE, AUTH_SIMPLE, \
-    SEARCH_SCOPE_WHOLE_SUBTREE, SEARCH_DEREFERENCE_ALWAYS, SUBTREE, SYNC, ALL_ATTRIBUTES
-from ldap3.utils.conv import escape_bytes
-from models import LdapGroup, LdapUser, LdapOrgUnit
-
-logging.basicConfig(filename='client_application.log', level=logging.CRITICAL)
-set_library_log_activation_level(logging.CRITICAL)
-set_library_log_detail_level(EXTENDED)
+from apps.ldap.ldap_models import LdapUser
 
 MIN_UID = 2000
 
-def upsert_user_ldap(user):
+
+def upsert_user_ldap(user, pwd):
     """
     Update or Insert a user to LDAP
 
@@ -24,10 +16,10 @@ def upsert_user_ldap(user):
     # Check if user exists
     if exists(user):
         # User exists, update
-        update(user)
+        return update(user, pwd)
     # New user, insert
     else:
-        insert(user)
+        return insert(user, pwd)
 
 
 def exists(user):
@@ -38,12 +30,15 @@ def exists(user):
     :param conn: Ldap connection
     :return: boolean exists
     """
+    if not user.ntnu_username:
+        return False
 
+    # Get the user from ldap
     ldap_user = LdapUser.objects.filter(username=user.ntnu_username).first()
-    return ldap_user not None
+    return ldap_user is not None
 
 
-def update(user):
+def update(user, pwd):
     """
     Update an existing user in LDAP
 
@@ -51,20 +46,23 @@ def update(user):
     :param changes: ldapmodify diff of changes
     :return: boolean updated
     """
+    try:
+        # Update user
+        ldap_user = LdapUser.objects.filter(username=user.ntnu_username).first()
+        ldap_user.username = user.ntnu_username
+        ldap_user.email = user.ntnu_username + "@stud.ntnu.no"
+        ldap_user.phone = user.phone_number
+        ldap_user.first_name = user.first_name
+        ldap_user.last_name = user.last_name
+        ldap_user.set_password(pwd)
+        ldap_user.save()
+        return True;
+    except Exception:
+        return False
 
-    ldap_user = LdapUser.objects.filter(username=user.ntnu_username).first()
-    ldap_user.username = user.ntnu_username
-    ldap_user.email = user.ntnu_username + "@stud.ntnu.no"
-    ldap_user.phone = user.phone_number
-    ldap_user.first_name = user.first_name
-    ldap_user.last_name = user.last_name
-    ldap_user.save()
-
-    # satisfy the return statement in comments
-    return True;
 
 
-def insert(user):
+def insert(user, pwd):
     """
     Insert a new user in LDAP
 
@@ -73,7 +71,7 @@ def insert(user):
     """
 
     # TODO: everything
-    pass
+    return False
 
 
 def format_field(input):
@@ -81,6 +79,7 @@ def format_field(input):
         return escape_bytes(input)
     else:
         return u'n/a'
+
 
 def find_next_uid():
     # TODO: execute external script to find next UID
