@@ -150,13 +150,13 @@ class Orders(DashboardPermissionMixin, ListView):
 class Order(DashboardPermissionMixin, DetailView):
     model = OrderLine
     template_name = 'webshop/dashboard/order.html'
-    permission_required = 'webshop.change_order_line'
+    permission_required = 'webshop.change_orderline'
     context_object_name = 'order'
 
 
 class OrderDeliver(DashboardPermissionMixin, DetailView):
     model = OrderLine
-    permission_required = 'webshop.change_order_line'
+    permission_required = 'webshop.change_orderline'
 
     def post(self, *args, **kwargs):
         super(OrderDeliver, self).get(*args, **kwargs)
