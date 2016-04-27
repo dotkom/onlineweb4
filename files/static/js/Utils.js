@@ -118,17 +118,11 @@ function Utils() {
    * Render a template on the basis of the attributes of a data object
    * @param {object} tmpl A jQuery wrapper DOM object
    * @param {object} data An object containing the template payload
+   * @return {object} Rendered DOM subtree containing provided data
    */
   Utils.prototype.render = function (tmpl, data) {
-    for (var field in data) {
-      if (data.hasOwnProperty(field)) {
-        var element = tmpl.find('[data-bind="' + field + '"]')
-
-        if (element.length) {
-          element[0].textContent = data[field]
-        }
-      }
-    }
+    var node = window._.Template(tmpl)
+    return node(data)
   }
 }
 

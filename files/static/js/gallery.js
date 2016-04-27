@@ -35,11 +35,124 @@ var GalleryUpload = (function ($, Dropzone) {
 })(window.jQuery, window.Dropzone)
 
 var GalleryCrop = (function ($, Cropper) {
-  var _cropper
+  var self = this
 
   // DOM References
+  var EDIT_CONTAINER = $('#gallery__image-edit-container')
+  var IMAGE_LOG = $('#gallery__image-edit--log')
+  var IMAGE_PRESET = $('#gallery__image-edit--preset')
+  var IMAGE_HEIGHT = $('#gallery__image-edit--height')
+  var IMAGE_WIDTH = $('#gallery__image-edit--width')
+  var IMAGE_ZOOM_IN = $('#gallery__image-edit__zoom-in')
+  var IMAGE_ZOOM_OUT = $('#gallery__image-edit__zoom-out')
+  var IMAGE_SET_CROP_MODE = $('#gallery__image-edit__crop')
+  var IMAGE_SET_DRAG_MODE = $('#gallery__image-edit__drag')
+  var IMAGE_RESET = $('#gallery__image-edit__reset')
   var MANAGE_BUTTON = $('#gallery__edit-button')
   var MANAGE_PANE = $('#gallery__manage-pane')
+  var PREVIEW_IMAGE = $('#gallery__image-edit--preview')
+
+  // Cropper
+  self.cropper = null
+  self.options = {
+    aspectRatio: 16 / 9,
+    preview: '#gallery__image-edit--preview-wrapper',
+    autoCrop: true,
+    dragCrop: true,
+    viewMode: 2,
+    movable: true,
+    resizable: true,
+    zoomable: true,
+    rotatable: false,
+    multiple: false,
+    cropmove: function (event) {
+      $('#gallery__image-edit--width').val(self.cropper.getData(true).width)
+      $('#gallery__image-edit--height').val(self.cropper.getData(true).height)
+
+      // TODO: Apply validation function that checks lower height and width bounds with respect to
+      // the currently active preset
+    }
+  }
+
+  /**
+   * Updates the cropper object options
+   */
+  var updateCropperOptions = function (preset) {
+    switch (preset) {
+      case '1':
+        self.cropper.setAspectRatio(16 / 9)
+        break
+      case '2':
+        self.cropper.setAspectRatio(19 / 7)
+        break
+      case '3':
+        self.cropper.setAspectRatio(NaN)
+        break
+      case '4':
+        self.cropper.setAspectRatio(2 / 3)
+        break
+      case '5':
+        self.cropper.setAspectRatio(NaN)
+        break
+    }
+
+    // Update sidebar with new aspect ratio data
+    var cropData = self.cropper.getData(true)
+    IMAGE_HEIGHT.val(cropData.height)
+    IMAGE_WIDTH.val(cropData.width)
+  }
+
+  /**
+   * Binds all necessary event listeners for the GalleryCrop module
+   */
+  var bindEventListeners = function () {
+    console.log('Setting up GalleryCrop event listeners ...')
+
+    // Listen for changes to selected preset
+    IMAGE_PRESET.on('change', function (e) {
+      var preset = $(this).children('option:selected').val()
+      updateCropperOptions(preset)
+    })
+
+    // Zoom in
+    IMAGE_ZOOM_IN.on('click', function (e) {
+      self.cropper.zoom(0.1)
+    })
+
+    // Zoom out
+    IMAGE_ZOOM_OUT.on('click', function (e) {
+      self.cropper.zoom(-0.1)
+    })
+
+    // Activates crop selection tool
+    IMAGE_SET_CROP_MODE.on('click', function (e) {
+      self.cropper.setDragMode('crop')
+    })
+
+    // Activates mouse move tool
+    IMAGE_SET_DRAG_MODE.on('click', function (e) {
+      self.cropper.setDragMode('move')
+    })
+
+    // Reset the selection
+    IMAGE_RESET.on('click', function (e) {
+      self.cropper.clear()
+    })
+
+    // Listen for changes directly to the height field
+    IMAGE_HEIGHT.on('keyup', function (e) {
+      var imageData = self.cropper.getData(true)
+      imageData.height = Number(IMAGE_HEIGHT.val())
+      self.cropper.setData(imageData)
+    })
+
+    // Listen for changes directly to the width field
+    IMAGE_WIDTH.on('keyup', function (e) {
+      var imageData = self.cropper.getData(true)
+      imageData.width = Number(IMAGE_WIDTH.val())
+      self.cropper.setData(imageData)
+    })
+  }
 
   return {
     /**
@@ -50,6 +163,20 @@ var GalleryCrop = (function ($, Cropper) {
       if (MANAGE_PANE.length && window.location.href.indexOf('#gallery__manage-pane') !== -1) {
         MANAGE_BUTTON.click()
       }
+
+      // If we see the image crop preset selection dropdown, we are in edit mode and can safely bind the crop
+      // event listeners.
+      if (IMAGE_PRESET.length > 0) {
+        bindEventListeners()
+      }
+    },
+
+    /**
+     * Prints a log message to the log field in the right hand sidebar of the edit image view
+     * @param {string} msg The message to be displayed
+     */
+    log: function (msg) {
+      IMAGE_LOG.text(msg)
     },
 
     /**
@@ -57,20 +184,26 @@ var GalleryCrop = (function ($, Cropper) {
      * @param {object} img An object containing at least an image ID, and full original size url
      */
     manage: function (img) {
-      var imageDOM = $('<img></img>')
       var imageData = Gallery.images.get(img)
+      var image = new window.Image()
+      image.id = 'gallery__image-active'
+      image.src = imageData.image
 
-      imageDOM.attr({
-        'src': imageData.image,
-        'id': 'gallery__image-active'
-      })
+      EDIT_CONTAINER.html(image)
+      PREVIEW_IMAGE.attr({'src': imageData.image})
 
-      $('#gallery__image-edit-container').html(imageDOM)
-      // Cropperjs sadly fails if provided a jQuery wrapped DOM Node in the constructor...
-      var image = document.getElementById('gallery__image-active')
-      _cropper = new Cropper(image, {
-        aspectRatio: 16 / 9
-      })
+      // For reasons still unknown, cropper needs a timeout before being able to wrap the img.
+      // Hooking the wrapper to the img load event does not work.
+      setTimeout(function () {
+        if (self.cropper !== null && self.cropper !== undefined) self.cropper.destroy()
+        self.cropper = new Cropper(image, self.options)
+
+        var cropData = self.cropper.getData()
+        IMAGE_HEIGHT.val(cropData.height)
+        IMAGE_WIDTH.val(cropData.width)
+
+        GalleryCrop.log('Klar til bruk')
+      }, 500)
     }
   }
 })(window.jQuery, window.Cropper)
