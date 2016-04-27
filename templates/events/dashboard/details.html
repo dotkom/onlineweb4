@@ -31,51 +31,48 @@ Arrangementsdetaljer
     </div>
 </div>
 
-{% if event.id %}
-<div class="row">
+ <div class="row">
     <div class="col-lg-12">
-        <div class="panel panel-default">
-            <div class="panel-body">
-                <ul id="dashboard-tabs" class="nav nav-tabs">
-                    <li role="presentation" class="hidden {% if active_tab == 'details' %} active{% endif %}">
-                        <a data-section="details" href="{% url 'dashboard_event_details_active' event.id 'details' %}">Detaljer</a>
-                    </li>
-                    <li role="presentation" class="hidden{% if active_tab == 'attendance' %} active{% endif %}">
-                        <a data-section="attendance" href="{% url 'dashboard_event_details_active' event.id 'attendance' %}">Påmelding</a>
-                    </li>
-                    {% if event.is_attendance_event %}
-                    <li role="presentation" class="{% if active_tab == 'attendees' %} active{% endif %}">
-                        <a data-section="attendees" href="{% url 'dashboard_event_details_active' event.id 'attendees' %}">Påmeldte</a>
-                    </li>
-                    <li role="presentation" class="hidden{% if active_tab == 'reservation' %} active{% endif %}">
-                        <a data-section="reservation" href="{% url 'dashboard_event_details_active' event.id 'reservation' %}">Reservasjon</a>
-                    </li>
-                    {% endif %}
-                </ul>
-            </div>
-        </div>
+        <ul class="nav nav-tabs" role="tablist">
+            <li role="presentation" class="active">
+                <a href="#attendees" aria-controls="attendees" role="tab" data-toggle="tab">Påmeldte ({{ event.attendance_event.number_of_seats_taken }})</a>
+            </li>
+            {% if event.attendance_event.waitlist %}
+                <li role="presentation">
+                    <a href="#waitlist" aria-controls="waitlist" role="tab" data-toggle="tab">Venteliste ({{ event.attendance_event.number_on_waitlist }})</a>
+                </li>
+            {%  endif %}
+            {%  if event.attendance_event.has_reservation %}
+                <li role="presentation">
+                    <a href="#reservees" aria-controls="reservees" role="tab" data-toggle="tab">Reservasjoner ({{ event.attendance_event.number_of_reserved_seats }})</a>
+                </li>
+            {%  endif %}
+            {%  if event.attendance_event.has_extras %}
+                <li role="presentation">
+                    <a href="#extra" aria-controls="extra" role="tab" data-toggle="tab">Ekstra</a>
+                </li>
+            {% endif %}
+        </ul>
     </div>
 </div>
-{% endif %}
 
-<div id="tab-content">
-    <section id="details">
-        {% include "events/dashboard/details/details.html" %}
-    </section>
-    {% if event.id %}
-        <section id="attendance">
-            {% include "events/dashboard/details/attendance.html" %}
-        </section>
-        {% if event.is_attendance_event %}
-            <section id="attendees">
-                {% include "events/dashboard/details/attendees.html" %}
-            </section>
-            <section id="reservation">
-                {% include "events/dashboard/details/reservation.html" %}
-            </section>
-        {% endif %}
-    {% endif %}
+<br />
+
+<div class="tab-content">
+    <div role="tabpanel" class="tab-pane active" id="attendees">
+        {%  include "events/dashboard/details/attendees.html" %}
+    </div>
+    <div role="tabpanel" class="tab-pane" id="waitlist">
+        {%  include "events/dashboard/details/waitlist.html" %}
+    </div>
+    <div role="tabpanel" class="tab-pane" id="reservees">
+        {%  include "events/dashboard/details/reservation.html" %}
+    </div>
+    <div role="tabpanel" class="tab-pane" id="extra">
+        {%  include "events/dashboard/details/extra.html" %}
+    </div>
 </div>
+
 {% endblock content %}
 
 {% block js %}
