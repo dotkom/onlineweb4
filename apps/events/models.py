@@ -47,14 +47,15 @@ class EventOrderedByRegistration(models.Manager):
 
         return super(EventOrderedByRegistration, self).get_queryset().\
             annotate(registration_filtered=Case(
-                When(Q(attendance_event__registration_start__gte=week_back) &
+                When(Q(event_end__gte=today) &
+                     Q(attendance_event__registration_start__gte=week_back) &
                      Q(attendance_event__registration_start__lte=week_in_future),
                      then='attendance_event__registration_start'),
                 default='event_end',
                 output_field=models.DateTimeField()
             )
         ).annotate(is_today=Case(
-            When(event_end__date=today.date(),
+            When(Q(event_end__date=today.date()),
                  then=Value(1)),
             default=Value(0),
             output_field=models.IntegerField()
