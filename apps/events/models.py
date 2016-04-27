@@ -42,13 +42,13 @@ class EventOrderedByRegistration(models.Manager):
         now = timezone.now()
         DELTA_FUTURE_SETTING = settings.OW4_SETTINGS.get('events').get('FEATURED_DAYS_FUTURE')
         DELTA_PAST_SETTING = settings.OW4_SETTINGS.get('events').get('FEATURED_DAYS_PAST')
-        BACK_DAYS_DELTA = timezone.now() - timedelta(days=DELTA_PAST_SETTING)
+        DAYS_BACK_DELTA = timezone.now() - timedelta(days=DELTA_PAST_SETTING)
         DAYS_FORWARD_DELTA = timezone.now() + timedelta(days=DELTA_FUTURE_SETTING)
 
         return super(EventOrderedByRegistration, self).get_queryset().\
             annotate(registration_filtered=Case(
                 When(Q(event_end__gte=now) &
-                     Q(attendance_event__registration_start__gte=BACK_DAYS_DELTA) &
+                     Q(attendance_event__registration_start__gte=DAYS_BACK_DELTA) &
                      Q(attendance_event__registration_start__lte=DAYS_FORWARD_DELTA),
                      then='attendance_event__registration_start'),
                 default='event_end',
