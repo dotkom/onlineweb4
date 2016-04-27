@@ -33,7 +33,7 @@ DATABASES = {
         'ENGINE': 'ldapdb.backends.ldap',
         'NAME': 'ldap://example.com',
         'USER': 'cn=admin,dc=example,dc=com',
-        'PASSWORD': 'secretpassword',    
+        'PASSWORD': 'secretpassword',
         #'TLS': True,
         #'CONNECTION_OPTIONS': {
         #    ldap.OPT_X_TLS_DEMAND: True,
