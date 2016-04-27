@@ -5,23 +5,13 @@ from ldap3.utils.log import set_library_log_activation_level, EXTENDED, PROTOCOL
 from ldap3 import Server, Connection, ALL, SIMPLE, SYNC, ALL, NTLM, MODIFY_REPLACE, AUTH_SIMPLE, \
     SEARCH_SCOPE_WHOLE_SUBTREE, SEARCH_DEREFERENCE_ALWAYS, SUBTREE, SYNC, ALL_ATTRIBUTES
 from ldap3.utils.conv import escape_bytes
+from models import LdapGroup, LdapUser, LdapOrgUnit
 
 logging.basicConfig(filename='client_application.log', level=logging.CRITICAL)
 set_library_log_activation_level(logging.CRITICAL)
 set_library_log_detail_level(EXTENDED)
 
-# TODO:
-# Dev now requires reverse ssh tunnel
-host = 'localhost'
-port = 9999
-
-# Credentials
-username = 'change_me'
-password = 'change_me'
-
-# Search args
-default_args = 'dc=online,dc=ntnu,dc=no'
-
+MIN_UID = 2000
 
 def upsert_user_ldap(user):
     """
@@ -31,28 +21,16 @@ def upsert_user_ldap(user):
     :return:
     """
 
-    # Setup Connection
-    server = Server(host, port=port, use_ssl=False)
-
-    # Connect
-    conn = Connection(server, client_strategy=SYNC, authentication=SIMPLE, user=username, password=password)
-
-    if not conn.bind():
-        print('error in bind ' + conn.result)
-
     # Check if user exists
-    if exists(user.username, conn):
+    if exists(user):
         # User exists, update
-        update(user, conn)
+        update(user)
     # New user, insert
     else:
-        insert(user, conn)
-
-    # Close the connection
-    conn.unbind()
+        insert(user)
 
 
-def exists(username, conn):
+def exists(user):
     """
     Check if user exists in LDAP
 
@@ -60,53 +38,41 @@ def exists(username, conn):
     :param conn: Ldap connection
     :return: boolean exists
     """
-    conn.search(search_base=default_args,
-                search_filter='(&(objectClass=user)(sAMAccountName=' + format_field('read') + '))',
-                search_scope=SUBTREE,
-                attributes=['cn', 'name', 'sAMAccountName', 'givenName', 'mail'])
 
-    if len(conn.entries) > 0:
-        return True
-    else:
-        return False
+    ldap_user = LdapUser.objects.filter(username=user.ntnu_username).first()
+    return ldap_user not None
 
 
-def update(user, conn):
+def update(user):
     """
     Update an existing user in LDAP
 
     :param user: OnlineUser
-    :param conn: Ldap Connection
     :param changes: ldapmodify diff of changes
     :return: boolean updated
     """
 
-    conn.modify('cn=' + user.username + ',cn=Users,' + default_args,
-                {b'givenName': [(MODIFY_REPLACE, [b'rofl'])]})
+    ldap_user = LdapUser.objects.filter(username=user.ntnu_username).first()
+    ldap_user.username = user.ntnu_username
+    ldap_user.email = user.ntnu_username + "@stud.ntnu.no"
+    ldap_user.phone = user.phone_number
+    ldap_user.first_name = user.first_name
+    ldap_user.last_name = user.last_name
+    ldap_user.save()
 
-    exists(user.username, conn)
+    # satisfy the return statement in comments
+    return True;
 
-    pass
 
-
-def insert(user, conn):
+def insert(user):
     """
     Insert a new user in LDAP
 
     :param user: OnlineUser
-    :param conn: Ldap Connection
     :return: boolean inserted
     """
 
-    conn.add('cn=Users,' + default_args,
-             attributes={'objectClass': ['user', 'organizationalPerson', 'person', 'top'],
-                         'cn': format_field(user.username),
-                         'sAMAccountName': format_field(user.username),
-                         'name': format_field(user.username),
-                         'mail': format_field(user.get_email()),
-                         'sn': format_field(user.last_name),
-                         'givenName': format_field(user.first_name)
-                         })
+    # TODO: everything
     pass
 
 
@@ -115,3 +81,13 @@ def format_field(input):
         return escape_bytes(input)
     else:
         return u'n/a'
+
+def find_next_uid():
+    # TODO: execute external script to find next UID
+    # Or do the following: find the LdapUser with the highest
+    # UID and add one
+    # In that case: TODO: find unused UID if a user has been deleted
+    if LdapUser.objects.exists():
+        next_uid = LdapUser.objects.latest('uid').uid + 1
+        if next_uid > MIN_UID: return next_uid
+    return MIN_UID
