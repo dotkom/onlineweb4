@@ -88,6 +88,9 @@ class Order(models.Model):
     quantity = models.PositiveIntegerField(default=1, validators=[MinValueValidator(1)])
     size = models.ForeignKey(ProductSize, null=True, blank=True)
 
+    def is_valid(self):
+        return self.product.stock is None or self.product.stock >= self.quantity
+
     def calculate_price(self):
         return self.product.price * self.quantity
 
@@ -114,6 +117,12 @@ class OrderLine(models.Model):
 
     def subtotal(self):
         return sum((order.calculate_price() for order in self.orders.all()))
+
+    def is_valid(self):
+        """
+        Check that all orders are valid
+        """
+        return all((order.is_valid() for order in self.orders.all()))
 
     def pay(self):
         if self.paid:

@@ -129,6 +129,11 @@ def webshop_pay(request):
             try:
                 stripe.api_key = settings.STRIPE_PRIVATE_KEYS["prokom"]
 
+                if not order_line.is_valid():
+                    error = "Ordren er ikke gyldig."
+                    messages.error(request, error)
+                    return HttpResponse(error, content_type="text/plain", status=500)
+
                 charge = stripe.Charge.create(
                     amount=amount,
                     currency="nok",
