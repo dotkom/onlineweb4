@@ -144,10 +144,16 @@
                                         {% else %}
                                             <p class="status-text">Du er meldt på dette arrangementet.</p>
                                         {% endif %}
+                                        {% if attendance_event.extras.all %}
+                                          {% if attendance_event.registration_end > now or attendance_event.unattend_deadline > now %}
+                                            {% include 'events/extras.html' %}
+                                          {% else %}
+                                            <p class="status-text">Valgt extra: {{ attendee.extras }}</p>
+                                          {% endif %}
+                                        {% endif %}
                                         {% if user_paid %}
                                             {% if attendance_event.unattend_deadline > now %}
                                                 {% if event.event_start > now %}
-                                                    {% include 'events/extras.html' %}
                                                     {% if payment_relation_id %}
                                                         <div class="action">
                                                             <a href="#refund" role="button" class="btn btn-large btn-danger" data-toggle="modal">Refunder og meld meg av</a>
@@ -167,7 +173,6 @@
                                         {% if not user_paid %}
                                             {% if attendance_event.unattend_deadline > now or place_on_wait_list %}
                                                 {% if event.event_start > now %}
-                                                    {% include 'events/extras.html' %}
                                                     <div class="action"><a href="#unattend" role="button" class="btn btn-large btn-danger" data-toggle="modal">Meld meg av</a></div>
                                                 {% endif %}
                                             {% endif %}
