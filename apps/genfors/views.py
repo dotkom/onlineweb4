@@ -1,28 +1,22 @@
 # -*- coding: utf-8 -*-
 
-from django.contrib import messages
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect
-from django.utils.translation import ugettext as _
-from django.http import HttpResponse, JsonResponse
-from django.views.decorators.http import require_http_methods
-from django.views.decorators.cache import cache_page
-from apps.genfors.forms import LoginForm, MeetingForm, QuestionForm, RegisterVoterForm, AlternativeFormSet
-from apps.genfors.models import (
-    Meeting,
-    Question,
-    RegisteredVoter,
-    Alternative,
-    BooleanVote,
-    MultipleChoice,
-    Result
-)
-from apps.genfors.utils import generate_genfors_context, handle_login, get_active_meeting, is_admin, anonymous_voter, \
-    get_next_meeting
-from apps.genfors.models import BOOLEAN_VOTE, MULTIPLE_CHOICE
-
 import json
 import random
+
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.http import HttpResponse, HttpResponseForbidden, JsonResponse
+from django.shortcuts import redirect, render
+from django.utils.translation import ugettext as _
+from django.views.decorators.cache import cache_page
+from django.views.decorators.http import require_http_methods
+
+from apps.genfors.forms import (AlternativeFormSet, LoginForm, MeetingForm, QuestionForm,
+                                RegisterVoterForm)
+from apps.genfors.models import (BOOLEAN_VOTE, MULTIPLE_CHOICE, Alternative, BooleanVote, Meeting,
+                                 MultipleChoice, Question, RegisteredVoter, Result)
+from apps.genfors.utils import (anonymous_voter, generate_genfors_context, get_active_meeting,
+                                get_next_meeting, handle_login, is_admin)
 
 
 @login_required
@@ -35,8 +29,10 @@ def genfors(request):
         return render(request, "genfors/index.html", context)
 
     reg_voter = RegisteredVoter.objects.filter(user=request.user, meeting=meeting).first()
-    anon_voter = anonymous_voter(request.COOKIES.get('anon_voter'), request.user.username)
-
+    try:
+        anon_voter = anonymous_voter(request.COOKIES['anon_voter'], request.user.username)
+    except KeyError:
+        anon_voter = None
     # Check for cookie voter hash
     if anon_voter:
         context['meeting'] = meeting
@@ -55,14 +51,15 @@ def genfors(request):
         if request.method == 'POST':
             form = RegisterVoterForm(request.POST)
             context['form'] = form
+            response = []
             if form.is_valid():
-                handle_login(request, context)
+                response = handle_login(request, context)
 
             elif 'anon_voter' in request.COOKIES:
                 response = render(request, "genfors/index_login.html", context)
                 # Delete old hash
                 response.delete_cookie('anon_voter')
-                return response
+            return response
 
         # Set registration_locked context and create login form
         else:
@@ -70,6 +67,8 @@ def genfors(request):
             if not reg_voter:
                 context['registration_locked'] = meeting.registration_locked
 
+    aq = meeting.get_active_question()
+    context = generate_genfors_context(aq, context, anon_voter, reg_voter)
     return render(request, "genfors/index_login.html", context)
 
 
@@ -93,8 +92,21 @@ def admin(request):
     if is_admin(request):
         meeting = get_next_meeting()
         if meeting:
+            aq = meeting.get_active_question()
+            a = anonymous_voter(request.COOKIES.get('anon_voter'), request.user.username)
+            r = RegisteredVoter.objects.filter(user=request.user, meeting=meeting).first()
+            if aq:
+                context['not_voted'] = None
+                v = a if aq.anonymous else r
+                context['already_voted'] = aq.already_voted(v)
+                not_voted = []
+                for person in meeting.get_can_vote():
+                    if not aq.already_voted(person):
+                        not_voted.append(person)
+                context['not_voted'] = not_voted
+
             context['meeting'] = meeting
-            context['question'] = meeting.get_active_question()
+            context['question'] = aq
             context['questions'] = meeting.get_locked_questions()
             context['pin_code'] = meeting.get_pin_code()
         elif request.method == 'POST':
@@ -137,7 +149,7 @@ def question_admin(request, question_id=None):
     meeting = get_active_meeting()
     if is_admin(request):
         if not meeting:
-            _handle_inactive_meeting(request)
+            return _handle_inactive_meeting(request)
 
         if question_id is None and meeting.get_active_question():
             messages.error(request, _('Kan ikke legge til et nytt spørsmål når det allerede er et aktivt et'))
@@ -246,12 +258,8 @@ def vote(request):
 
         # If user is logged in
         if a:
-            handle_user_vote(request, m, a, r)
-
-        # Else forbid
-        return HttpResponse(status_code=403, reason_phrase='Forbidden')
-    else:
-        return HttpResponse(status_code=403, reason_phrase='Forbidden')
+            return handle_user_vote(request, m, a, r)
+    return HttpResponseForbidden()
 
 
 @login_required
@@ -333,9 +341,9 @@ def api_user(request):
         if q:
             context = _handle_q(context, anon_voter, reg_voter, q)
         else:
-            genfors["question"] = None
+            context["question"] = None
 
-        return JsonResponse(genfors)
+        return JsonResponse(context)
 
     else:
         return JsonResponse({"error": "Du har ikke tilgang til dette endepunktet."})
@@ -469,8 +477,7 @@ def handle_user_vote(request, m, a, r):
         return redirect('genfors_index')
     # If user is registered and has not cast a vote on the active question
     else:
-        _handle_actual_user_voting(request, q, v)
-        return redirect('genfors_index')
+        return _handle_actual_user_voting(request, q, v)
 
 
 def _handle_actual_user_voting(request, q, v):
@@ -526,6 +533,7 @@ def _handle_multiple_choice_vote(request, alt, q, v):
 def _handle_q(context, anon_voter, reg_voter, q):
     context["question"] = {}
     context["question"]["description"] = q.description
+    context["question"]["count_blank_votes"] = q.count_blank_votes
     if q.anonymous:
         already_voted = q.already_voted(anon_voter)
     else:
@@ -539,9 +547,9 @@ def _handle_q(context, anon_voter, reg_voter, q):
         votes = q.get_votes()
         if q.anonymous:
             if q.question_type == 0:
-                genfors["question"]["votes"] = [[str(v.voter.anonymousvoter), v.answer] for v in votes]
+                context["question"]["votes"] = [[str(v.voter.anonymousvoter), v.answer] for v in votes]
             elif q.question_type == 1:
-                genfors["question"]["votes"] = [
+                context["question"]["votes"] = [
                     [
                         str(v.voter.anonymousvoter),
                         v.answer.description
@@ -552,13 +560,13 @@ def _handle_q(context, anon_voter, reg_voter, q):
                 ]
 
             # Shuffle the order of votes so you cannot infer who cast what vote when there are few voters left
-            random.shuffle(genfors['question']['votes'])
+            random.shuffle(context['question']['votes'])
 
         else:
             if q.question_type == 0:
-                genfors["question"]["votes"] = [[str(v.voter.registeredvoter), v.answer] for v in votes]
+                context["question"]["votes"] = [[str(v.voter.registeredvoter), v.answer] for v in votes]
             elif q.question_type == 1:
-                genfors["question"]["votes"] = [
+                context["question"]["votes"] = [
                     [
                         str(v.voter.registeredvoter),
                         v.answer.description

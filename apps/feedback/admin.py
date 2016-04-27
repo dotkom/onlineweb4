@@ -1,18 +1,12 @@
 # -*- coding: utf-8 -*-
 
-from apps.feedback.models import Feedback
-from apps.feedback.models import FeedbackRelation
-from apps.feedback.models import TextQuestion
-from apps.feedback.models import RatingQuestion
-from apps.feedback.models import Choice
-from apps.feedback.models import MultipleChoiceQuestion
-from apps.feedback.models import MultipleChoiceRelation
-
-from django.forms.models import ModelForm
 from django.contrib import admin
 from django.contrib.contenttypes.admin import GenericStackedInline
-
+from django.forms.models import ModelForm
 from reversion.admin import VersionAdmin
+
+from apps.feedback.models import (Choice, Feedback, FeedbackRelation, MultipleChoiceQuestion,
+                                  MultipleChoiceRelation, RatingQuestion, TextQuestion)
 
 
 class AlwaysChangedModelForm(ModelForm):

@@ -1,65 +1,54 @@
 Django>=1.9.0,<1.10.0
-Pillow==2.7.0                   # pillow
-django-tastypie==0.13.1         # API v0 - Use git master until django 1.9 release   v
+Pillow==3.1.1                   # PIL fork (Python Imaging Library)
+django-tastypie==0.13.3         # API v0 - Use git master until django 1.9 release   v
 djangorestframework>=3.3.0,<3.4.0 # API v1
-django-filter==0.11.0           # Filtering for DRF
+django-filter==0.12.0           # Filtering for DRF
 # python-memcached==1.57          # Memcache. Used by Mailinglists to fetch from Sympa.
 # Upstream is missing Python 3 patches
 git+https://github.com/JelteF/python-memcached@patch-1#egg=python-memcached==1.58
 markdown2==2.3.0                # textarea text formatting
-psycopg2                        # Postgres adapter
-pytz                            # Timezone lib. Obsolete?
-gunicorn==19.0
-icalendar==3.8.4
-stripe==1.20.2
+pytz                            # Timezone lib
+icalendar==3.9.2                # iCalendar generation
+stripe==1.30.0                  # Stripe payment
 
 # third party deps
-# django-filebrowser==3.5.4 		# File uploading
+# django-filebrowser==3.5.4     # File uploading
 # Missing django 1.9 patches
 git+https://github.com/cXhristian/django-filebrowser.git@django-1.9#egg=django-filebrowser==3.6.2
-django-grappelli==2.7.3         # Admin template set
+django-grappelli==2.8.1         # Admin template set
 # git+git://github.com/clintecker/django-chunks.git@0.2# Chunks, or reusable key:content for templates.
 git+https://github.com/dotKom/django-chunks.git@68cf551f08cfd8c40de9d82318e4fd20b814df7a#egg=django-chunks==0.3
-django-crispy-forms==1.5.2      # nice forms
-django-extensions==1.5.9        # nice extra commands for debugging, etc
+django-crispy-forms==1.6.0      # nice forms
+django-extensions==1.6.1        # nice extra commands for debugging, etc
 django-dynamic-fixture==1.8.5   # Dynamic fixtures for models
-django-recaptcha==1.0.4         # Google ReCaptcha
-django-oauth-toolkit==0.8.1     # OAuth2 authentication support
+django-recaptcha==1.0.5         # Google ReCaptcha
+django-oauth-toolkit==0.8.1    # OAuth2 authentication support
 django_compressor==2.0          # Compiles less and minifies js
-django-watson==1.2.0            # Indexed model search lib
-django-reversion==1.10.0        # Model version history with middleware hooks to all post_save signals
-django-guardian==1.3.2          # Per Object permissions framework
-django-taggit==0.17.6           # Generic multi-model tagging library
+django-watson==1.2.1            # Indexed model search lib
+django-reversion==1.10.1        # Model version history with middleware hooks to all post_save signals
+django-guardian==1.4.2          # Per Object permissions framework
+django-taggit==0.18.0           # Generic multi-model tagging library
 django-taggit-serializer==0.1.5 # REST Framework serializers for Django-taggit
-APScheduler==2.1.1              # Scheduler
-feedme==1.9.4
-git+https://github.com/dotKom/redwine.git@1.2.3#egg=redwine==1.2.3
-reportlab==3.1.44
+APScheduler==3.0.5              # Scheduler
+feedme==1.9.5
+git+https://github.com/dotKom/redwine.git@1.2.4#egg=redwine==1.2.4
+reportlab==3.3.0
 pdfdocument==3.1
-Unidecode==0.4.17               # Translates every unicode symbol to the closest ascii. online_mail_usernames
+Unidecode==0.4.19               # Translates every unicode symbol to the closest ascii. online_mail_usernames
 django-markdown-deux==1.0.5
-django-formset-js==0.4.3
-werkzeug==0.10.4
+django-formset-js==0.5.0        # used to dynamically create new formsets
 django-cors-headers==1.1.0      # Enable CORS for Nibble
 django-datetime-widget==0.9.3   # Datetime widget for forms
 
 #test tools
-cov-core==1.7
-coverage==4.0.1
-django-nose>=1.4,<1.5
-factory-boy==1.1.3
-lettuce==0.2.20
-nose==1.3.4
-nose-cov==1.6
-teamcity-messages==1.16
-flake8==2.4.1
-pepper8>=1.0.4                  # Transforms flake8 output to HTML report + TC messages
+django-nose>=1.4,<1.5           # We use this test runner locally
+nose==1.3.7                     # We use this test runner locally
 
 # Frigg
 requests[security]==2.8.0
 
 # Wiki
-wiki==0.1b0
+wiki==0.1
 
 # Django 1.9 support
 sorl-thumbnail>12.2
@@ -71,4 +60,3 @@ django-sekizai>=0.9
 # imagemagick                   # From package repository. Tested with version == 8:6.7.7.10.
 # libjpeg-dev					# From package repository.
 # libpq-dev						# From package repository.
-

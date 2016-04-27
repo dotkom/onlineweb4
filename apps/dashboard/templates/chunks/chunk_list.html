@@ -1,0 +1,25 @@
+{% extends 'dashboard_base.html' %}
+
+{% block breadcrumbs %}
+  <li>Chunks</li>
+{% endblock %}
+
+{% block content %}
+  <a class="btn btn-primary" href="{% url 'chunk-dashboard:create' %}">Ny chunk</a>
+  {% if chunks %}
+    <table class="table table-condensed">
+      <thead>
+        <th>Chunk navn</th>
+      </thead>
+      <tbody>
+        {% for chunk in chunks %}
+          <tr>
+            <td><a href="{% url 'chunk-dashboard:update' chunk.id %}">{{ chunk.key }}</a></td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    Det eksisterer ingen chunks.
+  {% endif %}
+{% endblock %}

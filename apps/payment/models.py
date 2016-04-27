@@ -8,12 +8,10 @@ from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.utils import timezone
 from django.utils.translation import ugettext as _
+from rest_framework.exceptions import NotAcceptable
 
 from apps.events.models import AttendanceEvent, Attendee
 from apps.marks.models import Suspension
-
-from rest_framework.exceptions import NotAcceptable
-
 
 User = settings.AUTH_USER_MODEL
 
@@ -137,6 +135,10 @@ class Payment(models.Model):
 
     def prices(self):
         return self.paymentprice_set.all()
+
+    def price(self):
+        # TODO implement group based pricing
+        return self.paymentprice_set.all()[0]
 
     def _is_type(self, model_type):
         return ContentType.objects.get_for_model(model_type) == self.content_type

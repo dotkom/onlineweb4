@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 import datetime
 import json
-
 from hashlib import sha256
 
 from django.conf import settings
@@ -9,9 +8,8 @@ from django.contrib import messages
 from django.shortcuts import redirect
 from django.utils import timezone
 
-from apps.genfors.models import AnonymousVoter, RegisteredVoter, \
-    Alternative, BooleanVote, Meeting, MultipleChoice, Result
-
+from apps.genfors.models import (Alternative, AnonymousVoter, BooleanVote, Meeting, MultipleChoice,
+                                 RegisteredVoter, Result)
 
 BOOLEAN_VOTE = 0
 MULTIPLE_CHOICE = 1
@@ -81,15 +79,13 @@ def handle_not_locked(self, admin):
     results = None
     if self.question_type is BOOLEAN_VOTE:
         results = handle_boolean_voting(self)
-
     elif self.question_type is MULTIPLE_CHOICE:
         results = handle_multiple_choice_voting(self)
-
     else:
         raise NotImplementedError
 
     if results:
-        winner = max(results.keys(), key=(lambda key: results[key]))
+        winner = get_winner(self)
         winner_votes = results[winner]
 
         minimum = 0
@@ -97,6 +93,8 @@ def handle_not_locked(self, admin):
             total_votes = self.total_voters
         else:
             total_votes = len(self.meeting.get_can_vote())
+
+        votes_for_alternative = total_votes - results['Blankt']
 
         # Normal
         if self.majority_type == 0:
@@ -108,8 +106,10 @@ def handle_not_locked(self, admin):
 
         res = {'valid': False, 'data': {}}
 
-        if total_votes != 0:
+        if total_votes != 0 and self.count_blank_votes:
             res['valid'] = winner_votes / float(total_votes) > minimum
+        elif votes_for_alternative != 0 and not self.count_blank_votes:
+            res['valid'] = winner_votes / float(votes_for_alternative) > minimum
 
         # Admins should see all info regardless of only show winner
         if admin or not self.only_show_winner:
@@ -120,6 +120,21 @@ def handle_not_locked(self, admin):
             return res
     else:
         return None
+
+
+def get_winner(self):
+    result = None
+    if self.question_type is BOOLEAN_VOTE and not self.count_blank_votes:
+        result = handle_boolean_voting(self)
+        del result['Blankt']
+    elif self.question_type is MULTIPLE_CHOICE and not self.count_blank_votes:
+        result = handle_multiple_choice_voting(self)
+        del result['Blankt']
+    elif self.question_type is MULTIPLE_CHOICE:
+        result = handle_multiple_choice_voting(self)
+    else:
+        result = handle_boolean_voting(self)
+    return max(result.keys(), key=(lambda key: result[key]))
 
 
 def handle_boolean_voting(self):
@@ -155,12 +170,12 @@ def handle_multiple_choice_voting(self):
 
 
 # other stuff
-def handle_login(request):
+def handle_login(request, context):
     meeting = get_active_meeting()
 
     reg_voter = RegisteredVoter.objects.filter(user=request.user, meeting=meeting).first()
     if reg_voter or not meeting.registration_locked:
-        _handle_user_login()
+        return _handle_user_login(request, context['form'])
 
 
 def _handle_user_login(request, form):
@@ -180,8 +195,8 @@ def _handle_user_login(request, form):
         reg_voter.save()
         # Double hashing when saving while we store the original hash as a cookie
         h2 = sha256()
-        h2.update(h)
-        h2.update(request.user.username)
+        h2.update(h.encode('utf-8'))
+        h2.update(request.user.username.encode('utf-8'))
         anon_voter = AnonymousVoter(user_hash=h2.hexdigest(), meeting=meeting)
         anon_voter.save()
     else:
@@ -194,7 +209,7 @@ def _handle_user_login(request, form):
     if anon_voter:
         # Anyonous voter hash stored in cookies for 1 day
         tomorrow = datetime.datetime.now() + datetime.timedelta(days=1)
-        response.set_cookie('anon_voter', h, expires=tomorrow)
+        response.set_cookie(key='anon_voter', value=h, expires=tomorrow)
     elif 'anon_voter' in request.COOKIES:
         # Delete old hash
         response.delete_cookie('anon_voter')
@@ -216,6 +231,7 @@ def generate_genfors_context(aq, context, anon_voter, reg_voter):
     context['active_question'] = {}
     context['active_question']['total_votes'] = total_votes
     context['active_question']['alternatives'] = alternatives
+    context['active_question']['count_blank_votes'] = aq.count_blank_votes
 
     context['registered_voter'] = reg_voter
     context['anonymous_voter'] = anon_voter
@@ -223,17 +239,51 @@ def generate_genfors_context(aq, context, anon_voter, reg_voter):
     res = aq.get_results()
 
     if total_votes != 0 and not aq.only_show_winner:
-        count_votes(context, aq, total_votes, res)
+        if aq.count_blank_votes:
+            count_blank_votes(context, aq, res)
+        else:
+            count_votes(context, aq, res)
+
+    return context
 
 
 def count_votes(context, aq, res):
     total_votes = context['active_question']['total_votes']
+    votes_for_alternative = context['active_question']['total_votes'] - res['data']['Blankt']
     alternatives = context['active_question']['alternatives']
 
     if aq.question_type is BOOLEAN_VOTE:
-        context['active_question']['yes_percent'] = res['data']['Ja'] * 100 // total_votes
-        context['active_question']['no_percent'] = res['data']['Nei'] * 100 // total_votes
+        if votes_for_alternative == 0:
+            context['active_question']['yes_percent'] = res['data']['Ja'] * 100 // 1
+            context['active_question']['no_percent'] = res['data']['Nei'] * 100 // 1
+        else:
+            context['active_question']['yes_percent'] = res['data']['Ja'] * 100 // votes_for_alternative
+            context['active_question']['no_percent'] = res['data']['Nei'] * 100 // votes_for_alternative
+
         context['active_question']['blank_percent'] = res['data']['Blankt'] * 100 // total_votes
+
+    elif aq.question_type is MULTIPLE_CHOICE and total_votes != 0:
+        context['active_question']['multiple_choice'] = {}
+        for a in alternatives:
+            context['active_question']['multiple_choice'][a.description] = [0, 0]
+        context['active_question']['multiple_choice']['Blankt'] = [0, 0]
+        for k, v in res['data'].items():
+            if k == 'Blankt':
+                context['active_question']['multiple_choice'][k] = [v, v * 100 // total_votes]
+            elif votes_for_alternative > 0:
+                context['active_question']['multiple_choice'][k] = [v, v * 100 // votes_for_alternative]
+            else:
+                context['active_question']['multiple_choice'][k] = [v, 0]
+
+
+def count_blank_votes(context, aq, res):
+    total_votes = context['active_question']['total_votes']
+    alternatives = context['active_question']['alternatives']
+
+    if aq.question_type is BOOLEAN_VOTE:
+            context['active_question']['yes_percent'] = res['data']['Ja'] * 100 // total_votes
+            context['active_question']['no_percent'] = res['data']['Nei'] * 100 // total_votes
+            context['active_question']['blank_percent'] = res['data']['Blankt'] * 100 // total_votes
 
     elif aq.question_type is MULTIPLE_CHOICE and total_votes != 0:
         context['active_question']['multiple_choice'] = {}

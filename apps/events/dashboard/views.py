@@ -2,22 +2,22 @@
 
 from datetime import datetime, time, timedelta
 
-from django.core.exceptions import PermissionDenied
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.core.exceptions import PermissionDenied
 from django.forms.models import modelformset_factory
 from django.http import HttpResponse, JsonResponse
-from django.shortcuts import render, get_object_or_404, redirect
+from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from django.utils.translation import ugettext as _
-
 from guardian.decorators import permission_required
 
-from apps.dashboard.tools import has_access, get_base_context
-from apps.events.dashboard.forms import ChangeEventForm, ChangeAttendanceEventForm, ChangeReservationForm
-from apps.events.models import Event, AttendanceEvent, Attendee, Reservation, Reservee
-from apps.events.utils import get_group_restricted_events, get_types_allowed
+from apps.dashboard.tools import get_base_context, has_access
+from apps.events.dashboard.forms import (ChangeAttendanceEventForm, ChangeEventForm,
+                                         ChangeReservationForm)
 from apps.events.dashboard.utils import event_ajax_handler
+from apps.events.models import AttendanceEvent, Attendee, Event, Reservation, Reservee
+from apps.events.utils import get_group_restricted_events, get_types_allowed
 
 
 @login_required
@@ -210,16 +210,16 @@ def event_change_attendees(request, event_id, active_tab='attendees'):
     return render(request, 'events/dashboard/details.html', context)
 
 
-def count_extras(arr, inlist, atts):
-    for att in atts:
-        choice = "Ikke valgt" if att.extras is None else att.extras
-        if att.extras not in arr:
-            arr[choice] = {"type": choice, "attending": 0, "waits": 0, "allergics": []}
-        ex = arr[choice]
-        ex[inlist] += 1
-        if att.user.allergies:
-            what_list = "påmeldt" if inlist is "attending" else "venteliste"
-            ex["allergics"].append({"user": att.user, "list": what_list})
+def count_extras(event_extras, attendance_list, attendees):
+    for attendee in attendees:
+        choice = attendee.extras
+        if attendee.extras not in event_extras:
+            event_extras[choice] = {"type": choice, "attending": 0, "waits": 0, "allergics": []}
+        ex = event_extras[choice]
+        ex[attendance_list] += 1
+        if attendee.user.allergies:
+            what_list = "påmeldt" if attendance_list is "attending" else "venteliste"
+            ex["allergics"].append({"user": attendee.user, "list": what_list})
 
 
 @login_required

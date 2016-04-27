@@ -1,15 +1,14 @@
 # -*- coding: utf-8 -*-
 
 import re
-from unidecode import unidecode
 
 from django.conf import settings
 from django.db import models
-from django.db.models import permalink, SET_NULL
+from django.db.models import SET_NULL, permalink
 from django.template.defaultfilters import slugify
 from django.utils.translation import ugettext as _
-
 from taggit.managers import TaggableManager
+from unidecode import unidecode
 
 from apps.gallery.models import ResponsiveImage
 

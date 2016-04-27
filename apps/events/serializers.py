@@ -1,7 +1,8 @@
 from rest_framework import serializers
+
+from apps.authentication.serializers import UserSerializer
 from apps.companyprofile.serializers import CompanySerializer
 from apps.events.models import AttendanceEvent, Attendee, CompanyEvent, Event, RuleBundle
-from apps.authentication.serializers import UserSerializer
 
 
 class AttendeeSerializer(serializers.ModelSerializer):

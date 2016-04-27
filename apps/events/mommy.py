@@ -2,8 +2,8 @@
 import locale
 import logging
 
-from django.utils import timezone
 from django.core.mail import EmailMessage
+from django.utils import timezone
 
 from apps.events.models import AttendanceEvent
 from apps.marks.models import Mark, MarkUser

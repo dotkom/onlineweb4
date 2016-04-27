@@ -6,11 +6,10 @@ import os
 from django.conf import settings
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-
 from taggit.managers import TaggableManager
+from utils.helpers import humanize_size
 
 from apps.gallery import settings as gallery_settings
-from utils.helpers import humanize_size
 
 
 class UnhandledImage(models.Model):
@@ -45,7 +44,6 @@ class UnhandledImage(models.Model):
         )
 
 
-# TODO: Introduce tags to images
 class ResponsiveImage(models.Model):
     name = models.CharField('Navn', max_length=200, null=False)
     timestamp = models.DateTimeField(auto_now_add=True, editable=False, null=False, blank=False)
@@ -88,12 +86,6 @@ class ResponsiveImage(models.Model):
             assert self.image_sm.width is not None
             assert self.image_xs.width is not None
         except OSError:
-            log.warning('Caught OSError for image file reference for ResponsiveImage %d (%s)' % (
-                self.id,
-                self.filename
-            ))
-            return False
-        except IOError:
             log.warning('Caught OSError for image file reference for ResponsiveImage %d (%s)' % (
                 self.id,
                 self.filename

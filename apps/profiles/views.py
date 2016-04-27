@@ -1,39 +1,36 @@
 # -*- coding: utf-8 -*-
 import json
+import logging
 import re
 import uuid
 from smtplib import SMTPException
 
 from django.conf import settings
 from django.contrib import messages
-from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.models import Group
 from django.core.mail import send_mail
-from django.http import HttpResponse, Http404, JsonResponse
-from django.shortcuts import redirect, render, get_object_or_404
-from django.utils.translation import ugettext as _
+from django.db import IntegrityError
+from django.http import Http404, HttpResponse, JsonResponse
+from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
-
+from django.utils.translation import ugettext as _
 from oauth2_provider.models import AccessToken
-
+from utils.shortcuts import render_json
 from watson import search as watson
 
 from apps.approval.forms import FieldOfStudyApplicationForm
 from apps.approval.models import MembershipApproval
 from apps.authentication.forms import NewEmailForm
-from apps.authentication.models import Email, RegisterToken, Position
 from apps.authentication.models import OnlineUser as User
-from apps.payment.models import PaymentTransaction
+from apps.authentication.models import Email, Position, RegisterToken
 from apps.marks.models import Mark, Suspension
-from apps.profiles.forms import (
-    PrivacyForm,
-    ProfileForm,
-    PositionForm
-)
+from apps.payment.models import PaymentDelay, PaymentRelation, PaymentTransaction
+from apps.profiles.forms import PositionForm, PrivacyForm, ProfileForm
 from apps.profiles.models import Privacy
-from apps.payment.models import PaymentRelation, PaymentDelay
-from utils.shortcuts import render_json
+from apps.shop.models import Order
+
 
 """
 Index for the entire user profile view
@@ -68,7 +65,9 @@ def _create_profile_context(request):
         'groups': groups,
         # privacy
         'privacy_form': PrivacyForm(instance=request.user.privacy),
+        # nibble information
         'transactions': PaymentTransaction.objects.filter(user=request.user),
+        'orders': Order.objects.filter(order_line__user=request.user).order_by('-order_line__datetime'),
 
         # SSO / OAuth2 approved apps
         'connected_apps': AccessToken.objects.filter(user=request.user, expires__gte=timezone.now())
@@ -267,7 +266,7 @@ def add_email(request):
                 ntnu_username = email_string.split("@")[0]
                 user = User.objects.filter(ntnu_username=ntnu_username)
                 if user.count() == 1:
-                    if user != request.user:
+                    if user[0] != request.user:
                         messages.error(request, _("En bruker med dette NTNU-brukernavnet eksisterer allerede."))
                         return redirect('profiles')
 
@@ -384,11 +383,16 @@ def verify_email(request):
 
 
 def _send_verification_mail(request, email):
-
+    log = logging.getLogger(__name__)
     # Create the registration token
     token = uuid.uuid4().hex
-    rt = RegisterToken(user=request.user, email=email, token=token)
-    rt.save()
+    try:
+        rt = RegisterToken(user=request.user, email=email, token=token)
+        rt.save()
+        log.info('Successfully registered token for %s' % request.user)
+    except IntegrityError as ie:
+        log.error('Failed to register token for %s due to %s' % (request.user, ie))
+        raise ie
 
     email_message = _("""
 En ny epost har blitt registrert på din profil på online.ntnu.no.

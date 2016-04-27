@@ -3,7 +3,6 @@
 # Created by 'myth' on 10/24/15
 
 from django import forms
-
 from taggit.forms import TagWidget
 
 from apps.gallery.models import ResponsiveImage

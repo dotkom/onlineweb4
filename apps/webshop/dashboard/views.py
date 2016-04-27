@@ -1,15 +1,15 @@
+import logging
+
 from django.contrib.contenttypes.models import ContentType
 from django.core.urlresolvers import reverse
 from django.shortcuts import get_object_or_404, redirect
-from django.views.generic import TemplateView, DetailView, UpdateView, CreateView, DeleteView, ListView
+from django.views.generic import (CreateView, DeleteView, DetailView, ListView, TemplateView,
+                                  UpdateView)
+from taggit.models import TaggedItem
 
 from apps.dashboard.tools import DashboardPermissionMixin
 from apps.gallery.models import ResponsiveImage
-from apps.webshop.models import Category, Product, OrderLine
-
-from taggit.models import TaggedItem
-
-import logging
+from apps.webshop.models import Category, OrderLine, Product
 
 logger = logging.getLogger(__name__)
 
@@ -41,10 +41,6 @@ class CategoryCreate(DashboardPermissionMixin, CreateView):
     fields = ['name', 'slug']
     template_name = 'webshop/dashboard/category_update.html'
     permission_required = 'webshop.add_category'
-
-    def get_object(self, *args, **kwargs):
-        # django-guardian hack https://github.com/django-guardian/django-guardian/issues/195
-        return None
 
     def get_success_url(self):
         return reverse('dashboard-webshop:categories')
@@ -93,10 +89,6 @@ class ProductCreate(DashboardPermissionMixin, CreateView):
         category = get_object_or_404(Category, slug=self.kwargs.get('category_slug'))
         product.category = category
         return super(ProductCreate, self).form_valid(form)
-
-    def get_object(self, *args, **kwargs):
-        # django-guardian hack https://github.com/django-guardian/django-guardian/issues/195
-        return None
 
     def get_success_url(self):
         return reverse('dashboard-webshop:category', kwargs={'slug': self.kwargs.get('category_slug')})

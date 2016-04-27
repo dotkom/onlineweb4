@@ -3,9 +3,9 @@
 import locale
 import logging
 
-from django.utils import timezone
 from django.conf import settings
 from django.core.mail import EmailMessage
+from django.utils import timezone
 
 from apps.feedback.models import FeedbackRelation
 from apps.marks.models import Mark, MarkUser
@@ -76,10 +76,10 @@ class FeedbackMail(Task):
         message.attended_mails = FeedbackMail.get_user_mails(not_responded)
 
         message.committee_mail = FeedbackMail.get_committee_email(feedback)
-        deadline = feedback.deadline.strftime("%d. %B").encode("utf-8")
+        deadline = feedback.deadline.strftime("%d. %B")
         title = FeedbackMail.get_title(feedback)
-        message.link = str("\n\n" + FeedbackMail.get_link(feedback)).encode()
-        results_link = str(FeedbackMail.get_link(feedback) + "results").encode()
+        message.link = str("\n\n" + FeedbackMail.get_link(feedback))
+        results_link = str(FeedbackMail.get_link(feedback) + "results")
 
         deadline_diff = (feedback.deadline - today).days
 
@@ -109,10 +109,8 @@ class FeedbackMail(Task):
         elif deadline_diff < 1:  # Last warning
             message.deadline = "\n\nI dag innen 23:59 er siste frist til å svare på skjemaet."
 
-            message.results_message = """
-            Hei, siste purremail på feedback skjema har blitt sendt til alle
-            gjenværende deltagere på \"{}\".\nDere kan se feedback-resultatene på:\n{}\n
-            """.format(title, results_link)
+            message.results_message = "Hei, siste purremail på feedback skjema har blitt sendt til alle gjenværende " \
+                "deltagere på \"{}\".\nDere kan se feedback-resultatene på:\n{}\n".format(title, results_link)
             message.send = True
             message.status = "Last warning"
         elif deadline_diff < 3 and feedback.gives_mark:  # 3 days from the deadline
@@ -121,13 +119,11 @@ class FeedbackMail(Task):
             message.status = "Warning message"
         elif not feedback.first_mail_sent:
             message.deadline = "\n\nFristen for å svare på skjema er %s innen kl 23:59." % deadline
-
-            message.results_message = """
-            Hei, nå har feedbackmail blitt sendt til alle
-            deltagere på \"{}\".\nDere kan se feedback-resultatene på:\n{}\n
-            """.format(title, results_link)
+            message.results_message = "Hei, nå har feedbackmail blitt sendt til alle deltagere på \"{}\"." \
+                "\nDere kan se resultatene på:\n{}\n".format(title, results_link)
             message.send = True
             message.status = "First message"
+
             feedback.first_mail_sent = True
             feedback.save()
             logger.info("first_mail_sent set")
@@ -149,7 +145,7 @@ class FeedbackMail(Task):
         # If the object(event) doesnt have start date it will send
         # The first notification the day after the feedbackrelation is made
         if date:
-            date_string = date.strftime("%d. %B").encode("utf-8")
+            date_string = date.strftime("%d. %B")
             message_date = "som du var med på den %s:" % date_string
         else:
             message_date = ""
@@ -179,10 +175,8 @@ class FeedbackMail(Task):
     @staticmethod
     def mark_message(feedback):
         if feedback.gives_mark:
-            return """
-            \nVær oppmerksom på at du får prikk dersom du ikke svarer
-            på disse spørsmålene innen fristen.
-            """
+            return "\nVær oppmerksom på at du får prikk dersom du ikke svarer " \
+                "på disse spørsmålene innen fristen."
         else:
             return ""
 

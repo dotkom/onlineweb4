@@ -4,7 +4,6 @@
 
 from django import forms
 from django.core.exceptions import ValidationError
-
 from oauth2_provider.settings import oauth2_settings
 from oauth2_provider.validators import validate_uris
 

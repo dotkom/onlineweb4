@@ -3,7 +3,7 @@
 # Created by 'myth' on 10/18/15
 
 from rest_framework import serializers
-from taggit_serializer.serializers import TagListSerializerField, TaggitSerializer
+from taggit_serializer.serializers import TaggitSerializer, TagListSerializerField
 
 from apps.gallery.models import ResponsiveImage
 

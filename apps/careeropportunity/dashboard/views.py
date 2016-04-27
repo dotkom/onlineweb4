@@ -2,14 +2,13 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
-
 from guardian.decorators import permission_required
 
 from apps.careeropportunity.forms import AddCareerOpportunityForm
 from apps.careeropportunity.models import CareerOpportunity
-from apps.dashboard.tools import has_access, get_base_context
+from apps.dashboard.tools import get_base_context, has_access
 
 
 @login_required

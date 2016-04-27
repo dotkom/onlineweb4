@@ -4,20 +4,18 @@
 
 from logging import getLogger
 
-from django.core.urlresolvers import reverse
 from django.contrib import messages
 from django.contrib.contenttypes.models import ContentType
+from django.core.urlresolvers import reverse
 from django.http import HttpResponseBadRequest, HttpResponseNotAllowed
 from django.shortcuts import redirect
-from django.views.generic import DetailView, UpdateView, ListView, TemplateView
-
+from django.views.generic import DetailView, ListView, TemplateView, UpdateView
 from taggit.models import TaggedItem
-
+from utils.helpers import humanize_size
 
 from apps.dashboard.tools import DashboardPermissionMixin
-from apps.gallery.models import UnhandledImage, ResponsiveImage
 from apps.gallery.dashboard.forms import ResponsiveImageForm
-from utils.helpers import humanize_size
+from apps.gallery.models import ResponsiveImage, UnhandledImage
 
 
 class GalleryIndex(DashboardPermissionMixin, ListView):
@@ -92,7 +90,7 @@ class GalleryDetail(DashboardPermissionMixin, UpdateView):
 
     def form_invalid(self, form):
         """
-        Add error message
+        Add error message if invalid
         """
 
         messages.error(self.request, 'Noen av feltene inneholder feil.')
@@ -107,6 +105,20 @@ class GalleryDetail(DashboardPermissionMixin, UpdateView):
         """
 
         return reverse('gallery_dashboard:detail', kwargs={'pk': self.object.id})
+
+    def get_object(self, queryset=None):
+        """
+        We override the get_object to inject an extra health-check on the status of the files toe
+        ResponsiveImage objects's ImageField point to. This to be able to insert error messages
+        to the user, prompting them to delete broken objects.
+        """
+
+        obj = super().get_object(queryset=queryset)
+
+        if not obj.file_status_ok():
+            messages.error(self.request, 'Dette bildeobjektet er korrupt/ødelagt og bør slettes!')
+
+        return obj
 
 
 class GalleryUpload(DashboardPermissionMixin, TemplateView):

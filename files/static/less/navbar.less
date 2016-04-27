@@ -289,12 +289,23 @@ svg, rect {
                 transform: translateX(-50%);
     }
     #mainnav ul.mn-nav {
-        display: none;
+        display: block;
         position: absolute;
         top: @navbar-height;
         left: 0;
         width: 100%;
         background: rgba(25, 25, 25, 1);
+        
+        opacity: 0;
+        transition: opacity .3s ease-in-out;
+        
+        &.mn-nav-open {
+            opacity: 1;
+        }
+        
+        &:not(.animation-in-process):not(.mn-nav-open) {
+            display: none;
+        }
     }
     #mainnav .mn-nav li:first-child {
         display: none;

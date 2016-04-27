@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 
-from django.conf.urls import url, include
-
+from django.conf.urls import include, url
 from tastypie.api import Api
 
-from apps.api.v0.article import ArticleResource, ArticleLatestResource
-from apps.api.v0.events import EventResource, AttendanceEventResource, CompanyResource, CompanyEventResource
+from apps.api.v0.article import ArticleLatestResource, ArticleResource
+from apps.api.v0.events import (AttendanceEventResource, CompanyEventResource, CompanyResource,
+                                EventResource)
 from apps.api.v0.offline import IssueResource
 
 v0_api = Api(api_name='v0')

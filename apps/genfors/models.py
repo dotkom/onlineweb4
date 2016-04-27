@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 
-from django.db import models
-from django.utils.translation import ugettext as _
-from django.conf import settings
-from django.utils.timezone import localtime
-from hashlib import sha256
 import random
+from hashlib import sha256
 
+from django.conf import settings
+from django.db import models
+from django.utils.timezone import localtime
+from django.utils.translation import ugettext as _
 
 User = settings.AUTH_USER_MODEL
 
@@ -60,7 +60,7 @@ class Meeting(models.Model):
     # Pincode generator for a particular meeting
     def generate_pin_code(self):
         h = sha256()
-        h.update(str(random.randint(0, 100000)))
+        h.update(str(random.randint(0, 100000)).encode('utf-8'))
         h = h.hexdigest()
         self.pin = h[:6]
         self.save()
@@ -199,6 +199,7 @@ class Question(models.Model):
     )
     only_show_winner = models.BooleanField(_('Vis kun vinner'), null=False, blank=False, default=False)
     total_voters = models.IntegerField(_('Stemmeberettigede'), null=True)
+    count_blank_votes = models.BooleanField(_('Tellende blanke stemmer'), null=False, blank=False, default=False)
 
     # Returns results as a dictionary, either by alternative or boolean-ish types
     def get_results(self, admin=False):
@@ -211,8 +212,15 @@ class Question(models.Model):
     # Gets the name of the alt with the most votes
     def get_leader(self):
         results = self.get_results()
-        if results:
+        if results and self.count_blank_votes:
             return max(results['data'].keys(), key=lambda key: results['data'][key])
+        elif results and not self.count_blank_votes:
+            if 'Blankt' in results['data']:
+                results['data'].pop('Blankt', None)
+            try:
+                return max(results['data'].keys(), key=lambda key: results['data'][key])
+            except ValueError:
+                return None
         else:
             return None
 

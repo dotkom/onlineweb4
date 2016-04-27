@@ -3,22 +3,12 @@
 from django.contrib import admin, messages
 from django.core import validators
 from django.utils.translation import ugettext as _
-
-from apps.events.models import Event
-from apps.events.models import AttendanceEvent
-from apps.events.models import Attendee
-from apps.events.models import CompanyEvent
-from apps.events.models import RuleBundle
-from apps.events.models import FieldOfStudyRule
-from apps.events.models import GradeRule
-from apps.events.models import UserGroupRule
-from apps.events.models import Reservation
-from apps.events.models import Reservee
-from apps.events.models import Extras
-from apps.events.models import GroupRestriction
-from apps.feedback.admin import FeedbackRelationInline
-
 from reversion.admin import VersionAdmin
+
+from apps.events.models import (AttendanceEvent, Attendee, CompanyEvent, Event, Extras,
+                                FieldOfStudyRule, GradeRule, GroupRestriction, Reservation,
+                                Reservee, RuleBundle, UserGroupRule)
+from apps.feedback.admin import FeedbackRelationInline
 
 
 class AttendeeInline(admin.TabularInline):

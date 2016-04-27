@@ -3,18 +3,17 @@
 import json
 
 from django.contrib.auth.decorators import login_required
-from django.http import Http404, HttpResponse
 from django.core.exceptions import PermissionDenied
+from django.http import Http404, HttpResponse
 from django.shortcuts import render
 from django.utils import timezone
 from django.utils.translation import ugettext as _
 from django.views.decorators.csrf import ensure_csrf_cookie
-
 from guardian.decorators import permission_required
 
 from apps.approval.models import MembershipApproval
 from apps.authentication.models import AllowedUsername
-from apps.dashboard.tools import has_access, get_base_context
+from apps.dashboard.tools import get_base_context, has_access
 
 
 @ensure_csrf_cookie

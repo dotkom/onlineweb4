@@ -2,9 +2,8 @@
 
 from datetime import date
 
-from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
 from django.contrib.auth.models import Group
-
+from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
 from guardian.mixins import PermissionRequiredMixin
 
 from apps.approval.models import MembershipApproval
@@ -124,5 +123,13 @@ class DashboardPermissionMixin(DashboardMixin, PermissionRequiredMixin):
     template if the currently logged in user is lacking appropriate
     permissions to access a certain view.
     """
+
+    def get_permission_object(self, *args, **kwargs):
+        """
+        By default PermissionRequiredMixin works with object permissions.
+        By returning None we force guardian to only check if the user
+        has the proper permission.
+        """
+        return None
 
     return_403 = True

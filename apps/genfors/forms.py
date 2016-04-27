@@ -1,16 +1,16 @@
 # -*- coding: utf-8 -*-
+import datetime
+
+from crispy_forms.bootstrap import Field, FieldWithButtons, FormActions, StrictButton
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Submit
-from crispy_forms.bootstrap import FormActions, Field, StrictButton, FieldWithButtons
-
 from django import forms
 from django.conf import settings
 from django.forms.models import modelformset_factory
-from django.utils.translation import ugettext as _
 from django.utils import timezone
-from apps.genfors.models import Alternative, Meeting, Question
+from django.utils.translation import ugettext as _
 
-import datetime
+from apps.genfors.models import Alternative, Meeting, Question
 
 
 class LoginForm(forms.Form):
@@ -54,7 +54,7 @@ class MeetingForm(forms.ModelForm):
 class QuestionForm(forms.ModelForm):
     class Meta:
         model = Question
-        fields = ['description', 'anonymous', 'only_show_winner', 'majority_type', 'question_type']
+        fields = ['description', 'anonymous', 'only_show_winner', 'count_blank_votes', 'majority_type', 'question_type']
 
 
 class AlternativeForm(forms.ModelForm):

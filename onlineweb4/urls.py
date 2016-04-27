@@ -8,6 +8,7 @@ from django.views.generic import TemplateView
 from django_nyt.urls import get_pattern as get_notify_pattern
 from filebrowser.sites import site
 from wiki.urls import get_pattern as get_wiki_pattern
+from onlineweb4 import views
 
 # URL config
 admin.autodiscover()
@@ -25,11 +26,11 @@ urlpatterns = [
     url(r'^$', TemplateView.as_view(template_name='frontpage.html'), name='home'),
 
     # nav-bar menu urls
-    url(r'^#events$', TemplateView.as_view(template_name='frontpage.html#events'), name='events-link'),
-    url(r'^#articles$', TemplateView.as_view(template_name='frontpage.html#articles'), name='articles-link'),
-    url(r'^#about$', TemplateView.as_view(template_name='frontpage.html#about'), name='about-link'),
-    url(r'^#business$', TemplateView.as_view(template_name='frontpage.html#business'), name='business-link'),
-    url(r'^#offline$', TemplateView.as_view(template_name='frontpage.html#offline'), name='offline-link'),
+    url(r'^#events$', TemplateView.as_view(template_name='frontpage.html'), name='events-link'),
+    url(r'^#articles$', TemplateView.as_view(template_name='frontpage.html'), name='articles-link'),
+    url(r'^#about$', TemplateView.as_view(template_name='frontpage.html'), name='about-link'),
+    url(r'^#business$', TemplateView.as_view(template_name='frontpage.html'), name='business-link'),
+    url(r'^#offline$', TemplateView.as_view(template_name='frontpage.html'), name='offline-link'),
 
     # Online Notifier Owner Verification (checked yearly or so by Google)
     url(r'^google79c0b331a83a53de\.html$', lambda r: HttpResponse(
@@ -85,6 +86,7 @@ if 'apps.companyprofile' in settings.INSTALLED_APPS:
 if 'apps.dashboard' in settings.INSTALLED_APPS:
     urlpatterns += [
         url(r'^dashboard/',         include('apps.dashboard.urls')),
+        url(r'^dashboard/chunks/', include('apps.dashboard.chunks.dashboard.urls', namespace='chunk-dashboard')),
     ]
 
 if 'apps.events' in settings.INSTALLED_APPS:
@@ -160,6 +162,11 @@ if 'apps.gallery' in settings.INSTALLED_APPS:
         )
     ]
 
+if 'apps.rutinator' in settings.INSTALLED_APPS:
+    urlpatterns += [
+        url(r'^dashboard/rutinator/', include('apps.rutinator.dashboard.urls', namespace='dashboard', app_name='rutinator')),
+    ]
+
 if 'apps.splash' in settings.INSTALLED_APPS:
     urlpatterns += [
         url(r'^splash/',           include('apps.splash.urls')),
@@ -208,6 +215,8 @@ if 'rest_framework' in settings.INSTALLED_APPS:
         url(r'^api/v1/', include(api_urls()))
     ]
 
+#500 view
+handler500 = views.server_error
 
 # http://docs.djangoproject.com/en/1.3/howto/static-files/#staticfiles-development
 if settings.DEBUG:
@@ -215,5 +224,5 @@ if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
     # 500
     urlpatterns += [
-        url(r'^500/$', server_error),
+        url(r'^500/$', views.server_error),
     ]

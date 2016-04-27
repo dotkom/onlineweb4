@@ -69,8 +69,8 @@ Artikler
                             <dd>{{ article.image.photographer|striptags }}</dd>
                             <dt>Vimeo ID</dt>
                             <dd>
-                                {% if article.vimeo %}
-                                    {{ article.vimeo|striptags }}
+                                {% if article.video %}
+                                    {{ article.video|striptags }}
                                 {% else %}
                                     <i>Ingen</i>
                                 {% endif %}

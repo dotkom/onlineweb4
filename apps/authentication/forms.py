@@ -6,7 +6,8 @@ from django import forms
 from django.contrib import auth
 from django.utils.translation import ugettext as _
 
-from apps.authentication.models import OnlineUser as User, Email
+from apps.authentication.models import OnlineUser as User
+from apps.authentication.models import Email
 
 
 class LoginForm(forms.Form):
@@ -119,7 +120,7 @@ class RegisterForm(forms.Form):
             zip_code = cleaned_data['zip_code']
             if len(zip_code) != 0:
                 # Check if zip_code is 4 digits long
-                if re.match(r'\d{4}', zip_code):
+                if not re.match(r'\d{4}', zip_code):
                     self._errors['zip_code'] = self.error_class([_("Postnummer må bestå av fire siffer.")])
 
             return cleaned_data

@@ -1,4 +1,5 @@
 from rest_framework import serializers
+
 from apps.authentication.models import OnlineUser as User
 
 

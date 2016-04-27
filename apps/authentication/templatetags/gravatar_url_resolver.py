@@ -1,5 +1,5 @@
-import urllib
 import hashlib
+import urllib
 
 from django import template
 from django.conf import settings

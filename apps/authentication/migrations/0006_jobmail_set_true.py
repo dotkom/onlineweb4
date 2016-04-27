@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 
 
-from django.db import models, migrations
+from django.db import migrations, models
 from django.utils import timezone
+
 
 def set_jobmail_field(apps, schema_editor):
     OnlineUser = apps.get_model("authentication", "OnlineUser")

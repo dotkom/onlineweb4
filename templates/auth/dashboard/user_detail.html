@@ -143,10 +143,13 @@
                 <p>Er du sikker på at du vil brukerprofilen til {{ user }} og dermed alle tilhørende relasjoner?</p>
             </div>
             <div class="modal-footer">
-                <div class="btn-group">
-                    <a href="{% url 'dashboard_user_delete' user.id %}" class="btn btn-danger" data-dismiss="modal" aria-hidden="true">Slett</a>
-                    <button class="btn" data-dismiss="modal" aria-hidden="true">Lukk</button>
-                </div>
+                <form action="{% url 'dashboard_user_delete' user.id %}" method="POST">
+                    {% csrf_token %}
+                    <div class="btn-group">
+                        <button type="submit" class="btn btn-danger">Slett</button>
+                        <button class="btn" data-dismiss="modal" aria-hidden="true">Lukk</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>

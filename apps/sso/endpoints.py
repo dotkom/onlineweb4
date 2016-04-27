@@ -3,7 +3,6 @@
 # Created by 'myth' on 6/27/15
 
 from django.http import JsonResponse
-
 from oauth2_provider.decorators import protected_resource
 from oauth2_provider.models import AccessToken
 

@@ -5,7 +5,6 @@ from django.conf.urls import url
 from apps.api.utils import SharedAPIRootRouter
 from apps.article import views
 
-
 urlpatterns = [
     url(r'^archive/$', views.archive, name='article_archive'),
     url(r'^(?P<article_id>\d+)/(?P<article_slug>[a-zA-Z0-9_-]+)/$', views.details, name='article_details'),

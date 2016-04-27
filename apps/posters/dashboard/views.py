@@ -1,27 +1,28 @@
 # -*- encoding: utf-8 -*-
 
 import json
+import logging
 
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Group
+from django.core.exceptions import ImproperlyConfigured, PermissionDenied
 from django.core.mail import EmailMessage
-from django.core.exceptions import PermissionDenied, ImproperlyConfigured
-from django.shortcuts import render, redirect, get_object_or_404, HttpResponseRedirect, HttpResponse
+from django.shortcuts import HttpResponse, HttpResponseRedirect, get_object_or_404, redirect, render
+from django.template.loader import render_to_string
 from django.utils.translation import ugettext as _
 from django.views.decorators.csrf import ensure_csrf_cookie
-
 from guardian.decorators import permission_required
-from guardian.models import UserObjectPermission, GroupObjectPermission
-from pytz import timezone as tz
+from guardian.models import GroupObjectPermission, UserObjectPermission
 
 from apps.authentication.models import OnlineUser as User
-from apps.dashboard.tools import get_base_context
-from apps.posters.forms import AddPosterForm, AddBongForm, AddOtherForm, EditPosterForm, EditOtherForm
 from apps.companyprofile.models import Company
+from apps.dashboard.tools import get_base_context
+from apps.posters.forms import (AddBongForm, AddOtherForm, AddPosterForm, EditOtherForm,
+                                EditPosterForm)
 from apps.posters.models import Poster
-from apps.posters.permissions import has_view_perms, has_view_all_perms, has_edit_perms
+from apps.posters.permissions import has_edit_perms, has_view_all_perms, has_view_perms
 
 
 @login_required
@@ -112,10 +113,12 @@ def edit(request, order_id=None):
     if order_id and request.user != poster.ordered_by and 'proKom' not in request.user.groups.all():
         raise PermissionDenied
 
+    selected_form = EditPosterForm
+
     if request.POST:
         if poster.title:
-            SelectedForm = EditOtherForm
-        form = SelectedForm(request.POST, instance=poster)
+            selected_form = EditOtherForm
+        form = selected_form(request.POST, instance=poster)
         if form.is_valid():
             form.save()
             return HttpResponseRedirect("../detail/"+str(poster.id))
@@ -124,11 +127,11 @@ def edit(request, order_id=None):
             context["poster"] = poster
 
     else:
-        SelectedForm = EditPosterForm
+        selected_form = EditPosterForm
         if poster.title:
-            SelectedForm = EditOtherForm
+            selected_form = EditOtherForm
 
-        context["form"] = SelectedForm(instance=poster)
+        context["form"] = selected_form(instance=poster)
         context["poster"] = poster
 
     return render(request, 'posters/dashboard/add.html', context)
@@ -165,8 +168,7 @@ def detail(request, order_id=None):
 
 
 def _handle_poster_add(request, form, order_type):
-    type_names = ("Plakat", "Bong", "Generell ")
-    type_name = type_names[order_type-1]
+    logger = logging.getLogger(__name__)
 
     poster = form.save(commit=False)
     if request.POST.get('company'):
@@ -186,48 +188,22 @@ def _handle_poster_add(request, form, order_type):
 
     title = str(poster)
 
-    # Prettify and localize dates
-    event_date = \
-        poster.event.event_start.astimezone(tz('Europe/Oslo')).strftime("%-d %B %Y kl %H:%M") \
-        if poster.event else poster.display_from
-    ordered_date = poster.ordered_date.astimezone(tz('Europe/Oslo')).strftime("%-d %B %Y kl %H:%M")
-
     # The great sending of emails
-    subject = '[ProKom] Ny bestilling for %s' % title
-    email_template = """
-Det har blitt registrert en ny %(order_type)sbestilling pa Online sine nettsider. Dette er bestilling nummer %(id)s.
-\n
-Antall og type(r): %(num)s x %(order_type)s%(bongs)s\n
-%(poster_order)s (%(event_date)s)\n
-Bestilt av %(ordered_by)s i %(ordered_by_committee)s den %(ordered_date)s.\n
-\n
-For mer informasjon, sjekk ut bestillingen her: %(absolute_url)s
-"""
-    email_message = '%(message)s%(signature)s' % {
-        'message': _(
-            email_template % {
-                'site': '',
-                'order_type': type_name.lower().rstrip(),
-                'num': '%s' % poster.amount,
-                'bongs': ', %s x bong' % poster.bong if poster.bong > 0 else '' if poster.bong > 0 else '',
-                'ordered_by': poster.ordered_by,
-                'ordered_by_committee': poster.ordered_committee,
-                'id': poster.id,
-                'poster_order': title,
-                'event_date': event_date,
-                'ordered_date': ordered_date,
-                'absolute_url': request.build_absolute_uri(poster.get_dashboard_url())
-            }
-        ),
-        'signature': _('\n\nVennlig hilsen Linjeforeningen Online')
-    }
+    subject = '[ProKom] Ny bestilling | %s' % title
+
+    poster.absolute_url = request.build_absolute_uri(poster.get_dashboard_url())
+    context = {}
+    context['poster'] = poster
+    message = render_to_string('posters/email/new_order_notification.txt', context)
+
     from_email = settings.EMAIL_PROKOM
     to_emails = [settings.EMAIL_PROKOM, request.user.get_email().email]
 
     try:
-        email_sent = EmailMessage(str(subject), str(email_message), from_email, to_emails, []).send()
+        email_sent = EmailMessage(subject, message, from_email, to_emails, []).send()
     except ImproperlyConfigured:
         email_sent = False
+        logger.warn("Failed to send email for new order")
     if email_sent:
         messages.success(request, 'Opprettet bestilling')
     else:
@@ -245,6 +221,7 @@ def assign_person(request):
             assign_to = User.objects.get(pk=assign_to_id)
 
             if orders.count() == 0:
+                logging.debug("Trying to assign to non-existing order \"%s\" (user: %s)." % (order_id, request.user))
                 response_text = json.dumps({'message': _(
                     """Kan ikke finne en ordre med denne IDen (%s).
 Om feilen vedvarer etter en refresh, kontakt dotkom@online.ntnu.no.""") % order_id})

@@ -1,24 +1,22 @@
 # -*- coding: utf-8 -*-
 
-import json
 import logging
 import os
 
-from django.db.models import Q
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
+from django.db.models import Q
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, render
-from django.http import JsonResponse, HttpResponse
-
 from guardian.decorators import permission_required
 from rest_framework import mixins, viewsets
 from rest_framework.permissions import AllowAny
 from taggit.utils import parse_tags
 
-from apps.gallery import util
-from apps.gallery.models import UnhandledImage, ResponsiveImage
 from apps.gallery.forms import DocumentForm
+from apps.gallery.models import ResponsiveImage, UnhandledImage
 from apps.gallery.serializers import ResponsiveImageSerializer
+from apps.gallery.util import ResponsiveImageHandler, UploadImageHandler
 
 
 def _create_request_dictionary():
@@ -55,37 +53,16 @@ def upload(request):
         form = DocumentForm(request.POST, request.FILES)
         if form.is_valid():
             log.info('%s uploaded image "%s"' % (request.user, os.path.abspath(str(request.FILES['file']))))
-            response = _handle_upload(request.FILES['file'])
-            return response
 
-    return HttpResponse(status=400, content=json.dumps({'success': False, 'message': 'Bad request or invalid type.'}))
+            # Check if we successfully generate an UnhandledImage object
+            result = UploadImageHandler(request.FILES['file']).status
+            if not result:
+                return JsonResponse({'success': False, 'message': result.message}, status=500)
 
+            # Return OK if all good
+            return JsonResponse({'success': True, 'message': 'OK'}, status=200)
 
-# If something goes wrong, all files will have to be deleted, this is not handled now
-def _handle_upload(uploaded_file):
-
-    log = logging.getLogger(__name__)
-    log.debug('Handling upload of file: "%s"' % os.path.abspath(str(uploaded_file)))
-
-    unhandled_file_path = util.save_unhandled_file(uploaded_file)
-    log.debug('Unhandled file was saved at: "%s"' % os.path.abspath(str(unhandled_file_path)))
-
-    thumbnail_result = util.create_thumbnail_for_unhandled_images(unhandled_file_path)
-
-    if 'error' in thumbnail_result:
-        log.error('Error while creating thumbnail for "%s"' % os.path.abspath(str(unhandled_file_path)))
-        # Delete files
-        return HttpResponse(status=500, content=json.dumps(thumbnail_result['error']))
-
-    # Image objects need to be created with relative paths, create media paths to please django (fuck you, django)
-    unhandle_media = util.get_unhandled_media_path(unhandled_file_path)
-    unhandled_thumbnail_media = util.get_unhandled_thumbnail_media_path(thumbnail_result['thumbnail_path'])
-
-    log.debug('Creating an UnhandledImage for "%s"' % os.path.abspath(str(unhandled_file_path)))
-    # Try catch this and delete files on exception
-    UnhandledImage(image=unhandle_media, thumbnail=unhandled_thumbnail_media).save()
-
-    return HttpResponse(status=200)
+    return JsonResponse({'success': False, 'message': 'Bad request or invalid type.'}, status=400)
 
 
 @login_required
@@ -93,8 +70,8 @@ def _handle_upload(uploaded_file):
 def number_of_untreated(request):
     if request.is_ajax():
         if request.method == 'GET':
-            return HttpResponse(status=200, content=json.dumps({'untreated': UnhandledImage.objects.all().count()}))
-    return HttpResponse(status=405)
+            return JsonResponse(data={'untreated': UnhandledImage.objects.all().count()}, status=200)
+    return JsonResponse({}, status=405)
 
 
 @login_required
@@ -112,8 +89,8 @@ def get_all_untreated(request):
                     'image': image.image.url
                 })
 
-            return HttpResponse(status=200, content=json.dumps({'untreated': images}))
-    return HttpResponse(status=405)
+            return JsonResponse({'untreated': images}, status=200)
+    return JsonResponse({}, status=405)
 
 
 # Same here, delete all files if something goes wrong, not yet handled
@@ -127,68 +104,42 @@ def crop_image(request):
         if request.method == 'POST':
             crop_data = request.POST
 
-            if not _verify_crop_data(crop_data):
-                log.info('%s attempted image crop with incomplete dimension payload' % request.user)
-                return JsonResponse(status=404, data=json.dumps(
-                    {'error': 'Json must contain id, x, y, height and width, and name.'}
-                ))
-
+            # Check that the image ID exists
             image = get_object_or_404(UnhandledImage, pk=crop_data['id'])
-            image_name = crop_data['name']
-            image_description = crop_data['description']
-            image_tags = crop_data['tags']
-            image_photographer = crop_data['photographer']
-            responsive_image_path = util.save_responsive_image(image, crop_data)
 
-            # Error / Status collection is performed in the utils create_responsive_images function
-            util.create_responsive_images(responsive_image_path)
+            # Fetch values from Django's immutable MultiValueDict
+            config = {key: crop_data.get(key) for key in crop_data.keys()}
+            config['preset'] = 'article'
 
-            original_media = util.get_responsive_original_path(responsive_image_path)
-            wide_media = util.get_responsive_wide_path(responsive_image_path)
-            lg_media = util.get_responsive_lg_path(responsive_image_path)
-            md_media = util.get_responsive_md_path(responsive_image_path)
-            sm_media = util.get_responsive_sm_path(responsive_image_path)
-            xs_media = util.get_responsive_xs_path(responsive_image_path)
-            thumbnail = util.get_responsive_thumbnail_path(responsive_image_path)
+            # Construct a responsive image handler and configure it using the provided request data
+            handler = ResponsiveImageHandler(image)
+            status = handler.configure(config)
+            if not status:
+                return HttpResponse(status.message, status=400)
 
-            resp_image = ResponsiveImage(
-                name=image_name,
-                description=image_description,
-                photographer=image_photographer,
-                image_original=original_media,
-                image_lg=lg_media,
-                image_md=md_media,
-                image_sm=sm_media,
-                image_xs=xs_media,
-                image_wide=wide_media,
-                thumbnail=thumbnail
-            )
-            resp_image.save()
-            # Unpack and add any potential tags
-            if image_tags:
-                resp_image.tags.add(*parse_tags(image_tags))
+            # Generate the responsive versions based on the provided request data
+            status = handler.generate()
+            if not status:
+                return HttpResponse(status.message, status=500)
 
-            log.debug(
+            # Add Taggit tags if provided
+            resp_image = status.data
+            tags = crop_data.get('tags')
+            if tags:
+                resp_image.tags.add(*parse_tags(tags))
+
+            # Log who performed the crop operation
+            log.info(
                 '%s cropped and saved ResponsiveImage %d (%s)' % (
                     request.user,
                     resp_image.id,
-                    resp_image.filename
+                    config.get('name')
                 )
             )
 
-            unhandled_image_name = image.filename
-            image.delete()
-            log.debug('UnhandledImage %s was deleted' % unhandled_image_name)
-
-            return HttpResponse(status=200, content=json.dumps({'cropData': crop_data}))
+            return JsonResponse(data={'name': config['name'], 'id': resp_image.id})
 
     return HttpResponse(status=405)
-
-
-def _verify_crop_data(crop_data):
-    return \
-        'id' in crop_data and 'x' in crop_data and 'y' in crop_data and 'height' in crop_data \
-        and 'width' in crop_data and 'name' in crop_data
 
 
 @login_required

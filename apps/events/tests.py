@@ -3,24 +3,37 @@
 import datetime
 import logging
 
-from django_dynamic_fixture import G
+from django.conf import settings
 from django.contrib.auth.models import Group
-from django.test import TestCase
+from django.core.urlresolvers import reverse
+from django.test import TestCase, override_settings
 from django.utils import timezone
+from django_dynamic_fixture import G
+from rest_framework import status
+from rest_framework.test import APITestCase
 
-from apps.authentication.models import OnlineUser as User, AllowedUsername
-from apps.events.models import (Event, AttendanceEvent, Attendee,
-                                RuleBundle, FieldOfStudyRule, GradeRule, UserGroupRule,
-                                Reservation, Reservee, GroupRestriction)
-from apps.marks.models import Mark, MarkUser, DURATION
+from apps.authentication.models import OnlineUser as User
+from apps.authentication.models import AllowedUsername
+from apps.events.models import (AttendanceEvent, Attendee, Event, FieldOfStudyRule, GradeRule,
+                                GroupRestriction, Reservation, Reservee, RuleBundle, UserGroupRule)
 from apps.events.mommy import SetEventMarks
+from apps.marks.models import DURATION, Mark, MarkUser
+
+
+def create_generic_event():
+        future = timezone.now() + datetime.timedelta(days=1)
+        event_start = future
+        event_end = future + datetime.timedelta(days=1)
+        event = G(Event, event_start=event_start, event_end=event_end)
+
+        return event
 
 
 class EventTest(TestCase):
 
     def setUp(self):
         self.event = G(Event, title='Sjakkturnering')
-        self.attendance_event = G(AttendanceEvent, event=self.event)
+        self.attendance_event = G(AttendanceEvent, event=self.event, max_capacity=2)
         self.user = G(User, username='ola123', ntnu_username='ola123ntnu', first_name="ola", last_name="nordmann")
         self.attendee = G(Attendee, event=self.attendance_event, user=self.user)
         self.logger = logging.getLogger(__name__)
@@ -369,3 +382,143 @@ class EventTest(TestCase):
                         "Any user should be able to see unrestricted events")
         self.assertTrue(unrestricted_event.can_display(denied_user),
                         "Any user should be able to see unrestricted events")
+
+
+class EventOrderedByRegistrationTestCase(TestCase):
+    def setUp(self):
+        self.FEATURED_TIMEDELTA_SETTINGS = settings
+        # Override settings so that the tests will work even if we update the default delta
+        self.FEATURED_TIMEDELTA_SETTINGS.OW4_SETTINGS['events']['OW4_EVENTS_FEATURED_DAYS_FUTURE'] = 7
+        self.FEATURED_TIMEDELTA_SETTINGS.OW4_SETTINGS['events']['OW4_EVENTS_FEATURED_DAYS_PAST'] = 7
+
+    def test_registration_no_push_forward(self):
+        """
+        Tests that an AttendanceEvent with registration date far in the future is sorted by its event end date,
+        like any other event.
+        """
+        today = timezone.now()
+        month_ahead = today + datetime.timedelta(days=30)
+        month_ahead_plus_five = month_ahead + datetime.timedelta(days=5)
+        normal_event = G(Event, event_start=month_ahead, event_end=month_ahead)
+        pushed_event = G(Event, event_start=month_ahead_plus_five, event_end=month_ahead_plus_five)
+        G(AttendanceEvent, registration_start=month_ahead_plus_five, registration_end=month_ahead_plus_five,
+          event=pushed_event)
+
+        expected_order = [normal_event, pushed_event]
+
+        with override_settings(settings=self.FEATURED_TIMEDELTA_SETTINGS):
+            self.assertEqual(list(Event.by_registration.all()), expected_order)
+
+    def test_registration_start_pushed_forward(self):
+        """
+        Tests that an AttendanceEvent with registration date within the "featured delta" (+/- 7 days from today)
+        will be pushed ahead in the event list, thus sorted by registration start rather than event end.
+        """
+        today = timezone.now()
+        three_days_ahead = today + datetime.timedelta(days=3)
+        month_ahead = today + datetime.timedelta(days=30)
+        month_ahead_plus_five = month_ahead + datetime.timedelta(days=5)
+        normal_event = G(Event, event_start=month_ahead, event_end=month_ahead)
+        pushed_event = G(Event, event_start=month_ahead_plus_five, event_end=month_ahead_plus_five)
+        G(AttendanceEvent, registration_start=three_days_ahead, registration_end=three_days_ahead, event=pushed_event)
+
+        expected_order = [pushed_event, normal_event]
+
+        with override_settings(settings=self.FEATURED_TIMEDELTA_SETTINGS):
+            self.assertEqual(list(Event.by_registration.all()), expected_order)
+
+    def test_registration_past_push_forward(self):
+        """
+        Tests that an AttendanceEvent with a registration date in the past, outside the "featured delta" (+/- 7 days)
+        will be sorted by the event's end date.
+        """
+        today = timezone.now()
+        month_ahead = today + datetime.timedelta(days=30)
+        month_ahead_plus_five = month_ahead + datetime.timedelta(days=5)
+        month_back = today - datetime.timedelta(days=30)
+        normal_event = G(Event, event_start=month_ahead, event_end=month_ahead)
+        pushed_event = G(Event, event_start=month_ahead_plus_five, event_end=month_ahead_plus_five)
+        G(AttendanceEvent, registration_start=month_back, registration_end=month_back, event=pushed_event)
+
+        expected_order = [normal_event, pushed_event]
+
+        with override_settings(settings=self.FEATURED_TIMEDELTA_SETTINGS):
+            self.assertEqual(list(Event.by_registration.all()), expected_order)
+
+
+class EventsURLTestCase(TestCase):
+    def test_events_index_empty(self):
+        url = reverse('events_index')
+
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_events_index_exists(self):
+        create_generic_event()
+
+        url = reverse('events_index')
+
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_events_detail(self):
+        event = create_generic_event()
+
+        url = reverse('events_details', args=(event.id, event.slug))
+
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_search_events(self):
+        query = ''
+
+        _url_pre_get_param = reverse('search_events')
+        url = _url_pre_get_param + '?query=%s' % query
+
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_events_ics_all(self):
+        url = reverse('events_ics')
+
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_events_ics_specific_event(self):
+        event = create_generic_event()
+
+        url = reverse('event_ics', args=(event.id,))
+
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+
+class EventsAPIURLTestCase(APITestCase):
+    def test_events_list_empty(self):
+        url = reverse('events-list')
+
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_events_list_exists(self):
+        create_generic_event()
+        url = reverse('events-list')
+
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_events_detail(self):
+        event = create_generic_event()
+        url = reverse('events-detail', args=(event.id,))
+
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)

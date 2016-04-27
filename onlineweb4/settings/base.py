@@ -154,10 +154,10 @@ PIZZA_GROUP = 'dotkom'
 PIZZA_ADMIN_GROUP = 'pizzaadmin'
 
 # Grappelli settings
-GRAPPELLI_ADMIN_TITLE = '<a href="/">Onlineweb</a>'
+GRAPPELLI_ADMIN_TITLE = 'Onlineweb'
 
 # Guardian settings
-ANONYMOUS_USER_ID = -1
+ANONYMOUS_USER_NAME = 'anonymoususer'
 GUARDIAN_RENDER_403 = True
 
 # Django-Taggit settings
@@ -219,7 +219,6 @@ INSTALLED_APPS = (
     'compressor',
     'pdfdocument',
     'watson',
-    'gunicorn',
     'markdown_deux',
     'djangoformsetjs',
     'reversion',
@@ -263,6 +262,7 @@ INSTALLED_APPS = (
     'apps.inventory',
     'apps.payment',
     'apps.posters',
+    #'apps.rutinator',
     'apps.sso',
     'apps.splash',
     'apps.shop',
@@ -397,6 +397,13 @@ REST_FRAMEWORK = {
 
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_URLS_REGEX = r'^/api/v1/.*$' # Enables CORS on /api/v1/ endpoints only
+
+OW4_SETTINGS = {
+   'events': {
+       'FEATURED_DAYS_FUTURE': os.getenv('OW4_EVENTS_FEATURED_DAYS_FUTURE', 3),
+       'FEATURED_DAYS_PAST': os.getenv('OW4_EVENTS_FEATURED_DAYS_PAST', 3),
+   }
+}
 
 # Remember to keep 'local' last, so it can override any setting.
 for settings_module in ['filebrowser', 'django_wiki', 'local']:  # local last

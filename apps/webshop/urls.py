@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from django.conf.urls import url
+
 from apps.webshop import views
 
 urlpatterns = [

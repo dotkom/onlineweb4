@@ -1,12 +1,13 @@
 import logging
-
 from datetime import timedelta
 
-from django_dynamic_fixture import G
+from django.core.urlresolvers import reverse
 from django.test import TestCase
 from django.utils import timezone
+from django_dynamic_fixture import G
+from rest_framework import status
 
-from apps.authentication.models import RegisterToken, OnlineUser, Email
+from apps.authentication.models import Email, OnlineUser, RegisterToken
 
 
 class AuthenticationTest(TestCase):
@@ -92,3 +93,26 @@ class AuthenticationTest(TestCase):
     def testEmailPrimaryOnCreation(self):
         email = G(Email, user=self.user, email="test@test.com")
         self.assertTrue(email.primary)
+
+
+class AuthenticationURLTestCase(TestCase):
+    def test_auth_login_view(self):
+        url = reverse('auth_login')
+
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_auth_register_view(self):
+        url = reverse('auth_register')
+
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_auth_recover_view(self):
+        url = reverse('auth_recover')
+
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
