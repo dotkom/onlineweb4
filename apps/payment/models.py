@@ -136,6 +136,10 @@ class Payment(models.Model):
     def prices(self):
         return self.paymentprice_set.all()
 
+    def price(self):
+        # TODO implement group based pricing
+        return self.paymentprice_set.all()[0]
+
     def _is_type(self, model_type):
         return ContentType.objects.get_for_model(model_type) == self.content_type
 

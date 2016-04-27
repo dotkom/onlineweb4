@@ -2,7 +2,6 @@
 
 from collections import Counter
 
-import watson
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, render
@@ -10,6 +9,7 @@ from django.utils import timezone
 from rest_framework import mixins, viewsets
 from rest_framework.permissions import AllowAny
 from taggit.models import TaggedItem
+from watson import search as watson
 
 from apps.article.models import Article
 from apps.article.serializers import ArticleSerializer
@@ -85,7 +85,7 @@ class ArticleViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.
     filter_fields = ('tags',)
 
     def get_queryset(self):
-        queryset = self.queryset
+        queryset = Article.objects.filter(published_date__lte=timezone.now()).order_by('-published_date')
         month = self.request.query_params.get('month', None)
         year = self.request.query_params.get('year', None)
         tags = self.request.query_params.get('tags', None)

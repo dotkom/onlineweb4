@@ -1,6 +1,7 @@
 # -*- encoding: utf-8 -*-
 
 import json
+import logging
 
 from django.conf import settings
 from django.contrib import messages
@@ -9,11 +10,11 @@ from django.contrib.auth.models import Group
 from django.core.exceptions import ImproperlyConfigured, PermissionDenied
 from django.core.mail import EmailMessage
 from django.shortcuts import HttpResponse, HttpResponseRedirect, get_object_or_404, redirect, render
+from django.template.loader import render_to_string
 from django.utils.translation import ugettext as _
 from django.views.decorators.csrf import ensure_csrf_cookie
 from guardian.decorators import permission_required
 from guardian.models import GroupObjectPermission, UserObjectPermission
-from pytz import timezone as tz
 
 from apps.authentication.models import OnlineUser as User
 from apps.companyprofile.models import Company
@@ -167,8 +168,7 @@ def detail(request, order_id=None):
 
 
 def _handle_poster_add(request, form, order_type):
-    type_names = ("Plakat", "Bong", "Generell ")
-    type_name = type_names[order_type-1]
+    logger = logging.getLogger(__name__)
 
     poster = form.save(commit=False)
     if request.POST.get('company'):
@@ -188,48 +188,22 @@ def _handle_poster_add(request, form, order_type):
 
     title = str(poster)
 
-    # Prettify and localize dates
-    event_date = \
-        poster.event.event_start.astimezone(tz('Europe/Oslo')).strftime("%-d %B %Y kl %H:%M") \
-        if poster.event else poster.display_from
-    ordered_date = poster.ordered_date.astimezone(tz('Europe/Oslo')).strftime("%-d %B %Y kl %H:%M")
-
     # The great sending of emails
-    subject = '[ProKom] Ny bestilling for %s' % title
-    email_template = """
-Det har blitt registrert en ny %(order_type)sbestilling pa Online sine nettsider. Dette er bestilling nummer %(id)s.
-\n
-Antall og type(r): %(num)s x %(order_type)s%(bongs)s\n
-%(poster_order)s (%(event_date)s)\n
-Bestilt av %(ordered_by)s i %(ordered_by_committee)s den %(ordered_date)s.\n
-\n
-For mer informasjon, sjekk ut bestillingen her: %(absolute_url)s
-"""
-    email_message = '%(message)s%(signature)s' % {
-        'message': _(
-            email_template % {
-                'site': '',
-                'order_type': type_name.lower().rstrip(),
-                'num': '%s' % poster.amount,
-                'bongs': ', %s x bong' % poster.bong if poster.bong else '',
-                'ordered_by': poster.ordered_by,
-                'ordered_by_committee': poster.ordered_committee,
-                'id': poster.id,
-                'poster_order': title,
-                'event_date': event_date,
-                'ordered_date': ordered_date,
-                'absolute_url': request.build_absolute_uri(poster.get_dashboard_url())
-            }
-        ),
-        'signature': _('\n\nVennlig hilsen Linjeforeningen Online')
-    }
+    subject = '[ProKom] Ny bestilling | %s' % title
+
+    poster.absolute_url = request.build_absolute_uri(poster.get_dashboard_url())
+    context = {}
+    context['poster'] = poster
+    message = render_to_string('posters/email/new_order_notification.txt', context)
+
     from_email = settings.EMAIL_PROKOM
     to_emails = [settings.EMAIL_PROKOM, request.user.get_email().email]
 
     try:
-        email_sent = EmailMessage(str(subject), str(email_message), from_email, to_emails, []).send()
+        email_sent = EmailMessage(subject, message, from_email, to_emails, []).send()
     except ImproperlyConfigured:
         email_sent = False
+        logger.warn("Failed to send email for new order")
     if email_sent:
         messages.success(request, 'Opprettet bestilling')
     else:
@@ -247,6 +221,7 @@ def assign_person(request):
             assign_to = User.objects.get(pk=assign_to_id)
 
             if orders.count() == 0:
+                logging.debug("Trying to assign to non-existing order \"%s\" (user: %s)." % (order_id, request.user))
                 response_text = json.dumps({'message': _(
                     """Kan ikke finne en ordre med denne IDen (%s).
 Om feilen vedvarer etter en refresh, kontakt dotkom@online.ntnu.no.""") % order_id})

@@ -1,0 +1,41 @@
+{% extends "dashboard_base.html" %}
+{% load compress %}
+{% load addcss %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+Kategori - Online Dashboard
+{% endblock title %}
+
+{% block styles %}
+    {{ block.super }}
+    {% compress css %}
+    {% endcompress %}
+{% endblock %}
+
+{% block page-header %}
+Kategori
+{% endblock %}
+
+{% block breadcrumbs %}
+    <li><a href="{% url 'dashboard_category_index' %}">Kategorier</a></li>
+    <li>Kategori</li>
+{% endblock %}
+
+{% block content %}
+    {%  if category.id %}
+        <div class="row">
+            <div class="col-md-12">
+                <a href="{% url 'dashboard_category_delete' category.id %}" class="btn btn-danger pull-right">
+                    <i class="fa fa-times fa-lg"></i> Slett kategori
+                </a>
+            </div>
+        </div>
+    {%  endif %}
+
+    <div class="row">
+        <div class="col-md-12">
+            {% include "inventory/dashboard/edit.html" %}
+        </div>
+    </div>
+{% endblock content %}

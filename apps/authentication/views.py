@@ -7,8 +7,11 @@ from smtplib import SMTPException
 from django.conf import settings
 from django.contrib import auth, messages
 from django.core.mail import send_mail
+from django.core.urlresolvers import reverse
+from django.db import IntegrityError
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render
+from django.template.loader import render_to_string
 from django.utils.translation import ugettext as _
 from django.views.decorators.debug import sensitive_post_parameters
 # API v1
@@ -85,26 +88,22 @@ def register(request):
 
                 # Create the registration token
                 token = uuid.uuid4().hex
+
                 try:
                     rt = RegisterToken(user=user, email=email.email, token=token)
                     rt.save()
                     log.info('Successfully registered token for %s' % request.user)
-                except:
-                    log.error('Failed to register token for %s' % request.user)
-                email_message = _("""
-En konto har blitt registrert på online.ntnu.no med denne epostadressen. Dersom du ikke
-har utført denne handlingen ber vi deg se bort fra denne eposten.
+                except IntegrityError as ie:
+                    log.error('Failed to register token for "%s" due to "%s"' % (request.user, ie))
 
-For å bruke denne kontoen kreves det at du verifiserer epostadressen. Du kan gjøre
-dette ved å besøke linken under.
+                email_context = {}
+                verify_url = reverse('auth_verify', args=(token,))
+                email_context['verify_url'] = request.build_absolute_uri(verify_url)
 
-http://%s/auth/verify/%s/
+                message = render_to_string('auth/email/welcome_tpl.txt', email_context)
 
-Denne lenken vil være gyldig i 24 timer. Dersom du behøver å få tilsendt en ny lenke
-kan dette gjøres med funksjonen for å gjenopprette passord.
-""") % (request.META['HTTP_HOST'], token)
                 try:
-                    send_mail(_('Verifiser din konto'), email_message, settings.DEFAULT_FROM_EMAIL, [email.email, ])
+                    send_mail(_('Verifiser din konto'), message, settings.DEFAULT_FROM_EMAIL, [email.email, ])
                 except SMTPException:
                     messages.error(request, 'Det oppstod en kritisk feil, epostadressen er ugyldig!')
                     return redirect('home')
@@ -142,7 +141,6 @@ def verify(request, token):
             # Check if Online-member, and set Infomail to True is he/she is
             if user.is_member:
                 user.infomail = True
-                user.jobmail = True
 
         user_activated = False
         if not user.is_active:
@@ -154,8 +152,12 @@ def verify(request, token):
 
         if user_activated:
             log.info('New user %s was activated' % user)
-            messages.success(request, _('Bruker %s ble aktivert. Du kan nå logge inn.') % user.username)
-            return redirect('auth_login')
+            user.backend = "django.contrib.auth.backends.ModelBackend"
+            auth.login(request, user)
+            messages.success(request, _(
+                'Bruker %s ble aktivert. Du er nå logget inn. '
+                'Kikk rundt på "Min Side" for å oppdatere profilinnstillinger.') % user.username)
+            return redirect('profiles')
         else:
             log.info('New email %s was verified for user %s' % (email, user))
             messages.success(request, _('Eposten %s er nå verifisert.') % email)
@@ -191,25 +193,21 @@ def recover(request):
                     rt = RegisterToken(user=email.user, email=email.email, token=token)
                     rt.save()
                     log.info('Successfully registered token for %s' % request.user)
-                except:
-                    log.error('Failed to register token for %s' % request.user)
-                email_message = _("""
-Vi har mottat forespørsel om å gjenopprette passordet for kontoen bundet til %s.
-Dersom du ikke har bedt om denne handlingen ber vi deg se bort fra denne eposten.
+                except IntegrityError as ie:
+                    log.error('Failed to register token for "%s" due to "%s"' % (request.user, ie))
+                    raise ie
 
-Brukernavn: %s
+                email_context = {}
+                email_context['email'] = email.email
+                email_context['username'] = email.user.username
+                set_password_url = reverse('auth_set_password', args=(token,))
+                email_context['reset_url'] = request.build_absolute_uri(set_password_url)
 
-Hvis du ønsker å gjennomføre en gjenoppretning av passord, bruk lenken under.
+                email_message = render_to_string('auth/email/password_reset_tpl.txt', email_context)
 
-http://%s/auth/set_password/%s/
+                send_mail(_('Gjenoppretting av passord'), email_message, settings.DEFAULT_FROM_EMAIL, [email.email, ])
 
-Denne lenken vil være gyldig i 24 timer. Dersom du behøver å få tilsendt en ny lenke
-kan dette gjøres med funksjonen for å gjenopprette passord.
-""") % (email.email, email.user.username, request.META['HTTP_HOST'], token)
-
-                send_mail(_('Gjenoppretning av passord'), email_message, settings.DEFAULT_FROM_EMAIL, [email.email, ])
-
-                messages.success(request, _('En lenke for gjenoppretning har blitt sendt til %s.') % email.email)
+                messages.success(request, _('En lenke for gjenoppretting har blitt sendt til %s.') % email.email)
 
                 return HttpResponseRedirect('/')
             else:
@@ -226,43 +224,44 @@ def set_password(request, token=None):
     if request.user.is_authenticated():
         return HttpResponseRedirect('/')
     else:
+        rt = None
         try:
-            rt = RegisterToken.objects.filter(token=token)[0]
-            if rt.is_valid:
-                if request.method == 'POST':
-                    form = ChangePasswordForm(request.POST, auto_id=True)
-                    if form.is_valid():
-                        user = getattr(rt, 'user')
+            rt = RegisterToken.objects.get(token=token)
+        except RegisterToken.DoesNotExist:
+            log.debug('%s tried to set password with nonexisting/expired token %s' % request.user, token)
+            messages.error(request, 'Denne lenken er utløpt. Bruk gjenopprett passord for å få tilsendt en ny lenke.')
+        if rt and rt.is_valid:
+            if request.method == 'POST':
+                form = ChangePasswordForm(request.POST, auto_id=True)
+                if form.is_valid():
+                    user = getattr(rt, 'user')
 
-                        user.is_active = True
-                        user.set_password(form.cleaned_data['new_password'])
-                        user.save()
+                    user.is_active = True
+                    user.set_password(form.cleaned_data['new_password'])
+                    user.save()
 
-                        rt.delete()
+                    rt.delete()
 
-                        messages.success(
-                            request,
-                            _('Bruker %s har gjennomført vellykket gjenoppretning av passord.' +
-                              'Du kan nå logge inn.') % user.username
-                        )
-                        log.info('User %s successfully recovered password.' % request.user)
-                        return HttpResponseRedirect('/')
+                    messages.success(
+                        request,
+                        _('Passordgjenoppretting gjennomført for "%s". ' +
+                          'Du kan nå logge inn.') % user.username
+                    )
+                    log.info('User "%s" successfully recovered password.' % request.user)
+                    return HttpResponseRedirect('/')
                 else:
-                    form = ChangePasswordForm()
-                    messages.success(request, _('Lenken er akseptert. Vennligst skriv inn ønsket passord.'))
-                return render(request, 'auth/set_password.html', {'form': form, 'token': token})
+                    messages.error(request, 'Noe gikk galt med gjenoppretting av passord. Vennligst prøv igjen.')
+                    log.debug('User %s failed to recover password with token %s. '
+                              '[form.is_valid => False]' % (request.user, rt))
+                    return HttpResponseRedirect('/')
             else:
-                log.debug('User %s failed to recover password with token %s' % (request.user, rt))
-                messages.error(
-                    request,
-                    _('Lenken er ugyldig. Vennligst bruk gjenoppretning av passord for å få tilsendt en ny lenke.')
-                )
-                return HttpResponseRedirect('/')
-        except:
-            log.debug('User %s failed to recover password with token %s' % (request.user, rt))
-            messages.error(
-                request, 'Noe gikk galt med gjenoppretning av passord. Vennligst prøv igjen.')
-            return HttpResponseRedirect('/')
+                form = ChangePasswordForm()
+                messages.success(request, _('Lenken er akseptert. Vennligst skriv inn ønsket passord.'))
+            return render(request, 'auth/set_password.html', {'form': form, 'token': token})
+        log.debug('User %s failed to recover password with token %s.' % (request.user, rt))
+        messages.error(
+            request, 'Noe gikk galt med gjenoppretning av passord. Vennligst prøv igjen.')
+        return HttpResponseRedirect('/')
 
 
 class UserViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.ListModelMixin):

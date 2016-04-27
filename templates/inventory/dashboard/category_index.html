@@ -1,0 +1,58 @@
+{% extends "dashboard_base.html" %}
+{% load compress %}
+
+{% block title %}
+Varelager - Online Dashboard
+{% endblock title %}
+
+{% block styles %}
+    {{ block.super }}
+    {% compress css %}
+    {% endcompress %}
+{% endblock %}
+
+{% block page-header %}
+Kategorier
+{% endblock %}
+
+{% block breadcrumbs %}
+    <li>Kategorier</li>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <a href="{% url 'dashboard_category_new' %}" class="btn btn-primary"><i class="fa fa-plus"></i> Ny kategori</a>
+    </div>
+</div>
+<br />
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">Kategorioversikt</h3>
+            </div>
+            <div class="panel-body">
+                {% if categories %}
+                    <table class="table table-striped table-condensed tablesorter" id="inventory_item_list">
+                        <thead>
+                            <tr>
+                                <th>Navn</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for category in categories %}
+                            <tr>
+                                <td><a href="/dashboard/inventory/category/{{ category.id }}/">{{ category.name }}</a></td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                {% else %}
+                    <p>Ingen kategorier</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

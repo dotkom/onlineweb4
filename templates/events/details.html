@@ -218,15 +218,19 @@
                                                 </div>
                                             {% endif %}
                                         {% endif %}
+
+                                        {%  if payment %}
+                                            <p class="status-text status-price">Pris: {{ payment.price }},-</p>
+                                        {%  endif %}
+
                                     {% endif %}
                                 {% endif %}
                             {% else %}
                                 <p class="status-text">Dette er ikke et påmeldingsarrangement.</p>
                             {% endif %}
 
-
                             {% if attendance_event %}
-                                <p class="help-text" style="margin-top:20px">Avmeldingsfristen 
+                                <p class="help-text">Avmeldingsfristen
                                     {% if attendance_event.unattend_deadline > now %}
                                         er
                                     {% else %}
