@@ -38,12 +38,22 @@
         </div>
     </div>
     <div class="col-sm-5">
-      <div class="product-name">
-        {{ product.name }}
-      </div>
-      <div class="product-price">
-        {{ product.price|default:0|floatformat:2 }}
-      </div>
+        <div class="product-name">
+            {{ product.name }}
+        </div>
+        <div class="product-price">
+            {{ product.price|default:0|floatformat:2 }}
+        </div>
+        {% if product.stock != None %}
+        <div class="product-stock">
+            {% if product.stock > 0 %}
+                {{ product.stock }} på lager
+            {% else %}
+                Utsolgt
+            {% endif %}
+        </div>
+        {% endif %}
+        {% if product.in_stock %}
         <form method="post">
           {% csrf_token %}
           <div class="form-group order-form">
@@ -62,6 +72,7 @@
           </div>
           <input type="submit" class="btn btn-lg btn-default" value="Legg til">
         </form>
+        {% endif %}
         {% if product.deadline %}
           <hr>
           <p>Dette produktet er kun tilgjengelig frem til </p>

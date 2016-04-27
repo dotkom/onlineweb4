@@ -91,22 +91,31 @@ class ProductDetail(WebshopMixin, DetailView):
             messages.error(request, "Dette produktet er ikke lenger tilgjengelig.")
             return super(ProductDetail, self).get(request, *args, **kwargs)
 
+        if not product.in_stock():
+            messages.error(request, "Dette produktet er utsolgt.")
+            return super().get(request, *args, **kwargs)
+
         form = OrderForm(request.POST)
         if form.is_valid():
             order_line = self.current_order_line()
 
             size = form.cleaned_data['size']
+            quantity = form.cleaned_data['quantity']
+
+            if product.stock is not None and product.stock < quantity:
+                messages.error(request, "Det er ikke nok produkteter på lageret.")
+                return super().get(request, *args, **kwargs)
 
             # Checking if product has already been added to cart
             order = order_line.orders.filter(product=product, size=size).first()
             if order:
                 # Adding to existing order
-                order.quantity += form.cleaned_data['quantity']
+                order.quantity += quantity
             else:
                 # Creating new order
                 order = Order(
                     product=product, price=product.price,
-                    quantity=form.cleaned_data['quantity'],
+                    quantity=quantity,
                     size=size,
                     order_line=order_line)
             order.save()

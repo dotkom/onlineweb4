@@ -23,6 +23,9 @@ class Product(models.Model):
     deadline = models.DateTimeField(null=True, blank=True)
     active = models.BooleanField(default=True)
 
+    def in_stock(self):
+        return self.stock is None or self.stock > 0
+
     def get_absolute_url(self):
         return reverse('webshop_product', args=[str(self.slug)])
 
@@ -129,6 +132,10 @@ class OrderLine(models.Model):
             return
         # Setting price for orders in case product price changes later
         for order in self.orders.all():
+            # Update stock
+            if order.product.stock:
+                order.product.stock -= order.quantity
+                order.product.save()
             order.price = order.calculate_price()
             order.save()
         self.paid = True
