@@ -115,7 +115,10 @@ class Order(models.Model):
         return self.product.price * self.quantity
 
     def __str__(self):
-        return "%sx %s" % (self.quantity, self.product)
+        order_text = "%sx %s" % (self.quantity, self.product)
+        if self.size:
+            order_text += " (%s)" % (self.size.size)
+        return order_text
 
     class Meta:
         verbose_name = 'Bestilling'
