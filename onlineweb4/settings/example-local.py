@@ -31,8 +31,8 @@ DATABASES = {
     },
     'ldap': {
         'ENGINE': 'ldapdb.backends.ldap',
-        'NAME': 'ldap://example.com',
-        'USER': 'cn=admin,dc=example,dc=com',
+        'NAME': 'ldap://localhost',
+        'USER': 'cn=admin,dc=online,dc=ntnu,dc=no',
         'PASSWORD': 'secretpassword',
         #'TLS': True,
         #'CONNECTION_OPTIONS': {
