@@ -25,7 +25,7 @@ class Product(models.Model):
 
     def calculate_stock(self):
         if self.product_sizes.count() > 0:
-            return sum((product_size.stock for product_size in self.product_sizes.all()))
+            return sum(product_size.stock for product_size in self.product_sizes.all())
         else:
             return self.stock
 
@@ -136,10 +136,10 @@ class OrderLine(models.Model):
     delivered = models.BooleanField(default=False)
 
     def count_orders(self):
-        return sum((order.quantity for order in self.orders.all()))
+        return sum(order.quantity for order in self.orders.all())
 
     def subtotal(self):
-        return sum((order.calculate_price() for order in self.orders.all()))
+        return sum(order.calculate_price() for order in self.orders.all())
 
     def is_valid(self):
         """
