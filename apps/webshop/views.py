@@ -31,11 +31,18 @@ class CartMixin(LoginRequiredMixin):
 
 
 class BreadCrumb(object):
+    """Dynamically generated breadcrumbs using name and url"""
     def get_breadcrumbs(self):
+        """Create breadcrumb for the main webshop page
+
+        Returns:
+            list: list of breadcrumbs
+        """
         breadcrumbs = [{'name': 'Webshop', 'url': reverse_lazy('webshop_home')}]
         return breadcrumbs
 
     def get_context_data(self, **kwargs):
+        """Add breadcrumbs to context"""
         context = super().get_context_data(**kwargs)
         context['breadcrumbs'] = self.get_breadcrumbs()
         return context

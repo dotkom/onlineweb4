@@ -26,16 +26,35 @@ class Product(models.Model):
     active = models.BooleanField(default=True)
 
     def calculate_stock(self):
+        """Calculates amount of stock based on either product sizes or product stock
+
+        Returns:
+            int: Stock amount
+        """
         if self.product_sizes.count() > 0:
             return sum(product_size.stock for product_size in self.product_sizes.all())
         else:
             return self.stock
 
     def in_stock(self):
+        """Check if product is in stock
+
+        Returns:
+            bool: product in stock
+        """
         stock = self.calculate_stock()
         return stock is None or stock > 0
 
     def enough_stock(self, quantity, product_size=None):
+        """Calculate if there are enough products for a purchase
+
+        Args:
+            quantity (int): Quantity to buy
+            product_size (ProductSize, optional): product size that is bought
+
+        Returns:
+            bool: has enough stock
+        """
         stock = self.stock
         if product_size:
             stock = product_size.stock
@@ -45,10 +64,22 @@ class Product(models.Model):
         return reverse('webshop_product', args=[str(self.slug)])
 
     def related_products(self):
+        """Products in same category excluding this product
+
+        Returns:
+            QuerySet: QuerySet of products
+        """
         return self.category.products.exclude(id=self.id)
 
     @property
     def images(self):
+        """Hacky way to support multiple images for a product
+
+        Uses the images_cvs field to lookup ResponsiveImage objects
+
+        Returns:
+            QuerySet: QuerySet of images
+        """
         if self.images_csv:
             id_tuple = self.images_csv.split(',')
             return ResponsiveImage.objects.filter(id__in=id_tuple)
@@ -87,7 +118,9 @@ class ProductSize(models.Model):
     product = models.ForeignKey(Product, related_name='product_sizes')
     size = models.CharField('Størrelse', max_length=25)
     description = models.CharField('Beskrivelse', max_length=50, null=True, blank=True)
-    stock = models.PositiveSmallIntegerField(null=True, blank=True, help_text="Antall på lager. Blankt vil si uendelig.")
+    stock = models.PositiveSmallIntegerField(
+        null=True, blank=True, help_text="Antall på lager. Blankt vil si uendelig."
+    )
 
     def __str__(self):
         if self.description:
@@ -109,9 +142,19 @@ class Order(models.Model):
     size = models.ForeignKey(ProductSize, null=True, blank=True)
 
     def is_valid(self):
+        """Validate order
+
+        Returns:
+            bool: valid order
+        """
         return self.product.enough_stock(self.quantity, self.size)
 
     def calculate_price(self):
+        """Calculate total price based on price per product and quantity
+
+        Returns:
+            int: price
+        """
         return self.product.price * self.quantity
 
     def __str__(self):
@@ -135,18 +178,35 @@ class OrderLine(models.Model):
     delivered = models.BooleanField(default=False)
 
     def count_orders(self):
+        """Total sum of all products
+
+        Returns:
+            int: sum of products
+        """
         return sum(order.quantity for order in self.orders.all())
 
     def subtotal(self):
+        """Subtotal of products
+
+        Returns:
+            int: subtotal
+        """
         return sum(order.calculate_price() for order in self.orders.all())
 
     def is_valid(self):
-        """
-        Check that all orders are valid
+        """Check that all orders are valid
+
+        Returns:
+            bool: orders are valid
         """
         return all((order.is_valid() for order in self.orders.all()))
 
     def update_stock(self, order):
+        """Updates stock for ProductSize if present or Product
+
+        Args:
+            order (Order): Order to update
+        """
         if order.size and order.size.stock:
             order.size.stock -= order.quantity
             order.size.save()
@@ -155,6 +215,7 @@ class OrderLine(models.Model):
             order.product.save()
 
     def pay(self):
+        """Marks order as paid, stores current price and updates stock"""
         if self.paid:
             return
         # Setting price for orders in case product price changes later
