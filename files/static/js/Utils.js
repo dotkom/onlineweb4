@@ -117,12 +117,12 @@ function Utils() {
   /**
    * Render a template on the basis of the attributes of a data object
    * @param {object} tmpl A jQuery wrapper DOM object
-   * @param {object} data An object containing the template payload
-   * @return {object} Rendered DOM subtree containing provided data
+   * @param {object} context An object containing the template payload
+   * @return {object} Rendered DOM subtree containing provided context data
    */
-  Utils.prototype.render = function (tmpl, data) {
-    var node = window._.Template(tmpl)
-    return node(data)
+  Utils.prototype.render = function (tmpl, context) {
+    var node = window._.template(tmpl)
+    return node(context)
   }
 }
 
@@ -131,7 +131,7 @@ if (!String.prototype.format) {
   String.prototype.format = function() {
     var args = arguments
     return this.replace(/{(\d+)}/g, function(match, number) {
-      return typeof args[number] != 'undefined' ? args[number] : match
+      return typeof args[number] !== 'undefined' ? args[number] : match
     })
   }
 }

@@ -4,6 +4,7 @@ from django.conf.urls import url
 
 from apps.api.utils import SharedAPIRootRouter
 from apps.gallery import views
+from apps.gallery.views import PresetView
 
 urlpatterns = [
     url(r'^upload/$', views.upload, name='upload'),
@@ -11,6 +12,7 @@ urlpatterns = [
     url(r'^crop/$', views.crop, name='crop'),
     url(r'^all/', views.all_images, name='all'),
     url(r'^search/', views.search, name='search'),
+    url(r'^preset/', PresetView.as_view(), name='preset'),
 ]
 
 # API v1

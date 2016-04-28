@@ -32,7 +32,8 @@ ARTICLE = {
     'aspect_ratio_x': 19,
     'aspect_ratio_y': 7,
     'min_width': 1280,
-    'min_height': 720
+    'min_height': 720,
+    'description': 'Artikkel'
 }
 COMPANY = {
     'aspect_ratio': True,
@@ -40,25 +41,32 @@ COMPANY = {
     'aspect_ratio_y': 9,
     'min_width': 360,
     'min_height': 170,
+    'description': 'Bedriftslogo'
 }
 EVENT = {
     'aspect_ratio': True,
     'aspect_ratio_x': 16,
     'aspect_ratio_y': 9,
-    'min_width': 1280,
-    'min_height': 720
+    'min_width': 800,
+    'min_height': 450,
+    'description': 'Arrangement'
 }
 OFFLINE = {
     'aspect_ratio': False,
     'aspect_ratio_x': 1,
     'aspect_ratio_y': 1.414,
     'min_width': 480,
-    'min_height': 640
+    'min_height': 640,
+    'description': 'Offline'
 }
 PRODUCT = {
     'aspect_ratio': True,
     'aspect_ratio_x': 5,
     'aspect_ratio_y': 6,
     'min_width': 128,
-    'min_height': 128
+    'min_height': 128,
+    'description': 'Produktbilde'
 }
+
+# Active presets
+PRESETS = [EVENT, ARTICLE, COMPANY, PRODUCT]

@@ -34,7 +34,7 @@ var GalleryUpload = (function ($, Dropzone) {
   }
 })(window.jQuery, window.Dropzone)
 
-var GalleryCrop = (function ($, Cropper) {
+var GalleryCrop = (function ($, Cropper, utils) {
   var self = this
 
   // DOM References
@@ -54,6 +54,7 @@ var GalleryCrop = (function ($, Cropper) {
 
   // Cropper
   self.cropper = null
+  self.presets = []
   self.options = {
     aspectRatio: 16 / 9,
     preview: '#gallery__image-edit--preview-wrapper',
@@ -75,44 +76,10 @@ var GalleryCrop = (function ($, Cropper) {
   }
 
   /**
-   * Updates the cropper object options
-   */
-  var updateCropperOptions = function (preset) {
-    switch (preset) {
-      case '1':
-        self.cropper.setAspectRatio(16 / 9)
-        break
-      case '2':
-        self.cropper.setAspectRatio(19 / 7)
-        break
-      case '3':
-        self.cropper.setAspectRatio(NaN)
-        break
-      case '4':
-        self.cropper.setAspectRatio(2 / 3)
-        break
-      case '5':
-        self.cropper.setAspectRatio(NaN)
-        break
-    }
-
-    // Update sidebar with new aspect ratio data
-    var cropData = self.cropper.getData(true)
-    IMAGE_HEIGHT.val(cropData.height)
-    IMAGE_WIDTH.val(cropData.width)
-  }
-
-  /**
    * Binds all necessary event listeners for the GalleryCrop module
    */
   var bindEventListeners = function () {
     console.log('Setting up GalleryCrop event listeners ...')
-
-    // Listen for changes to selected preset
-    IMAGE_PRESET.on('change', function (e) {
-      var preset = $(this).children('option:selected').val()
-      updateCropperOptions(preset)
-    })
 
     // Zoom in
     IMAGE_ZOOM_IN.on('click', function (e) {
@@ -154,6 +121,49 @@ var GalleryCrop = (function ($, Cropper) {
     })
   }
 
+  /**
+   * Retrieves the list of available presets from the server via an AJAX request.
+   */
+  var getCropPresetsFromServer = function () {
+    IMAGE_LOG.text('Henter preset fra tjeneren...')
+    console.log('Fetching crop presets from server')
+
+    // Declare success callback
+    var success = function (data) {
+      self.presets = data.presets
+
+      // Update the select dropdown
+      IMAGE_PRESET.html('')
+      var optionTemplate = '<option value="<%= val %>" <%= selected %>><%= description %></option>'
+      for (var i = 0; i < self.presets.length; i++) {
+        var context = {
+          val: i,
+          description: self.presets[i].description
+        }
+        if (i === 0) context.selected = 'selected'
+        else context.selected = ''
+
+        IMAGE_PRESET.append(utils.render(optionTemplate, context))
+      }
+
+      // Listen for changes to selected preset
+      IMAGE_PRESET.on('change', function (e) {
+        var preset = $(this).children('option:selected').val()
+        GalleryCrop.preset(preset)
+      })
+
+      IMAGE_LOG.text('Klar til bruk')
+    }
+
+    // Declare error callback
+    var error = function (xhr, errorMessage, responseText) {
+      IMAGE_LOG.text('En feil har oppstått')
+      console.error(responseText)
+    }
+
+    Gallery.ajax('GET', '/gallery/preset/', null, success, error, null)
+  }
+
   return {
     /**
      * Initialize the GalleryCrop module
@@ -168,6 +178,7 @@ var GalleryCrop = (function ($, Cropper) {
       // event listeners.
       if (IMAGE_PRESET.length > 0) {
         bindEventListeners()
+        getCropPresetsFromServer()
       }
     },
 
@@ -204,11 +215,32 @@ var GalleryCrop = (function ($, Cropper) {
 
         GalleryCrop.log('Klar til bruk')
       }, 500)
+    },
+
+    /**
+     * Activates a new cropping preset by the given ID
+     * @param preset An integer representing the preset ID from the dropdown menu
+     */
+    preset: function (preset) {
+      preset = Number(preset)
+      if (preset < 0 || preset >= self.presets.length) return IMAGE_LOG.text('Ugyldig preset ID')
+
+      // Reconfigure selection constraints
+      if (self.presets[preset].aspect_ratio) {
+        self.cropper.setAspectRatio(self.presets[preset].aspect_ratio_x / self.presets[preset].aspect_ratio_y)
+      } else {
+        self.cropper.setAspectRatio(NaN)
+      }
+
+      // Update sidebar with new aspect ratio data
+      var cropData = self.cropper.getData(true)
+      IMAGE_HEIGHT.val(cropData.height)
+      IMAGE_WIDTH.val(cropData.width)
     }
   }
-})(window.jQuery, window.Cropper)
+})(window.jQuery, window.Cropper, new window.Utils())
 
-var Gallery = (function ($, Utils, MicroEvent, Dropzone) {
+var Gallery = (function ($, utils, MicroEvent, Dropzone) {
   var _events = new MicroEvent()
   var _images = {}
 
@@ -277,6 +309,7 @@ var Gallery = (function ($, Utils, MicroEvent, Dropzone) {
    * Retrieve an array of all UnhandledImage objects currently in the database
    */
   var fetchUnhandledImages = function () {
+    // Declare the success callback
     var success = function (images) {
       // Update the local image cache with current data
       images = images.unhandled
@@ -288,6 +321,8 @@ var Gallery = (function ($, Utils, MicroEvent, Dropzone) {
       MANAGE_BUTTON_TEXT.text('Behandle ({0})'.format(images.length))
       createUnhandledImageThumbnails(images)
     }
+
+    // Declare the error callback
     var error = function (xhr, errorMessage, responseText) {
       console.log('Received error: ' + xhr.responseText + ' ' + errorMessage)
     }
@@ -378,7 +413,7 @@ var Gallery = (function ($, Utils, MicroEvent, Dropzone) {
       }
     }
   }
-})(window.jQuery, window.Utils, window.MicroEvent, window.Dropzone)
+})(window.jQuery, new window.Utils(), window.MicroEvent, window.Dropzone)
 
 // Initialise the Gallery module
 Gallery.init()

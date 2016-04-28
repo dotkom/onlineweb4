@@ -8,7 +8,9 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, render
+from django.views.generic import View
 from guardian.decorators import permission_required
+from guardian.mixins import PermissionRequiredMixin
 from rest_framework import mixins, viewsets
 from rest_framework.permissions import AllowAny
 from taggit.utils import parse_tags
@@ -16,6 +18,7 @@ from taggit.utils import parse_tags
 from apps.gallery.forms import DocumentForm
 from apps.gallery.models import ResponsiveImage, UnhandledImage
 from apps.gallery.serializers import ResponsiveImageSerializer
+from apps.gallery.settings import PRESETS
 from apps.gallery.util import ResponsiveImageHandler, UploadImageHandler
 
 
@@ -131,6 +134,24 @@ def crop(request):
             return JsonResponse(data={'name': config['name'], 'id': resp_image.id})
 
     return HttpResponse(status=405)
+
+
+class PresetView(PermissionRequiredMixin, View):
+    """
+    View class for querying the gallery backend about which image cropping presets are available.
+    """
+
+    permission_required = 'gallery.view_responsiveimage'
+
+    def get(self, *args, **kwargs):
+        """
+        HTTP GET Handler method
+        :param args: Positional arguments
+        :param kwargs: Keyword arguments
+        :return: A HTTP Response
+        """
+
+        return JsonResponse({'presets': PRESETS})
 
 
 @login_required

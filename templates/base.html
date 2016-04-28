@@ -202,10 +202,10 @@
     {% block js %}
         <script src="https://maps.googleapis.com/maps/api/js?v=3&amp;sensor=true"></script>
         <script src="{{ STATIC_URL }}js/libs/jquery-2.1.3.min.js"></script>
+        <script src="{{ STATIC_URL }}js/libs/underscore.min.js"></script>
         <script src="{{ STATIC_URL }}js/libs/bootstrap.min.js"></script>
         <script src="{{ STATIC_URL }}js/libs/moment.min.js"></script>
         <script src="{{ STATIC_URL }}js/libs/jquery.cookie.js"></script>
-        <script src="{{ STATIC_URL }}js/libs/underscore.min.js"></script>
         {% compress js %}
         <script src="{{ STATIC_URL }}js/libs/jquery.debouncedresize.js"></script>
         <script src="{{ STATIC_URL }}js/libs/fastclick.js"></script>
