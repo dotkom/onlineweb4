@@ -8,7 +8,7 @@ from django.conf import settings
 from django.contrib.auth.models import Group
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
-from django.db.models import Q, Case, Value, When
+from django.db.models import Case, Value, When, Q
 from django.template.defaultfilters import slugify
 from django.utils import timezone
 from django.utils.translation import ugettext as _
