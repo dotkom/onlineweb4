@@ -102,7 +102,7 @@ class ProductDetail(WebshopMixin, DetailView):
             size = form.cleaned_data['size']
             quantity = form.cleaned_data['quantity']
 
-            if product.stock is not None and product.stock < quantity:
+            if not product.enough_stock(quantity, size):
                 messages.error(request, "Det er ikke nok produkteter på lageret.")
                 return super().get(request, *args, **kwargs)
 

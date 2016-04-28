@@ -24,13 +24,20 @@ class Product(models.Model):
     active = models.BooleanField(default=True)
 
     def calculate_stock(self):
-        if self.product_sizes.size() > 0:
-            return sum((product_size.stock for product_size in self.product_sizes))
+        if self.product_sizes.count() > 0:
+            return sum((product_size.stock for product_size in self.product_sizes.all()))
         else:
             return self.stock
 
     def in_stock(self):
-        return self.stock is None or self.stock > 0
+        stock = self.calculate_stock()
+        return stock is None or stock > 0
+
+    def enough_stock(self, quantity, product_size=None):
+        stock = self.stock
+        if product_size:
+            stock = product_size.stock
+        return stock is None or stock >= quantity
 
     def get_absolute_url(self):
         return reverse('webshop_product', args=[str(self.slug)])
@@ -98,11 +105,7 @@ class Order(models.Model):
     size = models.ForeignKey(ProductSize, null=True, blank=True)
 
     def is_valid(self):
-        if self.size:
-            stock = self.size.stock
-        else:
-            stock = self.product.stock
-        return stock is None or stock >= self.quantity
+        return self.product.enough_stock(self.quantity, self.size)
 
     def calculate_price(self):
         return self.product.price * self.quantity

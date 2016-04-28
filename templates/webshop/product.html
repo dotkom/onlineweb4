@@ -46,8 +46,8 @@
         </div>
         {% if product.stock != None %}
         <div class="product-stock">
-            {% if product.stock > 0 %}
-                {{ product.stock }} på lager
+            {% if product.in_stock %}
+                På lager
             {% else %}
                 Utsolgt
             {% endif %}
@@ -64,7 +64,11 @@
             {% if sizes %}
               <select id="size" name="size" class="form-control">
                 {% for size in sizes %}
-                  <option value="{{ size.pk }}">{{ size.size }} {% if size.description %} - {{size.description }} {% endif %}</option>
+                    {% if size.stock != None and size.stock <= 0 %}
+                    <option disabled>{{ size }} (Utsolgt)</option>
+                    {% else %}
+                    <option value="{{ size.pk }}">{{ size }}</option>
+                    {% endif %}
                 {% endfor %}
               </select>
             {% endif %}
