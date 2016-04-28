@@ -90,11 +90,9 @@ class ProductSize(models.Model):
     stock = models.PositiveSmallIntegerField(null=True, blank=True, help_text="Antall på lager. Blankt vil si uendelig.")
 
     def __str__(self):
-        size_text = self.size
-        # Adding description
         if self.description:
-            size_text += " - " + self.description
-        return size_text
+            return "%s - %s" % (self.size, self.description)
+        return self.size
 
     class Meta:
         verbose_name = 'Størrelse'
@@ -117,10 +115,9 @@ class Order(models.Model):
         return self.product.price * self.quantity
 
     def __str__(self):
-        order_text = "%sx %s" % (self.quantity, self.product)
         if self.size:
-            order_text += " (%s)" % (self.size.size)
-        return order_text
+            return "%sx %s (%s)" % (self.quantity, self.product, self.size.size)
+        return "%sx %s" % (self.quantity, self.product)
 
     class Meta:
         verbose_name = 'Bestilling'
