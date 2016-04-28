@@ -88,7 +88,11 @@ class ProductSize(models.Model):
     stock = models.PositiveSmallIntegerField(null=True, blank=True)
 
     def __str__(self):
-        return self.size
+        size_text = self.size
+        # Adding description
+        if self.description:
+            size_text += " - " + self.description
+        return size_text
 
     class Meta:
         verbose_name = 'Størrelse'
