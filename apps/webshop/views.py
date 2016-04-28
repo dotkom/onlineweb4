@@ -103,7 +103,7 @@ class ProductDetail(WebshopMixin, DetailView):
             quantity = form.cleaned_data['quantity']
 
             if not product.enough_stock(quantity, size):
-                messages.error(request, "Det er ikke nok produkteter på lageret.")
+                messages.error(request, "Det er ikke nok produkter på lageret.")
                 return super().get(request, *args, **kwargs)
 
             # Checking if product has already been added to cart
