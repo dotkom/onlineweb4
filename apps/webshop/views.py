@@ -4,33 +4,34 @@ from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse_lazy
 from django.shortcuts import redirect
 from django.utils import timezone
+from django.utils.decorators import method_decorator
 from django.views.generic import DetailView, RedirectView, TemplateView
 
 from apps.webshop.forms import OrderForm
 from apps.webshop.models import Category, Order, OrderLine, Product, ProductSize
 
 
-class LoginRequiredMixin(object):
+class LoginRequiredMixin:
     @classmethod
     def as_view(cls, **initkwargs):
         view = super(LoginRequiredMixin, cls).as_view(**initkwargs)
         return login_required(view)
 
 
-class CartMixin(LoginRequiredMixin):
+class CartMixin:
     def get_context_data(self, **kwargs):
         context = super(CartMixin, self).get_context_data(**kwargs)
         context['order_line'] = self.current_order_line()
         return context
 
     def current_order_line(self):
+        if not self.request.user.is_authenticated():
+            return None
         order_line = OrderLine.objects.filter(user=self.request.user, paid=False).first()
-        if not order_line:
-            order_line = OrderLine.objects.create(user=self.request.user)
         return order_line
 
 
-class BreadCrumb(object):
+class BreadCrumb:
     """Dynamically generated breadcrumbs using name and url"""
     def get_breadcrumbs(self):
         """Create breadcrumb for the main webshop page
@@ -91,6 +92,7 @@ class ProductDetail(WebshopMixin, DetailView):
         context['sizes'] = ProductSize.objects.filter(product=self.get_object())
         return context
 
+    @method_decorator(login_required)
     def post(self, request, *args, **kwargs):
         product = self.get_object()
 
@@ -105,6 +107,8 @@ class ProductDetail(WebshopMixin, DetailView):
         form = OrderForm(request.POST)
         if form.is_valid():
             order_line = self.current_order_line()
+            if not order_line:
+                order_line = OrderLine.objects.create(user=self.request.user)
 
             size = form.cleaned_data['size']
             quantity = form.cleaned_data['quantity']
@@ -132,7 +136,7 @@ class ProductDetail(WebshopMixin, DetailView):
         return super(ProductDetail, self).get(request, *args, **kwargs)
 
 
-class Checkout(WebshopMixin, TemplateView):
+class Checkout(LoginRequiredMixin, WebshopMixin, TemplateView):
     template_name = 'webshop/checkout.html'
 
     def get_breadcrumbs(self):
@@ -141,7 +145,7 @@ class Checkout(WebshopMixin, TemplateView):
         return breadcrumbs
 
 
-class RemoveOrder(WebshopMixin, RedirectView):
+class RemoveOrder(LoginRequiredMixin, WebshopMixin, RedirectView):
     pattern_name = 'webshop_checkout'
 
     def post(self, request, *args, **kwargs):

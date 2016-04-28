@@ -31,7 +31,7 @@
         </div>
         <div class="webshop-cart pull-right">
             <a href="{% url 'webshop_checkout' %}"><span class="glyphicon glyphicon-shopping-cart"></span>
-            {% with count=order_line.count_orders %}
+            {% with count=order_line.count_orders|default:0 %}
                 {{ count }} vare{{ count|pluralize:"r" }} i handlevognen</a>
             {% endwith %}
         </div>
