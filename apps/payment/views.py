@@ -132,7 +132,7 @@ def webshop_pay(request):
                 if not order_line.is_valid():
                     error = "Ordren er ikke gyldig."
                     messages.error(request, error)
-                    return HttpResponse(error, content_type="text/plain", status=500)
+                    return HttpResponse(error, content_type="text/plain", status=400)
 
                 charge = stripe.Charge.create(
                     amount=amount,
