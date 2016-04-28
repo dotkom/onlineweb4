@@ -23,6 +23,12 @@ class Product(models.Model):
     deadline = models.DateTimeField(null=True, blank=True)
     active = models.BooleanField(default=True)
 
+    def calculate_stock(self):
+        if self.product_sizes.size() > 0:
+            return sum((product_size.stock for product_size in self.product_sizes))
+        else:
+            return self.stock
+
     def in_stock(self):
         return self.stock is None or self.stock > 0
 
@@ -69,7 +75,7 @@ class Category(models.Model):
 
 
 class ProductSize(models.Model):
-    product = models.ForeignKey(Product)
+    product = models.ForeignKey(Product, related_name='product_sizes')
     size = models.CharField('Størrelse', max_length=25)
     description = models.CharField('Beskrivelse', max_length=50, null=True, blank=True)
     stock = models.PositiveSmallIntegerField(null=True, blank=True)
@@ -92,7 +98,11 @@ class Order(models.Model):
     size = models.ForeignKey(ProductSize, null=True, blank=True)
 
     def is_valid(self):
-        return self.product.stock is None or self.product.stock >= self.quantity
+        if self.size:
+            stock = self.size.stock
+        else:
+            stock = self.product.stock
+        return stock is None or stock >= self.quantity
 
     def calculate_price(self):
         return self.product.price * self.quantity
@@ -127,15 +137,20 @@ class OrderLine(models.Model):
         """
         return all((order.is_valid() for order in self.orders.all()))
 
+    def update_stock(self, order):
+        if order.size and order.size.stock:
+            order.size.stock -= order.quantity
+            order.size.save()
+        elif order.product.stock:
+            order.product.stock -= order.quantity
+            order.product.save()
+
     def pay(self):
         if self.paid:
             return
         # Setting price for orders in case product price changes later
         for order in self.orders.all():
-            # Update stock
-            if order.product.stock:
-                order.product.stock -= order.quantity
-                order.product.save()
+            self.update_stock(order)
             order.price = order.calculate_price()
             order.save()
         self.paid = True
