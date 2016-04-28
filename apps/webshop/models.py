@@ -18,7 +18,9 @@ class Product(models.Model):
     images_csv = models.CommaSeparatedIntegerField(max_length=200, default=None, blank=True, null=True)
 
     price = models.DecimalField(max_digits=10, decimal_places=2)
-    stock = models.PositiveSmallIntegerField(null=True, blank=True)
+    stock = models.PositiveSmallIntegerField(
+        null=True, blank=True, help_text="Antall på lager. Blankt vil si uendelig."
+    )
 
     deadline = models.DateTimeField(null=True, blank=True)
     active = models.BooleanField(default=True)
@@ -85,7 +87,7 @@ class ProductSize(models.Model):
     product = models.ForeignKey(Product, related_name='product_sizes')
     size = models.CharField('Størrelse', max_length=25)
     description = models.CharField('Beskrivelse', max_length=50, null=True, blank=True)
-    stock = models.PositiveSmallIntegerField(null=True, blank=True)
+    stock = models.PositiveSmallIntegerField(null=True, blank=True, help_text="Antall på lager. Blankt vil si uendelig.")
 
     def __str__(self):
         size_text = self.size
