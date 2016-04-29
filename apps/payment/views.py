@@ -274,7 +274,7 @@ def _send_webshop_mail(order_line):
     )
 
     logging.getLogger(__name__).debug("Logging for send webshop mail")
-    logging.getLogger(__name__).info(str(order_line))
+    logging.getLogger(__name__).info("%s (#%s)" % (str(order_line), order_line.id))
 
     message += "\nDine produkter:"
     products = ""
