@@ -9,7 +9,7 @@ Requirements
 Download the latest versions of the following software
 
 * [VirtualBox](https://www.virtualbox.org/wiki/Downloads)
-* [Vagrant](http://downloads.vagrantup.com/)
+* [Vagrant](https://www.vagrantup.com/downloads.html)
 * [Git](http://git-scm.com)
     * the [GitHub for Windows](http://windows.github.com/) app is probably the easiest way to install and use Git on Windows
 * SSH - On Windows SSH is included with Git/GitHub for Windows.
