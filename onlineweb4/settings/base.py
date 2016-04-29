@@ -144,7 +144,6 @@ DATABASE_ROUTERS = ['ldapdb.router.Router']
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend', # this is default
     'guardian.backends.ObjectPermissionBackend',
-    'django_auth_ldap.backend.LDAPBackend',
 )
 
 ROOT_URLCONF = 'onlineweb4.urls'
