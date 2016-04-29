@@ -61,7 +61,7 @@ Webshop - {{ product }}
                 <td>{{ order_line.product }}</td>
                 <td>{{ order_line.quantity }}</td>
                 <td>{{ order_line.price }}</td>
-                <td>{{ order_line.size }}</td>
+                <td>{{ order_line.size|default:"" }}</td>
             </tr>
             {% endfor %}
         </tbody>

@@ -35,7 +35,6 @@ Webshop
                     <th>Antall produkter</th>
                     <th>Pris</th>
                     <th>Tidspunkt</th>
-                    <th>Transaksjonsnummer</th>
                     <th>Utlevert</th>
                 </tr>
             </thead>
@@ -51,7 +50,6 @@ Webshop
                     <td>{{ order.count_orders }}</td>
                     <td>{{ order.subtotal }}</td>
                     <td>{{ order.datetime }}</td>
-                    <td>{{ order.stripe_id|default:"" }}</td>
                     <td>{{ order.delivered|yesno:"Ja,Nei" }}</td>
                 </tr>
             {% endfor %}
