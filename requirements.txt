@@ -29,7 +29,7 @@ django-reversion==1.10.2        # Model version history with middleware hooks to
 django-guardian==1.4.4          # Per Object permissions framework
 django-taggit==0.18.1           # Generic multi-model tagging library
 django-taggit-serializer==0.1.5 # REST Framework serializers for Django-taggit
-APScheduler==3.1.0              # Scheduler
+APScheduler==3.0.6              # Scheduler
 feedme==1.9.5
 git+https://github.com/dotKom/redwine.git@1.2.4#egg=redwine==1.2.4
 reportlab==3.3.0
