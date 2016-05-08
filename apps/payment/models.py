@@ -159,7 +159,7 @@ class PaymentPrice(models.Model):
     description = models.CharField(max_length=128, null=True, blank=True)
 
     def __str__(self):
-        return str(self.price)
+        return self.description + " (" + str(self.price) + "kr)"
 
     class Meta(object):
         verbose_name = _("pris")

@@ -25,11 +25,14 @@
                                 <th>Fornavn</th>
                                 <th>Etternavn</th>
                                 {% if event.attendance_event.payment %}
-                                <th>Betalt</th>
+                                    <th>Betalt</th>
                                 {% endif %}
-                                <th>Møtt</th>
+                                {% if payment_prices %}
+                                    <th>Betalingstype</th>
+                                {% endif %}
+                                    <th>Møtt</th>
                                 {% if event.attendance_event.has_extras %}
-                                <th>Extra</th>
+                                    <th>Extra</th>
                                 {% endif %}
                                 <th>Fjern</th>
                             </tr>
@@ -41,11 +44,19 @@
                                 <td><a href="{% url 'dashboard_attendee_details' attendee.id %}">{{ attendee.user.first_name }}</a></td>
                                 <td><a href="{% url 'dashboard_attendee_details' attendee.id %}">{{ attendee.user.last_name }}</a></td>
                                 {% if event.attendance_event.payment %}
-                                <td>
-                                    <a href="#" data-id="{{ attendee.id }}" class="toggle-attendee paid">
-                                    <i class="fa fa-lg {% if attendee.paid %}fa-check-square-o checked{% else %}fa-square-o{% endif %}"></i>
-                                    </a>
-                                </td>
+                                    <td>
+                                        <a href="#" data-id="{{ attendee.id }}" class="toggle-attendee paid">
+                                        <i class="fa fa-lg {% if attendee.paid %}fa-check-square-o checked{% else %}fa-square-o{% endif %}"></i>
+                                        </a>
+                                    </td>
+                                {% endif %}
+                                {% if payment_prices %}
+
+                                    {% for key, value in payment_prices.items %}
+                                        {%  if key == attendee %}
+                                            <td>{{ value }}</td>
+                                        {%  endif %}
+                                    {%  endfor %}
                                 {% endif %}
                                 <td>
                                     <a href="#" data-id="{{ attendee.id }}" class="toggle-attendee attended">

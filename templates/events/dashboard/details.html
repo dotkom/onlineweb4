@@ -52,6 +52,11 @@ Arrangementsdetaljer
                     <a href="#extra" aria-controls="extra" role="tab" data-toggle="tab">Ekstra</a>
                 </li>
             {% endif %}
+            {%  if payment_prices %}
+                <li role="presentation">
+                    <a href="#payment-summary" aria-controls="payment-summary" role="tab" data-toggle="tab">Betalingsoppsumering</a>
+                </li>
+            {% endif %}
         </ul>
     </div>
 </div>
@@ -70,6 +75,9 @@ Arrangementsdetaljer
     </div>
     <div role="tabpanel" class="tab-pane" id="extra">
         {%  include "events/dashboard/details/extra.html" %}
+    </div>
+<div role="tabpanel" class="tab-pane" id="payment-summary">
+        {%  include "events/dashboard/details/payment_summary.html" %}
     </div>
 </div>
 

@@ -1,10 +1,16 @@
-{% for payment_price in payment.prices %}
-	<p class="status-text payment-price-tag">Prisen er på {{ payment_price.price }} Kr.</p>
-	<button id="stripeButton{{ payment_price.id }}" class="btn btn-large btn-success payment-button">Betal med kort</button>
-	{% if payment.prices|length > 1 %}
-		<p class="help-text row-space">{{payment_price.description}}</p>
-	{% endif %}
-{% endfor %}
+{%  if payment.prices|length == 1 %}
+    <p class="status-text payment-price-tag">Prisen er på {{ payment_price.price }} Kr.</p>
+	<button id="stripeButton{{ payment_price.id }}" class="btn btn-large btn-success payment-button">Betal med kort</button>
+{%  else %}
+    {% for payment_price in payment.prices %}
+        <p class="status-text payment-price-tag">{{ payment_price.description }}</p>
+        <button id="stripeButton{{ payment_price.id }}" class="btn btn-large btn-success payment-button">Betal med kort</button>
+        {% if payment.prices|length > 1 %}
+            <p class="help-text row-space">{{ payment_price.price }} Kr.</p>
+        {% endif %}
+    {% endfor %}
+{%  endif %}
+
 {% if payment_delay %}
 	<p class="help-text row_space">Frist: {{ payment_delay.valid_to }}</p>
 	<br>
