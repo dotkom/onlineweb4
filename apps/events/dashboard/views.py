@@ -114,20 +114,6 @@ def _create_details_context(request, event_id):
                 Reservee, max_num=seats, extra=seats, fields=['name', 'note', 'allergies'])
             context['change_reservees_formset'] = ReserveeFormSet(
                 queryset=event.attendance_event.reserved_seats.reservees.all())
-        if event.attendance_event.payment() and len(event.attendance_event.payment().prices()) > 1:
-            payments = {}
-
-            for attendee in event.attendance_event.attendees_qs:
-                paymentRelation = PaymentRelation.objects.filter(
-                    payment=event.attendance_event.payment(),
-                    user=attendee.user,
-                    refunded=False
-                )
-
-                if paymentRelation:
-                    payments[attendee] = paymentRelation[0].payment_price
-
-            context['payment_prices'] = payments
 
     return context
 
