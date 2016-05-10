@@ -19,7 +19,7 @@ django-grappelli==2.8.1         # Admin template set
 # git+git://github.com/clintecker/django-chunks.git@0.2# Chunks, or reusable key:content for templates.
 git+https://github.com/dotKom/django-chunks.git@68cf551f08cfd8c40de9d82318e4fd20b814df7a#egg=django-chunks==0.3
 django-crispy-forms==1.6.0      # nice forms
-django-extensions==1.6.6        # nice extra commands for debugging, etc
+django-extensions==1.6.7        # nice extra commands for debugging, etc
 django-dynamic-fixture==1.8.5   # Dynamic fixtures for models
 django-recaptcha==1.0.5         # Google ReCaptcha
 django-oauth-toolkit==0.8.1     # OAuth2 authentication support
