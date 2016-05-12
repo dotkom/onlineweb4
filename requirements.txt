@@ -27,7 +27,7 @@ django_compressor==2.0          # Compiles less and minifies js
 django-watson==1.2.1            # Indexed model search lib
 django-reversion==1.10.2        # Model version history with middleware hooks to all post_save signals
 django-guardian==1.4.4          # Per Object permissions framework
-django-taggit==0.18.2           # Generic multi-model tagging library
+django-taggit==0.18.3           # Generic multi-model tagging library
 django-taggit-serializer==0.1.5 # REST Framework serializers for Django-taggit
 APScheduler==3.1.0              # Scheduler
 feedme==1.9.5
