@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from collections import OrderedDict
 from datetime import datetime, time, timedelta
 
 from django.contrib import messages
@@ -18,6 +19,7 @@ from apps.events.dashboard.forms import (ChangeAttendanceEventForm, ChangeEventF
 from apps.events.dashboard.utils import event_ajax_handler
 from apps.events.models import AttendanceEvent, Attendee, Event, Reservation, Reservee
 from apps.events.utils import get_group_restricted_events, get_types_allowed
+from apps.payment.models import PaymentRelation
 
 
 @login_required
@@ -116,6 +118,36 @@ def _create_details_context(request, event_id):
     return context
 
 
+def _payment_prices(attendance_event):
+    payments = {}
+    summary = OrderedDict()
+
+    payment = attendance_event.payment()
+
+    if payment and len(payment.prices()) > 1:
+
+        for price in payment.prices():
+            summary[price] = 0
+
+        summary["Ikke valgt"] = 0
+
+        for attendee in attendance_event.attendees_qs:
+            paymentRelation = PaymentRelation.objects.filter(
+                payment=attendance_event.payment(),
+                user=attendee.user,
+                refunded=False
+            )
+
+            if paymentRelation:
+                payments[attendee] = paymentRelation[0].payment_price
+                summary[paymentRelation[0].payment_price] += 1
+            else:
+                payments[attendee] = "-"
+                summary['Ikke valgt'] += 1
+
+    return (payments, summary)
+
+
 @login_required
 @permission_required('events.view_event', return_403=True)
 def event_details(request, event_id, active_tab='details'):
@@ -203,6 +235,9 @@ def event_change_attendees(request, event_id, active_tab='attendees'):
     context['change_event_form'] = ChangeEventForm(instance=event)
     if event.is_attendance_event():
         context['change_attendance_form'] = ChangeAttendanceEventForm(instance=event.attendance_event)
+        prices = _payment_prices(event.attendance_event)
+        context['payment_prices'] = prices[0]
+        context['payment_price_summary'] = prices[1]
 
     context['extras'] = extras
     context['change_event_form'] = ChangeEventForm(instance=event)

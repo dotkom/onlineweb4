@@ -5,11 +5,6 @@
 {% load crispy_forms_tags %}
 
 {% block title %}Webshop {{ product }} - Online{% endblock title %}
-{% block header %}
-<a href="{% url 'webshop_home' %}">Webshop /</a> 
-<a href="{% url 'webshop_category' slug=product.category.slug %}">{{ product.category }}</a> / 
-{{product}}
-{% endblock header %}
 
 {% block webshop_content %}
 
@@ -43,12 +38,22 @@
         </div>
     </div>
     <div class="col-sm-5">
-      <div class="product-name">
-        {{ product.name }}
-      </div>
-      <div class="product-price">
-        {{ product.price|default:0|floatformat:2 }}
-      </div>
+        <div class="product-name">
+            {{ product.name }}
+        </div>
+        <div class="product-price">
+            {{ product.price|default:0|floatformat:2 }}
+        </div>
+        {% if product.stock != None %}
+        <div class="product-stock">
+            {% if product.in_stock %}
+                På lager
+            {% else %}
+                Utsolgt
+            {% endif %}
+        </div>
+        {% endif %}
+        {% if product.in_stock %}
         <form method="post">
           {% csrf_token %}
           <div class="form-group order-form">
@@ -59,7 +64,11 @@
             {% if sizes %}
               <select id="size" name="size" class="form-control">
                 {% for size in sizes %}
-                  <option value="{{ size.pk }}">{{ size.size }} {% if size.description %} - {{size.description }} {% endif %}</option>
+                    {% if size.stock != None and size.stock <= 0 %}
+                    <option disabled>{{ size }} (Utsolgt)</option>
+                    {% else %}
+                    <option value="{{ size.pk }}">{{ size }}</option>
+                    {% endif %}
                 {% endfor %}
               </select>
             {% endif %}
@@ -67,6 +76,7 @@
           </div>
           <input type="submit" class="btn btn-lg btn-default" value="Legg til">
         </form>
+        {% endif %}
         {% if product.deadline %}
           <hr>
           <p>Dette produktet er kun tilgjengelig frem til </p>

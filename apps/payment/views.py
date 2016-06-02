@@ -129,6 +129,11 @@ def webshop_pay(request):
             try:
                 stripe.api_key = settings.STRIPE_PRIVATE_KEYS["prokom"]
 
+                if not order_line.is_valid():
+                    error = "Ordren er ikke gyldig."
+                    messages.error(request, error)
+                    return HttpResponse(error, content_type="text/plain", status=400)
+
                 charge = stripe.Charge.create(
                     amount=amount,
                     currency="nok",
@@ -269,7 +274,7 @@ def _send_webshop_mail(order_line):
     )
 
     logging.getLogger(__name__).debug("Logging for send webshop mail")
-    logging.getLogger(__name__).info(str(order_line))
+    logging.getLogger(__name__).info("%s (#%s)" % (str(order_line), order_line.id))
 
     message += "\nDine produkter:"
     products = ""

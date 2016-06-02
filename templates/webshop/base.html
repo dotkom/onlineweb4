@@ -15,25 +15,34 @@
 {% block content %}
 <section id="webshop">
     <div class="container">
-        <div class="col-md-12">
-            <div class="page-header">
-                <h2 id="heading">{% block header%}Webshop{% endblock %}</h2>
-            </div>
-            <div class="webshop-cart pull-right">
-                <a href="{% url 'webshop_checkout' %}"><span class="glyphicon glyphicon-shopping-cart"></span>
-                {% with count=order_line.count_orders %}
-                    {{ count }} varer i handlevognen.</a>
-                {% endwith %}
-            </div>
+        <div class="page-header">
+            <h2 id="heading">Webshop</h2>
+            {% if breadcrumbs %}
+            <ol class="breadcrumb">
+                {% for breadcrumb in breadcrumbs %}
+                    {% if breadcrumb.url %}
+                        <li><a href="{{ breadcrumb.url }}">{{ breadcrumb.name }}</a></li>
+                    {% else %}
+                        <li class="active">{{ breadcrumb.name }}</li>
+                    {% endif %}
+                {% endfor %}
+            </ol>
+            {% endif %}
         </div>
-        
+        <div class="webshop-cart pull-right">
+            <a href="{% url 'webshop_checkout' %}"><span class="glyphicon glyphicon-shopping-cart"></span>
+            {% with count=order_line.count_orders|default:0 %}
+                {{ count }} vare{{ count|pluralize:"r" }} i handlevognen</a>
+            {% endwith %}
+        </div>
+
 
         {% block webshop_content %}
-    
+
             {% for product in products %}
 
                 {% if forloop.counter|divisibleby:2 %}
-                <div class="row">   
+                <div class="row">
                 {% endif %}
                     <div class="col-xs-12 col-sm-6 col-md-6">
                         <div class="col-md-5">
@@ -56,7 +65,7 @@
                 </div>
                 {% endif %}
                 {% empty %}
-                    <li>Fant ingen produkter</li>
+                    <p class="ingress">Ingen produkter funnet.</p>
             {% endfor %}
 
         {% endblock %}

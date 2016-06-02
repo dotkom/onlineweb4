@@ -5,10 +5,6 @@
 {% load crispy_forms_tags %}
 
 {% block title %}Webshop - Online{% endblock title %}
-{% block header %}
-<a href="{% url 'webshop_home' %}">Webshop /</a> 
-Checkout
-{% endblock header %}
 
 {% block webshop_content %}
 {% if order_line.orders.all %}
@@ -67,7 +63,7 @@ Checkout
 </table>
 
 {% else %}
-Handlekurven din er tom
+    <p class="ingress">Handlekurven din er tom</p>
 {% endif %}
 
 {% endblock %}

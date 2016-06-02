@@ -42,10 +42,6 @@ class CategoryCreate(DashboardPermissionMixin, CreateView):
     template_name = 'webshop/dashboard/category_update.html'
     permission_required = 'webshop.add_category'
 
-    def get_object(self, *args, **kwargs):
-        # django-guardian hack https://github.com/django-guardian/django-guardian/issues/195
-        return None
-
     def get_success_url(self):
         return reverse('dashboard-webshop:categories')
 
@@ -93,10 +89,6 @@ class ProductCreate(DashboardPermissionMixin, CreateView):
         category = get_object_or_404(Category, slug=self.kwargs.get('category_slug'))
         product.category = category
         return super(ProductCreate, self).form_valid(form)
-
-    def get_object(self, *args, **kwargs):
-        # django-guardian hack https://github.com/django-guardian/django-guardian/issues/195
-        return None
 
     def get_success_url(self):
         return reverse('dashboard-webshop:category', kwargs={'slug': self.kwargs.get('category_slug')})
@@ -158,13 +150,13 @@ class Orders(DashboardPermissionMixin, ListView):
 class Order(DashboardPermissionMixin, DetailView):
     model = OrderLine
     template_name = 'webshop/dashboard/order.html'
-    permission_required = 'webshop.change_order_line'
+    permission_required = 'webshop.change_orderline'
     context_object_name = 'order'
 
 
 class OrderDeliver(DashboardPermissionMixin, DetailView):
     model = OrderLine
-    permission_required = 'webshop.change_order_line'
+    permission_required = 'webshop.change_orderline'
 
     def post(self, *args, **kwargs):
         super(OrderDeliver, self).get(*args, **kwargs)
