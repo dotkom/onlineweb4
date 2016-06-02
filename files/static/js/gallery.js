@@ -130,6 +130,14 @@ var GalleryCrop = (function ($, Cropper, utils) {
       Gallery.events.fire('gallery-imageDataChanged')
     })
 
+    IMAGE_NAME.on('keyup', function (e) {
+      Gallery.events.fire('gallery-imageDataChanged')
+    })
+
+    IMAGE_DESCRIPTION.on('keyup', function (e) {
+      Gallery.events.fire('gallery-imageDataChanged')
+    })
+
     // Listen for changes to image data, so we can perform necessary tasks like sanity checks / validation
     Gallery.events.on('gallery-imageDataChanged', function () {
       GalleryCrop.validate(self.presets[IMAGE_PRESET.children('option:selected').val()])
@@ -283,7 +291,7 @@ var GalleryCrop = (function ($, Cropper, utils) {
         _errors.push('Bildehøyden er mindre enn minstekravet: {0}'.format(preset.min_height))
       }
       if (IMAGE_NAME.val().length <= 3) {
-        _errors.push('Bildet må ha et navn på mer enn 2 bokstaver.')
+        _errors.push('Bildet må ha et navn på mer enn 3 bokstaver.')
       }
       if (IMAGE_DESCRIPTION.val().length === 0) {
         _errors.push('Bildet må ha en beskrivelse')
@@ -297,8 +305,6 @@ var GalleryCrop = (function ($, Cropper, utils) {
       } else {
         GalleryCrop.log('OK')
       }
-
-      var KRISTIANE = 'Freaky'
 
       return _errors
     }
