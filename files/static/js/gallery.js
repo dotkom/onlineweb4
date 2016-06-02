@@ -178,6 +178,7 @@ var GalleryCrop = (function ($, Cropper, utils) {
       // event listeners.
       if (IMAGE_PRESET.length > 0) {
         bindEventListeners()
+        // Presets are defined in the Gallery app settings file
         getCropPresetsFromServer()
       }
     },
@@ -218,7 +219,8 @@ var GalleryCrop = (function ($, Cropper, utils) {
     },
 
     /**
-     * Activates a new cropping preset by the given ID
+     * Activates a new cropping preset by the given ID. Presets are defined in the Gallery app settings
+     * on the backend, and fetched through a view each time the Gallery front end module is loaded.
      * @param preset An integer representing the preset ID from the dropdown menu
      */
     preset: function (preset) {
@@ -229,6 +231,7 @@ var GalleryCrop = (function ($, Cropper, utils) {
       if (self.presets[preset].aspect_ratio) {
         self.cropper.setAspectRatio(self.presets[preset].aspect_ratio_x / self.presets[preset].aspect_ratio_y)
       } else {
+        // Cropper.js uses NaN to represent no aspect ratio requirements
         self.cropper.setAspectRatio(NaN)
       }
 

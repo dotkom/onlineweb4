@@ -87,7 +87,70 @@ def unhandled(request):
     return JsonResponse({'status': 405, 'message': 'Method not allowed'}, status=405)
 
 
-# Same here, delete all files if something goes wrong, not yet handled
+class CropView(PermissionRequiredMixin, View):
+    """
+    Handler view for processing of crop actions on an image, given data from a POST request.
+    """
+
+    log = logging.getLogger(__name__)
+    permission_required = 'gallery.add_responsiveimage'
+
+    def get(self, *args, **kwargs):
+        """
+        Http GET request handler
+        :param args: Positional arguments
+        :param kwargs: Keyword arguments
+        :return: An HttpResponse
+        """
+
+        return JsonResponse({'error': 'Method not allowed', 'status': 405})
+
+    def post(self, *args, **kwargs):
+        """
+        Http POST request handler
+        :param args: Positional arguments
+        :param kwargs: Keyword arguments
+        :return: An HttpResponse
+        """
+
+        crop_data = self.request.POST
+
+        # Check that the image ID exists
+        image = get_object_or_404(UnhandledImage, pk=crop_data['id'])
+
+        # Fetch values from Django's immutable MultiValueDict
+        config = {key: crop_data.get(key) for key in crop_data.keys()}
+        config['preset'] = 'article'
+
+        # Construct a responsive image handler and configure it using the provided request data
+        handler = ResponsiveImageHandler(image)
+        status = handler.configure(config)
+        if not status:
+            return HttpResponse(status.message, status=400)
+
+        # Generate the responsive versions based on the provided request data
+        status = handler.generate()
+        if not status:
+            return HttpResponse(status.message, status=500)
+
+        # Add Taggit tags if provided
+        resp_image = status.data
+        tags = crop_data.get('tags')
+        if tags:
+            resp_image.tags.add(*parse_tags(tags))
+
+        # Log who performed the crop operation
+        self.log.info(
+            '%s cropped and saved ResponsiveImage %d (%s)' % (
+                self.request.user,
+                resp_image.id,
+                config.get('name')
+            )
+        )
+
+        return JsonResponse(data={'name': config['name'], 'id': resp_image.id})
+
+
 @login_required
 @permission_required('gallery.add_responsiveimage')
 def crop(request):
@@ -139,6 +202,7 @@ def crop(request):
 class PresetView(PermissionRequiredMixin, View):
     """
     View class for querying the gallery backend about which image cropping presets are available.
+    Presets are defined in the app's settings.py file.
     """
 
     permission_required = 'gallery.view_responsiveimage'
