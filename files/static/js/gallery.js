@@ -48,6 +48,10 @@ var GalleryCrop = (function ($, Cropper, utils) {
   var IMAGE_SET_CROP_MODE = $('#gallery__image-edit__crop')
   var IMAGE_SET_DRAG_MODE = $('#gallery__image-edit__drag')
   var IMAGE_RESET = $('#gallery__image-edit__reset')
+  var IMAGE_DESCRIPTION = $('#gallery__image-edit--description')
+  var IMAGE_NAME = $('#gallery__image-edit--name')
+  var IMAGE_PHOTOGRAPHER = $('#gallery__image-edit--photographer')
+  var IMAGE_TAGS = $('#gallery__image-edit--tags')
   var MANAGE_BUTTON = $('#gallery__edit-button')
   var MANAGE_PANE = $('#gallery__manage-pane')
   var PREVIEW_IMAGE = $('#gallery__image-edit--preview')
@@ -67,11 +71,13 @@ var GalleryCrop = (function ($, Cropper, utils) {
     rotatable: false,
     multiple: false,
     cropmove: function (event) {
-      $('#gallery__image-edit--width').val(self.cropper.getData(true).width)
-      $('#gallery__image-edit--height').val(self.cropper.getData(true).height)
+      var cropData = self.cropper.getData(true)
 
-      // TODO: Apply validation function that checks lower height and width bounds with respect to
-      // the currently active preset
+      $('#gallery__image-edit--width').val(cropData.width)
+      $('#gallery__image-edit--height').val(cropData.height)
+
+      // Since we just moved the crop window, we need to inform stuff that listens for image data changes
+      Gallery.events.fire('gallery-imageDataChanged')
     }
   }
 
@@ -84,11 +90,13 @@ var GalleryCrop = (function ($, Cropper, utils) {
     // Zoom in
     IMAGE_ZOOM_IN.on('click', function (e) {
       self.cropper.zoom(0.1)
+      Gallery.events.fire('gallery-imageDataChanged')
     })
 
     // Zoom out
     IMAGE_ZOOM_OUT.on('click', function (e) {
       self.cropper.zoom(-0.1)
+      Gallery.events.fire('gallery-imageDataChanged')
     })
 
     // Activates crop selection tool
@@ -111,6 +119,7 @@ var GalleryCrop = (function ($, Cropper, utils) {
       var imageData = self.cropper.getData(true)
       imageData.height = Number(IMAGE_HEIGHT.val())
       self.cropper.setData(imageData)
+      Gallery.events.fire('gallery-imageDataChanged')
     })
 
     // Listen for changes directly to the width field
@@ -118,6 +127,12 @@ var GalleryCrop = (function ($, Cropper, utils) {
       var imageData = self.cropper.getData(true)
       imageData.width = Number(IMAGE_WIDTH.val())
       self.cropper.setData(imageData)
+      Gallery.events.fire('gallery-imageDataChanged')
+    })
+
+    // Listen for changes to image data, so we can perform necessary tasks like sanity checks / validation
+    Gallery.events.on('gallery-imageDataChanged', function () {
+      GalleryCrop.validate(self.presets[IMAGE_PRESET.children('option:selected').val()])
     })
   }
 
@@ -151,8 +166,6 @@ var GalleryCrop = (function ($, Cropper, utils) {
         var preset = $(this).children('option:selected').val()
         GalleryCrop.preset(preset)
       })
-
-      IMAGE_LOG.text('Klar til bruk')
     }
 
     // Declare error callback
@@ -184,11 +197,19 @@ var GalleryCrop = (function ($, Cropper, utils) {
     },
 
     /**
+     * Performs a validation check before sending a POST request to the backend with the current cropData.
+     * @param {object} preset A preset object containing attributes such as min_width, aspect_ratio etc.
+     */
+    crop: function (preset) {
+      // TODO: Maek code to do things
+    },
+
+    /**
      * Prints a log message to the log field in the right hand sidebar of the edit image view
      * @param {string} msg The message to be displayed
      */
     log: function (msg) {
-      IMAGE_LOG.text(msg)
+      IMAGE_LOG.html('<br />{0}'.format(msg))
     },
 
     /**
@@ -214,7 +235,8 @@ var GalleryCrop = (function ($, Cropper, utils) {
         IMAGE_HEIGHT.val(cropData.height)
         IMAGE_WIDTH.val(cropData.width)
 
-        GalleryCrop.log('Klar til bruk')
+        // Since we just changed what image is active, we need to inform stuff that listens for image data changes
+        Gallery.events.fire('gallery-imageDataChanged')
       }, 500)
     },
 
@@ -239,6 +261,46 @@ var GalleryCrop = (function ($, Cropper, utils) {
       var cropData = self.cropper.getData(true)
       IMAGE_HEIGHT.val(cropData.height)
       IMAGE_WIDTH.val(cropData.width)
+
+      // Since we just switched preset, we need to inform stuff that listens for image data changes
+      Gallery.events.fire('gallery-imageDataChanged')
+    },
+
+    /**
+     * Validates the current crop selection against a preset (object with min_height, min_width etcc)
+     * @param {object} preset Object with min_height, min_width etc.
+     */
+    validate: function (preset) {
+      var _cropData = self.cropper.getData(true)
+      var _errors = []
+
+      // Perform the checks on crop data vs preset, as well as form input fields
+
+      if (preset.min_width !== undefined && _cropData.width < preset.min_width) {
+        _errors.push('Bildebredden er mindre enn minstekravet: {0}'.format(preset.min_width))
+      }
+      if (preset.min_height !== undefined && _cropData.height < preset.min_height) {
+        _errors.push('Bildehøyden er mindre enn minstekravet: {0}'.format(preset.min_height))
+      }
+      if (IMAGE_NAME.val().length <= 3) {
+        _errors.push('Bildet må ha et navn på mer enn 2 bokstaver.')
+      }
+      if (IMAGE_DESCRIPTION.val().length === 0) {
+        _errors.push('Bildet må ha en beskrivelse')
+      }
+
+      // Display the errors in the status field
+      if (_errors.length > 0) {
+        var errorTemplate = '<br /><i>Må utbedres:</i><ul>' +
+          '<% _(errors).each(function (e) { %><li><%= e %></li><% }) %></ul>'
+        IMAGE_LOG.html(utils.render(errorTemplate, {errors: _errors}))
+      } else {
+        GalleryCrop.log('OK')
+      }
+
+      var KRISTIANE = 'Freaky'
+
+      return _errors
     }
   }
 })(window.jQuery, window.Cropper, new window.Utils())
