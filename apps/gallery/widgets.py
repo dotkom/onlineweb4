@@ -78,4 +78,12 @@ class TagInputField(TextInput):
         super(TagInputField, self).__init__(attrs=attrs)
 
     def render(self, name, value, attrs=None):
+        """
+        Renders this field widget as HTML
+        :param name: Field input name
+        :param value: Field input value
+        :param attrs: Field input attributes
+        :return: An HTML string representing this widget
+        """
+
         return super(TagInputField, self).render(name, value, attrs=attrs)

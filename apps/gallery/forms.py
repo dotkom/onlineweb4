@@ -18,7 +18,7 @@ class DocumentForm(forms.Form):
         else:
             form_data = self.cleaned_data['file']
 
-        # Because PIL is a fucking idiot
+        # Legacy fix for PIL, not sure if needed anymore
         correct_file_name = _get_correct_file_name(form_data)
         form_data.name = correct_file_name
 

@@ -38,6 +38,7 @@ var GalleryCrop = (function ($, Cropper, utils) {
   var self = this
 
   // DOM References
+  var CROP_IMAGE = $('#gallery__image-edit--submit')
   var EDIT_CONTAINER = $('#gallery__image-edit-container')
   var IMAGE_LOG = $('#gallery__image-edit--log')
   var IMAGE_PRESET = $('#gallery__image-edit--preset')
@@ -54,10 +55,14 @@ var GalleryCrop = (function ($, Cropper, utils) {
   var IMAGE_TAGS = $('#gallery__image-edit--tags')
   var MANAGE_BUTTON = $('#gallery__edit-button')
   var MANAGE_PANE = $('#gallery__manage-pane')
+  var MODAL_CROPFAILED = $('#gallery__image-edit__crop-failed')
+  var MODAL_PROCESSING = $('#gallery__image-edit__processing')
+  var RESET_BUTTON = $('#gallery__image-edit__back')
   var PREVIEW_IMAGE = $('#gallery__image-edit--preview')
 
   // Cropper
   self.cropper = null
+  self.imageId = -1
   self.presets = []
   self.options = {
     aspectRatio: 16 / 9,
@@ -138,9 +143,33 @@ var GalleryCrop = (function ($, Cropper, utils) {
       Gallery.events.fire('gallery-imageDataChanged')
     })
 
+    // Listen for crop button click event
+    CROP_IMAGE.on('click', function (e) {
+      e.preventDefault()
+      GalleryCrop.crop(self.presets[IMAGE_PRESET.children('option:selected').val()])
+    })
+
     // Listen for changes to image data, so we can perform necessary tasks like sanity checks / validation
     Gallery.events.on('gallery-imageDataChanged', function () {
       GalleryCrop.validate(self.presets[IMAGE_PRESET.children('option:selected').val()])
+    })
+
+    // Hop back to the unhandled image thumbnail preview on crop success
+    Gallery.events.on('gallery-imageCropSuccessful', function (e) {
+      MODAL_PROCESSING.modal('hide')
+      RESET_BUTTON.click()
+      GalleryCrop.reset()
+
+      // Fire the newUnhandledImage event, as it will force a reload of the server side state
+      Gallery.events.fire('gallery-newUnhandledImage')
+    })
+
+    // Handle crop failure events
+    Gallery.events.on('gallery-imageCropFailed', function (e) {
+      MODAL_PROCESSING.modal('hide')
+      MODAL_CROPFAILED.modal('show')
+
+      GalleryCrop.reset()
     })
   }
 
@@ -209,7 +238,33 @@ var GalleryCrop = (function ($, Cropper, utils) {
      * @param {object} preset A preset object containing attributes such as min_width, aspect_ratio etc.
      */
     crop: function (preset) {
-      // TODO: Maek code to do things
+      var _errors = GalleryCrop.validate(preset)
+
+      // Fire cropFailed and return prematurely if errors exist
+      if (_errors.length > 0) return Gallery.events.fire('gallery-imageCropFailed')
+
+      // Declare the success callback
+      var _success = function (data) {
+        Gallery.events.fire('gallery-imageCropSuccessful')
+      }
+      // Declare the error callback
+      var _error = function (xhr, errorMessage, responseText) {
+        Gallery.events.fire('gallery-imageCropFailed')
+        console.error('Received error: ' + xhr.responseText + ' ' + errorMessage)
+      }
+
+      // Prepare the image crop data payload with necessary fields
+      var payload = self.cropper.getData(true)
+      payload.id = self.imageId
+      payload.name = IMAGE_NAME.val()
+      payload.description = IMAGE_DESCRIPTION.val()
+      payload.photographer = IMAGE_PHOTOGRAPHER.val() || ''
+      payload.tags = IMAGE_TAGS.val() || ''
+
+      // Lock user out from GUI
+      MODAL_PROCESSING.modal('show')
+
+      Gallery.ajax('POST', '/gallery/crop/', payload, _success, _error)
     },
 
     /**
@@ -222,11 +277,15 @@ var GalleryCrop = (function ($, Cropper, utils) {
 
     /**
      * Opens the image crop and manage view, given some image data
-     * @param {object} img An object containing at least an image ID, and full original size url
+     * @param {Number} img An image ID as stored in the database (PK)
      */
     manage: function (img) {
       var imageData = Gallery.images.get(img)
       var image = new window.Image()
+
+      // Keep the ID, since we need it later when POSTing the crop data
+      self.imageId = img
+
       image.id = 'gallery__image-active'
       image.src = imageData.image
 
@@ -275,6 +334,20 @@ var GalleryCrop = (function ($, Cropper, utils) {
     },
 
     /**
+     * Resets all fields in the image cropping form
+     */
+    reset: function () {
+      IMAGE_WIDTH.val('0')
+      IMAGE_HEIGHT.val('0')
+      IMAGE_NAME.val('')
+      IMAGE_DESCRIPTION.val('')
+      IMAGE_PHOTOGRAPHER.val('')
+      IMAGE_TAGS.val('')
+      // Reset preset stuff
+      getCropPresetsFromServer()
+    },
+
+    /**
      * Validates the current crop selection against a preset (object with min_height, min_width etcc)
      * @param {object} preset Object with min_height, min_width etc.
      */
@@ -318,6 +391,7 @@ var Gallery = (function ($, utils, MicroEvent, Dropzone) {
   // DOM references
   var MANAGE_BUTTON_TEXT = $('#gallery__manage-button-text')
   var THUMBNAIL_VIEW = $('#gallery__thumbnail-view')
+  var DASHBOARD_MENU_GALLERY_UNHANDLED_BADGE = $('#dashboard__menu--gallery-unhandled-badge')
 
   /**
    * Set up AJAX such that Django receives its much needed CSRF token
@@ -390,6 +464,15 @@ var Gallery = (function ($, utils, MicroEvent, Dropzone) {
 
       // Update the manage button text and create thumbnails for the manage unhandled images view
       MANAGE_BUTTON_TEXT.text('Behandle ({0})'.format(images.length))
+
+      // Update the sidebar menu badge as well
+      var badge = '<small class="badge"><%= unhandledCount %></small>'
+      if (images.length > 0) {
+        DASHBOARD_MENU_GALLERY_UNHANDLED_BADGE.html(utils.render(badge, {unhandledCount: images.length}))
+      } else {
+        DASHBOARD_MENU_GALLERY_UNHANDLED_BADGE.html('')
+      }
+
       createUnhandledImageThumbnails(images)
     }
 

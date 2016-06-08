@@ -26,13 +26,13 @@ RESPONSIVE_IMAGES_XS_SIZE = (640, 360)
 THUMBNAIL_QUALITY = 70
 RESPONSIVE_IMAGE_QUALITY = 100
 
-# Presets and aspect ratios
+# Presets and aspect ratios. Active presets are defined in the PRESETS list
 ARTICLE = {
     'aspect_ratio': True,
     'aspect_ratio_x': 19,
     'aspect_ratio_y': 7,
     'min_width': 1280,
-    'min_height': 720,
+    'min_height': 472,
     'description': 'Artikkel'
 }
 COMPANY = {

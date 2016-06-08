@@ -127,9 +127,11 @@
                             <li>
                                 <a href="{% url 'gallery_dashboard:unhandled' %}">
                                     <i class="fa fa-angle-double-right orange"></i> Ubehandlet
+                                    <span id="dashboard__menu--gallery-unhandled-badge">
                                     {% if unhandled_images %}
                                         <small class="badge">{{ unhandled_images.count }}</small>
                                     {% endif %}
+                                    </span>
                                 </a>
                             </li>
                             {% endif %}

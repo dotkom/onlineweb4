@@ -16,7 +16,7 @@
                     <div class="tab-pane fade" id="gallery__edit-pane" role="tabpanel">
                         <div class="row">
                             <div class="col-lg-8 col-md-9 col-sm-12 col-xs-12">
-                                <a href="#gallery__thumbnail-pane" class="btn btn-primary" role="tab" data-toggle="tab">
+                                <a href="#gallery__thumbnail-pane" id="gallery__image-edit__back" class="btn btn-primary" role="tab" data-toggle="tab">
                                     <i class="fa fa-chevron-left"></i> Tilbake
                                 </a>
                             </div>
@@ -106,7 +106,7 @@
                                     <input class="form-control" type="text" id="gallery__image-edit--tags" name="name" placeholder="Eksempel: kjelleren, kontoret, åre" />
                                 </div>
                                 <div class="form-group">
-                                    <button type="submit" class="btn btn-success">
+                                    <button type="submit" class="btn btn-success" id="gallery__image-edit--submit">
                                         <i class="fa fa-submit"></i> Beskjær og lagre bilde
                                     </button>
                                 </div>
@@ -124,3 +124,38 @@
         </div>
     </div>
 </div>
+
+<!-- Modals -->
+<div class="modal fade" tabindex="-1" role="dialog" id="gallery__image-edit__processing"
+     data-keyboard="false" data-backdrop="static">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Behandler bilde</h4>
+      </div>
+      <div class="modal-body">
+        <p>Vennligst vent...<br /></p>
+        <p class="text-center">
+            <i class="fa fa-spinner fa-4x fa-spin"></i>
+        </p>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<div class="modal fade" tabindex="-1" role="dialog" id="gallery__image-edit__crop-failed">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">Ugyldig data</h4>
+      </div>
+      <div class="modal-body">
+        <p>Skjemaet inneholdt ugyldig bildedata. Se statusfeltet på høyre side for nærmere informasjon.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Lukk</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
