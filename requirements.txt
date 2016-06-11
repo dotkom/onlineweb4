@@ -25,7 +25,7 @@ django-recaptcha==1.0.5         # Google ReCaptcha
 django-oauth-toolkit==0.8.1     # OAuth2 authentication support
 django_compressor==2.0          # Compiles less and minifies js
 django-watson==1.2.1            # Indexed model search lib
-django-reversion==1.10.2        # Model version history with middleware hooks to all post_save signals
+django-reversion==2.0.0        # Model version history with middleware hooks to all post_save signals
 django-guardian==1.4.4          # Per Object permissions framework
 django-taggit==0.19.1           # Generic multi-model tagging library
 django-taggit-serializer==0.1.5 # REST Framework serializers for Django-taggit
