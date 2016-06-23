@@ -28,6 +28,7 @@ EMAIL_BEDKOM = 'bedkom@online.ntnu.no'
 EMAIL_DOTKOM = 'dotkom@online.ntnu.no'
 EMAIL_EKSKOM = 'ekskom@online.ntnu.no'
 EMAIL_FAGKOM = 'fagkom@online.ntnu.no'
+EMAIL_ITEX = 'itex@online.ntnu.no'
 EMAIL_PROKOM = 'prokom@online.ntnu.no'
 EMAIL_TRIKOM = 'trikom@online.ntnu.no'
 
