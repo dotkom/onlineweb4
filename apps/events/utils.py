@@ -350,6 +350,8 @@ def handle_mail_participants(event, _from_email, _to_email_value, subject, _mess
         from_email = settings.EMAIL_FAGKOM
     elif from_email_value == '5':
         from_email = settings.EMAIL_EKSKOM
+    elif from_email_value == '6':
+        from_email = settings.EMAIL_ITEX
 
     # Who to send emails to
     send_to_users = _to_email_options[_to_email_value][0]
