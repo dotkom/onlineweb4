@@ -1,3 +1,4 @@
+{% load compress %}
 {% load markdown_deux_tags %}
 {% load calendar_filters %}
 
@@ -14,8 +15,10 @@
 
   <link rel="icon" href="{{ STATIC_URL }}img/favicon.png">
   <link href="https://fonts.googleapis.com/css?family=Ubuntu:400,300" rel="stylesheet" type="text/css">
+  {% compress css %}
   <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/splash/reset.css">
   <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/splash/main.css">
+  {% endcompress css %}
 
   <link rel="chrome-webstore-item" href="https://chrome.google.com/webstore/detail/hfgffimlnajpbenfpaofmmffcdmgkllf">
 </head>
