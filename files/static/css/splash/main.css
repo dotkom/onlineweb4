@@ -273,7 +273,7 @@ article.cal {
 }
 .cal-left ul li {
   background: url(/static/img/splash/gradient.png);
-  height: 65px;
+  height: 78px;
   width: 92px;
   float: left;
   margin: 0 1px 1px 0;
@@ -285,7 +285,6 @@ article.cal {
   text-align: center;
   display: block;
   color: #ff7800;
-  margin-top: -6px;
 }
 .cal-left ul li span span {
   font-size: 38px;
