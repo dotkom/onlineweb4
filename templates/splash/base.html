@@ -95,7 +95,7 @@
           {% for events in splash_year.events %}
             {% with events|first as firstElement %}
             <li class="" data-date="{{ firstElement.start_time.month }}{{ firstElement.start_time.day }}">
-              <span>{{ firstElement.start_time|date:"F" }}<span>{{ firstElement.start_time.day }}</span>
+              <span>{{ firstElement.start_time|date:"l" }}<span>{{ firstElement.start_time.day }}</span>{{ firstElement.start_time|date:"F" }}</span>
 
               <article>
                 {% for event in events %}
@@ -151,7 +151,7 @@
         <h3>Bedrifter</h3>
         <p>Er du bedrift på jakt etter bedriftspresentasjon eller kurs? Klikk <a href="#" onclick="open_window('#bedrifter'); return false;">her</a> for mer informasjon.</p>
       </div>
-      
+
 
       <div class="right" id="social">
 
