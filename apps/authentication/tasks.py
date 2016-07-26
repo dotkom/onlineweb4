@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import locale
 import logging
 
 from django.conf import settings
@@ -15,12 +14,8 @@ class SynchronizeGroups(Task):
     def run():
         logger = logging.getLogger('syncer.%s' % __name__)
 
-        if not hasattr(settings, "GROUP_SYNCER"):
-            # Make sure to only run the group syncer if we have the settings for it
-            logger.info("GROUP_SYNCER setting not set, not syncing groups")
-        else:
-            locale.setlocale(locale.LC_ALL, 'en_US.utf8')
-
+        if hasattr(settings, "GROUP_SYNCER"):
+            logger.info('Running group syncer.')
             SynchronizeGroups.do_sync(logger)
 
     @staticmethod
