@@ -120,7 +120,6 @@ class CropView(PermissionRequiredMixin, View):
 
         # Fetch values from Django's immutable MultiValueDict
         config = {key: crop_data.get(key) for key in crop_data.keys()}
-        config['preset'] = 'article'
 
         # Construct a responsive image handler and configure it using the provided request data
         handler = ResponsiveImageHandler(image)
@@ -166,7 +165,8 @@ def crop(request):
 
             # Fetch values from Django's immutable MultiValueDict
             config = {key: crop_data.get(key) for key in crop_data.keys()}
-            config['preset'] = 'article'
+
+            log.debug('Crop invoked with config: %s' % repr(config))
 
             # Construct a responsive image handler and configure it using the provided request data
             handler = ResponsiveImageHandler(image)

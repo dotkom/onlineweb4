@@ -63,7 +63,7 @@ var GalleryCrop = (function ($, Cropper, utils) {
   // Cropper
   self.cropper = null
   self.imageId = -1
-  self.presets = []
+  self.presets = {}
   self.options = {
     aspectRatio: 16 / 9,
     preview: '#gallery__image-edit--preview-wrapper',
@@ -168,8 +168,6 @@ var GalleryCrop = (function ($, Cropper, utils) {
     Gallery.events.on('gallery-imageCropFailed', function (e) {
       MODAL_PROCESSING.modal('hide')
       MODAL_CROPFAILED.modal('show')
-
-      GalleryCrop.reset()
     })
   }
 
@@ -182,15 +180,15 @@ var GalleryCrop = (function ($, Cropper, utils) {
 
     // Declare success callback
     var success = function (data) {
-      self.presets = data.presets
-
       // Update the select dropdown
       IMAGE_PRESET.html('')
       var optionTemplate = '<option value="<%= val %>" <%= selected %>><%= description %></option>'
-      for (var i = 0; i < self.presets.length; i++) {
+      for (var i = 0; i < data.presets.length; i++) {
+        var name = data.presets[i].name
+        self.presets[name] = data.presets[i]
         var context = {
-          val: i,
-          description: self.presets[i].description
+          val: name,
+          description: data.presets[i].description
         }
         if (i === 0) context.selected = 'selected'
         else context.selected = ''
@@ -255,10 +253,11 @@ var GalleryCrop = (function ($, Cropper, utils) {
 
       // Prepare the image crop data payload with necessary fields
       var payload = self.cropper.getData(true)
-      payload.id = self.imageId
+      payload.id = Number(self.imageId)
       payload.name = IMAGE_NAME.val()
       payload.description = IMAGE_DESCRIPTION.val()
       payload.photographer = IMAGE_PHOTOGRAPHER.val() || ''
+      payload.preset = IMAGE_PRESET.children(':selected').val()
       payload.tags = IMAGE_TAGS.val() || ''
 
       // Lock user out from GUI
@@ -313,8 +312,7 @@ var GalleryCrop = (function ($, Cropper, utils) {
      * @param preset An integer representing the preset ID from the dropdown menu
      */
     preset: function (preset) {
-      preset = Number(preset)
-      if (preset < 0 || preset >= self.presets.length) return IMAGE_LOG.text('Ugyldig preset ID')
+      if (self.presets[preset] === undefined) return IMAGE_LOG.text('Ugyldig preset ID')
 
       // Reconfigure selection constraints
       if (self.presets[preset].aspect_ratio) {
@@ -478,7 +476,7 @@ var Gallery = (function ($, utils, MicroEvent, Dropzone) {
 
     // Declare the error callback
     var error = function (xhr, errorMessage, responseText) {
-      console.log('Received error: ' + xhr.responseText + ' ' + errorMessage)
+      console.error('Received error: ' + xhr.responseText + ' ' + errorMessage)
     }
 
     // Fetch all unhandled images from the Gallery endpoint
