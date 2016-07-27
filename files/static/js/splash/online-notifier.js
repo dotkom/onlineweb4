@@ -24,10 +24,7 @@ $(function(){
 	var _isNotifierInstalled = chrome.app.isInstalled;
 
 	if (_isChrome && !_isNotifierInstalled) {
-		$('body').append('<button style="position:absolute;top:0;right:0;z-index:100;'+
-			'text-align:center;font-size:13px;width:190px;'+
-			'font-weight:bold;line-height:28px;margin:0;padding:0;font-size:12px;background:#222;color:#FFF;border:none;border-left:1px solid #444;border-bottom:1px solid #444;'+
-			'" id="install_notifier" onclick="_installNotifier();">'+
-			_addNotifier + '</button>');
+		$('body').append('<button class="install-notifier" id="install_notifier" onclick="_installNotifier();">'
+			+ _addNotifier + '</button>');
 	}
 });
