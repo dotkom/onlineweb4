@@ -396,6 +396,8 @@ var Gallery = (function ($, utils, MicroEvent, Dropzone) {
   var _images = {}
 
   // DOM references
+  var BUTTON_ADD_RESPONSIVE_IMAGE = $('#add-responsive-image')
+  var IMAGE_SELECTION_WRAPPER = $('#image-selection-wrapper')
   var MANAGE_BUTTON_TEXT = $('#gallery__manage-button-text')
   var THUMBNAIL_VIEW = $('#gallery__thumbnail-view')
   var DASHBOARD_MENU_GALLERY_UNHANDLED_BADGE = $('#dashboard__menu--gallery-unhandled-badge')
@@ -509,6 +511,12 @@ var Gallery = (function ($, utils, MicroEvent, Dropzone) {
       // Initialize the support modules
       GalleryCrop.init()
       GalleryUpload.init()
+
+      // Listen for form widget button events
+      BUTTON_ADD_RESPONSIVE_IMAGE.on('click', function (e) {
+        e.preventDefault()
+        IMAGE_SELECTION_WRAPPER.slideToggle(100)
+      })
     },
 
     /**

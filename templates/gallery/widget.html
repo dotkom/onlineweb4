@@ -1,51 +1,49 @@
 <!-- IMAGE UPLOAD TEMPLATE FRAGMENT -->
 
 {% load responsive_image_url %}
-<div id="gallery__image-widget">
-    <div id="gallery__image-upload-wrapper" style="display:block">
-    <section id="gallery">
-        <div class="row">
-            <div class="col-md-12">
-                <div class="col-md-6">
-                    <a href="#gallery__upload-pane" id="gallery__upload-button" data-toggle="tab">
-                        <div class="row">
-                            <i class="fa fa-upload fa-3x fa-align-center"></i>
-                        </div>
-                        <div class="row caption" id="gallery__upload-button-text">
-                            Last opp
-                        </div>
-                    </a>
-                </div>
-                <div class="col-md-6">
-                    <a href="#gallery__manage-pane" id="gallery__edit-button" data-toggle="tab">
-                        <div class="row">
-                            <i class="fa fa-edit fa-3x fa-align-center"></i>
-                        </div>
-                        <div class="row caption" id="gallery__manage-button-text">
-                            Behandle
-                        </div>
-                    </a>
-                </div>
-            </div>
-        </div>
-        <hr />
-        <div class="row">
-            <div class="col-md-12">
-                <div id="messages"></div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-12">
-                <div class="tab-content">
-                    <div class="tab-pane fade in active" id="gallery__upload-pane">
-                        {% include "gallery/upload.html" %}
+<div id="gallery__image-upload-wrapper" style="display:block">
+<section id="gallery">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="col-md-6">
+                <a href="#gallery__upload-pane" id="gallery__upload-button" data-toggle="tab">
+                    <div class="row">
+                        <i class="fa fa-upload fa-3x fa-align-center"></i>
                     </div>
-                    <div class="tab-pane fade" id="gallery__manage-pane">
-                        {% include "gallery/edit.html" %}
+                    <div class="row caption" id="gallery__upload-button-text">
+                        Last opp
                     </div>
-                </div>
+                </a>
+            </div>
+            <div class="col-md-6">
+                <a href="#gallery__manage-pane" id="gallery__edit-button" data-toggle="tab">
+                    <div class="row">
+                        <i class="fa fa-edit fa-3x fa-align-center"></i>
+                    </div>
+                    <div class="row caption" id="gallery__manage-button-text">
+                        Behandle
+                    </div>
+                </a>
             </div>
         </div>
-    </section>
     </div>
+    <hr />
+    <div class="row">
+        <div class="col-md-12">
+            <div id="messages"></div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="tab-content">
+                <div class="tab-pane fade in active" id="gallery__upload-pane">
+                    {% include "gallery/upload.html" %}
+                </div>
+                <div class="tab-pane fade" id="gallery__manage-pane">
+                    {% include "gallery/edit.html" %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
 </div>

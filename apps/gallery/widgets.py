@@ -3,6 +3,7 @@
 # Created by 'myth' on 10/14/15
 
 from django.conf import settings
+from django.core.urlresolvers import reverse_lazy
 from django.forms import HiddenInput, TextInput
 from django.forms.utils import flatatt, force_text, format_html
 
@@ -13,7 +14,7 @@ WIDGET_STRING = """<br /><input{} />\r\n
 <div id="single-image-field-thumbnail">{}</div>
 <a href="#" class="btn btn-primary" id="add-responsive-image">\r\n
 <i class="fa fa-plus fa-lg"></i> Velg</a>\r\n
-<a href="#" class="btn btn-primary" id="upload-responsive-image">\r\n
+<a href="{}" class="btn btn-primary" target="_blank">\r\n
 <i class="fa fa-image fa-lg"></i> Last opp</a><br>\r\n
 <div id="image-selection-wrapper">\r\n
 <h2 id="image-selection-title">Velg bilde</h2>\r\n
@@ -22,7 +23,7 @@ WIDGET_STRING = """<br /><input{} />\r\n
 <div class="input-group">\r\n
 <input type="text" id="image-gallery-search" class="form-control" placeholder="Skriv inn søkeord...">\r\n
 <span class="input-group-btn">\r\n
-<button class="btn btn-primary" id="image-gallery-search-button" type="button">Søk!</button>\r\n
+<a class="btn btn-primary" id="image-gallery-search-button" type="button">Søk!</a>\r\n
 </span>\r\n
 </div>\r\n
 </div>\r\n
@@ -66,7 +67,9 @@ class SingleImageInput(HiddenInput):
                 encoding='utf-8'
             )
 
-        return format_html(WIDGET_STRING, flatatt(final_attrs), img_thumb)
+        upload_url = reverse_lazy('gallery_dashboard:upload')
+
+        return format_html(WIDGET_STRING, flatatt(final_attrs), img_thumb, upload_url)
 
 
 class TagInputField(TextInput):
