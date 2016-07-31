@@ -57,6 +57,7 @@ var GalleryCrop = (function ($, Cropper, utils) {
   var MANAGE_PANE = $('#gallery__manage-pane')
   var MODAL_CROPFAILED = $('#gallery__image-edit__crop-failed')
   var MODAL_PROCESSING = $('#gallery__image-edit__processing')
+  var MODAL_SUCCESS = $('#gallery__image-edit__crop-success')
   var RESET_BUTTON = $('#gallery__image-edit__back')
   var PREVIEW_IMAGE = $('#gallery__image-edit--preview')
 
@@ -155,10 +156,16 @@ var GalleryCrop = (function ($, Cropper, utils) {
     })
 
     // Hop back to the unhandled image thumbnail preview on crop success
-    Gallery.events.on('gallery-imageCropSuccessful', function (e) {
+    Gallery.events.on('gallery-imageCropSuccessful', function (e, data) {
       MODAL_PROCESSING.modal('hide')
       RESET_BUTTON.click()
       GalleryCrop.reset()
+
+      var _tmpl = '<p>Bilde {0} ({1}) av type "{2}" ble beskjært uten problemer</p>'.format(
+        data.name, data.id, data.preset
+      )
+      MODAL_SUCCESS.find('.modal-body').html(_tmpl)
+      MODAL_SUCCESS.modal('show')
 
       // Fire the newUnhandledImage event, as it will force a reload of the server side state
       Gallery.events.fire('gallery-newUnhandledImage')
@@ -241,16 +248,6 @@ var GalleryCrop = (function ($, Cropper, utils) {
       // Fire cropFailed and return prematurely if errors exist
       if (_errors.length > 0) return Gallery.events.fire('gallery-imageCropFailed')
 
-      // Declare the success callback
-      var _success = function (data) {
-        Gallery.events.fire('gallery-imageCropSuccessful')
-      }
-      // Declare the error callback
-      var _error = function (xhr, errorMessage, responseText) {
-        Gallery.events.fire('gallery-imageCropFailed')
-        console.error('Received error: ' + xhr.responseText + ' ' + errorMessage)
-      }
-
       // Prepare the image crop data payload with necessary fields
       var payload = self.cropper.getData(true)
       payload.id = Number(self.imageId)
@@ -259,6 +256,18 @@ var GalleryCrop = (function ($, Cropper, utils) {
       payload.photographer = IMAGE_PHOTOGRAPHER.val() || ''
       payload.preset = IMAGE_PRESET.children(':selected').val()
       payload.tags = IMAGE_TAGS.val() || ''
+
+      // Declare the success callback
+      var _success = function (data) {
+        data.name = payload.name
+        data.preset = payload.preset
+        Gallery.events.fire('gallery-imageCropSuccessful', data)
+      }
+      // Declare the error callback
+      var _error = function (xhr, errorMessage, responseText) {
+        Gallery.events.fire('gallery-imageCropFailed')
+        console.error('Received error: ' + xhr.responseText + ' ' + errorMessage)
+      }
 
       // Lock user out from GUI
       MODAL_PROCESSING.modal('show')
@@ -534,17 +543,18 @@ var Gallery = (function ($, utils, MicroEvent, Dropzone) {
      */
     events: {
       /**
-       * Tells the event system to fire an event of the given type.
-       * @param {string} event
+       * Fire an event of type "event" to all registered listeners for that type.
+       * @param {string} event The event type to be triggered
+       * @param {*} [payload] An optional event payload
        */
-      fire: function (event) {
-        _events.fire(event)
+      fire: function (event, payload) {
+        _events.fire(event, payload)
       },
 
       /**
        * Register a callback function on events of the given type.
-       * @param {string} event
-       * @param {function} callback
+       * @param {string} event Event type
+       * @param {function} callback Callback function accepting two arguments: {string} event, {*} payload
        */
       on: function (event, callback) {
         _events.on(event, callback)

@@ -494,6 +494,12 @@ class ResponsiveImageHandler(BaseImageHandler):
             os.path.basename(source_path)
         )
 
+        self._log.debug(
+            'Downsizing images based on model profile: %s' % repr(
+                gallery_settings.MODELS[self._config['preset']]['sizes']
+            )
+        )
+
         # Resize the images based on bootstrap breakpoint sizes for each preset type
         wide = self._resize_image(
             source_path,
