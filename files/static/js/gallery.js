@@ -2,6 +2,22 @@
  * Created by myth on 3/9/16.
  */
 
+const TMPL_IMAGE_SEARCH_RESULT = `
+<% for (var image of images) { %>
+<div class="col-md-6 col-sm-12 col-xs-12">
+ <div class="image-selection-thumbnail" data-id="<%= image.id %>">
+  <div class="image-selection-thumbnail-image">
+   <img src="<%= image.thumbnail %>" title="<%= image.name %>">
+  </div>
+  <div class="image-selection-thumbnail-text">
+    <h4 class="image-title"><%= image.name %></h4>
+    <span class="image-timestamp"><%= image.timestamp %></span>
+    <p class="image-description"><%= image.description %></p>
+  </div>
+ </div>
+</div>
+<% } %>`
+
 var GalleryUpload = (function ($, Dropzone) {
   // DOM references
   var UPLOAD_PANE = $('#gallery__upload-pane')
@@ -394,6 +410,7 @@ var GalleryCrop = (function ($, Cropper, utils) {
 var Gallery = (function ($, utils, MicroEvent, Dropzone) {
   var _events = new MicroEvent()
   var _images = {}
+  var _formSelectedSingleImage = null
 
   // DOM references
   var BUTTON_ADD_RESPONSIVE_IMAGE = $('#add-responsive-image')
@@ -516,6 +533,57 @@ var Gallery = (function ($, utils, MicroEvent, Dropzone) {
       BUTTON_ADD_RESPONSIVE_IMAGE.on('click', function (e) {
         e.preventDefault()
         IMAGE_SELECTION_WRAPPER.slideToggle(100)
+      })
+
+      /**
+       * Helper function that performs a search query to the Gallery backend. Query string is exact match and will
+       * not be tokenized.
+       * @param query A string containing a keyword or sentence.
+       */
+      var searchImages = function (query) {
+        var payload = { query: query }
+
+        Gallery.ajax('GET', '/gallery/search/', payload, function (data) {
+          var html = utils.render(TMPL_IMAGE_SEARCH_RESULT, {images: data.images})
+          if (!data.images.length) html = '<div class="col-md-12"><p>Ingen bilder matchet søket...</p></div></div>'
+          else html += '</div>'
+
+          $('#image-gallery-search-results').html(html)
+        }, function (xhr, thrownError, statusText) {
+          window.alert(thrownError)
+        })
+      }
+
+      // Listen for <Enter> keypress while the search input field is :active
+      $('#image-gallery-search').on('keypress', function (e) {
+        if (e.keyCode === 13) {
+          e.preventDefault()
+          e.stopPropagation()
+          searchImages($(this).val())
+        }
+      })
+
+      // Listen for manual clicks to the search button
+      $('#image-gallery-search-button').on('click', function (e) {
+        e.preventDefault()
+        searchImages($('#image-gallery-search').val())
+      })
+
+      // Place a permanent click event listener on the image widget, listening for
+      // click events originating from elements classed "image-selection-thumbnail".
+      // Updates the ID if the form input field and toggles highlighting.
+      $('#image-gallery-search-results').on('click', '.image-selection-thumbnail', function (e) {
+        if (_formSelectedSingleImage) _formSelectedSingleImage.removeClass('image-selection-thumbnail-active')
+        _formSelectedSingleImage = $(this)
+        _formSelectedSingleImage.addClass('image-selection-thumbnail-active')
+
+        var inputValue = $('#responsive-image-id')
+        var thumbnailWrapper = $('#single-image-field-thumbnail')
+
+        if (inputValue.length) {
+          inputValue.val(_formSelectedSingleImage.attr('data-id'))
+          thumbnailWrapper.html('<img src="' + _formSelectedSingleImage.find('img').attr('src') + '" alt>')
+        }
       })
     },
 
