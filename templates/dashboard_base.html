@@ -127,9 +127,11 @@
                             <li>
                                 <a href="{% url 'gallery_dashboard:unhandled' %}">
                                     <i class="fa fa-angle-double-right orange"></i> Ubehandlet
+                                    <span id="dashboard__menu--gallery-unhandled-badge">
                                     {% if unhandled_images %}
                                         <small class="badge">{{ unhandled_images.count }}</small>
                                     {% endif %}
+                                    </span>
                                 </a>
                             </li>
                             {% endif %}
@@ -333,6 +335,7 @@
 
     {% block js %}
         <script type="text/javascript" src="{{ STATIC_URL }}js/libs/jquery-2.1.3.min.js"></script>
+        <script type="text/javascript" src="{{ STATIC_URL }}js/libs/underscore.min.js"></script>
         <script type="text/javascript" src="{{ STATIC_URL }}js/libs/bootstrap.min.js"></script>
         <script type="text/javascript" src="{{ STATIC_URL }}js/libs/moment-2.9.0-with-locales.min.js"></script>
         <script type="text/javascript" src="{{ STATIC_URL }}js/libs/fastclick.js"></script>
@@ -344,6 +347,8 @@
         <script type="text/javascript" src="{{ STATIC_URL }}js/libs/cropper/cropper.min.js"></script>
         <script type="text/javascript" src="{{ STATIC_URL }}js/libs/bttrlazyloading/jquery.bttrlazyloading.min.js"></script>
         <script type="text/javascript" src="{{ STATIC_URL }}js/libs/dropzone/dropzone.min.js"></script>
+        <script type="text/javascript" src="{{ STATIC_URL }}js/Utils.js"></script>
+        <script type="text/javascript" src="{{ STATIC_URL }}js/microevent.js"></script>
         <script type="text/javascript" src="{{ STATIC_URL }}js/dashboard/dashboard.js"></script>
         <script type="text/javascript" src="{{ STATIC_URL }}js/gallery.js"></script>
     {% endblock %}

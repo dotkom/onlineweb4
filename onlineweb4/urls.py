@@ -100,6 +100,31 @@ if 'apps.feedback' in settings.INSTALLED_APPS:
         url(r'^feedback/',          include('apps.feedback.urls')),
     ]
 
+if 'apps.gallery' in settings.INSTALLED_APPS:
+    urlpatterns += [
+        url(
+            r'^gallery/',
+            include(
+                'apps.gallery.urls',
+                namespace='gallery',
+                app_name='gallery'
+            )
+        ),
+        url(
+            r'^dashboard/gallery/',
+            include(
+                'apps.gallery.dashboard.urls',
+                namespace='gallery_dashboard',
+                app_name='gallery'
+            )
+        )
+    ]
+
+if 'apps.genfors' in settings.INSTALLED_APPS:
+    urlpatterns += [
+        url(r'^genfors/',           include('apps.genfors.urls')),
+    ]
+
 if 'apps.marks' in settings.INSTALLED_APPS:
     urlpatterns += [
         url(r'^dashboard/marks/',          include('apps.marks.dashboard.urls')),
@@ -136,35 +161,13 @@ if 'apps.resourcecenter' in settings.INSTALLED_APPS and 'apps.mailinglists' in s
         url(r'^resourcecenter/',    include('apps.resourcecenter.urls')),  # Resourcecenter has catch-all on subpages
     ]
 
-if 'apps.genfors' in settings.INSTALLED_APPS:
-    urlpatterns += [
-        url(r'^genfors/',           include('apps.genfors.urls')),
-    ]
-
-
-if 'apps.gallery' in settings.INSTALLED_APPS:
-    urlpatterns += [
-        url(
-            r'^gallery/',
-            include(
-                'apps.gallery.urls',
-                namespace='gallery',
-                app_name='gallery'
-            )
-        ),
-        url(
-            r'^dashboard/gallery/',
-            include(
-                'apps.gallery.dashboard.urls',
-                namespace='gallery_dashboard',
-                app_name='gallery'
-            )
-        )
-    ]
-
 if 'apps.rutinator' in settings.INSTALLED_APPS:
     urlpatterns += [
-        url(r'^dashboard/rutinator/', include('apps.rutinator.dashboard.urls', namespace='dashboard', app_name='rutinator')),
+        url(r'^dashboard/rutinator/', include(
+            'apps.rutinator.dashboard.urls',
+            namespace='dashboard',
+            app_name='rutinator'
+        )),
     ]
 
 if 'apps.splash' in settings.INSTALLED_APPS:
@@ -181,7 +184,11 @@ if 'apps.sso' in settings.INSTALLED_APPS:
 if 'apps.webshop' in settings.INSTALLED_APPS:
     urlpatterns += [
         url(r'^webshop/',           include('apps.webshop.urls')),
-        url(r'^dashboard/webshop/', include('apps.webshop.dashboard.urls', namespace='dashboard-webshop', app_name='webshop')),
+        url(r'^dashboard/webshop/', include(
+            'apps.webshop.dashboard.urls',
+            namespace='dashboard-webshop',
+            app_name='webshop'
+        )),
     ]
 
 # feedme

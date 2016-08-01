@@ -465,6 +465,7 @@ class ResponsiveImageHandler(BaseImageHandler):
         :return: A GalleryStatus object
         """
 
+        # Start by declaring all the paths the image versions will be saved to
         source_path = get_absolute_path_to_original(self.image)
 
         wide_destination_path = os.path.join(
@@ -493,11 +494,38 @@ class ResponsiveImageHandler(BaseImageHandler):
             os.path.basename(source_path)
         )
 
-        wide = self._resize_image(source_path, wide_destination_path, gallery_settings.RESPONSIVE_IMAGES_WIDE_SIZE)
-        lg = self._resize_image(source_path, lg_destination_path, gallery_settings.RESPONSIVE_IMAGES_LG_SIZE)
-        md = self._resize_image(source_path, md_destination_path, gallery_settings.RESPONSIVE_IMAGES_MD_SIZE)
-        sm = self._resize_image(source_path, sm_destination_path, gallery_settings.RESPONSIVE_IMAGES_SM_SIZE)
-        xs = self._resize_image(source_path, xs_destination_path, gallery_settings.RESPONSIVE_IMAGES_XS_SIZE)
+        self._log.debug(
+            'Downsizing images based on model profile: %s' % repr(
+                gallery_settings.MODELS[self._config['preset']]['sizes']
+            )
+        )
+
+        # Resize the images based on bootstrap breakpoint sizes for each preset type
+        wide = self._resize_image(
+            source_path,
+            wide_destination_path,
+            gallery_settings.MODELS[self._config['preset']]['sizes']['lg']
+        )
+        lg = self._resize_image(
+            source_path,
+            lg_destination_path,
+            gallery_settings.MODELS[self._config['preset']]['sizes']['lg']
+        )
+        md = self._resize_image(
+            source_path,
+            md_destination_path,
+            gallery_settings.MODELS[self._config['preset']]['sizes']['md']
+        )
+        sm = self._resize_image(
+            source_path,
+            sm_destination_path,
+            gallery_settings.MODELS[self._config['preset']]['sizes']['sm']
+        )
+        xs = self._resize_image(
+            source_path,
+            xs_destination_path,
+            gallery_settings.MODELS[self._config['preset']]['sizes']['xs']
+        )
 
         # Aggregate statuses
         self.status = wide and lg and md and sm and xs
@@ -560,14 +588,9 @@ class ResponsiveImageHandler(BaseImageHandler):
         size = (self._config['width'], self._config['height'])
         max_size = (self.image.image.width, self.image.image.height)  # self.image is an UnhandledImage object
 
-        if preset in ('article', 'event'):
-            model = gallery_settings.ARTICLE
-        elif preset in ('company',):
-            model = gallery_settings.COMPANY
-        elif preset in ('offline',):
-            model = gallery_settings.OFFLINE
-        elif preset in ('product',):
-            model = gallery_settings.PRODUCT
+        # Verify that the selected preset from the client exists
+        if preset in gallery_settings.MODELS:
+            model = gallery_settings.MODELS[preset]
         else:
             return GalleryStatus(False, 'Config contained illegal value for "preset"')
 

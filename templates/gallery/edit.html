@@ -1,101 +1,121 @@
 <div class="row">
     <div class="col-md-12">
-        <div id="thumbview-header" class="row">
+        <div class="row">
             <div class="col-md-12">
                 <h2>Ubehandlede bilder</h2>
             </div>
         </div>
-        <div class="row">
+        <div class="row tabbable">
             <div class="col-md-12">
-                <div id="edit-tab" class="tab-content">
-                    <div class="tab-pane fade in active" id="thumbnail-pane" role="tabpanel">
+                <div id="gallery__edit-tab" class="tab-content">
+                    <div class="tab-pane fade in active" id="gallery__thumbnail-pane" role="tabpanel">
                         <div class="row">
-                            <div class="col-md-12">
-                                <a id="fetchallimages"><i class="fa fa-refresh"></i> Oppdater</a>
-                                <hr>
-                            </div>
-                        </div>
-                        <div class="row-fluid">
-                            <div id="thumbnail-view" class="row">
-
-                            </div>
+                            <div class="col-md-12" id="gallery__thumbnail-view"></div>
                         </div>
                     </div>
-                    <div class="tab-pane fade" id="edit-pane" role="tabpanel">
+                    <div class="tab-pane fade" id="gallery__edit-pane" role="tabpanel">
                         <div class="row">
-                            <div class="col-md-12">
-                                <a id="showthumbnailpane" href="#thumbnail-pane" data-toggle="tab" role="tab"><i class="fa fa-angle-double-left"></i> Gå tilbake</a>
-                                <hr>
+                            <div class="col-lg-8 col-md-9 col-sm-12 col-xs-12">
+                                <a href="#gallery__thumbnail-pane" id="gallery__image-edit__back" class="btn btn-primary" role="tab" data-toggle="tab">
+                                    <i class="fa fa-chevron-left"></i> Tilbake
+                                </a>
                             </div>
-                            <hr>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-8">
-                                <div id="image-edit-content">
-                                </div>
-                                <br />
-                                <div class="form-group">
-                                    <label for="image-edit-name">Navn</label>
-                                    <input id="image-edit-name" type="text" placeholder="Bildenavn..." class="form-control">
-                                </div>
-                                <div class="form-group">
-                                    <label for="image-edit-description">Beskrivelse</label>
-                                    <textarea id="image-edit-description" placeholder="Skriv inn en beskrivelse av bildet her..." class="form-control" rows="6"></textarea>
-                                </div>
-                                <div class="form-group">
-                                    <label for="image-edit-photographer">Fotograf</label>
-                                    <input id="image-edit-photographer" type="text" class="form-control" placeholder="Kan stå blank...">
-                                </div>
-                                <div class="form-group">
-                                    <label for="image-edit-tags">Tags</label>
-                                    <input id="image-edit-tags" placeholder="Eksempel: kontoret, kjelleren, åre" class="form-control">
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                                                <div id="datavalues" class="row row-space">
-                                    <div class="input-group">
-                                        <span class="input-group-addon">X</span>
-                                        <input id="cropperDataX" type="text" class="form-control">
-                                        <span class="input-group-addon">px</span>
-                                    </div>
-                                    <div class="input-group">
-                                        <span class="input-group-addon">Y</span>
-                                        <input id="cropperDataY" type="text" class="form-control">
-                                        <span class="input-group-addon">px</span>
-                                    </div>
-                                    <div class="input-group">
-                                        <span class="input-group-addon">Høyde</span>
-                                        <input id="cropperDataHeight" type="text" class="form-control">
-                                        <span class="input-group-addon">px</span>
-                                    </div>
-                                    <div class="input-group">
-                                        <span class="input-group-addon">Bredde</span>
-                                        <input id="cropperDataWidth" type="text" class="form-control">
-                                        <span class="input-group-addon">px</span>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="btn-group" role="group" aria-label="...">
-                                        <button id="zoominbutton" type="button" class="btn btn-primary"><i class="fa fa-search-plus"></i></button>
-                                        <button id="zoomoutbutton" type="button" class="btn btn-primary"><i class="fa fa-search-minus"></i></button>
-                                        <button id="resetbutton" type="button" class="btn btn-primary"><i class="fa fa-refresh"></i> Reset</button>
-                                        <button id="originalimagebutton" type="button" class="btn btn-primary"><i class="fa fa-picture-o"></i> Original</button>
-                                    </div>
-                                </div>
-                                <br />
-                                <div class="row">
-                                    <label for="image-edit-preview-standard">Standard (16:9)</label>
-                                    <div id="image-edit-preview-standard" class="image-edit-preview"></div>
-                                </div>
-                                <div class="row">
-                                    <label for="image-edit-preview-article">Bredform (19:7)</label>
-                                    <div id="image-edit-preview-wide" class="image-edit-preview"></div>
-                                </div>
+                            <div class="col-lg-4 col-md-3 col-md-12 col-xs-12">
+                                <h3>Innstillinger</h3>
                             </div>
                         </div>
+                        <br />
                         <div class="row">
-                            <div class="col-md-12">
-                                <button id="accept-crop-button" class="btn btn-success"><i class="fa fa-check"></i> Godta crop av bilde</button>
+                            <div class="col-lg-8 col-md-9 col-sd-12 col-xs-12">
+                                <div class="form-group">
+                                    <label for="gallery__image-edit-container">Bilde</label>
+                                    <div id="gallery__image-edit-container"></div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-3 col-md-12 col-xs-12" id="gallery__image-edit__sidebar">
+                                <div class="form-group">
+                                    <label for="gallery__image-edit--preview">Forhåndsvisning</label>
+                                    <div id="gallery__image-edit--preview-wrapper">
+                                        <img id="gallery__image-edit--preview" />
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="gallery__image-edit--preset">Bildetype</label>
+                                    <select name="preset" id="gallery__image-edit--preset" class="form-control">
+                                        <option value="event">Arrangement</option>
+                                        <option value="article">Artikkel</option>
+                                        <option value="company">Bedriftslogo</option>
+                                        <option value="product">Produktbilde</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Dimensjoner</label>
+                                    <div class="input-group input-group-sm">
+                                        <label class="input-group-addon" for="gallery__image-edit--width">Bredde</label>
+                                        <input type="text" class="form-control" id="gallery__image-edit--width" placeholder="Bredde">
+                                        <span class="input-group-addon">px</span>
+                                    </div>
+                                    <div class="input-group input-group-sm">
+                                        <label class="input-group-addon" for="gallery__image-edit--height">Høyde</label>
+                                        <input type="text" class="form-control" id="gallery__image-edit--height" placeholder="Høyde">
+                                        <span class="input-group-addon">px</span>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <span>
+                                        <div class="btn-group">
+                                            <a class="btn btn-default" title="Zoom inn" id="gallery__image-edit__zoom-in">
+                                                <i class="fa fa-search-plus"></i>
+                                            </a>
+                                            <a class="btn btn-default" title="Zoom ut" id="gallery__image-edit__zoom-out">
+                                                <i class="fa fa-search-minus"></i>
+                                            </a>
+                                        </div>
+                                        <div class="btn-group">
+                                            <a class="btn btn-default" title="Aktivér 'Dra'-modus" id="gallery__image-edit__drag">
+                                                <i class="fa fa-arrows"></i>
+                                            </a>
+                                            <a class="btn btn-default" title="Aktivér 'Crop'-modus" id="gallery__image-edit__crop">
+                                                <i class="fa fa-crop"></i>
+                                            </a>
+                                            <a class="btn btn-default" title="Tilbakestill" id="gallery__image-edit__reset">
+                                                <i class="fa fa-times"></i>
+                                            </a>
+                                        </div>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <br />
+                        <div class="row">
+                            <div class="col-lg-8 col-md-9 col-sm-12 col-xs-12">
+                                <div class="form-group">
+                                    <label for="gallery__image-edit--name">Navn</label>
+                                    <input class="form-control" type="text" id="gallery__image-edit--name" name="name" placeholder="Bildenavn"/>
+                                </div>
+                                <div class="form-group">
+                                    <label for="gallery__image-edit--description">Beskrivelse</label>
+                                    <textarea class="form-control" id="gallery__image-edit--description" rows="6" placeholder="Skriv inn en beskrivelse av bildet her..." name="description"></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label for="gallery__image-edit--photographer">Fotograf</label>
+                                    <input class="form-control" type="text" id="gallery__image-edit--photographer" placeholder="Kan stå blank" name="photographer" />
+                                </div>
+                                <div class="form-group">
+                                    <label for="gallery__image-edit--tags">Tags</label>
+                                    <input class="form-control" type="text" id="gallery__image-edit--tags" name="name" placeholder="Eksempel: kjelleren, kontoret, åre" />
+                                </div>
+                                <div class="form-group">
+                                    <button type="submit" class="btn btn-success" id="gallery__image-edit--submit">
+                                        <i class="fa fa-submit"></i> Beskjær og lagre bilde
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-3 col-sm-12 col-xs-12">
+                                <div class="form-group">
+                                    <label for="gallery__image-edit--log">Status</label>
+                                    <span id="gallery__image-edit--log"></span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -104,3 +124,55 @@
         </div>
     </div>
 </div>
+
+<!-- Modals -->
+<div class="modal fade" tabindex="-1" role="dialog" id="gallery__image-edit__processing"
+     data-keyboard="false" data-backdrop="static">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Behandler bilde</h4>
+      </div>
+      <div class="modal-body">
+        <p>Vennligst vent...<br /></p>
+        <p class="text-center">
+            <i class="fa fa-spinner fa-4x fa-spin"></i>
+        </p>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<div class="modal fade" tabindex="-1" role="dialog" id="gallery__image-edit__crop-failed">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">Ugyldig data</h4>
+      </div>
+      <div class="modal-body">
+        <p>Skjemaet inneholdt ugyldig bildedata. Se statusfeltet på høyre side for nærmere informasjon.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Lukk</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<div class="modal fade" tabindex="-1" role="dialog" id="gallery__image-edit__crop-success">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">Bildebeskjæring fullført</h4>
+      </div>
+      <div class="modal-body">
+        <p>Woop woop. Bildet ble beskjært! Dis b all gud!</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Lukk</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->

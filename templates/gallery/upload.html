@@ -1,9 +1,13 @@
 <div class="row">
     <div class="col-md-12">
         <h2>Last opp bilder</h2>
-        <form method="POST" id="image-upload" action="/gallery/upload/"
-              class="dropzone dz-clickable" enctype="multipart/form-data">
+        <form method="POST" id="gallery__image-upload-form" action="/gallery/upload/" class="dropzone" enctype="multipart/form-data">
             {% csrf_token %}
+            <div class="dz-message">
+                <i class="fa fa-arrow-circle-o-down fa-4x"></i>
+                <br /><br />
+                <span>Klikk eller slipp filer her...</span>
+            </div>
         </form>
     </div>
 </div>
