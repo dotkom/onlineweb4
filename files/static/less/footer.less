@@ -1,34 +1,32 @@
-section#footer {
-	margin-bottom:0;
-	background:#333;
-	padding:30px;
-	margin-top:100px;
+#footer {
+	margin-bottom: 0;
+	background: #333;
+	padding: 30px;
+	margin-top: 100px;
 
 	.contact-info {
 		.contact-item {
-			font-weight:300;
-			font-size:14px;
-			margin-bottom:5px;
-			color:#BBB;
+			font-weight: 300;
+			font-size: 14px;
+			margin-bottom: 5px;
+			color: #BBB;
+
 			span {
-				color:#666;
-				margin-right:10px;
+				color: #666;
+				margin-right: 10px;
 			}
 		}
 	}
 
 	.address {
-		font-weight:300;
-		font-size:14px;
-		margin-top:30px;
-		color:#BBB;
-        margin-bottom: 30px;
+		font-weight: 300;
+		font-size: 14px;
+		margin-top: 30px;
+		color: #BBB;
+    margin-bottom: 30px;
 
 		.address-heading {
-			color:#666;
-		}
-
-		.address-info {
+			color: #666;
 		}
 	}
 	
@@ -36,12 +34,21 @@ section#footer {
 	   width: 100%;
 	   height: 300px;
 	}
-	#footer-map .gmnoprint { display:none; }
-	#footer-map div a img { display: none; }
 
-	.footer-social {
-		margin-top: -12px;
-		margin-left: -12px;
-		margin-bottom: 20px;
+	#footer-map .gmnoprint,
+	#footer-map div a img {
+		display: none;
+	}
+
+	.socialIcon-link {
+		margin-right: 18px;
+
+		img {
+			width: 32px;
+		}
+
+		&:hover {
+			opacity: .7;
+		}
 	}
 }
