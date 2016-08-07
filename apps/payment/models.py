@@ -24,8 +24,12 @@ class Payment(models.Model):
         (3, _('Utsettelse')),
     )
 
-    # creates tuples used as key choices.
-    STRIPE_KEY_CHOICES = zip(settings.STRIPE_PUBLIC_KEYS.keys(), settings.STRIPE_PUBLIC_KEYS.keys())
+    # Make sure these exist in settings if they are to be used.
+    STRIPE_KEY_CHOICES = (
+        ('arrkom', 'arrkom'),
+        ('prokom', 'prokom'),
+        ('trikom', 'trikom'),
+    )
 
     content_type = models.ForeignKey(ContentType)
     object_id = models.PositiveIntegerField()
