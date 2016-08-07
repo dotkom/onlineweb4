@@ -158,9 +158,9 @@ class EventAdmin(VersionAdmin):
 
     def get_form(self, request, obj=None, **kwargs):
         form = super(EventAdmin, self).get_form(request, obj, **kwargs)
-        form.base_fields['ingress_short'].validators = [validators.MinLengthValidator(50)]
-        form.base_fields['ingress'].validators = [validators.MinLengthValidator(75)]
-        form.base_fields['description'].validators = [validators.MinLengthValidator(140)]
+        form.base_fields['ingress_short'].validators = [validators.MinLengthValidator(25)]
+        form.base_fields['ingress'].validators = [validators.MinLengthValidator(25)]
+        form.base_fields['description'].validators = [validators.MinLengthValidator(45)]
         return form
 
 
