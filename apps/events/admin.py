@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 from django.contrib import admin, messages
-from django.core import validators
 from django.utils.translation import ugettext as _
 from reversion.admin import VersionAdmin
 
@@ -155,13 +154,6 @@ class EventAdmin(VersionAdmin):
         for instance in instances:
             instance.save()
         formset.save_m2m()
-
-    def get_form(self, request, obj=None, **kwargs):
-        form = super(EventAdmin, self).get_form(request, obj, **kwargs)
-        form.base_fields['ingress_short'].validators = [validators.MinLengthValidator(50)]
-        form.base_fields['ingress'].validators = [validators.MinLengthValidator(75)]
-        form.base_fields['description'].validators = [validators.MinLengthValidator(140)]
-        return form
 
 
 class ReserveeInline(admin.TabularInline):
