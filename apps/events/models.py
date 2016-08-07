@@ -7,6 +7,7 @@ from functools import reduce
 from django.conf import settings
 from django.contrib.auth.models import Group
 from django.contrib.contenttypes.models import ContentType
+from django.core import validators
 from django.db import models
 from django.db.models import Case, Q, Value, When
 from django.template.defaultfilters import slugify
@@ -79,9 +80,10 @@ class Event(models.Model):
     event_start = models.DateTimeField(_('start-dato'))
     event_end = models.DateTimeField(_('slutt-dato'))
     location = models.CharField(_('lokasjon'), max_length=100)
-    ingress_short = models.CharField(_("kort ingress"), max_length=150)
-    ingress = models.TextField(_('ingress'))
-    description = models.TextField(_('beskrivelse'))
+    ingress_short = models.CharField(_("kort ingress"), max_length=150,
+                                     validators=[validators.MinLengthValidator(25)])
+    ingress = models.TextField(_('ingress'), validators=[validators.MinLengthValidator(25)])
+    description = models.TextField(_('beskrivelse'), validators=[validators.MinLengthValidator(45)])
     image = FileBrowseField(_("bilde"), max_length=200,
                             directory=IMAGE_FOLDER, extensions=IMAGE_EXTENSIONS, null=True, blank=True)
     event_type = models.SmallIntegerField(_('type'), choices=TYPE_CHOICES, null=False)
