@@ -1,0 +1,13 @@
+build:
+  unit_tests:
+    image: python:3
+    commands:
+      - apt-get install -y --no-install-recommends curl 
+      - curl -sL https://deb.nodesource.com/setup_4.x | bash -
+      - apt-get install nodejs libjpeg-dev ghostscript
+      - npm install -g less
+      - cp onlineweb4/settings/example-local.py onlineweb4/settings/local.py
+      - pip install tox
+      - tox -e flake8
+      - tox -e isort
+      - tox -e tests

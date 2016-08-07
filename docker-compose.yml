@@ -9,13 +9,11 @@ db:
     - dbdata
   ports:
     - "5432"
-# lessc:
-#   image: ewoutp/lessc
 web:
   build: .
   command: python manage.py runserver 0.0.0.0:8000
   volumes:
-    - .:/srv/onlineweb4
+    - .:/srv/app
   ports:
     - "8000:8000"
   links:
