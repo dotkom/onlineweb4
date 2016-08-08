@@ -44,7 +44,7 @@ django-nose>=1.4,<1.5           # We use this test runner locally
 nose==1.3.7                     # We use this test runner locally
 
 # Frigg
-requests[security]==2.10.0
+requests[security]==2.11.0
 
 # Wiki
 wiki==0.1
