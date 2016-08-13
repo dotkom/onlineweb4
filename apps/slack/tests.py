@@ -1,4 +1,7 @@
+from django.core.urlresolvers import reverse
 from django.test import TestCase
+from rest_framework import status
+from rest_framework.test import APITestCase
 from unittest.mock import MagicMock, patch
 
 from apps.slack.utils import SlackException, SlackInvite
@@ -46,3 +49,51 @@ class SlackInviteTest(TestCase):
 
         with self.assertRaises(SlackException):
             self.slack_invite.invite("test@example.com", "Test")
+
+class InviteViewSetTest(APITestCase):
+    @patch('apps.slack.views.SlackInvite')
+    def test_post_withEmailAndName_returnsOk(self, slack_mock):
+        url = reverse('slack-list')
+        name = 'Test Testesen'
+        email = 'test@example.com'
+
+        response = self.client.post(url, {'name': name, 'email': email})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertTrue(slack_mock.called)
+        self.assertTrue(response.json()['ok'])
+
+    @patch('apps.slack.views.SlackInvite')
+    def test_post_withEmailOnly_fails(self, slack_mock):
+        url = reverse('slack-list')
+        email = 'test@example.com'
+
+        response = self.client.post(url, {'email': email})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertFalse(response.json()['ok'])
+
+
+    @patch('apps.slack.views.SlackInvite')
+    def test_post_withNameOnly_fails(self, slack_mock):
+        url = reverse('slack-list')
+        name = 'Willy Nickersen'
+
+        response = self.client.post(url, {'name': name})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertFalse(response.json()['ok'])
+
+
+    @patch('apps.slack.views.SlackInvite.invite')
+    def test_post_withInvalidEmail_fails(self, slack_mock):
+        slack_mock.side_effect = SlackException('Error')
+        url = reverse('slack-list')
+        name = 'Name'
+        email = 'email@Invalid'
+
+        response = self.client.post(url, {'name': name, 'email': email})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertTrue(slack_mock.called)
+        self.assertFalse(response.json()['ok'])
