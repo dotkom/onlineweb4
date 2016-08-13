@@ -8,5 +8,5 @@ class SplashEventSerializer(ModelSerializer):
     class Meta(object):
         model = SplashEvent
         fields = (
-            'title', 'content', 'start_time', 'end_time',
+            'id', 'title', 'content', 'start_time', 'end_time',
         )
