@@ -25,10 +25,11 @@ class SlackInvite:
             "set_active": "true",
             "_attempts": 1
         })
-        if r.status_code != 200 or not isinstance(r.data, dict):
+        if r.status_code != 200 or not isinstance(r.json(), dict):
             raise SlackException('Failed to invite user')
-        if not r.data['ok']:
-            raise SlackException(r.data['error'])
+        data = r.json()
+        if not data['ok']:
+            raise SlackException(data['error'])
 
     def _match_email(self, email):
         return re.match(r'^.+@.+\..+', email)

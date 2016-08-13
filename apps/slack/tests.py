@@ -22,7 +22,7 @@ class SlackInviteTest(TestCase):
     @patch('apps.slack.utils.requests.post')
     def test_invite_callsRequestsPost(self, post_mock):
         post_mock.side_effect = [
-            MagicMock(status_code=200, data={'ok': True})
+            MagicMock(status_code=200, json=lambda: {'ok': True})
         ]
 
         mail = "test@example.com"
@@ -44,7 +44,7 @@ class SlackInviteTest(TestCase):
     @patch('apps.slack.utils.requests.post')
     def test_invite_statusCodeIsNot200_raisesException(self, post_mock):
         post_mock.side_effect = [
-            MagicMock(status_code=200, data={'ok': False, 'error': 'Mocked!'})
+            MagicMock(status_code=200, json=lambda: {'ok': False, 'error': 'Mocked!'})
         ]
 
         with self.assertRaises(SlackException):
