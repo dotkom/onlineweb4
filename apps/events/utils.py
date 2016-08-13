@@ -14,7 +14,6 @@ from filebrowser.settings import VERSIONS
 from apps.authentication.models import OnlineUser as User
 from apps.events.models import TYPE_CHOICES, Attendee, Event
 from apps.payment.models import PaymentDelay, PaymentRelation
-from apps.splash.models import SplashYear
 
 
 def get_group_restricted_events(user, all_events=False):
@@ -174,22 +173,6 @@ class EventCalendar(Calendar):
         cal_event.add('uid', 'event-' + str(event.id) + '@online.ntnu.no')
 
         self.cal.add_component(cal_event)
-
-
-class SplashCalendar(Calendar):
-    def add_event(self, event):
-        cal_event = icalendar.Event()
-        cal_event.add('dtstart', event.start_time)
-        cal_event.add('dtend', event.end_time)
-        cal_event.add('summary', event.title)
-        cal_event.add('description', event.content)
-        cal_event.add('uid', 'splash-' + str(event.id) + '@online.ntnu.no')
-
-        self.cal.add_component(cal_event)
-
-    def events(self):
-        self.add_events(SplashYear.objects.current_events())
-        self.filename = 'events'
 
 
 def find_image_versions(event):

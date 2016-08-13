@@ -173,6 +173,7 @@ if 'apps.rutinator' in settings.INSTALLED_APPS:
 if 'apps.splash' in settings.INSTALLED_APPS:
     urlpatterns += [
         url(r'^splash/',           include('apps.splash.urls')),
+        url(r'^splash/',           include('apps.splash.api.urls')),
     ]
 
 if 'apps.sso' in settings.INSTALLED_APPS:
