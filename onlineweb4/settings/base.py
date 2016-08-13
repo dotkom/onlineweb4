@@ -264,6 +264,7 @@ INSTALLED_APPS = (
     'apps.payment',
     'apps.posters',
     #'apps.rutinator',
+    'apps.slack',
     'apps.sso',
     'apps.splash',
     'apps.shop',
