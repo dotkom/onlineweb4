@@ -1,6 +1,5 @@
 from apps.api.utils import SharedAPIRootRouter
 from apps.slack import views
-from apps.shop.views import InventoryViewSet
 
 urlpatterns = []
 

@@ -1,10 +1,12 @@
+from unittest.mock import MagicMock, patch
+
 from django.core.urlresolvers import reverse
 from django.test import TestCase
 from rest_framework import status
 from rest_framework.test import APITestCase
-from unittest.mock import MagicMock, patch
 
 from apps.slack.utils import SlackException, SlackInvite
+
 
 class SlackInviteTest(TestCase):
     def setUp(self):
@@ -42,13 +44,14 @@ class SlackInviteTest(TestCase):
             self.slack_invite.invite("test@example.com", "Test")
 
     @patch('apps.slack.utils.requests.post')
-    def test_invite_statusCodeIsNot200_raisesException(self, post_mock):
+    def test_invite_okIsNotTrue_raisesException(self, post_mock):
         post_mock.side_effect = [
             MagicMock(status_code=200, json=lambda: {'ok': False, 'error': 'Mocked!'})
         ]
 
         with self.assertRaises(SlackException):
             self.slack_invite.invite("test@example.com", "Test")
+
 
 class InviteViewSetTest(APITestCase):
     @patch('apps.slack.views.SlackInvite')
@@ -73,7 +76,6 @@ class InviteViewSetTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertFalse(response.json()['ok'])
 
-
     @patch('apps.slack.views.SlackInvite')
     def test_post_withNameOnly_fails(self, slack_mock):
         url = reverse('slack-list')
@@ -83,7 +85,6 @@ class InviteViewSetTest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertFalse(response.json()['ok'])
-
 
     @patch('apps.slack.views.SlackInvite.invite')
     def test_post_withInvalidEmail_fails(self, slack_mock):

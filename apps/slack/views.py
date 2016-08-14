@@ -1,7 +1,8 @@
-from rest_framework.viewsets import ViewSet
 from rest_framework.response import Response
+from rest_framework.viewsets import ViewSet
 
 from apps.slack.utils import SlackException, SlackInvite
+
 
 class InviteViewSet(ViewSet):
     def create(self, request, format=None):

@@ -1,10 +1,13 @@
-from django.conf import settings
 import re
-import requests
 import time
+
+import requests
+from django.conf import settings
+
 
 class SlackException(Exception):
     pass
+
 
 class SlackInvite:
     def __init__(self):
