@@ -21,6 +21,14 @@ class SlackInviteTest(TestCase):
         self.assertFalse(self.slack_invite._match_email('@example.com'))
         self.assertTrue(self.slack_invite._match_email('mail@example.com'))
 
+    def test_invite_matchEmailFails_raisesException(self):
+        with self.assertRaises(SlackException):
+            self.slack_invite.invite('invalid@email', 'Name')
+
+    def test_invite_invalidName_raisesException(self):
+        with self.assertRaises(SlackException):
+            self.slack_invite.invite('valid@email.com', '')
+
     @patch('apps.slack.utils.requests.post')
     def test_invite_callsRequestsPost(self, post_mock):
         post_mock.side_effect = [
