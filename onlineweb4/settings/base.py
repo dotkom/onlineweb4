@@ -358,6 +358,14 @@ LOGGING = {
     }
 }
 
+SLACK_INVITER = {
+    # e.g. onlinentnu
+    'team_name': 'team_name_here',
+    # Token generated using OAuth2: https://api.slack.com/docs/oauth
+    # Scopes needed: client+admin
+    'token': 'xoxp-1234_fake'
+}
+
 # crispy forms settings
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
 

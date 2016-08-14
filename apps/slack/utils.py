@@ -1,3 +1,4 @@
+from django.conf import settings
 import re
 import requests
 import time
@@ -7,9 +8,8 @@ class SlackException(Exception):
 
 class SlackInvite:
     def __init__(self):
-        self.token = ''
-        self.team_name = 'onlinentnu'
-        self.channels = ['online']
+        self.token = settings.SLACK_INVITER['token']
+        self.team_name = settings.SLACK_INVITER['team_name']
 
     def _url(self):
         return "https://{team}.slack.com/api/users.admin.invite?t={time}".format(
@@ -20,7 +20,6 @@ class SlackInvite:
         r = requests.post(self._url(), data={
             "email": email,
             "first_name": name,
-            "channels": self.channels,
             "token": self.token,
             "set_active": "true",
             "_attempts": 1
