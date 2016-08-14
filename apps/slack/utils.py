@@ -28,10 +28,9 @@ class SlackInvite:
             team=self.team_name, time=int(time.time())
         )
 
-    def _post(self, email, name):
+    def _post(self, email):
         r = requests.post(self._url(), data={
             "email": email,
-            "first_name": name,
             "token": self.token,
             "set_active": "true",
             "_attempts": 1
@@ -45,12 +44,10 @@ class SlackInvite:
     def _match_email(self, email):
         return re.match(r'^.+@.+\..+', email)
 
-    def invite(self, email, name):
+    def invite(self, email):
         if not self._match_email(email):
             raise SlackException('Ugyldig e-mail')
-        if name == '':
-            raise SlackException('Ugyldig navn')
-        self._post(email, name)
+        self._post(email)
 
     def _error_to_text(self, error_text):
         if error_text == 'invalid_auth':
