@@ -92,11 +92,11 @@ class InviteViewSetTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     @patch('apps.slack.views.SlackInvite.invite')
-    def test_post_withInvalidEmail_fails(self, slack_mock):
+    def test_post_withSlackError_fails(self, slack_mock):
         slack_mock.side_effect = SlackException('Error')
         url = reverse('slack-list')
         name = 'Name'
-        email = 'email@Invalid'
+        email = 'email@example.com'
 
         response = self.client.post(url, {'name': name, 'email': email})
 
