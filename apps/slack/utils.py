@@ -38,7 +38,7 @@ class SlackInvite:
 
     def invite(self, email, name):
         if not self._match_email(email):
-            raise SlackException('Invalid e-mail')
+            raise SlackException('Ugyldig e-mail')
         if name == '':
-            raise SlackException('Empty name')
+            raise SlackException('Ugyldig navn')
         self._post(email, name)
