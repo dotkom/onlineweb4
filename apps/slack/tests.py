@@ -72,7 +72,6 @@ class InviteViewSetTest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertTrue(slack_mock.called)
-        self.assertTrue(response.json()['ok'])
 
     @patch('apps.slack.views.SlackInvite')
     def test_post_withEmailOnly_fails(self, slack_mock):
@@ -81,8 +80,7 @@ class InviteViewSetTest(APITestCase):
 
         response = self.client.post(url, {'email': email})
 
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertFalse(response.json()['ok'])
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     @patch('apps.slack.views.SlackInvite')
     def test_post_withNameOnly_fails(self, slack_mock):
@@ -91,8 +89,7 @@ class InviteViewSetTest(APITestCase):
 
         response = self.client.post(url, {'name': name})
 
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertFalse(response.json()['ok'])
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     @patch('apps.slack.views.SlackInvite.invite')
     def test_post_withInvalidEmail_fails(self, slack_mock):
@@ -103,6 +100,5 @@ class InviteViewSetTest(APITestCase):
 
         response = self.client.post(url, {'name': name, 'email': email})
 
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertTrue(slack_mock.called)
-        self.assertFalse(response.json()['ok'])
