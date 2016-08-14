@@ -1,9 +1,9 @@
+from rest_framework import serializers
 from rest_framework.response import Response
 from rest_framework.viewsets import ViewSet
-from rest_framework import serializers
 
-from apps.slack.utils import SlackException, SlackInvite
 from apps.slack.serializers import SlackSerializer
+from apps.slack.utils import SlackException, SlackInvite
 
 
 class InviteViewSet(ViewSet):
