@@ -54,5 +54,5 @@ class SlackInvite:
             log.error('Auth to Slack API failed')
         if error_text in self.ERRORS:
             return self.ERRORS[error_text]
-        log.warning('Unknown error from Slack API', error_text)
+        log.warning('Unknown error from Slack API: ' + error_text)
         return 'Ukjent feilmelding'
