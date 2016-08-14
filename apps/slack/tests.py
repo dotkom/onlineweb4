@@ -60,6 +60,17 @@ class SlackInviteTest(TestCase):
         with self.assertRaises(SlackException):
             self.slack_invite.invite("test@example.com", "Test")
 
+    @patch('apps.slack.utils.log.error')
+    @patch('apps.slack.utils.requests.post')
+    def test_invite_invalidAuth_logsError(self, post_mock, log_mock):
+        post_mock.side_effect = [
+            MagicMock(status_code=200, json=lambda: {'ok': False, 'error': 'invalid_auth'})
+        ]
+
+        with self.assertRaises(SlackException):
+            self.slack_invite.invite("test@example.com", "Test")
+        self.assertTrue(log_mock.called)
+
 
 class InviteViewSetTest(APITestCase):
     @patch('apps.slack.views.SlackInvite')
