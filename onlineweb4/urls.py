@@ -170,6 +170,11 @@ if 'apps.rutinator' in settings.INSTALLED_APPS:
         )),
     ]
 
+if 'apps.slack' in settings.INSTALLED_APPS:
+    urlpatterns += [
+        url(r'^slack/', include('apps.slack.urls'))
+    ]
+
 if 'apps.splash' in settings.INSTALLED_APPS:
     urlpatterns += [
         url(r'^splash/',           include('apps.splash.urls')),

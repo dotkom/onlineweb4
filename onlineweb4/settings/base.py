@@ -264,6 +264,7 @@ INSTALLED_APPS = (
     'apps.payment',
     'apps.posters',
     #'apps.rutinator',
+    'apps.slack',
     'apps.sso',
     'apps.splash',
     'apps.shop',
@@ -355,6 +356,14 @@ LOGGING = {
             'propagate': True,
         },
     }
+}
+
+SLACK_INVITER = {
+    # e.g. onlinentnu
+    'team_name': 'team_name_here',
+    # Token generated using OAuth2: https://api.slack.com/docs/oauth
+    # Scopes needed: client+admin
+    'token': 'xoxp-1234_fake'
 }
 
 # crispy forms settings
