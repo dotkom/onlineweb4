@@ -1,0 +1,6 @@
+Det har blitt registrert en ny medlemskapssøknad.
+
+Søker: {{ approval.applicant.get_full_name }}
+Studieretning: {% if approval.is_fos_application %}{{ approval.get_field_of_study_display }}{% else %}{{ approval.applicant.get_field_of_study_display }} (fornying av medlemskap){% endif %}
+
+Du kan behandle søknaden her: {{ approval_url }}

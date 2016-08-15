@@ -28,6 +28,7 @@ EMAIL_BEDKOM = 'bedkom@online.ntnu.no'
 EMAIL_DOTKOM = 'dotkom@online.ntnu.no'
 EMAIL_EKSKOM = 'ekskom@online.ntnu.no'
 EMAIL_FAGKOM = 'fagkom@online.ntnu.no'
+EMAIL_HS = 'hs@online.ntnu.no'
 EMAIL_ITEX = 'itex@online.ntnu.no'
 EMAIL_PROKOM = 'prokom@online.ntnu.no'
 EMAIL_TRIKOM = 'trikom@online.ntnu.no'
@@ -413,6 +414,10 @@ OW4_SETTINGS = {
        'FEATURED_DAYS_FUTURE': os.getenv('OW4_EVENTS_FEATURED_DAYS_FUTURE', 3),
        'FEATURED_DAYS_PAST': os.getenv('OW4_EVENTS_FEATURED_DAYS_PAST', 3),
    }
+}
+
+APPROVAL_SETTINGS = {
+    'SEND_APPROVER_NOTIFICATION_EMAIL': True,
 }
 
 # Remember to keep 'local' last, so it can override any setting.
