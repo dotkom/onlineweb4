@@ -31,6 +31,8 @@ class AddPosterTestCase(TestCase):
 
         # Create prokom group as permissions are assigned to prokom after creation
         G(Group, name='proKom')
+        # Create dotkom group because the redirect assertion wants to check if the user is in dotkom group
+        G(Group, name='dotKom')
 
         data = {
             'title': 'test',
@@ -43,10 +45,8 @@ class AddPosterTestCase(TestCase):
 
         response = self.client.post(url, data)
 
-        print(response.status_code)
-        print(response)
-        print(response.content)
+        poster = Poster.objects.get(title=data['title'])
 
-        # self.assertEqual(200, response.status_code)
+        self.assertEqual(data['title'], poster.title)
+        self.assertRedirects(response, reverse('posters_detail', args=(poster.id,)))
 
-        self.assertEqual(data['title'], Poster.objects.get(title=data['title']).title)
