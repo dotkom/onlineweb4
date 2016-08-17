@@ -49,4 +49,3 @@ class AddPosterTestCase(TestCase):
 
         self.assertEqual(data['title'], poster.title)
         self.assertRedirects(response, reverse('posters_detail', args=(poster.id,)))
-
