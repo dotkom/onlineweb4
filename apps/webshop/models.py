@@ -29,10 +29,15 @@ class Product(models.Model):
         """Calculates amount of stock based on either product sizes or product stock
 
         Returns:
-            int: Stock amount
+            int: Stock amount. None if stock isn't used
         """
         if self.product_sizes.count() > 0:
-            return sum(product_size.stock for product_size in self.product_sizes.all())
+            sizes = self.product_sizes.all()
+            sizes_with_stock = [size for size in sizes if size.stock is not None]
+            if len(sizes_with_stock) != len(sizes):
+                # One of the sizes is unlimited(None) which means stock size isn't relevant
+                return None
+            return sum(product_size.stock for product_size in sizes_with_stock)
         else:
             return self.stock
 
