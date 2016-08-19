@@ -179,11 +179,11 @@ def _handle_poster_add(request, form, order_type):
     poster.save()
 
     # Let this user have permissions to show this order
-    UserObjectPermission.objects.assign_perm('view_poster_order', obj=poster, user=request.user)
+    UserObjectPermission.objects.assign_perm('view_poster_order', request.user, poster)
     GroupObjectPermission.objects.assign_perm(
         'view_poster_order',
-        obj=poster,
-        group=Group.objects.get(name='proKom')
+        Group.objects.get(name='proKom'),
+        poster
     )
 
     title = str(poster)
