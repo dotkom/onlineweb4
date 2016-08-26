@@ -101,6 +101,7 @@ def create_membership_application(request):
 
         application = MembershipApproval(
             applicant=request.user,
+            field_of_study=request.user.field_of_study,
             new_expiry_date=new_expiration_date,
         )
         application.save()
