@@ -25,9 +25,11 @@ def upsert_user_ldap(user, pwd):
     :return:
     """
 
+    print("upserting...")
     # Check if user exists
     if exists(user):
         # User exists, update
+        print("user exists")
         return update(user, pwd)
     # New user, insert
     else:
@@ -60,18 +62,21 @@ def update(user, pwd):
     """
     try:
         # Update user
+        print("looking for user ...")
         ldap_user = LdapUser.objects.filter(username=user.ntnu_username).first()
+        print("ldap user " + str(ldap_user))
         ldap_user.username = user.ntnu_username
         ldap_user.email = user.ntnu_username + "@stud.ntnu.no"
         ldap_user.phone = user.phone_number
         ldap_user.first_name = user.first_name
         ldap_user.last_name = user.last_name
         ldap_user.set_password(pwd)
+        print("saving user")
         ldap_user.save()
         update_group_memberships(user)
         return True;
-    except Exception:
-        print("exception")
+    except Exception as exception:
+        print(exception)
         return False
 
 
