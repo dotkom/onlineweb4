@@ -46,6 +46,7 @@ Varelager
                         <tr>
                             <th>Navn</th>
                             <th>Mengde</th>
+                            <th>Kategori</th>
                             <th>Tidligste utløpsdato</th>
                             <th>Nyeste oppføring</th>
                         </tr>
@@ -55,6 +56,7 @@ Varelager
                         <tr>
                             <td><a href="/dashboard/inventory/item/{{ item.id }}/">{{ item.name }}</a></td>
                             <td>{{ item.total_amount }}</td>
+                            <td>{{ item.category}}</td>
                             <td {% if item.has_expired_batch %}class="red"{% endif %}>
                                 {{ item.oldest_expiration_date|date:'Y-m-d' }}
                             </td>
