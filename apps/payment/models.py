@@ -29,6 +29,7 @@ class Payment(models.Model):
         ('arrkom', 'arrkom'),
         ('prokom', 'prokom'),
         ('trikom', 'trikom'),
+        ('fagkom', 'fagkom'),
     )
 
     content_type = models.ForeignKey(ContentType)
