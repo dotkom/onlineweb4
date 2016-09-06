@@ -44,9 +44,6 @@ class LdapUser(ldapdb.models.Model):
     username = CharField(db_column='uid', primary_key=True, unique=True)
     password = CharField(db_column='userPassword', blank=True)
 
-    date_of_birth = DateField(db_column='birthday', blank=True)
-    latitude = FloatField(db_column='latitude', blank=True)
-
     def __str__(self):
         return self.username
 

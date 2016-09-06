@@ -25,7 +25,7 @@ GROUP_PRIORITY = [
 ]
 
 
-def upsert_user_ldap(user, pwd):
+def upsert_user_ldap(user, pwd=None):
     """
     Update or Insert a user to LDAP
 
@@ -50,7 +50,7 @@ def upsert_user_ldap(user, pwd):
             print("inserting user")
             return insert(user, pwd)
     except Exception as exception:
-        log.warning('Exception %s' % exception)
+        getLogger(__name__).warning('Exception %s' % exception)
         print("ex %s" % exception)
         return False
 
@@ -79,7 +79,7 @@ def update(user, pwd):
         getLogger(__name__).info('User %s successfully updated to LDAP' % ldap_user.username)
         return True
     except Exception as exception:
-        log.warning('Exception ' + str(exception))
+        getLogger(__name__).warning('Exception %s' % exception)
         return False
 
 
@@ -104,8 +104,8 @@ def insert(user, pwd):
         ldap_user.login_shell = '/bin/bash'
         ldap_user.username = user.ntnu_username
         ldap_user.uid = find_next_uid()
-        ldap_user.group = get_primary_group(user)
-        home_directory = generate_home_path(ldap_user.username)
+        ldap_user.group = get_primary_gid(user)
+        ldap_user.home_directory = generate_home_path(ldap_user.username)
         getLogger(__name__).debug('Saving LDAP user %s' % ldap_user.username)
         print("saving user")
         ldap_user.set_password(pwd)
@@ -128,7 +128,7 @@ def update_group_memberships(user):
     # remove user from groups the user is no longer a member of
     for ldap_group in LdapGroup.objects.all():
         if not ldap_group.name in ldap_groups and user.ntnu_username in ldap_group.usernames:
-            getLogger(__name__).debug('Removing %s from group %s ' % user, ldap_group.name)
+            getLogger(__name__).debug('Removing %s from group %s ' % (user, ldap_group.name))
             ldap_group.usernames.remove(user.ntnu_username)
             ldap_group.save()
 
@@ -136,7 +136,7 @@ def update_group_memberships(user):
     for ldap_group in ldap_groups:
         group = LdapGroup.objects.filter(name=ldap_group).first()
         if not user.ntnu_username in group.usernames:
-            getLogger(__name__).debug('Adding %s to group %s' % user, ldap_group.name)
+            getLogger(__name__).debug('Adding %s to group %s' % (user, ldap_group))
             group.usernames.append(user.ntnu_username)
             group.save()
 
@@ -153,7 +153,7 @@ def find_next_uid():
     # Or do the following: find the LdapUser with the highest
     # UID and add one
     # In that case: TODO: find unused UID if a user has been deleted
-    if LdapUser.objects.exists():
+    if LdapUser.objects.all().count() > 0:
         next_uid = LdapUser.objects.latest('uid').uid + 1
         print(str(LdapUser.objects.latest('uid')))
         if next_uid > MIN_UID:
@@ -167,13 +167,13 @@ def generate_home_path(username):
     return '/home/' + username[:2] + '/' + username
 
 
-def get_primary_group(user):
+def get_primary_gid(user):
     print("getting pri group")
     for group in user.groups.all():
         if group.name in GROUP_MAP:
             for i in range(0, len(GROUP_PRIORITY)):
                 if GROUP_PRIORITY[i] == GROUP_MAP[group.name]:
-                    return GROUP_MAP[group.name]
+                    LdapGroup.objects.filter(name=GROUP_MAP[group.name]).first().gid
     for group in user.groups.all():
         if group.name in GROUP_MAP:
-            return GROUP_MAP[group.name]
+            return LdapGroup.objects.filter(name=GROUP_MAP[group.name]).first().gid
