@@ -10,6 +10,7 @@ markdown2==2.3.1                # textarea text formatting
 pytz                            # Timezone lib
 stripe==1.37.0                  # Stripe payment
 icalendar==3.10                # iCalendar generation
+ldap3==1.1.2
 
 # third party deps
 # django-filebrowser==3.5.4     # File uploading
@@ -48,6 +49,12 @@ requests[security]==2.11.1
 
 # Wiki
 wiki==0.1
+
+# LDAP
+git+https://github.com/django-ldapdb/django-ldapdb.git
+#git+https://github.com/dotKom/django-ldapdb.git@py3-django1.9
+passlib
+django-auth-ldap
 
 # Django 1.9 support
 sorl-thumbnail>12.2

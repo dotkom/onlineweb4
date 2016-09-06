@@ -16,6 +16,7 @@ urlpatterns = [
     url(r'^password/$', views.password, name='profile_password'),
     url(r'^position/$', views.position, name='profile_position'),
     url(r'^email/$', views.add_email, name='profile_add_email'),
+    url(r'^internal_services/$', views.internal_services, name='profile_internal_services'),
 
     # Ajax views
     url(r'^deleteposition/$', views.delete_position, name='profile_delete_position'),

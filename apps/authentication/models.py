@@ -12,6 +12,7 @@ from django.utils import timezone
 from django.utils.html import strip_tags
 from django.utils.translation import ugettext as _
 
+
 # If this list is changed, remember to check that the year property on
 # OnlineUser is still correct!
 FIELD_OF_STUDY_CHOICES = [
@@ -82,8 +83,15 @@ def get_length_of_field_of_study(field_of_study):
         return 0
 
 
-class OnlineUser(AbstractUser):
+def ldap_sync(sender, instance, created, **kwargs):
+    """
+    Sync users to ldap
+    :param sender: The user object which invoked the sync, the actual OnlineUser
+    """
+    upsert_user_ldap(instance)
 
+
+class OnlineUser(AbstractUser):
     IMAGE_FOLDER = "images/profiles"
     IMAGE_EXTENSIONS = ['.jpg', '.jpeg', '.gif', '.png']
 
