@@ -51,8 +51,8 @@ requests[security]==2.11.1
 wiki==0.1
 
 # LDAP
-#git+https://github.com/django-ldapdb/django-ldapdb.git@py3
-git+https://github.com/dotKom/django-ldapdb.git@py3-django1.9
+git+https://github.com/django-ldapdb/django-ldapdb.git
+#git+https://github.com/dotKom/django-ldapdb.git@py3-django1.9
 passlib
 django-auth-ldap
 
