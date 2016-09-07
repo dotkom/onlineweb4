@@ -48,7 +48,6 @@ def index(request, active_tab='overview'):
 
 
 def _create_profile_context(request):
-
     groups = Group.objects.all()
 
     Privacy.objects.get_or_create(user=request.user)  # This is a hack
@@ -71,8 +70,8 @@ def _create_profile_context(request):
         'orders': Order.objects.filter(order_line__user=request.user).order_by('-order_line__datetime'),
 
         # SSO / OAuth2 approved apps
-        'connected_apps': AccessToken.objects.filter(user=request.user, expires__gte=timezone.now())
-        .order_by('expires'),
+        'connected_apps': AccessToken.objects.filter(user=request.user, expires__gte=timezone.now()).order_by(
+            'expires'),
 
         # marks
         'mark_rules_accepted': request.user.mark_rules,
@@ -443,10 +442,12 @@ def toggle_jobmail(request):
             return HttpResponse(status=200, content=json.dumps({'state': request.user.jobmail}))
     raise Http404
 
+
 @login_required
 def internal_services(request):
     if not has_access(request):
         messages.error(request, _(u"Du har ikke tilgang til å endre dette feltet."))
+        context = _create_profile_context(request)
         render(request, 'profiles/index.html', context)
 
     context = _create_profile_context(request)
@@ -465,7 +466,9 @@ def internal_services(request):
             # Update ldap
             if upsert_user_ldap(request.user, cleaned_pwd):
                 # Add message
-                messages.success(request, _(u"Passordet for interne tjenester er oppdater. Legg merke til at det kan ta noen minutter før endringene trer i kraft."))
+                messages.success(request, _(
+                    u"Passordet for interne tjenester er oppdater. "
+                    u"Legg merke til at det kan ta noen minutter før endringene trer i kraft."))
             else:
                 # Ldap upsert failed
                 messages.error(request, _(u"Passordet for interne tjenester ble ikke endret. Vennligst prøv igjen."))
@@ -475,6 +478,7 @@ def internal_services(request):
             messages.error(request, _(u"Passordet for interne tjenester ble ikke endret. Vennligst prøv igjen."))
 
     return render(request, 'profiles/index.html', context)
+
 
 @login_required
 def user_search(request):

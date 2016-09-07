@@ -10,7 +10,6 @@ from apps.profiles.models import Privacy
 
 
 class ProfileForm(forms.ModelForm):
-
     class Meta(object):
         model = OnlineUser
 
@@ -48,21 +47,18 @@ class ProfileForm(forms.ModelForm):
 
 
 class PrivacyForm(forms.ModelForm):
-
     class Meta(object):
         model = Privacy
         exclude = ['user', 'expose_nickname']
 
 
 class MailSettingsForm(forms.ModelForm):
-
     class Meta(object):
         model = OnlineUser
         fields = ['infomail', ]
 
 
 class PositionForm(forms.ModelForm):
-
     class Meta(object):
         model = Position
         exclude = ['user']
@@ -93,13 +89,12 @@ class PositionForm(forms.ModelForm):
 
         # If first year is larger than latter, or the diff is more than one, fail.
         if (int(years[0]) > int(years[1])) or (int(years[1]) - int(years[0])) > 1:
-                self._errors['period'] = self.error_class([_('Ikke gyldig års-intervall. Bare ett år er tillat.')])
+            self._errors['period'] = self.error_class([_('Ikke gyldig års-intervall. Bare ett år er tillat.')])
 
         return self.cleaned_data
 
 
 class MembershipSettingsForm(forms.ModelForm):
-
     def __init__(self, *args, **kwargs):
         super(MembershipSettingsForm, self).__init__(*args, **kwargs)
         self.fields['started_date'].widget.attrs['class'] = 'hasDatePicker'
@@ -111,6 +106,7 @@ class MembershipSettingsForm(forms.ModelForm):
         widgets = {
             'started_date': forms.TextInput(attrs={'placeholder': 'YYYY-MM-DD'}),
         }
+
 
 class InternalServicesForm(forms.Form):
     ow4_password = forms.CharField(widget=forms.PasswordInput(), label=_(u"Online passord"))
@@ -127,6 +123,5 @@ class InternalServicesForm(forms.Form):
 
             if user is None or user.id != self.current_user.id:
                 self._errors['ow4_password'] = self.error_class([_(u"Passordet er ikke korrekt.")])
-
 
             return cleaned_data
