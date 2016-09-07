@@ -47,8 +47,7 @@ def upsert_user_ldap(user, pwd=None):
             upsert_success = update(user)
         else:
             getLogger(__name__).debug(
-                'User does not exist, inserting new in ldap... [username: %s, user_id: %s ,ldap_uid: %s]' % (
-                    ldap_user.username, user.id, ldap_user.uid))
+                'User does not exist, inserting new in ldap... [user_id: %s]' % user.id)
             upsert_success = insert(user)
 
         if pwd:
