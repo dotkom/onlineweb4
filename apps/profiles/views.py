@@ -31,6 +31,7 @@ from apps.profiles.forms import InternalServicesForm, PositionForm, PrivacyForm,
 from apps.profiles.models import Privacy
 from apps.shop.models import Order
 from apps.ldap.ldap import upsert_user_ldap
+from apps.dashboard.tools import has_access
 
 """
 Index for the entire user profile view
@@ -107,6 +108,7 @@ def _create_profile_context(request):
             (_('betalt'), PaymentRelation.objects.all().filter(user=request.user), True),
         ],
         'internal_services_form': InternalServicesForm(),
+        'in_comittee': has_access(request)
     }
 
     return context
@@ -443,6 +445,10 @@ def toggle_jobmail(request):
 
 @login_required
 def internal_services(request):
+    if not has_access(request):
+        messages.error(request, _(u"Du har ikke tilgang til å endre dette feltet."))
+        render(request, 'profiles/index.html', context)
+
     context = _create_profile_context(request)
     context['active_tab'] = 'internal_services'
 
@@ -461,11 +467,11 @@ def internal_services(request):
                 # Add message
                 messages.success(request, _(u"Passordet for interne tjenester er oppdater. Legg merke til at det kan ta noen minutter før endringene trer i kraft."))
             else:
-                # User fucked up
+                # Ldap upsert failed
                 messages.error(request, _(u"Passordet for interne tjenester ble ikke endret. Vennligst prøv igjen."))
 
         else:
-            # User fucked up
+            # Form not validated
             messages.error(request, _(u"Passordet for interne tjenester ble ikke endret. Vennligst prøv igjen."))
 
     return render(request, 'profiles/index.html', context)
