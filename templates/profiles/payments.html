@@ -24,9 +24,12 @@
                                 <div class="row row-space">
                                     <div class="col-md-12">
                                         <h4><a href="{{ payment_event.payment.content_object.event.get_absolute_url }}">{{ payment_event.payment.description }} </a>
-                                        {% for price in payment_event.payment.prices %}
-                                            <span class="pull-right">{{ price }} Kr.</span></h4>
-                                        {% endfor %}
+                                        {% if payment_event.payment_price.description %}
+                                            <span class="pull-right">{{ payment_event.payment_price.description }}: {{ payment_event.payment_price.price }} Kr.</span></h4>
+                                        {% else %}
+                                            <span class="pull-right">{{ payment_event.payment_price.price }} Kr.</span></h4>
+                                        {% endif %}
+                                        <p>Betalingsreferanse: {{ payment_event.unique_id }}</p>
                                         {% if heading == 'ubetalt' %}
                                             <p>du har ikke beatalt, frist: {{ payment_event.valid_to }}</p>
                                         {% elif user in payment_event.payment.payment_delay_users and payment_event.deadline > 0 %}
