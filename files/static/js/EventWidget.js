@@ -73,10 +73,6 @@ function EventWidget (Utils){
      * @return string
      */
     function createEventItem(item) {
-        var event_image = item.images[0];
-        if ($(window).innerWidth() < 768) {
-            event_image = item.images[1];
-        }
         html = '<div><div class="col-sm-8 col-md-4" id="eventdescription">';
         html +=     '<div class="hero-title">';
         html +=         '<a href="events/' + item.id + '/' + item.slug + '">';
@@ -93,14 +89,22 @@ function EventWidget (Utils){
         if(item.images.length > 0) {
             html +=             '<div class="item active">';
             html +=                 '<a href="events/' + item.id + '/' + item.slug + '">';
-            html +=                         '<img src="' + event_image + '" width="100%" alt="" >';
+            html +=                     '<picture>';
+            html +=                         '<source srcset="' + item.images[2] + '" media="(max-width: 768px)">';
+            html +=                         '<source srcset="' + item.images[1] + '" media="(max-width: 992px)">';
+            html +=                         '<img src="' + item.images[0] + '" width="100%" alt="" >';
+            html +=                      '</picture>';
             html +=                 '</a>';
             html +=             '</div>';
         }
         for(var i=0; i < item.company_event.length; i++){
             html +=         '<div class="item ' + (!item.images[0] && i === 0 ? 'active' : '') + '">';
             html +=             '<a href="events/' + item.id + '/' + item.slug + '">';
-            html +=                 '<img src="' + item.company_event[i].company.image.thumb + '" width="100%" alt="" />';
+            html +=                 '<picture>';
+            html +=                     '<source srcset="' + item.company_event[i].company.image.lg + '" media="(max-width: 768px)">';
+            html +=                     '<source srcset="' + item.company_event[i].company.image.md + '" media="(max-width: 992px)">';
+            html +=                     '<img src="' + item.company_event[i].company.image.thumb + '" width="100%" alt="" />';
+            html +=                 '</picture>';
             html +=             '</a>';
             html +=         '</div>';
         }
