@@ -1,6 +1,6 @@
 setup_tasks:
   - npm install -g less
-  - apt-get install libsasl2-dev
+  - apt-get install libsasl2-2
 
 tasks:
   - tox -e flake8
