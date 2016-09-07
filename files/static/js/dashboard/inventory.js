@@ -33,9 +33,6 @@ var Inventory = (function ($, tools) {
 
             if (!performSelfCheck()) return
             
-            $('#inventory_item_list').tablesorter()
-            $('#inventory-batch-list').tablesorter()
-
             $('#inventory-delete-item').on('click', function (e) {
                 e.preventDefault()
                 $('.confirm-delete-item').data('id', $(this).data('id'))
