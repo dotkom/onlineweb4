@@ -184,7 +184,8 @@ def search_events(request):
     query = request.GET.get('query')
     filters = {
         'future': request.GET.get('future'),
-        'myevents': request.GET.get('myevents')
+        'myevents': request.GET.get('myevents'),
+        'atendable': request.GET.get('atendable')
     }
     events = _search_indexed(request, query, filters)
 

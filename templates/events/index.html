@@ -112,15 +112,16 @@ Arrangementsarkiv - Online
       this.query = '';
       this.future = true;
       this.myevents = false;
+      this.atendable = false;
     };
 
     Filters.prototype.search = function () {
         var url = '{% url 'search_events' %}?query=';
         var query = this.query;
         var filters = '';
-        filters   += '&future=' + this.future;
-        filters     += '&myevents=' + this.myevents;
-
+        filters += '&future=' + this.future;
+        filters += '&myevents=' + this.myevents;
+        filters += "&atendable=" + this.atendable;
         var self = this;
         $.get(url + query + filters, function (result) {
           $('#events').empty();
