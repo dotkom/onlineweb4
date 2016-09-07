@@ -41,7 +41,7 @@
                 <div class="row">
                     <div class="col-md-12">
                         <a href="{% url 'company_details' opportunity.company.id %}">
-                            <img width="100%" src="{% version opportunity.company.old_image 'companies_medium'     %}" alt="" />
+                            <img width="100%" src="{{ opportunity.company.image.xs }}" alt="" />
                         </a>
                     </div>
                 </div>

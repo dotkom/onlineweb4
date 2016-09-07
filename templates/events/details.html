@@ -296,7 +296,7 @@
                                             <a href="{% url 'company_details' company_relation.company.pk %}">
                                                 <div class="title">{{ company_relation.company.name }}</div>
                                                 <div class="image">
-                                                    <img src="{% version company_relation.company.old_image 'companies_thumb' %}" alt="" />
+                                                    <img src="{{ company_relation.company.image.thumb }}" alt="" />
                                                 </div>
                                             </a>
                                         </div>
