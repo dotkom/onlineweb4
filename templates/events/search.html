@@ -10,7 +10,7 @@
         {% if event.companies.all %}
             {% for company_relation in event.companies.all %}
                 <a href="{{ event.get_absolute_url }}">
-                    <img src="{% version company_relation.company.old_image 'companies_archive' %}" alt="" />
+                    <img src="{{ company_relation.company.image.md }}" alt="" />
                 </a>
             {% endfor %}
         {% else %}
