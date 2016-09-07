@@ -84,6 +84,12 @@ Arrangementsarkiv - Online
             Mine arrangementer
           </label>
         </div>
+        <div class="checkbox col-xs-12 col-sm-12 col-md-12">
+          <label>
+            <input type="checkbox" name="optionCheckboxs" value="option1" id="attendable">
+            Arrangement du ikke kan delta på
+          </label>
+        </div>
 	{% endif %}
 
     </div> <!-- end col-md-3 -->
@@ -112,7 +118,7 @@ Arrangementsarkiv - Online
       this.query = '';
       this.future = true;
       this.myevents = false;
-      this.atendable = false;
+      this.attendable = true;
     };
 
     Filters.prototype.search = function () {
@@ -121,7 +127,7 @@ Arrangementsarkiv - Online
         var filters = '';
         filters += '&future=' + this.future;
         filters += '&myevents=' + this.myevents;
-        filters += "&atendable=" + this.atendable;
+        filters += "&attendable=" + this.attendable;
         var self = this;
         $.get(url + query + filters, function (result) {
           $('#events').empty();
@@ -168,6 +174,10 @@ Arrangementsarkiv - Online
 
       $('#myevents').on('click', function () {
         filters.myevents = !filters.myevents;
+        filters.search();
+      });
+      $('#attendable').on('click',function () {
+        filters.attendable = !filters.attendable;
         filters.search();
       });
     });
