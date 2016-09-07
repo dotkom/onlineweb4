@@ -205,8 +205,8 @@ def _search_indexed(request, query, filters):
 
     if filters['myevents'] == 'true':
         kwargs['attendance_event__attendees__user'] = request.user
-    
-    filters['attendable'] = filters['attendable'] == 'true';
+
+    filters['attendable'] = filters['attendable'] == 'true'
     events = Event.objects.filter(**kwargs).order_by(order_by).prefetch_related(
         'attendance_event', 'attendance_event__attendees', 'attendance_event__reserved_seats',
         'attendance_event__reserved_seats__reservees')
@@ -218,8 +218,8 @@ def _search_indexed(request, query, filters):
         if (event.can_display(request.user) and
             not(event.is_attendance_event() and
                 filters['attendable'] and
-                event.attendance_event.is_eligible_for_signup(request.user))
-           ):
+                event.attendance_event.is_eligible_for_signup(request.user))):
+
             display_events.add(event.pk)
 
     events = events.filter(pk__in=display_events)
