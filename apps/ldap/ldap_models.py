@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from django.conf import settings
-
 import ldapdb.models
+from django.conf import settings
 from ldapdb.models.fields import CharField, ImageField, IntegerField, ListField
 from passlib.hash import ldap_sha512_crypt
 
