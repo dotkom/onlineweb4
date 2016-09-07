@@ -26,7 +26,10 @@ Karrieremuligheter - Online
                     <a href="{% url 'careeropportunity_details' opportunity.id %}">
                         <div class="row">
                             <div class="col-md-12">
-                                <img src="{{ opportunity.company.image.md }}" width="100%" alt=""/>
+                                <picture>
+                                    <source srcset="{{ opportunity.company.image.lg }}" media="(max-width: 992px)">
+                                    <img src="{{ opportunity.company.image.md }}" width="100%" alt=""/>
+                                </picture>
                             </div>
                         </div>
                         <div class="row">
