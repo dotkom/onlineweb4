@@ -141,6 +141,8 @@ MIDDLEWARE_CLASSES = (
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
+DATABASE_ROUTERS = ['ldapdb.router.Router']
+
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend', # this is default
     'guardian.backends.ObjectPermissionBackend',
@@ -242,6 +244,9 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.staticfiles',
 
+    # LDAP
+    'ldapdb',
+
     # Onlineweb 4 apps
     'apps.api',
     'apps.approval',
@@ -270,6 +275,7 @@ INSTALLED_APPS = (
     'apps.splash',
     'apps.shop',
     'apps.webshop',
+    'apps.ldap',
     'scripts',
 
     #External apps

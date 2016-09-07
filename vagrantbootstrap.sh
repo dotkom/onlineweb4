@@ -65,7 +65,10 @@ function install_packages() {
         libjpeg8 libjpeg8-dev zlib-bin libtiff4-dev libfreetype6 libfreetype6-dev libpq-dev libssl-dev\
         python-psycopg2 imagemagick \
         nodejs \
-        libffi-dev
+        libffi-dev \
+        libldap2-dev \
+        libsasl2-dev \
+        libssl-dev
 }
 
 function setup_virtualenv() {

@@ -49,11 +49,16 @@ Min side - Online
                             <a href="{% url 'profiles_active' 'connected_apps' %}" data-section="connected_apps">Apptilkoblinger</a>
                         </li>
                         <li class="{% ifequal 'marks' active_tab %}active{% endifequal %}">
-                            <a href="{% url 'profiles_active' 'marks' %}" data-section="marks">Prikker & Suspendering</a>
+                            <a href="{% url 'profiles_active' 'marks' %}" data-section="marks">Prikker &amp; Suspansjoner</a>
                         </li>
                         <li class="{% ifequal 'password' active_tab %}active{% endifequal %}">
                             <a href="{% url 'profiles_active' 'password' %}" data-section="password">Passord</a>
                         </li>
+                        {% if  in_comittee %}
+                        <li class="{% ifequal 'internal_services' active_tab %}active{% endifequal %}">
+                            <a href="{% url 'profiles_active' 'internal_services' %}" data-section="internal_services">Interne tjenester</a>
+                        </li>
+                        {% endif %}
                         <li class="{% ifequal 'email' active_tab %}active{% endifequal %}">
                             <a href="{% url 'profiles_active' 'email' %}" data-section="email">Epost-innstillinger</a>
                         </li>
@@ -90,6 +95,9 @@ Min side - Online
                         </section>
                         <section id="password">
                             {% include "profiles/change_password.html" %}
+                        </section>
+                        <section id="internal_services">
+                            {% include "profiles/internal_services.html" %}
                         </section>
                         <section id="email">
                             {% include "profiles/email.html" %}

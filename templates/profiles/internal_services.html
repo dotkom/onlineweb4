@@ -1,0 +1,36 @@
+{% load crispy_forms_tags %}
+<div class="row">
+    <div class="col-md-12">
+        {% if not user.ntnu_username %}
+
+        <p>Du må være gyldig onlinemedlem for å benytte interne tjenester.</p>
+
+        {% else %}
+        <h3>Tilgang til interne tjenester</h3>
+        <p>Her kan du redigere tilganger til interne tjenester som brukes i Online utenfor nettsidene. Dette gjelder følgende tjenester:</p>
+        <ul>
+            <li>Tilgang til filområdet</li>
+            <li>SSH-tilgang</li>
+        </ul>
+        <hr />
+        <h3>Endre passord</h3>
+        <p>Her kan du endre passord for å få tilgang til tjenestene nevnt ovenfor. Legg merke til at du må fylle ut passordet du bruker for å logge inn til Onlineweb4 (online.ntnu.no) for å kunne endre ditt ønskede passord til interne tjenester. Dette er gjort av sikkerhetsmessige årsaker.</p>
+        <form method="post" action="{% url 'profile_internal_services' %}">
+            {% csrf_token %}
+            {{ internal_services_form|crispy }}
+            <button type="submit" class="btn btn-success add">Lagre</button>
+        </form>
+    </div>
+    <div class="col-md-6">
+        <h3>SSH-tilgang</h3>
+        <p>For å få tilgang til serverne via SSH trenger du en SSH-klient. På Mac OS X og de fleste Linux-distribusjoner følger
+            dette med som standard. Hvis du er på Windows anbefaler vi
+            enten <a href="http://www.chiark.greenend.org.uk/~sgtatham/putty/download.html" target="_blank">PuTTY</a>
+            eller <a href="https://www.cygwin.com/" target="_blank">Cygwin</a>.</p>
+        <p>
+            <strong>Server:</strong> login.online.ntnu.no<br />
+            <strong>Brukernavn:</strong> {{ user.ntnu_username }}
+        </p>
+        {% endif %}
+    </div>
+</div>
