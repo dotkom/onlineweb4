@@ -40,22 +40,23 @@ class EventOrderedByRegistration(models.Manager):
     Order events by registration start if registration start is within 7 days of today.
     """
     def get_queryset(self):
-        today = timezone.now()
-        DELTA_FUTURE = settings.OW4_SETTINGS.get('events').get('FEATURED_DAYS_FUTURE')
-        DELTA_PAST = settings.OW4_SETTINGS.get('events').get('FEATURED_DAYS_PAST')
-        week_back = timezone.now() - timedelta(days=DELTA_PAST)
-        week_in_future = timezone.now() + timedelta(days=DELTA_FUTURE)
+        now = timezone.now()
+        DELTA_FUTURE_SETTING = settings.OW4_SETTINGS.get('events').get('FEATURED_DAYS_FUTURE')
+        DELTA_PAST_SETTING = settings.OW4_SETTINGS.get('events').get('FEATURED_DAYS_PAST')
+        DAYS_BACK_DELTA = timezone.now() - timedelta(days=DELTA_PAST_SETTING)
+        DAYS_FORWARD_DELTA = timezone.now() + timedelta(days=DELTA_FUTURE_SETTING)
 
         return super(EventOrderedByRegistration, self).get_queryset().\
             annotate(registration_filtered=Case(
-                When(Q(attendance_event__registration_start__gte=week_back) &
-                     Q(attendance_event__registration_start__lte=week_in_future),
+                When(Q(event_end__gte=now) &
+                     Q(attendance_event__registration_start__gte=DAYS_BACK_DELTA) &
+                     Q(attendance_event__registration_start__lte=DAYS_FORWARD_DELTA),
                      then='attendance_event__registration_start'),
                 default='event_end',
                 output_field=models.DateTimeField()
             )
         ).annotate(is_today=Case(
-            When(event_end__date=today.date(),
+            When(event_end__date=now.date(),
                  then=Value(1)),
             default=Value(0),
             output_field=models.IntegerField()
