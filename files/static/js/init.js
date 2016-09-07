@@ -1,13 +1,4 @@
-$(function() {
-    // ??
-    $('.dropdown-toggle').dropdown();
-
-    // Fadeout alerts
-    setTimeout(function () {
-        $('.alert').fadeOut();
-    }, 5000);
-
-    // Init the footer-map
+var initGoogleMaps = function() {
     var map = new google.maps.Map(document.getElementById("footer-map"),{
         center: new google.maps.LatLng(63.41819751959266, 10.40592152481463),
         zoom: 15,
@@ -63,18 +54,39 @@ $(function() {
         ]
     });
 
-    // Applying the marker to the map
+    // Applying the marker to the map, but only if the map has been created
     var online_marker = new google.maps.Marker({
         map: map,
         position: new google.maps.LatLng(63.41816871425781,10.405924207023645),
         icon: '/static/img/map-marker.png',
         visible: true
     });
+    return map;
+}
+
+$(function() {
+    // ??
+    $('.dropdown-toggle').dropdown();
+
+    // Fadeout alerts
+    setTimeout(function () {
+        $('.alert').fadeOut();
+    }, 5000);
+
+    // Init the footer-map, but don't crash if google is not found
+    try {
+        var map = initGoogleMaps();
+    }
+    catch (err){
+        console.warn("Could not load Google Maps:", err);
+    }
 
     // Reset center of the map on window-resize (using jquery-plugin to only fire the event when resizing is finished)
     // Also swap event image sources for proper resolution on mobile view
     $(window).on("debouncedresize",function(e) {
-        map.panTo(new google.maps.LatLng(63.41819751959266, 10.40592152481463));
+        if(map){
+            map.panTo(new google.maps.LatLng(63.41819751959266, 10.40592152481463));
+        }
 
         var mobile = false;
 
@@ -110,7 +122,7 @@ $(function() {
             $('.mn-nav').addClass('mn-nav-open')
                         .addClass('animation-in-process')
         }
-        
+
         setTimeout(function () {
             $('.mn-nav').removeClass('animation-in-process')
         }, 300)
