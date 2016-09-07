@@ -167,6 +167,9 @@ GUARDIAN_RENDER_403 = True
 # Django-Taggit settings
 TAGGIT_CASE_INSENSITIVE = True
 
+# LDAP
+LDAP_BASE_DN = 'dc=online,dc=ntnu,dc=no'
+
 # List of usergroups that should be listed under "Finn brukere" in user profile
 USER_SEARCH_GROUPS = [
     16,  # appKom

@@ -12,7 +12,6 @@ from django.utils import timezone
 from django.utils.html import strip_tags
 from django.utils.translation import ugettext as _
 
-
 # If this list is changed, remember to check that the year property on
 # OnlineUser is still correct!
 FIELD_OF_STUDY_CHOICES = [
