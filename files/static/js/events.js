@@ -96,12 +96,15 @@ return {
         message.prependTo(wrapper)
 
         // Fadeout and remove the alert
-        setTimeout(function() {
-            $('[id=' + id +']').fadeOut();
+        console.log("Showing message",message);
+        if(!(message.hasClass('alert-danger')) || message.hasClass('alert-error')){
             setTimeout(function() {
-                $('[id=' + id +']').remove();
+                $('[id=' + id +']').fadeOut();
+                setTimeout(function() {
+                    $('[id=' + id +']').remove();
+                }, 5000);
             }, 5000);
-        }, 5000);
+        }
     }
 }
 

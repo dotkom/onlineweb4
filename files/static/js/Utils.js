@@ -103,15 +103,19 @@ function Utils() {
     var msgWrapper = $('div.messages');
     var inner = msgWrapper.find('.message-container');
     var id = new Date().getTime();
-    $('<div class="alert ' + tags + '" id="' + id +'"><button type="button" class="close" data-dismiss="alert">&times;</button>' + message + '</div>').appendTo(inner);
+    var elm = $('<div class="alert ' + tags + '" id="' + id +'"><button type="button" class="close" data-dismiss="alert">&times;</button>' + message + '</div>');
+    elm.appendTo(inner);
 
     //Fadeout and remove the alert
-    setTimeout(function() {
-      $('[id=' + id +']').fadeOut();
+    console.log("Showing message",elm);
+    if(!(elm.hasClass('alert-danger') || elm.hasClass('alert-error'))){
       setTimeout(function() {
-        $('[id=' + id +']').remove();
+        $('[id=' + id +']').fadeOut();
+        setTimeout(function() {
+          $('[id=' + id +']').remove();
+        }, 5000);
       }, 5000);
-    }, 5000);
+    }
   }
 
   /**

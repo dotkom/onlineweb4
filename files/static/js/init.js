@@ -4,7 +4,13 @@ $(function() {
 
     // Fadeout alerts
     setTimeout(function () {
-        $('.alert').fadeOut();
+        $('.alert').each(function(i,elm){
+          if(!(elm.hasClass('alert-danger') || elm.hasClass('alert-error'))){
+            elm.fadeOut(400,function(){
+              elm.remove();
+            })
+          }
+        });
     }, 5000);
 
     // Init the footer-map
