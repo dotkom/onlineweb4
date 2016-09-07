@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
-
-from ldapdb.models.fields import (CharField, DateField, ImageField, ListField,
-                                  IntegerField, FloatField)
 import ldapdb.models
-from passlib.hash import ldap_sha512_crypt
+from ldapdb.models.fields import CharField, ImageField, IntegerField, ListField
 from onlineweb4.settings.local import LDAP_BASE_DN
+from passlib.hash import ldap_sha512_crypt
+
 
 class LdapOrgUnit(ldapdb.models.Model):
     """
@@ -17,6 +16,7 @@ class LdapOrgUnit(ldapdb.models.Model):
 
     def __str__(self):
         return self.name
+
 
 class LdapUser(ldapdb.models.Model):
     """
@@ -53,6 +53,7 @@ class LdapUser(ldapdb.models.Model):
 
     def check_password(self, password):
         return ldap_sha512_crypt.verify(password, self.password)
+
 
 class LdapGroup(ldapdb.models.Model):
     """

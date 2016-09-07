@@ -1,7 +1,7 @@
 # -*- coding: utf8 -*-
-
 from logging import getLogger
-from apps.ldap.ldap_models import LdapUser, LdapGroup
+
+from apps.ldap.ldap_models import LdapGroup, LdapUser
 
 MIN_UID = 2000
 
@@ -134,7 +134,7 @@ def update_group_memberships(user):
 
     # remove user from groups the user is no longer a member of
     for ldap_group in LdapGroup.objects.all():
-        if not ldap_group.name in ldap_groups and user.ntnu_username in ldap_group.usernames:
+        if ldap_group.name not in ldap_groups and user.ntnu_username in ldap_group.usernames:
             getLogger(__name__).debug('Removing %s from group %s ' % (user, ldap_group.name))
             ldap_group.usernames.remove(user.ntnu_username)
             ldap_group.save()
@@ -142,17 +142,10 @@ def update_group_memberships(user):
     # add user to new groups
     for ldap_group in ldap_groups:
         group = LdapGroup.objects.filter(name=ldap_group).first()
-        if not user.ntnu_username in group.usernames:
+        if user.ntnu_username not in group.usernames:
             getLogger(__name__).debug('Adding %s to group %s' % (user, ldap_group))
             group.usernames.append(user.ntnu_username)
             group.save()
-
-
-def format_field(input):
-    if input:
-        return escape_bytes(input)
-    else:
-        return u'n/a'
 
 
 def find_next_uid():

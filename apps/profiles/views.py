@@ -25,13 +25,14 @@ from apps.approval.models import MembershipApproval
 from apps.authentication.forms import NewEmailForm
 from apps.authentication.models import OnlineUser as User
 from apps.authentication.models import Email, Position, RegisterToken
+from apps.dashboard.tools import has_access
+from apps.ldap.ldap import upsert_user_ldap
 from apps.marks.models import Mark, Suspension
 from apps.payment.models import PaymentDelay, PaymentRelation, PaymentTransaction
 from apps.profiles.forms import InternalServicesForm, PositionForm, PrivacyForm, ProfileForm
 from apps.profiles.models import Privacy
 from apps.shop.models import Order
-from apps.ldap.ldap import upsert_user_ldap
-from apps.dashboard.tools import has_access
+
 
 """
 Index for the entire user profile view
