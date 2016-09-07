@@ -83,14 +83,6 @@ def get_length_of_field_of_study(field_of_study):
         return 0
 
 
-def ldap_sync(sender, instance, created, **kwargs):
-    """
-    Sync users to ldap
-    :param sender: The user object which invoked the sync, the actual OnlineUser
-    """
-    upsert_user_ldap(instance)
-
-
 class OnlineUser(AbstractUser):
     IMAGE_FOLDER = "images/profiles"
     IMAGE_EXTENSIONS = ['.jpg', '.jpeg', '.gif', '.png']

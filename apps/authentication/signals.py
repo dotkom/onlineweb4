@@ -6,8 +6,11 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.db.models.signals import m2m_changed, post_save
 from django.dispatch import receiver
+from django.db.models import signals
 
+from apps.authentication.models import OnlineUser
 from apps.authentication.tasks import SynchronizeGroups
+from apps.ldap.ldap import upsert_user_ldap
 
 User = get_user_model()
 logger = logging.getLogger('syncer.%s' % __name__)
@@ -44,4 +47,15 @@ def trigger_group_syncer(sender, created=False, **kwargs):
         else:
             SynchronizeGroups.run()
 
+
+def ldap_sync(sender, instance, created, **kwargs):
+    """
+    Sync users to ldap
+    :param sender: The user object which invoked the sync, the actual OnlineUser
+    """
+
+    upsert_user_ldap(instance)
+
+
 m2m_changed.connect(trigger_group_syncer, dispatch_uid=sync_uuid, sender=User.groups.through)
+signals.post_save.connect(ldap_sync, sender=OnlineUser)
