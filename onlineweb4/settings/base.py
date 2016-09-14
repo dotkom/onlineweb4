@@ -247,9 +247,6 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.staticfiles',
 
-    # LDAP
-    'ldapdb',
-
     # Onlineweb 4 apps
     'apps.api',
     'apps.approval',
