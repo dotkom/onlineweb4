@@ -141,8 +141,6 @@ MIDDLEWARE_CLASSES = (
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
-DATABASE_ROUTERS = ['ldapdb.router.Router']
-
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend', # this is default
     'guardian.backends.ObjectPermissionBackend',
@@ -166,9 +164,6 @@ GUARDIAN_RENDER_403 = True
 
 # Django-Taggit settings
 TAGGIT_CASE_INSENSITIVE = True
-
-# LDAP
-LDAP_BASE_DN = 'dc=online,dc=ntnu,dc=no'
 
 # List of usergroups that should be listed under "Finn brukere" in user profile
 USER_SEARCH_GROUPS = [
