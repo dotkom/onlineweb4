@@ -82,8 +82,8 @@ def _create_profile_context(request):
         ],
         'suspensions': [
             # Tuple syntax ('title', list_of_marks, is_collapsed)
-            (_('aktive suspansjoner'), Suspension.objects.filter(user=request.user, active=True), False),
-            (_('inaktive suspansjoner'), Suspension.objects.filter(user=request.user, active=False), True),
+            (_('aktive suspensjoner'), Suspension.objects.filter(user=request.user, active=True), False),
+            (_('inaktive suspensjoner'), Suspension.objects.filter(user=request.user, active=False), True),
         ],
         # password
         'password_change_form': PasswordChangeForm(request.user),
