@@ -278,7 +278,6 @@ INSTALLED_APPS = (
     'apps.splash',
     'apps.shop',
     'apps.webshop',
-    'apps.ldap',
     'scripts',
 
     #External apps
