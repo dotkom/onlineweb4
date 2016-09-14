@@ -1,4 +1,5 @@
 {% load fb_versions %}
+{% load markdown_deux_tags %}
 
 {% if events %}
   {% for event in events %}
@@ -11,7 +12,7 @@
                 <a href="{{ event.get_absolute_url }}">
                     <img src="{% version company_relation.company.old_image 'companies_archive' %}" alt="" />
                 </a>
-            {% endfor %} 
+            {% endfor %}
         {% else %}
             <a href="{{ event.get_absolute_url }}">
                 <img src="{% version event.image 'events_archive' %}" alt="" />
@@ -29,7 +30,7 @@
         <div class="row">
             <div class=" col-sm-12 col-md-8">
                 <h1>
-                    <a href="{{ event.get_absolute_url }}">{{ event.title }}</a> 
+                    <a href="{{ event.get_absolute_url }}">{{ event.title }}</a>
                 </h1>
             </div>
             <div class="col-sm-12 col-md-4">
@@ -37,7 +38,7 @@
             </div>
         </div>
 
-      <p class="ingress">{{ event.ingress }}</p>
+      <div class="ingress">{{ event.ingress|striptags|markdown }}</div>
 
       <div class="meta">
         {% if event.is_attendance_event %}
