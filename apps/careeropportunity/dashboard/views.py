@@ -1,4 +1,6 @@
 # -*- encoding: utf-8 -*-
+import logging
+
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
@@ -32,6 +34,8 @@ def index(request):
 @login_required
 @permission_required('careeropportunity.change_careeropportunity', return_403=True)
 def detail(request, opportunity_id=None):
+    logger = logging.getLogger(__name__)
+    logger.debug('Editing careeropportunity with id: %s' % (opportunity_id))
 
     if not has_access(request):
         raise PermissionDenied
@@ -66,6 +70,8 @@ def detail(request, opportunity_id=None):
 @login_required
 @permission_required('careeropportunity.change_careeropportunity', return_403=True)
 def delete(request, opportunity_id=None):
+    logger = logging.getLogger(__name__)
+    logger.debug('Deleting careeropportunitywith id: %s' % (opportunity_id))
     if not has_access(request):
         raise PermissionDenied
 
