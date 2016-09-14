@@ -24,7 +24,8 @@ class ProfileForm(forms.ModelForm):
             'bio',
             'gender',
             'github',
-            'linkedin'
+            'linkedin',
+            'rfid'
         ]
         widgets = {
             'allergies': forms.Textarea(attrs={'id': 'allergies'}),
@@ -42,6 +43,13 @@ class ProfileForm(forms.ModelForm):
         zip_code = cleaned_data['zip_code']
         if len(zip_code) != 0 and not re.match(r'\d{4}', zip_code):
             self._errors['zip_code'] = self.error_class([_("Postnummer må bestå av fire siffer.")])
+
+        # RFID code digits only
+        rfid = cleaned_data['rfid']
+        if len(rfid) != 0 and not re.match("(^\d{7}$)|(^\d{10}$)", rfid):
+            self._errors['rfid'] = self.error_class([_("RFID må bestå av syv eller ti siffer.")])
+
+        # TODO else-loop for converting to rfid
 
         return cleaned_data
 
