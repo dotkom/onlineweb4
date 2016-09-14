@@ -54,10 +54,10 @@ Min side - Online
                         <li class="{% ifequal 'password' active_tab %}active{% endifequal %}">
                             <a href="{% url 'profiles_active' 'password' %}" data-section="password">Passord</a>
                         </li>
-                        {% if  in_comittee %}
+                        <!--{% if  in_comittee %}
                         <li class="{% ifequal 'internal_services' active_tab %}active{% endifequal %}">
                             <a href="{% url 'profiles_active' 'internal_services' %}" data-section="internal_services">Interne tjenester</a>
-                        </li>
+                        </li>-->
                         {% endif %}
                         <li class="{% ifequal 'email' active_tab %}active{% endifequal %}">
                             <a href="{% url 'profiles_active' 'email' %}" data-section="email">Epost-innstillinger</a>
