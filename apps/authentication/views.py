@@ -228,7 +228,7 @@ def set_password(request, token=None):
         try:
             rt = RegisterToken.objects.get(token=token)
         except RegisterToken.DoesNotExist:
-            log.debug('%s tried to set password with nonexisting/expired token %s' % request.user, token)
+            log.debug('%s tried to set password with nonexisting/expired token %s' % (request.user, token))
             messages.error(request, 'Denne lenken er utløpt. Bruk gjenopprett passord for å få tilsendt en ny lenke.')
         if rt and rt.is_valid:
             if request.method == 'POST':
