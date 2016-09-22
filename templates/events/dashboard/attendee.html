@@ -10,8 +10,8 @@ Deltakerdetaljer
 {% endblock %}
 
 {% block breadcrumbs %}
-    <li><a href="{% url 'dashboard_events_index' %}">Events</a></li> 
-    <li><a href="{% url 'dashboard_event_details' attendee.event.event.id %}">{{ attendee.event }}</a></li>
+    <li><a href="{% url 'dashboard_events_index' %}">Events</a></li>
+    <li><a href="{% url 'dashboard_event_change_attendees' attendee.event.event.id %}">{{ attendee.event }}</a></li>
     <li>{{ attendee }}</li>
 {% endblock %}
 
