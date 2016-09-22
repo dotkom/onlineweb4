@@ -73,7 +73,7 @@ mark_not_attended.short_description = "Merk som ikke møtt"
 class AttendeeAdmin(VersionAdmin):
     model = Attendee
     list_display = ('user', 'event', 'paid', 'attended', 'note', 'extras')
-    list_filter = ('event__event__title',)
+    list_filter = ('event__event',)
     actions = [mark_paid, mark_attended, mark_not_paid, mark_not_attended]
 
     # Disable delete_selected http://bit.ly/1o4nleN
