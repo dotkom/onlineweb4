@@ -76,6 +76,7 @@ DEFAULT_PROFILE_PICTURE_PREFIX = os.path.join(STATIC_URL, "img", "profile_defaul
 # Additional locations of static files
 STATICFILES_DIRS = (
     os.path.join(PROJECT_ROOT_DIRECTORY, 'files/static'),
+    os.path.join(PROJECT_ROOT_DIRECTORY, 'assets'),
 )
 
 STATICFILES_FINDERS = (
@@ -232,6 +233,7 @@ INSTALLED_APPS = (
     'taggit_serializer',
     'corsheaders',
     'datetimewidget',
+    'webpack_loader',
 
     # Django apps
     'django.contrib.admin',
@@ -428,6 +430,12 @@ AUTH_PASSWORD_VALIDATORS = [
         }
     }
 ]
+
+WEBPACK_LOADER = {
+    'DEFAULT': {
+        'BUNDLE_DIR_NAME': 'webpack_bundles/'  # end with slash
+    }
+}
 
 # Remember to keep 'local' last, so it can override any setting.
 for settings_module in ['filebrowser', 'django_wiki', 'local']:  # local last
