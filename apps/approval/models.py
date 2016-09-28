@@ -6,6 +6,8 @@ from django.utils.translation import ugettext as _
 
 from apps.authentication.models import FIELD_OF_STUDY_CHOICES
 
+from django.core.mail import send_mail
+
 User = settings.AUTH_USER_MODEL
 
 
@@ -29,6 +31,22 @@ class Approval(models.Model):
     processed_date = models.DateTimeField(_("behandlet dato"), blank=True, null=True)
     approved = models.BooleanField(_("godkjent"), default=False, editable=False)
     message = models.TextField(_("melding"))
+
+    def alert_user():
+        if approved:
+            header_message: "Ditt medlemskap i Online er godkjent"
+        else:
+            header_message: "Ditt medlemskap i Online er ikke godkjent"
+
+        email = applicant.get_email()
+        if (not email == None):
+            send_mail(
+                header_message,
+                header_message,
+                settings.DEFAULT_FROM_EMAIL,
+                [email],
+                fail_silently=False,
+            )
 
 
 class MembershipApproval(Approval):
