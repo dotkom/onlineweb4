@@ -9,9 +9,15 @@ module.exports = {
   devtool: 'eval-source-map',
   entry: {
     // Used to extract common libraries
-    vendor: ['react', 'react-dom'],
+    vendor: [
+      'classnames', 'es6-promise', 'isomorphic-fetch',
+      'moment', 'react', 'react-bootstrap', 'react-dom'
+    ],
     frontpageEvents: [
       './assets/js/frontpage/events/index'
+    ],
+    careeropportunity: [
+      './assets/js/careeropportunity/index'
     ]
   },
   output: {
