@@ -20,7 +20,7 @@ from apps.events.forms import CaptchaForm
 from apps.events.models import AttendanceEvent, Attendee, CompanyEvent, Event
 from apps.events.pdf_generator import EventPDF
 from apps.events.serializers import (AttendanceEventSerializer, CompanyEventSerializer,
-                                     EventSerializer)
+                                     EventSerializer, AttendeeSerializer)
 from apps.events.utils import (get_group_restricted_events, handle_attend_event_payment,
                                handle_attendance_event_detail, handle_event_ajax,
                                handle_event_payment, handle_mail_participants)
@@ -317,6 +317,13 @@ class AttendanceEventViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin,
     queryset = AttendanceEvent.objects.all()
     serializer_class = AttendanceEventSerializer
     permission_classes = (AllowAny,)
+
+
+class AttendeeViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.ListModelMixin):
+    queryset = Attendee.objects.all()
+    serializer_class = AttendeeSerializer
+    permission_classes = (AllowAny,)
+    filter_fields = ('event', 'attended',)
 
 
 class CompanyEventViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.ListModelMixin):
