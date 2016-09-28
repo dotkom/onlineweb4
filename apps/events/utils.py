@@ -58,7 +58,7 @@ def handle_waitlist_bump(event, host, attendees, payment=None):
     message = 'Du har stått på venteliste for arrangementet "%s" og har nå fått plass.\n' % (str(event.title))
 
     if payment:
-        message += _handle_waitlist_bump_payment(payment, attendees, message)
+        message += _handle_waitlist_bump_payment(payment, attendees)
     else:
         message += "Det kreves ingen ekstra handling fra deg med mindre du vil melde deg av."
 
@@ -69,8 +69,9 @@ def handle_waitlist_bump(event, host, attendees, payment=None):
         send_mail(title, message, settings.DEFAULT_FROM_EMAIL, [attendee.user.email])
 
 
-def _handle_waitlist_bump_payment(payment, attendees, message):
+def _handle_waitlist_bump_payment(payment, attendees):
     extended_deadline = timezone.now() + timedelta(days=2)
+    message = ""
 
     if payment.payment_type == 1:  # Instant
         for attendee in attendees:
