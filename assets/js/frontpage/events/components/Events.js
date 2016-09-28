@@ -1,9 +1,20 @@
-import React from 'react';
+import React, { PropTypes } from 'react';
+import Event from './Event';
 
-const Events = () => (
+const Events = ({ events }) => (
   <div id="event-items">
-    Hello World
+    <div className="row clearfix hero">
+    {
+      events.map((event) => {
+        return <Event { ...event } />
+      })
+    }
+    </div>
   </div>
 );
+
+Events.propTypes = {
+  events: PropTypes.arrayOf(PropTypes.shape(Event.propTypes))
+};
 
 export default Events;
