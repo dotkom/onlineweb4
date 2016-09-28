@@ -34,9 +34,9 @@ class Approval(models.Model):
 
     def alert_user():
         if approved:
-            header_message: "Ditt medlemskap i Online er godkjent"
+            header_message = "Ditt medlemskap i Online er godkjent"
         else:
-            header_message: "Ditt medlemskap i Online er ikke godkjent"
+            header_message = "Ditt medlemskap i Online er ikke godkjent"
 
         email = applicant.get_email()
         if (not email == None):
