@@ -11,7 +11,8 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from django.utils.translation import ugettext as _
 # API v1
-from rest_framework import mixins, viewsets
+from requests import Response
+from rest_framework import mixins, status, views, viewsets
 from rest_framework.permissions import AllowAny
 from watson import search as watson
 
@@ -330,3 +331,8 @@ class CompanyEventViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mi
     queryset = CompanyEvent.objects.all()
     serializer_class = CompanyEventSerializer
     permission_classes = (AllowAny,)
+
+class AttendViewSet(views.View):
+    def post(self, request, format=None):
+        print('Hello')
+        return Response(status=status.HTTP_200_OK)

@@ -9,7 +9,7 @@ class AttendeeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Attendee
         fields = (
-            'event', 'user', 'attended', 'timestamp'
+            'event', 'user', 'attended', 'timestamp',
         )
 
 
@@ -55,3 +55,8 @@ class EventSerializer(serializers.ModelSerializer):
             'absolute_url', 'attendance_event', 'company_event', 'author', 'description', 'event_start', 'event_end',
             'event_type', 'id', 'images', 'ingress', 'ingress_short', 'location', 'slug', 'title',
         )
+
+
+class AttendSerializer(serializers.Serializer):
+    rfid = serializers.CharField()
+    event = serializers.PrimaryKeyRelatedField(read_only=True)
