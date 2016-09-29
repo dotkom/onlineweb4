@@ -272,4 +272,4 @@ class UserViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.Lis
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = (AllowAny,)
-    filter_fields = ('username', 'first_name', 'last_name', 'email')
+    filter_fields = ('username', 'first_name', 'last_name', 'rfid',)
