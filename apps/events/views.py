@@ -332,6 +332,7 @@ class CompanyEventViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mi
     serializer_class = CompanyEventSerializer
     permission_classes = (AllowAny,)
 
+
 class AttendViewSet(views.View):
     def post(self, request, format=None):
         print('Hello')
