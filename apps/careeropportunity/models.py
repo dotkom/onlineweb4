@@ -35,6 +35,19 @@ class CareerOpportunity(models.Model):
     location = TaggableManager(_('sted(er)'), through=CareerOpportunityLocationTag, blank=True)
     location.rel.related_name = "+"
 
+    JOB_TYPE_CHOICES = (
+        (1, 'Fastjobb'),
+        (2, 'Deltidsjobb'),
+        (3, 'Sommerjobb/internship'),
+        (4, 'Start-up'),
+        (5, 'Annet'),
+    )
+
+    job_type = models.IntegerField(
+        choices = JOB_TYPE_CHOICES,
+        default = 5,
+    )
+
     def __str__(self):
         return self.title
 
