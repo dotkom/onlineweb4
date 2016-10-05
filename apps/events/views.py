@@ -191,6 +191,9 @@ def search_events(request):
 
     return render(request, 'events/search.html', {'events': events})
 
+def _can_attend(user,event):
+    return (not(event.is_attendance_event()) or 
+            event.attendance_event.is_eligible_for_signup(user))
 
 def _search_indexed(request, query, filters):
     results = []
@@ -216,10 +219,8 @@ def _search_indexed(request, query, filters):
 
     for event in events:
         if (event.can_display(request.user) and
-            not(event.is_attendance_event() and
-                filters['attendable'] and
-                event.attendance_event.is_eligible_for_signup(request.user))):
-
+            not(filters['attendable'] and _can_attend(request.user,event))):
+            
             display_events.add(event.pk)
 
     events = events.filter(pk__in=display_events)
