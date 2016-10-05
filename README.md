@@ -1,6 +1,6 @@
 Onlineweb 4
 ==========
-[![Build Status](https://ci.online.ntnu.no/api/badges/dotKom/onlineweb4/status.svg)](https://ci.online.ntnu.no/dotKom/onlineweb4) [![Build status](https://ci.frigg.io/dotKom/onlineweb4/develop.svg)](https://ci.frigg.io/dotKom/onlineweb4/last/) [![Coverage status](https://ci.frigg.io/dotKom/onlineweb4/develop/coverage.svg)](https://ci.frigg.io/dotKom/onlineweb4/last/) 
+[![Build Status](https://ci.online.ntnu.no/api/badges/dotKom/onlineweb4/status.svg?branch=develop)](https://ci.online.ntnu.no/dotKom/onlineweb4) [![Build status](https://ci.frigg.io/dotKom/onlineweb4/develop.svg)](https://ci.frigg.io/dotKom/onlineweb4/last/) [![Coverage status](https://ci.frigg.io/dotKom/onlineweb4/develop/coverage.svg)](https://ci.frigg.io/dotKom/onlineweb4/last/) 
 
 Requirements
 ------------
