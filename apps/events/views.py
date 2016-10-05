@@ -221,8 +221,8 @@ def _search_indexed(request, query, filters):
 
     for event in events:
         if (event.can_display(request.user) and
-            not(filters['attendable'] and _can_attend(request.user,event))):
-            
+        not(filters['attendable'] and _can_attend(request.user, event))):
+ 
             display_events.add(event.pk)
 
     events = events.filter(pk__in=display_events)
