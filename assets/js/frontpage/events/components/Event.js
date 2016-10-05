@@ -1,19 +1,19 @@
 import React, { PropTypes } from 'react';
 import EventImage from './EventImage';
 
-const Event = ({ date, description, title, url }) => (
+const Event = ({ event_start, id, images, ingress_short, slug, title }) => (
   <div>
     <div className="col-sm-8 col-md-4">
       <div className="hero-title">
-        <a href={ url }>
+        <a href={ `events/${id}/${slug}` }>
           <p>{ title }</p>
         </a>
       </div>
       <div className="hero-ingress hidden-xs">
-        <p>{ description }</p>
+        <p>{ ingress_short }</p>
       </div>
     </div>
-    <EventImage date={ date } />
+    <EventImage event_start= {event_start } images={ images } />
   </div>
 );
 
