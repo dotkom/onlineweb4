@@ -13,3 +13,12 @@ build:
       - tox -e tests
     when:
       event: [pull_request]
+deploy:
+  ssh:
+    host: nansen.dotkom
+    port: 22
+    user: root
+    commands:
+      - /srv/www/ow4dev/deploy.sh
+    when:
+      branch: develop
