@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react';
-import EventImage from './EventImage';
+import EventImageContainer from '../containers/EventImageContainer';
 
-const Event = ({ event_start, id, images, ingress_short, slug, title }) => (
+const Event = ({ company_event, event_start, id, images, ingress_short, slug, title }) => (
   <div>
     <div className="col-sm-8 col-md-4">
       <div className="hero-title">
@@ -13,7 +13,13 @@ const Event = ({ event_start, id, images, ingress_short, slug, title }) => (
         <p>{ ingress_short }</p>
       </div>
     </div>
-    <EventImage event_start= {event_start } images={ images } />
+    <EventImageContainer
+      company_event={ company_event }
+      event_start= {event_start }
+      id={ id }
+      images={ images }
+      slug={ slug }
+    />
   </div>
 );
 
