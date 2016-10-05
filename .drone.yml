@@ -11,5 +11,5 @@ build:
       - tox -e flake8
       - tox -e isort
       - tox -e tests
-  when:
-    event: [pull_request]
+    when:
+      event: [pull_request]
