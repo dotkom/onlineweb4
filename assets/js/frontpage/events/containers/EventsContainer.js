@@ -4,8 +4,7 @@ import Events from '../components/Events';
 class EventsContainer extends Component {
   constructor(props) {
     super(props);
-
-    this.API_URL = 'https://online.ntnu.no/api/v1/events/?event_end__gte=2016-10-05&format=json';
+    this.API_URL = `/api/v1/events/?event_end__gte=${moment().format('YYYY-MM-DD')}&format=json`;
     this.state = {
       events: []
     };
