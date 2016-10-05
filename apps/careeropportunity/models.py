@@ -16,6 +16,7 @@ class CareerOpportunity(models.Model):
     description = models.TextField(_('beskrivelse'))
     start = models.DateTimeField(_('aktiv fra'))
     end = models.DateTimeField(_('aktiv til'))
+    deadline = models.DateField(_('søknadsfrist'), blank=True, null=True)
     featured = models.BooleanField(_('fremhevet'), default=False, blank=True)
 
     def __str__(self):
