@@ -1,6 +1,5 @@
 import React from 'react';
 import ReactDom from 'react-dom';
-import Header from './components/Header';
 import Events from './components/Events';
 
 // Temporary
@@ -19,14 +18,7 @@ const events = [
   }
 ];
 
-const App = () => (
-  <div className="container">
-      <Header />
-      <Events events={ events } />
-  </div>
-);
-
 ReactDom.render(
-  <App />,
-  document.getElementById('events')
+  <Events events={ events } />,
+  document.getElementById('event-items')
 );

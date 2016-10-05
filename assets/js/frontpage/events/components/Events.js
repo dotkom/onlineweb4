@@ -2,14 +2,12 @@ import React, { PropTypes } from 'react';
 import Event from './Event';
 
 const Events = ({ events }) => (
-  <div id="event-items">
-    <div className="row clearfix hero">
-    {
-      events.map((event) => {
-        return <Event { ...event } />
-      })
-    }
-    </div>
+  <div className="row clearfix hero">
+  {
+    events.map((event) => {
+      return <Event { ...event } />
+    })
+  }
   </div>
 );
 
