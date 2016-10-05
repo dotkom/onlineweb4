@@ -9,6 +9,7 @@ from django_dynamic_fixture import G
 from apps.approval.models import MembershipApproval
 from apps.authentication.models import OnlineUser as User
 
+from django.core import mail
 
 class ApprovalTest(TestCase):
 
@@ -68,8 +69,8 @@ class EmailTest(TestCase):
     def test_send_email(self):
         # Send message.
         mail.send_mail(
-            'Subject here', 'Here is the message.',
-            'from@example.com', ['to@example.com'],
+            'Testing onlineWebserver mail', 'Here is the message.',
+            'from@example.com', ['doraoline@gmail.com'],
             fail_silently=False,
         )
 
@@ -77,4 +78,4 @@ class EmailTest(TestCase):
         self.assertEqual(len(mail.outbox), 1)
 
         # Verify that the subject of the first message is correct.
-        self.assertEqual(mail.outbox[0].subject, 'Subject here')
+        self.assertEqual(mail.outbox[0].subject, 'Testing onlineWebserver mail')
