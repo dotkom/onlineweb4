@@ -2,6 +2,7 @@ build:
     tests:
         when:
             event: [pull_request]
+            branch: [!develop]
         image: registry.online.ntnu.no/dotkom/onlineweb4-testbase
         commands:
             - cp onlineweb4/settings/example-local.py onlineweb4/settings/local.py
