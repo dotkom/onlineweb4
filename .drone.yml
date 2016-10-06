@@ -10,14 +10,8 @@ build:
             username: $$REGISTRY_USERNAME
             password: $$REGISTRY_PASSWORD
             email: dotkom@online.ntnu.no
-cache:
-    mount:
-        - .tox
-matrix:
-    TESTENV:
-        - flake8
-        - isort
-        - tests
+        volumes:
+            - /tmp/drone/ow4test-cache/.tox:/drone/src/github.com/dotKom/onlineweb4/.tox
 deploy:
     ssh:
         when:
