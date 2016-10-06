@@ -1,7 +1,7 @@
-build:
+pipeline:
     tests:
         when:
-            event: [pull_request]
+            event: pull_request
         image: registry.online.ntnu.no/dotkom/onlineweb4-testbase
         commands:
             - cp onlineweb4/settings/example-local.py onlineweb4/settings/local.py
@@ -14,13 +14,14 @@ build:
             email: dotkom@online.ntnu.no
         volumes:
             - /tmp/drone/ow4test-cache/.tox:/drone/src/github.com/dotKom/onlineweb4/.tox
-deploy:
-    ssh:
-        when:
-            branch: develop
-        host: nansen.dotkom
-        port: 22
-        user: root
-        commands:
-            - /srv/www/ow4dev/deploy.sh
+    deploy:
+        ssh:
+            when:
+                branch: develop
+                event: push
+            host: nansen.dotkom
+            port: 22
+            user: root
+            commands:
+                - /srv/www/ow4dev/deploy.sh
 
