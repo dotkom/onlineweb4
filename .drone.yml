@@ -1,4 +1,4 @@
-pipeline:
+build:
     tests:
         when:
             event: pull_request
@@ -14,14 +14,14 @@ pipeline:
             email: dotkom@online.ntnu.no
         volumes:
             - /tmp/drone/ow4test-cache/.tox:/drone/src/github.com/dotKom/onlineweb4/.tox
-    deploy:
-        ssh:
-            when:
-                branch: develop
-                event: push
-            host: nansen.dotkom
-            port: 22
-            user: root
-            commands:
-                - /srv/www/ow4dev/deploy.sh
+deploy:
+    ssh:
+        when:
+            branch: develop
+            event: push
+        host: nansen.dotkom
+        port: 22
+        user: root
+        commands:
+            - /srv/www/ow4dev/deploy.sh
 
