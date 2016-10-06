@@ -25,6 +25,16 @@ $ git clone --recursive git@github.com:dotKom/onlineweb4.git
 $ cd onlineweb4
 ```
 
+
+CD/CI
+=======
+
+Pushes made to the develop branch will trigger a redeployment of the application on [dev.online.ntnu.no](https://dev.online.ntnu.no).
+
+Pull requests trigger containerized builds that perform code style checks and tests. You can view the details of these tests by clicking the "detail" link in the pull request checks status area.
+
+aefaef
+
 Alternatively on Windows, use the GitHub for Windows app to setup everything
 
 Vagrant
