@@ -9,7 +9,7 @@ from django.contrib.auth.models import Group
 from django.contrib.contenttypes.models import ContentType
 from django.core import validators
 from django.db import models
-from django.db.models import Case, Q, Value, When
+from django.db.models import Case, Q, Value, When, SET_NULL
 from django.template.defaultfilters import slugify
 from django.utils import timezone
 from django.utils.translation import ugettext as _
@@ -18,6 +18,7 @@ from unidecode import unidecode
 
 from apps.authentication.models import FIELD_OF_STUDY_CHOICES
 from apps.companyprofile.models import Company
+from apps.gallery.models import ResponsiveImage
 from apps.marks.models import get_expiration_date
 
 User = settings.AUTH_USER_MODEL
@@ -76,7 +77,7 @@ class Event(models.Model):
     objects = models.Manager()
     by_registration = EventOrderedByRegistration()
 
-    author = models.ForeignKey(User, related_name='oppretter')
+    author = models.ForeignKey(User, related_name='oppretter', null=True, blank=True)
     title = models.CharField(_('tittel'), max_length=60)
     event_start = models.DateTimeField(_('start-dato'))
     event_end = models.DateTimeField(_('slutt-dato'))
@@ -85,8 +86,9 @@ class Event(models.Model):
                                      validators=[validators.MinLengthValidator(25)])
     ingress = models.TextField(_('ingress'), validators=[validators.MinLengthValidator(25)])
     description = models.TextField(_('beskrivelse'), validators=[validators.MinLengthValidator(45)])
-    image = FileBrowseField(_("bilde"), max_length=200,
-                            directory=IMAGE_FOLDER, extensions=IMAGE_EXTENSIONS, null=True, blank=True)
+    image = models.ForeignKey(ResponsiveImage, related_name='events', blank=True, null=True, on_delete=SET_NULL)
+    old_image = FileBrowseField(_("bilde"), max_length=200,
+                                directory=IMAGE_FOLDER, extensions=IMAGE_EXTENSIONS, null=True, blank=True)
     event_type = models.SmallIntegerField(_('type'), choices=TYPE_CHOICES, null=False)
 
     def is_attendance_event(self):
