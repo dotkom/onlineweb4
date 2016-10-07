@@ -108,6 +108,7 @@ class UpdateEventView(DashboardPermissionMixin, UpdateView):
     form_class = dashboard_forms.CreateEventForm
     template_name = "events/dashboard/event_form.html"
     permission_required = 'events.edit_event'
+    pk_url_kwarg = 'event_id'
 
     def get_success_url(self):
         return reverse('dashboard_event_details', kwargs={'event_id': self.kwargs.get('event_id')})
