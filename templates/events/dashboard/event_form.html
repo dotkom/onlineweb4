@@ -2,8 +2,17 @@
 
 {% load addcss %}
 
+{% block title %}
+    Opprett arrangement | Online Dashboard
+{% endblock %}
+
 {% block page-header %}
     Opprett arrangement
+{% endblock %}
+
+{% block breadcrumbs %}
+    <li><a href="{% url 'dashboard_events_index' %}">Arrangementer</a></li>
+    <li>Nytt arrangement</li>
 {% endblock %}
 
 
