@@ -1,0 +1,31 @@
+{% extends "dashboard_base.html" %}
+
+{% load addcss %}
+
+{% block page-header %}
+    Opprett arrangement
+{% endblock %}
+
+
+{% block content %}
+<div class="col-md-12">
+    <form method="POST">
+      {% csrf_token %}
+      {% for field in form %}
+        <div class="form-group">
+          <label for="{{ field.auto_id }}">{{ field.label }}</label>
+          {{ field|addclass:"form-control" }}
+        </div>
+      {% endfor %}
+
+      <button class="btn btn-success" type="submit">
+        <i class="fa fa-save fa-lg"></i> Lagre
+      </button>
+    </form>
+    {% include 'gallery/formwidget.html' %}
+</div>
+{% endblock content %}
+
+{% block js %}
+    {{ block.super }}
+{% endblock %}

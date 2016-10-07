@@ -35,8 +35,17 @@ Arrangementsdetaljer
     <div class="col-lg-12">
         <ul class="nav nav-tabs" role="tablist">
             <li role="presentation" class="active">
-                <a href="#attendees" aria-controls="attendees" role="tab" data-toggle="tab">Påmeldte ({{ event.attendance_event.number_of_seats_taken }})</a>
+                <a href="#detail" aria-controls="detail" role="tab" data-toggle="tab">Detaljer</a>
             </li>
+            {% if event.attendance_event %}
+                <li role="presentation">
+                    <a href="#attendees" aria-controls="attendees" role="tab" data-toggle="tab">Påmelding ({{ event.attendance_event.number_of_seats_taken }})</a>
+                </li>
+            {% else %}
+                <li role="presentation">
+                    <a href="#create-attendance" aria-controls="create-attendance" role="tab" data-toggle="tab"><i class="fa fa-plus"></i> Legg til påmelding</a>
+                </li>
+            {% endif %}
             {% if event.attendance_event.waitlist %}
                 <li role="presentation">
                     <a href="#waitlist" aria-controls="waitlist" role="tab" data-toggle="tab">Venteliste ({{ event.attendance_event.number_on_waitlist }})</a>
@@ -64,8 +73,14 @@ Arrangementsdetaljer
 <br />
 
 <div class="tab-content">
-    <div role="tabpanel" class="tab-pane active" id="attendees">
+    <div role="tabpanel" class="tab-pane active" id="detail">
+        {%  include "events/dashboard/details/details.html" %}
+    </div>
+    <div role="tabpanel" class="tab-pane" id="attendees">
         {%  include "events/dashboard/details/attendees.html" %}
+    </div>
+    <div role="tabpanel" class="tab-pane" id="create-attendance">
+        <div id="create-attendance-view"></div>
     </div>
     <div role="tabpanel" class="tab-pane" id="waitlist">
         {%  include "events/dashboard/details/waitlist.html" %}
@@ -91,5 +106,10 @@ Arrangementsdetaljer
     <script type="text/javascript" src="{{ STATIC_URL }}js/libs/hogan-2.0.0.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}js/libs/typeahead.min.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}js/dashboard/events.js"></script>
+    <script>
+        $('#create-attendance-view').load("{% url 'dashboard_event_create_attendance' event.id %}", function() {
+          $('#create-attendance-form').attr('action', "{% url 'dashboard_event_create_attendance' event.id %}")
+        })
+    </script>
     {% endcompress %}
 {% endblock %}

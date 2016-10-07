@@ -4,6 +4,44 @@ from django import forms
 
 from apps.dashboard.widgets import DatetimePickerInput, multiple_widget_generator
 from apps.events.models import AttendanceEvent, Event, Reservation
+from apps.gallery.widgets import SingleImageInput
+
+
+class CreateEventForm(forms.ModelForm):
+    class Meta(object):
+        model = Event
+        fields = (
+            'title', 'event_start', 'event_end', 'location', 'ingress_short', 'ingress', 'description', 'event_type',
+            'image'
+        )
+
+        img_fields = [('image', {'id': 'responsive-image-id'})]
+        dtp_fields = [('event_start', {"placeholder": ""}), ('event_end', {"placeholder": ""})]
+        widgetlist = [
+            (DatetimePickerInput, dtp_fields),
+            (SingleImageInput, img_fields)
+        ]
+
+        # Multiple widget generator merges results from regular widget_generator into a single widget dict
+        widgets = multiple_widget_generator(widgetlist)
+
+
+class CreateAttendanceEventForm(forms.ModelForm):
+    class Meta(object):
+        model = AttendanceEvent
+        fields = (
+            'event', 'max_capacity', 'registration_start', 'registration_end',
+            'unattend_deadline', 'automatically_set_marks', 'waitlist', 'guest_attendance', 'marks_has_been_set',
+        )
+
+        dtp_fields = [('registration_start', {"placeholder": ""}), ('registration_end', {"placeholder": ""}),
+                      ('unattend_deadline', {"placeholder": ""})]
+        widgetlist = [
+            (DatetimePickerInput, dtp_fields),
+        ]
+
+        # Multiple widget generator merges results from regular widget_generator into a single widget dict
+        widgets = multiple_widget_generator(widgetlist)
 
 
 class ChangeEventForm(forms.ModelForm):
