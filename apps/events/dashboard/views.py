@@ -110,7 +110,7 @@ class UpdateEventView(DashboardPermissionMixin, UpdateView):
     permission_required = 'events.edit_event'
 
     def get_success_url(self):
-        return reverse('dashboard_event_details', kwargs={'event_id': self.kwargs.get('pk')})
+        return reverse('dashboard_event_details', kwargs={'event_id': self.kwargs.get('event_id')})
 
 
 class AddAttendanceView(DashboardPermissionMixin, CreateView):
@@ -118,6 +118,22 @@ class AddAttendanceView(DashboardPermissionMixin, CreateView):
     form_class = dashboard_forms.CreateAttendanceEventForm
     template_name = "events/dashboard/attendanceevent_form.html"
     permission_required = 'events.create_attendanceevent'
+    pk_url_kwarg = 'event_id'
+
+    def form_valid(self, form):
+        form.instance.event = get_object_or_404(Event, pk=self.kwargs.get('event_id'))
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse('dashboard_event_details', kwargs={'event_id': self.kwargs.get('event_id')})
+
+
+class UpdateAttendanceView(DashboardPermissionMixin, UpdateView):
+    model = AttendanceEvent
+    form_class = dashboard_forms.CreateAttendanceEventForm
+    template_name = "events/dashboard/attendanceevent_form.html"
+    permission_required = 'events.edit_attendanceevent'
+    pk_url_kwarg = 'event_id'
 
     def get_success_url(self):
         return reverse('dashboard_event_details', kwargs={'event_id': self.kwargs.get('event_id')})

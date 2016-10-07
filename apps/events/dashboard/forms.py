@@ -30,7 +30,7 @@ class CreateAttendanceEventForm(forms.ModelForm):
     class Meta(object):
         model = AttendanceEvent
         fields = (
-            'event', 'max_capacity', 'registration_start', 'registration_end',
+            'max_capacity', 'registration_start', 'registration_end',
             'unattend_deadline', 'automatically_set_marks', 'waitlist', 'guest_attendance', 'marks_has_been_set',
             'rule_bundles', 'extras'
         )
