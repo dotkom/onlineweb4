@@ -1,10 +1,25 @@
-{% extends "base.html" %}
+{% extends "dashboard_base.html" %}
+
+{% block title %}
+    Opprett arrangement | Online Dashboard
+{% endblock %}
+
+{% block page-header %}
+    Opprett arrangement
+{% endblock %}
+
+{% block breadcrumbs %}
+    <li><a href="{% url 'dashboard_events_index' %}">Arrangementer</a></li>
+    <li>Nytt arrangement</li>
+{% endblock %}
 
 
 {% block content %}
-
+<div class="col-md-12">
+    {% include 'events/dashboard/event_form.html' %}
+</div>
 {% endblock content %}
 
 {% block js %}
-    <script type="text/javascript" src="{{ STATIC_URL }}js/libs/jquery.cycle2.min.js"></script>
+    {{ block.super }}
 {% endblock %}
