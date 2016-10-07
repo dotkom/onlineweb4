@@ -96,11 +96,11 @@ def create_event(request):
 class CreateEventView(DashboardPermissionMixin, CreateView):
     model = Event
     form_class = dashboard_forms.CreateEventForm
-    template_name = "events/dashboard/event_form.html"
+    template_name = "events/dashboard/create.html"
     permission_required = 'events.create_event'
 
     def get_success_url(self):
-        return reverse('dashboard_event_details', kwargs={'event_id': self.kwargs.get('event_id')})
+        return reverse('dashboard_event_details', kwargs={'event_id': self.object.id})
 
 
 class UpdateEventView(DashboardPermissionMixin, UpdateView):
