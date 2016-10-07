@@ -15,9 +15,7 @@ from django.utils.translation import ugettext as _
 from django.views.generic import CreateView
 from guardian.decorators import permission_required
 
-from apps.dashboard.tools import get_base_context, has_access, DashboardPermissionMixin
-from apps.events.dashboard.forms import (ChangeAttendanceEventForm, ChangeEventForm,
-                                         ChangeReservationForm)
+from apps.dashboard.tools import DashboardPermissionMixin, get_base_context, has_access
 from apps.events.dashboard import forms as dashboard_forms
 from apps.events.dashboard.utils import event_ajax_handler
 from apps.events.models import AttendanceEvent, Attendee, Event, Reservation, Reservee
@@ -64,7 +62,7 @@ def create_event(request):
     context = get_base_context(request)
 
     if request.method == 'POST':
-        form = ChangeEventForm(request.POST)
+        form = dashboard_forms.ChangeEventForm(request.POST)
         if form.is_valid():
             cleaned = form.cleaned_data
 
@@ -87,7 +85,7 @@ def create_event(request):
             context['change_event_form'] = form
 
     if 'change_event_form' not in context.keys():
-        context['change_event_form'] = ChangeEventForm()
+        context['change_event_form'] = dashboard_forms.ChangeEventForm()
 
     context['event'] = _('Nytt arrangement')
     context['active_tab'] = 'details'
@@ -124,15 +122,15 @@ def _create_details_context(request, event_id):
     context['event'] = event
 
     # Add forms
-    context['change_event_form'] = ChangeEventForm(instance=event)
+    context['change_event_form'] = dashboard_forms.ChangeEventForm(instance=event)
     if event.is_attendance_event():
-        context['change_attendance_form'] = ChangeAttendanceEventForm(instance=event.attendance_event)
+        context['change_attendance_form'] = dashboard_forms.ChangeAttendanceEventForm(instance=event.attendance_event)
         if event.attendance_event.has_reservation:
-            context['change_reservation_form'] = ChangeReservationForm(instance=event.attendance_event.reserved_seats)
+            context['change_reservation_form'] = dashboard_forms.ChangeReservationForm(instance=event.attendance_event.reserved_seats)
             seats = event.attendance_event.reserved_seats.seats
-            ReserveeFormSet = modelformset_factory(
+            dashboard_forms.ReserveeFormSet = modelformset_factory(
                 Reservee, max_num=seats, extra=seats, fields=['name', 'note', 'allergies'])
-            context['change_reservees_formset'] = ReserveeFormSet(
+            context['change_reservees_formset'] = dashboard_forms.ReserveeFormSet(
                 queryset=event.attendance_event.reserved_seats.reservees.all())
 
     return context
@@ -202,11 +200,11 @@ def event_change_attendance(request, event_id):
             registration_end=registration_end
         )
         attendance_event.save()
-        context['change_attendance_form'] = ChangeAttendanceEventForm(instance=event.attendance_event)
+        context['change_attendance_form'] = dashboard_forms.ChangeAttendanceEventForm(instance=event.attendance_event)
 
     else:
         if request.method == 'POST':
-            form = ChangeAttendanceEventForm(request.POST, instance=event.attendance_event)
+            form = dashboard_forms.ChangeAttendanceEventForm(request.POST, instance=event.attendance_event)
             if form.is_valid():
                 form.save()
                 messages.success(request, _("Påmeldingsdetaljer ble lagret."))
@@ -252,15 +250,15 @@ def event_change_attendees(request, event_id, active_tab='attendees'):
         count_extras(extras, "attending", event.attendance_event.attendees_qs)
         count_extras(extras, "waits", event.attendance_event.waitlist_qs)
 
-    context['change_event_form'] = ChangeEventForm(instance=event)
+    context['change_event_form'] = dashboard_forms.ChangeEventForm(instance=event)
     if event.is_attendance_event():
-        context['change_attendance_form'] = ChangeAttendanceEventForm(instance=event.attendance_event)
+        context['change_attendance_form'] = dashboard_forms.ChangeAttendanceEventForm(instance=event.attendance_event)
         prices = _payment_prices(event.attendance_event)
         context['payment_prices'] = prices[0]
         context['payment_price_summary'] = prices[1]
 
     context['extras'] = extras
-    context['change_event_form'] = ChangeEventForm(instance=event)
+    context['change_event_form'] = dashboard_forms.ChangeEventForm(instance=event)
 
     return render(request, 'events/dashboard/details.html', context)
 
@@ -299,9 +297,9 @@ def event_change_reservation(request, event_id):
                 seats=0
             )
             reservation.save()
-            context['change_reservation_form'] = ChangeReservationForm(instance=reservation)
+            context['change_reservation_form'] = dashboard_forms.ChangeReservationForm(instance=reservation)
         else:
-            form = ChangeReservationForm(request.POST, instance=event.attendance_event.reserved_seats)
+            form = dashboard_forms.ChangeReservationForm(request.POST, instance=event.attendance_event.reserved_seats)
             if form.is_valid():
                 messages.success(request, _("Reservasjonen ble lagret."))
                 form.save()
