@@ -14,6 +14,21 @@ var Event = (function ($, tools) {
         return true
     }
 
+    // Get the currently correct endpoint for posting user changes to
+    var _pos_of_last_slash = window.location.href.toString().slice(0, window.location.href.toString().length-2).lastIndexOf('/')
+    var attendance_endpoint = window.location.href.toString().slice(0, _pos_of_last_slash) + '/attendees/'
+
+    // Javascript to enable link to tab
+    var url = document.location.toString();
+    if (url.match('#')) {
+        $('.nav-tabs a[href="#' + url.split('#')[1] + '"]').tab('show');
+    }
+
+    // Change hash for page-reload
+    $('.nav-tabs a').on('shown.bs.tab', function (e) {
+        window.location.hash = e.target.hash;
+    })
+
 
     var draw_table = function (tbody, data) {
         // Redraw the table with new data
@@ -36,16 +51,16 @@ var Event = (function ($, tools) {
             row += '<td><a href="'+ attendee.link +'">'+ attendee.last_name +'</td>'
             // Paid cell
             row += '<td><a href="#" data-id="'+ attendee.id +'" class="toggle-attendee paid">'
-            if (attendee.paid)  
+            if (attendee.paid)
                 row += '<i class="fa fa-lg fa-check-square-o checked"></i>'
-            else 
+            else
                 row += '<i class="fa fa-lg fa-square-o"></i>'
             row += '</a></td>'
             // Attended cell
             row += '<td><a href="#" data-id="'+ attendee.id +'" class="toggle-attendee attended">'
             if (attendee.attended)
                 row += '<i class="fa fa-lg fa-check-square-o checked"></i>'
-            else 
+            else
                 row += '<i class="fa fa-lg fa-square-o"></i>'
             row += '</a></td>'
             // Extras cell
@@ -140,7 +155,6 @@ var Event = (function ($, tools) {
         // Attendee module, toggles and adding
         attendee: {
             toggle: function(cell, action) {
-                var url = window.location.href.toString()
                 var data = {
                     "attendee_id": $(cell).data('id'),
                     "action": action
@@ -154,10 +168,9 @@ var Event = (function ($, tools) {
                 }
 
                 // Make an AJAX request using the Dashboard tools module
-                tools.ajax('POST', url, data, success, error, null)
+                tools.ajax('POST', attendance_endpoint, data, success, error, null)
             },
             add: function(user_id) {
-                var url = window.location.href.toString()
                 var data = {
                     "user_id": user_id,
                     "action": "add_attendee"
@@ -188,10 +201,9 @@ var Event = (function ($, tools) {
                 }
 
                 // Make an AJAX request using the Dashboard tools module
-                tools.ajax('POST', url, data, success, error, null)
+                tools.ajax('POST', attendance_endpoint, data, success, error, null)
             },
             remove: function(attendee_id) {
-                var url = window.location.href.toString()
                 var data = {
                     "attendee_id": attendee_id,
                     "action": "remove_attendee"
@@ -223,14 +235,14 @@ var Event = (function ($, tools) {
                 }
 
                 // Make an AJAX request using the Dashboard tools module
-                tools.ajax('POST', url, data, success, error, null)
+                tools.ajax('POST', attendance_endpoint, data, success, error, null)
             },
 
         }
 
     }
-    
-    
+
+
 })(jQuery, Dashboard.tools)
 
 $(document).ready(function () {
