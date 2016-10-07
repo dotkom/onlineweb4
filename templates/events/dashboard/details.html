@@ -141,10 +141,10 @@ Arrangementsdetaljer
           // Update create attendanceevent form with action attribute
           $('#create-attendance-form').attr('action', "{% url 'dashboard_event_create_attendance' event.id %}")
         })
-        $('#update-attendance-view').load("{% url 'dashboard_event_create_attendance' event.id %}", function() {
-          // $('#update-attendance-view').('form').attr('id', 'update-attendance-form')
+        $('#update-attendance-view').load("{% url 'dashboard_events_edit_attendance' event.id %}", function() {
+          $('#update-attendance-view').find('form').attr('id', 'update-attendance-form')
           // Update create attendanceevent form with action attribute
-          // $('#update-attendance-form').attr('action', "{% url 'dashboard_event_create_attendance' event.id %}")
+          $('#update-attendance-form').attr('action', "{% url 'dashboard_events_edit_attendance' event.id %}")
         })
         $('#add-company-view').load("{% url 'dashboard_events_add_company' event.id %}", function() {
           $('#add-company-view').find('form').attr('id', 'add-company-form')
