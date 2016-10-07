@@ -304,7 +304,7 @@
                                 </div>
                             </div>
                         {% else %}
-                            <img width="100%" src="{% version event.image 'events_main' %}" alt="{{ event.title }}"/>
+                            <img width="100%" src="{{ event.image.xs }}" alt="{{ event.title }}"/>
                         {% endif %}
                     </div>
                 </div>

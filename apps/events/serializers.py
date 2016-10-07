@@ -44,7 +44,6 @@ class CompanyEventSerializer(serializers.ModelSerializer):
 
 
 class EventSerializer(serializers.ModelSerializer):
-    author = UserSerializer()
     absolute_url = serializers.CharField(source='get_absolute_url', read_only=True)
     attendance_event = AttendanceEventSerializer()
     company_event = CompanyEventSerializer(many=True)
@@ -52,6 +51,6 @@ class EventSerializer(serializers.ModelSerializer):
     class Meta:
         model = Event
         fields = (
-            'absolute_url', 'attendance_event', 'company_event', 'author', 'description', 'event_start', 'event_end',
+            'absolute_url', 'attendance_event', 'company_event', 'description', 'event_start', 'event_end',
             'event_type', 'id', 'images', 'ingress', 'ingress_short', 'location', 'slug', 'title',
         )
