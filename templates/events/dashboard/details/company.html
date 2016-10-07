@@ -1,0 +1,11 @@
+{% for company in event.companies.all %}
+    <p>
+        <form method="POST" action="{% url 'dashboard_events_remove_company' event.id company.id %}">
+          {% csrf_token %}
+          {{ company.company.name }}
+          <button type="submit" class="btn btn-danger btn-xs"><i class="fa fa-times"></i> Fjern</button>
+        </form>
+    </p>
+{% empty %}
+    <p>Ingen bedrifter er knyttet til dette arrangementet.</p>
+{% endfor %}

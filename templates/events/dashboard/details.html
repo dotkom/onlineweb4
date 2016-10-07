@@ -55,6 +55,10 @@ Arrangementsdetaljer
                 <li role="presentation">
                     <a href="#reservees" aria-controls="reservees" role="tab" data-toggle="tab">Reservasjoner ({{ event.attendance_event.number_of_reserved_seats }})</a>
                 </li>
+            {% elif event.attendance_event and not event.attendance_event.has_reservations and False %}
+                <li role="presentation">
+                    <a href="#create-reservation" aria-controls="create-reservation" role="tab" data-toggle="tab"><i class="fa fa-plus"></i> Legg til reservasjoner</a>
+                </li>
             {%  endif %}
             {%  if event.attendance_event.has_extras %}
                 <li role="presentation">
@@ -65,7 +69,14 @@ Arrangementsdetaljer
                 <li role="presentation">
                     <a href="#payment-summary" aria-controls="payment-summary" role="tab" data-toggle="tab">Betalingsoppsumering</a>
                 </li>
+            {% elif event.attendance_event and not payment_prices and False %} {# @ToDo #}
+                <li role="presentation">
+                    <a href="#create-payment" aria-controls="create-payment" role="tab" data-toggle="tab"><i class="fa fa-plus"></i> Legg til betaling</a>
+                </li>
             {% endif %}
+            <li role="presentation">
+                <a href="#company" aria-controls="company" role="tab" data-toggle="tab">Bedrifter</a>
+            </li>
         </ul>
     </div>
 </div>
@@ -103,8 +114,12 @@ Arrangementsdetaljer
     <div role="tabpanel" class="tab-pane" id="extra">
         {%  include "events/dashboard/details/extra.html" %}
     </div>
-<div role="tabpanel" class="tab-pane" id="payment-summary">
+    <div role="tabpanel" class="tab-pane" id="payment-summary">
         {%  include "events/dashboard/details/payment_summary.html" %}
+    </div>
+    <div role="tabpanel" class="tab-pane" id="company">
+        {% include "events/dashboard/details/company.html" %}
+        <div id="add-company-view"></div>
     </div>
 </div>
 
@@ -130,6 +145,10 @@ Arrangementsdetaljer
           // $('#update-attendance-view').('form').attr('id', 'update-attendance-form')
           // Update create attendanceevent form with action attribute
           // $('#update-attendance-form').attr('action', "{% url 'dashboard_event_create_attendance' event.id %}")
+        })
+        $('#add-company-view').load("{% url 'dashboard_events_add_company' event.id %}", function() {
+          $('#add-company-view').find('form').attr('id', 'add-company-form')
+          $('#add-company-form').attr('action', "{% url 'dashboard_events_add_company' event.id %}")
         })
     </script>
     {% endcompress %}

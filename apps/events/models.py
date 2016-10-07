@@ -99,10 +99,10 @@ class Event(models.Model):
             return False
 
     def images(self):
-        if not self.image:
+        if not self.old_image:
             return []
         from apps.events.utils import find_image_versions
-        return find_image_versions(self)
+        return find_image_versions(self.old_image)
 
     # TODO move payment and feedback stuff to attendance event when dasboard is done
 
@@ -765,6 +765,7 @@ class CompanyEvent(models.Model):
         permissions = (
             ('view_companyevent', 'View CompanyEvent'),
         )
+        ordering = ('company',)
 
 
 class Attendee(models.Model):

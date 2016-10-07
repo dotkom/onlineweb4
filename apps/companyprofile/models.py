@@ -35,3 +35,4 @@ class Company(models.Model):
         permissions = (
             ('view_company', 'View Company'),
         )
+        ordering = ('name',)

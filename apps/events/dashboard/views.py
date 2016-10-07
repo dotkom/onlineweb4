@@ -12,13 +12,13 @@ from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from django.utils.translation import ugettext as _
-from django.views.generic import CreateView, UpdateView
+from django.views.generic import CreateView, DeleteView, UpdateView
 from guardian.decorators import permission_required
 
 from apps.dashboard.tools import DashboardPermissionMixin, get_base_context, has_access
 from apps.events.dashboard import forms as dashboard_forms
 from apps.events.dashboard.utils import event_ajax_handler
-from apps.events.models import AttendanceEvent, Attendee, Event, Reservation, Reservee
+from apps.events.models import AttendanceEvent, Attendee, CompanyEvent, Event, Reservation, Reservee
 from apps.events.utils import get_group_restricted_events, get_types_allowed
 from apps.payment.models import PaymentRelation
 
@@ -117,6 +117,28 @@ class AddAttendanceView(DashboardPermissionMixin, CreateView):
     model = AttendanceEvent
     form_class = dashboard_forms.CreateAttendanceEventForm
     template_name = "events/dashboard/attendanceevent_form.html"
+    permission_required = 'events.create_attendanceevent'
+
+    def get_success_url(self):
+        return reverse('dashboard_event_details', kwargs={'event_id': self.kwargs.get('event_id')})
+
+
+class AddCompanyEventView(DashboardPermissionMixin, CreateView):
+    model = CompanyEvent
+    form_class = dashboard_forms.AddCompanyForm
+    template_name = "events/dashboard/attendanceevent_form.html"
+    permission_required = 'events.create_attendanceevent'
+
+    def get_success_url(self):
+        return reverse('dashboard_event_details', kwargs={'event_id': self.kwargs.get('event_id')})
+
+    def form_valid(self, form):
+        form.instance.event = get_object_or_404(Event, pk=self.kwargs.get('event_id'))
+        return super().form_valid(form)
+
+
+class RemoveCompanyEventView(DashboardPermissionMixin, DeleteView):
+    model = CompanyEvent
     permission_required = 'events.create_attendanceevent'
 
     def get_success_url(self):
