@@ -26,7 +26,11 @@ var Event = (function ($, tools) {
 
     // Change hash for page-reload
     $('.nav-tabs a').on('shown.bs.tab', function (e) {
-        window.location.hash = e.target.hash;
+        if(history.pushState) {
+            history.pushState(null, "", e.target.hash);
+        } else {
+            window.location.hash = e.target.hash; //Polyfill for old browsers
+        }
     })
 
 
