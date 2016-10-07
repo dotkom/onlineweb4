@@ -6,16 +6,19 @@ from datetime import datetime, time, timedelta
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
+from django.core.urlresolvers import reverse
 from django.forms.models import modelformset_factory
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from django.utils.translation import ugettext as _
+from django.views.generic import CreateView
 from guardian.decorators import permission_required
 
-from apps.dashboard.tools import get_base_context, has_access
+from apps.dashboard.tools import get_base_context, has_access, DashboardPermissionMixin
 from apps.events.dashboard.forms import (ChangeAttendanceEventForm, ChangeEventForm,
                                          ChangeReservationForm)
+from apps.events.dashboard import forms as dashboard_forms
 from apps.events.dashboard.utils import event_ajax_handler
 from apps.events.models import AttendanceEvent, Attendee, Event, Reservation, Reservee
 from apps.events.utils import get_group_restricted_events, get_types_allowed
@@ -90,6 +93,23 @@ def create_event(request):
     context['active_tab'] = 'details'
 
     return render(request, 'events/dashboard/details.html', context)
+
+
+class CreateEventView(DashboardPermissionMixin, CreateView):
+    model = Event
+    form_class = dashboard_forms.CreateEventForm
+    template_name = "events/dashboard/event_form.html"
+    permission_required = 'events.create_event'
+
+
+class AddAttendanceView(DashboardPermissionMixin, CreateView):
+    model = AttendanceEvent
+    form_class = dashboard_forms.CreateAttendanceEventForm
+    template_name = "events/dashboard/attendanceevent_form.html"
+    permission_required = 'events.create_attendanceevent'
+
+    def get_success_url(self):
+        return reverse('dashboard_events_detail', kwargs={'event_id': self.kwargs.get('event_id')})
 
 
 def _create_details_context(request, event_id):
