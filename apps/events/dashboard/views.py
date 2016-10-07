@@ -12,7 +12,7 @@ from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from django.utils.translation import ugettext as _
-from django.views.generic import CreateView
+from django.views.generic import CreateView, UpdateView
 from guardian.decorators import permission_required
 
 from apps.dashboard.tools import DashboardPermissionMixin, get_base_context, has_access
@@ -99,6 +99,19 @@ class CreateEventView(DashboardPermissionMixin, CreateView):
     template_name = "events/dashboard/event_form.html"
     permission_required = 'events.create_event'
 
+    def get_success_url(self):
+        return reverse('dashboard_event_details', kwargs={'event_id': self.kwargs.get('event_id')})
+
+
+class UpdateEventView(DashboardPermissionMixin, UpdateView):
+    model = Event
+    form_class = dashboard_forms.CreateEventForm
+    template_name = "events/dashboard/event_form.html"
+    permission_required = 'events.edit_event'
+
+    def get_success_url(self):
+        return reverse('dashboard_event_details', kwargs={'event_id': self.kwargs.get('pk')})
+
 
 class AddAttendanceView(DashboardPermissionMixin, CreateView):
     model = AttendanceEvent
@@ -107,7 +120,7 @@ class AddAttendanceView(DashboardPermissionMixin, CreateView):
     permission_required = 'events.create_attendanceevent'
 
     def get_success_url(self):
-        return reverse('dashboard_events_detail', kwargs={'event_id': self.kwargs.get('event_id')})
+        return reverse('dashboard_event_details', kwargs={'event_id': self.kwargs.get('event_id')})
 
 
 def _create_details_context(request, event_id):
@@ -175,6 +188,7 @@ def event_details(request, event_id, active_tab='details'):
 
     context = _create_details_context(request, event_id)
     context['active_tab'] = active_tab
+    context['form'] = dashboard_forms.CreateEventForm(instance=get_object_or_404(Event, pk=event_id))
 
     return render(request, 'events/dashboard/details.html', context)
 
