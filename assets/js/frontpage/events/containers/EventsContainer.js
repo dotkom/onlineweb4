@@ -12,17 +12,16 @@ class EventsContainer extends Component {
   }
 
   fetchEvents() {
-    fetch(this.API_URL, {
-      method: 'GET'
-    }).then(function(response) {
-      return response.json().then(function(json) {
-        return json;
-      })
-    }).then(function(json) {
+    fetch(this.API_URL)
+    .then(response => {
+      return response.json();
+    }).then(json => {
       this.setState({
         events: json.results
       });
-    }.bind(this));
+    }).catch(e => {
+      console.error('Failed to fetch events:', e);
+    });
   }
 
   mainEvents() {
