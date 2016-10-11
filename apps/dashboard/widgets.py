@@ -151,9 +151,9 @@ class DatetimePickerInput(TextInput):
 
         # Kept for backwards compatibility with existing forms.
         final_attrs['placeholder'] = 'Den skal vises fra ...'
-        if attrs.get('placeholder', False):
+        if self.attrs.get('placeholder', False):
             # Update the placeholder text if supplied.
-            final_attrs['placeholder'] = force_text(attrs.get('placeholder'))
+            final_attrs['placeholder'] = force_text(self.attrs.get('placeholder'))
 
         return format_html(
             DATETIMEPICKER_WIDGET_STRING,
