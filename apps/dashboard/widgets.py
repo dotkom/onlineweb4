@@ -11,7 +11,7 @@ DATEPICKER_WIDGET_STRING = """
 <span class="input-group-btn datepickerbutton">\r\n
 <a href="#" class="btn btn-primary">\r\n
 <i class="fa fa-calendar fa-lg"></i></a></span>\r\n
-<input class="form-control" id="{}" name="{}" type="text" {} {} />\r\n
+<input class="form-control" id="{id}" name="{name}" type="text" placeholder="{placeholder}" value="{value}" />\r\n
 </div>\r\n
 """
 DATETIMEPICKER_WIDGET_STRING = """
@@ -19,7 +19,7 @@ DATETIMEPICKER_WIDGET_STRING = """
 <span class="input-group-btn datepickerbutton">\r\n
 <a href="#" class="btn btn-primary">\r\n
 <i class="fa fa-calendar fa-lg"></i></a></span>\r\n
-<input class="form-control" id="{}" name="{}" type="text" {} {} />\r\n
+<input class="form-control" id="{id}" name="{name}" type="text" placeholder="{placeholder}" value="{value}" />\r\n
 </div>\r\n
 """
 
@@ -28,7 +28,7 @@ TIMEPICKER_WIDGET_STRING = """
 <span class="input-group-btn datepickerbutton">\r\n
 <a href="#" class="btn btn-primary">\r\n
 <i class="fa fa-calendar fa-lg"></i></a></span>\r\n
-<input class="form-control" id="{}" name="{}" type="text" {} {} />\r\n
+<input class="form-control" id="{id}" name="{name}" type="text" placeholder="{placeholder}" value="{value}" />\r\n
 </div>\r\n
 """
 
@@ -107,17 +107,18 @@ class DatePickerInput(TextInput):
         else:
             final_attrs['value'] = ''
 
+        # Kept for backwards compatibility with existing forms.
+        final_attrs['placeholder'] = 'Den skal vises fra ...'
         if attrs.get('placeholder', False):
-            final_attrs['placeholder'] = format_html('placeholder="{}"', force_text(attrs.get('placeholder')))
-        else:
-            final_attrs['placeholder'] = format_html('placeholder="{}"', force_text('Den skal vises fra ...'))
+            # Update the placeholder text if supplied.
+            final_attrs['placeholder'] = force_text(attrs.get('placeholder'))
 
         return format_html(
-            DATEPICKER_WIDGET_STRING,
-            force_text(final_attrs['id']),
-            force_text(final_attrs['name']),
-            force_text(final_attrs['placeholder']),
-            final_attrs['value']
+            DATETIMEPICKER_WIDGET_STRING,
+            id=force_text(final_attrs['id']),
+            name=force_text(final_attrs['name']),
+            placeholder=force_text(final_attrs['placeholder']),
+            value=final_attrs['value']
         )
 
 
@@ -144,21 +145,22 @@ class DatetimePickerInput(TextInput):
 
         final_attrs = self.build_attrs(attrs, type=self.input_type, name=name)
         if value != '':
-            final_attrs['value'] = format_html('value="{}"', force_text(self._format_value(value)))
+            final_attrs['value'] = force_text(self._format_value(value))
         else:
             final_attrs['value'] = ''
 
+        # Kept for backwards compatibility with existing forms.
+        final_attrs['placeholder'] = 'Den skal vises fra ...'
         if attrs.get('placeholder', False):
-            final_attrs['placeholder'] = format_html('placeholder="{}"', force_text(attrs.get('placeholder')))
-        else:
-            final_attrs['placeholder'] = format_html('placeholder="{}"', force_text('Den skal vises fra ...'))
+            # Update the placeholder text if supplied.
+            final_attrs['placeholder'] = force_text(attrs.get('placeholder'))
 
         return format_html(
             DATETIMEPICKER_WIDGET_STRING,
-            force_text(final_attrs['id']),
-            force_text(final_attrs['name']),
-            force_text(final_attrs['placeholder']),
-            final_attrs['value']
+            id=force_text(final_attrs['id']),
+            name=force_text(final_attrs['name']),
+            placeholder=force_text(final_attrs['placeholder']),
+            value=final_attrs['value']
         )
 
 
@@ -189,15 +191,16 @@ class TimePickerInput(TextInput):
         else:
             final_attrs['value'] = ''
 
+        # Kept for backwards compatibility with existing forms.
+        final_attrs['placeholder'] = 'Den skal vises fra ...'
         if attrs.get('placeholder', False):
-            final_attrs['placeholder'] = format_html('placeholder="{}"', force_text(attrs.get('placeholder')))
-        else:
-            final_attrs['placeholder'] = format_html('placeholder="{}"', force_text('Den skal vises fra ...'))
+            # Update the placeholder text if supplied.
+            final_attrs['placeholder'] = force_text(attrs.get('placeholder'))
 
         return format_html(
-            TIMEPICKER_WIDGET_STRING,
-            force_text(final_attrs['id']),
-            force_text(final_attrs['name']),
-            force_text(final_attrs['placeholder']),
-            final_attrs['value']
+            DATETIMEPICKER_WIDGET_STRING,
+            id=force_text(final_attrs['id']),
+            name=force_text(final_attrs['name']),
+            placeholder=force_text(final_attrs['placeholder']),
+            value=final_attrs['value']
         )
