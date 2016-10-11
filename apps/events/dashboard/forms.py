@@ -2,12 +2,13 @@
 
 from django import forms
 
+from apps.dashboard.forms import HTML5RequiredMixin
 from apps.dashboard.widgets import DatetimePickerInput, multiple_widget_generator
 from apps.events.models import AttendanceEvent, CompanyEvent, Event, Reservation
 from apps.gallery.widgets import SingleImageInput
 
 
-class CreateEventForm(forms.ModelForm):
+class CreateEventForm(forms.ModelForm, HTML5RequiredMixin):
     class Meta(object):
         model = Event
         fields = (
@@ -26,7 +27,7 @@ class CreateEventForm(forms.ModelForm):
         widgets = multiple_widget_generator(widgetlist)
 
 
-class CreateAttendanceEventForm(forms.ModelForm):
+class CreateAttendanceEventForm(forms.ModelForm, HTML5RequiredMixin):
     class Meta(object):
         model = AttendanceEvent
         fields = (
@@ -51,7 +52,7 @@ class AddCompanyForm(forms.ModelForm):
         fields = ('company',)
 
 
-class ChangeEventForm(forms.ModelForm):
+class ChangeEventForm(forms.ModelForm, HTML5RequiredMixin):
 
     class Meta:
         model = Event
@@ -70,7 +71,7 @@ class ChangeEventForm(forms.ModelForm):
         widgets = multiple_widget_generator(widgetlist)
 
 
-class ChangeAttendanceEventForm(forms.ModelForm):
+class ChangeAttendanceEventForm(forms.ModelForm, HTML5RequiredMixin):
     class Meta:
         model = AttendanceEvent
         fields = (
