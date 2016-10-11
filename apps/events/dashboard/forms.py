@@ -17,7 +17,8 @@ class CreateEventForm(forms.ModelForm, HTML5RequiredMixin):
         )
 
         img_fields = [('image', {'id': 'responsive-image-id'})]
-        dtp_fields = [('event_start', {"placeholder": ""}), ('event_end', {"placeholder": ""})]
+        dtp_fields = [('event_start', {"placeholder": "Arrangementsstart"}),
+                      ('event_end', {"placeholder": "Arrangementsslutt"})]
         widgetlist = [
             (DatetimePickerInput, dtp_fields),
             (SingleImageInput, img_fields)
