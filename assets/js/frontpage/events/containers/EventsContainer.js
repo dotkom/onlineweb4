@@ -29,7 +29,7 @@ class EventsContainer extends Component {
   }
 
   smallEvents() {
-    return this.state.events.slice(2)
+    return this.state.events.slice(2, 10);
   }
 
   render() {
