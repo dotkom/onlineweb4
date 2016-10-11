@@ -1,6 +1,6 @@
 from django.contrib.admin.widgets import AdminFileWidget
 from django.forms import Form
-from django.forms.widgets import HiddenInput, FileInput
+from django.forms.widgets import FileInput, HiddenInput
 
 
 class HTML5RequiredMixin(Form):
