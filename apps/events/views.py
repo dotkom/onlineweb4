@@ -346,23 +346,33 @@ class AttendViewSet(views.APIView):
         rfid = request.data.get('rfid')
         event = request.data.get('event')
         username = request.data.get('username')
+        waitlist_approved = request.data.get('approved')
         attendee = None
 
-        if username is None:
-            try:
-                attendee = Attendee.objects.get(event=event, user__rfid=rfid)
-                if attendee.attended:
-                    return Response ({'message': 'Du har allerede møtt opp.'}, status=status.HTTP_400_BAD_REQUEST)
-                attendee.attended = True
-            except Attendee.DoesNotExist:
-                return Response({'message': 'Kortet finnes ikke i databasen. Skriv inn et brukernavn for å knytte kortet til brukeren og sjekk inn.'}, status=status.HTTP_400_BAD_REQUEST)
-        else:
+        if username is not None:
             try:
                 user = User.objects.get(username=username)
                 user.rfid = rfid
+                user.save()
             except User.DoesNotExist:
-                return Response({'message': 'Brukernavn finnes ikke. Husk at det er brukernavn på Onlineweb! (Prøv igjen, eller scan nytt kort for å avbryte.)'}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({'message': 'Brukernavn finnes ikke. Husk at det er brukernavn på Onlineweb! '
+                                            '(Prøv igjen, eller scan nytt kort for å avbryte.)', 'attend_status': 50},
+                                status=status.HTTP_400_BAD_REQUEST)
+        try:
+            attendee = Attendee.objects.get(event=event, user__rfid=rfid)
+            if attendee.attended:
+                return Response({'message': 'Du har allerede møtt opp.', 'attend_status': 20},
+                                status=status.HTTP_400_BAD_REQUEST)
+            if attendee.is_on_waitlist() and not waitlist_approved:
+                return Response({'message': (attendee.user.get_full_name(),
+                                             'er på venteliste. Registrere allikevel?'), 'attend_status': 30},
+                                status=status.HTTP_100_CONTINUE)
+            attendee.attended = True
+            attendee.save()
+        except Attendee.DoesNotExist:
+            return Response({'message': 'Kortet finnes ikke i databasen. '
+                                        'Skriv inn et brukernavn for å knytte kortet til brukeren og sjekk inn.',
+                             'attend_status': 40}, status=status.HTTP_400_BAD_REQUEST)
 
-        attendee.save()
-
-        return Response(request.data, status=status.HTTP_200_OK)
+        return Response({'message': (attendee.user.get_full_name(), 'er registrert som deltaker. Velkommen!'),
+                         'attend_status': 10}, status=status.HTTP_200_OK)
