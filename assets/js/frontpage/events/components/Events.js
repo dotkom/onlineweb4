@@ -1,9 +1,11 @@
 import React, { PropTypes } from 'react';
 import Event from './Event';
 import SmallEvent from './SmallEvent';
+import EventsHeading from './EventsHeading';
 
 const Events = ({ mainEvents, smallEvents }) => (
   <div>
+    <EventsHeading />
     <div className="row clearfix hero">
     {
       mainEvents.map((event) => {
