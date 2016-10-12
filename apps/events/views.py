@@ -325,7 +325,9 @@ class AttendanceEventViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin,
 class AttendeeViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.ListModelMixin):
     queryset = Attendee.objects.all()
     serializer_class = AttendeeSerializer
-    permission_classes = (AllowAny,)
+    authentication_classes = [OAuth2Authentication]
+    permission_classes = [TokenHasScope]
+    required_scopes = ['regme.readwrite']
     filter_fields = ('event', 'attended',)
 
 
