@@ -407,6 +407,18 @@ class AttendanceEvent(models.Model):
     # Extra choices
     extras = models.ManyToManyField(Extras, blank=True)
 
+    def get_feedback(self):
+        from apps.feedback.models import FeedbackRelation
+        try:
+            feedback = FeedbackRelation.objects.get(content_type=ContentType.objects.get_for_model(Event),
+                                                    object_id=self.pk)
+        except FeedbackRelation.DoesNotExist:
+            feedback = None
+        return feedback
+
+    def has_feedback(self):
+        return bool(self.get_feedback())
+
     @property
     def has_reservation(self):
         """ Returns whether this event has an attached reservation """
