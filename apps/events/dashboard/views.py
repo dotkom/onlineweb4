@@ -5,6 +5,7 @@ from datetime import datetime, time, timedelta
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import reverse
 from django.forms.models import modelformset_factory
@@ -20,6 +21,7 @@ from apps.events.dashboard import forms as dashboard_forms
 from apps.events.dashboard.utils import event_ajax_handler
 from apps.events.models import AttendanceEvent, Attendee, CompanyEvent, Event, Reservation, Reservee
 from apps.events.utils import get_group_restricted_events, get_types_allowed
+from apps.feedback.models import FeedbackRelation
 from apps.payment.models import PaymentRelation
 
 
@@ -156,6 +158,30 @@ class AddCompanyEventView(DashboardPermissionMixin, CreateView):
 
 class RemoveCompanyEventView(DashboardPermissionMixin, DeleteView):
     model = CompanyEvent
+    permission_required = 'events.create_attendanceevent'
+
+    def get_success_url(self):
+        return reverse('dashboard_event_details', kwargs={'event_id': self.kwargs.get('event_id')})
+
+
+class AddFeedbackRelationView(DashboardPermissionMixin, CreateView):
+    model = FeedbackRelation
+    form_class = dashboard_forms.CreateFeedbackRelationForm
+    template_name = 'events/dashboard/attendanceevent_form.html'
+    permission_required = 'events.create_attendanceevent'
+
+    def get_success_url(self):
+        return reverse('dashboard_event_details', kwargs={'event_id': self.kwargs.get('event_id')})
+
+    def form_valid(self, form):
+        form.instance.author = self.request.user
+        form.instance.content_type = ContentType.objects.get_for_model(Event)
+        form.instance.object_id = self.kwargs.get('event_id')
+        return super().form_valid(form)
+
+
+class RemoveFeedbackRelationView(DashboardPermissionMixin, DeleteView):
+    model = FeedbackRelation
     permission_required = 'events.create_attendanceevent'
 
     def get_success_url(self):

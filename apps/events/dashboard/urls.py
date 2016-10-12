@@ -20,6 +20,10 @@ urlpatterns = [
         name='dashboard_events_add_company'),
     url(r'^(?P<event_id>\d+)/remove_company/(?P<pk>\d+)/$', views.RemoveCompanyEventView.as_view(),
         name='dashboard_events_remove_company'),
+    url(r'^(?P<event_id>\d+)/add_feedback/$', views.AddFeedbackRelationView.as_view(),
+        name='dashboard_events_add_feedback'),
+    url(r'^(?P<event_id>\d+)/remove_feedback/(?P<pk>\d+)/$', views.RemoveFeedbackRelationView.as_view(),
+        name='dashboard_events_remove_feedback'),
     # url endpoints for saving forms
     url(r'^(?P<event_id>\d+)/attendance/$', views.event_change_attendance, name='dashboard_event_change_attendance'),
     url(r'^(?P<event_id>\d+)/attendees/$', views.event_change_attendees, name='dashboard_event_change_attendees'),
