@@ -3,8 +3,9 @@
 from django import forms
 
 from apps.dashboard.forms import HTML5RequiredMixin
-from apps.dashboard.widgets import DatetimePickerInput, multiple_widget_generator
+from apps.dashboard.widgets import DatePickerInput, DatetimePickerInput, multiple_widget_generator
 from apps.events.models import AttendanceEvent, CompanyEvent, Event, Reservation
+from apps.feedback.models import FeedbackRelation
 from apps.gallery.widgets import SingleImageInput
 
 
@@ -88,6 +89,18 @@ class ChangeAttendanceEventForm(forms.ModelForm, HTML5RequiredMixin):
         ]
 
         # Multiple widget generator merges results from regular widget_generator into a single widget dict
+        widgets = multiple_widget_generator(widgetlist)
+
+
+class CreateFeedbackRelationForm(forms.ModelForm, HTML5RequiredMixin):
+    class Meta(object):
+        model = FeedbackRelation
+        fields = ('feedback', 'deadline', 'gives_mark', 'active')
+
+        dp_fields = [('deadline', {})]
+        widgetlist = [
+            (DatePickerInput, dp_fields)
+        ]
         widgets = multiple_widget_generator(widgetlist)
 
 
