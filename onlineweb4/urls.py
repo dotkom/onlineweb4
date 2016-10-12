@@ -25,6 +25,9 @@ urlpatterns = [
     # Onlineweb front page
     url(r'^$', TemplateView.as_view(template_name='frontpage.html'), name='home'),
 
+    # Django-js-reverse used to get django urls to react
+    url(r'^jsreverse/$', 'django_js_reverse.views.urls_js', name='js_reverse'),
+
     # nav-bar menu urls
     url(r'^#events$', TemplateView.as_view(template_name='frontpage.html'), name='events-link'),
     url(r'^#articles$', TemplateView.as_view(template_name='frontpage.html'), name='articles-link'),
