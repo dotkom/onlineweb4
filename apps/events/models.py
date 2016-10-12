@@ -795,6 +795,9 @@ class Attendee(models.Model):
 
         super(Attendee, self).delete()
 
+    def is_on_waitlist(self):
+        return self in self.event.waitlist_qs
+
     class Meta:
         ordering = ['timestamp']
         unique_together = (('event', 'user'),)
