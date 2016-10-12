@@ -15,4 +15,3 @@ verbose_tasks:
 coverage:
   path: coverage.xml
   parser: python
-
