@@ -1,9 +1,14 @@
 {% extends "base.html" %}
+{% load render_bundle from webpack_loader %}
 {% load fb_versions %}
 
 {% block title %}
 Karrieremuligheter - Online
 {% endblock title %}
+
+{% block js %}
+  {% render_bundle 'careeropportunity' %}
+{% endblock %}
 
 {% block content %}
     <section id="career">
