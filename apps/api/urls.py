@@ -2,9 +2,9 @@
 
 from django.conf.urls import include, url
 
+from apps.events import views as event_views
 from apps.shop import views as shop_views
 from apps.sso import views as auth_views
-from apps.events import views as event_views
 
 urlpatterns = [
     url(r'^',       include('apps.api.v0.urls')),

@@ -11,17 +11,20 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from django.utils.translation import ugettext as _
 # API v1
-from requests import Response
+from oauth2_provider.ext.rest_framework import OAuth2Authentication
+from oauth2_provider.ext.rest_framework import TokenHasScope
 from rest_framework import mixins, status, views, viewsets
 from rest_framework.permissions import AllowAny
+from rest_framework.response import Response
 from watson import search as watson
 
+from apps.authentication.models import OnlineUser as User
 from apps.events.filters import EventDateFilter
 from apps.events.forms import CaptchaForm
 from apps.events.models import AttendanceEvent, Attendee, CompanyEvent, Event
 from apps.events.pdf_generator import EventPDF
-from apps.events.serializers import (AttendanceEventSerializer, CompanyEventSerializer,
-                                     EventSerializer, AttendeeSerializer)
+from apps.events.serializers import (AttendanceEventSerializer, AttendeeSerializer,
+                                     CompanyEventSerializer, EventSerializer)
 from apps.events.utils import (get_group_restricted_events, handle_attend_event_payment,
                                handle_attendance_event_detail, handle_event_ajax,
                                handle_event_payment, handle_mail_participants)
@@ -333,7 +336,33 @@ class CompanyEventViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mi
     permission_classes = (AllowAny,)
 
 
-class AttendViewSet(views.View):
+class AttendViewSet(views.APIView):
+    authentication_classes = [OAuth2Authentication]
+    permission_classes = [TokenHasScope]
+    required_scopes = ['regme.readwrite']
+
     def post(self, request, format=None):
-        print('Hello')
-        return Response(status=status.HTTP_200_OK)
+
+        rfid = request.data.get('rfid')
+        event = request.data.get('event')
+        username = request.data.get('username')
+        attendee = None
+
+        if username is None:
+            try:
+                attendee = Attendee.objects.get(event=event, user__rfid=rfid)
+                if attendee.attended:
+                    return Response ({'message': 'Du har allerede møtt opp.'}, status=status.HTTP_400_BAD_REQUEST)
+                attendee.attended = True
+            except Attendee.DoesNotExist:
+                return Response({'message': 'Kortet finnes ikke i databasen. Skriv inn et brukernavn for å knytte kortet til brukeren og sjekk inn.'}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            try:
+                user = User.objects.get(username=username)
+                user.rfid = rfid
+            except User.DoesNotExist:
+                return Response({'message': 'Brukernavn finnes ikke. Husk at det er brukernavn på Onlineweb! (Prøv igjen, eller scan nytt kort for å avbryte.)'}, status=status.HTTP_400_BAD_REQUEST)
+
+        attendee.save()
+
+        return Response(request.data, status=status.HTTP_200_OK)

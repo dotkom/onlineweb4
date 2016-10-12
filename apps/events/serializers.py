@@ -59,4 +59,4 @@ class EventSerializer(serializers.ModelSerializer):
 
 class AttendSerializer(serializers.Serializer):
     rfid = serializers.CharField()
-    event = serializers.PrimaryKeyRelatedField(read_only=True)
+    event = serializers.IntegerField(required=True)
