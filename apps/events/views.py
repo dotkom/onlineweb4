@@ -11,8 +11,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from django.utils.translation import ugettext as _
 # API v1
-from oauth2_provider.ext.rest_framework import OAuth2Authentication
-from oauth2_provider.ext.rest_framework import TokenHasScope
+from oauth2_provider.ext.rest_framework import OAuth2Authentication, TokenHasScope
 from rest_framework import mixins, status, views, viewsets
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
