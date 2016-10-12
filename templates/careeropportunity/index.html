@@ -6,8 +6,7 @@ Karrieremuligheter - Online
 {% endblock title %}
 
 {% block content %}
-
-    <section id="careeropportunities">
+    <section id="career">
         <div class="container">
             <div class="row">
                 <div class="col-md-12">
@@ -16,45 +15,37 @@ Karrieremuligheter - Online
                     </div>
                 </div>
             </div>
-
-            {% if opportunities %}
-{% for opportunity in opportunities %}
-    {% if forloop.counter0|divisibleby:"4" %}
-            <div class="row row-space">
-    {% endif %}
-                <div class="col-xs-12 col-sm-6 col-md-3">
-                    <a href="{% url 'careeropportunity_details' opportunity.id %}">
-                        <div class="row">
-                            <div class="col-md-12">
+            <div class="row">
+                <div class="col-xs-12 col-sm-12 col-md-3 pull-right">
+                    contolls
+                </div>
+                <div class="col-xs-12 col-sm-12 col-md-9 pull-left">
+                    {% for opportunity in opportunities %}
+                        <article class="row">
+                            <div class="col-xs-12 col-md-4">
                                 <picture>
                                     <source srcset="{{ opportunity.company.image.lg }}" media="(max-width: 992px)">
                                     <img src="{{ opportunity.company.image.md }}" width="100%" alt=""/>
                                 </picture>
                             </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-12">
-                                <h3 class="career-title">{{opportunity.title}}</h3>
+                            <div class="col-xs-12 col-md-8">
+                                <h1>
+                                    <a href="{% url 'careeropportunity_details' opportunity.id %}">
+                                        {{ opportunity.company.name }} - {{ opportunity.title }}
+                                    </a>
+                                </h1>
+                                <div class="ingress">
+                                    {{ opportunity.ingress }}
+                                </div>
+                                <div class="meta">
+                                    <div class="col-md-4">
+                                        Type
+                                </div>
                             </div>
-                        </div>
-                    </a>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <p class="career-ingress">{{opportunity.ingress}}</p>
-                        </div>
-                    </div>
+                        </article>
+                    {% endfor %}
                 </div>
-    {% if forloop.counter|divisibleby:"4" and not forloop.last%}
             </div>
-    {% endif %}
-
-    {% if forloop.last %}
-            </div>
-    {% endif %}
-{% endfor %}
         </div>
-        {% else %}
-        <p class="ingress">Ingen karrieremuligheter funnet.</p>
-        {% endif %}
     </section>
 {%endblock content %}
