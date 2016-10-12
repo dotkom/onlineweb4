@@ -114,7 +114,7 @@ class DatePickerInput(TextInput):
             final_attrs['placeholder'] = force_text(attrs.get('placeholder'))
 
         return format_html(
-            DATETIMEPICKER_WIDGET_STRING,
+            DATEPICKER_WIDGET_STRING,
             id=force_text(final_attrs['id']),
             name=force_text(final_attrs['name']),
             placeholder=force_text(final_attrs['placeholder']),
