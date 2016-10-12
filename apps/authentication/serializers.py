@@ -4,6 +4,7 @@ from apps.authentication.models import OnlineUser as User
 
 
 class UserSerializer(serializers.ModelSerializer):
+    username = serializers.HiddenField(default='')
     rfid = serializers.HiddenField(default='')
 
     class Meta:
