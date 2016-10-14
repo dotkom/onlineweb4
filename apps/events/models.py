@@ -753,6 +753,24 @@ class AttendanceEvent(models.Model):
                         return list(waitlist).index(attendee_object) + 1
         return 0
 
+    def get_payments(self):
+        from apps.payment.models import Payment
+        return Payment.objects.filter(content_type=ContentType.objects.get_for_model(AttendanceEvent),
+                                      object_id=self.pk)
+
+    def get_payment(self):
+        from apps.payment.models import Payment
+        try:
+            return Payment.objects.get(content_type=ContentType.objects.get_for_model(AttendanceEvent),
+                                       object_id=self.pk)
+        except Payment.DoesNotExist:
+            return None
+        except Payment.MultipleObjectsReturned:
+            import logging
+            logger = logging.getLogger(__name__)
+            logger.warn("Multiple payment objects connected to attendance event #%s." % self.pk)
+            return self.get_payments()  # Sneaky hack, however, use get_payments for multiple
+
     def __str__(self):
         return self.event.title
 

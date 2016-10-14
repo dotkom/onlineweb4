@@ -22,7 +22,7 @@ from apps.events.dashboard.utils import event_ajax_handler
 from apps.events.models import AttendanceEvent, Attendee, CompanyEvent, Event, Reservation, Reservee
 from apps.events.utils import get_group_restricted_events, get_types_allowed
 from apps.feedback.models import FeedbackRelation
-from apps.payment.models import PaymentRelation
+from apps.payment.models import Payment, PaymentPrice, PaymentRelation
 
 
 @login_required
@@ -182,6 +182,51 @@ class AddFeedbackRelationView(DashboardPermissionMixin, CreateView):
 
 class RemoveFeedbackRelationView(DashboardPermissionMixin, DeleteView):
     model = FeedbackRelation
+    permission_required = 'events.create_attendanceevent'
+
+    def get_success_url(self):
+        return reverse('dashboard_event_details', kwargs={'event_id': self.kwargs.get('event_id')})
+
+
+class AddPaymentView(DashboardPermissionMixin, CreateView):
+    model = Payment
+    form_class = dashboard_forms.CreatePaymentForm
+    template_name = 'events/dashboard/attendanceevent_form.html'
+    permission_required = 'events.create_attendanceevent'
+
+    def get_success_url(self):
+        return reverse('dashboard_event_details', kwargs={'event_id': self.kwargs.get('event_id')})
+
+    def form_valid(self, form):
+        form.instance.content_type = ContentType.objects.get_for_model(AttendanceEvent)
+        form.instance.object_id = self.kwargs.get('event_id')
+        return super().form_valid(form)
+
+
+class RemovePaymentView(DashboardPermissionMixin, DeleteView):
+    model = Payment
+    permission_required = 'events.create_attendanceevent'
+
+    def get_success_url(self):
+        return reverse('dashboard_event_details', kwargs={'event_id': self.kwargs.get('event_id')})
+
+
+class AddPaymentPriceView(DashboardPermissionMixin, CreateView):
+    model = PaymentPrice
+    form_class = dashboard_forms.CreatePaymentPriceForm
+    template_name = 'events/dashboard/attendanceevent_form.html'
+    permission_required = 'events.create_attendanceevent'
+
+    def get_success_url(self):
+        return reverse('dashboard_event_details', kwargs={'event_id': self.kwargs.get('event_id')})
+
+    def form_valid(self, form):
+        form.instance.payment = get_object_or_404(Payment, pk=self.kwargs.get('pk'))
+        return super().form_valid(form)
+
+
+class RemovePaymentPriceView(DashboardPermissionMixin, DeleteView):
+    model = PaymentPrice
     permission_required = 'events.create_attendanceevent'
 
     def get_success_url(self):

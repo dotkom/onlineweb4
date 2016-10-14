@@ -78,9 +78,9 @@ Arrangementsdetaljer
                 <li role="presentation">
                     <a href="#payment-summary" aria-controls="payment-summary" role="tab" data-toggle="tab">Betalingsoppsumering</a>
                 </li>
-            {% elif event.attendance_event and not payment_prices and False %} {# @ToDo #}
+            {% elif event.attendance_event and not payment_prices %}
                 <li role="presentation">
-                    <a href="#create-payment" aria-controls="create-payment" role="tab" data-toggle="tab"><i class="fa fa-plus"></i> Legg til betaling</a>
+                    <a href="#payment" aria-controls="payment" role="tab" data-toggle="tab">{% if not event.attendance_event.get_payment %}<i class="fa fa-plus"></i> Legg til betaling{% else %}Betalingsoversikt{% endif %}</a>
                 </li>
             {% endif %}
             <li role="presentation">
@@ -132,6 +132,12 @@ Arrangementsdetaljer
     <div role="tabpanel" class="tab-pane" id="payment-summary">
         {%  include "events/dashboard/details/payment_summary.html" %}
     </div>
+    <div role="tabpanel" class="tab-pane" id="payment">
+        {% if event.attendance_event.get_payment %}
+            {% include "events/dashboard/details/payment_prices.html" %}
+        {% endif %}
+        <div id="add-payment-view"></div>
+    </div>
     <div role="tabpanel" class="tab-pane" id="company">
         {% include "events/dashboard/details/company.html" %}
         <div id="add-company-view"></div>
@@ -173,6 +179,18 @@ Arrangementsdetaljer
           $('#add-feedback-form').attr('action', "{% url 'dashboard_events_add_feedback' event.id %}")
           Dashboard.activateDateTimePickers()
         })
+        {% if not event.attendance_event.get_payment %}
+        $('#add-payment-view').load("{% url 'dashboard_events_add_payment' event.id %}", function() {
+          $('#add-payment-view').find('form').attr('id', 'add-payment-form')
+          $('#add-payment-form').attr('action', "{% url 'dashboard_events_add_payment' event.id %}")
+          Dashboard.activateDateTimePickers()
+        })
+        {% else %}
+        $('#add-payment-price-view').load("{% url 'dashboard_events_add_payment_price' event.id event.attendance_event.get_payment.pk %}", function() {
+          $('#add-payment-price-view').find('form').attr('id', 'add-payment-price-form')
+          $('#add-payment-price-form').attr('action', "{% url 'dashboard_events_add_payment_price' event.id event.attendance_event.get_payment.pk %}")
+        })
+        {% endif %}
     </script>
     {% endcompress %}
 {% endblock %}
