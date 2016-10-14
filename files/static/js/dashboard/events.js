@@ -15,7 +15,7 @@ var Event = (function ($, tools) {
     }
 
     // Get the currently correct endpoint for posting user changes to
-    var _pos_of_last_slash = window.location.href.toString().slice(0, window.location.href.toString().length-2).lastIndexOf('/')
+    var _pos_of_last_slash = window.location.href.toString().slice(0, window.location.href.toString().length-1).lastIndexOf('/')
     var attendance_endpoint = window.location.href.toString().slice(0, _pos_of_last_slash) + '/attendees/'
 
     // Javascript to enable link to tab
