@@ -136,6 +136,11 @@ Arrangementsdetaljer
         {% if event.attendance_event.get_payment %}
             {% include "events/dashboard/details/payment_prices.html" %}
         {% endif %}
+        <p>
+            Du trenger kun å fylle ut ett av feltene "Frist" og "Utsettelse". Hvilket du fyller ut avhenger av betalingstypen du velger.
+            Velger du "frist" må du sette en betalingsfrist.
+            Velger du "utsettelse" må du oppgi antall dager utsettelse deltakeren får i antall dager etter deltakeren melder seg på arrangementet.
+        </p>
         <div id="add-payment-view"></div>
     </div>
     <div role="tabpanel" class="tab-pane" id="company">
