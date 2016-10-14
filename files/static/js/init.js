@@ -82,31 +82,10 @@ $(function() {
     }
 
     // Reset center of the map on window-resize (using jquery-plugin to only fire the event when resizing is finished)
-    // Also swap event image sources for proper resolution on mobile view
     $(window).on("debouncedresize",function(e) {
         if(map){
             map.panTo(new google.maps.LatLng(63.41819751959266, 10.40592152481463));
         }
-
-        var mobile = false;
-
-        if ($(window).innerWidth() < 768) {
-            mobile = true;
-        }
-
-        $('#eventimage img').each(function (index) {
-            var event_image_source;
-            image_path = $(this).attr('src').split('_');
-            image_ext = image_path[image_path.length - 1].split('.')[1];
-            if (mobile) {
-                image_path[image_path.length - 1] = "main." + image_ext;
-            }
-            else {
-                image_path[image_path.length - 1] = "thumb." + image_ext;
-            }
-            event_image_source = image_path.join("_");
-            $(this).attr('src', event_image_source);
-        });
     });
 
 
