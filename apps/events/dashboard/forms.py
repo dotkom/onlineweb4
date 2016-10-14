@@ -7,6 +7,7 @@ from apps.dashboard.widgets import DatePickerInput, DatetimePickerInput, multipl
 from apps.events.models import AttendanceEvent, CompanyEvent, Event, Reservation
 from apps.feedback.models import FeedbackRelation
 from apps.gallery.widgets import SingleImageInput
+from apps.payment.models import Payment, PaymentPrice
 
 
 class CreateEventForm(forms.ModelForm, HTML5RequiredMixin):
@@ -102,6 +103,24 @@ class CreateFeedbackRelationForm(forms.ModelForm, HTML5RequiredMixin):
             (DatePickerInput, dp_fields)
         ]
         widgets = multiple_widget_generator(widgetlist)
+
+
+class CreatePaymentForm(forms.ModelForm, HTML5RequiredMixin):
+    class Meta(object):
+        model = Payment
+        fields = ('stripe_key', 'payment_type', 'deadline', 'active', 'delay')
+
+        dtp_fields = [('deadline', {'placeholder': 'Betalingsfrist'})]
+        widgetlist = [
+            (DatetimePickerInput, dtp_fields)
+        ]
+        widgets = multiple_widget_generator(widgetlist)
+
+
+class CreatePaymentPriceForm(forms.ModelForm, HTML5RequiredMixin):
+    class Meta(object):
+        model = PaymentPrice
+        fields = ('price', 'description')
 
 
 class ChangeReservationForm(forms.ModelForm):
