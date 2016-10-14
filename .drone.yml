@@ -11,7 +11,7 @@ build:
             - tox -e flake8
             - tox -e tests
             - pip install codecov
-            - codecov --token=$$CODECOV_TOKEN
+            - codecov
         auth_config:
             username: $$REGISTRY_USERNAME
             password: $$REGISTRY_PASSWORD
