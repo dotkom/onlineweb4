@@ -224,7 +224,7 @@
                                             {% endif %}
                                         {% endif %}
 
-                                        {%  if payment %}
+                                        {%  if payment and payment.price %}
                                             <p class="status-text status-price">Pris: {{ payment.price.price }},-</p>
                                         {%  endif %}
 
