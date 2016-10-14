@@ -80,7 +80,7 @@ class ChangeAttendanceEventForm(forms.ModelForm, HTML5RequiredMixin):
         fields = (
             'event', 'max_capacity', 'waitlist', 'guest_attendance',
             'registration_start', 'registration_end', 'unattend_deadline',
-            'automatically_set_marks', 'marks_has_been_set', 'rule_bundles',
+            'automatically_set_marks', 'rule_bundles',
         )
 
         dtp_fields = [('registration_start', {}), ('registration_end', {}), ('unattend_deadline', {})]
@@ -96,7 +96,7 @@ class ChangeAttendanceEventForm(forms.ModelForm, HTML5RequiredMixin):
 class CreateFeedbackRelationForm(forms.ModelForm, HTML5RequiredMixin):
     class Meta(object):
         model = FeedbackRelation
-        fields = ('feedback', 'deadline', 'gives_mark', 'active')
+        fields = ('feedback', 'deadline', 'gives_mark')
 
         dp_fields = [('deadline', {})]
         widgetlist = [
@@ -108,7 +108,7 @@ class CreateFeedbackRelationForm(forms.ModelForm, HTML5RequiredMixin):
 class CreatePaymentForm(forms.ModelForm, HTML5RequiredMixin):
     class Meta(object):
         model = Payment
-        fields = ('stripe_key', 'payment_type', 'deadline', 'active', 'delay')
+        fields = ('stripe_key', 'payment_type', 'deadline', 'delay')
 
         dtp_fields = [('deadline', {'placeholder': 'Betalingsfrist'})]
         widgetlist = [
