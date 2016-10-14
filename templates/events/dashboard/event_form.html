@@ -4,7 +4,7 @@
   {% for field in form %}
     <div class="form-group">
       <label for="{{ field.auto_id }}">{{ field.label }}</label>
-      {{ field|addclass:"form-control" }}
+      {{ field|addclass:"form-control" }}{{ field.errors }}
     </div>
   {% endfor %}
 
