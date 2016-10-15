@@ -86,19 +86,19 @@ function EventWidget (Utils){
         html += '<div class="col-sm-4 col-md-2" id="eventimage">';
         html +=     '<div id="event-carousel" class="carousel slide">';
         html +=         '<div class="carousel-inner">';
-        if(item.images.length > 0) {
+        if(item.image !== null) {
             html +=             '<div class="item active">';
             html +=                 '<a href="events/' + item.id + '/' + item.slug + '">';
             html +=                     '<picture>';
-            html +=                         '<source srcset="' + item.images[2] + '" media="(max-width: 768px)">';
-            html +=                         '<source srcset="' + item.images[1] + '" media="(max-width: 992px)">';
-            html +=                         '<img src="' + item.images[0] + '" width="100%" alt="" >';
+            html +=                         '<source srcset="' + item.image.lg + '" media="(max-width: 768px)">';
+            html +=                         '<source srcset="' + item.image.md + '" media="(max-width: 992px)">';
+            html +=                         '<img src="' + item.image.thumb + '" width="100%" alt="" >';
             html +=                      '</picture>';
             html +=                 '</a>';
             html +=             '</div>';
         }
         for(var i=0; i < item.company_event.length; i++){
-            html +=         '<div class="item ' + (!item.images[0] && i === 0 ? 'active' : '') + '">';
+            html +=         '<div class="item ' + (item.image === null && i === 0 ? 'active' : '') + '">';
             html +=             '<a href="events/' + item.id + '/' + item.slug + '">';
             html +=                 '<picture>';
             html +=                     '<source srcset="' + item.company_event[i].company.image.lg + '" media="(max-width: 768px)">';
