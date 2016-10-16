@@ -297,8 +297,19 @@ def event_details(request, event_id, active_tab='details'):
         raise PermissionDenied
 
     context = _create_details_context(request, event_id)
+    event = context['event']
     context['active_tab'] = active_tab
     context['form'] = dashboard_forms.CreateEventForm(instance=get_object_or_404(Event, pk=event_id))
+
+    extras = {}
+    if event.is_attendance_event() and event.attendance_event.extras:
+        for extra in event.attendance_event.extras.all():
+            extras[extra] = {"type": extra, "attending": 0, "waits": 0, "allergics": []}
+
+        count_extras(extras, "attending", event.attendance_event.attendees_qs)
+        count_extras(extras, "waits", event.attendance_event.waitlist_qs)
+
+    context['extras'] = extras
 
     return render(request, 'events/dashboard/details.html', context)
 
