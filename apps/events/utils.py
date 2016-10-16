@@ -176,8 +176,8 @@ class EventCalendar(Calendar):
         self.cal.add_component(cal_event)
 
 
-def find_image_versions(event):
-    img = event.image
+def find_image_versions(image):
+    img = image
     img_strings = []
 
     for ver in VERSIONS.keys():

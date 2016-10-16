@@ -1,0 +1,82 @@
+<div class="row">
+    <div class="col-lg-12">
+        <div class="panel panel-default">
+            <!-- List of attendees payments -->
+            {% if event.attendance_event.get_payment.paymentprice_set.all %}
+            <div class="panel-heading">
+                <h3 class="panel-title">Betalte deltakere</h3>
+            </div>
+            <div class="panel-body">
+                <table class="table table-striped tablesorter">
+                    <thead>
+                        <tr>
+                            <th>Navn</th>
+                            <th>Betaling</th>
+                            <th>Pris</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for paymentprice in event.attendance_event.get_payment.paymentprice_set.all %}
+                        {% for paymentrelation in paymentprice.paymentrelation_set.all %}
+                            <tr>
+                                <td>{{ paymentrelation.user }}</td>
+                                <td>{{ paymentprice.description }}</td>
+                                <td>{{ paymentprice.price }}</td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td>Ingen deltakere har betalt for "{{ paymentprice.description }}" enda.</td>
+                                <td>{{ paymentprice.description }}</td>
+                                <td>{{ paymentprice.price }}</td>
+                            </tr>
+                        {% endfor %}
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div><!-- panel-body -->
+            {% endif %}
+            <!-- end of list of attendees payments -->
+
+            <!-- Payment administration -->
+            <div class="panel-heading">
+                <h3 class="panel-title">
+                    <a data-toggle="collapse" href="#payment-admin">Betalingsadministrasjon <i class="fa fa-chevron-down"></i></a>
+                </h3>
+            </div>
+            <div class="panel-collapse {% if event.attendance_event.get_payment.paymentprice_set.all %}collapse{% endif %}" id="payment-admin">
+                <div class="panel-body">
+                    <h4>Priser</h4>
+                        {% for price in event.attendance_event.get_payment.paymentprice_set.all %}
+                            <p>{{ price }} <a href="#confirm-delete-{{ price.pk }}" data-toggle="modal" class="btn btn-xs btn-danger"><i class="fa fa-times"></i> Fjern</a></p>
+                            <div id="confirm-delete-{{ price.pk }}" class="modal fade">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                            <h3>Bekreft sletting av pris</h3>
+                                        </div>
+                                        <div class="modal-body">
+                                            <p>Er du sikker på at du vil slette prisen "{{ price }}"? Det vil medføre at alle som har betalt denne prisen ikke vil være markert som betalt lengre. Ingen betalinger vil bli refundert.</p>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button class="btn pull-left" data-dismiss="modal" aria-hidden="true">Lukk</button>
+                                            <form method="POST" action="{% url 'dashboard_events_remove_payment_price' event.id price.id %}">
+                                                {% csrf_token %}
+                                                <button type="submit" class="btn btn-danger">
+                                                    <i class="fa fa-times fa-lg"></i> Slett
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% empty %}
+                            <p>Det er ikke satt opp noen priser enda.</p>
+                        {% endfor %}
+                    <h4>Legg til ny pris</h4>
+                    <div id="add-payment-price-view"></div>
+                </div>
+            </div><!-- panel-body -->
+        </div><!-- panel -->
+    </div><!-- col-lg-6 -->
+</div><!-- row -->

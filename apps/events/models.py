@@ -9,7 +9,7 @@ from django.contrib.auth.models import Group
 from django.contrib.contenttypes.models import ContentType
 from django.core import validators
 from django.db import models
-from django.db.models import Case, Q, Value, When
+from django.db.models import SET_NULL, Case, Q, Value, When
 from django.template.defaultfilters import slugify
 from django.utils import timezone
 from django.utils.translation import ugettext as _
@@ -18,6 +18,7 @@ from unidecode import unidecode
 
 from apps.authentication.models import FIELD_OF_STUDY_CHOICES
 from apps.companyprofile.models import Company
+from apps.gallery.models import ResponsiveImage
 from apps.marks.models import get_expiration_date
 
 User = settings.AUTH_USER_MODEL
@@ -76,7 +77,7 @@ class Event(models.Model):
     objects = models.Manager()
     by_registration = EventOrderedByRegistration()
 
-    author = models.ForeignKey(User, related_name='oppretter')
+    author = models.ForeignKey(User, related_name='oppretter', null=True, blank=True)
     title = models.CharField(_('tittel'), max_length=60)
     event_start = models.DateTimeField(_('start-dato'))
     event_end = models.DateTimeField(_('slutt-dato'))
@@ -85,8 +86,9 @@ class Event(models.Model):
                                      validators=[validators.MinLengthValidator(25)])
     ingress = models.TextField(_('ingress'), validators=[validators.MinLengthValidator(25)])
     description = models.TextField(_('beskrivelse'), validators=[validators.MinLengthValidator(45)])
-    image = FileBrowseField(_("bilde"), max_length=200,
-                            directory=IMAGE_FOLDER, extensions=IMAGE_EXTENSIONS, null=True, blank=True)
+    image = models.ForeignKey(ResponsiveImage, related_name='events', blank=True, null=True, on_delete=SET_NULL)
+    old_image = FileBrowseField(_("bilde"), max_length=200,
+                                directory=IMAGE_FOLDER, extensions=IMAGE_EXTENSIONS, null=True, blank=True)
     event_type = models.SmallIntegerField(_('type'), choices=TYPE_CHOICES, null=False)
 
     def is_attendance_event(self):
@@ -97,10 +99,10 @@ class Event(models.Model):
             return False
 
     def images(self):
-        if not self.image:
+        if not self.old_image:
             return []
         from apps.events.utils import find_image_versions
-        return find_image_versions(self)
+        return find_image_versions(self.old_image)
 
     # TODO move payment and feedback stuff to attendance event when dasboard is done
 
@@ -404,6 +406,18 @@ class AttendanceEvent(models.Model):
 
     # Extra choices
     extras = models.ManyToManyField(Extras, blank=True)
+
+    def get_feedback(self):
+        from apps.feedback.models import FeedbackRelation
+        try:
+            feedback = FeedbackRelation.objects.get(content_type=ContentType.objects.get_for_model(Event),
+                                                    object_id=self.pk)
+        except FeedbackRelation.DoesNotExist:
+            feedback = None
+        return feedback
+
+    def has_feedback(self):
+        return bool(self.get_feedback())
 
     @property
     def has_reservation(self):
@@ -739,6 +753,24 @@ class AttendanceEvent(models.Model):
                         return list(waitlist).index(attendee_object) + 1
         return 0
 
+    def get_payments(self):
+        from apps.payment.models import Payment
+        return Payment.objects.filter(content_type=ContentType.objects.get_for_model(AttendanceEvent),
+                                      object_id=self.pk)
+
+    def get_payment(self):
+        from apps.payment.models import Payment
+        try:
+            return Payment.objects.get(content_type=ContentType.objects.get_for_model(AttendanceEvent),
+                                       object_id=self.pk)
+        except Payment.DoesNotExist:
+            return None
+        except Payment.MultipleObjectsReturned:
+            import logging
+            logger = logging.getLogger(__name__)
+            logger.warn("Multiple payment objects connected to attendance event #%s." % self.pk)
+            return self.get_payments()  # Sneaky hack, however, use get_payments for multiple
+
     def __str__(self):
         return self.event.title
 
@@ -763,6 +795,7 @@ class CompanyEvent(models.Model):
         permissions = (
             ('view_companyevent', 'View CompanyEvent'),
         )
+        ordering = ('company',)
 
 
 class Attendee(models.Model):

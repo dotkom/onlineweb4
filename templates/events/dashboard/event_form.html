@@ -1,0 +1,15 @@
+{% load addcss %}
+<form method="POST" id="create-event-form">
+  {% csrf_token %}
+  {% for field in form %}
+    <div class="form-group">
+      <label for="{{ field.auto_id }}">{{ field.label }}</label>
+      {{ field|addclass:"form-control" }}{{ field.errors }}
+    </div>
+  {% endfor %}
+
+  <button class="btn btn-success" type="submit">
+    <i class="fa fa-save fa-lg"></i> Lagre
+  </button>
+</form>
+{% include 'gallery/formwidget.html' %}
