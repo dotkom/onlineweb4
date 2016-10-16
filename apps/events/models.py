@@ -463,7 +463,7 @@ class AttendanceEvent(models.Model):
 
     @property
     def attendees_not_paid(self):
-        return [a for a in self.attendees_qs if a.paid]
+        return list(self.attendees.filter(paid=False))
 
     @property
     def number_of_attendees(self):
