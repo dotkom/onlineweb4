@@ -35,7 +35,7 @@ class CreateAttendanceEventForm(forms.ModelForm, HTML5RequiredMixin):
         model = AttendanceEvent
         fields = (
             'max_capacity', 'registration_start', 'registration_end',
-            'unattend_deadline', 'automatically_set_marks', 'waitlist', 'guest_attendance', 'marks_has_been_set',
+            'unattend_deadline', 'automatically_set_marks', 'waitlist', 'guest_attendance',
             'rule_bundles', 'extras'
         )
 
