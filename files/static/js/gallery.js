@@ -177,7 +177,7 @@ var GalleryCrop = (function ($, Cropper, utils) {
       RESET_BUTTON.click()
       GalleryCrop.reset()
 
-      var _tmpl = '<p>Bilde {0} ({1}) av type "{2}" ble beskjært uten problemer</p>'.format(
+      var _tmpl = '<p>Bilde {0} ({1}) av type "{2}" ble beskåret uten problemer</p>'.format(
         data.name, data.id, data.preset
       )
       MODAL_SUCCESS.find('.modal-body').html(_tmpl)
