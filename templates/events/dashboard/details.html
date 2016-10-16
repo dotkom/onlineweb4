@@ -78,7 +78,7 @@ Arrangementsdetaljer
                 <li role="presentation">
                     <a href="#payment-summary" aria-controls="payment-summary" role="tab" data-toggle="tab">Betalingsoppsumering</a>
                 </li>
-            {% elif event.attendance_event and not payment_prices %}
+            {% elif event.attendance_event and not payment_prices and False %} {# Not ready to be implemented yet. #}
                 <li role="presentation">
                     <a href="#payment" aria-controls="payment" role="tab" data-toggle="tab">{% if not event.attendance_event.get_payment %}<i class="fa fa-plus"></i> Legg til betaling{% else %}Betalingsoversikt{% endif %}</a>
                 </li>
@@ -184,13 +184,13 @@ Arrangementsdetaljer
           $('#add-feedback-form').attr('action', "{% url 'dashboard_events_add_feedback' event.id %}")
           Dashboard.activateDateTimePickers()
         })
-        {% if not event.attendance_event.get_payment %}
+        {% if not event.attendance_event.get_payment and False %}
         $('#add-payment-view').load("{% url 'dashboard_events_add_payment' event.id %}", function() {
           $('#add-payment-view').find('form').attr('id', 'add-payment-form')
           $('#add-payment-form').attr('action', "{% url 'dashboard_events_add_payment' event.id %}")
           Dashboard.activateDateTimePickers()
         })
-        {% else %}
+        {% elif False %}
         $('#add-payment-price-view').load("{% url 'dashboard_events_add_payment_price' event.id event.attendance_event.get_payment.pk %}", function() {
           $('#add-payment-price-view').find('form').attr('id', 'add-payment-price-form')
           $('#add-payment-price-form').attr('action', "{% url 'dashboard_events_add_payment_price' event.id event.attendance_event.get_payment.pk %}")
