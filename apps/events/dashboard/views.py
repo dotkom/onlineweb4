@@ -99,7 +99,7 @@ class CreateEventView(DashboardPermissionMixin, CreateView):
     model = Event
     form_class = dashboard_forms.CreateEventForm
     template_name = "events/dashboard/create.html"
-    permission_required = 'events.create_event'
+    permission_required = 'events.add_event'
 
     def get_success_url(self):
         return reverse('dashboard_event_details', kwargs={'event_id': self.object.id})
@@ -120,7 +120,7 @@ class AddAttendanceView(DashboardPermissionMixin, CreateView):
     model = AttendanceEvent
     form_class = dashboard_forms.CreateAttendanceEventForm
     template_name = "events/dashboard/attendanceevent_form.html"
-    permission_required = 'events.create_attendanceevent'
+    permission_required = 'events.add_attendanceevent'
     pk_url_kwarg = 'event_id'
 
     def form_valid(self, form):
@@ -146,7 +146,7 @@ class AddCompanyEventView(DashboardPermissionMixin, CreateView):
     model = CompanyEvent
     form_class = dashboard_forms.AddCompanyForm
     template_name = "events/dashboard/attendanceevent_form.html"
-    permission_required = 'events.create_attendanceevent'
+    permission_required = 'events.add_attendanceevent'
 
     def get_success_url(self):
         return reverse('dashboard_event_details', kwargs={'event_id': self.kwargs.get('event_id')})
@@ -158,7 +158,7 @@ class AddCompanyEventView(DashboardPermissionMixin, CreateView):
 
 class RemoveCompanyEventView(DashboardPermissionMixin, DeleteView):
     model = CompanyEvent
-    permission_required = 'events.create_attendanceevent'
+    permission_required = 'events.add_attendanceevent'
 
     def get_success_url(self):
         return reverse('dashboard_event_details', kwargs={'event_id': self.kwargs.get('event_id')})
@@ -168,7 +168,7 @@ class AddFeedbackRelationView(DashboardPermissionMixin, CreateView):
     model = FeedbackRelation
     form_class = dashboard_forms.CreateFeedbackRelationForm
     template_name = 'events/dashboard/attendanceevent_form.html'
-    permission_required = 'events.create_attendanceevent'
+    permission_required = 'events.add_attendanceevent'
 
     def get_success_url(self):
         return reverse('dashboard_event_details', kwargs={'event_id': self.kwargs.get('event_id')})
@@ -182,7 +182,7 @@ class AddFeedbackRelationView(DashboardPermissionMixin, CreateView):
 
 class RemoveFeedbackRelationView(DashboardPermissionMixin, DeleteView):
     model = FeedbackRelation
-    permission_required = 'events.create_attendanceevent'
+    permission_required = 'events.add_attendanceevent'
 
     def get_success_url(self):
         return reverse('dashboard_event_details', kwargs={'event_id': self.kwargs.get('event_id')})
@@ -192,7 +192,7 @@ class AddPaymentView(DashboardPermissionMixin, CreateView):
     model = Payment
     form_class = dashboard_forms.CreatePaymentForm
     template_name = 'events/dashboard/attendanceevent_form.html'
-    permission_required = 'events.create_attendanceevent'
+    permission_required = 'events.add_attendanceevent'
 
     def get_success_url(self):
         return reverse('dashboard_event_details', kwargs={'event_id': self.kwargs.get('event_id')})
@@ -205,7 +205,7 @@ class AddPaymentView(DashboardPermissionMixin, CreateView):
 
 class RemovePaymentView(DashboardPermissionMixin, DeleteView):
     model = Payment
-    permission_required = 'events.create_attendanceevent'
+    permission_required = 'events.add_attendanceevent'
 
     def get_success_url(self):
         return reverse('dashboard_event_details', kwargs={'event_id': self.kwargs.get('event_id')})
@@ -215,7 +215,7 @@ class AddPaymentPriceView(DashboardPermissionMixin, CreateView):
     model = PaymentPrice
     form_class = dashboard_forms.CreatePaymentPriceForm
     template_name = 'events/dashboard/attendanceevent_form.html'
-    permission_required = 'events.create_attendanceevent'
+    permission_required = 'events.add_attendanceevent'
 
     def get_success_url(self):
         return reverse('dashboard_event_details', kwargs={'event_id': self.kwargs.get('event_id')})
@@ -227,7 +227,7 @@ class AddPaymentPriceView(DashboardPermissionMixin, CreateView):
 
 class RemovePaymentPriceView(DashboardPermissionMixin, DeleteView):
     model = PaymentPrice
-    permission_required = 'events.create_attendanceevent'
+    permission_required = 'events.add_attendanceevent'
 
     def get_success_url(self):
         return reverse('dashboard_event_details', kwargs={'event_id': self.kwargs.get('event_id')})
