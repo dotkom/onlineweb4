@@ -135,7 +135,7 @@ class UpdateAttendanceView(DashboardPermissionMixin, UpdateView):
     model = AttendanceEvent
     form_class = dashboard_forms.CreateAttendanceEventForm
     template_name = "events/dashboard/attendanceevent_form.html"
-    permission_required = 'events.edit_attendanceevent'
+    permission_required = 'events.add_attendanceevent'
     pk_url_kwarg = 'event_id'
 
     def get_success_url(self):
