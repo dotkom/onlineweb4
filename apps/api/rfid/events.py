@@ -96,7 +96,7 @@ class EventResource(ModelResource):
         bundle.data['slug'] = slugify(unidecode(bundle.data['title']))
 
         # If image is set
-        if bundle.data['image']:
+        if 'image' in bundle.data and bundle.data['image']:
             # Parse to FileObject used by Filebrowser
             temp_image = FileObject(bundle.data['image'])
 
