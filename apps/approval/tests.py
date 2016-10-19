@@ -70,7 +70,7 @@ class EmailTest(TestCase):
         # Send message.
         mail.send_mail(
             'Testing onlineWebserver mail', 'Here is the message.',
-            'from@example.com', ['doraoline@gmail.com'],
+            'from@example.com', ['EMAIL_DOTKOM'],
             fail_silently=False,
         )
 
