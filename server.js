@@ -25,7 +25,10 @@ new WebpackDevServer(compiler, {
   hot: true,
   inline: true,
   historyApiFallback: true,
-  headers: { "Access-Control-Allow-Origin": "*" }
+  headers: { "Access-Control-Allow-Origin": "*" },
+  stats: {
+    chunks: false
+  }
 }).listen(3000, '0.0.0.0', function (err, result) {
   if (err) {
     console.error(err);
