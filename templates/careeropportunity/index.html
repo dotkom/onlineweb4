@@ -17,16 +17,44 @@ Karrieremuligheter - Online
             </div>
             <div class="row">
                 <div class="col-xs-12 col-sm-12 col-md-3 pull-right">
-                    contolls
+                    <div class="filters">
+                        <h3>Bedrifter</h3>
+                        <ul>
+                            <li>Mesan</li>
+                            <li>Sopra Steria</li>
+                            <li>BEKK</li>
+                        </ul>
+                        <h3>Typer</h3>
+                        <ul>
+                            <li>Deltid</li>
+                            <li>Fulltid</li>
+                            <li>Sommerjobb</li>
+                        </ul>
+                        <h3>Sted</h3>
+                        <ul>
+                            <li>Oslo</li>
+                            <li>Trondheim</li>
+                            <li>Bergen</li>
+                            <li>Stavanger</li>
+                            <li>Mandal</li>
+                            <li>Hønefoss</li>
+                            <li>Klæbu</li>
+                            <li>Lillehammer</li>
+                            <li>Molde</li>
+                        </ul>
+                        <button>Resett filtre</button>
+                    </div>
                 </div>
                 <div class="col-xs-12 col-sm-12 col-md-9 pull-left">
                     {% for opportunity in opportunities %}
                         <article class="row">
                             <div class="col-xs-12 col-md-4">
-                                <picture>
-                                    <source srcset="{{ opportunity.company.image.lg }}" media="(max-width: 992px)">
-                                    <img src="{{ opportunity.company.image.md }}" width="100%" alt=""/>
-                                </picture>
+                                <a href="{% url 'careeropportunity_details' opportunity.id %}">
+                                    <picture>
+                                        <source srcset="{{ opportunity.company.image.lg }}" media="(max-width: 992px)">
+                                        <img src="{{ opportunity.company.image.md }}" alt="{{ opportunity.company.name }}" />
+                                    </picture>
+                                </a>
                             </div>
                             <div class="col-xs-12 col-md-8">
                                 <h1>
@@ -39,13 +67,13 @@ Karrieremuligheter - Online
                                 </div>
                                 <div class="meta">
                                     <div class="col-md-4">
-                                        Type:
+                                        <p>Type: Foo</p>
                                     </div>
                                     <div class="col-md-4">
-                                        Sted:
+                                        <p>Sted: Bar</p>
                                     </div>
                                     <div class="col-md-4">
-                                        Frist:
+                                        <p>Frist: Dolor sit amet</p>
                                     </div>
                                 </div>
                             </div>
