@@ -32,23 +32,6 @@ class Approval(models.Model):
     approved = models.BooleanField(_("godkjent"), default=False, editable=False)
     message = models.TextField(_("melding"))
 
-    def alert_user(self):
-        if self.approved:
-            header_message = "Ditt medlemskap i Online er godkjent"
-        else:
-            header_message = "Ditt medlemskap i Online er ikke godkjent"
-
-        email = self.applicant.get_email()
-        if (not email == None):
-            send_mail(
-                header_message,
-                header_message,
-                settings.DEFAULT_FROM_EMAIL,
-                [email],
-                fail_silently=False,
-            )
-
-
 class MembershipApproval(Approval):
     new_expiry_date = models.DateField(_("ny utløpsdato"), blank=True, null=True)
     field_of_study = models.SmallIntegerField(_("studieretning"), choices=FIELD_OF_STUDY_CHOICES, default=0)

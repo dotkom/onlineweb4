@@ -23,3 +23,23 @@ def send_approval_notification(approval):
     except ImproperlyConfigured:
         logger.warn('Failed to send approval approver notification email for approval#{pk}.'.format(
             {'pk': approval.pk}))
+
+def send_approval_status_update(approval):
+    logger = logging.getLogger(__name__)
+
+    accepted = approval.approved
+    message = ""
+    if accepted:
+        message = "Ditt medlemskap i Online er godkjent"
+    else:
+        message = "Ditt medlemskap i Online er ikke godkjent"
+    try:
+        EmailMessage("Ditt medlemskap i Online",
+                     message,
+                     settings.DEFAULT_FROM_EMAIL,
+                     [approval.applicant.get_email()],
+                     fail_silently = False,
+                     ).send()
+    except ImproperlyConfigured:
+        logger.warn('Failed to notify applicant about updated status on membership for approval#{pk}.'.format(
+            {'pk': approval.pk}))
