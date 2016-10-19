@@ -24,7 +24,8 @@ new WebpackDevServer(compiler, {
   publicPath: config.output.publicPath,
   hot: true,
   inline: true,
-  historyApiFallback: true
+  historyApiFallback: true,
+  headers: { "Access-Control-Allow-Origin": "*" }
 }).listen(3000, '0.0.0.0', function (err, result) {
   if (err) {
     console.error(err);
