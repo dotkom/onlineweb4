@@ -67,13 +67,34 @@ Karrieremuligheter - Online
                                 </div>
                                 <div class="meta">
                                     <div class="col-md-4">
-                                        <p>Type: Foo</p>
+                                        <p>
+                                            Type:
+                                            {% if opportunity.employment %}
+                                                {% for employment in opportunity.employment.all %}
+                                                    <span>{{ employment }}</span>
+                                                {% endfor %}
+                                            {% endif %}
+                                        </p>
                                     </div>
                                     <div class="col-md-4">
-                                        <p>Sted: Bar</p>
+                                        <p>
+                                            Sted:
+                                            {% if opportunity.location %}
+                                                {% for location in opportunity.location.all %}
+                                                    <span>{{ location }}</span>
+                                                {% endfor %}
+                                            {% endif %}
+                                        </p>
                                     </div>
                                     <div class="col-md-4">
-                                        <p>Frist: Dolor sit amet</p>
+                                        <p>Frist:
+                                            {% if opportunity.deadline %}
+                                                {{ opportunity.deadline }}
+                                            {% else %}
+                                                Ikke spesifisert
+                                            {% endif %}
+
+                                        </p>
                                     </div>
                                 </div>
                             </div>
