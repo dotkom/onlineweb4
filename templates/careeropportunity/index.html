@@ -20,34 +20,31 @@ Karrieremuligheter - Online
                     <div class="filters">
                         <h3>Bedrifter</h3>
                         <ul>
-                            <li>Mesan</li>
-                            <li>Sopra Steria</li>
-                            <li>BEKK</li>
+                            {% for company in companies %}
+                                <li data-company-id="{{ company.id }}">{{ company }}</li>
+                            {% endfor %}
                         </ul>
                         <h3>Typer</h3>
                         <ul>
-                            <li>Deltid</li>
-                            <li>Fulltid</li>
-                            <li>Sommerjobb</li>
+                            {% for employment in employment_tags %}
+                                <li data-slug="{{ employment.slug }}">{{ employment.text }}</li>
+                            {% endfor %}
                         </ul>
                         <h3>Sted</h3>
                         <ul>
-                            <li>Oslo</li>
-                            <li>Trondheim</li>
-                            <li>Bergen</li>
-                            <li>Stavanger</li>
-                            <li>Mandal</li>
-                            <li>Hønefoss</li>
-                            <li>Klæbu</li>
-                            <li>Lillehammer</li>
-                            <li>Molde</li>
+                            {% for location in location_tags %}
+                                <li data-slug="{{ location.slug }}">{{ location.text }}</li>
+                            {% endfor %}
                         </ul>
                         <button>Resett filtre</button>
                     </div>
                 </div>
                 <div class="col-xs-12 col-sm-12 col-md-9 pull-left">
                     {% for opportunity in opportunities %}
-                        <article class="row">
+                        <article class="row"
+                            data-company="{{ opportunity.company.id }}"
+                            data-employment="{% for employment in opportunity.employment.slugs %}{{ employment }} {% endfor %}"
+                            data-location="{% for location in opportunity.location.slugs %}{{ location }} {% endfor %}">
                             <div class="col-xs-12 col-md-4">
                                 <a href="{% url 'careeropportunity_details' opportunity.id %}">
                                     <picture>
