@@ -58,7 +58,7 @@ def details(request, event_id, event_slug):
     if request.method == 'POST':
         if request.is_ajax and 'action' in request.POST and 'extras_id' in request.POST:
             return JsonResponse(handle_event_ajax(event, request.user,
-                                request.POST['action'], request.POST['extras_id']))
+                                                  request.POST['action'], request.POST['extras_id']))
 
     form = CaptchaForm(user=request.user)
     context = {
@@ -89,7 +89,6 @@ def get_attendee(attendee_id):
 
 @login_required
 def attendEvent(request, event_id):
-
     event = get_object_or_404(Event, pk=event_id)
 
     if not event.is_attendance_event():
@@ -133,7 +132,6 @@ def attendEvent(request, event_id):
 
 @login_required
 def unattendEvent(request, event_id):
-
     event = get_object_or_404(Event, pk=event_id)
 
     if not event.is_attendance_event():
@@ -232,7 +230,6 @@ def _search_indexed(request, query, filters):
 @login_required()
 @user_passes_test(lambda u: u.groups.filter(name='Komiteer').count() == 1)
 def generate_pdf(request, event_id):
-
     event = get_object_or_404(Event, pk=event_id)
 
     # If this is not an attendance event, redirect to event with error
@@ -312,7 +309,7 @@ class EventViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.Li
         - event has NO group restriction OR user having access to restricted event
         """
         return Event.by_registration.filter(
-            Q(group_restriction__isnull=True) | Q(group_restriction__groups__in=self.request.user.groups.all())).\
+            Q(group_restriction__isnull=True) | Q(group_restriction__groups__in=self.request.user.groups.all())). \
             distinct()
 
 
@@ -356,23 +353,26 @@ class AttendViewSet(views.APIView):
                 user.rfid = rfid
                 user.save()
             except User.DoesNotExist:
-                return Response({'message': 'Brukernavn finnes ikke. Husk at det er brukernavn på Onlineweb! '
+                return Response({'message': 'Brukernavnet finnes ikke. Husk at det er et online.ntnu.no brukernavn! '
                                             '(Prøv igjen, eller scan nytt kort for å avbryte.)', 'attend_status': 50},
                                 status=status.HTTP_400_BAD_REQUEST)
         try:
             attendee = Attendee.objects.get(event=event, user__rfid=rfid)
             if attendee.attended:
-                return Response({'message': 'Du har allerede møtt opp.', 'attend_status': 20},
+                return Response({'message': (attendee.user.get_full_name(),
+                                             'har allerede registrert oppmøte.'), 'attend_status': 20},
                                 status=status.HTTP_400_BAD_REQUEST)
             if attendee.is_on_waitlist() and not waitlist_approved:
                 return Response({'message': (attendee.user.get_full_name(),
-                                             'er på venteliste. Registrere allikevel?'), 'attend_status': 30},
+                                             'er på venteliste. Registrer dem som møtt opp allikevel?'),
+                                 'attend_status': 30},
                                 status=status.HTTP_100_CONTINUE)
             attendee.attended = True
             attendee.save()
         except Attendee.DoesNotExist:
             return Response({'message': 'Kortet finnes ikke i databasen. '
-                                        'Skriv inn et brukernavn for å knytte kortet til brukeren og sjekk inn.',
+                                        'Skriv inn et online.ntnu.no brukernavn for å '
+                                        'knytte kortet til brukeren og registrere oppmøte.',
                              'attend_status': 40}, status=status.HTTP_400_BAD_REQUEST)
 
         return Response({'message': (attendee.user.get_full_name(), 'er registrert som deltaker. Velkommen!'),
