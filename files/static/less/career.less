@@ -11,6 +11,18 @@
         border-top: 1px dotted #ccc;
         font-size: 11px;
         color: #aaa;
+
+        span::after {
+            content: ",";
+        }
+
+        span:last-child::after {
+            content: none;
+        }
+
+        span:nth-last-child(2)::after {
+            content: " og "
+        }
     }
 
     article {
