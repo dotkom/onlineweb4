@@ -29,10 +29,10 @@ class CareerOpportunity(models.Model):
     featured = models.BooleanField(_('fremhevet'), default=False, blank=True)
     deadline = models.DateTimeField(_('frist'), default=None, null=True, blank=True)
 
-    employment = TaggableManager(through=CareerOpportunityEmploymentTag, blank=True)
+    employment = TaggableManager(_('stilling(er)'), through=CareerOpportunityEmploymentTag, blank=True)
     employment.rel.related_name = "+"
 
-    location = TaggableManager(through=CareerOpportunityLocationTag, blank=True)
+    location = TaggableManager(_('sted(er)'), through=CareerOpportunityLocationTag, blank=True)
     location.rel.related_name = "+"
 
     def __str__(self):
