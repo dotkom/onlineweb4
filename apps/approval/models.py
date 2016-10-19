@@ -32,13 +32,13 @@ class Approval(models.Model):
     approved = models.BooleanField(_("godkjent"), default=False, editable=False)
     message = models.TextField(_("melding"))
 
-    def alert_user():
-        if approved:
+    def alert_user(self):
+        if self.approved:
             header_message = "Ditt medlemskap i Online er godkjent"
         else:
             header_message = "Ditt medlemskap i Online er ikke godkjent"
 
-        email = applicant.get_email()
+        email = self.applicant.get_email()
         if (not email == None):
             send_mail(
                 header_message,
