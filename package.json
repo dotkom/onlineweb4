@@ -29,7 +29,8 @@
     "build:prod": "webpack -p",
     "build": "webpack",
     "watch": "webpack -w",
-    "start": "npm run watch"
+    "dev": "node server.js",
+    "start": "npm run dev"
   },
   "repository": {
     "type": "git",

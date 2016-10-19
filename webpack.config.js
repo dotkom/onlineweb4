@@ -4,12 +4,12 @@ var ExtractTextPlugin = require('extract-text-webpack-plugin');
 var BundleTracker = require('webpack-bundle-tracker');
 
 module.exports = {
-  context: __dirname,
   entry: {
     frontpageEvents: './assets/js/frontpage/events/index'
   },
   output: {
     path: path.resolve('./assets/webpack_bundles/'),
+    publicPath: 'http://localhost:3000/assets/bundles/',
     filename: '[name]-[hash].js'
   },
   module: {
