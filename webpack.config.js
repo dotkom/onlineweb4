@@ -2,10 +2,13 @@ var path = require('path');
 var webpack = require('webpack');
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
 var BundleTracker = require('webpack-bundle-tracker');
+var CommonsChunkPlugin = require("webpack/lib/optimize/CommonsChunkPlugin");
 
 module.exports = {
   context: __dirname,
   entry: {
+    // Used to extract common libraries
+    vendor: ['react', 'react-dom'],
     frontpageEvents: [
       './assets/js/frontpage/events/index'
     ]
@@ -31,6 +34,10 @@ module.exports = {
     includePath: [path.resolve(__dirname, './styles')]
   },
   plugins: [
+    new CommonsChunkPlugin({
+      names: ['vendor'],
+      minChunks: Infinity
+    }),
     new BundleTracker({filename: './webpack-stats.json'})
   ]
 };
