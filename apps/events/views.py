@@ -11,16 +11,19 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from django.utils.translation import ugettext as _
 # API v1
-from rest_framework import mixins, viewsets
+from oauth2_provider.ext.rest_framework import OAuth2Authentication, TokenHasScope
+from rest_framework import mixins, status, views, viewsets
 from rest_framework.permissions import AllowAny
+from rest_framework.response import Response
 from watson import search as watson
 
+from apps.authentication.models import OnlineUser as User
 from apps.events.filters import EventDateFilter
 from apps.events.forms import CaptchaForm
 from apps.events.models import AttendanceEvent, Attendee, CompanyEvent, Event
 from apps.events.pdf_generator import EventPDF
-from apps.events.serializers import (AttendanceEventSerializer, CompanyEventSerializer,
-                                     EventSerializer)
+from apps.events.serializers import (AttendanceEventSerializer, AttendeeSerializer,
+                                     CompanyEventSerializer, EventSerializer)
 from apps.events.utils import (get_group_restricted_events, handle_attend_event_payment,
                                handle_attendance_event_detail, handle_event_ajax,
                                handle_event_payment, handle_mail_participants)
@@ -55,7 +58,7 @@ def details(request, event_id, event_slug):
     if request.method == 'POST':
         if request.is_ajax and 'action' in request.POST and 'extras_id' in request.POST:
             return JsonResponse(handle_event_ajax(event, request.user,
-                                request.POST['action'], request.POST['extras_id']))
+                                                  request.POST['action'], request.POST['extras_id']))
 
     form = CaptchaForm(user=request.user)
     context = {
@@ -86,7 +89,6 @@ def get_attendee(attendee_id):
 
 @login_required
 def attendEvent(request, event_id):
-
     event = get_object_or_404(Event, pk=event_id)
 
     if not event.is_attendance_event():
@@ -130,7 +132,6 @@ def attendEvent(request, event_id):
 
 @login_required
 def unattendEvent(request, event_id):
-
     event = get_object_or_404(Event, pk=event_id)
 
     if not event.is_attendance_event():
@@ -229,7 +230,6 @@ def _search_indexed(request, query, filters):
 @login_required()
 @user_passes_test(lambda u: u.groups.filter(name='Komiteer').count() == 1)
 def generate_pdf(request, event_id):
-
     event = get_object_or_404(Event, pk=event_id)
 
     # If this is not an attendance event, redirect to event with error
@@ -309,7 +309,7 @@ class EventViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.Li
         - event has NO group restriction OR user having access to restricted event
         """
         return Event.by_registration.filter(
-            Q(group_restriction__isnull=True) | Q(group_restriction__groups__in=self.request.user.groups.all())).\
+            Q(group_restriction__isnull=True) | Q(group_restriction__groups__in=self.request.user.groups.all())). \
             distinct()
 
 
@@ -319,7 +319,61 @@ class AttendanceEventViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin,
     permission_classes = (AllowAny,)
 
 
+class AttendeeViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.ListModelMixin):
+    queryset = Attendee.objects.all()
+    serializer_class = AttendeeSerializer
+    authentication_classes = [OAuth2Authentication]
+    permission_classes = [TokenHasScope]
+    required_scopes = ['regme.readwrite']
+    filter_fields = ('event', 'attended',)
+
+
 class CompanyEventViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.ListModelMixin):
     queryset = CompanyEvent.objects.all()
     serializer_class = CompanyEventSerializer
     permission_classes = (AllowAny,)
+
+
+class AttendViewSet(views.APIView):
+    authentication_classes = [OAuth2Authentication]
+    permission_classes = [TokenHasScope]
+    required_scopes = ['regme.readwrite']
+
+    def post(self, request, format=None):
+
+        rfid = request.data.get('rfid')
+        event = request.data.get('event')
+        username = request.data.get('username')
+        waitlist_approved = request.data.get('approved')
+        attendee = None
+
+        if username is not None:
+            try:
+                user = User.objects.get(username=username)
+                user.rfid = rfid
+                user.save()
+            except User.DoesNotExist:
+                return Response({'message': 'Brukernavnet finnes ikke. Husk at det er et online.ntnu.no brukernavn! '
+                                            '(Prøv igjen, eller scan nytt kort for å avbryte.)', 'attend_status': 50},
+                                status=status.HTTP_400_BAD_REQUEST)
+        try:
+            attendee = Attendee.objects.get(event=event, user__rfid=rfid)
+            if attendee.attended:
+                return Response({'message': (attendee.user.get_full_name(),
+                                             'har allerede registrert oppmøte.'), 'attend_status': 20},
+                                status=status.HTTP_400_BAD_REQUEST)
+            if attendee.is_on_waitlist() and not waitlist_approved:
+                return Response({'message': (attendee.user.get_full_name(),
+                                             'er på venteliste. Registrer dem som møtt opp allikevel?'),
+                                 'attend_status': 30},
+                                status=status.HTTP_100_CONTINUE)
+            attendee.attended = True
+            attendee.save()
+        except Attendee.DoesNotExist:
+            return Response({'message': 'Kortet finnes ikke i databasen. '
+                                        'Skriv inn et online.ntnu.no brukernavn for å '
+                                        'knytte kortet til brukeren og registrere oppmøte.',
+                             'attend_status': 40}, status=status.HTTP_400_BAD_REQUEST)
+
+        return Response({'message': (attendee.user.get_full_name(), 'er registrert som deltaker. Velkommen!'),
+                         'attend_status': 10}, status=status.HTTP_200_OK)
