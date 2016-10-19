@@ -17,5 +17,6 @@ OAUTH2_SCOPES = {
     'authentication.onlineuser.nickname.read': 'Kallenavn (Lesetilgang)',
     'authentication.onlineuser.rfid.read': 'RFID (Lesetilgang)',
     'authentication.onlineuser.rfid.write': 'RFID (Skrivetilgang)',
+    'regme.readwrite': 'RFID (Lese og Skrivetilgang)',
     'shop.readwrite': 'Tilgang til å endre en brukers saldo gjennom betalingssystemet (Lese og skrivetilgang)',
 }
