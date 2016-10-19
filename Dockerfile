@@ -7,7 +7,7 @@ ENV APP_DIR=/srv/app
 RUN mkdir -p $APP_DIR
 WORKDIR $APP_DIR
 
-RUN curl -sL https://deb.nodesource.com/setup_4.x | bash -
+RUN curl -sL https://deb.nodesource.com/setup_6.x | bash -
 RUN apt-get update
 RUN apt-get install -y --no-install-recommends \
     nodejs \
@@ -22,5 +22,8 @@ RUN pip install -r $APP_DIR/requirements-prod.txt
 
 ENV DJANGO_SETTINGS_MODULE onlineweb4.settings
 ENV DATABASE_URL postgres://postgres@db/postgres
+
+COPY package.json $APP_DIR/package.json
+RUN npm install
 
 CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
