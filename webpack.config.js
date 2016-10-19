@@ -4,12 +4,14 @@ var ExtractTextPlugin = require('extract-text-webpack-plugin');
 var BundleTracker = require('webpack-bundle-tracker');
 
 module.exports = {
+  context: __dirname,
   entry: {
-    frontpageEvents: './assets/js/frontpage/events/index'
+    frontpageEvents: [
+      './assets/js/frontpage/events/index'
+    ]
   },
   output: {
     path: path.resolve('./assets/webpack_bundles/'),
-    publicPath: 'http://localhost:3000/assets/bundles/',
     filename: '[name]-[hash].js'
   },
   module: {
@@ -29,17 +31,6 @@ module.exports = {
     includePath: [path.resolve(__dirname, './styles')]
   },
   plugins: [
-    new webpack.DefinePlugin({
-      'process.env': {
-        'NODE_ENV': JSON.stringify('production')
-      }
-    }),
-    new webpack.optimize.UglifyJsPlugin({
-      compress: {
-        warnings: false
-      }
-    }),
-    new ExtractTextPlugin('styles.css'),
     new BundleTracker({filename: './webpack-stats.json'})
   ]
 };

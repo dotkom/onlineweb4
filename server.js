@@ -2,18 +2,33 @@ var config = require('./webpack.config.js');
 var webpack = require('webpack');
 var WebpackDevServer = require('webpack-dev-server');
 
-config.entry.dev = [
-  'webpack-dev-server/client?http://localhost:3000/',
-  'webpack/hot/dev-server'
-];
+var port = 3000;
 
-config.plugins.push(new webpack.HotModuleReplacementPlugin())
+// Add hot reloading to all entries
+for (var entry in config.entry) {
+  if (config.entry.hasOwnProperty(entry)) {
+    config.entry[entry].push('webpack/hot/dev-server');
+  }
+}
+
+config.entry.dev = 'webpack-dev-server/client?http://0.0.0.0:' + String(port);
+
+config.output.publicPath = 'http://localhost:' + String(port) + '/assets/bundles/';
+
+config.plugins.unshift(new webpack.NoErrorsPlugin()); // don't reload if there is an error
+config.plugins.unshift(new webpack.HotModuleReplacementPlugin());
 
 var compiler =  webpack(config);
 
-var server = new WebpackDevServer(compiler, {
+new WebpackDevServer(compiler, {
   publicPath: config.output.publicPath,
-  hot: true
-});
+  hot: true,
+  inline: true,
+  historyApiFallback: true
+}).listen(3000, '0.0.0.0', function (err, result) {
+  if (err) {
+    console.error(err);
+  }
 
-server.listen(3000);
+  console.log('Listening at 0.0.0.0:3000');
+});
