@@ -30,7 +30,7 @@ def login(request):
     if request.method == 'POST':
         form = LoginForm(request.POST)
         if form.login(request):
-            messages.success(request, _('Du er nå logget inn.'))
+            messages.success(request, _('Du er nå logget inn.'), extra_tags='data-dismiss')
             if redirect_url:
                 return HttpResponseRedirect(redirect_url)
             return HttpResponseRedirect('/')
@@ -45,7 +45,7 @@ def login(request):
 
 def logout(request):
     auth.logout(request)
-    messages.success(request, _('Du er nå logget ut.'))
+    messages.success(request, _('Du er nå logget ut.'), extra_tags='data-dismiss')
     return HttpResponseRedirect('/')
 
 
