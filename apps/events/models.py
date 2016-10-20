@@ -222,7 +222,7 @@ class FieldOfStudyRule(Rule):
                 return {"status": True, "message": None, "status_code": 210}
             # If there is no offset, the signup just hasn't started yet
             elif self.offset == 0:
-                return {"status": False, "message": _("Påmeldingen er ikke åpnet enda."), "status_code": 402}
+                return {"status": False, "message": _("Påmeldingen har ikke åpnet enda."), "status_code": 402}
             # In the last case there is a delayed signup
             else:
                 return {"status": False, "message": _("Din studieretning har utsatt påmelding."),
@@ -257,7 +257,7 @@ class GradeRule(Rule):
                 return {"status": True, "message": None, "status_code": 211}
             # If there is no offset, the signup just hasn't started yet
             elif self.offset == 0:
-                return {"status": False, "message": _("Påmeldingen er ikke åpnet enda."), "status_code": 402}
+                return {"status": False, "message": _("Påmeldingen har ikke åpnet enda."), "status_code": 402}
             # In the last case there is a delayed signup
             else:
                 return {
@@ -265,7 +265,7 @@ class GradeRule(Rule):
                     _("Ditt klassetrinn har utsatt påmelding."), "offset": offset_datetime, "status_code": 421}
         return {
             "status": False, "message":
-                _("Du er ikke i et klassetrinn som har tilgang til dette arrangementet."), "status_code": 411}
+                _("Ditt klassetrinn har ikke tilgang til dette arrangementet."), "status_code": 411}
 
     def __str__(self):
         if self.offset > 0:
@@ -298,7 +298,7 @@ class UserGroupRule(Rule):
                         "offset": offset_datetime, "status_code": 422}
         return {
             "status": False, "message":
-            _("Du er ikke i en brukergruppe som har tilgang til dette arrangmentet."), "status_code": 412}
+            _("Din brukergruppe har ikke tilgang til dette arrangementet."), "status_code": 412}
 
     def __str__(self):
         if self.offset > 0:
