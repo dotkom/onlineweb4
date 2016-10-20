@@ -265,7 +265,7 @@ class GradeRule(Rule):
                     _("Ditt klassetrinn har utsatt påmelding."), "offset": offset_datetime, "status_code": 421}
         return {
             "status": False, "message":
-                _("Du er ikke i et klassetrinn som har tilgang til dette arrangementet."), "status_code": 411}
+                _("Du er i et klassetrinn som ikke har tilgang til dette arrangementet."), "status_code": 411}
 
     def __str__(self):
         if self.offset > 0:
