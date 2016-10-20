@@ -9,14 +9,13 @@ db:
     - dbdata
   ports:
     - "5432"
-web:
+django:
   build: .
-  command: sh -c "python manage.py runserver 0.0.0.0:8000 & npm start"
+  command: python manage.py runserver 0.0.0.0:8000
   volumes:
     - .:/srv/app
   ports:
     - "8000:8000"
-    - "3000:3000"
   links:
     - db
     # - lessc
@@ -25,3 +24,10 @@ web:
     - DEBUG=1
     - DJANGO_SETTINGS_MODULE=onlineweb4.settings
     - DATABASE_URL=postgres://postgres@db/postgres
+webpack:
+  build: .
+  command: npm start
+  volumes:
+    - .:/srv/app
+  ports:
+    - "3000:3000"
