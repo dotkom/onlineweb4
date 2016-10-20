@@ -105,13 +105,7 @@ function Utils() {
     var id = new Date().getTime();
     $('<div class="alert ' + tags + '" id="' + id +'"><button type="button" class="close" data-dismiss="alert">&times;</button>' + message + '</div>').appendTo(inner);
 
-    //Fadeout and remove the alert
-    setTimeout(function() {
-      $('[id=' + id +']').fadeOut();
-      setTimeout(function() {
-        $('[id=' + id +']').remove();
-      }, 5000);
-    }, 5000);
+    timeOutAlerts()
   }
 
   /**

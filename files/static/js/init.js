@@ -64,14 +64,22 @@ var initGoogleMaps = function() {
     return map;
 }
 
+// Fadeout alerts if they have the data-dismiss property
+var timeOutAlerts = function() {
+  setTimeout(function () {
+    $('.alert').each(function() {
+      if ($(this).attr('data-dismiss')) {
+        $(this).fadeOut();
+      }
+    })
+  }, 5000)
+}
+
 $(function() {
     // ??
     $('.dropdown-toggle').dropdown();
 
-    // Fadeout alerts
-    setTimeout(function () {
-        $('.alert').fadeOut();
-    }, 5000);
+    timeOutAlerts()
 
     // Init the footer-map, but don't crash if google is not found
     try {
