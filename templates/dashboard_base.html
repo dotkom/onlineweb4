@@ -310,16 +310,16 @@
             <section class="content">
                 <div class="messages">
                     <div class="row">
-                        {% if messages %}
                         <div class="message-container col-md-12">
+                        {% if messages %}
                             {% for message in messages %}
                                 <div class="alert {{ message.level_tag }}" {{ message.extra_tags }}>
                                     <button type="button" class="close" data-dismiss="alert">&times;</button>
                                     {{ message }}
                                 </div>
                             {% endfor %}
-                        </div>
                         {% endif %}
+                        </div>
                     </div>
                 </div>
                 <section class="main-content">
