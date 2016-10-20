@@ -67,11 +67,7 @@ var initGoogleMaps = function() {
 // Fadeout alerts if they have the data-dismiss property
 var timeOutAlerts = function() {
   setTimeout(function () {
-    $('.alert').each(function() {
-      if ($(this).attr('data-dismiss')) {
-        $(this).fadeOut();
-      }
-    })
+    $('.alert[data-dismiss]').fadeOut()
   }, 5000)
 }
 
