@@ -80,7 +80,7 @@ Plakatbestillinger
                                 <td>{{ order.display_from|date:'Y-m-d' }}</td>
                                 <td>{{ order.ordered_committee }}</td>
                                 <td>{{ order.assigned_to }}</td>
-                                <td>{{ order.finished }}</td>
+                                <td><i class="glyphicon glyphicon-{% if order.finished %}ok{% else %}remove{% endif %}"></i></td>
                             </tr>
                         {% empty %}
                             <div class="col-md-6">
@@ -121,7 +121,7 @@ Plakatbestillinger
                                 <td>{{ order.display_from|date:'Y-m-d' }}</td>
                                 <td>{{ order.ordered_committee }}</td>
                                 <td>{{ order.assigned_to }}</td>
-                                <td>{{ order.finished }}</td>
+                                <td><i class="glyphicon glyphicon-{% if order.finished %}ok{% else %}remove{% endif %}"></i></td>
                             </tr>
                         {% empty %}
                             <div class="col-md-6">
