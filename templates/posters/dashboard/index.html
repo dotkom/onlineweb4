@@ -69,7 +69,6 @@ Plakatbestillinger
                             <tr>
                                 <th>Tittel</th>
                                 <th>Vises fra</th>
-                                <th>Vises til</th>
                                 <th>Bestilt av</th>
                                 <th>Tilordnet til</th>
                                 <th>Ferdigstilt</th>
@@ -79,7 +78,6 @@ Plakatbestillinger
                         {% for order in active_orders %}
                                 <td><a href={% url 'posters_detail' order.id %}>{{ order }}</a></td>
                                 <td>{{ order.display_from|date:'Y-m-d' }}</td>
-                                <td>{{ order.display_to|date:'Y-m-d' }}</td>
                                 <td>{{ order.ordered_committee }}</td>
                                 <td>{{ order.assigned_to }}</td>
                                 <td>{{ order.finished }}</td>
@@ -107,7 +105,6 @@ Plakatbestillinger
                             <tr>
                                 <th>Tittel</th>
                                 <th>Vises fra</th>
-                                <th>Vises til</th>
                                 <th>Bestilt av</th>
                                 <th>Tilordnet til</th>
                                 <th>Ferdigstilt</th>
@@ -122,7 +119,6 @@ Plakatbestillinger
                         {% endif %}
                                 <td><a href={% url 'posters_detail' order.id %}>{{ order }}</a></td>
                                 <td>{{ order.display_from|date:'Y-m-d' }}</td>
-                                <td>{{ order.display_to|date:'Y-m-d' }}</td>
                                 <td>{{ order.ordered_committee }}</td>
                                 <td>{{ order.assigned_to }}</td>
                                 <td>{{ order.finished }}</td>
