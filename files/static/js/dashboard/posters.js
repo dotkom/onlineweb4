@@ -28,7 +28,4 @@ $(document).ready(function() {
             crossDomain: false
         });
     }
-
-    // Bind tablesorter on the lists
-    $('.tablesorter').tablesorter();
 });
