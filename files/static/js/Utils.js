@@ -100,8 +100,7 @@ function Utils() {
       }
       $('<div class="container messages"><div class"row"><div class="message-container col-md-12"></div></div></div>').insertAfter(prnt);
     }
-    var msgWrapper = $('div.messages');
-    var inner = msgWrapper.find('.message-container');
+    var inner = $('.messages .message-container');
     var id = new Date().getTime();
     $('<div class="alert ' + tags + '" id="' + id +'"><button type="button" class="close" data-dismiss="alert">&times;</button>' + message + '</div>').appendTo(inner);
 
