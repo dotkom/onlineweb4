@@ -12,9 +12,9 @@
 {%  endif %}
 
 {% if payment_delay %}
-	<p class="help-text row_space">Frist: {{ payment_delay.valid_to }}</p>
+	<p class="help-text row_space">Betalingsfrist: {{ payment_delay.valid_to }}</p>
 	<br>
 {% elif payment.deadline %}
-	<p class="help-text row_space">Frist: {{ payment.deadline }}</p>
+	<p class="help-text row_space">Betalingsfrist: {{ payment.deadline }}</p>
 	<br>
 {% endif %}
