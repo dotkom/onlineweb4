@@ -199,6 +199,7 @@ def handle_attendance_event_detail(event, user, context):
     attendee = False
     place_on_wait_list = 0
     will_be_on_wait_list = False
+    can_unattend = True
     rules = []
     user_status = False
 
@@ -214,6 +215,8 @@ def handle_attendance_event_detail(event, user, context):
 
         will_be_on_wait_list = attendance_event.will_i_be_on_wait_list
 
+        can_unattend = timezone.now() < attendance_event.registration_end
+
         user_status = event.attendance_event.is_eligible_for_signup(user)
 
         # Check if this user is on the waitlist
@@ -226,6 +229,7 @@ def handle_attendance_event_detail(event, user, context):
         'attendee': attendee,
         'user_attending': user_attending,
         'will_be_on_wait_list': will_be_on_wait_list,
+        'can_unattend': can_unattend,
         'rules': rules,
         'user_status': user_status,
         'place_on_wait_list': int(place_on_wait_list),
