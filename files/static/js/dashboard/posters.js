@@ -4,7 +4,7 @@ $(document).ready(function() {
             assignToJob($(this).val(), row);
         });
     });
-    
+
     var assignToJob = function(order_id, row) {
         var assign_to_id = $(row).find('form').find(':selected').val();
         var utils = Dashboard.tools
@@ -17,7 +17,8 @@ $(document).ready(function() {
                 $(row).fadeOut(500);
             },
             error: function(response) {
-                if (response['status'] === 412) {
+                var utils = new Utils()
+                if (response['status'] === 400) {
                     response = JSON.parse(response['responseText']);
                     utils.setStatusMessage(response['message'], 'alert-danger');
                 }
