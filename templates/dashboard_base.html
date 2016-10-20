@@ -310,8 +310,8 @@
             <section class="content">
                 <div class="messages">
                     <div class="row">
-                        {% if messages %}
                         <div class="message-container col-md-12">
+                        {% if messages %}
                             {% for message in messages %}
                                 <div class="alert {% if message.tags %}
                                     {% if message.tags == 'alert-error' %} alert-danger {% else %}
@@ -320,8 +320,8 @@
                                     {{ message }}
                                 </div>
                             {% endfor %}
-                        </div>
                         {% endif %}
+                        </div>
                     </div>
                 </div>
                 <section class="main-content">
