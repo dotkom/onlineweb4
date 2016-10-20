@@ -222,7 +222,7 @@ class FieldOfStudyRule(Rule):
                 return {"status": True, "message": None, "status_code": 210}
             # If there is no offset, the signup just hasn't started yet
             elif self.offset == 0:
-                return {"status": False, "message": _("Påmeldingen er ikke åpnet enda."), "status_code": 402}
+                return {"status": False, "message": _("Påmeldingen har ikke åpnet enda."), "status_code": 402}
             # In the last case there is a delayed signup
             else:
                 return {"status": False, "message": _("Din studieretning har utsatt påmelding."),
@@ -257,7 +257,7 @@ class GradeRule(Rule):
                 return {"status": True, "message": None, "status_code": 211}
             # If there is no offset, the signup just hasn't started yet
             elif self.offset == 0:
-                return {"status": False, "message": _("Påmeldingen er ikke åpnet enda."), "status_code": 402}
+                return {"status": False, "message": _("Påmeldingen har ikke åpnet enda."), "status_code": 402}
             # In the last case there is a delayed signup
             else:
                 return {
