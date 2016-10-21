@@ -40,14 +40,6 @@
                     <div class="event-hero-meta">
                         <div class="row row-space">
                             <div class="event-hero-meta-info">
-                            {% if poster.display_to %}
-                                <div class="col-xs-12 col-sm-3 col-md-3">
-                                    <div class="event-hero-title">Vises fra</div>
-                                    <div class="event-hero-large-text">
-                                        <span class="break">{{poster.display_from}}</span>
-                                    </div>
-                                </div>
-                            {% endif %}
                                 <div class="col-xs-12 col-sm-3 col-md-3">
                                     <div class="event-hero-title">Pris</div>
                                     <div class="event-hero-large-text">
@@ -72,19 +64,11 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                             <div class="row">
                                 <div class="event-hero-meta-info">
-                                    {% if poster.display_to %}
                                     <div class="col-xs-12 col-sm-3 col-md-3">
-                                        <div class="event-hero-title">Vises til</div>
-                                        <div class="event-hero-large-text">
-                                            {{poster.display_to}}
-                                        </div>
-                                    </div>
-                                    {% endif %}
-                                    <div class="col-xs-12 col-sm-3 col-md-3">
-                                        
+
                                             <div class="event-hero-title">Antall</div>
                                             <div class="event-hero-large-text">
                                                 {% if poster.amount %}
@@ -99,29 +83,37 @@
                                             </div>
                                     </div>
                                     <div class="col-xs-12 col-sm-3 col-md-3">
-                                         
+
                                             <div class="event-hero-title">Event</div>
                                             <div class="event-hero-large-text">
                                                 <a href="{{poster.event.get_absolute_url}}">{{poster.event}}</a>
                                                 <br>
                                                 <span class="date-small">{{poster.event.event_start}}</span>
                                             </div>
-                                        
+
                                     </div>
 
                                     <div class="col-xs-12 col-sm-3 col-md-3">
-                                         
+
                                             <div class="event-hero-title">Tilordnet til</div>
                                             <div class="event-hero-large-text">
                                                 {%if poster.assigned_to %}{{poster.assigned_to}}
                                                 {%else %}<b>Ingen!</b>
                                                 {%endif %}
                                             </div>
-                                        
+
                                     </div>
+                                    {% if poster.display_from %}
+                                        <div class="col-xs-12 col-sm-3 col-md-3">
+                                            <div class="event-hero-title">Vises fra</div>
+                                            <div class="event-hero-large-text">
+                                                <span class="break">{{poster.display_from}}</span>
+                                            </div>
+                                        </div>
+                                    {% endif %}
                                 </div>
                             </div>
-                        
+
                     </div>
                 </div>
             </div>
@@ -134,23 +126,23 @@
             <div class="ingress">
                 <p>{{poster.description}}</p>
             </div>
-            
+
             <hr>
             <p>
                 <h5>Kommentarer</h5>
                 {{poster.comments}}
             </p>
             <hr>
-            
+
             <p>
-                <div class="btn-group pull-left">                    
+                <div class="btn-group pull-left">
                     <div class="btn-group pull-left">
                         <button type="button" class="btn btn-default dropdown-toggle">
                             <a href="../edit/{{poster.id}}">
                                 Rediger
                             </a>
                         </button>
-                        
+
                         <form method="POST">
                             {% csrf_token %}
                             <input type="text" name="completed" value="{% if poster.finished == "true" %}false{% else %}true{% endif %}" hidden>
@@ -159,7 +151,7 @@
                     </div>
                 </div>
             </p>
-            
+
         </div>
     </div>
 
