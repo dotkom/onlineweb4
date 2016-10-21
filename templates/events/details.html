@@ -327,6 +327,9 @@
                         </div>
                         <form action="{% url 'attend_event' event.id %}" method="POST">
                             <div class="modal-body">
+                                {% if not can_unattend %}
+                                    <div class="alert alert-warning">Avmeldingsfristen på dette arrangementet har utløpt. Det vil si at du kan ikke melde deg av dersom du først melder deg på.</div>
+                                {% endif %}
                                 {% if will_be_on_wait_list %}
                                 <p>Ved å sette deg på venteliste godtar du at du automatisk får plass om
                                     arrangementet utvides med flere plasser, eller andre påmeldte melder seg av, slik at du rykker frem i køen.
