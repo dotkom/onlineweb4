@@ -10,8 +10,7 @@
     "react": "^15.3.0",
     "react-bootstrap": "^0.30.5",
     "react-dom": "^15.3.0",
-    "remarkable": "^1.6.2",
-    "django-js-reverse": "^0.7.2"
+    "remarkable": "^1.6.2"
   },
   "devDependencies": {
     "babel-core": "^6.13.2",
