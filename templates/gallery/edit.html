@@ -50,6 +50,7 @@
                                 </div>
                                 <div class="form-group">
                                     <label>Dimensjoner</label>
+                                    {% csrf_token %}
                                     <div class="input-group input-group-sm">
                                         <label class="input-group-addon" for="gallery__image-edit--width">Bredde</label>
                                         <input type="text" class="form-control" id="gallery__image-edit--width" placeholder="Bredde">
@@ -89,6 +90,7 @@
                         <br />
                         <div class="row">
                             <div class="col-lg-8 col-md-9 col-sm-12 col-xs-12">
+                                {% csrf_token %}
                                 <div class="form-group">
                                     <label for="gallery__image-edit--name">Navn</label>
                                     <input class="form-control" type="text" id="gallery__image-edit--name" name="name" placeholder="Bildenavn"/>

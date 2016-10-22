@@ -33,6 +33,7 @@ Artikler
     <div class="col-md-12 col-lg-6">
         <div class="input-group">
             <span class="input-group-addon">Søk</span>
+            {% csrf_token %}
             <input type="text" class="form-control" placeholder="Søkeord..." id="dashboard-article-search-query">
             <span class="input-group-btn">
                 <a href="#" id="dashboard-article-search-button" class="btn btn-success">

@@ -33,6 +33,7 @@
                     <div class="col-xs-4">
                         <form action="/wiki/_search">
                             <div class="input-group">
+                                {% csrf_token %}
                                 <input name="q" type="text" class="form-control" placeholder="Søk...">
                                 <span class="input-group-btn">
                                     <button class="btn btn-default"><span class="fa fa-search"></span></button>

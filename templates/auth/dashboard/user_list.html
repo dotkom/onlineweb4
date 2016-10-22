@@ -28,6 +28,7 @@ Brukerprofiler
         <form class="form" method="get" action="{% url 'user_search' %}">
             <div class="input-group">
                 <span class="input-group-addon">Søk</span>
+                {% csrf_token %}
                 <input type="text" class="form-control" placeholder="Søkeord..." name="q">
                 <span class="input-group-btn">
                     <a href="#" class="btn btn-success">
