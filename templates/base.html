@@ -123,7 +123,7 @@
                 <div class="message-container col-md-12">
                     {% for message in messages %}
                         <div class="alert {{ message.level_tag }}" {{ message.extra_tags }}>
-                            <button type="button" class="close" data-dismiss="true">&times;</button>
+                            <button type="button" class="close" data-dismiss="alert">&times;</button>
                             {{ message }}
                         </div>
                     {% endfor %}
