@@ -37,7 +37,7 @@ class JobsContainer extends React.Component {
     }.bind(this));
 
     return (
-      <div class="job-list">
+      <div className="col-xs-12 col-sm-12 col-md-9 pull-left">
         {jobs}
       </div>
     );

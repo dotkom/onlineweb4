@@ -5,9 +5,7 @@ class Job extends React.Component {
 
   render() {
     return (
-      <div className="job">
-        {this.props.jobTitle}
-      </div>
+      <article>{this.props.jobTitle}</article>
     );
   }
 }
