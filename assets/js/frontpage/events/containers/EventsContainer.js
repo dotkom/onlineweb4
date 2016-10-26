@@ -33,7 +33,7 @@ class EventsContainer extends Component {
   filterEvents(e) {
     const self = this;
 
-    switch(e.eventType[0]) {
+    switch(e.eventType.id) {
       case 2:
         self.showBedpress = !self.showBedpress;
         break;
@@ -74,14 +74,10 @@ class EventsContainer extends Component {
 
   render() {
     const eventTypes = [
-      [1, 'Sosialt', this.showSocial],
-      [2, 'Bedriftspresentasjon', this.showBedpress],
-      [3, 'Kurs', this.showKurs],
-      [4, 'Annet', this.showOther]
-      /*[4, 'Utflukt'],
-      [5, 'Ekskursjon'],
-      [6, 'Internt'],
-      [7, 'Annet']*/
+      {id: 1, name: 'Sosialt', display: this.showSocial},
+      {id: 2, name: 'Bedriftspresentasjon', display: this.showBedpress},
+      {id: 3, name: 'Kurs', display: this.showKurs},
+      {id: 4, name: 'Annet', display: this.showOther}
     ];
     console.log('rerendering events')
     return (
