@@ -1,14 +1,19 @@
 import React from 'react';
+import { Glyphicon } from 'react-bootstrap';
+import EventFilter from './EventFilter';
 
-const EventsHeading = ({ }) => (
+const EventsHeading = ({eventTypes, filterEvents}) => (
   <div className="page-header clearfix">
     <div className="row">
-      <div className="col-md-8 col-xs-6">
+      <div className="col-md-4 col-xs-6">
         <h2 id="events-heading">ARRANGEMENTER</h2>
+      </div>
+      <div className="col-md-4 col-xs-6">
+        <EventFilter eventTypes={ eventTypes } filterEvents={ filterEvents } />
       </div>
       <div className="col-md-4 col-xs-6 archive-link">
         <a href={ Urls.events_index() }>ARKIV
-          <i cassName="glyphicon glyphicon-chevron-right"></i>
+          <Glyphicon glyph="chevron-right" />
         </a>
       </div>
     </div>
