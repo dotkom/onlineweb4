@@ -100,18 +100,11 @@ function Utils() {
       }
       $('<div class="container messages"><div class"row"><div class="message-container col-md-12"></div></div></div>').insertAfter(prnt);
     }
-    var msgWrapper = $('div.messages');
-    var inner = msgWrapper.find('.message-container');
+    var inner = $('.messages .message-container');
     var id = new Date().getTime();
     $('<div class="alert ' + tags + '" id="' + id +'"><button type="button" class="close" data-dismiss="alert">&times;</button>' + message + '</div>').appendTo(inner);
 
-    //Fadeout and remove the alert
-    setTimeout(function() {
-      $('[id=' + id +']').fadeOut();
-      setTimeout(function() {
-        $('[id=' + id +']').remove();
-      }, 5000);
-    }, 5000);
+    timeOutAlerts()
   }
 
   /**

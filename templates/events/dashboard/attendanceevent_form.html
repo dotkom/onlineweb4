@@ -1,0 +1,15 @@
+{% load addcss %}
+{% load crispy_forms_field %}
+<form id="create-attendance-form" method="POST">
+  {% csrf_token %}
+  {% for field in form %}
+    <div class="form-group">
+      {{ field.label_tag }}
+      {% if not field|is_checkbox %}{{ field|addclass:"form-control" }}{% else %}{{ field }}{% endif %}{{ field.errors }}
+    </div>
+  {% endfor %}
+
+  <button class="btn btn-success" type="submit">
+    <i class="fa fa-save fa-lg"></i> Lagre
+  </button>
+</form>

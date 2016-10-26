@@ -1,10 +1,12 @@
 from rest_framework import serializers
 
 from apps.companyprofile.models import Company
+from apps.gallery.serializers import ResponsiveImageSerializer
 
 
 class CompanySerializer(serializers.ModelSerializer):
+    image = ResponsiveImageSerializer()
 
     class Meta(object):
         model = Company
-        fields = ('name', 'site', 'images')
+        fields = ('name', 'site', 'image')

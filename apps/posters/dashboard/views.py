@@ -215,23 +215,15 @@ def _handle_poster_add(request, form, order_type):
 def assign_person(request):
     if request.is_ajax():
         if request.method == 'POST':
-            order_id = request.POST.get('order_id')
-            orders = Poster.objects.filter(pk=order_id)
-            assign_to_id = request.POST.get('assign_to_id')
-            assign_to = User.objects.get(pk=assign_to_id)
-
-            if orders.count() == 0:
-                logging.debug("Trying to assign to non-existing order \"%s\" (user: %s)." % (order_id, request.user))
-                response_text = json.dumps({'message': _(
-                    """Kan ikke finne en ordre med denne IDen (%s).
-Om feilen vedvarer etter en refresh, kontakt dotkom@online.ntnu.no.""") % order_id})
-                return HttpResponse(status=412, content=response_text)
-
-            order = orders[0]
+            order = get_object_or_404(Poster, pk=request.POST.get('order_id'))
+            if request.POST.get('assign_to_id') and not str(request.POST.get('assign_to_id')).isnumeric():
+                return HttpResponse(status=400, content=json.dumps(
+                    {'message': 'Denne brukerprofilen kunne ikke tilordnes til ordren.'}))
+            assign_to = get_object_or_404(User, pk=request.POST.get('assign_to_id'))
 
             if order.finished or order.assigned_to is not None:
                 response_text = json.dumps({'message': _("Denne ordren er allerede behandlet.")})
-                return HttpResponse(status=412, content=response_text)
+                return HttpResponse(status=400, content=response_text)
 
             order.assigned_to = assign_to
             order.save()

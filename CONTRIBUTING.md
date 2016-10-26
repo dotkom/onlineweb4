@@ -21,6 +21,13 @@ Follow the PEP8 standard
 If you do changes to the Python code base, please follow the PEP8 standard as described 
 [here](https://www.python.org/dev/peps/pep-0008/).
 
+Label issues appropriately
+--------------------------
+
+When issues are properly labelled, it is easier for us to prioritize which issues to handle at a glance. 
+Ideally, an issue is marked with what package it belongs to, the priority, its status, and the type of issue it is.
+Additionally, if an issue seems like an easy fix, please label it as such.
+
 Make sure all tests are successful
 ----------------------------------
 

@@ -8,6 +8,7 @@ class EventDateFilter(django_filters.FilterSet):
     event_start__lte = django_filters.DateTimeFilter(name='event_start', lookup_type='lte')
     event_end__gte = django_filters.DateTimeFilter(name='event_end', lookup_type='gte')
     event_end__lte = django_filters.DateTimeFilter(name='event_end', lookup_type='lte')
+    attendance_event__isnull = django_filters.BooleanFilter(name='attendance_event', lookup_type='isnull')
 
     class Meta:
         model = Event

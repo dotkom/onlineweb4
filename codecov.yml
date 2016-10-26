@@ -1,0 +1,14 @@
+codecov:
+  branch: develop
+  bot: "dotkom-build"
+
+coverage:
+  precision: 2
+  round: down
+  range: "70...100"
+
+  status: off
+
+  ignore: null
+
+comment: off

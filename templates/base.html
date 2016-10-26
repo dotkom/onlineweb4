@@ -122,9 +122,7 @@
             <div class="row">
                 <div class="message-container col-md-12">
                     {% for message in messages %}
-                        <div class="alert {% if message.tags %}
-                            {% if message.tags == 'alert-error' %} alert-danger {% else %}
-                            {{ message.tags }}{% endif %}{% endif %}">
+                        <div class="alert {{ message.level_tag }}" {{ message.extra_tags }}>
                             <button type="button" class="close" data-dismiss="alert">&times;</button>
                             {{ message }}
                         </div>
@@ -218,6 +216,7 @@
         <script src="{{ STATIC_URL }}js/libs/bootstrap.min.js"></script>
         <script src="{{ STATIC_URL }}js/libs/moment.min.js"></script>
         <script src="{{ STATIC_URL }}js/libs/jquery.cookie.js"></script>
+        <script src="{{ STATIC_URL }}js/libs/picturefill.min.js"></script>
         {% compress js %}
         <script src="{{ STATIC_URL }}js/libs/jquery.debouncedresize.js"></script>
         <script src="{{ STATIC_URL }}js/libs/fastclick.js"></script>

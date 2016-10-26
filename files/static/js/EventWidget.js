@@ -73,10 +73,6 @@ function EventWidget (Utils){
      * @return string
      */
     function createEventItem(item) {
-        var event_image = item.images[0];
-        if ($(window).innerWidth() < 768) {
-            event_image = item.images[1];
-        }
         html = '<div><div class="col-sm-8 col-md-4" id="eventdescription">';
         html +=     '<div class="hero-title">';
         html +=         '<a href="events/' + item.id + '/' + item.slug + '">';
@@ -90,17 +86,25 @@ function EventWidget (Utils){
         html += '<div class="col-sm-4 col-md-2" id="eventimage">';
         html +=     '<div id="event-carousel" class="carousel slide">';
         html +=         '<div class="carousel-inner">';
-        if(item.images.length > 0) {
+        if(item.image !== null) {
             html +=             '<div class="item active">';
             html +=                 '<a href="events/' + item.id + '/' + item.slug + '">';
-            html +=                         '<img src="' + event_image + '" width="100%" alt="" >';
+            html +=                     '<picture>';
+            html +=                         '<source srcset="' + item.image.lg + '" media="(max-width: 768px)">';
+            html +=                         '<source srcset="' + item.image.md + '" media="(max-width: 992px)">';
+            html +=                         '<img src="' + item.image.thumb + '" width="100%" alt="" >';
+            html +=                      '</picture>';
             html +=                 '</a>';
             html +=             '</div>';
         }
         for(var i=0; i < item.company_event.length; i++){
-            html +=         '<div class="item ' + (!item.images[0] && i === 0 ? 'active' : '') + '">';
+            html +=         '<div class="item ' + (item.image === null && i === 0 ? 'active' : '') + '">';
             html +=             '<a href="events/' + item.id + '/' + item.slug + '">';
-            html +=                 '<img src="' + item.company_event[i].company.images[0] + '" width="100%" alt="" />';
+            html +=                 '<picture>';
+            html +=                     '<source srcset="' + item.company_event[i].company.image.lg + '" media="(max-width: 768px)">';
+            html +=                     '<source srcset="' + item.company_event[i].company.image.md + '" media="(max-width: 992px)">';
+            html +=                     '<img src="' + item.company_event[i].company.image.thumb + '" width="100%" alt="" />';
+            html +=                 '</picture>';
             html +=             '</a>';
             html +=         '</div>';
         }

@@ -375,7 +375,7 @@ MESSAGE_TAGS = {messages.DEBUG: 'alert-debug',
                 messages.INFO: 'alert-info',
                 messages.SUCCESS: 'alert-success',
                 messages.WARNING: 'alert-warning',
-                messages.ERROR: 'alert-error'}
+                messages.ERROR: 'alert-danger'}
 
 
 # Not really sure what this does.

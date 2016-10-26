@@ -75,6 +75,28 @@ var Dashboard = (function ($) {
 
     // PUBLIC methods below
     return {
+        activateDateTimePickers: function() {
+            $('.dtp').each(function (i) {
+                $(this).datetimepicker({
+                    locale: 'nb',
+                    format: 'YYYY-MM-DD HH:mm:ss'
+                });
+            });
+
+            $('.dp').each(function (i) {
+                $(this).datetimepicker({
+                    locale: 'nb',
+                    format: 'YYYY-MM-DD'
+                });
+            });
+
+            $('.tp').each(function (i) {
+                $(this).datetimepicker({
+                    locale: 'nb',
+                    format: 'HH:mm:ss'
+                });
+            });
+        },
 
         // Bind expand/collapsing of sidebar elements
         init: function () {
@@ -153,26 +175,7 @@ var Dashboard = (function ($) {
 
             // Check for existence of input fields that require bootstrap datetimepicker
             // And activate it on these objects.
-            $('.dtp').each(function (i) {
-                $(this).datetimepicker({
-                    locale: 'nb',
-                    format: 'YYYY-MM-DD HH:mm:ss'
-                });
-            });
-            
-            $('.dp').each(function (i) {
-                $(this).datetimepicker({
-                    locale: 'nb',
-                    format: 'YYYY-MM-DD'
-                });
-            });
-            
-            $('.tp').each(function (i) {
-                $(this).datetimepicker({
-                    locale: 'nb',
-                    format: 'HH:mm:ss'
-                });
-            });
+            this.activateDateTimePickers()
 
             // Activate tablesorter on all tablesorter class tables
             $('.tablesorter').tablesorter()

@@ -8,14 +8,14 @@ django-filter==0.13.0           # Filtering for DRF
 git+https://github.com/JelteF/python-memcached@patch-1#egg=python-memcached==1.58
 markdown2==2.3.1                # textarea text formatting
 pytz                            # Timezone lib
-stripe==1.37.0                  # Stripe payment
+stripe==1.38.0                  # Stripe payment
 icalendar==3.10                # iCalendar generation
 
 # third party deps
 # django-filebrowser==3.5.4     # File uploading
 # Missing django 1.9 patches
 git+https://github.com/cXhristian/django-filebrowser.git@django-1.9#egg=django-filebrowser==3.6.2
-django-grappelli==2.8.1         # Admin template set
+django-grappelli==2.8.2         # Admin template set
 git+https://github.com/dotKom/django-chunks.git@e6bf109d4fd286964024c140ac1b8f3d86713540#egg=django-chunks==0.4
 django-crispy-forms==1.6.0      # nice forms
 django-extensions==1.7.4        # nice extra commands for debugging, etc
@@ -25,7 +25,7 @@ django-oauth-toolkit==0.8.1     # OAuth2 authentication support
 django_compressor==2.1          # Compiles less and minifies js
 django-watson==1.2.3            # Indexed model search lib
 django-reversion==2.0.6         # Model version history with middleware hooks to all post_save signals
-django-guardian==1.4.5          # Per Object permissions framework
+django-guardian==1.4.6          # Per Object permissions framework
 django-taggit==0.21.2           # Generic multi-model tagging library
 django-taggit-serializer==0.1.5 # REST Framework serializers for Django-taggit
 APScheduler==3.2.0              # Scheduler
