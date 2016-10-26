@@ -14,10 +14,14 @@ class TagsContainer extends React.Component {
       }
     }
 
+    // Store a copy of the initial store for use with resetting.
+    this.initialState = Object.assign({}, this.state)
+
     this.handleChange = this.handleChange.bind(this);
     this.handleReset = this.handleReset.bind(this);
   }
 
+  // Handles a Tag-component being clicked.
   handleChange(selectedKey) {
     let selectedTags = this.state.selectedTags;
 
@@ -27,23 +31,13 @@ class TagsContainer extends React.Component {
       selectedTags: selectedTags
     });
 
-    this.props.handleJobTypeChange(selectedTags);
+    this.props.handleChange(selectedTags);
   }
 
+  // Reset all buttons to their initial state.
   handleReset() {
-    let resetTagss = {};
-
-    for (let key in this.state.selectedTags) {
-      if (this.state.selectedTags.hasOwnProperty(key)) {
-        resetTagss[key] = false;
-      }
-    }
-
-    this.setState({
-      selectedTags: resetTagss
-    });
-
-    this.props.handleTagsChange(resetTagss);
+    this.setState(this.initialState);
+    this.props.handleChange(resetTags);
   }
 
   render() {
