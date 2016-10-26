@@ -1,6 +1,5 @@
 FROM python:3
-MAINTAINER Sklirg
-EXPOSE 8000
+MAINTAINER dotkom
 
 ENV APP_DIR=/srv/app
 
@@ -23,7 +22,4 @@ RUN pip install -r $APP_DIR/requirements-prod.txt
 ENV DJANGO_SETTINGS_MODULE onlineweb4.settings
 ENV DATABASE_URL postgres://postgres@db/postgres
 
-COPY package.json $APP_DIR/package.json
-RUN npm install
-
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+CMD ["bash"]

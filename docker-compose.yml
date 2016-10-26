@@ -12,7 +12,9 @@ services:
     ports:
       - "5432"
   django:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile.django
     command: python manage.py runserver 0.0.0.0:8000
     volumes:
       - .:/srv/app
@@ -27,7 +29,9 @@ services:
       - DJANGO_SETTINGS_MODULE=onlineweb4.settings
       - DATABASE_URL=postgres://postgres@db/postgres
   webpack:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile.webpack
     command: npm start
     volumes:
       - .:/srv/app
