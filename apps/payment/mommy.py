@@ -44,6 +44,7 @@ class PaymentReminder(Task):
                     PaymentReminder.send_deadline_passed_mail(payment)
                     PaymentReminder.notify_committee(payment)
                     PaymentReminder.set_marks(payment)
+                    PaymentReminder.suspend(payment)
 
                 payment.active = False
                 payment.save()
@@ -75,6 +76,7 @@ class PaymentReminder(Task):
 
         message = _("Hei, du har ikke betalt for ") + payment.description()
         message += _(".\nFristen har gått ut og du har fått en prikk.")
+        message += _("\nDu vil ikke kunne melde deg på nye arrangement før du har betalt.")
 
         message += _("\n\nFor mer info om arrangementet se:")
         message += "\n" + str(settings.BASE_URL + payment.content_object.event.get_absolute_url())
@@ -89,7 +91,7 @@ class PaymentReminder(Task):
     def send_missed_payment_mail(payment):
         subject = _("Betalingsfrist utgått: ") + payment.description()
         message = _("Hei, du har ikke betalt for følgende arrangement: ") + payment.description()
-        message += _("Fristen har utgått, og du har mistet plassen din på arrangementet")
+        message += _("Fristen har gått ut, og du har mistet plassen din på arrangementet")
         message += _("\nFor mer info om arrangementet se:")
         message += "\n" + str(settings.BASE_URL + payment.content_object.event.get_absolute_url())
         message += _("Dersom du har spørsmål kan du sende mail til ") + payment.responsible_mail()
@@ -147,6 +149,24 @@ class PaymentReminder(Task):
 
             Attendee.objects.get(event=payment.content_object,
                                  user=user).delete()
+
+
+    @staticmethod
+    def suspend(payment):
+        for user in PaymentReminder.not_paid(payment):
+            suspension = Suspension()
+
+            suspension.title = "Manglende betaling"
+            suspension.user = user
+            suspension.payment_id = payment.id
+            suspension.description = """
+            Du har ikke betalt for et arangement du har vært med på. For å fjerne denne suspensjonen må du betale.\n
+            Mer informasjon om betalingen finner du her: """
+            suspension.description += str(
+                settings.BASE_URL + payment.content_object.event.get_absolute_url()
+            )
+
+            suspension.save()
 
 
 class PaymentDelayHandler(Task):
