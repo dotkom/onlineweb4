@@ -1,0 +1,12 @@
+FROM node:6-slim
+MAINTAINER dotkom
+
+ENV APP_DIR=/srv/app
+
+RUN mkdir -p $APP_DIR
+WORKDIR $APP_DIR
+
+COPY package.json $APP_DIR/package.json
+RUN npm install
+
+CMD ["bash"]

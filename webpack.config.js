@@ -2,11 +2,17 @@ var path = require('path');
 var webpack = require('webpack');
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
 var BundleTracker = require('webpack-bundle-tracker');
+var CommonsChunkPlugin = require("webpack/lib/optimize/CommonsChunkPlugin");
 
 module.exports = {
   context: __dirname,
+  devtool: 'eval-source-map',
   entry: {
-    frontpageEvents: './assets/js/frontpage/events/index'
+    // Used to extract common libraries
+    vendor: ['react', 'react-dom'],
+    frontpageEvents: [
+      './assets/js/frontpage/events/index'
+    ]
   },
   output: {
     path: path.resolve('./assets/webpack_bundles/'),
@@ -29,17 +35,10 @@ module.exports = {
     includePath: [path.resolve(__dirname, './styles')]
   },
   plugins: [
-    new webpack.DefinePlugin({
-      'process.env': {
-        'NODE_ENV': JSON.stringify('production')
-      }
+    new CommonsChunkPlugin({
+      names: ['vendor'],
+      minChunks: Infinity
     }),
-    new webpack.optimize.UglifyJsPlugin({
-      compress: {
-        warnings: false
-      }
-    }),
-    new ExtractTextPlugin('styles.css'),
     new BundleTracker({filename: './webpack-stats.json'})
   ]
 };

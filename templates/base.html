@@ -1,5 +1,6 @@
 {% load compress %}
 {% load sekizai_tags %}
+{% load render_bundle from webpack_loader %}
 <!DOCTYPE html>
 <html>
 <head>
@@ -227,6 +228,8 @@
         {% endcompress %}
         <script src="{{ STATIC_URL }}js/libs/konami.js"></script>
         <script src="{{ STATIC_URL }}js/christmas.js"></script>
+        {% render_bundle 'vendor' %}
+        {% render_bundle 'dev' %}
     {% endblock %}
 
     {% render_block "js" %}
