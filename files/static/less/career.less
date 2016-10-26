@@ -1,6 +1,92 @@
 /* Career Opportunity
 -------------------------------------------------- */
 
+#career {
+    img {
+        width: 100%;
+    }
+
+    .meta {
+        padding: 5px 0 0 0;
+        border-top: 1px dotted #ccc;
+        font-size: 11px;
+        color: #aaa;
+
+        span::after {
+            content: ",";
+        }
+
+        span:last-child::after {
+            content: none;
+        }
+
+        span:nth-last-child(2)::after {
+            content: " og "
+        }
+    }
+
+    article {
+        margin-bottom: 40px;
+        padding-bottom: 30px;
+
+        h1 {
+            font-size: 20px;
+            font-weight: 400;
+            color: #ee7810;
+            margin-top: 0;
+        }
+
+        .ingress {
+          margin-bottom: 10px;
+          line-height: 1.625em;
+        }
+
+    }
+
+    .filters {
+        background: @baby-blue-medium;
+        padding: 15px;
+        margin-bottom: 20px;
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+            display: block;
+            margin-top: 10px;
+            margin-bottom: 15px;
+        }
+
+        li {
+            display: inline-flex;
+            padding:10px;
+            margin-right:5px;
+            margin-bottom: 5px;
+            color:white;
+            background:@baby-blue;
+            cursor: pointer;
+        }
+
+        button {
+            background-color: @baby-blue;
+            color: #fff;
+            border: none;
+            display: inline-block;
+            text-align: center;
+            width: 100%;
+            font-size: 13px;
+            padding-bottom: 10px;
+            padding-top: 10px;
+        }
+
+        h3 {
+            margin-top: 0px;
+            font-size: 20px;
+            color: white;
+        }
+    }
+}
+
 section#careeropportunities {
 
 	.career-ingress {
@@ -53,4 +139,3 @@ section#careeropportunity {
     text-align: center;
     margin-top: -10px;
 }
-

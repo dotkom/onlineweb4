@@ -1,13 +1,17 @@
 {% extends "base.html" %}
+{% load render_bundle from webpack_loader %}
 {% load fb_versions %}
 
 {% block title %}
 Karrieremuligheter - Online
 {% endblock title %}
 
-{% block content %}
+{% block js %}
+  {% render_bundle 'careeropportunity' %}
+{% endblock %}
 
-    <section id="careeropportunities">
+{% block content %}
+    <section id="career">
         <div class="container">
             <div class="row">
                 <div class="col-md-12">
@@ -16,45 +20,90 @@ Karrieremuligheter - Online
                     </div>
                 </div>
             </div>
-
-            {% if opportunities %}
-{% for opportunity in opportunities %}
-    {% if forloop.counter0|divisibleby:"4" %}
-            <div class="row row-space">
-    {% endif %}
-                <div class="col-xs-12 col-sm-6 col-md-3">
-                    <a href="{% url 'careeropportunity_details' opportunity.id %}">
-                        <div class="row">
-                            <div class="col-md-12">
-                                <picture>
-                                    <source srcset="{{ opportunity.company.image.lg }}" media="(max-width: 992px)">
-                                    <img src="{{ opportunity.company.image.md }}" width="100%" alt=""/>
-                                </picture>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-12">
-                                <h3 class="career-title">{{opportunity.title}}</h3>
-                            </div>
-                        </div>
-                    </a>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <p class="career-ingress">{{opportunity.ingress}}</p>
-                        </div>
+            <div class="row">
+                <div class="col-xs-12 col-sm-12 col-md-3 pull-right">
+                    <div class="filters">
+                        <h3>Bedrifter</h3>
+                        <ul>
+                            {% for company in companies %}
+                                <li data-company-id="{{ company.id }}">{{ company }}</li>
+                            {% endfor %}
+                        </ul>
+                        <h3>Typer</h3>
+                        <ul>
+                            {% for employment in employment_tags %}
+                                <li data-slug="{{ employment.slug }}">{{ employment.text }}</li>
+                            {% endfor %}
+                        </ul>
+                        <h3>Sted</h3>
+                        <ul>
+                            {% for location in location_tags %}
+                                <li data-slug="{{ location.slug }}">{{ location.text }}</li>
+                            {% endfor %}
+                        </ul>
+                        <button>Resett filtre</button>
                     </div>
                 </div>
-    {% if forloop.counter|divisibleby:"4" and not forloop.last%}
-            </div>
-    {% endif %}
+                <div class="col-xs-12 col-sm-12 col-md-9 pull-left">
+                    {% for opportunity in opportunities %}
+                        <article class="row"
+                            data-company="{{ opportunity.company.id }}"
+                            data-employment="{% for employment in opportunity.employment.slugs %}{{ employment }} {% endfor %}"
+                            data-location="{% for location in opportunity.location.slugs %}{{ location }} {% endfor %}">
+                            <div class="col-xs-12 col-md-4">
+                                <a href="{% url 'careeropportunity_details' opportunity.id %}">
+                                    <picture>
+                                        <source srcset="{{ opportunity.company.image.lg }}" media="(max-width: 992px)">
+                                        <img src="{{ opportunity.company.image.md }}" alt="{{ opportunity.company.name }}" />
+                                    </picture>
+                                </a>
+                            </div>
+                            <div class="col-xs-12 col-md-8">
+                                <h1>
+                                    <a href="{% url 'careeropportunity_details' opportunity.id %}">
+                                        {{ opportunity.company.name }} - {{ opportunity.title }}
+                                    </a>
+                                </h1>
+                                <div class="ingress">
+                                    {{ opportunity.ingress }}
+                                </div>
+                                <div class="meta">
+                                    <div class="col-md-4">
+                                        <p>
+                                            Type:
+                                            {% if opportunity.employment %}
+                                                {% for employment in opportunity.employment.all %}
+                                                    <span>{{ employment }}</span>
+                                                {% endfor %}
+                                            {% endif %}
+                                        </p>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <p>
+                                            Sted:
+                                            {% if opportunity.location %}
+                                                {% for location in opportunity.location.all %}
+                                                    <span>{{ location }}</span>
+                                                {% endfor %}
+                                            {% endif %}
+                                        </p>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <p>Frist:
+                                            {% if opportunity.deadline %}
+                                                {{ opportunity.deadline }}
+                                            {% else %}
+                                                Ikke spesifisert
+                                            {% endif %}
 
-    {% if forloop.last %}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </article>
+                    {% endfor %}
+                </div>
             </div>
-    {% endif %}
-{% endfor %}
         </div>
-        {% else %}
-        <p class="ingress">Ingen karrieremuligheter funnet.</p>
-        {% endif %}
     </section>
 {%endblock content %}
