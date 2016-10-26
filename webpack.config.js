@@ -6,6 +6,7 @@ var CommonsChunkPlugin = require("webpack/lib/optimize/CommonsChunkPlugin");
 
 module.exports = {
   context: __dirname,
+  devtool: 'eval-source-map',
   entry: {
     // Used to extract common libraries
     vendor: ['react', 'react-dom'],

@@ -27,7 +27,7 @@
     "webpack-dev-server": "^1.14.1"
   },
   "scripts": {
-    "build:prod": "webpack -p",
+    "build:prod": "webpack --config webpack.production.config.js",
     "build": "webpack",
     "watch": "webpack -w",
     "dev": "node server.js",
