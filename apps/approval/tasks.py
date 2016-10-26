@@ -34,7 +34,7 @@ def send_approval_status_update(approval):
     else:
         message = "Ditt medlemskap i Online er ikke godkjent"
     try:
-        EmailMessage("Ditt medlemskap i Online",
+        EmailMessage("Din medlemskapssøknad i Online",
                      message,
                      settings.DEFAULT_FROM_EMAIL,
                      [approval.applicant.get_email()],

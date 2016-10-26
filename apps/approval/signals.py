@@ -2,7 +2,7 @@ from django.conf import settings
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
-from .models import MembershipApproval, Approval
+from apps.approval.models import MembershipApproval, Approval
 from .tasks import send_approval_notification, send_approval_status_update
 
 
@@ -32,7 +32,7 @@ def notify_membership_applicant_handler(sender, instance, approved, **kwargs):
     """
 
        :param sender: The sending model.
-       :type sender: MembershipApproval
+       :type sender: Approval
        :param instance: The Approval instance
        :type instance: Approval
        :param approved: True or False, whether this instance is approved or not.
