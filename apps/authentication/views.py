@@ -266,10 +266,10 @@ def set_password(request, token=None):
 
 class UserViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.ListModelMixin):
     """
-    Viewset for User serializer. Supports filtering on 'username', 'first_name', 'last_name', 'email'
+    Viewset for User serializer. Supports filtering on 'first_name', 'last_name', 'email'
     """
 
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = (AllowAny,)
-    filter_fields = ('username', 'first_name', 'last_name', 'rfid',)
+    filter_fields = ('first_name', 'last_name', 'rfid',)
