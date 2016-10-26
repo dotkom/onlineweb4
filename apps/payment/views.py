@@ -194,10 +194,10 @@ def _send_payment_confirmation_mail(payment_relation):
 
     message = _("Hei!")
     message += _(" \n\nDu har betalt for ") + payment_relation.payment.description() + _(" på datoen ")\
-    + str(payment_date.strftime("%-d %B %Y kl. %H:%M"))
+        + str(payment_date.strftime("%-d %B %Y kl. %H:%M"))
     message += ".\n"
     message += _("Transaksjonen har nå blitt gjennomført, og du har blitt belastet en sum på ")\
-    + str(payment_relation.payment_price.price) + "kr."
+        + str(payment_relation.payment_price.price) + "kr."
     message += "\n\n"
     message += _("Ditt kvitteringsnummer er") + ": " + payment_relation.unique_id
     message += "\n\n"
