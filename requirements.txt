@@ -60,3 +60,5 @@ django-sekizai>=0.9
 # imagemagick                   # From package repository. Tested with version == 8:6.7.7.10.
 # libjpeg-dev					# From package repository.
 # libpq-dev						# From package repository.
+
+django_js_reverse==0.7.2
