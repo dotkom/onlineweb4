@@ -2,9 +2,9 @@ import React from 'react';
 import { ButtonGroup, Button } from 'react-bootstrap';
 
 const EventFilter = ({ eventTypes, filterEvents }) => (
-  <ButtonGroup>
+  <ButtonGroup className="event-filters">
     { eventTypes.map((eventType) => (
-        <Button bsStyle={ eventType[2] ? 'primary' : ''} onClick={ () => filterEvents({ eventType }) }> { eventType[1] } </Button>
+        <Button bsSize="xsmall" bsStyle={ eventType[2] ? 'primary' : 'default'} onClick={ () => filterEvents({ eventType }) }> { eventType[1] } </Button>
       ))
     }
   </ButtonGroup>
