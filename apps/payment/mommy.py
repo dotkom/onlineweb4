@@ -150,7 +150,6 @@ class PaymentReminder(Task):
             Attendee.objects.get(event=payment.content_object,
                                  user=user).delete()
 
-
     @staticmethod
     def suspend(payment):
         for user in PaymentReminder.not_paid(payment):
