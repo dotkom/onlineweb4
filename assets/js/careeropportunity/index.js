@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDom from 'react-dom';
-import JobTypeButtonsContainer from './containers/JobTypeButtonsContainer';
-import JobsContainer from './containers/JobsContainer.js';
+import TagsContainer from './containers/TagsContainer';
+import JobsContainer from './containers/JobsContainer';
 
 let data = {
   jobs: [{
@@ -41,21 +41,25 @@ class App extends React.Component {
   render() {
     return (
       <div className="container">
-          <div className="page-header clearfix">
-              <div className="row">
-                  <div className="col-md-8 col-xs-6">
-                      <h2 id="events-heading">KARRIEREMULIGHETER</h2>
-                  </div>
-              </div>
+        <div className="row">
+          <div className="col-md-12">
+            <div className="page-header">
+              <h2>KARRIEREMULIGHETER</h2>
+            </div>
+          </div>
+        </div>
+
+        <div className="row">
+          <div className="col-xs-12 col-sm-12 col-md-3 pull-right">
+            <div className="filters">
+              <h3>Bedrifter</h3>
+              <TagsContainer tags={this.props.data.jobTypes} handleJobTypeChange={this.handleJobTypeChange} />
+              <h3>Typer</h3>
+            </div>
           </div>
 
-          <div className="col-md-8">
-            <JobsContainer jobs={this.props.data.jobs} handleJobTypeChange={this.handleJobTypeChange} ref="jobList" />
-          </div>
-
-          <div className="col-md-4">
-            <JobTypeButtonsContainer jobTypes={this.props.data.jobTypes} handleJobTypeChange={this.handleJobTypeChange} />
-          </div>
+          <JobsContainer jobs={this.props.data.jobs} handleJobTypeChange={this.handleJobTypeChange} ref="jobList" />
+        </div>
       </div>
     );
   }
@@ -63,5 +67,5 @@ class App extends React.Component {
 
 ReactDom.render(
   <App data={data} />,
-  document.getElementById('careeropportunities')
+  document.getElementById('career-container')
 );
