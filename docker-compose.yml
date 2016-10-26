@@ -35,5 +35,6 @@ services:
     command: npm start
     volumes:
       - .:/srv/app
+      - /srv/app/node_modules
     ports:
       - "3000:3000"
