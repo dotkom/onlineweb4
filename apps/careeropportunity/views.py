@@ -4,9 +4,13 @@ from django.db.models import Q
 from django.shortcuts import get_object_or_404, render_to_response
 from django.template import RequestContext
 from django.utils import timezone
+# API v1
+from rest_framework import mixins, viewsets
+from rest_framework.permissions import AllowAny
 
 from apps.companyprofile.models import Company
 from apps.careeropportunity.models import CareerOpportunity
+from apps.careeropportunity.serializers import CareerSerializer
 
 
 def index(request):
@@ -67,3 +71,15 @@ def details(request, opportunity_id):
         {'opportunity': opportunity},
         context_instance=RequestContext(request)
     )
+
+class CareerViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.ListModelMixin):
+    """
+    Viewset for Career serializer
+    """
+
+    queryset = CareerOpportunity.objects.filter(
+        start__lte=timezone.now(),
+        end__gte=timezone.now()
+    ).order_by('-featured', '-start')
+    serializer_class = CareerSerializer
+    permission_classes = (AllowAny,)

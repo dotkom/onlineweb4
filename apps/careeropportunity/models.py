@@ -7,10 +7,6 @@ from taggit.models import TaggedItemBase
 from apps.companyprofile.models import Company
 
 
-class CareerOpportunityEmploymentTag(TaggedItemBase):
-    content_object = models.ForeignKey('CareerOpportunity')
-
-
 class CareerOpportunityLocationTag(TaggedItemBase):
     content_object = models.ForeignKey('CareerOpportunity')
 
@@ -30,12 +26,6 @@ class CareerOpportunity(models.Model):
     featured = models.BooleanField(_('fremhevet'), default=False, blank=True)
     deadline = models.DateTimeField(_('frist'), default=None, null=True, blank=True)
 
-    employment = TaggableManager(_('stilling(er)'), through=CareerOpportunityEmploymentTag, blank=True)
-    employment.rel.related_name = "+"
-
-    location = TaggableManager(_('sted(er)'), through=CareerOpportunityLocationTag, blank=True)
-    location.rel.related_name = "+"
-
     JOB_TYPE_CHOICES = (
         (1, 'Fastjobb'),
         (2, 'Deltidsjobb'),
@@ -44,10 +34,14 @@ class CareerOpportunity(models.Model):
         (5, 'Annet'),
     )
 
-    job_type = models.IntegerField(
-        choices = JOB_TYPE_CHOICES,
-        default = 5,
+    employment = models.IntegerField(
+        _('stillingstype'),
+        choices=JOB_TYPE_CHOICES,
+        default=5,
     )
+
+    location = TaggableManager(_('sted(er)'), through=CareerOpportunityLocationTag, blank=True)
+    location.rel.related_name = "+"
 
     def __str__(self):
         return self.title
