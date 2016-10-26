@@ -2,6 +2,7 @@
 {% load chunks %}
 {% load compress %}
 {% load markdown_deux_tags %}
+{% load render_bundle from webpack_loader %}
 
 
 {% block title %}Online, linjeforeningen for informatikk ved NTNU{% endblock title %}
@@ -10,11 +11,12 @@
     {{ block.super }}
     {% compress js %}
     <script type="text/javascript" src="{{ STATIC_URL }}js/ArticleWidget.js"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}js/EventWidget.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}js/OfflineWidget.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}js/Utils.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}js/initFrontpage.js"></script>
     {% endcompress %}
+
+    {% render_bundle 'frontpageEvents' %}
 {% endblock %}
 
 {% block apple-webapp %}

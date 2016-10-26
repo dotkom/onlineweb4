@@ -200,7 +200,13 @@
                                                 <p class="status-text">{{ user_status.message }}</p>
                                             {% endif %}
                                         {% else %}
-                                            <p class="status-text">{{ user_status.message }}</p>
+                                            <p class="status-text">
+                                                {% if user_status.status_code == 501 %}
+                                                    Påmeldingen åpner {{ attendance_event.registration_start|date:"d. M Y H.i" }}
+                                                {% else %}
+                                                    {{ user_status.message }}
+                                                {% endif %}
+                                            </p>
                                             {% if user_status.status_code == 403 %}
                                                 <p><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#user-status-modal">Mer info</button></p>
                                                 <div id="user-status-modal" class="modal fade" role="dialog">
