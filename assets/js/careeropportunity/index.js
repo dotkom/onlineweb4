@@ -53,12 +53,12 @@ class App extends React.Component {
           <div className="col-xs-12 col-sm-12 col-md-3 pull-right">
             <div className="filters">
               <h3>Bedrifter</h3>
-              <TagsContainer tags={this.props.data.jobTypes} handleJobTypeChange={this.handleJobTypeChange} />
+              <TagsContainer tags={this.props.data.jobTypes} handleChange={this.handleJobTypeChange} />
               <h3>Typer</h3>
             </div>
           </div>
 
-          <JobsContainer jobs={this.props.data.jobs} handleJobTypeChange={this.handleJobTypeChange} ref="jobList" />
+          <JobsContainer jobs={this.props.data.jobs} ref="jobList" />
         </div>
       </div>
     );

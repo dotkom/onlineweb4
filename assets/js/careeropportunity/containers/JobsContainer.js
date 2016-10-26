@@ -7,8 +7,6 @@ class JobsContainer extends React.Component {
     this.state = {
       selectedJobTypes: {}
     };
-
-    this.handleJobTypeChange = this.handleJobTypeChange.bind(this);
   }
 
   handleJobTypeChange(selectedJobTypes) {
@@ -20,6 +18,7 @@ class JobsContainer extends React.Component {
   render() {
     // Warning: Will be true on the initial render, which is the reason as to why we can
     // have an empty object in the initial selectedJobTypes state!
+    // TODO(torjusti): fix hackjob code
     let allJobTypesDisabled = true;
 
     for (let key in this.state.selectedJobTypes) {
