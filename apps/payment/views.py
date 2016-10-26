@@ -11,6 +11,7 @@ from django.core.mail import EmailMessage
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext as _
+from pytz import timezone as tz
 
 from apps.payment.models import Payment, PaymentPrice, PaymentRelation, PaymentTransaction
 from apps.webshop.models import OrderLine
@@ -189,12 +190,20 @@ def _send_payment_confirmation_mail(payment_relation):
     from_mail = payment_relation.payment.responsible_mail()
     to_mails = [payment_relation.user.email]
 
-    message = _("Du har betalt for ") + payment_relation.payment.description()
-    message += "\n"
+    payment_date = payment_relation.datetime.astimezone(tz('Europe/Oslo'))
+
+    message = _("Hei!")
+    message += _(" \n\nDu har betalt for ") + payment_relation.payment.description() + _(" på datoen ") + str(payment_date.strftime("%-d %B %Y kl. %H:%M"))
+    message += ".\n"
+    message += _("Transaksjonen har nå blitt gjennomført, og du har blitt belastet en sum på ") + str(payment_relation.payment_price.price) + "kr."
+    message += "\n\n"
     message += _("Ditt kvitteringsnummer er") + ": " + payment_relation.unique_id
-    message += "\n"
-    message += "\n"
+    message += "\n\n"
     message += _("Dersom du har problemer eller spørsmål, send mail til") + ": " + from_mail
+    message += "\n\n"
+    message += "Mvh. Linjeforeningen Online"
+    message += "\n"
+    message += "Org.nr. 992 548 045"
 
     EmailMessage(subject, str(message), from_mail, [], to_mails).send()
 
