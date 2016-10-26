@@ -33,14 +33,14 @@ def index(request):
     locations = []
 
     for opportunity in opportunities:
-        employment_slugs = opportunity.employment.slugs()
-        employment_tags = opportunity.employment.all()
-        for i in range(len(employment_slugs)):
-            if employment_tags[i] not in employments:
-                employments.append({
-                    'text': employment_tags[i],
-                    'slug': employment_slugs[i],
-                })
+        if opportunity.employment is not None:
+            employment_tag = {
+                'id': opportunity.employment,
+                'text': opportunity.get_employment_display()
+            }
+
+            if employment_tag not in employments:
+                employments.append(employment_tag)
 
         location_slugs = opportunity.location.slugs()
         location_tags = opportunity.location.all()

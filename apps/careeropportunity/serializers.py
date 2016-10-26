@@ -38,4 +38,7 @@ class CareerSerializer(TaggitSerializer, serializers.ModelSerializer):
         )
 
     def get_employment(self, obj):
-        return obj.get_employment_display()
+        return {
+            'id': obj.employment,
+            'name': obj.get_employment_display()
+        }
