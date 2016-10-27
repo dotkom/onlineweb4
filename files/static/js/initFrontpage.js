@@ -3,13 +3,13 @@ $(function() {
     var utils               = new Utils()
 
     var articleWidget       = new ArticleWidget(utils)
-    , eventWidget           = new EventWidget(utils)
+    //, eventWidget           = new EventWidget(utils)
     , offlineWidget         = new OfflineWidget(utils);
 
 
     /* RENDER
     ------------------------------------------------------------------------ */
-    eventWidget.render();
+    //eventWidget.render();
     offlineWidget.render();
 	articleWidget.render();
 
