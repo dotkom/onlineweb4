@@ -6,12 +6,12 @@ class EventImageContainer extends Component {
   mergeImages() {
     const images = [];
     // Event images
-    if(this.props.images.length > 0) {
-      images.push(this.props.images[0]);
+    if(this.props.image) {
+      images.push(this.props.image.lg);
     }
     // Company images
     for(let company of this.props.company_event) {
-      images.push(company.company.images[0]);
+      images.push(company.company.image.lg);
     }
     return images;
   }
