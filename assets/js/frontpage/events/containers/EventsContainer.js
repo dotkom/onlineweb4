@@ -7,13 +7,19 @@ class EventsContainer extends Component {
     this.API_URL = `/api/v1/events/?event_end__gte=${moment().format('YYYY-MM-DD')}&format=json`;
     this.state = {
       events: [],
-      visibleEvents: []  
+      showKurs: true,
+      showBedpress: true,
+      showSocial: true,
+      showOther: true,
     };
-    this.showKurs = true; 
-    this.showBedpress = true; 
-    this.showSocial = true; 
-    this.showOther = true;
     this.fetchEvents();
+    this.visibleEvents = this.state.events;
+    this.eventTypes = [
+      {id: 1, name: 'Sosialt', display: this.state.showSocial},
+      {id: 2, name: 'Bedriftspresentasjon', display: this.state.showBedpress},
+      {id: 3, name: 'Kurs', display: this.state.showKurs},
+      {id: 4, name: 'Annet', display: this.state.showOther}
+    ];
   }
 
   fetchEvents() {
@@ -21,9 +27,9 @@ class EventsContainer extends Component {
     .then(response => {
       return response.json();
     }).then(json => {
+      this.visibleEvents = json.results;
       this.setState({
-        events: json.results,
-        visibleEvents: json.results
+        events: json.results
       });
     }).catch(e => {
       console.error('Failed to fetch events:', e);
@@ -32,54 +38,54 @@ class EventsContainer extends Component {
   
   setEventVisibility(e) {
     const self = this;
-
     switch(e.eventType.id) {
       case 2:
-        self.showBedpress = !self.showBedpress;
+        self.setState({
+          showBedpress: !self.state.showBedpress
+        });
         break;
       case 3:
-        self.showKurs = !self.showKurs;
+        self.setState({
+          showKurs: !self.state.showKurs
+        });
         break;
       case 1: 
-        self.showSocial = !self.showSocial;
+        self.setState({
+          showSocial: !self.state.showSocial
+        });
         break;
       case 4:
-        self.showOther = !self.showOther;
+        self.setState({
+          showOther: !self.state.showOther
+        });
     }
+  }
 
-    const newEvents = this.state.events.filter(function (event) {
+  getVisibleEvents() {
+    const self = this;
+    this.visibleEvents = this.state.events.filter(function (event) {
       if(event.event_type === 1){
-        return self.showSocial;
+        return self.state.showSocial;
       } else if(event.event_type === 2){
-        return self.showBedpress;
+        return self.state.showBedpress;
       } else if(event.event_type === 3){
-        return self.showKurs;
+        return self.state.showKurs;
       } else if(event.event_type > 3){
-        return self.showOther;
+        return self.state.showOther;
       }
-    });
-
-    this.setState({
-      visibleEvents: newEvents
     });
   }
 
   mainEvents() {
-    return this.state.visibleEvents.slice(0,2);
+    return this.visibleEvents.slice(0,2);
   }
 
   smallEvents() {
-    return this.state.visibleEvents.slice(2, 10);
+    return this.visibleEvents.slice(2, 10);
   }
 
   render() {
-    const eventTypes = [
-      {id: 1, name: 'Sosialt', display: this.showSocial},
-      {id: 2, name: 'Bedriftspresentasjon', display: this.showBedpress},
-      {id: 3, name: 'Kurs', display: this.showKurs},
-      {id: 4, name: 'Annet', display: this.showOther}
-    ];
-    console.log('rerendering events')
+    this.getVisibleEvents();
     return (
       <Events mainEvents={ this.mainEvents() } smallEvents={ this.smallEvents() } setEventVisibility={ this.setEventVisibility.bind(this) } eventTypes={ this.eventTypes } />
     )
