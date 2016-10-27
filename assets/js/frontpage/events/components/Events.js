@@ -3,9 +3,9 @@ import Event from './Event';
 import SmallEvent from './SmallEvent';
 import EventsHeading from './EventsHeading';
 
-const Events = ({ mainEvents, smallEvents, filterEvents, eventTypes }) => (
+const Events = ({ mainEvents, smallEvents, setEventVisibility, eventTypes }) => (
   <div>
-    <EventsHeading eventTypes={ eventTypes } filterEvents={ filterEvents } />
+    <EventsHeading eventTypes={ eventTypes } setEventVisibility={ setEventVisibility } />
     <div className="row clearfix hero">
     {
       mainEvents.map((event) => {

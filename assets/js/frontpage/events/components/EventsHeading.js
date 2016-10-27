@@ -2,7 +2,7 @@ import React from 'react';
 import { Glyphicon } from 'react-bootstrap';
 import EventFilter from './EventFilter';
 
-const EventsHeading = ({eventTypes, filterEvents}) => (
+const EventsHeading = ({eventTypes, setEventVisibility}) => (
   <div>
     <div className="page-header clearfix">
       <div className="row">
@@ -19,7 +19,7 @@ const EventsHeading = ({eventTypes, filterEvents}) => (
       </div>
     </div>
     <div className="row">
-          <EventFilter eventTypes={ eventTypes } filterEvents={ filterEvents } />
+          <EventFilter eventTypes={ eventTypes } setEventVisibility={ setEventVisibility } />
     </div>
   </div>
 );

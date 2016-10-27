@@ -30,7 +30,7 @@ class EventsContainer extends Component {
     });
   }
   
-  filterEvents(e) {
+  setEventVisibility(e) {
     const self = this;
 
     switch(e.eventType.id) {
@@ -81,7 +81,7 @@ class EventsContainer extends Component {
     ];
     console.log('rerendering events')
     return (
-      <Events mainEvents={ this.mainEvents() } smallEvents={ this.smallEvents() } filterEvents={ this.filterEvents.bind(this) } eventTypes={ eventTypes } />
+      <Events mainEvents={ this.mainEvents() } smallEvents={ this.smallEvents() } setEventVisibility={ this.setEventVisibility.bind(this) } eventTypes={ this.eventTypes } />
     )
   }
 }
