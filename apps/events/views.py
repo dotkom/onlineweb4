@@ -359,14 +359,14 @@ class AttendViewSet(views.APIView):
         try:
             attendee = Attendee.objects.get(event=event, user__rfid=rfid)
             if attendee.attended:
-                return Response({'message': (attendee.user.get_full_name(),
-                                             'har allerede registrert oppmøte.'), 'attend_status': 20},
+                return Response({'message': (attendee.user.get_full_name() +
+                                             ' har allerede registrert oppmøte.'), 'attend_status': 20},
                                 status=status.HTTP_400_BAD_REQUEST)
             if attendee.is_on_waitlist() and not waitlist_approved:
-                return Response({'message': (attendee.user.get_full_name(),
-                                             'er på venteliste. Registrer dem som møtt opp allikevel?'),
+                return Response({'message': (attendee.user.get_full_name() +
+                                             ' er på venteliste. Registrer dem som møtt opp allikevel?'),
                                  'attend_status': 30},
-                                status=status.HTTP_100_CONTINUE)
+                                status=status.HTTP_200_OK)
             attendee.attended = True
             attendee.save()
         except Attendee.DoesNotExist:
@@ -375,5 +375,5 @@ class AttendViewSet(views.APIView):
                                         'knytte kortet til brukeren og registrere oppmøte.',
                              'attend_status': 40}, status=status.HTTP_400_BAD_REQUEST)
 
-        return Response({'message': (attendee.user.get_full_name(), 'er registrert som deltaker. Velkommen!'),
+        return Response({'message': (attendee.user.get_full_name() + ' er registrert som deltaker. Velkommen!'),
                          'attend_status': 10}, status=status.HTTP_200_OK)
