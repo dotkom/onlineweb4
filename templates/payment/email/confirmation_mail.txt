@@ -1,9 +1,9 @@
 Hei!
 
-Du har betalt for {{ payment_relation }} på datoen {{ payment_date }}.
-Transaksjonen har nå blitt gjennomført, og du har blitt belastet en sum på {{ payment_price }}kr.
+Du har betalt for {{ payment_relation.payment.description }} den {{ payment_date }}.
+Transaksjonen har nå blitt gjennomført, og du har blitt belastet en sum på {{ payment_relation.payment_price.price }}kr.
 
-Ditt kvitteringsnummer er: {{ payment_id }}
+Ditt kvitteringsnummer er: {{ payment_relation.unique_id }}
 
 Dersom du har problemer eller spørsmål, send mail til: {{ from_mail }}
 
