@@ -5,6 +5,16 @@ Transaksjonen har nå blitt gjennomført, og du har blitt belastet en sum på {{
 
 Ditt kvitteringsnummer er: {{ payment_relation.unique_id }}
 
+------------------------------------
+Vare				Pris
+------------------------------------
+{{ payment_relation.payment.description |slice:":20" }}			{{ payment_relation.payment_price.price }} kr
+
+
+------------------------------------
+totalt				{{ payment_relation.payment_price.price }} kr
+------------------------------------
+
 Dersom du har problemer eller spørsmål, send mail til: {{ from_mail }}
 
 Mvh. Linjeforeningen Online
