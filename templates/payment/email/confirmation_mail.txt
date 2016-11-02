@@ -8,11 +8,11 @@ Ditt kvitteringsnummer er: {{ payment_relation.unique_id }}
 ------------------------------------
 Vare				Pris
 ------------------------------------
-{{ payment_relation.payment.description |slice:":20" }}			{{ payment_relation.payment_price.price }} kr
+{{ payment_relation.payment.get_receipt_description }} {{ payment_relation.payment_price.price }} kr
 
 
 ------------------------------------
-totalt				{{ payment_relation.payment_price.price }} kr
+totalt                        {{ payment_relation.payment_price.price }} kr
 ------------------------------------
 
 Dersom du har problemer eller spørsmål, send mail til: {{ from_mail }}
