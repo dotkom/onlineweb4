@@ -28,13 +28,16 @@ def send_approval_status_update(approval):
     logger = logging.getLogger(__name__)
 
     accepted = approval.approved
-    message = ""
+    message = "Ditt medlemskap i Online er "
     if accepted:
-        message = "Ditt medlemskap i Online er godkjent"
+        message += "godkjent."
     else:
-        message = "Ditt medlemskap i Online er ikke godkjent"
+        message += "ikke godkjent."
+        if len(approval.message) == 0:
+            message += " Ta kontakt med Online for begrunnelse."
+        else: message += approval.message
     try:
-        EmailMessage("Din medlemskapssøknad i Online",
+        EmailMessage("Søknad om medlemskap i Online er vurdert",
                      message,
                      settings.DEFAULT_FROM_EMAIL,
                      [approval.applicant.get_email()],

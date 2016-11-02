@@ -43,6 +43,5 @@ def notify_membership_applicant_handler(sender, instance, approved, **kwargs):
        :rtype: None
     """
 
-    if approved:
-        if len(instance.applicant.get_email()) > 0:
-            send_approval_status_update(instance)
+    if len(instance.applicant.get_email()) > 0:
+        send_approval_status_update(instance)

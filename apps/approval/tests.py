@@ -11,6 +11,8 @@ from apps.authentication.models import OnlineUser as User
 
 from django.core import mail
 
+from apps.approval.tasks import send_approval_status_update
+
 class ApprovalTest(TestCase):
 
     def setUp(self):
@@ -66,16 +68,35 @@ class ApprovalTest(TestCase):
         self.assertEqual(self.approval.is_fos_application(), False)
 
 class EmailTest(TestCase):
-    def test_send_email(self):
-        # Send message.
-        mail.send_mail(
-            'Testing onlineWebserver mail', 'Here is the message.',
-            'from@example.com', ['EMAIL_DOTKOM'],
-            fail_silently=False,
-        )
+    # Create an approval
+    def setUp(self):
+        self.applicant = G(User, username="sokeren", first_name="Søker", last_name="Søkersen")
+        self.approval = G(MembershipApproval, applicant=self.applicant)
+        #self.approval.new_expiry_date = None
+        #self.approval.field_of_study = 0
+        #self.approval.started_date = None
+        self.logger = logging.getLogger(__name__)
+
+    def testEmailWhenMembershipDennied(self):
+
+        self.logger.debut("Testing method to send email when membershipapplications is denied")
+        self.approval.approved = False
+        self.approval.message = "Begrunnelse"
+        send_approval_status_update(self.approval)
+        self.setUp(False)
 
         # Test that one message has been sent.
         self.assertEqual(len(mail.outbox), 1)
-
         # Verify that the subject of the first message is correct.
-        self.assertEqual(mail.outbox[0].subject, 'Testing onlineWebserver mail')
+        self.assertEqual(mail.outbox[0].subject, 'Søknad om medlemskap i Online er vurdert')
+        self.assertEqual(mail.outbox[0].message, 'Ditt medlemskap i Online er ikke godkjent. Ta kontakt med Online for begrunnelse.')
+
+    def testEmailWhenMembershipAccepted(self):
+        self.logger.debut("Testing method to send email when membershipapplications is accepted")
+        self.approval.approved = True
+        send_approval_status_update(self.approval)
+        # Test that one message has been sent.
+        self.assertEqual(len(mail.outbox), 1)
+        # Verify that the subject of the first message is correct.
+        self.assertEqual(mail.outbox[0].subject, 'Søknad om medlemskap i Online er vurdert')
+        self.assertEqual(mail.outbox[0].message, 'Ditt medlemskap i Online er godkjent.')
