@@ -5,6 +5,7 @@ from django.utils import timezone
 
 from apps.feedback.models import FeedbackRelation
 
+
 def context_settings(request):
     context_extras = {}
     if hasattr(settings, 'GOOGLE_ANALYTICS_KEY'):
@@ -12,6 +13,7 @@ def context_settings(request):
     if hasattr(settings, 'HOT_RELOAD'):
         context_extras['HOT_RELOAD'] = settings.HOT_RELOAD
     return context_extras
+
 
 def feedback_notifier(request):
     context_extras = {}
