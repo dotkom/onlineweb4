@@ -11,4 +11,4 @@ class EventDateFilter(django_filters.FilterSet):
 
     class Meta:
         model = Event
-        fields = ('event_start', 'event_end',)
+        fields = ('event_start', 'event_end', 'event_type')
