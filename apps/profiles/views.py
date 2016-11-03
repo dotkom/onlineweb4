@@ -507,6 +507,7 @@ def view_profile(request, username):
     messages.error(request, _('Du har ikke tilgang til denne profilen'))
     return redirect('profiles')
 
+
 @login_required
 def feedback_pending(request):
     return render(request, 'profiles/feedback_pending.html', {})
