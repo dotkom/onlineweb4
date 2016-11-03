@@ -5,6 +5,7 @@ from django.utils import timezone
 
 from apps.feedback.models import FeedbackRelation
 
+
 def analytics(request):
     context_extras = {}
     if hasattr(settings, 'GOOGLE_ANALYTICS_KEY'):
