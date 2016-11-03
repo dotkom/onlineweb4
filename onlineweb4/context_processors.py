@@ -1,4 +1,7 @@
+# -*- coding: utf-8 -*-
+
 from django.conf import settings
+from django.utils import timezone
 
 from apps.feedback.models import FeedbackRelation
 
@@ -18,6 +21,13 @@ def feedback_notifier(request):
     active_feedbacks = FeedbackRelation.objects.filter(active=True)
     for active_feedback in active_feedbacks:
         if active_feedback.content_object is None:
+            continue
+
+        # Making sure we have an end data, and that the event is over
+        # and that the feedback deadline is not passed (logic reused from apps.feedback.mommy)
+        end_date = active_feedback.content_end_date()
+        today_date = timezone.now().date()
+        if not end_date or end_date.date() >= today_date or (active_feedback.deadline - today_date).days < 0:
             continue
 
         # This method returns both bools and a list for some reason. Python crashes with the expression: x in bool,
