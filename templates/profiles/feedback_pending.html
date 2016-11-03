@@ -1,0 +1,35 @@
+<div class="row">
+    <div class="col-md-12">
+        <h3>Manglende tilbakemeldinger</h3>
+        <p>Kurs, bedriftspresentasjoner og andre arrangementer kan kreve at du besvarer et tilbakemeldingsskjema i etterkant av arrangementet.</p>
+        <p>Dersom du ikke besvarer disse skjemaene innen tiden kan du tildeles en prikk.</p>
+        <p>Skjemaer du har som ikke er besvart er listet i tabellen under.</p>
+
+        <table class="table">
+            <thead>
+                <th>Arrangement</th>
+                <th>Dato</th>
+                <th>Tidsfrist</th>
+                <th></th>
+            </thead>
+            <tbody>
+                {% if feedback_pending|length > 0 %}
+                    {% for feedback in feedback_pending %}
+                        <tr>
+                            <td><a href="{{ feedback.content_object.get_absolute_url }}">{{ feedback.content_object.title }}</a></td>
+                            <td>{{ feedback.content_object.event_start|date:"d. M Y H.i" }}</td>
+                           <td>
+                               {% if feedback.deadline %}
+                                   {{ feedback.deadline|date:"d. M Y" }}
+                               {% endif %}
+                           </td>
+                            <td>
+                                <a href="{{ feedback.get_absolute_url }}">Til skjemaet</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>

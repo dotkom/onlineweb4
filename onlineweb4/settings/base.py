@@ -126,7 +126,10 @@ TEMPLATES = [
                 "django.template.context_processors.tz",
                 "django.contrib.messages.context_processors.messages",
                 "sekizai.context_processors.sekizai", # Wiki
+
+                # Onlineweb4 specific context processors
                 "onlineweb4.context_processors.context_settings",
+                "onlineweb4.context_processors.feedback_notifier",
             ],
             'debug': DEBUG,
         }
