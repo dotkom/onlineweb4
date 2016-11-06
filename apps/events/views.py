@@ -119,7 +119,7 @@ def attendEvent(request, event_id):
         if 'note' in form.cleaned_data:
             attendee.note = form.cleaned_data['note']
         attendee.save()
-        messages.success(request, _("Du er nå påmeldt på arrangementet!"))
+        messages.success(request, _("Du er nå meldt på arrangementet."))
 
         if attendance_event.payment():
             handle_attend_event_payment(event, request.user)
