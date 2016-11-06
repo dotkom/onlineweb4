@@ -1,6 +1,6 @@
 import React from 'react';
 import TagContainer from '../containers/TagContainer';
-import JobContainer from '../containers/JobContainer';
+import JobList from '../containers/JobList';
 
 let data = {
   jobs: [{
@@ -56,7 +56,8 @@ class CareerContainer extends React.Component {
       jobs: data.jobs,
       jobTypes: data.jobTypes,
       companies: data.companies,
-      locations: data.locations
+      locations: data.locations,
+      selectedTags: {}
     };
 
     this.handleTagChange = this.handleTagChange.bind(this);
@@ -67,7 +68,13 @@ class CareerContainer extends React.Component {
   }
 
   handleTagChange(type, updatedValues) {
-    this.refs.jobList.handleTagChange(type, updatedValues);
+    let updatedState = {};
+
+    updatedState[type] = updatedValues;
+
+    this.setState({
+      selectedTags: updatedState
+    });
   }
 
   handleJobTypeChange(updated) {
@@ -102,7 +109,7 @@ class CareerContainer extends React.Component {
             </div>
           </div>
 
-          <JobContainer jobs={this.state.jobs} ref="jobList" />
+          <JobList jobs={this.state.jobs} selectedTags={this.state.selectedTags} />
         </div>
       </div>
     );
