@@ -10,11 +10,13 @@ class JobContainer extends React.Component {
       let canShow = true;
 
       for (let type in this.props.selectedTags) {
-        for (let key in this.props.selectedTags[type]) {
-          if (this.props.selectedTags[type][key]) {
-            if (Array.isArray(job[type]) && job[type].indexOf(this.props.selectedTags[type][key]) < 0) {
-              canShow = false;
-            } else if (job[type] !== parseInt(key, 10)) { // :O :O :O :O TODO, parseInt should not be needed - move away from number keys?
+        for (let tag in this.props.selectedTags[type]) {
+          if (this.props.selectedTags[type][tag]) {
+            if (Array.isArray(job[type])) {
+              if (job[type].indexOf(tag) < 0) {
+                canShow = false;
+              }
+            } else if (job[type] !== tag) {
               canShow = false;
             }
           }
@@ -23,7 +25,7 @@ class JobContainer extends React.Component {
 
       if (canShow) {
         return (
-          <Job jobTitle={job.title} />
+          <Job jobData={job.data} />
         );
       }
     }.bind(this));
