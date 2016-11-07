@@ -9,7 +9,7 @@
             <thead>
                 <th>Arrangement</th>
                 <th>Dato</th>
-                <th>Tidsfrist</th>
+                <th>Frist</th>
                 <th></th>
             </thead>
             <tbody>
@@ -20,7 +20,7 @@
                             <td>{{ feedback.content_object.event_start|date:"d. M Y H.i" }}</td>
                            <td>
                                {% if feedback.deadline %}
-                                   {{ feedback.deadline|date:"d. M Y" }}
+                                   {{ feedback.deadline|date:"d. M Y" }} 23.59
                                {% endif %}
                            </td>
                             <td>
