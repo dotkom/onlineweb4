@@ -6,6 +6,12 @@ class Job extends React.Component {
   render() {
     let data = this.props.jobData;
 
+    let locations = data.location.map((location) => location.name);
+
+    if (locations.length >= 2) {
+      locations = `${locations.slice(0, -1).join(', ')} and ${locations[locations.length - 1]}`;
+    }
+
     return (
       <article className="row">
         <div className="col-xs-12 col-md-4">
@@ -30,7 +36,7 @@ class Job extends React.Component {
             </div>
 
             <div className="col-md-4">
-              <p>Sted: {data.location.map((location) => location.name).join(', ')}</p>
+              <p>Sted: {locations}</p>
             </div>
 
             <div className="col-md-4">
