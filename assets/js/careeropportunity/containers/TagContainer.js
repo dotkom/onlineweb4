@@ -41,6 +41,7 @@ class TagContainer extends React.Component {
   }
 
   render() {
+    console.log('GON BREAK')
     let tags = this.props.tags.map(function(tag) {
       return (
         <Tag selected={this.state.selectedTags[tag.key]} tagKey={tag.key} handleChange={this.handleChange} title={tag.title} />

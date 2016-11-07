@@ -1,5 +1,5 @@
 import React from 'react';
-import TagContainer from '../containers/TagContainer';
+import FilterContainer from '../containers/FilterContainer';
 import JobList from '../containers/JobList';
 
 let data = {
@@ -54,17 +54,17 @@ class CareerContainer extends React.Component {
 
     this.state = {
       jobs: data.jobs,
-      jobTypes: data.jobTypes,
-      companies: data.companies,
-      locations: data.locations,
+
+      tags: {
+        companies: data.companies,
+        locations: data.locations,
+        jobTypes: data.jobTypes
+      },
+
       selectedTags: {}
     };
 
     this.handleTagChange = this.handleTagChange.bind(this);
-
-    this.handleJobTypeChange = this.handleJobTypeChange.bind(this);
-    this.handleCompanyChange = this.handleCompanyChange.bind(this);
-    this.handleLocationChange = this.handleLocationChange.bind(this);
   }
 
   handleTagChange(type, updatedValues) {
@@ -75,18 +75,6 @@ class CareerContainer extends React.Component {
     this.setState({
       selectedTags: updatedState
     });
-  }
-
-  handleJobTypeChange(updated) {
-    this.handleTagChange('jobType', updated);
-  }
-
-  handleCompanyChange(updated) {
-    this.handleTagChange('company', updated);
-  }
-
-  handleLocationChange(updated) {
-    this.handleTagChange('location', updated);
   }
 
   render() {
@@ -101,14 +89,7 @@ class CareerContainer extends React.Component {
         </div>
 
         <div className="row">
-          <div className="col-xs-12 col-sm-12 col-md-3 pull-right">
-            <div className="filters">
-              <TagContainer heading="Bedrifter" tags={this.state.companies} handleChange={this.handleCompanyChange} />
-              <TagContainer heading="Typer" tags={this.state.jobTypes} handleChange={this.handleJobTypeChange} />
-              <TagContainer heading="Sted" tags={this.state.locations} handleChange={this.handleLocationChange} />
-            </div>
-          </div>
-
+          <FilterContainer tags={this.state.tags} handleTagChange={this.handleTagChange} />
           <JobList jobs={this.state.jobs} selectedTags={this.state.selectedTags} />
         </div>
       </div>
