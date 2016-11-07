@@ -6,7 +6,7 @@ class Job extends React.Component {
   render() {
     let data = this.props.jobData;
 
-    let locations = data.location.map((location) => location.name);
+    let locations = data.location.map((location) => location.name).reverse();
 
     if (locations.length >= 2) {
       locations = `${locations.slice(0, -1).join(', ')} and ${locations[locations.length - 1]}`;
