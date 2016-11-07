@@ -103,22 +103,20 @@ class FilterableJobList extends React.Component {
 
   render() {
     return (
-      <section id="career">
-        <div className="container">
-          <div className="row">
-            <div className="col-md-12">
-              <div className="page-header">
-                <h2>KARRIEREMULIGHETER</h2>
-              </div>
+      <div className="container">
+        <div className="row">
+          <div className="col-md-12">
+            <div className="page-header">
+              <h2>KARRIEREMULIGHETER</h2>
             </div>
           </div>
-
-          <div className="row">
-            <FilterContainer tags={this.state.tags} handleTagChange={this.handleTagChange} selectedTags={this.state.selectedTags} />
-            <JobList jobs={this.state.jobs} selectedTags={this.state.selectedTags} />
-          </div>
         </div>
-      </section>
+
+        <div className="row">
+          <FilterContainer tags={this.state.tags} handleTagChange={this.handleTagChange} selectedTags={this.state.selectedTags} />
+          <JobList jobs={this.state.jobs} selectedTags={this.state.selectedTags} />
+        </div>
+      </div>
     );
   }
 }
