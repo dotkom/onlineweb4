@@ -1,98 +1,124 @@
 import React from 'react';
 import FilterContainer from '../containers/FilterContainer';
 import JobList from '../containers/JobList';
-
-let data = {
-  jobs: [{
-    title: 'Jobb',
-    jobType: 0,
-    company: 0,
-    location: 0
-  }, {
-    title: 'Konsulent',
-    jobType: 1,
-    company: 1,
-    location: 0
-  }, {
-    title: 'Slave',
-    jobType: 2,
-    company: 2,
-    location: 0
-  }],
-
-  jobTypes: [{
-    key: 0,
-    title: 'Sommerjobb'
-  }, {
-    key: 1,
-    title: 'Fulltidsjobb'
-  }, {
-    key: 2,
-    title: 'Deltidsjobb'
-  }],
-
-  companies: [{
-    key: 0,
-    title: 'Accenture'
-  }, {
-    key: 1,
-    title: 'Sopra Steria'
-  }, {
-    key: 2,
-    title: 'Mamma'
-  }],
-
-  locations: [{
-    key: 0,
-    title: 'Trondheim'
-  }]
-};
+import request from 'superagent';
 
 class CareerContainer extends React.Component {
   constructor() {
     super();
 
     this.state = {
-      jobs: data.jobs,
+      jobs: [],
 
       tags: {
-        companies: data.companies,
-        locations: data.locations,
-        jobTypes: data.jobTypes
+        companies: [],
+        locations: [],
+        jobTypes: []
       },
 
-      selectedTags: {}
+      selectedTags: {
+        companies: {},
+        locations: {},
+        jobTypes: {}
+      }
     };
 
+    this.defaultSelectedtags = Object.assign({}, this.state.selectedTags);
+
     this.handleTagChange = this.handleTagChange.bind(this);
+    this.handleReset = this.handleReset.bind(this);
   }
 
-  handleTagChange(type, updatedValues) {
-    let updatedState = {};
 
-    updatedState[type] = updatedValues;
+  componentDidMount() {
+    const self = this;
 
+    request('GET', '/api/v1/career/').then(function(response) {
+      let data = JSON.parse(response.text);
+
+      let companies = [];
+      let locations = [];
+      let jobTypes = [];
+      let jobs = [];
+
+      data.results.forEach(function(job) {
+        if (companies.indexOf(job.company.name) < 0) {
+          companies.push(job.company.name);
+        }
+
+        if (jobTypes.indexOf(job.employment.name) < 0) {
+          jobTypes.push(job.employment.name);
+        }
+
+        job.location.forEach(function(location) {
+          if (locations.indexOf(location.name) < 0) {
+            locations.push(location.name);
+          }
+        });
+
+        jobs.push({
+          companies: job.company.name,
+          jobTypes: job.employment.name,
+          locations: job.location.map((location) => location.name),
+          data: job
+        });
+      });
+
+      self.setState({
+        jobs: jobs,
+
+        tags: {
+          companies: companies,
+          locations: locations,
+          jobTypes: jobTypes
+        }
+      });
+    });
+  }
+
+  handleTagChange(type, tag) {
+    let self = this;
+
+    this.setState(function(prevState) {
+      let updatedState = {};
+
+      for (let key in prevState.selectedTags) {
+        updatedState[key] = prevState.selectedTags[key];
+      }
+
+      updatedState[type][tag] = !updatedState[type][tag];
+
+      return {
+        selectedTags: updatedState
+      };
+    });
+  }
+
+  // Reset all buttons to their initial state.
+  handleReset() {
     this.setState({
-      selectedTags: updatedState
+      selectedTags: this.defaultSelectedtags
     });
   }
 
   render() {
     return (
-      <div className="container">
-        <div className="row">
-          <div className="col-md-12">
-            <div className="page-header">
-              <h2>KARRIEREMULIGHETER</h2>
+      <section id="career">
+        <div className="container">
+          <div className="row">
+            <div className="col-md-12">
+              <div className="page-header">
+                <h2>KARRIEREMULIGHETER</h2>
+              </div>
             </div>
           </div>
-        </div>
 
-        <div className="row">
-          <FilterContainer tags={this.state.tags} handleTagChange={this.handleTagChange} />
-          <JobList jobs={this.state.jobs} selectedTags={this.state.selectedTags} />
+          <div className="row">
+            <FilterContainer tags={this.state.tags} handleTagChange={this.handleTagChange} selectedTags={this.state.selectedTags} />
+            <JobList jobs={this.state.jobs} selectedTags={this.state.selectedTags} />
+          </div>
         </div>
-      </div>
+      </section>
     );
   }
 }

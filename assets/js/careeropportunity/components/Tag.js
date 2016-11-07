@@ -11,7 +11,7 @@ class Tag extends React.Component {
 
   render() {
     return (
-      <li onClick={this.handleClick.bind(this, this.props.tagKey)}>{this.props.title} - {this.props.selected ? 'yes' : 'no'}</li>
+      <li onClick={this.handleClick.bind(this, this.props.title)}>{this.props.title} - {this.props.selected ? 'yes' : 'no'}</li>
     );
   }
 }
