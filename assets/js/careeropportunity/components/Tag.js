@@ -1,3 +1,5 @@
+import classNames from 'classnames';
+
 class Tag extends React.Component {
   constructor() {
     super();
@@ -10,8 +12,12 @@ class Tag extends React.Component {
   }
 
   render() {
+    let classes = classNames({
+      'selected': this.props.selected
+    });
+
     return (
-      <li onClick={this.handleClick.bind(this, this.props.title)}>{this.props.title} - {this.props.selected ? 'yes' : 'no'}</li>
+      <li className={classes} onClick={this.handleClick.bind(this, this.props.title)}>{this.props.title}</li>
     );
   }
 }
