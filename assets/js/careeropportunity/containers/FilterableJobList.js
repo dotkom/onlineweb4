@@ -3,7 +3,7 @@ import FilterContainer from '../containers/FilterContainer';
 import JobList from '../containers/JobList';
 import request from 'superagent';
 
-class CareerContainer extends React.Component {
+class FilterableJobList extends React.Component {
   constructor() {
     super();
 
@@ -123,4 +123,4 @@ class CareerContainer extends React.Component {
   }
 }
 
-export default CareerContainer;
+export default FilterableJobList;
