@@ -2,6 +2,7 @@
 
 import datetime
 import logging
+import os
 
 from django.conf import settings
 from django.contrib.auth.models import Group
@@ -382,6 +383,36 @@ class EventTest(TestCase):
                         "Any user should be able to see unrestricted events")
         self.assertTrue(unrestricted_event.can_display(denied_user),
                         "Any user should be able to see unrestricted events")
+
+    def test_no_error_if_already_signed_up(self):
+        user = G(User)
+
+        self.client.force_login(user)
+
+        event = G(Event)
+        event.attendance_event = G(AttendanceEvent,
+                                   event=event, guest_attendance=True, max_capacity=2,
+                                   registration_start=timezone.now() - datetime.timedelta(hours=1),
+                                   registration_end=timezone.now() + datetime.timedelta(hours=1))
+
+        os.environ['RECAPTCHA_TESTING'] = 'True'
+
+        form_fields = {
+            'g-recaptcha-response': 'PASSED',
+            'phone_number': '12345678',
+            'note': 'hello',
+            'mark_rules': True,
+        }
+
+        url = reverse('attend_event', kwargs={'event_id': event.id})
+
+        self.client.post(url, form_fields)
+
+        self.assertEqual(1, Attendee.objects.filter(event=event.attendance_event, user=user).count())
+
+        self.client.post(url, form_fields)
+
+        del os.environ['RECAPTCHA_TESTING']
 
 
 class EventOrderedByRegistrationTestCase(TestCase):
