@@ -10,8 +10,8 @@ const EventImage = ({ event_start, id, images, slug }) => {
             <Carousel.Item active={index === 0 }>
               <a href={ `events/${id}/${slug}` }>
                 <picture>
-                  <source srcset={image.lg} media="(max-width: 768px)"/>
-                  <source srcset={image.md} media="(max-width: 992px)"/>
+                  <source srcSet={image.lg} media="(max-width: 768px)"/>
+                  <source srcSet={image.md} media="(max-width: 992px)"/>
                   <img src={image.thumb} width="100%" alt="" />
                 </picture>
               </a>
