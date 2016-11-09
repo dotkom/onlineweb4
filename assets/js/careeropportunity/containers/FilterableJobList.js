@@ -75,7 +75,31 @@ class FilterableJobList extends React.Component {
     });
   }
 
-  handleTagChange(type, tag) {
+  selectTagHandler(type, updatedTag) {
+    this.setState(prevState => {
+      let updatedState = {};
+
+      for (let key in prevState.selectedTags) {
+        if (key === type) {
+          updatedState[type] = {};
+
+          for (let tag in prevState.selectedTags[type]) {
+            updatedState[type][tag] = false;
+          }
+        } else {
+          updatedState[key] = prevState.selectedTags[key];
+        }
+      }
+
+      updatedState[type][updatedTag] = true;
+
+      return {
+        selectedTags: updatedState
+      }
+    });
+  }
+
+  defaultTagHandler(type, tag) {
     let self = this;
 
     this.setState(function(prevState) {
@@ -91,6 +115,14 @@ class FilterableJobList extends React.Component {
         selectedTags: updatedState
       };
     });
+  }
+
+  handleTagChange(type, tag) {
+    if (type === 'deadlines') {
+      this.selectTagHandler(type, tag);
+    } else {
+      this.defaultTagHandler(type, tag);
+    }
   }
 
   // Reset all buttons to their initial state.
