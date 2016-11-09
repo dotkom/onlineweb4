@@ -12,7 +12,7 @@ class AttendeeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Attendee
         fields = (
-            'event', 'user', 'attended', 'timestamp',
+            'id', 'event', 'user', 'attended', 'timestamp',
         )
 
 
