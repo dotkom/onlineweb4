@@ -26,11 +26,11 @@
     "eslint-plugin-jsx-a11y": "^2.2.3",
     "eslint-plugin-react": "^6.6.0",
     "extract-text-webpack-plugin": "^1.0.1",
+    "isomorphic-fetch": "^2.2.1",
     "less": "^2.7.1",
     "less-loader": "^2.2.3",
     "react-hot-loader": "^3.0.0-beta.6",
     "style-loader": "^0.13.1",
-    "superagent": "^2.3.0",
     "webpack": "^1.13.1",
     "webpack-bundle-tracker": "0.0.93",
     "webpack-dev-server": "^1.14.1"

@@ -6,6 +6,8 @@ class FilterableJobList extends React.Component {
   constructor() {
     super();
 
+    this.API_URL = '/api/v1/career?format=json';
+
     this.state = {
       jobs: [],
 
@@ -32,9 +34,9 @@ class FilterableJobList extends React.Component {
   componentDidMount() {
     const self = this;
 
-    request('GET', '/api/v1/career/').then(function(response) {
-      let data = JSON.parse(response.text);
-
+    fetch(this.API_URL).then(response => {
+      return response.json();
+    }).then(data => {
       let companies = [];
       let locations = [];
       let jobTypes = [];
