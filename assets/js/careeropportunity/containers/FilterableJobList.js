@@ -24,8 +24,6 @@ class FilterableJobList extends React.Component {
       }
     };
 
-    this.defaultSelectedtags = Object.assign({}, this.state.selectedTags);
-
     this.handleTagChange = this.handleTagChange.bind(this);
     this.handleReset = this.handleReset.bind(this);
   }
@@ -98,7 +96,11 @@ class FilterableJobList extends React.Component {
   // Reset all buttons to their initial state.
   handleReset() {
     this.setState({
-      selectedTags: this.defaultSelectedtags
+      selectedTags: {
+        companies: {},
+        locations: {},
+        jobTypes: {}
+      }
     });
   }
 
@@ -114,7 +116,7 @@ class FilterableJobList extends React.Component {
         </div>
 
         <div className="row">
-          <FilterContainer tags={this.state.tags} handleTagChange={this.handleTagChange} selectedTags={this.state.selectedTags} />
+          <FilterContainer tags={this.state.tags} handleTagChange={this.handleTagChange} handleReset={this.handleReset} selectedTags={this.state.selectedTags} />
           <JobList jobs={this.state.jobs} selectedTags={this.state.selectedTags} />
         </div>
       </div>
