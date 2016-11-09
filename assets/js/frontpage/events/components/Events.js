@@ -7,10 +7,10 @@ const Events = ({ mainEvents, smallEvents, setEventVisibility, eventTypes }) => 
   <div>
     <EventsHeading eventTypes={ eventTypes } setEventVisibility={ setEventVisibility } />
     <div className="row clearfix hero">
-    {
-      mainEvents.map((event) => {
-        return <Event { ...event } />
-      }) 
+      {
+        mainEvents.map((event) => {
+          return <Event key={ event.id } { ...event } />
+      })
     }
     </div>
     <div className="row clearfix hero">

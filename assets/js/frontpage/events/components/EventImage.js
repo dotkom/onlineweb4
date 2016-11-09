@@ -6,8 +6,8 @@ const EventImage = ({ event_start, id, images, slug }) => {
   return (
     <div className="col-sm-4 col-md-2">
       <Carousel controls={ false } indicators={ false }>
-          { images.map((image, index) => (
-            <Carousel.Item active={index === 0 }>
+        { images.map((image, index) => (
+          <Carousel.Item key={ index } active={index === 0 }>
               <a href={ `events/${id}/${slug}` }>
                 <picture>
                   <source srcSet={image.lg} media="(max-width: 768px)"/>
