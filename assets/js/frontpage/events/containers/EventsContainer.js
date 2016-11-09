@@ -11,6 +11,10 @@ class EventsContainer extends Component {
       showBedpress: true,
       showSocial: true,
       showOther: true,
+      socialEvents: [],
+      bedpressEvents: [],
+      kursEvents: [],
+      otherEvents: [],
     };
     this.fetchEvents();
     this.visibleEvents = this.state.events;
@@ -20,10 +24,10 @@ class EventsContainer extends Component {
       {id: 3, name: 'Kurs', display: this.state.showKurs},
       {id: 4, name: 'Annet', display: this.state.showOther}
     ];
-    this.socialEvents = this.fetchEventsByType(1);
-    this.bedpressEvents = this.fetchEventsByType(2);
-    this.kursEvents = this.fetchEventsByType(3);
-    this.otherEvents = this.fetchEventsByType(4);
+    this.fetchEventsByType(1);
+    this.fetchEventsByType(2);
+    this.fetchEventsByType(3);
+    this.fetchEventsByType(4);
   }
 
   fetchEvents() {
@@ -49,13 +53,13 @@ class EventsContainer extends Component {
       return response.json();
     }).then(json => {
       if(eventType === 1){
-        this.socialEvents = json.results;
+        this.state.socialEvents = json.results;
       } else if(eventType === 2){
-        this.bedpressEvents = json.results;
+        this.state.bedpressEvents = json.results;
       } else if(eventType === 3){
-        this.kursEvents = json.results;
+        this.state.kursEvents = json.results;
       } else if(eventType > 3){
-        this.otherEvents = json.results;
+        this.state.otherEvents = json.results;
       }
     }).catch(e => {
       console.error('Failed to fetch events by type:', e);
@@ -89,17 +93,21 @@ class EventsContainer extends Component {
 
   getVisibleEvents() {
     const self = this;
-    this.visibleEvents = this.state.events.filter(function (event) {
-      if(event.event_type === 1){
-        return self.state.showSocial;
-      } else if(event.event_type === 2){
-        return self.state.showBedpress;
-      } else if(event.event_type === 3){
-        return self.state.showKurs;
-      } else if(event.event_type > 3){
-        return self.state.showOther;
-      }
-    });
+    let visibleEvents = []
+    if(self.state.showSocial){
+      visibleEvents = visibleEvents.concat(this.state.socialEvents);
+    }
+    if(self.state.showBedpress){
+      visibleEvents = visibleEvents.concat(this.state.bedpressEvents);
+    }
+    if(self.state.showKurs){
+      visibleEvents = visibleEvents.concat(this.state.kursEvents);
+    }
+    if(self.state.showOther){
+      visibleEvents = visibleEvents.concat(this.state.otherEvents);
+    }
+    this.sortEvents(visibleEvents);
+    this.visibleEvents = visibleEvents;
   }
 
   mainEvents() {
