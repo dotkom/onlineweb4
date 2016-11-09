@@ -37,11 +37,10 @@ def send_approval_status_update(approval):
             message += " Ta kontakt med Online for begrunnelse."
         else: message += approval.message
     try:
-        EmailMessage("Søknad om medlemskap i Online er vurdert",
+        EmailMessage("Soknad om medlemskap i Online er vurdert",
                      message,
                      settings.DEFAULT_FROM_EMAIL,
                      [approval.applicant.get_email()],
-                     fail_silently = False,
                      ).send()
     except ImproperlyConfigured:
         logger.warn('Failed to notify applicant about updated status on membership for approval#{pk}.'.format(

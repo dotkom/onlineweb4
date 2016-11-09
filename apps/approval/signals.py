@@ -28,20 +28,20 @@ def new_membership_approval_handler(sender, instance, created, **kwargs):
 
 
 @receiver(post_save, sender=Approval)
-def notify_membership_applicant_handler(sender, instance, approved, **kwargs):
+def notify_membership_applicant_handler(sender, instance, created, **kwargs):
     """
 
        :param sender: The sending model.
        :type sender: Approval
        :param instance: The Approval instance
        :type instance: Approval
-       :param approved: True or False, whether this instance is approved or not.
-       :type approved: bool
+       :param approved: True or False, whether this instance is new or not.
+       :type created: bool
        :param kwargs: Other parameters.
        :type kwargs: dict
        :return: Nothing
        :rtype: None
     """
 
-    if len(instance.applicant.get_email()) > 0:
+    if instance.applicant.get_email():
         send_approval_status_update(instance)
