@@ -14,6 +14,8 @@ class Job extends React.Component {
 
     if (locations.length >= 2) {
       locations = `${locations.slice(0, -1).join(', ')} and ${locations[locations.length - 1]}`;
+    } else if (locations.length === 0) {
+      locations = 'Ikke spesifisert';
     }
 
     let deadline = data.deadline ? moment(data.deadline).format('Do MMMM YYYY, HH:mm') : 'Ikke spesifisert';
