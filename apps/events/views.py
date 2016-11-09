@@ -375,4 +375,4 @@ class AttendViewSet(views.APIView):
                              'attend_status': 40}, status=status.HTTP_400_BAD_REQUEST)
 
         return Response({'message': (attendee.user.get_full_name() + ' er registrert som deltaker. Velkommen!'),
-                         'attend_status': 10, 'attendee': attendee}, status=status.HTTP_200_OK)
+                         'attend_status': 10, 'attendee': attendee.id}, status=status.HTTP_200_OK)
