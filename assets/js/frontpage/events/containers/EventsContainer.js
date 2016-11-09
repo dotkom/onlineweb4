@@ -4,7 +4,7 @@ import Events from '../components/Events';
 class EventsContainer extends Component {
   constructor(props) {
     super(props);
-    this.API_URL = `/api/v1/events/?event_end__gte=${moment().format('YYYY-MM-DD')}&format=json`;
+    this.API_URL = `/api/v1/events/?event_end__gte=${moment().format('YYYY-MM-DD')}`;
     this.state = {
       events: [],
       showKurs: true,
@@ -20,10 +20,15 @@ class EventsContainer extends Component {
       {id: 3, name: 'Kurs', display: this.state.showKurs},
       {id: 4, name: 'Annet', display: this.state.showOther}
     ];
+    this.socialEvents = this.fetchEventsByType(1);
+    this.bedpressEvents = this.fetchEventsByType(2);
+    this.kursEvents = this.fetchEventsByType(3);
+    this.otherEvents = this.fetchEventsByType(4);
   }
 
   fetchEvents() {
-    fetch(this.API_URL)
+    const api_url = this.API_URL + '&format=json';
+    fetch(api_url)
     .then(response => {
       return response.json();
     }).then(json => {
@@ -35,7 +40,28 @@ class EventsContainer extends Component {
       console.error('Failed to fetch events:', e);
     });
   }
-  
+
+  fetchEventsByType(eventType) {
+    //problem: other, flere eventtyper
+    const api_url = this.API_URL + `&event_type=${eventType}&format=json`;
+    fetch(api_url)
+    .then(response => {
+      return response.json();
+    }).then(json => {
+      if(eventType === 1){
+        this.socialEvents = json.results;
+      } else if(eventType === 2){
+        this.bedpressEvents = json.results;
+      } else if(eventType === 3){
+        this.kursEvents = json.results;
+      } else if(eventType > 3){
+        this.otherEvents = json.results;
+      }
+    }).catch(e => {
+      console.error('Failed to fetch events by type:', e);
+    });
+  }
+
   setEventVisibility(e) {
     const self = this;
     switch(e.eventType.id) {
@@ -84,8 +110,16 @@ class EventsContainer extends Component {
     return this.visibleEvents.slice(2, 10);
   }
 
+  logEvents() {
+    console.log('Sosialt: ', this.socialEvents)
+    console.log('bedpress: ',this.bedpressEvents)
+    console.log('kurs: ', this.kursEvents)
+    console.log('annet: ', this.otherEvents)
+  }
+
   render() {
     this.getVisibleEvents();
+    this.logEvents();
     return (
       <Events mainEvents={ this.mainEvents() } smallEvents={ this.smallEvents() } setEventVisibility={ this.setEventVisibility.bind(this) } eventTypes={ this.eventTypes } />
     )
