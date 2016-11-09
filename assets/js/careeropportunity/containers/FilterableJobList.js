@@ -1,4 +1,3 @@
-import React from 'react';
 import FilterContainer from '../containers/FilterContainer';
 import JobList from '../containers/JobList';
 import request from 'superagent';
