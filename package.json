@@ -32,8 +32,8 @@
     "build": "webpack",
     "build:prod": "webpack --config webpack.production.config.js",
     "dev": "node server.js",
-    "start": "npm run dev"
-    "watch": "webpack -w",
+    "start": "npm run dev",
+    "watch": "webpack -w"
   },
   "repository": {
     "type": "git",
