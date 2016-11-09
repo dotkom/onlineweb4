@@ -345,7 +345,6 @@ class AttendViewSet(views.APIView):
         event = request.data.get('event')
         username = request.data.get('username')
         waitlist_approved = request.data.get('approved')
-        attendee = None
 
         if username is not None:
             try:
@@ -376,4 +375,4 @@ class AttendViewSet(views.APIView):
                              'attend_status': 40}, status=status.HTTP_400_BAD_REQUEST)
 
         return Response({'message': (attendee.user.get_full_name() + ' er registrert som deltaker. Velkommen!'),
-                         'attend_status': 10}, status=status.HTTP_200_OK)
+                         'attend_status': 10, 'attended': attendee}, status=status.HTTP_200_OK)
