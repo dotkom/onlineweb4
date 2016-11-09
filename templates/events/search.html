@@ -1,4 +1,3 @@
-{% load fb_versions %}
 {% load markdown_deux_tags %}
 
 {% if events %}
@@ -10,12 +9,18 @@
         {% if event.companies.all %}
             {% for company_relation in event.companies.all %}
                 <a href="{{ event.get_absolute_url }}">
-                    <img src="{% version company_relation.company.old_image 'companies_archive' %}" alt="" />
+                  <picture>
+                    <source srcset="{{ company_relation.company.image.lg }}" media="(max-width: 768px)">
+                    <img src="{{ company_relation.company.image.md }}" alt="" />
+                  </picture>
                 </a>
             {% endfor %}
         {% else %}
             <a href="{{ event.get_absolute_url }}">
-                <img src="{% version event.image 'events_archive' %}" alt="" />
+              <picture>
+                <source srcset="{{ event.image.lg }}" media="(max-width: 768px)">
+                <img src="{{ event.image.md }}" alt="" />
+              </picture>
             </a>
         {% endif %}
         {% if event.is_attendance_event %}

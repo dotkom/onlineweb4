@@ -46,7 +46,7 @@
                             <i class="fa fa-angle-down pull-right"></i>
                         </a>
                         <ul class="treeview-menu">
-                            <li class="hidden"><a href="{% url 'dashboard_event_create' %}"><i class="fa fa-angle-double-right orange"></i> Opprett arrangement</a></li>
+                            <li><a href="{% url 'dashboard_event_create' %}"><i class="fa fa-angle-double-right orange"></i> Opprett arrangement</a></li>
                             <li><a href="{% url 'dashboard_events_index' %}"><i class="fa fa-angle-double-right orange"></i> Kommende arrangement</a></li>
                             <li><a href="{% url 'dashboard_events_past' %}"><i class="fa fa-angle-double-right orange"></i> Tidligere arrangement</a></li>
                         </ul>
@@ -310,18 +310,16 @@
             <section class="content">
                 <div class="messages">
                     <div class="row">
-                        {% if messages %}
                         <div class="message-container col-md-12">
+                        {% if messages %}
                             {% for message in messages %}
-                                <div class="alert {% if message.tags %}
-                                    {% if message.tags == 'alert-error' %} alert-danger {% else %}
-                                    {{ message.tags }}{% endif %}{% endif %}">
+                                <div class="alert {{ message.level_tag }}" {{ message.extra_tags }}>
                                     <button type="button" class="close" data-dismiss="alert">&times;</button>
                                     {{ message }}
                                 </div>
                             {% endfor %}
-                        </div>
                         {% endif %}
+                        </div>
                     </div>
                 </div>
                 <section class="main-content">

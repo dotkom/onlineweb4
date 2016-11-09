@@ -77,6 +77,15 @@ class Payment(models.Model):
         if self._is_type(AttendanceEvent):
             return self.content_object.event.title
 
+    def get_receipt_description(self):
+        receipt_description = ""
+        description = [' '] * 30
+        temp = self.description()[0:25]
+        description[0:len(temp)+1] = list(temp)
+        for c in description:
+            receipt_description += c
+        return receipt_description
+
     def responsible_mail(self):
         if self._is_type(AttendanceEvent):
             event_type = self.content_object.event.event_type
@@ -143,7 +152,9 @@ class Payment(models.Model):
 
     def price(self):
         # TODO implement group based pricing
-        return self.paymentprice_set.all()[0]
+        if self.paymentprice_set.count() > 0:
+            return self.paymentprice_set.all()[0]
+        return None
 
     def _is_type(self, model_type):
         return ContentType.objects.get_for_model(model_type) == self.content_type

@@ -2,6 +2,7 @@
 
 from django.conf.urls import url
 
+from apps.api.utils import SharedAPIRootRouter
 from apps.authentication import views
 
 urlpatterns = [
@@ -12,3 +13,7 @@ urlpatterns = [
     url(r'^recover/$', views.recover, name='auth_recover'),
     url(r'^set_password/(?P<token>\w+)/$', views.set_password, name='auth_set_password'),
 ]
+
+# API v1
+router = SharedAPIRootRouter()
+router.register('users', views.UserViewSet, base_name='users')

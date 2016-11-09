@@ -1,0 +1,12 @@
+FROM python:3
+MAINTAINER dotkom@online.ntnu.no
+
+# Install deps
+RUN curl -sL https://deb.nodesource.com/setup_6.x | bash - && \
+    apt-get remove -y curl && apt-get install -y --no-install-recommends \
+    nodejs libjpeg-dev ghostscript && \
+    npm install -g less && \
+    pip install tox
+
+# Clean up
+RUN rm -rf /var/lib/apt/lists/* && rm -rf /tmp/*

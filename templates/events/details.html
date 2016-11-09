@@ -44,7 +44,7 @@
                                     </button>
                                     <ul class="dropdown-menu" role="menu">
                                         <li><a href="{% url 'admin:events_event_change' event.id %}">Rediger i administrasjonspanelet</a></li>
-                                        <li><a href="{% url 'dashboard_event_change_attendees' event.id %}">Åpne i dashboardet</a></li>
+                                        <li><a href="{% url 'dashboard_event_details' event.id %}">Åpne i dashboardet</a></li>
                                         {% if event.is_attendance_event %}
                                             <li><a href="{% url 'event_attendees_pdf' event.id %}">Påmeldingsliste</a></li>
                                             <li><a href="{% url 'event_mail_participants' event.id %}">Send epost til deltakere</a></li>
@@ -224,7 +224,7 @@
                                             {% endif %}
                                         {% endif %}
 
-                                        {%  if payment %}
+                                        {%  if payment and payment.price %}
                                             <p class="status-text status-price">Pris: {{ payment.price.price }},-</p>
                                         {%  endif %}
 
@@ -295,8 +295,11 @@
                                         <div class="heading clearfix row-space">
                                             <a href="{% url 'company_details' company_relation.company.pk %}">
                                                 <div class="title">{{ company_relation.company.name }}</div>
-                                                <div class="image">
-                                                    <img src="{% version company_relation.company.old_image 'companies_thumb' %}" alt="" />
+                                                <div class="image-holder">
+                                                    <picture>
+                                                        <source srcset="{{ company_relation.company.image.lg }}" media="(max-width: 992px)">
+                                                        <img src="{{ company_relation.company.image.md }}" width="100%" alt="{{ company_relation.company.name }}" />
+                                                    </picture>
                                                 </div>
                                             </a>
                                         </div>
@@ -304,7 +307,7 @@
                                 </div>
                             </div>
                         {% else %}
-                            <img width="100%" src="{% version event.image 'events_main' %}" alt="{{ event.title }}"/>
+                            <img class="event-image" src="{{ event.image.lg }}" alt="{{ event.image.description }}" />
                         {% endif %}
                     </div>
                 </div>
@@ -327,6 +330,9 @@
                         </div>
                         <form action="{% url 'attend_event' event.id %}" method="POST">
                             <div class="modal-body">
+                                {% if not can_unattend %}
+                                    <div class="alert alert-warning">Avmeldingsfristen på dette arrangementet har utløpt. Det vil si at du kan ikke melde deg av dersom du først melder deg på.</div>
+                                {% endif %}
                                 {% if will_be_on_wait_list %}
                                 <p>Ved å sette deg på venteliste godtar du at du automatisk får plass om
                                     arrangementet utvides med flere plasser, eller andre påmeldte melder seg av, slik at du rykker frem i køen.

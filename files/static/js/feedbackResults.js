@@ -24,7 +24,7 @@ $(function() {
         {
             $('#field-of-study-header').append('<div class="page-header"><h2>Studieretning</h2></div>');
 
-            box = '<div class="col-md-6"><div id="fos-graph"></div></div>'
+            box = '<div class="col-md-8"><div id="fos-graph"></div></div>'
             $('#field-of-study-graph').append(box);
             fosChart = jQuery.jqplot ('fos-graph', [data], 
             {

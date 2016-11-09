@@ -3,13 +3,16 @@ from rest_framework import serializers
 from apps.authentication.serializers import UserSerializer
 from apps.companyprofile.serializers import CompanySerializer
 from apps.events.models import AttendanceEvent, Attendee, CompanyEvent, Event, RuleBundle
+from apps.gallery.serializers import ResponsiveImageSerializer
 
 
 class AttendeeSerializer(serializers.ModelSerializer):
+    user = UserSerializer()
+
     class Meta:
         model = Attendee
         fields = (
-            '',
+            'event', 'user', 'attended', 'timestamp',
         )
 
 
@@ -44,14 +47,19 @@ class CompanyEventSerializer(serializers.ModelSerializer):
 
 
 class EventSerializer(serializers.ModelSerializer):
-    author = UserSerializer()
     absolute_url = serializers.CharField(source='get_absolute_url', read_only=True)
     attendance_event = AttendanceEventSerializer()
     company_event = CompanyEventSerializer(many=True)
+    image = ResponsiveImageSerializer()
 
     class Meta:
         model = Event
         fields = (
-            'absolute_url', 'attendance_event', 'company_event', 'author', 'description', 'event_start', 'event_end',
-            'event_type', 'id', 'images', 'ingress', 'ingress_short', 'location', 'slug', 'title',
+            'absolute_url', 'attendance_event', 'company_event', 'description', 'event_start', 'event_end',
+            'event_type', 'id', 'image', 'ingress', 'ingress_short', 'location', 'slug', 'title',
         )
+
+
+class AttendSerializer(serializers.Serializer):
+    rfid = serializers.CharField()
+    event = serializers.IntegerField(required=True)
