@@ -118,18 +118,18 @@ class EventsContainer extends Component {
     return this.visibleEvents.slice(2, 10);
   }
 
-  logEvents() {
-    /*if (this.bedpressEvents.length() > 0){
-        console.log('Sosialt: ', this.socialEvents)
-        console.log('bedpress: ',this.bedpressEvents[0])
-        console.log('kurs: ', this.kursEvents)
-        console.log('annet: ', this.otherEvents)
-      }*/
+  sortEvents(events){
+    events.sort((a, b) => {
+      return (
+        //checks if the event is starting today or ongoing
+        (moment().isAfter(a.event_start, 'day') && moment().isBefore(a.event_end)) ? 1 :
+        //checks which event comes first
+        moment(a.event_start).isBefore(b.event_start) ? 1 : -1)
+    })
   }
 
   render() {
     this.getVisibleEvents();
-    this.logEvents();
     return (
       <Events mainEvents={ this.mainEvents() } smallEvents={ this.smallEvents() } setEventVisibility={ this.setEventVisibility.bind(this) } eventTypes={ this.eventTypes } />
     )
