@@ -1,3 +1,7 @@
+import moment from 'moment';
+
+moment.locale('nb');
+
 class Job extends React.Component {
   constructor() {
     super();
@@ -11,6 +15,8 @@ class Job extends React.Component {
     if (locations.length >= 2) {
       locations = `${locations.slice(0, -1).join(', ')} and ${locations[locations.length - 1]}`;
     }
+
+    let deadline = data.deadline ? moment(data.deadline).format('Do MMMM YYYY, HH:mm') : 'Ikke spesifisert';
 
     return (
       <article className="row">
@@ -40,7 +46,7 @@ class Job extends React.Component {
             </div>
 
             <div className="col-md-4">
-              <p>Frist: {data.deadline || 'Ikke spesifisert'}</p>
+              <p>Frist: {deadline}</p>
             </div>
           </div>
         </div>
