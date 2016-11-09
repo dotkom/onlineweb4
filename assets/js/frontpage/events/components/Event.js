@@ -24,10 +24,8 @@ const Event = ({ company_event, event_start, id, image, ingress_short, slug, tit
 );
 
 Event.propTypes = {
-  date: PropTypes.string.isRequired,
   description: PropTypes.string.isRequired,
-  title: PropTypes.string.isRequired,
-  url: PropTypes.string.isRequired
+  title: PropTypes.string.isRequired
 };
 
 export default Event;
