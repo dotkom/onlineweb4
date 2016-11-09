@@ -28,6 +28,7 @@ class FilterContainer extends React.Component {
           <TagContainer heading="Bedrifter" tags={this.props.tags.companies} selectedTags={this.props.selectedTags.companies} handleChange={this.handleCompanyChange} />
           <TagContainer heading="Typer" tags={this.props.tags.jobTypes} selectedTags={this.props.selectedTags.jobTypes} handleChange={this.handleJobTypeChange} />
           <TagContainer heading="Sted" tags={this.props.tags.locations} selectedTags={this.props.selectedTags.locations} handleChange={this.handleLocationChange} />
+          <button onClick={this.props.handleReset}>Reset</button>
         </div>
       </div>
     );
