@@ -111,10 +111,12 @@ class EventsContainer extends Component {
   }
 
   logEvents() {
-    console.log('Sosialt: ', this.socialEvents)
-    console.log('bedpress: ',this.bedpressEvents)
-    console.log('kurs: ', this.kursEvents)
-    console.log('annet: ', this.otherEvents)
+    /*if (this.bedpressEvents.length() > 0){
+        console.log('Sosialt: ', this.socialEvents)
+        console.log('bedpress: ',this.bedpressEvents[0])
+        console.log('kurs: ', this.kursEvents)
+        console.log('annet: ', this.otherEvents)
+      }*/
   }
 
   render() {

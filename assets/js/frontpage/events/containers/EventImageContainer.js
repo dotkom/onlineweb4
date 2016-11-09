@@ -7,11 +7,11 @@ class EventImageContainer extends Component {
     const images = [];
     // Event images
     if(this.props.image) {
-      images.push(this.props.image.lg);
+      images.push(this.props.image);
     }
     // Company images
     for(let company of this.props.company_event) {
-      images.push(company.company.image.lg);
+      images.push(company.company.image);
     }
     return images;
   }
