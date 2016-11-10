@@ -8,8 +8,5 @@ RUN curl -sL https://deb.nodesource.com/setup_6.x | bash - && \
     npm install -g less && \
     pip install tox
 
-COPY package.json .
-RUN npm install
-
 # Clean up
 RUN rm -rf /var/lib/apt/lists/* && rm -rf /tmp/*
