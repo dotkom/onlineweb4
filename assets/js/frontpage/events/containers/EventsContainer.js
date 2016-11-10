@@ -19,10 +19,10 @@ class EventsContainer extends Component {
     this.fetchEvents();
     this.visibleEvents = this.state.events;
     this.eventTypes = [
-      {id: 1, name: 'Sosialt', display: this.state.showSocial},
-      {id: 2, name: 'Bedriftspresentasjon', display: this.state.showBedpress},
-      {id: 3, name: 'Kurs', display: this.state.showKurs},
-      {id: 4, name: 'Annet', display: this.state.showOther}
+      { id: 1, name: 'Sosialt', display: this.state.showSocial },
+      { id: 2, name: 'Bedriftspresentasjon', display: this.state.showBedpress },
+      { id: 3, name: 'Kurs', display: this.state.showKurs },
+      { id: 4, name: 'Annet', display: this.state.showOther },
     ];
     this.fetchEventsByType(1);
     this.fetchEventsByType(2);
@@ -31,79 +31,79 @@ class EventsContainer extends Component {
   }
 
   fetchEvents() {
-    const api_url = this.API_URL + '&format=json';
+    const api_url = `${this.API_URL}&format=json`;
     fetch(api_url)
-    .then(response => {
-      return response.json();
-    }).then(json => {
+    .then(response =>
+       response.json(),
+    ).then((json) => {
       this.visibleEvents = json.results;
       this.setState({
-        events: json.results
+        events: json.results,
       });
-    }).catch(e => {
+    }).catch((e) => {
       console.error('Failed to fetch events:', e);
     });
   }
 
   fetchEventsByType(eventType) {
-    //problem: other, flere eventtyper
-    const api_url = this.API_URL + `&event_type=${eventType}&format=json`;
+    // problem: other, flere eventtyper
+    const api_url = `${this.API_URL}&event_type=${eventType}&format=json`;
     fetch(api_url)
-    .then(response => {
-      return response.json();
-    }).then(json => {
-      if(eventType === 1){
+    .then(response =>
+       response.json(),
+    ).then((json) => {
+      if (eventType === 1) {
         this.state.socialEvents = json.results;
-      } else if(eventType === 2){
+      } else if (eventType === 2) {
         this.state.bedpressEvents = json.results;
-      } else if(eventType === 3){
+      } else if (eventType === 3) {
         this.state.kursEvents = json.results;
-      } else if(eventType > 3){
+      } else if (eventType > 3) {
         this.state.otherEvents = json.results;
       }
-    }).catch(e => {
+    }).catch((e) => {
       console.error('Failed to fetch events by type:', e);
     });
   }
 
   setEventVisibility(e) {
     const self = this;
-    switch(e.eventType.id) {
+    switch (e.eventType.id) {
       case 2:
         self.setState({
-          showBedpress: !self.state.showBedpress
+          showBedpress: !self.state.showBedpress,
         });
         break;
       case 3:
         self.setState({
-          showKurs: !self.state.showKurs
+          showKurs: !self.state.showKurs,
         });
         break;
-      case 1: 
+      case 1:
         self.setState({
-          showSocial: !self.state.showSocial
+          showSocial: !self.state.showSocial,
         });
         break;
       case 4:
         self.setState({
-          showOther: !self.state.showOther
+          showOther: !self.state.showOther,
         });
     }
   }
 
   getVisibleEvents() {
     const self = this;
-    let visibleEvents = []
-    if(self.state.showSocial){
+    let visibleEvents = [];
+    if (self.state.showSocial) {
       visibleEvents = visibleEvents.concat(this.state.socialEvents);
     }
-    if(self.state.showBedpress){
+    if (self.state.showBedpress) {
       visibleEvents = visibleEvents.concat(this.state.bedpressEvents);
     }
-    if(self.state.showKurs){
+    if (self.state.showKurs) {
       visibleEvents = visibleEvents.concat(this.state.kursEvents);
     }
-    if(self.state.showOther){
+    if (self.state.showOther) {
       visibleEvents = visibleEvents.concat(this.state.otherEvents);
     }
     this.sortEvents(visibleEvents);
@@ -111,28 +111,28 @@ class EventsContainer extends Component {
   }
 
   mainEvents() {
-    return this.visibleEvents.slice(0,2);
+    return this.visibleEvents.slice(0, 2);
   }
 
   smallEvents() {
     return this.visibleEvents.slice(2, 10);
   }
 
-  sortEvents(events){
-    events.sort((a, b) => {
-      return (
-        //checks if the event is starting today or ongoing
+  sortEvents(events) {
+    events.sort((a, b) =>
+       (
+        // checks if the event is starting today or ongoing
         (moment().isAfter(a.event_start, 'day') && moment().isBefore(a.event_end)) ? 1 :
-        //checks which event comes first
-        moment(a.event_start).isBefore(b.event_start) ? 1 : -1)
-    })
+        // checks which event comes first
+        moment(a.event_start).isBefore(b.event_start) ? 1 : -1),
+    );
   }
 
   render() {
     this.getVisibleEvents();
     return (
-      <Events mainEvents={ this.mainEvents() } smallEvents={ this.smallEvents() } setEventVisibility={ this.setEventVisibility.bind(this) } eventTypes={ this.eventTypes } />
-    )
+      <Events mainEvents={this.mainEvents()} smallEvents={this.smallEvents()} setEventVisibility={this.setEventVisibility.bind(this)} eventTypes={this.eventTypes} />
+    );
   }
 }
 

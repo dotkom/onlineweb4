@@ -5,7 +5,7 @@ const Event = ({ company_event, event_start, id, image, ingress_short, slug, tit
   <div>
     <div className="col-sm-8 col-md-4">
       <div className="hero-title">
-        <a href={ `events/${id}/${slug}` }>
+        <a href={`events/${id}/${slug}`}>
           <p>{ title }</p>
         </a>
       </div>
@@ -14,18 +14,18 @@ const Event = ({ company_event, event_start, id, image, ingress_short, slug, tit
       </div>
     </div>
     <EventImageContainer
-      company_event={ company_event }
-      event_start= {event_start }
-      id={ id }
-      image={ image }
-      slug={ slug }
+      company_event={company_event}
+      event_start={event_start}
+      id={id}
+      image={image}
+      slug={slug}
     />
   </div>
 );
 
 Event.propTypes = {
   description: PropTypes.string.isRequired,
-  title: PropTypes.string.isRequired
+  title: PropTypes.string.isRequired,
 };
 
 export default Event;

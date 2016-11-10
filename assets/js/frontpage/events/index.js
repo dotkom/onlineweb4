@@ -7,5 +7,5 @@ require('isomorphic-fetch');
 
 ReactDom.render(
   <EventsContainer />,
-  document.getElementById('event-items')
+  document.getElementById('event-items'),
 );
