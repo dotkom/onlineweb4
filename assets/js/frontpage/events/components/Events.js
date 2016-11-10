@@ -9,7 +9,7 @@ const Events = ({ mainEvents, smallEvents, setEventVisibility, eventTypes }) => 
     <div className="row clearfix hero">
       {
         mainEvents.map(event =>
-          <Event key={event.id} {...event} />,
+          <Event key={event.id} {...event} />,
         )
       }
     </div>
@@ -26,7 +26,9 @@ const Events = ({ mainEvents, smallEvents, setEventVisibility, eventTypes }) => 
 );
 
 Events.propTypes = {
+  eventTypes: EventsHeading.propTypes.eventTypes,
   mainEvents: PropTypes.arrayOf(PropTypes.shape(Event.propTypes)),
+  setEventVisibility: EventsHeading.propTypes.setEventVisibility,
   smallEvents: PropTypes.arrayOf(PropTypes.shape(Event.propTypes)),
 };
 

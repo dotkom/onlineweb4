@@ -24,4 +24,7 @@ const EventsHeading = ({ eventTypes, setEventVisibility }) => (
   </div>
 );
 
+EventsHeading.propTypes = EventFilter.propTypes;
+
+
 export default EventsHeading;

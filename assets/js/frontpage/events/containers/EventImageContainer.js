@@ -1,5 +1,7 @@
-import React, { Component } from 'react';
+import React, { Component, PropTypes } from 'react';
 import EventImage from '../components/EventImage';
+import CompanyPropTypes from '../proptypes/CompanyPropTypes';
+import ImagePropTypes from '../proptypes/ImagePropTypes';
 
 
 class EventImageContainer extends Component {
@@ -20,5 +22,13 @@ class EventImageContainer extends Component {
     return <EventImage {...this.props} images={this.mergeImages()} />;
   }
 }
+
+EventImageContainer.propTypes = {
+  company_event: PropTypes.arrayOf(PropTypes.shape({
+    company: PropTypes.shape(CompanyPropTypes),
+    event: PropTypes.number,
+  })),
+  image: PropTypes.shape(ImagePropTypes),
+};
 
 export default EventImageContainer;

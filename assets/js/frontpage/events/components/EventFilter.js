@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { PropTypes } from 'react';
 import { ButtonGroup, Button } from 'react-bootstrap';
 
 const EventFilter = ({ eventTypes, setEventVisibility }) => (
@@ -9,5 +9,16 @@ const EventFilter = ({ eventTypes, setEventVisibility }) => (
     }
   </ButtonGroup>
 );
+
+
+EventFilter.propTypes = {
+  eventTypes: PropTypes.arrayOf(PropTypes.shape({
+    display: PropTypes.bool.isRequired,
+    id: PropTypes.number.isRequired,
+    name: PropTypes.string.isRequired,
+  })).isRequired,
+  setEventVisibility: PropTypes.func.isRequired,
+};
+
 
 export default EventFilter;

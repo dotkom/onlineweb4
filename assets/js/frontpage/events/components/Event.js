@@ -1,5 +1,6 @@
 import React, { PropTypes } from 'react';
 import EventImageContainer from '../containers/EventImageContainer';
+import EventPropTypes from '../proptypes/EventPropTypes';
 
 const Event = ({ company_event, event_start, id, image, ingress_short, slug, title }) => (
   <div>
@@ -24,8 +25,10 @@ const Event = ({ company_event, event_start, id, image, ingress_short, slug, tit
 );
 
 Event.propTypes = {
-  description: PropTypes.string.isRequired,
-  title: PropTypes.string.isRequired,
+  id: EventPropTypes.id.isRequired,
+  ingress_short: EventPropTypes.ingress_short.isRequired,
+  slug: EventPropTypes.slug.isRequired,
+  title: EventPropTypes.title.isRequired,
 };
 
 export default Event;
