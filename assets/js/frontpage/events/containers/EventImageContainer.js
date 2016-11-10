@@ -6,16 +6,17 @@ import ImagePropTypes from '../proptypes/ImagePropTypes';
 
 class EventImageContainer extends Component {
   mergeImages() {
-    const images = [];
+    const { image, company_event } = this.props;
+    const eventImages = [];
     // Event images
-    if (this.props.image) {
-      images.push(this.props.image);
+    if (image) {
+      eventImages.push(image);
     }
     // Company images
-    for (const company of this.props.company_event) {
-      images.push(company.company.image);
-    }
-    return images;
+    const companyImages = company_event.map(company => (
+      company.company.image
+    ));
+    return [...eventImages, ...companyImages];
   }
 
   render() {
