@@ -222,7 +222,7 @@ class PaymentDelayHandler(Task):
     @staticmethod
     def send_notification_mail(payment_delay, unattend_deadline_passed):
         payment = payment_delay.payment
-        
+
         subject = _("Husk betaling for ") + payment.description()
 
         valid_to = payment_delay.valid_to.astimezone(tz('Europe/Oslo'))
