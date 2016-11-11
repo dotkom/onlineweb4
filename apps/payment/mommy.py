@@ -6,9 +6,9 @@ import logging
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.core.mail import EmailMessage
+from django.template.loader import render_to_string
 from django.utils import timezone
 from django.utils.translation import ugettext as _
-from django.template.loader import render_to_string
 from pytz import timezone as tz
 
 from apps.events.models import AttendanceEvent, Attendee
