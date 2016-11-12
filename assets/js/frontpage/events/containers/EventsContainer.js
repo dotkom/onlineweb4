@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import moment from 'moment';
 import Events from '../components/Events';
 
 class EventsContainer extends Component {
@@ -31,8 +32,8 @@ class EventsContainer extends Component {
   }
 
   fetchEvents() {
-    const api_url = `${this.API_URL}&format=json`;
-    fetch(api_url)
+    const apiUrl = `${this.API_URL}&format=json`;
+    fetch(apiUrl)
     .then(response =>
        response.json(),
     ).then((json) => {
@@ -47,8 +48,8 @@ class EventsContainer extends Component {
 
   fetchEventsByType(eventType) {
     // problem: other, flere eventtyper
-    const api_url = `${this.API_URL}&event_type=${eventType}&format=json`;
-    fetch(api_url)
+    const apiUrl = `${this.API_URL}&event_type=${eventType}&format=json`;
+    fetch(apiUrl)
     .then(response =>
        response.json(),
     ).then((json) => {
