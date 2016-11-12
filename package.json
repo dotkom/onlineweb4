@@ -43,6 +43,9 @@
   },
   "eslintConfig": {
     "extends": "airbnb",
+    "globals": {
+      "Urls": true
+    },
     "rules": {
       "react/jsx-filename-extension": [
         1,
