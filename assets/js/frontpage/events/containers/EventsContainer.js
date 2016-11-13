@@ -41,81 +41,62 @@ class EventsContainer extends Component {
     this.API_URL = `/api/v1/events/?event_end__gte=${moment().format('YYYY-MM-DD')}`;
     this.state = {
       events: [],
-      showKurs: true,
-      showBedpress: true,
-      showSocial: true,
-      showOther: true,
-      socialEvents: [],
-      bedpressEvents: [],
-      kursEvents: [],
-      otherEvents: [],
+      eventTypes: {
+        1: { id: 1, name: 'Sosialt', display: true, events: [] },
+        2: { id: 2, name: 'Bedriftspresentasjon', display: true, events: [] },
+        3: { id: 3, name: 'Kurs', display: true, events: [] },
+        4: { id: 4, name: 'Annet', display: true, events: [] },
+      },
     };
     this.setEventVisibility = this.setEventVisibility.bind(this);
     this.getVisibleEvents = this.getVisibleEvents.bind(this);
+
     this.fetchEvents();
-    this.eventTypes = [
-      { id: 1, name: 'Sosialt', display: this.state.showSocial },
-      { id: 2, name: 'Bedriftspresentasjon', display: this.state.showBedpress },
-      { id: 3, name: 'Kurs', display: this.state.showKurs },
-      { id: 4, name: 'Annet', display: this.state.showOther },
-    ];
-    this.eventTypes.forEach((eventType) => {
+    // Loop over event types
+    Object.keys(this.state.eventTypes).forEach((eventTypeId) => {
+      const eventType = this.state.eventTypes[eventTypeId];
       this.fetchEventsByType(eventType.id);
     });
   }
 
   getVisibleEvents() {
-    let visibleEvents = [];
-    if (this.state.showSocial) {
-      visibleEvents = visibleEvents.concat(this.state.socialEvents);
-    }
-    if (this.state.showBedpress) {
-      visibleEvents = visibleEvents.concat(this.state.bedpressEvents);
-    }
-    if (this.state.showKurs) {
-      visibleEvents = visibleEvents.concat(this.state.kursEvents);
-    }
-    if (this.state.showOther) {
-      visibleEvents = visibleEvents.concat(this.state.otherEvents);
-    }
+    const { eventTypes } = this.state;
+    const visibleEvents = Object.keys(eventTypes).reduce((events, eventTypeId) => {
+      const eventType = eventTypes[eventTypeId];
+      if (eventType.display) {
+        return [...events, ...eventType.events];
+      }
+      return events;
+    }, []);
+
     visibleEvents.sort(sortEvents);
     return visibleEvents;
   }
 
   setEventVisibility(e) {
-    switch (e.eventType.id) {
-      case 2:
-        this.setState({
-          showBedpress: !this.state.showBedpress,
-        });
-        break;
-      case 3:
-        this.setState({
-          showKurs: !this.state.showKurs,
-        });
-        break;
-      case 1:
-        this.setState({
-          showSocial: !this.state.showSocial,
-        });
-        break;
-      case 4:
-        this.setState({
-          showOther: !this.state.showOther,
-        });
-        break;
-      default:
-        break;
-    }
+    const eventTypeId = e.eventType.id;
+    this.setState({
+      eventTypes: Object.assign({}, this.state.eventTypes, {
+        [eventTypeId]: Object.assign({}, e.eventType, {
+          display: !e.eventType.display,
+        }),
+      }),
+    });
+  }
+
+  getEventTypes() {
+    const { eventTypes } = this.state;
+    // Turn object into array
+    return Object.keys(eventTypes).map(eventTypeId => (
+      eventTypes[eventTypeId]
+    ));
   }
 
   fetchEvents() {
     const apiUrl = `${this.API_URL}&format=json`;
     fetch(apiUrl)
-    .then(response =>
-       response.json(),
-    ).then((json) => {
-      this.visibleEvents = json.results;
+    .then(response => response.json())
+    .then((json) => {
       this.setState({
         events: json.results.map(apiEventsToEvents),
       });
@@ -123,23 +104,19 @@ class EventsContainer extends Component {
   }
 
   fetchEventsByType(eventType) {
-    // problem: other, flere eventtyper
     const apiUrl = `${this.API_URL}&event_type=${eventType}&format=json`;
     fetch(apiUrl)
     .then(response =>
        response.json(),
     ).then((json) => {
-      if (eventType === 1) {
-        this.state.socialEvents = json.results.map(apiEventsToEvents);
-      } else if (eventType === 2) {
-        this.state.bedpressEvents = json.results.map(apiEventsToEvents);
-      } else if (eventType === 3) {
-        this.state.kursEvents = json.results.map(apiEventsToEvents);
-      } else if (eventType > 3) {
-        this.state.otherEvents = json.results.map(apiEventsToEvents);
-      }
-    }).catch((e) => {
-      console.error('Failed to fetch events by type:', e);
+      const events = json.results.map(apiEventsToEvents);
+      this.setState({
+        eventTypes: Object.assign({}, this.state.eventTypes, {
+          [eventType]: Object.assign({}, this.state.eventTypes[eventType], {
+            events,
+          }),
+        }),
+      });
     });
   }
 
@@ -156,7 +133,7 @@ class EventsContainer extends Component {
       <Events
         mainEvents={this.mainEvents()} smallEvents={this.smallEvents()}
         setEventVisibility={this.setEventVisibility}
-        eventTypes={this.eventTypes}
+        eventTypes={this.getEventTypes()}
       />
     );
   }
