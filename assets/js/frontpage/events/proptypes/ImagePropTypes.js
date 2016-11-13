@@ -8,4 +8,4 @@ export default {
   md: PropTypes.string,
   sm: PropTypes.string,
   xs: PropTypes.string,
-}
+};
