@@ -126,7 +126,7 @@ TEMPLATES = [
                 "django.template.context_processors.tz",
                 "django.contrib.messages.context_processors.messages",
                 "sekizai.context_processors.sekizai", # Wiki
-                "onlineweb4.context_processors.analytics",
+                "onlineweb4.context_processors.context_settings",
             ],
             'debug': DEBUG,
         }
@@ -441,6 +441,8 @@ WEBPACK_LOADER = {
         'BUNDLE_DIR_NAME': 'webpack_bundles/'  # end with slash
     }
 }
+
+HOT_RELOAD = False
 
 # Remember to keep 'local' last, so it can override any setting.
 for settings_module in ['filebrowser', 'django_wiki', 'local']:  # local last

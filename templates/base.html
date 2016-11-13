@@ -228,7 +228,7 @@
         <script src="{{ STATIC_URL }}js/libs/konami.js"></script>
         <script src="{{ STATIC_URL }}js/christmas.js"></script>
         {% render_bundle 'vendor' %}
-        {% if debug %}
+        {% if HOT_RELOAD %}
         {% render_bundle 'dev' %}
         {% endif %}
     {% endblock %}
