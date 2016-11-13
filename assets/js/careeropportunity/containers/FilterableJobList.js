@@ -1,6 +1,5 @@
 import FilterContainer from '../containers/FilterContainer';
 import JobList from '../containers/JobList';
-import request from 'superagent';
 
 class FilterableJobList extends React.Component {
   constructor() {
