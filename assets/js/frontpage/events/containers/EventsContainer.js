@@ -2,6 +2,27 @@ import React, { Component } from 'react';
 import moment from 'moment';
 import Events from '../components/Events';
 
+const mergeEventImages = (eventImage, companyEvent) => {
+  const eventImages = [];
+  // Event images
+  if (eventImage) {
+    eventImages.push(eventImage);
+  }
+  // Company images
+  const companyImages = companyEvent.map(company => (
+    company.company.image
+  ));
+  return [...eventImages, ...companyImages];
+};
+
+const apiEventsToEvents = event => ({
+  eventUrl: `/events/${event.id}/${event.slug}`,
+  ingress: event.ingress_short,
+  startDate: event.event_start,
+  title: event.title,
+  images: mergeEventImages(event.image, event.company_event),
+});
+
 class EventsContainer extends Component {
   constructor(props) {
     super(props);
@@ -17,6 +38,7 @@ class EventsContainer extends Component {
       kursEvents: [],
       otherEvents: [],
     };
+    this.setEventVisibility = this.setEventVisibility.bind(this);
     this.fetchEvents();
     this.visibleEvents = this.state.events;
     this.eventTypes = [
@@ -54,13 +76,13 @@ class EventsContainer extends Component {
        response.json(),
     ).then((json) => {
       if (eventType === 1) {
-        this.state.socialEvents = json.results;
+        this.state.socialEvents = json.results.map(apiEventsToEvents);
       } else if (eventType === 2) {
-        this.state.bedpressEvents = json.results;
+        this.state.bedpressEvents = json.results.map(apiEventsToEvents);
       } else if (eventType === 3) {
-        this.state.kursEvents = json.results;
+        this.state.kursEvents = json.results.map(apiEventsToEvents);
       } else if (eventType > 3) {
-        this.state.otherEvents = json.results;
+        this.state.otherEvents = json.results.map(apiEventsToEvents);
       }
     }).catch((e) => {
       console.error('Failed to fetch events by type:', e);
@@ -132,7 +154,11 @@ class EventsContainer extends Component {
   render() {
     this.getVisibleEvents();
     return (
-      <Events mainEvents={this.mainEvents()} smallEvents={this.smallEvents()} setEventVisibility={this.setEventVisibility.bind(this)} eventTypes={this.eventTypes} />
+      <Events
+        mainEvents={this.mainEvents()} smallEvents={this.smallEvents()}
+        setEventVisibility={this.setEventVisibility}
+        eventTypes={this.eventTypes}
+      />
     );
   }
 }

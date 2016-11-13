@@ -17,7 +17,7 @@ const Events = ({ mainEvents, smallEvents, setEventVisibility, eventTypes }) => 
       <ul className="event-list clearfix">
         {
           smallEvents.map(event => (
-            <SmallEvent {...event} />
+            <SmallEvent key={event.id} {...event} />
           ))
         }
       </ul>
