@@ -19,7 +19,7 @@ const EventImage = ({ date, eventUrl, images }) => (
         ))
       }
     </Carousel>
-    <span className="hero-date">{ moment(date).lang('nb').format('DD. MMMM') }</span>
+    <span className="hero-date">{ moment(date).format('DD. MMMM') }</span>
   </div>
 );
 

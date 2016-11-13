@@ -4,7 +4,7 @@ import moment from 'moment';
 const SmallEvent = ({ eventUrl, startDate, title }) => (
   <li>
     <span>
-      {moment(startDate).lang('nb').format('DD.MM')}
+      {moment(startDate).format('DD.MM')}
     </span>
     <a href={eventUrl}>
       {title}
