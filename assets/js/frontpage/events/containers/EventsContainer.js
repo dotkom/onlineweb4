@@ -23,6 +23,18 @@ const apiEventsToEvents = event => ({
   images: mergeEventImages(event.image, event.company_event),
 });
 
+const sortEvents = (a, b) => {
+  // checks if the event is starting today or ongoing
+  if (moment().isAfter(a.event_start, 'day') && moment().isBefore(a.event_end)) {
+    return 1;
+  }
+  // checks which event comes first
+  if (moment(a.event_start).isBefore(b.event_start)) {
+    return 1;
+  }
+  return -1;
+};
+
 class EventsContainer extends Component {
   constructor(props) {
     super(props);
@@ -53,40 +65,23 @@ class EventsContainer extends Component {
     this.fetchEventsByType(4);
   }
 
-  fetchEvents() {
-    const apiUrl = `${this.API_URL}&format=json`;
-    fetch(apiUrl)
-    .then(response =>
-       response.json(),
-    ).then((json) => {
-      this.visibleEvents = json.results;
-      this.setState({
-        events: json.results,
-      });
-    }).catch((e) => {
-      console.error('Failed to fetch events:', e);
-    });
-  }
-
-  fetchEventsByType(eventType) {
-    // problem: other, flere eventtyper
-    const apiUrl = `${this.API_URL}&event_type=${eventType}&format=json`;
-    fetch(apiUrl)
-    .then(response =>
-       response.json(),
-    ).then((json) => {
-      if (eventType === 1) {
-        this.state.socialEvents = json.results.map(apiEventsToEvents);
-      } else if (eventType === 2) {
-        this.state.bedpressEvents = json.results.map(apiEventsToEvents);
-      } else if (eventType === 3) {
-        this.state.kursEvents = json.results.map(apiEventsToEvents);
-      } else if (eventType > 3) {
-        this.state.otherEvents = json.results.map(apiEventsToEvents);
-      }
-    }).catch((e) => {
-      console.error('Failed to fetch events by type:', e);
-    });
+  getVisibleEvents() {
+    const self = this;
+    let visibleEvents = [];
+    if (self.state.showSocial) {
+      visibleEvents = visibleEvents.concat(this.state.socialEvents);
+    }
+    if (self.state.showBedpress) {
+      visibleEvents = visibleEvents.concat(this.state.bedpressEvents);
+    }
+    if (self.state.showKurs) {
+      visibleEvents = visibleEvents.concat(this.state.kursEvents);
+    }
+    if (self.state.showOther) {
+      visibleEvents = visibleEvents.concat(this.state.otherEvents);
+    }
+    visibleEvents.sort(sortEvents);
+    this.visibleEvents = visibleEvents;
   }
 
   setEventVisibility(e) {
@@ -111,26 +106,44 @@ class EventsContainer extends Component {
         self.setState({
           showOther: !self.state.showOther,
         });
+        break;
+      default:
+        break;
     }
   }
 
-  getVisibleEvents() {
-    const self = this;
-    let visibleEvents = [];
-    if (self.state.showSocial) {
-      visibleEvents = visibleEvents.concat(this.state.socialEvents);
-    }
-    if (self.state.showBedpress) {
-      visibleEvents = visibleEvents.concat(this.state.bedpressEvents);
-    }
-    if (self.state.showKurs) {
-      visibleEvents = visibleEvents.concat(this.state.kursEvents);
-    }
-    if (self.state.showOther) {
-      visibleEvents = visibleEvents.concat(this.state.otherEvents);
-    }
-    this.sortEvents(visibleEvents);
-    this.visibleEvents = visibleEvents;
+  fetchEvents() {
+    const apiUrl = `${this.API_URL}&format=json`;
+    fetch(apiUrl)
+    .then(response =>
+       response.json(),
+    ).then((json) => {
+      this.visibleEvents = json.results;
+      this.setState({
+        events: json.results.map(apiEventsToEvents),
+      });
+    });
+  }
+
+  fetchEventsByType(eventType) {
+    // problem: other, flere eventtyper
+    const apiUrl = `${this.API_URL}&event_type=${eventType}&format=json`;
+    fetch(apiUrl)
+    .then(response =>
+       response.json(),
+    ).then((json) => {
+      if (eventType === 1) {
+        this.state.socialEvents = json.results.map(apiEventsToEvents);
+      } else if (eventType === 2) {
+        this.state.bedpressEvents = json.results.map(apiEventsToEvents);
+      } else if (eventType === 3) {
+        this.state.kursEvents = json.results.map(apiEventsToEvents);
+      } else if (eventType > 3) {
+        this.state.otherEvents = json.results.map(apiEventsToEvents);
+      }
+    }).catch((e) => {
+      console.error('Failed to fetch events by type:', e);
+    });
   }
 
   mainEvents() {
@@ -139,16 +152,6 @@ class EventsContainer extends Component {
 
   smallEvents() {
     return this.visibleEvents.slice(2, 10);
-  }
-
-  sortEvents(events) {
-    events.sort((a, b) =>
-       (
-        // checks if the event is starting today or ongoing
-        (moment().isAfter(a.event_start, 'day') && moment().isBefore(a.event_end)) ? 1 :
-        // checks which event comes first
-        moment(a.event_start).isBefore(b.event_start) ? 1 : -1),
-    );
   }
 
   render() {
