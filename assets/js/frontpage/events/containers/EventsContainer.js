@@ -51,60 +51,57 @@ class EventsContainer extends Component {
       otherEvents: [],
     };
     this.setEventVisibility = this.setEventVisibility.bind(this);
+    this.getVisibleEvents = this.getVisibleEvents.bind(this);
     this.fetchEvents();
-    this.visibleEvents = this.state.events;
     this.eventTypes = [
       { id: 1, name: 'Sosialt', display: this.state.showSocial },
       { id: 2, name: 'Bedriftspresentasjon', display: this.state.showBedpress },
       { id: 3, name: 'Kurs', display: this.state.showKurs },
       { id: 4, name: 'Annet', display: this.state.showOther },
     ];
-    this.fetchEventsByType(1);
-    this.fetchEventsByType(2);
-    this.fetchEventsByType(3);
-    this.fetchEventsByType(4);
+    this.eventTypes.forEach((eventType) => {
+      this.fetchEventsByType(eventType.id);
+    });
   }
 
   getVisibleEvents() {
-    const self = this;
     let visibleEvents = [];
-    if (self.state.showSocial) {
+    if (this.state.showSocial) {
       visibleEvents = visibleEvents.concat(this.state.socialEvents);
     }
-    if (self.state.showBedpress) {
+    if (this.state.showBedpress) {
       visibleEvents = visibleEvents.concat(this.state.bedpressEvents);
     }
-    if (self.state.showKurs) {
+    if (this.state.showKurs) {
       visibleEvents = visibleEvents.concat(this.state.kursEvents);
     }
-    if (self.state.showOther) {
+    if (this.state.showOther) {
       visibleEvents = visibleEvents.concat(this.state.otherEvents);
     }
     visibleEvents.sort(sortEvents);
-    this.visibleEvents = visibleEvents;
+    return visibleEvents;
   }
 
   setEventVisibility(e) {
-    const self = this;
     switch (e.eventType.id) {
       case 2:
-        self.setState({
-          showBedpress: !self.state.showBedpress,
+        this.setState({
+          showBedpress: !this.state.showBedpress,
         });
         break;
       case 3:
-        self.setState({
-          showKurs: !self.state.showKurs,
+        this.setState({
+          showKurs: !this.state.showKurs,
         });
         break;
       case 1:
-        self.setState({
-          showSocial: !self.state.showSocial,
+        this.setState({
+          showSocial: !this.state.showSocial,
         });
         break;
       case 4:
-        self.setState({
-          showOther: !self.state.showOther,
+        this.setState({
+          showOther: !this.state.showOther,
         });
         break;
       default:
@@ -147,15 +144,14 @@ class EventsContainer extends Component {
   }
 
   mainEvents() {
-    return this.visibleEvents.slice(0, 2);
+    return this.getVisibleEvents().slice(0, 2);
   }
 
   smallEvents() {
-    return this.visibleEvents.slice(2, 10);
+    return this.getVisibleEvents().slice(2, 10);
   }
 
   render() {
-    this.getVisibleEvents();
     return (
       <Events
         mainEvents={this.mainEvents()} smallEvents={this.smallEvents()}
