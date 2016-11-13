@@ -94,7 +94,7 @@ class EventsContainer extends Component {
 
   fetchEvents() {
     const apiUrl = `${this.API_URL}&format=json`;
-    fetch(apiUrl)
+    fetch(apiUrl, { credentials: 'same-origin' })
     .then(response => response.json())
     .then((json) => {
       this.setState({
@@ -105,7 +105,7 @@ class EventsContainer extends Component {
 
   fetchEventsByType(eventType) {
     const apiUrl = `${this.API_URL}&event_type=${eventType}&format=json`;
-    fetch(apiUrl)
+    fetch(apiUrl, { credentials: 'same-origin' })
     .then(response =>
        response.json(),
     ).then((json) => {
