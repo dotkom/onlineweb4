@@ -19,7 +19,9 @@ const EventsHeading = ({ eventTypes, setEventVisibility }) => (
       </div>
     </div>
     <div className="row">
-      <EventFilter eventTypes={eventTypes} setEventVisibility={setEventVisibility} />
+      <div className="col-lg-12">
+        <EventFilter eventTypes={eventTypes} setEventVisibility={setEventVisibility} />
+      </div>
     </div>
   </div>
 );
