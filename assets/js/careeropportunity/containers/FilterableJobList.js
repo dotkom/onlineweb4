@@ -1,5 +1,8 @@
 import FilterContainer from '../containers/FilterContainer';
 import JobList from '../containers/JobList';
+import moment from 'moment';
+
+moment.locale('nb');
 
 const mapData = job => ({
   locations: job.location.map(location => location.name).reverse(), // Locations contains name and slug in a reversed order
