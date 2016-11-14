@@ -10,7 +10,7 @@ const Job = ({ locations, deadline, companyImage, companyName, jobTitle, ingress
       <div className="col-xs-12 col-md-4">
         <a href="/careeropportunity/4/">
           <picture>
-            <source srcset={companyImage.lg} media="(max-width: 992px)" />
+            <source srcSet={companyImage.lg} media="(max-width: 992px)" />
             <img src={companyImage.md} alt="Firmalogo" />
           </picture>
         </a>
