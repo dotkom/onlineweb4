@@ -25,12 +25,6 @@ class FilterableJobList extends React.Component {
         locations: [],
         jobTypes: [],
       },
-
-      selectedTags: {
-        companies: {},
-        locations: {},
-        jobTypes: {},
-      }
     };
 
     this.handleTagChange = this.handleTagChange.bind(this);
@@ -73,14 +67,19 @@ class FilterableJobList extends React.Component {
         jobs.push(Object.assign({}, { tags: tagData }, mapData(job)));
       });
 
+      let tags = {
+        companies: {},
+        locations: {},
+        jobTypes: {},
+      };
+
+      companies.forEach(company => tags.companies[company] = { display: false, name: company });
+      locations.forEach(location => tags.locations[location] = { display: false, name: location });
+      jobTypes.forEach(jobType => tags.jobTypes[jobType] = { display: false, name: jobType });
+
       self.setState({
         jobs: jobs,
-
-        tags: {
-          companies: companies,
-          locations: locations,
-          jobTypes: jobTypes,
-        },
+        tags: tags,
       });
     });
   }
@@ -115,14 +114,14 @@ class FilterableJobList extends React.Component {
     this.setState(function(prevState) {
       let updatedState = {};
 
-      for (let key in prevState.selectedTags) {
-        updatedState[key] = prevState.selectedTags[key];
+      for (let key in prevState.tags) {
+        updatedState[key] = prevState.tags[key];
       }
 
-      updatedState[type][tag] = !updatedState[type][tag];
+      updatedState[type][tag].display = !updatedState[type][tag].display;
 
       return {
-        selectedTags: updatedState
+        tags: updatedState
       };
     });
   }
@@ -138,7 +137,7 @@ class FilterableJobList extends React.Component {
   // Reset all buttons to their initial state.
   handleReset() {
     this.setState({
-      selectedTags: {
+      tags: {
         companies: {},
         locations: {},
         jobTypes: {}
@@ -158,8 +157,8 @@ class FilterableJobList extends React.Component {
         </div>
 
         <div className="row">
-          <FilterContainer tags={this.state.tags} handleTagChange={this.handleTagChange} handleReset={this.handleReset} selectedTags={this.state.selectedTags} />
-          <JobList jobs={this.state.jobs} selectedTags={this.state.selectedTags} />
+          <FilterContainer tags={this.state.tags} handleTagChange={this.handleTagChange} handleReset={this.handleReset} selectedTags={this.state.tags} />
+          <JobList jobs={this.state.jobs} selectedTags={this.state.tags} />
         </div>
       </div>
     );
