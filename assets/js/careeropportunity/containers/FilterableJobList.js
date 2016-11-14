@@ -70,7 +70,7 @@ class FilterableJobList extends React.Component {
           locations: job.location.map((location) => location.name),
         };
 
-        jobs.push(Object.assign({}, tagData, mapData(job)));
+        jobs.push(Object.assign({}, { tags: tagData }, mapData(job)));
       });
 
       self.setState({
