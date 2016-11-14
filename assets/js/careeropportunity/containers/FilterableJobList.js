@@ -84,38 +84,24 @@ class FilterableJobList extends React.Component {
     });
   }
 
-  selectTagHandler(type, updatedTag) {
-    this.setState(prevState => {
-      let updatedState = {};
-
-      for (let key in prevState.selectedTags) {
-        if (key === type) {
-          updatedState[type] = {};
-
-          for (let tag in prevState.selectedTags[type]) {
-            updatedState[type][tag] = false;
-          }
-        } else {
-          updatedState[key] = prevState.selectedTags[key];
-        }
-      }
-
-      updatedState[type][updatedTag] = true;
-
-      return {
-        selectedTags: updatedState
-      }
-    });
-  }
-
-  defaultTagHandler(type, tag) {
+  handleTagChange(type, tag, switchMode) {
     let self = this;
 
     this.setState(function(prevState) {
       let updatedState = {};
 
       for (let key in prevState.tags) {
-        updatedState[key] = prevState.tags[key];
+        // If switchMode is on, all the other tags will be disabled - only one
+        // tag may be enabled at once
+        if (switchMode && key === type) {
+          updatedState[type] = {};
+
+          for (let tag in prevState.selectedTags[type]) {
+            updatedState[type][tag] = false;
+          }
+        } else {
+          updatedState[key] = prevState.tags[key];
+        }
       }
 
       updatedState[type][tag].display = !updatedState[type][tag].display;
@@ -124,14 +110,6 @@ class FilterableJobList extends React.Component {
         tags: updatedState
       };
     });
-  }
-
-  handleTagChange(type, tag) {
-    if (type === 'deadlines') {
-      this.selectTagHandler(type, tag);
-    } else {
-      this.defaultTagHandler(type, tag);
-    }
   }
 
   // Reset all buttons to their initial state.
