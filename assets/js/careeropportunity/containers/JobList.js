@@ -15,7 +15,7 @@ class JobContainer extends React.Component {
         let typeAllDisabled = true;
 
         for (let tag in this.props.selectedTags[type]) {
-          if (this.props.selectedTags[type][tag]) {
+          if (this.props.selectedTags[type][tag].display) {
             typeAllDisabled = false;
 
             if (Array.isArray(job.tags[type])) {
