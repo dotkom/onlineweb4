@@ -23,13 +23,13 @@ class FilterableJobList extends React.Component {
       tags: {
         companies: [],
         locations: [],
-        jobTypes: []
+        jobTypes: [],
       },
 
       selectedTags: {
         companies: {},
         locations: {},
-        jobTypes: {}
+        jobTypes: {},
       }
     };
 
@@ -79,7 +79,7 @@ class FilterableJobList extends React.Component {
         tags: {
           companies: companies,
           locations: locations,
-          jobTypes: jobTypes
+          jobTypes: jobTypes,
         },
       });
     });
