@@ -29,59 +29,59 @@ class FilterableJobList extends React.Component {
 
     this.handleTagChange = this.handleTagChange.bind(this);
     this.handleReset = this.handleReset.bind(this);
+    this.loadData = this.loadData.bind(this);
   }
 
+  loadData(data) {
+    let companies = [];
+    let locations = [];
+    let jobTypes = [];
+    let jobs = [];
 
-  componentDidMount() {
-    const self = this;
+    data.results.forEach(function(job) {
+      if (companies.indexOf(job.company.name) < 0) {
+        companies.push(job.company.name);
+      }
 
-    fetch(this.API_URL).then(response => {
-      return response.json();
-    }).then(data => {
-      let companies = [];
-      let locations = [];
-      let jobTypes = [];
-      let jobs = [];
+      if (jobTypes.indexOf(job.employment.name) < 0) {
+        jobTypes.push(job.employment.name);
+      }
 
-      data.results.forEach(function(job) {
-        if (companies.indexOf(job.company.name) < 0) {
-          companies.push(job.company.name);
+      job.location.forEach(function(location) {
+        if (locations.indexOf(location.name) < 0) {
+          locations.push(location.name);
         }
-
-        if (jobTypes.indexOf(job.employment.name) < 0) {
-          jobTypes.push(job.employment.name);
-        }
-
-        job.location.forEach(function(location) {
-          if (locations.indexOf(location.name) < 0) {
-            locations.push(location.name);
-          }
-        });
-
-        let tagData = {
-          companies: job.company.name,
-          jobTypes: job.employment.name,
-          locations: job.location.map((location) => location.name),
-        };
-
-        jobs.push(Object.assign({}, { tags: tagData }, mapData(job)));
       });
 
-      let tags = {
-        companies: {},
-        locations: {},
-        jobTypes: {},
+      let tagData = {
+        companies: job.company.name,
+        jobTypes: job.employment.name,
+        locations: job.location.map((location) => location.name),
       };
 
-      companies.forEach(company => tags.companies[company] = { display: false, name: company });
-      locations.forEach(location => tags.locations[location] = { display: false, name: location });
-      jobTypes.forEach(jobType => tags.jobTypes[jobType] = { display: false, name: jobType });
-
-      self.setState({
-        jobs: jobs,
-        tags: tags,
-      });
+      jobs.push(Object.assign({}, { tags: tagData }, mapData(job)));
     });
+
+    let tags = {
+      companies: {},
+      locations: {},
+      jobTypes: {},
+    };
+
+    companies.forEach(company => tags.companies[company] = { display: false, name: company });
+    locations.forEach(location => tags.locations[location] = { display: false, name: location });
+    jobTypes.forEach(jobType => tags.jobTypes[jobType] = { display: false, name: jobType });
+
+    this.setState({
+      jobs: jobs,
+      tags: tags,
+    });
+  }
+
+  componentDidMount() {
+    fetch(this.API_URL).then(response => {
+      return response.json();
+    }).then(this.loadData);
   }
 
   handleTagChange(type, tag, switchMode) {
