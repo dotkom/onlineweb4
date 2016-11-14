@@ -1,6 +1,16 @@
 import FilterContainer from '../containers/FilterContainer';
 import JobList from '../containers/JobList';
 
+const mapData = job => ({
+  locations: job.location.map(location => location.name).reverse(), // Locations contains name and slug in a reversed order
+  deadline: job.deadline ? moment(job.deadline).format('Do MMMM YYYY, HH:mm') : 'Ikke spesifisert', // Format and give default value
+  companyImage: job.company.image,
+  companyName: job.company.name,
+  jobTitle: job.title,
+  ingress: job.ingress,
+  jobType: job.employment.name,
+});
+
 class FilterableJobList extends React.Component {
   constructor() {
     super();
@@ -54,12 +64,13 @@ class FilterableJobList extends React.Component {
           }
         });
 
-        jobs.push({
+        let tagData = {
           companies: job.company.name,
           jobTypes: job.employment.name,
           locations: job.location.map((location) => location.name),
-          data: job
-        });
+        };
+
+        jobs.push(Object.assign({}, tagData, mapData(job)));
       });
 
       self.setState({
@@ -69,7 +80,7 @@ class FilterableJobList extends React.Component {
           companies: companies,
           locations: locations,
           jobTypes: jobTypes
-        }
+        },
       });
     });
   }

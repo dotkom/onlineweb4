@@ -35,7 +35,7 @@ class JobContainer extends React.Component {
 
       if (canShow) {
         return (
-          <Job jobData={job.data} />
+          <Job {...job} />
         );
       }
     }.bind(this));
