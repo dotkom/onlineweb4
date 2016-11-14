@@ -6,7 +6,7 @@ class JobContainer extends React.Component {
   }
 
   render() {
-    let jobs = this.props.jobs.map(function(job) {
+    let jobs = this.props.jobs.map(function(job, i) {
       let canShow = true;
 
       for (let type in this.props.selectedTags) {
@@ -35,7 +35,7 @@ class JobContainer extends React.Component {
 
       if (canShow) {
         return (
-          <Job {...job} />
+          <Job {...job} key={i} /> // TODO: Store a key while JSON parsing?
         );
       }
     }.bind(this));

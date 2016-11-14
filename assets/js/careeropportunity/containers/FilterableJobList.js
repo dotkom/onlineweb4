@@ -127,6 +127,7 @@ class FilterableJobList extends React.Component {
   }
 
   render() {
+    console.log('Rerendering FilterableJobList', this.state);
     return (
       <div className="container">
         <div className="row">
