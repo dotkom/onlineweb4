@@ -1,7 +1,3 @@
-import moment from 'moment';
-
-moment.locale('nb');
-
 const Job = ({ locations, deadline, companyImage, companyName, jobTitle, ingress, jobName }) => {
   if (locations.length >= 2) {
     locations = `${locations.slice(0, -1).join(', ')} and ${locations[locations.length - 1]}`;
