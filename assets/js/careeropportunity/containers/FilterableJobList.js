@@ -5,7 +5,7 @@ import moment from 'moment';
 moment.locale('nb');
 
 const mapData = job => ({
-  locations: job.location.map(location => location.name).reverse(), // Locations contains name and slug in a reversed order
+  locations: job.location.map(location => location.name), // Locations contains name and slug
   deadline: job.deadline ? moment(job.deadline).format('Do MMMM YYYY, HH:mm') : 'Ikke spesifisert', // Format and give default value
   companyImage: job.company.image,
   companyName: job.company.name,
