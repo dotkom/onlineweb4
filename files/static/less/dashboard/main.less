@@ -213,11 +213,12 @@ body {
 }
 /*left side - contains sidebar*/
 .left-side {
-  position: absolute;
+  position: fixed;
   width: 220px;
   top: 0;
   bottom: 0;
   background-color: @sidebar-bg;
+  overflow-y: auto;
 }
 @media screen and (min-width: 992px) {
   /*Right side strech mode*/
@@ -431,17 +432,18 @@ img {
   .row-offcanvas-right .sidebar-offcanvas {
     right: -220px;
   }
-  .row-offcanvas-left .sidebar-offcanvas {
+  .row-offcanvas-left .left-side {
     left: -220px;
   }
   .row-offcanvas-right.active {
     right: 220px;
   }
-  .row-offcanvas-left.active {
-    left: 220px;
+  .row-offcanvas-left.active .right-side {
+    margin-left: 220px;
+    width: 100%;
   }
-  .sidebar-offcanvas {
-    left: 0;
+  .row-offcanvas-left.active .left-side {
+    left: 0px;
   }
   body.fixed .sidebar-offcanvas {
     margin-top: 50px;
