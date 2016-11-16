@@ -7,6 +7,7 @@ class FilterContainer extends React.Component {
     this.handleCompanyChange = this.handleCompanyChange.bind(this);
     this.handleJobTypeChange = this.handleJobTypeChange.bind(this);
     this.handleLocationChange = this.handleLocationChange.bind(this);
+    this.handleDeadlineChange = this.handleDeadlineChange.bind(this);
   }
 
   handleCompanyChange(tag) {
@@ -21,6 +22,10 @@ class FilterContainer extends React.Component {
     this.props.handleTagChange('locations', tag);
   }
 
+  handleDeadlineChange(tag) {
+    this.props.handleTagChange('deadlines', tag, true);
+  }
+
   render() {
     return (
       <div className="col-xs-12 col-sm-12 col-md-3 pull-right">
@@ -28,6 +33,7 @@ class FilterContainer extends React.Component {
           <TagContainer heading="Bedrifter" tags={this.props.tags.companies} selectedTags={this.props.selectedTags.companies} handleChange={this.handleCompanyChange} />
           <TagContainer heading="Typer" tags={this.props.tags.jobTypes} selectedTags={this.props.selectedTags.jobTypes} handleChange={this.handleJobTypeChange} />
           <TagContainer heading="Sted" tags={this.props.tags.locations} selectedTags={this.props.selectedTags.locations} handleChange={this.handleLocationChange} />
+          <TagContainer heading="Frist" tags={this.props.tags.deadlines} selectedTags={this.props.selectedTags.deadlines} handleChange={this.handleDeadlineChange} />
           <button onClick={this.props.handleReset}>Reset</button>
         </div>
       </div>
