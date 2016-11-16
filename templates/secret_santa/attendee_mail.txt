@@ -1,0 +1,8 @@
+Hei.
+Du har blitt tildelt {{ user_to }} som du skal være secret santa for
+
+Dersom du har spørsmål kan du sende mail til {{ mail_committee }}
+
+
+Mvh
+Linjeforeningen Online
