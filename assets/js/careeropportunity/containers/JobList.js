@@ -7,7 +7,7 @@ class JobContainer extends React.Component {
 
   defaultCheck(job, id, tag) {
     if (Array.isArray(job.tags[id])) {
-      if (job.tags[id].indexOf(tag.id) >= 0) {
+      if (job.tags[id].indexOf(tag.name) >= 0) {
         return true;
       }
     } else if (job.tags[id] === tag.id) {
