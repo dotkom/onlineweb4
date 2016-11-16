@@ -3,8 +3,6 @@ pipeline:
     image: registry.online.ntnu.no/dotkom/onlineweb4-testbase
     when:
       event: pull_request
-    environment:
-      CODECOV_TOKEN: $$CODECOV_TOKEN
     commands:
       - npm install
       - ./node_modules/.bin/eslint assets/js/
