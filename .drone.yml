@@ -19,5 +19,8 @@ pipeline:
     host: nansen.online.ntnu.no
     user: root
     port: 22
+    when:
+      event: push
+      branch: develop
     script:
       - /srv/www/ow4dev/deploy.sh
