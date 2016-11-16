@@ -28,20 +28,20 @@ class JobContainer extends React.Component {
     let jobs = this.props.jobs.map(function(job, i) {
       let canShow = true;
 
-      for (let type in this.props.selectedTags) {
+      for (let type in this.props.tags) {
         let typeCanShow = false;
 
         let typeAllDisabled = true;
 
-        for (let key in this.props.selectedTags[type]) {
+        for (let key in this.props.tags[type]) {
           key = parseInt(key, 10);
 
-          if (this.props.selectedTags[type][key].display) {
+          if (this.props.tags[type][key].display) {
             typeAllDisabled = false;
 
-            let check = this.props.selectedTags[type][key].deadline ? self.deadlineCheck : self.defaultCheck;
+            let check = this.props.tags[type][key].deadline ? self.deadlineCheck : self.defaultCheck;
 
-            if (check(job, type, this.props.selectedTags[type][key])) {
+            if (check(job, type, this.props.tags[type][key])) {
               typeCanShow = true;
             }
           }

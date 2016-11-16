@@ -163,8 +163,8 @@ class FilterableJobList extends React.Component {
         </div>
 
         <div className="row">
-          <FilterContainer tags={this.state.tags} handleTagChange={this.handleTagChange} handleReset={this.handleReset} selectedTags={this.state.tags} />
-          <JobList jobs={this.state.jobs} selectedTags={this.state.tags} />
+          <FilterContainer tags={this.state.tags} handleTagChange={this.handleTagChange} handleReset={this.handleReset} />
+          <JobList jobs={this.state.jobs} tags={this.state.tags} />
         </div>
       </div>
     );
