@@ -5,26 +5,43 @@ class JobContainer extends React.Component {
     super();
   }
 
+  defaultCheck(job, id, tag) {
+    if (Array.isArray(job.tags[id])) {
+      if (job.tags[id].indexOf(tag.id) >= 0) {
+        return true;
+      }
+    } else if (job.tags[id] === tag.id) {
+      return true;
+    }
+
+    return false;
+  }
+
+  deadlineCheck(job, id, tag) {
+    let deadline = new Date(job.deadline);
+    return deadline instanceof Date ? deadline - Date.now() <= tag.deadline: false;
+  }
+
   render() {
+    let self = this;
+
     let jobs = this.props.jobs.map(function(job, i) {
       let canShow = true;
 
-      for (let id in this.props.selectedTags) {
+      for (let type in this.props.selectedTags) {
         let typeCanShow = false;
 
         let typeAllDisabled = true;
 
-        for (let tag in this.props.selectedTags[id]) {
-          tag = parseInt(tag, 10);
+        for (let key in this.props.selectedTags[type]) {
+          key = parseInt(key, 10);
 
-          if (this.props.selectedTags[id][tag].display) {
+          if (this.props.selectedTags[type][key].display) {
             typeAllDisabled = false;
 
-            if (Array.isArray(job.tags[id])) {
-              if (job.tags[id].indexOf(tag) >= 0) {
-                typeCanShow = true;
-              }
-            } else if (job.tags[id] === tag) {
+            let check = this.props.selectedTags[type][key].deadline ? self.deadlineCheck : self.defaultCheck;
+
+            if (check(job, type, this.props.selectedTags[type][key])) {
               typeCanShow = true;
             }
           }

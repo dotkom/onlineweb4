@@ -27,6 +27,7 @@ class FilterableJobList extends React.Component {
         companies: [],
         locations: [],
         jobTypes: [],
+        deadlines: [],
       },
     };
 
@@ -36,6 +37,8 @@ class FilterableJobList extends React.Component {
   }
 
   loadData(data) {
+    const self = this;
+
     let companies = [];
     let locations = [];
     let jobTypes = [];
@@ -69,6 +72,22 @@ class FilterableJobList extends React.Component {
       companies: {},
       locations: {},
       jobTypes: {},
+
+      deadlines: {
+        0: {
+          id: 0,
+          name: 'Maks 1 uke',
+          display: false,
+          deadline: 1000 * 60 * 60 * 24 * 7,
+        },
+
+        1: {
+          id: 1,
+          name: 'Maks 1 måned',
+          display: false,
+          deadline: 1000 * 60 * 60 * 24 * 7 * 4,
+        },
+      },
     };
 
     companies.forEach(company => tags.companies[company.id] = { id: company.id, display: false, name: company.name });
@@ -79,6 +98,9 @@ class FilterableJobList extends React.Component {
       jobs: jobs,
       tags: tags,
     });
+
+    // Store a copy of the tags for use in the reset button.
+    this.defaultTags = JSON.parse(JSON.stringify(tags));
   }
 
   componentDidMount() {
@@ -87,7 +109,8 @@ class FilterableJobList extends React.Component {
     }).then(this.loadData);
   }
 
-  handleTagChange(type, tag, switchMode) {
+  // TODO: Concerned about deep cloning.
+  handleTagChange(type, changedTag, switchMode) {
     let self = this;
 
     this.setState(function(prevState) {
@@ -97,17 +120,23 @@ class FilterableJobList extends React.Component {
         // If switchMode is on, all the other tags will be disabled - only one
         // tag may be enabled at once
         if (switchMode && key === type) {
-          updatedState[type] = {};
+          updatedState[type] = Object.assign({}, prevState.tags[type]);
 
-          for (let tag in prevState.selectedTags[type]) {
-            updatedState[type][tag] = false;
+          for (let tag in prevState.tags[type]) {
+            if (tag === changedTag) {
+              updatedState[type][tag].display = !updatedState[type][tag].display;
+            } else {
+               updatedState[type][tag].display = false;
+             }
           }
         } else {
-          updatedState[key] = prevState.tags[key];
+          updatedState[key] = Object.assign({}, prevState.tags[key]);
         }
       }
 
-      updatedState[type][tag].display = !updatedState[type][tag].display;
+      if (!switchMode) {
+        updatedState[type][changedTag].display = !updatedState[type][changedTag].display;
+      }
 
       return {
         tags: updatedState
@@ -118,11 +147,7 @@ class FilterableJobList extends React.Component {
   // Reset all buttons to their initial state.
   handleReset() {
     this.setState({
-      tags: {
-        companies: {},
-        locations: {},
-        jobTypes: {}
-      }
+      tags: this.defaultTags,
     });
   }
 
