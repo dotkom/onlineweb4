@@ -9,7 +9,7 @@ from django.contrib.auth.models import Group
 from django.contrib.contenttypes.models import ContentType
 from django.core import validators
 from django.db import models
-from django.db.models import SET_NULL, Case, Q, Value, When
+from django.db.models import Q, SET_NULL, Case, Value, When
 from django.template.defaultfilters import slugify
 from django.utils import timezone
 from django.utils.translation import ugettext as _
