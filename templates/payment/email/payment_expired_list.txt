@@ -1,0 +1,2 @@
+Følgende brukere mangler betaling på {{ payment_description }}:{% for user in payment_users %}
+- {{ user.get_full_name }}{% endfor %}
