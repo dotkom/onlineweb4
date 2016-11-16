@@ -235,6 +235,10 @@
                             {% endif %}
 
                             {% if attendance_event %}
+                                {% if user_status and user_status.status_code and user_status.status_code == 501 %}
+                                    <p class="help-text">Påmeldingen åpner {{ attendance_event.registration_start|date:"H.i d. M Y" }}</p>
+                                {% endif %}
+
                                 <p class="help-text">Avmeldingsfristen
                                     {% if attendance_event.unattend_deadline > now %}
                                         er
