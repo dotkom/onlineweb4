@@ -147,7 +147,9 @@ class FilterableJobList extends React.Component {
   // Reset all buttons to their initial state.
   handleReset() {
     this.setState({
-      tags: this.defaultTags,
+      // We need a deep clone because just using this.defaultTags here
+      // will make the reset button only work once due to this.defaultTags updating.
+      tags: JSON.parse(JSON.stringify(this.defaultTags)),
     });
   }
 
