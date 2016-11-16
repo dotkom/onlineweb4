@@ -15,7 +15,7 @@ pipeline:
 
   deploy:
     image: plugins/ssh
-    host: nansen.dotkom
+    host: nansen.online.ntnu.no
     user: root
     port: 22
     script:
