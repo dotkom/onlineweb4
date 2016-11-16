@@ -3,8 +3,6 @@ pipeline:
     image: registry.online.ntnu.no/dotkom/onlineweb4-testbase
     when:
       event: pull_request
-    environment:
-      CODECOV_TOKEN: $$CODECOV_TOKEN
     commands:
       - cp onlineweb4/settings/example-local.py onlineweb4/settings/local.py
       - tox -e isort
