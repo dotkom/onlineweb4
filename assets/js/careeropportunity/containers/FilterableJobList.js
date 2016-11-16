@@ -43,22 +43,22 @@ class FilterableJobList extends React.Component {
 
     data.results.forEach(function(job) {
       if (companies.indexOf(job.company.name) < 0) {
-        companies.push(job.company.name);
+        companies.push(job.company);
       }
 
       if (jobTypes.indexOf(job.employment.name) < 0) {
-        jobTypes.push(job.employment.name);
+        jobTypes.push(job.employment);
       }
 
       job.location.forEach(function(location) {
         if (locations.indexOf(location.name) < 0) {
-          locations.push(location.name);
+          locations.push(location);
         }
       });
 
       let tagData = {
-        companies: job.company.name,
-        jobTypes: job.employment.name,
+        companies: job.company.id,
+        jobTypes: job.employment.id,
         locations: job.location.map((location) => location.name),
       };
 
@@ -71,9 +71,9 @@ class FilterableJobList extends React.Component {
       jobTypes: {},
     };
 
-    companies.forEach(company => tags.companies[company] = { display: false, name: company });
-    locations.forEach(location => tags.locations[location] = { display: false, name: location });
-    jobTypes.forEach(jobType => tags.jobTypes[jobType] = { display: false, name: jobType });
+    companies.forEach(company => tags.companies[company.id] = { id: company.id, display: false, name: company.name });
+    jobTypes.forEach(jobType => tags.jobTypes[jobType.id] = { id: jobType.id, display: false, name: jobType.name });
+    locations.forEach((location, i) => tags.locations[i] = { id: i, display: false, name: location.name });
 
     this.setState({
       jobs: jobs,
@@ -127,7 +127,6 @@ class FilterableJobList extends React.Component {
   }
 
   render() {
-    console.log('Rerendering FilterableJobList', this.state);
     return (
       <div className="container">
         <div className="row">
