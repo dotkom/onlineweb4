@@ -1,6 +1,14 @@
 import django_filters
+from django_filters.filters import Lookup
 
 from apps.events.models import Event
+
+
+class ListFilter(django_filters.Filter):
+    # https://github.com/carltongibson/django-filter/issues/137#issuecomment-37820702
+    def filter(self, qs, value):
+        value_list = value.split(u',')
+        return super(ListFilter, self).filter(qs, Lookup(value_list, 'in'))
 
 
 class EventDateFilter(django_filters.FilterSet):
@@ -9,6 +17,7 @@ class EventDateFilter(django_filters.FilterSet):
     event_end__gte = django_filters.DateTimeFilter(name='event_end', lookup_type='gte')
     event_end__lte = django_filters.DateTimeFilter(name='event_end', lookup_type='lte')
     attendance_event__isnull = django_filters.BooleanFilter(name='attendance_event', lookup_type='isnull')
+    event_type = ListFilter()
 
     class Meta:
         model = Event

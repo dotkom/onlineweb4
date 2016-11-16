@@ -45,7 +45,7 @@ class EventsContainer extends Component {
         1: { id: 1, name: 'Sosialt', display: true, events: [] },
         2: { id: 2, name: 'Bedriftspresentasjon', display: true, events: [] },
         3: { id: 3, name: 'Kurs', display: true, events: [] },
-        4: { id: 4, name: 'Annet', display: true, events: [] },
+        other: { id: 'other', name: 'Annet', display: true, events: [] },
       },
     };
     this.setEventVisibility = this.setEventVisibility.bind(this);
@@ -104,7 +104,12 @@ class EventsContainer extends Component {
   }
 
   fetchEventsByType(eventType) {
-    const apiUrl = `${this.API_URL}&event_type=${eventType}&format=json`;
+    let apiUrl = `${this.API_URL}&format=json&event_type=`;
+    if (eventType === 'other') {
+      apiUrl += '4,5,6,7';
+    } else {
+      apiUrl += eventType;
+    }
     fetch(apiUrl, { credentials: 'same-origin' })
     .then(response =>
        response.json(),
