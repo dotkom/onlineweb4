@@ -1,31 +1,22 @@
-build:
-    tests:
-        when:
-            event: pull_request
-        image: registry.online.ntnu.no/dotkom/onlineweb4-testbase
-        environment:
-          CODECOV_TOKEN: $$CODECOV_TOKEN
-        commands:
-            - cp onlineweb4/settings/example-local.py onlineweb4/settings/local.py
-            - tox -e isort
-            - tox -e flake8
-            - tox -e tests
-            - pip install codecov
-            - codecov
-        auth_config:
-            username: $$REGISTRY_USERNAME
-            password: $$REGISTRY_PASSWORD
-            email: dotkom@online.ntnu.no
-        volumes:
-            - /tmp/drone/ow4test-cache/.tox:/drone/src/github.com/dotKom/onlineweb4/.tox
-deploy:
-    ssh:
-        when:
-            branch: develop
-            event: push
-        host: nansen.dotkom
-        port: 22
-        user: root
-        commands:
-            - /srv/www/ow4dev/deploy.sh
+pipeline:
+  test:
+    image: registry.online.ntnu.no/dotkom/onlineweb4-testbase
+    when:
+      event: pull_request
+    environment:
+      CODECOV_TOKEN: $$CODECOV_TOKEN
+    commands:
+      - cp onlineweb4/settings/example-local.py onlineweb4/settings/local.py
+      - tox -e isort
+      - tox -e flake8
+      - tox -e tests
+      - pip install codecov
+      - codecov
 
+  deploy:
+    image: plugins/ssh
+    host: nansen.dotkom
+    user: root
+    port: 22
+    script:
+      - /srv/www/ow4dev/deploy.sh
