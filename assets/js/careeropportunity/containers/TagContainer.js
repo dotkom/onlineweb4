@@ -8,8 +8,8 @@ class TagContainer extends React.Component {
   render() {
     const self = this;
 
-    let tags = Object.keys(this.props.selectedTags).map((tag, i) => (
-      <Tag key={i} selected={self.props.selectedTags[tag].display} handleChange={self.props.handleChange} title={self.props.selectedTags[tag].name} />
+    let tags = Object.keys(this.props.selectedTags).map(id => (
+      <Tag key={id} selected={self.props.selectedTags[id].display} handleChange={self.props.handleChange.bind(self, id)} title={self.props.selectedTags[id].name} />
     ));
 
     return (
