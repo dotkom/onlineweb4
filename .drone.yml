@@ -9,7 +9,7 @@ pipeline:
       - tox -e flake8
       - tox -e tests
       - pip install codecov
-      - codecov
+      - codecov -t $CODECOV_TOKEN
 
   deploy:
     image: plugins/ssh
