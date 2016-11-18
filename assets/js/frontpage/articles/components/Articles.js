@@ -1,6 +1,7 @@
 import React from 'react';
 import ArticlesHeading from './ArticlesHeading';
 import MainArticle from './MainArticle';
+import SmallArticle from './SmallArticle';
 
 const Articles = ({ mainArticles, smallArticles }) => (
   <div>
@@ -9,6 +10,11 @@ const Articles = ({ mainArticles, smallArticles }) => (
       {
         mainArticles.map((article, index) => (
           <MainArticle article={article} key={index} />
+        ))
+      }
+      {
+        smallArticles.map((article, index) => (
+          <SmallArticle article={article} key={index} />
         ))
       }
     </div>
