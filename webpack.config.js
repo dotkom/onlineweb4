@@ -15,6 +15,9 @@ module.exports = {
     ],
     frontpageEvents: [
       './assets/js/frontpage/events/index'
+    ],
+    frontpageArticles: [
+      './assets/js/frontpage/articles/index'
     ]
   },
   output: {
