@@ -8,9 +8,11 @@ const Events = ({ mainEvents, smallEvents, setEventVisibility, eventTypes }) => 
     <EventsHeading eventTypes={eventTypes} setEventVisibility={setEventVisibility} />
     <div className="row clearfix hero">
       {
-        mainEvents.map((event, index) =>
+        mainEvents.length !== 0
+        ? mainEvents.map((event, index) =>
           <Event key={index} {...event} />,
         )
+        : <div className="col-lg-12">Ingen arrangementer funnet.</div>
       }
     </div>
     <div className="row clearfix hero">
