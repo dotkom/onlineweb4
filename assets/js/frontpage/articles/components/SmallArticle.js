@@ -1,14 +1,21 @@
-import React from 'react';
+import React, { PropTypes } from 'react';
+import ImagePropTypes from 'common/proptypes/ImagePropTypes';
 
-const SmallArticle = ({ article }) => (
+const SmallArticle = ({ articleUrl, heading, image }) => (
   <div className="col-xs-6 col-md-2">
-    <a href={article.articleUrl}>
-      <img src={article.image.thumb} alt={article.heading} />
+    <a href={articleUrl}>
+      <img src={image.thumb} alt={heading} />
       <br />
-      <h4>{article.heading}</h4>
+      <h4>{heading}</h4>
     </a>
   </div>
 );
+
+SmallArticle.propTypes = {
+  articleUrl: PropTypes.string.isRequired,
+  heading: PropTypes.string.isRequired,
+  image: ImagePropTypes.isRequired,
+};
 
 
 export default SmallArticle;

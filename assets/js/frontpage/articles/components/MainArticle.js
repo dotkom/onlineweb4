@@ -1,14 +1,21 @@
-import React from 'react';
+import React, { PropTypes } from 'react';
+import ImagePropTypes from 'common/proptypes/ImagePropTypes';
 
-const MainArticle = ({ article }) => (
+const MainArticle = ({ articleUrl, heading, image, ingress }) => (
   <div className="col-md-6">
-    <a href="{article.articleUrl}">
-      <img src={article.image.sm} alt={article.heading} />
-      <h3>{article.heading}</h3>
+    <a href={articleUrl}>
+      <img src={image.sm} alt={heading} />
+      <h3>{heading}</h3>
     </a>
-    <p>{article.ingress}</p>
+    <p>{ingress}</p>
   </div>
 );
 
+MainArticle.propTypes = {
+  articleUrl: PropTypes.string.isRequired,
+  heading: PropTypes.string.isRequired,
+  image: ImagePropTypes.isRequired,
+  ingress: PropTypes.string.isRequired,
+};
 
 export default MainArticle;

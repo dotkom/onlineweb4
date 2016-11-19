@@ -20,6 +20,9 @@ module.exports = {
       './assets/js/frontpage/articles/index'
     ]
   },
+  resolve: {
+    root: path.resolve('./assets/js/'),
+  },
   output: {
     path: path.resolve('./assets/webpack_bundles/'),
     filename: '[name]-[hash].js'
