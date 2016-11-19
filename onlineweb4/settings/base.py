@@ -442,8 +442,6 @@ WEBPACK_LOADER = {
     }
 }
 
-HOT_RELOAD = False
-
 # Remember to keep 'local' last, so it can override any setting.
 for settings_module in ['filebrowser', 'django_wiki', 'local']:  # local last
     if not os.path.exists(os.path.join(PROJECT_SETTINGS_DIRECTORY,

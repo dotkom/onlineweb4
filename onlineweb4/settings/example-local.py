@@ -9,8 +9,6 @@ sys.dont_write_bytecode = True
 
 DEBUG = True
 
-HOT_RELOAD = False
-
 # Change this to the host in production
 ALLOWED_HOSTS = '*'
 
