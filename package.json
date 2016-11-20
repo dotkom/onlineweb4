@@ -1,7 +1,7 @@
 {
   "name": "onlineweb4",
   "version": "1.0.0",
-  "description": "Onlineweb 4 ==========",
+  "description": "Onlineweb 4",
   "dependencies": {
     "babel-polyfill": "^6.13.0",
     "classnames": "^2.2.5",
@@ -46,10 +46,10 @@
     "type": "git",
     "url": "git+https://github.com/dotKom/onlineweb4.git"
   },
-  "author": "",
+  "author": "dotkom",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/dotKom/onlineweb4/issues"
   },
-  "homepage": "https://github.com/dotKom/onlineweb4#readme"
+  "homepage": "https://online.ntnu.no/"
 }
