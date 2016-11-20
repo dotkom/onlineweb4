@@ -9,8 +9,7 @@ pipeline:
       - tox -e flake8
       - tox -e tests
       - pip install codecov
-      - codecov -t $CODECOV_TOKEN
-
+      - codecov
   deploy:
     image: plugins/ssh
     host: nansen.online.ntnu.no
