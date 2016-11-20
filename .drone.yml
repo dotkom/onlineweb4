@@ -14,7 +14,6 @@ pipeline:
       - python manage.py test -v 2
       - pip install codecov
       - codecov
-
   deploy:
     image: plugins/ssh
     host: nansen.online.ntnu.no
