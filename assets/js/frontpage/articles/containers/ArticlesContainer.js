@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import Articles from '../components/Articles';
 
 
-const apiArticlesToArticles = (article) => ({
+const apiArticlesToArticles = article => ({
   articleUrl: article.absolute_url,
   ingress: article.ingress_short,
   heading: article.heading,
