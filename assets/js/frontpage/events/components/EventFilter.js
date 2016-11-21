@@ -24,7 +24,7 @@ const EventFilter = ({ eventTypes, setEventVisibility }) => (
 EventFilter.propTypes = {
   eventTypes: PropTypes.arrayOf(PropTypes.shape({
     display: PropTypes.bool.isRequired,
-    id: PropTypes.number.isRequired,
+    id: PropTypes.string.isRequired,
     name: PropTypes.string.isRequired,
   })).isRequired,
   setEventVisibility: PropTypes.func.isRequired,

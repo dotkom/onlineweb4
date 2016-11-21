@@ -43,9 +43,9 @@ class EventsContainer extends Component {
     this.state = {
       events: [],
       eventTypes: {
-        1: { id: 1, name: 'Sosialt', display: true, events: [] },
-        2: { id: 2, name: 'Bedriftspresentasjon', display: true, events: [] },
-        3: { id: 3, name: 'Kurs', display: true, events: [] },
+        1: { id: '1', name: 'Sosialt', display: true, events: [] },
+        2: { id: '2', name: 'Bedriftspresentasjon', display: true, events: [] },
+        3: { id: '3', name: 'Kurs', display: true, events: [] },
         other: { id: 'other', name: 'Annet', display: true, events: [] },
       },
     };
