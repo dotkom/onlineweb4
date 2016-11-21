@@ -10,6 +10,7 @@ export const setEventsForEventTypeId = (state, eventTypeId, events) => (
   Object.assign({}, state.eventTypes, {
     [eventTypeId]: Object.assign({}, state.eventTypes[eventTypeId], {
       events,
+      loaded: true,
     }),
   })
 );

@@ -36,18 +36,47 @@ const sortEvents = (a, b) => {
   return -1;
 };
 
+/*
+Reduces array to object and adds some generic fields
+
+Example:
+{
+  1: {
+    id: '1',
+    name: 'Test',
+    display: true,
+    ...
+  },
+  ...
+}
+*/
+const initialEventTypes = eventTypes => (
+  eventTypes.reduce((accumulator, eventType) => (
+    Object.assign(accumulator, {
+      [eventType.id]: {
+        id: eventType.id,
+        name: eventType.name,
+        display: true,
+        events: [],
+        loaded: false,
+      },
+    })
+  ), {})
+);
+
 class EventsContainer extends Component {
   constructor(props) {
     super(props);
     this.API_URL = `/api/v1/events/?event_end__gte=${moment().format('YYYY-MM-DD')}`;
+    const eventTypes = [
+      { id: '1', name: 'Sosialt' },
+      { id: '2', name: 'Bedriftspresentasjon' },
+      { id: '3', name: 'Kurs' },
+      { id: 'other', name: 'Annet' },
+    ];
     this.state = {
       events: [],
-      eventTypes: {
-        1: { id: '1', name: 'Sosialt', display: true, events: [] },
-        2: { id: '2', name: 'Bedriftspresentasjon', display: true, events: [] },
-        3: { id: '3', name: 'Kurs', display: true, events: [] },
-        other: { id: 'other', name: 'Annet', display: true, events: [] },
-      },
+      eventTypes: initialEventTypes(eventTypes),
     };
     this.setEventVisibility = this.setEventVisibility.bind(this);
     this.getVisibleEvents = this.getVisibleEvents.bind(this);
@@ -62,6 +91,14 @@ class EventsContainer extends Component {
 
   getVisibleEvents() {
     const { eventTypes } = this.state;
+    const allEventTypesLoaded = Object.keys(eventTypes).every(eventTypeId => (
+      eventTypes[eventTypeId].loaded
+    ));
+    if (!allEventTypesLoaded) {
+      // Show initially loaded events instead
+      return this.state.events;
+    }
+    // Reduce all event type events to one array
     const visibleEvents = Object.keys(eventTypes).reduce((events, eventTypeId) => {
       const eventType = eventTypes[eventTypeId];
       if (eventType.display) {
