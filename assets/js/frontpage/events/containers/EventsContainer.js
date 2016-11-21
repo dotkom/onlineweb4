@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import moment from 'moment';
 import Events from '../components/Events';
+import { setEventsForEventTypeId, toggleEventTypeDisplay } from '../utils';
 
 const mergeEventImages = (eventImage, companyEvent) => {
   const eventImages = [];
@@ -74,13 +75,8 @@ class EventsContainer extends Component {
   }
 
   setEventVisibility(e) {
-    const eventTypeId = e.eventType.id;
     this.setState({
-      eventTypes: Object.assign({}, this.state.eventTypes, {
-        [eventTypeId]: Object.assign({}, e.eventType, {
-          display: !e.eventType.display,
-        }),
-      }),
+      eventTypes: toggleEventTypeDisplay(this.state, e.eventType),
     });
   }
 
@@ -116,11 +112,7 @@ class EventsContainer extends Component {
     ).then((json) => {
       const events = json.results.map(apiEventsToEvents);
       this.setState({
-        eventTypes: Object.assign({}, this.state.eventTypes, {
-          [eventType]: Object.assign({}, this.state.eventTypes[eventType], {
-            events,
-          }),
-        }),
+        eventTypes: setEventsForEventTypeId(this.state, eventType, events),
       });
     });
   }
