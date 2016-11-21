@@ -31,10 +31,11 @@ class Command(BaseCommand):
 
     # Function for generating a list with random numbers corresponding to
     # the indexes of the list of users attending the event.
+    @staticmethod
     def generate_random_list(users):
-        to_from = random.sample(range(0, len(users)), len(users))
+        to_from = random.sample(range(len(users)), len(users))
         while(not Command.check_random_list(to_from)):
-            to_from = random.sample(range(0, len(users)), len(users))
+            to_from = random.sample(range(len(users)), len(users))
         return to_from
 
 
@@ -42,13 +43,15 @@ class Command(BaseCommand):
     # Checks the index of the original list of users against the randomly
     # generated number. If index and random number is the same, then someone
     # got themselves as secret Santa.
+    @staticmethod
     def check_random_list(random):
-        for count, user in enumerate(random):
-            if (count == random[count]):
+        for user_index, user2_index in enumerate(random):
+            if (user_index == user2_index):
                 return False
         return True
 
 
+    @staticmethod
     def send_mail(user_to, user_from):
         subject = "Secret santa"
 
@@ -62,6 +65,7 @@ class Command(BaseCommand):
         EmailMessage(subject, content, settings.EMAIL_TRIKOM, [receiver]).send()
 
 
+    @staticmethod
     def mail_to_committee(to_from_dict):
         subject = "Secret santa til-fra liste"
 
