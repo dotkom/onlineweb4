@@ -76,10 +76,11 @@ class FilterableJobList extends React.Component {
       // Create tags for all non-existing locations in the job.
       job.location.forEach(function(location) {
         if (locations.indexOf(location.name) < 0) {
-          locations.push(location);
+          locations.push(location.name);
         }
       });
 
+      console.log(locations);
       // Store job tag data in an own object.
       let tagData = {
         companies: job.company.id,
@@ -101,7 +102,7 @@ class FilterableJobList extends React.Component {
 
     companies.forEach(company => tags.companies[company.id] = { id: company.id, display: false, name: company.name });
     jobTypes.forEach(jobType => tags.jobTypes[jobType.id] = { id: jobType.id, display: false, name: jobType.name });
-    locations.forEach((location, i) => tags.locations[i] = { id: i, display: false, name: location.name });
+    locations.forEach((location, i) => tags.locations[i] = { id: i, display: false, name: location });
 
     this.setState({
       jobs: jobs,
