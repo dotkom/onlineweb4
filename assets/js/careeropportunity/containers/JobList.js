@@ -1,4 +1,5 @@
 import Job from '../components/Job';
+import {Col} from 'react-bootstrap';
 
 class JobContainer extends React.Component {
   constructor(props) {
@@ -9,10 +10,10 @@ class JobContainer extends React.Component {
   defaultCheck(job, id, tag) {
     // Job might have multiple tags, such as multiple locations.
     if (Array.isArray(job.tags[id])) {
-      // If the tag exists in the list of tags.
       if (job.tags[id].indexOf(tag.name) >= 0) {
         return true;
       }
+      // If the tag exists in the list of tags.
     } else if (job.tags[id] === tag.id) {
       return true;
     }
@@ -67,9 +68,9 @@ class JobContainer extends React.Component {
     }.bind(this));
 
     return (
-      <div className="col-xs-12 col-sm-12 col-md-9 pull-left">
+      <Col xs={12} sm={12} md={9} className="pull-left">
         {jobs}
-      </div>
+      </Col>
     );
   }
 }

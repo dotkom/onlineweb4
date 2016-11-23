@@ -1,4 +1,5 @@
 import TagContainer from './TagContainer';
+import {Col} from 'react-bootstrap';
 
 class FilterContainer extends React.Component {
   constructor(props) {
@@ -28,7 +29,7 @@ class FilterContainer extends React.Component {
 
   render() {
     return (
-      <div className="col-xs-12 col-sm-12 col-md-3 pull-right">
+      <Col xs={12} sm={12} md={3} className="pull-right">
         <div className="filters">
           <TagContainer heading="Bedrifter" tags={this.props.tags.companies} handleChange={this.handleCompanyChange} />
           <TagContainer heading="Typer" tags={this.props.tags.jobTypes} handleChange={this.handleJobTypeChange} />
@@ -36,7 +37,7 @@ class FilterContainer extends React.Component {
           <TagContainer heading="Frist" tags={this.props.tags.deadlines} handleChange={this.handleDeadlineChange} />
           <button onClick={this.props.handleReset}>Reset</button>
         </div>
-      </div>
+      </Col>
     );
   }
 }

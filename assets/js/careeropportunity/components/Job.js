@@ -1,3 +1,5 @@
+import {Col} from 'react-bootstrap';
+
 const Job = ({ locations, deadline, companyImage, companyName, jobTitle, ingress, jobType, id }) => {
   if (locations.length >= 2) {
     locations = `${locations.slice(0, -1).join(', ')} og ${locations[locations.length - 1]}`;
@@ -7,16 +9,16 @@ const Job = ({ locations, deadline, companyImage, companyName, jobTitle, ingress
 
   return (
     <article className="row">
-      <div className="col-xs-12 col-md-4">
+      <Col xs={12} md={4}>
         <a href="/careeropportunity/4/">
           <picture>
             <source srcSet={companyImage.lg} media="(max-width: 992px)" />
             <img src={companyImage.md} alt="Firmalogo" />
           </picture>
         </a>
-      </div>
+      </Col>
 
-      <div className="col-xs-12 col-md-8">
+      <Col xs={12} md={8}>
         <h1>
           <a href={'/careeropportunity/' + id}>{companyName} - {jobTitle}</a>
         </h1>
@@ -24,19 +26,19 @@ const Job = ({ locations, deadline, companyImage, companyName, jobTitle, ingress
         <div className="ingress">{ingress}</div>
 
         <div className="meta">
-          <div className="col-md-4">
+          <Col md={4}>
             <p>Type: {jobType}</p>
-          </div>
+          </Col>
 
-          <div className="col-md-4">
+          <Col md={4}>
             <p>Sted: {locations}</p>
-          </div>
+          </Col>
 
-          <div className="col-md-4">
+          <Col md={4}>
             <p>Frist: {deadline}</p>
-          </div>
+          </Col>
         </div>
-      </div>
+      </Col>
     </article>
   );
 };
