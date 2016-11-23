@@ -1,10 +1,15 @@
-import {Col} from 'react-bootstrap';
+import React from 'react';
+import { Col } from 'react-bootstrap';
 
-const Job = ({ locations, deadline, companyImage, companyName, jobTitle, ingress, jobType, id }) => {
+const Job = ({ locations, deadline, companyImage, companyName, title, ingress, type, id }) => {
+  let locationsText;
+
   if (locations.length >= 2) {
-    locations = `${locations.slice(0, -1).join(', ')} og ${locations[locations.length - 1]}`;
+    locationsText = `${locations.slice(0, -1).join(', ')} og ${locations[locations.length - 1]}`;
   } else if (locations.length === 0) {
-    locations = 'Ikke spesifisert';
+    locationsText = 'Ikke spesifisert';
+  } else { // Only one location.
+    locationsText = locations[0];
   }
 
   return (
@@ -20,18 +25,18 @@ const Job = ({ locations, deadline, companyImage, companyName, jobTitle, ingress
 
       <Col xs={12} md={8}>
         <h1>
-          <a href={'/careeropportunity/' + id}>{companyName} - {jobTitle}</a>
+          <a href={`/careeropportunity/${id}`}>{companyName} - {title}</a>
         </h1>
 
         <div className="ingress">{ingress}</div>
 
         <div className="meta">
           <Col md={4}>
-            <p>Type: {jobType}</p>
+            <p>Type: {type}</p>
           </Col>
 
           <Col md={4}>
-            <p>Sted: {locations}</p>
+            <p>Sted: {locationsText}</p>
           </Col>
 
           <Col md={4}>
@@ -41,6 +46,17 @@ const Job = ({ locations, deadline, companyImage, companyName, jobTitle, ingress
       </Col>
     </article>
   );
+};
+
+Job.propTypes = {
+  locations: React.PropTypes.arrayOf(React.PropTypes.string),
+  deadline: React.PropTypes.string,
+  companyImage: React.PropTypes.object,
+  companyName: React.PropTypes.string,
+  title: React.PropTypes.string,
+  ingress: React.PropTypes.string,
+  type: React.PropTypes.string,
+  id: React.PropTypes.number,
 };
 
 export default Job;

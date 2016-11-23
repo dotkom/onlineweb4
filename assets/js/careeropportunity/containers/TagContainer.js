@@ -1,8 +1,15 @@
+import React from 'react';
 import Tag from '../components/Tag';
 
 const TagContainer = ({ tags, handleChange, heading }) => {
-  let tagElems = Object.keys(tags).map(id => (
-    <Tag key={id} selected={tags[id].display} handleChange={handleChange.bind(self, id)} title={tags[id].name} />
+  const tagElems = Object.keys(tags).map(id => (
+    <Tag
+      key={id}
+      changeKey={id}
+      selected={tags[id].display}
+      handleChange={handleChange}
+      title={tags[id].name}
+    />
   ));
 
   return (
@@ -13,6 +20,12 @@ const TagContainer = ({ tags, handleChange, heading }) => {
       </ul>
     </div>
   );
+};
+
+TagContainer.propTypes = {
+  handleChange: React.PropTypes.func,
+  heading: React.PropTypes.string,
+  tags: React.PropTypes.object,
 };
 
 export default TagContainer;

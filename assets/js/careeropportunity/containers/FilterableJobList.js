@@ -1,6 +1,7 @@
+import React from 'react';
+import moment from 'moment';
 import FilterContainer from '../containers/FilterContainer';
 import JobList from '../containers/JobList';
-import moment from 'moment';
 
 moment.locale('nb');
 
@@ -10,9 +11,9 @@ const mapData = job => ({
   deadline: job.deadline ? moment(job.deadline).format('Do MMMM YYYY, HH:mm') : 'Ikke spesifisert', // Format and give default value
   companyImage: job.company.image,
   companyName: job.company.name,
-  jobTitle: job.title,
+  title: job.title,
   ingress: job.ingress,
-  jobType: job.employment.name,
+  type: job.employment.name,
   id: job.id,
 });
 
@@ -55,15 +56,18 @@ class FilterableJobList extends React.Component {
     this.loadData = this.loadData.bind(this);
   }
 
+  // Fetch data from server on component mount.
+  componentDidMount() {
+    fetch(this.API_URL).then(response => response.json()).then(this.loadData);
+  }
+
   loadData(data) {
-    const self = this;
+    const companies = [];
+    const locations = [];
+    const jobTypes = [];
+    const jobs = [];
 
-    let companies = [];
-    let locations = [];
-    let jobTypes = [];
-    let jobs = [];
-
-    data.results.forEach(function(job) {
+    data.results.forEach((job) => {
       // Create a new company tag if it does not already exist.
       if (companies.indexOf(job.company.name) < 0) {
         companies.push(job.company);
@@ -75,37 +79,44 @@ class FilterableJobList extends React.Component {
       }
 
       // Create tags for all non-existing locations in the job.
-      job.location.forEach(function(location) {
+      job.location.forEach((location) => {
         if (locations.indexOf(location.name) < 0) {
           locations.push(location.name);
         }
       });
 
       // Store job tag data in an own object.
-      let tagData = {
+      const tagData = {
         companies: job.company.id,
         jobTypes: job.employment.id,
-        // location contains both a name and a slug.
+        // Location contains both a name and a slug.
         locations: job.location.map(location => location.name),
       };
 
       // Add the data to the other job properties.
       jobs.push(Object.assign({}, { tags: tagData }, mapData(job)));
-
     });
 
-    let tags = {
+    const tags = {
       companies: {},
       locations: {},
       jobTypes: {},
     };
 
-    companies.forEach(company => tags.companies[company.id] = { id: company.id, display: false, name: company.name });
-    jobTypes.forEach(jobType => tags.jobTypes[jobType.id] = { id: jobType.id, display: false, name: jobType.name });
-    locations.forEach((location, i) => tags.locations[i] = { id: i, display: false, name: location });
+    companies.forEach((company) => {
+      tags.companies[company.id] = { id: company.id, display: false, name: company.name };
+    });
+
+    jobTypes.forEach((jobType) => {
+      tags.jobTypes[jobType.id] = { id: jobType.id, display: false, name: jobType.name };
+    });
+
+    locations.forEach((location, i) => {
+      tags.locations[i] = { id: i, display: false, name: location };
+    });
 
     this.setState({
-      jobs: jobs,
+      jobs,
       tags: Object.assign({}, this.state.tags, tags),
     });
 
@@ -113,40 +124,31 @@ class FilterableJobList extends React.Component {
     this.defaultTags = JSON.parse(JSON.stringify(tags));
   }
 
-  // Fetch data from server on component mount.
-  componentDidMount() {
-    fetch(this.API_URL).then(response => {
-      return response.json();
-    }).then(this.loadData);
-  }
-
   // If switchMode is true, this implies that all the tags in the TagContainer
   // should act like a select menu - selecting one tag will disselect the others.
   handleTagChange(type, changedTag, switchMode) {
-    let self = this;
+    this.setState((prevState) => {
+      const updatedState = {};
 
-    this.setState(function(prevState) {
-      let updatedState = {};
-
-      for (let key in prevState.tags) {
+      Object.keys(prevState.tags).forEach((key) => {
         // If switchMode is on, all the other tags will be disabled - only one
         // tag may be enabled at once
         if (switchMode && key === type) {
           // Create a clone of the old state.
           updatedState[type] = Object.assign({}, prevState.tags[type]);
 
-          for (let tag in prevState.tags[type]) {
+          Object.keys(prevState.tags[type]).forEach((tag) => {
             if (tag === changedTag) {
               // If this is the updated tag, toggle it. If not, turn it off.
               updatedState[type][tag].display = !updatedState[type][tag].display;
             } else {
-               updatedState[type][tag].display = false;
-             }
-          }
+              updatedState[type][tag].display = false;
+            }
+          });
         } else {
           updatedState[key] = Object.assign({}, prevState.tags[key]);
         }
-      }
+      });
 
       // No dropdown-logic, just directly toggle the tag.
       if (!switchMode) {
@@ -154,7 +156,7 @@ class FilterableJobList extends React.Component {
       }
 
       return {
-        tags: updatedState
+        tags: updatedState,
       };
     });
   }
@@ -180,7 +182,12 @@ class FilterableJobList extends React.Component {
         </div>
 
         <div className="row">
-          <FilterContainer tags={this.state.tags} handleTagChange={this.handleTagChange} handleReset={this.handleReset} />
+          <FilterContainer
+            tags={this.state.tags}
+            handleTagChange={this.handleTagChange}
+            handleReset={this.handleReset}
+          />
+
           <JobList jobs={this.state.jobs} tags={this.state.tags} />
         </div>
       </div>

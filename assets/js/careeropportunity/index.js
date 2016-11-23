@@ -7,5 +7,5 @@ require('isomorphic-fetch');
 
 ReactDom.render(
   <FilterableJobList />,
-  document.getElementById('career')
+  document.getElementById('career'),
 );
