@@ -3,9 +3,9 @@
 import os
 import random
 
-from django.core.management.base import BaseCommand
-from django.core.mail import EmailMessage
 from django.conf import settings
+from django.core.mail import EmailMessage
+from django.core.management.base import BaseCommand
 from django.template.loader import render_to_string
 
 from apps.events.models import AttendanceEvent
@@ -15,7 +15,6 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument('event_id')
 
-
     def handle(self, *args, **options):
         event_id = options['event_id']
         event = AttendanceEvent.objects.get(event=event_id)
@@ -23,13 +22,13 @@ class Command(BaseCommand):
         random_users = self.generate_random_list(users)
         to_from_dict = {}
         for count, user in enumerate(users):
-            to_from_dict['Par %s' % (count+1)] = {'To': user.user.get_full_name(), 'From': users[random_users[count]].user.get_full_name()}
-            
+            to_from_dict['Par %s' % (count+1)] = {'To': user.user.get_full_name(), 
+                                                  'From': users[random_users[count]].user.get_full_name()}
+
             self.send_mail(user, users[random_users[count]])
 
         self.write_to_file(to_from_dict)
         self.mail_to_committee(to_from_dict)
-
 
     # Function for generating a list with random numbers corresponding to
     # the indexes of the list of users attending the event.
@@ -39,7 +38,6 @@ class Command(BaseCommand):
         while(not Command.check_random_list(to_from)):
             to_from = random.sample(range(len(users)), len(users))
         return to_from
-
 
     # Function for checking that the random list of indexes is valid.
     # Checks the index of the original list of users against the randomly
@@ -51,7 +49,6 @@ class Command(BaseCommand):
             if (user_index == user2_index):
                 return False
         return True
-
 
     @staticmethod
     def send_mail(user_to, user_from):
@@ -66,7 +63,6 @@ class Command(BaseCommand):
 
         EmailMessage(subject, content, settings.EMAIL_TRIKOM, [receiver]).send()
 
-
     @staticmethod
     def mail_to_committee(to_from_dict):
         subject = "Secret santa til-fra liste"
@@ -75,14 +71,13 @@ class Command(BaseCommand):
 
         EmailMessage(subject, content, settings.EMAIL_TRIKOM, [settings.EMAIL_TRIKOM]).send()
 
-
     @staticmethod
     def write_to_file(to_from_dict):
         directory = 'uploaded_media/txt'
         if not os.path.exists(directory):
             os.makedirs(directory)
 
-        txt_file = open(directory + '/secret_santa_to_from.txt','w+')
+        txt_file = open(directory + '/secret_santa_to_from.txt', 'w+')
 
         content = render_to_string('secret_santa/committee_pdf.txt', {
             'to_from_dict': to_from_dict,
@@ -90,4 +85,3 @@ class Command(BaseCommand):
 
         txt_file.write(content)
         txt_file.close()
-
