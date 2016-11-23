@@ -53,7 +53,7 @@
 										</div>
 										<div class="col-md-10">
 											<div class="profile-name">{{ user.get_full_name|striptags }} &nbsp;</div>
-											<b>Telefon</b> 
+											<b>Telefon</b>
 											{% if user.privacy.expose_phone_number %}
 												{% firstof user.phone_number|striptags '<em>Ikke tilgjengelig</em>' %}
 											{% else %}
@@ -71,7 +71,7 @@
 						{% endif %}
 					{% endfor %}
 				</section>
-			{% endfor %}		
+			{% endfor %}
 		</div>
 		<div class="col-md-3 sidebar">
 			<div id="affix" class=" hidden-print hidden-xs hidden-sm">
@@ -111,7 +111,7 @@
                 });
             };
         })(jQuery);
-        
+
 
         $(function () {
             {% verbatim %}
@@ -127,6 +127,7 @@
                     return item;
                 },
                 template: user_search_template,
+                valueKey: 'id',
                 engine: Hogan
             }).on('typeahead:selected typeahead:autocompleted', function(e, datum) {
                 window.location = '/profile/view/' + datum.username;
@@ -153,6 +154,6 @@
 			    target: '#affix',
 			    offset: 90
 			});
-        });   
+        });
     </script>
 {% endblock %}
