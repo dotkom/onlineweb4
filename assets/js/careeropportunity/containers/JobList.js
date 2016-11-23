@@ -5,8 +5,11 @@ class JobContainer extends React.Component {
     super();
   }
 
+  // Checks tags where the only involved factor is whether the button is on or not.
   defaultCheck(job, id, tag) {
+    // Job might have multiple tags, such as multiple locations.
     if (Array.isArray(job.tags[id])) {
+      // If the tag exists in the list of tags.
       if (job.tags[id].indexOf(tag.name) >= 0) {
         return true;
       }
@@ -17,8 +20,11 @@ class JobContainer extends React.Component {
     return false;
   }
 
+  // Check for the deadline tags.
   deadlineCheck(job, id, tag) {
     let deadline = new Date(job.deadline);
+    // If the difference between the deadline and the current date is less than the
+    // deadline specified by the tag, return true.
     return deadline instanceof Date ? deadline - Date.now() <= tag.deadline: false;
   }
 
@@ -26,6 +32,8 @@ class JobContainer extends React.Component {
     let self = this;
 
     let jobs = this.props.jobs.map(function(job, i) {
+      // Whether we may show this job or not.
+      // Requires
       let canShow = true;
 
       for (let type in this.props.tags) {
