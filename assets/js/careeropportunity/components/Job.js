@@ -1,4 +1,4 @@
-const Job = ({ locations, deadline, companyImage, companyName, jobTitle, ingress, jobName, id }) => {
+const Job = ({ locations, deadline, companyImage, companyName, jobTitle, ingress, jobType, id }) => {
   if (locations.length >= 2) {
     locations = `${locations.slice(0, -1).join(', ')} og ${locations[locations.length - 1]}`;
   } else if (locations.length === 0) {
@@ -25,7 +25,7 @@ const Job = ({ locations, deadline, companyImage, companyName, jobTitle, ingress
 
         <div className="meta">
           <div className="col-md-4">
-            <p>Type: {jobName}</p>
+            <p>Type: {jobType}</p>
           </div>
 
           <div className="col-md-4">
