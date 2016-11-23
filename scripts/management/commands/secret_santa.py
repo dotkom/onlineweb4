@@ -22,7 +22,7 @@ class Command(BaseCommand):
         random_users = self.generate_random_list(users)
         to_from_dict = {}
         for count, user in enumerate(users):
-            to_from_dict['Par %s' % (count+1)] = {'To': user.user.get_full_name(), 
+            to_from_dict['Par %s' % (count+1)] = {'To': user.user.get_full_name(),
                                                   'From': users[random_users[count]].user.get_full_name()}
 
             self.send_mail(user, users[random_users[count]])
