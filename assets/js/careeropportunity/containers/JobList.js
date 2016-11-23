@@ -1,78 +1,82 @@
+import React from 'react';
+import { Col } from 'react-bootstrap';
 import Job from '../components/Job';
-import {Col} from 'react-bootstrap';
 
-class JobContainer extends React.Component {
-  constructor(props) {
-    super();
-  }
-
-  // Checks tags where the only involved factor is whether the button is on or not.
-  defaultCheck(job, id, tag) {
-    // Job might have multiple tags, such as multiple locations.
-    if (Array.isArray(job.tags[id])) {
-      if (job.tags[id].indexOf(tag.name) >= 0) {
-        return true;
-      }
-      // If the tag exists in the list of tags.
-    } else if (job.tags[id] === tag.id) {
+// Checks tags where the only involved factor is whether the button is on or not.
+const defaultCheck = (job, id, tag) => {
+  // Job might have multiple tags, such as multiple locations.
+  if (Array.isArray(job.tags[id])) {
+    if (job.tags[id].indexOf(tag.name) >= 0) {
       return true;
     }
-
-    return false;
+    // If the tag exists in the list of tags.
+  } else if (job.tags[id] === tag.id) {
+    return true;
   }
+
+  return false;
+};
 
   // Check for the deadline tags.
-  deadlineCheck(job, id, tag) {
-    let deadline = new Date(job.deadline);
-    // If the difference between the deadline and the current date is less than the
-    // deadline specified by the tag, return true.
-    return deadline instanceof Date ? deadline - Date.now() <= tag.deadline: false;
-  }
+const deadlineCheck = (job, id, tag) => {
+  const deadline = new Date(job.deadline);
+  // If the difference between the deadline and the current date is less than the
+  // deadline specified by the tag, return true.
+  return deadline instanceof Date ? deadline - Date.now() <= tag.deadline : false;
+};
 
-  render() {
-    let self = this;
+const JobContainer = ({ jobs, tags }) => {
+  const jobElems = jobs.map((job, i) => {
+    // Whether we may show this job or not.
+    let canShow = true;
 
-    let jobs = this.props.jobs.map(function(job, i) {
-      // Whether we may show this job or not.
-      let canShow = true;
+    Object.keys(tags).forEach((type) => {
+      let typeCanShow = false;
 
-      for (let type in this.props.tags) {
-        let typeCanShow = false;
+      let typeAllDisabled = true;
 
-        let typeAllDisabled = true;
+      Object.keys(tags[type]).forEach((tag) => {
+        const tagKey = parseInt(tag, 10);
 
-        for (let key in this.props.tags[type]) {
-          key = parseInt(key, 10);
+        if (tags[type][tagKey].display) {
+          typeAllDisabled = false;
 
-          if (this.props.tags[type][key].display) {
-            typeAllDisabled = false;
+          const check = tags[type][tagKey].deadline ? deadlineCheck : defaultCheck;
 
-            let check = this.props.tags[type][key].deadline ? self.deadlineCheck : self.defaultCheck;
-
-            if (check(job, type, this.props.tags[type][key])) {
-              typeCanShow = true;
-            }
+          if (check(job, type, tags[type][tagKey])) {
+            typeCanShow = true;
           }
         }
+      });
 
-        if (!(typeCanShow || typeAllDisabled)) {
-          canShow = false;
-        }
+      if (!(typeCanShow || typeAllDisabled)) {
+        canShow = false;
       }
+    });
 
-      if (canShow) {
-        return (
-          <Job {...job} key={i} /> // TODO: Store a key while JSON parsing?
-        );
-      }
-    }.bind(this));
+    return canShow ? <Job {...job} key={i} /> : false;
+  });
 
-    return (
-      <Col xs={12} sm={12} md={9} className="pull-left">
-        {jobs}
-      </Col>
-    );
-  }
-}
+  return (
+    <Col xs={12} sm={12} md={9} className="pull-left">
+      {jobElems}
+    </Col>
+  );
+};
+
+JobContainer.propTypes = {
+  jobs: React.PropTypes.arrayOf(React.PropTypes.shape({
+    locations: React.PropTypes.array,
+    deadline: React.PropTypes.string,
+    companyImage: React.PropTypes.object,
+    companyName: React.PropTypes.string,
+    jobTitle: React.PropTypes.string,
+    ingress: React.PropTypes.string,
+    jobType: React.PropTypes.string,
+    id: React.PropTypes.number,
+  })),
+
+  tags: React.PropTypes.object,
+};
 
 export default JobContainer;
