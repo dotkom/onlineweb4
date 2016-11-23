@@ -121,7 +121,7 @@ class FilterableJobList extends React.Component {
     });
 
     // Store a copy of the tags for use in the reset button.
-    this.defaultTags = JSON.parse(JSON.stringify(tags));
+    this.defaultTags = JSON.stringify(this.state.tags);
   }
 
   // If switchMode is true, this implies that all the tags in the TagContainer
@@ -164,9 +164,8 @@ class FilterableJobList extends React.Component {
   // Reset all buttons to their initial state.
   handleReset() {
     this.setState({
-      // We need a deep clone because just using this.defaultTags here
-      // will make the reset button only work once due to this.defaultTags updating.
-      tags: JSON.parse(JSON.stringify(this.defaultTags)),
+      // Not creating a clone here will cause the reset button to only work once.
+      tags: JSON.parse(this.defaultTags),
     });
   }
 
