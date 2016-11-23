@@ -16,6 +16,10 @@ NOSE_ARGS = ['--with-coverage', '--cover-package=apps', '--cover-html-dir=covera
 
 DEBUG = False
 
+INTERNAL_IPS = (
+    '127.0.0.1',
+)
+
 ADMINS = (
     ('dotKom', 'dotkom@online.ntnu.no'),
 )
@@ -76,6 +80,7 @@ DEFAULT_PROFILE_PICTURE_PREFIX = os.path.join(STATIC_URL, "img", "profile_defaul
 # Additional locations of static files
 STATICFILES_DIRS = (
     os.path.join(PROJECT_ROOT_DIRECTORY, 'files/static'),
+    os.path.join(PROJECT_ROOT_DIRECTORY, 'assets'),
 )
 
 STATICFILES_FINDERS = (
@@ -121,7 +126,7 @@ TEMPLATES = [
                 "django.template.context_processors.tz",
                 "django.contrib.messages.context_processors.messages",
                 "sekizai.context_processors.sekizai", # Wiki
-                "onlineweb4.context_processors.analytics",
+                "onlineweb4.context_processors.context_settings",
             ],
             'debug': DEBUG,
         }
@@ -205,6 +210,7 @@ PUBLIC_LISTS = [
 INSTALLED_APPS = (
     # Third party dependencies
     'django.contrib.humanize',
+    'django_js_reverse',
     'django_nose',
     'django_nyt', # Wiki
     'mptt', # Wiki
@@ -232,6 +238,7 @@ INSTALLED_APPS = (
     'taggit_serializer',
     'corsheaders',
     'datetimewidget',
+    'webpack_loader',
 
     # Django apps
     'django.contrib.admin',
@@ -428,6 +435,12 @@ AUTH_PASSWORD_VALIDATORS = [
         }
     }
 ]
+
+WEBPACK_LOADER = {
+    'DEFAULT': {
+        'BUNDLE_DIR_NAME': 'webpack_bundles/'  # end with slash
+    }
+}
 
 # Remember to keep 'local' last, so it can override any setting.
 for settings_module in ['filebrowser', 'django_wiki', 'local']:  # local last

@@ -38,6 +38,7 @@ django-markdown-deux==1.0.5
 django-formset-js==0.5.0        # used to dynamically create new formsets
 django-cors-headers==1.1.0      # Enable CORS for Nibble
 django-datetime-widget==0.9.3   # Datetime widget for forms
+django-webpack-loader==0.3.3    # Integration with webpack
 
 #test tools
 django-nose>=1.4,<1.5           # We use this test runner locally
@@ -59,3 +60,5 @@ django-sekizai>=0.9
 # imagemagick                   # From package repository. Tested with version == 8:6.7.7.10.
 # libjpeg-dev					# From package repository.
 # libpq-dev						# From package repository.
+
+django_js_reverse==0.7.2

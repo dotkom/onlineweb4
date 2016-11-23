@@ -5,6 +5,9 @@ pipeline:
       event: pull_request
     commands:
       - cp onlineweb4/settings/example-local.py onlineweb4/settings/local.py
+      - npm install
+      - npm run build:prod
+      - ./node_modules/.bin/eslint assets/js/
       - pip install -r requirements.txt -r requirements-testing.txt
       - isort -c -rc apps middleware scripts utils
       - flake8 apps middleware scripts utils

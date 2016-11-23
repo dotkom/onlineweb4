@@ -2,6 +2,7 @@
 {% load chunks %}
 {% load compress %}
 {% load markdown_deux_tags %}
+{% load render_bundle from webpack_loader %}
 
 
 {% block title %}Online, linjeforeningen for informatikk ved NTNU{% endblock title %}
@@ -10,11 +11,13 @@
     {{ block.super }}
     {% compress js %}
     <script type="text/javascript" src="{{ STATIC_URL }}js/ArticleWidget.js"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}js/EventWidget.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}js/OfflineWidget.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}js/Utils.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}js/initFrontpage.js"></script>
     {% endcompress %}
+
+    {% render_bundle 'frontpageEvents' %}
+    {% render_bundle 'frontpageArticles' %}
 {% endblock %}
 
 {% block apple-webapp %}
@@ -74,38 +77,13 @@
 {% block content %}
     <section id="events">
         <div class="container">
-            <div class="page-header clearfix">
-                <div class="row">
-                    <div class="col-md-8 col-xs-6">
-                        <h1 id="events-heading">Arrangementer</h1>
-                    </div>
-                    <div class="col-md-4 col-xs-6 archive-link">
-                        <a href="{% url 'events_index' %}">ARKIV
-                            <i class="glyphicon glyphicon-chevron-right"></i>
-                        </a>
-                    </div>
-                </div>
-            </div>
             <div id="event-items"></div>
         </div>
     </section>
 
     <section id="articles">
         <div class="container">
-            <div class="page-header clearfix">
-                <div class="row">
-                    <div class="col-md-8 col-xs-6">
-                        <h1 id="articles-heading">Artikler</h1>
-                    </div>
-                    <div class="col-md-4 col-xs-6 archive-link">
-                        <a href="{% url 'article_archive' %}">ARKIV
-                            <i class="glyphicon glyphicon-chevron-right"></i>
-                        </a>
-                    </div>
-                </div>
-            </div>
-            <div class="row row-space" id="article-frontpage-featured"></div>
-            <div class="row" id="article-frontpage-normal"></div>
+            <div id='article-items'></div>
         </div>
     </section>
 

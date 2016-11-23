@@ -1,26 +1,40 @@
-dbdata:
-  image: postgres:latest
-  volumes:
-    - /var/lib/postgresql
-  command: /bin/true
-db:
-  image: aidanlister/postgres-hstore
-  volumes_from:
-    - dbdata
-  ports:
-    - "5432"
-web:
-  build: .
-  command: python manage.py runserver 0.0.0.0:8000
-  volumes:
-    - .:/srv/app
-  ports:
-    - "8000:8000"
-  links:
-    - db
-    # - lessc
-  environment:
-    - INSTANCE_TYPE=web
-    - DEBUG=1
-    - DJANGO_SETTINGS_MODULE=onlineweb4.settings
-    - DATABASE_URL=postgres://postgres@db/postgres
+version: '2'
+services:
+  dbdata:
+    image: postgres:latest
+    volumes:
+      - /var/lib/postgresql
+    command: /bin/true
+  db:
+    image: aidanlister/postgres-hstore
+    volumes_from:
+      - dbdata
+    ports:
+      - "5432"
+  django:
+    build:
+      context: .
+      dockerfile: Dockerfile.django
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/srv/app
+    ports:
+      - "8000:8000"
+    links:
+      - db
+      # - lessc
+    environment:
+      - INSTANCE_TYPE=web
+      - DEBUG=1
+      - DJANGO_SETTINGS_MODULE=onlineweb4.settings
+      - DATABASE_URL=postgres://postgres@db/postgres
+  webpack:
+    build:
+      context: .
+      dockerfile: Dockerfile.webpack
+    command: npm start
+    volumes:
+      - .:/srv/app
+      - /srv/app/node_modules
+    ports:
+      - "3000:3000"
