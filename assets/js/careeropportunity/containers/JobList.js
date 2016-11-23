@@ -33,7 +33,6 @@ class JobContainer extends React.Component {
 
     let jobs = this.props.jobs.map(function(job, i) {
       // Whether we may show this job or not.
-      // Requires
       let canShow = true;
 
       for (let type in this.props.tags) {

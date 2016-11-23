@@ -30,10 +30,10 @@ class FilterContainer extends React.Component {
     return (
       <div className="col-xs-12 col-sm-12 col-md-3 pull-right">
         <div className="filters">
-          <TagContainer heading="Bedrifter" tags={this.props.tags.companies} tags={this.props.tags.companies} handleChange={this.handleCompanyChange} />
-          <TagContainer heading="Typer" tags={this.props.tags.jobTypes} tags={this.props.tags.jobTypes} handleChange={this.handleJobTypeChange} />
-          <TagContainer heading="Sted" tags={this.props.tags.locations} tags={this.props.tags.locations} handleChange={this.handleLocationChange} />
-          <TagContainer heading="Frist" tags={this.props.tags.deadlines} tags={this.props.tags.deadlines} handleChange={this.handleDeadlineChange} />
+          <TagContainer heading="Bedrifter" tags={this.props.tags.companies} handleChange={this.handleCompanyChange} />
+          <TagContainer heading="Typer" tags={this.props.tags.jobTypes} handleChange={this.handleJobTypeChange} />
+          <TagContainer heading="Sted" tags={this.props.tags.locations} handleChange={this.handleLocationChange} />
+          <TagContainer heading="Frist" tags={this.props.tags.deadlines} handleChange={this.handleDeadlineChange} />
           <button onClick={this.props.handleReset}>Reset</button>
         </div>
       </div>
