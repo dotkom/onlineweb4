@@ -38,4 +38,5 @@ node_modules/*
 coverage
 coverage.xml
 setuptools-*.zip
-drone-secrets.yml
+.drone-secrets.yml*
+
