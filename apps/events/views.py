@@ -346,7 +346,7 @@ class AttendViewSet(views.APIView):
         username = request.data.get('username')
         waitlist_approved = request.data.get('approved')
 
-        if username is not None:
+        if username is not None and rfid is not None:
             try:
                 user = User.objects.get(username=username)
                 user.rfid = rfid
@@ -356,7 +356,11 @@ class AttendViewSet(views.APIView):
                                             '(Prøv igjen, eller scan nytt kort for å avbryte.)', 'attend_status': 50},
                                 status=status.HTTP_400_BAD_REQUEST)
         try:
-            attendee = Attendee.objects.get(event=event, user__rfid=rfid)
+            if rfid is None:
+                attendee = Attendee.objects.get(event=event, user__username=username)
+            else:
+                attendee = Attendee.objects.get(event=event, user__rfid=rfid)
+
             if attendee.attended:
                 return Response({'message': (attendee.user.get_full_name() +
                                              ' har allerede registrert oppmøte.'), 'attend_status': 20},
@@ -369,10 +373,15 @@ class AttendViewSet(views.APIView):
             attendee.attended = True
             attendee.save()
         except Attendee.DoesNotExist:
-            return Response({'message': 'Kortet finnes ikke i databasen. '
-                                        'Skriv inn et online.ntnu.no brukernavn for å '
-                                        'knytte kortet til brukeren og registrere oppmøte.',
-                             'attend_status': 40}, status=status.HTTP_400_BAD_REQUEST)
+            if rfid is None:
+                return Response({'message': 'Brukernavnet finnes ikke. Husk at det er et online.ntnu.no brukernavn! '
+                                            '(Prøv igjen, eller scan nytt kort for å avbryte.)', 'attend_status': 50},
+                                status=status.HTTP_400_BAD_REQUEST)
+            else:
+                return Response({'message': 'Kortet finnes ikke i databasen. '
+                                            'Skriv inn et online.ntnu.no brukernavn for å '
+                                            'knytte kortet til brukeren og registrere oppmøte.',
+                                 'attend_status': 40}, status=status.HTTP_400_BAD_REQUEST)
 
         return Response({'message': (attendee.user.get_full_name() + ' er registrert som deltaker. Velkommen!'),
                          'attend_status': 10, 'attendee': attendee.id}, status=status.HTTP_200_OK)
