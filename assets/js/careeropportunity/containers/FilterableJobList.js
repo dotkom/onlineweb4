@@ -13,6 +13,7 @@ const mapData = job => ({
   jobTitle: job.title,
   ingress: job.ingress,
   jobType: job.employment.name,
+  id: job.id,
 });
 
 class FilterableJobList extends React.Component {
@@ -80,7 +81,6 @@ class FilterableJobList extends React.Component {
         }
       });
 
-      console.log(locations);
       // Store job tag data in an own object.
       let tagData = {
         companies: job.company.id,
