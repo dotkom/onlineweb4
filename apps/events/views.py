@@ -346,6 +346,7 @@ class AttendViewSet(views.APIView):
         username = request.data.get('username')
         waitlist_approved = request.data.get('approved')
 
+        # If attendee has typed in username to bind a new card to their user
         if username is not None and rfid is not None:
             try:
                 user = User.objects.get(username=username)
@@ -356,32 +357,44 @@ class AttendViewSet(views.APIView):
                                             '(Prøv igjen, eller scan nytt kort for å avbryte.)', 'attend_status': 50},
                                 status=status.HTTP_400_BAD_REQUEST)
         try:
+            # If attendee is trying to attend by username
             if rfid is None:
                 attendee = Attendee.objects.get(event=event, user__username=username)
             else:
                 attendee = Attendee.objects.get(event=event, user__rfid=rfid)
 
+            # If attendee is already marked as attended
             if attendee.attended:
                 return Response({'message': (attendee.user.get_full_name() +
                                              ' har allerede registrert oppmøte.'), 'attend_status': 20},
                                 status=status.HTTP_400_BAD_REQUEST)
+
+            # If attendee is on waitlist (bypassed if attendee has gotten the all-clear)
             if attendee.is_on_waitlist() and not waitlist_approved:
                 return Response({'message': (attendee.user.get_full_name() +
                                              ' er på venteliste. Registrer dem som møtt opp allikevel?'),
                                  'attend_status': 30},
                                 status=status.HTTP_403_FORBIDDEN)
+
+            # All is clear, set attendee to attended and save
             attendee.attended = True
             attendee.save()
+
         except Attendee.DoesNotExist:
+
+            # If attendee tried to attend by a username that isn't tied to a user
             if rfid is None:
                 return Response({'message': 'Brukernavnet finnes ikke. Husk at det er et online.ntnu.no brukernavn! '
                                             '(Prøv igjen, eller scan nytt kort for å avbryte.)', 'attend_status': 50},
                                 status=status.HTTP_400_BAD_REQUEST)
+
+            # If attendee tried to attend by card, but card isn't tied to a user
             else:
                 return Response({'message': 'Kortet finnes ikke i databasen. '
                                             'Skriv inn et online.ntnu.no brukernavn for å '
                                             'knytte kortet til brukeren og registrere oppmøte.',
                                  'attend_status': 40}, status=status.HTTP_400_BAD_REQUEST)
 
+        # All is clear, attendee is attended
         return Response({'message': (attendee.user.get_full_name() + ' er registrert som deltaker. Velkommen!'),
                          'attend_status': 10, 'attendee': attendee.id}, status=status.HTTP_200_OK)
