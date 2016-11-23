@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import random
+import os
 
 from django.core.management.base import BaseCommand
 from django.core.mail import EmailMessage
@@ -19,14 +20,15 @@ class Command(BaseCommand):
         event_id = options['event_id']
         event = AttendanceEvent.objects.get(event=event_id)
         users = event.attendees_qs
-        random_users = Command.generate_random_list(users)
+        random_users = self.generate_random_list(users)
         to_from_dict = {}
         for count, user in enumerate(users):
             to_from_dict['Par %s' % (count+1)] = {'To': user.user.get_full_name(), 'From': users[random_users[count]].user.get_full_name()}
             
-            Command.send_mail(user, users[random_users[count]])
+            self.send_mail(user, users[random_users[count]])
 
-        Command.mail_to_committee(to_from_dict)
+        self.write_to_file(to_from_dict)
+        self.mail_to_committee(to_from_dict)
 
 
     # Function for generating a list with random numbers corresponding to
@@ -69,8 +71,23 @@ class Command(BaseCommand):
     def mail_to_committee(to_from_dict):
         subject = "Secret santa til-fra liste"
 
-        content = render_to_string('secret_santa/committee_mail.txt', {
+        content = render_to_string('secret_santa/committee_mail.txt')
+
+        EmailMessage(subject, content, settings.EMAIL_TRIKOM, [settings.EMAIL_TRIKOM]).send()
+
+
+    @staticmethod
+    def write_to_file(to_from_dict):
+        directory = 'uploaded_media/txt'
+        if not os.path.exists(directory):
+            os.makedirs(directory)
+
+        txt_file = open(directory + '/secret_santa_to_from.txt','w+')
+
+        content = render_to_string('secret_santa/committee_pdf.txt', {
             'to_from_dict': to_from_dict,
         })
 
-        EmailMessage(subject, content, settings.EMAIL_TRIKOM, [settings.EMAIL_TRIKOM]).send()
+        txt_file.write(content)
+        txt_file.close()
+

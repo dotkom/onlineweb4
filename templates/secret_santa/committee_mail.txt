@@ -1,6 +1,2 @@
-Secret santa til og fra liste:
-
-{% for key, values in to_from_dict.items %} {{ key }}:
-    {% for k, value in values.items %} {{ k }}: {{ value }}
-    {% endfor %}
-{% endfor %}
+Secret santa e-post har blitt sendt ut.
+Det er lagret en kopi av alle til-fra par om det blir behov for å sjekke dette.
