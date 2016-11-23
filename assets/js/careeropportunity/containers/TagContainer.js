@@ -1,26 +1,18 @@
 import Tag from '../components/Tag';
 
-class TagContainer extends React.Component {
-  constructor() {
-    super();
-  }
+const TagContainer = ({ tags, handleChange, heading }) => {
+  let tagElems = Object.keys(tags).map(id => (
+    <Tag key={id} selected={tags[id].display} handleChange={handleChange.bind(self, id)} title={tags[id].name} />
+  ));
 
-  render() {
-    const self = this;
-
-    let tags = Object.keys(this.props.tags).map(id => (
-      <Tag key={id} selected={self.props.tags[id].display} handleChange={self.props.handleChange.bind(self, id)} title={self.props.tags[id].name} />
-    ));
-
-    return (
-      <div>
-        <h3>{this.props.heading}</h3>
-        <ul>
-          {tags}
-        </ul>
-      </div>
-    );
-  }
-}
+  return (
+    <div>
+      <h3>{heading}</h3>
+      <ul>
+        {tagElems}
+      </ul>
+    </div>
+  );
+};
 
 export default TagContainer;
