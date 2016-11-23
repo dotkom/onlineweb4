@@ -365,7 +365,7 @@ class AttendViewSet(views.APIView):
                 return Response({'message': (attendee.user.get_full_name() +
                                              ' er på venteliste. Registrer dem som møtt opp allikevel?'),
                                  'attend_status': 30},
-                                status=status.HTTP_200_OK)
+                                status=status.HTTP_403_FORBIDDEN)
             attendee.attended = True
             attendee.save()
         except Attendee.DoesNotExist:
