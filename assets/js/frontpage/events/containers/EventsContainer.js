@@ -27,14 +27,13 @@ const apiEventsToEvents = event => ({
 
 const sortEvents = (a, b) => {
   // checks if the event is starting today or is ongoing
-  if (moment().isAfter(a.startDate, 'day') && moment().isBefore(a.endDate)) {
+  if (moment().isBetween(a.startDate, a.endDate)) {
+    if (moment().isBetween(b.startDate, b.endDate)) {
+      return moment(a.endDate).isBefore(b.endDate) ? -1 : 1;
+    }
     return -1;
   }
-  // checks which event comes first
-  if (moment(a.startDate).isBefore(b.endDate)) {
-    return -1;
-  }
-  return 1;
+  return moment(a.startDate).isBefore(b.startDate) ? -1 : 1;
 };
 
 /*
