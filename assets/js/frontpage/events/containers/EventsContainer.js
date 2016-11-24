@@ -20,20 +20,21 @@ const apiEventsToEvents = event => ({
   eventUrl: `/events/${event.id}/${event.slug}`,
   ingress: event.ingress_short,
   startDate: event.event_start,
+  endDate: event.event_end,
   title: event.title,
   images: mergeEventImages(event.image, event.company_event),
 });
 
 const sortEvents = (a, b) => {
-  // checks if the event is starting today or ongoing
-  if (moment().isAfter(a.event_start, 'day') && moment().isBefore(a.event_end)) {
-    return 1;
+  // checks if the event is starting today or is ongoing
+  if (moment().isAfter(a.startDate, 'day') && moment().isBefore(a.endDate)) {
+    return -1;
   }
   // checks which event comes first
-  if (moment(a.event_start).isBefore(b.event_start)) {
-    return 1;
+  if (moment(a.startDate).isBefore(b.endDate)) {
+    return -1;
   }
-  return -1;
+  return 1;
 };
 
 /*
