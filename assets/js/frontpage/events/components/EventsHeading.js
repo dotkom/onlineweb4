@@ -7,11 +7,11 @@ const EventsHeading = ({ eventTypes, setEventVisibility }) => (
     <div className="page-header clearfix">
       <div className="row">
         <div className="col-md-8 col-xs-6">
-          <h2 id="events-heading">ARRANGEMENTER</h2>
+          <h1 id="events-heading">Arrangementer</h1>
         </div>
         <div className="col-md-4 col-xs-6">
           <div className="archive-link">
-            <a href={Urls.events_index()}>ARKIV
+            <a href={Urls.events_index()}>Arkiv
               <Glyphicon glyph="chevron-right" />
             </a>
           </div>
