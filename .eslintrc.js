@@ -4,7 +4,8 @@ module.exports = {
     Urls: true
   },
   env: {
-    browser: true
+    browser: true,
+    jest: true
   },
   rules: {
     "react/jsx-filename-extension": [
