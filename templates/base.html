@@ -217,7 +217,7 @@
         <script src="{{ STATIC_URL }}js/libs/bootstrap.min.js"></script>
         <script src="{{ STATIC_URL }}js/libs/moment.min.js"></script>
         <script src="{{ STATIC_URL }}js/libs/jquery.cookie.js"></script>
-        <script src="{{ STATIC_URL }}django_js_reverse/js/reverse.js"></script>
+        <script src="{% url 'js_reverse' %}" type="text/javascript"></script>
         <script src="{{ STATIC_URL }}js/libs/picturefill.min.js"></script>
         {% compress js %}
         <script src="{{ STATIC_URL }}js/libs/jquery.debouncedresize.js"></script>
