@@ -1,3 +1,4 @@
+import React from 'react';
 import { mount } from 'enzyme';
 import SmallEvent from '../components/SmallEvent';
 
@@ -11,4 +12,3 @@ describe('<SmallEvent />', () => {
     expect(wrapper.find({ href: testUrl })).toBeDefined();
   });
 });
-
