@@ -1,0 +1,11 @@
+Hei, du har ikke betalt for {{ payment_description }}.
+
+Fristen for å betale er {{ payment_deadline }}.
+
+For mer informasjon se:
+{{ payment_url }}
+
+Dersom du har spørsmål kan du sende mail til {{ payment_email }}.
+
+Mvh
+Linjeforeningen Online

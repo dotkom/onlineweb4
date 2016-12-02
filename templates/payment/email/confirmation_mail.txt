@@ -1,0 +1,21 @@
+Hei!
+
+Du har betalt for {{ payment_relation.payment.description }} den {{ payment_date }}.
+Transaksjonen har nå blitt gjennomført, og du har blitt belastet en sum på {{ payment_relation.payment_price.price }}kr.
+
+Ditt kvitteringsnummer er: {{ payment_relation.unique_id }}
+
+------------------------------------
+Vare				Pris
+------------------------------------
+{{ payment_relation.payment.get_receipt_description }} {{ payment_relation.payment_price.price }} kr
+
+
+------------------------------------
+totalt                        {{ payment_relation.payment_price.price }} kr
+------------------------------------
+
+Dersom du har problemer eller spørsmål, send mail til: {{ from_mail }}
+
+Mvh. Linjeforeningen Online
+Org.nr. 992 548 045

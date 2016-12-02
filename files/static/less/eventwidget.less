@@ -104,6 +104,55 @@ section#events {
         text-transform:uppercase;
     }
 
+    .event-filters {
+        padding-bottom: 20px;
+        float: right;
+        margin-top: -10px;
+    }
+
+    .event-filter-button {
+      background-color: #027bbb;
+      color: #FFF;
+      padding: 4px 8px;
+      font-weight: 600;
+      border-color: #0f88c7;
+      border-radius: 0;
+    }
+
+    .event-filter-button:hover {
+      background: #2291cc;
+      border-color: #319fda;
+    }
+
+    .event-kurs {
+        background-color: @fagkom-color;
+        color: #FFF;
+    }
+
+    .event-sosialt {
+        background-color: @arrkom-color;
+        color: #FFF;
+    }
+
+    .event-bedriftspresentasjon {
+        background-color: @baby-blue;
+        color: #FFF;
+    }
+
+    .event-annet {
+        background-color: @heading;
+        color: #FFF;
+    }
+
+    .hidden-event-button {
+        background-color: #FFF;
+        color: #000;
+    }
+
+    .hidden-event-button:hover {
+      background-color: #f2f2f2;
+    }
+
     ul.event-list {
         list-style: none;
         margin-top: 8px;
@@ -117,7 +166,8 @@ section#events {
             @media (min-width: 992px) {
                 width: 455px;
 
-                &.column-bottom,
+                // Remove border-bottom from last row
+                &:nth-child(odd):nth-last-child(2),
                 &:last-child {
                     border: none;
                 }

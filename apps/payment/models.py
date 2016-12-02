@@ -77,6 +77,15 @@ class Payment(models.Model):
         if self._is_type(AttendanceEvent):
             return self.content_object.event.title
 
+    def get_receipt_description(self):
+        receipt_description = ""
+        description = [' '] * 30
+        temp = self.description()[0:25]
+        description[0:len(temp)+1] = list(temp)
+        for c in description:
+            receipt_description += c
+        return receipt_description
+
     def responsible_mail(self):
         if self._is_type(AttendanceEvent):
             event_type = self.content_object.event.event_type

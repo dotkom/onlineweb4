@@ -7,10 +7,12 @@ import stripe
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.core.mail import EmailMessage
+from django.core.mail import EmailMessage, send_mail
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
+from django.template.loader import render_to_string
 from django.utils.translation import ugettext as _
+from pytz import timezone as tz
 
 from apps.payment.models import Payment, PaymentPrice, PaymentRelation, PaymentTransaction
 from apps.webshop.models import OrderLine
@@ -189,14 +191,16 @@ def _send_payment_confirmation_mail(payment_relation):
     from_mail = payment_relation.payment.responsible_mail()
     to_mails = [payment_relation.user.email]
 
-    message = _("Du har betalt for ") + payment_relation.payment.description()
-    message += "\n"
-    message += _("Ditt kvitteringsnummer er") + ": " + payment_relation.unique_id
-    message += "\n"
-    message += "\n"
-    message += _("Dersom du har problemer eller spørsmål, send mail til") + ": " + from_mail
+    payment_date = payment_relation.datetime.astimezone(tz('Europe/Oslo'))
 
-    EmailMessage(subject, str(message), from_mail, [], to_mails).send()
+    email_context = {}
+    email_context['payment_date'] = payment_date.strftime("%-d %B %Y kl. %H:%M")
+    email_context['payment_relation'] = payment_relation
+    email_context['from_mail'] = from_mail
+
+    email_message = render_to_string('payment/email/confirmation_mail.txt', email_context)
+
+    send_mail(subject, email_message, from_mail, to_mails)
 
 
 @login_required
