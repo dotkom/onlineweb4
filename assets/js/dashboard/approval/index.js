@@ -1,3 +1,5 @@
+import './less/approval.less';
+
 $(document).ready(function() {
     $("div.application").each(function(i, row) {
         $(row).find("button.approve").click(function() {
@@ -23,7 +25,7 @@ $(document).ready(function() {
             });
         }).prop('disabled', false);
     });
-    
+
     var approveApplication = function(application_id, row) {
         var utils = Dashboard.tools
         $.ajax({

@@ -1,4 +1,5 @@
 {% load compress %}
+{% load render_bundle from webpack_loader %}
 <!DOCTYPE html>
 <html>
 <head>
@@ -332,6 +333,7 @@
     </div><!-- ./wrapper -->
 
     {% block js %}
+        {% render_bundle 'vendor' %}
         <script type="text/javascript" src="{{ STATIC_URL }}js/libs/jquery-2.1.3.min.js"></script>
         <script type="text/javascript" src="{{ STATIC_URL }}js/libs/underscore.min.js"></script>
         <script type="text/javascript" src="{{ STATIC_URL }}js/libs/bootstrap.min.js"></script>
