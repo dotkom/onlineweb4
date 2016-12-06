@@ -21,7 +21,7 @@ module.exports = {
     ]
   },
   resolve: {
-    root: path.resolve(__dirname, './assets/js/'),
+    root: path.resolve(__dirname, './assets/'),
   },
   output: {
     path: path.resolve('./assets/webpack_bundles/'),

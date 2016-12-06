@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react';
-import ImagePropTypes from 'common/proptypes/ImagePropTypes';
+import ImagePropTypes from 'js/common/proptypes/ImagePropTypes';
 
 const MainArticle = ({ articleUrl, heading, image, ingress }) => (
   <div className="col-md-6">

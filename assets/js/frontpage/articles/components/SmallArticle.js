@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react';
-import ImagePropTypes from 'common/proptypes/ImagePropTypes';
+import ImagePropTypes from 'js/common/proptypes/ImagePropTypes';
 
 const SmallArticle = ({ articleUrl, heading, image }) => (
   <div className="col-xs-6 col-md-2">

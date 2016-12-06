@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react';
 import moment from 'moment';
 import { Carousel } from 'react-bootstrap';
-import ImagePropTypes from 'common/proptypes/ImagePropTypes';
+import ImagePropTypes from 'js/common/proptypes/ImagePropTypes';
 
 const EventImage = ({ date, eventUrl, images }) => (
   <div className="col-sm-4 col-md-2">
