@@ -6,12 +6,15 @@ var CommonsChunkPlugin = require("webpack/lib/optimize/CommonsChunkPlugin");
 
 module.exports = {
   context: __dirname,
-  devtool: 'eval-source-map',
+  devtool: 'inline-source-map',
   entry: {
     // Used to extract common libraries
     vendor: [
       'classnames', 'es6-promise', 'isomorphic-fetch',
       'moment', 'react', 'react-bootstrap', 'react-dom'
+    ],
+    core: [
+      './assets/js/core/index',
     ],
     frontpageEvents: [
       './assets/js/frontpage/events/index'
@@ -36,18 +39,18 @@ module.exports = {
       },
       {
         test: /\.less$/,
-        loader: ExtractTextPlugin.extract('style', 'css!less'),
+        loader: ExtractTextPlugin.extract(
+          'css-loader?sourceMap!' +
+          'less-loader?sourceMap'),
       }
     ]
-  },
-  lessLoader: {
-    includePath: [path.resolve(__dirname, './styles')]
   },
   plugins: [
     new CommonsChunkPlugin({
       names: ['vendor'],
       minChunks: Infinity
     }),
+    new ExtractTextPlugin('[name]-[hash].css'),
     new BundleTracker({filename: './webpack-stats.json'})
   ]
 };

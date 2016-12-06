@@ -17,12 +17,10 @@
     <meta name="theme-color" content="#005fa2">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     {% block styles %}
-        {% compress css %}
-        <link rel="stylesheet" type="text/less" href="{{ STATIC_URL }}less/core.less">
-        {% endcompress %}
     {% endblock %}
     {% block scripts %}
     {% endblock %}
+    {% render_bundle 'core' 'css' %}
     {% render_block "css" %}
     {% block apple-webapp %}{% endblock %}
 </head>
