@@ -5,13 +5,6 @@
 Webshop - Online Dashboard
 {% endblock title %}
 
-{% block styles %}
-    {{ block.super }}
-    {% compress css %}
-    <link rel="stylesheet" type="text/less" href="{{ STATIC_URL }}less/webshop.less">
-    {% endcompress %}
-{% endblock %}
-
 {% block js %}
     {{ block.super }}
     {% compress js %}
