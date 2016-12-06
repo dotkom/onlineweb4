@@ -16,6 +16,9 @@ module.exports = {
     core: [
       './assets/js/core/index',
     ],
+    events_archive: [
+      './assets/js/events/archive/index'
+    ],
     frontpageEvents: [
       './assets/js/frontpage/events/index'
     ],
