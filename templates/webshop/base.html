@@ -1,15 +1,13 @@
 {% extends 'base.html' %}
 
-{% load compress %}
 {% load markdown_deux_tags %}
+{% load render_bundle from webpack_loader %}
 
 {% block title %}Webshop - Online{% endblock title %}
 
 {% block styles %}
     {{ block.super }}
-    {% compress css %}
-    <link rel="stylesheet" type="text/less" href="{{ STATIC_URL }}less/webshop.less">
-    {% endcompress %}
+    {% render_bundle 'webshop' 'css' %}
 {% endblock %}
 
 {% block content %}

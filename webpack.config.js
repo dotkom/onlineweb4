@@ -21,7 +21,10 @@ module.exports = {
     ],
     frontpageArticles: [
       './assets/js/frontpage/articles/index'
-    ]
+    ],
+    webshop: [
+      './assets/js/webshop/index',
+    ],
   },
   resolve: {
     root: path.resolve(__dirname, './assets/'),
