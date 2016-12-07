@@ -13,6 +13,7 @@
     "react-bootstrap": "^0.30.5",
     "react-dom": "^15.3.0",
     "remarkable": "^1.6.2",
+    "url-loader": "^0.5.7",
     "webpack": "^1.13.1",
     "webpack-bundle-tracker": "0.0.93",
     "webpack-dev-server": "^1.14.1",
