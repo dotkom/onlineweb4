@@ -1,3 +1,12 @@
+// Breaks for some reason
+/* eslint comma-dangle: ["error", {"functions":
+  "arrays": "always-multiline",
+  "objects": "always-multiline",
+  "imports": "always-multiline",
+  "exports": "always-multiline",
+  "functions": "ignore",
+}] */
+
 const config = require('./webpack.config.js');
 const webpack = require('webpack');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
@@ -15,12 +24,14 @@ config.plugins.push(new webpack.DefinePlugin({
 
 // Replace less loader
 Object.keys(config.module.loaders).forEach((key) => {
-  const loader = config.module.loaders[key];
-  if (loader.test.match(/\.less$/)) {
-    loader.loader = ExtractTextPlugin.extract(
-      'css-loader?sourceMap!' +
-      'less-loader?sourceMap',
-    );
+  if ({}.hasOwnProperty.call(config.module.loaders, key)) {
+    const loader = config.module.loaders[key];
+    if ('.less'.match(loader.test)) {
+      loader.loader = ExtractTextPlugin.extract(
+        'css-loader?sourceMap!' +
+        'less-loader?sourceMap'
+      );
+    }
   }
 });
 // Add extract text plugin
