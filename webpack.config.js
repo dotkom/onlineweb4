@@ -51,6 +51,10 @@ module.exports = {
           'css-loader?sourceMap!' +
           'less-loader?sourceMap'),
       },
+      {
+        test: /\.(eot|svg|ttf|woff|woff2)$/,
+        loader: 'file-loader?name=fonts/[name].[ext]&publicPath=/static/fonts/',
+      },
     ],
   },
   plugins: [

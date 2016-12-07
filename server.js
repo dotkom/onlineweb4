@@ -26,7 +26,7 @@ Object.keys(config.entry).forEach((entry) => {
   }
 });
 
-config.output.publicPath = `http://${host}/assets/bundles/`;
+config.output.publicPath = `http://${host}/static/`;
 
 // Don't reload if there is an error
 config.plugins.unshift(new webpack.NoErrorsPlugin());
