@@ -1,8 +1,7 @@
-var path = require('path');
-var webpack = require('webpack');
-var ExtractTextPlugin = require('extract-text-webpack-plugin');
-var BundleTracker = require('webpack-bundle-tracker');
-var CommonsChunkPlugin = require("webpack/lib/optimize/CommonsChunkPlugin");
+const path = require('path');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const BundleTracker = require('webpack-bundle-tracker');
+const CommonsChunkPlugin = require('webpack/lib/optimize/CommonsChunkPlugin');
 
 module.exports = {
   context: __dirname,
@@ -11,7 +10,7 @@ module.exports = {
     // Used to extract common libraries
     vendor: [
       'classnames', 'es6-promise', 'isomorphic-fetch',
-      'moment', 'react', 'react-bootstrap', 'react-dom'
+      'moment', 'react', 'react-bootstrap', 'react-dom',
     ],
     core: [
       './assets/js/core/index',
@@ -20,13 +19,13 @@ module.exports = {
       './assets/js/dashboard/approval/index',
     ],
     events_archive: [
-      './assets/js/events/archive/index'
+      './assets/js/events/archive/index',
     ],
     frontpageEvents: [
-      './assets/js/frontpage/events/index'
+      './assets/js/frontpage/events/index',
     ],
     frontpageArticles: [
-      './assets/js/frontpage/articles/index'
+      './assets/js/frontpage/articles/index',
     ],
     webshop: [
       './assets/js/webshop/index',
@@ -37,29 +36,29 @@ module.exports = {
   },
   output: {
     path: path.resolve('./assets/webpack_bundles/'),
-    filename: '[name]-[hash].js'
+    filename: '[name]-[hash].js',
   },
   module: {
     loaders: [
       {
         test: /\.js$/,
         exclude: /node_modules/,
-        loader: 'babel-loader'
+        loader: 'babel-loader',
       },
       {
         test: /\.less$/,
         loader: ExtractTextPlugin.extract(
           'css-loader?sourceMap!' +
           'less-loader?sourceMap'),
-      }
-    ]
+      },
+    ],
   },
   plugins: [
     new CommonsChunkPlugin({
       names: ['vendor'],
-      minChunks: Infinity
+      minChunks: Infinity,
     }),
     new ExtractTextPlugin('[name]-[hash].css'),
-    new BundleTracker({filename: './webpack-stats.json'})
-  ]
+    new BundleTracker({ filename: './webpack-stats.json' }),
+  ],
 };

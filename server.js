@@ -1,43 +1,51 @@
-var config = require('./webpack.config.js');
-var webpack = require('webpack');
-var WebpackDevServer = require('webpack-dev-server');
+// Not relevant for nodejs
+/* eslint no-console: 0 */
+// Breaks for some reason
+/* eslint comma-dangle: ["error", {"functions":
+  "arrays": "always-multiline",
+  "objects": "always-multiline",
+  "imports": "always-multiline",
+  "exports": "always-multiline",
+  "functions": "ignore",
+}] */
 
-var ip = '0.0.0.0';
-var port = 3000;
-var host = ip + ':' + String(port);
+const config = require('./webpack.config.js');
+const webpack = require('webpack');
+const WebpackDevServer = require('webpack-dev-server');
 
+const ip = '0.0.0.0';
+const port = 3000;
+const host = `${ip}:${port}`;
 // Add hot reloading to all entries
-for (var entry in config.entry) {
-  if (config.entry.hasOwnProperty(entry) && entry !== 'vendor') {
+Object.keys(config.entry).forEach((entry) => {
+  if ({}.hasOwnProperty.call(config.entry, entry) && entry !== 'vendor') {
     config.entry[entry].unshift(
-      'webpack-dev-server/client?http://' + host,
+      `webpack-dev-server/client?http://${host}`,
       'webpack/hot/dev-server'
     );
   }
-}
+});
 
-// config.entry.dev = ;
+config.output.publicPath = `http://${host}/assets/bundles/`;
 
-config.output.publicPath = 'http://' + host + '/assets/bundles/';
-
-config.plugins.unshift(new webpack.NoErrorsPlugin()); // don't reload if there is an error
+// Don't reload if there is an error
+config.plugins.unshift(new webpack.NoErrorsPlugin());
 config.plugins.unshift(new webpack.HotModuleReplacementPlugin());
 
-var compiler =  webpack(config);
+const compiler = webpack(config);
 
 new WebpackDevServer(compiler, {
   publicPath: config.output.publicPath,
   hot: true,
   inline: true,
   historyApiFallback: true,
-  headers: { "Access-Control-Allow-Origin": "*" },
+  headers: { 'Access-Control-Allow-Origin': '*' },
   stats: {
-    chunks: false
-  }
-}).listen(port, ip, function (err, result) {
+    chunks: false,
+  },
+}).listen(port, ip, (err) => {
   if (err) {
     console.error(err);
   }
-
-  console.log('Listening at ' + host);
+  console.log(`Listening at ${host}`);
 });
