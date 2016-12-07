@@ -1,14 +1,14 @@
-var config = require('./webpack.config.js');
-var webpack = require('webpack');
-var ExtractTextPlugin = require('extract-text-webpack-plugin');
+const config = require('./webpack.config.js');
+const webpack = require('webpack');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 config.devtool = 'cheap-module-source-map';
 
 // Set environment to production
 config.plugins.push(new webpack.DefinePlugin({
   'process.env': {
-    'NODE_ENV': JSON.stringify('production')
-  }
+    NODE_ENV: JSON.stringify('production'),
+  },
 }));
 
 // Extract css to file
@@ -31,10 +31,10 @@ config.plugins.push(new ExtractTextPlugin('[name]-[hash].css'));
 config.plugins.push(new webpack.optimize.UglifyJsPlugin({
   compress: {
     warnings: false,
-    screw_ie8: true
+    screw_ie8: true,
   },
   comments: false,
-  sourceMap: false
+  sourceMap: false,
 }));
 
 module.exports = config;
