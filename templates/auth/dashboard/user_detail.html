@@ -4,12 +4,6 @@
 
 {% block title %}Brukerprofiler - {{ user }}{% endblock %}
 
-{% block styles %}
-    {{ block.super }}
-    {% compress css %}
-    {% endcompress %}
-{% endblock %}
-
 {% block page-header %}
     {{ user }}
 {% endblock %}

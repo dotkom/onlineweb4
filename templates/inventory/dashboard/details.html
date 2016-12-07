@@ -7,12 +7,6 @@
     {{ item.name }} - Online Dashboard
 {% endblock title %}
 
-{% block styles %}
-    {{ block.super }}
-    {% compress css %}
-    {% endcompress %}
-{% endblock %}
-
 {% block js %}
     {{ block.super }}
     {% compress js %}

@@ -5,12 +5,6 @@
 Varelager - Online Dashboard
 {% endblock title %}
 
-{% block styles %}
-    {{ block.super }}
-    {% compress css %}
-    {% endcompress %}
-{% endblock %}
-
 {% block js %}
     {{ block.super }}
     {% compress js %}
@@ -23,7 +17,7 @@ Varelager
 {% endblock %}
 
 {% block breadcrumbs %}
-    <li>Varelager</li> 
+    <li>Varelager</li>
 {% endblock %}
 
 {% block content %}

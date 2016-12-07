@@ -5,12 +5,6 @@
 Bedrifter - Online Dashboard
 {% endblock title %}
 
-{% block styles %}
-    {{ block.super }}
-    {% compress css %}
-    {% endcompress %}
-{% endblock %}
-
 {% block js %}
     {{ block.super }}
     {% compress js %}
@@ -23,7 +17,7 @@ Bedrifter
 {% endblock %}
 
 {% block breadcrumbs %}
-    <li>Bedrifter</li> 
+    <li>Bedrifter</li>
 {% endblock %}
 
 {% block content %}
