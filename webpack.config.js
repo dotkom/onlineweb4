@@ -1,11 +1,10 @@
 const path = require('path');
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const BundleTracker = require('webpack-bundle-tracker');
 const CommonsChunkPlugin = require('webpack/lib/optimize/CommonsChunkPlugin');
 
 module.exports = {
   context: __dirname,
-  devtool: 'inline-source-map',
+  devtool: 'eval-source-map',
   entry: {
     // Used to extract common libraries
     vendor: [
@@ -47,9 +46,11 @@ module.exports = {
       },
       {
         test: /\.less$/,
-        loader: ExtractTextPlugin.extract(
+        // loader: ExtractTextPlugin.extract(
+        loader:
+          'style-loader!' +
           'css-loader?sourceMap!' +
-          'less-loader?sourceMap'),
+          'less-loader?sourceMap',
       },
       {
         test: /\.(eot|svg|ttf|woff|woff2)$/,
@@ -62,7 +63,6 @@ module.exports = {
       names: ['vendor'],
       minChunks: Infinity,
     }),
-    new ExtractTextPlugin('[name]-[hash].css'),
     new BundleTracker({ filename: './webpack-stats.json' }),
   ],
 };

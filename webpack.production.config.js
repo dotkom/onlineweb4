@@ -1,5 +1,6 @@
 var config = require('./webpack.config.js');
 var webpack = require('webpack');
+var ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 config.devtool = 'cheap-module-source-map';
 
@@ -9,6 +10,22 @@ config.plugins.push(new webpack.DefinePlugin({
     'NODE_ENV': JSON.stringify('production')
   }
 }));
+
+// Extract css to file
+
+// Replace less loader
+Object.keys(config.module.loaders).forEach((key) => {
+  const loader = config.module.loaders[key];
+  if (loader.test.match(/\.less$/)) {
+    loader.loader = ExtractTextPlugin.extract(
+      'css-loader?sourceMap!' +
+      'less-loader?sourceMap',
+    );
+  }
+});
+// Add extract text plugin
+config.plugins.push(new ExtractTextPlugin('[name]-[hash].css'));
+
 
 // Uglify js
 config.plugins.push(new webpack.optimize.UglifyJsPlugin({
