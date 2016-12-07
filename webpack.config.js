@@ -42,7 +42,7 @@ module.exports = {
       {
         test: /\.js$/,
         exclude: /node_modules/,
-        loader: 'babel-loader',
+        loaders: ['react-hot', 'babel'],
       },
       {
         test: /\.less$/,
