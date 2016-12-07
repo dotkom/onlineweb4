@@ -34,7 +34,6 @@ config.plugins.push(new webpack.optimize.UglifyJsPlugin({
     screw_ie8: true,
   },
   comments: false,
-  sourceMap: false,
 }));
 
 module.exports = config;
