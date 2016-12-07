@@ -32,6 +32,17 @@ config.output.publicPath = `http://${host}/static/`;
 config.plugins.unshift(new webpack.NoErrorsPlugin());
 config.plugins.unshift(new webpack.HotModuleReplacementPlugin());
 
+// Add react-hot-loader to js loader
+Object.keys(config.module.loaders).forEach((key) => {
+  if ({}.hasOwnProperty.call(config.module.loaders, key)) {
+    const loader = config.module.loaders[key];
+    if ('.js'.match(loader.test)) {
+      loader.loaders.unshift('react-hot');
+    }
+  }
+});
+
+
 const compiler = webpack(config);
 
 new WebpackDevServer(compiler, {
