@@ -8,7 +8,7 @@ module.exports = {
   entry: {
     // Used to extract common libraries
     vendor: [
-      'classnames', 'es6-promise', 'isomorphic-fetch',
+      'classnames', 'es6-promise', 'whatwg-fetch',
       'moment', 'react', 'react-bootstrap', 'react-dom',
     ],
     core: [
