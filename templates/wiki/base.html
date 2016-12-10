@@ -3,6 +3,7 @@
 {% load sekizai_tags %}
 {% load i18n wiki_tags %}
 {% load compress %}
+{% load render_bundle from webpack_loader %}
 
 {% block title %}
 {% block wiki_pagetitle %}{% endblock %}
@@ -13,13 +14,12 @@
     {% compress js %}
     <script src="{{ STATIC_URL }}wiki/js/core.js"></script>
     {% endcompress %}
+    {% render_bundle 'wiki' 'js' %}
 {% endblock %}
 
 {% block styles %}
     {{ block.super }}
-    {% compress css %}
-        <link rel="stylesheet" type="text/less" href="{{ STATIC_URL }}less/wiki.less" />
-    {% endcompress %}
+    {% render_bundle 'wiki' 'css' %}
 {% endblock %}
 
 {% block content %}

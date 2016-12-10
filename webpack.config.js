@@ -39,6 +39,9 @@ module.exports = {
     webshop: [
       './assets/js/webshop/index',
     ],
+    wiki: [
+      './assets/js/wiki/index',
+    ],
   },
   resolve: {
     root: path.resolve(__dirname, './assets/'),
