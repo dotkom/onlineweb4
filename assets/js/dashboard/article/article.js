@@ -14,7 +14,6 @@ var Article = (function ($, tools) {
      * @param uri Relative URI on the endpoint
      */
     var doRequest = function (uri) {
-        last_request = uri
 
         var success = function (data) {
             Article.table.draw(data)

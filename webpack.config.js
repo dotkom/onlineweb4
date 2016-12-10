@@ -27,6 +27,9 @@ module.exports = {
     dashboard_approval: [
       './assets/js/dashboard/approval/index',
     ],
+    dashboardArticle: [
+      './assets/js/dashboard/article/index',
+    ],
     events_archive: [
       './assets/js/events/archive/index',
     ],
