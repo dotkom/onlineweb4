@@ -10,6 +10,13 @@
         z-index: 1050;
     }
 
+    // Wrapping the less file with #wiki and using extended mixins
+    // messes up the results and produces #wiki #wiki .form-actions
+    // Reapplying clearfix
+    .form-actions {
+      .clearfix();
+    }
+
     .page-header {
         margin-top: 0px;
     }
