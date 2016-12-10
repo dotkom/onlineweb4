@@ -1,6 +1,8 @@
 # -*- coding: utf8 -*-
 import os
 import sys
+import webpack_loader
+from webpack_resolve import create_resolve_file
 
 import wiki
 from django.contrib.messages import constants as messages
@@ -92,6 +94,7 @@ STATICFILES_FINDERS = (
 
 # Including django-wiki static files so we can import the less files.
 DJANGO_WIKI_STATIC = os.path.join(os.path.dirname(wiki.__file__), 'static')
+create_resolve_file()
 
 COMPRESS_FILES = True
 COMPRESS_OUTPUT_DIR = 'cache'
