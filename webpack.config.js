@@ -39,6 +39,9 @@ module.exports = {
     frontpageArticles: [
       './assets/js/frontpage/articles/index',
     ],
+    profiles: [
+      './assets/js/profiles/index',
+    ],
     webshop: [
       './assets/js/webshop/index',
     ],
