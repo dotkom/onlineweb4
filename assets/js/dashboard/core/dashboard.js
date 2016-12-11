@@ -1,5 +1,5 @@
 var Dashboard = (function ($) {
-    
+
     // Private method to set up AJAX for dashboard
     var doAjaxSetup = function () {
         var csrfSafeMethod = function (method) {
@@ -28,7 +28,7 @@ var Dashboard = (function ($) {
             // Else stretch
             } else {
                 $('.left-side').toggleClass("collapse-left")
-                $(".right-side").toggleClass("strech")   
+                $(".right-side").toggleClass("strech")
             }
        })
     };
@@ -62,7 +62,7 @@ var Dashboard = (function ($) {
             }
             else {
                 var $parent = $(this).parent();
-                
+
                 if ($parent.hasClass('treeview') && $parent.find('ul').is(':hidden')) {
                     localStorage.setItem('ow4_dashboard_sidebar', $parent.find('ul li:first-child a').attr('href'));
                 }
@@ -127,7 +127,7 @@ var Dashboard = (function ($) {
 
                 })
             })
-    
+
             // Generic javascript to enable interactive tabs that do not require page reload
             var switchTab = function(newActiveTab) {
                 if ($('#dashboard-tabs').length) {
@@ -151,10 +151,10 @@ var Dashboard = (function ($) {
 
             // Hide all other tabs and show the active one when the page loads
             if ($('#dashboard-tabs').length) {
-                // Hide all sections 
+                // Hide all sections
                 $('#tab-content section').hide()
                 // Find the currently active tab and show it
-                activeTab = $('#dashboard-tabs').find('li.active a').data('section')    
+                activeTab = $('#dashboard-tabs').find('li.active a').data('section')
                 $('#' + activeTab).show()
 
                 // Set up the tabs to show/hide when clicked
@@ -211,14 +211,14 @@ var Dashboard = (function ($) {
             },
 
             // Display a status message for 5 seconds
-            // 
+            //
             // :param message: String message text
             // :param tags: String of Bootstrap Alert CSS classes
             showStatusMessage: function (message, tags) {
                 var id = new Date().getTime();
                 var wrapper = $('.messages')
-                var message = $('<div class="row" id="'+ id +'"><div class="col-md-12">' + 
-                                '<div class="alert ' + tags + '">' + 
+                var message = $('<div class="row" id="'+ id +'"><div class="col-md-12">' +
+                                '<div class="alert ' + tags + '">' +
                                 message + '</div></div></div>')
 
                 if(wrapper.length == 0){
@@ -260,7 +260,7 @@ var Dashboard = (function ($) {
                 for (m = 0; m < rlen; m++) {
                     a[m] = "<td>" + a[m].join("</td><td>") + "</td>"
                 }
-                
+
                 tbody.innerHTML = "<tr>" + a.join("</tr><tr>") + "</tr>"
             },
 
@@ -278,14 +278,14 @@ var Dashboard = (function ($) {
                 if (errors) return false
                 else return true
             },
-            
+
             toggleChecked: function(element) {
 
                 var checkedIcon = 'fa-check-square-o'
                 var uncheckedIcon = 'fa-square-o'
                 var allITags = $(element).find('i')
                 var ilen = allITags.length
-                
+
                 for (m = 0; m < ilen; m++) {
                     icon = allITags[m]
                     if ($(icon).hasClass('checked')) {

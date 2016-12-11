@@ -16,8 +16,9 @@
         <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/font-awesome.min.css">
         <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/bootstrap-datetimepicker.min.css">
         <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/cropper/cropper.min.css"/>
+
+        {% render_bundle 'dashboard' 'css' %}
         {% compress css %}
-        <link rel="stylesheet" type="text/less" href="{{ STATIC_URL }}less/dashboard/main.less">
         <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/jquery-tablesorter/tablesorter.css">
         <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/dropzone/dropzone.css" />
         <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/bttrlazyloading/bttrlazyloading.css" />
@@ -349,7 +350,7 @@
         <script type="text/javascript" src="{{ STATIC_URL }}js/libs/dropzone/dropzone.min.js"></script>
         <script type="text/javascript" src="{{ STATIC_URL }}js/Utils.js"></script>
         <script type="text/javascript" src="{{ STATIC_URL }}js/microevent.js"></script>
-        <script type="text/javascript" src="{{ STATIC_URL }}js/dashboard/dashboard.js"></script>
+        {% render_bundle 'dashboard' 'js' %}
         <script type="text/javascript" src="{{ STATIC_URL }}js/gallery.js"></script>
     {% endblock %}
 

@@ -24,6 +24,9 @@ module.exports = {
     core: [
       './assets/js/core/index',
     ],
+    dashboard: [
+      './assets/js/dashboard/core/index',
+    ],
     dashboard_approval: [
       './assets/js/dashboard/approval/index',
     ],
