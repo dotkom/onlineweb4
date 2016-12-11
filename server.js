@@ -53,6 +53,7 @@ new WebpackDevServer(compiler, {
   headers: { 'Access-Control-Allow-Origin': '*' },
   stats: {
     chunks: false,
+    colors: true,
   },
 }).listen(port, ip, (err) => {
   if (err) {
