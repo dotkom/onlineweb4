@@ -33,6 +33,9 @@ module.exports = {
     dashboardArticle: [
       './assets/js/dashboard/article/index',
     ],
+    dashboardGroups: [
+      './assets/js/dashboard/groups/index',
+    ],
     events_archive: [
       './assets/js/events/archive/index',
     ],
