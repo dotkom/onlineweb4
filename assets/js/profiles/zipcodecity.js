@@ -1,3 +1,4 @@
+import $ from 'jquery';
 import { csrfSafeMethod } from 'js/common/utils';
 
 // This small hack is needed to allow city to be fetched from bring.

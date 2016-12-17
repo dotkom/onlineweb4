@@ -1,5 +1,6 @@
 import React from 'react';
 import { Glyphicon } from 'react-bootstrap';
+import Urls from 'urls';
 
 const ArticlesHeading = () => (
   <div className="page-header clearfix">

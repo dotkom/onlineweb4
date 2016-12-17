@@ -1,5 +1,6 @@
 import React from 'react';
 import { Glyphicon } from 'react-bootstrap';
+import Urls from 'urls';
 import EventFilter from './EventFilter';
 
 const EventsHeading = ({ eventTypes, setEventVisibility }) => (

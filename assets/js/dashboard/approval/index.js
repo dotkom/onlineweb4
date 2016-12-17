@@ -1,3 +1,4 @@
+import $ from 'jquery';
 import './less/approval.less';
 
 const approveApplication = (applicationId, row) => {

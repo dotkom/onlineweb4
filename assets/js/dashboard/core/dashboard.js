@@ -1,3 +1,4 @@
+import jQuery from 'jquery';
 import { csrfSafeMethod } from 'js/common/utils';
 
 const Dashboard = (function PrivateDashboard($) {
@@ -287,7 +288,7 @@ const Dashboard = (function PrivateDashboard($) {
   };
 }(jQuery));
 
-$(document).ready(() => {
+jQuery(document).ready(() => {
   Dashboard.init();
 });
 

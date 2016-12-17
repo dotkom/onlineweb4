@@ -1,3 +1,6 @@
+import Urls from 'urls';
+import $ from 'jquery';
+
 const Filters = function Filters() {
   this.query = '';
   this.future = true;

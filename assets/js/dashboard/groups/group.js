@@ -1,4 +1,5 @@
 import Hogan from 'hogan.js';
+import jQuery from 'jquery';
 
 /*
     The Group module provides dynamic interaction with User and Group
@@ -116,6 +117,6 @@ const Group = (function PrivateGroup($, tools) {
   };
 }(jQuery, window.Dashboard.tools));
 
-$(document).ready(() => {
+jQuery(document).ready(() => {
   Group.init();
 });

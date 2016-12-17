@@ -1,4 +1,5 @@
 import moment from 'moment';
+import jQuery from 'jquery';
 /**
  * Created by myth on 10/18/15.
  */

@@ -63,6 +63,10 @@ module.exports = {
     path: path.resolve('./assets/webpack_bundles/'),
     filename: '[name]-[hash].js',
   },
+  externals: {
+    jquery: 'jQuery',
+    urls: 'Urls',
+  },
   module: {
     loaders: [
       {
