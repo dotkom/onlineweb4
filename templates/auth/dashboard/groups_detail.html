@@ -10,7 +10,6 @@
 
 {% block js %}
     {{ block.super }}
-    <script type="text/javascript" src="{{ STATIC_URL }}js/libs/hogan-2.0.0.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}js/libs/typeahead.min.js"></script>
     {% render_bundle 'dashboardGroups' 'js' %}
 {% endblock %}

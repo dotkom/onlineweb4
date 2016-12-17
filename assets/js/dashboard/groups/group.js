@@ -1,3 +1,5 @@
+import Hogan from 'hogan.js';
+
 /*
     The Group module provides dynamic interaction with User and Group
     objects in the database, through AJAX POST.
