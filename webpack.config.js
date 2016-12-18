@@ -4,9 +4,9 @@ const CommonsChunkPlugin = require('webpack/lib/optimize/CommonsChunkPlugin');
 const fs = require('fs');
 
 const extraResolveFile = 'webpack-extra-resolve.json';
-let resolvePaths;
+let resolvePaths = [];
 if (fs.existsSync(extraResolveFile)) {
-  resolvePaths = JSON.parse(fs.readFileSync(extraResolveFile, 'utf-8'));
+  resolvePaths = JSON.parse(fs.readFileSync(extraResolveFile, 'utf-8')).paths;
 } else {
   console.error('Start the django web server before running webpack'); // eslint-disable-line no-console
   process.exit(1);
@@ -57,7 +57,7 @@ module.exports = {
   },
   resolve: {
     root: path.resolve(__dirname, './assets/'),
-    fallback: resolvePaths.paths,
+    fallback: resolvePaths,
   },
   output: {
     path: path.resolve('./assets/webpack_bundles/'),
