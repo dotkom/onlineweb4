@@ -1,3 +1,4 @@
+import Hogan from 'hogan.js';
 /*
     The event module provides dynamic functions to event objects
     such as toggling paid, attended, adding and removing users on events

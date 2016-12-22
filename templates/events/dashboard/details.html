@@ -1,6 +1,7 @@
 {% extends "dashboard_base.html" %}
 {% load compress %}
 {% load crispy_forms_tags %}
+{% load render_bundle from webpack_loader %}
 
 {% block title %}
 {{ event }} - Dashboard - Online
@@ -12,11 +13,7 @@ Arrangementsdetaljer
 
 {% block styles %}
     {{ block.super }}
-    {% compress css %}
-    {{ change_event_form.media.css }}
-    {{ change_attendance_form.media.css }}
-    <link rel="stylesheet" type="text/less" href="{{ STATIC_URL }}less/dashboard/events.less" />
-    {% endcompress %}
+    {% render_bundle 'dashboardEvents' 'css' %}
 {% endblock %}
 
 {% block breadcrumbs %}
@@ -153,12 +150,9 @@ Arrangementsdetaljer
 
 {% block js %}
     {{ block.super }}
-    {% compress js %}
-    {{ change_event_form.media.js }}
-    {{ change_attendance_form.media.js }}
-    <script type="text/javascript" src="{{ STATIC_URL }}js/libs/hogan-2.0.0.js"></script>
+    {# typeahead.js doesn't play nice with npm #}
     <script type="text/javascript" src="{{ STATIC_URL }}js/libs/typeahead.min.js"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}js/dashboard/events.js"></script>
+    {% render_bundle 'dashboardEvents' 'js' %}
     <script>
         // Update details view form with action attribute
         $('#create-event-form').attr('action', "{% url 'dashboard_events_edit' event.id %}")
@@ -197,5 +191,4 @@ Arrangementsdetaljer
         })
         {% endif %}
     </script>
-    {% endcompress %}
 {% endblock %}

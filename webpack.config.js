@@ -36,6 +36,9 @@ module.exports = {
     dashboardCareeropportunity: [
       './assets/js/dashboard/careeropportunity/index',
     ],
+    dashboardEvents: [
+      './assets/js/dashboard/events/index',
+    ],
     dashboardGroups: [
       './assets/js/dashboard/groups/index',
     ],

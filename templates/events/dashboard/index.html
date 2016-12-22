@@ -1,5 +1,5 @@
 {% extends "dashboard_base.html" %}
-{% load compress %}
+{% load render_bundle from webpack_loader %}
 
 {% block title %}
 Event index - Dashboard - Online
@@ -11,16 +11,14 @@ Arrangementsoversikt
 
 {% block styles %}
     {{ block.super }}
-    {% compress css %}
-        <link rel="stylesheet" type="text/less" href="{{ STATIC_URL }}less/dashboard/events.less" />
-    {% endcompress %}
+    {% render_bundle 'dashboardEvents' 'css' %}
 {% endblock %}
 
 {% block js %}
     {{ block.super }}
-    {% compress js %}
-    <script src="{{ STATIC_URL }}js/dashboard/events.js"></script>
-    {% endcompress %}
+    {# typeahead.js doesn't play nice with npm #}
+    <script type="text/javascript" src="{{ STATIC_URL }}js/libs/typeahead.min.js"></script>
+    {% render_bundle 'dashboardEvents' 'js' %}
 {% endblock js %}
 
 {% block breadcrumbs %}
