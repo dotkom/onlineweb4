@@ -51,6 +51,9 @@ module.exports = {
     frontpageArticles: [
       './assets/js/frontpage/articles/index',
     ],
+    mailinglists: [
+      './assets/js/mailinglists/index',
+    ],
     profiles: [
       './assets/js/profiles/index',
     ],

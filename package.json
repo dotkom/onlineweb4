@@ -10,6 +10,7 @@
     "extract-text-webpack-plugin": "^1.0.1",
     "file-loader": "^0.9.0",
     "hogan.js": "2.0",
+    "masonry-layout": "^4.1.1",
     "moment": "^2.16.0",
     "react": "^15.3.0",
     "react-bootstrap": "^0.30.5",
