@@ -8,10 +8,6 @@ Min side - Online
 
 {% block styles %}
     {{ block.super }}
-    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/jcrop/jquery.Jcrop.min.css" />
-    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/jquery-ui/jquery.ui.datepicker.min.css" />
-    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/jquery-ui/jquery.ui.theme.min.css" />
-    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/jquery-ui/jquery.ui.core.min.css" />
     {% render_bundle 'profiles' 'css' %}
 {% endblock %}
 
