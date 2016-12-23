@@ -8,12 +8,8 @@
 {% block styles %}
     {{ block.super }}
     <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/cropper/cropper.min.css"/>
-    {% compress css %}
-        <link rel="stylesheet" type="text/less" href="{{ STATIC_URL }}less/gallery.less" />
-        <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/dropzone/dropzone.css" />
-        <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/bttrlazyloading/bttrlazyloading.css" />
-        <link rel="stylesheet" type="text/less" href="{{ STATIC_URL }}less/font-awesome/font-awesome.less" />
-    {% endcompress %}
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/dropzone/dropzone.css" />
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/bttrlazyloading/bttrlazyloading.css" />
 {% endblock %}
 
 {% block content %}
@@ -48,7 +44,5 @@
     <script type="text/javascript" src="{{ STATIC_URL }}js/libs/blazy/blazy.min.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}js/libs/cropper/cropper.min.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}js/libs/bttrlazyloading/jquery.bttrlazyloading.min.js"></script>
-    {% compress js %}
-        <script type="text/javascript" src="{{ STATIC_URL }}js/libs/jquery.cookie.js"></script>
-    {% endcompress %}
+    <script type="text/javascript" src="{{ STATIC_URL }}js/libs/jquery.cookie.js"></script>
 {% endblock %}

@@ -1,4 +1,5 @@
 import 'less/core.less';
+import 'js/common/less/gallery.less';
 import 'es6-promise/auto';
 import 'whatwg-fetch';
 import moment from 'moment';

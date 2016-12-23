@@ -8,11 +8,8 @@
 {% block styles %}
     {{ block.super }}
     <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/cropper/cropper.min.css"/>
-    {% compress css %}
-        <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/dropzone/dropzone.css" />
-        <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/bttrlazyloading/bttrlazyloading.css" />
-        <link rel="stylesheet" type="text/less" href="{{ STATIC_URL }}less/gallery.less" />
-    {% endcompress %}
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/dropzone/dropzone.css" />
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/bttrlazyloading/bttrlazyloading.css" />
 {% endblock %}
 
 {% block content %}
