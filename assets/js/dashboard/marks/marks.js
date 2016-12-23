@@ -1,3 +1,5 @@
+import Hogan from 'hogan.js';
+
 var Marks = (function ($, tools) {
 
     // Perform self check, display error if missing deps
@@ -32,7 +34,7 @@ var Marks = (function ($, tools) {
     };
 
     // Private generic ajax handler.
-    // 
+    //
     // :param id: user ID in database
     // :param action: either 'remove_user' or 'add_user'
     var ajax_usermod = function (id, action) {
@@ -82,7 +84,7 @@ var Marks = (function ($, tools) {
                 $('#marks_details_users').slideToggle(200);
                 $('#usersearch').focus();
             });
-            
+
             // Bind remove user buttons
             $('.remove-user').each(function (i) {
                 var cell = $(this).parent();
@@ -92,7 +94,7 @@ var Marks = (function ($, tools) {
                     Marks.user.remove(user_id);
                 })
             });
-            
+
             /* Typeahead for user search */
 
             // Smart toggle function
@@ -106,7 +108,7 @@ var Marks = (function ($, tools) {
             var user_search_template =  [
                 '<span data-id="{{ id }}" class="user-meta"><h4>{{ value }}</h4>'
             ].join('');
-            
+
             // Bind the input field
             $('#usersearch').typeahead({
                 remote: "/profile/api_plain_user_search/?query=%QUERY",
@@ -130,7 +132,7 @@ var Marks = (function ($, tools) {
                     ajax_usermod(user_id, 'remove_user')
                 }
             },
-            
+
             add: function (user_id) {
                 ajax_usermod(user_id, 'add_user')
             }

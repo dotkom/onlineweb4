@@ -42,6 +42,9 @@ module.exports = {
     dashboardGroups: [
       './assets/js/dashboard/groups/index',
     ],
+    dashboardMarks: [
+      './assets/js/dashboard/marks/index',
+    ],
     dashboardPosters: [
       './assets/js/dashboard/posters/index',
     ],
