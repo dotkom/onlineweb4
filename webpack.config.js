@@ -63,6 +63,9 @@ module.exports = {
     profiles: [
       './assets/js/profiles/index',
     ],
+    sso: [
+      './assets/js/sso/index',
+    ],
     resourcecenter: [
       './assets/js/resourcecenter/index',
     ],
