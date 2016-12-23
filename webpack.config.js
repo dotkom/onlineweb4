@@ -22,61 +22,61 @@ module.exports = {
       'moment', 'react', 'react-bootstrap', 'react-dom',
     ],
     core: [
-      './assets/js/core/index',
+      './assets/core/index',
     ],
     dashboard: [
-      './assets/js/dashboard/core/index',
+      './assets/dashboard/core/index',
     ],
     dashboard_approval: [
-      './assets/js/dashboard/approval/index',
+      './assets/dashboard/approval/index',
     ],
     dashboardArticle: [
-      './assets/js/dashboard/article/index',
+      './assets/dashboard/article/index',
     ],
     dashboardCareeropportunity: [
-      './assets/js/dashboard/careeropportunity/index',
+      './assets/dashboard/careeropportunity/index',
     ],
     dashboardEvents: [
-      './assets/js/dashboard/events/index',
+      './assets/dashboard/events/index',
     ],
     dashboardGallery: [
-      './assets/js/dashboard/gallery/index',
+      './assets/dashboard/gallery/index',
     ],
     dashboardGroups: [
-      './assets/js/dashboard/groups/index',
+      './assets/dashboard/groups/index',
     ],
     dashboardMarks: [
-      './assets/js/dashboard/marks/index',
+      './assets/dashboard/marks/index',
     ],
     dashboardPosters: [
-      './assets/js/dashboard/posters/index',
+      './assets/dashboard/posters/index',
     ],
     events_archive: [
-      './assets/js/events/archive/index',
+      './assets/events/archive/index',
     ],
     frontpageEvents: [
-      './assets/js/frontpage/events/index',
+      './assets/frontpage/events/index',
     ],
     frontpageArticles: [
-      './assets/js/frontpage/articles/index',
+      './assets/frontpage/articles/index',
     ],
     mailinglists: [
-      './assets/js/mailinglists/index',
+      './assets/mailinglists/index',
     ],
     profiles: [
-      './assets/js/profiles/index',
+      './assets/profiles/index',
     ],
     sso: [
-      './assets/js/sso/index',
+      './assets/sso/index',
     ],
     resourcecenter: [
-      './assets/js/resourcecenter/index',
+      './assets/resourcecenter/index',
     ],
     webshop: [
-      './assets/js/webshop/index',
+      './assets/webshop/index',
     ],
     wiki: [
-      './assets/js/wiki/index',
+      './assets/wiki/index',
     ],
   },
   resolve: {
