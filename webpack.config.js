@@ -99,6 +99,12 @@ module.exports = {
         loaders: ['babel'],
       },
       {
+        test: /\.css$/,
+        loader:
+          'style-loader!' +
+          'css-loader?sourceMap!',
+      },
+      {
         test: /\.less$/,
         loader:
           'style-loader!' +
@@ -106,7 +112,7 @@ module.exports = {
           'less-loader?sourceMap',
       },
       {
-        test: /\.(eot|svg|ttf|woff|woff2)$/,
+        test: /\.(eot|svg|ttf|woff|woff2)(\?[a-z0-9=&.]+)?$/,
         loader: 'url-loader?limit=10000',
       },
     ],
