@@ -1,4 +1,4 @@
-@import 'colors.less';
+@import '~js/common/less/colors.less';
 
 /* Help mixin */
 .transition_easer(@seconds: 0.2s) {
@@ -30,7 +30,7 @@ section#offline {
         display: inline-block;
         margin: 1em;
         text-align: center;
-        
+
         -moz-box-shadow: 5px 5px 5px #ccc;
         -webkit-box-shadow: 5px 5px 5px #ccc;
         box-shadow: 5px 5px 5px #ccc;
@@ -39,19 +39,19 @@ section#offline {
             text-decoration: none;
             line-height: 2em;
             display: block;
-            
+
             &:first-child {
                 .transition_easer;
                 display: block;
                 color: #fff;
                 background: #333;
                 opacity: 0;
-                text-decoration: none; 
-                margin-top: -24px; 
+                text-decoration: none;
+                margin-top: -24px;
                 position: relative; bottom: -24px;
             }
         }
-        
+
 
         span {
             .transition_easer;
@@ -74,17 +74,17 @@ section#offline {
             -webkit-box-shadow: 10px 10px 10px #666;
             box-shadow: 10px 10px 10px #666;
 
-            span { 
-                opacity: 0.75; 
+            span {
+                opacity: 0.75;
             }
 
             a {
-                &:first-child { 
-                    opacity: 0.75; 
+                &:first-child {
+                    opacity: 0.75;
                 }
             }
         }
-    } 
+    }
 }
 
 #offline-nav {
@@ -100,11 +100,11 @@ section#offline {
             border-left-width: 1px;
         }
     }
-    
+
     .first a{
         border-left-width: 1px;
     }
-    
+
     .pagination ul > li {
         display: inline-block;
     }
@@ -142,7 +142,7 @@ section#offline {
     }
 
     #filter-menu {
- 
+
          a {
             padding: 5px 15px;
             border-radius: 0px;
@@ -150,4 +150,3 @@ section#offline {
     }
 
 }
-
