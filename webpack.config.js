@@ -57,6 +57,9 @@ module.exports = {
     profiles: [
       './assets/js/profiles/index',
     ],
+    resourcecenter: [
+      './assets/js/resourcecenter/index',
+    ],
     webshop: [
       './assets/js/webshop/index',
     ],
