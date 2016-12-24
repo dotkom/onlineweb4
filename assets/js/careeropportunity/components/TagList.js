@@ -1,7 +1,7 @@
 import React from 'react';
-import Tag from '../components/Tag';
+import Tag from './Tag';
 
-const TagContainer = ({ tags, handleChange, heading }) => {
+const TagList = ({ tags, handleChange, heading }) => {
   const tagElems = Object.keys(tags).map(id => (
     <Tag
       key={id}
@@ -22,10 +22,10 @@ const TagContainer = ({ tags, handleChange, heading }) => {
   );
 };
 
-TagContainer.propTypes = {
+TagList.propTypes = {
   handleChange: React.PropTypes.func,
   heading: React.PropTypes.string,
   tags: React.PropTypes.object,
 };
 
-export default TagContainer;
+export default TagList;

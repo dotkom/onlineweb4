@@ -1,8 +1,8 @@
 import React from 'react';
 import { Col } from 'react-bootstrap';
-import TagContainer from './TagContainer';
+import TagList from './TagList';
 
-class FilterContainer extends React.Component {
+class FilterList extends React.Component {
   constructor() {
     super();
 
@@ -32,25 +32,25 @@ class FilterContainer extends React.Component {
     return (
       <Col xs={12} sm={12} md={3} className="pull-right">
         <div className="filters">
-          <TagContainer
+          <TagList
             heading="Bedrifter"
             tags={this.props.tags.companies}
             handleChange={this.handleCompanyChange}
           />
 
-          <TagContainer
+          <TagList
             heading="Typer"
             tags={this.props.tags.jobTypes}
             handleChange={this.handleJobTypeChange}
           />
 
-          <TagContainer
+          <TagList
             heading="Sted"
             tags={this.props.tags.locations}
             handleChange={this.handleLocationChange}
           />
 
-          <TagContainer
+          <TagList
             heading="Frist"
             tags={this.props.tags.deadlines}
             handleChange={this.handleDeadlineChange}
@@ -63,10 +63,10 @@ class FilterContainer extends React.Component {
   }
 }
 
-FilterContainer.propTypes = {
+FilterList.propTypes = {
   handleTagChange: React.PropTypes.func,
   tags: React.PropTypes.object,
   handleReset: React.PropTypes.func,
 };
 
-export default FilterContainer;
+export default FilterList;

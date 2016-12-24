@@ -1,6 +1,6 @@
 import React from 'react';
 import { Col } from 'react-bootstrap';
-import Job from '../components/Job';
+import Job from './Job';
 
 // Checks tags where the only involved factor is whether the button is on or not.
 const defaultCheck = (job, id, tag) => {
