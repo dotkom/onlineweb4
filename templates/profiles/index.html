@@ -104,48 +104,10 @@ Min side - Online
 {% endblock content %}
 {% block js %}
     {{ block.super }}
-    <script type="text/javascript" src="{{ STATIC_URL }}js/libs/hogan-2.0.0.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}js/libs/typeahead.min.js"></script>
-    {% compress js %}
     <script type="text/javascript" src="{{ STATIC_URL }}js/libs/jquery.color.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}js/libs/jquery.cookie.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}js/Utils.js"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}js/profiles.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}js/libs/imagesloaded.pkgd.min.js"></script>
-    {% endcompress %}
     {% render_bundle 'profiles' 'js' %}
-        <script type="text/javascript">
-        // Smart toggle function that we add to jQuery
-        (function($) {
-            $.fn.toggleDisabled = function(){
-                return this.each(function(){
-                    this.disabled = !this.disabled;
-                });
-            };
-        })(jQuery);
-
-        $(function () {
-            {% verbatim %}
-            var user_search_template =  [
-            '<img width="100%" src="{{ image }}" alt="" />',
-            '<span data-id="{{ id }}" class="user-meta"><h4>{{ name }}</h4>',
-            ].join('');
-            {% endverbatim %}
-
-            $('#search-users').typeahead({
-                remote: "{% url 'profiles_api_user_search' %}?query=%QUERY",
-                updater: function (item) {
-                    return item;
-                },
-                template: user_search_template,
-                engine: Hogan
-            }).on('typeahead:selected typeahead:autocompleted', function(e, datum) {
-                window.location = '/profile/' + datum.username;
-            });
-
-            $('#id_present').on('change', function () {
-                $('#id_end_year').toggleDisabled();
-            });
-        });
-        </script>
 {% endblock %}
