@@ -129,7 +129,7 @@ $(function() {
             articleSettings.tag = url[url.length-2];
             articleSettings.tagPage = 1;
 
-            
+
             page = 1;
 
             // Render!
@@ -145,7 +145,7 @@ $(function() {
     //
 
     $('#article_archive_filter_reset').on('click',function(e) {
-        
+
         if (e.preventDefault)
             e.preventDefault();
         else
@@ -162,7 +162,7 @@ $(function() {
         articleSettings.tagPage = 1;
         page = 1;
 
-        
+
 
         // Render!
         articleWidget.render(1,true,articleSettings,function () {
@@ -187,8 +187,8 @@ function ArticleArchive (Utils) {
     /* Render the widget */
     ArticleArchive.prototype.render = function(page, overwrite, settings, callback_func) {
         is_more_elements = true;
-        
-        
+
+
 
         // Building the query
         var q = '';
@@ -199,18 +199,18 @@ function ArticleArchive (Utils) {
 
 
         // We got a new query! Set new query and reset more_elements
-        
+
         if (q != pre_query) {
-            
+
             pre_query = q;
             is_more_elements = true;
         }
 
-        
+
 
         var _url_params = "?format=json";
         if (settings.tag) {
-            
+
             _url_params += '&tags=' + settings.tag;
             _url_params += '&page=' + settings.tagPage
         }
@@ -222,7 +222,7 @@ function ArticleArchive (Utils) {
             // If no filtering, use page supplied
             _url_params += '&page=' + page
         }
-        
+
 
         // Only call the method if we have more elements
         if (is_more_elements) {
@@ -232,7 +232,7 @@ function ArticleArchive (Utils) {
                 'method': 'GET',
                 'data': {},
                 success: function(data) {
-                    
+
                     // Variables
                     var num = 1;
                     var output = '';
@@ -277,12 +277,12 @@ function ArticleArchive (Utils) {
                         // Increasing num!
                         num++;
                     }
-                    
+
 
                     // Checking to see if we have no more elements
-                    
+
                     is_more_elements = data.next != null;
-                    
+
 
                     // Wrapping up the chunk
                     output += '</div>';
@@ -306,13 +306,13 @@ function ArticleArchive (Utils) {
                     else {
                         // We are just appending articles
                         $("#article_archive_container").append(output);
-                        
+
                         // If we are not on the first page, animate them in!
                         if (page != 1) {
                             $("#article_archive_container .article-hidden").fadeIn(400);
                         }
                     }
-                    
+
                     // If supplied a callback function, execute it
                     if (callback_func instanceof Function) {
                         callback_func();

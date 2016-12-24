@@ -21,6 +21,9 @@ module.exports = {
       'classnames', 'es6-promise', 'whatwg-fetch',
       'moment', 'react', 'react-bootstrap', 'react-dom',
     ],
+    articleArchive: [
+      './assets/article/archive/index',
+    ],
     core: [
       './assets/core/index',
     ],

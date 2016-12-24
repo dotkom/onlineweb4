@@ -1,3 +1,4 @@
+
 $(document).ready(function () {
     $('div.tagcloud span').each(function () {
         var max = $('div.tagcloud').data('max_frequency');
