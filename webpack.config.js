@@ -84,7 +84,7 @@ module.exports = {
     fallback: resolvePaths,
   },
   output: {
-    path: path.resolve('./assets/webpack_bundles/'),
+    path: path.resolve('./bundles/webpack/'),
     filename: '[name]-[hash].js',
   },
   externals: {

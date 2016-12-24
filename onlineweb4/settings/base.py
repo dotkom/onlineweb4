@@ -83,6 +83,7 @@ DEFAULT_PROFILE_PICTURE_PREFIX = os.path.join(STATIC_URL, "img", "profile_defaul
 STATICFILES_DIRS = (
     os.path.join(PROJECT_ROOT_DIRECTORY, 'files/static'),
     os.path.join(PROJECT_ROOT_DIRECTORY, 'assets'),
+    os.path.join(PROJECT_ROOT_DIRECTORY, 'bundles'),
 )
 
 STATICFILES_FINDERS = (
@@ -441,7 +442,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 WEBPACK_LOADER = {
     'DEFAULT': {
-        'BUNDLE_DIR_NAME': 'webpack_bundles/'  # end with slash
+        'BUNDLE_DIR_NAME': 'webpack/'  # end with slash
     }
 }
 
