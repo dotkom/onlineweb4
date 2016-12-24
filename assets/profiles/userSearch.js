@@ -1,5 +1,6 @@
 import $ from 'jquery';
 import Hogan from 'hogan.js';
+import Spinner from 'spin.js';
 import Urls from 'urls';
 
 const userSearchTemplate = [
@@ -20,7 +21,8 @@ $('#search-users').typeahead({
 });
 
 // Spin until everything is ready
-$('.affix-spinner').spin();
+const affixSpinner = document.querySelector('.affix-spinner');
+new Spinner().spin(affixSpinner);
 
 // Jump to right place when section in affix is clicked
 $('#affix a').on('click', function affixClick(event) {

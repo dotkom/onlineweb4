@@ -94,7 +94,5 @@
 {% block js %}
     {{ block.super }}
     <script type="text/javascript" src="{{ STATIC_URL }}js/libs/typeahead.min.js"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}js/libs/spin.min.js"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}js/libs/jquery.spin.js"></script>
     {% render_bundle 'profiles' 'js' %}
 {% endblock %}
