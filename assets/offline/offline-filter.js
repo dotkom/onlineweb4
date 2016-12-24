@@ -211,13 +211,11 @@ $(() => {
         } else {
           clickedIndex = selectedIndex + 1;
         }
-      } else {
+      } else if (this.id === 'offline-nav-first') {
         // Håkej, so the current nav-button is first/last
-        if (this.id === 'offline-nav-first') {
-          clickedIndex = 0;
-        } else {
-          clickedIndex = $('.offline-nav').length - 1;
-        }
+        clickedIndex = 0;
+      } else {
+        clickedIndex = $('.offline-nav').length - 1;
       }
 
       // Hide all the visible issues and fade in the new ones
@@ -230,16 +228,13 @@ $(() => {
             $('.offline_issue.displayable').each(function offlineIssueDisplayable() {
               // Checking to see if this is one of the issues that we can display on the first page,
               // or if this goes on the 2nd, 3rd … one
-              if (num >= (numIssuesToDisplay * parseInt(clickedIndex, 10)) && num < (numIssuesToDisplay * (parseInt(clickedIndex, 10) + 1))) {
-                $(this).stop().fadeIn(400, () => {
-                  if ($('.displayable:animated').length === 0) {
-                                        // All fading in is done, we're no longer busy!
-                    busy = false;
-                  }
-                });
+              const startIndex = numIssuesToDisplay * parseInt(clickedIndex, 10);
+              const endIndex = startIndex + numIssuesToDisplay;
+              if (num >= (startIndex) && num < (endIndex)) {
+                $(this).stop().fadeIn(400);
               }
 
-                            // Incr
+              // Incr
               num += 1;
             });
           }
@@ -247,13 +242,11 @@ $(() => {
       } else {
         // There are no visible issues (is this even possible…?),
         // so just fade 'em. Comments in section ^
-        $('.offline_issue.displayable').each(function () {
-          if (num >= (numIssuesToDisplay * parseInt(clickedIndex, 10)) && num < (numIssuesToDisplay * (parseInt(clickedIndex, 10) + 1))) {
-            $(this).fadeIn(400, () => {
-              if ($('.offline_issue.displayable:animated').length === 0) {
-                busy = false;
-              }
-            });
+        $('.offline_issue.displayable').each(function offlineIssueDisplayable() {
+          const startIndex = numIssuesToDisplay * parseInt(clickedIndex, 10);
+          const endIndex = startIndex + numIssuesToDisplay;
+          if (num >= (startIndex) && num < (endIndex)) {
+            $(this).fadeIn(400);
           }
 
           num += 1;
