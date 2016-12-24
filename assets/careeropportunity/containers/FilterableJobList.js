@@ -1,7 +1,8 @@
 import React from 'react';
 import moment from 'moment';
-import FilterContainer from '../containers/FilterContainer';
-import JobList from '../containers/JobList';
+import { Grid, Col, Row } from 'react-bootstrap';
+import FilterList from '../components/FilterList';
+import JobList from '../components/JobList';
 
 moment.locale('nb');
 
@@ -182,7 +183,7 @@ class FilterableJobList extends React.Component {
         </div>
 
         <div className="row">
-          <FilterContainer
+          <FilterList
             tags={this.state.tags}
             handleTagChange={this.handleTagChange}
             handleReset={this.handleReset}
