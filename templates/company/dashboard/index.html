@@ -1,16 +1,8 @@
 {% extends "dashboard_base.html" %}
-{% load compress %}
 
 {% block title %}
 Bedrifter - Online Dashboard
 {% endblock title %}
-
-{% block js %}
-    {{ block.super }}
-    {% compress js %}
-    <script src="{{ STATIC_URL }}js/dashboard/company.js"></script>
-    {% endcompress %}
-{% endblock js %}
 
 {% block page-header %}
 Bedrifter
