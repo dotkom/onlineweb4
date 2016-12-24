@@ -1,6 +1,6 @@
 {% extends 'dashboard_base.html' %}
 {% load addcss %}
-{% load chunks %}
+{% load render_bundle from webpack_loader %}
 {% load compress %}
 
 {% block title %}
@@ -9,6 +9,16 @@
 
 {% block page-header %}
   Chunks
+{% endblock %}
+
+{% block styles %}
+  {{ block.super }}
+  {% render_bundle 'dashboardChunks' 'css' %}
+{% endblock %}
+
+{% block js %}
+  {{ block.super }}
+  {% render_bundle 'dashboardChunks' 'js' %}
 {% endblock %}
 
 {% block breadcrumbs %}
@@ -68,26 +78,4 @@
   </div>
 </div>
 {% endif %}
-{% endblock %}
-
-{% block js %}
-  {{ block.super }}
-  {% compress js %}
-    <script type="text/javascript" src="{{ STATIC_URL }}js/libs/showdown.min.js"></script>
-    <script>
-      function run() {
-        var previousSourceText = sourceText | ''
-        var sourceText = document.getElementById('id_content').value
-        if (previousSourceText === sourceText) return
-        var target = document.getElementById('chunk-content')
-        var converter = new showdown.Converter()
-        var output = converter.makeHtml(sourceText)
-        target.innerHTML = output
-      }
-      // Run once initially to render it first time.
-      run()
-      // Render for changes to the data
-      $('#id_content').on('change keyup', run)
-    </script>
-  {% endcompress %}
 {% endblock %}

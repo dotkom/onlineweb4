@@ -36,6 +36,9 @@ module.exports = {
     dashboardCareeropportunity: [
       './assets/dashboard/careeropportunity/index',
     ],
+    dashboardChunks: [
+      './assets/dashboard/chunks/index',
+    ],
     dashboardEvents: [
       './assets/dashboard/events/index',
     ],
