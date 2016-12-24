@@ -57,6 +57,9 @@ module.exports = {
     dashboardPosters: [
       './assets/dashboard/posters/index',
     ],
+    dashboardWebshop: [
+      './assets/dashboard/webshop/index',
+    ],
     events_archive: [
       './assets/events/archive/index',
     ],

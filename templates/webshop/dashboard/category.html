@@ -1,16 +1,19 @@
 {% extends "dashboard_base.html" %}
-{% load compress %}
+{% load render_bundle from webpack_loader %}
 
 {% block title %}
 {{ category }} - Online Dashboard
 {% endblock title %}
 
+{% block styles %}
+    {{ block.super }}
+    {% render_bundle 'dashboardWebshop' 'css' %}
+{% endblock %}
+
 {% block js %}
     {{ block.super }}
-    {% compress js %}
-    <script src="{{ STATIC_URL }}js/dashboard/webshop.js"></script>
-    {% endcompress %}
-{% endblock js %}
+    {% render_bundle 'dashboardWebshop' 'js' %}
+{% endblock %}
 
 {% block page-header %}
 Webshop
