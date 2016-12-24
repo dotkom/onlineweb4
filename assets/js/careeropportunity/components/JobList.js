@@ -54,7 +54,9 @@ const JobContainer = ({ jobs, tags }) => {
       }
     });
 
-    return canShow ? <Job {...job} key={i} /> : false;
+    if (canShow) {
+      return <Job {...job} key={i} />;
+    }
   });
 
   return (
