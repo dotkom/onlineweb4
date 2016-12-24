@@ -11,9 +11,7 @@
 
 {% block js %}
     {{ block.super }}
-    {% compress js %}
     <script src="{{ STATIC_URL }}wiki/js/core.js"></script>
-    {% endcompress %}
     {% render_bundle 'wiki' 'js' %}
 {% endblock %}
 
