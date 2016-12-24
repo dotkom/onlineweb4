@@ -1,9 +1,18 @@
 {% extends "base.html" %}
-
-{% load compress %}
+{% load render_bundle from webpack_loader %}
 
 {% block title %}
 Generalforsamling - Online
+{% endblock %}
+
+{% block styles %}
+    {{ block.super }}
+    {% render_bundle 'genfors' 'css' %}
+{% endblock %}
+
+{% block js %}
+    {{ block.super }}
+    {% render_bundle 'genfors' 'js' %}
 {% endblock %}
 
 {% block content %}
@@ -275,11 +284,4 @@ Generalforsamling - Online
         </div>
     </div>
 </section>
-{% endblock %}
-
-{% block js %}
-    {{ block.super }}
-    {% compress js %}
-    <script src="/static/js/genfors.js"></script>
-    {% endcompress %}
 {% endblock %}

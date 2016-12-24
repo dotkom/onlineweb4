@@ -69,6 +69,9 @@ module.exports = {
     frontpageArticles: [
       './assets/frontpage/articles/index',
     ],
+    genfors: [
+      './assets/genfors/index',
+    ],
     mailinglists: [
       './assets/mailinglists/index',
     ],

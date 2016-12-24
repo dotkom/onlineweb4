@@ -1,6 +1,4 @@
-var Genfors;
-
-Genfors = (function () {
+var Genfors = (function () {
 
     var DEBUG = false
 
@@ -162,8 +160,8 @@ Genfors = (function () {
                             else {
                                 if (key == 'Blankt') { 
                                     type = 'warning';
-                                    html += '<div class="progress"><div class="progress-bar progress-bar-' + type + '" role="progressbar" aria-valuenow="' + percent + 
-                                        '" aria-valuemin="0" aria-valuemax="100" style="width: ' + percent + '%;">' + value + ' av ' + current_votes + 
+                                    html += '<div class="progress"><div class="progress-bar progress-bar-' + type + '" role="progressbar" aria-valuenow="' + percent +
+                                        '" aria-valuemin="0" aria-valuemax="100" style="width: ' + percent + '%;">' + value + ' av ' + current_votes +
                                         ' stemme' + ((current_votes>1)?'r':'') + '</div></div>';
                                 }
                                 else {
@@ -206,7 +204,7 @@ Genfors = (function () {
                                 if (key == 'Blankt') {
                                     percent = Genfors.get_percent(value, current_votes);
                                     type = "warning";
-                                    html += '<div class="progress"><div class="progress-bar progress-bar-' + type + '" role="progressbar" aria-valuenow="' + percent + '" aria-valuemin="0" aria-valuemax="100" style="width: ' + percent + '%">' + value + ' av ' + current_votes + ' stemme' + ((current_votes>1)?'r':'') + 
+                                    html += '<div class="progress"><div class="progress-bar progress-bar-' + type + '" role="progressbar" aria-valuenow="' + percent + '" aria-valuemin="0" aria-valuemax="100" style="width: ' + percent + '%">' + value + ' av ' + current_votes + ' stemme' + ((current_votes>1)?'r':'') +
                                         '</div></div>';
                                 }
                                 else {
@@ -239,7 +237,4 @@ Genfors = (function () {
     }
 }());
 
-$(document).ready(function () {
-    Genfors.vote.bind_buttons();
-    setInterval(Genfors.update, 10000);
-});
+export default Genfors;
