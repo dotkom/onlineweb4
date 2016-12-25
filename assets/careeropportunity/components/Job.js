@@ -15,7 +15,7 @@ const Job = ({ locations, deadline, companyImage, companyName, title, ingress, t
   return (
     <article className="row">
       <Col xs={12} md={4}>
-        <a href="/careeropportunity/4/">
+        <a href={`/careeropportunity/${id}`}>
           <picture>
             <source srcSet={companyImage.lg} media="(max-width: 992px)" />
             <img src={companyImage.md} alt="Firmalogo" />
