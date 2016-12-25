@@ -4,8 +4,6 @@ import { Grid, Col, Row } from 'react-bootstrap';
 import FilterList from '../components/FilterList';
 import JobList from '../components/JobList';
 
-moment.locale('nb');
-
 // Normalizes data from the server, most notably converting to camelCase.
 const mapData = job => ({
   locations: job.location.map(location => location.name), // Locations contains name and slug
