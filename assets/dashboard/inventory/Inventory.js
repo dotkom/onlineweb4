@@ -1,68 +1,49 @@
+import jQuery from 'jquery';
+
 /*
     The Company module exposes functionality needed in the company section
     of the dashboard.
 */
 
-var Inventory = (function ($, tools) {
+const Inventory = (function PrivateInventory($) {
+  const postDeleteForm = (url) => {
+    $(`<form method="POST" action="${url}">` +
+        `<input type="hidden" name="csrfmiddlewaretoken" value="${
+        $('input[name=csrfmiddlewaretoken]').val()}"></form>`).submit();
+  };
 
-    // Perform self check, display error if missing deps
-    var performSelfCheck = function () {
-        var errors = false
-        if ($ == undefined) {
-            console.error('jQuery missing!')
-            errors = true
-        }
-        if (tools == undefined) {
-            console.error('Dashboard tools missing!')
-            errors = true
-        }
-        if (errors) return false
-        return true
-    }
+  return {
+    // Bind them buttons and other initial functionality here
+    init() {
+      $('#inventory-delete-item').on('click', function deleteItem(e) {
+        e.preventDefault();
+        $('.confirm-delete-item').data('id', $(this).data('id'));
+      });
 
-    var postDeleteForm = function (url) {
-        $('<form method="POST" action="' + url + '">' +
-        '<input type="hidden" name="csrfmiddlewaretoken" value="' +
-        $('input[name=csrfmiddlewaretoken]').val() + '"></form>').submit()
-    }
+      $('.deletebatch').on('click', function deleteBatch(e) {
+        e.preventDefault();
+        $('.confirm-delete-batch').data('id', $(this).data('id'));
+      });
 
-    return {
+      $('.confirm-delete-item').on('click', function confirmDeleteItem() {
+        const url = `/dashboard/inventory/item/${$(this).data('id')}/delete/`;
+        postDeleteForm(url);
+      });
 
-        // Bind them buttons and other initial functionality here
-        init: function () {
+      $('.confirm-delete-batch').on('click', function confirmDeleteBatch() {
+        const itemId = $('#item_id').val();
+        const url = `/dashboard/inventory/item/${itemId}/batch/${$(this).data('id')}/delete/`;
+        postDeleteForm(url);
+      });
 
-            if (!performSelfCheck()) return
+      $('#inventory-add-batch').on('click', (e) => {
+        e.preventDefault();
+        $('#inventory-add-batch-form').slideToggle(200);
+      });
+    },
 
-            $('#inventory-delete-item').on('click', function (e) {
-                e.preventDefault()
-                $('.confirm-delete-item').data('id', $(this).data('id'))
-            })
-
-            $('.deletebatch').on('click', function (e) {
-                e.preventDefault()
-                $('.confirm-delete-batch').data('id', $(this).data('id'))
-            })
-
-            $('.confirm-delete-item').on('click', function (e) {
-                url = '/dashboard/inventory/item/' + $(this).data('id') + '/delete/'
-                postDeleteForm(url)
-            })
-
-            $('.confirm-delete-batch').on('click', function (e) {
-                url = '/dashboard/inventory/item/' +
-                    $('#item_id').val() + '/batch/' + $(this).data('id') + '/delete/'
-                postDeleteForm(url)
-            })
-
-            $('#inventory-add-batch').on('click', function (e) {
-                e.preventDefault()
-                $('#inventory-add-batch-form').slideToggle(200)
-            })
-        }
-
-    }
-
-})(jQuery, Dashboard.tools)
+  };
+}(jQuery));
 
 
 export default Inventory;
