@@ -7,6 +7,11 @@
 
 {% block title %}Online, linjeforeningen for informatikk ved NTNU{% endblock title %}
 
+{% block styles %}
+    {{ block.super }}
+    {% render_bundle 'frontpage' 'css' %}
+{% endblock %}
+
 {% block js %}
     {{ block.super }}
     {% compress js %}
@@ -15,8 +20,7 @@
     <script type="text/javascript" src="{{ STATIC_URL }}js/initFrontpage.js"></script>
     {% endcompress %}
 
-    {% render_bundle 'frontpageEvents' %}
-    {% render_bundle 'frontpageArticles' %}
+    {% render_bundle 'frontpage' 'js' %}
 {% endblock %}
 
 {% block apple-webapp %}

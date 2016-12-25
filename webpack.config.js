@@ -66,11 +66,8 @@ module.exports = {
     events_archive: [
       './assets/events/archive/index',
     ],
-    frontpageEvents: [
-      './assets/frontpage/events/index',
-    ],
-    frontpageArticles: [
-      './assets/frontpage/articles/index',
+    frontpage: [
+      './assets/frontpage/index',
     ],
     genfors: [
       './assets/genfors/index',
