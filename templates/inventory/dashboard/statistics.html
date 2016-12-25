@@ -1,5 +1,5 @@
 {% extends "dashboard_base.html" %}
-{% load compress %}
+{% load render_bundle from webpack_loader %}
 
 {% block title %}
 Varelager statistikk - Online Dashboard
@@ -17,10 +17,8 @@ Varelager statistikk
 {% block js %}
     {{ block.super }}
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-    {% compress js %}
-        <script src="{{ STATIC_URL }}js/dashboard/InventoryStats.js"></script>
-    {% endcompress %}
-{% endblock js %}
+    {% render_bundle 'dashboardInventory' 'js' %}
+{% endblock %}
 
 {% block content %}
 <div class="row">

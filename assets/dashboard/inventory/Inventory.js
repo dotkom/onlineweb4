@@ -22,7 +22,7 @@ var Inventory = (function ($, tools) {
 
     var postDeleteForm = function (url) {
         $('<form method="POST" action="' + url + '">' +
-        '<input type="hidden" name="csrfmiddlewaretoken" value="' + 
+        '<input type="hidden" name="csrfmiddlewaretoken" value="' +
         $('input[name=csrfmiddlewaretoken]').val() + '"></form>').submit()
     }
 
@@ -32,7 +32,7 @@ var Inventory = (function ($, tools) {
         init: function () {
 
             if (!performSelfCheck()) return
-            
+
             $('#inventory-delete-item').on('click', function (e) {
                 e.preventDefault()
                 $('.confirm-delete-item').data('id', $(this).data('id'))
@@ -64,6 +64,5 @@ var Inventory = (function ($, tools) {
 
 })(jQuery, Dashboard.tools)
 
-$(document).ready(function () {
-    Inventory.init()
-})
+
+export default Inventory;

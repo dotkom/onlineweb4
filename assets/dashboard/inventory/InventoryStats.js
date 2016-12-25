@@ -36,6 +36,7 @@ var inventoryGraphs = function(){
     });
 }
 
-inventoryGraphs()
 
-
+export default {
+  init: inventoryGraphs,
+};

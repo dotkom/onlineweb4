@@ -51,6 +51,9 @@ module.exports = {
     dashboardGroups: [
       './assets/dashboard/groups/index',
     ],
+    dashboardInventory: [
+      './assets/dashboard/inventory/index',
+    ],
     dashboardMarks: [
       './assets/dashboard/marks/index',
     ],
