@@ -2,16 +2,12 @@ $(function() {
     var TOP_OFFSET_ADJUST   = 65;
     var utils               = new Utils()
 
-    var articleWidget       = new ArticleWidget(utils)
-    //, eventWidget           = new EventWidget(utils)
-    , offlineWidget         = new OfflineWidget(utils);
+    var offlineWidget       = new OfflineWidget(utils);
 
 
     /* RENDER
     ------------------------------------------------------------------------ */
-    //eventWidget.render();
     offlineWidget.render();
-	articleWidget.render();
 
 
     /* EVENT LISTENERS
