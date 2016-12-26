@@ -26,7 +26,7 @@ function OfflineWidget (Utils){
         var maxWidth = $('#offlineCarousel .carousel-inner').width();
         var maxWidthPer = 156;
         var issuesPerSlide = Math.floor(maxWidth/maxWidthPer);
-        
+
         if (offlines.length <= 0) {
             // No issues added
             insertMe += '<p>Ingen utgaver funnet.</p>';
@@ -46,7 +46,7 @@ function OfflineWidget (Utils){
                 }
             }
         }
-        
+
         $("#offlineCarousel .carousel-inner").html(insertMe);
         $("#offlineCarousel .carousel-inner div.item:first").addClass("active");
         $("#offlineCarousel").carousel({interval: false});
@@ -57,3 +57,5 @@ function OfflineWidget (Utils){
         OfflineWidget.prototype.createDom();
     });
 }
+
+export default OfflineWidget;

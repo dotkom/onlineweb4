@@ -1,4 +1,5 @@
-$(function() {
+import OfflineWidget from './OfflineWidget';
+
     var TOP_OFFSET_ADJUST   = 65;
     var utils               = new Utils()
 
@@ -115,4 +116,3 @@ $(function() {
 			$('.navbar-toggle').trigger('click');
 		}
 	});
-});
