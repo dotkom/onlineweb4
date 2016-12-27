@@ -220,13 +220,13 @@
         {% compress js %}
         <script src="{{ STATIC_URL }}js/libs/jquery.debouncedresize.js"></script>
         <script src="{{ STATIC_URL }}js/libs/fastclick.js"></script>
-        <script src="{{ STATIC_URL }}js/init.js"></script>
         <script src="{{ STATIC_URL }}js/microevent.js"></script>
         {% endcompress %}
         <script src="{{ STATIC_URL }}js/libs/konami.js"></script>
         <script src="{{ STATIC_URL }}js/christmas.js"></script>
         {% render_bundle 'vendor' %}
         {% render_bundle 'core' 'js' %}
+
     {% endblock %}
 
     {% render_block "js" %}

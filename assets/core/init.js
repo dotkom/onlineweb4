@@ -1,4 +1,4 @@
-var initGoogleMaps = function() {
+export const createGoogleMaps = function() {
     var map = new google.maps.Map(document.getElementById("footer-map"),{
         center: new google.maps.LatLng(63.41819751959266, 10.40592152481463),
         zoom: 15,
@@ -65,33 +65,32 @@ var initGoogleMaps = function() {
 }
 
 // Fadeout alerts if they have the data-dismiss property
-var timeOutAlerts = function() {
+export const timeOutAlerts = function() {
   setTimeout(function () {
     $('.alert[data-dismiss]').fadeOut()
   }, 5000)
 }
 
-$(function() {
+export const initGoogleMaps = () => {
+  // Init the footer-map, but don't crash if google is not found
+  try {
+      var map = createGoogleMaps();
+  }
+  catch (err){
+      console.warn("Could not load Google Maps:", err);
+  }
+
+  // Reset center of the map on window-resize (using jquery-plugin to only fire the event when resizing is finished)
+  $(window).on("debouncedresize",function(e) {
+      if(map){
+          map.panTo(new google.maps.LatLng(63.41819751959266, 10.40592152481463));
+      }
+  });
+};
+
+export const initialize = () => {
     // ??
     $('.dropdown-toggle').dropdown();
-
-    timeOutAlerts()
-
-    // Init the footer-map, but don't crash if google is not found
-    try {
-        var map = initGoogleMaps();
-    }
-    catch (err){
-        console.warn("Could not load Google Maps:", err);
-    }
-
-    // Reset center of the map on window-resize (using jquery-plugin to only fire the event when resizing is finished)
-    $(window).on("debouncedresize",function(e) {
-        if(map){
-            map.panTo(new google.maps.LatLng(63.41819751959266, 10.40592152481463));
-        }
-    });
-
 
     /* nav bar toggle
     ---------------------------------------------------------------------------*/
@@ -155,4 +154,4 @@ $(function() {
     // Removes 300 ms delay on touch via libs/fastclick.js
     FastClick.attach(document.body);
 
-});
+};
