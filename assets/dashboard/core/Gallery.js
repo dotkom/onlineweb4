@@ -1,4 +1,5 @@
 import jQuery from 'jquery';
+import MicroEvent from 'common/utils/MicroEvent';
 import GalleryCrop from './GalleryCrop';
 import GalleryUpload from './GalleryUpload';
 
@@ -18,7 +19,7 @@ const TMPL_IMAGE_SEARCH_RESULT = `
 </div>
 <% } %>`;
 
-const Gallery = (function PrivateGallery($, utils, MicroEvent) {
+const Gallery = (function PrivateGallery($, utils) {
   const events = new MicroEvent();
   const galleryImages = {};
   let formSelectedSingleImage = null;
@@ -266,6 +267,6 @@ const Gallery = (function PrivateGallery($, utils, MicroEvent) {
       },
     },
   };
-}(jQuery, new window.Utils(), window.MicroEvent));
+}(jQuery, new window.Utils()));
 
 export default Gallery;

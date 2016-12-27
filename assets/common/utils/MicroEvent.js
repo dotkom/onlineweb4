@@ -37,3 +37,5 @@ var MicroEvent = function () {
     }
   }
 }
+
+export default MicroEvent;
