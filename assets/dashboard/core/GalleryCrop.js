@@ -2,8 +2,6 @@ import jQuery from 'jquery';
 import Gallery from './Gallery';
 
 const GalleryCrop = (function PrivateGalleryCrop($, Cropper, utils) {
-  const self = this;
-
   // DOM References
   const CROP_IMAGE = $('#gallery__image-edit--submit');
   const EDIT_CONTAINER = $('#gallery__image-edit-container');
@@ -29,10 +27,10 @@ const GalleryCrop = (function PrivateGalleryCrop($, Cropper, utils) {
   const PREVIEW_IMAGE = $('#gallery__image-edit--preview');
 
   // Cropper
-  self.cropper = null;
-  self.imageId = -1;
-  self.presets = {};
-  self.options = {
+  let cropper = null;
+  let imageId = -1;
+  const presets = {};
+  const options = {
     aspectRatio: 16 / 9,
     preview: '#gallery__image-edit--preview-wrapper',
     autoCrop: true,
@@ -44,7 +42,7 @@ const GalleryCrop = (function PrivateGalleryCrop($, Cropper, utils) {
     rotatable: false,
     multiple: false,
     cropmove() {
-      const cropData = self.cropper.getData(true);
+      const cropData = cropper.getData(true);
 
       $('#gallery__image-edit--width').val(cropData.width);
       $('#gallery__image-edit--height').val(cropData.height);
@@ -61,44 +59,44 @@ const GalleryCrop = (function PrivateGalleryCrop($, Cropper, utils) {
   const bindEventListeners = () => {
     // Zoom in
     IMAGE_ZOOM_IN.on('click', () => {
-      self.cropper.zoom(0.1);
+      cropper.zoom(0.1);
       Gallery.events.fire('gallery-imageDataChanged');
     });
 
     // Zoom out
     IMAGE_ZOOM_OUT.on('click', () => {
-      self.cropper.zoom(-0.1);
+      cropper.zoom(-0.1);
       Gallery.events.fire('gallery-imageDataChanged');
     });
 
     // Activates crop selection tool
     IMAGE_SET_CROP_MODE.on('click', () => {
-      self.cropper.setDragMode('crop');
+      cropper.setDragMode('crop');
     });
 
     // Activates mouse move tool
     IMAGE_SET_DRAG_MODE.on('click', () => {
-      self.cropper.setDragMode('move');
+      cropper.setDragMode('move');
     });
 
     // Reset the selection
     IMAGE_RESET.on('click', () => {
-      self.cropper.clear();
+      cropper.clear();
     });
 
     // Listen for changes directly to the height field
     IMAGE_HEIGHT.on('keyup', () => {
-      const imageData = self.cropper.getData(true);
+      const imageData = cropper.getData(true);
       imageData.height = Number(IMAGE_HEIGHT.val());
-      self.cropper.setData(imageData);
+      cropper.setData(imageData);
       Gallery.events.fire('gallery-imageDataChanged');
     });
 
     // Listen for changes directly to the width field
     IMAGE_WIDTH.on('keyup', () => {
-      const imageData = self.cropper.getData(true);
+      const imageData = cropper.getData(true);
       imageData.width = Number(IMAGE_WIDTH.val());
-      self.cropper.setData(imageData);
+      cropper.setData(imageData);
       Gallery.events.fire('gallery-imageDataChanged');
     });
 
@@ -113,13 +111,13 @@ const GalleryCrop = (function PrivateGalleryCrop($, Cropper, utils) {
     // Listen for crop button click event
     CROP_IMAGE.on('click', (e) => {
       e.preventDefault();
-      GalleryCrop.crop(self.presets[IMAGE_PRESET.children('option:selected').val()]);
+      GalleryCrop.crop(presets[IMAGE_PRESET.children('option:selected').val()]);
     });
 
     // Listen for changes to image data, so we can perform necessary tasks
     // like sanity checks / validation
     Gallery.events.on('gallery-imageDataChanged', () => {
-      GalleryCrop.validate(self.presets[IMAGE_PRESET.children('option:selected').val()]);
+      GalleryCrop.validate(presets[IMAGE_PRESET.children('option:selected').val()]);
     });
 
     // Hop back to the unhandled image thumbnail preview on crop success
@@ -158,7 +156,7 @@ const GalleryCrop = (function PrivateGalleryCrop($, Cropper, utils) {
       const optionTemplate = '<option value="<%= val %>" <%= selected %>><%= description %></option>';
       for (let i = 0; i < data.presets.length; i += 1) {
         const name = data.presets[i].name;
-        self.presets[name] = data.presets[i];
+        presets[name] = data.presets[i];
         const context = {
           val: name,
           description: data.presets[i].description,
@@ -218,8 +216,8 @@ const GalleryCrop = (function PrivateGalleryCrop($, Cropper, utils) {
       if (errors.length > 0) return Gallery.events.fire('gallery-imageCropFailed');
 
       // Prepare the image crop data payload with necessary fields
-      const payload = self.cropper.getData(true);
-      payload.id = Number(self.imageId);
+      const payload = cropper.getData(true);
+      payload.id = Number(imageId);
       payload.name = IMAGE_NAME.val();
       payload.description = IMAGE_DESCRIPTION.val();
       payload.photographer = IMAGE_PHOTOGRAPHER.val() || '';
@@ -263,7 +261,7 @@ const GalleryCrop = (function PrivateGalleryCrop($, Cropper, utils) {
       const image = new window.Image();
 
       // Keep the ID, since we need it later when POSTing the crop data
-      self.imageId = img;
+      imageId = img;
 
       image.id = 'gallery__image-active';
       image.src = imageData.image;
@@ -274,10 +272,10 @@ const GalleryCrop = (function PrivateGalleryCrop($, Cropper, utils) {
       // For reasons still unknown, cropper needs a timeout before being able to wrap the img.
       // Hooking the wrapper to the img load event does not work.
       setTimeout(() => {
-        if (self.cropper !== null && self.cropper !== undefined) self.cropper.destroy();
-        self.cropper = new window.Cropper(image, self.options);
+        if (cropper !== null && cropper !== undefined) cropper.destroy();
+        cropper = new window.Cropper(image, options);
 
-        const cropData = self.cropper.getData();
+        const cropData = cropper.getData();
         IMAGE_HEIGHT.val(cropData.height);
         IMAGE_WIDTH.val(cropData.width);
 
@@ -294,19 +292,19 @@ const GalleryCrop = (function PrivateGalleryCrop($, Cropper, utils) {
      * @param preset An integer representing the preset ID from the dropdown menu
      */
     preset(presetID) {
-      const preset = self.presets[presetID];
+      const preset = presets[presetID];
       if (preset === undefined) return IMAGE_LOG.text('Ugyldig preset ID');
 
       // Reconfigure selection constraints
       if (preset.aspect_ratio) {
-        self.cropper.setAspectRatio(preset.aspect_ratio_x / preset.aspect_ratio_y);
+        cropper.setAspectRatio(preset.aspect_ratio_x / preset.aspect_ratio_y);
       } else {
         // Cropper.js uses NaN to represent no aspect ratio requirements
-        self.cropper.setAspectRatio(NaN);
+        cropper.setAspectRatio(NaN);
       }
 
       // Update sidebar with new aspect ratio data
-      const cropData = self.cropper.getData(true);
+      const cropData = cropper.getData(true);
       IMAGE_HEIGHT.val(cropData.height);
       IMAGE_WIDTH.val(cropData.width);
 
@@ -336,7 +334,7 @@ const GalleryCrop = (function PrivateGalleryCrop($, Cropper, utils) {
      * @param {object} preset Object with min_height, min_width etc.
      */
     validate(preset) {
-      const cropData = self.cropper.getData(true);
+      const cropData = cropper.getData(true);
       const errors = [];
 
       // Perform the checks on crop data vs preset, as well as form input fields
