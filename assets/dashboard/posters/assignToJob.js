@@ -1,7 +1,5 @@
 import $ from 'jquery';
-import Utils from 'common/utils/Utils';
-
-const utils = new Utils();
+import { setStatusMessage } from 'common/utils/';
 
 const assignToJob = (orderId, row) => {
   const assignToId = $(row).find('form').find(':selected').val();
@@ -16,9 +14,9 @@ const assignToJob = (orderId, row) => {
     error(response) {
       if (response.status === 400) {
         const jsonResponse = JSON.parse(response.responseText);
-        utils.setStatusMessage(jsonResponse.message, 'alert-danger');
+        setStatusMessage(jsonResponse.message, 'alert-danger');
       } else {
-        utils.setStatusMessage('En uventet error ble oppdaget. Kontakt dotkom@online.ntnu.no for assistanse.', 'alert-danger');
+        setStatusMessage('En uventet error ble oppdaget. Kontakt dotkom@online.ntnu.no for assistanse.', 'alert-danger');
       }
     },
     crossDomain: false,

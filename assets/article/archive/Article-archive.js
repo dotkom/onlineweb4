@@ -1,8 +1,6 @@
 import $ from 'jquery';
-import Utils from 'common/utils/Utils';
 import ArticleArchiveWidget from './ArticleArchiveWidget';
 
-const utils = new Utils(); // Class for the Widget
 let isLoadingNewContent = false; // Indicating if we are currently loading something
 let page = 1; // What page we are on
 const months = {
@@ -28,7 +26,7 @@ const articleSettings = {
   tagPage: 1,
 };
 
-const articleWidget = new ArticleArchiveWidget(utils);
+const articleWidget = new ArticleArchiveWidget();
 
 // The initial rendgering (loading from ajax)
 // Build settings by url

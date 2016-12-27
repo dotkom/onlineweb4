@@ -1,7 +1,8 @@
 import moment from 'moment';
 import $ from 'jquery';
+import { makeApiRequest } from 'common/utils';
 
-function ArticleArchiveWidget(Utils) {
+function ArticleArchiveWidget() {
   // True if we have more elements, false if not. To avoid many empty ajax-calls
   let isMoreElements = true;
   // The previous query made by the settings supplied
@@ -47,7 +48,7 @@ function ArticleArchiveWidget(Utils) {
     // Only call the method if we have more elements
     if (isMoreElements) {
       // The api-call
-      Utils.makeApiRequest({
+      makeApiRequest({
         url: `/api/v1/articles/${urlParams}`,
         method: 'GET',
         data: {},

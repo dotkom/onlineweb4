@@ -1,11 +1,12 @@
 import $ from 'jquery';
+import { makeApiRequest } from 'common/utils/';
 
-function OfflineWidget(Utils) {
+function OfflineWidget() {
   const that = $(this);
   this.data = {};
     /* Render the widget */
   OfflineWidget.prototype.render = () => {
-    Utils.makeApiRequest({
+    makeApiRequest({
       url: '/api/v1/offline/?format=json',
       method: 'GET',
       data: {},

@@ -68,13 +68,6 @@ export const createGoogleMaps = () => {
   return map;
 };
 
-// Fadeout alerts if they have the data-dismiss property
-export const timeOutAlerts = () => {
-  setTimeout(() => {
-    $('.alert[data-dismiss]').fadeOut();
-  }, 5000);
-};
-
 export const initGoogleMaps = () => {
   // Init the footer-map, but don't crash if google is not found
   let map;

@@ -1,8 +1,5 @@
 import $ from 'jquery';
-import Utils from 'common/utils/Utils';
-import { csrfSafeMethod } from 'common/utils/csrf';
-
-const utils = new Utils();
+import { csrfSafeMethod, setStatusMessage } from 'common/utils/';
 
 /* AJAX SETUP FOR CSRF */
 $.ajaxSetup({
@@ -87,11 +84,11 @@ $(document).ready(() => {
       data: { rules_accepted: true },
       success(res) {
         const jsonResponse = JSON.parse(res);
-        utils.setStatusMessage(jsonResponse.message, 'alert-success');
+        setStatusMessage(jsonResponse.message, 'alert-success');
         $('.marks').attr('disabled', true);
       },
       error() {
-        utils.setStatusMessage('En uventet feil ble oppdaget. Kontakt dotkom@online.ntnu.no for assistanse.', 'alert-danger');
+        setStatusMessage('En uventet feil ble oppdaget. Kontakt dotkom@online.ntnu.no for assistanse.', 'alert-danger');
       },
       crossDomain: false,
     });
@@ -143,9 +140,9 @@ $(document).ready(() => {
       error(res) {
         if (res.status === 412) {
           const jsonResponse = JSON.parse(res.responseText);
-          utils.setStatusMessage(jsonResponse.message, 'alert-danger');
+          setStatusMessage(jsonResponse.message, 'alert-danger');
         } else {
-          utils.setStatusMessage('En uventet feil ble oppdaget. Kontakt dotkom@online.ntnu.no for assistanse.', 'alert-danger');
+          setStatusMessage('En uventet feil ble oppdaget. Kontakt dotkom@online.ntnu.no for assistanse.', 'alert-danger');
         }
       },
       crossDomain: false,
@@ -173,9 +170,9 @@ $(document).ready(() => {
       error(res) {
         if (res.status === 412) {
           const jsonResponse = JSON.parse(res.responseText);
-          utils.setStatusMessage(jsonResponse.message, 'alert-danger');
+          setStatusMessage(jsonResponse.message, 'alert-danger');
         } else {
-          utils.setStatusMessage('En uventet feil ble oppdaget. Kontakt dotkom@online.ntnu.no for assistanse.', 'alert-danger');
+          setStatusMessage('En uventet feil ble oppdaget. Kontakt dotkom@online.ntnu.no for assistanse.', 'alert-danger');
         }
       },
       crossDomain: false,
@@ -188,14 +185,14 @@ $(document).ready(() => {
       url: 'verify_email/',
       data: { email },
       success() {
-        utils.setStatusMessage(`En ny verifikasjonsepost har blitt sendt til ${email}.`, 'alert-success');
+        setStatusMessage(`En ny verifikasjonsepost har blitt sendt til ${email}.`, 'alert-success');
       },
       error(res) {
         if (res.status === 412) {
           const jsonResponse = JSON.parse(res.responseText);
-          utils.setStatusMessage(jsonResponse.message, 'alert-danger');
+          setStatusMessage(jsonResponse.message, 'alert-danger');
         } else {
-          utils.setStatusMessage('En uventet feil ble oppdaget. Kontakt dotkom@online.ntnu.no for assistanse.', 'alert-danger');
+          setStatusMessage('En uventet feil ble oppdaget. Kontakt dotkom@online.ntnu.no for assistanse.', 'alert-danger');
         }
       },
       crossDomain: false,
@@ -240,7 +237,7 @@ $(document).ready(() => {
         }
       },
       error() {
-        utils.setStatusMessage('Det oppstod en uventet feil under endring.', 'alert-danger');
+        setStatusMessage('Det oppstod en uventet feil under endring.', 'alert-danger');
       },
       crossDomain: false,
     });
@@ -268,12 +265,12 @@ $(document).ready(() => {
       success(res) {
         const result = JSON.parse(res);
         $(that).parent().remove();
-        utils.setStatusMessage(result.message, 'alert-success');
+        setStatusMessage(result.message, 'alert-success');
       },
       error(res) {
         const result = JSON.parse(res);
         if (res.status === 500) {
-          utils.setStatusMessage(result.message, 'alert-danger');
+          setStatusMessage(result.message, 'alert-danger');
         }
       },
       crossDomain: false,

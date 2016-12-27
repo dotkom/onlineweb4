@@ -1,8 +1,8 @@
 import $ from 'jquery';
+import { showStatusMessage } from 'common/utils';
 import './less/approval.less';
 
 const approveApplication = (applicationId, row) => {
-  const utils = window.Dashboard.tools;
   $.ajax({
     method: 'POST',
     url: 'approve_application/',
@@ -14,9 +14,9 @@ const approveApplication = (applicationId, row) => {
     error: (response) => {
       if (response.status === 412) {
         const responseJson = JSON.parse(response.responseText);
-        utils.showStatusMessage(responseJson.message, 'alert-danger');
+        showStatusMessage(responseJson.message, 'alert-danger');
       } else {
-        utils.showStatusMessage('En uventet error ble oppdaget. Kontakt dotkom@online.ntnu.no for assistanse.', 'alert-danger');
+        showStatusMessage('En uventet error ble oppdaget. Kontakt dotkom@online.ntnu.no for assistanse.', 'alert-danger');
       }
     },
     crossDomain: false,
@@ -24,7 +24,6 @@ const approveApplication = (applicationId, row) => {
 };
 
 const declineApplication = (applicationId, message, row) => {
-  const utils = window.Dashboard.tools;
   $.ajax({
     method: 'POST',
     url: 'decline_application/',
@@ -36,9 +35,9 @@ const declineApplication = (applicationId, message, row) => {
     error: (response) => {
       if (response.status === 412) {
         const responseJson = JSON.parse(response.responseText);
-        utils.showStatusMessage(responseJson.message, 'alert-danger');
+        showStatusMessage(responseJson.message, 'alert-danger');
       } else {
-        utils.showStatusMessage('En uventet error ble oppdaget. Kontakt dotkom@online.ntnu.no for assistanse.', 'alert-danger');
+        showStatusMessage('En uventet error ble oppdaget. Kontakt dotkom@online.ntnu.no for assistanse.', 'alert-danger');
       }
     },
     crossDomain: false,

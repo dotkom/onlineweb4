@@ -1,4 +1,5 @@
 import $ from 'jquery';
+import { ajaxRequest, showFlashMessage } from 'common/utils/';
 
 /*
     The event module provides dynamic functions to event objects
@@ -8,37 +9,6 @@ import $ from 'jquery';
 // Global variables defined in details template
 const allExtras = window.all_extras;
 const selectedExtra = window.selected_extra;
-
-const showFlashMessage = (message, tags) => {
-  const id = new Date().getTime();
-  let wrapper = $('.messages');
-  const messageElement = $(`
-    <div class="row" id="${id}">
-      <div class="col-md-12">
-        <div class="alert ${tags}">${message}</div>
-      </div>
-    </div>
-  `);
-
-  if (wrapper.length === 0) {
-    wrapper = $('section:first > .container:first');
-  }
-  messageElement.prependTo(wrapper);
-
-  window.timeOutAlerts();
-};
-
-const ajaxRequest = (request) => {
-  $.ajax({
-    url: request.url,
-    type: 'POST',
-    data: request.data,
-    headers: { 'X-CSRFToken': $.cookie('csrftoken') },
-    error: request.error,
-    success: request.success,
-  });
-};
-
 
 const sendChoice = (id) => {
   const url = window.location.href.toString();

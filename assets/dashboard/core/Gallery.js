@@ -1,6 +1,6 @@
 import jQuery from 'jquery';
-import Utils from 'common/utils/Utils';
 import MicroEvent from 'common/utils/MicroEvent';
+import { format, render } from 'common/utils';
 import GalleryCrop from './GalleryCrop';
 import GalleryUpload from './GalleryUpload';
 
@@ -20,7 +20,7 @@ const TMPL_IMAGE_SEARCH_RESULT = `
 </div>
 <% } %>`;
 
-const Gallery = (function PrivateGallery($, utils) {
+const Gallery = (function PrivateGallery($) {
   const events = new MicroEvent();
   const galleryImages = {};
   let formSelectedSingleImage = null;
@@ -103,12 +103,12 @@ const Gallery = (function PrivateGallery($, utils) {
       }
 
       // Update the manage button text and create thumbnails for the manage unhandled images view
-      MANAGE_BUTTON_TEXT.text('Behandle ({0})'.format(images.length));
+      MANAGE_BUTTON_TEXT.text(format('Behandle ({0})', images.length));
 
       // Update the sidebar menu badge as well
       const badge = '<small class="badge"><%= unhandledCount %></small>';
       if (images.length > 0) {
-        const badgeHtml = utils.render(badge, { unhandledCount: images.length });
+        const badgeHtml = render(badge, { unhandledCount: images.length });
         DASHBOARD_MENU_GALLERY_UNHANDLED_BADGE.html(badgeHtml);
       } else {
         DASHBOARD_MENU_GALLERY_UNHANDLED_BADGE.html('');
@@ -159,7 +159,7 @@ const Gallery = (function PrivateGallery($, utils) {
         const payload = { query };
 
         Gallery.ajax('GET', '/gallery/search/', payload, (data) => {
-          let html = utils.render(TMPL_IMAGE_SEARCH_RESULT, { images: data.images });
+          let html = render(TMPL_IMAGE_SEARCH_RESULT, { images: data.images });
           if (!data.images.length) html = '<div class="col-md-12"><p>Ingen bilder matchet søket...</p></div></div>';
           else html += '</div>';
 
@@ -268,6 +268,6 @@ const Gallery = (function PrivateGallery($, utils) {
       },
     },
   };
-}(jQuery, new Utils()));
+}(jQuery));
 
 export default Gallery;

@@ -1,8 +1,8 @@
 import jQuery from 'jquery';
-import Utils from 'common/utils/Utils';
+import { format, render } from 'common/utils';
 import Gallery from './Gallery';
 
-const GalleryCrop = (function PrivateGalleryCrop($, Cropper, utils) {
+const GalleryCrop = (function PrivateGalleryCrop($) {
   // DOM References
   const CROP_IMAGE = $('#gallery__image-edit--submit');
   const EDIT_CONTAINER = $('#gallery__image-edit-container');
@@ -127,7 +127,8 @@ const GalleryCrop = (function PrivateGalleryCrop($, Cropper, utils) {
       RESET_BUTTON.click();
       GalleryCrop.reset();
 
-      const tmpl = '<p>Bilde {0} ({1}) av type "{2}" ble beskåret uten problemer</p>'.format(
+      const tmpl = format(
+        '<p>Bilde {0} ({1}) av type "{2}" ble beskåret uten problemer</p>',
         data.name, data.id, data.preset,
       );
       MODAL_SUCCESS.find('.modal-body').html(tmpl);
@@ -165,7 +166,7 @@ const GalleryCrop = (function PrivateGalleryCrop($, Cropper, utils) {
         if (i === 0) context.selected = 'selected';
         else context.selected = '';
 
-        IMAGE_PRESET.append(utils.render(optionTemplate, context));
+        IMAGE_PRESET.append(render(optionTemplate, context));
       }
 
       // Listen for changes to selected preset
@@ -250,7 +251,7 @@ const GalleryCrop = (function PrivateGalleryCrop($, Cropper, utils) {
      * @param {string} msg The message to be displayed
      */
     log(msg) {
-      IMAGE_LOG.html('<br />{0}'.format(msg));
+      IMAGE_LOG.html(format('<br />{0}', msg));
     },
 
     /**
@@ -341,10 +342,10 @@ const GalleryCrop = (function PrivateGalleryCrop($, Cropper, utils) {
       // Perform the checks on crop data vs preset, as well as form input fields
 
       if (preset.min_width !== undefined && cropData.width < preset.min_width) {
-        errors.push('Bildebredden er mindre enn minstekravet: {0}'.format(preset.min_width));
+        errors.push(format('Bildebredden er mindre enn minstekravet: {0}', preset.min_width));
       }
       if (preset.min_height !== undefined && cropData.height < preset.min_height) {
-        errors.push('Bildehøyden er mindre enn minstekravet: {0}'.format(preset.min_height));
+        errors.push(format('Bildehøyden er mindre enn minstekravet: {0}', preset.min_height));
       }
       if (IMAGE_NAME.val().length <= 3) {
         errors.push('Bildet må ha et navn på mer enn 3 bokstaver.');
@@ -357,7 +358,7 @@ const GalleryCrop = (function PrivateGalleryCrop($, Cropper, utils) {
       if (errors.length > 0) {
         const errorTemplate = '<br /><i>Må utbedres:</i><ul>' +
           '<% _(errors).each(function (e) { %><li><%= e %></li><% }) %></ul>';
-        IMAGE_LOG.html(utils.render(errorTemplate, { errors }));
+        IMAGE_LOG.html(render(errorTemplate, { errors }));
       } else {
         GalleryCrop.log('OK');
       }
@@ -365,6 +366,6 @@ const GalleryCrop = (function PrivateGalleryCrop($, Cropper, utils) {
       return errors;
     },
   };
-}(jQuery, window.Cropper, new Utils()));
+}(jQuery));
 
 export default GalleryCrop;

@@ -1,6 +1,5 @@
 import $ from 'jquery';
-import Utils from 'common/utils/Utils';
-import { csrfSafeMethod } from 'common/utils/csrf';
+import { csrfSafeMethod, setStatusMessage } from 'common/utils/';
 
 // The code was loading twice, this is an ugly fix to prevent that.
 let pageInitialized = false;
@@ -153,12 +152,11 @@ const initialize = () => {
         $(row).hide();
       },
       error(res) {
-        const utils = new Utils();
         if (res.status === 412) {
           const jsonResponse = JSON.parse(res.responseText);
-          utils.setStatusMessage(jsonResponse.message, 'alert-danger');
+          setStatusMessage(jsonResponse.message, 'alert-danger');
         } else {
-          utils.setStatusMessage('En uventet feil ble oppdaget. Kontakt dotkom@online.ntnu.no for assistanse.', 'alert-danger');
+          setStatusMessage('En uventet feil ble oppdaget. Kontakt dotkom@online.ntnu.no for assistanse.', 'alert-danger');
         }
       },
       crossDomain: false,
