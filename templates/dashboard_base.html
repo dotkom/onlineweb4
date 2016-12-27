@@ -13,7 +13,6 @@
     <link rel="icon" href="{{ STATIC_URL }}img/favicon.png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     {% block styles %}
-        <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/bootstrap-datetimepicker.min.css">
         <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/cropper/cropper.min.css"/>
 
         {% render_bundle 'dashboard' 'css' %}
@@ -333,10 +332,8 @@
         {% render_bundle 'vendor' %}
         <script type="text/javascript" src="{{ STATIC_URL }}js/libs/jquery-2.1.3.min.js"></script>
         <script type="text/javascript" src="{{ STATIC_URL }}js/libs/bootstrap.min.js"></script>
-        <script type="text/javascript" src="{{ STATIC_URL }}js/libs/moment-2.9.0-with-locales.min.js"></script>
         <script type="text/javascript" src="{{ STATIC_URL }}js/libs/jquery.cookie.js"></script>
         <script type="text/javascript" src="{{ STATIC_URL }}js/libs/jquery.tablesorter.min.js"></script>
-        <script type="text/javascript" src="{{ STATIC_URL }}js/libs/bootstrap-datetimepicker.min.js"></script>
         <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
         <script type="text/javascript" src="{{ STATIC_URL }}js/libs/blazy/blazy.min.js"></script>
         <script type="text/javascript" src="{{ STATIC_URL }}js/libs/cropper/cropper.min.js"></script>

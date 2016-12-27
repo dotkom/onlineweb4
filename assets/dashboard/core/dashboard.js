@@ -1,4 +1,5 @@
 import jQuery from 'jquery';
+import 'common/datetimepicker';
 import { csrfSafeMethod } from 'common/utils';
 
 const Dashboard = (function PrivateDashboard($) {
