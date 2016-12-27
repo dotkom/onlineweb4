@@ -3,7 +3,7 @@ import 'common/datetimepicker';
 import { csrfSafeMethod } from 'common/utils';
 
 const Dashboard = (function PrivateDashboard($) {
-    // Private method to set up AJAX for dashboard
+  // Private method to set up AJAX for dashboard
   const doAjaxSetup = () => {
     $.ajaxSetup({
       crossDomain: false,
@@ -15,16 +15,16 @@ const Dashboard = (function PrivateDashboard($) {
     });
   };
 
-    // Private method to bind toggling of sidebar
+  // Private method to bind toggling of sidebar
   const bindSidebarToggle = () => {
     $("[data-toggle='offcanvas']").click(() => {
-            // If window is small enough, enable sidebar push menu
+      // If window is small enough, enable sidebar push menu
       if ($(window).width() <= 992) {
         $('.row-offcanvas').toggleClass('active');
         $('.left-side').removeClass('collapse-left');
         $('.right-side').removeClass('strech');
         $('.row-offcanvas').toggleClass('relative');
-            // Else stretch
+      // Else stretch
       } else {
         $('.left-side').toggleClass('collapse-left');
         $('.right-side').toggleClass('strech');
@@ -32,7 +32,7 @@ const Dashboard = (function PrivateDashboard($) {
     });
   };
 
-    // Check if we should auto expand the sidebar
+  // Check if we should auto expand the sidebar
   const sidebarAutoExpand = () => {
     if (typeof (localStorage) !== 'undefined') {
       const sidebarValue = localStorage.getItem('ow4_dashboard_sidebar');
@@ -51,7 +51,7 @@ const Dashboard = (function PrivateDashboard($) {
     }
   };
 
-    // Listeners used to store what
+  // Listeners used to store what
   const bindSidebarExpand = () => {
     $('.sidebar-menu a').on('click', function sidebarExpand() {
       const url = $(this).attr('href');
@@ -113,7 +113,7 @@ const Dashboard = (function PrivateDashboard($) {
         const navMenu = $(this);
         const navItem = $(this).parent();
         navItem.on('click', 'a', () => {
-                    // Toggle the submenu
+          // Toggle the submenu
           navMenu.slideToggle(200);
 
           if (expanded !== navMenu && expanded != null) expanded.slideUp(200);
@@ -127,11 +127,11 @@ const Dashboard = (function PrivateDashboard($) {
         if ($('#dashboard-tabs').length) {
           const tabElement = $('#dashboard-tabs').find(`[data-section="${newActiveTab}"]`);
           if (tabElement.length) {
-                        // Hide sections
+            // Hide sections
             $('#tab-content section').hide();
-                        // Unmark currently active tab
+            // Unmark currently active tab
             $('#dashboard-tabs').find('li.active').removeClass('active');
-                        // Update the active tab to the clicked tab and show that section
+            // Update the active tab to the clicked tab and show that section
             tabElement.parent().addClass('active');
             $(`#${newActiveTab}`).show();
                         // Update URL
@@ -140,15 +140,15 @@ const Dashboard = (function PrivateDashboard($) {
         }
       };
 
-            // Hide all other tabs and show the active one when the page loads
+      // Hide all other tabs and show the active one when the page loads
       if ($('#dashboard-tabs').length) {
-                // Hide all sections
+        // Hide all sections
         $('#tab-content section').hide();
-                // Find the currently active tab and show it
+        // Find the currently active tab and show it
         const activeTab = $('#dashboard-tabs').find('li.active a').data('section');
         $(`#${activeTab}`).show();
 
-                // Set up the tabs to show/hide when clicked
+        // Set up the tabs to show/hide when clicked
         $('#dashboard-tabs').on('click', 'a', function tab(e) {
           e.preventDefault();
           const newActiveTab = $(this).data('section');
@@ -161,27 +161,27 @@ const Dashboard = (function PrivateDashboard($) {
         // If you can figure out how to do this properly, be my guest.
       });
 
-            // Set up AJAX CSRF for Dashboard
+      // Set up AJAX CSRF for Dashboard
       doAjaxSetup();
 
-            // Check for existence of input fields that require bootstrap datetimepicker
-            // And activate it on these objects.
+      // Check for existence of input fields that require bootstrap datetimepicker
+      // And activate it on these objects.
       this.activateDateTimePickers();
 
-            // Activate tablesorter on all tablesorter class tables
+      // Activate tablesorter on all tablesorter class tables
       $('.tablesorter').tablesorter();
     },
 
     tools: {
-            // Perform an AJAX request
-            //
-            // :param method: Can be POST, GET etc.
-            // :param url: URL of the endpoint
-            // :param data: Either null or an object of data fields
-            // :param success: success function callback
-            // :param error: error function callback
-            // :param type: Either null (default is application/x-www-form-urlencoded)
-            //              or 'json'
+      // Perform an AJAX request
+      //
+      // :param method: Can be POST, GET etc.
+      // :param url: URL of the endpoint
+      // :param data: Either null or an object of data fields
+      // :param success: success function callback
+      // :param error: error function callback
+      // :param type: Either null (default is application/x-www-form-urlencoded)
+      //              or 'json'
       ajax(method, url, data, success, error, type) {
         const payload = {
           type: method.toUpperCase(),
@@ -199,10 +199,10 @@ const Dashboard = (function PrivateDashboard($) {
         $.ajax(payload);
       },
 
-            // Display a status message for 5 seconds
-            //
-            // :param message: String message text
-            // :param tags: String of Bootstrap Alert CSS classes
+      // Display a status message for 5 seconds
+      //
+      // :param message: String message text
+      // :param tags: String of Bootstrap Alert CSS classes
       showStatusMessage(message, tags) {
         const id = new Date().getTime();
         let wrapper = $('.messages');
@@ -215,7 +215,7 @@ const Dashboard = (function PrivateDashboard($) {
         }
         messageElement.prependTo(wrapper);
 
-                // Fadeout and remove the alert
+        // Fadeout and remove the alert
         setTimeout(() => {
           $(`[id=${id}]`).fadeOut();
           setTimeout(() => {
@@ -257,7 +257,7 @@ const Dashboard = (function PrivateDashboard($) {
         tbody.innerHTML = `<tr>${a.join('</tr><tr>')}</tr>`;
       },
 
-            // Check if we have jQuery
+      // Check if we have jQuery
       performSelfCheck() {
         let errors = false;
         if ($ === undefined) {
