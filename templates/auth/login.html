@@ -1,10 +1,20 @@
 {% extends "base.html" %}
 {% load crispy_forms_tags %}
-{% load compress %}
+{% load render_bundle from webpack_loader %}
 
 {% block title %}
 Logg inn - Online
 {% endblock title %}
+
+{% block styles %}
+    {{ block.super }}
+    {% render_bundle 'authentication' 'css' %}
+{% endblock %}
+
+{% block js %}
+    {{ block.super }}
+    {% render_bundle 'authentication' 'js' %}
+{% endblock %}
 
 {% block content %}
 <section id="login">
@@ -25,9 +35,3 @@ Logg inn - Online
     </div>
 </section>
 {% endblock content %}
-{% block js %}
-    {{ block.super }}
-    {% compress js %}
-    <script type="text/javascript" src="{{ STATIC_URL }}js/login.js"></script>
-    {% endcompress %}
-{% endblock js %}

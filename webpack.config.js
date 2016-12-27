@@ -24,6 +24,9 @@ module.exports = {
     articleArchive: [
       './assets/article/archive/index',
     ],
+    authentication: [
+      './assets/authentication/index',
+    ],
     core: [
       './assets/core/index',
     ],
