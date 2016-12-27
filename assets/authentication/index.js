@@ -1,1 +1,3 @@
-import './login';
+import Login from './login';
+
+Login();
