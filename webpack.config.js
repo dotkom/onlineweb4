@@ -112,6 +112,7 @@ module.exports = {
     filename: '[name]-[hash].js',
   },
   externals: {
+    google: 'google',
     jquery: 'jQuery',
     urls: 'Urls',
   },
