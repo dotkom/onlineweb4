@@ -1,5 +1,6 @@
 import 'common/less/gallery.less';
 import moment from 'moment';
+import 'bootstrap';
 // Polyfills
 import 'es6-promise/auto';
 import 'whatwg-fetch';
