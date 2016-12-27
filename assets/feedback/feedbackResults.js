@@ -65,7 +65,7 @@ const initialize = () => {
     for (let i = 0; i < titles.length; i += 1) {
       const box = `<div class="col-md-6 rating-chart"><div id="rating-chart-${i}"></div></div>`;
       $('#rating-graphs').append(box);
-      const ticks = Array.range(1, ratings[i].length, 1);
+      const ticks = ratings[i].map((_, index) => index + 1);
       const title = titles[i];
 
       ratingCharts[i] = $.jqplot(`rating-chart-${i}`, [ratings[i]],
@@ -141,26 +141,6 @@ const initialize = () => {
         });
     }
   }
-
-  Array.range = function (a, b, step) {
-    let A = [];
-    if (typeof a === 'number') {
-      A[0] = a;
-      step = step || 1;
-      while (a + step <= b) {
-        A[A.length] = a += step;
-      }
-    } else {
-      let s = 'abcdefghijklmnopqrstuvwxyz';
-      if (a === a.toUpperCase()) {
-        b = b.toUpperCase();
-        s = s.toUpperCase();
-      }
-      s = s.substring(s.indexOf(a), s.indexOf(b) + 1);
-      A = s.split('');
-    }
-    return A;
-  };
 
   function deleteAnswer(answerId, row) {
     $.ajax({
