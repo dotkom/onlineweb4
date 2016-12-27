@@ -2,10 +2,9 @@
  * Created by myth on 3/10/16.
  */
 
-var MicroEvent = function () {
-  var debug = window.DEBUG
-  var self = this
-  self.events = {}
+const MicroEvent = () => {
+  const debug = window.DEBUG;
+  const events = {};
 
   return {
     /**
@@ -13,29 +12,31 @@ var MicroEvent = function () {
      * @param {string} event The event type to be triggered
      * @param {*} [payload] An optional event payload
      */
-    fire: function (event, payload) {
-      if (debug) console.log('Firing event: ' + event, 'Payload: ', payload)
+    fire(event, payload) {
+      if (debug) console.log(`Firing event: ${event}`, 'Payload: ', payload);
 
       // Attempt to fetch the event queue and fire event to all listeners
-      var listeners = self.events[event]
-      if (typeof listeners === 'undefined') return
-      for (var i = 0; i < listeners.length; i++) listeners[i](event, payload)
+      const listeners = events[event];
+      if (typeof listeners === 'undefined') return;
+      for (let i = 0; i < listeners.length; i += 1) listeners[i](event, payload);
     },
 
     /**
-     * Register a callback on a given event type, that will invoke the callback function once the event fires.
+     * Register a callback on a given event type, that will invoke the
+     * callback function once the event fires.
      * @param {string} event Event type
-     * @param {function} callback Callback function accepting two arguments: {string} event, {*} payload
+     * @param {function} callback Callback function accepting
+     * two arguments: {string} event, {*} payload
      */
-    on: function (event, callback) {
-      if (debug) console.log('Registering callback on event: ' + event)
+    on(event, callback) {
+      if (debug) console.log(`Registering callback on event: ${event}`);
 
-      if (typeof self.events[event] === 'undefined') {
-        self.events[event] = []
+      if (typeof events[event] === 'undefined') {
+        events[event] = [];
       }
-      self.events[event].push(callback)
-    }
-  }
-}
+      events[event].push(callback);
+    },
+  };
+};
 
 export default MicroEvent;
