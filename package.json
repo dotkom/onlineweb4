@@ -6,6 +6,7 @@
     "babel-polyfill": "^6.13.0",
     "bootstrap": "^3.3.7",
     "classnames": "^2.2.5",
+    "dropzone": "^4.3.0",
     "eonasdan-bootstrap-datetimepicker": "^4.17.43",
     "es6-promise": "^4.0.5",
     "extract-text-webpack-plugin": "^1.0.1",

@@ -1,4 +1,7 @@
 import jQuery from 'jquery';
+import Dropzone from 'dropzone';
+import 'dropzone/dist/dropzone.css';
+import './less/dropzone.less';
 import Gallery from './Gallery';
 
 const GalleryUpload = (function PrivateGalleryUpload($) {
@@ -18,10 +21,10 @@ const GalleryUpload = (function PrivateGalleryUpload($) {
         we must use the autoDiscover aproach, but disable the autodiscover, so we get the styling,
         while being able to hook into onqueuecomplete event.
         */
-        window.Dropzone.autoDiscover = false;
+        Dropzone.autoDiscover = false;
 
         // Transform the upload form to a dropzone instance
-        return new window.Dropzone('#gallery__image-upload-form', {
+        return new Dropzone('#gallery__image-upload-form', {
           action: '/gallery/upload',
           clickable: true,
           init() {
