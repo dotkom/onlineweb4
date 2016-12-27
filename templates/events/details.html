@@ -6,10 +6,28 @@
 {% load calendar_filters %}
 {% load payment_tag %}
 {% load compress %}
+{% load render_bundle from webpack_loader %}
 
 {% block title %}
 {{ event.title }} - Online
 {% endblock title %}
+
+{% block styles %}
+    {{ block.super }}
+    {% render_bundle 'eventsDetails' 'css' %}
+{% endblock %}
+
+{% block js %}
+    {{ block.super }}
+    <script>
+        var selected_extra = "{{ attendee.extras }}";
+        var all_extras = [{% for e in attendance_event.extras.all %}"{{e}}", {%endfor%}];
+    </script>
+    {% compress js %}
+    <script type="text/javascript" src="{{ STATIC_URL }}js/Utils.js"></script>
+    {% endcompress %}
+    {% render_bundle 'eventsDetails' 'js' %}
+{% endblock %}
 
 {% block content %}
     <section id="event-details">
@@ -402,15 +420,3 @@
     </div>
 </section>
 {% endblock content %}
-
-{% block js %}
-    {{ block.super }}
-    <script>
-        var selected_extra = "{{ attendee.extras }}";
-        var all_extras = [{% for e in attendance_event.extras.all %}"{{e}}", {%endfor%}];
-    </script>
-    {% compress js %}
-    <script type="text/javascript" src="{{ STATIC_URL }}js/Utils.js"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}js/events.js"></script>
-    {% endcompress %}
-{% endblock %}

@@ -69,6 +69,9 @@ module.exports = {
     events_archive: [
       './assets/events/archive/index',
     ],
+    eventsDetails: [
+      './assets/events/details/index',
+    ],
     feedback: [
       './assets/feedback/index',
     ],
