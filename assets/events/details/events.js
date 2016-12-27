@@ -1,108 +1,90 @@
-import jQuery from 'jquery';
+import $ from 'jquery';
 
 /*
     The event module provides dynamic functions to event objects
     such as saving user selection on event extras
 */
 
-var Event = (function ($) {
+// Global variables defined in details template
+const allExtras = window.all_extras;
+const selectedExtra = window.selected_extra;
 
-    // Perform self check, display error if missing deps
-    var performSelfCheck = function () {
-        var errors = false
-        if ($ == undefined) console.error('jQuery missing!')
-        if (errors) return false
-        return true
+const showFlashMessage = (message, tags) => {
+  const id = new Date().getTime();
+  let wrapper = $('.messages');
+  const messageElement = $(`
+    <div class="row" id="${id}">
+      <div class="col-md-12">
+        <div class="alert ${tags}">${message}</div>
+      </div>
+    </div>
+  `);
+
+  if (wrapper.length === 0) {
+    wrapper = $('section:first > .container:first');
+  }
+  messageElement.prependTo(wrapper);
+
+  window.timeOutAlerts();
+};
+
+const ajaxRequest = (request) => {
+  $.ajax({
+    url: request.url,
+    type: 'POST',
+    data: request.data,
+    headers: { 'X-CSRFToken': $.cookie('csrftoken') },
+    error: request.error,
+    success: request.success,
+  });
+};
+
+
+const sendChoice = (id) => {
+  const url = window.location.href.toString();
+  const data = {
+    extras_id: id,
+    action: 'extras',
+  };
+  const success = (jsonData) => {
+    // var line = $('#' + attendee_id > i)
+    showFlashMessage(jsonData.message, 'alert-success');
+
+    const chosenText = 'Valgt ekstra: ';
+    const options = $('.extras-choice option');
+    for (let i = options.length - 1; i >= 0; i -= 1) {
+      if (options[i].text.indexOf(chosenText) >= 0) {
+        options[i].text = allExtras[i];
+        break;
+      }
     }
 
-return {
-    init: function () {
-        if (!performSelfCheck()) return;
+    const selected = $('.extras-choice option:selected');
+    selected.text(chosenText + selected.text());
+  };
+  const error = (xhr, txt, errorMessage) => {
+    const message = 'Det skjedde en feil! Refresh siden og prøv igjen, eller kontakt de ansvarlige hvis det fortsatt ikke går. ';
+    showFlashMessage(message + errorMessage, 'alert-danger');
+  };
 
-        $(".extras-choice").on('change', function() {
-            var id = $(this).val();
-            var text = $(this).text();
-            Event.sendChoice(id, text);
-        });
+  // Make an AJAX request
+  ajaxRequest({ method: 'POST', url, data, success, error });
+};
 
-        if(all_extras.length >0 && selected_extra == "None"){
-            message = "Vennligst velg et alternativ for extra bestilling. (Over avmeldingsknappen)";
-            Event.showFlashMessage(message, 'alert-warning')
-        }
-        else if(all_extras.length >0 && selected_extra !== "" && jQuery.inArray(selected_extra, all_extras) == -1){
-            message = "Ditt valg til ekstra bestilling er ikke lenger gyldig! Velg et nytt.";
-            Event.showFlashMessage(message, 'alert-warning')
-        }
-    },
+const init = () => {
+  $('.extras-choice').on('change', function changeExtraChoice() {
+    const id = $(this).val();
+    const text = $(this).text();
+    sendChoice(id, text);
+  });
 
-    sendChoice: function(id, text) {
-        var url = window.location.href.toString()
-        var data = {
-            "extras_id": id,
-            "action": "extras"
-        }
-        var success = function (data) {
-            //var line = $('#' + attendee_id > i)
-            Event.showFlashMessage(data.message, 'alert-success');
+  if (allExtras.length > 0 && selectedExtra === 'None') {
+    const message = 'Vennligst velg et alternativ for extra bestilling. (Over avmeldingsknappen)';
+    showFlashMessage(message, 'alert-warning');
+  } else if (allExtras.length > 0 && selectedExtra !== '' && $.inArray(selectedExtra, allExtras) === -1) {
+    const message = 'Ditt valg til ekstra bestilling er ikke lenger gyldig! Velg et nytt.';
+    showFlashMessage(message, 'alert-warning');
+  }
+};
 
-            var chosen_text = "Valgt ekstra: ";
-            var options = $(".extras-choice option");
-            for (var i = options.length - 1; i >= 0; i--) {
-                if(options[i].text.indexOf(chosen_text) >= 0){
-                    options[i].text = all_extras[i];
-                    break;
-                }
-            };
-
-            var selected = $(".extras-choice option:selected");
-            selected.text(chosen_text + selected.text())
-        }
-        var error = function (xhr, txt, error) {
-            var message = "Det skjedde en feil! Refresh siden og prøv igjen, eller kontakt de ansvarlige hvis det fortsatt ikke går. "
-            Event.showFlashMessage(message+error, 'alert-danger');
-        }
-
-        // Make an AJAX request
-        Event.ajaxRequest({'method': 'POST', 'url': url, 'data': data, success: success, error: error});
-    },
-
-    ajaxRequest: function(request) {
-        $.ajax({
-            url: request.url,
-            type: "POST",
-            data: request.data,
-            headers: {'X-CSRFToken':$.cookie('csrftoken')},
-            error: (function(error){
-                return function(e){
-                    error(e);
-                }
-            })(request.error),
-            success: (function(success){
-                return function(data){
-                    success(data);
-                }
-            })(request.success)
-        });
-    },
-
-    showFlashMessage: function (message, tags) {
-        var id = new Date().getTime();
-        var wrapper = $('.messages')
-        var message = $('<div class="row" id="'+ id +'"><div class="col-md-12">' +
-                        '<div class="alert ' + tags + '">' +
-                        message + '</div></div></div>')
-
-        if(wrapper.length == 0){
-            wrapper = $('section:first > .container:first')
-        }
-        message.prependTo(wrapper)
-
-        timeOutAlerts()
-    }
-}
-
-
-
-})(jQuery)
-
-export default Event;
+export default init;
