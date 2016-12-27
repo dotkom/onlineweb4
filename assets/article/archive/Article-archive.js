@@ -1,7 +1,8 @@
 import $ from 'jquery';
+import Utils from 'common/utils/Utils';
 import ArticleArchiveWidget from './ArticleArchiveWidget';
 
-const utils = new window.Utils(); // Class for the Widget
+const utils = new Utils(); // Class for the Widget
 let isLoadingNewContent = false; // Indicating if we are currently loading something
 let page = 1; // What page we are on
 const months = {

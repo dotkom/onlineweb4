@@ -1,8 +1,9 @@
 import $ from 'jquery';
+import Utils from 'common/utils/Utils';
 import OfflineWidget from './OfflineWidget';
 
 const TOP_OFFSET_ADJUST = 65;
-const utils = new window.Utils();
+const utils = new Utils();
 
 const offlineWidget = new OfflineWidget(utils);
 

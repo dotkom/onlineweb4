@@ -13,7 +13,6 @@
 
 {% block js %}
     {{ block.super }}
-    <script type="text/javascript" src="{{ STATIC_URL }}js/Utils.js"></script>
     {% render_bundle 'articleDetails' 'js' %}
 {% endblock %}
 

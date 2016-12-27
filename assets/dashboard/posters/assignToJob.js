@@ -1,7 +1,7 @@
 import $ from 'jquery';
+import Utils from 'common/utils/Utils';
 
-// TODO: Import
-const utils = new window.Utils();
+const utils = new Utils();
 
 const assignToJob = (orderId, row) => {
   const assignToId = $(row).find('form').find(':selected').val();

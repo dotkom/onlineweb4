@@ -1,5 +1,8 @@
 import $ from 'jquery';
+import Utils from 'common/utils/Utils';
 import { csrfSafeMethod } from 'common/utils/csrf';
+
+const utils = new Utils();
 
 /* AJAX SETUP FOR CSRF */
 $.ajaxSetup({
@@ -78,8 +81,6 @@ $(document).ready(() => {
    JS for marks pane
   */
   const updateMarkRules = () => {
-    const utils = new window.Utils();
-
     $.ajax({
       method: 'POST',
       url: 'update_mark_rules/',
@@ -140,7 +141,6 @@ $(document).ready(() => {
         $(row).hide();
       },
       error(res) {
-        const utils = new window.Utils();
         if (res.status === 412) {
           const jsonResponse = JSON.parse(res.responseText);
           utils.setStatusMessage(jsonResponse.message, 'alert-danger');
@@ -171,7 +171,6 @@ $(document).ready(() => {
           .text('Primær');
       },
       error(res) {
-        const utils = new window.Utils();
         if (res.status === 412) {
           const jsonResponse = JSON.parse(res.responseText);
           utils.setStatusMessage(jsonResponse.message, 'alert-danger');
@@ -189,11 +188,9 @@ $(document).ready(() => {
       url: 'verify_email/',
       data: { email },
       success() {
-        const utils = new window.Utils();
         utils.setStatusMessage(`En ny verifikasjonsepost har blitt sendt til ${email}.`, 'alert-success');
       },
       error(res) {
-        const utils = new window.Utils();
         if (res.status === 412) {
           const jsonResponse = JSON.parse(res.responseText);
           utils.setStatusMessage(jsonResponse.message, 'alert-danger');
@@ -243,7 +240,6 @@ $(document).ready(() => {
         }
       },
       error() {
-        const utils = new window.Utils();
         utils.setStatusMessage('Det oppstod en uventet feil under endring.', 'alert-danger');
       },
       crossDomain: false,
@@ -271,12 +267,10 @@ $(document).ready(() => {
       data: { position_id: $(this).data('position-id') },
       success(res) {
         const result = JSON.parse(res);
-        const utils = new window.Utils();
         $(that).parent().remove();
         utils.setStatusMessage(result.message, 'alert-success');
       },
       error(res) {
-        const utils = new window.Utils();
         const result = JSON.parse(res);
         if (res.status === 500) {
           utils.setStatusMessage(result.message, 'alert-danger');

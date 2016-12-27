@@ -24,7 +24,6 @@
         var all_extras = [{% for e in attendance_event.extras.all %}"{{e}}", {%endfor%}];
     </script>
     {% compress js %}
-    <script type="text/javascript" src="{{ STATIC_URL }}js/Utils.js"></script>
     {% endcompress %}
     {% render_bundle 'eventsDetails' 'js' %}
 {% endblock %}

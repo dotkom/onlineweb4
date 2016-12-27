@@ -128,3 +128,5 @@ if (!String.prototype.format) {
     })
   }
 }
+
+export default Utils;

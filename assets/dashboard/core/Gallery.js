@@ -1,4 +1,5 @@
 import jQuery from 'jquery';
+import Utils from 'common/utils/Utils';
 import MicroEvent from 'common/utils/MicroEvent';
 import GalleryCrop from './GalleryCrop';
 import GalleryUpload from './GalleryUpload';
@@ -267,6 +268,6 @@ const Gallery = (function PrivateGallery($, utils) {
       },
     },
   };
-}(jQuery, new window.Utils()));
+}(jQuery, new Utils()));
 
 export default Gallery;

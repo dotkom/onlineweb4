@@ -1,4 +1,5 @@
 import jQuery from 'jquery';
+import Utils from 'common/utils/Utils';
 import Gallery from './Gallery';
 
 const GalleryCrop = (function PrivateGalleryCrop($, Cropper, utils) {
@@ -364,6 +365,6 @@ const GalleryCrop = (function PrivateGalleryCrop($, Cropper, utils) {
       return errors;
     },
   };
-}(jQuery, window.Cropper, new window.Utils()));
+}(jQuery, window.Cropper, new Utils()));
 
 export default GalleryCrop;
