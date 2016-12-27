@@ -653,5 +653,4 @@ var Gallery = (function ($, utils, MicroEvent, Dropzone) {
   }
 })(window.jQuery, new window.Utils(), window.MicroEvent, window.Dropzone)
 
-// Initialise the Gallery module
-Gallery.init()
+export default Gallery;
