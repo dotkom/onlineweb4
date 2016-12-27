@@ -66,6 +66,9 @@ module.exports = {
     events_archive: [
       './assets/events/archive/index',
     ],
+    feedback: [
+      './assets/feedback/index',
+    ],
     frontpage: [
       './assets/frontpage/index',
     ],

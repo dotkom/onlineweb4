@@ -1,9 +1,21 @@
 {% extends "base.html" %}
 {% load crispy_forms_tags %}
+{% load render_bundle from webpack_loader %}
 
 {% block title %}
 Tilbakemeldinger - Svar - Online
 {% endblock title %}
+
+{% block styles %}
+    {{ block.super }}
+    {% render_bundle 'feedback' 'css' %}
+{% endblock %}
+
+{% block js %}
+    {{ block.super }}
+    <script src="{{ STATIC_URL }}js/libs/jquery.barrating.min.js"></script>
+    {% render_bundle 'feedback' 'js' %}
+{% endblock %}
 
 {% block content %}
 <section class="container" id="feedbackanswer">
@@ -34,9 +46,4 @@ Tilbakemeldinger - Svar - Online
         </div>
     </div>
 </section>
-{% block js %}
-    {{ block.super }}
-    <script src="{{ STATIC_URL }}js/libs/jquery.barrating.min.js"></script>
-    <script src="{{ STATIC_URL }}js/feedback.js"></script>
 {% endblock %}
-{%endblock content %}

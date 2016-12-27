@@ -2,7 +2,7 @@
 //The code was loading twice, this is an ugly fix to prevent that.
 var pageInitialized = false;
 
-$(function() {
+const initialize = () => {
     /* AJAX SETUP FOR CSRF */
     $.ajaxSetup({
         crossDomain: false, // obviates need for sameOrigin test
@@ -26,27 +26,27 @@ $(function() {
 
             box = '<div class="col-md-8"><div id="fos-graph"></div></div>'
             $('#field-of-study-graph').append(box);
-            fosChart = jQuery.jqplot ('fos-graph', [data], 
+            fosChart = jQuery.jqplot ('fos-graph', [data],
             {
                 grid: {
-                    drawBorder: false, 
+                    drawBorder: false,
                     drawGridlines: false,
                     background: '#ffffff',
                     shadow:false
                 },
-                seriesDefaults: 
+                seriesDefaults:
                 {
-                    renderer: jQuery.jqplot.PieRenderer, 
-                    rendererOptions: 
+                    renderer: jQuery.jqplot.PieRenderer,
+                    rendererOptions:
                     {
                         showDataLabels: true,
                         dataLabels: 'value',
                         sliceMargin: 10
                     }
-                }, 
-                legend: 
-                { 
-                    show:true, 
+                },
+                legend:
+                {
+                    show:true,
                     location: $(window).width() > 991 ? 'e' : 's',
                     fontSize: '15pt',
                     border: 'none'
@@ -55,7 +55,7 @@ $(function() {
         }
     }
 
-    function printRatingCharts(ratings, titles) 
+    function printRatingCharts(ratings, titles)
     {
         ratingCharts = new Array();
 
@@ -64,28 +64,28 @@ $(function() {
         }
 
         for(var i = 0; i < titles.length; i++)
-        {   
+        {
             box = '<div class="col-md-6 rating-chart"><div id="rating-chart-' + i + '"></div></div>'
             $('#rating-graphs').append(box);
             ticks = Array.range(1, ratings[i].length, 1);
             title = titles[i];
 
-            ratingCharts[i] = $.jqplot('rating-chart-' + i, [ratings[i]], 
+            ratingCharts[i] = $.jqplot('rating-chart-' + i, [ratings[i]],
             {
                 title: title,
                 seriesDefaults:
                 {
                     renderer:$.jqplot.BarRenderer,
-                    pointLabels: 
+                    pointLabels:
                     {
-                        show: true, 
+                        show: true,
                         hideZeros: true,
                         formatString: '%d',
                     }
                 },
-                axes: 
+                axes:
                 {
-                    xaxis: 
+                    xaxis:
                     {
                         renderer: $.jqplot.CategoryAxisRenderer,
                         ticks: ticks,
@@ -95,10 +95,10 @@ $(function() {
                         tickOptions: { show: false}
                     },
                 },
-                grid: 
-                { 
+                grid:
+                {
                     gridLineColor: '#FFF',
-                    drawBorder: false,    
+                    drawBorder: false,
                 }
             });
         }
@@ -112,32 +112,32 @@ $(function() {
         }
 
         for(i = 0; i < questions.length; i++)
-        {   
+        {
             box = '<div class="col-md-6"><div id="mc-chart-' + i + '"></div></div>'
             $('#multiple-choice-graphs').append(box);
             question = questions[i];
-            mcCharts[i] = $.jqplot('mc-chart-' + i, [data[i]], 
+            mcCharts[i] = $.jqplot('mc-chart-' + i, [data[i]],
             {
                 title: question,
                 grid: {
-                    drawBorder: false, 
+                    drawBorder: false,
                     drawGridlines: false,
                     background: '#ffffff',
                     shadow:false
                 },
-                seriesDefaults: 
+                seriesDefaults:
                 {
-                    renderer: jQuery.jqplot.PieRenderer, 
-                    rendererOptions: 
+                    renderer: jQuery.jqplot.PieRenderer,
+                    rendererOptions:
                     {
                         showDataLabels: true,
                         dataLabels: 'value',
                         sliceMargin: 10
                     }
-                }, 
-                legend: 
-                { 
-                    show:true, 
+                },
+                legend:
+                {
+                    show:true,
                     location: $(window).width() > 991 ? 'e' : 's',
                     fontSize: '15pt',
                     border: 'none'
@@ -162,7 +162,7 @@ $(function() {
                 s= s.toUpperCase();
             }
             s= s.substring(s.indexOf(a), s.indexOf(b)+ 1);
-            A= s.split('');        
+            A= s.split('');
         }
         return A;
     }
@@ -210,16 +210,16 @@ $(function() {
                 if($(window).width() < 992){
                     for(i = 0; i < mcCharts.length; i++){
                         mcCharts[i].replot({
-                            legend: 
-                            { 
+                            legend:
+                            {
                                 location: 's',
                             }
                         });
                     }
 
                     fosChart.replot({
-                        legend: 
-                        { 
+                        legend:
+                        {
                             location: 's',
                         }
                     });
@@ -227,16 +227,16 @@ $(function() {
                 else{
                     for(i = 0; i < mcCharts.length; i++){
                         mcCharts[i].replot({
-                            legend: 
-                            { 
+                            legend:
+                            {
                                 location: 'e',
                             }
                         });
                     }
 
                     fosChart.replot({
-                        legend: 
-                        { 
+                        legend:
+                        {
                             location: 'e',
                         }
                     });
@@ -288,6 +288,6 @@ $(function() {
             pageInitialized = true;
         }
     });
-});
+};
 
-
+export default initialize;
