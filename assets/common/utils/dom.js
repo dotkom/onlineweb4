@@ -1,3 +1,5 @@
+import { template } from 'underscore';
+
 /**
  * Render a template on the basis of the attributes of a data object
  * @param {object} tmpl A jQuery wrapper DOM object
@@ -5,7 +7,7 @@
  * @return {object} Rendered DOM subtree containing provided context data
  */
 export const render = (tmpl, context) => {
-  const node = window._.template(tmpl);
+  const node = template(tmpl);
   return node(context);
 };
 
