@@ -13,8 +13,6 @@
     <link rel="icon" href="{{ STATIC_URL }}img/favicon.png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     {% block styles %}
-        <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/cropper/cropper.min.css"/>
-
         {% render_bundle 'dashboard' 'css' %}
         <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/jquery-tablesorter/tablesorter.css">
     {% endblock %}
@@ -332,7 +330,6 @@
         <script type="text/javascript" src="{{ STATIC_URL }}js/libs/jquery.cookie.js"></script>
         <script type="text/javascript" src="{{ STATIC_URL }}js/libs/jquery.tablesorter.min.js"></script>
         <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
-        <script type="text/javascript" src="{{ STATIC_URL }}js/libs/cropper/cropper.min.js"></script>
         {% render_bundle 'dashboard' 'js' %}
     {% endblock %}
 

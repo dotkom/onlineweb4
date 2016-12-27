@@ -1,4 +1,6 @@
 import jQuery from 'jquery';
+import Cropper from 'cropperjs';
+import 'cropperjs/dist/cropper.css';
 import { format, render } from 'common/utils';
 import Gallery from './Gallery';
 
@@ -275,7 +277,7 @@ const GalleryCrop = (function PrivateGalleryCrop($) {
       // Hooking the wrapper to the img load event does not work.
       setTimeout(() => {
         if (cropper !== null && cropper !== undefined) cropper.destroy();
-        cropper = new window.Cropper(image, options);
+        cropper = new Cropper(image, options);
 
         const cropData = cropper.getData();
         IMAGE_HEIGHT.val(cropData.height);
