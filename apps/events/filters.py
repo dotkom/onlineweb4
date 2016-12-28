@@ -12,11 +12,11 @@ class ListFilter(django_filters.Filter):
 
 
 class EventDateFilter(django_filters.FilterSet):
-    event_start__gte = django_filters.DateTimeFilter(name='event_start', lookup_type='gte')
-    event_start__lte = django_filters.DateTimeFilter(name='event_start', lookup_type='lte')
-    event_end__gte = django_filters.DateTimeFilter(name='event_end', lookup_type='gte')
-    event_end__lte = django_filters.DateTimeFilter(name='event_end', lookup_type='lte')
-    attendance_event__isnull = django_filters.BooleanFilter(name='attendance_event', lookup_type='isnull')
+    event_start__gte = django_filters.DateTimeFilter(name='event_start', lookup_expr='gte')
+    event_start__lte = django_filters.DateTimeFilter(name='event_start', lookup_expr='lte')
+    event_end__gte = django_filters.DateTimeFilter(name='event_end', lookup_expr='gte')
+    event_end__lte = django_filters.DateTimeFilter(name='event_end', lookup_expr='lte')
+    attendance_event__isnull = django_filters.BooleanFilter(name='attendance_event', lookup_expr='isnull')
     event_type = ListFilter()
 
     class Meta:
