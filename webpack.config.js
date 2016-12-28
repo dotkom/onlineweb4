@@ -42,6 +42,9 @@ module.exports = {
     dashboardArticle: [
       './assets/dashboard/article/index',
     ],
+    dashboardAuthentication: [
+      './assets/dashboard/authentication/index',
+    ],
     dashboardCareeropportunity: [
       './assets/dashboard/careeropportunity/index',
     ],
