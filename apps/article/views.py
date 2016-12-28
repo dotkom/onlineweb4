@@ -82,9 +82,9 @@ class ArticleViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.
     queryset = Article.objects.filter(published_date__lte=timezone.now()).order_by('-published_date')
     serializer_class = ArticleSerializer
     permission_classes = (AllowAny,)
-    filter_fields = ('tags',)
 
     def get_queryset(self):
+        """Manually filtering the qs. @ToDo: Make this use internal REST framework functions."""
         queryset = Article.objects.filter(published_date__lte=timezone.now()).order_by('-published_date')
         month = self.request.query_params.get('month', None)
         year = self.request.query_params.get('year', None)
