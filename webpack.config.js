@@ -143,6 +143,10 @@ module.exports = {
           'less-loader?sourceMap',
       },
       {
+        test: /\.(png|gif|jpe?g)$/,
+        loader: 'url-loader?limit=10000',
+      },
+      {
         test: /\.(eot|svg|ttf|woff|woff2)(\?[a-z0-9=&.]+)?$/,
         loader: 'url-loader?limit=10000',
       },

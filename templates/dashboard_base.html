@@ -14,7 +14,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     {% block styles %}
         {% render_bundle 'dashboard' 'css' %}
-        <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/jquery-tablesorter/tablesorter.css">
     {% endblock %}
 </head>
 <body>
@@ -328,7 +327,6 @@
         {% render_bundle 'vendor' %}
         <script type="text/javascript" src="{{ STATIC_URL }}js/libs/jquery-2.1.3.min.js"></script>
         <script type="text/javascript" src="{{ STATIC_URL }}js/libs/jquery.cookie.js"></script>
-        <script type="text/javascript" src="{{ STATIC_URL }}js/libs/jquery.tablesorter.min.js"></script>
         {% render_bundle 'dashboard' 'js' %}
     {% endblock %}
 
