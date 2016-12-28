@@ -1,9 +1,24 @@
 import $ from 'jquery';
 
+/**
+ * Checks whether an HTTP method is considered CSRF safe or not
+ * @param {string} method An HTTP method as string
+ * @returns {boolean} true if the provided HTTP method is CSRF-safe. False otherwise.
+ */
 export const csrfSafeMethod = method => (
-  // these HTTP methods do not require CSRF protection
-  /^(GET|HEAD|OPTIONS|TRACE)$/.test(method)
+  (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method.toUpperCase()))
 );
+
+export const ajaxEnableCSRF = (jQuery) => {
+  jQuery.ajaxSetup({
+    beforeSend: (xhr, settings) => {
+      if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+        xhr.setRequestHeader('X-CSRFToken', $.cookie('csrftoken'));
+      }
+    },
+  });
+};
+
 
 export const ajaxRequest = (request) => {
   $.ajax({

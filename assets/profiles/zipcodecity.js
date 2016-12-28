@@ -1,40 +1,15 @@
-import $ from 'jquery';
-import { csrfSafeMethod } from 'common/utils';
+const cityFromZipCode = zipCode => (
+  new Promise((resolve, reject) => {
+    fetch(`https://fraktguide.bring.no/fraktguide/api/postalCode.json?country=no&pnr=${zipCode}`, { mode: 'cors' })
+    // To JSON
+    .then(response => response.json())
+    // JSON looks like { result: 'city', ...}
+    .then(json => json.result)
+    // Resolve promise with city name
+    .then(resolve)
+    // Otherwise reject
+    .catch(reject);
+  })
+);
 
-// This small hack is needed to allow city to be fetched from bring.
-// On a request to bring, crossdomain needs to be set to false
-// and then restored when the request is fulfilled.
-const turnOnCrossDomain = () => {
-  $.ajaxSetup({
-    crossDomain: true,
-  });
-};
-
-const turnOffCrossDomain = () => {
-  $.ajaxSetup({
-    crossDomain: false, // obviates need for sameOrigin test
-    beforeSend(xhr, settings) {
-      if (!csrfSafeMethod(settings.type)) {
-        xhr.setRequestHeader('X-CSRFToken', $.cookie('csrftoken'));
-      }
-    },
-  });
-};
-
-const loadCity = () => {
-  const zipCode = $('#zip-code').text();
-  turnOnCrossDomain();
-  $.ajax({
-    url: `https://fraktguide.bring.no/fraktguide/api/postalCode.json?country=no&pnr=${zipCode}&callback=?`,
-    dataType: 'jsonp',
-    success(res) {
-      $('#city').html(`&nbsp;${res.result}`);
-      turnOffCrossDomain();
-    },
-    error() {
-      turnOffCrossDomain();
-    },
-  });
-};
-
-export default loadCity;
+export default cityFromZipCode;
