@@ -1,5 +1,5 @@
 import $ from 'jquery';
-import { makeApiRequest } from 'common/utils/';
+import { debouncedResize, makeApiRequest } from 'common/utils/';
 
 function OfflineWidget() {
   const that = $(this);
@@ -55,8 +55,8 @@ function OfflineWidget() {
     $('#offlineCarousel').carousel({ interval: false });
   };
 
-    // Recreate DOM on resize
-  $(window).on('debouncedresize', () => {
+  // Recreate DOM on resize
+  debouncedResize(() => {
     OfflineWidget.prototype.createDom();
   });
 }

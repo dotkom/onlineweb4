@@ -1,5 +1,5 @@
 import $ from 'jquery';
-import { csrfSafeMethod, setStatusMessage } from 'common/utils/';
+import { csrfSafeMethod, debouncedResize, setStatusMessage } from 'common/utils/';
 
 // The code was loading twice, this is an ugly fix to prevent that.
 let pageInitialized = false;
@@ -171,8 +171,8 @@ const initialize = () => {
         printMultipleChoiceCharts(data.replies.mc_answers, data.replies.mc_questions);
       });
 
-              // change the size of different charts when the screen size changes
-      $(window).on('debouncedresize', () => {
+      // change the size of different charts when the screen size changes
+      debouncedResize(() => {
         // Checking if window is less than 992px of width.
         // If so, location of text is south (s) of the graph. If not, the location is east (e)
         if ($(window).width() < 992) {
@@ -226,7 +226,7 @@ const initialize = () => {
       });
 
       // Adds and removes class that controls whitespace between columns on feedback results page.
-      $(window).on('debouncedresize', () => {
+      debouncedResize(() => {
         if ($(window).width() < 992) {
           $('div.specifier').removeClass('whitespaceFix');
         }

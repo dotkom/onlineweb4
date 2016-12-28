@@ -1,4 +1,6 @@
 import $ from 'jquery';
+import { debouncedResize } from 'common/utils';
+
 /*
     Written by: Thomas Gautvedt with the help of God, Jesus and the rest of my friends at the zoo
     License: to kill
@@ -293,7 +295,6 @@ $(() => {
   // Fikser paginator
   initPageinator();
 
-  // On resize (using jQuery-plugin for smart resizing
-  // to avoid 32948239842834 events firering at the same time)
-  $(window).on('debouncedresize', initOffline(false));
+  // On resize to avoid 32948239842834 events firering at the same time)
+  debouncedResize(initOffline(false));
 });
