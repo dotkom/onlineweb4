@@ -26,6 +26,8 @@ Object.keys(config.entry).forEach((entry) => {
   }
 });
 
+// Remove [hash] since webpack-dev-server stores all generated copies in memory based on filename
+config.output.filename = '[name].js';
 config.output.publicPath = `http://${host}/static/`;
 
 // Don't reload if there is an error
