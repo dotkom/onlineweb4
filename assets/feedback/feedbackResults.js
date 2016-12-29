@@ -1,6 +1,6 @@
 import $ from 'jquery';
 import 'common/jqplot';
-import { csrfSafeMethod, debouncedResize, setStatusMessage } from 'common/utils/';
+import { ajaxEnableCSRF, debouncedResize, setStatusMessage } from 'common/utils/';
 
 // The code was loading twice, this is an ugly fix to prevent that.
 let pageInitialized = false;
@@ -10,16 +10,7 @@ const initialize = () => {
   let fosChart;
   let mcCharts;
 
-    /* AJAX SETUP FOR CSRF */
-  $.ajaxSetup({
-    crossDomain: false, // obviates need for sameOrigin test
-    beforeSend(xhr, settings) {
-      if (!csrfSafeMethod(settings.type)) {
-        xhr.setRequestHeader('X-CSRFToken', $.cookie('csrftoken'));
-      }
-    },
-  });
-    /* END AJAX SETUP */
+  ajaxEnableCSRF();
 
   function printFosChart(data) {
     if (data.length > 0) {

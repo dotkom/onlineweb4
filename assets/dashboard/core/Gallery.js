@@ -1,6 +1,6 @@
 import jQuery from 'jquery';
 import MicroEvent from 'common/utils/MicroEvent';
-import { format, render } from 'common/utils';
+import { ajaxEnableCSRF, format, render } from 'common/utils';
 import GalleryCrop from './GalleryCrop';
 import GalleryUpload from './GalleryUpload';
 
@@ -31,29 +31,6 @@ const Gallery = (function PrivateGallery($) {
   const MANAGE_BUTTON_TEXT = $('#gallery__manage-button-text');
   const THUMBNAIL_VIEW = $('#gallery__thumbnail-view');
   const DASHBOARD_MENU_GALLERY_UNHANDLED_BADGE = $('#dashboard__menu--gallery-unhandled-badge');
-
-  /**
-   * Set up AJAX such that Django receives its much needed CSRF token
-   */
-  const doAjaxSetup = () => {
-    /**
-     * Checks whether an HTTP method is considered CSRF safe or not
-     * @param {string} method An HTTP method as string
-     * @returns {boolean} true if the provided HTTP method is CSRF-safe. False otherwise.
-     */
-    const csrfSafeMethod = method => (
-      (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method.toUpperCase()))
-    );
-
-    $.ajaxSetup({
-      crossDomain: false,
-      beforeSend(xhr, settings) {
-        if (!csrfSafeMethod(settings.type)) {
-          xhr.setRequestHeader('X-CSRFToken', $.cookie('csrftoken'));
-        }
-      },
-    });
-  };
 
   /**
    * Create the HTML wrapper for the thumbnail of an UnhandledImage wrapper as a jQuery DOM object.
@@ -132,7 +109,7 @@ const Gallery = (function PrivateGallery($) {
      */
     init() {
       // Do the ajax setup
-      doAjaxSetup();
+      ajaxEnableCSRF();
 
       // Register retrieval of unhandled images on the newUnhandledImage event
       this.events.on('gallery-newUnhandledImage', fetchUnhandledImages);

@@ -1,21 +1,9 @@
 import jQuery from 'jquery';
 import 'common/datetimepicker';
 import 'common/tablesorter';
-import { csrfSafeMethod } from 'common/utils';
+import { ajaxEnableCSRF } from 'common/utils';
 
 const Dashboard = (function PrivateDashboard($) {
-  // Private method to set up AJAX for dashboard
-  const doAjaxSetup = () => {
-    $.ajaxSetup({
-      crossDomain: false,
-      beforeSend(xhr, settings) {
-        if (!csrfSafeMethod(settings.type)) {
-          xhr.setRequestHeader('X-CSRFToken', $.cookie('csrftoken'));
-        }
-      },
-    });
-  };
-
   // Private method to bind toggling of sidebar
   const bindSidebarToggle = () => {
     $("[data-toggle='offcanvas']").click(() => {
@@ -163,7 +151,7 @@ const Dashboard = (function PrivateDashboard($) {
       });
 
       // Set up AJAX CSRF for Dashboard
-      doAjaxSetup();
+      ajaxEnableCSRF();
 
       // Check for existence of input fields that require bootstrap datetimepicker
       // And activate it on these objects.
@@ -262,9 +250,6 @@ const Dashboard = (function PrivateDashboard($) {
       performSelfCheck() {
         let errors = false;
         if ($ === undefined) {
-          errors = true;
-        }
-        if ($.cookie === undefined) {
           errors = true;
         }
         return !errors;

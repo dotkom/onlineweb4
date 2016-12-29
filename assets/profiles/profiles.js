@@ -1,16 +1,7 @@
 import $ from 'jquery';
-import { csrfSafeMethod, setStatusMessage } from 'common/utils/';
+import { ajaxEnableCSRF, setStatusMessage } from 'common/utils/';
 
-/* AJAX SETUP FOR CSRF */
-$.ajaxSetup({
-  crossDomain: false, // obviates need for sameOrigin test
-  beforeSend(xhr, settings) {
-    if (!csrfSafeMethod(settings.type)) {
-      xhr.setRequestHeader('X-CSRFToken', $.cookie('csrftoken'));
-    }
-  },
-});
-/* END AJAX SETUP */
+ajaxEnableCSRF();
 
 $(document).ready(() => {
   // Generic javascript to enable interactive tabs that do not require page reload
