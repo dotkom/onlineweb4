@@ -126,7 +126,8 @@ module.exports = {
     loaders: [
       {
         test: /\.js$/,
-        exclude: /node_modules/,
+        // Somehow babel fucks up jqplot
+        exclude: /(node_modules|jqplot\.\w+\.js)/,
         loaders: ['babel'],
       },
       {

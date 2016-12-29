@@ -1,4 +1,5 @@
 import $ from 'jquery';
+import 'common/jqplot';
 import { csrfSafeMethod, debouncedResize, setStatusMessage } from 'common/utils/';
 
 // The code was loading twice, this is an ugly fix to prevent that.

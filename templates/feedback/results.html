@@ -9,17 +9,11 @@ Tilbakemeldinger - Resultater - Online
 
 {% block styles %}
     {{ block.super }}
-    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/jqplot/jquery.jqplot.min.css" />
     {% render_bundle 'feedback' 'css' %}
 {% endblock %}
 
 {% block js %}
     {{ block.super }}
-    <script src="{{ STATIC_URL }}js/libs/jqplot/jquery.jqplot.min.js"></script>
-    <script src="{{ STATIC_URL }}js/libs/jqplot/jqplot.pieRenderer.min.js"></script>
-    <script src="{{ STATIC_URL }}js/libs/jqplot/jqplot.barRenderer.min.js"></script>
-    <script src="{{ STATIC_URL }}js/libs/jqplot/jqplot.categoryAxisRenderer.min.js"></script>
-    <script src="{{ STATIC_URL }}js/libs/jqplot/jqplot.pointLabels.min.js"></script>
     <script src="{{ STATIC_URL }}js/libs/jquery.cookie.js"></script>
     {% render_bundle 'feedback' 'js' %}
 {% endblock %}
