@@ -1,5 +1,5 @@
 import $ from 'jquery';
-import { ajaxRequest, showFlashMessage } from 'common/utils/';
+import { makeApiRequest, showFlashMessage } from 'common/utils/';
 
 /*
     The event module provides dynamic functions to event objects
@@ -38,7 +38,7 @@ const sendChoice = (id) => {
   };
 
   // Make an AJAX request
-  ajaxRequest({ method: 'POST', url, data, success, error });
+  makeApiRequest({ type: 'POST', url, data, success, error });
 };
 
 const init = () => {

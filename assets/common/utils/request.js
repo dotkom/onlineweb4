@@ -20,18 +20,6 @@ export const ajaxEnableCSRF = (jQuery) => {
   });
 };
 
-
-export const ajaxRequest = (request) => {
-  $.ajax({
-    url: request.url,
-    type: 'POST',
-    data: request.data,
-    headers: { 'X-CSRFToken': Cookies.get('csrftoken') },
-    error: request.error,
-    success: request.success,
-  });
-};
-
 /* Static method to make single API requests */
 export const makeApiRequest = (request) => {
   $.ajax({
