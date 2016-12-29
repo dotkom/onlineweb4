@@ -1,4 +1,5 @@
 import $ from 'jquery';
+import Cookies from 'js-cookie';
 
 /**
  * Checks whether an HTTP method is considered CSRF safe or not
@@ -13,7 +14,7 @@ export const ajaxEnableCSRF = (jQuery) => {
   jQuery.ajaxSetup({
     beforeSend: (xhr, settings) => {
       if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
-        xhr.setRequestHeader('X-CSRFToken', $.cookie('csrftoken'));
+        xhr.setRequestHeader('X-CSRFToken', Cookies.get('csrftoken'));
       }
     },
   });
@@ -25,26 +26,11 @@ export const ajaxRequest = (request) => {
     url: request.url,
     type: 'POST',
     data: request.data,
-    headers: { 'X-CSRFToken': $.cookie('csrftoken') },
+    headers: { 'X-CSRFToken': Cookies.get('csrftoken') },
     error: request.error,
     success: request.success,
   });
 };
-
-/* adapted from djangoproject.com */
-/* Static method */
-function getCookie(name) {
-  if (document.cookie) {
-    const cookies = document.cookie.split(';');
-    for (let i = 0; i < cookies.length; i += 1) {
-      const cookie = $.trim(cookies[i]);
-      if (cookie.substring(0, name.length + 1) === `${name}=`) {
-        return decodeURIComponent(cookie.substring(name.length + 1));
-      }
-    }
-  }
-  return null;
-}
 
 /* Static method to make single API requests */
 export const makeApiRequest = (request) => {
@@ -52,7 +38,7 @@ export const makeApiRequest = (request) => {
     url: request.url,
     type: request.type,
     data: request.data,
-    headers: { 'X-CSRFToken': getCookie('csrftoken') },
+    headers: { 'X-CSRFToken': Cookies.get('csrftoken') },
     error: request.error,
     success: request.success,
   });
