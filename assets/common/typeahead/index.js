@@ -24,7 +24,7 @@ export const typeahead = (element, options) => {
   element.typeahead({
     valueKey: 'id',
   }, {
-    name: 'user-profiles',
+    name: options.name || 'typeahead',
     source,
     templates: {
       suggestion: options.template,
@@ -43,6 +43,7 @@ export const plainUserTypeahead = (element, select) => {
     url: `${Urls.profiles_api_plain_user_search()}?query=%QUERY`,
     select,
     display: 'value',
+    name: 'users-plain',
   });
 };
 
@@ -58,6 +59,7 @@ export const userTypeahead = (element, select) => {
     template: userSearchTemplate,
     url: `${Urls.profiles_api_user_search()}?query=%QUERY`,
     select,
+    name: 'users',
   });
 };
 

@@ -1,6 +1,5 @@
 import jQuery from 'jquery';
 import { plainUserTypeahead } from 'common/typeahead';
-import './less/typeahead.less';
 
 /*
   The event module provides dynamic functions to event objects
