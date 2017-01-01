@@ -151,7 +151,7 @@ const Dashboard = (function PrivateDashboard($) {
       });
 
       // Set up AJAX CSRF for Dashboard
-      ajaxEnableCSRF();
+      ajaxEnableCSRF($);
 
       // Check for existence of input fields that require bootstrap datetimepicker
       // And activate it on these objects.

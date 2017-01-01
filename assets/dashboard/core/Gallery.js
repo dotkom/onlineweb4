@@ -109,7 +109,7 @@ const Gallery = (function PrivateGallery($) {
      */
     init() {
       // Do the ajax setup
-      ajaxEnableCSRF();
+      ajaxEnableCSRF($);
 
       // Register retrieval of unhandled images on the newUnhandledImage event
       this.events.on('gallery-newUnhandledImage', fetchUnhandledImages);

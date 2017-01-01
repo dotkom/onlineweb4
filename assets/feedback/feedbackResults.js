@@ -10,7 +10,7 @@ const initialize = () => {
   let fosChart;
   let mcCharts;
 
-  ajaxEnableCSRF();
+  ajaxEnableCSRF($);
 
   function printFosChart(data) {
     if (data.length > 0) {

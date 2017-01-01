@@ -1,7 +1,7 @@
 import $ from 'jquery';
 import { ajaxEnableCSRF, setStatusMessage } from 'common/utils/';
 
-ajaxEnableCSRF();
+ajaxEnableCSRF($);
 
 $(document).ready(() => {
   // Generic javascript to enable interactive tabs that do not require page reload

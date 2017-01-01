@@ -173,7 +173,7 @@ const Event = (function PrivateEvent($, tools) {
             }
             drawTable('waitlist', eventData.waitlist);
           }
-          tools.showStatusMessage(data.message, 'alert-success');
+          tools.showStatusMessage(eventData.message, 'alert-success');
         };
         const error = (xhr) => {
           tools.showStatusMessage(xhr.responseText, 'alert-danger');
