@@ -9,7 +9,12 @@ Generalforsamling logg inn- Online
 
 {% block styles %}
     {{ block.super }}
-    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/bootstrap-datetimepicker.min.css">
+    {% render_bundle 'genfors' 'css' %}
+{% endblock %}
+
+{% block js %}
+    {{ block.super }}
+    {% render_bundle 'genfors' 'js' %}
 {% endblock %}
 
 {% block content %}
@@ -266,23 +271,4 @@ Generalforsamling logg inn- Online
         </div>
     </div>
 </section>
-{% endblock %}
-
-{% block js %}
-    {{ block.super }}
-    <script src="{{ STATIC_URL }}js/libs/moment-2.9.0-with-locales.min.js"></script>
-    <script src="{{ STATIC_URL }}js/libs/bootstrap-datetimepicker.min.js"></script>
-    <script>
-        $(function () {
-            var date = new Date();
-            date.setDate(date.getDate() - 1); // Yesterday
-            // Check for existence of input fields that require bootstrap datetimepicker
-            // And activate it on these objects.
-            $('#id_start_date').datetimepicker({
-                locale: 'nb',
-                format: 'YYYY-MM-DD',
-                minDate: date
-            });
-        });
-    </script>
 {% endblock %}
