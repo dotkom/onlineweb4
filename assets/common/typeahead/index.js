@@ -6,7 +6,7 @@ import './less/typeahead.less';
 /**
  * Simple wrapper function for Typeahead
  * @param {Object} element jQuery element to apply typeahead to
- * @params {Object} options Options for typeahead (template, url, select)
+ * @params {Object} options Options for typeahead (template, url, select, display)
  * Template has to be compiled. e.g. _.template('<div>...</div>')
  */
 export const typeahead = (element, options) => {
@@ -29,7 +29,7 @@ export const typeahead = (element, options) => {
     templates: {
       suggestion: options.template,
     },
-    display: 'name',
+    display: options.display || 'name',
   }).on('typeahead:selected typeahead:autocompleted', options.select);
 };
 
@@ -42,6 +42,7 @@ export const plainUserTypeahead = (element, select) => {
     template: plainUserSearchTemplate,
     url: `${Urls.profiles_api_plain_user_search()}?query=%QUERY`,
     select,
+    display: 'value',
   });
 };
 
