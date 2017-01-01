@@ -1,5 +1,7 @@
-import Hogan from 'hogan.js';
 import jQuery from 'jquery';
+import { plainUserTypeahead } from 'common/typeahead';
+import './less/typeahead.less';
+
 /*
   The event module provides dynamic functions to event objects
   such as toggling paid, attended, adding and removing users on events
@@ -121,21 +123,7 @@ const Event = (function PrivateEvent($, tools) {
       });
 
       /* Typeahead for user search */
-
-      // Typeahead template
-      const userSearchTemplate = [
-        '<span data-id="{{ id }}" class="user-meta"><h4>{{ value }}</h4>',
-      ].join('');
-
-      // Bind the input field
-      $('#usersearch').typeahead({
-        remote: '/profile/api_plain_user_search/?query=%QUERY',
-        updater(item) {
-          return item;
-        },
-        template: userSearchTemplate,
-        engine: Hogan,
-      }).on('typeahead:selected typeahead:autocompleted', (e, datum) => {
+      plainUserTypeahead($('#usersearch'), (e, datum) => {
         ($(() => {
           Event.attendee.add(datum.id);
           $('#usersearch').val('');

@@ -2,7 +2,6 @@ import { loadCityFromZipCode } from 'common/utils/';
 import enableUserSearch from './userSearch';
 import './profiles';
 import './less/profiles.less';
-import './less/typeahead.less';
 
 const zipCodeElement = document.getElementById('zip-code');
 if (zipCodeElement) {

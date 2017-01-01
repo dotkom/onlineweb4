@@ -16,8 +16,6 @@ Arrangementsoversikt
 
 {% block js %}
     {{ block.super }}
-    {# typeahead.js doesn't play nice with npm #}
-    <script type="text/javascript" src="{{ STATIC_URL }}js/libs/typeahead.min.js"></script>
     {% render_bundle 'dashboardEvents' 'js' %}
 {% endblock js %}
 

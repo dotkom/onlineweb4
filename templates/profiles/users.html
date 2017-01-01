@@ -93,6 +93,5 @@
 
 {% block js %}
     {{ block.super }}
-    <script type="text/javascript" src="{{ STATIC_URL }}js/libs/typeahead.min.js"></script>
     {% render_bundle 'profiles' 'js' %}
 {% endblock %}

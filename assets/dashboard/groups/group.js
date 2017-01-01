@@ -1,5 +1,5 @@
-import Hogan from 'hogan.js';
 import jQuery from 'jquery';
+import { plainUserTypeahead } from 'common/typeahead';
 
 /*
     The Group module provides dynamic interaction with User and Group
@@ -80,21 +80,7 @@ const Group = (function PrivateGroup($, tools) {
       });
 
       /* Typeahead for user search */
-
-      // Typeahead template
-      const userSearchTemplate = [
-        '<span data-id="{{ id }}" class="user-meta"><h4>{{ value }}</h4>',
-      ].join('');
-
-      // Bind the input field
-      $('#usersearch').typeahead({
-        remote: '/profile/api_plain_user_search/?query=%QUERY',
-        updater(item) {
-          return item;
-        },
-        template: userSearchTemplate,
-        engine: Hogan,
-      }).on('typeahead:selected typeahead:autocompleted', (e, datum) => {
+      plainUserTypeahead($('#usersearch'), (e, datum) => {
         ($(() => {
           Group.user.add(datum.id);
           $('#usersearch').val('');

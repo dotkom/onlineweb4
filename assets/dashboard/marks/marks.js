@@ -1,5 +1,5 @@
 import jQuery from 'jquery';
-import Hogan from 'hogan.js';
+import { plainUserTypeahead } from 'common/typeahead';
 
 const Marks = (function PrivateMarks($, tools) {
   // Private helper method to draw the user table
@@ -82,21 +82,7 @@ const Marks = (function PrivateMarks($, tools) {
       });
 
       /* Typeahead for user search */
-
-      // Typeahead template
-      const userSearchTemplate = [
-        '<span data-id="{{ id }}" class="user-meta"><h4>{{ value }}</h4>',
-      ].join('');
-
-      // Bind the input field
-      $('#usersearch').typeahead({
-        remote: '/profile/api_plain_user_search/?query=%QUERY',
-        updater(item) {
-          return item;
-        },
-        template: userSearchTemplate,
-        engine: Hogan,
-      }).on('typeahead:selected typeahead:autocompleted', (e, datum) => {
+      plainUserTypeahead($('#usersearch'), (e, datum) => {
         ($(() => {
           Marks.user.add(datum.id);
           $('#usersearch').val('');

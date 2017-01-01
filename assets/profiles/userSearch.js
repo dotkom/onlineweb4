@@ -1,23 +1,11 @@
 import $ from 'jquery';
-import Hogan from 'hogan.js';
+import { userTypeahead } from 'common/typeahead';
 import Spinner from 'spin.js';
-import Urls from 'urls';
+import './less/typeahead.less';
 
-const userSearchTemplate = [
-  '<img width="100%" src="{{ image }}" alt="" />',
-  '<span data-id="{{ id }}" class="user-meta"><h4>{{ name }}</h4>',
-].join('');
 
 export default () => {
-  $('#search-users').typeahead({
-    remote: `${Urls.profiles_api_user_search()}?query=%QUERY`,
-    updater(item) {
-      return item;
-    },
-    template: userSearchTemplate,
-    valueKey: 'id',
-    engine: Hogan,
-  }).on('typeahead:selected typeahead:autocompleted', (e, datum) => {
+  userTypeahead($('#search-users'), (e, datum) => {
     window.location = `/profile/view/${datum.username}`;
   });
 

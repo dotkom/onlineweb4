@@ -1,4 +1,4 @@
-.tt-dropdown-menu {
+.tt-menu {
   width: 350px;
   margin-top: 12px;
   padding: 8px 0;
@@ -8,10 +8,12 @@
 }
 
 .tt-suggestion {
+  padding: 3px 0px;
+  font-size: 18px;
+  line-height: 24px;
+  cursor: pointer;
   height: 91px;
-  vertical-align: center;
   position: relative;
-  outline: hidden;
 
   img {
     width:75px;
@@ -35,7 +37,7 @@
     }
   }
 
-  &.tt-is-under-cursor {
+  &.tt-cursor {
     color: #fff;
     background-color: #0097cf;
   }
@@ -67,17 +69,6 @@
   color: #999
 }
 
-.tt-suggestion {
-  padding: 3px 0px;
-  font-size: 18px;
-  line-height: 24px;
-}
-
-.tt-suggestion.tt-is-under-cursor {
-  color: #fff;
-  background-color: #0097cf;
-
-}
 .tt-suggestion p {
   margin: 0;
 }
