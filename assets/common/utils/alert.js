@@ -42,3 +42,28 @@ export const showFlashMessage = (message, tags) => {
 
   timeOutAlerts();
 };
+
+// Display a status message for 5 seconds
+//
+// :param message: String message text
+// :param tags: String of Bootstrap Alert CSS classes
+export const showStatusMessage = (message, tags) => {
+  const id = new Date().getTime();
+  let wrapper = $('.messages');
+  const messageElement = $(`<div class="row" id="${id}"><div class="col-md-12">` +
+                          `<div class="alert ${tags}">${
+                          message}</div></div></div>`);
+
+  if (wrapper.length === 0) {
+    wrapper = $('section:first > .container:first');
+  }
+  messageElement.prependTo(wrapper);
+
+  // Fadeout and remove the alert
+  setTimeout(() => {
+    $(`[id=${id}]`).fadeOut();
+    setTimeout(() => {
+      $(`[id=${id}]`).remove();
+    }, 5000);
+  }, 5000);
+};

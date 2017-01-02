@@ -1,11 +1,12 @@
 import jQuery from 'jquery';
 import moment from 'moment';
+import { ajax, showStatusMessage } from 'common/utils';
 
 /**
  * Created by myth on 10/24/15.
  */
 
-const GalleryDashboard = (function PrivateGalleryDashboard($, tools) {
+const GalleryDashboard = (function PrivateGalleryDashboard($) {
   /* Private fields */
 
   const SEARCH_ENDPOINT = '/api/v1/images/';
@@ -27,10 +28,10 @@ const GalleryDashboard = (function PrivateGalleryDashboard($, tools) {
       GalleryDashboard.draw(data);
     };
     const error = (xhr) => {
-      tools.showStatusMessage(`Det oppstod en uventet feil: ${xhr.responseText}`, 'alert-danger');
+      showStatusMessage(`Det oppstod en uventet feil: ${xhr.responseText}`, 'alert-danger');
     };
     // Trigger AJAX request with query
-    tools.ajax('GET', uri, null, success, error, 'json');
+    ajax('GET', uri, null, success, error, 'json');
   };
 
   /* Public API */
@@ -112,6 +113,6 @@ const GalleryDashboard = (function PrivateGalleryDashboard($, tools) {
       resultTable.html(html);
     },
   };
-}(jQuery, window.Dashboard.tools));
+}(jQuery));
 
 export default GalleryDashboard;

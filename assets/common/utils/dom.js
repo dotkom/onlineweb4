@@ -1,3 +1,4 @@
+import $ from 'jquery';
 import { template } from 'underscore';
 import { cityFromZipCode } from './request';
 
@@ -24,4 +25,21 @@ export const loadCityFromZipCode = (zipCodeElement, cityElement) => {
     // eslint-disable-next-line no-param-reassign
     cityElement.innerHTML = `&nbsp;${city}`;
   });
+};
+
+export const toggleChecked = (element) => {
+  const checkedIcon = 'fa-check-square-o';
+  const uncheckedIcon = 'fa-square-o';
+  const allITags = $(element).find('i');
+  const ilen = allITags.length;
+
+  let icon;
+  for (let m = 0; m < ilen; m += 1) {
+    icon = allITags[m];
+    if ($(icon).hasClass('checked')) {
+      $(icon).removeClass('checked').removeClass(checkedIcon).addClass(uncheckedIcon);
+    } else {
+      $(icon).addClass('checked').removeClass(uncheckedIcon).addClass(checkedIcon);
+    }
+  }
 };

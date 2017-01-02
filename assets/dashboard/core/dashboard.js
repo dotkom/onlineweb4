@@ -86,9 +86,6 @@ const Dashboard = (function PrivateDashboard($) {
 
     // Bind expand/collapsing of sidebar elements
     init() {
-      // Perform self-check
-      if (!Dashboard.tools.performSelfCheck()) return;
-
       // Methods for sidebar expand
       sidebarAutoExpand();
       bindSidebarExpand();
@@ -160,124 +157,9 @@ const Dashboard = (function PrivateDashboard($) {
       // Activate tablesorter on all tablesorter class tables
       $('.tablesorter').tablesorter();
     },
-
-    tools: {
-      // Perform an AJAX request
-      //
-      // :param method: Can be POST, GET etc.
-      // :param url: URL of the endpoint
-      // :param data: Either null or an object of data fields
-      // :param success: success function callback
-      // :param error: error function callback
-      // :param type: Either null (default is application/x-www-form-urlencoded)
-      //              or 'json'
-      ajax(method, url, data, success, error, type) {
-        const payload = {
-          type: method.toUpperCase(),
-          url,
-          success,
-          error,
-        };
-        if (data !== null || data !== undefined) payload.data = data;
-        if (type !== null || type !== undefined) {
-          if (type === 'json') {
-            payload.contentType = 'application/json; charset=UTF-8';
-            payload.dataType = 'json';
-          }
-        }
-        $.ajax(payload);
-      },
-
-      // Display a status message for 5 seconds
-      //
-      // :param message: String message text
-      // :param tags: String of Bootstrap Alert CSS classes
-      showStatusMessage(message, tags) {
-        const id = new Date().getTime();
-        let wrapper = $('.messages');
-        const messageElement = $(`<div class="row" id="${id}"><div class="col-md-12">` +
-                                `<div class="alert ${tags}">${
-                                message}</div></div></div>`);
-
-        if (wrapper.length === 0) {
-          wrapper = $('section:first > .container:first');
-        }
-        messageElement.prependTo(wrapper);
-
-        // Fadeout and remove the alert
-        setTimeout(() => {
-          $(`[id=${id}]`).fadeOut();
-          setTimeout(() => {
-            $(`[id=${id}]`).remove();
-          }, 5000);
-        }, 5000);
-      },
-
-      // Sort a table body, given a column index
-      tablesort(tbody, c) {
-        const rows = tbody.rows;
-        const rlen = rows.length;
-
-        const a = [];
-        let cells;
-        let clen;
-        for (let m = 0; m < rlen; m += 1) {
-          cells = rows[m].cells;
-          clen = cells.length;
-          a[m] = [];
-          for (let n = 0; n < clen; n += 1) {
-            a[m][n] = cells[n].innerHTML;
-          }
-        }
-
-        a.sort((a1, a2) => {
-          if (a1[c] === a2[c]) {
-            return 0;
-          }
-          return a1[c] > a2[c] ? 1 : -1;
-        });
-
-        for (let m = 0; m < rlen; m += 1) {
-          a[m] = `<td>${a[m].join('</td><td>')}</td>`;
-        }
-
-
-        // eslint-disable-next-line no-param-reassign
-        tbody.innerHTML = `<tr>${a.join('</tr><tr>')}</tr>`;
-      },
-
-      // Check if we have jQuery
-      performSelfCheck() {
-        let errors = false;
-        if ($ === undefined) {
-          errors = true;
-        }
-        return !errors;
-      },
-
-      toggleChecked(element) {
-        const checkedIcon = 'fa-check-square-o';
-        const uncheckedIcon = 'fa-square-o';
-        const allITags = $(element).find('i');
-        const ilen = allITags.length;
-
-        let icon;
-        for (let m = 0; m < ilen; m += 1) {
-          icon = allITags[m];
-          if ($(icon).hasClass('checked')) {
-            $(icon).removeClass('checked').removeClass(checkedIcon).addClass(uncheckedIcon);
-          } else {
-            $(icon).addClass('checked').removeClass(uncheckedIcon).addClass(checkedIcon);
-          }
-        }
-      },
-    },
   };
 }(jQuery));
 
 jQuery(document).ready(() => {
   Dashboard.init();
 });
-
-// TODO: Rewrite code to use modules instead of using a global variable
-window.Dashboard = Dashboard;

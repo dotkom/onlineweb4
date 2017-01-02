@@ -1,12 +1,13 @@
 import jQuery from 'jquery';
 import { plainUserTypeahead } from 'common/typeahead';
+import { ajax, showStatusMessage } from 'common/utils';
 
 /*
     The Group module provides dynamic interaction with User and Group
     objects in the database, through AJAX POST.
 */
 
-const Group = (function PrivateGroup($, tools) {
+const Group = (function PrivateGroup($) {
   // Private helper method to draw the user table
   //
   // :param tbody: the ID of the <tbody> element of the table
@@ -52,11 +53,10 @@ const Group = (function PrivateGroup($, tools) {
       }
     };
     const error = (xhr, txt, errorMessage) => {
-      tools.showStatusMessage(errorMessage, 'alert-danger');
+      showStatusMessage(errorMessage, 'alert-danger');
     };
 
-    // Make an AJAX request using the Dashboard tools module
-    tools.ajax('POST', url, data, success, error, null);
+    ajax('POST', url, data, success, error, null);
   };
 
   return {
@@ -101,7 +101,7 @@ const Group = (function PrivateGroup($, tools) {
       },
     },
   };
-}(jQuery, window.Dashboard.tools));
+}(jQuery));
 
 jQuery(document).ready(() => {
   Group.init();

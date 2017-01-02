@@ -1,7 +1,8 @@
 import jQuery from 'jquery';
 import { plainUserTypeahead } from 'common/typeahead';
+import { ajax, showStatusMessage } from 'common/utils';
 
-const Marks = (function PrivateMarks($, tools) {
+const Marks = (function PrivateMarks($) {
   // Private helper method to draw the user table
   //
   // :param tbody: the ID of the <tbody> element of the table
@@ -46,7 +47,7 @@ const Marks = (function PrivateMarks($, tools) {
         const mark = jsonData.mark;
 
         drawTable('userlist', jsonData);
-        tools.showStatusMessage(jsonData.message, 'alert-success');
+        showStatusMessage(jsonData.message, 'alert-success');
 
         $('#dashboard-marks-changed-by').html(mark.last_changed_by);
         $('#dashboard-marks-changed-time').html(mark.last_changed_date);
@@ -54,11 +55,10 @@ const Marks = (function PrivateMarks($, tools) {
     };
     const error = (xhr) => {
       const response = jQuery.parseJSON(xhr.responseText);
-      tools.showStatusMessage(response.message, 'alert-danger');
+      showStatusMessage(response.message, 'alert-danger');
     };
 
-    // Make an AJAX request using the Dashboard tools module
-    tools.ajax('POST', url, postData, success, error, null);
+    ajax('POST', url, postData, success, error, null);
   };
 
   return {
@@ -103,7 +103,7 @@ const Marks = (function PrivateMarks($, tools) {
       },
     },
   };
-}(jQuery, window.Dashboard.tools));
+}(jQuery));
 
 
 export default Marks;

@@ -1,5 +1,6 @@
 import moment from 'moment';
 import jQuery from 'jquery';
+import { ajax, showStatusMessage } from 'common/utils';
 /**
  * Created by myth on 10/18/15.
  */
@@ -9,7 +10,7 @@ import jQuery from 'jquery';
   Can't be Article since then Article.search will refer
   to the function itself instead of the returned object
 */
-const Article = (function PrivateArticle($, tools) {
+const Article = (function PrivateArticle($) {
     // Private fields and methods
 
   const SEARCH_ENDPOINT = '/api/v1/articles/';
@@ -29,10 +30,10 @@ const Article = (function PrivateArticle($, tools) {
       Article.table.draw(data);
     };
     const error = function error(xhr, statusText) {
-      tools.showStatusMessage(`Det oppstod en uventet feil: ${statusText}`, 'alert-danger');
+      showStatusMessage(`Det oppstod en uventet feil: ${statusText}`, 'alert-danger');
     };
         // Trigger AJAX request with query
-    tools.ajax('GET', uri, null, success, error, 'json');
+    ajax('GET', uri, null, success, error, 'json');
   };
 
     // Public fields
@@ -99,10 +100,10 @@ const Article = (function PrivateArticle($, tools) {
 
         results.html(html);
 
-                // TODO: Pagination
+        // TODO: Pagination
       },
     },
   };
-}(jQuery, window.Dashboard.tools));
+}(jQuery));
 
 Article.init();

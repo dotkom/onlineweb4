@@ -1,12 +1,13 @@
 import jQuery from 'jquery';
 import { plainUserTypeahead } from 'common/typeahead';
+import { ajax, showStatusMessage, toggleChecked } from 'common/utils';
 
 /*
   The event module provides dynamic functions to event objects
   such as toggling paid, attended, adding and removing users on events
 */
 
-const Event = (function PrivateEvent($, tools) {
+const Event = (function PrivateEvent($) {
   // Get the currently correct endpoint for posting user changes to
   const posOfLastSlash = window.location.href.toString().slice(0, window.location.href.toString().length).lastIndexOf('/');
   const attendanceEndpoint = `${window.location.href.toString().slice(0, posOfLastSlash)}/attendees/`;
@@ -139,14 +140,13 @@ const Event = (function PrivateEvent($, tools) {
         };
         const success = () => {
           // var line = $('#' + attendee_id > i)
-          tools.toggleChecked(cell);
+          toggleChecked(cell);
         };
         const error = (xhr, txt, errorMessage) => {
-          tools.showStatusMessage(errorMessage, 'alert-danger');
+          showStatusMessage(errorMessage, 'alert-danger');
         };
 
-        // Make an AJAX request using the Dashboard tools module
-        tools.ajax('POST', attendanceEndpoint, data, success, error, null);
+        ajax('POST', attendanceEndpoint, data, success, error, null);
       },
       add(userId) {
         const data = {
@@ -172,14 +172,13 @@ const Event = (function PrivateEvent($, tools) {
             }
             drawTable('waitlist', eventData.waitlist);
           }
-          tools.showStatusMessage(eventData.message, 'alert-success');
+          showStatusMessage(eventData.message, 'alert-success');
         };
         const error = (xhr) => {
-          tools.showStatusMessage(xhr.responseText, 'alert-danger');
+          showStatusMessage(xhr.responseText, 'alert-danger');
         };
 
-        // Make an AJAX request using the Dashboard tools module
-        tools.ajax('POST', attendanceEndpoint, data, success, error, null);
+        ajax('POST', attendanceEndpoint, data, success, error, null);
       },
       remove(attendeeId) {
         const data = {
@@ -205,20 +204,19 @@ const Event = (function PrivateEvent($, tools) {
           } else {
             drawTable('waitlist', eventData.waitlist);
           }
-          tools.showStatusMessage(eventData.message, 'alert-success');
+          showStatusMessage(eventData.message, 'alert-success');
         };
         const error = (xhr) => {
-          tools.showStatusMessage(xhr.responseText, 'alert-danger');
+          showStatusMessage(xhr.responseText, 'alert-danger');
         };
 
-        // Make an AJAX request using the Dashboard tools module
-        tools.ajax('POST', attendanceEndpoint, data, success, error, null);
+        ajax('POST', attendanceEndpoint, data, success, error, null);
       },
 
     },
 
   };
-}(jQuery, window.Dashboard.tools));
+}(jQuery));
 
 jQuery(document).ready(() => {
   Event.init();

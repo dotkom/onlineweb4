@@ -45,3 +45,29 @@ export const cityFromZipCode = zipCode => (
     .catch(reject);
   })
 );
+
+// Perform an AJAX request
+//
+// :param method: Can be POST, GET etc.
+// :param url: URL of the endpoint
+// :param data: Either null or an object of data fields
+// :param success: success function callback
+// :param error: error function callback
+// :param type: Either null (default is application/x-www-form-urlencoded)
+//              or 'json'
+export const ajax = (method, url, data, success, error, type) => {
+  const payload = {
+    type: method.toUpperCase(),
+    url,
+    success,
+    error,
+  };
+  if (data !== null || data !== undefined) payload.data = data;
+  if (type !== null || type !== undefined) {
+    if (type === 'json') {
+      payload.contentType = 'application/json; charset=UTF-8';
+      payload.dataType = 'json';
+    }
+  }
+  $.ajax(payload);
+};
