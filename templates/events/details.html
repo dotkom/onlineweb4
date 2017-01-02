@@ -5,7 +5,6 @@
 {% load group_membership %}
 {% load calendar_filters %}
 {% load payment_tag %}
-{% load compress %}
 {% load render_bundle from webpack_loader %}
 
 {% block title %}
@@ -23,8 +22,6 @@
         var selected_extra = "{{ attendee.extras }}";
         var all_extras = [{% for e in attendance_event.extras.all %}"{{e}}", {%endfor%}];
     </script>
-    {% compress js %}
-    {% endcompress %}
     {% render_bundle 'eventsDetails' 'js' %}
 {% endblock %}
 

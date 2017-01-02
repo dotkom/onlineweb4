@@ -90,27 +90,11 @@ STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
 #    'django.contrib.staticfiles.finders.DefaultStorageFinder',
-    'compressor.finders.CompressorFinder',
 )
 
 # Including django-wiki static files so we can import the less files.
 DJANGO_WIKI_STATIC = os.path.join(os.path.dirname(wiki.__file__), 'static')
 create_resolve_file()
-
-COMPRESS_FILES = True
-COMPRESS_OUTPUT_DIR = 'cache'
-COMPRESS_PRECOMPILERS = (
-    ('text/less', 'lessc --include-path=%s {infile} {outfile}' % DJANGO_WIKI_STATIC),
-)
-
-COMPRESS_CSS_FILTERS = [
-    'compressor.filters.css_default.CssAbsoluteFilter',
-    # We want this later on, but it breaks production so disabling for now.
-    #'compressor-filters.cssmin.CSSMinFilter',
-]
-COMPRESS_JS_FILTERS = [
-    'compressor.filters.jsmin.JSMinFilter',
-]
 
 TEMPLATES = [
     {
@@ -228,7 +212,6 @@ INSTALLED_APPS = (
     'django_dynamic_fixture',
     'oauth2_provider',
     'captcha',
-    'compressor',
     'pdfdocument',
     'watson',
     'markdown_deux',
