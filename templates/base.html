@@ -18,6 +18,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     {% block styles %}
     {% endblock %}
+    {% render_bundle 'common' 'css' %}
     {% render_bundle 'core' 'css' %}
     {% block scripts %}
     {% endblock %}
@@ -211,9 +212,8 @@
     {% block js %}
         <script src="https://maps.googleapis.com/maps/api/js?v=3&amp;sensor=true"></script>
         <script src="{% url 'js_reverse' %}" type="text/javascript"></script>
-        {% render_bundle 'vendor' %}
+        {% render_bundle 'common' 'js' %}
         {% render_bundle 'core' 'js' %}
-
     {% endblock %}
 
     {% render_block "js" %}

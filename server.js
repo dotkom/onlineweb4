@@ -18,7 +18,7 @@ const port = 3000;
 const host = `${ip}:${port}`;
 // Add hot reloading to all entries
 Object.keys(config.entry).forEach((entry) => {
-  if ({}.hasOwnProperty.call(config.entry, entry) && entry !== 'vendor') {
+  if ({}.hasOwnProperty.call(config.entry, entry)) {
     config.entry[entry].unshift(
       `webpack-dev-server/client?http://${host}`,
       'webpack/hot/dev-server'

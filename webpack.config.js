@@ -16,13 +16,6 @@ module.exports = {
   context: __dirname,
   devtool: 'eval-source-map',
   entry: {
-    // Used to extract common libraries
-    // Libraries that are used in several entries are good candidates for this list
-    vendor: [
-      'bootstrap', 'classnames', 'corejs-typeahead', 'eonasdan-bootstrap-datetimepicker',
-      'es6-promise', 'jquery', 'js-cookie', 'moment', 'react',
-      'react-bootstrap', 'tablesorter', 'underscore', 'react-dom', 'whatwg-fetch',
-    ],
     articleDetails: [
       './assets/article/details/index',
     ],
@@ -161,8 +154,8 @@ module.exports = {
   },
   plugins: [
     new CommonsChunkPlugin({
-      names: ['vendor'],
-      minChunks: Infinity,
+      names: ['common'],
+      minChunks: 2,
     }),
     new BundleTracker({ filename: './webpack-stats.json' }),
   ],

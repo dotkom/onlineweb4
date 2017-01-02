@@ -13,6 +13,7 @@
     <link rel="icon" href="{{ STATIC_URL }}img/favicon.png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     {% block styles %}
+        {% render_bundle 'common' 'css' %}
         {% render_bundle 'dashboard' 'css' %}
     {% endblock %}
 </head>
@@ -324,8 +325,8 @@
     </div><!-- ./wrapper -->
 
     {% block js %}
-        {% render_bundle 'vendor' %}
         <script src="{% url 'js_reverse' %}" type="text/javascript"></script>
+        {% render_bundle 'common' 'js' %}
         {% render_bundle 'dashboard' 'js' %}
     {% endblock %}
 
