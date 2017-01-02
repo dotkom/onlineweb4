@@ -11,7 +11,7 @@ const config = require('./webpack.config.js');
 const webpack = require('webpack');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
-config.devtool = 'cheap-module-source-map';
+config.devtool = 'cheap-source-map';
 
 // Set environment to production
 config.plugins.push(new webpack.DefinePlugin({
@@ -22,7 +22,7 @@ config.plugins.push(new webpack.DefinePlugin({
 
 // Extract css to file
 
-// Replace less loader
+// Remove style loader
 Object.keys(config.module.loaders).forEach((key) => {
   if ({}.hasOwnProperty.call(config.module.loaders, key)) {
     const loader = config.module.loaders[key];
@@ -30,6 +30,11 @@ Object.keys(config.module.loaders).forEach((key) => {
       loader.loader = ExtractTextPlugin.extract(
         'css-loader?sourceMap!' +
         'less-loader?sourceMap'
+      );
+    }
+    if ('.css'.match(loader.test)) {
+      loader.loader = ExtractTextPlugin.extract(
+        'css-loader?sourceMap'
       );
     }
   }
