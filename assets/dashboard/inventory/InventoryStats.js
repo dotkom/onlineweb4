@@ -1,10 +1,11 @@
 import $ from 'jquery';
+import google from 'google';
 
 const inventoryGraphs = () => {
   let jsonData = {};
 
   function drawChart() {
-    const data = new window.google.visualization.DataTable();
+    const data = new google.visualization.DataTable();
 
     data.addColumn('string', 'Vare');
     data.addColumn('number', 'Antall');
@@ -13,7 +14,7 @@ const inventoryGraphs = () => {
       data.addRow([key, jsonData[key]]);
     });
 
-    const view = new window.google.visualization.DataView(data);
+    const view = new google.visualization.DataView(data);
 
     const options = {
       title: 'Varesalg',
@@ -21,14 +22,14 @@ const inventoryGraphs = () => {
       bar: { groupWidth: '95%' },
       legend: { position: 'none' },
     };
-    const chart = new window.google.visualization.ColumnChart(document.getElementById('columnchart_values'));
+    const chart = new google.visualization.ColumnChart(document.getElementById('columnchart_values'));
     chart.draw(view, options);
   }
 
   $.getJSON('orders/', (data) => {
     jsonData = data;
-    window.google.charts.load('current', { packages: ['corechart'] });
-    window.google.charts.setOnLoadCallback(drawChart);
+    google.charts.load('current', { packages: ['corechart'] });
+    google.charts.setOnLoadCallback(drawChart);
   });
 };
 

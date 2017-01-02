@@ -7,6 +7,7 @@ export const timeOutAlerts = () => {
   }, 5000);
 };
 
+// TODO: Remove duplicate methods that more or less do the same thing
 
 /* Method to add status messages which mimic django's own. */
 export const setStatusMessage = (message, tags) => {

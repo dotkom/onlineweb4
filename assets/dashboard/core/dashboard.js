@@ -32,7 +32,7 @@ const Dashboard = (function PrivateDashboard($) {
           if (!expanded && $(this).attr('href') === sidebarValue) {
             $(this).parent().parent().show();
 
-                        // Avoid collision with identical urls (#)
+            // Avoid collision with identical urls (#)
             expanded = true;
           }
         });

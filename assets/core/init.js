@@ -22,20 +22,20 @@ export const createGoogleMaps = () => {
       },
       {
         stylers: [
-                    { hue: '#666666' },
-                    { lightness: -30 },
+          { hue: '#666666' },
+          { lightness: -30 },
         ],
       },
       {
         featureType: 'poi.school',
         stylers: [
-                    { color: '#b3b3b3' },
+          { color: '#b3b3b3' },
         ],
       },
       {
         featureType: 'poi.park',
         stylers: [
-                    { color: '#d2e4c4' },
+          { color: '#d2e4c4' },
         ],
 
       },
@@ -43,16 +43,16 @@ export const createGoogleMaps = () => {
         featureType: 'road.local',
         elementType: 'all',
         stylers: [
-                    { hue: '#f4f4f4' },
-                    { lightness: 52 },
+          { hue: '#f4f4f4' },
+          { lightness: 52 },
         ],
       },
       {
         featureType: 'poi.sports_complex',
         stylers: [
-                    { saturation: 4 },
-                    { weight: 0.5 },
-                    { color: '#bad5aa' },
+          { saturation: 4 },
+          { weight: 0.5 },
+          { color: '#bad5aa' },
         ],
       },
     ],
@@ -109,17 +109,15 @@ export const initialize = () => {
     document.querySelector('.mn-svg-rect-bottom').setAttribute('class', 'mn-svg-rect-bottom');
   };
 
-    /* nav bar toggle
-    ---------------------------------------------------------------------------*/
+  /* nav bar toggle
+  ---------------------------------------------------------------------------*/
   $('#mainnav-button').click(() => {
     if ($('.mn-nav').first().hasClass('mn-nav-open')) {
       removeAnimation();
-      $('.mn-nav').removeClass('mn-nav-open')
-                        .addClass('animation-in-process');
+      $('.mn-nav').removeClass('mn-nav-open').addClass('animation-in-process');
     } else {
       addAnimation();
-      $('.mn-nav').addClass('mn-nav-open')
-                        .addClass('animation-in-process');
+      $('.mn-nav').addClass('mn-nav-open').addClass('animation-in-process');
     }
 
     setTimeout(() => {
