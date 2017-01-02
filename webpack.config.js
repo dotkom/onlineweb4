@@ -17,9 +17,11 @@ module.exports = {
   devtool: 'eval-source-map',
   entry: {
     // Used to extract common libraries
+    // Libraries that are used in several entries are good candidates for this list
     vendor: [
-      'classnames', 'es6-promise', 'whatwg-fetch',
-      'moment', 'react', 'react-bootstrap', 'react-dom',
+      'bootstrap', 'classnames', 'corejs-typeahead', 'eonasdan-bootstrap-datetimepicker',
+      'es6-promise', 'jquery', 'js-cookie', 'moment', 'react',
+      'react-bootstrap', 'tablesorter', 'underscore', 'react-dom', 'whatwg-fetch',
     ],
     articleDetails: [
       './assets/article/details/index',
