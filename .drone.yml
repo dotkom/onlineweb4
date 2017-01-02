@@ -9,7 +9,7 @@ pipeline:
       - pip install -r requirements.txt -r requirements-testing.txt
       - python webpack_resolve.py
       - npm run build:prod
-      - ./node_modules/.bin/eslint assets/js/
+      - npm run lint
       - isort -c -rc apps middleware scripts utils
       - flake8 apps middleware scripts utils
       - python manage.py test -v 2

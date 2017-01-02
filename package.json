@@ -64,7 +64,7 @@
     "dev": "node server.js",
     "start": "npm run dev",
     "test": "jest",
-    "watch": "webpack -w"
+    "lint": "eslint assets/"
   },
   "repository": {
     "type": "git",
