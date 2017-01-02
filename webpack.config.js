@@ -119,7 +119,6 @@ module.exports = {
   },
   externals: {
     google: 'google',
-    jquery: 'jQuery',
     urls: 'Urls',
   },
   module: {
@@ -129,6 +128,11 @@ module.exports = {
         // Somehow babel fucks up jqplot
         exclude: /(node_modules|jqplot\.\w+\.js)/,
         loaders: ['babel'],
+      },
+      {
+        // Hack for modules that depend on global jQuery
+        test: /(node_modules\/bootstrap\/.+|jquery.jqplot|jqplot\.\w+)\.js$/,
+        loader: 'imports?jQuery=jquery,$=jquery,this=>window',
       },
       {
         test: /\.css$/,
