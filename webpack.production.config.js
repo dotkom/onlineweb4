@@ -11,17 +11,19 @@ const config = require('./webpack.config.js');
 const webpack = require('webpack');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
+// TODO: duvholt: I'm not entirely sure which source map is best for production.
+// Documentation is kind of spotty
 config.devtool = 'cheap-source-map';
 
 // Set environment to production
+// Some libraries use this to turn off some dev features
 config.plugins.push(new webpack.DefinePlugin({
   'process.env': {
     NODE_ENV: JSON.stringify('production'),
   },
 }));
 
-// Extract css to file
-
+// We want to include CSS and JS seperately:
 // Remove style loader
 Object.keys(config.module.loaders).forEach((key) => {
   if ({}.hasOwnProperty.call(config.module.loaders, key)) {
@@ -39,7 +41,7 @@ Object.keys(config.module.loaders).forEach((key) => {
     }
   }
 });
-// Add extract text plugin
+// Add extract text plugin to extract css to .css files
 config.plugins.push(new ExtractTextPlugin('[name]-[hash].css'));
 
 
