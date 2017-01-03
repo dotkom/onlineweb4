@@ -1,5 +1,6 @@
 import { debouncedResize } from 'common/utils';
-import google from 'google';
+
+const google = window.google;
 
 export const createGoogleMaps = () => {
   const map = new google.maps.Map(document.getElementById('footer-map'), {

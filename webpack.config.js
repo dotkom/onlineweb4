@@ -113,7 +113,6 @@ module.exports = {
     filename: '[name]-[hash].js',
   },
   externals: {
-    google: 'google',
     urls: 'Urls',
   },
   module: {

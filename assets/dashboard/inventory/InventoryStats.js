@@ -1,5 +1,6 @@
 import $ from 'jquery';
-import google from 'google';
+
+const google = window.google;
 
 const inventoryGraphs = () => {
   let jsonData = {};
