@@ -61,7 +61,7 @@
   "scripts": {
     "build": "webpack",
     "build:prod": "webpack --config webpack.production.config.js",
-    "dev": "node server.js",
+    "dev": "node webpack.server.js",
     "start": "npm run dev",
     "test": "jest",
     "lint": "eslint assets/"
