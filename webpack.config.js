@@ -31,7 +31,7 @@ module.exports = {
     dashboard: [
       './assets/dashboard/core/index',
     ],
-    dashboard_approval: [
+    dashboardApproval: [
       './assets/dashboard/approval/index',
     ],
     dashboardArticle: [
@@ -67,7 +67,7 @@ module.exports = {
     dashboardWebshop: [
       './assets/dashboard/webshop/index',
     ],
-    events_archive: [
+    eventsArchive: [
       './assets/events/archive/index',
     ],
     eventsDetails: [
