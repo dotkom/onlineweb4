@@ -13,17 +13,17 @@ const config = require('./webpack.config.js');
 const webpack = require('webpack');
 const WebpackDevServer = require('webpack-dev-server');
 
-const ip = '0.0.0.0';
-// TODO: Do something smarter than hardcoding a port number
-const port = 3000;
-const host = `${ip}:${port}`;
+const IP = process.env.WEBPACK_DEV_IP || '0.0.0.0';
+const PUBLIC_IP = process.env.WEBPACK_DEV_PUBLIC_IP || IP;
+const PORT = process.env.WEBPACK_DEV_PORT || 3000;
+const HOST = `${PUBLIC_IP}:${PORT}`;
 
 // Add hot reloading to all entries
 // https://webpack.js.org/concepts/hot-module-replacement/
 Object.keys(config.entry).forEach((entry) => {
   if ({}.hasOwnProperty.call(config.entry, entry)) {
     config.entry[entry].unshift(
-      `webpack-dev-server/client?http://${host}`,
+      `webpack-dev-server/client?http://${HOST}`,
       'webpack/hot/dev-server'
     );
   }
@@ -32,7 +32,7 @@ Object.keys(config.entry).forEach((entry) => {
 // Remove [hash] since webpack-dev-server stores all generated copies in memory based on filename
 config.output.filename = '[name].js';
 // Entries will be served from a seperate http server instead of from filesystem
-config.output.publicPath = `http://${host}/static/`;
+config.output.publicPath = `http://${HOST}/static/`;
 
 // Don't reload if there is an error
 config.plugins.unshift(new webpack.NoErrorsPlugin());
@@ -72,9 +72,9 @@ new WebpackDevServer(compiler, {
     // Enables color output
     colors: true,
   },
-}).listen(port, ip, (err) => {
+}).listen(PORT, IP, (err) => {
   if (err) {
     console.error(err);
   }
-  console.log(`Listening at ${host}`);
+  console.log(`Listening at ${HOST}`);
 });

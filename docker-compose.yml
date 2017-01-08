@@ -39,5 +39,9 @@ services:
       - site-packages:/usr/local/lib/python3.6/site-packages
     ports:
       - "3000:3000"
+    environment:
+      - WEBPACK_DEV_IP=0.0.0.0
+      - WEBPACK_DEV_PORT=3000
+      - WEBPACK_DEV_PUBLIC_IP=localhost
 volumes:
   site-packages: {}
