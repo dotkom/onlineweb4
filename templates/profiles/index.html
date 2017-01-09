@@ -33,6 +33,13 @@ Min side - Online
                         <li class="{% ifequal 'overview' active_tab %}active{% endifequal %}">
                             <a href="{% url 'profiles_active' 'overview' %}" data-section="overview">Oversikt</a>
                         </li>
+                        {% if feedback_pending|length > 0 or active_tab == 'feedback_pending' %}
+                            <li class="{% ifequal 'feedback_pending' active_tab %}active{% endifequal %}">
+                                <a href="{% url 'profiles_active' 'feedback_pending' %}" data-section="feedback_pending">
+                                    Manglende tilbakemeldinger ({{ feedback_pending|length }})
+                                </a>
+                            </li>
+                        {% endif %}
                         <li class="{% ifequal 'edit' active_tab %}active{% endifequal %}">
                             <a href="{% url 'profiles_active' 'edit' %}" data-section="edit">Rediger profil</a>
                         </li>
@@ -69,6 +76,9 @@ Min side - Online
                     <div id="tab-content">
                         <section id="overview">
                             {% include "profiles/overview.html" %}
+                        </section>
+                        <section id="feedback_pending">
+                            {% include "profiles/feedback_pending.html" %}
                         </section>
                         <section id="edit">
                             {% include "profiles/edit.html" %}

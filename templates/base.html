@@ -58,17 +58,25 @@
             {% if user.is_authenticated %}
                 <li>
                     <a href="#login_menu" class="dropdown-toggle dropdown-signin login glyphicon glyphicon-user" data-toggle="dropdown"></a>
-                    <span class="username_menu hidden-xs hidden-sm hidden-md">{{ user.username }}</span>
+                    <span class="username_menu hidden-xs hidden-sm hidden-md">
+                        {{ user.username }}
+                    </span>
 
                     <ul class="dropdown-menu login-box" role="menu">
-
                         {% if user.is_staff %}
                             <li><a href="/admin/">Administrasjon</a></li>
                         {% endif %}
                         {% if user.is_committee %}
                             <li><a href="/dashboard/">Dashboard</a></li>
                         {% endif %}
-                        <li><a href="{% url 'profiles' %}">Min side<span class="hidden-lg">: {{ user.username }}</span></a></li>
+                        <li>
+                            <a href="{% url 'profiles' %}">
+                                Min side<span class="hidden-lg">: {{ user.username }}</span>
+                                {% if feedback_pending %}
+                                    ({{ feedback_pending|length }})
+                                {% endif %}
+                            </a>
+                        </li>
                         <li><a href="{% url 'profiles_user_search' %}">Finn brukere</a></li>
                         <li class="divider"></li>
                         <li><a href="{% url 'auth_logout' %}">Logg ut</a></li>
