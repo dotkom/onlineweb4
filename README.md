@@ -38,6 +38,15 @@ aefaef
 
 Alternatively on Windows, use the GitHub for Windows app to setup everything
 
+Docker
+======
+
+We're using Docker and docker-compose for the development environment. Run `docker-compose pull` followed by `docker-compose build` to get your services up and ready, then start OW4 using `docker-compose up -d` (`-d` for "detached" mode). This will expose the Django development webserver on `http://localhost:8000`. For more information, check out `docker-compose.yml`. For logs when using detached mode, run `docker-compose logs` (or `docker-compose logs <service>` for logs for a specific service).
+
+The Docker setup can be streamlined by some simple make commands. Executing `make` will run `docker-compose pull`, `docker-compose build` and finally `docker-compose up -d` -- a simple way to build a new version of the project and get it up and running (note: this does not actually fetch the latest changes from GitHub!). For simply running OW4 using make, execute `make run`. These commands execute `docker-compose up -d`, which runs docker-compose in detached mode. To check the logs from Docker, check out `make logs` or `docker-compose logs` as described earlier.
+
+To find out if the container is running or not, execute `make status`. This will list currently running containers and their status.
+
 Vagrant
 =======
 
