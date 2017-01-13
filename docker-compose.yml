@@ -25,9 +25,9 @@ services:
       # - lessc
     environment:
       - INSTANCE_TYPE=web
-      - DEBUG=1
       - DJANGO_SETTINGS_MODULE=onlineweb4.settings
       - DATABASE_URL=postgres://postgres@db/postgres
+      - OW4_DJANGO_DEBUG=True
   webpack:
     build:
       context: .
