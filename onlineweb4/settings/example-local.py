@@ -1,6 +1,7 @@
 import os
 import sys
 
+import dj_database_url
 from decouple import config
 
 from .base import PROJECT_ROOT_DIRECTORY
@@ -15,22 +16,8 @@ DEBUG = config("OW4_DJANGO_DEBUG", cast=bool, default=False)
 ALLOWED_HOSTS = config("OW4_DJANGO_ALLOWED_HOSTS", default='*')
 
 DATABASES = {
-    #'default': {
-        #'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        #'NAME': 'django',
-        #'USER': 'django',
-        #'PASSWORD': 'django',
-        #'HOST': '127.0.0.1',
-        #'PORT': '',
-    #},
-    'default': {
-        'ENGINE': config("OW4_DJANGO_DATABASE_ENGINE", default='django.db.backends.sqlite3'),
-        'NAME': config("OW4_DJANGO_DATABASE_NAME", default='db.db'),
-        'USER': config("OW4_DJANGO_DATABASE_USER", default=''),
-        'PASSWORD': config("OW4_DJANGO_DATABASE_PASSWORD", default=''),
-        'HOST': config("OW4_DJANGO_DATABASE_HOST", default=''),
-        'PORT': config("OW4_DJANGO_DATABASE_PORT", default=''),
-    }
+    # Set this using the environment variable "DATABASE_URL"
+    'default': dj_database_url.config(default="sqlite:///%s/db.db" % PROJECT_ROOT_DIRECTORY),
 }
 
 # Email settings

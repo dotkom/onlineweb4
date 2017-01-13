@@ -2,6 +2,7 @@
 import os
 import sys
 
+import dj_database_url
 import wiki
 from django.contrib.messages import constants as messages
 from decouple import config
@@ -31,14 +32,8 @@ ADMINS = (
 MANAGERS = ADMINS
 
 DATABASES = {
-    'default': {
-        'ENGINE': config("OW4_DJANGO_DATABASE_ENGINE", default='django.db.backends.sqlite3'),
-        'NAME': config("OW4_DJANGO_DATABASE_NAME", default='db.db'),
-        'USER': config("OW4_DJANGO_DATABASE_USER", default=''),
-        'PASSWORD': config("OW4_DJANGO_DATABASE_PASSWORD", default=''),
-        'HOST': config("OW4_DJANGO_DATABASE_HOST", default=''),
-        'PORT': config("OW4_DJANGO_DATABASE_PORT", default=''),
-    }
+    # Set this using the environment variable "DATABASE_URL"
+    'default': dj_database_url.config(default="sqlite:///%s/db.db" % PROJECT_ROOT_DIRECTORY),
 }
 
 # Email settings

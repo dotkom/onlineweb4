@@ -42,3 +42,4 @@ setuptools-*.zip
 assets/webpack_bundles
 webpack-stats.json
 .drone-secrets.yml*
+.env
