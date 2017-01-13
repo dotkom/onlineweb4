@@ -47,6 +47,8 @@ The Docker setup can be streamlined by some simple make commands. Executing `mak
 
 To find out if the container is running or not, execute `make status`. This will list currently running containers and their status.
 
+To run commands agains the containers, use `docker-compose exec <container name> <command>`, e.g. `docker-compose exec django python manage.py migrate`. Do this using make with `make exec`. There's also a shortcut to run `manage.py` commands, e.g. `make manage migrate`.
+
 Vagrant
 =======
 

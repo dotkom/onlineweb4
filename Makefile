@@ -1,4 +1,4 @@
-.PHONY: build up run logs start stop down rm status
+.PHONY: build up run logs start stop down rm status exec django manage
 
 build:
 	docker-compose pull
@@ -26,5 +26,14 @@ rm:
 
 status:
 	docker-compose ps
+
+exec:
+	docker-compose exec
+
+django:
+	docker-compose exec django
+
+manage:
+	docker-compose exec django python manage.py
 
 default: build up
