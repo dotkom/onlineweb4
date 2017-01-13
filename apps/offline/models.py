@@ -3,10 +3,10 @@
 from os import path
 
 from chunks.models import Chunk
+from django.conf import settings
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from filebrowser.fields import FileBrowseField
-from onlineweb4.settings.local import MEDIA_ROOT
 
 THUMBNAIL_HEIGHT = 200  # Ønsket høyde på thumbnail
 IMAGE_FOLDER = "images/offline"
@@ -49,7 +49,7 @@ class Issue(models.Model):
     def url(self):
         # TODO: url kan være feil ved prodsetting
         url = str(self.issue).replace("/media/", "/var/websites/prod/onlineweb_uploads/")
-        url = path.join(MEDIA_ROOT, url)
+        url = path.join(settings.MEDIA_ROOT, url)
         return url
 
     @property
