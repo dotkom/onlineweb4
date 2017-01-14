@@ -51,8 +51,8 @@
             <div class="panel-body">
                 <div class="col-md-4">Web-brukernavn</div>
                 <div class="col-md-8">{{ user.username }}</div>
-                <div class="col-md-4">Online-mailalias</div>
-                <div class="col-md-8"><a href="mailto:{{ user.online_mail }}@online.ntnu.no">{{ user.online_mail }}@online.ntnu.no</a></div>
+                <div class="col-md-4">Online-e-post-adresse</div>
+                <div class="col-md-8">{% if user.online_mail %}<a href="mailto:{{ user.online_mail }}@online.ntnu.no">{{ user.online_mail }}@online.ntnu.no</a>{% else %}-{% endif %}</div>
                 <div class="col-md-4">RFID</div>
                 <div class="col-md-8">{{ user.rfid }}</div>
                 <div class="col-md-12"><br>
