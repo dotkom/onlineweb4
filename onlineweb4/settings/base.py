@@ -81,11 +81,10 @@ BASE_URL = config("OW4_DJANGO_BASE_URL", default='https://online.ntnu.no')
 AUTH_USER_MODEL = 'authentication.OnlineUser'
 LOGIN_URL = '/auth/login/'
 
-# Override this in local.py in prod.
+# Override this in prod.
 MEDIA_ROOT = config("OW4_DJANGO_MEDIA_ROOT", default=os.path.join(PROJECT_ROOT_DIRECTORY, 'uploaded_media'))
 MEDIA_URL = '/media/'
 
-# STATIC_ROOT = os.path.join(PROJECT_ROOT_DIRECTORY, 'static')
 STATIC_ROOT = config("OW4_DJANGO_STATIC_ROOT", default=os.path.join(PROJECT_ROOT_DIRECTORY, 'static'))
 STATIC_URL = '/static/'
 
@@ -118,8 +117,6 @@ COMPRESS_PRECOMPILERS = (
 
 COMPRESS_CSS_FILTERS = [
     'compressor.filters.css_default.CssAbsoluteFilter',
-    # We want this later on, but it breaks production so disabling for now.
-    #'compressor-filters.cssmin.CSSMinFilter',
 ]
 COMPRESS_JS_FILTERS = [
     'compressor.filters.jsmin.JSMinFilter',

@@ -43,19 +43,13 @@ EMAIL_BACKEND = config("OW4_DJANGO_EMAIL_BACKEND", default='django.core.mail.bac
 
 # GOOGLE_ANALYTICS_KEY = 'UA-XXXX-Y'
 
-#MEDIA_ROOT = '/var/websites/prod/onlineweb_uploads'
 MEDIA_ROOT = config("OW4_DJANGO_MEDIA_ROOT", default=os.path.join(PROJECT_ROOT_DIRECTORY, 'uploaded_media'))
-
-#MEDIA_URL = '//media.online.ntnu.no/'
 MEDIA_URL = '/media/'
 
-#MEDIA_ROOT = '/var/websites/prod/static'
 STATIC_ROOT = config("OW4_DJANGO_STATIC_ROOT", default=os.path.join(PROJECT_ROOT_DIRECTORY, 'static'))
-# STATIC_ROOT = os.path.join(PROJECT_ROOT_DIRECTORY, 'static')
-#STATIC_URL = '//static.online.ntnu.no'
 STATIC_URL = '/static/'
 
-#Url of default profile picture
+# Url of default profile picture
 DEFAULT_PROFILE_PICTURE_URL = os.path.join(STATIC_URL, "img", "profile_default.png")
 
 # Filebrowser local settings.
