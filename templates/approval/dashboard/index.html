@@ -45,7 +45,7 @@ Søknadsgodkjenning
     {% for app in membership_applications %}
     <div class="row application">
         <div class="col-md-3 cell">
-            <div class="visible-xs visible-sm">1. </div>{{ app.applicant.get_full_name }}
+            <div class="visible-xs visible-sm">1. </div><a href="{% url 'dashboard_user_detail' app.applicant.id %}" target="_blank">{{ app.applicant.get_full_name }}</a>
         </div>
         <div class="col-md-3 cell">
             <div class="visible-xs visible-sm">2. </div>
