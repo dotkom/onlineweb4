@@ -33,6 +33,8 @@
                 <div class="col-md-8">{{ user.address }}, <span id="zip-code">{{ user.zip_code }}</span><span id="city">{{ user.city }}</span></div>
                 <div class="col-md-4">Telefonnummer</div>
                 <div class="col-md-8">{% if user.phone_number %}{{ user.phone_number }}{% else %}Ikke oppgitt{% endif %}</div>
+                <div class="col-md-4">E-post-adresse</div>
+                <div class="col-md-8">{% if user.get_email %}<a href="mailto:{{ user.get_email.email }}">{{ user.get_email.email }}</a> (primær){% else %}-{% endif %}</div>
                 <div class="col-md-4">Nettside</div>
                 <div class="col-md-8">
                     {% if user.website %}<a href="{{ user.website }}" target="_blank">{{ user.website }}</a>{% endif %}
@@ -83,6 +85,8 @@
                 {% if user.ntnu_username %}
                 <div class="col-md-4">NTNU-brukernavn</div>
                 <div class="col-md-8">{{ user.ntnu_username }}</div>
+                <div class="col-md-4">E-post-adresse</div>
+                <div class="col-md-8"><a href="mailto:{{ user.ntnu_username }}@stud.ntnu.no">{{ user.ntnu_username }}@stud.ntnu.no</a></div>
                 <div class="col-md-4">Studie (start)</div>
                 <div class="col-md-8">{{ user.year }}. år {{ user.get_field_of_study_display }} ({{ user.started_date }})</div>
                 {% else %}
