@@ -35,7 +35,8 @@ def send_approval_status_update(approval):
         message += "ikke godkjent."
         if len(approval.message) == 0:
             message += " Ta kontakt med Online for begrunnelse."
-        else: message += approval.message
+        else:
+            message += approval.message
     try:
         EmailMessage("Soknad om medlemskap i Online er vurdert",
                      message,
