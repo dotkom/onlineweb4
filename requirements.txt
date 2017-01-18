@@ -22,7 +22,6 @@ django-extensions==1.7.4        # nice extra commands for debugging, etc
 django-dynamic-fixture==1.9.0   # Dynamic fixtures for models
 django-recaptcha==1.0.5         # Google ReCaptcha
 django-oauth-toolkit==0.8.1     # OAuth2 authentication support
-django_compressor==2.1          # Compiles less and minifies js
 django-watson==1.2.3            # Indexed model search lib
 django-reversion==2.0.6         # Model version history with middleware hooks to all post_save signals
 django-guardian==1.4.6          # Per Object permissions framework

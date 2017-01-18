@@ -1,9 +1,20 @@
 {% extends "base.html" %}
+{% load render_bundle from webpack_loader %}
 {% load markdown_deux_tags %}
 {% load fb_versions %}
 {% load group_membership %}
 
 {% block title %}{{ article.heading }} - Online{% endblock title %}
+
+{% block styles %}
+    {{ block.super }}
+    {% render_bundle 'articleDetails' 'css' %}
+{% endblock %}
+
+{% block js %}
+    {{ block.super }}
+    {% render_bundle 'articleDetails' 'js' %}
+{% endblock %}
 
 {% block content %}
     <section id="article-details">
@@ -136,9 +147,3 @@
         </div>
     </section>
 {% endblock content %}
-
-{% block js %}
-    {{ block.super }}
-    <script type="text/javascript" src="{{ STATIC_URL }}js/Utils.js"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}js/Article-related.js"></script>
-{% endblock js %}
