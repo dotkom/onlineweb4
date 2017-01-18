@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 
+{% load static %}
 {% load sekizai_tags %}
 {% load i18n wiki_tags %}
 {% load render_bundle from webpack_loader %}
@@ -10,7 +11,9 @@
 
 {% block js %}
     {{ block.super }}
-    <script src="{{ STATIC_URL }}wiki/js/core.js"></script>
+    <script src="{% static "wiki/js/jquery.min.js" %}"></script>
+    <script src="{% static "wiki/js/core.js" %}"></script>
+    <script src="{% static "wiki/bootstrap/js/bootstrap.min.js" %}"></script>
     {% render_bundle 'wiki' 'js' %}
 {% endblock %}
 
