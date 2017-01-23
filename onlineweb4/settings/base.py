@@ -417,6 +417,33 @@ APPROVAL_SETTINGS = {
     'SEND_APPROVER_NOTIFICATION_EMAIL': True,
 }
 
+OW4_GSUITE_CREDENTIALS_FILENAME = os.getenv('OW4_GSUITE_CREDENTIALS_FILENAME', 'gsuitecredentials.json')
+OW4_GSUITE_CREDENTIALS_PATH = os.getenv('OW4_GSUITE_CREDENTIALS_PATH',
+                                        os.path.join(PROJECT_ROOT_DIRECTORY, OW4_GSUITE_CREDENTIALS_FILENAME))
+OW4_GSUITE_SYNC = {
+    'CREDENTIALS': OW4_GSUITE_CREDENTIALS_PATH,
+    'DOMAIN': 'online.ntnu.no',
+    # DELEGATED_ACCOUNT: G Suite Account with proper permissions to perform insertions and removals.
+    'DELEGATED_ACCOUNT': os.getenv('OW4_GSUITE_SYNC_DELEGATED_ACCOUNT'),
+    'ENABLE_INSERT': False,
+    'ENABLE_DELETE': False,
+    # OW4 name (lowercase) -> G Suite name (lowercase)
+    'GROUPS': {
+        'appkom': 'appkom',
+        'arrkom': 'arrkom',
+        'bankom': 'bankom',
+        'bedkom': 'bedkom',
+        'dotkom': 'dotkom',
+        'ekskom': 'ekskom',
+        'fagkom': 'fagkom',
+        'hovedstyret': 'hovedstyret',
+        'jubkom': 'jubkom',
+        'prokom': 'prokom',
+        'seniorkom': 'seniorkom',
+        'trikom': 'trikom',
+    }
+}
+
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
