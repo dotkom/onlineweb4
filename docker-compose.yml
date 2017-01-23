@@ -23,6 +23,7 @@ services:
       - "8000:8000"
     links:
       - db
+    env_file: ./ow4_env
     environment:
       - INSTANCE_TYPE=web
       - DJANGO_SETTINGS_MODULE=onlineweb4.settings
