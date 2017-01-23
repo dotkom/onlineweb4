@@ -1,6 +1,7 @@
 {% extends 'dashboard_base.html' %}
 {% load markdown_deux_tags %}
 {% load addcss %}
+{% load render_bundle from webpack_loader %}
 
 {% block title %}
     {% if edit %}
@@ -16,7 +17,12 @@ Artikler
 
 {% block js %}
     {{ block.super }}
-    <script src="{{ STATIC_URL }}js/dashboard/article.js" type="text/javascript"></script>
+    {% render_bundle 'dashboardArticle' 'js' %}
+{% endblock %}
+
+{% block styles %}
+    {{ block.super }}
+    {% render_bundle 'dashboardArticle' 'css' %}
 {% endblock %}
 
 {% block breadcrumbs %}

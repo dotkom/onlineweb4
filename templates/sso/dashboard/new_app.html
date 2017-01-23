@@ -1,24 +1,10 @@
 {% extends "dashboard_base.html" %}
-{% load compress %}
 {% load addcss %}
 {% load crispy_forms_tags %}
 
 {% block title %}
 Ny App-klient - Ekstern tilgang - Online Dashboard
 {% endblock title %}
-
-{% block styles %}
-    {{ block.super }}
-    {% compress css %}
-    {% endcompress %}
-{% endblock %}
-
-{% block js %}
-    {{ block.super }}
-    {% compress js %}
-
-    {% endcompress %}
-{% endblock js %}
 
 {% block page-header %}
 Ny App-klient

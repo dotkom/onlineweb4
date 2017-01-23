@@ -1,14 +1,6 @@
 {% extends "base.html" %}
-{% load compress %}
 
 {% block title %}Internal Server Error - Online{% endblock title %}
-
-{% block styles %}
-    {{ block.super }}
-    {% compress css %}
-        <link rel="stylesheet" type="text/less" href="{{ STATIC_URL }}less/errorform.less">
-    {% endcompress %}
-{% endblock %}
 
 {% block content %}
     <section id="error">

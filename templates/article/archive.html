@@ -1,10 +1,21 @@
 {% extends 'base.html' %}
 
 {% load chunks %}
-{% load compress %}
+{% load render_bundle from webpack_loader %}
 {% load markdown_deux_tags %}
 
 {% block title %}Artikkelarkiv - Online{% endblock title %}
+
+{% block styles %}
+    {{ block.super }}
+    {% render_bundle 'articleArchive' 'css' %}
+{% endblock %}
+
+{% block js %}
+    {{ block.super }}
+    {% render_bundle 'articleArchive' 'js' %}
+{% endblock %}
+
 
 {% block submenu %}
     <nav class="subnavbar">
@@ -56,12 +67,3 @@
         </div>
     </section>
 {% endblock content %}
-
-{% block js %}
-    {{ block.super }}
-    {% compress js %}
-    <script type="text/javascript" src="{{ STATIC_URL }}js/Utils.js"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}js/Article-archive.js"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}js/TagCloud.js"></script>
-    {% endcompress %}
-{% endblock js %}

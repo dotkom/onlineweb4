@@ -1,6 +1,8 @@
 # -*- coding: utf8 -*-
 import os
 import sys
+import webpack_loader
+from webpack_resolve import create_resolve_file
 
 import dj_database_url
 import wiki
@@ -97,30 +99,18 @@ FILEBROWSER_MEDIA_ROOT = MEDIA_ROOT
 STATICFILES_DIRS = (
     os.path.join(PROJECT_ROOT_DIRECTORY, 'files/static'),
     os.path.join(PROJECT_ROOT_DIRECTORY, 'assets'),
+    os.path.join(PROJECT_ROOT_DIRECTORY, 'bundles'),
 )
 
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
 #    'django.contrib.staticfiles.finders.DefaultStorageFinder',
-    'compressor.finders.CompressorFinder',
 )
 
 # Including django-wiki static files so we can import the less files.
 DJANGO_WIKI_STATIC = os.path.join(os.path.dirname(wiki.__file__), 'static')
-
-COMPRESS_FILES = config("OW4_DJANGO_COMPRESS_FILES", cast=bool, default=True)
-COMPRESS_OUTPUT_DIR = config("OW4_DJANGO_COMPRESS_OUTPUT_DIR", default='cache')
-COMPRESS_PRECOMPILERS = (
-    ('text/less', 'lessc --include-path=%s {infile} {outfile}' % DJANGO_WIKI_STATIC),
-)
-
-COMPRESS_CSS_FILTERS = [
-    'compressor.filters.css_default.CssAbsoluteFilter',
-]
-COMPRESS_JS_FILTERS = [
-    'compressor.filters.jsmin.JSMinFilter',
-]
+create_resolve_file()
 
 TEMPLATES = [
     {
@@ -237,7 +227,6 @@ INSTALLED_APPS = (
     'django_dynamic_fixture',
     'oauth2_provider',
     'captcha',
-    'compressor',
     'pdfdocument',
     'watson',
     'markdown_deux',
@@ -475,7 +464,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 WEBPACK_LOADER = {
     'DEFAULT': {
-        'BUNDLE_DIR_NAME': 'webpack_bundles/'  # end with slash
+        'BUNDLE_DIR_NAME': 'webpack/'  # end with slash
     }
 }
 

@@ -18,13 +18,11 @@ services:
     command: python manage.py runserver 0.0.0.0:8000
     volumes:
       - .:/srv/app
+      - site-packages:/usr/local/lib/python3.6/site-packages
     ports:
       - "8000:8000"
     links:
       - db
-      # - lessc
-    env_file:
-      - ./.env
     environment:
       - INSTANCE_TYPE=web
       - DJANGO_SETTINGS_MODULE=onlineweb4.settings
@@ -36,5 +34,12 @@ services:
     volumes:
       - .:/srv/app
       - /srv/app/node_modules
+      - site-packages:/usr/local/lib/python3.6/site-packages
     ports:
       - "3000:3000"
+    environment:
+      - WEBPACK_DEV_IP=0.0.0.0
+      - WEBPACK_DEV_PORT=3000
+      - WEBPACK_DEV_PUBLIC_IP=localhost
+volumes:
+  site-packages: {}
