@@ -1,14 +1,8 @@
 {% extends 'dashboard_base.html' %}
-{% load compress %}
+{% load render_bundle from webpack_loader %}
 {% load gravatar_url_resolver %}
 
 {% block title %}Brukerprofiler - {{ user }}{% endblock %}
-
-{% block styles %}
-    {{ block.super }}
-    {% compress css %}
-    {% endcompress %}
-{% endblock %}
 
 {% block page-header %}
     {{ user }}
@@ -17,6 +11,16 @@
 {% block breadcrumbs %}
 <li><a href="{% url 'user_list' %}">Brukerprofiler</a></li>
 <li>{{ user }}</li>
+{% endblock %}
+
+{% block styles %}
+    {{ block.super }}
+    {% render_bundle 'dashboardAuthentication' 'css' %}
+{% endblock %}
+
+{% block js %}
+    {{ block.super }}
+    {% render_bundle 'dashboardAuthentication' 'js' %}
 {% endblock %}
 
 {% block content %}
@@ -158,11 +162,4 @@
         </div>
     </div>
 </div>
-{% endblock %}
-
-{% block js %}
-    {{ block.super }}
-    {% compress js %}
-        <script type="text/javascript" src="{{ STATIC_URL }}js/zipcodecity.js"></script>
-    {% endcompress %}
 {% endblock %}

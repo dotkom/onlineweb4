@@ -1,21 +1,8 @@
 {% extends "dashboard_base.html" %}
-{% load compress %}
 
 {% block title %}
 Legg til ny bedrift - Online Dashboard
 {% endblock title %}
-
-{% block styles %}
-    {{ block.super }}
-    {% compress css %}
-    {% endcompress %}
-{% endblock %}
-
-{% block js %}
-    {{ block.super }}
-    {% compress js %}
-    {% endcompress %}
-{% endblock js %}
 
 {% block page-header %}
 Ny bedrift

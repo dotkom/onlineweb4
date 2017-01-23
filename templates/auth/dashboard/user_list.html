@@ -1,12 +1,5 @@
 {% extends 'dashboard_base.html' %}
-{% load compress %}
 {% block title %}Brukerprofiler{% endblock %}
-
-{% block styles %}
-    {{ block.super }}
-    {% compress css %}
-    {% endcompress %}
-{% endblock %}
 
 {% block page-header %}
 Brukerprofiler
@@ -118,10 +111,4 @@ Brukerprofiler
         </table>
     </div>
 </div>
-{% endblock %}
-
-{% block js %}
-    {{ block.super }}
-    <!-- Dashboard JS here -->
-    <script src="{{ STATIC_URL }}js/dashboard/authentication.js"></script>
 {% endblock %}

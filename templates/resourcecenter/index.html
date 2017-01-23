@@ -1,15 +1,18 @@
 {% extends "base.html" %}
-{% load compress %}
+{% load render_bundle from webpack_loader %}
 
 {% block title %}
 Ressurssenter - Online
 {% endblock title %}
 
 {% block styles %}
-{{ block.super }}
-{% compress css %}
-<link rel="stylesheet" type="text/less" href="{{ STATIC_URL }}less/resourcecenter.less">
-{% endcompress %}
+	{{ block.super }}
+	{% render_bundle 'resourcecenter' 'css' %}
+{% endblock %}
+
+{% block js %}
+	{{ block.super }}
+	{% render_bundle 'resourcecenter' 'js' %}
 {% endblock %}
 
 {% block content %}

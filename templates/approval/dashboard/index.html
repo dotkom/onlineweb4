@@ -1,22 +1,18 @@
 {% extends "dashboard_base.html" %}
-{% load compress %}
+{% load render_bundle from webpack_loader %}
 
 {% block title %}
-Søknadsgodkjenning - Online 
+Søknadsgodkjenning - Online
 {% endblock title %}
 
 {% block styles %}
     {{ block.super }}
-    {% compress css %}
-        <link rel="stylesheet" type="text/less" href="{{ STATIC_URL }}less/dashboard/approval.less" />
-    {% endcompress %}
+    {% render_bundle 'dashboardApproval' 'css' %}
 {% endblock %}
 
 {% block js %}
     {{ block.super }}
-    {% compress js %}
-        <script type="text/javascript" src="{{ STATIC_URL }}js/dashboard/approval.js"></script>
-    {% endcompress %}
+    {% render_bundle 'dashboardApproval' 'js' %}
 {% endblock js %}
 
 {% block page-header %}
@@ -24,7 +20,7 @@ Søknadsgodkjenning
 {% endblock %}
 
 {% block breadcrumbs %}
-    <li>Approvals</li> 
+    <li>Approvals</li>
 {% endblock %}
 
 {% block content %}
