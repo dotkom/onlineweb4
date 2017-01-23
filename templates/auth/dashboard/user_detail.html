@@ -32,7 +32,7 @@
                 <div class="col-md-4">Adresse</div>
                 <div class="col-md-8">{{ user.address }}, <span id="zip-code">{{ user.zip_code }}</span><span id="city">{{ user.city }}</span></div>
                 <div class="col-md-4">Telefonnummer</div>
-                <div class="col-md-8">{% if user.phone_number %}{{ user.phone_number }}{% else %}-{% endif %}</div>
+                <div class="col-md-8">{{ user.phone_number|default:"-" }}</div>
                 <div class="col-md-4">E-post-adresse</div>
                 <div class="col-md-8">{% if user.get_email %}<a href="mailto:{{ user.get_email.email }}">{{ user.get_email.email }}</a> (primær){% else %}-{% endif %}</div>
                 <div class="col-md-4">Nettside</div>
@@ -54,7 +54,7 @@
                 <div class="col-md-4">Online-e-post-adresse</div>
                 <div class="col-md-8">{% if user.online_mail %}<a href="mailto:{{ user.online_mail }}@online.ntnu.no">{{ user.online_mail }}@online.ntnu.no</a>{% else %}-{% endif %}</div>
                 <div class="col-md-4">RFID</div>
-                <div class="col-md-8">{% if user.rfid %}{{ user.rfid }}{% else %}-{% endif %}</div>
+                <div class="col-md-8">{{ user.rfid|default:"-" }}</div>
                 <div class="col-md-12"><br>
                     <table class="table">
                         <tr>
@@ -101,11 +101,11 @@
             <div class="panel-body">
                 <div class="col-md-6">
                     <h4>Allergier</h4>
-                    <p>{% if user.allergies %}{{ user.allergies }}{% else %}-{% endif %}</p>
+                    <p>{{ user.allergies|default:"-" }}</p>
                 </div>
                 <div class="col-md-6">
                     <h4>Bio</h4>
-                    <p>{% if user.bio %}{{ user.bio }}{% else %}-{% endif %}</p>
+                    <p>{{ user.bio|default:"-" }}</p>
                 </div>
             </div>
         </div>
