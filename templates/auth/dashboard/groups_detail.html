@@ -32,6 +32,7 @@
             <hr />
             <h4>Legg til brukere</h4>
             <p>Klikk på den aktuelle brukeren for å legge han/hun til i &laquo;{{ group }}&raquo;</p>
+            {% csrf_token %}
             <input type="text" class="form-control" maxlength="50" autocomplete=off name="usersearch" id="usersearch" placeholder="Søk..." />
         </div>
     </div>

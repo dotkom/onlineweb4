@@ -69,6 +69,7 @@ Søknadsgodkjenning
     </div>
     <div id="confirm{{ app.id }}" class="row confirm">
         <div class="col-md-6">
+            {% csrf_token %}
             <textarea rows="6">Skriv litt om hvorfor søknaden avslås.</textarea>
         </div>
         <div class="col-md-2">
