@@ -208,7 +208,6 @@ INSTALLED_APPS = (
     'sekizai', # Wiki
     'sorl.thumbnail', # Wiki
     'grappelli',
-    'filebrowser',
     'chunks',
     'crispy_forms',
     'django_extensions',

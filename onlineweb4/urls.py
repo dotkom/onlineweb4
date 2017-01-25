@@ -15,8 +15,6 @@ from onlineweb4 import views
 admin.autodiscover()
 
 urlpatterns = [
-    # Filebrowser must be above all admin-urls
-    url(r'^admin/filebrowser/',     include(site.urls)),
     url(r'^grappelli/',             include('grappelli.urls')),
 
     # Admin urls
