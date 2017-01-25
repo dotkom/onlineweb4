@@ -15,8 +15,6 @@ from onlineweb4 import views
 admin.autodiscover()
 
 urlpatterns = [
-    url(r'^grappelli/',             include('grappelli.urls')),
-
     # Admin urls
     url(r'^admin/',             include(admin.site.urls)),
     url(r'^admin/doc/',         include('django.contrib.admindocs.urls')),
