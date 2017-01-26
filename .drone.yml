@@ -12,7 +12,7 @@ pipeline:
       - npm run lint
       - isort -c -rc apps middleware scripts utils
       - flake8 apps middleware scripts utils
-      - py.test
+      - py.test --cov=apps
       - pip install codecov
       - codecov
   deploy:
