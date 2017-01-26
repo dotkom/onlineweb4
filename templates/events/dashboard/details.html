@@ -148,6 +148,7 @@ Arrangementsdetaljer
 {% endblock content %}
 
 {% block js %}
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
     {{ block.super }}
     {% render_bundle 'dashboardEvents' 'js' %}
     <script>
