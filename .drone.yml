@@ -6,14 +6,14 @@ pipeline:
     commands:
       - cp onlineweb4/settings/example-local.py onlineweb4/settings/local.py
       - npm install --depth=0 --quiet
-      - pip install -r requirements.txt -r requirements-testing.txt
+      - pip install -r requirements.txt -r requirements-testing.txt --quiet
       - python webpack_resolve.py
       - npm run build:prod
       - npm run lint
       - isort -c -rc apps middleware scripts utils
       - flake8 apps middleware scripts utils
       - py.test --cov=apps
-      - pip install codecov
+      - pip install codecov --quiet
       - codecov
   deploy:
     image: plugins/ssh
