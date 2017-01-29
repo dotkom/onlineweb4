@@ -21,7 +21,6 @@ function OfflineWidget() {
   OfflineWidget.prototype.createDom = () => {
     const data = that.data;
     const offlines = data.results;
-    const prefix = $('#offlineCarousel').data('prefix');
     const suffix = '.thumb.png';
     const itemWrapperStart = '<div class="item centered">';
     const itemWrapperEnd = '</div>';
@@ -39,7 +38,7 @@ function OfflineWidget() {
         if (i === 0) {
           insertMe += itemWrapperStart;
         }
-        insertMe += `<a href="${prefix}${offlines[i].issue}"><img src="${prefix}${offlines[i].issue}${suffix}" /></a>`;
+        insertMe += `<a href="${offlines[i].issue}"><img src="${offlines[i].issue}${suffix}" /></a>`;
 
         if (i === offlines.length - 1 || (i + 1) % issuesPerSlide === 0) {
           insertMe += itemWrapperEnd;
