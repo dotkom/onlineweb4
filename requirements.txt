@@ -15,7 +15,6 @@ icalendar==3.10                # iCalendar generation
 # django-filebrowser==3.5.4     # File uploading
 # Missing django 1.9 patches
 git+https://github.com/cXhristian/django-filebrowser.git@django-1.9#egg=django-filebrowser==3.6.2
-django-grappelli==2.8.2         # Admin template set
 git+https://github.com/dotKom/django-chunks.git@e6bf109d4fd286964024c140ac1b8f3d86713540#egg=django-chunks==0.4
 django-crispy-forms==1.6.0      # nice forms
 django-extensions==1.7.4        # nice extra commands for debugging, etc

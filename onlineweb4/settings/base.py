@@ -143,9 +143,6 @@ WSGI_APPLICATION = 'onlineweb4.wsgi.application'
 PIZZA_GROUP = 'dotkom'
 PIZZA_ADMIN_GROUP = 'pizzaadmin'
 
-# Grappelli settings
-GRAPPELLI_ADMIN_TITLE = 'Onlineweb'
-
 # Guardian settings
 ANONYMOUS_USER_NAME = 'anonymoususer'
 GUARDIAN_RENDER_403 = True
@@ -199,8 +196,6 @@ INSTALLED_APPS = (
     'mptt', # Wiki
     'sekizai', # Wiki
     'sorl.thumbnail', # Wiki
-    'grappelli',
-    'filebrowser',
     'chunks',
     'crispy_forms',
     'django_extensions',
