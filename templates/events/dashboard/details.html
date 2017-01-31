@@ -158,29 +158,29 @@ Arrangementsdetaljer
         $('#create-attendance-view').load("{% url 'dashboard_event_create_attendance' event.id %}", function() {
           // Update create attendanceevent form with action attribute
           $('#create-attendance-form').attr('action', "{% url 'dashboard_event_create_attendance' event.id %}")
-          Dashboard.activateDateTimePickers()
+          window.dispatchEvent(new Event('activateDateTimePickers'));
         })
         $('#update-attendance-view').load("{% url 'dashboard_events_edit_attendance' event.id %}", function() {
           $('#update-attendance-view').find('form').attr('id', 'update-attendance-form')
           // Update create attendanceevent form with action attribute
           $('#update-attendance-form').attr('action', "{% url 'dashboard_events_edit_attendance' event.id %}")
-          Dashboard.activateDateTimePickers()
+          window.dispatchEvent(new Event('activateDateTimePickers'));
         })
         $('#add-company-view').load("{% url 'dashboard_events_add_company' event.id %}", function() {
           $('#add-company-view').find('form').attr('id', 'add-company-form')
           $('#add-company-form').attr('action', "{% url 'dashboard_events_add_company' event.id %}")
-          Dashboard.activateDateTimePickers()
+          window.dispatchEvent(new Event('activateDateTimePickers'));
         })
         $('#add-feedback-view').load("{% url 'dashboard_events_add_feedback' event.id %}", function() {
           $('#add-feedback-view').find('form').attr('id', 'add-feedback-form')
           $('#add-feedback-form').attr('action', "{% url 'dashboard_events_add_feedback' event.id %}")
-          Dashboard.activateDateTimePickers()
+          window.dispatchEvent(new Event('activateDateTimePickers'));
         })
         {% if not event.attendance_event.get_payment and False %}
         $('#add-payment-view').load("{% url 'dashboard_events_add_payment' event.id %}", function() {
           $('#add-payment-view').find('form').attr('id', 'add-payment-form')
           $('#add-payment-form').attr('action', "{% url 'dashboard_events_add_payment' event.id %}")
-          Dashboard.activateDateTimePickers()
+          window.dispatchEvent(new Event('activateDateTimePickers'));
         })
         {% elif False %}
         $('#add-payment-price-view').load("{% url 'dashboard_events_add_payment_price' event.id event.attendance_event.get_payment.pk %}", function() {
