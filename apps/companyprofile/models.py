@@ -1,6 +1,5 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-from filebrowser.fields import FileBrowseField
 
 from apps.gallery.models import ResponsiveImage
 
@@ -13,8 +12,6 @@ class Company(models.Model):
     name = models.CharField(_("bedriftsnavn"), max_length=100)
     short_description = models.TextField(_("kort beskrivelse"))
     long_description = models.TextField(_("utdypende beskrivelse"), blank=True, null=True)
-    old_image = FileBrowseField(_("bilde"), max_length=200, directory=IMAGE_FOLDER,
-                                extensions=IMAGE_EXTENSIONS, null=False, blank=False)
     image = models.ForeignKey(ResponsiveImage, null=True, blank=False, default=None)
     site = models.CharField(_("hjemmeside"), max_length=100)
     email_address = models.EmailField(_("epostaddresse"), max_length=75, blank=True, null=True)
