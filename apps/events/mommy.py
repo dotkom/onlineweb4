@@ -109,4 +109,5 @@ class Message():
             self.end)
         return message
 
+
 schedule.register(SetEventMarks, day_of_week='mon-sun', hour=8, minute=0o5)

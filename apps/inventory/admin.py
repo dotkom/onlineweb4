@@ -18,4 +18,5 @@ class ItemAdmin(admin.ModelAdmin):
         'last_added'
     ]
 
+
 admin.site.register(Item, ItemAdmin)

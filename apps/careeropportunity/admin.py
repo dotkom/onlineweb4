@@ -9,4 +9,5 @@ from apps.careeropportunity.models import CareerOpportunity
 class CareerOpportunityAdmin(VersionAdmin):
     model = CareerOpportunity
 
+
 admin.site.register(CareerOpportunity, CareerOpportunityAdmin)
