@@ -153,6 +153,10 @@ const Dashboard = (function PrivateDashboard($) {
       // Check for existence of input fields that require bootstrap datetimepicker
       // And activate it on these objects.
       this.activateDateTimePickers();
+        
+      window.addEventListener('activateDateTimePickers', function() {
+        this.activateDateTimePickers();
+      });
 
       // Activate tablesorter on all tablesorter class tables
       $('.tablesorter').tablesorter();
