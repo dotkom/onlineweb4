@@ -153,8 +153,8 @@ const Dashboard = (function PrivateDashboard($) {
       // Check for existence of input fields that require bootstrap datetimepicker
       // And activate it on these objects.
       this.activateDateTimePickers();
-        
-      window.addEventListener('activateDateTimePickers', function() {
+
+      window.addEventListener('activateDateTimePickers', () => {
         this.activateDateTimePickers();
       });
 
