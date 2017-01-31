@@ -17,5 +17,6 @@ class ProxyChunkAdmin(VersionAdmin):
         offline = Chunk.objects.filter(Q(key='offline_ingress') | Q(key='offline_brodtekst'))
         return offline
 
+
 admin.site.register(ProxyChunk, ProxyChunkAdmin)
 admin.site.register(Issue)

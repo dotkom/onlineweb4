@@ -46,4 +46,5 @@ def trigger_group_syncer(sender, created=False, **kwargs):
         else:
             SynchronizeGroups.run()
 
+
 m2m_changed.connect(trigger_group_syncer, dispatch_uid=sync_uuid, sender=User.groups.through)
