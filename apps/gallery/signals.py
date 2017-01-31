@@ -16,6 +16,7 @@ def unhandled_image_delete(sender, instance, **kwargs):
     if instance.thumbnail:
         instance.thumbnail.delete(False)
 
+
 # Connect post_delete event with
 post_delete.connect(receiver=unhandled_image_delete, dispatch_uid=uuid.uuid1(), sender=UnhandledImage)
 
