@@ -2,22 +2,27 @@
 import logging
 import uuid
 
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
-# from django.db.models import signals
 from django.db.models.signals import m2m_changed, post_save
 from django.dispatch import receiver
 
-# from apps.authentication.models import OnlineUser
 from apps.authentication.tasks import SynchronizeGroups
+from apps.gsuite.mail_syncer.main import update_g_suite_user
 
 User = get_user_model()
 logger = logging.getLogger('syncer.%s' % __name__)
 sync_uuid = uuid.uuid1()
 
 
+def run_group_syncer(user):
+    SynchronizeGroups.run()
+    update_g_suite_user(settings.OW4_GSUITE_SYNC.get('DOMAIN'), user)
+
+
 @receiver(post_save, sender=Group)
-def trigger_group_syncer(sender, created=False, **kwargs):
+def trigger_group_syncer(sender, instance, created=False, **kwargs):
     """
     :param sender: The model that triggered this hook
     :param instance: The model instance triggering this hook
@@ -38,12 +43,12 @@ def trigger_group_syncer(sender, created=False, **kwargs):
             logger.debug('Disconnect m2m_changed signal hook with uuid %s before synchronizing groups' % sync_uuid)
             if m2m_changed.disconnect(sender=sender, dispatch_uid=sync_uuid):
                 logger.debug('Signal with uuid %s disconnected' % sync_uuid)
-                SynchronizeGroups.run()
+                run_group_syncer(instance)
 
             sync_uuid = uuid.uuid1()
             logger.debug('m2m_changed signal hook reconnected with uuid: %s' % sync_uuid)
             m2m_changed.connect(receiver=trigger_group_syncer, dispatch_uid=sync_uuid, sender=User.groups.through)
         else:
-            SynchronizeGroups.run()
+            run_group_syncer(instance)
 
 m2m_changed.connect(trigger_group_syncer, dispatch_uid=sync_uuid, sender=User.groups.through)
