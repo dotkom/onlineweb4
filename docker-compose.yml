@@ -21,10 +21,12 @@ services:
       - site-packages:/usr/local/lib/python3.6/site-packages
     ports:
       - "8000:8000"
+    depends_on:
+      - db
     links:
       - db
     environment:
-      - INSTANCE_TYPE=web
+      - DATABASE_URL
       - DJANGO_SETTINGS_MODULE=onlineweb4.settings
       - OW4_PYTHON_DONT_WRITE_BYTECODE
       - OW4_DJANGO_TEST_RUNNER
