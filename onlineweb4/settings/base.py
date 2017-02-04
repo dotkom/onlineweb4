@@ -425,6 +425,7 @@ OW4_GSUITE_SYNC = {
     'DOMAIN': 'online.ntnu.no',
     # DELEGATED_ACCOUNT: G Suite Account with proper permissions to perform insertions and removals.
     'DELEGATED_ACCOUNT': os.getenv('OW4_GSUITE_SYNC_DELEGATED_ACCOUNT'),
+    'ENABLED': False,
     'ENABLE_INSERT': False,
     'ENABLE_DELETE': False,
     # OW4 name (lowercase) -> G Suite name (lowercase)
