@@ -154,6 +154,10 @@ const Dashboard = (function PrivateDashboard($) {
       // And activate it on these objects.
       this.activateDateTimePickers();
 
+      window.addEventListener('activateDateTimePickers', () => {
+        this.activateDateTimePickers();
+      });
+
       // Activate tablesorter on all tablesorter class tables
       $('.tablesorter').tablesorter();
     },

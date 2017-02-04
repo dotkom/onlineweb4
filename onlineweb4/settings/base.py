@@ -1,10 +1,8 @@
 # -*- coding: utf8 -*-
 import os
 import sys
-import webpack_loader
 from webpack_resolve import create_resolve_file
 
-import wiki
 from django.contrib.messages import constants as messages
 
 # Directory that contains this file.
@@ -13,8 +11,6 @@ PROJECT_SETTINGS_DIRECTORY = os.path.dirname(globals()['__file__'])
 PROJECT_ROOT_DIRECTORY = os.path.join(PROJECT_SETTINGS_DIRECTORY, '..', '..')
 
 TEST_RUNNER = "django_nose.NoseTestSuiteRunner"
-
-NOSE_ARGS = ['--with-coverage', '--cover-package=apps', '--cover-html-dir=coverage', '--cover-xml', '--cover-html']
 
 DEBUG = False
 
@@ -92,10 +88,6 @@ STATICFILES_FINDERS = (
 #    'django.contrib.staticfiles.finders.DefaultStorageFinder',
 )
 
-# Including django-wiki static files so we can import the less files.
-DJANGO_WIKI_STATIC = os.path.join(os.path.dirname(wiki.__file__), 'static')
-create_resolve_file()
-
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -151,9 +143,6 @@ WSGI_APPLICATION = 'onlineweb4.wsgi.application'
 PIZZA_GROUP = 'dotkom'
 PIZZA_ADMIN_GROUP = 'pizzaadmin'
 
-# Grappelli settings
-GRAPPELLI_ADMIN_TITLE = 'Onlineweb'
-
 # Guardian settings
 ANONYMOUS_USER_NAME = 'anonymoususer'
 GUARDIAN_RENDER_403 = True
@@ -207,8 +196,6 @@ INSTALLED_APPS = (
     'mptt', # Wiki
     'sekizai', # Wiki
     'sorl.thumbnail', # Wiki
-    'grappelli',
-    'filebrowser',
     'chunks',
     'crispy_forms',
     'django_extensions',
@@ -476,3 +463,8 @@ for settings_module in ['filebrowser', 'django_wiki', 'local']:  # local last
     except ImportError as e:
         print("Could not import settings for '%s' : %s" % (settings_module,
                 str(e)))
+
+
+if DEBUG:
+    # Create webpack-extra-resolve.json
+    create_resolve_file()

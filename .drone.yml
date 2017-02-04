@@ -5,15 +5,15 @@ pipeline:
       event: pull_request
     commands:
       - cp onlineweb4/settings/example-local.py onlineweb4/settings/local.py
-      - npm install
-      - pip install -r requirements.txt -r requirements-testing.txt
+      - npm install --depth=0 --quiet
+      - pip install -r requirements.txt -r requirements-testing.txt --quiet
       - python webpack_resolve.py
       - npm run build:prod
       - npm run lint
       - isort -c -rc apps middleware scripts utils
       - flake8 apps middleware scripts utils
-      - python manage.py test -v 2
-      - pip install codecov
+      - py.test --cov=apps
+      - pip install codecov --quiet
       - codecov
   deploy:
     image: plugins/ssh
