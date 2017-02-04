@@ -15,6 +15,8 @@ COPY requirements.txt $APP_DIR/requirements.txt
 RUN pip install -r $APP_DIR/requirements.txt
 COPY requirements-prod.txt $APP_DIR/requirements-prod.txt
 RUN pip install -r $APP_DIR/requirements-prod.txt
+COPY requirements-testing.txt $APP_DIR/requirements-testing.txt
+RUN pip install -r $APP_DIR/requirements-testing.txt
 
 ENV DJANGO_SETTINGS_MODULE onlineweb4.settings
 

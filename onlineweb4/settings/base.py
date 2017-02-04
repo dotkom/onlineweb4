@@ -1,11 +1,8 @@
 # -*- coding: utf8 -*-
 import os
 import sys
-import webpack_loader
 from webpack_resolve import create_resolve_file
 
-import dj_database_url
-import wiki
 from django.contrib.messages import constants as messages
 from decouple import config
 
@@ -17,8 +14,6 @@ PROJECT_ROOT_DIRECTORY = os.path.join(PROJECT_SETTINGS_DIRECTORY, '..', '..')
 sys.dont_write_bytecode = config("OW4_PYTHON_DONT_WRITE_BYTECODE", cast=bool, default=True)
 
 TEST_RUNNER = config("OW4_DJANGO_TEST_RUNNER", default="django_nose.NoseTestSuiteRunner")
-
-NOSE_ARGS = ['--with-coverage', '--cover-package=apps', '--cover-html-dir=coverage', '--cover-xml', '--cover-html']
 
 DEBUG = config("OW4_DJANGO_DEBUG", cast=bool, default=False)
 
@@ -108,10 +103,6 @@ STATICFILES_FINDERS = (
 #    'django.contrib.staticfiles.finders.DefaultStorageFinder',
 )
 
-# Including django-wiki static files so we can import the less files.
-DJANGO_WIKI_STATIC = os.path.join(os.path.dirname(wiki.__file__), 'static')
-create_resolve_file()
-
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -162,9 +153,6 @@ ROOT_URLCONF = 'onlineweb4.urls'
 
 # Python dotted path to the WSGI application used by Django's runserver.
 WSGI_APPLICATION = 'onlineweb4.wsgi.application'
-
-# Grappelli settings
-GRAPPELLI_ADMIN_TITLE = 'Onlineweb'
 
 # Guardian settings
 ANONYMOUS_USER_NAME = 'anonymoususer'
@@ -219,8 +207,6 @@ INSTALLED_APPS = (
     'mptt', # Wiki
     'sekizai', # Wiki
     'sorl.thumbnail', # Wiki
-    'grappelli',
-    'filebrowser',
     'chunks',
     'crispy_forms',
     'django_extensions',
@@ -482,3 +468,7 @@ for settings_module in ['filebrowser', 'django_wiki', 'local']:  # local last
         exec('from .%s import *' % settings_module)
     except ImportError as e:
         print("Could not import settings for '%s' : %s" % (settings_module, str(e)))
+
+if DEBUG:
+    # Create webpack-extra-resolve.json
+    create_resolve_file()

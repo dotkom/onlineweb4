@@ -5,9 +5,12 @@
     @fa-font-path: "/static/wiki/font-awesome/font";
     @icon-font-path: "/static/fonts/";
 
-    // Temporary fix until we upgrade django-wiki to >0.0.23
+    // OW4 and django-wiki have different Bootstrap versions which screwed up modals
     .modal {
         z-index: 1050;
+    }
+    .modal-backdrop {
+        z-index: 0;
     }
 
     // Wrapping the less file with #wiki and using extended mixins

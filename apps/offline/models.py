@@ -6,7 +6,6 @@ from chunks.models import Chunk
 from django.conf import settings
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-from filebrowser.fields import FileBrowseField
 
 THUMBNAIL_HEIGHT = 200  # Ønsket høyde på thumbnail
 IMAGE_FOLDER = "images/offline"
@@ -23,7 +22,7 @@ class Issue(models.Model):
     title = models.CharField(_("tittel"), max_length=50)
     release_date = models.DateField(_("utgivelsesdato"))
     description = models.TextField(_("beskrivelse"), blank=True, null=True)
-    issue = FileBrowseField(_("pdf"), directory=IMAGE_FOLDER, max_length=500, extensions=['.pdf'])
+    issue = models.FileField(_("pdf"), max_length=500, upload_to=IMAGE_FOLDER)
 
     def release_date_to_string(self):
         month = {
