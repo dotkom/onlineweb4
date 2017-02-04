@@ -74,14 +74,12 @@ def get_user(original_user, gsuite=False, ow4=False):
     return ow4_user if ow4 else gsuite_user
 
 
-def insert_ow4_user_into_g_suite_group(domain, group_name, ow4_user):
+def insert_ow4_user_into_g_suite_group(domain, group_name, ow4_user, suppress_http_errors=False):
     if not ow4_user.online_mail:
         logger.error("OW4 User '{user}' ({user.pk}) missing Online email address! (current: '{user.online_mail}')".
                      format(user=ow4_user),
                      extra={'user': ow4_user, 'group': group_name})
         return
-        # @ToDo: This should probably trigger an error or notification, so we easily can identify this issue.
-        # However, it should not stop execution of other, potentially safe, updates.
 
     if not settings.OW4_GSUITE_SYNC.get('ENABLE_INSERT', False):
         logger.debug('Skipping inserting user "{user}" since ENABLE_INSERT is False.'.format(user=ow4_user))
@@ -96,15 +94,22 @@ def insert_ow4_user_into_g_suite_group(domain, group_name, ow4_user):
 
     directory = setup_g_suite_client()
 
-    resp = directory.members().insert(body=g_suite_user_dict, groupKey=group_key).execute()
     logger.info("Inserting '{user}' into G Suite group '{group}'.".format(user=ow4_user, group=group_key),
                 extra={'user': ow4_user, 'group': group_name})
+    resp = None
+    try:
+        resp = directory.members().insert(body=g_suite_user_dict, groupKey=group_key).execute()
+    except HttpError as err:
+        logger.error('HttpError when inserting into G Suite group: {err}'.format(err=err),
+                     extra={'suppress_http_error': suppress_http_errors})
+        if not suppress_http_errors:
+            raise err
     logger.debug("Inserting response: {resp}".format(resp=resp))
 
     return resp
 
 
-def remove_g_suite_user_from_group(domain, group_name, g_suite_user):
+def remove_g_suite_user_from_group(domain, group_name, g_suite_user, suppress_http_errors=False):
     if isinstance(g_suite_user, str):
         user_key = get_user_key(domain, g_suite_user)
     else:
@@ -122,15 +127,23 @@ def remove_g_suite_user_from_group(domain, group_name, g_suite_user):
 
     directory = setup_g_suite_client()
 
-    resp = directory.members().delete(groupKey=group_key, memberKey=user_key).execute()
     logger.info("Removing '{user}' from G Suite group '{group}'.".format(user=user_key, group=group_key),
                  extra={'user': user_key, 'group': group_key})
+
+    resp = None
+    try:
+        resp = directory.members().delete(groupKey=group_key, memberKey=user_key).execute()
+    except HttpError as err:
+        logger.error('HttpError when deleting user "{user}" from G Suite group: {err}'.format(err=err, user=user_key),
+                     extra={'suppress_http_error': suppress_http_errors})
+        if not suppress_http_errors:
+            raise err
     logger.debug('Removal of user response: {resp}'.format(resp=resp))
 
     return resp
 
 
-def get_g_suite_users_for_group(domain, group_name):
+def get_g_suite_users_for_group(domain, group_name, suppress_http_errors=False):
     # G Suite Group Key
     group_key = get_group_key(domain, group_name)
     logger.debug("Getting G Suite member list for '{group}'.".format(group=group_key))
@@ -141,14 +154,15 @@ def get_g_suite_users_for_group(domain, group_name):
     try:
         members = directory.members().list(groupKey=group_key).execute().get('members')
     except HttpError as e:
-        logger.error('HttpError when requesting user list: %s' % e)
-        # @ToDo: Find out how to handle this properly.
-        raise e
+        logger.error('HttpError when requesting user list: {err}'.format(err=e),
+                     extra={'suppress_http_error': suppress_http_errors})
+        if not suppress_http_errors:
+            raise e
 
     return members
 
 
-def get_g_suite_groups_for_user(domain, _user):
+def get_g_suite_groups_for_user(domain, _user, suppress_http_errors=False):
     user = get_user(_user, gsuite=True)
 
     user_key = get_user_key(domain, user)
@@ -157,12 +171,14 @@ def get_g_suite_groups_for_user(domain, _user):
 
     directory = setup_g_suite_client()
 
+    groups = []
     try:
         groups = directory.groups().list(userKey=user_key).execute().get('groups')
     except HttpError as e:
-        logger.error('HttpError when requesting user group membership list: %s' % e)
-        # @ToDo: Find out how to handle this properly.
-        raise e
+        logger.error('HttpError when requesting user group membership list: {err}'.format(err=e),
+                     extra={'suppress_http_error': suppress_http_errors})
+        if not suppress_http_errors:
+            raise e
 
     return groups
 
