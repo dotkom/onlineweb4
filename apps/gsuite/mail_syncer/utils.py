@@ -2,7 +2,6 @@ import logging
 
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
-from django.core.management.base import BaseCommand
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 from oauth2client.service_account import ServiceAccountCredentials
@@ -29,7 +28,7 @@ def _check_setup_ok():
     if not settings.OW4_GSUITE_SYNC.get('DELEGATED_ACCOUNT'):
         logger.error('To be able to actually execute calls towards G Suite you must define DELEGATED_ACCOUNT.')
     if settings.OW4_GSUITE_SYNC.get('ENABLED') and (
-        not settings.OW4_GSUITE_SYNC.get('ENABLE_INSERT') or not settings.OW4_GSUITE_SYNC.get('ENABLE_DELETE')):
+            not settings.OW4_GSUITE_SYNC.get('ENABLE_INSERT') or not settings.OW4_GSUITE_SYNC.get('ENABLE_DELETE')):
         logger.error('To be able to execute unsafe calls towards G Suite you must allow this in settings.')
         raise ImproperlyConfigured('To actually execute unsafe calls to G Suite, allow this in OW4 settings.')
     return True
@@ -38,7 +37,7 @@ def _check_setup_ok():
 def get_group_key(domain, group_name):
     if not domain or not group_name:
         raise ValueError('You need to pass a domain and a user when generating user key.')
-    
+
     email_domain = "@%s" % domain
     if email_domain in group_name:
         return group_name
@@ -58,11 +57,11 @@ def get_user_key(domain, user):
 def get_user(original_user, gsuite=False, ow4=False):
     if not gsuite or ow4:
         raise ValueError('You need to pass either gsuite=True or ow4=True to cast user to that type.')
-    
+
     gsuite_user = None
     ow4_user = None
 
-    if isinstance(original_user , User):
+    if isinstance(original_user, User):
         ow4_user = original_user
         gsuite_user = ow4_user.online_mail
     else:
@@ -72,7 +71,7 @@ def get_user(original_user, gsuite=False, ow4=False):
         except User.DoesNotExist as e:
             logger.warning('User "%s" does not exist on OW4!' % original_user)
             raise e
-    
+
     return ow4_user if ow4 else gsuite_user
 
 
@@ -105,7 +104,7 @@ def insert_ow4_user_into_g_suite_group(domain, group_name, ow4_user):
 def remove_g_suite_user_from_group(domain, group_name, g_suite_user):
     if isinstance(g_suite_user, str):
         user_key = get_user_key(domain, g_suite_user)
-    else: 
+    else:
         user_key = g_suite_user.get('email')
     if 'leder@%s' % domain == user_key or 'nestleder@%s' % domain == user_key:
         # Not removing these guys from any lists.
@@ -146,7 +145,7 @@ def get_g_suite_users_for_group(domain, group_name):
 def get_g_suite_groups_for_user(domain, _user):
     if not _check_setup_ok():
         return []
-    
+
     user = get_user(_user, gsuite=True)
 
     user_key = get_user_key(domain, user)
@@ -173,7 +172,7 @@ def get_appropriate_g_suite_group_names_for_user(domain, user):
     for group in user_groups:
         if group.name.lower() in g_suite_groups.keys():
             g_suite_user_groups.append(group.name.lower())
-    
+
     return g_suite_user_groups
 
 
@@ -188,7 +187,7 @@ def get_missing_g_suite_group_names_for_user(domain, user):
     for group in user_should_be_in_groups:
         if group not in user_is_in_groups:
             missing_groups.append(group)
-    
+
     return missing_groups
 
 
@@ -204,8 +203,8 @@ def get_excess_groups_for_user(domain, user):
         # Make sure not to remove mailing list managers from lists they have to be in.
         if group_name in available_groups and group_name not in user_should_be_in_groups:
             excess_groups.append(group.get('name'))
-    
-    return excess_groups    
+
+    return excess_groups
 
 
 def check_amount_of_members_ow4_g_suite(g_suite_members, ow4_users, quiet=False):

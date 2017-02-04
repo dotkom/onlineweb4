@@ -1,10 +1,14 @@
+import logging
+
 from django.conf import settings
+from django.core.management import BaseCommand
 
 from apps.gsuite.mail_syncer.main import update_g_suite_group
-from apps.gsuite.mail_syncer.utils import (
-    get_g_suite_users_for_group, get_ow4_users_for_group, check_amount_of_members_ow4_g_suite,
-    check_emails_match_each_other
-)
+from apps.gsuite.mail_syncer.utils import (check_amount_of_members_ow4_g_suite,
+                                           check_emails_match_each_other,
+                                           get_g_suite_users_for_group, get_ow4_users_for_group)
+
+logger = logging.getLogger(__name__)
 
 
 class Command(BaseCommand):

@@ -1,12 +1,11 @@
 import logging
 
-from django.conf import settings
-
-from apps.gsuite.mail_syncer.utils import (
-    get_missing_g_suite_group_names_for_user, get_excess_groups_for_user, _get_excess_users_in_g_suite,
-    _get_missing_ow4_users_for_g_suite, insert_ow4_user_into_g_suite_group, remove_g_suite_user_from_group
-)
-
+from apps.gsuite.mail_syncer.utils import (_get_excess_users_in_g_suite,
+                                           _get_missing_ow4_users_for_g_suite,
+                                           get_excess_groups_for_user,
+                                           get_missing_g_suite_group_names_for_user,
+                                           insert_ow4_user_into_g_suite_group,
+                                           remove_g_suite_user_from_group)
 
 logger = logging.getLogger(__name__)
 
@@ -21,6 +20,7 @@ def remove_excess_g_suite_users(domain, group_name, g_suite_excess_users):
 
     for excess_user in g_suite_excess_users:
         resp = remove_g_suite_user_from_group(domain, group_name, excess_user)
+        logger.debug('Response from cleaning: %s' % resp)
 
 
 def insert_ow4_user_into_groups(domain, user, group_names):
