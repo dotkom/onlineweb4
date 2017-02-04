@@ -2,14 +2,14 @@ import logging
 
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
-from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
-from oauth2client.service_account import ServiceAccountCredentials
 
 from apps.authentication.models import OnlineUser as User
+from apps.gsuite.auth import build_and_authenticate_g_suite_service
 
 logger = logging.getLogger(__name__)
 
+# Scopes for the directory API
 scopes = [
     'https://www.googleapis.com/auth/admin.directory.group',
     'https://www.googleapis.com/auth/admin.directory.group.member',
@@ -17,23 +17,16 @@ scopes = [
     'https://www.googleapis.com/auth/admin.directory.user.alias',
 ]
 
-credentials = None
-if settings.OW4_GSUITE_SYNC.get('ENABLED'):
-    credentials = ServiceAccountCredentials.from_json_keyfile_name(
-        settings.OW4_GSUITE_SYNC.get('CREDENTIALS'), scopes=scopes)
-    credentials = credentials.create_delegated(settings.OW4_GSUITE_SYNC.get('DELEGATED_ACCOUNT'))
 
-directory = build('admin', 'directory_v1', credentials=credentials)
-
-
-def _check_setup_ok():
+def setup_g_suite_client():
     if not settings.OW4_GSUITE_SYNC.get('DELEGATED_ACCOUNT'):
         logger.error('To be able to actually execute calls towards G Suite you must define DELEGATED_ACCOUNT.')
     if settings.OW4_GSUITE_SYNC.get('ENABLED') and (
             not settings.OW4_GSUITE_SYNC.get('ENABLE_INSERT') or not settings.OW4_GSUITE_SYNC.get('ENABLE_DELETE')):
         logger.error('To be able to execute unsafe calls towards G Suite you must allow this in settings.')
         raise ImproperlyConfigured('To actually execute unsafe calls to G Suite, allow this in OW4 settings.')
-    return True
+
+    return build_and_authenticate_g_suite_service('admin', 'directory_v1', scopes)
 
 
 def get_group_key(domain, group_name):
@@ -96,6 +89,8 @@ def insert_ow4_user_into_g_suite_group(domain, group_name, ow4_user):
         'role': 'MEMBER',
     }
 
+    directory = setup_g_suite_client()
+
     logger.info("Inserting '%s' into G Suite group '%s'." % (ow4_user.online_mail, group_key))
     resp = directory.members().insert(body=g_suite_user_dict, groupKey=group_key).execute()
     logger.debug("Inserting response: %s" % resp)
@@ -118,6 +113,8 @@ def remove_g_suite_user_from_group(domain, group_name, g_suite_user):
 
     group_key = get_group_key(domain, group_name)
 
+    directory = setup_g_suite_client()
+
     logger.debug("Removing '%s' from G Suite group '%s'." % (user_key, group_key))
     resp = directory.members().delete(groupKey=group_key, memberKey=user_key).execute()
     logger.debug('Removal of user response: %s' % resp)
@@ -126,12 +123,14 @@ def remove_g_suite_user_from_group(domain, group_name, g_suite_user):
 
 
 def get_g_suite_users_for_group(domain, group_name):
-    if not _check_setup_ok():
+    if not setup_g_suite_client():
         return []
 
     # G Suite Group Key
     group_key = get_group_key(domain, group_name)
     logger.debug("Getting G Suite member list for '%s'." % group_key)
+
+    directory = setup_g_suite_client()
 
     members = []
     try:
@@ -145,13 +144,15 @@ def get_g_suite_users_for_group(domain, group_name):
 
 
 def get_g_suite_groups_for_user(domain, _user):
-    if not _check_setup_ok():
+    if not setup_g_suite_client():
         return []
 
     user = get_user(_user, gsuite=True)
 
     user_key = get_user_key(domain, user)
     logger.debug("Getting G Suite user membership list for '%s'." % user_key)
+
+    directory = setup_g_suite_client()
 
     try:
         groups = directory.groups().list(userKey=user_key).execute().get('groups')
