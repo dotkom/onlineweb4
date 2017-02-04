@@ -38,6 +38,8 @@ django-formset-js==0.5.0        # used to dynamically create new formsets
 django-cors-headers==1.1.0      # Enable CORS for Nibble
 django-datetime-widget==0.9.3   # Datetime widget for forms
 django-webpack-loader==0.3.3    # Integration with webpack
+dj-database-url==0.4.2          # Allows to configure databases using URLs
+python-decouple==3.0            # Configuration and settings management
 
 #test tools
 django-nose>=1.4,<1.5           # We use this test runner locally
