@@ -17,9 +17,11 @@ scopes = [
     'https://www.googleapis.com/auth/admin.directory.user.alias',
 ]
 
-credentials = ServiceAccountCredentials.from_json_keyfile_name(
-    settings.OW4_GSUITE_SYNC.get('CREDENTIALS'), scopes=scopes)
-credentials = credentials.create_delegated(settings.OW4_GSUITE_SYNC.get('DELEGATED_ACCOUNT'))
+credentials = None
+if settings.OW4_GSUITE_SYNC.get('ENABLED'):
+    credentials = ServiceAccountCredentials.from_json_keyfile_name(
+        settings.OW4_GSUITE_SYNC.get('CREDENTIALS'), scopes=scopes)
+    credentials = credentials.create_delegated(settings.OW4_GSUITE_SYNC.get('DELEGATED_ACCOUNT'))
 
 directory = build('admin', 'directory_v1', credentials=credentials)
 
