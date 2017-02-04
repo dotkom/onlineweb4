@@ -123,9 +123,6 @@ def remove_g_suite_user_from_group(domain, group_name, g_suite_user):
 
 
 def get_g_suite_users_for_group(domain, group_name):
-    if not setup_g_suite_client():
-        return []
-
     # G Suite Group Key
     group_key = get_group_key(domain, group_name)
     logger.debug("Getting G Suite member list for '%s'." % group_key)
@@ -144,9 +141,6 @@ def get_g_suite_users_for_group(domain, group_name):
 
 
 def get_g_suite_groups_for_user(domain, _user):
-    if not setup_g_suite_client():
-        return []
-
     user = get_user(_user, gsuite=True)
 
     user_key = get_user_key(domain, user)
