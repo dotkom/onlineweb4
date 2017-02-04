@@ -31,22 +31,26 @@ def setup_g_suite_client():
 
 def get_group_key(domain, group_name):
     if not domain or not group_name:
-        raise ValueError('You need to pass a domain and a user when generating user key.')
+        logger.error('You need to pass a domain and a group when generating group key.',
+                     extra={'domain': domain, 'group': group_name})
+        raise ValueError('You need to pass a domain and a group when generating group key.')
 
-    email_domain = "@%s" % domain
+    email_domain = "@{domain}".format(domain=domain)
     if email_domain in group_name:
         return group_name
-    return '%(group)s@%(domain)s' % {'group': group_name, 'domain': domain}
+    return '{group}@{domain}'.format(group=group_name, domain=domain)
 
 
 def get_user_key(domain, user):
     if not domain or not user:
+        logger.error('You need to pass a domain and a user when generating user key.',
+                     extra={'domain': domain, 'group': user})
         raise ValueError('You need to pass a domain and a user when generating user key.')
 
-    email_domain = "@%s" % domain
+    email_domain = "@{domain}".format(domain=domain)
     if email_domain in user:
         return user
-    return "%s%s" % (user, email_domain)
+    return "{user_email}{email_domain}".format(user_email=user, email_domain=email_domain)
 
 
 def get_user(original_user, gsuite=False, ow4=False):
@@ -64,7 +68,7 @@ def get_user(original_user, gsuite=False, ow4=False):
         try:
             ow4_user = User.objects.get(online_mail__iexact=original_user)
         except User.DoesNotExist as e:
-            logger.warning('User "%s" does not exist on OW4!' % original_user)
+            logger.warning('User "{user}" does not exist on OW4!'.format(user=original_user))
             raise e
 
     return ow4_user if ow4 else gsuite_user
@@ -72,14 +76,15 @@ def get_user(original_user, gsuite=False, ow4=False):
 
 def insert_ow4_user_into_g_suite_group(domain, group_name, ow4_user):
     if not ow4_user.online_mail:
-        logger.error("OW4 User '%s' (#%i) missing Online email address! (current: '%s')"
-                     % (ow4_user.get_full_name(), ow4_user.id, ow4_user.online_mail))
+        logger.error("OW4 User '{user}' ({user.pk}) missing Online email address! (current: '{user.online_mail}')".
+                     format(user=ow4_user),
+                     extra={'user': ow4_user, 'group': group_name})
         return
         # @ToDo: This should probably trigger an error or notification, so we easily can identify this issue.
         # However, it should not stop execution of other, potentially safe, updates.
 
     if not settings.OW4_GSUITE_SYNC.get('ENABLE_INSERT', False):
-        logger.debug('Skipping inserting user %s since ENABLE_INSERT is False.' % ow4_user)
+        logger.debug('Skipping inserting user "{user}" since ENABLE_INSERT is False.'.format(user=ow4_user))
         return
 
     group_key = get_group_key(domain, group_name)
@@ -91,9 +96,10 @@ def insert_ow4_user_into_g_suite_group(domain, group_name, ow4_user):
 
     directory = setup_g_suite_client()
 
-    logger.info("Inserting '%s' into G Suite group '%s'." % (ow4_user.online_mail, group_key))
     resp = directory.members().insert(body=g_suite_user_dict, groupKey=group_key).execute()
-    logger.debug("Inserting response: %s" % resp)
+    logger.info("Inserting '{user}' into G Suite group '{group}'.".format(user=ow4_user, group=group_key),
+                extra={'user': ow4_user, 'group': group_name})
+    logger.debug("Inserting response: {resp}".format(resp=resp))
 
     return resp
 
@@ -103,21 +109,23 @@ def remove_g_suite_user_from_group(domain, group_name, g_suite_user):
         user_key = get_user_key(domain, g_suite_user)
     else:
         user_key = g_suite_user.get('email')
-    if 'leder@%s' % domain == user_key or 'nestleder@%s' % domain == user_key:
+    if 'leder@{domain}'.format(domain=domain) == user_key or 'nestleder@{domain}'.format(domain=domain) == user_key:
         # Not removing these guys from any lists.
+        logger.debug('Skipping removing user "{user}" since (s)he should be on all lists.'.format(user=user_key))
         return
 
     if not settings.OW4_GSUITE_SYNC.get('ENABLE_DELETE', False):
-        logger.debug('Skipping removing user %s since ENABLE_DELETE is False.' % g_suite_user)
+        logger.debug('Skipping removing user "{user}" since ENABLE_DELETE is False.'.format(user=user_key))
         return
 
     group_key = get_group_key(domain, group_name)
 
     directory = setup_g_suite_client()
 
-    logger.debug("Removing '%s' from G Suite group '%s'." % (user_key, group_key))
     resp = directory.members().delete(groupKey=group_key, memberKey=user_key).execute()
-    logger.debug('Removal of user response: %s' % resp)
+    logger.info("Removing '{user}' from G Suite group '{group}'.".format(user=user_key, group=group_key),
+                 extra={'user': user_key, 'group': group_key})
+    logger.debug('Removal of user response: {resp}'.format(resp=resp))
 
     return resp
 
@@ -125,7 +133,7 @@ def remove_g_suite_user_from_group(domain, group_name, g_suite_user):
 def get_g_suite_users_for_group(domain, group_name):
     # G Suite Group Key
     group_key = get_group_key(domain, group_name)
-    logger.debug("Getting G Suite member list for '%s'." % group_key)
+    logger.debug("Getting G Suite member list for '{group}'.".format(group=group_key))
 
     directory = setup_g_suite_client()
 
@@ -144,7 +152,8 @@ def get_g_suite_groups_for_user(domain, _user):
     user = get_user(_user, gsuite=True)
 
     user_key = get_user_key(domain, user)
-    logger.debug("Getting G Suite user membership list for '%s'." % user_key)
+    logger.debug("Getting G Suite user membership list for '{user}'.".format(user=user_key),
+                 extra={'user': user_key})
 
     directory = setup_g_suite_client()
 
@@ -179,7 +188,9 @@ def get_missing_g_suite_group_names_for_user(domain, user):
 
     missing_groups = []
 
-    logger.debug('"%s" is currently in "%s", should be in "%s".' % (user, user_should_be_in_groups, user_is_in_groups))
+    logger.debug('"{user}" is currently in "{in_groups}", should be in "{should_be_in_groups}".'.format(
+        user=user, in_groups=user_is_in_groups, should_be_in_groups=user_should_be_in_groups),
+        extra={'user': user})
 
     for group in user_should_be_in_groups:
         if group not in user_is_in_groups:
@@ -211,12 +222,14 @@ def check_amount_of_members_ow4_g_suite(g_suite_members, ow4_users, quiet=False)
         return True
     elif g_suite_count > ow4_count:
         if not quiet:
-            logger.debug('There are more users in G Suite (%i) than on OW4 (%i). '
-                         'Need to trim inactive users from G Suite.' % (g_suite_count, ow4_count))
+            logger.debug('There are more users in G Suite ({g_suite_count}) than on OW4 ({ow4_count}). '
+                         'Need to trim inactive users from G Suite.'.format(g_suite_count=g_suite_count,
+                                                                            ow4_count=ow4_count))
     else:
         if not quiet:
-            logger.debug('There are more users on OW4 (%i) than in G Suite (%i). '
-                         'Need to update G Suite with new members.' % (ow4_count, g_suite_count))
+            logger.debug('There are more users on OW4 ({ow4_count}) than in G Suite ({g_suite_count}). '
+                         'Need to update G Suite with new members.'.format(g_suite_count=g_suite_count,
+                                                                            ow4_count=ow4_count))
     return False
 
 
@@ -227,7 +240,8 @@ def check_emails_match_each_other(g_suite_users, ow4_users):
     logger.debug('Verifying that all users match to an email address.')
     for gsuite_user, ow4_user in zip(g_suite_users, ow4_users.order_by('first_name')):
         if ow4_user.online_mail != gsuite_user.get('email'):
-            logger.warning("Emails do not match! '%s' != '%s'" % (ow4_user.online_mail, gsuite_user.get('email')))
+            logger.debug("Emails do not match! '{ow4_user_email}' != '{g_suite_user_email}'".format(
+                ow4_user_email=ow4_user.online_mail, g_suite_user_email=gsuite_user.get('email')))
             return False
     return True
 
@@ -241,16 +255,16 @@ def _get_excess_users_in_g_suite(g_suite_users, ow4_users):
         except User.DoesNotExist:
             excess_users.append(user)
 
-    logger.debug('Excess users in G Suite: %s' % excess_users)
+    logger.debug('Excess users in G Suite: {excess_users}'.format(excess_users=excess_users))
     return excess_users
 
 
 def _get_g_suite_user_from_g_suite_user_list(g_suite_users, g_suite_email):
     for user in g_suite_users:
         if g_suite_email == user.get('email'):
-            logger.debug("Found user with G Suite email address '%s'" % g_suite_email)
+            logger.debug("Found user with G Suite email address '{g_suite_email}'".format(g_suite_email=g_suite_email))
             return user
-    logger.debug("Could not find user with G Suite email address '%s'" % g_suite_email)
+    logger.debug("Could not find user with G Suite email address '{g_suite_email}'".format(g_suite_email=g_suite_email))
     return None
 
 
@@ -261,5 +275,6 @@ def _get_missing_ow4_users_for_g_suite(g_suite_users, ow4_users):
         if not _get_g_suite_user_from_g_suite_user_list(g_suite_users, ow4_user.online_mail):
             missing_users.append(ow4_user)
 
-    logger.debug('OW4 users missing in G Suite(%i): %s' % (len(missing_users), missing_users))
+    logger.debug('OW4 users missing in G Suite ({missing_users_count}): {missing_users}'.format(
+        missing_users_count=len(missing_users), missing_users=missing_users))
     return missing_users

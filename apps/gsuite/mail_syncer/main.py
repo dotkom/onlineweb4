@@ -16,23 +16,26 @@ def insert_ow4_users_into_g_suite(domain, group_name, missing_users):
 
 
 def remove_excess_g_suite_users(domain, group_name, g_suite_excess_users):
-    logger.info("Cleaning G Suite group '%s' (Removing %s)" % (group_name, g_suite_excess_users))
+    logger.info("Cleaning G Suite group '{group}'.".format(group=group_name),
+                extra={'group': group_name, 'excess_users': g_suite_excess_users})
 
     for excess_user in g_suite_excess_users:
         resp = remove_g_suite_user_from_group(domain, group_name, excess_user)
-        logger.debug('Response from cleaning: %s' % resp)
+        logger.debug('Response from cleaning {group_name}: {resp}'.format(group_name=group_name, resp=resp))
 
 
 def insert_ow4_user_into_groups(domain, user, group_names):
-    logger.debug('Inserting %s into new G Suite groups (%s)' % (user, group_names))
-    groups = ["%s@online.ntnu.no" % group_name for group_name in group_names]
+    logger.info('Inserting {user} into some new G Suite groups.'.format(user=user),
+                extra={'new_groups': group_names, 'user': user})
+    groups = ["{group}@{domain}".format(group=group_name, domain=domain) for group_name in group_names]
     for group in groups:
         insert_ow4_user_into_g_suite_group(domain, group, user)
 
 
 def cleanup_groups_for_user(domain, user):
     excess_groups = get_excess_groups_for_user(domain, user)
-    logger.debug('Removing %s from some G Suite groups (%s)' % (user, excess_groups))
+    logger.debug('Removing "{user}" from some G Suite groups.'.format(user=user),
+                 extra={'user': user, 'excess_groups': excess_groups})
     for group in excess_groups:
         remove_g_suite_user_from_group(domain, group, user.online_mail)
 
