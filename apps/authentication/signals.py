@@ -18,7 +18,8 @@ sync_uuid = uuid.uuid1()
 
 def run_group_syncer(user):
     SynchronizeGroups.run()
-    update_g_suite_user(settings.OW4_GSUITE_SYNC.get('DOMAIN'), user)
+    if settings.OW4_GSUITE_SYNC.get('ENABLED', False):
+        update_g_suite_user(settings.OW4_GSUITE_SYNC.get('DOMAIN'), user)
 
 
 @receiver(post_save, sender=Group)
