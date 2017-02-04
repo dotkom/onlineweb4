@@ -1,4 +1,4 @@
-Django>=1.9,<1.10
+Django>=1.10,<1.11
 Pillow==4.0.0                   # PIL fork (Python Imaging Library)
 django-tastypie==0.13.3         # API v0 - Use git master until django 1.9 release   v
 djangorestframework==3.5.3      # API v1
@@ -37,6 +37,8 @@ django-formset-js==0.5.0        # used to dynamically create new formsets
 django-cors-headers==2.0.1      # Enable CORS for Nibble
 django-datetime-widget==0.9.3   # Datetime widget for forms
 django-webpack-loader==0.4.1    # Integration with webpack
+dj-database-url==0.4.2          # Allows to configure databases using URLs
+python-decouple==3.0            # Configuration and settings management
 
 #test tools
 django-nose>=1.4,<1.5           # We use this test runner locally
