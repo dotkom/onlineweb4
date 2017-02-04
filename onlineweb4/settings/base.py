@@ -1,10 +1,11 @@
 # -*- coding: utf8 -*-
 import os
 import sys
-from webpack_resolve import create_resolve_file
 
-from django.contrib.messages import constants as messages
+import dj_database_url
 from decouple import config
+from django.contrib.messages import constants as messages
+from webpack_resolve import create_resolve_file
 
 # Directory that contains this file.
 PROJECT_SETTINGS_DIRECTORY = os.path.dirname(globals()['__file__'])
