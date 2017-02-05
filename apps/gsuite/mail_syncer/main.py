@@ -103,7 +103,7 @@ def update_g_suite_group(domain, group_name, g_suite_users, ow4_users):
     :param g_suite_users: A list of G Suite users to update group memberships for.
     :type g_suite_users: list
     :param ow4_users: A list of OW4 users to update group memberships for.
-    :type ow4_users: list
+    :type ow4_users: django.db.models.QuerySet
     """
     excess_users = _get_excess_users_in_g_suite(g_suite_users, ow4_users)
     missing_users = _get_missing_ow4_users_for_g_suite(g_suite_users, ow4_users)
