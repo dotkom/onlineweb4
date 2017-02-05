@@ -1,4 +1,4 @@
-Django>=1.9,<1.10
+Django>=1.10,<1.11
 Pillow==4.0.0                   # PIL fork (Python Imaging Library)
 django-tastypie==0.13.3         # API v0 - Use git master until django 1.9 release   v
 djangorestframework==3.5.3      # API v1
@@ -10,6 +10,7 @@ markdown2==2.3.3                # textarea text formatting
 pytz                            # Timezone lib
 stripe==1.46.0                  # Stripe payment
 icalendar==3.11.2                # iCalendar generation
+google-api-python-client==1.6.1
 
 # third party deps
 # django-filebrowser==3.5.4     # File uploading
