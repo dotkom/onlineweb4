@@ -1,27 +1,38 @@
 # -*- coding: utf8 -*-
 import os
 import sys
-from webpack_resolve import create_resolve_file
 
+import dj_database_url
+from decouple import config
 from django.contrib.messages import constants as messages
+from webpack_resolve import create_resolve_file
 
 # Directory that contains this file.
 PROJECT_SETTINGS_DIRECTORY = os.path.dirname(globals()['__file__'])
 # Root directory. Contains manage.py
 PROJECT_ROOT_DIRECTORY = os.path.join(PROJECT_SETTINGS_DIRECTORY, '..', '..')
 
-TEST_RUNNER = "django_nose.NoseTestSuiteRunner"
+sys.dont_write_bytecode = config("OW4_PYTHON_DONT_WRITE_BYTECODE", cast=bool, default=True)
 
-DEBUG = False
+TEST_RUNNER = config("OW4_DJANGO_TEST_RUNNER", default="django_nose.NoseTestSuiteRunner")
+
+DEBUG = config("OW4_DJANGO_DEBUG", cast=bool, default=False)
 
 INTERNAL_IPS = (
     '127.0.0.1',
 )
 
+ALLOWED_HOSTS = config("OW4_DJANGO_ALLOWED_HOSTS", default='*')
+
 ADMINS = (
     ('dotKom', 'dotkom@online.ntnu.no'),
 )
 MANAGERS = ADMINS
+
+DATABASES = {
+    # Set this using the environment variable "DATABASE_URL"
+    'default': dj_database_url.config(default="sqlite:///%s/db.db" % PROJECT_ROOT_DIRECTORY),
+}
 
 # Email settings
 DEFAULT_FROM_EMAIL = 'online@online.ntnu.no'
@@ -34,6 +45,8 @@ EMAIL_HS = 'hs@online.ntnu.no'
 EMAIL_ITEX = 'itex@online.ntnu.no'
 EMAIL_PROKOM = 'prokom@online.ntnu.no'
 EMAIL_TRIKOM = 'trikom@online.ntnu.no'
+
+EMAIL_BACKEND = config("OW4_DJANGO_EMAIL_BACKEND", default='django.core.mail.backends.console.EmailBackend')
 
 # We will receive errors and other django messages from this email
 SERVER_EMAIL = 'onlineweb4-error@online.ntnu.no'
@@ -55,25 +68,28 @@ USE_I18N = True
 USE_L10N = True
 USE_TZ = True
 DATETIME_FORMAT = 'N j, Y, H:i'
-SECRET_KEY = 'override-this-in-local.py'
+SECRET_KEY = config("OW4_DJANGO_SECRET_KEY", default='override-this-in-local.py')
 
 # Session cookie expires after one year
 SESSION_COOKIE_AGE = 31540000
 
 # Override this in local if you need to :)
-BASE_URL = 'https://online.ntnu.no'
+BASE_URL = config("OW4_DJANGO_BASE_URL", default='https://online.ntnu.no')
 
 AUTH_USER_MODEL = 'authentication.OnlineUser'
 LOGIN_URL = '/auth/login/'
 
-MEDIA_ROOT = os.path.join(PROJECT_ROOT_DIRECTORY, 'uploaded_media')  # Override this in local.py in prod.
+# Override this in prod.
+MEDIA_ROOT = config("OW4_DJANGO_MEDIA_ROOT", default=os.path.join(PROJECT_ROOT_DIRECTORY, 'uploaded_media'))
 MEDIA_URL = '/media/'
 
-STATIC_ROOT = os.path.join(PROJECT_ROOT_DIRECTORY, 'static')
+STATIC_ROOT = config("OW4_DJANGO_STATIC_ROOT", default=os.path.join(PROJECT_ROOT_DIRECTORY, 'static'))
 STATIC_URL = '/static/'
 
 # Prefix for default profile picture
 DEFAULT_PROFILE_PICTURE_PREFIX = os.path.join(STATIC_URL, "img", "profile_default")
+
+FILEBROWSER_MEDIA_ROOT = MEDIA_ROOT
 
 # Additional locations of static files
 STATICFILES_DIRS = (
@@ -138,10 +154,6 @@ ROOT_URLCONF = 'onlineweb4.urls'
 
 # Python dotted path to the WSGI application used by Django's runserver.
 WSGI_APPLICATION = 'onlineweb4.wsgi.application'
-
-# Pizzasystem settings
-PIZZA_GROUP = 'dotkom'
-PIZZA_ADMIN_GROUP = 'pizzaadmin'
 
 # Guardian settings
 ANONYMOUS_USER_NAME = 'anonymoususer'
@@ -345,10 +357,10 @@ LOGGING = {
 
 SLACK_INVITER = {
     # e.g. onlinentnu
-    'team_name': 'team_name_here',
+    'team_name': config("OW4_DJANGO_SLACK_INVITER_TEAM_NAME", default='team_name_here'),
     # Token generated using OAuth2: https://api.slack.com/docs/oauth
     # Scopes needed: client+admin
-    'token': 'xoxp-1234_fake'
+    'token': config("OW4_DJANGO_SLACK_INVITER_TOKEN", default='xoxp-1234_fake'),
 }
 
 # crispy forms settings
@@ -390,8 +402,30 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 10
 }
 
-CORS_ORIGIN_ALLOW_ALL = True
+CORS_ORIGIN_ALLOW_ALL = config("OW4_DJANGO_CORS_ORIGIN_ALLOW_ALL", cast=bool, default=True)
 CORS_URLS_REGEX = r'^/api/v1/.*$' # Enables CORS on /api/v1/ endpoints only
+
+# Online stripe keys.
+# For development replace with https://online.ntnu.no/wiki/komiteer/dotkom/aktuelt/onlineweb4/keys/
+# For production login to Stripe
+STRIPE_PUBLIC_KEYS = {
+    "arrkom": config("OW4_DJANGO_STRIPE_PUBLIC_KEY_ARRKOM", default="pk_test_replace_this"),
+    "prokom": config("OW4_DJANGO_STRIPE_PUBLIC_KEY_PROKOM", default="pk_test_replace_this"),
+    "trikom": config("OW4_DJANGO_STRIPE_PUBLIC_KEY_TRIKOM", default="pk_test_replace_this"),
+}
+
+STRIPE_PRIVATE_KEYS = {
+    "arrkom": config("OW4_DJANGO_STRIPE_PRIVATE_KEY_ARRKOM", default="pk_test_replace_this"),
+    "prokom": config("OW4_DJANGO_STRIPE_PRIVATE_KEY_PROKOM", default="pk_test_replace_this"),
+    "trikom": config("OW4_DJANGO_STRIPE_PRIVATE_KEY_TRIKOM", default="pk_test_replace_this"),
+}
+
+# Google reCaptcha settings
+# Keys are found here: https://online.ntnu.no/wiki/komiteer/dotkom/aktuelt/onlineweb4/keys/
+RECAPTCHA_PUBLIC_KEY = config("OW4_DJANGO_RECAPTCHA_PUBLIC_KEY", default='replace this')
+RECAPTCHA_PRIVATE_KEY = config("OW4_DJANGO_RECAPTCHA_PRIVATE_KEY", default='replace this')
+NOCAPTCHA = config("OW4_DJANGO_NOCAPTCHA", cast=bool, default=True)
+RECAPTCHA_USE_SSL = config("OW4_DJANGO_RECAPTCHA_USE_SSL", cast=bool, default=True)
 
 OW4_SETTINGS = {
    'events': {
@@ -403,6 +437,8 @@ OW4_SETTINGS = {
 APPROVAL_SETTINGS = {
     'SEND_APPROVER_NOTIFICATION_EMAIL': True,
 }
+
+GENFORS_ADMIN_PASSWORD = config("OW4_DJANGO_GENFORS_ADMIN_PASSWORD", default='ADMIN_PASSWORD')
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -423,19 +459,16 @@ WEBPACK_LOADER = {
 for settings_module in ['filebrowser', 'django_wiki', 'local']:  # local last
     if not os.path.exists(os.path.join(PROJECT_SETTINGS_DIRECTORY,
             settings_module + ".py")):
-        sys.stderr.write("Could not find settings module '%s'.\n" %
-                settings_module)
         if settings_module == 'local':
-            sys.stderr.write("You need to copy the settings file "
-                             "'onlineweb4/settings/example-local.py' to "
-                             "'onlineweb4/settings/local.py'.\n")
-        sys.exit(1)
+            # If missing local settings, skip
+            continue
+        else:
+            sys.stderr.write("Could not find settings module '%s'.\n" % settings_module)
+            sys.exit(1)
     try:
         exec('from .%s import *' % settings_module)
     except ImportError as e:
-        print("Could not import settings for '%s' : %s" % (settings_module,
-                str(e)))
-
+        print("Could not import settings for '%s' : %s" % (settings_module, str(e)))
 
 if DEBUG:
     # Create webpack-extra-resolve.json

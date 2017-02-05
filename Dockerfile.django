@@ -19,6 +19,5 @@ COPY requirements-testing.txt $APP_DIR/requirements-testing.txt
 RUN pip install -r $APP_DIR/requirements-testing.txt
 
 ENV DJANGO_SETTINGS_MODULE onlineweb4.settings
-ENV DATABASE_URL postgres://postgres@db/postgres
 
 CMD ["bash"]
