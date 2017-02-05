@@ -188,7 +188,7 @@ def remove_g_suite_user_from_group(domain, group_name, g_suite_user, suppress_ht
     directory = setup_g_suite_client()
 
     logger.info("Removing '{user}' from G Suite group '{group}'.".format(user=user_key, group=group_key),
-                 extra={'user': user_key, 'group': group_key})
+                extra={'user': user_key, 'group': group_key})
 
     resp = None
     try:
@@ -370,7 +370,7 @@ def check_amount_of_members_ow4_g_suite(g_suite_members, ow4_users, quiet=False)
         if not quiet:
             logger.debug('There are more users on OW4 ({ow4_count}) than in G Suite ({g_suite_count}). '
                          'Need to update G Suite with new members.'.format(g_suite_count=g_suite_count,
-                                                                            ow4_count=ow4_count))
+                                                                           ow4_count=ow4_count))
     return False
 
 
