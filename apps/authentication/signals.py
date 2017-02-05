@@ -17,6 +17,12 @@ sync_uuid = uuid.uuid1()
 
 
 def run_group_syncer(user):
+    """
+    Tasks to run after User is changed.
+    :param user: The user instance to sync groups for.
+    :type user: OnlineUser
+    :return: None
+    """
     SynchronizeGroups.run()
     if settings.OW4_GSUITE_SYNC.get('ENABLED', False):
         update_g_suite_user(settings.OW4_GSUITE_SYNC.get('DOMAIN'), user, suppress_http_errors=True)
