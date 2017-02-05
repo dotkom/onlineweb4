@@ -1,40 +1,29 @@
 import os
 import sys
 
+import dj_database_url
+from decouple import config
+
 from .base import PROJECT_ROOT_DIRECTORY
 
 # Prevent python from making .pyc files
-sys.dont_write_bytecode = True
+sys.dont_write_bytecode = config("OW4_PYTHON_DONT_WRITE_BYTECODE", cast=bool, default=True)
 
 
-DEBUG = True
+DEBUG = config("OW4_DJANGO_DEBUG", cast=bool, default=False)
 
 # Change this to the host in production
-ALLOWED_HOSTS = '*'
+ALLOWED_HOSTS = config("OW4_DJANGO_ALLOWED_HOSTS", default='*')
 
 DATABASES = {
-    #'default': {
-        #'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        #'NAME': 'django',
-        #'USER': 'django',
-        #'PASSWORD': 'django',
-        #'HOST': '127.0.0.1',
-        #'PORT': '',
-    #},
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': 'db.db',
-        'USER': '',
-        'PASSWORD': '',
-        'HOST': '',
-        'PORT': '',
-    }
+    # Set this using the environment variable "DATABASE_URL"
+    'default': dj_database_url.config(default="sqlite:///%s/db.db" % PROJECT_ROOT_DIRECTORY),
 }
 
 # Email settings
 # If you are actually sending mail, this should be replaced with an
 # email adress you can get all mail to.
-DEVELOPMENT_EMAIL = 'your_preferred_adress_here'
+DEVELOPMENT_EMAIL = config("OW4_DJANGO_DEVELOPMENT_EMAIL", default='your_preferred_adress_here')
 
 # Overwriting all the emails from base.py with the development email, so that
 # all mail gets sent to the developer(s) instead of their actual targets.
@@ -50,23 +39,17 @@ EMAIL_FAGKOM = DEVELOPMENT_EMAIL
 EMAIL_PROKOM = DEVELOPMENT_EMAIL
 EMAIL_TRIKOM = DEVELOPMENT_EMAIL
 
-#EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'  # real
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # prints
+EMAIL_BACKEND = config("OW4_DJANGO_EMAIL_BACKEND", default='django.core.mail.backends.console.EmailBackend')
 
 # GOOGLE_ANALYTICS_KEY = 'UA-XXXX-Y'
 
-#MEDIA_ROOT = '/var/websites/prod/onlineweb_uploads'
-MEDIA_ROOT = os.path.join(PROJECT_ROOT_DIRECTORY, "uploaded_media/")
-
-#MEDIA_URL = '//media.online.ntnu.no/'
+MEDIA_ROOT = config("OW4_DJANGO_MEDIA_ROOT", default=os.path.join(PROJECT_ROOT_DIRECTORY, 'uploaded_media'))
 MEDIA_URL = '/media/'
 
-#MEDIA_ROOT = '/var/websites/prod/static'
-STATIC_ROOT = os.path.join(PROJECT_ROOT_DIRECTORY, 'collected_static')
-#STATIC_URL = '//static.online.ntnu.no'
+STATIC_ROOT = config("OW4_DJANGO_STATIC_ROOT", default=os.path.join(PROJECT_ROOT_DIRECTORY, 'static'))
 STATIC_URL = '/static/'
 
-#Url of default profile picture
+# Url of default profile picture
 DEFAULT_PROFILE_PICTURE_URL = os.path.join(STATIC_URL, "img", "profile_default.png")
 
 # Filebrowser local settings.
@@ -80,7 +63,7 @@ FILEBROWSER_MEDIA_ROOT = MEDIA_ROOT
 #   'django_extensions', # http://packages.python.org/django-extensions/
 # )
 
-GENFORS_ADMIN_PASSWORD = 'ADMIN_PASSWORD'
+GENFORS_ADMIN_PASSWORD = config("OW4_DJANGO_GENFORS_ADMIN_PASSWORD", default='ADMIN_PASSWORD')
 
 SYMPA_DB_PASSWD = ''
 SYMPA_DB_USER = ''
@@ -145,20 +128,20 @@ LOGGING = {
 # For development replace with https://online.ntnu.no/wiki/komiteer/dotkom/aktuelt/onlineweb4/keys/
 # For production login to Stripe
 STRIPE_PUBLIC_KEYS = {
-    "arrkom": "pk_test_replace_this",
-    "prokom": "pk_test_replace_this",
-    "trikom": "pk_test_replace_this"
+    "arrkom": config("OW4_DJANGO_STRIPE_PUBLIC_KEY_ARRKOM", default="pk_test_replace_this"),
+    "prokom": config("OW4_DJANGO_STRIPE_PUBLIC_KEY_PROKOM", default="pk_test_replace_this"),
+    "trikom": config("OW4_DJANGO_STRIPE_PUBLIC_KEY_TRIKOM", default="pk_test_replace_this"),
 }
 
 STRIPE_PRIVATE_KEYS = {
-    "arrkom": "sk_test_replace_this",
-    "prokom": "sk_test_replace_this",
-    "trikom": "sk_test_replace_this"
+    "arrkom": config("OW4_DJANGO_STRIPE_PRIVATE_KEY_ARRKOM", default="pk_test_replace_this"),
+    "prokom": config("OW4_DJANGO_STRIPE_PRIVATE_KEY_PROKOM", default="pk_test_replace_this"),
+    "trikom": config("OW4_DJANGO_STRIPE_PRIVATE_KEY_TRIKOM", default="pk_test_replace_this"),
 }
 
 # Google reCaptcha settings
 # Keys are found here: https://online.ntnu.no/wiki/komiteer/dotkom/aktuelt/onlineweb4/keys/
-RECAPTCHA_PUBLIC_KEY = 'replace this'
-RECAPTCHA_PRIVATE_KEY = 'replace this'
-NOCAPTCHA = True
-RECAPTCHA_USE_SSL = True
+RECAPTCHA_PUBLIC_KEY = config("OW4_DJANGO_RECAPTCHA_PUBLIC_KEY", default='replace this')
+RECAPTCHA_PRIVATE_KEY = config("OW4_DJANGO_RECAPTCHA_PRIVATE_KEY", default='replace this')
+NOCAPTCHA = config("OW4_DJANGO_NOCAPTCHA", cast=bool, default=True)
+RECAPTCHA_USE_SSL = config("OW4_DJANGO_RECAPTCHA_USE_SSL", cast=bool, default=True)

@@ -1,5 +1,5 @@
 {% extends 'dashboard_base.html' %}
-{% load compress %}
+{% load render_bundle from webpack_loader %}
 {% load crispy_forms_tags %}
 {% load addcss %}
 
@@ -7,9 +7,12 @@
 
 {% block styles %}
     {{ block.super }}
-    {% compress css %}
-        <link rel="stylesheet" type="text/less" href="{{ STATIC_URL }}less/dashboard/marks.less" />
-    {% endcompress %}
+    {% render_bundle 'dashboardMarks' 'css' %}
+{% endblock %}
+
+{% block js %}
+    {{ block.super }}
+    {% render_bundle 'dashboardMarks' 'js' %}
 {% endblock %}
 
 {% block page-header %}

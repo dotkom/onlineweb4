@@ -1,15 +1,18 @@
 from rest_framework import serializers
 
+from apps.authentication.serializers import UserSerializer
 from apps.companyprofile.serializers import CompanySerializer
 from apps.events.models import AttendanceEvent, Attendee, CompanyEvent, Event, RuleBundle
 from apps.gallery.serializers import ResponsiveImageSerializer
 
 
 class AttendeeSerializer(serializers.ModelSerializer):
+    user = UserSerializer()
+
     class Meta:
         model = Attendee
         fields = (
-            'event', 'user', 'attended', 'timestamp',
+            'id', 'event', 'user', 'attended', 'timestamp',
         )
 
 

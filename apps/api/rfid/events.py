@@ -78,7 +78,6 @@ class AttendanceEventResource(ModelResource):
 
 
 class EventResource(ModelResource):
-    author = fields.ToOneField(UserResource, 'author', full=True)
     company_event = fields.ToManyField(CompanyEventResource, 'companies', full=True, null=True, blank=True)
     attendance_event = fields.ToOneField(AttendanceEventResource, 'attendance_event', full=True, null=True, blank=True)
 

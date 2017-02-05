@@ -38,4 +38,8 @@ node_modules/*
 coverage
 coverage.xml
 setuptools-*.zip
-drone-secrets.yml
+# django-webpack-loader
+bundles/
+webpack-stats.json
+webpack-extra-resolve.json
+.drone-secrets.yml*
