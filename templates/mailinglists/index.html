@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load compress %}
+{% load render_bundle from webpack_loader %}
 
 {% block title %}
 Epostlister - Online
@@ -7,10 +7,14 @@ Epostlister - Online
 
 {% block styles %}
 	{{ block.super }}
-	{% compress css %}
-		<link rel="stylesheet" type="text/less" href="{{ STATIC_URL }}less/mailinglists.less">
-	{% endcompress %}
+	{% render_bundle 'mailinglists' 'css' %}
 {% endblock %}
+
+{% block js %}
+	{{ block.super }}
+	{% render_bundle 'mailinglists' 'js' %}
+{% endblock js %}
+
 
 {% block content %}
 
@@ -23,7 +27,7 @@ Epostlister - Online
 					</div>
 				</div>
 			</div>
-			
+
 			<div class="row">
 				<div class="col-md-12" id="guidelines">
 					<h3>Retningslinjer og oversikt</h3>
@@ -55,7 +59,7 @@ Epostlister - Online
 			<div class="row" id="mailinglist-items">
 				<h3>Lister og medlemmer</h3>
 				<div id="masonry">
-					
+
 
 					<!-- masonry used for responsiveness, don't add bootstrap3 -->
 					{% for list in lists %}
@@ -72,18 +76,10 @@ Epostlister - Online
 							</div>
 						</div>
 					{% endfor %}
-				
+
 				</div>
 			</div>
 		</div>
 	</section>
 
 {% endblock content %}
-
-{% block js %}
-	{{ block.super }}
-	<script src="{{ STATIC_URL }}js/libs/masonry-3.1.2.min.js"></script>
-	{% compress js %}
-	<script src="{{ STATIC_URL }}js/Mailinglists.js"></script>
-	{% endcompress %}
-{% endblock js %}

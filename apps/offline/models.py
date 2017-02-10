@@ -3,10 +3,9 @@
 from os import path
 
 from chunks.models import Chunk
+from django.conf import settings
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-from filebrowser.fields import FileBrowseField
-from onlineweb4.settings.local import MEDIA_ROOT
 
 THUMBNAIL_HEIGHT = 200  # Ønsket høyde på thumbnail
 IMAGE_FOLDER = "images/offline"
@@ -23,7 +22,7 @@ class Issue(models.Model):
     title = models.CharField(_("tittel"), max_length=50)
     release_date = models.DateField(_("utgivelsesdato"))
     description = models.TextField(_("beskrivelse"), blank=True, null=True)
-    issue = FileBrowseField(_("pdf"), directory=IMAGE_FOLDER, max_length=500, extensions=['.pdf'])
+    issue = models.FileField(_("pdf"), max_length=500, upload_to=IMAGE_FOLDER)
 
     def release_date_to_string(self):
         month = {
@@ -49,7 +48,7 @@ class Issue(models.Model):
     def url(self):
         # TODO: url kan være feil ved prodsetting
         url = str(self.issue).replace("/media/", "/var/websites/prod/onlineweb_uploads/")
-        url = path.join(MEDIA_ROOT, url)
+        url = path.join(settings.MEDIA_ROOT, url)
         return url
 
     @property

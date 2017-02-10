@@ -1,0 +1,14 @@
+Hei, du har ikke betalt for {{ payment_description }}.
+
+Fristen for å betale er {{ payment_deadline }}.
+
+{% if unattend_deadline_passed %}Hvis du ikke betaler innen fristen vil du få en prikk og du vil
+ikke ha mulighet til å melde deg på andre arrangementer før du har betalt.{% else %}Hvis du ikke betaler innen fristen vil du få en prikk og du vil bli meldt av arrangementet.{% endif %}
+
+For mer informasjon se:
+{{ payment_url }}
+
+Dersom du har spørsmål kan du sende mail til {{ payment_email }}.
+
+Mvh
+Linjeforeningen Online
