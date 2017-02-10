@@ -27,7 +27,7 @@ def new_membership_approval_handler(sender, instance, created, **kwargs):
             send_approval_notification(instance)
 
 
-@receiver(post_save, sender=Approval)
+@receiver(post_save, sender=MembershipApproval)
 def notify_membership_applicant_handler(sender, instance, created, **kwargs):
     """
 
