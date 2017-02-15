@@ -9,7 +9,7 @@ from django.db.models.signals import m2m_changed, post_save
 from django.dispatch import receiver
 
 from apps.authentication.tasks import SynchronizeGroups
-from apps.gsuite.mail_syncer.main import update_g_suite_user
+from apps.gsuite.mail_syncer.main import update_g_suite_group, update_g_suite_user
 
 User = get_user_model()
 logger = logging.getLogger('syncer.%s' % __name__)
@@ -25,7 +25,12 @@ def run_group_syncer(user):
     """
     SynchronizeGroups.run()
     if settings.OW4_GSUITE_SYNC.get('ENABLED', False):
-        update_g_suite_user(settings.OW4_GSUITE_SYNC.get('DOMAIN'), user, suppress_http_errors=True)
+        ow4_gsuite_domain = settings.OW4_GSUITE_SYNC.get('DOMAIN')
+        if isinstance(user, User):
+            update_g_suite_user(ow4_gsuite_domain, user, suppress_http_errors=True)
+        elif isinstance(user, Group):
+            group = user
+            update_g_suite_group(ow4_gsuite_domain, group.name, suppress_http_errors=True)
 
 
 @receiver(post_save, sender=Group)
