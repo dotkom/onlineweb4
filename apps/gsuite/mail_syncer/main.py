@@ -2,8 +2,9 @@ import logging
 
 from apps.gsuite.mail_syncer.utils import (_get_excess_users_in_g_suite,
                                            _get_missing_ow4_users_for_g_suite,
-                                           get_excess_groups_for_user,
+                                           get_excess_groups_for_user, get_g_suite_users_for_group,
                                            get_missing_g_suite_group_names_for_user,
+                                           get_ow4_users_for_group,
                                            insert_ow4_user_into_g_suite_group,
                                            remove_g_suite_user_from_group)
 
@@ -93,18 +94,19 @@ def update_g_suite_user(domain, ow4_user, suppress_http_errors=False):
                                 suppress_http_errors=suppress_http_errors)
 
 
-def update_g_suite_group(domain, group_name, g_suite_users, ow4_users):
+def update_g_suite_group(domain, group_name, suppress_http_errors=False):
     """
     Finds missing and excess users and adds and removes the users to/from them, respectively.
     :param domain: The domain in which to find a group's user lists.
     :type domain: str
     :param group_name: The name of the group to get group membership status for.
     :type group_name: str
-    :param g_suite_users: A list of G Suite users to update group memberships for.
-    :type g_suite_users: list
-    :param ow4_users: A list of OW4 users to update group memberships for.
-    :type ow4_users: django.db.models.QuerySet
+    :param suppress_http_errors: Whether or not to suppress HttpErrors happening during execution.
+    :type suppress_http_errors: bool
     """
+    g_suite_users = get_g_suite_users_for_group(domain, group_name, suppress_http_errors=suppress_http_errors)
+    ow4_users = get_ow4_users_for_group(group_name)
+
     excess_users = _get_excess_users_in_g_suite(g_suite_users, ow4_users)
     missing_users = _get_missing_ow4_users_for_g_suite(g_suite_users, ow4_users)
 
