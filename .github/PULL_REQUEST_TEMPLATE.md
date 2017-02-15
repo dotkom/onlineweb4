@@ -6,7 +6,7 @@
 
 ## Code Checklist
 
-- [ ] The code follows dotKom code style 
+- [ ] The code follows dotkom code style 
 - [ ] The code passes the defined tests
 - [ ] I have added tests for the code I added
 - [ ] I have provided documentation for the code I added
