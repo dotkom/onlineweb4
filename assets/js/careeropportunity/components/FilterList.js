@@ -1,71 +1,51 @@
 import React from 'react';
 import { Col } from 'react-bootstrap';
 import TagList from './TagList';
+import tagsPropTypes from '../propTypes/tags';
 
-class FilterList extends React.Component {
-  constructor() {
-    super();
+const FilterList = ({ tags, handleTagChange, handleReset }) => (
+  <Col xs={12} sm={12} md={3} className="pull-right">
+    <div className="filters">
+      <TagList
+        heading="Bedrifter"
+        tags={tags.companies}
+        handleChange={(tag) => {
+          handleTagChange('companies', tag);
+        }}
+      />
 
-    this.handleCompanyChange = this.handleCompanyChange.bind(this);
-    this.handleJobTypeChange = this.handleJobTypeChange.bind(this);
-    this.handleLocationChange = this.handleLocationChange.bind(this);
-    this.handleDeadlineChange = this.handleDeadlineChange.bind(this);
-  }
+      <TagList
+        heading="Typer"
+        tags={tags.jobTypes}
+        handleChange={(tag) => {
+          handleTagChange('jobTypes', tag);
+        }}
+      />
 
-  handleCompanyChange(tag) {
-    this.props.handleTagChange('companies', tag);
-  }
+      <TagList
+        heading="Sted"
+        tags={tags.locations}
+        handleChange={(tag) => {
+          handleTagChange('locations', tag);
+        }}
+      />
 
-  handleJobTypeChange(tag) {
-    this.props.handleTagChange('jobTypes', tag);
-  }
+      <TagList
+        heading="Frist"
+        tags={tags.deadlines}
+        handleChange={(tag) => {
+          handleTagChange('deadlines', tag, true);
+        }}
+      />
 
-  handleLocationChange(tag) {
-    this.props.handleTagChange('locations', tag);
-  }
-
-  handleDeadlineChange(tag) {
-    this.props.handleTagChange('deadlines', tag, true);
-  }
-
-  render() {
-    return (
-      <Col xs={12} sm={12} md={3} className="pull-right">
-        <div className="filters">
-          <TagList
-            heading="Bedrifter"
-            tags={this.props.tags.companies}
-            handleChange={this.handleCompanyChange}
-          />
-
-          <TagList
-            heading="Typer"
-            tags={this.props.tags.jobTypes}
-            handleChange={this.handleJobTypeChange}
-          />
-
-          <TagList
-            heading="Sted"
-            tags={this.props.tags.locations}
-            handleChange={this.handleLocationChange}
-          />
-
-          <TagList
-            heading="Frist"
-            tags={this.props.tags.deadlines}
-            handleChange={this.handleDeadlineChange}
-          />
-
-          <button onClick={this.props.handleReset}>Reset</button>
-        </div>
-      </Col>
-    );
-  }
-}
+      <button onClick={handleReset}>Reset</button>
+    </div>
+  </Col>
+);
 
 FilterList.propTypes = {
   handleTagChange: React.PropTypes.func,
-  tags: React.PropTypes.object,
+  tags: tagsPropTypes,
   handleReset: React.PropTypes.func,
 };
 

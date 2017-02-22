@@ -1,31 +1,28 @@
 import React from 'react';
 import Tag from './Tag';
+import tagsPropTypes from '../propTypes/tags';
 
-const TagList = ({ tags, handleChange, heading }) => {
-  const tagElems = Object.keys(tags).map(id => (
-    <Tag
-      key={id}
-      changeKey={id}
-      selected={tags[id].display}
-      handleChange={handleChange}
-      title={tags[id].name}
-    />
-  ));
-
-  return (
-    <div>
-      <h3>{heading}</h3>
-      <ul>
-        {tagElems}
-      </ul>
-    </div>
-  );
-};
+const TagList = ({ tags, handleChange, heading }) => (
+  <div>
+    <h3>{heading}</h3>
+    <ul>
+      {Object.keys(tags).map(id => (
+        <Tag
+          key={id}
+          changeKey={id}
+          selected={tags[id].display}
+          handleChange={handleChange}
+          title={tags[id].name}
+        />
+      ))}
+    </ul>
+  </div>
+);
 
 TagList.propTypes = {
   handleChange: React.PropTypes.func,
   heading: React.PropTypes.string,
-  tags: React.PropTypes.object,
+  tags: tagsPropTypes,
 };
 
 export default TagList;

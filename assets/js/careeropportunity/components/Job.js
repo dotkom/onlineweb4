@@ -1,62 +1,56 @@
 import React from 'react';
 import { Col } from 'react-bootstrap';
+import jobPropTypes from '../propTypes/job';
 
-const Job = ({ locations, deadline, companyImage, companyName, title, ingress, type, id }) => {
-  let locationsText;
-
-  if (locations.length >= 2) {
-    locationsText = `${locations.slice(0, -1).join(', ')} og ${locations[locations.length - 1]}`;
-  } else if (locations.length === 0) {
-    locationsText = 'Ikke spesifisert';
-  } else { // Only one location.
-    locationsText = locations[0];
+// Accepts a list of locations and returns a comma-separated list of locations
+// with 'og' inserted before the last element, and 'Ikke spesifisert' if no
+// locations have been specified.
+const formatLocations = (locations) => {
+  if (locations.length >= 2) { // If we have more than 2 elements, return a comma-separated list.
+    return `${locations.slice(0, -1).join(', ')} og ${locations[locations.length - 1]}`;
+  } else if (locations.length === 1) { // Do not format the location if we only have 1 element.
+    return locations[0];
   }
 
-  return (
-    <article className="row">
-      <Col xs={12} md={4}>
-        <a href={`/careeropportunity/${id}`}>
-          <picture>
-            <source srcSet={companyImage.lg} media="(max-width: 992px)" />
-            <img src={companyImage.md} alt="Firmalogo" />
-          </picture>
-        </a>
-      </Col>
+  // No locations have been specified.
+  return 'Ikke spesifisert';
+};
 
-      <Col xs={12} md={8}>
-        <h1>
-          <a href={`/careeropportunity/${id}`}>{companyName} - {title}</a>
-        </h1>
+const Job = ({ locations, deadline, companyImage, companyName, title, ingress, type, id }) => (
+  <article className="row">
+    <Col xs={12} md={4}>
+      <a href={`/careeropportunity/${id}`}>
+        <picture>
+          <source srcSet={companyImage.lg} media="(max-width: 992px)" />
+          <img src={companyImage.md} alt="Firmalogo" />
+        </picture>
+      </a>
+    </Col>
 
-        <div className="ingress">{ingress}</div>
+    <Col xs={12} md={8}>
+      <h1>
+        <a href={`/careeropportunity/${id}`}>{companyName} - {title}</a>
+      </h1>
 
-        <div className="meta">
-          <Col md={4}>
-            <p>Type: {type}</p>
-          </Col>
+      <div className="ingress">{ingress}</div>
 
-          <Col md={4}>
-            <p>Sted: {locationsText}</p>
-          </Col>
+      <div className="meta">
+        <Col md={4}>
+          <p>Type: {type}</p>
+        </Col>
 
-          <Col md={4}>
-            <p>Frist: {deadline}</p>
-          </Col>
-        </div>
-      </Col>
-    </article>
+        <Col md={4}>
+          <p>Sted: {formatLocations(locations)}</p>
+        </Col>
+
+        <Col md={4}>
+          <p>Frist: {deadline}</p>
+        </Col>
+      </div>
+    </Col>
+  </article>
   );
-};
 
-Job.propTypes = {
-  locations: React.PropTypes.arrayOf(React.PropTypes.string),
-  deadline: React.PropTypes.string,
-  companyImage: React.PropTypes.object,
-  companyName: React.PropTypes.string,
-  title: React.PropTypes.string,
-  ingress: React.PropTypes.string,
-  type: React.PropTypes.string,
-  id: React.PropTypes.number,
-};
+Job.propTypes = jobPropTypes;
 
 export default Job;
