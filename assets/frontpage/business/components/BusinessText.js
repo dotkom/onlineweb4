@@ -9,7 +9,7 @@ const BusinessText = () => (
     <div className="business-text">
       <p>Online er linjeforeningen for informatikkstudentene ved NTNU. Våre studenter går Bachelor- eller
       Mastergradstudium i informatikk. Dette innebærer blant annet å lære om utvikling, forbedring, evaluering
-      og bruk av datasystemer. For mer informasjon om studiet, se NTNU sine
+      og bruk av datasystemer. For mer informasjon om studiet, se NTNU sine&nbsp;
       <a href="http://www.ntnu.no/studier/informasjonsteknologi-informatikk" target="_blank">offisielle nettsider.</a></p>
       <p>Linjeforeningen har gjennom flere år opparbeidet seg et repertoar av tjenester som vi tilbyr våre studenter.
       I samarbeid med næringslivet tilbyr vi kurs og bedriftspresentasjoner for å gi studentene våre en bredere og dypere
