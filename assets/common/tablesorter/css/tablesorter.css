@@ -1,0 +1,15 @@
+.tablesorter thead .tablesorter-header-inner {
+	background-image: url(../img/bg.gif);
+	background-repeat: no-repeat;
+	background-position: center right;
+	cursor: pointer;
+}
+.tablesorter tbody td {
+	vertical-align: top;
+}
+.tablesorter thead .tablesorter-headerAsc .tablesorter-header-inner {
+	background-image: url(../img/asc.gif);
+}
+.tablesorter thead .tablesorter-headerDesc .tablesorter-header-inner {
+	background-image: url(../img/desc.gif);
+}

@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
-{% load compress %}
 {% load calendar_filters %}
+{% load render_bundle from webpack_loader %}
 
 {% block title %}
 Arrangementsarkiv - Online
@@ -9,9 +9,7 @@ Arrangementsarkiv - Online
 
 {% block styles %}
   {{ block.super }}
-  {% compress css %}
-    <link rel="stylesheet" type="text/less" href="{{ STATIC_URL }}less/event_archive.less">
-  {% endcompress %}
+  {% render_bundle 'eventsArchive' 'css' %}
 {% endblock %}
 
 {% block submenu %}
@@ -40,7 +38,7 @@ Arrangementsarkiv - Online
     <div class="row">
       <div class="col-md-12">
         <div class="page-header">
-          <h2>ARRANGEMENTER
+          <h1>Arrangementer
             <div class="btn-group pull-right">
               <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
                 <span class="glyphicon glyphicon-calendar"></span>
@@ -58,7 +56,7 @@ Arrangementsarkiv - Online
                   {% endif %}
               </ul>
             </div>
-          </h2>
+          </h1>
         </div>
       </div>
     </div>
@@ -103,74 +101,6 @@ Arrangementsarkiv - Online
 {%endblock content %}
 
 {% block js %}
-
   {{ block.super }}
-  {% compress js %}
-  <script type="text/javascript">
-    var Filters = function () {
-
-      this.query = '';
-      this.future = true;
-      this.myevents = false;
-    };
-
-    Filters.prototype.search = function () {
-        var url = '{% url 'search_events' %}?query=';
-        var query = this.query;
-        var filters = '';
-        filters   += '&future=' + this.future;
-        filters     += '&myevents=' + this.myevents;
-
-        var self = this;
-        $.get(url + query + filters, function (result) {
-          $('#events').empty();
-          $('#events').append(result);
-          if(!self.future) {
-            // Calculate menu offset
-            var offset = $('nav.subnavbar').position().top+$('nav.subnavbar').outerHeight(true);
-            // Scroll to closest event
-            var articles = $('#events article');
-            var today = new Date();
-            articles.each(function(i, event) {
-              var event_date = new Date($(event).data('date'));
-              if(event_date < today) {
-                // Scroll animation
-                $('html, body').animate({scrollTop: $(event).offset().top - offset}, 250);
-                return false;
-              }
-            });
-          }
-        });
-      };
-
-    $(function () {
-
-      var filters = new Filters();
-      filters.search();
-
-
-      $('#search').keyup(function () {
-        filters.query = $(this).val();
-        filters.search();
-      });
-
-      // This is a slight hack to avoid a difficult bug in jQuery where some browsers tend to preserve checkbox states
-      // without them being domready.
-      $(document).ready(function () {
-        $('#future').prop('checked', true);
-      });
-
-      $('#future').on('click', function () {
-        filters.future = !filters.future;
-        filters.search();
-      });
-
-      $('#myevents').on('click', function () {
-        filters.myevents = !filters.myevents;
-        filters.search();
-      });
-    });
-  </script>
-  {% endcompress %}
-
+  {% render_bundle 'eventsArchive' 'js' %}
 {% endblock %}

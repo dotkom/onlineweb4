@@ -1,0 +1,10 @@
+Hei, du har ikke betalt for {{ payment_description }}.
+
+Fristen for betaling har gått ut.
+
+{% if payment_unattend_passed %}Du har fått en prikk og vil ikke kunne melde deg på nye arrangementer før du har betalt.{% else %}Du har fått en prikk og blitt meldt av arrangementet.{% endif %}
+
+Dersom du har spørsmål kan du sende mail til {{ payment_email }}.
+
+Mvh
+Linjeforeningen Online

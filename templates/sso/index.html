@@ -1,4 +1,4 @@
-{% load compress %}
+{% load render_bundle from webpack_loader %}
 <!DOCTYPE html>
 <html>
 <head>
@@ -9,11 +9,9 @@
     <link rel="icon" href="{{ STATIC_URL }}img/favicon.png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     {% block styles %}
-        {% compress css %}
-        <link rel="stylesheet" type="text/less" href="{{ STATIC_URL }}less/font-awesome-4.2.0/font-awesome.less">
-        <link rel="stylesheet" type="text/less" href="{{ STATIC_URL }}less/core.less">
-        <link rel="stylesheet" type="text/less" href="{{ STATIC_URL }}less/sso.less">
-        {% endcompress %}
+        {% render_bundle 'common' 'css' %}
+        {% render_bundle 'core' 'css' %}
+        {% render_bundle 'sso' 'css' %}
     {% endblock %}
 </head>
 <body>
@@ -178,9 +176,10 @@
     </section>
 
     {% block js %}
-        <script src="{{ STATIC_URL }}js/libs/jquery-2.1.3.min.js"></script>
-        <script src="{{ STATIC_URL }}js/libs/bootstrap.min.js"></script>
         <script src="https://maps.googleapis.com/maps/api/js?v=3&amp;sensor=true"></script>
+        {% render_bundle 'common' 'js' %}
+        {% render_bundle 'core' 'js' %}
+        {% render_bundle 'sso' 'js' %}
     {% endblock %}
 
     {% if GOOGLE_ANALYTICS_KEY %}

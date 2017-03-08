@@ -1,7 +1,3 @@
 {
-	"presets": ["es2015", "react"],
-	"plugins": [
-		"transform-react-require",
-		"react-hot-loader/babel"
-	]
+	"presets": ["es2015", "react"]
 }

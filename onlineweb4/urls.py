@@ -5,6 +5,7 @@ from django.contrib import admin
 from django.http import HttpResponse
 from django.views.defaults import server_error
 from django.views.generic import TemplateView
+from django_js_reverse.views import urls_js
 from django_nyt.urls import get_pattern as get_notify_pattern
 from filebrowser.sites import site
 from wiki.urls import get_pattern as get_wiki_pattern
@@ -14,10 +15,6 @@ from onlineweb4 import views
 admin.autodiscover()
 
 urlpatterns = [
-    # Filebrowser must be above all admin-urls
-    url(r'^admin/filebrowser/',     include(site.urls)),
-    url(r'^grappelli/',             include('grappelli.urls')),
-
     # Admin urls
     url(r'^admin/',             include(admin.site.urls)),
     url(r'^admin/doc/',         include('django.contrib.admindocs.urls')),
@@ -26,7 +23,7 @@ urlpatterns = [
     url(r'^$', TemplateView.as_view(template_name='frontpage.html'), name='home'),
 
     # Django-js-reverse used to get django urls to react
-    url(r'^jsreverse/$', 'django_js_reverse.views.urls_js', name='js_reverse'),
+    url(r'^jsreverse/$', urls_js, name='js_reverse'),
 
     # nav-bar menu urls
     url(r'^#events$', TemplateView.as_view(template_name='frontpage.html'), name='events-link'),

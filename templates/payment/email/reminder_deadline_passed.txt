@@ -1,0 +1,11 @@
+Hei, du har ikke betalt for {{ payment_description }}.
+
+Fristen har gått ut og du har fått en prikk.
+
+For mer informasjon se:
+{{ payment_url }}
+
+Dersom du har spørsmål kan du sende mail til {{ payment_email }}.
+
+Mvh
+Linjeforeningen Online

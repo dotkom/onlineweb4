@@ -1,15 +1,19 @@
 {% extends 'base.html'%}
 {% load gravatar_url_resolver %}
 {% load crispy_forms_tags %}
-{% load compress %}
 {% load firstof from future %}
+{% load render_bundle from webpack_loader %}
 
 {% block styles %}
     {{ block.super }}
-    {% compress css %}
-        <link rel="stylesheet" type="text/less" href="{{ STATIC_URL }}less/profiles.less" />
-    {% endcompress %}
+    {% render_bundle 'profiles' 'css' %}
 {% endblock %}
+
+{% block js %}
+    {{ block.super }}
+    {% render_bundle 'profiles' 'js' %}
+{% endblock %}
+
 {% block title %}
     Profilen til {{ user_profile.get_full_name }}
 {% endblock title %}
@@ -156,10 +160,3 @@
     </section>
 
 {% endblock content %}
-
-{% block js %}
-    {{ block.super }}
-    {% compress js %}
-        <script type="text/javascript" src="{{ STATIC_URL }}js/zipcodecity.js"></script>
-    {% endcompress %}
-{% endblock %}

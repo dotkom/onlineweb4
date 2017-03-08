@@ -1,6 +1,6 @@
 {% extends "dashboard_base.html" %}
-{% load compress %}
 {% load crispy_forms_tags %}
+{% load render_bundle from webpack_loader %}
 
 {% block title %}
 {{ event }} - Dashboard - Online
@@ -12,11 +12,7 @@ Arrangementsdetaljer
 
 {% block styles %}
     {{ block.super }}
-    {% compress css %}
-    {{ change_event_form.media.css }}
-    {{ change_attendance_form.media.css }}
-    <link rel="stylesheet" type="text/less" href="{{ STATIC_URL }}less/dashboard/events.less" />
-    {% endcompress %}
+    {% render_bundle 'dashboardEvents' 'css' %}
 {% endblock %}
 
 {% block breadcrumbs %}
@@ -152,13 +148,9 @@ Arrangementsdetaljer
 {% endblock content %}
 
 {% block js %}
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
     {{ block.super }}
-    {% compress js %}
-    {{ change_event_form.media.js }}
-    {{ change_attendance_form.media.js }}
-    <script type="text/javascript" src="{{ STATIC_URL }}js/libs/hogan-2.0.0.js"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}js/libs/typeahead.min.js"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}js/dashboard/events.js"></script>
+    {% render_bundle 'dashboardEvents' 'js' %}
     <script>
         // Update details view form with action attribute
         $('#create-event-form').attr('action', "{% url 'dashboard_events_edit' event.id %}")
@@ -166,29 +158,29 @@ Arrangementsdetaljer
         $('#create-attendance-view').load("{% url 'dashboard_event_create_attendance' event.id %}", function() {
           // Update create attendanceevent form with action attribute
           $('#create-attendance-form').attr('action', "{% url 'dashboard_event_create_attendance' event.id %}")
-          Dashboard.activateDateTimePickers()
+          window.dispatchEvent(new Event('activateDateTimePickers'));
         })
         $('#update-attendance-view').load("{% url 'dashboard_events_edit_attendance' event.id %}", function() {
           $('#update-attendance-view').find('form').attr('id', 'update-attendance-form')
           // Update create attendanceevent form with action attribute
           $('#update-attendance-form').attr('action', "{% url 'dashboard_events_edit_attendance' event.id %}")
-          Dashboard.activateDateTimePickers()
+          window.dispatchEvent(new Event('activateDateTimePickers'));
         })
         $('#add-company-view').load("{% url 'dashboard_events_add_company' event.id %}", function() {
           $('#add-company-view').find('form').attr('id', 'add-company-form')
           $('#add-company-form').attr('action', "{% url 'dashboard_events_add_company' event.id %}")
-          Dashboard.activateDateTimePickers()
+          window.dispatchEvent(new Event('activateDateTimePickers'));
         })
         $('#add-feedback-view').load("{% url 'dashboard_events_add_feedback' event.id %}", function() {
           $('#add-feedback-view').find('form').attr('id', 'add-feedback-form')
           $('#add-feedback-form').attr('action', "{% url 'dashboard_events_add_feedback' event.id %}")
-          Dashboard.activateDateTimePickers()
+          window.dispatchEvent(new Event('activateDateTimePickers'));
         })
         {% if not event.attendance_event.get_payment and False %}
         $('#add-payment-view').load("{% url 'dashboard_events_add_payment' event.id %}", function() {
           $('#add-payment-view').find('form').attr('id', 'add-payment-form')
           $('#add-payment-form').attr('action', "{% url 'dashboard_events_add_payment' event.id %}")
-          Dashboard.activateDateTimePickers()
+          window.dispatchEvent(new Event('activateDateTimePickers'));
         })
         {% elif False %}
         $('#add-payment-price-view').load("{% url 'dashboard_events_add_payment_price' event.id event.attendance_event.get_payment.pk %}", function() {
@@ -197,5 +189,4 @@ Arrangementsdetaljer
         })
         {% endif %}
     </script>
-    {% endcompress %}
 {% endblock %}

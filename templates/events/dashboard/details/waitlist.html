@@ -46,7 +46,7 @@
                                 </td>
                                 {% endif %}
                                 <td>
-                                    <a href="#modal-delete-attendee" data-toggle="modal" data-id="{{ attendee.id }}" data-name="{{ attendee.user.get_full_name }}" class="remove-user">
+                                    <a href="#modal-delete-waitlist-attendee" data-toggle="modal" data-id="{{ attendee.id }}" data-name="{{ attendee.user.get_full_name }}" class="remove-user">
                                         <i class="fa fa-times fa-lg red"></i>
                                     </a>
                                 </td>
@@ -62,3 +62,21 @@
         </div><!-- panel -->
     </div><!-- col-lg-12 -->
 </div><!-- row -->
+
+<div id="modal-delete-waitlist-attendee" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h3>Bekreft avmelding av deltaker!</h3>
+            </div>
+            <div class="modal-body">
+                <p>Er du sikker på at du vil fjerne <span class="modal-remove-user-name"></span> fra {{ event.title }}?</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" data-dismiss="modal" aria-hidden="true">Lukk</button>
+                <button class="btn btn-danger confirm-remove-user" data-dismiss="modal" aria-hidden="true">Fjern</button>
+            </div>
+        </div>
+    </div>
+</div>

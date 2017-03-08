@@ -1,15 +1,8 @@
 {% extends "dashboard_base.html" %}
-{% load compress %}
 
 {% block title %}
 Bestillinger - Online Dashboard
 {% endblock title %}
-
-{% block styles %}
-    {{ block.super }}
-    {% compress css %}
-    {% endcompress %}
-{% endblock %}
 
 {% block page-header %}
 Webshop

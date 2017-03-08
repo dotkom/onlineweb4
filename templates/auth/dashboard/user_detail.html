@@ -1,14 +1,8 @@
 {% extends 'dashboard_base.html' %}
-{% load compress %}
+{% load render_bundle from webpack_loader %}
 {% load gravatar_url_resolver %}
 
 {% block title %}Brukerprofiler - {{ user }}{% endblock %}
-
-{% block styles %}
-    {{ block.super }}
-    {% compress css %}
-    {% endcompress %}
-{% endblock %}
 
 {% block page-header %}
     {{ user }}
@@ -17,6 +11,16 @@
 {% block breadcrumbs %}
 <li><a href="{% url 'user_list' %}">Brukerprofiler</a></li>
 <li>{{ user }}</li>
+{% endblock %}
+
+{% block styles %}
+    {{ block.super }}
+    {% render_bundle 'dashboardAuthentication' 'css' %}
+{% endblock %}
+
+{% block js %}
+    {{ block.super }}
+    {% render_bundle 'dashboardAuthentication' 'js' %}
 {% endblock %}
 
 {% block content %}
@@ -32,10 +36,12 @@
                 <div class="col-md-4">Adresse</div>
                 <div class="col-md-8">{{ user.address }}, <span id="zip-code">{{ user.zip_code }}</span><span id="city">{{ user.city }}</span></div>
                 <div class="col-md-4">Telefonnummer</div>
-                <div class="col-md-8">{% if user.phone_number %}{{ user.phone_number }}{% else %}Ikke oppgitt{% endif %}</div>
+                <div class="col-md-8">{{ user.phone_number|default:"-" }}</div>
+                <div class="col-md-4">E-post-adresse</div>
+                <div class="col-md-8">{% if user.get_email %}<a href="mailto:{{ user.get_email.email }}">{{ user.get_email.email }}</a> (primær){% else %}-{% endif %}</div>
                 <div class="col-md-4">Nettside</div>
                 <div class="col-md-8">
-                    {% if user.website %}<a href="{{ user.website }}" target="_blank">{{ user.website }}</a>{% endif %}
+                    {% if user.website %}<a href="{{ user.website }}" target="_blank">{{ user.website }}</a>{% else %}-{% endif %}
                     {% if user.github %}<a href="{{ user.github }}" target="_blank"><i class="fa fa-lg fa-github"></i></a>{% endif %}
                     {% if user.linkedin %}<a href="{{ user.linkedin }}" target="_blank"><i class="fa fa-lg fa-linkedin"></i></a>{% endif %}
                 </div>
@@ -49,10 +55,10 @@
             <div class="panel-body">
                 <div class="col-md-4">Web-brukernavn</div>
                 <div class="col-md-8">{{ user.username }}</div>
-                <div class="col-md-4">Online-mailalias</div>
-                <div class="col-md-8"><a href="mailto:{{ user.online_mail }}@online.ntnu.no">{{ user.online_mail }}@online.ntnu.no</a></div>
+                <div class="col-md-4">Online-e-post-adresse</div>
+                <div class="col-md-8">{% if user.online_mail %}<a href="mailto:{{ user.online_mail }}@online.ntnu.no">{{ user.online_mail }}@online.ntnu.no</a>{% else %}-{% endif %}</div>
                 <div class="col-md-4">RFID</div>
-                <div class="col-md-8">{{ user.rfid }}</div>
+                <div class="col-md-8">{{ user.rfid|default:"-" }}</div>
                 <div class="col-md-12"><br>
                     <table class="table">
                         <tr>
@@ -83,6 +89,8 @@
                 {% if user.ntnu_username %}
                 <div class="col-md-4">NTNU-brukernavn</div>
                 <div class="col-md-8">{{ user.ntnu_username }}</div>
+                <div class="col-md-4">E-post-adresse</div>
+                <div class="col-md-8"><a href="mailto:{{ user.ntnu_username }}@stud.ntnu.no">{{ user.ntnu_username }}@stud.ntnu.no</a></div>
                 <div class="col-md-4">Studie (start)</div>
                 <div class="col-md-8">{{ user.year }}. år {{ user.get_field_of_study_display }} ({{ user.started_date }})</div>
                 {% else %}
@@ -97,11 +105,11 @@
             <div class="panel-body">
                 <div class="col-md-6">
                     <h4>Allergier</h4>
-                    <p>{{ user.allergies }}</p>
+                    <p>{{ user.allergies|default:"-" }}</p>
                 </div>
                 <div class="col-md-6">
                     <h4>Bio</h4>
-                    <p>{{ user.bio }}</p>
+                    <p>{{ user.bio|default:"-" }}</p>
                 </div>
             </div>
         </div>
@@ -154,11 +162,4 @@
         </div>
     </div>
 </div>
-{% endblock %}
-
-{% block js %}
-    {{ block.super }}
-    {% compress js %}
-        <script type="text/javascript" src="{{ STATIC_URL }}js/zipcodecity.js"></script>
-    {% endcompress %}
 {% endblock %}

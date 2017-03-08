@@ -1,16 +1,19 @@
 {% extends 'base.html' %}
 {% load chunks %}
-{% load compress %}
+{% load render_bundle from webpack_loader %}
 
 {% block title %}
 Tidsskriftet Offline - Online
 {% endblock title %}
 
+{% block styles %}
+    {{ block.super }}
+    {% render_bundle 'offline' 'css' %}
+{% endblock %}
+
 {% block js %}
     {{ block.super }}
-    {% compress js %}
-    <script src="{{ STATIC_URL }}js/offline-filter.js"></script>
-    {% endcompress %}
+    {% render_bundle 'offline' 'js' %}
 {% endblock %}
 
 {% block submenu %}
@@ -37,7 +40,7 @@ Tidsskriftet Offline - Online
         <div class="row">
             <div class="col-md-12">
                 <div class="page-header">
-                    <h2>OFFLINE</h2>
+                    <h1>Offline</h1>
                 </div>
             </div>
         </div>
