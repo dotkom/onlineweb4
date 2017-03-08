@@ -44,4 +44,5 @@ def notify_membership_applicant_handler(sender, instance, created, **kwargs):
     """
 
     if instance.processed and instance.applicant.get_email():
+      if settings.APPROVAL_SETTINGS.get('SEND_APPROVER_NOTIFICATION_EMAIL', False):
         send_approval_status_update(instance)
