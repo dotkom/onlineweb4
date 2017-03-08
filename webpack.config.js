@@ -124,7 +124,6 @@ module.exports = {
     root: path.resolve(__dirname, './assets/'),
     // Extra resolve paths like wiki static files
     fallback: resolvePaths,
->>>>>>> develop
   },
   // Generated bundles output
   output: {
