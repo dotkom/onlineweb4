@@ -8,7 +8,7 @@ from django.core.urlresolvers import reverse
 from django.test import TestCase, override_settings
 from django.utils import timezone
 from django_dynamic_fixture import G
-git
+from rest_framework import status
 
 from apps.authentication.models import Email, OnlineUser, RegisterToken
 
