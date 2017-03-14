@@ -6,8 +6,6 @@ from django.utils.translation import ugettext as _
 
 from apps.authentication.models import FIELD_OF_STUDY_CHOICES
 
-from django.core.mail import send_mail
-
 User = settings.AUTH_USER_MODEL
 
 
@@ -27,14 +25,20 @@ class Approval(models.Model):
         editable=False
     )
     created = models.DateTimeField(_("opprettet"), auto_now_add=True)
-    processed = models.BooleanField(_("behandlet"), default=False, editable=False)
-    processed_date = models.DateTimeField(_("behandlet dato"), blank=True, null=True)
-    approved = models.BooleanField(_("godkjent"), default=False, editable=False)
+    processed = models.BooleanField(
+        _("behandlet"), default=False, editable=False)
+    processed_date = models.DateTimeField(
+        _("behandlet dato"), blank=True, null=True)
+    approved = models.BooleanField(
+        _("godkjent"), default=False, editable=False)
     message = models.TextField(_("melding"))
 
+
 class MembershipApproval(Approval):
-    new_expiry_date = models.DateField(_("ny utløpsdato"), blank=True, null=True)
-    field_of_study = models.SmallIntegerField(_("studieretning"), choices=FIELD_OF_STUDY_CHOICES, default=0)
+    new_expiry_date = models.DateField(
+        _("ny utløpsdato"), blank=True, null=True)
+    field_of_study = models.SmallIntegerField(
+        _("studieretning"), choices=FIELD_OF_STUDY_CHOICES, default=0)
     started_date = models.DateField(_("startet dato"), blank=True, null=True)
 
     def is_membership_application(self):

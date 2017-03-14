@@ -24,6 +24,7 @@ def send_approval_notification(approval):
         logger.warn('Failed to send approval approver notification email for approval#{pk}.'.format(
             {'pk': approval.pk}))
 
+
 def send_approval_status_update(approval):
     logger = logging.getLogger(__name__)
 

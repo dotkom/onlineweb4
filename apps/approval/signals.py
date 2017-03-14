@@ -2,7 +2,8 @@ from django.conf import settings
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
-from apps.approval.models import MembershipApproval, Approval
+from apps.approval.models import MembershipApproval
+
 from .tasks import send_approval_notification, send_approval_status_update
 
 
@@ -44,5 +45,5 @@ def notify_membership_applicant_handler(sender, instance, created, **kwargs):
     """
 
     if instance.processed and instance.applicant.get_email():
-      if settings.APPROVAL_SETTINGS.get('SEND_APPROVER_NOTIFICATION_EMAIL', False):
-        send_approval_status_update(instance)
+        if settings.APPROVAL_SETTINGS.get('SEND_APPLICANT_NOTIFICATION_EMAIL', False):
+            send_approval_status_update(instance)
