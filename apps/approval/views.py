@@ -18,7 +18,8 @@ from apps.authentication.models import AllowedUsername, get_length_of_field_of_s
 def create_fos_application(request):
     if request.method == 'POST':
         if not request.user.ntnu_username:
-            messages.error(request, _("Du må knytte et NTNU-brukernavn til kontoen din."))
+            messages.error(request, _(
+                "Du må knytte et NTNU-brukernavn til kontoen din."))
             return redirect('profiles_active', active_tab='membership')
 
         form = FieldOfStudyApplicationForm(request.POST)
@@ -28,7 +29,8 @@ def create_fos_application(request):
             field_of_study = int(cleaned['field_of_study'])
 
             if field_of_study == 0:
-                messages.warning(request, _("Denne studieretningen (Gjest) er ikke et gyldig alternativ."))
+                messages.warning(request, _(
+                    "Denne studieretningen (Gjest) er ikke et gyldig alternativ."))
                 return redirect('profiles_active', active_tab='membership')
 
             started_day = 1
@@ -40,11 +42,13 @@ def create_fos_application(request):
             if cleaned['started_semester'] == "v":
                 started_month = 1
 
-            started_date = datetime.date(started_year, started_month, started_day)
+            started_date = datetime.date(
+                started_year, started_month, started_day)
 
             # Does the user already have a field of study and started date?
             if request.user.started_date and request.user.field_of_study:
-                # If there is no change from the current settings, ignore the request
+                # If there is no change from the current settings, ignore the
+                # request
                 if request.user.started_date == started_date and request.user.field_of_study == field_of_study:
                     messages.error(
                         request,
@@ -60,10 +64,12 @@ def create_fos_application(request):
 
             length_of_fos = get_length_of_field_of_study(field_of_study)
             if length_of_fos > 0:
-                application.new_expiry_date = get_expiry_date(started_year, length_of_fos)
+                application.new_expiry_date = get_expiry_date(
+                    started_year, length_of_fos)
             application.save()
 
-            messages.success(request, _("Søknad om bytte av studieretning er sendt."))
+            messages.success(request, _(
+                "Søknad om bytte av studieretning er sendt."))
 
         return redirect('profiles_active', active_tab='membership')
     raise Http404
@@ -71,9 +77,10 @@ def create_fos_application(request):
 
 def get_expiry_date(started_year, length_of_fos):
     today = timezone.now().date()
-    # Expiry dates should be 15th September, so that we have time to get new lists from NTNU
+    # Expiry dates should be 15th September, so that we have time to get new
+    # lists from NTNU
     new_expiry_date = datetime.date(
-        started_year, 9, 16) + datetime.timedelta(days=365*length_of_fos)
+        started_year, 9, 16) + datetime.timedelta(days=365 * length_of_fos)
     # Expiry dates in the past sets the expiry date to next september
     if new_expiry_date < today:
         if today < datetime.date(today.year, 9, 15):
@@ -88,16 +95,20 @@ def get_expiry_date(started_year, length_of_fos):
 def create_membership_application(request):
     if request.method == 'POST':
         if not request.user.has_expiring_membership:
-            messages.error(request, _("Din bruker har ikke et utløpende medlemskap."))
+            messages.error(request, _(
+                "Din bruker har ikke et utløpende medlemskap."))
             return redirect('profiles_active', active_tab='membership')
 
         if not request.user.ntnu_username:
-            messages.error(request, _("Du må knytte et NTNU-brukernavn til kontoen din."))
+            messages.error(request, _(
+                "Du må knytte et NTNU-brukernavn til kontoen din."))
             return redirect('profiles_active', active_tab='membership')
 
         # Extend length of membership by 1 year
-        membership = AllowedUsername.objects.get(username=request.user.ntnu_username)
-        new_expiration_date = datetime.date(membership.expiration_date.year + 1, 9, 16)
+        membership = AllowedUsername.objects.get(
+            username=request.user.ntnu_username)
+        new_expiration_date = datetime.date(
+            membership.expiration_date.year + 1, 9, 16)
 
         application = MembershipApproval(
             applicant=request.user,
@@ -106,7 +117,8 @@ def create_membership_application(request):
         )
         application.save()
 
-        messages.success(request, _("Søknad om ett års forlenget medlemskap er sendt."))
+        messages.success(request, _(
+            "Søknad om ett års forlenget medlemskap er sendt."))
 
         return redirect('profiles_active', active_tab='membership')
     raise Http404
@@ -121,7 +133,8 @@ def cancel_application(request, application_id):
         return redirect('profiles_active', active_tab='membership')
 
     if app.processed:
-        messages.error(request, _("Denne søknaden er behandlet og kan ikke slettes."))
+        messages.error(request, _(
+            "Denne søknaden er behandlet og kan ikke slettes."))
         return redirect('profiles_active', active_tab='membership')
 
     app.delete()
