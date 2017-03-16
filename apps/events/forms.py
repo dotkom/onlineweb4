@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from captcha.fields import ReCaptchaField
 from django import forms
+from django.conf import settings
 from django.utils.translation import ugettext as _
 
 
@@ -32,6 +33,9 @@ class CaptchaForm(forms.Form):
 
             if self.user.is_member:
                 del self.fields['note']
+
+            if not settings.OW4_SETTINGS.get('events', {}).get('ENABLE_RECAPTCHA', True):
+                del self.fields['captcha']
 
     def clean(self):
         super(CaptchaForm, self).clean()
