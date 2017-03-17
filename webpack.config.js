@@ -19,7 +19,7 @@ if (fs.existsSync(extraResolveFile)) {
   A base configuration for webpack.
   Both the webpack dev server and production config extend from this
 */
-module.exports = {
+const webpackConfig = {
   context: __dirname,
   // Sourcemapping. eval-source-map shows original code as source map and has decent rebuild speed
   devtool: 'eval-source-map',
@@ -202,3 +202,10 @@ module.exports = {
     new BundleTracker({ filename: './webpack-stats.json' }),
   ],
 };
+
+// Add abakus override if instructed to do so
+if (process.env.OW4_ABAKUS_OVERRIDE && process.env.OW4_ABAKUS_OVERRIDE.toLowerCase() === 'true') {
+  webpackConfig.entry.core.push('./assets/core/z_override_abakus');
+}
+
+module.exports = webpackConfig;
