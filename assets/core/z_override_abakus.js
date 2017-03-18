@@ -8,6 +8,8 @@ const overrideWithAbakus = () => {
   hspImg.src = hspLogo;
   const hspSpan = document.querySelector('.ms-span');
   hspSpan.innerHTML = 'From dotkom with <i class="glyphicon glyphicon-heart"></i>';
+  const hspRef = document.querySelector('#ms-ref');
+  hspRef.href = 'https://abakus.no';
 };
 
 overrideWithAbakus();
