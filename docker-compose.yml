@@ -72,6 +72,7 @@ services:
     ports:
       - "3000:3000"
     environment:
+      - OW4_ABAKUS_OVERRIDE
       - WEBPACK_DEV_IP=0.0.0.0
       - WEBPACK_DEV_PORT=3000
       - WEBPACK_DEV_PUBLIC_IP=localhost
