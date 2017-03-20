@@ -54,6 +54,17 @@ Pushes made to the develop branch will trigger a redeployment of the application
 Pull requests trigger containerized builds that perform code style checks and tests. You can view the details of these tests by clicking the "detail" link in the pull request checks status area.
 
 
+Docker
+======
+
+We're using Docker and docker-compose for the development environment. Run `docker-compose pull` followed by `docker-compose build` to get your services up and ready, then start OW4 using `docker-compose up -d` (`-d` for "detached" mode). This will expose the Django development webserver on `http://localhost:8000`. For more information, check out `docker-compose.yml`. For logs when using detached mode, run `docker-compose logs` (or `docker-compose logs <service>` for logs for a specific service).
+
+The Docker setup can be streamlined by some simple make commands. Executing `make` will run `docker-compose pull`, `docker-compose build` and finally `docker-compose up -d` -- a simple way to build a new version of the project and get it up and running (note: this does not actually fetch the latest changes from GitHub!). For simply running OW4 using make, execute `make run`. These commands execute `docker-compose up -d`, which runs docker-compose in detached mode. To check the logs from Docker, check out `make logs` or `docker-compose logs` as described earlier.
+
+To find out if the container is running or not, execute `make status`. This will list currently running containers and their status.
+
+To run commands agains the containers, use `docker-compose exec <container name> <command>`, e.g. `docker-compose exec django python manage.py migrate`. Do this using make with `make exec`. There's also a shortcut to run `manage.py` commands, e.g. `make manage migrate`.
+
 Vagrant
 =======
 
