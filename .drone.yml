@@ -5,7 +5,7 @@ pipeline:
       event: pull_request
     restore: true
     mount:
-      - /usr/local/lib/python3.5/site-packages/
+      - /usr/local/lib/python3.5/site-packages
       - ./node_modules
     volumes:
       - /tmp/cache:/cache
@@ -33,7 +33,7 @@ pipeline:
       event: pull_request
     rebuild: true
     mount:
-      - /usr/local/lib/python3.5/site-packages/
+      - /usr/local/lib/python3.5/site-packages
       - ./node_modules
     volumes:
       - /tmp/cache:/cache
