@@ -16,8 +16,10 @@ def unhandled_image_delete(sender, instance, **kwargs):
     if instance.thumbnail:
         instance.thumbnail.delete(False)
 
+
 # Connect post_delete event with
 post_delete.connect(receiver=unhandled_image_delete, dispatch_uid=uuid.uuid1(), sender=UnhandledImage)
+
 
 # Preset our dispatch UUID, so we can re-use it in the orphan removal part
 # of the post_delete signal.
@@ -66,6 +68,7 @@ def responsive_image_delete(sender, instance, **kwargs):
     # Now we re-attach the post_delete signal, and issue a new UUID as dispatch ID.
     log.debug('Re-attaching post_delete signal for ResponsiveImage')
     post_delete.connect(receiver=responsive_image_delete, dispatch_uid=uuid.uuid1(), sender=ResponsiveImage)
+
 
 # Listen for ResponsiveImage.delete() signals, so we can remove the image files accordingly.
 post_delete.connect(receiver=responsive_image_delete, dispatch_uid=resp_img_uuid, sender=ResponsiveImage)

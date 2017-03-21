@@ -1,43 +1,43 @@
-Django>=1.9.0,<1.10.0
-Pillow==3.3.1                   # PIL fork (Python Imaging Library)
+Django==1.9.12
+Pillow==4.0.0                   # PIL fork (Python Imaging Library)
 django-tastypie==0.13.3         # API v0 - Use git master until django 1.9 release   v
-djangorestframework==3.5.3      # API v1
+djangorestframework==3.5.4      # API v1
 django-filter==1.0.1            # Filtering for DRF
 # python-memcached==1.57          # Memcache. Used by Mailinglists to fetch from Sympa.
 # Upstream is missing Python 3 patches
 git+https://github.com/JelteF/python-memcached@patch-1#egg=python-memcached==1.58
-markdown2==2.3.1                # textarea text formatting
+markdown2==2.3.3                # textarea text formatting
 pytz                            # Timezone lib
-stripe==1.38.0                  # Stripe payment
-icalendar==3.10                # iCalendar generation
-google-api-python-client==1.6.1
+stripe==1.48.1                  # Stripe payment
+icalendar==3.11.3               # iCalendar generation
+google-api-python-client==1.6.2
 
 # third party deps
 # django-filebrowser==3.5.4     # File uploading
 # Missing django 1.9 patches
 git+https://github.com/cXhristian/django-filebrowser.git@django-1.9#egg=django-filebrowser==3.6.2
 git+https://github.com/dotKom/django-chunks.git@e6bf109d4fd286964024c140ac1b8f3d86713540#egg=django-chunks==0.4
-django-crispy-forms==1.6.0      # nice forms
-django-extensions==1.7.4        # nice extra commands for debugging, etc
-django-dynamic-fixture==1.9.0   # Dynamic fixtures for models
-django-recaptcha==1.0.5         # Google ReCaptcha
-django-oauth-toolkit==0.8.1     # OAuth2 authentication support
-django-watson==1.2.3            # Indexed model search lib
-django-reversion==2.0.6         # Model version history with middleware hooks to all post_save signals
+django-crispy-forms==1.6.1      # nice forms
+django-extensions==1.7.7        # nice extra commands for debugging, etc
+django-dynamic-fixture==1.9.1   # Dynamic fixtures for models
+django-recaptcha==1.2.1         # Google ReCaptcha
+django-oauth-toolkit==0.12.0     # OAuth2 authentication support
+django-watson==1.3.0            # Indexed model search lib
+django-reversion==2.0.8         # Model version history with middleware hooks to all post_save signals
 django-guardian==1.4.6          # Per Object permissions framework
-django-taggit==0.21.2           # Generic multi-model tagging library
+django-taggit==0.22.0           # Generic multi-model tagging library
 django-taggit-serializer==0.1.5 # REST Framework serializers for Django-taggit
-APScheduler==3.2.0              # Scheduler
+APScheduler==3.3.1              # Scheduler
 feedme==1.9.5
 git+https://github.com/dotKom/redwine.git@1.2.4#egg=redwine==1.2.4
 reportlab==3.3.0
 pdfdocument==3.1
-Unidecode==0.4.19               # Translates every unicode symbol to the closest ascii. online_mail_usernames
+Unidecode==0.04.20               # Translates every unicode symbol to the closest ascii. online_mail_usernames
 django-markdown-deux==1.0.5
 django-formset-js==0.5.0        # used to dynamically create new formsets
-django-cors-headers==1.1.0      # Enable CORS for Nibble
+django-cors-headers==2.0.2      # Enable CORS for Nibble
 django-datetime-widget==0.9.3   # Datetime widget for forms
-django-webpack-loader==0.3.3    # Integration with webpack
+django-webpack-loader==0.4.1    # Integration with webpack
 dj-database-url==0.4.2          # Allows to configure databases using URLs
 python-decouple==3.0            # Configuration and settings management
 
@@ -46,10 +46,10 @@ django-nose>=1.4,<1.5           # We use this test runner locally
 nose==1.3.7                     # We use this test runner locally
 
 # Frigg
-requests[security]==2.11.1
+requests[security]==2.13.0
 
 # Wiki
-wiki==0.1
+wiki==0.2.1
 
 # Django 1.9 support
 sorl-thumbnail>12.2
@@ -62,4 +62,4 @@ django-sekizai>=0.9
 # libjpeg-dev					# From package repository.
 # libpq-dev						# From package repository.
 
-django_js_reverse==0.7.2
+django-js-reverse==0.7.3

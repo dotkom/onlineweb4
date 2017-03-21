@@ -52,21 +52,29 @@ class GroupRestrictionInline(admin.TabularInline):
 
 def mark_paid(modeladmin, request, queryset):
     queryset.update(paid=True)
+
+
 mark_paid.short_description = "Merk som betalt"
 
 
 def mark_not_paid(modeladmin, request, queryset):
     queryset.update(paid=False)
+
+
 mark_not_paid.short_description = "Merk som ikke betalt"
 
 
 def mark_attended(modeladmin, request, queryset):
     queryset.update(attended=True)
+
+
 mark_attended.short_description = "Merk som møtt"
 
 
 def mark_not_attended(modeladmin, request, queryset):
     queryset.update(attended=False)
+
+
 mark_not_attended.short_description = "Merk som ikke møtt"
 
 

@@ -63,4 +63,5 @@ def trigger_group_syncer(sender, instance, created=False, **kwargs):
         else:
             run_group_syncer(instance)
 
+
 m2m_changed.connect(trigger_group_syncer, dispatch_uid=sync_uuid, sender=User.groups.through)

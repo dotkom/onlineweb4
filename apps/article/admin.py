@@ -21,4 +21,5 @@ class ArticleAdmin(VersionAdmin):
         for instances in instances:
             instances.save()
 
+
 admin.site.register(Article, ArticleAdmin)
