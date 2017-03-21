@@ -289,6 +289,7 @@ class TextAnswer(models.Model):
             ('view_textanswer', 'View TextAnswer'),
         )
 
+
 RATING_CHOICES = [(k, str(k)) for k in range(1, 7)]  # 1 to 6
 RATING_CHOICES.insert(0, ("", ""))  # Adds a blank field to prevent 1 from beeing selected by default
 

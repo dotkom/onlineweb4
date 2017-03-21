@@ -36,6 +36,7 @@ class OnlineUserAdmin(UserAdmin, VersionAdmin):
     filter_horizontal = ('groups', 'user_permissions',)
     search_fields = ('first_name', 'last_name', 'username', 'ntnu_username',)
 
+
 admin.site.register(OnlineUser, OnlineUserAdmin)
 
 
@@ -63,16 +64,19 @@ class AllowedUsernameAdmin(VersionAdmin):
                 user.save()
         obj.save()
 
+
 admin.site.register(AllowedUsername, AllowedUsernameAdmin)
 
 
 class PositionAdmin(VersionAdmin):
     model = Position
 
+
 admin.site.register(Position, PositionAdmin)
 
 
 class SpecialPositionAdmin(VersionAdmin):
     model = SpecialPosition
+
 
 admin.site.register(SpecialPosition, SpecialPositionAdmin)

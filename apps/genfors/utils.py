@@ -48,6 +48,7 @@ def anonymous_voter(anon_cookie, username):
     h.update(username.encode('utf-8'))
     return AnonymousVoter.objects.filter(user_hash=h.hexdigest(), meeting=meeting).first()
 
+
 """
 End helper functions
 """

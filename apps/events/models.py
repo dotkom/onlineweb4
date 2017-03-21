@@ -13,7 +13,6 @@ from django.db.models import SET_NULL, Case, Q, Value, When
 from django.template.defaultfilters import slugify
 from django.utils import timezone
 from django.utils.translation import ugettext as _
-from filebrowser.fields import FileBrowseField
 from unidecode import unidecode
 
 from apps.authentication.models import FIELD_OF_STUDY_CHOICES
@@ -87,8 +86,6 @@ class Event(models.Model):
     ingress = models.TextField(_('ingress'), validators=[validators.MinLengthValidator(25)])
     description = models.TextField(_('beskrivelse'), validators=[validators.MinLengthValidator(45)])
     image = models.ForeignKey(ResponsiveImage, related_name='events', blank=True, null=True, on_delete=SET_NULL)
-    old_image = FileBrowseField(_("bilde"), max_length=200,
-                                directory=IMAGE_FOLDER, extensions=IMAGE_EXTENSIONS, null=True, blank=True)
     event_type = models.SmallIntegerField(_('type'), choices=TYPE_CHOICES, null=False)
 
     def is_attendance_event(self):

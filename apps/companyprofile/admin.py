@@ -10,4 +10,5 @@ class CompanyAdmin(VersionAdmin):
     list_display = ('name', 'site', 'email_address', 'phone_number',)
     search_fields = ('name',)
 
+
 admin.site.register(Company, CompanyAdmin)
