@@ -27,7 +27,7 @@ pipeline:
       - pip install codecov --quiet
       - codecov
 
-  restore-cache:
+  rebuild-cache:
     image: drillster/drone-volume-cache
     when:
       event: pull_request
