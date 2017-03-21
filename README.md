@@ -38,6 +38,14 @@ Install it by running `pip install docker-compose`.
 
 Then, fire it up by issuing `docker-compose up -d` from the project root directory.
 
+## Makefile
+
+There exists a `Makefile` which simplifies interaction with docker and docker-compose.
+
+Simply run `make` to build and start onlineweb4, and run `make stop` to stop it.
+
+To view output from onlineweb4, run `make logs`. To view output from a specific service (e.g. django), prepend the `make` command with `OW4_MAKE_TARGET=django`.
+
 # VirtualEnv
 
 If you are oldschool and using python virtual envs, just activate your env,
