@@ -1,4 +1,15 @@
 pipeline:
+  restore-cache:
+    image: drillster/drone-volume-cache
+    when:
+      event: pull_request
+    restore: true
+    mount:
+      - /usr/local/lib/python3.5/site-packages/
+      - ./node_modules
+    volumes:
+      - /tmp/cache:/cache
+
   test:
     image: registry.online.ntnu.no/dotkom/onlineweb4-testbase
     when:
@@ -15,6 +26,18 @@ pipeline:
       - py.test --cov=apps
       - pip install codecov --quiet
       - codecov
+
+  restore-cache:
+    image: drillster/drone-volume-cache
+    when:
+      event: pull_request
+    rebuild: true
+    mount:
+      - /usr/local/lib/python3.5/site-packages/
+      - ./node_modules
+    volumes:
+      - /tmp/cache:/cache
+
   deploy:
     image: plugins/ssh
     host: nansen.online.ntnu.no
