@@ -128,11 +128,11 @@ const Gallery = (function PrivateGallery($) {
         IMAGE_SELECTION_WRAPPER.slideToggle(100);
       });
 
-      //Remove set image
+      // Remove set image
       BUTTON_REMOVE_IMAGE.on('click', (e) => {
         e.preventDefault();
-        $('#responsive-image-id').attr('value',"");
-        $('#single-image-field-thumbnail').html("Det er ikke valgt noe bilde.");
+        $('#responsive-image-id').attr('value', '');
+        $('#single-image-field-thumbnail').html('Det er ikke valgt noe bilde.');
       });
 
       /**
