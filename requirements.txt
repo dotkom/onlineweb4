@@ -9,7 +9,7 @@ git+https://github.com/JelteF/python-memcached@patch-1#egg=python-memcached==1.5
 markdown2==2.3.3                # textarea text formatting
 pytz                            # Timezone lib
 stripe==1.48.1                  # Stripe payment
-icalendar==3.11.3                # iCalendar generation
+icalendar==3.11.3               # iCalendar generation
 google-api-python-client==1.6.2
 
 # third party deps

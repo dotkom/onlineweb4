@@ -1,0 +1,78 @@
+@abakus-gray: #262623;
+@abakus-red: #b11b11;
+
+/* General */
+a {
+  color: @abakus-gray;
+}
+
+a:hover {
+  color: lighten(@abakus-gray, 10%);
+}
+
+/* Nav */
+#mainnav {
+  background: @abakus-gray;
+}
+
+.subnavbar {
+  background: @abakus-red;
+}
+
+/* Nav: Main sponsor */
+#main-sponsor {
+  .ms-span {
+    text-align: center;
+  }
+}
+
+/* Nav: User Dropdown */
+.dropdown-menu > li > a:hover {
+  background-color: @abakus-red;
+}
+
+
+/* Frontpage: events */
+section#events {
+    .hero {
+        .hero-date {
+          background: @abakus-red;
+        }
+    }
+
+    .event-filter-button {
+      background-color: @abakus-red;
+      border-color: lighten(@abakus-red, 10%);
+    }
+
+    .event-filter-button:hover {
+      background: lighten(@abakus-red, 10%);
+      border-color: lighten(@abakus-red, 20%);
+    }
+}
+
+/* Frontpage: Offline Carousel */
+#offlineCarousel .carousel-control {
+  color: @abakus-gray;
+}
+
+/* Frontpage: Company */
+section#business {
+  .sale-box {
+    background: @abakus-gray;
+  }
+  .sale-content {
+    background: lighten(@abakus-gray, 50%);
+  }
+}
+
+/* Frontpage: About */
+.nav-pills > li.active {
+  > a {
+    background-color: @abakus-red;
+  }
+
+  > a:hover {
+    background-color: lighten(@abakus-red, 10%);
+  }
+}

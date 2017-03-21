@@ -429,13 +429,43 @@ RECAPTCHA_USE_SSL = config("OW4_DJANGO_RECAPTCHA_USE_SSL", cast=bool, default=Tr
 
 OW4_SETTINGS = {
    'events': {
+       'ENABLE_RECAPTCHA': config('OW4_EVENTS_ENABLE_RECAPTCHA', True, cast=bool),
        'FEATURED_DAYS_FUTURE': os.getenv('OW4_EVENTS_FEATURED_DAYS_FUTURE', 3),
        'FEATURED_DAYS_PAST': os.getenv('OW4_EVENTS_FEATURED_DAYS_PAST', 3),
    }
 }
 
 APPROVAL_SETTINGS = {
+    'SEND_APPLICANT_NOTIFICATION_EMAIL': True,
     'SEND_APPROVER_NOTIFICATION_EMAIL': True,
+}
+
+OW4_GSUITE_CREDENTIALS_FILENAME = config('OW4_GSUITE_CREDENTIALS_FILENAME', default='gsuitecredentials.json')
+OW4_GSUITE_CREDENTIALS_PATH = config('OW4_GSUITE_CREDENTIALS_PATH',
+                                     default=os.path.join(PROJECT_ROOT_DIRECTORY, OW4_GSUITE_CREDENTIALS_FILENAME))
+OW4_GSUITE_SYNC = {
+    'CREDENTIALS': OW4_GSUITE_CREDENTIALS_PATH,
+    'DOMAIN': config('OW4_GSUITE_SYNC_DOMAIN', default='online.ntnu.no'),
+    # DELEGATED_ACCOUNT: G Suite Account with proper permissions to perform insertions and removals.
+    'DELEGATED_ACCOUNT': config('OW4_GSUITE_SYNC_DELEGATED_ACCOUNT', default=''),
+    'ENABLED': config('OW4_GSUITE_SYNC_ENABLED', cast=bool, default=False),
+    'ENABLE_INSERT': config('OW4_GSUITE_SYNC_ENABLE_INSERT', cast=bool, default=False),
+    'ENABLE_DELETE': config('OW4_GSUITE_SYNC_ENABLE_DELETE', cast=bool, default=False),
+    # OW4 name (lowercase) -> G Suite name (lowercase)
+    'GROUPS': {
+        'appkom': 'appkom',
+        'arrkom': 'arrkom',
+        'bankom': 'bankom',
+        'bedkom': 'bedkom',
+        'dotkom': 'dotkom',
+        'ekskom': 'ekskom',
+        'fagkom': 'fagkom',
+        'hovedstyret': 'hovedstyret',
+        'jubkom': 'jubkom',
+        'prokom': 'prokom',
+        'seniorkom': 'seniorkom',
+        'trikom': 'trikom',
+    }
 }
 
 GENFORS_ADMIN_PASSWORD = config("OW4_DJANGO_GENFORS_ADMIN_PASSWORD", default='ADMIN_PASSWORD')

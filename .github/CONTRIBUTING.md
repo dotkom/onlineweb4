@@ -35,6 +35,19 @@ We use TeamCity to run the test suite and build the project for every new pull r
 successful for you pull request. We will not merge any branches that breaks the build. You can see the tests 
 [here](https://online.ntnu.no/tc/).
 
+
+Creating Issues
+---------------
+
+Issues should be submitted according to the issue submission template.
+
+
+Opening Pull Requests
+---------------------
+
+Pull requests should be opened according to the pull request template.
+
+
 Other notices
 =============
 

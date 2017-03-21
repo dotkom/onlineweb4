@@ -1,6 +1,6 @@
 Onlineweb 4
 ==========
-[![Build Status](https://ci.online.ntnu.no/api/badges/dotKom/onlineweb4/status.svg)](https://ci.online.ntnu.no/dotKom/onlineweb4) [![codecov](https://codecov.io/gh/dotKom/onlineweb4/branch/develop/graph/badge.svg)](https://codecov.io/gh/dotKom/onlineweb4)
+[![Build Status](https://ci.online.ntnu.no/api/badges/dotkom/onlineweb4/status.svg?branch=develop)](https://ci.online.ntnu.no/dotkom/onlineweb4) [![codecov](https://codecov.io/gh/dotKom/onlineweb4/branch/develop/graph/badge.svg)](https://codecov.io/gh/dotKom/onlineweb4)
 
 
 Requirements
@@ -27,6 +27,25 @@ $ cd onlineweb4
 ```
 
 
+Local development environment
+------------
+
+# Docker and Docker Compose
+
+To fire up the dev environment, you should use docker-compose.
+
+Install it by running `pip install docker-compose`.
+
+Then, fire it up by issuing `docker-compose up -d` from the project root directory.
+
+# VirtualEnv
+
+If you are oldschool and using python virtual envs, just activate your env,
+run `pip install -r requirements.txt`, then `python manage.py migrate`, before starting the dev server with `python manage.py runserver 127.0.0.1:8000`.
+
+Next, you need to fire up the front-end stuff, by running `npm install` followed by `npm start`.
+
+
 CD/CI
 =======
 
@@ -34,9 +53,6 @@ Pushes made to the develop branch will trigger a redeployment of the application
 
 Pull requests trigger containerized builds that perform code style checks and tests. You can view the details of these tests by clicking the "detail" link in the pull request checks status area.
 
-aefaef
-
-Alternatively on Windows, use the GitHub for Windows app to setup everything
 
 Vagrant
 =======

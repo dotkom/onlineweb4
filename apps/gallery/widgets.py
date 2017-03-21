@@ -15,7 +15,9 @@ WIDGET_STRING = """<br /><input{} />\r\n
 <a href="#" class="btn btn-primary" id="add-responsive-image">\r\n
 <i class="fa fa-plus fa-lg"></i> Velg</a>\r\n
 <a href="{}" class="btn btn-primary" target="_blank">\r\n
-<i class="fa fa-image fa-lg"></i> Last opp</a><br>\r\n
+<i class="fa fa-image fa-lg"></i> Last opp</a>\r\n
+<a href="#" class="btn btn-danger" id="dashboard-gallery-remove-image">\r\n
+<i class="fa fa-times fa-lg"></i> Fjern bilde</a><br>\r\n
 <div id="image-selection-wrapper">\r\n
 <h2 id="image-selection-title">Velg bilde</h2>\r\n
 <div class="row">\r\n

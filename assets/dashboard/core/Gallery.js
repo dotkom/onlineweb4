@@ -31,6 +31,7 @@ const Gallery = (function PrivateGallery($) {
   const MANAGE_BUTTON_TEXT = $('#gallery__manage-button-text');
   const THUMBNAIL_VIEW = $('#gallery__thumbnail-view');
   const DASHBOARD_MENU_GALLERY_UNHANDLED_BADGE = $('#dashboard__menu--gallery-unhandled-badge');
+  const BUTTON_REMOVE_IMAGE = $('#dashboard-gallery-remove-image');
 
   /**
    * Create the HTML wrapper for the thumbnail of an UnhandledImage wrapper as a jQuery DOM object.
@@ -125,6 +126,13 @@ const Gallery = (function PrivateGallery($) {
       BUTTON_ADD_RESPONSIVE_IMAGE.on('click', (e) => {
         e.preventDefault();
         IMAGE_SELECTION_WRAPPER.slideToggle(100);
+      });
+
+      // Remove set image
+      BUTTON_REMOVE_IMAGE.on('click', (e) => {
+        e.preventDefault();
+        $('#responsive-image-id').attr('value', '');
+        $('#single-image-field-thumbnail').html('Det er ikke valgt noe bilde.');
       });
 
       /**
