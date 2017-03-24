@@ -45,29 +45,6 @@
         padding: 15px;
         margin-bottom: 20px;
 
-        ul {
-            list-style-type: none;
-            padding: 0;
-            margin: 0;
-            display: block;
-            margin-top: 10px;
-            margin-bottom: 15px;
-        }
-
-        li {
-            display: inline-flex;
-            padding:10px;
-            margin-right:5px;
-            margin-bottom: 5px;
-            color:white;
-            background:@baby-blue;
-            cursor: pointer;
-        }
-
-        li.selected {
-          background: darken(@baby-blue, 10%);
-        }
-
         button {
             background-color: @baby-blue;
             color: #fff;
@@ -78,6 +55,29 @@
             font-size: 13px;
             padding-bottom: 10px;
             padding-top: 10px;
+        }
+
+        .TagContainer {
+            padding: 0;
+            margin: 0;
+            display: block;
+            margin-top: 10px;
+            margin-bottom: 15px;
+
+            button {
+                display: inline-flex;
+                padding: 10px;
+                margin-right: 5px;
+                margin-bottom: 5px;
+                color: white;
+                width: auto;
+                background:@baby-blue;
+                cursor: pointer;
+            }
+
+            button.selected {
+              background: darken(@baby-blue, 10%);
+            }
         }
 
         h3 {

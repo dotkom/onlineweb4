@@ -2,12 +2,12 @@ import React from 'react';
 import classNames from 'classnames';
 
 const Tag = ({ selected, title, changeKey, handleChange }) => (
-  <li
+  <button
     className={classNames({ selected })}
     onClick={() => handleChange(changeKey)}
   >
     {title}
-  </li>
+  </button>
 );
 
 Tag.propTypes = {
