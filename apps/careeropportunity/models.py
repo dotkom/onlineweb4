@@ -1,17 +1,10 @@
 # -*- coding: utf-8 -*-
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
+from taggit.managers import TaggableManager
 
 from apps.companyprofile.models import Company
 
-
-<<<<<<< HEAD
-=======
-class CareerOpportunityLocationTag(TaggedItemBase):
-    content_object = models.ForeignKey('CareerOpportunity')
-
-
->>>>>>> cb14576... Add API endpoint for career
 class CareerOpportunity(models.Model):
     """
     Base class for CareerOpportunity
@@ -40,7 +33,7 @@ class CareerOpportunity(models.Model):
         default=5,
     )
 
-    location = TaggableManager(_('sted(er)'), through=CareerOpportunityLocationTag, blank=True)
+    location = TaggableManager(_('sted(er)'), blank=True)
     location.rel.related_name = "+"
 
     def __str__(self):
