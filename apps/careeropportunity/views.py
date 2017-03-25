@@ -20,13 +20,13 @@ def index(request):
 
     # Subquery to filter out only the companies that have a careeropportunity
     # visible right now, to avoid listing companies that are irrelevant
-    distinct_company_opportunities = CareerOpportunity.objects.filter(
-        start__lte=timezone.now(),
-        end__gte=timezone.now()
-    ).values_list('company', flat=True)
-    companies = Company.objects.filter(
-        id__in=set(distinct_company_opportunities)
-    )
+    #distinct_company_opportunities = CareerOpportunity.objects.filter(
+    #    start__lte=timezone.now(),
+    #    end__gte=timezone.now()
+    #).values_list('company', flat=True)
+    #companies = Company.objects.filter(
+    #    id__in=set(distinct_company_opportunities)
+    #)
 
     employments = []
     locations = []
@@ -65,6 +65,7 @@ def details(request, opportunity_id):
         {'opportunity': opportunity},
         context_instance=RequestContext(request)
     )
+
 
 class CareerViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.ListModelMixin):
     """

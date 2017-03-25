@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from taggit_serializer.serializers import TaggitSerializer, TagListSerializerField
+from taggit_serializer.serializers import TaggitSerializer
 
 from apps.careeropportunity.models import CareerOpportunity
 from apps.companyprofile.serializers import CompanySerializer
@@ -15,6 +15,7 @@ class LocationTagListSerializerFieldWithSlug(serializers.ModelSerializer):
             })
 
         return locations
+
 
 class CareerSerializer(TaggitSerializer, serializers.ModelSerializer):
     company = CompanySerializer()
@@ -35,7 +36,7 @@ class CareerSerializer(TaggitSerializer, serializers.ModelSerializer):
                   'deadline',
                   'employment',
                   'location'
-        )
+                  )
 
     def get_employment(self, obj):
         return {
