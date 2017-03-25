@@ -9,7 +9,7 @@ from rest_framework.permissions import AllowAny
 
 from apps.careeropportunity.models import CareerOpportunity
 from apps.careeropportunity.serializers import CareerSerializer
-from apps.companyprofile.models import Company
+# from apps.companyprofile.models import Company
 
 
 def index(request):
@@ -20,13 +20,13 @@ def index(request):
 
     # Subquery to filter out only the companies that have a careeropportunity
     # visible right now, to avoid listing companies that are irrelevant
-    #distinct_company_opportunities = CareerOpportunity.objects.filter(
-    #    start__lte=timezone.now(),
-    #    end__gte=timezone.now()
-    #).values_list('company', flat=True)
-    #companies = Company.objects.filter(
+    # distinct_company_opportunities = CareerOpportunity.objects.filter(
+    #     start__lte=timezone.now(),
+    #     end__gte=timezone.now()
+    # ).values_list('company', flat=True)
+    # companies = Company.objects.filter(
     #    id__in=set(distinct_company_opportunities)
-    #)
+    # )
 
     employments = []
     locations = []
