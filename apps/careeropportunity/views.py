@@ -11,6 +11,7 @@ from apps.careeropportunity.models import CareerOpportunity
 from apps.careeropportunity.serializers import CareerSerializer
 from apps.companyprofile.models import Company
 
+
 def index(request):
     opportunities = CareerOpportunity.objects.filter(
         start__lte=timezone.now(),

@@ -1,8 +1,8 @@
 from rest_framework import serializers
 from taggit_serializer.serializers import TaggitSerializer, TagListSerializerField
 
-from apps.companyprofile.serializers import CompanySerializer
 from apps.careeropportunity.models import CareerOpportunity
+from apps.companyprofile.serializers import CompanySerializer
 
 
 class LocationTagListSerializerFieldWithSlug(serializers.ModelSerializer):

@@ -5,6 +5,7 @@ from taggit.managers import TaggableManager
 
 from apps.companyprofile.models import Company
 
+
 class CareerOpportunity(models.Model):
     """
     Base class for CareerOpportunity
