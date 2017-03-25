@@ -4,7 +4,6 @@ from django.conf.urls import url
 
 from apps.sso import endpoints, views
 
-
 urlpatterns = [
     url(r'^$', views.index, name='sso_index'),
     url(r'^user/', endpoints.user, name='sso_user'),
