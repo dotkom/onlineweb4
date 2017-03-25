@@ -53,7 +53,7 @@ class CompanyResource(ModelResource):
         queryset = Company.objects.all()
         resource_name = 'company'
         allowed_methods = ['get']
-        fields = ['image']
+        fields = ['name']
 
 
 class CompanyEventResource(ModelResource):
@@ -108,15 +108,6 @@ class EventResource(ModelResource):
 
             # Unset the image-field
             del(bundle.data['image'])
-
-        # Do the same thing for the company image
-        if bundle.data['company_event']:
-            for company in bundle.data['company_event']:
-                temp_image = FileObject(company.data['companies'].data['image'])
-                for ver in VERSIONS.keys():
-                    if ver.startswith('companies_thumb'):
-                        company.data['companies'].data['image_' + ver] = temp_image.version_generate(ver).url
-                del(company.data['companies'].data['image'])
 
         # Returning washed object
         return bundle
