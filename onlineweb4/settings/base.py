@@ -141,6 +141,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'middleware.http.Http403Middleware',
     'reversion.middleware.RevisionMiddleware',
+    'oauth2_provider.middleware.OAuth2TokenMiddleware',
     # Uncomment the next line for simple clickjacking protection:
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
@@ -148,6 +149,7 @@ MIDDLEWARE_CLASSES = (
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend', # this is default
     'guardian.backends.ObjectPermissionBackend',
+    'oauth2_provider.backends.OAuth2Backend',
 )
 
 ROOT_URLCONF = 'onlineweb4.urls'
