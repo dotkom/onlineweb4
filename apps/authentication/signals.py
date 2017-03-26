@@ -27,9 +27,11 @@ def run_group_syncer(user):
     if settings.OW4_GSUITE_SYNC.get('ENABLED', False):
         ow4_gsuite_domain = settings.OW4_GSUITE_SYNC.get('DOMAIN')
         if isinstance(user, User):
+            logger.debug('Running G Suite syncer for user {}'.format(user))
             update_g_suite_user(ow4_gsuite_domain, user, suppress_http_errors=True)
         elif isinstance(user, Group):
             group = user
+            logger.debug('Running G Suite syncer for group {}'.format(group))
             update_g_suite_group(ow4_gsuite_domain, group.name, suppress_http_errors=True)
 
 
