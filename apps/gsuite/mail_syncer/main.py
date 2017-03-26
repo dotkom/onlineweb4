@@ -11,7 +11,7 @@ from apps.gsuite.mail_syncer.utils import (_get_excess_users_in_g_suite,
 logger = logging.getLogger(__name__)
 
 
-def insert_ow4_users_into_g_suite(domain, group_name, missing_users):
+def insert_ow4_users_into_g_suite(domain, group_name, missing_users, suppress_http_errors=False):
     """
     Inserts a list of OW4 users into a G Suite group.
     :param domain: The domain in which to insert a user into a group.
@@ -22,10 +22,10 @@ def insert_ow4_users_into_g_suite(domain, group_name, missing_users):
     :type missing_users: list
     """
     for missing_user in missing_users:
-        insert_ow4_user_into_g_suite_group(domain, group_name, missing_user)
+        insert_ow4_user_into_g_suite_group(domain, group_name, missing_user, suppress_http_errors=suppress_http_errors)
 
 
-def remove_excess_g_suite_users(domain, group_name, g_suite_excess_users):
+def remove_excess_g_suite_users(domain, group_name, g_suite_excess_users, suppress_http_errors=False):
     """
     Removes excess users from a G Suite group.
     :param domain: The domain in which to remove a user from a group.
@@ -39,7 +39,7 @@ def remove_excess_g_suite_users(domain, group_name, g_suite_excess_users):
                 extra={'group': group_name, 'excess_users': g_suite_excess_users})
 
     for excess_user in g_suite_excess_users:
-        resp = remove_g_suite_user_from_group(domain, group_name, excess_user)
+        resp = remove_g_suite_user_from_group(domain, group_name, excess_user, suppress_http_errors=suppress_http_errors)
         logger.debug('Response from cleaning {group_name}: {resp}'.format(group_name=group_name, resp=resp))
 
 
@@ -113,5 +113,5 @@ def update_g_suite_group(domain, group_name, suppress_http_errors=False):
     missing_users = _get_missing_ow4_users_for_g_suite(g_suite_users, ow4_users)
 
     # @ToDo: Look into bulk updates
-    insert_ow4_users_into_g_suite(domain, group_name, missing_users)
-    remove_excess_g_suite_users(domain, group_name, excess_users)
+    insert_ow4_users_into_g_suite(domain, group_name, missing_users, suppress_http_errors=suppress_http_errors)
+    remove_excess_g_suite_users(domain, group_name, excess_users, suppress_http_errors=suppress_http_errors)
