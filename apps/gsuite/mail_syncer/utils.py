@@ -450,7 +450,7 @@ def _get_missing_ow4_users_for_g_suite(g_suite_users, ow4_users):
     missing_users = []
 
     for ow4_user in ow4_users:
-        if not _get_g_suite_user_from_g_suite_user_list(g_suite_users, ow4_user.online_mail):
+        if not _get_g_suite_user_from_g_suite_user_list(g_suite_users, ow4_user.get_online_mail()):
             missing_users.append(ow4_user)
 
     logger.debug('OW4 users missing in G Suite ({missing_users_count}): {missing_users}'.format(
