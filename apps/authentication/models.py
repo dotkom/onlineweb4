@@ -168,6 +168,11 @@ class OnlineUser(AbstractUser):
     def get_emails(self):
         return Email.objects.all().filter(user=self)
 
+    def get_online_mail(self):
+        if self.online_mail:
+            return self.online_mail + '@' + settings.OW4_GSUITE_SYNC.get('DOMAIN')
+        return None
+
     def get_active_suspensions(self):
         return self.suspension_set.filter(active=True)
 
