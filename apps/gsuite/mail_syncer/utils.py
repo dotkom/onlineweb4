@@ -411,7 +411,7 @@ def _get_excess_users_in_g_suite(g_suite_users, ow4_users):
 
     for user in g_suite_users:
         try:
-            ow4_users.get(online_mail=user.get('email'))
+            ow4_users.get(online_mail=user.get('email').split('@')[0])
         except User.DoesNotExist:
             excess_users.append(user)
 
