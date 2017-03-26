@@ -229,7 +229,7 @@ def get_g_suite_users_for_group(domain, group_name, suppress_http_errors=False):
         if not suppress_http_errors:
             raise e
 
-    return members
+    return members or []
 
 
 def get_g_suite_groups_for_user(domain, _user, suppress_http_errors=False):
@@ -260,7 +260,7 @@ def get_g_suite_groups_for_user(domain, _user, suppress_http_errors=False):
         if not suppress_http_errors:
             raise e
 
-    return groups
+    return groups or []
 
 
 def get_ow4_users_for_group(group_name):
@@ -342,6 +342,7 @@ def get_excess_groups_for_user(domain, user):
         if group_name in available_groups and group_name not in user_should_be_in_groups:
             excess_groups.append(group.get('name'))
 
+    logger.info('{} should be removed from these groups: {}'.format(user, excess_groups))
     return excess_groups
 
 
