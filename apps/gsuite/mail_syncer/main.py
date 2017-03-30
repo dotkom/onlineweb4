@@ -39,7 +39,8 @@ def remove_excess_g_suite_users(domain, group_name, g_suite_excess_users, suppre
                 extra={'group': group_name, 'excess_users': g_suite_excess_users})
 
     for excess_user in g_suite_excess_users:
-        resp = remove_g_suite_user_from_group(domain, group_name, excess_user, suppress_http_errors=suppress_http_errors)
+        resp = remove_g_suite_user_from_group(domain, group_name, excess_user,
+                                              suppress_http_errors=suppress_http_errors)
         logger.debug('Response from cleaning {group_name}: {resp}'.format(group_name=group_name, resp=resp))
 
 
