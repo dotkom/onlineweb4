@@ -1,7 +1,7 @@
 {% extends "sso/index.html" %}
 {% block content %}
-{% if not error %}
 <div id="sso-panel">
+{% if not error %}
     <div id="sso-panel-header">
         <h3>Ekstern autentisering</h3>
     </div>
@@ -28,9 +28,16 @@
         </form>
     </div>
     <p class="text-center"><small><i class="fa fa-lock"></i> Ekstern autentisering benytter OAuth 2.0 gjennom TLS</small></p>
+{% else %}
+    <div id="sso-panel-header">
+        <h3>En feil skjedde</h3>
+    </div>
+    <div id="sso-panel-body">
+        {{ error.description }}
+    </div>
+{% endif %}
 </div>
 <br />
 <br />
 <p class="text-center">Les mer om bruken av <i><a href="/wiki/">Ekstern Autentisering</a></i> på wikien.</p>
-{% endif %}
 {% endblock %}
