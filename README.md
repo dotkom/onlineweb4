@@ -116,7 +116,7 @@ CONS:
 * You have to access the dev server on <parallels-ip>:<some port> instead of the neat localhost:8001 that virtualbox let's you do.
 
 PROS:
-* Parallels is _much_ better than virtualbox for mac. 
+* Parallels is _much_ better than virtualbox for mac.
 * VB will hang after sleep, which requires a shutdown of the machine to keep working, causing lots of .swp files. This has never happened to me (melwil) with Parallels.
 * Parallels is faster, tab completion, checking out branches, stashing, is all ~instant in Parallels, while it can take as much as seconds in VB.
 * Parallels was made for Mac.
