@@ -125,6 +125,11 @@ if 'apps.genfors' in settings.INSTALLED_APPS:
         url(r'^genfors/',           include('apps.genfors.urls')),
     ]
 
+if 'apps.hobbygroups' in settings.INSTALLED_APPS:
+    urlpatterns += [
+        url(r'^hobbygroups/', include('apps.hobbygroups.urls')),
+    ]
+
 if 'apps.marks' in settings.INSTALLED_APPS:
     urlpatterns += [
         url(r'^dashboard/marks/',          include('apps.marks.dashboard.urls')),
