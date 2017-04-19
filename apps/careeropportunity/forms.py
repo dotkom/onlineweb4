@@ -18,7 +18,7 @@ class AddCareerOpportunityForm(forms.ModelForm):
     deadline = forms.DateTimeField(label='Søknadsfrist', required=True, widget=forms.TextInput(
         attrs={'placeholder': 'Velg søknadsfrist'}))
 
-
     class Meta:
         model = CareerOpportunity
-        fields = ('company', 'title', 'ingress', 'description', 'start', 'end', 'featured', 'deadline', 'employment', 'location')
+        fields = ('company', 'title', 'ingress', 'description', 'start', 'end',
+                  'featured', 'deadline', 'employment', 'location')
