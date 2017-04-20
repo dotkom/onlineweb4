@@ -49,9 +49,9 @@
                 <li><a href="{% url 'events_index' %}">Arkiv</a></li>
                 <li><a href="{% url 'careeropportunity_index' %}">Karriere</a></li>
                 <li><a href="{% url 'resourcecenter_index' %}">Ressurser</a></li>
+                <li><a href="{% url 'hobbygroups_index' %}" class="hidden-sm">Interessegrupper</a></li>
                 <li><a href="/wiki/">Wiki</a></li>
                 <li><a href="/webshop/">Webshop</a></li>
-                <li><a href="{% url 'hobbygroups_index' %}" class="hidden-sm">Interessegrupper</a></li>
             </ul>
             <ul class="mn-user-nav">
             {% if user.is_authenticated %}
