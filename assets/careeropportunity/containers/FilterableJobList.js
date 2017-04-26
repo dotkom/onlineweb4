@@ -58,6 +58,8 @@ class FilterableJobList extends React.Component {
           },
         ]),
       },
+
+      filterText: '',
     };
 
     this.handleTagChange = this.handleTagChange.bind(this);
@@ -182,6 +184,12 @@ class FilterableJobList extends React.Component {
     });
   }
 
+  handleFilterChange(event) {
+    this.setState({
+      filterText: event.target.value,
+    });
+  }
+
   render() {
     return (
       <Grid>
@@ -198,9 +206,15 @@ class FilterableJobList extends React.Component {
             tags={this.state.tags}
             handleTagChange={this.handleTagChange}
             handleReset={this.handleReset}
+            handleFilterChange={e => this.handleFilterChange(e)}
+            filterText={this.state.filterText}
           />
 
-          <JobList jobs={this.state.jobs} tags={this.state.tags} />
+          <JobList
+            jobs={this.state.jobs}
+            tags={this.state.tags}
+            filterText={this.state.filterText}
+          />
         </Row>
       </Grid>
     );

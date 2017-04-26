@@ -2272,6 +2272,10 @@ function.prototype.name@^1.0.0:
     function-bind "^1.1.0"
     is-callable "^1.1.2"
 
+fuse.js@^2.7.3:
+  version "2.7.3"
+  resolved "https://registry.yarnpkg.com/fuse.js/-/fuse.js-2.7.3.tgz#dd9c7ac3e59420ab057e2b25f4e3bddae4f940a5"
+
 gauge@~2.7.1:
   version "2.7.3"
   resolved "https://registry.yarnpkg.com/gauge/-/gauge-2.7.3.tgz#1c23855f962f17b3ad3d0dc7443f304542edfe09"
