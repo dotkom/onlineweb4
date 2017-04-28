@@ -1,58 +1,51 @@
 export const toggleEventTypeDisplay = (state, eventType) => {
-  let newState = state;
+  const newState = Object.assign({}, state);
+  const selected = [];
   let eventCount = 0;
-  let selected = [];
-  for (let key in state.eventTypes) {
+
+  for (const type of Object.values(newState.eventTypes)) {
     eventCount++;
-    if (state.eventTypes[key].display) {
-      selected.push(key);
+    if (type.display) {
+      selected.push(type.id);
     }
   }
 
   // If only one event is selected and is being deselected, then show all and set dirty to false
-  if (selected.length === 1 && eventType === newState.eventTypes[selected[0]]) {
-    newState.dirty = false;
-    for (let key in state.eventTypes) {
-      newState.eventTypes[key] = Object.assign({}, newState.eventTypes[key], {
+  if (selected.length === 1 && eventType.id === selected[0]) {
+    state.dirty = false;
+    for (const type of Object.values(newState.eventTypes)) {
+      Object.assign(type, {
         display: true,
-      })
+      });
     }
   }
 
   // If only one event is unselected and is being selected, then show all and set dirty to true
   else if (selected.length === eventCount - 1 && selected.indexOf(eventType.id) === -1) {
-    newState.dirty = true;
-    for (let key in state.eventTypes) {
-      newState.eventTypes[key] = Object.assign({}, newState.eventTypes[key], {
+    state.dirty = true;
+    for (const type of Object.values(newState.eventTypes)) {
+      Object.assign(type, {
         display: true,
-      })
+      });
     }
   }
 
   // If all events are selected and dirty is false, then deselect the all other than the selected and set dirty to true
   else if (selected.length === eventCount && !state.dirty) {
-    newState.dirty = true;
-    for (let key in state.eventTypes) {
-      if (key !== eventType.id) {
-        newState.eventTypes[key] = Object.assign({}, newState.eventTypes[key], {
+    state.dirty = true;
+    for (const type of Object.values(newState.eventTypes)) {
+      if (type.id !== eventType.id) {
+        Object.assign(type, {
           display: false,
-        })
+        });
       }
     }
   }
 
-  // If all events are selected and dirty is true, then deselect the selected one and leave dirty as true
-  else if (selected.length === eventCount && state.dirty) {
-    newState.eventTypes = Object.assign({}, state.eventTypes, {
-      [eventType.id]: Object.assign({}, eventType, {
-        display: !eventType.display,
-      }),
-    });
-  }
-
-  // If none of the edge cases above
+  // If none of the edge cases above, then toggle as usual
   else {
-    newState.eventTypes = Object.assign({}, state.eventTypes, {
+    state.dirty = true;
+    Object.assign(newState.eventTypes, {
       [eventType.id]: Object.assign({}, eventType, {
         display: !eventType.display,
       }),
@@ -60,7 +53,7 @@ export const toggleEventTypeDisplay = (state, eventType) => {
   }
 
   return Object.assign({}, state.eventTypes, newState.eventTypes);
-};
+}
 
 export const setEventsForEventTypeId = (state, eventTypeId, events) => (
   Object.assign({}, state.eventTypes, {
