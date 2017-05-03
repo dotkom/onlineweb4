@@ -1,13 +1,15 @@
 {% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% load addcss %}
 {% load render_bundle from webpack_loader %}
 
 {% block title %}
-Interessegrupper - Online
+Kontakt oss - Online
 {% endblock title %}
 
 {% block content %}
 
-<section id="hobbygroups">
+<section id="contact">
 	<div class="container">
 		<div class="col-md-12">
 			<div class="page-header">
@@ -25,11 +27,19 @@ Interessegrupper - Online
                 </div>
 			</div>
 		</div>
-		<form method="POST" id="contact_form" action="{% url 'submit' %}">
-			{% csrf_token %}
-				{{ form.as_p }}
-				<button class="btn btn-success" id="submitContactForm" type="submit">Send</button>
-		</form>
+
+		<div class="row">
+			<div class="col-md-6">
+				<form method="POST" id="contact_form" action="{% url 'submit' %}">
+					{% csrf_token %}
+						{{ form.contact_name|addclass:"form-control" }}
+						{{ form.contact_email|addclass:"form-control" }}
+						{{ form.content|addclass:"form-control" }}
+						<button class="btn btn-success" id="submitContactForm" type="submit">Send</button>
+				</form>
+			</div>
+			<div class="col-md-6"></div>
+		</div>
 	</div>
 </section>
 
