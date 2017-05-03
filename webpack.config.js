@@ -93,6 +93,9 @@ const webpackConfig = {
     genfors: [
       './assets/genfors/index',
     ],
+    hobbygroups: [
+      './assets/hobbygroups/index',
+    ],
     mailinglists: [
       './assets/mailinglists/index',
     ],
