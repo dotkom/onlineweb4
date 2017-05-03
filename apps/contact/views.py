@@ -1,6 +1,6 @@
 from django.contrib import messages
 from django.core.mail import EmailMessage
-from django.shortcuts import render_to_response, redirect
+from django.shortcuts import redirect, render_to_response
 from django.template import RequestContext
 
 from apps.contact.forms import ContactForm
