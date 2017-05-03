@@ -34,7 +34,8 @@ Kontakt oss - Online
 		<div class="row" id="introduction">
             <div class="col-md-6">
                 <p>
-                    Her kan du kontakte HS eller dotkom.
+                    Ønsker du å komme med forslag til hovedstyret eller noen innspill til utviklingsteamet dotkom?
+                    Da kan du enkelt ta kontakt med oss via dette skjemaet!
                 </p>
                 <hr>
             </div>
@@ -45,8 +46,11 @@ Kontakt oss - Online
 			<div class="col-md-6">
 				<form method="POST" id="contact_form" action="{% url 'submit' %}">
 					{% csrf_token %}
+                    <div id="choice_label">
                     {{ form.contact_receiver.label }}
+                    </div>
                     {{ form.contact_receiver|addclass:"form-control" }}
+                    <hr>
 					{{ form.contact_name|addclass:"form-control" }}
 					{{ form.contact_email|addclass:"form-control" }}
 					{{ form.content|addclass:"form-control" }}

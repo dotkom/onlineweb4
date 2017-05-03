@@ -1,8 +1,9 @@
 from django import forms
 
+
 class ContactForm(forms.Form):
     komiteer = ((1, "Hovedstyret"), (2, "Drifts- og utviklingskomiteen"))
-    contact_name = forms.CharField(required=True, label="Ditt navn:", widget=forms.TextInput({"placeholder":"Navn"}))
-    contact_email = forms.EmailField(required=True, label="Din epostadresse:", widget=forms.TextInput({"placeholder":"Epostadresse"}))
+    contact_name = forms.CharField(required=True, label="Ditt navn:", widget=forms.TextInput({"placeholder": "Navn"}))
+    contact_email = forms.EmailField(required=True, label="Din epostadresse:", widget=forms.TextInput({"placeholder": "Epostadresse"}))
     contact_receiver = forms.ChoiceField(required=True, label="Hvem ønsker du å kontakte?", choices=komiteer)
-    content = forms.CharField(required=True, widget=forms.Textarea({"placeholder":"Din melding"}), label="Melding:")
+    content = forms.CharField(required=True, widget=forms.Textarea({"placeholder": "Din melding"}), label="Melding:")
