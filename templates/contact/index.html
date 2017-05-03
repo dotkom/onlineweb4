@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% load render_bundle from webpack_loader %}
+
+{% block title %}
+Interessegrupper - Online
+{% endblock title %}
+
+{% block content %}
+
+<section id="hobbygroups">
+	<div class="container">
+		<div class="col-md-12">
+			<div class="page-header">
+				<h1 id="resourcecenter-heading">Kontakt oss</h1>
+			</div>
+		</div>
+
+		<div class="row" id="introduction">
+            <div class="col-xs-12 col-sm-12 col-md-12">
+                <div class="col-md-12">
+                    <p>
+                        Her kan du kontakte HS eller dotkom.
+                    </p>
+                    <hr>
+                </div>
+			</div>
+		</div>
+		<form method="POST" id="contact_form" action="{% url 'submit' %}">
+			{% csrf_token %}
+				{{ form.as_p }}
+				<button class="btn btn-success" id="submitContactForm" type="submit">Send</button>
+		</form>
+	</div>
+</section>
+
+{% endblock content %}
