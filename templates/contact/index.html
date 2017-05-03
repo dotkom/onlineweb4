@@ -7,6 +7,16 @@
 Kontakt oss - Online
 {% endblock title %}
 
+{% block styles %}
+	{{ block.super }}
+	{% render_bundle 'contact' 'css' %}
+{% endblock %}
+
+{% block js %}
+	{{ block.super }}
+	{% render_bundle 'contact' 'js' %}
+{% endblock %}
+
 {% block content %}
 
 <section id="contact">
