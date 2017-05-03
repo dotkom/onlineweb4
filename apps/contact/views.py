@@ -26,7 +26,7 @@ def contact_submit(request):
             to_email = choice
 
             EmailMessage(subject, content, from_email, to_email).send()
-            messages.success(request, 'Mailen ble sendte')
+            messages.success(request, 'Mailen ble sendt')
         else:
             messages.error(request, 'Mail ble ikke sendt')
     return redirect('contact_index')

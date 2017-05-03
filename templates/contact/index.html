@@ -47,11 +47,8 @@ Kontakt oss - Online
 					{% csrf_token %}
                     {{ form.contact_receiver.label }}
                     {{ form.contact_receiver|addclass:"form-control" }}
-					{{ form.contact_name.label }}
 					{{ form.contact_name|addclass:"form-control" }}
-					{{ form.contact_email.label }}
 					{{ form.contact_email|addclass:"form-control" }}
-					{{ form.content.label }}
 					{{ form.content|addclass:"form-control" }}
 					<button class="btn btn-success" id="submitContactForm" type="submit">Send</button>
 				</form>
