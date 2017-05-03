@@ -14,8 +14,12 @@ def contact_submit(request):
     if request.method == 'POST':
         form = ContactForm(request.POST)
         if form.is_valid():
-            EmailMessage('subject', form.cleaned_data['content'], form.cleaned_data['contact_email'],
-            ['dotkom@online.ntnu.no']).send()
+            subject = 'subject'
+            content = form.cleaned_data['content']
+            from_email = form.cleaned_data['contact_email']
+            to_email = 'dotkom@online.ntnu.no'
+
+            EmailMessage(subject, content, from_email, to_email).send()
             messages.success(request, 'Mailen ble sendte')
         else:
             messages.error(request, 'Mail ble ikke sendt')
