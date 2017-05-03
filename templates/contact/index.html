@@ -45,6 +45,8 @@ Kontakt oss - Online
 			<div class="col-md-6">
 				<form method="POST" id="contact_form" action="{% url 'submit' %}">
 					{% csrf_token %}
+                    {{ form.contact_receiver.label }}
+                    {{ form.contact_receiver|addclass:"form-control" }}
 					{{ form.contact_name.label }}
 					{{ form.contact_name|addclass:"form-control" }}
 					{{ form.contact_email.label }}
