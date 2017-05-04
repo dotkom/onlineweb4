@@ -24,5 +24,5 @@ def contact_submit(request):
             EmailMessage(subject, content, from_email, to_email).send()
             messages.success(request, 'Mailen ble sendt')
         else:
-            messages.error(request, 'Mail ble ikke sendt')
+            messages.error(request, 'Mail ble ikke sendt, prøv igjen eller send mail direkte til dotkom(at)online.ntnu.no')
     return redirect('contact_index')
