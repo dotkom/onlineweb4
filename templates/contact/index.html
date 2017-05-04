@@ -47,13 +47,16 @@ Kontakt oss - Online
 				<form method="POST" id="contact_form" action="{% url 'submit' %}">
 					{% csrf_token %}
                     <div id="choice_label">
-                    {{ form.contact_receiver.label }}
+                    	{{ form.contact_receiver.label }}
                     </div>
                     {{ form.contact_receiver|addclass:"form-control" }}
                     <hr>
 					{{ form.contact_name|addclass:"form-control" }}
 					{{ form.contact_email|addclass:"form-control" }}
 					{{ form.content|addclass:"form-control" }}
+					<div id="captcha">
+						{{ form.captcha }}
+					</div>
 					<button class="btn btn-success" id="submitContactForm" type="submit">Send</button>
 				</form>
 			</div>
