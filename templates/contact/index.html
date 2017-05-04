@@ -46,17 +46,21 @@ Kontakt oss - Online
 			<div class="col-md-6">
 				<form method="POST" id="contact_form" action="{% url 'submit' %}">
 					{% csrf_token %}
-                    <div id="choice_label">
-                    	{{ form.contact_receiver.label }}
-                    </div>
-                    {{ form.contact_receiver|addclass:"form-control" }}
-                    <hr>
-					{{ form.contact_name|addclass:"form-control" }}
-					{{ form.contact_email|addclass:"form-control" }}
-					{{ form.content|addclass:"form-control" }}
-					<div id="captcha">
-						{{ form.captcha }}
-					</div>
+					{% for field in form %}
+						{% if field.id_for_label == "id_contact_receiver" %}
+							<div id="choice_label">
+								{{ field.label }}
+							</div>
+							{{ field|addclass:"form-control" }}
+							<hr>
+						{% elif field.id_for_label == "id_captcha" %}
+							<div id=captcha>
+								{{ field }}
+							</div>
+						{% else %}
+							{{ field|addclass:"form-control" }}
+						{% endif %}
+					{% endfor %}
 					<button class="btn btn-success" id="submitContactForm" type="submit">Send</button>
 				</form>
 			</div>
