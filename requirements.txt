@@ -19,7 +19,7 @@ git+https://github.com/cXhristian/django-filebrowser.git@django-1.9#egg=django-f
 git+https://github.com/dotKom/django-chunks.git@e6bf109d4fd286964024c140ac1b8f3d86713540#egg=django-chunks==0.4
 django-crispy-forms==1.6.1      # nice forms
 django-extensions==1.7.9        # nice extra commands for debugging, etc
-django-dynamic-fixture==1.9.4   # Dynamic fixtures for models
+django-dynamic-fixture==1.9.5   # Dynamic fixtures for models
 django-recaptcha==1.3.0         # Google ReCaptcha
 django-oauth-toolkit==0.12.0    # OAuth2 authentication support
 django-watson==1.3.1            # Indexed model search lib
@@ -46,7 +46,7 @@ django-nose>=1.4,<1.5           # We use this test runner locally
 nose==1.3.7                     # We use this test runner locally
 
 # Frigg
-requests[security]==2.14.0
+requests[security]==2.14.1
 
 # Wiki
 wiki==0.2.4
