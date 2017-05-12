@@ -114,6 +114,48 @@ def get_user(original_user, gsuite=False, ow4=False):
     return ow4_user if ow4 else gsuite_user
 
 
+def insert_email_into_g_suite_group(domain, group_name, email, suppress_http_errors=False):
+    """
+    Insert an email address into a G Suite group.
+    :param domain: The domain in which to insert a user into.
+    :type domain: str
+    :param group_name: The name of the group the user should be inserted into.
+    :type group_name: str
+    :param email: The email in question.
+    :type email: str
+    :param suppress_http_errors: Whether or not to suppress HttpErrors happening during execution.
+    :type suppress_http_errors: bool
+    :return: The response of the execution.
+    """
+    group_key = get_group_key(domain, group_name)
+
+    logger.info("Inserting '{email}' into G Suite group '{group}'.".format(email=email, group=group_key),
+                extra={'email': email, 'group': group_key})
+
+    if not settings.OW4_GSUITE_SYNC.get('ENABLE_INSERT', False):
+        logger.debug('Skipping inserting email "{email}" since ENABLE_INSERT is False.'.format(email=email))
+        return
+
+    g_suite_user_dict = {
+        'email': get_user_key(domain, email),
+        'role': 'MEMBER',
+    }
+
+    directory = setup_g_suite_client()
+
+    resp = None
+    try:
+        resp = directory.members().insert(body=g_suite_user_dict, groupKey=group_key).execute()
+    except HttpError as err:
+        logger.error('HttpError when inserting into G Suite group: {err}'.format(err=err),
+                     extra={'suppress_http_error': suppress_http_errors})
+        if not suppress_http_errors:
+            raise err
+    logger.debug("Inserting response: {resp}".format(resp=resp))
+
+    return resp
+
+
 def insert_ow4_user_into_g_suite_group(domain, group_name, ow4_user, suppress_http_errors=False):
     """
     Insert a given OW4 user into a group in G Suite.
@@ -127,38 +169,17 @@ def insert_ow4_user_into_g_suite_group(domain, group_name, ow4_user, suppress_ht
     :type suppress_http_errors: bool
     :return: The response of the execution.
     """
+    logger.info("Inserting '{user}' into G Suite group '{group}'.".format(user=ow4_user, group=group_name),
+                extra={'user': ow4_user, 'group': group_name})
+
     if not ow4_user.online_mail:
         logger.error("OW4 User '{user}' ({user.pk}) missing Online email address! (current: '{user.online_mail}')".
                      format(user=ow4_user),
                      extra={'user': ow4_user, 'group': group_name})
         return
 
-    if not settings.OW4_GSUITE_SYNC.get('ENABLE_INSERT', False):
-        logger.debug('Skipping inserting user "{user}" since ENABLE_INSERT is False.'.format(user=ow4_user))
-        return
-
-    group_key = get_group_key(domain, group_name)
-
-    g_suite_user_dict = {
-        'email': get_user_key(domain, ow4_user.online_mail),
-        'role': 'MEMBER',
-    }
-
-    directory = setup_g_suite_client()
-
-    logger.info("Inserting '{user}' into G Suite group '{group}'.".format(user=ow4_user, group=group_key),
-                extra={'user': ow4_user, 'group': group_name})
-    resp = None
-    try:
-        resp = directory.members().insert(body=g_suite_user_dict, groupKey=group_key).execute()
-    except HttpError as err:
-        logger.error('HttpError when inserting into G Suite group: {err}'.format(err=err),
-                     extra={'suppress_http_error': suppress_http_errors})
-        if not suppress_http_errors:
-            raise err
-    logger.debug("Inserting response: {resp}".format(resp=resp))
-
-    return resp
+    return insert_email_into_g_suite_group(domain, group_name, ow4_user.online_mail,
+                                           suppress_http_errors=suppress_http_errors)
 
 
 def remove_g_suite_user_from_group(domain, group_name, g_suite_user, suppress_http_errors=False):
