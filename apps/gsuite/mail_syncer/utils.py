@@ -65,6 +65,11 @@ def get_user_key(domain, user):
     :return: The user key (email@domain)
     :rtype: str
     """
+    if isinstance(user, str):
+        if '@' in user:
+            # If user is email address, return immediately.
+            return user
+
     if not domain or not user:
         logger.error('You need to pass a domain and a user when generating user key.',
                      extra={'domain': domain, 'group': user})
