@@ -27,7 +27,6 @@ def _get_error_message_from_httperror(err):
     :rtype: str
     """
     json_error = json.loads(str(err.content.decode()))
-    logging.debug('HttpErr %s' % json_error)
     return json_error.get('error', {}).get('message', '')
 
 
