@@ -1,7 +1,6 @@
 import logging
 
 from django.conf import settings
-from django.core.exceptions import ImproperlyConfigured
 from googleapiclient.errors import HttpError
 
 from apps.authentication.models import OnlineUser as User
@@ -29,8 +28,8 @@ def setup_g_suite_client():
         logger.error('To be able to actually execute calls towards G Suite you must define DELEGATED_ACCOUNT.')
     if settings.OW4_GSUITE_SYNC.get('ENABLED') and (
             not settings.OW4_GSUITE_SYNC.get('ENABLE_INSERT') and not settings.OW4_GSUITE_SYNC.get('ENABLE_DELETE')):
-        logger.error('To be able to execute unsafe calls towards G Suite you must allow this in settings.')
-        raise ImproperlyConfigured('To actually execute unsafe calls to G Suite, allow this in OW4 settings.')
+        logger.warning('To be able to execute unsafe calls towards G Suite you must allow this in settings.'
+                       'Neither "ENABLE_INSERT" nor "ENABLE_DELETE" are enabled.')
 
     return build_and_authenticate_g_suite_service('admin', 'directory_v1', scopes)
 
