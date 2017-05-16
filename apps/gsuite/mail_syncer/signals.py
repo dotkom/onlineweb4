@@ -90,11 +90,19 @@ def toggle_mailing_lists(sender, instance, **kwargs):
     mailing_lists_fields = ['infomail', 'jobmail']
     update_fields = []
 
-    current_user = User.objects.get(pk=instance.pk)
-    if instance.infomail != current_user.infomail:
-        update_fields.append('infomail')
-    if instance.jobmail != current_user.jobmail:
-        update_fields.append('jobmail')
+    try:
+        # Get the current user and find out what's about to change
+        current_user = User.objects.get(pk=instance.pk)
+        if instance.infomail != current_user.infomail:
+            update_fields.append('infomail')
+        if instance.jobmail != current_user.jobmail:
+            update_fields.append('jobmail')
+    except User.DoesNotExist:
+        # Find out which mailing lists are opted into if the user did not previously exist
+        for mailing_list in mailing_lists_fields:
+            if getattr(User, mailing_list, False):
+                update_fields.append(mailing_list)
+
 
     if update_fields:
         for mailing_list in mailing_lists_fields:
