@@ -110,7 +110,7 @@ class OnlineUser(AbstractUser):
     github = models.URLField(_("github"), blank=True, null=True)
     linkedin = models.URLField(_("linkedin"), blank=True, null=True)
     gender = models.CharField(_("kjønn"), max_length=10, choices=GENDER_CHOICES, default="male")
-    bio = models.TextField(_("bio"), blank=True)
+    bio = models.TextField(_("bio"), max_length=2048, blank=True)
     saldo = models.PositiveSmallIntegerField(_("saldo"), default=0, null=True)
 
     # NTNU credentials
