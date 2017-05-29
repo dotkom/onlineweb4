@@ -136,14 +136,8 @@
                         </div>
                     </div>
                     <div class="row attribute-list">
-                        <div class="col-md-12" id="bio">
-                            <b>Bio</b><br />
-                            {% if user_profile.bio %}
-                                {{ user_profile.bio|striptags }}
-                            {% else %}
-                                Ikke tilgjengelig
-                            {% endif %}
-                        </div>
+                        <div class="col-md-12"><b>Bio</b><br /></div>
+                        <div class="col-md-12" id="bio">{% firstof user_profile.bio 'Ikke tilgjengelig' %}</div>
                     </div>
                     <div class="row">
                         <div class="col-md-3">

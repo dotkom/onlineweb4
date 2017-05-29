@@ -131,9 +131,7 @@
                     <div class="col-md-4">
                         <em>Ingen posisjoner registrert...</em>
                     </div>
-                    <div class="col-md-8" class="bio">
-                        {% firstof user.bio|striptags '' %}
-                    </div>
+                    <div class="col-md-8 bio">{{ user.bio }}</div>
                 </div>
             {% else %}
                 <div class="row row-small-space">
@@ -143,18 +141,14 @@
                         <p>{{ position.period }}: {{ position.get_position_display }}, {{ position.get_committee_display }}</p><br\>
                     {% endfor %}
                     </div>
-                    <div class="col-md-8" class="bio">
-                        {% firstof user.bio|striptags '' %}
-                    </div>
+                    <div class="col-md-8 bio">{{ user.bio }}</div>
                 </div>
                 {% if user.special_positions.all %}
                     <div class="row">
                         <div class="col-md-4" style="margin-top:10px;">
                             <b>Hedersposisjoner</b>
                         </div>
-                        <div class="col-md-8" class="bio">
-                            {% firstof user.bio|striptags '' %}
-                        </div>
+                        <div class="col-md-8 bio">{{ user.bio }}</div>
                     </div>
                     {% for position in user.special_positions.all %}
                         <div class="row row-small-space">
@@ -162,9 +156,7 @@
                                 Fra {{ position.since_year }}, {{ position.position }}
                             </div>
                             {% if forloop.first %}
-                                <div class="col-md-8" class="bio">
-                                    {% firstof user.bio|striptags '' %}
-                                </div>
+                                <div class="col-md-8 bio">{{ user.bio }}</div>
                             {% endif %}
                         </div>
                     {% endfor %}
