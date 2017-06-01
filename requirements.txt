@@ -1,4 +1,4 @@
-Django==1.11.1
+Django==1.11.2
 Pillow==4.1.1                   # PIL fork (Python Imaging Library)
 django-tastypie==0.13.3         # API v0 - Use git master until django 1.9 release   v
 djangorestframework==3.6.3      # API v1
