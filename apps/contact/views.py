@@ -44,5 +44,5 @@ def contact_submit(request):
             EmailMessage(subject, content, from_email, to_email).send()
             messages.success(request, 'Meldingen ble sendt')
         else:
-            messages.error(request, 'Meldingen ble ikke sendt, prøv igjen eller send mail direkte til dotkom ')
+            messages.error(request, 'Meldingen ble ikke sendt. Prøv igjen eller send mail direkte til dotkom ')
     return redirect('contact_index')
