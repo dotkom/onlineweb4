@@ -17,7 +17,6 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from django.utils.translation import ugettext as _
 from oauth2_provider.models import AccessToken
-from utils.shortcuts import render_json
 from watson import search as watson
 
 from apps.approval.forms import FieldOfStudyApplicationForm
@@ -31,6 +30,7 @@ from apps.payment.models import PaymentDelay, PaymentRelation, PaymentTransactio
 from apps.profiles.forms import InternalServicesForm, PositionForm, PrivacyForm, ProfileForm
 from apps.profiles.models import Privacy
 from apps.shop.models import Order
+from utils.shortcuts import render_json
 
 
 """
