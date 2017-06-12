@@ -24,6 +24,9 @@ def setup_g_suite_client():
     :return: Google API Client
     :rtype: googleapiclient.discovery.Resource
     """
+    if not settings.OW4_GSUITE_SYNC.get('ENABLED', False):
+        logger.debug('Trying to setup G Suite API client, but OW4_GSUITE_SYNC is not enabled.')
+        return
     if not settings.OW4_GSUITE_SYNC.get('DELEGATED_ACCOUNT'):
         logger.error('To be able to actually execute calls towards G Suite you must define DELEGATED_ACCOUNT.')
     if settings.OW4_GSUITE_SYNC.get('ENABLED') and (
@@ -94,7 +97,7 @@ def get_user(original_user, gsuite=False, ow4=False):
     :return: User account for the given domain.
     :rtype object
     """
-    if not gsuite or ow4:
+    if not gsuite and not ow4:
         raise ValueError('You need to pass either gsuite=True or ow4=True to cast user to that type.')
 
     gsuite_user = None

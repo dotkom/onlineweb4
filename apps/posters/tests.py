@@ -1,6 +1,7 @@
+from django.conf import settings
 from django.contrib.auth.models import Group, Permission
 from django.core.urlresolvers import reverse
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from django_dynamic_fixture import G
 
 from apps.authentication.models import OnlineUser as User
@@ -26,8 +27,12 @@ class AddPosterTestCase(TestCase):
         self.client.force_login(user)
 
         group = G(Group, name='Komiteer')
-        user.groups.add(group)
-        user.save()
+
+        ow4_gsuite_sync = settings.OW4_GSUITE_SYNC
+        ow4_gsuite_sync['ENABLED'] = False
+        with override_settings(OW4_GSUITE_SYNC=ow4_gsuite_sync):
+            user.groups.add(group)
+            user.save()
 
         # Create prokom group as permissions are assigned to prokom after creation
         G(Group, name='proKom')
