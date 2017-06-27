@@ -20,7 +20,7 @@ git+https://github.com/dotKom/django-chunks.git@e6bf109d4fd286964024c140ac1b8f3d
 django-crispy-forms==1.6.1      # nice forms
 django-extensions==1.7.9        # nice extra commands for debugging, etc
 django-dynamic-fixture==1.9.5   # Dynamic fixtures for models
-django-recaptcha==1.3.0         # Google ReCaptcha
+django-recaptcha==1.3.1         # Google ReCaptcha
 django-oauth-toolkit==1.0.0    # OAuth2 authentication support
 django-watson==1.3.1            # Indexed model search lib
 django-reversion==2.0.9         # Model version history with middleware hooks to all post_save signals
