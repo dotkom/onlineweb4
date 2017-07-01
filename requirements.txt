@@ -1,5 +1,5 @@
 Django==1.11.2
-Pillow==4.1.1                   # PIL fork (Python Imaging Library)
+Pillow==4.2.0                   # PIL fork (Python Imaging Library)
 django-tastypie==0.13.3         # API v0 - Use git master until django 1.9 release   v
 djangorestframework==3.6.3      # API v1
 django-filter==1.0.4            # Filtering for DRF
