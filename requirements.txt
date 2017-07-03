@@ -1,6 +1,6 @@
 Django==1.11.3
 Pillow==4.2.0                   # PIL fork (Python Imaging Library)
-django-tastypie==0.13.3         # API v0 - Use git master until django 1.9 release   v
+django-tastypie==0.14.0         # API v0 - Use git master until django 1.9 release   v
 djangorestframework==3.6.3      # API v1
 django-filter==1.0.4            # Filtering for DRF
 # python-memcached==1.57          # Memcache. Used by Mailinglists to fetch from Sympa.
