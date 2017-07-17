@@ -137,7 +137,7 @@ class OnlineUser(AbstractUser):
     def is_committee(self):
         try:
             committee_group = Group.objects.get(name='Komiteer')
-            return self in committee_group.user_set.all() or self.is_staff()
+            return self in committee_group.user_set.all() or self.is_staff
         except Group.DoesNotExist:
             # This probably means that a developer does not have the Komiteer group set up, so let's fail silently
             return False
