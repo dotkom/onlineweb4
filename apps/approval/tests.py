@@ -9,7 +9,7 @@ from django_dynamic_fixture import G
 
 from apps.approval.models import MembershipApproval
 from apps.approval.tasks import send_approval_status_update
-from apps.authentication.models import OnlineUser as User
+from apps.authentication.models import OnlineUser as User, Email
 
 
 class ApprovalTest(TestCase):
@@ -79,6 +79,7 @@ class EmailTest(TestCase):
     def setUp(self):
         self.applicant = G(User, username="sokeren",
                            first_name="Søker", last_name="Søkersen")
+        G(Email, user=self.applicant, email="test@example.com")
         self.approval = G(MembershipApproval, applicant=self.applicant)
         self.logger = logging.getLogger(__name__)
 
