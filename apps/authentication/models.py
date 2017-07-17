@@ -85,6 +85,7 @@ def get_length_of_field_of_study(field_of_study):
 class OnlineUser(AbstractUser):
     IMAGE_FOLDER = "images/profiles"
     IMAGE_EXTENSIONS = ['.jpg', '.jpeg', '.gif', '.png']
+    backend = 'django.contrib.auth.backends.ModelBackend'
 
     # Online related fields
     field_of_study = models.SmallIntegerField(_("studieretning"), choices=FIELD_OF_STUDY_CHOICES, default=0)
