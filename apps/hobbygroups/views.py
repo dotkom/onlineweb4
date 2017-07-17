@@ -1,5 +1,4 @@
-from django.shortcuts import render_to_response
-from django.template import RequestContext
+from django.shortcuts import render
 from apps.hobbygroups.models import Hobby
 
 
@@ -9,4 +8,4 @@ def index(request):
     context = {
         'hobbygroups': hobbygroups,
     }
-    return render_to_response('hobbygroups/index.html', context, context_instance=RequestContext(request))
+    return render(request, 'hobbygroups/index.html', context)
