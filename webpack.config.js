@@ -36,6 +36,9 @@ const webpackConfig = {
     authentication: [
       './assets/authentication/index',
     ],
+    careeropportunity: [
+      './assets/careeropportunity/index'
+    ],
     core: [
       './assets/core/index',
     ],

@@ -40,8 +40,8 @@ Ny karrieremulighet
                         {% if field.field.required %}<span style="color:red;" title="Dette feltet kreves">*</span>{% endif %}
                     </div>
                     <div class="col-md-9">
-                        {% if field.name == 'start' or field.name == 'end' %}
-                            <div class="input-group {% if field.errors %}has-error{% endif %} {% if field.name == 'start' or field.name == 'end' %}dtp{% endif %}">
+                        {% if field.name == 'start' or field.name == 'end' or field.name == 'deadline' %}
+                            <div class="input-group {% if field.errors %}has-error{% endif %} {% if field.name == 'start' or field.name == 'end' or field.name == 'deadline' %}dtp{% endif %}">
                             {{ field|addclass:"form-control"}}
                                 <span class="input-group-btn">
                                     <a href="#" class="btn btn-primary datepickerbutton">
@@ -65,7 +65,7 @@ Ny karrieremulighet
         </div>
         {% csrf_token %}
       </form>
-        
+
     </section>
     {% if cop %}
     <div id="modal-delete-careeropportunity" class="modal fade">
