@@ -1,10 +1,23 @@
+import datetime
+from django.utils import timezone
 from django.test import TestCase
 from django.core.urlresolvers import reverse
 from rest_framework import status
-from apps.events.tests import create_generic_event
 from django_dynamic_fixture import G
 from apps.authentication.models import OnlineUser as User
 from django.contrib.auth.models import Group, Permission
+
+from apps.events.models import Event, AttendanceEvent
+
+
+def create_generic_attendance_event():
+        future = timezone.now() + datetime.timedelta(days=1)
+        event_start = future
+        event_end = future + datetime.timedelta(days=1)
+        event = G(Event, event_start=event_start, event_end=event_end)
+        G(AttendanceEvent, event=event, max_capacity=2)
+        # print(event.attendance_event.get_feedback().id)
+        return event
 
 
 def add_permissions(user):
@@ -36,7 +49,7 @@ class DashboardEventsURLTestCase(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_events_index_exists(self):
-        create_generic_event()
+        create_generic_attendance_event()
         add_permissions(self.user)
         url = reverse('dashboard_events_index')
 
@@ -54,7 +67,7 @@ class DashboardEventsURLTestCase(TestCase):
 
     def test_dashboard_events_details(self):
         add_permissions(self.user)
-        event = create_generic_event()
+        event = create_generic_attendance_event()
         url = reverse('dashboard_event_details', kwargs={'event_id': event.id})
 
         response = self.client.get(url)
@@ -63,7 +76,7 @@ class DashboardEventsURLTestCase(TestCase):
 
     def test_dashboard_events_edit(self):
         add_permissions(self.user)
-        event = create_generic_event()
+        event = create_generic_attendance_event()
         url = reverse('dashboard_events_edit', kwargs={'event_id': event.id})
 
         response = self.client.get(url)
