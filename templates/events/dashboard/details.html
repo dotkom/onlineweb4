@@ -117,7 +117,7 @@ Arrangementsdetaljer
         {%  include "events/dashboard/details/reservation.html" %}
     </div>
     <div role="tabpanel" class="tab-pane" id="feedback">
-        {% if event.attendance_event and not event.attendance_event.has_feedback %}
+        {% if event.attendance_event and event.attendance_event.has_feedback %}
             {% include "events/dashboard/details/feedback.html" %}
         {% endif %}
     </div>
