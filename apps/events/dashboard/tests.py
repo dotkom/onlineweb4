@@ -1,13 +1,14 @@
 import datetime
-from django.utils import timezone
-from django.test import TestCase
-from django.core.urlresolvers import reverse
-from rest_framework import status
-from django_dynamic_fixture import G
-from apps.authentication.models import OnlineUser as User
-from django.contrib.auth.models import Group, Permission
 
-from apps.events.models import Event, AttendanceEvent
+from django.contrib.auth.models import Group, Permission
+from django.core.urlresolvers import reverse
+from django.test import TestCase
+from django.utils import timezone
+from django_dynamic_fixture import G
+from rest_framework import status
+
+from apps.authentication.models import OnlineUser as User
+from apps.events.models import AttendanceEvent, Event
 
 
 def create_generic_attendance_event():

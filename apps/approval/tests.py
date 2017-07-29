@@ -9,7 +9,8 @@ from django_dynamic_fixture import G
 
 from apps.approval.models import MembershipApproval
 from apps.approval.tasks import send_approval_status_update
-from apps.authentication.models import OnlineUser as User, Email
+from apps.authentication.models import OnlineUser as User
+from apps.authentication.models import Email
 
 
 class ApprovalTest(TestCase):
