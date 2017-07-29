@@ -3,8 +3,8 @@
 from django.contrib import admin
 from django.contrib.contenttypes.admin import GenericStackedInline
 from reversion.admin import VersionAdmin
-
 from utils.admin import DepositWithdrawalFilter
+
 from apps.payment.models import (Payment, PaymentDelay, PaymentPrice, PaymentRelation,
                                  PaymentTransaction)
 
