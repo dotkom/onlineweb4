@@ -52,7 +52,7 @@ wiki==0.3b1
 # Django 1.9 support
 sorl-thumbnail>12.2
 django-appconf>=1.0
-django-mptt>=0.8.0
+django-mptt==0.8.7
 django-sekizai==0.10.0
 
 # non-pip
