@@ -1,0 +1,42 @@
+{% extends "sso/index.html" %}
+{% block content %}
+<div id="sso-panel">
+{% if not error %}
+    <div id="sso-panel-header">
+        <h3>Ekstern autentisering</h3>
+    </div>
+    <div id="sso-panel-body">
+        <h4>Tjenesten {{ client.name }} ønsker tilgang til denne informasjonen om deg.</h4>
+        <form id="sso-authorization-form" method="post" action="{% url 'oidc_provider:authorize' %}">
+            {% csrf_token %}
+
+            {{ hidden_inputs }}
+
+            <p>Tjenesten behøver følgende tilganger:</p>
+            <ul class="sso-permissions">
+            {% for scope in scopes %}
+            <li>
+                <strong>{{ scope.name }}</strong>
+                <br />
+                <i>{{ scope.description }}</i>
+            </li>
+            {% endfor %}
+            </ul>
+            <br />
+            <div id="sso-control-buttons">
+                <input type="submit" class="btn btn-large btn-success" name="allow" value="Godta" />
+                <input type="submit" class="btn btn-large btn-danger pull-right" value="Avslå" />
+            </div>
+        </form>
+    </div>
+    <p class="text-center"><small><i class="glyphicon glyphicon-lock"></i> Ekstern autentisering benytter OAuth 2.0 gjennom TLS</small></p>
+{% else %}
+    <div id="sso-panel-header">
+        <h3>En feil skjedde</h3>
+    </div>
+    <div id="sso-panel-body">
+        {{ error.description }}
+    </div>
+{% endif %}
+</div>
+{% endblock %}
