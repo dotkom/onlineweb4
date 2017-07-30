@@ -58,7 +58,7 @@ class GSuiteAPITestCase(TestCase):
             mocked_logger.assert_called_with(
                 'Skipping removing user "{user}" since (s)he should be on all lists.'.format(user=email))
 
-    @patch('apps.gsuite.mail_syncer.utils.setup_g_suite_client', autospec=True)  # new=MockedGoogleAPIClient
+    @patch('apps.gsuite.mail_syncer.utils.setup_g_suite_client', autospec=True)
     def test_insert_email_into_g_suite_group(self, mocked_g_suite_client):
         group_name = list(settings.OW4_GSUITE_SYNC.get('GROUPS').keys())[0]
         email = 'example@example.org'
