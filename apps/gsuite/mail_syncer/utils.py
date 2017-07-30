@@ -97,7 +97,7 @@ def get_user(original_user, gsuite=False, ow4=False):
     :return: User account for the given domain.
     :rtype object
     """
-    if not gsuite and not ow4:
+    if not (gsuite or ow4):
         raise ValueError('You need to pass either gsuite=True or ow4=True to cast user to that type.')
 
     gsuite_user = None
