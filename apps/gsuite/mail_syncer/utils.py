@@ -24,6 +24,9 @@ def setup_g_suite_client():
     :return: Google API Client
     :rtype: googleapiclient.discovery.Resource
     """
+    if not settings.OW4_GSUITE_SYNC.get('ENABLED', False):
+        logger.debug('Trying to setup G Suite API client, but OW4_GSUITE_SYNC is not enabled.')
+        return
     if not settings.OW4_GSUITE_SYNC.get('DELEGATED_ACCOUNT'):
         logger.error('To be able to actually execute calls towards G Suite you must define DELEGATED_ACCOUNT.')
     if settings.OW4_GSUITE_SYNC.get('ENABLED') and (
@@ -94,7 +97,7 @@ def get_user(original_user, gsuite=False, ow4=False):
     :return: User account for the given domain.
     :rtype object
     """
-    if not gsuite or ow4:
+    if not (gsuite or ow4):
         raise ValueError('You need to pass either gsuite=True or ow4=True to cast user to that type.')
 
     gsuite_user = None
@@ -422,7 +425,7 @@ def check_emails_match_each_other(g_suite_users, ow4_users):
     return True
 
 
-def _get_excess_users_in_g_suite(g_suite_users, ow4_users):
+def get_excess_users_in_g_suite(g_suite_users, ow4_users):
     """
     Finds excess users from lists of G Suite users and OW4 users.
     :param g_suite_users: The members of a G Suite group.
@@ -462,7 +465,7 @@ def _get_g_suite_user_from_g_suite_user_list(g_suite_users, g_suite_email):
     return None
 
 
-def _get_missing_ow4_users_for_g_suite(g_suite_users, ow4_users):
+def get_missing_ow4_users_for_g_suite(g_suite_users, ow4_users):
     """
     Find the OW4 users who are missing given a set of G Suite users.
     :param g_suite_users: The members of a G Suite group.
