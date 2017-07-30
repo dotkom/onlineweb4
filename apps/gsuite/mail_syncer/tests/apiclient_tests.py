@@ -14,14 +14,14 @@ from apps.gsuite.mail_syncer.utils import (insert_email_into_g_suite_group,
 class GSuiteAPITestCase(TestCase):
     def setUp(self):
         self.domain = settings.OW4_GSUITE_SYNC.get('DOMAIN')
-        self.ow4_gsuite_sync = settings.OW4_GSUITE_SYNC
+        self.ow4_gsuite_sync = settings.OW4_GSUITE_SYNC.copy()
 
     @patch('logging.Logger.debug')
     def test_insert_when_insert_disabled(self, mocked_logger):
         group_name = list(settings.OW4_GSUITE_SYNC.get('GROUPS').keys())[0]
         email = 'example@example.org'
 
-        ow4_gsuite_sync = self.ow4_gsuite_sync.copy()
+        ow4_gsuite_sync = self.ow4_gsuite_sync
         ow4_gsuite_sync['ENABLE_INSERT'] = False
 
         with override_settings(OW4_GSUITE_SYNC=ow4_gsuite_sync):
@@ -35,7 +35,7 @@ class GSuiteAPITestCase(TestCase):
         group_name = list(settings.OW4_GSUITE_SYNC.get('GROUPS').keys())[0]
         email = 'example@example.org'
 
-        ow4_gsuite_sync = self.ow4_gsuite_sync.copy()
+        ow4_gsuite_sync = self.ow4_gsuite_sync
         ow4_gsuite_sync['ENABLE_DELETE'] = False
 
         with override_settings(OW4_GSUITE_SYNC=ow4_gsuite_sync):
@@ -49,7 +49,7 @@ class GSuiteAPITestCase(TestCase):
         group_name = list(settings.OW4_GSUITE_SYNC.get('GROUPS').keys())[0]
         email = 'leder@{domain}'.format(domain=self.domain)
 
-        ow4_gsuite_sync = self.ow4_gsuite_sync.copy()
+        ow4_gsuite_sync = self.ow4_gsuite_sync
         ow4_gsuite_sync['ENABLE_DELETE'] = False
 
         with override_settings(OW4_GSUITE_SYNC=ow4_gsuite_sync):
@@ -67,7 +67,7 @@ class GSuiteAPITestCase(TestCase):
         mocked_g_suite_client.return_value.members.return_value.insert.return_value.execute.return_value = \
             {'email': email}
 
-        ow4_gsuite_sync = self.ow4_gsuite_sync.copy()
+        ow4_gsuite_sync = self.ow4_gsuite_sync
         ow4_gsuite_sync['ENABLE_INSERT'] = True
 
         with override_settings(OW4_GSUITE_SYNC=ow4_gsuite_sync):
@@ -84,7 +84,7 @@ class GSuiteAPITestCase(TestCase):
         mocked_g_suite_client.return_value.members.return_value.insert.side_effect = \
             create_http_error(status=409, reason=error_reason, error=error_reason)
 
-        ow4_gsuite_sync = self.ow4_gsuite_sync.copy()
+        ow4_gsuite_sync = self.ow4_gsuite_sync
         ow4_gsuite_sync['ENABLE_INSERT'] = True
 
         with override_settings(OW4_GSUITE_SYNC=ow4_gsuite_sync):
@@ -101,7 +101,7 @@ class GSuiteAPITestCase(TestCase):
 
         mocked_insert_ow4_user.return_value = {'email': user.online_mail}
 
-        ow4_gsuite_sync = self.ow4_gsuite_sync.copy()
+        ow4_gsuite_sync = self.ow4_gsuite_sync
         ow4_gsuite_sync['ENABLE_INSERT'] = True
 
         with override_settings(OW4_GSUITE_SYNC=ow4_gsuite_sync):
@@ -114,7 +114,7 @@ class GSuiteAPITestCase(TestCase):
         group_name = list(settings.OW4_GSUITE_SYNC.get('GROUPS').keys())[0]
         user = G(OnlineUser, online_mail=None)
 
-        ow4_gsuite_sync = self.ow4_gsuite_sync.copy()
+        ow4_gsuite_sync = self.ow4_gsuite_sync
         ow4_gsuite_sync['ENABLE_INSERT'] = True
 
         with override_settings(OW4_GSUITE_SYNC=ow4_gsuite_sync):
@@ -133,7 +133,7 @@ class GSuiteAPITestCase(TestCase):
         mocked_g_suite_client.return_value.members.return_value.delete.return_value.execute.return_value = \
             None
 
-        ow4_gsuite_sync = self.ow4_gsuite_sync.copy()
+        ow4_gsuite_sync = self.ow4_gsuite_sync
         ow4_gsuite_sync['ENABLE_DELETE'] = True
 
         with override_settings(OW4_GSUITE_SYNC=ow4_gsuite_sync):

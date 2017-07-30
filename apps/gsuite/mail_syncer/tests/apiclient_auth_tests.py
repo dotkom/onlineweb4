@@ -9,7 +9,7 @@ from apps.gsuite.mail_syncer.utils import setup_g_suite_client
 
 class GSuiteAPIClientTestCase(TestCase):
     def setUp(self):
-        self.ow4_gsuite_sync = settings.OW4_GSUITE_SYNC
+        self.ow4_gsuite_sync = settings.OW4_GSUITE_SYNC.copy()
 
     def test_build_gsuite_api_client_no_credentials(self):
         self.assertRaises(ValueError, lambda: build_g_suite_service('admin', 'directory_v1', None))
