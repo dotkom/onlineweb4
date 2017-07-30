@@ -142,6 +142,7 @@ MIDDLEWARE_CLASSES = (
     'middleware.http.Http403Middleware',
     'reversion.middleware.RevisionMiddleware',
     'oauth2_provider.middleware.OAuth2TokenMiddleware',
+    'oidc_provider.middleware.SessionManagementMiddleware',
     # Uncomment the next line for simple clickjacking protection:
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
@@ -230,6 +231,7 @@ INSTALLED_APPS = (
     'corsheaders',
     'datetimewidget',
     'webpack_loader',
+    'oidc_provider',
 
     # Django apps
     'django.contrib.admin',
