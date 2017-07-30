@@ -52,6 +52,7 @@ if 'apps.approval' in settings.INSTALLED_APPS:
     urlpatterns += [
         url(r'^approval/',              include('apps.approval.urls')),
         url(r'^dashboard/approval/',    include('apps.approval.dashboard.urls')),
+        url(r'^committeeapplication/', include('apps.approval.api.urls')),
     ]
 
 if 'apps.article' in settings.INSTALLED_APPS:
