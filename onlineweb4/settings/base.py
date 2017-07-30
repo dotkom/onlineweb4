@@ -407,7 +407,7 @@ REST_FRAMEWORK = {
 }
 
 CORS_ORIGIN_ALLOW_ALL = config("OW4_DJANGO_CORS_ORIGIN_ALLOW_ALL", cast=bool, default=True)
-CORS_URLS_REGEX = r'^/api/v1/.*$' # Enables CORS on /api/v1/ endpoints only
+CORS_URLS_REGEX = r'^(/api/v1/.*|/sso/user/)$' # Enables CORS on /api/v1/ endpoints and the /sso/user/ endpoint
 
 # Online stripe keys.
 # For development replace with https://online.ntnu.no/wiki/komiteer/dotkom/aktuelt/onlineweb4/keys/
