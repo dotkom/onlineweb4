@@ -1,3 +1,4 @@
+from django.core.exceptions import ValidationError as DjangoValidationError
 from rest_framework import serializers
 
 from apps.approval.models import CommitteeApplication, CommitteePriority
@@ -23,7 +24,12 @@ class CommitteeApplicationSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         committees = validated_data.pop('committeepriority_set')
-        application = CommitteeApplication.objects.create(**validated_data)
+        application = CommitteeApplication(**validated_data)
+        try:
+            application.clean()
+        except DjangoValidationError as django_error:
+            raise serializers.ValidationError(django_error.message)
+        application.save()
 
         for committee in committees:
             CommitteePriority.objects.create(committee_application=application, **committee)
