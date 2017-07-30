@@ -17,3 +17,9 @@ class CommitteeApplicationViewSet(ModelViewSet):
     authentication_classes = [OAuth2Authentication, SessionAuthentication]
     permission_classes = [TokenHasScopeOrUserHasObjectPermissionsOrWriteOnly]
     required_scopes = ['approval']
+
+    def perform_create(self, serializer):
+        if self.request.user and self.request.user.is_authenticated:
+            serializer.save(applicant=self.request.user)
+        else:
+            serializer.save()
