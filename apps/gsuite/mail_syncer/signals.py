@@ -8,6 +8,7 @@ from django.dispatch import receiver
 from googleapiclient.errors import HttpError
 
 from apps.gsuite.mail_syncer.utils import insert_email_into_g_suite_group
+
 from .main import remove_g_suite_user_from_group
 
 User = get_user_model()
