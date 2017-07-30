@@ -425,7 +425,7 @@ def check_emails_match_each_other(g_suite_users, ow4_users):
     return True
 
 
-def _get_excess_users_in_g_suite(g_suite_users, ow4_users):
+def get_excess_users_in_g_suite(g_suite_users, ow4_users):
     """
     Finds excess users from lists of G Suite users and OW4 users.
     :param g_suite_users: The members of a G Suite group.
@@ -465,7 +465,7 @@ def _get_g_suite_user_from_g_suite_user_list(g_suite_users, g_suite_email):
     return None
 
 
-def _get_missing_ow4_users_for_g_suite(g_suite_users, ow4_users):
+def get_missing_ow4_users_for_g_suite(g_suite_users, ow4_users):
     """
     Find the OW4 users who are missing given a set of G Suite users.
     :param g_suite_users: The members of a G Suite group.

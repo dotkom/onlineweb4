@@ -7,14 +7,12 @@ from mock import patch
 
 from apps.authentication.models import OnlineUser
 from apps.gsuite.mail_syncer.tests.test_utils import create_http_error
-from apps.gsuite.mail_syncer.utils import (_get_excess_users_in_g_suite,
-                                           _get_g_suite_user_from_g_suite_user_list,
-                                           _get_missing_ow4_users_for_g_suite,
-                                           check_amount_of_members_ow4_g_suite,
+from apps.gsuite.mail_syncer.utils import (check_amount_of_members_ow4_g_suite,
                                            get_appropriate_g_suite_group_names_for_user,
-                                           get_excess_groups_for_user, get_g_suite_groups_for_user,
-                                           get_g_suite_users_for_group,
+                                           get_excess_groups_for_user, get_excess_users_in_g_suite,
+                                           get_g_suite_groups_for_user, get_g_suite_users_for_group,
                                            get_missing_g_suite_group_names_for_user,
+                                           get_missing_ow4_users_for_g_suite,
                                            get_ow4_users_for_group, insert_email_into_g_suite_group,
                                            insert_ow4_user_into_g_suite_group)
 
@@ -151,16 +149,9 @@ class GSuiteAPIUtilsTestCase(TestCase):
 
         with override_settings(OW4_GSUITE_SYNC=ow4_gsuite_sync):
             group.user_set.add(user)
-            users = _get_excess_users_in_g_suite(g_suite_members, group.user_set.all())
+            users = get_excess_users_in_g_suite(g_suite_members, group.user_set.all())
 
         self.assertIn({'email': 'test2@example.org'}, users)
-
-    def test_g_suite_user_from_g_suite_user_list(self):
-        user = {'email': 'test@example.org'}
-        g_suite_members = [user, {'email': 'test2@example.org'}]
-
-        resp = _get_g_suite_user_from_g_suite_user_list(g_suite_members, user.get('email'))
-        self.assertEqual(user, resp)
 
     def test_get_missing_ow4_users_for_g_suite(self):
         g_suite_members = [{'email': 'test@%s' % self.domain}]
@@ -175,7 +166,7 @@ class GSuiteAPIUtilsTestCase(TestCase):
 
         with override_settings(OW4_GSUITE_SYNC=ow4_gsuite_sync):
             group.user_set.add(user, user2)
-            users = _get_missing_ow4_users_for_g_suite(g_suite_members, group.user_set.all())
+            users = get_missing_ow4_users_for_g_suite(g_suite_members, group.user_set.all())
 
         self.assertIn(user2, users)
 
