@@ -3,11 +3,9 @@ from django.conf.urls import include, url
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.http import HttpResponse
-from django.views.defaults import server_error
 from django.views.generic import TemplateView
 from django_js_reverse.views import urls_js
 from django_nyt.urls import get_pattern as get_notify_pattern
-from filebrowser.sites import site
 from wiki.urls import get_pattern as get_wiki_pattern
 from onlineweb4 import views
 
@@ -231,6 +229,11 @@ if 'rest_framework' in settings.INSTALLED_APPS:
 
     urlpatterns += [
         url(r'^api/v1/', include(api_urls()))
+    ]
+
+if 'oidc_provider' in settings.INSTALLED_APPS:
+    urlpatterns += [
+        url(r'^openid/', include('oidc_provider.urls', namespace='oidc_provider'))
     ]
 
 #500 view
