@@ -8,7 +8,8 @@ class Hobby(models.Model):
     description = models.TextField(max_length=250)
     image = models.ImageField(upload_to=settings.IMAGES_PATH)
     read_more_link = models.URLField(blank=True)
-    hobby_priority = models.IntegerField(default=0)
+    priority = models.IntegerField(default=0)
 
     def __str__(self):
-        return (self.title + " [Priority: " + str(self.hobby_priority) + "]")
+        return "{title} (Priority: {priority})".format(title=self.title,
+                                                       priority=self.priority)
