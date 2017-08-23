@@ -4,6 +4,7 @@ from django.conf import settings
 from django.contrib.auth.models import Group
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.urls import reverse
 from django.utils.translation import ugettext as _
 
 from apps.authentication.models import FIELD_OF_STUDY_CHOICES
@@ -84,6 +85,12 @@ class CommitteeApplication(models.Model):
     def get_name(self):
         return self.applicant if self.applicant else self.name
     get_name.short_description = "navn"
+
+    def get_email(self):
+        return self.applicant.get_email().email if self.applicant else self.email
+
+    def get_absolute_url(self):
+        return reverse('admin:approval_committeeapplication_change', args=(self.pk,))
 
     def clean(self):
         if not (self.applicant or (self.email and self.name)):

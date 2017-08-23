@@ -2,7 +2,7 @@ import logging
 
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
-from django.core.mail import EmailMessage
+from django.core.mail import EmailMessage, send_mail
 from django.core.urlresolvers import reverse
 from django.template.loader import render_to_string
 
@@ -47,3 +47,13 @@ def send_approval_status_update(approval):
     except ImproperlyConfigured:
         logger.warn('Failed to notify applicant about updated status on membership for approval#{pk}.'.format(
             {'pk': approval.pk}))
+
+
+def send_committee_application_notification(application, to_emails, link_to_admin=False):
+    context = {
+        'link_to_admin': link_to_admin,
+        'absolute_url': settings.BASE_URL + application.get_absolute_url(),
+        'applicant_name': application.get_name(),
+    }
+    message = render_to_string('approval/email/committeeapplication_notification.txt', context)
+    send_mail('[opptak] Bekreftelse på komitesøknad', message, settings.DEFAULT_FROM_EMAIL, to_emails)
