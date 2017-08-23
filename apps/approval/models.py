@@ -86,6 +86,9 @@ class CommitteeApplication(models.Model):
         return self.applicant if self.applicant else self.name
     get_name.short_description = "navn"
 
+    def get_email(self):
+        return self.applicant.get_email().email if self.applicant else self.email
+
     def get_absolute_url(self):
         return reverse('admin:approval_committeeapplication_change', args=(self.pk,))
 
