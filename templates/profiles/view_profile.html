@@ -1,15 +1,18 @@
 {% extends 'base.html'%}
 {% load gravatar_url_resolver %}
 {% load crispy_forms_tags %}
-{% load compress %}
-{% load firstof from future %}
+{% load render_bundle from webpack_loader %}
 
 {% block styles %}
     {{ block.super }}
-    {% compress css %}
-        <link rel="stylesheet" type="text/less" href="{{ STATIC_URL }}less/profiles.less" />
-    {% endcompress %}
+    {% render_bundle 'profiles' 'css' %}
 {% endblock %}
+
+{% block js %}
+    {{ block.super }}
+    {% render_bundle 'profiles' 'js' %}
+{% endblock %}
+
 {% block title %}
     Profilen til {{ user_profile.get_full_name }}
 {% endblock title %}
@@ -132,14 +135,8 @@
                         </div>
                     </div>
                     <div class="row attribute-list">
-                        <div class="col-md-12" id="bio">
-                            <b>Bio</b><br />
-                            {% if user_profile.bio %}
-                                {{ user_profile.bio|striptags }}
-                            {% else %}
-                                Ikke tilgjengelig
-                            {% endif %}
-                        </div>
+                        <div class="col-md-12"><b>Bio</b><br /></div>
+                        <div class="col-md-12" id="bio">{% firstof user_profile.bio 'Ikke tilgjengelig' %}</div>
                     </div>
                     <div class="row">
                         <div class="col-md-3">
@@ -156,10 +153,3 @@
     </section>
 
 {% endblock content %}
-
-{% block js %}
-    {{ block.super }}
-    {% compress js %}
-        <script type="text/javascript" src="{{ STATIC_URL }}js/zipcodecity.js"></script>
-    {% endcompress %}
-{% endblock %}

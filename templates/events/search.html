@@ -1,4 +1,4 @@
-{% load fb_versions %}
+{% load markdown_deux_tags %}
 
 {% if events %}
   {% for event in events %}
@@ -9,12 +9,18 @@
         {% if event.companies.all %}
             {% for company_relation in event.companies.all %}
                 <a href="{{ event.get_absolute_url }}">
-                    <img src="{% version company_relation.company.old_image 'companies_archive' %}" alt="" />
+                  <picture>
+                    <source srcset="{{ company_relation.company.image.lg }}" media="(max-width: 768px)">
+                    <img src="{{ company_relation.company.image.md }}" alt="" />
+                  </picture>
                 </a>
-            {% endfor %} 
+            {% endfor %}
         {% else %}
             <a href="{{ event.get_absolute_url }}">
-                <img src="{% version event.image 'events_archive' %}" alt="" />
+              <picture>
+                <source srcset="{{ event.image.lg }}" media="(max-width: 768px)">
+                <img src="{{ event.image.md }}" alt="" />
+              </picture>
             </a>
         {% endif %}
         {% if event.is_attendance_event %}
@@ -29,7 +35,7 @@
         <div class="row">
             <div class=" col-sm-12 col-md-8">
                 <h1>
-                    <a href="{{ event.get_absolute_url }}">{{ event.title }}</a> 
+                    <a href="{{ event.get_absolute_url }}">{{ event.title }}</a>
                 </h1>
             </div>
             <div class="col-sm-12 col-md-4">
@@ -37,7 +43,7 @@
             </div>
         </div>
 
-      <p class="ingress">{{ event.ingress }}</p>
+      <div class="ingress">{{ event.ingress|striptags|markdown }}</div>
 
       <div class="meta">
         {% if event.is_attendance_event %}

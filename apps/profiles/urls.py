@@ -10,6 +10,7 @@ urlpatterns = [
     # Show a specific profile.
     url(r'^view/(?P<username>[a-zA-Z0-9_-]+)/$', views.view_profile, name='profiles_view'),
 
+    url(r'^feedback-pending/$', views.feedback_pending, name='feedback_pending'),
     url(r'^edit/$', views.edit_profile, name='profile_edit'),
     url(r'^privacy/$', views.privacy, name='profile_privacy'),
     url(r'^connected_apps/$', views.connected_apps, name='profile_connected_apps'),

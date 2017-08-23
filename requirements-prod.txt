@@ -1,2 +1,2 @@
-gunicorn==19.6                  # Used as a http server in production
-psycopg2                        # Postgres adapter
+gunicorn==19.7.0                  # Used as a http server in production
+psycopg2==2.7.1                   # Postgres adapter

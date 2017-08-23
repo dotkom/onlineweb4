@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load compress %}
+{% load render_bundle from webpack_loader %}
 
 {% block title %}
 Min side - Online
@@ -7,14 +7,7 @@ Min side - Online
 
 {% block styles %}
     {{ block.super }}
-    {% compress css %}
-        <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}less/jcrop/jquery.Jcrop.min.css" />
-        <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}less/jquery-ui/jquery.ui.datepicker.min.css" />
-        <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}less/jquery-ui/jquery.ui.theme.min.css" />
-        <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}less/jquery-ui/jquery.ui.core.min.css" />
-        <link rel="stylesheet" type="text/less" href="{{ STATIC_URL }}less/profiles.less" />
-        <link rel="stylesheet" type="text/less" href="{{ STATIC_URL }}less/typeahead.less" />
-    {% endcompress %}
+    {% render_bundle 'profiles' 'css' %}
 {% endblock %}
 
 {% block content %}
@@ -33,6 +26,13 @@ Min side - Online
                         <li class="{% ifequal 'overview' active_tab %}active{% endifequal %}">
                             <a href="{% url 'profiles_active' 'overview' %}" data-section="overview">Oversikt</a>
                         </li>
+                        {% if feedback_pending|length > 0 or active_tab == 'feedback_pending' %}
+                            <li class="{% ifequal 'feedback_pending' active_tab %}active{% endifequal %}">
+                                <a href="{% url 'profiles_active' 'feedback_pending' %}" data-section="feedback_pending">
+                                    Manglende tilbakemeldinger ({{ feedback_pending|length }})
+                                </a>
+                            </li>
+                        {% endif %}
                         <li class="{% ifequal 'edit' active_tab %}active{% endifequal %}">
                             <a href="{% url 'profiles_active' 'edit' %}" data-section="edit">Rediger profil</a>
                         </li>
@@ -49,7 +49,7 @@ Min side - Online
                             <a href="{% url 'profiles_active' 'connected_apps' %}" data-section="connected_apps">Apptilkoblinger</a>
                         </li>
                         <li class="{% ifequal 'marks' active_tab %}active{% endifequal %}">
-                            <a href="{% url 'profiles_active' 'marks' %}" data-section="marks">Prikker &amp; Suspansjoner</a>
+                            <a href="{% url 'profiles_active' 'marks' %}" data-section="marks">Prikker &amp; suspensjoner</a>
                         </li>
                         <li class="{% ifequal 'password' active_tab %}active{% endifequal %}">
                             <a href="{% url 'profiles_active' 'password' %}" data-section="password">Passord</a>
@@ -69,6 +69,9 @@ Min side - Online
                     <div id="tab-content">
                         <section id="overview">
                             {% include "profiles/overview.html" %}
+                        </section>
+                        <section id="feedback_pending">
+                            {% include "profiles/feedback_pending.html" %}
                         </section>
                         <section id="edit">
                             {% include "profiles/edit.html" %}
@@ -110,48 +113,5 @@ Min side - Online
 {% endblock content %}
 {% block js %}
     {{ block.super }}
-    <script type="text/javascript" src="{{ STATIC_URL }}js/libs/hogan-2.0.0.js"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}js/libs/typeahead.min.js"></script>
-    {% compress js %}
-    <script type="text/javascript" src="{{ STATIC_URL }}js/libs/jquery.color.js"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}js/libs/jquery.cookie.js"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}js/Utils.js"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}js/profiles.js"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}js/zipcodecity.js"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}js/libs/imagesloaded.pkgd.min.js"></script>
-    {% endcompress %}
-        <script type="text/javascript">
-        // Smart toggle function that we add to jQuery
-        (function($) {
-            $.fn.toggleDisabled = function(){
-                return this.each(function(){
-                    this.disabled = !this.disabled;
-                });
-            };
-        })(jQuery);
-
-        $(function () {
-            {% verbatim %}
-            var user_search_template =  [
-            '<img width="100%" src="{{ image }}" alt="" />',
-            '<span data-id="{{ id }}" class="user-meta"><h4>{{ name }}</h4>',
-            ].join('');
-            {% endverbatim %}
-
-            $('#search-users').typeahead({
-                remote: "{% url 'profiles_api_user_search' %}?query=%QUERY",
-                updater: function (item) {
-                    return item;
-                },
-                template: user_search_template,
-                engine: Hogan
-            }).on('typeahead:selected typeahead:autocompleted', function(e, datum) {
-                window.location = '/profile/' + datum.username;
-            });
-
-            $('#id_present').on('change', function () {
-                $('#id_end_year').toggleDisabled();
-            });
-        });
-        </script>
+    {% render_bundle 'profiles' 'js' %}
 {% endblock %}

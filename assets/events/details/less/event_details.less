@@ -1,0 +1,210 @@
+@import "~common/less/colors.less";
+
+section#event-details {
+    .row-space {
+        margin-bottom: 30px;
+        @media screen and (max-width: 767px) {
+            margin-bottom: 0px;
+        }
+    }
+    .event-hero {
+        color: #FFF;
+        .event-hero-duration {
+            background-color: @arrkom-color;
+            font-weight: 300;
+            font-size: 20px;
+            text-align: center;
+            padding: 20px;
+            @media screen and (max-width: 767px) {
+                padding: 0px;
+                margin-bottom: 0px;
+            }
+            .start-day {
+                width: 100%;
+                display: block;
+                font-size: 28px;
+                color: @arrkom-color;
+                font-weight: 600;
+                margin-bottom: 10px;
+                .start-day-number {
+                    padding: 7px;
+                    background: white;
+                }
+            }
+            .start-month {
+                width: 100%;
+                display: block;
+                font-weight: 300;
+                font-size: 20px;
+                text-transform: uppercase;
+                .start-month-text {
+                    padding: 9px;
+                }
+            }
+            .start-year {
+                width: 100%;
+                font-weight: 300;
+                font-size: 14px;
+            }
+        }
+    }
+    .event-hero-meta {
+        color: #FFF;
+        background-color: #49A0CC;
+        padding: 20px;
+        @media screen and (max-width: 767px) {
+            padding-top: 20px;
+            padding-bottom: 0px;
+        }
+        text-align:center;
+        .event-hero-meta-info {
+            padding-bottom: 50px;
+            @media screen and (max-width: 767px) {
+                padding-bottom: 20px;
+            }
+            .event-hero-title {
+                font-size: 14px;
+                font-weight: 600;
+                /*color:#FFE5BD;*/
+
+                color: #FFD2A5;
+                /*color:#FF5A42;*/
+                /*color:#AEE50B;*/
+                /*color:#B0E59F;*/
+                /*color:#a1d40a;*/
+
+                text-transform: uppercase;
+            }
+            .event-hero-large-text {
+                font-size: 28px;
+                font-weight: 300;
+                .break {
+                    width: 100%;
+                    display: block;
+                    margin-bottom: -15px;
+                }
+                .date-small {
+                    font-size: 13px;
+                }
+            }
+            .event-hero-small-text {
+                font-weight: 300;
+                font-size: 20px;
+                margin-bottom: 9px;
+            }
+        }
+    }
+    .event-status {
+        color: white;
+        background: #EE974F;
+        padding: 20px;
+        font-weight: 300;
+        text-align: center;
+        .btn {
+            /*border-color: rgba(0, 0, 0, 0);*/
+            border-radius: 2px;
+        }
+        .event-status-region {
+            margin-bottom: 20px;
+        }
+        .status-text {
+            font-size: 18px;
+        }
+        .status-rules {
+            .status-rules-heading {
+                font-size: 12px;
+                font-weight: 600;
+                text-transform: uppercase;
+            }
+            span {
+                margin-right: 5px;
+            }
+            li {
+                list-style-type: none;
+            }
+        }
+        .extras{
+            margin: 0 0 11px 0;
+            .extras-text{
+                font-size: 1.1em;
+                font-weight: 400;
+            }
+            .extras-choice{
+                width: auto;
+                margin-left: auto;
+                margin-right: auto;
+                border-radius: 2px;
+                border: none;
+            }
+        }
+        p {
+            color: white;
+        }
+    }
+    @media (min-width: 992px) {
+        .event-status-container {
+            float: right;
+        }
+        .event-status-companies-container {
+            float: right;
+            clear: right;
+        }
+    }
+    .event-status-extra {
+        padding: 10px 20px 0px 20px;
+        text-align: center;
+        /*background:#FF8874;*/
+
+        background: #ffBe8b;
+        color: white;
+        p {
+            color: white;
+        }
+    }
+    .event-status-companies {
+        .title {
+            font-size: 22px;
+            font-weight: 300;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #EBEBEB;
+        }
+        .heading {
+            .title {
+                float: left;
+                font-weight: 300;
+                line-height: 65px;
+                font-size: 20px;
+                margin: 0;
+                border: none;
+            }
+            .image {
+                float: right;
+            }
+        }
+    }
+    .event-access {
+        padding: 10px;
+        margin-bottom: 20px;
+        background: #D6EAFF;
+        text-align: center;
+        .access-title {
+            color: @heading;
+            font-size: 15px;
+            font-weight: 300;
+            text-align: center;
+        }
+        .label-info {
+            line-height: 21px;
+        }
+    }
+    .payment-price-tag {
+        margin-bottom: 10px;
+    }
+    .payment-button {
+        margin-bottom: 10px;
+    }
+    .event-image {
+      width: 100%;
+    }
+}

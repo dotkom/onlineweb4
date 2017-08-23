@@ -1,23 +1,16 @@
-Onlineweb 4
-==========
+# Onlineweb 4
+[![Build Status](https://ci.online.ntnu.no/api/badges/dotkom/onlineweb4/status.svg?branch=develop)](https://ci.online.ntnu.no/dotkom/onlineweb4) [![codecov](https://codecov.io/gh/dotKom/onlineweb4/branch/develop/graph/badge.svg)](https://codecov.io/gh/dotKom/onlineweb4)
 
-[![Build status](https://ci.frigg.io/dotKom/onlineweb4/develop.svg)](https://ci.frigg.io/dotKom/onlineweb4/last/) [![Coverage status](https://ci.frigg.io/dotKom/onlineweb4/develop/coverage.svg)](https://ci.frigg.io/dotKom/onlineweb4/last/) 
-
-Requirements
-------------
+## Requirements
 
 Download the latest versions of the following software
 
-* [VirtualBox](https://www.virtualbox.org/wiki/Downloads)
-* [Vagrant](https://www.vagrantup.com/downloads.html)
 * [Git](http://git-scm.com)
     * the [GitHub for Windows](http://windows.github.com/) app is probably the easiest way to install and use Git on Windows
 * SSH - On Windows SSH is included with Git/GitHub for Windows.
 
-Installation
-------------
+## Installation - Git and repository setup
 
-# Git and repository setup
 ```bash
 $ git config --global core.autocrlf false
 $ git config --global user.name "<your github username>"
@@ -26,10 +19,41 @@ $ git clone --recursive git@github.com:dotKom/onlineweb4.git
 $ cd onlineweb4
 ```
 
-Alternatively on Windows, use the GitHub for Windows app to setup everything
+## Local development environment
 
-Vagrant
-=======
+### Docker and Docker Compose
+
+To fire up the dev environment, you should use docker-compose.
+
+Install it by running `pip install docker-compose`.
+
+There exists a `Makefile` in the project root directory. This simplifies interaction with docker and docker-compose.
+
+Simply run `make` to build and start onlineweb4, and run `make stop` to stop it.
+
+To view output from onlineweb4, run `make logs`. To view output from a specific service (e.g. django), prepend the `make` command with `OW4_MAKE_TARGET=django`.
+
+If you can't use `make`, you can fire up the dev environment by issuing `docker-compose up -d`.
+
+
+## CD/CI
+
+Pushes made to the develop branch will trigger a redeployment of the application on [dev.online.ntnu.no](https://dev.online.ntnu.no).
+
+Pull requests trigger containerized builds that perform code style checks and tests. You can view the details of these tests by clicking the "detail" link in the pull request checks status area.
+
+## Alternative local develop environments
+
+### VirtualEnv
+
+If you are oldschool and using python virtual envs, just activate your env,
+run `pip install -r requirements.txt`, then `python manage.py migrate`, before starting the dev server with `python manage.py runserver 127.0.0.1:8000`.
+
+Next, you need to fire up the front-end stuff, by running `npm install` followed by `npm start`.
+
+### Vagrant
+
+You'll need [Vagrant](https://www.vagrantup.com/downloads.html) and [VirtualBox](https://www.virtualbox.org/wiki/Downloads) for this option.
 
 This will create a virtual machine with all that is required to start developing
 
@@ -63,8 +87,8 @@ $ vagrant suspend onlineweb
 $ vagrant resume onlineweb
 ```
 
-Vagrant for Parallels
-=====================
+
+#### Vagrant for Parallels
 
 If you wish to use a Parallels, the Vagrantfile has been set up to accept that. There is one more step to setup this.
 ```bash

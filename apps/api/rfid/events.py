@@ -53,7 +53,7 @@ class CompanyResource(ModelResource):
         queryset = Company.objects.all()
         resource_name = 'company'
         allowed_methods = ['get']
-        fields = ['old_image']
+        fields = ['name']
 
 
 class CompanyEventResource(ModelResource):
@@ -78,7 +78,6 @@ class AttendanceEventResource(ModelResource):
 
 
 class EventResource(ModelResource):
-    author = fields.ToOneField(UserResource, 'author', full=True)
     company_event = fields.ToManyField(CompanyEventResource, 'companies', full=True, null=True, blank=True)
     attendance_event = fields.ToOneField(AttendanceEventResource, 'attendance_event', full=True, null=True, blank=True)
 
@@ -96,7 +95,7 @@ class EventResource(ModelResource):
         bundle.data['slug'] = slugify(unidecode(bundle.data['title']))
 
         # If image is set
-        if bundle.data['image']:
+        if 'image' in bundle.data and bundle.data['image']:
             # Parse to FileObject used by Filebrowser
             temp_image = FileObject(bundle.data['image'])
 
@@ -109,15 +108,6 @@ class EventResource(ModelResource):
 
             # Unset the image-field
             del(bundle.data['image'])
-
-        # Do the same thing for the company image
-        if bundle.data['company_event']:
-            for company in bundle.data['company_event']:
-                temp_image = FileObject(company.data['companies'].data['old_image'])
-                for ver in VERSIONS.keys():
-                    if ver.startswith('companies_thumb'):
-                        company.data['companies'].data['old_image_' + ver] = temp_image.version_generate(ver).url
-                del(company.data['companies'].data['old_image'])
 
         # Returning washed object
         return bundle

@@ -1,5 +1,5 @@
-{% load compress %}
 {% load sekizai_tags %}
+{% load render_bundle from webpack_loader %}
 <!DOCTYPE html>
 <html>
 <head>
@@ -16,10 +16,9 @@
     <meta name="theme-color" content="#005fa2">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     {% block styles %}
-        {% compress css %}
-        <link rel="stylesheet" type="text/less" href="{{ STATIC_URL }}less/core.less">
-        {% endcompress %}
     {% endblock %}
+    {% render_bundle 'common' 'css' %}
+    {% render_bundle 'core' 'css' %}
     {% block scripts %}
     {% endblock %}
     {% render_block "css" %}
@@ -50,6 +49,7 @@
                 <li><a href="{% url 'events_index' %}">Arkiv</a></li>
                 <li><a href="{% url 'careeropportunity_index' %}">Karriere</a></li>
                 <li><a href="{% url 'resourcecenter_index' %}">Ressurser</a></li>
+                <li><a href="{% url 'hobbygroups_index' %}" class="hidden-sm">Interessegrupper</a></li>
                 <li><a href="/wiki/">Wiki</a></li>
                 <li><a href="/webshop/">Webshop</a></li>
             </ul>
@@ -57,17 +57,25 @@
             {% if user.is_authenticated %}
                 <li>
                     <a href="#login_menu" class="dropdown-toggle dropdown-signin login glyphicon glyphicon-user" data-toggle="dropdown"></a>
-                    <span class="username_menu hidden-xs hidden-sm hidden-md">{{ user.username }}</span>
+                    <span class="username_menu hidden-xs hidden-sm hidden-md">
+                        {{ user.username }}
+                    </span>
 
                     <ul class="dropdown-menu login-box" role="menu">
-
                         {% if user.is_staff %}
                             <li><a href="/admin/">Administrasjon</a></li>
                         {% endif %}
                         {% if user.is_committee %}
                             <li><a href="/dashboard/">Dashboard</a></li>
                         {% endif %}
-                        <li><a href="{% url 'profiles' %}">Min side<span class="hidden-lg">: {{ user.username }}</span></a></li>
+                        <li>
+                            <a href="{% url 'profiles' %}">
+                                Min side<span class="hidden-lg">: {{ user.username }}</span>
+                                {% if feedback_pending %}
+                                    ({{ feedback_pending|length }})
+                                {% endif %}
+                            </a>
+                        </li>
                         <li><a href="{% url 'profiles_user_search' %}">Finn brukere</a></li>
                         <li class="divider"></li>
                         <li><a href="{% url 'auth_logout' %}">Logg ut</a></li>
@@ -105,7 +113,7 @@
             </ul>
 
             <div id="main-sponsor">
-                <a href="http://www.steria.no/">
+                <a href="http://www.soprasteria.no/" id="ms-ref">
                     <img class="ms-img" src="{{ STATIC_URL }}img/soprasteria.svg" alt="Hovedsamarbeidspartner - Sopra Steria">
                 </a>
                 <span class="ms-span">Hovedsamarbeidspartner</span>
@@ -122,9 +130,7 @@
             <div class="row">
                 <div class="message-container col-md-12">
                     {% for message in messages %}
-                        <div class="alert {% if message.tags %}
-                            {% if message.tags == 'alert-error' %} alert-danger {% else %}
-                            {{ message.tags }}{% endif %}{% endif %}">
+                        <div class="alert {{ message.level_tag }}" {{ message.extra_tags }}>
                             <button type="button" class="close" data-dismiss="alert">&times;</button>
                             {{ message }}
                         </div>
@@ -197,8 +203,8 @@
                                 <div class="address-heading">Postadresse <span class="glyphicon glyphicon-map-marker"></span></div>
                                 <div class="address-info">
                                     Online Linjeforening<br>
-                                    Sem Sælandsv. 7-9<br>
-                                    7034 Trondheim<br>
+                                    Sem Sælandsv. 9<br>
+                                    7491 Trondheim<br>
                                 </div>
                             </div>
                         </div>
@@ -213,19 +219,9 @@
 
     {% block js %}
         <script src="https://maps.googleapis.com/maps/api/js?v=3&amp;sensor=true"></script>
-        <script src="{{ STATIC_URL }}js/libs/jquery-2.1.3.min.js"></script>
-        <script src="{{ STATIC_URL }}js/libs/underscore.min.js"></script>
-        <script src="{{ STATIC_URL }}js/libs/bootstrap.min.js"></script>
-        <script src="{{ STATIC_URL }}js/libs/moment.min.js"></script>
-        <script src="{{ STATIC_URL }}js/libs/jquery.cookie.js"></script>
-        {% compress js %}
-        <script src="{{ STATIC_URL }}js/libs/jquery.debouncedresize.js"></script>
-        <script src="{{ STATIC_URL }}js/libs/fastclick.js"></script>
-        <script src="{{ STATIC_URL }}js/init.js"></script>
-        <script src="{{ STATIC_URL }}js/microevent.js"></script>
-        {% endcompress %}
-        <script src="{{ STATIC_URL }}js/libs/konami.js"></script>
-        <script src="{{ STATIC_URL }}js/christmas.js"></script>
+        <script src="{% url 'js_reverse' %}" type="text/javascript"></script>
+        {% render_bundle 'common' 'js' %}
+        {% render_bundle 'core' 'js' %}
     {% endblock %}
 
     {% render_block "js" %}

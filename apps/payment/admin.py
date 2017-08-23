@@ -6,6 +6,7 @@ from reversion.admin import VersionAdmin
 
 from apps.payment.models import (Payment, PaymentDelay, PaymentPrice, PaymentRelation,
                                  PaymentTransaction)
+from utils.admin import DepositWithdrawalFilter
 
 
 class PaymentInline(GenericStackedInline):
@@ -47,7 +48,9 @@ class PaymentDelayAdmin(VersionAdmin):
 
 class PaymentTransactionAdmin(VersionAdmin):
     model = PaymentTransaction
-    list_display = ('__str__', 'user', 'datetime')
+    list_display = ('__str__', 'user', 'datetime', 'amount', 'used_stripe')
+    list_filter = ('used_stripe', DepositWithdrawalFilter)
+
 
 admin.site.register(Payment, PaymentAdmin)
 admin.site.register(PaymentRelation, PaymentRelationAdmin)

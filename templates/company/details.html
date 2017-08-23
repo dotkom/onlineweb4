@@ -1,6 +1,6 @@
+
 {% extends "base.html" %}
 {% load markdown_deux_tags %}
-{% load fb_versions %}
 
 {% block title %}
 {{ company.name }} - Online
@@ -27,7 +27,10 @@
 				</div>
 			</div>
 			<div class="col-lg-4 col-md-4 col-sm-5 col-xs-12">
-				<img src="{% version company.old_image 'companies_main' %}" width="100%" alt="" />
+				<picture>
+						<source srcset="{{ company.image.lg }}" media="(max-width: 768px)">
+						<img src="{{ company.image.md }}" width="100%" alt=""/>
+				</picture>
                 {% if company.site or company.email_address or company.phone_number %}
                 <div class="contactinfo">
                     {% if company.site %}

@@ -1,11 +1,9 @@
-{% load crispy_forms_tags %}
-
 {% if event.id %}
 <div class="row">
     <div class="col-lg-12">
         <a href="{{ event.get_absolute_url }}" class ="btn btn-info"><i class="fa fa-play"></i> Vis</a>
         <a href="/admin/auth/group/{{ group.id }}/delete/" class="btn btn-danger pull-right"><i class="fa fa-times"></i> Slett</a>
-    </div> 
+    </div>
 </div>
 <br />
 {% endif %}
@@ -16,30 +14,7 @@
                 <h3 class="panel-title">Arrangementsdetaljer</h3>
             </div>
             <div class="panel-body">
-                <form class="edit-form" method="post" action="{% url 'dashboard_event_create' %}" enctype="multipart/form-data">
-                    <div class="row row-space">
-                    {% csrf_token %}
-                    {{ change_event_form|crispy }} 
-                    {% comment %}
-                    {% for field in change_event_form %}
-                        {% ifnotequal field.name 'image' %}
-                            <div class="inline">
-                                <div class="col-md-2">{{ field.label }}</div>
-                                <div class="col-md-10">
-                                    {{ field }}
-                                    {{ field.errors }}
-                                </div>
-                            </div>
-                        {% endifnotequal %}
-                    {% endfor %}
-                    {% endcomment %}
-                    </div>
-                    <div class="row row-space">
-                        <div class="col-md-12" style="margin-left: 0px">
-                            <button class="btn btn-success pull-right" type="submit">Lagre arrangementsdetaljer</button>
-                        </div>
-                    </div>
-                </form>
+                {% include 'events/dashboard/event_form.html' %}
             </div><!-- panel-body -->
         </div><!-- panel -->
     </div>

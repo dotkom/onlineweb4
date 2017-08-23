@@ -58,7 +58,7 @@ def handle_waitlist_bump(event, host, attendees, payment=None):
     message = 'Du har stått på venteliste for arrangementet "%s" og har nå fått plass.\n' % (str(event.title))
 
     if payment:
-        message += _handle_waitlist_bump_payment(payment, attendees, message)
+        message += _handle_waitlist_bump_payment(payment, attendees)
     else:
         message += "Det kreves ingen ekstra handling fra deg med mindre du vil melde deg av."
 
@@ -69,8 +69,9 @@ def handle_waitlist_bump(event, host, attendees, payment=None):
         send_mail(title, message, settings.DEFAULT_FROM_EMAIL, [attendee.user.email])
 
 
-def _handle_waitlist_bump_payment(payment, attendees, message):
+def _handle_waitlist_bump_payment(payment, attendees):
     extended_deadline = timezone.now() + timedelta(days=2)
+    message = ""
 
     if payment.payment_type == 1:  # Instant
         for attendee in attendees:
@@ -175,8 +176,8 @@ class EventCalendar(Calendar):
         self.cal.add_component(cal_event)
 
 
-def find_image_versions(event):
-    img = event.image
+def find_image_versions(image):
+    img = image
     img_strings = []
 
     for ver in VERSIONS.keys():
@@ -198,6 +199,7 @@ def handle_attendance_event_detail(event, user, context):
     attendee = False
     place_on_wait_list = 0
     will_be_on_wait_list = False
+    can_unattend = True
     rules = []
     user_status = False
 
@@ -213,6 +215,8 @@ def handle_attendance_event_detail(event, user, context):
 
         will_be_on_wait_list = attendance_event.will_i_be_on_wait_list
 
+        can_unattend = timezone.now() < attendance_event.registration_end
+
         user_status = event.attendance_event.is_eligible_for_signup(user)
 
         # Check if this user is on the waitlist
@@ -225,6 +229,7 @@ def handle_attendance_event_detail(event, user, context):
         'attendee': attendee,
         'user_attending': user_attending,
         'will_be_on_wait_list': will_be_on_wait_list,
+        'can_unattend': can_unattend,
         'rules': rules,
         'user_status': user_status,
         'place_on_wait_list': int(place_on_wait_list),
@@ -346,7 +351,7 @@ def handle_mail_participants(event, _from_email, _to_email_value, subject, _mess
     # Send mail
     try:
         email_addresses = [a.user.get_email().email for a in send_to_users]
-        _email_sent = EmailMessage(str(subject), str(message), from_email, [], email_addresses).send()
+        _email_sent = EmailMessage(str(subject), str(message), from_email, [from_email], email_addresses).send()
         logger.info('Sent mail to %s for event "%s".' % (_to_email_options[_to_email_value][1], event))
         return _email_sent, all_attendees, attendees_on_waitlist, attendees_not_paid
     except ImproperlyConfigured as e:

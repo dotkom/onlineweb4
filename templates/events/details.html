@@ -1,15 +1,28 @@
 {% extends "base.html" %}
-{% load fb_versions %}
 {% load markdown_deux_tags %}
 {% load crispy_forms_tags %}
 {% load group_membership %}
 {% load calendar_filters %}
 {% load payment_tag %}
-{% load compress %}
+{% load render_bundle from webpack_loader %}
 
 {% block title %}
 {{ event.title }} - Online
 {% endblock title %}
+
+{% block styles %}
+    {{ block.super }}
+    {% render_bundle 'eventsDetails' 'css' %}
+{% endblock %}
+
+{% block js %}
+    {{ block.super }}
+    <script>
+        var selected_extra = "{{ attendee.extras }}";
+        var all_extras = [{% for e in attendance_event.extras.all %}"{{e}}", {%endfor%}];
+    </script>
+    {% render_bundle 'eventsDetails' 'js' %}
+{% endblock %}
 
 {% block content %}
     <section id="event-details">
@@ -167,6 +180,7 @@
                                             {% display_payments payment payment_delay %}
                                             <!-- TODO display payment deadline -->
                                             <script src="{{ STATIC_URL }}js/libs/jquery-2.1.3.min.js"></script>
+                                            <script src="{{ STATIC_URL }}js/libs/jquery.cookie.js"></script>
                                             <script src="https://checkout.stripe.com/checkout.js"></script>
                                             <script src="{{ STATIC_URL }}js/payment.js"></script>
                                         {% endif %}
@@ -188,6 +202,7 @@
                                                 <p class="status-text">Påmelding til arangementet krever betaling.</p>
                                                 {% display_payments payment payment_delay %}
                                                 <script src="{{ STATIC_URL }}js/libs/jquery-2.1.3.min.js"></script>
+                                                <script src="{{ STATIC_URL }}js/libs/jquery.cookie.js"></script>
                                                 <script src="https://checkout.stripe.com/checkout.js"></script>
                                                 <script src="{{ STATIC_URL }}js/payment.js"></script>
                                             {% else %}
@@ -224,7 +239,7 @@
                                             {% endif %}
                                         {% endif %}
 
-                                        {%  if payment %}
+                                        {%  if payment and payment.price %}
                                             <p class="status-text status-price">Pris: {{ payment.price.price }},-</p>
                                         {%  endif %}
 
@@ -235,6 +250,10 @@
                             {% endif %}
 
                             {% if attendance_event %}
+                                {% if user_status and user_status.status_code and user_status.status_code == 501 %}
+                                    <p class="help-text">Påmeldingen åpner {{ attendance_event.registration_start|date:"H.i d. M Y" }}</p>
+                                {% endif %}
+
                                 <p class="help-text">Avmeldingsfristen
                                     {% if attendance_event.unattend_deadline > now %}
                                         er
@@ -295,8 +314,11 @@
                                         <div class="heading clearfix row-space">
                                             <a href="{% url 'company_details' company_relation.company.pk %}">
                                                 <div class="title">{{ company_relation.company.name }}</div>
-                                                <div class="image">
-                                                    <img src="{% version company_relation.company.old_image 'companies_thumb' %}" alt="" />
+                                                <div class="image-holder">
+                                                    <picture>
+                                                        <source srcset="{{ company_relation.company.image.lg }}" media="(max-width: 992px)">
+                                                        <img src="{{ company_relation.company.image.md }}" width="100%" alt="{{ company_relation.company.name }}" />
+                                                    </picture>
                                                 </div>
                                             </a>
                                         </div>
@@ -304,7 +326,7 @@
                                 </div>
                             </div>
                         {% else %}
-                            <img width="100%" src="{% version event.image 'events_main' %}" alt="{{ event.title }}"/>
+                            <img class="event-image" src="{{ event.image.lg }}" alt="{{ event.image.description }}" />
                         {% endif %}
                     </div>
                 </div>
@@ -327,6 +349,9 @@
                         </div>
                         <form action="{% url 'attend_event' event.id %}" method="POST">
                             <div class="modal-body">
+                                {% if not can_unattend %}
+                                    <div class="alert alert-warning">Avmeldingsfristen på dette arrangementet har utløpt. Det vil si at du kan ikke melde deg av dersom du først melder deg på.</div>
+                                {% endif %}
                                 {% if will_be_on_wait_list %}
                                 <p>Ved å sette deg på venteliste godtar du at du automatisk får plass om
                                     arrangementet utvides med flere plasser, eller andre påmeldte melder seg av, slik at du rykker frem i køen.
@@ -392,15 +417,3 @@
     </div>
 </section>
 {% endblock content %}
-
-{% block js %}
-    {{ block.super }}
-    <script>
-        var selected_extra = "{{ attendee.extras }}";
-        var all_extras = [{% for e in attendance_event.extras.all %}"{{e}}", {%endfor%}];
-    </script>
-    {% compress js %}
-    <script type="text/javascript" src="{{ STATIC_URL }}js/Utils.js"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}js/events.js"></script>
-    {% endcompress %}
-{% endblock %}

@@ -1,8 +1,18 @@
 {% extends "base.html" %}
-{% load compress %}
+{% load render_bundle from webpack_loader %}
 
 {% block title %}
 Generalforsamling brukere - Online
+{% endblock %}
+
+{% block styles %}
+    {{ block.super }}
+    {% render_bundle 'genfors' 'css' %}
+{% endblock %}
+
+{% block js %}
+    {{ block.super }}
+    {% render_bundle 'genfors' 'js' %}
 {% endblock %}
 
 {% block content %}
@@ -68,66 +78,4 @@ Generalforsamling brukere - Online
         </div>
     </div>
 </section>
-{% endblock %}
-
-{% block js %}
-    {{ block.super }}
-    <script>
-        function getCookie(name) {
-            var cookieValue = null;
-            if (document.cookie && document.cookie != '') {
-                var cookies = document.cookie.split(';');
-                for (var i = 0; i < cookies.length; i++) {
-                    var cookie = jQuery.trim(cookies[i]);
-                    // Does this cookie string begin with the name we want?
-                    if (cookie.substring(0, name.length + 1) == (name + '=')) {
-                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                        break;
-                    }
-                }
-            }
-            return cookieValue;
-        }
-        var csrftoken = getCookie('csrftoken');
-        function csrfSafeMethod(method) {
-            // these HTTP methods do not require CSRF protection
-            return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
-        }
-        $.ajaxSetup({
-            crossDomain: false, // obviates need for sameOrigin test
-            beforeSend: function(xhr, settings) {
-                if (!csrfSafeMethod(settings.type)) {
-                    xhr.setRequestHeader("X-CSRFToken", csrftoken);
-                }
-            }
-        });
-        $(".vote-button").click(function (e) {
-            var button = $(this);
-            var userid = button.data("user-id");
-            $.ajax({
-                type: "post", url: '/genfors/admin/user/can_vote',
-                data: {'user-id': userid},
-                success: function(data) {
-                    if(data['success']) {
-                        button.removeClass('btn-danger btn-success');
-                        if (data['can_vote']) {
-                            button.addClass('btn-success');
-                            button.text('Ja');
-                        }
-                        else {
-                            button.addClass('btn-danger');
-                            button.text('Nei');
-                        }
-                    }
-                    else {
-                        console.log(data);
-                        var modal = $('#errorModal');
-                        modal.find('.modal-body > p').text(data['error']);
-                        modal.modal();
-                    }
-                },
-                dataType: 'json'
-            });
-        });
-    </script>
 {% endblock %}

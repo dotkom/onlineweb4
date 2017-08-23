@@ -17,7 +17,6 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from django.utils.translation import ugettext as _
 from oauth2_provider.models import AccessToken
-from utils.shortcuts import render_json
 from watson import search as watson
 
 from apps.approval.forms import FieldOfStudyApplicationForm
@@ -31,6 +30,7 @@ from apps.payment.models import PaymentDelay, PaymentRelation, PaymentTransactio
 from apps.profiles.forms import InternalServicesForm, PositionForm, PrivacyForm, ProfileForm
 from apps.profiles.models import Privacy
 from apps.shop.models import Order
+from utils.shortcuts import render_json
 
 
 """
@@ -82,8 +82,8 @@ def _create_profile_context(request):
         ],
         'suspensions': [
             # Tuple syntax ('title', list_of_marks, is_collapsed)
-            (_('aktive suspansjoner'), Suspension.objects.filter(user=request.user, active=True), False),
-            (_('inaktive suspansjoner'), Suspension.objects.filter(user=request.user, active=False), True),
+            (_('aktive suspensjoner'), Suspension.objects.filter(user=request.user, active=True), False),
+            (_('inaktive suspensjoner'), Suspension.objects.filter(user=request.user, active=False), True),
         ],
         # password
         'password_change_form': PasswordChangeForm(request.user),
@@ -506,3 +506,8 @@ def view_profile(request, username):
 
     messages.error(request, _('Du har ikke tilgang til denne profilen'))
     return redirect('profiles')
+
+
+@login_required
+def feedback_pending(request):
+    return render(request, 'profiles/feedback_pending.html', {})

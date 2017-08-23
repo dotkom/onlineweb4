@@ -1,16 +1,12 @@
 {% extends 'base.html' %}
 {% load gravatar_url_resolver %}
 {% load crispy_forms_tags %}
-{% load compress %}
-{% load firstof from future %}
+{% load render_bundle from webpack_loader %}
 
 
 {% block styles %}
     {{ block.super }}
-    {% compress css %}
-        <link rel="stylesheet" type="text/less" href="{{ STATIC_URL }}less/profiles.less" />
-        <link rel="stylesheet" type="text/less" href="{{ STATIC_URL }}less/typeahead.less" />
-    {% endcompress %}
+    {% render_bundle 'profiles' 'css' %}
 {% endblock %}
 
 {% block title %}
@@ -53,7 +49,7 @@
 										</div>
 										<div class="col-md-10">
 											<div class="profile-name">{{ user.get_full_name|striptags }} &nbsp;</div>
-											<b>Telefon</b> 
+											<b>Telefon</b>
 											{% if user.privacy.expose_phone_number %}
 												{% firstof user.phone_number|striptags '<em>Ikke tilgjengelig</em>' %}
 											{% else %}
@@ -71,7 +67,7 @@
 						{% endif %}
 					{% endfor %}
 				</section>
-			{% endfor %}		
+			{% endfor %}
 		</div>
 		<div class="col-md-3 sidebar">
 			<div id="affix" class=" hidden-print hidden-xs hidden-sm">
@@ -95,64 +91,5 @@
 
 {% block js %}
     {{ block.super }}
-    {% compress js %}
-    <script type="text/javascript" src="{{ STATIC_URL }}js/libs/hogan-2.0.0.js"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}js/libs/typeahead.min.js"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}js/libs/spin.min.js"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}js/libs/jquery.spin.js"></script>
-    {% endcompress %}
-    <script type="text/javascript">
-
-        // Smart toggle function that we add to jQuery
-        (function($) {
-            $.fn.toggleDisabled = function(){
-                return this.each(function(){
-                    this.disabled = !this.disabled;
-                });
-            };
-        })(jQuery);
-        
-
-        $(function () {
-            {% verbatim %}
-            var user_search_template =  [
-            '<img width="100%" src="{{ image }}" alt="" />',
-            '<span data-id="{{ id }}" class="user-meta"><h4>{{ name }}</h4>',
-            ].join('');
-            {% endverbatim %}
-
-            $('#search-users').typeahead({
-                remote: "{% url 'profiles_api_user_search' %}?query=%QUERY",
-                updater: function (item) {
-                    return item;
-                },
-                template: user_search_template,
-                engine: Hogan
-            }).on('typeahead:selected typeahead:autocompleted', function(e, datum) {
-                window.location = '/profile/view/' + datum.username;
-            });
-
-            // Spin until everything is ready
-            $('.affix-spinner').spin();
-
-            // Jump to right place when section in affix is clicked
-			$('#affix a').on('click', function(event) {
-				var offset = 80;
-			    event.preventDefault();
-			    window.location.hash = $(this).attr('href')
-			    scrollBy(0, -offset);
-			});
-        });
-
-
-        // When all images are loaded, disable spinner, show affix and enable scrollspy
-        $(window).load(function() {
-        	$('.affix-spinner-wrapper').remove();
-        	$('.affix').show();
-        	$('body').scrollspy({
-			    target: '#affix',
-			    offset: 90
-			});
-        });   
-    </script>
+    {% render_bundle 'profiles' 'js' %}
 {% endblock %}

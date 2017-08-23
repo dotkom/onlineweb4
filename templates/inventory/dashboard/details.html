@@ -1,7 +1,7 @@
 {% extends "dashboard_base.html" %}
 {% load addcss %}
 {% load crispy_forms_tags %}
-{% load compress %}
+{% load render_bundle from webpack_loader %}
 
 {% block title %}
     {{ item.name }} - Online Dashboard
@@ -9,16 +9,13 @@
 
 {% block styles %}
     {{ block.super }}
-    {% compress css %}
-    {% endcompress %}
+    {% render_bundle 'dashboardInventory' 'css' %}
 {% endblock %}
 
 {% block js %}
     {{ block.super }}
-    {% compress js %}
-    <script src="{{ STATIC_URL }}js/dashboard/inventory.js"></script>
-    {% endcompress %}
-{% endblock js %}
+    {% render_bundle 'dashboardInventory' 'js' %}
+{% endblock %}
 
 {% block page-header %}
     Endre {{ item.name }}

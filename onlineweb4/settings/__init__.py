@@ -6,6 +6,6 @@ if not os.path.exists(os.path.join(os.path.dirname(globals()['__file__']), 'base
     sys.exit(1)
 try:
     from onlineweb4.settings.base import *
-except ImportError:
-    sys.stderr.write("Failed to import from the base settings file. Quitting.\n")
+except ImportError as e:
+    sys.stderr.write("Failed to import from the base settings file. Quitting.\n" + str(e) + "\n")
     sys.exit(1)

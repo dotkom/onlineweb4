@@ -1,5 +1,5 @@
 {% extends "dashboard_base.html" %}
-{% load compress %}
+{% load render_bundle from webpack_loader %}
 
 {% block title %}
 Event index - Dashboard - Online
@@ -11,25 +11,24 @@ Arrangementsoversikt
 
 {% block styles %}
     {{ block.super }}
-    {% compress css %}
-        <link rel="stylesheet" type="text/less" href="{{ STATIC_URL }}less/dashboard/events.less" />
-    {% endcompress %}
+    {% render_bundle 'dashboardEvents' 'css' %}
 {% endblock %}
 
 {% block js %}
     {{ block.super }}
-    {% compress js %}
-    <script src="{{ STATIC_URL }}js/dashboard/events.js"></script>
-    {% endcompress %}
+    {% render_bundle 'dashboardEvents' 'js' %}
 {% endblock js %}
 
 {% block breadcrumbs %}
-    <li>Events</li>
+    <li>Arrangementer</li>
 {% endblock %}
 
 {% block content %}
 <div class="row">
     <div class="col-lg-12">
+        <p>
+          <a href="{% url 'dashboard_event_create' %}" class="btn btn-success">Opprett arrangement</a>
+        </p>
         <div class="panel panel-default">
             <div class="panel-heading">
                 <h3 class="panel-title">Arrangement</h3>
@@ -48,7 +47,7 @@ Arrangementsoversikt
                     <tbody>
                     {% for event in events %}
                         <tr>
-                            <td><a href="{% url 'dashboard_event_change_attendees' event.id %}">{{ event }}</a></td>
+                            <td><a href="{% url 'dashboard_event_details' event.id %}">{{ event }}</a></td>
                             <td>
                                 {% if event.is_attendance_event %}
                                     {{ event.attendance_event.number_of_seats_taken }}/{{ event.attendance_event.max_capacity }}

@@ -82,7 +82,7 @@ class EventResource(ModelResource):
             del(bundle.data['image'])
 
         # Do the same thing for the company image
-        if bundle.data['company_event']:
+        if 'image' in bundle.data and bundle.data['image']:
             for company in bundle.data['company_event']:
                 temp_image = FileObject(company.data['companies'].data['old_image'])
                 for ver in VERSIONS.keys():

@@ -30,7 +30,7 @@ def login(request):
     if request.method == 'POST':
         form = LoginForm(request.POST)
         if form.login(request):
-            messages.success(request, _('Du er nå logget inn.'))
+            messages.success(request, _('Du er nå logget inn.'), extra_tags='data-dismiss')
             if redirect_url:
                 return HttpResponseRedirect(redirect_url)
             return HttpResponseRedirect('/')
@@ -45,7 +45,7 @@ def login(request):
 
 def logout(request):
     auth.logout(request)
-    messages.success(request, _('Du er nå logget ut.'))
+    messages.success(request, _('Du er nå logget ut.'), extra_tags='data-dismiss')
     return HttpResponseRedirect('/')
 
 
@@ -228,7 +228,7 @@ def set_password(request, token=None):
         try:
             rt = RegisterToken.objects.get(token=token)
         except RegisterToken.DoesNotExist:
-            log.debug('%s tried to set password with nonexisting/expired token %s' % request.user, token)
+            log.debug('%s tried to set password with nonexisting/expired token %s' % (request.user, token))
             messages.error(request, 'Denne lenken er utløpt. Bruk gjenopprett passord for å få tilsendt en ny lenke.')
         if rt and rt.is_valid:
             if request.method == 'POST':
@@ -266,10 +266,10 @@ def set_password(request, token=None):
 
 class UserViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.ListModelMixin):
     """
-    Viewset for User serializer. Supports filtering on 'username', 'first_name', 'last_name', 'email'
+    Viewset for User serializer. Supports filtering on 'first_name', 'last_name', 'email'
     """
 
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = (AllowAny,)
-    filter_fields = ('username', 'first_name', 'last_name', 'email')
+    filter_fields = ('first_name', 'last_name', 'rfid',)

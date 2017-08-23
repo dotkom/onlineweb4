@@ -1,8 +1,7 @@
 {% extends "dashboard_base.html" %}
-{% load compress %}
 
 {% block title %}
-Deltakerdetaljer - Dashboard - Online 
+Deltakerdetaljer - Dashboard - Online
 {% endblock title %}
 
 {% block page-header %}
@@ -10,8 +9,8 @@ Deltakerdetaljer
 {% endblock %}
 
 {% block breadcrumbs %}
-    <li><a href="{% url 'dashboard_events_index' %}">Events</a></li> 
-    <li><a href="{% url 'dashboard_event_details' attendee.event.event.id %}">{{ attendee.event }}</a></li>
+    <li><a href="{% url 'dashboard_events_index' %}">Events</a></li>
+    <li><a href="{% url 'dashboard_event_change_attendees' attendee.event.event.id %}">{{ attendee.event }}</a></li>
     <li>{{ attendee }}</li>
 {% endblock %}
 
@@ -80,8 +79,8 @@ Deltakerdetaljer
             </div><!-- panel-body -->
         </div><!-- panel -->
     </div><!-- col-lg-6 -->
-</div><!-- row -->    
-    
+</div><!-- row -->
+
 
 
 {% endblock content %}

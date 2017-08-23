@@ -1,17 +1,10 @@
 {% extends "dashboard_base.html" %}
-{% load compress %}
 {% load addcss %}
 {% load crispy_forms_tags %}
 
 {% block title %}
 Kategori - Online Dashboard
 {% endblock title %}
-
-{% block styles %}
-    {{ block.super }}
-    {% compress css %}
-    {% endcompress %}
-{% endblock %}
 
 {% block page-header %}
 Kategori

@@ -101,7 +101,7 @@ class FeedbackRelation(models.Model):
         """
         Returns the absolute URL to its `views.feedback`
         """
-        return reverse("apps.feedback.views.feedback",
+        return reverse("feedback",
                        args=[self.content_type.app_label,
                              self.content_type.model,
                              self.object_id,
@@ -288,6 +288,7 @@ class TextAnswer(models.Model):
         permissions = (
             ('view_textanswer', 'View TextAnswer'),
         )
+
 
 RATING_CHOICES = [(k, str(k)) for k in range(1, 7)]  # 1 to 6
 RATING_CHOICES.insert(0, ("", ""))  # Adds a blank field to prevent 1 from beeing selected by default

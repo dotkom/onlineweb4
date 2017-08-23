@@ -1,6 +1,6 @@
 {% extends "dashboard_base.html" %}
-{% load compress %}
 {% load crispy_forms_tags %}
+{% load render_bundle from webpack_loader %}
 
 {% block title %}
 {{ event }} - Dashboard - Online
@@ -12,15 +12,11 @@ Arrangementsdetaljer
 
 {% block styles %}
     {{ block.super }}
-    {% compress css %}
-    {{ change_event_form.media.css }}
-    {{ change_attendance_form.media.css }}
-    <link rel="stylesheet" type="text/less" href="{{ STATIC_URL }}less/dashboard/events.less" />
-    {% endcompress %}
+    {% render_bundle 'dashboardEvents' 'css' %}
 {% endblock %}
 
 {% block breadcrumbs %}
-    <li><a href="{% url 'dashboard_events_index' %}">Events</a></li>
+    <li><a href="{% url 'dashboard_events_index' %}">Arrangementer</a></li>
     <li>{{ event }}</li>
 {% endblock %}
 
@@ -35,8 +31,17 @@ Arrangementsdetaljer
     <div class="col-lg-12">
         <ul class="nav nav-tabs" role="tablist">
             <li role="presentation" class="active">
-                <a href="#attendees" aria-controls="attendees" role="tab" data-toggle="tab">Påmeldte ({{ event.attendance_event.number_of_seats_taken }})</a>
+                <a href="#detail" aria-controls="detail" role="tab" data-toggle="tab">Detaljer</a>
             </li>
+            {% if event.attendance_event %}
+                <li role="presentation">
+                    <a href="#attendees" aria-controls="attendees" role="tab" data-toggle="tab">Påmelding ({{ event.attendance_event.number_of_seats_taken }}/{{ event.attendance_event.max_capacity }})</a>
+                </li>
+            {% else %}
+                <li role="presentation">
+                    <a href="#create-attendance" aria-controls="create-attendance" role="tab" data-toggle="tab"><i class="fa fa-plus"></i> Legg til påmelding</a>
+                </li>
+            {% endif %}
             {% if event.attendance_event.waitlist %}
                 <li role="presentation">
                     <a href="#waitlist" aria-controls="waitlist" role="tab" data-toggle="tab">Venteliste ({{ event.attendance_event.number_on_waitlist }})</a>
@@ -46,17 +51,37 @@ Arrangementsdetaljer
                 <li role="presentation">
                     <a href="#reservees" aria-controls="reservees" role="tab" data-toggle="tab">Reservasjoner ({{ event.attendance_event.number_of_reserved_seats }})</a>
                 </li>
+            {% elif event.attendance_event and not event.attendance_event.has_reservations and False %}
+                <li role="presentation">
+                    <a href="#create-reservation" aria-controls="create-reservation" role="tab" data-toggle="tab"><i class="fa fa-plus"></i> Legg til reservasjoner</a>
+                </li>
             {%  endif %}
             {%  if event.attendance_event.has_extras %}
                 <li role="presentation">
                     <a href="#extra" aria-controls="extra" role="tab" data-toggle="tab">Ekstra</a>
                 </li>
             {% endif %}
+            {% if event.attendance_event and not event.attendance_event.has_feedback %}
+                <li role="presentation">
+                    <a href="#create-feedback" aria-controls="create-feedback" role="tab" data-toggle="tab"><i class="fa fa-plus"></i> Legg til tilbakemeldingsskjema</a>
+                </li>
+            {% elif event.attendance_event and event.attendance_event.has_feedback %}
+                <li role="presentation">
+                    <a href="#feedback" aria-controls="feedback" role="tab" data-toggle="tab">Tilbakemeldingsskjema</a>
+                </li>
+            {% endif %}
             {%  if payment_prices %}
                 <li role="presentation">
                     <a href="#payment-summary" aria-controls="payment-summary" role="tab" data-toggle="tab">Betalingsoppsumering</a>
                 </li>
+            {% elif event.attendance_event and not payment_prices and False %} {# Not ready to be implemented yet. #}
+                <li role="presentation">
+                    <a href="#payment" aria-controls="payment" role="tab" data-toggle="tab">{% if not event.attendance_event.get_payment %}<i class="fa fa-plus"></i> Legg til betaling{% else %}Betalingsoversikt{% endif %}</a>
+                </li>
             {% endif %}
+            <li role="presentation">
+                <a href="#company" aria-controls="company" role="tab" data-toggle="tab">Bedrifter</a>
+            </li>
         </ul>
     </div>
 </div>
@@ -64,8 +89,26 @@ Arrangementsdetaljer
 <br />
 
 <div class="tab-content">
-    <div role="tabpanel" class="tab-pane active" id="attendees">
+    <div role="tabpanel" class="tab-pane active" id="detail">
+        {%  include "events/dashboard/details/details.html" %}
+    </div>
+    <div role="tabpanel" class="tab-pane" id="attendees">
+        <div class="panel-group">
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h4 class="panel-title">
+                <a data-toggle="collapse" href="#attendance-form">Påmeldingsinformasjon <i class="fa fa-chevron-down"></i></a>
+              </h4>
+            </div>
+            <div id="attendance-form" class="panel-collapse collapse">
+              <div id="update-attendance-view" class="panel-body"></div>
+            </div>
+          </div>
+        </div>
         {%  include "events/dashboard/details/attendees.html" %}
+    </div>
+    <div role="tabpanel" class="tab-pane" id="create-attendance">
+        <div id="create-attendance-view"></div>
     </div>
     <div role="tabpanel" class="tab-pane" id="waitlist">
         {%  include "events/dashboard/details/waitlist.html" %}
@@ -73,23 +116,79 @@ Arrangementsdetaljer
     <div role="tabpanel" class="tab-pane" id="reservees">
         {%  include "events/dashboard/details/reservation.html" %}
     </div>
+    <div role="tabpanel" class="tab-pane" id="feedback">
+        {% if event.attendance_event and event.attendance_event.has_feedback %}
+            {% include "events/dashboard/details/feedback.html" %}
+        {% endif %}
+    </div>
+    <div role="tabpanel" class="tab-pane" id="create-feedback">
+        <div id="add-feedback-view"></div>
+    </div>
     <div role="tabpanel" class="tab-pane" id="extra">
         {%  include "events/dashboard/details/extra.html" %}
     </div>
-<div role="tabpanel" class="tab-pane" id="payment-summary">
+    <div role="tabpanel" class="tab-pane" id="payment-summary">
         {%  include "events/dashboard/details/payment_summary.html" %}
+    </div>
+    <div role="tabpanel" class="tab-pane" id="payment">
+        {% if event.attendance_event.get_payment %}
+            {% include "events/dashboard/details/payment_prices.html" %}
+        {% endif %}
+        <p>
+            Du trenger kun å fylle ut ett av feltene "Frist" og "Utsettelse". Hvilket du fyller ut avhenger av betalingstypen du velger.
+            Velger du "frist" må du sette en betalingsfrist.
+            Velger du "utsettelse" må du oppgi antall dager utsettelse deltakeren får i antall dager etter deltakeren melder seg på arrangementet.
+        </p>
+        <div id="add-payment-view"></div>
+    </div>
+    <div role="tabpanel" class="tab-pane" id="company">
+        {% include "events/dashboard/details/company.html" %}
+        <div id="add-company-view"></div>
     </div>
 </div>
 
 {% endblock content %}
 
 {% block js %}
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
     {{ block.super }}
-    {% compress js %}
-    {{ change_event_form.media.js }}
-    {{ change_attendance_form.media.js }}
-    <script type="text/javascript" src="{{ STATIC_URL }}js/libs/hogan-2.0.0.js"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}js/libs/typeahead.min.js"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}js/dashboard/events.js"></script>
-    {% endcompress %}
+    {% render_bundle 'dashboardEvents' 'js' %}
+    <script>
+        // Update details view form with action attribute
+        $('#create-event-form').attr('action', "{% url 'dashboard_events_edit' event.id %}")
+        // Fetch the form used for creating an attendanceevent
+        $('#create-attendance-view').load("{% url 'dashboard_event_create_attendance' event.id %}", function() {
+          // Update create attendanceevent form with action attribute
+          $('#create-attendance-form').attr('action', "{% url 'dashboard_event_create_attendance' event.id %}")
+          window.dispatchEvent(new Event('activateDateTimePickers'));
+        })
+        $('#update-attendance-view').load("{% url 'dashboard_events_edit_attendance' event.id %}", function() {
+          $('#update-attendance-view').find('form').attr('id', 'update-attendance-form')
+          // Update create attendanceevent form with action attribute
+          $('#update-attendance-form').attr('action', "{% url 'dashboard_events_edit_attendance' event.id %}")
+          window.dispatchEvent(new Event('activateDateTimePickers'));
+        })
+        $('#add-company-view').load("{% url 'dashboard_events_add_company' event.id %}", function() {
+          $('#add-company-view').find('form').attr('id', 'add-company-form')
+          $('#add-company-form').attr('action', "{% url 'dashboard_events_add_company' event.id %}")
+          window.dispatchEvent(new Event('activateDateTimePickers'));
+        })
+        $('#add-feedback-view').load("{% url 'dashboard_events_add_feedback' event.id %}", function() {
+          $('#add-feedback-view').find('form').attr('id', 'add-feedback-form')
+          $('#add-feedback-form').attr('action', "{% url 'dashboard_events_add_feedback' event.id %}")
+          window.dispatchEvent(new Event('activateDateTimePickers'));
+        })
+        {% if not event.attendance_event.get_payment and False %}
+        $('#add-payment-view').load("{% url 'dashboard_events_add_payment' event.id %}", function() {
+          $('#add-payment-view').find('form').attr('id', 'add-payment-form')
+          $('#add-payment-form').attr('action', "{% url 'dashboard_events_add_payment' event.id %}")
+          window.dispatchEvent(new Event('activateDateTimePickers'));
+        })
+        {% elif False %}
+        $('#add-payment-price-view').load("{% url 'dashboard_events_add_payment_price' event.id event.attendance_event.get_payment.pk %}", function() {
+          $('#add-payment-price-view').find('form').attr('id', 'add-payment-price-form')
+          $('#add-payment-price-form').attr('action', "{% url 'dashboard_events_add_payment_price' event.id event.attendance_event.get_payment.pk %}")
+        })
+        {% endif %}
+    </script>
 {% endblock %}

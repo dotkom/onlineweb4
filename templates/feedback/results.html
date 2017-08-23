@@ -1,21 +1,31 @@
 {% extends "base.html" %}
-
 {% load question_filters %}
-{% load compress %}
+{% load render_bundle from webpack_loader %}
 
 {% block title %}
 Tilbakemeldinger - Resultater - Online
 {% endblock title %}
 
+{% block styles %}
+    {{ block.super }}
+    {% render_bundle 'feedback' 'css' %}
+{% endblock %}
+
+{% block js %}
+    {{ block.super }}
+    {% render_bundle 'feedback' 'js' %}
+{% endblock %}
+
+
 {% block content %}
 <section class="container" id="feedback-results">
     <div class="page-header">
-        <h1>{{ description }}</h1> 
+        <h1>{{ description }}</h1>
     </div>
     <div id="field-of-study-header"></div>
     <div class="row" id="field-of-study-graph">
         {% if info %}
-            <div class="col-md-6">
+            <div class="col-md-4">
                 <div class="panel panel-default">
                     <div class="panel-heading">
                         <h3 class="panel-title">Statistikk:</h3>
@@ -61,19 +71,4 @@ Tilbakemeldinger - Resultater - Online
         </div>
     </div>
 </section>
-<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/jqplot/jquery.jqplot.min.css" />
-{% block js %}
-    {{ block.super }}
-    <script src="{{ STATIC_URL }}js/libs/jqplot/jquery.jqplot.min.js"></script>
-    <script src="{{ STATIC_URL }}js/libs/jqplot/jqplot.pieRenderer.min.js"></script>
-    <script src="{{ STATIC_URL }}js/libs/jqplot/jqplot.barRenderer.min.js"></script>
-    <script src="{{ STATIC_URL }}js/libs/jqplot/jqplot.categoryAxisRenderer.min.js"></script>
-    <script src="{{ STATIC_URL }}js/libs/jqplot/jqplot.pointLabels.min.js"></script>
-    {% compress js %}
-    <script src="{{ STATIC_URL }}js/libs/jquery.cookie.js"></script>
-    <script src="{{ STATIC_URL }}js/Utils.js"></script>
-    <script src="{{ STATIC_URL }}js/feedbackResults.js"></script>
-    {% endcompress %}
 {% endblock %}
-
-{% endblock content %}

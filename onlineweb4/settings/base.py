@@ -2,24 +2,37 @@
 import os
 import sys
 
-import wiki
+import dj_database_url
+from decouple import config
 from django.contrib.messages import constants as messages
+from webpack_resolve import create_resolve_file
 
 # Directory that contains this file.
 PROJECT_SETTINGS_DIRECTORY = os.path.dirname(globals()['__file__'])
 # Root directory. Contains manage.py
 PROJECT_ROOT_DIRECTORY = os.path.join(PROJECT_SETTINGS_DIRECTORY, '..', '..')
 
-TEST_RUNNER = "django_nose.NoseTestSuiteRunner"
+sys.dont_write_bytecode = config("OW4_PYTHON_DONT_WRITE_BYTECODE", cast=bool, default=True)
 
-NOSE_ARGS = ['--with-coverage', '--cover-package=apps', '--cover-html-dir=coverage', '--cover-xml', '--cover-html']
+TEST_RUNNER = config("OW4_DJANGO_TEST_RUNNER", default="django_nose.NoseTestSuiteRunner")
 
-DEBUG = False
+DEBUG = config("OW4_DJANGO_DEBUG", cast=bool, default=False)
+
+INTERNAL_IPS = (
+    '127.0.0.1',
+)
+
+ALLOWED_HOSTS = config("OW4_DJANGO_ALLOWED_HOSTS", default='*')
 
 ADMINS = (
     ('dotKom', 'dotkom@online.ntnu.no'),
 )
 MANAGERS = ADMINS
+
+DATABASES = {
+    # Set this using the environment variable "DATABASE_URL"
+    'default': dj_database_url.config(default="sqlite:///%s/db.db" % PROJECT_ROOT_DIRECTORY),
+}
 
 # Email settings
 DEFAULT_FROM_EMAIL = 'online@online.ntnu.no'
@@ -32,6 +45,8 @@ EMAIL_HS = 'hs@online.ntnu.no'
 EMAIL_ITEX = 'itex@online.ntnu.no'
 EMAIL_PROKOM = 'prokom@online.ntnu.no'
 EMAIL_TRIKOM = 'trikom@online.ntnu.no'
+
+EMAIL_BACKEND = config("OW4_DJANGO_EMAIL_BACKEND", default='django.core.mail.backends.console.EmailBackend')
 
 # We will receive errors and other django messages from this email
 SERVER_EMAIL = 'onlineweb4-error@online.ntnu.no'
@@ -53,55 +68,41 @@ USE_I18N = True
 USE_L10N = True
 USE_TZ = True
 DATETIME_FORMAT = 'N j, Y, H:i'
-SECRET_KEY = 'override-this-in-local.py'
+SECRET_KEY = config("OW4_DJANGO_SECRET_KEY", default='override-this-in-local.py')
 
 # Session cookie expires after one year
 SESSION_COOKIE_AGE = 31540000
 
 # Override this in local if you need to :)
-BASE_URL = 'https://online.ntnu.no'
+BASE_URL = config("OW4_DJANGO_BASE_URL", default='https://online.ntnu.no')
 
 AUTH_USER_MODEL = 'authentication.OnlineUser'
 LOGIN_URL = '/auth/login/'
 
-MEDIA_ROOT = os.path.join(PROJECT_ROOT_DIRECTORY, 'uploaded_media')  # Override this in local.py in prod.
+# Override this in prod.
+MEDIA_ROOT = config("OW4_DJANGO_MEDIA_ROOT", default=os.path.join(PROJECT_ROOT_DIRECTORY, 'uploaded_media'))
 MEDIA_URL = '/media/'
 
-STATIC_ROOT = os.path.join(PROJECT_ROOT_DIRECTORY, 'static')
+STATIC_ROOT = config("OW4_DJANGO_STATIC_ROOT", default=os.path.join(PROJECT_ROOT_DIRECTORY, 'static'))
 STATIC_URL = '/static/'
 
 # Prefix for default profile picture
 DEFAULT_PROFILE_PICTURE_PREFIX = os.path.join(STATIC_URL, "img", "profile_default")
 
+FILEBROWSER_MEDIA_ROOT = MEDIA_ROOT
+
 # Additional locations of static files
 STATICFILES_DIRS = (
     os.path.join(PROJECT_ROOT_DIRECTORY, 'files/static'),
+    os.path.join(PROJECT_ROOT_DIRECTORY, 'assets'),
+    os.path.join(PROJECT_ROOT_DIRECTORY, 'bundles'),
 )
 
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
 #    'django.contrib.staticfiles.finders.DefaultStorageFinder',
-    'compressor.finders.CompressorFinder',
 )
-
-# Including django-wiki static files so we can import the less files.
-DJANGO_WIKI_STATIC = os.path.join(os.path.dirname(wiki.__file__), 'static')
-
-COMPRESS_FILES = True
-COMPRESS_OUTPUT_DIR = 'cache'
-COMPRESS_PRECOMPILERS = (
-    ('text/less', 'lessc --include-path=%s {infile} {outfile}' % DJANGO_WIKI_STATIC),
-)
-
-COMPRESS_CSS_FILTERS = [
-    'compressor.filters.css_default.CssAbsoluteFilter',
-    # We want this later on, but it breaks production so disabling for now.
-    #'compressor-filters.cssmin.CSSMinFilter',
-]
-COMPRESS_JS_FILTERS = [
-    'compressor.filters.jsmin.JSMinFilter',
-]
 
 TEMPLATES = [
     {
@@ -121,7 +122,10 @@ TEMPLATES = [
                 "django.template.context_processors.tz",
                 "django.contrib.messages.context_processors.messages",
                 "sekizai.context_processors.sekizai", # Wiki
-                "onlineweb4.context_processors.analytics",
+
+                # Onlineweb4 specific context processors
+                "onlineweb4.context_processors.context_settings",
+                "onlineweb4.context_processors.feedback_notifier",
             ],
             'debug': DEBUG,
         }
@@ -137,6 +141,8 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'middleware.http.Http403Middleware',
     'reversion.middleware.RevisionMiddleware',
+    'oauth2_provider.middleware.OAuth2TokenMiddleware',
+    'oidc_provider.middleware.SessionManagementMiddleware',
     # Uncomment the next line for simple clickjacking protection:
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
@@ -144,19 +150,13 @@ MIDDLEWARE_CLASSES = (
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend', # this is default
     'guardian.backends.ObjectPermissionBackend',
+    'oauth2_provider.backends.OAuth2Backend',
 )
 
 ROOT_URLCONF = 'onlineweb4.urls'
 
 # Python dotted path to the WSGI application used by Django's runserver.
 WSGI_APPLICATION = 'onlineweb4.wsgi.application'
-
-# Pizzasystem settings
-PIZZA_GROUP = 'dotkom'
-PIZZA_ADMIN_GROUP = 'pizzaadmin'
-
-# Grappelli settings
-GRAPPELLI_ADMIN_TITLE = 'Onlineweb'
 
 # Guardian settings
 ANONYMOUS_USER_NAME = 'anonymoususer'
@@ -205,20 +205,18 @@ PUBLIC_LISTS = [
 INSTALLED_APPS = (
     # Third party dependencies
     'django.contrib.humanize',
+    'django_js_reverse',
     'django_nose',
     'django_nyt', # Wiki
     'mptt', # Wiki
     'sekizai', # Wiki
     'sorl.thumbnail', # Wiki
-    'grappelli',
-    'filebrowser',
     'chunks',
     'crispy_forms',
     'django_extensions',
     'django_dynamic_fixture',
     'oauth2_provider',
     'captcha',
-    'compressor',
     'pdfdocument',
     'watson',
     'markdown_deux',
@@ -232,6 +230,8 @@ INSTALLED_APPS = (
     'taggit_serializer',
     'corsheaders',
     'datetimewidget',
+    'webpack_loader',
+    'oidc_provider',
 
     # Django apps
     'django.contrib.admin',
@@ -252,6 +252,8 @@ INSTALLED_APPS = (
     'apps.companyprofile',
     'apps.dashboard',
     'apps.gallery',
+    'apps.gsuite',
+    'apps.hobbygroups',
     'apps.events',
     'apps.marks',
     'apps.offline',
@@ -361,10 +363,10 @@ LOGGING = {
 
 SLACK_INVITER = {
     # e.g. onlinentnu
-    'team_name': 'team_name_here',
+    'team_name': config("OW4_DJANGO_SLACK_INVITER_TEAM_NAME", default='team_name_here'),
     # Token generated using OAuth2: https://api.slack.com/docs/oauth
     # Scopes needed: client+admin
-    'token': 'xoxp-1234_fake'
+    'token': config("OW4_DJANGO_SLACK_INVITER_TOKEN", default='xoxp-1234_fake'),
 }
 
 # crispy forms settings
@@ -375,7 +377,7 @@ MESSAGE_TAGS = {messages.DEBUG: 'alert-debug',
                 messages.INFO: 'alert-info',
                 messages.SUCCESS: 'alert-success',
                 messages.WARNING: 'alert-warning',
-                messages.ERROR: 'alert-error'}
+                messages.ERROR: 'alert-danger'}
 
 
 # Not really sure what this does.
@@ -406,19 +408,73 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 10
 }
 
-CORS_ORIGIN_ALLOW_ALL = True
-CORS_URLS_REGEX = r'^/api/v1/.*$' # Enables CORS on /api/v1/ endpoints only
+CORS_ORIGIN_ALLOW_ALL = config("OW4_DJANGO_CORS_ORIGIN_ALLOW_ALL", cast=bool, default=True)
+CORS_URLS_REGEX = r'^(/api/v1/.*|/sso/user/)$' # Enables CORS on /api/v1/ endpoints and the /sso/user/ endpoint
+
+# Online stripe keys.
+# For development replace with https://online.ntnu.no/wiki/komiteer/dotkom/aktuelt/onlineweb4/keys/
+# For production login to Stripe
+STRIPE_PUBLIC_KEYS = {
+    "arrkom": config("OW4_DJANGO_STRIPE_PUBLIC_KEY_ARRKOM", default="pk_test_replace_this"),
+    "prokom": config("OW4_DJANGO_STRIPE_PUBLIC_KEY_PROKOM", default="pk_test_replace_this"),
+    "trikom": config("OW4_DJANGO_STRIPE_PUBLIC_KEY_TRIKOM", default="pk_test_replace_this"),
+}
+
+STRIPE_PRIVATE_KEYS = {
+    "arrkom": config("OW4_DJANGO_STRIPE_PRIVATE_KEY_ARRKOM", default="pk_test_replace_this"),
+    "prokom": config("OW4_DJANGO_STRIPE_PRIVATE_KEY_PROKOM", default="pk_test_replace_this"),
+    "trikom": config("OW4_DJANGO_STRIPE_PRIVATE_KEY_TRIKOM", default="pk_test_replace_this"),
+}
+
+# Google reCaptcha settings
+# Keys are found here: https://online.ntnu.no/wiki/komiteer/dotkom/aktuelt/onlineweb4/keys/
+RECAPTCHA_PUBLIC_KEY = config("OW4_DJANGO_RECAPTCHA_PUBLIC_KEY", default='replace this')
+RECAPTCHA_PRIVATE_KEY = config("OW4_DJANGO_RECAPTCHA_PRIVATE_KEY", default='replace this')
+NOCAPTCHA = config("OW4_DJANGO_NOCAPTCHA", cast=bool, default=True)
+RECAPTCHA_USE_SSL = config("OW4_DJANGO_RECAPTCHA_USE_SSL", cast=bool, default=True)
 
 OW4_SETTINGS = {
    'events': {
+       'ENABLE_RECAPTCHA': config('OW4_EVENTS_ENABLE_RECAPTCHA', True, cast=bool),
        'FEATURED_DAYS_FUTURE': os.getenv('OW4_EVENTS_FEATURED_DAYS_FUTURE', 3),
        'FEATURED_DAYS_PAST': os.getenv('OW4_EVENTS_FEATURED_DAYS_PAST', 3),
    }
 }
 
 APPROVAL_SETTINGS = {
+    'SEND_APPLICANT_NOTIFICATION_EMAIL': True,
     'SEND_APPROVER_NOTIFICATION_EMAIL': True,
 }
+
+OW4_GSUITE_CREDENTIALS_FILENAME = config('OW4_GSUITE_CREDENTIALS_FILENAME', default='gsuitecredentials.json')
+OW4_GSUITE_CREDENTIALS_PATH = config('OW4_GSUITE_CREDENTIALS_PATH',
+                                     default=os.path.join(PROJECT_ROOT_DIRECTORY, OW4_GSUITE_CREDENTIALS_FILENAME))
+OW4_GSUITE_SYNC = {
+    'CREDENTIALS': OW4_GSUITE_CREDENTIALS_PATH,
+    'DOMAIN': config('OW4_GSUITE_SYNC_DOMAIN', default='online.ntnu.no'),
+    # DELEGATED_ACCOUNT: G Suite Account with proper permissions to perform insertions and removals.
+    'DELEGATED_ACCOUNT': config('OW4_GSUITE_SYNC_DELEGATED_ACCOUNT', default=''),
+    'ENABLED': config('OW4_GSUITE_SYNC_ENABLED', cast=bool, default=False),
+    'ENABLE_INSERT': config('OW4_GSUITE_SYNC_ENABLE_INSERT', cast=bool, default=False),
+    'ENABLE_DELETE': config('OW4_GSUITE_SYNC_ENABLE_DELETE', cast=bool, default=False),
+    # OW4 name (lowercase) -> G Suite name (lowercase)
+    'GROUPS': {
+        'appkom': 'appkom',
+        'arrkom': 'arrkom',
+        'bankom': 'bankom',
+        'bedkom': 'bedkom',
+        'dotkom': 'dotkom',
+        'ekskom': 'ekskom',
+        'fagkom': 'fagkom',
+        'hovedstyret': 'hovedstyret',
+        'jubkom': 'jubkom',
+        'prokom': 'prokom',
+        'seniorkom': 'seniorkom',
+        'trikom': 'trikom',
+    }
+}
+
+GENFORS_ADMIN_PASSWORD = config("OW4_DJANGO_GENFORS_ADMIN_PASSWORD", default='ADMIN_PASSWORD')
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -429,19 +485,27 @@ AUTH_PASSWORD_VALIDATORS = [
     }
 ]
 
+WEBPACK_LOADER = {
+    'DEFAULT': {
+        'BUNDLE_DIR_NAME': 'webpack/'  # end with slash
+    }
+}
+
 # Remember to keep 'local' last, so it can override any setting.
 for settings_module in ['filebrowser', 'django_wiki', 'local']:  # local last
     if not os.path.exists(os.path.join(PROJECT_SETTINGS_DIRECTORY,
             settings_module + ".py")):
-        sys.stderr.write("Could not find settings module '%s'.\n" %
-                settings_module)
         if settings_module == 'local':
-            sys.stderr.write("You need to copy the settings file "
-                             "'onlineweb4/settings/example-local.py' to "
-                             "'onlineweb4/settings/local.py'.\n")
-        sys.exit(1)
+            # If missing local settings, skip
+            continue
+        else:
+            sys.stderr.write("Could not find settings module '%s'.\n" % settings_module)
+            sys.exit(1)
     try:
         exec('from .%s import *' % settings_module)
     except ImportError as e:
-        print("Could not import settings for '%s' : %s" % (settings_module,
-                str(e)))
+        print("Could not import settings for '%s' : %s" % (settings_module, str(e)))
+
+if DEBUG:
+    # Create webpack-extra-resolve.json
+    create_resolve_file()
