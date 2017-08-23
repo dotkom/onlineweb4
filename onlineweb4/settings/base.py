@@ -43,6 +43,7 @@ EMAIL_EKSKOM = 'ekskom@online.ntnu.no'
 EMAIL_FAGKOM = 'fagkom@online.ntnu.no'
 EMAIL_HS = 'hs@online.ntnu.no'
 EMAIL_ITEX = 'itex@online.ntnu.no'
+EMAIL_OPPTAK='opptak@online.ntnu.no'
 EMAIL_PROKOM = 'prokom@online.ntnu.no'
 EMAIL_TRIKOM = 'trikom@online.ntnu.no'
 
