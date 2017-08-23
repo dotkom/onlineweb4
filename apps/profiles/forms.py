@@ -25,6 +25,7 @@ class ProfileForm(forms.ModelForm):
             'gender',
             'github',
             'linkedin',
+            'cardnumber',
             'rfid'
         ]
         widgets = {
@@ -49,10 +50,11 @@ class ProfileForm(forms.ModelForm):
         if len(rfid) != 0 and not re.match("(^\d{7}$)|(^\d{10}$)", rfid):
             self._errors['rfid'] = self.error_class([_("RFID må bestå av syv eller ti siffer.")])
 
-        # TODO else-loop for converting to rfid
+        # Number on card
+        cardnumber = cleaned_data['card_number']
+        # TODO don't know how number looks, so don't know how to validate it
 
         return cleaned_data
-
 
 class PrivacyForm(forms.ModelForm):
     class Meta(object):
