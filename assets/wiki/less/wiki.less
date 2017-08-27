@@ -1,23 +1,12 @@
 @import "~common/less/colors.less";
 
 #wiki {
-    @import "~wiki/bootstrap/less/wiki/wiki-bootstrap.less";
-    @fa-font-path: "/static/wiki/font-awesome/font";
-    @icon-font-path: "/static/fonts/";
-
     // OW4 and django-wiki have different Bootstrap versions which screwed up modals
     .modal {
         z-index: 1050;
     }
     .modal-backdrop {
         z-index: 0;
-    }
-
-    // Wrapping the less file with #wiki and using extended mixins
-    // messes up the results and produces #wiki #wiki .form-actions
-    // Reapplying clearfix
-    .form-actions {
-      .clearfix();
     }
 
     .page-header {
