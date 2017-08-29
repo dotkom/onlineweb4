@@ -10,7 +10,7 @@ markdown2==2.3.4                # textarea text formatting
 pytz                            # Timezone lib
 stripe==1.62.1                  # Stripe payment
 icalendar==3.11.7               # iCalendar generation
-google-api-python-client==1.6.2
+google-api-python-client==1.6.3
 
 # third party deps
 django-filebrowser==3.9.1       # File uploading
