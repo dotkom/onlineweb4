@@ -25,6 +25,7 @@
     "react": "^15.3.0",
     "react-bootstrap": "^0.30.5",
     "react-dom": "^15.3.0",
+    "react-router": "^4.2.0",
     "remarkable": "^1.6.2",
     "showdown": "^1.5.5",
     "spin.js": "^2.3.2",
