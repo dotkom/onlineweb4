@@ -45,15 +45,14 @@ class ProfileForm(forms.ModelForm):
         if len(zip_code) != 0 and not re.match(r'\d{4}', zip_code):
             self._errors['zip_code'] = self.error_class([_("Postnummer må bestå av fire siffer.")])
 
-        # RFID code digits only
-        rfid = cleaned_data['rfid']
-        if len(rfid) != 0 and not re.match("(^\d{7}$)|(^\d{10}$)", rfid):
-            self._errors['rfid'] = self.error_class([_("RFID må bestå av syv eller ti siffer.")])
-
-        # Number on card
+        # Cardnumber digits only
         cardnumber = cleaned_data['cardnumber']
+        if len(cardnumber) != 0 and not re.match("(^\d{7}$)|(^\d{10}$)", cardnumber):
+            cardnumber = cleaned_data['cardnumber']
+            self._errors['cardnumber'] = self.error_class([_("Kortnr må bestå av syv eller ti siffer.")])
 
         return cleaned_data
+
 
 class PrivacyForm(forms.ModelForm):
     class Meta(object):
