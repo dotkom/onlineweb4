@@ -51,7 +51,7 @@ class ProfileForm(forms.ModelForm):
             self._errors['rfid'] = self.error_class([_("RFID må bestå av syv eller ti siffer.")])
 
         # Number on card
-        cardnumber = cleaned_data['card_number']
+        cardnumber = cleaned_data['cardnumber']
 
         return cleaned_data
 
