@@ -42,7 +42,7 @@ class ProfileForm(forms.ModelForm):
 
         # ZIP code digits only
         zip_code = cleaned_data['zip_code']
-        if len(zip_code) != 0 and not re.match(r'\d{4}', zip_code):
+        if zip_code and len(zip_code) != 0 and not re.match(r'\d{4}', zip_code):
             self._errors['zip_code'] = self.error_class([_(ZIP_CODE_VALIDATION_ERROR)])
 
         return cleaned_data
