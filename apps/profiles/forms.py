@@ -8,6 +8,8 @@ from django.utils.translation import ugettext as _
 from apps.authentication.models import OnlineUser, Position
 from apps.profiles.models import Privacy
 
+ZIP_CODE_VALIDATION_ERROR = "Postnummer må bestå av fire siffer."
+
 
 class ProfileForm(forms.ModelForm):
     class Meta(object):
@@ -41,7 +43,7 @@ class ProfileForm(forms.ModelForm):
         # ZIP code digits only
         zip_code = cleaned_data['zip_code']
         if len(zip_code) != 0 and not re.match(r'\d{4}', zip_code):
-            self._errors['zip_code'] = self.error_class([_("Postnummer må bestå av fire siffer.")])
+            self._errors['zip_code'] = self.error_class([_(ZIP_CODE_VALIDATION_ERROR)])
 
         return cleaned_data
 

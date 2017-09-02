@@ -4,7 +4,7 @@ from django_dynamic_fixture import G
 from rest_framework import status
 
 from apps.authentication.models import OnlineUser as User
-from apps.profiles.forms import ProfileForm
+from apps.profiles.forms import ZIP_CODE_VALIDATION_ERROR, ProfileForm
 
 
 class ProfilesURLTestCase(TestCase):
@@ -47,6 +47,15 @@ class ProfileViewEditTestCase(TestCase):
         response = self.client.post(self._url, data)
 
         self.assertEqual(200, response.status_code)
+
+    def test_profile_save_invalid_zip(self):
+        data = {
+            'zip_code': 123
+        }
+
+        response = self.client.post(self._url, data)
+
+        self.assertFormError(response, 'user_profile_form', 'zip_code', ZIP_CODE_VALIDATION_ERROR)
 
 
 class ProfileEditFormTestCase(TestCase):
