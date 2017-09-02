@@ -18,7 +18,6 @@ pipeline:
       - cp onlineweb4/settings/example-local.py onlineweb4/settings/local.py
       - npm install --depth=0 --quiet
       - pip install -r requirements.txt -r requirements-testing.txt --quiet --cache-dir pip-cache
-      - python webpack_resolve.py
       - npm run build:prod
       - npm run lint
       - isort -c -rc apps middleware scripts utils

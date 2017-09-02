@@ -5,7 +5,6 @@ import sys
 import dj_database_url
 from decouple import config
 from django.contrib.messages import constants as messages
-from webpack_resolve import create_resolve_file
 
 # Directory that contains this file.
 PROJECT_SETTINGS_DIRECTORY = os.path.dirname(globals()['__file__'])
@@ -508,7 +507,3 @@ for settings_module in ['filebrowser', 'django_wiki', 'local']:  # local last
         exec('from .%s import *' % settings_module)
     except ImportError as e:
         print("Could not import settings for '%s' : %s" % (settings_module, str(e)))
-
-if DEBUG:
-    # Create webpack-extra-resolve.json
-    create_resolve_file()
