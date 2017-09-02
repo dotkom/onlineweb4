@@ -38,10 +38,11 @@ pipeline:
       - /tmp/cache:/cache
 
   deploy:
-    image: plugins/ssh
+    image: appleboy/drone-ssh
     host: nansen.online.ntnu.no
-    user: root
     port: 22
+    user: root
+    key: ${SSH_KEY}
     when:
       event: push
       branch: develop
