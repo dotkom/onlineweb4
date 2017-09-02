@@ -39,6 +39,7 @@ pipeline:
 
   deploy:
     image: appleboy/drone-ssh
+    secrets: [ssh_key]
     host: nansen.online.ntnu.no
     port: 22
     user: root
