@@ -39,11 +39,13 @@ pipeline:
 
   deploy:
     image: appleboy/drone-ssh
+    pull: true
     secrets: [ssh_key]
     host: nansen.online.ntnu.no
     port: 22
     username: root
     key: ${SSH_KEY}
+    command_timeout: 600
     when:
       event: push
       branch: develop
