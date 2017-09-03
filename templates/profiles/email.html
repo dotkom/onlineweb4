@@ -60,6 +60,12 @@
 {% if in_komiteer and user.online_mail %}
 <div class="row">
     <div class="col-xs-12 col-sm-12 col-md-10">
+        <h3>Online e-postkonto</h3>
+        <p>Alle komitemedlemmer vil få e-post sendt til en Google-konto. Dersom du ikke allerede har en konto kan du opprette en her.</p>
+        <form action="{% url 'profile_create_gsuite_account' %}" method="POST">
+            {% csrf_token %}
+            <button class="btn btn-success">Opprett G Suite konto</button>
+        </form>
         <h3>Online epost-alias</h3>
         <p>Alle medlemmer av komiteer har et alias knyttet til sin konto. Aliaset videresender epost til din primæraddresse, som kan velges ovenfor. Ditt alias er:</p>
         <p>{{ user.online_mail }}@online.ntnu.no</p>

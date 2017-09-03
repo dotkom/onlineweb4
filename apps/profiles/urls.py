@@ -17,6 +17,7 @@ urlpatterns = [
     url(r'^password/$', views.password, name='profile_password'),
     url(r'^position/$', views.position, name='profile_position'),
     url(r'^email/$', views.add_email, name='profile_add_email'),
+    url(r'^create_gsuite/$', views.GSuiteCreateAccount.as_view(), name='profile_create_gsuite_account'),
     # url(r'^internal_services/$', views.internal_services, name='profile_internal_services'),
 
     # Ajax views

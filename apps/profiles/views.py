@@ -16,6 +16,7 @@ from django.http import Http404, HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from django.utils.translation import ugettext as _
+from django.views import View
 from oauth2_provider.models import AccessToken
 from watson import search as watson
 
@@ -24,7 +25,9 @@ from apps.approval.models import MembershipApproval
 from apps.authentication.forms import NewEmailForm
 from apps.authentication.models import OnlineUser as User
 from apps.authentication.models import Email, Position, RegisterToken
+from apps.authentication.utils import create_online_mail_alias
 from apps.dashboard.tools import has_access
+from apps.gsuite.accounts.main import create_g_suite_account
 from apps.marks.models import Mark, Suspension
 from apps.payment.models import PaymentDelay, PaymentRelation, PaymentTransaction
 from apps.profiles.forms import InternalServicesForm, PositionForm, PrivacyForm, ProfileForm
@@ -56,6 +59,9 @@ def _create_profile_context(request):
     Until now, it has been generated upon loading models.py, which is a bit hacky.
     The code is refactored to use Django signals, so whenever a user is created, a privacy-property is set up.
     """
+
+    if not request.user.online_mail:
+        create_online_mail_alias(request.user)
 
     context = {
         # edit
@@ -511,3 +517,14 @@ def view_profile(request, username):
 @login_required
 def feedback_pending(request):
     return render(request, 'profiles/feedback_pending.html', {})
+
+
+class GSuiteCreateAccount(View):
+    def post(self, request, *args, **kwargs):
+        create_g_suite_account(request.user)
+
+        messages.success(request,
+                         "Opprettet en G Suite konto til deg. Sjekk primærepostadressen din ({}) for instruksjoner."
+                         .format(request.user.get_email().email))
+
+        return redirect('profile_add_email')

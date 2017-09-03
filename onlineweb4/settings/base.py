@@ -460,6 +460,11 @@ OW4_GSUITE_SETTINGS = {
     'ENABLED': config('OW4_GSUITE_ENABLED', cast=bool, default=True)  # @ToDo: Not default to True
 }
 
+OW4_GSUITE_ACCOUNTS = {
+    'ENABLED': config('OW4_GSUITE_ACCOUNTS_ENABLED', cast=bool, default=True),  # @ToDo: Not default to True
+    'INSERT_ENABLED': config('OW4_GSUITE_ACCOUNTS_ENABLE_INSERT', cast=bool, default=True)  # @ToDo: Not default to True
+}
+
 OW4_GSUITE_SYNC = {
     'CREDENTIALS': OW4_GSUITE_SETTINGS.get('CREDENTIALS'),
     'DOMAIN': OW4_GSUITE_SETTINGS.get('DOMAIN'),
