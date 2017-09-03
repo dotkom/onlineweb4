@@ -2,6 +2,8 @@ import logging
 import uuid
 
 from django.conf import settings
+from django.core.mail import send_mail
+from django.template.loader import render_to_string
 
 from apps.authentication.utils import create_online_mail_alias
 from apps.gsuite.auth import build_and_authenticate_g_suite_service
@@ -65,4 +67,15 @@ def create_g_suite_account(ow4_user):
         user=ow4_user, gsuite_username=resp.get('primaryEmail')))
     logger.debug('Created G Suite account, response: {}'.format(resp))
 
+    notify_g_suite_user_account(ow4_user, password)
+
     return resp
+
+
+def notify_g_suite_user_account(user, password):
+    logger.debug('Notifying user about new G Suite account')
+    message = render_to_string('authentication/email/gsuite_account_notification.txt', {
+        "user": user,
+        "password": password,
+    })
+    send_mail('Informasjon om G Suite konto fra Online', message, settings.EMAIL_DOTKOM, [user.get_email().email])
