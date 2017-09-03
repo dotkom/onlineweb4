@@ -1,4 +1,4 @@
-FROM python:3
+FROM python:3-alpine
 MAINTAINER dotkom
 
 ENV APP_DIR=/srv/app
@@ -6,10 +6,11 @@ ENV APP_DIR=/srv/app
 RUN mkdir -p $APP_DIR
 WORKDIR $APP_DIR
 
-RUN apt-get update
-RUN apt-get install -y --no-install-recommends \
-    libjpeg-dev \
-    ghostscript
+RUN apk add --no-cache \
+    build-base \
+    git \
+    imagemagick zlib-dev jpeg-dev \
+    postgresql-dev
 
 COPY requirements.txt $APP_DIR/requirements.txt
 RUN pip install -r $APP_DIR/requirements.txt
