@@ -43,7 +43,7 @@ pipeline:
     host: nansen.online.ntnu.no
     port: 22
     username: root
-    key: $SSH_KEY
+    key: ${SSH_KEY}
     when:
       event: push
       branch: develop
