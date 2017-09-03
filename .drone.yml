@@ -12,6 +12,7 @@ pipeline:
 
   test:
     image: registry.online.ntnu.no/dotkom/onlineweb4-testbase
+    secrets: [codecov_token]
     when:
       event: pull_request
     commands:
