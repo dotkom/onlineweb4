@@ -27,7 +27,7 @@ def setup_g_suite_client():
     if not settings.OW4_GSUITE_SYNC.get('ENABLED', False):
         logger.debug('Trying to setup G Suite API client, but OW4_GSUITE_SYNC is not enabled.')
         return
-    if not settings.OW4_GSUITE_SYNC.get('DELEGATED_ACCOUNT'):
+    if not settings.OW4_GSUITE_SETTINGS.get('DELEGATED_ACCOUNT'):
         logger.error('To be able to actually execute calls towards G Suite you must define DELEGATED_ACCOUNT.')
     if settings.OW4_GSUITE_SYNC.get('ENABLED') and (
             not settings.OW4_GSUITE_SYNC.get('ENABLE_INSERT') and not settings.OW4_GSUITE_SYNC.get('ENABLE_DELETE')):

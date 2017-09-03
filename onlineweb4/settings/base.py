@@ -451,11 +451,19 @@ APPROVAL_SETTINGS = {
 OW4_GSUITE_CREDENTIALS_FILENAME = config('OW4_GSUITE_CREDENTIALS_FILENAME', default='gsuitecredentials.json')
 OW4_GSUITE_CREDENTIALS_PATH = config('OW4_GSUITE_CREDENTIALS_PATH',
                                      default=os.path.join(PROJECT_ROOT_DIRECTORY, OW4_GSUITE_CREDENTIALS_FILENAME))
-OW4_GSUITE_SYNC = {
+
+OW4_GSUITE_SETTINGS = {
     'CREDENTIALS': OW4_GSUITE_CREDENTIALS_PATH,
     'DOMAIN': config('OW4_GSUITE_SYNC_DOMAIN', default='online.ntnu.no'),
     # DELEGATED_ACCOUNT: G Suite Account with proper permissions to perform insertions and removals.
-    'DELEGATED_ACCOUNT': config('OW4_GSUITE_SYNC_DELEGATED_ACCOUNT', default=''),
+    'DELEGATED_ACCOUNT': config('OW4_GSUITE_DELEGATED_ACCOUNT', default=''),
+    'ENABLED': config('OW4_GSUITE_ENABLED', cast=bool, default=True)  # @ToDo: Not default to True
+}
+
+OW4_GSUITE_SYNC = {
+    'CREDENTIALS': OW4_GSUITE_SETTINGS.get('CREDENTIALS'),
+    'DOMAIN': OW4_GSUITE_SETTINGS.get('DOMAIN'),
+    'DELEGATED_ACCOUNT': OW4_GSUITE_SETTINGS.get('DELEGATED_ACCOUNT'),
     'ENABLED': config('OW4_GSUITE_SYNC_ENABLED', cast=bool, default=False),
     'ENABLE_INSERT': config('OW4_GSUITE_SYNC_ENABLE_INSERT', cast=bool, default=False),
     'ENABLE_DELETE': config('OW4_GSUITE_SYNC_ENABLE_DELETE', cast=bool, default=False),
