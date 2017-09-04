@@ -8,6 +8,7 @@ from googleapiclient.errors import HttpError
 
 from apps.authentication.utils import create_online_mail_alias
 from apps.gsuite.auth import build_and_authenticate_g_suite_service
+from apps.gsuite.mail_syncer.main import update_g_suite_user
 from apps.gsuite.mail_syncer.utils import get_user_key
 
 logger = logging.getLogger(__name__)
@@ -51,8 +52,10 @@ def create_g_suite_account(ow4_user):
 
     password = create_temporary_password()
 
+    domain = settings.OW4_GSUITE_SETTINGS.get('DOMAIN')
+
     query = directory.users().insert(body={
-        "primaryEmail": "{}@{}".format(ow4_user.online_mail, settings.OW4_GSUITE_SETTINGS.get('DOMAIN')),
+        "primaryEmail": "{}@{}".format(ow4_user.online_mail, domain),
         "password": password,
         "name": {
             "givenName": ow4_user.first_name,
@@ -77,6 +80,8 @@ def create_g_suite_account(ow4_user):
     logger.debug('Created G Suite account, response: {}'.format(resp))
 
     notify_g_suite_user_account(ow4_user, password)
+
+    update_g_suite_user(domain, ow4_user)
 
     return resp
 
