@@ -457,12 +457,12 @@ OW4_GSUITE_SETTINGS = {
     'DOMAIN': config('OW4_GSUITE_SYNC_DOMAIN', default='online.ntnu.no'),
     # DELEGATED_ACCOUNT: G Suite Account with proper permissions to perform insertions and removals.
     'DELEGATED_ACCOUNT': config('OW4_GSUITE_DELEGATED_ACCOUNT', default=''),
-    'ENABLED': config('OW4_GSUITE_ENABLED', cast=bool, default=True)  # @ToDo: Not default to True
+    'ENABLED': config('OW4_GSUITE_ENABLED', cast=bool, default=False),
 }
 
 OW4_GSUITE_ACCOUNTS = {
-    'ENABLED': config('OW4_GSUITE_ACCOUNTS_ENABLED', cast=bool, default=True),  # @ToDo: Not default to True
-    'INSERT_ENABLED': config('OW4_GSUITE_ACCOUNTS_ENABLE_INSERT', cast=bool, default=True)  # @ToDo: Not default to True
+    'ENABLED': config('OW4_GSUITE_ACCOUNTS_ENABLED', cast=bool, default=False),
+    'ENABLE_INSERT': config('OW4_GSUITE_ACCOUNTS_ENABLE_INSERT', cast=bool, default=False),
 }
 
 OW4_GSUITE_SYNC = {
