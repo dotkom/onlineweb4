@@ -9,7 +9,9 @@ from django.db.models.signals import m2m_changed, post_save
 from django.dispatch import receiver
 
 from apps.authentication.tasks import SynchronizeGroups
+from apps.gsuite.accounts.main import create_g_suite_account
 from apps.gsuite.mail_syncer.main import update_g_suite_group, update_g_suite_user
+from apps.gsuite.utils import get_user_key
 
 User = get_user_model()
 logger = logging.getLogger('syncer.%s' % __name__)
@@ -27,6 +29,12 @@ def run_group_syncer(user):
     if settings.OW4_GSUITE_SYNC.get('ENABLED', False):
         ow4_gsuite_domain = settings.OW4_GSUITE_SYNC.get('DOMAIN')
         if isinstance(user, User):
+            # Create G Suite account if it doesn't exist for this user yet
+            if user.is_staff and settings.OW4_GSUITE_ACCOUNTS.get('ENABLE_INSERT'):
+                try:
+                    get_user_key(ow4_gsuite_domain, user.online_mail)
+                except ValueError:
+                    create_g_suite_account(user)
             logger.debug('Running G Suite syncer for user {}'.format(user))
             update_g_suite_user(ow4_gsuite_domain, user, suppress_http_errors=True)
         elif isinstance(user, Group):
