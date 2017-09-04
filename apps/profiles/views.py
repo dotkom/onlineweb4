@@ -17,6 +17,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from django.utils.translation import ugettext as _
 from django.views import View
+from googleapiclient.errors import HttpError
 from oauth2_provider.models import AccessToken
 from watson import search as watson
 
@@ -521,10 +522,17 @@ def feedback_pending(request):
 
 class GSuiteCreateAccount(View):
     def post(self, request, *args, **kwargs):
-        create_g_suite_account(request.user)
 
-        messages.success(request,
-                         "Opprettet en G Suite konto til deg. Sjekk primærepostadressen din ({}) for instruksjoner."
-                         .format(request.user.get_email().email))
+        try:
+            create_g_suite_account(request.user)
+            messages.success(request,
+                             "Opprettet en G Suite konto til deg. Sjekk primærepostadressen din ({}) for instruksjoner."
+                             .format(request.user.get_email().email))
+        except HttpError as err:
+            if err.resp.status == 409:
+                messages.error(request, 'Det finnes allerede en brukerkonto med dette brukernavnet i G Suite. '
+                               'Dersom du mener det er galt, ta kontakt med dotkom.')
+            else:
+                messages.error(request, 'Noe gikk galt. Vennligst ta kontakt med dotkom.')
 
         return redirect('profile_add_email')

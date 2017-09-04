@@ -4,6 +4,7 @@ import uuid
 from django.conf import settings
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
+from googleapiclient.errors import HttpError
 
 from apps.authentication.utils import create_online_mail_alias
 from apps.gsuite.auth import build_and_authenticate_g_suite_service
@@ -52,7 +53,7 @@ def create_g_suite_account(ow4_user):
 
     password = create_temporary_password()
 
-    resp = directory.users().insert(body={
+    query = directory.users().insert(body={
         "primaryEmail": "{}@{}".format(ow4_user.online_mail, settings.OW4_GSUITE_SETTINGS.get('DOMAIN')),
         "password": password,
         "name": {
@@ -61,7 +62,17 @@ def create_g_suite_account(ow4_user):
             "fullName": ow4_user.get_full_name(),
         },
         "changePasswordAtNextLogin": True
-    }).execute()
+    })
+
+    try:
+        resp = query.execute()
+    except HttpError as err:
+        logger.error('HttpError while requesting G Suite Account creation: {}'.format(err.content),
+                     extra={"error": err})
+        if err.resp.status == 409:
+            logger.error('G Suite account creation: User "{}@online.ntnu.no" already exists.'
+                         .format(ow4_user.online_mail))
+        raise err
 
     logger.info('Created G Suite account for "{user}" with username "{gsuite_username}"'.format(
         user=ow4_user, gsuite_username=resp.get('primaryEmail')))
