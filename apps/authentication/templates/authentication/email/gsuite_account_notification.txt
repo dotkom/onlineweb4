@@ -1,0 +1,13 @@
+Det har blitt opprettet en G Suite ("Google-konto") for deg i Online sitt domene (online.ntnu.no).
+
+Du vil bli bedt om å bytte passord første gang du logger inn på kontoen.
+
+Brukernavn: {{ user.online_mail }}@online.ntnu.no
+Passord (midlertidig): {{ password }}
+
+Du kan logge inn på kontoen ved å gå til https://accounts.google.com/AddSession?service=accountsettings
+
+Om du ønsker å sette opp videresending til en privat e-postkonto kan dette gjøres ved å følge guiden som ligger på wikien vår:
+https://online.ntnu.no/wiki/komiteer/epost_aliaser/
+
+Dersom du har noen spørsmål kan du ta kontakt med dotkom på dotkom@online.ntnu.no.
