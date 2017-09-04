@@ -1,3 +1,4 @@
+import pytest
 from django.test import TestCase
 from django_dynamic_fixture import G
 from mock import patch
@@ -51,6 +52,7 @@ class GSuiteUtilsTestCase(TestCase):
         self.assertEqual(user, get_user(user.online_mail, ow4=True))
         self.assertEqual(user.online_mail, get_user(user.online_mail, gsuite=True))
 
+    @pytest.mark.skip  # We now create users if they don't exist.
     @patch('logging.Logger.warning')
     def test_get_onlineuser_not_exist(self, mocked_logger):
         email = '{user}@{domain}'.format(domain=self.domain, user=self.user)

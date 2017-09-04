@@ -1,3 +1,4 @@
+import pytest
 from django.conf import settings
 from django.contrib.auth.models import Group
 from django.test import TestCase, override_settings
@@ -44,6 +45,7 @@ class GSuiteAPIUtilsTestCase(TestCase):
             "Inserting '{user}' into G Suite group '{group}'.".format(user=user.online_mail, group=group_email),
             extra={'email': user.online_mail, 'group': group_email})
 
+    @pytest.mark.skip  # We now create users if they don't exist.
     @patch('logging.Logger.error')
     def test_insert_ow4_user_into_g_suite_group_no_online_mail(self, mocked_logger):
         user = G(OnlineUser, online_mail=None)

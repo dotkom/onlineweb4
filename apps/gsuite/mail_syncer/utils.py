@@ -4,6 +4,8 @@ from django.conf import settings
 from googleapiclient.errors import HttpError
 
 from apps.authentication.models import OnlineUser as User
+from apps.gsuite.accounts.main import create_g_suite_account
+from apps.gsuite.accounts.utils import user_exists_in_g_suite
 from apps.gsuite.auth import build_and_authenticate_g_suite_service
 from apps.gsuite.utils import get_group_key, get_user_key
 
@@ -129,11 +131,9 @@ def insert_ow4_user_into_g_suite_group(domain, group_name, ow4_user, suppress_ht
     logger.info("Inserting '{user}' into G Suite group '{group}'.".format(user=ow4_user, group=group_name),
                 extra={'user': ow4_user, 'group': group_name})
 
-    if not ow4_user.online_mail:
-        logger.error("OW4 User '{user}' ({user.pk}) missing Online email address! (current: '{user.online_mail}')".
-                     format(user=ow4_user),
-                     extra={'user': ow4_user, 'group': group_name})
-        return
+    if not ow4_user.online_mail or not user_exists_in_g_suite(ow4_user):
+        create_g_suite_account(ow4_user)
+        ow4_user = User.objects.get(pk=ow4_user.pk)  # Fetch updated object since it was updated in the create func.
 
     return insert_email_into_g_suite_group(domain, group_name, ow4_user.online_mail,
                                            suppress_http_errors=suppress_http_errors)

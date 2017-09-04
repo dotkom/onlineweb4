@@ -1,3 +1,4 @@
+import pytest
 from django.conf import settings
 from django.test import TestCase, override_settings
 from django_dynamic_fixture import G
@@ -108,6 +109,7 @@ class GSuiteAPITestCase(TestCase):
             resp = mocked_insert_ow4_user(self.domain, group_name, user)
             self.assertEqual(resp.get('email'), user.online_mail)
 
+    @pytest.mark.skip  # We now create users if they don't exist.
     @patch('logging.Logger.error')
     @patch('apps.gsuite.mail_syncer.utils.setup_g_suite_client', autospec=True)
     def test_insert_ow4_user_into_g_suite_group_no_online_mail(self, mocked_gsuite_client, mocked_logger):
