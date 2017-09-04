@@ -8,7 +8,7 @@ from googleapiclient.errors import HttpError
 
 from apps.authentication.utils import create_online_mail_alias
 from apps.gsuite.auth import build_and_authenticate_g_suite_service
-
+from apps.gsuite.mail_syncer.utils import get_user_key
 
 logger = logging.getLogger(__name__)
 
@@ -81,6 +81,28 @@ def create_g_suite_account(ow4_user):
     notify_g_suite_user_account(ow4_user, password)
 
     return resp
+
+
+def reset_password_g_suite_account(ow4_user):
+    if not ow4_user.online_mail:
+        raise ValueError('Det finnes ingen G Suite konto for denne epostadressen.')
+
+    directory = setup_g_suite_client()
+
+    password = create_temporary_password()
+
+    user_key = get_user_key(settings.OW4_GSUITE_SETTINGS.get('DOMAIN'), ow4_user.online_mail)
+
+    logger.debug('Resetting G Suite password for {}.'.format(ow4_user))
+
+    resp = directory.users().update(body={
+        "password": password,
+        "changePasswordAtNextLogin": True,
+    }, userKey=user_key)  # .execute()
+
+    logger.debug('Reset G Suite password for {}, resp: {}'.format(ow4_user, resp))
+
+    notify_g_suite_user_account(ow4_user, password)
 
 
 def notify_g_suite_user_account(user, password):

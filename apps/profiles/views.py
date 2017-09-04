@@ -28,7 +28,7 @@ from apps.authentication.models import OnlineUser as User
 from apps.authentication.models import Email, Position, RegisterToken
 from apps.authentication.utils import create_online_mail_alias
 from apps.dashboard.tools import has_access
-from apps.gsuite.accounts.main import create_g_suite_account
+from apps.gsuite.accounts.main import create_g_suite_account, reset_password_g_suite_account
 from apps.marks.models import Mark, Suspension
 from apps.payment.models import PaymentDelay, PaymentRelation, PaymentTransaction
 from apps.profiles.forms import InternalServicesForm, PositionForm, PrivacyForm, ProfileForm
@@ -534,5 +534,16 @@ class GSuiteCreateAccount(View):
                                'Dersom du mener det er galt, ta kontakt med dotkom.')
             else:
                 messages.error(request, 'Noe gikk galt. Vennligst ta kontakt med dotkom.')
+
+        return redirect('profile_add_email')
+
+
+class GSuiteResetPassword(View):
+    def post(self, request, *args, **kwargs):
+        try:
+            reset_password_g_suite_account(request.user)
+            messages.success(request, "Du har fått satt et nytt passord. Sjekk primæreposten din for informasjon.")
+        except ValueError as err:
+            messages.error(request, err)
 
         return redirect('profile_add_email')

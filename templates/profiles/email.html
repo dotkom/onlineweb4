@@ -68,6 +68,12 @@
             {% csrf_token %}
             <button class="btn btn-success">Opprett G Suite konto</button>
         </form>
+        <h4>Glemt passord til Online-epostkontoen ("G Suite")?</h4>
+        <p>Dersom du har glemt passordet til G Suite kontoen din, eller av andre grunner ikke får logget inn kan du tilbakestille passordet her.</p>
+        <form action="{% url 'profile_reset_gsuite_account' %}" method="POST">
+            {% csrf_token %}
+            <button class="btn btn-primary">Gjenopprett G Suite passord</button>
+        </form>
     </div>
 </div>
 {% endif %}
