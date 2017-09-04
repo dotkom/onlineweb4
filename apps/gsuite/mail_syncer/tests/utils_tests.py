@@ -3,7 +3,8 @@ from django_dynamic_fixture import G
 from mock import patch
 
 from apps.authentication.models import OnlineUser
-from apps.gsuite.mail_syncer.utils import get_group_key, get_user, get_user_key
+from apps.gsuite.mail_syncer.utils import get_user
+from apps.gsuite.utils import get_group_key, get_user_key
 
 
 class GSuiteUtilsTestCase(TestCase):
