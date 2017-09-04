@@ -61,7 +61,7 @@ def _create_profile_context(request):
     The code is refactored to use Django signals, so whenever a user is created, a privacy-property is set up.
     """
 
-    if not request.user.online_mail:
+    if request.user.is_staff and not request.user.online_mail:
         create_online_mail_alias(request.user)
 
     context = {
