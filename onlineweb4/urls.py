@@ -173,6 +173,11 @@ if 'apps.profiles' in settings.INSTALLED_APPS:
         url(r'^profile/',           include('apps.profiles.urls')),
     ]
 
+if 'apps.photoalbum' in settings.INSTALLED_APPS:
+    urlpatterns += [
+        url(r'^photoalbum/',    include('apps.photoalbum.urls')),
+    ]
+
 if 'apps.resourcecenter' in settings.INSTALLED_APPS and 'apps.mailinglists' in settings.INSTALLED_APPS:
     urlpatterns += [
         url(r'^resourcecenter/mailinglists/', include('apps.mailinglists.urls')),  # leave in this order because...
