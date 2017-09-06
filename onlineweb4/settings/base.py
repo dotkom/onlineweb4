@@ -49,7 +49,183 @@ USER_SEARCH_GROUPS = [
     24,  # itex
 ]
 
-# Slack inviter
+#List of mailing lists, used in update_sympa_memcache_from_sql.py
+PUBLIC_LISTS = [
+    "foreninger",
+    "linjeforeninger",
+    "gloshaugen",
+    "dragvoll",
+    "masterforeninger",
+    "kjellere",
+    "linjeledere",
+    "linjeredaksjoner",
+    "glosfaddere",
+    "sr-samarbeid",
+    "ivt-samarbeid",
+    "linjekor",
+    "studentdemokratiet"
+]
+
+INSTALLED_APPS = (
+    # Third party dependencies
+    'django.contrib.humanize',
+    'django_js_reverse',
+    'django_nose',
+    'django_nyt', # Wiki
+    'mptt', # Wiki
+    'sekizai', # Wiki
+    'sorl.thumbnail', # Wiki
+    'chunks',
+    'crispy_forms',
+    'django_extensions',
+    'django_dynamic_fixture',
+    'oauth2_provider',
+    'captcha',
+    'pdfdocument',
+    'watson',
+    'markdown_deux',
+    'djangoformsetjs',
+    'reversion',
+    'guardian',
+    'stripe',
+    'rest_framework',
+    'django_filters',
+    'taggit',
+    'taggit_serializer',
+    'corsheaders',
+    'datetimewidget',
+    'webpack_loader',
+    'oidc_provider',
+
+    # Django apps
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.messages',
+    'django.contrib.sessions',
+    'django.contrib.sites',
+    'django.contrib.staticfiles',
+
+    # Onlineweb 4 apps
+    'apps.api',
+    'apps.approval',
+    'apps.article',
+    'apps.authentication',
+    'apps.autoconfig',
+    'apps.careeropportunity',
+    'apps.companyprofile',
+    'apps.dashboard',
+    'apps.gallery',
+    'apps.gsuite',
+    'apps.hobbygroups',
+    'apps.events',
+    'apps.marks',
+    'apps.offline',
+    'apps.feedback',
+    'apps.mommy',
+    'apps.profiles',
+    'apps.genfors',
+    'apps.resourcecenter',
+    'apps.mailinglists',
+    'apps.inventory',
+    'apps.payment',
+    'apps.photoalbum',
+    'apps.posters',
+    #'apps.rutinator',
+    'apps.slack',
+    'apps.sso',
+    'apps.splash',
+    'apps.shop',
+    'apps.webshop',
+    'scripts',
+
+    #External apps
+    'feedme',
+    'redwine',
+
+    #Wiki
+    'wiki',
+    'wiki.plugins.attachments',
+    'wiki.plugins.images',
+    'wiki.plugins.macros',
+    'wiki.plugins.help',
+    'wiki.plugins.links',
+
+)
+
+
+# SSO / OAuth2 settings
+if 'apps.sso' in INSTALLED_APPS:
+    from apps.sso.settings import OAUTH2_SCOPES
+    OAUTH2_PROVIDER = {
+        'SCOPES': OAUTH2_SCOPES,
+        'ACCESS_TOKEN_EXPIRE_SECONDS': 3600,
+        'AUTHORIZATION_CODE_EXPIRE_SECONDS': 60,
+    }
+    OAUTH2_PROVIDER_APPLICATION_MODEL = 'sso.Client'
+
+# A sample logging configuration. The only tangible logging
+# performed by this configuration is to send an email to
+# the site admins on every HTTP 500 error when DEBUG=False.
+# See http://docs.djangoproject.com/en/dev/topics/logging for
+# more details on how to customize your logging configuration.
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'filters': {
+        'require_debug_false': {
+            '()': 'django.utils.log.RequireDebugFalse'
+        }
+    },
+    'formatters': {
+        'standard': {
+            'format': '%(asctime)s [%(levelname)s] %(name)s: %(message)s'
+        },
+    },
+    'handlers': {
+        'null': {
+            'level': 'DEBUG',
+            'class': 'logging.NullHandler',
+        },
+        'mail_admins': {
+            'level': 'ERROR',
+            'filters': ['require_debug_false'],
+            'class': 'django.utils.log.AdminEmailHandler'
+        },
+        'console':{
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'standard'
+        }
+    },
+    'loggers': {
+        'django.security.DisallowedHost': {
+            'handlers': ['null'],
+            'propagate': False,
+        },
+        'django.request': {
+            'handlers': ['mail_admins'],
+            'level': 'ERROR',
+            'propagate': True,
+        },
+        'feedback': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+        'syncer': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+        '': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+    }
+}
+
 SLACK_INVITER = {
     # e.g. onlinentnu
     'team_name': config("OW4_DJANGO_SLACK_INVITER_TEAM_NAME", default='team_name_here'),
