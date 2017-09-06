@@ -1,6 +1,5 @@
 {% load render_bundle from webpack_loader %}
 {% load raven %}
-{% sentry_public_dsn 'https' %}
 
 <!DOCTYPE html>
 <html>
@@ -19,7 +18,7 @@
         {% render_bundle 'dashboard' 'css' %}
     {% endblock %}
     {% block scripts %}
-        <script>Raven.config('{% sentry_public_dsn %}').install()</script>
+        <script>Raven.config('{% sentry_public_dsn "https" %}').install()</script>
     {% endblock %}
 </head>
 <body>
