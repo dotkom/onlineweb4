@@ -101,7 +101,7 @@ def reset_password_g_suite_account(ow4_user):
     resp = directory.users().update(body={
         "password": password,
         "changePasswordAtNextLogin": True,
-    }, userKey=user_key)  # .execute()
+    }, userKey=user_key).execute()
 
     logger.debug('Reset G Suite password for {}, resp: {}'.format(ow4_user, resp))
 
