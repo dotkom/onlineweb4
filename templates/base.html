@@ -1,5 +1,8 @@
 {% load sekizai_tags %}
 {% load render_bundle from webpack_loader %}
+{% load raven %}
+{% sentry_public_dsn 'https' %}
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -20,6 +23,7 @@
     {% render_bundle 'common' 'css' %}
     {% render_bundle 'core' 'css' %}
     {% block scripts %}
+        <script>Raven.config('{% sentry_public_dsn %}').install()</script>
     {% endblock %}
     {% render_block "css" %}
     {% block apple-webapp %}{% endblock %}
