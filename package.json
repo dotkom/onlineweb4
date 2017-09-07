@@ -2,6 +2,10 @@
   "name": "onlineweb4",
   "version": "1.0.0",
   "description": "Onlineweb 4",
+  "browserslist": [
+    "last 2 versions",
+    "> 5% in NO"
+  ],
   "dependencies": {
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "babel-plugin-transform-runtime": "^6.23.0",
