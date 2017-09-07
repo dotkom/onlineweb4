@@ -22,7 +22,6 @@
     {% render_bundle 'common' 'css' %}
     {% render_bundle 'core' 'css' %}
     {% block scripts %}
-        <script>Raven.config('{% sentry_public_dsn "https" %}').install()</script>
     {% endblock %}
     {% render_block "css" %}
     {% block apple-webapp %}{% endblock %}
@@ -221,6 +220,9 @@
     </section>
 
     {% block js %}
+        <script src="https://cdn.ravenjs.com/3.17.0/raven.min.js" crossorigin="anonymous"></script>
+        <script>Raven.config('{% sentry_public_dsn "https" %}').install()</script>
+
         <script src="https://maps.googleapis.com/maps/api/js?v=3&amp;sensor=true"></script>
         <script src="{% url 'js_reverse' %}" type="text/javascript"></script>
         {% render_bundle 'common' 'js' %}
