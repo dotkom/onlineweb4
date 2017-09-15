@@ -1,7 +1,6 @@
 const path = require('path');
 const BundleTracker = require('webpack-bundle-tracker');
 const CommonsChunkPlugin = require('webpack/lib/optimize/CommonsChunkPlugin');
-const fs = require('fs');
 
 /*
   A base configuration for webpack.
@@ -106,10 +105,12 @@ const webpackConfig = {
       './assets/wiki/index',
     ],
   },
-  // Webpack's resolve magic https://webpack.github.io/docs/resolving.html
   resolve: {
-    // Makes it possible to write `import 'common/blabla'` to avoid a bunch of ../../
-    root: path.resolve(__dirname, './assets/'),
+    modules: [
+      // Makes it possible to write `import 'common/blabla'` to avoid a bunch of ../../
+      path.join(__dirname, 'assets/'),
+      'node_modules',
+    ],
   },
   // Generated bundles output
   output: {
@@ -132,36 +133,57 @@ const webpackConfig = {
       Loaders using `loader1!loader2` syntax is evaluated right to left
       which means that higher level loaders should be on the rightmost side
     */
-    loaders: [
+    rules: [
       {
         // With a few expections we need to run all js files
         // through babel to transpile ES6 to ES5
         test: /\.js$/,
         // Somehow babel fucks up jqplot
         exclude: /(node_modules|jqplot\.\w+\.js)/,
-        loaders: ['babel'],
+        loaders: ['babel-loader'],
       },
       {
         // Hack for modules that depend on global jQuery
         // https://webpack.js.org/guides/shimming/#imports-loader
         test: /(node_modules\/bootstrap\/.+|jquery.jqplot|jqplot\.\w+)\.js$/,
-        loader: 'imports?jQuery=jquery,$=jquery,this=>window',
+        loader: 'imports-loader?jQuery=jquery,$=jquery,this=>window',
       },
       {
         test: /\.css$/,
-        loader:
-          // Load CSS by inserting <style> elements. Necessary for hot reloading
-          'style-loader!' +
-          // CSS + sourcemapping
-          'css-loader?sourceMap!',
+        loader: [
+          {
+            // Load CSS by inserting <style> elements. Necessary for hot reloading
+            loader: 'style-loader',
+          },
+          {
+            // CSS + sourcemapping
+            loader: 'css-loader',
+            options: {
+              sourceMap: true,
+            },
+          },
+        ],
       },
       {
         // Like .css execept that we run the file through a less transpiler first
         test: /\.less$/,
-        loader:
-          'style-loader!' +
-          'css-loader?sourceMap!' +
-          'less-loader?sourceMap',
+        loader: [
+          {
+            loader: 'style-loader',
+          },
+          {
+            loader: 'css-loader',
+            options: {
+              sourceMap: true,
+            },
+          },
+          {
+            loader: 'less-loader',
+            options: {
+              sourceMap: true,
+            },
+          },
+        ],
       },
       {
         // webpack can import images from both javascript and css

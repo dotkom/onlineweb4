@@ -25,9 +25,9 @@ config.plugins.push(new webpack.DefinePlugin({
 
 // We want to include CSS and JS seperately:
 // Remove style loader
-Object.keys(config.module.loaders).forEach((key) => {
-  if ({}.hasOwnProperty.call(config.module.loaders, key)) {
-    const loader = config.module.loaders[key];
+Object.keys(config.module.rules).forEach((key) => {
+  if ({}.hasOwnProperty.call(config.module.rules, key)) {
+    const loader = config.module.rules[key];
     if ('.less'.match(loader.test)) {
       loader.loader = ExtractTextPlugin.extract(
         'css-loader?sourceMap!' +
