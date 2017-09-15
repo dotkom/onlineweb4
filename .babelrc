@@ -6,9 +6,9 @@
     "react"
   ],
   "plugins": [
+    "react-hot-loader/babel",
     ["transform-runtime", { "polyfill": false }],
-    "transform-object-rest-spread",
-    "react-hot-loader/babel"
+    "transform-object-rest-spread"
   ],
   "env": {
     "test": {

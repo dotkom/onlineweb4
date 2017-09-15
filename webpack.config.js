@@ -24,6 +24,7 @@ const webpackConfig = {
       './assets/authentication/index',
     ],
     core: [
+      'react-hot-loader/patch',
       './assets/core/index',
     ],
     dashboard: [
