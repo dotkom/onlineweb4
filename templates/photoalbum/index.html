@@ -2,10 +2,11 @@
 
 {% block content %}
     <section>
-    Fotoalbum in the making
 
-    I think
+        <a href="/photoalbum/create">Nytt album</a></li>
 
-    I hope
+        {%  for album in albums %}
+            Album
+        {% endfor %}
     </section>
 {% endblock content %}

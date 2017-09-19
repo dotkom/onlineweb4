@@ -1,13 +1,23 @@
 from django.shortcuts import render
 
-# Create your views here.
+from apps.photoalbum.models import Album, Photo
+from apps.photoalbum.forms import AlbumForm
+
 
 def index(request):
 
+    albums = Album.objects.all()
     return render(request, 'photoalbum/index.html')
 
 
-def test(request):
+def album(request):
 
-    return render(request, 'photoalbum/index.html')
+    photos = Photo.all()
 
+    return render(request, 'photoalbum/{% album.title %}')
+
+
+def create_album(request):
+    form = AlbumForm(request.POST)
+
+    return render(request, 'photoalbum/create.html', {'form': form})
