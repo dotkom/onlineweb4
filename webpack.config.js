@@ -125,6 +125,7 @@ const webpackConfig = {
   externals: {
     // django-js-reverse adds a global Urls object which we use to generate urls in javascript
     urls: 'Urls',
+    jquery: 'jQuery',
   },
   module: {
     /*

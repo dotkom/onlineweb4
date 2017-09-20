@@ -329,6 +329,12 @@
         <script src="https://cdn.ravenjs.com/3.17.0/raven.min.js" crossorigin="anonymous"></script>
         <script>Raven.config('{% sentry_public_dsn "https" %}').install()</script>
         <script src="{% url 'js_reverse' %}" type="text/javascript"></script>
+        <script
+            src="https://code.jquery.com/jquery-2.2.4.min.js"
+            integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="
+            crossorigin="anonymous"
+        ></script>
+
         {% render_bundle 'common' 'js' %}
         {% render_bundle 'dashboard' 'js' %}
     {% endblock %}
