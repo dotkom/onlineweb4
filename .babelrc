@@ -1,12 +1,13 @@
 {
   "presets" : [
     ["env", {
-      "modules": "commonjs" // set to false when upgrading to webpack >=2
+      "modules": false
     }],
     "react"
   ],
   "plugins": [
-    ["transform-runtime", { "polyfill": false }],
+    "react-hot-loader/babel",
+    "transform-runtime",
     "transform-object-rest-spread"
   ],
   "env": {
