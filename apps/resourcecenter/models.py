@@ -4,8 +4,8 @@ from apps.resourcecenter import settings
 
 
 class Resource(models.Model):
-    title = models.CharField(max_length=25)
-    description = models.TextField(max_length=250)
+    title = models.CharField(max_length=35)
+    description = models.TextField()
     image = models.ImageField(upload_to=settings.IMAGES_PATH)
     priority = models.IntegerField(default=0)
 
