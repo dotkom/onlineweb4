@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% load render_bundle from webpack_loader %}
+
+{% block title %}
+Interessegrupper - Online
+{% endblock title %}
+
+{% block styles %}
+	{{ block.super }}
+	{% render_bundle 'resourcecenter' 'css' %}
+{% endblock %}
+
+{% block js %}
+	{{ block.super }}
+	{% render_bundle 'resourcecenter' 'js' %}
+{% endblock %}
+
+{% block content %}
+
+<section id="resourcecenter">
+	<div class="container">
+		<div class="col-md-12">
+			<div class="page-header">
+				<h1 id="resourcecenter-heading">Ressurssenter</h1>
+			</div>
+		</div>
+		<hr>
+        <div class="row">
+        {% for resource in resources %}
+            <div class="col-xs-12 col-sm-6 col-md-6">
+                <div class="col-md-5">
+                    <img src="{{ resource.image.url }}" alt="{{ resource.title }}" />
+                </div>
+                <div class="col-md-7 resource-description">
+                    <h3>{{ resource.title }}</h3>
+                    <p>
+                        {{ resource.description }}
+                        {{ resource.image.url }}
+                    {% if resource.read_more_link %}
+                        <ul>
+                            <li><a href="{{ resource.read_more_link }}">Les mer om oss her!</a></li>
+                        </ul>
+                    {% endif %}
+                    </p>
+                </div>
+            </div>
+        {% endfor %}
+        </div>
+	</div>
+</section>
+
+{% endblock content %}
