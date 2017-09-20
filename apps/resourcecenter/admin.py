@@ -6,4 +6,5 @@ from apps.resourcecenter.models import Resource
 class ResourceCenterAdmin(admin.ModelAdmin):
     model = Resource
 
+
 admin.site.register(Resource)
