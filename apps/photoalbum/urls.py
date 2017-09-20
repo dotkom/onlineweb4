@@ -5,7 +5,7 @@ from apps.photoalbum import views
 
 
 urlpatterns = [
-    url(r'^$', views.index, name='index'),
+    url(r'^$', views.index, name='albums'),
     url(r'^create$', views.create_album, name="create_album"),
     url(r'^(?P<title>\w+)/$', views.album, name="album")
 
