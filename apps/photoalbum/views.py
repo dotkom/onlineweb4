@@ -19,5 +19,14 @@ def album(request):
 
 def create_album(request):
     form = AlbumForm(request.POST)
+    print("In create")
+
+    if request.method == "post":
+        print("Method is post")
+        form = AlbumForm(request.POST, request.FILES)
+        if form.is_valid():
+            print("Album form is valid")
+
+            return render(request, 'photoalbum/index.html', {'form': form})
 
     return render(request, 'photoalbum/create.html', {'form': form})
