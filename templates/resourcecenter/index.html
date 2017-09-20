@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load render_bundle from webpack_loader %}
+{% load markdown_deux_tags %}
 
 {% block title %}
 Interessegrupper - Online
@@ -24,9 +25,10 @@ Interessegrupper - Online
 				<h1 id="resourcecenter-heading">Ressurssenter</h1>
 			</div>
 		</div>
-		<hr>
-        <div class="row">
         {% for resource in resources %}
+            {% if not forloop.counter|divisibleby:2 %}
+                <div class="row">
+            {% endif %}
             <div class="col-xs-12 col-sm-6 col-md-6">
                 <div class="col-md-5">
                     <img src="{{ resource.image.url }}" alt="{{ resource.title }}" />
@@ -34,18 +36,14 @@ Interessegrupper - Online
                 <div class="col-md-7 resource-description">
                     <h3>{{ resource.title }}</h3>
                     <p>
-                        {{ resource.description }}
-                        {{ resource.image.url }}
-                    {% if resource.read_more_link %}
-                        <ul>
-                            <li><a href="{{ resource.read_more_link }}">Les mer om oss her!</a></li>
-                        </ul>
-                    {% endif %}
+                        {{ resource.description|markdown }}
                     </p>
                 </div>
             </div>
+            {% if forloop.counter|divisibleby:2 %}
+                </div>
+            {% endif %}
         {% endfor %}
-        </div>
 	</div>
 </section>
 

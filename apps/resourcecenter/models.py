@@ -7,7 +7,6 @@ class Resource(models.Model):
     title = models.CharField(max_length=25)
     description = models.TextField(max_length=250)
     image = models.ImageField(upload_to=settings.IMAGES_PATH)
-    url = models.URLField(blank=True)
     priority = models.IntegerField(default=0)
 
     def __str__(self):
