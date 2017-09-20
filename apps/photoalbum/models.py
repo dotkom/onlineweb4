@@ -6,13 +6,11 @@ from django.utils.translation import ugettext as _
 
 IMAGE_FOLDER = "images/photo_album"
 
+class Album(models.Model):
+    title = models.CharField(_("tittel"), blank=False, null=False, max_length=50)
+    photos = models.ForeignKey("Photo", null=True, blank=True)
+
 
 class Photo(models.Model):
     # Path should depend on album?
-    photo_id = models.ImageField(upload_to=IMAGE_FOLDER)
-
-class Album(models.Model):
-    title = models.TextField(_("tittel"), blank=False, null=False)
-    photos = models.ForeignKey(Photo)
-
-
+    image = models.ImageField(upload_to="")
