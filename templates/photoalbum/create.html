@@ -4,10 +4,10 @@
     <section>
         <h1> Opprett nytt album </h1>
 
-        <form action="" method="post">
+        <form action="{% url 'create_album' %}" method="post">
             {% csrf_token %}
             {{ form }}
-            <input type="submit" value="Submit" />
+            <input type="submit" value="Opprett album" />
         </form>
     </section>
 {% endblock content %}
