@@ -10,8 +10,9 @@ class DetailView extends React.Component {
         super(props);
     }
     render(){
+      const { job }=this.props;
         return (
-          <InfoBox deadline={job.deadline}/>
+          <InfoBox deadline={job}/>
         );
     }
 }

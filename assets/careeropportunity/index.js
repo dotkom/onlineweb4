@@ -20,7 +20,6 @@ const App = () => {
         <Route exact path='/careeropportunity/' component={FilterableJobList} />
         <Route path='/careeropportunity/:id' component={DetailView} />
       </Switch>
-
     </Router>
   );
 }
