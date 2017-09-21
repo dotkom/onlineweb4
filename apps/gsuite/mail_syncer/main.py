@@ -1,5 +1,7 @@
 import logging
 
+from django.conf import settings
+
 from apps.gsuite.mail_syncer.utils import (get_excess_groups_for_user, get_excess_users_in_g_suite,
                                            get_g_suite_users_for_group,
                                            get_missing_g_suite_group_names_for_user,
@@ -107,6 +109,12 @@ def update_g_suite_group(domain, group_name, suppress_http_errors=False):
     :param suppress_http_errors: Whether or not to suppress HttpErrors happening during execution.
     :type suppress_http_errors: bool
     """
+
+    if not group_name.lower() in settings.OW4_GSUITE_SYNC.get('GROUPS', {}).keys():
+        logger.debug('Not running group syncer for group {} - group syncing not enabled for this group'
+                     .format(group_name))
+        return
+
     g_suite_users = get_g_suite_users_for_group(domain, group_name, suppress_http_errors=suppress_http_errors)
     ow4_users = get_ow4_users_for_group(group_name)
 
