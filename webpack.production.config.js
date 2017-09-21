@@ -11,9 +11,8 @@ const config = require('./webpack.config.js');
 const webpack = require('webpack');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
-// TODO: duvholt: I'm not entirely sure which source map is best for production.
-// Documentation is kind of spotty
-config.devtool = 'cheap-source-map';
+// Full source map
+config.devtool = 'source-map';
 
 // Set environment to production
 // Some libraries use this to turn off some dev features
@@ -51,6 +50,7 @@ config.plugins.push(new webpack.optimize.UglifyJsPlugin({
     warnings: false,
     screw_ie8: true,
   },
+  sourceMap: true,
   comments: false,
 }));
 
