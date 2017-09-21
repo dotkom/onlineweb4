@@ -110,7 +110,7 @@ def update_g_suite_group(domain, group_name, suppress_http_errors=False):
     :type suppress_http_errors: bool
     """
 
-    if not group_name.lower() in settings.OW4_GSUITE_SYNC.get('GROUPS', {}).keys():
+    if group_name.lower() not in settings.OW4_GSUITE_SYNC.get('GROUPS', {}).keys():
         logger.debug('Not running group syncer for group {} - group syncing not enabled for this group'
                      .format(group_name))
         return
