@@ -62,6 +62,6 @@ django-sekizai==0.10.0
 # libpq-dev						# From package repository.
 
 # Monitoring
-raven==6.2.0
+raven==6.2.1
 
 django-js-reverse==0.7.3
