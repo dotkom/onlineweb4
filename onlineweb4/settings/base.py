@@ -496,6 +496,7 @@ OW4_GSUITE_SYNC = {
         'prokom': 'prokom',
         'seniorkom': 'seniorkom',
         'trikom': 'trikom',
+        'tillitsvalgte' : 'tillitsvalgte',
     }
 }
 
