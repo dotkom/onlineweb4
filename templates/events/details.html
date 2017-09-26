@@ -179,7 +179,6 @@
                                         {% elif payment and not place_on_wait_list and not user_paid %}
                                             {% display_payments payment payment_delay %}
                                             <!-- TODO display payment deadline -->
-                                            <script src="{{ STATIC_URL }}js/libs/jquery-2.1.3.min.js"></script>
                                             <script src="{{ STATIC_URL }}js/libs/jquery.cookie.js"></script>
                                             <script src="https://checkout.stripe.com/checkout.js"></script>
                                             <script src="{{ STATIC_URL }}js/payment.js"></script>
@@ -201,7 +200,6 @@
                                             {% elif payment and payment.payment_type == 1 %} <!-- Instant payment -->
                                                 <p class="status-text">Påmelding til arangementet krever betaling.</p>
                                                 {% display_payments payment payment_delay %}
-                                                <script src="{{ STATIC_URL }}js/libs/jquery-2.1.3.min.js"></script>
                                                 <script src="{{ STATIC_URL }}js/libs/jquery.cookie.js"></script>
                                                 <script src="https://checkout.stripe.com/checkout.js"></script>
                                                 <script src="{{ STATIC_URL }}js/payment.js"></script>
