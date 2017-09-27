@@ -52,10 +52,6 @@
         <td>{{ count }}</td>
         <td>
             <button id="stripe-button" class="btn btn-success">Betal</button>
-            <script src="{{ STATIC_URL }}js/libs/jquery-2.1.3.min.js"></script>
-            <script src="{{ STATIC_URL }}js/libs/jquery.cookie.js"></script>
-            <script src="https://checkout.stripe.com/checkout.js"></script>
-            <script src="{{ STATIC_URL }}js/webshop.js"></script>
         </td>
     </tr>
     {% endwith %}
@@ -67,3 +63,9 @@
 
 {% endblock %}
 </div>
+
+{% block js %}
+  <script src="{{ STATIC_URL }}js/libs/jquery.cookie.js"></script>
+  <script src="https://checkout.stripe.com/checkout.js"></script>
+  <script src="{{ STATIC_URL }}js/webshop.js"></script>
+{% block %}
