@@ -6,7 +6,7 @@
         <a href="/photoalbum/create">Nytt album</a></li>
 
         {%  for album in albums %}
-            Album
+           {{ album.title }}
         {% endfor %}
     </section>
 {% endblock content %}

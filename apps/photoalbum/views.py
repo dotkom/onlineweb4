@@ -7,7 +7,9 @@ from apps.photoalbum.forms import AlbumForm
 def index(request):
 
     albums = Album.objects.all()
-    return render(request, 'photoalbum/index.html')
+    print("Albums: ", albums)
+
+    return render(request, 'photoalbum/index.html', {'albums': albums})
 
 
 def album(request):
@@ -29,8 +31,14 @@ def create_album(request):
         print("Request if method is post: ", request)
         if form.is_valid():
             print("Album form is valid")
-            form.save()
+            print("Form: ", form)
 
-            return render(request, 'photoalbum/index.html')
+            album = form.save()
+            print("Album: ", album.title)
+            album.save()
+            print("Albums after save: ", Album.objects.all())
+
+            albums = Album.objects.all()
+            return render(request, 'photoalbum/index.html', {'albums': albums})
 
     return render(request, 'photoalbum/create.html', {'form': form})
