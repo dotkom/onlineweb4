@@ -3,10 +3,20 @@
 {% block content %}
     <section>
 
-        <a href="/photoalbum/create">Nytt album</a></li>
 
+        <a href="/photoalbum/create">
+            <h2>
+                Nytt album
+            </h2>
+        </a>
+
+        <h2> Album </h2>
         {%  for album in albums %}
-           {{ album.title }}
+            <a href="{%  url 'album_detail' album.pk %}" >
+                <div style="display: block">
+                   {{ album.title }}
+            </div>
+        </a>
         {% endfor %}
     </section>
 {% endblock content %}
