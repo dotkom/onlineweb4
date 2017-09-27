@@ -6,8 +6,6 @@ from django.http import JsonResponse
 from oauth2_provider.decorators import protected_resource
 from oauth2_provider.models import AccessToken
 
-from apps.authentication.models import FIELD_OF_STUDY_CHOICES
-
 
 @protected_resource([
     'authentication.onlineuser.username.read',
@@ -43,7 +41,7 @@ def user(request):
             'nickname': tokenobject.user.nickname,
             'rfid': tokenobject.user.rfid,
             'image': tokenobject.user.get_image_url(),
-            'field_of_study': FIELD_OF_STUDY_CHOICES[tokenobject.user.field_of_study][1]
+            'field_of_study': tokenobject.user.get_field_of_study_display(),
         }
 
         return JsonResponse(status=200, data=userdata)

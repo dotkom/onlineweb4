@@ -44,7 +44,9 @@ class Filters {
     // Binding event listeners
     searchInput.addEventListener('keyup', this.updateQuery);
     futureCheckbox.addEventListener('click', this.toggleFuture);
-    myeventsCheckbox.addEventListener('click', this.toggleMyEvents);
+    if (myeventsCheckbox !== null) {
+      myeventsCheckbox.addEventListener('click', this.toggleMyEvents);
+    }
   }
 
   updateQuery(e) {

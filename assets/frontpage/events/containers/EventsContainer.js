@@ -76,6 +76,7 @@ class EventsContainer extends Component {
     ];
     this.state = {
       events: [],
+      dirty: false,
       eventTypes: initialEventTypes(eventTypes),
     };
     this.setEventVisibility = this.setEventVisibility.bind(this);

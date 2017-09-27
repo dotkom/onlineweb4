@@ -14,7 +14,6 @@ bash-backend:
 
 build:
 	@docker-compose build
-	@docker-compose run --rm $(BACKEND_SERVICE_NAME) python webpack_resolve.py
 
 clean: stop
 	@docker-compose rm --force

@@ -19,4 +19,6 @@ OAUTH2_SCOPES = {
     'authentication.onlineuser.rfid.write': 'RFID (Skrivetilgang)',
     'regme.readwrite': 'RFID (Lese og Skrivetilgang)',
     'shop.readwrite': 'Tilgang til å endre en brukers saldo gjennom betalingssystemet (Lese og skrivetilgang)',
+    'approval:read': 'Tilgang til å lese søknader innsendt i søknadssystemet',
+    'approval:write': 'Tilgang til å sende inn søknad til søknadssystemet',
 }
