@@ -12,7 +12,7 @@
 
         <h2> Album </h2>
         {%  for album in albums %}
-            <a href="{%  url 'album_detail' album.pk %}" >
+            <a href="{%  url 'album_detail' pk=album.pk %}" >
                 <div style="display: block">
                    {{ album.title }}
             </div>
