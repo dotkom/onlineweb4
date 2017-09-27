@@ -51,6 +51,8 @@ class AlbumDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(AlbumDetailView, self).get_context_data(**kwargs)
+        print("Kwargs: ", self.kwargs)
+
         context['album'] = Album.objects.get(pk=self.kwargs['pk'])
         return context
 
