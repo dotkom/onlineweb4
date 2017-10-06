@@ -497,6 +497,7 @@ OW4_GSUITE_SYNC = {
         'seniorkom': 'seniorkom',
         'trikom': 'trikom',
         'tillitsvalgte' : 'tillitsvalgte',
+        'redaksjonen' : 'redaksjonen',
     }
 }
 
