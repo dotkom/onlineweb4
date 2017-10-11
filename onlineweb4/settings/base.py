@@ -496,8 +496,12 @@ OW4_GSUITE_SYNC = {
         'prokom': 'prokom',
         'seniorkom': 'seniorkom',
         'trikom': 'trikom',
-        'tillitsvalgte' : 'tillitsvalgte',
-        'redaksjonen' : 'redaksjonen',
+        'tillitsvalgte': 'tillitsvalgte',
+        'redaksjonen': 'redaksjonen',
+        'ekskom': 'ekskom',
+        'itex' : 'itex',
+        'velkom': 'velkom',
+
     }
 }
 
