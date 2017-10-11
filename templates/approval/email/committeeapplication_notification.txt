@@ -1,0 +1,4 @@
+Dette er en bekreftelse på at det har blitt registrert en ny komitesøknad for {{ applicant_name }}.
+
+{% if link_to_admin %}Søknad: {{ absolute_url }}{% endif %}
+

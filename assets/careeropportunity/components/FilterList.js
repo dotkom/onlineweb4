@@ -2,10 +2,13 @@ import React from 'react';
 import { Col } from 'react-bootstrap';
 import TagList from './TagList';
 import tagsPropTypes from '../propTypes/tags';
+import SearchBox from '../components/SearchBox';
 
-const FilterList = ({ tags, handleTagChange, handleReset }) => (
+const FilterList = ({ tags, filterText, handleTagChange, handleReset, handleFilterChange }) => (
   <Col xs={12} sm={12} md={3} className="pull-right">
     <div className="filters">
+      <SearchBox text={filterText} onChange={e => handleFilterChange(e)} />
+
       <TagList
         heading="Bedrifter"
         tags={tags.companies}
@@ -47,6 +50,8 @@ FilterList.propTypes = {
   handleTagChange: React.PropTypes.func,
   tags: tagsPropTypes,
   handleReset: React.PropTypes.func,
+  handleFilterChange: React.PropTypes.func.isRequired,
+  filterText: React.PropTypes.string.isRequired,
 };
 
 export default FilterList;

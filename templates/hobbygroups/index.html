@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% load render_bundle from webpack_loader %}
+
+{% block title %}
+Interessegrupper - Online
+{% endblock title %}
+
+{% block styles %}
+	{{ block.super }}
+	{% render_bundle 'hobbygroups' 'css' %}
+{% endblock %}
+
+{% block js %}
+	{{ block.super }}
+	{% render_bundle 'hobbygroups' 'js' %}
+{% endblock %}
+
+{% block content %}
+
+<section id="hobbygroups">
+	<div class="container">
+		<div class="col-md-12">
+			<div class="page-header">
+				<h1 id="resourcecenter-heading">Interessegrupper</h1>
+			</div>
+		</div>
+
+		<div class="row" id="introduction">
+            <div class="col-xs-12 col-sm-12 col-md-12">
+                <div class="col-md-12">
+                    <p>
+                        På denne siden finner du informasjon om alle de forskjellige interessegruppene i online.
+                        Ser du noe som ser interessant ut? Ta kontakt og møt noen med samme interesser som deg.
+                        Interessegruppene i Online er grupper for alle mulige slags interesser.
+                        Har du og en kompis eller to en sær/stilig/fantastisk interesse? Opprett en interessegruppe!
+                        Da kan du finne flere som deler din interesse og har mulighet til å søke om støtte fra hovedstyre.
+                    </p>
+                    <hr>
+                </div>
+			</div>
+		</div>
+
+        <div class="row">
+        {% for hobby in hobbygroups %}
+            {% if not forloop.counter|divisibleby:2 %}
+                <div class="row">
+            {% endif %}
+                <div class="col-xs-12 col-sm-6 col-md-6">
+                    <div class="col-md-5">
+                        <img src="{{ hobby.image.url }}" alt="{{ hobby.title }}" />
+                    </div>
+                    <div class="col-md-7 hobbydescription">
+                        <h3>{{ hobby.title }}</h3>
+                        <p>
+                            {{ hobby.description }}
+
+                        {% if hobby.read_more_link %}
+                            <ul>
+                                <li><a href="{{ hobby.read_more_link }}">Les mer om oss her!</a></li>
+                            </ul>
+                        {% endif %}
+                        </p>
+                    </div>
+                </div>
+            {% if forloop.counter|divisibleby:2 %}
+                </div>
+            {% endif %}
+        {% endfor %}
+        </div>
+
+	</div>
+</section>
+
+{% endblock content %}

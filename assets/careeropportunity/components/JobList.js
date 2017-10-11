@@ -1,6 +1,7 @@
 import React from 'react';
 import { Col } from 'react-bootstrap';
 import moment from 'moment';
+import Fuse from 'fuse.js';
 import Job from './Job';
 import tagsPropTypes from '../propTypes/tags';
 import jobPropTypes from '../propTypes/job';
@@ -27,8 +28,24 @@ const deadlineCheck = (job, id, tag) => (
     new Date(job.deadline).getTime() - Date.now() <= tag.deadline : false
 );
 
-const JobList = ({ jobs, tags }) => {
-  const jobElems = jobs.reduce((elems, job, i) => {
+const JobList = ({ jobs, tags, filterText }) => {
+  const fuse = new Fuse(jobs, {
+    shouldSort: false,
+    treshold: 0.6,
+    location: 0,
+    distance: 100,
+    maxPatternLength: 32,
+    minMatchCharLength: 1,
+    keys: [
+      'locations', 'companyName', 'companyName', 'title', 'ingress', 'type',
+    ],
+  });
+
+  const search = fuse.search(filterText);
+
+  const prefilteredJobs = filterText.length ? search : jobs;
+
+  const jobElems = prefilteredJobs.reduce((elems, job, i) => {
     // Whether we may show this job or not.
     let canShow = true;
 
@@ -76,6 +93,7 @@ const JobList = ({ jobs, tags }) => {
 JobList.propTypes = {
   jobs: React.PropTypes.arrayOf(React.PropTypes.shape(jobPropTypes)),
   tags: tagsPropTypes,
+  filterText: React.PropTypes.string.isRequired,
 };
 
 export default JobList;

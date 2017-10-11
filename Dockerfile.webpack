@@ -1,4 +1,4 @@
-FROM node:6-slim
+FROM node:8.5-alpine
 MAINTAINER dotkom
 
 ENV APP_DIR=/srv/app
@@ -7,6 +7,6 @@ RUN mkdir -p $APP_DIR
 WORKDIR $APP_DIR
 
 COPY package.json $APP_DIR/package.json
-RUN npm install
+RUN yarn
 
 CMD ["bash"]
