@@ -1,122 +1,72 @@
-Onlineweb 4
-==========
+# Onlineweb 4
 [![Build Status](https://ci.online.ntnu.no/api/badges/dotkom/onlineweb4/status.svg?branch=develop)](https://ci.online.ntnu.no/dotkom/onlineweb4) [![codecov](https://codecov.io/gh/dotKom/onlineweb4/branch/develop/graph/badge.svg)](https://codecov.io/gh/dotKom/onlineweb4)
 
+## Frameworks
 
-Requirements
-------------
+### Frontend
 
-Download the latest versions of the following software
+The frontend code is located in the `assets` folder.  
+It's a mixture of old jQuery code and newer React code.  
+The code is built with [webpack](http://webpack.js.org/) and transpiled using [Babel](https://babeljs.io/).
 
-* [VirtualBox](https://www.virtualbox.org/wiki/Downloads)
-* [Vagrant](https://www.vagrantup.com/downloads.html)
-* [Git](http://git-scm.com)
-    * the [GitHub for Windows](http://windows.github.com/) app is probably the easiest way to install and use Git on Windows
-* SSH - On Windows SSH is included with Git/GitHub for Windows.
+*Some static files are still stored in `files/static`, but should be moved to `assets` and included using webpack*.
 
-Installation
-------------
+### Backend
+ 
+Python 3 with [Django](https://docs.djangoproject.com/) is used as a backend and is mostly located in the `apps` folder.  
+Django templates are in `templates` folder.  
+The API uses [Django REST framework](http://www.django-rest-framework.org/) 
 
-# Git and repository setup
+
+## Installation - Git and repository setup
+
 ```bash
 $ git config --global core.autocrlf false
 $ git config --global user.name "<your github username>"
-$ git config --global user.email <your.github@email.com>
-$ git clone --recursive git@github.com:dotKom/onlineweb4.git
+$ git config --global user.email your.github@email.com
+$ git clone git@github.com:dotkom/onlineweb4.git
 $ cd onlineweb4
 ```
 
+## Development environment
 
-Local development environment
-------------
+The easiest way to get started with development is to use the provided Docker images.  
+On the other hand on slower machines Docker might be noticeable slower in which case a local installation using virtualenv can be preferred. 
 
-# Docker and Docker Compose
+### Docker and Docker Compose
 
-To fire up the dev environment, you should use docker-compose.
+To fire up the dev environment, you should use [docker-compose](https://docs.docker.com/compose/overview/).
 
 Install it by running `pip install docker-compose`.
 
-Then, fire it up by issuing `docker-compose up -d` from the project root directory.
-
-## Makefile
-
-There exists a `Makefile` which simplifies interaction with docker and docker-compose.
+There exists a `Makefile` in the project root directory. This simplifies interaction with docker and docker-compose.
 
 Simply run `make` to build and start onlineweb4, and run `make stop` to stop it.
 
 To view output from onlineweb4, run `make logs`. To view output from a specific service (e.g. django), prepend the `make` command with `OW4_MAKE_TARGET=django`.
 
-# VirtualEnv
+If you can't use `make`, you can fire up the dev environment by issuing `docker-compose up -d`.
 
-If you are oldschool and using python virtual envs, just activate your env,
-run `pip install -r requirements.txt`, then `python manage.py migrate`, before starting the dev server with `python manage.py runserver 127.0.0.1:8000`.
+If the site doesn't load properly the first time you are running the project, you might need to restart Docker once by running `docker-compose restart`.
+
+### Local installation
+
+A few packages are required to build our Python depedencies: 
+
+- libjpeg-dev
+- ghostscript
+
+If these aren't already installed pip will likely fail to build the packages.
+
+If you are oldschool and like using python virtual envs, just activate your env,
+run `pip install -r requirements.txt`, then `python manage.py migrate`, before starting the dev server with `python manage.py runserver`.
 
 Next, you need to fire up the front-end stuff, by running `npm install` followed by `npm start`.
 
+The project should now be available at [http://localhost:8000](http://localhost:8000)
 
-CD/CI
-=======
+## CD/CI
 
 Pushes made to the develop branch will trigger a redeployment of the application on [dev.online.ntnu.no](https://dev.online.ntnu.no).
 
 Pull requests trigger containerized builds that perform code style checks and tests. You can view the details of these tests by clicking the "detail" link in the pull request checks status area.
-
-
-Vagrant
-=======
-
-This will create a virtual machine with all that is required to start developing
-
-* see the Vagrantfile for special VM configuration options and
-* see the vagrantbootstrap.sh script for provisioning options
-
-```bash
-$ vagrant up
-```
-
-If anything goes wrong
-```bash
-$ vagrant reload # will re-up the machine without destroying it
-$ vagrant destroy -f # delete everything to start from scratch
-$ vagrant provision # re-run the provisioning (vagrantbootstrap.sh) task
-```
-
-After the machine is up and provisioned you can SSH to the instance to run a server
-```bash
-$ vagrant ssh # if prompted for a password just type 'vagrant'
-$ workon onlineweb # this is the virtualenv
-$ cd /vagrant # this is the mounted shared folder of the project root
-$ python manage.py runserver 0.0.0.0:8000 # this will bind to all interfaces on port 8000 (forwarded as 8001)
-```
-
-Site should be available at http://localhost:8001
-
-To suspend/resume the VM
-```bash
-$ vagrant suspend onlineweb
-$ vagrant resume onlineweb
-```
-
-Vagrant for Parallels
-=====================
-
-If you wish to use a Parallels, the Vagrantfile has been set up to accept that. There is one more step to setup this.
-```bash
-$ vagrant plugin install vagrant-parallels
-```
-
-Then run `vagrant up` with parallels as the provider.
-```bash
-$ vagrant up --provider=parallels
-```
-
-Some things are worth noting here;  
-CONS:
-* The port forwarding doesn't work for Parallels, as of the time of writing this (26.11.13).
-* You have to access the dev server on <parallels-ip>:<some port> instead of the neat localhost:8001 that virtualbox let's you do.
-
-PROS:
-* Parallels is _much_ better than virtualbox for mac. 
-* VB will hang after sleep, which requires a shutdown of the machine to keep working, causing lots of .swp files. This has never happened to me (melwil) with Parallels.
-* Parallels is faster, tab completion, checking out branches, stashing, is all ~instant in Parallels, while it can take as much as seconds in VB.
-* Parallels was made for Mac.

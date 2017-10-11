@@ -1,5 +1,7 @@
 {% load sekizai_tags %}
 {% load render_bundle from webpack_loader %}
+{% load raven %}
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -49,6 +51,7 @@
                 <li><a href="{% url 'events_index' %}">Arkiv</a></li>
                 <li><a href="{% url 'careeropportunity_index' %}">Karriere</a></li>
                 <li><a href="{% url 'resourcecenter_index' %}">Ressurser</a></li>
+                <li><a href="{% url 'hobbygroups_index' %}" class="hidden-sm">Interessegrupper</a></li>
                 <li><a href="/wiki/">Wiki</a></li>
                 <li><a href="/webshop/">Webshop</a></li>
             </ul>
@@ -181,6 +184,9 @@
                                     <span class="glyphicon glyphicon-envelope"></span>kontakt@online.ntnu.no
                                 </div>
                                 <div class="contact-item">
+                                    <span class="glyphicon glyphicon-file"></span>faktura@online.ntnu.no
+                                </div>
+                                <div class="contact-item">
                                     <span class="glyphicon glyphicon-phone"></span>73 59 64 89
                                 </div>
                             </div>
@@ -199,11 +205,11 @@
                         </div>
                         <div class="col-xs-6 col-sm-6 col-md-6">
                             <div class="address">
-                                <div class="address-heading">Postadresse <span class="glyphicon glyphicon-map-marker"></span></div>
+                                <div class="address-heading">Post og Faktura <span class="glyphicon glyphicon-map-marker"></span></div>
                                 <div class="address-info">
                                     Online Linjeforening<br>
-                                    Sem Sælandsv. 7-9<br>
-                                    7034 Trondheim<br>
+                                    Sem Sælandsv. 9<br>
+                                    7491 Trondheim<br>
                                 </div>
                             </div>
                         </div>
@@ -217,6 +223,14 @@
     </section>
 
     {% block js %}
+        <script src="https://cdn.ravenjs.com/3.17.0/raven.min.js" crossorigin="anonymous"></script>
+        <script>Raven.config('{% sentry_public_dsn "https" %}').install()</script>
+
+        <script
+            src="https://code.jquery.com/jquery-2.2.4.min.js"
+            integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="
+            crossorigin="anonymous"
+        ></script>
         <script src="https://maps.googleapis.com/maps/api/js?v=3&amp;sensor=true"></script>
         <script src="{% url 'js_reverse' %}" type="text/javascript"></script>
         {% render_bundle 'common' 'js' %}
