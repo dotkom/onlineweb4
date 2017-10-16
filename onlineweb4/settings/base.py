@@ -286,6 +286,7 @@ INSTALLED_APPS = (
     'wiki.plugins.macros',
     'wiki.plugins.help',
     'wiki.plugins.links',
+    'wiki.plugins.globalhistory',
 
 )
 
