@@ -1,20 +1,14 @@
 import React from 'react';
-import moment from 'moment';
-import { Grid, Col, Row } from 'react-bootstrap';
-import FilterList from '../components/FilterList';
-import JobList from '../components/JobList';
 import InfoBox from '../components/InfoOnOpportunity';
 
-class DetailView extends React.Component {
-    constructor(props){
-        super(props);
-    }
-    render(){
-      const { job }=this.props;
-        return (
-          <InfoBox deadline={job}/>
-        );
-    }
-}
+const DetailView = (props) => {
+  const id = parseInt(props.match.params.id, 10);
 
-export default DetailView
+  const job = props.jobs.find(job => job.id === id);
+
+  return (
+    <InfoBox {...job} />
+  );
+};
+
+export default DetailView;
