@@ -1,10 +1,10 @@
-from django.core.management.base import NoArgsCommand
+from django.core.management.base import BaseCommand
 
 
-class Command(NoArgsCommand):
+class Command(BaseCommand):
     help = "Starter mommy-sheduler"
 
-    def handle_noargs(self, **options):
+    def handle(self, **options):
         from apps import mommy
         mommy.autodiscover()
         mommy.run()

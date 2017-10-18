@@ -159,7 +159,9 @@ const Dashboard = (function PrivateDashboard($) {
       });
 
       // Activate tablesorter on all tablesorter class tables
-      $('.tablesorter').tablesorter();
+      if ($('.tablesorter').size() > 0) {
+        $('.tablesorter').tablesorter();
+      }
     },
   };
 }(jQuery));

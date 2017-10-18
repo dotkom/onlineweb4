@@ -1,9 +1,11 @@
 import logging
 
-from apps.gsuite.mail_syncer.utils import (_get_excess_users_in_g_suite,
-                                           _get_missing_ow4_users_for_g_suite,
-                                           get_excess_groups_for_user, get_g_suite_users_for_group,
+from django.conf import settings
+
+from apps.gsuite.mail_syncer.utils import (get_excess_groups_for_user, get_excess_users_in_g_suite,
+                                           get_g_suite_users_for_group,
                                            get_missing_g_suite_group_names_for_user,
+                                           get_missing_ow4_users_for_g_suite,
                                            get_ow4_users_for_group,
                                            insert_ow4_user_into_g_suite_group,
                                            remove_g_suite_user_from_group)
@@ -107,11 +109,17 @@ def update_g_suite_group(domain, group_name, suppress_http_errors=False):
     :param suppress_http_errors: Whether or not to suppress HttpErrors happening during execution.
     :type suppress_http_errors: bool
     """
+
+    if group_name.lower() not in settings.OW4_GSUITE_SYNC.get('GROUPS', {}).keys():
+        logger.debug('Not running group syncer for group {} - group syncing not enabled for this group'
+                     .format(group_name))
+        return
+
     g_suite_users = get_g_suite_users_for_group(domain, group_name, suppress_http_errors=suppress_http_errors)
     ow4_users = get_ow4_users_for_group(group_name)
 
-    excess_users = _get_excess_users_in_g_suite(g_suite_users, ow4_users)
-    missing_users = _get_missing_ow4_users_for_g_suite(g_suite_users, ow4_users)
+    excess_users = get_excess_users_in_g_suite(g_suite_users, ow4_users)
+    missing_users = get_missing_ow4_users_for_g_suite(g_suite_users, ow4_users)
 
     # @ToDo: Look into bulk updates
     insert_ow4_users_into_g_suite(domain, group_name, missing_users, suppress_http_errors=suppress_http_errors)

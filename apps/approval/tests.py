@@ -3,13 +3,15 @@
 import logging
 
 from django.core import mail
+from django.core.exceptions import ValidationError
 from django.test import TestCase
 from django.utils import timezone
 from django_dynamic_fixture import G
 
-from apps.approval.models import MembershipApproval
+from apps.approval.models import CommitteeApplication, MembershipApproval
 from apps.approval.tasks import send_approval_status_update
 from apps.authentication.models import OnlineUser as User
+from apps.authentication.models import Email
 
 
 class ApprovalTest(TestCase):
@@ -79,6 +81,7 @@ class EmailTest(TestCase):
     def setUp(self):
         self.applicant = G(User, username="sokeren",
                            first_name="Søker", last_name="Søkersen")
+        G(Email, user=self.applicant, email="test@example.com")
         self.approval = G(MembershipApproval, applicant=self.applicant)
         self.logger = logging.getLogger(__name__)
 
@@ -117,3 +120,22 @@ class EmailTest(TestCase):
                          'Soknad om medlemskap i Online er vurdert')
         self.assertIn('Ditt medlemskap i Online er godkjent.',
                       str(mail.outbox[0].message()))
+
+
+class CommitteeApplicationTestCase(TestCase):
+    def test_anon_can_not_apply(self):
+        application = CommitteeApplication()
+        application.application_text = 'something'
+        with self.assertRaises(ValidationError):
+            application.clean()
+
+    def test_user_can_apply(self):
+        applicant = G(User)
+        application = G(CommitteeApplication, applicant=applicant, name=None, email=None)
+
+        self.assertEqual(application, CommitteeApplication.objects.get(pk=application.pk))
+
+    def test_name_email_can_apply(self):
+        application = G(CommitteeApplication, name='Ola Nordmann', email='test@example.org', user=None)
+
+        self.assertEqual(application, CommitteeApplication.objects.get(pk=application.pk))

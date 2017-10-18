@@ -1,7 +1,6 @@
 import logging
 
 from django.conf import settings
-from django.core.exceptions import ImproperlyConfigured
 from googleapiclient.errors import HttpError
 
 from apps.authentication.models import OnlineUser as User
@@ -25,12 +24,15 @@ def setup_g_suite_client():
     :return: Google API Client
     :rtype: googleapiclient.discovery.Resource
     """
-    if not settings.OW4_GSUITE_SYNC.get('DELEGATED_ACCOUNT'):
+    if not settings.OW4_GSUITE_SYNC.get('ENABLED', False):
+        logger.debug('Trying to setup G Suite API client, but OW4_GSUITE_SYNC is not enabled.')
+        return
+    if not settings.OW4_GSUITE_SETTINGS.get('DELEGATED_ACCOUNT'):
         logger.error('To be able to actually execute calls towards G Suite you must define DELEGATED_ACCOUNT.')
     if settings.OW4_GSUITE_SYNC.get('ENABLED') and (
             not settings.OW4_GSUITE_SYNC.get('ENABLE_INSERT') and not settings.OW4_GSUITE_SYNC.get('ENABLE_DELETE')):
-        logger.error('To be able to execute unsafe calls towards G Suite you must allow this in settings.')
-        raise ImproperlyConfigured('To actually execute unsafe calls to G Suite, allow this in OW4 settings.')
+        logger.warning('To be able to execute unsafe calls towards G Suite you must allow this in settings.'
+                       'Neither "ENABLE_INSERT" nor "ENABLE_DELETE" are enabled.')
 
     return build_and_authenticate_g_suite_service('admin', 'directory_v1', scopes)
 
@@ -66,6 +68,11 @@ def get_user_key(domain, user):
     :return: The user key (email@domain)
     :rtype: str
     """
+    if isinstance(user, str):
+        if '@' in user:
+            # If user is email address, return immediately.
+            return user
+
     if not domain or not user:
         logger.error('You need to pass a domain and a user when generating user key.',
                      extra={'domain': domain, 'group': user})
@@ -90,7 +97,7 @@ def get_user(original_user, gsuite=False, ow4=False):
     :return: User account for the given domain.
     :rtype object
     """
-    if not gsuite or ow4:
+    if not (gsuite or ow4):
         raise ValueError('You need to pass either gsuite=True or ow4=True to cast user to that type.')
 
     gsuite_user = None
@@ -110,6 +117,48 @@ def get_user(original_user, gsuite=False, ow4=False):
     return ow4_user if ow4 else gsuite_user
 
 
+def insert_email_into_g_suite_group(domain, group_name, email, suppress_http_errors=False):
+    """
+    Insert an email address into a G Suite group.
+    :param domain: The domain in which to insert a user into.
+    :type domain: str
+    :param group_name: The name of the group the user should be inserted into.
+    :type group_name: str
+    :param email: The email in question.
+    :type email: str
+    :param suppress_http_errors: Whether or not to suppress HttpErrors happening during execution.
+    :type suppress_http_errors: bool
+    :return: The response of the execution.
+    """
+    group_key = get_group_key(domain, group_name)
+
+    logger.info("Inserting '{email}' into G Suite group '{group}'.".format(email=email, group=group_key),
+                extra={'email': email, 'group': group_key})
+
+    if not settings.OW4_GSUITE_SYNC.get('ENABLE_INSERT', False):
+        logger.debug('Skipping inserting email "{email}" since ENABLE_INSERT is False.'.format(email=email))
+        return
+
+    g_suite_user_dict = {
+        'email': get_user_key(domain, email),
+        'role': 'MEMBER',
+    }
+
+    directory = setup_g_suite_client()
+
+    resp = None
+    try:
+        resp = directory.members().insert(body=g_suite_user_dict, groupKey=group_key).execute()
+    except HttpError as err:
+        logger.error('HttpError when inserting into G Suite group: {err}'.format(err=err),
+                     extra={'suppress_http_error': suppress_http_errors})
+        if not suppress_http_errors:
+            raise err
+    logger.debug("Inserting response: {resp}".format(resp=resp))
+
+    return resp
+
+
 def insert_ow4_user_into_g_suite_group(domain, group_name, ow4_user, suppress_http_errors=False):
     """
     Insert a given OW4 user into a group in G Suite.
@@ -123,38 +172,17 @@ def insert_ow4_user_into_g_suite_group(domain, group_name, ow4_user, suppress_ht
     :type suppress_http_errors: bool
     :return: The response of the execution.
     """
+    logger.info("Inserting '{user}' into G Suite group '{group}'.".format(user=ow4_user, group=group_name),
+                extra={'user': ow4_user, 'group': group_name})
+
     if not ow4_user.online_mail:
         logger.error("OW4 User '{user}' ({user.pk}) missing Online email address! (current: '{user.online_mail}')".
                      format(user=ow4_user),
                      extra={'user': ow4_user, 'group': group_name})
         return
 
-    if not settings.OW4_GSUITE_SYNC.get('ENABLE_INSERT', False):
-        logger.debug('Skipping inserting user "{user}" since ENABLE_INSERT is False.'.format(user=ow4_user))
-        return
-
-    group_key = get_group_key(domain, group_name)
-
-    g_suite_user_dict = {
-        'email': get_user_key(domain, ow4_user.online_mail),
-        'role': 'MEMBER',
-    }
-
-    directory = setup_g_suite_client()
-
-    logger.info("Inserting '{user}' into G Suite group '{group}'.".format(user=ow4_user, group=group_key),
-                extra={'user': ow4_user, 'group': group_name})
-    resp = None
-    try:
-        resp = directory.members().insert(body=g_suite_user_dict, groupKey=group_key).execute()
-    except HttpError as err:
-        logger.error('HttpError when inserting into G Suite group: {err}'.format(err=err),
-                     extra={'suppress_http_error': suppress_http_errors})
-        if not suppress_http_errors:
-            raise err
-    logger.debug("Inserting response: {resp}".format(resp=resp))
-
-    return resp
+    return insert_email_into_g_suite_group(domain, group_name, ow4_user.online_mail,
+                                           suppress_http_errors=suppress_http_errors)
 
 
 def remove_g_suite_user_from_group(domain, group_name, g_suite_user, suppress_http_errors=False):
@@ -397,7 +425,7 @@ def check_emails_match_each_other(g_suite_users, ow4_users):
     return True
 
 
-def _get_excess_users_in_g_suite(g_suite_users, ow4_users):
+def get_excess_users_in_g_suite(g_suite_users, ow4_users):
     """
     Finds excess users from lists of G Suite users and OW4 users.
     :param g_suite_users: The members of a G Suite group.
@@ -437,7 +465,7 @@ def _get_g_suite_user_from_g_suite_user_list(g_suite_users, g_suite_email):
     return None
 
 
-def _get_missing_ow4_users_for_g_suite(g_suite_users, ow4_users):
+def get_missing_ow4_users_for_g_suite(g_suite_users, ow4_users):
     """
     Find the OW4 users who are missing given a set of G Suite users.
     :param g_suite_users: The members of a G Suite group.

@@ -13,6 +13,8 @@ from oauth2_provider.models import AccessToken
     'authentication.onlineuser.last_name.read',
     'authentication.onlineuser.email.read',
     'authentication.onlineuser.is_member.read',
+    'authentication.onlineuser.is_staff.read',
+    'authentication.onlineuser.is_superuser.read',
     'authentication.onlineuser.field_of_study.read',
     'authentication.onlineuser.nickname.read',
     'authentication.onlineuser.rfid.read'
@@ -38,6 +40,8 @@ def user(request):
             'username': tokenobject.user.username,
             'email': tokenobject.user.get_email().email,
             'member': tokenobject.user.is_member,
+            'staff': tokenobject.user.is_staff,
+            'superuser': tokenobject.user.is_superuser,
             'nickname': tokenobject.user.nickname,
             'rfid': tokenobject.user.rfid,
             'image': tokenobject.user.get_image_url(),

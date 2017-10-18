@@ -12,13 +12,13 @@ pipeline:
 
   test:
     image: registry.online.ntnu.no/dotkom/onlineweb4-testbase
+    secrets: [codecov_token]
     when:
       event: pull_request
     commands:
       - cp onlineweb4/settings/example-local.py onlineweb4/settings/local.py
       - npm install --depth=0 --quiet
       - pip install -r requirements.txt -r requirements-testing.txt --quiet --cache-dir pip-cache
-      - python webpack_resolve.py
       - npm run build:prod
       - npm run lint
       - isort -c -rc apps middleware scripts utils
@@ -39,10 +39,14 @@ pipeline:
       - /tmp/cache:/cache
 
   deploy:
-    image: plugins/ssh
+    image: appleboy/drone-ssh
+    pull: true
+    secrets: [ssh_key]
     host: nansen.online.ntnu.no
-    user: root
     port: 22
+    username: root
+    key: ${SSH_KEY}
+    command_timeout: 600
     when:
       event: push
       branch: develop

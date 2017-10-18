@@ -55,7 +55,7 @@ class Item(models.Model):
 
     @property
     def has_expired_batch(self):
-        if timezone.now().date() >= self.oldest_expiration_date:
+        if self.oldest_expiration_date and timezone.now().date() >= self.oldest_expiration_date:
             return True
         return False
 

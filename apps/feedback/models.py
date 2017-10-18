@@ -101,7 +101,7 @@ class FeedbackRelation(models.Model):
         """
         Returns the absolute URL to its `views.feedback`
         """
-        return reverse("apps.feedback.views.feedback",
+        return reverse("feedback",
                        args=[self.content_type.app_label,
                              self.content_type.model,
                              self.object_id,

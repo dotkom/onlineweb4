@@ -19,6 +19,7 @@
 
 {% block styles %}
     {{ block.super }}
+     <link href="{{ STATIC_URL }}wiki/bootstrap/css/wiki-bootstrap.min.css" rel="stylesheet">
     {% render_bundle 'wiki' 'css' %}
 {% endblock %}
 

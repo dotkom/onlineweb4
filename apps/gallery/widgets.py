@@ -57,7 +57,9 @@ class SingleImageInput(HiddenInput):
             value = ''
 
         img_thumb = 'Det er ikke valgt noe bilde.'
-        final_attrs = self.build_attrs(attrs, type=self.input_type, name=name)
+
+        attrs = self.build_attrs(self.attrs, attrs)
+        final_attrs = self.build_attrs(attrs, {'type': self.input_type, 'name': name})
         if value != '':
             # Only add the value attribute if the value is non-empty
             final_attrs['value'] = force_text(self._format_value(value))

@@ -5,7 +5,6 @@ import sys
 import dj_database_url
 from decouple import config
 from django.contrib.messages import constants as messages
-from webpack_resolve import create_resolve_file
 
 # Directory that contains this file.
 PROJECT_SETTINGS_DIRECTORY = os.path.dirname(globals()['__file__'])
@@ -43,6 +42,7 @@ EMAIL_EKSKOM = 'ekskom@online.ntnu.no'
 EMAIL_FAGKOM = 'fagkom@online.ntnu.no'
 EMAIL_HS = 'hs@online.ntnu.no'
 EMAIL_ITEX = 'itex@online.ntnu.no'
+EMAIL_OPPTAK='opptak@online.ntnu.no'
 EMAIL_PROKOM = 'prokom@online.ntnu.no'
 EMAIL_TRIKOM = 'trikom@online.ntnu.no'
 
@@ -142,6 +142,7 @@ MIDDLEWARE_CLASSES = (
     'middleware.http.Http403Middleware',
     'reversion.middleware.RevisionMiddleware',
     'oauth2_provider.middleware.OAuth2TokenMiddleware',
+    'oidc_provider.middleware.SessionManagementMiddleware',
     # Uncomment the next line for simple clickjacking protection:
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
@@ -230,6 +231,8 @@ INSTALLED_APPS = (
     'corsheaders',
     'datetimewidget',
     'webpack_loader',
+    'oidc_provider',
+    'raven.contrib.django.raven_compat',  # Sentry, error tracking
 
     # Django apps
     'django.contrib.admin',
@@ -251,6 +254,7 @@ INSTALLED_APPS = (
     'apps.contact',
     'apps.dashboard',
     'apps.gallery',
+    'apps.gsuite',
     'apps.hobbygroups',
     'apps.events',
     'apps.marks',
@@ -283,6 +287,7 @@ INSTALLED_APPS = (
     'wiki.plugins.macros',
     'wiki.plugins.help',
     'wiki.plugins.links',
+    'wiki.plugins.globalhistory',
 
 )
 
@@ -329,6 +334,10 @@ LOGGING = {
             'level': 'DEBUG',
             'class': 'logging.StreamHandler',
             'formatter': 'standard'
+        },
+        'sentry': {
+            'level': 'ERROR',  # Decides what is sent to Sentry. Error is only error and above.
+            'class': 'raven.contrib.django.raven_compat.handlers.SentryHandler',
         }
     },
     'loggers': {
@@ -350,6 +359,11 @@ LOGGING = {
             'handlers': ['console'],
             'level': 'DEBUG',
             'propagate': True,
+        },
+        'raven': {
+            'level': 'DEBUG',
+            'handlers': ['console'],
+            'propagate': False,
         },
         '': {
             'handlers': ['console'],
@@ -407,7 +421,7 @@ REST_FRAMEWORK = {
 }
 
 CORS_ORIGIN_ALLOW_ALL = config("OW4_DJANGO_CORS_ORIGIN_ALLOW_ALL", cast=bool, default=True)
-CORS_URLS_REGEX = r'^/api/v1/.*$' # Enables CORS on /api/v1/ endpoints only
+CORS_URLS_REGEX = r'^(/api/v1/.*|/sso/user/)$' # Enables CORS on /api/v1/ endpoints and the /sso/user/ endpoint
 
 # Online stripe keys.
 # For development replace with https://online.ntnu.no/wiki/komiteer/dotkom/aktuelt/onlineweb4/keys/
@@ -442,16 +456,31 @@ OW4_SETTINGS = {
 APPROVAL_SETTINGS = {
     'SEND_APPLICANT_NOTIFICATION_EMAIL': True,
     'SEND_APPROVER_NOTIFICATION_EMAIL': True,
+    'SEND_COMMITTEEAPPLICATION_APPLICANT_EMAIL': config('OW4_APPROVAL_SEND_COMMITTEEAPPLICATION_APPLICANT_EMAIL',
+                                                        default=False, cast=bool),
 }
 
 OW4_GSUITE_CREDENTIALS_FILENAME = config('OW4_GSUITE_CREDENTIALS_FILENAME', default='gsuitecredentials.json')
 OW4_GSUITE_CREDENTIALS_PATH = config('OW4_GSUITE_CREDENTIALS_PATH',
                                      default=os.path.join(PROJECT_ROOT_DIRECTORY, OW4_GSUITE_CREDENTIALS_FILENAME))
-OW4_GSUITE_SYNC = {
+
+OW4_GSUITE_SETTINGS = {
     'CREDENTIALS': OW4_GSUITE_CREDENTIALS_PATH,
     'DOMAIN': config('OW4_GSUITE_SYNC_DOMAIN', default='online.ntnu.no'),
     # DELEGATED_ACCOUNT: G Suite Account with proper permissions to perform insertions and removals.
-    'DELEGATED_ACCOUNT': config('OW4_GSUITE_SYNC_DELEGATED_ACCOUNT', default=''),
+    'DELEGATED_ACCOUNT': config('OW4_GSUITE_DELEGATED_ACCOUNT', default=''),
+    'ENABLED': config('OW4_GSUITE_ENABLED', cast=bool, default=False),
+}
+
+OW4_GSUITE_ACCOUNTS = {
+    'ENABLED': config('OW4_GSUITE_ACCOUNTS_ENABLED', cast=bool, default=False),
+    'ENABLE_INSERT': config('OW4_GSUITE_ACCOUNTS_ENABLE_INSERT', cast=bool, default=False),
+}
+
+OW4_GSUITE_SYNC = {
+    'CREDENTIALS': OW4_GSUITE_SETTINGS.get('CREDENTIALS'),
+    'DOMAIN': OW4_GSUITE_SETTINGS.get('DOMAIN'),
+    'DELEGATED_ACCOUNT': OW4_GSUITE_SETTINGS.get('DELEGATED_ACCOUNT'),
     'ENABLED': config('OW4_GSUITE_SYNC_ENABLED', cast=bool, default=False),
     'ENABLE_INSERT': config('OW4_GSUITE_SYNC_ENABLE_INSERT', cast=bool, default=False),
     'ENABLE_DELETE': config('OW4_GSUITE_SYNC_ENABLE_DELETE', cast=bool, default=False),
@@ -469,6 +498,11 @@ OW4_GSUITE_SYNC = {
         'prokom': 'prokom',
         'seniorkom': 'seniorkom',
         'trikom': 'trikom',
+        'tillitsvalgte': 'tillitsvalgte',
+        'redaksjonen': 'redaksjonen',
+        'ekskom': 'ekskom',
+        'itex' : 'itex',
+        'velkom': 'velkom',
     }
 }
 
@@ -490,7 +524,7 @@ WEBPACK_LOADER = {
 }
 
 # Remember to keep 'local' last, so it can override any setting.
-for settings_module in ['filebrowser', 'django_wiki', 'local']:  # local last
+for settings_module in ['filebrowser', 'django_wiki',  'raven', 'local']:  # local last
     if not os.path.exists(os.path.join(PROJECT_SETTINGS_DIRECTORY,
             settings_module + ".py")):
         if settings_module == 'local':
@@ -503,7 +537,3 @@ for settings_module in ['filebrowser', 'django_wiki', 'local']:  # local last
         exec('from .%s import *' % settings_module)
     except ImportError as e:
         print("Could not import settings for '%s' : %s" % (settings_module, str(e)))
-
-if DEBUG:
-    # Create webpack-extra-resolve.json
-    create_resolve_file()

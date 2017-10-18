@@ -41,5 +41,4 @@ setuptools-*.zip
 # django-webpack-loader
 bundles/
 webpack-stats.json
-webpack-extra-resolve.json
 .drone-secrets.yml*

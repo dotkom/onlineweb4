@@ -35,23 +35,9 @@ config.output.filename = '[name].js';
 config.output.publicPath = `http://${HOST}/static/`;
 
 // Don't reload if there is an error
-config.plugins.unshift(new webpack.NoErrorsPlugin());
+config.plugins.unshift(new webpack.NoEmitOnErrorsPlugin());
 // HMR
 config.plugins.unshift(new webpack.HotModuleReplacementPlugin());
-
-// Add react-hot-loader to js loader
-Object.keys(config.module.loaders).forEach((key) => {
-  if ({}.hasOwnProperty.call(config.module.loaders, key)) {
-    const loader = config.module.loaders[key];
-    /*
-      TODO: This check might match more than necessary in the future.
-      It should only match babel loader rule
-    */
-    if ('.js'.match(loader.test)) {
-      loader.loaders.unshift('react-hot');
-    }
-  }
-});
 
 
 const compiler = webpack(config);
