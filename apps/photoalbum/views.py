@@ -17,6 +17,7 @@ class AlbumsListView(ListView):
     def get_context_data(self, **kwargs):
         context = super(AlbumsListView, self).get_context_data(**kwargs)
         context['albums'] = Album.objects.all()
+        print("test+ape+cum")
         return context
 
 
@@ -33,6 +34,7 @@ def create_album(request):
         if form.is_valid():
             print("Album form is valid")
             print("Form: ", form)
+            print("Something")
 
             album = form.save()
             print("Album: ", album.title)
