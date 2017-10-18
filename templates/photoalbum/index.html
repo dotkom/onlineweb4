@@ -5,16 +5,18 @@
 
 
         <a href="/photoalbum/create">
-            <h2>
+            <p>
                 Nytt album
-            </h2>
+            </p>
         </a>
 
-        <h2> Album </h2>
+        <h2> Albumer </h2>
         {%  for album in albums %}
             <a href="{%  url 'album_detail' pk=album.pk %}" >
-                <div style="display: block">
-                   {{ album.title }}
+
+            <div style="display: inline-block; width: 150px">
+                <img src="{{STATIC_URL}}img/photo_album_folder.png" alt="{{ album.title }}" style="width: 150px">
+                <p style="display: block; text-align: center"> {{ album.title }}</p>
             </div>
         </a>
         {% endfor %}
