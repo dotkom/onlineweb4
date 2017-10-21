@@ -6,8 +6,10 @@ const DetailView = (props) => {
 
   const job = props.jobs.find(job => job.id === id);
 
-  return (
+  return job ? (
     <InfoBox {...job} />
+  ) : (
+    <div>Denne karrieremuligheten eksisterer ikke.</div>
   );
 };
 

@@ -12,59 +12,7 @@ from apps.careeropportunity.serializers import CareerSerializer
 
 
 def index(request):
-    opportunities = CareerOpportunity.objects.filter(
-        start__lte=timezone.now(),
-        end__gte=timezone.now()
-    ).order_by('-featured', '-start')
-
-    # Subquery to filter out only the companies that have a careeropportunity
-    # visible right now, to avoid listing companies that are irrelevant
-    # distinct_company_opportunities = CareerOpportunity.objects.filter(
-    #     start__lte=timezone.now(),
-    #     end__gte=timezone.now()
-    # ).values_list('company', flat=True)
-    # companies = Company.objects.filter(
-    #    id__in=set(distinct_company_opportunities)
-    # )
-
-    employments = []
-    locations = []
-
-    for opportunity in opportunities:
-        if opportunity.employment is not None:
-            employment_tag = {
-                'id': opportunity.employment,
-                'text': opportunity.get_employment_display()
-            }
-
-            if employment_tag not in employments:
-                employments.append(employment_tag)
-
-        location_slugs = opportunity.location.slugs()
-        location_tags = opportunity.location.all()
-        for i in range(len(location_slugs)):
-            if location_tags[i] not in locations:
-                locations.append({
-                    'text': location_tags[i],
-                    'slug': location_slugs[i],
-                })
-
-    return render(
-        request,
-        'careeropportunity/index.html',
-        {'opportunities': opportunities},
-    )
-
-
-def details(request, opportunity_id):
-    opportunity = get_object_or_404(CareerOpportunity, pk=opportunity_id)
-
-    return render(
-        request,
-        'careeropportunity/details.html',
-        {'opportunity': opportunity},
-    )
-
+    return render(request, 'careeropportunity/index.html')
 
 class CareerViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.ListModelMixin):
     """
