@@ -24,6 +24,8 @@ const normalizeData = job => ({
   deadline: job.deadline ? moment(job.deadline).format('Do MMMM YYYY, HH:mm') : 'Ikke spesifisert', // Format and give default value
   companyImage: job.company.image,
   companyName: job.company.name,
+  companyDescription: job.company.short_description,
+  companyId: job.company.id,
   title: job.title,
   ingress: job.ingress,
   description: job.description,
