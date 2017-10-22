@@ -71,9 +71,9 @@ class SetRFIDView(APIView):
     permission_classes = [TokenHasScope]
     required_scopes = ['shop.readwrite']
 
-    def post(self, request, format=None):
-        username = request.data["username"].lower()
-        password = request.data["password"]
+    def post(self, request):
+        username = request.data.get("username", '').lower()
+        password = request.data.get("password", '')
 
         if '@' in username:
             email = Email.objects.filter(email=username)
@@ -83,7 +83,7 @@ class SetRFIDView(APIView):
         user = auth.authenticate(username=username, password=password)
 
         if user:
-            user.rfid = request.data["rfid"]
+            user.rfid = request.data.get("rfid", '')
             user.save()
             return Response("OK", status=status.HTTP_200_OK)
 
