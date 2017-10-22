@@ -13,12 +13,12 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from apps.authentication.models import OnlineUser as User, OnlineUser
+from apps.authentication.models import OnlineUser as User
 from apps.authentication.models import Email
 from apps.inventory.models import Item
 from apps.payment.models import PaymentTransaction
 from apps.shop.forms import SetRFIDForm
-from apps.shop.models import OrderLine, MagicToken
+from apps.shop.models import MagicToken, OrderLine
 from apps.shop.serializers import (ItemSerializer, OrderLineSerializer, TransactionSerializer,
                                    UserSerializer)
 from apps.shop.utils import send_magic_link
@@ -111,8 +111,8 @@ class SetRFIDView(APIView):
         if not user and username and rfid and request_magic_link:
             onlineuser = None
             try:
-                onlineuser = OnlineUser.objects.get(username=username)
-            except OnlineUser.DoesNotExist:
+                onlineuser = User.objects.get(username=username)
+            except User.DoesNotExist:
                 return Response('User does not exist', status=status.HTTP_400_BAD_REQUEST)
 
             send_magic_link(onlineuser, rfid)
