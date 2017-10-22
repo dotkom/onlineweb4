@@ -90,7 +90,10 @@ class SetRFIDView(APIView):
         if not rfid:
             return Response('Missing RFID from request payload', status=status.HTTP_400_BAD_REQUEST)
 
-        if user:
+        if user and rfid:
+            if user.rfid == rfid:
+                return Response("OK", status=status.HTTP_200_OK)
+
             user.rfid = rfid
             user.save()
             return Response("OK", status=status.HTTP_200_OK)
