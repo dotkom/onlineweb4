@@ -75,6 +75,9 @@ class SetRFIDView(APIView):
         username = request.data.get("username", '').lower()
         password = request.data.get("password", '')
 
+        if not username:
+            return Response('Missing authentication details', status=status.HTTP_400_BAD_REQUEST)
+
         if '@' in username:
             email = Email.objects.filter(email=username)
             if email:
