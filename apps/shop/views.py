@@ -85,8 +85,13 @@ class SetRFIDView(APIView):
 
         user = auth.authenticate(username=username, password=password)
 
+        rfid = request.data.get("rfid", '')
+
+        if not rfid:
+            return Response('Missing RFID from request payload', status=status.HTTP_400_BAD_REQUEST)
+
         if user:
-            user.rfid = request.data.get("rfid", '')
+            user.rfid = rfid
             user.save()
             return Response("OK", status=status.HTTP_200_OK)
 
