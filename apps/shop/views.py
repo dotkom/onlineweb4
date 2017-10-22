@@ -98,4 +98,4 @@ class SetRFIDView(APIView):
             user.save()
             return Response("OK", status=status.HTTP_200_OK)
 
-        return Response("Invalid user credentials", status=status.HTTP_409_CONFLICT)
+        return Response("Invalid user credentials", status=status.HTTP_400_BAD_REQUEST)
