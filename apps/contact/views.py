@@ -2,8 +2,7 @@ import logging
 
 from django.contrib import messages
 from django.core.mail import EmailMessage
-from django.shortcuts import redirect, render_to_response
-from django.template import RequestContext
+from django.shortcuts import redirect, render
 
 from apps.contact.forms import ContactForm
 
@@ -11,7 +10,7 @@ from apps.contact.forms import ContactForm
 # Index page
 def index(request):
     context = {'form': ContactForm}
-    return render_to_response('contact/index.html', context, context_instance=RequestContext(request))
+    return render(request, 'contact/index.html', context)
 
 
 def contact_submit(request):
