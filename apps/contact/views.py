@@ -25,6 +25,7 @@ def contact_submit(request):
             content = form.cleaned_data['content']
             from_email = form.cleaned_data['contact_email']
             to_email = [form.cleaned_data['contact_receiver']]
+            client_ip = get_client_ip(request)
 
             if not name:
                 name = 'Noen'
@@ -33,9 +34,8 @@ def contact_submit(request):
                 username = request.user.username
                 log.info('{username} has tried to contact {to_email}'.format(username=username, to_email=to_email))
             else:
-                # add logging of IP if not logged in
-                # messages.error(request, client_ip)
-                print('Her skal jeg logge IP')
+                log.info('A user at {client_ip} has tried to contact {to_email}'.format(
+                    client_ip=client_ip, to_email=to_email))
 
             subject = '[Kontakt] {name} har kontaktet dere gjennom online.ntnu.no'.format(
                 name=name)
@@ -43,8 +43,7 @@ def contact_submit(request):
             EmailMessage(subject, content, from_email, to_email).send()
             messages.success(request, 'Meldingen ble sendt')
         else:
-            client_ip = get_client_ip(request)
-            messages.error(request, 'Meldingen ble ikke sendt. Prøv igjen eller send mail direkte til dotkom' + client_ip)
+            messages.error(request, 'Meldingen ble ikke sendt. Prøv igjen eller send mail direkte til dotkom')
     return redirect('contact_index')
 
 
