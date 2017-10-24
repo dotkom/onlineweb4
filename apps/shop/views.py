@@ -1,10 +1,11 @@
 # API v1
 import logging
 
+from django.conf import settings
 from django.contrib import auth, messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
-from django.urls import reverse_lazy
+from django.urls import reverse, reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views.generic import FormView
 from oauth2_provider.ext.rest_framework import OAuth2Authentication, TokenHasScope
@@ -21,7 +22,7 @@ from apps.shop.forms import SetRFIDForm
 from apps.shop.models import MagicToken, OrderLine
 from apps.shop.serializers import (ItemSerializer, OrderLineSerializer, TransactionSerializer,
                                    UserSerializer)
-from apps.shop.utils import send_magic_link
+from apps.shop.utils import create_magic_token, send_magic_link
 
 
 class OrderLineViewSet(viewsets.GenericViewSet, mixins.CreateModelMixin):
@@ -84,6 +85,7 @@ class SetRFIDView(APIView):
         username = request.data.get("username", '').lower()
         password = request.data.get("password", '')
         request_magic_link = request.data.get('magic_link', False)
+        send_magic_link_email = request.data.get('send_email', True)
 
         if not username:
             return Response('Missing authentication details', status=status.HTTP_400_BAD_REQUEST)
@@ -115,8 +117,15 @@ class SetRFIDView(APIView):
             except User.DoesNotExist:
                 return Response('User does not exist', status=status.HTTP_400_BAD_REQUEST)
 
-            send_magic_link(onlineuser, rfid)
-            return Response('Sent magic link', status=status.HTTP_201_CREATED)
+            if send_magic_link_email:
+                magic_token = send_magic_link(onlineuser, rfid)
+            else:
+                magic_token = create_magic_token(onlineuser, rfid)
+            data = {
+                'token': str(magic_token.token),
+                'url': '{}{}'.format(settings.BASE_URL, reverse('shop_set_rfid', args=[str(magic_token.token)]))
+            }
+            return Response(data=data, status=status.HTTP_201_CREATED)
 
         return Response("Invalid user credentials", status=status.HTTP_400_BAD_REQUEST)
 

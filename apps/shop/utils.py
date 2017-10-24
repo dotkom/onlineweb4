@@ -6,8 +6,12 @@ from django.urls import reverse
 from .models import MagicToken
 
 
+def create_magic_token(user, rfid):
+    return MagicToken.objects.create(user=user, data=rfid)
+
+
 def send_magic_link(user, rfid):
-    token = MagicToken.objects.create(user=user, data=rfid)
+    token = create_magic_token(user, rfid)
 
     rfid_confirm_link = reverse('shop_set_rfid', args=[str(token.token)])
 
@@ -16,3 +20,5 @@ def send_magic_link(user, rfid):
         'rfid_confirm_link': '{}{}'.format(settings.BASE_URL, rfid_confirm_link),
     })
     send_mail('Oppdatert RFID på online.ntnu.no', message, settings.DEFAULT_FROM_EMAIL, [user.get_email().email])
+
+    return token
