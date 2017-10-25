@@ -21,13 +21,137 @@ APPROVAL_SETTINGS = {
                                                         default=False, cast=bool),
 }
 
-OW4_SETTINGS = {
-   'events': {
-       'ENABLE_RECAPTCHA': config('OW4_EVENTS_ENABLE_RECAPTCHA', True, cast=bool),
-       'FEATURED_DAYS_FUTURE': os.getenv('OW4_EVENTS_FEATURED_DAYS_FUTURE', 3),
-       'FEATURED_DAYS_PAST': os.getenv('OW4_EVENTS_FEATURED_DAYS_PAST', 3),
-   }
-}
+# Email settings
+DEFAULT_FROM_EMAIL = 'online@online.ntnu.no'
+EMAIL_ARRKOM = 'arrkom@online.ntnu.no'
+EMAIL_BEDKOM = 'bedkom@online.ntnu.no'
+EMAIL_DOTKOM = 'dotkom@online.ntnu.no'
+EMAIL_EKSKOM = 'ekskom@online.ntnu.no'
+EMAIL_FAGKOM = 'fagkom@online.ntnu.no'
+EMAIL_HS = 'hs@online.ntnu.no'
+EMAIL_ITEX = 'itex@online.ntnu.no'
+EMAIL_OPPTAK='opptak@online.ntnu.no'
+EMAIL_PROKOM = 'prokom@online.ntnu.no'
+EMAIL_TRIKOM = 'trikom@online.ntnu.no'
+
+EMAIL_BACKEND = config("OW4_DJANGO_EMAIL_BACKEND", default='django.core.mail.backends.console.EmailBackend')
+
+# We will receive errors and other django messages from this email
+SERVER_EMAIL = 'onlineweb4-error@online.ntnu.no'
+
+TIME_ZONE = 'Europe/Oslo'
+
+# http://www.i18nguy.com/unicode/language-identifiers.html
+LANGUAGE_CODE = 'nb'
+LANGUAGES = (
+                ('nb', 'Norwegian'),
+                ('en_US', 'English'),
+            )
+LOCALE_PATHS = [
+    os.path.join(PROJECT_ROOT_DIRECTORY, 'locale'),
+]
+
+SITE_ID = 1
+USE_I18N = True
+USE_L10N = True
+USE_TZ = True
+DATETIME_FORMAT = 'N j, Y, H:i'
+SECRET_KEY = config("OW4_DJANGO_SECRET_KEY", default='override-this-in-local.py')
+
+# Session cookie expires after one year
+SESSION_COOKIE_AGE = 31540000
+
+# Override this in local if you need to :)
+BASE_URL = config("OW4_DJANGO_BASE_URL", default='https://online.ntnu.no')
+
+AUTH_USER_MODEL = 'authentication.OnlineUser'
+LOGIN_URL = '/auth/login/'
+
+# Override this in prod.
+MEDIA_ROOT = config("OW4_DJANGO_MEDIA_ROOT", default=os.path.join(PROJECT_ROOT_DIRECTORY, 'uploaded_media'))
+MEDIA_URL = '/media/'
+
+STATIC_ROOT = config("OW4_DJANGO_STATIC_ROOT", default=os.path.join(PROJECT_ROOT_DIRECTORY, 'static'))
+STATIC_URL = '/static/'
+
+# Prefix for default profile picture
+DEFAULT_PROFILE_PICTURE_PREFIX = os.path.join(STATIC_URL, "img", "profile_default")
+
+FILEBROWSER_MEDIA_ROOT = MEDIA_ROOT
+
+# Additional locations of static files
+STATICFILES_DIRS = (
+    os.path.join(PROJECT_ROOT_DIRECTORY, 'files/static'),
+    os.path.join(PROJECT_ROOT_DIRECTORY, 'assets'),
+    os.path.join(PROJECT_ROOT_DIRECTORY, 'bundles'),
+)
+
+STATICFILES_FINDERS = (
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+#    'django.contrib.staticfiles.finders.DefaultStorageFinder',
+)
+
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'APP_DIRS': True,
+        'DIRS': [
+            os.path.join(PROJECT_ROOT_DIRECTORY, 'templates/')
+        ],
+        'OPTIONS': {
+            'context_processors': [
+                "django.contrib.auth.context_processors.auth",
+                "django.template.context_processors.debug",
+                "django.template.context_processors.i18n",
+                "django.template.context_processors.media",
+                "django.template.context_processors.request",
+                "django.template.context_processors.static",
+                "django.template.context_processors.tz",
+                "django.contrib.messages.context_processors.messages",
+                "sekizai.context_processors.sekizai", # Wiki
+
+                # Onlineweb4 specific context processors
+                "onlineweb4.context_processors.context_settings",
+                "onlineweb4.context_processors.feedback_notifier",
+            ],
+            'debug': True,
+        }
+    }
+]
+
+MIDDLEWARE_CLASSES = (
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
+    'middleware.http.Http403Middleware',
+    'reversion.middleware.RevisionMiddleware',
+    'oauth2_provider.middleware.OAuth2TokenMiddleware',
+    'oidc_provider.middleware.SessionManagementMiddleware',
+    # Uncomment the next line for simple clickjacking protection:
+    # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
+)
+
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend', # this is default
+    'guardian.backends.ObjectPermissionBackend',
+    'oauth2_provider.backends.OAuth2Backend',
+)
+
+ROOT_URLCONF = 'onlineweb4.urls'
+
+# Python dotted path to the WSGI application used by Django's runserver.
+WSGI_APPLICATION = 'onlineweb4.wsgi.application'
+
+# Guardian settings
+ANONYMOUS_USER_NAME = 'anonymoususer'
+GUARDIAN_RENDER_403 = True
+
+# Django-Taggit settings
+TAGGIT_CASE_INSENSITIVE = True
 
 # List of usergroups that should be listed under "Finn brukere" in user profile
 USER_SEARCH_GROUPS = [
