@@ -78,7 +78,7 @@
                                 {% endif %}
                             </a>
                         </li>
-                        <li><a href="mailto:dotkom@online.ntnu.no">Kontakt oss</a></li>
+                        <li><a href="{% url 'contact_index' %}">Kontakt oss</a></li>
                         <li><a href="{% url 'profiles_user_search' %}">Finn brukere</a></li>
                         <li class="divider"></li>
                         <li><a href="{% url 'auth_logout' %}">Logg ut</a></li>
@@ -170,7 +170,7 @@
                     </div>
                     <div class="row">
                         <div class="col-md-12">
-                            <p>Har du funnet en feil på nettsiden?<br>Ta kontakt med <a href="{% url 'contact_index' %}">Utviklingsteamet</a></p>
+                            <p>Har du funnet en feil på nettsiden?<br>Ta kontakt med <a href="mailto:dotkom@online.ntnu.no">Utviklingsteamet</a></p>
                         </div>
                     </div>
                 </div>
