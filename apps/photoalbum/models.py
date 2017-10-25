@@ -13,4 +13,4 @@ class Album(models.Model):
 
 class Photo(models.Model):
     # Path should depend on album?
-    image = models.ImageField(upload_to="")
+    photo = models.ImageField(upload_to="uploaded_media/images/photo_album/")
