@@ -7,7 +7,7 @@ from apps.careeropportunity import views
 
 urlpatterns = [
     url(r'^$', views.index, name='careeropportunity_index'),
-    url(r'^\d+/$', views.index, name='careeropportunity_details'),
+    url(r'^(\d+)/$', views.index, name='careeropportunity_details'),
 ]
 
 # API v1

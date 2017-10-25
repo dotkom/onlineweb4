@@ -11,7 +11,7 @@ from apps.careeropportunity.serializers import CareerSerializer
 # from apps.companyprofile.models import Company
 
 
-def index(request):
+def index(request, id=None):
     return render(request, 'careeropportunity/index.html')
 
 class CareerViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.ListModelMixin):
