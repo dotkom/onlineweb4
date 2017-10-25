@@ -1,12 +1,18 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <section>
 
-        <h2> {{  album.title }}</h2>
+	<section id="album">
+            <div class="container">
+                <div class="col-md-12">
+                    <div class="page-header">
+                        <h1>{{ album.title}}</h1>
+                    </div>
+                </div>
 
-        {%  for photo in photos %}
-            A photo here
-        {% endfor  %}
+                {%  for photo in photos %}
+		            A photo here
+		        {% endfor  %}
+            </div>
     </section>
 {% endblock content %}
