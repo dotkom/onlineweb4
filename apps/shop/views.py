@@ -22,7 +22,7 @@ from apps.shop.forms import SetRFIDForm
 from apps.shop.models import MagicToken, OrderLine
 from apps.shop.serializers import (ItemSerializer, OrderLineSerializer, TransactionSerializer,
                                    UserSerializer)
-from apps.shop.utils import create_magic_token, send_magic_link
+from apps.shop.utils import create_magic_token
 
 
 class OrderLineViewSet(viewsets.GenericViewSet, mixins.CreateModelMixin):
@@ -117,10 +117,7 @@ class SetRFIDView(APIView):
             except User.DoesNotExist:
                 return Response('User does not exist', status=status.HTTP_400_BAD_REQUEST)
 
-            if send_magic_link_email:
-                magic_token = send_magic_link(onlineuser, rfid)
-            else:
-                magic_token = create_magic_token(onlineuser, rfid)
+            magic_token = create_magic_token(onlineuser, rfid, send_token_by_email=send_magic_link_email)
             data = {
                 'token': str(magic_token.token),
                 'url': '{}{}'.format(settings.BASE_URL, reverse('shop_set_rfid', args=[str(magic_token.token)]))
