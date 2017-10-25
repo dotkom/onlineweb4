@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import uuid
 
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
@@ -63,3 +64,10 @@ class OrderLine(models.Model):
 
     def __str__(self):
         return str(self.pk)
+
+
+class MagicToken(models.Model):
+    user = models.ForeignKey(User)
+    token = models.CharField('token', default=uuid.uuid4, max_length=36)
+    data = models.TextField('data')
+    created = models.DateTimeField('created', editable=False, auto_now_add=True)

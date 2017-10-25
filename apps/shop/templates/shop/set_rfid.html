@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% load addcss %}
+
+{% block title %}Oppdater RFID | Online{% endblock %}
+
+{% block content %}
+<section>
+    <div class="container">
+        <div class="col-md-12">
+            <header>
+                <h1>Oppdater RFID</h1>
+            </header>
+            <p>Nåværende RFID: {% if current_rfid %}{{ current_rfid }}{% else %}Ingen{% endif %}</p>
+            <p>Ny RFID: {{ form.rfid.value }}</p>
+            {% for error in form.errors %}
+                <p>{{ error }}</p>
+            {% endfor %}
+            <form action="{% url 'shop_set_rfid' token %}" method="post">
+                {% csrf_token %}
+                <div hidden>
+                    {{ form.rfid }}
+                </div>
+                <button type="submit" class="btn btn-primary">Oppdater RFID</button>
+            </form>
+        </div>
+    </div>
+</section>
+{% endblock %}
