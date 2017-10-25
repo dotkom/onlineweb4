@@ -8,7 +8,11 @@ from django.shortcuts import render, HttpResponseRedirect
 from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
 from django.utils.decorators import method_decorator
+from django.views.generic.edit import FormView
 
+from apps.gallery.util import UploadImageHandler
+
+from apps.photoalbum.forms import AlbumForm
 
 class AlbumsListView(ListView):
     model = Album
@@ -17,34 +21,54 @@ class AlbumsListView(ListView):
     def get_context_data(self, **kwargs):
         context = super(AlbumsListView, self).get_context_data(**kwargs)
         context['albums'] = Album.objects.all()
-        print("test+ape+cum")
         return context
 
 
-def create_album(request):
-    form = AlbumForm(request.POST)
-    print("In create")
 
-    print(request.method)
+class CreateAlbum(FormView):
 
-    if request.method == "POST":
-        print("Method is post")
-        form = AlbumForm(request.POST, request.FILES)
-        print("Request if method is post: ", request)
+    form_class = AlbumForm
+    template_name = '/photoalbum/create.html' # Replace with your template.
+    success_url = '/photoalbum/index.html'  # Replace with your URL or reverse().
+
+    def post(self, request, *args, **kwargs):
+        form_class = self.get_form_class()
+        form = self.get_form(form_class)
+        photos = request.FILES.getlist('photos')
         if form.is_valid():
-            print("Album form is valid")
-            print("Form: ", form)
-            print("Something")
+            for photo in photos:
+                console.log("Photo!")
+            return self.form_valid(form)
+        else:
+            return self.form_invalid(form)
 
+def create_album(request):
+    #log = logging.getLogger(__name__)
+    form = AlbumForm(request.POST)
+    
+    if request.method == "POST":
+        form = AlbumForm(request.POST, request.FILES)
+        if form.is_valid():
+            images = upload(request)
             album = form.save()
-            print("Album: ", album.title)
             album.save()
-            print("Albums after save: ", Album.objects.all())
-
+    
             albums = Album.objects.all()
             return render(request, 'photoalbum/index.html', {'albums': albums})
 
     return render(request, 'photoalbum/create.html', {'form': form})
+
+
+def upload(request):
+
+    images = UploadImageHandler(request.FILES['images']).status
+    if not result: 
+        return JsonResponse({'success': False, 'message': result.message}, status=500)
+
+        # Return OK if all is good
+        return JsonResponse({'success': True, 'message': 'OK'}, status=200)
+    return JsonResponse({'success': False, 'message': 'Bad request or invalid type'}, status=400)
+
 
 
 class AlbumDetailView(DetailView):
@@ -53,8 +77,7 @@ class AlbumDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(AlbumDetailView, self).get_context_data(**kwargs)
-        print("Kwargs: ", self.kwargs)
-
+    
         context['album'] = Album.objects.get(pk=self.kwargs['pk'])
         return context
 

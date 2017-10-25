@@ -4,17 +4,7 @@ from django import forms
 
 from apps.photoalbum.models import Album
 
-class AlbumForm(forms.ModelForm):
-    photo_folder = forms.FileField(widget=forms.ClearableFileInput(attrs={'multiple': True}), required=False)
+class AlbumForm(forms.Form):
 
-    class Meta(object):
-        model = Album
-
-        fields = [
-            'title'
-        ]
-
-        widgets = {
-            'title': forms.TextInput(attrs={'placeholder': 'Tittel'})
-        }
-
+	title = forms.TextInput(attrs={'placeholder': 'Tittel'})
+	photos = forms.FileField(widget=forms.ClearableFileInput(attrs={'multiple': True}))    
