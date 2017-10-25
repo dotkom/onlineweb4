@@ -82,6 +82,11 @@ if 'apps.companyprofile' in settings.INSTALLED_APPS:
         url(r'^dashboard/company/', include('apps.companyprofile.dashboard.urls')),
     ]
 
+if 'apps.contact' in settings.INSTALLED_APPS:
+    urlpatterns += [
+        url(r'^contact/', include('apps.contact.urls')),
+    ]
+
 if 'apps.dashboard' in settings.INSTALLED_APPS:
     urlpatterns += [
         url(r'^dashboard/',         include('apps.dashboard.urls')),

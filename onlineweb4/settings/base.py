@@ -251,6 +251,7 @@ INSTALLED_APPS = (
     'apps.autoconfig',
     'apps.careeropportunity',
     'apps.companyprofile',
+    'apps.contact',
     'apps.dashboard',
     'apps.gallery',
     'apps.gsuite',
