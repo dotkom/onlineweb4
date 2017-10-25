@@ -1,7 +1,17 @@
 import React from 'react';
 import Markdown from 'react-markdown';
+import { formatLocations } from './Job';
 
-const InfoBox = ({ title, description, companyId, companyName, companyDescription, companyImage }) => (
+const InfoBox = ({
+  title,
+  description,
+  companyId,
+  locations,
+  deadline,
+  type,
+  companyName,
+  companyDescription,
+  companyImage }) => (
   <section id="careeropportunity">
     <div className="container">
       <div className="row">
@@ -53,6 +63,22 @@ const InfoBox = ({ title, description, companyId, companyName, companyDescriptio
                 </div>
               </div>
             </a>
+          </div>
+
+          <div className="company">
+            <div className="row">
+              <div className="col-md-12">
+                <h3>Nøkkelinformasjon</h3>
+              </div>
+            </div>
+
+            <div className="row">
+              <div className="col-md-12">
+                <p>Type: {type}</p>
+                <p>Sted: {formatLocations(locations)}</p>
+                <p>Frist: {deadline}</p>
+              </div>
+            </div>
           </div>
         </div>
       </div>

@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 // Accepts a list of locations and returns a comma-separated list of locations
 // with 'og' inserted before the last element, and 'Ikke spesifisert' if no
 // locations have been specified.
-const formatLocations = (locations) => {
+export const formatLocations = (locations) => {
   if (locations.length >= 2) { // If we have more than 2 elements, return a comma-separated list.
     return `${locations.slice(0, -1).join(', ')} og ${locations[locations.length - 1]}`;
   } else if (locations.length === 1) { // Do not format the location if we only have 1 element.

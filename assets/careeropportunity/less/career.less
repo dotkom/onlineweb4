@@ -1,5 +1,4 @@
-/* Career Opportunity
--------------------------------------------------- */
+@import '~common/less/colors.less';
 
 #career {
     img {
@@ -11,18 +10,6 @@
         border-top: 1px dotted #ccc;
         font-size: 11px;
         color: #aaa;
-
-        span::after {
-            content: ",";
-        }
-
-        span:last-child::after {
-            content: none;
-        }
-
-        span:nth-last-child(2)::after {
-            content: " og "
-        }
     }
 
     article {
@@ -42,34 +29,15 @@
         }
 
     }
+    
+    input {
+      margin-bottom: 10px;
+    }
 
     .filters {
         background: @baby-blue-medium;
         padding: 15px;
         margin-bottom: 20px;
-
-        ul {
-            list-style-type: none;
-            padding: 0;
-            margin: 0;
-            display: block;
-            margin-top: 10px;
-            margin-bottom: 15px;
-        }
-
-        li {
-            display: inline-flex;
-            padding:10px;
-            margin-right:5px;
-            margin-bottom: 5px;
-            color:white;
-            background:@baby-blue;
-            cursor: pointer;
-        }
-
-        li.selected {
-          background: darken(@baby-blue, 10%);
-        }
 
         button {
             background-color: @baby-blue;
@@ -83,6 +51,29 @@
             padding-top: 10px;
         }
 
+        .TagContainer {
+            padding: 0;
+            margin: 0;
+            display: block;
+            margin-top: 10px;
+            margin-bottom: 15px;
+
+            button {
+                display: inline-flex;
+                padding: 10px;
+                margin-right: 5px;
+                margin-bottom: 5px;
+                color: white;
+                width: auto;
+                background:@baby-blue;
+                cursor: pointer;
+            }
+
+            button.selected {
+              background: darken(@baby-blue, 10%);
+            }
+        }
+
         h3 {
             margin-top: 0px;
             font-size: 20px;
@@ -92,66 +83,53 @@
 }
 
 section#careeropportunities {
+    .career-ingress {
+        font-weight:300;
+    }
 
-	.career-ingress {
-		font-weight:300;
-	}
-
-	.career-title {
-		font-size:20px;
-	}
+    .career-title {
+        font-size:20px;
+    }
 }
 
 section#careeropportunity {
-  .careerdescription {
-    margin-bottom: 40px;
-  }
-	.company {
-    margin-top: 15px;
-    padding-left: 15px;
-    padding-right: 15px;
-    padding-bottom: 10px;
-    box-sizing: border-box;
-		color:white;
-		background:@baby-blue-medium;
-
-		h3 {
-			color:white;
-			font-size:19px;
-		}
-
-		.company-ingress p {
-			color:white;
-			font-weight:300;
-			font-size:14px;
-		}
-
-		.company-image-caption {
-			font-weight:300;
-			font-size:11px;
-			color:white;
-			text-transform: uppercase;
-		}
-
-		a:hover {
-			text-decoration: none;
-		}
-	}
-  .info {
-    margin-top: 15px;
-    padding-left: 15px;
-    padding-right: 15px;
-    padding-bottom: 15px;
-    box-sizing: border-box;
-    color:white;
-    background:@baby-blue-medium;
-
-    .info-text p {
-      color:white;
-			font-weight:300;
-			font-size:14px;
+    .careerdescription {
+        margin-bottom: 40px;
     }
-  }
+
+    .company {
+        margin-top: 15px;
+        padding-left: 15px;
+        padding-right: 15px;
+        padding-bottom: 10px;
+        box-sizing: border-box;
+        background: @baby-blue-medium;
+
+        h3, p {
+            color: white;
+        }
+
+        h3 {
+            font-size:19px;
+        }
+
+        .company-ingress p {
+            color:white;
+            font-weight:300;
+            font-size:14px;
+        }
+
+        .company-image-caption {
+            font-weight:300;
+            font-size:11px;
+            color:white;
+            text-transform: uppercase;
+        }
+
+        a:hover {
+            text-decoration: none;
+        }
+    }
 }
 
 #opportunity-company-name h3 {
