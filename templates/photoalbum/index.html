@@ -6,12 +6,7 @@
 {% load render_bundle from webpack_loader %}
 
 
-{% block js %}
-    {{ block.super }}
-    <script src="{% static "wiki/js/jquery.min.js" %}"></script>
-    <script src="{% static "wiki/js/core.js" %}"></script>
-    <script src="{% static "wiki/bootstrap/js/bootstrap.min.js" %}"></script>
-{% endblock %}
+
 
 {% block styles %}
     {{ block.super }}
@@ -20,7 +15,6 @@
 
 {% block content %}
     <section id="albums">
-        {% block photoalbum_body %}
             <div class="container">
                 <div class="col-md-12">
                     <div class="page-header">
@@ -49,11 +43,9 @@
                         </p>
                     </div>
                 </a>
-                {% endfor %}
-                    </div>
-        {% endblock %}
-        
 
-       
+                {% endfor %}
+            </div>
+        
     </section>
 {% endblock %}
