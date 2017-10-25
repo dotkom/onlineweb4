@@ -25,44 +25,69 @@
 </div>
 <div class="row">
     <div class="col-md-12">
-    <div>
-          <ul class="nav nav-tabs" role="tablist">
-            <li role="presentation" class="active">
-                <a href="#orders" aria-controls="orders" role="tab" data-toggle="tab">Ordre</a>
-            </li>
-            <li role="presentation">
-                <a href="#transactions" aria-controls="transactions" role="tab" data-toggle="tab">Transaksjoner</a>
-            </li>
-          </ul>
+        <div>
+            <ul class="nav nav-tabs" role="tablist">
+                <li role="presentation" class="active">
+                    <a href="#orders" aria-controls="orders" role="tab" data-toggle="tab">Ordre</a>
+                </li>
+                <li role="presentation">
+                    <a href="#transactions" aria-controls="transactions" role="tab" data-toggle="tab">Transaksjoner</a>
+                </li>
+            </ul>
 
-          <!-- Tab panes -->
-          <div class="tab-content">
-            <div role="tabpanel" class="tab-pane active" id="orders">
-                    <table class="table">
+            <!-- Tab panes -->
+            <div class="tab-content">
+                <div role="tabpanel" class="tab-pane active" id="orders">
+                    <table class="table table-hover">
                         <thead>
-                            <th>Tidspunkt</th>
-                            <th>Vare</th>
-                            <th>Beløp</th>
+                        <th>Tidspunkt</th>
+                        <th>Vare</th>
+                        <th>Beløp</th>
                         </thead>
                         <tbody>
-                            {% for order in orders %}
-                                <tr>
-                                    <td>{{ order.order_line.datetime }}</td>
-                                    <td>{{ order.content_object }}</td>
-                                    <td>{{ order.price }} kr</td>
-                                </tr>
-                            {% endfor %}
+                        {% for order in orders %}
+                            <tr data-toggle="modal" data-target="#{{ order.order_line }}{{ order.object_id }}Modal">
+                                <td>{{ order.order_line.datetime }}</td>
+                                <td>{{ order.content_object }}</td>
+                                <td>{{ order.price }} kr</td>
+                            </tr>
+                            <!-- Bootstrap Modal -->
+                            <div id="{{ order.order_line }}{{ order.object_id }}Modal" class="modal fade" role="dialog">
+                                <div class="modal-dialog">
+                                    <!-- Modal content-->
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                            <h4 class="modal-title">Kvittering for kjøp</h4>
+                                        </div>
+                                        <div class="modal-body">
+                                            <p><strong>Dato:</strong> {{ order.order_line.datetime }}</p>
+                                            <p><strong>Type:</strong> {{ order.content_object }}</p>
+                                            <p><strong>Antall:</strong> {{ order.quantity }}</p>
+                                            <p><strong>Pris:</strong> {{ order.price }} kr</p>
+                                            <p><strong>Selger:</strong> Linjeforeningen Online</p>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-default" data-dismiss="modal">
+                                                Close
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        {% endfor %}
                         </tbody>
                     </table>
-            </div>
-            <div role="tabpanel" class="tab-pane" id="transactions">
-                <table class="table">
-                    <thead>
+                </div>
+                <div role="tabpanel" class="tab-pane" id="transactions">
+                    <table class="table">
+                        <thead>
                         <th>Tidspunkt</th>
                         <th>Betalingsmetode</th>
                         <th>Beløp</th>
-                    </thead>
-                    <tbody>
+                        </thead>
+                        <tbody>
                         {% for transaction in transactions %}
                             <tr>
                                 <td>{{ transaction.datetime }}</td>
@@ -71,13 +96,13 @@
                                 {% else %}
                                     <td>Kontant</td>
                                 {% endif %}
-                            <td>{{ transaction.amount }} kr</td>
+                                <td>{{ transaction.amount }} kr</td>
                             </tr>
                         {% endfor %}
-                    </tbody>
-                </table>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
-      </div>
     </div>
 </div>
