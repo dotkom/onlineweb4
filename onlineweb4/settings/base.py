@@ -493,6 +493,7 @@ OW4_GSUITE_SYNC = {
         'dotkom': 'dotkom',
         'ekskom': 'ekskom',
         'fagkom': 'fagkom',
+        'fond': 'fond',
         'hovedstyret': 'hovedstyret',
         'jubkom': 'jubkom',
         'prokom': 'prokom',
