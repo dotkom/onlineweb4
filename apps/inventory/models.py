@@ -15,6 +15,13 @@ class ItemCategory(models.Model):
     def __str__(self):
         return self.name
 
+    class Meta(object):
+        verbose_name = _("Kategori")
+        verbose_name_plural = _("Kategorier")
+        permissions = (
+            ("view_itemcategory", "View Item Category"),
+        )
+
 
 class Item(models.Model):
 
