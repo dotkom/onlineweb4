@@ -8,7 +8,7 @@ django-filter==1.1.0            # Filtering for DRF
 git+https://github.com/JelteF/python-memcached@patch-1#egg=python-memcached==1.58
 markdown2==2.3.4                # textarea text formatting
 pytz                            # Timezone lib
-stripe==1.74.0                  # Stripe payment
+stripe==1.75.0                  # Stripe payment
 icalendar==4.0.0               # iCalendar generation
 google-api-python-client==1.6.4
 
