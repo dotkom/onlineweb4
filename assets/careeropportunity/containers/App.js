@@ -21,7 +21,7 @@ const getDeadlines = deadlines => (
 // Normalizes data from the server, most notably converting to camelCase.
 const normalizeData = job => ({
   locations: job.location.map(location => location.name), // Locations contains name and slug
-  deadline: job.deadline ? moment(job.deadline).format('Do MMMM YYYY, HH:mm') : 'Ikke spesifisert', // Format and give default value
+  deadline: job.deadline ? moment(job.deadline).format('Do MMMM YYYY') : 'Ikke spesifisert', // Format and give default value
   companyImage: job.company.image,
   companyName: job.company.name,
   companyDescription: job.company.short_description,
@@ -204,7 +204,7 @@ class App extends React.Component {
                 handleReset={() => this.handleReset()}
                 handleTagChange={(type, changedTag, switchMode) => this.handleTagChange(type, changedTag, switchMode)}
                 handleFilterChange={(e) => this.handleFilterChange(e)}
-                {...props} 
+                {...props}
               />}
           />
 

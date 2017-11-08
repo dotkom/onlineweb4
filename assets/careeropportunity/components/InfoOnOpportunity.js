@@ -38,7 +38,7 @@ const InfoBox = ({
                   <source srcSet={companyImage.lg} media="(max-width: 992px)" />
                   <img src={companyImage.md} width="100%" />
                 </picture>
-              </a> 
+              </a>
             </div>
           </div>
 
