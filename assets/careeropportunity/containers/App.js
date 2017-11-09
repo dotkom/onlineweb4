@@ -206,7 +206,8 @@ class App extends React.Component {
                 this.handleTagChange(type, changedTag, switchMode)}
               handleFilterChange={e => this.handleFilterChange(e)}
               {...props}
-            />}          />
+            />}
+          />
 
           <Route
             path="/careeropportunity/:id"
