@@ -1,23 +1,15 @@
 import React from 'react';
 import Markdown from 'react-markdown';
 import { formatLocations } from './Job';
+import companyImageProps from '../propTypes/companyImage';
 
-const InfoBox = ({
-  title,
-  description,
-  companyId,
-  locations,
-  deadline,
-  type,
-  companyName,
-  companyDescription,
-  companyImage }) => (
+const InfoBox = props => (
   <section id="careeropportunity">
     <div className="container">
       <div className="row">
         <div className="col-md-12">
           <div className="page-header">
-            <h2>{title}</h2>
+            <h2>{props.title}</h2>
           </div>
         </div>
       </div>
@@ -25,28 +17,28 @@ const InfoBox = ({
       <div className="row">
         <div className="col-md-8 col-sm-7 careerdescription">
           <Markdown
-            source={description}
-            escapeHtml={true}
+            source={props.description}
+            escapeHtml
           />
         </div>
 
         <div className="col-md-4 col-sm-5">
           <div className="row">
             <div className="col-md-12">
-            <a href={'/company/' + companyId}>
+              <a href={`/company/${props.companyId}`}>
                 <picture>
-                  <source srcSet={companyImage.lg} media="(max-width: 992px)" />
-                  <img src={companyImage.md} width="100%" />
+                  <source srcSet={props.companyImage.lg} media="(max-width: 992px)" />
+                  <img src={props.companyImage.md} width="100%" alt={props.companyName} />
                 </picture>
-              </a> 
+              </a>
             </div>
           </div>
 
           <div className="company">
-            <a href={'/company/' + companyId}>
+            <a href={`/company/${props.companyId}`}>
               <div className="row">
                 <div className="col-md-12">
-                  <h3>{companyName}</h3>
+                  <h3>{props.companyName}</h3>
                 </div>
               </div>
 
@@ -54,8 +46,8 @@ const InfoBox = ({
                 <div className="col-md-12">
                   <div className="company-ingress">
                     <Markdown
-                      source={companyDescription}
-                      escapeHtml={true}
+                      source={props.companyDescription}
+                      escapeHtml
                     />
                   </div>
 
@@ -74,9 +66,9 @@ const InfoBox = ({
 
             <div className="row">
               <div className="col-md-12">
-                <p>Type: {type}</p>
-                <p>Sted: {formatLocations(locations)}</p>
-                <p>Frist: {deadline}</p>
+                <p>Type: {props.type}</p>
+                <p>Sted: {formatLocations(props.locations)}</p>
+                <p>Frist: {props.deadline}</p>
               </div>
             </div>
           </div>
@@ -85,5 +77,17 @@ const InfoBox = ({
     </div>
   </section>
 );
+
+InfoBox.propTypes = {
+  title: React.PropTypes.string,
+  deadline: React.PropTypes.string,
+  locations: React.PropTypes.arrayOf(React.PropTypes.string),
+  companyId: React.PropTypes.number,
+  description: React.PropTypes.string,
+  type: React.PropTypes.string,
+  companyName: React.PropTypes.string,
+  companyDescription: React.PropTypes.string,
+  companyImage: companyImageProps,
+};
 
 export default InfoBox;

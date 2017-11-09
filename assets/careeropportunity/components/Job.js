@@ -1,7 +1,7 @@
 import React from 'react';
 import { Col } from 'react-bootstrap';
-import jobPropTypes from '../propTypes/job';
 import { Link } from 'react-router-dom';
+import jobPropTypes from '../propTypes/job';
 
 // Accepts a list of locations and returns a comma-separated list of locations
 // with 'og' inserted before the last element, and 'Ikke spesifisert' if no

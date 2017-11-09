@@ -1,5 +1,5 @@
 import React from 'react';
-import { Router, Route, Switch, Link, IndexRoute } from 'react-router';
+import { Router, Route, Switch } from 'react-router';
 import moment from 'moment';
 import createBrowserHistory from 'history/createBrowserHistory';
 import FilterableJobList from './FilterableJobList';
@@ -196,20 +196,21 @@ class App extends React.Component {
         <Switch>
           <Route
             exact
-            path='/careeropportunity/'
+            path="/careeropportunity/"
             render={props => <FilterableJobList
-                tags={this.state.tags}
-                filterText={this.state.filterText}
-                jobs={this.state.jobs}
-                handleReset={() => this.handleReset()}
-                handleTagChange={(type, changedTag, switchMode) => this.handleTagChange(type, changedTag, switchMode)}
-                handleFilterChange={(e) => this.handleFilterChange(e)}
-                {...props} 
-              />}
+              tags={this.state.tags}
+              filterText={this.state.filterText}
+              jobs={this.state.jobs}
+              handleReset={() => this.handleReset()}
+              handleTagChange={(type, changedTag, switchMode) =>
+                this.handleTagChange(type, changedTag, switchMode)}
+              handleFilterChange={e => this.handleFilterChange(e)}
+              {...props}
+            />}
           />
 
           <Route
-            path='/careeropportunity/:id'
+            path="/careeropportunity/:id"
             render={props => <DetailView {...props} jobs={this.state.jobs} />}
           />
         </Switch>
