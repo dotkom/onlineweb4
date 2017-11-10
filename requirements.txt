@@ -6,7 +6,7 @@ django-filter==1.1.0            # Filtering for DRF
 # python-memcached==1.57          # Memcache. Used by Mailinglists to fetch from Sympa.
 # Upstream is missing Python 3 patches
 git+https://github.com/JelteF/python-memcached@patch-1#egg=python-memcached==1.58
-markdown2==2.3.4                # textarea text formatting
+markdown2==2.3.5                # textarea text formatting
 pytz                            # Timezone lib
 stripe==1.75.0                  # Stripe payment
 icalendar==4.0.0               # iCalendar generation
