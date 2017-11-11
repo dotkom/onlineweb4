@@ -13,7 +13,8 @@ pipeline:
   setup:
     image: registry.online.ntnu.no/dotkom/onlineweb4-testbase
     when:
-      event: pull_request
+      event: [push, pull_request, tag, deployment]
+      branch: master
     commands:
       - cp onlineweb4/settings/example-local.py onlineweb4/settings/local.py
       - npm install --depth=0 --quiet
@@ -48,7 +49,8 @@ pipeline:
     image: registry.online.ntnu.no/dotkom/onlineweb4-testbase
     secrets: [codecov_token]
     when:
-      event: pull_request
+      event: [push, pull_request, tag, deployment]
+      branch: master
     group: testing
     commands:
       - py.test --cov=apps
