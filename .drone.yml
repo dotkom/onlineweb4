@@ -80,5 +80,6 @@ pipeline:
     when:
       event: push
       branch: develop
+      status: success
     script:
       - /srv/www/ow4dev/deploy.sh
