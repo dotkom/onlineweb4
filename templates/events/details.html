@@ -64,7 +64,8 @@
                                         <li><a href="{% url 'admin:events_event_change' event.id %}">Rediger i administrasjonspanelet</a></li>
                                         <li><a href="{% url 'dashboard_event_details' event.id %}">Åpne i dashboardet</a></li>
                                         {% if event.is_attendance_event %}
-                                            <li><a href="{% url 'event_attendees_pdf' event.id %}">Påmeldingsliste</a></li>
+                                            <li><a href="{% url 'event_attendees_pdf' event.id %}">Påmeldingsliste PDF</a></li>
+                                            <li><a href="{% url 'event_attendees_json' event.id %}">Påmeldingsliste JSON</a></li>
                                             <li><a href="{% url 'event_mail_participants' event.id %}">Send epost til deltakere</a></li>
                                         {% endif %}
                                     </ul>

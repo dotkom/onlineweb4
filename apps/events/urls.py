@@ -7,7 +7,8 @@ from apps.events import views
 
 urlpatterns = [
     url(r'^$', views.index, name='events_index'),
-    url(r'^(?P<event_id>\d+)/attendees/$', views.generate_pdf, name='event_attendees_pdf'),
+    url(r'^(?P<event_id>\d+)/attendees/pdf$', views.generate_pdf, name='event_attendees_pdf'),
+    url(r'^(?P<event_id>\d+)/attendees/json$', views.generate_json, name='event_attendees_json'),
     url(r'^(?P<event_id>\d+)/attend/$', views.attendEvent, name='attend_event'),
     url(r'^(?P<event_id>\d+)/unattend/$', views.unattendEvent, name='unattend_event'),
     url(r'^(?P<event_id>\d+)/(?P<event_slug>[a-zA-Z0-9_-]+)/$', views.details, name='events_details'),

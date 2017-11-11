@@ -6,7 +6,10 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.signing import Signer
 from django.core.urlresolvers import reverse
 from django.db.models import Q
+import json
+from django.core import serializers
 from django.http import JsonResponse
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from django.utils.translation import ugettext as _
@@ -231,7 +234,6 @@ def _search_indexed(request, query, filters):
 @user_passes_test(lambda u: u.groups.filter(name='Komiteer').count() == 1)
 def generate_pdf(request, event_id):
     event = get_object_or_404(Event, pk=event_id)
-
     # If this is not an attendance event, redirect to event with error
     if not event.attendance_event:
         messages.error(request, _("Dette er ikke et påmeldingsarrangement."))
@@ -243,6 +245,61 @@ def generate_pdf(request, event_id):
         return redirect(event)
 
     return EventPDF(event).render_pdf()
+
+
+@login_required()
+@user_passes_test(lambda u: u.groups.filter(name='Komiteer').count() == 1)
+def generate_json(request, event_id):
+    event = get_object_or_404(Event, pk=event_id)
+    # If this is not an attendance event, redirect to event with error
+    if not event.attendance_event:
+        messages.error(request, _("Dette er ikke et påmeldingsarrangement."))
+        return redirect(event)
+
+    # Check access
+    if event not in get_group_restricted_events(request.user):
+        messages.error(request, _('Du har ikke tilgang til listen for dette arrangementet. hei'))
+        return redirect(event)
+
+    attendee_unsorted = event.attendance_event.attendees_qs
+    attendee_sorted = sorted(attendee_unsorted, key=lambda attendee: attendee.user.last_name)
+    waiters = event.attendance_event.waitlist_qs
+    reserve = event.attendance_event.reservees_qs
+    # Goes though attendance, the waitlist and reservations, and adds them to a json file.
+    attendees = []
+    for a in attendee_sorted:
+        attendees.append({
+            "first_name": a.user.first_name,
+            "last_name": a.user.last_name,
+            "year": a.user.year,
+            "phone_number": a.user.phone_number,
+            "allergies": a.user.allergies
+        })
+    waitlist = []
+    for w in waiters:
+        waitlist.append({
+            "first_name": w.user.first_name,
+            "last_name": w.user.last_name,
+            "year": w.user.year,
+            "phone_number": w.user.phone_number
+        })
+
+    reservees = []
+    for r in reserve:
+        reservees.append({
+            "name": r.name,
+            "note": r.note
+        })
+
+    response = HttpResponse(content_type='application/json')
+    response['Content-Disposition'] = 'attachment; filename="' + event.title + '.json"'
+    response.write(json.dumps({
+        'Attendees': attendees,
+        'Waitlist': waitlist,
+        'Reservations': reservees
+    }))
+
+    return response
 
 
 def calendar_export(request, event_id=None, user=None):
