@@ -1,5 +1,6 @@
 import logging
 import re
+
 from django.contrib.auth.models import Group
 from django.db.models import Q
 from unidecode import unidecode

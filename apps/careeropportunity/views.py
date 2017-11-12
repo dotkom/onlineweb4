@@ -8,6 +8,8 @@ from rest_framework.permissions import AllowAny
 
 from apps.careeropportunity.models import CareerOpportunity
 from apps.careeropportunity.serializers import CareerSerializer
+
+
 # from apps.companyprofile.models import Company
 
 
