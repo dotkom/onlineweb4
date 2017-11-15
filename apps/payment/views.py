@@ -14,7 +14,7 @@ from django.template.loader import render_to_string
 from django.utils.translation import ugettext as _
 from pytz import timezone as tz
 
-from apps.payment.models import Payment, PaymentPrice, PaymentRelation, PaymentTransaction, ReceiptEmail
+from apps.payment.models import Payment, PaymentPrice, PaymentRelation, PaymentTransaction
 from apps.webshop.models import OrderLine
 
 
@@ -186,24 +186,6 @@ def payment_refund(request, payment_relation_id):
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 
-def _send_payment_confirmation_mail(payment_relation):
-    subject = _("kvittering") + ": " + payment_relation.payment.description()
-    from_mail = payment_relation.payment.responsible_mail()
-    to_mails = [payment_relation.user.email]
-
-    context = {
-        'payment_date': payment_relation.datetime.astimezone(tz('Europe/Oslo')).strftime("%-d %B %Y kl. %H:%M"),
-        'description': payment_relation.payment.description,
-        'payment_id': payment_relation.unique_id,
-        'amount': payment_relation.payment_price.price,
-        'to_mail': to_mails,
-        'from_mail': from_mail
-    }
-
-    email_message = render_to_string('payment/email/confirmation_mail.txt', context)
-    send_mail(subject, email_message, from_mail, to_mails)
-
-
 @login_required
 def saldo_info(request):
 
@@ -254,6 +236,25 @@ def saldo(request):
                 return HttpResponse(str(e), content_type="text/plain", status=500)
 
     raise Http404("Request not supported")
+
+
+# Confirmation Mails
+def _send_payment_confirmation_mail(payment_relation):
+    subject = _("kvittering") + ": " + payment_relation.payment.description()
+    from_mail = payment_relation.payment.responsible_mail()
+    to_mails = [payment_relation.user.email]
+
+    context = {
+        'payment_date': payment_relation.datetime.astimezone(tz('Europe/Oslo')).strftime("%-d %B %Y kl. %H:%M"),
+        'description': payment_relation.payment.description,
+        'payment_id': payment_relation.unique_id,
+        'amount': payment_relation.payment_price.price,
+        'to_mail': to_mails,
+        'from_mail': from_mail
+    }
+
+    email_message = render_to_string('payment/email/confirmation_mail.txt', context)
+    send_mail(subject, email_message, from_mail, to_mails)
 
 
 def _send_confirmation_mail(payment_transaction):
