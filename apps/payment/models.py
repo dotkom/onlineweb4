@@ -228,6 +228,12 @@ class PaymentTransaction(models.Model):
     user = models.ForeignKey(User)
     amount = models.IntegerField(null=True, blank=True)
     used_stripe = models.BooleanField(default=False)
+    unique_id = models.CharField(max_length=128, null=True, blank=True)
+
+    def save(self, *args, **kwargs):
+        if not self.unique_id:
+            self.unique_id = str(uuid.uuid4())
+        super().save(*args, **kwargs)
 
     datetime = models.DateTimeField(auto_now=True)
 

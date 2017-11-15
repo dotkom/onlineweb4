@@ -1,18 +1,20 @@
 Hei!
 
 Du har betalt for {{ description }} den {{ payment_date }}.
-Transaksjonen har nå blitt gjennomført, og du har blitt belastet en sum på {{ amount }}kr.
+Transaksjonen har nå blitt gjennomført, og du har blitt belastet en sum på {{ total_amount }}kr.
 
 Ditt kvitteringsnummer er: {{ payment_id }}
 
 ------------------------------------
 Vare				Pris
 ------------------------------------
-{{ description }} {{ amount }} kr
+{% for item in items %}
+{{ item.description }} {{ item.amount }} kr
+{% endfor %}
 
 
 ------------------------------------
-totalt                        {{ amount }} kr
+totalt                        {{ total_amount }} kr
 ------------------------------------
 
 Dersom du har problemer eller spørsmål, send mail til: {{ from_mail }}

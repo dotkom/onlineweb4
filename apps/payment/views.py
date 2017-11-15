@@ -244,11 +244,19 @@ def _send_payment_confirmation_mail(payment_relation):
     from_mail = payment_relation.payment.responsible_mail()
     to_mails = [payment_relation.user.email]
 
+    items = [
+        {
+            'amount': int(payment_relation.payment_price.price),
+            'description': payment_relation.payment.description
+        },
+    ]
+
     context = {
         'payment_date': payment_relation.datetime.astimezone(tz('Europe/Oslo')).strftime("%-d %B %Y kl. %H:%M"),
         'description': payment_relation.payment.description,
         'payment_id': payment_relation.unique_id,
-        'amount': payment_relation.payment_price.price,
+        'items': items,
+        'total_amount': sum(item['amount'] for item in items),
         'to_mail': to_mails,
         'from_mail': from_mail
     }
@@ -262,11 +270,19 @@ def _send_confirmation_mail(payment_transaction):
     from_mail = settings.EMAIL_TRIKOM
     to_mails = [payment_transaction.user.email]
 
+    items = [
+        {
+            'amount': int(payment_transaction.amount),
+            'description': 'Saldo'
+        },
+    ]
+
     context = {
         'payment_date': payment_transaction.datetime,
         'description': "påfyll av saldo",
         'payment_id': payment_transaction.unique_id,
-        'amount': payment_transaction.amount,
+        'items': items,
+        'total_amount': sum(item['amount'] for item in items),
         'to_mail': to_mails,
         'from_mail': from_mail
     }
@@ -280,21 +296,22 @@ def _send_webshop_mail(order_line):
     from_mail = settings.EMAIL_PROKOM
     to_mails = [order_line.user.email]
 
-    message = _(
-        "Hei, du har bestilt ting i Online sin webshop. Ordren din kom på totalt %.2f kroner."
-        % order_line.subtotal()
-    )
+    items = []
+    for order in order_line.orders.all():
+        items.append({
+            'amount': order.price,
+            'description': order.product.name
+        })
 
-    logging.getLogger(__name__).debug("Logging for send webshop mail")
-    logging.getLogger(__name__).info("%s (#%s)" % (str(order_line), order_line.id))
+    context = {
+        'payment_date': order_line.datetime,
+        'description': 'varer i Online sin webshop',
+        'payment_id': order_line.id,
+        'items': items,
+        'total_amount': order_line.subtotal,
+        'to_mail': to_mails,
+        'from_mail': from_mail
+    }
 
-    message += "\nDine produkter:"
-    products = ""
-    for o in order_line.orders.all():
-        products += "\n " + str(o)
-    message += products
-    message += "\n\nDin betalingsreferanse er " + order_line.stripe_id
-    message += "\n\n"
-    message += _("Dersom du har problemer eller spørsmål, send mail til") + ": " + settings.EMAIL_PROKOM
-
-    EmailMessage(subject, str(message), from_mail, to_mails).send()
+    email_message = render_to_string('payment/email/confirmation_mail.txt', context)
+    send_mail(subject, email_message, from_mail, to_mails)
