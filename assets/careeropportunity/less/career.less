@@ -1,0 +1,138 @@
+@import '~common/less/colors.less';
+
+#career {
+    img {
+        width: 100%;
+    }
+
+    .meta {
+        padding: 5px 0 0 0;
+        border-top: 1px dotted #ccc;
+        font-size: 11px;
+        color: #aaa;
+    }
+
+    article {
+        margin-bottom: 40px;
+        padding-bottom: 30px;
+
+        h1 {
+            font-size: 20px;
+            font-weight: 400;
+            color: #ee7810;
+            margin-top: 0;
+        }
+
+        .ingress {
+          margin-bottom: 10px;
+          line-height: 1.625em;
+        }
+
+    }
+    
+    input {
+      margin-bottom: 10px;
+    }
+
+    .filters {
+        background: @baby-blue-medium;
+        padding: 15px;
+        margin-bottom: 20px;
+
+        button {
+            background-color: @baby-blue;
+            color: #fff;
+            border: none;
+            display: inline-block;
+            text-align: center;
+            width: 100%;
+            font-size: 13px;
+            padding-bottom: 10px;
+            padding-top: 10px;
+        }
+
+        .TagContainer {
+            padding: 0;
+            margin: 0;
+            display: block;
+            margin-top: 10px;
+            margin-bottom: 15px;
+
+            button {
+                display: inline-flex;
+                padding: 10px;
+                margin-right: 5px;
+                margin-bottom: 5px;
+                color: white;
+                width: auto;
+                background:@baby-blue;
+                cursor: pointer;
+            }
+
+            button.selected {
+              background: darken(@baby-blue, 10%);
+            }
+        }
+
+        h3 {
+            margin-top: 0px;
+            font-size: 20px;
+            color: white;
+        }
+    }
+}
+
+section#careeropportunities {
+    .career-ingress {
+        font-weight:300;
+    }
+
+    .career-title {
+        font-size:20px;
+    }
+}
+
+section#careeropportunity {
+    .careerdescription {
+        margin-bottom: 40px;
+    }
+
+    .company {
+        margin-top: 15px;
+        padding-left: 15px;
+        padding-right: 15px;
+        padding-bottom: 10px;
+        box-sizing: border-box;
+        background: @baby-blue-medium;
+
+        h3, p {
+            color: white;
+        }
+
+        h3 {
+            font-size:19px;
+        }
+
+        .company-ingress p {
+            color:white;
+            font-weight:300;
+            font-size:14px;
+        }
+
+        .company-image-caption {
+            font-weight:300;
+            font-size:11px;
+            color:white;
+            text-transform: uppercase;
+        }
+
+        a:hover {
+            text-decoration: none;
+        }
+    }
+}
+
+#opportunity-company-name h3 {
+    text-align: center;
+    margin-top: -10px;
+}

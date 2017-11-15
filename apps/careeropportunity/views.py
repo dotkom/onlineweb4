@@ -1,29 +1,27 @@
 # -*- coding: utf-8 -*-
 
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import render
 from django.utils import timezone
+# API v1
+from rest_framework import mixins, viewsets
+from rest_framework.permissions import AllowAny
 
 from apps.careeropportunity.models import CareerOpportunity
+from apps.careeropportunity.serializers import CareerSerializer
 
 
-def index(request):
-    opportunities = CareerOpportunity.objects.filter(
+def index(request, id=None):
+    return render(request, 'careeropportunity/index.html')
+
+
+class CareerViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.ListModelMixin):
+    """
+    Viewset for Career serializer
+    """
+
+    queryset = CareerOpportunity.objects.filter(
         start__lte=timezone.now(),
         end__gte=timezone.now()
     ).order_by('-featured', '-start')
-
-    return render(
-        request,
-        'careeropportunity/index.html',
-        {'opportunities': opportunities},
-    )
-
-
-def details(request, opportunity_id):
-    opportunity = get_object_or_404(CareerOpportunity, pk=opportunity_id)
-
-    return render(
-        request,
-        'careeropportunity/details.html',
-        {'opportunity': opportunity},
-    )
+    serializer_class = CareerSerializer
+    permission_classes = (AllowAny,)
