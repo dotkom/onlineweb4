@@ -4,8 +4,8 @@ from django.shortcuts import render
 from django.utils import timezone
 # API v1
 from rest_framework import mixins, viewsets
-from rest_framework.permissions import AllowAny
 from rest_framework.pagination import PageNumberPagination
+from rest_framework.permissions import AllowAny
 
 from apps.careeropportunity.models import CareerOpportunity
 from apps.careeropportunity.serializers import CareerSerializer
