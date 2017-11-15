@@ -251,6 +251,7 @@ INSTALLED_APPS = (
     'apps.autoconfig',
     'apps.careeropportunity',
     'apps.companyprofile',
+    'apps.contact',
     'apps.dashboard',
     'apps.gallery',
     'apps.gsuite',
@@ -286,6 +287,7 @@ INSTALLED_APPS = (
     'wiki.plugins.macros',
     'wiki.plugins.help',
     'wiki.plugins.links',
+    'wiki.plugins.globalhistory',
 
 )
 
@@ -491,12 +493,17 @@ OW4_GSUITE_SYNC = {
         'dotkom': 'dotkom',
         'ekskom': 'ekskom',
         'fagkom': 'fagkom',
+        'fond': 'fond',
         'hovedstyret': 'hovedstyret',
         'jubkom': 'jubkom',
         'prokom': 'prokom',
         'seniorkom': 'seniorkom',
         'trikom': 'trikom',
-        'tillitsvalgte' : 'tillitsvalgte',
+        'tillitsvalgte': 'tillitsvalgte',
+        'redaksjonen': 'redaksjonen',
+        'ekskom': 'ekskom',
+        'itex' : 'itex',
+        'velkom': 'velkom',
     }
 }
 

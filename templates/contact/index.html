@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% load addcss %}
+{% load render_bundle from webpack_loader %}
+
+{% block title %}
+Kontakt oss - Online
+{% endblock title %}
+
+{% block styles %}
+	{{ block.super }}
+	{% render_bundle 'contact' 'css' %}
+{% endblock %}
+
+{% block js %}
+	{{ block.super }}
+	{% render_bundle 'contact' 'js' %}
+{% endblock %}
+
+{% block content %}
+
+<section id="contact">
+	<div class="container">
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="page-header">
+                    <h1 id="resourcecenter-heading">Kontakt oss</h1>
+                </div>
+            </div>
+            <div class="col-md-6"></div>
+        </div>
+
+		<div class="row" id="introduction">
+            <div class="col-md-6">
+                <p>
+                    Ønsker du å komme med forslag til hovedstyret eller noen innspill til utviklingsteamet dotkom?
+                    Da kan du enkelt ta kontakt med oss via dette skjemaet! Legg ved epost og navn hvis du vil ha svar.
+                </p>
+                <hr>
+            </div>
+            <div class="col-md-6"></div>
+		</div>
+
+		<div class="row">
+			<div class="col-md-6">
+				<form method="POST" id="contact_form" action="{% url 'submit' %}">
+					{% csrf_token %}
+					{% for field in form %}
+						{% if field.id_for_label == "id_contact_receiver" %}
+							<div id="choice_label">
+								{{ field.label }}
+							</div>
+							{{ field|addclass:"form-control" }}
+							<hr>
+						{% elif field.id_for_label == "id_captcha" %}
+							<div id=captcha>
+								{{ field }}
+							</div>
+						{% else %}
+							{{ field|addclass:"form-control" }}
+						{% endif %}
+					{% endfor %}
+					<button class="btn btn-success" id="submitContactForm" type="submit">Send</button>
+				</form>
+			</div>
+			<div class="col-md-6"></div>
+		</div>
+	</div>
+</section>
+
+{% endblock content %}

@@ -78,6 +78,7 @@
                                 {% endif %}
                             </a>
                         </li>
+                        <li><a href="{% url 'contact_index' %}">Kontakt oss</a></li>
                         <li><a href="{% url 'profiles_user_search' %}">Finn brukere</a></li>
                         <li class="divider"></li>
                         <li><a href="{% url 'auth_logout' %}">Logg ut</a></li>
@@ -184,6 +185,9 @@
                                     <span class="glyphicon glyphicon-envelope"></span>kontakt@online.ntnu.no
                                 </div>
                                 <div class="contact-item">
+                                    <span class="glyphicon glyphicon-file"></span>faktura@online.ntnu.no
+                                </div>
+                                <div class="contact-item">
                                     <span class="glyphicon glyphicon-phone"></span>73 59 64 89
                                 </div>
                             </div>
@@ -202,7 +206,7 @@
                         </div>
                         <div class="col-xs-6 col-sm-6 col-md-6">
                             <div class="address">
-                                <div class="address-heading">Postadresse <span class="glyphicon glyphicon-map-marker"></span></div>
+                                <div class="address-heading">Post og Faktura <span class="glyphicon glyphicon-map-marker"></span></div>
                                 <div class="address-info">
                                     Online Linjeforening<br>
                                     Sem Sælandsv. 9<br>
