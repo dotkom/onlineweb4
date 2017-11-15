@@ -5,6 +5,7 @@ from django.utils import timezone
 # API v1
 from rest_framework import mixins, viewsets
 from rest_framework.permissions import AllowAny
+from rest_framework.pagination import PageNumberPagination
 
 from apps.careeropportunity.models import CareerOpportunity
 from apps.careeropportunity.serializers import CareerSerializer
@@ -12,6 +13,10 @@ from apps.careeropportunity.serializers import CareerSerializer
 
 def index(request, id=None):
     return render(request, 'careeropportunity/index.html')
+
+
+class HundredItemsPaginator(PageNumberPagination):
+    page_size = 100
 
 
 class CareerViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.ListModelMixin):
@@ -25,3 +30,4 @@ class CareerViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.L
     ).order_by('-featured', '-start')
     serializer_class = CareerSerializer
     permission_classes = (AllowAny,)
+    pagination_class = HundredItemsPaginator
