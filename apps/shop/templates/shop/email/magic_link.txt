@@ -1,0 +1,14 @@
+Hei {{ user }}.
+
+Noen har bedt om å oppdatere RFID-en tilkyttet din brukerkonto på https://online.ntnu.no
+
+For å gjennomføre dette, vennligst klikk her: {{ rfid_confirm_link }}
+
+Dersom dette ikke var deg kan du se bort i fra denne e-posten.
+
+Dette er en automatisk generert e-post og det er derfor ikke mulig å svare på den.
+
+Dersom du har spørsmål kan du ta kontakt med dotkom på dotkom@online.ntnu.no
+
+Mvh,
+Linjeforeningen Online

@@ -175,6 +175,8 @@ class PaymentPrice(models.Model):
     description = models.CharField(max_length=128, null=True, blank=True)
 
     def __str__(self):
+        if not self.description:
+            return str(self.price) + "kr"
         return self.description + " (" + str(self.price) + "kr)"
 
     class Meta(object):
