@@ -14,7 +14,7 @@ from django.template.loader import render_to_string
 from django.utils.translation import ugettext as _
 from pytz import timezone as tz
 
-from apps.payment.models import Payment, PaymentPrice, PaymentRelation, PaymentTransaction
+from apps.payment.models import Payment, PaymentPrice, PaymentRelation, PaymentTransaction, ReceiptEmail
 from apps.webshop.models import OrderLine
 
 
@@ -191,15 +191,16 @@ def _send_payment_confirmation_mail(payment_relation):
     from_mail = payment_relation.payment.responsible_mail()
     to_mails = [payment_relation.user.email]
 
-    payment_date = payment_relation.datetime.astimezone(tz('Europe/Oslo'))
+    context = {
+        'payment_date': payment_relation.datetime.astimezone(tz('Europe/Oslo')).strftime("%-d %B %Y kl. %H:%M"),
+        'description': payment_relation.payment.description,
+        'payment_id': payment_relation.unique_id,
+        'amount': payment_relation.payment_price.price,
+        'to_mail': to_mails,
+        'from_mail': from_mail
+    }
 
-    email_context = {}
-    email_context['payment_date'] = payment_date.strftime("%-d %B %Y kl. %H:%M")
-    email_context['payment_relation'] = payment_relation
-    email_context['from_mail'] = from_mail
-
-    email_message = render_to_string('payment/email/confirmation_mail.txt', email_context)
-
+    email_message = render_to_string('payment/email/confirmation_mail.txt', context)
     send_mail(subject, email_message, from_mail, to_mails)
 
 
@@ -241,9 +242,10 @@ def saldo(request):
                     description="Saldo deposit - " + request.user.email
                 )
 
-                PaymentTransaction.objects.create(user=request.user, amount=amount, used_stripe=True)
+                payment_transaction = PaymentTransaction.objects.create(user=request.user, amount=amount,
+                                                                        used_stripe=True)
 
-                # _send_saldo_confirmation_mail(request.user.email, amount)
+                _send_confirmation_mail(payment_transaction)
 
                 messages.success(request, _("Inskudd utført."))
                 return HttpResponse("Inskudd utført.", content_type="text/plain", status=200)
@@ -254,17 +256,22 @@ def saldo(request):
     raise Http404("Request not supported")
 
 
-def _send_saldo_confirmation_mail(email, amount):
+def _send_confirmation_mail(payment_transaction):
     subject = _("kvittering saldo inskudd")
     from_mail = settings.EMAIL_TRIKOM
+    to_mails = [payment_transaction.user.email]
 
-    message = _("Kvitering på saldo inskudd på ") + str(amount)
-    message += _(" til din Online saldo.")
-    message += "\n"
-    message += "\n"
-    message += _("Dersom du har problemer eller spørsmål, send mail til") + ": " + from_mail
+    context = {
+        'payment_date': payment_transaction.datetime,
+        'description': "påfyll av saldo",
+        'payment_id': payment_transaction.unique_id,
+        'amount': payment_transaction.amount,
+        'to_mail': to_mails,
+        'from_mail': from_mail
+    }
 
-    EmailMessage(subject, str(message), from_mail, [], [email]).send()
+    email_message = render_to_string('payment/email/confirmation_mail.txt', context)
+    send_mail(subject, email_message, from_mail, to_mails)
 
 
 def _send_webshop_mail(order_line):
