@@ -34,11 +34,6 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.AddField(
-            model_name='careeropportunity',
-            name='deadline',
-            field=models.DateTimeField(blank=True, default=None, null=True, verbose_name='frist'),
-        ),
-        migrations.AddField(
             model_name='careeropportunitylocationtag',
             name='content_object',
             field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='careeropportunity.CareerOpportunity'),
