@@ -70,7 +70,7 @@ class App extends React.Component {
   }
 
   componentDidMount() {
-    fetch(this.API_URL).then(response => response.json()).then(data => this.loadData(data));
+    fetch(this.API_URL, { credentials: 'same-origin' }).then(response => response.json()).then(data => this.loadData(data));
   }
 
   loadData(data) {
