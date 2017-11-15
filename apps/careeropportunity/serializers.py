@@ -31,7 +31,6 @@ class CareerSerializer(TaggitSerializer, serializers.ModelSerializer):
                   'description',
                   'start',
                   'end',
-                  'deadline',
                   'featured',
                   'deadline',
                   'employment',
