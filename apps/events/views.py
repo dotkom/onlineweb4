@@ -237,12 +237,12 @@ def generate_pdf(request, event_id):
         messages.error(request, _("Dette er ikke et påmeldingsarrangement."))
         return redirect(event)
 
-    # Check access
-    if event not in get_group_restricted_events(request.user):
-        messages.error(request, _('Du har ikke tilgang til listen for dette arrangementet.'))
-        return redirect(event)
+    if event.organizer and request.user.has_perm('events.change_event', obj=event) \
+            or event in get_group_restricted_events(request.user):
+        return EventPDF(event).render_pdf()
 
-    return EventPDF(event).render_pdf()
+    messages.error(request, _('Du har ikke tilgang til listen for dette arrangementet.'))
+    return redirect(event)
 
 
 def calendar_export(request, event_id=None, user=None):
