@@ -4,6 +4,7 @@ from datetime import timedelta
 
 import icalendar
 from django.conf import settings
+from django.contrib.auth.models import Group
 from django.core.exceptions import ImproperlyConfigured
 from django.core.mail import EmailMessage, send_mail
 from django.core.signing import BadSignature, Signer
@@ -357,3 +358,36 @@ def handle_mail_participants(event, _from_email, _to_email_value, subject, _mess
     except ImproperlyConfigured as e:
         logger.error('Something went wrong while trying to send mail to %s for event "%s"\n%s' %
                      (_to_email_options[_to_email_value][1], event, e))
+
+
+def get_organizer_by_event_type(event_type):
+    logger = logging.getLogger(__name__)
+
+    try:
+        if event_type == TYPE_CHOICES[0][0]:
+            return Group.objects.get(name__iexact='arrkom')
+        elif event_type == TYPE_CHOICES[1][0]:
+            return Group.objects.get(name__iexact='bedkom')
+        elif event_type == TYPE_CHOICES[2][0]:
+            return Group.objects.get(name__iexact='fagkom')
+        elif event_type == TYPE_CHOICES[4][0]:
+            return Group.objects.get(name__iexact='ekskom')
+        elif event_type == TYPE_CHOICES[5][0]:
+            return Group.objects.get(name__iexact='arrkom')
+        elif event_type == TYPE_CHOICES[7][0]:
+            return Group.objects.get(name__iexact='trikom')
+    except Group.DoesNotExist:
+        logger.warning('Group for event type "{}" does not exist.'.format(event_type))
+
+    else:
+        return None
+
+
+def get_organizer_for_event(event):
+    logger = logging.getLogger(__name__)
+    event_type = get_organizer_by_event_type(event.event_type)
+
+    if not event_type:
+        logger.warning('Could not get organizer for event "{}" (#{})!'.format(event, event.pk))
+
+    return event_type
