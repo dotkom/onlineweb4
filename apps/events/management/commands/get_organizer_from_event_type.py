@@ -5,6 +5,28 @@ from apps.events.models import Event
 from apps.events.utils import get_organizer_by_event_type
 
 
+def traverse_relations(event):
+    # Check if this is an attendance event, and if so, save it.
+    if hasattr(event, 'attendance_event'):
+        event.attendance_event.save()
+
+        if hasattr(event, 'companies'):
+            for company_event in event.companies.all():
+                company_event.save()
+
+        # Save all attendees too
+        for attendee in event.attendance_event.attendees.all():
+            attendee.save()
+
+        # Check if the event has any reservations, and if so, save it.
+        if hasattr(event.attendance_event, 'reserved_seats'):
+            event.attendance_event.reserved_seats.save()
+
+            # Save all reservees as too
+            for reservee in event.attendance_event.reserved_seats.reservees.all():
+                reservee.save()
+
+
 class Command(BaseCommand):
 
     def add_arguments(self, parser):
@@ -32,23 +54,4 @@ class Command(BaseCommand):
 
             # If set, run overridden .save() for related objects as well.
             if save_all:
-
-                # Check if this is an attendance event, and if so, save that too.
-                if hasattr(event, 'attendance_event'):
-                    event.attendance_event.save()
-
-                    if hasattr(event, 'companies'):
-                        for company_event in event.companies.all():
-                            company_event.save()
-
-                    # Save all attendees too
-                    for attendee in event.attendance_event.attendees.all():
-                        attendee.save()
-
-                    # Check if the event has any reservations, and if so, save it.
-                    if hasattr(event.attendance_event, 'reserved_seats'):
-                        event.attendance_event.reserved_seats.save()
-
-                        # Save all reservees as too
-                        for reservee in event.attendance_event.reserved_seats.reservees.all():
-                            reservee.save()
+                traverse_relations(event)
