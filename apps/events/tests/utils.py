@@ -3,16 +3,17 @@ from django_dynamic_fixture import G
 from guardian.shortcuts import assign_perm, get_perms_for_model
 
 from ..models import TYPE_CHOICES, AttendanceEvent, Event
+from ..utils import get_organizer_by_event_type
 
 
 def generate_event(event_type=TYPE_CHOICES[1][0]):
-    event = G(Event, event_type=event_type)
+    event = G(Event, event_type=event_type, organizer=get_organizer_by_event_type(event_type))
     G(AttendanceEvent, event=event)
     return event
 
 
 def add_to_committee(user, group=None):
-    komiteer = G(Group, pk=12, name="Komiteer")
+    komiteer = Group.objects.get(name__iexact="Komiteer")
 
     if komiteer not in user.groups.all():
         user.groups.add(komiteer)
@@ -32,24 +33,24 @@ def add_event_permissions(group):
 
 
 def add_to_arrkom(user):
-    arrkom = G(Group, pk=1, name="arrKom")
+    arrkom = Group.objects.get(name__iexact='arrkom')
     add_event_permissions(arrkom)
     return add_to_committee(user, group=arrkom)
 
 
 def add_to_bedkom(user):
-    bedkom = G(Group, pk=3, name="bedKom")
+    bedkom = Group.objects.get(name__iexact='bedkom')
     add_event_permissions(bedkom)
     return add_to_committee(user, group=bedkom)
 
 
 def add_to_fagkom(user):
-    fagkom = G(Group, pk=6, name="fagKom")
+    fagkom = Group.objects.get(name__iexact='fagkom')
     add_event_permissions(fagkom)
     return add_to_committee(user, group=fagkom)
 
 
 def add_to_trikom(user):
-    trikom = G(Group, pk=8, name="triKom")
+    trikom = Group.objects.get(name__iexact='trikom')
     add_event_permissions(trikom)
     return add_to_committee(user, group=trikom)
