@@ -169,7 +169,7 @@ class Event(models.Model):
 
     class Meta:
         verbose_name = _('arrangement')
-        verbose_name_plural = _('arrangement')
+        verbose_name_plural = _('arrangementer')
         permissions = (
             ('view_event', 'View Event'),
         )
