@@ -789,6 +789,14 @@ class AttendanceEvent(models.Model):
     def __str__(self):
         return self.event.title
 
+    def save(self, force_insert=False, force_update=False, using=None,
+             update_fields=None):
+        super().save(force_insert=force_insert, force_update=force_update, using=using, update_fields=update_fields)
+
+        if self.event.organizer:
+            assign_perm('events.change_attendanceevent', self.event.organizer, obj=self)
+            assign_perm('events.delete_attendanceevent', self.event.organizer, obj=self)
+
     class Meta:
         verbose_name = _('påmelding')
         verbose_name_plural = _('påmeldinger')
@@ -803,6 +811,14 @@ class CompanyEvent(models.Model):
     """
     company = models.ForeignKey(Company, verbose_name=_('bedrifter'))
     event = models.ForeignKey(Event, verbose_name=_('arrangement'), related_name='companies')
+
+    def save(self, force_insert=False, force_update=False, using=None,
+             update_fields=None):
+        super().save(force_insert=force_insert, force_update=force_update, using=using, update_fields=update_fields)
+
+        if self.event.organizer:
+            assign_perm('events.change_companyevent', self.event.organizer, obj=self)
+            assign_perm('events.delete_companyevent', self.event.organizer, obj=self)
 
     class Meta:
         verbose_name = _('bedrift')
@@ -843,6 +859,14 @@ class Attendee(models.Model):
     def is_on_waitlist(self):
         return self in self.event.waitlist_qs
 
+    def save(self, force_insert=False, force_update=False, using=None,
+             update_fields=None):
+        super().save(force_insert=force_insert, force_update=force_update, using=using, update_fields=update_fields)
+
+        if self.event.event.organizer:
+            assign_perm('events.change_attendee', self.event.event.organizer, obj=self)
+            assign_perm('events.delete_attendee', self.event.event.organizer, obj=self)
+
     class Meta:
         ordering = ['timestamp']
         unique_together = (('event', 'user'),)
@@ -861,6 +885,14 @@ class Reservation(models.Model):
 
     def __str__(self):
         return "Reservasjoner for %s" % self.attendance_event.event.title
+
+    def save(self, force_insert=False, force_update=False, using=None,
+             update_fields=None):
+        super().save(force_insert=force_insert, force_update=force_update, using=using, update_fields=update_fields)
+
+        if self.attendance_event.event.organizer:
+            assign_perm('events.change_reservation', self.attendance_event.event.organizer, obj=self)
+            assign_perm('events.delete_reservation', self.attendance_event.event.organizer, obj=self)
 
     class Meta:
         verbose_name = _("reservasjon")
@@ -883,6 +915,14 @@ class Reservee(models.Model):
 
     def __str__(self):
         return self.name
+
+    def save(self, force_insert=False, force_update=False, using=None,
+             update_fields=None):
+        super().save(force_insert=force_insert, force_update=force_update, using=using, update_fields=update_fields)
+
+        if self.reservation.attendance_event.event.organizer:
+            assign_perm('events.change_reservee', self.reservation.attendance_event.event.organizer, obj=self)
+            assign_perm('events.delete_reservee', self.reservation.attendance_event.event.organizer, obj=self)
 
     class Meta:
         verbose_name = _("reservasjon")
