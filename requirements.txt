@@ -45,9 +45,6 @@ docutils==0.14                  # Allows django-admindocs to generate documentat
 django-nose>=1.4,<1.5           # We use this test runner locally
 nose==1.3.7                     # We use this test runner locally
 
-# Frigg
-requests[security]==2.13.0
-
 # Wiki
 wiki==0.3b1
 
