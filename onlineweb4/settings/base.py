@@ -15,7 +15,7 @@ sys.dont_write_bytecode = config("OW4_PYTHON_DONT_WRITE_BYTECODE", cast=bool, de
 
 TEST_RUNNER = config("OW4_DJANGO_TEST_RUNNER", default="django_nose.NoseTestSuiteRunner")
 
-DEBUG = config("OW4_DJANGO_DEBUG", cast=bool, default=False)
+DEBUG = config("OW4_DJANGO_DEBUG", cast=bool, default=True)
 
 INTERNAL_IPS = (
     '127.0.0.1',
