@@ -1,15 +1,15 @@
 # -*- coding: utf-8 -*-
 
+import json
+
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.contenttypes.models import ContentType
+from django.core import serializers
 from django.core.signing import Signer
 from django.core.urlresolvers import reverse
 from django.db.models import Q
-import json
-from django.core import serializers
-from django.http import JsonResponse
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from django.utils.translation import ugettext as _
