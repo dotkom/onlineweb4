@@ -9,9 +9,6 @@ from .base import PROJECT_ROOT_DIRECTORY
 # Prevent python from making .pyc files
 sys.dont_write_bytecode = config("OW4_PYTHON_DONT_WRITE_BYTECODE", cast=bool, default=True)
 
-
-DEBUG = config("OW4_DJANGO_DEBUG", cast=bool, default=False)
-
 # Change this to the host in production
 ALLOWED_HOSTS = config("OW4_DJANGO_ALLOWED_HOSTS", default='*')
 
