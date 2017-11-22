@@ -28,7 +28,7 @@ const arrangeJobs = (jobs, check) => {
   const top = [];
   const remainder = [];
 
-  jobs.forEach(job => {
+  jobs.forEach((job) => {
     if (check(job)) {
       top.push(job);
     } else {
@@ -63,7 +63,7 @@ const JobList = ({ jobs, tags, filterText }) => {
 
   const prefilteredJobs = filterText.length ? search : jobs;
 
-  let jobObjects = prefilteredJobs.reduce((elems, job, i) => {
+  let jobObjects = prefilteredJobs.reduce((elems, job) => {
     // Whether we may show this job or not.
     let canShow = true;
 
