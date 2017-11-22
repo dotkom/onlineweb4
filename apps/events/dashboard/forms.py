@@ -15,7 +15,7 @@ class CreateEventForm(forms.ModelForm, HTML5RequiredMixin):
         model = Event
         fields = (
             'title', 'event_start', 'event_end', 'location', 'ingress_short', 'ingress', 'description', 'event_type',
-            'image'
+            'image', 'organizer',
         )
 
         img_fields = [('image', {'id': 'responsive-image-id'})]
