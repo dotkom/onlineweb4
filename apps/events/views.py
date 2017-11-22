@@ -5,7 +5,6 @@ import json
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.contenttypes.models import ContentType
-from django.core import serializers
 from django.core.signing import Signer
 from django.core.urlresolvers import reverse
 from django.db.models import Q
