@@ -291,7 +291,7 @@ def generate_json(request, event_id):
         })
 
     response = HttpResponse(content_type='application/json')
-    response['Content-Disposition'] = 'attachment; filename="' + event.title + '.json"'
+    response['Content-Disposition'] = 'attachment; filename="' + event.id + '.json"'
     response.write(json.dumps({
         'Attendees': attendees,
         'Waitlist': waitlist,
