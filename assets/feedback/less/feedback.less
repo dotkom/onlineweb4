@@ -1,3 +1,7 @@
+@import "~common/less/responsive-variables.less";
+@import "~common/less/colors.less";
+
+
 .feedback-answer-label label {
     font-size:20px;
     margin-top:10px;
@@ -136,6 +140,14 @@
             background-color: #59a6d6;
             color: white;
         }
+    }
+}
+@media screen and(max-width: @media-desktop-min) {
+    .br-widget {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: row;
     }
 }
 

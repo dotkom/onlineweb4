@@ -1,5 +1,6 @@
 import AnswerRating from './answerRating';
 import FeedBackResults from './feedbackResults';
+import './less/feedback.less';
 
 
 // Check if bar rating should be initialized
