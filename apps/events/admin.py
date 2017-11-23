@@ -2,6 +2,7 @@
 
 from django.contrib import admin, messages
 from django.utils.translation import ugettext as _
+from guardian.admin import GuardedModelAdmin
 from reversion.admin import VersionAdmin
 
 from apps.events.models import (AttendanceEvent, Attendee, CompanyEvent, Event, Extras,
@@ -78,11 +79,13 @@ def mark_not_attended(modeladmin, request, queryset):
 mark_not_attended.short_description = "Merk som ikke møtt"
 
 
-class AttendeeAdmin(VersionAdmin):
+class AttendeeAdmin(GuardedModelAdmin, VersionAdmin):
     model = Attendee
     list_display = ('user', 'event', 'paid', 'attended', 'note', 'extras')
     list_filter = ('event__event',)
     actions = [mark_paid, mark_attended, mark_not_paid, mark_not_attended]
+    group_owned_objects_field = 'event__event__organizer'
+    user_can_access_owned_by_group_objects_only = True
 
     # Disable delete_selected http://bit.ly/1o4nleN
     def get_actions(self, request):
@@ -134,10 +137,13 @@ class AttendanceEventInline(admin.StackedInline):
     exclude = ("marks_has_been_set",)
 
 
-class EventAdmin(VersionAdmin):
+class EventAdmin(GuardedModelAdmin, VersionAdmin):
     inlines = (AttendanceEventInline, FeedbackRelationInline, CompanyInline, GroupRestrictionInline)
     exclude = ("author", )
     search_fields = ('title',)
+
+    group_owned_objects_field = 'organizer'
+    user_can_access_owned_by_group_objects_only = True
 
     def save_model(self, request, obj, form, change):
         if not change:  # created
@@ -171,7 +177,7 @@ class ReserveeInline(admin.TabularInline):
     inline_classes = ('grp-collapse grp-open',)  # style
 
 
-class ReservationAdmin(VersionAdmin):
+class ReservationAdmin(GuardedModelAdmin, VersionAdmin):
     model = Reservation
     inlines = (ReserveeInline,)
     max_num = 1
@@ -179,6 +185,8 @@ class ReservationAdmin(VersionAdmin):
     list_display = ('attendance_event', '_number_of_seats_taken', 'seats', '_attendees', '_max_capacity')
     classes = ('grp-collapse grp-open',)  # style
     inline_classes = ('grp-collapse grp-open',)  # style
+    user_can_access_owned_by_group_objects_only = True
+    group_owned_objects_field = 'attendance_event__event__organizer'
 
     def _number_of_seats_taken(self, obj):
         return obj.number_of_seats_taken

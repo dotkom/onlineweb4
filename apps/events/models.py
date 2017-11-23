@@ -8,11 +8,13 @@ from django.conf import settings
 from django.contrib.auth.models import Group
 from django.contrib.contenttypes.models import ContentType
 from django.core import validators
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import SET_NULL, Case, Q, Value, When
 from django.template.defaultfilters import slugify
 from django.utils import timezone
 from django.utils.translation import ugettext as _
+from guardian.shortcuts import assign_perm
 from unidecode import unidecode
 
 from apps.authentication.models import FIELD_OF_STUDY_CHOICES
@@ -23,13 +25,14 @@ from apps.marks.models import get_expiration_date
 User = settings.AUTH_USER_MODEL
 
 TYPE_CHOICES = (
-    (1, 'Sosialt'),
+    (1, 'Sosialt (Arrkom)'),
     (2, 'Bedriftspresentasjon'),
     (3, 'Kurs'),
     (4, 'Utflukt'),
     (5, 'Ekskursjon'),
     (6, 'Internt'),
-    (7, 'Annet')
+    (7, 'Annet'),
+    (20, 'Sosialt (Trikom)'),
 )
 
 
@@ -87,6 +90,7 @@ class Event(models.Model):
     description = models.TextField(_('beskrivelse'), validators=[validators.MinLengthValidator(45)])
     image = models.ForeignKey(ResponsiveImage, related_name='events', blank=True, null=True, on_delete=SET_NULL)
     event_type = models.SmallIntegerField(_('type'), choices=TYPE_CHOICES, null=False)
+    organizer = models.ForeignKey(Group, verbose_name=_('arrangør'), blank=True, null=True, on_delete=SET_NULL)
 
     def is_attendance_event(self):
         """ Returns true if the event is an attendance event """
@@ -163,6 +167,18 @@ class Event(models.Model):
     @models.permalink
     def get_absolute_url(self):
         return 'events_details', None, {'event_id': self.id, 'event_slug': self.slug}
+
+    def clean(self):
+        if not self.organizer:
+            raise ValidationError('Arrangementet krever en organisator.')
+
+    def save(self, force_insert=False, force_update=False, using=None,
+             update_fields=None):
+        super().save(force_insert=force_insert, force_update=force_update, using=using, update_fields=update_fields)
+
+        if self.organizer:
+            assign_perm('events.change_event', self.organizer, obj=self)
+            assign_perm('events.delete_event', self.organizer, obj=self)
 
     def __str__(self):
         return self.title
@@ -771,6 +787,14 @@ class AttendanceEvent(models.Model):
     def __str__(self):
         return self.event.title
 
+    def save(self, force_insert=False, force_update=False, using=None,
+             update_fields=None):
+        super().save(force_insert=force_insert, force_update=force_update, using=using, update_fields=update_fields)
+
+        if self.event.organizer:
+            assign_perm('events.change_attendanceevent', self.event.organizer, obj=self)
+            assign_perm('events.delete_attendanceevent', self.event.organizer, obj=self)
+
     class Meta:
         verbose_name = _('påmelding')
         verbose_name_plural = _('påmeldinger')
@@ -785,6 +809,14 @@ class CompanyEvent(models.Model):
     """
     company = models.ForeignKey(Company, verbose_name=_('bedrifter'))
     event = models.ForeignKey(Event, verbose_name=_('arrangement'), related_name='companies')
+
+    def save(self, force_insert=False, force_update=False, using=None,
+             update_fields=None):
+        super().save(force_insert=force_insert, force_update=force_update, using=using, update_fields=update_fields)
+
+        if self.event.organizer:
+            assign_perm('events.change_companyevent', self.event.organizer, obj=self)
+            assign_perm('events.delete_companyevent', self.event.organizer, obj=self)
 
     class Meta:
         verbose_name = _('bedrift')
@@ -825,6 +857,14 @@ class Attendee(models.Model):
     def is_on_waitlist(self):
         return self in self.event.waitlist_qs
 
+    def save(self, force_insert=False, force_update=False, using=None,
+             update_fields=None):
+        super().save(force_insert=force_insert, force_update=force_update, using=using, update_fields=update_fields)
+
+        if self.event.event.organizer:
+            assign_perm('events.change_attendee', self.event.event.organizer, obj=self)
+            assign_perm('events.delete_attendee', self.event.event.organizer, obj=self)
+
     class Meta:
         ordering = ['timestamp']
         unique_together = (('event', 'user'),)
@@ -843,6 +883,14 @@ class Reservation(models.Model):
 
     def __str__(self):
         return "Reservasjoner for %s" % self.attendance_event.event.title
+
+    def save(self, force_insert=False, force_update=False, using=None,
+             update_fields=None):
+        super().save(force_insert=force_insert, force_update=force_update, using=using, update_fields=update_fields)
+
+        if self.attendance_event.event.organizer:
+            assign_perm('events.change_reservation', self.attendance_event.event.organizer, obj=self)
+            assign_perm('events.delete_reservation', self.attendance_event.event.organizer, obj=self)
 
     class Meta:
         verbose_name = _("reservasjon")
@@ -865,6 +913,14 @@ class Reservee(models.Model):
 
     def __str__(self):
         return self.name
+
+    def save(self, force_insert=False, force_update=False, using=None,
+             update_fields=None):
+        super().save(force_insert=force_insert, force_update=force_update, using=using, update_fields=update_fields)
+
+        if self.reservation.attendance_event.event.organizer:
+            assign_perm('events.change_reservee', self.reservation.attendance_event.event.organizer, obj=self)
+            assign_perm('events.delete_reservee', self.reservation.attendance_event.event.organizer, obj=self)
 
     class Meta:
         verbose_name = _("reservasjon")

@@ -72,6 +72,7 @@ class EventsContainer extends Component {
       { id: '1', name: 'Sosialt' },
       { id: '2', name: 'Bedriftspresentasjon' },
       { id: '3', name: 'Kurs' },
+      { id: '20', name: 'Sosialt' },
       { id: 'other', name: 'Annet' },
     ];
     this.state = {
