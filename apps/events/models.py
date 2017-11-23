@@ -8,6 +8,7 @@ from django.conf import settings
 from django.contrib.auth.models import Group
 from django.contrib.contenttypes.models import ContentType
 from django.core import validators
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import SET_NULL, Case, Q, Value, When
 from django.template.defaultfilters import slugify
@@ -167,15 +168,12 @@ class Event(models.Model):
     def get_absolute_url(self):
         return 'events_details', None, {'event_id': self.id, 'event_slug': self.slug}
 
+    def clean(self):
+        if not self.organizer:
+            raise ValidationError('Arrangementet krever en organisator.')
+
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):
-        # Local import to circumvent circular import.
-        from .utils import get_organizer_by_event_type
-
-        if not self.organizer:
-            # Try to set organizer based on event type, if not set by user.
-            self.organizer = get_organizer_by_event_type(self.event_type)
-
         super().save(force_insert=force_insert, force_update=force_update, using=using, update_fields=update_fields)
 
         if self.organizer:
