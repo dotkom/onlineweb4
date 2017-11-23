@@ -21,6 +21,24 @@ const defaultCheck = (job, id, tag) => {
   return false;
 };
 
+// Move jobs which match the check to the top of the array using
+// a stable algorithm. This is used to move full-time jobs and
+// sponsored jobs to the top.
+const arrangeJobs = (jobs, check) => {
+  const top = [];
+  const remainder = [];
+
+  jobs.forEach((job) => {
+    if (check(job)) {
+      top.push(job);
+    } else {
+      remainder.push(job);
+    }
+  });
+
+  return top.concat(remainder);
+};
+
 // Check for the deadline tags. If the difference between the deadline, and
 // the current date is less than the deadline specified by the tag, return true.
 const deadlineCheck = (job, id, tag) => (
@@ -45,7 +63,7 @@ const JobList = ({ jobs, tags, filterText }) => {
 
   const prefilteredJobs = filterText.length ? search : jobs;
 
-  const jobElems = prefilteredJobs.reduce((elems, job, i) => {
+  let jobObjects = prefilteredJobs.reduce((elems, job) => {
     // Whether we may show this job or not.
     let canShow = true;
 
@@ -77,11 +95,23 @@ const JobList = ({ jobs, tags, filterText }) => {
     });
 
     if (canShow) {
-      elems.push(<Job {...job} key={i} />);
+      elems.push(job);
     }
 
     return elems;
   }, []);
+
+  if (!filterText) {
+    jobObjects = jobObjects.sort((a, b) => a.title > b.title);
+  }
+
+  // First move full-time jobs to the top, then move the sponsored
+  // jobs to the top, while retaining the full-time-job sorting.
+  const sortedJobs = arrangeJobs(
+    arrangeJobs(jobObjects, job => job.type === 'Fastjobb'), job => job.featured,
+  );
+
+  const jobElems = sortedJobs.map((job, i) => <Job {...job} key={i} />);
 
   return (
     <Col xs={12} sm={12} md={9} className="pull-left">

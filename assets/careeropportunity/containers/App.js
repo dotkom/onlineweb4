@@ -31,6 +31,7 @@ const normalizeData = job => ({
   description: job.description,
   type: job.employment.name,
   id: job.id,
+  featured: job.featured,
 });
 
 class App extends React.Component {
