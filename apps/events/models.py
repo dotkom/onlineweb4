@@ -90,7 +90,7 @@ class Event(models.Model):
     description = models.TextField(_('beskrivelse'), validators=[validators.MinLengthValidator(45)])
     image = models.ForeignKey(ResponsiveImage, related_name='events', blank=True, null=True, on_delete=SET_NULL)
     event_type = models.SmallIntegerField(_('type'), choices=TYPE_CHOICES, null=False)
-    organizer = models.ForeignKey(Group, blank=True, null=True, on_delete=SET_NULL)
+    organizer = models.ForeignKey(Group, verbose_name=_('arrangør'), blank=True, null=True, on_delete=SET_NULL)
 
     def is_attendance_event(self):
         """ Returns true if the event is an attendance event """
