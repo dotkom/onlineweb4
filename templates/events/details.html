@@ -303,30 +303,33 @@
                     </div>
                 </div>
                 <div class="col-md-5 event-status-companies-container">
-                    <div>
-                        {% if event.companies.all %}
-                            <div class="row">
-                                <div class="col-md-12 event-status-companies">
-                                    <div class="title">Medarrangører</div>
-                                    {% for company_relation in event.companies.all %}
-                                        <div class="heading clearfix row-space">
-                                            <a href="{% url 'company_details' company_relation.company.pk %}">
-                                                <div class="title">{{ company_relation.company.name }}</div>
-                                                <div class="image-holder">
-                                                    <picture>
-                                                        <source srcset="{{ company_relation.company.image.lg }}" media="(max-width: 992px)">
-                                                        <img src="{{ company_relation.company.image.md }}" width="100%" alt="{{ company_relation.company.name }}" />
-                                                    </picture>
-                                                </div>
-                                            </a>
-                                        </div>
-                                    {% endfor %}
-                                </div>
+                    {% if event.companies.all %}
+                        <div class="row">
+                            <div class="col-md-12 event-status-companies">
+                                <div class="title">Medarrangører</div>
+                                {% for company_relation in event.companies.all %}
+                                    <div class="heading clearfix row-space">
+                                        <a href="{% url 'company_details' company_relation.company.pk %}">
+                                            <div class="title">{{ company_relation.company.name }}</div>
+                                            <div class="image-holder">
+                                                <picture>
+                                                    <source srcset="{{ company_relation.company.image.lg }}" media="(max-width: 992px)">
+                                                    <img src="{{ company_relation.company.image.md }}" width="100%" alt="{{ company_relation.company.name }}" />
+                                                </picture>
+                                            </div>
+                                        </a>
+                                    </div>
+                                {% endfor %}
                             </div>
-                        {% else %}
-                            <img class="event-image" src="{{ event.image.lg }}" alt="{{ event.image.description }}" />
-                        {% endif %}
-                    </div>
+                        </div>
+                    {% else %}
+                        <div class="event-details-single-image">
+                          <img class="event-image" src="{{ event.image.lg }}" alt="{{ event.image.description }}" />
+                          {% if event.image.photographer %}
+                            <p class="event-details-image-credits">Foto: {{ event.image.photographer }}</p>
+                          {% endif %}
+                        </div>
+                    {% endif %}
                 </div>
             </div>
 
