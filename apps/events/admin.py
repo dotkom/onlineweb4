@@ -83,6 +83,7 @@ class AttendeeAdmin(GuardedModelAdmin, VersionAdmin):
     model = Attendee
     list_display = ('user', 'event', 'paid', 'attended', 'note', 'extras')
     list_filter = ('event__event',)
+    search_fields = ('event__event__title', 'user__first_name', 'user__last_name', 'user__username')
     actions = [mark_paid, mark_attended, mark_not_paid, mark_not_attended]
     group_owned_objects_field = 'event__event__organizer'
     user_can_access_owned_by_group_objects_only = True
