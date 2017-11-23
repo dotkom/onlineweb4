@@ -25,14 +25,13 @@ from apps.marks.models import get_expiration_date
 User = settings.AUTH_USER_MODEL
 
 TYPE_CHOICES = (
-    (1, 'Sosialt (Arrkom)'),
+    (1, 'Sosialt'),
     (2, 'Bedriftspresentasjon'),
     (3, 'Kurs'),
     (4, 'Utflukt'),
     (5, 'Ekskursjon'),
     (6, 'Internt'),
     (7, 'Annet'),
-    (20, 'Sosialt (Trikom)'),
 )
 
 
@@ -170,7 +169,7 @@ class Event(models.Model):
 
     def clean(self):
         if not self.organizer:
-            raise ValidationError('Arrangementet krever en organisator.')
+            raise ValidationError({'organizer': ['Arrangementet krever en arrangør.']})
 
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):

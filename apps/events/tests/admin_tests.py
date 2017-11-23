@@ -153,7 +153,9 @@ class FagkomEventAdminTestCase(EventAdminTestCase):
 class TrikomEventAdminTestCase(EventAdminTestCase):
     def setUp(self):
         super().setUp()
-        self.event = generate_event(TYPE_CHOICES[7][0])
+        self.event = generate_event(TYPE_CHOICES[0][0])
+        self.event.organizer = Group.objects.get(name__iexact="trikom")
+        self.event.save()
 
         add_to_trikom(self.user)
 
