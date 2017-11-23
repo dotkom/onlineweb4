@@ -169,7 +169,7 @@ class Event(models.Model):
 
     def clean(self):
         if not self.organizer:
-            raise ValidationError('Arrangementet krever en organisator.')
+            raise ValidationError({'organizer': ['Arrangementet krever en arrangør.']})
 
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):
