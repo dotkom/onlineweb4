@@ -10,17 +10,40 @@ pipeline:
     volumes:
       - /tmp/cache:/cache
 
-  test:
+  setup:
     image: registry.online.ntnu.no/dotkom/onlineweb4-testbase
-    secrets: [codecov_token]
     when:
-      event: pull_request
+      event: [push, pull_request, tag, deployment]
+      branch: develop
     commands:
       - cp onlineweb4/settings/example-local.py onlineweb4/settings/local.py
       - npm install --depth=0 --quiet
-      - pip install -r requirements.txt -r requirements-testing.txt --quiet --cache-dir pip-cache
+
+  npm-build:
+    image: registry.online.ntnu.no/dotkom/onlineweb4-testbase
+    when:
+      event: pull_request
+    group: testing
+    commands:
       - npm run build:prod
+
+  js-lint:
+    image: registry.online.ntnu.no/dotkom/onlineweb4-testbase
+    when:
+      event: pull_request
+    group: testing
+    commands:
       - npm run lint
+
+  python-tests:
+    image: registry.online.ntnu.no/dotkom/onlineweb4-testbase
+    secrets: [codecov_token]
+    when:
+      event: [push, pull_request, tag, deployment]
+      branch: develop
+    group: testing
+    commands:
+      - pip install -r requirements.txt -r requirements-testing.txt --quiet --cache-dir pip-cache
       - isort -c -rc apps middleware scripts utils
       - flake8 apps middleware scripts utils
       - py.test --cov=apps
@@ -50,5 +73,6 @@ pipeline:
     when:
       event: push
       branch: develop
+      status: success
     script:
       - /srv/www/ow4dev/deploy.sh
