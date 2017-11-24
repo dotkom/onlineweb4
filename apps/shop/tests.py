@@ -1,10 +1,10 @@
 from datetime import timedelta
 
 from django.core.urlresolvers import reverse
+from django.test import TestCase
 from django.utils.timezone import now
 from django_dynamic_fixture import G
-from oauth2_provider.models import AccessToken
-from oauth2_provider.tests.test_auth_backends import ApplicationModel, BaseTest
+from oauth2_provider.models import AccessToken, get_application_model
 from rest_framework import status
 from rest_framework.test import APITestCase
 
@@ -12,6 +12,8 @@ from apps.authentication.models import Email, OnlineUser
 from apps.inventory.models import Item
 from apps.shop.models import MagicToken
 from apps.sso.models import Client
+
+ApplicationModel = get_application_model()
 
 
 class ShopAPIURLTestCase(APITestCase):
@@ -39,7 +41,7 @@ class ShopAPIURLTestCase(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
 
-class ShopSetRFIDTestCase(BaseTest):
+class ShopSetRFIDTestCase(TestCase):
     def setUp(self):
         super().setUp()
         self.user = G(OnlineUser)
