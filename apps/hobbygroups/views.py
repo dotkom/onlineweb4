@@ -1,7 +1,6 @@
 from django.shortcuts import render
 from rest_framework import viewsets
 
-
 from apps.hobbygroups.models import Hobby
 from apps.hobbygroups.serializers import HobbySerializer
 
