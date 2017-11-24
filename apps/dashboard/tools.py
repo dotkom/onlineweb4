@@ -116,10 +116,20 @@ class DashboardMixin(object):
         return context
 
 
-class DashboardPermissionMixin(DashboardMixin, PermissionRequiredMixin):
+class DashboardObjectPermissionMixin(DashboardMixin, PermissionRequiredMixin):
     """
-    DashboardPermissionMixin combines the DashboardMixin with Django
+    DashboardObjectPermissionMixin combines the DashboardMixin with Django
     Guardian's permission based mixin, rendering a 403 Unauthorized
+    template if the currently logged in user is lacking appropriate
+    permissions to access a certain object in a view.
+    """
+
+    return_403 = True
+
+
+class DashboardPermissionMixin(DashboardObjectPermissionMixin):
+    """
+    DashboardPermissionMixin renders a 403 Unauthorized
     template if the currently logged in user is lacking appropriate
     permissions to access a certain view.
     """
@@ -132,4 +142,8 @@ class DashboardPermissionMixin(DashboardMixin, PermissionRequiredMixin):
         """
         return None
 
-    return_403 = True
+
+class DashboardCreatePermissionMixin(DashboardPermissionMixin):
+    def get_permission_object(self):
+        # There is no existing object when creating an object. @ToDo: override this in a nicer way?
+        return None
