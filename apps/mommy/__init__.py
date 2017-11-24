@@ -22,7 +22,7 @@ def autodiscover():
         # Attempt to import the app's mommy module.
         try:
             import_module('%s.mommy' % app)
-        except:
+        except ImportError:
             # silently fail if mommy module does not exist
             if module_has_submodule(mod, 'mommy'):
                 raise
