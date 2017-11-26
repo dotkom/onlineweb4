@@ -143,7 +143,7 @@ class DashboardPermissionMixin(DashboardObjectPermissionMixin):
         return None
 
 
-class DashboardCreatePermissionMixin(DashboardPermissionMixin):
+class DashboardCreatePermissionMixin(DashboardObjectPermissionMixin):
     def get_permission_object(self):
         # There is no existing object when creating an object. @ToDo: override this in a nicer way?
         return None
