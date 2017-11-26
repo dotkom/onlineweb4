@@ -17,8 +17,8 @@ from django.views.generic import CreateView, DeleteView, UpdateView
 from guardian.decorators import permission_required
 from guardian.shortcuts import get_objects_for_user
 
-from apps.dashboard.tools import (DashboardCreatePermissionMixin, DashboardPermissionMixin,
-                                  get_base_context, has_access)
+from apps.dashboard.tools import (DashboardCreatePermissionMixin, DashboardObjectPermissionMixin,
+                                  DashboardPermissionMixin, get_base_context, has_access)
 from apps.events.dashboard import forms as dashboard_forms
 from apps.events.dashboard.utils import event_ajax_handler
 from apps.events.models import AttendanceEvent, Attendee, CompanyEvent, Event, Reservation, Reservee
@@ -107,7 +107,7 @@ class CreateEventView(DashboardCreatePermissionMixin, CreateView):
         return reverse('dashboard_event_details', kwargs={'event_id': self.object.id})
 
 
-class UpdateEventView(DashboardPermissionMixin, UpdateView):
+class UpdateEventView(DashboardObjectPermissionMixin, UpdateView):
     model = Event
     form_class = dashboard_forms.CreateEventForm
     template_name = "events/dashboard/event_form.html"
@@ -133,7 +133,7 @@ class AddAttendanceView(DashboardCreatePermissionMixin, CreateView):
         return reverse('dashboard_event_details', kwargs={'event_id': self.kwargs.get('event_id')})
 
 
-class UpdateAttendanceView(DashboardPermissionMixin, UpdateView):
+class UpdateAttendanceView(DashboardObjectPermissionMixin, UpdateView):
     model = AttendanceEvent
     form_class = dashboard_forms.CreateAttendanceEventForm
     template_name = "events/dashboard/attendanceevent_form.html"
@@ -158,7 +158,7 @@ class AddCompanyEventView(DashboardCreatePermissionMixin, CreateView):
         return super().form_valid(form)
 
 
-class RemoveCompanyEventView(DashboardPermissionMixin, DeleteView):
+class RemoveCompanyEventView(DashboardObjectPermissionMixin, DeleteView):
     model = CompanyEvent
     permission_required = 'events.add_attendanceevent'
     pk_url_kwarg = 'event_id'
@@ -183,7 +183,7 @@ class AddFeedbackRelationView(DashboardCreatePermissionMixin, CreateView):
         return super().form_valid(form)
 
 
-class RemoveFeedbackRelationView(DashboardPermissionMixin, DeleteView):
+class RemoveFeedbackRelationView(DashboardObjectPermissionMixin, DeleteView):
     model = FeedbackRelation
     permission_required = 'events.add_attendanceevent'
     pk_url_kwarg = 'event_id'
