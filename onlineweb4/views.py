@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 import logging
+from smtplib import SMTPException
 
 from django.conf import settings
 from django.contrib import messages
 from django.core.mail import send_mail
 from django.shortcuts import redirect, render
 from onlineweb4.forms import ErrorForm
-from smtplib import SMTPException
 
 
 def server_error(request):
