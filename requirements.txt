@@ -22,7 +22,7 @@ django-recaptcha==1.3.1         # Google ReCaptcha
 django-oauth-toolkit==1.0.0    # OAuth2 authentication support
 django-watson==1.4.4            # Indexed model search lib
 django-reversion==2.0.11        # Model version history with middleware hooks to all post_save signals
-git+https://github.com/dotkom/django-guardian.git@1b184d5377200ab4ad59b343ae8af9a863124510#egg=django-guardian==1.4.9b          # Per Object permissions framework
+django-guardian==1.4.9          # Per Object permissions framework
 django-taggit==0.22.1           # Generic multi-model tagging library
 django-taggit-serializer==0.1.5 # REST Framework serializers for Django-taggit
 APScheduler==3.4.0              # Scheduler
