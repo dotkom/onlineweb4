@@ -28,15 +28,15 @@ class Command(BaseCommand):
             self.send_mail(user, users[random_users[count]])
 
         self.write_to_file(to_from_dict)
-        self.mail_to_committee(to_from_dict)
+        self.mail_to_committee()
 
     # Function for generating a list with random numbers corresponding to
     # the indexes of the list of users attending the event.
     @staticmethod
     def generate_random_list(users):
         to_from = random.sample(range(len(users)), len(users))
-        while(not Command.check_random_list(to_from)):
-            to_from = random.sample(range(len(users)), len(users))
+        Command.check_random_list(to_from)
+        #    to_from = random.sample(range(len(users)), len(users))
         return to_from
 
     # Function for checking that the random list of indexes is valid.
@@ -44,11 +44,29 @@ class Command(BaseCommand):
     # generated number. If index and random number is the same, then someone
     # got themselves as secret Santa.
     @staticmethod
-    def check_random_list(random):
-        for user_index, user2_index in enumerate(random):
-            if (user_index == user2_index):
-                return False
-        return True
+    def check_random_list(random_list):
+        for user_index, user2_index in enumerate(random_list):
+            if user_index == user2_index:
+                Command.search_and_swap_pair(random_list, user_index)
+        return random_list
+
+    @staticmethod
+    def search_and_swap_pair(random_list, user_index):
+        increment = 1
+        user_swap_index = random.choice(random_list)
+        search_start = user_swap_index
+        while True:
+            if user_swap_index == len(random_list)-1:
+                increment = -1
+                user_swap_index = search_start
+
+            if user_swap_index != user_index:
+                random_list[user_index], random_list[user_swap_index] = \
+                    random_list[user_swap_index], random_list[user_index]
+                break
+            else:
+                user_swap_index += increment
+        Command.check_random_list(random_list)
 
     @staticmethod
     def send_mail(user_to, user_from):
@@ -64,8 +82,8 @@ class Command(BaseCommand):
         EmailMessage(subject, content, settings.EMAIL_TRIKOM, [receiver]).send()
 
     @staticmethod
-    def mail_to_committee(to_from_dict):
-        subject = "Secret santa til-fra liste"
+    def mail_to_committee():
+        subject = "Secret santa"
 
         content = render_to_string('secret_santa/committee_mail.txt')
 
@@ -79,7 +97,7 @@ class Command(BaseCommand):
 
         txt_file = open(directory + '/secret_santa_to_from.txt', 'w+')
 
-        content = render_to_string('secret_santa/committee_pdf.txt', {
+        content = render_to_string('secret_santa/to_from_list.txt', {
             'to_from_dict': to_from_dict,
         })
 
