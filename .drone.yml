@@ -2,7 +2,7 @@ pipeline:
   restore-cache:
     image: drillster/drone-volume-cache
     when:
-      event: pull_request
+      event: push
     restore: true
     mount:
       - ./pip-cache
@@ -13,8 +13,7 @@ pipeline:
   setup:
     image: registry.online.ntnu.no/dotkom/onlineweb4-testbase
     when:
-      event: [push, pull_request, tag, deployment]
-      branch: develop
+      event: push
     commands:
       - cp onlineweb4/settings/example-local.py onlineweb4/settings/local.py
       - npm install --depth=0 --quiet
@@ -22,7 +21,7 @@ pipeline:
   npm-build:
     image: registry.online.ntnu.no/dotkom/onlineweb4-testbase
     when:
-      event: pull_request
+      event: push
     group: testing
     commands:
       - npm run build:prod
@@ -30,7 +29,7 @@ pipeline:
   js-lint:
     image: registry.online.ntnu.no/dotkom/onlineweb4-testbase
     when:
-      event: pull_request
+      event: push
     group: testing
     commands:
       - npm run lint
@@ -39,8 +38,7 @@ pipeline:
     image: registry.online.ntnu.no/dotkom/onlineweb4-testbase
     secrets: [codecov_token]
     when:
-      event: [push, pull_request, tag, deployment]
-      branch: develop
+      event: push
     group: testing
     commands:
       - pip install -r requirements.txt -r requirements-testing.txt --quiet --cache-dir pip-cache
@@ -53,7 +51,7 @@ pipeline:
   rebuild-cache:
     image: drillster/drone-volume-cache
     when:
-      event: pull_request
+      event: push
     rebuild: true
     mount:
       - ./pip-cache
