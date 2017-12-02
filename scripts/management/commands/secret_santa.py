@@ -35,6 +35,7 @@ class Command(BaseCommand):
     @staticmethod
     def generate_random_list(users):
         to_from = random.sample(range(len(users)), len(users))
+        print(to_from)
         Command.check_random_list(to_from)
         #    to_from = random.sample(range(len(users)), len(users))
         return to_from
@@ -47,25 +48,19 @@ class Command(BaseCommand):
     def check_random_list(random_list):
         for user_index, user2_index in enumerate(random_list):
             if user_index == user2_index:
-                Command.search_and_swap_pair(random_list, user_index)
+                Command.swap_pair(random_list, user_index)
         return random_list
 
     @staticmethod
-    def search_and_swap_pair(random_list, user_index):
-        increment = 1
+    def swap_pair(random_list, user_index):
         user_swap_index = random.choice(random_list)
-        search_start = user_swap_index
-        while True:
-            if user_swap_index == len(random_list)-1:
-                increment = -1
-                user_swap_index = search_start
-
-            if user_swap_index != user_index:
-                random_list[user_index], random_list[user_swap_index] = \
-                    random_list[user_swap_index], random_list[user_index]
-                break
+        if user_swap_index == user_index:
+            if user_swap_index != len(random_list)-1:
+                user_swap_index += 1
             else:
-                user_swap_index += increment
+                user_swap_index -= 1
+        random_list[user_index], random_list[user_swap_index] = \
+            random_list[user_swap_index], random_list[user_index]
         Command.check_random_list(random_list)
 
     @staticmethod
