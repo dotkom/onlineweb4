@@ -24,7 +24,6 @@ class Command(BaseCommand):
         for count, user in enumerate(users):
             to_from_dict['Par %s' % (count+1)] = {'To': user.user.get_full_name(),
                                                   'From': users[random_users[count]].user.get_full_name()}
-
             self.send_mail(user, users[random_users[count]])
 
         self.write_to_file(to_from_dict)
@@ -36,7 +35,6 @@ class Command(BaseCommand):
     def generate_random_list(users):
         to_from = random.sample(range(len(users)), len(users))
         Command.check_random_list(to_from)
-        #    to_from = random.sample(range(len(users)), len(users))
         return to_from
 
     # Function for checking that the random list of indexes is valid.
