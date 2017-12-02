@@ -75,7 +75,7 @@ class Command(BaseCommand):
 
     @staticmethod
     def mail_to_committee():
-        subject = "Secret santa"
+        subject = "Secret santa e-post sendt til påmeldte"
 
         content = render_to_string('secret_santa/committee_mail.txt')
 
