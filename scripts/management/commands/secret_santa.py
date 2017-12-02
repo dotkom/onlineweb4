@@ -34,8 +34,7 @@ class Command(BaseCommand):
     @staticmethod
     def generate_random_list(users):
         to_from = random.sample(range(len(users)), len(users))
-        return_list = Command.fix_random_list(list(to_from))
-        return return_list
+        return Command.fix_random_list(to_from)
 
     # Function for checking that the random list of indexes is valid.
     # Checks the index of the original list of users against the randomly
