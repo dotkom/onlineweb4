@@ -34,7 +34,6 @@ class Command(BaseCommand):
     @staticmethod
     def generate_random_list(users):
         to_from = random.sample(range(len(users)), len(users))
-        to_from = [0, 1, 2, 3, 4, 5, 6, 7]
         return_list = Command.fix_random_list(list(to_from))
         return return_list
 
