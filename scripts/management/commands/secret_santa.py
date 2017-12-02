@@ -34,22 +34,31 @@ class Command(BaseCommand):
     @staticmethod
     def generate_random_list(users):
         to_from = random.sample(range(len(users)), len(users))
-        Command.check_random_list(to_from)
-        return to_from
+        to_from = tuple([0, 1, 2, 3, 4, 5, 6, 7])
+        return_list = Command.fix_random_list(list(to_from))
+        print(to_from)
+        print(return_list)
+        return return_list
 
     # Function for checking that the random list of indexes is valid.
     # Checks the index of the original list of users against the randomly
     # generated number. If index and random number is the same, then someone
     # got themselves as secret Santa.
     @staticmethod
-    def check_random_list(random_list):
-        for user_index, user2_index in enumerate(random_list):
-            if user_index == user2_index:
-                Command.swap_pair(random_list, user_index)
+    def fix_random_list(random_list):
+        random_list = list(random_list)
+        for user_index, user in enumerate(random_list):
+            # The user part of the for-loop does not update when the random_list
+            # is updated. So to avoid swapping an already swapped item the index
+            # must be checked against the updated list, not the user created in the
+            # beginning of the loop.
+            if user_index == random_list[user_index]:
+                random_list = Command.swap_pair(random_list, user_index)
         return random_list
 
     @staticmethod
     def swap_pair(random_list, user_index):
+        random_list = list(random_list)
         user_swap_index = random.choice(random_list)
         if user_swap_index == user_index:
             if user_swap_index != len(random_list)-1:
@@ -58,7 +67,7 @@ class Command(BaseCommand):
                 user_swap_index -= 1
         random_list[user_index], random_list[user_swap_index] = \
             random_list[user_swap_index], random_list[user_index]
-        Command.check_random_list(random_list)
+        return random_list
 
     @staticmethod
     def send_mail(user_to, user_from):
