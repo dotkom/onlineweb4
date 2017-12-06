@@ -11,7 +11,7 @@ from .utils import (add_payment_delay, add_to_trikom, attend_user_to_event, gene
                     generate_payment, pay_for_event)
 
 
-class EventsURLTestCase(TestCase):
+class EventsDetailTestMixin:
     def setUp(self):
         G(Group, pk=1, name="arrKom")
         G(Group, pk=3, name="bedKom")
@@ -27,6 +27,8 @@ class EventsURLTestCase(TestCase):
         self.event_url = reverse(
             'events_details', args=(self.event.id, self.event.slug))
 
+
+class EventsDetailRestricted(EventsDetailTestMixin, TestCase):
     def test_ok(self):
         response = self.client.get(self.event_url)
 
@@ -62,6 +64,8 @@ class EventsURLTestCase(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertIn("Du har ikke tilgang til dette arrangementet.", messages)
 
+
+class EventsDetailPayment(EventsDetailTestMixin, TestCase):
     def test_payment_logged_out(self):
         payment = generate_payment(self.event)
 
