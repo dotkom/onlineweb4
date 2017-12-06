@@ -10,7 +10,8 @@ from ..utils import get_organizer_by_event_type
 
 
 def generate_event(event_type=TYPE_CHOICES[1][0]):
-    event = G(Event, event_type=event_type, organizer=get_organizer_by_event_type(event_type))
+    event = G(Event, event_type=event_type,
+              organizer=get_organizer_by_event_type(event_type))
     G(AttendanceEvent, event=event)
     return event
 

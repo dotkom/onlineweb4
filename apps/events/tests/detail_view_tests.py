@@ -6,7 +6,7 @@ from rest_framework import status
 
 from apps.authentication.models import OnlineUser
 
-from ..models import TYPE_CHOICES, GroupRestriction
+from ..models import TYPE_CHOICES, AttendanceEvent, Event, Extras, GroupRestriction
 from .utils import (add_payment_delay, add_to_trikom, attend_user_to_event, generate_event,
                     generate_payment, pay_for_event)
 
@@ -135,3 +135,58 @@ class EventsDetailPayment(EventsDetailTestMixin, TestCase):
         self.assertEqual(context['user_paid'], False)
         self.assertEqual(context['payment_delay'], payment_delay)
         self.assertEqual(context['payment_relation_id'], None)
+
+
+class EventsDetailExtras(EventsDetailTestMixin, TestCase):
+    def extras_post(self, event_url, extras_id):
+        return self.client.post(
+            event_url,
+            {
+                'action': 'extras',
+                'extras_id': extras_id
+            },
+            HTTP_X_REQUESTED_WITH='XMLHttpRequest'
+        )
+
+    def test_extras_on_non_attendance_event(self):
+        event = G(Event)
+        extras = G(Extras)
+        event_url = reverse('events_details', args=(event.id, event.slug))
+
+        response = self.extras_post(event_url, extras.id)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.json()['message'],
+                         'Dette er ikke et påmeldingsarrangement.')
+
+    def test_extras_on_not_attended_event(self):
+        extras = G(Extras)
+
+        response = self.extras_post(self.event_url, extras.id)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.json()['message'],
+                         'Du er ikke påmeldt dette arrangementet.')
+
+    def test_invalid_extras(self):
+        attend_user_to_event(self.event, self.user)
+
+        response = self.extras_post(self.event_url, 1000)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.json()['message'],
+                         'Ugyldig valg')
+
+    def test_extras_success(self):
+        extras = G(Extras)
+        event = G(Event)
+        G(AttendanceEvent, event=event, extras=[extras])
+        attend_user_to_event(event, self.user)
+        event_url = reverse(
+            'events_details', args=(event.id, event.slug))
+
+        response = self.extras_post(event_url, extras.id)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.json()['message'],
+                         'Lagret ditt valg')

@@ -13,7 +13,7 @@ from django.utils import timezone
 from filebrowser.settings import VERSIONS
 
 from apps.authentication.models import OnlineUser as User
-from apps.events.models import TYPE_CHOICES, Attendee, Event
+from apps.events.models import TYPE_CHOICES, Attendee, Event, Extras
 from apps.payment.models import PaymentDelay, PaymentRelation
 
 
@@ -287,16 +287,20 @@ def handle_event_ajax(event, user, action, extras_id):
 def handle_event_extras(event, user, extras_id):
     resp = {'message': "Feil!"}
 
-    if not event.is_attendance_event:
-        return 'Dette er ikke et påmeldingsarrangement.'
+    if not event.is_attendance_event():
+        return {'message': 'Dette er ikke et påmeldingsarrangement.'}
 
     attendance_event = event.attendance_event
 
     if not attendance_event.is_attendee(user):
-        return 'Du er ikke påmeldt dette arrangementet.'
+        return {'message': 'Du er ikke påmeldt dette arrangementet.'}
 
     attendee = Attendee.objects.get(event=attendance_event, user=user)
-    attendee.extras = attendance_event.extras.all()[int(extras_id)]
+    try:
+        attendee.extras = attendance_event.extras.get(id=extras_id)
+    except Extras.DoesNotExist:
+        return {'message': 'Ugyldig valg'}
+
     attendee.save()
     resp['message'] = "Lagret ditt valg"
     return resp
