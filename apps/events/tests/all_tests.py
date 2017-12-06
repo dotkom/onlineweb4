@@ -463,15 +463,6 @@ class EventsURLTestCase(TestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-    def test_events_detail(self):
-        event = create_generic_event()
-
-        url = reverse('events_details', args=(event.id, event.slug))
-
-        response = self.client.get(url)
-
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-
     def test_search_events(self):
         query = ''
 
