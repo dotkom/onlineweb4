@@ -14,7 +14,7 @@ from .utils import (add_payment_delay, add_to_trikom, attend_user_to_event, gene
                     generate_payment, pay_for_event)
 
 
-class EventsDetailTestMixin:
+class EventsTestMixin:
     def setUp(self):
         G(Group, pk=1, name="arrKom")
         G(Group, pk=3, name="bedKom")
@@ -31,7 +31,7 @@ class EventsDetailTestMixin:
             'events_details', args=(self.event.id, self.event.slug))
 
 
-class EventsDetailRestricted(EventsDetailTestMixin, TestCase):
+class EventsDetailRestricted(EventsTestMixin, TestCase):
     def test_ok(self):
         response = self.client.get(self.event_url)
 
@@ -68,7 +68,7 @@ class EventsDetailRestricted(EventsDetailTestMixin, TestCase):
         self.assertIn("Du har ikke tilgang til dette arrangementet.", messages)
 
 
-class EventsDetailPayment(EventsDetailTestMixin, TestCase):
+class EventsDetailPayment(EventsTestMixin, TestCase):
     def test_payment_logged_out(self):
         payment = generate_payment(self.event)
 
@@ -140,7 +140,7 @@ class EventsDetailPayment(EventsDetailTestMixin, TestCase):
         self.assertEqual(context['payment_relation_id'], None)
 
 
-class EventsDetailExtras(EventsDetailTestMixin, TestCase):
+class EventsDetailExtras(EventsTestMixin, TestCase):
     def extras_post(self, event_url, extras_id):
         return self.client.post(
             event_url,
@@ -195,7 +195,7 @@ class EventsDetailExtras(EventsDetailTestMixin, TestCase):
                          'Lagret ditt valg')
 
 
-class EventsAttend(EventsDetailTestMixin, TestCase):
+class EventsAttend(EventsTestMixin, TestCase):
     def setUp(self):
         super().setUp()
         os.environ['RECAPTCHA_TESTING'] = 'True'
