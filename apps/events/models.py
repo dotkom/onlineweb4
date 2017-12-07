@@ -598,6 +598,7 @@ class AttendanceEvent(models.Model):
         """
         Checks if a user can attend a specific event
         This method checks for:
+            Already attended
             Waitlist
             Room on event
             Rules
@@ -616,6 +617,12 @@ class AttendanceEvent(models.Model):
         """
 
         response = {'status': False, 'message': '', 'status_code': None}
+
+        # User is already an attendee
+        if self.attendees.filter(user=user).exists():
+            response['message'] = 'Du er allerede meldt på dette arrangementet.'
+            response['status_code'] = 404
+            return response
 
         # Registration closed
         if timezone.now() > self.registration_end:
