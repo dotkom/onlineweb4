@@ -32,11 +32,13 @@ def attend_user_to_event(event, user):
     )
 
 
-def pay_for_event(event, user):
+def pay_for_event(event, user, *args, **kwargs):
     return G(
         PaymentRelation,
         payment=event.attendance_event.payment(),
-        user=user
+        user=user,
+        *args,
+        **kwargs
     )
 
 

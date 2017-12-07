@@ -1,15 +1,17 @@
 import os
 from datetime import timedelta
-from django.utils import timezone
+
 from django.contrib.auth.models import Group
 from django.core.urlresolvers import reverse
 from django.test import TestCase
+from django.utils import timezone
 from django_dynamic_fixture import G
 from rest_framework import status
 
 from apps.authentication.models import AllowedUsername, OnlineUser
+from apps.payment.models import PaymentDelay
 
-from ..models import TYPE_CHOICES, AttendanceEvent, Event, Extras, GroupRestriction
+from ..models import AttendanceEvent, Event, Extras, GroupRestriction
 from .utils import (add_payment_delay, add_to_trikom, attend_user_to_event, generate_event,
                     generate_payment, pay_for_event)
 
@@ -17,16 +19,13 @@ from .utils import (add_payment_delay, add_to_trikom, attend_user_to_event, gene
 class EventsTestMixin:
     def setUp(self):
         G(Group, pk=1, name="arrKom")
-        G(Group, pk=3, name="bedKom")
-        G(Group, pk=6, name="fagKom")
-        G(Group, pk=5, name="eksKom")
         G(Group, pk=8, name="triKom")
         G(Group, pk=12, name="Komiteer")
 
         self.user = G(OnlineUser, ntnu_username='test')
         self.client.force_login(self.user)
 
-        self.event = generate_event(TYPE_CHOICES[0][0])
+        self.event = generate_event()
         self.event_url = reverse(
             'events_details', args=(self.event.id, self.event.slug))
 
@@ -304,3 +303,94 @@ class EventsAttend(EventsTestMixin, TestCase):
 
         self.assertRedirects(response, event.get_absolute_url())
         self.assertInMessages('Du er nå meldt på arrangementet.', response)
+
+
+class EventsUnattend(EventsTestMixin, TestCase):
+    def test_unattend_not_attended(self):
+        url = reverse('unattend_event', args=(self.event.id,))
+
+        response = self.client.post(url, follow=True)
+
+        self.assertRedirects(response, self.event.get_absolute_url())
+        self.assertInMessages(
+            'Du er ikke påmeldt dette arrangementet.', response)
+
+    def test_unattend_not_attendance_event(self):
+        event = G(Event)
+        url = reverse('unattend_event', args=(event.id,))
+
+        response = self.client.post(url, follow=True)
+
+        self.assertRedirects(response, event.get_absolute_url())
+        self.assertInMessages(
+            'Dette er ikke et påmeldingsarrangement.', response)
+
+    def test_unattend_deadline_yesterday(self):
+        event = G(Event)
+        G(AttendanceEvent, event=event,
+          unattend_deadline=timezone.now() - timedelta(days=1))
+        attend_user_to_event(event, self.user)
+        url = reverse('unattend_event', args=(event.id,))
+
+        response = self.client.post(url, follow=True)
+
+        self.assertRedirects(response, event.get_absolute_url())
+        self.assertInMessages(
+            'Avmeldingsfristen for dette arrangementet har utløpt.', response)
+
+    def test_unattend_event_started(self):
+        event = G(Event, event_start=timezone.now() - timedelta(days=1))
+        G(AttendanceEvent, event=event,
+          unattend_deadline=timezone.now() + timedelta(days=1))
+        attend_user_to_event(event, self.user)
+        url = reverse('unattend_event', args=(event.id,))
+
+        response = self.client.post(url, follow=True)
+
+        self.assertRedirects(response, event.get_absolute_url())
+        self.assertInMessages(
+            'Dette arrangementet har allerede startet.', response)
+
+    def test_unattend_successfully(self):
+        event = G(Event, event_start=timezone.now() + timedelta(days=1))
+        G(AttendanceEvent, event=event,
+          unattend_deadline=timezone.now() + timedelta(days=1))
+        attend_user_to_event(event, self.user)
+        url = reverse('unattend_event', args=(event.id,))
+
+        response = self.client.post(url, follow=True, HTTP_HOST='example.com')
+
+        self.assertRedirects(response, event.get_absolute_url())
+        self.assertInMessages('Du ble meldt av arrangementet.', response)
+
+    def test_unattend_payment_not_refunded(self):
+        event = G(Event, event_start=timezone.now() + timedelta(days=1))
+        G(AttendanceEvent, event=event,
+          unattend_deadline=timezone.now() + timedelta(days=1))
+        attend_user_to_event(event, self.user)
+        generate_payment(event)
+        pay_for_event(event, self.user)
+        url = reverse('unattend_event', args=(event.id,))
+
+        response = self.client.post(url, follow=True, HTTP_HOST='example.com')
+
+        self.assertRedirects(response, event.get_absolute_url())
+        self.assertInMessages(
+            'Du har betalt for arrangementet og må refundere før du kan melde deg av', response)
+
+    def test_unattend_payment_removes_payment_delays(self):
+        event = G(Event, event_start=timezone.now() + timedelta(days=1))
+        G(AttendanceEvent, event=event,
+          unattend_deadline=timezone.now() + timedelta(days=1))
+        attend_user_to_event(event, self.user)
+        payment = generate_payment(event)
+        pay_for_event(event, self.user, refunded=True)
+        payment_delay = add_payment_delay(payment, self.user)
+        url = reverse('unattend_event', args=(event.id,))
+
+        response = self.client.post(url, follow=True, HTTP_HOST='example.com')
+
+        self.assertRedirects(response, event.get_absolute_url())
+        self.assertInMessages('Du ble meldt av arrangementet.', response)
+        self.assertEqual(PaymentDelay.objects.filter(
+            id=payment_delay.id).count(), 0)
