@@ -1,10 +1,13 @@
+import os
+from datetime import timedelta
+from django.utils import timezone
 from django.contrib.auth.models import Group
 from django.core.urlresolvers import reverse
 from django.test import TestCase
 from django_dynamic_fixture import G
 from rest_framework import status
 
-from apps.authentication.models import OnlineUser
+from apps.authentication.models import AllowedUsername, OnlineUser
 
 from ..models import TYPE_CHOICES, AttendanceEvent, Event, Extras, GroupRestriction
 from .utils import (add_payment_delay, add_to_trikom, attend_user_to_event, generate_event,
@@ -20,7 +23,7 @@ class EventsDetailTestMixin:
         G(Group, pk=8, name="triKom")
         G(Group, pk=12, name="Komiteer")
 
-        self.user = G(OnlineUser)
+        self.user = G(OnlineUser, ntnu_username='test')
         self.client.force_login(self.user)
 
         self.event = generate_event(TYPE_CHOICES[0][0])
@@ -190,3 +193,115 @@ class EventsDetailExtras(EventsDetailTestMixin, TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.json()['message'],
                          'Lagret ditt valg')
+
+
+class EventsAttend(EventsDetailTestMixin, TestCase):
+    def setUp(self):
+        super().setUp()
+        os.environ['RECAPTCHA_TESTING'] = 'True'
+
+    def tearDown(self):
+        del os.environ['RECAPTCHA_TESTING']
+
+    def test_attend_404(self):
+        url = reverse('attend_event', args=(1000,))
+
+        response = self.client.post(url)
+
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_attend_not_attendance_event(self):
+        event = G(Event)
+        url = reverse('attend_event', args=(event.id,))
+
+        response = self.client.post(url, follow=True)
+        messages = [str(message) for message in response.context['messages']]
+
+        self.assertRedirects(response, event.get_absolute_url())
+        self.assertIn("Dette er ikke et påmeldingsarrangement.", messages)
+
+    def test_attend_get(self):
+        url = reverse('attend_event', args=(self.event.id,))
+
+        response = self.client.get(url, follow=True)
+        messages = [str(message) for message in response.context['messages']]
+
+        self.assertRedirects(response, self.event.get_absolute_url())
+        self.assertIn("Vennligst fyll ut skjemaet.", messages)
+
+    def test_attend_missing_note(self):
+        form_params = {'g-recaptcha-response': 'PASSED'}
+        url = reverse('attend_event', args=(self.event.id,))
+
+        response = self.client.post(url, form_params, follow=True)
+        messages = [str(message) for message in response.context['messages']]
+
+        self.assertRedirects(response, self.event.get_absolute_url())
+        self.assertIn('Du må fylle inn et notat!', messages)
+
+    def test_attend_not_accepted_rules(self):
+        form_params = {'g-recaptcha-response': 'PASSED'}
+        url = reverse('attend_event', args=(self.event.id,))
+        G(AllowedUsername, username=self.user.ntnu_username,
+          expiration_date=timezone.now() + timedelta(days=1))
+
+        response = self.client.post(url, form_params, follow=True)
+        messages = [str(message) for message in response.context['messages']]
+
+        self.assertRedirects(response, self.event.get_absolute_url())
+        self.assertIn('Du må godta prikkereglene!', messages)
+
+    def test_attend_invalid_captcha(self):
+        url = reverse('attend_event', args=(self.event.id,))
+        form_params = {'g-recaptcha-response': 'WRONG'}
+        G(AllowedUsername, username=self.user.ntnu_username,
+          expiration_date=timezone.now() + timedelta(days=1))
+        self.user.mark_rules = True
+        self.user.save()
+
+        response = self.client.post(url, form_params, follow=True)
+        messages = [str(message) for message in response.context['messages']]
+
+        self.assertRedirects(response, self.event.get_absolute_url())
+        self.assertIn('Du klarte ikke captchaen! Er du en bot?', messages)
+
+    def test_attend_before_registration_start(self):
+        event = G(Event)
+        G(AttendanceEvent, event=event,
+          registration_start=timezone.now() + timedelta(days=1),
+          registration_end=timezone.now() + timedelta(days=2))
+        url = reverse('attend_event', args=(event.id,))
+        # django-recatpcha magic when RECAPTCHA_TESTING=True
+        form_params = {'g-recaptcha-response': 'PASSED'}
+        G(AllowedUsername, username=self.user.ntnu_username,
+          expiration_date=timezone.now() + timedelta(days=1))
+        self.user.mark_rules = True
+        self.user.save()
+
+        response = self.client.post(url, form_params, follow=True)
+        messages = [str(message) for message in response.context['messages']]
+
+        self.assertRedirects(response, event.get_absolute_url())
+        self.assertIn('Påmeldingen har ikke åpnet enda.', messages)
+
+    def test_attend_successfully(self):
+        event = G(Event)
+        G(
+            AttendanceEvent,
+            event=event,
+            registration_start=timezone.now() - timedelta(days=1),
+            registration_end=timezone.now() + timedelta(days=1)
+        )
+        url = reverse('attend_event', args=(event.id,))
+        # django-recatpcha magic when RECAPTCHA_TESTING=True
+        form_params = {'g-recaptcha-response': 'PASSED'}
+        G(AllowedUsername, username=self.user.ntnu_username,
+          expiration_date=timezone.now() + timedelta(days=1))
+        self.user.mark_rules = True
+        self.user.save()
+
+        response = self.client.post(url, form_params, follow=True)
+        messages = [str(message) for message in response.context['messages']]
+
+        self.assertRedirects(response, event.get_absolute_url())
+        self.assertIn('Du er nå meldt på arrangementet.', messages)
