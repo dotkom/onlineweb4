@@ -30,6 +30,10 @@ class EventsTestMixin:
         self.event_url = reverse(
             'events_details', args=(self.event.id, self.event.slug))
 
+    def assertInMessages(self, message_text, response):
+        messages = [str(message) for message in response.context['messages']]
+        self.assertIn(message_text, messages)
+
 
 class EventsDetailRestricted(EventsTestMixin, TestCase):
     def test_ok(self):
@@ -62,10 +66,10 @@ class EventsDetailRestricted(EventsTestMixin, TestCase):
         G(GroupRestriction, event=self.event, groups=[arrkom])
 
         response = self.client.get(self.event_url)
-        messages = [str(message) for message in response.context['messages']]
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertIn("Du har ikke tilgang til dette arrangementet.", messages)
+        self.assertInMessages(
+            "Du har ikke tilgang til dette arrangementet.", response)
 
 
 class EventsDetailPayment(EventsTestMixin, TestCase):
@@ -215,29 +219,27 @@ class EventsAttend(EventsTestMixin, TestCase):
         url = reverse('attend_event', args=(event.id,))
 
         response = self.client.post(url, follow=True)
-        messages = [str(message) for message in response.context['messages']]
 
         self.assertRedirects(response, event.get_absolute_url())
-        self.assertIn("Dette er ikke et påmeldingsarrangement.", messages)
+        self.assertInMessages(
+            'Dette er ikke et påmeldingsarrangement.', response)
 
     def test_attend_get(self):
         url = reverse('attend_event', args=(self.event.id,))
 
         response = self.client.get(url, follow=True)
-        messages = [str(message) for message in response.context['messages']]
 
         self.assertRedirects(response, self.event.get_absolute_url())
-        self.assertIn("Vennligst fyll ut skjemaet.", messages)
+        self.assertInMessages("Vennligst fyll ut skjemaet.", response)
 
     def test_attend_missing_note(self):
         form_params = {'g-recaptcha-response': 'PASSED'}
         url = reverse('attend_event', args=(self.event.id,))
 
         response = self.client.post(url, form_params, follow=True)
-        messages = [str(message) for message in response.context['messages']]
 
         self.assertRedirects(response, self.event.get_absolute_url())
-        self.assertIn('Du må fylle inn et notat!', messages)
+        self.assertInMessages('Du må fylle inn et notat!', response)
 
     def test_attend_not_accepted_rules(self):
         form_params = {'g-recaptcha-response': 'PASSED'}
@@ -246,10 +248,9 @@ class EventsAttend(EventsTestMixin, TestCase):
           expiration_date=timezone.now() + timedelta(days=1))
 
         response = self.client.post(url, form_params, follow=True)
-        messages = [str(message) for message in response.context['messages']]
 
         self.assertRedirects(response, self.event.get_absolute_url())
-        self.assertIn('Du må godta prikkereglene!', messages)
+        self.assertInMessages('Du må godta prikkereglene!', response)
 
     def test_attend_invalid_captcha(self):
         url = reverse('attend_event', args=(self.event.id,))
@@ -260,10 +261,10 @@ class EventsAttend(EventsTestMixin, TestCase):
         self.user.save()
 
         response = self.client.post(url, form_params, follow=True)
-        messages = [str(message) for message in response.context['messages']]
 
         self.assertRedirects(response, self.event.get_absolute_url())
-        self.assertIn('Du klarte ikke captchaen! Er du en bot?', messages)
+        self.assertInMessages(
+            'Du klarte ikke captchaen! Er du en bot?', response)
 
     def test_attend_before_registration_start(self):
         event = G(Event)
@@ -279,10 +280,9 @@ class EventsAttend(EventsTestMixin, TestCase):
         self.user.save()
 
         response = self.client.post(url, form_params, follow=True)
-        messages = [str(message) for message in response.context['messages']]
 
         self.assertRedirects(response, event.get_absolute_url())
-        self.assertIn('Påmeldingen har ikke åpnet enda.', messages)
+        self.assertInMessages('Påmeldingen har ikke åpnet enda.', response)
 
     def test_attend_successfully(self):
         event = G(Event)
@@ -301,7 +301,6 @@ class EventsAttend(EventsTestMixin, TestCase):
         self.user.save()
 
         response = self.client.post(url, form_params, follow=True)
-        messages = [str(message) for message in response.context['messages']]
 
         self.assertRedirects(response, event.get_absolute_url())
-        self.assertIn('Du er nå meldt på arrangementet.', messages)
+        self.assertInMessages('Du er nå meldt på arrangementet.', response)
