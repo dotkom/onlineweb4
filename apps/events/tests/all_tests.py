@@ -35,7 +35,6 @@ class EventTest(TestCase):
         self.event = G(Event, title='Sjakkturnering')
         self.attendance_event = G(AttendanceEvent, event=self.event, max_capacity=2)
         self.user = G(User, username='ola123', ntnu_username='ola123ntnu', first_name="ola", last_name="nordmann")
-        self.attendee = G(Attendee, event=self.attendance_event, user=self.user)
         self.logger = logging.getLogger(__name__)
         # Setting registration start 1 hour in the past, end one week in the future.
         self.now = timezone.now()
@@ -58,6 +57,7 @@ class EventTest(TestCase):
     #
 
     def testAttendeeAndWaitlistQS(self):
+        G(Attendee, event=self.attendance_event, user=self.user)
         self.logger.debug("Testing attendee queryset")
         user1 = G(User, username="jan", first_name="jan")
         G(Attendee, event=self.attendance_event, user=user1)
@@ -78,6 +78,7 @@ class EventTest(TestCase):
         self.assertEqual(self.attendance_event.number_of_reserved_seats_taken, 2)
 
     def testNumberOfTakenSeats(self):
+        G(Attendee, event=self.attendance_event, user=self.user, attended=False)
         # Increase event capacity so we have more room to test with
         self.attendance_event.max_capacity = 5
         self.assertEqual(self.attendance_event.number_of_attendees, 1)
@@ -102,9 +103,10 @@ class EventTest(TestCase):
     #
 
     def testAttendeeUnicodeIsCorrect(self):
+        attendee = G(Attendee, event=self.attendance_event, user=self.user, attended=False)
         self.logger.debug("Testing testing on Attendee with dynamic fixtures")
-        self.assertEqual(self.attendee.__str__(), self.user.get_full_name())
-        self.assertNotEqual(self.attendee.__str__(), 'Ola Normann')
+        self.assertEqual(attendee.__str__(), self.user.get_full_name())
+        self.assertNotEqual(attendee.__str__(), 'Ola Normann')
 
     def testSignUpWithNoRulesNoMarks(self):
         self.logger.debug("Testing signup with no rules and no marks.")
@@ -260,13 +262,11 @@ class EventTest(TestCase):
     #
 
     def testMommyNotAttended(self):
-        self.attendee.attended = False
-        self.attendee.save()
+        G(Attendee, event=self.attendance_event, user=self.user, attended=False)
         self.assertEqual([self.user], self.attendance_event.not_attended())
 
     def testMommyAttended(self):
-        self.attendee.attended = True
-        self.attendee.save()
+        G(Attendee, event=self.attendance_event, user=self.user, attended=True)
         self.assertEqual([], self.attendance_event.not_attended())
 
     def testMommyActiveEvents(self):
@@ -307,8 +307,7 @@ class EventTest(TestCase):
         self.assertFalse(SetEventMarks.active_events())
 
     def testMommySetMarks(self):
-        self.attendee.attended = False
-        self.attendee.save()
+        G(Attendee, event=self.attendance_event, user=self.user, attended=False)
         self.attendance_event.marks_has_been_set = False
         self.attendance_event.automatically_set_marks = True
         self.event.event_end = timezone.now() - datetime.timedelta(days=1)
@@ -321,8 +320,7 @@ class EventTest(TestCase):
         self.assertEqual(self.user, MarkUser.objects.get().user)
 
     def testMommyEveryoneAttendend(self):
-        self.attendee.attended = True
-        self.attendee.save()
+        G(Attendee, event=self.attendance_event, user=self.user, attended=True)
         self.attendance_event.marks_has_been_set = False
         self.attendance_event.automatically_set_marks = True
         self.event.event_end = timezone.now() - datetime.timedelta(days=1)
@@ -335,8 +333,7 @@ class EventTest(TestCase):
         self.assertFalse(MarkUser.objects.all())
 
     def testMommyGenerateEmptyMessage(self):
-        self.attendee.attended = True
-        self.attendee.save()
+        G(Attendee, event=self.attendance_event, user=self.user, attended=True)
         self.attendance_event.marks_has_been_set = False
         self.attendance_event.automatically_set_marks = True
         self.event.event_end = timezone.now() - datetime.timedelta(days=1)
@@ -349,8 +346,7 @@ class EventTest(TestCase):
         self.assertFalse(message.results_message)
 
     def testMommyGenerateMessage(self):
-        self.attendee.attended = False
-        self.attendee.save()
+        G(Attendee, event=self.attendance_event, user=self.user, attended=False)
         self.attendance_event.marks_has_been_set = False
         self.attendance_event.automatically_set_marks = True
         self.event.event_end = timezone.now() - datetime.timedelta(days=1)
