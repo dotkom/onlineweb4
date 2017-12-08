@@ -394,3 +394,23 @@ class EventsUnattend(EventsTestMixin, TestCase):
         self.assertInMessages('Du ble meldt av arrangementet.', response)
         self.assertEqual(PaymentDelay.objects.filter(
             id=payment_delay.id).count(), 0)
+
+
+class EventMailParticipates(EventsTestMixin, TestCase):
+    def setUp(self):
+        super().setUp()
+        self.mail_url = reverse('event_mail_participants', args=(self.event.id,))
+
+    def test_not_attendance_event(self):
+        event = G(Event)
+        url = reverse('event_mail_participants', args=(event.id,))
+
+        response = self.client.get(url, follow=True)
+
+        self.assertInMessages('Dette er ikke et påmeldingsarrangement.', response)
+
+    def test_missing_access(self):
+        response = self.client.get(self.mail_url, follow=True)
+
+        self.assertInMessages(
+            'Du har ikke tilgang til å vise denne siden.', response)
