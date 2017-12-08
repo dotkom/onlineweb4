@@ -346,6 +346,8 @@ def handle_mail_participants(event, _from_email, _to_email_value, subject, _mess
     elif from_email_value == '6':
         from_email = settings.EMAIL_ITEX
 
+    if _to_email_value not in _to_email_options:
+        return False
     # Who to send emails to
     send_to_users = _to_email_options[_to_email_value][0]
 
