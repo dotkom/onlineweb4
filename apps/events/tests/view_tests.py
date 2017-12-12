@@ -2,8 +2,9 @@ import os
 from datetime import timedelta
 
 from django.contrib.auth.models import Group
+from django.core import mail
 from django.core.urlresolvers import reverse
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from django.utils import timezone
 from django_dynamic_fixture import G
 from rest_framework import status
@@ -11,9 +12,9 @@ from rest_framework import status
 from apps.authentication.models import AllowedUsername, OnlineUser
 from apps.payment.models import PaymentDelay
 
-from ..models import AttendanceEvent, Event, Extras, GroupRestriction
-from .utils import (add_payment_delay, add_to_trikom, attend_user_to_event, generate_event,
-                    generate_payment, pay_for_event)
+from ..models import TYPE_CHOICES, AttendanceEvent, Event, Extras, GroupRestriction
+from .utils import (add_payment_delay, add_to_arrkom, add_to_trikom, attend_user_to_event,
+                    generate_event, generate_payment, pay_for_event)
 
 
 class EventsTestMixin:
@@ -394,3 +395,106 @@ class EventsUnattend(EventsTestMixin, TestCase):
         self.assertInMessages('Du ble meldt av arrangementet.', response)
         self.assertEqual(PaymentDelay.objects.filter(
             id=payment_delay.id).count(), 0)
+
+
+class EventMailParticipates(EventsTestMixin, TestCase):
+    def setUp(self):
+        super().setUp()
+        self.mail_url = reverse(
+            'event_mail_participants', args=(self.event.id,))
+
+    def test_not_attendance_event(self):
+        event = G(Event)
+        url = reverse('event_mail_participants', args=(event.id,))
+
+        response = self.client.get(url, follow=True)
+
+        self.assertInMessages(
+            'Dette er ikke et påmeldingsarrangement.', response)
+        self.assertEqual(len(mail.outbox), 0)
+
+    def test_missing_access(self):
+        response = self.client.get(self.mail_url, follow=True)
+
+        self.assertInMessages(
+            'Du har ikke tilgang til å vise denne siden.', response)
+        self.assertEqual(len(mail.outbox), 0)
+
+    def test_get_as_arrkom(self):
+        add_to_arrkom(self.user)
+        event = generate_event(TYPE_CHOICES[0][0])
+        url = reverse('event_mail_participants', args=(event.id,))
+
+        response = self.client.get(url)
+
+        self.assertEqual(response.context['event'], event)
+        self.assertEqual(len(mail.outbox), 0)
+
+    def test_post_as_arrkom_missing_data(self):
+        add_to_arrkom(self.user)
+        event = generate_event(TYPE_CHOICES[0][0])
+        url = reverse('event_mail_participants', args=(event.id,))
+
+        response = self.client.post(url)
+
+        self.assertEqual(response.context['event'], event)
+        self.assertInMessages(
+            'Vi klarte ikke å sende mailene dine. Prøv igjen', response)
+        self.assertEqual(len(mail.outbox), 0)
+
+    @override_settings(EMAIL_ARRKOM='arrkom@online.ntnu.no')
+    def test_post_as_arrkom_successfully(self):
+        add_to_arrkom(self.user)
+        event = generate_event(TYPE_CHOICES[0][0])
+        url = reverse('event_mail_participants', args=(event.id,))
+
+        response = self.client.post(url, {
+            'from_email': '1',
+            'to_email': '1',
+            'subject': 'Test',
+            'message': 'Test message'
+        })
+
+        self.assertEqual(response.context['event'], event)
+        self.assertInMessages(
+            'Mailen ble sendt', response)
+        self.assertEqual(mail.outbox[0].from_email, 'arrkom@online.ntnu.no')
+        self.assertEqual(mail.outbox[0].subject, 'Test')
+        self.assertIn('Test message', mail.outbox[0].body)
+
+    def test_post_as_arrkom_invalid_from_email_defaults_to_kontakt(self):
+        add_to_arrkom(self.user)
+        event = generate_event(TYPE_CHOICES[0][0])
+        url = reverse('event_mail_participants', args=(event.id,))
+
+        response = self.client.post(url, {
+            'from_email': '1000',
+            'to_email': '1',
+            'subject': 'Test',
+            'message': 'Test message'
+        })
+
+        self.assertEqual(response.context['event'], event)
+        self.assertInMessages(
+            'Mailen ble sendt', response)
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(mail.outbox[0].from_email, 'kontakt@online.ntnu.no')
+        self.assertEqual(mail.outbox[0].subject, 'Test')
+        self.assertIn('Test message', mail.outbox[0].body)
+
+    def test_post_as_arrkom_invalid_to_email(self):
+        add_to_arrkom(self.user)
+        event = generate_event(TYPE_CHOICES[0][0])
+        url = reverse('event_mail_participants', args=(event.id,))
+
+        response = self.client.post(url, {
+            'from_email': '1',
+            'to_email': '1000',
+            'subject': 'Test',
+            'message': 'Test message'
+        })
+
+        self.assertEqual(response.context['event'], event)
+        self.assertInMessages(
+            'Vi klarte ikke å sende mailene dine. Prøv igjen', response)
+        self.assertEqual(len(mail.outbox), 0)

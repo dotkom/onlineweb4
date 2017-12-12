@@ -320,7 +320,7 @@ def mail_participants(request, event_id):
     event = get_object_or_404(Event, pk=event_id)
 
     # If this is not an attendance event, redirect to event with error
-    if not event.attendance_event:
+    if not event.is_attendance_event():
         messages.error(request, _("Dette er ikke et påmeldingsarrangement."))
         return redirect(event)
 
