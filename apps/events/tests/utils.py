@@ -3,6 +3,7 @@ from django.contrib.contenttypes.models import ContentType
 from django_dynamic_fixture import G
 from guardian.shortcuts import assign_perm, get_perms_for_model
 
+from apps.authentication.models import OnlineUser
 from apps.payment.models import Payment, PaymentDelay, PaymentRelation
 
 from ..models import TYPE_CHOICES, AttendanceEvent, Attendee, Event
@@ -16,11 +17,13 @@ def generate_event(event_type=TYPE_CHOICES[1][0]):
     return event
 
 
-def generate_payment(event):
+def generate_payment(event, *args, **kwargs):
     return G(
         Payment,
         object_id=event.id,
-        content_type=ContentType.objects.get_for_model(AttendanceEvent)
+        content_type=ContentType.objects.get_for_model(AttendanceEvent),
+        *args,
+        **kwargs
     )
 
 
@@ -48,6 +51,14 @@ def add_payment_delay(payment, user):
         payment=payment,
         user=user
     )
+
+
+def generate_user(username):
+    return G(OnlineUser, username=username, ntnu_username=username)
+
+
+def generate_attendee(event, username):
+    return attend_user_to_event(event, generate_user(username))
 
 
 def add_to_committee(user, group=None):
