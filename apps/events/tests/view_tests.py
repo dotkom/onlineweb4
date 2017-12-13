@@ -305,6 +305,28 @@ class EventsAttend(EventsTestMixin, TestCase):
         self.assertRedirects(response, event.get_absolute_url())
         self.assertInMessages('Du er nå meldt på arrangementet.', response)
 
+    def test_attend_twice(self):
+        event = G(Event)
+        G(
+            AttendanceEvent,
+            event=event,
+            registration_start=timezone.now() - timedelta(days=1),
+            registration_end=timezone.now() + timedelta(days=1)
+        )
+        url = reverse('attend_event', args=(event.id,))
+        # django-recatpcha magic when RECAPTCHA_TESTING=True
+        form_params = {'g-recaptcha-response': 'PASSED'}
+        G(AllowedUsername, username=self.user.ntnu_username,
+          expiration_date=timezone.now() + timedelta(days=1))
+        self.user.mark_rules = True
+        self.user.save()
+
+        self.client.post(url, form_params, follow=True)
+        response = self.client.post(url, form_params, follow=True)
+
+        self.assertRedirects(response, event.get_absolute_url())
+        self.assertInMessages('Du er allerede meldt på dette arrangementet.', response)
+
 
 class EventsUnattend(EventsTestMixin, TestCase):
     def test_unattend_not_attended(self):
