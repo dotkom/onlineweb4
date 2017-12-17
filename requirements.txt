@@ -65,4 +65,4 @@ django-sekizai==0.10.0
 # Monitoring
 raven==6.4.0
 
-django-js-reverse==0.7.3
+django-js-reverse==0.8.1
