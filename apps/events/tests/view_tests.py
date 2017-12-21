@@ -7,14 +7,16 @@ from django.core.urlresolvers import reverse
 from django.test import TestCase, override_settings
 from django.utils import timezone
 from django_dynamic_fixture import G
+from freezegun import freeze_time
 from rest_framework import status
 
-from apps.authentication.models import AllowedUsername, OnlineUser
+from apps.authentication.models import AllowedUsername
 from apps.payment.models import PaymentDelay
 
 from ..models import TYPE_CHOICES, AttendanceEvent, Event, Extras, GroupRestriction
 from .utils import (add_payment_delay, add_to_arrkom, add_to_trikom, attend_user_to_event,
-                    generate_event, generate_payment, pay_for_event)
+                    generate_attendee, generate_event, generate_payment, generate_user,
+                    pay_for_event)
 
 
 class EventsTestMixin:
@@ -23,7 +25,7 @@ class EventsTestMixin:
         G(Group, pk=8, name="triKom")
         G(Group, pk=12, name="Komiteer")
 
-        self.user = G(OnlineUser, ntnu_username='test')
+        self.user = generate_user('test')
         self.client.force_login(self.user)
 
         self.event = generate_event()
@@ -325,7 +327,26 @@ class EventsAttend(EventsTestMixin, TestCase):
         response = self.client.post(url, form_params, follow=True)
 
         self.assertRedirects(response, event.get_absolute_url())
-        self.assertInMessages('Du er allerede meldt på dette arrangementet.', response)
+        self.assertInMessages(
+            'Du er allerede meldt på dette arrangementet.', response)
+
+    def test_attend_with_payment_creates_paymentdelay(self):
+        event = G(Event)
+        G(AttendanceEvent, event=event,
+            registration_start=timezone.now() - timedelta(days=1),
+            registration_end=timezone.now() + timedelta(days=1))
+        generate_payment(event, payment_type=3)
+        url = reverse('attend_event', args=(event.id,))
+        # django-recatpcha magic when RECAPTCHA_TESTING=True
+        form_params = {'g-recaptcha-response': 'PASSED'}
+        G(AllowedUsername, username=self.user.ntnu_username,
+          expiration_date=timezone.now() + timedelta(days=1))
+        self.user.mark_rules = True
+        self.user.save()
+
+        self.client.post(url, form_params, follow=True)
+
+        self.assertTrue(PaymentDelay.objects.filter(user=self.user).exists())
 
 
 class EventsUnattend(EventsTestMixin, TestCase):
@@ -417,6 +438,102 @@ class EventsUnattend(EventsTestMixin, TestCase):
         self.assertInMessages('Du ble meldt av arrangementet.', response)
         self.assertEqual(PaymentDelay.objects.filter(
             id=payment_delay.id).count(), 0)
+
+
+class EventsUnattendWaitlist(TestCase):
+    def setUp(self):
+        self.event = G(Event, event_start=timezone.now() + timedelta(days=1))
+        G(AttendanceEvent, event=self.event,
+          unattend_deadline=timezone.now() + timedelta(days=1),
+          max_capacity=2, waitlist=True)
+        self.user = generate_user('test')
+        self.client.force_login(self.user)
+        self.other_user = generate_user('other')
+        self.url = reverse('unattend_event', args=(self.event.id,))
+
+    def test_unattend_notifies_waitlist_when_attending(self):
+        generate_attendee(self.event, 'user1')
+        attend_user_to_event(self.event, self.user)
+        generate_attendee(self.event, 'user2')
+        generate_attendee(self.event, 'user3')
+
+        self.client.post(self.url, follow=True, HTTP_HOST='example.com')
+
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertIn('Du har fått plass på', mail.outbox[0].subject)
+
+    def test_unattend_does_not_notify_waitlist_when_on_waitlist(self):
+        generate_attendee(self.event, 'user1')
+        generate_attendee(self.event, 'user2')
+        attend_user_to_event(self.event, self.user)
+        generate_attendee(self.event, 'user3')
+
+        self.client.post(self.url, follow=True, HTTP_HOST='example.com')
+
+        self.assertEqual(len(mail.outbox), 0)
+
+    @freeze_time("2017-01-01 12:00")
+    def test_payment_type_instant_uses_extended(self):
+        generate_payment(self.event, payment_type=1)
+        generate_attendee(self.event, 'user1')
+        attend_user_to_event(self.event, self.user)
+        attend_user_to_event(self.event, self.other_user)
+        generate_attendee(self.event, 'user3')
+        payment_delay_time = timedelta(days=2)
+
+        self.client.post(self.url, follow=True, HTTP_HOST='example.com')
+
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertIn('Du har fått plass på', mail.outbox[0].subject)
+        payment_delay = PaymentDelay.objects.get(user=self.other_user)
+        self.assertEqual(payment_delay.valid_to, timezone.now() + payment_delay_time)
+
+    def test_payment_delay_is_not_created_if_deadline_over_48_hours(self):
+        generate_payment(self.event, payment_type=2, deadline=timezone.now() + timedelta(days=3))
+        generate_attendee(self.event, 'user1')
+        attend_user_to_event(self.event, self.user)
+        attend_user_to_event(self.event, self.other_user)
+        generate_attendee(self.event, 'user3')
+
+        self.client.post(self.url, follow=True, HTTP_HOST='example.com')
+
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertIn('Du har fått plass på', mail.outbox[0].subject)
+        payment_delay = PaymentDelay.objects.filter(user=self.other_user)
+        self.assertFalse(payment_delay.exists())
+
+    @freeze_time("2017-01-01 12:00")
+    def test_payment_delay_is_created_if_deadline_under_48_hours(self):
+        generate_payment(self.event, payment_type=2, deadline=timezone.now() + timedelta(hours=47))
+        generate_attendee(self.event, 'user1')
+        attend_user_to_event(self.event, self.user)
+        attend_user_to_event(self.event, self.other_user)
+        generate_attendee(self.event, 'user3')
+        payment_delay_time = timedelta(days=2)
+
+        self.client.post(self.url, follow=True, HTTP_HOST='example.com')
+
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertIn('Du har fått plass på', mail.outbox[0].subject)
+        payment_delay = PaymentDelay.objects.get(user=self.other_user)
+        self.assertEqual(payment_delay.valid_to, timezone.now() + payment_delay_time)
+
+    @freeze_time("2017-01-01 12:00")
+    def test_payment_type_delay_uses_payment_delay(self):
+        delay_days = 4
+        payment_delay_time = timedelta(days=delay_days)
+        generate_payment(self.event, payment_type=3, delay=delay_days)
+        generate_attendee(self.event, 'user1')
+        attend_user_to_event(self.event, self.user)
+        attend_user_to_event(self.event, self.other_user)
+        generate_attendee(self.event, 'user3')
+
+        self.client.post(self.url, follow=True, HTTP_HOST='example.com')
+
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertIn('Du har fått plass på', mail.outbox[0].subject)
+        payment_delay = PaymentDelay.objects.get(user=self.other_user)
+        self.assertEqual(payment_delay.valid_to, timezone.now() + payment_delay_time)
 
 
 class EventMailParticipates(EventsTestMixin, TestCase):
