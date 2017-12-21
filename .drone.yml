@@ -43,17 +43,6 @@ pipeline:
     commands:
       - npm run lint-less
 
-  python-tests:
-    image: registry.online.ntnu.no/dotkom/onlineweb4-testbase
-    secrets: [codecov_token]
-    when:
-      event: push
-    group: testing
-    commands:
-      - tox -e tests
-      - pip install codecov --quiet
-      - codecov
-
   python-lint:
     image: registry.online.ntnu.no/dotkom/onlineweb4-testbase
     when:
@@ -61,6 +50,16 @@ pipeline:
     group: testing
     commands:
       - tox -e flake8 -e isort
+
+  python-tests:
+    image: registry.online.ntnu.no/dotkom/onlineweb4-testbase
+    secrets: [codecov_token]
+    when:
+      event: push
+    commands:
+      - tox -e tests
+      - pip install codecov --quiet
+      - codecov
 
   rebuild-cache:
     image: drillster/drone-volume-cache
