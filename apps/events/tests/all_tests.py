@@ -10,7 +10,6 @@ from django.test import TestCase, override_settings
 from django.utils import timezone
 from django_dynamic_fixture import G
 from rest_framework import status
-from rest_framework.test import APITestCase
 
 from apps.authentication.models import OnlineUser as User
 from apps.authentication.models import AllowedUsername
@@ -480,31 +479,6 @@ class EventsURLTestCase(TestCase):
         event = create_generic_event()
 
         url = reverse('event_ics', args=(event.id,))
-
-        response = self.client.get(url)
-
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-
-class EventsAPIURLTestCase(APITestCase):
-    def test_events_list_empty(self):
-        url = reverse('events-list')
-
-        response = self.client.get(url)
-
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-    def test_events_list_exists(self):
-        create_generic_event()
-        url = reverse('events-list')
-
-        response = self.client.get(url)
-
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-    def test_events_detail(self):
-        event = create_generic_event()
-        url = reverse('events-detail', args=(event.id,))
 
         response = self.client.get(url)
 
