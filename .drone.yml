@@ -5,7 +5,7 @@ pipeline:
       event: push
     restore: true
     mount:
-      - ./pip-cache
+      - ./.tox
       - ./node_modules
     volumes:
       - /tmp/cache:/cache
@@ -17,6 +17,7 @@ pipeline:
     commands:
       - cp onlineweb4/settings/example-local.py onlineweb4/settings/local.py
       - npm install --depth=0 --quiet
+      - pip install tox
 
   npm-build:
     image: registry.online.ntnu.no/dotkom/onlineweb4-testbase
@@ -49,12 +50,17 @@ pipeline:
       event: push
     group: testing
     commands:
-      - pip install -r requirements.txt -r requirements-testing.txt --quiet --cache-dir pip-cache
-      - isort -c -rc apps middleware scripts utils
-      - flake8 apps middleware scripts utils
-      - py.test --cov=apps
+      - tox -e tests
       - pip install codecov --quiet
       - codecov
+
+  python-lint:
+    image: registry.online.ntnu.no/dotkom/onlineweb4-testbase
+    when:
+      event: push
+    group: testing
+    commands:
+      - tox -e flake8 -e isort
 
   rebuild-cache:
     image: drillster/drone-volume-cache
@@ -62,7 +68,7 @@ pipeline:
       event: push
     rebuild: true
     mount:
-      - ./pip-cache
+      - ./.tox
       - ./node_modules
     volumes:
       - /tmp/cache:/cache
