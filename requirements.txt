@@ -1,7 +1,7 @@
 Django==2.0
 Pillow==4.3.0                   # PIL fork (Python Imaging Library)
 django-tastypie==0.14.0         # API v0
-djangorestframework==3.7.4      # API v1
+djangorestframework==3.7.5      # API v1
 django-filter==1.1.0            # Filtering for DRF
 # python-memcached==1.57          # Memcache. Used by Mailinglists to fetch from Sympa.
 # Upstream is missing Python 3 patches
