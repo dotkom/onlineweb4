@@ -37,6 +37,11 @@ class PaymentTest(TestCase):
         )
         self.payment_price = G(PaymentPrice, price=200, payment=self.event_payment)
 
+    def simulate_user_payment(self, user):
+        G(PaymentRelation, payment=self.event_payment,
+          user=user, payment_price=self.payment_price)
+        self.event_payment.handle_payment(user)
+
     def testPaymentCreation(self):
         PaymentRelation.objects.create(
             payment=self.event_payment,
@@ -144,18 +149,42 @@ class PaymentTest(TestCase):
     # Mommy
 
     def testEventMommyNotPaid(self):
-        G(Attendee, event=self.attendance_event, user=self.user)
-        attendees = [attendee.user for attendee in Attendee.objects.all()]
+        user1 = G(User)
+        user2 = G(User)
+        G(Attendee, event=self.attendance_event, user=user1)
+        G(Attendee, event=self.attendance_event, user=user2)
+        self.simulate_user_payment(user1)
+
         not_paid = PaymentReminder.not_paid(self.event_payment)
 
-        self.assertEqual(attendees, not_paid)
+        self.assertEqual([user2], not_paid)
 
     def testEventMommyPaid(self):
-        G(Attendee, event=self.attendance_event, user=self.user)
-        G(PaymentRelation, payment=self.event_payment, user=self.user, payment_price=self.payment_price)
+        user1 = G(User)
+        user2 = G(User)
+        G(Attendee, event=self.attendance_event, user=user1)
+        G(Attendee, event=self.attendance_event, user=user2)
+        self.simulate_user_payment(user1)
+        self.simulate_user_payment(user2)
+
         not_paid = PaymentReminder.not_paid(self.event_payment)
 
         self.assertFalse(not_paid)
+
+    def testEventMommyPaidWithDelays(self):
+        user1 = G(User)
+        user2 = G(User)
+        user3 = G(User)
+        G(Attendee, event=self.attendance_event, user=user1)
+        G(Attendee, event=self.attendance_event, user=user2)
+        G(Attendee, event=self.attendance_event, user=user3)
+        G(PaymentDelay, payment=self.event_payment, user=user2,
+          valid_to=timezone.now() + timedelta(days=1))
+        self.simulate_user_payment(user3)
+
+        not_paid = PaymentReminder.not_paid(self.event_payment)
+
+        self.assertEqual([user1], not_paid)
 
     def testEventMommyNotPaidMailAddress(self):
         G(Attendee, event=self.attendance_event, user=self.user)

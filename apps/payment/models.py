@@ -54,9 +54,6 @@ class Payment(models.Model):
     changed_date = models.DateTimeField(auto_now=True, editable=False)
     last_changed_by = models.ForeignKey(User, editable=False, null=True)  # Blank and null is temperarly
 
-    def paid_users(self):
-        return [payment_relation.user for payment_relation in self.paymentrelation_set.filter(refunded=False)]
-
     def payment_delays(self):
         return self.paymentdelay_set.filter(active=True)
 
