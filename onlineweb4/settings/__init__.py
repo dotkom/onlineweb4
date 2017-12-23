@@ -1,11 +1,14 @@
 import sys
-import os
 
-if not os.path.exists(os.path.join(os.path.dirname(globals()['__file__']), 'base.py')):
-    sys.stderr.write("Failed to locate the base settings file. Quitting.\n")
-    sys.exit(1)
+
+from onlineweb4.settings.base import *
+from onlineweb4.settings.django_wiki import *
+from onlineweb4.settings.filebrowser import *
+from onlineweb4.settings.raven import *
+
 try:
-    from onlineweb4.settings.base import *
+    from onlineweb4.settings.local import *
 except ImportError as e:
-    sys.stderr.write("Failed to import from the base settings file. Quitting.\n" + str(e) + "\n")
-    sys.exit(1)
+    # No local settings file found.
+    # You can still override using environment variables.
+    pass

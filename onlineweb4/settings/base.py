@@ -524,18 +524,3 @@ WEBPACK_LOADER = {
         'BUNDLE_DIR_NAME': 'webpack/'  # end with slash
     }
 }
-
-# Remember to keep 'local' last, so it can override any setting.
-for settings_module in ['filebrowser', 'django_wiki',  'raven', 'local']:  # local last
-    if not os.path.exists(os.path.join(PROJECT_SETTINGS_DIRECTORY,
-            settings_module + ".py")):
-        if settings_module == 'local':
-            # If missing local settings, skip
-            continue
-        else:
-            sys.stderr.write("Could not find settings module '%s'.\n" % settings_module)
-            sys.exit(1)
-    try:
-        exec('from .%s import *' % settings_module)
-    except ImportError as e:
-        print("Could not import settings for '%s' : %s" % (settings_module, str(e)))
