@@ -20,11 +20,9 @@
 import django
 import os
 import sys
-from django.conf import settings
 
 sys.path.insert(0, os.path.abspath('../'))
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "onlineweb4.settings")
-#settings.configure()
 django.setup()
 
 # -- General configuration ------------------------------------------------
