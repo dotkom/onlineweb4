@@ -7,10 +7,32 @@ Welcome to onlineweb4's documentation!
 ======================================
 
 .. toctree::
-   :maxdepth: 2
+    :maxdepth: 2
 
-   authentication/index
-   payment/index
+    authentication/index
+    careeropportunity/index
+    companyprofile/index
+    contact/index
+    dashboard/index
+    events/index
+    feedback/index
+    gallery/index
+    gsuite/index
+    hobbygroups/index
+    inventory/index
+    marks/index
+    mommy/index
+    offline/index
+    payment/index
+    posters/index
+    profiles/index
+    resourcecenter/index
+    shop/index
+    slack/index
+    splash/index
+    sso/index
+    webshop/index
+
 
 Indices and tables
 ==================
