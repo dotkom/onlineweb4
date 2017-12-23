@@ -35,10 +35,7 @@ class Payment(models.Model):
     content_type = models.ForeignKey(ContentType)
     """Which model the payment is created for. For attendance events this should be event."""
     object_id = models.PositiveIntegerField()
-    """
-    Object id for the model chosen in content_type.
-    For events this should be the event id and not attendance event id.
-    """
+    """Object id for the model chosen in content_type."""
     content_object = GenericForeignKey()
     """Helper attribute which points to the object select in object_id"""
     stripe_key = models.CharField(
