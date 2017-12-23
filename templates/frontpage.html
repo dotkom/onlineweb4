@@ -4,8 +4,6 @@
 {% load render_bundle from webpack_loader %}
 
 
-{% block title %}Online, linjeforeningen for informatikk ved NTNU{% endblock title %}
-
 {% block styles %}
     {{ block.super }}
     {% render_bundle 'frontpage' 'css' %}
