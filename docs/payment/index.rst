@@ -41,7 +41,7 @@ Attendance
 
 Depending on which :attr:`~apps.payment.models.Payment.payment_type` was selected three different things can happen.
 
-- **Immidiate**: Nothing? (Should be looked into)
+- **Immediate**: Nothing? (Should be looked into)
 - **Deadline**: Nothing? (Should be looked into)
 - **Delay**: :class:`~apps.payment.models.PaymentDelay` is created using :attr:`~apps.payment.models.Payment.delay`.
 
@@ -57,7 +57,7 @@ Waitlist bump
 
 Depending on which :attr:`~apps.payment.models.Payment.payment_type` was selected three different things can happen.
 
-- **Immidiate**: :class:`~apps.payment.models.PaymentDelay` is created with a delay of two days
+- **Immediate**: :class:`~apps.payment.models.PaymentDelay` is created with a delay of two days
 - **Deadline**: :class:`~apps.payment.models.PaymentDelay` is created with a delay of :attr:`~apps.payment.models.Payment.deadline` or a minimum of two days.
 - **Delay**: :class:`~apps.payment.models.PaymentDelay` is created using :attr:`~apps.payment.models.Payment.delay`.
 

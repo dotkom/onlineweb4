@@ -54,7 +54,7 @@ class Payment(models.Model):
         Which payment type to use for payments.
         Can be one of the following:
 
-        - Immidiate
+        - Immediate
         - Deadline. See :attr:`deadline`
         - Delay. See :attr:`delay`
     """
