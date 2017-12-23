@@ -185,3 +185,5 @@ intersphinx_mapping = {
                'https://docs.djangoproject.com/en/1.11/_objects/'),
     'sphinx': ('http://sphinx.readthedocs.org/en/latest/', None),
 }
+
+autodoc_default_flags = ['members', 'show-inheritance']
