@@ -33,26 +33,46 @@ class Payment(models.Model):
     )
 
     content_type = models.ForeignKey(ContentType)
+    """Which model the payment is created for. For attendance events this should be event."""
     object_id = models.PositiveIntegerField()
+    """
+    Object id for the model chosen in content_type.
+    For events this should be the event id and not attendance event id.
+    """
     content_object = GenericForeignKey()
+    """Helper attribute which points to the object select in object_id"""
     stripe_key = models.CharField(
         _('stripe key'),
         max_length=10,
         choices=STRIPE_KEY_CHOICES,
         default="arrkom"
     )
+    """Which Stripe key to use for payments"""
 
     payment_type = models.SmallIntegerField(_('type'), choices=TYPE_CHOICES)
+    """
+        Which payment type to use for payments.
+        Can be one of the following:
 
-    # Optional fields depending on payment type
+        - Immidiate
+        - Deadline. See :attr:`deadline`
+        - Delay. See :attr:`delay`
+    """
+
     deadline = models.DateTimeField(_("frist"), blank=True, null=True)
+    """Shared deadline for all payments"""
     active = models.BooleanField(default=True)
+    """Is payment activated"""
     delay = models.SmallIntegerField(_('utsettelse'), blank=True, null=True, default=2)
+    """Number of days before user has to pay"""
 
     # For logging and history
     added_date = models.DateTimeField(_("opprettet dato"), auto_now=True)
+    """Day of payment creation. Automatically set"""
     changed_date = models.DateTimeField(auto_now=True, editable=False)
+    """Last changed. Automatically set"""
     last_changed_by = models.ForeignKey(User, editable=False, null=True)  # Blank and null is temperarly
+    """User who last changed payment. Automatically set"""
 
     def payment_delays(self):
         return self.paymentdelay_set.filter(active=True)
@@ -61,6 +81,13 @@ class Payment(models.Model):
         return [payment_delay.user for payment_delay in self.payment_delays()]
 
     def create_payment_delay(self, user, deadline):
+        """
+        Method for creating a payment delay for user with a set deadline.
+        If a PaymentDelay already exsists it is updated with new deadline.
+
+        :param OnlineUser user: User to create payment delay for
+        :param datetime.datetime deadline: Payment delay deadline
+        """
         payment_delays = self.paymentdelay_set.filter(payment=self, user=user)
 
         if payment_delays:
@@ -100,6 +127,13 @@ class Payment(models.Model):
             return settings.DEFAULT_FROM_EMAIL
 
     def handle_payment(self, user):
+        """
+        Method for handling payments from user.
+        Deletes any relevant payment delays, suspensions and marks user's attendee object as paid.
+
+        :param OnlineUser user: User who paid
+
+        """
         if self._is_type(AttendanceEvent):
             attendee = Attendee.objects.filter(event=self.content_object, user=user)
 
@@ -121,6 +155,13 @@ class Payment(models.Model):
                 Attendee.objects.create(event=self.content_object, user=user, paid=True)
 
     def handle_refund(self, host, payment_relation):
+        """
+        Method for handling refunds.
+        For events it deletes the Attendee object.
+
+        :param str host: hostname to include in email
+        :param PaymentRelation payment_relation: user payment to refund
+        """
         payment_relation.refunded = True
         payment_relation.save()
 
@@ -131,6 +172,7 @@ class Payment(models.Model):
                                  user=payment_relation.user).delete()
 
     def check_refund(self, payment_relation):
+        """Method for checking if the payment can be refunded"""
         if self._is_type(AttendanceEvent):
             attendance_event = self.content_object
             if attendance_event.unattend_deadline < timezone.now():
@@ -168,8 +210,11 @@ class Payment(models.Model):
 
 class PaymentPrice(models.Model):
     payment = models.ForeignKey(Payment)
+    """Payment object"""
     price = models.IntegerField(_("pris"))
+    """Price in NOK"""
     description = models.CharField(max_length=128, null=True, blank=True)
+    """Description of price"""
 
     def __str__(self):
         if not self.description:
@@ -182,14 +227,23 @@ class PaymentPrice(models.Model):
 
 
 class PaymentRelation(models.Model):
+    """Payment metadata for user"""
+
     payment = models.ForeignKey(Payment)
+    """Payment object"""
     payment_price = models.ForeignKey(PaymentPrice)
+    """Price object"""
     user = models.ForeignKey(User)
+    """User who paid"""
     datetime = models.DateTimeField(auto_now=True)
+    """Datetime when payment was created"""
     refunded = models.BooleanField(default=False)
+    """Has payment been refunded"""
 
     unique_id = models.CharField(max_length=128, null=True, blank=True)
+    """Unique ID for payment"""
     stripe_id = models.CharField(max_length=128)
+    """ID from Stripe payment"""
 
     def save(self, *args, **kwargs):
         if not self.unique_id:
@@ -205,11 +259,16 @@ class PaymentRelation(models.Model):
 
 
 class PaymentDelay(models.Model):
+    """User specific payment deadline"""
     payment = models.ForeignKey(Payment)
+    """Payment object"""
     user = models.ForeignKey(User)
+    """User object"""
     valid_to = models.DateTimeField()
+    """Payment deadline"""
 
     active = models.BooleanField(default=True)
+    """Is payment delay active"""
 
     def __str__(self):
         return self.payment.description() + " - " + str(self.user)
@@ -222,11 +281,16 @@ class PaymentDelay(models.Model):
 
 
 class PaymentTransaction(models.Model):
+    """Transaction for a user"""
     user = models.ForeignKey(User)
+    """User object"""
     amount = models.IntegerField(null=True, blank=True)
+    """Amount in NOK"""
     used_stripe = models.BooleanField(default=False)
+    """Was transaction paid for using Stripe"""
 
     datetime = models.DateTimeField(auto_now=True)
+    """Transaction creation datetime. Automatically generated."""
 
     def __str__(self):
         return str(self.user) + " - " + str(self.amount) + "(" + str(self.datetime) + ")"

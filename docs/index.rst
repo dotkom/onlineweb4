@@ -8,9 +8,9 @@ Welcome to onlineweb4's documentation!
 
 .. toctree::
    :maxdepth: 2
-   
+
    authentication/index
-   events
+   payment/index
 
 Indices and tables
 ==================
