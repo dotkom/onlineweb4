@@ -61,7 +61,7 @@ class Payment(models.Model):
     active = models.BooleanField(default=True)
     """Is payment activated"""
     delay = models.SmallIntegerField(_('utsettelse'), blank=True, null=True, default=2)
-    """Number of days before user has to pay"""
+    """Number of days after user attended which they have to pay."""
 
     # For logging and history
     added_date = models.DateTimeField(_("opprettet dato"), auto_now=True)
