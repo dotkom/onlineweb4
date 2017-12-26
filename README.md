@@ -71,3 +71,13 @@ The project should now be available at [http://localhost:8000](http://localhost:
 Pushes made to the develop branch will trigger a redeployment of the application on [dev.online.ntnu.no](https://dev.online.ntnu.no).
 
 Pull requests trigger containerized builds that perform code style checks and tests. You can view the details of these tests by clicking the "detail" link in the pull request checks status area.
+
+## Tools
+
+Builds will fail if our requirements for code style is not met. To ensure that you adhere to our code guidelines, we recommend you run linting tools locally before pushing your code. Running `make test` will run our tests and linters all at once. Look to our [Makefile](https://github.com/dotkom/onlineweb4/blob/86ef0e267bdad3346a705551d2a3d377b2802d81/Makefile#L55) for more specific commands.
+
+Running `make test` frequently can be quite inefficient, which is why we recommend using editors that support linting your code as you go. For JavaScript, we use [ESLint](https://eslint.org/docs/about/), with editor plugins available [here](https://eslint.org/docs/user-guide/integrations). Correspondingly, we use [stylelint](https://stylelint.io) for our stylesheets, with editor plugins available [here](https://github.com/stylelint/stylelint/blob/master/docs/user-guide/complementary-tools.md#editor-plugins). For Python, we use [isort](https://github.com/timothycrosley/isort) and [Flake8](http://flake8.pycqa.org/).
+
+### Our recommendation
+
+In dotkom, we find that [PyCharm](https://www.jetbrains.com/pycharm/) is a great IDE that is well suited for contributing to onlineweb4. It'll come with support for ESLint, stylelint, and PEP 8 out of the box, and can be set up to run isort and Flake8 with some ease. We recommend it to our beginners who don't want to spend a lot of time setting up the plugins or extensions mentioned above, or don't have any preferences of their own yet. It also comes with a ridiculously long list of features that make developing onlineweb4 more efficient. Last, but not least, you can apply for a free student license [here](https://www.jetbrains.com/student/).
