@@ -1,6 +1,32 @@
 /* Navbar
 -------------------------------------------------- */
+@dropdown-link-active-color:     #fff;
+@dropdown-link-active-bg:        @component-active-bg;
+
+@dropdown-link-hover-color:      #fff;
+@dropdown-link-hover-bg:         @dropdown-link-active-bg;
+
 @navbar-height:                    57px;
+
+@navbar-default-color:             #fff;
+@navbar-default-bg:                #004b80;
+
+@navbar-default-link-color:                #fff;
+@navbar-default-link-hover-color:          #fff;
+@navbar-default-link-hover-bg:             rgba(255,255,255,0.1);
+@navbar-default-link-active-color:         #fff;
+@navbar-default-link-active-bg:            transparent;
+
+@navbar-default-brand-hover-color:         darken(@navbar-default-link-color, 10%);
+@nav-pills-active-link-hover-color:         #fff;
+
+@state-warning-text:             #c09853;
+@state-warning-bg:               #fcf8e3;
+@state-warning-border:           darken(spin(@state-warning-bg, -10), 3%);
+
+@state-danger-text:              #b94a48;
+@state-danger-bg:                #f2dede;
+@state-danger-border:            darken(spin(@state-danger-bg, -10), 3%);
 
 #mainnav {
   position: fixed;
