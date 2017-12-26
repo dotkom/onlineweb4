@@ -1,10 +1,9 @@
 @import "~common/less/responsive-variables.less";
 @import "~common/less/colors.less";
 
-
 .feedback-answer-label label {
-  font-size:20px;
-  margin-top:10px;
+  font-size: 20px;
+  margin-top: 10px;
 }
 
 #feedbackanswer {
@@ -13,7 +12,7 @@
   }
 }
 
-#feedback{
+#feedback {
   label {
     display: block;
     clear: both;
@@ -34,103 +33,90 @@
     width: 50%;
   }
 
-  div{ /*TODO, create clearfix mixin*/
+  div { /*TODO, create clearfix mixin*/
     *zoom: 1;
 
-    &:before,
-    &:after {
+    &::before,
+    &::after {
       display: table;
       content: "";
     }
 
-    &:after {
+    &::after {
       clear: both;
     }
   }
 }
 
 .control-label {
-  font-size:18px;
+  font-size: 18px;
 }
 
 .barChartText {
-  stroke:@heading;
-  fill:@heading;
-  font-size:20px;
+  stroke: @heading;
+  fill: @heading;
+  font-size: 20px;
 }
 
-#feedback-results
-{
-  .rating-chart
-    {
+#feedback-results {
+  .rating-chart {
     margin-bottom: 25px;
     margin-left: -10px;
   }
 
-  .panel-heading
-    {
+  .panel-heading {
     font-weight: 600;
     color: #004b80;
   }
 
-  .answer:hover
-    {
-    cursor: pointer;
-    //border-style:outset;
-  }
-
-  .answer:hover .icon
-    {
-    visibility:visible;
-  }
-
-  .icon
-    {
+  .icon {
     visibility: hidden;
     color: red;
     padding-right: 10px;
   }
 
+  .answer:hover {
+    cursor: pointer;
+    //border-style:outset;
+  }
+
+  .answer:hover .icon {
+    visibility: visible;
+  }
 }
 
-.errorlist
-{
+.errorlist {
   color: red;
   margin-bottom: 30px;
 }
 
-.whitespaceFix:nth-child(even)
-{
+.whitespaceFix:nth-child(even) {
   float: right;
 }
 
-.infonumber
-{
+.infonumber {
   font-size: 14px;
   font-weight: 600;
   color: #004b80;
   float: right;
 }
 
-@media (max-width:1000px) {
-  #feedback{
-    textarea{
+@media (max-width: 1000px) {
+  #feedback {
+    textarea {
       width: 100%;
     }
 
-    select{
+    select {
       width: 100%;
     }
   }
 }
 
-
 .rating-wrapper {
   .br-widget {
     height: 52px;
-  }
 
-  .br-widget {
     a {
       display: block;
       width: 35px;

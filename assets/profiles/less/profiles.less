@@ -143,6 +143,7 @@ label > i.btn-icon {
   background-color: white;
   padding-left: 10px;
 }
+
 .markbody .inline .row-fluid [class*="span"] {
   min-height: 15px;
 }
@@ -159,8 +160,8 @@ label > i.btn-icon {
   @btn-success-border);
 }
 
-.marks.on:after {
-  content: "Jeg har godtatt prikkereglene og er inneforstått med hva dette betyr."
+.marks.on::after {
+  content: "Jeg har godtatt prikkereglene og er inneforstått med hva dette betyr.";
 }
 
 .marks.off {
@@ -171,8 +172,8 @@ label > i.btn-icon {
   @btn-warning-border);
 }
 
-.marks.off:after {
-  content: "Jeg godtar prikkereglene og er inneforstått med hva dette betyr."
+.marks.off::after {
+  content: "Jeg godtar prikkereglene og er inneforstått med hva dette betyr.";
 }
 
 textarea, input[type="text"], input[type="email"], input[type="url"], input[type="number"] {

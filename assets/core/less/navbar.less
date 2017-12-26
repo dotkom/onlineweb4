@@ -35,14 +35,17 @@
   height: @navbar-height;
   z-index: 10;
 }
-#mainnav .container     { position: relative; }
-#mainnav .glyphicon     { top: 0; }
-#mainnav .dropdown-menu { margin: 0 0 0 -1px; border-top: none; }
+#mainnav .container { position: relative; }
+#mainnav .glyphicon { top: 0; }
+
+#mainnav .dropdown-menu {
+  margin: 0 0 0 -1px;
+  border-top: none;
+}
 #mainnav .dropdown-menu .divider { padding: 0; }
 
 #mainnav .container > ul {
   list-style: none;
-  padding: 0;
   display: inline-block;
   vertical-align: middle;
   margin: 0;
@@ -50,7 +53,7 @@
 }
 
 .mn-nav {
-  -webkit-transform: translate3d(0,0,0);
+  -webkit-transform: translate3d(0, 0, 0);
 }
 
 .mn-nav li {
@@ -62,7 +65,7 @@
 }
 
 .mn-nav li > .online-logo-link {
-  padding:0 13px 0 0;
+  padding: 0 13px 0 0;
 }
 
 .mn-nav li:hover {
@@ -215,7 +218,7 @@ svg, rect {
   margin-right: -3px;
 }
 
-.username_menu{
+.username_menu {
   padding-left: 10px;
   color: #fff;
 }
@@ -235,7 +238,6 @@ svg, rect {
   text-decoration: none;
   background: rgba(255, 255, 255, 0.2);
 }
-
 
 .subnavbar {
   position: fixed;
@@ -274,18 +276,16 @@ svg, rect {
 }
 
 /* Controls gap between navbar and content */
-.subnavbar   + section           { padding: 87px 0 0 0; }
-.subnavbar   + div.messages      { padding: 97px 0 0 0; }
+.subnavbar + section { padding: 87px 0 0 0; }
+.subnavbar + div.messages { padding: 97px 0 0 0; }
 
-#mainnav     + section           { padding: 62px 0 0 0; }
-#mainnav     + div.messages      { padding: 62px 0 0 0; }
+#mainnav + section { padding: 62px 0 0 0; }
+#mainnav + div.messages { padding: 62px 0 0 0; }
 
-.subnavbar   + div.messages .alert,
-#mainnav     + div.messages .alert {
+.subnavbar + div.messages .alert,
+#mainnav + div.messages .alert {
   margin-bottom: 0;
 }
-
-
 
 @media (max-width: 991px) {
   .mn-user-nav {
@@ -312,11 +312,11 @@ svg, rect {
     background: rgba(25, 25, 25, 1);
     opacity: 0;
     transition: opacity 0.3s ease-in-out;
-        
+
     &.mn-nav-open {
       opacity: 1;
     }
-        
+
     &:not(.animation-in-process):not(.mn-nav-open) {
       display: none;
     }
@@ -340,12 +340,8 @@ svg, rect {
     line-height: 40px;
   }
 
-
   #mainnav ul.mn-collapse {
     display: block;
-  }
-
-  .mn-collapse li {
   }
 
   .mn-collapse a {
@@ -361,18 +357,17 @@ svg, rect {
     width: 95px;
   }
 
-
   .mn-user-nav {
     right: 105px;
   }
 
   #main-sponsor {
     top: 12px;
-    right: 15px
+    right: 15px;
   }
 
   .ms-span {
-    font-size:6px;
+    font-size: 6px;
     padding: 3px 0 0 13px;
     right: -5px;
   }
@@ -392,15 +387,15 @@ svg, rect {
 
   .subnavbar ul li a:hover,
   .subnavbar ul li a.active {
-    background: rgba(255,255,255, 0.1);
+    background: rgba(255, 255, 255, 0.1);
   }
 }
 
 /* Logos
 -------------------------------------------------- */
 .dropdown-form li > form > .login-extra > a {
-  padding:20px 0 0 0;
-  display:block;
+  padding: 20px 0 0 0;
+  display: block;
 }
 
 /* Login
@@ -423,7 +418,7 @@ svg, rect {
 
 .login-btn {
   margin: 10px 0 0 0;
-  padding: 4px 10px!important;
+  padding: 4px 10px !important;
   border-radius: 5px;
   display: block;
   float: right;

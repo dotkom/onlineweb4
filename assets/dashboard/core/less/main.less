@@ -9,11 +9,10 @@
 @orange: #ee7810;
 @blue: #004b80;
 
-
 /* Generics */
 
 html, body {
-  font-family: 'Open Sans';
+  font-family: 'Open Sans', sans-serif;
 }
 
 h1,h2 {
@@ -30,11 +29,9 @@ ul {
   padding: 0;
 }
 
-
 .center-text {
   text-align: center;
 }
-
 
 /* Color classes */
 
@@ -72,36 +69,31 @@ nav#dashboard_main_nav {
 }
 
 .sidebar {
+  margin-top: -15px;
+  margin-bottom: 5px;
+
   h1,h2,h3,h4,h5,h6 {
     color: #000;
   }
 }
 
 #sidebar_toggle {
+  display: inline-block;
   height: 57px;
   margin-right: 25px;
   font-size: 20px;
   color: #fff;
   line-height: 57px;
   vertical-align: middle;
-  cursor: pointer
+  cursor: pointer;
 }
 
 #sidebar_toggle:hover {
   color: #ddd;
 }
 
-
-#sidebar_toggle {
-  display: inline-block;
-}
-
 .topspacing {
   padding-top: 60px;
-}
-
-.sidebar {
-  margin-top: -15px;
 }
 
 .errorlist {
@@ -113,9 +105,10 @@ nav#dashboard_main_nav {
 /* Main content area */
 
 .content {
-  padding: 15px;
+  padding: 20px 15px;
   z-index: 1;
   display: block;
+  background: @dash-bg;
 
   .main-content {
     z-index: 2;
@@ -185,9 +178,10 @@ tr, td, th {
     Core: General style
 ----------------------------
 */
-html,
-body {
-  overflow-x: hidden!important;
+
+/* stylelint-disable-next-line no-duplicate-selectors */
+html, body {
+  overflow-x: hidden !important;
   -webkit-font-smoothing: antialiased;
   background-color: @dash-bg;
   min-height: 100%;
@@ -199,13 +193,13 @@ body {
   min-height: 100%;
 }
 
-.wrapper:before,
-.wrapper:after {
+.wrapper::before,
+.wrapper::after {
   display: table;
   content: " ";
 }
 
-.wrapper:after {
+.wrapper::after {
   clear: both;
 }
 
@@ -273,12 +267,6 @@ body.fixed .wrapper {
   margin-top: 50px;
 }
 
-/* Content */
-.content {
-  padding: 20px 15px;
-  background: @dash-bg;
-}
-
 /* Utility */
 
 /* Page Header */
@@ -335,7 +323,7 @@ img {
 
 /* Remove box shadow */
 .no-shadow {
-  box-shadow: none!important;
+  box-shadow: none !important;
 }
 
 /* Don't display when printing */
@@ -370,24 +358,21 @@ img {
 
 /* _fix for sparkline tooltip */
 .jqstooltip {
-  padding: 5px!important;
-  width: auto!important;
-  height: auto!important;
+  padding: 5px !important;
+  width: auto !important;
+  height: auto !important;
 }
 
 /*
     Component: Sidebar
 --------------------------
 */
-.sidebar {
-  margin-bottom: 5px;
-}
 
 .sidebar .sidebar-form input:focus {
   -webkit-box-shadow: none;
   -moz-box-shadow: none;
   box-shadow: none;
-  border-color: transparent!important;
+  border-color: transparent !important;
 }
 
 .sidebar .sidebar-menu {
