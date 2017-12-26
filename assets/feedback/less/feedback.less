@@ -3,156 +3,167 @@
 
 
 .feedback-answer-label label {
-    font-size:20px;
-    margin-top:10px;
+  font-size:20px;
+  margin-top:10px;
 }
 
 #feedbackanswer {
-    h2 {
-        text-transform: uppercase;
-    }
+  h2 {
+    text-transform: uppercase;
+  }
 }
 
 #feedback{
-    label {
-        display: block;
-        clear: both;
+  label {
+    display: block;
+    clear: both;
+  }
+
+  ul {
+    margin-left: 0;
+    padding-left: 0;
+  }
+
+  li {
+    list-style: none;
+    float: left;
+    margin-left: 0;
+  }
+
+  select {
+    width: 50%;
+  }
+
+  div{ /*TODO, create clearfix mixin*/
+    *zoom: 1;
+
+    &:before,
+    &:after {
+      display: table;
+      content: "";
     }
 
-    ul {
-        margin-left: 0px;
-        padding-left: 0px;
+    &:after {
+      clear: both;
     }
-    li {
-        list-style: none;
-        float: left;
-        margin-left: 0px;
-    }
-    select {
-        width: 50%;
-    }
-    div{ /*TODO, create clearfix mixin*/
-        *zoom: 1;
-        &:before,
-        &:after {
-            display: table;
-            content: "";
-        }
-        &:after {
-            clear: both;
-        }
-    }
+  }
 }
 
 .control-label {
-    font-size:18px;
+  font-size:18px;
 }
 
 .barChartText {
-    stroke:@heading;
-    fill:@heading;
-    font-size:20px;
+  stroke:@heading;
+  fill:@heading;
+  font-size:20px;
 }
 
 #feedback-results
 {
-    .rating-chart
+  .rating-chart
     {
-        margin-bottom: 25px;
-        margin-left: -10px;
-    }
-    .panel-heading
-    {
-        font-weight: 600;
-        color: #004b80;
-    }
-    .answer:hover
-    {
-        cursor: pointer;
-        //border-style:outset;
-    }
-    .answer:hover .icon
-    {
-        visibility:visible;
-    }
+    margin-bottom: 25px;
+    margin-left: -10px;
+  }
 
-    .icon
+  .panel-heading
     {
-        visibility: hidden;
-        color: red;
-        padding-right: 10px;
-    }
+    font-weight: 600;
+    color: #004b80;
+  }
+
+  .answer:hover
+    {
+    cursor: pointer;
+    //border-style:outset;
+  }
+
+  .answer:hover .icon
+    {
+    visibility:visible;
+  }
+
+  .icon
+    {
+    visibility: hidden;
+    color: red;
+    padding-right: 10px;
+  }
 
 }
 
 .errorlist
 {
-    color: red;
-    margin-bottom: 30px;
+  color: red;
+  margin-bottom: 30px;
 }
 
 .whitespaceFix:nth-child(even)
 {
-    float: right;
+  float: right;
 }
 
 .infonumber
 {
-    font-size: 14px;
-    font-weight: 600;
-    color: #004b80;
-    float: right;
+  font-size: 14px;
+  font-weight: 600;
+  color: #004b80;
+  float: right;
 }
 
 @media (max-width:1000px) {
-
-    #feedback{
-        textarea{
-            width: 100%;
-        }
-        select{
-            width: 100%;
-        }
+  #feedback{
+    textarea{
+      width: 100%;
     }
+
+    select{
+      width: 100%;
+    }
+  }
 }
 
 
 .rating-wrapper {
-    .br-widget {
-        height: 52px;
+  .br-widget {
+    height: 52px;
+  }
+
+  .br-widget {
+    a {
+      display: block;
+      width: 35px;
+      height: 35px;
+      float: left;
+      background-color: #e3e3e3;
+      margin: 2px;
+      text-decoration: none;
+      font-size: 16px;
+      font-weight: 400;
+      line-height: 2.2;
+      text-align: center;
+      color: #b6b6b6;
     }
-    .br-widget {
-        a {
-            display: block;
-            width: 35px;
-            height: 35px;
-            float: left;
-            background-color: #e3e3e3;
-            margin: 2px;
-            text-decoration: none;
-            font-size: 16px;
-            font-weight: 400;
-            line-height: 2.2;
-            text-align: center;
-            color: #b6b6b6;
-        }
-        a.br-active, a.br-selected {
-            background-color: #59a6d6;
-            color: white;
-        }
+
+    a.br-active, a.br-selected {
+      background-color: #59a6d6;
+      color: white;
     }
+  }
 }
+
 @media screen and(max-width: @media-desktop-min) {
-    .br-widget {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-direction: row;
-    }
+  .br-widget {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: row;
+  }
 }
 
 .rating-wrapper .br-widget a.br-active,
 .rating-wrapper .br-widget a.br-selected {
-    background-color: #59a6d6;
-    color: white;
+  background-color: #59a6d6;
+  color: white;
 }
