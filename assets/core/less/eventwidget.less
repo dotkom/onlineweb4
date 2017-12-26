@@ -167,18 +167,17 @@ section#events {
       @media (min-width: 992px) {
         width: 455px;
 
-        // Remove border-bottom from last row
-        &:nth-child(odd):nth-last-child(2),
-        &:last-child {
-          border: none;
-        }
-
         &:nth-child(odd) {
           float: left;
         }
 
         &:nth-child(even) {
           float: right;
+        }
+
+        // Remove border-bottom from last row
+        &:last-child, &:nth-child(odd):nth-last-child(2) {
+          border: none;
         }
       }
 
