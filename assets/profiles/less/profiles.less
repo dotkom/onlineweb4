@@ -276,54 +276,61 @@ section#user-search {
     margin-bottom: 20px;
   }
 
-  /* all links */
+  .sidebar .nav {
+    /* all links */
+    & > li > a {
+      color: #999;
+      padding: 4px 20px;
+      font-size: 13px;
+      font-weight: 400;
+    }
 
-  .sidebar .nav>li>a {
-    color: #999;
-    padding: 4px 20px;
-    font-size: 13px;
-    font-weight: 400;
-  }
+    & > .active > a {
+      color: @baby-blue;
+      text-decoration: none;
+      background-color: transparent;
+      border-left-color: @baby-blue;
+      font-weight: 700;
+    }
 
-  /* nested links */
+    /* active & hover links */
+    & > li > a:hover, & > li > a:focus {
+      color: @baby-blue;
+      text-decoration: none;
+      background-color: transparent;
+      border-left-color: @baby-blue;
+    }
 
-  .sidebar .nav .nav>li>a {
-    padding-top: 1px;
-    padding-bottom: 1px;
-    padding-left: 30px;
-    font-size: 12px;
-  }
+    /* hide inactive nested list */
+    ul.nav {
+      display: none;
+    }
 
-  /* active & hover links */
+    /* nested links */
+    .nav > li > a {
+      padding-top: 1px;
+      padding-bottom: 1px;
+      padding-left: 30px;
+      font-size: 12px;
+    }
 
-  .sidebar .nav>.active>a, .sidebar .nav>li>a:hover, .sidebar .nav>li>a:focus {
-    color: @baby-blue;
-    text-decoration: none;
-    background-color: transparent;
-    border-left-color: @baby-blue;
-  }
+    /* all active links */
+    & > .active {
+      &:hover > a, &:focus > a {
+        font-weight: 700;
+      }
 
-  /* all active links */
+      /* show active nested list */
+      & > ul.nav {
+        display: block;
+      }
+    }
 
-  .sidebar .nav>.active>a, .sidebar .nav>.active:hover>a, .sidebar .nav>.active:focus>a {
-    font-weight: 700;
-  }
-
-  /* nested active links */
-
-  .sidebar .nav .nav>.active>a, .sidebar .nav .nav>.active:hover>a, .sidebar .nav .nav>.active:focus>a {
-    font-weight: 500;
-  }
-
-  /* hide inactive nested list */
-
-  .sidebar .nav ul.nav {
-    display: none;
-  }
-
-  /* show active nested list */
-
-  .sidebar .nav>.active>ul.nav {
-    display: block;
+    /* nested active links */
+    .nav > .active {
+      a, &:hover a, &:focus a {
+        font-weight: 500;
+      }
+    }
   }
 }
