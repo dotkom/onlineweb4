@@ -8,7 +8,7 @@
 }
 
 .tt-suggestion {
-  padding: 3px 0px;
+  padding: 3px 0;
   font-size: 18px;
   line-height: 24px;
   cursor: pointer;
@@ -16,15 +16,17 @@
   position: relative;
 
   img {
-    width:75px;
-    height:75px;
+    width: 75px;
+    height: 75px;
     position: absolute;
     top: 7px;
-    left: 0px;
+    left: 0;
+
     &[src=''] {
       display: none;
     }
   }
+
   .user-meta {
     position: absolute;
     top: 24px;
@@ -33,7 +35,7 @@
     display: inline-block;
 
     .phone {
-      font-size:13px;
+      font-size: 13px;
     }
   }
 
@@ -42,6 +44,7 @@
     background-color: #0097cf;
   }
 }
+
 .typeahead,
 .tt-query,
 .tt-hint {
@@ -52,8 +55,8 @@
   line-height: 30px;
   border: 2px solid #ccc;
   -webkit-border-radius: 8px;
-     -moz-border-radius: 8px;
-          border-radius: 8px;
+  -moz-border-radius: 8px;
+  border-radius: 8px;
   outline: none;
 }
 
@@ -70,5 +73,5 @@
 }
 
 .twitter-typeahead {
-  display:block !important;
+  display: block !important;
 }

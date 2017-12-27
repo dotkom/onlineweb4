@@ -1,44 +1,41 @@
 /* Offline
 -------------------------------------------------- */
 #offlineCarousel {
+  text-align: center;
+
+  .carousel-control {
     text-align: center;
+    color: #428bca;
+    border-radius: 50%;
+    height: 40px;
+    width: 40px;
+    margin: auto auto;
 
-    .carousel-control {
-        text-align: center;
+    // override opacity
+    .opacity(0.9);
 
-        color: #428bca;
-        border-radius: 50%;
-        height: 40px;
-        width:  40px;
+    // override text-shadow
+    text-shadow: none;
 
-        margin: auto auto;
-
-        // override opacity
-        .opacity(0.9);
-
-        // override text-shadow
-        text-shadow: none;
-
-        // override hover and focus
-        &:hover{
-            color: #2A6496;
-        }
-
-        // override mixin gradient
-        &.left,
-        &.right {
-            background-image: none;
-        }
+    // override hover and focus
+    &:hover {
+      color: #2a6496;
     }
 
-    .item {
-        a:not(:first-child) {
-            margin-left: 10px;
-        }
+    // override mixin gradient
+    &.left,
+    &.right {
+      background-image: none;
+    }
+  }
 
-        img {
-            display: inline-block;
-        }
+  .item {
+    a:not(:first-child) {
+      margin-left: 10px;
     }
 
+    img {
+      display: inline-block;
+    }
+  }
 }
