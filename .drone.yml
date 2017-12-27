@@ -32,7 +32,15 @@ pipeline:
       event: push
     group: testing
     commands:
-      - npm run lint
+      - npm run lint-js
+
+  less-lint:
+    image: registry.online.ntnu.no/dotkom/onlineweb4-testbase
+    when:
+      event: push
+    group: testing
+    commands:
+      - npm run lint-less
 
   python-tests:
     image: registry.online.ntnu.no/dotkom/onlineweb4-testbase
