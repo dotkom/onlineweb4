@@ -12,6 +12,7 @@ pipeline:
 
   setup:
     image: registry.online.ntnu.no/dotkom/onlineweb4-testbase
+    pull: true
     when:
       event: push
     commands:
