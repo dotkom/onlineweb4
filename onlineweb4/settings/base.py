@@ -87,7 +87,11 @@ OAUTH2_PROVIDER_APPLICATION_MODEL = 'sso.Client'
 
 WEBPACK_LOADER = {
     'DEFAULT': {
-        'BUNDLE_DIR_NAME': 'webpack/'  # end with slash
+        'BUNDLE_DIR_NAME': 'webpack/',  # end with slash
+        'STATS_FILE': os.path.join(
+            PROJECT_ROOT_DIRECTORY,
+            config('OW4_WEBPACK_LOADER_STATS_FILE', default='webpack-stats.json')
+        )
     }
 }
 
