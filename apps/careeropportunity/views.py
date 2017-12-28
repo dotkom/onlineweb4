@@ -24,10 +24,12 @@ class CareerViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.L
     Viewset for Career serializer
     """
 
-    queryset = CareerOpportunity.objects.filter(
-        start__lte=timezone.now(),
-        end__gte=timezone.now()
-    ).order_by('-featured', '-start')
     serializer_class = CareerSerializer
     permission_classes = (AllowAny,)
     pagination_class = HundredItemsPaginator
+
+    def get_queryset(self, *args, **kwargs):
+        return CareerOpportunity.objects.filter(
+            start__lte=timezone.now(),
+            end__gte=timezone.now()
+        ).order_by('-featured', '-start')
