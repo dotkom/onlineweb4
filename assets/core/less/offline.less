@@ -2,151 +2,151 @@
 
 /* Help mixin */
 .transition_easer(@seconds: 0.2s) {
-    -webkit-transition: all @seconds ease-in-out;
-    -moz-transition: all @seconds ease-in-out;
-    -o-transition: all @seconds ease-in-out;
-    -ms-transition: all @seconds ease-in-out;
+  -webkit-transition: all @seconds ease-in-out;
+  -moz-transition: all @seconds ease-in-out;
+  -o-transition: all @seconds ease-in-out;
+  -ms-transition: all @seconds ease-in-out;
 }
 
 /* Offline */
+
 /* TODO: find out where this #offline is used */
 div#offline {
-    position: relative;
-    text-align: center;
-    margin: 0px auto;
+  position: relative;
+  text-align: center;
+  margin: 0 auto;
 }
 
 section#offline {
-    p {
-        margin-right: 15px;
-    }
-}
-
-#offline-wrapper {
-    overflow: hidden;
-    height: 226px;
-
-    .offline_issue {
-        display: inline-block;
-        margin: 1em;
-        text-align: center;
-
-        -moz-box-shadow: 5px 5px 5px #ccc;
-        -webkit-box-shadow: 5px 5px 5px #ccc;
-        box-shadow: 5px 5px 5px #ccc;
-
-        a {
-            text-decoration: none;
-            line-height: 2em;
-            display: block;
-
-            &:first-child {
-                .transition_easer;
-                display: block;
-                color: #fff;
-                background: #333;
-                opacity: 0;
-                text-decoration: none;
-                margin-top: -24px;
-                position: relative; bottom: -24px;
-            }
-        }
-
-
-        span {
-            .transition_easer;
-            display: block;
-            color: #fff;
-            background: #333;
-            opacity: 0;
-            line-height: 2em;
-            margin-bottom: -24px;
-            position: relative; top: -24px;
-
-        }
-
-        .offline_issue_archive {
-            transition: none;
-        }
-
-        &:hover {
-            -moz-box-shadow: 10px 10px 10px #666;
-            -webkit-box-shadow: 10px 10px 10px #666;
-            box-shadow: 10px 10px 10px #666;
-
-            span {
-                opacity: 0.75;
-            }
-
-            a {
-                &:first-child {
-                    opacity: 0.75;
-                }
-            }
-        }
-    }
-}
-
-#offline-nav {
-    text-align: center;
-
-    .paddright {
-        margin-right: 10px;
-    }
-    .paddleft {
-        margin-left: 10px;
-
-        a {
-            border-left-width: 1px;
-        }
-    }
-
-    .first a{
-        border-left-width: 1px;
-    }
-
-    .pagination ul > li {
-        display: inline-block;
-    }
+  p {
+    margin-right: 15px;
+  }
 }
 
 .filterbox {
+  background-color: @baby-blue-medium;
+  padding: 15px;
+  margin-bottom: 20px;
 
-    background-color: @baby-blue-medium;
-    padding: 15px;
-    margin-bottom: 20px;
+  a, li {
+    color: white;
+  }
 
-    a, li {
-        color: white;
+  a:hover {
+    color: #027bbb;
+    border-radius: 0;
+  }
+
+  li.active a {
+    border-radius: 0;
+    background-color: #027bbb;
+  }
+
+  li.active a:hover {
+    background-color: #027bbb;
+  }
+
+  h3 {
+    color: white;
+    font-size: 20px;
+    font-weight: 400;
+    margin-top: 0;
+  }
+
+  #filter-menu {
+    a {
+      padding: 5px 15px;
+      border-radius: 0;
+    }
+  }
+}
+
+#offline-nav {
+  text-align: center;
+
+  .paddright {
+    margin-right: 10px;
+  }
+
+  .paddleft {
+    margin-left: 10px;
+
+    a {
+      border-left-width: 1px;
+    }
+  }
+
+  .first a {
+    border-left-width: 1px;
+  }
+
+  .pagination ul > li {
+    display: inline-block;
+  }
+}
+
+#offline-wrapper {
+  overflow: hidden;
+  height: 226px;
+
+  span {
+    .transition_easer;
+
+    display: block;
+    color: #fff;
+    background: #333;
+    opacity: 0;
+    line-height: 2em;
+    margin-bottom: -24px;
+    position: relative;
+    top: -24px;
+  }
+
+  .offline_issue {
+    display: inline-block;
+    margin: 1em;
+    text-align: center;
+    -moz-box-shadow: 5px 5px 5px #ccc;
+    -webkit-box-shadow: 5px 5px 5px #ccc;
+    box-shadow: 5px 5px 5px #ccc;
+
+    a {
+      text-decoration: none;
+      line-height: 2em;
+      display: block;
+
+      &:first-child {
+        .transition_easer;
+
+        display: block;
+        color: #fff;
+        background: #333;
+        opacity: 0;
+        text-decoration: none;
+        margin-top: -24px;
+        position: relative;
+        bottom: -24px;
+      }
     }
 
-    a:hover {
-        color: #027bbb;
-        border-radius: 0px;
+    .offline_issue_archive {
+      transition: none;
     }
 
-    li.active a {
-        border-radius: 0px;
-	background-color: #027bbb;
-    }
+    &:hover {
+      -moz-box-shadow: 10px 10px 10px #666;
+      -webkit-box-shadow: 10px 10px 10px #666;
+      box-shadow: 10px 10px 10px #666;
 
-    li.active a:hover {
-	background-color: #027bbb;
-    }
+      span {
+        opacity: 0.75;
+      }
 
-    h3 {
-        color: white;
-        font-size: 20px;
-        font-weight: 400;
-        margin-top: 0px;
-    }
-
-    #filter-menu {
-
-         a {
-            padding: 5px 15px;
-            border-radius: 0px;
+      a {
+        &:first-child {
+          opacity: 0.75;
         }
+      }
     }
-
+  }
 }

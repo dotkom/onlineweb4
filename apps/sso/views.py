@@ -18,7 +18,7 @@ def index(request):
 
     context = {}
 
-    return render(request, 'sso/index.html', context)
+    return render(request, 'sso/authorize.html', context)
 
 
 class AuthorizationView(DefaultAuthorizationView):
