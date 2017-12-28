@@ -32,6 +32,7 @@ Welcome to onlineweb4's documentation!
     splash/index
     sso/index
     webshop/index
+    testing/index
 
 
 Indices and tables
