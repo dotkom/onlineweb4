@@ -414,7 +414,7 @@ class AttendViewSet(views.APIView):
                                 status=status.HTTP_400_BAD_REQUEST)
         try:
             # If attendee is trying to attend by username
-            if rfid is None:
+            if not rfid:
                 attendee = Attendee.objects.get(event=event, user__username=username)
             else:
                 attendee = Attendee.objects.get(event=event, user__rfid=rfid)
@@ -443,6 +443,10 @@ class AttendViewSet(views.APIView):
                 return Response({'message': 'Brukernavnet finnes ikke. Husk at det er et online.ntnu.no brukernavn! '
                                             '(Prøv igjen, eller scan nytt kort for å avbryte.)', 'attend_status': 50},
                                 status=status.HTTP_400_BAD_REQUEST)
+
+            elif not rfid:
+                return Response({'message': 'RFID-en er ugyldig. Ble kortet scannet korrekt? Prøv igjen.',
+                                 'attend_status': 41}, status=status.HTTP_400_BAD_REQUEST)
 
             # If attendee tried to attend by card, but card isn't tied to a user
             else:

@@ -204,3 +204,23 @@ class AttendAPITestCase(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.json()['attend_status'], 10)
+
+    def test_api_does_not_try_to_get_user_by_rfid_empty_string(self):
+        self.event.attendance_event.max_capacity = 2
+        self.event.attendance_event.save()
+
+        self.attendee1.user.rfid = ''
+        self.attendee2.user.rfid = ''
+        self.attendee1.user.save()
+        self.attendee2.user.save()
+
+        response = self.client.post(self.url, {
+            'event': self.event.id,
+            'rfid': '',
+        }, **self.headers)
+
+        self.refresh_attendees()
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertFalse(self.attendees[0].attended)
+        self.assertFalse(self.attendees[1].attended)
+        self.assertEqual(response.json()['attend_status'], 41)
