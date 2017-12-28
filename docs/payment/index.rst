@@ -41,9 +41,15 @@ Attendance
 
 Depending on which :attr:`~apps.payment.models.Payment.payment_type` was selected three different things can happen.
 
-- **Immediate**: Nothing? (Should be looked into)
-- **Deadline**: Nothing? (Should be looked into)
-- **Delay**: :class:`~apps.payment.models.PaymentDelay` is created using :attr:`~apps.payment.models.Payment.delay`.
+**Immediate**
+    The user has to pay before attending the event.
+    The :class:`~apps.events.models.Attendee` object is automatically created by :meth:`~apps.payment.models.Payment.handle_payment`. 
+
+**Deadline**
+    The user has to pay before the set deadline, but nothing special happens when attending.
+
+**Delay**
+    :class:`~apps.payment.models.PaymentDelay` is created using :attr:`~apps.payment.models.Payment.delay`.
 
 Unattendance
 ************
@@ -57,9 +63,14 @@ Waitlist bump
 
 Depending on which :attr:`~apps.payment.models.Payment.payment_type` was selected three different things can happen.
 
-- **Immediate**: :class:`~apps.payment.models.PaymentDelay` is created with a delay of two days
-- **Deadline**: :class:`~apps.payment.models.PaymentDelay` is created with a delay of :attr:`~apps.payment.models.Payment.deadline` or a minimum of two days.
-- **Delay**: :class:`~apps.payment.models.PaymentDelay` is created using :attr:`~apps.payment.models.Payment.delay`.
+**Immediate**
+    :class:`~apps.payment.models.PaymentDelay` is created with a delay of two days
+
+**Deadline**
+    :class:`~apps.payment.models.PaymentDelay` is created with a delay of :attr:`~apps.payment.models.Payment.deadline` or a minimum of two days.
+
+**Delay**
+    :class:`~apps.payment.models.PaymentDelay` is created using :attr:`~apps.payment.models.Payment.delay`.
 
 
 Refund
