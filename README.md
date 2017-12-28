@@ -38,15 +38,16 @@ On the other hand on slower machines Docker might be noticeable slower in which 
 
 To fire up the dev environment, you should use [docker-compose](https://docs.docker.com/compose/overview/).
 
-Install it by running `pip install docker-compose`.
+First install Docker and Docker-compose 
 
-There exists a `Makefile` in the project root directory. This simplifies interaction with docker and docker-compose.
+Run navigate to project root folder and run 'docker-compose up' 
 
-Simply run `make` to build and start onlineweb4, and run `make stop` to stop it.
+Run bach in the container with 'docker exec -i -t onlineweb4_django_1 bash'
+rename settings-file in onlineweb4/settings from example-local.py to local.py 
 
-To view output from onlineweb4, run `make logs`. To view output from a specific service (e.g. django), prepend the `make` command with `OW4_MAKE_TARGET=django`.
+Run 'docker-compose run django python webpack_resolve.py'
 
-If you can't use `make`, you can fire up the dev environment by issuing `docker-compose up -d`.
+You can fire up the dev environment by issuing `docker-compose up -d`.
 
 If the site doesn't load properly the first time you are running the project, you might need to restart Docker once by running `docker-compose restart`.
 
