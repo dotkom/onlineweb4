@@ -444,6 +444,7 @@ class AttendViewSet(views.APIView):
                                             '(Prøv igjen, eller scan nytt kort for å avbryte.)', 'attend_status': 50},
                                 status=status.HTTP_400_BAD_REQUEST)
 
+            # If RFID is empty string or the likes.
             elif not rfid:
                 return Response({'message': 'RFID-en er ugyldig. Ble kortet scannet korrekt? Prøv igjen.',
                                  'attend_status': 41}, status=status.HTTP_400_BAD_REQUEST)
