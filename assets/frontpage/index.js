@@ -4,6 +4,7 @@ import { AppContainer } from 'react-hot-loader';
 import ArticlesContainer from './articles/containers/ArticlesContainer';
 import EventsContainer from './events/containers/EventsContainer';
 import './initFrontpage';
+import './less/frontpage.less';
 
 const renderArticles = (Articles) => {
   ReactDom.render(
