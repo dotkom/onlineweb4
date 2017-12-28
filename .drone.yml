@@ -16,7 +16,7 @@ pipeline:
       event: push
     commands:
       - cp onlineweb4/settings/example-local.py onlineweb4/settings/local.py
-      - npm install --depth=0 --quiet
+      - yarn install --pure-lockfile
       - pip install tox
 
   npm-build:
