@@ -402,6 +402,10 @@ class AttendViewSet(views.APIView):
         username = request.data.get('username')
         waitlist_approved = request.data.get('approved')
 
+        if not (username or rfid):
+            return Response({'message': 'Mangler både RFID og brukernavn. Vennligst prøv igjen.',
+                             'attend_status': 41}, status=status.HTTP_400_BAD_REQUEST)
+
         # If attendee has typed in username to bind a new card to their user
         if username is not None and rfid is not None:
             try:
@@ -443,11 +447,6 @@ class AttendViewSet(views.APIView):
                 return Response({'message': 'Brukernavnet finnes ikke. Husk at det er et online.ntnu.no brukernavn! '
                                             '(Prøv igjen, eller scan nytt kort for å avbryte.)', 'attend_status': 50},
                                 status=status.HTTP_400_BAD_REQUEST)
-
-            # If RFID is empty string or the likes.
-            elif not rfid:
-                return Response({'message': 'RFID-en er ugyldig. Ble kortet scannet korrekt? Prøv igjen.',
-                                 'attend_status': 41}, status=status.HTTP_400_BAD_REQUEST)
 
             # If attendee tried to attend by card, but card isn't tied to a user
             else:
