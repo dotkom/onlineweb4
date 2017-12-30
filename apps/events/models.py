@@ -437,14 +437,11 @@ class AttendanceEvent(models.Model):
     @property
     def has_reservation(self):
         """ Returns whether this event has an attached reservation """
-        try:
-            return True if self.reserved_seats else False
-        except Reservation.DoesNotExist:
-            return False
+        return hasattr(self, 'reserved_seats')
 
     @property
     def has_extras(self):
-        return bool(self.extras.exists())
+        return self.extras.exists()
 
     @property
     def attendees_qs(self):
