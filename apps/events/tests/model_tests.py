@@ -8,8 +8,10 @@ from django_dynamic_fixture import G
 
 from apps.authentication.models import OnlineUser as User
 from apps.authentication.models import AllowedUsername
-from apps.events.models import (AttendanceEvent, Attendee, Event, FieldOfStudyRule, GradeRule,
-                                GroupRestriction, Reservation, Reservee, RuleBundle, UserGroupRule)
+from apps.companyprofile.models import Company
+from apps.events.models import (AttendanceEvent, Attendee, CompanyEvent, Event, FieldOfStudyRule,
+                                GradeRule, GroupRestriction, Reservation, Reservee, RuleBundle,
+                                UserGroupRule)
 from apps.feedback.models import Feedback, FeedbackRelation
 from apps.marks.models import DURATION, Mark, MarkUser
 
@@ -21,6 +23,16 @@ class EventModelTest(TestCase):
         event = G(Event, title='Sjakkturnering')
 
         self.assertEqual(event.__str__(), 'Sjakkturnering')
+
+    def test_company_event_method_returns_company_events(self):
+        event = G(Event, title='Sjakkturnering')
+        company1 = G(CompanyEvent, event=event, company=G(Company))
+        company2 = G(CompanyEvent, event=event, company=G(Company))
+
+        companies = event.company_event
+
+        self.assertIn(company1, companies)
+        self.assertIn(company2, companies)
 
 
 class AttendanceEventModelTest(TestCase):

@@ -97,16 +97,7 @@ class Event(models.Model):
 
     def is_attendance_event(self):
         """ Returns true if the event is an attendance event """
-        try:
-            return True if self.attendance_event else False
-        except AttendanceEvent.DoesNotExist:
-            return False
-
-    def images(self):
-        if not self.old_image:
-            return []
-        from apps.events.utils import find_image_versions
-        return find_image_versions(self.old_image)
+        return hasattr(self, 'attendance_event')
 
     # TODO move payment and feedback stuff to attendance event when dasboard is done
 
@@ -132,10 +123,7 @@ class Event(models.Model):
 
     @property
     def company_event(self):
-        try:
-            return CompanyEvent.objects.filter(event=self)
-        except CompanyEvent.DoesNotExist:
-            return None
+        return CompanyEvent.objects.filter(event=self)
 
     def feedback_mail(self):
         if self.event_type == 1 or self.event_type == 4:  # Sosialt & Utflukt
