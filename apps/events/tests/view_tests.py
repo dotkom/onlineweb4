@@ -637,3 +637,51 @@ class EventMailParticipates(EventsTestMixin, TestCase):
         self.assertInMessages(
             'Vi klarte ikke å sende mailene dine. Prøv igjen', response)
         self.assertEqual(len(mail.outbox), 0)
+
+
+class EventsArchive(TestCase):
+    def test_events_index_empty(self):
+        url = reverse('events_index')
+
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_events_index_exists(self):
+        generate_event()
+
+        url = reverse('events_index')
+
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+
+class EventsSearch(TestCase):
+    def test_search_events(self):
+        query = ''
+
+        _url_pre_get_param = reverse('search_events')
+        url = _url_pre_get_param + '?query=%s' % query
+
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+
+class EventsCalendar(TestCase):
+    def test_events_ics_all(self):
+        url = reverse('events_ics')
+
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_events_ics_specific_event(self):
+        event = generate_event()
+
+        url = reverse('event_ics', args=(event.id,))
+
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)

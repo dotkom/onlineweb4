@@ -17,6 +17,11 @@ def generate_event(event_type=TYPE_CHOICES[1][0]):
     return event
 
 
+def generate_attendance_event():
+    event = G(Event)
+    return G(AttendanceEvent, event=event)
+
+
 def generate_payment(event, *args, **kwargs):
     return G(
         Payment,
