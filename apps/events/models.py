@@ -6,6 +6,7 @@ from functools import reduce
 
 from django.conf import settings
 from django.contrib.auth.models import Group
+from django.contrib.contenttypes.fields import GenericRelation
 from django.contrib.contenttypes.models import ContentType
 from django.core import validators
 from django.core.exceptions import ValidationError
@@ -19,6 +20,7 @@ from unidecode import unidecode
 
 from apps.authentication.models import FIELD_OF_STUDY_CHOICES
 from apps.companyprofile.models import Company
+from apps.feedback.models import FeedbackRelation
 from apps.gallery.models import ResponsiveImage
 from apps.marks.models import get_expiration_date
 
@@ -90,6 +92,8 @@ class Event(models.Model):
     image = models.ForeignKey(ResponsiveImage, related_name='events', blank=True, null=True, on_delete=SET_NULL)
     event_type = models.SmallIntegerField(_('type'), choices=TYPE_CHOICES, null=False)
     organizer = models.ForeignKey(Group, verbose_name=_('arrangør'), blank=True, null=True, on_delete=SET_NULL)
+
+    feedback = GenericRelation(FeedbackRelation)
 
     def is_attendance_event(self):
         """ Returns true if the event is an attendance event """
@@ -419,17 +423,16 @@ class AttendanceEvent(models.Model):
     # Extra choices
     extras = models.ManyToManyField(Extras, blank=True)
 
+    @property
+    def feedback(self):
+        """Proxy for generic feedback relation on event"""
+        return self.event.feedback
+
     def get_feedback(self):
-        from apps.feedback.models import FeedbackRelation
-        try:
-            feedback = FeedbackRelation.objects.get(content_type=ContentType.objects.get_for_model(Event),
-                                                    object_id=self.pk)
-        except FeedbackRelation.DoesNotExist:
-            feedback = None
-        return feedback
+        return self.feedback.first()
 
     def has_feedback(self):
-        return bool(self.get_feedback())
+        return self.feedback.exists()
 
     @property
     def has_reservation(self):
