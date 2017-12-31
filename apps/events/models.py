@@ -766,6 +766,14 @@ class AttendanceEvent(models.Model):
 
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):
+        # If max capacity changed we will notify users that they are now on the attend list
+        old_attendance_event = AttendanceEvent.objects.filter(event_id=self.event_id).first()
+        if old_attendance_event:
+            extra_capacity = self.max_capacity - old_attendance_event.max_capacity
+            if extra_capacity > 0:
+                # Using old object because max_capacity has already been changed in self
+                old_attendance_event.notify_waiting_list(extra_capacity)
+
         super().save(force_insert=force_insert, force_update=force_update, using=using, update_fields=update_fields)
 
         if self.event.organizer:

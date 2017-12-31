@@ -2,6 +2,7 @@ import datetime
 
 from django.contrib.auth.models import Group
 from django.contrib.contenttypes.models import ContentType
+from django.core import mail
 from django.test import TestCase
 from django.utils import timezone
 from django_dynamic_fixture import G
@@ -15,7 +16,7 @@ from apps.events.models import (AttendanceEvent, Attendee, CompanyEvent, Event, 
 from apps.feedback.models import Feedback, FeedbackRelation
 from apps.marks.models import DURATION, Mark, MarkUser
 
-from .utils import generate_attendance_event
+from .utils import generate_attendance_event, generate_attendee
 
 
 class EventModelTest(TestCase):
@@ -310,6 +311,47 @@ class AttendanceEventModelTest(TestCase):
                         "Any user should be able to see unrestricted events")
         self.assertTrue(unrestricted_event.can_display(denied_user),
                         "Any user should be able to see unrestricted events")
+
+
+class WaitlistAttendanceEventTest(TestCase):
+    def setUp(self):
+        self.attendance_event = generate_attendance_event(max_capacity=2)
+
+    def test_changing_max_capacity_with_no_guestlist_should_do_nothing(self):
+        for i in range(1):
+            generate_attendee(self.attendance_event.event, 'user' + str(i))
+
+        self.attendance_event.max_capacity = 4
+        self.attendance_event.save()
+
+        self.assertEqual(len(mail.outbox), 0)
+
+    def test_lowering_max_capacity(self):
+        for i in range(1):
+            generate_attendee(self.attendance_event.event, 'user' + str(i))
+
+        self.attendance_event.max_capacity = 1
+        self.attendance_event.save()
+
+        self.assertEqual(len(mail.outbox), 0)
+
+    def test_changing_max_capacity_should_notify_waitlist(self):
+        for i in range(4):
+            generate_attendee(self.attendance_event.event, 'user' + str(i))
+
+        self.attendance_event.max_capacity = 3
+        self.attendance_event.save()
+
+        self.assertEqual(len(mail.outbox), 1)
+
+    def test_changing_max_capacity_should_notify_waitlist_with_capacity_larger_than_guestlist(self):
+        for i in range(4):
+            generate_attendee(self.attendance_event.event, 'user' + str(i))
+
+        self.attendance_event.max_capacity = 5
+        self.attendance_event.save()
+
+        self.assertEqual(len(mail.outbox), 2)
 
 
 class AttendeeModelTest(TestCase):
