@@ -432,7 +432,7 @@ class AttendanceEvent(models.Model):
         return self.extras.exists()
 
     @property
-    def attendees_qs(self):
+    def attending_attendees_qs(self):
         """ Queryset with all attendees not on waiting list """
         return self.attendees.all()[:self.max_capacity - self.number_of_reserved_seats]
 
@@ -440,7 +440,7 @@ class AttendanceEvent(models.Model):
         """ Queryset with all attendees not attended """
         # .filter does apperantly not work on sliced querysets
         # return self.attendees_qs.filter(attended=False)
-        return [a.user for a in self.attendees_qs if not a.attended]
+        return [a.user for a in self.attending_attendees_qs if not a.attended]
 
     @property
     def waitlist_qs(self):
@@ -462,7 +462,7 @@ class AttendanceEvent(models.Model):
     def number_of_attendees(self):
         """ Count of all attendees not in waiting list """
         # We need to use len() instead of .count() here, because of the prefetched event archive
-        return len(self.attendees_qs)
+        return len(self.attending_attendees_qs)
 
     @property
     def number_on_waitlist(self):

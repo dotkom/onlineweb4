@@ -114,7 +114,7 @@ class PaymentReminder(Task):
 
     @staticmethod
     def not_paid(payment):
-        attendees = payment.content_object.attendees_qs
+        attendees = payment.content_object.attending_attendees_qs
         not_paid_users = [attendee.user for attendee in attendees if not attendee.paid]
 
         # Removes users with active payment delays from the list

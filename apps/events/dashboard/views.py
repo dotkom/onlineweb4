@@ -277,7 +277,7 @@ def _payment_prices(attendance_event):
 
         summary["Ikke valgt"] = 0
 
-        for attendee in attendance_event.attendees_qs:
+        for attendee in attendance_event.attending_attendees_qs:
             paymentRelation = PaymentRelation.objects.filter(
                 payment=attendance_event.payment(),
                 user=attendee.user,
@@ -315,7 +315,7 @@ def event_details(request, event_id, active_tab='details'):
         for extra in event.attendance_event.extras.all():
             extras[extra] = {"type": extra, "attending": 0, "waits": 0, "allergics": []}
 
-        count_extras(extras, "attending", event.attendance_event.attendees_qs)
+        count_extras(extras, "attending", event.attendance_event.attending_attendees_qs)
         count_extras(extras, "waits", event.attendance_event.waitlist_qs)
 
     context['extras'] = extras
@@ -392,7 +392,7 @@ def event_change_attendees(request, event_id, active_tab='attendees'):
         for extra in event.attendance_event.extras.all():
             extras[extra] = {"type": extra, "attending": 0, "waits": 0, "allergics": []}
 
-        count_extras(extras, "attending", event.attendance_event.attendees_qs)
+        count_extras(extras, "attending", event.attendance_event.attending_attendees_qs)
         count_extras(extras, "waits", event.attendance_event.waitlist_qs)
 
     context['change_event_form'] = dashboard_forms.ChangeEventForm(instance=event)

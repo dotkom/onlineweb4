@@ -78,7 +78,7 @@ def handle_add_attendee(event, user_id):
     resp['message'] = '%s ble meldt på %s' % (user.get_full_name(), event)
     resp['attendees'] = []
 
-    for number, a in enumerate(attendee.event.attendees_qs):
+    for number, a in enumerate(attendee.event.attending_attendees_qs):
         resp['attendees'].append({
             'number': number+1,
             'id': a.id,
@@ -115,7 +115,7 @@ def handle_remove_attendee(event, attendee_id, _server_hostname):
     attendee.delete()
     resp['message'] = '%s ble fjernet fra %s' % (attendee.user.get_full_name(), attendee.event)
     resp['attendees'] = []
-    for number, a in enumerate(attendee.event.attendees_qs):
+    for number, a in enumerate(attendee.event.attending_attendees_qs):
         resp['attendees'].append({
             'number': number+1,
             'id': a.id,

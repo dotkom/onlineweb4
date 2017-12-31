@@ -18,7 +18,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         event_id = options['event_id']
         event = AttendanceEvent.objects.get(event=event_id)
-        users = event.attendees_qs
+        users = event.attending_attendees_qs
         random_users = self.generate_random_list(users)
         to_from_dict = {}
         for count, user in enumerate(users):

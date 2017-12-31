@@ -260,7 +260,7 @@ def generate_json(request, event_id):
         messages.error(request, _('Du har ikke tilgang til listen for dette arrangementet. hei'))
         return redirect(event)
 
-    attendee_unsorted = event.attendance_event.attendees_qs
+    attendee_unsorted = event.attendance_event.attending_attendees_qs
     attendee_sorted = sorted(attendee_unsorted, key=lambda attendee: attendee.user.last_name)
     waiters = event.attendance_event.waitlist_qs
     reserve = event.attendance_event.reservees_qs
@@ -329,7 +329,7 @@ def mail_participants(request, event_id):
         messages.error(request, _('Du har ikke tilgang til å vise denne siden.'))
         return redirect(event)
 
-    all_attendees = list(event.attendance_event.attendees_qs)
+    all_attendees = list(event.attendance_event.attending_attendees_qs)
     attendees_on_waitlist = list(event.attendance_event.waitlist_qs)
     attendees_not_paid = list(event.attendance_event.attendees_not_paid)
 
