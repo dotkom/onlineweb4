@@ -142,11 +142,7 @@ class PaymentReminder(Task):
     @staticmethod
     def unattend(payment):
         for user in PaymentReminder.not_paid(payment):
-            payment.content_object.notify_waiting_list(
-                host=settings.BASE_URL, unattended_user=user)
-
-            Attendee.objects.get(event=payment.content_object,
-                                 user=user).delete()
+            Attendee.objects.get(event=payment.content_object, user=user).delete()
 
     @staticmethod
     def suspend(payment):
@@ -273,10 +269,6 @@ class PaymentDelayHandler(Task):
 
     @staticmethod
     def unattend(payment_delay):
-        payment_delay.payment.content_object.notify_waiting_list(
-            host=settings.BASE_URL,
-            unattended_user=payment_delay.user
-        )
         Attendee.objects.get(event=payment_delay.payment.content_object, user=payment_delay.user).delete()
 
 

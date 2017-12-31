@@ -839,6 +839,8 @@ class Attendee(models.Model):
             # Do nothing
             False
 
+        self.event.notify_waiting_list(host=settings.BASE_URL, unattended_user=self.user)
+
         super(Attendee, self).delete()
 
     def is_on_waitlist(self):

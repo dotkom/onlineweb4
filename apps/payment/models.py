@@ -151,7 +151,7 @@ class Payment(models.Model):
             else:
                 Attendee.objects.create(event=self.content_object, user=user, paid=True)
 
-    def handle_refund(self, host, payment_relation):
+    def handle_refund(self, payment_relation):
         """
         Method for handling refunds.
         For events it deletes the Attendee object.
@@ -163,8 +163,6 @@ class Payment(models.Model):
         payment_relation.save()
 
         if self._is_type(AttendanceEvent):
-            self.content_object.notify_waiting_list(
-                host=host, unattended_user=payment_relation.user)
             Attendee.objects.get(event=self.content_object,
                                  user=payment_relation.user).delete()
 

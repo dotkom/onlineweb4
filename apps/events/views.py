@@ -176,7 +176,6 @@ def unattendEvent(request, event_id):
         for delay in delays:
             delay.delete()
 
-    event.attendance_event.notify_waiting_list(host=request.META['HTTP_HOST'], unattended_user=request.user)
     Attendee.objects.get(event=attendance_event, user=request.user).delete()
 
     messages.success(request, _("Du ble meldt av arrangementet."))

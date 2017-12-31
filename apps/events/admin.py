@@ -95,11 +95,6 @@ class AttendeeAdmin(GuardedModelAdmin, VersionAdmin):
             del actions['delete_selected']
         return actions
 
-    def delete_model(self, request, obj):
-        event = obj.event.event
-        event.attendance_event.notify_waiting_list(host=request.META['HTTP_HOST'], unattended_user=obj.user)
-        obj.delete()
-
 
 class CompanyEventAdmin(VersionAdmin):
     model = CompanyEvent
