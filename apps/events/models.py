@@ -557,13 +557,13 @@ class AttendanceEvent(models.Model):
 
         return payment
 
-    def notify_waiting_list(self, host, extra_capacity=1):
+    def notify_waiting_list(self, extra_capacity=1):
         from apps.events.utils import handle_waitlist_bump  # Imported here to avoid circular import
         if not self.waitlist_qs:
             return
         # Send mail to users who were on waiting list
         bumped_attendees = self.waitlist_qs[:extra_capacity]
-        handle_waitlist_bump(self.event, host, bumped_attendees, self.payment())
+        handle_waitlist_bump(self.event, bumped_attendees, self.payment())
 
     def is_eligible_for_signup(self, user):
         """
@@ -830,7 +830,7 @@ class Attendee(models.Model):
             False
 
         if not self.is_on_waitlist():
-            self.event.notify_waiting_list(host=settings.BASE_URL)
+            self.event.notify_waiting_list()
 
         super(Attendee, self).delete()
 

@@ -52,8 +52,7 @@ def get_types_allowed(user):
     return types_allowed
 
 
-def handle_waitlist_bump(event, host, attendees, payment=None):
-
+def handle_waitlist_bump(event, attendees, payment=None):
     title = 'Du har fått plass på %s' % (event.title)
 
     message = 'Du har stått på venteliste for arrangementet "%s" og har nå fått plass.\n' % (str(event.title))
@@ -64,7 +63,7 @@ def handle_waitlist_bump(event, host, attendees, payment=None):
         message += "Det kreves ingen ekstra handling fra deg med mindre du vil melde deg av."
 
     message += "\n\nFor mer info:"
-    message += "\nhttp://%s%s" % (host, event.get_absolute_url())
+    message += "\nhttp://%s%s" % (settings.BASE_URL, event.get_absolute_url())
 
     for attendee in attendees:
         send_mail(title, message, settings.DEFAULT_FROM_EMAIL, [attendee.user.email])
