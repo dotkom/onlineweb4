@@ -2,7 +2,6 @@
 
 from collections import OrderedDict
 from datetime import datetime, timedelta
-from functools import reduce
 
 from django.conf import settings
 from django.contrib.auth.models import Group
@@ -731,7 +730,7 @@ class AttendanceEvent(models.Model):
         return self.attendees.filter(user=user)
 
     def is_on_waitlist(self, user):
-        return reduce(lambda x, y: x or y.user == user, self.waitlist_qs, False)
+        return any(a.user == user for a in self.waitlist_qs)
 
     def what_place_is_user_on_wait_list(self, user):
         if self.waitlist:
