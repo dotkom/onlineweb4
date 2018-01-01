@@ -138,18 +138,12 @@ class Event(models.Model):
             return settings.DEFAULT_FROM_EMAIL
 
     def can_display(self, user):
-        restriction = GroupRestriction.objects.filter(event=self)
-
+        restriction = GroupRestriction.objects.filter(event=self).first()
         if not restriction:
             return True
-
         if not user:
             return False
-
-        groups = restriction[0].groups
-
-        # returns True if any of the users groups are in one of the accepted groups
-        return any(group in user.groups.all() for group in groups.all())
+        return restriction.has_access(user)
 
     @property
     def slug(self):
@@ -948,6 +942,10 @@ class GroupRestriction(models.Model):
 
     groups = models.ManyToManyField(Group, blank=True,
                                     help_text=_('Legg til de gruppene som skal ha tilgang til arrangementet'))
+
+    def has_access(self, user):
+        # returns True if any of the users groups are in one of the accepted groups
+        return self.groups.filter(id__in=user.groups.all()).exists()
 
     class Meta:
         verbose_name = _("restriksjon")
