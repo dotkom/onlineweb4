@@ -434,7 +434,7 @@ class AttendanceEvent(models.Model):
     @property
     def attending_attendees_qs(self):
         """ Queryset with all attendees not on waiting list """
-        return self.attendees.all()[:self.max_capacity - self.number_of_reserved_seats]
+        return self.attendees.all()[:self.number_of_attendee_seats]
 
     def not_attended(self):
         """ Queryset with all attendees not attended """
@@ -445,7 +445,7 @@ class AttendanceEvent(models.Model):
     @property
     def waitlist_qs(self):
         """ Queryset with all attendees in waiting list """
-        return self.attendees.all()[self.max_capacity - self.number_of_reserved_seats:]
+        return self.attendees.all()[self.number_of_attendee_seats:]
 
     @property
     def reservees_qs(self):
@@ -469,6 +469,11 @@ class AttendanceEvent(models.Model):
         """ Count of all attendees on waiting list """
         # We need to use len() instead of .count() here, because of the prefetched event archive
         return len(self.waitlist_qs)
+
+    @property
+    def number_of_attendee_seats(self):
+        """Return the number of seats which can be used for attendees"""
+        return self.max_capacity - self.number_of_reserved_seats
 
     @property
     def number_of_reserved_seats(self):
@@ -764,15 +769,29 @@ class AttendanceEvent(models.Model):
     def __str__(self):
         return self.event.title
 
+    def check_for_waitlist_changes(self):
+        """
+        Checks if any attendees should be bumped from the waitlist
+
+        Waitlist bumping can happen if e.g. max capacity or number of reserved seats is adjusted
+        This method should be called with edited fields, but before the attendance event is saved
+        as it looks at the difference between the fields.
+        """
+
+        old_attendance_event = AttendanceEvent.objects.filter(event_id=self.event_id).first()
+        if not old_attendance_event:
+            # Attendance event was just created
+            return
+
+        extra_capacity = self.number_of_attendee_seats - old_attendance_event.number_of_attendee_seats
+        if extra_capacity > 0:
+            # Using old object because max_capacity has already been changed in self
+            old_attendance_event.notify_waiting_list(extra_capacity)
+
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):
         # If max capacity changed we will notify users that they are now on the attend list
-        old_attendance_event = AttendanceEvent.objects.filter(event_id=self.event_id).first()
-        if old_attendance_event:
-            extra_capacity = self.max_capacity - old_attendance_event.max_capacity
-            if extra_capacity > 0:
-                # Using old object because max_capacity has already been changed in self
-                old_attendance_event.notify_waiting_list(extra_capacity)
+        self.check_for_waitlist_changes()
 
         super().save(force_insert=force_insert, force_update=force_update, using=using, update_fields=update_fields)
 
@@ -874,6 +893,8 @@ class Reservation(models.Model):
 
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):
+        # Notify attendance event that the waitlist may have changed
+        self.attendance_event.check_for_waitlist_changes()
         super().save(force_insert=force_insert, force_update=force_update, using=using, update_fields=update_fields)
 
         if self.attendance_event.event.organizer:

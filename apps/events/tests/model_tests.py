@@ -353,6 +353,28 @@ class WaitlistAttendanceEventTest(TestCase):
 
         self.assertEqual(len(mail.outbox), 2)
 
+    def test_changing_reservation_should_notify_waitlist(self):
+        reservation = G(Reservation, attendance_event=self.attendance_event, seats=2)
+        for i in range(4):
+            generate_attendee(self.attendance_event.event, 'user' + str(i))
+
+        reservation.seats = 1
+        reservation.save()
+
+        self.assertEqual(len(mail.outbox), 1)
+
+    def test_changing_reservation_and_max_capacity_should_notify_waitlist(self):
+        reservation = G(Reservation, attendance_event=self.attendance_event, seats=2)
+        for i in range(5):
+            generate_attendee(self.attendance_event.event, 'user' + str(i))
+
+        reservation.seats = 1
+        reservation.save()
+        self.attendance_event.max_capacity = 3
+        self.attendance_event.save()
+
+        self.assertEqual(len(mail.outbox), 2)
+
 
 class AttendeeModelTest(TestCase):
     def setUp(self):
