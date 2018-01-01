@@ -6,9 +6,8 @@ from datetime import datetime, timedelta
 from django.conf import settings
 from django.contrib.auth.models import Group
 from django.contrib.contenttypes.fields import GenericRelation
-from django.contrib.contenttypes.models import ContentType
 from django.core import validators
-from django.core.exceptions import ValidationError
+from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist, ValidationError
 from django.db import models
 from django.db.models import SET_NULL, Case, Q, Value, When
 from django.template.defaultfilters import slugify
@@ -404,6 +403,8 @@ class AttendanceEvent(models.Model):
     # Extra choices
     extras = models.ManyToManyField(Extras, blank=True)
 
+    payments = GenericRelation('payment.Payment')
+
     @property
     def feedback(self):
         """Proxy for generic feedback relation on event"""
@@ -543,17 +544,6 @@ class AttendanceEvent(models.Model):
     @property
     def waitlist_enabled(self):
         return self.waitlist
-
-    def payment(self):
-        # Importing here to awoid circular dependency error
-        from apps.payment.models import Payment
-        try:
-            payment = Payment.objects.get(content_type=ContentType.objects.get_for_model(AttendanceEvent),
-                                          object_id=self.event.id)
-        except Payment.DoesNotExist:
-            payment = None
-
-        return payment
 
     def notify_waiting_list(self, extra_capacity=1):
         from apps.events.utils import handle_waitlist_bump  # Imported here to avoid circular import
@@ -741,19 +731,21 @@ class AttendanceEvent(models.Model):
                         return list(waitlist).index(attendee_object) + 1
         return 0
 
+    def payment(self):
+        try:
+            return self.payments.get()
+        except ObjectDoesNotExist:
+            return None
+
     def get_payments(self):
-        from apps.payment.models import Payment
-        return Payment.objects.filter(content_type=ContentType.objects.get_for_model(AttendanceEvent),
-                                      object_id=self.pk)
+        return self.payments.all()
 
     def get_payment(self):
-        from apps.payment.models import Payment
         try:
-            return Payment.objects.get(content_type=ContentType.objects.get_for_model(AttendanceEvent),
-                                       object_id=self.pk)
-        except Payment.DoesNotExist:
+            return self.payments.get()
+        except ObjectDoesNotExist:
             return None
-        except Payment.MultipleObjectsReturned:
+        except MultipleObjectsReturned:
             import logging
             logger = logging.getLogger(__name__)
             logger.warn("Multiple payment objects connected to attendance event #%s." % self.pk)
