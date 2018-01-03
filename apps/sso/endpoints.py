@@ -6,6 +6,8 @@ from django.http import JsonResponse
 from oauth2_provider.decorators import protected_resource
 from oauth2_provider.models import AccessToken
 
+from apps.sso.userinfo import Onlineweb4Userinfo
+
 SCOPES = [
     'authentication.onlineuser.username.read',
     'authentication.onlineuser.first_name.read',
@@ -36,19 +38,7 @@ def user(request):
 
         bearer = bearer[1]
         tokenobject = AccessToken.objects.get(token=bearer)
-        userdata = {
-            'first_name': tokenobject.user.first_name,
-            'last_name': tokenobject.user.last_name,
-            'username': tokenobject.user.username,
-            'email': tokenobject.user.get_email().email,
-            'member': tokenobject.user.is_member,
-            'staff': tokenobject.user.is_staff,
-            'superuser': tokenobject.user.is_superuser,
-            'nickname': tokenobject.user.nickname,
-            'rfid': tokenobject.user.rfid,
-            'image': tokenobject.user.get_image_url(),
-            'field_of_study': tokenobject.user.get_field_of_study_display(),
-        }
+        userdata = Onlineweb4Userinfo(tokenobject.user).oauth2()
 
         return JsonResponse(status=200, data=userdata)
     except AccessToken.DoesNotExist:

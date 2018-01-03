@@ -4,6 +4,7 @@ from oauth2_provider.models import get_access_token_model, get_application_model
 
 from apps.authentication.models import Email, OnlineUser
 from apps.oauth2_provider.test import OAuth2TestCase
+from apps.sso.userinfo import Onlineweb4Userinfo
 
 from .endpoints import SCOPES
 
@@ -25,3 +26,4 @@ class UserinfoTestCase(OAuth2TestCase):
 
         self.assertEqual(200, resp.status_code)
         self.assertEqual(self.user.username, resp.json().get('username'))
+        self.assertEqual(Onlineweb4Userinfo(self.user).oauth2(), resp.json())
