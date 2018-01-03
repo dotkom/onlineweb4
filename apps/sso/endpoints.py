@@ -6,8 +6,7 @@ from django.http import JsonResponse
 from oauth2_provider.decorators import protected_resource
 from oauth2_provider.models import AccessToken
 
-
-@protected_resource([
+SCOPES = [
     'authentication.onlineuser.username.read',
     'authentication.onlineuser.first_name.read',
     'authentication.onlineuser.last_name.read',
@@ -18,7 +17,10 @@ from oauth2_provider.models import AccessToken
     'authentication.onlineuser.field_of_study.read',
     'authentication.onlineuser.nickname.read',
     'authentication.onlineuser.rfid.read'
-])
+]
+
+
+@protected_resource(SCOPES)
 def user(request):
     """
     Basic user information provided based on the Bearer Token provided by an SSO application
