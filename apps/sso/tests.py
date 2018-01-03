@@ -6,14 +6,14 @@ from apps.authentication.models import Email, OnlineUser
 from apps.oauth2_provider.test import OAuth2TestCase
 from apps.sso.userinfo import Onlineweb4Userinfo
 
-from .endpoints import SCOPES
+from .endpoints import USERINFO_SCOPES
 
 Application = get_application_model()
 AccessToken = get_access_token_model()
 
 
 class UserinfoTestCase(OAuth2TestCase):
-    scopes = SCOPES
+    scopes = USERINFO_SCOPES
 
     def setUp(self):
         self.user = G(OnlineUser)
