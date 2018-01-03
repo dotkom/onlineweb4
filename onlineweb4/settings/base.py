@@ -124,3 +124,8 @@ RECAPTCHA_PUBLIC_KEY = config("OW4_DJANGO_RECAPTCHA_PUBLIC_KEY", default='6LfV9j
 RECAPTCHA_PRIVATE_KEY = config("OW4_DJANGO_RECAPTCHA_PRIVATE_KEY", default='6LfV9jkUAAAAABlc4-q01vMsBNv3-Gsp75G8Zd5N')
 NOCAPTCHA = config("OW4_DJANGO_NOCAPTCHA", cast=bool, default=True)
 RECAPTCHA_USE_SSL = config("OW4_DJANGO_RECAPTCHA_USE_SSL", cast=bool, default=True)
+
+
+# oidc_provider - OpenID Connect Provider
+OIDC_USERINFO = 'apps.oidc_provider.claims.userinfo'
+OIDC_EXTRA_SCOPE_CLAIMS = 'apps.oidc_provider.claims.Onlineweb4ScopeClaims'
