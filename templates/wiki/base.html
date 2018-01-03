@@ -15,15 +15,15 @@
     <script src="{% static "wiki/js/core.js" %}"></script>
     <script src="{% static "wiki/bootstrap/js/bootstrap.min.js" %}"></script>
     {% render_bundle 'wiki' 'js' %}
-    {% render_block "js" %}
 {% endblock %}
+{% render_block "js" %}
 
 {% block styles %}
     {{ block.super }}
      <link href="{{ STATIC_URL }}wiki/bootstrap/css/wiki-bootstrap.min.css" rel="stylesheet">
     {% render_bundle 'wiki' 'css' %}
-    {% render_block "css" %}
 {% endblock %}
+{% render_block "css" %}
 
 {% block content %}
     <section id="wiki">
