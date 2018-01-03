@@ -1,21 +1,12 @@
-from datetime import timedelta
-
 from django.core.urlresolvers import reverse
-from django.utils import timezone
 from django_dynamic_fixture import G
-from oauth2_provider.models import (get_access_token_model, get_application_model, get_grant_model,
-                                    get_refresh_token_model)
 from rest_framework import status
 from rest_framework.test import APITestCase
 
 from apps.authentication.models import OnlineUser
+from apps.oauth2_provider.test import OAuth2TestCase
 
 from .utils import attend_user_to_event, generate_event
-
-Application = get_application_model()
-Grant = get_grant_model()
-AccessToken = get_access_token_model()
-RefreshToken = get_refresh_token_model()
 
 
 def generate_attendee(event, username, rfid):
@@ -48,23 +39,12 @@ class EventsAPIURLTestCase(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
 
-class AttendAPITestCase(APITestCase):
+class AttendAPITestCase(OAuth2TestCase):
+    scopes = ['read', 'write', 'regme.readwrite']
+
     def setUp(self):
         self.user = G(OnlineUser, name='test_user')
-        self.application = Application.objects.create(
-            name='test_client', user=self.user,
-            client_type=Application.CLIENT_CONFIDENTIAL,
-            authorization_grant_type=Application.GRANT_CLIENT_CREDENTIALS,
-            scopes='read write regme.readwrite',
-            redirect_uris='http://localhost',
-        )
-        self.application.save()
-        self.access_token = AccessToken.objects.create(
-            user=self.user, token='1234567890',
-            application=self.application, scope='read write regme.readwrite',
-            expires=timezone.now() + timedelta(days=1)
-        )
-        self.access_token.save()
+        self.access_token = self.generate_access_token(self.user)
         self.headers = {
             'format': 'json',
             'HTTP_AUTHORIZATION': 'Bearer ' + self.access_token.token,
