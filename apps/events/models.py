@@ -418,7 +418,7 @@ class AttendanceEvent(models.Model):
 
     @property
     def has_reservation(self):
-        """ Returns whether this event has an attached reservation """
+        """Returns whether this event has an attached reservation """
         return hasattr(self, 'reserved_seats')
 
     @property
@@ -427,27 +427,28 @@ class AttendanceEvent(models.Model):
 
     @property
     def attending_attendees_qs(self):
-        """ Queryset with all attendees not on waiting list """
+        """Queryset with all attendees not on waiting list """
         return self.attendees.all()[:self.number_of_attendee_seats]
 
     def not_attended(self):
-        """ Queryset with all attendees not attended """
+        """List of all attending attendees who have not attended"""
         return [a.user for a in self.attending_attendees_qs if not a.attended]
 
     @property
     def waitlist_qs(self):
-        """ Queryset with all attendees in waiting list """
+        """Queryset with all attendees on waiting list """
         return self.attendees.all()[self.number_of_attendee_seats:]
 
     @property
     def reservees_qs(self):
-        """ Queryset with all reserved seats which have been filled """
+        """Queryset with all reserved seats which have been filled """
         if self.has_reservation:
             return self.reserved_seats.reservees.all()
         return []
 
     @property
     def attendees_not_paid(self):
+        """List of attendees who haven't paid"""
         return list(self.attendees.filter(paid=False))
 
     @property
@@ -469,23 +470,17 @@ class AttendanceEvent(models.Model):
 
     @property
     def number_of_reserved_seats(self):
-        """
-        Total number of seats for this event that are reserved
-        """
+        """Total number of seats for this event that are reserved"""
         return self.reserved_seats.seats if self.has_reservation else 0
 
     @property
     def number_of_reserved_seats_taken(self):
-        """
-        Returns number of reserved seats which have been filled
-        """
+        """Returns number of reserved seats which have been filled"""
         return self.reserved_seats.number_of_seats_taken if self.has_reservation else 0
 
     @property
     def number_of_seats_taken(self):
-        """
-        Returns the total amount of taken seats for an attendance_event.
-        """
+        """Returns the total amount of taken seats for an attendance_event."""
         # This includes all attendees + reserved seats for the event, if any.
         # Always use the total number of reserved seats here, because they are not
         # available for regular users to claim.
@@ -493,16 +488,12 @@ class AttendanceEvent(models.Model):
 
     @property
     def free_seats(self):
-        """
-        Integer representing the number of free seats for an event
-        """
+        """Integer representing the number of free seats for an event"""
         return 0 if self.number_of_seats_taken == self.max_capacity else self.max_capacity - self.number_of_seats_taken
 
     @property
     def room_on_event(self):
-        """
-        Returns True if there are free seats or an open waiting list
-        """
+        """Returns True if there are free seats or an open waiting list"""
         return True if self.free_seats > 0 or self.waitlist else False
 
     @property
@@ -569,8 +560,6 @@ class AttendanceEvent(models.Model):
         5XX = server error (event related)
         These codes are meant as a debugging tool only. The eligibility checking is quite
         extensive, and tracking where it's going wrong is much needed.
-        TODO:
-            Exception handling
         """
 
         response = {'status': False, 'message': '', 'status_code': None}
