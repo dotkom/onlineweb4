@@ -432,8 +432,6 @@ class AttendanceEvent(models.Model):
 
     def not_attended(self):
         """ Queryset with all attendees not attended """
-        # .filter does apperantly not work on sliced querysets
-        # return self.attendees_qs.filter(attended=False)
         return [a.user for a in self.attending_attendees_qs if not a.attended]
 
     @property
