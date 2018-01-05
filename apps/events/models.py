@@ -534,11 +534,11 @@ class AttendanceEvent(models.Model):
     def waitlist_enabled(self):
         return self.waitlist
 
-    def notify_waiting_list(self, extra_capacity=1):
+    def bump_waitlist_for_x_users(self, extra_capacity=1):
+        """Handle bumping of the x first users on the waitlist"""
         from apps.events.utils import handle_waitlist_bump  # Imported here to avoid circular import
         if not self.waitlist_qs:
             return
-        # Send mail to users who were on waiting list
         bumped_attendees = self.waitlist_qs[:extra_capacity]
         handle_waitlist_bump(self.event, bumped_attendees, self.payment())
 
@@ -741,7 +741,7 @@ class AttendanceEvent(models.Model):
     def __str__(self):
         return self.event.title
 
-    def check_for_waitlist_changes(self):
+    def bump_waitlist(self):
         """
         Checks if any attendees should be bumped from the waitlist
 
@@ -757,13 +757,12 @@ class AttendanceEvent(models.Model):
 
         extra_capacity = self.number_of_attendee_seats - old_attendance_event.number_of_attendee_seats
         if extra_capacity > 0:
-            # Using old object because max_capacity has already been changed in self
-            old_attendance_event.notify_waiting_list(extra_capacity)
+            # Using old object because waitlist has already been changed in self
+            old_attendance_event.bump_waitlist_for_x_users(extra_capacity)
 
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):
-        # If max capacity changed we will notify users that they are now on the attend list
-        self.check_for_waitlist_changes()
+        self.bump_waitlist()
 
         super().save(force_insert=force_insert, force_update=force_update, using=using, update_fields=update_fields)
 
@@ -829,7 +828,7 @@ class Attendee(models.Model):
             False
 
         if not self.is_on_waitlist():
-            self.event.notify_waiting_list()
+            self.event.bump_waitlist_for_x_users()
 
         super(Attendee, self).delete()
 
@@ -866,7 +865,7 @@ class Reservation(models.Model):
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):
         # Notify attendance event that the waitlist may have changed
-        self.attendance_event.check_for_waitlist_changes()
+        self.attendance_event.bump_waitlist()
         super().save(force_insert=force_insert, force_update=force_update, using=using, update_fields=update_fields)
 
         if self.attendance_event.event.organizer:
