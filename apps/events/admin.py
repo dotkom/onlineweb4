@@ -95,11 +95,6 @@ class AttendeeAdmin(GuardedModelAdmin, VersionAdmin):
             del actions['delete_selected']
         return actions
 
-    def delete_model(self, request, obj):
-        event = obj.event.event
-        event.attendance_event.notify_waiting_list(host=request.META['HTTP_HOST'], unattended_user=obj.user)
-        obj.delete()
-
 
 class CompanyEventAdmin(VersionAdmin):
     model = CompanyEvent
@@ -149,19 +144,6 @@ class EventAdmin(GuardedModelAdmin, VersionAdmin):
     def save_model(self, request, obj, form, change):
         if not change:  # created
             obj.author = request.user
-        else:
-            # If attendance max capacity changed we will notify users that they are now on the attend list
-            old_event = Event.objects.get(id=obj.id)
-            if old_event.is_attendance_event():
-                old_waitlist_size = old_event.attendance_event.waitlist_qs.count()
-                if old_waitlist_size > 0:
-                    diff_capacity = obj.attendance_event.max_capacity - old_event.attendance_event.max_capacity
-                    if diff_capacity > 0:
-                        if diff_capacity > old_waitlist_size:
-                            diff_capacity = old_waitlist_size
-                        # Using old_event because max_capacity has already been changed in obj
-                        old_event.attendance_event.notify_waiting_list(host=request.META['HTTP_HOST'],
-                                                                       extra_capacity=diff_capacity)
         obj.save()
 
     def save_formset(self, request, form, formset, change):

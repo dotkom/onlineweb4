@@ -21,8 +21,8 @@ class EventPDF(object):
 
     def __init__(self, event):
         self.event = event
-        attendee_qs = event.attendance_event.attendees_qs
-        self.attendees = sorted(attendee_qs, key=lambda attendee: attendee.user.last_name)
+        attendees = event.attendance_event.attending_attendees_qs
+        self.attendees = sorted(attendees, key=lambda attendee: attendee.user.last_name)
         self.waiters = event.attendance_event.waitlist_qs
         self.reservees = event.attendance_event.reservees_qs
         self.attendee_table_data = [('Navn', 'Klasse', 'Studie', 'Telefon'), ]

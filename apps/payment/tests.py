@@ -140,7 +140,7 @@ class PaymentTest(TestCase):
         )
         self.assertFalse(payment_relation.refunded)
 
-        self.event_payment.handle_refund("host", payment_relation)
+        self.event_payment.handle_refund(payment_relation)
         attendees = Attendee.objects.all()
 
         self.assertTrue(payment_relation.refunded)
