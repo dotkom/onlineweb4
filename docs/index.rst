@@ -9,6 +9,8 @@ Welcome to onlineweb4's documentation!
 .. toctree::
     :maxdepth: 2
 
+    approval/index
+    article/index
     authentication/index
     careeropportunity/index
     companyprofile/index
