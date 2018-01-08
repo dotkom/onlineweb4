@@ -24,12 +24,14 @@ class AlbumsListView(ListView):
         return context
 
 
-
+# Gives NonType Error when used
 class CreateAlbum(FormView):
-
+    print("In CreateAlbumView")
+    
     form_class = AlbumForm
     template_name = '/photoalbum/create.html' # Replace with your template.
     success_url = '/photoalbum/index.html'  # Replace with your URL or reverse().
+
 
     def post(self, request, *args, **kwargs):
         form_class = self.get_form_class()
@@ -41,10 +43,14 @@ class CreateAlbum(FormView):
             return self.form_valid(form)
         else:
             return self.form_invalid(form)
+    
+
 
 def create_album(request):
+    print("In create_album")
     #log = logging.getLogger(__name__)
     form = AlbumForm(request.POST)
+    print(form)
     
     if request.method == "POST":
         form = AlbumForm(request.POST, request.FILES)
@@ -68,7 +74,6 @@ def upload(request):
         # Return OK if all is good
         return JsonResponse({'success': True, 'message': 'OK'}, status=200)
     return JsonResponse({'success': False, 'message': 'Bad request or invalid type'}, status=400)
-
 
 
 class AlbumDetailView(DetailView):
