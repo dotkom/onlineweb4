@@ -140,3 +140,26 @@ An example of a rule bundle:
 See :class:`~apps.events.models.RuleBundle`.
 
 Unfortunately over time the list of rule bundles have grown more than expected because of weird combinations.
+
+*******
+Archive
+*******
+
+A list of all events can be found in the archive.
+
+It is possible to search and filter on future events only or events the user has attended.
+
+***************
+Calendar Export
+***************
+
+Events can be exported as iCalendar(ics).
+Calendars like Google Calendar will automatically update the calendar when new events are added. 
+
+Three different types of calendar export is supported:
+
+- All events(public)
+- User events(private)
+- Specific event(public)
+
+The private calendar is implemented using Django's signing tool :class:`django.core.signing.Signer` with username as key.
