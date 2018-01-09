@@ -45,35 +45,34 @@ class CreateAlbum(FormView):
             return self.form_invalid(form)
     
 
+def upload_photos(photos):
+    for photo in photos:
+        print("Photo")
+        Photo.objects.create(photo)
 
 def create_album(request):
     print("In create_album")
     #log = logging.getLogger(__name__)
-    form = AlbumForm(request.POST)
-    print(form)
-    
+   
     if request.method == "POST":
         form = AlbumForm(request.POST, request.FILES)
+
+        print(form)
+        print(request.FILES)
         if form.is_valid():
-            images = upload(request)
+            photos = upload_photos(request.FILES.getlist('photos'))
             album = form.save()
-            album.save()
+            
     
             albums = Album.objects.all()
             return render(request, 'photoalbum/index.html', {'albums': albums})
+        else:
+            print("FOrm is not valid")
 
+    form = AlbumForm(request.POST)
     return render(request, 'photoalbum/create.html', {'form': form})
 
 
-def upload(request):
-
-    images = UploadImageHandler(request.FILES['images']).status
-    if not result: 
-        return JsonResponse({'success': False, 'message': result.message}, status=500)
-
-        # Return OK if all is good
-        return JsonResponse({'success': True, 'message': 'OK'}, status=200)
-    return JsonResponse({'success': False, 'message': 'Bad request or invalid type'}, status=400)
 
 
 class AlbumDetailView(DetailView):
