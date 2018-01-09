@@ -1,3 +1,5 @@
+.. _payment:
+
 Payment
 =======
 
@@ -27,6 +29,8 @@ Refunding
 *********
 
 *TODO*
+
+.. _payment-events:
 
 Events
 ------

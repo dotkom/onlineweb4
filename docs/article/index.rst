@@ -1,7 +1,7 @@
-.. _feedback:
+.. _article:
 
-Feedback
-========
+Article
+=======
 
 
 .. toctree::

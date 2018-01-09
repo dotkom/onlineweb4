@@ -80,16 +80,26 @@ class Event(models.Model):
 
     author = models.ForeignKey(User, related_name='oppretter', null=True, blank=True)
     title = models.CharField(_('tittel'), max_length=60)
+    """Event title"""
     event_start = models.DateTimeField(_('start-dato'))
+    """Datetime for event start"""
     event_end = models.DateTimeField(_('slutt-dato'))
+    """Datetime for event end"""
     location = models.CharField(_('lokasjon'), max_length=100)
+    """Event location"""
     ingress_short = models.CharField(_("kort ingress"), max_length=150,
                                      validators=[validators.MinLengthValidator(25)])
+    """Short ingress used on the frontpage"""
     ingress = models.TextField(_('ingress'), validators=[validators.MinLengthValidator(25)])
+    """Ingress used in archive and details page"""
     description = models.TextField(_('beskrivelse'), validators=[validators.MinLengthValidator(45)])
+    """Event description shown on details page"""
     image = models.ForeignKey(ResponsiveImage, related_name='events', blank=True, null=True, on_delete=SET_NULL)
+    """Event image"""
     event_type = models.SmallIntegerField(_('type'), choices=TYPE_CHOICES, null=False)
+    """Event type. Used mainly for filtering"""
     organizer = models.ForeignKey(Group, verbose_name=_('arrangør'), blank=True, null=True, on_delete=SET_NULL)
+    """Committee responsible for organizing the event"""
 
     feedback = GenericRelation(FeedbackRelation)
 
@@ -546,12 +556,12 @@ class AttendanceEvent(models.Model):
         """
         Checks if a user can attend a specific event
         This method checks for:
-            Already attended
-            Waitlist
-            Room on event
-            Rules
-            Marks
-            Suspension
+        - Already attended
+        - Waitlist
+        - Room on event
+        - Rules
+        - Marks
+        - Suspension
         @param User object
         The returned dict contains a key called 'status_code'. These codes follow the HTTP
         standard in terms of overlying scheme.
