@@ -21,6 +21,10 @@ class AlbumsListView(ListView):
     def get_context_data(self, **kwargs):
         context = super(AlbumsListView, self).get_context_data(**kwargs)
         context['albums'] = Album.objects.all()
+        print("Albums: ")
+        print(context['albums'])
+        for album in context['albums']:
+            print("Album: ", album.title)
         return context
 
 
@@ -68,13 +72,14 @@ def create_album(request):
         print(request.FILES)
         if form.is_valid():
             photos = upload_photos(request.FILES.getlist('photos'))
-
+            cleaned_data = form.cleaned_data
             album = Album()
-            album.title = form['title']
+            album.title = cleaned_data['title']
             album.photos = photos
             album.save()
     
             albums = Album.objects.all()
+
             return render(request, 'photoalbum/index.html', {'albums': albums})
         else:
             print("FOrm is not valid")
