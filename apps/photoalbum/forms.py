@@ -16,5 +16,5 @@ class AlbumForm2(forms.ModelForm):
 class AlbumForm(forms.Form):
 	
 	title = forms.CharField(widget=forms.TextInput(), label=_("Tittel"))
-	photos = forms.FileField(widget=forms.ClearableFileInput(), label=_("Bilder"))    
+	photos = forms.FileField(widget=forms.ClearableFileInput(attrs={'multiple': True}), label=_("Bilder"))    
 	
