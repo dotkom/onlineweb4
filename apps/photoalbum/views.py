@@ -43,23 +43,48 @@ class CreateAlbum(FormView):
         photos = request.FILES.getlist('photos')
         if form.is_valid():
             for photo in photos:
+
                 console.log("Photo!")
             return self.form_valid(form)
         else:
             return self.form_invalid(form)
     
 
+
+
 def upload_photos(photos):
-    print("PHOTOS")
-    print(photos)
+    photos_list = []
+
 
     for photo in photos:
-        print("Photo")
-        print(photo)
-        p = Photo()
-        p.photo = photo
+        print("photo: ", photo)
+        p = Photo(photo=photo)
+        print(p)
         p.save()
+        photos_list.append(p)
         print("Created photo")
+
+    print("Photos list")
+    print(photos_list)
+    return photos_list
+
+
+
+
+def upload_photo(photo):
+    photos_list = []
+
+
+    print("photo: ", photo[0])
+    p = Photo(photo=photo[0])
+    print(p)
+    p.save()
+    photos_list.append(p)
+    print("Created photo")
+
+    print("Photos list")
+    print(photos_list)
+    return photos_list
 
 def create_album(request):
     print("In create_album")
@@ -67,22 +92,21 @@ def create_album(request):
    
     if request.method == "POST":
         form = AlbumForm(request.POST, request.FILES)
-
-        print(form)
-        print(request.FILES)
         if form.is_valid():
-            photos = upload_photos(request.FILES.getlist('photos'))
+            photos = upload_photo(request.FILES.getlist('photos'))
+            
             cleaned_data = form.cleaned_data
             album = Album()
             album.title = cleaned_data['title']
-            album.photos = photos
+            album.photos = photos[0]
+            print(album.photos)
             album.save()
     
             albums = Album.objects.all()
 
             return render(request, 'photoalbum/index.html', {'albums': albums})
         else:
-            print("FOrm is not valid")
+            print("Form is not valid")
 
     form = AlbumForm(request.POST)
     return render(request, 'photoalbum/create.html', {'form': form})
@@ -98,6 +122,7 @@ class AlbumDetailView(DetailView):
         context = super(AlbumDetailView, self).get_context_data(**kwargs)
     
         context['album'] = Album.objects.get(pk=self.kwargs['pk'])
+        print(context['album'].photos.photo)
         return context
 
 
