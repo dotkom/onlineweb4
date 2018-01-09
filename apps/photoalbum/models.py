@@ -4,7 +4,7 @@ from django.conf import settings
 from django.db import models
 from django.utils.translation import ugettext as _
 
-IMAGE_FOLDER = "uploaded_media/images/photo_album"
+IMAGE_FOLDER = "images/photo_album"
 
 class Album(models.Model):
     title = models.CharField(_("Tittel"), blank=False, null=False, max_length=50)
