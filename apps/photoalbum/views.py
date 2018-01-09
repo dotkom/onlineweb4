@@ -52,13 +52,13 @@ class CreateAlbum(FormView):
 
 
 
-def upload_photos(photos):
+def upload_photos(photos, album):
     photos_list = []
 
 
     for photo in photos:
         print("photo: ", photo)
-        p = Photo(photo=photo)
+        p = Photo(photo=photo, album=album)
         print(p)
         p.save()
         photos_list.append(p)
@@ -73,6 +73,7 @@ def upload_photos(photos):
 
 def upload_photo(photo):
     photos_list = []
+
 
 
     print("photo: ", photo[0])
@@ -93,14 +94,13 @@ def create_album(request):
     if request.method == "POST":
         form = AlbumForm(request.POST, request.FILES)
         if form.is_valid():
-            photos = upload_photo(request.FILES.getlist('photos'))
-            
             cleaned_data = form.cleaned_data
             album = Album()
             album.title = cleaned_data['title']
-            album.photos = photos[0]
-            print(album.photos)
             album.save()
+
+            photos = upload_photos(request.FILES.getlist('photos'), album)
+            
     
             albums = Album.objects.all()
 
@@ -122,7 +122,8 @@ class AlbumDetailView(DetailView):
         context = super(AlbumDetailView, self).get_context_data(**kwargs)
     
         context['album'] = Album.objects.get(pk=self.kwargs['pk'])
-        print(context['album'].photos.photo)
+        context['photos'] = Photo.objects.all().filter(album=context['album'])
+        print(context['photos'])
         return context
 
 
