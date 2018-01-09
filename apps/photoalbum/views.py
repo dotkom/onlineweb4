@@ -12,7 +12,7 @@ from django.views.generic.edit import FormView
 
 from apps.gallery.util import UploadImageHandler
 
-from apps.photoalbum.forms import AlbumForm
+from apps.photoalbum.forms import AlbumForm2
 
 class AlbumsListView(ListView):
     model = Album
@@ -46,9 +46,16 @@ class CreateAlbum(FormView):
     
 
 def upload_photos(photos):
+    print("PHOTOS")
+    print(photos)
+
     for photo in photos:
         print("Photo")
-        Photo.objects.create(photo)
+        print(photo)
+        p = Photo()
+        p.photo = photo
+        p.save()
+        print("Created photo")
 
 def create_album(request):
     print("In create_album")
@@ -61,8 +68,11 @@ def create_album(request):
         print(request.FILES)
         if form.is_valid():
             photos = upload_photos(request.FILES.getlist('photos'))
-            album = form.save()
-            
+
+            album = Album()
+            album.title = form['title']
+            album.photos = photos
+            album.save()
     
             albums = Album.objects.all()
             return render(request, 'photoalbum/index.html', {'albums': albums})
