@@ -20,7 +20,7 @@
                 </div>
                 <div class="row">
                 	<div class="col-xs-12 col-sm-6 col-md-4">
-						<form action="{% url 'create_album' %}" method="post">
+						<form enctype="multipart/form-data" action="{% url 'create_album' %}" method="post">
 				            {% csrf_token %}
 				            {{ form|crispy }}
 				            <button class="btn btn-sucess" type="submit">
