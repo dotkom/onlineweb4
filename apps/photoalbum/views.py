@@ -123,7 +123,7 @@ class AlbumDetailView(DetailView):
     
         context['album'] = Album.objects.get(pk=self.kwargs['pk'])
         context['photos'] = Photo.objects.all().filter(album=context['album'])
-        print(context['photos'])
+        print(context['photos'][0].photo)
         return context
 
 
