@@ -1,3 +1,12 @@
+import os
+
+from decouple import config
+
+from .base import PROJECT_ROOT_DIRECTORY
+
+
+LOG_DIR = os.path.join(PROJECT_ROOT_DIRECTORY, 'log')
+
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
 # the site admins on every HTTP 500 error when DEBUG=False.
@@ -31,6 +40,12 @@ LOGGING = {
             'class': 'logging.StreamHandler',
             'formatter': 'standard'
         },
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'formatter': 'standard',
+            'filename': config('OW4_LOG_PATH', default='{}/debug.log'.format(LOG_DIR)),
+        },
         'sentry': {
             'level': 'ERROR',  # Decides what is sent to Sentry. Error is only error and above.
             'class': 'raven.contrib.django.raven_compat.handlers.SentryHandler',
@@ -47,24 +62,25 @@ LOGGING = {
             'propagate': True,
         },
         'feedback': {
-            'handlers': ['console'],
+            'handlers': ['console', 'file'],
             'level': 'DEBUG',
             'propagate': True,
         },
         'syncer': {
-            'handlers': ['console'],
+            'handlers': ['console', 'file'],
             'level': 'DEBUG',
             'propagate': True,
         },
         'raven': {
             'level': 'DEBUG',
-            'handlers': ['console'],
+            'handlers': ['console', 'file'],
             'propagate': False,
         },
         '': {
-            'handlers': ['console'],
+            'handlers': ['console', 'file'],
             'level': 'DEBUG',
             'propagate': True,
         },
     }
 }
+
