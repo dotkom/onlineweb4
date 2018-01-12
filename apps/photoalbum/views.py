@@ -28,63 +28,14 @@ class AlbumsListView(ListView):
         return context
 
 
-# Gives NonType Error when used
-class CreateAlbum(FormView):
-    print("In CreateAlbumView")
-    
-    form_class = AlbumForm
-    template_name = '/photoalbum/create.html' # Replace with your template.
-    success_url = '/photoalbum/index.html'  # Replace with your URL or reverse().
-
-
-    def post(self, request, *args, **kwargs):
-        form_class = self.get_form_class()
-        form = self.get_form(form_class)
-        photos = request.FILES.getlist('photos')
-        if form.is_valid():
-            for photo in photos:
-
-                console.log("Photo!")
-            return self.form_valid(form)
-        else:
-            return self.form_invalid(form)
-    
-
-
-
 def upload_photos(photos, album):
     photos_list = []
 
-
     for photo in photos:
-        print("photo: ", photo)
         p = Photo(photo=photo, album=album)
-        print(p)
         p.save()
         photos_list.append(p)
-        print("Created photo")
 
-    print("Photos list")
-    print(photos_list)
-    return photos_list
-
-
-
-
-def upload_photo(photo):
-    photos_list = []
-
-
-
-    print("photo: ", photo[0])
-    p = Photo(photo=photo[0])
-    print(p)
-    p.save()
-    photos_list.append(p)
-    print("Created photo")
-
-    print("Photos list")
-    print(photos_list)
     return photos_list
 
 def create_album(request):
@@ -95,8 +46,8 @@ def create_album(request):
         form = AlbumForm(request.POST, request.FILES)
         if form.is_valid():
             cleaned_data = form.cleaned_data
-            album = Album()
-            album.title = cleaned_data['title']
+            title = cleaned_data['title']
+            album = Album.objects.get_or_create(title=title)[0]
             album.save()
 
             photos = upload_photos(request.FILES.getlist('photos'), album)
@@ -112,13 +63,15 @@ def create_album(request):
     return render(request, 'photoalbum/create.html', {'form': form})
 
 def delete_album(request, pk):
-    print("In delete album")
-    print(request)
+    album = Album.objects.filter(pk=pk)
 
-    Album.objects.filter(pk=pk).delete()
+    photos = Photo.objects.all().filter(album=album)
+    album.delete()
+
+    for photo in photos:
+        photo.delete()
 
     return AlbumsListView.as_view()(request)
-
 
 
 class AlbumDetailView(DetailView):
@@ -130,8 +83,19 @@ class AlbumDetailView(DetailView):
     
         context['album'] = Album.objects.get(pk=self.kwargs['pk'])
         context['photos'] = Photo.objects.all().filter(album=context['album'])
-        print(context['photos'][0].photo)
         return context
 
+class PhotoDetailView(DetailView):
+    model = Photo
+    template_name = "photoalbum/photo.html"
 
+    def get_context_data(self, **kwargs):
+        context = super(PhotoDetailView, self).get_context_data(**kwargs)
+    
+        context['photo'] = Photo.objects.get(pk=self.kwargs['pk'])
+        print("Before getting album pk")
+        album = context['photo'].album
+        print("Album pk: ", album.pk)
+        context['album'] = Album.objects.get(pk=album.pk)
+        return context
 
