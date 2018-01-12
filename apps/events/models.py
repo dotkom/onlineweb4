@@ -88,9 +88,11 @@ class Event(models.Model):
     location = models.CharField(_('lokasjon'), max_length=100)
     """Event location"""
     ingress_short = models.CharField(_("kort ingress"), max_length=150,
-                                     validators=[validators.MinLengthValidator(25)])
+                                     validators=[validators.MinLengthValidator(25)],
+                                     help_text='En kort ingress som blir vist på forsiden')
     """Short ingress used on the frontpage"""
-    ingress = models.TextField(_('ingress'), validators=[validators.MinLengthValidator(25)])
+    ingress = models.TextField(_('ingress'), validators=[validators.MinLengthValidator(25)],
+                               help_text='En ingress som blir vist før beskrivelsen.')
     """Ingress used in archive and details page"""
     description = models.TextField(_('beskrivelse'), validators=[validators.MinLengthValidator(45)])
     """Event description shown on details page"""
