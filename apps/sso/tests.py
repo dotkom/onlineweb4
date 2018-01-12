@@ -61,3 +61,26 @@ class UserinfoOIDCTestCase(TestCase):
         self.assertEqual(user.pk, resp.json().get('sub'))
         self.assertEqual(user.username, resp.json().get('preferred_username'))
         self.assertEqual(user.username, resp.json().get('nickname'))
+
+    def test_get_ow4_info(self):
+        user = G(OnlineUser)
+        G(Email, user=user)
+
+        token = Token.objects.create(
+            user=user,
+            client=self.oidc_client,
+            expires_at=timezone.now() + timedelta(days=1),
+            _scope='openid profile onlineweb4',
+            access_token='123',
+            refresh_token='456',
+            _id_token='{"sub": %s}' % user.pk,
+        )
+
+        url = reverse('oidc_provider:userinfo')
+
+        resp = self.client.get(url, HTTP_AUTHORIZATION='Bearer ' + token.access_token)
+
+        self.assertEqual(200, resp.status_code)
+        self.assertEqual(user.pk, resp.json().get('sub'))
+        self.assertEqual(user.username, resp.json().get('preferred_username'))
+        self.assertEqual(user.username, resp.json().get('nickname'))
