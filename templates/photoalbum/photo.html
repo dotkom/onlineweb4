@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+	<section id="album">
+        <div class="container">
+            <div class="col-md-12">
+                <div class="page-header">
+                        <ul class="nav nav-pills">
+                        <li class="pull-left">
+                            <h1>{{ album.title}}</h1>
+                        </li>
+                        <li class="pull-right active">
+                            <a href="{% url 'albums_list' %}">
+                                <span class="fa fa-edit">
+                                    Tilbake
+                                </span>
+                            </a>
+                        </li>
+
+                    </ul>
+                </div>
+            </div>
+
+            <img src="{{MEDIA_URL}}{{ photo.photo}}" alt="{{ photo.photo }}" style="width: 750px; ">
+        </div>
+    </section>
+
+	
+
+{% endblock %}

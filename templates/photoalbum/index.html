@@ -15,37 +15,37 @@
 
 {% block content %}
     <section id="albums">
-            <div class="container">
-                <div class="col-md-12">
-                    <div class="page-header">
-                        <ul class="nav nav-pills">
-                            <li class="pull-left">
-                                <h1>Fotoalbum</h1>
-                            </li>
-                            <li class="pull-right active">
-                                <a href="/photoalbum/create">
-                                    <span class="fa fa-edit">
-                                        Nytt album
-                                    </span>
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
+        <div class="container">
+            <div class="col-md-12">
+                <div class="page-header">
+                    <ul class="nav nav-pills">
+                        <li class="pull-left">
+                            <h1>Fotoalbum</h1>
+                        </li>
+                        <li class="pull-right active">
+                            <a href="/photoalbum/create">
+                                <span class="fa fa-edit">
+                                    Nytt album
+                                </span>
+                            </a>
+                        </li>
+                    </ul>
                 </div>
-
-                {%  for album in albums %}
-                    <a href="{%  url 'album_detail' pk=album.pk %}" >
-
-                    <div style="display: inline-block; width: 150px">
-                        <img src="{{STATIC_URL}}img/photo_album_folder.png" alt="{{ album.title }}" style="width: 150px">
-                        <p style="display: block; text-align: center"> 
-                            {{ album.title }}
-                        </p>
-                    </div>
-                </a>
-
-                {% endfor %}
             </div>
+
+            {%  for album in albums %}
+                <a href="{%  url 'album_detail' pk=album.pk %}" >
+
+                <div style="display: inline-block; width: 150px">
+                    <img src="{{STATIC_URL}}img/photo_album_folder.png" alt="{{ album.title }}" style="width: 150px">
+                    <p style="display: block; text-align: center"> 
+                        {{ album.title }}
+                    </p>
+                </div>
+            </a>
+
+            {% endfor %}
+        </div>
         
     </section>
 {% endblock %}
