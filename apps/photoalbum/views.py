@@ -111,6 +111,13 @@ def create_album(request):
     form = AlbumForm(request.POST)
     return render(request, 'photoalbum/create.html', {'form': form})
 
+def delete_album(request, pk):
+    print("In delete album")
+    print(request)
+
+    Album.objects.filter(pk=pk).delete()
+
+    return AlbumsListView.as_view()(request)
 
 
 

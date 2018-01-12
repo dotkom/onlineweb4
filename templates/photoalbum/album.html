@@ -6,7 +6,18 @@
             <div class="container">
                 <div class="col-md-12">
                     <div class="page-header">
-                        <h1>{{ album.title}}</h1>
+                            <ul class="nav nav-pills">
+                            <li class="pull-left">
+                                <h1>{{ album.title}}</h1>
+                            </li>
+                            <li class="pull-right active">
+                                <a href="{% url 'delete_album' pk=album.pk %}">
+                                    <span class="fa fa-edit">
+                                        Slett album
+                                    </span>
+                                </a>
+                            </li>
+                        </ul>
                     </div>
                 </div>
 
