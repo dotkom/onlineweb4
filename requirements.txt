@@ -49,7 +49,7 @@ nose==1.3.7                     # We use this test runner locally
 requests[security]==2.18.4
 
 # Wiki
-wiki==0.3b3
+wiki==0.3b4
 
 # Django 1.9 support
 sorl-thumbnail>12.2
