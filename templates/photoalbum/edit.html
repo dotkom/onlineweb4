@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% load crispy_forms_tags %}
+
+{% load render_bundle from webpack_loader %}
+
+{% block styles %}
+    {{ block.super }}
+{% endblock %}
+
+{% block content %}
+ 	<section id="create_album">
+            <div class="container">
+                <div class="col-md-12">
+                    <div class="page-header">
+                        <h1>Endre album</h1>
+                    </div>
+                </div>
+                <div class="row">
+                	<div class="col-xs-12 col-sm-6 col-md-4">
+						<form enctype="multipart/form-data" action="{% url 'edit_album' pk=album.pk%}" method="post">
+				            {% csrf_token %}
+				            {{ form|crispy }}
+				            <button class="btn btn-sucess" type="submit">
+				            	Endre album
+				            </button>
+				        </form>
+				    </div>
+				</div>
+            </div>
+    </section>
+
+{% endblock content %}
