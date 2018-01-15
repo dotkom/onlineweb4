@@ -1,7 +1,7 @@
 from django.shortcuts import render
 
 from apps.photoalbum.models import Album, Photo
-from apps.photoalbum.forms import AlbumForm
+from apps.photoalbum.forms import AlbumForm, AlbumForm2
 
 from django.shortcuts import render, HttpResponseRedirect
 
@@ -12,7 +12,6 @@ from django.views.generic.edit import FormView
 
 from apps.gallery.util import UploadImageHandler
 
-from apps.photoalbum.forms import AlbumForm2
 
 class AlbumsListView(ListView):
     model = Album
@@ -39,8 +38,6 @@ def upload_photos(photos, album):
     return photos_list
 
 def create_album(request):
-    print("In create_album")
-    #log = logging.getLogger(__name__)
    
     if request.method == "POST":
         form = AlbumForm(request.POST, request.FILES)
@@ -51,11 +48,8 @@ def create_album(request):
             album.save()
 
             photos = upload_photos(request.FILES.getlist('photos'), album)
-            
     
-            albums = Album.objects.all()
-
-            return render(request, 'photoalbum/index.html', {'albums': albums})
+            return AlbumsListView.as_view()(request)
         else:
             print("Form is not valid")
 
@@ -83,6 +77,7 @@ class AlbumDetailView(DetailView):
     
         context['album'] = Album.objects.get(pk=self.kwargs['pk'])
         context['photos'] = Photo.objects.all().filter(album=context['album'])
+
         return context
 
 class PhotoDetailView(DetailView):
@@ -91,11 +86,32 @@ class PhotoDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(PhotoDetailView, self).get_context_data(**kwargs)
-    
         context['photo'] = Photo.objects.get(pk=self.kwargs['pk'])
-        print("Before getting album pk")
         album = context['photo'].album
-        print("Album pk: ", album.pk)
         context['album'] = Album.objects.get(pk=album.pk)
+
         return context
 
+def edit_album(request, pk):
+    print("Edit album: ", pk)
+    album = Album.objects.get(pk=pk)
+    form = AlbumForm2(instance=album)
+    print(form)
+   
+    if request.method == "POST":
+        form = AlbumForm2(request.POST, request.FILES, instance=album, )
+        if form.is_valid():
+            cleaned_data = form.cleaned_data
+            print("Cleaned data: ", cleaned_data)
+            title = cleaned_data['title']
+            album.title = title
+            album.save()
+
+            photos = upload_photos(request.FILES.getlist('photos_to_upload'), album)
+            
+            albums = Album.objects.all()
+            return render(request, 'photoalbum/index.html', {'albums': albums})
+        else:
+            print("Form is not valid when updating album")
+
+    return render(request, 'photoalbum/edit.html', {'form': form, 'album': album})
