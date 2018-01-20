@@ -59,7 +59,7 @@ pipeline:
       event: push
     group: testing
     commands:
-      - tox -e tests
+      - tox -e tests --recreate
       - pip install codecov --quiet
       - codecov
 
