@@ -21,7 +21,7 @@ django-dynamic-fixture==2.0.0   # Dynamic fixtures for models
 django-recaptcha==1.3.1         # Google ReCaptcha
 django-oauth-toolkit==1.0.0    # OAuth2 authentication support
 django-watson==1.5.0            # Indexed model search lib
-django-reversion==2.0.12        # Model version history with middleware hooks to all post_save signals
+django-reversion==2.0.13        # Model version history with middleware hooks to all post_save signals
 django-guardian==1.4.9          # Per Object permissions framework
 django-taggit==0.22.2           # Generic multi-model tagging library
 django-taggit-serializer==0.1.5 # REST Framework serializers for Django-taggit
