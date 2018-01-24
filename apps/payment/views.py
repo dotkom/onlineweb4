@@ -144,6 +144,26 @@ def webshop_pay(request):
                 order_line.stripe_id = charge.id
                 order_line.save()
 
+                receipt = PaymentReceipt(
+                    to_mail=request.user.email,
+                    from_mail=settings.EMAIL_PROKOM,
+                    subject="[kvittering] webshop",
+                    description="varer i webshop",
+                    transaction_date=order_line.datetime
+                )
+                receipt.save()
+
+                for order in order_line.orders.all():
+                    item = ReceiptItem(
+                        receipt=receipt,
+                        name=order.product.name,
+                        price=int(order.price/order.quantity),
+                        quantity=order.quantity
+                    )
+                    item.save()
+
+                _send_receipt(receipt)
+
                 messages.success(request, "Betaling utført")
 
                 return HttpResponse("Betaling utført.", content_type="text/plain", status=200)
@@ -222,7 +242,7 @@ def saldo(request):
                 receipt = PaymentReceipt(
                     to_mail=payment_transaction.user.email,
                     from_mail=settings.EMAIL_TRIKOM,
-                    subject="kvittering saldo inskudd",
+                    subject="[kvittering] saldo inskudd",
                     description="påfyll av saldo",
                     transaction_date=payment_transaction.datetime,
                 )
@@ -266,33 +286,6 @@ def _send_payment_confirmation_mail(payment_relation):
         'payment_id': payment_relation.unique_id,
         'items': items,
         'total_amount': sum(item['amount'] for item in items),
-        'to_mail': to_mails,
-        'from_mail': from_mail
-    }
-
-    email_message = render_to_string('payment/email/confirmation_mail.txt', context)
-    send_mail(subject, email_message, from_mail, to_mails)
-
-
-def _send_webshop_mail(order_line):
-    subject = _("Kvittering Webshop Online")
-    from_mail = settings.EMAIL_PROKOM
-    to_mails = [order_line.user.email]
-
-    items = []
-    for order in order_line.orders.all():
-        items.append({
-            'amount': order.price/order.quantity,
-            'description': order.product.name,
-            'quantity': order.quantity
-        })
-
-    context = {
-        'payment_date': order_line.datetime,
-        'description': 'varer i Online sin webshop',
-        'payment_id': order_line.id,
-        'items': items,
-        'total_amount': order_line.subtotal,
         'to_mail': to_mails,
         'from_mail': from_mail
     }
