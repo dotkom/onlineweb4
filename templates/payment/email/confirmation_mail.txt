@@ -9,7 +9,7 @@ Ditt kvitteringsnummer er: {{ payment_id }}
 Vare				Pris
 ------------------------------------
 {% for item in items %}
-{{ item.description }} {{ item.amount }} kr
+{{ item.quantity }}x {{ item.description }} {{ item.amount }} kr
 {% endfor %}
 
 

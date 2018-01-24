@@ -14,13 +14,12 @@ from django.template.loader import render_to_string
 from django.utils.translation import ugettext as _
 from pytz import timezone as tz
 
-from apps.payment.models import Payment, PaymentPrice, PaymentRelation, PaymentTransaction
+from apps.payment.models import Payment, PaymentPrice, PaymentRelation, PaymentTransaction, ReceiptItem, PaymentReceipt
 from apps.webshop.models import OrderLine
 
 
 @login_required
 def payment(request):
-
     if request.is_ajax():
         if request.method == "POST":
 
@@ -65,7 +64,6 @@ def payment(request):
 
 @login_required
 def payment_info(request):
-
     if request.is_ajax():
         if 'payment_id' in request.session:
 
@@ -112,7 +110,6 @@ def webshop_info(request):
 
 @login_required
 def webshop_pay(request):
-
     if request.is_ajax():
         if request.method == "POST":
 
@@ -146,7 +143,6 @@ def webshop_pay(request):
                 order_line.pay()
                 order_line.stripe_id = charge.id
                 order_line.save()
-                _send_webshop_mail(order_line)
 
                 messages.success(request, "Betaling utført")
 
@@ -160,7 +156,6 @@ def webshop_pay(request):
 
 @login_required
 def payment_refund(request, payment_relation_id):
-
     payment_relation = get_object_or_404(PaymentRelation, pk=payment_relation_id)
 
     # Prevents users from refunding others
@@ -188,9 +183,7 @@ def payment_refund(request, payment_relation_id):
 
 @login_required
 def saldo_info(request):
-
     if request.is_ajax():
-
         data = dict()
 
         data['stripe_public_key'] = settings.STRIPE_PUBLIC_KEYS["trikom"]
@@ -202,7 +195,6 @@ def saldo_info(request):
 
 @login_required
 def saldo(request):
-
     if request.is_ajax():
         if request.method == "POST":
 
@@ -227,7 +219,24 @@ def saldo(request):
                 payment_transaction = PaymentTransaction.objects.create(user=request.user, amount=amount,
                                                                         used_stripe=True)
 
-                _send_confirmation_mail(payment_transaction)
+                receipt = PaymentReceipt(
+                    to_mail=payment_transaction.user.email,
+                    from_mail=settings.EMAIL_TRIKOM,
+                    subject="kvittering saldo inskudd",
+                    description="påfyll av saldo",
+                    transaction_date=payment_transaction.datetime,
+                )
+                receipt.save()
+
+                item = ReceiptItem(
+                    receipt=receipt,
+                    name='Saldo',
+                    price=int(payment_transaction.amount)
+                )
+
+                item.save()
+
+                _send_receipt(receipt)
 
                 messages.success(request, _("Inskudd utført."))
                 return HttpResponse("Inskudd utført.", content_type="text/plain", status=200)
@@ -265,32 +274,6 @@ def _send_payment_confirmation_mail(payment_relation):
     send_mail(subject, email_message, from_mail, to_mails)
 
 
-def _send_confirmation_mail(payment_transaction):
-    subject = _("kvittering saldo inskudd")
-    from_mail = settings.EMAIL_TRIKOM
-    to_mails = [payment_transaction.user.email]
-
-    items = [
-        {
-            'amount': int(payment_transaction.amount),
-            'description': 'Saldo'
-        },
-    ]
-
-    context = {
-        'payment_date': payment_transaction.datetime,
-        'description': "påfyll av saldo",
-        'payment_id': payment_transaction.unique_id,
-        'items': items,
-        'total_amount': sum(item['amount'] for item in items),
-        'to_mail': to_mails,
-        'from_mail': from_mail
-    }
-
-    email_message = render_to_string('payment/email/confirmation_mail.txt', context)
-    send_mail(subject, email_message, from_mail, to_mails)
-
-
 def _send_webshop_mail(order_line):
     subject = _("Kvittering Webshop Online")
     from_mail = settings.EMAIL_PROKOM
@@ -299,8 +282,9 @@ def _send_webshop_mail(order_line):
     items = []
     for order in order_line.orders.all():
         items.append({
-            'amount': order.price,
-            'description': order.product.name
+            'amount': order.price/order.quantity,
+            'description': order.product.name,
+            'quantity': order.quantity
         })
 
     context = {
@@ -309,6 +293,36 @@ def _send_webshop_mail(order_line):
         'payment_id': order_line.id,
         'items': items,
         'total_amount': order_line.subtotal,
+        'to_mail': to_mails,
+        'from_mail': from_mail
+    }
+
+    email_message = render_to_string('payment/email/confirmation_mail.txt', context)
+    send_mail(subject, email_message, from_mail, to_mails)
+
+
+def _send_receipt(receipt):
+    subject = receipt.subject
+    from_mail = receipt.from_mail
+    to_mails = [receipt.to_mail]
+
+    items = []
+    total_amount = 0
+    for item in receipt.items.all():
+        items.append({
+            'amount': item.price,
+            'description': item.name,
+            'quantity': item.quantity
+        })
+        total_amount += item.price * item.quantity
+    print('items:', items)
+
+    context = {
+        'payment_date': receipt.transaction_date,
+        'description': receipt.description,
+        'payment_id': receipt.receipt_id,
+        'items': items,
+        'total_amount': total_amount,
         'to_mail': to_mails,
         'from_mail': from_mail
     }

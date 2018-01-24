@@ -228,13 +228,6 @@ class PaymentTransaction(models.Model):
     user = models.ForeignKey(User)
     amount = models.IntegerField(null=True, blank=True)
     used_stripe = models.BooleanField(default=False)
-    unique_id = models.CharField(max_length=128, null=True, blank=True)
-
-    def save(self, *args, **kwargs):
-        if not self.unique_id:
-            self.unique_id = str(uuid.uuid4())
-        super().save(*args, **kwargs)
-
     datetime = models.DateTimeField(auto_now=True)
 
     def __str__(self):
@@ -248,9 +241,30 @@ class PaymentTransaction(models.Model):
                 raise NotAcceptable("Insufficient funds")
 
             self.user.save()
-        super(PaymentTransaction, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     class Meta:
         ordering = ['-datetime']
         verbose_name = _('transaksjon')
         verbose_name_plural = _('transaksjoner')
+
+
+class PaymentReceipt(models.Model):
+    receipt_id = models.CharField(max_length=128, default=None)
+    to_mail = models.EmailField()
+    from_mail = models.EmailField()
+    subject = models.TextField()
+    description = models.TextField()
+    transaction_date = models.DateTimeField()
+
+    def save(self, *args, **kwargs):
+        if not self.receipt_id:
+            self.receipt_id = str(uuid.uuid4())
+        super().save(*args, **kwargs)
+
+
+class ReceiptItem(models.Model):
+    receipt = models.ForeignKey('PaymentReceipt', related_name='items')
+    name = models.CharField(max_length=50)
+    price = models.IntegerField()
+    quantity = models.IntegerField(default=1)
