@@ -51,7 +51,23 @@ def payment(request):
 
                     payment_object.handle_payment(request.user)
 
-                    _send_payment_confirmation_mail(payment_relation)
+                    receipt = PaymentReceipt(
+                        to_mail=payment_relation.user.email,
+                        from_mail=payment_relation.payment.responsible_mail(),
+                        subject="[kvittering] " + payment_relation.payment.description(),
+                        description=payment_relation.payment.description(),
+                        transaction_date=payment_relation.datetime
+                    )
+                    receipt.save()
+
+                    item = ReceiptItem(
+                        receipt=receipt,
+                        name=payment_relation.payment.description(),
+                        price=int(payment_relation.payment_price.price)
+                    )
+                    item.save()
+
+                    _send_receipt(receipt)
 
                     messages.success(request, _("Betaling utført."))
                     return HttpResponse("Betaling utført.", content_type="text/plain", status=200)
@@ -265,33 +281,6 @@ def saldo(request):
                 return HttpResponse(str(e), content_type="text/plain", status=500)
 
     raise Http404("Request not supported")
-
-
-# Confirmation Mails
-def _send_payment_confirmation_mail(payment_relation):
-    subject = _("kvittering") + ": " + payment_relation.payment.description()
-    from_mail = payment_relation.payment.responsible_mail()
-    to_mails = [payment_relation.user.email]
-
-    items = [
-        {
-            'amount': int(payment_relation.payment_price.price),
-            'description': payment_relation.payment.description
-        },
-    ]
-
-    context = {
-        'payment_date': payment_relation.datetime.astimezone(tz('Europe/Oslo')).strftime("%-d %B %Y kl. %H:%M"),
-        'description': payment_relation.payment.description,
-        'payment_id': payment_relation.unique_id,
-        'items': items,
-        'total_amount': sum(item['amount'] for item in items),
-        'to_mail': to_mails,
-        'from_mail': from_mail
-    }
-
-    email_message = render_to_string('payment/email/confirmation_mail.txt', context)
-    send_mail(subject, email_message, from_mail, to_mails)
 
 
 def _send_receipt(receipt):
