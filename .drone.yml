@@ -2,38 +2,74 @@ pipeline:
   restore-cache:
     image: drillster/drone-volume-cache
     when:
-      event: pull_request
+      event: push
     restore: true
     mount:
-      - ./pip-cache
+      - ./.tox
       - ./node_modules
     volumes:
       - /tmp/cache:/cache
 
-  test:
+  setup:
+    image: registry.online.ntnu.no/dotkom/onlineweb4-testbase
+    pull: true
+    when:
+      event: push
+    commands:
+      - cp onlineweb4/settings/example-local.py onlineweb4/settings/local.py
+      - yarn install --pure-lockfile
+      - pip install tox
+
+  npm-build:
+    image: registry.online.ntnu.no/dotkom/onlineweb4-testbase
+    when:
+      event: push
+    group: testing
+    commands:
+      - npm run build:prod
+
+  js-lint:
+    image: registry.online.ntnu.no/dotkom/onlineweb4-testbase
+    when:
+      event: push
+    group: testing
+    commands:
+      - npm run lint-js
+
+  less-lint:
+    image: registry.online.ntnu.no/dotkom/onlineweb4-testbase
+    when:
+      event: push
+    group: testing
+    commands:
+      - npm run lint-less
+
+  python-lint:
+    image: registry.online.ntnu.no/dotkom/onlineweb4-testbase
+    when:
+      event: push
+    group: testing
+    commands:
+      - tox -e flake8 -e isort
+
+  python-tests:
     image: registry.online.ntnu.no/dotkom/onlineweb4-testbase
     secrets: [codecov_token]
     when:
-      event: pull_request
+      event: push
+    group: testing
     commands:
-      - cp onlineweb4/settings/example-local.py onlineweb4/settings/local.py
-      - npm install --depth=0 --quiet
-      - pip install -r requirements.txt -r requirements-testing.txt --quiet --cache-dir pip-cache
-      - npm run build:prod
-      - npm run lint
-      - isort -c -rc apps middleware scripts utils
-      - flake8 apps middleware scripts utils
-      - py.test --cov=apps
+      - tox -e tests --recreate
       - pip install codecov --quiet
       - codecov
 
   rebuild-cache:
     image: drillster/drone-volume-cache
     when:
-      event: pull_request
+      event: push
     rebuild: true
     mount:
-      - ./pip-cache
+      - ./.tox
       - ./node_modules
     volumes:
       - /tmp/cache:/cache
@@ -50,5 +86,6 @@ pipeline:
     when:
       event: push
       branch: develop
+      status: success
     script:
       - /srv/www/ow4dev/deploy.sh

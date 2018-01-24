@@ -1,2 +1,4 @@
 Secret santa e-post har blitt sendt ut.
-Det er lagret en kopi av alle til-fra par om det blir behov for å sjekke dette.
+
+Det er lagret en liste med alle til-fra par.
+Ta kontakt med dotkom om om det blir behov for å sjekke denne.

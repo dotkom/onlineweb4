@@ -23,6 +23,9 @@ const webpackConfig = {
     authentication: [
       './assets/authentication/index',
     ],
+    careeropportunity: [
+      './assets/careeropportunity/index'
+    ],
     core: [
       'react-hot-loader/patch',
       './assets/core/index',

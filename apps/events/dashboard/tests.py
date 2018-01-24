@@ -65,21 +65,3 @@ class DashboardEventsURLTestCase(TestCase):
         response = self.client.get(url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-    def test_dashboard_events_details(self):
-        add_permissions(self.user)
-        event = create_generic_attendance_event()
-        url = reverse('dashboard_event_details', kwargs={'event_id': event.id})
-
-        response = self.client.get(url)
-
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-    def test_dashboard_events_edit(self):
-        add_permissions(self.user)
-        event = create_generic_attendance_event()
-        url = reverse('dashboard_events_edit', kwargs={'event_id': event.id})
-
-        response = self.client.get(url)
-
-        self.assertEqual(response.status_code, status.HTTP_200_OK)

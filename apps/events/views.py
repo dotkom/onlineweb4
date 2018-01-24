@@ -1,17 +1,19 @@
 # -*- coding: utf-8 -*-
 
+import json
+
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.contenttypes.models import ContentType
 from django.core.signing import Signer
 from django.core.urlresolvers import reverse
 from django.db.models import Q
-from django.http import JsonResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from django.utils.translation import ugettext as _
 # API v1
-from oauth2_provider.ext.rest_framework import OAuth2Authentication, TokenHasScope
+from oauth2_provider.contrib.rest_framework import OAuth2Authentication, TokenHasScope
 from rest_framework import mixins, status, views, viewsets
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
@@ -174,7 +176,6 @@ def unattendEvent(request, event_id):
         for delay in delays:
             delay.delete()
 
-    event.attendance_event.notify_waiting_list(host=request.META['HTTP_HOST'], unattended_user=request.user)
     Attendee.objects.get(event=attendance_event, user=request.user).delete()
 
     messages.success(request, _("Du ble meldt av arrangementet."))
@@ -231,7 +232,23 @@ def _search_indexed(request, query, filters):
 @user_passes_test(lambda u: u.groups.filter(name='Komiteer').count() == 1)
 def generate_pdf(request, event_id):
     event = get_object_or_404(Event, pk=event_id)
+    # If this is not an attendance event, redirect to event with error
+    if not event.attendance_event:
+        messages.error(request, _("Dette er ikke et påmeldingsarrangement."))
+        return redirect(event)
 
+    if event.organizer and request.user.has_perm('events.change_event', obj=event) \
+            or event in get_group_restricted_events(request.user):
+        return EventPDF(event).render_pdf()
+
+    messages.error(request, _('Du har ikke tilgang til listen for dette arrangementet.'))
+    return redirect(event)
+
+
+@login_required()
+@user_passes_test(lambda u: u.groups.filter(name='Komiteer').count() == 1)
+def generate_json(request, event_id):
+    event = get_object_or_404(Event, pk=event_id)
     # If this is not an attendance event, redirect to event with error
     if not event.attendance_event:
         messages.error(request, _("Dette er ikke et påmeldingsarrangement."))
@@ -239,10 +256,48 @@ def generate_pdf(request, event_id):
 
     # Check access
     if event not in get_group_restricted_events(request.user):
-        messages.error(request, _('Du har ikke tilgang til listen for dette arrangementet.'))
+        messages.error(request, _('Du har ikke tilgang til listen for dette arrangementet. hei'))
         return redirect(event)
 
-    return EventPDF(event).render_pdf()
+    attendee_unsorted = event.attendance_event.attending_attendees_qs
+    attendee_sorted = sorted(attendee_unsorted, key=lambda attendee: attendee.user.last_name)
+    waiters = event.attendance_event.waitlist_qs
+    reserve = event.attendance_event.reservees_qs
+    # Goes though attendance, the waitlist and reservations, and adds them to a json file.
+    attendees = []
+    for a in attendee_sorted:
+        attendees.append({
+            "first_name": a.user.first_name,
+            "last_name": a.user.last_name,
+            "year": a.user.year,
+            "phone_number": a.user.phone_number,
+            "allergies": a.user.allergies
+        })
+    waitlist = []
+    for w in waiters:
+        waitlist.append({
+            "first_name": w.user.first_name,
+            "last_name": w.user.last_name,
+            "year": w.user.year,
+            "phone_number": w.user.phone_number
+        })
+
+    reservees = []
+    for r in reserve:
+        reservees.append({
+            "name": r.name,
+            "note": r.note
+        })
+
+    response = HttpResponse(content_type='application/json')
+    response['Content-Disposition'] = 'attachment; filename="' + str(event.id) + '.json"'
+    response.write(json.dumps({
+        'Attendees': attendees,
+        'Waitlist': waitlist,
+        'Reservations': reservees
+    }))
+
+    return response
 
 
 def calendar_export(request, event_id=None, user=None):
@@ -264,7 +319,7 @@ def mail_participants(request, event_id):
     event = get_object_or_404(Event, pk=event_id)
 
     # If this is not an attendance event, redirect to event with error
-    if not event.attendance_event:
+    if not event.is_attendance_event():
         messages.error(request, _("Dette er ikke et påmeldingsarrangement."))
         return redirect(event)
 
@@ -273,7 +328,7 @@ def mail_participants(request, event_id):
         messages.error(request, _('Du har ikke tilgang til å vise denne siden.'))
         return redirect(event)
 
-    all_attendees = list(event.attendance_event.attendees_qs)
+    all_attendees = list(event.attendance_event.attending_attendees_qs)
     attendees_on_waitlist = list(event.attendance_event.waitlist_qs)
     attendees_not_paid = list(event.attendance_event.attendees_not_paid)
 
@@ -306,7 +361,7 @@ class EventViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.Li
     def get_queryset(self):
         """
         :return: Queryset filtered by these requirements:
-        - event has NO group restriction OR user having access to restricted event
+            event has NO group restriction OR user having access to restricted event
         """
         return Event.by_registration.filter(
             Q(group_restriction__isnull=True) | Q(group_restriction__groups__in=self.request.user.groups.all())). \

@@ -16,7 +16,7 @@ from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.core.urlresolvers import reverse
-from django.db import models
+from django.db import IntegrityError, models
 from django.utils.translation import ugettext as _
 
 from apps.authentication.models import FIELD_OF_STUDY_CHOICES
@@ -172,7 +172,7 @@ class FeedbackRelation(models.Model):
                 rt = RegisterToken(fbr=self, token=token)
                 rt.save()
                 log.info('Successfully registered token for fbr %s with token %s' % (self, token))
-            except:
+            except IntegrityError:
                 log.error('Failed to register token for fbr %s with token %s' % (self, token))
 
 

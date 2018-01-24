@@ -209,7 +209,7 @@ def payment_refund(request, payment_relation_id):
         ch = stripe.Charge.retrieve(payment_relation.stripe_id)
         ch.refunds.create()
 
-        payment_relation.payment.handle_refund(request.META['HTTP_HOST'], payment_relation)
+        payment_relation.payment.handle_refund(payment_relation)
         messages.success(request, _("Betalingen har blitt refundert."))
     except stripe.InvalidRequestError as e:
         messages.error(request, str(e))

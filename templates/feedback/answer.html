@@ -18,31 +18,29 @@ Tilbakemeldinger - Svar - Online
 
 {% block content %}
 <section class="container" id="feedbackanswer">
-    <div class="row">
-        <div class="col-md-12">
-            <div class="page-header">
-                <h2>{{ description }}</h2>
-            </div>
-            <form method="POST" role="form" class="feedback-answer-label" id="feedback">
-                {% csrf_token %}
-		            {% for question in questions %}
-                        <div class="rating-wrapper">
-                            {%  if question.display %}
-                                <span class="label label-info test" data-toggle="tooltip" data-placement="left"
-                                      title="Ditt svar på dette spørsmålet vil vises til bedriften">
-                                    Vises til bedrift
-                                </span>
-                            {%  endif %}
-                            <div class="form-group test {% if question.errors %} has-error {% endif %}">
-                            {{ question}}
-                            </div>
-                        </div>
-                    {% endfor %}
-                <div class="form-group">
-                    <button class="btn btn-success" type="submit">Send</button>
-                </div>
-            </form>
+    <div class="container">
+        <div class="page-header">
+            <h2>{{ description }}</h2>
         </div>
+        <form method="POST" role="form" class="feedback-answer-label" id="feedback">
+            {% csrf_token %}
+                {% for question in questions %}
+                    <div class="rating-wrapper">
+                        {%  if question.display %}
+                            <span class="label label-info test" data-toggle="tooltip" data-placement="left"
+                                  title="Ditt svar på dette spørsmålet vil vises til bedriften">
+                                Vises til bedrift
+                            </span>
+                        {%  endif %}
+                        <div class="form-group test {% if question.errors %} has-error {% endif %}">
+                        {{ question}}
+                        </div>
+                    </div>
+                {% endfor %}
+            <div class="form-group">
+                <button class="btn btn-success" type="submit">Send</button>
+            </div>
+        </form>
     </div>
 </section>
 {% endblock %}

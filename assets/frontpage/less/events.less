@@ -1,0 +1,213 @@
+section#events {
+  #eventimage {
+    margin-bottom: 15px;
+  }
+
+  .hero {
+    .hero-time {
+      font-size: 18px;
+    }
+
+    .hero-title p {
+      color: #666;
+      font-weight: 400;
+      font-size: 18px;
+      margin-bottom: 10px;
+      word-wrap: break-word;
+    }
+
+    .hero-ingress p {
+      font-weight: 400;
+    }
+
+    .hero-date {
+      background: @baby-blue;
+      display: block;
+      color: #fff;
+      padding: 2px;
+      text-align: center;
+      font-weight: 300;
+      font-size: 18px;
+    }
+  }
+
+  /* Old stuff for refrence below */
+
+  .event-title {
+    font-size: 17px;
+    margin-bottom: 5px;
+    color: #666;
+    margin-top: -7px;
+  }
+
+  .event-ingress {
+    font-size: 12px;
+    color: #777;
+    font-weight: 300;
+  }
+
+  .event-calendar-box {
+    padding: 3px 3px 3px 3px;
+    text-align: center;
+    font-weight: 400;
+    font-size: 19px;
+    width: 6%;
+  }
+
+  .event-arrkom {
+    .event-calendar-box();
+
+    background: @arrkom-color;
+    color: @arrkom-color;
+  }
+
+  .event-fagkom {
+    .event-calendar-box();
+
+    background: @fagkom-color;
+    color: @fagkom-color;
+  }
+
+  .event-bedkom {
+    .event-calendar-box();
+
+    background: @bedkom-color;
+    color: @bedkom-color;
+  }
+
+  /* Gets overridden below if needed */
+  [class*='event-type-'] {
+    .event-arrkom;
+  }
+
+  .event-type-1 {
+    .event-arrkom;
+  }
+
+  .event-type-2 {
+    .event-bedkom;
+  }
+
+  .event-type-3 {
+    .event-fagkom;
+  }
+
+  .event-calendar-date {
+    display: block;
+    background: #fff;
+    padding: 3px;
+  }
+
+  .event-calendar-month {
+    color: #fff;
+    font-size: 13px;
+    font-weight: 400;
+    text-transform: uppercase;
+  }
+
+  .event-filters {
+    padding-bottom: 20px;
+    float: right;
+    margin-top: -10px;
+  }
+
+  .event-filter-button {
+    background-color: #027bbb;
+    color: #fff;
+    padding: 4px 8px;
+    font-weight: 600;
+    border-color: #0f88c7;
+    border-radius: 0;
+  }
+
+  .event-filter-button:hover {
+    background: #2291cc;
+    border-color: #319fda;
+  }
+
+  .event-kurs {
+    background-color: @fagkom-color;
+    color: #fff;
+  }
+
+  .event-sosialt {
+    background-color: @arrkom-color;
+    color: #fff;
+  }
+
+  .event-bedriftspresentasjon {
+    background-color: @baby-blue;
+    color: #fff;
+  }
+
+  .event-annet {
+    background-color: @heading;
+    color: #fff;
+  }
+
+  .hidden-event-button {
+    background-color: #fff;
+    color: #000;
+  }
+
+  .hidden-event-button:hover {
+    background-color: #f2f2f2;
+  }
+
+  ul.event-list {
+    list-style: none;
+    margin-top: 8px;
+    padding: 0 15px;
+
+    li {
+      padding: 10px 0;
+      border-bottom: 1px solid #e0e0e0;
+      font-size: 14px;
+
+      @media (min-width: 992px) {
+        width: 455px;
+
+        &:nth-child(odd) {
+          float: left;
+        }
+
+        &:nth-child(even) {
+          float: right;
+        }
+
+        // Remove border-bottom from last row
+        &:last-child, &:nth-child(odd):nth-last-child(2) {
+          border: none;
+        }
+      }
+
+      @media (min-width: 1200px) {
+        width: 555px;
+      }
+
+      span {
+        float: right;
+        color: #ccc;
+        color: #428bca;
+      }
+
+      a {
+        color: #666;
+      }
+    }
+  }
+
+  @media (max-width: 991px) {
+    ul.event-list:nth-child(1) {
+      margin-bottom: 0;
+
+      li:last-child {
+        border-bottom: 1px solid #e0e0e0;
+      }
+    }
+
+    ul.event-list:nth-child(2) {
+      margin-top: 0;
+    }
+  }
+}

@@ -114,11 +114,8 @@ class PaymentReminder(Task):
 
     @staticmethod
     def not_paid(payment):
-        attendees = [attendee.user for attendee in payment.content_object.attendees_qs]
-        paid_users = payment.paid_users()
-
-        # Creates a list of users in attendees but not in the list of paid users
-        not_paid_users = [user for user in attendees if user not in paid_users]
+        attendees = payment.content_object.attending_attendees_qs
+        not_paid_users = [attendee.user for attendee in attendees if not attendee.paid]
 
         # Removes users with active payment delays from the list
         return [user for user in not_paid_users if user not in payment.payment_delay_users()]
@@ -145,11 +142,7 @@ class PaymentReminder(Task):
     @staticmethod
     def unattend(payment):
         for user in PaymentReminder.not_paid(payment):
-            payment.content_object.notify_waiting_list(
-                host=settings.BASE_URL, unattended_user=user)
-
-            Attendee.objects.get(event=payment.content_object,
-                                 user=user).delete()
+            Attendee.objects.get(event=payment.content_object, user=user).delete()
 
     @staticmethod
     def suspend(payment):
@@ -276,10 +269,6 @@ class PaymentDelayHandler(Task):
 
     @staticmethod
     def unattend(payment_delay):
-        payment_delay.payment.content_object.notify_waiting_list(
-            host=settings.BASE_URL,
-            unattended_user=payment_delay.user
-        )
         Attendee.objects.get(event=payment_delay.payment.content_object, user=payment_delay.user).delete()
 
 

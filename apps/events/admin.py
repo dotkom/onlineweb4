@@ -2,6 +2,7 @@
 
 from django.contrib import admin, messages
 from django.utils.translation import ugettext as _
+from guardian.admin import GuardedModelAdmin
 from reversion.admin import VersionAdmin
 
 from apps.events.models import (AttendanceEvent, Attendee, CompanyEvent, Event, Extras,
@@ -78,11 +79,14 @@ def mark_not_attended(modeladmin, request, queryset):
 mark_not_attended.short_description = "Merk som ikke møtt"
 
 
-class AttendeeAdmin(VersionAdmin):
+class AttendeeAdmin(GuardedModelAdmin, VersionAdmin):
     model = Attendee
     list_display = ('user', 'event', 'paid', 'attended', 'note', 'extras')
     list_filter = ('event__event',)
+    search_fields = ('event__event__title', 'user__first_name', 'user__last_name', 'user__username')
     actions = [mark_paid, mark_attended, mark_not_paid, mark_not_attended]
+    group_owned_objects_field = 'event__event__organizer'
+    user_can_access_owned_by_group_objects_only = True
 
     # Disable delete_selected http://bit.ly/1o4nleN
     def get_actions(self, request):
@@ -90,11 +94,6 @@ class AttendeeAdmin(VersionAdmin):
         if 'delete_selected' in actions:
             del actions['delete_selected']
         return actions
-
-    def delete_model(self, request, obj):
-        event = obj.event.event
-        event.attendance_event.notify_waiting_list(host=request.META['HTTP_HOST'], unattended_user=obj.user)
-        obj.delete()
 
 
 class CompanyEventAdmin(VersionAdmin):
@@ -134,27 +133,17 @@ class AttendanceEventInline(admin.StackedInline):
     exclude = ("marks_has_been_set",)
 
 
-class EventAdmin(VersionAdmin):
+class EventAdmin(GuardedModelAdmin, VersionAdmin):
     inlines = (AttendanceEventInline, FeedbackRelationInline, CompanyInline, GroupRestrictionInline)
     exclude = ("author", )
     search_fields = ('title',)
 
+    group_owned_objects_field = 'organizer'
+    user_can_access_owned_by_group_objects_only = True
+
     def save_model(self, request, obj, form, change):
         if not change:  # created
             obj.author = request.user
-        else:
-            # If attendance max capacity changed we will notify users that they are now on the attend list
-            old_event = Event.objects.get(id=obj.id)
-            if old_event.is_attendance_event():
-                old_waitlist_size = old_event.attendance_event.waitlist_qs.count()
-                if old_waitlist_size > 0:
-                    diff_capacity = obj.attendance_event.max_capacity - old_event.attendance_event.max_capacity
-                    if diff_capacity > 0:
-                        if diff_capacity > old_waitlist_size:
-                            diff_capacity = old_waitlist_size
-                        # Using old_event because max_capacity has already been changed in obj
-                        old_event.attendance_event.notify_waiting_list(host=request.META['HTTP_HOST'],
-                                                                       extra_capacity=diff_capacity)
         obj.save()
 
     def save_formset(self, request, form, formset, change):
@@ -171,7 +160,7 @@ class ReserveeInline(admin.TabularInline):
     inline_classes = ('grp-collapse grp-open',)  # style
 
 
-class ReservationAdmin(VersionAdmin):
+class ReservationAdmin(GuardedModelAdmin, VersionAdmin):
     model = Reservation
     inlines = (ReserveeInline,)
     max_num = 1
@@ -179,6 +168,8 @@ class ReservationAdmin(VersionAdmin):
     list_display = ('attendance_event', '_number_of_seats_taken', 'seats', '_attendees', '_max_capacity')
     classes = ('grp-collapse grp-open',)  # style
     inline_classes = ('grp-collapse grp-open',)  # style
+    user_can_access_owned_by_group_objects_only = True
+    group_owned_objects_field = 'attendance_event__event__organizer'
 
     def _number_of_seats_taken(self, obj):
         return obj.number_of_seats_taken

@@ -1,43 +1,60 @@
-{% extends "sso/index.html" %}
+{% extends 'base.html' %}
+
+{% load chunks %}
+
+{% load render_bundle from webpack_loader %}
+
+{% block styles %}
+  {{ block.super }}
+  {% render_bundle 'sso' 'css' %}
+{% endblock %}
+
+{% block js %}
+  {{ block.super }}
+  {% render_bundle 'sso' 'js' %}
+{% endblock %}
+
 {% block content %}
-<div id="sso-panel">
-{% if not error %}
-    <div id="sso-panel-header">
-        <h3>Ekstern autentisering</h3>
-    </div>
-    <div id="sso-panel-body">
-        <h4>Tjenesten {{ application.name }} ønsker innloggingsinformasjon.</h4>
-        <form id="sso-authorization-form" method="post">
-            {% csrf_token %}
-            {% for field in form %}
-                {% if field.is_hidden %}
-                    {{ field }}
-                {% endif %}
-            {% endfor %}
-            <p>Tjenesten behøver følgende tilganger:</p>
-            <ul class="sso-permissions">
-                {% for scope in scopes_descriptions %}
-                    <li>{{ scope }}</li>
+<section id="sso-container">
+    <div id="sso-panel">
+    {% if not error %}
+        <div id="sso-panel-header">
+            <h3>Ekstern autentisering</h3>
+        </div>
+        <div id="sso-panel-body">
+            <h4>Tjenesten {{ application.name }} ønsker innloggingsinformasjon.</h4>
+            <form id="sso-authorization-form" method="post">
+                {% csrf_token %}
+                {% for field in form %}
+                    {% if field.is_hidden %}
+                        {{ field }}
+                    {% endif %}
                 {% endfor %}
-            </ul>
-            <br />
-            <div id="sso-control-buttons">
-                <input type="submit" class="btn btn-large btn-success" name="allow" value="Godta" />
-                <input type="submit" class="btn btn-large btn-danger pull-right" value="Avslå" />
-            </div>
-        </form>
+                <p>Tjenesten behøver følgende tilganger:</p>
+                <ul class="sso-permissions">
+                    {% for scope in scopes_descriptions %}
+                        <li>{{ scope }}</li>
+                    {% endfor %}
+                </ul>
+                <br />
+                <div id="sso-control-buttons">
+                    <input type="submit" class="btn btn-large btn-success" name="allow" value="Godta" />
+                    <input type="submit" class="btn btn-large btn-danger pull-right" value="Avslå" />
+                </div>
+            </form>
+        </div>
+        <p class="text-center"><small><i class="fa fa-lock"></i> Ekstern autentisering benytter OAuth 2.0 gjennom TLS</small></p>
+    {% else %}
+        <div id="sso-panel-header">
+            <h3>En feil skjedde</h3>
+        </div>
+        <div id="sso-panel-body">
+            {{ error.description }}
+        </div>
+    {% endif %}
     </div>
-    <p class="text-center"><small><i class="fa fa-lock"></i> Ekstern autentisering benytter OAuth 2.0 gjennom TLS</small></p>
-{% else %}
-    <div id="sso-panel-header">
-        <h3>En feil skjedde</h3>
-    </div>
-    <div id="sso-panel-body">
-        {{ error.description }}
-    </div>
-{% endif %}
-</div>
-<br />
-<br />
-<p class="text-center">Les mer om bruken av <i><a href="/wiki/">Ekstern Autentisering</a></i> på wikien.</p>
+    <br />
+    <br />
+    <p class="text-center">Les mer om bruken av <i><a href="/wiki/">Ekstern Autentisering</a></i> på wikien.</p>
+</section>
 {% endblock %}

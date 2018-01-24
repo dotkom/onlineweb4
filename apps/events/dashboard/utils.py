@@ -30,7 +30,7 @@ def event_ajax_handler(event, request):
     elif action == 'add_attendee':
         return handle_add_attendee(event, request.POST['user_id'])
     elif action == 'remove_attendee':
-        return handle_remove_attendee(event, request.POST['attendee_id'], request.META['HTTP_HOST'])
+        return handle_remove_attendee(event, request.POST['attendee_id'])
     else:
         raise NotImplementedError
 
@@ -78,7 +78,7 @@ def handle_add_attendee(event, user_id):
     resp['message'] = '%s ble meldt på %s' % (user.get_full_name(), event)
     resp['attendees'] = []
 
-    for number, a in enumerate(attendee.event.attendees_qs):
+    for number, a in enumerate(attendee.event.attending_attendees_qs):
         resp['attendees'].append({
             'number': number+1,
             'id': a.id,
@@ -104,18 +104,16 @@ def handle_add_attendee(event, user_id):
     return resp
 
 
-def handle_remove_attendee(event, attendee_id, _server_hostname):
+def handle_remove_attendee(event, attendee_id):
     resp = {}
     attendee = Attendee.objects.filter(pk=attendee_id)
     if attendee.count() != 1:
         return 'Fant ingen påmeldte med oppgitt ID (%s).' % attendee_id
     attendee = attendee[0]
-    event.attendance_event.notify_waiting_list(
-        host=_server_hostname, unattended_user=attendee.user)
     attendee.delete()
     resp['message'] = '%s ble fjernet fra %s' % (attendee.user.get_full_name(), attendee.event)
     resp['attendees'] = []
-    for number, a in enumerate(attendee.event.attendees_qs):
+    for number, a in enumerate(attendee.event.attending_attendees_qs):
         resp['attendees'].append({
             'number': number+1,
             'id': a.id,

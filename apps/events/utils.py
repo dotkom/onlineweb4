@@ -4,6 +4,7 @@ from datetime import timedelta
 
 import icalendar
 from django.conf import settings
+from django.contrib.auth.models import Group
 from django.core.exceptions import ImproperlyConfigured
 from django.core.mail import EmailMessage, send_mail
 from django.core.signing import BadSignature, Signer
@@ -12,7 +13,7 @@ from django.utils import timezone
 from filebrowser.settings import VERSIONS
 
 from apps.authentication.models import OnlineUser as User
-from apps.events.models import TYPE_CHOICES, Attendee, Event
+from apps.events.models import TYPE_CHOICES, Attendee, Event, Extras
 from apps.payment.models import PaymentDelay, PaymentRelation
 
 
@@ -51,8 +52,7 @@ def get_types_allowed(user):
     return types_allowed
 
 
-def handle_waitlist_bump(event, host, attendees, payment=None):
-
+def handle_waitlist_bump(event, attendees, payment=None):
     title = 'Du har fått plass på %s' % (event.title)
 
     message = 'Du har stått på venteliste for arrangementet "%s" og har nå fått plass.\n' % (str(event.title))
@@ -63,7 +63,7 @@ def handle_waitlist_bump(event, host, attendees, payment=None):
         message += "Det kreves ingen ekstra handling fra deg med mindre du vil melde deg av."
 
     message += "\n\nFor mer info:"
-    message += "\nhttp://%s%s" % (host, event.get_absolute_url())
+    message += "\n%s%s" % (settings.BASE_URL, event.get_absolute_url())
 
     for attendee in attendees:
         send_mail(title, message, settings.DEFAULT_FROM_EMAIL, [attendee.user.email])
@@ -286,16 +286,20 @@ def handle_event_ajax(event, user, action, extras_id):
 def handle_event_extras(event, user, extras_id):
     resp = {'message': "Feil!"}
 
-    if not event.is_attendance_event:
-        return 'Dette er ikke et påmeldingsarrangement.'
+    if not event.is_attendance_event():
+        return {'message': 'Dette er ikke et påmeldingsarrangement.'}
 
     attendance_event = event.attendance_event
 
     if not attendance_event.is_attendee(user):
-        return 'Du er ikke påmeldt dette arrangementet.'
+        return {'message': 'Du er ikke påmeldt dette arrangementet.'}
 
     attendee = Attendee.objects.get(event=attendance_event, user=user)
-    attendee.extras = attendance_event.extras.all()[int(extras_id)]
+    try:
+        attendee.extras = attendance_event.extras.get(id=extras_id)
+    except Extras.DoesNotExist:
+        return {'message': 'Ugyldig valg'}
+
     attendee.save()
     resp['message'] = "Lagret ditt valg"
     return resp
@@ -341,6 +345,8 @@ def handle_mail_participants(event, _from_email, _to_email_value, subject, _mess
     elif from_email_value == '6':
         from_email = settings.EMAIL_ITEX
 
+    if _to_email_value not in _to_email_options:
+        return False
     # Who to send emails to
     send_to_users = _to_email_options[_to_email_value][0]
 
@@ -357,3 +363,36 @@ def handle_mail_participants(event, _from_email, _to_email_value, subject, _mess
     except ImproperlyConfigured as e:
         logger.error('Something went wrong while trying to send mail to %s for event "%s"\n%s' %
                      (_to_email_options[_to_email_value][1], event, e))
+
+
+def get_organizer_by_event_type(event_type):
+    logger = logging.getLogger(__name__)
+
+    try:
+        if event_type == TYPE_CHOICES[0][0]:
+            return Group.objects.get(name__iexact='arrkom')
+        elif event_type == TYPE_CHOICES[1][0]:
+            return Group.objects.get(name__iexact='bedkom')
+        elif event_type == TYPE_CHOICES[2][0]:
+            return Group.objects.get(name__iexact='fagkom')
+        elif event_type == TYPE_CHOICES[4][0]:
+            return Group.objects.get(name__iexact='ekskom')
+        elif event_type == TYPE_CHOICES[5][0]:
+            return Group.objects.get(name__iexact='arrkom')
+        elif event_type == TYPE_CHOICES[7][0]:
+            return Group.objects.get(name__iexact='trikom')
+    except Group.DoesNotExist:
+        logger.warning('Group for event type "{}" does not exist.'.format(event_type))
+
+    else:
+        return None
+
+
+def get_organizer_for_event(event):
+    logger = logging.getLogger(__name__)
+    event_type = get_organizer_by_event_type(event.event_type)
+
+    if not event_type:
+        logger.warning('Could not get organizer for event "{}" (#{})!'.format(event, event.pk))
+
+    return event_type

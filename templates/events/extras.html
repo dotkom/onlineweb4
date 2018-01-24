@@ -6,7 +6,7 @@
           <option value="" disabled selected>Velg et alternativ</option>
         {% endif %}
         {% for choice in attendance_event.extras.all %}
-            <option value="{{ forloop.counter0 }}" 
+            <option value="{{ choice.id }}"
               {%if attendee.extras == choice %}
                 selected="selected">
                 Valgt ekstra: {{choice}}

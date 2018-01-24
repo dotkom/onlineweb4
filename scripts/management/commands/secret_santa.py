@@ -18,37 +18,52 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         event_id = options['event_id']
         event = AttendanceEvent.objects.get(event=event_id)
-        users = event.attendees_qs
+        users = event.attending_attendees_qs
         random_users = self.generate_random_list(users)
         to_from_dict = {}
         for count, user in enumerate(users):
             to_from_dict['Par %s' % (count+1)] = {'To': user.user.get_full_name(),
                                                   'From': users[random_users[count]].user.get_full_name()}
-
             self.send_mail(user, users[random_users[count]])
 
         self.write_to_file(to_from_dict)
-        self.mail_to_committee(to_from_dict)
+        self.mail_to_committee()
 
     # Function for generating a list with random numbers corresponding to
     # the indexes of the list of users attending the event.
     @staticmethod
     def generate_random_list(users):
         to_from = random.sample(range(len(users)), len(users))
-        while(not Command.check_random_list(to_from)):
-            to_from = random.sample(range(len(users)), len(users))
-        return to_from
+        return Command.fix_random_list(to_from)
 
     # Function for checking that the random list of indexes is valid.
     # Checks the index of the original list of users against the randomly
     # generated number. If index and random number is the same, then someone
     # got themselves as secret Santa.
     @staticmethod
-    def check_random_list(random):
-        for user_index, user2_index in enumerate(random):
-            if (user_index == user2_index):
-                return False
-        return True
+    def fix_random_list(random_list):
+        random_list = list(random_list)
+        for user_index, user in enumerate(random_list):
+            # The user part of the for-loop does not update when the random_list
+            # is updated. So to avoid swapping an already swapped item the index
+            # must be checked against the updated list, not the user created in the
+            # beginning of the loop.
+            if user_index == random_list[user_index]:
+                random_list = Command.swap_pair(random_list, user_index)
+        return random_list
+
+    @staticmethod
+    def swap_pair(random_list, user_index):
+        random_list = list(random_list)
+        user_swap_index = random.choice(random_list)
+        if user_swap_index == user_index:
+            if user_swap_index != len(random_list)-1:
+                user_swap_index += 1
+            else:
+                user_swap_index -= 1
+        random_list[user_index], random_list[user_swap_index] = \
+            random_list[user_swap_index], random_list[user_index]
+        return random_list
 
     @staticmethod
     def send_mail(user_to, user_from):
@@ -64,8 +79,8 @@ class Command(BaseCommand):
         EmailMessage(subject, content, settings.EMAIL_TRIKOM, [receiver]).send()
 
     @staticmethod
-    def mail_to_committee(to_from_dict):
-        subject = "Secret santa til-fra liste"
+    def mail_to_committee():
+        subject = "Secret santa e-post sendt til påmeldte"
 
         content = render_to_string('secret_santa/committee_mail.txt')
 
@@ -79,7 +94,7 @@ class Command(BaseCommand):
 
         txt_file = open(directory + '/secret_santa_to_from.txt', 'w+')
 
-        content = render_to_string('secret_santa/committee_pdf.txt', {
+        content = render_to_string('secret_santa/to_from_list.txt', {
             'to_from_dict': to_from_dict,
         })
 

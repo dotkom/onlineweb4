@@ -15,12 +15,14 @@ from django.utils import timezone
 from django.utils.translation import ugettext as _
 from django.views.generic import CreateView, DeleteView, UpdateView
 from guardian.decorators import permission_required
+from guardian.shortcuts import get_objects_for_user
 
-from apps.dashboard.tools import DashboardPermissionMixin, get_base_context, has_access
+from apps.dashboard.tools import (DashboardCreatePermissionMixin, DashboardObjectPermissionMixin,
+                                  DashboardPermissionMixin, get_base_context, has_access)
 from apps.events.dashboard import forms as dashboard_forms
 from apps.events.dashboard.utils import event_ajax_handler
 from apps.events.models import AttendanceEvent, Attendee, CompanyEvent, Event, Reservation, Reservee
-from apps.events.utils import get_group_restricted_events, get_types_allowed
+from apps.events.utils import get_types_allowed
 from apps.feedback.models import FeedbackRelation
 from apps.payment.models import Payment, PaymentPrice, PaymentRelation
 
@@ -31,7 +33,7 @@ def index(request):
     if not has_access(request):
         raise PermissionDenied
 
-    allowed_events = get_group_restricted_events(request.user, True)
+    allowed_events = get_objects_for_user(request.user, 'events.change_event', accept_global_perms=False)
     events = allowed_events.filter(event_start__gte=timezone.now().date()).order_by('event_start')
 
     context = get_base_context(request)
@@ -46,7 +48,7 @@ def past(request):
     if not has_access(request):
         raise PermissionDenied
 
-    allowed_events = get_group_restricted_events(request.user, True)
+    allowed_events = get_objects_for_user(request.user, 'events.change_event', accept_global_perms=False)
     events = allowed_events.filter(event_start__lt=timezone.now().date()).order_by('-event_start')
 
     context = get_base_context(request)
@@ -95,7 +97,7 @@ def create_event(request):
     return render(request, 'events/dashboard/details.html', context)
 
 
-class CreateEventView(DashboardPermissionMixin, CreateView):
+class CreateEventView(DashboardCreatePermissionMixin, CreateView):
     model = Event
     form_class = dashboard_forms.CreateEventForm
     template_name = "events/dashboard/create.html"
@@ -105,18 +107,18 @@ class CreateEventView(DashboardPermissionMixin, CreateView):
         return reverse('dashboard_event_details', kwargs={'event_id': self.object.id})
 
 
-class UpdateEventView(DashboardPermissionMixin, UpdateView):
+class UpdateEventView(DashboardObjectPermissionMixin, UpdateView):
     model = Event
     form_class = dashboard_forms.CreateEventForm
     template_name = "events/dashboard/event_form.html"
-    permission_required = 'events.add_event'
+    permission_required = 'events.change_event'
     pk_url_kwarg = 'event_id'
 
     def get_success_url(self):
         return reverse('dashboard_event_details', kwargs={'event_id': self.kwargs.get('event_id')})
 
 
-class AddAttendanceView(DashboardPermissionMixin, CreateView):
+class AddAttendanceView(DashboardCreatePermissionMixin, CreateView):
     model = AttendanceEvent
     form_class = dashboard_forms.CreateAttendanceEventForm
     template_name = "events/dashboard/attendanceevent_form.html"
@@ -131,18 +133,18 @@ class AddAttendanceView(DashboardPermissionMixin, CreateView):
         return reverse('dashboard_event_details', kwargs={'event_id': self.kwargs.get('event_id')})
 
 
-class UpdateAttendanceView(DashboardPermissionMixin, UpdateView):
+class UpdateAttendanceView(DashboardObjectPermissionMixin, UpdateView):
     model = AttendanceEvent
     form_class = dashboard_forms.CreateAttendanceEventForm
     template_name = "events/dashboard/attendanceevent_form.html"
-    permission_required = 'events.add_attendanceevent'
+    permission_required = 'events.change_attendanceevent'
     pk_url_kwarg = 'event_id'
 
     def get_success_url(self):
         return reverse('dashboard_event_details', kwargs={'event_id': self.kwargs.get('event_id')})
 
 
-class AddCompanyEventView(DashboardPermissionMixin, CreateView):
+class AddCompanyEventView(DashboardCreatePermissionMixin, CreateView):
     model = CompanyEvent
     form_class = dashboard_forms.AddCompanyForm
     template_name = "events/dashboard/attendanceevent_form.html"
@@ -156,15 +158,16 @@ class AddCompanyEventView(DashboardPermissionMixin, CreateView):
         return super().form_valid(form)
 
 
-class RemoveCompanyEventView(DashboardPermissionMixin, DeleteView):
+class RemoveCompanyEventView(DashboardObjectPermissionMixin, DeleteView):
     model = CompanyEvent
     permission_required = 'events.add_attendanceevent'
+    pk_url_kwarg = 'event_id'
 
     def get_success_url(self):
         return reverse('dashboard_event_details', kwargs={'event_id': self.kwargs.get('event_id')})
 
 
-class AddFeedbackRelationView(DashboardPermissionMixin, CreateView):
+class AddFeedbackRelationView(DashboardCreatePermissionMixin, CreateView):
     model = FeedbackRelation
     form_class = dashboard_forms.CreateFeedbackRelationForm
     template_name = 'events/dashboard/attendanceevent_form.html'
@@ -180,9 +183,10 @@ class AddFeedbackRelationView(DashboardPermissionMixin, CreateView):
         return super().form_valid(form)
 
 
-class RemoveFeedbackRelationView(DashboardPermissionMixin, DeleteView):
+class RemoveFeedbackRelationView(DashboardObjectPermissionMixin, DeleteView):
     model = FeedbackRelation
     permission_required = 'events.add_attendanceevent'
+    pk_url_kwarg = 'event_id'
 
     def get_success_url(self):
         return reverse('dashboard_event_details', kwargs={'event_id': self.kwargs.get('event_id')})
@@ -273,7 +277,7 @@ def _payment_prices(attendance_event):
 
         summary["Ikke valgt"] = 0
 
-        for attendee in attendance_event.attendees_qs:
+        for attendee in attendance_event.attending_attendees_qs:
             paymentRelation = PaymentRelation.objects.filter(
                 payment=attendance_event.payment(),
                 user=attendee.user,
@@ -291,22 +295,27 @@ def _payment_prices(attendance_event):
 
 
 @login_required
-@permission_required('events.view_event', return_403=True)
+@permission_required('events.change_event', return_403=True)
 def event_details(request, event_id, active_tab='details'):
     if not has_access(request):
+        raise PermissionDenied
+
+    event = get_object_or_404(Event, pk=event_id)
+
+    if not request.user.has_perm('events.change_event', obj=event):
         raise PermissionDenied
 
     context = _create_details_context(request, event_id)
     event = context['event']
     context['active_tab'] = active_tab
-    context['form'] = dashboard_forms.CreateEventForm(instance=get_object_or_404(Event, pk=event_id))
+    context['form'] = dashboard_forms.CreateEventForm(instance=event)
 
     extras = {}
     if event.is_attendance_event() and event.attendance_event.extras:
         for extra in event.attendance_event.extras.all():
             extras[extra] = {"type": extra, "attending": 0, "waits": 0, "allergics": []}
 
-        count_extras(extras, "attending", event.attendance_event.attendees_qs)
+        count_extras(extras, "attending", event.attendance_event.attending_attendees_qs)
         count_extras(extras, "waits", event.attendance_event.waitlist_qs)
 
     context['extras'] = extras
@@ -383,7 +392,7 @@ def event_change_attendees(request, event_id, active_tab='attendees'):
         for extra in event.attendance_event.extras.all():
             extras[extra] = {"type": extra, "attending": 0, "waits": 0, "allergics": []}
 
-        count_extras(extras, "attending", event.attendance_event.attendees_qs)
+        count_extras(extras, "attending", event.attendance_event.attending_attendees_qs)
         count_extras(extras, "waits", event.attendance_event.waitlist_qs)
 
     context['change_event_form'] = dashboard_forms.ChangeEventForm(instance=event)
