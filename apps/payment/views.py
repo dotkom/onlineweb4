@@ -1,18 +1,16 @@
 # -*- coding: utf-8 -*-
 
 import json
-import logging
 
 import stripe
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.core.mail import EmailMessage, send_mail
+from django.core.mail import send_mail
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.template.loader import render_to_string
 from django.utils.translation import ugettext as _
-from pytz import timezone as tz
 
 from apps.payment.models import Payment, PaymentPrice, PaymentRelation, PaymentTransaction, ReceiptItem, PaymentReceipt
 from apps.webshop.models import OrderLine
