@@ -3,14 +3,16 @@
 from datetime import timedelta
 
 from django.contrib.contenttypes.models import ContentType
+from django.core import mail
 from django.test import TestCase
 from django.utils import timezone
 from django_dynamic_fixture import G
 
 from apps.authentication.models import OnlineUser as User
 from apps.events.models import AttendanceEvent, Attendee, Event
-from apps.payment.models import Payment, PaymentDelay, PaymentPrice, PaymentRelation
+from apps.payment.models import Payment, PaymentDelay, PaymentPrice, PaymentReceipt, PaymentRelation
 from apps.payment.mommy import PaymentDelayHandler, PaymentReminder
+from apps.payment.views import _send_receipt
 
 
 class PaymentTest(TestCase):
@@ -71,6 +73,22 @@ class PaymentTest(TestCase):
         attendee = Attendee.objects.all()[0]
 
         self.assertTrue(attendee.paid)
+
+    def testEventPaymentReceipt(self):
+        self.receipt = G(
+            PaymentReceipt,
+            to_mail="test@test.no",
+            from_mail="test@unittest.no",
+            subject="kvittering",
+            description="isbading",
+            transaction_date=timezone.now()
+        )
+
+        _send_receipt(self.receipt)
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(mail.outbox[0].subject, "kvittering")
+        self.assertEqual(mail.outbox[0].to, ["test@test.no"])
+        self.assertEqual(mail.outbox[0].from_email, "test@unittest.no")
 
     def testEventPaymentRefundCheckUnatendDeadlinePassed(self):
         G(Attendee, event=self.attendance_event, user=self.user)

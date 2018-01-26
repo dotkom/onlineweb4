@@ -12,7 +12,8 @@ from django.shortcuts import get_object_or_404
 from django.template.loader import render_to_string
 from django.utils.translation import ugettext as _
 
-from apps.payment.models import Payment, PaymentPrice, PaymentRelation, PaymentTransaction, ReceiptItem, PaymentReceipt
+from apps.payment.models import (Payment, PaymentPrice, PaymentReceipt, PaymentRelation,
+                                 PaymentTransaction, ReceiptItem)
 from apps.webshop.models import OrderLine
 
 
@@ -282,6 +283,9 @@ def saldo(request):
 
 
 def _send_receipt(receipt):
+    """Send confirmation email with receipt
+    param receipt: object
+    """
     subject = receipt.subject
     from_mail = receipt.from_mail
     to_mails = [receipt.to_mail]

@@ -306,6 +306,7 @@ class PaymentTransaction(models.Model):
 
 
 class PaymentReceipt(models.Model):
+    """Transaction receipt"""
     receipt_id = models.CharField(max_length=128, default=None)
     to_mail = models.EmailField()
     from_mail = models.EmailField()
@@ -320,6 +321,7 @@ class PaymentReceipt(models.Model):
 
 
 class ReceiptItem(models.Model):
+    """Items attached to receipt"""
     receipt = models.ForeignKey('PaymentReceipt', related_name='items')
     name = models.CharField(max_length=50)
     price = models.IntegerField()
