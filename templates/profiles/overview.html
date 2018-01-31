@@ -137,8 +137,10 @@
                 <div class="row row-small-space">
                     <div class="col-md-4 position">
                     {% for position in user.positions.all %}
-                        <span class="glyphicon glyphicon-remove delete-position" data-position-id="{{ position.id }}"></span>
-                        <p>{{ position.period }}: {{ position.get_position_display }}, {{ position.get_committee_display }}</p><br\>
+                        <div>
+                            <span class="glyphicon glyphicon-remove delete-position" data-position-id="{{ position.id }}"></span>
+                            <p>{{ position.period }}: {{ position.get_position_display }}, {{ position.get_committee_display }}</p>
+                        </div>
                     {% endfor %}
                     </div>
                     <div class="col-md-8 bio">{{ user.bio }}</div>
