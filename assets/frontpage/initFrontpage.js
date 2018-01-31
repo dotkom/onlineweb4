@@ -12,7 +12,7 @@ offlineWidget.render();
 
 /* FUNCTIONS
 ------------------------------------------------------------------------ */
-const cleanHash = () => $(location).attr('hash').replace(/^#!/, '');
+const cleanHash = () => $(location).attr('hash').replace(/^#*!/, '');
 
 const jump = (section) => {
   if (typeof section !== 'undefined') {
