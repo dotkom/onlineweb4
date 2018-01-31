@@ -37,6 +37,10 @@
                         {%  for photo in photos %}
                              <img src="{{MEDIA_URL}}{{ photo.photo}}" alt="{{ photo.photo }}" style="width: 150px" class="photo_edit">
                         {% endfor  %}
+
+                        <form action="{% url 'delete_photos' %}" method="POST">
+                            <input id="submit" type="button" value="Slett bilder" />
+                        </form>
                     </div>
 				</div>
             </div>
