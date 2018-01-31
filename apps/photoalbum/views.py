@@ -16,6 +16,7 @@ from apps.gallery.util import UploadImageHandler
 class AlbumsListView(ListView):
     model = Album
     template_name = 'photoalbum/index.html'
+    print("In AlbumsListView")
 
     def get_context_data(self, **kwargs):
         context = super(AlbumsListView, self).get_context_data(**kwargs)
@@ -38,17 +39,23 @@ def upload_photos(photos, album):
     return photos_list
 
 def create_album(request):
+    print("In create_album")
    
     if request.method == "POST":
         form = AlbumForm(request.POST, request.FILES)
+        print("It is POST")
         if form.is_valid():
+            print("It is valid")
             cleaned_data = form.cleaned_data
             title = cleaned_data['title']
             album = Album.objects.get_or_create(title=title)[0]
             album.save()
 
             photos = upload_photos(request.FILES.getlist('photos'), album)
-    
+            
+            albums = Album.objects.all()
+            return render(request, 'photoalbum/index.html', {'albums': albums})
+
             return AlbumsListView.as_view()(request)
         else:
             print("Form is not valid")
@@ -96,6 +103,7 @@ def edit_album(request, pk):
     print("Edit album: ", pk)
     album = Album.objects.get(pk=pk)
     form = AlbumForm2(instance=album)
+    photos = Photo.objects.all().filter(album=album)
     print(form)
    
     if request.method == "POST":
@@ -114,4 +122,4 @@ def edit_album(request, pk):
         else:
             print("Form is not valid when updating album")
 
-    return render(request, 'photoalbum/edit.html', {'form': form, 'album': album})
+    return render(request, 'photoalbum/edit.html', {'form': form, 'album': album, 'photos': photos})
