@@ -12,7 +12,7 @@ offlineWidget.render();
 
 /* FUNCTIONS
 ------------------------------------------------------------------------ */
-const cleanHash = () => $(location).attr('hash').replace(/^#*!/, '');
+const cleanHash = () => $(location).attr('hash').replace(/^#!/, '');
 
 const jump = (section) => {
   if (typeof section !== 'undefined') {
@@ -100,7 +100,7 @@ if (cleanHash().length > 0) {
         $(`a[href$="#${subHash[0]}-${subHash[1]}"]`).trigger('click');
       }
     } else {
-      jump(currentCleanHash);
+      jump(currentCleanHash.replace(/#/,""));
     }
   }, 500);
 }
