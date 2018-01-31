@@ -6,6 +6,12 @@
 
 {% block styles %}
     {{ block.super }}
+    {% render_bundle 'photoalbum' 'css' %}
+{% endblock %}
+
+{% block js %}
+    {{ block.super }}
+    {% render_bundle 'photoalbum' 'js' %}
 {% endblock %}
 
 {% block content %}
@@ -26,6 +32,12 @@
 				            </button>
 				        </form>
 				    </div>
+                    <div class="col-xs-12 col-sm-6 col-md-4">
+                        
+                        {%  for photo in photos %}
+                             <img src="{{MEDIA_URL}}{{ photo.photo}}" alt="{{ photo.photo }}" style="width: 150px" class="photo_edit">
+                        {% endfor  %}
+                    </div>
 				</div>
             </div>
     </section>
