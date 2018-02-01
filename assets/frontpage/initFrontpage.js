@@ -100,7 +100,7 @@ if (cleanHash().length > 0) {
         $(`a[href$="#${subHash[0]}-${subHash[1]}"]`).trigger('click');
       }
     } else {
-      jump(currentCleanHash);
+      jump(currentCleanHash.replace(/#/, ''));
     }
   }, 500);
 }
