@@ -129,11 +129,11 @@ def edit_name(request, album):
 		return render(request, 'photoalbum/index.html', {'albums': albums})
 
 def delete_photos(request):
-	print("Delete photos")
-	print(request.POST)
 	
-	# For photo in request
-	#Delete it 
+	photos_to_delete = request.POST.getlist('photos[]')
+	for photo_pk in photos_to_delete:
+		photo = Photo.objects.get(pk=photo_pk)
+		photo.delete()
 
 	albums = Album.objects.all()
 	return render(request, 'photoalbum/index.html', {'albums': albums})
