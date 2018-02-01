@@ -1,49 +1,54 @@
 {% extends "base.html" %}
 
 {% load crispy_forms_tags %}
-
 {% load render_bundle from webpack_loader %}
 
 {% block styles %}
-    {{ block.super }}
-    {% render_bundle 'photoalbum' 'css' %}
+		{{ block.super }}
+		{% render_bundle 'photoalbum' 'css' %}
 {% endblock %}
 
 {% block js %}
-    {{ block.super }}
-    {% render_bundle 'photoalbum' 'js' %}
+		{{ block.super }}
+		{% render_bundle 'photoalbum' 'js' %}
 {% endblock %}
 
 {% block content %}
- 	<section id="create_album">
-            <div class="container">
-                <div class="col-md-12">
-                    <div class="page-header">
-                        <h1>Endre album</h1>
-                    </div>
-                </div>
-                <div class="row">
-                	<div class="col-xs-12 col-sm-6 col-md-4">
-						<form enctype="multipart/form-data" action="{% url 'edit_album' pk=album.pk%}" method="post">
-				            {% csrf_token %}
-				            {{ form|crispy }}
-				            <button class="btn btn-sucess" type="submit">
-				            	Endre album
-				            </button>
-				        </form>
-				    </div>
-                    <div class="col-xs-12 col-sm-6 col-md-4">
-                        
-                        {%  for photo in photos %}
-                             <img src="{{MEDIA_URL}}{{ photo.photo}}" alt="{{ photo.photo }}" style="width: 150px" class="photo_edit">
-                        {% endfor  %}
-
-                        <form action="{% url 'delete_photos' %}" method="POST">
-                            <input id="submit" type="button" value="Slett bilder" />
-                        </form>
-                    </div>
+	<section id="create_album">
+		<div class="container">
+			<div class="col-md-12">
+				<div class="page-header">
+					<h1>Endre album</h1>
 				</div>
-            </div>
-    </section>
+			</div>
+			<div class="row">
+				<div class="col-xs-12 col-sm-6 col-md-4">
+					<form enctype="multipart/form-data" action="{% url 'edit_album' pk=album.pk%}" method="post">
+						{% csrf_token %}
+						{{ form|crispy }}
+						<button class="btn btn-sucess" type="submit" name="edit_name">
+							Endre navn
+						</button>
+					</form>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-xs-12 col-sm-6 col-md-4">
+					<form action="{% url 'edit_album' pk=album.pk %}" method="post" >
+						{% csrf_token %}
+							{% for photo in photos %}
+								<label>
+									<input type="checkbox" class="hidden_checkbox" name="photos[]" value="{{ photo.id }}">
+									<img src="{{MEDIA_URL}}{{ photo.photo}}" alt="{{ photo.photo }}" style="width: 150px" class="photo_edit">
+								</label>
+							{% endfor  %}
+							<button class="btn btn-sucess" type="submit" name="delete_photos">
+								Slett bilder
+							</button>
+						</form>
+					</div>
+				</div>
+			</div>
+		</section>
 
 {% endblock content %}
