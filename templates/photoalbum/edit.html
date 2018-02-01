@@ -35,20 +35,32 @@
 			<div class="row">
 				<div class="col-xs-12 col-sm-6 col-md-4">
 					<form action="{% url 'edit_album' pk=album.pk %}" method="post" >
+					{% csrf_token %}
+						{% for photo in photos %}
+							<label>
+								<input type="checkbox" class="hidden_checkbox" name="photos[]" value="{{ photo.id }}">
+								<img src="{{MEDIA_URL}}{{ photo.photo}}" alt="{{ photo.photo }}" style="width: 150px" class="photo_edit">
+							</label>
+						{% endfor  %}
+						<button class="btn btn-sucess" type="submit" name="delete_photos">
+							Slett bilder
+						</button>
+					</form>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-xs-12 col-sm-6 col-md-4">
+					<form enctype="multipart/form-data"  action="{% url 'edit_album' pk=album.pk %}" method="post" >
 						{% csrf_token %}
-							{% for photo in photos %}
-								<label>
-									<input type="checkbox" class="hidden_checkbox" name="photos[]" value="{{ photo.id }}">
-									<img src="{{MEDIA_URL}}{{ photo.photo}}" alt="{{ photo.photo }}" style="width: 150px" class="photo_edit">
-								</label>
-							{% endfor  %}
-							<button class="btn btn-sucess" type="submit" name="delete_photos">
-								Slett bilder
+							<button class="btn btn-sucess" type="submit" name="add_photos">
+								Legg til bilder
 							</button>
 						</form>
 					</div>
 				</div>
 			</div>
+		</div>
 		</section>
 
 {% endblock content %}
