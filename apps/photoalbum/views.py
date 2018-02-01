@@ -110,6 +110,8 @@ def edit_album(request, pk):
 			edit_name(request, album)
 		elif "delete_photos" in request.POST:
  			delete_photos(request)
+		elif "add_photos" in request.POST:
+			add_photos(request)
 		else:
 			print("Form is not edit_name or delete_photos")
 
@@ -137,3 +139,10 @@ def delete_photos(request):
 
 	albums = Album.objects.all()
 	return render(request, 'photoalbum/index.html', {'albums': albums})
+
+def add_photos(request):
+	print("Add photos")
+
+	albums = Album.objects.all()
+	return render(request, 'photoalbum/index.html', {'albums': albums})
+
