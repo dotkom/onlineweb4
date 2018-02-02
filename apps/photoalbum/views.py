@@ -103,15 +103,16 @@ def edit_album(request, pk):
 	upload_photos_form = UploadPhotosForm(instance=album)
 	
 	if request.method == "POST":
+		print(request)
 		if "edit_name" in request.POST:
 			edit_name(request, album)
 		elif "delete_photos" in request.POST:
  			delete_photos(request)
-		elif "add_photos" in request.POST:
+		elif request.FILES.getlist('upload_photos'):
 			add_photos(request, album)
 			photos = Photo.objects.all().filter(album=album)
 		else:
-			print("Form is not edit_name or delete_photos")
+			print("Form is not edit_name, delete_photos or add_photos")
 
 
 
@@ -142,7 +143,7 @@ def add_photos(request, album):
 	print("Add photos")
 	form = UploadPhotosForm(instance=album)
 
-	photos = upload_photos(request.FILES.getlist('photos'), album)
+	photos = upload_photos(request.FILES.getlist('upload_photos'), album)
 
 	print("After adding photos")
 

@@ -52,12 +52,9 @@
 			<br>
 			<div class="row">
 				<div>
-					<form enctype="multipart/form-data"  action="{% url 'edit_album' pk=album.pk %}" method="post" >
+					<form enctype="multipart/form-data"  action="{% url 'edit_album' pk=album.pk %}" method="post">
 						{% csrf_token %}
-						{{ upload_photos_form|crispy }}
-							<button class="btn btn-sucess" type="submit" name="add_photos">
-								Legg til bilder
-							</button>
+						<input type="file" name="upload_photos" multiple class="clearablefileinput" id="id_photos" onchange="this.form.submit()">
 						</form>
 					</div>
 				</div>
