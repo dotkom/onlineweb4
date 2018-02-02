@@ -11,6 +11,7 @@ from django.utils.decorators import method_decorator
 from django.views.generic.edit import FormView
 
 from apps.gallery.util import UploadImageHandler
+from utils import upload_photos
 
 
 class AlbumsListView(ListView):
@@ -22,26 +23,11 @@ class AlbumsListView(ListView):
 		context['albums'] = Album.objects.all()
 		return context
 
-
-def upload_photos(photos, album):
-	photos_list = []
-
-	for photo in photos:
-		print(photos)
-		p = Photo(photo=photo, album=album)
-		p.save()
-		photos_list.append(p)
-
-	return photos_list
-
+@login_required
 def create_album(request):
-	print("In create_album")
-   
 	if request.method == "POST":
 		form = AlbumForm(request.POST, request.FILES)
-		print("It is POST")
 		if form.is_valid():
-			print("It is valid")
 			cleaned_data = form.cleaned_data
 			title = cleaned_data['title']
 			album = Album.objects.get_or_create(title=title)[0]
@@ -59,6 +45,7 @@ def create_album(request):
 	form = AlbumForm(request.POST)
 	return render(request, 'photoalbum/create.html', {'form': form})
 
+@login_required
 def delete_album(request, pk):
 	album = Album.objects.filter(pk=pk)
 
@@ -95,15 +82,15 @@ class PhotoDetailView(DetailView):
 
 		return context
 
+# Maybe both deletion, editing and creation is supposed to be done from the admin panel?
+@login_required
 def edit_album(request, pk):
-	print("Edit album: ", pk)
 	album = Album.objects.get(pk=pk)
 	photos = Photo.objects.all().filter(album=album)
 	name_form = AlbumNameForm(instance=album)
 	upload_photos_form = UploadPhotosForm(instance=album)
 	
 	if request.method == "POST":
-		print(request)
 		if "edit_name" in request.POST:
 			edit_name(request, album)
 		elif "delete_photos" in request.POST:
@@ -114,10 +101,10 @@ def edit_album(request, pk):
 		else:
 			print("Form is not edit_name, delete_photos or add_photos")
 
-
-
+	photos = Photo.objects.all().filter(album=album)
 	return render(request, 'photoalbum/edit.html', {'name_form': name_form, 'upload_photos_form': upload_photos_form, 'album': album, 'photos': photos})
 
+@login_required
 def edit_name(request, album):
 	form = AlbumNameForm(request.POST, request.FILES, instance=album)
 	if form.is_valid():
@@ -129,24 +116,23 @@ def edit_name(request, album):
 		albums = Album.objects.all()
 		return render(request, 'photoalbum/index.html', {'albums': albums})
 
-def delete_photos(request):
-	
+@login_required
+def delete_photos(request):	
 	photos_to_delete = request.POST.getlist('photos[]')
-	for photo_pk in photos_to_delete:
-		photo = Photo.objects.get(pk=photo_pk)
-		photo.delete()
+	if photos_to_delete != []:
+		for photo_pk in photos_to_delete:
+			photo = Photo.objects.get(pk=photo_pk)
+			photo.delete()
+	else: 
+		print("Photos to delete is empty")
 
+	request_copy = request.POST.copy()
+	request_copy = request_copy.setlist('photos[]', [])
 	albums = Album.objects.all()
-	return render(request, 'photoalbum/index.html', {'albums': albums})
+	return render(request_copy, 'photoalbum/index.html', {'albums': albums})
 
+@login_required
 def add_photos(request, album):
-	print("Add photos")
 	form = UploadPhotosForm(instance=album)
 
 	photos = upload_photos(request.FILES.getlist('upload_photos'), album)
-
-	print("After adding photos")
-
-	#albums = Album.objects.all()
-	#return render(request, 'photoalbum/index.html', {'albums': albums})
-
