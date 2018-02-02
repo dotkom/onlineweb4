@@ -9,3 +9,5 @@ $(() => {
 	  photo.toggleClass('chosen')
   })
 })
+
+
