@@ -25,13 +25,14 @@
 				<div class="col-xs-12 col-sm-6 col-md-4">
 					<form enctype="multipart/form-data" action="{% url 'edit_album' pk=album.pk%}" method="post">
 						{% csrf_token %}
-						{{ form|crispy }}
+						{{ name_form|crispy }}
 						<button class="btn btn-sucess" type="submit" name="edit_name">
 							Endre navn
 						</button>
 					</form>
 				</div>
 			</div>
+			<br>
 			<div class="row">
 				<div class="col-xs-12 col-sm-6 col-md-4">
 					<form action="{% url 'edit_album' pk=album.pk %}" method="post" >
@@ -48,11 +49,12 @@
 					</form>
 				</div>
 			</div>
-
+			<br>
 			<div class="row">
-				<div class="col-xs-12 col-sm-6 col-md-4">
+				<div>
 					<form enctype="multipart/form-data"  action="{% url 'edit_album' pk=album.pk %}" method="post" >
 						{% csrf_token %}
+						{{ upload_photos_form|crispy }}
 							<button class="btn btn-sucess" type="submit" name="add_photos">
 								Legg til bilder
 							</button>

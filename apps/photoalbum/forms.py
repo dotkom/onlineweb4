@@ -19,3 +19,17 @@ class AlbumForm2(forms.ModelForm):
 		print("Meta object: ", object)
 		fields = ['title', 'photos_to_upload']
 
+
+class AlbumNameForm(forms.ModelForm):
+	class Meta(object):
+		model = Album
+		fields = ['title']
+
+class UploadPhotosForm(forms.ModelForm):
+	photos = forms.FileField(widget=forms.ClearableFileInput(attrs={'multiple': True}), label=_("Bilder"), required=False)    
+	class Meta(object):
+		model = Album
+		fields = ['photos']
+
+
+
