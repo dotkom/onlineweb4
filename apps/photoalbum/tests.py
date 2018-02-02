@@ -1,3 +1,49 @@
-from django.test import TestCase
+# -*- coding: utf-8 -*-
 
-# Create your tests here.
+from django.test import TestCase
+from django_dynamic_fixture import G
+
+from apps.photoalbum.models import Album, Photo
+
+class PhotoAlbumTest(TestCase):
+
+	#def setUp(self):
+		#self.album = G(Album, title="Test album")
+
+		#self.photo = G(Photo, album=self.album)
+
+	def testAlbumCreation(self):
+		test_title = "Test album"
+		Album.objects.create(title=test_title)
+
+		album = Album.objects.all()[0]
+		self.assertEqual(album.title, test_title)
+
+	def testPhotoCreation(self):
+		album = Album.objects.all()[0]
+		photo = Photo.objects.create(photo=" ", album=album)
+
+		self.assertEqual(photo.photo, photo_path)
+		self.assertEqual(photo.album, album)
+
+	def testPhotoUpload(self):
+
+		pass
+		# Also test that images are uploaded
+
+	def testAlbumDeletion(self):
+		pass
+		# Also test that the photos are deleted
+
+
+class AlbumEditFormTest(TestCase):
+	def testAlbumNameEdit(self):
+		pass
+
+	def testPhotosDeletion(self):
+		pass
+
+	def testAddPhotos(self):
+		pass
+
+
