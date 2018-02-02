@@ -3,37 +3,37 @@
 {% block content %}
 
 	<section id="album">
-            <div class="container">
-                <div class="col-md-12">
-                    <div class="page-header">
-                            <ul class="nav nav-pills">
-                            <li class="pull-left">
-                                <h1>{{ album.title}}</h1>
-                            </li>
-                            <li class="pull-right active">
-                                <a href="{% url 'delete_album' pk=album.pk %}">
-                                    <span class="fa fa-edit">
-                                        Slett album
-                                    </span>
-                                </a>
-                            </li>
+		<div class="container">
+			<div class="col-md-12">
+				<div class="page-header">
+					<ul class="nav nav-pills">
+					<li class="pull-left">
+						<h1>{{ album.title}}</h1>
+					</li>
+					<li class="pull-right active">
+						<a href="{% url 'delete_album' pk=album.pk %}">
+							<span class="fa fa-edit">
+								Slett album
+							</span>
+						</a>
+					</li>
 
-                            <li class="pull-right active">
-                                <a href="{% url 'edit_album' pk=album.pk %}">
-                                    <span class="fa fa-edit">
-                                        Endre album
-                                    </span>
-                                </a>
-                            </li>
-                            
-                        </ul>
-                    </div>
-                </div>
+					<li class="pull-right active">
+						<a href="{% url 'edit_album' pk=album.pk %}">
+							<span class="fa fa-edit">
+								Endre album
+							</span>
+						</a>
+					</li>
+						
+					</ul>
+				</div>
+			</div>
 
-                {%  for photo in photos %}
-                    <a href="{% url 'photo_detail' album_pk=album.pk pk=photo.pk %}">
-                     <img src="{{MEDIA_URL}}{{ photo.photo}}" alt="{{ photo.photo }}" style="width: 150px">
-		        {% endfor  %}
-            </div>
-    </section>
+			{%  for photo in photos %}
+				<a href="{% url 'photo_detail' album_pk=album.pk pk=photo.pk %}">
+				 <img src="{{MEDIA_URL}}{{ photo.photo}}" alt="{{ photo.photo }}" style="width: 150px">
+			{% endfor  %}
+		</div>
+	</section>
 {% endblock content %}

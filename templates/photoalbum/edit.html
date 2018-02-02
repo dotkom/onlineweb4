@@ -18,11 +18,22 @@
 		<div class="container">
 			<div class="col-md-12">
 				<div class="page-header">
-					<h1>Endre album</h1>
+					<ul class="nav nav-pills">
+            <li class="pull-left">
+                <h1> Endre album</h1>
+            </li>
+            <li class="pull-right active">
+                <a href="{% url 'delete_album' pk=album.pk %}">
+                    <span class="fa fa-edit">
+                       Tilbake
+                    </span>
+                </a>
+            </li>
+        	</ul>
 				</div>
 			</div>
 			<div class="row">
-				<div class="col-xs-12 col-sm-6 col-md-4">
+				<div class="col-md-12">
 					<form enctype="multipart/form-data" action="{% url 'edit_album' pk=album.pk%}" method="post">
 						{% csrf_token %}
 						{{ name_form|crispy }}
@@ -34,12 +45,12 @@
 			</div>
 			<br>
 			<div class="row">
-				<div class="col-xs-12 col-sm-6 col-md-4">
+				<div class="col-md-12">
 					<form action="{% url 'edit_album' pk=album.pk %}" method="post" >
 					{% csrf_token %}
 						{% for photo in photos %}
 							<label>
-								<input type="checkbox" class="hidden_checkbox" name="photos[]" value="{{ photo.id }}">
+								<input type="checkbox" class="hidden_checkbox" name="photos[]" value="{{ photo.id }}" style="display:none">
 								<img src="{{MEDIA_URL}}{{ photo.photo}}" alt="{{ photo.photo }}" style="width: 150px" class="photo_edit">
 							</label>
 						{% endfor  %}
@@ -51,8 +62,8 @@
 			</div>
 			<br>
 			<div class="row">
-				<div>
-					<form enctype="multipart/form-data"  action="{% url 'edit_album' pk=album.pk %}" method="post">
+				<div class="col-md-12">
+					<form enctype="multipart/form-data"  action="{% url 'edit_album' pk=album.pk %}" method="post" class="btn btn-sucess" >
 						{% csrf_token %}
 						<input type="file" name="upload_photos" multiple class="clearablefileinput" id="id_photos" onchange="this.form.submit()">
 						</form>
