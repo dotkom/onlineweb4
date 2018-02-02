@@ -1,7 +1,7 @@
 from django.shortcuts import render
 
 from apps.photoalbum.models import Album, Photo
-from apps.photoalbum.forms import AlbumForm, AlbumForm2
+from apps.photoalbum.forms import AlbumForm, AlbumForm2, AlbumNameForm, UploadPhotosForm
 
 from django.shortcuts import render, HttpResponseRedirect
 
@@ -16,15 +16,10 @@ from apps.gallery.util import UploadImageHandler
 class AlbumsListView(ListView):
 	model = Album
 	template_name = 'photoalbum/index.html'
-	print("In AlbumsListView")
 
 	def get_context_data(self, **kwargs):
 		context = super(AlbumsListView, self).get_context_data(**kwargs)
 		context['albums'] = Album.objects.all()
-		print("Albums: ")
-		print(context['albums'])
-		for album in context['albums']:
-			print("Album: ", album.title)
 		return context
 
 
@@ -32,6 +27,7 @@ def upload_photos(photos, album):
 	photos_list = []
 
 	for photo in photos:
+		print(photos)
 		p = Photo(photo=photo, album=album)
 		p.save()
 		photos_list.append(p)
@@ -102,8 +98,9 @@ class PhotoDetailView(DetailView):
 def edit_album(request, pk):
 	print("Edit album: ", pk)
 	album = Album.objects.get(pk=pk)
-	form = AlbumForm2(instance=album)
 	photos = Photo.objects.all().filter(album=album)
+	name_form = AlbumNameForm(instance=album)
+	upload_photos_form = UploadPhotosForm(instance=album)
 	
 	if request.method == "POST":
 		if "edit_name" in request.POST:
@@ -111,21 +108,22 @@ def edit_album(request, pk):
 		elif "delete_photos" in request.POST:
  			delete_photos(request)
 		elif "add_photos" in request.POST:
-			add_photos(request)
+			add_photos(request, album)
+			photos = Photo.objects.all().filter(album=album)
 		else:
 			print("Form is not edit_name or delete_photos")
 
-	return render(request, 'photoalbum/edit.html', {'form': form, 'album': album, 'photos': photos})
+
+
+	return render(request, 'photoalbum/edit.html', {'name_form': name_form, 'upload_photos_form': upload_photos_form, 'album': album, 'photos': photos})
 
 def edit_name(request, album):
-	form = AlbumForm2(request.POST, request.FILES, instance=album)
+	form = AlbumNameForm(request.POST, request.FILES, instance=album)
 	if form.is_valid():
 		cleaned_data = form.cleaned_data
 		title = cleaned_data['title']
 		album.title = title
 		album.save()
-
-		#photos = upload_photos(request.FILES.getlist('photos_to_upload'), album)
 		
 		albums = Album.objects.all()
 		return render(request, 'photoalbum/index.html', {'albums': albums})
@@ -140,9 +138,14 @@ def delete_photos(request):
 	albums = Album.objects.all()
 	return render(request, 'photoalbum/index.html', {'albums': albums})
 
-def add_photos(request):
+def add_photos(request, album):
 	print("Add photos")
+	form = UploadPhotosForm(instance=album)
 
-	albums = Album.objects.all()
-	return render(request, 'photoalbum/index.html', {'albums': albums})
+	photos = upload_photos(request.FILES.getlist('photos'), album)
+
+	print("After adding photos")
+
+	#albums = Album.objects.all()
+	#return render(request, 'photoalbum/index.html', {'albums': albums})
 
