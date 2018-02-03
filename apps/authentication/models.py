@@ -26,6 +26,7 @@ FIELD_OF_STUDY_CHOICES = [
     (15, _('Helseinformatikk')),
     (16, _('Interaksjonsdesign, spill- og læringsteknologi')),
     (30, _('Annen mastergrad')),
+    (40, _('Sosialt medlem')),
     (80, _('PhD')),
     (90, _('International')),
     (100, _('Annet Onlinemedlem')),
@@ -73,6 +74,8 @@ def get_length_of_field_of_study(field_of_study):
         return 3
     elif 10 <= field_of_study <= 30:  # 10-30 is considered master
         return 2
+    elif field_of_study == 40:  # social
+        return 1
     elif field_of_study == 80:  # phd
         return 3
     elif field_of_study == 90:  # international
@@ -205,6 +208,9 @@ class OnlineUser(AbstractUser):
             if year >= 2:
                 return 5
             return 4
+        elif self.field_of_study == 40:  # social
+            if year > 1:
+                return 1
         elif self.field_of_study == 80:  # phd
             return year + 5
         elif self.field_of_study == 90:  # international
