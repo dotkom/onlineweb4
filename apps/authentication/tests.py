@@ -88,11 +88,6 @@ class AuthenticationTest(TestCase):
         self.user.field_of_study = 90
         self.assertEqual(1, self.user.year)
 
-    def testInternational2(self):
-        self.user.started_date = self.now.date() - timedelta(days=365)
-        self.user.field_of_study = 90
-        self.assertEqual(4, self.user.year)
-
     def testSocial(self):
         self.user.started_date = self.now.date()
         self.user.field_of_study = 40
