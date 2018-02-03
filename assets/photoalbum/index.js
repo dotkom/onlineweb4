@@ -10,9 +10,10 @@ $(document).ready(() => {
   })
 
   $('#show_report_photo_form').click(function show_form (e) {
-	console.log("Changing visibility")
+		console.log("Changing visibility")
 		const button = $(this)
 		//button.style["visibility"] = "hidden"
+		document.getElementById('show_report_photo_form').style["visibility"] = "hidden"
 		document.getElementById('report_photo_form').style["visibility"] = "visible"
   })
 
