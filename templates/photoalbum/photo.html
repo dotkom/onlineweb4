@@ -1,29 +1,51 @@
 {% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% load render_bundle from webpack_loader %}
+
+
+{% block js %}
+		{{ block.super }}
+		{% render_bundle 'photoalbum' 'js' %}
+{% endblock %}
+
 
 {% block content %}
 
 	<section id="album">
-        <div class="container">
-            <div class="col-md-12">
-                <div class="page-header">
-                        <ul class="nav nav-pills">
-                        <li class="pull-left">
-                            <h1>{{ album.title}}</h1>
-                        </li>
-                        <li class="pull-right active">
-                            <a href="{% url 'albums_list' %}">
-                                <span class="fa fa-edit">
-                                    Tilbake
-                                </span>
-                            </a>
-                        </li>
+		<div class="container">
+			<div class="col-md-12">
+				<div class="page-header">
+						<ul class="nav nav-pills">
+						<li class="pull-left">
+							<h1>{{ album.title}}</h1>
+						</li>
+						<li class="pull-right active">
+							<a href="{% url 'albums_list' %}">
+								<span class="fa fa-edit">
+									Tilbake
+								</span>
+							</a>
+						</li>
 
-                    </ul>
-                </div>
-            </div>
+					</ul>
+				</div>
+			</div>
 
-            <img src="{{MEDIA_URL}}{{ photo.photo}}" alt="{{ photo.photo }}" style="display: block; margin-right: auto; margin-left: auto;">
-        </div>
-    </section>
+			<img src="{{MEDIA_URL}}{{ photo.photo}}" alt="{{ photo.photo }}" style="display: block; margin-right: auto; margin-left: auto;">
+
+
+			<button class="btn btn-success" type="submit" id="show_report_photo_form" onClick="show_form()">
+				Rapporter bilde
+			</button>
+
+			<form action="{% url 'photo_detail' album_pk=album.pk pk=photo.pk %}" method="post" id="report_photo_form" >
+				{% csrf_token %}
+				{{ form|crispy }}
+				<button class="btn btn-success" type="submit" name="report_photo">
+					Send rapport
+				</button>
+			</form>
+		</div>
+	</section>
 
 {% endblock %}

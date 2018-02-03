@@ -1,17 +1,18 @@
-from django.shortcuts import render
+# -*- coding: utf-8 -*-
 
-from apps.photoalbum.models import Album, Photo
-from apps.photoalbum.forms import AlbumForm, AlbumForm2, AlbumNameForm, UploadPhotosForm
-
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, HttpResponseRedirect
-
-from django.views.generic.detail import DetailView
-from django.views.generic.list import ListView
 from django.utils.decorators import method_decorator
+from django.urls import reverse
+from django.views.generic import View
+from django.views.generic.detail import DetailView, SingleObjectMixin
 from django.views.generic.edit import FormView
+from django.views.generic.list import ListView
 
 from apps.gallery.util import UploadImageHandler
-from utils import upload_photos
+from apps.photoalbum.utils import upload_photos, report_photo
+from apps.photoalbum.models import Album, Photo
+from apps.photoalbum.forms import AlbumForm, AlbumForm2, AlbumNameForm, UploadPhotosForm, ReportPhotoForm
 
 
 class AlbumsListView(ListView):
@@ -23,7 +24,6 @@ class AlbumsListView(ListView):
 		context['albums'] = Album.objects.all()
 		return context
 
-@login_required
 def create_album(request):
 	if request.method == "POST":
 		form = AlbumForm(request.POST, request.FILES)
@@ -70,17 +70,67 @@ class AlbumDetailView(DetailView):
 
 		return context
 
-class PhotoDetailView(DetailView):
+class PhotoDisplay(DetailView):
 	model = Photo
 	template_name = "photoalbum/photo.html"
 
 	def get_context_data(self, **kwargs):
-		context = super(PhotoDetailView, self).get_context_data(**kwargs)
+		context = super(PhotoDisplay, self).get_context_data(**kwargs)
 		context['photo'] = Photo.objects.get(pk=self.kwargs['pk'])
 		album = context['photo'].album
 		context['album'] = Album.objects.get(pk=album.pk)
+		context['form'] = ReportPhotoForm()
 
 		return context
+
+class PhotoReportFormView(SingleObjectMixin, FormView):
+	model = Photo
+	template_name= 'photoalbum/photo.html'
+	form_class = ReportPhotoForm
+
+
+	def post(self, request, *args, **kwargs):
+		self.object = self.get_object()
+		return super(PhotoReportFormView, self).post(request, *args, **kwargs)
+
+	def form_invalid(self, form):
+		print("Form is invalid")
+		print(form.errors)
+
+		return super().form_invalid(form)
+
+	def form_valid(self, form):
+		photo = self.get_object()
+		user = self.request.user
+		cleaned_data = form.cleaned_data
+		report_photo(cleaned_data['reason'], photo, user)
+
+		return super().form_valid(form)
+			
+	def get_success_url(self):
+		photo_pk = self.object.pk
+		album_pk = self.object.album.pk
+		return reverse('photo_detail', kwargs={'pk': self.object.pk, 'album_pk': self.object.album.pk})
+
+	def get_context_data(self, **kwargs):
+		context = super(PhotoReportFormView, self).get_context_data(**kwargs)
+		context['photo'] = Photo.objects.get(pk=self.kwargs['pk'])
+		album = context['photo'].album
+		context['album'] = Album.objects.get(pk=album.pk)
+		context['form'] = ReportPhotoForm()
+
+		return context
+
+class PhotoDetailView(View):
+
+	def get(self, request, *args, **kwargs):
+		view = PhotoDisplay.as_view()
+		return view(request, *args, **kwargs)
+
+	def post(self, request, *args, **kwargs):
+		view = PhotoReportFormView.as_view()
+		return view(request, *args, **kwargs)
+
 
 # Maybe both deletion, editing and creation is supposed to be done from the admin panel?
 @login_required

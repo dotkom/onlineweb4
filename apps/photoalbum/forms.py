@@ -32,4 +32,5 @@ class UploadPhotosForm(forms.ModelForm):
 		fields = ['photos']
 
 
-
+class ReportPhotoForm(forms.Form):
+  reason = forms.CharField(widget=forms.TextInput(), label=_("Begrunnelse"))
