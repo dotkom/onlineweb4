@@ -23,7 +23,7 @@ def report_photo(description, photo, user):
     user_name = "anonym"
 
   msg = user_name + " rapporterte bildet " +  \
-    str(photo.pk) + "i album " + photo.album.title + \
+    str(photo.pk) + " i album " + photo.album.title + \
   	" med begrunnelse " + description 
 
   print("Warning prokom: " + msg)

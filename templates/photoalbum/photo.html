@@ -34,11 +34,11 @@
 			<img src="{{MEDIA_URL}}{{ photo.photo}}" alt="{{ photo.photo }}" style="display: block; margin-right: auto; margin-left: auto;">
 
 
-			<button class="btn btn-success" type="submit" id="show_report_photo_form" onClick="show_form()">
+			<button class="btn btn-success" type="submit" id="show_report_photo_form"">
 				Rapporter bilde
 			</button>
 
-			<form action="{% url 'photo_detail' album_pk=album.pk pk=photo.pk %}" method="post" id="report_photo_form" >
+			<form action="{% url 'photo_detail' album_pk=album.pk pk=photo.pk %}" method="post" id="report_photo_form" style="visibility: hidden;">
 				{% csrf_token %}
 				{{ form|crispy }}
 				<button class="btn btn-success" type="submit" name="report_photo">
