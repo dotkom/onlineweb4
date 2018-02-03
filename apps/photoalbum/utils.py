@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
 
+
+from django.contrib.auth import get_user_model
+
 def upload_photos(photos, album):
 	photos_list = []
 
@@ -10,3 +13,20 @@ def upload_photos(photos, album):
 		photos_list.append(p)
 
 	return photos_list
+
+
+def report_photo(description, photo, user):
+  print("Description: ", description)
+  try:
+    user_name = user.get_full_name()
+  except:
+    user_name = "anonym"
+
+  msg = user_name + " rapporterte bildet " +  \
+    str(photo.pk) + "i album " + photo.album.title + \
+  	" med begrunnelse " + description 
+
+  print("Warning prokom: " + msg)
+	# Send email to prokom
+
+
