@@ -14,4 +14,5 @@ urlpatterns = [
     url(r'^(?P<pk>\w+)/$', views.AlbumDetailView.as_view(), name="album_detail"),
     # Should have album-name before pk
     url(r'^(?P<album_pk>\w+)/(?P<pk>\w+)/$', views.PhotoDetailView.as_view(), name="photo_detail"),
+    #url(r'^(?P<album_pk>\w+)/(?P<pk>\w+)/$', views.PhotoDetailView.as_view(), name="photo_report_form"),
 ]
