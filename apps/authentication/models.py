@@ -77,7 +77,7 @@ def get_length_of_field_of_study(field_of_study):
     elif field_of_study == 40:  # social
         return 1
     elif field_of_study == 80:  # phd
-        return 3
+        return 99
     elif field_of_study == 90:  # international
         return 1
     # If user's field of study is not matched by any of these tests, return -1
