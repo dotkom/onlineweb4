@@ -349,6 +349,7 @@ def mail_participants(request, event_id):
         'attendees_not_paid': attendees_not_paid, 'event': event
     })
 
+
 @login_required
 def toggleShowAsAttending(request, event_id):
     event = get_object_or_404(Event, pk=event_id)
@@ -366,7 +367,7 @@ def toggleShowAsAttending(request, event_id):
     else:
         attendee.show_as_attending_event = True
         messages.success(request, _("Du er nå synlig som påmeldt dette arrangementet."))
-        
+
     attendee.save()
     return redirect(event)
 
