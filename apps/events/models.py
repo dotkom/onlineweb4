@@ -512,6 +512,18 @@ class AttendanceEvent(models.Model):
     def registration_open(self):
         return timezone.now() < self.registration_start
 
+    @property
+    def visible_attendees_qs(self):
+        """ Queryset with all attendees whom want to be displayed as attending """
+        visible_attendees = []
+
+        for attendee in self.attending_attendees_qs:
+            if attendee.is_visible_as_attending():
+                visible_attendees.append(attendee.user)
+        
+        return visible_attendees
+
+
     def has_delayed_signup(self, user):
         pass
 
@@ -827,6 +839,8 @@ class Attendee(models.Model):
     note = models.CharField(_('notat'), max_length=100, blank=True, default='')
     extras = models.ForeignKey(Extras, blank=True, null=True)
 
+    show_as_attending_event = models.NullBooleanField(_('vis som påmeldt sosialt arrangementet'), null=True, default=None)
+
     def __str__(self):
         return self.user.get_full_name()
 
@@ -846,6 +860,13 @@ class Attendee(models.Model):
 
     def is_on_waitlist(self):
         return self in self.event.waitlist_qs
+
+    def is_visible_as_attending(self):
+        # Is visible as attending if default users privacy settings are set and 
+        # explicit settings for attending this event does not override privacy setting
+        user_setting = self.user.get_visible_as_attending_events()
+
+        return (user_setting and self.show_as_attending_event == None) or self.show_as_attending_event
 
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):
