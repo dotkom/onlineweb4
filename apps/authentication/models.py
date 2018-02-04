@@ -251,6 +251,12 @@ class OnlineUser(AbstractUser):
         gravatar_url += urllib.parse.urlencode({'d': default, 's': str(size)})
         return gravatar_url
 
+    def get_visible_as_attending_events(self):
+        """ Returns the default value of visible_as_attending_events set in privacy/personvern """
+        if (hasattr(self, 'privacy')):
+            return self.privacy.visible_as_attending_events
+        return False
+
     class Meta(object):
         ordering = ['first_name', 'last_name']
         verbose_name = _("brukerprofil")
