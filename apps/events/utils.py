@@ -202,6 +202,8 @@ def handle_attendance_event_detail(event, user, context):
     can_unattend = True
     rules = []
     user_status = False
+    show_as_attending = False
+    user_setting_show_as_attending = False
 
     if attendance_event.rule_bundles:
         for rule_bundle in attendance_event.rule_bundles.all():
@@ -212,6 +214,7 @@ def handle_attendance_event_detail(event, user, context):
         if attendance_event.is_attendee(user):
             user_attending = True
             attendee = Attendee.objects.get(event=attendance_event, user=user)
+            show_as_attending = attendee.is_visible_as_attending()
 
         will_be_on_wait_list = attendance_event.will_i_be_on_wait_list
 
@@ -221,6 +224,9 @@ def handle_attendance_event_detail(event, user, context):
 
         # Check if this user is on the waitlist
         place_on_wait_list = attendance_event.what_place_is_user_on_wait_list(user)
+
+        # Check the default setting for visible as attending event
+        user_setting_show_as_attending = user.get_visible_as_attending_events()
 
     context.update({
         'now': timezone.now(),
@@ -233,6 +239,8 @@ def handle_attendance_event_detail(event, user, context):
         'rules': rules,
         'user_status': user_status,
         'place_on_wait_list': int(place_on_wait_list),
+        'user_setting_show_as_attending': user_setting_show_as_attending,
+        'show_as_attending': show_as_attending,
         # 'position_in_wait_list': position_in_wait_list,
     })
     return context
