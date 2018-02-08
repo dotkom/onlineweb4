@@ -17,7 +17,14 @@ class Album(models.Model):
 		return self.title
 
 	def get_photos(self):
-		return AlbumToPhoto.objects.filter(album=self).values("photo")
+		photo_list = AlbumToPhoto.objects.filter(album=self).values("photo")
+		photos = []
+		for photo_dict in photo_list:
+			pk = photo_dict.get("photo")
+			photo = Photo.objects.get(pk=pk)
+			photos.append(photo)
+
+		return photos
 
 
 class Photo(models.Model):
@@ -30,9 +37,15 @@ class Photo(models.Model):
 		return AlbumToPhoto.objects.get(photo=self).album
 
 	def get_tagged_users(self):
-		return PhotoWithUser.objects.filter(photo=self).values("user")
+		user_list = PhotoWithUser.objects.filter(photo=self).values("user")
+		users = []
+		for user_dict in user_list:
+			pk = user_drict.get("user")
+			user = OnlineUser.objects.get(pk=pk)
+			users.append(user)
 
-		
+		return users
+	
 
 class AlbumTag(models.Model):
 	name = models.CharField(_("Navn"), blank=False, null=False, max_length=20)
