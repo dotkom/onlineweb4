@@ -45,11 +45,11 @@ def create_album(request):
 	form = AlbumForm(request.POST)
 	return render(request, 'photoalbum/create.html', {'form': form})
 
-@login_required
+#@login_required
 def delete_album(request, pk):
-	album = Album.objects.filter(pk=pk)
+	album = Album.objects.get(pk=pk)
 
-	photos = Photo.objects.all().filter(album=album)
+	photos = album.get_photos()
 	album.delete()
 
 	for photo in photos:
@@ -62,6 +62,8 @@ class AlbumDetailView(DetailView):
 	model = Album
 	template_name = "photoalbum/album.html"
 
+	print("AlbumDetailView")
+
 	def get_context_data(self, **kwargs):
 		context = super(AlbumDetailView, self).get_context_data(**kwargs)
 	
@@ -69,16 +71,20 @@ class AlbumDetailView(DetailView):
 		context['album'] = album
 		context['photos'] = album.get_photos()
 
+		for photo in album.get_photos():
+			print(photo)
+			#print(photo.pk)
 		return context
 
 class PhotoDisplay(DetailView):
+	print("PhotoDisplay")
 	model = Photo
 	template_name = "photoalbum/photo.html"
 
 	def get_context_data(self, **kwargs):
 		context = super(PhotoDisplay, self).get_context_data(**kwargs)
 		context['photo'] = Photo.objects.get(pk=self.kwargs['pk'])
-		album = context['photo'].album
+		album = context['photo'].get_album()
 		context['album'] = Album.objects.get(pk=album.pk)
 		context['form'] = ReportPhotoForm()
 
@@ -134,10 +140,10 @@ class PhotoDetailView(View):
 
 
 # Maybe both deletion, editing and creation is supposed to be done from the admin panel?
-@login_required
+#@login_required
 def edit_album(request, pk):
 	album = Album.objects.get(pk=pk)
-	photos = Photo.objects.all().filter(album=album)
+	photos = album.get_photos()
 	name_form = AlbumNameForm(instance=album)
 	upload_photos_form = UploadPhotosForm(instance=album)
 	
@@ -148,14 +154,14 @@ def edit_album(request, pk):
  			delete_photos(request)
 		elif request.FILES.getlist('upload_photos'):
 			add_photos(request, album)
-			photos = Photo.objects.all().filter(album=album)
+			photos = album.get_photos()
 		else:
 			print("Form is not edit_name, delete_photos or add_photos")
 
-	photos = Photo.objects.all().filter(album=album)
+	photos = album.get_photos()
 	return render(request, 'photoalbum/edit.html', {'name_form': name_form, 'upload_photos_form': upload_photos_form, 'album': album, 'photos': photos})
 
-@login_required
+#@login_required
 def edit_name(request, album):
 	form = AlbumNameForm(request.POST, request.FILES, instance=album)
 	if form.is_valid():
@@ -167,7 +173,7 @@ def edit_name(request, album):
 		albums = Album.objects.all()
 		return render(request, 'photoalbum/index.html', {'albums': albums})
 
-@login_required
+#@login_required
 def delete_photos(request):	
 	photos_to_delete = request.POST.getlist('photos[]')
 	if photos_to_delete != []:
@@ -182,7 +188,7 @@ def delete_photos(request):
 	albums = Album.objects.all()
 	return render(request_copy, 'photoalbum/index.html', {'albums': albums})
 
-@login_required
+#@login_required
 def add_photos(request, album):
 	form = UploadPhotosForm(instance=album)
 
