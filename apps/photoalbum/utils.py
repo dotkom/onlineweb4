@@ -4,6 +4,7 @@
 from django.contrib.auth import get_user_model
 
 from apps.photoalbum.models import Photo, AlbumToPhoto
+from apps.photoalbum.tasks import send_report_on_photo
 
 def upload_photos(photos, album):
 	photos_list = []
@@ -12,7 +13,7 @@ def upload_photos(photos, album):
 		print(photos)
 		p = Photo(photo=photo)
 		p.save()
-		albumToPhoto = AlbumToPhoto(album=album, photo=photo)
+		albumToPhoto = AlbumToPhoto(album=album, photo=p)
 		albumToPhoto.save()
 		photos_list.append(p)
 
@@ -27,10 +28,13 @@ def report_photo(description, photo, user):
 		user_name = "anonym"
 
 	msg = user_name + " rapporterte bildet " +  \
-		str(photo.pk) + " i album " + photo.album.title + \
-		" med begrunnelse " + description 
+		str(photo.pk) + " i album " + "phototitle" \
+		" med begrunnelse " + description
+		# photo.get_album(().title + \
 
-	print("Warning prokom: " + msg)
+	print("Warning prokom: ", msg)
+	send_report_on_photo(user, photo, description)
+
 	# Send email to prokom
 
 
