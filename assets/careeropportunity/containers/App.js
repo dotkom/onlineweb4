@@ -7,10 +7,6 @@ import DetailView from './DetailView';
 
 const history = createBrowserHistory();
 
-history.listen(() => {
-  window.scrollTo(0, 0);
-});
-
 const getDeadlines = deadlines => (
   deadlines.reduce((accumulator, deadline, index) => Object.assign(accumulator, {
     [index]: {
