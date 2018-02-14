@@ -3,8 +3,9 @@
 
 from django.contrib.auth import get_user_model
 
-from apps.photoalbum.models import Photo, AlbumToPhoto
+from apps.photoalbum.models import Photo, AlbumToPhoto, AlbumTag
 from apps.photoalbum.tasks import send_report_on_photo
+
 
 def upload_photos(photos, album):
 	photos_list = []
@@ -37,4 +38,13 @@ def report_photo(description, photo, user):
 
 	# Send email to prokom
 
+def get_or_create_tags(names, album):
+	names = names.split(",")
+	tags = []
+	for name in names: 
+		tag = AlbumTag.objects.get_or_create(name=name, album=album)
+		tags.append(tag)
 
+	print(tags)
+
+	return tags
