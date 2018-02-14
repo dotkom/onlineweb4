@@ -13,7 +13,7 @@ class DetailView extends React.Component {
     window.scrollTo(0, 0);
   }
 
-  componentWillReceiveProps(nextProps, nextState) {
+  componentWillReceiveProps(nextProps) {
     this.id = parseInt(nextProps.match.params.id, 10);
     this.job = nextProps.jobs.find(j => j.id === this.id);
   }
