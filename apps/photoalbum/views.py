@@ -10,8 +10,8 @@ from django.views.generic.edit import FormView
 from django.views.generic.list import ListView
 
 from apps.gallery.util import UploadImageHandler
-from apps.photoalbum.utils import upload_photos, report_photo
-from apps.photoalbum.models import Album, Photo
+from apps.photoalbum.utils import upload_photos, report_photo, get_or_create_tags
+from apps.photoalbum.models import Album, Photo, AlbumTag
 from apps.photoalbum.forms import AlbumForm, AlbumForm2, AlbumNameForm, UploadPhotosForm, ReportPhotoForm
 
 
@@ -34,6 +34,7 @@ def create_album(request):
 			album.save()
 
 			photos = upload_photos(request.FILES.getlist('photos'), album)
+			tags = get_or_create_tags(cleaned_data['tags'], album)
 			
 			albums = Album.objects.all()
 			return render(request, 'photoalbum/index.html', {'albums': albums})
@@ -70,6 +71,7 @@ class AlbumDetailView(DetailView):
 		album = Album.objects.get(pk=self.kwargs['pk'])
 		context['album'] = album
 		context['photos'] = album.get_photos()
+		context['tags'] = AlbumTag.objects.all()
 
 		for photo in album.get_photos():
 			print(photo)
