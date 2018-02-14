@@ -32,8 +32,15 @@
                     </ul>
                 </div>
             </div>
+            <div>
+                <form id="searchform" action="{% url 'albums_list' %}" method="GET" accept-charset="utf-8">
+                    {% csrf_token %}
+                    {{ filter.form.as_p }}
+                  <input type="submit">
+               </form>
+            </div>
 
-            {%  for album in albums %}
+            {%  for album in filter.qs %}
                 <a href="{%  url 'album_detail' pk=album.pk %}" >
 
                 <div style="display: inline-block; width: 150px">
