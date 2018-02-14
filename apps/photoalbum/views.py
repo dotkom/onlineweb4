@@ -15,14 +15,39 @@ from apps.photoalbum.models import Album, Photo, AlbumTag
 from apps.photoalbum.forms import AlbumForm, AlbumForm2, AlbumNameForm, UploadPhotosForm, ReportPhotoForm
 
 
+from django_filters import FilterSet, Filter
+
 class AlbumsListView(ListView):
 	model = Album
 	template_name = 'photoalbum/index.html'
+	
+
+	def get(self, request, *args, **kwargs):
+		print("In get in albums list view")
+		print(request)
+		print(*args)
+		print(kwargs)
+		filter = AlbumFilter(request.GET, queryset=Album.objects.all())
+		print("Filtered albums: ", filter)
+		#for album in albums:
+		#	print("Album in filtered albums: ", album.title)
+    	#return render(request, 'my_app/template.html', {'filter': filter})
+
+
+		return render(request, 'photoalbum/index.html', {'filter': filter})
 
 	def get_context_data(self, **kwargs):
 		context = super(AlbumsListView, self).get_context_data(**kwargs)
 		context['albums'] = Album.objects.all()
+		context['filter'] = AlbumFilter(request.GET, queryset=Album.objects.all())
 		return context
+
+
+class AlbumFilter(FilterSet):
+	class Meta:
+		model = Album
+
+		fields = ['title']
 
 def create_album(request):
 	if request.method == "POST":
@@ -38,8 +63,6 @@ def create_album(request):
 			
 			albums = Album.objects.all()
 			return render(request, 'photoalbum/index.html', {'albums': albums})
-
-			return AlbumsListView.as_view()(request)
 		else:
 			print("Form is not valid")
 
@@ -59,7 +82,7 @@ def delete_album(request, pk):
 	return AlbumsListView.as_view()(request)
 
 
-class AlbumDetailView(DetailView):
+class AlbumDetailView(DetailView, View):
 	model = Album
 	template_name = "photoalbum/album.html"
 
@@ -71,11 +94,8 @@ class AlbumDetailView(DetailView):
 		album = Album.objects.get(pk=self.kwargs['pk'])
 		context['album'] = album
 		context['photos'] = album.get_photos()
-		context['tags'] = AlbumTag.objects.all()
+		context['tags'] = album.get_tags()
 
-		for photo in album.get_photos():
-			print(photo)
-			#print(photo.pk)
 		return context
 
 class PhotoDisplay(DetailView):
