@@ -15,7 +15,7 @@ from apps.photoalbum.models import Album, Photo, AlbumTag
 from apps.photoalbum.forms import AlbumForm, AlbumForm2, AlbumNameForm, UploadPhotosForm, ReportPhotoForm
 
 
-from django_filters import FilterSet, Filter
+from django_filters import FilterSet, Filter, CharFilter
 
 class AlbumsListView(ListView):
 	model = Album
@@ -31,7 +31,7 @@ class AlbumsListView(ListView):
 		print("Filtered albums: ", filter)
 		#for album in albums:
 		#	print("Album in filtered albums: ", album.title)
-    	#return render(request, 'my_app/template.html', {'filter': filter})
+		#return render(request, 'my_app/template.html', {'filter': filter})
 
 
 		return render(request, 'photoalbum/index.html', {'filter': filter})
@@ -44,6 +44,44 @@ class AlbumsListView(ListView):
 
 
 class AlbumFilter(FilterSet):
+
+	def filter_keyword(self, queryset, value):
+		queryset = []
+		if value != "":
+			list = value.split(" ")
+
+			try:	
+				for album in Album.objects.all():
+					for word in list:
+						print("WOrd: ", word)
+						# If word is in title
+						if word.lower() in album.title.lower():
+							print("Word ", word, " is in album title")
+							queryset.append(album)
+						else:
+							try:
+								tag =AlbumTag.objects.get(name=word.lower())
+								if tag != None or tag in album.get_tags():
+									print("Word ", word, " is tag and album has tag")
+									queryset.append(album)
+							except Exception:
+									print("Tag does not exist")
+			except Exception as e:
+				print("Exception: ", e)
+				queryset = Album.objects.all()
+			#else:
+				#queryset = Album.objects.filter(Q(title__contains=value) or Q(authors__contains=value))
+
+		else:
+			print("Filtering value was empty")
+			queryset = Album.objects.all()
+
+		print("Queryset after filtering: ", queryset)
+
+		return queryset
+
+
+	title = CharFilter(label='Søk', method=filter_keyword)
 	class Meta:
 		model = Album
 
@@ -173,7 +211,7 @@ def edit_album(request, pk):
 		if "edit_name" in request.POST:
 			edit_name(request, album)
 		elif "delete_photos" in request.POST:
- 			delete_photos(request)
+			delete_photos(request)
 		elif request.FILES.getlist('upload_photos'):
 			add_photos(request, album)
 			photos = album.get_photos()
