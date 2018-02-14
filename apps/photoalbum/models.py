@@ -26,6 +26,15 @@ class Album(models.Model):
 
 		return photos
 
+	def get_tags(self):
+		tag_list = TagsToAlbum.objects.filter(album=self).values("tag")
+		tags = []
+		for tags_dict in tag_list:
+			pk = tags_dict.get("tag")
+			tag = AlbumTag.objects.get(pk=pk)
+			tags.append(tag)
+
+		return tags
 
 class Photo(models.Model):
 	# Path should depend on album?
@@ -62,3 +71,7 @@ class AlbumToPhoto(models.Model):
 class PhotoWithUser(models.Model):
 	photo = models.ForeignKey(Photo)
 	user = models.ForeignKey(OnlineUser)
+
+class TagsToAlbum(models.Model):
+	album = models.ForeignKey(Album)
+	tag = models.ForeignKey(AlbumTag)
