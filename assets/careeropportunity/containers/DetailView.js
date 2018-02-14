@@ -9,8 +9,8 @@ class DetailView extends React.Component {
     this.job = props.jobs.find(j => j.id === this.id);
   }
 
-  componentDidMount(){
-      window.scrollTo(0, 0);
+  componentDidMount() {
+    window.scrollTo(0, 0);
   }
 
   render() {
