@@ -1,5 +1,6 @@
 {% load render_bundle from webpack_loader %}
 {% load raven %}
+ {% load sekizai_tags %}
 
 <!DOCTYPE html>
 <html>
@@ -22,6 +23,7 @@
     {% render_bundle 'core' 'css' %}
     {% block scripts %}
     {% endblock %}
+    {% render_block "css" %}
     {% block apple-webapp %}{% endblock %}
 </head>
 <body>
@@ -236,6 +238,7 @@
         {% render_bundle 'common' 'js' %}
         {% render_bundle 'core' 'js' %}
     {% endblock %}
+    {% render_block "js" %}
 
     {% if GOOGLE_ANALYTICS_KEY %}
         <script type="text/javascript">
