@@ -31,7 +31,9 @@
 			</div>
 			<div>
 				{% for tag in tags %}
-					{{ tag.name }}
+					<span class="tag" style="background-color: #80808061; border-radius: 6px; margin: 4px; padding: 0 10px;">
+						{{ tag.name }}
+					</span>
 				{% endfor %}
 			</div>
 			{%  for photo in photos %}
