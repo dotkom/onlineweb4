@@ -12,7 +12,6 @@ from apps.authentication.models import OnlineUser as User
 from apps.events.models import AttendanceEvent, Attendee, Event
 from apps.payment.models import Payment, PaymentDelay, PaymentPrice, PaymentReceipt, PaymentRelation
 from apps.payment.mommy import PaymentDelayHandler, PaymentReminder
-from apps.payment.views import _send_receipt
 
 
 class PaymentTest(TestCase):
@@ -75,20 +74,22 @@ class PaymentTest(TestCase):
         self.assertTrue(attendee.paid)
 
     def testEventPaymentReceipt(self):
+        G(Attendee, event=self.attendance_event, user=self.user)
+        payment_relation = G(
+            PaymentRelation,
+            payment=self.event_payment,
+            user=self.user,
+            payment_price=self.payment_price
+        )
         self.receipt = G(
             PaymentReceipt,
-            to_mail="test@test.no",
-            from_mail="test@unittest.no",
-            subject="kvittering",
-            description="isbading",
-            transaction_date=timezone.now()
+            object_id=payment_relation.id,
+            content_type=ContentType.objects.get_for_model(payment_relation),
         )
 
-        _send_receipt(self.receipt)
         self.assertEqual(len(mail.outbox), 1)
-        self.assertEqual(mail.outbox[0].subject, "kvittering")
-        self.assertEqual(mail.outbox[0].to, ["test@test.no"])
-        self.assertEqual(mail.outbox[0].from_email, "test@unittest.no")
+        self.assertEqual(mail.outbox[0].subject, "[Kvittering] " + payment_relation.payment.description())
+        self.assertEqual(mail.outbox[0].to, [payment_relation.user.email])
 
     def testEventPaymentRefundCheckUnatendDeadlinePassed(self):
         G(Attendee, event=self.attendance_event, user=self.user)
