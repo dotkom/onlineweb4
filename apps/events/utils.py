@@ -225,7 +225,7 @@ def handle_attendance_event_detail(event, user, context):
         # Check if this user is on the waitlist
         place_on_wait_list = attendance_event.what_place_is_user_on_wait_list(user)
 
-        # Check the default setting for visible as attending event
+        # Get the default setting for visible as attending event from users privacy setting
         user_setting_show_as_attending = user.get_visible_as_attending_events()
 
     context.update({
