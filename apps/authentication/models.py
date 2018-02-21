@@ -253,7 +253,7 @@ class OnlineUser(AbstractUser):
 
     def get_visible_as_attending_events(self):
         """ Returns the default value of visible_as_attending_events set in privacy/personvern """
-        if (hasattr(self, 'privacy')):
+        if hasattr(self, 'privacy'):
             return self.privacy.visible_as_attending_events
         return False
 
