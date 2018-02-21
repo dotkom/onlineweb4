@@ -48,6 +48,8 @@ class PaymentDelayAdmin(VersionAdmin):
 
 class PaymentReceiptAdmin(admin.ModelAdmin):
     model = PaymentReceipt
+    list_display = ('receipt_id',)
+    search_fields = ['receipt_id']
 
 
 class PaymentTransactionAdmin(VersionAdmin):
