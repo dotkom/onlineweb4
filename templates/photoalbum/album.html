@@ -36,9 +36,11 @@
 					</span>
 				{% endfor %}
 			</div>
+
 			{%  for photo in photos %}
 				<a href="{% url 'photo_detail' album_pk=album.pk pk=photo.pk %}">
-				<img src="{{MEDIA_URL}}{{ photo.photo}}" alt="{{ photo.photo }}" style="width: 150px">
+					<img src="{{MEDIA_URL}}{{ photo.photo}}" alt="{{ photo.photo }}" class="album_photo" style="max-width: 150px; margin: 10px; max-height: 200px;">
+				</a>
 			{% endfor  %}
 
 		</div>
