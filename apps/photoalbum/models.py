@@ -26,9 +26,12 @@ class Album(models.Model):
 		return photos
 
 	def get_tags(self):
+		print("All tags: ", TagsToAlbum.objects.all())
 		tag_list = TagsToAlbum.objects.filter(album=self).values("tag")
+		print("Tag_list: ", tag_list)
 		tags = []
 		for tags_dict in tag_list:
+			print("Tag_dict: ", tags_dict)
 			pk = tags_dict.get("tag")
 			tag = AlbumTag.objects.get(pk=pk)
 			tags.append(tag)

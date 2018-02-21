@@ -3,7 +3,7 @@
 
 from django.contrib.auth import get_user_model
 
-from apps.photoalbum.models import Photo, AlbumToPhoto, AlbumTag
+from apps.photoalbum.models import Photo, AlbumToPhoto, AlbumTag, TagsToAlbum
 from apps.photoalbum.tasks import send_report_on_photo
 
 
@@ -42,9 +42,19 @@ def get_or_create_tags(names, album):
 	names = names.split(",")
 	tags = []
 	for name in names: 
-		tag = AlbumTag.objects.get_or_create(name=name, album=album)
+		tag, created = AlbumTag.objects.get_or_create(name=name)
+		tag.save()
+		tag_to_ablum, created= TagsToAlbum.objects.get_or_create(tag=tag, album=album)
 		tags.append(tag)
 
-	print(tags)
-
 	return tags
+
+def get_tags_as_string(album):
+	tags = album.get_tags()
+	tags_string = ""
+	for tag in tags:
+		tags_string += tag.name
+		if tag != tags[-1]:
+			tags_string += ", "
+
+	return tags_string
