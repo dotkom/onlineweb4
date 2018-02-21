@@ -10,7 +10,7 @@ from django_dynamic_fixture import G
 
 from apps.authentication.models import OnlineUser as User
 from apps.events.models import AttendanceEvent, Attendee, Event
-from apps.payment.models import Payment, PaymentDelay, PaymentPrice, PaymentReceipt, PaymentRelation
+from apps.payment.models import Payment, PaymentDelay, PaymentPrice, PaymentRelation
 from apps.payment.mommy import PaymentDelayHandler, PaymentReminder
 
 
