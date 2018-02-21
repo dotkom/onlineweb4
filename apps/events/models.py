@@ -515,8 +515,9 @@ class AttendanceEvent(models.Model):
     @property
     def visible_attendees_qs(self):
         """ Queryset with all attendees whom want to be displayed as attending """
-        return self.attendees.filter(show_as_attending_event=True).order_by('user__last_name')[:self.number_of_attendee_seats]
-    
+        return self.attendees.filter(show_as_attending_event=True).order_by(
+            'user__last_name')[:self.number_of_attendee_seats]
+
     def has_delayed_signup(self, user):
         pass
 
