@@ -5,7 +5,7 @@ from django.contrib.contenttypes.admin import GenericStackedInline
 from reversion.admin import VersionAdmin
 
 from apps.payment.models import (Payment, PaymentDelay, PaymentPrice, PaymentRelation,
-                                 PaymentTransaction)
+                                 PaymentTransaction, PaymentReceipt)
 from utils.admin import DepositWithdrawalFilter
 
 
@@ -46,12 +46,17 @@ class PaymentDelayAdmin(VersionAdmin):
     list_display = ('__str__', 'valid_to', 'active')
 
 
+class PaymentReceiptAdmin(admin.ModelAdmin):
+    model = PaymentReceipt
+
+
 class PaymentTransactionAdmin(VersionAdmin):
     model = PaymentTransaction
     list_display = ('__str__', 'user', 'datetime', 'amount', 'used_stripe')
     list_filter = ('used_stripe', DepositWithdrawalFilter)
 
 
+admin.site.register(PaymentReceipt, PaymentReceiptAdmin)
 admin.site.register(Payment, PaymentAdmin)
 admin.site.register(PaymentRelation, PaymentRelationAdmin)
 admin.site.register(PaymentDelay, PaymentDelayAdmin)

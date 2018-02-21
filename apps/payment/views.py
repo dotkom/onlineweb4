@@ -6,14 +6,13 @@ import stripe
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.core.mail import send_mail
+from django.contrib.contenttypes.models import ContentType
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
-from django.template.loader import render_to_string
 from django.utils.translation import ugettext as _
 
 from apps.payment.models import (Payment, PaymentPrice, PaymentReceipt, PaymentRelation,
-                                 PaymentTransaction, ReceiptItem)
+                                 PaymentTransaction)
 from apps.webshop.models import OrderLine
 
 
@@ -50,23 +49,9 @@ def payment(request):
 
                     payment_object.handle_payment(request.user)
 
-                    receipt = PaymentReceipt(
-                        to_mail=payment_relation.user.email,
-                        from_mail=payment_relation.payment.responsible_mail(),
-                        subject="[kvittering] " + payment_relation.payment.description(),
-                        description=payment_relation.payment.description(),
-                        transaction_date=payment_relation.datetime
-                    )
+                    receipt = PaymentReceipt(object_id=payment_relation.id,
+                                             content_type=ContentType.objects.get_for_model(payment_relation))
                     receipt.save()
-
-                    item = ReceiptItem(
-                        receipt=receipt,
-                        name=payment_relation.payment.description(),
-                        price=int(payment_relation.payment_price.price)
-                    )
-                    item.save()
-
-                    _send_receipt(receipt)
 
                     messages.success(request, _("Betaling utført."))
                     return HttpResponse("Betaling utført.", content_type="text/plain", status=200)
@@ -159,26 +144,9 @@ def webshop_pay(request):
                 order_line.stripe_id = charge.id
                 order_line.save()
 
-                receipt = PaymentReceipt(
-                    to_mail=request.user.email,
-                    from_mail=settings.EMAIL_PROKOM,
-                    subject="[kvittering] webshop",
-                    description="varer i webshop",
-                    transaction_date=order_line.datetime
-                )
+                receipt = PaymentReceipt(object_id=order_line.id,
+                                         content_type=ContentType.objects.get_for_model(order_line))
                 receipt.save()
-
-                for order in order_line.orders.all():
-                    item = ReceiptItem(
-                        receipt=receipt,
-                        name=order.product.name,
-                        price=int(order.price/order.quantity),
-                        quantity=order.quantity
-                    )
-                    item.save()
-
-                _send_receipt(receipt)
-
                 messages.success(request, "Betaling utført")
 
                 return HttpResponse("Betaling utført.", content_type="text/plain", status=200)
@@ -253,25 +221,9 @@ def saldo(request):
 
                 payment_transaction = PaymentTransaction.objects.create(user=request.user, amount=amount,
                                                                         used_stripe=True)
-
-                receipt = PaymentReceipt(
-                    to_mail=payment_transaction.user.email,
-                    from_mail=settings.EMAIL_TRIKOM,
-                    subject="[kvittering] saldo inskudd",
-                    description="påfyll av saldo",
-                    transaction_date=payment_transaction.datetime,
-                )
+                receipt = PaymentReceipt(object_id=payment_transaction.id,
+                                         content_type=ContentType.objects.get_for_model(payment_transaction))
                 receipt.save()
-
-                item = ReceiptItem(
-                    receipt=receipt,
-                    name='Saldo',
-                    price=int(payment_transaction.amount)
-                )
-
-                item.save()
-
-                _send_receipt(receipt)
 
                 messages.success(request, _("Inskudd utført."))
                 return HttpResponse("Inskudd utført.", content_type="text/plain", status=200)
@@ -280,36 +232,3 @@ def saldo(request):
                 return HttpResponse(str(e), content_type="text/plain", status=500)
 
     raise Http404("Request not supported")
-
-
-def _send_receipt(receipt):
-    """Send confirmation email with receipt
-    param receipt: object
-    """
-    subject = receipt.subject
-    from_mail = receipt.from_mail
-    to_mails = [receipt.to_mail]
-
-    items = []
-    total_amount = 0
-    for item in receipt.items.all():
-        items.append({
-            'amount': item.price,
-            'description': item.name,
-            'quantity': item.quantity
-        })
-        total_amount += item.price * item.quantity
-    print('items:', items)
-
-    context = {
-        'payment_date': receipt.transaction_date,
-        'description': receipt.description,
-        'payment_id': receipt.receipt_id,
-        'items': items,
-        'total_amount': total_amount,
-        'to_mail': to_mails,
-        'from_mail': from_mail
-    }
-
-    email_message = render_to_string('payment/email/confirmation_mail.txt', context)
-    send_mail(subject, email_message, from_mail, to_mails)

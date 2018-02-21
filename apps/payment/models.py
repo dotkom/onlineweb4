@@ -5,13 +5,16 @@ import uuid
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
+from django.core.mail import send_mail
 from django.db import models
+from django.template.loader import render_to_string
 from django.utils import timezone
 from django.utils.translation import ugettext as _
 from rest_framework.exceptions import NotAcceptable
 
 from apps.events.models import AttendanceEvent, Attendee
 from apps.marks.models import Suspension
+from apps.webshop.models import OrderLine
 
 User = settings.AUTH_USER_MODEL
 
@@ -307,22 +310,95 @@ class PaymentTransaction(models.Model):
 
 class PaymentReceipt(models.Model):
     """Transaction receipt"""
-    receipt_id = models.CharField(max_length=128, default=None)
-    to_mail = models.EmailField()
-    from_mail = models.EmailField()
-    subject = models.TextField()
-    description = models.TextField()
-    transaction_date = models.DateTimeField()
+    receipt_id = models.UUIDField(default=uuid.uuid4)
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+    """Which model the receipt is created for"""
+    object_id = models.PositiveIntegerField(null=True)
+    """Object id for the model chosen in content_type"""
+    content_object = GenericForeignKey()
+    """Helper attribute which points to the object select in object_id"""
 
     def save(self, *args, **kwargs):
-        if not self.receipt_id:
-            self.receipt_id = str(uuid.uuid4())
+        # Saldo
+        if self._is_type(PaymentTransaction):
+            self.type = 0
+            self.timestamp = self.content_object.datetime
+            self.subject = "[Kvittering] Saldoinnskudd på online.ntnu.no"
+            self.description = ""
+            self.items = [{
+                'name': "Påfyll av saldo",
+                'price': self.content_object.amount,
+                'quantity': 1
+            }]
+            self.from_mail = settings.EMAIL_TRIKOM
+            self.to_mail = [self.content_object.user.email]
+
+        # Webshop
+        elif self._is_type(OrderLine):
+            self.type = 1
+            self.timestamp = self.content_object.datetime
+            self.subject = "[Kvittering] Kjøp i webshop på online.ntnu.no"
+            self.description = "varer i webshop"
+            self.from_mail = settings.EMAIL_PROKOM
+            self.to_mail = [self.content_object.user.email]
+            self.items = []
+
+            for order in self.content_object.orders.all():
+                item = {
+                    'name': order.product.name,
+                    'price': int(order.price/order.quantity),
+                    'quantity': order.quantity
+                }
+                self.items.append(item)
+
+        # Event
+        elif self._is_type(PaymentRelation):
+            self.type = 2
+            self.timestamp = self.content_object.datetime
+            self.subject = "[Kvittering] " + self.content_object.payment.description()
+            self.description = self.content_object.payment.description()
+            self.from_mail = settings.EMAIL_ARRKOM
+            self.to_mail = [self.content_object.user.email]
+            self.items = [
+                {
+                    'name': self.content_object.payment.description(),
+                    'price': self.content_object.payment_price.price,
+                    'quantity': 1
+                 },
+            ]
+        self._send_receipt(self.timestamp, self.subject, self.description, self.receipt_id,
+                           self.items, self.to_mail, self.from_mail)
         super().save(*args, **kwargs)
 
+    def _is_type(self, model_type):
+        """Function for comparing content types to differentiate payment types"""
+        return ContentType.objects.get_for_model(model_type) == self.content_type
 
-class ReceiptItem(models.Model):
-    """Items attached to receipt"""
-    receipt = models.ForeignKey('PaymentReceipt', related_name='items')
-    name = models.CharField(max_length=50)
-    price = models.IntegerField()
-    quantity = models.IntegerField(default=1)
+    def _send_receipt(self, payment_date, subject, description, payment_id, items, to_mail, from_mail):
+        """Send confirmation email with receipt
+        param receipt: object
+        """
+
+        # Calculate total item price and ensure correct input to template.
+        receipt_items = []
+        total_amount = 0
+        for item in items:
+            receipt_items.append({
+                    'amount': item['price'],
+                    'description': item['name'],
+                    'quantity': item['quantity']
+                    })
+            total_amount += item['price'] * item['quantity']
+
+        context = {
+            'payment_date': payment_date,
+            'description': description,
+            'payment_id': payment_id,
+            'items': receipt_items,
+            'total_amount': total_amount,
+            'to_mail': to_mail,
+            'from_mail': from_mail
+        }
+
+        email_message = render_to_string('payment/email/confirmation_mail.txt', context)
+        send_mail(subject, email_message, from_mail, to_mail)
