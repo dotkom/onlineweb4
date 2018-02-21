@@ -120,6 +120,7 @@ def attendEvent(request, event_id):
         attendee = Attendee(event=attendance_event, user=request.user)
         if 'note' in form.cleaned_data:
             attendee.note = form.cleaned_data['note']
+        attendee.show_as_attending_event = request.user.get_visible_as_attending_events()
         attendee.save()
         messages.success(request, _("Du er nå meldt på arrangementet."))
 
@@ -361,7 +362,7 @@ def toggleShowAsAttending(request, event_id):
     attendance_event = event.attendance_event
     attendee = Attendee.objects.get(event=attendance_event, user=request.user)
 
-    if (attendee.is_visible_as_attending()):
+    if (attendee.show_as_attending_event):
         attendee.show_as_attending_event = False
         messages.success(request, _("Du er ikke lenger synlig som påmeldt dette arrangementet."))
     else:
