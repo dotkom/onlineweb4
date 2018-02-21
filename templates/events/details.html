@@ -435,10 +435,10 @@
                                     </tr>
                                 </thead>
                                 <tbody id="attendee_list">
-                                    {% for user in event.attendance_event.visible_attendees_qs %}
+                                    {% for attendee in event.attendance_event.visible_attendees_qs %}
                                     <tr>
-                                        <td>{{ user.first_name }}</td>
-                                        <td>{{ user.last_name }}</td>
+                                        <td>{{ attendee.user.first_name }}</td>
+                                        <td>{{ attendee.user.last_name }}</td>
                                     </tr>
                                     {% endfor %}
                                 </tbody>
@@ -457,8 +457,6 @@
                                 {% else %}
                                     <a href="{% url 'toggleShowAsAttending' event.id %}"><button class="btn btn-success">Gjør meg synlig som påmeldt</button></a>
                                 {% endif %}
-                            {% else %}
-                                <button class="btn btn-success disabled">Meld deg på arrangementet</button>
                             {% endif %}
                             <button class="btn" data-dismiss="modal" aria-hidden="true">Lukk</button>
                         </div>
