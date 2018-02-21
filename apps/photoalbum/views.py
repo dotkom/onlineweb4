@@ -10,7 +10,7 @@ from django.views.generic.edit import FormView
 from django.views.generic.list import ListView
 
 from apps.gallery.util import UploadImageHandler
-from apps.photoalbum.utils import upload_photos, report_photo, get_or_create_tags, get_tags_as_string
+from apps.photoalbum.utils import upload_photos, report_photo, get_or_create_tags, get_tags_as_string, get_previous_photo, get_next_photo
 from apps.photoalbum.models import Album, Photo, AlbumTag
 from apps.photoalbum.forms import AlbumForm, AlbumForm2, AlbumNameForm, UploadPhotosForm, ReportPhotoForm, AlbumTagsForm
 
@@ -143,11 +143,16 @@ class PhotoDisplay(DetailView):
 
 	def get_context_data(self, **kwargs):
 		context = super(PhotoDisplay, self).get_context_data(**kwargs)
+		photo = Photo.objects.get(pk=self.kwargs['pk'])
 		context['photo'] = Photo.objects.get(pk=self.kwargs['pk'])
 		album = context['photo'].get_album()
-		context['album'] = Album.objects.get(pk=album.pk)
+		context['album'] = Album.objects.get(pk=album.pk) # TODO: can't I just have album here?
 		context['form'] = ReportPhotoForm()
+		context['next_photo'] = get_next_photo(photo, album)
+		context['previous_photo'] = get_previous_photo(photo, album)
 
+		print("Next_photo: ", context['next_photo'])
+		print("Previous_photo: ", context['previous_photo'])
 		return context
 
 class PhotoReportFormView(SingleObjectMixin, FormView):
