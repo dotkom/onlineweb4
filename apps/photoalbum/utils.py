@@ -62,8 +62,6 @@ def get_tags_as_string(album):
 def get_next_photo(photo, album):
 	photos = album.get_photos()
 	enumerated_list = list(enumerate(photos))
-	print_album_photo_indexs(album)
-	print("This photo pk: ", photo.pk)
 	for i, loop_photo in enumerated_list:
 		last_photo_index = enumerated_list[-1][0]
 		is_last_photo = i == last_photo_index
@@ -72,18 +70,12 @@ def get_next_photo(photo, album):
 			return next_photo
 	return None
 
-
-
-
 def get_previous_photo(photo, album):
 	photos = album.get_photos()
 	enumerated_list = list(enumerate(photos))
-	print_album_photo_indexs(album)
-	print("This photo pk: ", photo.pk)
 	for i, loop_photo in enumerated_list:
 		is_first_photo = i == 0
 		if loop_photo.pk == int(photo.pk) and not is_first_photo:
-			print("Photo_index: ", i)
 			previous_photo = enumerated_list[i-1][1]
 			return previous_photo
 	return None
@@ -93,5 +85,3 @@ def print_album_photo_indexs(album):
 	pks = []
 	for photo in photos: 
 		pks.append(photo.pk)
-
-	print("Pks to album: ", pks)

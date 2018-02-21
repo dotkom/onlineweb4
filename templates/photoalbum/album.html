@@ -31,7 +31,7 @@
 			</div>
 			<div>
 				{% for tag in tags %}
-					<span class="tag" style="background-color: #80808061; border-radius: 6px; margin: 4px; padding: 0 10px;">
+					<span class="tag"">
 						{{ tag.name }}
 					</span>
 				{% endfor %}
@@ -39,7 +39,7 @@
 
 			{%  for photo in photos %}
 				<a href="{% url 'photo_detail' album_pk=album.pk pk=photo.pk %}">
-					<img src="{{MEDIA_URL}}{{ photo.photo}}" alt="{{ photo.photo }}" class="album_photo" style="max-width: 150px; margin: 10px; max-height: 200px;">
+					<img src="{{MEDIA_URL}}{{ photo.photo}}" alt="{{ photo.photo }}" class="album_photo small">
 				</a>
 			{% endfor  %}
 
