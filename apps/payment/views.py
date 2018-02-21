@@ -40,7 +40,7 @@ def payment(request):
                         description=payment_object.description() + " - " + request.user.email
                     )
 
-                    payment_relation = PaymentRelation.objects.create(
+                    PaymentRelation.objects.create(
                         payment=payment_object,
                         payment_price=payment_price,
                         user=request.user,
@@ -48,10 +48,6 @@ def payment(request):
                     )
 
                     payment_object.handle_payment(request.user)
-
-                    receipt = PaymentReceipt(object_id=payment_relation.id,
-                                             content_type=ContentType.objects.get_for_model(payment_relation))
-                    receipt.save()
 
                     messages.success(request, _("Betaling utført."))
                     return HttpResponse("Betaling utført.", content_type="text/plain", status=200)
@@ -219,11 +215,7 @@ def saldo(request):
                     description="Saldo deposit - " + request.user.email
                 )
 
-                payment_transaction = PaymentTransaction.objects.create(user=request.user, amount=amount,
-                                                                        used_stripe=True)
-                receipt = PaymentReceipt(object_id=payment_transaction.id,
-                                         content_type=ContentType.objects.get_for_model(payment_transaction))
-                receipt.save()
+                PaymentTransaction.objects.create(user=request.user, amount=amount, used_stripe=True)
 
                 messages.success(request, _("Inskudd utført."))
                 return HttpResponse("Inskudd utført.", content_type="text/plain", status=200)

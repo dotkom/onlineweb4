@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from django.contrib.contenttypes.models import ContentType
 from django.core.urlresolvers import reverse
 from django.core.validators import MinValueValidator
 from django.db import models
@@ -7,6 +8,7 @@ from django.utils import timezone
 
 from apps.authentication.models import OnlineUser as User
 from apps.gallery.models import ResponsiveImage
+from apps.payment.models import PaymentReceipt
 
 
 class Product(models.Model):
@@ -231,6 +233,12 @@ class OrderLine(models.Model):
         self.paid = True
         self.datetime = timezone.now()
         self.save()
+
+    def save(self, *args, **kwargs):
+        super(OrderLine, self).save(*args, **kwargs)
+        receipt = PaymentReceipt(object_id=self.id,
+                                 content_type=ContentType.objects.get_for_model(self))
+        receipt.save()
 
     def __str__(self):
         return "Webshop purchase %s by %s" % (self.datetime, self.user)

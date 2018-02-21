@@ -14,7 +14,6 @@ from rest_framework.exceptions import NotAcceptable
 
 from apps.events.models import AttendanceEvent, Attendee
 from apps.marks.models import Suspension
-from apps.webshop.models import OrderLine
 
 User = settings.AUTH_USER_MODEL
 
@@ -247,6 +246,9 @@ class PaymentRelation(models.Model):
         if not self.unique_id:
             self.unique_id = str(uuid.uuid4())
         super(PaymentRelation, self).save(*args, **kwargs)
+        receipt = PaymentReceipt(object_id=self.id,
+                                 content_type=ContentType.objects.get_for_model(self))
+        receipt.save()
 
     def __str__(self):
         return self.payment.description() + " - " + str(self.user)
@@ -301,6 +303,9 @@ class PaymentTransaction(models.Model):
 
             self.user.save()
         super().save(*args, **kwargs)
+        receipt = PaymentReceipt(object_id=self.id,
+                                 content_type=ContentType.objects.get_for_model(self))
+        receipt.save()
 
     class Meta:
         ordering = ['-datetime']
@@ -333,24 +338,6 @@ class PaymentReceipt(models.Model):
             self.from_mail = settings.EMAIL_TRIKOM
             self.to_mail = [self.content_object.user.email]
 
-        # Webshop
-        elif self._is_type(OrderLine):
-            self.type = 1
-            self.timestamp = self.content_object.datetime
-            self.subject = "[Kvittering] Kjøp i webshop på online.ntnu.no"
-            self.description = "varer i webshop"
-            self.from_mail = settings.EMAIL_PROKOM
-            self.to_mail = [self.content_object.user.email]
-            self.items = []
-
-            for order in self.content_object.orders.all():
-                item = {
-                    'name': order.product.name,
-                    'price': int(order.price/order.quantity),
-                    'quantity': order.quantity
-                }
-                self.items.append(item)
-
         # Event
         elif self._is_type(PaymentRelation):
             self.type = 2
@@ -366,6 +353,26 @@ class PaymentReceipt(models.Model):
                     'quantity': 1
                  },
             ]
+
+        # Webshop
+        # Uses else because of circular dependency issues when importing the PaymentReceipt model into the webshop app.
+        else:
+            self.type = 1
+            self.timestamp = self.content_object.datetime
+            self.subject = "[Kvittering] Kjøp i webshop på online.ntnu.no"
+            self.description = "varer i webshop"
+            self.from_mail = settings.EMAIL_PROKOM
+            self.to_mail = [self.content_object.user.email]
+            self.items = []
+
+            for order in self.content_object.orders.all():
+                item = {
+                    'name': order.product.name,
+                    'price': int(order.price / order.quantity),
+                    'quantity': order.quantity
+                }
+                self.items.append(item)
+
         self._send_receipt(self.timestamp, self.subject, self.description, self.receipt_id,
                            self.items, self.to_mail, self.from_mail)
         super().save(*args, **kwargs)
