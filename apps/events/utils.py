@@ -214,7 +214,7 @@ def handle_attendance_event_detail(event, user, context):
         if attendance_event.is_attendee(user):
             user_attending = True
             attendee = Attendee.objects.get(event=attendance_event, user=user)
-            show_as_attending = attendee.is_visible_as_attending()
+            show_as_attending = attendee.show_as_attending_event
 
         will_be_on_wait_list = attendance_event.will_i_be_on_wait_list
 
