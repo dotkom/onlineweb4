@@ -81,11 +81,6 @@ class PaymentTest(TestCase):
             user=self.user,
             payment_price=self.payment_price
         )
-        self.receipt = G(
-            PaymentReceipt,
-            object_id=payment_relation.id,
-            content_type=ContentType.objects.get_for_model(payment_relation),
-        )
 
         self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(mail.outbox[0].subject, "[Kvittering] " + payment_relation.payment.description())
