@@ -1,7 +1,6 @@
 {% extends 'base.html' %}
 
 {% load static %}
-{% load sekizai_tags %}
 {% load i18n wiki_tags %}
 {% load render_bundle from webpack_loader %}
 
@@ -16,14 +15,12 @@
     <script src="{% static "wiki/bootstrap/js/bootstrap.min.js" %}"></script>
     {% render_bundle 'wiki' 'js' %}
 {% endblock %}
-{% render_block "js" %}
 
 {% block styles %}
     {{ block.super }}
      <link href="{{ STATIC_URL }}wiki/bootstrap/css/wiki-bootstrap.min.css" rel="stylesheet">
     {% render_bundle 'wiki' 'css' %}
 {% endblock %}
-{% render_block "css" %}
 
 {% block content %}
     <section id="wiki">
@@ -34,14 +31,28 @@
                         {% block wiki_breadcrumbs %}{% endblock %}
                     </div>
                     <div class="col-xs-4">
-                        <form action="/wiki/_search">
-                            <div class="input-group">
-                                <input name="q" type="text" class="form-control" placeholder="Søk...">
-                                <span class="input-group-btn">
-                                    <button class="btn btn-default"><span class="fa fa-search"></span></button>
-                                </span>
-                            </div>
-                        </form>
+                      <form method="GET" action="{% spaceless %}
+                        {% if article or urlpath %}
+                            {% url 'wiki:search' article_id=article.id path=urlpath.path %}
+                        {% else %}
+                            {% url 'wiki:search' %}
+                        {% endif %}
+                        {% endspaceless %}">
+                        <div class="input-group">
+                            <input type="text" class="form-control" name="q" placeholder="{% spaceless %}
+                            {% if article or urlpath %}
+                            {% trans " Search from current article... " %}
+                            {% else %}
+                            {% trans "Search whole wiki... " %}
+                            {% endif %}
+                            {% endspaceless %}" />
+                            <span class="input-group-btn">
+                              <button class="btn btn-default" type="submit">
+                                <span class="fa fa-search"></span>
+                              </button>
+                            </span>
+                        </div>
+                      </form>
                     </div>
                 </div>
                 {% block wiki_contents %}{% endblock %}

@@ -79,7 +79,6 @@ class App extends React.Component {
     const locations = [];
     const jobTypes = [];
     const jobs = [];
-
     data.results.forEach((job) => {
       // Create a new company tag if it does not already exist.
       if (companies.indexOf(job.company.name) < 0) {
