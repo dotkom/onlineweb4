@@ -1,26 +1,23 @@
 # -*- coding: utf-8 -*-
 
 import json
-import logging
 
 import stripe
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.core.mail import EmailMessage, send_mail
+from django.contrib.contenttypes.models import ContentType
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
-from django.template.loader import render_to_string
 from django.utils.translation import ugettext as _
-from pytz import timezone as tz
 
-from apps.payment.models import Payment, PaymentPrice, PaymentRelation, PaymentTransaction
+from apps.payment.models import (Payment, PaymentPrice, PaymentReceipt, PaymentRelation,
+                                 PaymentTransaction)
 from apps.webshop.models import OrderLine
 
 
 @login_required
 def payment(request):
-
     if request.is_ajax():
         if request.method == "POST":
 
@@ -43,7 +40,7 @@ def payment(request):
                         description=payment_object.description() + " - " + request.user.email
                     )
 
-                    payment_relation = PaymentRelation.objects.create(
+                    PaymentRelation.objects.create(
                         payment=payment_object,
                         payment_price=payment_price,
                         user=request.user,
@@ -51,8 +48,6 @@ def payment(request):
                     )
 
                     payment_object.handle_payment(request.user)
-
-                    _send_payment_confirmation_mail(payment_relation)
 
                     messages.success(request, _("Betaling utført."))
                     return HttpResponse("Betaling utført.", content_type="text/plain", status=200)
@@ -65,7 +60,6 @@ def payment(request):
 
 @login_required
 def payment_info(request):
-
     if request.is_ajax():
         if 'payment_id' in request.session:
 
@@ -112,7 +106,6 @@ def webshop_info(request):
 
 @login_required
 def webshop_pay(request):
-
     if request.is_ajax():
         if request.method == "POST":
 
@@ -146,8 +139,10 @@ def webshop_pay(request):
                 order_line.pay()
                 order_line.stripe_id = charge.id
                 order_line.save()
-                _send_webshop_mail(order_line)
 
+                receipt = PaymentReceipt(object_id=order_line.id,
+                                         content_type=ContentType.objects.get_for_model(order_line))
+                receipt.save()
                 messages.success(request, "Betaling utført")
 
                 return HttpResponse("Betaling utført.", content_type="text/plain", status=200)
@@ -160,7 +155,6 @@ def webshop_pay(request):
 
 @login_required
 def payment_refund(request, payment_relation_id):
-
     payment_relation = get_object_or_404(PaymentRelation, pk=payment_relation_id)
 
     # Prevents users from refunding others
@@ -186,28 +180,9 @@ def payment_refund(request, payment_relation_id):
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 
-def _send_payment_confirmation_mail(payment_relation):
-    subject = _("kvittering") + ": " + payment_relation.payment.description()
-    from_mail = payment_relation.payment.responsible_mail()
-    to_mails = [payment_relation.user.email]
-
-    payment_date = payment_relation.datetime.astimezone(tz('Europe/Oslo'))
-
-    email_context = {}
-    email_context['payment_date'] = payment_date.strftime("%-d %B %Y kl. %H:%M")
-    email_context['payment_relation'] = payment_relation
-    email_context['from_mail'] = from_mail
-
-    email_message = render_to_string('payment/email/confirmation_mail.txt', email_context)
-
-    send_mail(subject, email_message, from_mail, to_mails)
-
-
 @login_required
 def saldo_info(request):
-
     if request.is_ajax():
-
         data = dict()
 
         data['stripe_public_key'] = settings.STRIPE_PUBLIC_KEYS["trikom"]
@@ -219,7 +194,6 @@ def saldo_info(request):
 
 @login_required
 def saldo(request):
-
     if request.is_ajax():
         if request.method == "POST":
 
@@ -243,8 +217,6 @@ def saldo(request):
 
                 PaymentTransaction.objects.create(user=request.user, amount=amount, used_stripe=True)
 
-                # _send_saldo_confirmation_mail(request.user.email, amount)
-
                 messages.success(request, _("Inskudd utført."))
                 return HttpResponse("Inskudd utført.", content_type="text/plain", status=200)
             except stripe.CardError as e:
@@ -252,41 +224,3 @@ def saldo(request):
                 return HttpResponse(str(e), content_type="text/plain", status=500)
 
     raise Http404("Request not supported")
-
-
-def _send_saldo_confirmation_mail(email, amount):
-    subject = _("kvittering saldo inskudd")
-    from_mail = settings.EMAIL_TRIKOM
-
-    message = _("Kvitering på saldo inskudd på ") + str(amount)
-    message += _(" til din Online saldo.")
-    message += "\n"
-    message += "\n"
-    message += _("Dersom du har problemer eller spørsmål, send mail til") + ": " + from_mail
-
-    EmailMessage(subject, str(message), from_mail, [], [email]).send()
-
-
-def _send_webshop_mail(order_line):
-    subject = _("Kvittering Webshop Online")
-    from_mail = settings.EMAIL_PROKOM
-    to_mails = [order_line.user.email]
-
-    message = _(
-        "Hei, du har bestilt ting i Online sin webshop. Ordren din kom på totalt %.2f kroner."
-        % order_line.subtotal()
-    )
-
-    logging.getLogger(__name__).debug("Logging for send webshop mail")
-    logging.getLogger(__name__).info("%s (#%s)" % (str(order_line), order_line.id))
-
-    message += "\nDine produkter:"
-    products = ""
-    for o in order_line.orders.all():
-        products += "\n " + str(o)
-    message += products
-    message += "\n\nDin betalingsreferanse er " + order_line.stripe_id
-    message += "\n\n"
-    message += _("Dersom du har problemer eller spørsmål, send mail til") + ": " + settings.EMAIL_PROKOM
-
-    EmailMessage(subject, str(message), from_mail, to_mails).send()

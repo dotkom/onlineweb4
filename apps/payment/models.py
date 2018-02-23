@@ -5,7 +5,9 @@ import uuid
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
+from django.core.mail import send_mail
 from django.db import models
+from django.template.loader import render_to_string
 from django.utils import timezone
 from django.utils.translation import ugettext as _
 from rest_framework.exceptions import NotAcceptable
@@ -240,10 +242,36 @@ class PaymentRelation(models.Model):
     stripe_id = models.CharField(max_length=128)
     """ID from Stripe payment"""
 
+    def get_timestamp(self):
+        return self.datetime
+
+    def get_subject(self):
+        return "[Kvittering] " + self.payment.description()
+
+    def get_description(self):
+        return self.payment.description()
+
+    def get_items(self):
+        items = [{
+                    'name': self.payment.description(),
+                    'price': self.payment_price.price,
+                    'quantity': 1
+                 }]
+        return items
+
+    def get_from_mail(self):
+        return settings.EMAIL_ARRKOM
+
+    def get_to_mail(self):
+        return self.user.email
+
     def save(self, *args, **kwargs):
         if not self.unique_id:
             self.unique_id = str(uuid.uuid4())
         super(PaymentRelation, self).save(*args, **kwargs)
+        receipt = PaymentReceipt(object_id=self.id,
+                                 content_type=ContentType.objects.get_for_model(self))
+        receipt.save()
 
     def __str__(self):
         return self.payment.description() + " - " + str(self.user)
@@ -283,9 +311,31 @@ class PaymentTransaction(models.Model):
     """Amount in NOK"""
     used_stripe = models.BooleanField(default=False)
     """Was transaction paid for using Stripe"""
-
     datetime = models.DateTimeField(auto_now=True)
     """Transaction creation datetime. Automatically generated."""
+
+    def get_timestamp(self):
+        return self.datetime
+
+    def get_subject(self):
+        return "[Kvittering] Saldoinnskudd på online.ntnu.no"
+
+    def get_description(self):
+        return "saldoinnskudd på online.ntnu.no"
+
+    def get_items(self):
+        items = [{
+                'name': "Påfyll av saldo",
+                'price': self.amount,
+                'quantity': 1
+            }]
+        return items
+
+    def get_from_mail(self):
+        return settings.EMAIL_TRIKOM
+
+    def get_to_mail(self):
+        return self.user.email
 
     def __str__(self):
         return str(self.user) + " - " + str(self.amount) + "(" + str(self.datetime) + ")"
@@ -298,9 +348,69 @@ class PaymentTransaction(models.Model):
                 raise NotAcceptable("Insufficient funds")
 
             self.user.save()
-        super(PaymentTransaction, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
+        receipt = PaymentReceipt(object_id=self.id,
+                                 content_type=ContentType.objects.get_for_model(self))
+        receipt.save()
 
     class Meta:
         ordering = ['-datetime']
         verbose_name = _('transaksjon')
         verbose_name_plural = _('transaksjoner')
+
+
+class PaymentReceipt(models.Model):
+    """Transaction receipt"""
+    receipt_id = models.UUIDField(default=uuid.uuid4)
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+    """Which model the receipt is created for"""
+    object_id = models.PositiveIntegerField(null=True)
+    """Object id for the model chosen in content_type"""
+    content_object = GenericForeignKey()
+    """Helper attribute which points to the object select in object_id"""
+
+    def save(self, *args, **kwargs):
+        transaction = self.content_object
+        self.timestamp = transaction.get_timestamp()
+        self.subject = transaction.get_subject()
+        self.description = transaction.get_description()
+        self.items = transaction.get_items()
+        self.from_mail = transaction.get_from_mail()
+        self.to_mail = [transaction.get_to_mail()]
+
+        self._send_receipt(self.timestamp, self.subject, self.description, self.receipt_id,
+                           self.items, self.to_mail, self.from_mail)
+        super().save(*args, **kwargs)
+
+    def _is_type(self, model_type):
+        """Function for comparing content types to differentiate payment types"""
+        return ContentType.objects.get_for_model(model_type) == self.content_type
+
+    def _send_receipt(self, payment_date, subject, description, payment_id, items, to_mail, from_mail):
+        """Send confirmation email with receipt
+        param receipt: object
+        """
+
+        # Calculate total item price and ensure correct input to template.
+        receipt_items = []
+        total_amount = 0
+        for item in items:
+            receipt_items.append({
+                    'amount': item['price'],
+                    'description': item['name'],
+                    'quantity': item['quantity']
+                    })
+            total_amount += item['price'] * item['quantity']
+
+        context = {
+            'payment_date': payment_date,
+            'description': description,
+            'payment_id': payment_id,
+            'items': receipt_items,
+            'total_amount': total_amount,
+            'to_mail': to_mail,
+            'from_mail': from_mail
+        }
+
+        email_message = render_to_string('payment/email/confirmation_mail.txt', context)
+        send_mail(subject, email_message, from_mail, to_mail)
