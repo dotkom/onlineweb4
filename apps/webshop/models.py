@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.core.urlresolvers import reverse
 from django.core.validators import MinValueValidator
@@ -233,6 +234,33 @@ class OrderLine(models.Model):
         self.paid = True
         self.datetime = timezone.now()
         self.save()
+
+    def get_timestamp(self):
+        return self.datetime
+
+    def get_subject(self):
+        return "[Kvittering] Kjøp i webshop på online.ntnu.no"
+
+    def get_description(self):
+        return "varer i webshop"
+
+    def get_items(self):
+        items = []
+
+        for order in self.orders.all():
+            item = {
+                'name': order.product.name,
+                'price': int(order.price / order.quantity),
+                'quantity': order.quantity
+            }
+            items.append(item)
+        return items
+
+    def get_from_mail(self):
+        return settings.EMAIL_PROKOM
+
+    def get_to_mail(self):
+        return self.user.email
 
     def save(self, *args, **kwargs):
         super(OrderLine, self).save(*args, **kwargs)

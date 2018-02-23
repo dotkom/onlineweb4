@@ -242,6 +242,29 @@ class PaymentRelation(models.Model):
     stripe_id = models.CharField(max_length=128)
     """ID from Stripe payment"""
 
+    def get_timestamp(self):
+        return self.datetime
+
+    def get_subject(self):
+        return "[Kvittering] " + self.payment.description()
+
+    def get_description(self):
+        return self.payment.description()
+
+    def get_items(self):
+        items = [{
+                    'name': self.payment.description(),
+                    'price': self.payment_price.price,
+                    'quantity': 1
+                 }]
+        return items
+
+    def get_from_mail(self):
+        return settings.EMAIL_ARRKOM
+
+    def get_to_mail(self):
+        return self.user.email
+
     def save(self, *args, **kwargs):
         if not self.unique_id:
             self.unique_id = str(uuid.uuid4())
@@ -291,6 +314,29 @@ class PaymentTransaction(models.Model):
     datetime = models.DateTimeField(auto_now=True)
     """Transaction creation datetime. Automatically generated."""
 
+    def get_timestamp(self):
+        return self.datetime
+
+    def get_subject(self):
+        return "[Kvittering] Saldoinnskudd på online.ntnu.no"
+
+    def get_description(self):
+        return "saldoinnskudd på online.ntnu.no"
+
+    def get_items(self):
+        items = [{
+                'name': "Påfyll av saldo",
+                'price': self.amount,
+                'quantity': 1
+            }]
+        return items
+
+    def get_from_mail(self):
+        return settings.EMAIL_TRIKOM
+
+    def get_to_mail(self):
+        return self.user.email
+
     def __str__(self):
         return str(self.user) + " - " + str(self.amount) + "(" + str(self.datetime) + ")"
 
@@ -324,54 +370,13 @@ class PaymentReceipt(models.Model):
     """Helper attribute which points to the object select in object_id"""
 
     def save(self, *args, **kwargs):
-        # Saldo
-        if self._is_type(PaymentTransaction):
-            self.type = 0
-            self.timestamp = self.content_object.datetime
-            self.subject = "[Kvittering] Saldoinnskudd på online.ntnu.no"
-            self.description = ""
-            self.items = [{
-                'name': "Påfyll av saldo",
-                'price': self.content_object.amount,
-                'quantity': 1
-            }]
-            self.from_mail = settings.EMAIL_TRIKOM
-            self.to_mail = [self.content_object.user.email]
-
-        # Event
-        elif self._is_type(PaymentRelation):
-            self.type = 2
-            self.timestamp = self.content_object.datetime
-            self.subject = "[Kvittering] " + self.content_object.payment.description()
-            self.description = self.content_object.payment.description()
-            self.from_mail = settings.EMAIL_ARRKOM
-            self.to_mail = [self.content_object.user.email]
-            self.items = [
-                {
-                    'name': self.content_object.payment.description(),
-                    'price': self.content_object.payment_price.price,
-                    'quantity': 1
-                 },
-            ]
-
-        # Webshop
-        # Uses else because of circular dependency issues when importing the PaymentReceipt model into the webshop app.
-        else:
-            self.type = 1
-            self.timestamp = self.content_object.datetime
-            self.subject = "[Kvittering] Kjøp i webshop på online.ntnu.no"
-            self.description = "varer i webshop"
-            self.from_mail = settings.EMAIL_PROKOM
-            self.to_mail = [self.content_object.user.email]
-            self.items = []
-
-            for order in self.content_object.orders.all():
-                item = {
-                    'name': order.product.name,
-                    'price': int(order.price / order.quantity),
-                    'quantity': order.quantity
-                }
-                self.items.append(item)
+        transaction = self.content_object
+        self.timestamp = transaction.get_timestamp()
+        self.subject = transaction.get_subject()
+        self.description = transaction.get_description()
+        self.items = transaction.get_items()
+        self.from_mail = transaction.get_from_mail()
+        self.to_mail = [transaction.get_to_mail()]
 
         self._send_receipt(self.timestamp, self.subject, self.description, self.receipt_id,
                            self.items, self.to_mail, self.from_mail)
