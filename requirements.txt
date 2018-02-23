@@ -8,7 +8,7 @@ django-filter==1.1.0            # Filtering for DRF
 git+https://github.com/JelteF/python-memcached@patch-1#egg=python-memcached==1.58
 markdown2==2.3.5                # textarea text formatting
 pytz                            # Timezone lib
-stripe==1.78.0                  # Stripe payment
+stripe==1.79.0                  # Stripe payment
 icalendar==4.0.1               # iCalendar generation
 google-api-python-client==1.6.5
 
@@ -20,7 +20,7 @@ django-extensions==2.0.0        # nice extra commands for debugging, etc
 django-dynamic-fixture==2.0.0   # Dynamic fixtures for models
 django-recaptcha==1.4.0         # Google ReCaptcha
 django-oauth-toolkit==1.0.0    # OAuth2 authentication support
-django-watson==1.5.1            # Indexed model search lib
+django-watson==1.5.2            # Indexed model search lib
 django-reversion==2.0.13        # Model version history with middleware hooks to all post_save signals
 git+https://github.com/dotkom/django-guardian.git@1b184d5377200ab4ad59b343ae8af9a863124510#egg=django-guardian==1.4.9.1          # Per Object permissions framework
 django-taggit==0.22.2           # Generic multi-model tagging library
