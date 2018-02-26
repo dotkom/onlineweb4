@@ -1,2 +1,2 @@
 psycopg2==2.7.4                   # Postgres adapter
-uWSGI==2.0.16                     # Used as a http server in production
+uWSGI==2.0.17                     # Used as a http server in production
