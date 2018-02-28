@@ -1,11 +1,16 @@
 {% extends "base.html" %}
+
 {% load crispy_forms_tags %}
 {% load render_bundle from webpack_loader %}
 
+{% block styles %}
+	{{ block.super }}
+	{% render_bundle 'photoalbum' 'css' %}
+{% endblock %}
 
 {% block js %}
-		{{ block.super }}
-		{% render_bundle 'photoalbum' 'js' %}
+	{{ block.super }}
+	{% render_bundle 'photoalbum' 'js' %}
 {% endblock %}
 
 
