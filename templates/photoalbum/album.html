@@ -1,5 +1,17 @@
 {% extends "base.html" %}
 
+{% load render_bundle from webpack_loader %}
+
+{% block styles %}
+	{{ block.super }}
+	{% render_bundle 'photoalbum' 'css' %}
+{% endblock %}
+
+{% block js %}
+		{{ block.super }}
+		{% render_bundle 'photoalbum' 'js' %}
+{% endblock %}
+
 {% block content %}
 
 	<section id="album">
@@ -38,9 +50,11 @@
 			</div>
 
 			{%  for photo in photos %}
-				<a href="{% url 'photo_detail' album_pk=album.pk pk=photo.pk %}">
-					<img src="{{MEDIA_URL}}{{ photo.photo}}" alt="{{ photo.photo }}" class="album_photo small">
-				</a>
+				<div class="small_photo_div"> 
+					<a href="{% url 'photo_detail' album_pk=album.pk pk=photo.pk %}">
+						<img src="{{MEDIA_URL}}{{ photo.photo}}" alt="{{ photo.photo }}" class="album_photo_small center">
+					</a>
+				</div>
 			{% endfor  %}
 
 		</div>
