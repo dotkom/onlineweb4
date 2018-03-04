@@ -35,7 +35,7 @@ class Payment(models.Model):
     )
 
     content_type = models.ForeignKey(ContentType)
-    """Which model the payment is created for. For attendance events this should be event."""
+    """Which model the payment is created for. For attendance events this should be attendance_event(påmelding)."""
     object_id = models.PositiveIntegerField()
     """Object id for the model chosen in content_type."""
     content_object = GenericForeignKey()
