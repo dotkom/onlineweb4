@@ -183,7 +183,7 @@
                                                             </div>
 
                                                             {% if event.event_type is 1 %}
-                                                            <div class="action col-md-6 col-sm-6 col-xs-6"><a href="#attendees" role="button" class="btn btn-large btn-info" data-toggle="modal">Vis påmeldte</a></div>
+                                                            <div class="action col-md-6 col-sm-6 col-xs-6"><a href="#other_attending" role="button" class="btn btn-large btn-info" data-toggle="modal">Vis påmeldte</a></div>
                                                             {% endif %}
                                                         </div>
                                                     {% else %} <!-- User has paid flag set but no payment_relation object -->
@@ -203,7 +203,7 @@
                                                         <div class="action col-md-6 col-sm-6 col-xs-6"><a href="#unattend" role="button" class="btn btn-large btn-danger" data-toggle="modal">Meld meg av</a></div>
 
                                                         {% if event.event_type is 1 %}
-                                                        <div class="action col-md-6 col-sm-6 col-xs-6"><a href="#attendees" role="button" class="btn btn-large btn-info" data-toggle="modal">Vis påmeldte</a></div>
+                                                        <div class="action col-md-6 col-sm-6 col-xs-6"><a href="#other_attending" role="button" class="btn btn-large btn-info" data-toggle="modal">Vis påmeldte</a></div>
                                                         {% endif %}
                                                     </div>
                                                 {% endif %}
@@ -218,7 +218,7 @@
                                                     <div class="action col-md-6 col-sm-6 col-xs-6"><a href="#attend" role="button" class="btn btn-large btn-warning" data-toggle="modal">Sett meg på ventelist</a></div>
 
                                                     {% if event.event_type is 1 %}
-                                                    <div class="action col-md-6 col-sm-6 col-xs-6"><a href="#attendees" role="button" class="btn btn-large btn-info" data-toggle="modal">Vis påmeldte</a></div>
+                                                    <div class="action col-md-6 col-sm-6 col-xs-6"><a href="#other_attending" role="button" class="btn btn-large btn-info" data-toggle="modal">Vis påmeldte</a></div>
                                                     {% endif %}
                                                 </div>
                                             {% elif payment and payment.payment_type == 1 %} <!-- Instant payment -->
@@ -230,7 +230,7 @@
                                                     <div class="action col-md-6 col-sm-6 col-xs-6"><a href="#attend" role="button" class="btn btn-large btn-success" data-toggle="modal">Meld meg på</a></div>
 
                                                     {% if event.event_type is 1 %}
-                                                    <div class="action col-md-6 col-sm-6 col-xs-6"><a href="#attendees" role="button" class="btn btn-large btn-info" data-toggle="modal">Vis påmeldte</a></div>
+                                                    <div class="action col-md-6 col-sm-6 col-xs-6"><a href="#other_attending" role="button" class="btn btn-large btn-info" data-toggle="modal">Vis påmeldte</a></div>
                                                     {% endif %}
                                                 </div>
                                             {% endif %}
@@ -419,13 +419,13 @@
             </div>
 
             <!-- DIFF -->
-            <div id="attendees" class="modal fade">
+            <div id="other_attending" class="modal fade">
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                             <h3>Påmeldte til {{ event.title }} </h3>
-                            <h5><i>Siden dette er et sosialt arrangement kan du ønske å vise deg som påmeldt for andre å se.</i></h5>
+                            <h5>Siden dette er et sosialt arrangement kan du ønske å vise deg som påmeldt for andre å se.</h5>
                         </div>
                         <div class="modal-body">
                             <table class="table table-striped table-condensed tablesorter attendees" id="extras-table">
