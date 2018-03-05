@@ -181,10 +181,6 @@
                                                             <div class="action col-md-6 col-sm-6 col-xs-6">
                                                                 <a href="#refund" role="button" class="btn btn-large btn-danger" data-toggle="modal">Refunder og meld meg av</a>
                                                             </div>
-
-                                                            {% if event.event_type is 1 %}
-                                                            <div class="action col-md-6 col-sm-6 col-xs-6"><a href="#attendees" role="button" class="btn btn-large btn-info" data-toggle="modal">Vis påmeldte</a></div>
-                                                            {% endif %}
                                                         </div>
                                                     {% else %} <!-- User has paid flag set but no payment_relation object -->
                                                         <p>Du har betalt og må kontakte ansvarlig komitee for og melde deg av</p>
