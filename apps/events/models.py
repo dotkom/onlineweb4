@@ -512,12 +512,6 @@ class AttendanceEvent(models.Model):
     def registration_open(self):
         return timezone.now() < self.registration_start
 
-    @property
-    def visible_attendees_qs(self):
-        """ Queryset with all attendees whom want to be displayed as attending """
-        return self.attendees.filter(show_as_attending_event=True).\
-            order_by('user__last_name')[:self.number_of_attendee_seats]
-
     def has_delayed_signup(self, user):
         pass
 
@@ -832,8 +826,6 @@ class Attendee(models.Model):
     paid = models.BooleanField(_('har betalt'), default=False)
     note = models.CharField(_('notat'), max_length=100, blank=True, default='')
     extras = models.ForeignKey(Extras, blank=True, null=True)
-
-    show_as_attending_event = models.BooleanField(_('vis som påmeldt arrangementet'), default=False)
 
     def __str__(self):
         return self.user.get_full_name()

@@ -120,7 +120,6 @@ def attendEvent(request, event_id):
         attendee = Attendee(event=attendance_event, user=request.user)
         if 'note' in form.cleaned_data:
             attendee.note = form.cleaned_data['note']
-        attendee.show_as_attending_event = request.user.get_visible_as_attending_events()
         attendee.save()
         messages.success(request, _("Du er nå meldt på arrangementet."))
 
@@ -349,28 +348,6 @@ def mail_participants(request, event_id):
         'all_attendees': all_attendees, 'attendees_on_waitlist': attendees_on_waitlist,
         'attendees_not_paid': attendees_not_paid, 'event': event
     })
-
-
-@login_required
-def toggleShowAsAttending(request, event_id):
-    event = get_object_or_404(Event, pk=event_id)
-
-    if not event.is_attendance_event():
-        messages.error(request, _("Dette er ikke et påmeldingsarrangement."))
-        return redirect(event)
-
-    attendance_event = event.attendance_event
-    attendee = Attendee.objects.get(event=attendance_event, user=request.user)
-
-    if (attendee.show_as_attending_event):
-        attendee.show_as_attending_event = False
-        messages.success(request, _("Du er ikke lenger synlig som påmeldt dette arrangementet."))
-    else:
-        attendee.show_as_attending_event = True
-        messages.success(request, _("Du er nå synlig som påmeldt dette arrangementet."))
-
-    attendee.save()
-    return redirect(event)
 
 
 class EventViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.ListModelMixin):
