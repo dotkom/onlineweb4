@@ -197,10 +197,6 @@
                                                     
                                                     <div class="btn-group">
                                                         <div class="action col-md-6 col-sm-6 col-xs-6"><a href="#unattend" role="button" class="btn btn-large btn-danger" data-toggle="modal">Meld meg av</a></div>
-
-                                                        {% if event.event_type is 1 %}
-                                                        <div class="action col-md-6 col-sm-6 col-xs-6"><a href="#attendees" role="button" class="btn btn-large btn-info" data-toggle="modal">Vis påmeldte</a></div>
-                                                        {% endif %}
                                                     </div>
                                                 {% endif %}
                                             {% endif %}
@@ -213,9 +209,6 @@
 
                                                     <div class="action col-md-6 col-sm-6 col-xs-6"><a href="#attend" role="button" class="btn btn-large btn-warning" data-toggle="modal">Sett meg på venteliste</a></div>
 
-                                                    {% if event.event_type is 1 %}
-                                                    <div class="action col-md-6 col-sm-6 col-xs-6"><a href="#attendees" role="button" class="btn btn-large btn-info" data-toggle="modal">Vis påmeldte</a></div>
-                                                    {% endif %}
                                                 </div>
                                             {% elif payment and payment.payment_type == 1 %} <!-- Instant payment -->
                                                 <p class="status-text">Påmelding til arangementet krever betaling.</p>
@@ -224,10 +217,6 @@
                                                 <p class="status-text">Du kan melde deg på dette arrangementet.</p>
                                                 <div class="btn-group">
                                                     <div class="action col-md-6 col-sm-6 col-xs-6"><a href="#attend" role="button" class="btn btn-large btn-success" data-toggle="modal">Meld meg på</a></div>
-
-                                                    {% if event.event_type is 1 %}
-                                                    <div class="action col-md-6 col-sm-6 col-xs-6"><a href="#attendees" role="button" class="btn btn-large btn-info" data-toggle="modal">Vis påmeldte</a></div>
-                                                    {% endif %}
                                                 </div>
                                             {% endif %}
                                         {% elif user_status.offset %}
