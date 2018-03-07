@@ -390,30 +390,33 @@ class CompanyEventViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mi
     permission_classes = (AllowAny,)
 
 
-def validate_attend_params(rfid, username):
-    if not (username or rfid):
-        return {'message': 'Mangler både RFID og brukernavn. Vennligst prøv igjen.',
-                'attend_status': 41,
-                }
-
-    # If attendee has typed in username to bind a new card to their user
-    if username is not None and rfid is not None:
-        try:
-            user = User.objects.get(username=username)
-            user.rfid = rfid
-            user.save()
-        except User.DoesNotExist:
-            return {'message': 'Brukernavnet finnes ikke. Husk at det er et online.ntnu.no brukernavn! '
-                    '(Prøv igjen, eller scan nytt kort for å avbryte.)',
-                    'attend_status': 50,
-                    }
-    return {}
-
-
 class AttendViewSet(views.APIView):
     authentication_classes = [OAuth2Authentication]
     permission_classes = [TokenHasScope]
     required_scopes = ['regme.readwrite']
+
+    @staticmethod
+    def _validate_attend_params(rfid, username):
+        if not (username or rfid):
+            return {
+                'message': 'Mangler både RFID og brukernavn. Vennligst prøv igjen.',
+                'attend_status': 41,
+            }
+
+        # If attendee has typed in username to bind a new card to their user
+        if username is not None and rfid is not None:
+            try:
+                user = User.objects.get(username=username)
+                user.rfid = rfid
+                user.save()
+            except User.DoesNotExist:
+                return {
+                    'message': 'Brukernavnet finnes ikke. Husk at det er et online.ntnu.no brukernavn! '
+                               '(Prøv igjen, eller scan nytt kort for å avbryte.)',
+                    'attend_status': 50,
+                }
+
+        return {}
 
     def post(self, request, format=None):
 
@@ -422,7 +425,7 @@ class AttendViewSet(views.APIView):
         username = request.data.get('username')
         waitlist_approved = request.data.get('approved')
 
-        error = validate_attend_params(rfid, username)
+        error = self._validate_attend_params(rfid, username)
         if 'message' in error and 'attend_status' in error:
             return Response({'message': error.get('message'), 'attend_status': error.get('attend_status')},
                             status=status.HTTP_400_BAD_REQUEST
