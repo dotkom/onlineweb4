@@ -1,3 +1,5 @@
+<!-- If this is a security issue or information leakage (having access to something you (probably) shouldn't), please send an email rather than opening a public issue. -->
+
 ## What kind of an issue is this?
 
 - [ ] Bug report
