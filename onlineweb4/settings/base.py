@@ -115,7 +115,7 @@ IMPORT_DDF_MODELS = False
 
 # Django CORS headers
 CORS_ORIGIN_ALLOW_ALL = config("OW4_DJANGO_CORS_ORIGIN_ALLOW_ALL", cast=bool, default=True)
-CORS_URLS_REGEX = r'^(/api/v1/.*|/sso/user/|/openid/.*)$' # Enables CORS on /api/v1/ endpoints and the /sso/user/ endpoint
+CORS_URLS_REGEX = r'^(/api/v1/.*|/sso/user/|/openid/.*)$' # Enables CORS on all /api/v1/, /sso/user/ and all /openid/ endpoints 
 
 
 # Google reCaptcha settings
