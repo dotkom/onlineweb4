@@ -417,12 +417,13 @@ class AttendViewSet(views.APIView):
     permission_classes = [TokenHasScope]
     required_scopes = ['regme.readwrite']
 
-    def post(self, request, format=None):
-
-        rfid = request.data.get('rfid')
-        event = request.data.get('event')
-        username = request.data.get('username')
-        waitlist_approved = request.data.get('approved')
+    @staticmethod
+    def _validate_attend_params(rfid, username):
+        if not (username or rfid):
+            return {
+                'message': 'Mangler både RFID og brukernavn. Vennligst prøv igjen.',
+                'attend_status': 41,
+            }
 
         # If attendee has typed in username to bind a new card to their user
         if username is not None and rfid is not None:
@@ -431,12 +432,30 @@ class AttendViewSet(views.APIView):
                 user.rfid = rfid
                 user.save()
             except User.DoesNotExist:
-                return Response({'message': 'Brukernavnet finnes ikke. Husk at det er et online.ntnu.no brukernavn! '
-                                            '(Prøv igjen, eller scan nytt kort for å avbryte.)', 'attend_status': 50},
-                                status=status.HTTP_400_BAD_REQUEST)
+                return {
+                    'message': 'Brukernavnet finnes ikke. Husk at det er et online.ntnu.no brukernavn! '
+                               '(Prøv igjen, eller scan nytt kort for å avbryte.)',
+                    'attend_status': 50,
+                }
+
+        return {}
+
+    def post(self, request, format=None):
+
+        rfid = request.data.get('rfid')
+        event = request.data.get('event')
+        username = request.data.get('username')
+        waitlist_approved = request.data.get('approved')
+
+        error = self._validate_attend_params(rfid, username)
+        if 'message' in error and 'attend_status' in error:
+            return Response({'message': error.get('message'), 'attend_status': error.get('attend_status')},
+                            status=status.HTTP_400_BAD_REQUEST
+                            )
+
         try:
             # If attendee is trying to attend by username
-            if rfid is None:
+            if not rfid:
                 attendee = Attendee.objects.get(event=event, user__username=username)
             else:
                 attendee = Attendee.objects.get(event=event, user__rfid=rfid)
