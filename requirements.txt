@@ -38,7 +38,7 @@ django-datetime-widget==0.9.3   # Datetime widget for forms
 django-webpack-loader==0.6.0    # Integration with webpack
 dj-database-url==0.5.0          # Allows to configure databases using URLs
 python-decouple==3.1            # Configuration and settings management
-django-oidc-provider==0.5.2     # OpenID Connect Provider
+django-oidc-provider==0.5.3     # OpenID Connect Provider
 docutils==0.14                  # Allows django-admindocs to generate documentation
 
 #test tools
