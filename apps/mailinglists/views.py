@@ -1,24 +1,9 @@
 # -*- coding: utf-8 -*-
 
 from django.shortcuts import render
-from memcache import Client
-
-# dotKom: To manually see the mailinglists in memcache, do this:
-#
-# $ ssh you@morgan.online.ntnu.no               # connect to morgan
-# $ sudo su www-data -                          # log in as web user
-# $ python                                      # open the interactive python shell
-# $ from memcache import client                 # error message will appear if the library is not found
-# $ mc = Client(["127.0.0.1:11211"], debug=0)   # start the memcache client
-# $ lists = mc.get("sympa_lists")               # get sympa lists that are stored in memcache
-# $ print lists
 
 
 def index(request):
-
-
-    # If we couldn't find any information in memcache right now
-
     lists = [
         {'name': 'linjeforeninger', 'members': [
             {'name': 'Dragvoll', 'email': 'dragvoll@online.ntnu.no'},
