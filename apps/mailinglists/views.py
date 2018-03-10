@@ -11,7 +11,7 @@ def index(request):
             {'name': 'Kalvskinnet', 'email': 'kalvskinnet@online.ntnu.no'},
         ]},
         {'name': 'dragvoll', 'members': [
-            {'name': 'Akwabaa', 'email': 'akwaabapost.ntnu@gmail.com'},
+            {'name': 'Akwaaba', 'email': 'akwaabapost.ntnu@gmail.com'},
             {'name': 'Apeiron', 'email': 'apeiron.ntnu@gmail.com'},
             {'name': 'CAF', 'email': 'cafidrett@gmail.com'},
             {'name': 'Leviathan', 'email': 'leviathan.ntnu@gmail.com'},
