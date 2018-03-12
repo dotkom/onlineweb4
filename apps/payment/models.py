@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import logging
 import uuid
 
 from django.conf import settings
@@ -99,6 +100,10 @@ class Payment(models.Model):
     def description(self):
         if self._is_type(AttendanceEvent):
             return self.content_object.event.title
+        logging.getLogger(__name__).error(
+            "Trying to get description for payment #{}, but it's not AttendanceEvent.".format(self.pk)
+        )
+        return 'No description'
 
     def get_receipt_description(self):
         receipt_description = ""
