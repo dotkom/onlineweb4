@@ -214,7 +214,7 @@ class AttendAPITestCase(OAuth2TestCase):
         response = self.client.post(self.url, json.dumps({
             'event': self.event.id,
             'rfid': self.attendee1.user.rfid,
-        }), **self.headers, content_type='application/json')
+        }), content_type='application/json', **self.headers)
 
         self.refresh_attendees()
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
