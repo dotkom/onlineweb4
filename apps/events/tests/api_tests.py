@@ -1,3 +1,5 @@
+import json
+
 from django.core.urlresolvers import reverse
 from django_dynamic_fixture import G
 from rest_framework import status
@@ -209,10 +211,10 @@ class AttendAPITestCase(OAuth2TestCase):
         self.attendee1.user.rfid = None
         self.attendee1.user.save()
 
-        response = self.client.post(self.url, {
+        response = self.client.post(self.url, json.dumps({
             'event': self.event.id,
             'rfid': self.attendee1.user.rfid,
-        }, **self.headers)
+        }), content_type='application/json', **self.headers)
 
         self.refresh_attendees()
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
