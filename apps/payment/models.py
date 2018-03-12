@@ -6,6 +6,7 @@ import uuid
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
+from django.core.exceptions import ValidationError
 from django.core.mail import send_mail
 from django.db import models
 from django.template.loader import render_to_string
@@ -202,6 +203,19 @@ class Payment(models.Model):
 
     def __str__(self):
         return self.description()
+
+    def clean_generic_relation(self):
+        if not self._is_type(AttendanceEvent):
+            raise ValidationError({
+                'content_type': _('Denne typen objekter støttes ikke av betalingssystemet for tiden.'),
+            })
+        else:
+            if not self.content_object or not self.content_object.event.is_attendance_event():
+                raise ValidationError(_('Dette arrangementet har ikke påmelding.'))
+
+    def clean(self):
+        super().clean()
+        self.clean_generic_relation()
 
     class Meta(object):
         unique_together = ('content_type', 'object_id')
