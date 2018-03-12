@@ -3,15 +3,15 @@
 import re
 
 from django.contrib.auth.models import Group
-from django.core.management.base import NoArgsCommand
+from django.core.management.base import BaseCommand
 from django.db.models import Q
 from unidecode import unidecode
 
 from apps.authentication.models import OnlineUser
 
 
-class Command(NoArgsCommand):
-    def handle_noargs(self, *args, **kwargs):
+class Command(BaseCommand):
+    def handle(self, *args, **kwargs):
         # We only sync in members of the Komiteer group
         group = Group.objects.get(name="Komiteer")
         # Fetch all users that do not currently have an alias

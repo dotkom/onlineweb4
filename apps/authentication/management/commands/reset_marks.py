@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
-from django.core.management.base import NoArgsCommand
+from django.core.management.base import BaseCommand
 
 
-class Command(NoArgsCommand):
+class Command(BaseCommand):
     help = 'Nullstiller prikkegodkjenning på alle brukere'
 
-    def handle_noargs(self, **options):
+    def handle(self, **options):
         from apps.authentication.models import OnlineUser
 
         for user in OnlineUser.objects.all():
