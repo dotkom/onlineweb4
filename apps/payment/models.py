@@ -210,12 +210,10 @@ class PaymentPrice(models.Model):
     """Payment object"""
     price = models.IntegerField(_("pris"))
     """Price in NOK"""
-    description = models.CharField(max_length=128, null=True, blank=True)
+    description = models.CharField(max_length=128)
     """Description of price"""
 
     def __str__(self):
-        if not self.description:
-            return str(self.price) + "kr"
         return self.description + " (" + str(self.price) + "kr)"
 
     class Meta(object):
