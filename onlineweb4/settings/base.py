@@ -50,23 +50,6 @@ USER_SEARCH_GROUPS = [
     24,  # itex
 ]
 
-#List of mailing lists, used in update_sympa_memcache_from_sql.py
-PUBLIC_LISTS = [
-    "foreninger",
-    "linjeforeninger",
-    "gloshaugen",
-    "dragvoll",
-    "masterforeninger",
-    "kjellere",
-    "linjeledere",
-    "linjeredaksjoner",
-    "glosfaddere",
-    "sr-samarbeid",
-    "ivt-samarbeid",
-    "linjekor",
-    "studentdemokratiet"
-]
-
 # Slack inviter
 SLACK_INVITER = {
     # e.g. onlinentnu
