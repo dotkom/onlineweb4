@@ -1,58 +1,61 @@
 {% extends "base.html" %}
 
-
 {% load static %}
-
 {% load render_bundle from webpack_loader %}
 
 
 
 
 {% block styles %}
-    {{ block.super }}
+  {{ block.super }}
+  {% render_bundle 'photoalbum' 'css' %}
 {% endblock %}
 
+{% block js %}
+  {{ block.super }}
+  {% render_bundle 'photoalbum' 'js' %}
+{% endblock %}
 
 {% block content %}
-    <section id="albums">
-        <div class="container">
-            <div class="col-md-12">
-                <div class="page-header">
-                    <ul class="nav nav-pills">
-                        <li class="pull-left">
-                            <h1>Fotoalbum</h1>
-                        </li>
-                        <li class="pull-right active">
-                            <a href="{% url 'create_album' %}">
-                                <span class="fa fa-edit">
-                                    Nytt album
-                                </span>
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-            <div>
-                <form id="searchform" action="{% url 'albums_list' %}" method="GET" accept-charset="utf-8">
-                    {% csrf_token %}
-                    {{ filter.form.as_p }}
-                  <input type="submit">
-               </form>
-            </div>
+	<section id="albums">
+		<div class="container">
+			<div class="col-md-12">
+				<div class="page-header">
+					<ul class="nav nav-pills">
+						<li class="pull-left">
+							<h1>Fotoalbum</h1>
+						</li>
+						<li class="pull-right active">
+							<a href="{% url 'create_album' %}">
+								<span class="fa fa-edit">
+									Nytt album
+								</span>
+							</a>
+						</li>
+					</ul>
+				</div>
+			</div>
+			<div>
+				<form id="searchform" action="{% url 'albums_list' %}" method="GET" accept-charset="utf-8" class="form-inline">
+					{% csrf_token %}
+					{{ filter.form }}
+				  <input class="btn btn-primary" type="submit">
+			  </form>
+			</div>
 
-            {%  for album in filter.qs %}
-                <a href="{%  url 'album_detail' pk=album.pk %}" >
+			{%  for album in filter.qs %}
+				<a href="{%  url 'album_detail' pk=album.pk %}" >
 
-                <div style="display: inline-block; width: 150px">
-                    <img src="{{STATIC_URL}}img/photo_album_folder.png" alt="{{ album.title }}" style="width: 150px">
-                    <p style="display: block; text-align: center"> 
-                        {{ album.title }}
-                    </p>
-                </div>
-            </a>
+				<div style="display: inline-block; width: 150px">
+					<span class="glyphicon glyphicon-folder-open photo_folder" alt="{{ album.title }}"></span>
+					<p style="display: block; text-align: center"> 
+						{{ album.title }}
+					</p>
+				</div>
+			</a>
 
-            {% endfor %}
-        </div>
-        
-    </section>
+			{% endfor %}
+		</div>
+		
+	</section>
 {% endblock %}

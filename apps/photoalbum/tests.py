@@ -26,6 +26,9 @@ class PhotoAlbumTest(TestCase):
 		self.assertEqual(photo.photo, photo_path)
 		self.assertEqual(photo.album, album)
 
+  def testTagCreation(self):
+    pass
+
 	def testPhotoUpload(self):
 
 		pass
@@ -37,6 +40,9 @@ class PhotoAlbumTest(TestCase):
 
 
 class AlbumEditFormTest(TestCase):
+
+  def setUp(self):
+    
 	def testAlbumNameEdit(self):
 		pass
 
@@ -45,5 +51,7 @@ class AlbumEditFormTest(TestCase):
 
 	def testAddPhotos(self):
 		pass
+
+  def testChangeTags(self):
 
 
