@@ -17,9 +17,15 @@ $(document).ready(() => {
 		document.getElementById('report_photo_form').style["visibility"] = "visible"
   })
 
-  function show_form(e) {
-  	console.log("Running show form")
-  }
+  $(".photo .big").bind("keydown", function(e) {
+  	console.log("Running on keydown")
+    if (e.keyCode == 37) { // Left
+      console.log("Left arrow")
+    }
+    if (e.keyCode == 39) { // Right arrow
+      console.log("Right arrow")
+    }
+  })
 
 })
 
