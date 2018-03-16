@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from django import forms
-
 from django.utils.translation import ugettext as _
 
 from apps.photoalbum.models import Album, Photo
@@ -11,29 +10,22 @@ class AlbumForm(forms.Form):
 	tags = forms.CharField(widget=forms.TextInput(), label=("Tags"))
 
 
-class AlbumForm2(forms.ModelForm):
-	print("AlbumForm2")
-	photos_to_upload = forms.FileField(widget=forms.ClearableFileInput(attrs={'multiple': True}), label=_("Bilder"), required=False)    
-
-	class Meta(object):
-		model = Album
-		fields = ['title', 'photos_to_upload']
-
-
 class AlbumNameForm(forms.ModelForm):
 	class Meta(object):
 		model = Album
 		fields = ['title']
+
 
 class AlbumTagsForm(forms.Form):
 	tags = forms.CharField(widget=forms.TextInput(), label=_("Tags"))
 
 
 class UploadPhotosForm(forms.ModelForm):
-	photos = forms.FileField(widget=forms.ClearableFileInput(attrs={'multiple': True}), label=_("Bilder"), required=False)    
-	class Meta(object):
-		model = Album
-		fields = ['photos']
+  photos = forms.FileField(widget=forms.ClearableFileInput(attrs={'multiple': True}), label=_("Bilder"), required=False)
+
+  class Meta(object):
+    model = Album
+    fields = ['photos']
 
 
 class ReportPhotoForm(forms.Form):

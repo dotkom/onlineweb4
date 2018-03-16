@@ -52,7 +52,7 @@
 			{%  for photo in photos %}
 				<div class="small_photo_div"> 
 					<a href="{% url 'photo_detail' album_pk=album.pk pk=photo.pk %}">
-						<img src="{{MEDIA_URL}}{{ photo.photo}}" alt="{{ photo.photo }}" class="album_photo_small center">
+						<img src="{{MEDIA_URL}}{{ photo.photo}}" alt="{{ photo.photo }}" class="album_photo small center">
 					</a>
 				</div>
 			{% endfor  %}
