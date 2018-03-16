@@ -15,7 +15,6 @@
 
 
 {% block content %}
-
 	<section id="album">
 		<div class="container">
 			<div class="col-md-12">
@@ -55,7 +54,7 @@
 				Rapporter bilde
 			</button>
 
-			<form action="{% url 'photo_detail' album_pk=album.pk pk=photo.pk %}" method="post" id="report_photo_form" style="visibility: hidden;">
+			<form action="{% url 'photo_detail' album_pk=album.pk pk=photo.pk %}" method="post" id="report_photo_form" class="hidden">
 				{% csrf_token %}
 				{{ form|crispy }}
 				<button class="btn btn-success" type="submit" name="report_photo">
