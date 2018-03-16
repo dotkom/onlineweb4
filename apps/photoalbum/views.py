@@ -79,8 +79,6 @@ def create_album(request):
 			photos = upload_photos(request.FILES.getlist('photos'), album)
 			tags = get_or_create_tags(cleaned_data['tags'], album)
 
-			#albums = Album.objects.all()
-			#eturn render(request, 'photoalbum/index.html', {'albums': albums})
 			return redirect('albums_list')
 		else:
 			print("Form is not valid")
@@ -118,7 +116,6 @@ class AlbumDetailView(DetailView, View):
 
 
 class PhotoDisplay(DetailView):
-	print("PhotoDisplay")
 	model = Photo
 	template_name = "photoalbum/photo.html"
 
@@ -140,15 +137,11 @@ class PhotoReportFormView(SingleObjectMixin, FormView):
 	template_name= 'photoalbum/photo.html'
 	form_class = ReportPhotoForm
 
-
 	def post(self, request, *args, **kwargs):
 		self.object = self.get_object()
 		return super(PhotoReportFormView, self).post(request, *args, **kwargs)
 
 	def form_invalid(self, form):
-		print("Form is invalid")
-		print(form.errors)
-
 		return super().form_invalid(form)
 
 	def form_valid(self, form):
@@ -162,6 +155,7 @@ class PhotoReportFormView(SingleObjectMixin, FormView):
 	def get_success_url(self):
 		photo_pk = self.object.pk
 		album_pk = self.object.album.pk
+		
 		return reverse('photo_detail', kwargs={'pk': self.object.pk, 'album_pk': self.object.album.pk})
 
 	def get_context_data(self, **kwargs):
@@ -204,8 +198,6 @@ def edit_album(request, pk):
 		elif request.FILES.getlist('upload_photos'):
 			add_photos(request, album)
 			photos = album.get_photos()
-		else:
-			print("Form is not edit_name, delete_photos or add_photos")
 
 	photos = album.get_photos()
 	return render(request, 'photoalbum/edit.html', {'name_form': name_form, 'tags_form': tags_form,'upload_photos_form': upload_photos_form, 'album': album, 'photos': photos})
