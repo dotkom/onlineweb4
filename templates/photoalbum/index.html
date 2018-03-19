@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
 {% load static %}
+{% load widget_tweaks %}
 {% load render_bundle from webpack_loader %}
 
 
@@ -38,27 +39,31 @@
 					</ul>
 				</div>
 			</div>
-			<div>
+			<div class="col-md-12">
 				<form id="searchform" action="{% url 'albums_list' %}" method="GET" accept-charset="utf-8" class="form-inline">
 					{% csrf_token %}
-					{{ filter.form }}
-				  <input class="btn btn-primary" type="submit">
+						<div class="form-group">
+							{% render_field filter.form.title class="form-control" %}
+						</div>
+						<button type="submit" class="btn btn-primary">
+							<span class="glyphicon glyphicon-search"></span> Søk
+						</button>
 			  </form>
+			  <br>
 			</div>
-
-			{%  for album in filter.qs %}
-				<a href="{%  url 'album_detail' pk=album.pk %}" >
-
-				<div style="display: inline-block; width: 150px">
-					<span class="glyphicon glyphicon-folder-open photo_folder" alt="{{ album.title }}"></span>
-					<p style="display: block; text-align: center"> 
-						{{ album.title }}
-					</p>
-				</div>
-			</a>
-
-			{% endfor %}
+			
+			<div class="col-md-12">
+				{%  for album in filter.qs %}
+					<a href="{%  url 'album_detail' pk=album.pk %}" >
+						<div style="display: inline-block; width: 150px">
+							<span class="glyphicon glyphicon-folder-open photo_folder" alt="{{ album.title }}"></span>
+							<p style="display: block; text-align: center"> 
+								{{ album.title }}
+							</p>
+						</div>
+					</a>
+				{% endfor %}
+			</div>
 		</div>
-		
 	</section>
 {% endblock %}
