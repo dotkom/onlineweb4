@@ -16,8 +16,9 @@ class AlbumNameForm(forms.ModelForm):
 		fields = ['title']
 
 
-class AlbumTagsForm(forms.Form):
-	tags = forms.CharField(widget=forms.TextInput(), label=_("Tags"))
+class AlbumEditForm(forms.Form):
+  title = forms.CharField(widget=forms.TextInput(), label=_("Tittel"))
+  tags = forms.CharField(widget=forms.TextInput(), label=_("Tags"))
 
 
 class UploadPhotosForm(forms.ModelForm):
