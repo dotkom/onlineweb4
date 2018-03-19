@@ -23,11 +23,11 @@
                 <h1> Endre album</h1>
             </li>
             <li class="pull-right active">
-                <a href="{% url 'albums_list' %}">
-                    <span class="fa fa-edit">
-                       Tilbake
-                    </span>
-                </a>
+              <a href="{% url 'albums_list' %}">
+                <span class="fa fa-edit">
+                   Tilbake
+                </span>
+              </a>
             </li>
         	</ul>
 				</div>
@@ -37,7 +37,7 @@
 					<form enctype="multipart/form-data" action="{% url 'edit_album' pk=album.pk%}" method="post">
 						{% csrf_token %}
 						{{ name_form|crispy }}
-						<button class="btn btn-sucess" type="submit" name="edit_name">
+						<button class="btn btn-success" type="submit" name="edit_name">
 							Endre navn
 						</button>
 					</form>
@@ -48,7 +48,7 @@
 					<form enctype="multipart/form-data" action="{% url 'edit_album' pk=album.pk%}" method="post">
 						{% csrf_token %}
 						{{ tags_form|crispy }}
-						<button class="btn btn-sucess" type="submit" name="edit_tags">
+						<button class="btn btn-success" type="submit" name="edit_tags">
 							Endre tags
 						</button>
 					</form>
@@ -56,33 +56,44 @@
 			</div>
 
 			<br>
-			<div class="row">
-				<div class="col-md-12">
-					<form action="{% url 'edit_album' pk=album.pk %}" method="post" >
-					{% csrf_token %}
-						{% for photo in photos %}
-							<label>
-								<input type="checkbox" class="hidden_checkbox" name="photos[]" value="{{ photo.id }}" style="display:none">
-								<img src="{{MEDIA_URL}}{{ photo.photo}}" alt="{{ photo.photo }}" style="width: 150px" class="photo_edit">
-							</label>
-						{% endfor  %}
-						<button class="btn btn-sucess" type="submit" name="delete_photos">
-							Slett bilder
-						</button>
-					</form>
-				</div>
-			</div>
-			<br>
-			<div class="row">
-				<div class="col-md-12">
-					<form enctype="multipart/form-data"  action="{% url 'edit_album' pk=album.pk %}" method="post" class="btn btn-sucess" >
-						{% csrf_token %}
-						<input type="file" name="upload_photos" multiple class="clearablefileinput" id="id_photos" onchange="this.form.submit()">
-						</form>
-					</div>
-				</div>
-			</div>
-		</div>
-		</section>
+
+      <div class="row">
+        <div class="col-md-12">
+          <form enctype="multipart/form-data"  action="{% url 'edit_album' pk=album.pk %}" method="post">
+            {% csrf_token %}
+            <label class="btn btn-success">
+              Last opp
+              <input type="file" name="upload_photos" multiple class="hidden" id="id_photos" onchange="this.form.submit()">
+            </label>
+          </form>
+        </div>
+      </div>
+      
+      <br>
+
+      <div class="row">
+        <div class="col-md-12">
+          <form action="{% url 'edit_album' pk=album.pk %}" method="post" >
+          {% csrf_token %}
+            {% for photo in photos %}
+              <label>
+                <input type="checkbox" class="hidden_checkbox" name="photos[]" value="{{ photo.id }}" style="display:none">
+                <div class="tiny">
+                  <div class="flex_div">
+                    <img src="{{MEDIA_URL}}{{ photo.photo}}" alt="{{ photo.photo }}" class="photo">
+                  </div>
+                </div>
+              </label>
+            {% endfor  %}
+            <br>
+            <button class="btn btn-success" type="submit" name="delete_photos">
+              Slett bilder
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+      
+  </section>
 
 {% endblock content %}
