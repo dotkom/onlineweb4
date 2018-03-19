@@ -27,14 +27,16 @@ class AlbumsListView(ListView):
 
 	def get(self, request, *args, **kwargs):
 		filter = AlbumFilter(request.GET, queryset=Album.objects.all())
+		prokom = is_prokom(request.user)
 
-		return render(request, 'photoalbum/index.html', {'filter': filter})
+		return render(request, 'photoalbum/index.html', {'filter': filter, 'is_prokom': prokom})
 
 	def get_context_data(self, **kwargs):
 		context = super(AlbumsListView, self).get_context_data(**kwargs)
 		context['albums'] = Album.objects.all()
 		context['filter'] = AlbumFilter(request.GET, queryset=Album.objects.all())
 		context['is_prokom'] = is_prokom(self.request.user)
+		print("Is prokom: " + context['is_prokom'])
 
 		return context
 

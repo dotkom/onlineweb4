@@ -33,20 +33,23 @@
 					</ul>
 				</div>
 			</div>
-      <div class="big_photo_box">
-        {% if not previous_photo == None %}
-          <a href="{% url 'photo_detail' album_pk=album.pk pk=previous_photo.pk %}" class="navigation_pointer left" id="previous_photo_url">
-            Forrige bilde
-          </a>
-        {% endif %}
+      <div class="col-md-12">
+        <div class="relative_parent">
+          {% if not previous_photo == None %}
+            <a href="{% url 'photo_detail' album_pk=album.pk pk=previous_photo.pk %}" class="navigation_pointer left" id="previous_photo_url">
+              Forrige bilde
+            </a>
+          {% endif %}
 
-        <img src="{{MEDIA_URL}}{{ photo.photo}}" alt="{{ photo.photo }}" style="display: block; margin-right: auto; margin-left: auto;" class="photo_album photo big" />
-
-        {% if not next_photo == None %}
-          <a href="{% url 'photo_detail' album_pk=album.pk pk=next_photo.pk %}" class="navigation_pointer right" id="next_photo_url">
-            Neste bilde
-          </a>
-        {% endif %}
+          
+          <img src="{{MEDIA_URL}}{{ photo.photo}}" alt="{{ photo.photo }}" class="big_photo center" />
+          
+          {% if not next_photo == None %}
+            <a href="{% url 'photo_detail' album_pk=album.pk pk=next_photo.pk %}" class="navigation_pointer right" id="next_photo_url">
+              Neste bilde
+            </a>
+          {% endif %}
+        </div>
       </div>
 
       <button class="btn btn-success" type="submit" id="show_report_photo_form">

@@ -6,8 +6,8 @@ from apps.photoalbum.models import Album, Photo
 
 class AlbumForm(forms.Form):
 	title = forms.CharField(widget=forms.TextInput(), label=_("Tittel"))
+	tags = forms.CharField(widget=forms.TextInput(), label=_("Tags"))
 	photos = forms.FileField(widget=forms.ClearableFileInput(attrs={'multiple': True}), label=_("Bilder"))    
-	tags = forms.CharField(widget=forms.TextInput(), label=("Tags"))
 
 
 class AlbumNameForm(forms.ModelForm):
@@ -17,17 +17,17 @@ class AlbumNameForm(forms.ModelForm):
 
 
 class AlbumEditForm(forms.Form):
-  title = forms.CharField(widget=forms.TextInput(), label=_("Tittel"))
-  tags = forms.CharField(widget=forms.TextInput(), label=_("Tags"))
+	title = forms.CharField(widget=forms.TextInput(), label=_("Tittel"))
+	tags = forms.CharField(widget=forms.TextInput(), label=_("Tags"))
 
 
 class UploadPhotosForm(forms.ModelForm):
-  photos = forms.FileField(widget=forms.ClearableFileInput(attrs={'multiple': True}), label=_("Bilder"), required=False)
+	photos = forms.FileField(widget=forms.ClearableFileInput(attrs={'multiple': True}), label=_("Bilder"), required=False)
 
-  class Meta(object):
-    model = Album
-    fields = ['photos']
+	class Meta(object):
+		model = Album
+		fields = ['photos']
 
 
 class ReportPhotoForm(forms.Form):
-  reason = forms.CharField(widget=forms.TextInput(), label=_("Begrunnelse"))
+	reason = forms.CharField(widget=forms.TextInput(), label=_("Begrunnelse"))
