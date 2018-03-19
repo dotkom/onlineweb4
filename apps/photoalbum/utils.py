@@ -85,3 +85,11 @@ def print_album_photo_indexs(album):
 	pks = []
 	for photo in photos: 
 		pks.append(photo.pk)
+
+def is_prokom(user):
+  print("Checking if user is in prokom")
+  return True
+  #if (user.comittee == 'prokom'):
+  #  return true
+  #else:
+  #  print("User is not in prokom")

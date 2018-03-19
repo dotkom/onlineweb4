@@ -25,6 +25,8 @@
 						<li class="pull-left">
 							<h1>Fotoalbum</h1>
 						</li>
+						{{ is_prokom }}
+						{% if is_prokom %}
 						<li class="pull-right active">
 							<a href="{% url 'create_album' %}">
 								<span class="fa fa-edit">
@@ -32,6 +34,7 @@
 								</span>
 							</a>
 						</li>
+						{% endif %}
 					</ul>
 				</div>
 			</div>

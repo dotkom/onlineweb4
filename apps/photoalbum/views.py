@@ -4,6 +4,8 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, HttpResponseRedirect, redirect
 from django.utils.decorators import method_decorator
 from django.urls import reverse
+from django.utils.translation import ugettext as _
+
 from django.views.generic import View
 from django.views.generic.detail import DetailView, SingleObjectMixin
 from django.views.generic.edit import FormView
@@ -11,8 +13,10 @@ from django.views.generic.list import ListView
 
 from django import forms
 
+from django.db import models
+
 from apps.gallery.util import UploadImageHandler
-from apps.photoalbum.utils import upload_photos, report_photo, get_or_create_tags, get_tags_as_string, get_previous_photo, get_next_photo
+from apps.photoalbum.utils import upload_photos, report_photo, get_or_create_tags, get_tags_as_string, get_previous_photo, get_next_photo, is_prokom
 from apps.photoalbum.models import Album, Photo, AlbumTag
 from apps.photoalbum.forms import AlbumForm, AlbumNameForm, UploadPhotosForm, ReportPhotoForm, AlbumTagsForm
 from django_filters import FilterSet, Filter, CharFilter
@@ -30,7 +34,8 @@ class AlbumsListView(ListView):
 		context = super(AlbumsListView, self).get_context_data(**kwargs)
 		context['albums'] = Album.objects.all()
 		context['filter'] = AlbumFilter(request.GET, queryset=Album.objects.all())
-		
+		context['is_prokom'] = is_prokom(self.request.user)
+
 		return context
 
 
@@ -60,11 +65,20 @@ class AlbumFilter(FilterSet):
 
 		return queryset
 
-	title = CharFilter(label='Søk', method=filter_keyword)
+	title = CharFilter(label=_('Søk'), method=filter_keyword)
 	class Meta:
 		model = Album
 
 		fields = ['title']
+
+		filter_overrides = {
+			models.CharField: {
+				'filter_class': CharFilter,
+				'extra': lambda f: {
+					'widget': forms.TextInput(),
+				}
+			}
+		}
 
 
 def create_album(request):
@@ -111,6 +125,7 @@ class AlbumDetailView(DetailView, View):
 		context['album'] = album
 		context['photos'] = album.get_photos()
 		context['tags'] = album.get_tags()
+		context['is_prokom'] = is_prokom(self.request.user)
 
 		return context
 
@@ -128,6 +143,7 @@ class PhotoDisplay(DetailView):
 		context['form'] = ReportPhotoForm()
 		context['next_photo'] = get_next_photo(photo, album)
 		context['previous_photo'] = get_previous_photo(photo, album)
+		context['is_prokom'] = is_prokom(self.request.user)
 
 		return context
 
@@ -249,3 +265,5 @@ def add_photos(request, album):
 	form = UploadPhotosForm(instance=album)
 
 	photos = upload_photos(request.FILES.getlist('upload_photos'), album)
+
+

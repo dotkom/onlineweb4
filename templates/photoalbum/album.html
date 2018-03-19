@@ -13,31 +13,31 @@
 {% endblock %}
 
 {% block content %}
-
 	<section id="album">
 		<div class="container">
 			<div class="col-md-12">
 				<div class="page-header">
 					<ul class="nav nav-pills">
-					<li class="pull-left">
-						<h1>{{ album.title}}</h1>
-					</li>
-					<li class="pull-right active">
-						<a href="{% url 'delete_album' pk=album.pk %}">
-							<span class="fa fa-edit">
-								Slett album
-							</span>
-						</a>
-					</li>
+  					<li class="pull-left">
+  						<h1>{{ album.title}}</h1>
+  					</li>
+            {% if is_prokom %}
+    					<li class="pull-right active">
+    						<a href="{% url 'delete_album' pk=album.pk %}">
+    							<span class="fa fa-edit">
+    								Slett album
+    							</span>
+    						</a>
+    					</li>
 
-					<li class="pull-right active">
-						<a href="{% url 'edit_album' pk=album.pk %}">
-							<span class="fa fa-edit">
-								Endre album
-							</span>
-						</a>
-					</li>
-						
+    					<li class="pull-right active">
+    						<a href="{% url 'edit_album' pk=album.pk %}">
+    							<span class="fa fa-edit">
+    								Endre album
+    							</span>
+    						</a>
+    					</li>					
+            {% endif %}
 					</ul>
 				</div>
 			</div>
@@ -50,10 +50,12 @@
 			</div>
 
 			{%  for photo in photos %}
-				<div class="small_photo_div"> 
-					<a href="{% url 'photo_detail' album_pk=album.pk pk=photo.pk %}">
-						<img src="{{MEDIA_URL}}{{ photo.photo}}" alt="{{ photo.photo }}" class="album_photo small center">
-					</a>
+				<div class="small">
+  				<a href="{% url 'photo_detail' album_pk=album.pk pk=photo.pk %}">
+            <div class="flex_div">
+  						<img src="{{MEDIA_URL}}{{ photo.photo}}" alt="{{ photo.photo }}" class="photo center">
+            </div>
+  				</a>
 				</div>
 			{% endfor  %}
 
