@@ -38,8 +38,8 @@
 				<div class="col-md-6">
 					<form enctype="multipart/form-data" action="{% url 'edit_album' pk=album.pk%}" method="post">
 						{% csrf_token %}
-						{{ name_and_tags_form|crispy }}
-						<button class="btn btn-success" type="submit" name="edit_name_and_tags">
+						{{ edit_form|crispy }}
+						<button class="btn btn-success" type="submit" name="edit_album">
 							Lagre
 						</button>
 					</form>
