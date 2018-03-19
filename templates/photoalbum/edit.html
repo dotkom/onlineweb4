@@ -24,11 +24,13 @@
                   <h1> Endre album</h1>
               </li>
               <li class="pull-right active">
+                <button class="btn btn-default">
                 <a href="{% url 'albums_list' %}">
                   <span class="fa fa-edit">
                      Tilbake
                   </span>
                 </a>
+                </button>
               </li>
           	</ul>
   				</div>
@@ -46,12 +48,11 @@
 				</div>
 			</div>
 			
-			<br>
-
       <div class="row">
         <div class="col-md-6">
           <form enctype="multipart/form-data"  action="{% url 'edit_album' pk=album.pk %}" method="post">
             {% csrf_token %}
+            <br>
             <label class="btn btn-success">
               Last opp
               <input type="file" name="upload_photos" multiple class="hidden" id="id_photos" onchange="this.form.submit()">
@@ -60,8 +61,6 @@
         </div>
       </div>
       
-      <br>
-
       <div class="row">
         <div class="col-md-12">
           <form action="{% url 'edit_album' pk=album.pk %}" method="post" >
@@ -84,7 +83,5 @@
         </div>
       </div>
     </div>
-      
   </section>
-
 {% endblock content %}
