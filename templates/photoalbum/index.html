@@ -20,49 +20,53 @@
 {% block content %}
 	<section id="albums">
 		<div class="container">
-			<div class="col-md-12">
-				<div class="page-header">
-					<ul class="nav nav-pills">
-						<li class="pull-left">
-							<h1>Fotoalbum</h1>
-						</li>
-						{{ is_prokom }}
-						{% if is_prokom %}
-						<li class="pull-right active">
-							<a href="{% url 'create_album' %}">
-								<span class="fa fa-edit">
-									Nytt album
-								</span>
-							</a>
-						</li>
-						{% endif %}
-					</ul>
+			<div class="row">
+				<div class="col-md-12">
+					<div class="page-header">
+						<ul class="nav nav-pills">
+							<li class="pull-left">
+								<h1>Fotoalbum</h1>
+							</li>
+							{% if is_prokom %}
+							<li class="pull-right active">
+								<a href="{% url 'create_album' %}">
+									<span class="fa fa-edit">
+										Nytt album
+									</span>
+								</a>
+							</li>
+							{% endif %}
+						</ul>
+					</div>
 				</div>
 			</div>
-			<div class="col-md-12">
-				<form id="searchform" action="{% url 'albums_list' %}" method="GET" accept-charset="utf-8" class="form-inline">
-					{% csrf_token %}
-						<div class="form-group">
-							{% render_field filter.form.title class="form-control" %}
-						</div>
-						<button type="submit" class="btn btn-primary">
-							<span class="glyphicon glyphicon-search"></span> Søk
-						</button>
-			  </form>
-			  <br>
+			<div class="row">
+				<div class="col-md-12">
+					<form id="searchform" action="{% url 'albums_list' %}" method="GET" accept-charset="utf-8" class="form-inline">
+						{% csrf_token %}
+							<div class="form-group">
+								{% render_field filter.form.title class="form-control" %}
+							</div>
+							<button type="submit" class="btn btn-primary">
+								<span class="glyphicon glyphicon-search"></span> Søk
+							</button>
+				  </form>
+				  <br>
+				</div>
 			</div>
-			
-			<div class="col-md-12">
-				{%  for album in filter.qs %}
-					<a href="{%  url 'album_detail' pk=album.pk %}" >
-						<div class="tiny">
-							<span class="glyphicon glyphicon-folder-open photo_folder" alt="{{ album.title }}"></span>
-							<p class="text-center album-title"> 
-								{{ album.title }}
-							</p>
-						</div>
-					</a>
-				{% endfor %}
+			<div class="row">
+				<div class="col-md-12">
+					{%  for album in filter.qs %}
+						<a href="{%  url 'album_detail' pk=album.pk %}" >
+							<div class="tiny">
+								<span class="glyphicon glyphicon-folder-open photo_folder" alt="{{ album.title }}"></span>
+								<p class="text-center album-title"> 
+									{{ album.title }}
+								</p>
+							</div>
+						</a>
+					{% endfor %}
+				</div>
 			</div>
 		</div>
 	</section>
