@@ -18,7 +18,7 @@ from django.db import models
 from apps.gallery.util import UploadImageHandler
 from apps.photoalbum.utils import upload_photos, report_photo, get_or_create_tags, get_tags_as_string, get_previous_photo, get_next_photo, is_prokom
 from apps.photoalbum.models import Album, Photo, AlbumTag
-from apps.photoalbum.forms import AlbumForm, AlbumNameForm, UploadPhotosForm, ReportPhotoForm, AlbumTagsForm
+from apps.photoalbum.forms import AlbumForm, AlbumEditForm, UploadPhotosForm, ReportPhotoForm
 from django_filters import FilterSet, Filter, CharFilter
 
 class AlbumsListView(ListView):
@@ -200,16 +200,13 @@ class PhotoDetailView(View):
 def edit_album(request, pk):
 	album = Album.objects.get(pk=pk)
 	photos = album.get_photos()
-	name_form = AlbumNameForm(instance=album)
-	tags_form = AlbumTagsForm(initial={'tags': get_tags_as_string(album)})
+	edit_form = AlbumEditForm(initial={'title': album.title, 'tags': get_tags_as_string(album)})
 	upload_photos_form = UploadPhotosForm(instance=album)
 	
 	if request.method == "POST":
-		if "edit_name" in request.POST:
-			edit_name(request, album)
-		elif "edit_tags" in request.POST:
-			edit_tags(request, album)
-			tags_form = AlbumTagsForm(initial={'tags': get_tags_as_string(album)})
+		if "edit_album" in request.POST:
+			edit_name_and_tags(request, album)
+			edit_form = AlbumEditForm(initial={'title': album.title, 'tags': get_tags_as_string(album)})
 		elif "delete_photos" in request.POST:
 			delete_photos(request)
 		elif request.FILES.getlist('upload_photos'):
@@ -217,33 +214,18 @@ def edit_album(request, pk):
 			photos = album.get_photos()
 
 	photos = album.get_photos()
-	return render(request, 'photoalbum/edit.html', {'name_form': name_form, 'tags_form': tags_form,'upload_photos_form': upload_photos_form, 'album': album, 'photos': photos})
+	return render(request, 'photoalbum/edit.html', {'edit_form': edit_form, 'upload_photos_form': upload_photos_form, 'album': album, 'photos': photos})
 
 #@login_required
-def edit_name(request, album):
-	form = AlbumNameForm(request.POST, request.FILES, instance=album)
+def edit_name_and_tags(request, album):
+	form = AlbumNameForm(request.POST, instance=album)
 	if form.is_valid():
 		cleaned_data = form.cleaned_data
 		title = cleaned_data['title']
 		album.title = title
 		album.save()
 
-		#albums = Album.objects.all()
-		#return render(request, 'photoalbum/index.html', {'albums': albums})
-
-def edit_tags(request, album):
-	form = AlbumTagsForm(request.POST)
-	print("In edit_tags")
-	if form.is_valid():
-		cleaned_data = form.cleaned_data
-		print("Edit_tags is valid")
-
-		tags = get_or_create_tags(cleaned_data['tags'], album)
-		#album.tags = tags
-		#album.save()
-
-		#albums = Album.objects.all()
-		#return render(request, 'photoalbum/index.html', {'albums': albums})
+		ags = get_or_create_tags(cleaned_data['tags'], album)
 
 #@login_required
 def delete_photos(request): 
