@@ -55,6 +55,12 @@ class Photo(models.Model):
 
 		return users
 	
+#@receiver(post_save, sender=Photo, dispatch_uid="update_photo")
+#def update_photo(sender, instance, **kwargs):
+##  if instance.image:
+#    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+#    fullpath = BASE_DIR + instance.image.url
+#    rotate_photo(fullpath)
 
 class AlbumTag(models.Model):
 	name = models.CharField(_("Navn"), blank=False, null=False, max_length=20)
