@@ -65,12 +65,12 @@ class AlbumFilter(FilterSet):
 
 		return queryset
 
-	title = CharFilter(label=_('Søk'), method=filter_keyword)
+	title = CharFilter(label=_(""), method=filter_keyword)
 	class Meta:
 		model = Album
 
 		fields = ['title']
-
+		"""
 		filter_overrides = {
 			models.CharField: {
 				'filter_class': CharFilter,
@@ -79,6 +79,7 @@ class AlbumFilter(FilterSet):
 				}
 			}
 		}
+		"""
 
 
 def create_album(request):

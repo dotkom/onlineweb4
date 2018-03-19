@@ -183,6 +183,7 @@ INSTALLED_APPS = (
     'webpack_loader',
     'oidc_provider',
     'raven.contrib.django.raven_compat',  # Sentry, error tracking
+    'widget_tweaks',
 
     # Django apps
     'django.contrib.admin',
