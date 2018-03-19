@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
-from django.contrib.auth import get_user_model
+import os
 
+from django.contrib.auth import get_user_model
+from django.conf import settings
+
+from PIL import Image, ExifTags
 from apps.photoalbum.models import Photo, AlbumToPhoto, AlbumTag, TagsToAlbum
 from apps.photoalbum.tasks import send_report_on_photo
 
@@ -12,6 +16,11 @@ def upload_photos(photos, album):
 		print(photos)
 		p = Photo(photo=photo)
 		p.save()
+
+		print("Photo path: ", p.photo)
+
+		rotate_photo(p.photo)
+
 		albumToPhoto = AlbumToPhoto(album=album, photo=p)
 		albumToPhoto.save()
 		photos_list.append(p)
@@ -85,12 +94,52 @@ def print_album_photo_indexs(album):
 		pks.append(photo.pk)
 
 def is_prokom(user):
-  print("Checking if user is in prokom")
-  return True
-  #if (user.comittee == 'prokom'):
-  #  return true
-  #else:
-  #  print("User is not in prokom")
+	print("Checking if user is in prokom")
+	return True
+	#if (user.comittee == 'prokom'):
+	#  return true
+	#else:
+	#  print("User is not in prokom")
 
 def clear_tags_to_album(album):
-  TagsToAlbum.objects.filter(album=album).delete()
+	TagsToAlbum.objects.filter(album=album).delete()
+
+
+def rotate_photo(photo):
+	BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+	print("Media root: ", settings.MEDIA_ROOT)
+	print("Media URL: ", settings.MEDIA_URL)
+	print("Photo: ", photo.url)
+	filepath = "/home/doraoline/Coding/onlineweb4/uploaded_media/images/photo_album/IMG_2207_zotXi3h.JPG"
+
+	try:
+			image = Image.open(filepath)
+			print("Opened image: ", image)
+			for orientation in ExifTags.TAGS.keys():
+				if ExifTags.TAGS[orientation] == 'Orientation':
+					break
+			print("Before dict")
+			print(image._getexif())
+
+			exif = dict(image._getexif().items())
+
+			exif = {ExifTags.TAGS[k]: v
+				for k, v in image._getexif().items()
+				if k in ExifTags.TAGS}
+
+			print("Orientation: ", exif)
+			if exif[orientation] == 3:
+				print("Rotate image 180 degrees")
+				image = image.rotate(180, expand=True)
+			elif exif[orientation] == 6:
+				print("Rotate image 270 degrees")
+				image = image.rotate(270, expand=True)
+			elif exif[orientation] == 8:
+				print("Rotate image 90 degrees")
+				image = image.rotate(90, expand=True)
+			image.save(filepath)
+			image.close()
+	except (AttributeError, KeyError, IndexError) as e:
+		print("Exception: ", type(e), e, str(e))
+		pass 
