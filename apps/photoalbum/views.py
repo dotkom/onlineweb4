@@ -16,7 +16,7 @@ from django import forms
 from django.db import models
 
 from apps.gallery.util import UploadImageHandler
-from apps.photoalbum.utils import upload_photos, report_photo, get_or_create_tags, get_tags_as_string, get_previous_photo, get_next_photo, is_prokom
+from apps.photoalbum.utils import upload_photos, report_photo, get_or_create_tags, get_tags_as_string, get_previous_photo, get_next_photo, is_prokom, clear_tags_to_album
 from apps.photoalbum.models import Album, Photo, AlbumTag
 from apps.photoalbum.forms import AlbumForm, AlbumEditForm, UploadPhotosForm, ReportPhotoForm
 from django_filters import FilterSet, Filter, CharFilter
@@ -31,6 +31,7 @@ class AlbumsListView(ListView):
 
 		return render(request, 'photoalbum/index.html', {'filter': filter, 'is_prokom': prokom})
 
+	"""
 	def get_context_data(self, **kwargs):
 		context = super(AlbumsListView, self).get_context_data(**kwargs)
 		context['albums'] = Album.objects.all()
@@ -39,6 +40,7 @@ class AlbumsListView(ListView):
 		print("Is prokom: " + context['is_prokom'])
 
 		return context
+	"""
 
 
 class AlbumFilter(FilterSet):
@@ -47,12 +49,13 @@ class AlbumFilter(FilterSet):
 		queryset = []
 		if value != "":
 			list = value.split(" ")
-			try:  
-				for album in Album.objects.all():
+			print("List: ", list)
+			for album in Album.objects.all():
 					for word in list:
 						# If word is in title
 						if word.lower() in album.title.lower():
 							queryset.append(album)
+							print("Word is in title")
 						else:
 							try:
 								tag = AlbumTag.objects.get(name=word.lower())
@@ -60,8 +63,6 @@ class AlbumFilter(FilterSet):
 									queryset.append(album)
 							except Exception:
 								print("Tag does not exist")
-			except Exception as e:
-				queryset = Album.objects.all()
 		else:
 			queryset = Album.objects.all()
 
@@ -70,18 +71,7 @@ class AlbumFilter(FilterSet):
 	title = CharFilter(label=_(""), method=filter_keyword)
 	class Meta:
 		model = Album
-
 		fields = ['title']
-		"""
-		filter_overrides = {
-			models.CharField: {
-				'filter_class': CharFilter,
-				'extra': lambda f: {
-					'widget': forms.TextInput(),
-				}
-			}
-		}
-		"""
 
 
 def create_album(request):
@@ -205,6 +195,7 @@ def edit_album(request, pk):
 	edit_form = AlbumEditForm(initial={'title': album.title, 'tags': get_tags_as_string(album)})
 	upload_photos_form = UploadPhotosForm(instance=album)
 	
+	print("Edit_form: ", edit_form)
 	if request.method == "POST":
 		if "edit_album" in request.POST:
 			edit_name_and_tags(request, album)
@@ -220,14 +211,17 @@ def edit_album(request, pk):
 
 #@login_required
 def edit_name_and_tags(request, album):
-	form = AlbumNameForm(request.POST, instance=album)
+	print("Editing album")
+	form = AlbumEditForm(request.POST)
 	if form.is_valid():
 		cleaned_data = form.cleaned_data
 		title = cleaned_data['title']
 		album.title = title
 		album.save()
 
-		ags = get_or_create_tags(cleaned_data['tags'], album)
+		# Empty tags to album first, in case some of the tags are removed
+		clear_tags_to_album(album)
+		tags = get_or_create_tags(cleaned_data['tags'], album)
 
 #@login_required
 def delete_photos(request): 
@@ -241,9 +235,6 @@ def delete_photos(request):
 
 	request_copy = request.POST.copy()
 	request_copy = request_copy.setlist('photos[]', [])
-	
-	#albums = Album.objects.all()
-	#return render(request_copy, 'photoalbum/index.html', {'albums': albums})
 
 #@login_required
 def add_photos(request, album):

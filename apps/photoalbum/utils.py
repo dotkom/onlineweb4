@@ -1,6 +1,4 @@
 # -*- coding: utf-8 -*-
-
-
 from django.contrib.auth import get_user_model
 
 from apps.photoalbum.models import Photo, AlbumToPhoto, AlbumTag, TagsToAlbum
@@ -93,3 +91,6 @@ def is_prokom(user):
   #  return true
   #else:
   #  print("User is not in prokom")
+
+def clear_tags_to_album(album):
+  TagsToAlbum.objects.filter(album=album).delete()

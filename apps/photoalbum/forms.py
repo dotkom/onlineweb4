@@ -17,6 +17,7 @@ class AlbumNameForm(forms.ModelForm):
 
 
 class AlbumEditForm(forms.Form):
+	print("In AlbumEditForm")
 	title = forms.CharField(widget=forms.TextInput(), label=_("Tittel"))
 	tags = forms.CharField(widget=forms.TextInput(), label=_("Tags"))
 
