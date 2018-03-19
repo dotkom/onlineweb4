@@ -16,49 +16,40 @@
 {% block content %}
 	<section id="create_album">
 		<div class="container">
-			<div class="col-md-12">
-				<div class="page-header">
-					<ul class="nav nav-pills">
-            <li class="pull-left">
-                <h1> Endre album</h1>
-            </li>
-            <li class="pull-right active">
-              <a href="{% url 'albums_list' %}">
-                <span class="fa fa-edit">
-                   Tilbake
-                </span>
-              </a>
-            </li>
-        	</ul>
-				</div>
+      <div class="row">
+  			<div class="col-md-12">
+  				<div class="page-header">
+  					<ul class="nav nav-pills">
+              <li class="pull-left">
+                  <h1> Endre album</h1>
+              </li>
+              <li class="pull-right active">
+                <a href="{% url 'albums_list' %}">
+                  <span class="fa fa-edit">
+                     Tilbake
+                  </span>
+                </a>
+              </li>
+          	</ul>
+  				</div>
+        </div>
 			</div>
 			<div class="row">
-				<div class="col-md-12">
+				<div class="col-md-6">
 					<form enctype="multipart/form-data" action="{% url 'edit_album' pk=album.pk%}" method="post">
 						{% csrf_token %}
-						{{ name_form|crispy }}
-						<button class="btn btn-success" type="submit" name="edit_name">
-							Endre navn
+						{{ name_and_tags_form|crispy }}
+						<button class="btn btn-success" type="submit" name="edit_name_and_tags">
+							Lagre
 						</button>
 					</form>
 				</div>
 			</div>
-			<div class="row">
-				<div class="col-md-12">
-					<form enctype="multipart/form-data" action="{% url 'edit_album' pk=album.pk%}" method="post">
-						{% csrf_token %}
-						{{ tags_form|crispy }}
-						<button class="btn btn-success" type="submit" name="edit_tags">
-							Endre tags
-						</button>
-					</form>
-				</div>
-			</div>
-
+			
 			<br>
 
       <div class="row">
-        <div class="col-md-12">
+        <div class="col-md-6">
           <form enctype="multipart/form-data"  action="{% url 'edit_album' pk=album.pk %}" method="post">
             {% csrf_token %}
             <label class="btn btn-success">
