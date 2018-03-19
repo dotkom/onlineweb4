@@ -31,38 +31,27 @@ class AlbumsListView(ListView):
 
 		return render(request, 'photoalbum/index.html', {'filter': filter, 'is_prokom': prokom})
 
-	"""
-	def get_context_data(self, **kwargs):
-		context = super(AlbumsListView, self).get_context_data(**kwargs)
-		context['albums'] = Album.objects.all()
-		context['filter'] = AlbumFilter(request.GET, queryset=Album.objects.all())
-		context['is_prokom'] = is_prokom(self.request.user)
-		print("Is prokom: " + context['is_prokom'])
-
-		return context
-	"""
-
-
 class AlbumFilter(FilterSet):
 
 	def filter_keyword(self, queryset, value):
 		queryset = []
 		if value != "":
 			list = value.split(" ")
-			print("List: ", list)
-			for album in Album.objects.all():
+			try:  
+				for album in Album.objects.all():
 					for word in list:
 						# If word is in title
 						if word.lower() in album.title.lower():
 							queryset.append(album)
-							print("Word is in title")
 						else:
 							try:
 								tag = AlbumTag.objects.get(name=word.lower())
-								if tag != None or tag in album.get_tags():
+								if tag != None and tag in album.get_tags():
 									queryset.append(album)
 							except Exception:
 								print("Tag does not exist")
+			except Exception as e:
+				queryset = Album.objects.all()
 		else:
 			queryset = Album.objects.all()
 
