@@ -13,7 +13,7 @@ icalendar==4.0.1                # iCalendar generation
 google-api-python-client==1.6.5
 
 # third party deps
-django-filebrowser==3.9.1       # File uploading
+django-filebrowser==3.10.1       # File uploading
 git+https://github.com/dotKom/django-chunks.git@e6bf109d4fd286964024c140ac1b8f3d86713540#egg=django-chunks==0.4
 django-crispy-forms==1.7.2      # nice forms
 django-extensions==2.0.6        # nice extra commands for debugging, etc
