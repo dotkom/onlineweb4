@@ -58,7 +58,7 @@
 				<div class="col-md-12">
 					{%  for album in filter.qs %}
 						<a href="{%  url 'album_detail' pk=album.pk album_slug=album.slug %}">
-							<div class="tiny">
+							<div class="narrow">
 								<span class="glyphicon glyphicon-folder-open photo_folder" alt="{{ album.title }}"></span>
 								<p class="text-center album-title"> 
 									{{ album.title }}

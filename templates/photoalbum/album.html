@@ -25,16 +25,14 @@
               {% if is_prokom %}
       					<li class="pull-right active">
       						<a href="{% url 'delete_album' pk=album.pk %}">
-      							<span class="fa fa-edit">
-      								Slett album
-      							</span>
+      							<span class="glyphicon glyphicon-trash"></span>
+                    Slett
       						</a>
       					</li>
       					<li class="pull-right active">
       						<a href="{% url 'edit_album' pk=album.pk %}">
-      							<span class="fa fa-edit">
-      								Endre album
-      							</span>
+      							<span class="glyphicon glyphicon-edit"></span>
+                    Rediger
       						</a>
       					</li>					
               {% endif %}
@@ -57,7 +55,7 @@
 				{% endfor %}
 			</div>
 
-      <div class="row">
+      <div class="row center photos_div">
   			{%  for photo in photos %}
   				<div class="small">
     				<a href="{% url 'photo_detail' album_pk=album.pk album_slug=album.slug pk=photo.pk %}">

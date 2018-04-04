@@ -7,14 +7,17 @@ $(document).ready(() => {
   $('.photo_edit').click(function choose_photo (e) {
 		const photo = $(this)
 		photo.toggleClass('chosen')
+    const parent = photo.parent()
+
+    parent.toggleClass('chosen')
   })
 
   $('#show_report_photo_form').click(function show_form (e) {
 		console.log("Changing visibility")
 		const button = $(this)
 		//button.style["visibility"] = "hidden"
-		document.getElementById('show_report_photo_form').style["visibility"] = "hidden"
-		document.getElementById('report_photo_form').style["visibility"] = "visible"
+		$('#show_report_photo_form').toggleClass('hidden')
+		$('#report_photo_form').toggleClass('hidden')
   })
 
   $(".photo .big").bind("keydown", function(e) {
