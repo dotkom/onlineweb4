@@ -14,3 +14,7 @@ class AlbumAdmin(VersionAdmin):
 admin.site.register(Album, AlbumAdmin)
 admin.site.register(Photo)
 admin.site.register(AlbumTag)
+admin.site.register(Photo)
+admin.site.register(AlbumToPhoto)
+admin.site.register(PhotoWithUser)
+admin.site.register(TagsToAlbum)

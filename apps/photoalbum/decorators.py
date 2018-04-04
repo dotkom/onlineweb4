@@ -7,12 +7,11 @@ from django.core.exceptions import PermissionDenied
 
 def prokom_required(view_func):
 
-	def is_prokom(request, *args, **kwargs):
-		print("Request: ", request)
-		print("View_func: ", view_func)
-		prokom = False
+	def check_if_is_prokom(request, *args, **kwargs):
+		is_prokom(request.user)
+		prokom = True
 		if prokom:
 			return view_func(request, *args, **kwargs)
 		raise PermissionDenied
-		
-	return is_prokom
+
+	return check_if_is_prokom
