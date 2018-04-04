@@ -184,7 +184,6 @@ def edit_album(request, pk):
 	edit_form = AlbumEditForm(initial={'title': album.title, 'tags': get_tags_as_string(album)})
 	upload_photos_form = UploadPhotosForm(instance=album)
 	
-	print("Edit_form: ", edit_form)
 	if request.method == "POST":
 		if "edit_album" in request.POST:
 			edit_name_and_tags(request, album)
@@ -200,7 +199,6 @@ def edit_album(request, pk):
 
 #@login_required
 def edit_name_and_tags(request, album):
-	print("Editing album")
 	form = AlbumEditForm(request.POST)
 	if form.is_valid():
 		cleaned_data = form.cleaned_data
