@@ -33,6 +33,15 @@
 					</ul>
 				</div>
 			</div>
+      <div class="row">
+        <span> Taggede brukere: </span>
+        {% for users in tagged_users %}
+          <span class="tag"">
+            {{ users.username }}
+          </span>
+        {% endfor %}
+      </div>
+
       <div class="col-md-12">
         <div class="relative_parent">
           {% if not previous_photo == None %}
@@ -52,6 +61,17 @@
         </div>
       </div>
 
+      {% if is_prokom %}
+        <form action="{% url 'photo_detail' album_pk=album.pk album_slug=album.slug pk=photo.pk %}" method="post" id="tag_users_form">
+          {% csrf_token %}
+          {{ tag_users_form|crispy }}
+          <button class="btn btn-success" type="submit" name="tag_users">
+            Tag brukere
+          </button>
+        </form>
+      {% endif %}
+      <br>
+      <br>
       <button class="btn btn-success" type="submit" id="show_report_photo_form">
         Rapporter bilde
       </button>

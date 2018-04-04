@@ -32,3 +32,7 @@ class UploadPhotosForm(forms.ModelForm):
 
 class ReportPhotoForm(forms.Form):
 	reason = forms.CharField(widget=forms.TextInput(), label=_("Begrunnelse"))
+
+
+class TagUsersForm(forms.Form):
+	users = forms.CharField(widget=forms.TextInput(), label=_("Brukere"))

@@ -58,10 +58,10 @@ class Photo(models.Model):
 		return AlbumToPhoto.objects.get(photo=self).album
 
 	def get_tagged_users(self):
-		user_list = PhotoWithUser.objects.filter(photo=self).values("user")
+		user_list = UserTagToPhoto.objects.filter(photo=self).values("user")
 		users = []
 		for user_dict in user_list:
-			pk = user_drict.get("user")
+			pk = user_dict.get("user")
 			user = OnlineUser.objects.get(pk=pk)
 			users.append(user)
 
@@ -86,7 +86,7 @@ class AlbumToPhoto(models.Model):
 	album = models.ForeignKey(Album)
 
 
-class PhotoWithUser(models.Model):
+class UserTagToPhoto(models.Model):
 	photo = models.ForeignKey(Photo)
 	user = models.ForeignKey(OnlineUser)
 
