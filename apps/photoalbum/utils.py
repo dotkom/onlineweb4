@@ -5,8 +5,10 @@ from django.contrib.auth import get_user_model
 from django.conf import settings
 
 from PIL import Image, ExifTags
-from apps.photoalbum.models import Photo, AlbumToPhoto, AlbumTag, TagsToAlbum
+from apps.photoalbum.models import Photo, AlbumToPhoto, AlbumTag, TagsToAlbum, UserTagToPhoto
 from apps.photoalbum.tasks import send_report_on_photo
+
+from apps.authentication.models import OnlineUser
 
 
 def upload_photos(photos, album):
@@ -140,3 +142,18 @@ def rotate_photo(photo):
 	except (AttributeError, KeyError, IndexError) as e:
 		print("Exception: ", type(e), e, str(e))
 		pass 
+
+
+def tag_users(users, photo):
+	print("In tag users")
+	print("Uses: ", users)
+	user_names = users.split(",")
+
+	for name in user_names: 
+		print("Name: ", name)
+		user = OnlineUser.objects.get(username=name)
+		print(user)
+
+		user_tag_to_photo, created= UserTagToPhoto.objects.get_or_create(user=user, photo=photo)
+		
+		print("User tagged in photo: ", user_tag_to_photo)

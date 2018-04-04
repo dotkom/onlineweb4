@@ -18,9 +18,10 @@ from django.db import models
 from apps.gallery.util import UploadImageHandler
 from apps.photoalbum.utils import upload_photos, report_photo, get_or_create_tags, get_tags_as_string, get_previous_photo, get_next_photo, is_prokom, clear_tags_to_album
 from apps.photoalbum.models import Album, Photo, AlbumTag
-from apps.photoalbum.forms import AlbumForm, AlbumEditForm, UploadPhotosForm, ReportPhotoForm
+from apps.photoalbum.forms import AlbumForm, AlbumEditForm, UploadPhotosForm, ReportPhotoForm, TagUsersForm
 from django_filters import FilterSet, Filter, CharFilter
 from apps.photoalbum.decorators import prokom_required
+from apps.photoalbum import utils
 
 class AlbumsListView(ListView):
 	model = Album
@@ -124,11 +125,15 @@ class PhotoDisplay(DetailView):
 		album = context['photo'].get_album()
 		context['album'] = Album.objects.get(pk=album.pk) # TODO: can't I just have album here?
 		context['form'] = ReportPhotoForm()
+		context['tag_users_form'] = TagUsersForm()
+		context['tagged_users'] = context['photo'].get_tagged_users
 		context['next_photo'] = get_next_photo(photo, album)
 		context['previous_photo'] = get_previous_photo(photo, album)
 		context['is_prokom'] = is_prokom(self.request.user)
 
 		return context
+
+
 
 
 class PhotoReportFormView(SingleObjectMixin, FormView):
@@ -146,6 +151,7 @@ class PhotoReportFormView(SingleObjectMixin, FormView):
 	def form_valid(self, form):
 		photo = self.get_object()
 		user = self.request.user
+		print(user)
 		cleaned_data = form.cleaned_data
 		report_photo(cleaned_data['reason'], photo, user)
 
@@ -160,7 +166,7 @@ class PhotoReportFormView(SingleObjectMixin, FormView):
 	def get_context_data(self, **kwargs):
 		context = super(PhotoReportFormView, self).get_context_data(**kwargs)
 		context['photo'] = Photo.objects.get(pk=self.kwargs['pk'])
-		album = context['photo'].album
+		album = context['photo'].get_album()
 		context['album'] = Album.objects.get(pk=album.pk)
 		context['form'] = ReportPhotoForm()
 
@@ -170,11 +176,19 @@ class PhotoReportFormView(SingleObjectMixin, FormView):
 class PhotoDetailView(View):
 
 	def get(self, request, *args, **kwargs):
+		print("In get)")
+		print(request.user)
 		view = PhotoDisplay.as_view()
 		return view(request, *args, **kwargs)
 
 	def post(self, request, *args, **kwargs):
-		view = PhotoReportFormView.as_view()
+		print("In post")
+		print(request.user)
+		view = None
+		if "tag_users" in request.POST:
+			view = TagUsersToPhotoFormView.as_view()
+		elif "report_photo_form":
+			view = PhotoReportFormView.as_view()
 		return view(request, *args, **kwargs)
 
 
@@ -230,4 +244,41 @@ def add_photos(request, album):
 
 	photos = upload_photos(request.FILES.getlist('upload_photos'), album)
 
+
+class TagUsersToPhotoFormView(SingleObjectMixin, FormView):
+	model = Photo
+	tempalte_name = 'photoalbum/photo.html'
+	form_class = TagUsersForm
+
+	def post(self, request, *args, **kwargs):
+		self.object = self.get_object()
+		return super(TagUsersToPhotoFormView, self).post(request, *args, **kwargs)
+
+	def form_invalid(self, form):
+		return super().form_invalid(form)
+
+	def form_valid(self, form):
+		photo = self.get_object()
+		user = self.request.user
+		print("Nickname: ", self.request.user.username)
+		cleaned_data = form.cleaned_data
+		utils.tag_users(cleaned_data['users'], photo)
+
+		return super().form_valid(form)
+
+
+	def get_success_url(self):
+		photo = self.object
+		album = self.object.get_album()
+
+		return reverse('photo_detail', kwargs={'pk': photo.pk, 'album_pk': album.pk, 'album_slug': album.slug })
+
+	def get_context_data(self, **kwargs):
+		context = super(TagUsersToPhotoFormView, self).get_context_data(**kwargs)
+		context['photo'] = Photo.objects.get(pk=self.kwargs['pk'])
+		album = context['photo'].album
+		context['album'] = Album.objects.get(pk=album.pk)
+		context['form'] = ReportPhotoForm()
+
+		return context
 
