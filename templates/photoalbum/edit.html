@@ -24,13 +24,11 @@
                   <h1> Endre album</h1>
               </li>
               <li class="pull-right active">
-                <button class="btn btn-default">
                 <a href="{% url 'albums_list' %}">
                   <span class="fa fa-edit">
                      Tilbake
                   </span>
                 </a>
-                </button>
               </li>
           	</ul>
   				</div>
@@ -54,6 +52,7 @@
             {% csrf_token %}
             <br>
             <label class="btn btn-success">
+              <span class="glyphicon glyphicon-upload"></span>
               Last opp
               <input type="file" name="upload_photos" multiple class="hidden" id="id_photos" onchange="this.form.submit()">
             </label>
@@ -77,6 +76,7 @@
             {% endfor  %}
             <br>
             <button class="btn btn-success" type="submit" name="delete_photos">
+              <span class="glyphicon glyphicon-trash"></span>
               Slett bilder
             </button>
           </form>
