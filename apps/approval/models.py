@@ -7,6 +7,7 @@ from django.db import models
 from django.urls import reverse
 from django.utils.translation import ugettext as _
 
+from apps.approval import settings as approval_settings
 from apps.authentication.models import FIELD_OF_STUDY_CHOICES
 
 User = settings.AUTH_USER_MODEL
@@ -38,6 +39,8 @@ class MembershipApproval(Approval):
     new_expiry_date = models.DateField(_("ny utløpsdato"), blank=True, null=True)
     field_of_study = models.SmallIntegerField(_("studieretning"), choices=FIELD_OF_STUDY_CHOICES, default=0)
     started_date = models.DateField(_("startet dato"), blank=True, null=True)
+    documentation = models.ImageField(upload_to=approval_settings.DOCUMENTATION_PATH, blank=True,
+                                      null=True, default=None)
 
     def is_membership_application(self):
         if self.new_expiry_date:
@@ -46,6 +49,11 @@ class MembershipApproval(Approval):
 
     def is_fos_application(self):
         if self.field_of_study != 0 and self.started_date:
+            return True
+        return False
+
+    def has_documentation(self):
+        if self.documentation:
             return True
         return False
 

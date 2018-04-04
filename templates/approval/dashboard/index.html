@@ -31,11 +31,14 @@ Søknadsgodkjenning
         <div class="col-md-3">
             <span><div class="visible-xs visible-sm">1. </div>Navn på søker</span>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-2">
             <span><div class="visible-xs visible-sm">2. </div>Utløpsdato for medlemskap</span>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-3">
             <span><div class="visible-xs visible-sm">3. </div>Detaljer for søknad om ny studieretning</span>
+        </div>
+        <div class="col-md-4">
+            <span><div class="visible-xs visible-sm">3. </div>Ekstra dokumentasjon</span>
         </div>
     </div>
     {% for app in membership_applications %}
@@ -43,7 +46,7 @@ Søknadsgodkjenning
         <div class="col-md-3 cell">
             <div class="visible-xs visible-sm">1. </div><a href="{% url 'dashboard_user_detail' app.applicant.id %}" target="_blank">{{ app.applicant.get_full_name }}</a>
         </div>
-        <div class="col-md-3 cell">
+        <div class="col-md-2 cell">
             <div class="visible-xs visible-sm">2. </div>
             {% if app.is_membership_application %}
                 {{ app.new_expiry_date }}
@@ -51,10 +54,17 @@ Søknadsgodkjenning
                 -
             {% endif %}
         </div>
-        <div class="col-md-4 cell">
+        <div class="col-md-3 cell">
             <div class="visible-xs visible-sm">3. </div>
             {% if app.is_fos_application %}
                 {{ app.get_field_of_study_display }} (startet: {{ app.started_date }})
+            {% else %}
+                -
+            {% endif %}
+        </div>
+        <div class="col-md-2 cell">
+            {% if app.has_documentation %}
+                <div class="visible-xs visible-sm">1. </div><a href="/media/{{app.documentation}}" target="_blank">Dokumentasjon</a>
             {% else %}
                 -
             {% endif %}
