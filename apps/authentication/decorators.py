@@ -12,5 +12,6 @@ def need_membership(view_func):
         if request.user.is_member:
             return view_func(request, *args, **kwargs)
         # Raise 403 error if user does not have access
+        print("Is not a member")
         raise Http403
     return check_membership
