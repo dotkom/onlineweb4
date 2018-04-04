@@ -26,11 +26,11 @@ class PhotoAlbumTest(TestCase):
 		self.assertEqual(photo.photo, photo_path)
 		self.assertEqual(photo.album, album)
 
-  def testTagCreation(self):
+  def testAlbumTagCreation(self):
     pass
 
 	def testPhotoUpload(self):
-
+ 
 		pass
 		# Also test that images are uploaded
 

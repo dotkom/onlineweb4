@@ -67,10 +67,10 @@
           {% csrf_token %}
             {% for photo in photos %}
               <label>
-                <input type="checkbox" class="hidden_checkbox" name="photos[]" value="{{ photo.id }}" style="display:none">
+                <input type="checkbox" class="hidden_checkbox" name="photos[]" value="{{ photo.id }}">
                 <div class="tiny">
                   <div class="flex_div">
-                    <img src="{{MEDIA_URL}}{{ photo.photo}}" alt="{{ photo.photo }}" class="photo">
+                    <img src="{{MEDIA_URL}}{{ photo.photo}}" alt="{{ photo.photo }}" class="photo photo_edit">
                   </div>
                 </div>
               </label>
