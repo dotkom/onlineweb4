@@ -20,6 +20,7 @@ from apps.photoalbum.utils import upload_photos, report_photo, get_or_create_tag
 from apps.photoalbum.models import Album, Photo, AlbumTag
 from apps.photoalbum.forms import AlbumForm, AlbumEditForm, UploadPhotosForm, ReportPhotoForm
 from django_filters import FilterSet, Filter, CharFilter
+from apps.photoalbum.decorators import prokom_required
 
 class AlbumsListView(ListView):
 	model = Album
@@ -62,7 +63,7 @@ class AlbumFilter(FilterSet):
 		model = Album
 		fields = ['title']
 
-
+@prokom_required
 def create_album(request):
 	if request.method == 'POST':
 		form = AlbumForm(request.POST, request.FILES)
@@ -83,7 +84,7 @@ def create_album(request):
 	form = AlbumForm()
 	return render(request, 'photoalbum/create.html', {'form': form})
 
-#@login_required
+@prokom_required
 def delete_album(request, pk):
 	album = Album.objects.get(pk=pk)
 
@@ -177,7 +178,7 @@ class PhotoDetailView(View):
 		return view(request, *args, **kwargs)
 
 
-#@login_required
+@prokom_required
 def edit_album(request, pk):
 	album = Album.objects.get(pk=pk)
 	photos = album.get_photos()
@@ -197,7 +198,7 @@ def edit_album(request, pk):
 	photos = album.get_photos()
 	return render(request, 'photoalbum/edit.html', {'edit_form': edit_form, 'upload_photos_form': upload_photos_form, 'album': album, 'photos': photos})
 
-#@login_required
+@prokom_required
 def edit_name_and_tags(request, album):
 	form = AlbumEditForm(request.POST)
 	if form.is_valid():
@@ -210,7 +211,7 @@ def edit_name_and_tags(request, album):
 		clear_tags_to_album(album)
 		tags = get_or_create_tags(cleaned_data['tags'], album)
 
-#@login_required
+@prokom_required
 def delete_photos(request): 
 	photos_to_delete = request.POST.getlist('photos[]')
 	if photos_to_delete != []:
@@ -223,7 +224,7 @@ def delete_photos(request):
 	request_copy = request.POST.copy()
 	request_copy = request_copy.setlist('photos[]', [])
 
-#@login_required
+@prokom_required
 def add_photos(request, album):
 	form = UploadPhotosForm(instance=album)
 
