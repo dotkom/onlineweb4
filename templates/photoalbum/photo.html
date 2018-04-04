@@ -24,7 +24,7 @@
 							<h1>{{ album.title }}</h1>
 						</li>
 						<li class="pull-right active">
-							<a href="{% url 'album_detail' pk=album.pk %}">
+							<a href="{% url 'album_detail' pk=album.pk album_slug=album.slug %}">
 								<span class="fa fa-edit">
 									Tilbake
 								</span>
@@ -36,7 +36,7 @@
       <div class="col-md-12">
         <div class="relative_parent">
           {% if not previous_photo == None %}
-            <a href="{% url 'photo_detail' album_pk=album.pk pk=previous_photo.pk %}" class="navigation_pointer left" id="previous_photo_url">
+            <a href="{% url 'photo_detail' album_pk=album.pk album_slug=album.slug pk=previous_photo.pk %}" class="navigation_pointer left" id="previous_photo_url">
               Forrige bilde
             </a>
           {% endif %}
@@ -45,7 +45,7 @@
           <img src="{{MEDIA_URL}}{{ photo.photo}}" alt="{{ photo.photo }}" class="big_photo center" />
           
           {% if not next_photo == None %}
-            <a href="{% url 'photo_detail' album_pk=album.pk pk=next_photo.pk %}" class="navigation_pointer right" id="next_photo_url">
+            <a href="{% url 'photo_detail' album_pk=album.pk album_slug=album.slug pk=next_photo.pk %}" class="navigation_pointer right" id="next_photo_url">
               Neste bilde
             </a>
           {% endif %}
@@ -56,7 +56,7 @@
         Rapporter bilde
       </button>
 
-      <form action="{% url 'photo_detail' album_pk=album.pk pk=photo.pk %}" method="post" id="report_photo_form" class="hidden">
+      <form action="{% url 'photo_detail' album_pk=album.pk album_slug=album.slug pk=photo.pk %}" method="post" id="report_photo_form" class="hidden">
         {% csrf_token %}
         {{ form|crispy }}
         <button class="btn btn-success" type="submit" name="report_photo">

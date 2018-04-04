@@ -60,7 +60,7 @@
       <div class="row">
   			{%  for photo in photos %}
   				<div class="small">
-    				<a href="{% url 'photo_detail' album_pk=album.pk pk=photo.pk %}">
+    				<a href="{% url 'photo_detail' album_pk=album.pk album_slug=album.slug pk=photo.pk %}">
               <div class="flex_div">
     						<img src="{{MEDIA_URL}}{{ photo.photo}}" alt="{{ photo.photo }}" class="photo center">
               </div>

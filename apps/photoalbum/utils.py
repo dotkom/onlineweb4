@@ -13,11 +13,8 @@ def upload_photos(photos, album):
 	photos_list = []
 
 	for photo in photos:
-		print(photos)
 		p = Photo(photo=photo)
 		p.save()
-
-		print("Photo path: ", p.photo)
 
 		rotate_photo(p.photo)
 
