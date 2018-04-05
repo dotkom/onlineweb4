@@ -16,9 +16,11 @@ from django import forms
 from django.db import models
 
 from apps.gallery.util import UploadImageHandler
-from apps.photoalbum.utils import upload_photos, report_photo, get_or_create_tags, get_tags_as_string, get_previous_photo, get_next_photo, is_prokom, clear_tags_to_album
-from apps.photoalbum.models import Album, Photo, AlbumTag
-from apps.photoalbum.forms import AlbumForm, AlbumEditForm, UploadPhotosForm, ReportPhotoForm, TagUsersForm
+from apps.gallery.models import ResponsiveImage
+
+from apps.photoalbum.utils import report_photo, get_tags_as_string, get_previous_photo, get_next_photo, is_prokom, clear_tags_to_album
+from apps.photoalbum.models import Album
+from apps.photoalbum.forms import ReportPhotoForm
 from django_filters import FilterSet, Filter, CharFilter
 from apps.photoalbum.decorators import prokom_required
 from apps.photoalbum import utils
@@ -29,9 +31,8 @@ class AlbumsListView(ListView):
 
 	def get(self, request, *args, **kwargs):
 		filter = AlbumFilter(request.GET, queryset=Album.objects.all())
-		prokom = is_prokom(request.user)
-
-		return render(request, 'photoalbum/index.html', {'filter': filter, 'is_prokom': prokom})
+		
+		return render(request, 'photoalbum/index.html', {'filter': filter})
 
 class AlbumFilter(FilterSet):
 
@@ -47,8 +48,8 @@ class AlbumFilter(FilterSet):
 							queryset.append(album)
 						else:
 							try:
-								tag = AlbumTag.objects.get(name=word.lower())
-								if tag != None and tag in album.get_tags():
+								tags = album.tags
+								if tag != None and tag in tags():
 									queryset.append(album)
 							except Exception:
 								print("Tag does not exist")
@@ -60,42 +61,10 @@ class AlbumFilter(FilterSet):
 		return queryset
 
 	title = CharFilter(label=_(""), method=filter_keyword)
+	
 	class Meta:
 		model = Album
 		fields = ['title']
-
-@prokom_required
-def create_album(request):
-	if request.method == 'POST':
-		form = AlbumForm(request.POST, request.FILES)
-		if form.is_valid():
-			cleaned_data = form.cleaned_data
-			title = cleaned_data['title']
-			album, created = Album.objects.get_or_create(title=title)
-			album.save()
-
-			photos = upload_photos(request.FILES.getlist('photos'), album)
-			tags = get_or_create_tags(cleaned_data['tags'], album)
-
-			return redirect('albums_list')
-		else:
-			print("Form is not valid")
-			messages.error(request, _("Noen av de påkrevde feltene mangler"))
-
-	form = AlbumForm()
-	return render(request, 'photoalbum/create.html', {'form': form})
-
-@prokom_required
-def delete_album(request, pk):
-	album = Album.objects.get(pk=pk)
-
-	photos = album.get_photos()
-	album.delete()
-
-	for photo in photos:
-		photo.delete()
-
-	return AlbumsListView.as_view()(request)
 
 
 class AlbumDetailView(DetailView, View):
@@ -107,37 +76,32 @@ class AlbumDetailView(DetailView, View):
 	
 		album = Album.objects.get(pk=self.kwargs['pk'])
 		context['album'] = album
-		context['photos'] = album.get_photos()
-		context['tags'] = album.get_tags()
-		context['is_prokom'] = is_prokom(self.request.user)
+		context['photos'] = album.photos
+		context['tags'] = album.tags
 
 		return context
 
 
 class PhotoDisplay(DetailView):
-	model = Photo
+	model = ResponsiveImage
 	template_name = "photoalbum/photo.html"
 
 	def get_context_data(self, **kwargs):
 		context = super(PhotoDisplay, self).get_context_data(**kwargs)
-		photo = Photo.objects.get(pk=self.kwargs['pk'])
-		context['photo'] = Photo.objects.get(pk=self.kwargs['pk'])
-		album = context['photo'].get_album()
-		context['album'] = Album.objects.get(pk=album.pk) # TODO: can't I just have album here?
+		photo = ResponsiveImage.objects.get(pk=self.kwargs['pk'])
+		context['photo'] = photo
+		#album = context['photo'].get_album()
+		#context['album'] = Album.objects.get(pk=album.pk) # TODO: can't I just have album here?
 		context['form'] = ReportPhotoForm()
-		context['tag_users_form'] = TagUsersForm()
 		context['tagged_users'] = context['photo'].get_tagged_users
-		context['next_photo'] = get_next_photo(photo, album)
-		context['previous_photo'] = get_previous_photo(photo, album)
-		context['is_prokom'] = is_prokom(self.request.user)
-
+		#context['next_photo'] = get_next_photo(photo, album)
+		#context['previous_photo'] = get_previous_photo(photo, album)
+		
 		return context
 
 
-
-
 class PhotoReportFormView(SingleObjectMixin, FormView):
-	model = Photo
+	model = ResponsiveImage
 	template_name= 'photoalbum/photo.html'
 	form_class = ReportPhotoForm
 
@@ -151,7 +115,6 @@ class PhotoReportFormView(SingleObjectMixin, FormView):
 	def form_valid(self, form):
 		photo = self.get_object()
 		user = self.request.user
-		print(user)
 		cleaned_data = form.cleaned_data
 		report_photo(cleaned_data['reason'], photo, user)
 
@@ -176,75 +139,16 @@ class PhotoReportFormView(SingleObjectMixin, FormView):
 class PhotoDetailView(View):
 
 	def get(self, request, *args, **kwargs):
-		print("In get)")
-		print(request.user)
 		view = PhotoDisplay.as_view()
 		return view(request, *args, **kwargs)
 
 	def post(self, request, *args, **kwargs):
-		print("In post")
-		print(request.user)
-		view = None
-		if "tag_users" in request.POST:
-			view = TagUsersToPhotoFormView.as_view()
-		elif "report_photo_form":
-			view = PhotoReportFormView.as_view()
+		view = PhotoReportFormView.as_view()
 		return view(request, *args, **kwargs)
 
 
-@prokom_required
-def edit_album(request, pk):
-	album = Album.objects.get(pk=pk)
-	photos = album.get_photos()
-	edit_form = AlbumEditForm(initial={'title': album.title, 'tags': get_tags_as_string(album)})
-	upload_photos_form = UploadPhotosForm(instance=album)
-	
-	if request.method == "POST":
-		if "edit_album" in request.POST:
-			edit_name_and_tags(request, album)
-			edit_form = AlbumEditForm(initial={'title': album.title, 'tags': get_tags_as_string(album)})
-		elif "delete_photos" in request.POST:
-			delete_photos(request)
-		elif request.FILES.getlist('upload_photos'):
-			add_photos(request, album)
-			photos = album.get_photos()
 
-	photos = album.get_photos()
-	return render(request, 'photoalbum/edit.html', {'edit_form': edit_form, 'upload_photos_form': upload_photos_form, 'album': album, 'photos': photos})
-
-@prokom_required
-def edit_name_and_tags(request, album):
-	form = AlbumEditForm(request.POST)
-	if form.is_valid():
-		cleaned_data = form.cleaned_data
-		title = cleaned_data['title']
-		album.title = title
-		album.save()
-
-		# Empty tags to album first, in case some of the tags are removed
-		clear_tags_to_album(album)
-		tags = get_or_create_tags(cleaned_data['tags'], album)
-
-@prokom_required
-def delete_photos(request): 
-	photos_to_delete = request.POST.getlist('photos[]')
-	if photos_to_delete != []:
-		for photo_pk in photos_to_delete:
-			photo = Photo.objects.get(pk=photo_pk)
-			photo.delete()
-	else: 
-		print("Photos to delete is empty")
-
-	request_copy = request.POST.copy()
-	request_copy = request_copy.setlist('photos[]', [])
-
-@prokom_required
-def add_photos(request, album):
-	form = UploadPhotosForm(instance=album)
-
-	photos = upload_photos(request.FILES.getlist('upload_photos'), album)
-
-
+"""
 class TagUsersToPhotoFormView(SingleObjectMixin, FormView):
 	model = Photo
 	tempalte_name = 'photoalbum/photo.html'
@@ -281,4 +185,4 @@ class TagUsersToPhotoFormView(SingleObjectMixin, FormView):
 		context['form'] = ReportPhotoForm()
 
 		return context
-
+"""
