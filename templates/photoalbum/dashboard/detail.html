@@ -19,7 +19,7 @@
 
 {% block breadcrumbs %}
     <li><a href="{% url 'dashboard_photoalbum_index' %}">Fotoalbum</a></li>
-    <li> {{ album.title }}</li>
+    <li> {{ album.title }} </li>
 {% endblock %}
 
 {% block content %}
@@ -37,7 +37,7 @@
     </div>
 </div>
 <br />
-<<div class="row">
+<div class="row">
     <div class="col-md-12">
         <div class="panel panel-default">
             <div class="panel-heading">
@@ -51,12 +51,14 @@
                     </dl>
                     <h3>Tags</h3>
                     {% for tag in album.tags.all %}
-                      {{ tag }}
+                      <a href="/photoalbum/tag/{{tag.slug }}/" class="btn btn-default"> 
+                        {{ tag }}
+                      </a>
                     {% endfor %}
                 </div>
                 <div class="col-sm-12 col-md-4">
                     {% for photo in album.photos.all %}  
-                      <!--<img src="{{ photo.sm }}" alt  width="100%" /> -->
+                      <img src="{{ photo.sm }}" alt  width="100%" />
                     {% endfor %}
                     
                 </div>
