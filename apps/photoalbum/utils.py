@@ -5,26 +5,10 @@ from django.contrib.auth import get_user_model
 from django.conf import settings
 
 from PIL import Image, ExifTags
-from apps.photoalbum.models import Photo, AlbumToPhoto, AlbumTag, TagsToAlbum, UserTagToPhoto
+from apps.photoalbum.models import Album
 from apps.photoalbum.tasks import send_report_on_photo
 
 from apps.authentication.models import OnlineUser
-
-
-def upload_photos(photos, album):
-	photos_list = []
-
-	for photo in photos:
-		p = Photo(photo=photo)
-		p.save()
-
-		rotate_photo(p.photo)
-
-		albumToPhoto = AlbumToPhoto(album=album, photo=p)
-		albumToPhoto.save()
-		photos_list.append(p)
-
-	return photos_list
 
 
 def report_photo(description, photo, user):
@@ -43,17 +27,6 @@ def report_photo(description, photo, user):
 	send_report_on_photo(user, photo, description)
 
 	# Send email to prokom
-
-def get_or_create_tags(names, album):
-	names = names.split(",")
-	tags = []
-	for name in names: 
-		tag, created = AlbumTag.objects.get_or_create(name=name)
-		tag.save()
-		tag_to_ablum, created= TagsToAlbum.objects.get_or_create(tag=tag, album=album)
-		tags.append(tag)
-
-	return tags
 
 def get_tags_as_string(album):
 	tags = album.get_tags()
@@ -103,47 +76,7 @@ def is_prokom(user):
 def clear_tags_to_album(album):
 	TagsToAlbum.objects.filter(album=album).delete()
 
-
-def rotate_photo(photo):
-	BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
-	print("Media root: ", settings.MEDIA_ROOT)
-	print("Media URL: ", settings.MEDIA_URL)
-	print("Photo: ", photo.url)
-	filepath = "/home/doraoline/Coding/onlineweb4/uploaded_media/images/photo_album/IMG_2207_zotXi3h.JPG"
-
-	try:
-			image = Image.open(filepath)
-			print("Opened image: ", image)
-			for orientation in ExifTags.TAGS.keys():
-				if ExifTags.TAGS[orientation] == 'Orientation':
-					break
-			print("Before dict")
-			print(image._getexif())
-
-			exif = dict(image._getexif().items())
-
-			exif = {ExifTags.TAGS[k]: v
-				for k, v in image._getexif().items()
-				if k in ExifTags.TAGS}
-
-			print("Orientation: ", exif)
-			if exif[orientation] == 3:
-				print("Rotate image 180 degrees")
-				image = image.rotate(180, expand=True)
-			elif exif[orientation] == 6:
-				print("Rotate image 270 degrees")
-				image = image.rotate(270, expand=True)
-			elif exif[orientation] == 8:
-				print("Rotate image 90 degrees")
-				image = image.rotate(90, expand=True)
-			image.save(filepath)
-			image.close()
-	except (AttributeError, KeyError, IndexError) as e:
-		print("Exception: ", type(e), e, str(e))
-		pass 
-
-
+"""
 def tag_users(users, photo):
 	print("In tag users")
 	print("Uses: ", users)
@@ -157,3 +90,4 @@ def tag_users(users, photo):
 		user_tag_to_photo, created= UserTagToPhoto.objects.get_or_create(user=user, photo=photo)
 		
 		print("User tagged in photo: ", user_tag_to_photo)
+"""

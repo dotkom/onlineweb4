@@ -1,0 +1,89 @@
+{% extends "dashboard_base.html" %}
+{% load render_bundle from webpack_loader %}
+
+{% block title %}
+Fotoalbumer - Online Dashboard
+{% endblock title %}
+
+{% block page-header %}
+Fotoalbumer
+{% endblock %}
+
+{% block js %}
+    {{ block.super }}
+    {% render_bundle 'dashboardPhotoalbum' 'js' %}
+{% endblock %}
+
+{% block styles %}
+    {{ block.super }}
+    {% render_bundle 'dashboardPhotoalbum' 'css' %}
+{% endblock %}
+
+{% block breadcrumbs %}
+    <li>Fotoalbumer</li>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <p>Her finner du en oversikt over alle fotoalbumer. Benytt søkefeltet for å filtrere artiklene.</p>
+    </div>
+    <div class="col-md-12 col-lg-6">
+        <div class="input-group">
+            <span class="input-group-addon">Søk</span>
+            <input type="text" class="form-control" placeholder="Søkeord..." id="dashboard-photoalbum-search-query">
+            <span class="input-group-btn">
+                <a href="#" id="dashboard-photoalbum-search-button" class="btn btn-success">
+                    <i class="fa fa-search fa-lg"></i>
+                </a>
+            </span>
+        </div>
+    </div>
+    <div class="col-md-12 col-lg-6">
+        <div class="button-group">
+            {% for year in years %}
+                <a href="#" class="btn btn-primary dashboard-photoalbum-year">{{ year }}</a>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        {% for tag, count in tags %}
+        <a href="#" class="label label-warning dashboard-photoalbum-tag">{{ tag }}</a>
+        {% endfor %}
+    </div>
+</div>
+<br />
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">Oversikt</h3>
+            </div>
+            <div class="panel-body">
+                <table class="table table-striped table-condensed tablesorter">
+                    <thead>
+                        <tr>
+                            <th>Tittel</th>
+                            <th>Endre</th>
+                        </tr>
+                    </thead>
+                    <tbody id="dashboard-photoalbum-table">
+                    {% for photoalbum in photoalbum %}
+                        <tr>
+                            <td><a href="{% url 'dashboard_photoalbum_detail' photoalbum.pk %}">{{ photoalbum.title }}</a></td>
+                            <td>
+                                <a href="{% url 'dashboard_photoalbum_edit' photoalbum.pk %}">
+                                    <i class="fa fa-edit fa-lg"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
