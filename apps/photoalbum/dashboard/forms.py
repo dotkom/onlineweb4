@@ -46,34 +46,3 @@ class UploadPhotosForm(forms.ModelForm):
 		model = Album
 		fields = ['photos']
 """
-
-"""
-class AlbumForm(forms.ModelForm):
-	class Meta(object):
-
-		model = Album
-		fields = [
-
-		]
-
-	title = forms.CharField(widget=forms.TextInput(), label=_("Tittel"))
-	tags = forms.CharField(widget=forms.TextInput(), label=_("Tags"))
-	photos = forms.FileField(widget=forms.ClearableFileInput(attrs={'multiple': True}), label=_("Bilder"))    
-
-	widgetlist = [
-		#(MultipleImagesInput, 'photos')
-	]
-
-	print("Before widget stuff")
-	# Multiple widget generator merges results from regular widget_generator into a single widget dict
-	widgets = multiple_widget_generator(widgetlist)
-	print("Before widgets update")
-	widgets.update({
-		'tags': TagWidget(attrs={'placeholder': 'Eksempel: åre, online, kjelleren'}),
-		'photos': MultipleImagesInput(attrs={'multiple': True, 'name': 'Bilder'})
-		})
-
-	#labels = {
-	#			'tags': 'Tags'
-	#}
-	"""
