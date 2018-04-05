@@ -1,0 +1,93 @@
+{% extends "dashboard_base.html" %}
+{% load markdown_deux_tags %}
+{% load addcss %}
+{% load render_bundle from webpack_loader %}
+{% load widget_tweaks %}
+
+{% block title %}
+  {{ album.title }} - Online Dashboard
+{% endblock title %}
+
+{% block page-header %}
+  Fotoalbum
+{% endblock %}
+
+{% block styles %}
+    {{ block.super }}
+    {% render_bundle 'photoalbum' 'css' %}
+{% endblock %}
+
+{% block breadcrumbs %}
+    <li><a href="{% url 'dashboard_photoalbum_index' %}">Fotoalbum</a></li>
+    <li> {{ album.title }}</li>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <a href="{% url 'dashboard_photoalbum_edit' album.pk %}" class="btn btn-primary">
+            <i class="fa fa-edit fa-lg"></i> Endre
+        </a>
+        <a href="{{ album.get_absolute_url }}" class="btn btn-info">
+            <i class="fa fa-play fa-lg"></i> Vis
+        </a>
+        <a href="#modal-delete" data-toggle="modal" class="btn btn-danger pull-right">
+            <i class="fa fa-times fa-lg"></i> Slett
+        </a>
+    </div>
+</div>
+<br />
+<<div class="row">
+    <div class="col-md-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">Oversikt</h3>
+            </div>
+            <div class="panel-body">
+                <div class="col-sm-12 col-md-8">
+                    <dl class="dl-horizontal">
+                        <dt></dt>
+                        <dd><h2>{{ album.title|striptags }}</h2></dd>
+                    </dl>
+                    <h3>Tags</h3>
+                    {% for tag in album.tags.all %}
+                      {{ tag }}
+                    {% endfor %}
+                </div>
+                <div class="col-sm-12 col-md-4">
+                    {% for photo in album.photos.all %}  
+                      <!--<img src="{{ photo.sm }}" alt  width="100%" /> -->
+                    {% endfor %}
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="modal-delete" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h3>Bekreft sletting av fotoalbum</h3>
+            </div>
+            <div class="modal-body">
+                <p>Er du sikker på at du vil slette fotoalbumet?</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn pull-left" data-dismiss="modal" aria-hidden="true">Lukk</button>
+                <form action="" method="POST">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="delete" />
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fa fa-times fa-lg"></i> Slett
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+
+

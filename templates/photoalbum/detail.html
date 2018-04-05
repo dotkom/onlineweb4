@@ -22,20 +22,6 @@
     					<li class="pull-left">
     						<h1>{{ album.title}}</h1>
     					</li>
-              {% if is_prokom %}
-      					<li class="pull-right active">
-      						<a href="{% url 'delete_album' pk=album.pk %}">
-      							<span class="glyphicon glyphicon-trash"></span>
-                    Slett
-      						</a>
-      					</li>
-      					<li class="pull-right active">
-      						<a href="{% url 'edit_album' pk=album.pk %}">
-      							<span class="glyphicon glyphicon-edit"></span>
-                    Rediger
-      						</a>
-      					</li>					
-              {% endif %}
               <li class="pull-right active">
                 <a href="{% url 'albums_list' %}">
                   <span class="fa fa-edit">
