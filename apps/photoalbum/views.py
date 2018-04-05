@@ -95,13 +95,14 @@ class PhotoDisplay(DetailView):
 	def get_context_data(self, **kwargs):
 		context = super(PhotoDisplay, self).get_context_data(**kwargs)
 		photo = ResponsiveImage.objects.get(pk=self.kwargs['pk'])
+		album = Album.objects.get(pk=self.kwargs['album_pk'])
+		
 		context['photo'] = photo
-		#album = context['photo'].get_album()
-		#context['album'] = Album.objects.get(pk=album.pk) # TODO: can't I just have album here?
+		context['album'] = album
 		context['form'] = ReportPhotoForm()
-		context['tagged_users'] = context['photo'].get_tagged_users
-		#context['next_photo'] = get_next_photo(photo, album)
-		#context['previous_photo'] = get_previous_photo(photo, album)
+		context['tagged_users'] = context['photo'].tags
+		context['next_photo'] = get_next_photo(photo, album)
+		context['previous_photo'] = get_previous_photo(photo, album)
 		
 		return context
 

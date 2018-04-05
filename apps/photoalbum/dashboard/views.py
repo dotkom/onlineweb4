@@ -115,5 +115,42 @@ class PhotoAlbumEdit(DashboardPermissionMixin, UpdateView):
 	permission_required = 'superuser'
 	template_name = 'photoalbum/dashboard/create.html'
 
+	def post(self, request, *args, **kwargs):
+		print('pk: ', self.kwargs.get('pk'))
+		print("In post")
+		album = get_object_or_404(Album, pk=self.kwargs.get('pk'))
+		form = AlbumForm(request.POST, instance=album)
+
+		print("Action: ", self.request.POST['action'])
+		if 'action' in self.request.POST and self.request.POST['action'] == 'delete':
+			instance = get_object_or_404(Album, pk=album.pk)
+			album_title = instance.title
+			album_pk = instance.pk
+			instance.delete()
+			messages.success(request, '%s ble slettet.' % album_title)
+			getLogger(__name__).info('%s deleted album %d (%s)' % (self.request.user, album_pk, album_title))
+
+			return redirect('dashboard_photoalbum_index')
+
+	def form_valid(self, form):
+		instance = form.save(commit=False)
+		#instance.changed_by = self.request.user
+		instance.save()
+		form.save_m2m()
+
+		messages.success(self.request, 'Albumet ble endret.')
+		getLogger(__name__).info('%s edited photoalbum %d (%s)' % (request.user, instance.id, instance.title))
+
+
 	def get_success_url(self):
 		return reverse('dashboard_photoalbum_detail', kwargs={'pk': self.kwargs.get('album_pk')})
+
+	def get_context_data(self, **kwargs):
+		context = super(PhotoAlbumEdit, self).get_context_data(**kwargs) 
+		print('pk: ', self.kwargs.get('pk'))
+		album = get_object_or_404(Album, pk=self.kwargs.get('pk'))
+		context['album'] = album
+		context['form'] = AlbumForm
+		context['edit'] = True
+
+		return context
