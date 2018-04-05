@@ -5,5 +5,10 @@ from django.conf.urls import url
 from apps.photoalbum.dashboard import views
 
 urlpatterns = [
-	url('$,' views.AlbumList.as_view(), name='album_list')
+	url(r'^$', views.PhotoAlbumIndex.as_view(), name='dashboard_photoalbum_index'),
+  url(r'^new/$', views.PhotoAlbumCreate.as_view(), name='dashboard_photoalbum_create'),
+  url(r'^(?P<album_pk>\d+)/$', views.PhotoAlbumDetail.as_view(), name='dashboard_photoalbum_detail'),
+  #url(r'^(?P<album_pk>\d+)/edit/$', views.PhotoAlbumEdit.as_view(), name='dashboard_photoalbum_edit')
+  
+
 ]
