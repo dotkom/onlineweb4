@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-from django.conf import settings
 from django.db import models
 from django.db.models import permalink
 from django.template.defaultfilters import slugify 
@@ -8,10 +7,9 @@ from django.utils.translation import ugettext as _
 from unidecode import unidecode
 from taggit.managers import TaggableManager
 
-from apps.authentication.models import OnlineUser
 from apps.gallery.models import ResponsiveImage
 
-IMAGE_FOLDER = "images/photo_album"
+#IMAGE_FOLDER = "images/photo_album"
 
 class Album(models.Model):
 	title = models.CharField(_("Tittel"), blank=False, null=False, max_length=50)
@@ -25,9 +23,9 @@ class Album(models.Model):
 	def slug(self):
 		return slugify(unidecode(self.title))
 
-	@permalink
-	def get_absolute_url(self):
-			return 'album_detail', None, {'album_id': self.id, 'album_slug': self.slug}
+	#@permalink
+	#def get_absolute_url(self):
+			#return 'album_detail', None, {'album_id': self.id, 'album_slug': self.slug}
 
 	"""
 	def get_photos(self):

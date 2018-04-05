@@ -11,12 +11,12 @@ Fotoalbumer
 
 {% block js %}
     {{ block.super }}
-    {% render_bundle 'dashboardPhotoalbum' 'js' %}
+    {% render_bundle 'photoalbum' 'js' %}
 {% endblock %}
 
 {% block styles %}
     {{ block.super }}
-    {% render_bundle 'dashboardPhotoalbum' 'css' %}
+    {% render_bundle 'photoalbum' 'css' %}
 {% endblock %}
 
 {% block breadcrumbs %}
@@ -70,11 +70,11 @@ Fotoalbumer
                         </tr>
                     </thead>
                     <tbody id="dashboard-photoalbum-table">
-                    {% for photoalbum in photoalbum %}
+                    {% for album in albums %}
                         <tr>
-                            <td><a href="{% url 'dashboard_photoalbum_detail' photoalbum.pk %}">{{ photoalbum.title }}</a></td>
+                            <td><a href="{% url 'dashboard_photoalbum_detail' album.pk %}">{{ album.title }}</a></td>
                             <td>
-                                <a href="{% url 'dashboard_photoalbum_edit' photoalbum.pk %}">
+                                <a href="{% url 'dashboard_photoalbum_edit' album.pk %}">
                                     <i class="fa fa-edit fa-lg"></i>
                                 </a>
                             </td>
