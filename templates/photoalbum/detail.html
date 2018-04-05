@@ -22,27 +22,20 @@
     					<li class="pull-left">
     						<h1>{{ album.title}}</h1>
     					</li>
-              <li class="pull-right active">
-                <a href="{% url 'albums_list' %}">
-                  <span class="fa fa-edit">
-                     Tilbake
-                  </span>
-                </a>
-              </li>
   					</ul>
   				</div>
   			</div>
       </div>
 			<div class="row">
-				{% for tag in tags %}
+				{% for tag in album.tags.all %}
 					<span class="tag"">
-						{{ tag.name }}
+						<a href="" class="btn btn-default">{{ tag }}</a>
 					</span>
 				{% endfor %}
 			</div>
 
       <div class="row center photos_div">
-  			{%  for photo in photos %}
+  			{%  for photo in album.photos.all %}
   				<div class="small">
     				<a href="{% url 'photo_detail' album_pk=album.pk album_slug=album.slug pk=photo.pk %}">
               <div class="flex_div">

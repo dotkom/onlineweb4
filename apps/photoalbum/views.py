@@ -35,7 +35,7 @@ class AlbumsListView(ListView):
 		context = super(AlbumsListView, self).get_context_data(**kwargs)
 
 		context['albums'] = Album.objects.all()
-		print(context['albums'][0])
+		
 		return context
 
 """
@@ -75,15 +75,13 @@ class AlbumFilter(FilterSet):
 class AlbumDetailView(DetailView, View):
 	print("In album detail view")
 	model = Album
-	template_name = "photoalbum/album.html"
+	template_name = "photoalbum/detail.html"
 
 	def get_context_data(self, **kwargs):
 		context = super(AlbumDetailView, self).get_context_data(**kwargs)
 	
 		album = Album.objects.get(pk=self.kwargs['pk'])
 		context['album'] = album
-		context['photos'] = album.photos
-		context['tags'] = album.tags
 
 		return context
 
