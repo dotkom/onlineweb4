@@ -176,6 +176,7 @@ if 'apps.profiles' in settings.INSTALLED_APPS:
 if 'apps.photoalbum' in settings.INSTALLED_APPS:
     urlpatterns += [
         url(r'^photoalbum/',    include('apps.photoalbum.urls')),
+        url(r'^dashboard/photoalbum/',  include('apps.photoalbum.dashboard.urls')),
     ]
 
 if 'apps.resourcecenter' in settings.INSTALLED_APPS and 'apps.mailinglists' in settings.INSTALLED_APPS:
