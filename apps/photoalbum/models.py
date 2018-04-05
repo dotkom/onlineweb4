@@ -16,7 +16,7 @@ IMAGE_FOLDER = "images/photo_album"
 class Album(models.Model):
 	title = models.CharField(_("Tittel"), blank=False, null=False, max_length=50)
 	tags = TaggableManager(blank=True)
-	photos = models.ManyToManyField(ResponsiveImage)
+	photos = models.ManyToManyField(ResponsiveImage, blank=True)
 
 	def __str__(self):
 		return self.title
@@ -54,6 +54,7 @@ class Album(models.Model):
 		return tags
 	"""
 
+"""
 class Photo(models.Model):
 	# Path should depend on album?
 	photo = models.ImageField(upload_to=IMAGE_FOLDER)
@@ -70,30 +71,4 @@ class Photo(models.Model):
 			users.append(user)
 
 		return users
-	
-#@receiver(post_save, sender=Photo, dispatch_uid="update_photo")
-#def update_photo(sender, instance, **kwargs):
-##  if instance.image:
-#    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-#    fullpath = BASE_DIR + instance.image.url
-#    rotate_photo(fullpath)
-
-class AlbumTag(models.Model):
-	name = models.CharField(_("Navn"), blank=False, null=False, max_length=20)
-
-	def __str__(self):
-		return self.name
-
-
-class AlbumToPhoto(models.Model):
-	photo = models.ForeignKey(Photo)
-	album = models.ForeignKey(Album)
-
-
-class UserTagToPhoto(models.Model):
-	photo = models.ForeignKey(Photo)
-	user = models.ForeignKey(OnlineUser)
-
-class TagsToAlbum(models.Model):
-	album = models.ForeignKey(Album)
-	tag = models.ForeignKey(AlbumTag)
+"""

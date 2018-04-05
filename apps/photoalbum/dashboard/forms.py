@@ -4,7 +4,7 @@ from django.utils.translation import ugettext as _
 
 from taggit.forms import TagWidget
 from apps.photoalbum.widgets import MultipleImagesInput
-from apps.photoalbum.models import Album, Photo
+from apps.photoalbum.models import Album
 
 from apps.dashboard.widgets import multiple_widget_generator
 
@@ -38,28 +38,14 @@ class AlbumForm(forms.ModelForm):
 
 
 
-class AlbumNameForm(forms.ModelForm):
-	class Meta(object):
-		model = Album
-		fields = ['title']
-
-
-class AlbumEditForm(forms.Form):
-	print("In AlbumEditForm")
-	title = forms.CharField(widget=forms.TextInput(), label=_("Tittel"))
-	tags = forms.CharField(widget=forms.TextInput(), label=_("Tags"))
-
-
+"""
 class UploadPhotosForm(forms.ModelForm):
 	photos = forms.FileField(widget=forms.ClearableFileInput(attrs={'multiple': True}), label=_("Bilder"), required=False)
 
 	class Meta(object):
 		model = Album
 		fields = ['photos']
-
-
-class TagUsersForm(forms.Form):
-	users = forms.CharField(widget=forms.TextInput(), label=_("Brukere"))
+"""
 
 """
 class AlbumForm(forms.ModelForm):
