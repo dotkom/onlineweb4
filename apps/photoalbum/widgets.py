@@ -11,7 +11,7 @@ from apps.gallery.widgets import SingleImageInput
 
 WIDGET_STRING = """<br /><input{} />\r\n
 <div id="multiple-image-field-thumbnail">{}</div>
-<a href="#" class="btn btn-primary" id="add-responsive-images">\r\n
+<a href="#" class="btn btn-primary" id="add-responsive-image">\r\n
 <i class="fa fa-plus fa-lg"></i> Velg</a>\r\n
 <a href="{}" class="btn btn-primary" target="_blank">\r\n
 <i class="fa fa-image fa-lg"></i> Last opp</a>\r\n
@@ -56,6 +56,7 @@ class MultipleImagesInput(HiddenInput):
 
       attrs = self.build_attrs(self.attrs, attrs)
       final_attrs = self.build_attrs(attrs, {'type': self.input_type, 'name': name})
+      """
       if value != '':
           # Only add the value attribute if the value is non-empty
           final_attrs['value'] = force_text(self._format_value(value))
@@ -66,7 +67,7 @@ class MultipleImagesInput(HiddenInput):
               str(img.name),
               encoding='utf-8'
           )
-
+      """
       upload_url = reverse_lazy('gallery_dashboard:upload')
 
       return format_html(WIDGET_STRING, flatatt(final_attrs), img_thumb, upload_url)  
