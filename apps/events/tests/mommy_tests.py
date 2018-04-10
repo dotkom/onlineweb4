@@ -4,8 +4,8 @@ from django.test import TestCase
 from django.utils import timezone
 from django_dynamic_fixture import G
 
-from apps.authentication.models import OnlineUser as User
 from apps.authentication.models import AllowedUsername
+from apps.authentication.models import OnlineUser as User
 from apps.events.models import AttendanceEvent, Attendee, Event
 from apps.events.mommy import SetEventMarks
 from apps.marks.models import MarkUser

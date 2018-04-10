@@ -4,8 +4,8 @@ from django.core.urlresolvers import reverse
 from django.test import TestCase, override_settings
 from django_dynamic_fixture import G
 
-from apps.authentication.models import OnlineUser as User
 from apps.authentication.models import Email
+from apps.authentication.models import OnlineUser as User
 from apps.posters.models import Poster
 
 

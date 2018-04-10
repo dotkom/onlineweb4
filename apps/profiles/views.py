@@ -24,8 +24,9 @@ from watson import search as watson
 from apps.approval.forms import FieldOfStudyApplicationForm
 from apps.approval.models import MembershipApproval
 from apps.authentication.forms import NewEmailForm
+from apps.authentication.models import Email
 from apps.authentication.models import OnlineUser as User
-from apps.authentication.models import Email, Position, RegisterToken
+from apps.authentication.models import Position, RegisterToken
 from apps.authentication.utils import create_online_mail_alias
 from apps.dashboard.tools import has_access
 from apps.gsuite.accounts.main import create_g_suite_account, reset_password_g_suite_account

@@ -19,8 +19,9 @@ from rest_framework import mixins, viewsets
 from rest_framework.permissions import AllowAny
 
 from apps.authentication.forms import ChangePasswordForm, LoginForm, RecoveryForm, RegisterForm
+from apps.authentication.models import Email
 from apps.authentication.models import OnlineUser as User
-from apps.authentication.models import Email, RegisterToken
+from apps.authentication.models import RegisterToken
 from apps.authentication.serializers import UserSerializer
 
 

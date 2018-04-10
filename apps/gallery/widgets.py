@@ -9,7 +9,6 @@ from django.forms.utils import flatatt, force_text, format_html
 
 from apps.gallery.models import ResponsiveImage
 
-
 WIDGET_STRING = """<br /><input{} />\r\n
 <div id="single-image-field-thumbnail">{}</div>
 <a href="#" class="btn btn-primary" id="add-responsive-image">\r\n

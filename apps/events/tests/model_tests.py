@@ -7,8 +7,8 @@ from django.test import TestCase
 from django.utils import timezone
 from django_dynamic_fixture import G
 
-from apps.authentication.models import OnlineUser as User
 from apps.authentication.models import AllowedUsername
+from apps.authentication.models import OnlineUser as User
 from apps.companyprofile.models import Company
 from apps.events.models import (AttendanceEvent, Attendee, CompanyEvent, Event, FieldOfStudyRule,
                                 GradeRule, GroupRestriction, Reservation, Reservee, RuleBundle,
