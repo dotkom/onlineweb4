@@ -14,8 +14,8 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from apps.authentication.models import OnlineUser as User
 from apps.authentication.models import Email
+from apps.authentication.models import OnlineUser as User
 from apps.inventory.models import Item
 from apps.payment.models import PaymentTransaction
 from apps.shop.forms import SetRFIDForm

@@ -3,6 +3,7 @@ import sys
 
 from decouple import config
 
+from apps.sso.settings import OAUTH2_SCOPES
 
 # Directory that contains this file.
 PROJECT_SETTINGS_DIRECTORY = os.path.dirname(globals()['__file__'])
@@ -60,7 +61,6 @@ SLACK_INVITER = {
 }
 
 # SSO / OAuth2 settings
-from apps.sso.settings import OAUTH2_SCOPES
 OAUTH2_PROVIDER = {
     'SCOPES': OAUTH2_SCOPES,
     'ACCESS_TOKEN_EXPIRE_SECONDS': 3600,

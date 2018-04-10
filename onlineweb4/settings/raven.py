@@ -1,6 +1,6 @@
 import os
-import raven
 
+import raven
 from decouple import config
 
 from .base import PROJECT_ROOT_DIRECTORY

@@ -15,8 +15,8 @@ from guardian.decorators import permission_required
 from watson.views import SearchView
 
 from apps.authentication.forms import UserUpdateForm
-from apps.authentication.models import OnlineUser as User
 from apps.authentication.models import AllowedUsername
+from apps.authentication.models import OnlineUser as User
 from apps.dashboard.tools import DashboardPermissionMixin, get_base_context, has_access
 
 
