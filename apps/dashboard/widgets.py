@@ -5,7 +5,6 @@
 from django.forms.utils import force_text, format_html
 from django.forms.widgets import TextInput
 
-
 DATEPICKER_WIDGET_STRING = """
 <div class="input-group dp">\r\n
 <span class="input-group-btn datepickerbutton">\r\n

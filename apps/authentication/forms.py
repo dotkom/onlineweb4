@@ -6,8 +6,8 @@ from django import forms
 from django.contrib import auth
 from django.utils.translation import ugettext as _
 
-from apps.authentication.models import OnlineUser as User
 from apps.authentication.models import Email
+from apps.authentication.models import OnlineUser as User
 
 
 class LoginForm(forms.Form):

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import json
+import logging
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
@@ -419,6 +420,8 @@ class AttendViewSet(views.APIView):
 
     @staticmethod
     def _validate_attend_params(rfid, username):
+        logger = logging.getLogger(__name__)
+
         if not (username or rfid):
             return {
                 'message': 'Mangler både RFID og brukernavn. Vennligst prøv igjen.',
@@ -431,6 +434,10 @@ class AttendViewSet(views.APIView):
                 user = User.objects.get(username=username)
                 user.rfid = rfid
                 user.save()
+                logger.debug('Storing new RFID to user "%s"' % user, extra={
+                    'user': user.pk,
+                    'rfid': rfid,
+                })
             except User.DoesNotExist:
                 return {
                     'message': 'Brukernavnet finnes ikke. Husk at det er et online.ntnu.no brukernavn! '
@@ -441,6 +448,7 @@ class AttendViewSet(views.APIView):
         return {}
 
     def post(self, request, format=None):
+        logger = logging.getLogger(__name__)
 
         rfid = request.data.get('rfid')
         event = request.data.get('event')
@@ -462,6 +470,10 @@ class AttendViewSet(views.APIView):
 
             # If attendee is already marked as attended
             if attendee.attended:
+                logger.debug('Attendee already marked as attended.', extra={
+                    'user': attendee.user.id,
+                    'event': event,
+                })
                 return Response({'message': (attendee.user.get_full_name() +
                                              ' har allerede registrert oppmøte.'), 'attend_status': 20},
                                 status=status.HTTP_400_BAD_REQUEST)
@@ -491,6 +503,16 @@ class AttendViewSet(views.APIView):
                                             'Skriv inn et online.ntnu.no brukernavn for å '
                                             'knytte kortet til brukeren og registrere oppmøte.',
                                  'attend_status': 40}, status=status.HTTP_400_BAD_REQUEST)
+
+        except Attendee.MultipleObjectsReturned as exception:
+            logger.error('MultipleObjectsReturned for event #{}, username "{}" with RFID {}.'.format(
+                event, username, rfid
+            ), extra={
+                'event': event,
+                'rfid': rfid,
+                'username': username,
+            })
+            raise exception
 
         # All is clear, attendee is attended
         return Response({'message': (attendee.user.get_full_name() + ' er registrert som deltaker. Velkommen!'),

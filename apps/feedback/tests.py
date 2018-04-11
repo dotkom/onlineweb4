@@ -8,8 +8,8 @@ from django.test.client import Client
 from django.utils import timezone as timezone
 from django.utils.translation import ugettext_lazy as _
 
-from apps.authentication.models import OnlineUser as User
 from apps.authentication.models import Email
+from apps.authentication.models import OnlineUser as User
 from apps.events.models import AttendanceEvent, Attendee, Event
 from apps.feedback.models import Feedback, FeedbackRelation, RatingQuestion, TextQuestion
 from apps.feedback.mommy import FeedbackMail

@@ -1,6 +1,5 @@
 from decouple import config
 
-
 # Online stripe keys.
 # For development replace with https://online.ntnu.no/wiki/komiteer/dotkom/aktuelt/onlineweb4/keys/
 # For production login to Stripe
