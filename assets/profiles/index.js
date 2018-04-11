@@ -1,5 +1,5 @@
 import { loadCityFromZipCode } from 'common/utils/';
-import { DependentDocumentation } from './dependent_fields';
+import DependentDocumentation from './dependent_fields';
 import enableUserSearch from './userSearch';
 import './profiles';
 import './less/profiles.less';
