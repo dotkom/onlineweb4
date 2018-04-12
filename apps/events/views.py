@@ -516,16 +516,6 @@ class AttendViewSet(views.APIView):
                                             'knytte kortet til brukeren og registrere oppmøte.',
                                  'attend_status': 40}, status=status.HTTP_400_BAD_REQUEST)
 
-        except Attendee.MultipleObjectsReturned as exception:
-            logger.error('MultipleObjectsReturned for event #{}, username "{}" with RFID {}.'.format(
-                event, username, rfid
-            ), extra={
-                'event': event,
-                'rfid': rfid,
-                'username': username,
-            })
-            raise exception
-
         # All is clear, attendee is attended
         return Response({'message': (attendee.user.get_full_name() + ' er registrert som deltaker. Velkommen!'),
                          'attend_status': 10, 'attendee': attendee.id}, status=status.HTTP_200_OK)
