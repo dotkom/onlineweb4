@@ -4,6 +4,7 @@ from datetime import timedelta
 
 from django.conf import settings
 from django.contrib.auth.models import Group
+from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
 from django.test import TestCase, override_settings
 from django.utils import timezone
@@ -166,14 +167,16 @@ class AuthenticationURLTestCase(TestCase):
 
 class RfidValidatorTestCase(TestCase):
     def test_valid_8_char_rfid_passes_test(self):
-        self.assertTrue(validate_rfid('12345678'))
+        # Validation failure raises exception, we test this by expecting it not to raise an exception.
+        validate_rfid('12345678')
 
     def test_valid_10_char_rfid_passes_test(self):
-        self.assertTrue(validate_rfid('1234567890'))
+        # Validation failure raises exception, we test this by expecting it not to raise an exception.
+        validate_rfid('1234567890')
 
     def test_invalid_rfid_fails_test(self):
-        self.assertFalse(validate_rfid('1234567'))
-        self.assertFalse(validate_rfid('abcdefgh'))
-        self.assertFalse(validate_rfid('abcdefghij'))
-        self.assertFalse(validate_rfid('        '))
-        self.assertFalse(validate_rfid('          '))
+        self.assertRaises(ValidationError, lambda: validate_rfid('1234567'))
+        self.assertRaises(ValidationError, lambda: validate_rfid('abcdefgh'))
+        self.assertRaises(ValidationError, lambda: validate_rfid('abcdefghij'))
+        self.assertRaises(ValidationError, lambda: validate_rfid('        '))
+        self.assertRaises(ValidationError, lambda: validate_rfid('          '))
