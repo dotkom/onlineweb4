@@ -11,6 +11,7 @@ from django_dynamic_fixture import G
 from rest_framework import status
 
 from apps.authentication.models import Email, OnlineUser, RegisterToken
+from apps.authentication.validators import validate_rfid
 
 
 class AuthenticationTest(TestCase):
@@ -161,3 +162,18 @@ class AuthenticationURLTestCase(TestCase):
         response = self.client.get(url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+
+class RfidValidatorTestCase(TestCase):
+    def test_valid_8_char_rfid_passes_test(self):
+        self.assertTrue(validate_rfid('12345678'))
+
+    def test_valid_10_char_rfid_passes_test(self):
+        self.assertTrue(validate_rfid('1234567890'))
+
+    def test_invalid_rfid_fails_test(self):
+        self.assertFalse(validate_rfid('1234567'))
+        self.assertFalse(validate_rfid('abcdefgh'))
+        self.assertFalse(validate_rfid('abcdefghij'))
+        self.assertFalse(validate_rfid('        '))
+        self.assertFalse(validate_rfid('          '))

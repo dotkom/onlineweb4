@@ -191,11 +191,6 @@ class AttendAPITestCase(OAuth2TestCase):
         self.event.attendance_event.max_capacity = 2
         self.event.attendance_event.save()
 
-        self.attendee1.user.rfid = ''
-        self.attendee2.user.rfid = ''
-        self.attendee1.user.save()
-        self.attendee2.user.save()
-
         response = self.client.post(self.url, {
             'event': self.event.id,
             'rfid': '',
