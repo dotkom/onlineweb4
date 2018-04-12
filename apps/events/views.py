@@ -6,8 +6,10 @@ import logging
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.contenttypes.models import ContentType
+from django.core.exceptions import ValidationError
 from django.core.signing import Signer
 from django.core.urlresolvers import reverse
+from django.db import IntegrityError
 from django.db.models import Q
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
@@ -443,6 +445,16 @@ class AttendViewSet(views.APIView):
                     'message': 'Brukernavnet finnes ikke. Husk at det er et online.ntnu.no brukernavn! '
                                '(Prøv igjen, eller scan nytt kort for å avbryte.)',
                     'attend_status': 50,
+                }
+            except (IntegrityError, ValidationError):
+                logger.error('Could not store RFID information for username "" with RFID "".'.format(
+                    username, rfid,
+                ))
+                return {
+                    'message': 'Det oppstod en feil da vi prøvde å lagre informasjonen. Vennligst prøv igjen. '
+                               'Dersom problemet vedvarer, ta kontakt med dotkom. '
+                               'Personen kan registreres med brukernavn i steden for RFID.',
+                    'attend_status': 51,
                 }
 
         return {}

@@ -16,6 +16,10 @@ def generate_attendee(event, username, rfid):
     return attend_user_to_event(event, user)
 
 
+def generate_valid_rfid():
+    return '12345678'
+
+
 class EventsAPIURLTestCase(APITestCase):
     def test_events_list_empty(self):
         url = reverse('events-list')
@@ -215,3 +219,21 @@ class AttendAPITestCase(OAuth2TestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertFalse(self.attendees[0].attended)
         self.assertEqual(response.json()['attend_status'], 41)
+
+    def test_save_rfid_gives_useful_error_message_if_rfid_already_exists(self):
+        rfid = generate_valid_rfid()
+        self.attendee1.user.rfid = None
+        self.attendee1.user.save()
+        self.attendee2.user.rfid = rfid
+        self.attendee2.user.save()
+
+        response = self.client.post(self.url, json.dumps({
+            'event': self.event.id,
+            'username': self.attendee1.user.username,
+            'rfid': rfid,
+        }), content_type='application/json', **self.headers)
+
+        self.refresh_attendees()
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertFalse(self.attendees[0].attended)
+        self.assertEqual(response.json()['attend_status'], 51)
