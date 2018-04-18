@@ -23,7 +23,7 @@ from apps.gallery.models import ResponsiveImage
 from apps.photoalbum.utils import report_photo, get_tags_as_string, get_previous_photo, get_next_photo, is_prokom, clear_tags_to_album
 from apps.photoalbum.models import Album
 from apps.photoalbum.forms import ReportPhotoForm
-#from django_filters import FilterSet, Filter, CharFilter
+from django_filters import FilterSet, Filter, CharFilter
 from apps.photoalbum.decorators import prokom_required
 from apps.photoalbum import utils
 
@@ -33,12 +33,14 @@ class AlbumsListView(ListView):
 
 	def get_context_data(self, **kwargs):
 		context = super(AlbumsListView, self).get_context_data(**kwargs)
+		filter = AlbumFilter(self.request.GET, queryset=Album.objects.all())
 
 		context['albums'] = Album.objects.all()
-		
+		context['filter'] = filter
+
 		return context
 
-"""
+
 class AlbumFilter(FilterSet):
 
 	def filter_keyword(self, queryset, value):
@@ -70,7 +72,6 @@ class AlbumFilter(FilterSet):
 	class Meta:
 		model = Album
 		fields = ['title']
-"""
 
 class AlbumDetailView(DetailView, View):
 	print("In album detail view")
