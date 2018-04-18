@@ -9,11 +9,11 @@ import taggit.managers
 class Migration(migrations.Migration):
 
     initial = True
-
     dependencies = [
         ('gallery', '0012_auto_20160309_2133'),
         ('taggit', '0002_auto_20150616_2121'),
     ]
+
 
     operations = [
         migrations.CreateModel(

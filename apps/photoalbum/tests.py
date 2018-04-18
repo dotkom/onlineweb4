@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
-
+"""
 from django.test import TestCase
 from django_dynamic_fixture import G
 
-from apps.photoalbum.models import Album, Photo
+from apps.gallery.models import ResponsiveImage
+from apps.photoalbum.models import Album
 
 class PhotoAlbumTest(TestCase):
 
@@ -21,7 +22,7 @@ class PhotoAlbumTest(TestCase):
 
 	def testPhotoCreation(self):
 		album = Album.objects.all()[0]
-		photo = Photo.objects.create(photo=" ", album=album)
+		photo = ResponsiveImage.objects.create(photo=" ", album=album)
 
 		self.assertEqual(photo.photo, photo_path)
 		self.assertEqual(photo.album, album)
@@ -55,3 +56,5 @@ class AlbumEditFormTest(TestCase):
   def testChangeTags(self):
 
 
+
+"""

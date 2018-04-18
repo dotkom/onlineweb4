@@ -1,31 +1,28 @@
 # -*- coding: utf-8 -*-
 
+from django import forms
 from django.urls import reverse
 from django.utils.translation import ugettext as _
 from django.db.models import Q
 from django.utils import timezone
-from rest_framework import mixins, viewsets
-from watson import search as watson
 
 from django.views.generic import View
 from django.views.generic.detail import DetailView, SingleObjectMixin
 from django.views.generic.edit import FormView
 from django.views.generic.list import ListView
 
-
-
-from django import forms
-
+from django_filters import FilterSet, Filter, CharFilter
+from watson import search as watson
+from rest_framework import mixins, viewsets
 
 from apps.gallery.util import UploadImageHandler
 from apps.gallery.models import ResponsiveImage
 
-from apps.photoalbum.utils import report_photo, get_tags_as_string, get_previous_photo, get_next_photo, is_prokom, clear_tags_to_album
+from apps.photoalbum import utils
+from apps.photoalbum.utils import report_photo, get_previous_photo, get_next_photo
 from apps.photoalbum.models import Album
 from apps.photoalbum.forms import ReportPhotoForm
-from django_filters import FilterSet, Filter, CharFilter
 from apps.photoalbum.decorators import prokom_required
-from apps.photoalbum import utils
 
 class AlbumsListView(ListView):
 	model = Album
@@ -39,7 +36,6 @@ class AlbumsListView(ListView):
 		context['filter'] = filter
 
 		return context
-
 
 class AlbumFilter(FilterSet):
 
@@ -73,8 +69,9 @@ class AlbumFilter(FilterSet):
 		model = Album
 		fields = ['title']
 
+
 class AlbumDetailView(DetailView, View):
-	print("In album detail view")
+
 	model = Album
 	template_name = "photoalbum/detail.html"
 
@@ -134,7 +131,7 @@ class PhotoReportFormView(SingleObjectMixin, FormView):
 
 	def get_context_data(self, **kwargs):
 		context = super(PhotoReportFormView, self).get_context_data(**kwargs)
-		context['photo'] = Photo.objects.get(pk=self.kwargs['pk'])
+		context['photo'] = ResponsiveImage.objects.get(pk=self.kwargs['pk'])
 		album = context['photo'].get_album()
 		context['album'] = Album.objects.get(pk=album.pk)
 		context['form'] = ReportPhotoForm()
@@ -151,6 +148,7 @@ class PhotoDetailView(View):
 	def post(self, request, *args, **kwargs):
 		view = PhotoReportFormView.as_view()
 		return view(request, *args, **kwargs)
+
 
 """
 class PhotoAlbumViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.ListModelMixin):

@@ -15,3 +15,4 @@ def send_report_on_photo(user, photo, description):
 	except ImproperlyConfigured:
 		logger.warn('Failed to send the report of the photo to prokom from user {user} on photo #{pk}.'.format(
             {'user': user.name, 'pk': photo.pk}))
+
