@@ -14,6 +14,8 @@ from django.utils.translation import ugettext as _
 
 # If this list is changed, remember to check that the year property on
 # OnlineUser is still correct!
+from apps.authentication.validators import validate_rfid
+
 FIELD_OF_STUDY_CHOICES = [
     (0, _('Gjest')),
     (1, _('Bachelor i Informatikk')),
@@ -105,7 +107,7 @@ class OnlineUser(AbstractUser):
     # Other
     allergies = models.TextField(_("allergier"), blank=True, null=True)
     mark_rules = models.BooleanField(_("godtatt prikkeregler"), default=False)
-    rfid = models.CharField(_("RFID"), max_length=50, blank=True, null=True)
+    rfid = models.CharField(_("RFID"), max_length=50, unique=True, blank=True, null=True, validators=[validate_rfid])
     nickname = models.CharField(_("nickname"), max_length=50, blank=True, null=True)
     website = models.URLField(_("hjemmeside"), blank=True, null=True)
     github = models.URLField(_("github"), blank=True, null=True)
