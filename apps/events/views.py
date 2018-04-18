@@ -476,8 +476,18 @@ class AttendViewSet(views.APIView):
         try:
             # If attendee is trying to attend by username
             if not rfid:
+                logger.debug('Retrieving attendee by username', extra={
+                    'event': event,
+                    'username': username,
+                    'rfid': rfid,
+                })
                 attendee = Attendee.objects.get(event=event, user__username=username)
             else:
+                logger.debug('Retrieving attendee by rfid', extra={
+                    'event': event,
+                    'username': username,
+                    'rfid': rfid,
+                })
                 attendee = Attendee.objects.get(event=event, user__rfid=rfid)
 
             # If attendee is already marked as attended
