@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+
 import os
 
 from django.contrib.auth import get_user_model
@@ -27,16 +28,6 @@ def report_photo(description, photo, user):
 	send_report_on_photo(user, photo, description)
 
 	# Send email to prokom
-
-def get_tags_as_string(album):
-	tags = album.get_tags()
-	tags_string = ""
-	for tag in tags:
-		tags_string += tag.name
-		if tag != tags[-1]:
-			tags_string += ", "
-
-	return tags_string
 
 def get_next_photo(photo, album):
 	photos = album.get_photos()
@@ -73,8 +64,6 @@ def is_prokom(user):
 	#else:
 	#  print("User is not in prokom")
 
-def clear_tags_to_album(album):
-	TagsToAlbum.objects.filter(album=album).delete()
 
 """
 def tag_users(users, photo):
