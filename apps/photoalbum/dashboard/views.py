@@ -1,4 +1,5 @@
 # -*- coding: utf8 -*-
+
 from logging import getLogger
 
 from django.contrib import messages
@@ -6,12 +7,11 @@ from django.core.urlresolvers import reverse
 from django.shortcuts import get_object_or_404, redirect, render
 
 from django.views.generic import DetailView, ListView, TemplateView, UpdateView, FormView, CreateView
-
+from django.views.generic.edit import FormMixin
 
 from apps.photoalbum.dashboard.forms import AlbumForm
 from apps.photoalbum.models import Album
 from apps.dashboard.tools import DashboardPermissionMixin
-
 
 
 #@permission_required('photoalbum.view_photoalbum')
@@ -34,7 +34,6 @@ class PhotoAlbumIndex(DashboardPermissionMixin, ListView):
 
 		context['albums'] = Album.objects.all()
 		return context
-
 
 #@permission_required('photoalbum.view_photoalbum')
 class PhotoAlbumCreate(DashboardPermissionMixin, CreateView):
@@ -77,10 +76,8 @@ class PhotoAlbumCreate(DashboardPermissionMixin, CreateView):
 		print(self.object)
 		return reverse('dashboard_photoalbum_detail', kwargs={'pk': self.object.pk})
 
-
 #@permission_required('photoalbum.view_photoalbum')
 class PhotoAlbumDetailDashboard(DashboardPermissionMixin, DetailView):
-
 	print("In PhotoAlbumDetailDashboard")
 	permission_required = 'superuser'
 
@@ -106,22 +103,21 @@ class PhotoAlbumDetailDashboard(DashboardPermissionMixin, DetailView):
 	
 
 
-
 class PhotoAlbumEdit(DashboardPermissionMixin, UpdateView):
-
 	form_class = AlbumForm
 	model = Album
 	context_object_name = 'album'
 	permission_required = 'superuser'
 	template_name = 'photoalbum/dashboard/create.html'
 
+	print("PhotoAlbumEdit")
 	def post(self, request, *args, **kwargs):
 		print('pk: ', self.kwargs.get('pk'))
 		print("In post")
 		album = get_object_or_404(Album, pk=self.kwargs.get('pk'))
 		form = AlbumForm(request.POST, instance=album)
 
-		print("Action: ", self.request.POST['action'])
+		#print("Action: ", self.request.POST['action'])
 		if 'action' in self.request.POST and self.request.POST['action'] == 'delete':
 			instance = get_object_or_404(Album, pk=album.pk)
 			album_title = instance.title
@@ -132,25 +128,58 @@ class PhotoAlbumEdit(DashboardPermissionMixin, UpdateView):
 
 			return redirect('dashboard_photoalbum_index')
 
+		print("Something went wrong, I think", self.request.POST)
+		print(form)
+		print(form.is_valid())
+		if form.is_valid():
+			self.form_valid(form)
+
+		"""
+		if form.is_valid():
+			instance = form.save(commit=False)
+			instance.save()
+			form.save_m2m()
+
+			return redirect('dashboard_photoalbum_index')
+		"""
+		#return super(PhotoAlbumEdit, self).post(request)
+
 	def form_valid(self, form):
+		print("Form is valid when editing album")
 		instance = form.save(commit=False)
 		#instance.changed_by = self.request.user
 		instance.save()
 		form.save_m2m()
 
 		messages.success(self.request, 'Albumet ble endret.')
-		getLogger(__name__).info('%s edited photoalbum %d (%s)' % (request.user, instance.id, instance.title))
+		getLogger(__name__).info('%s edited photoalbum %d (%s)' % (self.request.user, instance.id, instance.title))
+		return super(PhotoAlbumEdit, self).form_valid(form)
 
+
+	def form_invalid(self, form):
+		print("Form is not valid")
+		"""
+		Add error message if invalid
+		"""
+
+		messages.error(self.request, 'Noen av feltene inneholder feil.')
+
+		return super(PhotoAlbumEdit, self).form_invalid(form)
 
 	def get_success_url(self):
-		return reverse('dashboard_photoalbum_detail', kwargs={'pk': self.kwargs.get('album_pk')})
+		print("Success url in album edit")
+		
+	#	print(self.kwargs.get('pk'))
+	#	return reverse('dashboard_photoalbum_detail', kwargs={'pk': self.kwargs.get('pk')})
+		return redirect('dashboard_photoalbum_index')
 
 	def get_context_data(self, **kwargs):
+		print("In get context data")
 		context = super(PhotoAlbumEdit, self).get_context_data(**kwargs) 
-		print('pk: ', self.kwargs.get('pk'))
 		album = get_object_or_404(Album, pk=self.kwargs.get('pk'))
+		
 		context['album'] = album
-		context['form'] = AlbumForm
+		context['form'] = AlbumForm(instance=album)
 		context['edit'] = True
 
 		return context

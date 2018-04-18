@@ -49,6 +49,7 @@ class MultipleImagesInput(HiddenInput):
       :return: An HTML string representing this widget
       """
 
+      
       if value is None:
           value = ''
 

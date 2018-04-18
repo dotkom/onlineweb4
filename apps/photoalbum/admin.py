@@ -1,3 +1,5 @@
+
+"""
 from django.contrib import admin
 from reversion.admin import VersionAdmin
 
@@ -12,3 +14,4 @@ class AlbumAdmin(VersionAdmin):
 	)
 
 admin.site.register(Album, AlbumAdmin)
+"""
