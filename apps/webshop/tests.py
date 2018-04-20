@@ -1,3 +1,5 @@
+from unittest.mock import MagicMock, patch
+
 from django.core.urlresolvers import reverse
 from django.test import TestCase
 from django_dynamic_fixture import G
@@ -5,7 +7,7 @@ from rest_framework import status
 
 from apps.authentication.models import OnlineUser
 
-from .models import OrderLine, Product, ProductSize
+from .models import Order, OrderLine, Product, ProductSize
 
 
 class WebshopTestMixin:
@@ -166,3 +168,117 @@ class WebshopProductDetail(TestCase, WebshopTestMixin):
         })
 
         self.assertInMessages('Vennligst oppgi et gyldig antall', response)
+
+
+class CheckoutTest(TestCase, WebshopTestMixin):
+    url = reverse('webshop_pay')
+
+    def setUp(self):
+            self.user = G(OnlineUser, username='test', ntnu_username='test')
+
+    @patch('apps.payment.views.stripe.Charge.create')
+    def test_pay_size(self, stripe_create):
+        stripe_create.return_value = MagicMock(id=123)
+        self.client.force_login(self.user)
+        product = G(Product, slug='product1', active=True, stock=None, deadline=None, price=50)
+        size = G(ProductSize, size='L', produc=product, stock=2)
+        self.client.post(reverse('webshop_product', kwargs={'slug': 'product1'}), {
+            'quantity': 2,
+            'size': size.pk
+        })
+        order_line = OrderLine.objects.get(user=self.user)
+
+        response = self.client.post(self.url, {
+            'stripeToken': 'stripy',
+            'amount': 10000,
+            'order_line_id': order_line.pk
+        }, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.content, 'Betaling utført.'.encode())
+        order_line.refresh_from_db()
+        self.assertEqual(order_line.stripe_id, '123')
+        size.refresh_from_db()
+        self.assertEqual(size.stock, 0)
+
+    @patch('apps.payment.views.stripe.Charge.create')
+    def test_pay(self, stripe_create):
+        stripe_create.return_value = MagicMock(id=123)
+        self.client.force_login(self.user)
+        product = G(Product, slug='product1', active=True, stock=5, deadline=None, price=50)
+        self.client.post(reverse('webshop_product', kwargs={'slug': 'product1'}), {
+            'quantity': 4,
+        })
+        order_line = OrderLine.objects.get(user=self.user)
+
+        response = self.client.post(self.url, {
+            'stripeToken': 'stripy',
+            'amount': 20000,
+            'order_line_id': order_line.pk
+        }, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.content, 'Betaling utført.'.encode())
+        order_line.refresh_from_db()
+        self.assertEqual(order_line.stripe_id, '123')
+        product.refresh_from_db()
+        self.assertEqual(product.stock, 1)
+
+    @patch('apps.payment.views.stripe.Charge.create')
+    def test_not_enough_stock(self, stripe_create):
+        self.client.force_login(self.user)
+        product = G(Product, slug='product1', active=True, stock=5, deadline=None, price=50)
+        order_line = G(OrderLine, user=self.user)
+        G(Order, order_line=order_line, quantity=6, product=product, size=None)
+
+        response = self.client.post(self.url, {
+            'stripeToken': 'stripy',
+            'amount': 30000,
+            'order_line_id': order_line.pk
+        }, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+
+        self.assertEqual(response.content, 'Ordren er ikke gyldig.'.encode())
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        product.refresh_from_db()
+        self.assertEqual(product.stock, 5)
+
+    @patch('apps.payment.views.stripe.Charge.create')
+    def test_wrong_subtotal(self, stripe_create):
+        self.client.force_login(self.user)
+        product = G(Product, slug='product1', active=True, stock=5, deadline=None, price=50)
+        order_line = G(OrderLine, user=self.user)
+        G(Order, order_line=order_line, quantity=4, product=product, size=None)
+
+        response = self.client.post(self.url, {
+            'stripeToken': 'stripy',
+            'amount': 20001,
+            'order_line_id': order_line.pk
+        }, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+
+        self.assertEqual(response.content, 'Invalid input'.encode())
+        self.assertEqual(response.status_code,
+                         status.HTTP_500_INTERNAL_SERVER_ERROR)
+        product.refresh_from_db()
+        self.assertEqual(product.stock, 5)
+
+    @patch('apps.payment.views.stripe.Charge.create')
+    def test_size_not_enough_stock(self, stripe_create):
+        self.client.force_login(self.user)
+        # product.stock should not be used
+        product = G(Product, slug='product1', active=True, stock=10, deadline=None, price=50)
+        size = G(ProductSize, product=product, size='M', stock=3)
+        G(ProductSize, product=product, size='L', stock=5)
+        order_line = G(OrderLine, user=self.user)
+        G(Order, order_line=order_line, quantity=4, product=product, size=size)
+
+        response = self.client.post(self.url, {
+            'stripeToken': 'stripy',
+            'amount': 20000,
+            'order_line_id': order_line.pk
+        }, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+
+        self.assertEqual(response.content, 'Ordren er ikke gyldig.'.encode())
+        self.assertEqual(response.status_code,
+                         status.HTTP_400_BAD_REQUEST)
+        product.refresh_from_db()
+        self.assertEqual(size.stock, 3)
