@@ -133,7 +133,32 @@ const Gallery = (function PrivateGallery($) {
 
       // Listen for form widget button events
       BUTTON_ADD_RESPONSIVE_IMAGES.on('click', (e) => {
+        console.log("BUTTON_ADD_RESPONSIVE_IMAGES")
         e.preventDefault();
+
+        const inputValue = $('#id_photos');
+        const selectedImages = $('.image-selection-thumbnail-active');
+        const thumbnailWrapper = $('#multiple-images-field-thumbnail');
+
+        var selectedImagesPk = []
+        var imagesHTML = ''
+        selectedImages.each(function() {
+          console.log($(this))
+          selectedImagesPk.push($(this).attr('data-id'))
+          imagesHTML += `<img src="${$(this).find('img').attr('src')}" alt class="hidden">`
+        })
+
+
+        console.log(selectedImagesPk)
+
+        if (selectedImages.length) {
+          inputValue.val(selectedImagesPk);
+          //inputValue.val(ResponsiveImage.objects.get(pk=1))
+          //thumbnailWrapper.html(`<img src="${formSelectedSingleImage.find('img').attr('src')}" alt>`);
+          thumbnailWrapper.html('<p> Du har valgt ' + selectedImages.length + ' bilder. </p>' + imagesHTML);
+          thumbnailWrapper.attr('data-images', selectedImagesPk)
+        }
+
         IMAGE_SELECTION_WRAPPER.slideToggle(100);
       });
 
@@ -199,7 +224,9 @@ const Gallery = (function PrivateGallery($) {
           image.toggleClass('image-selection-thumbnail-active');
 
           const inputValue = $('#responsive-image-id');
-          const thumbnailWrapper = $('#single-image-field-thumbnail');
+          const thumbnailWrapper = $('#multiple-images-field-thumbnail');
+
+
         } else {
           if (formSelectedSingleImage) formSelectedSingleImage.removeClass('image-selection-thumbnail-active');
           formSelectedSingleImage = $(this);
