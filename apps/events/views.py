@@ -447,7 +447,7 @@ class AttendViewSet(views.APIView):
                     'attend_status': 50,
                 }
             except (IntegrityError, ValidationError):
-                logger.error('Could not store RFID information for username "" with RFID "".'.format(
+                logger.error('Could not store RFID information for username "{}" with RFID "{}".'.format(
                     username, rfid,
                 ))
                 return {
