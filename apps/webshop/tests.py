@@ -5,7 +5,7 @@ from rest_framework import status
 
 from apps.authentication.models import OnlineUser
 
-from .models import OrderLine, Product
+from .models import OrderLine, Product, ProductSize
 
 
 class WebshopTestMixin:
@@ -107,6 +107,53 @@ class WebshopProductDetail(TestCase, WebshopTestMixin):
 
         response = self.client.post(self.url, {
             'quantity': 7,
+        })
+
+        self.assertInMessages('Det er ikke nok produkter på lageret.', response)
+
+    def test_order_size(self):
+        size = G(ProductSize, product=self.product, size='M', stock=5)
+        self.client.force_login(self.user)
+
+        response = self.client.post(self.url, {
+            'quantity': 2,
+            'size': size.pk
+        })
+
+        self.assertRedirects(response, reverse('webshop_checkout'))
+        order_line = OrderLine.objects.get(user=self.user)
+        order = order_line.orders.get(product=self.product)
+        self.assertEqual(order.quantity, 2)
+
+    def test_order_unknown_size(self):
+        size = G(ProductSize, product=self.product, size='M', stock=5)
+        self.client.force_login(self.user)
+
+        response = self.client.post(self.url, {
+            'quantity': 2,
+            'size': size.pk + 1
+        })
+
+        self.assertInMessages('Vennligst oppgi et gyldig antall', response)
+
+    def test_order_size_not_enough_stock(self):
+        size = G(ProductSize, product=self.product, size='M', stock=5)
+        self.client.force_login(self.user)
+
+        response = self.client.post(self.url, {
+            'quantity': 6,
+            'size': size.pk
+        })
+
+        self.assertInMessages('Det er ikke nok produkter på lageret.', response)
+
+    def test_order_size_out_of_stock(self):
+        size = G(ProductSize, product=self.product, size='M', stock=5)
+        self.client.force_login(self.user)
+
+        response = self.client.post(self.url, {
+            'quantity': 6,
+            'size': size.pk
         })
 
         self.assertInMessages('Det er ikke nok produkter på lageret.', response)
