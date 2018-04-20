@@ -24,14 +24,17 @@ const Gallery = (function PrivateGallery($) {
   const events = new MicroEvent();
   const galleryImages = {};
   let formSelectedSingleImage = null;
+  let formSelectedMultipleImages = null;
 
   // DOM references
   const BUTTON_ADD_RESPONSIVE_IMAGE = $('#add-responsive-image');
+  const BUTTON_ADD_RESPONSIVE_IMAGES = $('#add-responsive-images');
   const IMAGE_SELECTION_WRAPPER = $('#image-selection-wrapper');
   const MANAGE_BUTTON_TEXT = $('#gallery__manage-button-text');
   const THUMBNAIL_VIEW = $('#gallery__thumbnail-view');
   const DASHBOARD_MENU_GALLERY_UNHANDLED_BADGE = $('#dashboard__menu--gallery-unhandled-badge');
   const BUTTON_REMOVE_IMAGE = $('#dashboard-gallery-remove-image');
+  const BUTTON_REMOVE_IMAGES = $('#dashboard-gallery-remove-images');
 
   /**
    * Create the HTML wrapper for the thumbnail of an UnhandledImage wrapper as a jQuery DOM object.
@@ -128,11 +131,24 @@ const Gallery = (function PrivateGallery($) {
         IMAGE_SELECTION_WRAPPER.slideToggle(100);
       });
 
+      // Listen for form widget button events
+      BUTTON_ADD_RESPONSIVE_IMAGES.on('click', (e) => {
+        e.preventDefault();
+        IMAGE_SELECTION_WRAPPER.slideToggle(100);
+      });
+
       // Remove set image
       BUTTON_REMOVE_IMAGE.on('click', (e) => {
         e.preventDefault();
         $('#responsive-image-id').attr('value', '');
         $('#single-image-field-thumbnail').html('Det er ikke valgt noe bilde.');
+      });
+
+      // Remove set image
+      BUTTON_REMOVE_IMAGES.on('click', (e) => {
+        e.preventDefault();
+        //$('#responsive-image-id').attr('value', '');
+        $('#single-image-field-thumbnail').html('Det er ikke valgt noe bilder.');
       });
 
       /**
@@ -173,18 +189,48 @@ const Gallery = (function PrivateGallery($) {
       // click events originating from elements classed "image-selection-thumbnail".
       // Updates the ID if the form input field and toggles highlighting.
       $('#image-gallery-search-results').on('click', '.image-selection-thumbnail', function clickThumb() {
-        if (formSelectedSingleImage) formSelectedSingleImage.removeClass('image-selection-thumbnail-active');
-        formSelectedSingleImage = $(this);
-        formSelectedSingleImage.addClass('image-selection-thumbnail-active');
+        console.log("In search results")
+        console.log($(this).parent())
+        var multiple = $('#image-gallery-search-results').hasClass('multiple') 
+        console.log(multiple)
+        if (multiple) {
+          var image = $(this);
+          console.log(image)
+          image.toggleClass('image-selection-thumbnail-active');
+
+          const inputValue = $('#responsive-image-id');
+          const thumbnailWrapper = $('#single-image-field-thumbnail');
+        } else {
+          if (formSelectedSingleImage) formSelectedSingleImage.removeClass('image-selection-thumbnail-active');
+          formSelectedSingleImage = $(this);
+          formSelectedSingleImage.addClass('image-selection-thumbnail-active');
+
+          const inputValue = $('#responsive-image-id');
+          const thumbnailWrapper = $('#single-image-field-thumbnail');
+
+          if (inputValue.length) {
+            inputValue.val(formSelectedSingleImage.attr('data-id'));
+            thumbnailWrapper.html(`<img src="${formSelectedSingleImage.find('img').attr('src')}" alt>`);
+          }
+        }
+      });
+      /**
+      $('#image-gallery-search-results.multiple').on('click', '.image-selection-thumbnail', function clickThumb() {
+        //if (formSelectedMultipleImages) formSelectedMultipleImages.removeClass('image-selection-thumbnail-active');
+        var image = $(this);
+        console.log(image)
+        image.addClass('image-selection-thumbnail-active');
 
         const inputValue = $('#responsive-image-id');
         const thumbnailWrapper = $('#single-image-field-thumbnail');
-
+        /**
         if (inputValue.length) {
-          inputValue.val(formSelectedSingleImage.attr('data-id'));
-          thumbnailWrapper.html(`<img src="${formSelectedSingleImage.find('img').attr('src')}" alt>`);
+          inputValue.val(formSelectedMultipleImages.attr('data-id'));
+          thumbnailWrapper.html(`<img src="${formSelectedMultipleImages.find('img').attr('src')}" alt>`);
         }
+        
       });
+      **/
     },
 
     /**
