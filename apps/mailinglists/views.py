@@ -38,6 +38,7 @@ def index(request):
             {'name': 'Psykolosjen', 'email': 'psykolosjen@gmail.com'},
             {'name': 'Sturm und Drang', 'email': 'sd.linjeforening@gmail.com'},
             {'name': 'Socius Extremus', 'email': 'socius.extremus@hotmail.no'},
+            {'name': 'YFF', 'email': 'yff.ntnu@hotmail.com'},
         ]},
         {'name': 'gloshaugen', 'members': [
             {'name': 'H.M. Aarhønen', 'email': 'aarhonen-hs@list.stud.ntnu.no'},
