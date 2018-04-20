@@ -10,15 +10,15 @@ from apps.gallery.widgets import SingleImageInput
 
 
 WIDGET_STRING = """<br /><input{} />\r\n
-<div id="multiple-image-field-thumbnail">{}</div>
-<a href="#" class="btn btn-primary" id="add-responsive-image">\r\n
-<i class="fa fa-plus fa-lg"></i> Velg</a>\r\n
+<div id="single-image-field-thumbnail">{}</div>
+<a href="#" class="btn btn-primary" id="add-responsive-images">\r\n
+<i class="fa fa-plus fa-lg"></i> Velg bilder</a>\r\n
 <a href="{}" class="btn btn-primary" target="_blank">\r\n
 <i class="fa fa-image fa-lg"></i> Last opp</a>\r\n
-<a href="#" class="btn btn-danger" id="dashboard-gallery-remove-image">\r\n
+<a href="#" class="btn btn-danger" id="dashboard-gallery-remove-images">\r\n
 <i class="fa fa-times fa-lg"></i> Fjern bilder</a><br>\r\n
 <div id="image-selection-wrapper">\r\n
-<h2 id="image-selection-title">Velg bilder</h2>\r\n
+<h2 id="image-selection-title">Velg bilde</h2>\r\n
 <div class="row">\r\n
 <div class="col-md-12">\r\n
 <div class="input-group">\r\n
@@ -30,7 +30,7 @@ WIDGET_STRING = """<br /><input{} />\r\n
 </div>\r\n
 </div>\r\n
 <hr />\r\n
-<div class="row" id="image-gallery-search-results"></div>\r\n
+<div class="row multiple" id="image-gallery-search-results"></div>\r\n
 </div>\r\n"""
 
 
@@ -40,7 +40,7 @@ class MultipleImagesInput(HiddenInput):
         super(MultipleImagesInput, self).__init__(attrs)
         self.input_type = 'hidden'
 
-  def render(self, name, value, attrs={'multiple': True}):
+  def render(self, name, value, attrs={'mulitple: True'}):
       """
       Renders this field widget as HTML
       :param name: Field input name
@@ -49,26 +49,32 @@ class MultipleImagesInput(HiddenInput):
       :return: An HTML string representing this widget
       """
 
-      
-      if value is None:
-          value = ''
+      print("Value: ", value)
+      is_empty = not value
+      #value = value[0]
+      #if value is None or []:
+      #    value = ''
+
 
       img_thumb = 'Det er ikke valgt noen bilder.'
 
       attrs = self.build_attrs(self.attrs, attrs)
       final_attrs = self.build_attrs(attrs, {'type': self.input_type, 'name': name})
-      """
-      if value != '':
+      print("In MultipleImagesInput", final_attrs)
+      
+      if value:
           # Only add the value attribute if the value is non-empty
           final_attrs['value'] = force_text(self._format_value(value))
           img = ResponsiveImage.objects.get(pk=value)
           img_thumb = format_html(
-              '<img src="{}" alt title="{}"/>',
+              '<input type="checkbox" class="hidden_checkbox" name="photos[]" value="{{ value }}" \
+              <img class="multiple" src="{}" alt title="{}"/> \
+              </input>',
               settings.MEDIA_URL + str(img.thumbnail),
               str(img.name),
               encoding='utf-8'
+
           )
-      """
       upload_url = reverse_lazy('gallery_dashboard:upload')
 
       return format_html(WIDGET_STRING, flatatt(final_attrs), img_thumb, upload_url)  
