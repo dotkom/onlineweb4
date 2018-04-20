@@ -46,7 +46,7 @@ def index(request):
             {'name': 'Delta', 'email': 'delta@delta.org.ntnu.no'},
             {'name': 'Omega', 'email': 'hs@omega.ntnu.no'},
             {'name': 'Leonardo', 'email': 'ilpresidente.leonardo@gmail.com'},
-            {'name': 'Janus', 'email': 'linjeforeningjanus@gmail.com'},
+            {'name': 'Janus', 'email': 'janus@org.ntnu.no'},
             {'name': 'Nabla', 'email': 'nabla@nabla.ntnu.no'},
             {'name': 'Online', 'email': 'online@online.ntnu.no'},
             {'name': 'Placebo', 'email': 'placebo@list.stud.ntnu.no'},
