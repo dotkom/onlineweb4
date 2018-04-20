@@ -16,6 +16,12 @@
   Fotoalbum
 {% endblock %}
 
+
+{% block js %}
+  {{ block.super }}
+  {% render_bundle 'photoalbum' js %}
+{% endblock %}
+
 {% block styles %}
     {{ block.super }}
     {% render_bundle 'photoalbum' 'css' %}
@@ -53,9 +59,9 @@
         <div class="form-group {% if field.errors %} has-error {% endif %}">
           <label for="{{ field.auto_id }}" {% if field.errors %} class="red" {% endif %}> {{field.label }} </label>
           {{ field|addclass:"form-control" }}
-        </div>
+        </div>      
       {% endfor %}
-      <button class="btn btn-success" type="submit">
+     <button class="btn btn-success" type="submit">
           <i class="fa fa-save fa-lg"></i> Lagre
       </button>
     </form>

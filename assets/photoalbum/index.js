@@ -6,10 +6,11 @@ $(document).ready(() => {
   console.log('Running script')
   $('.photo_edit').click(function choose_photo (e) {
 		const photo = $(this)
-		photo.toggleClass('chosen')
+    console.log("Choosing photo")
+		photo.toggleClass('image-selection-thumbnail-active')
     const parent = photo.parent()
 
-    parent.toggleClass('chosen')
+    parent.toggleClass('image-selection-thumbnail-active')
   })
 
   $('#show_report_photo_form').click(function show_form (e) {

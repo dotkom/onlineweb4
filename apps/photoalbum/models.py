@@ -23,9 +23,9 @@ class Album(models.Model):
 	def slug(self):
 		return slugify(unidecode(self.title))
 
-	@permalink
-	def get_absolute_url(self):
-			return 'album_detail', None, {'pk': self.pk, 'slug': self.slug}
+	#@permalink
+	#def get_absolute_url(self):
+	#		return 'album_detail', None, {'pk': self.pk, 'slug': self.slug}
 
 	"""
 	def get_photos(self):
