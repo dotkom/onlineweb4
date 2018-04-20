@@ -42,6 +42,7 @@ def article_create(request):
             instance = form.save(commit=False)
             instance.changed_by = request.user
             instance.created_by = request.user
+            print(form['image'])
             instance.save()
             form.save_m2m()
 
@@ -89,10 +90,13 @@ def article_edit(request, article_id):
 
         form = ArticleForm(request.POST, instance=article)
         if form.is_valid():
+            print("Form when edit: ", form['image'])
+            print("After printing")
             instance = form.save(commit=False)
             instance.changed_by = request.user
             instance.save()
             form.save_m2m()
+            print(instance.image)
 
             messages.success(request, 'Artikkelen ble lagret.')
             getLogger(__name__).info('%s edited article %d (%s)' % (request.user, instance.id, instance.heading))

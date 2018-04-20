@@ -10,7 +10,7 @@ from apps.gallery.widgets import SingleImageInput
 
 
 WIDGET_STRING = """<br /><input{} />\r\n
-<div id="single-image-field-thumbnail">{}</div>
+<div id="multiple-images-field-thumbnail">{}</div>
 <a href="#" class="btn btn-primary" id="add-responsive-images">\r\n
 <i class="fa fa-plus fa-lg"></i> Velg bilder</a>\r\n
 <a href="{}" class="btn btn-primary" target="_blank">\r\n
@@ -56,20 +56,20 @@ class MultipleImagesInput(HiddenInput):
       #    value = ''
 
 
+
       img_thumb = 'Det er ikke valgt noen bilder.'
 
       attrs = self.build_attrs(self.attrs, attrs)
       final_attrs = self.build_attrs(attrs, {'type': self.input_type, 'name': name})
-      print("In MultipleImagesInput", final_attrs)
       
       if value:
+          #values = value.split(',')
+          value = value.split(',')[0]
           # Only add the value attribute if the value is non-empty
           final_attrs['value'] = force_text(self._format_value(value))
           img = ResponsiveImage.objects.get(pk=value)
           img_thumb = format_html(
-              '<input type="checkbox" class="hidden_checkbox" name="photos[]" value="{{ value }}" \
-              <img class="multiple" src="{}" alt title="{}"/> \
-              </input>',
+              '<img class="multiple" src="{}" alt title="{}"/>',
               settings.MEDIA_URL + str(img.thumbnail),
               str(img.name),
               encoding='utf-8'
@@ -77,5 +77,6 @@ class MultipleImagesInput(HiddenInput):
           )
       upload_url = reverse_lazy('gallery_dashboard:upload')
 
-      return format_html(WIDGET_STRING, flatatt(final_attrs), img_thumb, upload_url)  
+      #return format_html(WIDGET_STRING, flatatt(final_attrs), img_thumb, upload_url)  
+      return ResponsiveImage.objects.get(pk=1)
 
