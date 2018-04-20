@@ -16,8 +16,8 @@ class Album(models.Model):
 	tags = TaggableManager(blank=True)
 	photos = models.ManyToManyField(ResponsiveImage, blank=True)
 
-	def __str__(self):
-		return self.title
+	#def __str__(self):
+  #		return self.title
 
 	@property
 	def slug(self):

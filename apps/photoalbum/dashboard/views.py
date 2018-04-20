@@ -13,22 +13,24 @@ from django.views.generic.edit import FormMixin
 from apps.photoalbum.dashboard.forms import AlbumForm
 from apps.photoalbum.models import Album
 from apps.dashboard.tools import DashboardPermissionMixin
+from apps.photoalbum.utils import get_photos_from_form
+from apps.gallery.models import ResponsiveImage
 
 
 class PhotoAlbumIndex(DashboardPermissionMixin, ListView):
 
 	permission_required = 'superuser' # 'photoalbum'
 
-	albums = Album.objects.all()
-	for album in albums: 
-		print(album.title)
+	#albums = Album.objects.all()
+	#for album in albums: 
+	# print(album.title)
 
 
 	model = Album
 	template_name = 'photoalbum/dashboard/index.html'
-	queryset = Album.objects.all().order_by('-timestamp')[:15]
+	#queryset = Album.objects.all().order_by('-timestamp')[:15]
 
-	print(Album.objects.all())
+	#print(Album.objects.all())
 
 	def get_context_data(self, **kwargs):
 		context = super(PhotoAlbumIndex, self).get_context_data(**kwargs) 
@@ -107,13 +109,14 @@ class PhotoAlbumDetailDashboard(DashboardPermissionMixin, DetailView):
 class PhotoAlbumEdit(DashboardPermissionMixin, UpdateView):
 	form_class = AlbumForm
 	model = Album
-	#context_object_name = 'album'
+	context_object_name = 'album'
 	permission_required = 'superuser'
 	template_name = 'photoalbum/dashboard/create.html'
 
 	def post(self, request, *args, **kwargs):
 		album = get_object_or_404(Album, pk=self.kwargs.get('pk'))
 		form = AlbumForm(request.POST, instance=album)
+		self.object = self.get_object()
 
 		if 'action' in self.request.POST and self.request.POST['action'] == 'delete':
 			instance = get_object_or_404(Album, pk=album.pk)
@@ -124,7 +127,8 @@ class PhotoAlbumEdit(DashboardPermissionMixin, UpdateView):
 			getLogger(__name__).info('%s deleted album %d (%s)' % (self.request.user, album_pk, album_title))
 
 			return redirect('dashboard_photoalbum_index')
-
+		#photos = get_photos_from_form(form)
+		#form['photos'] = photos
 		if form.is_valid():
 			self.form_valid(form)
 		else:
@@ -139,9 +143,16 @@ class PhotoAlbumEdit(DashboardPermissionMixin, UpdateView):
 		instance = form.save(commit=False)
 		#instance.changed_by = self.request.user
 		instance.save()
-		print(form)
-		form.save_m2m()
-		print(instance.photos)
+		#photos = get_photos_from_form(form)
+		#print(photos)
+		#print(form['photos'])
+		photo = ResponsiveImage.objects.get(pk=1)
+		print(photo)
+		instance.photos.add(photo)
+		print(instance.photos.all())
+		instance.save()
+		#form.save_m2m()
+		print(instance.photos.all())
 
 		messages.success(self.request, 'Albumet ble endret.')
 		getLogger(__name__).info('%s edited photoalbum %d (%s)' % (self.request.user, instance.id, instance.title))
@@ -150,6 +161,8 @@ class PhotoAlbumEdit(DashboardPermissionMixin, UpdateView):
 
 	def form_invalid(self, form):
 		print("Form is not valid")
+		print(form)
+
 		"""
 		Add error message if invalid
 		"""
@@ -165,6 +178,7 @@ class PhotoAlbumEdit(DashboardPermissionMixin, UpdateView):
 	def get_context_data(self, **kwargs):
 		print("In get context data")
 		context = super(PhotoAlbumEdit, self).get_context_data(**kwargs) 
+		print(self.kwargs.get('pk'))
 		album = get_object_or_404(Album, pk=self.kwargs.get('pk'))
 		
 		context['album'] = album
