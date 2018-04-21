@@ -109,7 +109,7 @@ def attendEvent(request, event_id):
     if not form.is_valid():
         for field, errors in form.errors.items():
             for error in errors:
-                messages.error(request, error)
+                messages.error(request, _("ReCAPTCHA feilet med validering. Vennligst prøv igjen."))
 
         return redirect(event)
 
