@@ -234,6 +234,7 @@ class OrderLine(models.Model):
         self.paid = True
         self.datetime = timezone.now()
         self.save()
+        self.send_receipt()
 
     def get_timestamp(self):
         return self.datetime
@@ -262,8 +263,7 @@ class OrderLine(models.Model):
     def get_to_mail(self):
         return self.user.email
 
-    def save(self, *args, **kwargs):
-        super(OrderLine, self).save(*args, **kwargs)
+    def send_receipt(self):
         receipt = PaymentReceipt(object_id=self.id,
                                  content_type=ContentType.objects.get_for_model(self))
         receipt.save()
