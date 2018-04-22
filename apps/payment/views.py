@@ -140,9 +140,6 @@ def webshop_pay(request):
                 order_line.stripe_id = charge.id
                 order_line.save()
 
-                receipt = PaymentReceipt(object_id=order_line.id,
-                                         content_type=ContentType.objects.get_for_model(order_line))
-                receipt.save()
                 messages.success(request, "Betaling utført")
 
                 return HttpResponse("Betaling utført.", content_type="text/plain", status=200)
