@@ -13,7 +13,7 @@ from django.views.generic.edit import FormMixin
 from apps.photoalbum.dashboard.forms import AlbumForm
 from apps.photoalbum.models import Album
 from apps.dashboard.tools import DashboardPermissionMixin, get_base_context, check_access_or_403
-from apps.photoalbum.utils import get_photos_from_form
+from apps.photoalbum.utils import get_photos_from_form, get_photos_to_album
 from apps.gallery.models import ResponsiveImage
 
 # @permission_required('photoalbum.view_album')
@@ -33,15 +33,22 @@ def photoalbum_create(request):
 	form = AlbumForm()
 
 	if request.method == 'POST':
+
+		if 'upload_photos' in request.POST:
+			photos = form['files']
+			print("Files: ", photos)
+
 		form = AlbumForm(request.POST)
 		if form.is_valid():
 			instance = form.save(commit=False)
 			instance.save()
 			instance.changed_by = request.user
 			instance.created_by = request.user
-			photos = get_photos_from_form(form)
-			#instance.photos.add(ResponsiveImage.objects.get(pk=2))
-			instance.photos.add(photos)
+			photos = get_photos_to_album(instance.title)
+						
+			for photo in photos:
+				instance.photos.add(photo)
+
 			instance.save()
 
 			messages.success(request, 'Albumet ble opprettet.')
@@ -55,6 +62,10 @@ def photoalbum_create(request):
 
 	return render(request, 'photoalbum/dashboard/create.html', context)
 
+def upload_photos(request, album_title):
+	print("In upload_photos")
+	photos = form['files']
+	print("Files: ", photos)
 
 #@permissionrequired('photoalbum.view_album')
 def photoalbum_detail(request, pk):
@@ -77,6 +88,8 @@ def photoalbum_edit(request, pk):
 	form = AlbumForm(instance=album)
 
 	if request.method == 'POST':
+		if 'upload_photos' in request.POST:
+			upload_photos(form)
 
 		if 'action' in request.POST and request.POST['action'] == 'delete':
 			instance = get_object_or_404(Album, pk=album.pk)
@@ -94,11 +107,11 @@ def photoalbum_edit(request, pk):
 			instance.save()
 			instance.changed_by = request.user
 			instance.created_by = request.user
-			photos = get_photos_from_form(form)
+			photos = get_photos_to_album(instance.title)
+			
 			for photo in photos:
 				instance.photos.add(photo)
-			#instance.photos.add(ResponsiveImage.objects.get(pk=2))
-			#instance.photos.add(photos)
+
 			instance.save()
 
 			messages.success(request, 'Albumet ble lagret.')

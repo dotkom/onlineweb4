@@ -14,6 +14,8 @@ urlpatterns = [
   url(r'^(?P<pk>\d+)/$', views.photoalbum_detail, name='dashboard_photoalbum_detail'),
   
   #url(r'^(?P<pk>\d+)/edit/$', views.PhotoAlbumEdit.as_view(), name='dashboard_photoalbum_edit')
-  url(r'^(?P<pk>\d+)/edit/$', views.photoalbum_edit, name='dashboard_photoalbum_edit')
+  url(r'^(?P<pk>\d+)/edit/$', views.photoalbum_edit, name='dashboard_photoalbum_edit'),
+
+  url(r'^upload_photos/$', views.upload_photos, name='upload_photos')
 
 ]
