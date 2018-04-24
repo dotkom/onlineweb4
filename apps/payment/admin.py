@@ -32,7 +32,8 @@ class PaymentPriceInline(admin.StackedInline):
 class PaymentAdmin(VersionAdmin):
     inlines = (PaymentPriceInline, )
     model = Payment
-    list_display = ('__str__', 'stripe_key', 'payment_type')
+    list_display = ('__str__', 'active', 'payment_type', 'deadline', 'delay', 'stripe_key')
+    list_filter = ['active', 'stripe_key', 'payment_type']
 
 
 class PaymentRelationAdmin(VersionAdmin):
