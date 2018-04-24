@@ -8,4 +8,4 @@ class HobbygroupAdmin(admin.ModelAdmin):
     list_display = ['title', 'priority']
 
 
-admin.site.register(Hobby)
+admin.site.register(Hobby, HobbygroupAdmin)
