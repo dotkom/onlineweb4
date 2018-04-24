@@ -2,8 +2,8 @@
 
 ## What kind of an issue is this?
 
-- [ ] Bug report
-- [ ] Feature request
+- Bug report
+- Feature request
 
 
 ## What is the expected behaviour?
