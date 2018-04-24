@@ -56,15 +56,18 @@
                       </a>
                     {% endfor %}
                 </div>
-                <div class="col-sm-12 col-md-4">
-                    {% for photo in album.photos.all %}  
-                      <img src="{{ photo.sm }}" alt  width="100%" />
-                      A photo here
-                    {% endfor %}          
-                </div>
             </div>
         </div>
     </div>
+</div>
+<div class="row">
+  <div class="col-sm-12 col-md-4">
+    {% for photo in album.photos.all %}
+      <a href="{% url 'gallery_dashboard:detail' photo.pk %}">  
+        <img src="{{ photo.thumb }}" alt />
+      </a>
+    {% endfor %}          
+  </div>
 </div>
 <div id="modal-delete" class="modal fade">
     <div class="modal-dialog">
