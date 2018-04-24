@@ -61,6 +61,18 @@
           {{ field|addclass:"form-control" }}
         </div>      
       {% endfor %}
+      <form method="POST" action="{% url 'upload_photos' %}" enctype="multipart/form-data" >
+            {% csrf_token %}
+            <div>
+                <label class="btn btn-primary"> 
+                  <i class="fa fa-image fa-lg"></i>
+                  Last opp
+                  <input type="file" name="upload_phtotos" id="files" multiple class="hidden" onchange="this.form.submit()">
+                </label>
+                
+            </div>
+        </form>
+
      <button class="btn btn-success" type="submit">
           <i class="fa fa-save fa-lg"></i> Lagre
       </button>
