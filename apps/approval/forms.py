@@ -25,3 +25,5 @@ class FieldOfStudyApplicationForm(forms.Form):
         label=_("Hvilket år startet du? "), choices=_year_choices())
     field_of_study = forms.ChoiceField(
         label=_("Studieretning "), choices=FIELD_OF_STUDY_CHOICES)
+    documentation = forms.ImageField(
+        label=_("Dokumentasjon "), required=False)

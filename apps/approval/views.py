@@ -22,7 +22,7 @@ def create_fos_application(request):
                 "Du må knytte et NTNU-brukernavn til kontoen din."))
             return redirect('profiles_active', active_tab='membership')
 
-        form = FieldOfStudyApplicationForm(request.POST)
+        form = FieldOfStudyApplicationForm(request.POST, request.FILES)
         if form.is_valid():
             cleaned = form.cleaned_data
 
@@ -56,10 +56,13 @@ def create_fos_application(request):
                     )
                     return redirect('profiles_active', active_tab='membership')
 
+            documentation = cleaned['documentation']
+
             application = MembershipApproval(
                 applicant=request.user,
                 field_of_study=field_of_study,
-                started_date=started_date
+                started_date=started_date,
+                documentation=documentation
             )
 
             length_of_fos = get_length_of_field_of_study(field_of_study)
