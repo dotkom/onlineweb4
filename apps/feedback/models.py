@@ -184,7 +184,7 @@ class Feedback(models.Model):
     author = models.ForeignKey(User)
     description = models.CharField(_('beskrivelse'), max_length=100)
     display_field_of_study = models.BooleanField(
-        _('Vis studie oversikt'),
+        _('Vis studieoversikt'),
         default=True,
         help_text=_('Grafen over studiefelt vil bli vist til bedriften')
     )
