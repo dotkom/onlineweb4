@@ -5,6 +5,7 @@ from datetime import timedelta
 import icalendar
 from django.conf import settings
 from django.contrib.auth.models import Group
+from django.contrib.humanize.templatetags.humanize import naturaltime
 from django.core.exceptions import ImproperlyConfigured
 from django.core.mail import EmailMessage, send_mail
 from django.core.signing import BadSignature, Signer
@@ -91,7 +92,11 @@ def _handle_waitlist_bump_payment(payment, attendees):
         deadline = timezone.now() + payment.delay
         for attendee in attendees:
             payment.create_payment_delay(attendee.user, deadline)
-        message += "Dette arrangementet krever betaling og du må betale innen %d dager." % payment.delay
+
+        # Adding some seconds makes it seem like it's in more than X days, rather than X-1 days and 23 hours.
+        # Could be weird if the delay is less than a minute or so, in which the seconds actually matter.
+        message += "Dette arrangementet krever betaling og du må betale innen %s (%s)." % \
+                   (deadline.strftime('%-d %B %Y kl. %H:%M'), naturaltime(deadline + timedelta(seconds=5)))
     if len(payment.prices()) == 1:
         message += "\nPrisen for dette arrangementet er %skr." % payment.prices()[0].price
     # elif len(payment.prices()) >= 2:
