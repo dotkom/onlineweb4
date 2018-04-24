@@ -61,7 +61,7 @@ class MultipleImagesInput(HiddenInput):
 
       attrs = self.build_attrs(self.attrs, attrs)
       final_attrs = self.build_attrs(attrs, {'type': self.input_type, 'name': name})
-      
+      """
       if value:
           #values = value.split(',')
           value = value.split(',')[0]
@@ -75,6 +75,7 @@ class MultipleImagesInput(HiddenInput):
               encoding='utf-8'
 
           )
+      """
       upload_url = reverse_lazy('gallery_dashboard:upload')
 
       #return format_html(WIDGET_STRING, flatatt(final_attrs), img_thumb, upload_url)  

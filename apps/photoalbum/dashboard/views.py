@@ -12,72 +12,45 @@ from django.views.generic.edit import FormMixin
 
 from apps.photoalbum.dashboard.forms import AlbumForm
 from apps.photoalbum.models import Album
-from apps.dashboard.tools import DashboardPermissionMixin
+from apps.dashboard.tools import DashboardPermissionMixin, get_base_context, check_access_or_403
 from apps.photoalbum.utils import get_photos_from_form
 from apps.gallery.models import ResponsiveImage
 
 
-class PhotoAlbumIndex(DashboardPermissionMixin, ListView):
+def photoalbum_index(request):
+	# check_access_or_403(request)
 
-	permission_required = 'superuser' # 'photoalbum'
+	context = get_base_context(request)
+	context['albums'] = Album.objects.all()
 
-	#albums = Album.objects.all()
-	#for album in albums: 
-	# print(album.title)
+	return render(request, 'photoalbum/dashboard/index.html', context)
 
+def photoalbum_create(request):
 
-	model = Album
-	template_name = 'photoalbum/dashboard/index.html'
-	#queryset = Album.objects.all().order_by('-timestamp')[:15]
-
-	#print(Album.objects.all())
-
-	def get_context_data(self, **kwargs):
-		context = super(PhotoAlbumIndex, self).get_context_data(**kwargs) 
-
-		context['albums'] = Album.objects.all()
-		return context
-
-#@permission_required('photoalbum.view_photoalbum')
-class PhotoAlbumCreate(DashboardPermissionMixin, CreateView):
-	permission_required = 'superuser'
-
-	model = Album
-	template_name = 'photoalbum/dashboard/create.html'
-	form_class = AlbumForm
-	context_object_name = 'album'
 	form = AlbumForm()
 
-	#def post(self, request, *args, **kwargs):
-		#form = AlbumForm(request.POST, request.FILES)
-		#print("In post")
+	if request.method == 'POST':
+		form = AlbumForm(request.POST)
+		if form.is_valid():
+			instance = form.save(commit=False)
+			instance.save()
+			instance.changed_by = request.user
+			instance.created_by = request.user
+			instance.photos.add(ResponsiveImage.objects.get(pk=2))
+			instance.save()
 
-	def form_valid(self, form):
-		print("Form valid: ", form)
-		instance = form.save(commit=False)
-		print(instance)
-		#form.save_m2m()
+			messages.success(request, 'Albumet ble opprettet.')
+			#getLogger(__name__).info('%s deleted album %d (%s)' % (request.user, instance.pk, instance.title))
+			
+			return redirect(photoalbum_detail, pk=instance.pk)
+		else:
+			message.error(request, 'Noen av de påkrevde feltene inneholder feil.')
 
-		messages.success(self.request, 'PhotoAlbum ble laget.')
-		#getLogger(__name__).info('%s created PhotoAlbum %d' & (self.request.user, self.request.object.id))
+	context = get_base_context(request)
+	context['form'] = form
 
-		print("Before return redirect")
-		#return reverse('dashboard_photoalbum_detail', kwargs={'album_pk': instance.pk})
+	return render(request, 'photoalbum/dashboard/create.html', context)
 
-		return super(PhotoAlbumCreate, self).form_valid(form)
-		#return super(PhotoAlbumCreate, self).get_success_url()
-
-	def form_invalid(self, form):
-		print("Form invalid")
-
-		messages.error(self.request, 'Noen av feltene inneholder feil.')
-
-		return super(PhotoAlbumCreate, self).form_invalid(form)
-
-	def get_success_url(self):
-		print("Success url")
-		print(self.object)
-		return reverse('dashboard_photoalbum_detail', kwargs={'pk': self.object.pk})
 
 #@permission_required('photoalbum.view_photoalbum')
 class PhotoAlbumDetailDashboard(DashboardPermissionMixin, DetailView):
@@ -103,88 +76,68 @@ class PhotoAlbumDetailDashboard(DashboardPermissionMixin, DetailView):
 	def get_success_url(self):
 
 		return reverse('dashboard_photoalbum_detail', kwargs={'pk': self.object.id})
-	
 
-
-class PhotoAlbumEdit(DashboardPermissionMixin, UpdateView):
-	form_class = AlbumForm
-	model = Album
-	context_object_name = 'album'
-	permission_required = 'superuser'
-	template_name = 'photoalbum/dashboard/create.html'
-
-	def post(self, request, *args, **kwargs):
+	def get_context_data(self, **kwargs):
+		print("In get context data")
+		context = super(PhotoAlbumDetailDashboard, self).get_context_data(**kwargs)
 		album = get_object_or_404(Album, pk=self.kwargs.get('pk'))
-		form = AlbumForm(request.POST, instance=album)
-		self.object = self.get_object()
+		
+		context['album'] = album
 
-		if 'action' in self.request.POST and self.request.POST['action'] == 'delete':
+		print("Photos to album in detail")
+		#album.photos.add(ResponsiveImage.objects.get(pk=1))
+		#print(album.photos.all())
+
+		return context
+	
+def photoalbum_detail(request, pk):
+	#check_access_or_403(request)
+
+	album = get_object_or_404(Album, pk=pk)
+
+	context = get_base_context(request)
+	context['album'] = album
+
+	return render(request, 'photoalbum/dashboard/detail.html', context)
+
+
+def photoalbum_edit(request, pk):
+	#check_access_or_403(request)
+
+	album = get_object_or_404(Album, pk=pk)
+
+	form = AlbumForm(instance=album)
+
+	if request.method == 'POST':
+
+		if 'action' in request.POST and request.POST['action'] == 'delete':
 			instance = get_object_or_404(Album, pk=album.pk)
 			album_title = instance.title
 			album_pk = instance.pk
 			instance.delete()
 			messages.success(request, '%s ble slettet.' % album_title)
-			getLogger(__name__).info('%s deleted album %d (%s)' % (self.request.user, album_pk, album_title))
+			getLogger(__name__).info('%s deleted album %d (%s)' % (request.user, album_pk, album_title))
 
 			return redirect('dashboard_photoalbum_index')
-		#photos = get_photos_from_form(form)
-		#form['photos'] = photos
+
+		form = AlbumForm(request.POST)
 		if form.is_valid():
-			self.form_valid(form)
+			instance = form.save(commit=False)
+			instance.save()
+			instance.changed_by = request.user
+			instance.created_by = request.user
+			instance.photos.add(ResponsiveImage.objects.get(pk=2))
+			instance.save()
+
+			messages.success(request, '%s ble slettet.' % instance.title)
+			getLogger(__name__).info('%s deleted album %d (%s)' % (request.user, instance.pk, instance.title))
+			
+			return redirect('dashboard_photoalbum_index')
 		else:
-			self.form_invalid(form)
+			message.error(request, 'Noen av de påkrevde feltene inneholder feil.')
 
-		return super(PhotoAlbumEdit, self).post(request)
+	context = get_base_context(request)
+	context['form'] = form
+	context['edit'] = True
 
-
-
-	def form_valid(self, form):
-		print("Form is valid when editing album")
-		instance = form.save(commit=False)
-		#instance.changed_by = self.request.user
-		instance.save()
-		#photos = get_photos_from_form(form)
-		#print(photos)
-		#print(form['photos'])
-		photo = ResponsiveImage.objects.get(pk=1)
-		print(photo)
-		instance.photos.add(photo)
-		print(instance.photos.all())
-		instance.save()
-		#form.save_m2m()
-		print(instance.photos.all())
-
-		messages.success(self.request, 'Albumet ble endret.')
-		getLogger(__name__).info('%s edited photoalbum %d (%s)' % (self.request.user, instance.id, instance.title))
-		return super(PhotoAlbumEdit, self).form_valid(form)
-
-
-	def form_invalid(self, form):
-		print("Form is not valid")
-		print(form)
-
-		"""
-		Add error message if invalid
-		"""
-
-		messages.error(self.request, 'Noen av feltene inneholder feil.')
-
-		return super(PhotoAlbumEdit, self).form_invalid(form)
-
-	def get_success_url(self):
-		return reverse('dashboard_photoalbum_detail', kwargs={'pk': self.kwargs.get('pk')})
-		
-
-	def get_context_data(self, **kwargs):
-		print("In get context data")
-		context = super(PhotoAlbumEdit, self).get_context_data(**kwargs) 
-		print(self.kwargs.get('pk'))
-		album = get_object_or_404(Album, pk=self.kwargs.get('pk'))
-		
-		context['album'] = album
-		context['form'] = AlbumForm(instance=album)
-		context['edit'] = True
-
-		return context
-
-	print("At the end of PhotoAlbumEdit")
+	return render(request, 'photoalbum/dashboard/create.html', context)
