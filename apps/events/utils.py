@@ -323,7 +323,7 @@ def handle_attend_event_payment(event, user):
 
     if payment and not event.attendance_event.is_on_waitlist(user):
         if payment.payment_type == 3:
-            deadline = timezone.now() + timedelta(days=payment.delay)
+            deadline = timezone.now() + payment.delay
             payment.create_payment_delay(user, deadline)
             # TODO send mail
 
