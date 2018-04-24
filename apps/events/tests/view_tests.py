@@ -335,7 +335,7 @@ class EventsAttend(EventsTestMixin, TestCase):
         G(AttendanceEvent, event=event,
             registration_start=timezone.now() - timedelta(days=1),
             registration_end=timezone.now() + timedelta(days=1))
-        generate_payment(event, payment_type=3)
+        generate_payment(event, payment_type=3, delay=timedelta(days=2))
         url = reverse('attend_event', args=(event.id,))
         # django-recatpcha magic when RECAPTCHA_TESTING=True
         form_params = {'g-recaptcha-response': 'PASSED'}
@@ -522,7 +522,7 @@ class EventsUnattendWaitlist(TestCase):
     def test_payment_type_delay_uses_payment_delay(self):
         delay_days = 4
         payment_delay_time = timedelta(days=delay_days)
-        generate_payment(self.event, payment_type=3, delay=delay_days)
+        generate_payment(self.event, payment_type=3, delay=payment_delay_time)
         generate_attendee(self.event, 'user1')
         attend_user_to_event(self.event, self.user)
         attend_user_to_event(self.event, self.other_user)

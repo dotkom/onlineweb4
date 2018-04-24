@@ -88,7 +88,7 @@ def _handle_waitlist_bump_payment(payment, attendees):
             message += "Dette arrangementet krever betaling og du har 48 timer på å betale"
 
     elif payment.payment_type == 3:  # Delay
-        deadline = timezone.now() + timedelta(days=payment.delay)
+        deadline = timezone.now() + payment.delay
         for attendee in attendees:
             payment.create_payment_delay(attendee.user, deadline)
         message += "Dette arrangementet krever betaling og du må betale innen %d dager." % payment.delay
