@@ -38,13 +38,17 @@ class PaymentAdmin(VersionAdmin):
 
 class PaymentRelationAdmin(VersionAdmin):
     model = PaymentRelation
-    list_display = ('__str__', 'refunded')
+    list_display = ('payment', 'user', 'datetime', 'refunded')
+    list_filter = ['refunded']
+    search_fields = ['user__first_name', 'user__last_name', 'user__username', 'user__ntnu_username']
     exclude = ('stripe_id',)
 
 
 class PaymentDelayAdmin(VersionAdmin):
     model = PaymentDelay
     list_display = ('__str__', 'valid_to', 'active')
+    search_fields = ['user__first_name', 'user__last_name', 'user__username', 'user__ntnu_username']
+    list_filter = ['active']
 
 
 class PaymentReceiptAdmin(admin.ModelAdmin):
