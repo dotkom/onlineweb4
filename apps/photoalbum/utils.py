@@ -77,7 +77,7 @@ def get_photos_from_form(form):
   #  photo = UnhandledImage.get(pk)
   #  photos.append(photo)
   
-  photos = ResponsiveImage.objects.get(pk=1)
+  photos = [ResponsiveImage.objects.get(pk=1), ResponsiveImage.objects.get(pk=2)]
   return photos
 
 """
