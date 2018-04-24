@@ -19,15 +19,13 @@ class AlbumForm(forms.ModelForm):
 			'photos'
 		]
 
-		photos_fields = [('photos', {'id': 'responsive-image-id'})]
+		photos_fields = [('photos', {'id': 'responsive-images-id'})]
 		widgetlist = [
 			#(MultipleImagesInput, 'photos')
 		]
 
-		print("Before widget stuff")
 		# Multiple widget generator merges results from regular widget_generator into a single widget dict
 		widgets = multiple_widget_generator(widgetlist)
-		print("Before widgets update")
 		widgets.update({
 			'tags': TagWidget(attrs={'placeholder': 'Eksempel: åre, online, kjelleren'}),
 			'photos': MultipleImagesInput(attrs={'multiple': True, 'name': 'Bilder'})
