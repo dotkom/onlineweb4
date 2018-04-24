@@ -44,10 +44,19 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-xs-12 col-sm-6 col-md-4">
+            <div class="col-xs-12 col-sm-6 col-md-5">
                 <form id="field-of-study-application" enctype="multipart/form-data" method="post" action="{% url 'approval_send_fos_application' %}">
                     {% csrf_token %}
-                    {{ field_of_study_application|crispy }}
+                    {{ field_of_study_application.started_semester|as_crispy_field }}
+                    {{ field_of_study_application.started_year|as_crispy_field }}
+                    {{ field_of_study_application.field_of_study|as_crispy_field }}
+                    <div id="field-of-study-application-documentation">
+                        <p>For å søke sosialt medlemsskap i linjeforeningen, kreves det at du tar over 50% informatikk
+                            emner (15 stp+) ved NTNU per semester og at du planlegger å søke overgang til informatikk.
+                            Dette må dokumenteres ved at du laster opp f.eks et screenshot av din studieplan på
+                            studentweb.</p>
+                        {{ field_of_study_application.documentation|as_crispy_field }}
+                    </div>
                     <button type="submit" class="btn btn-success pull-right">Send søknad</button>
                 </form>
             </div>
