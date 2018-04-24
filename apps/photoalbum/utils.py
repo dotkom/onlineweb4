@@ -68,13 +68,17 @@ def is_prokom(user):
 def get_photos_from_form(form):
   print("get_photos_from_form")
   pks = form['photos']
-  print(pks)
+  #print(pks)
+
+
   #pks_list = pks.split(',')
   #photos = []
   #for pk in pks_list:
   #  photo = UnhandledImage.get(pk)
   #  photos.append(photo)
+  
   photos = ResponsiveImage.objects.get(pk=1)
+  return photos
 
 """
 def tag_users(users, photo):
