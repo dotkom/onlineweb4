@@ -17,7 +17,8 @@ class CaptchaForm(forms.Form):
     mark_rules = forms.BooleanField(label=_('Jeg godtar <a href="/profile/#marks" target="_blank">prikkreglene</a>'),
                                     error_messages={'required': _('Du må godta prikkereglene!')})
     captcha = ReCaptchaField(error_messages={'captcha_error': _('Du klarte ikke captchaen! Er du en bot?'),
-                                             'captcha_invalid': _('Du klarte ikke captchaen! Er du en bot?')})
+                                             'captcha_invalid': _('Du klarte ikke captchaen! Er du en bot?'),
+                                             'required': _('Du glemte captchaen! Vennligst prøv på nytt.')})
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user', None)
