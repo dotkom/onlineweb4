@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from django.contrib import admin
+from django.contrib.admin import register
 
 from apps.approval.models import CommitteeApplication, CommitteePriority, MembershipApproval
 
@@ -17,9 +18,16 @@ class CommitteeApplicationAdmin(admin.ModelAdmin):
     search_fields = ['name', 'email', 'applicant__first_name', 'applicant__last_name', 'applicant__email']
 
 
+@register(MembershipApproval)
 class MembershipApprovalAdmin(admin.ModelAdmin):
-    pass
+    model = MembershipApproval
+    list_display = (
+        '__str__', 'applicant', 'approver', 'created', 'processed', 'approved',
+    )
+    list_filter = ('approved', 'processed')
+    search_fields = (
+        'applicant__first_name', 'applicant__last_name', 'applicant__username', 'applicant__ntnu_username',
+    )
 
 
 admin.site.register(CommitteeApplication, CommitteeApplicationAdmin)
-admin.site.register(MembershipApproval, MembershipApprovalAdmin)
