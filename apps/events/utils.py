@@ -82,7 +82,7 @@ def _handle_waitlist_bump_payment(payment, attendees):
     elif payment.payment_type == 2:  # Deadline
         if payment.deadline > extended_deadline:  # More than 2 days left of payment deadline
             message += "Dette arrangementet krever betaling og fristen for og betale er %s" \
-                       % (payment.deadline.strftime('%-d %B %Y kl: %H:%M'))
+                       % (payment.deadline.strftime('%-d %B %Y kl. %H:%M'))
         else:  # The deadline is in less than 2 days
             for attendee in attendees:
                 payment.create_payment_delay(attendee.user, extended_deadline)
