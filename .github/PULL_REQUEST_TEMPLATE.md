@@ -1,6 +1,6 @@
 ## What kind of a pull request is this?
 
-- [ ] QA / Code Review
+- QA / Code Review
 <!-- Add other options if appropriate -->
 
 
