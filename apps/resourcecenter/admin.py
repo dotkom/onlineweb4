@@ -8,4 +8,4 @@ class ResourceCenterAdmin(admin.ModelAdmin):
     list_display = ['title', 'priority']
 
 
-admin.site.register(Resource)
+admin.site.register(Resource, ResourceCenterAdmin)
