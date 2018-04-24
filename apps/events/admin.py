@@ -81,9 +81,12 @@ mark_not_attended.short_description = "Merk som ikke møtt"
 
 class AttendeeAdmin(GuardedModelAdmin, VersionAdmin):
     model = Attendee
-    list_display = ('user', 'event', 'paid', 'attended', 'note', 'extras')
-    list_filter = ('event__event',)
-    search_fields = ('event__event__title', 'user__first_name', 'user__last_name', 'user__username')
+    ordering = ['-timestamp']
+    list_display = ('user', 'event', 'timestamp', 'paid', 'attended', 'note', 'extras')
+    list_filter = ('attended', 'paid', 'event__event')
+    search_fields = (
+        'event__event__title', '=event__event__id', 'user__first_name', 'user__last_name', 'user__username',
+    )
     actions = [mark_paid, mark_attended, mark_not_paid, mark_not_attended]
     group_owned_objects_field = 'event__event__organizer'
     user_can_access_owned_by_group_objects_only = True
@@ -136,6 +139,8 @@ class AttendanceEventInline(admin.StackedInline):
 class EventAdmin(GuardedModelAdmin, VersionAdmin):
     inlines = (AttendanceEventInline, FeedbackRelationInline, CompanyInline, GroupRestrictionInline)
     exclude = ("author", )
+    list_display = ['__str__', 'event_type', 'organizer']
+    list_filter = ['event_type', 'organizer']
     search_fields = ('title',)
 
     group_owned_objects_field = 'organizer'
