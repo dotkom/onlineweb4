@@ -18,4 +18,3 @@ class OfflineConfig(AppConfig):
         from apps.offline.models import Issue
 
         reversion.register(Chunk)
-        reversion.register(Issue)

@@ -6,6 +6,11 @@ from reversion.admin import VersionAdmin
 from apps.offline.models import Issue, ProxyChunk
 
 
+class IssueAdmin(VersionAdmin):
+    model = Issue
+    list_display = ['title', 'release_date']
+
+
 class ProxyChunkAdmin(VersionAdmin):
 
     readonly_fields = ['key']
@@ -19,4 +24,4 @@ class ProxyChunkAdmin(VersionAdmin):
 
 
 admin.site.register(ProxyChunk, ProxyChunkAdmin)
-admin.site.register(Issue)
+admin.site.register(Issue, IssueAdmin)
