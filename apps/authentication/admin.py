@@ -36,13 +36,17 @@ class OnlineUserAdmin(UserAdmin, VersionAdmin):
     filter_horizontal = ('groups', 'user_permissions',)
     search_fields = ('first_name', 'last_name', 'username', 'ntnu_username',)
 
+    def is_member(self, instance):
+        return instance.is_member
+    is_member.boolean = True
+
 
 admin.site.register(OnlineUser, OnlineUserAdmin)
 
 
 class AllowedUsernameAdmin(VersionAdmin):
     model = AllowedUsername
-    list_display = ('username', 'registered', 'expiration_date', 'note')
+    list_display = ('username', 'registered', 'expiration_date', 'note', 'is_active')
     fieldsets = (
         (None, {'fields': ('username', 'registered', 'expiration_date')}),
         (_('Notater'), {'fields': ('note', 'description')}),
@@ -63,6 +67,10 @@ class AllowedUsernameAdmin(VersionAdmin):
                 user.infomail = True
                 user.save()
         obj.save()
+
+    def is_active(self, instance):
+        return instance.is_active
+    is_active.boolean = True
 
 
 admin.site.register(AllowedUsername, AllowedUsernameAdmin)
