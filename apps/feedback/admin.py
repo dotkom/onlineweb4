@@ -72,7 +72,8 @@ class MultipleChoiceInline(admin.StackedInline):
 
 
 class FeedbackAdmin(VersionAdmin):
-    list_display = ('description', 'author')
+    list_display = ('description', 'author', 'display_field_of_study', 'display_info')
+    list_filter = ['display_field_of_study', 'display_info']
 
     inlines = (TextInline, RatingInline, MultipleChoiceInline)
     exclude = ('author',)
