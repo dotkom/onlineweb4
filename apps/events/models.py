@@ -517,7 +517,8 @@ class AttendanceEvent(models.Model):
     def visible_attending_attendees(self):
         """ List with all attendees whom want to be displayed as attending else return a anonymous name """
         dyr = ['piggsvin', 'kjøttmais', 'flaggermus', 'elg', 'villsvin', 'rådyr', 'moskus', 'narhval', 
-            'spekkhogger', 'gaupe', 'ekorn', 'kanin', 'lemen', 'neshorn', 'ørn', 'gullfisk', 'kodiakbjørn']
+            'spekkhogger', 'gaupe', 'ekorn', 'kanin', 'lemen', 'neshorn', 'ørn', 'gullfisk', 'kodiakbjørn',
+            'hacker', 'stol', 'bever', 'datamaskin', 'piano', 'strykejern', 'samurai', 'laks', 'server']
 
         visible_attendees = []
         for attendee in self.attending_attendees_qs:
