@@ -40,6 +40,7 @@ EMAIL_ITEX = 'itex@online.ntnu.no'
 EMAIL_OPPTAK='opptak@online.ntnu.no'
 EMAIL_PROKOM = 'prokom@online.ntnu.no'
 EMAIL_TRIKOM = 'trikom@online.ntnu.no'
+EMAIL_XSPORT = 'x-sport@online.ntnu.no'
 
 EMAIL_BACKEND = config("OW4_DJANGO_EMAIL_BACKEND", default='django.core.mail.backends.console.EmailBackend')
 
