@@ -2,6 +2,7 @@
 
 from collections import OrderedDict
 from datetime import datetime, timedelta
+from random import choice as random_choice
 
 from django.conf import settings
 from django.contrib.auth.models import Group
@@ -513,10 +514,20 @@ class AttendanceEvent(models.Model):
         return timezone.now() < self.registration_start
 
     @property
-    def visible_attendees_qs(self):
-        """ Queryset with all attendees whom want to be displayed as attending """
-        return self.attendees.filter(show_as_attending_event=True).\
-            order_by('user__last_name')[:self.number_of_attendee_seats]
+    def visible_attending_attendees(self):
+        """ List with all attendees whom want to be displayed as attending else return a anonymous name """
+        dyr = ['piggsvin', 'kjøttmais', 'flaggermus', 'elg', 'villsvin', 'rådyr', 'moskus', 'narhval', 
+            'spekkhogger', 'gaupe', 'ekorn', 'kanin', 'lemen', 'neshorn', 'ørn', 'gullfisk', 'kodiakbjørn']
+
+        visible_attendees = []
+        for attendee in self.attending_attendees_qs:
+            user = attendee.user
+            visible = attendee.show_as_attending_event
+            f_name, l_name = [user.first_name, user.last_name] if visible else ['Anonym ' + random_choice(dyr), '']
+            year = '{} klasse'.format(user.year)
+            visible_attendees.append({'visible': visible, 'first_name': f_name, 'last_name': l_name, 'year': year})
+
+        return sorted(visible_attendees, key=lambda attendee: attendee['visible'], reverse=True)
 
     def has_delayed_signup(self, user):
         pass
