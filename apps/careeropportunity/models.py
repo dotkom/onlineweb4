@@ -31,7 +31,8 @@ class CareerOpportunity(models.Model):
     employment = models.IntegerField(
         _('stillingstype'),
         choices=JOB_TYPE_CHOICES,
-        default=5,
+        blank=False,
+        null=False,
     )
 
     location = TaggableManager(_('sted(er)'), blank=True)
