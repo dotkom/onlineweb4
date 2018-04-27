@@ -5,7 +5,9 @@ from apps.splash.models import SplashEvent
 
 
 class SplashEventAdmin(VersionAdmin):
-    pass
+    model = SplashEvent
+    ordering = ['-start_time']
+    list_display = ['title', 'start_time', 'end_time']
 
 
 admin.site.register(SplashEvent, SplashEventAdmin)

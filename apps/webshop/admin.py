@@ -16,6 +16,11 @@ class ProductSizeInline(admin.TabularInline):
 
 
 class ProductAdmin(admin.ModelAdmin):
+    model = Product
+    list_display = ['name', 'category', 'active', 'price', 'stock']
+    list_filter = ['active', 'category']
+    search_fields = ['name']
+
     inlines = [ProductSizeInline]
     prepopulated_fields = {"slug": ("name",)}
 
@@ -27,11 +32,19 @@ class OrderInline(admin.TabularInline):
 
 class OrderLineAdmin(admin.ModelAdmin):
     model = OrderLine
+
+    list_display = ['user', 'datetime', 'paid', 'delivered']
+    list_filter = ['paid', 'delivered']
+    search_fields = ['user__first_name', 'user__last_name', 'user__username', 'user__ntnu_username']
+
     inlines = [OrderInline, ]
 
 
 class OrderAdmin(admin.ModelAdmin):
     model = Order
+
+    list_display = ['product', 'price', 'quantity', 'size']
+    list_filter = ['product']
 
 
 admin.site.register(Category, CategoryAdmin)

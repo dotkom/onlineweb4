@@ -13,9 +13,12 @@ class ItemAdmin(admin.ModelAdmin):
     model = Item
     list_display = [
         'name',
+        'category',
         'total_amount',
         'oldest_expiration_date',
-        'last_added'
+        'last_added',
+        'available',
+        'price',
     ]
 
 

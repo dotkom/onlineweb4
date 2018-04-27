@@ -16,6 +16,7 @@ class MarkUserInline(admin.TabularInline):
 
 class MarkAdmin(VersionAdmin):
     inlines = (MarkUserInline,)
+    list_display = ['__str__', 'category', 'added_date']
     search_fields = ('title',)
 
     def save_model(self, request, obj, form, change):

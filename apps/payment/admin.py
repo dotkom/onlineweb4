@@ -32,18 +32,23 @@ class PaymentPriceInline(admin.StackedInline):
 class PaymentAdmin(VersionAdmin):
     inlines = (PaymentPriceInline, )
     model = Payment
-    list_display = ('__str__', 'stripe_key', 'payment_type')
+    list_display = ('__str__', 'active', 'payment_type', 'deadline', 'delay', 'stripe_key')
+    list_filter = ['active', 'stripe_key', 'payment_type']
 
 
 class PaymentRelationAdmin(VersionAdmin):
     model = PaymentRelation
-    list_display = ('__str__', 'refunded')
+    list_display = ('payment', 'user', 'datetime', 'refunded')
+    list_filter = ['refunded']
+    search_fields = ['user__first_name', 'user__last_name', 'user__username', 'user__ntnu_username']
     exclude = ('stripe_id',)
 
 
 class PaymentDelayAdmin(VersionAdmin):
     model = PaymentDelay
     list_display = ('__str__', 'valid_to', 'active')
+    search_fields = ['user__first_name', 'user__last_name', 'user__username', 'user__ntnu_username']
+    list_filter = ['active']
 
 
 class PaymentReceiptAdmin(admin.ModelAdmin):
