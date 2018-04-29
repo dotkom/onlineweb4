@@ -433,27 +433,33 @@
                                     <tr>
                                         <th><b>Fornavn</b></th>
                                         <th><b>Etternavn</b></th>
+                                        <th><b>Årstrinn</b></th>
                                     </tr>
                                 </thead>
                                 <tbody id="attendee_list">
-                                    {% for attendee in event.attendance_event.visible_attendees_qs %}
+                                    {% for attendee in event.attendance_event.visible_attending_attendees %}
                                     <tr>
-                                        <td>{{ attendee.user.first_name }}</td>
-                                        <td>{{ attendee.user.last_name }}</td>
+                                        {% if attendee.visible %}
+                                            <td>{{ attendee.first_name }}</td>
+                                            <td>{{ attendee.last_name }}</td>
+                                        {% else %}
+                                            <td colspan="2" class="event-social-list-anon"><i>{{ attendee.first_name }}</i></td>
+                                        {% endif %}
+                                        <td>{{ attendee.year }}</td>
                                     </tr>
                                     {% endfor %}
                                 </tbody>
                             </table>
                             {% if user_setting_show_as_attending %}
-                                <i>Du vises automatisk som påmeldt alle fremtidige sosiale arrangement, dette kan endres under personvern på <a href="{% url 'profile_privacy' %}">profilen din her.</a></i>
+                                <i>Du vises automatisk som påmeldt alle fremtidige sosiale arrangement du er meldt på, dette kan endres under personvern på <a href="{% url 'profile_privacy' %}">profilen din her.</a></i>
                             {% else %}
-                                <i>Hvis du ønsker å automatisk vises som påmeldt på alle fremtidige sosiale arrangement kan det gjøres under personvern på <a href="{% url 'profile_privacy' %}">profilen din her.</a></i>
+                                <i>Under <a href="{% url 'profile_privacy' %}">personvern på profilen din</a> kan du endre til at du automatisk vises som påmeldte for alle fremtidige sosiale arrangement du blir meldt på.</i>
                             {% endif %}
                         </div>
                         <div class="modal-footer">
-                            {% if user_attending %}
-                                {% if show_as_attending %}
-                                    <a href="{% url 'toggleShowAsAttending' event.id %}"><button class="btn btn-warning">Ikke vis meg på denne listen</button></a>
+                            {% if user_attending and not place_on_wait_list %}
+                                {% if show_as_attending and user_attending %}
+                                    <a href="{% url 'toggleShowAsAttending' event.id %}"><button class="btn btn-warning">Ikke vis meg som påmeldt</button></a>
                                 {% else %}
                                     <a href="{% url 'toggleShowAsAttending' event.id %}"><button class="btn btn-success">Gjør meg synlig som påmeldt</button></a>
                                 {% endif %}
