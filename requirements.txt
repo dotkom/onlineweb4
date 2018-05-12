@@ -61,6 +61,6 @@ django-appconf>=1.0
 # libpq-dev						# From package repository.
 
 # Monitoring
-raven==6.7.0
+raven==6.8.0
 
 django-js-reverse==0.8.1
