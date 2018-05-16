@@ -90,6 +90,7 @@ def index(request):
             {'name': 'Badcom', 'email': 'badcom.mail@gmail.com'},
             {'name': 'NTNUI', 'email': 'hovedstyret@ntnui.no'},
             {'name': 'Radio Revolt', 'email': 'ntnu@radiorevolt.no'},
+            {'name': 'Revolve NTNU', 'email': 'post@revolve.no'},
             {'name': 'Studenttinget', 'email': 'sti@studenttinget.no'},
             {'name': 'Samfundet', 'email': 'styret@samfundet.no'},
             {'name': 'Student-TV', 'email': 'styret@stv.no'},
