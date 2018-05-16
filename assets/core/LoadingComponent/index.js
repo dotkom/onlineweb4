@@ -1,8 +1,21 @@
 import React from 'react';
 import ReactDom from 'react-dom';
 import { AppContainer } from 'react-hot-loader';
+import Transition from 'react-transition-group/Transition';
 
 import style from './style.less'; // eslint-disable-line no-unused-vars
+
+const duration = 400;
+
+const defaultStyle = {
+  transition: `opacity ${duration}ms ease-in-out`,
+  opacity: 0,
+};
+
+const transitionStyles = {
+  entering: { opacity: 0 },
+  entered: { opacity: 1 },
+};
 
 class IsLoading extends React.Component {
   constructor() {
@@ -23,14 +36,30 @@ class IsLoading extends React.Component {
 
   render() {
     return (
-      <div className="isloading__component">
-        {this.state.show && <div
-          className="alert alert-info"
-        >
-          Onlinewebben gjør en spørring som kan ta litt tid.<br />
-          Det er viktig at du forblir på siden under denne prosessen for å hindre tap av data.
-        </div>}
-      </div>
+      <Transition
+        in={this.state.show}
+        timeout={duration}
+        appear
+        mountOnEnter
+        unmountOnExit
+      >
+        {state => (
+          <div
+            className="isloading__component"
+            style={{
+              ...defaultStyle,
+              ...transitionStyles[state],
+            }}
+          >
+            <div
+              className="alert alert-info"
+            >
+              Onlinewebben gjør en spørring som kan ta litt tid.<br />
+              Det er viktig at du forblir på siden under denne prosessen for å hindre tap av data.
+            </div>
+          </div>
+        )}
+      </Transition>
     );
   }
 }
