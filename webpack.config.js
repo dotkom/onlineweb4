@@ -29,6 +29,7 @@ const webpackConfig = {
     core: [
       'react-hot-loader/patch',
       './assets/core/index',
+      './assets/core/LoadingComponent/index',
     ],
     contact: [
       './assets/contact/index',
