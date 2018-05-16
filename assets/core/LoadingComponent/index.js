@@ -52,10 +52,15 @@ class IsLoading extends React.Component {
             }}
           >
             <div
-              className="alert alert-info"
+              className="alert alert-info alert-dismissible"
+              role="alert"
             >
               Onlinewebben gjør en spørring som kan ta litt tid.<br />
               Det er viktig at du forblir på siden under denne prosessen for å hindre tap av data.
+              <button
+                className="close"
+                data-dismiss="alert"
+              >&times;</button>
             </div>
           </div>
         )}
