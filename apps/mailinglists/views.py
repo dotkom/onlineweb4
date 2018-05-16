@@ -66,6 +66,7 @@ def index(request):
         {'name': 'kalvskinnet', 'members': [
             {'name': 'TIHLDE', 'email': 'hs@tihlde.org'},
             {'name': 'Elektra', 'email': 'leder@elektra.io'},
+            {'name': 'KOM', 'email': 'kom.linjeforening@gmail.com'},
             {'name': 'MiT', 'email': 'leder@mit.teknikersamfunn.no'},
             {'name': 'Vivas', 'email': 'leder@vivas.teknikersamfunn.no'},
             {'name': 'Nutrix', 'email': 'nutrixlinjeforening@gmail.com'},
