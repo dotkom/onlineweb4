@@ -26,12 +26,33 @@ class IsLoading extends React.Component {
     this.registerListeners();
   }
 
-  registerListeners() {
+  registerBeforeUnloadListener() {
+    window.addEventListener(
+      'beforeunload',
+      (event) => {
+        if (this.state.show) {
+          // Basic support is set by modifying the returnValue in-place rather than returning.
+          // Doing both covers all bases.
+          // Some browsers overrides the custom message.
+          // eslint-disable-next-line no-param-reassign
+          event.returnValue = 'Onlinewebben utfører en spørring som kan ta litt tid. Det er viktig at du forblir på siden under denne prosessen for å hindre tap av data.';
+          return event.returnValue;
+        }
+        return event.returnValue;
+      });
+  }
+
+  registerOW4Listeners() {
     document.addEventListener('ow4-long-xhr-start',
     () => this.setState({ show: true }));
 
     document.addEventListener('ow4-long-xhr-end',
     () => this.setState({ show: false }));
+  }
+
+  registerListeners() {
+    this.registerOW4Listeners();
+    this.registerBeforeUnloadListener();
   }
 
   render() {
