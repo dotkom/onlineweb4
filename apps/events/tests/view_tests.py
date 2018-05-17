@@ -14,14 +14,15 @@ from apps.authentication.models import AllowedUsername
 from apps.payment.models import PaymentDelay
 
 from ..models import TYPE_CHOICES, AttendanceEvent, Event, Extras, GroupRestriction
-from .utils import (add_payment_delay, add_to_arrkom, add_to_trikom, attend_user_to_event,
-                    generate_attendee, generate_event, generate_payment, generate_user,
-                    pay_for_event)
+from .utils import (add_payment_delay, add_to_arrkom, add_to_bedkom, add_to_trikom,
+                    attend_user_to_event, generate_attendee, generate_event, generate_payment,
+                    generate_user, pay_for_event)
 
 
 class EventsTestMixin:
     def setUp(self):
         G(Group, pk=1, name="arrKom")
+        G(Group, pk=3, name="bedKom")
         G(Group, pk=8, name="triKom")
         G(Group, pk=12, name="Komiteer")
 
@@ -557,6 +558,17 @@ class EventMailParticipates(EventsTestMixin, TestCase):
 
         self.assertInMessages(
             'Du har ikke tilgang til å vise denne siden.', response)
+        self.assertEqual(len(mail.outbox), 0)
+
+    def test_get_own_social_event_as_bedkom(self):
+        add_to_bedkom(self.user)
+        bedkom = Group.objects.get(name__iexact='bedkom')
+        event = generate_event(TYPE_CHOICES[0][0], organizer=bedkom)
+        url = reverse('event_mail_participants', args=(event.id,))
+
+        response = self.client.get(url)
+
+        self.assertEqual(response.context['event'], event)
         self.assertEqual(len(mail.outbox), 0)
 
     def test_get_as_arrkom(self):

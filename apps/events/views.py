@@ -29,9 +29,8 @@ from apps.events.models import AttendanceEvent, Attendee, CompanyEvent, Event
 from apps.events.pdf_generator import EventPDF
 from apps.events.serializers import (AttendanceEventSerializer, AttendeeSerializer,
                                      CompanyEventSerializer, EventSerializer)
-from apps.events.utils import (get_group_restricted_events, handle_attend_event_payment,
-                               handle_attendance_event_detail, handle_event_ajax,
-                               handle_event_payment, handle_mail_participants)
+from apps.events.utils import (handle_attend_event_payment, handle_attendance_event_detail,
+                               handle_event_ajax, handle_event_payment, handle_mail_participants)
 from apps.payment.models import Payment, PaymentDelay, PaymentRelation
 
 from .utils import EventCalendar
@@ -55,11 +54,6 @@ def details(request, event_id, event_slug):
         messages.error(request, "Du har ikke tilgang til dette arrangementet.")
         return index(request)
 
-    user_access_to_event = False
-    if request.user:
-        if event in get_group_restricted_events(request.user):
-            user_access_to_event = True
-
     if request.method == 'POST':
         if request.is_ajax and 'action' in request.POST and 'extras_id' in request.POST:
             return JsonResponse(handle_event_ajax(event, request.user,
@@ -70,7 +64,6 @@ def details(request, event_id, event_slug):
         'captcha_form': form,
         'event': event,
         'ics_path': request.build_absolute_uri(reverse('event_ics', args=(event.id,))),
-        'user_access_to_event': user_access_to_event,
     }
 
     if event.is_attendance_event():
@@ -241,8 +234,7 @@ def generate_pdf(request, event_id):
         messages.error(request, _("Dette er ikke et påmeldingsarrangement."))
         return redirect(event)
 
-    if event.organizer and request.user.has_perm('events.change_event', obj=event) \
-            or event in get_group_restricted_events(request.user):
+    if request.user.has_perm('events.change_event', obj=event):
         return EventPDF(event).render_pdf()
 
     messages.error(request, _('Du har ikke tilgang til listen for dette arrangementet.'))
@@ -259,8 +251,8 @@ def generate_json(request, event_id):
         return redirect(event)
 
     # Check access
-    if event not in get_group_restricted_events(request.user):
-        messages.error(request, _('Du har ikke tilgang til listen for dette arrangementet. hei'))
+    if not request.user.has_perm('events.change_event', obj=event):
+        messages.error(request, _('Du har ikke tilgang til listen for dette arrangementet.'))
         return redirect(event)
 
     attendee_unsorted = event.attendance_event.attending_attendees_qs
@@ -328,7 +320,7 @@ def mail_participants(request, event_id):
         return redirect(event)
 
     # Check access
-    if event not in get_group_restricted_events(request.user):
+    if not request.user.has_perm('events.change_event', obj=event):
         messages.error(request, _('Du har ikke tilgang til å vise denne siden.'))
         return redirect(event)
 
