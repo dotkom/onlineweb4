@@ -24,6 +24,8 @@ var setupButton = function(data){
         key: data['stripe_public_key'],
         image: '/static/img/online_stripe_logo.png',
         token: function(token) {
+            // Dispatch event allowing IsLoading component to show.
+            document.dispatchEvent(new Event('ow4-long-xhr-start'));
             $.ajax({
                 type:"POST",
                 url:"/payment/saldo/",
@@ -33,9 +35,15 @@ var setupButton = function(data){
                 },
                 //Reloads the page on error or success to show the message and update the site content.
                 success: function(){
+                    // Tell IsLoading-component that request ended.
+                    document.dispatchEvent(new Event('ow4-long-xhr-end'));
+
                     location.reload();
                 },
                 error: function(result){
+                    // Tell IsLoading-component that request ended.
+                    document.dispatchEvent(new Event('ow4-long-xhr-end'));
+
                     location.reload();
                 }
             });

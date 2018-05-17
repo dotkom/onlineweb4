@@ -210,12 +210,18 @@ $(document).ready(() => {
   });
 
   const toggleSubscription = (list) => {
+    // Dispatch event allowing IsLoading component to show.
+    document.dispatchEvent(new Event('ow4-long-xhr-start'));
+
     const listID = $(`#toggle_${list}`);
     $.ajax({
       method: 'POST',
       url: `toggle_${list}/`,
       data: {},
       success(data) {
+        // Tell IsLoading-component that request ended.
+        document.dispatchEvent(new Event('ow4-long-xhr-end'));
+
         const res = JSON.parse(data);
         if (res.state === true) {
           listID.removeClass('btn-success');
@@ -228,6 +234,9 @@ $(document).ready(() => {
         }
       },
       error() {
+        // Tell IsLoading-component that request ended.
+        document.dispatchEvent(new Event('ow4-long-xhr-end'));
+
         setStatusMessage('Det oppstod en uventet feil under endring.', 'alert-danger');
       },
       crossDomain: false,
