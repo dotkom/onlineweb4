@@ -5,6 +5,7 @@ from datetime import timedelta
 import icalendar
 from django.conf import settings
 from django.contrib.auth.models import Group
+from django.contrib.humanize.templatetags.humanize import naturaltime
 from django.core.exceptions import ImproperlyConfigured
 from django.core.mail import EmailMessage, send_mail
 from django.core.signing import BadSignature, Signer
@@ -81,17 +82,21 @@ def _handle_waitlist_bump_payment(payment, attendees):
     elif payment.payment_type == 2:  # Deadline
         if payment.deadline > extended_deadline:  # More than 2 days left of payment deadline
             message += "Dette arrangementet krever betaling og fristen for og betale er %s" \
-                       % (payment.deadline.strftime('%-d %B %Y kl: %H:%M'))
+                       % (payment.deadline.strftime('%-d %B %Y kl. %H:%M'))
         else:  # The deadline is in less than 2 days
             for attendee in attendees:
                 payment.create_payment_delay(attendee.user, extended_deadline)
             message += "Dette arrangementet krever betaling og du har 48 timer på å betale"
 
     elif payment.payment_type == 3:  # Delay
-        deadline = timezone.now() + timedelta(days=payment.delay)
+        deadline = timezone.now() + payment.delay
         for attendee in attendees:
             payment.create_payment_delay(attendee.user, deadline)
-        message += "Dette arrangementet krever betaling og du må betale innen %d dager." % payment.delay
+
+        # Adding some seconds makes it seem like it's in more than X days, rather than X-1 days and 23 hours.
+        # Could be weird if the delay is less than a minute or so, in which the seconds actually matter.
+        message += "Dette arrangementet krever betaling og du må betale innen %s (%s)." % \
+                   (deadline.strftime('%-d %B %Y kl. %H:%M'), naturaltime(deadline + timedelta(seconds=5)))
     if len(payment.prices()) == 1:
         message += "\nPrisen for dette arrangementet er %skr." % payment.prices()[0].price
     # elif len(payment.prices()) >= 2:
@@ -323,7 +328,7 @@ def handle_attend_event_payment(event, user):
 
     if payment and not event.attendance_event.is_on_waitlist(user):
         if payment.payment_type == 3:
-            deadline = timezone.now() + timedelta(days=payment.delay)
+            deadline = timezone.now() + payment.delay
             payment.create_payment_delay(user, deadline)
             # TODO send mail
 

@@ -64,8 +64,9 @@ class Payment(models.Model):
     """Shared deadline for all payments"""
     active = models.BooleanField(default=True)
     """Is payment activated"""
-    delay = models.SmallIntegerField(_('utsettelse'), blank=True, null=True, default=2)
-    """Number of days after user attended which they have to pay."""
+    delay = models.DurationField(_('utsettelse'), blank=True, null=True,
+                                 help_text='Oppgi utsettelse på formatet "dager timer:min:sek"')
+    """Duration after user attended which they have to pay."""
 
     # For logging and history
     added_date = models.DateTimeField(_("opprettet dato"), auto_now=True)
