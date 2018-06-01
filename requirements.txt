@@ -1,4 +1,4 @@
-Django==2.0.5
+Django==2.0.6
 Pillow==5.1.0                   # PIL fork (Python Imaging Library)
 django-tastypie==0.14.1         # API v0
 djangorestframework==3.8.2      # API v1
