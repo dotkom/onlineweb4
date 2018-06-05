@@ -8,6 +8,6 @@ freezegun==0.3.10
 mock==2.0.0
 
 # py.test
-pytest==3.6.0
+pytest==3.6.1
 pytest-cov==2.5.1
 pytest-django==3.2.1
