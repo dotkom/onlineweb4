@@ -46,19 +46,24 @@ def get_course_finish_date(course):
     return None
 
 
-def get_year_from_course(course, date):
+def get_add_years(course):
     """Add years back for more recent courses.
-    If course is 2nd grade, the user started one more year before."""
-    # Add 1 year if verification happens during spring, 0 if during fall.
-    add_years = 0  # if timezone.now().month >= 7 else 1
+        If course is 2nd grade, the user started one more year before."""
+    # Add 1 year if verification happens during fall, 0 if during spring.
+    add_years = 1 if timezone.now().month >= 7 else 0
 
     if course['id'] == GROUP_IDENTIFIERS['PROSJEKT1']:
         add_years += 1
     elif course['id'] == GROUP_IDENTIFIERS['ALGDAT']:
         add_years += 1
     elif course['id'] == GROUP_IDENTIFIERS['PROSJEKT2']:
-        add_years += 2
-    return (timezone.now().year - date.year) + add_years
+        add_years += 3
+
+    return min(3, add_years)
+
+
+def get_year_from_course(course, date):
+    return (timezone.now().year - date.year) + get_add_years(course)
 
 
 def get_bachelor_year(groups):
@@ -69,10 +74,11 @@ def get_bachelor_year(groups):
             parsed_datetime = get_course_finish_date(group)
             if parsed_datetime:
                 years.append(get_year_from_course(group, parsed_datetime))
+            else:
+                # If we don't know the end date, only add the years for the course.
+                years.append(get_add_years(group))
 
-    # Find the max number of years to add, and add a year to that.
-    # Grades aren't indexed by zero for some reason, so we need to +1.
-    return max(years) + 1
+    return max(years)
 
 
 def get_master_year(groups):
