@@ -206,6 +206,7 @@ INSTALLED_APPS = (
     'apps.companyprofile',
     'apps.contact',
     'apps.dashboard',
+    'apps.dataporten',
     'apps.gallery',
     'apps.gsuite',
     'apps.hobbygroups',
