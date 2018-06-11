@@ -51,8 +51,8 @@ INFORMATICS_MASTER_STUDY_PROGRAMME = json.loads("""{
         },
         "id": "fc:fs:fs:prg:ntnu.no:MIT"
     }""")
-# PVS
-"""{
+
+INFORMATICS_MASTER_PVS_SPECIALIZATION = json.loads("""{
         "type": "fc:fs:str",
         "parent": "fc:org:ntnu.no",
         "membership": {
@@ -65,7 +65,7 @@ INFORMATICS_MASTER_STUDY_PROGRAMME = json.loads("""{
         },
         "id": "fc:fs:fs:str:ntnu.no:MIT-PVS",
         "displayName": "Programvaresystemer"
-    }"""
+    }""")
 # PVS-course
 """{
         "type": "fc:fs:emne",
@@ -81,8 +81,6 @@ INFORMATICS_MASTER_STUDY_PROGRAMME = json.loads("""{
         "id": "fc:fs:fs:emne:ntnu.no:IT3901:1",
         "displayName": "Masteroppgave i informatikk: Programvaresystemer"
     }"""
-
-NON_INFORMATICS_STUDY_PROGRAMME = ""
 
 # Courses
 

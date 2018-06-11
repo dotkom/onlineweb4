@@ -1,3 +1,5 @@
+import json
+import os
 from unittest import skip
 
 from dateutil.parser import parse
@@ -11,9 +13,12 @@ from apps.dataporten.study.utils import (get_bachelor_year, get_course_finish_da
                                          get_study, get_year, get_year_from_course)
 
 from .course_test_data import (INFORMATICS_BACHELOR_STUDY_PROGRAMME,
+                               INFORMATICS_MASTER_PVS_SPECIALIZATION,
                                INFORMATICS_MASTER_STUDY_PROGRAMME, ITGK_ACTIVE, ITGK_EXPIRED,
                                NON_INFORMATICS_COURSE_EXPIRED, PROJECT1_ACTIVE, PROJECT1_EXPIRED,
                                PROJECT2_ACTIVE, PVS_ACTIVE, load_course)
+
+DIR_NAME = os.path.dirname(os.path.realpath(__file__))
 
 
 class DataProcessingTestCase(TestCase):
@@ -160,7 +165,7 @@ class DataProcessingTestCase(TestCase):
     @freeze_time("2010-10-01 12:00")
     def test_get_field_of_study_master_pvs(self):
         groups = [
-            PVS_ACTIVE,
+            load_course(INFORMATICS_MASTER_PVS_SPECIALIZATION, active=True),
         ]
 
         self.assertEqual(FIELD_OF_STUDY_CHOICES[2][0], get_field_of_study(groups))

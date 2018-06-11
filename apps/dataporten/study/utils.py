@@ -96,16 +96,25 @@ def get_field_of_study(groups):
     if get_group_id(get_study(groups)) == GROUP_IDENTIFIERS['BACHELOR']:
         return FIELD_OF_STUDY_CHOICES[1][0]
     else:
+        found_master_study = False
         for group in groups:
             group_id = get_group_id(group)
-            logger.debug('User is (probably) master student, trying to find a match for "%s".' % group_id)
-            if group_id == GROUP_IDENTIFIERS['MASTER_COURSE_PVS']:
+            if group_id == GROUP_IDENTIFIERS['MASTER_SPEC_PVS']:
                 return FIELD_OF_STUDY_CHOICES[2][0]
-            elif group_id == GROUP_IDENTIFIERS['MASTER_COURSE_DB']:
+            elif group_id == GROUP_IDENTIFIERS['MASTER_SPEC_DBS']:
                 return FIELD_OF_STUDY_CHOICES[3][0]
-            elif group_id == GROUP_IDENTIFIERS['MASTER_COURSE_AI']:
+            elif group_id == GROUP_IDENTIFIERS['MASTER_SPEC_KI']:
                 return FIELD_OF_STUDY_CHOICES[6][0]
-            elif group_id == GROUP_IDENTIFIERS['MASTER_COURSE_UX']:
+            elif group_id == GROUP_IDENTIFIERS['MASTER_SPEC_UX']:
                 return FIELD_OF_STUDY_CHOICES[8][0]
             elif group_id == GROUP_IDENTIFIERS['MASTER_COURSE_OTHER']:
                 return FIELD_OF_STUDY_CHOICES[9][0]
+            elif group_id == GROUP_IDENTIFIERS['MASTER']:
+                found_master_study = True
+
+        # If we don't find a specific master study, return 'other'
+        if found_master_study:
+            return FIELD_OF_STUDY_CHOICES[9][0]
+
+    # Return guest if we find nothing else
+    return FIELD_OF_STUDY_CHOICES[0][0]

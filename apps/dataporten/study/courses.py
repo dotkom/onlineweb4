@@ -7,9 +7,6 @@ GROUP_IDENTIFIERS = {
     'MASTER': 'fc:fs:fs:prg:ntnu.no:MIT',
     'IDI': 'fc:org:ntnu.no:unit:631000',
 
-    # fc:fs:fs:str:ntnu.no:MIT-PVS- programvaresys
-    # fc:fs:fs:str:ntnu.no:MIT-KI - kunstig int
-
     # Courses used for verification
 
     # 1st grade
@@ -22,6 +19,12 @@ GROUP_IDENTIFIERS = {
 
     # 3rd grade
     'PROSJEKT2': 'fc:fs:fs:emne:ntnu.no:IT2901:1',
+
+    # Master specializations
+    'MASTER_SPEC_DBS': 'fc:fs:fs:str:ntnu.no:MIT-DBS',
+    'MASTER_SPEC_KI': 'fc:fs:fs:str:ntnu.no:MIT-KI',
+    'MASTER_SPEC_PVS': 'fc:fs:fs:str:ntnu.no:MIT-PVS',
+    'MASTER_SPEC_UX': 'fc:fs:fs:str:ntnu.no:MIT-ISL',
 
     # Master project courses
     'MASTER_COURSE': 'fc:fs:fs:emne:ntnu.no:IT3901',
