@@ -1,6 +1,7 @@
 import json
 
 import mock
+from django.core import mail
 from django.test import TestCase
 from django_dynamic_fixture import G
 
@@ -45,7 +46,7 @@ class StudyUpdatingTestCase(TestCase):
         self.assertTrue(application.approved)
         self.assertTrue(application.processed)
 
-        # self.assertEqual(len(mail.outbox), 0)  # @Fixme
+        self.assertEqual(len(mail.outbox), 0)
 
     def test_find_user_study_and_update_5th_grader(self):
         user = G(OnlineUser)
@@ -62,4 +63,4 @@ class StudyUpdatingTestCase(TestCase):
         self.assertTrue(application.approved)
         self.assertTrue(application.processed)
 
-        # self.assertEqual(len(mail.outbox), 0)  # @Fixme
+        self.assertEqual(len(mail.outbox), 0)
