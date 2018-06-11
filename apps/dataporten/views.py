@@ -22,6 +22,8 @@ DATAPORTEN_SCOPES = settings.DATAPORTEN.get('STUDY', {}).get('SCOPES')
 
 @login_required()
 def study(request):
+    """This view redirects the user to Dataporten to request authorization for fetching information about the
+    user's groups membership, which can be used to verify eligibility for membership of Online."""
     if request.user.is_member:
         messages.info(request, 'Du er allerede registrert som medlem.')
         return redirect('profiles_active', active_tab='membership')
@@ -62,6 +64,10 @@ def study(request):
 
 @login_required()
 def study_callback(request):
+    """This view fetches information from Dataporten to verify the eligibility. This is done by fetching
+    the /me/groups-API from Dataporten and further processing the fetched groups to find group membership.
+
+    Dataporten Groups API: https://docs.dataporten.no/docs/groups/"""
     logger.debug('Fetching study programme for user {}'.format(request.user), extra={'user': request.user})
 
     client = client_setup(DATAPORTEN_CLIENT_ID, DATAPORTEN_CLIENT_SECRET)

@@ -16,6 +16,7 @@ Welcome to onlineweb4's documentation!
     companyprofile/index
     contact/index
     dashboard/index
+    dataporten/index
     events/index
     feedback/index
     gallery/index
