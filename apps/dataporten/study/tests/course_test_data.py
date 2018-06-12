@@ -9,7 +9,6 @@ def load_course(course, active=False, years_ago=0):
     elif active:
         return course
     year = timezone.now().year - years_ago
-    print('creating course %s years ago in year %s (now is %s)' % (years_ago, year, timezone.now().year))
     return json.loads(json.dumps(course) % str(year))
 
 

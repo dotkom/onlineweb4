@@ -73,7 +73,6 @@ def study_callback(request):
     client = client_setup(DATAPORTEN_CLIENT_ID, DATAPORTEN_CLIENT_SECRET)
 
     queryparams = request.GET.urlencode()
-    print('qp', queryparams)
 
     try:
         auth_resp = client.parse_response(AuthorizationResponse, info=queryparams, sformat='urlencoded')
