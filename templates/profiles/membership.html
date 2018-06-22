@@ -5,6 +5,7 @@
         <h3>Medlemskap</h3>
     </div>
 </div>
+{% if enable_dataporten_application %}
 <div class="row">
     <div class="col-xs-12 col-sm-6 col-md-5">
         <a href="{% url 'dataporten:study' %}" class="btn btn-success">
@@ -12,6 +13,7 @@
         </a>
     </div>
 </div>
+{% endif %}
 {% if not has_active_approvals %}
     <div class="row">
         <div class="col-md-12">

@@ -115,7 +115,9 @@ def _create_profile_context(request):
             (_('betalt'), PaymentRelation.objects.all().filter(user=request.user), True),
         ],
         'internal_services_form': InternalServicesForm(),
-        'in_comittee': has_access(request)
+        'in_comittee': has_access(request),
+        'enable_dataporten_application':
+            settings.DATAPORTEN.get('STUDY').get('ENABLED') or settings.DATAPORTEN.get('STUDY').get('TESTING'),
     }
 
     return context

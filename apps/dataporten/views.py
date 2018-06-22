@@ -24,7 +24,9 @@ DATAPORTEN_SCOPES = settings.DATAPORTEN.get('STUDY', {}).get('SCOPES')
 def study(request):
     """This view redirects the user to Dataporten to request authorization for fetching information about the
     user's groups membership, which can be used to verify eligibility for membership of Online."""
-    if request.user.is_member:
+
+    # If the user already is a member we can return early. However, if we're in testing, we want to skip the check.
+    if settings.DATAPORTEN.get('STUDY').get('ENABLED') and request.user.is_member:
         messages.info(request, 'Du er allerede registrert som medlem.')
         return redirect('profiles_active', active_tab='membership')
 
