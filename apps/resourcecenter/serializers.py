@@ -6,4 +6,4 @@ from apps.resourcecenter.models import Resource
 class ResourceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Resource
-        fields = ('id', 'title', 'description')
+        fields = ('id', 'title', 'description', 'image')
