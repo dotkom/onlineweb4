@@ -18,7 +18,7 @@ class Approval(models.Model):
         User,
         verbose_name=_("søker"),
         related_name="applicant",
-        editable=False
+        editable=True
     )
     approver = models.ForeignKey(
         User,
