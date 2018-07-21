@@ -1,4 +1,4 @@
-FROM python:3
+FROM python:3.4
 MAINTAINER dotkom
 
 ENV APP_DIR=/srv/app
