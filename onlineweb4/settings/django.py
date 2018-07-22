@@ -227,6 +227,7 @@ INSTALLED_APPS = (
     'apps.splash',
     'apps.shop',
     'apps.webshop',
+    'apps.chunksapi',
     'scripts',
 
     #External apps
