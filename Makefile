@@ -33,6 +33,9 @@ migrate:
 makemigrations:
 	@docker-compose run --rm $(BACKEND_SERVICE_NAME) python manage.py makemigrations $(OW4_MAKE_TARGET)
 
+makemigrations-merge:
+	@docker-compose run --rm $(BACKEND_SERVICE_NAME) python manage.py makemigrations --merge $(OW4_MAKE_TARGET)
+
 restart: stop start
 
 shell:
@@ -72,4 +75,8 @@ test-backend:
 
 test-frontend:
 	@docker-compose run --rm $(FRONTEND_SERVICE_NAME) npm run test
+
+install-frontend:
+	@docker-compose run --rm $(FRONTEND_SERVICE_NAME) npm install
+
 
