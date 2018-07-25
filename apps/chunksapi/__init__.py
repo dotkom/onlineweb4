@@ -1,1 +1,1 @@
-default_app_config = 'apps.chunks.appconfig.ChunksAPIConfig'
+default_app_config = 'apps.chunksapi.appconfig.ChunksAPIConfig'
