@@ -206,6 +206,12 @@ if 'apps.webshop' in settings.INSTALLED_APPS:
         )),
     ]
 
+if 'apps.chunksapi' in settings.INSTALLED_APPS:
+    urlpatterns += [
+        url(r'^chunks/', include('apps.chunksapi.urls')),
+    ]
+
+
 # feedme
 if 'feedme' in settings.INSTALLED_APPS:
     feedme_urls = [
@@ -241,6 +247,7 @@ if 'oidc_provider' in settings.INSTALLED_APPS:
     urlpatterns += [
         url(r'^openid/', include('oidc_provider.urls', namespace='oidc_provider'))
     ]
+
 
 #500 view
 handler500 = views.server_error
