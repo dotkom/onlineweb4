@@ -93,6 +93,12 @@ if 'apps.dashboard' in settings.INSTALLED_APPS:
         url(r'^dashboard/chunks/', include('apps.dashboard.chunks.dashboard.urls', namespace='chunk-dashboard')),
     ]
 
+if 'apps.dataporten' in settings.INSTALLED_APPS:
+    from apps.dataporten import urls as dataporten_urls
+    urlpatterns += [
+        url(r'^dataporten/', include(dataporten_urls, namespace='dataporten')),
+    ]
+
 if 'apps.events' in settings.INSTALLED_APPS:
     urlpatterns += [
         url(r'^events/',            include('apps.events.urls')),

@@ -24,7 +24,7 @@ def new_membership_approval_handler(sender, instance, created, **kwargs):
     :rtype: None
     """
 
-    if created:
+    if created and not instance.processed:
         if settings.APPROVAL_SETTINGS.get('SEND_APPROVER_NOTIFICATION_EMAIL', False):
             send_approval_notification(instance)
 
@@ -45,7 +45,7 @@ def notify_membership_applicant_handler(sender, instance, created, **kwargs):
        :rtype: None
     """
 
-    if instance.processed and instance.applicant.get_email():
+    if not created and instance.processed and instance.applicant.get_email():
         if settings.APPROVAL_SETTINGS.get('SEND_APPLICANT_NOTIFICATION_EMAIL', False):
             send_approval_status_update(instance)
 
