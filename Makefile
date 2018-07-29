@@ -40,6 +40,8 @@ shell:
 
 start:
 	@docker-compose up -d
+	@echo "Onlineweb4 is running in a detached container."
+	@echo "To view output from onlineweb4, run make logs. To view output from a specific service (e.g. django), prepend the make command with OW4_MAKE_TARGET=django."
 
 status:
 	@docker-compose ps
