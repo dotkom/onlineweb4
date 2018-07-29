@@ -60,8 +60,6 @@ FILEBROWSER_MEDIA_ROOT = MEDIA_ROOT
 #   'django_extensions', # http://packages.python.org/django-extensions/
 # )
 
-GENFORS_ADMIN_PASSWORD = config("OW4_DJANGO_GENFORS_ADMIN_PASSWORD", default='ADMIN_PASSWORD')
-
 SYMPA_DB_PASSWD = ''
 SYMPA_DB_USER = ''
 SYMPA_DB_NAME = ''

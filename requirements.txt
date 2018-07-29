@@ -32,7 +32,6 @@ reportlab==3.4.0
 pdfdocument==3.2
 Unidecode==0.04.21               # Translates every unicode symbol to the closest ascii. online_mail_usernames
 django-markdown-deux==1.0.5
-django-formset-js==0.5.0        # used to dynamically create new formsets
 django-cors-headers==2.2.0      # Enable CORS for Nibble
 django-datetime-widget==0.9.3   # Datetime widget for forms
 django-webpack-loader==0.6.0    # Integration with webpack

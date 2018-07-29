@@ -29,8 +29,6 @@ OW4_SETTINGS = {
    }
 }
 
-GENFORS_ADMIN_PASSWORD = config("OW4_DJANGO_GENFORS_ADMIN_PASSWORD", default='ADMIN_PASSWORD')
-
 # List of usergroups that should be listed under "Finn brukere" in user profile
 USER_SEARCH_GROUPS = [
     16,  # appKom
