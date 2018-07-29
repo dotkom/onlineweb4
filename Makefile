@@ -15,7 +15,7 @@ bash-backend:
 build:
 	@docker-compose build
 
-clean: stop
+clean: down
 	@docker-compose rm --force
 
 docs:
