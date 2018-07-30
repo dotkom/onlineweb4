@@ -7,7 +7,7 @@ BACKEND_TEST_FOLDERS = apps
 
 FRONTEND_SERVICE_NAME = webpack
 
-all: clean build start
+all: down build start
 
 bash-backend:
 	@docker-compose run --rm $(BACKEND_SERVICE_NAME) bash
