@@ -17,12 +17,13 @@ build:
 
 clean: down
 	@docker-compose rm --force
+	@docker volumes prune
 
 docs:
 	cd docs; make html
 
 down:
-	@docker-compose down
+	@docker-compose down --volumes
 
 logs:
 	@docker-compose logs -f $(OW4_MAKE_TARGET)
