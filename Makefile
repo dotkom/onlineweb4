@@ -7,7 +7,7 @@ BACKEND_TEST_FOLDERS = apps
 
 FRONTEND_SERVICE_NAME = webpack
 
-all: build start
+all: down build start
 
 bash-backend:
 	@docker-compose run --rm $(BACKEND_SERVICE_NAME) bash
@@ -15,14 +15,15 @@ bash-backend:
 build:
 	@docker-compose build
 
-clean: stop
+clean: down
 	@docker-compose rm --force
+	@docker volumes prune
 
 docs:
 	cd docs; make html
 
 down:
-	@docker-compose down
+	@docker-compose down --volumes
 
 logs:
 	@docker-compose logs -f $(OW4_MAKE_TARGET)
@@ -40,6 +41,8 @@ shell:
 
 start:
 	@docker-compose up -d
+	@echo "Onlineweb4 is running in a detached container."
+	@echo "To view output from onlineweb4, run make logs. To view output from a specific service (e.g. django), prepend the make command with OW4_MAKE_TARGET=django."
 
 status:
 	@docker-compose ps
