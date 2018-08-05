@@ -4,7 +4,7 @@ const google = window.google;
 
 export const createGoogleMaps = () => {
   const map = new google.maps.Map(document.getElementById('footer-map'), {
-    center: new google.maps.LatLng(63.41819751959266, 10.40592152481463),
+    center: new google.maps.LatLng(63.415510, 10.404668),
     zoom: 15,
     mapTypeId: google.maps.MapTypeId.ROADMAP,
     disableDefaultUI: true,
@@ -58,7 +58,7 @@ export const createGoogleMaps = () => {
   // eslint-disable-next-line no-new
   new google.maps.Marker({
     map,
-    position: new google.maps.LatLng(63.41816871425781, 10.405924207023645),
+    position: new google.maps.LatLng(63.415510, 10.404668),
     icon: '/static/img/map-marker.png',
     visible: true,
   });
@@ -77,7 +77,7 @@ export const initGoogleMaps = () => {
   // Reset center of the map on window-resize
   debouncedResize(() => {
     if (map) {
-      map.panTo(new google.maps.LatLng(63.41819751959266, 10.40592152481463));
+      map.panTo(new google.maps.LatLng(63.415510, 10.404668));
     }
   });
 };
