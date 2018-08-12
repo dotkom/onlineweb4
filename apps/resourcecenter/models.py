@@ -1,7 +1,8 @@
 from django.db import models
+from django.db.models import SET_NULL
 
 from apps.gallery.models import ResponsiveImage
-from django.db.models import SET_NULL
+
 
 class Resource(models.Model):
     title = models.CharField(max_length=35)
