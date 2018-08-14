@@ -5,86 +5,108 @@
         <h3>Medlemskap</h3>
     </div>
 </div>
-{% if enable_dataporten_application %}
 <div class="row">
-    <div class="col-xs-12 col-sm-6 col-md-5">
-        <a href="{% url 'dataporten:study' %}" class="btn btn-success">
-            Søk medlemskap automatisk gjennom Dataporten
-        </a>
+    <div class="col-xs-12 membership-text">
+            Her kan du administrere dine søknader for medlemskap i Online, Linjeforeningen for Informatikk! <br>
+            {% if not has_active_approvals %}
+            Ved å sende inn en medlemskapssøknad, kan du få muligheten til å delta på Online sine mange arrangementer
+            gjennom skoleåret. <br> Hvorfor nøle? Søk nå!
+            {% endif %}
     </div>
 </div>
-{% endif %}
 {% if not has_active_approvals %}
+    {% if enable_dataporten_application %}
     <div class="row">
-        <div class="col-md-12">
-            <p><strong>Avslåtte søknader havner nederst på siden, sjekk her før du sender inn nye søknader!</strong></p>
+        <div class="col-xs-12 col-sm-6 col-md-5">
+            <a href="{% url 'dataporten:study' %}" class="btn btn-success membership-button">
+                Søk medlemskap automatisk gjennom Dataporten
+            </a>
         </div>
     </div>
-    {% if user.ntnu_username %}
-        {% if user.has_expiring_membership %}
-            <hr />
-            <div class="row">
-                <div class="col-xs-12 col-sm-6 col-md-6">
-                    <p class="ingress">
-                        Ettersom du har et gammelt medlemskap kan du søke om å få dette forlenget. Forlengelsen er for ett år om gangen.
-                    </p>
-                </div>
-                <div class="col-xs-12 col-sm-6 col-md-3">
-                    <form id="membership-application" method="post" action="{% url 'approval_send_membership_application' %}">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-success pull-right">Send søknad om forlengelse</button>
-                    </form>
-                </div>
-            </div>
-        {% endif %}
-        <hr />
+    <div class="manual-membership-choice">
         <div class="row">
-            <div class="col-md-12">
-                <p class="ingress">
-                    Med skjemaet under søker du om å få oppdatert studieretningen din. Starten på studieretningen er når du ble tatt opp.
-                    Om du tidligere har vært bachelor og ønsker å søke deg over på master, skal starttidspunkt være når du kom
-                    inn på mastergraden.
-                </p>
-                <p>
-                    Merk at det er viktig at du legger inn virkelig informasjon i dette skjemaet. Fusk med feil startdato
-                    og studieretning kan få svært alvorlige konsekvenser, og du risikerer utestengelse fra linjeforeningens
-                    arrangementer.
-                </p>
-            </div>
+            <div class="col-xs-12 col-sm-6 col-md-5"><strong>Eller</strong></div>
         </div>
         <div class="row">
             <div class="col-xs-12 col-sm-6 col-md-5">
-                <form id="field-of-study-application" enctype="multipart/form-data" method="post" action="{% url 'approval_send_fos_application' %}">
-                    {% csrf_token %}
-                    {{ field_of_study_application.started_semester|as_crispy_field }}
-                    {{ field_of_study_application.started_year|as_crispy_field }}
-                    {{ field_of_study_application.field_of_study|as_crispy_field }}
-                    <div id="field-of-study-application-documentation">
-                        <p>For å søke sosialt medlemsskap i linjeforeningen, kreves det at du tar over 50% informatikk
-                            emner (15 stp+) ved NTNU per semester og at du planlegger å søke overgang til informatikk.
-                            Dette må dokumenteres ved at du laster opp f.eks et screenshot av din studieplan på
-                            studentweb.</p>
-                        {{ field_of_study_application.documentation|as_crispy_field }}
-                    </div>
-                    <button type="submit" class="btn btn-success pull-right">Send søknad</button>
-                </form>
+                <a class="btn btn-warning membership-button manual-membership-button">
+                    Søk medlemskap med manuell godkjenning
+                </a>
             </div>
         </div>
-
-    {% else %}
-        <div class="row">
-            <div class="col-xs-12 col-sm-6 col-md-4">
-                <p>For å aktivere ditt medlemskap kreves det at du har knyttet din studentkonto til din profil.</p>
-                <p>Gå til Epost-innstillinger og registrer din @stud.ntnu.no epost.</p>
-            </div>
-        </div>
+    </div>
     {% endif %}
+    <div class="row">
+        <div class="col-md-12">
+            <p><strong>NB! Godkjente og avslåtte søknader havner nederst på siden, sjekk her før du sender inn nye søknader!</strong></p>
+        </div>
+    </div>
+    <div class="manual-membership-form">
+        {% if user.ntnu_username %}
+            {% if user.has_expiring_membership %}
+                <hr />
+                <div class="row">
+                    <div class="col-xs-12 col-sm-6 col-md-6">
+                        <p class="ingress">
+                            Ettersom du har et gammelt medlemskap kan du søke om å få dette forlenget. Forlengelsen er for ett år om gangen.
+                        </p>
+                    </div>
+                    <div class="col-xs-12 col-sm-6 col-md-3">
+                        <form id="membership-application" method="post" action="{% url 'approval_send_membership_application' %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-success pull-right">Send søknad om forlengelse</button>
+                        </form>
+                    </div>
+                </div>
+            {% endif %}
+            <hr />
+            <div class="row">
+                <div class="col-md-12">
+                    <p class="ingress">
+                        Med skjemaet under søker du om å få oppdatert studieretningen din. Starten på studieretningen er når du ble tatt opp.
+                        Om du tidligere har vært bachelor og ønsker å søke deg over på master, skal starttidspunkt være når du kom
+                        inn på mastergraden.
+                    </p>
+                    <p>
+                        Merk at det er viktig at du legger inn virkelig informasjon i dette skjemaet. Fusk med feil startdato
+                        og studieretning kan få svært alvorlige konsekvenser, og du risikerer utestengelse fra linjeforeningens
+                        arrangementer.
+                    </p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12 col-sm-6 col-md-5">
+                    <form id="field-of-study-application" enctype="multipart/form-data" method="post" action="{% url 'approval_send_fos_application' %}">
+                        {% csrf_token %}
+                        {{ field_of_study_application.started_semester|as_crispy_field }}
+                        {{ field_of_study_application.started_year|as_crispy_field }}
+                        {{ field_of_study_application.field_of_study|as_crispy_field }}
+                        <div id="field-of-study-application-documentation">
+                            <p>For å søke sosialt medlemsskap i linjeforeningen, kreves det at du tar over 50% informatikk
+                                emner (15 stp+) ved NTNU per semester og at du planlegger å søke overgang til informatikk.
+                                Dette må dokumenteres ved at du laster opp f.eks et screenshot av din studieplan på
+                                studentweb.</p>
+                            {{ field_of_study_application.documentation|as_crispy_field }}
+                        </div>
+                        <button type="submit" class="btn btn-success pull-right">Send søknad</button>
+                    </form>
+                </div>
+            </div>
+        {% else %}
+            <div class="row">
+                <div class="col-xs-12 col-sm-6 col-md-4">
+                    <p>For å aktivere ditt medlemskap kreves det at du har knyttet din studentkonto til din profil.</p>
+                    <p>Gå til Epost-innstillinger og registrer din @stud.ntnu.no epost.</p>
+                </div>
+            </div>
+        {% endif %}
+    </div>
 {% endif %}
 <hr />
 <div class="row">
     <div class="col-md-12">
         {%  if has_active_approvals %}
-            <p>Du har aktive søknader.</p>
+            <p>Du har allerede aktive søknader.</p>
             <p>Dersom du oppdager feil eller mangler i en aktiv søknad kan du slette den og sende inn en ny.</p>
         {% else %}
             <p>Du har ingen aktive søknader.</p>

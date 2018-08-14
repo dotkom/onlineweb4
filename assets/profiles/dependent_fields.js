@@ -9,4 +9,10 @@ export default () => {
       $('#field-of-study-application-documentation').hide();
     }
   });
+
+  $('.manual-membership-form').hide();
+  $('.manual-membership-button').on('click', () => {
+    $('.manual-membership-form').show();
+    $('.manual-membership-choice').hide();
+  });
 };
