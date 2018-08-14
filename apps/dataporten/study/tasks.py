@@ -42,7 +42,7 @@ def find_user_study_and_update(user, groups):
         start_date_for_study = study_year
 
     # Approvals are usually set from July 1st, so we do that here too.
-    started_date = datetime(timezone.now().year - start_date_for_study, 7, 1)
+    started_date = datetime(timezone.now().year - start_date_for_study + 1, 7, 1)
 
     logger.debug('Found {} to be studying {} on year {}'.format(user, study_id, study_year))
 
@@ -58,4 +58,4 @@ def find_user_study_and_update(user, groups):
             new_expiry_date=get_expiry_date(started_date.year, get_length_of_field_of_study(field_of_study)),
             started_date=started_date,
         )
-        return True
+        return True, study_name, study_year

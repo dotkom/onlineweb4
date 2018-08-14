@@ -126,7 +126,7 @@ def study_callback(request):
     groups = fetch_groups_information(access_token)
 
     try:
-        studies_informatics = find_user_study_and_update(request.user, groups)
+        studies_informatics, study_name, study_year = find_user_study_and_update(request.user, groups)
     except IntegrityError:
         messages.error(
             request,
@@ -140,7 +140,7 @@ def study_callback(request):
             request,
             'Bekreftet studieretning som {} i {}. klasse. Dersom dette er feil, '
             'kontakt dotkom slik at vi kan rette opp og finne ut hva som gikk galt.'
-            .format(request.user.get_field_of_study_display(), request.user.year)
+            .format(study_name, study_year)
         )
     else:
         messages.error(
