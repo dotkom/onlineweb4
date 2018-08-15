@@ -8,7 +8,7 @@ from django.shortcuts import redirect
 from oic import rndstr
 from oic.oauth2 import AuthorizationResponse, ResponseError
 
-from apps.dataporten.study.tasks import fetch_groups_information, find_user_study_and_update
+from apps.dataporten.study.tasks import fetch_groups_information, find_user_study_and_update, set_ntnu_username
 
 from .client import client_setup
 
@@ -120,7 +120,16 @@ def study_callback(request):
         )
         return redirect('profiles_active', active_tab='membership')
     elif not request.user.ntnu_username:
-        pass  # @ToDo: Register email address. Maybe store it, but ask user to confirm? -> resend auth email
+        try:
+            set_ntnu_username(request.user, ntnu_username_dataporten)
+        except IntegrityError:
+            messages.error(
+                request,
+                'En bruker er allerede knyttet til denne NTNU-kontoen. '
+                'Dersom du har glemt passordet til din andre bruker kan du bruke "glemt passord"-funksjonen.'
+            )
+            return redirect('profiles_active', active_tab='membership')
+            # @ToDo: Register email address. Maybe store it, but ask user to confirm? -> resend auth email
 
     # Getting information about study of the user
     groups = fetch_groups_information(access_token)
