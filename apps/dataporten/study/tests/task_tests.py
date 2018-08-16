@@ -7,7 +7,8 @@ from django_dynamic_fixture import G
 
 from apps.approval.models import MembershipApproval
 from apps.authentication.models import OnlineUser
-from apps.dataporten.study.tasks import fetch_groups_information, find_user_study_and_update
+from apps.dataporten.study.tasks import (fetch_groups_information, find_user_study_and_update,
+                                         set_ntnu_username)
 
 from .course_test_data import (INFORMATICS_BACHELOR_STUDY_PROGRAMME,
                                INFORMATICS_MASTER_STUDY_PROGRAMME, ITGK_ACTIVE, PVS_ACTIVE,
@@ -64,3 +65,10 @@ class StudyUpdatingTestCase(TestCase):
         self.assertTrue(application.processed)
 
         self.assertEqual(len(mail.outbox), 0)
+
+
+class UserUpdatingTestCase(TestCase):
+    def test_set_ntnu_username(self):
+        user = G(OnlineUser)
+        set_ntnu_username(user, "testname")
+        self.assertEqual(user.ntnu_username, "testname")
