@@ -121,21 +121,15 @@ def study_callback(request):
         )
         return redirect('profiles_active', active_tab='membership')
     elif not request.user.ntnu_username:
-        try:
-            set_ntnu_username(request.user, ntnu_username_dataporten)
-        except IntegrityError:
-            messages.error(
-                request,
-                'En bruker er allerede knyttet til denne NTNU-kontoen. '
-                'Dersom du har glemt passordet til din andre bruker kan du bruke "glemt passord"-funksjonen.'
-            )
-            return redirect('profiles_active', active_tab='membership')
-            # @ToDo: Register email address. Maybe store it, but ask user to confirm? -> resend auth email
+        pass
+        # @ToDo: Register email address. Maybe store it, but ask user to confirm? -> resend auth email
 
     # Getting information about study of the user
     groups = fetch_groups_information(access_token)
 
     try:
+        if not request.user.ntnu_username:
+            set_ntnu_username(request.user, ntnu_username_dataporten)
         studies_informatics, study_name, study_year = find_user_study_and_update(request.user, groups)
     except IntegrityError:
         messages.error(
