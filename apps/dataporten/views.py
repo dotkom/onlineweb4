@@ -8,7 +8,8 @@ from django.shortcuts import redirect
 from oic import rndstr
 from oic.oauth2 import AuthorizationResponse, ResponseError
 
-from apps.dataporten.study.tasks import fetch_groups_information, find_user_study_and_update, set_ntnu_username
+from apps.dataporten.study.tasks import (fetch_groups_information, find_user_study_and_update,
+                                         set_ntnu_username)
 
 from .client import client_setup
 

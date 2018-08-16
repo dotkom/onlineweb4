@@ -6,11 +6,9 @@ import requests
 from django.utils import timezone
 from django.utils.http import urlencode
 
-
 from apps.approval.models import MembershipApproval
 from apps.approval.views import get_expiry_date
-from apps.authentication.models import get_length_of_field_of_study
-from apps.authentication.models import AllowedUsername
+from apps.authentication.models import AllowedUsername, get_length_of_field_of_study
 from apps.dataporten.study.utils import get_field_of_study, get_group_id, get_study, get_year
 
 logger = logging.getLogger(__name__)
