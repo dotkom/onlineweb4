@@ -1,4 +1,8 @@
 .PHONY: all bash-backend build clean docs down logs restart shell start status stop \
+
+
+
+
 	drone lint-only test-only lint-backend lint-frontend test-backend test-frontend
 
 BACKEND_SERVICE_NAME = django
