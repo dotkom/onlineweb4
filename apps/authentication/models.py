@@ -52,8 +52,10 @@ COMMITTEES = [
     ('pangkom', _('Pensjonistkomiteen')),
     ('prokom', _('Profil-og aviskomiteen')),
     ('redaksjonen', _('Redaksjonen')),
+    ('seniorkom',_('Seniorkomiteen')),
     ('trikom', _('Trivselskomiteen')),
     ('velkom', _('Velkomstkomiteen')),
+    
 ]
 
 POSITIONS = [
