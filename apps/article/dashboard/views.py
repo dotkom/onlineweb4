@@ -14,7 +14,7 @@ from apps.article.models import Article
 from apps.dashboard.tools import check_access_or_403, get_base_context
 
 
-@permission_required('article.view_article')
+@permission_required('article.view_article', return_403=True)
 def article_index(request):
     check_access_or_403(request)
 
@@ -30,7 +30,7 @@ def article_index(request):
     return render(request, 'article/dashboard/article_index.html', context)
 
 
-@permission_required('article.add_article')
+@permission_required('article.add_article', return_403=True)
 def article_create(request):
     check_access_or_403(request)
 
@@ -56,7 +56,7 @@ def article_create(request):
     return render(request, 'article/dashboard/article_create.html', context)
 
 
-@permission_required('article.view_article')
+@permission_required('article.view_article', return_403=True)
 def article_detail(request, article_id):
     check_access_or_403(request)
 
@@ -68,7 +68,7 @@ def article_detail(request, article_id):
     return render(request, 'article/dashboard/article_detail.html', context)
 
 
-@permission_required('article.change_article')
+@permission_required('article.change_article', return_403=True)
 def article_edit(request, article_id):
     check_access_or_403(request)
 
