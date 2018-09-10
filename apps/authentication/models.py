@@ -55,7 +55,6 @@ COMMITTEES = [
     ('seniorkom',_('Seniorkomiteen')),
     ('trikom', _('Trivselskomiteen')),
     ('velkom', _('Velkomstkomiteen')),
-    
 ]
 
 POSITIONS = [
