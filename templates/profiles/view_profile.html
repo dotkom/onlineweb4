@@ -91,6 +91,14 @@
                             {% endif %}
                         </div>
                         <div class="col-md-4">
+                            <b> Komité E-Post</b><br />
+                            {% if user_profile.online_mail%}
+                            {{ user_profile.online_mail }}@online.ntnu.no
+                            {% else %}
+                            Ikke tilgjengelig
+                            {% endif%}
+                         </div>
+                        <div class="col-md-4">
                             <b>NTNU-brukernavn</b><br />
                             {{ user_profile.ntnu_username }}
                         </div>
