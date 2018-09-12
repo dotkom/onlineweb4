@@ -27,7 +27,7 @@ def index(request):
     cops = CareerOpportunity.objects.all()
     context['cops'] = cops.filter(end__gte=timezone.now()).order_by('end')
     context['archive'] = cops.filter(end__lte=timezone.now()).order_by('-id')
-
+    context['all'] = cops
     return render(request, 'careeropportunity/dashboard/index.html', context)
 
 
