@@ -37,8 +37,10 @@ class ProfileForm(forms.ModelForm):
 
     def clean_zip_code(self):
         zip_code = self.cleaned_data['zip_code']
-        if zip_code and len(zip_code) != 0 and not re.match(r'\d{4}', zip_code):
+        if not zip_code or not re.match(r'^\d{4}$', zip_code):
             self.add_error('zip_code', ZIP_CODE_VALIDATION_ERROR)
+
+        return zip_code
 
 
 class PrivacyForm(forms.ModelForm):
