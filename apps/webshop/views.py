@@ -157,11 +157,11 @@ class Checkout(LoginRequiredMixin, WebshopMixin, TemplateView):
     def remove_inactive_orders(self, orders):
         for order in orders:
             if order.product.stock == 0:
-                message = """Det er ingen {} på lager og varen er fjerne
+                message = """Det er ingen {} på lager og varen er fjernet
                              fra din handlevogn.""".format(order.product.name)
             else:
                 message = """{} er ikke lenger tilgjengelig for kjøp og
-                             er fjernet fra din handlevognen.""".format(order.product.name)
+                             er fjernet fra din handlevogn.""".format(order.product.name)
             messages.add_message(self.request, messages.INFO, message)
             order.delete()
 
