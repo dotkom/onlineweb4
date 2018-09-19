@@ -215,7 +215,7 @@ def _handle_poster_add(request, form, order_type):
 
         
         from_email = settings.EMAIL_DOTKOM
-        to_email = "tokongs98@gmail.com"
+        to_email = ["tokongs98@gmail.com"]
         try:
             EmailMessage(subject, message, from_email, to_email, []).send()
         except ImproperlyConfigured:
