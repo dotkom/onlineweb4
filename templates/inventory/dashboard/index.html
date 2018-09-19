@@ -47,6 +47,7 @@ Varelager
                             <th>Tidligste utløpsdato</th>
                             <th>Nyeste oppføring</th>
                             <th>Pris</th>
+                            <th>Til salgs</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -60,6 +61,7 @@ Varelager
                             </td>
                             <td>{{ item.last_added|date:'Y-m-d' }}</td>
                             <td>{% if item.available %}{{ item.price }},-{% else %}-{% endif %}</td>
+                            <td>{% if item.available %}Ja{% else %}Nei{% endif %}</td>
                         </tr>
                     {% endfor %}
                     </tbody>
