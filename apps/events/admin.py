@@ -151,6 +151,7 @@ class EventAdmin(GuardedModelAdmin, VersionAdmin):
             obj.author = request.user
         obj.save()
 
+
 class ReserveeInline(admin.TabularInline):
     model = Reservee
     extra = 1
