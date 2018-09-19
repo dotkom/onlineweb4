@@ -209,18 +209,18 @@ def _handle_poster_add(request, form, order_type):
     else:
         messages.error(request, 'Klarte ikke å sende epost, men bestillingen din ble fortsatt opprettet')
 
-    if(True):
+    if(poster.id % 100 == 0):
         subject = '[ProKom] {} Poster Bestillinger!'.format(poster.id)
         message = render_to_string('posters/email/100_multiple_order.txt', context)
 
         
         from_email = settings.EMAIL_DOTKOM
-        to_email = ["tokongs98@gmail.com"]
+        to_email = [settings.EMAIL_PROKOM]
         try:
             EmailMessage(subject, message, from_email, to_email, []).send()
         except ImproperlyConfigured:
             logger.warn("Failed to send email Congratulating ProKom with number of poster orders divisible by 100")
-        
+
 # Ajax
 @login_required
 def assign_person(request):
