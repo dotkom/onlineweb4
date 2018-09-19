@@ -69,15 +69,13 @@ def get_length_of_field_of_study(field_of_study):
     """
     Returns length of a field of study
     """
-    if field_of_study == 0 or field_of_study == 100:  # others
+    if field_of_study == 0 or field_of_study == 100 or field_of_study == 40:  # others or social
         return 0
     # dont return a bachelor student as 4th or 5th grade
     elif field_of_study == 1:  # bachelor
         return 3
     elif 10 <= field_of_study <= 30:  # 10-30 is considered master
         return 2
-    elif field_of_study == 40:  # social
-        return 1
     elif field_of_study == 80:  # phd
         return 99
     elif field_of_study == 90:  # international
