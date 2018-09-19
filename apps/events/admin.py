@@ -155,6 +155,8 @@ class EventAdmin(GuardedModelAdmin, VersionAdmin):
         instances = formset.save(commit=False)
         for instance in instances:
             instance.save()
+        for obj in formset.deleted_objects:
+            obj.delete()
         formset.save_m2m()
 
 
