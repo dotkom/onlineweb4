@@ -151,15 +151,6 @@ class EventAdmin(GuardedModelAdmin, VersionAdmin):
             obj.author = request.user
         obj.save()
 
-    def save_formset(self, request, form, formset, change):
-        instances = formset.save(commit=False)
-        for instance in instances:
-            instance.save()
-        for obj in formset.deleted_objects:
-            obj.delete()
-        formset.save_m2m()
-
-
 class ReserveeInline(admin.TabularInline):
     model = Reservee
     extra = 1
