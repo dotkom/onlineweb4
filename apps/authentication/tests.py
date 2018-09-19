@@ -93,12 +93,12 @@ class AuthenticationTest(TestCase):
     def testSocial(self):
         self.user.started_date = self.now.date()
         self.user.field_of_study = 40
-        self.assertEqual(1, self.user.year)
+        self.assertEqual(0, self.user.year)
 
-    def testTwoYearSocialShouldNotBePossible(self):
+    def testSocialYearIncrementShouldNotBePossible(self):
         self.user.started_date = self.now.date() - timedelta(days=365)
         self.user.field_of_study = 40
-        self.assertEqual(1, self.user.year)
+        self.assertEqual(0, self.user.year)
 
     def testEmailPrimaryOnCreation(self):
         email = G(Email, user=self.user, email="test@test.com")
