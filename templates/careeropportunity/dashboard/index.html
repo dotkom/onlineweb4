@@ -57,23 +57,7 @@ Karrieremuligheter
             </div>
         </div>
     </div>
-    <div id="modal-delete-careeropportunity-{{ cop.id }}" class="modal fade">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <h3>Bekreft sletting av karrieremulighet!</h3>
-                </div>
-                <div class="modal-body">
-                    <p>Er du sikker på at du vil slette karrieremuligheten "{{ cop.title }}" fra {{ cop.company }}?</p>
-                </div>
-                <div class="modal-footer">
-                    <button class="btn" data-dismiss="modal" aria-hidden="true">Lukk</button>
-                    <a href="{% url 'careeropportunity_dashboard_delete' cop.id %}" class="btn btn-danger" aria-hidden="true">Slett</a>
-                </div>
-            </div>
-        </div>
-    </div>
+
     <br />
     {% endfor %}
     </section>
@@ -96,6 +80,7 @@ Karrieremuligheter
                         <th>Tittel</th>
                         <th>Vist fra</th>
                         <th>Vist til</th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -105,6 +90,10 @@ Karrieremuligheter
                         <td>{{ cop.title }}</td>
                         <td>{{ cop.start|date:'Y-m-d H:i:s' }}</td>
                         <td>{{ cop.end|date:'Y-m-d H:i:s' }}</td>
+                        <td class="btn-group">
+                            <a href="{% url 'careeropportunity_dashboard_edit' cop.id %}" type="button" class="btn btn-warning"><i class="fa fa-pencil"></i></a>
+                            <a href="#modal-delete-careeropportunity-{{ cop.id }}" data-toggle="modal" type="button" class="btn btn-danger"><i class="fa fa-trash"></i></a>
+                        </td>
                     </tr>
                 {% endfor %}
                 </tbody>
@@ -118,4 +107,24 @@ Karrieremuligheter
         </div>
     </div>
     {% endif %}
+
+    {% for cop in all %}
+    <div id="modal-delete-careeropportunity-{{ cop.id }}" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h3>Bekreft sletting av karrieremulighet!</h3>
+                </div>
+                <div class="modal-body">
+                    <p>Er du sikker på at du vil slette karrieremuligheten "{{ cop.title }}" fra {{ cop.company }}?</p>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn" data-dismiss="modal" aria-hidden="true">Lukk</button>
+                    <a href="{% url 'careeropportunity_dashboard_delete' cop.id %}" class="btn btn-danger" aria-hidden="true">Slett</a>
+                </div>
+            </div>
+        </div>
+    </div>    
+    {% endfor %}
 {% endblock content %}

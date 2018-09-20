@@ -42,7 +42,7 @@ Webshop
                     <td>{{ order.user }}</td>
                     <td>{{ order.count_orders }}</td>
                     <td>{{ order.subtotal }}</td>
-                    <td>{{ order.datetime }}</td>
+                    <td>{{ order.datetime | date:"Y-m-j h:m"}}</td>
                     <td>{{ order.delivered|yesno:"Ja,Nei" }}</td>
                 </tr>
             {% endfor %}
