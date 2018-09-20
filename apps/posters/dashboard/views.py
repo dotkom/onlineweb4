@@ -210,7 +210,7 @@ def _handle_poster_add(request, form, order_type):
         messages.error(request, 'Klarte ikke å sende epost, men bestillingen din ble fortsatt opprettet')
 
     if(poster.id % 100 == 0):
-        subject = '[ProKom] {} Poster Bestillinger!'.format(poster.id)
+        subject = '[DotKom] {} Gratulerer!'.format(poster.id)
         message = render_to_string('posters/email/100_multiple_order.txt', context)
 
         
