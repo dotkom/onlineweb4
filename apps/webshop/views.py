@@ -2,6 +2,7 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse_lazy
+from django.db.models import Q
 from django.shortcuts import redirect
 from django.utils import timezone
 from django.utils.decorators import method_decorator
@@ -95,7 +96,6 @@ class ProductDetail(WebshopMixin, DetailView):
     @method_decorator(login_required)
     def post(self, request, *args, **kwargs):
         product = self.get_object()
-
         if product.deadline and product.deadline < timezone.now():
             messages.error(request, "Dette produktet er ikke lenger tilgjengelig.")
             return super(ProductDetail, self).get(request, *args, **kwargs)
@@ -143,6 +143,28 @@ class Checkout(LoginRequiredMixin, WebshopMixin, TemplateView):
         breadcrumbs = super().get_breadcrumbs()
         breadcrumbs.append({'name': 'Sjekk ut'})
         return breadcrumbs
+
+    def get(self, request, *args, **kwargs):
+        order_line = self.current_order_line()
+        if order_line:
+            invalid_orders = order_line.orders.filter(Q(product__active=False) |
+                                                      Q(product__deadline__lt=timezone.now()) |
+                                                      Q(product__stock=0))
+
+            self.remove_inactive_orders(invalid_orders)
+
+        return super(Checkout, self).get(request, *args, **kwargs)
+
+    def remove_inactive_orders(self, orders):
+        for order in orders:
+            if order.product.stock == 0:
+                message = """Det er ingen {} på lager og varen er fjernet
+                             fra din handlevogn.""".format(order.product.name)
+            else:
+                message = """{} er ikke lenger tilgjengelig for kjøp og
+                             er fjernet fra din handlevogn.""".format(order.product.name)
+            messages.add_message(self.request, messages.INFO, message)
+            order.delete()
 
 
 class RemoveOrder(LoginRequiredMixin, WebshopMixin, RedirectView):
