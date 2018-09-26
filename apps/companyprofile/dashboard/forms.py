@@ -16,6 +16,5 @@ class CompanyForm(ModelForm):
 
         exclude = ['old_image']
 
-
         # Widget generator accepts a form widget, and a list of tuples between field name and an attribute dict
         widgets = widget_generator(SingleImageInput, [('image', {'id': 'responsive-image-id'})])
