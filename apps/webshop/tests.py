@@ -176,6 +176,60 @@ class CheckoutTest(TestCase, WebshopTestMixin):
     def setUp(self):
             self.user = G(OnlineUser, username='test', ntnu_username='test')
 
+    def test_remove_inactive_order(self):
+        self.client.force_login(self.user)
+
+        order_line = G(OrderLine, user=self.user, paid=False)
+        product = G(Product, active=True, stock=None, deadline=None)
+        order = G(Order, order_line=order_line, product=product)
+
+        order.save()
+
+        self.client.get(reverse("webshop_checkout"))
+        self.assertEqual(order, Order.objects.get(pk=order.pk))
+
+        product.active = False
+        product.save()
+
+        self.client.get(reverse("webshop_checkout"))
+        self.assertFalse(Order.objects.filter(pk=order.pk).exists())
+
+    def test_remove_sold_out_oreder(self):
+        self.client.force_login(self.user)
+
+        order_line = G(OrderLine, user=self.user, paid=False)
+        product = G(Product, active=True, stock=10, deadline=None)
+        order = G(Order, order_line=order_line, product=product)
+
+        order.save()
+
+        self.client.get(reverse("webshop_checkout"))
+        self.assertEqual(order, Order.objects.get(pk=order.pk))
+
+        product.stock = 0
+        product.save()
+
+        self.client.get(reverse("webshop_checkout"))
+        self.assertFalse(Order.objects.filter(pk=order.pk).exists())
+
+    def test_remove_expired_oreder(self):
+        self.client.force_login(self.user)
+
+        order_line = G(OrderLine, user=self.user, paid=False)
+        product = G(Product, active=True, stock=None, deadline='2100-12-12 00:00Z')
+        order = G(Order, order_line=order_line, product=product)
+
+        order.save()
+
+        self.client.get(reverse("webshop_checkout"))
+        self.assertEqual(order, Order.objects.get(pk=order.pk))
+
+        product.deadline = '2010-12-12 00:00Z'
+        product.save()
+
+        self.client.get(reverse("webshop_checkout"))
+        self.assertFalse(Order.objects.filter(pk=order.pk).exists())
+
     @patch('apps.payment.views.stripe.Charge.create')
     def test_pay_size(self, stripe_create):
         stripe_create.return_value = MagicMock(id=123)
