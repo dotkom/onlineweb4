@@ -13,8 +13,8 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.AddField(
-            model_name='batch',
-            name='low_stock_treshhold',
+            model_name='item',
+            name='low_stock_treshold',
             field=models.IntegerField(default=10, verbose_name='Grense for email om lav beholdning'),
         ),
     ]
