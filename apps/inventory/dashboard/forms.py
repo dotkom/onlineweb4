@@ -10,7 +10,7 @@ class ItemForm(forms.ModelForm):
 
     class Meta(object):
         model = Item
-        fields = ('name', 'description', 'category', 'available', 'price', 'image')
+        fields = ('name', 'description', 'category', 'available', 'price', 'low_stock_treshold', 'image')
 
         # Widget generator accepts a form widget, and a list of tuples between field name and an attribute dict
         widgets = widget_generator(SingleImageInput, [('image', {'id': 'responsive-image-id'})])
