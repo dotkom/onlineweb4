@@ -10,7 +10,7 @@ from django.template.loader import render_to_string
 from guardian.models import GroupObjectPermission, UserObjectPermission
 
 from apps.companyprofile.models import Company
-from apps.posters.models import Poster
+
 
 def _handle_poster_add(request, form, order_type):
     logger = logging.getLogger(__name__)

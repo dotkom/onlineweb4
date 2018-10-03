@@ -1,23 +1,16 @@
 # -*- encoding: utf-8 -*-
 
 import json
-import logging
 
-from django.conf import settings
-from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Group
-from django.core.exceptions import ImproperlyConfigured, PermissionDenied
-from django.core.mail import EmailMessage
+from django.core.exceptions import PermissionDenied
 from django.shortcuts import HttpResponse, HttpResponseRedirect, get_object_or_404, redirect, render
-from django.template.loader import render_to_string
 from django.utils.translation import ugettext as _
 from django.views.decorators.csrf import ensure_csrf_cookie
 from guardian.decorators import permission_required
-from guardian.models import GroupObjectPermission, UserObjectPermission
 
 from apps.authentication.models import OnlineUser as User
-from apps.companyprofile.models import Company
 from apps.dashboard.tools import get_base_context
 from apps.posters.forms import (AddBongForm, AddOtherForm, AddPosterForm, EditOtherForm,
                                 EditPosterForm)
@@ -25,6 +18,7 @@ from apps.posters.models import Poster
 from apps.posters.permissions import has_edit_perms, has_view_all_perms, has_view_perms
 
 from .utils import _handle_poster_add
+
 
 @login_required
 @permission_required('posters.overview_poster_order', return_403=True)
@@ -166,6 +160,7 @@ def detail(request, order_id=None):
             poster.toggle_finished()
 
     return render(request, 'posters/dashboard/details.html', context)
+
 
 # Ajax
 @login_required
