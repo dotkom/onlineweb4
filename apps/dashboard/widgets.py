@@ -108,7 +108,7 @@ class DatePickerInput(TextInput):
             final_attrs['value'] = ''
 
         # Kept for backwards compatibility with existing forms.
-        final_attrs['placeholder'] = 'Den skal vises fra ...'
+        final_attrs['placeholder'] = 'Vennligst velg en dato ...'
         if attrs.get('placeholder', False):
             # Update the placeholder text if supplied.
             final_attrs['placeholder'] = force_text(attrs.get('placeholder'))
@@ -151,7 +151,7 @@ class DatetimePickerInput(TextInput):
             final_attrs['value'] = ''
 
         # Kept for backwards compatibility with existing forms.
-        final_attrs['placeholder'] = 'Den skal vises fra ...'
+        final_attrs['placeholder'] = 'Vennligst velg dato og klokkeslett ...'
         if self.attrs.get('placeholder', False):
             # Update the placeholder text if supplied.
             final_attrs['placeholder'] = force_text(self.attrs.get('placeholder'))
@@ -194,7 +194,7 @@ class TimePickerInput(TextInput):
             final_attrs['value'] = ''
 
         # Kept for backwards compatibility with existing forms.
-        final_attrs['placeholder'] = 'Den skal vises fra ...'
+        final_attrs['placeholder'] = 'Vennligst velg klokkeslett ...'
         if attrs.get('placeholder', False):
             # Update the placeholder text if supplied.
             final_attrs['placeholder'] = force_text(attrs.get('placeholder'))
