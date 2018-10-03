@@ -210,10 +210,14 @@ def _handle_poster_add(request, form, order_type):
         messages.error(request, 'Klarte ikke å sende epost, men bestillingen din ble fortsatt opprettet')
 
     if(poster.id % 100 == 0):
-        subject = '[DotKom] {} Gratulerer!'.format(poster.id)
+        _handle_poster_celebration(poster, context)
+
+
+def _handle_poster_celebration(poster, context):
+        logger = logging.getLogger(__name__)
+        subject = '[DotKom] {} Postere!'.format(poster.id)
         message = render_to_string('posters/email/100_multiple_order.txt', context)
 
-        
         from_email = settings.EMAIL_DOTKOM
         to_email = [settings.EMAIL_PROKOM]
         try:
