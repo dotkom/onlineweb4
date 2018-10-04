@@ -32,6 +32,7 @@ class Item(models.Model):
     category = models.ForeignKey(ItemCategory, verbose_name=_("Kategori"),
                                  related_name="category", null=True, blank=True)
     image = models.ForeignKey(ResponsiveImage, null=True, blank=True, default=None)
+    low_stock_treshold = models.IntegerField("Grense for email om lav beholdning", default=10)
 
     @property
     def oldest_expiration_date(self):
@@ -88,7 +89,7 @@ class Item(models.Model):
     def handle_notifications(self, amount):
 
         # Send one notification when the stock goes to or below 10
-        if self.total_amount <= 10 and self.total_amount + amount > 10:
+        if self.total_amount <= self.low_stock_treshhold and self.total_amount + amount > self.low_stock_treshhold:
             message = "Det er kun " + str(self.total_amount) + " igjen av " + str(self.name) + \
                       " på kontoret.\n\n" \
                       "Dette er en automatisk generert melding og antallet kan være noe feil."
