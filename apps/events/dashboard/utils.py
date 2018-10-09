@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 import logging
+from datetime import datetime
+
 from django.core.urlresolvers import reverse
 
 from apps.authentication.models import OnlineUser as User
 from apps.events.models import Attendee
-from datetime import datetime
 
 
 def _get_attendee(attendee_id):
