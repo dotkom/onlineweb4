@@ -6,5 +6,5 @@ register = template.Library()
 @register.filter
 def shuffle(arg):
     li = list(arg)[:]
-    random.shuffle(aux)
-    return aux
+    random.shuffle(li)
+    return li
