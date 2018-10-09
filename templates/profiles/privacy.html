@@ -4,8 +4,8 @@
         <div class="col-md-12">
             {% csrf_token %}
             <div class="row">
-                <div class="col-md-12">
-                    <div class="row row-space">
+                <div class="col-md-12 privacy-header">
+                    <div class="row">
                         <div class="col-md-12" id="paddingtop">
                             <h3 class="header-inline">Personvern</h3>
                             <i id="privacy-help"
@@ -18,9 +18,14 @@
                             </i>
                         </div>
                     </div>
+                    <div class="row privacy-description">
+                        Oppdater dine personvernsinnstillinger ved å toggle boksene under og deretter "lagre". <br/>
+                        Du kan til enhver tid endre på dine innstillinger for å holde dine personlige opplysninger <br/>
+                        skjult eller synlig for andre brukere av online sine nettsider.
+                    </div>
                 </div>
                 <div class="col-md-12">
-                    <div class="col-md-12">
+                    <div class="privacy-container col-md-12">
                         {% for field in privacy_form %}
                             <div class="privacybox {% if field.value %}on{% else %}off{% endif %} pull-left">
                                 <span>{{ field.label }} {{ field }} </span>
@@ -30,8 +35,8 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-12 form-actions" style="margin-left: 0px; margin-top: 15px;">
-            <button class="btn btn-success pull-right" type="submit">Lagre personvern</button>
+        <div class="col-md-12 form-actions" style="margin-left: 15px; margin-top: 30px;">
+            <button class="btn btn-success" type="submit">Lagre personvern</button>
         </div>
     </form>
 </div>

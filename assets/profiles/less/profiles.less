@@ -74,20 +74,23 @@ label > i.btn-icon {
   cursor: pointer;
 }
 
-.privacybox {
-  background-color: @baby-blue;
-  color: #fff;
-  width: 250px;
-  height: 75px;
-  line-height: 75px;
-  text-align: center;
-  margin: 0 20px 20px 0;
-  padding: 0 5px 5px 0;
-  font-size: 1.5em;
-  border-style: solid;
-  border-width: 1px;
-  border-radius: 4px;
+.privacy-header {
+    margin-left: 15px;
+}
 
+.privacy-description {
+  padding: 15px;
+}
+
+.privacy-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.privacybox {
+  margin: 5px 0 5px 0;
+  padding: 3px;
+  border-radius: 5px;
   /* Make text non-selectable */
 
   -webkit-touch-callout: none;
@@ -98,10 +101,7 @@ label > i.btn-icon {
   user-select: none;
 
   span {
-    display: inline-block;
-    vertical-align: middle;
-    color: 111;
-    line-height: normal;
+    padding: 0 10px 0 10px;
   }
 
   &.on {
@@ -215,7 +215,7 @@ textarea {
   }
 
   .privacybox {
-    width: 200px;
+    width: 250px;
   }
 }
 
