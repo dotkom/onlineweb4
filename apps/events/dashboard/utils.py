@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import logging
 from django.core.urlresolvers import reverse
 
 from apps.authentication.models import OnlineUser as User
@@ -14,6 +15,7 @@ def _get_attendee(attendee_id):
 
 def event_ajax_handler(event, request):
     action = request.POST['action']
+    administrating_user = request.user
 
     if action == 'attended':
         attendee = _get_attendee(request.POST['attendee_id'])
@@ -30,7 +32,7 @@ def event_ajax_handler(event, request):
     elif action == 'add_attendee':
         return handle_add_attendee(event, request.POST['user_id'])
     elif action == 'remove_attendee':
-        return handle_remove_attendee(event, request.POST['attendee_id'])
+        return handle_remove_attendee(event, request.POST['attendee_id'], administrating_user)
     else:
         raise NotImplementedError
 
@@ -104,7 +106,8 @@ def handle_add_attendee(event, user_id):
     return resp
 
 
-def handle_remove_attendee(event, attendee_id):
+def handle_remove_attendee(event, attendee_id, administrating_user):
+    logger = logging.getLogger(__name__)
     resp = {}
     attendee = Attendee.objects.filter(pk=attendee_id)
     if attendee.count() != 1:
@@ -136,4 +139,9 @@ def handle_remove_attendee(event, attendee_id):
             'attended': a.attended,
             'link': reverse('dashboard_attendee_details', kwargs={'attendee_id': a.id})
         })
+
+    # Log user who deleted attendee
+    logger.info('User %s was removed from event "%s" by %s' % (attendee.user.get_full_name(),
+                                                               attendee.event, administrating_user))
+
     return resp
