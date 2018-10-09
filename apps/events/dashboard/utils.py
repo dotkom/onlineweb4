@@ -4,6 +4,7 @@ from django.core.urlresolvers import reverse
 
 from apps.authentication.models import OnlineUser as User
 from apps.events.models import Attendee
+from datetime import datetime
 
 
 def _get_attendee(attendee_id):
@@ -114,6 +115,12 @@ def handle_remove_attendee(event, attendee_id, administrating_user):
         return 'Fant ingen påmeldte med oppgitt ID (%s).' % attendee_id
     attendee = attendee[0]
     attendee.delete()
+
+    # Log user who deleted attendee
+    logger.info('User %s was removed from event "%s" by %s on %s' % (attendee.user.get_full_name(),
+                                                                     attendee.event, administrating_user,
+                                                                     datetime.now()))
+
     resp['message'] = '%s ble fjernet fra %s' % (attendee.user.get_full_name(), attendee.event)
     resp['attendees'] = []
     for number, a in enumerate(attendee.event.attending_attendees_qs):
@@ -139,9 +146,4 @@ def handle_remove_attendee(event, attendee_id, administrating_user):
             'attended': a.attended,
             'link': reverse('dashboard_attendee_details', kwargs={'attendee_id': a.id})
         })
-
-    # Log user who deleted attendee
-    logger.info('User %s was removed from event "%s" by %s' % (attendee.user.get_full_name(),
-                                                               attendee.event, administrating_user))
-
     return resp
