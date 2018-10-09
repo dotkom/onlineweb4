@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import logging
 from collections import OrderedDict
 from datetime import datetime, timedelta
 from random import choice as random_choice
@@ -9,6 +10,7 @@ from django.contrib.auth.models import Group
 from django.contrib.contenttypes.fields import GenericRelation
 from django.core import validators
 from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist, ValidationError
+from django.core.mail import EmailMessage
 from django.db import models
 from django.db.models import SET_NULL, Case, Q, Value, When
 from django.template.defaultfilters import slugify
@@ -866,6 +868,21 @@ class Attendee(models.Model):
 
     def is_on_waitlist(self):
         return self in self.event.waitlist_qs
+
+    def manually_unattend(self, admin_user):
+        logger = logging.getLogger(__name__)
+        logger.info('User %s was removed from event "%s" by %s on %s' %
+                    (self.user.get_full_name(), self.event, admin_user, datetime.now()))
+
+        # Notify responsible group if someone is unattended after deadline
+        if datetime.now() > self.event.unattend_deadline:
+            subject = '[%s] %s har blitt avmeldt arrangementet av %s' % (self.event, self.user.get_full_name(), admin_user)
+            message = '%s har blitt avmeldt arrangementet "%s" av %s den %s' % (self.event, self.user.get_full_name(),
+                                                                                admin_user, datetime.now())
+            from_email = self.event.event.feedback_mail()
+            EmailMessage(subject, message, from_email, from_email).send()
+
+        self.delete()
 
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):
