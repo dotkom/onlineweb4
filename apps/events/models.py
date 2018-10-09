@@ -869,7 +869,8 @@ class Attendee(models.Model):
     def is_on_waitlist(self):
         return self in self.event.waitlist_qs
 
-    def manually_unattend(self, admin_user):
+    # Unattend user from event
+    def unattend(self, admin_user):
         logger = logging.getLogger(__name__)
         logger.info('User %s was removed from event "%s" by %s on %s' %
                     (self.user.get_full_name(), self.event, admin_user, datetime.now()))

@@ -111,7 +111,7 @@ def handle_remove_attendee(event, attendee_id, admin_user):
     if attendee.count() != 1:
         return 'Fant ingen påmeldte med oppgitt ID (%s).' % attendee_id
     attendee = attendee[0]
-    attendee.manually_unattend(admin_user)
+    attendee.unattend(admin_user)
     resp['message'] = '%s ble fjernet fra %s' % (attendee.user.get_full_name(), attendee.event)
     resp['attendees'] = []
     for number, a in enumerate(attendee.event.attending_attendees_qs):
