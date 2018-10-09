@@ -876,7 +876,8 @@ class Attendee(models.Model):
 
         # Notify responsible group if someone is unattended after deadline
         if datetime.now() > self.event.unattend_deadline:
-            subject = '[%s] %s har blitt avmeldt arrangementet av %s' % (self.event, self.user.get_full_name(), admin_user)
+            subject = '[%s] %s har blitt avmeldt arrangementet av %s' % (self.event, self.user.get_full_name(),
+                                                                         admin_user)
             message = '%s har blitt avmeldt arrangementet "%s" av %s den %s' % (self.event, self.user.get_full_name(),
                                                                                 admin_user, datetime.now())
             from_email = self.event.event.feedback_mail()
