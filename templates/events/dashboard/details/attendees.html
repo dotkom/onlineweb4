@@ -24,6 +24,7 @@
                                 <th>#</th>
                                 <th>Fornavn</th>
                                 <th>Etternavn</th>
+                                <th>Year of study</th>
                                 {% if event.attendance_event.payment %}
                                     <th>Betalt</th>
                                 {% endif %}
@@ -43,6 +44,7 @@
                                 <td>{{ forloop.counter }}</td>
                                 <td><a href="{% url 'dashboard_attendee_details' attendee.id %}">{{ attendee.user.first_name }}</a></td>
                                 <td><a href="{% url 'dashboard_attendee_details' attendee.id %}">{{ attendee.user.last_name }}</a></td>
+                                <td><a href="{% url 'dashboard_attendee_details' attendee.id %}">{{ attendee.user.year}}</a></td>
                                 {% if event.attendance_event.payment %}
                                     <td>
                                         <a href="#" data-id="{{ attendee.id }}" class="toggle-attendee paid">

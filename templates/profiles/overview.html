@@ -74,6 +74,14 @@
                 {% endif %}
             </div>
             <div class="col-md-4">
+                <b> Komité E-Post</b><br />
+                {% if user.online_mail%}
+                    {{ user.online_mail }}@online.ntnu.no
+                {% else %}
+                    Ikke tilgjengelig
+                {% endif%}
+            </div>
+            <div class="col-md-4">
                 <b>NTNU-brukernavn</b><br />
                 {% if user.ntnu_username %}
                     {{ user.ntnu_username }}
@@ -81,6 +89,8 @@
                     Ikke tilgjengelig
                 {% endif %}
             </div>
+        </div>
+        <div class="row attribute-list">
             <div class="col-md-4">
                 <b>RFID</b><br />
                 {% if user.rfid %}
@@ -89,8 +99,6 @@
                     Ikke tilgjengelig
                 {% endif %}
             </div>
-        </div>
-        <div class="row attribute-list">
             <div class="col-md-4">
                 <b>Hjemmeside</b><br />
                 {% if user.website %}
@@ -107,6 +115,8 @@
                     Ikke tilgjengelig
                 {% endif %}
             </div>
+        </div>    
+        <div class="row attribute-list">
             <div class="col-md-4">
                 <b>LinkedIn</b><br />
                 {% if user.linkedin %}
