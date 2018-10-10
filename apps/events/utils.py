@@ -12,6 +12,7 @@ from django.core.signing import BadSignature, Signer
 from django.http import HttpResponse
 from django.utils import timezone
 from filebrowser.settings import VERSIONS
+from pytz import timezone as tz
 
 from apps.authentication.models import OnlineUser as User
 from apps.events.models import TYPE_CHOICES, Attendee, Event, Extras
@@ -330,7 +331,15 @@ def handle_attend_event_payment(event, user):
         if payment.payment_type == 3:
             deadline = timezone.now() + payment.delay
             payment.create_payment_delay(user, deadline)
-            # TODO send mail
+
+            # Send notification about payment to user by mail
+            subject = '[%s] Husk å betale for og fullføre påmeldingen til arrangementet.' % event.title
+            message = 'Du har meldt deg på "%s" som er et betalings arrangement. \nFor å fullføre påmeldingen, ' \
+                      'er du nødt til å gå inn på arrangementets side og klikke "betal". \n' \
+                      'Betalingen må gjennomføres innen den %s, og summen er på: %s kr.' % \
+                      (event.title, payment.deadline.astimezone(tz('Europe/Oslo')).strftime("%-d %B %Y kl. %H:%M"),
+                       payment.price().price)
+            EmailMessage(subject, message, event.feedback_mail(), [user.get_email]).send()
 
 
 def handle_mail_participants(event, _from_email, _to_email_value, subject, _message,
