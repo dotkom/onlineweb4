@@ -864,6 +864,15 @@ class Attendee(models.Model):
 
         super(Attendee, self).delete()
 
+    def get_payment_deadline(self):
+        # Importing here to prevent circular dependencies
+        from apps.payment.models import PaymentDelay
+        try:
+            deadline = PaymentDelay.objects.filter(user=self.user, payment=self.event.payment())[0].valid_to
+        except PaymentDelay.DoesNotExist:
+            return
+        return deadline
+
     def is_on_waitlist(self):
         return self in self.event.waitlist_qs
 
