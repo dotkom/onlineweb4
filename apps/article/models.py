@@ -32,11 +32,16 @@ class Article(models.Model):
     created_by = models.ForeignKey(
         User, null=False,
         verbose_name=_("opprettet av"),
-        related_name="created_by", editable=False
+        related_name="created_by",
+        editable=False
     )
     authors = models.CharField(_('forfatter(e)'), max_length=200, blank=True)
     changed_by = models.ForeignKey(
-        User, null=False, verbose_name=_("endret av"), related_name="changed_by", editable=False
+        User, null=False,
+        verbose_name=_("endret av"),
+        related_name="changed_by",
+        editable=False,
+        on_delete=models.CASCADE
     )
     featured = models.BooleanField(_("featured artikkel"), default=False)
 

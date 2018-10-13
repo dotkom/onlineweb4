@@ -18,7 +18,8 @@ class Approval(models.Model):
         User,
         verbose_name=_("søker"),
         related_name="applicant",
-        editable=True
+        editable=True,
+        on_delete=models.CASCADE
     )
     approver = models.ForeignKey(
         User,
@@ -26,7 +27,8 @@ class Approval(models.Model):
         related_name="approver",
         blank=True,
         null=True,
-        editable=False
+        editable=False,
+        on_delete=models.CASCADE
     )
     created = models.DateTimeField(_("opprettet"), auto_now_add=True)
     processed = models.BooleanField(_("behandlet"), default=False, editable=False)

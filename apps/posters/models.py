@@ -26,18 +26,25 @@ class OrderMixin(models.Model):
         (3, 'Annet'),
     ))
     ordered_date = models.DateTimeField(auto_now_add=True, editable=False)
-    ordered_by = models.ForeignKey(User, verbose_name=_("bestilt av"), related_name='ordered_by')
+    ordered_by = models.ForeignKey(
+        User,
+        verbose_name=_("bestilt av"),
+        related_name='ordered_by',
+        on_delete=models.CASCADE
+    )
     ordered_committee = models.ForeignKey(
         Group,
         verbose_name=_('bestilt av komite'),
-        related_name='ordered_committee'
+        related_name='ordered_committee',
+        on_delete=models.CASCADE
     )
     assigned_to = models.ForeignKey(
         User,
         verbose_name=_('tilordnet til'),
         related_name='assigned_to',
         blank=True,
-        null=True
+        null=True,
+        on_delete=models.CASCADE
     )
     description = models.TextField(_("beskrivelse"), blank=True, null=True)
     comments = models.TextField(_("kommentar"), blank=True, null=True)
@@ -69,7 +76,7 @@ class Poster(OrderMixin):
     Poster order
     """
     title = models.CharField(_('arrangementstittel'), max_length=60, blank=True, null=True)
-    event = models.ForeignKey(Event, related_name='Arrangement', blank=True, null=True)
+    event = models.ForeignKey(Event, related_name='Arrangement', blank=True, null=True, on_delete=models.CASCADE)
     price = models.DecimalField(_('pris'), max_digits=10, decimal_places=2, blank=True, null=True)
     display_to = models.DateField(_("vis til"), blank=True, null=True, default=None)
     bong = models.IntegerField(_('bonger'), blank=True, null=True)

@@ -58,7 +58,8 @@ class Mark(models.Model):
         verbose_name=_("gitt av"),
         editable=False,
         null=True,
-        blank=True
+        blank=True,
+        on_delete=models.CASCADE
     )
     last_changed_date = models.DateTimeField(_("sist redigert"), auto_now=True, editable=False)
     last_changed_by = models.ForeignKey(
@@ -67,7 +68,8 @@ class Mark(models.Model):
         verbose_name=_("sist redigert av"),
         editable=False,
         null=True,
-        blank=False
+        blank=False,
+        on_delete=models.CASCADE
     )
     description = models.CharField(
         _("beskrivelse"),
@@ -109,8 +111,8 @@ class MarkUser(models.Model):
     """
     One entry for a user that has received a mark.
     """
-    mark = models.ForeignKey(Mark, related_name="given_to")
-    user = models.ForeignKey(User)
+    mark = models.ForeignKey(Mark, related_name="given_to", on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     expiration_date = models.DateField(_("utløpsdato"), editable=False)
 
@@ -205,7 +207,7 @@ def _get_with_duration_and_vacation(added_date=timezone.now()):
 
 class Suspension(models.Model):
 
-    user = models.ForeignKey(User)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.CharField(_('tittel'), max_length=64)
     description = models.CharField(_("beskrivelse"), max_length=255)
     active = models.BooleanField(default=True)

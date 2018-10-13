@@ -13,7 +13,7 @@ from apps.payment.models import PaymentReceipt
 
 
 class Product(models.Model):
-    category = models.ForeignKey('Category', related_name='products')
+    category = models.ForeignKey('Category', related_name='products', on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
     slug = models.SlugField(unique=True)
     short = models.CharField(max_length=200)
@@ -123,7 +123,7 @@ class Category(models.Model):
 
 
 class ProductSize(models.Model):
-    product = models.ForeignKey(Product, related_name='product_sizes')
+    product = models.ForeignKey(Product, related_name='product_sizes', on_delete=models.CASCADE)
     size = models.CharField('Størrelse', max_length=25)
     description = models.CharField('Beskrivelse', max_length=50, null=True, blank=True)
     stock = models.PositiveSmallIntegerField(
@@ -141,13 +141,13 @@ class ProductSize(models.Model):
 
 
 class Order(models.Model):
-    product = models.ForeignKey('Product')
-    order_line = models.ForeignKey('OrderLine', related_name='orders')
+    product = models.ForeignKey('Product', on_delete=models.CASCADE)
+    order_line = models.ForeignKey('OrderLine', related_name='orders', on_delete=models.CASCADE)
     # Price of product when paid
     price = models.DecimalField(max_digits=10, decimal_places=2, blank=True)
     # Quantity of products ordered
     quantity = models.PositiveIntegerField(default=1, validators=[MinValueValidator(1)])
-    size = models.ForeignKey(ProductSize, null=True, blank=True)
+    size = models.ForeignKey(ProductSize, null=True, blank=True, on_delete=models.CASCADE)
 
     def is_valid(self):
         """Validate order
@@ -179,7 +179,7 @@ class Order(models.Model):
 
 
 class OrderLine(models.Model):
-    user = models.ForeignKey(User)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     datetime = models.DateTimeField(null=True, blank=True)
     paid = models.BooleanField(default=False)
     stripe_id = models.CharField(max_length=50, null=True, blank=True)

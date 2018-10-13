@@ -275,7 +275,7 @@ class OnlineUser(AbstractUser):
 
 
 class Email(models.Model):
-    user = models.ForeignKey(OnlineUser, related_name="email_user")
+    user = models.ForeignKey(OnlineUser, related_name="email_user", on_delete=models.CASCADE)
     email = models.EmailField(_("epostadresse"), unique=True)
     primary = models.BooleanField(_("primær"), default=False)
     verified = models.BooleanField(_("verifisert"), default=False, editable=False)
@@ -304,7 +304,7 @@ class Email(models.Model):
 
 
 class RegisterToken(models.Model):
-    user = models.ForeignKey(OnlineUser, related_name="register_user")
+    user = models.ForeignKey(OnlineUser, related_name="register_user", on_delete=models.CASCADE)
     email = models.EmailField(_("epost"), max_length=254)
     token = models.CharField(_("token"), max_length=32, unique=True)
     created = models.DateTimeField(_("opprettet dato"), editable=False, auto_now_add=True)
@@ -358,7 +358,7 @@ class Position(models.Model):
     period = models.CharField(_('periode'), max_length=9, default="2013-2014", blank=False)
     committee = models.CharField(_("komite"), max_length=20, choices=COMMITTEES, default="hs")
     position = models.CharField(_("stilling"), max_length=20, choices=POSITIONS, default="medlem")
-    user = models.ForeignKey(OnlineUser, related_name='positions', blank=False)
+    user = models.ForeignKey(OnlineUser, related_name='positions', blank=False, on_delete=models.CASCADE)
 
     @property
     def print_string(self):
@@ -382,7 +382,7 @@ class SpecialPosition(models.Model):
     """
     position = models.CharField(_('Posisjon'), max_length=50, blank=False)
     since_year = models.IntegerField(_('Medlem siden'))
-    user = models.ForeignKey(OnlineUser, related_name='special_positions', blank=False)
+    user = models.ForeignKey(OnlineUser, related_name='special_positions', blank=False, on_delete=models.CASCADE)
 
     def __str__(self):
         return '%s, %s' % (self.user.get_full_name(), self.position)
