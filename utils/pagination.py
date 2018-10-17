@@ -7,6 +7,6 @@ class PageNumberPagination(RFPageNumberPagination):
     max_page_size = 80
     
     def get_page_size(self, request):
-        if 'size' in request.query_params:
-            return min(self.max_page_size, int(request.query_params['size']))
+        if 'page_size' in request.query_params:
+            return min(self.max_page_size, int(request.query_params['page_size']))
         return self.page_size
