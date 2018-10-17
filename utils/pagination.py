@@ -1,4 +1,3 @@
-import six
 from rest_framework.pagination import PageNumberPagination as RFPageNumberPagination
 
 
