@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
 from chunks.models import Chunk
-from rest_framework import mixins, viewsets, filters
-from rest_framework.views import APIView
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import filters, mixins, viewsets
+from rest_framework.views import APIView
 
 from apps.chunksapi.serializers import ChunkSerializer
 
