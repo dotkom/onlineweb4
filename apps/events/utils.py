@@ -50,9 +50,6 @@ def get_types_allowed(user):
         if group.name == 'eksKom':
             types_allowed.append(5)  # ekskursjon
 
-        if group.name == 'itex':
-            types_allowed.append(5)  # ekskursjon
-
     return types_allowed
 
 
