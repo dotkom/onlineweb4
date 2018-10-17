@@ -34,7 +34,6 @@ from apps.events.utils import (handle_attend_event_payment, handle_attendance_ev
 from apps.payment.models import Payment, PaymentDelay, PaymentRelation
 
 from .utils import EventCalendar
-from .utils import check_user_exists
 
 
 def index(request):
