@@ -34,6 +34,7 @@ from apps.events.utils import (handle_attend_event_payment, handle_attendance_ev
 from apps.payment.models import Payment, PaymentDelay, PaymentRelation
 
 from .utils import EventCalendar
+from .utils import check_user_exists
 
 
 def index(request):
@@ -504,20 +505,32 @@ class AttendViewSet(views.APIView):
             attendee.save()
 
         except Attendee.DoesNotExist:
-
             # If attendee tried to attend by a username that isn't tied to a user
+            user = None
             if rfid is None:
-                return Response({'message': 'Brukernavnet finnes ikke. Husk at det er et online.ntnu.no brukernavn! '
-                                            '(Prøv igjen, eller scan nytt kort for å avbryte.)', 'attend_status': 50},
-                                status=status.HTTP_400_BAD_REQUEST)
+                user = User.objects.filter(username=username)
+                
+                if not user:
+                    return Response({'message': 'Brukernavnet finnes ikke. Husk at det er et online.ntnu.no brukernavn! '
+                                                '(Prøv igjen, eller scan nytt kort for å avbryte.)', 'attend_status': 50},
+                                    status=status.HTTP_400_BAD_REQUEST)
 
             # If attendee tried to attend by card, but card isn't tied to a user
             else:
-                return Response({'message': 'Kortet finnes ikke i databasen. '
-                                            'Skriv inn et online.ntnu.no brukernavn for å '
-                                            'knytte kortet til brukeren og registrere oppmøte.',
-                                 'attend_status': 40}, status=status.HTTP_400_BAD_REQUEST)
+                user = User.objects.filter(rfid=rfid)
+                
+                if not user:
+                    return Response({'message': 'Kortet finnes ikke i databasen. '
+                                                'Skriv inn et online.ntnu.no brukernavn for å '
+                                                'knytte kortet til brukeren og registrere oppmøte.',
+                                    'attend_status': 40}, status=status.HTTP_400_BAD_REQUEST)
+
+            if user:
+                return Response({'message': (user[0].get_full_name() +
+                                '            er ikke meldt på dette arangementet.'),
+                                'attend_status': 55},
+                                status=status.HTTP_403_FORBIDDEN)
 
         # All is clear, attendee is attended
-        return Response({'message': (attendee.user.get_full_name() + ' er registrert som deltaker. Velkommen!'),
-                         'attend_status': 10, 'attendee': attendee.id}, status=status.HTTP_200_OK)
+        return Response({'message': (user.get_full_name() + ' er registrert som deltaker. Velkommen!'),
+                         'attend_status': 10, 'attendee': 2}, status=status.HTTP_200_OK)
