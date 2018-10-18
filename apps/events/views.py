@@ -532,4 +532,4 @@ class AttendViewSet(views.APIView):
 
         # All is clear, attendee is attended
         return Response({'message': (user.get_full_name() + ' er registrert som deltaker. Velkommen!'),
-                         'attend_status': 10, 'attendee': 2}, status=status.HTTP_200_OK)
+                         'attend_status': 10, 'attendee': attendee.id}, status=status.HTTP_200_OK)
