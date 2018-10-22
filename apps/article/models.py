@@ -34,7 +34,8 @@ class Article(models.Model):
         User, null=False,
         verbose_name=_("opprettet av"),
         related_name="created_by",
-        editable=False
+        editable=False,
+        on_delete=models.CASCADE
     )
     authors = models.CharField(_('forfatter(e)'), max_length=200, blank=True)
     changed_by = models.ForeignKey(

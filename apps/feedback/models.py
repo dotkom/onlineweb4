@@ -389,7 +389,11 @@ class MultipleChoiceRelation(models.Model):
 
 
 class Choice(models.Model):
-    question = models.ForeignKey(MultipleChoiceQuestion, related_name="choices")
+    question = models.ForeignKey(
+        MultipleChoiceQuestion,
+        related_name="choices",
+        on_delete=models.CASCADE
+    )
     choice = models.CharField(_('valg'), max_length=256, blank=False)
 
     def __str__(self):
