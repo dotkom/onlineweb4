@@ -6,9 +6,9 @@ from logging import getLogger
 
 from django.contrib import messages
 from django.contrib.contenttypes.models import ContentType
-from django.core.urlresolvers import reverse
 from django.http import HttpResponseBadRequest, HttpResponseNotAllowed
 from django.shortcuts import redirect
+from django.urls import reverse
 from django.views.generic import DetailView, ListView, TemplateView, UpdateView
 from taggit.models import TaggedItem
 

@@ -3,8 +3,8 @@ import logging
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.core.mail import EmailMessage, send_mail
-from django.core.urlresolvers import reverse
 from django.template.loader import render_to_string
+from django.urls import reverse
 
 
 def send_approval_notification(approval):

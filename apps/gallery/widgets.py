@@ -3,9 +3,9 @@
 # Created by 'myth' on 10/14/15
 
 from django.conf import settings
-from django.core.urlresolvers import reverse_lazy
 from django.forms import HiddenInput, TextInput
 from django.forms.utils import flatatt, force_text, format_html
+from django.urls import reverse
 
 from apps.gallery.models import ResponsiveImage
 

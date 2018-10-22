@@ -1,8 +1,8 @@
 import datetime
 import logging
 
-from django.core.urlresolvers import reverse
 from django.test import TestCase
+from django.urls import reverse
 from django_dynamic_fixture import G
 from rest_framework import status
 from rest_framework.test import APITestCase
