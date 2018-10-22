@@ -8,6 +8,7 @@ from functools import reduce
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser, Group
 from django.db import models
+from django.urls import reverse
 from django.utils import timezone
 from django.utils.html import strip_tags
 from django.utils.translation import ugettext as _
@@ -223,9 +224,8 @@ class OnlineUser(AbstractUser):
 
         return min(start_year + years_passed, start_year + length_of_study)
 
-    @models.permalink
     def get_absolute_url(self):
-        return 'profiles_view', None, {'username': self.username}
+        return reverse('profiles_view', kwargs={'username': self.username})
 
     def __str__(self):
         return self.get_full_name()

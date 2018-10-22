@@ -6,6 +6,7 @@ from django.conf import settings
 from django.db import models
 from django.db.models import SET_NULL, permalink
 from django.template.defaultfilters import slugify
+from django.urls import reverse
 from django.utils.translation import ugettext as _
 from taggit.managers import TaggableManager
 from unidecode import unidecode
@@ -57,9 +58,8 @@ class Article(models.Model):
     def slug(self):
         return slugify(unidecode(self.heading))
 
-    @permalink
     def get_absolute_url(self):
-        return 'article_details', None, {'article_id': self.id, 'article_slug': self.slug}
+        return reverse('article_details', kwargs={'article_id': self.id, 'article_slug': self.slug})
 
     class Meta(object):
         verbose_name = _("artikkel")

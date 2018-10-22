@@ -15,6 +15,7 @@ from django.db import models
 from django.db.models import SET_NULL, Case, Q, Value, When
 from django.template.defaultfilters import slugify
 from django.template.loader import render_to_string
+from django.urls import reverse
 from django.utils import timezone
 from django.utils.translation import ugettext as _
 from guardian.shortcuts import assign_perm
@@ -173,9 +174,8 @@ class Event(models.Model):
     def slug(self):
         return slugify(unidecode(self.title))
 
-    @models.permalink
     def get_absolute_url(self):
-        return 'events_details', None, {'event_id': self.id, 'event_slug': self.slug}
+        return reverse('events_details', kwargs={'event_id': self.id, 'event_slug': self.slug})
 
     def clean(self):
         if not self.organizer:
