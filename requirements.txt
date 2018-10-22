@@ -26,7 +26,6 @@ git+https://github.com/dotkom/django-guardian.git@1b184d5377200ab4ad59b343ae8af9
 django-taggit==0.22.2           # Generic multi-model tagging library
 django-taggit-serializer==0.1.5 # REST Framework serializers for Django-taggit
 APScheduler==3.5.1              # Scheduler
-feedme==1.9.5
 git+https://github.com/dotKom/redwine.git@0690807537fcbeeacde9c40b0e45549e0d216a96#egg=redwine==1.2.4.1
 reportlab==3.4.0
 pdfdocument==3.2
