@@ -17,7 +17,7 @@ django-filebrowser==3.9.1       # File uploading
 git+https://github.com/dotKom/django-chunks.git@e6bf109d4fd286964024c140ac1b8f3d86713540#egg=django-chunks==0.4
 django-crispy-forms==1.7.2      # nice forms
 django-extensions==1.9.7        # nice extra commands for debugging, etc
-django-dynamic-fixture==1.9.5   # Dynamic fixtures for models
+django-dynamic-fixture==2.0.0   # Dynamic fixtures for models
 django-recaptcha==1.4.0         # Google ReCaptcha
 django-oauth-toolkit==1.0.0    # OAuth2 authentication support
 django-watson==1.5.2            # Indexed model search lib
