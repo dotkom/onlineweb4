@@ -14,7 +14,7 @@ admin.autodiscover()
 
 urlpatterns = [
     # Admin urls
-    url(r'^admin/',             include(admin.site.urls)),
+    url(r'^admin/', admin.site.urls),
     url(r'^admin/doc/',         include('django.contrib.admindocs.urls')),
 
     # Onlineweb front page
