@@ -7,7 +7,7 @@ from django.conf import settings
 register = template.Library()
 
 
-@register.assignment_tag(takes_context=True)
+@register.simple_tag(takes_context=True)
 def gravatar_url(context, user, size):
     prefix = "https://" if context['request'].is_secure() else "http://"
     default = "%s%s%s_%s.png" % (
