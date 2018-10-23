@@ -34,7 +34,7 @@ def _handle_poster_add(request, form, order_type):
     title = str(poster)
 
     # The great sending of emails
-    subject = '[ProKom] Ny bestilling | %s' % title
+    subject = '[prokom] Ny bestilling | %s' % title
 
     poster.absolute_url = request.build_absolute_uri(poster.get_dashboard_url())
     context = {}
@@ -48,7 +48,7 @@ def _handle_poster_add(request, form, order_type):
         email_sent = EmailMessage(subject, message, from_email, to_emails, []).send()
     except ImproperlyConfigured:
         email_sent = False
-        logger.warn("Failed to send email for new order")
+        logger.exception("Failed to send email for new order")
     if email_sent:
         messages.success(request, 'Opprettet bestilling')
     else:
@@ -60,7 +60,7 @@ def _handle_poster_add(request, form, order_type):
 
 def _handle_poster_celebration(poster, context):
         logger = logging.getLogger(__name__)
-        subject = '[DotKom] {} Postere!'.format(poster.id)
+        subject = '[prokom] {} plakater!'.format(poster.id)
         message = render_to_string('posters/email/100_multiple_order.txt', context)
 
         from_email = settings.EMAIL_DOTKOM
@@ -68,4 +68,4 @@ def _handle_poster_celebration(poster, context):
         try:
             EmailMessage(subject, message, from_email, to_email, []).send()
         except ImproperlyConfigured:
-            logger.warn("Failed to send email Congratulating ProKom with number of poster orders divisible by 100")
+            logger.exception("Failed to send email Congratulating ProKom with number of poster orders divisible by 100")
