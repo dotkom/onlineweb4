@@ -14,6 +14,7 @@ from django.core.mail import EmailMessage
 from django.db import models
 from django.db.models import SET_NULL, Case, Q, Value, When
 from django.template.defaultfilters import slugify
+from django.template.loader import render_to_string
 from django.utils import timezone
 from django.utils.translation import ugettext as _
 from guardian.shortcuts import assign_perm
@@ -876,13 +877,21 @@ class Attendee(models.Model):
                     (self.user.get_full_name(), self.event, admin_user, datetime.now()))
 
         # Notify responsible group if someone is unattended after deadline
-        if datetime.now(self.event.unattend_deadline.tzinfo) >= self.event.unattend_deadline:
+        if timezone.now() >= self.event.unattend_deadline:
             subject = '[%s] %s har blitt avmeldt arrangementet av %s' % (self.event, self.user.get_full_name(),
                                                                          admin_user)
-            message = '%s har blitt avmeldt arrangementet "%s" av %s den %s' % (self.user.get_full_name(), self.event,
-                                                                                admin_user, datetime.now())
-            from_email = self.event.event.feedback_mail()
-            EmailMessage(subject, message, from_email, [from_email]).send()
+
+            content = render_to_string('events/email/unattend.txt', {
+                'user': self.user.get_full_name(),
+                'user_id': self.user_id,
+                'event': self.event,
+                'admin': admin_user,
+                'admin_id': admin_user.id,
+                'time': timezone.now().strftime('%m. %b %H:%M:%S')
+            })
+
+            to_email = self.event.event.feedback_mail()
+            EmailMessage(subject, content, "online@online.ntnu.no", [to_email]).send()
 
         self.delete()
 
