@@ -57,73 +57,47 @@ label > i.btn-icon {
   margin-left: 22px;
 }
 
-#paddingtop {
-  padding-top: 20px;
-}
-
 .header-inline {
   display: inline-block;
-  padding-right: 10px;
 }
 
 .glyphicon-info-sign {
   font-size: 14px;
 }
 
+.privacy-form {
+  max-width: 512px;
+}
+
 #privacy-help, #image-help {
   cursor: pointer;
-}
-
-.privacy-header {
-  margin-left: 15px;
-}
-
-.privacy-description {
-  padding: 15px;
 }
 
 .privacy-container {
   display: flex;
   flex-direction: column;
+  margin-bottom: 10px;
 }
 
-.privacybox {
-  margin: 5px 0 5px 0;
-  padding: 3px;
-  border-radius: 5px;
+.privacy-field {
+  display: flex;
+  align-items: center;
 
-  /* Make text non-selectable */
-
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  -khtml-user-select: none;
-  -moz-user-select: -moz-none;
-  -ms-user-select: none;
+  margin: 0;
+  font-weight: normal;
   user-select: none;
 
-  span {
-    padding: 0 10px 0 10px;
+  input {
+    margin: 0 8px 0 0;
   }
 
-  &.on {
-    .button-variant(@btn-success-color;
-    @btn-success-bg;
-    @btn-success-border);
+  &:hover {
+    cursor: pointer;
   }
 
-  &.off {
-    .button-variant(@btn-warning-color;
-    @btn-warning-bg;
-    @btn-warning-border);
+  &:not(:last-child) {
+    margin-bottom: 4px;
   }
-
-  input[type="checkbox"] {
-    display: none;
-  }
-}
-
-.privacybox:hover {
-  cursor: pointer;
 }
 
 .mark, .application {
