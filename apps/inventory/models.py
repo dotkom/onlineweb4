@@ -89,7 +89,7 @@ class Item(models.Model):
     def handle_notifications(self, amount):
 
         # Send one notification when the stock goes to or below 10
-        if self.total_amount <= self.low_stock_treshhold and self.total_amount + amount > self.low_stock_treshhold:
+        if self.total_amount <= self.low_stock_treshold and self.total_amount + amount > self.low_stock_treshold:
             message = "Det er kun " + str(self.total_amount) + " igjen av " + str(self.name) + \
                       " på kontoret.\n\n" \
                       "Dette er en automatisk generert melding og antallet kan være noe feil."
