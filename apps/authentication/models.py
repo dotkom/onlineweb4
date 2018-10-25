@@ -140,7 +140,7 @@ class OnlineUser(AbstractUser):
     saldo = models.PositiveSmallIntegerField(_("saldo"), default=0, null=True)
 
     # NTNU credentials
-    ntnu_username = models.CharField(_("NTNU-brukernavn"), max_length=10, blank=True, null=True, unique=True)
+    ntnu_username = models.CharField(_("NTNU-brukernavn"), max_length=50, blank=True, null=True, unique=True)
 
     # TODO checkbox for forwarding of @online.ntnu.no mail
 
