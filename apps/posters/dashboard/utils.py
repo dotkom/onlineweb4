@@ -60,7 +60,7 @@ def _handle_poster_add(request, form, order_type):
 
 def _handle_poster_celebration(poster, context):
         logger = logging.getLogger(__name__)
-        subject = '[prokom] {} plakater!'.format(poster.id)
+        subject = '[dotkom] Gratulerer med {} plakater!'.format(poster.id)
         message = render_to_string('posters/email/100_multiple_order.txt', context)
 
         from_email = settings.EMAIL_DOTKOM
