@@ -9,7 +9,13 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('first_name', 'last_name', 'rfid',)
+        fields = ('first_name', 'last_name', 'rfid', 'password', 'email', 'username',)
+        extra_kwargs = {
+            'email': {'write_only': True},
+            'password': {'write_only': True},
+            'username': {'write_only': True},
+        }
+
 
 
 class PositionSerializer(serializers.ModelSerializer):
