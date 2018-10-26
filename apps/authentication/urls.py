@@ -4,6 +4,7 @@ from django.conf.urls import url
 
 from apps.api.utils import SharedAPIRootRouter
 from apps.authentication import views
+from apps.authentication.api import views as api_views
 
 urlpatterns = [
     url(r'^login/$', views.login, name='auth_login'),
@@ -16,4 +17,4 @@ urlpatterns = [
 
 # API v1
 router = SharedAPIRootRouter()
-router.register('users', views.UserViewSet, base_name='users')
+router.register('users', api_views.UserViewSet, base_name='users')

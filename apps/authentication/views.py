@@ -14,15 +14,11 @@ from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils.translation import ugettext as _
 from django.views.decorators.debug import sensitive_post_parameters
-# API v1
-from rest_framework import mixins, viewsets
-from rest_framework.permissions import AllowAny
 
 from apps.authentication.forms import ChangePasswordForm, LoginForm, RecoveryForm, RegisterForm
 from apps.authentication.models import Email
 from apps.authentication.models import OnlineUser as User
 from apps.authentication.models import RegisterToken
-from apps.authentication.serializers import UserSerializer
 
 
 @sensitive_post_parameters()
@@ -263,14 +259,3 @@ def set_password(request, token=None):
         messages.error(
             request, 'Noe gikk galt med gjenoppretning av passord. Vennligst prøv igjen.')
         return HttpResponseRedirect('/')
-
-
-class UserViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.ListModelMixin):
-    """
-    Viewset for User serializer. Supports filtering on 'first_name', 'last_name', 'email'
-    """
-
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
-    permission_classes = (AllowAny,)
-    filter_fields = ('first_name', 'last_name', 'rfid',)
