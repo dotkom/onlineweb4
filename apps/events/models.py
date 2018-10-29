@@ -857,7 +857,7 @@ class Attendee(models.Model):
         # Importing here to prevent circular dependencies
         from apps.payment.models import PaymentDelay
         try:
-            PaymentDelay.objects.filter(user=self.user, payment=self.event.payment()).delete()
+            PaymentDelay.objects.get(user=self.user, payment=self.event.payment()).delete()
         except PaymentDelay.DoesNotExist:
             # Do nothing
             False
@@ -871,9 +871,9 @@ class Attendee(models.Model):
         # Importing here to prevent circular dependencies
         from apps.payment.models import PaymentDelay
         try:
-            deadline = PaymentDelay.objects.filter(user=self.user, payment=self.event.payment())[0].valid_to
+            deadline = PaymentDelay.objects.get(user=self.user, payment=self.event.payment()).valid_to
         except PaymentDelay.DoesNotExist:
-            return
+            return "Betalt"
         return deadline
 
     def is_on_waitlist(self):
