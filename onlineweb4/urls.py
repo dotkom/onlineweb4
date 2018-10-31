@@ -86,6 +86,11 @@ if 'apps.contact' in settings.INSTALLED_APPS:
     urlpatterns += [
         url(r'^contact/', include('apps.contact.urls')),
     ]
+    
+if 'apps.contribution' in settings.INSTALLED_APPS:
+    urlpatterns += [
+        url(r'^contribution/', include('apps.contribution.urls')),
+    ]
 
 if 'apps.dashboard' in settings.INSTALLED_APPS:
     urlpatterns += [
