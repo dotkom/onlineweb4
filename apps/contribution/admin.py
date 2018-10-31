@@ -16,4 +16,5 @@ class RepositoryAdmin(admin.ModelAdmin):
         LanguagesInLine,
     ]
 
+
 admin.site.register(Repository, RepositoryAdmin)
