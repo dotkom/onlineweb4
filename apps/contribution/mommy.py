@@ -1,11 +1,11 @@
 import json
 
 import requests
+from django.utils import timezone
 
 from apps.contribution.models import Repository, RepositoryLanguage
 from apps.mommy import schedule
 from apps.mommy.registry import Task
-from django.utils import timezone
 
 git_domain = "https://api.github.com"
 
@@ -61,4 +61,4 @@ class UpdateRepositories(Task):
         return data
 
 
-schedule.register(UpdateRepositories, day_of_week="mon-sun", hour=15, minute=46)
+schedule.register(UpdateRepositories, day_of_week="mon-sun", hour=7, minute=0)
