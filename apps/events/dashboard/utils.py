@@ -14,6 +14,7 @@ def _get_attendee(attendee_id):
 
 def event_ajax_handler(event, request):
     action = request.POST['action']
+    administrating_user = request.user
 
     if action == 'attended':
         attendee = _get_attendee(request.POST['attendee_id'])
@@ -30,7 +31,7 @@ def event_ajax_handler(event, request):
     elif action == 'add_attendee':
         return handle_add_attendee(event, request.POST['user_id'])
     elif action == 'remove_attendee':
-        return handle_remove_attendee(event, request.POST['attendee_id'])
+        return handle_remove_attendee(event, request.POST['attendee_id'], administrating_user)
     else:
         raise NotImplementedError
 
@@ -104,13 +105,13 @@ def handle_add_attendee(event, user_id):
     return resp
 
 
-def handle_remove_attendee(event, attendee_id):
+def handle_remove_attendee(event, attendee_id, admin_user):
     resp = {}
     attendee = Attendee.objects.filter(pk=attendee_id)
     if attendee.count() != 1:
         return 'Fant ingen påmeldte med oppgitt ID (%s).' % attendee_id
     attendee = attendee[0]
-    attendee.delete()
+    attendee.unattend(admin_user)
     resp['message'] = '%s ble fjernet fra %s' % (attendee.user.get_full_name(), attendee.event)
     resp['attendees'] = []
     for number, a in enumerate(attendee.event.attending_attendees_qs):

@@ -5,9 +5,9 @@ from apps.careeropportunity.models import CareerOpportunity
 
 class AddCareerOpportunityForm(forms.ModelForm):
 
-    title = forms.CharField(label='Tittel', required=True, widget=forms.TextInput(
+    title = forms.CharField(label='Tittel', required=True, max_length=100, widget=forms.TextInput(
         attrs={'placeholder': 'Tittel for karrieremuligheten'}))
-    ingress = forms.CharField(label='Ingress', required=True, widget=forms.Textarea(
+    ingress = forms.CharField(label='Ingress', required=True, max_length=250, widget=forms.Textarea(
         attrs={'placeholder': 'Kort ingress til karrieremuligheten (Max 250 tegn)'}))
     description = forms.CharField(label='Beskrivelse', required=True, widget=forms.Textarea(
         attrs={'placeholder': 'Detaljert beskrivelse av karrieremuligheten'}))

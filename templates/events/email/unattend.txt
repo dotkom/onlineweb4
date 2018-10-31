@@ -1,0 +1,1 @@
+{{ user }} (#{{ user_id }}) har blitt avmeldt arrangementet "{{ event }}" av {{ admin }} (#{{ admin_id }}) den {{ time }}.

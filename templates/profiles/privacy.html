@@ -1,37 +1,23 @@
-
-<div class="row">
-    <form method="post" action="{% url 'profile_privacy' %}" enctype="multipart/form-data">
-        <div class="col-md-12">
-            {% csrf_token %}
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="row row-space">
-                        <div class="col-md-12" id="paddingtop">
-                            <h3 class="header-inline">Personvern</h3>
-                            <i id="privacy-help"
-                               class="glyphicon glyphicon-info-sign"
-                               href="#"
-                               data-toggle="popover"
-                               title="Hjelpeinformasjon"
-                               data-content="Grønn indikerer valgt, oransje indikerer ikke valgt. Dersom du velger at profilen din ikke skal være synlig for andre brukere, vil ikke de andre valgene ha noen effekt."
-                               data-original-title="Hjelpeinformasjon">
-                            </i>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-12">
-                    <div class="col-md-12">
-                        {% for field in privacy_form %}
-                            <div class="privacybox {% if field.value %}on{% else %}off{% endif %} pull-left">
-                                <span>{{ field.label }} {{ field }} </span>
-                            </div>
-                        {% endfor %}
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-12 form-actions" style="margin-left: 0px; margin-top: 15px;">
-            <button class="btn btn-success pull-right" type="submit">Lagre personvern</button>
-        </div>
-    </form>
-</div>
+<form class="privacy-form" method="post" action="{% url 'profile_privacy' %}" enctype="multipart/form-data">
+    {% csrf_token %}
+    <h3 class="header-inline">Personvern</h3>
+    <i id="privacy-help"
+        class="glyphicon glyphicon-info-sign"
+        href="#"
+        data-toggle="popover"
+        title="Hjelpeinformasjon"
+        data-content="Dersom du velger at profilen din ikke skal være synlig for andre brukere, vil ikke de andre valgene ha noen effekt."
+        data-original-title="Hjelpeinformasjon">
+    </i>
+    <p class="privacy-description">Oppdater dine personvernsinnstillinger ved å toggle boksene under og deretter "lagre". Du kan til enhver tid endre på dine innstillinger for å holde dine personlige opplysninger skjult eller synlig for andre brukere av online sine nettsider.</p>
+    <div class="privacy-container">
+        {% for field in privacy_form %}
+            <label class="privacy-field" for="{{ field.id_for_label }}">
+                {{ field }}{{ field.label }}
+            </label>
+        {% endfor %}
+    </div>
+    <div class="form-actions">
+        <button class="btn btn-success" type="submit">Lagre personvern</button>
+    </div>
+</form>
