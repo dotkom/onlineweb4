@@ -97,21 +97,6 @@ PRODUCT = {
         'xs': (260, 312)
     }
 }
-RESOURCE = {
-    'name': 'resource',
-    'description': 'Ressurs',
-    'aspect_ratio': True,
-    'aspect_ratio_x': 1,
-    'aspect_ratio_y': 1,
-    'min_width': 710,
-    'min_height': 710,
-    'sizes': {
-        'lg': (710, 710),
-        'md': (710, 710),
-        'sm': (540, 540),
-        'xs': (360, 360)
-    }
-}
 
 # Keyword lookup
 MODELS = {
@@ -119,9 +104,8 @@ MODELS = {
     'event': EVENT,
     'company': COMPANY,
     'offline': OFFLINE,
-    'product': PRODUCT,
-    'resource': RESOURCE
+    'product': PRODUCT
 }
 
 # Active presets
-PRESETS = [EVENT, ARTICLE, COMPANY, PRODUCT, RESOURCE]
+PRESETS = [EVENT, ARTICLE, COMPANY, PRODUCT]
