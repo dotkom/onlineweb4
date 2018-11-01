@@ -336,10 +336,15 @@ def handle_attend_event_payment(event, user):
             # Send notification about payment to user by mail
             subject = '[%s] Husk å betale for og fullføre påmeldingen til arrangementet.' % event.title
 
+            if payment.price() is not None:
+                price = payment.price().price
+            else:
+                price = 0
+
             content = render_to_string('events/email/payment_reminder.txt', {
                 'event': event.title,
                 'time': payment.deadline.astimezone(tz('Europe/Oslo')).strftime("%-d %B %Y kl. %H:%M"),
-                'price': payment.price().price
+                'price': price
             })
 
             EmailMessage(subject, content, event.feedback_mail(), [user.get_email]).send()
