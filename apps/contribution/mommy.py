@@ -60,8 +60,8 @@ class UpdateRepositories(Task):
 
     @staticmethod
     def new_repository(new_repo, new_languages):
-        # Filter out repositories with inactivity
-        if new_repo.updated_at.year > timezone.now().year - 2:
+        # Filter out repositories with inactivity past 2 years (365 days * 2)
+        if new_repo.updated_at > (timezone.now() - timezone.timedelta(days=730)).replace(tzinfo=None):
             new_repo = Repository(
                 id=new_repo.id,
                 name=new_repo.name,
@@ -94,4 +94,4 @@ class UpdateRepositories(Task):
         return data
 
 
-schedule.register(UpdateRepositories, day_of_week="mon-sun", hour=13, minute=5)
+schedule.register(UpdateRepositories, day_of_week="mon-sun", hour=3, minute=0)
