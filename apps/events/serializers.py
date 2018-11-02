@@ -21,6 +21,7 @@ class RuleBundleSerializer(serializers.ModelSerializer):
         model = RuleBundle
         fields = (
             'description', 'field_of_study_rules', 'grade_rules', 'user_group_rules',
+            'rule_strings', 'id',
         )
 
 
