@@ -204,6 +204,7 @@ INSTALLED_APPS = (
     'apps.careeropportunity',
     'apps.companyprofile',
     'apps.contact',
+    'apps.contribution',
     'apps.dashboard',
     'apps.dataporten',
     'apps.gallery',
