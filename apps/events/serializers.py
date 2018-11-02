@@ -33,7 +33,8 @@ class AttendanceEventSerializer(serializers.ModelSerializer):
         fields = (
             'max_capacity', 'waitlist', 'guest_attendance',
             'registration_start', 'registration_end', 'unattend_deadline',
-            'automatically_set_marks', 'rule_bundles',
+            'automatically_set_marks', 'rule_bundles', 'number_on_waitlist',
+            'number_of_seats_taken',
         )
 
 
