@@ -344,7 +344,8 @@ class RuleBundle(models.Model):
         rules.extend(self.user_group_rules.all())
         return rules
 
-    def get_rule_strings(self):
+    @property
+    def rule_strings(self):
         return [str(rule) for rule in self.get_all_rules()]
 
     def satisfied(self, user, registration_start):
@@ -363,8 +364,8 @@ class RuleBundle(models.Model):
     def __str__(self):
         if self.description:
             return self.description
-        elif self.get_rule_strings():
-            return ", ".join(self.get_rule_strings())
+        elif self.rule_strings:
+            return ", ".join(self.rule_strings)
         else:
             return _("Tom rule bundle.")
 

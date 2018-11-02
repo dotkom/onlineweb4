@@ -21,6 +21,7 @@ class RuleBundleSerializer(serializers.ModelSerializer):
         model = RuleBundle
         fields = (
             'description', 'field_of_study_rules', 'grade_rules', 'user_group_rules',
+            'rule_strings', 'id',
         )
 
 
@@ -32,7 +33,8 @@ class AttendanceEventSerializer(serializers.ModelSerializer):
         fields = (
             'max_capacity', 'waitlist', 'guest_attendance',
             'registration_start', 'registration_end', 'unattend_deadline',
-            'automatically_set_marks', 'rule_bundles',
+            'automatically_set_marks', 'rule_bundles', 'number_on_waitlist',
+            'number_of_seats_taken',
         )
 
 
