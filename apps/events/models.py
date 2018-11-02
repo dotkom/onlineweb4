@@ -139,6 +139,10 @@ class Event(models.Model):
     def company_event(self):
         return CompanyEvent.objects.filter(event=self)
 
+    @property
+    def organizer_name(self):
+        return self.organizer.name
+
     def feedback_mail(self):
         if self.event_type == 1 or self.event_type == 4:  # Sosialt & Utflukt
             return settings.EMAIL_ARRKOM
