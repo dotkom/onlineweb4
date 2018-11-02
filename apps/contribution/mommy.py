@@ -2,6 +2,7 @@ import json
 
 import requests
 from django.utils import timezone
+from pytz import timezone as tz
 
 from apps.contribution.models import Repository, RepositoryLanguage
 from apps.mommy import schedule
@@ -16,12 +17,13 @@ class UpdateRepositories(Task):
     def run():
         # Load new data
         fresh = UpdateRepositories.get_git_repositories()
+        localtz = tz('Europe/Oslo')
         for repo in fresh:
             fresh_repo = Repository(
                 id=int(repo['id']),
                 name=repo['name'],
                 description=repo['description'],
-                updated_at=timezone.datetime.strptime(repo['updated_at'], "%Y-%m-%dT%H:%M:%SZ"),
+                updated_at=localtz.localize(timezone.datetime.strptime(repo['updated_at'], "%Y-%m-%dT%H:%M:%SZ")),
                 url=repo['url']
             )
 
@@ -61,7 +63,7 @@ class UpdateRepositories(Task):
     @staticmethod
     def new_repository(new_repo, new_languages):
         # Filter out repositories with inactivity past 2 years (365 days * 2)
-        if new_repo.updated_at > (timezone.now() - timezone.timedelta(days=730)).replace(tzinfo=None):
+        if new_repo.updated_at > timezone.now() - timezone.timedelta(days=730):
             new_repo = Repository(
                 id=new_repo.id,
                 name=new_repo.name,
@@ -94,4 +96,4 @@ class UpdateRepositories(Task):
         return data
 
 
-schedule.register(UpdateRepositories, day_of_week="mon-sun", hour=3, minute=0)
+schedule.register(UpdateRepositories, day_of_week="mon-sun", hour=16, minute=36)
