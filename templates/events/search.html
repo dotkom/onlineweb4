@@ -1,4 +1,5 @@
 {% load markdown_deux_tags %}
+{% load shuffle %}
 
 {% if events %}
   {% for event in events %}
@@ -7,14 +8,14 @@
     <div class="col-xs-12 col-sm-4 col-md-4 left-box">
       <div class="row">
         {% if event.companies.all %}
-            {% for company_relation in event.companies.all %}
+            {% with event.companies.all|shuffle|first as random_relation %}
                 <a href="{{ event.get_absolute_url }}">
                   <picture>
-                    <source srcset="{{ company_relation.company.image.lg }}" media="(max-width: 768px)">
-                    <img src="{{ company_relation.company.image.md }}" alt="" />
+                    <source srcset="{{ random_relation.company.image.lg }}" media="(max-width: 768px)">
+                    <img src="{{ random_relation.company.image.md }}" alt="" />
                   </picture>
                 </a>
-            {% endfor %}
+            {% endwith %}
         {% else %}
             <a href="{{ event.get_absolute_url }}">
               <picture>
