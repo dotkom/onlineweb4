@@ -21,6 +21,8 @@ from googleapiclient.errors import HttpError
 from oauth2_provider.models import AccessToken
 from watson import search as watson
 
+from rest_framework import filters, generics
+
 from apps.approval.forms import FieldOfStudyApplicationForm
 from apps.approval.models import MembershipApproval
 from apps.authentication.forms import NewEmailForm
@@ -34,6 +36,7 @@ from apps.marks.models import Mark, Suspension
 from apps.payment.models import PaymentDelay, PaymentRelation, PaymentTransaction
 from apps.profiles.forms import InternalServicesForm, PositionForm, PrivacyForm, ProfileForm
 from apps.profiles.models import Privacy
+from apps.profiles.serializers import ProfileSerializer
 from apps.shop.models import Order
 from utils.shortcuts import render_json
 
@@ -550,3 +553,9 @@ class GSuiteResetPassword(View):
             messages.error(request, err)
 
         return redirect('profile_add_email')
+
+class ProfileSearchSet(generics.ListAPIView):
+    queryset = User.objects.filter(privacy__visible_for_other_users=True)    
+    serializer_class = ProfileSerializer
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ("username", "first_name", "last_name")
