@@ -3,11 +3,11 @@ from rest_framework import serializers
 from apps.authentication.models import OnlineUser as User
 from apps.profiles.models import Privacy
 
+
 class ProfileSerializer(serializers.ModelSerializer):
     nickname = serializers.SerializerMethodField()
     online_mail = serializers.SerializerMethodField()
     phone_number = serializers.SerializerMethodField()
-
 
     class Meta:
         model = User
