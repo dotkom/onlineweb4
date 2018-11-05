@@ -23,7 +23,7 @@ APPROVAL_SETTINGS = {
 
 OW4_SETTINGS = {
    'events': {
-       'ENABLE_RECAPTCHA': config('OW4_EVENTS_ENABLE_RECAPTCHA', False, cast=bool),
+       'ENABLE_RECAPTCHA': config('OW4_EVENTS_ENABLE_RECAPTCHA', True, cast=bool),
        'FEATURED_DAYS_FUTURE': os.getenv('OW4_EVENTS_FEATURED_DAYS_FUTURE', 3),
        'FEATURED_DAYS_PAST': os.getenv('OW4_EVENTS_FEATURED_DAYS_PAST', 3),
    }
