@@ -214,7 +214,7 @@ def handle_attendance_event_detail(event, user, context):
 
     if attendance_event.rule_bundles:
         for rule_bundle in attendance_event.rule_bundles.all():
-            rules.append(rule_bundle.get_rule_strings)
+            rules.append(rule_bundle.rule_strings)
 
     if user.is_authenticated():
         user_anonymous = False

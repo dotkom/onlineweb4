@@ -57,72 +57,46 @@ label > i.btn-icon {
   margin-left: 22px;
 }
 
-#paddingtop {
-  padding-top: 20px;
-}
-
 .header-inline {
   display: inline-block;
-  padding-right: 10px;
 }
 
 .glyphicon-info-sign {
   font-size: 14px;
 }
 
+.privacy-form {
+  max-width: 512px;
+}
+
 #privacy-help, #image-help {
   cursor: pointer;
 }
 
-.privacybox {
-  background-color: @baby-blue;
-  color: #fff;
-  width: 250px;
-  height: 75px;
-  line-height: 75px;
-  text-align: center;
-  margin: 0 20px 20px 0;
-  padding: 0 5px 5px 0;
-  font-size: 1.5em;
-  border-style: solid;
-  border-width: 1px;
-  border-radius: 4px;
-
-  /* Make text non-selectable */
-
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  -khtml-user-select: none;
-  -moz-user-select: -moz-none;
-  -ms-user-select: none;
-  user-select: none;
-
-  span {
-    display: inline-block;
-    vertical-align: middle;
-    color: 111;
-    line-height: normal;
-  }
-
-  &.on {
-    .button-variant(@btn-success-color;
-    @btn-success-bg;
-    @btn-success-border);
-  }
-
-  &.off {
-    .button-variant(@btn-warning-color;
-    @btn-warning-bg;
-    @btn-warning-border);
-  }
-
-  input[type="checkbox"] {
-    display: none;
-  }
+.privacy-container {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 10px;
 }
 
-.privacybox:hover {
-  cursor: pointer;
+.privacy-field {
+  display: flex;
+  align-items: center;
+  margin: 0;
+  font-weight: normal;
+  user-select: none;
+
+  input {
+    margin: 0 8px 0 0;
+  }
+
+  &:hover {
+    cursor: pointer;
+  }
+
+  &:not(:last-child) {
+    margin-bottom: 4px;
+  }
 }
 
 .mark, .application {
@@ -215,7 +189,7 @@ textarea {
   }
 
   .privacybox {
-    width: 200px;
+    width: 250px;
   }
 }
 

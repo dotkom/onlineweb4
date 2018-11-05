@@ -36,11 +36,9 @@ On the other hand on slower machines Docker might be noticeable slower in which 
 
 ### Docker and Docker Compose
 
-To fire up the dev environment, you should use [docker-compose](https://docs.docker.com/compose/overview/).
+To fire up the dev environment, you should use [docker-compose](https://docs.docker.com/compose/overview/), which can be installed by running `pip install docker-compose`.
 
-Install it by running `pip install docker-compose`.
-
-There exists a `Makefile` in the project root directory. This simplifies interaction with docker and docker-compose.
+There is a `Makefile` located in the root directory. This can be used to manage the application without direct interaction with `docker`, `docker-compose`, et al.
 
 Simply run `make` to build and start onlineweb4, and run `make stop` to stop it.
 

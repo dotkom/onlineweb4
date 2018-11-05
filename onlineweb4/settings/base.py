@@ -23,7 +23,7 @@ APPROVAL_SETTINGS = {
 
 OW4_SETTINGS = {
    'events': {
-       'ENABLE_RECAPTCHA': config('OW4_EVENTS_ENABLE_RECAPTCHA', True, cast=bool),
+       'ENABLE_RECAPTCHA': config('OW4_EVENTS_ENABLE_RECAPTCHA', False, cast=bool),
        'FEATURED_DAYS_FUTURE': os.getenv('OW4_EVENTS_FEATURED_DAYS_FUTURE', 3),
        'FEATURED_DAYS_PAST': os.getenv('OW4_EVENTS_FEATURED_DAYS_PAST', 3),
    }
@@ -96,7 +96,7 @@ IMPORT_DDF_MODELS = False
 
 # Django CORS headers
 CORS_ORIGIN_ALLOW_ALL = config("OW4_DJANGO_CORS_ORIGIN_ALLOW_ALL", cast=bool, default=True)
-CORS_URLS_REGEX = r'^(/api/v1/.*|/sso/user/|/openid/.*)$' # Enables CORS on all /api/v1/, /sso/user/ and all /openid/ endpoints 
+CORS_URLS_REGEX = r'^(/api/v1/.*|/sso/user/|/openid/.*)$' # Enables CORS on all /api/v1/, /sso/user/ and all /openid/ endpoints
 
 
 # Google reCaptcha settings

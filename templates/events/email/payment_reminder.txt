@@ -1,5 +1,0 @@
-Hei!
-
-Du har meldt deg på {{ event }} som er et betalingsarrangement.
-For å fullføre påmeldingen, er du nødt til å gå inn på arrangementets side og klikke "betal".
-Betalingen må gjennomføres innen den {{ time }}, og summen er på: {{ price }} kr.

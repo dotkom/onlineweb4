@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import logging
 from collections import OrderedDict
 from datetime import datetime, timedelta
 from random import choice as random_choice
@@ -9,9 +10,11 @@ from django.contrib.auth.models import Group
 from django.contrib.contenttypes.fields import GenericRelation
 from django.core import validators
 from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist, ValidationError
+from django.core.mail import EmailMessage
 from django.db import models
 from django.db.models import SET_NULL, Case, Q, Value, When
 from django.template.defaultfilters import slugify
+from django.template.loader import render_to_string
 from django.utils import timezone
 from django.utils.translation import ugettext as _
 from guardian.shortcuts import assign_perm
@@ -135,6 +138,10 @@ class Event(models.Model):
     @property
     def company_event(self):
         return CompanyEvent.objects.filter(event=self)
+
+    @property
+    def organizer_name(self):
+        return self.organizer.name
 
     def feedback_mail(self):
         if self.event_type == 1 or self.event_type == 4:  # Sosialt & Utflukt
@@ -337,7 +344,8 @@ class RuleBundle(models.Model):
         rules.extend(self.user_group_rules.all())
         return rules
 
-    def get_rule_strings(self):
+    @property
+    def rule_strings(self):
         return [str(rule) for rule in self.get_all_rules()]
 
     def satisfied(self, user, registration_start):
@@ -356,8 +364,8 @@ class RuleBundle(models.Model):
     def __str__(self):
         if self.description:
             return self.description
-        elif self.get_rule_strings():
-            return ", ".join(self.get_rule_strings())
+        elif self.rule_strings:
+            return ", ".join(self.rule_strings)
         else:
             return _("Tom rule bundle.")
 
@@ -854,7 +862,7 @@ class Attendee(models.Model):
         # Importing here to prevent circular dependencies
         from apps.payment.models import PaymentDelay
         try:
-            PaymentDelay.objects.filter(user=self.user, payment=self.event.payment()).delete()
+            PaymentDelay.objects.get(user=self.user, payment=self.event.payment()).delete()
         except PaymentDelay.DoesNotExist:
             # Do nothing
             False
@@ -864,8 +872,42 @@ class Attendee(models.Model):
 
         super(Attendee, self).delete()
 
+    def get_payment_deadline(self):
+        # Importing here to prevent circular dependencies
+        from apps.payment.models import PaymentDelay
+        try:
+            deadline = PaymentDelay.objects.get(user=self.user, payment=self.event.payment()).valid_to
+        except PaymentDelay.DoesNotExist:
+            return "Betalt"
+        return deadline
+
     def is_on_waitlist(self):
         return self in self.event.waitlist_qs
+
+    # Unattend user from event
+    def unattend(self, admin_user):
+        logger = logging.getLogger(__name__)
+        logger.info('User %s was removed from event "%s" by %s on %s' %
+                    (self.user.get_full_name(), self.event, admin_user, datetime.now()))
+
+        # Notify responsible group if someone is unattended after deadline
+        if timezone.now() >= self.event.unattend_deadline:
+            subject = '[%s] %s har blitt avmeldt arrangementet av %s' % (self.event, self.user.get_full_name(),
+                                                                         admin_user)
+
+            content = render_to_string('events/email/unattend.txt', {
+                'user': self.user.get_full_name(),
+                'user_id': self.user_id,
+                'event': self.event,
+                'admin': admin_user,
+                'admin_id': admin_user.id,
+                'time': timezone.now().strftime('%m. %b %H:%M:%S')
+            })
+
+            to_email = self.event.event.feedback_mail()
+            EmailMessage(subject, content, "online@online.ntnu.no", [to_email]).send()
+
+        self.delete()
 
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):
