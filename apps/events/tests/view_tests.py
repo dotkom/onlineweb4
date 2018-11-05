@@ -11,7 +11,7 @@ from freezegun import freeze_time
 from rest_framework import status
 
 from apps.authentication.models import AllowedUsername
-from apps.payment.models import PaymentDelay, PaymentPrice
+from apps.payment.models import PaymentDelay
 
 from ..models import TYPE_CHOICES, AttendanceEvent, Event, Extras, GroupRestriction
 from .utils import (add_payment_delay, add_to_arrkom, add_to_bedkom, add_to_trikom,
@@ -336,8 +336,7 @@ class EventsAttend(EventsTestMixin, TestCase):
         G(AttendanceEvent, event=event,
             registration_start=timezone.now() - timedelta(days=1),
             registration_end=timezone.now() + timedelta(days=1))
-        self.event_payment = generate_payment(event, payment_type=3, delay=timedelta(days=2))
-        G(PaymentPrice, price=200, payment=self.event_payment)
+        generate_payment(event, payment_type=3, delay=timedelta(days=2))
         url = reverse('attend_event', args=(event.id,))
         # django-recatpcha magic when RECAPTCHA_TESTING=True
         form_params = {'g-recaptcha-response': 'PASSED'}
