@@ -7,3 +7,4 @@ from apps.contribution.serializers import RepositorySerializer
 class RepositoryViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Repository.objects.all()
     serializer_class = RepositorySerializer
+    ordering = ('-updated_at',)
