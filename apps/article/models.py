@@ -4,7 +4,7 @@ import re
 
 from django.conf import settings
 from django.db import models
-from django.db.models import SET_NULL, permalink
+from django.db.models import SET_NULL
 from django.template.defaultfilters import slugify
 from django.urls import reverse
 from django.utils.translation import ugettext as _

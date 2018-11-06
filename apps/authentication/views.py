@@ -7,11 +7,11 @@ from smtplib import SMTPException
 from django.conf import settings
 from django.contrib import auth, messages
 from django.core.mail import send_mail
-from django.urls import reverse
 from django.db import IntegrityError
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render
 from django.template.loader import render_to_string
+from django.urls import reverse
 from django.utils.translation import ugettext as _
 from django.views.decorators.debug import sensitive_post_parameters
 # API v1

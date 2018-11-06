@@ -1,8 +1,8 @@
 import datetime
 
 from django.contrib.auth.models import Group, Permission
-from django.urls import reverse
 from django.test import TestCase
+from django.urls import reverse
 from django.utils import timezone
 from django_dynamic_fixture import G
 from rest_framework import status

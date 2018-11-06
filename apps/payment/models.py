@@ -73,7 +73,12 @@ class Payment(models.Model):
     """Day of payment creation. Automatically set"""
     changed_date = models.DateTimeField(auto_now=True, editable=False)
     """Last changed. Automatically set"""
-    last_changed_by = models.ForeignKey(User, editable=False, null=True, on_delete=models.CASCADE)  # Blank and null is temperarly
+    last_changed_by = models.ForeignKey(  # Blank and null is temperarly
+        User,
+        editable=False,
+        null=True,
+        on_delete=models.CASCADE
+    )
     """User who last changed payment. Automatically set"""
 
     def payment_delays(self):
