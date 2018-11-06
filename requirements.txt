@@ -68,3 +68,4 @@ django-appconf>=1.0
 raven==6.6.0
 
 django-js-reverse==0.8.1
+pycodestyle==2.3.1

@@ -64,8 +64,7 @@ lint-only: lint-backend lint-frontend
 test-only: test-backend test-frontend
 
 lint-backend:
-	@docker-compose run --rm $(BACKEND_SERVICE_NAME) flake8 $(BACKEND_LINT_FOLDERS)
-	@docker-compose run --rm $(BACKEND_SERVICE_NAME) isort -c -rc $(BACKEND_LINT_FOLDERS)
+	@docker-compose run --rm $(BACKEND_SERVICE_NAME) tox -e flake8 -e isort $(BACKEND_LINT_FOLDERS)
 
 lint-frontend:
 	@docker-compose run --rm $(FRONTEND_SERVICE_NAME) npm run lint
