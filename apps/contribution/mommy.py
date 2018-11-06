@@ -24,7 +24,9 @@ class UpdateRepositories(Task):
                 name=repo['name'],
                 description=repo['description'],
                 updated_at=localtz.localize(timezone.datetime.strptime(repo['updated_at'], "%Y-%m-%dT%H:%M:%SZ")),
-                url=repo['url']
+                url=repo['url'],
+                public_url=repo['html_url'],
+                issues=repo['open_issues_count']
             )
 
             # If repository exists, only update data
@@ -44,6 +46,8 @@ class UpdateRepositories(Task):
         stored_repo.description = fresh_repo.description
         stored_repo.updated_at = fresh_repo.updated_at
         stored_repo.url = fresh_repo.url
+        stored_repo.public_url = fresh_repo.public_url
+        stored_repo.issues = fresh_repo.issues
         stored_repo.save()
 
         # Update languages if they exist, and add if not
@@ -69,7 +73,9 @@ class UpdateRepositories(Task):
                 name=new_repo.name,
                 description=new_repo.description,
                 updated_at=new_repo.updated_at,
-                url=new_repo.url
+                url=new_repo.url,
+                public_url=new_repo.public_url,
+                issues=new_repo.issues
             )
             new_repo.save()
 

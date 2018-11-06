@@ -6,6 +6,8 @@ class Repository(models.Model):
     name = models.CharField(max_length=150)
     description = models.CharField(max_length=300, null=True)
     url = models.URLField()
+    public_url = models.URLField()
+    issues = models.IntegerField()
     updated_at = models.DateTimeField()
 
 

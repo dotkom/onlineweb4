@@ -16,7 +16,9 @@ class UpdateRepositoriesTest(TestCase):
                       name="Test1",
                       description="This is a repo for testing",
                       updated_at=self.now,
-                      url="https://www.google.com"
+                      url="https://www.google.com",
+                      public_url="https://google.com",
+                      issues=2
                       )
 
         self.language_js = G(RepositoryLanguage,
@@ -32,7 +34,9 @@ class UpdateRepositoriesTest(TestCase):
                        name="Test2",
                        description="This is a repo for testing2",
                        updated_at=local_now,
-                       url="https://www.google.com/kittens"
+                       url="https://www.google.com/kittens",
+                       public_url="https://google.com/humpbackwhale",
+                       issues=4
                        )
 
         fresh_languages = {'JavaScript': 80000}
@@ -42,6 +46,8 @@ class UpdateRepositoriesTest(TestCase):
         self.assertEqual(fresh_repo.description, self.repo.description)
         self.assertEqual(fresh_repo.updated_at, self.repo.updated_at)
         self.assertEqual(fresh_repo.url, self.repo.url)
+        self.assertEqual(fresh_repo.public_url, self.repo.public_url)
+        self.assertEqual(fresh_repo.issues, self.repo.issues)
         self.assertEqual(fresh_repo.languages, self.repo.languages)
 
     def testRepositoryCreation(self):
@@ -51,7 +57,9 @@ class UpdateRepositoriesTest(TestCase):
                        name="Test3",
                        description="This is a repo for testing3",
                        updated_at=local_now,
-                       url="https://www.google.com/kittens/3"
+                       url="https://www.google.com/kittens/3",
+                       public_url="https://google.com/kiwi",
+                       issues=1
                        )
 
         fresh_languages = {'PythonScript': 90000}
@@ -62,6 +70,8 @@ class UpdateRepositoriesTest(TestCase):
         self.assertEqual(stored_repo.description, fresh_repo.description)
         self.assertEqual(stored_repo.updated_at, fresh_repo.updated_at)
         self.assertEqual(stored_repo.url, fresh_repo.url)
+        self.assertEqual(stored_repo.public_url, fresh_repo.public_url)
+        self.assertEqual(stored_repo.issues, fresh_repo.issues)
 
         stored_language = stored_repo.languages.get(type="PythonScript")
         self.assertEqual(stored_language.size, fresh_languages['PythonScript'])
