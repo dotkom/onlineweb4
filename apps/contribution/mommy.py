@@ -40,6 +40,12 @@ class UpdateRepositories(Task):
                 repo_languages = UpdateRepositories.get_repository_languages(fresh_repo.url)
                 UpdateRepositories.new_repository(fresh_repo, repo_languages)
 
+        # Delete repositories that does not satisfy the updated_at limit
+        old_repositories = Repository.objects.all()
+        for repo in old_repositories:
+            if repo.updated_at < timezone.now() - timezone.timedelta(days=730):
+                repo.delete()
+
     @staticmethod
     def update_repository(stored_repo, fresh_repo, repo_languages):
         stored_repo.name = fresh_repo.name
@@ -102,4 +108,4 @@ class UpdateRepositories(Task):
         return data
 
 
-schedule.register(UpdateRepositories, day_of_week="mon-sun", hour=16, minute=36)
+schedule.register(UpdateRepositories, day_of_week="mon-sun", hour=6, minute=0)
