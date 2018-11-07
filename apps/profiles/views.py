@@ -17,8 +17,10 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from django.utils.translation import ugettext as _
 from django.views import View
+from django_filters.rest_framework import DjangoFilterBackend
 from googleapiclient.errors import HttpError
 from oauth2_provider.models import AccessToken
+from rest_framework import filters, mixins, viewsets
 from watson import search as watson
 
 from apps.approval.forms import FieldOfStudyApplicationForm
@@ -32,8 +34,10 @@ from apps.dashboard.tools import has_access
 from apps.gsuite.accounts.main import create_g_suite_account, reset_password_g_suite_account
 from apps.marks.models import Mark, Suspension
 from apps.payment.models import PaymentDelay, PaymentRelation, PaymentTransaction
+from apps.profiles.filters import ProfileFilter
 from apps.profiles.forms import InternalServicesForm, PositionForm, PrivacyForm, ProfileForm
 from apps.profiles.models import Privacy
+from apps.profiles.serializers import ProfileSerializer
 from apps.shop.models import Order
 from utils.shortcuts import render_json
 
@@ -550,3 +554,11 @@ class GSuiteResetPassword(View):
             messages.error(request, err)
 
         return redirect('profile_add_email')
+
+
+class ProfileSearchSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.ListModelMixin):
+    queryset = User.objects.filter(privacy__visible_for_other_users=True)
+    serializer_class = ProfileSerializer
+    search_fields = ("username", "first_name", "last_name")
+    filter_backends = (DjangoFilterBackend, filters.SearchFilter)
+    filter_class = ProfileFilter

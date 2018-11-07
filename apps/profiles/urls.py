@@ -2,6 +2,7 @@
 
 from django.conf.urls import url
 
+from apps.api.utils import SharedAPIRootRouter
 from apps.profiles import views
 
 urlpatterns = [
@@ -40,3 +41,6 @@ urlpatterns = [
     # Profile index with active tab.
     url(r'^(?P<active_tab>\w+)/$', views.index, name='profiles_active'),
 ]
+
+router = SharedAPIRootRouter()
+router.register('profile-search', views.ProfileSearchSet, base_name='profile-search')
