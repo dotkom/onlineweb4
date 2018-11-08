@@ -50,7 +50,7 @@ pipeline:
       event: push
     group: testing
     commands:
-      - tox -e flake8 -e isort
+      - tox -e flake8 -e isort --recreate
 
   python-tests:
     image: registry.online.ntnu.no/dotkom/onlineweb4-testbase
