@@ -21,7 +21,7 @@ from apps.payment.models import PaymentTransaction
 from apps.shop.forms import SetRFIDForm
 from apps.shop.models import MagicToken, OrderLine
 from apps.shop.serializers import (ItemSerializer, OrderLineSerializer, TransactionSerializer,
-                                   UserSerializer, UserOrderLineSerializer)
+                                   UserOrderLineSerializer, UserSerializer)
 from apps.shop.utils import create_magic_token
 
 
@@ -58,6 +58,7 @@ class TransactionViewSet(viewsets.GenericViewSet, mixins.CreateModelMixin):
 
     def perform_create(self, serializer):
         serializer.save()
+
 
 class UserOrderViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.RetrieveModelMixin):
     serializer_class = UserOrderLineSerializer
