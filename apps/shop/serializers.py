@@ -76,3 +76,19 @@ class ItemSerializer(serializers.ModelSerializer):
         fields = (
             'pk', 'name', 'price', 'description', 'image', 'category'
         )
+
+
+class UserOrderSerializer(serializers.ModelSerializer):
+    content_object = ItemSerializer()
+
+    class Meta:
+        model = Order
+        fields = ('price', 'quantity', 'content_object')
+
+
+class UserOrderLineSerializer(serializers.ModelSerializer):
+    orders = UserOrderSerializer(many=True)
+
+    class Meta:
+        model = OrderLine
+        fields = ('orders', 'paid', 'datetime')
