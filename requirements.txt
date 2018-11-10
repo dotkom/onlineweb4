@@ -66,4 +66,4 @@ django-appconf>=1.0
 # Monitoring
 raven==6.6.0
 
-django-js-reverse==0.8.1
+django-js-reverse==0.8.2
