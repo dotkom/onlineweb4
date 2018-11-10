@@ -4,7 +4,6 @@ from django.conf import settings
 from django.http import HttpResponseForbidden
 from django.template import RequestContext, Template, TemplateDoesNotExist, loader
 
-
 """
 # Middleware to allow the display of a 403.html template when a
 # 403 error is raised.
@@ -16,6 +15,7 @@ try:
 except ImportError:
     class MiddlewareMixin(object):
         pass
+
 
 class Http403(Exception):
     pass

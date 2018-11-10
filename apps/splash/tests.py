@@ -1,6 +1,6 @@
 import datetime
-import pytz
 
+import pytz
 from django.test import TestCase
 from django.urls import reverse
 from django_dynamic_fixture import G
