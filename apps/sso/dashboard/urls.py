@@ -6,6 +6,8 @@ from django.conf.urls import url
 
 from .views import app_details, index, new_app
 
+app_name = 'sso'
+
 urlpatterns = [
     url(r'^$', index, name='index'),
     url(r'^app/new/', new_app, name='new_app'),

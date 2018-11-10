@@ -6,6 +6,8 @@ from django.conf.urls import url
 
 from apps.gallery.dashboard import views
 
+app_name = 'gallery'
+
 urlpatterns = [
     url(
         '^$',

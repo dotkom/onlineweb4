@@ -6,6 +6,8 @@ from apps.api.utils import SharedAPIRootRouter
 from apps.gallery import views
 from apps.gallery.views import CropView, PresetView
 
+app_name = 'gallery'
+
 urlpatterns = [
     url(r'^upload/$', views.upload, name='upload'),
     url(r'^unhandled/$', views.unhandled, name='unhandled'),
