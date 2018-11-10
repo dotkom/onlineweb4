@@ -4,8 +4,9 @@
 
 from django.conf import settings
 from django.forms import HiddenInput, TextInput
-from django.forms.utils import flatatt, force_text, format_html
+from django.forms.utils import flatatt, format_html
 from django.urls import reverse_lazy
+from django.utils.encoding import force_text
 
 from apps.gallery.models import ResponsiveImage
 

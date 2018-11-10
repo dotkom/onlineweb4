@@ -1,4 +1,4 @@
-Django==1.11.16
+Django==2.0.9
 Pillow==4.3.0                   # PIL fork (Python Imaging Library)
 django-tastypie==0.14.0         # API v0
 djangorestframework==3.7.7      # API v1
@@ -13,7 +13,7 @@ icalendar==4.0.1                # iCalendar generation
 google-api-python-client==1.6.5
 
 # third party deps
-django-filebrowser==3.9.1       # File uploading
+django-filebrowser==3.10.1      # File uploading
 git+https://github.com/dotKom/django-chunks.git@e6bf109d4fd286964024c140ac1b8f3d86713540#egg=django-chunks==0.4
 django-crispy-forms==1.7.2      # nice forms
 django-extensions==1.9.7        # nice extra commands for debugging, etc
