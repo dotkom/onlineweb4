@@ -103,7 +103,7 @@ class DatePickerInput(TextInput):
         attrs = self.build_attrs(self.attrs, attrs)
         final_attrs = self.build_attrs(attrs, {'type': self.input_type, 'name': name})
         if value != '':
-            final_attrs['value'] = format_html('value="{}"', force_text(self._format_value(value)))
+            final_attrs['value'] = format_html('value="{}"', force_text(self.format_value(value)))
         else:
             final_attrs['value'] = ''
 
@@ -146,7 +146,7 @@ class DatetimePickerInput(TextInput):
         attrs = self.build_attrs(self.attrs, attrs)
         final_attrs = self.build_attrs(attrs, {'type': self.input_type, 'name': name})
         if value != '':
-            final_attrs['value'] = force_text(self._format_value(value))
+            final_attrs['value'] = force_text(self.format_value(value))
         else:
             final_attrs['value'] = ''
 
@@ -189,7 +189,7 @@ class TimePickerInput(TextInput):
         attrs = self.build_attrs(self.attrs, attrs)
         final_attrs = self.build_attrs(attrs, {'type': self.input_type, 'name': name})
         if value != '':
-            final_attrs['value'] = format_html('value="{}"', force_text(self._format_value(value)))
+            final_attrs['value'] = format_html('value="{}"', force_text(self.format_value(value)))
         else:
             final_attrs['value'] = ''
 

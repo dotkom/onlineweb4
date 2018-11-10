@@ -61,7 +61,7 @@ class SingleImageInput(HiddenInput):
         final_attrs = self.build_attrs(attrs, {'type': self.input_type, 'name': name})
         if value != '':
             # Only add the value attribute if the value is non-empty
-            final_attrs['value'] = force_text(self._format_value(value))
+            final_attrs['value'] = force_text(self.format_value(value))
             img = ResponsiveImage.objects.get(pk=value)
             img_thumb = format_html(
                 '<img src="{}" alt title="{}"/>',
