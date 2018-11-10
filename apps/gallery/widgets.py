@@ -43,7 +43,7 @@ class SingleImageInput(HiddenInput):
         super(SingleImageInput, self).__init__(attrs)
         self.input_type = 'hidden'
 
-    def render(self, name, value, attrs=None):
+    def render(self, name, value, attrs=None, renderer=None):
         """
         Renders this field widget as HTML
         :param name: Field input name
@@ -83,7 +83,7 @@ class TagInputField(TextInput):
     def __init__(self, attrs=None):
         super(TagInputField, self).__init__(attrs=attrs)
 
-    def render(self, name, value, attrs=None):
+    def render(self, name, value, attrs=None, renderer=None):
         """
         Renders this field widget as HTML
         :param name: Field input name

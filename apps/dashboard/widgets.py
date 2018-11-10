@@ -88,7 +88,7 @@ class DatePickerInput(TextInput):
         super(DatePickerInput, self).__init__(attrs)
         self.input_type = 'text'
 
-    def render(self, name, value, attrs=None):
+    def render(self, name, value, attrs=None, renderer=None):
         """
         Renders this widget
         :param name: Name attribute of the input type
@@ -131,7 +131,7 @@ class DatetimePickerInput(TextInput):
         super(DatetimePickerInput, self).__init__(attrs)
         self.input_type = 'text'
 
-    def render(self, name, value, attrs=None):
+    def render(self, name, value, attrs=None, renderer=None):
         """
         Renders this widget
         :param name: Name attribute of the input type
@@ -174,7 +174,7 @@ class TimePickerInput(TextInput):
         super(TimePickerInput, self).__init__(attrs)
         self.input_type = 'text'
 
-    def render(self, name, value, attrs=None):
+    def render(self, name, value, attrs=None, renderer=None):
         """
         Renders this widget
         :param name: Name attribute of the input type
