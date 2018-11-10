@@ -34,7 +34,7 @@ class Migration(migrations.Migration):
             name='CompanyEvent',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('company', models.ForeignKey(verbose_name='bedrifter', to='companyprofile.Company')),
+                ('company', models.ForeignKey(verbose_name='bedrifter', to='companyprofile.Company', on_delete=models.CASCADE)),
             ],
             options={
                 'verbose_name': 'bedrift',
@@ -67,7 +67,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='AttendanceEvent',
             fields=[
-                ('event', models.OneToOneField(related_name='attendance_event', primary_key=True, serialize=False, to='events.Event')),
+                ('event', models.OneToOneField(related_name='attendance_event', primary_key=True, serialize=False, to='events.Event', on_delete=models.CASCADE)),
                 ('max_capacity', models.PositiveIntegerField(verbose_name='maks-kapasitet')),
                 ('waitlist', models.BooleanField(default=False, verbose_name='venteliste')),
                 ('guest_attendance', models.BooleanField(default=False, verbose_name='gjestep\xe5melding')),
@@ -89,7 +89,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('seats', models.PositiveIntegerField(verbose_name='reserverte plasser')),
-                ('attendance_event', models.OneToOneField(related_name='reserved_seats', to='events.AttendanceEvent')),
+                ('attendance_event', models.OneToOneField(related_name='reserved_seats', to='events.AttendanceEvent', on_delete=models.CASCADE)),
             ],
             options={
                 'verbose_name': 'reservasjon',
@@ -105,7 +105,7 @@ class Migration(migrations.Migration):
                 ('name', models.CharField(max_length=69, verbose_name='navn')),
                 ('note', models.CharField(max_length=100, verbose_name='notat')),
                 ('allergies', models.CharField(max_length=200, null=True, verbose_name='allergier', blank=True)),
-                ('reservation', models.ForeignKey(related_name='reservees', to='events.Reservation')),
+                ('reservation', models.ForeignKey(related_name='reservees', to='events.Reservation', on_delete=models.CASCADE)),
             ],
             options={
                 'ordering': ['id'],
@@ -129,7 +129,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='GradeRule',
             fields=[
-                ('rule_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='events.Rule')),
+                ('rule_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='events.Rule', on_delete=models.CASCADE)),
                 ('grade', models.SmallIntegerField(verbose_name='klassetrinn')),
             ],
             options={
@@ -140,7 +140,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='FieldOfStudyRule',
             fields=[
-                ('rule_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='events.Rule')),
+                ('rule_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='events.Rule', on_delete=models.CASCADE)),
                 ('field_of_study', models.SmallIntegerField(verbose_name='studieretning', choices=[(0, 'Gjest'), (1, 'Bachelor i Informatikk (BIT)'), (10, 'Software (SW)'), (11, 'Informasjonsforvaltning (DIF)'), (12, 'Komplekse Datasystemer (KDS)'), (13, 'Spillteknologi (SPT)'), (14, 'Intelligente Systemer (IRS)'), (15, 'Helseinformatikk (MSMEDTEK)'), (30, 'Annen mastergrad'), (80, 'PhD'), (90, 'International'), (100, 'Annet Onlinemedlem')])),
             ],
             options={
@@ -164,8 +164,8 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='UserGroupRule',
             fields=[
-                ('rule_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='events.Rule')),
-                ('group', models.ForeignKey(to='auth.Group')),
+                ('rule_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='events.Rule', on_delete=models.CASCADE)),
+                ('group', models.ForeignKey(to='auth.Group', on_delete=models.CASCADE)),
             ],
             options={
                 'permissions': (('view_usergrouprule', 'View UserGroupRule'),),
@@ -181,25 +181,25 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='event',
             name='author',
-            field=models.ForeignKey(related_name='oppretter', to=settings.AUTH_USER_MODEL),
+            field=models.ForeignKey(related_name='oppretter', to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='companyevent',
             name='event',
-            field=models.ForeignKey(related_name='companies', verbose_name='arrangement', to='events.Event'),
+            field=models.ForeignKey(related_name='companies', verbose_name='arrangement', to='events.Event', on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='attendee',
             name='event',
-            field=models.ForeignKey(related_name='attendees', to='events.AttendanceEvent'),
+            field=models.ForeignKey(related_name='attendees', to='events.AttendanceEvent', on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='attendee',
             name='user',
-            field=models.ForeignKey(to=settings.AUTH_USER_MODEL),
+            field=models.ForeignKey(to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AlterUniqueTogether(

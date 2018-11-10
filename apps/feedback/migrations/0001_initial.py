@@ -31,7 +31,7 @@ class Migration(migrations.Migration):
                 ('description', models.CharField(max_length=100, verbose_name='beskrivelse')),
                 ('display_field_of_study', models.BooleanField(default=True, help_text='Grafen over studiefelt vil bli vist til bedriften', verbose_name='Vis studie oversikt')),
                 ('display_info', models.BooleanField(default=True, help_text='En boks med ekstra informasjon vil bli vist til bedriften', verbose_name='Vis extra informasjon')),
-                ('author', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
+                ('author', models.ForeignKey(to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE)),
             ],
             options={
                 'verbose_name': 'tilbakemeldingsskjema',
@@ -51,8 +51,8 @@ class Migration(migrations.Migration):
                 ('created_date', models.DateTimeField(auto_now_add=True)),
                 ('first_mail_sent', models.BooleanField(default=False)),
                 ('answered', models.ManyToManyField(related_name='feedbacks', null=True, to=settings.AUTH_USER_MODEL, blank=True)),
-                ('content_type', models.ForeignKey(to='contenttypes.ContentType')),
-                ('feedback', models.ForeignKey(verbose_name='Tilbakemeldingskjema', to='feedback.Feedback')),
+                ('content_type', models.ForeignKey(to='contenttypes.ContentType', on_delete=models.CASCADE)),
+                ('feedback', models.ForeignKey(verbose_name='Tilbakemeldingskjema', to='feedback.Feedback', on_delete=models.CASCADE)),
             ],
             options={
                 'verbose_name': 'tilbakemelding',
@@ -66,7 +66,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('answer', models.SmallIntegerField(verbose_name='Studieretning', choices=[(0, 'Gjest'), (1, 'Bachelor i Informatikk (BIT)'), (10, 'Software (SW)'), (11, 'Informasjonsforvaltning (DIF)'), (12, 'Komplekse Datasystemer (KDS)'), (13, 'Spillteknologi (SPT)'), (14, 'Intelligente Systemer (IRS)'), (15, 'Helseinformatikk (MSMEDTEK)'), (30, 'Annen mastergrad'), (80, 'PhD'), (90, 'International'), (100, 'Annet Onlinemedlem')])),
-                ('feedback_relation', models.ForeignKey(related_name='field_of_study_answers', to='feedback.FeedbackRelation')),
+                ('feedback_relation', models.ForeignKey(related_name='field_of_study_answers', to='feedback.FeedbackRelation', on_delete=models.CASCADE)),
             ],
             options={
                 'permissions': (('view_fieldofstudyanswer', 'View FieldOfStudyAnswer'),),
@@ -78,7 +78,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('answer', models.CharField(max_length=256, verbose_name='svar')),
-                ('feedback_relation', models.ForeignKey(related_name='multiple_choice_answers', to='feedback.FeedbackRelation')),
+                ('feedback_relation', models.ForeignKey(related_name='multiple_choice_answers', to='feedback.FeedbackRelation', on_delete=models.CASCADE)),
             ],
             options={
                 'permissions': (('view_multiplechoiceanswer', 'View MultipleChoiceAnswer'),),
@@ -102,8 +102,8 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('order', models.SmallIntegerField(default=30, verbose_name='Rekkef\xf8lge')),
                 ('display', models.BooleanField(default=True, verbose_name='Vis til bedrift')),
-                ('feedback', models.ForeignKey(related_name='multiple_choice_questions', to='feedback.Feedback')),
-                ('multiple_choice_relation', models.ForeignKey(to='feedback.MultipleChoiceQuestion')),
+                ('feedback', models.ForeignKey(related_name='multiple_choice_questions', to='feedback.Feedback', on_delete=models.CASCADE)),
+                ('multiple_choice_relation', models.ForeignKey(to='feedback.MultipleChoiceQuestion', on_delete=models.CASCADE)),
             ],
             options={
                 'permissions': (('view_multiplechoicerelation', 'View MultipleChoiceRelation'),),
@@ -115,7 +115,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('answer', models.SmallIntegerField(default=0, verbose_name='karakter', choices=[(1, b'1'), (2, b'2'), (3, b'3'), (4, b'4'), (5, b'5'), (6, b'6')])),
-                ('feedback_relation', models.ForeignKey(related_name='rating_answers', to='feedback.FeedbackRelation')),
+                ('feedback_relation', models.ForeignKey(related_name='rating_answers', to='feedback.FeedbackRelation', on_delete=models.CASCADE)),
             ],
             options={
                 'permissions': (('view_ratinganswer', 'View RatingAnswer'),),
@@ -129,7 +129,7 @@ class Migration(migrations.Migration):
                 ('order', models.SmallIntegerField(default=20, verbose_name='Rekkef\xf8lge')),
                 ('label', models.CharField(max_length=256, verbose_name='Sp\xf8rsm\xe5l')),
                 ('display', models.BooleanField(default=True, verbose_name='Vis til bedrift')),
-                ('feedback', models.ForeignKey(related_name='rating_questions', to='feedback.Feedback')),
+                ('feedback', models.ForeignKey(related_name='rating_questions', to='feedback.Feedback', on_delete=models.CASCADE)),
             ],
             options={
                 'permissions': (('view_ratingquestion', 'View RatingQuestion'),),
@@ -142,7 +142,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('token', models.CharField(max_length=32, verbose_name='token')),
                 ('created', models.DateTimeField(auto_now_add=True, verbose_name='opprettet dato')),
-                ('fbr', models.ForeignKey(related_name='Feedback_relation', to='feedback.FeedbackRelation')),
+                ('fbr', models.ForeignKey(related_name='Feedback_relation', to='feedback.FeedbackRelation', on_delete=models.CASCADE)),
             ],
             options={
                 'permissions': (('view_feedbackregistertoken', 'View FeedbackRegisterToken'),),
@@ -154,7 +154,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('answer', models.TextField(verbose_name='svar')),
-                ('feedback_relation', models.ForeignKey(related_name='text_answers', to='feedback.FeedbackRelation')),
+                ('feedback_relation', models.ForeignKey(related_name='text_answers', to='feedback.FeedbackRelation', on_delete=models.CASCADE)),
             ],
             options={
                 'permissions': (('view_textanswer', 'View TextAnswer'),),
@@ -168,7 +168,7 @@ class Migration(migrations.Migration):
                 ('order', models.SmallIntegerField(default=10, verbose_name='Rekkef\xf8lge')),
                 ('label', models.CharField(max_length=256, verbose_name='Sp\xf8rsm\xe5l')),
                 ('display', models.BooleanField(default=True, verbose_name='Vis til bedrift')),
-                ('feedback', models.ForeignKey(related_name='text_questions', to='feedback.Feedback')),
+                ('feedback', models.ForeignKey(related_name='text_questions', to='feedback.Feedback', on_delete=models.CASCADE)),
             ],
             options={
                 'permissions': (('view_textquestion', 'View TextQuestion'),),
@@ -178,19 +178,19 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='textanswer',
             name='question',
-            field=models.ForeignKey(related_name='answer', to='feedback.TextQuestion'),
+            field=models.ForeignKey(related_name='answer', to='feedback.TextQuestion', on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='ratinganswer',
             name='question',
-            field=models.ForeignKey(related_name='answer', to='feedback.RatingQuestion'),
+            field=models.ForeignKey(related_name='answer', to='feedback.RatingQuestion', on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='multiplechoiceanswer',
             name='question',
-            field=models.ForeignKey(related_name='answer', to='feedback.MultipleChoiceRelation'),
+            field=models.ForeignKey(related_name='answer', to='feedback.MultipleChoiceRelation', on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AlterUniqueTogether(
@@ -200,7 +200,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='choice',
             name='question',
-            field=models.ForeignKey(related_name='choices', to='feedback.MultipleChoiceQuestion'),
+            field=models.ForeignKey(related_name='choices', to='feedback.MultipleChoiceQuestion', on_delete=models.CASCADE),
             preserve_default=True,
         ),
     ]

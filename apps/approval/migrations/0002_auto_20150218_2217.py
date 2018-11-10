@@ -16,13 +16,13 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='approval',
             name='applicant',
-            field=models.ForeignKey(related_name='applicant', editable=False, to=settings.AUTH_USER_MODEL, verbose_name='s\xf8ker'),
+            field=models.ForeignKey(related_name='applicant', editable=False, to=settings.AUTH_USER_MODEL, verbose_name='s\xf8ker', on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='approval',
             name='approver',
-            field=models.ForeignKey(related_name='approver', blank=True, editable=False, to=settings.AUTH_USER_MODEL, null=True, verbose_name='godkjenner'),
+            field=models.ForeignKey(related_name='approver', blank=True, editable=False, to=settings.AUTH_USER_MODEL, null=True, verbose_name='godkjenner', on_delete=models.CASCADE),
             preserve_default=True,
         ),
     ]

@@ -17,7 +17,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('price', models.IntegerField(verbose_name='pris')),
                 ('description', models.CharField(max_length=128, null=True, blank=True)),
-                ('payment', models.ForeignKey(to='payment.Payment')),
+                ('payment', models.ForeignKey(to='payment.Payment', on_delete=models.CASCADE)),
             ],
             options={
                 'verbose_name': 'pris',
@@ -38,7 +38,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='paymentrelation',
             name='payment_price',
-            field=models.ForeignKey(default=0, to='payment.PaymentPrice'),
+            field=models.ForeignKey(default=0, to='payment.PaymentPrice', on_delete=models.CASCADE),
             preserve_default=False,
         ),
         migrations.AddField(

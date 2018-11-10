@@ -20,8 +20,8 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('amount', models.IntegerField(null=True, blank=True)),
                 ('datetime', models.DateTimeField(auto_now=True)),
-                ('item', models.ForeignKey(blank=True, to='inventory.Item', null=True)),
-                ('user', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
+                ('item', models.ForeignKey(blank=True, to='inventory.Item', null=True, on_delete=models.CASCADE)),
+                ('user', models.ForeignKey(to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE)),
             ],
             options={
                 'verbose_name': 'transaksjon',

@@ -44,12 +44,12 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Poster',
             fields=[
-                ('ordermixin_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='posters.OrderMixin')),
+                ('ordermixin_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='posters.OrderMixin', on_delete=models.CASCADE)),
                 ('title', models.CharField(max_length=60, null=True, verbose_name='arrangementstittel', blank=True)),
                 ('price', models.DecimalField(null=True, verbose_name='pris', max_digits=10, decimal_places=2, blank=True)),
                 ('display_to', models.DateField(default=None, null=True, verbose_name='vis til', blank=True)),
                 ('bong', models.IntegerField(null=True, verbose_name='bonger', blank=True)),
-                ('event', models.ForeignKey(related_name='Arrangement', blank=True, to='events.Event', null=True)),
+                ('event', models.ForeignKey(related_name='Arrangement', blank=True, to='events.Event', null=True, on_delete=models.CASCADE)),
             ],
             options={
                 'ordering': ['-id'],
@@ -62,19 +62,19 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='ordermixin',
             name='assigned_to',
-            field=models.ForeignKey(related_name='tilordnet til', blank=True, to=settings.AUTH_USER_MODEL, null=True),
+            field=models.ForeignKey(related_name='tilordnet til', blank=True, to=settings.AUTH_USER_MODEL, null=True, on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='ordermixin',
             name='ordered_by',
-            field=models.ForeignKey(related_name='bestilt av', to=settings.AUTH_USER_MODEL),
+            field=models.ForeignKey(related_name='bestilt av', to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='ordermixin',
             name='ordered_committee',
-            field=models.ForeignKey(related_name='bestilt av komite', to='auth.Group'),
+            field=models.ForeignKey(related_name='bestilt av komite', to='auth.Group', on_delete=models.CASCADE),
             preserve_default=True,
         ),
     ]
