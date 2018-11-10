@@ -11,11 +11,17 @@ from django.template import RequestContext, Template, TemplateDoesNotExist, load
 """
 
 
+try:
+    from django.utils.deprecation import MiddlewareMixin
+except ImportError:
+    class MiddlewareMixin(object):
+        pass
+
 class Http403(Exception):
     pass
 
 
-class Http403Middleware(object):
+class Http403Middleware(MiddlewareMixin):
     def process_exception(self, request, exception):
         from .http import Http403
 
