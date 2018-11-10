@@ -98,7 +98,7 @@ class SimpleTest(TestCase):
 
     def test_user_answered(self):
         feedback_relation = self.create_feedback_relation()
-        feedback_relation.answered = [self.user1]
+        feedback_relation.answered.set([self.user1])
         message = FeedbackMail.generate_message(feedback_relation, self.logger)
 
         not_answered = [self.user2.email]
@@ -106,7 +106,7 @@ class SimpleTest(TestCase):
 
     def test_everyone_answered(self):
         feedback_relation = self.create_feedback_relation()
-        feedback_relation.answered = [self.user1, self.user2]
+        feedback_relation.answered.set([self.user1, self.user2])
         message = FeedbackMail.generate_message(feedback_relation, self.logger)
 
         self.assertEqual(message.status, 'Everyone has answered')
