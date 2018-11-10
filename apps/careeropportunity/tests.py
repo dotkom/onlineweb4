@@ -1,3 +1,5 @@
+import pytz
+
 from datetime import datetime, timedelta
 
 from django.test import TestCase
@@ -18,7 +20,7 @@ class CareerOpportunityURLTestCase(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_careeropportunity_detail(self):
-        past = datetime(2000, 1, 1)
+        past = datetime(2000, 1, 1, 1, 0, 0, 0, pytz.UTC)
         future = timezone.now() + timedelta(days=1)
         careeropportunity = G(CareerOpportunity, start=past, end=future)
 

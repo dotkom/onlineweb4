@@ -1,4 +1,5 @@
 import datetime
+import pytz
 
 from django.test import TestCase
 from django.urls import reverse
@@ -43,8 +44,8 @@ class SplashAPIURLTestCase(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_splash_events_list_filter_future(self):
-        last_week = datetime.datetime.now() - datetime.timedelta(days=7)
-        next_week = datetime.datetime.now() + datetime.timedelta(days=7)
+        last_week = datetime.datetime.now(pytz.UTC) - datetime.timedelta(days=7)
+        next_week = datetime.datetime.now(pytz.UTC) + datetime.timedelta(days=7)
 
         G(SplashEvent, start_time=last_week, end_time=last_week)
         next_week_event = G(SplashEvent, start_time=next_week, end_time=next_week)
