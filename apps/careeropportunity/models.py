@@ -36,7 +36,7 @@ class CareerOpportunity(models.Model):
     )
 
     location = TaggableManager(_('sted(er)'), blank=True)
-    location.rel.related_name = "+"
+    location.remote_field.related_name = "+"
 
     def __str__(self):
         return self.title
