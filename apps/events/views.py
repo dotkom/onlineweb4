@@ -38,7 +38,7 @@ from .utils import EventCalendar
 
 def index(request):
     context = {}
-    if request.user and request.user.is_authenticated():
+    if request.user and request.user.is_authenticated:
         signer = Signer()
         context['signer_value'] = signer.sign(request.user.username)
         context['personal_ics_path'] = request.build_absolute_uri(

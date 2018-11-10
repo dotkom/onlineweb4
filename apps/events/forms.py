@@ -25,7 +25,7 @@ class CaptchaForm(forms.Form):
         super(CaptchaForm, self).__init__(*args, **kwargs)
 
         # Removing mark rules field if user has already accepted the rules
-        if self.user and self.user.is_authenticated():
+        if self.user and self.user.is_authenticated:
             if self.user.mark_rules:
                 del self.fields['mark_rules']
 

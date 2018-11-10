@@ -214,7 +214,7 @@ def handle_attendance_event_detail(event, user, context):
         for rule_bundle in attendance_event.rule_bundles.all():
             rules.append(rule_bundle.rule_strings)
 
-    if user.is_authenticated():
+    if user.is_authenticated:
         user_anonymous = False
         if attendance_event.is_attendee(user):
             user_attending = True
@@ -263,7 +263,7 @@ def handle_event_payment(event, user, payment, context):
         'payment_relation_id': payment_relation_id,
     })
 
-    if not user.is_authenticated():  # Return early if user not logged in, can't filter payment relations against no one
+    if not user.is_authenticated:  # Return early if user not logged in, can't filter payment relations against no one
         return context
 
     payment_relations = PaymentRelation.objects.filter(payment=payment, user=user, refunded=False)

@@ -54,7 +54,7 @@ def logout(request):
 def register(request):
     log = logging.getLogger(__name__)
 
-    if request.user.is_authenticated():
+    if request.user.is_authenticated:
         messages.error(request, _('Registrering av ny konto krever at du er logget ut.'))
         return HttpResponseRedirect('/')
     else:
@@ -172,7 +172,7 @@ def verify(request, token):
 
 def recover(request):
     log = logging.getLogger(__name__)
-    if request.user.is_authenticated():
+    if request.user.is_authenticated:
         messages.error(request, _('Gjenoppretning av passord krever at du er logget ut.'))
         return HttpResponseRedirect('/')
     else:
@@ -222,7 +222,7 @@ def recover(request):
 @sensitive_post_parameters()
 def set_password(request, token=None):
     log = logging.getLogger(__name__)
-    if request.user.is_authenticated():
+    if request.user.is_authenticated:
         return HttpResponseRedirect('/')
     else:
         rt = None

@@ -18,7 +18,7 @@ def context_settings(request):
 def feedback_notifier(request):
     context_extras = {}
     context_extras['feedback_pending'] = []
-    if not request.user.is_authenticated():
+    if not request.user.is_authenticated:
         return context_extras
 
     active_feedbacks = FeedbackRelation.objects.filter(active=True)
