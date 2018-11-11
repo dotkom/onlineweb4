@@ -35,3 +35,16 @@ class ProfileSerializer(serializers.ModelSerializer):
             return object.phone_number
         else:
             return ""
+
+class PrivacySerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Privacy
+        fields = (
+            'visible_for_other_users',
+            'expose_nickname',
+            'expose_email',
+            'expose_phone_number',
+            'expose_address',
+            'visible_as_attending_events',
+        )

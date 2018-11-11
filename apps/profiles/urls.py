@@ -46,3 +46,4 @@ urlpatterns = [
 router = SharedAPIRootRouter()
 router.register('profile/search', views.ProfileSearchSet, base_name='profile-search')
 router.register('profile/orders', UserOrderViewSet, base_name='profile-orders')
+router.register('profile/privacy', views.PersonalPrivacyView, base_name='profile-privacy')

@@ -20,7 +20,7 @@ from django.views import View
 from django_filters.rest_framework import DjangoFilterBackend
 from googleapiclient.errors import HttpError
 from oauth2_provider.models import AccessToken
-from rest_framework import filters, mixins, viewsets
+from rest_framework import filters, mixins, viewsets, views, response, status, permissions
 from watson import search as watson
 
 from apps.approval.forms import FieldOfStudyApplicationForm
@@ -37,7 +37,7 @@ from apps.payment.models import PaymentDelay, PaymentRelation, PaymentTransactio
 from apps.profiles.filters import ProfileFilter
 from apps.profiles.forms import InternalServicesForm, PositionForm, PrivacyForm, ProfileForm
 from apps.profiles.models import Privacy
-from apps.profiles.serializers import ProfileSerializer
+from apps.profiles.serializers import ProfileSerializer, PrivacySerializer
 from apps.shop.models import Order
 from utils.shortcuts import render_json
 
@@ -562,3 +562,16 @@ class ProfileSearchSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixin
     search_fields = ("username", "first_name", "last_name")
     filter_backends = (DjangoFilterBackend, filters.SearchFilter)
     filter_class = ProfileFilter
+
+class PersonalPrivacyView(viewsets.ViewSet):
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def list(self, request, format=None):
+        privacy = Privacy.objects.get(user=request.user)
+        serializer = PrivacySerializer(privacy)
+        return response.Response(serializer.data)
+
+    def update(self, request, pk=None):
+        privacy = Privacy.objects.get(user=request.user)
+        serializer = PrivacySerializer(privacy, data=request.data)
+        return response.Response(serializer.data)
