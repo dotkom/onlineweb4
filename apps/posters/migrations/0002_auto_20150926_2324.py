@@ -15,16 +15,16 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='ordermixin',
             name='assigned_to',
-            field=models.ForeignKey(related_name='assigned_to', verbose_name='tilordnet til', blank=True, to=settings.AUTH_USER_MODEL, null=True),
+            field=models.ForeignKey(related_name='assigned_to', verbose_name='tilordnet til', blank=True, to=settings.AUTH_USER_MODEL, null=True, on_delete=models.CASCADE),
         ),
         migrations.AlterField(
             model_name='ordermixin',
             name='ordered_by',
-            field=models.ForeignKey(related_name='ordered_by', verbose_name='bestilt av', to=settings.AUTH_USER_MODEL),
+            field=models.ForeignKey(related_name='ordered_by', verbose_name='bestilt av', to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE),
         ),
         migrations.AlterField(
             model_name='ordermixin',
             name='ordered_committee',
-            field=models.ForeignKey(related_name='ordered_committee', verbose_name='bestilt av komite', to='auth.Group'),
+            field=models.ForeignKey(related_name='ordered_committee', verbose_name='bestilt av komite', to='auth.Group', on_delete=models.CASCADE),
         ),
     ]

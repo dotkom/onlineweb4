@@ -21,7 +21,7 @@ class Migration(migrations.Migration):
                 ('start', models.DateTimeField(verbose_name='aktiv fra')),
                 ('end', models.DateTimeField(verbose_name='aktiv til')),
                 ('featured', models.BooleanField(default=False, verbose_name='fremhevet')),
-                ('company', models.ForeignKey(related_name='company', to='companyprofile.Company')),
+                ('company', models.ForeignKey(related_name='company', to='companyprofile.Company', on_delete=models.CASCADE)),
             ],
             options={
                 'verbose_name': 'karrieremulighet',

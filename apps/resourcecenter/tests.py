@@ -6,8 +6,8 @@ Replace this with more appropriate tests for your application.
 """
 from unittest import skip
 
-from django.core.urlresolvers import reverse
 from django.test import TestCase
+from django.urls import reverse
 from rest_framework import status
 
 

@@ -15,6 +15,7 @@ from django.db import models
 from django.db.models import SET_NULL, Case, Q, Value, When
 from django.template.defaultfilters import slugify
 from django.template.loader import render_to_string
+from django.urls import reverse
 from django.utils import timezone
 from django.utils.translation import ugettext as _
 from guardian.shortcuts import assign_perm
@@ -82,7 +83,13 @@ class Event(models.Model):
     objects = models.Manager()
     by_registration = EventOrderedByRegistration()
 
-    author = models.ForeignKey(User, related_name='oppretter', null=True, blank=True)
+    author = models.ForeignKey(
+        User,
+        related_name='oppretter',
+        null=True,
+        blank=True,
+        on_delete=models.CASCADE
+    )
     title = models.CharField(_('tittel'), max_length=60)
     """Event title"""
     event_start = models.DateTimeField(_('start-dato'))
@@ -167,9 +174,8 @@ class Event(models.Model):
     def slug(self):
         return slugify(unidecode(self.title))
 
-    @models.permalink
     def get_absolute_url(self):
-        return 'events_details', None, {'event_id': self.id, 'event_slug': self.slug}
+        return reverse('events_details', kwargs={'event_id': self.id, 'event_slug': self.slug})
 
     def clean(self):
         if not self.organizer:
@@ -296,7 +302,12 @@ class GradeRule(Rule):
 
 
 class UserGroupRule(Rule):
-    group = models.ForeignKey(Group, blank=False, null=False)
+    group = models.ForeignKey(
+        Group,
+        blank=False,
+        null=False,
+        on_delete=models.CASCADE
+    )
 
     def satisfied(self, user, registration_start):
         """ Override method """
@@ -404,8 +415,9 @@ class AttendanceEvent(models.Model):
     event = models.OneToOneField(
         Event,
         primary_key=True,
-        related_name='attendance_event')
-
+        related_name='attendance_event',
+        on_delete=models.CASCADE
+    )
     max_capacity = models.PositiveIntegerField(_('maks-kapasitet'), null=False, blank=False)
     waitlist = models.BooleanField(_('venteliste'), default=False)
     guest_attendance = models.BooleanField(_('gjestepåmelding'), null=False, blank=False, default=False)
@@ -820,8 +832,17 @@ class CompanyEvent(models.Model):
     """
     Company relation to AttendanceEvent
     """
-    company = models.ForeignKey(Company, verbose_name=_('bedrifter'))
-    event = models.ForeignKey(Event, verbose_name=_('arrangement'), related_name='companies')
+    company = models.ForeignKey(
+        Company,
+        verbose_name=_('bedrifter'),
+        on_delete=models.CASCADE
+    )
+    event = models.ForeignKey(
+        Event,
+        verbose_name=_('arrangement'),
+        related_name='companies',
+        on_delete=models.CASCADE
+    )
 
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):
@@ -844,14 +865,14 @@ class Attendee(models.Model):
     """
     User relation to AttendanceEvent.
     """
-    event = models.ForeignKey(AttendanceEvent, related_name="attendees")
-    user = models.ForeignKey(User)
+    event = models.ForeignKey(AttendanceEvent, related_name="attendees", on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     timestamp = models.DateTimeField(auto_now_add=True, editable=False)
     attended = models.BooleanField(_('var tilstede'), default=False)
     paid = models.BooleanField(_('har betalt'), default=False)
     note = models.CharField(_('notat'), max_length=100, blank=True, default='')
-    extras = models.ForeignKey(Extras, blank=True, null=True)
+    extras = models.ForeignKey(Extras, blank=True, null=True, on_delete=models.CASCADE)
 
     show_as_attending_event = models.BooleanField(_('vis som påmeldt arrangementet'), default=False)
 
@@ -926,7 +947,7 @@ class Attendee(models.Model):
 
 
 class Reservation(models.Model):
-    attendance_event = models.OneToOneField(AttendanceEvent, related_name="reserved_seats")
+    attendance_event = models.OneToOneField(AttendanceEvent, related_name="reserved_seats", on_delete=models.CASCADE)
     seats = models.PositiveIntegerField("reserverte plasser", blank=False, null=False)
 
     @property
@@ -958,7 +979,7 @@ class Reservee(models.Model):
     """
     Reservation entry
     """
-    reservation = models.ForeignKey(Reservation, related_name='reservees')
+    reservation = models.ForeignKey(Reservation, related_name='reservees', on_delete=models.CASCADE)
     # I 2014 var norges lengste navn på 69 tegn;
     # julius andreas gimli arn macgyver chewbacka highlander elessar-jankov
     name = models.CharField('navn', max_length=69)
@@ -989,7 +1010,9 @@ class GroupRestriction(models.Model):
     event = models.OneToOneField(
         Event,
         primary_key=True,
-        related_name='group_restriction')
+        related_name='group_restriction',
+        on_delete=models.CASCADE
+    )
 
     groups = models.ManyToManyField(Group, blank=True,
                                     help_text=_('Legg til de gruppene som skal ha tilgang til arrangementet'))

@@ -43,7 +43,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('datetime', models.DateTimeField(auto_now_add=True)),
                 ('paid', models.BooleanField(default=False)),
-                ('user', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
+                ('user', models.ForeignKey(to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE)),
             ],
         ),
         migrations.CreateModel(
@@ -59,7 +59,7 @@ class Migration(migrations.Migration):
                 ('stock', models.PositiveSmallIntegerField(null=True, blank=True)),
                 ('deadline', models.DateTimeField(null=True, blank=True)),
                 ('active', models.BooleanField(default=True)),
-                ('category', models.ForeignKey(related_name='products', to='webshop.Category')),
+                ('category', models.ForeignKey(related_name='products', to='webshop.Category', on_delete=models.CASCADE)),
             ],
             options={
                 'verbose_name': 'Produkt',
@@ -73,7 +73,7 @@ class Migration(migrations.Migration):
                 ('size', models.CharField(max_length=25, verbose_name='St\xf8rrelse')),
                 ('description', models.CharField(max_length=50, null=True, verbose_name='Beskrivelse', blank=True)),
                 ('stock', models.PositiveSmallIntegerField(null=True, blank=True)),
-                ('product', models.ForeignKey(to='webshop.Product')),
+                ('product', models.ForeignKey(to='webshop.Product', on_delete=models.CASCADE)),
             ],
             options={
                 'verbose_name': 'St\xf8rrelse',
@@ -83,16 +83,16 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='order',
             name='order_line',
-            field=models.ForeignKey(related_name='orders', to='webshop.OrderLine'),
+            field=models.ForeignKey(related_name='orders', to='webshop.OrderLine', on_delete=models.CASCADE),
         ),
         migrations.AddField(
             model_name='order',
             name='product',
-            field=models.ForeignKey(to='webshop.Product'),
+            field=models.ForeignKey(to='webshop.Product', on_delete=models.CASCADE),
         ),
         migrations.AddField(
             model_name='order',
             name='size',
-            field=models.ForeignKey(blank=True, to='webshop.ProductSize', null=True),
+            field=models.ForeignKey(blank=True, to='webshop.ProductSize', null=True, on_delete=models.CASCADE),
         ),
     ]

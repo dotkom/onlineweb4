@@ -21,7 +21,7 @@ class Migration(migrations.Migration):
                 ('active', models.BooleanField(default=False)),
                 ('added_date', models.DateTimeField(auto_now=True)),
                 ('expiration_date', models.DateField(verbose_name='utl\xf8psdato', null=True, editable=False, blank=True)),
-                ('user', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
+                ('user', models.ForeignKey(to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE)),
             ],
             options={
             },

@@ -15,7 +15,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='GroupRestriction',
             fields=[
-                ('event', models.OneToOneField(related_name='group_restriction', primary_key=True, serialize=False, to='events.Event')),
+                ('event', models.OneToOneField(related_name='group_restriction', primary_key=True, serialize=False, to='events.Event', on_delete=models.CASCADE)),
                 ('groups', models.ManyToManyField(help_text='Legg til de gruppene som skal ha tilgang til arrangementet', to='auth.Group', null=True, blank=True)),
             ],
             options={

@@ -1,5 +1,5 @@
 from chunks.models import Chunk
-from django.core.urlresolvers import reverse, reverse_lazy
+from django.urls import reverse, reverse_lazy
 from django.views.generic import CreateView, DeleteView, ListView, UpdateView
 
 from apps.dashboard.tools import DashboardPermissionMixin

@@ -16,8 +16,8 @@ class Migration(migrations.Migration):
             name='ItemRelation',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('item', models.ForeignKey(to='inventory.Item')),
-                ('transaction', models.ForeignKey(to='payment.PaymentTransaction')),
+                ('item', models.ForeignKey(to='inventory.Item', on_delete=models.CASCADE)),
+                ('transaction', models.ForeignKey(to='payment.PaymentTransaction', on_delete=models.CASCADE)),
             ],
             options={
             },

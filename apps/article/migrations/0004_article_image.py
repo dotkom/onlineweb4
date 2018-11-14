@@ -15,7 +15,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='article',
             name='image',
-            field=models.ForeignKey(default=None, to='gallery.ResponsiveImage', null=True),
+            field=models.ForeignKey(default=None, to='gallery.ResponsiveImage', null=True, on_delete=models.CASCADE),
             preserve_default=True,
         ),
     ]

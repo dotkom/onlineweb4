@@ -15,7 +15,7 @@ class Privacy(models.Model):
     expose_address = models.BooleanField(_("vis addresse"), default=True)
     visible_as_attending_events = models.BooleanField(_("vis på sosiale arrangement"), default=False)
 
-    user = models.OneToOneField(User, related_name="privacy")
+    user = models.OneToOneField(User, related_name="privacy", on_delete=models.CASCADE)
 
     def __str__(self):
         return self.user.get_full_name()

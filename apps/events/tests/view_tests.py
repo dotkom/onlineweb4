@@ -3,8 +3,8 @@ from datetime import timedelta
 
 from django.contrib.auth.models import Group
 from django.core import mail
-from django.core.urlresolvers import reverse
 from django.test import TestCase, override_settings
+from django.urls import reverse
 from django.utils import timezone
 from django_dynamic_fixture import G
 from freezegun import freeze_time

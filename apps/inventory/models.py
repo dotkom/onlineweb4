@@ -29,9 +29,15 @@ class Item(models.Model):
     description = models.CharField(_("Beskrivelse"), max_length=50, null=True, blank=True)
     price = models.IntegerField(_("Pris"), null=True, blank=True)
     available = models.BooleanField(_("Til salgs"), default=False)
-    category = models.ForeignKey(ItemCategory, verbose_name=_("Kategori"),
-                                 related_name="category", null=True, blank=True)
-    image = models.ForeignKey(ResponsiveImage, null=True, blank=True, default=None)
+    category = models.ForeignKey(
+        ItemCategory,
+        verbose_name=_("Kategori"),
+        related_name="category",
+        null=True,
+        blank=True,
+        on_delete=models.CASCADE
+    )
+    image = models.ForeignKey(ResponsiveImage, null=True, blank=True, default=None, on_delete=models.CASCADE)
     low_stock_treshold = models.IntegerField("Grense for email om lav beholdning", default=10)
 
     @property
@@ -115,7 +121,7 @@ class Item(models.Model):
 
 class Batch(models.Model):
 
-    item = models.ForeignKey(Item, verbose_name=_("Vare"), related_name="batches")
+    item = models.ForeignKey(Item, verbose_name=_("Vare"), related_name="batches", on_delete=models.CASCADE)
     amount = models.IntegerField(_("Antall"), default=0)
     date_added = models.DateField(_("Dato lagt til"), editable=False, auto_now_add=True)
     expiration_date = models.DateField(_("Utløpsdato"), null=True, blank=True, editable=True)

@@ -3,6 +3,8 @@ from django.conf.urls import url
 
 from apps.webshop.dashboard import views
 
+app_name = 'webshop'
+
 urlpatterns = [
     url(r'^$', views.Overview.as_view(), name='index'),
     url(r'^categories/$', views.Categories.as_view(), name='categories'),

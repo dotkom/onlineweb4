@@ -11,7 +11,7 @@ class CareerOpportunity(models.Model):
     Base class for CareerOpportunity
     """
 
-    company = models.ForeignKey(Company, related_name='company')
+    company = models.ForeignKey(Company, related_name='company', on_delete=models.CASCADE)
     title = models.CharField(_('tittel'), max_length=100)
     ingress = models.CharField(_('ingress'), max_length=250)
     description = models.TextField(_('beskrivelse'))
@@ -36,7 +36,7 @@ class CareerOpportunity(models.Model):
     )
 
     location = TaggableManager(_('sted(er)'), blank=True)
-    location.rel.related_name = "+"
+    location.remote_field.related_name = "+"
 
     def __str__(self):
         return self.title

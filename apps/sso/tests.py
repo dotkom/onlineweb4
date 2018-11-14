@@ -22,7 +22,7 @@ class UserinfoTestCase(OAuth2TestCase):
         self.access_token = self.generate_access_token(self.user)
 
     def test_get_userinfo(self):
-        url = reverse('sso_user')
+        url = reverse('sso:user')
         resp = self.client.get(url, **self.generate_headers())
 
         self.assertEqual(200, resp.status_code)

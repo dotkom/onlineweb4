@@ -19,8 +19,8 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('valid_to', models.DateTimeField()),
                 ('active', models.BooleanField(default=True)),
-                ('payment', models.ForeignKey(to='payment.Payment')),
-                ('user', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
+                ('payment', models.ForeignKey(to='payment.Payment', on_delete=models.CASCADE)),
+                ('user', models.ForeignKey(to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE)),
             ],
             options={
             },

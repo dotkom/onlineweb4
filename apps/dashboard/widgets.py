@@ -2,8 +2,9 @@
 #
 # Created by 'myth' on 10/18/15
 
-from django.forms.utils import force_text, format_html
+from django.forms.utils import format_html
 from django.forms.widgets import TextInput
+from django.utils.encoding import force_text
 
 DATEPICKER_WIDGET_STRING = """
 <div class="input-group dp">\r\n
@@ -88,7 +89,7 @@ class DatePickerInput(TextInput):
         super(DatePickerInput, self).__init__(attrs)
         self.input_type = 'text'
 
-    def render(self, name, value, attrs=None):
+    def render(self, name, value, attrs=None, renderer=None):
         """
         Renders this widget
         :param name: Name attribute of the input type
@@ -103,7 +104,7 @@ class DatePickerInput(TextInput):
         attrs = self.build_attrs(self.attrs, attrs)
         final_attrs = self.build_attrs(attrs, {'type': self.input_type, 'name': name})
         if value != '':
-            final_attrs['value'] = format_html('value="{}"', force_text(self._format_value(value)))
+            final_attrs['value'] = format_html('value="{}"', force_text(self.format_value(value)))
         else:
             final_attrs['value'] = ''
 
@@ -131,7 +132,7 @@ class DatetimePickerInput(TextInput):
         super(DatetimePickerInput, self).__init__(attrs)
         self.input_type = 'text'
 
-    def render(self, name, value, attrs=None):
+    def render(self, name, value, attrs=None, renderer=None):
         """
         Renders this widget
         :param name: Name attribute of the input type
@@ -146,7 +147,7 @@ class DatetimePickerInput(TextInput):
         attrs = self.build_attrs(self.attrs, attrs)
         final_attrs = self.build_attrs(attrs, {'type': self.input_type, 'name': name})
         if value != '':
-            final_attrs['value'] = force_text(self._format_value(value))
+            final_attrs['value'] = force_text(self.format_value(value))
         else:
             final_attrs['value'] = ''
 
@@ -174,7 +175,7 @@ class TimePickerInput(TextInput):
         super(TimePickerInput, self).__init__(attrs)
         self.input_type = 'text'
 
-    def render(self, name, value, attrs=None):
+    def render(self, name, value, attrs=None, renderer=None):
         """
         Renders this widget
         :param name: Name attribute of the input type
@@ -189,7 +190,7 @@ class TimePickerInput(TextInput):
         attrs = self.build_attrs(self.attrs, attrs)
         final_attrs = self.build_attrs(attrs, {'type': self.input_type, 'name': name})
         if value != '':
-            final_attrs['value'] = format_html('value="{}"', force_text(self._format_value(value)))
+            final_attrs['value'] = format_html('value="{}"', force_text(self.format_value(value)))
         else:
             final_attrs['value'] = ''
 

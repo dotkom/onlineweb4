@@ -80,7 +80,7 @@ class Migration(migrations.Migration):
                 ('email', models.EmailField(unique=True, max_length=75, verbose_name='epostadresse')),
                 ('primary', models.BooleanField(default=False, verbose_name='prim\xe6r')),
                 ('verified', models.BooleanField(default=False, verbose_name='verifisert', editable=False)),
-                ('user', models.ForeignKey(related_name='email_user', to=settings.AUTH_USER_MODEL)),
+                ('user', models.ForeignKey(related_name='email_user', to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE)),
             ],
             options={
                 'verbose_name': 'epostadresse',
@@ -96,7 +96,7 @@ class Migration(migrations.Migration):
                 ('period', models.CharField(default=b'2013-2014', max_length=9, verbose_name='periode')),
                 ('committee', models.CharField(default=b'hs', max_length=10, verbose_name='komite', choices=[(b'hs', 'Hovedstyret'), (b'appkom', 'Applikasjonskomiteen'), (b'arrkom', 'Arrangementskomiteen'), (b'bankom', 'Bank- og \xf8konomikomiteen'), (b'bedkom', 'Bedriftskomiteen'), (b'dotkom', 'Drifts- og utviklingskomiteen'), (b'ekskom', 'Ekskursjonskomiteen'), (b'fagkom', 'Fag- og kurskomiteen'), (b'jubkom', 'Jubileumskomiteen'), (b'pangkom', 'Pensjonistkomiteen'), (b'prokom', 'Profil-og aviskomiteen'), (b'trikom', 'Trivselskomiteen'), (b'velkom', 'Velkomstkomiteen')])),
                 ('position', models.CharField(default=b'medlem', max_length=10, verbose_name='stilling', choices=[(b'medlem', 'Medlem'), (b'leder', 'Leder'), (b'nestleder', 'Nestleder'), (b'okoans', '\xd8konomiansvarlig')])),
-                ('user', models.ForeignKey(related_name='positions', to=settings.AUTH_USER_MODEL)),
+                ('user', models.ForeignKey(related_name='positions', to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE)),
             ],
             options={
                 'ordering': ('user', 'period'),
@@ -113,7 +113,7 @@ class Migration(migrations.Migration):
                 ('email', models.EmailField(max_length=254, verbose_name='epost')),
                 ('token', models.CharField(max_length=32, verbose_name='token')),
                 ('created', models.DateTimeField(auto_now_add=True, verbose_name='opprettet dato')),
-                ('user', models.ForeignKey(related_name='register_user', to=settings.AUTH_USER_MODEL)),
+                ('user', models.ForeignKey(related_name='register_user', to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE)),
             ],
             options={
                 'permissions': (('view_registertoken', 'View RegisterToken'),),
@@ -126,7 +126,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('position', models.CharField(max_length=50, verbose_name='Posisjon')),
                 ('since_year', models.IntegerField(max_length=4, verbose_name='Medlem siden')),
-                ('user', models.ForeignKey(related_name='special_positions', to=settings.AUTH_USER_MODEL)),
+                ('user', models.ForeignKey(related_name='special_positions', to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE)),
             ],
             options={
                 'ordering': ('user', 'since_year'),

@@ -7,11 +7,11 @@ from smtplib import SMTPException
 from django.conf import settings
 from django.contrib import auth, messages
 from django.core.mail import send_mail
-from django.core.urlresolvers import reverse
 from django.db import IntegrityError
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render
 from django.template.loader import render_to_string
+from django.urls import reverse
 from django.utils.translation import ugettext as _
 from django.views.decorators.debug import sensitive_post_parameters
 # API v1
@@ -54,7 +54,7 @@ def logout(request):
 def register(request):
     log = logging.getLogger(__name__)
 
-    if request.user.is_authenticated():
+    if request.user.is_authenticated:
         messages.error(request, _('Registrering av ny konto krever at du er logget ut.'))
         return HttpResponseRedirect('/')
     else:
@@ -172,7 +172,7 @@ def verify(request, token):
 
 def recover(request):
     log = logging.getLogger(__name__)
-    if request.user.is_authenticated():
+    if request.user.is_authenticated:
         messages.error(request, _('Gjenoppretning av passord krever at du er logget ut.'))
         return HttpResponseRedirect('/')
     else:
@@ -222,7 +222,7 @@ def recover(request):
 @sensitive_post_parameters()
 def set_password(request, token=None):
     log = logging.getLogger(__name__)
-    if request.user.is_authenticated():
+    if request.user.is_authenticated:
         return HttpResponseRedirect('/')
     else:
         rt = None

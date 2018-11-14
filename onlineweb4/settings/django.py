@@ -128,7 +128,7 @@ TEMPLATES = [
     }
 ]
 
-MIDDLEWARE_CLASSES = (
+MIDDLEWARE = (
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -231,7 +231,6 @@ INSTALLED_APPS = (
     'scripts',
 
     #External apps
-    'feedme',
     'redwine',
 
     #Wiki

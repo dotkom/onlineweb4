@@ -43,7 +43,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='splashevent',
             name='splash_year',
-            field=models.ForeignKey(related_name='splash_events', to='splash.SplashYear'),
+            field=models.ForeignKey(related_name='splash_events', to='splash.SplashYear', on_delete=models.CASCADE),
             preserve_default=True,
         ),
     ]

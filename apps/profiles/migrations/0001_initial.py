@@ -21,7 +21,7 @@ class Migration(migrations.Migration):
                 ('expose_email', models.BooleanField(default=True, verbose_name='vis epost')),
                 ('expose_phone_number', models.BooleanField(default=True, verbose_name='vis telefonnummer')),
                 ('expose_address', models.BooleanField(default=True, verbose_name='vis addresse')),
-                ('user', models.ForeignKey(related_name='privacy', to=settings.AUTH_USER_MODEL, unique=True)),
+                ('user', models.ForeignKey(related_name='privacy', to=settings.AUTH_USER_MODEL, unique=True, on_delete=models.CASCADE)),
             ],
             options={
                 'verbose_name': 'personvern',

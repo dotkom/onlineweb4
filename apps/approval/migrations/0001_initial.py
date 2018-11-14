@@ -27,7 +27,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='MembershipApproval',
             fields=[
-                ('approval_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='approval.Approval')),
+                ('approval_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='approval.Approval', on_delete=models.CASCADE)),
                 ('new_expiry_date', models.DateField(null=True, verbose_name='ny utl\xf8psdato', blank=True)),
                 ('field_of_study', models.SmallIntegerField(default=0, verbose_name='studieretning', choices=[(0, 'Gjest'), (1, 'Bachelor i Informatikk (BIT)'), (10, 'Software (SW)'), (11, 'Informasjonsforvaltning (DIF)'), (12, 'Komplekse Datasystemer (KDS)'), (13, 'Spillteknologi (SPT)'), (14, 'Intelligente Systemer (IRS)'), (15, 'Helseinformatikk (MSMEDTEK)'), (30, 'Annen mastergrad'), (80, 'PhD'), (90, 'International'), (100, 'Annet Onlinemedlem')])),
                 ('started_date', models.DateField(null=True, verbose_name='startet dato', blank=True)),

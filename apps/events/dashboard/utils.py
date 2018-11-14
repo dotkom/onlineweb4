@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 
 from apps.authentication.models import OnlineUser as User
 from apps.events.models import Attendee

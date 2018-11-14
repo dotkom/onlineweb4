@@ -40,7 +40,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='batch',
             name='item',
-            field=models.ForeignKey(related_name='batches', verbose_name='Vare', to='inventory.Item'),
+            field=models.ForeignKey(related_name='batches', verbose_name='Vare', to='inventory.Item', on_delete=models.CASCADE),
             preserve_default=True,
         ),
     ]

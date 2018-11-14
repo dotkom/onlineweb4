@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.core.urlresolvers import reverse_lazy
 from django.db.models import Q
 from django.shortcuts import redirect
+from django.urls import reverse_lazy
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views.generic import DetailView, RedirectView, TemplateView
@@ -26,7 +26,7 @@ class CartMixin:
         return context
 
     def current_order_line(self):
-        if not self.request.user.is_authenticated():
+        if not self.request.user.is_authenticated:
             return None
         order_line = OrderLine.objects.filter(user=self.request.user, paid=False).first()
         return order_line

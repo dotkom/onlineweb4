@@ -16,13 +16,13 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='article',
             name='changed_by',
-            field=models.ForeignKey(related_name='changed_by', editable=False, to=settings.AUTH_USER_MODEL, verbose_name='endret av'),
+            field=models.ForeignKey(related_name='changed_by', editable=False, to=settings.AUTH_USER_MODEL, verbose_name='endret av', on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='article',
             name='created_by',
-            field=models.ForeignKey(related_name='created_by', editable=False, to=settings.AUTH_USER_MODEL, verbose_name='opprettet av'),
+            field=models.ForeignKey(related_name='created_by', editable=False, to=settings.AUTH_USER_MODEL, verbose_name='opprettet av', on_delete=models.CASCADE),
             preserve_default=True,
         ),
     ]

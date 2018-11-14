@@ -24,8 +24,8 @@ class Migration(migrations.Migration):
                 ('description', models.CharField(help_text='Dette feltet kreves kun dersom det er mer enn en betaling', max_length=60, null=True, verbose_name='beskrivelse', blank=True)),
                 ('added_date', models.DateTimeField(auto_now=True, verbose_name='opprettet dato')),
                 ('changed_date', models.DateTimeField(auto_now=True)),
-                ('content_type', models.ForeignKey(to='contenttypes.ContentType')),
-                ('last_changed_by', models.ForeignKey(editable=False, to=settings.AUTH_USER_MODEL, null=True)),
+                ('content_type', models.ForeignKey(to='contenttypes.ContentType', on_delete=models.CASCADE)),
+                ('last_changed_by', models.ForeignKey(editable=False, to=settings.AUTH_USER_MODEL, null=True, on_delete=models.CASCADE)),
             ],
             options={
                 'verbose_name': 'betaling',
@@ -39,8 +39,8 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('datetime', models.DateTimeField(auto_now=True)),
                 ('unique_id', models.CharField(max_length=128, null=True, blank=True)),
-                ('payment', models.ForeignKey(to='payment.Payment')),
-                ('user', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
+                ('payment', models.ForeignKey(to='payment.Payment', on_delete=models.CASCADE)),
+                ('user', models.ForeignKey(to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE)),
             ],
             options={
                 'verbose_name': 'betalingsrelasjon',

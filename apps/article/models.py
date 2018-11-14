@@ -4,8 +4,9 @@ import re
 
 from django.conf import settings
 from django.db import models
-from django.db.models import SET_NULL, permalink
+from django.db.models import SET_NULL
 from django.template.defaultfilters import slugify
+from django.urls import reverse
 from django.utils.translation import ugettext as _
 from taggit.managers import TaggableManager
 from unidecode import unidecode
@@ -32,11 +33,17 @@ class Article(models.Model):
     created_by = models.ForeignKey(
         User, null=False,
         verbose_name=_("opprettet av"),
-        related_name="created_by", editable=False
+        related_name="created_by",
+        editable=False,
+        on_delete=models.CASCADE
     )
     authors = models.CharField(_('forfatter(e)'), max_length=200, blank=True)
     changed_by = models.ForeignKey(
-        User, null=False, verbose_name=_("endret av"), related_name="changed_by", editable=False
+        User, null=False,
+        verbose_name=_("endret av"),
+        related_name="changed_by",
+        editable=False,
+        on_delete=models.CASCADE
     )
     featured = models.BooleanField(_("featured artikkel"), default=False)
 
@@ -52,9 +59,8 @@ class Article(models.Model):
     def slug(self):
         return slugify(unidecode(self.heading))
 
-    @permalink
     def get_absolute_url(self):
-        return 'article_details', None, {'article_id': self.id, 'article_slug': self.slug}
+        return reverse('article_details', kwargs={'article_id': self.id, 'article_slug': self.slug})
 
     class Meta(object):
         verbose_name = _("artikkel")

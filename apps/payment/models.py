@@ -36,7 +36,7 @@ class Payment(models.Model):
         ('fagkom', 'fagkom'),
     )
 
-    content_type = models.ForeignKey(ContentType)
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     """Which model the payment is created for. For attendance events this should be attendance_event(påmelding)."""
     object_id = models.PositiveIntegerField()
     """Object id for the model chosen in content_type."""
@@ -73,7 +73,12 @@ class Payment(models.Model):
     """Day of payment creation. Automatically set"""
     changed_date = models.DateTimeField(auto_now=True, editable=False)
     """Last changed. Automatically set"""
-    last_changed_by = models.ForeignKey(User, editable=False, null=True)  # Blank and null is temperarly
+    last_changed_by = models.ForeignKey(  # Blank and null is temperarly
+        User,
+        editable=False,
+        null=True,
+        on_delete=models.CASCADE
+    )
     """User who last changed payment. Automatically set"""
 
     def payment_delays(self):
@@ -226,7 +231,7 @@ class Payment(models.Model):
 
 
 class PaymentPrice(models.Model):
-    payment = models.ForeignKey(Payment)
+    payment = models.ForeignKey(Payment, on_delete=models.CASCADE)
     """Payment object"""
     price = models.IntegerField(_("pris"))
     """Price in NOK"""
@@ -244,11 +249,11 @@ class PaymentPrice(models.Model):
 class PaymentRelation(models.Model):
     """Payment metadata for user"""
 
-    payment = models.ForeignKey(Payment)
+    payment = models.ForeignKey(Payment, on_delete=models.CASCADE)
     """Payment object"""
-    payment_price = models.ForeignKey(PaymentPrice)
+    payment_price = models.ForeignKey(PaymentPrice, on_delete=models.CASCADE)
     """Price object"""
-    user = models.ForeignKey(User)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     """User who paid"""
     datetime = models.DateTimeField(auto_now=True)
     """Datetime when payment was created"""
@@ -301,9 +306,9 @@ class PaymentRelation(models.Model):
 
 class PaymentDelay(models.Model):
     """User specific payment deadline"""
-    payment = models.ForeignKey(Payment)
+    payment = models.ForeignKey(Payment, on_delete=models.CASCADE)
     """Payment object"""
-    user = models.ForeignKey(User)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     """User object"""
     valid_to = models.DateTimeField()
     """Payment deadline"""
@@ -323,7 +328,7 @@ class PaymentDelay(models.Model):
 
 class PaymentTransaction(models.Model):
     """Transaction for a user"""
-    user = models.ForeignKey(User)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     """User object"""
     amount = models.IntegerField(null=True, blank=True)
     """Amount in NOK"""

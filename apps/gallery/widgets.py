@@ -3,9 +3,10 @@
 # Created by 'myth' on 10/14/15
 
 from django.conf import settings
-from django.core.urlresolvers import reverse_lazy
 from django.forms import HiddenInput, TextInput
-from django.forms.utils import flatatt, force_text, format_html
+from django.forms.utils import flatatt, format_html
+from django.urls import reverse_lazy
+from django.utils.encoding import force_text
 
 from apps.gallery.models import ResponsiveImage
 
@@ -43,7 +44,7 @@ class SingleImageInput(HiddenInput):
         super(SingleImageInput, self).__init__(attrs)
         self.input_type = 'hidden'
 
-    def render(self, name, value, attrs=None):
+    def render(self, name, value, attrs=None, renderer=None):
         """
         Renders this field widget as HTML
         :param name: Field input name
@@ -61,7 +62,7 @@ class SingleImageInput(HiddenInput):
         final_attrs = self.build_attrs(attrs, {'type': self.input_type, 'name': name})
         if value != '':
             # Only add the value attribute if the value is non-empty
-            final_attrs['value'] = force_text(self._format_value(value))
+            final_attrs['value'] = force_text(self.format_value(value))
             img = ResponsiveImage.objects.get(pk=value)
             img_thumb = format_html(
                 '<img src="{}" alt title="{}"/>',
@@ -83,7 +84,7 @@ class TagInputField(TextInput):
     def __init__(self, attrs=None):
         super(TagInputField, self).__init__(attrs=attrs)
 
-    def render(self, name, value, attrs=None):
+    def render(self, name, value, attrs=None, renderer=None):
         """
         Renders this field widget as HTML
         :param name: Field input name

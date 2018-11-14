@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.contrib.auth.models import Group, Permission
-from django.core.urlresolvers import reverse
 from django.test import TestCase, override_settings
+from django.urls import reverse
 from django_dynamic_fixture import G
 
 from apps.authentication.models import Email

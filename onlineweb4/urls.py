@@ -5,16 +5,14 @@ from django.contrib import admin
 from django.http import HttpResponse
 from django.views.generic import TemplateView
 from django_js_reverse.views import urls_js
-from django_nyt.urls import get_pattern as get_notify_pattern
 from onlineweb4 import views
-from wiki.urls import get_pattern as get_wiki_pattern
 
 # URL config
 admin.autodiscover()
 
 urlpatterns = [
     # Admin urls
-    url(r'^admin/',             include(admin.site.urls)),
+    url(r'^admin/', admin.site.urls),
     url(r'^admin/doc/',         include('django.contrib.admindocs.urls')),
 
     # Onlineweb front page
@@ -35,8 +33,8 @@ urlpatterns = [
         "google-site-verification: google79c0b331a83a53de.html", content_type="text/html")),
 
     # Wiki
-    url(r'^notify/', get_notify_pattern()),
-    url(r'^wiki/', get_wiki_pattern())
+    url(r'^notify/', include('django_nyt.urls')),
+    url(r'^wiki/', include('wiki.urls'))
 ]
 
 
@@ -122,7 +120,6 @@ if 'apps.gallery' in settings.INSTALLED_APPS:
             include(
                 'apps.gallery.urls',
                 namespace='gallery',
-                app_name='gallery'
             )
         ),
         url(
@@ -130,7 +127,6 @@ if 'apps.gallery' in settings.INSTALLED_APPS:
             include(
                 'apps.gallery.dashboard.urls',
                 namespace='gallery_dashboard',
-                app_name='gallery'
             )
         )
     ]
@@ -199,7 +195,7 @@ if 'apps.splash' in settings.INSTALLED_APPS:
 if 'apps.sso' in settings.INSTALLED_APPS:
     urlpatterns += [
         url(r'^sso/', include('apps.sso.urls')),
-        url(r'^dashboard/auth/sso/', include('apps.sso.dashboard.urls', namespace='dashboard', app_name='sso')),
+        url(r'^dashboard/auth/sso/', include('apps.sso.dashboard.urls', namespace='dashboard')),
     ]
 
 if 'apps.webshop' in settings.INSTALLED_APPS:
@@ -208,7 +204,6 @@ if 'apps.webshop' in settings.INSTALLED_APPS:
         url(r'^dashboard/webshop/', include(
             'apps.webshop.dashboard.urls',
             namespace='dashboard-webshop',
-            app_name='webshop'
         )),
     ]
 

@@ -1,8 +1,8 @@
 import logging
 
 from django.contrib.contenttypes.models import ContentType
-from django.core.urlresolvers import reverse
 from django.shortcuts import get_object_or_404, redirect
+from django.urls import reverse
 from django.views.generic import (CreateView, DeleteView, DetailView, ListView, TemplateView,
                                   UpdateView)
 from taggit.models import TaggedItem
