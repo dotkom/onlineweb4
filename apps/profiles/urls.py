@@ -4,6 +4,7 @@ from django.conf.urls import url
 
 from apps.api.utils import SharedAPIRootRouter
 from apps.profiles import views
+from apps.shop.views import UserOrderViewSet
 
 urlpatterns = [
     url(r'^$', views.index, name='profiles'),
@@ -43,4 +44,5 @@ urlpatterns = [
 ]
 
 router = SharedAPIRootRouter()
-router.register('profile-search', views.ProfileSearchSet, base_name='profile-search')
+router.register('profile/search', views.ProfileSearchSet, base_name='profile-search')
+router.register('profile/orders', UserOrderViewSet, base_name='profile-orders')

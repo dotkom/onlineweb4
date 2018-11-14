@@ -10,7 +10,7 @@ from django.utils.decorators import method_decorator
 from django.views.generic import FormView
 from oauth2_provider.contrib.rest_framework import OAuth2Authentication, TokenHasScope
 from rest_framework import mixins, status, viewsets
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -62,10 +62,9 @@ class TransactionViewSet(viewsets.GenericViewSet, mixins.CreateModelMixin):
 
 class UserOrderViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.RetrieveModelMixin):
     serializer_class = UserOrderLineSerializer
+    permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
-        if self.request.user.is_anonymous:
-            return OrderLine.objects.none()
         return OrderLine.objects.filter(user=self.request.user)
 
 
