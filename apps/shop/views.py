@@ -10,7 +10,7 @@ from django.utils.decorators import method_decorator
 from django.views.generic import FormView
 from oauth2_provider.contrib.rest_framework import OAuth2Authentication, TokenHasScope
 from rest_framework import mixins, status, viewsets
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -21,7 +21,7 @@ from apps.payment.models import PaymentTransaction
 from apps.shop.forms import SetRFIDForm
 from apps.shop.models import MagicToken, OrderLine
 from apps.shop.serializers import (ItemSerializer, OrderLineSerializer, TransactionSerializer,
-                                   UserSerializer)
+                                   UserOrderLineSerializer, UserSerializer)
 from apps.shop.utils import create_magic_token
 
 
@@ -58,6 +58,14 @@ class TransactionViewSet(viewsets.GenericViewSet, mixins.CreateModelMixin):
 
     def perform_create(self, serializer):
         serializer.save()
+
+
+class UserOrderViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.RetrieveModelMixin):
+    serializer_class = UserOrderLineSerializer
+    permission_classes = (IsAuthenticated,)
+
+    def get_queryset(self):
+        return OrderLine.objects.filter(user=self.request.user)
 
 
 class UserViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.ListModelMixin, APIView):
