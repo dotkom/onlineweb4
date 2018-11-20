@@ -96,7 +96,7 @@ class UpdateRepositories(Task):
 
     @staticmethod
     def get_git_repositories():
-        url = git_domain + "/users/dotkom/repos?per_page=100"
+        url = git_domain + "/users/dotkom/repos?per_page=60"
         r = requests.get(url)
         data = json.loads(r.text)
         return data
