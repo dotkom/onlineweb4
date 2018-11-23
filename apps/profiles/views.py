@@ -20,7 +20,7 @@ from django.views import View
 from django_filters.rest_framework import DjangoFilterBackend
 from googleapiclient.errors import HttpError
 from oauth2_provider.models import AccessToken
-from rest_framework import filters, mixins, viewsets
+from rest_framework import filters, mixins, permissions, response, viewsets
 from watson import search as watson
 
 from apps.approval.forms import FieldOfStudyApplicationForm
@@ -34,10 +34,10 @@ from apps.dashboard.tools import has_access
 from apps.gsuite.accounts.main import create_g_suite_account, reset_password_g_suite_account
 from apps.marks.models import Mark, Suspension
 from apps.payment.models import PaymentDelay, PaymentRelation, PaymentTransaction
-from apps.profiles.filters import ProfileFilter
+from apps.profiles.filters import PublicProfileFilter
 from apps.profiles.forms import InternalServicesForm, PositionForm, PrivacyForm, ProfileForm
 from apps.profiles.models import Privacy
-from apps.profiles.serializers import ProfileSerializer
+from apps.profiles.serializers import PrivacySerializer, ProfileSerializer, PublicProfileSerializer
 from apps.shop.models import Order
 from utils.shortcuts import render_json
 
@@ -556,9 +556,32 @@ class GSuiteResetPassword(View):
         return redirect('profile_add_email')
 
 
-class ProfileSearchSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.ListModelMixin):
+class PublicProfileSearchSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.ListModelMixin):
     queryset = User.objects.filter(privacy__visible_for_other_users=True)
-    serializer_class = ProfileSerializer
+    serializer_class = PublicProfileSerializer
     search_fields = ("username", "first_name", "last_name")
     filter_backends = (DjangoFilterBackend, filters.SearchFilter)
-    filter_class = ProfileFilter
+    filter_class = PublicProfileFilter
+
+
+class PersonalPrivacyView(viewsets.ViewSet):
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def list(self, request, format=None):
+        privacy = Privacy.objects.get(user=request.user)
+        serializer = PrivacySerializer(privacy)
+        return response.Response(serializer.data)
+
+    def update(self, request, pk=None):
+        privacy = Privacy.objects.get(user=request.user)
+        serializer = PrivacySerializer(privacy, data=request.data)
+        return response.Response(serializer.data)
+
+
+class ProfileViewSet(viewsets.ViewSet):
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def list(self, request, format=None):
+        user = request.user
+        serializer = ProfileSerializer(user)
+        return response.Response(serializer.data)
