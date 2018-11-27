@@ -1,9 +1,7 @@
-import logging
-
 import django_filters
 from django_filters.filters import Lookup
 
-from apps.events.models import AttendanceEvent, Attendee, Event
+from apps.events.models import Attendee, Event
 
 
 class ListFilter(django_filters.Filter):
