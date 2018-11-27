@@ -753,24 +753,6 @@ class AttendanceEvent(models.Model):
 
         return self._process_rulebundle_satisfaction_responses(responses)
 
-    def user_can_attend(self, user):
-        """
-        Mirror functionality of self.rules_satisfied while returning a boolean
-        """
-        if self.guest_attendance:
-            return True
-        elif not user.is_member:
-            return False
-        elif not self.rule_bundles.exists() and user.is_member:
-            return True
-        responses = []
-        for rule_bundle in self.rule_bundles.all():
-            responses.extend(rule_bundle.satisfied(user, self.registration_start))
-        for response in responses:
-            if response['status']:
-                return True
-        return False
-
     def is_attendee(self, user):
         return self.attendees.filter(user=user)
 

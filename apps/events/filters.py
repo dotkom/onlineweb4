@@ -19,31 +19,10 @@ class EventDateFilter(django_filters.FilterSet):
     event_end__gte = django_filters.DateTimeFilter(field_name='event_end', lookup_expr='gte')
     event_end__lte = django_filters.DateTimeFilter(field_name='event_end', lookup_expr='lte')
     attendance_event__isnull = django_filters.BooleanFilter(field_name='attendance_event', lookup_expr='isnull')
-    can_attend = django_filters.BooleanFilter(field_name='attendance_event', method='filter_can_attend')
-    is_attending = django_filters.BooleanFilter(field_name='attendance_event', method='filter_is_attending')
+    is_attendee = django_filters.BooleanFilter(field_name='attendance_event', method='filter_is_attendee')
     event_type = ListFilter()
 
-    def filter_can_attend(self, queryset, name, value):
-        """
-        Filter events on if a user can attend an the related attendance_event.
-        """
-
-        """ Users cannot attend events if they are not logged in """
-        if not self.request.user.is_authenticated:
-            return queryset.none()
-
-        attendance_events = AttendanceEvent.objects.all()
-        possible_attendance_events = []
-        for a_event in attendance_events:
-            if a_event.user_can_attend(self.request.user):
-                possible_attendance_events.append(a_event.pk)
-
-        if value:
-            return queryset.filter(pk__in=possible_attendance_events)
-        else:
-            return queryset.exclude(pk__in=possible_attendance_events)
-
-    def filter_is_attending(self, queryset, name, value):
+    def filter_is_attendee(self, queryset, name, value):
         """
         Filter events on if a user can attend them or not.
         """
