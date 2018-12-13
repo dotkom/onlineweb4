@@ -575,10 +575,9 @@ class PersonalPrivacyView(viewsets.ViewSet):
     def put(self, request, pk=None):
         privacy = Privacy.objects.get(user=request.user)
         serializer = PrivacySerializer(privacy, data=request.data)
-        if serializer.is_valid():
+        if serializer.is_valid(raise_exception=True):
             serializer.save(user=request.user)
             return response.Response(serializer.data)
-        return response.Response(privacy)
 
 
 class ProfileViewSet(viewsets.ViewSet):
