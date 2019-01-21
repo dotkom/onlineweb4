@@ -22,7 +22,7 @@ class EventDateFilter(django_filters.FilterSet):
 
     def filter_is_attendee(self, queryset, name, value):
         """
-        Filter events on if a user can attend them or not.
+        Filter events based on if a user is attending them or not.
         """
 
         """ User cannot attend events if they are not logged in """
@@ -33,8 +33,7 @@ class EventDateFilter(django_filters.FilterSet):
         attending_events = [attendee.event.pk for attendee in user_attendees]
         if value:
             return queryset.filter(pk__in=attending_events)
-        else:
-            return queryset.exclude(pk__in=attending_events)
+        return queryset.all()
 
     class Meta:
         model = Event
