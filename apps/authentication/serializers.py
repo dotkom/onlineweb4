@@ -17,7 +17,6 @@ class UserSerializer(serializers.ModelSerializer):
         }
 
 
-
 class PositionSerializer(serializers.ModelSerializer):
 
     class Meta:
