@@ -587,3 +587,10 @@ class ProfileViewSet(viewsets.ViewSet):
         user = request.user
         serializer = ProfileSerializer(user)
         return response.Response(serializer.data)
+
+    def put(self, request, pk=None):
+        user = request.user
+        serializer = ProfileSerializer(user, data=request.data, partial=True)
+        if serializer.is_valid(raise_exception=True):
+            serializer.save(user=request.user)
+            return response.Response(serializer.data)
