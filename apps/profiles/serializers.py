@@ -14,7 +14,7 @@ class ProfileSerializer(serializers.ModelSerializer):
         model = User
         fields = (
             "first_name", "last_name", "username", "nickname", "ntnu_username", "year", "email", "online_mail",
-            "phone_number", "address", "website", "github", "linkedin", "positions", "special_positions"
+            "phone_number", "address", "website", "github", "linkedin", "positions", "special_positions", "rfid",
         )
 
 
