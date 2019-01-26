@@ -1,7 +1,13 @@
 from rest_framework import serializers
 
 from apps.authentication.models import OnlineUser as User
-from apps.authentication.models import Position, SpecialPosition
+from apps.authentication.models import Position, SpecialPosition, Email
+
+
+class UserNameSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('first_name', 'last_name', 'email', 'username',)
 
 
 class UserSerializer(serializers.ModelSerializer):

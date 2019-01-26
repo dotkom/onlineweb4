@@ -3,6 +3,7 @@
 from django.conf.urls import url
 
 from apps.api.utils import SharedAPIRootRouter
+from apps.marks.views import MarksViewSet, SuspensionViewSet
 from apps.profiles import views
 from apps.shop.views import UserOrderViewSet
 
