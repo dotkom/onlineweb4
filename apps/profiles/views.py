@@ -29,6 +29,7 @@ from apps.authentication.forms import NewEmailForm
 from apps.authentication.models import Email
 from apps.authentication.models import OnlineUser as User
 from apps.authentication.models import Position, RegisterToken
+from apps.authentication.serializers import EmailSerializer
 from apps.authentication.utils import create_online_mail_alias
 from apps.dashboard.tools import has_access
 from apps.gsuite.accounts.main import create_g_suite_account, reset_password_g_suite_account
@@ -592,5 +593,13 @@ class ProfileViewSet(viewsets.ViewSet):
         user = request.user
         serializer = ProfileSerializer(user, data=request.data, partial=True)
         if serializer.is_valid(raise_exception=True):
-            serializer.save(user=request.user)
+            serializer.save(user=user)
             return response.Response(serializer.data)
+
+class UserEmailAddressesViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
+    """ TODO: Support creation of mail, and updating of primary mail """
+    serializer_class = EmailSerializer
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def get_queryset(self):
+        return Email.objects.filter(user=self.request.user)

@@ -34,3 +34,9 @@ class SpecialPositionSerializer(serializers.ModelSerializer):
     class Meta:
         model = SpecialPosition
         fields = ("since_year", "position")
+
+class EmailSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Email
+        fields = ('email', 'primary', 'verified',)
