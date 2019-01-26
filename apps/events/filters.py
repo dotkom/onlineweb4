@@ -1,15 +1,10 @@
 import django_filters
-from django_filters.filters import Lookup
+from django_filters.filters import BaseInFilter, NumberFilter
 
 from apps.events.models import Attendee, Event
 
-
-class ListFilter(django_filters.Filter):
-    # https://github.com/carltongibson/django-filter/issues/137#issuecomment-37820702
-    def filter(self, qs, value):
-        value_list = value.split(u',')
-        return super(ListFilter, self).filter(qs, Lookup(value_list, 'in'))
-
+class EventTypeInFilter(BaseInFilter, NumberFilter):
+    pass
 
 class EventDateFilter(django_filters.FilterSet):
     event_start__gte = django_filters.DateTimeFilter(field_name='event_start', lookup_expr='gte')
@@ -18,7 +13,7 @@ class EventDateFilter(django_filters.FilterSet):
     event_end__lte = django_filters.DateTimeFilter(field_name='event_end', lookup_expr='lte')
     attendance_event__isnull = django_filters.BooleanFilter(field_name='attendance_event', lookup_expr='isnull')
     is_attendee = django_filters.BooleanFilter(field_name='attendance_event', method='filter_is_attendee')
-    event_type = ListFilter()
+    event_type = EventTypeInFilter(field_name='event_type', lookup_expr='in')
 
     def filter_is_attendee(self, queryset, name, value):
         """
