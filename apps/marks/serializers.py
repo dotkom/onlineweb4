@@ -1,6 +1,5 @@
 from rest_framework import serializers
 
-from apps.authentication.serializers import UserNameSerializer
 from apps.marks.models import Mark, Suspension
 
 

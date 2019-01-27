@@ -596,6 +596,7 @@ class ProfileViewSet(viewsets.ViewSet):
             serializer.save(user=user)
             return response.Response(serializer.data)
 
+
 class UserEmailAddressesViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     """ TODO: Support creation of mail, and updating of primary mail """
     serializer_class = EmailSerializer

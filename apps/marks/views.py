@@ -14,6 +14,7 @@ class MarksViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
         mark_ids = [relation.mark.id for relation in user_relation]
         return Mark.objects.filter(pk__in=mark_ids)
 
+
 class SuspensionViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     serializer_class = SuspensionSerializer
     permission_classes = (permissions.IsAuthenticated,)
