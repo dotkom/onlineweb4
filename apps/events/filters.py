@@ -3,8 +3,10 @@ from django_filters.filters import BaseInFilter, NumberFilter
 
 from apps.events.models import Attendee, Event
 
+
 class EventTypeInFilter(BaseInFilter, NumberFilter):
     pass
+
 
 class EventDateFilter(django_filters.FilterSet):
     event_start__gte = django_filters.DateTimeFilter(field_name='event_start', lookup_expr='gte')
