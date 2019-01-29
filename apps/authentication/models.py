@@ -259,6 +259,10 @@ class OnlineUser(AbstractUser):
         gravatar_url += urllib.parse.urlencode({'d': default, 's': str(size)})
         return gravatar_url
 
+    @property
+    def image(self):
+        return self.get_image_url(240)
+
     def get_visible_as_attending_events(self):
         """ Returns the default value of visible_as_attending_events set in privacy/personvern """
         if hasattr(self, 'privacy'):
