@@ -23,20 +23,38 @@ class ProfileSerializer(serializers.ModelSerializer):
         )
 
 
-def _expose_field(obj, user_field, privacy_field):
-    privacy = Privacy.objects.get(user=obj)
-    expose = getattr(privacy, privacy_field)
-    if expose:
-        return getattr(obj, user_field)
-    return None
+class ExposableUserField(serializers.Field):
+    """
+    Serializes a field for a user based on the users Privacy settings.
+
+    Defaults to a defined variable naming:
+    For a field 'foo' on OnlineUser, the field 'expose_foo' from Privacy will be used.
+    This behavior can be overwritten with the 'privacy_field' kwarg.
+    """
+
+    def __init__(self, **kwargs):
+        self.field_name = kwargs.pop('field_name', None)
+        defualt_privacy_field = 'expose_{}'.format(self.field_name)
+        self.privacy_field = kwargs.pop('privacy_field', defualt_privacy_field)
+        super(ExposableUserField, self).__init__(**kwargs)
+
+    def get_attribute(self, obj):
+        return obj
+
+    def to_representation(self, obj):
+        privacy = Privacy.objects.get(user=obj)
+        expose = getattr(privacy, self.privacy_field)
+        if expose:
+            return getattr(obj, self.field_name)
+        return None
 
 
 class PublicProfileSerializer(serializers.ModelSerializer):
-    address = serializers.SerializerMethodField()
-    nickname = serializers.SerializerMethodField()
-    email = serializers.SerializerMethodField()
-    phone_number = serializers.SerializerMethodField()
-    zip_code = serializers.SerializerMethodField()
+    address = ExposableUserField(field_name='address')
+    nickname = ExposableUserField(field_name='nickname')
+    email = ExposableUserField(field_name='email')
+    phone_number = ExposableUserField(field_name='phone_number')
+    zip_code = ExposableUserField(field_name='zip_code', privacy_field='expose_address')
 
     positions = PositionSerializer(many=True)
     special_positions = SpecialPositionSerializer(many=True)
@@ -66,21 +84,6 @@ class PublicProfileSerializer(serializers.ModelSerializer):
             "image",
             "started_date",
         )
-
-    def get_address(self, obj):
-        return _expose_field(obj, 'address', 'expose_address')
-
-    def get_nickname(self, obj):
-        return _expose_field(obj, 'nickname', 'expose_nickname')
-
-    def get_email(self, obj):
-        return _expose_field(obj, 'email', 'expose_email')
-
-    def get_phone_number(self, obj):
-        return _expose_field(obj, 'phone_number', 'expose_phone_number')
-
-    def get_zip_code(self, obj):
-        return _expose_field(obj, 'zip_code', 'expose_address')
 
 
 class PrivacySerializer(serializers.ModelSerializer):
