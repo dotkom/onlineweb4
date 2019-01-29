@@ -1,18 +1,17 @@
 from rest_framework import mixins, permissions, viewsets
 
-from apps.marks.models import Mark, MarkUser, Suspension
-from apps.marks.serializers import MarkSerializer, SuspensionSerializer
+from apps.marks.models import MarkUser, Suspension
+from apps.marks.serializers import MarkUserSerializer, SuspensionSerializer
 
 
 class MarksViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
-    serializer_class = MarkSerializer
+    serializer_class = MarkUserSerializer
     permission_classes = (permissions.IsAuthenticated,)
 
     def get_queryset(self):
         user = self.request.user
-        user_relation = MarkUser.objects.filter(user=user)
-        mark_ids = [relation.mark.id for relation in user_relation]
-        return Mark.objects.filter(pk__in=mark_ids)
+        user_marks = MarkUser.objects.filter(user=user)
+        return user_marks
 
 
 class SuspensionViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):

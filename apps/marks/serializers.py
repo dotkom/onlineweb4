@@ -1,9 +1,12 @@
 from rest_framework import serializers
 
-from apps.marks.models import Mark, Suspension
+from apps.authentication.serializers import UserNameSerializer
+from apps.marks.models import Mark, MarkUser, Suspension
 
 
 class MarkSerializer(serializers.ModelSerializer):
+    given_by = UserNameSerializer()
+    last_changed_by = UserNameSerializer()
 
     class Meta:
         model = Mark
@@ -13,6 +16,19 @@ class MarkSerializer(serializers.ModelSerializer):
             'last_changed_date',
             'description',
             'category',
+            'given_by',
+            'last_changed_by',
+        )
+
+
+class MarkUserSerializer(serializers.ModelSerializer):
+    mark = MarkSerializer()
+
+    class Meta:
+        model = MarkUser
+        fields = (
+            'expiration_date',
+            'mark'
         )
 
 
