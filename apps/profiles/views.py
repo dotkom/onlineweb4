@@ -563,6 +563,7 @@ class PublicProfileSearchSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin,
     search_fields = ("username", "first_name", "last_name")
     filter_backends = (DjangoFilterBackend, filters.SearchFilter)
     filter_class = PublicProfileFilter
+    permission_classes = (permissions.IsAuthenticated,)
 
 
 class PersonalPrivacyView(viewsets.ViewSet):
