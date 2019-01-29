@@ -22,12 +22,14 @@ class ProfileSerializer(serializers.ModelSerializer):
             "username", "ntnu_username", "online_mail", "field_of_study", "started_date", "compiled", "saldo",
         )
 
+
 def _expose_field(obj, user_field, privacy_field):
     privacy = Privacy.objects.get(user=obj)
     expose = getattr(privacy, privacy_field)
     if expose:
         return getattr(obj, user_field)
     return None
+
 
 class PublicProfileSerializer(serializers.ModelSerializer):
     address = serializers.SerializerMethodField()
