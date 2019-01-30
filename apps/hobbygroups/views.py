@@ -7,7 +7,7 @@ from apps.hobbygroups.serializers import HobbySerializer
 
 # Index page
 def index(request):
-    hobbygroups = Hobby.objects.all().order_by('-priority')
+    hobbygroups = Hobby.objects.filter(active=True).order_by('-priority')
     context = {
         'hobbygroups': hobbygroups,
     }
@@ -15,5 +15,5 @@ def index(request):
 
 
 class HobbyViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Hobby.objects.all()
+    queryset = Hobby.objects.filter(active=True)
     serializer_class = HobbySerializer
