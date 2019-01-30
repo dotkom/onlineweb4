@@ -15,40 +15,75 @@ class ProfileSerializer(serializers.ModelSerializer):
         fields = (
             "first_name", "last_name", "username", "nickname", "ntnu_username", "year", "email", "online_mail",
             "phone_number", "address", "website", "github", "linkedin", "positions", "special_positions", "rfid",
+            "field_of_study", "started_date", "compiled", "infomail", "jobmail", "zip_code", "allergies",
+            "mark_rules", "gender", "bio", "saldo", "is_committee", "is_member", "image", "has_expiring_membership",
+        )
+        read_only_fields = (
+            "username", "ntnu_username", "online_mail", "field_of_study", "started_date", "compiled", "saldo",
         )
 
 
+class ExposableUserField(serializers.Field):
+    """
+    Serializes a field for a user based on the users Privacy settings.
+
+    Defaults to a defined variable naming:
+    For a field 'foo' on OnlineUser, the field 'expose_foo' from Privacy will be used.
+    This behavior can be overwritten with the 'privacy_field' kwarg.
+    """
+
+    def __init__(self, **kwargs):
+        self.field_name = kwargs.pop('field_name', None)
+        defualt_privacy_field = 'expose_{}'.format(self.field_name)
+        self.privacy_field = kwargs.pop('privacy_field', defualt_privacy_field)
+        super(ExposableUserField, self).__init__(**kwargs)
+
+    def get_attribute(self, obj):
+        return obj
+
+    def to_representation(self, obj):
+        privacy = Privacy.objects.get(user=obj)
+        expose = getattr(privacy, self.privacy_field)
+        if expose:
+            return getattr(obj, self.field_name)
+        return None
+
+
 class PublicProfileSerializer(serializers.ModelSerializer):
-    nickname = serializers.SerializerMethodField()
-    online_mail = serializers.SerializerMethodField()
-    phone_number = serializers.SerializerMethodField()
+    address = ExposableUserField(field_name='address')
+    nickname = ExposableUserField(field_name='nickname')
+    email = ExposableUserField(field_name='email')
+    phone_number = ExposableUserField(field_name='phone_number')
+    zip_code = ExposableUserField(field_name='zip_code', privacy_field='expose_address')
+
+    positions = PositionSerializer(many=True)
+    special_positions = SpecialPositionSerializer(many=True)
 
     class Meta:
         model = User
         fields = (
-            "username", "nickname", "first_name", "last_name", "phone_number", "online_mail"
+            "id",
+            "username",
+            "nickname",
+            "first_name",
+            "last_name",
+            "phone_number",
+            "online_mail",
+            "address",
+            "zip_code",
+            "email",
+            "website",
+            "github",
+            "linkedin",
+            "ntnu_username",
+            "field_of_study",
+            "year",
+            "bio",
+            "positions",
+            "special_positions",
+            "image",
+            "started_date",
         )
-
-    def get_nickname(self, object):
-        expose_nickname = Privacy.objects.get(user=object).expose_nickname
-        if expose_nickname:
-            return object.nickname
-        else:
-            return ""
-
-    def get_online_mail(self, object):
-        expose_mail = Privacy.objects.get(user=object).expose_email
-        if expose_mail:
-            return object.online_mail
-        else:
-            return ""
-
-    def get_phone_number(self, object):
-        expose_phone_number = Privacy.objects.get(user=object).expose_phone_number
-        if expose_phone_number:
-            return object.phone_number
-        else:
-            return ""
 
 
 class PrivacySerializer(serializers.ModelSerializer):

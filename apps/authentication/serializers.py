@@ -1,7 +1,14 @@
 from rest_framework import serializers
 
+from apps.authentication.models import Email
 from apps.authentication.models import OnlineUser as User
 from apps.authentication.models import Position, SpecialPosition
+
+
+class UserNameSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('first_name', 'last_name', 'email', 'username',)
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -28,3 +35,10 @@ class SpecialPositionSerializer(serializers.ModelSerializer):
     class Meta:
         model = SpecialPosition
         fields = ("since_year", "position")
+
+
+class EmailSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Email
+        fields = ('email', 'primary', 'verified',)
