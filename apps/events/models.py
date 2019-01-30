@@ -922,7 +922,7 @@ class Attendee(models.Model):
                 'event': self.event,
                 'admin': admin_user,
                 'admin_id': admin_user.id,
-                'time': timezone.now().strftime('%m. %b %H:%M:%S')
+                'time': timezone.now().strftime('%d. %b %H:%M:%S')
             })
 
             to_email = self.event.event.feedback_mail()
