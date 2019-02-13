@@ -53,6 +53,11 @@ Kontakt oss - Online
 							</div>
 							{{ field|addclass:"form-control" }}
 							<hr>
+						{% elif field.id_for_label == "id_contact_checkbox" %}
+							<label id ="is_anon" for="is_anon">
+								{{ field }}
+								Ønsker å være anonym	
+							</label>
 						{% elif field.id_for_label == "id_captcha" %}
 							<div id=captcha>
 								{{ field }}
