@@ -48,5 +48,6 @@ OW4_GSUITE_SYNC = {
         'ekskom': 'ekskom',
         'itex' : 'itex',
         'velkom': 'velkom',
+        'interessegrupper': 'interessegrupper',
     }
 }
