@@ -8,8 +8,10 @@ class ContactForm(forms.Form):
                     )
     contact_receiver = forms.ChoiceField(required=True, label="Hvem ønsker du å kontakte?", choices=mail_choices)
     contact_checkbox = forms.BooleanField(required=False)
-    contact_name = forms.CharField(required=False, widget=forms.TextInput({"placeholder": "Navn"}))
-    contact_email = forms.EmailField(required=False, widget=forms.TextInput({"placeholder": "Epostadresse"}))
+    contact_name = forms.CharField(required=False, widget=forms.TextInput({"placeholder": "Navn",
+                                                                           "required": True}))
+    contact_email = forms.EmailField(required=False, widget=forms.TextInput({"placeholder": "Epostadresse",
+                                                                             "required": True}))
     content = forms.CharField(required=True, widget=forms.Textarea({"placeholder": "Din melding"}))
     captcha = ReCaptchaField(error_messages={'required': ('Du klarte ikke captchaen! Er du en bot?'),
                                              'invalid': ('Du klarte ikke captchaen! Er du en bot?')})
