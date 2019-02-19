@@ -15,9 +15,9 @@ class ContactForm(forms.Form):
                                              'invalid': ('Du klarte ikke captchaen! Er du en bot?')})
 
     def clean(self):
-        name = self.cleaned_data['contact_name']
-        is_anon = self.cleaned_data['contact_checkbox']
-        email = self.cleaned_data['contact_email']
+        name = self.cleaned_data.get('contact_name')
+        is_anon = self.cleaned_data.get('contact_checkbox')
+        email = self.cleaned_data.get('contact_email')
 
         if not (name and email) and not is_anon:
             raise forms.ValidationError(
