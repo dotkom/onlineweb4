@@ -20,7 +20,7 @@ class ContactForm(forms.Form):
         name = self.cleaned_data.get('contact_name')
         is_anon = self.cleaned_data.get('contact_checkbox')
         email = self.cleaned_data.get('contact_email')
- 
+
         if not (name and email) and not is_anon:
             error_msg = "Must be filled"
             self.add_error('contact_name', error_msg)
