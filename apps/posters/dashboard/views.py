@@ -32,8 +32,9 @@ def index(request):
 
     # View to show if user not in committee, but wanting to see own orders
     if not has_view_all_perms(request.user):
-        context['your_orders'] = [x for x in Poster.objects.filter(ordered_by=request.user)
-                                  if request.user.has_perm('view_poster_order', x)]
+        context['your_orders'] = [x for x in Poster.objects.all()
+                                  if request.user.has_perm('view_poster_order', x)
+                                  and request.user in x.ordered_committee.user_set.all()]
         return render(request, 'posters/dashboard/index.html', context)
 
     orders = Poster.objects.all()
@@ -96,6 +97,7 @@ def add(request, order_type=0):
 
 @ensure_csrf_cookie
 @login_required
+@permission_required('posters.view_poster_order', (Poster, 'pk', 'order_id'), return_403=True)
 def edit(request, order_id=None):
     context = get_base_context(request)
     context['add_poster_form'] = AddPosterForm()
@@ -104,9 +106,6 @@ def edit(request, order_id=None):
         poster = get_object_or_404(Poster, pk=order_id)
     else:
         poster = order_id
-
-    if order_id and request.user != poster.ordered_by and 'proKom' not in request.user.groups.all():
-        raise PermissionDenied
 
     selected_form = EditPosterForm
 
@@ -134,7 +133,7 @@ def edit(request, order_id=None):
 
 @ensure_csrf_cookie
 @login_required
-@permission_required('view_poster_order', (Poster, 'pk', 'order_id'), return_403=True)
+@permission_required('posters.view_poster_order', (Poster, 'pk', 'order_id'), return_403=True)
 def detail(request, order_id=None):
 
     if not order_id:
