@@ -10,7 +10,7 @@ class ContactForm(forms.Form):
     contact_checkbox = forms.BooleanField(required=False)
     contact_name = forms.CharField(required=False, widget=forms.TextInput({"placeholder": "Navn",
                                                                            "required": True}))
-    contact_email = forms.EmailField(required=False, widget=forms.TextInput({"placeholder": "Epostadresse",
+    contact_email = forms.EmailField(required=False, widget=forms.EmailInput({"placeholder": "Epostadresse",
                                                                              "required": True}))
     content = forms.CharField(required=True, widget=forms.Textarea({"placeholder": "Din melding"}))
     captcha = ReCaptchaField(error_messages={'required': ('Du klarte ikke captchaen! Er du en bot?'),
@@ -22,6 +22,6 @@ class ContactForm(forms.Form):
         email = self.cleaned_data.get('contact_email')
 
         if not (name and email) and not is_anon:
-            raise forms.ValidationError(
-                "Du må skrive ditt navn og mail hvis du ikke skal være anonym!"
-            )
+            error_msg = "Must be filled"
+            self.add_error('contact_name', error_msg)
+            self.add_error('contact_email', error_msg)
