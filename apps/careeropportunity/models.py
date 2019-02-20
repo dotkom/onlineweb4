@@ -25,6 +25,7 @@ class CareerOpportunity(models.Model):
         (2, 'Deltidsjobb'),
         (3, 'Sommerjobb/internship'),
         (4, 'Start-up'),
+        (6, 'Graduate'),
         (5, 'Annet'),
     )
 
