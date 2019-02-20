@@ -26,6 +26,7 @@ from apps.events.utils import get_types_allowed
 from apps.feedback.models import FeedbackRelation
 from apps.payment.models import Payment, PaymentPrice, PaymentRelation
 
+import logging
 
 @login_required
 @permission_required('events.view_event', return_403=True)
@@ -60,6 +61,8 @@ def past(request):
 @login_required
 @permission_required('events.view_event', return_403=True)
 def create_event(request):
+    logger = logging.getLogger(__name__)
+
     if not has_access(request):
         raise PermissionDenied
 
@@ -70,9 +73,11 @@ def create_event(request):
         if form.is_valid():
             cleaned = form.cleaned_data
 
+            #logger.warning(cleaned)
+            #logger.warning(get_types_allowed(request.user))
+
             if cleaned['event_type'] not in get_types_allowed(request.user):
-                messages.error(request, _(
-                    "Du har ikke tilgang til å lage arranngement av typen '%s'.") % cleaned['event_type'])
+                messages.error(request, _("Du har ikke tilgang til å lage arrangement av typen '%s'.") % cleaned['event_type'])
                 context['change_event_form'] = form
 
             else:
