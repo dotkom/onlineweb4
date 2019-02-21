@@ -1,8 +1,14 @@
 {% extends 'base.html' %}
+{% load render_bundle from webpack_loader %}
 
 {% block title %}
 Send epost til påmeldte - Online
 {% endblock title %}
+
+{% block js %}
+	{{ block.super }}
+	{% render_bundle 'eventsDetails' 'js' %}
+{% endblock %}
 
 {% block content %}
 <section>
@@ -14,7 +20,7 @@ Send epost til påmeldte - Online
                 </div>
             </div>
         </div>
-        <div class="row" style="font-size: 18px">
+        <div class="row" id="attendeesAmount">
             <div class="col-md-4">
 				Påmeldte: {{ all_attendees|length }}
             </div>
