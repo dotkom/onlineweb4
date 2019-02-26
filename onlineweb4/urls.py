@@ -3,9 +3,14 @@ from django.conf.urls import include, url
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.http import HttpResponse
+from django.urls import path
+from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import TemplateView
 from django_js_reverse.views import urls_js
+from graphene_django.views import GraphQLView
 from onlineweb4 import views
+
+from .schema import schema
 
 # URL config
 admin.autodiscover()
@@ -27,6 +32,9 @@ urlpatterns = [
     url(r'^#about$', TemplateView.as_view(template_name='frontpage.html'), name='about-link'),
     url(r'^#business$', TemplateView.as_view(template_name='frontpage.html'), name='business-link'),
     url(r'^#offline$', TemplateView.as_view(template_name='frontpage.html'), name='offline-link'),
+
+    # GraphQL
+    path('graphql', csrf_exempt(GraphQLView.as_view(graphiql=True, schema=schema))),
 
     # Online Notifier Owner Verification (checked yearly or so by Google)
     url(r'^google79c0b331a83a53de\.html$', lambda r: HttpResponse(

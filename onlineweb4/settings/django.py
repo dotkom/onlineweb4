@@ -167,6 +167,7 @@ INSTALLED_APPS = (
     'crispy_forms',
     'django_extensions',
     'django_dynamic_fixture',
+    'graphene_django',
     'oauth2_provider',
     'captcha',
     'pdfdocument',

@@ -38,6 +38,7 @@ dj-database-url==0.5.0          # Allows to configure databases using URLs
 python-decouple==3.1            # Configuration and settings management
 django-oidc-provider==0.6.1     # OpenID Connect Provider
 docutils==0.14                  # Allows django-admindocs to generate documentation
+graphene-django==2.2.0          # GraphQL
 requests-oauthlib==0.8.0        # Simplify OAuth2 connections to external apps
 oic==0.14.0			            # OpenID Connect Client
 freezegun==0.3.10               # Freezes time for tests
