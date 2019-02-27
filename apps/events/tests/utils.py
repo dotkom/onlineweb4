@@ -109,8 +109,3 @@ def add_to_trikom(user):
     trikom = Group.objects.get(name__iexact='trikom')
     add_event_permissions(trikom)
     return add_to_committee(user, group=trikom)
-
-#def add_to_realfagskjelleren(user):
-#    realfagskjelleren = Group.objects.get(name_iexact='Realfagskjelleren')
-#    add_event_permissions(realfagskjelleren)
-#    return add_to_committee(user, group=realfagskjelleren)
