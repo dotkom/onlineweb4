@@ -147,7 +147,7 @@ class RemoveFeedbackRelationView(DashboardObjectPermissionMixin, DeleteView):
     pk_url_kwarg = 'event_id'
 
     def get_success_url(self):
-        return reverse('event_details', kwargs={'event_id': self.kwargs.get('event_id')})
+        return reverse('dashboard_event_details', kwargs={'event_id': self.kwargs.get('event_id')})
 
 
 class AddPaymentView(DashboardPermissionMixin, CreateView):
