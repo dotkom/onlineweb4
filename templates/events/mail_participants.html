@@ -1,8 +1,14 @@
 {% extends 'base.html' %}
+{% load render_bundle from webpack_loader %}
 
 {% block title %}
 Send epost til påmeldte - Online
 {% endblock title %}
+
+{% block js %}
+	{{ block.super }}
+	{% render_bundle 'eventsDetails' 'js' %}
+{% endblock %}
 
 {% block content %}
 <section>
@@ -14,37 +20,15 @@ Send epost til påmeldte - Online
                 </div>
             </div>
         </div>
-        <div class="row">
+        <div class="row" id="attendeesAmount">
             <div class="col-md-4">
-                <div class="page-header">
-                    <h3>Alle påmeldte</h3>
-                </div>
-				{% for attendee in all_attendees %}
-					{{ attendee.user.email }},
-				{% empty %}
-					Ingen er påmeldt dette arrangementet.
-				{% endfor %}
+				Påmeldte: {{ all_attendees|length }}
             </div>
             <div class="col-md-4">
-                <div class="page-header">
-                    <h3>Påmeldte som er på venteliste</h3>
-                </div>
-				{% for attendee in attendees_on_waitlist %}
-					{{ attendee.user.email }},
-				{% empty %}
-					Ingen er på venteliste.
-				{% endfor %}
+                Påmeldte som er på venteliste: {{ attendees_on_waitlist|length}}
             </div>
             <div class="col-md-4">
-                <div class="page-header">
-                    <h3>Påmeldte som ikke har betalt</h3>
-                </div>
-				{% for attendee in attendees_not_paid %}
-					{{ attendee.user.email }},
-				{% empty %}
-					Alle som er meldt på har betalt
-				{% endfor %}
-            </div>
+				Påmeldte som ikke har betalt: {{ attendees_not_paid|length }}
         </div>
         <div class="row" style="margin-top:30px">
             <div class="col-md-6">
