@@ -19,7 +19,7 @@ class Order(models.Model):
     # Price of product when paid
     price = models.DecimalField(max_digits=10, decimal_places=2, blank=True)
     # Quantity of products ordered
-    quantity = models.PositiveIntegerField(default=1, validators=[MinValueValidator(1)])
+    quantity = models.PositiveIntegerField(validators=[MinValueValidator(1)])
 
     def total_price(self):
         return self.content_object.price * self.quantity
