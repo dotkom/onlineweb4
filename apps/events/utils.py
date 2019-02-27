@@ -39,7 +39,7 @@ def get_types_allowed(user):
         if group.name == 'Hovedstyret' or group.name == 'dotKom':
             types_allowed = [i + 1 for i in range(len(TYPE_CHOICES))]  # full access
             return types_allowed
-            
+
         if group.name == 'arrKom':
             types_allowed.append(1)  # sosialt
             types_allowed.append(4)  # utflukt
