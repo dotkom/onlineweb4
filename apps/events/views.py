@@ -371,8 +371,8 @@ def toggleShowAsAttending(request, event_id):
 class EventViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.ListModelMixin):
     serializer_class = EventSerializer
     permission_classes = (AllowAny,)
-    filter_class = EventDateFilter
-    filter_fields = ('event_start', 'event_end', 'id',)
+    filterset_class = EventDateFilter
+    filterset_fields = ('event_start', 'event_end', 'id',)
     ordering_fields = ('event_start', 'event_end', 'id', 'is_today', 'registration_filtered')
     ordering = ('-is_today', 'registration_filtered', 'id')
 
@@ -398,7 +398,7 @@ class AttendeeViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins
     authentication_classes = [OAuth2Authentication]
     permission_classes = [TokenHasScope]
     required_scopes = ['regme.readwrite']
-    filter_fields = ('event', 'attended',)
+    filterset_fields = ('event', 'attended',)
 
 
 class CompanyEventViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.ListModelMixin):

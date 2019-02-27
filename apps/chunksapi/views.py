@@ -11,5 +11,5 @@ class ChunkViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.Li
     queryset = Chunk.objects.all()
     model = Chunk
     serializer_class = ChunkSerializer
-    filter_fields = ('key', )
+    filterset_fields = ('key', )
     pagination_class = None

@@ -562,7 +562,7 @@ class PublicProfileSearchSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin,
     serializer_class = PublicProfileSerializer
     search_fields = ("username", "first_name", "last_name")
     filter_backends = (DjangoFilterBackend, filters.SearchFilter)
-    filter_class = PublicProfileFilter
+    filterset_class = PublicProfileFilter
     permission_classes = (permissions.IsAuthenticated,)
 
 

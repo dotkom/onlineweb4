@@ -16,7 +16,7 @@ class UserViewSet(mixins.CreateModelMixin,
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = (AllowAny,)
-    filter_fields = ('first_name', 'last_name', 'rfid',)
+    filterset_fields = ('first_name', 'last_name', 'rfid',)
 
     def create(self, request, *args, **kwargs):
         return super().create(request, *args, **kwargs)
