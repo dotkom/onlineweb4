@@ -22,7 +22,6 @@ from apps.dashboard.tools import (DashboardCreatePermissionMixin, DashboardObjec
 from apps.events.dashboard import forms as dashboard_forms
 from apps.events.dashboard.utils import event_ajax_handler
 from apps.events.models import AttendanceEvent, Attendee, CompanyEvent, Event, Reservation, Reservee
-from apps.events.utils import get_types_allowed
 from apps.feedback.models import FeedbackRelation
 from apps.payment.models import Payment, PaymentPrice, PaymentRelation
 
@@ -56,52 +55,6 @@ def past(request):
     context['events'] = events
 
     return render(request, 'events/dashboard/index.html', context)
-
-
-@login_required
-@permission_required('events.view_event', return_403=True)
-def create_event(request):
-    logger = logging.getLogger(__name__)
-
-    if not has_access(request):
-        raise PermissionDenied
-
-    context = get_base_context(request)
-
-    if request.method == 'POST':
-        form = dashboard_forms.ChangeEventForm(request.POST)
-        if form.is_valid():
-            cleaned = form.cleaned_data
-
-            #logger.warning(cleaned)
-            #logger.warning(get_types_allowed(request.user))
-
-            if cleaned['event_type'] not in get_types_allowed(request.user):
-                messages.error(request, _("Du har ikke tilgang til å lage arrangement av typen '%s'.") % cleaned['event_type'])
-                context['change_event_form'] = form
-
-            else:
-                # Create object, but do not commit to db. We need to add stuff.
-                event = form.save(commit=False)
-                # Add author
-                event.author = request.user
-                event.save()
-
-                messages.success(request, _("Arrangementet ble opprettet."))
-                return redirect('dashboard_event_details', event_id=event.id)
-
-        else:
-            context['change_event_form'] = form
-
-    if 'change_event_form' not in context.keys():
-        context['change_event_form'] = dashboard_forms.ChangeEventForm()
-
-    context['event'] = _('Nytt arrangement')
-    context['active_tab'] = 'details'
-
-    return render(request, 'events/dashboard/details.html', context)
-
-
 class CreateEventView(DashboardCreatePermissionMixin, CreateView):
     model = Event
     form_class = dashboard_forms.CreateEventForm
@@ -194,7 +147,7 @@ class RemoveFeedbackRelationView(DashboardObjectPermissionMixin, DeleteView):
     pk_url_kwarg = 'event_id'
 
     def get_success_url(self):
-        return reverse('dashboard_event_details', kwargs={'event_id': self.kwargs.get('event_id')})
+        return reverse('event_details', kwargs={'event_id': self.kwargs.get('event_id')})
 
 
 class AddPaymentView(DashboardPermissionMixin, CreateView):
