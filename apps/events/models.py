@@ -37,7 +37,7 @@ TYPE_CHOICES = (
     (5, 'Ekskursjon'),
     (6, 'Internt'),
     (7, 'Annet'),
-    (8, 'Realfagskjelleren'),
+    (8, 'Realfagskjelleren')
 )
 
 
@@ -707,6 +707,7 @@ class AttendanceEvent(models.Model):
         future_response = {}
         errors = []
 
+        for response in responses:
             if response['status']:
                 return response
             elif 'offset' in response:
@@ -718,7 +719,6 @@ class AttendanceEvent(models.Model):
             else:
                 errors.append(response)
 
-        for response in responses:
         if future_response:
             return future_response
         if smallest_offset > timezone.now() and offset_response:
