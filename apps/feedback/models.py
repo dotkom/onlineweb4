@@ -193,6 +193,10 @@ class Feedback(models.Model):
         default=True,
         help_text=_('En boks med ekstra informasjon vil bli vist til bedriften')
     )
+    available = models.BooleanField(
+        _('Vis feedbackskjemaet'),
+        default=True,
+        help_text=_('Dette brukes til å skjule ubrukte skjemaer, lager du et nytt, så ignorer denne.'))
 
     @property
     def ratingquestions(self):

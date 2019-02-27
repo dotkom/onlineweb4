@@ -5,7 +5,7 @@ from django import forms
 from apps.dashboard.forms import HTML5RequiredMixin
 from apps.dashboard.widgets import DatePickerInput, DatetimePickerInput, multiple_widget_generator
 from apps.events.models import AttendanceEvent, CompanyEvent, Event, Reservation
-from apps.feedback.models import FeedbackRelation
+from apps.feedback.models import Feedback, FeedbackRelation
 from apps.gallery.widgets import SingleImageInput
 from apps.payment.models import Payment, PaymentPrice
 
@@ -94,6 +94,12 @@ class ChangeAttendanceEventForm(forms.ModelForm, HTML5RequiredMixin):
 
 
 class CreateFeedbackRelationForm(forms.ModelForm, HTML5RequiredMixin):
+
+    def __init__(self, *args, **kwargs):
+        super(CreateFeedbackRelationForm, self).__init__(*args, **kwargs)
+        feedback = Feedback.objects.filter(available=True)
+        self.fields['feedback'].queryset = feedback
+
     class Meta(object):
         model = FeedbackRelation
         fields = ('feedback', 'deadline', 'gives_mark')
