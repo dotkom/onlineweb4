@@ -4,7 +4,8 @@ from django.test import TestCase
 from django.urls import reverse
 from django.utils import timezone
 from django_dynamic_fixture import G
-from oidc_provider.models import CLIENT_TYPE_CHOICES, RESPONSE_TYPE_CHOICES, Client, Token
+from oidc_provider.models import (CLIENT_TYPE_CHOICES, RESPONSE_TYPE_CHOICES, Client, ResponseType,
+                                  Token)
 
 from apps.authentication.models import Email, OnlineUser
 from apps.oauth2_provider.test import OAuth2TestCase
@@ -32,12 +33,15 @@ class UserinfoTestCase(OAuth2TestCase):
 
 class UserinfoOIDCTestCase(TestCase):
     def setUp(self):
+        id_token_response = ResponseType.objects.create(
+            value=RESPONSE_TYPE_CHOICES[1]
+        )
         self.oidc_client = Client.objects.create(
             client_type=CLIENT_TYPE_CHOICES[1],
             client_id='123',
-            response_type=RESPONSE_TYPE_CHOICES[0],
             _redirect_uris='http://localhost'
         )
+        self.oidc_client.response_types.add(id_token_response)
 
     def test_get_userinfo(self):
         user = G(OnlineUser)
