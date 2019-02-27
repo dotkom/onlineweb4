@@ -25,8 +25,6 @@ from apps.events.models import AttendanceEvent, Attendee, CompanyEvent, Event, R
 from apps.feedback.models import FeedbackRelation
 from apps.payment.models import Payment, PaymentPrice, PaymentRelation
 
-import logging
-
 @login_required
 @permission_required('events.view_event', return_403=True)
 def index(request):
