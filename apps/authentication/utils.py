@@ -46,7 +46,7 @@ def create_online_mail_aliases():
         i = ''
         while True:
             # Start with a suggestion that is only lower case name replaced spaces with dots
-            suggestion = re.sub("\s+", ".", name)
+            suggestion = re.sub(r"\s+", ".", name)
             # Suggestion now contains only lowercase letters, dots and possibly other chars
             # Like dashes. The following regex is a catch-all and removes them.
             suggestion = re.sub(r'[^a-z.]', "", suggestion)
