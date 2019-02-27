@@ -22,12 +22,18 @@ def _handle_poster_add(request, form, order_type):
     poster.order_type = order_type
 
     poster.save()
+    ordered_committee = form.cleaned_data['ordered_committee']
 
     # Let this user have permissions to show this order
     UserObjectPermission.objects.assign_perm('view_poster_order', request.user, poster)
     GroupObjectPermission.objects.assign_perm(
         'view_poster_order',
         Group.objects.get(name='proKom'),
+        poster
+    )
+    GroupObjectPermission.objects.assign_perm(
+        'view_poster_order',
+        ordered_committee,
         poster
     )
 
