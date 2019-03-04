@@ -185,7 +185,7 @@ class Payment(models.Model):
         if self._is_type(AttendanceEvent):
             attendance_event = self.content_object
             if attendance_event.unattend_deadline < timezone.now():
-                return False, _("Fristen for og melde seg av har utgått")
+                return False, _("Fristen for å melde seg av har utgått")
             if len(Attendee.objects.filter(event=attendance_event, user=payment_relation.user)) == 0:
                 return False, _("Du er ikke påmeldt dette arrangementet.")
             if attendance_event.event.event_start < timezone.now():
