@@ -664,7 +664,7 @@ class AttendanceEvent(models.Model):
         # Is suspended
         if self.is_suspended(user):
             response['status'] = False
-            response['message'] = _("Du er suspandert og kan ikke melde deg på.")
+            response['message'] = _("Du er suspendert og kan ikke melde deg på.")
             response['status_code'] = 402
 
             return response

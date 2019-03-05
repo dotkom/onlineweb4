@@ -83,7 +83,7 @@ def _handle_waitlist_bump_payment(payment, attendees):
 
     elif payment.payment_type == 2:  # Deadline
         if payment.deadline > extended_deadline:  # More than 2 days left of payment deadline
-            message += "Dette arrangementet krever betaling og fristen for og betale er %s" \
+            message += "Dette arrangementet krever betaling og fristen for å betale er %s" \
                        % (payment.deadline.strftime('%-d %B %Y kl. %H:%M'))
         else:  # The deadline is in less than 2 days
             for attendee in attendees:
@@ -336,7 +336,7 @@ def handle_attend_event_payment(event, user):
             deadline = payment.deadline
 
         # Send notification about payment to user by mail
-        subject = '[%s] Husk å betale for og fullføre påmeldingen til arrangementet.' % event.title
+        subject = '[%s] Husk å betale for å fullføre påmeldingen til arrangementet.' % event.title
 
         content = render_to_string('events/email/payment_reminder.txt', {
             'event': event.title,
