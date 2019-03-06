@@ -3,7 +3,7 @@ from django.contrib.contenttypes.models import ContentType
 from django_dynamic_fixture import G
 from guardian.shortcuts import assign_perm, get_perms_for_model
 
-from apps.authentication.models import OnlineUser
+from apps.authentication.models import Email, OnlineUser
 from apps.payment.models import Payment, PaymentDelay, PaymentRelation
 
 from ..models import TYPE_CHOICES, AttendanceEvent, Attendee, Event
@@ -60,7 +60,9 @@ def add_payment_delay(payment, user):
 
 
 def generate_user(username):
-    return G(OnlineUser, username=username, ntnu_username=username)
+    user = G(OnlineUser, username=username, ntnu_username=username)
+    G(Email, user=user)
+    return user
 
 
 def generate_attendee(event, username):
