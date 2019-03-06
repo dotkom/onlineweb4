@@ -37,6 +37,7 @@ TYPE_CHOICES = (
     (5, 'Ekskursjon'),
     (6, 'Internt'),
     (7, 'Annet'),
+    (8, 'Realfagskjelleren')
 )
 
 

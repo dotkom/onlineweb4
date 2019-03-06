@@ -140,7 +140,7 @@ class EventsContainer extends Component {
   fetchEventsByType(eventType) {
     let apiUrl = `${this.API_URL}&format=json&event_type=`;
     if (eventType === 'other') {
-      apiUrl += '4,5,6,7';
+      apiUrl += '4,5,6,7,8';
     } else {
       apiUrl += eventType;
     }

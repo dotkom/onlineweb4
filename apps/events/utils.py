@@ -39,6 +39,7 @@ def get_types_allowed(user):
         if group.name == 'Hovedstyret' or group.name == 'dotKom':
             types_allowed = [i + 1 for i in range(len(TYPE_CHOICES))]  # full access
             return types_allowed
+
         if group.name == 'arrKom':
             types_allowed.append(1)  # sosialt
             types_allowed.append(4)  # utflukt
@@ -51,6 +52,9 @@ def get_types_allowed(user):
 
         if group.name == 'eksKom':
             types_allowed.append(5)  # ekskursjon
+
+        if group.name == 'Realfagskjelleren':
+            types_allowed.append(8)  # Realfagskjelleren
 
     return types_allowed
 
@@ -410,6 +414,8 @@ def get_organizer_by_event_type(event_type):
             return Group.objects.get(name__iexact='arrkom')
         elif event_type == TYPE_CHOICES[7][0]:
             return Group.objects.get(name__iexact='trikom')
+        elif event_type == TYPE_CHOICES[8][0]:
+            return Group.objects.get(name__iexact='Realfagskjelleren')
     except Group.DoesNotExist:
         logger.warning('Group for event type "{}" does not exist.'.format(event_type))
 
