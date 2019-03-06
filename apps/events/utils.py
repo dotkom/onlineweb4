@@ -344,7 +344,7 @@ def handle_attend_event_payment(event, user):
             'price': payment.price().price
         })
 
-        EmailMessage(subject, content, event.feedback_mail(), [user.get_email]).send()
+        EmailMessage(subject, content, event.feedback_mail(), [user.get_email().email]).send()
 
 
 def handle_mail_participants(event, _from_email, _to_email_value, subject, _message,
