@@ -114,6 +114,10 @@ class Event(models.Model):
     """Event type. Used mainly for filtering"""
     organizer = models.ForeignKey(Group, verbose_name=_('arrangør'), blank=True, null=True, on_delete=SET_NULL)
     """Committee responsible for organizing the event"""
+    visible = models.BooleanField(
+        _('Vis arrangementet utenfor Dashboard/admin-panelet'),
+        default=True,
+        help_text='Denne brukes primært for å skjule eksisterende eventer.')
 
     feedback = GenericRelation(FeedbackRelation)
 
@@ -169,7 +173,7 @@ class Event(models.Model):
             return True
         if not user:
             return False
-        return restriction.has_access(user)
+        return restriction.has_access(user) if self.visible else False
 
     @property
     def slug(self):

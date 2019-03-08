@@ -50,7 +50,7 @@ def details(request, event_id, event_slug):
     event = get_object_or_404(Event, pk=event_id)
 
     # Restricts access to the event if it is group restricted
-    if not event.can_display(request.user):
+    if not event.can_display(request.user) or not event.visible:
         messages.error(request, "Du har ikke tilgang til dette arrangementet.")
         return index(request)
 
@@ -204,7 +204,7 @@ def _search_indexed(request, query, filters):
     if filters['myevents'] == 'true':
         kwargs['attendance_event__attendees__user'] = request.user
 
-    events = Event.objects.filter(**kwargs).order_by(order_by).prefetch_related(
+    events = Event.objects.filter(visible=True, **kwargs).order_by(order_by).prefetch_related(
         'attendance_event', 'attendance_event__attendees', 'attendance_event__reserved_seats',
         'attendance_event__reserved_seats__reservees')
 
@@ -382,7 +382,8 @@ class EventViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.Li
             event has NO group restriction OR user having access to restricted event
         """
         return Event.by_registration.filter(
-            Q(group_restriction__isnull=True) | Q(group_restriction__groups__in=self.request.user.groups.all())). \
+            (Q(group_restriction__isnull=True) | Q(group_restriction__groups__in=self.request.user.groups.all())) &
+            Q(visible=True)). \
             distinct()
 
 
