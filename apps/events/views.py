@@ -16,6 +16,7 @@ from django.urls import reverse
 from django.utils import timezone
 from django.utils.translation import ugettext as _
 # API v1
+from guardian.shortcuts import get_objects_for_user
 from oauth2_provider.contrib.rest_framework import OAuth2Authentication, TokenHasScope
 from rest_framework import mixins, status, views, viewsets
 from rest_framework.permissions import AllowAny
@@ -394,12 +395,20 @@ class AttendanceEventViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin,
 
 
 class AttendeeViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.ListModelMixin):
-    queryset = Attendee.objects.all()
     serializer_class = AttendeeSerializer
     authentication_classes = [OAuth2Authentication]
     permission_classes = [TokenHasScope]
     required_scopes = ['regme.readwrite']
     filter_fields = ('event', 'attended',)
+
+    def get_queryset(self):
+        allowed_events = get_objects_for_user(
+            self.request.user,
+            'events.change_event',
+            accept_global_perms=False
+        )
+        attendance_events = AttendanceEvent.objects.filter(event__in=allowed_events)
+        return Attendee.objects.filter(event__in=attendance_events)
 
 
 class CompanyEventViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.ListModelMixin):
