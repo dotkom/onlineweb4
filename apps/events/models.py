@@ -175,7 +175,7 @@ class Event(models.Model):
             return True
         if not user:
             return False
-        return restriction.has_access(user) if self.visible else False
+        return restriction.has_access(user)
 
     @property
     def slug(self):
