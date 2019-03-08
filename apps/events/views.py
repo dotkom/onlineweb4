@@ -50,7 +50,7 @@ def details(request, event_id, event_slug):
     event = get_object_or_404(Event, pk=event_id)
 
     # Restricts access to the event if it is group restricted
-    if not event.can_display(request.user) or not event.visible:
+    if not event.can_display(request.user):
         messages.error(request, "Du har ikke tilgang til dette arrangementet.")
         return index(request)
 

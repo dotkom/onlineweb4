@@ -169,6 +169,8 @@ class Event(models.Model):
 
     def can_display(self, user):
         restriction = GroupRestriction.objects.filter(event=self).first()
+        if not self.visible:
+            return False
         if not restriction:
             return True
         if not user:
