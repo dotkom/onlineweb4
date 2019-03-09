@@ -402,6 +402,8 @@ class AttendeeViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins
     filter_fields = ('event', 'attended',)
 
     def get_queryset(self):
+        if self.request.user.is_superuser:
+            return Attendee.objects.all()
         allowed_events = get_objects_for_user(
             self.request.user,
             'events.change_event',
