@@ -1,10 +1,11 @@
 {% load addcss %}
+{% load crispy_forms_field %}
 <form method="POST" id="create-event-form">
   {% csrf_token %}
   {% for field in form %}
     <div class="form-group">
-      <label for="{{ field.auto_id }}">{{ field.label }}</label>
-      {{ field|addclass:"form-control" }}{{ field.errors }}
+      {{ field.label_tag }}
+      {% if not field|is_checkbox %}{{ field|addclass:"form-control" }}{% else %}{{ field }}{% endif %}{{ field.errors }}
     </div>
   {% endfor %}
 

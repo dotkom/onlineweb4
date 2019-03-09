@@ -379,7 +379,7 @@ class EventViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.Li
     def get_queryset(self):
         """
         :return: Queryset filtered by these requirements:
-            event has NO group restriction OR user having access to restricted event
+            event is visible AND (event has NO group restriction OR user having access to restricted event)
         """
         return Event.by_registration.filter(
             (Q(group_restriction__isnull=True) | Q(group_restriction__groups__in=self.request.user.groups.all())) &

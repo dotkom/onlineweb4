@@ -115,9 +115,9 @@ class Event(models.Model):
     organizer = models.ForeignKey(Group, verbose_name=_('arrangør'), blank=True, null=True, on_delete=SET_NULL)
     """Committee responsible for organizing the event"""
     visible = models.BooleanField(
-        _('Vis arrangementet utenfor Dashboard/admin-panelet'),
+        _('Vis arrangementet utenfor Dashboard og Adminpanelet'),
         default=True,
-        help_text='Denne brukes primært for å skjule eksisterende eventer.')
+        help_text=_('Denne brukes for å skjule eksisterende arrangementer.'))
 
     feedback = GenericRelation(FeedbackRelation)
 

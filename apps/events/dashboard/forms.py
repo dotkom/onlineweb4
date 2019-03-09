@@ -15,7 +15,7 @@ class CreateEventForm(forms.ModelForm, HTML5RequiredMixin):
         model = Event
         fields = (
             'title', 'event_start', 'event_end', 'location', 'ingress_short', 'ingress', 'description', 'event_type',
-            'image', 'organizer',
+            'image', 'organizer', 'visible',
         )
 
         img_fields = [('image', {'id': 'responsive-image-id'})]
@@ -61,7 +61,7 @@ class ChangeEventForm(forms.ModelForm, HTML5RequiredMixin):
         model = Event
         fields = (
             'title', 'event_type', 'event_start', 'event_end', 'location', 'ingress_short', 'ingress', 'description',
-            'image'
+            'image', 'visible',
         )
 
         dtp_fields = [('event_start', {}), ('event_end', {})]
