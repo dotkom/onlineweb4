@@ -396,21 +396,22 @@ class AttendanceEventViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin,
 
 class AttendeeViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.ListModelMixin):
     serializer_class = AttendeeSerializer
-    authentication_classes = [OAuth2Authentication]
-    permission_classes = [TokenHasScope]
-    required_scopes = ['regme.readwrite']
     filter_fields = ('event', 'attended',)
 
-    def get_queryset(self):
-        if self.request.user.is_superuser:
+    @staticmethod
+    def _get_allowed_attendees(user):
+        if user.is_superuser:
             return Attendee.objects.all()
         allowed_events = get_objects_for_user(
-            self.request.user,
+            user,
             'events.change_event',
             accept_global_perms=False
         )
         attendance_events = AttendanceEvent.objects.filter(event__in=allowed_events)
         return Attendee.objects.filter(event__in=attendance_events)
+
+    def get_queryset(self):
+        return self._get_allowed_attendees(self.request.user)
 
 
 class CompanyEventViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.ListModelMixin):
