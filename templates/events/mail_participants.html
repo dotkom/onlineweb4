@@ -7,6 +7,7 @@ Send epost til påmeldte - Online
 
 {% block js %}
 	{{ block.super }}
+	{% render_bundle 'eventsMail' %}
 {% endblock %}
 
 {% block content %}
@@ -19,7 +20,7 @@ Send epost til påmeldte - Online
                 </div>
             </div>
         </div>
-        <div class="row" id="attendeesAmount">
+        <div class="row attendees-amount">
             <div class="col-md-4">
 				Påmeldte: {{ all_attendees|length }}
             </div>
@@ -29,7 +30,7 @@ Send epost til påmeldte - Online
             <div class="col-md-4">
 				Påmeldte som ikke har betalt: {{ attendees_not_paid|length }}
         </div>
-        <div class="row" style="margin-top:30px">
+        <div class="row send-mail-form">
             <div class="col-md-6">
                 <h3>Send epost direkte</h3>
                 <form method="post" onsubmit="return confirm('Har du dobbeltsjekket informasjonen og vil sende denne eposten?');">
@@ -64,7 +65,7 @@ Send epost til påmeldte - Online
                         <label for="message">Melding</label>
                         <textarea id="message" name="message" class="form-control" rows="5"></textarea>
                     </div>
-                    <p style="padding:10px; text-align:center" class="alert-warning">Vi legger automatisk på signatur for deg, skriv BARE din beskjed.</p>
+                    <p class="alert-warning">Vi legger automatisk på signatur for deg, skriv BARE din beskjed.</p>
                     <input name="submit" class="btn btn-success" type="submit" value="Send" />
                 </form>
             </div>
