@@ -74,6 +74,17 @@ class EventsDetailRestricted(EventsTestMixin, TestCase):
         self.assertInMessages(
             "Du har ikke tilgang til dette arrangementet.", response)
 
+    def test_group_hidden_no_access(self):
+        self.event = G(Event, visible=False)
+        self.event_url = reverse(
+            'events_details', args=(self.event.id, self.event.slug))
+
+        response = self.client.get(self.event_url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertInMessages(
+            "Du har ikke tilgang til dette arrangementet.", response)
+
 
 class EventsDetailPayment(EventsTestMixin, TestCase):
     def test_payment_logged_out(self):

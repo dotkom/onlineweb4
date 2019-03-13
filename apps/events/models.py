@@ -114,6 +114,10 @@ class Event(models.Model):
     """Event type. Used mainly for filtering"""
     organizer = models.ForeignKey(Group, verbose_name=_('arrangør'), blank=True, null=True, on_delete=SET_NULL)
     """Committee responsible for organizing the event"""
+    visible = models.BooleanField(
+        _('Vis arrangementet utenfor Dashboard og Adminpanelet'),
+        default=True,
+        help_text=_('Denne brukes for å skjule eksisterende arrangementer.'))
 
     feedback = GenericRelation(FeedbackRelation)
 
@@ -165,6 +169,8 @@ class Event(models.Model):
 
     def can_display(self, user):
         restriction = GroupRestriction.objects.filter(event=self).first()
+        if not self.visible:
+            return False
         if not restriction:
             return True
         if not user:

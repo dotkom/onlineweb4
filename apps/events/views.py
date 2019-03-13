@@ -204,7 +204,7 @@ def _search_indexed(request, query, filters):
     if filters['myevents'] == 'true':
         kwargs['attendance_event__attendees__user'] = request.user
 
-    events = Event.objects.filter(**kwargs).order_by(order_by).prefetch_related(
+    events = Event.objects.filter(visible=True, **kwargs).order_by(order_by).prefetch_related(
         'attendance_event', 'attendance_event__attendees', 'attendance_event__reserved_seats',
         'attendance_event__reserved_seats__reservees')
 
@@ -379,10 +379,11 @@ class EventViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.Li
     def get_queryset(self):
         """
         :return: Queryset filtered by these requirements:
-            event has NO group restriction OR user having access to restricted event
+            event is visible AND (event has NO group restriction OR user having access to restricted event)
         """
         return Event.by_registration.filter(
-            Q(group_restriction__isnull=True) | Q(group_restriction__groups__in=self.request.user.groups.all())). \
+            (Q(group_restriction__isnull=True) | Q(group_restriction__groups__in=self.request.user.groups.all())) &
+            Q(visible=True)). \
             distinct()
 
 
