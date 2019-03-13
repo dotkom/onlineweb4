@@ -79,6 +79,9 @@ const webpackConfig = {
     eventsDetails: [
       './assets/events/details/index',
     ],
+    eventsMail: [
+      './assets/events/mail/index',
+    ],
     feedback: [
       './assets/feedback/index',
     ],
