@@ -470,6 +470,12 @@ class AttendViewSet(views.APIView):
     @staticmethod
     def _authorize_user(user, event_id):
         try:
+            if not event_id:
+                return Response({
+                    'message': 'Arrangementets id er ikke oppgitt',
+                    'attend_status': 42
+                    }, status=status.HTTP_400_BAD_REQUEST)
+
             event_object = Event.objects.get(pk=event_id)
             if not user.is_authenticated:
                 return Response({

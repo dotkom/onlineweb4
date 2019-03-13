@@ -1,5 +1,6 @@
 import json
 
+from django.contrib.auth.models import Group
 from django.urls import reverse
 from django_dynamic_fixture import G
 from rest_framework import status
@@ -49,14 +50,15 @@ class AttendAPITestCase(OAuth2TestCase):
     scopes = ['read', 'write', 'regme.readwrite']
 
     def setUp(self):
-        self.user = G(OnlineUser, name='test_user')
+        self.committee = G(Group, name='arrKom')
+        self.user = G(OnlineUser, name='test_user', groups=[self.committee])
         self.access_token = self.generate_access_token(self.user)
         self.headers = {
             'format': 'json',
             'HTTP_AUTHORIZATION': 'Bearer ' + self.access_token.token,
         }
         self.url = reverse('event_attend')
-        self.event = generate_event()
+        self.event = generate_event(organizer=self.committee)
         self.attendee1 = generate_attendee(self.event, 'test1', '123')
         self.attendee2 = generate_attendee(self.event, 'test2', '321')
         self.attendees = [self.attendee1, self.attendee2]
@@ -237,3 +239,27 @@ class AttendAPITestCase(OAuth2TestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertFalse(self.attendees[0].attended)
         self.assertEqual(response.json()['attend_status'], 51)
+
+    def test_wrong_committee_registering_attendance(self):
+        wrong_committee = G(Group, name='bedKom')
+        self.committee.user_set.remove(self.user)
+        self.committee.save()
+        self.user.groups.add(wrong_committee)
+        self.user.save()
+
+        response = self.client.post(self.url, {
+            'event': self.event.id,
+            'username': self.attendee1.user.username,
+        }, **self.headers)
+
+        self.refresh_attendees()
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_not_authenticated_user_registering_attendance(self):
+        response = self.client.post(self.url, {
+            'event': self.event.id,
+            'username': self.attendee1.user.username,
+        }, headers={'format': 'json'})
+
+        self.refresh_attendees()
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
