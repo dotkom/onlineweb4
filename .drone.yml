@@ -82,7 +82,7 @@ pipeline:
     port: 22
     username: root
     key: ${SSH_KEY}
-    command_timeout: 600
+    command_timeout: 600s
     when:
       event: push
       branch: develop
