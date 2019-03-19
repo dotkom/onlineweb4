@@ -332,8 +332,17 @@ def mail_participants(request, event_id):
         subject = request.POST.get('subject')
         message = request.POST.get('message')
         images = [(image.name, image.read(), image.content_type) for image in request.FILES.getlist('image')]
-        mail_sent = handle_mail_participants(event, request.POST.get('from_email'), request.POST.get('to_email'),
-                                             subject, message, images, all_attendees, attendees_on_waitlist, attendees_not_paid)
+        mail_sent = handle_mail_participants(
+            event,
+            request.POST.get('from_email'),
+            request.POST.get('to_email'),
+            subject,
+            message,
+            images,
+            all_attendees,
+            attendees_on_waitlist,
+            attendees_not_paid
+        )
 
         if mail_sent:
             messages.success(request, _('Mailen ble sendt'))
