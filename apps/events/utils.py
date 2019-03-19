@@ -351,7 +351,7 @@ def handle_attend_event_payment(event, user):
         EmailMessage(subject, content, event.feedback_mail(), [user.get_email().email]).send()
 
 
-def handle_mail_participants(event, _from_email, _to_email_value, subject, _message,
+def handle_mail_participants(event, _from_email, _to_email_value, subject, _message, _image,
                              all_attendees, attendees_on_waitlist, attendees_not_paid):
     logger = logging.getLogger(__name__)
 
@@ -384,13 +384,13 @@ def handle_mail_participants(event, _from_email, _to_email_value, subject, _mess
     send_to_users = _to_email_options[_to_email_value][0]
 
     signature = '\n\nVennlig hilsen Linjeforeningen Online.\n(Denne eposten kan besvares til %s)' % from_email
-
     message = '%s%s' % (_message, signature)
 
     # Send mail
     try:
         email_addresses = [a.user.get_email().email for a in send_to_users]
-        _email_sent = EmailMessage(str(subject), str(message), from_email, [from_email], email_addresses).send()
+        _email_sent = EmailMessage(str(subject), str(message), from_email, [
+                                   from_email], email_addresses, attachments=_image).send()
         logger.info('Sent mail to %s for event "%s".' % (_to_email_options[_to_email_value][1], event))
         return _email_sent, all_attendees, attendees_on_waitlist, attendees_not_paid
     except ImproperlyConfigured as e:
