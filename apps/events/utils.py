@@ -384,7 +384,9 @@ def handle_mail_participants(event, _from_email, _to_email_value, subject, _mess
     send_to_users = _to_email_options[_to_email_value][0]
 
     signature = '\n\nVennlig hilsen Linjeforeningen Online.\n(Denne eposten kan besvares til %s)' % from_email
+
     message = '%s%s' % (_message, signature)
+
     # Send mail
     try:
         email_addresses = [a.user.get_email().email for a in send_to_users]
