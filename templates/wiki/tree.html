@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% load static %}
+{% load i18n wiki_tags %}
+{% load render_bundle from webpack_loader %}
+
+{% block title %}
+{% block wiki_pagetitle %}{% endblock %}
+{% endblock title %}
+
+{% block js %}
+    {{ block.super }}
+    <script src="{% static "wiki/js/jquery.min.js" %}"></script>
+    <script src="{% static "wiki/js/core.js" %}"></script>
+    <script src="{% static "wiki/bootstrap/js/bootstrap.min.js" %}"></script>
+    {% render_bundle 'wiki' 'js' %}
+{% endblock %}
+
+{% block styles %}
+    {{ block.super }}
+     <link href="{{ STATIC_URL }}wiki/bootstrap/css/wiki-bootstrap.min.css" rel="stylesheet">
+    {% render_bundle 'wiki' 'css' %}
+{% endblock %}
+
+{% block content %}
+    <section id="wiki-tree">
+        {% block wiki_body %}
+            <div class="container">
+                <!-- article.html -->
+                <h4>List of articles</h4>
+                <ul>
+                <!-- Need to get the first article (root) -->
+                {% url 'wiki:get' path=urlpath.root.path as rootpath %}
+                <li>
+                    <a href="{{ rootpath }}">
+                    {{ urlpath.root.article.current_revision.title }}
+                    </a>
+                </li>
+
+                <!-- Now get all the descendent articles of the root -->
+                {% for child in descendants %}
+                    <!-- Don't list articles marked for deletion -->
+                    {% if not child.is_deleted %}
+                    {% with ''|center:child.level as range %}
+                        {% for _ in range %}<ul>{% endfor %}
+                        {% url 'wiki:get' path=child.path as childpath %}
+                        <li>
+                        <a href="{{ childpath }}">
+                            {{ child.article.current_revision.title }}
+                        </a>
+                        </li>
+                        {% for _ in range %}</ul>{% endfor %}
+                    {% endwith %}
+                    {% endif %}
+                {% endfor %}
+                </ul>
+            </div>
+        {% endblock %}
+    </section>
+{% endblock %}
