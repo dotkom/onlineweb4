@@ -95,7 +95,7 @@ class PaymentReminder(Task):
         message += _("Dersom du har spørsmål kan du sende mail til ") + payment.responsible_mail()
         message += _("\n\nMvh\nLinjeforeningen Online")
 
-        logging.getLogger(__name__).warn(
+        logging.getLogger(__name__).warning(
             'Call to method that does nothing. Should it send a mail? Subject: %s' % subject
         )
 

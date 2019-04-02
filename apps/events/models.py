@@ -785,7 +785,7 @@ class AttendanceEvent(models.Model):
         except MultipleObjectsReturned:
             import logging
             logger = logging.getLogger(__name__)
-            logger.warn("Multiple payment objects connected to attendance event #%s." % self.pk)
+            logger.warning("Multiple payment objects connected to attendance event #%s." % self.pk)
             return self.get_payments()  # Sneaky hack, however, use get_payments for multiple
 
     def __str__(self):
