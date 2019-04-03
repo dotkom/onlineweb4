@@ -17,8 +17,6 @@ from django.utils import timezone
 from django.utils.translation import ugettext as _
 # API v1
 from guardian.shortcuts import get_objects_for_user
-from oauth2_provider.contrib.rest_framework import OAuth2Authentication, TokenHasScope
-from apps.oidc_provider.authentication import OidcOauth2Auth
 from rest_framework import mixins, status, views, viewsets
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
@@ -33,6 +31,7 @@ from apps.events.serializers import (AttendanceEventSerializer, AttendeeSerializ
                                      CompanyEventSerializer, EventSerializer)
 from apps.events.utils import (handle_attend_event_payment, handle_attendance_event_detail,
                                handle_event_ajax, handle_event_payment, handle_mail_participants)
+from apps.oidc_provider.authentication import OidcOauth2Auth
 from apps.payment.models import Payment, PaymentDelay, PaymentRelation
 
 from .utils import EventCalendar
@@ -424,7 +423,7 @@ class CompanyEventViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mi
 
 class AttendViewSet(views.APIView):
     authentication_classes = [OidcOauth2Auth]
-    
+
     @staticmethod
     def _validate_attend_params(rfid, username):
         logger = logging.getLogger(__name__)
