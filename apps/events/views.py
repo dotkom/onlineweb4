@@ -18,6 +18,7 @@ from django.utils.translation import ugettext as _
 # API v1
 from guardian.shortcuts import get_objects_for_user
 from oauth2_provider.contrib.rest_framework import OAuth2Authentication, TokenHasScope
+from apps.oidc_provider.authentication import OidcOauth2Auth
 from rest_framework import mixins, status, views, viewsets
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
@@ -396,9 +397,9 @@ class AttendanceEventViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin,
 
 class AttendeeViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.ListModelMixin):
     serializer_class = AttendeeSerializer
-    authentication_classes = [OAuth2Authentication]
-    permission_classes = [TokenHasScope]
-    required_scopes = ['regme.readwrite']
+    authentication_classes = [OidcOauth2Auth]
+    #permission_classes = [TokenHasScope]
+    #required_scopes = ['regme.readwrite']
     filter_fields = ('event', 'attended',)
 
     @staticmethod
@@ -424,9 +425,9 @@ class CompanyEventViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mi
 
 
 class AttendViewSet(views.APIView):
-    authentication_classes = [OAuth2Authentication]
-    permission_classes = [TokenHasScope]
-    required_scopes = ['regme.readwrite']
+    authentication_classes = [OidcOauth2Auth]
+    #permission_classes = [TokenHasScope]
+    #required_scopes = ['regme.readwrite']
 
     @staticmethod
     def _validate_attend_params(rfid, username):
