@@ -12,7 +12,7 @@ from apps.dashboard.tools import get_base_context, has_access
 
 
 @login_required
-@permission_required('companyprofile.view_company')
+@permission_required('companyprofile.show_company')
 def index(request):
     """
     This is the main companyprofile dashboard view
@@ -59,7 +59,7 @@ def new(request):
 
 
 @login_required
-@permission_required('companyprofile.view_company')
+@permission_required('companyprofile.show_company')
 def detail(request, pk):
     """
     Detailed company view per PK

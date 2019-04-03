@@ -76,7 +76,7 @@ class MembershipApproval(Approval):
         verbose_name = _("medlemskapssøknad")
         verbose_name_plural = _("medlemskapssøknader")
         permissions = (
-            ('view_membershipapproval', 'View membership approval'),
+            ('show_membershipapproval', 'Show membership approval'),
         )
 
 

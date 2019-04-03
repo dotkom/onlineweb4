@@ -14,7 +14,7 @@ from apps.dashboard.tools import get_base_context, has_access
 
 
 @login_required
-@permission_required('careeropportunity.view_careeropportunity', return_403=True)
+@permission_required('careeropportunity.show_careeropportunity', return_403=True)
 def index(request):
 
     if not has_access(request):

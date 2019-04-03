@@ -48,8 +48,8 @@ class ArticleURLTestCase(TestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-    def test_view_article_tag(self):
-        url = reverse('view_article_tag', args=('slug',))
+    def test_show_article_tag(self):
+        url = reverse('show_article_tag', args=('slug',))
 
         response = self.client.get(url)
 

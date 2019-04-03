@@ -40,7 +40,7 @@ class UnhandledImage(models.Model):
         verbose_name = _('Ubehandlet bilde')
         verbose_name_plural = _('Ubehandlede bilder')
         permissions = (
-            ('view_unhandledimage', _('View UnhandledImage')),
+            ('show_unhandledimage', _('Show UnhandledImage')),
         )
 
 
@@ -163,5 +163,5 @@ class ResponsiveImage(models.Model):
         verbose_name = _('Responsivt Bilde')
         verbose_name_plural = _('Responsive Bilder')
         permissions = (
-            ('view_responsiveimage', _('View ResponsiveImage')),
+            ('show_responsiveimage', _('Show ResponsiveImage')),
         )

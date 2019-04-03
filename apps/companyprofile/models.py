@@ -28,6 +28,6 @@ class Company(models.Model):
         verbose_name = _("Bedrift")
         verbose_name_plural = _("Bedrifter")
         permissions = (
-            ('view_company', 'View Company'),
+            ('show_company', 'Show Company'),
         )
         ordering = ('name',)

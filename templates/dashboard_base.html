@@ -32,7 +32,7 @@
                 <h4 class="center-text"><small>Velkommen</small><br />{{ request.user.first_name }}</h4>
                 <ul class="sidebar-menu">
                     {% block sidebar %}
-                    {% if 'events.view_event' in user_permissions %}
+                    {% if 'events.show_event' in user_permissions %}
                     <li class="treeview">
                         <a href="#">
                             <i class="fa fa-wheelchair blue"></i>
@@ -46,7 +46,7 @@
                         </ul>
                     </li>
                     {% endif %}
-                    {% if 'article.view_article' in user_permissions %}
+                    {% if 'article.show_article' in user_permissions %}
                     <li class="treeview">
                         <a href="#">
                             <i class="fa fa-file-text-o blue"></i>
@@ -67,7 +67,7 @@
                         </ul>
                     </li>
                     {% endif %}
-                    {% if 'authentication.view_onlineuser' in user_permissions %}
+                    {% if 'authentication.show_onlineuser' in user_permissions %}
                     <li class="treeview">
                         <a href="#">
                             <i class="fa fa-user blue"></i>
@@ -84,7 +84,7 @@
                         </ul>
                     </li>
                     {% endif %}
-                    {% if 'companyprofile.view_company' in user_permissions %}
+                    {% if 'companyprofile.show_company' in user_permissions %}
                     <li class="treeview">
                         <a href="#">
                             <i class="fa fa-money blue"></i> <span>Bedrifter</span>
@@ -98,7 +98,7 @@
                         </ul>
                     </li>
                     {% endif %}
-                    {% if 'gallery.view_responsiveimage' in user_permissions %}
+                    {% if 'gallery.show_responsiveimage' in user_permissions %}
                     <li class="treeview">
                         <a href="#">
                             <i class="fa fa-image blue"></i> <span>Bilder</span>
@@ -117,7 +117,7 @@
                                     <i class="fa fa-angle-double-right orange"></i> Oversikt
                                 </a>
                             </li>
-                            {% if 'gallery.view_unhandledimage' in user_permissions %}
+                            {% if 'gallery.show_unhandledimage' in user_permissions %}
                             <li>
                                 <a href="{% url 'gallery_dashboard:unhandled' %}">
                                     <i class="fa fa-angle-double-right orange"></i> Ubehandlet
@@ -158,7 +158,7 @@
                         </ul>
                     </li>
                     {% endif %}
-                    {% if 'careeropportunity.view_careeropportunity' in user_permissions %}
+                    {% if 'careeropportunity.show_careeropportunity' in user_permissions %}
                     <li class="treeview">
                         <a href="#">
                             <i class="fa fa-suitcase blue"></i> <span>Karrieremuligheter</span>
@@ -170,7 +170,7 @@
                         </ul>
                     </li>
                     {% endif %}
-                    {% if 'offline.view_issue' in user_permissions %}
+                    {% if 'offline.show_issue' in user_permissions %}
                     <li class="treeview">
                         <a href="#">
                             <i class="fa fa-plug blue"></i> <span>Offline</span>
@@ -198,7 +198,7 @@
                         </ul>
                     </li>
                     {% endif %}
-                    {% if 'marks.view_mark' in user_permissions %}
+                    {% if 'marks.show_mark' in user_permissions %}
                     <li class="treeview">
                         <a href="#">
                             <i class="fa fa-times-circle blue"></i> <span>Prikker</span>
@@ -226,7 +226,7 @@
                         </a>
                     </li>
                     {% endif %}
-                    {% if 'approval.view_membershipapproval' in user_permissions %}
+                    {% if 'approval.show_membershipapproval' in user_permissions %}
                     <li>
                         <a href="{% url 'approvals' %}">
                             <i class="fa fa-envelope-o blue"></i> <span>Søknader</span>
@@ -234,7 +234,7 @@
                         </a>
                     </li>
                     {% endif %}
-                    {% if 'feedback.view_feedback' in user_permissions %}
+                    {% if 'feedback.show_feedback' in user_permissions %}
                     <li class="treeview">
                         <a href="#">
                             <i class="fa fa-envelope blue"></i> <span>Tilbakemelding</span>
@@ -246,7 +246,7 @@
                         </ul>
                     </li>
                     {% endif %}
-                    {% if 'inventory.view_item' in user_permissions %}
+                    {% if 'inventory.show_item' in user_permissions %}
                     <li class="treeview">
                         <a href="#">
                             <i class="fa fa-archive blue"></i> <span>Varelager</span>

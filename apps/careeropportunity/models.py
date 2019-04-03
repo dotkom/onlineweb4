@@ -45,5 +45,5 @@ class CareerOpportunity(models.Model):
         verbose_name = _('karrieremulighet')
         verbose_name_plural = _('karrieremuligheter')
         permissions = (
-            ('view_careeropportunity', 'View CareerOpportunity'),
+            ('show_careeropportunity', 'Show CareerOpportunity'),
         )

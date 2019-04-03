@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 
 class Overview(DashboardPermissionMixin, TemplateView):
     template_name = 'webshop/dashboard/index.html'
-    permission_required = 'webshop.view_category'
+    permission_required = 'webshop.show_category'
 
 
 class Categories(DashboardPermissionMixin, TemplateView):
@@ -33,7 +33,7 @@ class Categories(DashboardPermissionMixin, TemplateView):
 class CategoryView(DashboardPermissionMixin, DetailView):
     model = Category
     template_name = 'webshop/dashboard/category.html'
-    permission_required = 'webshop.view_category'
+    permission_required = 'webshop.show_category'
 
 
 class CategoryCreate(DashboardPermissionMixin, CreateView):
@@ -69,7 +69,7 @@ class CategoryDelete(DashboardPermissionMixin, DeleteView):
 class ProductView(DashboardPermissionMixin, DetailView):
     model = Product
     template_name = 'webshop/dashboard/product.html'
-    permission_required = 'webshop.view_product'
+    permission_required = 'webshop.show_product'
 
 
 class ProductCreate(DashboardPermissionMixin, CreateView):
@@ -142,7 +142,7 @@ class ProductImage(DashboardPermissionMixin, DetailView):
 
 class Orders(DashboardPermissionMixin, ListView):
     template_name = 'webshop/dashboard/orders.html'
-    permission_required = 'webshop.view_order'
+    permission_required = 'webshop.show_order'
     queryset = OrderLine.objects.filter(paid=True)
     context_object_name = 'orders'
 

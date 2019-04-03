@@ -24,5 +24,5 @@ class Privacy(models.Model):
         verbose_name = _("personvern")
         verbose_name_plural = _("personvern")
         permissions = (
-            ('view_privacy', 'View Privacy'),
+            ('show_privacy', 'Show Privacy'),
         )

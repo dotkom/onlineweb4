@@ -118,9 +118,9 @@ def groups_detail(request, pk):
 
 
 @login_required
-@permission_required("authentication.view_allowedusername", return_403=True)
+@permission_required("authentication.show_allowedusername", return_403=True)
 def members_index(request):
-
+    
     """
     Index overview for allowedusernames in dashboard
     """
@@ -147,7 +147,7 @@ class UserListView(DashboardPermissionMixin, ListView):
     queryset = User.objects.all().exclude(id=-1)
     paginate_by = 25
     paginator_class = Paginator
-    permission_required = 'authentication.view_onlineuser'
+    permission_required = 'authentication.show_onlineuser'
     template_name = 'auth/dashboard/user_list.html'
 
 
@@ -156,7 +156,7 @@ class UserSearchView(DashboardPermissionMixin, SearchView):
     queryset = User.objects.all().exclude(id=-1)
     paginate_by = 25
     paginator_class = Paginator
-    permission_required = 'authentication.view_onlineuser'
+    permission_required = 'authentication.show_onlineuser'
     template_name = 'auth/dashboard/user_list.html'
     empty_query_redirect = reverse_lazy('user_list')
 
@@ -164,7 +164,7 @@ class UserSearchView(DashboardPermissionMixin, SearchView):
 class UserDetailView(DashboardPermissionMixin, DetailView):
     model = User
     context_object_name = 'user'
-    permission_required = 'authentication.view_onlineuser'
+    permission_required = 'authentication.show_onlineuser'
     pk_url_kwarg = 'user_id'
     template_name = 'auth/dashboard/user_detail.html'
 

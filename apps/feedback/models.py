@@ -50,7 +50,7 @@ class FeedbackRelation(models.Model):
         unique_together = ('feedback', 'content_type', 'object_id')
 
         permissions = (
-            ('view_feedbackrelation', 'View FeedbackRelation'),
+            ('show_feedbackrelation', 'Show FeedbackRelation'),
         )
 
         verbose_name = _('tilbakemelding')
@@ -229,7 +229,7 @@ class Feedback(models.Model):
         verbose_name = _('tilbakemeldingsskjema')
         verbose_name_plural = _('tilbakemeldingsskjemaer')
         permissions = (
-            ('view_feedback', 'View Feedback'),
+            ('show_feedback', 'Show Feedback'),
         )
 
 
@@ -247,7 +247,7 @@ class FieldOfStudyAnswer(models.Model):
 
     class Meta(object):
         permissions = (
-            ('view_fieldofstudyanswer', 'View FieldOfStudyAnswer'),
+            ('show_fieldofstudyanswer', 'Show FieldOfStudyAnswer'),
         )
 
 
@@ -266,7 +266,7 @@ class TextQuestion(models.Model):
 
     class Meta(object):
         permissions = (
-            ('view_textquestion', 'View TextQuestion'),
+            ('show_textquestion', 'Show TextQuestion'),
         )
 
 
@@ -294,7 +294,7 @@ class TextAnswer(models.Model):
 
     class Meta(object):
         permissions = (
-            ('view_textanswer', 'View TextAnswer'),
+            ('show_textanswer', 'Show TextAnswer'),
         )
 
 
@@ -318,7 +318,7 @@ class RatingQuestion(models.Model):
 
     class Meta(object):
         permissions = (
-            ('view_ratingquestion', 'View RatingQuestion'),
+            ('show_ratingquestion', 'Show RatingQuestion'),
         )
 
 
@@ -348,7 +348,7 @@ class RatingAnswer(models.Model):
 
     class Meta(object):
         permissions = (
-            ('view_ratinganswer', 'View RatingAnswer'),
+            ('show_ratinganswer', 'Show RatingAnswer'),
         )
 
 
@@ -359,7 +359,7 @@ class MultipleChoiceQuestion(models.Model):
         verbose_name = _('Flervalgspørsmål')
         verbose_name_plural = _('Flervalgspørsmål')
         permissions = (
-            ('view_multiplechoicequestion', 'View MultipleChoiceQuestion'),
+            ('show_multiplechoicequestion', 'Show MultipleChoiceQuestion'),
         )
 
     def __str__(self):
@@ -384,7 +384,7 @@ class MultipleChoiceRelation(models.Model):
 
     class Meta(object):
         permissions = (
-            ('view_multiplechoicerelation', 'View MultipleChoiceRelation'),
+            ('show_multiplechoicerelation', 'Show MultipleChoiceRelation'),
         )
 
 
@@ -401,7 +401,7 @@ class Choice(models.Model):
 
     class Meta(object):
         permissions = (
-            ('view_choice', 'View Choice'),
+            ('show_choice', 'Show Choice'),
         )
 
 
@@ -427,7 +427,7 @@ class MultipleChoiceAnswer(models.Model):
 
     class Meta(object):
         permissions = (
-            ('view_multiplechoiceanswer', 'View MultipleChoiceAnswer'),
+            ('show_multiplechoiceanswer', 'Show MultipleChoiceAnswer'),
         )
 
 
@@ -450,5 +450,5 @@ class RegisterToken(models.Model):
 
     class Meta(object):
         permissions = (
-            ('view_feedbackregistertoken', 'View FeedbackRegisterToken'),
+            ('show_feedbackregistertoken', 'Show FeedbackRegisterToken'),
         )

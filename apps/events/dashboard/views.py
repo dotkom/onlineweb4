@@ -28,7 +28,7 @@ from apps.payment.models import Payment, PaymentPrice, PaymentRelation
 
 
 @login_required
-@permission_required('events.view_event', return_403=True)
+@permission_required('events.show_event', return_403=True)
 def index(request):
     if not has_access(request):
         raise PermissionDenied
@@ -43,7 +43,7 @@ def index(request):
 
 
 @login_required
-@permission_required('events.view_event', return_403=True)
+@permission_required('events.show_event', return_403=True)
 def past(request):
     if not has_access(request):
         raise PermissionDenied
@@ -58,7 +58,7 @@ def past(request):
 
 
 @login_required
-@permission_required('events.view_event', return_403=True)
+@permission_required('events.show_event', return_403=True)
 def create_event(request):
     if not has_access(request):
         raise PermissionDenied
@@ -324,7 +324,7 @@ def event_details(request, event_id, active_tab='details'):
 
 
 @login_required
-@permission_required('events.view_attendanceevent', return_403=True)
+@permission_required('events.show_attendanceevent', return_403=True)
 def event_change_attendance(request, event_id):
     context = _create_details_context(request, event_id)
     context['active_tab'] = 'attendance'
@@ -359,7 +359,7 @@ def event_change_attendance(request, event_id):
 
 
 @login_required
-@permission_required('events.view_attendee', return_403=True)
+@permission_required('events.show_attendee', return_403=True)
 def event_change_attendees(request, event_id, active_tab='attendees'):
     if not has_access(request):
         raise PermissionDenied
@@ -421,7 +421,7 @@ def count_extras(event_extras, attendance_list, attendees):
 
 
 @login_required
-@permission_required('events.view_reservation', return_403=True)
+@permission_required('events.show_reservation', return_403=True)
 def event_change_reservation(request, event_id):
     if not has_access(request):
         raise PermissionDenied
@@ -454,7 +454,7 @@ def event_change_reservation(request, event_id):
 
 
 @login_required
-@permission_required('events.view_attendee', return_403=True)
+@permission_required('events.show_attendee', return_403=True)
 def attendee_details(request, attendee_id):
 
     context = get_base_context(request)

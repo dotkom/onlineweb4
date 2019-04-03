@@ -18,7 +18,7 @@ from apps.dashboard.tools import get_base_context, has_access
 
 @ensure_csrf_cookie
 @login_required
-@permission_required('approval.view_membershipapproval', return_403=True)
+@permission_required('approval.show_membershipapproval', return_403=True)
 def index(request):
 
     # Generic check to see if user has access to dashboard. (In Komiteer or superuser)

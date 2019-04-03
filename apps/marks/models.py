@@ -103,7 +103,7 @@ class Mark(models.Model):
         verbose_name = _("Prikk")
         verbose_name_plural = _("Prikker")
         permissions = (
-            ('view_mark', 'View Mark'),
+            ('show_mark', 'Show Mark'),
         )
 
 

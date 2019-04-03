@@ -42,5 +42,5 @@ class Client(AbstractApplication):
 
     class Meta(object):
         permissions = (
-            ('view_client', 'View Client'),
+            ('show_client', 'Show Client'),
         )

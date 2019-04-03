@@ -17,7 +17,7 @@ from apps.marks.models import Mark, MarkUser
 
 
 @login_required
-@permission_required('marks.view_mark', return_403=True)
+@permission_required('marks.show_mark', return_403=True)
 def index(request):
     """
     Marks overview

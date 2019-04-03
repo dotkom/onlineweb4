@@ -274,7 +274,7 @@ class OnlineUser(AbstractUser):
         verbose_name = _("brukerprofil")
         verbose_name_plural = _("brukerprofiler")
         permissions = (
-            ('view_onlineuser', 'View OnlineUser'),
+            ('show_onlineuser', 'Show OnlineUser'),
         )
 
 
@@ -303,7 +303,7 @@ class Email(models.Model):
         verbose_name = _("epostadresse")
         verbose_name_plural = _("epostadresser")
         permissions = (
-            ('view_email', 'View Email'),
+            ('show_email', 'Show Email'),
         )
 
 
@@ -321,7 +321,7 @@ class RegisterToken(models.Model):
 
     class Meta(object):
         permissions = (
-            ('view_registertoken', 'View RegisterToken'),
+            ('show_registertoken', 'View RegisterToken'),
         )
 
 
@@ -351,7 +351,7 @@ class AllowedUsername(models.Model):
         verbose_name_plural = _("medlemsregister")
         ordering = ("username",)
         permissions = (
-            ('view_allowedusername', 'View AllowedUsername'),
+            ('show_allowedusername', 'Show AllowedUsername'),
         )
 
 
@@ -376,7 +376,7 @@ class Position(models.Model):
         verbose_name_plural = _('posisjoner')
         ordering = ('user', 'period', )
         permissions = (
-            ('view_position', 'View Position'),
+            ('show_position', 'Show Position'),
         )
 
 
@@ -396,5 +396,5 @@ class SpecialPosition(models.Model):
         verbose_name_plural = _('spesialposisjoner')
         ordering = ('user', 'since_year',)
         permissions = (
-            ('view_specialposition', 'View SpecialPosition'),
+            ('show_specialposition', 'Show SpecialPosition'),
         )

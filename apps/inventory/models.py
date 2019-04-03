@@ -19,7 +19,7 @@ class ItemCategory(models.Model):
         verbose_name = _("Kategori")
         verbose_name_plural = _("Kategorier")
         permissions = (
-            ("view_itemcategory", "View Item Category"),
+            ("show_itemcategory", "Show Item Category"),
         )
 
 
@@ -115,7 +115,7 @@ class Item(models.Model):
         verbose_name = _("Vare")
         verbose_name_plural = _("Varer")
         permissions = (
-            ("view_item", "View Inventory Item"),
+            ("show_item", "Show Inventory Item"),
         )
 
 

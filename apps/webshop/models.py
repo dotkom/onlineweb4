@@ -106,7 +106,7 @@ class Product(models.Model):
         verbose_name = 'Produkt'
         verbose_name_plural = 'Produkter'
         permissions = (
-            ('view_product', 'View Product'),
+            ('show_product', 'Show Product'),
         )
 
 
@@ -124,7 +124,7 @@ class Category(models.Model):
         verbose_name = 'Kategori'
         verbose_name_plural = 'Kategorier'
         permissions = (
-            ('view_category', 'View Category'),
+            ('show_category', 'Show Category'),
         )
 
 
@@ -180,7 +180,7 @@ class Order(models.Model):
         verbose_name = 'Bestilling'
         verbose_name_plural = 'Bestillinger'
         permissions = (
-            ('view_order', 'View Order'),
+            ('show_order', 'Show Order'),
         )
 
 
@@ -279,5 +279,5 @@ class OrderLine(models.Model):
 
     class Meta:
         permissions = (
-            ('view_order_line', 'View Order Line'),
+            ('show_order_line', 'Show Order Line'),
         )

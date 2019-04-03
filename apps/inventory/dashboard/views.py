@@ -18,7 +18,7 @@ from apps.shop.models import Order
 
 
 @login_required
-@permission_required('inventory.view_item', return_403=True)
+@permission_required('inventory.show_item', return_403=True)
 def index(request):
 
     # Generic check to see if user has access to dashboard. (In Komiteer or superuser)
@@ -62,7 +62,7 @@ def new(request):
 
 
 @login_required
-@permission_required('inventory.view_item', return_403=True)
+@permission_required('inventory.show_item', return_403=True)
 def details(request, item_pk):
     # Generic check to see if user has access to dashboard. (In Komiteer or superuser)
     if not has_access(request):
@@ -194,7 +194,7 @@ def batch_delete(request, item_pk, batch_pk):
 
 
 @login_required
-@permission_required('inventory.view_itemcategory', return_403=True)
+@permission_required('inventory.show_itemcategory', return_403=True)
 def category_index(request):
 
     # Generic check to see if user has access to dashboard. (In Komiteer or superuser)
@@ -210,7 +210,7 @@ def category_index(request):
 
 
 @login_required
-@permission_required('inventory.view_itemcategory', return_403=True)
+@permission_required('inventory.show_itemcategory', return_403=True)
 def category_details(request, category_pk):
     # Generic check to see if user has access to dashboard. (In Komiteer or superuser)
     if not has_access(request):

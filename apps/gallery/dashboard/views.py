@@ -25,7 +25,7 @@ class GalleryIndex(DashboardPermissionMixin, ListView):
     ResponsiveImages.
     """
 
-    permission_required = 'gallery.view_responsiveimage'
+    permission_required = 'gallery.show_responsiveimage'
     template_name = 'gallery/dashboard/index.html'
     queryset = ResponsiveImage.objects.all().order_by('-timestamp')[:15]
     context_object_name = 'images'
@@ -138,7 +138,7 @@ class GalleryUnhandledIndex(DashboardPermissionMixin, ListView):
     Administrators may remove images from this view.
     """
 
-    permission_required = 'gallery.view_unhandledimage'
+    permission_required = 'gallery.show_unhandledimage'
     template_name = 'gallery/dashboard/unhandled.html'
     queryset = UnhandledImage.objects.all()
     context_object_name = 'images'

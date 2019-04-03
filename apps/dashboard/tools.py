@@ -59,12 +59,12 @@ def get_base_context(request):
     context['user_permissions'] = set(request.user.get_all_permissions())
 
     # Check if we need approval count to display in template sidebar badge
-    if request.user.has_perm('approval.view_membershipapproval'):
+    if request.user.has_perm('approval.show_membershipapproval'):
         context['approval_pending'] = MembershipApproval.objects.filter(
             processed=False).count()
 
     # Check if there exists a batch in inventory that has expired
-    if request.user.has_perm('inventory.view_item'):
+    if request.user.has_perm('inventory.show_item'):
         if Batch.objects.filter(expiration_date__lt=date.today()):
             context['inventory_expired'] = True
 
@@ -74,7 +74,7 @@ def get_base_context(request):
             context['poster_orders'] += Poster.objects.filter(assigned_to=request.user, finished=False).count()
 
     # Check if we have any unhandled images pending crop and save
-    if request.user.has_perm('gallery.view_unhandledimage'):
+    if request.user.has_perm('gallery.show_unhandledimage'):
         context['unhandled_images'] = UnhandledImage.objects.all()
 
     return context

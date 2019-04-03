@@ -49,7 +49,7 @@
                 <h3>Tags</h3>
                 <div class="tag-cloud" id="article_archive_tagcloud">
                     {% for tag, count in tags %}
-                        <span><a href="{% url 'view_article_tag' tag.slug %}" class="tag">{{ tag }}</a></span>
+                        <span><a href="{% url 'show_article_tag' tag.slug %}" class="tag">{{ tag }}</a></span>
                     {% endfor %}
                 </div>
                 <h3>Filter</h3>

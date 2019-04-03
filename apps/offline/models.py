@@ -65,5 +65,5 @@ class Issue(models.Model):
         verbose_name_plural = 'Utgivelser'
         ordering = ['-release_date']
         permissions = (
-            ('view_issue', 'View Issue'),
+            ('show_issue', 'Show Issue'),
         )

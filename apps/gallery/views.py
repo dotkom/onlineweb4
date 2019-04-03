@@ -33,7 +33,7 @@ def _create_request_dictionary():
 
 
 @login_required
-@permission_required('gallery.view_responsiveimage')
+@permission_required('gallery.show_responsiveimage')
 def all_images(request):
     """
     Returns a rendered view that displays all images
@@ -205,7 +205,7 @@ class PresetView(PermissionRequiredMixin, View):
     Presets are defined in the app's settings.py file.
     """
 
-    permission_required = 'gallery.view_responsiveimage'
+    permission_required = 'gallery.show_responsiveimage'
 
     def get(self, *args, **kwargs):
         """
@@ -219,7 +219,7 @@ class PresetView(PermissionRequiredMixin, View):
 
 
 @login_required
-@permission_required('gallery.view_responsiveimage')
+@permission_required('gallery.show_responsiveimage')
 def search(request):
     """
     Performs a search request and returns a JSON response

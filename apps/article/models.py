@@ -67,5 +67,5 @@ class Article(models.Model):
         verbose_name_plural = _("artikler")
         ordering = ['published_date']
         permissions = (
-            ('view_article', 'View Article'),
+            ('show_article', 'Show Article'),
         )

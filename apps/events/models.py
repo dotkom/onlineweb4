@@ -46,6 +46,7 @@ class EventOrderedByRegistration(models.Manager):
     """
     Order events by registration start if registration start is within 7 days of today.
     """
+
     def get_queryset(self):
         now = timezone.now()
         DELTA_FUTURE_SETTING = settings.OW4_SETTINGS.get('events').get('FEATURED_DAYS_FUTURE')
@@ -196,7 +197,7 @@ class Event(models.Model):
         verbose_name = _('arrangement')
         verbose_name_plural = _('arrangementer')
         permissions = (
-            ('view_event', 'View Event'),
+            ('show_event', 'Show Event'),
         )
 
 
@@ -226,7 +227,7 @@ class Rule(models.Model):
 
     class Meta:
         permissions = (
-            ('view_rule', 'View Rule'),
+            ('show_rule', 'Show Rule'),
         )
 
 
@@ -261,7 +262,7 @@ class FieldOfStudyRule(Rule):
 
     class Meta:
         permissions = (
-            ('view_fieldofstudyrule', 'View FieldOfStudyRule'),
+            ('show_fieldofstudyrule', 'Show FieldOfStudyRule'),
         )
 
 
@@ -297,7 +298,7 @@ class GradeRule(Rule):
 
     class Meta:
         permissions = (
-            ('view_graderule', 'View GradeRule'),
+            ('show_graderule', 'Show GradeRule'),
         )
 
 
@@ -335,7 +336,7 @@ class UserGroupRule(Rule):
 
     class Meta:
         permissions = (
-            ('view_usergrouprule', 'View UserGroupRule'),
+            ('show_usergrouprule', 'Show UserGroupRule'),
         )
 
 
@@ -382,7 +383,7 @@ class RuleBundle(models.Model):
 
     class Meta:
         permissions = (
-            ('view_rulebundle', 'View RuleBundle'),
+            ('show_rulebundle', 'Show RuleBundle'),
         )
 
 
@@ -824,7 +825,7 @@ class AttendanceEvent(models.Model):
         verbose_name = _('påmelding')
         verbose_name_plural = _('påmeldinger')
         permissions = (
-            ('view_attendanceevent', 'View AttendanceEvent'),
+            ('show_attendanceevent', 'Show AttendanceEvent'),
         )
 
 
@@ -856,7 +857,7 @@ class CompanyEvent(models.Model):
         verbose_name = _('bedrift')
         verbose_name_plural = _('bedrifter')
         permissions = (
-            ('view_companyevent', 'View CompanyEvent'),
+            ('show_companyevent', 'Show CompanyEvent'),
         )
         ordering = ('company',)
 
@@ -942,7 +943,7 @@ class Attendee(models.Model):
         ordering = ['timestamp']
         unique_together = (('event', 'user'),)
         permissions = (
-            ('view_attendee', 'View Attendee'),
+            ('show_attendee', 'Show Attendee'),
         )
 
 
@@ -971,7 +972,7 @@ class Reservation(models.Model):
         verbose_name = _("reservasjon")
         verbose_name_plural = _("reservasjoner")
         permissions = (
-            ('view_reservation', 'View Reservation'),
+            ('show_reservation', 'Show Reservation'),
         )
 
 
@@ -1002,7 +1003,7 @@ class Reservee(models.Model):
         verbose_name_plural = _("reservasjoner")
         ordering = ['id']
         permissions = (
-            ('view_reservee', 'View Reservee'),
+            ('show_reservee', 'Show Reservee'),
         )
 
 
