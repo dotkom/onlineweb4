@@ -120,7 +120,7 @@ def groups_detail(request, pk):
 @login_required
 @permission_required("authentication.show_allowedusername", return_403=True)
 def members_index(request):
-    
+
     """
     Index overview for allowedusernames in dashboard
     """
