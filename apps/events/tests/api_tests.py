@@ -89,12 +89,10 @@ class AttendAPITestCase(OAuth2TestCase):
             attendee.refresh_from_db()
             attendee.user.refresh_from_db()
 
-    """
     def test_missing_auth_returns_unauthorized(self):
         response = self.client.post(self.url)
 
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
-    """
 
     def test_missing_data_returns_bad_request(self):
         response = self.client.post(self.url, **self.headers)

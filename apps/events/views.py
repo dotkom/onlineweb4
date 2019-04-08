@@ -466,6 +466,12 @@ class AttendViewSet(views.APIView):
     @staticmethod
     def _authorize_user(user, event_id):
         try:
+            if not user.is_authenticated:
+                return Response({
+                    'message': 'Administerende bruker må være logget inn for å registrere oppmøte',
+                    'attend_status': 60
+                    }, status=status.HTTP_401_UNAUTHORIZED)
+
             if not event_id:
                 return Response({
                     'message': 'Arrangementets id er ikke oppgitt',
@@ -473,11 +479,6 @@ class AttendViewSet(views.APIView):
                     }, status=status.HTTP_400_BAD_REQUEST)
 
             event_object = Event.objects.get(pk=event_id)
-            if not user.is_authenticated:
-                return Response({
-                    'message': 'Administerende bruker må være logget inn for å registrere oppmøte',
-                    'attend_status': 60
-                    }, status=status.HTTP_401_UNAUTHORIZED)
             if not user.has_perm('events.change_event', event_object):
                 return Response({
                     'message': 'Administerende bruker har ikke rettigheter til å registrere oppmøte '
