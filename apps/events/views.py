@@ -16,7 +16,7 @@ from django.urls import reverse
 from django.utils import timezone
 from django.utils.translation import ugettext as _
 # API v1
-from oauth2_provider.contrib.rest_framework import OAuth2Authentication, TokenHasScope
+from guardian.shortcuts import get_objects_for_user
 from rest_framework import mixins, status, views, viewsets
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
@@ -31,6 +31,7 @@ from apps.events.serializers import (AttendanceEventSerializer, AttendeeSerializ
                                      CompanyEventSerializer, EventSerializer)
 from apps.events.utils import (handle_attend_event_payment, handle_attendance_event_detail,
                                handle_event_ajax, handle_event_payment, handle_mail_participants)
+from apps.oidc_provider.authentication import OidcOauth2Auth
 from apps.payment.models import Payment, PaymentDelay, PaymentRelation
 
 from .utils import EventCalendar
@@ -394,12 +395,24 @@ class AttendanceEventViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin,
 
 
 class AttendeeViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.ListModelMixin):
-    queryset = Attendee.objects.all()
     serializer_class = AttendeeSerializer
-    authentication_classes = [OAuth2Authentication]
-    permission_classes = [TokenHasScope]
-    required_scopes = ['regme.readwrite']
+    authentication_classes = [OidcOauth2Auth]
     filter_fields = ('event', 'attended',)
+
+    @staticmethod
+    def _get_allowed_attendees(user):
+        if user.is_superuser:
+            return Attendee.objects.all()
+        allowed_events = get_objects_for_user(
+            user,
+            'events.change_event',
+            accept_global_perms=False
+        )
+        attendance_events = AttendanceEvent.objects.filter(event__in=allowed_events)
+        return Attendee.objects.filter(event__in=attendance_events)
+
+    def get_queryset(self):
+        return self._get_allowed_attendees(self.request.user)
 
 
 class CompanyEventViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.ListModelMixin):
@@ -409,9 +422,7 @@ class CompanyEventViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mi
 
 
 class AttendViewSet(views.APIView):
-    authentication_classes = [OAuth2Authentication]
-    permission_classes = [TokenHasScope]
-    required_scopes = ['regme.readwrite']
+    authentication_classes = [OidcOauth2Auth]
 
     @staticmethod
     def _validate_attend_params(rfid, username):
@@ -452,6 +463,35 @@ class AttendViewSet(views.APIView):
 
         return {}
 
+    @staticmethod
+    def _authorize_user(user, event_id):
+        try:
+            if not user.is_authenticated:
+                return Response({
+                    'message': 'Administerende bruker må være logget inn for å registrere oppmøte',
+                    'attend_status': 60
+                    }, status=status.HTTP_401_UNAUTHORIZED)
+
+            if not event_id:
+                return Response({
+                    'message': 'Arrangementets id er ikke oppgitt',
+                    'attend_status': 42
+                    }, status=status.HTTP_400_BAD_REQUEST)
+
+            event_object = Event.objects.get(pk=event_id)
+            if not user.has_perm('events.change_event', event_object):
+                return Response({
+                    'message': 'Administerende bruker har ikke rettigheter til å registrere oppmøte '
+                               'på dette arrangementet',
+                    'attend_status': 61
+                    }, status=status.HTTP_403_FORBIDDEN)
+        except Event.DoesNotExist:
+            return Response({
+                'message': 'Det gitte arrangementet eksisterer ikke',
+                'attend_status': 62
+                }, status=status.HTTP_404_NOT_FOUND)
+        return False
+
     def post(self, request, format=None):
         logger = logging.getLogger(__name__)
 
@@ -459,6 +499,10 @@ class AttendViewSet(views.APIView):
         event = request.data.get('event')
         username = request.data.get('username')
         waitlist_approved = request.data.get('approved')
+
+        auth_error = self._authorize_user(request.user, event)
+        if auth_error:
+            return auth_error
 
         error = self._validate_attend_params(rfid, username)
         if 'message' in error and 'attend_status' in error:

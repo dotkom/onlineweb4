@@ -1,7 +1,11 @@
 import json
+from datetime import timedelta
 
+from django.contrib.auth.models import Group
 from django.urls import reverse
+from django.utils import timezone
 from django_dynamic_fixture import G
+from oidc_provider.models import CLIENT_TYPE_CHOICES, RESPONSE_TYPE_CHOICES, Client, Token
 from rest_framework import status
 from rest_framework.test import APITestCase
 
@@ -46,17 +50,36 @@ class EventsAPIURLTestCase(APITestCase):
 
 
 class AttendAPITestCase(OAuth2TestCase):
-    scopes = ['read', 'write', 'regme.readwrite']
+
+    @staticmethod
+    def _getOIDCToken(user):
+        oidc_client = Client.objects.create(
+            client_type=CLIENT_TYPE_CHOICES[1],
+            client_id='123',
+            response_type=RESPONSE_TYPE_CHOICES[0],
+            _redirect_uris='http://localhost'
+        )
+
+        return Token.objects.create(
+            user=user,
+            client=oidc_client,
+            expires_at=timezone.now() + timedelta(days=1),
+            _scope='openid profile',
+            access_token='123',
+            refresh_token='456',
+            _id_token='{"sub": %s}' % user.pk,
+        )
 
     def setUp(self):
-        self.user = G(OnlineUser, name='test_user')
-        self.access_token = self.generate_access_token(self.user)
+        self.committee = G(Group, name='arrKom')
+        self.user = G(OnlineUser, name='test_user', groups=[self.committee])
+        self.token = self._getOIDCToken(self.user)
         self.headers = {
             'format': 'json',
-            'HTTP_AUTHORIZATION': 'Bearer ' + self.access_token.token,
+            'HTTP_AUTHORIZATION': 'Bearer ' + self.token.access_token,
         }
         self.url = reverse('event_attend')
-        self.event = generate_event()
+        self.event = generate_event(organizer=self.committee)
         self.attendee1 = generate_attendee(self.event, 'test1', '123')
         self.attendee2 = generate_attendee(self.event, 'test2', '321')
         self.attendees = [self.attendee1, self.attendee2]
@@ -70,14 +93,6 @@ class AttendAPITestCase(OAuth2TestCase):
         response = self.client.post(self.url)
 
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
-
-    def test_wrong_scope_returns_forbidden(self):
-        self.access_token.scope = 'read write wrongme.readwrite'
-        self.access_token.save()
-
-        response = self.client.post(self.url, **self.headers)
-
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_missing_data_returns_bad_request(self):
         response = self.client.post(self.url, **self.headers)
@@ -237,3 +252,27 @@ class AttendAPITestCase(OAuth2TestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertFalse(self.attendees[0].attended)
         self.assertEqual(response.json()['attend_status'], 51)
+
+    def test_wrong_committee_registering_attendance(self):
+        wrong_committee = G(Group, name='bedKom')
+        self.committee.user_set.remove(self.user)
+        self.committee.save()
+        self.user.groups.add(wrong_committee)
+        self.user.save()
+
+        response = self.client.post(self.url, {
+            'event': self.event.id,
+            'username': self.attendee1.user.username,
+        }, **self.headers)
+
+        self.refresh_attendees()
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_not_authenticated_user_registering_attendance(self):
+        response = self.client.post(self.url, {
+            'event': self.event.id,
+            'username': self.attendee1.user.username,
+        }, headers={'format': 'json'})
+
+        self.refresh_attendees()
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
