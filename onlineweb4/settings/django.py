@@ -8,7 +8,7 @@ from django.contrib.messages import constants as messages
 
 from .base import PROJECT_ROOT_DIRECTORY, PROJECT_SETTINGS_DIRECTORY
 
-TEST_RUNNER = config("OW4_DJANGO_TEST_RUNNER", default="django_nose.NoseTestSuiteRunner")
+TEST_RUNNER = config("OW4_DJANGO_TEST_RUNNER", default="onlineweb4.runner.PytestTestRunner")
 
 DEBUG = config("OW4_DJANGO_DEBUG", cast=bool, default=True)
 
