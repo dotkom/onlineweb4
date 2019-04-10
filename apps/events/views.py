@@ -205,7 +205,7 @@ def _search_indexed(request, query, filters):
     if filters['myevents'] == 'true':
         kwargs['attendance_event__attendees__user'] = request.user
 
-    events = Event.objects.filter(visible=True, **kwargs).order_by(order_by).prefetch_related(
+    events = Event.objects.filter(**kwargs).order_by(order_by).prefetch_related(
         'attendance_event', 'attendance_event__attendees', 'attendance_event__reserved_seats',
         'attendance_event__reserved_seats__reservees')
 
