@@ -21,7 +21,7 @@ def send_approval_notification(approval):
         EmailMessage("[Medlemskapssøknad] %s" % approval.applicant.get_full_name(),
                      content, settings.DEFAULT_FROM_EMAIL, to_emails).send()
     except ImproperlyConfigured:
-        logger.warn('Failed to send approval approver notification email for approval#{pk}.'.format(
+        logger.warning('Failed to send approval approver notification email for approval#{pk}.'.format(
             {'pk': approval.pk}))
 
 
@@ -45,7 +45,7 @@ def send_approval_status_update(approval):
                      [approval.applicant.get_email()],
                      ).send()
     except ImproperlyConfigured:
-        logger.warn('Failed to notify applicant about updated status on membership for approval#{pk}.'.format(
+        logger.warning('Failed to notify applicant about updated status on membership for approval#{pk}.'.format(
             {'pk': approval.pk}))
 
 
