@@ -42,7 +42,7 @@ def send_approval_status_update(approval):
         EmailMessage("Soknad om medlemskap i Online er vurdert",
                      message,
                      settings.DEFAULT_FROM_EMAIL,
-                     [approval.applicant.get_email()],
+                     [approval.applicant.get_email().email],
                      ).send()
     except ImproperlyConfigured:
         logger.warn('Failed to notify applicant about updated status on membership for approval#{pk}.'.format(

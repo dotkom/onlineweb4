@@ -55,4 +55,4 @@ def notify_new_committee_application(sender, instance, created, **kwargs):
     if created:
         send_committee_application_notification(instance, [settings.EMAIL_OPPTAK], link_to_admin=True)
         if settings.APPROVAL_SETTINGS.get('SEND_COMMITTEEAPPLICATION_APPLICANT_EMAIL', False):
-            send_committee_application_notification(instance, [instance.get_email()], link_to_admin=False)
+            send_committee_application_notification(instance, [instance.get_email().email], link_to_admin=False)
