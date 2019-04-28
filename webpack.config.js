@@ -70,6 +70,9 @@ const webpackConfig = {
     dashboardPosters: [
       './assets/dashboard/posters/index',
     ],
+    dashboardResources: [
+      './assets/dashboard/resources/index',
+    ],
     dashboardWebshop: [
       './assets/dashboard/webshop/index',
     ],

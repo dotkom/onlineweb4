@@ -171,6 +171,7 @@ if 'apps.resourcecenter' in settings.INSTALLED_APPS and 'apps.mailinglists' in s
     urlpatterns += [
         url(r'^resourcecenter/mailinglists/', include('apps.mailinglists.urls')),  # leave in this order because...
         url(r'^resourcecenter/',    include('apps.resourcecenter.urls')),  # Resourcecenter has catch-all on subpages
+        url(r'^dashboard/resources/', include('apps.resourcecenter.dashboard.urls')),
     ]
 
 if 'apps.rutinator' in settings.INSTALLED_APPS:
