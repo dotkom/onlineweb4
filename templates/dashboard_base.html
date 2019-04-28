@@ -219,6 +219,13 @@
                         </a>
                     </li>
                     {% endif %}
+                    {% if 'resourcecenter.view_resource' in user_permissions %}
+                    <li>
+                        <a href="/dashboard/resources">
+                            <i class="fa fa-universal-access blue"></i> <span>Ressurser</span>
+                        </a>
+                    </li>
+                    {% endif %}
                     {% if request.user.is_superuser %}
                     <li>
                         <a href="/dashboard/rutinator/">
