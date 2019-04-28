@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
 const Tag = ({ selected, title, changeKey, handleChange }) => (
@@ -11,10 +12,10 @@ const Tag = ({ selected, title, changeKey, handleChange }) => (
 );
 
 Tag.propTypes = {
-  title: React.PropTypes.string,
-  selected: React.PropTypes.bool,
-  handleChange: React.PropTypes.func,
-  changeKey: React.PropTypes.string,
+  title: PropTypes.string,
+  selected: PropTypes.bool,
+  handleChange: PropTypes.func,
+  changeKey: PropTypes.string,
 };
 
 export default Tag;

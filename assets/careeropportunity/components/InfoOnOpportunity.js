@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import Markdown from 'react-markdown';
 import { formatLocations } from './Job';
 import companyImageProps from '../propTypes/companyImage';
@@ -79,14 +80,14 @@ const InfoBox = props => (
 );
 
 InfoBox.propTypes = {
-  title: React.PropTypes.string,
-  deadline: React.PropTypes.string,
-  locations: React.PropTypes.arrayOf(React.PropTypes.string),
-  companyId: React.PropTypes.number,
-  description: React.PropTypes.string,
-  type: React.PropTypes.string,
-  companyName: React.PropTypes.string,
-  companyDescription: React.PropTypes.string,
+  title: PropTypes.string,
+  deadline: PropTypes.string,
+  locations: PropTypes.arrayOf(PropTypes.string),
+  companyId: PropTypes.number,
+  description: PropTypes.string,
+  type: PropTypes.string,
+  companyName: PropTypes.string,
+  companyDescription: PropTypes.string,
   companyImage: companyImageProps,
 };
 

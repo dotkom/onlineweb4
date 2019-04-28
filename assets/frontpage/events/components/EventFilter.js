@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import { ButtonGroup, Button } from 'react-bootstrap';
 import classNames from 'classnames';
 

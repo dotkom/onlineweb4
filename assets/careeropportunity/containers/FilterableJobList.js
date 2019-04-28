@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { Grid, Col, Row } from 'react-bootstrap';
 import FilterList from '../components/FilterList';
 import JobList from '../components/JobList';
@@ -36,11 +37,11 @@ const FilterableJobList = props => (
 
 FilterableJobList.propTypes = {
   tags: tagPropTypes,
-  handleTagChange: React.PropTypes.func,
-  handleReset: React.PropTypes.func,
-  handleFilterChange: React.PropTypes.func,
-  filterText: React.PropTypes.string,
-  jobs: React.PropTypes.arrayOf(React.PropTypes.shape(jobPropTypes)),
+  handleTagChange: PropTypes.func,
+  handleReset: PropTypes.func,
+  handleFilterChange: PropTypes.func,
+  filterText: PropTypes.string,
+  jobs: PropTypes.arrayOf(PropTypes.shape(jobPropTypes)),
 };
 
 export default FilterableJobList;

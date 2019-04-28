@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import InfoBox from '../components/InfoOnOpportunity';
 import jobPropTypes from '../propTypes/job';
 
@@ -28,12 +29,12 @@ class DetailView extends React.Component {
 }
 
 DetailView.propTypes = {
-  jobs: React.PropTypes.arrayOf(React.PropTypes.shape(jobPropTypes)),
-  match: React.PropTypes.shape({
-    isExact: React.PropTypes.bool,
-    params: React.PropTypes.object.isRequired,
-    path: React.PropTypes.string.isRequired,
-    url: React.PropTypes.string.isRequired,
+  jobs: PropTypes.arrayOf(PropTypes.shape(jobPropTypes)),
+  match: PropTypes.shape({
+    isExact: PropTypes.bool,
+    params: PropTypes.object.isRequired,
+    path: PropTypes.string.isRequired,
+    url: PropTypes.string.isRequired,
   }),
 };
 
