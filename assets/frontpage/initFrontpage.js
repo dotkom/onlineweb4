@@ -16,9 +16,12 @@ const cleanHash = () => $(location).attr('hash').replace(/^#!/, '');
 
 const jump = (section) => {
   if (typeof section !== 'undefined') {
-    $('html, body').animate({ scrollTop: $(`#${section}`).offset().top - TOP_OFFSET_ADJUST }, 250, () => {
-      window.location.hash = `#!${section}`;
-    });
+    const elementAnchor = $(`#${section}`).offset();
+    if (elementAnchor) {
+      $('html, body').animate({ scrollTop: elementAnchor.top - TOP_OFFSET_ADJUST }, 250, () => {
+        window.location.hash = `#!${section}`;
+      });
+    }
   }
 };
 
@@ -79,7 +82,10 @@ $(window).scroll(scrollspy);
 
 $(window).resize(() => {
   if (cleanHash()) {
-    $(window).scrollTop($($(location).attr('hash').replace(/^#!/, '')).offset().top - TOP_OFFSET_ADJUST);
+    const elementAnchor = $($(location).attr('hash').replace(/^#!/, '')).offset();
+    if (elementAnchor) {
+      $(window).scrollTop(elementAnchor.top - TOP_OFFSET_ADJUST);
+    }
   }
 });
 
