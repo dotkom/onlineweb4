@@ -1,7 +1,9 @@
 import React from 'react';
 import ReactDom from 'react-dom';
 
+import Main from './containers/Main';
+
 ReactDom.render(
-  <h1>Ressurser</h1>,
+  <Main />,
   document.getElementById('resources-react-root'),
 );
