@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { Col } from 'react-bootstrap';
 import TagList from './TagList';
 import tagsPropTypes from '../propTypes/tags';
@@ -47,11 +48,11 @@ const FilterList = ({ tags, filterText, handleTagChange, handleReset, handleFilt
 );
 
 FilterList.propTypes = {
-  handleTagChange: React.PropTypes.func,
+  handleTagChange: PropTypes.func,
   tags: tagsPropTypes,
-  handleReset: React.PropTypes.func,
-  handleFilterChange: React.PropTypes.func.isRequired,
-  filterText: React.PropTypes.string.isRequired,
+  handleReset: PropTypes.func,
+  handleFilterChange: PropTypes.func.isRequired,
+  filterText: PropTypes.string.isRequired,
 };
 
 export default FilterList;

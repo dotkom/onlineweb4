@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import Tag from './Tag';
 import tagsPropTypes from '../propTypes/tags';
 
@@ -20,8 +21,8 @@ const TagList = ({ tags, handleChange, heading }) => (
 );
 
 TagList.propTypes = {
-  handleChange: React.PropTypes.func,
-  heading: React.PropTypes.string,
+  handleChange: PropTypes.func,
+  heading: PropTypes.string,
   tags: tagsPropTypes,
 };
 

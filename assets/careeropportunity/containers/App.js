@@ -1,7 +1,7 @@
 import React from 'react';
 import { Router, Route, Switch } from 'react-router';
 import moment from 'moment';
-import createBrowserHistory from 'history/createBrowserHistory';
+import { createBrowserHistory } from 'history';
 import FilterableJobList from './FilterableJobList';
 import DetailView from './DetailView';
 

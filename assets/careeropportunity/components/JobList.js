@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { Col } from 'react-bootstrap';
 import moment from 'moment';
 import Fuse from 'fuse.js';
@@ -121,9 +122,9 @@ const JobList = ({ jobs, tags, filterText }) => {
 };
 
 JobList.propTypes = {
-  jobs: React.PropTypes.arrayOf(React.PropTypes.shape(jobPropTypes)),
+  jobs: PropTypes.arrayOf(PropTypes.shape(jobPropTypes)),
   tags: tagsPropTypes,
-  filterText: React.PropTypes.string.isRequired,
+  filterText: PropTypes.string.isRequired,
 };
 
 export default JobList;

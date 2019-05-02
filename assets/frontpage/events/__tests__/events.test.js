@@ -1,7 +1,9 @@
 import React from 'react';
-import { mount } from 'enzyme';
+import { mount, configure } from 'enzyme';
+import Adapter from 'enzyme-adapter-react-16';
 import SmallEvent from '../components/SmallEvent';
 
+configure({ adapter: new Adapter() });
 
 describe('<SmallEvent />', () => {
   const testUrl = 'thisIsUrl';
