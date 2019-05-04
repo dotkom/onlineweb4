@@ -25,8 +25,8 @@ const ResourcesList = () => {
 
   return (
     <DashboardContainer>
-      <Link href={`${basePath}new`}>
-        <button className="btn btn-success">Opprett ny ressurs</button>
+      <Link to={`${basePath}new`}>
+        <p className="btn btn-success">Opprett ny ressurs</p>
       </Link>
       <DashboardPanel title="Oversikt">
         <DashboardTable headers={['Tittel', 'Sortingsprioritet', 'Vises på siden', 'Handling']}>
