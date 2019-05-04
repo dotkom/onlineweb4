@@ -2,11 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Urls from 'urls';
 
+import DashboardTable from 'dashboard/common/DashboardTable';
+import DashboardPanel from 'dashboard/common/DashboardPanel';
+import DashboardContainer from 'dashboard/common/DashboardContainer';
+
 import getAllResources from '../api/resource';
 import Resource from '../components/Resource';
-import DashboardTable from '../../common/DashboardTable';
-import DashboardPanel from '../../common/DashboardPanel';
-import DashboardContainer from '../../common/DashboardContainer';
 
 const DEFAULT_RESOURCES = [];
 

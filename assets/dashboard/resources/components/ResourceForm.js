@@ -1,12 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import BooleanInput from '../../common/forms/BooleanInput';
-import TextInput from '../../common/forms/TextInput';
-import NumberInput from '../../common/forms/NumberInput';
+import BooleanInput from 'dashboard/common/forms/BooleanInput';
+import TextInput from 'dashboard/common/forms/TextInput';
+import NumberInput from 'dashboard/common/forms/NumberInput';
+import TextArea from 'dashboard/common/forms/TextArea';
+import ResponsiveImageInput from 'dashboard/common/forms/ResponseiveImageInput';
+
 import ResourcePropTypes from '../propTypes/resource';
-import TextArea from '../../common/forms/TextArea';
-import ResponsiveImageInput from '../../common/forms/ResponseiveImageInput';
 
 const ResourceForm = ({ resource, setResource, onSave, onCancel }) => {
   const onInput = (name, value) => {

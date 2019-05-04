@@ -2,8 +2,10 @@ import React, { useEffect, useState, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
+import getResponsiveImages from 'dashboard/gallery/api/image';
+
 import Field from './Field';
-import getResponsiveImages from '../../resources/api/image';
+
 
 const DEFAULT_IMAGE_PLACEHOLDER = 'Søk på bilder. Du kan bruke titler, tags og beskrivelse';
 

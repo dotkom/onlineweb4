@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 
-import ImagePropTypes from '../../../common/proptypes/ImagePropTypes';
+import ImagePropTypes from 'common/proptypes/ImagePropTypes';
 
 const ResourcePropTypes = PropTypes.shape({
   image: ImagePropTypes,
