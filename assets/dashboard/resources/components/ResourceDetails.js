@@ -2,8 +2,8 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
-import DashboardContainer from '../../common/DashboardContainer';
-import DashboardPanel from '../../common/DashboardPanel';
+import DashboardContainer from 'dashboard/common/DashboardContainer';
+import DashboardPanel from 'dashboard/common/DashboardPanel';
 
 const ResourceDetails = ({ children, title, backUrl }) => (
   <DashboardContainer>
