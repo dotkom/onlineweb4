@@ -7,7 +7,7 @@ import DashboardPanel from '../../common/DashboardPanel';
 
 const ResourceDetails = ({ children, title, backUrl }) => (
   <DashboardContainer>
-    <Link href={backUrl}>
+    <Link to={backUrl}>
       <button className="btn btn-warning">Tilbake</button>
     </Link>
     <DashboardPanel title={title}>

@@ -5,7 +5,7 @@ const DashboardTable = ({ children, headers = [] }) => (
   <table className="table table-striped table-condensed tablesorter">
     <thead>
       <tr>
-        { headers.map(header => <th>{ header }</th>) }
+        { headers.map(header => <th key={header}>{ header }</th>) }
       </tr>
     </thead>
     <tbody>
