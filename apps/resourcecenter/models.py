@@ -9,6 +9,7 @@ class Resource(models.Model):
     description = models.TextField()
     image = models.ForeignKey(ResponsiveImage, related_name='resources', blank=True, null=True, on_delete=SET_NULL)
     priority = models.IntegerField(default=0)
+    active = models.BooleanField(default=True)
 
     def __str__(self):
         return "{title} (Priority: {priority})".format(title=self.title,
