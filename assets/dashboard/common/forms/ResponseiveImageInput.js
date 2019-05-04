@@ -63,10 +63,10 @@ const ResponsiveImageInput = ({
                   onClick={() => handleImageClick(image.id)}
                 >
                   <div className="image-selection-thumbnail-image">
-                    <img src={image.sm} alt={image.title} title={image.title} />
+                    <img src={image.sm} alt={image.name} title={image.name} />
                   </div>
                   <div className="image-selection-thumbnail-text">
-                    <h4 className="image-title">{image.title}</h4>
+                    <h4 className="image-title">{image.name}</h4>
                     <span className="image-timestamp">{image.timestamp}</span>
                     <p className="image-description">{image.description}</p>
                   </div>
