@@ -158,6 +158,13 @@
                         </ul>
                     </li>
                     {% endif %}
+                    {% if 'hobbygroups.change_hobby' in user_permissions %}
+                    <li>
+                        <a href="/dashboard/hobbies">
+                            <i class="fa fa-comments blue"></i> <span>Interessegrupper</span>
+                        </a>
+                    </li>
+                    {% endif %}
                     {% if 'careeropportunity.view_careeropportunity' in user_permissions %}
                     <li class="treeview">
                         <a href="#">

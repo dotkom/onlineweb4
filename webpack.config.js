@@ -61,6 +61,9 @@ const webpackConfig = {
     dashboardGroups: [
       './assets/dashboard/groups/index',
     ],
+    dashboardHobbies: [
+      './assets/dashboard/hobbies/index',
+    ],
     dashboardInventory: [
       './assets/dashboard/inventory/index',
     ],

@@ -1,0 +1,28 @@
+{% extends "dashboard_base.html" %}
+{% load render_bundle from webpack_loader %}
+
+{% block title %}
+Interessegrupper - Online
+{% endblock title %}
+
+{% block styles %}
+    {{ block.super }}
+    {% render_bundle 'dashboardHobbies' 'css' %}
+{% endblock %}
+
+{% block js %}
+    {{ block.super }}
+    {% render_bundle 'dashboardHobbies' 'js' %}
+{% endblock %}
+
+{% block page-header %}
+Interessegrupper
+{% endblock %}
+
+{% block breadcrumbs %}
+    <li>Interessegrupper</li>
+{% endblock %}
+
+{% block content %}
+    <div id="hobbies-react-root"></div>
+{% endblock content %}
