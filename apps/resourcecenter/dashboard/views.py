@@ -3,7 +3,7 @@ from django.core.exceptions import PermissionDenied
 from django.shortcuts import render
 from guardian.decorators import permission_required
 
-from apps.dashboard.tools import has_access
+from apps.dashboard.tools import get_base_context, has_access
 
 
 @login_required
@@ -13,4 +13,6 @@ def index(request):
     if not has_access(request):
         raise PermissionDenied
 
-    return render(request, 'resourcecenter/dashboard/index.html')
+    context = get_base_context(request)
+
+    return render(request, 'resourcecenter/dashboard/index.html', context)
