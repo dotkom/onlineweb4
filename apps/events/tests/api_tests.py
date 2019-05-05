@@ -25,6 +25,141 @@ def generate_valid_rfid():
     return '12345678'
 
 
+class CreateAttendeeTestCase(OAuth2TestCase):
+
+    @staticmethod
+    def _getOIDCToken(user, client_id='123', refresh_token='456'):
+        oidc_client = Client.objects.create(
+            client_type=CLIENT_TYPE_CHOICES[1],
+            client_id=client_id,
+            response_type=RESPONSE_TYPE_CHOICES[0],
+            _redirect_uris='http://localhost'
+        )
+
+        return Token.objects.create(
+            user=user,
+            client=oidc_client,
+            expires_at=timezone.now() + timedelta(days=1),
+            _scope='openid profile',
+            access_token=client_id,
+            refresh_token=refresh_token,
+            _id_token='{"sub": %s}' % user.pk,
+        )
+
+    def setUp(self):
+
+        self.committee = G(Group, name='arrKom')
+        self.user = G(OnlineUser, name='_user')
+        self.token = self._getOIDCToken(self.user)
+        self.headers = {
+            'Accepts': 'application/json',
+            'Content-Type': 'application/json',
+            'format': 'json',
+            'HTTP_AUTHORIZATION': 'Bearer ' + self.token.access_token,
+        }
+        self.url = '/api/v1/user-attendees/'
+        self.id_url = lambda _id: self.url + str(_id) + '/'
+        self.event = generate_event(organizer=self.committee)
+        self.event.attendance_event.registration_start = timezone.now()
+        self.event.attendance_event.registration_end = timezone.now() + timezone.timedelta(days=2)
+        self.event.attendance_event.max_capacity = 20
+        self.event.attendance_event.save()
+        self.attendee1 = generate_attendee(self.event, 'test1', '123')
+        self.attendee2 = generate_attendee(self.event, 'test2', '321')
+        self.attendees = [self.attendee1, self.attendee2]
+
+    def test_attend_not_attendance_event(self):
+        event_without_attendance = generate_event(organizer=self.committee, attendance=False)
+
+        response = self.client.post(self.url, {
+            'event_id': event_without_attendance.id,
+        }, **self.headers)
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.json().get('message'), 'Dette er ikke et påmeldingsarrangement')
+
+    def test_guest_user_can_attend_event_with_guest_attendance(self):
+        attendance = self.event.attendance_event
+        attendance.guest_attendance = True
+        attendance.save()
+
+        response = self.client.post(self.url, {
+            'event_id': self.event.id,
+        }, **self.headers)
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertTrue(attendance.is_attendee(self.user))
+
+    def test_guest_user_cannot_attend_event_without_guest_attendance(self):
+        attendance = self.event.attendance_event
+        attendance.guest_attendance = False
+        attendance.save()
+
+        response = self.client.post(self.url, {
+            'event_id': self.event.id,
+        }, **self.headers)
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.json().get('message'), 'Dette arrangementet er kun åpent for medlemmer.')
+
+    def test_user_cannot_attend_event_after_registration_end(self):
+        attendance = self.event.attendance_event
+        attendance.registration_start = timezone.now() - timezone.timedelta(days=2)
+        attendance.registration_end = timezone.now() - timezone.timedelta(days=2)
+        attendance.guest_attendance = True
+        attendance.save()
+
+        response = self.client.post(self.url, {
+            'event_id': self.event.id,
+        }, **self.headers)
+
+        self.assertEqual(response.status_code, status.HTTP_502_BAD_GATEWAY)
+        self.assertEqual(response.json().get('message'), 'Påmeldingen er ikke lenger åpen.')
+
+    def test_user_can_unattend_before_deadline(self):
+        self.event.attendance_event.unattend_deadline = timezone.now() + timezone.timedelta(days=2)
+        self.event.event_start = timezone.now() + timezone.timedelta(days=3)
+        self.event.attendance_event.save()
+        self.event.save()
+        attendee = attend_user_to_event(self.event, self.user)
+
+        response = self.client.delete(self.id_url(attendee.id), **self.headers)
+
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertFalse(self.event.attendance_event.is_attendee(self.user))
+
+    def test_user_cannot_unattend_after_deadline_has_passed(self):
+        self.event.attendance_event.unattend_deadline = timezone.now() - timezone.timedelta(days=2)
+        self.event.attendance_event.save()
+        attendee = attend_user_to_event(self.event, self.user)
+
+        response = self.client.delete(self.id_url(attendee.id), {
+            'event_id': self.event.id,
+        }, **self.headers)
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertTrue(self.event.attendance_event.is_attendee(self.user))
+        self.assertEqual(
+            response.json().get('message'),
+            'Avmeldingsfristen har gått ut, det er ikke lenger mulig å melde seg av arrangementet.'
+        )
+
+    def test_user_cannot_unattend_after_event_has_started(self):
+        self.event.attendance_event.unattend_deadline = timezone.now() + timezone.timedelta(days=2)
+        self.event.event_start = timezone.now() - timezone.timedelta(hours=1)
+        self.event.attendance_event.save()
+        self.event.save()
+        attendee = attend_user_to_event(self.event, self.user)
+
+        response = self.client.delete(self.id_url(attendee.id), **self.headers)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertTrue(self.event.attendance_event.is_attendee(self.user))
+        self.assertEqual(
+            response.json().get('message'),
+            'Du kan ikke melde deg av et arrangement som allerde har startet.'
+        )
+
+
 class EventsAPIURLTestCase(APITestCase):
     def test_events_list_empty(self):
         url = reverse('events-list')
