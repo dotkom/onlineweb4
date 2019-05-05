@@ -25,4 +25,5 @@ urlpatterns = [
 router = SharedAPIRootRouter()
 router.register('events', views.EventViewSet, base_name='events')
 router.register('attendees', views.AttendeeViewSet, base_name='attendees')
+router.register('user-attendees', views.UserAttendeeViewSet, base_name='user_attendees')
 router.register('attend', views.AttendViewSet, base_name='attend')

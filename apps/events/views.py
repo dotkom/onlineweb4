@@ -28,7 +28,8 @@ from apps.events.forms import CaptchaForm
 from apps.events.models import AttendanceEvent, Attendee, CompanyEvent, Event
 from apps.events.pdf_generator import EventPDF
 from apps.events.serializers import (AttendanceEventSerializer, AttendeeSerializer,
-                                     CompanyEventSerializer, EventSerializer)
+                                     CompanyEventSerializer, EventSerializer,
+                                     UserAttendeeSerializer)
 from apps.events.utils import (handle_attend_event_payment, handle_attendance_event_detail,
                                handle_event_ajax, handle_event_payment, handle_mail_participants)
 from apps.oidc_provider.authentication import OidcOauth2Auth
@@ -401,6 +402,83 @@ class AttendanceEventViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin,
     queryset = AttendanceEvent.objects.all()
     serializer_class = AttendanceEventSerializer
     permission_classes = (AllowAny,)
+
+
+class UserAttendeeViewSet(viewsets.ModelViewSet):
+    serializer_class = UserAttendeeSerializer
+    authentication_classes = [OidcOauth2Auth]
+    filter_fields = ('event', 'attended',)
+
+    def get_queryset(self):
+        return Attendee.objects.filter(user=self.request.user)
+
+    def destroy(self, request, *args, **kwargs):
+        user = self.request.user
+        attendee = self.get_object()
+        attendance_event = attendee.event
+
+        # User can only be unattended before the deadline, or if they are on the wait list.
+        if timezone.now() > attendance_event.unattend_deadline and not attendance_event.is_on_waitlist(user):
+            return Response({
+                'message': 'Avmeldingsfristen har gått ut, det er ikke lenger mulig å melde seg av arrangementet.'
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        if attendance_event.event.event_start < timezone.now():
+            return Response({
+                'message': 'Du kan ikke melde deg av et arrangement som allerde har startet.'
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        if attendee.has_paid:
+            return Response({
+                'message': 'Du må refundere betalingene dine før du kan melde deg av.'
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        # Attendees un-attend with themselves as the admin user
+        attendee.unattend(user)
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    def create(self, request, *args, **kwargs):
+        """
+        Overwrite DRF create from DRF mixins.CreateModelMixin
+        """
+        user = request.user
+        event_id = request.data.get('event_id')
+        event = Event.objects.get(pk=event_id)
+
+        if not event:
+            return Response({
+                'message': 'Det gitte arrangementet eksisterer ikke'
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        if not event.is_attendance_event():
+            return Response({
+                'message': 'Dette er ikke et påmeldingsarrangement'
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        attendance_event = event.attendance_event
+        attend_response = attendance_event.is_eligible_for_signup(request.user)
+
+        can_attend = attend_response['status']
+        if can_attend:
+            serializer = self.get_serializer(data={
+                'show_as_attending_event': user.get_visible_as_attending_events(),
+                'event_id': event.id,
+                'user_id': user.id
+            })
+            serializer.is_valid(raise_exception=True)
+            self.perform_create(serializer)
+
+            if attendance_event.payment():
+                handle_attend_event_payment(event, request.user)
+
+            headers = self.get_success_headers(serializer.data)
+            return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+        else:
+            return Response({
+                'message': attend_response.get('message')
+            }, status=attend_response.get('status_code', status.HTTP_500_INTERNAL_SERVER_ERROR))
 
 
 class AttendeeViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.ListModelMixin):
