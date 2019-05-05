@@ -1,9 +1,34 @@
 from rest_framework import serializers
 
+from apps.authentication.models import OnlineUser as User
 from apps.authentication.serializers import UserSerializer
 from apps.companyprofile.serializers import CompanySerializer
 from apps.events.models import AttendanceEvent, Attendee, CompanyEvent, Event, RuleBundle
 from apps.gallery.serializers import ResponsiveImageSerializer
+
+
+class UserAttendeeSerializer(serializers.ModelSerializer):
+    user = UserSerializer(read_only=True)
+    user_id = serializers.PrimaryKeyRelatedField(
+        write_only=True,
+        source='user',
+        default=serializers.CurrentUserDefault(),
+        queryset=User.objects.all()
+    )
+    event = serializers.PrimaryKeyRelatedField(required=False, read_only=True)
+    event_id = serializers.PrimaryKeyRelatedField(
+        write_only=True,
+        source='event',
+        queryset=AttendanceEvent.objects.all()
+    )
+
+    class Meta:
+        model = Attendee
+        fields = (
+            'id', 'event', 'user', 'attended', 'timestamp', 'event_id', 'user_id', 'show_as_attending_event',
+            'has_paid',
+        )
+        read_only_fields = ('event', 'user', 'id', 'timestamp', 'has_paid')
 
 
 class AttendeeSerializer(serializers.ModelSerializer):
