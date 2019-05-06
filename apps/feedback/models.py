@@ -372,6 +372,7 @@ class MultipleChoiceQuestion(models.Model):
         permissions = (
             ('view_multiplechoicequestion', 'View MultipleChoiceQuestion'),
         )
+        default_permissions = ('add', 'change', 'delete')
 
     def __str__(self):
         return self.label
