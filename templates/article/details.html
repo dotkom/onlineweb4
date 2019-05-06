@@ -134,7 +134,7 @@
                         <div class="tag-cloud">
                             {% if article.tags %}
                                 {% for tag in article.tags.all %}
-                                    <a href="{% url 'show_article_tag' tag.slug %}"><span class="tag">{{ tag }}</span></a>
+                                    <a href="{% url 'view_article_tag' tag.slug %}"><span class="tag">{{ tag }}</span></a>
                                 {% endfor %}
                             {% else %}
                                 <p>Denne artikkelen har ingen tags.</p>
