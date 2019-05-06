@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from rest_framework_recaptcha.fields import ReCaptchaField
 
 from apps.authentication.models import OnlineUser as User
 from apps.authentication.serializers import UserSerializer
@@ -21,12 +22,13 @@ class UserAttendeeSerializer(serializers.ModelSerializer):
         source='event',
         queryset=AttendanceEvent.objects.all()
     )
+    recaptcha = ReCaptchaField()
 
     class Meta:
         model = Attendee
         fields = (
             'id', 'event', 'user', 'attended', 'timestamp', 'event_id', 'user_id', 'show_as_attending_event',
-            'has_paid',
+            'has_paid', 'recaptcha',
         )
         read_only_fields = ('event', 'user', 'id', 'timestamp', 'has_paid')
 
