@@ -52,6 +52,7 @@ class FeedbackRelation(models.Model):
         permissions = (
             ('view_feedbackrelation', 'View FeedbackRelation'),
         )
+        default_permissions = ('add', 'change', 'delete')
 
         verbose_name = _('tilbakemelding')
         verbose_name_plural = _('tilbakemeldinger')
@@ -235,6 +236,7 @@ class Feedback(models.Model):
         permissions = (
             ('view_feedback', 'View Feedback'),
         )
+        default_permissions = ('add', 'change', 'delete')
 
 
 class FieldOfStudyAnswer(models.Model):
@@ -253,6 +255,7 @@ class FieldOfStudyAnswer(models.Model):
         permissions = (
             ('view_fieldofstudyanswer', 'View FieldOfStudyAnswer'),
         )
+        default_permissions = ('add', 'change', 'delete')
 
 
 class TextQuestion(models.Model):
@@ -272,6 +275,7 @@ class TextQuestion(models.Model):
         permissions = (
             ('view_textquestion', 'View TextQuestion'),
         )
+        default_permissions = ('add', 'change', 'delete')
 
 
 class TextAnswer(models.Model):
@@ -300,6 +304,7 @@ class TextAnswer(models.Model):
         permissions = (
             ('view_textanswer', 'View TextAnswer'),
         )
+        default_permissions = ('add', 'change', 'delete')
 
 
 RATING_CHOICES = [(k, str(k)) for k in range(1, 7)]  # 1 to 6
@@ -324,6 +329,7 @@ class RatingQuestion(models.Model):
         permissions = (
             ('view_ratingquestion', 'View RatingQuestion'),
         )
+        default_permissions = ('add', 'change', 'delete')
 
 
 class RatingAnswer(models.Model):
@@ -354,6 +360,7 @@ class RatingAnswer(models.Model):
         permissions = (
             ('view_ratinganswer', 'View RatingAnswer'),
         )
+        default_permissions = ('add', 'change', 'delete')
 
 
 class MultipleChoiceQuestion(models.Model):
@@ -390,6 +397,7 @@ class MultipleChoiceRelation(models.Model):
         permissions = (
             ('view_multiplechoicerelation', 'View MultipleChoiceRelation'),
         )
+        default_permissions = ('add', 'change', 'delete')
 
 
 class Choice(models.Model):
@@ -407,6 +415,7 @@ class Choice(models.Model):
         permissions = (
             ('view_choice', 'View Choice'),
         )
+        default_permissions = ('add', 'change', 'delete')
 
 
 class MultipleChoiceAnswer(models.Model):
@@ -433,6 +442,7 @@ class MultipleChoiceAnswer(models.Model):
         permissions = (
             ('view_multiplechoiceanswer', 'View MultipleChoiceAnswer'),
         )
+        default_permissions = ('add', 'change', 'delete')
 
 
 # For creating a link for others(companies) to see the results page
@@ -456,3 +466,4 @@ class RegisterToken(models.Model):
         permissions = (
             ('view_feedbackregistertoken', 'View FeedbackRegisterToken'),
         )
+        default_permissions = ('add', 'change', 'delete')

@@ -26,3 +26,4 @@ class Privacy(models.Model):
         permissions = (
             ('view_privacy', 'View Privacy'),
         )
+        default_permissions = ('add', 'change', 'delete')

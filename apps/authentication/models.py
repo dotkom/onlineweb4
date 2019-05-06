@@ -276,6 +276,7 @@ class OnlineUser(AbstractUser):
         permissions = (
             ('view_onlineuser', 'View OnlineUser'),
         )
+        default_permissions = ('add', 'change', 'delete')
 
 
 class Email(models.Model):
@@ -305,6 +306,7 @@ class Email(models.Model):
         permissions = (
             ('view_email', 'View Email'),
         )
+        default_permissions = ('add', 'change', 'delete')
 
 
 class RegisterToken(models.Model):
@@ -323,6 +325,7 @@ class RegisterToken(models.Model):
         permissions = (
             ('view_registertoken', 'View RegisterToken'),
         )
+        default_permissions = ('add', 'change', 'delete')
 
 
 class AllowedUsername(models.Model):
@@ -353,6 +356,7 @@ class AllowedUsername(models.Model):
         permissions = (
             ('view_allowedusername', 'View AllowedUsername'),
         )
+        default_permissions = ('add', 'change', 'delete')
 
 
 class Position(models.Model):
@@ -378,6 +382,7 @@ class Position(models.Model):
         permissions = (
             ('view_position', 'View Position'),
         )
+        default_permissions = ('add', 'change', 'delete')
 
 
 class SpecialPosition(models.Model):
@@ -398,3 +403,4 @@ class SpecialPosition(models.Model):
         permissions = (
             ('view_specialposition', 'View SpecialPosition'),
         )
+        default_permissions = ('add', 'change', 'delete')

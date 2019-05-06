@@ -36,6 +36,9 @@ class Approval(models.Model):
     approved = models.BooleanField(_("godkjent"), default=False, editable=False)
     message = models.TextField(_("melding"))
 
+    class Meta:
+        default_permissions = ('add', 'change', 'delete')
+
 
 class MembershipApproval(Approval):
     new_expiry_date = models.DateField(_("ny utløpsdato"), blank=True, null=True)
@@ -78,6 +81,7 @@ class MembershipApproval(Approval):
         permissions = (
             ('view_membershipapproval', 'View membership approval'),
         )
+        default_permissions = ('add', 'change', 'delete')
 
 
 class CommitteeApplication(models.Model):

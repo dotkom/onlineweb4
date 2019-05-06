@@ -44,3 +44,4 @@ class Client(AbstractApplication):
         permissions = (
             ('view_client', 'View Client'),
         )
+        default_permissions = ('add', 'change', 'delete')

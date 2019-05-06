@@ -12,3 +12,4 @@ class SplashEvent(models.Model):
 
     class Meta(object):
         ordering = ('start_time',)
+        default_permissions = ('add', 'change', 'delete')
