@@ -198,6 +198,7 @@ class Event(models.Model):
         permissions = (
             ('view_event', 'View Event'),
         )
+        default_permissions = ('add', 'change', 'delete')
 
 
 """
@@ -228,6 +229,7 @@ class Rule(models.Model):
         permissions = (
             ('view_rule', 'View Rule'),
         )
+        default_permissions = ('add', 'change', 'delete')
 
 
 class FieldOfStudyRule(Rule):
@@ -263,6 +265,7 @@ class FieldOfStudyRule(Rule):
         permissions = (
             ('view_fieldofstudyrule', 'View FieldOfStudyRule'),
         )
+        default_permissions = ('add', 'change', 'delete')
 
 
 class GradeRule(Rule):
@@ -299,6 +302,7 @@ class GradeRule(Rule):
         permissions = (
             ('view_graderule', 'View GradeRule'),
         )
+        default_permissions = ('add', 'change', 'delete')
 
 
 class UserGroupRule(Rule):
@@ -337,6 +341,7 @@ class UserGroupRule(Rule):
         permissions = (
             ('view_usergrouprule', 'View UserGroupRule'),
         )
+        default_permissions = ('add', 'change', 'delete')
 
 
 class RuleBundle(models.Model):
@@ -384,6 +389,7 @@ class RuleBundle(models.Model):
         permissions = (
             ('view_rulebundle', 'View RuleBundle'),
         )
+        default_permissions = ('add', 'change', 'delete')
 
 
 """
@@ -406,6 +412,7 @@ class Extras(models.Model):
         verbose_name = _("ekstra valg")
         verbose_name_plural = _("ekstra valg")
         ordering = ['choice']
+        default_permissions = ('add', 'change', 'delete')
 
 
 class AttendanceEvent(models.Model):
@@ -826,6 +833,7 @@ class AttendanceEvent(models.Model):
         permissions = (
             ('view_attendanceevent', 'View AttendanceEvent'),
         )
+        default_permissions = ('add', 'change', 'delete')
 
 
 class CompanyEvent(models.Model):
@@ -859,6 +867,7 @@ class CompanyEvent(models.Model):
             ('view_companyevent', 'View CompanyEvent'),
         )
         ordering = ('company',)
+        default_permissions = ('add', 'change', 'delete')
 
 
 class Attendee(models.Model):
@@ -944,6 +953,7 @@ class Attendee(models.Model):
         permissions = (
             ('view_attendee', 'View Attendee'),
         )
+        default_permissions = ('add', 'change', 'delete')
 
 
 class Reservation(models.Model):
@@ -973,6 +983,7 @@ class Reservation(models.Model):
         permissions = (
             ('view_reservation', 'View Reservation'),
         )
+        default_permissions = ('add', 'change', 'delete')
 
 
 class Reservee(models.Model):
@@ -1004,6 +1015,7 @@ class Reservee(models.Model):
         permissions = (
             ('view_reservee', 'View Reservee'),
         )
+        default_permissions = ('add', 'change', 'delete')
 
 
 class GroupRestriction(models.Model):
@@ -1027,3 +1039,4 @@ class GroupRestriction(models.Model):
         permissions = (
             ('view_restriction', 'View Restriction'),
         )
+        default_permissions = ('add', 'change', 'delete')

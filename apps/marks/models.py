@@ -105,6 +105,7 @@ class Mark(models.Model):
         permissions = (
             ('view_mark', 'View Mark'),
         )
+        default_permissions = ('add', 'change', 'delete')
 
 
 class MarkUser(models.Model):
@@ -138,6 +139,7 @@ class MarkUser(models.Model):
         permissions = (
             ('view_userentry', 'View UserEntry'),
         )
+        default_permissions = ('add', 'change', 'delete')
 
 
 def _fix_mark_history(user):
@@ -219,5 +221,8 @@ class Suspension(models.Model):
 
     def __str__(self):
         return "Suspension: " + str(self.user)
+
+    class Meta:
+        default_permissions = ('add', 'change', 'delete')
 
     # TODO URL

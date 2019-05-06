@@ -229,6 +229,8 @@ class Payment(models.Model):
         verbose_name = _("betaling")
         verbose_name_plural = _("betalinger")
 
+        default_permissions = ('add', 'change', 'delete')
+
 
 class PaymentPrice(models.Model):
     payment = models.ForeignKey(Payment, on_delete=models.CASCADE)
@@ -244,6 +246,7 @@ class PaymentPrice(models.Model):
     class Meta(object):
         verbose_name = _("pris")
         verbose_name_plural = _("priser")
+        default_permissions = ('add', 'change', 'delete')
 
 
 class PaymentRelation(models.Model):
@@ -302,6 +305,7 @@ class PaymentRelation(models.Model):
     class Meta(object):
         verbose_name = _("betalingsrelasjon")
         verbose_name_plural = _("betalingsrelasjoner")
+        default_permissions = ('add', 'change', 'delete')
 
 
 class PaymentDelay(models.Model):
@@ -324,6 +328,8 @@ class PaymentDelay(models.Model):
 
         verbose_name = _('betalingsutsettelse')
         verbose_name_plural = _('betalingsutsettelser')
+
+        default_permissions = ('add', 'change', 'delete')
 
 
 class PaymentTransaction(models.Model):
@@ -380,6 +386,7 @@ class PaymentTransaction(models.Model):
         ordering = ['-datetime']
         verbose_name = _('transaksjon')
         verbose_name_plural = _('transaksjoner')
+        default_permissions = ('add', 'change', 'delete')
 
 
 class PaymentReceipt(models.Model):
@@ -437,3 +444,6 @@ class PaymentReceipt(models.Model):
 
         email_message = render_to_string('payment/email/confirmation_mail.txt', context)
         send_mail(subject, email_message, from_mail, to_mail)
+
+    class Meta:
+        default_permissions = ('add', 'change', 'delete')

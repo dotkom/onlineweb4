@@ -30,6 +30,9 @@ class Order(models.Model):
     def __str__(self):
         return str(self.content_object)
 
+    class Meta:
+        default_permissions = ('add', 'change', 'delete')
+
 
 class OrderLine(models.Model):
     user = models.ForeignKey(User, related_name="u", on_delete=models.CASCADE)
@@ -65,9 +68,15 @@ class OrderLine(models.Model):
     def __str__(self):
         return str(self.pk)
 
+    class Meta:
+        default_permissions = ('add', 'change', 'delete')
+
 
 class MagicToken(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     token = models.CharField('token', default=uuid.uuid4, max_length=36)
     data = models.TextField('data')
     created = models.DateTimeField('created', editable=False, auto_now_add=True)
+
+    class Meta:
+        default_permissions = ('add', 'change', 'delete')

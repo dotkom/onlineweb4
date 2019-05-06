@@ -108,6 +108,7 @@ class Product(models.Model):
         permissions = (
             ('view_product', 'View Product'),
         )
+        default_permissions = ('add', 'change', 'delete')
 
 
 class Category(models.Model):
@@ -126,6 +127,7 @@ class Category(models.Model):
         permissions = (
             ('view_category', 'View Category'),
         )
+        default_permissions = ('add', 'change', 'delete')
 
 
 class ProductSize(models.Model):
@@ -144,6 +146,7 @@ class ProductSize(models.Model):
     class Meta:
         verbose_name = 'Størrelse'
         verbose_name_plural = 'Størrelser'
+        default_permissions = ('add', 'change', 'delete')
 
 
 class Order(models.Model):
@@ -182,6 +185,7 @@ class Order(models.Model):
         permissions = (
             ('view_order', 'View Order'),
         )
+        default_permissions = ('add', 'change', 'delete')
 
 
 class OrderLine(models.Model):
@@ -281,3 +285,4 @@ class OrderLine(models.Model):
         permissions = (
             ('view_order_line', 'View Order Line'),
         )
+        default_permissions = ('add', 'change', 'delete')

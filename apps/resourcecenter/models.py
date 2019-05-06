@@ -12,3 +12,6 @@ class Resource(models.Model):
     def __str__(self):
         return "{title} (Priority: {priority})".format(title=self.title,
                                                        priority=self.priority)
+
+    class Meta:
+        default_permissions = ('add', 'change', 'delete')

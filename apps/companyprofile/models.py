@@ -31,3 +31,4 @@ class Company(models.Model):
             ('view_company', 'View Company'),
         )
         ordering = ('name',)
+        default_permissions = ('add', 'change', 'delete')

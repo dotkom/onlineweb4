@@ -47,3 +47,4 @@ class CareerOpportunity(models.Model):
         permissions = (
             ('view_careeropportunity', 'View CareerOpportunity'),
         )
+        default_permissions = ('add', 'change', 'delete')

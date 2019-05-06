@@ -17,3 +17,4 @@ class Hobby(models.Model):
 
     class Meta:
         verbose_name_plural = "Hobbies"
+        default_permissions = ('add', 'change', 'delete')

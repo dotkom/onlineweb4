@@ -21,6 +21,7 @@ class ItemCategory(models.Model):
         permissions = (
             ("view_itemcategory", "View Item Category"),
         )
+        default_permissions = ('add', 'change', 'delete')
 
 
 class Item(models.Model):
@@ -117,6 +118,7 @@ class Item(models.Model):
         permissions = (
             ("view_item", "View Inventory Item"),
         )
+        default_permissions = ('add', 'change', 'delete')
 
 
 class Batch(models.Model):
@@ -129,3 +131,4 @@ class Batch(models.Model):
     class Meta(object):
         verbose_name = _("Batch")
         verbose_name_plural = _("Batches")
+        default_permissions = ('add', 'change', 'delete')
