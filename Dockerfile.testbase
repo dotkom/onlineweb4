@@ -1,8 +1,8 @@
 FROM python:3.7
-MAINTAINER dotkom@online.ntnu.no
+LABEL MAINTAINER=dotkom@online.ntnu.no
 
 # Install deps
-RUN curl -sL https://deb.nodesource.com/setup_6.x | bash - && \
+RUN curl -sL https://deb.nodesource.com/setup_8.x | bash - && \
     apt-get remove -y curl && apt-get install -y --no-install-recommends \
     nodejs libjpeg-dev ghostscript && \
     npm install -g less && \

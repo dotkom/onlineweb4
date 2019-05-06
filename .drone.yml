@@ -16,7 +16,7 @@ steps:
         - /tmp/cache:/cache
 
   - name: setup
-    image: registry.online.ntnu.no/dotkom/onlineweb4-testbase
+    image: registry.online.ntnu.no/dotkom/onlineweb4-testbase:3.7
     pull: true
     when:
       event:
@@ -27,7 +27,7 @@ steps:
       - pip install tox
 
   - name: npm-build
-    image: registry.online.ntnu.no/dotkom/onlineweb4-testbase
+    image: registry.online.ntnu.no/dotkom/onlineweb4-testbase:3.7
     when:
       event:
         - push
@@ -36,7 +36,7 @@ steps:
       - npm run build:prod
 
   - name: js-lint
-    image: registry.online.ntnu.no/dotkom/onlineweb4-testbase
+    image: registry.online.ntnu.no/dotkom/onlineweb4-testbase:3.7
     when:
       event:
         - push
@@ -45,7 +45,7 @@ steps:
       - npm run lint-js
 
   - name: less-lint
-    image: registry.online.ntnu.no/dotkom/onlineweb4-testbase
+    image: registry.online.ntnu.no/dotkom/onlineweb4-testbase:3.7
     when:
       event:
         - push
@@ -54,7 +54,7 @@ steps:
       - npm run lint-less
 
   - name: python-lint
-    image: registry.online.ntnu.no/dotkom/onlineweb4-testbase
+    image: registry.online.ntnu.no/dotkom/onlineweb4-testbase:3.7
     when:
       event:
         - push
@@ -63,7 +63,7 @@ steps:
       - tox -e flake8 -e isort --recreate
 
   - name: python-tests
-    image: registry.online.ntnu.no/dotkom/onlineweb4-testbase
+    image: registry.online.ntnu.no/dotkom/onlineweb4-testbase:3.7
     secrets:
       - codecov_token
     environment:
