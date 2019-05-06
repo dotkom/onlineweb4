@@ -12,13 +12,13 @@ from apps.events.models import AttendanceEvent, Event
 
 
 def create_generic_attendance_event():
-        future = timezone.now() + datetime.timedelta(days=1)
-        event_start = future
-        event_end = future + datetime.timedelta(days=1)
-        event = G(Event, event_start=event_start, event_end=event_end)
-        G(AttendanceEvent, event=event, max_capacity=2)
-        # print(event.attendance_event.get_feedback().id)
-        return event
+    future = timezone.now() + datetime.timedelta(days=1)
+    event_start = future
+    event_end = future + datetime.timedelta(days=1)
+    event = G(Event, event_start=event_start, event_end=event_end)
+    G(AttendanceEvent, event=event, max_capacity=2)
+    # print(event.attendance_event.get_feedback().id)
+    return event
 
 
 def add_permissions(user):
