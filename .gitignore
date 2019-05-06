@@ -43,3 +43,4 @@ bundles/
 webpack-stats.json
 webpack-stats-test.json
 .drone-secrets.yml*
+jest/
