@@ -15,7 +15,7 @@ urlpatterns = [
         name='index'
     ),
     url(
-        '^(?P<pk>\d+)/$',
+        r'^(?P<pk>\d+)/$',
         views.GalleryDetail.as_view(),
         name='detail'
     ),
@@ -25,7 +25,7 @@ urlpatterns = [
         name='upload'
     ),
     url(
-        '^(?P<pk>\d+)/delete/$',
+        r'^(?P<pk>\d+)/delete/$',
         views.GalleryDelete.as_view(),
         name='delete'
     ),
@@ -35,7 +35,7 @@ urlpatterns = [
         name='unhandled'
     ),
     url(
-        '^unhandled/(?P<pk>\d+)/delete/$',
+        r'^unhandled/(?P<pk>\d+)/delete/$',
         views.GalleryUnhandledDelete.as_view(),
         name='unhandled_delete'
     )

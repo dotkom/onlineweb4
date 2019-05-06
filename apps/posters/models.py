@@ -69,6 +69,7 @@ class OrderMixin(models.Model):
             ('overview_poster_order', 'View poster order overview'),
             ('view_poster_order', 'View poster orders'),
         )
+        default_permissions = ('add', 'change', 'delete')
 
 
 class Poster(OrderMixin):
@@ -90,6 +91,7 @@ class Poster(OrderMixin):
             ('overview_poster_order', 'View poster order overview'),
             ('view_poster_order', 'View poster orders'),
         )
+        default_permissions = ('add', 'change', 'delete')
 
     def __str__(self):
         if self.order_type == 1:
@@ -101,3 +103,6 @@ class Poster(OrderMixin):
 class CustomText(models.Model):
     field = models.CharField(max_length=50)
     text = models.CharField(max_length=30)
+
+    class Meta:
+        default_permissions = ('add', 'change', 'delete')

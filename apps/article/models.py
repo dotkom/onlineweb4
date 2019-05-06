@@ -69,3 +69,4 @@ class Article(models.Model):
         permissions = (
             ('view_article', 'View Article'),
         )
+        default_permissions = ('add', 'change', 'delete')

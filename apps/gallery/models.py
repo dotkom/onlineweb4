@@ -42,6 +42,7 @@ class UnhandledImage(models.Model):
         permissions = (
             ('view_unhandledimage', _('View UnhandledImage')),
         )
+        default_permissions = ('add', 'change', 'delete')
 
 
 class ResponsiveImage(models.Model):
@@ -165,3 +166,4 @@ class ResponsiveImage(models.Model):
         permissions = (
             ('view_responsiveimage', _('View ResponsiveImage')),
         )
+        default_permissions = ('add', 'change', 'delete')

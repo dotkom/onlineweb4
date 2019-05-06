@@ -67,3 +67,4 @@ class Issue(models.Model):
         permissions = (
             ('view_issue', 'View Issue'),
         )
+        default_permissions = ('add', 'change', 'delete')

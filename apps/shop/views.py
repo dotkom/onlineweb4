@@ -74,7 +74,7 @@ class UserViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.Lis
     authentication_classes = [OAuth2Authentication]
     permission_classes = [TokenHasScope]
     required_scopes = ['shop.readwrite']
-    filter_fields = ('rfid',)
+    filterset_fields = ('rfid',)
 
 
 class InventoryViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.ListModelMixin):
