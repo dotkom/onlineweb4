@@ -17,7 +17,7 @@ from django.utils import timezone
 from django.utils.translation import ugettext as _
 # API v1
 from guardian.shortcuts import get_objects_for_user
-from rest_framework import mixins, status, views, viewsets
+from rest_framework import mixins, permissions, status, views, viewsets
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from watson import search as watson
@@ -29,7 +29,7 @@ from apps.events.models import AttendanceEvent, Attendee, CompanyEvent, Event
 from apps.events.pdf_generator import EventPDF
 from apps.events.serializers import (AttendanceEventSerializer, AttendeeSerializer,
                                      CompanyEventSerializer, EventSerializer,
-                                     UserAttendeeSerializer)
+                                     UserAttendanceEventSerializer, UserAttendeeSerializer)
 from apps.events.utils import (handle_attend_event_payment, handle_attendance_event_detail,
                                handle_event_ajax, handle_event_payment, handle_mail_participants)
 from apps.oidc_provider.authentication import OidcOauth2Auth
@@ -396,6 +396,12 @@ class EventViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.Li
             (Q(group_restriction__isnull=True) | Q(group_restriction__groups__in=self.request.user.groups.all())) &
             Q(visible=True)). \
             distinct()
+
+
+class UserAttendanceEventViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = AttendanceEvent.objects.all()
+    serializer_class = UserAttendanceEventSerializer
+    permission_classes = (permissions.IsAuthenticated,)
 
 
 class AttendanceEventViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.ListModelMixin):

@@ -50,6 +50,47 @@ class RuleBundleSerializer(serializers.ModelSerializer):
         )
 
 
+class SerializerUserMethodField(serializers.SerializerMethodField):
+    """
+    Serialize a field related to a user.
+    Gets a field from a model instance with only the user as an arguemnt.
+    """
+
+    def bind(self, field_name, parent):
+        if self.method_name is None:
+            self.method_name = field_name
+        super(SerializerUserMethodField, self).bind(field_name, parent)
+
+    def to_representation(self, obj):
+        request = self.context.get('request', None)
+        if request:
+            get_user_field_method = getattr(obj, self.method_name)
+            return get_user_field_method(request.user)
+        return None
+
+
+class UserAttendanceEventSerializer(serializers.ModelSerializer):
+    rule_bundles = RuleBundleSerializer(many=True)
+    has_postponed_registration = SerializerUserMethodField()
+    is_marked = SerializerUserMethodField()
+    is_suspended = SerializerUserMethodField()
+    is_eligible_for_signup = SerializerUserMethodField()
+    is_attendee = SerializerUserMethodField()
+    is_on_waitlist = SerializerUserMethodField()
+    what_place_is_user_on_wait_list = SerializerUserMethodField()
+
+    class Meta:
+        model = AttendanceEvent
+        fields = (
+            'max_capacity', 'waitlist', 'guest_attendance',
+            'registration_start', 'registration_end', 'unattend_deadline',
+            'automatically_set_marks', 'rule_bundles', 'number_on_waitlist',
+            'number_of_seats_taken', 'visible_attending_attendees', 'has_extras',
+            'has_reservation', 'has_postponed_registration', 'is_marked', 'is_suspended',
+            'is_eligible_for_signup', 'is_attendee', 'is_on_waitlist', 'what_place_is_user_on_wait_list'
+        )
+
+
 class AttendanceEventSerializer(serializers.ModelSerializer):
     rule_bundles = RuleBundleSerializer(many=True)
 
