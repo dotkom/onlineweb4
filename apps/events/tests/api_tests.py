@@ -5,7 +5,8 @@ from django.contrib.auth.models import Group
 from django.urls import reverse
 from django.utils import timezone
 from django_dynamic_fixture import G
-from oidc_provider.models import CLIENT_TYPE_CHOICES, RESPONSE_TYPE_CHOICES, Client, Token
+from oidc_provider.models import (CLIENT_TYPE_CHOICES, RESPONSE_TYPE_CHOICES, Client, ResponseType,
+                                  Token)
 from rest_framework import status
 from rest_framework.test import APITestCase
 
@@ -53,12 +54,15 @@ class AttendAPITestCase(OAuth2TestCase):
 
     @staticmethod
     def _getOIDCToken(user):
+        id_token_response = ResponseType.objects.create(
+            value=RESPONSE_TYPE_CHOICES[1]
+        )
         oidc_client = Client.objects.create(
             client_type=CLIENT_TYPE_CHOICES[1],
             client_id='123',
-            response_type=RESPONSE_TYPE_CHOICES[0],
             _redirect_uris='http://localhost'
         )
+        oidc_client.response_types.add(id_token_response)
 
         return Token.objects.create(
             user=user,
