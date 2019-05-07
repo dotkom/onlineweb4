@@ -10,7 +10,8 @@ from rest_framework.test import APITestCase
 from apps.authentication.models import OnlineUser
 from apps.oidc_provider.test import OIDCTestCase
 
-from .utils import attend_user_to_event, generate_event
+from .utils import (attend_user_to_event, generate_event, generate_payment, generate_user,
+                    pay_for_event)
 
 
 def generate_attendee(event, username, rfid):
@@ -27,7 +28,7 @@ class CreateAttendeeTestCase(OIDCTestCase):
     def setUp(self):
 
         self.committee = G(Group, name='arrKom')
-        self.user = G(OnlineUser, name='_user')
+        self.user = generate_user(username='_user')
         self.token = self.generate_access_token(self.user)
         self.headers = {
             **self.generate_headers(),
@@ -47,7 +48,7 @@ class CreateAttendeeTestCase(OIDCTestCase):
         self.attendee2 = generate_attendee(self.event, 'test2', '321')
         self.attendees = [self.attendee1, self.attendee2]
 
-    def test_attend_not_attendance_event(self):
+    def test_user_cannot_attend_a_non_attendance_event(self):
         event_without_attendance = generate_event(organizer=self.committee, attendance=False)
 
         response = self.client.post(self.url, {
@@ -68,6 +69,20 @@ class CreateAttendeeTestCase(OIDCTestCase):
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertTrue(attendance.is_attendee(self.user))
+
+    def test_user_cannot_attend_twice(self):
+        attendance = self.event.attendance_event
+        initial_attendees = len(attendance.attendees.all())
+
+        self.test_guest_user_can_attend_event_with_guest_attendance()
+
+        response = self.client.post(self.url, {
+            'event_id': self.event.id,
+        }, **self.headers)
+
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(response.json().get('message'), 'Du er allerede meldt på dette arrangementet.')
+        self.assertEqual(len(attendance.attendees.all()), initial_attendees + 1)
 
     def test_guest_user_cannot_attend_event_without_guest_attendance(self):
         attendance = self.event.attendance_event
@@ -137,6 +152,33 @@ class CreateAttendeeTestCase(OIDCTestCase):
             response.json().get('message'),
             'Du kan ikke melde deg av et arrangement som allerde har startet.'
         )
+
+    def test_user_can_re_attend_and_event_after_un_attending(self):
+        self.test_user_can_unattend_before_deadline()
+        self.test_guest_user_can_attend_event_with_guest_attendance()
+
+    def test_payment_is_generated_on_attendance(self):
+        generate_payment(self.event)
+        attendance = self.event.attendance_event
+        attendance.guest_attendance = True
+        attendance.save()
+
+        attend_response = self.client.post(self.url, {
+            'event_id': self.event.id,
+        }, **self.headers)
+
+        self.assertEqual(attend_response.status_code, status.HTTP_201_CREATED)
+        self.assertFalse(attend_response.json()['has_paid'])
+
+        pay_for_event(self.event, self.user)
+        attendee_id = attend_response.json()['id']
+
+        attendee_response = self.client.get(self.id_url(attendee_id), {
+            'event_id': self.event.id,
+        }, **self.headers)
+
+        self.assertEqual(attendee_response.status_code, status.HTTP_200_OK)
+        self.assertTrue(attendee_response.json()['has_paid'])
 
 
 class EventsAPIURLTestCase(APITestCase):
