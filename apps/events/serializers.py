@@ -1,3 +1,4 @@
+from onlineweb4.fields.recaptcha import RecaptchaField
 from rest_framework import serializers
 
 from apps.authentication.models import OnlineUser as User
@@ -21,12 +22,17 @@ class UserAttendeeSerializer(serializers.ModelSerializer):
         source='event',
         queryset=AttendanceEvent.objects.all()
     )
+    recaptcha = RecaptchaField()
+
+    def create(self, validated_data):
+        validated_data.pop('recaptcha')
+        return super(UserAttendeeSerializer, self).create(validated_data)
 
     class Meta:
         model = Attendee
         fields = (
             'id', 'event', 'user', 'attended', 'timestamp', 'event_id', 'user_id', 'show_as_attending_event',
-            'has_paid',
+            'has_paid', 'recaptcha',
         )
         read_only_fields = ('event', 'user', 'id', 'timestamp', 'has_paid')
 
