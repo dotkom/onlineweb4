@@ -37,7 +37,7 @@ class CreateAttendeeTestCase(OIDCTestCase):
             'format': 'json',
         }
 
-        self.url = '/api/v1/user-attendees/'
+        self.url = reverse('user_attendees-list')
         self.id_url = lambda _id: self.url + str(_id) + '/'
         self.event = generate_event(organizer=self.committee)
         self.event.attendance_event.registration_start = timezone.now()
