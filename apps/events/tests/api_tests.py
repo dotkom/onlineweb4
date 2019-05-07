@@ -1,17 +1,14 @@
 import json
-from datetime import timedelta
 
 from django.contrib.auth.models import Group
 from django.urls import reverse
 from django.utils import timezone
 from django_dynamic_fixture import G
-from oidc_provider.models import (CLIENT_TYPE_CHOICES, RESPONSE_TYPE_CHOICES, Client, ResponseType,
-                                  Token)
 from rest_framework import status
 from rest_framework.test import APITestCase
 
 from apps.authentication.models import OnlineUser
-from apps.oauth2_provider.test import OAuth2TestCase
+from apps.oidc_provider.test import OIDCTestCase
 
 from .utils import attend_user_to_event, generate_event
 
@@ -25,38 +22,20 @@ def generate_valid_rfid():
     return '12345678'
 
 
-class CreateAttendeeTestCase(OAuth2TestCase):
-
-    @staticmethod
-    def _getOIDCToken(user, client_id='123', refresh_token='456'):
-        oidc_client = Client.objects.create(
-            client_type=CLIENT_TYPE_CHOICES[1],
-            client_id=client_id,
-            response_type=RESPONSE_TYPE_CHOICES[0],
-            _redirect_uris='http://localhost'
-        )
-
-        return Token.objects.create(
-            user=user,
-            client=oidc_client,
-            expires_at=timezone.now() + timedelta(days=1),
-            _scope='openid profile',
-            access_token=client_id,
-            refresh_token=refresh_token,
-            _id_token='{"sub": %s}' % user.pk,
-        )
+class CreateAttendeeTestCase(OIDCTestCase):
 
     def setUp(self):
 
         self.committee = G(Group, name='arrKom')
         self.user = G(OnlineUser, name='_user')
-        self.token = self._getOIDCToken(self.user)
+        self.token = self.generate_access_token(self.user)
         self.headers = {
+            **self.generate_headers(),
             'Accepts': 'application/json',
             'Content-Type': 'application/json',
             'format': 'json',
-            'HTTP_AUTHORIZATION': 'Bearer ' + self.token.access_token,
         }
+
         self.url = '/api/v1/user-attendees/'
         self.id_url = lambda _id: self.url + str(_id) + '/'
         self.event = generate_event(organizer=self.committee)
@@ -185,38 +164,19 @@ class EventsAPIURLTestCase(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
 
-class AttendAPITestCase(OAuth2TestCase):
-
-    @staticmethod
-    def _getOIDCToken(user):
-        id_token_response = ResponseType.objects.create(
-            value=RESPONSE_TYPE_CHOICES[1]
-        )
-        oidc_client = Client.objects.create(
-            client_type=CLIENT_TYPE_CHOICES[1],
-            client_id='123',
-            _redirect_uris='http://localhost'
-        )
-        oidc_client.response_types.add(id_token_response)
-
-        return Token.objects.create(
-            user=user,
-            client=oidc_client,
-            expires_at=timezone.now() + timedelta(days=1),
-            _scope='openid profile',
-            access_token='123',
-            refresh_token='456',
-            _id_token='{"sub": %s}' % user.pk,
-        )
+class AttendAPITestCase(OIDCTestCase):
 
     def setUp(self):
         self.committee = G(Group, name='arrKom')
         self.user = G(OnlineUser, name='test_user', groups=[self.committee])
-        self.token = self._getOIDCToken(self.user)
+        self.token = self.generate_access_token(self.user)
         self.headers = {
+            **self.generate_headers(),
+            'Accepts': 'application/json',
+            'Content-Type': 'application/json',
             'format': 'json',
-            'HTTP_AUTHORIZATION': 'Bearer ' + self.token.access_token,
         }
+
         self.url = reverse('event_attend')
         self.event = generate_event(organizer=self.committee)
         self.attendee1 = generate_attendee(self.event, 'test1', '123')
