@@ -471,7 +471,6 @@ class UserAttendeeViewSet(viewsets.ModelViewSet):
                 'show_as_attending_event': user.get_visible_as_attending_events(),
                 'event_id': event.id,
                 'user_id': user.id,
-                'recatpcha': request.data.get('recaptcha'),
             })
             serializer.is_valid(raise_exception=True)
             self.perform_create(serializer)

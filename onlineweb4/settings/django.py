@@ -169,7 +169,6 @@ INSTALLED_APPS = (
     'django_dynamic_fixture',
     'oauth2_provider',
     'captcha',
-    'rest_framework_recaptcha',
     'pdfdocument',
     'watson',
     'markdown_deux',
