@@ -375,7 +375,7 @@ def count_extras(event_extras, attendance_list, attendees):
         ex = event_extras[choice]
         ex[attendance_list] += 1
         if attendee.user.allergies:
-            what_list = "påmeldt" if attendance_list is "attending" else "venteliste"
+            what_list = "påmeldt" if attendance_list == "attending" else "venteliste"
             ex["allergics"].append({"user": attendee.user, "list": what_list})
 
 

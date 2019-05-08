@@ -9,4 +9,4 @@ class GsuiteConfig(AppConfig):
         super(GsuiteConfig, self).ready()
         # The following stops pycharm from nagging about unused import statement
         # noinspection PyUnresolvedReferences
-        import apps.gsuite.mail_syncer.signals  # flake8: noqa
+        import apps.gsuite.mail_syncer.signals  # noqa: F401

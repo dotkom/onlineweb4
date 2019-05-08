@@ -12,7 +12,7 @@ class GalleryConfig(AppConfig):
 
         # The following stops pycharm from nagging about unused import statement
         # noinspection PyUnresolvedReferences
-        import apps.gallery.signals  # flake8: noqa
+        import apps.gallery.signals  # noqa: F401
         from apps.gallery.models import ResponsiveImage
 
         # Perform checks that necessary directories exist on the disk

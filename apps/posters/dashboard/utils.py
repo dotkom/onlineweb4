@@ -65,13 +65,13 @@ def _handle_poster_add(request, form, order_type):
 
 
 def _handle_poster_celebration(poster, context):
-        logger = logging.getLogger(__name__)
-        subject = '[dotkom] Gratulerer med {} plakater!'.format(poster.id)
-        message = render_to_string('posters/email/100_multiple_order.txt', context)
+    logger = logging.getLogger(__name__)
+    subject = '[dotkom] Gratulerer med {} plakater!'.format(poster.id)
+    message = render_to_string('posters/email/100_multiple_order.txt', context)
 
-        from_email = settings.EMAIL_DOTKOM
-        to_email = [settings.EMAIL_PROKOM]
-        try:
-            EmailMessage(subject, message, from_email, to_email, []).send()
-        except ImproperlyConfigured:
-            logger.exception("Failed to send email Congratulating ProKom with number of poster orders divisible by 100")
+    from_email = settings.EMAIL_DOTKOM
+    to_email = [settings.EMAIL_PROKOM]
+    try:
+        EmailMessage(subject, message, from_email, to_email, []).send()
+    except ImproperlyConfigured:
+        logger.exception("Failed to send email Congratulating ProKom with number of poster orders divisible by 100")
