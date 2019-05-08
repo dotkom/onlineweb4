@@ -1,11 +1,14 @@
+from django.utils import timezone
 from onlineweb4.fields.recaptcha import RecaptchaField
 from rest_framework import serializers
+from rest_framework.serializers import ValidationError
 
 from apps.authentication.models import OnlineUser as User
 from apps.authentication.serializers import UserSerializer
 from apps.companyprofile.serializers import CompanySerializer
 from apps.events.models import AttendanceEvent, Attendee, CompanyEvent, Event, Extras, RuleBundle
 from apps.gallery.serializers import ResponsiveImageSerializer
+from apps.profiles.models import Privacy
 
 
 class ExtrasSerializer(serializers.ModelSerializer):
@@ -15,41 +18,137 @@ class ExtrasSerializer(serializers.ModelSerializer):
         fields = ('id', 'choice', 'note',)
 
 
-class UserAttendeeSerializer(serializers.ModelSerializer):
+class AttendeeRegistrationReadOnlySerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)
     extras = ExtrasSerializer(read_only=True)
-    extras_id = serializers.PrimaryKeyRelatedField(
-        required=False,
-        allow_null=True,
-        write_only=True,
-        source='extras',
-        queryset=Extras.objects.all()
-    )
-    user_id = serializers.PrimaryKeyRelatedField(
-        write_only=True,
-        source='user',
-        default=serializers.CurrentUserDefault(),
-        queryset=User.objects.all()
-    )
     event = serializers.PrimaryKeyRelatedField(required=False, read_only=True)
-    event_id = serializers.PrimaryKeyRelatedField(
-        write_only=True,
-        source='event',
-        queryset=AttendanceEvent.objects.all()
-    )
-    recaptcha = RecaptchaField()
-
-    def create(self, validated_data):
-        validated_data.pop('recaptcha')
-        return super(UserAttendeeSerializer, self).create(validated_data)
 
     class Meta:
         model = Attendee
         fields = (
-            'id', 'event', 'user', 'attended', 'timestamp', 'event_id', 'user_id', 'show_as_attending_event',
-            'has_paid', 'recaptcha', 'extras', 'extras_id',
+            'id', 'event', 'user', 'attended', 'timestamp', 'show_as_attending_event', 'has_paid', 'extras',
         )
-        read_only_fields = ('event', 'user', 'id', 'timestamp', 'has_paid')
+        read_only = True
+
+
+class VisibleAttendeeField(serializers.BooleanField):
+    def to_internal_value(self, value):
+        raise ValidationError(value)
+        if value is None:
+            request = self.parent.context.get('request', None)
+            privacy = Privacy.objects.get(user=request.user)
+            if privacy:
+                return privacy.visible_as_attending_events
+
+        return value
+
+
+class WritableSerializerMethodField(serializers.SerializerMethodField):
+
+    def __init__(self, method_name=None, **kwargs):
+        self.method_name = method_name
+        self.setter_method_name = kwargs.pop('setter_method_name', None)
+        self.deserializer_field = kwargs.pop('deserializer_field')
+
+        kwargs['source'] = '*'
+        super(serializers.SerializerMethodField, self).__init__(**kwargs)
+
+    def bind(self, field_name, parent):
+        retval = super().bind(field_name, parent)
+        if not self.setter_method_name:
+            self.setter_method_name = f'set_{field_name}'
+
+        return retval
+
+    def to_internal_value(self, data):
+        value = self.deserializer_field.to_internal_value(data)
+        method = getattr(self.parent, self.setter_method_name)
+        method(value)
+        return {}
+
+
+class AttendeeRegistrationCreateSerializer(serializers.ModelSerializer):
+    extras = serializers.PrimaryKeyRelatedField(
+        required=False,
+        allow_null=True,
+        write_only=True,
+        queryset=Extras.objects.all(),
+    )
+    user = serializers.PrimaryKeyRelatedField(
+        write_only=True,
+        default=serializers.CurrentUserDefault(),
+        queryset=User.objects.all(),
+    )
+    event = serializers.PrimaryKeyRelatedField(
+        write_only=True,
+        queryset=AttendanceEvent.objects.all(),
+    )
+    recaptcha = RecaptchaField()
+
+    def validate(self, data):
+        request = self.context.get('request', None)
+        if not request:
+            raise ValidationError('internal:Request was not passed as context to serializer')
+
+        user = request.user
+        if not user.is_authenticated:
+            raise ValidationError('Du må være logget inn for å kunne melde deg på et arrangement')
+
+        attendance_event = data.get('event', None)
+        event = attendance_event.event
+
+        if not event:
+            raise ValidationError('Det gitte arrangementet eksisterer ikke')
+
+        if not event.is_attendance_event():
+            raise ValidationError('Dette er ikke et påmeldingsarrangement')
+
+        attend_response = attendance_event.is_eligible_for_signup(request.user)
+        can_attend = attend_response.get('status')
+
+        if not can_attend:
+            raise ValidationError(attend_response.get('message'))
+
+        return data
+
+    def create(self, validated_data):
+        """
+        The recaptcha field is not part of the model, but will still need to be validated.
+        All serializer fields will be put into 'Model#create', and 'recaptcha' is removed for the serializer not
+        to try and create it on the model-
+        """
+        validated_data.pop('recaptcha')
+        return super(AttendeeRegistrationCreateSerializer, self).create(validated_data)
+
+    class Meta:
+        model = Attendee
+        fields = (
+            'id', 'event', 'user', 'show_as_attending_event', 'recaptcha', 'extras',
+        )
+
+
+class AttendeeRegistrationUpdateSerializer(serializers.ModelSerializer):
+    extras = serializers.PrimaryKeyRelatedField(
+        required=False,
+        allow_null=True,
+        write_only=True,
+        queryset=Extras.objects.all()
+    )
+
+    def validate_extras(self, value):
+        attendance = self.instance.event
+        if timezone.now() > attendance.registration_end:
+            raise ValidationError('Det er ikke mulig å endre ekstravalg etter påmeldingsfristen')
+        if timezone.now() > attendance.unattend_deadline:
+            raise ValidationError('Det er ikke mulig å endre ekstravalg etter avmeldingsfristen')
+
+        return value
+
+    class Meta:
+        model = Attendee
+        fields = (
+            'id', 'user', 'show_as_attending_event', 'extras',
+        )
 
 
 class AttendeeSerializer(serializers.ModelSerializer):

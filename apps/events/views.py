@@ -27,9 +27,12 @@ from apps.events.filters import AttendanceEventFilter, EventDateFilter
 from apps.events.forms import CaptchaForm
 from apps.events.models import AttendanceEvent, Attendee, CompanyEvent, Event
 from apps.events.pdf_generator import EventPDF
-from apps.events.serializers import (AttendanceEventSerializer, AttendeeSerializer,
+from apps.events.serializers import (AttendanceEventSerializer,
+                                     AttendeeRegistrationCreateSerializer,
+                                     AttendeeRegistrationReadOnlySerializer,
+                                     AttendeeRegistrationUpdateSerializer, AttendeeSerializer,
                                      CompanyEventSerializer, EventSerializer,
-                                     UserAttendanceEventSerializer, UserAttendeeSerializer)
+                                     UserAttendanceEventSerializer)
 from apps.events.utils import (handle_attend_event_payment, handle_attendance_event_detail,
                                handle_event_ajax, handle_event_payment, handle_mail_participants)
 from apps.oidc_provider.authentication import OidcOauth2Auth
@@ -412,12 +415,21 @@ class AttendanceEventViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin,
 
 
 class UserAttendeeViewSet(viewsets.ModelViewSet):
-    serializer_class = UserAttendeeSerializer
     permission_classes = (permissions.IsAuthenticated,)
     filter_fields = ('event', 'attended',)
 
     def get_queryset(self):
         return Attendee.objects.filter(user=self.request.user)
+
+    def get_serializer_class(self):
+        if self.action == 'create':
+            return AttendeeRegistrationCreateSerializer
+        if self.action in ['update', 'partial_update']:
+            return AttendeeRegistrationUpdateSerializer
+        if self.action in ['list', 'retrieve']:
+            return AttendeeRegistrationReadOnlySerializer
+
+        return super().get_serializer_class()
 
     def destroy(self, request, *args, **kwargs):
         user = self.request.user
@@ -444,50 +456,6 @@ class UserAttendeeViewSet(viewsets.ModelViewSet):
         attendee.unattend(user)
 
         return Response(status=status.HTTP_204_NO_CONTENT)
-
-    def create(self, request, *args, **kwargs):
-        """
-        Overwrite DRF create from DRF mixins.CreateModelMixin
-        """
-        user = request.user
-        event_id = request.data.get('event_id')
-        event = Event.objects.get(pk=event_id)
-
-        if not event:
-            return Response({
-                'message': 'Det gitte arrangementet eksisterer ikke'
-            }, status=status.HTTP_400_BAD_REQUEST)
-
-        if not event.is_attendance_event():
-            return Response({
-                'message': 'Dette er ikke et påmeldingsarrangement'
-            }, status=status.HTTP_400_BAD_REQUEST)
-
-        attendance_event = event.attendance_event
-        attend_response = attendance_event.is_eligible_for_signup(request.user)
-
-        can_attend = attend_response['status']
-        if can_attend:
-            serializer = self.get_serializer(data={
-                'show_as_attending_event': user.get_visible_as_attending_events(),
-                'event_id': event.id,
-                'user_id': user.id,
-                'recaptcha': request.data.get('recaptcha'),
-                'extras_id': request.data.get('extras_id'),
-            })
-            serializer.is_valid(raise_exception=True)
-            self.perform_create(serializer)
-
-            if attendance_event.payment():
-                handle_attend_event_payment(event, request.user)
-
-            headers = self.get_success_headers(serializer.data)
-            return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
-
-        else:
-            return Response({
-                'message': attend_response.get('message')
-            }, status=attend_response.get('status_code', status.HTTP_500_INTERNAL_SERVER_ERROR))
 
 
 class AttendeeViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.ListModelMixin):
