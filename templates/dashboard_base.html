@@ -262,16 +262,22 @@
                         </ul>
                     </li>
                     {% endif %}
+                    {% if 'webshop.view_category' in user_permissions or 'webshop.view_order' in user_permissions %}
                     <li class="treeview">
                         <a href="#">
                             <i class="fa fa-shopping-cart blue"></i> <span>Webshop</span>
                             <i class="fa fa-angle-down pull-right"></i>
                         </a>
                         <ul class="treeview-menu">
-                            <li><a href="{% url 'dashboard-webshop:categories' %}"><i class="fa fa-angle-double-right orange"></i> Kategorier</a></li>
-                            <li><a href="{% url 'dashboard-webshop:orders'%}"><i class="fa fa-angle-double-right orange"></i> Bestillinger</a></li>
+                            {% if 'webshop.view_category' in user_permissions %}
+                                <li><a href="{% url 'dashboard-webshop:categories' %}"><i class="fa fa-angle-double-right orange"></i> Kategorier</a></li>
+                            {% endif %}
+                            {% if 'webshop.view_order' in user_permissions %}
+                                <li><a href="{% url 'dashboard-webshop:orders'%}"><i class="fa fa-angle-double-right orange"></i> Bestillinger</a></li>
+                            {% endif %}
                         </ul>
                     </li>
+                    {% endif %}
                     <!--<li>
                         <a href="#">
                             <i class="fa fa-bell blue"></i> <span>Til oppfølging</span>
