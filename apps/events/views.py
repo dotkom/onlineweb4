@@ -23,7 +23,7 @@ from rest_framework.response import Response
 from watson import search as watson
 
 from apps.authentication.models import OnlineUser as User
-from apps.events.filters import EventDateFilter, AttendanceEventFilter
+from apps.events.filters import AttendanceEventFilter, EventDateFilter
 from apps.events.forms import CaptchaForm
 from apps.events.models import AttendanceEvent, Attendee, CompanyEvent, Event
 from apps.events.pdf_generator import EventPDF
