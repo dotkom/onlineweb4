@@ -8,7 +8,6 @@ from apps.authentication.serializers import UserSerializer
 from apps.companyprofile.serializers import CompanySerializer
 from apps.events.models import AttendanceEvent, Attendee, CompanyEvent, Event, Extras, RuleBundle
 from apps.gallery.serializers import ResponsiveImageSerializer
-from apps.profiles.models import Privacy
 
 
 class ExtrasSerializer(serializers.ModelSerializer):
@@ -29,42 +28,6 @@ class AttendeeRegistrationReadOnlySerializer(serializers.ModelSerializer):
             'id', 'event', 'user', 'attended', 'timestamp', 'show_as_attending_event', 'has_paid', 'extras',
         )
         read_only = True
-
-
-class VisibleAttendeeField(serializers.BooleanField):
-    def to_internal_value(self, value):
-        raise ValidationError(value)
-        if value is None:
-            request = self.parent.context.get('request', None)
-            privacy = Privacy.objects.get(user=request.user)
-            if privacy:
-                return privacy.visible_as_attending_events
-
-        return value
-
-
-class WritableSerializerMethodField(serializers.SerializerMethodField):
-
-    def __init__(self, method_name=None, **kwargs):
-        self.method_name = method_name
-        self.setter_method_name = kwargs.pop('setter_method_name', None)
-        self.deserializer_field = kwargs.pop('deserializer_field')
-
-        kwargs['source'] = '*'
-        super(serializers.SerializerMethodField, self).__init__(**kwargs)
-
-    def bind(self, field_name, parent):
-        retval = super().bind(field_name, parent)
-        if not self.setter_method_name:
-            self.setter_method_name = f'set_{field_name}'
-
-        return retval
-
-    def to_internal_value(self, data):
-        value = self.deserializer_field.to_internal_value(data)
-        method = getattr(self.parent, self.setter_method_name)
-        method(value)
-        return {}
 
 
 class AttendeeRegistrationCreateSerializer(serializers.ModelSerializer):
