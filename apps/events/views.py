@@ -416,7 +416,7 @@ class AttendanceEventViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin,
 
 class UserAttendeeViewSet(viewsets.ModelViewSet):
     permission_classes = (permissions.IsAuthenticated,)
-    filter_fields = ('event', 'attended',)
+    filterset_fields = ('event', 'attended',)
 
     def get_queryset(self):
         return Attendee.objects.filter(user=self.request.user)
@@ -461,7 +461,7 @@ class UserAttendeeViewSet(viewsets.ModelViewSet):
 class AttendeeViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.ListModelMixin):
     serializer_class = AttendeeSerializer
     authentication_classes = [OidcOauth2Auth]
-    filter_fields = ('event', 'attended',)
+    filterset_fields = ('event', 'attended',)
 
     @staticmethod
     def _get_allowed_attendees(user):
