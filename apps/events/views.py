@@ -23,7 +23,7 @@ from rest_framework.response import Response
 from watson import search as watson
 
 from apps.authentication.models import OnlineUser as User
-from apps.events.filters import EventDateFilter
+from apps.events.filters import EventDateFilter, AttendanceEventFilter
 from apps.events.forms import CaptchaForm
 from apps.events.models import AttendanceEvent, Attendee, CompanyEvent, Event
 from apps.events.pdf_generator import EventPDF
@@ -402,6 +402,7 @@ class UserAttendanceEventViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = AttendanceEvent.objects.all()
     serializer_class = UserAttendanceEventSerializer
     permission_classes = (permissions.IsAuthenticated,)
+    filter_class = AttendanceEventFilter
 
 
 class AttendanceEventViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.ListModelMixin):
@@ -412,7 +413,7 @@ class AttendanceEventViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin,
 
 class UserAttendeeViewSet(viewsets.ModelViewSet):
     serializer_class = UserAttendeeSerializer
-    authentication_classes = [OidcOauth2Auth]
+    permission_classes = (permissions.IsAuthenticated,)
     filter_fields = ('event', 'attended',)
 
     def get_queryset(self):
@@ -472,6 +473,7 @@ class UserAttendeeViewSet(viewsets.ModelViewSet):
                 'event_id': event.id,
                 'user_id': user.id,
                 'recaptcha': request.data.get('recaptcha'),
+                'extras_id': request.data.get('extras_id'),
             })
             serializer.is_valid(raise_exception=True)
             self.perform_create(serializer)

@@ -768,7 +768,7 @@ class AttendanceEvent(models.Model):
         return self._process_rulebundle_satisfaction_responses(responses)
 
     def is_attendee(self, user):
-        return self.attendees.filter(user=user)
+        return self.attendees.filter(user=user).exists()
 
     def is_on_waitlist(self, user):
         return any(a.user == user for a in self.waitlist_qs)

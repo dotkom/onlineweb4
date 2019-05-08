@@ -4,12 +4,27 @@ from rest_framework import serializers
 from apps.authentication.models import OnlineUser as User
 from apps.authentication.serializers import UserSerializer
 from apps.companyprofile.serializers import CompanySerializer
-from apps.events.models import AttendanceEvent, Attendee, CompanyEvent, Event, RuleBundle
+from apps.events.models import AttendanceEvent, Attendee, CompanyEvent, Event, Extras, RuleBundle
 from apps.gallery.serializers import ResponsiveImageSerializer
+
+
+class ExtrasSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Extras
+        fields = ('id', 'choice', 'note',)
 
 
 class UserAttendeeSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)
+    extras = ExtrasSerializer(read_only=True)
+    extras_id = serializers.PrimaryKeyRelatedField(
+        required=False,
+        allow_null=True,
+        write_only=True,
+        source='extras',
+        queryset=Extras.objects.all()
+    )
     user_id = serializers.PrimaryKeyRelatedField(
         write_only=True,
         source='user',
@@ -32,7 +47,7 @@ class UserAttendeeSerializer(serializers.ModelSerializer):
         model = Attendee
         fields = (
             'id', 'event', 'user', 'attended', 'timestamp', 'event_id', 'user_id', 'show_as_attending_event',
-            'has_paid', 'recaptcha',
+            'has_paid', 'recaptcha', 'extras', 'extras_id',
         )
         read_only_fields = ('event', 'user', 'id', 'timestamp', 'has_paid')
 
@@ -77,6 +92,7 @@ class SerializerUserMethodField(serializers.SerializerMethodField):
 
 class UserAttendanceEventSerializer(serializers.ModelSerializer):
     rule_bundles = RuleBundleSerializer(many=True)
+    extras = ExtrasSerializer(many=True)
     has_postponed_registration = SerializerUserMethodField()
     is_marked = SerializerUserMethodField()
     is_suspended = SerializerUserMethodField()
@@ -88,7 +104,7 @@ class UserAttendanceEventSerializer(serializers.ModelSerializer):
     class Meta:
         model = AttendanceEvent
         fields = (
-            'max_capacity', 'waitlist', 'guest_attendance',
+            'max_capacity', 'waitlist', 'guest_attendance', 'extras',
             'registration_start', 'registration_end', 'unattend_deadline',
             'automatically_set_marks', 'rule_bundles', 'number_on_waitlist',
             'number_of_seats_taken', 'visible_attending_attendees', 'has_extras',
@@ -99,6 +115,7 @@ class UserAttendanceEventSerializer(serializers.ModelSerializer):
 
 class AttendanceEventSerializer(serializers.ModelSerializer):
     rule_bundles = RuleBundleSerializer(many=True)
+    extras = ExtrasSerializer(many=True)
 
     class Meta:
         model = AttendanceEvent
@@ -106,7 +123,7 @@ class AttendanceEventSerializer(serializers.ModelSerializer):
             'max_capacity', 'waitlist', 'guest_attendance',
             'registration_start', 'registration_end', 'unattend_deadline',
             'automatically_set_marks', 'rule_bundles', 'number_on_waitlist',
-            'number_of_seats_taken',
+            'number_of_seats_taken', 'extras',
         )
 
 

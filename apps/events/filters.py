@@ -2,7 +2,7 @@ import django_filters
 from django_filters.filters import BaseInFilter, NumberFilter
 from guardian.shortcuts import get_objects_for_user
 
-from apps.events.models import Attendee, Event
+from apps.events.models import AttendanceEvent, Attendee, Event
 
 
 class EventTypeInFilter(BaseInFilter, NumberFilter):
@@ -88,3 +88,17 @@ class EventDateFilter(django_filters.FilterSet):
     class Meta:
         model = Event
         fields = ('event_start', 'event_end', 'event_type', 'is_attendee')
+
+
+class AttendanceEventFilter(django_filters.FilterSet):
+    has_extras = django_filters.BooleanFilter(method='filter_has_extras')
+
+    def filter_has_extras(self, queryset, name, value):
+        if value:
+            with_extras_pks = [attendance.event.id for attendance in queryset if attendance.has_extras]
+            return queryset.filter(pk__in=with_extras_pks)
+        return queryset
+
+    class Meta:
+        model = AttendanceEvent
+        fields = ('has_extras',)
