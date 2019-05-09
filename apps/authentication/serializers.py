@@ -1,5 +1,3 @@
-import logging
-
 from onlineweb4.fields.recaptcha import RecaptchaField
 from rest_framework import serializers
 

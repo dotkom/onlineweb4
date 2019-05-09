@@ -8,9 +8,7 @@ from django.contrib.auth.models import Group
 from django.core.mail import send_mail
 from django.db import IntegrityError
 from django.db.models import Q
-from django.shortcuts import redirect
 from django.template.loader import render_to_string
-from rest_framework import status
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
