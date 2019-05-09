@@ -1,7 +1,7 @@
-import requests
 import logging
 from unittest import mock
 
+import requests
 from django.conf import settings
 from rest_framework import serializers
 

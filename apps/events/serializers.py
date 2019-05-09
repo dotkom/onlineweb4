@@ -4,7 +4,7 @@ from rest_framework import serializers
 from rest_framework.serializers import ValidationError
 
 from apps.authentication.models import OnlineUser as User
-from apps.authentication.serializers import UserSerializer
+from apps.authentication.serializers import UserReadOnlySerializer
 from apps.companyprofile.serializers import CompanySerializer
 from apps.events.models import AttendanceEvent, Attendee, CompanyEvent, Event, Extras, RuleBundle
 from apps.gallery.serializers import ResponsiveImageSerializer
@@ -19,7 +19,7 @@ class ExtrasSerializer(serializers.ModelSerializer):
 
 
 class AttendeeRegistrationReadOnlySerializer(serializers.ModelSerializer):
-    user = UserSerializer(read_only=True)
+    user = UserReadOnlySerializer(read_only=True)
     extras = ExtrasSerializer(read_only=True)
     event = serializers.PrimaryKeyRelatedField(required=False, read_only=True)
 
@@ -126,7 +126,7 @@ class AttendeeRegistrationUpdateSerializer(serializers.ModelSerializer):
 
 
 class AttendeeSerializer(serializers.ModelSerializer):
-    user = UserSerializer()
+    user = UserReadOnlySerializer()
 
     class Meta:
         model = Attendee

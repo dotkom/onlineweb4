@@ -2,7 +2,7 @@ from django.core.exceptions import ValidationError as DjangoValidationError
 from rest_framework import serializers
 
 from apps.approval.models import CommitteeApplication, CommitteePriority
-from apps.authentication.serializers import UserSerializer
+from apps.authentication.serializers import UserReadOnlySerializer
 
 
 class CommitteeSerializer(serializers.ModelSerializer):
@@ -18,7 +18,7 @@ class CommitteeSerializer(serializers.ModelSerializer):
 
 class CommitteeApplicationSerializer(serializers.ModelSerializer):
     committees = CommitteeSerializer(many=True, source='committeepriority_set')
-    applicant = UserSerializer(read_only=True)
+    applicant = UserReadOnlySerializer(read_only=True)
 
     class Meta:
         model = CommitteeApplication
