@@ -158,6 +158,13 @@
                         </ul>
                     </li>
                     {% endif %}
+                    {% if 'hobbygroups.change_hobby' in user_permissions %}
+                    <li>
+                        <a href="/dashboard/hobbies">
+                            <i class="fa fa-comments blue"></i> <span>Interessegrupper</span>
+                        </a>
+                    </li>
+                    {% endif %}
                     {% if 'careeropportunity.view_careeropportunity' in user_permissions %}
                     <li class="treeview">
                         <a href="#">
@@ -216,6 +223,13 @@
                     <li>
                         <a href="/redwine/">
                             <i class="fa fa-trophy blue"></i> <span>Redwine</span>
+                        </a>
+                    </li>
+                    {% endif %}
+                    {% if 'resourcecenter.change_resource' in user_permissions %}
+                    <li>
+                        <a href="/dashboard/resources">
+                            <i class="fa fa-universal-access blue"></i> <span>Ressurser</span>
                         </a>
                     </li>
                     {% endif %}

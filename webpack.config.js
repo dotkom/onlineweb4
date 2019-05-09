@@ -61,6 +61,9 @@ const webpackConfig = {
     dashboardGroups: [
       './assets/dashboard/groups/index',
     ],
+    dashboardHobbies: [
+      './assets/dashboard/hobbies/index',
+    ],
     dashboardInventory: [
       './assets/dashboard/inventory/index',
     ],
@@ -69,6 +72,9 @@ const webpackConfig = {
     ],
     dashboardPosters: [
       './assets/dashboard/posters/index',
+    ],
+    dashboardResources: [
+      './assets/dashboard/resources/index',
     ],
     dashboardWebshop: [
       './assets/dashboard/webshop/index',

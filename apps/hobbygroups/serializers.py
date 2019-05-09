@@ -1,9 +1,28 @@
 from rest_framework import serializers
 
+from apps.gallery.models import ResponsiveImage
+from apps.gallery.serializers import ResponsiveImageSerializer
 from apps.hobbygroups.models import Hobby
 
 
 class HobbySerializer(serializers.ModelSerializer):
+
+    image = ResponsiveImageSerializer(read_only=True)
+    image_id = serializers.PrimaryKeyRelatedField(
+        write_only=True,
+        source='image',
+        queryset=ResponsiveImage.objects.all()
+    )
+
     class Meta:
         model = Hobby
-        fields = ('id', 'title', 'description', 'read_more_link')
+        fields = (
+            'id',
+            'title',
+            'description',
+            'read_more_link',
+            'image',
+            'image_id',
+            'priority',
+            'active'
+        )

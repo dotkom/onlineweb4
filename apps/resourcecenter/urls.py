@@ -10,4 +10,4 @@ urlpatterns = [
 ]
 
 router = SharedAPIRootRouter()
-router.register('resources', views.HobbyViewSet)
+router.register('resources', views.ResourceViewSet)

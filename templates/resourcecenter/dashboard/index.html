@@ -1,0 +1,28 @@
+{% extends "dashboard_base.html" %}
+{% load render_bundle from webpack_loader %}
+
+{% block title %}
+Ressurser - Online
+{% endblock title %}
+
+{% block styles %}
+    {{ block.super }}
+    {% render_bundle 'dashboardResources' 'css' %}
+{% endblock %}
+
+{% block js %}
+    {{ block.super }}
+    {% render_bundle 'dashboardResources' 'js' %}
+{% endblock %}
+
+{% block page-header %}
+Ressurser
+{% endblock %}
+
+{% block breadcrumbs %}
+    <li>Ressurser</li>
+{% endblock %}
+
+{% block content %}
+    <div id="resources-react-root"></div>
+{% endblock content %}

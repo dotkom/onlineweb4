@@ -135,6 +135,7 @@ if 'apps.gallery' in settings.INSTALLED_APPS:
 if 'apps.hobbygroups' in settings.INSTALLED_APPS:
     urlpatterns += [
         url(r'^hobbygroups/', include('apps.hobbygroups.urls')),
+        url(r'^dashboard/hobbies/', include('apps.hobbygroups.dashboard.urls')),
     ]
 
 if 'apps.marks' in settings.INSTALLED_APPS:
@@ -171,6 +172,7 @@ if 'apps.resourcecenter' in settings.INSTALLED_APPS and 'apps.mailinglists' in s
     urlpatterns += [
         url(r'^resourcecenter/mailinglists/', include('apps.mailinglists.urls')),  # leave in this order because...
         url(r'^resourcecenter/',    include('apps.resourcecenter.urls')),  # Resourcecenter has catch-all on subpages
+        url(r'^dashboard/resources/', include('apps.resourcecenter.dashboard.urls')),
     ]
 
 if 'apps.rutinator' in settings.INSTALLED_APPS:
