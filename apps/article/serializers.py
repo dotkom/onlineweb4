@@ -12,7 +12,7 @@ class ArticleSerializer(TaggitSerializer, serializers.ModelSerializer):
     tags = TagListSerializerField()
     absolute_url = serializers.CharField(source='get_absolute_url', read_only=True)
 
-    class Meta(object):
+    class Meta:
         model = Article
         fields = (
             'absolute_url',

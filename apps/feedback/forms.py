@@ -25,7 +25,7 @@ class RatingAnswerForm(AnswerForm):
         choices=RATING_CHOICES
     )
 
-    class Meta(object):
+    class Meta:
         model = RatingAnswer
         exclude = ("feedback_relation", "question",)
 
@@ -36,7 +36,7 @@ class FieldOfStudyAnswerForm(AnswerForm):
         data = self.cleaned_data['answer']
         return data
 
-    class Meta(object):
+    class Meta:
         model = FieldOfStudyAnswer
         exclude = ("feedback_relation", "question",)
 
@@ -45,7 +45,7 @@ class TextAnswerForm(AnswerForm):
     answer = forms.CharField(
         widget=forms.Textarea(attrs={'class': 'form-control', 'type': 'text'}))
 
-    class Meta(object):
+    class Meta:
         model = TextAnswer
         exclude = ("feedback_relation", "question",)
 
@@ -62,7 +62,7 @@ class MultipleChoiceForm(forms.ModelForm):
             widget=forms.Select(attrs={'class': 'form-control'}))
         self.fields['answer'].label = self.instance.question.multiple_choice_relation.label
 
-    class Meta(object):
+    class Meta:
         model = MultipleChoiceAnswer
         exclude = ("feedback_relation", "question", "choice")
 

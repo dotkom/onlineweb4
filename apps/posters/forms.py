@@ -37,7 +37,7 @@ class AddForm(forms.ModelForm):
         empty_label=None
     )
 
-    class Meta(object):
+    class Meta:
         model = Poster
         fields = ['ordered_committee', 'amount', 'description', 'price', 'comments', 'display_from']
         dtp_fields = [('display_from', {})]
@@ -62,7 +62,7 @@ class AddPosterForm(AddForm):
         label='Event',
         queryset=Event.objects.order_by('-id').exclude(event_start__lte=timezone.now()))
 
-    class Meta(object):
+    class Meta:
         model = Poster
         fields = ['ordered_committee', 'event', 'amount', 'bong', 'description',
                   'price', 'display_from', 'comments']
@@ -90,7 +90,7 @@ class AddOtherForm(AddForm):
         })
     )
 
-    class Meta(object):
+    class Meta:
         model = Poster
         fields = ['ordered_committee', 'title', 'amount', 'price', 'description',
                   'display_from', 'comments']
@@ -106,7 +106,7 @@ class AddOtherForm(AddForm):
 
 
 class EditPosterForm(AddPosterForm):
-    class Meta(object):
+    class Meta:
         model = Poster
         fields = ['event', 'amount', 'bong', 'description',
                   'price', 'display_from', 'comments']
@@ -122,7 +122,7 @@ class EditPosterForm(AddPosterForm):
 
 
 class EditOtherForm(AddOtherForm):
-    class Meta(object):
+    class Meta:
         model = Poster
         fields = ['title', 'amount', 'price', 'description',
                   'display_from', 'comments']

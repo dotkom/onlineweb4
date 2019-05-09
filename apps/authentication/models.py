@@ -269,7 +269,7 @@ class OnlineUser(AbstractUser):
             return self.privacy.visible_as_attending_events
         return False
 
-    class Meta(object):
+    class Meta:
         ordering = ['first_name', 'last_name']
         verbose_name = _("brukerprofil")
         verbose_name_plural = _("brukerprofiler")
@@ -300,7 +300,7 @@ class Email(models.Model):
     def __str__(self):
         return self.email
 
-    class Meta(object):
+    class Meta:
         verbose_name = _("epostadresse")
         verbose_name_plural = _("epostadresser")
         permissions = (
@@ -321,7 +321,7 @@ class RegisterToken(models.Model):
         now = timezone.now()
         return now < self.created + valid_period
 
-    class Meta(object):
+    class Meta:
         permissions = (
             ('view_registertoken', 'View RegisterToken'),
         )
@@ -375,7 +375,7 @@ class Position(models.Model):
     def __str__(self):
         return self.print_string
 
-    class Meta(object):
+    class Meta:
         verbose_name = _('posisjon')
         verbose_name_plural = _('posisjoner')
         ordering = ('user', 'period', )
@@ -396,7 +396,7 @@ class SpecialPosition(models.Model):
     def __str__(self):
         return '%s, %s' % (self.user.get_full_name(), self.position)
 
-    class Meta(object):
+    class Meta:
         verbose_name = _('spesialposisjon')
         verbose_name_plural = _('spesialposisjoner')
         ordering = ('user', 'since_year',)

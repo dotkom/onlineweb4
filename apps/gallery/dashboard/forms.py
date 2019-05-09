@@ -10,7 +10,7 @@ from apps.gallery.models import ResponsiveImage
 
 class ResponsiveImageForm(forms.ModelForm):
 
-    class Meta(object):
+    class Meta:
         model = ResponsiveImage
         fields = ['name', 'description', 'photographer', 'tags']
         widgets = {

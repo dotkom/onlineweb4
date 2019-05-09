@@ -10,6 +10,6 @@ class SplashEvent(models.Model):
     def __str__(self):
         return self.title
 
-    class Meta(object):
+    class Meta:
         ordering = ('start_time',)
         default_permissions = ('add', 'change', 'delete')

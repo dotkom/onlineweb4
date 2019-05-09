@@ -37,7 +37,7 @@ class NewClientForm(forms.ModelForm):
             except ValidationError:
                 self.add_error('redirect_uris', 'Feltet inneholder ugyldige URIer.')
 
-    class Meta(object):
+    class Meta:
         """
         Metaclass
         """

@@ -20,7 +20,7 @@ class Privacy(models.Model):
     def __str__(self):
         return self.user.get_full_name()
 
-    class Meta(object):
+    class Meta:
         verbose_name = _("personvern")
         verbose_name_plural = _("personvern")
         permissions = (

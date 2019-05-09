@@ -8,7 +8,7 @@ from apps.gallery.widgets import SingleImageInput
 
 
 class ArticleForm(forms.ModelForm):
-    class Meta(object):
+    class Meta:
         """
         Add fields that should have DTP activated in the datetimepicker_fields list
         """

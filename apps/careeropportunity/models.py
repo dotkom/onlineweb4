@@ -42,7 +42,7 @@ class CareerOpportunity(models.Model):
     def __str__(self):
         return self.title
 
-    class Meta(object):
+    class Meta:
         verbose_name = _('karrieremulighet')
         verbose_name_plural = _('karrieremuligheter')
         permissions = (

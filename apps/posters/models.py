@@ -62,7 +62,7 @@ class OrderMixin(models.Model):
     def get_dashboard_url(self):
         return self.get_absolute_url()
 
-    class Meta(object):
+    class Meta:
 
         permissions = (
             ('add_poster_order', 'Add poster orders'),
@@ -82,7 +82,7 @@ class Poster(OrderMixin):
     display_to = models.DateField(_("vis til"), blank=True, null=True, default=None)
     bong = models.IntegerField(_('bonger'), blank=True, null=True)
 
-    class Meta(object):
+    class Meta:
         ordering = ['-id']
         verbose_name = _("bestilling")
         verbose_name_plural = _("bestillinger")

@@ -7,6 +7,6 @@ from apps.marks.models import Mark
 
 class MarkForm(forms.ModelForm):
 
-    class Meta(object):
+    class Meta:
         model = Mark
         fields = ['title', 'description', 'category']

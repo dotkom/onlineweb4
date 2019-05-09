@@ -223,7 +223,7 @@ class Payment(models.Model):
         super().clean()
         self.clean_generic_relation()
 
-    class Meta(object):
+    class Meta:
         unique_together = ('content_type', 'object_id')
 
         verbose_name = _("betaling")
@@ -243,7 +243,7 @@ class PaymentPrice(models.Model):
     def __str__(self):
         return self.description + " (" + str(self.price) + "kr)"
 
-    class Meta(object):
+    class Meta:
         verbose_name = _("pris")
         verbose_name_plural = _("priser")
         default_permissions = ('add', 'change', 'delete')
@@ -302,7 +302,7 @@ class PaymentRelation(models.Model):
     def __str__(self):
         return self.payment.description() + " - " + str(self.user)
 
-    class Meta(object):
+    class Meta:
         verbose_name = _("betalingsrelasjon")
         verbose_name_plural = _("betalingsrelasjoner")
         default_permissions = ('add', 'change', 'delete')
@@ -323,7 +323,7 @@ class PaymentDelay(models.Model):
     def __str__(self):
         return self.payment.description() + " - " + str(self.user)
 
-    class Meta(object):
+    class Meta:
         unique_together = ('payment', 'user')
 
         verbose_name = _('betalingsutsettelse')

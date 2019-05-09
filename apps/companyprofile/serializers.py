@@ -7,7 +7,7 @@ from apps.gallery.serializers import ResponsiveImageSerializer
 class CompanySerializer(serializers.ModelSerializer):
     image = ResponsiveImageSerializer()
 
-    class Meta(object):
+    class Meta:
         model = Company
 
         fields = (

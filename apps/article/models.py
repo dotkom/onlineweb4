@@ -62,7 +62,7 @@ class Article(models.Model):
     def get_absolute_url(self):
         return reverse('article_details', kwargs={'article_id': self.id, 'article_slug': self.slug})
 
-    class Meta(object):
+    class Meta:
         verbose_name = _("artikkel")
         verbose_name_plural = _("artikler")
         ordering = ['published_date']
