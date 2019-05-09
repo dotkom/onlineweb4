@@ -4,9 +4,9 @@ from django_dynamic_fixture import G
 from mock import patch
 
 from apps.authentication.models import Email, OnlineUser
-from apps.gsuite.mail_syncer.signals import (_get_error_message_from_httperror,
-                                             insert_user_into_group_pass_if_already_member,
-                                             remove_user_from_group_pass_if_not_subscribed)
+from apps.gsuite.mail_syncer.tasks import (_get_error_message_from_httperror,
+                                           insert_user_into_group_pass_if_already_member,
+                                           remove_user_from_group_pass_if_not_subscribed)
 from apps.gsuite.mail_syncer.tests.test_utils import create_http_error
 
 
@@ -22,7 +22,7 @@ class GSuiteSignalsTestCase(TestCase):
         self.assertEqual(error_message, parsed_error_message)
 
     @patch('logging.Logger.warning')
-    @patch('apps.gsuite.mail_syncer.signals.insert_email_into_g_suite_group')
+    @patch('apps.gsuite.mail_syncer.tasks.insert_email_into_g_suite_group')
     def test_insert_user_pass_if_already_in_group_passing(self, mocked_insert, mocked_logger):
         user = G(OnlineUser, infomail=False)
         email_addr = 'example@example.org'
@@ -44,7 +44,7 @@ class GSuiteSignalsTestCase(TestCase):
                     email=email, list=group_name))
 
     @patch('logging.Logger.warning')
-    @patch('apps.gsuite.mail_syncer.signals.remove_g_suite_user_from_group')
+    @patch('apps.gsuite.mail_syncer.tasks.remove_g_suite_user_from_group')
     def test_remove_user_from_group_pass_if_not_subscribed(self, mocked_remove, mocked_logger):
         user = G(OnlineUser, infomail=False)
         email_addr = 'example@example.org'

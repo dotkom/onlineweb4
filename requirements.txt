@@ -10,6 +10,7 @@ pytz                            # Timezone lib
 stripe==1.79.1                  # Stripe payment
 icalendar==4.0.1                # iCalendar generation
 google-api-python-client==1.6.5
+celery==4.2.0                   # Async task runner
 
 # third party deps
 django-filebrowser==3.10.1      # File uploading
