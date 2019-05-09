@@ -1,3 +1,3 @@
-flake8==3.5.0
-isort==4.3.4
-pycodestyle==2.3.1
+flake8==3.7.7
+isort==4.3.18
+pycodestyle==2.5

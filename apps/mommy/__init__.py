@@ -1,7 +1,7 @@
 # encoding: utf-8
-from .registry import Schedule
-
 import logging
+
+from .registry import Schedule
 
 logger = logging.getLogger(__name__)
 default_app_config = 'apps.mommy.appconfig.MommyConfig'
@@ -30,7 +30,7 @@ def autodiscover():
 
 def run(**kwargs):
     """
-    imports apscheduler, registers scheduled jobs, runs the scheduler
+    imports appscheduler, registers scheduled jobs, runs the scheduler
     """
     from apscheduler.schedulers.blocking import BlockingScheduler
 

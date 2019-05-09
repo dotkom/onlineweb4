@@ -11,9 +11,10 @@ from .models import Order, OrderLine, Product, ProductSize
 
 
 class WebshopTestMixin:
-    def assertInMessages(self, message_text, response):
-            messages = [str(message) for message in response.context['messages']]
-            self.assertIn(message_text, messages)
+    @staticmethod
+    def assert_in_messages(message_text, response):
+        messages = [str(message) for message in response.context['messages']]
+        assert message_text in messages
 
 
 class WebshopHome(TestCase):
@@ -89,7 +90,7 @@ class WebshopProductDetail(TestCase, WebshopTestMixin):
             'quantity': 1,
         })
 
-        self.assertInMessages('Dette produktet er ikke lenger tilgjengelig.', response)
+        self.assert_in_messages('Dette produktet er ikke lenger tilgjengelig.', response)
 
     def test_order_out_of_stock(self):
         self.product.stock = 0
@@ -100,7 +101,7 @@ class WebshopProductDetail(TestCase, WebshopTestMixin):
             'quantity': 1,
         })
 
-        self.assertInMessages('Dette produktet er utsolgt.', response)
+        self.assert_in_messages('Dette produktet er utsolgt.', response)
 
     def test_order_not_enough_stock(self):
         self.product.stock = 5
@@ -111,7 +112,7 @@ class WebshopProductDetail(TestCase, WebshopTestMixin):
             'quantity': 7,
         })
 
-        self.assertInMessages('Det er ikke nok produkter på lageret.', response)
+        self.assert_in_messages('Det er ikke nok produkter på lageret.', response)
 
     def test_order_size(self):
         size = G(ProductSize, product=self.product, size='M', stock=5)
@@ -136,7 +137,7 @@ class WebshopProductDetail(TestCase, WebshopTestMixin):
             'size': size.pk + 1
         })
 
-        self.assertInMessages('Vennligst oppgi et gyldig antall', response)
+        self.assert_in_messages('Vennligst oppgi et gyldig antall', response)
 
     def test_order_size_not_enough_stock(self):
         size = G(ProductSize, product=self.product, size='M', stock=5)
@@ -147,7 +148,7 @@ class WebshopProductDetail(TestCase, WebshopTestMixin):
             'size': size.pk
         })
 
-        self.assertInMessages('Det er ikke nok produkter på lageret.', response)
+        self.assert_in_messages('Det er ikke nok produkter på lageret.', response)
 
     def test_order_size_out_of_stock(self):
         size = G(ProductSize, product=self.product, size='M', stock=5)
@@ -158,7 +159,7 @@ class WebshopProductDetail(TestCase, WebshopTestMixin):
             'size': size.pk
         })
 
-        self.assertInMessages('Det er ikke nok produkter på lageret.', response)
+        self.assert_in_messages('Det er ikke nok produkter på lageret.', response)
 
     def test_order_negative_quantity(self):
         self.client.force_login(self.user)
@@ -167,14 +168,14 @@ class WebshopProductDetail(TestCase, WebshopTestMixin):
             'quantity': -1,
         })
 
-        self.assertInMessages('Vennligst oppgi et gyldig antall', response)
+        self.assert_in_messages('Vennligst oppgi et gyldig antall', response)
 
 
 class CheckoutTest(TestCase, WebshopTestMixin):
     url = reverse('webshop_pay')
 
     def setUp(self):
-            self.user = G(OnlineUser, username='test', ntnu_username='test')
+        self.user = G(OnlineUser, username='test', ntnu_username='test')
 
     def test_remove_inactive_order(self):
         self.client.force_login(self.user)

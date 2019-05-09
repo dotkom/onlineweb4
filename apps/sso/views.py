@@ -4,8 +4,10 @@ import logging
 
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
-from oauth2_provider.views.base import AuthorizationView as DefaultAuthorizationView  # flake8: noqa
-from oauth2_provider.views.base import RevokeTokenView, TokenView
+from oauth2_provider.views.base import AuthorizationView as DefaultAuthorizationView
+
+# noinspection PyUnresolvedReferences
+from oauth2_provider.views.base import RevokeTokenView, TokenView  # noqa: F401  # isort:skip
 
 _log = logging.getLogger('SSO')
 
