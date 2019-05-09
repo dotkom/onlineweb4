@@ -4,7 +4,7 @@ from apps.contribution.models import Repository, RepositoryLanguage
 
 
 class RepositoryLanguagesSerializer(serializers.ModelSerializer):
-    class Meta(object):
+    class Meta:
         model = RepositoryLanguage
         fields = ('type', 'size')
 

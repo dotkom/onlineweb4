@@ -10,7 +10,7 @@ from apps.gallery.widgets import SingleImageInput
 class CompanyForm(ModelForm):
     site = URLField(max_length=100)
 
-    class Meta(object):
+    class Meta:
         model = Company
         fields = ('name', 'short_description', 'long_description', 'image', 'site', 'email_address', 'phone_number',)
 

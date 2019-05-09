@@ -24,7 +24,7 @@ class Company(models.Model):
         from apps.companyprofile.utils import find_image_versions
         return find_image_versions(self)
 
-    class Meta(object):
+    class Meta:
         verbose_name = _("Bedrift")
         verbose_name_plural = _("Bedrifter")
         permissions = (

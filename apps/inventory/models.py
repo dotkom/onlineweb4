@@ -15,7 +15,7 @@ class ItemCategory(models.Model):
     def __str__(self):
         return self.name
 
-    class Meta(object):
+    class Meta:
         verbose_name = _("Kategori")
         verbose_name_plural = _("Kategorier")
         permissions = (
@@ -112,7 +112,7 @@ class Item(models.Model):
     def __str__(self):
         return self.name
 
-    class Meta(object):
+    class Meta:
         verbose_name = _("Vare")
         verbose_name_plural = _("Varer")
         permissions = (
@@ -128,7 +128,7 @@ class Batch(models.Model):
     date_added = models.DateField(_("Dato lagt til"), editable=False, auto_now_add=True)
     expiration_date = models.DateField(_("Utløpsdato"), null=True, blank=True, editable=True)
 
-    class Meta(object):
+    class Meta:
         verbose_name = _("Batch")
         verbose_name_plural = _("Batches")
         default_permissions = ('add', 'change', 'delete')

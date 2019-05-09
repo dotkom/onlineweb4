@@ -46,7 +46,7 @@ class FeedbackRelation(models.Model):
         related_name='feedbacks',
         blank=True)
 
-    class Meta(object):
+    class Meta:
         unique_together = ('feedback', 'content_type', 'object_id')
 
         permissions = (
@@ -251,7 +251,7 @@ class FieldOfStudyAnswer(models.Model):
     def __str__(self):
         return self.get_answer_display()
 
-    class Meta(object):
+    class Meta:
         permissions = (
             ('view_fieldofstudyanswer', 'View FieldOfStudyAnswer'),
         )
@@ -271,7 +271,7 @@ class TextQuestion(models.Model):
     def __str__(self):
         return self.label
 
-    class Meta(object):
+    class Meta:
         permissions = (
             ('view_textquestion', 'View TextQuestion'),
         )
@@ -300,7 +300,7 @@ class TextAnswer(models.Model):
     def order(self):
         return self.question.order
 
-    class Meta(object):
+    class Meta:
         permissions = (
             ('view_textanswer', 'View TextAnswer'),
         )
@@ -325,7 +325,7 @@ class RatingQuestion(models.Model):
     def __str__(self):
         return self.label
 
-    class Meta(object):
+    class Meta:
         permissions = (
             ('view_ratingquestion', 'View RatingQuestion'),
         )
@@ -356,7 +356,7 @@ class RatingAnswer(models.Model):
     def order(self):
         return self.question.order
 
-    class Meta(object):
+    class Meta:
         permissions = (
             ('view_ratinganswer', 'View RatingAnswer'),
         )
@@ -366,7 +366,7 @@ class RatingAnswer(models.Model):
 class MultipleChoiceQuestion(models.Model):
     label = models.CharField(_('Spørsmål'), blank=False, max_length=256)
 
-    class Meta(object):
+    class Meta:
         verbose_name = _('Flervalgspørsmål')
         verbose_name_plural = _('Flervalgspørsmål')
         permissions = (
@@ -394,7 +394,7 @@ class MultipleChoiceRelation(models.Model):
     def __str__(self):
         return self.multiple_choice_relation.label
 
-    class Meta(object):
+    class Meta:
         permissions = (
             ('view_multiplechoicerelation', 'View MultipleChoiceRelation'),
         )
@@ -412,7 +412,7 @@ class Choice(models.Model):
     def __str__(self):
         return self.choice
 
-    class Meta(object):
+    class Meta:
         permissions = (
             ('view_choice', 'View Choice'),
         )
@@ -439,7 +439,7 @@ class MultipleChoiceAnswer(models.Model):
     def order(self):
         return self.question.order
 
-    class Meta(object):
+    class Meta:
         permissions = (
             ('view_multiplechoiceanswer', 'View MultipleChoiceAnswer'),
         )
@@ -463,7 +463,7 @@ class RegisterToken(models.Model):
         # now = timezone.now()
         # return now < self.created + valid_period
 
-    class Meta(object):
+    class Meta:
         permissions = (
             ('view_feedbackregistertoken', 'View FeedbackRegisterToken'),
         )

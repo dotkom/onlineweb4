@@ -113,7 +113,7 @@ class CommitteeApplication(models.Model):
     def __str__(self):
         return '{created}: {applicant}'.format(applicant=self.get_name(), created=self.created.strftime('%Y-%m-%d'))
 
-    class Meta(object):
+    class Meta:
         default_permissions = ('add', 'change', 'delete', 'view')
         verbose_name = 'komitesøknad'
         verbose_name_plural = 'komitesøknader'
@@ -132,7 +132,7 @@ class CommitteePriority(models.Model):
             return '{committee}: {priority}'.format(committee=self.group, priority=self.get_priority_display())
         return "{committee}".format(committee=self.group)
 
-    class Meta(object):
+    class Meta:
         default_permissions = ('add', 'change', 'delete', 'view')
         verbose_name = 'komiteprioritering'
         verbose_name_plural = 'komiteprioriteringer'

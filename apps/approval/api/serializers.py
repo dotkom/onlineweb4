@@ -8,7 +8,7 @@ from apps.authentication.serializers import UserSerializer
 class CommitteeSerializer(serializers.ModelSerializer):
     group_name = serializers.SerializerMethodField(source='group')
 
-    class Meta(object):
+    class Meta:
         model = CommitteePriority
         fields = ('group', 'group_name', 'priority')
 
@@ -20,7 +20,7 @@ class CommitteeApplicationSerializer(serializers.ModelSerializer):
     committees = CommitteeSerializer(many=True, source='committeepriority_set')
     applicant = UserSerializer(read_only=True)
 
-    class Meta(object):
+    class Meta:
         model = CommitteeApplication
         fields = ('name', 'email', 'applicant', 'application_text', 'prioritized', 'committees')
 

@@ -8,7 +8,7 @@ from apps.inventory.models import Batch, Item, ItemCategory
 
 class ItemForm(forms.ModelForm):
 
-    class Meta(object):
+    class Meta:
         model = Item
         fields = ('name', 'description', 'category', 'available', 'price', 'low_stock_treshold', 'image')
 
@@ -18,13 +18,13 @@ class ItemForm(forms.ModelForm):
 
 class CategoryForm(forms.ModelForm):
 
-    class Meta(object):
+    class Meta:
         model = ItemCategory
         fields = ('name', )
 
 
 class BatchForm(forms.ModelForm):
 
-    class Meta(object):
+    class Meta:
         model = Batch
         exclude = ['item']

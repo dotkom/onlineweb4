@@ -32,7 +32,7 @@ class UnhandledImage(models.Model):
     def resolution(self):
         return '%sx%s' % (self.image.width, self.image.height)
 
-    class Meta(object):
+    class Meta:
         """
         UnhandledImage Metaclass
         """
@@ -156,7 +156,7 @@ class ResponsiveImage(models.Model):
 
         return humanize_size(total)
 
-    class Meta(object):
+    class Meta:
         """
         ResponsiveImage Metaclass
         """

@@ -12,7 +12,7 @@ ZIP_CODE_VALIDATION_ERROR = "Postnummer må bestå av fire siffer."
 
 
 class ProfileForm(forms.ModelForm):
-    class Meta(object):
+    class Meta:
         model = OnlineUser
 
         fields = [
@@ -44,19 +44,19 @@ class ProfileForm(forms.ModelForm):
 
 
 class PrivacyForm(forms.ModelForm):
-    class Meta(object):
+    class Meta:
         model = Privacy
         exclude = ['user', 'expose_nickname']
 
 
 class MailSettingsForm(forms.ModelForm):
-    class Meta(object):
+    class Meta:
         model = OnlineUser
         fields = ['infomail', ]
 
 
 class PositionForm(forms.ModelForm):
-    class Meta(object):
+    class Meta:
         model = Position
         exclude = ['user']
         widgets = {
@@ -96,7 +96,7 @@ class MembershipSettingsForm(forms.ModelForm):
         super(MembershipSettingsForm, self).__init__(*args, **kwargs)
         self.fields['started_date'].widget.attrs['class'] = 'hasDatePicker'
 
-    class Meta(object):
+    class Meta:
         model = OnlineUser
         fields = ['field_of_study', 'started_date']
 

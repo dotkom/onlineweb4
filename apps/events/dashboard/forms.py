@@ -11,7 +11,7 @@ from apps.payment.models import Payment, PaymentPrice
 
 
 class CreateEventForm(forms.ModelForm, HTML5RequiredMixin):
-    class Meta(object):
+    class Meta:
         model = Event
         fields = (
             'title', 'event_start', 'event_end', 'location', 'ingress_short', 'ingress', 'description', 'event_type',
@@ -31,7 +31,7 @@ class CreateEventForm(forms.ModelForm, HTML5RequiredMixin):
 
 
 class CreateAttendanceEventForm(forms.ModelForm, HTML5RequiredMixin):
-    class Meta(object):
+    class Meta:
         model = AttendanceEvent
         fields = (
             'max_capacity', 'registration_start', 'registration_end',
@@ -50,7 +50,7 @@ class CreateAttendanceEventForm(forms.ModelForm, HTML5RequiredMixin):
 
 
 class AddCompanyForm(forms.ModelForm):
-    class Meta(object):
+    class Meta:
         model = CompanyEvent
         fields = ('company',)
 
@@ -100,7 +100,7 @@ class CreateFeedbackRelationForm(forms.ModelForm, HTML5RequiredMixin):
         feedback = Feedback.objects.filter(available=True)
         self.fields['feedback'].queryset = feedback
 
-    class Meta(object):
+    class Meta:
         model = FeedbackRelation
         fields = ('feedback', 'deadline', 'gives_mark')
 
@@ -112,7 +112,7 @@ class CreateFeedbackRelationForm(forms.ModelForm, HTML5RequiredMixin):
 
 
 class CreatePaymentForm(forms.ModelForm, HTML5RequiredMixin):
-    class Meta(object):
+    class Meta:
         model = Payment
         fields = ('stripe_key', 'payment_type', 'deadline', 'delay')
 
@@ -124,7 +124,7 @@ class CreatePaymentForm(forms.ModelForm, HTML5RequiredMixin):
 
 
 class CreatePaymentPriceForm(forms.ModelForm, HTML5RequiredMixin):
-    class Meta(object):
+    class Meta:
         model = PaymentPrice
         fields = ('price', 'description')
 

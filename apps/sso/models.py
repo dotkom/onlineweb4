@@ -40,7 +40,7 @@ class Client(AbstractApplication):
 
         return self.redirect_uris.split()
 
-    class Meta(object):
+    class Meta:
         permissions = (
             ('view_client', 'View Client'),
         )

@@ -12,7 +12,7 @@ class ResponsiveImageSerializer(TaggitSerializer, serializers.ModelSerializer):
 
     tags = TagListSerializerField()
 
-    class Meta(object):
+    class Meta:
         model = ResponsiveImage
         fields = (
             'id', 'name', 'timestamp', 'description', 'thumb',
