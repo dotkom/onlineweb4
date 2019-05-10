@@ -567,15 +567,6 @@ babel-generator@^6.24.0, babel-generator@^6.26.0:
     source-map "^0.5.7"
     trim-right "^1.0.1"
 
-babel-helper-builder-binary-assignment-operator-visitor@^6.24.1:
-  version "6.24.1"
-  resolved "https://registry.yarnpkg.com/babel-helper-builder-binary-assignment-operator-visitor/-/babel-helper-builder-binary-assignment-operator-visitor-6.24.1.tgz#cce4517ada356f4220bcae8a02c2b346f9a56664"
-  integrity sha1-zORReto1b0IgvK6KAsKzRvmlZmQ=
-  dependencies:
-    babel-helper-explode-assignable-expression "^6.24.1"
-    babel-runtime "^6.22.0"
-    babel-types "^6.24.1"
-
 babel-helper-builder-react-jsx@^6.24.1:
   version "6.26.0"
   resolved "https://registry.yarnpkg.com/babel-helper-builder-react-jsx/-/babel-helper-builder-react-jsx-6.26.0.tgz#39ff8313b75c8b65dceff1f31d383e0ff2a408a0"
@@ -604,15 +595,6 @@ babel-helper-define-map@^6.24.1:
     babel-runtime "^6.26.0"
     babel-types "^6.26.0"
     lodash "^4.17.4"
-
-babel-helper-explode-assignable-expression@^6.24.1:
-  version "6.24.1"
-  resolved "https://registry.yarnpkg.com/babel-helper-explode-assignable-expression/-/babel-helper-explode-assignable-expression-6.24.1.tgz#f25b82cf7dc10433c55f70592d5746400ac22caa"
-  integrity sha1-8luCz33BBDPFX3BZLVdGQArCLKo=
-  dependencies:
-    babel-runtime "^6.22.0"
-    babel-traverse "^6.24.1"
-    babel-types "^6.24.1"
 
 babel-helper-function-name@^6.24.1:
   version "6.24.1"
@@ -737,11 +719,6 @@ babel-plugin-syntax-async-functions@^6.8.0:
   version "6.13.0"
   resolved "https://registry.yarnpkg.com/babel-plugin-syntax-async-functions/-/babel-plugin-syntax-async-functions-6.13.0.tgz#cad9cad1191b5ad634bf30ae0872391e0647be95"
   integrity sha1-ytnK0RkbWtY0vzCuCHI5HgZHvpU=
-
-babel-plugin-syntax-exponentiation-operator@^6.8.0:
-  version "6.13.0"
-  resolved "https://registry.yarnpkg.com/babel-plugin-syntax-exponentiation-operator/-/babel-plugin-syntax-exponentiation-operator-6.13.0.tgz#9ee7e8337290da95288201a6a57f4170317830de"
-  integrity sha1-nufoM3KQ2pUoggGmpX9BcDF4MN4=
 
 babel-plugin-syntax-flow@^6.18.0:
   version "6.18.0"
@@ -965,10 +942,6 @@ babel-plugin-transform-exponentiation-operator@^6.22.0:
   version "6.24.1"
   resolved "https://registry.yarnpkg.com/babel-plugin-transform-exponentiation-operator/-/babel-plugin-transform-exponentiation-operator-6.24.1.tgz#2ab0c9c7f3098fa48907772bb813fe41e8de3a0e"
   integrity sha1-KrDJx/MJj6SJB3cruBP+QejeOg4=
-  dependencies:
-    babel-helper-builder-binary-assignment-operator-visitor "^6.24.1"
-    babel-plugin-syntax-exponentiation-operator "^6.8.0"
-    babel-runtime "^6.22.0"
 
 babel-plugin-transform-flow-strip-types@^6.22.0:
   version "6.22.0"
@@ -1021,8 +994,6 @@ babel-plugin-transform-regenerator@^6.22.0:
   version "6.26.0"
   resolved "https://registry.yarnpkg.com/babel-plugin-transform-regenerator/-/babel-plugin-transform-regenerator-6.26.0.tgz#e0703696fbde27f0a3efcacf8b4dca2f7b3a8f2f"
   integrity sha1-4HA2lvveJ/Cj78rPi03KL3s6jy8=
-  dependencies:
-    regenerator-transform "^0.10.0"
 
 babel-plugin-transform-runtime@^6.23.0:
   version "6.23.0"
@@ -1112,7 +1083,7 @@ babel-register@^6.24.0, babel-register@^6.26.0:
     mkdirp "^0.5.1"
     source-map-support "^0.4.15"
 
-babel-runtime@^6.18.0, babel-runtime@^6.22.0, babel-runtime@^6.26.0:
+babel-runtime@^6.22.0, babel-runtime@^6.26.0:
   version "6.26.0"
   resolved "https://registry.yarnpkg.com/babel-runtime/-/babel-runtime-6.26.0.tgz#965c7058668e82b55d7bfe04ff2337bc8b5647fe"
   dependencies:
@@ -1178,7 +1149,7 @@ babel-types@^6.18.0:
     lodash "^4.2.0"
     to-fast-properties "^1.0.1"
 
-babel-types@^6.19.0, babel-types@^6.23.0, babel-types@^6.24.1, babel-types@^6.26.0:
+babel-types@^6.23.0, babel-types@^6.24.1, babel-types@^6.26.0:
   version "6.26.0"
   resolved "https://registry.yarnpkg.com/babel-types/-/babel-types-6.26.0.tgz#a3b073f94ab49eb6fa55cd65227a334380632497"
   integrity sha1-o7Bz+Uq0nrb6Vc1lInozQ4BjJJc=
@@ -1552,10 +1523,15 @@ caniuse-db@^1.0.30000529, caniuse-db@^1.0.30000634, caniuse-db@^1.0.30000639:
   resolved "https://registry.yarnpkg.com/caniuse-db/-/caniuse-db-1.0.30000963.tgz#df13099c13d3ad29d8ded5387f77e86319dd3805"
   integrity sha512-5Qk1jSsqRY3dD7BAjU018y0MsznzYb+kMTKzGknue8vSWlHkw2S345vRnd0cVEerzZ6ugUfoKaUOOVbBxWLWCA==
 
-caniuse-lite@^1.0.30000783, caniuse-lite@^1.0.30000792, caniuse-lite@^1.0.30000805, caniuse-lite@^1.0.30000844:
+caniuse-lite@^1.0.30000783, caniuse-lite@^1.0.30000792, caniuse-lite@^1.0.30000844:
   version "1.0.30000963"
   resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30000963.tgz#5be481d5292f22aff5ee0db4a6c049b65b5798b1"
   integrity sha512-n4HUiullc7Lw0LyzpeLa2ffP8KxFBGdxqD/8G3bSL6oB758hZ2UE2CVK+tQN958tJIi0/tfpjAc67aAtoHgnrQ==
+
+caniuse-lite@^1.0.30000805:
+  version "1.0.30000967"
+  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30000967.tgz#a5039577806fccee80a04aaafb2c0890b1ee2f73"
+  integrity sha512-rUBIbap+VJfxTzrM4akJ00lkvVb5/n5v3EGXfWzSH5zT8aJmGzjA8HWhJ4U6kCpzxozUSnB+yvAYDRPY6mRpgQ==
 
 cardinal@^1.0.0:
   version "1.0.0"
@@ -7089,10 +7065,10 @@ react-transition-group@^2.0.0, react-transition-group@^2.2.0:
     prop-types "^15.6.2"
     react-lifecycles-compat "^3.0.4"
 
-react-transition-group@^4.0.0:
-  version "4.0.0"
-  resolved "https://registry.yarnpkg.com/react-transition-group/-/react-transition-group-4.0.0.tgz#1d82b20d78aa09eac6268ceef0349307146942c6"
-  integrity sha512-b+uvkr15Pb80mqcsz5WAB+d53zS8/pTp3wDEsOiqpea93G8BqfsMFcPv2XZR0owqU13BJWoJvd17VjOPEY/9aA==
+react-transition-group@^4.0.1:
+  version "4.0.1"
+  resolved "https://registry.yarnpkg.com/react-transition-group/-/react-transition-group-4.0.1.tgz#8cb8d58763e259da465385bb83b3b41b3ecba629"
+  integrity sha512-SsLcBYhO4afXJC9esL8XMxi/y0ZvEc7To0TvtrBELqzpjXQHPZOTxvuPh2/4EhYc0uSMfp2SExIxsyJ0pBdNzg==
   dependencies:
     dom-helpers "^3.4.0"
     loose-envify "^1.4.0"
@@ -7269,15 +7245,6 @@ regenerator-runtime@^0.13.2:
   version "0.13.2"
   resolved "https://registry.yarnpkg.com/regenerator-runtime/-/regenerator-runtime-0.13.2.tgz#32e59c9a6fb9b1a4aff09b4930ca2d4477343447"
   integrity sha512-S/TQAZJO+D3m9xeN1WTI8dLKBBiRgXBlTJvbWjCThHWZj9EvHK70Ff50/tYj2J/fvBY6JtFVwRuazHN2E7M9BA==
-
-regenerator-transform@^0.10.0:
-  version "0.10.1"
-  resolved "https://registry.yarnpkg.com/regenerator-transform/-/regenerator-transform-0.10.1.tgz#1e4996837231da8b7f3cf4114d71b5691a0680dd"
-  integrity sha512-PJepbvDbuK1xgIgnau7Y90cwaAmO/LCLMI2mPvaXq2heGMR3aWW5/BQvYrhJ8jgmQjXewXvBjzfqKcVOmhjZ6Q==
-  dependencies:
-    babel-runtime "^6.18.0"
-    babel-types "^6.19.0"
-    private "^0.1.6"
 
 regex-cache@^0.4.2:
   version "0.4.4"

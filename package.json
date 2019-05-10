@@ -41,7 +41,7 @@
     "react-markdown": "^2.5.0",
     "react-router": "^5.0.0",
     "react-router-dom": "^5.0.0",
-    "react-transition-group": "^4.0.0",
+    "react-transition-group": "^4.0.1",
     "remarkable": "^1.6.2",
     "showdown": "^1.5.5",
     "spin.js": "^2.3.2",
