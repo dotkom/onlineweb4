@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
-from googleapiclient.discovery import build
 from google.oauth2 import service_account
+from googleapiclient.discovery import build
 
 
 def generate_g_suite_credentials(json_keyfile_name=settings.OW4_GSUITE_SYNC.get('CREDENTIALS'), scopes=list()):
