@@ -5,7 +5,7 @@
 from django import forms
 from django.core.exceptions import ValidationError
 from oauth2_provider.settings import oauth2_settings
-from oauth2_provider.validators import validate_uris
+from oauth2_provider.validators import URIValidator
 
 from apps.sso.models import Client
 
@@ -33,7 +33,8 @@ class NewClientForm(forms.ModelForm):
 
             # Validate the uris
             try:
-                validate_uris(redirect_uris)
+                validator = URIValidator()
+                validator(redirect_uris)
             except ValidationError:
                 self.add_error('redirect_uris', 'Feltet inneholder ugyldige URIer.')
 
