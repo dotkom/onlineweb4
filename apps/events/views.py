@@ -401,7 +401,7 @@ class EventViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.Li
             distinct()
 
 
-class UserAttendanceEventViewSet(viewsets.ReadOnlyModelViewSet):
+class RegistrationAttendaceEventViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = AttendanceEvent.objects.all()
     serializer_class = UserAttendanceEventSerializer
     permission_classes = (permissions.IsAuthenticated,)
@@ -414,7 +414,7 @@ class AttendanceEventViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin,
     permission_classes = (AllowAny,)
 
 
-class UserAttendeeViewSet(viewsets.ModelViewSet):
+class RegistrationAttendeeViewSet(viewsets.ModelViewSet):
     permission_classes = (permissions.IsAuthenticated,)
     filterset_fields = ('event', 'attended',)
 
