@@ -81,6 +81,24 @@ class CreateAttendeeTestCase(OIDCTestCase):
         self.assertTrue(attendance.is_attendee(self.user))
 
     @mock_validate_recaptcha()
+    def test_guest_user_cannot_attend_other_users_to_events(self, _):
+        attendance = self.event.attendance_event
+        attendance.guest_attendance = True
+        attendance.save()
+
+        other_user = generate_user(username='other_user')
+
+        response = self.client.post(self.url, {
+            'event': self.event.id,
+            'user': other_user.id,
+            **self.recaptcha_arg,
+        }, **self.headers)
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertFalse(attendance.is_attendee(other_user))
+        self.assertEqual(response.json().get('user'), ['Du kan ikke melde andre brukere på arrangementer!'])
+
+    @mock_validate_recaptcha()
     def test_show_as_attending_event_is_set_false_by_default(self, _):
         attendance = self.event.attendance_event
         attendance.guest_attendance = True

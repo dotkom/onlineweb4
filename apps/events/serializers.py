@@ -48,6 +48,16 @@ class AttendeeRegistrationCreateSerializer(serializers.ModelSerializer):
     )
     recaptcha = RecaptchaField()
 
+    def validate_user(self, user):
+        request = self.context.get('request')
+        if not request:
+            raise ValidationError('internal:Request was not passed as context to serializer')
+
+        if user.id != request.user.id:
+            raise ValidationError('Du kan ikke melde andre brukere på arrangementer!')
+
+        return user
+
     def validate(self, data):
         request = self.context.get('request', None)
         if not request:
