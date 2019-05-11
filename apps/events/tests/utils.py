@@ -10,7 +10,7 @@ from ..models import TYPE_CHOICES, AttendanceEvent, Attendee, Event
 from ..utils import get_organizer_by_event_type
 
 
-def generate_event(event_type=TYPE_CHOICES[1][0], organizer=None, attendance=True):
+def generate_event(event_type=TYPE_CHOICES[1][0], organizer=None, attendance=True) -> Event:
     if organizer is None:
         organizer = get_organizer_by_event_type(event_type)
     event = G(Event, event_type=event_type, organizer=organizer)
@@ -24,7 +24,7 @@ def generate_attendance_event(*args, **kwargs):
     return G(AttendanceEvent, event=event, *args, **kwargs)
 
 
-def generate_payment(event, *args, **kwargs):
+def generate_payment(event, *args, **kwargs) -> Payment:
     payment = G(
         Payment,
         object_id=event.id,
@@ -36,7 +36,7 @@ def generate_payment(event, *args, **kwargs):
     return payment
 
 
-def attend_user_to_event(event, user):
+def attend_user_to_event(event, user) -> Attendee:
     return G(
         Attendee,
         event=event.attendance_event,
@@ -44,7 +44,7 @@ def attend_user_to_event(event, user):
     )
 
 
-def pay_for_event(event, user, *args, **kwargs):
+def pay_for_event(event, user, *args, **kwargs) -> PaymentRelation:
     return G(
         PaymentRelation,
         payment=event.attendance_event.payment(),
@@ -54,7 +54,7 @@ def pay_for_event(event, user, *args, **kwargs):
     )
 
 
-def add_payment_delay(payment, user):
+def add_payment_delay(payment, user) -> PaymentDelay:
     return G(
         PaymentDelay,
         payment=payment,
@@ -62,17 +62,17 @@ def add_payment_delay(payment, user):
     )
 
 
-def generate_user(username):
+def generate_user(username) -> OnlineUser:
     user = G(OnlineUser, username=username, ntnu_username=username)
     G(Email, user=user)
     return user
 
 
-def generate_attendee(event, username):
+def generate_attendee(event, username) -> Attendee:
     return attend_user_to_event(event, generate_user(username))
 
 
-def add_to_committee(user, group=None):
+def add_to_committee(user, group=None) -> OnlineUser:
     komiteer = Group.objects.get(name__iexact="Komiteer")
 
     if komiteer not in user.groups.all():
