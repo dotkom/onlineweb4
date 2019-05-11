@@ -7,6 +7,20 @@ from rest_framework import serializers
 from apps.payment.models import Payment, PaymentPrice, PaymentRelation, PaymentTransaction
 
 
+class PaymentPriceReadOnlySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PaymentPrice
+        fields = ('id', 'price', 'description',)
+
+
+class PaymentReadOnlySerializer(serializers.ModelSerializer):
+    payment_prices = PaymentPriceReadOnlySerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Payment
+        fields = ('id', 'payment_prices', 'description', 'stripe_public_key',)
+
+
 class PaymentRelationCreateSerializer(serializers.ModelSerializer):
     """
     Relates the user, to a payment, stripe charge and price
