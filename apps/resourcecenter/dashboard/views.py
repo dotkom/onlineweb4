@@ -7,7 +7,7 @@ from apps.dashboard.tools import get_base_context, has_access
 
 
 @login_required
-@permission_required('resourcecenter.view_resource', return_403=True)
+@permission_required('resourcecenter.change_resource', return_403=True)
 def index(request):
 
     if not has_access(request):
