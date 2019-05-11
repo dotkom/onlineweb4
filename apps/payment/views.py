@@ -9,8 +9,11 @@ from django.contrib.auth.decorators import login_required
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext as _
+from rest_framework import mixins, permissions, viewsets
 
 from apps.payment.models import Payment, PaymentPrice, PaymentRelation, PaymentTransaction
+from apps.payment.serializers import (PaymentRelationCreateSerializer,
+                                      PaymentTransactionCreateSerializer)
 from apps.webshop.models import OrderLine
 
 
@@ -219,3 +222,15 @@ def saldo(request):
                 return HttpResponse(str(e), content_type="text/plain", status=500)
 
     raise Http404("Request not supported")
+
+
+class PaymentRelationCreateViewSet(viewsets.GenericViewSet, mixins.CreateModelMixin):
+    permission_classes = (permissions.IsAuthenticated,)
+    serializer_class = PaymentRelationCreateSerializer
+    queryset = PaymentTransaction.objects.none()
+
+
+class PaymentTransactionCreateViewSet(viewsets.GenericViewSet, mixins.CreateModelMixin):
+    permission_classes = (permissions.IsAuthenticated,)
+    serializer_class = PaymentTransactionCreateSerializer
+    queryset = PaymentTransaction.objects.none()

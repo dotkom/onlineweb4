@@ -204,6 +204,14 @@ class Payment(models.Model):
             return self.paymentprice_set.all()[0]
         return None
 
+    @property
+    def stripe_private_key(self):
+        return settings.STRIPE_PRIVATE_KEYS[self.stripe_key]
+
+    @property
+    def stripe_public_key(self):
+        return settings.STRIPE_PUBLIC_KEYS[self.stripe_key]
+
     def _is_type(self, model_type):
         return ContentType.objects.get_for_model(model_type) == self.content_type
 

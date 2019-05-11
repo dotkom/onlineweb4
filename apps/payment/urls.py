@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from django.conf.urls import url
 
+from apps.api.utils import SharedAPIRootRouter
 from apps.payment import views
 
 urlpatterns = [
@@ -13,3 +14,8 @@ urlpatterns = [
     url(r'^webshop_pay/$', views.webshop_pay, name='webshop_pay'),
     url(r'^refund/(?P<payment_relation_id>\d+)$', views.payment_refund, name='payment_refund'),
 ]
+
+# API v1
+router = SharedAPIRootRouter()
+router.register('payment/relations', views.PaymentRelationCreateViewSet, base_name='payment_relations')
+router.register('payment/transactions', views.PaymentTransactionCreateViewSet, base_name='payment_transactions')
