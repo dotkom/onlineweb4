@@ -1,19 +1,20 @@
 import json
-from datetime import timedelta
 
 from django.contrib.auth.models import Group
 from django.urls import reverse
 from django.utils import timezone
 from django_dynamic_fixture import G
-from oidc_provider.models import (CLIENT_TYPE_CHOICES, RESPONSE_TYPE_CHOICES, Client, ResponseType,
-                                  Token)
+from onlineweb4.fields.recaptcha import mock_validate_recaptcha
 from rest_framework import status
 from rest_framework.test import APITestCase
 
 from apps.authentication.models import OnlineUser
-from apps.oauth2_provider.test import OAuth2TestCase
+from apps.events.models import Attendee
+from apps.oidc_provider.test import OIDCTestCase
+from apps.profiles.models import Privacy
 
-from .utils import attend_user_to_event, generate_event
+from .utils import (attend_user_to_event, generate_event, generate_payment, generate_user,
+                    pay_for_event)
 
 
 def generate_attendee(event, username, rfid):
@@ -23,6 +24,297 @@ def generate_attendee(event, username, rfid):
 
 def generate_valid_rfid():
     return '12345678'
+
+
+class CreateAttendeeTestCase(OIDCTestCase):
+
+    def setUp(self):
+
+        self.committee = G(Group, name='arrKom')
+        self.user = generate_user(username='_user')
+        self.privacy = G(Privacy, user=self.user)
+        self.token = self.generate_access_token(self.user)
+        self.headers = {
+            **self.generate_headers(),
+            'Accepts': 'application/json',
+            'Content-Type': 'application/json',
+            'content_type': 'application/json',
+            'format': 'json',
+        }
+        self.recaptcha_arg = {'recaptcha': '--mock-recaptcha--'}
+
+        self.url = reverse('registration_attendees-list')
+        self.id_url = lambda _id: self.url + str(_id) + '/'
+        self.event = generate_event(organizer=self.committee)
+        self.event.attendance_event.registration_start = timezone.now()
+        self.event.attendance_event.registration_end = timezone.now() + timezone.timedelta(days=2)
+        self.event.attendance_event.max_capacity = 20
+        self.event.attendance_event.save()
+        self.attendee1 = generate_attendee(self.event, 'test1', '123')
+        self.attendee2 = generate_attendee(self.event, 'test2', '321')
+        self.attendees = [self.attendee1, self.attendee2]
+
+    @mock_validate_recaptcha()
+    def test_user_cannot_attend_a_non_attendance_event(self, _):
+        event_without_attendance = generate_event(organizer=self.committee, attendance=False)
+
+        response = self.client.post(self.url, {
+            'event': event_without_attendance.id,
+            **self.recaptcha_arg,
+        }, **self.headers)
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertTrue(response.json(), ['Dette er ikke et påmeldingsarrangement'])
+
+    @mock_validate_recaptcha()
+    def test_guest_user_can_attend_event_with_guest_attendance(self, _):
+        attendance = self.event.attendance_event
+        attendance.guest_attendance = True
+        attendance.save()
+
+        response = self.client.post(self.url, {
+            'event': self.event.id,
+            **self.recaptcha_arg,
+        }, **self.headers)
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertTrue(attendance.is_attendee(self.user))
+
+    @mock_validate_recaptcha()
+    def test_guest_user_cannot_attend_other_users_to_events(self, _):
+        attendance = self.event.attendance_event
+        attendance.guest_attendance = True
+        attendance.save()
+
+        other_user = generate_user(username='other_user')
+
+        response = self.client.post(self.url, {
+            'event': self.event.id,
+            'user': other_user.id,
+            **self.recaptcha_arg,
+        }, **self.headers)
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertFalse(attendance.is_attendee(other_user))
+        self.assertEqual(response.json().get('user'), ['Du kan ikke melde andre brukere på arrangementer!'])
+
+    @mock_validate_recaptcha()
+    def test_show_as_attending_event_is_set_false_by_default(self, _):
+        attendance = self.event.attendance_event
+        attendance.guest_attendance = True
+        attendance.save()
+
+        response = self.client.post(self.url, {
+            'event': self.event.id,
+            **self.recaptcha_arg,
+        }, **self.headers)
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertFalse(response.json().get('show_as_attending_event'))
+
+    @mock_validate_recaptcha()
+    def test_user_can_set_show_as_attending_event_on_registration(self, _):
+        attendance = self.event.attendance_event
+        attendance.guest_attendance = True
+        attendance.save()
+
+        self.privacy.visible_as_attending_events = True
+        self.privacy.save()
+
+        response = self.client.post(self.url, {
+            'event': self.event.id,
+            'show_as_attending_event': True,
+            **self.recaptcha_arg,
+        }, **self.headers)
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertTrue(response.json().get('show_as_attending_event'))
+
+    @mock_validate_recaptcha()
+    def test_user_can_change_show_as_attending_event_after_registering(self, _):
+        attendance = self.event.attendance_event
+        attendance.guest_attendance = True
+        attendance.save()
+
+        self.privacy.visible_as_attending_events = False
+        self.privacy.save()
+
+        response = self.client.post(self.url, {
+            'event': self.event.id,
+            **self.recaptcha_arg,
+        }, **self.headers)
+
+        attendee_id = response.json().get('id')
+        attendance.registration_end = timezone.now() + timezone.timedelta(hours=1)
+        attendance.unattend_deadline = timezone.now() + timezone.timedelta(hours=1)
+        attendance.save()
+
+        patch_response = self.client.patch(self.id_url(attendee_id), {
+            'show_as_attending_event': True,
+        }, **self.headers)
+
+        self.assertEqual(patch_response.status_code, status.HTTP_200_OK)
+        self.assertEqual(patch_response.json().get('show_as_attending_event'), True)
+
+    @mock_validate_recaptcha()
+    def test_user_can_change_show_as_attending_event_if_registration_has_ended(self, _):
+        attendance = self.event.attendance_event
+        attendance.guest_attendance = True
+        attendance.save()
+
+        self.privacy.visible_as_attending_events = False
+        self.privacy.save()
+
+        response = self.client.post(self.url, {
+            'event': self.event.id,
+            **self.recaptcha_arg,
+        }, **self.headers)
+
+        attendee_id = response.json().get('id')
+        attendance.registration_end = timezone.now() - timezone.timedelta(hours=1)
+        attendance.save()
+
+        patch_response = self.client.patch(self.id_url(attendee_id), {
+            'show_as_attending_event': True,
+        }, **self.headers)
+
+        attendee = Attendee.objects.get(pk=attendee_id)
+
+        self.assertEqual(patch_response.status_code, status.HTTP_200_OK)
+        self.assertEqual(attendee.show_as_attending_event, True)
+
+    def test_guest_user_cannot_attend_event_with_guest_attendance_without_captcha(self):
+        attendance = self.event.attendance_event
+        attendance.guest_attendance = True
+        attendance.save()
+
+        response = self.client.post(self.url, {
+            'event': self.event.id,
+        }, **self.headers)
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertFalse(attendance.is_attendee(self.user))
+        self.assertEqual(response.json().get('recaptcha'), ['Dette feltet er påkrevd.'])
+
+    @mock_validate_recaptcha()
+    def test_user_cannot_attend_twice(self, _):
+        attendance = self.event.attendance_event
+        initial_attendees = len(attendance.attendees.all())
+
+        self.test_guest_user_can_attend_event_with_guest_attendance()
+
+        response = self.client.post(self.url, {
+            'event': self.event.id,
+            **self.recaptcha_arg,
+        }, **self.headers)
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.json().get('non_field_errors'), ['Feltene event, user må gjøre et unikt sett.'])
+        self.assertEqual(len(attendance.attendees.all()), initial_attendees + 1)
+
+    @mock_validate_recaptcha()
+    def test_guest_user_cannot_attend_event_without_guest_attendance(self, _):
+        attendance = self.event.attendance_event
+        attendance.guest_attendance = False
+        attendance.save()
+
+        response = self.client.post(self.url, {
+            'event': self.event.id,
+            **self.recaptcha_arg,
+        }, **self.headers)
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.json().get('non_field_errors'), ['Dette arrangementet er kun åpent for medlemmer.'])
+
+    @mock_validate_recaptcha()
+    def test_user_cannot_attend_event_after_registration_end(self, _):
+        attendance = self.event.attendance_event
+        attendance.registration_start = timezone.now() - timezone.timedelta(days=2)
+        attendance.registration_end = timezone.now() - timezone.timedelta(days=2)
+        attendance.guest_attendance = True
+        attendance.save()
+
+        response = self.client.post(self.url, {
+            'event': self.event.id,
+            **self.recaptcha_arg,
+        }, **self.headers)
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.json().get('non_field_errors'), ['Påmeldingen er ikke lenger åpen.'])
+
+    def test_user_can_unattend_before_deadline(self):
+        self.event.attendance_event.unattend_deadline = timezone.now() + timezone.timedelta(days=2)
+        self.event.event_start = timezone.now() + timezone.timedelta(days=3)
+        self.event.attendance_event.save()
+        self.event.save()
+        attendee = attend_user_to_event(self.event, self.user)
+
+        response = self.client.delete(self.id_url(attendee.id), **self.headers)
+
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertFalse(self.event.attendance_event.is_attendee(self.user))
+
+    def test_user_cannot_unattend_after_deadline_has_passed(self):
+        self.event.attendance_event.unattend_deadline = timezone.now() - timezone.timedelta(days=2)
+        self.event.attendance_event.save()
+        attendee = attend_user_to_event(self.event, self.user)
+
+        response = self.client.delete(self.id_url(attendee.id), **self.headers)
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertTrue(self.event.attendance_event.is_attendee(self.user))
+        self.assertEqual(
+            response.json().get('message'),
+            'Avmeldingsfristen har gått ut, det er ikke lenger mulig å melde seg av arrangementet.'
+        )
+
+    def test_user_cannot_unattend_after_event_has_started(self):
+        self.event.attendance_event.unattend_deadline = timezone.now() + timezone.timedelta(days=2)
+        self.event.event_start = timezone.now() - timezone.timedelta(hours=1)
+        self.event.attendance_event.save()
+        self.event.save()
+        attendee = attend_user_to_event(self.event, self.user)
+
+        response = self.client.delete(self.id_url(attendee.id), **self.headers)
+
+        self.assertEqual(
+            response.json().get('message'),
+            'Du kan ikke melde deg av et arrangement som allerde har startet.'
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertTrue(self.event.attendance_event.is_attendee(self.user))
+        self.assertEqual(
+            response.json().get('message'),
+            'Du kan ikke melde deg av et arrangement som allerde har startet.'
+        )
+
+    def test_user_can_re_attend_and_event_after_un_attending(self):
+        self.test_user_can_unattend_before_deadline()
+        self.test_guest_user_can_attend_event_with_guest_attendance()
+
+    @mock_validate_recaptcha()
+    def test_payment_is_generated_on_attendance(self, _):
+        generate_payment(self.event)
+        attendance = self.event.attendance_event
+        attendance.guest_attendance = True
+        attendance.save()
+
+        attend_response = self.client.post(self.url, {
+            'event': self.event.id,
+            **self.recaptcha_arg,
+        }, **self.headers)
+
+        self.assertEqual(attend_response.status_code, status.HTTP_201_CREATED)
+
+        pay_for_event(self.event, self.user)
+        attendee_id = attend_response.json()['id']
+
+        attendee_response = self.client.get(self.id_url(attendee_id), {
+            'event': self.event.id,
+        }, **self.headers)
+
+        self.assertEqual(attendee_response.status_code, status.HTTP_200_OK)
+        self.assertTrue(attendee_response.json()['has_paid'])
 
 
 class EventsAPIURLTestCase(APITestCase):
@@ -50,38 +342,19 @@ class EventsAPIURLTestCase(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
 
-class AttendAPITestCase(OAuth2TestCase):
-
-    @staticmethod
-    def _getOIDCToken(user):
-        id_token_response = ResponseType.objects.create(
-            value=RESPONSE_TYPE_CHOICES[1]
-        )
-        oidc_client = Client.objects.create(
-            client_type=CLIENT_TYPE_CHOICES[1],
-            client_id='123',
-            _redirect_uris='http://localhost'
-        )
-        oidc_client.response_types.add(id_token_response)
-
-        return Token.objects.create(
-            user=user,
-            client=oidc_client,
-            expires_at=timezone.now() + timedelta(days=1),
-            _scope='openid profile',
-            access_token='123',
-            refresh_token='456',
-            _id_token='{"sub": %s}' % user.pk,
-        )
+class AttendAPITestCase(OIDCTestCase):
 
     def setUp(self):
         self.committee = G(Group, name='arrKom')
         self.user = G(OnlineUser, name='test_user', groups=[self.committee])
-        self.token = self._getOIDCToken(self.user)
+        self.token = self.generate_access_token(self.user)
         self.headers = {
+            **self.generate_headers(),
+            'Accepts': 'application/json',
+            'Content-Type': 'application/json',
             'format': 'json',
-            'HTTP_AUTHORIZATION': 'Bearer ' + self.token.access_token,
         }
+
         self.url = reverse('event_attend')
         self.event = generate_event(organizer=self.committee)
         self.attendee1 = generate_attendee(self.event, 'test1', '123')

@@ -4,17 +4,18 @@ from django_dynamic_fixture import G
 from guardian.shortcuts import assign_perm, get_perms_for_model
 
 from apps.authentication.models import Email, OnlineUser
-from apps.payment.models import Payment, PaymentDelay, PaymentRelation
+from apps.payment.models import Payment, PaymentDelay, PaymentPrice, PaymentRelation
 
 from ..models import TYPE_CHOICES, AttendanceEvent, Attendee, Event
 from ..utils import get_organizer_by_event_type
 
 
-def generate_event(event_type=TYPE_CHOICES[1][0], organizer=None):
+def generate_event(event_type=TYPE_CHOICES[1][0], organizer=None, attendance=True):
     if organizer is None:
         organizer = get_organizer_by_event_type(event_type)
     event = G(Event, event_type=event_type, organizer=organizer)
-    G(AttendanceEvent, event=event)
+    if attendance:
+        G(AttendanceEvent, event=event)
     return event
 
 
@@ -24,13 +25,15 @@ def generate_attendance_event(*args, **kwargs):
 
 
 def generate_payment(event, *args, **kwargs):
-    return G(
+    payment = G(
         Payment,
         object_id=event.id,
         content_type=ContentType.objects.get_for_model(AttendanceEvent),
         *args,
         **kwargs
     )
+    G(PaymentPrice, payment=payment)
+    return payment
 
 
 def attend_user_to_event(event, user):
