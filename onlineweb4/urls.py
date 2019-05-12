@@ -153,6 +153,12 @@ if 'apps.inventory' in settings.INSTALLED_APPS:
         url(r'^dashboard/inventory/',          include('apps.inventory.dashboard.urls')),
     ]
 
+if 'apps.notifications' in settings.INSTALLED_APPS:
+    urlpatterns += [
+        url(r'^notifications/', include('apps.notifications.urls')),
+    ]
+
+
 if 'apps.shop' in settings.INSTALLED_APPS:
     urlpatterns += [
         url(r'^shop/',          include('apps.shop.urls')),
