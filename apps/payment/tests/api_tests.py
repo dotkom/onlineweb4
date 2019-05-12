@@ -58,15 +58,6 @@ class CreateAttendeeTestCase(OIDCTestCase):
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
-    def test_user_can_pay_for_an_event(self):
-        response = self.client.post(self.url, {
-            'payment': self.payment.id,
-            'payment_price': self.payment.price().id,
-            'stripe_token': self.stripe_token.id,
-        }, **self.headers)
-
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-
     def test_event_payment_fails_without_stripe_token(self):
         response = self.client.post(self.url, {
             'payment': self.payment.id,
