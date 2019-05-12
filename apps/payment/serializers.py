@@ -6,11 +6,14 @@ from rest_framework import serializers
 
 from apps.payment.models import Payment, PaymentPrice, PaymentRelation, PaymentTransaction
 
+logger = logging.getLogger(__name__)
+
 
 class PaymentPriceReadOnlySerializer(serializers.ModelSerializer):
     class Meta:
         model = PaymentPrice
         fields = ('id', 'price', 'description',)
+        read_only = True
 
 
 class PaymentReadOnlySerializer(serializers.ModelSerializer):
@@ -19,6 +22,17 @@ class PaymentReadOnlySerializer(serializers.ModelSerializer):
     class Meta:
         model = Payment
         fields = ('id', 'payment_prices', 'description', 'stripe_public_key',)
+        read_only = True
+
+
+class PaymentRelationReadOnlySerializer(serializers.ModelSerializer):
+    payment = PaymentReadOnlySerializer(read_only=True)
+    payment_price = PaymentPriceReadOnlySerializer(read_only=True)
+
+    class Meta:
+        model = PaymentRelation
+        fields = ('payment', 'payment_price', 'datetime', 'refunded')
+        read_only = True
 
 
 class PaymentRelationCreateSerializer(serializers.ModelSerializer):
@@ -34,6 +48,7 @@ class PaymentRelationCreateSerializer(serializers.ModelSerializer):
         queryset=PaymentPrice.objects.all(),
     )
     stripe_token = serializers.CharField(write_only=True)
+    user = serializers.HiddenField(default=serializers.CurrentUserDefault())
 
     def validate(self, data):
         payment = data.get('payment')
@@ -49,11 +64,14 @@ class PaymentRelationCreateSerializer(serializers.ModelSerializer):
         """
         Overwrite create to handle the stripe charge before the relation is created.
         """
-        logger = logging.getLogger(__name__)
         request = self.context.get('request')
+        user = request.user
 
         payment: Payment = validated_data.get('payment')
         payment_price: PaymentPrice = validated_data.get('payment_price')
+
+        if not payment.is_user_allowed_to_pay(user):
+            raise serializers.ValidationError('Du har ikke tilgang til å betale for denne betalingen')
 
         """ Get stripe token and remove it from the data that from the create data """
         stripe_token = validated_data.pop('stripe_token')
@@ -72,7 +90,6 @@ class PaymentRelationCreateSerializer(serializers.ModelSerializer):
 
             created_payment_relation = super().create({
                 'stripe_id': charge.id,
-                'user': request.user,
                 **validated_data,
             })
 
@@ -108,7 +125,6 @@ class PaymentTransactionCreateSerializer(serializers.ModelSerializer):
         return amount
 
     def create(self, validated_data):
-        logger = logging.getLogger(__name__)
         request = self.context.get('request')
 
         amount = validated_data.get('amount')

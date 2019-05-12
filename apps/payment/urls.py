@@ -17,5 +17,5 @@ urlpatterns = [
 
 # API v1
 router = SharedAPIRootRouter()
-router.register('payment/relations', views.PaymentRelationCreateViewSet, base_name='payment_relations')
+router.register('payment/relations', views.PaymentRelationViewSet, base_name='payment_relations')
 router.register('payment/transactions', views.PaymentTransactionCreateViewSet, base_name='payment_transactions')

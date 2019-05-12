@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import json
+import logging
 
 import stripe
 from django.conf import settings
@@ -9,12 +10,17 @@ from django.contrib.auth.decorators import login_required
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext as _
-from rest_framework import mixins, permissions, viewsets
+from rest_framework import mixins, permissions, status, viewsets
+from rest_framework.response import Response
 
 from apps.payment.models import Payment, PaymentPrice, PaymentRelation, PaymentTransaction
-from apps.payment.serializers import (PaymentRelationCreateSerializer,
+from apps.payment.serializers import (PaymentPriceReadOnlySerializer,
+                                      PaymentRelationCreateSerializer,
+                                      PaymentRelationReadOnlySerializer,
                                       PaymentTransactionCreateSerializer)
 from apps.webshop.models import OrderLine
+
+logger = logging.getLogger(__name__)
 
 
 @login_required
@@ -224,10 +230,61 @@ def saldo(request):
     raise Http404("Request not supported")
 
 
-class PaymentRelationCreateViewSet(viewsets.GenericViewSet, mixins.CreateModelMixin):
+class PaymentRelationViewSet(viewsets.GenericViewSet,
+                             mixins.CreateModelMixin,
+                             mixins.DestroyModelMixin,
+                             mixins.ListModelMixin,
+                             mixins.RetrieveModelMixin):
+
     permission_classes = (permissions.IsAuthenticated,)
-    serializer_class = PaymentRelationCreateSerializer
-    queryset = PaymentTransaction.objects.none()
+
+    def get_serializer_class(self):
+        """
+        Get different serializers for creating (paying) and listing/retrieving previous payments.
+        Delete does not use a serializer, and logic resides in the view.
+        """
+        if self.action in ['list', 'retrieve']:
+            return PaymentRelationReadOnlySerializer
+        if self.action == 'create':
+            return PaymentRelationCreateSerializer
+        return super().get_serializer_class()
+
+    def get_queryset(self):
+        user = self.request.user
+        return PaymentRelation.objects.filter(user=user)
+
+    def destroy(self, request, *args, **kwargs):
+        """
+        Destroy logic is set in the view because serializers cannot delete.
+        """
+        user = request.user
+        payment_relation = self.get_object()
+        can_refund, message = payment_relation.payment.check_refund(payment_relation)
+
+        if not can_refund:
+            return Response({'message': message}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            """ Handle the actual refund with the stripe API """
+            stripe.api_key = payment_relation.payment.stripe_private_key
+            charge = stripe.Charge.retrieve(payment_relation.stripe_id)
+            charge.refunds.create()
+
+            """ Handle the internal refund registration and cleanup """
+            payment_relation.payment.handle_refund(payment_relation)
+
+            return Response({'message': _("Betalingen har blitt refundert.")}, status.HTTP_200_OK)
+
+        except stripe.InvalidRequestError as error:
+            logger.error(f'An error occurred during refund of payment: {payment_relation} '
+                         f'to stripe for user: {user}', error)
+            return Response(error.json_body, status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class PaymentPriceReadOnlyViewSet(viewsets.ReadOnlyModelViewSet):
+    permission_classes = (permissions.IsAuthenticated,)
+    serializer_class = PaymentPriceReadOnlySerializer
+    queryset = PaymentPrice.objects.all()
 
 
 class PaymentTransactionCreateViewSet(viewsets.GenericViewSet, mixins.CreateModelMixin):
