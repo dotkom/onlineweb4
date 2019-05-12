@@ -36,7 +36,7 @@ def generate_payment(event, *args, **kwargs) -> Payment:
     return payment
 
 
-def attend_user_to_event(event, user) -> Attendee:
+def attend_user_to_event(event: Event, user: OnlineUser) -> Attendee:
     return G(
         Attendee,
         event=event.attendance_event,
@@ -44,7 +44,7 @@ def attend_user_to_event(event, user) -> Attendee:
     )
 
 
-def pay_for_event(event, user, *args, **kwargs) -> PaymentRelation:
+def pay_for_event(event: Event, user: OnlineUser, *args, **kwargs) -> PaymentRelation:
     return G(
         PaymentRelation,
         payment=event.attendance_event.payment(),
@@ -54,7 +54,7 @@ def pay_for_event(event, user, *args, **kwargs) -> PaymentRelation:
     )
 
 
-def add_payment_delay(payment, user) -> PaymentDelay:
+def add_payment_delay(payment: Payment, user: OnlineUser) -> PaymentDelay:
     return G(
         PaymentDelay,
         payment=payment,
