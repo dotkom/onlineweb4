@@ -137,7 +137,23 @@ class Payment(models.Model):
         else:
             return settings.DEFAULT_FROM_EMAIL
 
-    def handle_payment(self, user):
+    def is_user_allowed_to_pay(self, user: User) -> bool:
+        """
+        In the case of attendance events the user should only be allowed to pay if they are attending
+        and has not paid yet.
+        """
+        if self._is_type(AttendanceEvent):
+            event: AttendanceEvent = self.content_object
+            is_attending = event.is_attendee(user)
+            if is_attending:
+                attendee = Attendee.objects.get(user=user, event=event)
+                return not attendee.has_paid
+            return False
+
+        """ There are no rules prohibiting user from paying for other types of payments """
+        return True
+
+    def handle_payment(self, user: User):
         """
         Method for handling payments from user.
         Deletes any relevant payment delays, suspensions and marks user's attendee object as paid.
@@ -180,7 +196,7 @@ class Payment(models.Model):
             Attendee.objects.get(event=self.content_object,
                                  user=payment_relation.user).delete()
 
-    def check_refund(self, payment_relation):
+    def check_refund(self, payment_relation) -> (bool, str):
         """Method for checking if the payment can be refunded"""
         if self._is_type(AttendanceEvent):
             attendance_event = self.content_object
