@@ -63,7 +63,6 @@ class CreateAttendeeTestCase(OIDCTestCase):
             'payment': self.payment.id,
             'payment_price': self.payment.price().id,
             'stripe_token': self.stripe_token.id,
-            'user':
         }, **self.headers)
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
