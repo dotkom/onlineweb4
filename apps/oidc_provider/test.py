@@ -51,3 +51,9 @@ class OIDCTestCase(TestCase):
         self._user = G(User)
         self.token = self.generate_access_token(self._user, client_id='999', refresh_token='888')
         self.headers = self.generate_headers()
+        self.bare_headers = {
+            'Accepts': 'application/json',
+            'Content-Type': 'application/json',
+            'content_type': 'application/json',
+            'format': 'json',
+        }

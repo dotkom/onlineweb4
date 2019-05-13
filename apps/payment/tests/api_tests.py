@@ -13,18 +13,12 @@ from apps.oidc_provider.test import OIDCTestCase
 from .utils import add_price_to_payment, generate_event_payment
 
 
-class CreateAttendeeTestCase(OIDCTestCase):
+class PaymentRelationTestCase(OIDCTestCase):
 
     def setUp(self):
         self.committee = G(Group, name='arrKom')
         self.user = generate_user(username='test_user')
         self.token = self.generate_access_token(self.user)
-        self.bare_headers = {
-            'Accepts': 'application/json',
-            'Content-Type': 'application/json',
-            'content_type': 'application/json',
-            'format': 'json',
-        }
         self.headers = {
             **self.generate_headers(),
             **self.bare_headers,
@@ -247,3 +241,140 @@ class CreateAttendeeTestCase(OIDCTestCase):
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response.json().get('message'), 'Dette arrangementet har allerede startet.')
+
+
+class PaymentTransactionTestCase(OIDCTestCase):
+
+    def setUp(self):
+        self.user = generate_user(username='test_user')
+        self.token = self.generate_access_token(self.user)
+        self.headers = {
+            **self.generate_headers(),
+            **self.bare_headers,
+        }
+
+        self.url = reverse('payment_transactions-list')
+        self.id_url = lambda _id: self.url + str(_id) + '/'
+        date_next_year = timezone.now() + timezone.timedelta(days=366)
+        self.mock_card = {
+            'number': '4242424242424242',
+            'exp_month': 12,
+            'exp_year': date_next_year.year,
+            'cvc': '123'
+        }
+        stripe.api_key = settings.STRIPE_PUBLIC_KEYS['trikom']
+        self.stripe_token = stripe.Token.create(card=self.mock_card)
+        self.amount = 100
+
+    def test_user_has_access_to_view_transactions(self):
+        response = self.client.get(self.url, **self.headers)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_unauthenticated_clients_cannot_access_transactions(self):
+        response = self.client.get(self.url, **self.bare_headers)
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.json().get('detail'), 'Manglende autentiseringsinformasjon.')
+
+    def test_user_can_create_a_transaction(self):
+        response = self.client.post(self.url, {
+            'amount': self.amount,
+            'stripe_token': self.stripe_token.id,
+        }, **self.headers)
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+    def test_user_saldo_is_updated_when_a_transaction_is_created(self):
+        starting_saldo = self.user.saldo
+        expected_saldo = starting_saldo + self.amount
+
+        response = self.client.post(self.url, {
+            'amount': self.amount,
+            'stripe_token': self.stripe_token.id,
+        }, **self.headers)
+
+        self.user.refresh_from_db()
+
+        self.assertEqual(self.user.saldo, expected_saldo)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+    def test_user_cannot_create_a_transaction_with_wrong_price(self):
+        wrong_amount = 666
+
+        response = self.client.post(self.url, {
+            'amount': wrong_amount,
+            'stripe_token': self.stripe_token.id,
+        }, **self.headers)
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.json().get('amount'), [f'{wrong_amount} er ikke en gyldig betalingspris'])
+
+    def test_transaction_fails_without_stripe_token(self):
+        response = self.client.post(self.url, {
+            'amount': self.amount,
+        }, **self.headers)
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.json().get('stripe_token'), ['Dette feltet er påkrevd.'])
+
+    def test_event_payment_fails_with_fake_stripe_token(self):
+        token = '--fake-token--'
+
+        response = self.client.post(self.url, {
+            'amount': self.amount,
+            'stripe_token': token,
+        }, **self.headers)
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn(f'No such token: {token}', response.json()[0])
+
+
+class PaymentDelayTestCase(OIDCTestCase):
+
+    def setUp(self):
+        self.user = generate_user(username='test_user')
+        self.token = self.generate_access_token(self.user)
+        self.headers = {
+            **self.generate_headers(),
+            **self.bare_headers,
+        }
+
+        self.url = reverse('payment_delays-list')
+        self.id_url = lambda _id: self.url + str(_id) + '/'
+
+    def test_user_can_access_payment_delays(self):
+        response = self.client.get(self.url, **self.headers)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_unauthenticated_clients_cannot_access_payment_delays(self):
+        response = self.client.get(self.url, **self.bare_headers)
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.json().get('detail'), 'Manglende autentiseringsinformasjon.')
+
+
+class PaymentPriceTestCase(OIDCTestCase):
+
+    def setUp(self):
+        self.user = generate_user(username='test_user')
+        self.token = self.generate_access_token(self.user)
+        self.headers = {
+            **self.generate_headers(),
+            **self.bare_headers,
+        }
+
+        self.url = reverse('payment_prices-list')
+        self.id_url = lambda _id: self.url + str(_id) + '/'
+
+    def test_user_can_access_payment_prices(self):
+        response = self.client.get(self.url, **self.headers)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_unauthenticated_clients_cannot_access_payment_delays(self):
+        response = self.client.get(self.url, **self.bare_headers)
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.json().get('detail'), 'Manglende autentiseringsinformasjon.')
