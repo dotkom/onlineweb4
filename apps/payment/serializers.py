@@ -4,7 +4,8 @@ import stripe
 from django.conf import settings
 from rest_framework import serializers
 
-from apps.payment.models import Payment, PaymentPrice, PaymentRelation, PaymentTransaction
+from apps.payment.models import (Payment, PaymentDelay, PaymentPrice, PaymentRelation,
+                                 PaymentTransaction)
 
 logger = logging.getLogger(__name__)
 
@@ -120,10 +121,29 @@ class PaymentRelationCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = PaymentRelation
-        fields = ('id', 'payment', 'payment_price', 'stripe_token',)
+        fields = ('id', 'payment', 'payment_price', 'stripe_token', 'user',)
+
+
+class PaymentTransactionReadOnlySerializer(serializers.ModelSerializer):
+    items = serializers.SerializerMethodField()
+    description = serializers.SerializerMethodField()
+
+    def get_items(self, obj: PaymentTransaction):
+        return obj.get_items()
+
+    def get_description(self, obj: PaymentTransaction):
+        return obj.get_description()
+
+    class Meta:
+        model = PaymentTransaction
+        fields = ('amount', 'used_stripe', 'datetime', )
+        read_only = True
 
 
 class PaymentTransactionCreateSerializer(serializers.ModelSerializer):
+    user = serializers.HiddenField(default=serializers.CurrentUserDefault())
+    stripe_token = serializers.CharField(write_only=True)
+    used_stripe = serializers.HiddenField(default=True)
     amount = serializers.IntegerField(required=True)
 
     def validate_amount(self, amount):
@@ -150,7 +170,7 @@ class PaymentTransactionCreateSerializer(serializers.ModelSerializer):
                 description=f'Saldo deposit - {request.user.email}',
                 api_key=stripe_private_key,
             )
-            return super().create(validated_data, user=request.user, used_stripe=True)
+            return super().create(validated_data)
 
         except stripe.error.CardError as err:
             error = err.json_body.get('error', {})
@@ -165,7 +185,4 @@ class PaymentTransactionCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = PaymentTransaction
-        fields = ('stripe_token', 'amount',)
-        extra_kwargs = {
-            'stripe_token': {'required': True}
-        }
+        fields = ('id', 'stripe_token', 'amount', 'used_stripe', 'user',)

@@ -13,7 +13,8 @@ from django.utils.translation import ugettext as _
 from rest_framework import mixins, permissions, status, viewsets
 from rest_framework.response import Response
 
-from apps.payment.models import Payment, PaymentDelay, PaymentPrice, PaymentRelation, PaymentTransaction
+from apps.payment.models import (Payment, PaymentDelay, PaymentPrice, PaymentRelation,
+                                 PaymentTransaction)
 from apps.payment.serializers import (PaymentDelayReadOnlySerializer,
                                       PaymentPriceReadOnlySerializer,
                                       PaymentRelationCreateSerializer,
@@ -301,7 +302,24 @@ class PaymentPriceReadOnlyViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = PaymentPrice.objects.all()
 
 
-class PaymentTransactionCreateViewSet(viewsets.GenericViewSet, mixins.CreateModelMixin):
+class PaymentTransactionViewSet(viewsets.GenericViewSet,
+                                mixins.CreateModelMixin,
+                                mixins.ListModelMixin,
+                                mixins.RetrieveModelMixin):
+    """
+    Payment transaction can only be created and viewed.
+    The user should not be able to change or delete them after creation.
+    """
     permission_classes = (permissions.IsAuthenticated,)
-    serializer_class = PaymentTransactionCreateSerializer
-    queryset = PaymentTransaction.objects.none()
+
+    def get_serializer_class(self):
+        if self.action in ['list', 'retrieve']:
+            return PaymentTransactionReadOnlySerializer
+        if self.action == 'create':
+            return PaymentTransactionCreateSerializer
+
+        super().get_serializer_class()
+
+    def get_queryset(self):
+        user = self.request.user
+        return PaymentTransaction.objects.filter(user=user)
