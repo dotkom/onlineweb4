@@ -35,6 +35,15 @@ class PaymentRelationReadOnlySerializer(serializers.ModelSerializer):
         read_only = True
 
 
+class PaymentDelayReadOnlySerializer(serializers.ModelSerializer):
+    payment = PaymentReadOnlySerializer()
+
+    class Meta:
+        model = PaymentDelay
+        fields = ('payment', 'valid_to', 'active')
+        read_only = True
+
+
 class PaymentRelationCreateSerializer(serializers.ModelSerializer):
     """
     Relates the user, to a payment, stripe charge and price

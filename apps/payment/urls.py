@@ -18,4 +18,6 @@ urlpatterns = [
 # API v1
 router = SharedAPIRootRouter()
 router.register('payment/relations', views.PaymentRelationViewSet, base_name='payment_relations')
-router.register('payment/transactions', views.PaymentTransactionCreateViewSet, base_name='payment_transactions')
+router.register('payment/transactions', views.PaymentTransactionViewSet, base_name='payment_transactions')
+router.register('payment/prices', views.PaymentPriceReadOnlyViewSet, base_name='payment_prices')
+router.register('payment/delays', views.PaymentDelayReadOnlyViewSet, base_name='payment_delays')

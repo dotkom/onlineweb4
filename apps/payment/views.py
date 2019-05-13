@@ -13,11 +13,13 @@ from django.utils.translation import ugettext as _
 from rest_framework import mixins, permissions, status, viewsets
 from rest_framework.response import Response
 
-from apps.payment.models import Payment, PaymentPrice, PaymentRelation, PaymentTransaction
-from apps.payment.serializers import (PaymentPriceReadOnlySerializer,
+from apps.payment.models import Payment, PaymentDelay, PaymentPrice, PaymentRelation, PaymentTransaction
+from apps.payment.serializers import (PaymentDelayReadOnlySerializer,
+                                      PaymentPriceReadOnlySerializer,
                                       PaymentRelationCreateSerializer,
                                       PaymentRelationReadOnlySerializer,
-                                      PaymentTransactionCreateSerializer)
+                                      PaymentTransactionCreateSerializer,
+                                      PaymentTransactionReadOnlySerializer)
 from apps.webshop.models import OrderLine
 
 logger = logging.getLogger(__name__)
@@ -228,6 +230,18 @@ def saldo(request):
                 return HttpResponse(str(e), content_type="text/plain", status=500)
 
     raise Http404("Request not supported")
+
+
+class PaymentDelayReadOnlyViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    Allow users to view their own payment delays.
+    """
+    permission_classes = (permissions.IsAuthenticated,)
+    serializer_class = PaymentDelayReadOnlySerializer
+
+    def get_queryset(self):
+        user = self.request.user
+        return PaymentDelay.objects.filter(user=user)
 
 
 class PaymentRelationViewSet(viewsets.GenericViewSet,
