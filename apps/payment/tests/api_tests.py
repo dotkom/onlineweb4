@@ -6,7 +6,8 @@ from django.utils import timezone
 from django_dynamic_fixture import G
 from rest_framework import status
 
-from apps.events.tests.utils import attend_user_to_event, generate_event, generate_user
+from apps.events.tests.utils import (attend_user_to_event, generate_event, generate_user,
+                                     pay_for_event)
 from apps.oidc_provider.test import OIDCTestCase
 
 from .utils import add_price_to_payment, generate_event_payment
@@ -18,12 +19,15 @@ class CreateAttendeeTestCase(OIDCTestCase):
         self.committee = G(Group, name='arrKom')
         self.user = generate_user(username='test_user')
         self.token = self.generate_access_token(self.user)
-        self.headers = {
-            **self.generate_headers(),
+        self.bare_headers = {
             'Accepts': 'application/json',
             'Content-Type': 'application/json',
             'content_type': 'application/json',
             'format': 'json',
+        }
+        self.headers = {
+            **self.generate_headers(),
+            **self.bare_headers,
         }
 
         self.url = reverse('payment_relations-list')
@@ -57,6 +61,35 @@ class CreateAttendeeTestCase(OIDCTestCase):
         }, **self.headers)
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+    def test_user_has_access_to_view_payments(self):
+        response = self.client.get(self.url, **self.headers)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_user_can_view_their_own_payments(self):
+        payment_relation = pay_for_event(self.event, self.user)
+
+        response = self.client.get(self.id_url(payment_relation.id), **self.headers)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.json().get('payment').get('id'), self.payment.id)
+
+    def test_user_cannot_view_other_users_payments(self):
+        other_user = generate_user(username='other_user')
+        attend_user_to_event(self.event, other_user)
+        payment_relation = pay_for_event(self.event, other_user)
+
+        response = self.client.get(self.id_url(payment_relation.id), **self.headers)
+
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(response.json().get('detail'), 'Ikke funnet.')
+
+    def test_unauthenticated_client_cannot_access_payments(self):
+        response = self.client.get(self.url, **self.bare_headers)
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.json().get('detail'), 'Manglende autentiseringsinformasjon.')
 
     def test_event_payment_fails_without_stripe_token(self):
         response = self.client.post(self.url, {
