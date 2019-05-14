@@ -5,6 +5,7 @@ from django.conf import settings
 from rest_framework import serializers
 from rest_framework.serializers import ValidationError
 
+from apps.payment import status
 from apps.payment.models import (Payment, PaymentDelay, PaymentPrice, PaymentRelation,
                                  PaymentTransaction)
 
@@ -137,27 +138,15 @@ class PaymentTransactionReadOnlySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = PaymentTransaction
-        fields = ('amount', 'used_stripe', 'datetime', )
+        fields = ('amount', 'used_stripe', 'datetime', 'status',)
         read_only = True
 
 
 class PaymentTransactionCreateSerializer(serializers.ModelSerializer):
     user = serializers.HiddenField(default=serializers.CurrentUserDefault())
-    payment_method_id = serializers.CharField(write_only=True, required=False)
-    payment_intent_id = serializers.CharField(write_only=True, required=False)
+    payment_method_id = serializers.CharField(write_only=True)
     used_stripe = serializers.HiddenField(default=True)
     amount = serializers.IntegerField(required=True)
-
-    def validate(self, data):
-        payment_method_id = data.get('payment_method_id')
-        payment_intent_id = data.get('payment_intent_id')
-
-        if not payment_method_id and not payment_intent_id:
-            raise ValidationError('Request must include either payment_method_id or payment_intent_id')
-        if payment_intent_id and payment_method_id:
-            raise ValidationError('Request should only include one of either payment_method_id or payment_intent_id')
-
-        return data
 
     def validate_amount(self, amount):
         valid_amounts = [100, 200, 500]
@@ -170,45 +159,37 @@ class PaymentTransactionCreateSerializer(serializers.ModelSerializer):
         request = self.context.get('request')
 
         amount = validated_data.get('amount')
-        payment_method_id = validated_data.get('payment_method_id')
-        payment_intent_id = validated_data.get('payment_intent_id')
-        if payment_method_id:
-            validated_data.pop('payment_method_id')
-        if payment_intent_id:
-            validated_data.pop('payment_intent_id')
+        payment_method_id = validated_data.pop('payment_method_id')
 
         logger.info(f'User: {request.user} attempting to add {amount} to saldo')
         try:
             """ Use Trikom key for additions to user saldo """
             stripe_private_key = settings.STRIPE_PRIVATE_KEYS['trikom']
 
-            intent: stripe.PaymentIntent
-
-            # In case of a payment confirmation
-            if payment_intent_id:
-                intent = stripe.PaymentIntent.confirm(payment_intent_id)
-
-            # In case of a regular payment
-            elif payment_method_id:
-                intent = stripe.PaymentIntent.create(
-                    payment_method=payment_method_id,
-                    amount=amount * 100,  # Price is multiplied with 100 because the amount is in øre
-                    currency='nok',
-                    confirmation_method='manual',
-                    confirm=True,
-                    description=f'Saldo deposit - {request.user.email}',
-                    api_key=stripe_private_key,
-                )
+            intent = stripe.PaymentIntent.create(
+                payment_method=payment_method_id,
+                amount=amount * 100,  # Price is multiplied with 100 because the amount is in øre
+                currency='nok',
+                confirmation_method='manual',
+                confirm=True,
+                description=f'Saldo deposit - {request.user.email}',
+                api_key=stripe_private_key,
+            )
 
             # If the payment needs more validation by Stripe or the bank
             if intent.status == 'requires_source_action' and intent.next_action.type == 'use_stripe_sdk':
-                return {
-                    'requires_action': True,
-                    'payment_intent_client_secret': intent.client_secret,
-                }
+                return super().create({
+                    **validated_data,
+                    'status': status.PENDING,
+                    'payment_intent_secret': intent.client_secret,
+                })
 
             elif intent.status == 'succeeded':
                 return super().create(validated_data)
+
+            else:
+                logger.error(f'Payment intent returned an invalid status: {intent.status}')
+                raise ValidationError('Det skjedde noe galt under behandlingen av betalingen ')
 
         except stripe.error.CardError as err:
             error = err.json_body.get('error', {})
@@ -223,4 +204,47 @@ class PaymentTransactionCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = PaymentTransaction
-        fields = ('id', 'payment_method_id', 'payment_intent_id', 'amount', 'used_stripe', 'user',)
+        fields = ('id', 'payment_method_id', 'payment_intent_secret', 'amount', 'used_stripe', 'user', 'status',)
+
+
+class PaymentTransactionUpdateSerializer(serializers.ModelSerializer):
+    payment_intent_id = serializers.CharField(write_only=True, required=True, allow_blank=False)
+
+    def update(self, instance: PaymentTransaction, validated_data):
+
+        # Update should only be used to confirm transactions. PENDING is the first stage of a payment.
+        if instance.status != status.PENDING:
+            raise ValidationError('Denne transaksjonen er allerede betalt og bekreftet')
+
+        # Remove data, as we only want to use it to potentially write data derived from it
+        payment_intent_id = validated_data.pop('payment_intent_id')
+
+        try:
+            intent = stripe.PaymentIntent.confirm(payment_intent_id)
+
+            # If the status is still not confirmed we update the transaction with a new secret key to handle.
+            if intent.status == 'requires_source_action' and intent.next_action.type == 'use_stripe_sdk':
+                return super().update(instance, {
+                    **validated_data,
+                    'payment_intent_secret': intent.client_secret,
+                })
+            # If the payment is successfully confirmed we update the status of the transaction to SUCCEEDED.
+            elif intent.status == 'succeeded':
+                return super().update(instance, {
+                    **validated_data,
+                    'status': status.SUCCEEDED,
+                })
+
+            else:
+                logger.error(f'Payment intent returned an invalid status: {intent.status}')
+                raise ValidationError('Det skjedde noe galt under behandlingen av betalingsbekreftelsen ')
+
+        except stripe.error.CardError as error:
+            logger.error(f'An error occurred during confirmation of '
+                         f'PaymentTransaction: {instance.id} by user: {instance.user}', error)
+            raise ValidationError('Det skjedde en feil under bekreftelsen av betalingen.')
+
+    class Meta:
+        model = PaymentTransaction
+        fields = ('payment_intent_id', 'id', 'payment_intent_secret', 'amount', 'status',)
+        read_only_fields = ('id', 'payment_intent_secret', 'amount', 'status',)

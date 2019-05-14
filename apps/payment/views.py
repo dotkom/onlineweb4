@@ -20,7 +20,8 @@ from apps.payment.serializers import (PaymentDelayReadOnlySerializer,
                                       PaymentRelationCreateSerializer,
                                       PaymentRelationReadOnlySerializer,
                                       PaymentTransactionCreateSerializer,
-                                      PaymentTransactionReadOnlySerializer)
+                                      PaymentTransactionReadOnlySerializer,
+                                      PaymentTransactionUpdateSerializer)
 from apps.webshop.models import OrderLine
 
 logger = logging.getLogger(__name__)
@@ -302,13 +303,12 @@ class PaymentPriceReadOnlyViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = PaymentPrice.objects.all()
 
 
-class PaymentTransactionViewSet(viewsets.GenericViewSet,
-                                mixins.CreateModelMixin,
-                                mixins.ListModelMixin,
-                                mixins.RetrieveModelMixin):
+class PaymentTransactionViewSet(viewsets.ModelViewSet):
     """
-    Payment transaction can only be created and viewed.
-    The user should not be able to change or delete them after creation.
+    A user should be allowed to view their transactions.
+    Transactions are created with Stripe payment intents.
+    Transactions are only updated to confirm pending payment intents.
+    A use should not be able to delete a transaction.
     """
     permission_classes = (permissions.IsAuthenticated,)
 
@@ -317,6 +317,8 @@ class PaymentTransactionViewSet(viewsets.GenericViewSet,
             return PaymentTransactionReadOnlySerializer
         if self.action == 'create':
             return PaymentTransactionCreateSerializer
+        if self.action in ['update', 'partial_update']:
+            return PaymentTransactionUpdateSerializer
 
         super().get_serializer_class()
 
