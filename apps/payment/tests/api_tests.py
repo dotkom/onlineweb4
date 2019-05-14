@@ -1,3 +1,5 @@
+from unittest import mock
+
 import stripe
 from django.conf import settings
 from django.contrib.auth.models import Group
@@ -9,8 +11,26 @@ from rest_framework import status
 from apps.events.tests.utils import (attend_user_to_event, generate_event, generate_user,
                                      pay_for_event)
 from apps.oidc_provider.test import OIDCTestCase
+from apps.payment import status as payment_status
 
 from .utils import add_price_to_payment, generate_event_payment
+
+
+class IntentAction:
+    type = ''
+
+
+class SuccessfulPaymentIntent:
+    status = 'succeeded'
+    next_action = IntentAction
+
+
+def mock_payment_intent_confirm():
+    """
+    Patches payment intent confirmation to work server side.
+    A real implementation requires user interaction, like confirming with BankID.
+    """
+    return mock.patch('stripe.PaymentIntent.confirm', return_value=SuccessfulPaymentIntent)
 
 
 class PaymentRelationTestCase(OIDCTestCase):
@@ -258,7 +278,7 @@ class PaymentTransactionTestCase(OIDCTestCase):
         self.id_url = lambda _id: self.url + str(_id) + '/'
         date_next_year = timezone.now() + timezone.timedelta(days=366)
         self.mock_card = {
-            'number': '4242424242424242',
+            'number': '4000000000003055',
             'exp_month': 12,
             'exp_year': date_next_year.year,
             'cvc': '123'
@@ -292,22 +312,60 @@ class PaymentTransactionTestCase(OIDCTestCase):
         }, **self.headers)
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response.json().get('status'), payment_status.DONE)
 
+    @mock_payment_intent_confirm()
+    def test_initiating_a_3d_secure_transaction_results_in_a_pending_transaction(self, _):
+        response = self.client.post(self.url, {
+            'amount': self.amount,
+            'payment_method_id': self.secure_payment_method.id,
+        }, **self.headers)
 
-    def test_user_can_create_a_3d_secure_transaction(self):
+        current_payment_status = response.json().get('status')
+        payment_intent_secret = response.json().get('payment_intent_secret')
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(current_payment_status, payment_status.PENDING)
+        self.assertIsNotNone(current_payment_status, payment_intent_secret)
+
+    @mock_payment_intent_confirm()
+    def test_user_can_complete_a_3d_secure_transaction(self, _):
         initial_response = self.client.post(self.url, {
             'amount': self.amount,
             'payment_method_id': self.secure_payment_method.id,
         }, **self.headers)
 
-        requires_action = initial_response.json().get('requires_action')
-        payment_intent_client_secret = initial_response.json().get('payment_intent_client_secret')
-
         self.assertEqual(initial_response.status_code, status.HTTP_201_CREATED)
-        self.assertTrue(requires_action)
-        self.assertTrue(payment_intent_client_secret)
 
-    def test_user_saldo_is_updated_when_a_transaction_is_created(self):
+        """
+        Handling a payment_intent_secret _has_ to be done on a client via Stripe.js.
+        Stripe will prompt the user with a modal requiring interaction via something like BankID.
+        The response has been mocked in 3D secure tests, since it cannot be done with regular unit testing.
+        https://stripe.com/docs/payments/payment-intents/quickstart#handling-next-actions
+        """
+        transaction_id = initial_response.json().get('id')
+        confirm_response = self.client.patch(self.id_url(transaction_id), {
+            'payment_intent_id': '--some-fake-id--',
+            # Fake id works since actual validation has been disabled by the mock_payment_intent_confirm decorator
+        }, **self.headers)
+
+        current_payment_status = confirm_response.json().get('status')
+
+        self.assertEqual(confirm_response.status_code, status.HTTP_200_OK)
+        self.assertEqual(current_payment_status, payment_status.DONE)
+
+    def test_user_saldo_is_updated_when_a_transaction_is_confirmed(self):
+        starting_saldo = self.user.saldo
+        expected_saldo = starting_saldo + self.amount
+
+        # Use existing test to to the hard work, since it completely relies on the things done in it.
+        self.test_user_can_complete_a_3d_secure_transaction()
+
+        self.user.refresh_from_db()
+
+        self.assertEqual(self.user.saldo, expected_saldo)
+
+    def test_user_saldo_is_updated_when_a_transaction_is_done(self):
         starting_saldo = self.user.saldo
         expected_saldo = starting_saldo + self.amount
 
@@ -319,6 +377,22 @@ class PaymentTransactionTestCase(OIDCTestCase):
         self.user.refresh_from_db()
 
         self.assertEqual(self.user.saldo, expected_saldo)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+    @mock_payment_intent_confirm()
+    def test_user_saldo_is_not_updated_when_a_transaction_is_pending(self, _):
+        starting_saldo = self.user.saldo
+        saldo_id_succeeded = starting_saldo + self.amount
+
+        response = self.client.post(self.url, {
+            'amount': self.amount,
+            'payment_method_id': self.secure_payment_method.id,
+        }, **self.headers)
+
+        self.user.refresh_from_db()
+
+        self.assertEqual(self.user.saldo, starting_saldo)
+        self.assertNotEqual(self.user.saldo, saldo_id_succeeded)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     def test_user_cannot_create_a_transaction_with_wrong_price(self):
