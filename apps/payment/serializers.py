@@ -3,6 +3,7 @@ import logging
 import stripe
 from django.conf import settings
 from rest_framework import serializers
+from rest_framework.serializers import ValidationError
 
 from apps.payment.models import (Payment, PaymentDelay, PaymentPrice, PaymentRelation,
                                  PaymentTransaction)
@@ -142,14 +143,26 @@ class PaymentTransactionReadOnlySerializer(serializers.ModelSerializer):
 
 class PaymentTransactionCreateSerializer(serializers.ModelSerializer):
     user = serializers.HiddenField(default=serializers.CurrentUserDefault())
-    stripe_token = serializers.CharField(write_only=True)
+    payment_method_id = serializers.CharField(write_only=True, required=False)
+    payment_intent_id = serializers.CharField(write_only=True, required=False)
     used_stripe = serializers.HiddenField(default=True)
     amount = serializers.IntegerField(required=True)
+
+    def validate(self, data):
+        payment_method_id = data.get('payment_method_id')
+        payment_intent_id = data.get('payment_intent_id')
+
+        if not payment_method_id and not payment_intent_id:
+            raise ValidationError('Request must include either payment_method_id or payment_intent_id')
+        if payment_intent_id and payment_method_id:
+            raise ValidationError('Request should only include one of either payment_method_id or payment_intent_id')
+
+        return data
 
     def validate_amount(self, amount):
         valid_amounts = [100, 200, 500]
         if amount not in valid_amounts:
-            raise serializers.ValidationError(f'{amount} er ikke en gyldig betalingspris')
+            raise ValidationError(f'{amount} er ikke en gyldig betalingspris')
 
         return amount
 
@@ -157,32 +170,57 @@ class PaymentTransactionCreateSerializer(serializers.ModelSerializer):
         request = self.context.get('request')
 
         amount = validated_data.get('amount')
-        stripe_token = validated_data.pop('stripe_token')
+        payment_method_id = validated_data.get('payment_method_id')
+        payment_intent_id = validated_data.get('payment_intent_id')
+        if payment_method_id:
+            validated_data.pop('payment_method_id')
+        if payment_intent_id:
+            validated_data.pop('payment_intent_id')
 
         logger.info(f'User: {request.user} attempting to add {amount} to saldo')
         try:
             """ Use Trikom key for additions to user saldo """
             stripe_private_key = settings.STRIPE_PRIVATE_KEYS['trikom']
-            stripe.Charge.create(
-                amount=amount * 100,  # Price is multiplied with 100 because the amount is in øre
-                currency="nok",
-                card=stripe_token,
-                description=f'Saldo deposit - {request.user.email}',
-                api_key=stripe_private_key,
-            )
-            return super().create(validated_data)
+
+            intent: stripe.PaymentIntent
+
+            # In case of a payment confirmation
+            if payment_intent_id:
+                intent = stripe.PaymentIntent.confirm(payment_intent_id)
+
+            # In case of a regular payment
+            elif payment_method_id:
+                intent = stripe.PaymentIntent.create(
+                    payment_method=payment_method_id,
+                    amount=amount * 100,  # Price is multiplied with 100 because the amount is in øre
+                    currency='nok',
+                    confirmation_method='manual',
+                    confirm=True,
+                    description=f'Saldo deposit - {request.user.email}',
+                    api_key=stripe_private_key,
+                )
+
+            # If the payment needs more validation by Stripe or the bank
+            if intent.status == 'requires_source_action' and intent.next_action.type == 'use_stripe_sdk':
+                return {
+                    'requires_action': True,
+                    'payment_intent_client_secret': intent.client_secret,
+                }
+
+            elif intent.status == 'succeeded':
+                return super().create(validated_data)
 
         except stripe.error.CardError as err:
             error = err.json_body.get('error', {})
             logger.error(f'Stripe charge for {request.user} failed with card_error: {error}')
-            raise serializers.ValidationError(error)
+            raise ValidationError(error)
 
         except stripe.error.StripeError as error:
             logger.error(f'An error occurred during the Stripe charge: {error}')
-            raise serializers.ValidationError(error)
+            raise ValidationError(error)
 
         return None
 
     class Meta:
         model = PaymentTransaction
-        fields = ('id', 'stripe_token', 'amount', 'used_stripe', 'user',)
+        fields = ('id', 'payment_method_id', 'payment_intent_id', 'amount', 'used_stripe', 'user',)

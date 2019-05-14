@@ -35,6 +35,7 @@ class PaymentRelationTestCase(OIDCTestCase):
         }
         stripe.api_key = settings.STRIPE_PUBLIC_KEYS['arrkom']
         self.stripe_token = stripe.Token.create(card=self.mock_card)
+        self.payment_method = stripe.PaymentMethod.create(type='card', card=self.mock_card)
 
         self.event = generate_event(organizer=self.committee)
         self.event.event_end = timezone.now() + timezone.timedelta(days=3)
@@ -262,8 +263,15 @@ class PaymentTransactionTestCase(OIDCTestCase):
             'exp_year': date_next_year.year,
             'cvc': '123'
         }
+        self.mock_3d_secure_card = {
+            'number': '4000000000003220',
+            'exp_month': 12,
+            'exp_year': date_next_year.year,
+            'cvc': '123',
+        }
         stripe.api_key = settings.STRIPE_PUBLIC_KEYS['trikom']
-        self.stripe_token = stripe.Token.create(card=self.mock_card)
+        self.payment_method = stripe.PaymentMethod.create(type='card', card=self.mock_card)
+        self.secure_payment_method = stripe.PaymentMethod.create(type='card', card=self.mock_3d_secure_card)
         self.amount = 100
 
     def test_user_has_access_to_view_transactions(self):
@@ -277,13 +285,27 @@ class PaymentTransactionTestCase(OIDCTestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         self.assertEqual(response.json().get('detail'), 'Manglende autentiseringsinformasjon.')
 
-    def test_user_can_create_a_transaction(self):
+    def test_user_can_create_a_transaction_with_a_regular_card(self):
         response = self.client.post(self.url, {
             'amount': self.amount,
-            'stripe_token': self.stripe_token.id,
+            'payment_method_id': self.payment_method.id,
         }, **self.headers)
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+
+    def test_user_can_create_a_3d_secure_transaction(self):
+        initial_response = self.client.post(self.url, {
+            'amount': self.amount,
+            'payment_method_id': self.secure_payment_method.id,
+        }, **self.headers)
+
+        requires_action = initial_response.json().get('requires_action')
+        payment_intent_client_secret = initial_response.json().get('payment_intent_client_secret')
+
+        self.assertEqual(initial_response.status_code, status.HTTP_201_CREATED)
+        self.assertTrue(requires_action)
+        self.assertTrue(payment_intent_client_secret)
 
     def test_user_saldo_is_updated_when_a_transaction_is_created(self):
         starting_saldo = self.user.saldo
@@ -291,7 +313,7 @@ class PaymentTransactionTestCase(OIDCTestCase):
 
         response = self.client.post(self.url, {
             'amount': self.amount,
-            'stripe_token': self.stripe_token.id,
+            'payment_method_id': self.payment_method.id,
         }, **self.headers)
 
         self.user.refresh_from_db()
@@ -304,30 +326,30 @@ class PaymentTransactionTestCase(OIDCTestCase):
 
         response = self.client.post(self.url, {
             'amount': wrong_amount,
-            'stripe_token': self.stripe_token.id,
+            'payment_method_id': self.payment_method.id,
         }, **self.headers)
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response.json().get('amount'), [f'{wrong_amount} er ikke en gyldig betalingspris'])
 
-    def test_transaction_fails_without_stripe_token(self):
+    def test_transaction_fails_without_payment_method_id(self):
         response = self.client.post(self.url, {
             'amount': self.amount,
         }, **self.headers)
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.json().get('stripe_token'), ['Dette feltet er påkrevd.'])
+        self.assertEqual(response.json().get('payment_method_id'), ['Dette feltet er påkrevd.'])
 
-    def test_event_payment_fails_with_fake_stripe_token(self):
-        token = '--fake-token--'
+    def test_event_payment_fails_with_fake_payment_method_id(self):
+        fake_payment_method_id = '--fake-token--'
 
         response = self.client.post(self.url, {
             'amount': self.amount,
-            'stripe_token': token,
+            'payment_method_id': fake_payment_method_id,
         }, **self.headers)
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertIn(f'No such token: {token}', response.json()[0])
+        self.assertIn(f'No such payment_method: {fake_payment_method_id}', response.json()[0])
 
 
 class PaymentDelayTestCase(OIDCTestCase):
