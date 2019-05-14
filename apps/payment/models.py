@@ -16,6 +16,7 @@ from rest_framework.exceptions import NotAcceptable
 
 from apps.events.models import AttendanceEvent, Attendee
 from apps.marks.models import Suspension
+from apps.payment import status
 
 User = settings.AUTH_USER_MODEL
 
@@ -366,6 +367,15 @@ class PaymentTransaction(models.Model):
     """Was transaction paid for using Stripe"""
     datetime = models.DateTimeField(auto_now=True)
     """Transaction creation datetime. Automatically generated."""
+    status = models.CharField(
+        max_length=30,
+        null=False,
+        choices=status.PAYMENT_STATUS_CHOICES,
+        default=status.SUCCEEDED
+    )
+    """ Status of a Stripe payment """
+    payment_intent_secret = models.CharField(max_length=200, null=True, blank=True)
+    """ Stripe payment intent secret key for verifying pending transactions/intents """
 
     def get_timestamp(self):
         return self.datetime
@@ -393,14 +403,34 @@ class PaymentTransaction(models.Model):
     def __str__(self):
         return str(self.user) + " - " + str(self.amount) + "(" + str(self.datetime) + ")"
 
-    def save(self, *args, **kwargs):
-        if not self.pk:
+    def _handle_status_change(self):
+        """
+        Should only be called from the save method.
+        TODO: Implement using pre-save signal.
+        """
+
+        """ When a payment succeeds, ot should be stored to the DB """
+        if self.status == status.SUCCEEDED:
             self.user.saldo = self.user.saldo + self.amount
 
             if self.user.saldo < 0:
                 raise NotAcceptable("Insufficient funds")
 
             self.user.save()
+            """ Pass the transaction to the next step, which is DONE """
+            self.status = status.DONE
+
+        """ Handle when a transaction is being refunded by Stripe """
+        if self.status == status.REFUNDED:
+            self.user.saldo = self.user.saldo - self.amount
+            self.user.save()
+            """ Pass transaction to the next strip, which is REMOVED """
+            self.status = status.REMOVED
+
+    def save(self, *args, **kwargs):
+        """ Handle the currently set status of the transaction """
+        self._handle_status_change()
+
         super().save(*args, **kwargs)
         receipt = PaymentReceipt(object_id=self.id,
                                  content_type=ContentType.objects.get_for_model(self))
