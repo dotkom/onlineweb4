@@ -17,4 +17,5 @@ class CompanySerializer(serializers.ModelSerializer):
           'image',
           'long_description',
           'short_description',
+          'phone_number',
         )
