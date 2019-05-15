@@ -5,7 +5,7 @@ from guardian.shortcuts import get_objects_for_user
 from apps.events.models import AttendanceEvent, Attendee, Event
 
 
-class EventTypeInFilter(BaseInFilter, NumberFilter):
+class BaseNumberInFilter(BaseInFilter, NumberFilter):
     pass
 
 
@@ -18,7 +18,8 @@ class EventDateFilter(django_filters.FilterSet):
     is_attendee = django_filters.BooleanFilter(field_name='attendance_event', method='filter_is_attendee')
     can_change = django_filters.BooleanFilter(method='filter_can_change')
     can_attend = django_filters.BooleanFilter(method='filter_can_attend')
-    event_type = EventTypeInFilter(field_name='event_type', lookup_expr='in')
+    event_type = BaseNumberInFilter(field_name='event_type', lookup_expr='in')
+    companies = BaseNumberInFilter(field_name='companies', lookup_expr='company__in')
 
     def filter_can_attend(self, queryset, name, value):
         """

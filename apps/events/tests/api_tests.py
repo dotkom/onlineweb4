@@ -6,10 +6,10 @@ from django.utils import timezone
 from django_dynamic_fixture import G
 from onlineweb4.fields.recaptcha import mock_validate_recaptcha
 from rest_framework import status
-from rest_framework.test import APITestCase
 
 from apps.authentication.models import OnlineUser
-from apps.events.models import Attendee
+from apps.companyprofile.models import Company
+from apps.events.models import Attendee, CompanyEvent
 from apps.oidc_provider.test import OIDCTestCase
 from apps.profiles.models import Privacy
 
@@ -317,29 +317,64 @@ class CreateAttendeeTestCase(OIDCTestCase):
         self.assertTrue(attendee_response.json()['has_paid'])
 
 
-class EventsAPIURLTestCase(APITestCase):
+class EventsAPITestCase(OIDCTestCase):
+
+    def setUp(self):
+
+        self.committee = G(Group, name='bedKom')
+        self.user = generate_user(username='_user')
+        self.privacy = G(Privacy, user=self.user)
+        self.token = self.generate_access_token(self.user)
+
+        self.url = reverse('events-list')
+        self.id_url = lambda _id: self.url + str(_id) + '/'
+        self.event = generate_event(organizer=self.committee)
+        self.event.attendance_event.registration_start = timezone.now()
+        self.event.attendance_event.registration_end = timezone.now() + timezone.timedelta(days=2)
+        self.event.attendance_event.max_capacity = 20
+        self.event.attendance_event.save()
+        self.attendee1 = generate_attendee(self.event, 'test1', '123')
+        self.attendee2 = generate_attendee(self.event, 'test2', '321')
+        self.attendees = [self.attendee1, self.attendee2]
+
     def test_events_list_empty(self):
-        url = reverse('events-list')
-
-        response = self.client.get(url)
-
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-    def test_events_list_exists(self):
-        generate_event()
-        url = reverse('events-list')
-
-        response = self.client.get(url)
+        response = self.client.get(self.url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_events_detail(self):
-        event = generate_event()
-        url = reverse('events-detail', args=(event.id,))
 
-        response = self.client.get(url)
+        response = self.client.get(self.id_url(self.event.id))
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_events_list_exists(self):
+        response = self.client.get(self.url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        events_list = response.json().get('results')
+        event_titles_list = list(map(lambda event: event.get('title'), events_list))
+
+        self.assertIn(self.event.title, event_titles_list)
+
+    def test_filter_companies_in_event_list(self):
+        onlinecorp: Company = G(Company, name='onlinecorp')
+        bedpres_with_onlinecorp = generate_event(organizer=self.committee)
+        G(CompanyEvent, company=onlinecorp, event=bedpres_with_onlinecorp)
+        evilcorp: Company = G(Company, name='evilcorp')
+        bedpres_with_evilcorp = generate_event(organizer=self.committee)
+        G(CompanyEvent, company=evilcorp, event=bedpres_with_evilcorp)
+
+        response = self.client.get(f'{self.url}?companies={onlinecorp.id}')
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        events_list = response.json().get('results')
+        event_titles_list = list(map(lambda event: event.get('id'), events_list))
+
+        self.assertIn(bedpres_with_onlinecorp.id, event_titles_list)
+        self.assertNotIn(bedpres_with_evilcorp.id, event_titles_list)
 
 
 class AttendAPITestCase(OIDCTestCase):

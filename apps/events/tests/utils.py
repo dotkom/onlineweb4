@@ -10,7 +10,7 @@ from ..models import TYPE_CHOICES, AttendanceEvent, Attendee, Event
 from ..utils import get_organizer_by_event_type
 
 
-def generate_event(event_type=TYPE_CHOICES[1][0], organizer=None, attendance=True):
+def generate_event(event_type=TYPE_CHOICES[1][0], organizer=None, attendance=True) -> Event:
     if organizer is None:
         organizer = get_organizer_by_event_type(event_type)
     event = G(Event, event_type=event_type, organizer=organizer)
