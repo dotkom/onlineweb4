@@ -293,6 +293,16 @@ class PaymentRelation(models.Model):
     stripe_id = models.CharField(max_length=128)
     """ID from Stripe payment"""
 
+    status = models.CharField(
+        max_length=30,
+        null=False,
+        choices=status.PAYMENT_STATUS_CHOICES,
+        default=status.SUCCEEDED
+    )
+    """ Status of a Stripe payment """
+    payment_intent_secret = models.CharField(max_length=200, null=True, blank=True)
+    """ Stripe payment intent secret key for verifying pending transactions/intents """
+
     def get_timestamp(self):
         return self.datetime
 
@@ -316,7 +326,21 @@ class PaymentRelation(models.Model):
     def get_to_mail(self):
         return self.user.email
 
+    def _handle_status_change(self):
+        """
+        Called only from the save method. Saving should no be done here, as that would lead to recursion.
+        """
+        if self.status == status.SUCCEEDED:
+            """ Handle the completed payment. Remove delays, suspensions and marks """
+            self.payment.handle_payment(self.user)
+            self.status = status.DONE
+        elif self.status == status.REFUNDED:
+            self.refunded = True
+            self.payment.handle_refund(self)
+            self.status = status.REMOVED
+
     def save(self, *args, **kwargs):
+        self._handle_status_change()
         if not self.unique_id:
             self.unique_id = str(uuid.uuid4())
         super(PaymentRelation, self).save(*args, **kwargs)
