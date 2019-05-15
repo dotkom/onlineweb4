@@ -10,15 +10,17 @@ from django.contrib.auth.decorators import login_required
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext as _
-from rest_framework import mixins, permissions, status, viewsets
+from rest_framework import permissions, status, viewsets
 from rest_framework.response import Response
 
+from apps.payment import status as payment_status
 from apps.payment.models import (Payment, PaymentDelay, PaymentPrice, PaymentRelation,
                                  PaymentTransaction)
 from apps.payment.serializers import (PaymentDelayReadOnlySerializer,
                                       PaymentPriceReadOnlySerializer,
                                       PaymentRelationCreateSerializer,
                                       PaymentRelationReadOnlySerializer,
+                                      PaymentRelationUpdateSerializer,
                                       PaymentTransactionCreateSerializer,
                                       PaymentTransactionReadOnlySerializer,
                                       PaymentTransactionUpdateSerializer)
@@ -246,11 +248,7 @@ class PaymentDelayReadOnlyViewSet(viewsets.ReadOnlyModelViewSet):
         return PaymentDelay.objects.filter(user=user)
 
 
-class PaymentRelationViewSet(viewsets.GenericViewSet,
-                             mixins.CreateModelMixin,
-                             mixins.DestroyModelMixin,
-                             mixins.ListModelMixin,
-                             mixins.RetrieveModelMixin):
+class PaymentRelationViewSet(viewsets.ModelViewSet):
 
     permission_classes = (permissions.IsAuthenticated,)
 
@@ -263,6 +261,9 @@ class PaymentRelationViewSet(viewsets.GenericViewSet,
             return PaymentRelationReadOnlySerializer
         if self.action == 'create':
             return PaymentRelationCreateSerializer
+        if self.action in ['update', 'partial_update']:
+            return PaymentRelationUpdateSerializer
+
         return super().get_serializer_class()
 
     def get_queryset(self):
@@ -274,7 +275,7 @@ class PaymentRelationViewSet(viewsets.GenericViewSet,
         Destroy logic is set in the view because serializers cannot delete.
         """
         user = request.user
-        payment_relation = self.get_object()
+        payment_relation: PaymentRelation = self.get_object()
         can_refund, message = payment_relation.payment.check_refund(payment_relation)
 
         if not can_refund:
@@ -283,18 +284,27 @@ class PaymentRelationViewSet(viewsets.GenericViewSet,
         try:
             """ Handle the actual refund with the stripe API """
             stripe.api_key = payment_relation.payment.stripe_private_key
-            charge = stripe.Charge.retrieve(payment_relation.stripe_id)
-            charge.refunds.create()
+            intent = stripe.PaymentIntent.retrieve(payment_relation.stripe_id)
 
-            """ Handle the internal refund registration and cleanup """
-            payment_relation.payment.handle_refund(payment_relation)
+            if payment_relation.status in [payment_status.SUCCEEDED, payment_status.DONE]:
+                intent['charges']['data'][0].refund()
+
+            elif payment_relation.status == payment_status.PENDING:
+                intent.cancel()
+
+            elif payment_relation.status in [payment_status.REFUNDED, payment_status.REMOVED]:
+                return Response({
+                    'message': _("Denne betalingen har allerede blitt refundert.")
+                }, status.HTTP_400_BAD_REQUEST)
 
             return Response({'message': _("Betalingen har blitt refundert.")}, status.HTTP_200_OK)
 
-        except stripe.InvalidRequestError as error:
+        except (stripe.error.InvalidRequestError, stripe.error.StripeError, Exception) as error:
             logger.error(f'An error occurred during refund of payment: {payment_relation} '
                          f'to stripe for user: {user}', error)
-            return Response(error.json_body, status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response({
+                'message': 'Det skjedde en feil under behandlingen av refunderingen'
+            }, status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 class PaymentPriceReadOnlyViewSet(viewsets.ReadOnlyModelViewSet):
@@ -325,3 +335,6 @@ class PaymentTransactionViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         user = self.request.user
         return PaymentTransaction.objects.filter(user=user)
+
+    def destroy(self, request, *args, **kwargs):
+        return Response({'message': 'Du kan ikke slette eksisterende transaksjoner'}, status.HTTP_403_FORBIDDEN)
