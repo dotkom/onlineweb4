@@ -26,6 +26,7 @@ from apps.companyprofile.models import Company
 from apps.feedback.models import FeedbackRelation
 from apps.gallery.models import ResponsiveImage
 from apps.marks.models import get_expiration_date
+from apps.payment import status as payment_status
 
 User = settings.AUTH_USER_MODEL
 
@@ -928,7 +929,7 @@ class Attendee(models.Model):
         """
         if self.payment_relations:
             non_refunded_payment_relations = self.payment_relations.filter(refunded=False)
-            return len(non_refunded_payment_relations) != 0
+            return any(map(lambda relation: relation.status == payment_status.DONE, non_refunded_payment_relations))
         return False
 
     @property

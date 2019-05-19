@@ -8,6 +8,7 @@ from apps.authentication.serializers import UserSerializer
 from apps.companyprofile.serializers import CompanySerializer
 from apps.events.models import AttendanceEvent, Attendee, CompanyEvent, Event, Extras, RuleBundle
 from apps.gallery.serializers import ResponsiveImageSerializer
+from apps.payment.serializers import PaymentReadOnlySerializer
 
 
 class ExtrasSerializer(serializers.ModelSerializer):
@@ -165,6 +166,8 @@ class SerializerUserMethodField(serializers.SerializerMethodField):
 class UserAttendanceEventSerializer(serializers.ModelSerializer):
     rule_bundles = RuleBundleSerializer(many=True)
     extras = ExtrasSerializer(many=True)
+    payments = serializers.SerializerMethodField()
+
     has_postponed_registration = SerializerUserMethodField()
     is_marked = SerializerUserMethodField()
     is_suspended = SerializerUserMethodField()
@@ -173,10 +176,15 @@ class UserAttendanceEventSerializer(serializers.ModelSerializer):
     is_on_waitlist = SerializerUserMethodField()
     what_place_is_user_on_wait_list = SerializerUserMethodField()
 
+    def get_payments(self, obj):
+        payments = obj.get_payments()
+        serialized_payments = PaymentReadOnlySerializer(payments, many=True)
+        return serialized_payments.data
+
     class Meta:
         model = AttendanceEvent
         fields = (
-            'max_capacity', 'waitlist', 'guest_attendance', 'extras',
+            'max_capacity', 'waitlist', 'guest_attendance', 'extras', 'payments',
             'registration_start', 'registration_end', 'unattend_deadline',
             'automatically_set_marks', 'rule_bundles', 'number_on_waitlist',
             'number_of_seats_taken', 'visible_attending_attendees', 'has_extras',

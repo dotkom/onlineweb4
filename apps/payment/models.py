@@ -16,6 +16,7 @@ from rest_framework.exceptions import NotAcceptable
 
 from apps.events.models import AttendanceEvent, Attendee
 from apps.marks.models import Suspension
+from apps.payment import status
 
 User = settings.AUTH_USER_MODEL
 
@@ -137,7 +138,23 @@ class Payment(models.Model):
         else:
             return settings.DEFAULT_FROM_EMAIL
 
-    def handle_payment(self, user):
+    def is_user_allowed_to_pay(self, user: User) -> bool:
+        """
+        In the case of attendance events the user should only be allowed to pay if they are attending
+        and has not paid yet.
+        """
+        if self._is_type(AttendanceEvent):
+            event: AttendanceEvent = self.content_object
+            is_attending = event.is_attendee(user)
+            if is_attending:
+                attendee = Attendee.objects.get(user=user, event=event)
+                return not attendee.has_paid
+            return False
+
+        """ There are no rules prohibiting user from paying for other types of payments """
+        return True
+
+    def handle_payment(self, user: User):
         """
         Method for handling payments from user.
         Deletes any relevant payment delays, suspensions and marks user's attendee object as paid.
@@ -180,7 +197,7 @@ class Payment(models.Model):
             Attendee.objects.get(event=self.content_object,
                                  user=payment_relation.user).delete()
 
-    def check_refund(self, payment_relation):
+    def check_refund(self, payment_relation) -> (bool, str):
         """Method for checking if the payment can be refunded"""
         if self._is_type(AttendanceEvent):
             attendance_event = self.content_object
@@ -203,6 +220,14 @@ class Payment(models.Model):
         if self.paymentprice_set.count() > 0:
             return self.paymentprice_set.all()[0]
         return None
+
+    @property
+    def stripe_private_key(self):
+        return settings.STRIPE_PRIVATE_KEYS[self.stripe_key]
+
+    @property
+    def stripe_public_key(self):
+        return settings.STRIPE_PUBLIC_KEYS[self.stripe_key]
 
     def _is_type(self, model_type):
         return ContentType.objects.get_for_model(model_type) == self.content_type
@@ -268,6 +293,16 @@ class PaymentRelation(models.Model):
     stripe_id = models.CharField(max_length=128)
     """ID from Stripe payment"""
 
+    status = models.CharField(
+        max_length=30,
+        null=False,
+        choices=status.PAYMENT_STATUS_CHOICES,
+        default=status.SUCCEEDED
+    )
+    """ Status of a Stripe payment """
+    payment_intent_secret = models.CharField(max_length=200, null=True, blank=True)
+    """ Stripe payment intent secret key for verifying pending transactions/intents """
+
     def get_timestamp(self):
         return self.datetime
 
@@ -291,7 +326,21 @@ class PaymentRelation(models.Model):
     def get_to_mail(self):
         return self.user.email
 
+    def _handle_status_change(self):
+        """
+        Called only from the save method. Saving should no be done here, as that would lead to recursion.
+        """
+        if self.status == status.SUCCEEDED:
+            """ Handle the completed payment. Remove delays, suspensions and marks """
+            self.payment.handle_payment(self.user)
+            self.status = status.DONE
+        elif self.status == status.REFUNDED:
+            self.refunded = True
+            self.payment.handle_refund(self)
+            self.status = status.REMOVED
+
     def save(self, *args, **kwargs):
+        self._handle_status_change()
         if not self.unique_id:
             self.unique_id = str(uuid.uuid4())
         super(PaymentRelation, self).save(*args, **kwargs)
@@ -342,6 +391,15 @@ class PaymentTransaction(models.Model):
     """Was transaction paid for using Stripe"""
     datetime = models.DateTimeField(auto_now=True)
     """Transaction creation datetime. Automatically generated."""
+    status = models.CharField(
+        max_length=30,
+        null=False,
+        choices=status.PAYMENT_STATUS_CHOICES,
+        default=status.SUCCEEDED
+    )
+    """ Status of a Stripe payment """
+    payment_intent_secret = models.CharField(max_length=200, null=True, blank=True)
+    """ Stripe payment intent secret key for verifying pending transactions/intents """
 
     def get_timestamp(self):
         return self.datetime
@@ -369,14 +427,34 @@ class PaymentTransaction(models.Model):
     def __str__(self):
         return str(self.user) + " - " + str(self.amount) + "(" + str(self.datetime) + ")"
 
-    def save(self, *args, **kwargs):
-        if not self.pk:
+    def _handle_status_change(self):
+        """
+        Should only be called from the save method.
+        TODO: Implement using pre-save signal.
+        """
+
+        """ When a payment succeeds, ot should be stored to the DB """
+        if self.status == status.SUCCEEDED:
             self.user.saldo = self.user.saldo + self.amount
 
             if self.user.saldo < 0:
                 raise NotAcceptable("Insufficient funds")
 
             self.user.save()
+            """ Pass the transaction to the next step, which is DONE """
+            self.status = status.DONE
+
+        """ Handle when a transaction is being refunded by Stripe """
+        if self.status == status.REFUNDED:
+            self.user.saldo = self.user.saldo - self.amount
+            self.user.save()
+            """ Pass transaction to the next strip, which is REMOVED """
+            self.status = status.REMOVED
+
+    def save(self, *args, **kwargs):
+        """ Handle the currently set status of the transaction """
+        self._handle_status_change()
+
         super().save(*args, **kwargs)
         receipt = PaymentReceipt(object_id=self.id,
                                  content_type=ContentType.objects.get_for_model(self))
