@@ -27,6 +27,7 @@ class CareerViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.L
     serializer_class = CareerSerializer
     permission_classes = (AllowAny,)
     pagination_class = HundredItemsPaginator
+    filterset_fields = ('company',)
 
     def get_queryset(self, *args, **kwargs):
         return CareerOpportunity.objects.filter(

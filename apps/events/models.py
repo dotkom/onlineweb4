@@ -26,6 +26,7 @@ from apps.companyprofile.models import Company
 from apps.feedback.models import FeedbackRelation
 from apps.gallery.models import ResponsiveImage
 from apps.marks.models import get_expiration_date
+from apps.payment import status as payment_status
 
 User = settings.AUTH_USER_MODEL
 
@@ -768,7 +769,7 @@ class AttendanceEvent(models.Model):
         return self._process_rulebundle_satisfaction_responses(responses)
 
     def is_attendee(self, user):
-        return self.attendees.filter(user=user)
+        return self.attendees.filter(user=user).exists()
 
     def is_on_waitlist(self, user):
         return any(a.user == user for a in self.waitlist_qs)
@@ -909,14 +910,42 @@ class Attendee(models.Model):
 
         super(Attendee, self).delete()
 
-    def get_payment_deadline(self):
+    @property
+    def payment_relations(self):
+        # Importing here to prevent circular dependencies
+        from apps.payment.models import PaymentRelation
+
+        payment = self.event.payment()
+        if payment:
+            payment_relations = PaymentRelation.objects.filter(payment=payment, user=self.user)
+            return payment_relations
+        return None
+
+    @property
+    def has_paid(self):
+        """
+        Useful for checking if the user has paid, and if anything potentially needs refunding.
+        :return: If the user has paid anything for the event.
+        """
+        if self.payment_relations:
+            non_refunded_payment_relations = self.payment_relations.filter(refunded=False)
+            return any(map(lambda relation: relation.status == payment_status.DONE, non_refunded_payment_relations))
+        return False
+
+    @property
+    def payment_delays(self):
         # Importing here to prevent circular dependencies
         from apps.payment.models import PaymentDelay
         try:
-            deadline = PaymentDelay.objects.get(user=self.user, payment=self.event.payment()).valid_to
+            return PaymentDelay.objects.filter(user=self.user, payment=self.event.payment())
         except PaymentDelay.DoesNotExist:
-            return "Betalt"
-        return deadline
+            return PaymentDelay.objects.none()
+
+    def get_payment_deadline(self):
+        delays = self.payment_delays
+        if len(delays) == 0:
+            return 'Betalt'
+        return delays.first().valid_to
 
     def is_on_waitlist(self):
         return self in self.event.waitlist_qs
@@ -944,6 +973,10 @@ class Attendee(models.Model):
             to_email = self.event.event.feedback_mail()
             EmailMessage(subject, content, "online@online.ntnu.no", [to_email]).send()
 
+        if not self.has_paid:
+            self._clean_payment_delays()
+
+        # TODO: Not delete attendee unless payments have been refunded?
         self.delete()
 
     def save(self, force_insert=False, force_update=False, using=None,
@@ -953,6 +986,10 @@ class Attendee(models.Model):
         if self.event.event.organizer:
             assign_perm('events.change_attendee', self.event.event.organizer, obj=self)
             assign_perm('events.delete_attendee', self.event.event.organizer, obj=self)
+
+    def _clean_payment_delays(self):
+        for delay in self.payment_delays:
+            delay.delete()
 
     class Meta:
         ordering = ['timestamp']

@@ -63,7 +63,7 @@ const EditResource = ({ id }) => {
     if (res) {
       setResource({
         ...res,
-        image_id: res.image.id,
+        image_id: res.image ? res.image.id : null,
       });
     }
   };
@@ -76,8 +76,10 @@ const EditResource = ({ id }) => {
     initResource();
   }, []);
 
+  const title = `Endre på ressurse${resource.title ? `n: ${resource.title}` : ''}`;
+
   return (
-    <ResourceDetails title="Lag en ny ressurs" backUrl={basePath}>
+    <ResourceDetails title={title} backUrl={basePath}>
       <ResourceForm
         resource={resource}
         setResource={setResource}

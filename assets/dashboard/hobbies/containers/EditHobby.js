@@ -64,7 +64,7 @@ const EditHobby = ({ id }) => {
     if (res) {
       setHobby({
         ...res,
-        image_id: res.image.id,
+        image_id: res.image ? res.image.id : null,
       });
     }
   };
@@ -77,8 +77,10 @@ const EditHobby = ({ id }) => {
     initHobby();
   }, []);
 
+  const title = `Endre på interessegruppe${hobby.title ? `n: ${hobby.title}` : ''}`;
+
   return (
-    <HobbyDetails title="Lag en ny interessegruppe" backUrl={basePath}>
+    <HobbyDetails title={title} backUrl={basePath}>
       <HobbyForm
         hobby={hobby}
         setHobby={setHobby}

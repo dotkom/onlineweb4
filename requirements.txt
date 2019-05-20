@@ -32,7 +32,7 @@ pdfdocument==3.3
 Unidecode==1.0.23               # Translates every unicode symbol to the closest ascii. online_mail_usernames
 django-markdown-deux==1.0.5
 django-cors-headers==2.5.3      # Enable CORS for Nibble
-django-datetime-widget==0.9.3   # Datetime widget for forms
+git+https://github.com/oleast/django-datetime-widget.git@95a5ba4738853d1ed4081e1e33e1600cba984aad#egg=django-datetime-widget==0.9.4
 django-webpack-loader==0.6.0    # Integration with webpack
 dj-database-url==0.5.0          # Allows to configure databases using URLs
 python-decouple==3.1            # Configuration and settings management
