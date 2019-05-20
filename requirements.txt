@@ -7,7 +7,7 @@ django-filter==2.1.0           # Filtering for DRF
 git+https://github.com/JelteF/python-memcached@patch-1#egg=python-memcached==1.58
 markdown2==2.3.7                # textarea text formatting
 pytz                            # Timezone lib
-stripe==2.27.0                  # Stripe payment
+stripe==2.28.1                  # Stripe payment
 icalendar==4.0.3                # iCalendar generation
 google-api-python-client==1.7.8
 celery==4.3.0                   # Async task runner
@@ -16,9 +16,9 @@ celery==4.3.0                   # Async task runner
 django-filebrowser==3.11.1      # File uploading
 git+https://github.com/dotKom/django-chunks.git@e6bf109d4fd286964024c140ac1b8f3d86713540#egg=django-chunks==0.4
 django-crispy-forms==1.7.2      # nice forms
-django-extensions==2.1.6        # nice extra commands for debugging, etc
+django-extensions==2.1.7        # nice extra commands for debugging, etc
 django-dynamic-fixture==2.0.0   # Dynamic fixtures for models
-django-recaptcha==1.4.0         # Google ReCaptcha
+django-recaptcha==2.0.4         # Google ReCaptcha
 django-oauth-toolkit==1.2.0    # OAuth2 authentication support
 django-watson==1.5.2            # Indexed model search lib
 django-reversion==3.0.3        # Model version history with middleware hooks to all post_save signals
@@ -43,7 +43,7 @@ oic==0.15.1			            # OpenID Connect Client
 python-dateutil==2.8.0                 # Simplify date parsing
 
 # Frigg
-requests[security]==2.21.0
+requests[security]==2.22.0
 
 # Wiki
 wiki==0.4.4
