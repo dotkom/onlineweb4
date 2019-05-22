@@ -11,4 +11,4 @@ urlpatterns = [
 
 # API v1
 router = SharedAPIRootRouter()
-router.register('companies', views.CompanyViewSet, base_name='companies')
+router.register('companies', views.CompanyViewSet, basename='companies')

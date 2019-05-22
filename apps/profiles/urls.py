@@ -45,10 +45,10 @@ urlpatterns = [
 ]
 
 router = SharedAPIRootRouter()
-router.register('profile/search', views.PublicProfileSearchSet, base_name='profile-search')
-router.register('profile/orders', UserOrderViewSet, base_name='profile-orders')
-router.register('profile/privacy', views.PersonalPrivacyView, base_name='profile-privacy')
-router.register('profile/marks', MarksViewSet, base_name='profile-marks')
-router.register('profile/suspensions', SuspensionViewSet, base_name='profile-suspensions')
-router.register('profile/emails', views.UserEmailAddressesViewSet, base_name='profile-emails')
-router.register('profile', views.ProfileViewSet, base_name='profile')
+router.register('profile/search', views.PublicProfileSearchSet, basename='profile-search')
+router.register('profile/orders', UserOrderViewSet, basename='profile-orders')
+router.register('profile/privacy', views.PersonalPrivacyView, basename='profile-privacy')
+router.register('profile/marks', MarksViewSet, basename='profile-marks')
+router.register('profile/suspensions', SuspensionViewSet, basename='profile-suspensions')
+router.register('profile/emails', views.UserEmailAddressesViewSet, basename='profile-emails')
+router.register('profile', views.ProfileViewSet, basename='profile')

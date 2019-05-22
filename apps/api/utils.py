@@ -6,5 +6,4 @@ class SharedAPIRootRouter(SimpleRouter):
 
     def register(self, *args, **kwargs):
         self.shared_router.register(*args, **kwargs)
-        # super().register(*args, **kwargs)  # Python 3 way of calling super method
-        super(SimpleRouter, self).register(*args, **kwargs)  # Python 2 way of calling super method
+        super().register(*args, **kwargs)

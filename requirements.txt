@@ -1,6 +1,6 @@
 Django==2.1.8
 Pillow==6.0.0                   # PIL fork (Python Imaging Library)
-djangorestframework==3.7.7      # API v1
+djangorestframework==3.9.4      # API v1
 django-filter==2.1.0           # Filtering for DRF
 # python-memcached==1.57          # Memcache. Used by Mailinglists to fetch from Sympa.
 # Upstream is missing Python 3 patches
@@ -21,7 +21,7 @@ django-dynamic-fixture==2.0.0   # Dynamic fixtures for models
 django-recaptcha==2.0.4         # Google ReCaptcha
 django-oauth-toolkit==1.2.0    # OAuth2 authentication support
 django-watson==1.5.2            # Indexed model search lib
-django-reversion==3.0.3        # Model version history with middleware hooks to all post_save signals
+django-reversion==3.0.4        # Model version history with middleware hooks to all post_save signals
 django-guardian==1.5.1          # Per Object permissions framework
 django-taggit==1.1.0           # Generic multi-model tagging library
 django-taggit-serializer==0.1.7 # REST Framework serializers for Django-taggit
@@ -31,7 +31,7 @@ reportlab==3.5.21
 pdfdocument==3.3
 Unidecode==1.0.23               # Translates every unicode symbol to the closest ascii. online_mail_usernames
 django-markdown-deux==1.0.5
-django-cors-headers==2.5.3      # Enable CORS for Nibble
+django-cors-headers==3.0.1      # Enable CORS for Nibble
 git+https://github.com/oleast/django-datetime-widget.git@95a5ba4738853d1ed4081e1e33e1600cba984aad#egg=django-datetime-widget==0.9.4
 django-webpack-loader==0.6.0    # Integration with webpack
 dj-database-url==0.5.0          # Allows to configure databases using URLs

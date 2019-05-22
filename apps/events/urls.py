@@ -23,16 +23,16 @@ urlpatterns = [
 
 # API v1
 router = SharedAPIRootRouter()
-router.register('events', views.EventViewSet, base_name='events')
-router.register('attendees', views.AttendeeViewSet, base_name='attendees')
+router.register('events', views.EventViewSet, basename='events')
+router.register('attendees', views.AttendeeViewSet, basename='attendees')
 router.register(
     prefix='registration/attendance-events',
     viewset=views.RegistrationAttendaceEventViewSet,
-    base_name='registration_attendance_events'
+    basename='registration_attendance_events'
 )
 router.register(
     prefix='registration/user-attendees',
     viewset=views.RegistrationAttendeeViewSet,
-    base_name='registration_attendees'
+    basename='registration_attendees'
 )
-router.register('attend', views.AttendViewSet, base_name='attend')
+router.register('attend', views.AttendViewSet, basename='attend')
