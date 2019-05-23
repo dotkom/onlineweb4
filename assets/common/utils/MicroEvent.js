@@ -30,7 +30,7 @@ const MicroEvent = () => {
      * two arguments: {string} event, {*} payload
      */
     on(event, callback) {
-        // eslint-disable-next-line no-console
+      // eslint-disable-next-line no-console
       if (debug) console.debug(`Registering callback on event: ${event}`);
 
       if (typeof events[event] === 'undefined') {
