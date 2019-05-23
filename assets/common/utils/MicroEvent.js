@@ -13,7 +13,7 @@ const MicroEvent = () => {
      * @param {*} [payload] An optional event payload
      */
     fire(event, payload) {
-        // eslint-disable-next-line no-console
+      // eslint-disable-next-line no-console
       if (debug) console.debug(`Firing event: ${event}`, 'Payload: ', payload);
 
       // Attempt to fetch the event queue and fire event to all listeners
