@@ -216,6 +216,11 @@ if 'apps.webshop' in settings.INSTALLED_APPS:
         )),
     ]
 
+if 'apps.wiki_api' in settings.INSTALLED_APPS:
+    urlpatterns += [
+        url(r'^wiki-api/', include('apps.wiki_api.urls')),
+    ]
+
 if 'apps.chunksapi' in settings.INSTALLED_APPS:
     urlpatterns += [
         url(r'^chunks/', include('apps.chunksapi.urls')),
