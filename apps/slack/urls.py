@@ -4,4 +4,4 @@ from apps.slack import views
 urlpatterns = []
 
 router = SharedAPIRootRouter()
-router.register('slack', views.InviteViewSet, base_name='slack')
+router.register('slack', views.InviteViewSet, basename='slack')

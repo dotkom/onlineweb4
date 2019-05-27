@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
+from google.oauth2 import service_account
 from googleapiclient.discovery import build
-from oauth2client.service_account import ServiceAccountCredentials
 
 
 def generate_g_suite_credentials(json_keyfile_name=settings.OW4_GSUITE_SYNC.get('CREDENTIALS'), scopes=list()):
@@ -15,7 +15,7 @@ def generate_g_suite_credentials(json_keyfile_name=settings.OW4_GSUITE_SYNC.get(
     :return: Credentials
     :rtype: ServiceAccountCredentials
     """
-    credentials = ServiceAccountCredentials.from_json_keyfile_name(json_keyfile_name, scopes=scopes)
+    credentials = service_account.Credentials.from_json_keyfile_name(json_keyfile_name, scopes=scopes)
     credentials = credentials.create_delegated(settings.OW4_GSUITE_SETTINGS.get('DELEGATED_ACCOUNT'))
 
     return credentials

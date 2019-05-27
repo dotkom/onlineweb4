@@ -13,7 +13,8 @@ const MicroEvent = () => {
      * @param {*} [payload] An optional event payload
      */
     fire(event, payload) {
-      if (debug) console.log(`Firing event: ${event}`, 'Payload: ', payload);
+      // eslint-disable-next-line no-console
+      if (debug) console.debug(`Firing event: ${event}`, 'Payload: ', payload);
 
       // Attempt to fetch the event queue and fire event to all listeners
       const listeners = events[event];
@@ -29,7 +30,8 @@ const MicroEvent = () => {
      * two arguments: {string} event, {*} payload
      */
     on(event, callback) {
-      if (debug) console.log(`Registering callback on event: ${event}`);
+      // eslint-disable-next-line no-console
+      if (debug) console.debug(`Registering callback on event: ${event}`);
 
       if (typeof events[event] === 'undefined') {
         events[event] = [];

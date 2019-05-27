@@ -158,7 +158,6 @@ INSTALLED_APPS = (
     # Third party dependencies
     'django.contrib.humanize',
     'django_js_reverse',
-    'django_nose',
     'django_nyt', # Wiki
     'mptt', # Wiki
     'sekizai', # Wiki

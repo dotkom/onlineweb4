@@ -1,6 +1,7 @@
-import os
 from datetime import timedelta
+from unittest.mock import patch
 
+from captcha.client import RecaptchaResponse
 from django.contrib.auth.models import Group
 from django.core import mail
 from django.test import TestCase, override_settings
@@ -214,12 +215,6 @@ class EventsDetailExtras(EventsTestMixin, TestCase):
 
 
 class EventsAttend(EventsTestMixin, TestCase):
-    def setUp(self):
-        super().setUp()
-        os.environ['RECAPTCHA_TESTING'] = 'True'
-
-    def tearDown(self):
-        del os.environ['RECAPTCHA_TESTING']
 
     def test_attend_404(self):
         url = reverse('attend_event', args=(1000,))
@@ -266,7 +261,9 @@ class EventsAttend(EventsTestMixin, TestCase):
         self.assertRedirects(response, self.event.get_absolute_url())
         self.assertInMessages('Du må godta prikkereglene!', response)
 
-    def test_attend_invalid_captcha(self):
+    @patch("captcha.fields.client.submit")
+    def test_attend_invalid_captcha(self, mocked_submit):
+        mocked_submit.return_value = RecaptchaResponse(is_valid=False)
         url = reverse('attend_event', args=(self.event.id,))
         form_params = {'g-recaptcha-response': 'WRONG'}
         G(AllowedUsername, username=self.user.ntnu_username,
@@ -280,13 +277,15 @@ class EventsAttend(EventsTestMixin, TestCase):
         self.assertInMessages(
             'Du klarte ikke captchaen! Er du en bot?', response)
 
-    def test_attend_before_registration_start(self):
+    @patch("captcha.fields.client.submit")
+    def test_attend_before_registration_start(self, mocked_submit):
+        mocked_submit.return_value = RecaptchaResponse(is_valid=True)
         event = G(Event)
         G(AttendanceEvent, event=event,
           registration_start=timezone.now() + timedelta(days=1),
           registration_end=timezone.now() + timedelta(days=2))
         url = reverse('attend_event', args=(event.id,))
-        # django-recatpcha magic when RECAPTCHA_TESTING=True
+
         form_params = {'g-recaptcha-response': 'PASSED'}
         G(AllowedUsername, username=self.user.ntnu_username,
           expiration_date=timezone.now() + timedelta(days=1))
@@ -298,7 +297,9 @@ class EventsAttend(EventsTestMixin, TestCase):
         self.assertRedirects(response, event.get_absolute_url())
         self.assertInMessages('Påmeldingen har ikke åpnet enda.', response)
 
-    def test_attend_successfully(self):
+    @patch("captcha.fields.client.submit")
+    def test_attend_successfully(self, mocked_submit):
+        mocked_submit.return_value = RecaptchaResponse(is_valid=True)
         event = G(Event)
         G(
             AttendanceEvent,
@@ -307,7 +308,7 @@ class EventsAttend(EventsTestMixin, TestCase):
             registration_end=timezone.now() + timedelta(days=1)
         )
         url = reverse('attend_event', args=(event.id,))
-        # django-recatpcha magic when RECAPTCHA_TESTING=True
+
         form_params = {'g-recaptcha-response': 'PASSED'}
         G(AllowedUsername, username=self.user.ntnu_username,
           expiration_date=timezone.now() + timedelta(days=1))
@@ -319,7 +320,9 @@ class EventsAttend(EventsTestMixin, TestCase):
         self.assertRedirects(response, event.get_absolute_url())
         self.assertInMessages('Du er nå meldt på arrangementet.', response)
 
-    def test_attend_twice(self):
+    @patch("captcha.fields.client.submit")
+    def test_attend_twice(self, mocked_submit):
+        mocked_submit.return_value = RecaptchaResponse(is_valid=True)
         event = G(Event)
         G(
             AttendanceEvent,
@@ -328,7 +331,7 @@ class EventsAttend(EventsTestMixin, TestCase):
             registration_end=timezone.now() + timedelta(days=1)
         )
         url = reverse('attend_event', args=(event.id,))
-        # django-recatpcha magic when RECAPTCHA_TESTING=True
+
         form_params = {'g-recaptcha-response': 'PASSED'}
         G(AllowedUsername, username=self.user.ntnu_username,
           expiration_date=timezone.now() + timedelta(days=1))
@@ -342,7 +345,9 @@ class EventsAttend(EventsTestMixin, TestCase):
         self.assertInMessages(
             'Du er allerede meldt på dette arrangementet.', response)
 
-    def test_attend_with_payment_creates_paymentdelay(self):
+    @patch("captcha.fields.client.submit")
+    def test_attend_with_payment_creates_paymentdelay(self, mocked_submit):
+        mocked_submit.return_value = RecaptchaResponse(is_valid=True)
         event = G(Event)
         G(AttendanceEvent, event=event,
             registration_start=timezone.now() - timedelta(days=1),
@@ -350,7 +355,7 @@ class EventsAttend(EventsTestMixin, TestCase):
         self.event_payment = generate_payment(event, payment_type=3, delay=timedelta(days=2))
         G(PaymentPrice, price=200, payment=self.event_payment)
         url = reverse('attend_event', args=(event.id,))
-        # django-recatpcha magic when RECAPTCHA_TESTING=True
+
         form_params = {'g-recaptcha-response': 'PASSED'}
         G(AllowedUsername, username=self.user.ntnu_username,
           expiration_date=timezone.now() + timedelta(days=1))
