@@ -141,7 +141,7 @@ class PaymentRelationCreateSerializer(serializers.ModelSerializer):
 class PaymentRelationUpdateSerializer(serializers.ModelSerializer):
     payment_intent_id = serializers.CharField(write_only=True, required=True, allow_blank=False)
 
-    def update(self, instance: PaymentTransaction, validated_data):
+    def update(self, instance: PaymentRelation, validated_data):
 
         # Update should only be used to confirm a payment relation. PENDING is the first stage of a payment.
         if instance.status != status.PENDING:
@@ -151,6 +151,7 @@ class PaymentRelationUpdateSerializer(serializers.ModelSerializer):
         payment_intent_id = validated_data.pop('payment_intent_id')
 
         try:
+            stripe.api_key = instance.payment.stripe_private_key
             intent = stripe.PaymentIntent.confirm(payment_intent_id)
 
             # If the status is still not confirmed we update the transaction with a new secret key to handle.
@@ -193,7 +194,9 @@ class PaymentTransactionReadOnlySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = PaymentTransaction
-        fields = ('amount', 'used_stripe', 'datetime', 'status', 'payment_intent_secret',)
+        fields = (
+           'id', 'amount', 'used_stripe', 'datetime', 'status', 'payment_intent_secret', 'description', 'items',
+        )
         read_only = True
 
 
@@ -259,8 +262,10 @@ class PaymentTransactionCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = PaymentTransaction
-        fields = ('id', 'payment_method_id', 'payment_intent_secret', 'amount', 'used_stripe', 'user', 'status',)
-        read_only_fields = ('id', 'payment_intent_secret', 'status',)
+        fields = (
+            'id', 'payment_method_id', 'payment_intent_secret', 'amount', 'used_stripe', 'user', 'status', 'datetime',
+        )
+        read_only_fields = ('id', 'payment_intent_secret', 'status', 'datetime',)
 
 
 class PaymentTransactionUpdateSerializer(serializers.ModelSerializer):
@@ -276,6 +281,9 @@ class PaymentTransactionUpdateSerializer(serializers.ModelSerializer):
         payment_intent_id = validated_data.pop('payment_intent_id')
 
         try:
+            """ Use Trikom key for additions to user saldo """
+            stripe.api_key = settings.STRIPE_PRIVATE_KEYS['trikom']
+
             intent = stripe.PaymentIntent.confirm(payment_intent_id)
 
             # If the status is still not confirmed we update the transaction with a new secret key to handle.
@@ -302,5 +310,7 @@ class PaymentTransactionUpdateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = PaymentTransaction
-        fields = ('payment_intent_id', 'id', 'payment_intent_secret', 'amount', 'status',)
-        read_only_fields = ('id', 'payment_intent_secret', 'amount', 'status',)
+        fields = (
+            'payment_intent_id', 'id', 'payment_intent_secret', 'amount', 'status', 'used_stripe', 'datetime',
+        )
+        read_only_fields = ('id', 'payment_intent_secret', 'amount', 'status', 'used_stripe', 'datetime')
