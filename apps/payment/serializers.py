@@ -141,7 +141,7 @@ class PaymentRelationCreateSerializer(serializers.ModelSerializer):
 class PaymentRelationUpdateSerializer(serializers.ModelSerializer):
     payment_intent_id = serializers.CharField(write_only=True, required=True, allow_blank=False)
 
-    def update(self, instance: PaymentTransaction, validated_data):
+    def update(self, instance: PaymentRelation, validated_data):
 
         # Update should only be used to confirm a payment relation. PENDING is the first stage of a payment.
         if instance.status != status.PENDING:
@@ -151,6 +151,7 @@ class PaymentRelationUpdateSerializer(serializers.ModelSerializer):
         payment_intent_id = validated_data.pop('payment_intent_id')
 
         try:
+            stripe.api_key = instance.payment.stripe_private_key
             intent = stripe.PaymentIntent.confirm(payment_intent_id)
 
             # If the status is still not confirmed we update the transaction with a new secret key to handle.
