@@ -4,6 +4,9 @@ MAINTAINER dotkom
 ENV APP_DIR=/srv/app
 
 RUN mkdir -p $APP_DIR
+
+COPY poetry.lock pyproject.toml /$APP_DIR/
+
 WORKDIR $APP_DIR
 
 RUN apt-get update
@@ -11,14 +14,10 @@ RUN apt-get install -y --no-install-recommends \
     libjpeg-dev \
     ghostscript
 
-COPY requirements.txt $APP_DIR/requirements.txt
-RUN pip install -r $APP_DIR/requirements.txt
-COPY requirements-prod.txt $APP_DIR/requirements-prod.txt
-RUN pip install -r $APP_DIR/requirements-prod.txt
-COPY requirements-testing.txt $APP_DIR/requirements-testing.txt
-RUN pip install -r $APP_DIR/requirements-testing.txt
-COPY requirements-linting.txt $APP_DIR/requirements-linting.txt
-RUN pip install -r $APP_DIR/requirements-linting.txt
+RUN pip install poetry
+
+RUN poetry config settings.virtualenvs.create false \
+  && poetry install --no-interaction --no-ansi -E "prod"
 
 ENV DJANGO_SETTINGS_MODULE onlineweb4.settings
 
