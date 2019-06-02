@@ -12,6 +12,7 @@ from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext as _
 from rest_framework import permissions, status, viewsets
 from rest_framework.response import Response
+from stripe.error import CardError, InvalidRequestError, StripeError
 
 from apps.payment import status as payment_status
 from apps.payment.models import (Payment, PaymentDelay, PaymentPrice, PaymentRelation,
@@ -64,7 +65,7 @@ def payment(request):
 
                     messages.success(request, _("Betaling utført."))
                     return HttpResponse("Betaling utført.", content_type="text/plain", status=200)
-                except stripe.CardError as e:
+                except CardError as e:
                     messages.error(request, str(e))
                     return HttpResponse(str(e), content_type="text/plain", status=500)
 
@@ -156,7 +157,7 @@ def webshop_pay(request):
                 messages.success(request, "Betaling utført")
 
                 return HttpResponse("Betaling utført.", content_type="text/plain", status=200)
-            except stripe.CardError as e:
+            except CardError as e:
                 messages.error(request, str(e))
                 return HttpResponse(str(e), content_type="text/plain", status=500)
 
@@ -184,7 +185,7 @@ def payment_refund(request, payment_relation_id):
 
         payment_relation.payment.handle_refund(payment_relation)
         messages.success(request, _("Betalingen har blitt refundert."))
-    except stripe.InvalidRequestError as e:
+    except InvalidRequestError as e:
         messages.error(request, str(e))
 
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
@@ -229,7 +230,7 @@ def saldo(request):
 
                 messages.success(request, _("Inskudd utført."))
                 return HttpResponse("Inskudd utført.", content_type="text/plain", status=200)
-            except stripe.CardError as e:
+            except CardError as e:
                 messages.error(request, str(e))
                 return HttpResponse(str(e), content_type="text/plain", status=500)
 
@@ -299,7 +300,7 @@ class PaymentRelationViewSet(viewsets.ModelViewSet):
 
             return Response({'message': _("Betalingen har blitt refundert.")}, status.HTTP_200_OK)
 
-        except (stripe.error.InvalidRequestError, stripe.error.StripeError, Exception) as error:
+        except (InvalidRequestError, StripeError, Exception) as error:
             logger.error(f'An error occurred during refund of payment: {payment_relation} '
                          f'to stripe for user: {user}', error)
             return Response({

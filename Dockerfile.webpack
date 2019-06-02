@@ -1,5 +1,5 @@
 FROM node:8.5-alpine
-MAINTAINER dotkom
+LABEL maintainer="dotkom <dotkom@online.ntnu.no>"
 
 ENV APP_DIR=/srv/app
 

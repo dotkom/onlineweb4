@@ -17,7 +17,7 @@ build:
 
 clean: down
 	@docker-compose rm --force
-	@docker volumes prune
+	@docker volume prune --force
 
 docs:
 	cd docs; make html
