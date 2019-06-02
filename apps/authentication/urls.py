@@ -18,3 +18,6 @@ urlpatterns = [
 # API v1
 router = SharedAPIRootRouter()
 router.register('users', api_views.UserViewSet, basename='users')
+router.register('user/emails', api_views.EmailViewSet, basename='user_emails')
+router.register('user/positions', api_views.PositionViewSet, basename='user_positions')
+router.register('user/special-positions', api_views.SpecialPositionViewSet, basename='user_special_positions')

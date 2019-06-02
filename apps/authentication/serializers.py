@@ -58,7 +58,7 @@ class UserCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = (
-            'first_name', 'last_name', 'password', 'email', 'username', 'recaptcha'
+            'first_name', 'last_name', 'password', 'email', 'username', 'recaptcha', 'id',
         )
         extra_kwargs = {
             'password': {'write_only': True}
@@ -66,31 +66,108 @@ class UserCreateSerializer(serializers.ModelSerializer):
 
 
 class UserUpdateSerializer(serializers.ModelSerializer):
-    email = OnlineUserEmailField(required=True)
 
     class Meta:
         model = User
         fields = (
             'first_name', 'last_name', 'rfid', 'password', 'email', 'username', 'infomail', 'jobmail', 'nickname',
-            'website', 'github', 'linkedin', 'gender', 'bio', 'ntnu_username', 'password', 'phone',
+            'website', 'github', 'linkedin', 'gender', 'bio', 'ntnu_username', 'password', 'phone', 'id',
         )
+        extra_kwargs = {
+            'password': {'write_only': True}
+        }
 
 
-class PositionSerializer(serializers.ModelSerializer):
+class PositionReadOnlySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Position
-        fields = ("period", "committee", "position")
+        fields = ('id', 'committee', 'position', 'period', 'period_start', 'period_end',)
+        read_only = True
+
+
+class PositionCreateAndUpdateSerializer(serializers.ModelSerializer):
+    user = serializers.HiddenField(default=serializers.CurrentUserDefault())
+    period_start = serializers.DateField(required=True, allow_null=False)
+    period_end = serializers.DateField(required=True, allow_null=False)
+
+    def validate(self, data):
+        period_start = data.get('period_start')
+        period_end = data.get('period_end')
+
+        if any([period_end, period_start]) and not all([period_end, period_start]):
+            raise serializers.ValidationError('For å endre perioden på vervet må du oppgi verdier for start og slutt')
+
+        if period_start > period_end:
+            raise serializers.ValidationError('Vervets starttid kan ikke være etter vervets sluttid')
+        if period_start == period_end:
+            raise serializers.ValidationError('Du kan ikke starte og avslutte et verv på samme dag')
+
+        return data
+
+    class Meta:
+        model = Position
+        fields = ('id', 'committee', 'position', 'period', 'period_start', 'period_end', 'user',)
 
 
 class SpecialPositionSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = SpecialPosition
-        fields = ("since_year", "position")
+        fields = ('id', 'since_year', 'position',)
+        read_only = True
 
 
-class EmailSerializer(serializers.ModelSerializer):
+class EmailReadOnlySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Email
-        fields = ('email', 'primary', 'verified',)
+        fields = ('id', 'email', 'primary', 'verified',)
+        extra_kwargs = {
+            'user': {'write_only': True}
+        }
+        read_only = True
+
+
+class EmailCreateSerializer(serializers.ModelSerializer):
+    verified = serializers.BooleanField(default=False)
+    primary = serializers.BooleanField(default=False)
+    user = serializers.HiddenField(default=serializers.CurrentUserDefault())
+    email = OnlineUserEmailField(required=True)
+
+    class Meta:
+        model = Email
+        fields = ('id', 'email', 'primary', 'verified', 'user',)
+        read_only_fields = ('primary', 'verified', 'user',)
+
+
+class EmailUpdateSerializer(serializers.ModelSerializer):
+    primary = serializers.BooleanField()
+
+    def validate_primary(self, obj: bool):
+        """
+        User cannot set an email as non-primary by itself.
+        It can only be done by setting another email as primary.
+        """
+        if not obj:
+            raise serializers.ValidationError('Kan bare endre primærepost ved å sette en annen som primær')
+        return obj
+
+    def update(self, instance: Email, validated_data):
+        request = self.context.get('request', None)
+        if not request.user:
+            raise serializers.ValidationError('Du må være logget inn for å oppdatere epost')
+
+        """ Set old primary email as inactive if this instance is set as primary """
+        if validated_data.get('primary', None):
+            primary_email: Email = request.user.get_email()
+            if primary_email:
+                primary_email.primary = False
+                primary_email.save()
+
+        return super().update(instance, validated_data)
+
+    class Meta:
+        model = Email
+        fields = ('id', 'email', 'primary', 'verified',)
+        read_only_fields = ('email', 'verified',)
