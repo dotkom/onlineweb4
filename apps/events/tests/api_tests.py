@@ -50,8 +50,8 @@ class CreateAttendeeTestCase(OIDCTestCase):
         self.event.attendance_event.registration_end = timezone.now() + timezone.timedelta(days=2)
         self.event.attendance_event.max_capacity = 20
         self.event.attendance_event.save()
-        self.attendee1 = generate_attendee(self.event, 'test1', '123')
-        self.attendee2 = generate_attendee(self.event, 'test2', '321')
+        self.attendee1 = generate_attendee(self.event, 'test1', '4321')
+        self.attendee2 = generate_attendee(self.event, 'test2', '1234')
         self.attendees = [self.attendee1, self.attendee2]
 
     @mock_validate_recaptcha()
@@ -333,8 +333,8 @@ class EventsAPITestCase(OIDCTestCase):
         self.event.attendance_event.registration_end = timezone.now() + timezone.timedelta(days=2)
         self.event.attendance_event.max_capacity = 20
         self.event.attendance_event.save()
-        self.attendee1 = generate_attendee(self.event, 'test1', '123')
-        self.attendee2 = generate_attendee(self.event, 'test2', '321')
+        self.attendee1 = generate_attendee(self.event, 'test1', '1231')
+        self.attendee2 = generate_attendee(self.event, 'test2', '4321')
         self.attendees = [self.attendee1, self.attendee2]
 
     def test_events_list_empty(self):
@@ -392,8 +392,8 @@ class AttendAPITestCase(OIDCTestCase):
 
         self.url = reverse('event_attend')
         self.event = generate_event(organizer=self.committee)
-        self.attendee1 = generate_attendee(self.event, 'test1', '123')
-        self.attendee2 = generate_attendee(self.event, 'test2', '321')
+        self.attendee1 = generate_attendee(self.event, 'test1', '0123')
+        self.attendee2 = generate_attendee(self.event, 'test2', '3210')
         self.attendees = [self.attendee1, self.attendee2]
 
     def refresh_attendees(self):
