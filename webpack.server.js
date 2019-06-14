@@ -13,10 +13,13 @@ const config = require('./webpack.config.js');
 const webpack = require('webpack');
 const WebpackDevServer = require('webpack-dev-server');
 
+const HTTPS = process.env.WEBPACK_DEV_HTTPS || false;
 const IP = process.env.WEBPACK_DEV_IP || '0.0.0.0';
 const PUBLIC_IP = process.env.WEBPACK_DEV_PUBLIC_IP || IP;
 const PORT = process.env.WEBPACK_DEV_PORT || 3000;
+const PUBLIC_PORT = process.env.WEBPACK_DEV_PUBLIC_PORT || PORT;
 const HOST = `${PUBLIC_IP}:${PORT}`;
+const PROTOCOL = HTTPS ? 'https' : 'http';
 
 // Add hot reloading to all entries
 // https://webpack.js.org/concepts/hot-module-replacement/
@@ -32,7 +35,7 @@ Object.keys(config.entry).forEach((entry) => {
 // Remove [hash] since webpack-dev-server stores all generated copies in memory based on filename
 config.output.filename = '[name].js';
 // Entries will be served from a seperate http server instead of from filesystem
-config.output.publicPath = `http://${HOST}/static/`;
+config.output.publicPath = `${PROTOCOL}://${PUBLIC_IP}:${PUBLIC_PORT}/static/`;
 
 // Don't reload if there is an error
 config.plugins.unshift(new webpack.NoEmitOnErrorsPlugin());
@@ -50,6 +53,7 @@ new WebpackDevServer(compiler, {
   inline: true,
   // TODO: Not sure if this is actually needed
   historyApiFallback: true,
+  disableHostCheck: true,
   // Allow CORS
   headers: { 'Access-Control-Allow-Origin': '*' },
   stats: {
