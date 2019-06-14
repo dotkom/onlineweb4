@@ -1,5 +1,5 @@
 from guardian.shortcuts import get_objects_for_user
-from rest_framework import status, viewsets
+from rest_framework import mixins, status, viewsets
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 
@@ -14,7 +14,11 @@ from apps.authentication.serializers import (EmailCreateSerializer, EmailReadOnl
                                              UserUpdateSerializer)
 
 
-class UserViewSet(viewsets.ModelViewSet):
+class UserViewSet(viewsets.GenericViewSet,
+                  mixins.ListModelMixin,
+                  mixins.RetrieveModelMixin,
+                  mixins.CreateModelMixin,
+                  mixins.UpdateModelMixin):
     """
     Viewset for User serializer. Supports filtering on 'first_name', 'last_name', 'email'
     """
@@ -49,15 +53,6 @@ class UserViewSet(viewsets.ModelViewSet):
             return UserReadOnlySerializer
 
         return super().get_serializer_class()
-
-    def perform_destroy(self, instance: User):
-        """
-        Destroying a user should delete all personal data, and mark the user as inactive.
-        All fields that can be wiped should be wiped, and other fields should be made anonymous.
-        Deleting the user object itself should not be done, as relations like attendance should be preserved.
-        """
-        instance.active = False
-        instance.save()
 
 
 class EmailViewSet(viewsets.ModelViewSet):
