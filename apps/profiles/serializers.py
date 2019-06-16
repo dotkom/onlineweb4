@@ -1,13 +1,13 @@
 from rest_framework import serializers
 
 from apps.authentication.models import OnlineUser as User
-from apps.authentication.serializers import PositionSerializer, SpecialPositionSerializer
+from apps.authentication.serializers import PositionReadOnlySerializer, SpecialPositionSerializer
 from apps.profiles.models import Privacy
 
 
 class ProfileSerializer(serializers.ModelSerializer):
     year = serializers.IntegerField()
-    positions = PositionSerializer(many=True)
+    positions = PositionReadOnlySerializer(many=True)
     special_positions = SpecialPositionSerializer(many=True)
 
     class Meta:
@@ -56,7 +56,7 @@ class PublicProfileSerializer(serializers.ModelSerializer):
     phone_number = ExposableUserField(field_name='phone_number')
     zip_code = ExposableUserField(field_name='zip_code', privacy_field='expose_address')
 
-    positions = PositionSerializer(many=True)
+    positions = PositionReadOnlySerializer(many=True)
     special_positions = SpecialPositionSerializer(many=True)
 
     class Meta:

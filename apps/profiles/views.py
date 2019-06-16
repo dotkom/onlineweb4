@@ -29,7 +29,7 @@ from apps.authentication.forms import NewEmailForm
 from apps.authentication.models import Email
 from apps.authentication.models import OnlineUser as User
 from apps.authentication.models import Position, RegisterToken
-from apps.authentication.serializers import EmailSerializer
+from apps.authentication.serializers import EmailReadOnlySerializer
 from apps.authentication.utils import create_online_mail_alias
 from apps.dashboard.tools import has_access
 from apps.gsuite.accounts.main import create_g_suite_account, reset_password_g_suite_account
@@ -600,7 +600,7 @@ class ProfileViewSet(viewsets.ViewSet):
 
 class UserEmailAddressesViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     """ TODO: Support creation of mail, and updating of primary mail """
-    serializer_class = EmailSerializer
+    serializer_class = EmailReadOnlySerializer
     permission_classes = (permissions.IsAuthenticated,)
 
     def get_queryset(self):

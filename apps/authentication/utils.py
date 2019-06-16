@@ -1,11 +1,20 @@
 import logging
 import re
+import uuid
+from smtplib import SMTPException
 
+from django.conf import settings
 from django.contrib.auth.models import Group
+from django.core.mail import send_mail
+from django.db import IntegrityError
 from django.db.models import Q
+from django.template.loader import render_to_string
+from rest_framework.request import Request
+from rest_framework.response import Response
+from rest_framework.reverse import reverse
 from unidecode import unidecode
 
-from apps.authentication.models import OnlineUser
+from apps.authentication.models import Email, OnlineUser, RegisterToken
 
 
 def create_online_mail_alias(user):
@@ -64,3 +73,26 @@ def create_online_mail_aliases():
     for user in group.user_set.all():
         if user.online_mail and user.email:
             print("%s: %s" % (user.online_mail, user.email))
+
+
+def send_register_verification_email(user: OnlineUser, email_obj: Email, request: Request) -> Response:
+    logger = logging.getLogger(__name__)
+
+    token = uuid.uuid4().hex
+
+    try:
+        RegisterToken.objects.create(user=user, email=email_obj.email, token=token)
+        logger.info(f'Successfully registered token for {user}')
+    except IntegrityError as error:
+        logger.error(f'Failed to register token for {user} due to {error}')
+
+    verify_url = reverse('auth_verify', args=[token], request=request)
+    message = render_to_string('auth/email/welcome_tpl.txt', {
+        'verify_url': verify_url,
+    })
+
+    try:
+        send_mail('Verifiser din konto', message, settings.DEFAULT_FROM_EMAIL, [email_obj.email, ])
+        logger.info(f'Account verification email sent to {user} via {email_obj.email}')
+    except SMTPException as error:
+        logging.error(f'Failed to send verification email to {user} due to {error}')

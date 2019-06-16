@@ -361,16 +361,21 @@ class AllowedUsername(models.Model):
 
 class Position(models.Model):
     """
-    Contains a users position in the organization from a given year
+    Contains a users position in the organization year range
     """
-    period = models.CharField(_('periode'), max_length=9, default="2013-2014", blank=False)
-    committee = models.CharField(_("komite"), max_length=20, choices=COMMITTEES, default="hs")
-    position = models.CharField(_("stilling"), max_length=20, choices=POSITIONS, default="medlem")
+    period_start = models.DateField(default=datetime.date.today)
+    period_end = models.DateField(default=datetime.date.today)
+    committee = models.CharField(_('komité'), max_length=20, choices=COMMITTEES, default='hs')
+    position = models.CharField(_('stilling'), max_length=20, choices=POSITIONS, default='medlem')
     user = models.ForeignKey(OnlineUser, related_name='positions', blank=False, on_delete=models.CASCADE)
 
     @property
+    def period(self):
+        return f'{self.period_start.year}-{self.period_end.year}'
+
+    @property
     def print_string(self):
-        return '%s: %s(%s)' % (self.period, self.committee, self.position)
+        return f'{self.period}: {self.committee} ({self.position})'
 
     def __str__(self):
         return self.print_string
@@ -378,7 +383,7 @@ class Position(models.Model):
     class Meta:
         verbose_name = _('posisjon')
         verbose_name_plural = _('posisjoner')
-        ordering = ('user', 'period', )
+        ordering = ('user', 'period_start', 'period_end')
         permissions = (
             ('view_position', 'View Position'),
         )
