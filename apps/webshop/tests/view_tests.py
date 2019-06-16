@@ -6,8 +6,7 @@ from django_dynamic_fixture import G
 from rest_framework import status
 
 from apps.authentication.models import OnlineUser
-
-from .models import Order, OrderLine, Product, ProductSize
+from apps.webshop.models import Order, OrderLine, Product, ProductSize
 
 
 class WebshopTestMixin:
