@@ -7,9 +7,14 @@ from django.urls import reverse_lazy
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views.generic import DetailView, RedirectView, TemplateView
+from rest_framework import permissions, viewsets
 
+from apps.authentication.models import OnlineUser as User
 from apps.webshop.forms import OrderForm
 from apps.webshop.models import Category, Order, OrderLine, Product, ProductSize
+from apps.webshop.serializers import (OrderCreateSerializer, OrderLineCreateSerializer,
+                                      OrderLineReadOnlySerializer, OrderReadOnlySerializer,
+                                      OrderUpdateSerializer, ProductReadOnlySerializer)
 
 
 class LoginRequiredMixin:
@@ -174,3 +179,43 @@ class RemoveOrder(LoginRequiredMixin, WebshopMixin, RedirectView):
         else:
             Order.objects.filter(order_line=order_line).delete()
         return super(RemoveOrder, self).post(request, *args, **kwargs)
+
+
+class ProductViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Product.objects.filter(active=True)
+    permission_classes = (permissions.AllowAny,)
+    serializer_class = ProductReadOnlySerializer
+
+
+class OrderViewSet(viewsets.ModelViewSet):
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def get_serializer_class(self):
+        if self.action == 'create':
+            return OrderCreateSerializer
+        if self.action in ['list', 'retrieve']:
+            return OrderReadOnlySerializer
+        if self.action in ['update', 'partial_update']:
+            return OrderUpdateSerializer
+
+        return super().get_serializer_class()
+
+    def get_queryset(self):
+        user = self.request.user
+        return Order.objects.filter(order_line__user=user)
+
+
+class OrderLineViewSet(viewsets.ModelViewSet):
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def get_serializer_class(self):
+        if self.action == 'create':
+            return OrderLineCreateSerializer
+        if self.action in ['list', 'retrieve']:
+            return OrderLineReadOnlySerializer
+
+        return super().get_serializer_class()
+
+    def get_queryset(self):
+        user = self.request.user
+        return OrderLine.objects.filter(user=user)
