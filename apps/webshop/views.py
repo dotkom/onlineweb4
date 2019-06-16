@@ -26,10 +26,8 @@ class CartMixin:
         return context
 
     def current_order_line(self):
-        if not self.request.user.is_authenticated:
-            return None
-        order_line = OrderLine.objects.filter(user=self.request.user, paid=False).first()
-        return order_line
+        user: User = self.request.user
+        return OrderLine.get_current_order_line_for_user(user)
 
 
 class BreadCrumb:
@@ -107,8 +105,6 @@ class ProductDetail(WebshopMixin, DetailView):
         form = OrderForm(request.POST)
         if form.is_valid():
             order_line = self.current_order_line()
-            if not order_line:
-                order_line = OrderLine.objects.create(user=self.request.user)
 
             size = form.cleaned_data['size']
             quantity = form.cleaned_data['quantity']

@@ -195,6 +195,23 @@ class OrderLine(models.Model):
     stripe_id = models.CharField(max_length=50, null=True, blank=True)
     delivered = models.BooleanField(default=False)
 
+    @staticmethod
+    def get_current_order_line_for_user(user: User):
+        """
+        Gets the currently active OrderLine for a user
+        Users can only have a single OrderLine in progress at a time.
+        If it does not exist a new one will be created.
+
+        Returns: OrderLine: the current OrderLine for the user
+        """
+        if not user.is_authenticated:
+            return None
+
+        try:
+            return OrderLine.objects.get(user=user, paid=False)
+        except OrderLine.DoesNotExist:
+            return OrderLine.objects.create(user=user)
+
     def count_orders(self):
         """Total sum of all products
 
