@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from django.conf import settings
+from django.contrib.contenttypes.fields import GenericRelation
 from django.contrib.contenttypes.models import ContentType
 from django.core.validators import MinValueValidator, validate_comma_separated_integer_list
 from django.db import models
@@ -9,7 +10,6 @@ from django.utils import timezone
 
 from apps.authentication.models import OnlineUser as User
 from apps.gallery.models import ResponsiveImage
-from apps.payment.models import PaymentReceipt
 
 
 class Product(models.Model):
@@ -194,6 +194,7 @@ class OrderLine(models.Model):
     paid = models.BooleanField(default=False)
     stripe_id = models.CharField(max_length=50, null=True, blank=True)
     delivered = models.BooleanField(default=False)
+    payments = GenericRelation('payment.Payment')
 
     @staticmethod
     def get_current_order_line_for_user(user: User):
@@ -207,10 +208,21 @@ class OrderLine(models.Model):
         if not user.is_authenticated:
             return None
 
-        try:
-            return OrderLine.objects.get(user=user, paid=False)
-        except OrderLine.DoesNotExist:
-            return OrderLine.objects.create(user=user)
+        current_order_line = OrderLine.objects.filter(user=user, paid=False).first()
+        if not current_order_line:
+            current_order_line = OrderLine.objects.create(user=user)
+
+        return current_order_line
+
+    @property
+    def payment(self):
+        return self.payments.all().first()
+
+    @property
+    def payment_description(self):
+        all_orders = self.orders.all()
+        order_count = sum(map(lambda order: order.quantity, all_orders))
+        return f'{order_count} varer fra Onlines webshop'
 
     def count_orders(self):
         """Total sum of all products
@@ -291,6 +303,7 @@ class OrderLine(models.Model):
         return self.user.email
 
     def send_receipt(self):
+        from apps.payment.models import PaymentReceipt  # Import PaymentReceipt to avoid circular dependency.
         receipt = PaymentReceipt(object_id=self.id,
                                  content_type=ContentType.objects.get_for_model(self))
         receipt.save()
