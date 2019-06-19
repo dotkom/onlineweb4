@@ -20,7 +20,10 @@ class PaymentPriceReadOnlySerializer(serializers.ModelSerializer):
 
 
 class PaymentReadOnlySerializer(serializers.ModelSerializer):
-    payment_prices = PaymentPriceReadOnlySerializer(many=True, read_only=True)
+    payment_prices = serializers.SerializerMethodField()
+
+    def get_payment_prices(self, payment: Payment):
+        return PaymentPriceReadOnlySerializer(payment.prices(), many=True).data
 
     class Meta:
         model = Payment

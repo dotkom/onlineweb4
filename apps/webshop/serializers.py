@@ -2,6 +2,7 @@ from django.utils import timezone
 from rest_framework import serializers
 
 from apps.gallery.serializers import ResponsiveImageSerializer
+from apps.payment.serializers import PaymentReadOnlySerializer
 from apps.webshop.models import Category, Order, OrderLine, Product, ProductSize
 
 
@@ -194,16 +195,23 @@ class OrderUpdateSerializer(serializers.ModelSerializer):
 
 class OrderLineReadOnlySerializer(serializers.ModelSerializer):
     orders = OrderReadOnlySerializer(many=True)
+    payment = serializers.SerializerMethodField()
+
+    def get_payment(self, order_line: OrderLine):
+        payment = order_line.payment
+        if payment:
+            return PaymentReadOnlySerializer(order_line.payment).data
+        return None
 
     class Meta:
         model = OrderLine
         fields = (
-            'id', 'datetime', 'paid', 'stripe_id', 'delivered', 'orders', 'subtotal', 'is_valid',
+            'id', 'datetime', 'paid', 'stripe_id', 'delivered', 'orders', 'subtotal', 'is_valid', 'payment',
         )
         read_only = True
 
 
-class OrderLineCreateSerializer(OrderLineReadOnlySerializer):
+class OrderLineCreateSerializer(serializers.ModelSerializer):
     orders = OrderReadOnlySerializer(required=False, many=True)
     user = serializers.HiddenField(default=serializers.CurrentUserDefault())
 
@@ -219,8 +227,8 @@ class OrderLineCreateSerializer(OrderLineReadOnlySerializer):
 
         return super().validate(data)
 
-    class Meta(OrderLineReadOnlySerializer.Meta):
-        read_only = False
+    class Meta:
+        model = OrderLine
         fields = (
             'id', 'datetime', 'paid', 'stripe_id', 'delivered', 'orders', 'subtotal', 'is_valid', 'user',
         )
