@@ -60,15 +60,8 @@ class WebshopOrderLineTests(OIDCTestCase):
             'exp_year': date_next_year.year,
             'cvc': '123'
         }
-        self.mock_3d_secure_card = {
-            'number': '4000000000003220',
-            'exp_month': 12,
-            'exp_year': date_next_year.year,
-            'cvc': '123',
-        }
-        stripe.api_key = settings.STRIPE_PUBLIC_KEYS['arrkom']
+        stripe.api_key = settings.STRIPE_PUBLIC_KEYS['prokom']
         self.payment_method = stripe.PaymentMethod.create(type='card', card=self.mock_card)
-        self.secure_payment_method = stripe.PaymentMethod.create(type='card', card=self.mock_3d_secure_card)
 
         self.product1: Product = G(
             Product,
@@ -124,6 +117,23 @@ class WebshopOrderLineTests(OIDCTestCase):
             ['Du har allerede en handlekurv som ikke er betalt, betal eller slett den for å kunne opprette en ny']
         )
         self.assertEqual(OrderLine.objects.filter(user=self.user).count(), amount_of_user_order_lines)
+
+    def test_user_can_pay_for_an_order_line(self):
+        G(Order, order_line=self.order_line1, product=self.product1)
+        payment = self.order_line1.payment
+        payment_price = payment.price()
+
+        url = reverse('payment_relations-list')
+
+        response = self.client.post(url, {
+            'payment': payment.id,
+            'payment_price': payment_price.id,
+            'payment_method_id': self.payment_method.id,
+        }, **self.headers)
+        self.order_line1.refresh_from_db()
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(self.order_line1.paid, True)
 
 
 class WebshopOrderTests(OIDCTestCase):
