@@ -5,7 +5,8 @@ from django.contrib.auth.admin import UserAdmin
 from django.utils.translation import ugettext as _
 from reversion.admin import VersionAdmin
 
-from apps.authentication.models import AllowedUsername, Email, OnlineUser, Position, SpecialPosition
+from apps.authentication.models import (AllowedUsername, Email, GroupMember, GroupRole, OnlineGroup,
+                                        OnlineUser, Position, SpecialPosition)
 
 
 class EmailInline(admin.TabularInline):
@@ -88,3 +89,24 @@ class SpecialPositionAdmin(VersionAdmin):
 
 
 admin.site.register(SpecialPosition, SpecialPositionAdmin)
+
+
+class OnlineGroupAdmin(VersionAdmin):
+    model = OnlineGroup
+
+
+admin.site.register(OnlineGroup, OnlineGroupAdmin)
+
+
+class GroupMemberAdmin(VersionAdmin):
+    model = GroupMember
+
+
+admin.site.register(GroupMember, GroupMemberAdmin)
+
+
+class GroupRoleAdmin(VersionAdmin):
+    model = GroupRole
+
+
+admin.site.register(GroupRole, GroupRoleAdmin)
