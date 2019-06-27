@@ -13,9 +13,11 @@ from django.utils import timezone
 from django.utils.html import strip_tags
 from django.utils.translation import ugettext as _
 
+from apps.authentication.constants import GroupType, RoleType
 # If this list is changed, remember to check that the year property on
 # OnlineUser is still correct!
 from apps.authentication.validators import validate_rfid
+from apps.gallery.models import ResponsiveImage
 
 FIELD_OF_STUDY_CHOICES = [
     (0, _('Gjest')),
@@ -161,6 +163,13 @@ class OnlineUser(AbstractUser):
 
     @property
     def is_committee(self):
+        # New check for committee membership
+        memberships = GroupMember.objects.filter(user=self)
+        for membership in memberships:
+            if membership.group.group_type == GroupType.COMMITTEE:
+                return True
+
+        # Old check for committee membership for backwards compatibility
         try:
             committee_group = Group.objects.get(name='Komiteer')
             return self in committee_group.user_set.all() or self.is_staff
@@ -407,5 +416,167 @@ class SpecialPosition(models.Model):
         ordering = ('user', 'since_year',)
         permissions = (
             ('view_specialposition', 'View SpecialPosition'),
+        )
+        default_permissions = ('add', 'change', 'delete')
+
+
+class OnlineGroup(models.Model):
+    """
+    A group relating a Django group to a group in Online
+    """
+    """ The Django group this Online group relates to """
+    group = models.OneToOneField(
+        Group,
+        verbose_name='Djangogruppe',
+        primary_key=True,
+        related_name='online_group',
+        on_delete=models.CASCADE,
+    )
+
+    """ The short name of a group, eg. HS or Dotkom """
+    name_short = models.CharField(_('Forkortelse'), null=False, blank=False, max_length=48)
+    """ The long/full name of a group, like Hovedstyret or Drifts- og utviklingskomiteen """
+    name_long = models.CharField(_('Fullt navn'), null=False, blank=False, max_length=128)
+    description_short = models.TextField(_('Beskrivelse (kortfattet)'), max_length=2048, blank=True)
+    description_long = models.TextField(_('Beskrivelse (helhetlig)'), max_length=2048, blank=True)
+    email = models.EmailField(_('E-post'), max_length=128, blank=True)
+    image = models.ForeignKey(
+        ResponsiveImage,
+        related_name='online_groups',
+        on_delete=models.DO_NOTHING,
+        null=True,
+        blank=True,
+    )
+    created = models.DateTimeField(_('Oprettelsesdato'), default=timezone.now)
+
+    group_type = models.CharField(
+        verbose_name=_('Gruppetype'),
+        choices=GroupType.ALL_CHOICES,
+        default=GroupType.COMMITTEE,
+        max_length=256,
+        null=False,
+        blank=False,
+    )
+
+    @property
+    def id(self):
+        """ Proxy primary key/id from group object """
+        return self.group.id
+
+    def get_users_with_role(self, role: RoleType):
+        member_ids = [member.id for member in self.members.all() if member.has_role(role)]
+        return self.members.filter(pk__in=member_ids)
+
+    @property
+    def leader(self) -> OnlineUser:
+        leader_members = self.get_users_with_role(RoleType.LEADER)
+        if leader_members.count() == 1:
+            return leader_members.first().user
+        elif leader_members.count() == 0:
+            return None
+
+    @property
+    def deputy_leader(self) -> OnlineUser:
+        deputy_leader_members = self.get_users_with_role(RoleType.DEPUTY_LEADER)
+        if deputy_leader_members.count() == 1:
+            return deputy_leader_members.first().user
+        elif deputy_leader_members.count() == 0:
+            return None
+
+    @property
+    def treasurer(self) -> OnlineUser:
+        treasurer_members = self.get_users_with_role(RoleType.TREASURER)
+        if treasurer_members.count() == 1:
+            return treasurer_members.first().user
+        elif treasurer_members.count() == 0:
+            return None
+
+    @property
+    def verbose_type(self):
+        return [kind[1] for kind in GroupType.ALL_CHOICES if kind[0] == self.group_type][0]
+
+    def __str__(self):
+        return self.name_short
+
+    class Meta:
+        verbose_name = _('Onlinegruppe')
+        verbose_name_plural = _('Onlinegrupper')
+        ordering = ('name_long',)
+        permissions = (
+            ('view_onlinegroups', 'View OnlineGroup'),
+        )
+        default_permissions = ('add', 'change', 'delete')
+
+
+class GroupMember(models.Model):
+    """
+    Model relating a user to an Online group
+    """
+    user = models.ForeignKey(
+        OnlineUser,
+        verbose_name='Bruker',
+        related_name='group_memberships',
+        on_delete=models.CASCADE,
+        null=False
+    )
+    group = models.ForeignKey(
+        OnlineGroup,
+        verbose_name='Onlinegruppe',
+        related_name='members',
+        on_delete=models.CASCADE,
+        null=False
+    )
+    added = models.DateTimeField(default=timezone.now)
+
+    def has_role(self, role: RoleType):
+        return self.roles.filter(role_type=role).exists()
+
+    def __str__(self):
+        return f'{self.user} - {self.group}'
+
+    class Meta:
+        verbose_name = _('Gruppemedlemskap')
+        verbose_name_plural = _('Gruppemedlemskap')
+        """ Users can only have 1 membership to each group """
+        unique_together = (('user', 'group',),)
+        ordering = ('group', 'user', 'added')
+        permissions = (
+            ('view_groupmember', 'View GroupMember'),
+        )
+        default_permissions = ('add', 'change', 'delete')
+
+
+class GroupRole(models.Model):
+    membership = models.ForeignKey(
+        GroupMember,
+        verbose_name='Medlemskap',
+        related_name='roles',
+        on_delete=models.CASCADE
+    )
+    role_type = models.CharField(
+        verbose_name='Rolle',
+        choices=RoleType.ALL_CHOICES,
+        default=RoleType.MEMBER,
+        max_length=256,
+        null=False,
+        blank=False,
+    )
+    added = models.DateTimeField(default=timezone.now)
+
+    @property
+    def verbose_name(self):
+        return [kind[1] for kind in RoleType.ALL_CHOICES if kind[0] == self.role_type][0]
+
+    def __str__(self):
+        return f'{self.membership} - {self.verbose_name}'
+
+    class Meta:
+        verbose_name = _('Medlemskapsrolle')
+        verbose_name_plural = _('Medlemskapsroller')
+        """ Each membership can only have a single instance of each role type """
+        unique_together = (('membership', 'role_type',),)
+        ordering = ('membership', 'role_type', 'added')
+        permissions = (
+            ('view_grouprole', 'View GroupRole'),
         )
         default_permissions = ('add', 'change', 'delete')
