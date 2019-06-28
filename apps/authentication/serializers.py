@@ -2,6 +2,7 @@ from django.contrib.auth.models import Group
 from onlineweb4.fields.recaptcha import RecaptchaField
 from rest_framework import serializers
 
+from apps.authentication.constants import RoleType
 from apps.authentication.fields import OnlineUserEmailField
 from apps.authentication.models import Email, GroupMember, GroupRole, OnlineGroup
 from apps.authentication.models import OnlineUser as User
@@ -195,6 +196,18 @@ class GroupRoleCreateSerializer(serializers.ModelSerializer):
         required=True,
         queryset=GroupMember.objects.all(),
     )
+
+    def validate(self, data):
+        role_type: RoleType = data.get('role_type')
+        if role_type in RoleType.SINGLUAR_POSITIONS:
+            membership: GroupMember = data.get('membership')
+            online_group: OnlineGroup = membership.group
+            members = online_group.get_members_with_role(role_type)
+
+            if members.count() != 0:
+                raise serializers.ValidationError(f'Det finnes allerede et gruppemedlem med rollen "{role_type}"')
+
+        return data
 
     class Meta:
         model = GroupRole

@@ -22,7 +22,10 @@ class RoleType:
     ON_LEAVE = 'on_leave'
     CHIEF_EDITOR = 'chief_editor'
 
+    # Members in these roles are counted as active members of a group
     ACTIVE_MEMBERS = (LEADER, DEPUTY_LEADER, TREASURER, MEMBER, CHIEF_EDITOR)
+    # A group can only have a single member with these roles each
+    SINGLUAR_POSITIONS = (LEADER, DEPUTY_LEADER, TREASURER, CHIEF_EDITOR)
 
     ALL_TYPES = (LEADER, DEPUTY_LEADER, TREASURER, MEMBER, RETIRED, ON_LEAVE, CHIEF_EDITOR)
     ALL_CHOICES = (

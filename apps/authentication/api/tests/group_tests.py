@@ -51,7 +51,6 @@ class OnlineGroupTestCase(OIDCTestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_superuser_can_create_groups(self):
-        self.user.save()
         response = self.client.post(self.url, self.group_data, **self.headers)
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -183,6 +182,13 @@ class GroupMemberTestCase(OIDCTestCase):
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
+    def test_user_cannot_have_multiple_memberships_in_one_group(self):
+        self.create_membership()
+        response = self.client.post(self.url, self.membership_data, **self.headers)
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.json().get('non_field_errors'), ['Feltene user, group må gjøre et unikt sett.'])
+
     def test_regular_user_cannot_create_groups(self):
         self.user.is_superuser = False
         self.user.save()
@@ -296,10 +302,41 @@ class GroupRoleTestCase(OIDCTestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_superuser_can_create_roles(self):
-        self.user.save()
         response = self.client.post(self.url, self.get_role_data(RoleType.MEMBER), **self.headers)
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+    def test_member_cannot_have_the_same_role_twice_in_a_single_group(self):
+        self.create_role(RoleType.MEMBER)
+        response = self.client.post(self.url, self.get_role_data(RoleType.MEMBER), **self.headers)
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(
+            response.json().get('non_field_errors'),
+            ['Feltene membership, role_type må gjøre et unikt sett.']
+        )
+
+    def test_group_member_can_have_different_role_types_in_the_same_group(self):
+        self.create_role(RoleType.LEADER)
+        response = self.client.post(self.url, self.get_role_data(RoleType.MEMBER), **self.headers)
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+    def test_singluar_role_types_can_only_appear_once_for_each_group(self):
+        other_user: User = G(User, username='test_wrong_person')
+        membership = GroupMember.objects.create(user=other_user, group=self.online_group)
+
+        self.create_role(RoleType.LEADER)
+        response = self.client.post(self.url, {
+            **self.get_role_data(RoleType.LEADER),
+            'membership': membership.id,
+        }, **self.headers)
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(
+            response.json().get('non_field_errors'),
+            [f'Det finnes allerede et gruppemedlem med rollen "{RoleType.LEADER}"']
+        )
 
     def test_regular_user_cannot_create_roles(self):
         self.user.is_superuser = False

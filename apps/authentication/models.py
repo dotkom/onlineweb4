@@ -463,13 +463,13 @@ class OnlineGroup(models.Model):
         """ Proxy primary key/id from group object """
         return self.group.id
 
-    def get_users_with_role(self, role: RoleType):
+    def get_members_with_role(self, role: RoleType):
         member_ids = [member.id for member in self.members.all() if member.has_role(role)]
         return self.members.filter(pk__in=member_ids)
 
     @property
     def leader(self) -> OnlineUser:
-        leader_members = self.get_users_with_role(RoleType.LEADER)
+        leader_members = self.get_members_with_role(RoleType.LEADER)
         if leader_members.count() == 1:
             return leader_members.first().user
         elif leader_members.count() == 0:
@@ -477,7 +477,7 @@ class OnlineGroup(models.Model):
 
     @property
     def deputy_leader(self) -> OnlineUser:
-        deputy_leader_members = self.get_users_with_role(RoleType.DEPUTY_LEADER)
+        deputy_leader_members = self.get_members_with_role(RoleType.DEPUTY_LEADER)
         if deputy_leader_members.count() == 1:
             return deputy_leader_members.first().user
         elif deputy_leader_members.count() == 0:
@@ -485,7 +485,7 @@ class OnlineGroup(models.Model):
 
     @property
     def treasurer(self) -> OnlineUser:
-        treasurer_members = self.get_users_with_role(RoleType.TREASURER)
+        treasurer_members = self.get_members_with_role(RoleType.TREASURER)
         if treasurer_members.count() == 1:
             return treasurer_members.first().user
         elif treasurer_members.count() == 0:
