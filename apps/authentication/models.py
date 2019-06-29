@@ -493,7 +493,7 @@ class OnlineGroup(models.Model):
 
     @property
     def verbose_type(self):
-        return [kind[1] for kind in GroupType.ALL_CHOICES if kind[0] == self.group_type][0]
+        return self.get_group_type_display()
 
     def __str__(self):
         return self.name_short
@@ -565,7 +565,7 @@ class GroupRole(models.Model):
 
     @property
     def verbose_name(self):
-        return [kind[1] for kind in RoleType.ALL_CHOICES if kind[0] == self.role_type][0]
+        return self.get_role_type_display()
 
     def __str__(self):
         return f'{self.membership} - {self.verbose_name}'
