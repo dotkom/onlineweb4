@@ -4,7 +4,7 @@ from django import forms
 
 from apps.dashboard.forms import HTML5RequiredMixin
 from apps.dashboard.widgets import DatePickerInput, DatetimePickerInput, multiple_widget_generator
-from apps.events.models import AttendanceEvent, CompanyEvent, Event, Reservation
+from apps.events.models import AttendanceEvent, CompanyEvent, Event, Registration, Reservation
 from apps.feedback.models import Feedback, FeedbackRelation
 from apps.gallery.widgets import SingleImageInput
 from apps.payment.models import Payment, PaymentPrice
@@ -34,9 +34,9 @@ class CreateAttendanceEventForm(forms.ModelForm, HTML5RequiredMixin):
     class Meta:
         model = AttendanceEvent
         fields = (
-            'max_capacity', 'registration_start', 'registration_end',
+            'registration_start', 'registration_end',
             'unattend_deadline', 'automatically_set_marks', 'waitlist', 'guest_attendance',
-            'rule_bundles', 'extras'
+            'extras',
         )
 
         dtp_fields = [('registration_start', {"placeholder": ""}), ('registration_end', {"placeholder": ""}),
@@ -47,6 +47,14 @@ class CreateAttendanceEventForm(forms.ModelForm, HTML5RequiredMixin):
 
         # Multiple widget generator merges results from regular widget_generator into a single widget dict
         widgets = multiple_widget_generator(widgetlist)
+
+
+class CreateRegistrationForm(forms.ModelForm, HTML5RequiredMixin):
+    class Meta:
+        model = Registration
+        fields = (
+            'rule_bundles', 'max_capacity', 'description',
+        )
 
 
 class AddCompanyForm(forms.ModelForm):
@@ -78,9 +86,9 @@ class ChangeAttendanceEventForm(forms.ModelForm, HTML5RequiredMixin):
     class Meta:
         model = AttendanceEvent
         fields = (
-            'event', 'max_capacity', 'waitlist', 'guest_attendance',
+            'event', 'waitlist', 'guest_attendance',
             'registration_start', 'registration_end', 'unattend_deadline',
-            'automatically_set_marks', 'rule_bundles',
+            'automatically_set_marks',
         )
 
         dtp_fields = [('registration_start', {}), ('registration_end', {}), ('unattend_deadline', {})]
@@ -91,6 +99,14 @@ class ChangeAttendanceEventForm(forms.ModelForm, HTML5RequiredMixin):
 
         # Multiple widget generator merges results from regular widget_generator into a single widget dict
         widgets = multiple_widget_generator(widgetlist)
+
+
+class ChangeRegistrationForm(forms.ModelForm, HTML5RequiredMixin):
+    class Meta:
+        model = Registration
+        fields = (
+            'rule_bundles', 'max_capacity', 'description',
+        )
 
 
 class CreateFeedbackRelationForm(forms.ModelForm, HTML5RequiredMixin):
@@ -132,4 +148,4 @@ class CreatePaymentPriceForm(forms.ModelForm, HTML5RequiredMixin):
 class ChangeReservationForm(forms.ModelForm):
     class Meta:
         model = Reservation
-        exclude = ['attendance_event', ]
+        exclude = ['registration', ]

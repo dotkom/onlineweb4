@@ -218,10 +218,12 @@
                                                 <p class="status-text">Påmelding til arangementet krever betaling.</p>
                                                 {% display_payments payment payment_delay %}
                                             {% else %}
+                                                {% for registration in attendance_event.registrations.all %}
                                                 <p class="status-text">Du kan melde deg på dette arrangementet.</p>
                                                 <div class="btn-group">
-                                                    <div class="action col-md-6 col-sm-6 col-xs-6"><a href="#attend" role="button" class="btn btn-large btn-success" data-toggle="modal">Meld meg på</a></div>
+                                                    <div class="action col-md-6 col-sm-6 col-xs-6"><a href="#attend-{{registration.id}}" role="button" class="btn btn-large btn-success" data-toggle="modal">Meld meg på</a></div>
                                                 </div>
+                                                {% endfor %}
                                             {% endif %}
                                         {% elif user_status.offset %}
                                             <p class="status-text">Du kan melde deg på {{ user_status.offset }}.</p>
@@ -350,7 +352,9 @@
             </div>
 
             <!-- MODALS -->
-            <div id="attend" class="modal fade">
+            {% if event.is_attendance_event %}
+            {% for registration in event.attendance_event.registrations.all %}
+            <div id="attend-{{registration.id}}" class="modal fade">
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -364,7 +368,7 @@
                             {{ event.title }}
                             </h3>
                         </div>
-                        <form action="{% url 'attend_event' event.id %}" method="POST">
+                        <form action="{% url 'attend_event' event.id registration.id %}" method="POST">
                             <div class="modal-body">
                                 {% if not can_unattend %}
                                     <div class="alert alert-warning">Avmeldingsfristen på dette arrangementet har utløpt. Det vil si at du kan ikke melde deg av dersom du først melder deg på.</div>
@@ -386,6 +390,7 @@
                     </div>
                 </div>
             </div>
+            {% endfor %}
             <div id="unattend" class="modal fade">
                 <div class="modal-dialog">
                     <div class="modal-content">
@@ -406,6 +411,7 @@
                     </div>
                 </div>
             </div>
+            {% endif %}
 
             {% if event.event_type == 1 %} 
                 {% if user_status.status or user_attending %}
