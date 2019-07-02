@@ -433,7 +433,6 @@ class AttendanceEvent(models.Model):
         related_name='attendance_event',
         on_delete=models.CASCADE
     )
-    max_capacity = models.PositiveIntegerField(_('maks-kapasitet'), null=False, blank=False)
     waitlist = models.BooleanField(_('venteliste'), default=False)
     guest_attendance = models.BooleanField(_('gjestepåmelding'), null=False, blank=False, default=False)
     registration_start = models.DateTimeField(_('registrerings-start'), null=False, blank=False)
@@ -444,9 +443,6 @@ class AttendanceEvent(models.Model):
     automatically_set_marks = models.BooleanField(_('automatisk prikk'), default=False,
                                                   help_text=_('Påmeldte som ikke har møtt vil automatisk få prikk'))
     marks_has_been_set = models.BooleanField(default=False)
-
-    # Access rules
-    rule_bundles = models.ManyToManyField(RuleBundle, blank=True)
 
     # Extra choices
     extras = models.ManyToManyField(Extras, blank=True)
@@ -466,17 +462,31 @@ class AttendanceEvent(models.Model):
 
     @property
     def has_reservation(self):
-        """Returns whether this event has an attached reservation """
-        return hasattr(self, 'reserved_seats')
+        """Returns whether this event has reservations for any of the registrations """
+        return any([registration.has_reservation for registration in self.registrations.all()])
 
     @property
     def has_extras(self):
         return self.extras.exists()
 
     @property
+    def max_capacity(self):
+        return sum([registration.max_capacity for registration in self.registrations.all()])
+
+    @property
+    def all_registrations(self):
+        return self.registrations.all()
+
+    @property
     def attending_attendees_qs(self):
         """Queryset with all attendees not on waiting list """
-        return self.attendees.all()[:self.number_of_attendee_seats]
+        attendee_ids = []
+
+        for registration in self.registrations.all():
+            for attendee in registration.attending_attendees_qs:
+                attendee_ids.append(attendee.id)
+
+        return Attendee.objects.filter(pk__in=attendee_ids)
 
     def not_attended(self):
         """List of all attending attendees who have not attended"""
@@ -485,14 +495,22 @@ class AttendanceEvent(models.Model):
     @property
     def waitlist_qs(self):
         """Queryset with all attendees on waiting list """
-        return self.attendees.all()[self.number_of_attendee_seats:]
+        attendee_ids = []
+        for registration in self.registrations.all():
+            for attendee in registration.waitlist_qs:
+                attendee_ids.append(attendee.id)
+
+        return Attendee.objects.filter(pk__in=attendee_ids)
 
     @property
     def reservees_qs(self):
         """Queryset with all reserved seats which have been filled """
-        if self.has_reservation:
-            return self.reserved_seats.reservees.all()
-        return []
+        attendee_ids = []
+        for registration in self.registrations.all():
+            for attendee in registration.reservees_qs:
+                attendee_ids.append(attendee.id)
+
+        return Attendee.objects.filter(pk__in=attendee_ids)
 
     @property
     def attendees_not_paid(self):
@@ -519,12 +537,18 @@ class AttendanceEvent(models.Model):
     @property
     def number_of_reserved_seats(self):
         """Total number of seats for this event that are reserved"""
-        return self.reserved_seats.seats if self.has_reservation else 0
+        return sum([registration.number_of_reserved_seats for registration in self.registrations.all()])
 
     @property
     def number_of_reserved_seats_taken(self):
         """Returns number of reserved seats which have been filled"""
-        return self.reserved_seats.number_of_seats_taken if self.has_reservation else 0
+        registrations = self.registrations.all()
+        total = 0
+        for registration in registrations:
+            if registration.has_reservation:
+                total += registration.reserved_seats.number_of_seats_taken
+
+        return total
 
     @property
     def number_of_seats_taken(self):
@@ -599,15 +623,7 @@ class AttendanceEvent(models.Model):
     def waitlist_enabled(self):
         return self.waitlist
 
-    def bump_waitlist_for_x_users(self, extra_capacity=1):
-        """Handle bumping of the x first users on the waitlist"""
-        from apps.events.utils import handle_waitlist_bump  # Imported here to avoid circular import
-        if not self.waitlist_qs:
-            return
-        bumped_attendees = self.waitlist_qs[:extra_capacity]
-        handle_waitlist_bump(self.event, bumped_attendees, self.payment())
-
-    def is_eligible_for_signup(self, user):
+    def is_eligible_for_signup(self, user: User):
         """
         Checks if a user can attend a specific event
         This method checks for:
@@ -617,7 +633,6 @@ class AttendanceEvent(models.Model):
         - Rules
         - Marks
         - Suspension
-        @param User object
         The returned dict contains a key called 'status_code'. These codes follow the HTTP
         standard in terms of overlying scheme.
         2XX = successful
@@ -714,13 +729,13 @@ class AttendanceEvent(models.Model):
                     response['offset'] = postponed_registration_start
         return response
 
-    def _process_rulebundle_satisfaction_responses(self, responses):
+    @staticmethod
+    def process_rulebundle_satisfaction_responses(responses):
         # Put the smallest offset faaar into the future.
         smallest_offset = timezone.now() + timedelta(days=365)
         offset_response = {}
         future_response = {}
         errors = []
-
         for response in responses:
             if response['status']:
                 return response
@@ -755,18 +770,20 @@ class AttendanceEvent(models.Model):
                 'status': False, 'message':
                 _("Dette arrangementet er kun åpent for medlemmer."), 'status_code': 400}
 
-        # If there are no rule_bundles on this object, all members of Online are allowed.
-        if not self.rule_bundles.exists() and user.is_member:
+        registrations = self.registrations.all()
+        event_has_rule_bundles = any([registration.rule_bundles.exists() for registration in registrations])
+
+        # If there are no rule bundles attached; all members of Online are allowed.
+        if not event_has_rule_bundles and user.is_member:
             return {'status': True, 'status_code': 200}
 
-        # Check all rule bundles
+        # Gather responses for all event registrations
         responses = []
+        for registration in registrations:
+            registration_rule_response = registration.rules_satisfied(user)
+            responses.append(registration_rule_response)
 
-        # If one satisfies, return true, else append to the error list
-        for rule_bundle in self.rule_bundles.all():
-            responses.extend(rule_bundle.satisfied(user, self.registration_start))
-
-        return self._process_rulebundle_satisfaction_responses(responses)
+        return self.process_rulebundle_satisfaction_responses(responses)
 
     def is_attendee(self, user):
         return self.attendees.filter(user=user).exists()
@@ -806,30 +823,8 @@ class AttendanceEvent(models.Model):
     def __str__(self):
         return self.event.title
 
-    def bump_waitlist(self):
-        """
-        Checks if any attendees should be bumped from the waitlist
-
-        Waitlist bumping can happen if e.g. max capacity or number of reserved seats is adjusted
-        This method should be called with edited fields, but before the attendance event is saved
-        as it looks at the difference between the fields.
-        """
-
-        old_attendance_event = AttendanceEvent.objects.filter(event_id=self.event_id).first()
-        if not old_attendance_event:
-            # Attendance event was just created
-            return
-
-        extra_capacity = self.number_of_attendee_seats - old_attendance_event.number_of_attendee_seats
-        if extra_capacity > 0:
-            # Using old object because waitlist has already been changed in self
-            old_attendance_event.bump_waitlist_for_x_users(extra_capacity)
-
-    def save(self, force_insert=False, force_update=False, using=None,
-             update_fields=None):
-        self.bump_waitlist()
-
-        super().save(force_insert=force_insert, force_update=force_update, using=using, update_fields=update_fields)
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
 
         if self.event.organizer:
             assign_perm('events.change_attendanceevent', self.event.organizer, obj=self)
@@ -878,11 +873,178 @@ class CompanyEvent(models.Model):
         default_permissions = ('add', 'change', 'delete')
 
 
+class Registration(models.Model):
+    """
+    Event registration related to AttendanceEvent and Attendees
+    """
+
+    attendance = models.ForeignKey(
+        AttendanceEvent,
+        related_name='registrations',
+        verbose_name='Påmelding',
+        on_delete=models.CASCADE,
+    )
+    description = models.CharField(max_length=80, null=False, blank=False, verbose_name='Kort beskrivelse')
+
+    max_capacity = models.PositiveIntegerField(_('maks-kapasitet'), null=False, blank=False)
+    rule_bundles = models.ManyToManyField(RuleBundle, blank=True)
+
+    @property
+    def has_reservation(self):
+        """Returns whether this registration has an attached reservation """
+        return hasattr(self, 'reserved_seats')
+
+    @property
+    def attending_attendees_qs(self):
+        """Queryset with all attendees not on waiting list """
+        return self.attendees.all()[:self.number_of_attendee_seats]
+
+    @property
+    def waitlist_qs(self):
+        """Queryset with all attendees on waiting list """
+        return self.attendees.all()[self.number_of_attendee_seats:]
+
+    @property
+    def reservees_qs(self):
+        """Queryset with all reserved seats which have been filled """
+        if self.has_reservation:
+            return self.reserved_seats.reservees.all()
+        return []
+
+    @property
+    def number_of_attendees(self):
+        # We need to use len() instead of .count() here, because of the prefetched event archive
+        return len(self.attending_attendees_qs)
+
+    @property
+    def number_on_waitlist(self):
+        # We need to use len() instead of .count() here, because of the prefetched event archive
+        return len(self.waitlist_qs)
+
+    @property
+    def number_of_attendee_seats(self):
+        """Return the number of seats which can be used for attendees"""
+        return self.max_capacity - self.number_of_reserved_seats
+
+    @property
+    def number_of_reserved_seats(self):
+        """Total number of seats for this event that are reserved"""
+        return self.reserved_seats.seats if self.has_reservation else 0
+
+    @property
+    def number_of_reserved_seats_taken(self):
+        """Returns number of reserved seats which have been filled"""
+        return self.reserved_seats.number_of_seats_taken if self.has_reservation else 0
+
+    @property
+    def number_of_seats_taken(self):
+        """Returns the total amount of taken seats for an attendance_event."""
+        # This includes all attendees + reserved seats for the event, if any.
+        # Always use the total number of reserved seats here, because they are not
+        # available for regular users to claim.
+        return self.number_of_attendees + self.number_of_reserved_seats
+
+    @property
+    def free_seats(self):
+        """Integer representing the number of free seats for an event"""
+        return 0 if self.number_of_seats_taken == self.max_capacity else self.max_capacity - self.number_of_seats_taken
+
+    @property
+    def room_on_event(self):
+        """Returns True if there are free seats or an open waiting list"""
+        return True if self.free_seats > 0 or self.waitlist else False
+
+    def rules_satisfied(self, user: User):
+        ""
+        # If the event has guest attendance, allow absolutely anyone
+        if self.attendance.guest_attendance:
+            return {'status': True, 'status_code': 201}
+
+        # If the user is not a member, return False right away
+        # TODO check for guest list
+        if not user.is_member:
+            return {
+                'status': False, 'message':
+                    _("Dette arrangementet er kun åpent for medlemmer."), 'status_code': 400}
+
+        event_has_rule_bundles = self.rule_bundles.exists()
+
+        # If there are no rule bundles attached; all members of Online are allowed.
+        if not event_has_rule_bundles and user.is_member:
+            return {'status': True, 'status_code': 200}
+
+        # Check all rule bundles
+        responses = []
+
+        # If one satisfies, return true, else append to the error list
+        for rule_bundle in self.rule_bundles.all():
+            rule_responses = rule_bundle.satisfied(user, self.attendance.registration_start)
+            responses.extend(rule_responses)
+
+        return AttendanceEvent.process_rulebundle_satisfaction_responses(responses)
+
+    def __str__(self):
+        return f'{self.attendance.event.title} - {self.description}'
+
+    def bump_waitlist_for_x_users(self, extra_capacity=1):
+        """Handle bumping of the x first users on the waitlist"""
+        from apps.events.utils import handle_waitlist_bump  # Imported here to avoid circular import
+        if not self.waitlist_qs:
+            return
+        bumped_attendees = self.waitlist_qs[:extra_capacity]
+        handle_waitlist_bump(self.attendance.event, bumped_attendees, self.attendance.payment())
+
+    def bump_waitlist(self):
+        """
+        Checks if any attendees should be bumped from the waitlist
+
+        Waitlist bumping can happen if e.g. max capacity or number of reserved seats is adjusted
+        This method should be called with edited fields, but before the attendance event is saved
+        as it looks at the difference between the fields.
+        """
+
+        old_registration = Registration.objects.filter(pk=self.id).first()
+        if not old_registration:
+            # Attendance event was just created
+            return
+
+        extra_capacity = self.number_of_attendee_seats - old_registration.number_of_attendee_seats
+        if extra_capacity > 0:
+            # Using old object because waitlist has already been changed in self
+            old_registration.bump_waitlist_for_x_users(extra_capacity)
+
+    def save(self, *args, **kwargs):
+        self.bump_waitlist()
+        super().save(*args, **kwargs)
+
+        organizer = self.attendance.event.organizer
+        if organizer:
+            assign_perm('events.change_registration', organizer, obj=self)
+            assign_perm('events.delete_registration', organizer, obj=self)
+
+    class Meta:
+        verbose_name = _('Arrengementsregistrering')
+        verbose_name_plural = _('Arrangementsregistreringer')
+        ordering = ('attendance', 'description', 'max_capacity',)
+        permissions = (
+            ('view_registration', 'View Registration'),
+        )
+        default_permissions = ('add', 'change', 'delete')
+
+
 class Attendee(models.Model):
     """
     User relation to AttendanceEvent.
     """
     event = models.ForeignKey(AttendanceEvent, related_name="attendees", on_delete=models.CASCADE)
+    registration = models.ForeignKey(
+        Registration,
+        related_name="attendees",
+        verbose_name='Registrering',
+        on_delete=models.CASCADE,
+        null=True,  # Has to be nullable for backwards compatibility
+        blank=False,  # Required in forms, to force on new instances
+    )
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     timestamp = models.DateTimeField(auto_now_add=True, editable=False)
@@ -906,7 +1068,7 @@ class Attendee(models.Model):
             False
 
         if not self.is_on_waitlist():
-            self.event.bump_waitlist_for_x_users()
+            self.registration.bump_waitlist_for_x_users()
 
         super(Attendee, self).delete()
 
@@ -1001,7 +1163,14 @@ class Attendee(models.Model):
 
 
 class Reservation(models.Model):
-    attendance_event = models.OneToOneField(AttendanceEvent, related_name="reserved_seats", on_delete=models.CASCADE)
+    registration = models.OneToOneField(
+        Registration,
+        related_name="reserved_seats",
+        verbose_name='Reservasjon',
+        on_delete=models.CASCADE,
+        null=True,  # Can be null for backwards compatibility
+        blank=False,  # Required in forms so all future instances need the relation
+    )
     seats = models.PositiveIntegerField("reserverte plasser", blank=False, null=False)
 
     @property
@@ -1009,17 +1178,18 @@ class Reservation(models.Model):
         return self.reservees.count()
 
     def __str__(self):
-        return "Reservasjoner for %s" % self.attendance_event.event.title
+        return "Reservasjoner for %s" % self.registration.attendance.event.title
 
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):
         # Notify attendance event that the waitlist may have changed
-        self.attendance_event.bump_waitlist()
+        self.registration.bump_waitlist()
         super().save(force_insert=force_insert, force_update=force_update, using=using, update_fields=update_fields)
 
-        if self.attendance_event.event.organizer:
-            assign_perm('events.change_reservation', self.attendance_event.event.organizer, obj=self)
-            assign_perm('events.delete_reservation', self.attendance_event.event.organizer, obj=self)
+        organizer = self.registration.attendance.event.organizer
+        if organizer:
+            assign_perm('events.change_reservation', organizer, obj=self)
+            assign_perm('events.delete_reservation', organizer, obj=self)
 
     class Meta:
         verbose_name = _("reservasjon")
@@ -1048,9 +1218,10 @@ class Reservee(models.Model):
              update_fields=None):
         super().save(force_insert=force_insert, force_update=force_update, using=using, update_fields=update_fields)
 
-        if self.reservation.attendance_event.event.organizer:
-            assign_perm('events.change_reservee', self.reservation.attendance_event.event.organizer, obj=self)
-            assign_perm('events.delete_reservee', self.reservation.attendance_event.event.organizer, obj=self)
+        organizer = self.reservation.registration.attendance.event.organizer
+        if organizer:
+            assign_perm('events.change_reservee', organizer, obj=self)
+            assign_perm('events.delete_reservee', organizer, obj=self)
 
     class Meta:
         verbose_name = _("reservasjon")
