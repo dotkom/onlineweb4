@@ -13,13 +13,13 @@ from apps.events.models import Attendee, CompanyEvent
 from apps.oidc_provider.test import OIDCTestCase
 from apps.profiles.models import Privacy
 
-from .utils import (attend_user_to_event, generate_event, generate_payment, generate_user,
-                    pay_for_event)
+from .utils import (attend_user_to_event, generate_event, generate_payment, generate_registration,
+                    generate_user, pay_for_event)
 
 
-def generate_attendee(event, username, rfid):
+def generate_attendee(event, username, rfid, registration):
     user = G(OnlineUser, username=username, rfid=rfid)
-    return attend_user_to_event(event, user)
+    return attend_user_to_event(event, user, registration)
 
 
 def generate_valid_rfid():
@@ -48,10 +48,10 @@ class CreateAttendeeTestCase(OIDCTestCase):
         self.event = generate_event(organizer=self.committee)
         self.event.attendance_event.registration_start = timezone.now()
         self.event.attendance_event.registration_end = timezone.now() + timezone.timedelta(days=2)
-        self.event.attendance_event.max_capacity = 20
         self.event.attendance_event.save()
-        self.attendee1 = generate_attendee(self.event, 'test1', '4321')
-        self.attendee2 = generate_attendee(self.event, 'test2', '1234')
+        self.registration = generate_registration(attendance=self.event.attendance_event, max_capacity=20)
+        self.attendee1 = generate_attendee(self.event, 'test1', '4321', self.registration)
+        self.attendee2 = generate_attendee(self.event, 'test2', '1234', self.registration)
         self.attendees = [self.attendee1, self.attendee2]
 
     @mock_validate_recaptcha()
@@ -60,6 +60,7 @@ class CreateAttendeeTestCase(OIDCTestCase):
 
         response = self.client.post(self.url, {
             'event': event_without_attendance.id,
+            'registration': self.registration.id,
             **self.recaptcha_arg,
         }, **self.headers)
 
@@ -74,6 +75,7 @@ class CreateAttendeeTestCase(OIDCTestCase):
 
         response = self.client.post(self.url, {
             'event': self.event.id,
+            'registration': self.registration.id,
             **self.recaptcha_arg,
         }, **self.headers)
 
@@ -91,6 +93,7 @@ class CreateAttendeeTestCase(OIDCTestCase):
         response = self.client.post(self.url, {
             'event': self.event.id,
             'user': other_user.id,
+            'registration': self.registration.id,
             **self.recaptcha_arg,
         }, **self.headers)
 
@@ -106,6 +109,7 @@ class CreateAttendeeTestCase(OIDCTestCase):
 
         response = self.client.post(self.url, {
             'event': self.event.id,
+            'registration': self.registration.id,
             **self.recaptcha_arg,
         }, **self.headers)
 
@@ -124,6 +128,7 @@ class CreateAttendeeTestCase(OIDCTestCase):
         response = self.client.post(self.url, {
             'event': self.event.id,
             'show_as_attending_event': True,
+            'registration': self.registration.id,
             **self.recaptcha_arg,
         }, **self.headers)
 
@@ -141,6 +146,7 @@ class CreateAttendeeTestCase(OIDCTestCase):
 
         response = self.client.post(self.url, {
             'event': self.event.id,
+            'registration': self.registration.id,
             **self.recaptcha_arg,
         }, **self.headers)
 
@@ -167,6 +173,7 @@ class CreateAttendeeTestCase(OIDCTestCase):
 
         response = self.client.post(self.url, {
             'event': self.event.id,
+            'registration': self.registration.id,
             **self.recaptcha_arg,
         }, **self.headers)
 
@@ -190,6 +197,7 @@ class CreateAttendeeTestCase(OIDCTestCase):
 
         response = self.client.post(self.url, {
             'event': self.event.id,
+            'registration': self.registration.id,
         }, **self.headers)
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -205,6 +213,7 @@ class CreateAttendeeTestCase(OIDCTestCase):
 
         response = self.client.post(self.url, {
             'event': self.event.id,
+            'registration': self.registration.id,
             **self.recaptcha_arg,
         }, **self.headers)
 
@@ -220,6 +229,7 @@ class CreateAttendeeTestCase(OIDCTestCase):
 
         response = self.client.post(self.url, {
             'event': self.event.id,
+            'registration': self.registration.id,
             **self.recaptcha_arg,
         }, **self.headers)
 
@@ -236,6 +246,7 @@ class CreateAttendeeTestCase(OIDCTestCase):
 
         response = self.client.post(self.url, {
             'event': self.event.id,
+            'registration': self.registration.id,
             **self.recaptcha_arg,
         }, **self.headers)
 
@@ -247,7 +258,7 @@ class CreateAttendeeTestCase(OIDCTestCase):
         self.event.event_start = timezone.now() + timezone.timedelta(days=3)
         self.event.attendance_event.save()
         self.event.save()
-        attendee = attend_user_to_event(self.event, self.user)
+        attendee = attend_user_to_event(self.event, self.user, self.registration)
 
         response = self.client.delete(self.id_url(attendee.id), **self.headers)
 
@@ -257,7 +268,7 @@ class CreateAttendeeTestCase(OIDCTestCase):
     def test_user_cannot_unattend_after_deadline_has_passed(self):
         self.event.attendance_event.unattend_deadline = timezone.now() - timezone.timedelta(days=2)
         self.event.attendance_event.save()
-        attendee = attend_user_to_event(self.event, self.user)
+        attendee = attend_user_to_event(self.event, self.user, self.registration)
 
         response = self.client.delete(self.id_url(attendee.id), **self.headers)
 
@@ -273,7 +284,7 @@ class CreateAttendeeTestCase(OIDCTestCase):
         self.event.event_start = timezone.now() - timezone.timedelta(hours=1)
         self.event.attendance_event.save()
         self.event.save()
-        attendee = attend_user_to_event(self.event, self.user)
+        attendee = attend_user_to_event(self.event, self.user, self.registration)
 
         response = self.client.delete(self.id_url(attendee.id), **self.headers)
 
@@ -301,6 +312,7 @@ class CreateAttendeeTestCase(OIDCTestCase):
 
         attend_response = self.client.post(self.url, {
             'event': self.event.id,
+            'registration': self.registration.id,
             **self.recaptcha_arg,
         }, **self.headers)
 
@@ -310,6 +322,7 @@ class CreateAttendeeTestCase(OIDCTestCase):
         attendee_id = attend_response.json()['id']
 
         attendee_response = self.client.get(self.id_url(attendee_id), {
+            'registration': self.registration.id,
             'event': self.event.id,
         }, **self.headers)
 
@@ -331,10 +344,10 @@ class EventsAPITestCase(OIDCTestCase):
         self.event = generate_event(organizer=self.committee)
         self.event.attendance_event.registration_start = timezone.now()
         self.event.attendance_event.registration_end = timezone.now() + timezone.timedelta(days=2)
-        self.event.attendance_event.max_capacity = 20
         self.event.attendance_event.save()
-        self.attendee1 = generate_attendee(self.event, 'test1', '1231')
-        self.attendee2 = generate_attendee(self.event, 'test2', '4321')
+        self.registration = generate_registration(attendance=self.event.attendance_event, max_capacity=20)
+        self.attendee1 = generate_attendee(self.event, 'test1', '1231', self.registration)
+        self.attendee2 = generate_attendee(self.event, 'test2', '4321', self.registration)
         self.attendees = [self.attendee1, self.attendee2]
 
     def test_events_list_empty(self):
@@ -392,8 +405,9 @@ class AttendAPITestCase(OIDCTestCase):
 
         self.url = reverse('event_attend')
         self.event = generate_event(organizer=self.committee)
-        self.attendee1 = generate_attendee(self.event, 'test1', '0123')
-        self.attendee2 = generate_attendee(self.event, 'test2', '3210')
+        self.registration = generate_registration(attendance=self.event.attendance_event, max_capacity=20)
+        self.attendee1 = generate_attendee(self.event, 'test1', '0123', self.registration)
+        self.attendee2 = generate_attendee(self.event, 'test2', '3210', self.registration)
         self.attendees = [self.attendee1, self.attendee2]
 
     def refresh_attendees(self):
@@ -479,7 +493,8 @@ class AttendAPITestCase(OIDCTestCase):
         self.assertEqual(response.json()['attend_status'], 50)
 
     def test_user_is_on_waitlist_username(self):
-        self.event.attendance_event.max_capacity = 1
+        self.registration.max_capacity = 1
+        self.registration.save()
         self.event.attendance_event.waitlist = True
         self.event.attendance_event.save()
 
@@ -492,7 +507,8 @@ class AttendAPITestCase(OIDCTestCase):
         self.assertEqual(response.json()['attend_status'], 30)
 
     def test_user_is_on_waitlist_rfid(self):
-        self.event.attendance_event.max_capacity = 1
+        self.registration.max_capacity = 1
+        self.registration.save()
         self.event.attendance_event.waitlist = True
         self.event.attendance_event.save()
 
@@ -505,7 +521,7 @@ class AttendAPITestCase(OIDCTestCase):
         self.assertEqual(response.json()['attend_status'], 30)
 
     def test_user_is_on_waitlist_approved(self):
-        self.event.attendance_event.max_capacity = 1
+        self.registration.max_capacity = 1
         self.event.attendance_event.waitlist = True
         self.event.attendance_event.save()
 
@@ -519,8 +535,8 @@ class AttendAPITestCase(OIDCTestCase):
         self.assertEqual(response.json()['attend_status'], 10)
 
     def test_api_does_not_try_to_get_user_by_rfid_empty_string(self):
-        self.event.attendance_event.max_capacity = 2
-        self.event.attendance_event.save()
+        self.registration.max_capacity = 2
+        self.registration.save()
 
         response = self.client.post(self.url, {
             'event': self.event.id,

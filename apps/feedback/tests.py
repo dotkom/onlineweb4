@@ -10,7 +10,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from apps.authentication.models import Email
 from apps.authentication.models import OnlineUser as User
-from apps.events.models import AttendanceEvent, Attendee, Event
+from apps.events.models import AttendanceEvent, Attendee, Event, Registration
 from apps.feedback.models import Feedback, FeedbackRelation, RatingQuestion, TextQuestion
 from apps.feedback.mommy import FeedbackMail
 from apps.marks.models import Mark
@@ -58,15 +58,19 @@ class SimpleTest(TestCase):
             unattend_deadline=timezone.now(),
             registration_end=timezone.now(),
             event=event,
-            max_capacity=30
+        )
+        registration = Registration.objects.create(
+            max_capacity=30,
+            attendance=attendance_event,
+            description='Åpen registrering',
         )
 
         feedback = Feedback.objects.create(author=self.user1)
         TextQuestion.objects.create(feedback=feedback)
         RatingQuestion.objects.create(feedback=feedback)
 
-        Attendee.objects.create(event=attendance_event, user=self.user1, attended=True)
-        Attendee.objects.create(event=attendance_event, user=self.user2, attended=True)
+        Attendee.objects.create(event=attendance_event, user=self.user1, registration=registration, attended=True)
+        Attendee.objects.create(event=attendance_event, user=self.user2, registration=registration, attended=True)
         return FeedbackRelation.objects.create(feedback=feedback, content_object=event, deadline=deadline, active=True)
 
     # Create a feedback relation that won't work

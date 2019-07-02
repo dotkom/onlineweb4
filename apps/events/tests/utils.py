@@ -6,7 +6,7 @@ from guardian.shortcuts import assign_perm, get_perms_for_model
 from apps.authentication.models import Email, OnlineUser
 from apps.payment.models import Payment, PaymentDelay, PaymentPrice, PaymentRelation
 
-from ..models import TYPE_CHOICES, AttendanceEvent, Attendee, Event
+from ..models import TYPE_CHOICES, AttendanceEvent, Attendee, Event, Registration
 from ..utils import get_organizer_by_event_type
 
 
@@ -24,6 +24,10 @@ def generate_attendance_event(*args, **kwargs):
     return G(AttendanceEvent, event=event, *args, **kwargs)
 
 
+def generate_registration(*args, **kwargs):
+    return G(Registration, *args, **kwargs)
+
+
 def generate_payment(event, *args, **kwargs) -> Payment:
     payment = G(
         Payment,
@@ -36,11 +40,12 @@ def generate_payment(event, *args, **kwargs) -> Payment:
     return payment
 
 
-def attend_user_to_event(event: Event, user: OnlineUser) -> Attendee:
+def attend_user_to_event(event: Event, user: OnlineUser, registration: Registration) -> Attendee:
     return G(
         Attendee,
         event=event.attendance_event,
-        user=user
+        user=user,
+        registration=registration,
     )
 
 
@@ -68,8 +73,8 @@ def generate_user(username) -> OnlineUser:
     return user
 
 
-def generate_attendee(event, username) -> Attendee:
-    return attend_user_to_event(event, generate_user(username))
+def generate_attendee(event, username, registration) -> Attendee:
+    return attend_user_to_event(event, generate_user(username), registration)
 
 
 def add_to_committee(user, group=None) -> OnlineUser:
