@@ -39,7 +39,7 @@ class NotificationReadOnlySerializer(serializers.ModelSerializer):
     class Meta:
         model = Notification
         fields = (
-            'message_type', 'sent', 'title', 'body', 'tag', 'badge', 'image', 'icon', 'require_interaction',
+            'id', 'message_type', 'sent', 'title', 'body', 'tag', 'badge', 'image', 'icon', 'require_interaction',
             'renotify', 'silent', 'timestamp', 'url', 'verbose_type',
         )
         read_only = True

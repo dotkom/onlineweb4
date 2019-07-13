@@ -65,9 +65,7 @@ class NotificationSetting(models.Model):
         Create all missing notification types as settings for the user is they are missing.
         """
         current_types = set([setting.message_type for setting in cls.objects.filter(user=user)])
-        logger.warning(current_types)
         missing_types = set(NotificationType.ALL_TYPES) - current_types
-        logger.warning(missing_types)
 
         for message_type in missing_types:
             NotificationSetting.objects.create(user=user, message_type=message_type)
