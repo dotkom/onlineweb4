@@ -9,7 +9,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('notifications', '0002_auto_20190512_1550'),
+        ('notifications', '0001_initial'),
     ]
 
     operations = [
