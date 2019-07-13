@@ -3,7 +3,6 @@ import logging
 from pywebpush import webpush, WebPushException
 
 from onlineweb4.celery import app as celery_app
-from apps.notifications.models import NotificationSubscription
 
 
 logger = logging.getLogger(__name__)
@@ -13,8 +12,9 @@ VAPID_CLAIMS = {
     'sub': 'mailto:dotkom@online.ntnu.no'
 }
 
+
 @celery_app.task(bind=True, max_retries=3)
-def send_webpush(self, subscription: NotificationSubscription, target=None, **kwargs):
+def send_webpush(self, subscription, target=None, **kwargs):
     """
     Send a webpush message asynchronously
     """
@@ -28,15 +28,17 @@ def send_webpush(self, subscription: NotificationSubscription, target=None, **kw
         }
     }
 
-    data = kwargs.get('data')
+    notification = kwargs.get('notification')
 
     try:
         webpush(
             subscription_info=subscription_info,
-            data=data,
+            data=notification.data,
             vapid_private_key=VAPID_PRIVATE_KEY,
             vapid_claims=VAPID_CLAIMS,
         )
+        notification.sent = True
+        notification.save()
     except WebPushException as error:
         logger.error(error)
         # Mozilla returns additional information in the body of the response.
