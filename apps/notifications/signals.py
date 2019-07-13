@@ -5,7 +5,6 @@ from django.dispatch import receiver
 
 from .models import Notification
 
-
 logger = logging.getLogger(__name__)
 
 

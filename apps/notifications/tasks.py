@@ -1,9 +1,7 @@
 import logging
 
-from pywebpush import webpush, WebPushException
-
 from onlineweb4.celery import app as celery_app
-
+from pywebpush import WebPushException, webpush
 
 logger = logging.getLogger(__name__)
 

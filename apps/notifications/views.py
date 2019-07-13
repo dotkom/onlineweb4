@@ -1,7 +1,8 @@
-from rest_framework import viewsets, permissions, mixins
+from rest_framework import mixins, permissions, viewsets
 
 from apps.notifications.models import Notification, NotificationSetting, NotificationSubscription
-from apps.notifications.serializers import (NotificationReadOnlySerializer, NotificationSettingSerializer,
+from apps.notifications.serializers import (NotificationReadOnlySerializer,
+                                            NotificationSettingSerializer,
                                             NotificationSubscriptionSerializer)
 
 
