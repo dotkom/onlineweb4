@@ -1,7 +1,8 @@
 from rest_framework import viewsets, permissions, mixins
 
-from apps.notifications.models import NotificationSetting, NotificationSubscription
-from apps.notifications.serializers import NotificationSettingSerializer, NotificationSubscriptionSerializer
+from apps.notifications.models import Notification, NotificationSetting, NotificationSubscription
+from apps.notifications.serializers import (NotificationReadOnlySerializer, NotificationSettingSerializer,
+                                            NotificationSubscriptionSerializer)
 
 
 class NotificationSettingsViewSet(viewsets.GenericViewSet,
@@ -31,3 +32,12 @@ class NotificationSubscriptionViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         user = self.request.user
         return NotificationSubscription.objects.filter(user=user)
+
+
+class NotificationViewSet(viewsets.ReadOnlyModelViewSet):
+    permission_classes = (permissions.IsAuthenticated,)
+    serializer_class = NotificationReadOnlySerializer
+
+    def get_queryset(self):
+        user = self.request.user
+        return Notification.objects.filter(user=user)
