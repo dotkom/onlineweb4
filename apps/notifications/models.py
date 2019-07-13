@@ -23,9 +23,18 @@ class NotificationSubscription(models.Model):
     auth = models.CharField(unique=True, max_length=500)
     p256dh = models.CharField(unique=True, max_length=500)
 
+    def __str__(self):
+        return f'{self.user} - {self.endpoint}'
+
     class Meta:
         verbose_name = 'Pushvarslingsabbonement'
         verbose_name_plural = 'Pushvarslingsabbonement'
+        ordering = ('user', 'endpoint',)
+        unique_together = (('user', 'endpoint'),)
+        permissions = (
+            ('view_notificationsubscription', 'View Notification Subscription'),
+        )
+        default_permissions = ('add', 'change', 'delete')
 
 
 class NotificationSetting(models.Model):
@@ -62,6 +71,19 @@ class NotificationSetting(models.Model):
 
         for message_type in missing_types:
             NotificationSetting.objects.create(user=user, message_type=message_type)
+
+    def __str__(self):
+        return f'{self.user} - {self.get_message_type_display()}'
+
+    class Meta:
+        verbose_name = 'Varselinnstilling'
+        verbose_name_plural = 'Varselinnstillinger'
+        ordering = ('user', 'message_type',)
+        unique_together = (('user', 'message_type'),)
+        permissions = (
+            ('view_notificationsetting', 'View Notification Setting'),
+        )
+        default_permissions = ('add', 'change', 'delete')
 
 
 def get_current_timestamp():
@@ -140,3 +162,15 @@ class Notification(models.Model):
         subscriptions = NotificationSubscription.objects.filter(user=self.user)
         for subscription in subscriptions:
             send_webpush.delay(subscription=subscription, notification=self)
+
+    def __str__(self):
+        return f'{self.title} - {self.user}'
+
+    class Meta:
+        verbose_name = 'Varsel'
+        verbose_name_plural = 'Varsler'
+        ordering = ('timestamp', 'user', 'title',)
+        permissions = (
+            ('view_notification', 'View Notification'),
+        )
+        default_permissions = ('add', 'change', 'delete')
