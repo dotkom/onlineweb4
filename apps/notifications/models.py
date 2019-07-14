@@ -115,7 +115,11 @@ class Notification(models.Model):
         null=True,
         on_delete=models.SET_NULL,
     )
-    icon = models.URLField(default='https://beta.online.ntnu.no/static/pwa-icon-v0-192.png')
+    icon = models.CharField(
+        max_length=1024,
+        default='https://beta.online.ntnu.no/static/pwa-icon-v0-192.png',
+        blank=True
+    )
     title = models.CharField(max_length=60, null=False, blank=False)
     body = models.CharField(max_length=512, null=False, blank=False)
     tag = models.CharField(max_length=50, null=True, blank=True)
@@ -124,15 +128,18 @@ class Notification(models.Model):
     renotify = models.BooleanField(default=False,)
     silent = models.BooleanField(default=False,)
     timestamp = models.IntegerField(default=get_current_timestamp)
-    url = models.URLField(default='/')
+    url = models.CharField(max_length=1024, default='/', blank=True)
 
     @property
     def data(self):
+        image_url = None
+        if isinstance(self.image, ResponsiveImage):
+            image_url = self.image.md
         return {
             'badge': self.badge,
             'vibrate': self.vibrate,
             'sound': self.sound,
-            'image': self.image.md,
+            'image': image_url,
             'icon': self.icon,
             'title': self.title,
             'body': self.body,
@@ -159,7 +166,7 @@ class Notification(models.Model):
 
         subscriptions = NotificationSubscription.objects.filter(user=self.user)
         for subscription in subscriptions:
-            send_webpush.delay(subscription=subscription, notification=self)
+            send_webpush.delay(subscription_id=subscription.id, notification_id=self.id)
 
     def __str__(self):
         return f'{self.title} - {self.user}'
