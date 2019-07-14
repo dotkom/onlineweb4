@@ -3,6 +3,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 
 from apps.offline.models import Issue
+from apps.offline.notifications import OfflineCreatedNotification
 from apps.offline.tasks import create_thumbnail
 
 
@@ -17,3 +18,13 @@ def trigger_create_thumbnail(sender, instance, created, **kwargs):
     """
 
     create_thumbnail(instance)
+
+
+@receiver(post_save, sender=Issue)
+def create_offline_created_notification(sender, instance, created=False, **kwargs):
+    """
+    Send notifications to users about a new release of Offline
+    """
+    if created:
+        notification = OfflineCreatedNotification(issue=instance)
+        notification.dispatch()

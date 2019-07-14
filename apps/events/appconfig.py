@@ -6,7 +6,11 @@ class EventsConfig(AppConfig):
     verbose_name = 'Events'
 
     def ready(self):
-        super(EventsConfig, self).ready()
+        super().ready()
+
+        # The following stops pycharm from nagging about unused import statement
+        # noinspection PyUnresolvedReferences
+        import apps.events.signals  # noqa: F401
 
         from watson import search as watson
 
