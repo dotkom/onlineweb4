@@ -1,11 +1,15 @@
+from django.contrib.auth.models import Group
 from onlineweb4.fields.recaptcha import RecaptchaField
 from rest_framework import serializers
 
+from apps.authentication.constants import RoleType
 from apps.authentication.fields import OnlineUserEmailField
-from apps.authentication.models import Email
+from apps.authentication.models import Email, GroupMember, GroupRole, OnlineGroup
 from apps.authentication.models import OnlineUser as User
 from apps.authentication.models import Position, SpecialPosition
 from apps.authentication.utils import send_register_verification_email
+from apps.gallery.models import ResponsiveImage
+from apps.gallery.serializers import ResponsiveImageSerializer
 
 
 class UserNameSerializer(serializers.ModelSerializer):
@@ -171,3 +175,103 @@ class EmailUpdateSerializer(serializers.ModelSerializer):
         model = Email
         fields = ('id', 'email', 'primary', 'verified',)
         read_only_fields = ('email', 'verified',)
+
+
+class GroupReadOnlySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Group
+        fields = ('id', 'name',)
+        read_only = True
+
+
+class GroupRoleReadOnlySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = GroupRole
+        fields = ('id', 'role_type', 'added', 'verbose_name')
+        read_only = True
+
+
+class GroupRoleCreateSerializer(serializers.ModelSerializer):
+    membership = serializers.PrimaryKeyRelatedField(
+        required=True,
+        queryset=GroupMember.objects.all(),
+    )
+
+    def validate(self, data):
+        role_type: RoleType = data.get('role_type')
+        if role_type in RoleType.SINGLUAR_POSITIONS:
+            membership: GroupMember = data.get('membership')
+            online_group: OnlineGroup = membership.group
+            members = online_group.get_members_with_role(role_type)
+
+            if members.count() != 0:
+                raise serializers.ValidationError(f'Det finnes allerede et gruppemedlem med rollen "{role_type}"')
+
+        return data
+
+    class Meta:
+        model = GroupRole
+        fields = ('membership', 'role_type',)
+
+
+class GroupMemberReadOnlySerializer(serializers.ModelSerializer):
+    user = UserNameSerializer()
+    roles = GroupRoleReadOnlySerializer(many=True)
+
+    class Meta:
+        model = GroupMember
+        fields = ('id', 'user', 'added', 'roles',)
+        read_only = True
+
+
+class GroupMemberCreateSerializer(serializers.ModelSerializer):
+    user = serializers.PrimaryKeyRelatedField(
+        required=True,
+        queryset=User.objects.all(),
+    )
+    group = serializers.PrimaryKeyRelatedField(
+        required=True,
+        queryset=OnlineGroup.objects.all(),
+    )
+
+    class Meta:
+        model = GroupMember
+        fields = ('user', 'group',)
+
+
+class OnlineGroupReadOnlySerializer(serializers.ModelSerializer):
+    group = GroupReadOnlySerializer()
+    members = GroupMemberReadOnlySerializer(many=True)
+    image = ResponsiveImageSerializer()
+
+    class Meta:
+        model = OnlineGroup
+        fields = (
+            'image', 'name_short', 'name_long', 'name_short', 'description_long', 'description_short',
+            'email', 'created', 'group_type', 'verbose_type', 'group', 'members',
+        )
+        read_only = True
+
+
+class OnlineGroupCreateOrUpdateSerializer(serializers.ModelSerializer):
+    group = serializers.PrimaryKeyRelatedField(
+        required=False,
+        queryset=Group.objects.all()
+    )
+    image = serializers.PrimaryKeyRelatedField(
+        required=False,
+        queryset=ResponsiveImage.objects.all(),
+    )
+
+    def validate_group(self, group: Group):
+        if OnlineGroup.objects.filter(group__pk=group.id).exists():
+            raise serializers.ValidationError('Denne Djangogruppen har allerede en Onlinegruppe')
+
+        return group
+
+    class Meta:
+        model = OnlineGroup
+        fields = (
+            'group', 'image', 'name_short', 'name_long', 'description_short', 'description_long', 'email',
+            'group_type',
+        )

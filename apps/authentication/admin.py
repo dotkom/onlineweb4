@@ -5,7 +5,8 @@ from django.contrib.auth.admin import UserAdmin
 from django.utils.translation import ugettext as _
 from reversion.admin import VersionAdmin
 
-from apps.authentication.models import AllowedUsername, Email, OnlineUser, Position, SpecialPosition
+from apps.authentication.models import (AllowedUsername, Email, GroupMember, GroupRole, OnlineGroup,
+                                        OnlineUser, Position, SpecialPosition)
 
 
 class EmailInline(admin.TabularInline):
@@ -88,3 +89,45 @@ class SpecialPositionAdmin(VersionAdmin):
 
 
 admin.site.register(SpecialPosition, SpecialPositionAdmin)
+
+
+class GroupMemberInlineAdmin(admin.StackedInline):
+    model = GroupMember
+    extra = 0
+
+
+@admin.register(OnlineGroup)
+class OnlineGroupAdmin(VersionAdmin):
+    model = OnlineGroup
+    list_display = ('name_short', 'name_long', 'member_count', 'verbose_type', 'leader')
+    list_display_links = ('name_short', 'name_long')
+    search_fields = ('name_short', 'name_long', 'group_type', 'email',)
+    inlines = (GroupMemberInlineAdmin,)
+
+    def member_count(self, group: OnlineGroup):
+        return f'{group.members.count()} ({group.group.user_set.count()})'
+    member_count.admin_order_field = 'members__count'
+    member_count.short_description = 'Antall medlemmder (synkronisert)'
+
+
+class GroupRoleInlineAdmin(admin.StackedInline):
+    model = GroupRole
+    extra = 0
+
+
+@admin.register(GroupMember)
+class GroupMemberAdmin(VersionAdmin):
+    model = GroupMember
+    list_display = ('user', 'group', 'all_roles')
+    inlines = (GroupRoleInlineAdmin,)
+    search_fields = (
+        'user__username', 'user__first_name', 'user__last_name', 'group__name_short', 'group__name_long',
+        'roles__role_type',
+    )
+
+    def all_roles(self, member: GroupMember):
+        return ', '.join([role.verbose_name for role in member.roles.all()])
+    all_roles.short_description = 'Roller'
+
+    def get_queryset(self, *args):
+        return super().get_queryset(*args).prefetch_related('roles')

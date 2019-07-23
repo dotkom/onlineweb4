@@ -5,9 +5,10 @@ import uuid
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
-from django.db.models.signals import m2m_changed, post_save
+from django.db.models.signals import m2m_changed, post_save, pre_delete
 from django.dispatch import receiver
 
+from apps.authentication.models import GroupMember, OnlineGroup
 from apps.authentication.tasks import SynchronizeGroups
 from apps.gsuite.mail_syncer.main import update_g_suite_group, update_g_suite_user
 
@@ -67,3 +68,21 @@ def trigger_group_syncer(sender, instance, created=False, **kwargs):
 
 
 m2m_changed.connect(trigger_group_syncer, dispatch_uid=sync_uuid, sender=User.groups.through)
+
+
+@receiver(post_save, sender=GroupMember)
+def add_online_group_member_to_django_group(sender, instance: GroupMember, created=False, **kwargs):
+    online_group: OnlineGroup = instance.group
+    group: Group = online_group.group
+    user: User = instance.user
+    if user not in group.user_set.all():
+        group.user_set.add(user)
+
+
+@receiver(pre_delete, sender=GroupMember)
+def remove_online_group_members_from_django_group(sender, instance: GroupMember, **kwargs):
+    online_group: OnlineGroup = instance.group
+    group: Group = online_group.group
+    user: User = instance.user
+    if user in group.user_set.all():
+        group.user_set.remove(user)
