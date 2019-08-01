@@ -10,7 +10,7 @@ from apps.events.tests.utils import generate_user
 from apps.oidc_provider.test import OIDCTestCase
 
 
-class OnlineGroupTestCase(OIDCTestCase):
+class GroupRoleTestCase(OIDCTestCase):
 
     def setUp(self):
         self.user: User = generate_user(username='test_user')
@@ -25,6 +25,42 @@ class OnlineGroupTestCase(OIDCTestCase):
         }
 
         self.url = reverse('groups-list')
+        self.id_url = lambda _id: self.url + str(_id) + '/'
+        self.group_name = 'Noenkom'
+        self.group = G(Group, name=self.group_name)
+
+    def test_roles_returns_200(self):
+        response = self.client.get(self.url, **self.headers)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_un_authenticated_user_gets_200(self):
+        response = self.client.get(self.url, **self.bare_headers)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_get_group_by_id(self):
+        response = self.client.get(self.id_url(self.group.id), **self.bare_headers)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.json().get('id'), self.group.id)
+
+
+class OnlineGroupTestCase(OIDCTestCase):
+
+    def setUp(self):
+        self.user: User = generate_user(username='test_user')
+        self.user.is_superuser = True
+        self.user.save()
+        self.user.refresh_from_db()
+        self.other_user: User = generate_user(username='other_user')
+        self.token = self.generate_access_token(self.user)
+        self.headers = {
+            **self.generate_headers(),
+            **self.bare_headers,
+        }
+
+        self.url = reverse('online_groups-list')
         self.id_url = lambda _id: self.url + str(_id) + '/'
         self.group_name = 'Noenkom'
         self.group_name_long = 'Noenkomiteen'

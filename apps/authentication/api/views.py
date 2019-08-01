@@ -1,3 +1,4 @@
+from django.contrib.auth.models import Group
 from guardian.shortcuts import get_objects_for_user
 from rest_framework import mixins, status, viewsets
 from rest_framework.permissions import AllowAny, IsAuthenticated
@@ -8,7 +9,7 @@ from apps.authentication.models import OnlineUser as User
 from apps.authentication.models import Position, SpecialPosition
 from apps.authentication.serializers import (EmailCreateSerializer, EmailReadOnlySerializer,
                                              EmailUpdateSerializer, GroupMemberCreateSerializer,
-                                             GroupMemberReadOnlySerializer,
+                                             GroupReadOnlySerializer, GroupMemberReadOnlySerializer,
                                              GroupRoleCreateSerializer, GroupRoleReadOnlySerializer,
                                              OnlineGroupCreateOrUpdateSerializer,
                                              OnlineGroupReadOnlySerializer,
@@ -109,6 +110,12 @@ class SpecialPositionViewSet(viewsets.ReadOnlyModelViewSet):
         return SpecialPosition.objects.filter(user=user)
 
 
+class GroupViewSet(viewsets.ReadOnlyModelViewSet):
+    permission_classes = (AllowAny,)
+    queryset = Group.objects.all()
+    serializer_class = GroupReadOnlySerializer
+
+
 class OnlineGroupViewSet(viewsets.ModelViewSet):
     permission_classes = (AllowAny,)
 
@@ -134,6 +141,10 @@ class OnlineGroupViewSet(viewsets.ModelViewSet):
             return all_groups
 
     def get_queryset(self):
+
+        if self.action in ['list', 'retrieve']:
+            return OnlineGroup.objects.all()
+
         user = self.request.user
         return self.get_editable_groups_for_user(user, self.action)
 
@@ -176,6 +187,9 @@ class GroupMemberViewSet(viewsets.GenericViewSet,
         return GroupMember.objects.filter(pk__in=allowed_membership_ids)
 
     def get_queryset(self):
+        if self.action in ['list', 'retrieve']:
+            return GroupMember.objects.all()
+
         user = self.request.user
         return self.get_allowed_memberships_for_user(user, self.action)
 
@@ -217,6 +231,9 @@ class GroupRoleViewSet(viewsets.GenericViewSet,
         return GroupRole.objects.filter(pk__in=allowed_role_ids)
 
     def get_queryset(self):
+        if self.action in ['list', 'retrieve']:
+            return GroupRole.objects.all()
+
         user = self.request.user
         return self.get_allowed_roles_for_user(user, self.action)
 

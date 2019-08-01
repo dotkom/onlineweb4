@@ -216,7 +216,6 @@ class GroupRoleCreateSerializer(serializers.ModelSerializer):
 
 class GroupMemberReadOnlySerializer(serializers.ModelSerializer):
     user = UserNameSerializer()
-    roles = GroupRoleReadOnlySerializer(many=True)
 
     class Meta:
         model = GroupMember
@@ -240,8 +239,6 @@ class GroupMemberCreateSerializer(serializers.ModelSerializer):
 
 
 class OnlineGroupReadOnlySerializer(serializers.ModelSerializer):
-    group = GroupReadOnlySerializer()
-    members = GroupMemberReadOnlySerializer(many=True)
     image = ResponsiveImageSerializer()
 
     class Meta:
