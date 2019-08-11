@@ -110,16 +110,10 @@ class OnlineGroupAdmin(VersionAdmin):
     member_count.short_description = 'Antall medlemmder (synkronisert)'
 
 
-class GroupRoleInlineAdmin(admin.StackedInline):
-    model = GroupRole
-    extra = 0
-
-
 @admin.register(GroupMember)
 class GroupMemberAdmin(VersionAdmin):
     model = GroupMember
     list_display = ('user', 'group', 'all_roles')
-    inlines = (GroupRoleInlineAdmin,)
     search_fields = (
         'user__username', 'user__first_name', 'user__last_name', 'group__name_short', 'group__name_long',
         'roles__role_type',
@@ -131,3 +125,10 @@ class GroupMemberAdmin(VersionAdmin):
 
     def get_queryset(self, *args):
         return super().get_queryset(*args).prefetch_related('roles')
+
+
+@admin.register(GroupRole)
+class GroupRoleAdmin(VersionAdmin):
+    model = GroupRole
+    list_display = ('role_type', 'verbose_name')
+    search_fields = ('role_type',)

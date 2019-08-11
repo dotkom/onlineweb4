@@ -2,7 +2,6 @@ from django.contrib.auth.models import Group
 from onlineweb4.fields.recaptcha import RecaptchaField
 from rest_framework import serializers
 
-from apps.authentication.constants import RoleType
 from apps.authentication.fields import OnlineUserEmailField
 from apps.authentication.models import Email, GroupMember, GroupRole, OnlineGroup
 from apps.authentication.models import OnlineUser as User
@@ -187,36 +186,12 @@ class GroupReadOnlySerializer(serializers.ModelSerializer):
 class GroupRoleReadOnlySerializer(serializers.ModelSerializer):
     class Meta:
         model = GroupRole
-        fields = ('id', 'role_type', 'added', 'verbose_name')
+        fields = ('id', 'role_type', 'verbose_name')
         read_only = True
-
-
-class GroupRoleCreateSerializer(serializers.ModelSerializer):
-    membership = serializers.PrimaryKeyRelatedField(
-        required=True,
-        queryset=GroupMember.objects.all(),
-    )
-
-    def validate(self, data):
-        role_type: RoleType = data.get('role_type')
-        if role_type in RoleType.SINGLUAR_POSITIONS:
-            membership: GroupMember = data.get('membership')
-            online_group: OnlineGroup = membership.group
-            members = online_group.get_members_with_role(role_type)
-
-            if members.count() != 0:
-                raise serializers.ValidationError(f'Det finnes allerede et gruppemedlem med rollen "{role_type}"')
-
-        return data
-
-    class Meta:
-        model = GroupRole
-        fields = ('membership', 'role_type',)
 
 
 class GroupMemberReadOnlySerializer(serializers.ModelSerializer):
     user = UserNameSerializer()
-    roles = GroupRoleReadOnlySerializer(many=True)
 
     class Meta:
         model = GroupMember
@@ -233,15 +208,32 @@ class GroupMemberCreateSerializer(serializers.ModelSerializer):
         required=True,
         queryset=OnlineGroup.objects.all(),
     )
+    roles = serializers.PrimaryKeyRelatedField(
+        required=False,
+        queryset=GroupRole.objects.all(),
+        many=True,
+    )
 
     class Meta:
         model = GroupMember
-        fields = ('user', 'group',)
+        fields = ('user', 'group', 'added', 'roles',)
+        read_only_fields = ('added',)
+
+
+class GroupMemberUpdateSerializer(serializers.ModelSerializer):
+    roles = serializers.PrimaryKeyRelatedField(
+        required=False,
+        queryset=GroupRole.objects.all(),
+        many=True,
+    )
+
+    class Meta:
+        model = GroupMember
+        fields = ('user', 'group', 'added', 'roles',)
+        read_only_fields = ('added', 'user', 'group',)
 
 
 class OnlineGroupReadOnlySerializer(serializers.ModelSerializer):
-    group = GroupReadOnlySerializer()
-    members = GroupMemberReadOnlySerializer(many=True)
     image = ResponsiveImageSerializer()
 
     class Meta:

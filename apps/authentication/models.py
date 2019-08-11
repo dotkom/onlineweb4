@@ -547,11 +547,10 @@ class GroupMember(models.Model):
 
 
 class GroupRole(models.Model):
-    membership = models.ForeignKey(
+    memberships = models.ManyToManyField(
         GroupMember,
         verbose_name='Medlemskap',
         related_name='roles',
-        on_delete=models.CASCADE
     )
     role_type = models.CharField(
         verbose_name='Rolle',
@@ -560,22 +559,20 @@ class GroupRole(models.Model):
         max_length=256,
         null=False,
         blank=False,
+        unique=True,
     )
-    added = models.DateTimeField(default=timezone.now)
 
     @property
     def verbose_name(self):
         return self.get_role_type_display()
 
     def __str__(self):
-        return f'{self.membership} - {self.verbose_name}'
+        return self.verbose_name
 
     class Meta:
         verbose_name = _('Medlemskapsrolle')
         verbose_name_plural = _('Medlemskapsroller')
-        """ Each membership can only have a single instance of each role type """
-        unique_together = (('membership', 'role_type',),)
-        ordering = ('membership', 'role_type', 'added')
+        ordering = ('role_type',)
         permissions = (
             ('view_grouprole', 'View GroupRole'),
         )

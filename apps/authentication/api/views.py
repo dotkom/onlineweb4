@@ -1,3 +1,4 @@
+from django.contrib.auth.models import Group
 from guardian.shortcuts import get_objects_for_user
 from rest_framework import mixins, status, viewsets
 from rest_framework.permissions import AllowAny, IsAuthenticated
@@ -9,7 +10,8 @@ from apps.authentication.models import Position, SpecialPosition
 from apps.authentication.serializers import (EmailCreateSerializer, EmailReadOnlySerializer,
                                              EmailUpdateSerializer, GroupMemberCreateSerializer,
                                              GroupMemberReadOnlySerializer,
-                                             GroupRoleCreateSerializer, GroupRoleReadOnlySerializer,
+                                             GroupMemberUpdateSerializer, GroupReadOnlySerializer,
+                                             GroupRoleReadOnlySerializer,
                                              OnlineGroupCreateOrUpdateSerializer,
                                              OnlineGroupReadOnlySerializer,
                                              PositionCreateAndUpdateSerializer,
@@ -109,6 +111,12 @@ class SpecialPositionViewSet(viewsets.ReadOnlyModelViewSet):
         return SpecialPosition.objects.filter(user=user)
 
 
+class GroupViewSet(viewsets.ReadOnlyModelViewSet):
+    permission_classes = (AllowAny,)
+    queryset = Group.objects.all()
+    serializer_class = GroupReadOnlySerializer
+
+
 class OnlineGroupViewSet(viewsets.ModelViewSet):
     permission_classes = (AllowAny,)
 
@@ -129,11 +137,10 @@ class OnlineGroupViewSet(viewsets.ModelViewSet):
             ]
             return OnlineGroup.objects.filter(pk__in=allowed_group_ids)
 
-        """ All users should be able to list all groups """
-        if action in ['retrieve', 'list']:
-            return all_groups
-
     def get_queryset(self):
+        if self.action in ['list', 'retrieve']:
+            return OnlineGroup.objects.all()
+
         user = self.request.user
         return self.get_editable_groups_for_user(user, self.action)
 
@@ -157,12 +164,7 @@ class OnlineGroupViewSet(viewsets.ModelViewSet):
         }, status=status.HTTP_403_FORBIDDEN)
 
 
-class GroupMemberViewSet(viewsets.GenericViewSet,
-                         mixins.ListModelMixin,
-                         mixins.RetrieveModelMixin,
-                         mixins.CreateModelMixin,
-                         mixins.DestroyModelMixin):
-    """ Group members should not be updated by themselves """
+class GroupMemberViewSet(viewsets.ModelViewSet):
     permission_classes = (AllowAny,)
 
     @staticmethod
@@ -176,12 +178,17 @@ class GroupMemberViewSet(viewsets.GenericViewSet,
         return GroupMember.objects.filter(pk__in=allowed_membership_ids)
 
     def get_queryset(self):
+        if self.action in ['list', 'retrieve']:
+            return GroupMember.objects.all()
+
         user = self.request.user
         return self.get_allowed_memberships_for_user(user, self.action)
 
     def get_serializer_class(self):
         if self.action == 'create':
             return GroupMemberCreateSerializer
+        if self.action in ['update', 'partial_update']:
+            return GroupMemberUpdateSerializer
         if self.action in ['list', 'retrieve']:
             return GroupMemberReadOnlySerializer
 
@@ -198,41 +205,7 @@ class GroupMemberViewSet(viewsets.GenericViewSet,
         }, status=status.HTTP_403_FORBIDDEN)
 
 
-class GroupRoleViewSet(viewsets.GenericViewSet,
-                       mixins.ListModelMixin,
-                       mixins.RetrieveModelMixin,
-                       mixins.CreateModelMixin,
-                       mixins.DestroyModelMixin):
-    """ Group roles should not be updated by themselves """
+class GroupRoleViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = (AllowAny,)
-
-    @staticmethod
-    def get_allowed_roles_for_user(user: User, action: str):
-        allowed_memberships = GroupMemberViewSet.get_allowed_memberships_for_user(user, action)
-        allowed_role_ids = []
-        for membership in allowed_memberships:
-            for role in membership.roles.all():
-                allowed_role_ids.append(role.id)
-
-        return GroupRole.objects.filter(pk__in=allowed_role_ids)
-
-    def get_queryset(self):
-        user = self.request.user
-        return self.get_allowed_roles_for_user(user, self.action)
-
-    def get_serializer_class(self):
-        if self.action == 'create':
-            return GroupRoleCreateSerializer
-        if self.action in ['list', 'retrieve']:
-            return GroupRoleReadOnlySerializer
-
-        return super().get_serializer_class()
-
-    def create(self, request, *args, **kwargs):
-
-        if request.user.is_superuser or request.user.has_perm('authentication.add_grouprole'):
-            return super().create(request, *args, **kwargs)
-
-        return Response({
-            'message': 'Du har ikke tillatelse til å opprette gruppemedlemsroller'
-        }, status=status.HTTP_403_FORBIDDEN)
+    serializer_class = GroupRoleReadOnlySerializer
+    queryset = GroupRole.objects.all()
