@@ -17,6 +17,7 @@ from rest_framework.exceptions import NotAcceptable
 from apps.events.models import AttendanceEvent, Attendee
 from apps.marks.models import Suspension
 from apps.payment import status
+from apps.webshop.models import OrderLine
 
 User = settings.AUTH_USER_MODEL
 
@@ -108,8 +109,12 @@ class Payment(models.Model):
     def description(self):
         if self._is_type(AttendanceEvent):
             return self.content_object.event.title
+        if self._is_type(OrderLine):
+            order_line: OrderLine = self.content_object
+            return f'{order_line.user} - {order_line.payment_description}'
         logging.getLogger(__name__).error(
-            "Trying to get description for payment #{}, but it's not AttendanceEvent.".format(self.pk)
+            f'Trying to get description for payment #{self.pk}, but it\'s not an AttendanceEvent or a '
+            f'Webshop OrderLine.'
         )
         return 'No description'
 
@@ -135,6 +140,8 @@ class Payment(models.Model):
                 return settings.EMAIL_EKSKOM
             else:
                 return settings.DEFAULT_FROM_EMAIL
+        elif self._is_type(OrderLine):
+            return settings.EMAIL_PROKOM
         else:
             return settings.DEFAULT_FROM_EMAIL
 
@@ -150,6 +157,14 @@ class Payment(models.Model):
                 attendee = Attendee.objects.get(user=user, event=event)
                 return not attendee.has_paid
             return False
+
+        """
+        Payments for Webshop orderlines should only be payable for the owner of the orderline
+        """
+        if self._is_type(OrderLine):
+            order_line: OrderLine = self.content_object
+            is_order_line_owner = order_line.user == user
+            return is_order_line_owner
 
         """ There are no rules prohibiting user from paying for other types of payments """
         return True
@@ -182,6 +197,11 @@ class Payment(models.Model):
             else:
                 Attendee.objects.create(event=self.content_object, user=user, paid=True)
 
+        elif self._is_type(OrderLine):
+            order_line: OrderLine = self.content_object
+            order_line.paid = True
+            order_line.save()
+
     def handle_refund(self, payment_relation):
         """
         Method for handling refunds.
@@ -197,6 +217,11 @@ class Payment(models.Model):
             Attendee.objects.get(event=self.content_object,
                                  user=payment_relation.user).delete()
 
+        if self._is_type(OrderLine):
+            order_line: OrderLine = self.content_object
+            order_line.paid = False
+            order_line.save()
+
     def check_refund(self, payment_relation) -> (bool, str):
         """Method for checking if the payment can be refunded"""
         if self._is_type(AttendanceEvent):
@@ -209,6 +234,9 @@ class Payment(models.Model):
                 return False, _("Dette arrangementet har allerede startet.")
 
             return True, ''
+
+        if self._is_type(OrderLine):
+            return False, 'Du kan ikke refundere betalinger i Webshop på dette tidspunktet'
 
         return False, 'Refund checks not implemented'
 
@@ -236,7 +264,7 @@ class Payment(models.Model):
         return self.description()
 
     def clean_generic_relation(self):
-        if not self._is_type(AttendanceEvent):
+        if not self._is_type(AttendanceEvent) and not self._is_type(OrderLine):
             raise ValidationError({
                 'content_type': _('Denne typen objekter støttes ikke av betalingssystemet for tiden.'),
             })
