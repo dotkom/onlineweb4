@@ -207,7 +207,7 @@ class PaymentTransactionCreateSerializer(serializers.ModelSerializer):
     amount = serializers.IntegerField(required=True)
 
     def validate_amount(self, amount):
-        valid_amounts = [100, 200, 500]
+        valid_amounts = [100, 200, 300, 500, 800, 1000]
         if amount not in valid_amounts:
             raise ValidationError(f'{amount} er ikke en gyldig betalingspris')
 
