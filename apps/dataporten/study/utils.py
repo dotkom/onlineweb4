@@ -129,4 +129,3 @@ def get_field_of_study(groups):
 
     # Return guest if we find nothing else
     return FieldOfStudyType.GUEST
-
