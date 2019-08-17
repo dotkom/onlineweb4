@@ -3,7 +3,7 @@ import logging
 from dateutil.parser import parse
 from django.utils import timezone
 
-from apps.authentication.models import FIELD_OF_STUDY_CHOICES
+from apps.authentication.constants import FieldOfStudyType
 from apps.dataporten.study.courses import GROUP_IDENTIFIERS, MASTER_IDS
 
 logger = logging.getLogger(__name__)
@@ -14,6 +14,11 @@ def get_study(groups):
     for group in groups:
         if group.get('id') == GROUP_IDENTIFIERS['BACHELOR']:
             logger.debug('User found to be bachelor student')
+            study_group = group
+            break
+
+        elif group.get('id') == GROUP_IDENTIFIERS['MASTER_OLD']:
+            logger.debug('User found to be master student on old programme')
             study_group = group
             break
 
@@ -100,27 +105,28 @@ def get_year(study_id, groups):
 
 def get_field_of_study(groups):
     if get_group_id(get_study(groups)) == GROUP_IDENTIFIERS['BACHELOR']:
-        return FIELD_OF_STUDY_CHOICES[1][0]
+        return FieldOfStudyType.BACHELOR
     else:
         found_master_study = False
         for group in groups:
             group_id = get_group_id(group)
-            if group_id == GROUP_IDENTIFIERS['MASTER_SPEC_PVS']:
-                return FIELD_OF_STUDY_CHOICES[2][0]
-            elif group_id == GROUP_IDENTIFIERS['MASTER_SPEC_DBS']:
-                return FIELD_OF_STUDY_CHOICES[3][0]
-            elif group_id == GROUP_IDENTIFIERS['MASTER_SPEC_KI']:
-                return FIELD_OF_STUDY_CHOICES[6][0]
-            elif group_id == GROUP_IDENTIFIERS['MASTER_SPEC_UX']:
-                return FIELD_OF_STUDY_CHOICES[8][0]
+            if group_id in (GROUP_IDENTIFIERS['MASTER_SPEC_PVS_OLD'], GROUP_IDENTIFIERS['MASTER_SPEC_SWE']):
+                return FieldOfStudyType.SOFTWARE_ENGINEERING
+            elif group_id in (GROUP_IDENTIFIERS['MASTER_SPEC_DBS_OLD'], GROUP_IDENTIFIERS['MASTER_SPEC_DBS']):
+                return FieldOfStudyType.DATABASE_AND_SEARCH
+            elif group_id in (GROUP_IDENTIFIERS['MASTER_SPEC_KI_OLD'], GROUP_IDENTIFIERS['MASTER_SPEC_AI']):
+                return FieldOfStudyType.ARTIFICIAL_INTELLIGENCE
+            elif group_id in (GROUP_IDENTIFIERS['MASTER_SPEC_UX_OLD'], GROUP_IDENTIFIERS['MASTER_SPEC_UX']):
+                return FieldOfStudyType.INTERACTION_DESIGN
             elif group_id == GROUP_IDENTIFIERS['MASTER_COURSE_OTHER']:
-                return FIELD_OF_STUDY_CHOICES[9][0]
-            elif group_id == GROUP_IDENTIFIERS['MASTER']:
+                return FieldOfStudyType.OTHER_MASTERS
+            elif group_id in (GROUP_IDENTIFIERS['MASTER'],  GROUP_IDENTIFIERS['MASTER_OLD']):
                 found_master_study = True
 
         # If we don't find a specific master study, return 'other'
         if found_master_study:
-            return FIELD_OF_STUDY_CHOICES[9][0]
+            return FieldOfStudyType.OTHER_MASTERS
 
     # Return guest if we find nothing else
-    return FIELD_OF_STUDY_CHOICES[0][0]
+    return FieldOfStudyType.GUEST
+

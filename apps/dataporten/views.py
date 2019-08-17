@@ -130,7 +130,24 @@ def study_callback(request):
     try:
         if not request.user.ntnu_username:
             set_ntnu_username(request.user, ntnu_username_dataporten)
-        studies_informatics, study_name, study_year = find_user_study_and_update(request.user, groups)
+        studies_info = find_user_study_and_update(request.user, groups)
+
+        if not studies_info:
+            logger.warning(
+                'Dataporten groups do not match groups for informatics',
+                extra={
+                    'user': request.user,
+                    'groups': groups,
+                }
+            )
+            messages.error(
+                request,
+                'Studieretningen du studerer ved gir ikke medlemskap i Online. ',
+                'Hvis du mener dette er en feil; ta vennligst kontakt Dotkom slik at vi kan feilsøke prosessen.'
+            )
+            return redirect('profiles_active', active_tab='membership')
+
+        studies_informatics, study_name, study_year = studies_info
     except IntegrityError:
         messages.error(
             request,
