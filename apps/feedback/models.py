@@ -19,7 +19,7 @@ from django.db import IntegrityError, models
 from django.urls import reverse
 from django.utils.translation import ugettext as _
 
-from apps.authentication.models import FIELD_OF_STUDY_CHOICES
+from apps.authentication.constants import FieldOfStudyType
 
 User = settings.AUTH_USER_MODEL
 
@@ -246,7 +246,7 @@ class FieldOfStudyAnswer(models.Model):
         on_delete=models.CASCADE
     )
     answer = models.SmallIntegerField(
-        _('Studieretning'), choices=FIELD_OF_STUDY_CHOICES)
+        _('Studieretning'), choices=FieldOfStudyType.ALL_CHOICES)
 
     def __str__(self):
         return self.get_answer_display()

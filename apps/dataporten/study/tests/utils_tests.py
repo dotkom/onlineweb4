@@ -5,7 +5,7 @@ from dateutil.parser import parse
 from django.test import TestCase
 from freezegun import freeze_time
 
-from apps.authentication.models import FIELD_OF_STUDY_CHOICES
+from apps.authentication.constants import FieldOfStudyType
 from apps.dataporten.study.courses import GROUP_IDENTIFIERS
 from apps.dataporten.study.utils import (get_bachelor_year, get_course_finish_date,
                                          get_field_of_study, get_group_name, get_master_year,
@@ -152,7 +152,7 @@ class DataProcessingTestCase(TestCase):
             INFORMATICS_BACHELOR_STUDY_PROGRAMME,
         ]
 
-        self.assertEqual(FIELD_OF_STUDY_CHOICES[1][0], get_field_of_study(groups))
+        self.assertEqual(FieldOfStudyType.BACHELOR, get_field_of_study(groups))
 
     @freeze_time("2010-10-01 12:00")
     def test_get_field_of_study_master_pvs(self):
@@ -160,7 +160,7 @@ class DataProcessingTestCase(TestCase):
             load_course(INFORMATICS_MASTER_PVS_SPECIALIZATION, active=True),
         ]
 
-        self.assertEqual(FIELD_OF_STUDY_CHOICES[2][0], get_field_of_study(groups))
+        self.assertEqual(FieldOfStudyType.SOFTWARE_ENGINEERING, get_field_of_study(groups))
 
     @freeze_time("2010-10-01 12:00")
     def test_get_year_1st_grader_fall(self):
@@ -219,7 +219,7 @@ class GetStudyTestCase(TestCase):
             groups = json.load(f)
 
         field_of_study = get_field_of_study(groups)
-        self.assertEqual(FIELD_OF_STUDY_CHOICES[1][0], field_of_study)
+        self.assertEqual(FieldOfStudyType.BACHELOR, field_of_study)
 
         self.assertEqual(1, get_year(GROUP_IDENTIFIERS['BACHELOR'], groups))
 
@@ -231,7 +231,7 @@ class GetStudyTestCase(TestCase):
             groups = json.load(f)
 
         field_of_study = get_field_of_study(groups)
-        self.assertEqual(FIELD_OF_STUDY_CHOICES[1][0], field_of_study)
+        self.assertEqual(FieldOfStudyType.BACHELOR, field_of_study)
 
         self.assertEqual(2, get_year(GROUP_IDENTIFIERS['BACHELOR'], groups))
 
@@ -243,19 +243,31 @@ class GetStudyTestCase(TestCase):
             groups = json.load(f)
 
         field_of_study = get_field_of_study(groups)
-        self.assertEqual(FIELD_OF_STUDY_CHOICES[1][0], field_of_study)
+        self.assertEqual(FieldOfStudyType.BACHELOR, field_of_study)
 
         self.assertEqual(3, get_year(GROUP_IDENTIFIERS['BACHELOR'], groups))
 
     @freeze_time("2018-04-01 12:00")
-    def test_find_study_4th_grader_dbs(self):
+    def test_find_study_4th_grader_dbs_2018(self):
         dumps_dir = os.path.join(DIR_NAME, 'data')
         fname = os.path.join(dumps_dir, '4th_grader_2018_dbs.json')
         with open(fname, 'r') as f:
             groups = json.load(f)
 
         field_of_study = get_field_of_study(groups)
-        self.assertEqual(FIELD_OF_STUDY_CHOICES[3][0], field_of_study)
+        self.assertEqual(FieldOfStudyType.DATABASE_AND_SEARCH, field_of_study)
+
+        self.assertEqual(4, get_year(GROUP_IDENTIFIERS['MASTER'], groups))
+
+    @freeze_time("2019-04-01 12:00")
+    def test_find_study_4th_grader_dbs_2019(self):
+        dumps_dir = os.path.join(DIR_NAME, 'data')
+        fname = os.path.join(dumps_dir, '4th_grader_2019_dbs.json')
+        with open(fname, 'r') as f:
+            groups = json.load(f)
+
+        field_of_study = get_field_of_study(groups)
+        self.assertEqual(FieldOfStudyType.DATABASE_AND_SEARCH, field_of_study)
 
         self.assertEqual(4, get_year(GROUP_IDENTIFIERS['MASTER'], groups))
 
@@ -267,7 +279,7 @@ class GetStudyTestCase(TestCase):
             groups = json.load(f)
 
         field_of_study = get_field_of_study(groups)
-        self.assertEqual(FIELD_OF_STUDY_CHOICES[6][0], field_of_study)
+        self.assertEqual(FieldOfStudyType.ARTIFICIAL_INTELLIGENCE, field_of_study)
 
         self.assertEqual(5, get_year(GROUP_IDENTIFIERS['MASTER'], groups))
 
@@ -279,7 +291,7 @@ class GetStudyTestCase(TestCase):
             groups = json.load(f)
 
         field_of_study = get_field_of_study(groups)
-        self.assertEqual(FIELD_OF_STUDY_CHOICES[2][0], field_of_study)
+        self.assertEqual(FieldOfStudyType.SOFTWARE_ENGINEERING, field_of_study)
 
         self.assertEqual(5, get_year(GROUP_IDENTIFIERS['MASTER'], groups))
 
@@ -291,7 +303,7 @@ class GetStudyTestCase(TestCase):
             groups = json.load(f)
 
         field_of_study = get_field_of_study(groups)
-        self.assertEqual(FIELD_OF_STUDY_CHOICES[1][0], field_of_study)
+        self.assertEqual(FieldOfStudyType.BACHELOR, field_of_study)
 
         self.assertEqual(1, get_year(GROUP_IDENTIFIERS['BACHELOR'], groups))
 
@@ -303,7 +315,7 @@ class GetStudyTestCase(TestCase):
             groups = json.load(f)
 
         field_of_study = get_field_of_study(groups)
-        self.assertEqual(FIELD_OF_STUDY_CHOICES[1][0], field_of_study)
+        self.assertEqual(FieldOfStudyType.BACHELOR, field_of_study)
 
         self.assertEqual(2, get_year(GROUP_IDENTIFIERS['BACHELOR'], groups))
 
@@ -315,7 +327,7 @@ class GetStudyTestCase(TestCase):
             groups = json.load(f)
 
         field_of_study = get_field_of_study(groups)
-        self.assertEqual(FIELD_OF_STUDY_CHOICES[1][0], field_of_study)
+        self.assertEqual(FieldOfStudyType.BACHELOR, field_of_study)
 
         self.assertEqual(3, get_year(GROUP_IDENTIFIERS['BACHELOR'], groups))
 
@@ -327,7 +339,7 @@ class GetStudyTestCase(TestCase):
             groups = json.load(f)
 
         field_of_study = get_field_of_study(groups)
-        self.assertEqual(FIELD_OF_STUDY_CHOICES[3][0], field_of_study)
+        self.assertEqual(FieldOfStudyType.DATABASE_AND_SEARCH, field_of_study)
 
         self.assertEqual(4, get_year(GROUP_IDENTIFIERS['MASTER'], groups))
 
@@ -339,7 +351,7 @@ class GetStudyTestCase(TestCase):
             groups = json.load(f)
 
         field_of_study = get_field_of_study(groups)
-        self.assertEqual(FIELD_OF_STUDY_CHOICES[6][0], field_of_study)
+        self.assertEqual(FieldOfStudyType.ARTIFICIAL_INTELLIGENCE, field_of_study)
 
         self.assertEqual(5, get_year(GROUP_IDENTIFIERS['MASTER'], groups))
 
@@ -351,6 +363,6 @@ class GetStudyTestCase(TestCase):
             groups = json.load(f)
 
         field_of_study = get_field_of_study(groups)
-        self.assertEqual(FIELD_OF_STUDY_CHOICES[2][0], field_of_study)
+        self.assertEqual(FieldOfStudyType.SOFTWARE_ENGINEERING, field_of_study)
 
         self.assertEqual(5, get_year(GROUP_IDENTIFIERS['MASTER'], groups))

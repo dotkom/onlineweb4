@@ -13,29 +13,11 @@ from django.utils import timezone
 from django.utils.html import strip_tags
 from django.utils.translation import ugettext as _
 
-from apps.authentication.constants import GroupType, RoleType
+from apps.authentication.constants import FieldOfStudyType, GroupType, RoleType
 # If this list is changed, remember to check that the year property on
 # OnlineUser is still correct!
 from apps.authentication.validators import validate_rfid
 from apps.gallery.models import ResponsiveImage
-
-FIELD_OF_STUDY_CHOICES = [
-    (0, _('Gjest')),
-    (1, _('Bachelor i Informatikk')),
-    # master degrees take up the interval [10,30]
-    (10, _('Programvaresystemer')),
-    (11, _('Databaser og søk')),
-    (12, _('Algoritmer og datamaskiner')),
-    (13, _('Spillteknologi')),
-    (14, _('Kunstig intelligens')),
-    (15, _('Helseinformatikk')),
-    (16, _('Interaksjonsdesign, spill- og læringsteknologi')),
-    (30, _('Annen mastergrad')),
-    (40, _('Sosialt medlem')),
-    (80, _('PhD')),
-    (90, _('International')),
-    (100, _('Annet Onlinemedlem')),
-]
 
 GENDER_CHOICES = [
     ("male", _("mann")),
@@ -73,16 +55,16 @@ def get_length_of_field_of_study(field_of_study):
     """
     Returns length of a field of study
     """
-    if field_of_study == 0 or field_of_study == 100 or field_of_study == 40:  # others or social
+    if field_of_study in [FieldOfStudyType.GUEST, FieldOfStudyType.OTHER_MEMBER, FieldOfStudyType.SOCIAL_MEMBER]:
         return 0
     # dont return a bachelor student as 4th or 5th grade
-    elif field_of_study == 1:  # bachelor
+    elif field_of_study == FieldOfStudyType.BACHELOR:
         return 3
-    elif 10 <= field_of_study <= 30:  # 10-30 is considered master
+    elif field_of_study in FieldOfStudyType.ALL_MASTERS:
         return 2
-    elif field_of_study == 80:  # phd
+    elif field_of_study == FieldOfStudyType.PHD:
         return 99
-    elif field_of_study == 90:  # international
+    elif field_of_study == FieldOfStudyType.INTERNATIONAL:
         return 1
     # If user's field of study is not matched by any of these tests, return -1
     else:
@@ -93,17 +75,15 @@ def get_start_of_field_of_study(field_of_study):
     """
     Returns start year of a field of study
     """
-    if field_of_study == 0 or field_of_study == 100:  # others
+    if field_of_study in [FieldOfStudyType.GUEST, FieldOfStudyType.OTHER_MEMBER, FieldOfStudyType.SOCIAL_MEMBER]:
         return 0
-    elif field_of_study == 1:  # bachelor
+    elif field_of_study == FieldOfStudyType.BACHELOR:
         return 0
-    elif 10 <= field_of_study <= 30:  # 10-30 is considered master
+    elif field_of_study in FieldOfStudyType.ALL_MASTERS:
         return 3
-    elif field_of_study == 40:  # social
-        return 0
-    elif field_of_study == 80:  # phd
+    elif field_of_study == FieldOfStudyType.PHD:
         return 5
-    elif field_of_study == 90:  # international
+    elif field_of_study == FieldOfStudyType.INTERNATIONAL:
         return 0
     # If user's field of study is not matched by any of these tests, return -1
     else:
@@ -116,7 +96,11 @@ class OnlineUser(AbstractUser):
     backend = 'django.contrib.auth.backends.ModelBackend'
 
     # Online related fields
-    field_of_study = models.SmallIntegerField(_("studieretning"), choices=FIELD_OF_STUDY_CHOICES, default=0)
+    field_of_study = models.SmallIntegerField(
+        _("studieretning"),
+        choices=FieldOfStudyType.ALL_CHOICES,
+        default=FieldOfStudyType.GUEST
+    )
     started_date = models.DateField(_("startet studie"), default=datetime.date.today)
     compiled = models.BooleanField(_("kompilert"), default=False)
 

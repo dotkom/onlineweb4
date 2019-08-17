@@ -3,7 +3,8 @@ from importlib import import_module
 
 from django import template
 
-from apps.feedback.models import FIELD_OF_STUDY_CHOICES, RATING_CHOICES
+from apps.authentication.constants import FieldOfStudyType
+from apps.feedback.models import RATING_CHOICES
 
 register = template.Library()
 
@@ -27,7 +28,7 @@ def count_fos(value):
         answer_count[str(answer)] += 1
 
     ordered_answers = []
-    for _, x in FIELD_OF_STUDY_CHOICES[1:]:
+    for _, x in FieldOfStudyType.ALL_CHOICES[1:]:
         ordered_answers.append([x, answer_count[x]])
     return ordered_answers
 

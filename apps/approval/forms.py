@@ -4,7 +4,7 @@ from django import forms
 from django.utils import timezone
 from django.utils.translation import ugettext as _
 
-from apps.authentication.models import FIELD_OF_STUDY_CHOICES
+from apps.authentication.constants import FieldOfStudyType
 
 SEMESTER_CHOICES = [
     ("h", _("Høst")),
@@ -24,6 +24,6 @@ class FieldOfStudyApplicationForm(forms.Form):
     started_year = forms.ChoiceField(
         label=_("Hvilket år startet du? "), choices=_year_choices())
     field_of_study = forms.ChoiceField(
-        label=_("Studieretning "), choices=FIELD_OF_STUDY_CHOICES)
+        label=_("Studieretning "), choices=FieldOfStudyType.ALL_CHOICES)
     documentation = forms.ImageField(
         label=_("Dokumentasjon "), required=False)

@@ -8,7 +8,7 @@ from django.urls import reverse
 from django.utils.translation import ugettext as _
 
 from apps.approval import settings as approval_settings
-from apps.authentication.models import FIELD_OF_STUDY_CHOICES
+from apps.authentication.constants import FieldOfStudyType
 
 User = settings.AUTH_USER_MODEL
 
@@ -42,7 +42,11 @@ class Approval(models.Model):
 
 class MembershipApproval(Approval):
     new_expiry_date = models.DateField(_("ny utløpsdato"), blank=True, null=True)
-    field_of_study = models.SmallIntegerField(_("studieretning"), choices=FIELD_OF_STUDY_CHOICES, default=0)
+    field_of_study = models.SmallIntegerField(
+        _("studieretning"),
+        choices=FieldOfStudyType.ALL_CHOICES,
+        default=FieldOfStudyType.GUEST,
+    )
     started_date = models.DateField(_("startet dato"), blank=True, null=True)
     documentation = models.ImageField(upload_to=approval_settings.DOCUMENTATION_PATH, blank=True,
                                       null=True, default=None)
