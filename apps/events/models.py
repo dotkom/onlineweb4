@@ -21,7 +21,7 @@ from django.utils.translation import ugettext as _
 from guardian.shortcuts import assign_perm
 from unidecode import unidecode
 
-from apps.authentication.models import FIELD_OF_STUDY_CHOICES
+from apps.authentication.constants import FieldOfStudyType
 from apps.companyprofile.models import Company
 from apps.feedback.models import FeedbackRelation
 from apps.gallery.models import ResponsiveImage
@@ -241,7 +241,7 @@ class Rule(models.Model):
 
 
 class FieldOfStudyRule(Rule):
-    field_of_study = models.SmallIntegerField(_('studieretning'), choices=FIELD_OF_STUDY_CHOICES)
+    field_of_study = models.SmallIntegerField(_('studieretning'), choices=FieldOfStudyType.ALL_CHOICES)
 
     def satisfied(self, user, registration_start):
         """ Override method """
