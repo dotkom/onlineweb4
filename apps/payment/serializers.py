@@ -6,7 +6,7 @@ from rest_framework import serializers
 from rest_framework.serializers import ValidationError
 
 from apps.payment import status
-from apps.payment.models import (Payment, PaymentDelay, PaymentPrice, PaymentRelation,
+from apps.payment.models import (FikenSale, Payment, PaymentDelay, PaymentPrice, PaymentRelation,
                                  PaymentTransaction)
 
 logger = logging.getLogger(__name__)
@@ -337,3 +337,25 @@ class PaymentTransactionUpdateSerializer(serializers.ModelSerializer):
             'payment_intent_id', 'id', 'payment_intent_secret', 'amount', 'status', 'used_stripe', 'datetime',
         )
         read_only_fields = ('id', 'payment_intent_secret', 'amount', 'status', 'used_stripe', 'datetime')
+
+
+class FikenSaleSerializer(serializers.ModelSerializer):
+    totalPaid = serializers.SerializerMethodField(method_name='get_total_paid')
+    paymentDate = serializers.SerializerMethodField(method_name='get_payment_date')
+    paymentAccount = serializers.SerializerMethodField(method_name='get_payment_account')
+
+    def get_total_paid(self, obj: FikenSale):
+        return obj.amount
+
+    def get_payment_date(self, obj: FikenSale):
+        return obj.date
+
+    def get_payment_account(self, obj: FikenSale):
+        return obj.account
+
+    class Meta:
+        model = FikenSale
+        fields = (
+            'identifier', 'date', 'kind', 'paid', 'totalPaid', 'lines', 'paymentDate', 'paymentAccount',
+        )
+        read_only = True

@@ -6,7 +6,7 @@ class PaymentConfig(AppConfig):
     verbose_name = 'Payment'
 
     def ready(self):
-        super(PaymentConfig, self).ready()
+        super().ready()
         # The following stops pycharm from nagging about unused import statement
         # noinspection PyUnresolvedReferences
         import apps.payment.signals  # noqa: F401

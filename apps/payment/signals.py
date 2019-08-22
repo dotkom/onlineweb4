@@ -1,8 +1,14 @@
-from django.db.models.signals import pre_save
+import logging
+
+from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 
 from . import status
-from .models import PaymentRelation, PaymentTransaction
+from .models import FikenSale, PaymentRelation, PaymentTransaction
+from .serializers import FikenSaleSerializer
+from .tasks import register_sale_with_fiken
+
+logger = logging.getLogger(__name__)
 
 
 @receiver(signal=pre_save, sender=PaymentRelation)
@@ -32,3 +38,13 @@ def handle_payment_transaction_status_change(sender, instance: PaymentTransactio
 
         # Pass transaction to the next strip, which is REMOVED
         instance.status = status.REMOVED
+
+
+@receiver(post_save, sender=FikenSale)
+def handle_fiken_sale_created(sender, instance: FikenSale, created=False, **kwargs):
+    if created:
+        logger.info(f'Registering {instance} with Fiken')
+        sale_data = FikenSaleSerializer(instance).data
+        register_sale_with_fiken.delay(sale_data=sale_data)
+    else:
+        logger.warning(f'{instance} updated after creation')
