@@ -369,6 +369,17 @@ class PaymentRelation(models.Model):
         can_refund, reason = self.payment.check_refund(self)
         return reason
 
+    def _create_fiken_sale(self, amount: float):
+        transaction_type = TransactionType.EVENT
+        FikenSale.objects.create(
+            stripe_key=self.payment.stripe_key,
+            original_amount=amount,
+            transaction_type=transaction_type,
+            description=f'{self.get_description()} - {self.user.get_full_name()}',
+            object_id=self.id,
+            content_type=ContentType.objects.get_for_model(self)
+        )
+
     def save(self, *args, **kwargs):
         if not self.unique_id:
             self.unique_id = str(uuid.uuid4())
@@ -458,6 +469,16 @@ class PaymentTransaction(models.Model):
     def __str__(self):
         return str(self.user) + " - " + str(self.amount) + "(" + str(self.datetime) + ")"
 
+    def _create_fiken_sale(self, amount: float):
+        FikenSale.objects.create(
+            stripe_key=StripeKey.TRIKOM,
+            original_amount=amount,
+            transaction_type=TransactionType.KIOSK,
+            description=f'{self.get_description()} - {self.user.get_full_name()}',
+            object_id=self.id,
+            content_type=ContentType.objects.get_for_model(self)
+        )
+
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
         receipt = PaymentReceipt(object_id=self.id,
@@ -529,3 +550,106 @@ class PaymentReceipt(models.Model):
 
     class Meta:
         default_permissions = ('add', 'change', 'delete')
+
+
+class FikenSale(models.Model):
+    stripe_key = models.CharField(
+        'Stripe key',
+        max_length=20,
+        choices=StripeKey.ALL_CHOICES,
+        default=StripeKey.ARRKOM,
+    )
+    transaction_type = models.CharField(
+        'Transaction Type',
+        max_length=20,
+        choices=TransactionType.ALL_CHOICES,
+    )
+    original_amount = models.FloatField()
+    kind = models.CharField(
+        'Fiken Sale kind',
+        max_length=20,
+        choices=FikenSaleKind.ALL_CHOICES,
+        default=FikenSaleKind.CASH_SALE,
+    )
+    paid = models.BooleanField(default=True)
+    created_date = models.DateTimeField(default=timezone.now)
+    description = models.CharField(max_length=200)
+
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+    """Which model the receipt is created for"""
+    object_id = models.PositiveIntegerField(null=True)
+    """Object id for the model chosen in content_type"""
+    content_object = GenericForeignKey()
+    """Helper attribute which points to the object select in object_id"""
+
+    @property
+    def identifier(self) -> str:
+        return f'{self.transaction_type.upper()}-{self.id}'
+
+    @property
+    def date(self):
+        return str(self.created_date.date())
+
+    @property
+    def account(self) -> str:
+        """
+        Fiken account related to the Stripe key used for the sale
+        """
+        if self.stripe_key == StripeKey.ARRKOM:
+            return FikenAccount.ARRKOM
+        elif self.stripe_key == StripeKey.FAGKOM:
+            return FikenAccount.FAGKOM
+        elif self.stripe_key == StripeKey.TRIKOM:
+            return FikenAccount.TRIKOM
+        elif self.stripe_key == StripeKey.PROKOM:
+            return FikenAccount.PROKOM
+        return FikenAccount.ARRKOM
+
+    @property
+    def amount(self) -> float:
+        """
+        Convert NOK kr amount to NOK øre amount.
+        Remove Stripe fee from the amount
+        """
+        stripe_fee_percentage = 0.024  # 2.4 %
+        stripe_fee = 2  # 2 NOK
+        return (self.original_amount * (1.0 - stripe_fee_percentage) - stripe_fee) * 100
+
+    @property
+    def vat_type(self) -> str:
+        if self.transaction_type == TransactionType.KIOSK:
+            return VatTypeSale.OUTSIDE
+        elif self.transaction_type == TransactionType.EVENT:
+            return VatTypeSale.OUTSIDE
+        elif self.transaction_type == TransactionType.WEB_SHOP:
+            return VatTypeSale.NONE
+        return VatTypeSale.NONE
+
+    @property
+    def vat_percentage(self) -> float:
+        if self.transaction_type in (TransactionType.EVENT, TransactionType.KIOSK):
+            return 0.0
+        elif self.transaction_type in (TransactionType.WEB_SHOP,):
+            return 0.25
+        return 0.0
+
+    @property
+    def net_amount(self) -> float:
+        return self.amount * (1.0 - self.vat_percentage)
+
+    @property
+    def vat_amount(self) -> float:
+        return self.amount * self.vat_percentage
+
+    @property
+    def lines(self):
+        """
+        Fiken Order Line description
+        """
+        return [{
+            'netPrice': self.net_amount,
+            'vat': self.vat_amount,
+            'vatType': self.vat_type,
+            'account': self.account,
+            'description': self.description,
+        }]
