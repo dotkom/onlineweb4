@@ -64,6 +64,9 @@ services:
       - OW4_GSUITE_SYNC_ENABLE_INSERT
       - OW4_GSUITE_SYNC_ENABLE_DELETE
       - OW4_VIMEO_API_TOKEN
+      - OW4_FIKEN_ORG
+      - OW4_FIKEN_USER
+      - OW4_FIKEN_PASSWORD
   webpack:
     build:
       context: .
