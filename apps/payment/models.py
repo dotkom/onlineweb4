@@ -16,6 +16,8 @@ from django.utils.translation import ugettext as _
 from apps.events.models import AttendanceEvent, Attendee
 from apps.marks.models import Suspension
 from apps.payment import status
+from apps.payment.constants import (FikenAccount, FikenSaleKind, StripeKey, TransactionType,
+                                    VatTypeSale)
 from apps.webshop.models import OrderLine
 
 User = settings.AUTH_USER_MODEL
@@ -31,14 +33,6 @@ class Payment(models.Model):
         (3, _('Utsettelse')),
     )
 
-    # Make sure these exist in settings if they are to be used.
-    STRIPE_KEY_CHOICES = (
-        ('arrkom', 'arrkom'),
-        ('prokom', 'prokom'),
-        ('trikom', 'trikom'),
-        ('fagkom', 'fagkom'),
-    )
-
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     """Which model the payment is created for. For attendance events this should be attendance_event(påmelding)."""
     object_id = models.PositiveIntegerField()
@@ -48,8 +42,8 @@ class Payment(models.Model):
     stripe_key = models.CharField(
         _('stripe key'),
         max_length=10,
-        choices=STRIPE_KEY_CHOICES,
-        default="arrkom"
+        choices=StripeKey.ALL_CHOICES,
+        default=StripeKey.ARRKOM,
     )
     """Which Stripe key to use for payments"""
 
@@ -258,6 +252,14 @@ class Payment(models.Model):
 
     def _is_type(self, model_type):
         return ContentType.objects.get_for_model(model_type) == self.content_type
+
+    @property
+    def transaction_type(self):
+        if self._is_type(AttendanceEvent):
+            return TransactionType.EVENT
+        elif self._is_type(OrderLine):
+            return TransactionType.WEB_SHOP
+        logging.error(f'Payment {self} is related to unsupported model/content-type')
 
     def __str__(self):
         return self.description()
