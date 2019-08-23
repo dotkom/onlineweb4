@@ -373,7 +373,7 @@ class PaymentRelation(models.Model):
         FikenSale.objects.create(
             stripe_key=self.payment.stripe_key,
             original_amount=amount * 100,  # Payment price is in Kr, sale amount is in Øre
-            transaction_type=self.transaction_type,
+            transaction_type=self.payment.transaction_type,
             description=f'{self.get_description()} - {self.user.get_full_name()}',
             object_id=self.id,
             content_type=ContentType.objects.get_for_model(self)
