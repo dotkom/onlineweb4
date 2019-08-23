@@ -67,6 +67,10 @@ services:
       - OW4_FIKEN_ORG
       - OW4_FIKEN_USER
       - OW4_FIKEN_PASSWORD
+      - OW4_FIKEN_ACCOUNT_ARRKOM
+      - OW4_FIKEN_ACCOUNT_PROKOM
+      - OW4_FIKEN_ACCOUNT_TRIKOM
+      - OW4_FIKEN_ACCOUNT_FAGKOM
   webpack:
     build:
       context: .
