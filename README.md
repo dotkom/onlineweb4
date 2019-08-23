@@ -36,7 +36,7 @@ On the other hand on slower machines Docker might be noticeable slower in which 
 
 ### Docker and Docker Compose
 
-To fire up the dev environment, you should use [docker-compose](https://docs.docker.com/compose/overview/), which can be installed by running `pip install docker-compose`.
+To fire up the dev environment, you should use [Docker](https://docs.docker.com/install/). Following that, you will need [docker-compose](https://docs.docker.com/compose/overview/), which can be installed following [this](https://docs.docker.com/compose/install/) guide.
 
 There is a `Makefile` located in the root directory. This can be used to manage the application without direct interaction with `docker`, `docker-compose`, et al.
 
