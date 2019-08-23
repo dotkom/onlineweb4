@@ -1,5 +1,6 @@
 from django.conf import settings
 
+
 class StripeKey:
     # Stripe keys are configured in "onlineweb4/settings/stripe.py"
     ARRKOM = 'arrkom'

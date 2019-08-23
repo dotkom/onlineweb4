@@ -372,7 +372,7 @@ class PaymentRelation(models.Model):
     def _create_fiken_sale(self, amount: float):
         FikenSale.objects.create(
             stripe_key=self.payment.stripe_key,
-            original_amount=amount,
+            original_amount=amount * 100,  # Payment price is in Kr, sale amount is in Øre
             transaction_type=self.transaction_type,
             description=f'{self.get_description()} - {self.user.get_full_name()}',
             object_id=self.id,
@@ -471,7 +471,7 @@ class PaymentTransaction(models.Model):
     def _create_fiken_sale(self, amount: float):
         FikenSale.objects.create(
             stripe_key=StripeKey.TRIKOM,
-            original_amount=amount,
+            original_amount=amount * 100,  # Transaction amount is in Kr, sale amount is in øre
             transaction_type=TransactionType.KIOSK,
             description=f'{self.get_description()} - {self.user.get_full_name()}',
             object_id=self.id,
@@ -562,7 +562,7 @@ class FikenSale(models.Model):
         max_length=20,
         choices=TransactionType.ALL_CHOICES,
     )
-    original_amount = models.FloatField()
+    original_amount = models.IntegerField()
     kind = models.CharField(
         'Fiken Sale kind',
         max_length=20,
@@ -606,12 +606,11 @@ class FikenSale(models.Model):
     @property
     def amount(self) -> float:
         """
-        Convert NOK kr amount to NOK øre amount.
         Remove Stripe fee from the amount
         """
         stripe_fee_percentage = 0.024  # 2.4 %
         stripe_fee = 2  # 2 NOK
-        return (self.original_amount * (1.0 - stripe_fee_percentage) - stripe_fee) * 100
+        return self.original_amount * (1.0 - stripe_fee_percentage) - stripe_fee
 
     @property
     def vat_type(self) -> str:
