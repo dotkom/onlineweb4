@@ -48,7 +48,9 @@ If you can't use `make`, you can fire up the dev environment by issuing `docker-
 
 If the site doesn't load properly the first time you are running the project, you might need to restart Docker once by running `docker-compose restart`.
 
-### Local installation
+Remember to run `make migrate` your first time, and after migrations have been made.
+
+#### Alternative to Docker: Local installation
 
 A few packages are required to build our Python depedencies: 
 
