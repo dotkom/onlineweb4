@@ -1,5 +1,7 @@
-# Make sure these exist in settings if they are to be used.
+from django.conf import settings
+
 class StripeKey:
+    # Stripe keys are configured in "onlineweb4/settings/stripe.py"
     ARRKOM = 'arrkom'
     PROKOM = 'prokom'
     TRIKOM = 'trikom'
@@ -84,10 +86,11 @@ class VatTypePurchase:
 
 
 class FikenAccount:
-    ARRKOM = '1960:10003'
-    PROKOM = '1960:10002'
-    TRIKOM = '1960:10001'
-    FAGKOM = '1960:10004'
+    # Fiken accounts are configured in "onlineweb4/settings/fiken.py"
+    ARRKOM = settings.OW4_FIKEN_ACCOUNT_ARRKOM
+    PROKOM = settings.OW4_FIKEN_ACCOUNT_PROKOM
+    TRIKOM = settings.OW4_FIKEN_ACCOUNT_TRIKOM
+    FAGKOM = settings.OW4_FIKEN_ACCOUNT_FAGKOM
 
     ALL_ACCOUNTS = (ARRKOM, PROKOM, TRIKOM, FAGKOM,)
     ALL_CHOICES = [(a, a) for a in ALL_ACCOUNTS]

@@ -18,6 +18,7 @@ logger = logging.getLogger(__name__)
 @app.task(bind=True)
 def register_sale_with_fiken(_, sale_data: dict):
     logger.info('Starting Fiken register')
+    sale_identifier = sale_data.get("identifier")
     if FIKEN_USER and FIKEN_PASSWORD and FIKEN_ORG:
         auth = HTTPBasicAuth(FIKEN_USER, FIKEN_PASSWORD)
         headers = {'Content-type': 'application/json', 'Accept': 'application/json'}
@@ -28,6 +29,10 @@ def register_sale_with_fiken(_, sale_data: dict):
             json=sale_data,
         )
         if response.ok:
-            logger.info(f'Successfully registered sale {sale_data.get("identifier")} in Fiken')
+            logger.info(f'Successfully registered sale {sale_identifier} in Fiken')
         else:
-            logger.warning(f'Failed at registering sale {sale_data.get("identifier")} in Fiken')
+            logger.warning(f'Failed at registering sale {sale_identifier} in Fiken')
+            logger.warning(f'Fiken request failed with status code: {response.status_code} and '
+                           f'message {response.text}')
+    else:
+        logger.warning(f'Fiken is not configured correctly. Could not register sale {sale_identifier}')

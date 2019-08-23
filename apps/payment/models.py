@@ -370,11 +370,10 @@ class PaymentRelation(models.Model):
         return reason
 
     def _create_fiken_sale(self, amount: float):
-        transaction_type = TransactionType.EVENT
         FikenSale.objects.create(
             stripe_key=self.payment.stripe_key,
             original_amount=amount,
-            transaction_type=transaction_type,
+            transaction_type=self.transaction_type,
             description=f'{self.get_description()} - {self.user.get_full_name()}',
             object_id=self.id,
             content_type=ContentType.objects.get_for_model(self)
@@ -557,7 +556,6 @@ class FikenSale(models.Model):
         'Stripe key',
         max_length=20,
         choices=StripeKey.ALL_CHOICES,
-        default=StripeKey.ARRKOM,
     )
     transaction_type = models.CharField(
         'Transaction Type',
@@ -572,7 +570,7 @@ class FikenSale(models.Model):
         default=FikenSaleKind.CASH_SALE,
     )
     paid = models.BooleanField(default=True)
-    created_date = models.DateTimeField(default=timezone.now)
+    created_date = models.DateTimeField(auto_now_add=True)
     description = models.CharField(max_length=200)
 
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)

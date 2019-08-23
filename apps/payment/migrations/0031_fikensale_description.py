@@ -13,7 +13,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='fikensale',
             name='description',
-            field=models.CharField(default='TEST', max_length=200),
+            field=models.CharField(default='', max_length=200),
             preserve_default=False,
         ),
     ]
