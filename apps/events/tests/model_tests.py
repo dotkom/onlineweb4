@@ -11,12 +11,12 @@ from apps.authentication.models import AllowedUsername
 from apps.authentication.models import OnlineUser as User
 from apps.companyprofile.models import Company
 from apps.events.models import (AttendanceEvent, Attendee, CompanyEvent, Event, FieldOfStudyRule,
-                                GradeRule, GroupRestriction, Reservation, Reservee, RuleBundle,
-                                UserGroupRule)
+                                GradeRule, GroupRestriction, Registration, Reservation, Reservee,
+                                RuleBundle, UserGroupRule)
 from apps.feedback.models import Feedback, FeedbackRelation
 from apps.marks.models import DURATION, Mark, MarkUser
 
-from .utils import generate_attendance_event, generate_attendee
+from .utils import generate_attendance_event, generate_attendee, generate_registration
 
 
 class EventModelTest(TestCase):
@@ -39,10 +39,14 @@ class EventModelTest(TestCase):
 class AttendanceEventModelTest(TestCase):
     def setUp(self):
         self.event = G(Event, title='Sjakkturnering')
-        self.attendance_event = G(
-            AttendanceEvent, event=self.event, max_capacity=2)
-        self.user = G(User, username='ola123', ntnu_username='ola123ntnu',
-                      first_name="ola", last_name="nordmann")
+        self.attendance_event = G(AttendanceEvent, event=self.event)
+        self.registration = G(
+            Registration,
+            attendance=self.attendance_event,
+            description='Påmelding folk som ikke kan sjakk',
+            max_capacity=2,
+        )
+        self.user = G(User, username='ola123', ntnu_username='ola123ntnu', first_name="ola", last_name="nordmann")
         # Setting registration start 1 hour in the past, end one week in the future.
         self.now = timezone.now()
         self.attendance_event.registration_start = self.now - \
@@ -64,8 +68,9 @@ class AttendanceEventModelTest(TestCase):
             content_type=ContentType.objects.get_for_model(Event)
         )
 
-    def add_reservation(self, attendance_event):
-        return G(Reservation, attendance_event=attendance_event)
+    def add_reservation(self, registration: Registration) -> Reservation:
+        reservation = G(Reservation, registration=registration)
+        return reservation
 
     def test_attendanceEventUnicode_IsCorrect(self):
         self.assertEqual(self.attendance_event.__str__(), 'Sjakkturnering')
@@ -95,28 +100,31 @@ class AttendanceEventModelTest(TestCase):
 
     def test_has_reservation(self):
         attendance_event = self.create_attendance_event()
+        registration: Registration = G(Registration, attendance=attendance_event)
 
+        self.assertFalse(registration.has_reservation)
         self.assertFalse(attendance_event.has_reservation)
 
-        self.add_reservation(attendance_event)
+        self.add_reservation(registration)
 
+        self.assertTrue(registration.has_reservation)
         self.assertTrue(attendance_event.has_reservation)
 
     def test_attendee_waitlist_qs(self):
-        G(Attendee, event=self.attendance_event, user=self.user)
+        G(Attendee, event=self.attendance_event, registration=self.registration, user=self.user)
         user1 = G(User, username="jan", first_name="jan")
-        G(Attendee, event=self.attendance_event, user=user1)
+        G(Attendee, event=self.attendance_event, registration=self.registration, user=user1)
         user2 = G(User, username="per", first_name="per")
-        G(Attendee, event=self.attendance_event, user=user2)
+        G(Attendee, event=self.attendance_event, registration=self.registration, user=user2)
         user3 = G(User, username="gro", first_name="gro")
-        G(Attendee, event=self.attendance_event, user=user3)
-        self.assertEqual(self.attendance_event.max_capacity, 2)
+        G(Attendee, event=self.attendance_event, registration=self.registration, user=user3)
+        self.assertEqual(self.registration.max_capacity, 2)
         self.assertEqual(self.attendance_event.number_of_attendees, 2)
         self.assertEqual(self.attendance_event.number_on_waitlist, 2)
 
     def test_reserved_seats(self):
         reservation = G(
-            Reservation, attendance_event=self.attendance_event, seats=2)
+            Reservation, attendance_event=self.attendance_event, registration=self.registration, seats=2)
         G(Reservee, reservation=reservation, name="jan",
           note="jan er kul", allergies="allergi1")
         self.assertEqual(
@@ -127,16 +135,17 @@ class AttendanceEventModelTest(TestCase):
             self.attendance_event.number_of_reserved_seats_taken, 2)
 
     def test_number_of_taken_seats(self):
-        G(Attendee, event=self.attendance_event, user=self.user, attended=False)
+        G(Attendee, event=self.attendance_event, registration=self.registration, user=self.user, attended=False)
         # Increase event capacity so we have more room to test with
-        self.attendance_event.max_capacity = 5
+        self.registration.max_capacity = 5
+        self.registration.save()
+        self.assertEqual(self.attendance_event.number_of_attendees, 1)
         self.assertEqual(self.attendance_event.number_of_attendees, 1)
         # Make a reservation, for 2 seats
-        reservation = G(
-            Reservation, attendance_event=self.attendance_event, seats=2)
+        reservation = G(Reservation, registration=self.registration, seats=2)
         G(Reservee, reservation=reservation, name="jan",
           note="jan er kul", allergies="allergi1")
-        self.assertEqual(self.attendance_event.max_capacity, 5)
+        self.assertEqual(self.registration.max_capacity, 5)
         self.assertEqual(self.attendance_event.number_of_attendees, 1)
         self.assertEqual(
             self.attendance_event.number_of_reserved_seats_taken, 1)
@@ -148,7 +157,7 @@ class AttendanceEventModelTest(TestCase):
             self.attendance_event.number_of_reserved_seats_taken, 2)
         self.assertEqual(self.attendance_event.number_of_seats_taken, 3)
         user3 = G(User, username="gro", first_name="gro")
-        G(Attendee, event=self.attendance_event, user=user3)
+        G(Attendee, event=self.attendance_event, registration=self.registration, user=user3)
         self.assertEqual(self.attendance_event.number_of_attendees, 2)
         self.assertEqual(self.attendance_event.number_of_seats_taken, 4)
 
@@ -186,7 +195,7 @@ class AttendanceEventModelTest(TestCase):
         self.rulebundle.field_of_study_rules.add(self.fosrule)
         self.assertEqual(str(self.rulebundle),
                          "Bachelor i Informatikk etter 24 timer")
-        self.attendance_event.rule_bundles.add(self.rulebundle)
+        self.registration.rule_bundles.add(self.rulebundle)
 
         # Status should be negative, and indicate that the restriction is a grade rule
         response = self.attendance_event.is_eligible_for_signup(self.user)
@@ -216,7 +225,7 @@ class AttendanceEventModelTest(TestCase):
         self.rulebundle = G(RuleBundle, description='')
         self.rulebundle.grade_rules.add(self.graderule)
         self.assertEqual(str(self.rulebundle), "1. klasse etter 24 timer")
-        self.attendance_event.rule_bundles.add(self.rulebundle)
+        self.registration.rule_bundles.add(self.rulebundle)
 
         # Status should be negative, and indicate that the restriction is a grade rule
         response = self.attendance_event.is_eligible_for_signup(self.user)
@@ -248,7 +257,7 @@ class AttendanceEventModelTest(TestCase):
         self.rulebundle = G(RuleBundle, description='')
         self.rulebundle.user_group_rules.add(self.grouprule)
         self.assertEqual(str(self.rulebundle), "Testgroup etter 24 timer")
-        self.attendance_event.rule_bundles.add(self.rulebundle)
+        self.registration.rule_bundles.add(self.rulebundle)
 
         # Status should be negative, and indicate that the restriction is a grade rule
         response = self.attendance_event.is_eligible_for_signup(self.user)
@@ -283,7 +292,7 @@ class AttendanceEventModelTest(TestCase):
         self.rulebundle = G(RuleBundle, description='')
         self.rulebundle.grade_rules.add(self.graderule)
         self.rulebundle.user_group_rules.add(self.grouprule)
-        self.attendance_event.rule_bundles.add(self.rulebundle)
+        self.registration.rule_bundles.add(self.rulebundle)
         # Move registration start into the future
         self.attendance_event.registration_start = self.now + \
             datetime.timedelta(hours=1)
@@ -315,48 +324,52 @@ class AttendanceEventModelTest(TestCase):
 
 class WaitlistAttendanceEventTest(TestCase):
     def setUp(self):
-        self.attendance_event = generate_attendance_event(max_capacity=2)
+        self.attendance_event = generate_attendance_event()
+        self.registration = generate_registration(max_capacity=2)
+
+    def generate_attendee(self, event: Event, username: str) -> Attendee:
+        generate_attendee(event, username, self.registration)
 
     def test_changing_max_capacity_with_no_guestlist_should_do_nothing(self):
         for i in range(1):
-            generate_attendee(self.attendance_event.event, 'user' + str(i))
+            self.generate_attendee(self.attendance_event.event, 'user' + str(i))
 
-        self.attendance_event.max_capacity = 4
-        self.attendance_event.save()
+        self.registration.max_capacity = 4
+        self.registration.save()
 
         self.assertEqual(len(mail.outbox), 0)
 
     def test_lowering_max_capacity(self):
         for i in range(1):
-            generate_attendee(self.attendance_event.event, 'user' + str(i))
+            self.generate_attendee(self.attendance_event.event, 'user' + str(i))
 
-        self.attendance_event.max_capacity = 1
-        self.attendance_event.save()
+        self.registration.max_capacity = 1
+        self.registration.save()
 
         self.assertEqual(len(mail.outbox), 0)
 
     def test_changing_max_capacity_should_notify_waitlist(self):
         for i in range(4):
-            generate_attendee(self.attendance_event.event, 'user' + str(i))
+            self.generate_attendee(self.attendance_event.event, 'user' + str(i))
 
-        self.attendance_event.max_capacity = 3
-        self.attendance_event.save()
+        self.registration.max_capacity = 3
+        self.registration.save()
 
         self.assertEqual(len(mail.outbox), 1)
 
     def test_changing_max_capacity_should_notify_waitlist_with_capacity_larger_than_guestlist(self):
         for i in range(4):
-            generate_attendee(self.attendance_event.event, 'user' + str(i))
+            self.generate_attendee(self.attendance_event.event, 'user' + str(i))
 
-        self.attendance_event.max_capacity = 5
-        self.attendance_event.save()
+        self.registration.max_capacity = 5
+        self.registration.save()
 
         self.assertEqual(len(mail.outbox), 2)
 
     def test_changing_reservation_should_notify_waitlist(self):
-        reservation = G(Reservation, attendance_event=self.attendance_event, seats=2)
+        reservation = G(Reservation, registration=self.registration, seats=2)
         for i in range(4):
-            generate_attendee(self.attendance_event.event, 'user' + str(i))
+            self.generate_attendee(self.attendance_event.event, 'user' + str(i))
 
         reservation.seats = 1
         reservation.save()
@@ -364,14 +377,14 @@ class WaitlistAttendanceEventTest(TestCase):
         self.assertEqual(len(mail.outbox), 1)
 
     def test_changing_reservation_and_max_capacity_should_notify_waitlist(self):
-        reservation = G(Reservation, attendance_event=self.attendance_event, seats=2)
+        reservation = G(Reservation, registration=self.registration, seats=2)
         for i in range(5):
-            generate_attendee(self.attendance_event.event, 'user' + str(i))
+            self.generate_attendee(self.attendance_event.event, 'user' + str(i))
 
         reservation.seats = 1
         reservation.save()
-        self.attendance_event.max_capacity = 3
-        self.attendance_event.save()
+        self.registration.max_capacity = 3
+        self.registration.save()
 
         self.assertEqual(len(mail.outbox), 2)
 
@@ -383,9 +396,10 @@ class AttendeeModelTest(TestCase):
             first_name="ola", last_name="nordmann"
         )
         self.attendance_event = generate_attendance_event()
+        self.registration = G(Registration, attendance=self.attendance_event)
 
     def test_attendee_unicode_is_correct(self):
-        attendee = G(Attendee, event=self.attendance_event,
+        attendee = G(Attendee, event=self.attendance_event, registration=self.registration,
                      user=self.user, attended=False)
 
         self.assertEqual(attendee.__str__(), self.user.get_full_name())

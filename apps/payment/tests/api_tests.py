@@ -8,8 +8,8 @@ from django.utils import timezone
 from django_dynamic_fixture import G
 from rest_framework import status
 
-from apps.events.tests.utils import (attend_user_to_event, generate_event, generate_user,
-                                     pay_for_event)
+from apps.events.tests.utils import (attend_user_to_event, generate_event, generate_registration,
+                                     generate_user, pay_for_event)
 from apps.oidc_provider.test import OIDCTestCase
 from apps.payment import status as payment_status
 
@@ -70,9 +70,10 @@ class PaymentRelationTestCase(OIDCTestCase):
         self.event.attendance_event.unattend_deadline = timezone.now() + timezone.timedelta(days=1)
         self.event.save()
         self.event.attendance_event.save()
+        self.registration = generate_registration(attendance=self.event.attendance_event)
 
         self.payment = generate_event_payment(self.event)
-        self.attendee = attend_user_to_event(self.event, self.user)
+        self.attendee = attend_user_to_event(self.event, self.user, self.registration)
 
     def test_user_can_pay_for_an_event(self):
         response = self.client.post(self.url, {
@@ -140,7 +141,7 @@ class PaymentRelationTestCase(OIDCTestCase):
 
     def test_user_cannot_view_other_users_payments(self):
         other_user = generate_user(username='other_user')
-        attend_user_to_event(self.event, other_user)
+        attend_user_to_event(self.event, other_user, self.registration)
         payment_relation = pay_for_event(self.event, other_user)
 
         response = self.client.get(self.id_url(payment_relation.id), **self.headers)

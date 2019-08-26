@@ -6,8 +6,8 @@ from guardian.admin import GuardedModelAdmin
 from reversion.admin import VersionAdmin
 
 from apps.events.models import (AttendanceEvent, Attendee, CompanyEvent, Event, Extras,
-                                FieldOfStudyRule, GradeRule, GroupRestriction, Reservation,
-                                Reservee, RuleBundle, UserGroupRule)
+                                FieldOfStudyRule, GradeRule, GroupRestriction, Registration,
+                                Reservation, Reservee, RuleBundle, UserGroupRule)
 from apps.feedback.admin import FeedbackRelationInline
 
 
@@ -126,11 +126,27 @@ class UserGroupRuleAdmin(VersionAdmin):
     model = UserGroupRule
 
 
+class RegistrationInlineAdmin(admin.StackedInline):
+    model = Registration
+    extra = 0
+    filter_horizontal = ('rule_bundles',)
+
+
+@admin.register(AttendanceEvent)
+class AttendanceEventAdmin(admin.ModelAdmin):
+    inlines = (RegistrationInlineAdmin, )
+    classes = ('grp-collapse grp-open',)  # style
+    inline_classes = ('grp-collapse grp-open',)  # style
+    exclude = ("marks_has_been_set",)
+
+    group_owned_objects_field = 'event__organizer'
+    user_can_access_owned_by_group_objects_only = True
+
+
 class AttendanceEventInline(admin.StackedInline):
     model = AttendanceEvent
     max_num = 1
     extra = 0
-    filter_horizontal = ('rule_bundles',)
     classes = ('grp-collapse grp-open',)  # style
     inline_classes = ('grp-collapse grp-open',)  # style
     exclude = ("marks_has_been_set",)
@@ -164,11 +180,11 @@ class ReservationAdmin(GuardedModelAdmin, VersionAdmin):
     inlines = (ReserveeInline,)
     max_num = 1
     extra = 0
-    list_display = ('attendance_event', '_number_of_seats_taken', 'seats', '_attendees', '_max_capacity')
+    list_display = ('registration', '_number_of_seats_taken', 'seats', '_attendees', '_max_capacity')
     classes = ('grp-collapse grp-open',)  # style
     inline_classes = ('grp-collapse grp-open',)  # style
     user_can_access_owned_by_group_objects_only = True
-    group_owned_objects_field = 'attendance_event__event__organizer'
+    group_owned_objects_field = 'registration__attendance__event__organizer'
 
     def _number_of_seats_taken(self, obj):
         return obj.number_of_seats_taken
@@ -183,8 +199,8 @@ class ReservationAdmin(GuardedModelAdmin, VersionAdmin):
     _max_capacity.short_description = _("Arrangementets maks-kapasitet")
 
     def save_model(self, request, obj, form, change):
-        attendance_event = AttendanceEvent.objects.get(pk=obj.attendance_event.event)
-        number_of_free_seats = attendance_event.max_capacity - attendance_event.number_of_attendees
+        registration = Registration.objects.get(pk=obj.registration_id)
+        number_of_free_seats = registration.max_capacity - registration.number_of_attendees
         if number_of_free_seats < obj.seats:
             obj.seats = number_of_free_seats
             self.message_user(request, _(

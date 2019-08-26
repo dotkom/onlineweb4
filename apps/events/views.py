@@ -25,7 +25,7 @@ from watson import search as watson
 from apps.authentication.models import OnlineUser as User
 from apps.events.filters import AttendanceEventFilter, EventDateFilter
 from apps.events.forms import CaptchaForm
-from apps.events.models import AttendanceEvent, Attendee, CompanyEvent, Event
+from apps.events.models import AttendanceEvent, Attendee, CompanyEvent, Event, Registration
 from apps.events.pdf_generator import EventPDF
 from apps.events.serializers import (AttendanceEventSerializer,
                                      AttendeeRegistrationCreateSerializer,
@@ -91,8 +91,9 @@ def get_attendee(attendee_id):
 
 
 @login_required
-def attendEvent(request, event_id):
-    event = get_object_or_404(Event, pk=event_id)
+def attendEvent(request, event_id: int, registration_id: int):
+    registration: Registration = get_object_or_404(Registration, pk=registration_id)
+    event: Event = get_object_or_404(Event, pk=event_id)
 
     if not event.is_attendance_event():
         messages.error(request, _("Dette er ikke et påmeldingsarrangement."))
@@ -100,6 +101,10 @@ def attendEvent(request, event_id):
 
     if not request.POST:
         messages.error(request, _('Vennligst fyll ut skjemaet.'))
+        return redirect(event)
+
+    if not registration.attendance.event_id == event.id:
+        messages.error(request, _("Denne registreringen er ikke gyldig for dette arrangementet"))
         return redirect(event)
 
     form = CaptchaForm(request.POST, user=request.user)
@@ -115,10 +120,11 @@ def attendEvent(request, event_id):
     # If not, an error message will be present in the returned dict
     attendance_event = event.attendance_event
 
-    response = event.attendance_event.is_eligible_for_signup(request.user)
+    event_response = attendance_event.is_eligible_for_signup(request.user)
+    registration_response = registration.rules_satisfied(request.user)
 
-    if response['status']:
-        attendee = Attendee(event=attendance_event, user=request.user)
+    if event_response['status'] and registration_response['status']:
+        attendee = Attendee(event=attendance_event, user=request.user, registration=registration)
         if 'note' in form.cleaned_data:
             attendee.note = form.cleaned_data['note']
         attendee.show_as_attending_event = request.user.get_visible_as_attending_events()
@@ -130,7 +136,7 @@ def attendEvent(request, event_id):
 
         return redirect(event)
     else:
-        messages.error(request, response['message'])
+        messages.error(request, event_response['message'])
         return redirect(event)
 
 

@@ -216,10 +216,6 @@ def handle_attendance_event_detail(event, user, context):
     show_as_attending = False
     user_setting_show_as_attending = False
 
-    if attendance_event.rule_bundles:
-        for rule_bundle in attendance_event.rule_bundles.all():
-            rules.append(rule_bundle.rule_strings)
-
     if user.is_authenticated:
         user_anonymous = False
         if attendance_event.is_attendee(user):

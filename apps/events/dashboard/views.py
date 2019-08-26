@@ -363,8 +363,10 @@ def event_change_attendees(request, event_id, active_tab='attendees'):
 
     context['extras'] = extras
     context['change_event_form'] = dashboard_forms.ChangeEventForm(instance=event)
-
-    return render(request, 'events/dashboard/details.html', context)
+    context['change_registration_forms'] = [
+        dashboard_forms.ChangeRegistrationForm(instance=registration)
+        for registration in event.attendance_event.registrations.all()
+    ]
 
 
 def count_extras(event_extras, attendance_list, attendees):
@@ -388,22 +390,18 @@ def event_change_reservation(request, event_id):
     context = _create_details_context(request, event_id)
     context['active_tab'] = 'reservation'
 
-    event = context['event']
-
-    if not event.is_attendance_event():
-        messages.error(request, _("Dette er ikke et påmeldingsarrangement."))
-        return redirect('dashboard_event_details_active', event_id=event.id, active_tab='details')
+    registration = context['registration']
 
     if request.method == 'POST':
-        if not event.attendance_event.has_reservation:
+        if not registration.has_reservation:
             reservation = Reservation(
-                attendance_event=event.attendance_event,
+                registration=registration,
                 seats=0
             )
             reservation.save()
             context['change_reservation_form'] = dashboard_forms.ChangeReservationForm(instance=reservation)
         else:
-            form = dashboard_forms.ChangeReservationForm(request.POST, instance=event.attendance_event.reserved_seats)
+            form = dashboard_forms.ChangeReservationForm(request.POST, instance=registration.reserved_seats)
             if form.is_valid():
                 messages.success(request, _("Reservasjonen ble lagret."))
                 form.save()

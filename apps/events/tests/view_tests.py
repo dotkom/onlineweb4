@@ -14,10 +14,18 @@ from rest_framework import status
 from apps.authentication.models import AllowedUsername
 from apps.payment.models import PaymentDelay, PaymentPrice
 
-from ..models import TYPE_CHOICES, AttendanceEvent, Event, Extras, GroupRestriction
+from ..models import TYPE_CHOICES, AttendanceEvent, Event, Extras, GroupRestriction, Registration
 from .utils import (add_payment_delay, add_to_arrkom, add_to_bedkom, add_to_trikom,
                     attend_user_to_event, generate_attendee, generate_event, generate_payment,
-                    generate_user, pay_for_event)
+                    generate_registration, generate_user, pay_for_event)
+
+
+def get_attend_url(event_id: int, registration_id: int):
+    return reverse('attend_event', args=[event_id, registration_id])
+
+
+def get_unattend_url(event_id: int):
+    return reverse('unattend_event', args=[event_id])
 
 
 class EventsTestMixin:
@@ -31,6 +39,7 @@ class EventsTestMixin:
         self.client.force_login(self.user)
 
         self.event = generate_event()
+        self.registration = generate_registration(attendance=self.event.attendance_event)
         self.event_url = reverse(
             'events_details', args=(self.event.id, self.event.slug))
 
@@ -116,7 +125,7 @@ class EventsDetailPayment(EventsTestMixin, TestCase):
 
     def test_payment_attended(self):
         payment = generate_payment(self.event)
-        attend_user_to_event(self.event, self.user)
+        attend_user_to_event(self.event, self.user, self.registration)
 
         response = self.client.get(self.event_url)
         context = response.context
@@ -130,7 +139,7 @@ class EventsDetailPayment(EventsTestMixin, TestCase):
 
     def test_payment_paid(self):
         payment = generate_payment(self.event)
-        attend_user_to_event(self.event, self.user)
+        attend_user_to_event(self.event, self.user, self.registration)
         payment_relation = pay_for_event(self.event, self.user)
 
         response = self.client.get(self.event_url)
@@ -146,7 +155,7 @@ class EventsDetailPayment(EventsTestMixin, TestCase):
     def test_payment_attended_with_delay(self):
         payment = generate_payment(self.event)
         payment_delay = add_payment_delay(payment, self.user)
-        attend_user_to_event(self.event, self.user)
+        attend_user_to_event(self.event, self.user, self.registration)
 
         response = self.client.get(self.event_url)
         context = response.context
@@ -191,7 +200,7 @@ class EventsDetailExtras(EventsTestMixin, TestCase):
                          'Du er ikke påmeldt dette arrangementet.')
 
     def test_invalid_extras(self):
-        attend_user_to_event(self.event, self.user)
+        attend_user_to_event(self.event, self.user, self.registration)
 
         response = self.extras_post(self.event_url, 1000)
 
@@ -203,7 +212,7 @@ class EventsDetailExtras(EventsTestMixin, TestCase):
         extras = G(Extras)
         event = G(Event)
         G(AttendanceEvent, event=event, extras=[extras])
-        attend_user_to_event(event, self.user)
+        attend_user_to_event(event, self.user, self.registration)
         event_url = reverse(
             'events_details', args=(event.id, event.slug))
 
@@ -217,7 +226,7 @@ class EventsDetailExtras(EventsTestMixin, TestCase):
 class EventsAttend(EventsTestMixin, TestCase):
 
     def test_attend_404(self):
-        url = reverse('attend_event', args=(1000,))
+        url = get_attend_url(1000, 2000)
 
         response = self.client.post(url)
 
@@ -225,7 +234,7 @@ class EventsAttend(EventsTestMixin, TestCase):
 
     def test_attend_not_attendance_event(self):
         event = G(Event)
-        url = reverse('attend_event', args=(event.id,))
+        url = get_attend_url(event.id, self.registration.id)
 
         response = self.client.post(url, follow=True)
 
@@ -234,7 +243,7 @@ class EventsAttend(EventsTestMixin, TestCase):
             'Dette er ikke et påmeldingsarrangement.', response)
 
     def test_attend_get(self):
-        url = reverse('attend_event', args=(self.event.id,))
+        url = get_attend_url(self.event.id, self.registration.id)
 
         response = self.client.get(url, follow=True)
 
@@ -243,7 +252,7 @@ class EventsAttend(EventsTestMixin, TestCase):
 
     def test_attend_missing_note(self):
         form_params = {'g-recaptcha-response': 'PASSED'}
-        url = reverse('attend_event', args=(self.event.id,))
+        url = get_attend_url(self.event.id, self.registration.id)
 
         response = self.client.post(url, form_params, follow=True)
 
@@ -252,7 +261,7 @@ class EventsAttend(EventsTestMixin, TestCase):
 
     def test_attend_not_accepted_rules(self):
         form_params = {'g-recaptcha-response': 'PASSED'}
-        url = reverse('attend_event', args=(self.event.id,))
+        url = get_attend_url(self.event.id, self.registration.id)
         G(AllowedUsername, username=self.user.ntnu_username,
           expiration_date=timezone.now() + timedelta(days=1))
 
@@ -264,7 +273,7 @@ class EventsAttend(EventsTestMixin, TestCase):
     @patch("captcha.fields.client.submit")
     def test_attend_invalid_captcha(self, mocked_submit):
         mocked_submit.return_value = RecaptchaResponse(is_valid=False)
-        url = reverse('attend_event', args=(self.event.id,))
+        url = get_attend_url(self.event.id, self.registration.id)
         form_params = {'g-recaptcha-response': 'WRONG'}
         G(AllowedUsername, username=self.user.ntnu_username,
           expiration_date=timezone.now() + timedelta(days=1))
@@ -281,10 +290,15 @@ class EventsAttend(EventsTestMixin, TestCase):
     def test_attend_before_registration_start(self, mocked_submit):
         mocked_submit.return_value = RecaptchaResponse(is_valid=True)
         event = G(Event)
-        G(AttendanceEvent, event=event,
-          registration_start=timezone.now() + timedelta(days=1),
-          registration_end=timezone.now() + timedelta(days=2))
-        url = reverse('attend_event', args=(event.id,))
+        attendance_event: AttendanceEvent = G(
+            AttendanceEvent,
+            event=event,
+            registration_start=timezone.now() + timedelta(days=1),
+            registration_end=timezone.now() + timedelta(days=2)
+        )
+        registration: Registration = G(Registration, attendance=attendance_event)
+
+        url = get_attend_url(event.id, registration.id)
 
         form_params = {'g-recaptcha-response': 'PASSED'}
         G(AllowedUsername, username=self.user.ntnu_username,
@@ -300,14 +314,16 @@ class EventsAttend(EventsTestMixin, TestCase):
     @patch("captcha.fields.client.submit")
     def test_attend_successfully(self, mocked_submit):
         mocked_submit.return_value = RecaptchaResponse(is_valid=True)
-        event = G(Event)
-        G(
+        event: Event = G(Event)
+        attendance_event: AttendanceEvent = G(
             AttendanceEvent,
             event=event,
             registration_start=timezone.now() - timedelta(days=1),
             registration_end=timezone.now() + timedelta(days=1)
         )
-        url = reverse('attend_event', args=(event.id,))
+        registration: Registration = G(Registration, attendance=attendance_event)
+
+        url = get_attend_url(event.id, registration.id)
 
         form_params = {'g-recaptcha-response': 'PASSED'}
         G(AllowedUsername, username=self.user.ntnu_username,
@@ -323,14 +339,16 @@ class EventsAttend(EventsTestMixin, TestCase):
     @patch("captcha.fields.client.submit")
     def test_attend_twice(self, mocked_submit):
         mocked_submit.return_value = RecaptchaResponse(is_valid=True)
-        event = G(Event)
-        G(
+        event: Event = G(Event)
+        attendance_event: AttendanceEvent = G(
             AttendanceEvent,
             event=event,
             registration_start=timezone.now() - timedelta(days=1),
             registration_end=timezone.now() + timedelta(days=1)
         )
-        url = reverse('attend_event', args=(event.id,))
+        registration: Registration = G(Registration, attendance=attendance_event)
+
+        url = get_attend_url(event.id, registration.id)
 
         form_params = {'g-recaptcha-response': 'PASSED'}
         G(AllowedUsername, username=self.user.ntnu_username,
@@ -348,13 +366,18 @@ class EventsAttend(EventsTestMixin, TestCase):
     @patch("captcha.fields.client.submit")
     def test_attend_with_payment_creates_paymentdelay(self, mocked_submit):
         mocked_submit.return_value = RecaptchaResponse(is_valid=True)
-        event = G(Event)
-        G(AttendanceEvent, event=event,
+        event: Event = G(Event)
+        attendance_event: AttendanceEvent = G(
+            AttendanceEvent,
+            event=event,
             registration_start=timezone.now() - timedelta(days=1),
-            registration_end=timezone.now() + timedelta(days=1))
+            registration_end=timezone.now() + timedelta(days=1)
+        )
+        registration: Registration = G(Registration, attendance=attendance_event)
+
         self.event_payment = generate_payment(event, payment_type=3, delay=timedelta(days=2))
         G(PaymentPrice, price=200, payment=self.event_payment)
-        url = reverse('attend_event', args=(event.id,))
+        url = get_attend_url(event.id, registration.id)
 
         form_params = {'g-recaptcha-response': 'PASSED'}
         G(AllowedUsername, username=self.user.ntnu_username,
@@ -369,7 +392,7 @@ class EventsAttend(EventsTestMixin, TestCase):
 
 class EventsUnattend(EventsTestMixin, TestCase):
     def test_unattend_not_attended(self):
-        url = reverse('unattend_event', args=(self.event.id,))
+        url = get_unattend_url(self.event.id)
 
         response = self.client.post(url, follow=True)
 
@@ -377,23 +400,17 @@ class EventsUnattend(EventsTestMixin, TestCase):
         self.assertInMessages(
             'Du er ikke påmeldt dette arrangementet.', response)
 
-    def test_unattend_not_attendance_event(self):
-        event = G(Event)
-        url = reverse('unattend_event', args=(event.id,))
-
-        response = self.client.post(url, follow=True)
-
-        self.assertRedirects(response, event.get_absolute_url())
-        self.assertInMessages(
-            'Dette er ikke et påmeldingsarrangement.', response)
-
     def test_unattend_deadline_yesterday(self):
-        event = G(Event)
-        G(AttendanceEvent, event=event,
-          unattend_deadline=timezone.now() - timedelta(days=1))
-        attend_user_to_event(event, self.user)
-        url = reverse('unattend_event', args=(event.id,))
+        event: Event = G(Event)
+        attendance: AttendanceEvent = G(
+            AttendanceEvent,
+            event=event,
+            unattend_deadline=timezone.now() - timedelta(days=1),
+        )
+        registration: Registration = G(Registration, attendance=attendance)
+        attend_user_to_event(event, self.user, registration)
 
+        url = get_unattend_url(event.id)
         response = self.client.post(url, follow=True)
 
         self.assertRedirects(response, event.get_absolute_url())
@@ -401,12 +418,16 @@ class EventsUnattend(EventsTestMixin, TestCase):
             'Avmeldingsfristen for dette arrangementet har utløpt.', response)
 
     def test_unattend_event_started(self):
-        event = G(Event, event_start=timezone.now() - timedelta(days=1))
-        G(AttendanceEvent, event=event,
-          unattend_deadline=timezone.now() + timedelta(days=1))
-        attend_user_to_event(event, self.user)
-        url = reverse('unattend_event', args=(event.id,))
+        event: Event = G(Event, event_start=timezone.now() - timedelta(days=1))
+        attendance: AttendanceEvent = G(
+            AttendanceEvent,
+            event=event,
+            unattend_deadline=timezone.now() + timedelta(days=1),
+        )
+        registration: Registration = G(Registration, attendance=attendance)
+        attend_user_to_event(event, self.user, registration)
 
+        url = get_unattend_url(event.id)
         response = self.client.post(url, follow=True)
 
         self.assertRedirects(response, event.get_absolute_url())
@@ -414,11 +435,16 @@ class EventsUnattend(EventsTestMixin, TestCase):
             'Dette arrangementet har allerede startet.', response)
 
     def test_unattend_successfully(self):
-        event = G(Event, event_start=timezone.now() + timedelta(days=1))
-        G(AttendanceEvent, event=event,
-          unattend_deadline=timezone.now() + timedelta(days=1))
-        attend_user_to_event(event, self.user)
-        url = reverse('unattend_event', args=(event.id,))
+        event: Event = G(Event, event_start=timezone.now() + timedelta(days=1))
+        attendance: AttendanceEvent = G(
+            AttendanceEvent,
+            event=event,
+            unattend_deadline=timezone.now() + timedelta(days=1),
+        )
+        registration: Registration = G(Registration, attendance=attendance)
+        attend_user_to_event(event, self.user, registration)
+
+        url = get_unattend_url(event.id)
 
         response = self.client.post(url, follow=True, HTTP_HOST='example.com')
 
@@ -426,13 +452,18 @@ class EventsUnattend(EventsTestMixin, TestCase):
         self.assertInMessages('Du ble meldt av arrangementet.', response)
 
     def test_unattend_payment_not_refunded(self):
-        event = G(Event, event_start=timezone.now() + timedelta(days=1))
-        G(AttendanceEvent, event=event,
-          unattend_deadline=timezone.now() + timedelta(days=1))
-        attend_user_to_event(event, self.user)
+        event: Event = G(Event, event_start=timezone.now() + timedelta(days=1))
+        attendance: AttendanceEvent = G(
+            AttendanceEvent,
+            event=event,
+            unattend_deadline=timezone.now() + timedelta(days=1)
+        )
+        registration: Registration = G(Registration, attendance=attendance)
+        attend_user_to_event(event, self.user, registration)
         generate_payment(event)
         pay_for_event(event, self.user)
-        url = reverse('unattend_event', args=(event.id,))
+
+        url = get_unattend_url(event.id)
 
         response = self.client.post(url, follow=True, HTTP_HOST='example.com')
 
@@ -441,14 +472,19 @@ class EventsUnattend(EventsTestMixin, TestCase):
             'Du har betalt for arrangementet og må refundere før du kan melde deg av', response)
 
     def test_unattend_payment_removes_payment_delays(self):
-        event = G(Event, event_start=timezone.now() + timedelta(days=1))
-        G(AttendanceEvent, event=event,
-          unattend_deadline=timezone.now() + timedelta(days=1))
-        attend_user_to_event(event, self.user)
+        event: Event = G(Event, event_start=timezone.now() + timedelta(days=1))
+        attendance: AttendanceEvent = G(
+            AttendanceEvent,
+            event=event,
+            unattend_deadline=timezone.now() + timedelta(days=1),
+        )
+        registration: Registration = G(Registration, attendance=attendance)
+        attend_user_to_event(event, self.user, registration)
         payment = generate_payment(event)
         pay_for_event(event, self.user, refunded=True)
         payment_delay = add_payment_delay(payment, self.user)
-        url = reverse('unattend_event', args=(event.id,))
+
+        url = get_unattend_url(event.id)
 
         response = self.client.post(url, follow=True, HTTP_HOST='example.com')
 
@@ -462,18 +498,19 @@ class EventsUnattendWaitlist(TestCase):
     def setUp(self):
         self.event = G(Event, event_start=timezone.now() + timedelta(days=1))
         G(AttendanceEvent, event=self.event,
-          unattend_deadline=timezone.now() + timedelta(days=1),
-          max_capacity=2, waitlist=True)
+          unattend_deadline=timezone.now() + timedelta(days=1), waitlist=True)
+        self.registration = G(Registration, attendance=self.event.attendance_event, max_capacity=2)
+
         self.user = generate_user('test')
         self.client.force_login(self.user)
         self.other_user = generate_user('other')
-        self.url = reverse('unattend_event', args=(self.event.id,))
+        self.url = get_unattend_url(self.event.id)
 
     def test_unattend_notifies_waitlist_when_attending(self):
-        generate_attendee(self.event, 'user1')
-        attend_user_to_event(self.event, self.user)
-        generate_attendee(self.event, 'user2')
-        generate_attendee(self.event, 'user3')
+        generate_attendee(self.event, 'user1', self.registration)
+        attend_user_to_event(self.event, self.user, self.registration)
+        generate_attendee(self.event, 'user2', self.registration)
+        generate_attendee(self.event, 'user3', self.registration)
 
         self.client.post(self.url, follow=True, HTTP_HOST='example.com')
 
@@ -481,10 +518,10 @@ class EventsUnattendWaitlist(TestCase):
         self.assertIn('Du har fått plass på', mail.outbox[0].subject)
 
     def test_unattend_does_not_notify_waitlist_when_on_waitlist(self):
-        generate_attendee(self.event, 'user1')
-        generate_attendee(self.event, 'user2')
-        attend_user_to_event(self.event, self.user)
-        generate_attendee(self.event, 'user3')
+        generate_attendee(self.event, 'user1', self.registration)
+        generate_attendee(self.event, 'user2', self.registration)
+        attend_user_to_event(self.event, self.user, self.registration)
+        generate_attendee(self.event, 'user3', self.registration)
 
         self.client.post(self.url, follow=True, HTTP_HOST='example.com')
 
@@ -493,10 +530,10 @@ class EventsUnattendWaitlist(TestCase):
     @freeze_time("2017-01-01 12:00")
     def test_payment_type_instant_uses_extended(self):
         generate_payment(self.event, payment_type=1)
-        generate_attendee(self.event, 'user1')
-        attend_user_to_event(self.event, self.user)
-        attend_user_to_event(self.event, self.other_user)
-        generate_attendee(self.event, 'user3')
+        generate_attendee(self.event, 'user1', self.registration)
+        attend_user_to_event(self.event, self.user, self.registration)
+        attend_user_to_event(self.event, self.other_user, self.registration)
+        generate_attendee(self.event, 'user3', self.registration)
         payment_delay_time = timedelta(days=2)
 
         self.client.post(self.url, follow=True, HTTP_HOST='example.com')
@@ -508,10 +545,10 @@ class EventsUnattendWaitlist(TestCase):
 
     def test_payment_delay_is_not_created_if_deadline_over_48_hours(self):
         generate_payment(self.event, payment_type=2, deadline=timezone.now() + timedelta(days=3))
-        generate_attendee(self.event, 'user1')
-        attend_user_to_event(self.event, self.user)
-        attend_user_to_event(self.event, self.other_user)
-        generate_attendee(self.event, 'user3')
+        generate_attendee(self.event, 'user1', self.registration)
+        attend_user_to_event(self.event, self.user, self.registration)
+        attend_user_to_event(self.event, self.other_user, self.registration)
+        generate_attendee(self.event, 'user3', self.registration)
 
         self.client.post(self.url, follow=True, HTTP_HOST='example.com')
 
@@ -523,10 +560,10 @@ class EventsUnattendWaitlist(TestCase):
     @freeze_time("2017-01-01 12:00")
     def test_payment_delay_is_created_if_deadline_under_48_hours(self):
         generate_payment(self.event, payment_type=2, deadline=timezone.now() + timedelta(hours=47))
-        generate_attendee(self.event, 'user1')
-        attend_user_to_event(self.event, self.user)
-        attend_user_to_event(self.event, self.other_user)
-        generate_attendee(self.event, 'user3')
+        generate_attendee(self.event, 'user1', self.registration)
+        attend_user_to_event(self.event, self.user, self.registration)
+        attend_user_to_event(self.event, self.other_user, self.registration)
+        generate_attendee(self.event, 'user3', self.registration)
         payment_delay_time = timedelta(days=2)
 
         self.client.post(self.url, follow=True, HTTP_HOST='example.com')
@@ -541,10 +578,10 @@ class EventsUnattendWaitlist(TestCase):
         delay_days = 4
         payment_delay_time = timedelta(days=delay_days)
         generate_payment(self.event, payment_type=3, delay=payment_delay_time)
-        generate_attendee(self.event, 'user1')
-        attend_user_to_event(self.event, self.user)
-        attend_user_to_event(self.event, self.other_user)
-        generate_attendee(self.event, 'user3')
+        generate_attendee(self.event, 'user1', self.registration)
+        attend_user_to_event(self.event, self.user, self.registration)
+        attend_user_to_event(self.event, self.other_user, self.registration)
+        generate_attendee(self.event, 'user3', self.registration)
 
         self.client.post(self.url, follow=True, HTTP_HOST='example.com')
 

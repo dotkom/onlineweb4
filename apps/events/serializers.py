@@ -6,7 +6,8 @@ from rest_framework.serializers import ValidationError
 from apps.authentication.models import OnlineUser as User
 from apps.authentication.serializers import UserReadOnlySerializer
 from apps.companyprofile.serializers import CompanySerializer
-from apps.events.models import AttendanceEvent, Attendee, CompanyEvent, Event, Extras, RuleBundle
+from apps.events.models import (AttendanceEvent, Attendee, CompanyEvent, Event, Extras,
+                                Registration, RuleBundle)
 from apps.gallery.serializers import ResponsiveImageSerializer
 from apps.payment.serializers import PaymentReadOnlySerializer
 
@@ -47,9 +48,14 @@ class AttendeeRegistrationCreateSerializer(serializers.ModelSerializer):
         write_only=True,
         queryset=AttendanceEvent.objects.all(),
     )
+    registration = serializers.PrimaryKeyRelatedField(
+        write_only=True,
+        required=True,
+        queryset=Registration.objects.all(),
+    )
     recaptcha = RecaptchaField()
 
-    def validate_user(self, user):
+    def validate_user(self, user: User):
         request = self.context.get('request')
         if not request:
             raise ValidationError('internal:Request was not passed as context to serializer')
@@ -58,6 +64,14 @@ class AttendeeRegistrationCreateSerializer(serializers.ModelSerializer):
             raise ValidationError('Du kan ikke melde andre brukere på arrangementer!')
 
         return user
+
+    def validate_registration(self, registration: Registration):
+        event_id = self.initial_data.get('event')
+
+        if not event_id == registration.attendance_id:
+            raise ValidationError('Denne registreringen er ikke gyldig for dette arrangementet')
+
+        return registration
 
     def validate(self, data):
         request = self.context.get('request', None)
@@ -70,6 +84,7 @@ class AttendeeRegistrationCreateSerializer(serializers.ModelSerializer):
 
         attendance_event = data.get('event', None)
         event = attendance_event.event
+        registration = data.get('registration', None)
 
         if not event:
             raise ValidationError('Det gitte arrangementet eksisterer ikke')
@@ -77,11 +92,15 @@ class AttendeeRegistrationCreateSerializer(serializers.ModelSerializer):
         if not event.is_attendance_event():
             raise ValidationError('Dette er ikke et påmeldingsarrangement')
 
-        attend_response = attendance_event.is_eligible_for_signup(request.user)
-        can_attend = attend_response.get('status')
+        event_response = attendance_event.is_eligible_for_signup(request.user)
+        can_attend_event = event_response.get('status')
+        if not can_attend_event:
+            raise ValidationError(event_response.get('message'))
 
-        if not can_attend:
-            raise ValidationError(attend_response.get('message'))
+        registration_response = registration.rules_satisfied(request.user)
+        can_attend_registration = registration_response.get('status')
+        if not can_attend_registration:
+            raise ValidationError(registration_response.get('message'))
 
         return data
 
@@ -97,7 +116,7 @@ class AttendeeRegistrationCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Attendee
         fields = (
-            'id', 'event', 'user', 'show_as_attending_event', 'recaptcha', 'extras',
+            'id', 'event', 'user', 'show_as_attending_event', 'recaptcha', 'extras', 'registration',
         )
 
 
@@ -164,7 +183,6 @@ class SerializerUserMethodField(serializers.SerializerMethodField):
 
 
 class UserAttendanceEventSerializer(serializers.ModelSerializer):
-    rule_bundles = RuleBundleSerializer(many=True)
     extras = ExtrasSerializer(many=True)
     payments = serializers.SerializerMethodField()
 
@@ -186,7 +204,7 @@ class UserAttendanceEventSerializer(serializers.ModelSerializer):
         fields = (
             'max_capacity', 'waitlist', 'guest_attendance', 'extras', 'payments',
             'registration_start', 'registration_end', 'unattend_deadline',
-            'automatically_set_marks', 'rule_bundles', 'number_on_waitlist',
+            'automatically_set_marks', 'number_on_waitlist',
             'number_of_seats_taken', 'visible_attending_attendees', 'has_extras',
             'has_reservation', 'has_postponed_registration', 'is_marked', 'is_suspended',
             'is_eligible_for_signup', 'is_attendee', 'is_on_waitlist', 'what_place_is_user_on_wait_list'
@@ -194,7 +212,6 @@ class UserAttendanceEventSerializer(serializers.ModelSerializer):
 
 
 class AttendanceEventSerializer(serializers.ModelSerializer):
-    rule_bundles = RuleBundleSerializer(many=True)
     extras = ExtrasSerializer(many=True)
 
     class Meta:
@@ -202,7 +219,7 @@ class AttendanceEventSerializer(serializers.ModelSerializer):
         fields = (
             'max_capacity', 'waitlist', 'guest_attendance',
             'registration_start', 'registration_end', 'unattend_deadline',
-            'automatically_set_marks', 'rule_bundles', 'number_on_waitlist',
+            'automatically_set_marks', 'number_on_waitlist',
             'number_of_seats_taken', 'extras',
         )
 
