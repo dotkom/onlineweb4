@@ -17,8 +17,8 @@ from apps.events.models import AttendanceEvent, Attendee
 from apps.marks.models import Suspension
 from apps.payment import status
 from apps.payment.constants import (FikenAccount, FikenSaleKind, StripeKey, TransactionType,
-                                    VatTypeSale)
-from apps.webshop.models import OrderLine
+                                    VatTypeSale, vat_percentage)
+from apps.webshop.models import Order, OrderLine
 
 User = settings.AUTH_USER_MODEL
 
@@ -102,9 +102,9 @@ class Payment(models.Model):
             PaymentDelay.objects.create(payment=self, user=user, valid_to=deadline)
 
     def description(self):
-        if self._is_type(AttendanceEvent):
+        if self.is_type(AttendanceEvent):
             return self.content_object.event.title
-        if self._is_type(OrderLine):
+        if self.is_type(OrderLine):
             order_line: OrderLine = self.content_object
             return f'{order_line.user} - {order_line.payment_description}'
         logging.getLogger(__name__).error(
@@ -123,7 +123,7 @@ class Payment(models.Model):
         return receipt_description
 
     def responsible_mail(self):
-        if self._is_type(AttendanceEvent):
+        if self.is_type(AttendanceEvent):
             event_type = self.content_object.event.event_type
             if event_type == 1 or event_type == 4:  # Sosialt & Utflukt
                 return settings.EMAIL_ARRKOM
@@ -135,7 +135,7 @@ class Payment(models.Model):
                 return settings.EMAIL_EKSKOM
             else:
                 return settings.DEFAULT_FROM_EMAIL
-        elif self._is_type(OrderLine):
+        elif self.is_type(OrderLine):
             return settings.EMAIL_PROKOM
         else:
             return settings.DEFAULT_FROM_EMAIL
@@ -145,7 +145,7 @@ class Payment(models.Model):
         In the case of attendance events the user should only be allowed to pay if they are attending
         and has not paid yet.
         """
-        if self._is_type(AttendanceEvent):
+        if self.is_type(AttendanceEvent):
             event: AttendanceEvent = self.content_object
             is_attending = event.is_attendee(user)
             if is_attending:
@@ -156,7 +156,7 @@ class Payment(models.Model):
         """
         Payments for Webshop orderlines should only be payable for the owner of the orderline
         """
-        if self._is_type(OrderLine):
+        if self.is_type(OrderLine):
             order_line: OrderLine = self.content_object
             is_order_line_owner = order_line.user == user
             return is_order_line_owner
@@ -172,7 +172,7 @@ class Payment(models.Model):
         :param OnlineUser user: User who paid
 
         """
-        if self._is_type(AttendanceEvent):
+        if self.is_type(AttendanceEvent):
             attendee = Attendee.objects.filter(event=self.content_object, user=user)
 
             # Delete payment delay objects for the user if there are any
@@ -192,7 +192,7 @@ class Payment(models.Model):
             else:
                 Attendee.objects.create(event=self.content_object, user=user, paid=True)
 
-        elif self._is_type(OrderLine):
+        elif self.is_type(OrderLine):
             order_line: OrderLine = self.content_object
             order_line.paid = True
             order_line.save()
@@ -206,18 +206,18 @@ class Payment(models.Model):
         :param PaymentRelation payment_relation: user payment to refund
         """
 
-        if self._is_type(AttendanceEvent):
+        if self.is_type(AttendanceEvent):
             Attendee.objects.get(event=self.content_object,
                                  user=payment_relation.user).delete()
 
-        if self._is_type(OrderLine):
+        if self.is_type(OrderLine):
             order_line: OrderLine = self.content_object
             order_line.paid = False
             order_line.save()
 
     def check_refund(self, payment_relation) -> (bool, str):
         """Method for checking if the payment can be refunded"""
-        if self._is_type(AttendanceEvent):
+        if self.is_type(AttendanceEvent):
             attendance_event = self.content_object
             if attendance_event.unattend_deadline < timezone.now():
                 return False, _("Fristen for å melde seg av har utgått")
@@ -228,7 +228,7 @@ class Payment(models.Model):
 
             return True, ''
 
-        if self._is_type(OrderLine):
+        if self.is_type(OrderLine):
             return False, 'Du kan ikke refundere betalinger i Webshop på dette tidspunktet'
 
         return False, 'Refund checks not implemented'
@@ -250,14 +250,14 @@ class Payment(models.Model):
     def stripe_public_key(self):
         return settings.STRIPE_PUBLIC_KEYS[self.stripe_key]
 
-    def _is_type(self, model_type):
+    def is_type(self, model_type):
         return ContentType.objects.get_for_model(model_type) == self.content_type
 
     @property
     def transaction_type(self):
-        if self._is_type(AttendanceEvent):
+        if self.is_type(AttendanceEvent):
             return TransactionType.EVENT
-        elif self._is_type(OrderLine):
+        elif self.is_type(OrderLine):
             return TransactionType.WEB_SHOP
         logging.error(f'Payment {self} is related to unsupported model/content-type')
 
@@ -265,7 +265,7 @@ class Payment(models.Model):
         return self.description()
 
     def clean_generic_relation(self):
-        if not self._is_type(AttendanceEvent) and not self._is_type(OrderLine):
+        if not self.is_type(AttendanceEvent) and not self.is_type(OrderLine):
             raise ValidationError({
                 'content_type': _('Denne typen objekter støttes ikke av betalingssystemet for tiden.'),
             })
@@ -369,15 +369,32 @@ class PaymentRelation(models.Model):
         can_refund, reason = self.payment.check_refund(self)
         return reason
 
-    def _create_fiken_sale(self, amount: float):
-        FikenSale.objects.create(
+    def create_fiken_sale(self, amount: int):
+        ore_amount = amount * 100,  # Payment price is in Kr, sale amount is in Øre
+        sale = FikenSale.objects.create(
             stripe_key=self.payment.stripe_key,
             original_amount=amount * 100,  # Payment price is in Kr, sale amount is in Øre
             transaction_type=self.payment.transaction_type,
-            description=f'{self.get_description()} - {self.user.get_full_name()}',
             object_id=self.id,
             content_type=ContentType.objects.get_for_model(self)
         )
+
+        if self.payment.is_type(AttendanceEvent):
+            FikenOrderLine.objects.create(
+                sale=sale,
+                description=f'{self.get_description()} - {self.user.get_full_name()}',
+                price=ore_amount,
+                vat_type=VatTypeSale.OUTSIDE,
+            )
+        elif self.payment.is_type(OrderLine):
+            order_line: OrderLine = self.payment.content_object
+            for order in order_line.orders.all():
+                FikenOrderLine.objects.create(
+                    sale=sale,
+                    description=f'{order_line} - {self.user.get_full_name()}',
+                    price=order.price * 100,  # Webshop price is in Kr, Fiken price is in Øre
+                    vat_type=order.product.vat_type,
+                )
 
     def save(self, *args, **kwargs):
         if not self.unique_id:
@@ -468,14 +485,20 @@ class PaymentTransaction(models.Model):
     def __str__(self):
         return str(self.user) + " - " + str(self.amount) + "(" + str(self.datetime) + ")"
 
-    def _create_fiken_sale(self, amount: float):
-        FikenSale.objects.create(
+    def create_fiken_sale(self, amount: int):
+        ore_amount = amount * 100  # Transaction amount is in Kr, sale amount is in øre
+        sale = FikenSale.objects.create(
             stripe_key=StripeKey.TRIKOM,
-            original_amount=amount * 100,  # Transaction amount is in Kr, sale amount is in øre
+            original_amount=ore_amount,
             transaction_type=TransactionType.KIOSK,
-            description=f'{self.get_description()} - {self.user.get_full_name()}',
             object_id=self.id,
             content_type=ContentType.objects.get_for_model(self)
+        )
+        FikenOrderLine.objects.create(
+            sale=sale,
+            description=f'{self.get_description()} - {self.user.get_full_name()}',
+            price=ore_amount,
+            vat_type=VatTypeSale.OUTSIDE,
         )
 
     def save(self, *args, **kwargs):
@@ -571,7 +594,6 @@ class FikenSale(models.Model):
     )
     paid = models.BooleanField(default=True)
     created_date = models.DateTimeField(auto_now_add=True)
-    description = models.CharField(max_length=200)
 
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     """Which model the receipt is created for"""
@@ -579,6 +601,12 @@ class FikenSale(models.Model):
     """Object id for the model chosen in content_type"""
     content_object = GenericForeignKey()
     """Helper attribute which points to the object select in object_id"""
+
+    @staticmethod
+    def remove_stripe_fee(price: int) -> float:
+        stripe_fee_percentage = 0.024  # 2.4 %
+        stripe_fee = 2  # 2 NOK
+        return price * (1.0 - stripe_fee_percentage) - stripe_fee
 
     @property
     def identifier(self) -> str:
@@ -605,48 +633,27 @@ class FikenSale(models.Model):
 
     @property
     def amount(self) -> float:
-        """
-        Remove Stripe fee from the amount
-        """
-        stripe_fee_percentage = 0.024  # 2.4 %
-        stripe_fee = 2  # 2 NOK
-        return self.original_amount * (1.0 - stripe_fee_percentage) - stripe_fee
+        return self.remove_stripe_fee(self.original_amount)
+
+
+class FikenOrderLine(models.Model):
+    sale = models.ForeignKey(to=FikenSale, related_name='order_lines', on_delete=models.CASCADE)
+    price = models.IntegerField()
+    vat_type = models.CharField(max_length=200, choices=VatTypeSale.ALL_CHOICES)
+    description = models.CharField(max_length=200)
 
     @property
-    def vat_type(self) -> str:
-        if self.transaction_type == TransactionType.KIOSK:
-            return VatTypeSale.OUTSIDE
-        elif self.transaction_type == TransactionType.EVENT:
-            return VatTypeSale.OUTSIDE
-        elif self.transaction_type == TransactionType.WEB_SHOP:
-            return VatTypeSale.NONE
-        return VatTypeSale.NONE
+    def price_without_fee(self) -> float:
+        return self.sale.remove_stripe_fee(self.price)
 
     @property
     def vat_percentage(self) -> float:
-        if self.transaction_type in (TransactionType.EVENT, TransactionType.KIOSK):
-            return 0.0
-        elif self.transaction_type in (TransactionType.WEB_SHOP,):
-            return 0.25
-        return 0.0
+        return vat_percentage[self.vat_type]
 
     @property
-    def net_amount(self) -> float:
-        return self.amount * (1.0 - self.vat_percentage)
+    def net_price(self) -> float:
+        return self.price_without_fee * (1 - self.vat_percentage)
 
     @property
-    def vat_amount(self) -> float:
-        return self.amount * self.vat_percentage
-
-    @property
-    def lines(self):
-        """
-        Fiken Order Line description
-        """
-        return [{
-            'netPrice': self.net_amount,
-            'vat': self.vat_amount,
-            'vatType': self.vat_type,
-            'account': self.account,
-            'description': self.description,
-        }]
+    def vat_price(self) -> float:
+        return self.price_without_fee * self.vat_percentage

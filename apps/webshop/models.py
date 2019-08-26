@@ -10,6 +10,7 @@ from django.utils import timezone
 
 from apps.authentication.models import OnlineUser as User
 from apps.gallery.models import ResponsiveImage
+from apps.payment.constants import VatTypeSale
 
 
 class Product(models.Model):
@@ -33,6 +34,7 @@ class Product(models.Model):
 
     deadline = models.DateTimeField(null=True, blank=True)
     active = models.BooleanField(default=True)
+    vat_type = models.CharField(max_length=200, choices=VatTypeSale.ALL_CHOICES, default=VatTypeSale.NONE)
 
     def calculate_stock(self):
         """Calculates amount of stock based on either product sizes or product stock

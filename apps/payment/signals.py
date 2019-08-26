@@ -1,5 +1,6 @@
 import logging
 
+from django.contrib.contenttypes.models import ContentType
 from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 
@@ -38,6 +39,28 @@ def handle_payment_transaction_status_change(sender, instance: PaymentTransactio
 
         # Pass transaction to the next strip, which is REMOVED
         instance.status = status.REMOVED
+
+
+@receiver(post_save, sender=PaymentRelation)
+def create_fiken_sale_for_relations(sender, instance: PaymentRelation, **kwargs):
+    relation_content_type = ContentType.objects.get_for_model(PaymentRelation)
+    fiken_sales_count = FikenSale.objects.filter(content_type=relation_content_type, content_object=instance).count()
+    logging.warning(f'RELATIONS {fiken_sales_count}, {instance}')
+    if fiken_sales_count == 0 and instance.status == status.DONE:
+        instance.create_fiken_sale(instance.payment_price.price)
+    elif fiken_sales_count == 1 and instance.status == status.REMOVED:
+        instance.create_fiken_sale(-instance.payment_price.price)
+
+
+@receiver(post_save, sender=PaymentTransaction)
+def create_fiken_sale_for_transactions(sender, instance: PaymentTransaction, **kwargs):
+    transaction_content_type = ContentType.objects.get_for_model(PaymentTransaction)
+    fiken_sales_count = FikenSale.objects.filter(content_type=transaction_content_type, content_object=instance).count()
+    logging.warning(f'RELATIONS {fiken_sales_count}, {instance}')
+    if fiken_sales_count == 0 and instance.status == status.DONE:
+        instance.create_fiken_sale(instance.amount)
+    elif fiken_sales_count == 1 and instance.status == status.REMOVED:
+        instance.create_fiken_sale(-instance.amount)
 
 
 @receiver(post_save, sender=FikenSale)

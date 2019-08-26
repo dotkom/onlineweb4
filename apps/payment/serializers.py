@@ -6,7 +6,7 @@ from rest_framework import serializers
 from rest_framework.serializers import ValidationError
 
 from apps.payment import status
-from apps.payment.models import (FikenSale, Payment, PaymentDelay, PaymentPrice, PaymentRelation,
+from apps.payment.models import (FikenOrderLine, FikenSale, Payment, PaymentDelay, PaymentPrice, PaymentRelation,
                                  PaymentTransaction)
 
 logger = logging.getLogger(__name__)
@@ -339,19 +339,23 @@ class PaymentTransactionUpdateSerializer(serializers.ModelSerializer):
         read_only_fields = ('id', 'payment_intent_secret', 'amount', 'status', 'used_stripe', 'datetime')
 
 
+class FikenOrderLineSerializer(serializers.ModelSerializer):
+    netPrice = serializers.IntegerField(source='net_price')
+    vat = serializers.IntegerField(source='vat_price')
+    vatType = serializers.CharField(source='vat_type')
+    account = serializers.CharField(source='sale__account')
+
+    class Meta:
+        model = FikenOrderLine
+        fields = ('netPrice', 'vat', 'vatType', 'account', 'description',)
+        read_only = True
+
+
 class FikenSaleSerializer(serializers.ModelSerializer):
-    totalPaid = serializers.SerializerMethodField(method_name='get_total_paid')
-    paymentDate = serializers.SerializerMethodField(method_name='get_payment_date')
-    paymentAccount = serializers.SerializerMethodField(method_name='get_payment_account')
-
-    def get_total_paid(self, obj: FikenSale):
-        return obj.amount
-
-    def get_payment_date(self, obj: FikenSale):
-        return obj.date
-
-    def get_payment_account(self, obj: FikenSale):
-        return obj.account
+    totalPaid = serializers.IntegerField(source='amount')
+    paymentDate = serializers.CharField(source='date')
+    paymentAccount = serializers.CharField(source='account')
+    lines = FikenOrderLineSerializer(many=True, source='order_lines')
 
     class Meta:
         model = FikenSale
