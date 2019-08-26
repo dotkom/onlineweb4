@@ -3,12 +3,14 @@ import logging
 from datetime import timedelta
 
 from django.conf import settings
+from django.contrib.auth.models import Group
 from django.test import TestCase
 from django.test.client import Client
 from django.utils import timezone as timezone
 from django.utils.translation import ugettext_lazy as _
+from django_dynamic_fixture import G
 
-from apps.authentication.models import Email
+from apps.authentication.models import Email, OnlineGroup
 from apps.authentication.models import OnlineUser as User
 from apps.events.models import AttendanceEvent, Attendee, Event
 from apps.feedback.models import Feedback, FeedbackRelation, RatingQuestion, TextQuestion
@@ -38,7 +40,7 @@ class SimpleTest(TestCase):
     def tomorow(self):
         return timezone.now() + timedelta(days=1)
 
-    def create_feedback_relation(self, end_date=False, event_type=2, feedback=None, deadline=False):
+    def create_feedback_relation(self, end_date=False, event_type=2, feedback=None, deadline=False, organizer=None):
         if not end_date:
             end_date = self.yesterday()
 
@@ -50,7 +52,8 @@ class SimpleTest(TestCase):
             event_start=self.yesterday(),
             event_end=end_date,
             event_type=event_type,
-            author=self.user1
+            author=self.user1,
+            organizer=organizer,
         )
 
         attendance_event = AttendanceEvent.objects.create(
@@ -185,6 +188,15 @@ class SimpleTest(TestCase):
         feedback_relation = self.create_void_feedback_relation()
         email = FeedbackMail.get_committee_email(feedback_relation)
         self.assertEqual(email, "missing mail")
+
+    def test_group_email(self):
+        # Feedback email should be be to the organizing committee
+        organizer_group: Group = G(Group)
+        online_group: OnlineGroup = G(OnlineGroup, group=organizer_group, email='testkom@example.com')
+        feedback_relation = self.create_feedback_relation(event_type=1, organizer=organizer_group)
+        email = FeedbackMail.get_committee_email(feedback_relation)
+        self.assertEqual(email, online_group.email)
+        self.assertNotEqual(email, settings.EMAIL_ARRKOM)
 
     def test_date(self):
         feedback_relation = self.create_feedback_relation()
