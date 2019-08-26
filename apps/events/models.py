@@ -22,6 +22,7 @@ from guardian.shortcuts import assign_perm
 from unidecode import unidecode
 
 from apps.authentication.constants import FieldOfStudyType
+from apps.authentication.models import OnlineGroup
 from apps.companyprofile.models import Company
 from apps.feedback.models import FeedbackRelation
 from apps.gallery.models import ResponsiveImage
@@ -157,6 +158,21 @@ class Event(models.Model):
         return self.organizer.name
 
     def feedback_mail(self):
+        """
+        Get feedback mail from organizer Online group.
+        Use old fallback if organizer has not been set up completly for the event/group yet
+        """
+        if self.organizer:
+            organizer_group = OnlineGroup.objects.filter(pk=self.organizer.id).first()
+            if organizer_group and organizer_group.email:
+                return organizer_group.email
+
+        return self._feedback_mail_fallback()
+
+    def _feedback_mail_fallback(self):
+        """
+        Fallback/old method for getting the email to an event organizer group
+        """
         if self.event_type == 1 or self.event_type == 4:  # Sosialt & Utflukt
             return settings.EMAIL_ARRKOM
         elif self.event_type == 2:  # Bedpres
