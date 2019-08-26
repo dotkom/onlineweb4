@@ -4,7 +4,7 @@ from django.contrib import admin
 from django.contrib.contenttypes.admin import GenericStackedInline
 from reversion.admin import VersionAdmin
 
-from apps.payment.models import (FikenSale, Payment, PaymentDelay, PaymentPrice, PaymentReceipt,
+from apps.payment.models import (FikenOrderLine, FikenSale, Payment, PaymentDelay, PaymentPrice, PaymentReceipt,
                                  PaymentRelation, PaymentTransaction)
 from utils.admin import DepositWithdrawalFilter
 
@@ -63,9 +63,16 @@ class PaymentTransactionAdmin(VersionAdmin):
     list_filter = ('used_stripe', DepositWithdrawalFilter)
 
 
+class FikenOrderLineInlineAdmin(admin.StackedInline):
+    model = FikenOrderLine
+    extra = 0
+    classes = ('grp-collapse grp-open',)  # style
+
+
 @admin.register(FikenSale)
 class FikenSaleAdmin(VersionAdmin):
     model = FikenSale
+    inlines = (FikenOrderLineInlineAdmin,)
     list_display = ('stripe_key', 'date', 'amount', 'original_amount',)
 
 

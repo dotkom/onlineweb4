@@ -4,7 +4,7 @@ import logging
 import uuid
 
 from django.conf import settings
-from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 from django.core.mail import send_mail
@@ -332,6 +332,8 @@ class PaymentRelation(models.Model):
     payment_intent_secret = models.CharField(max_length=200, null=True, blank=True)
     """ Stripe payment intent secret key for verifying pending transactions/intents """
 
+    sales = GenericRelation('FikenSale')
+
     def get_timestamp(self):
         return self.datetime
 
@@ -396,6 +398,8 @@ class PaymentRelation(models.Model):
                     vat_type=order.product.vat_type,
                 )
 
+        return sale
+
     def save(self, *args, **kwargs):
         if not self.unique_id:
             self.unique_id = str(uuid.uuid4())
@@ -459,6 +463,8 @@ class PaymentTransaction(models.Model):
     payment_intent_secret = models.CharField(max_length=200, null=True, blank=True)
     """ Stripe payment intent secret key for verifying pending transactions/intents """
 
+    sales = GenericRelation('FikenSale')
+
     def get_timestamp(self):
         return self.datetime
 
@@ -500,6 +506,7 @@ class PaymentTransaction(models.Model):
             price=ore_amount,
             vat_type=VatTypeSale.OUTSIDE,
         )
+        return sale
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
@@ -594,6 +601,12 @@ class FikenSale(models.Model):
     )
     paid = models.BooleanField(default=True)
     created_date = models.DateTimeField(auto_now_add=True)
+    status = models.CharField(
+        max_length=30,
+        null=False,
+        choices=status.PAYMENT_STATUS_CHOICES,
+        default=status.SUCCEEDED
+    )
 
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     """Which model the receipt is created for"""
@@ -605,8 +618,8 @@ class FikenSale(models.Model):
     @staticmethod
     def remove_stripe_fee(price: int) -> float:
         stripe_fee_percentage = 0.024  # 2.4 %
-        stripe_fee = 2  # 2 NOK
-        return price * (1.0 - stripe_fee_percentage) - stripe_fee
+        stripe_fee = 200  # 2 Kr NOK
+        return price * (1 - stripe_fee_percentage) - stripe_fee
 
     @property
     def identifier(self) -> str:
@@ -635,9 +648,13 @@ class FikenSale(models.Model):
     def amount(self) -> float:
         return self.remove_stripe_fee(self.original_amount)
 
+    @property
+    def lines(self):
+        return self.order_lines.all()
+
 
 class FikenOrderLine(models.Model):
-    sale = models.ForeignKey(to=FikenSale, related_name='order_lines', on_delete=models.CASCADE)
+    sale = models.ForeignKey(to=FikenSale, related_name='order_lines', on_delete=models.CASCADE, null=True)
     price = models.IntegerField()
     vat_type = models.CharField(max_length=200, choices=VatTypeSale.ALL_CHOICES)
     description = models.CharField(max_length=200)

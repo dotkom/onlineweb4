@@ -343,7 +343,10 @@ class FikenOrderLineSerializer(serializers.ModelSerializer):
     netPrice = serializers.IntegerField(source='net_price')
     vat = serializers.IntegerField(source='vat_price')
     vatType = serializers.CharField(source='vat_type')
-    account = serializers.CharField(source='sale__account')
+    account = serializers.SerializerMethodField()
+
+    def get_account(self, obj: FikenOrderLine):
+        return obj.sale.account
 
     class Meta:
         model = FikenOrderLine
@@ -355,7 +358,7 @@ class FikenSaleSerializer(serializers.ModelSerializer):
     totalPaid = serializers.IntegerField(source='amount')
     paymentDate = serializers.CharField(source='date')
     paymentAccount = serializers.CharField(source='account')
-    lines = FikenOrderLineSerializer(many=True, source='order_lines')
+    lines = FikenOrderLineSerializer(many=True)
 
     class Meta:
         model = FikenSale

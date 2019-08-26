@@ -41,33 +41,29 @@ def handle_payment_transaction_status_change(sender, instance: PaymentTransactio
         instance.status = status.REMOVED
 
 
+def handle_fiken_sale_created(sale: FikenSale):
+    logger.info(f'Registering {sale} with Fiken')
+    sale_data = FikenSaleSerializer(sale).data
+    register_sale_with_fiken.delay(sale_data=sale_data)
+
+
 @receiver(post_save, sender=PaymentRelation)
 def create_fiken_sale_for_relations(sender, instance: PaymentRelation, **kwargs):
-    relation_content_type = ContentType.objects.get_for_model(PaymentRelation)
-    fiken_sales_count = FikenSale.objects.filter(content_type=relation_content_type, content_object=instance).count()
-    logging.warning(f'RELATIONS {fiken_sales_count}, {instance}')
+    fiken_sales_count = instance.sales.count()
     if fiken_sales_count == 0 and instance.status == status.DONE:
-        instance.create_fiken_sale(instance.payment_price.price)
+        sale = instance.create_fiken_sale(instance.payment_price.price)
+        handle_fiken_sale_created(sale)
     elif fiken_sales_count == 1 and instance.status == status.REMOVED:
-        instance.create_fiken_sale(-instance.payment_price.price)
+        sale = instance.create_fiken_sale(-instance.payment_price.price)
+        handle_fiken_sale_created(sale)
 
 
 @receiver(post_save, sender=PaymentTransaction)
 def create_fiken_sale_for_transactions(sender, instance: PaymentTransaction, **kwargs):
-    transaction_content_type = ContentType.objects.get_for_model(PaymentTransaction)
-    fiken_sales_count = FikenSale.objects.filter(content_type=transaction_content_type, content_object=instance).count()
-    logging.warning(f'RELATIONS {fiken_sales_count}, {instance}')
+    fiken_sales_count = instance.sales.count()
     if fiken_sales_count == 0 and instance.status == status.DONE:
-        instance.create_fiken_sale(instance.amount)
+        sale = instance.create_fiken_sale(instance.amount)
+        handle_fiken_sale_created(sale)
     elif fiken_sales_count == 1 and instance.status == status.REMOVED:
-        instance.create_fiken_sale(-instance.amount)
-
-
-@receiver(post_save, sender=FikenSale)
-def handle_fiken_sale_created(sender, instance: FikenSale, created=False, **kwargs):
-    if created:
-        logger.info(f'Registering {instance} with Fiken')
-        sale_data = FikenSaleSerializer(instance).data
-        register_sale_with_fiken.delay(sale_data=sale_data)
-    else:
-        logger.warning(f'{instance} updated after creation')
+        sale = instance.create_fiken_sale(-instance.amount)
+        handle_fiken_sale_created(sale)
