@@ -157,6 +157,18 @@ class Event(models.Model):
         return self.organizer.name
 
     def feedback_mail(self):
+        """
+        Get feedback mail from organizer Online group.
+        Use old fallback if organizer has not been set up completly for the event/group yet
+        """
+        if self.organizer and self.organizer.online_group and self.organizer.online_group.email:
+            return self.organizer.online_group.email
+        return self._feedback_mail_fallback()
+
+    def _feedback_mail_fallback(self):
+        """
+        Fallback/old method for getting the email to an event organizer group
+        """
         if self.event_type == 1 or self.event_type == 4:  # Sosialt & Utflukt
             return settings.EMAIL_ARRKOM
         elif self.event_type == 2:  # Bedpres
