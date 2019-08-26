@@ -6,6 +6,7 @@ from django.conf import settings
 from django.contrib.auth.models import Group
 from django.test import TestCase
 from django.test.client import Client
+from django.urls import reverse
 from django.utils import timezone as timezone
 from django.utils.translation import ugettext_lazy as _
 from django_dynamic_fixture import G
@@ -18,17 +19,16 @@ from apps.feedback.mommy import FeedbackMail
 from apps.marks.models import Mark
 
 
-class SimpleTest(TestCase):
-
+class FeedbackTestCaseMixin:
     # Feedback mail
     def setUp(self):
 
         self.logger = logging.getLogger()
 
         # Setup users
-        self.user1 = User.objects.create(username="user1", is_active=True, is_staff=True)
+        self.user1: User = G(User, username="user1", is_active=True, is_staff=True)
         Email.objects.create(user=self.user1, email="user1@gmail.com", primary=True)
-        self.user2 = User.objects.create(username="user2")
+        self.user2: User = G(User, username="user2")
         Email.objects.create(user=self.user2, email="user2@gmail.com", primary=True)
 
         self.user1.set_password("Herpaderp123")
@@ -47,7 +47,7 @@ class SimpleTest(TestCase):
         if not deadline:
             deadline = timezone.now().date() + timedelta(days=4)
 
-        event = Event.objects.create(
+        self.event = Event.objects.create(
             title="-",
             event_start=self.yesterday(),
             event_end=end_date,
@@ -56,11 +56,11 @@ class SimpleTest(TestCase):
             organizer=organizer,
         )
 
-        attendance_event = AttendanceEvent.objects.create(
+        self.attendance_event = AttendanceEvent.objects.create(
             registration_start=timezone.now(),
             unattend_deadline=timezone.now(),
             registration_end=timezone.now(),
-            event=event,
+            event=self.event,
             max_capacity=30
         )
 
@@ -68,9 +68,14 @@ class SimpleTest(TestCase):
         TextQuestion.objects.create(feedback=feedback)
         RatingQuestion.objects.create(feedback=feedback)
 
-        Attendee.objects.create(event=attendance_event, user=self.user1, attended=True)
-        Attendee.objects.create(event=attendance_event, user=self.user2, attended=True)
-        return FeedbackRelation.objects.create(feedback=feedback, content_object=event, deadline=deadline, active=True)
+        Attendee.objects.create(event=self.attendance_event, user=self.user1, attended=True)
+        Attendee.objects.create(event=self.attendance_event, user=self.user2, attended=True)
+        return FeedbackRelation.objects.create(
+            feedback=feedback,
+            content_object=self.event,
+            deadline=deadline,
+            active=True,
+        )
 
     # Create a feedback relation that won't work
     def create_void_feedback_relation(self):
@@ -83,6 +88,8 @@ class SimpleTest(TestCase):
             active=True
         )
 
+
+class SimpleTest(FeedbackTestCaseMixin, TestCase):
     def test_users_mail_addresses(self):
         feedback_relation = self.create_feedback_relation()
 
@@ -232,18 +239,6 @@ class SimpleTest(TestCase):
                 response.context['questions'][i].errors['answer']
             )
 
-    """
-    Disabled because request.META['HTTP_HOST'] apperantly is not supported by the test client
-    def test_good_urls(self):
-        client = Client()
-        client.login(username="user1", password="Herpaderp123")
-        feedback_relation = FeedbackRelation.objects.get(pk=1)
-        response = client.post(feedback_relation.get_absolute_url())
-        self.assertEqual(response.status_code, 200)
-        response = client.get(feedback_relation.get_absolute_url() + 'results/')
-        self.assertEqual(response.status_code, 200)
-    """
-
     def test_should_redirect(self):  # Login_required / not logged inn
         response = self.client.get("/feedback/events/event/100/1/")
         self.assertEqual(response.status_code, 302)
@@ -266,3 +261,53 @@ class SimpleTest(TestCase):
 
     # TODO test tokens
     # TODO test permissions when implemented
+
+
+class FeedbackViewTestCase(FeedbackTestCaseMixin, TestCase):
+
+    def setUp(self):
+        super().setUp()
+        self.organizer: Group = G(Group)
+        self.organizer.user_set.add(self.user1)
+
+        self.feedback_relation = self.create_feedback_relation(organizer=self.organizer)
+        self.feedback_url = reverse('feedback', args=(
+            'events',
+            'event',
+            str(self.event.id),
+            str(self.feedback_relation.id))
+        )
+        self.results_url = reverse('result', args=(
+            'events',
+            'event',
+            str(self.event.id),
+            str(self.feedback_relation.id)
+        ))
+        self.client.force_login(self.user1, backend=None)
+
+    def test_user_can_load_feedback_page(self):
+        self.client.force_login(self.user2)
+        response = self.client.get(self.feedback_url)
+        self.assertEqual(response.status_code, 200)
+
+    def test_non_attendee_user_cannot_load_feedback_page(self):
+        user3: User = G(User)
+        self.client.force_login(user3)
+        response = self.client.get(self.feedback_url)
+        self.assertEqual(response.status_code, 302)
+
+    def test_organizer_can_access_results(self):
+        response = self.client.get(self.results_url)
+        self.assertEqual(response.status_code, 200)
+
+    def test_admin_can_access_results(self):
+        admin_user: User = G(User, is_superuser=True)
+        self.client.force_login(admin_user)
+        response = self.client.get(self.results_url)
+        self.assertEqual(response.status_code, 200)
+
+    def test_regular_cannot_access_results(self):
+        admin_user: User = G(User, is_superuser=False)
+        self.client.force_login(admin_user)
+        response = self.client.get(self.results_url)
+        self.assertEqual(response.status_code, 302)  # No access returns a redirect for feedback results
