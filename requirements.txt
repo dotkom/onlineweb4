@@ -1,13 +1,7 @@
 Django==2.1.11
-<<<<<<< HEAD
 Pillow==6.1.0                   # PIL fork (Python Imaging Library)
 djangorestframework==3.10.2      # API v1
 django-filter==2.2.0           # Filtering for DRF
-=======
-Pillow==6.0.0                   # PIL fork (Python Imaging Library)
-djangorestframework==3.9.4      # API v1
-django-filter==2.1.0           # Filtering for DRF
->>>>>>> origin
 # python-memcached==1.57          # Memcache. Used by Mailinglists to fetch from Sympa.
 # Upstream is missing Python 3 patches
 git+https://github.com/JelteF/python-memcached@patch-1#egg=python-memcached==1.58
