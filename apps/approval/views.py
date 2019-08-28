@@ -11,7 +11,7 @@ from django.utils.translation import ugettext as _
 
 from apps.approval.forms import FieldOfStudyApplicationForm
 from apps.approval.models import MembershipApproval
-from apps.authentication.models import AllowedUsername, get_length_of_field_of_study
+from apps.authentication.models import AllowedUsername, get_length_of_membership
 
 
 @login_required
@@ -65,7 +65,7 @@ def create_fos_application(request):
                 documentation=documentation
             )
 
-            length_of_fos = get_length_of_field_of_study(field_of_study)
+            length_of_fos = get_length_of_membership(field_of_study)
             if length_of_fos > 0:
                 application.new_expiry_date = get_expiry_date(
                     started_year, length_of_fos)

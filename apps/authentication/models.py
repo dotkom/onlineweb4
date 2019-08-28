@@ -71,6 +71,13 @@ def get_length_of_field_of_study(field_of_study):
         return 0
 
 
+def get_length_of_membership(field_of_study: str) -> int:
+    if field_of_study == FieldOfStudyType.SOCIAL_MEMBER:
+        return 1
+    else:
+        return get_length_of_field_of_study(field_of_study)
+
+
 def get_start_of_field_of_study(field_of_study):
     """
     Returns start year of a field of study
