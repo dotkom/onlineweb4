@@ -1055,7 +1055,7 @@ class Reservee(models.Model):
     # julius andreas gimli arn macgyver chewbacka highlander elessar-jankov
     name = models.CharField('navn', max_length=69)
     note = models.CharField('notat', max_length=100)
-    allergies = models.CharField('allergier', max_length=200, blank=True, null=True)
+    allergies = models.CharField('allergier', max_length=200, null=True, blank=True)
 
     def __str__(self):
         return self.name
