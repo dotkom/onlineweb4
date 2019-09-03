@@ -18,6 +18,7 @@ from apps.marks.models import Suspension
 from apps.payment import status
 from apps.payment.constants import (FikenAccount, FikenSaleKind, StripeKey, TransactionType,
                                     VatTypeSale, vat_percentage)
+from apps.payment.pdf_generator import FikenSalePDF
 from apps.webshop.models import Order, OrderLine
 
 User = settings.AUTH_USER_MODEL
@@ -605,8 +606,8 @@ class FikenSale(models.Model):
         max_length=30,
         null=False,
         choices=status.PAYMENT_STATUS_CHOICES,
-        default=status.SUCCEEDED
     )
+    fiken_id = models.IntegerField(null=True, blank=True)
 
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     """Which model the receipt is created for"""
@@ -617,12 +618,14 @@ class FikenSale(models.Model):
 
     @staticmethod
     def remove_stripe_fee(price: int) -> float:
-        stripe_fee_percentage = 0.024  # 2.4 %
-        stripe_fee = 200  # 2 Kr NOK
+        stripe_fee_percentage = 0.014  # 1.4 %
+        stripe_fee = 180  # 1.8 Kr NOK
         return price * (1 - stripe_fee_percentage) - stripe_fee
 
     @property
     def identifier(self) -> str:
+        if self.status == status.REFUNDED:
+            return f'REFUND-{self.id}'
         return f'{self.transaction_type.upper()}-{self.id}'
 
     @property
@@ -646,11 +649,24 @@ class FikenSale(models.Model):
 
     @property
     def amount(self) -> float:
-        return self.remove_stripe_fee(self.original_amount)
+        amount = self.remove_stripe_fee(self.original_amount)
+        if self.status == status.REFUNDED:
+            return -amount
+        return amount
 
     @property
     def lines(self):
         return self.order_lines.all()
+
+    def create_attachment(self):
+        attachment_file = FikenSalePDF(self).render_pdf()
+        sale_attachment = FikenSaleAttachment.objects.create(
+            sale=self,
+            filename=f'sale-attachment-{self.identifier}.pdf',
+            comment='',
+        )
+        sale_attachment.file.save(sale_attachment.filename, attachment_file, )
+        return sale_attachment
 
 
 class FikenOrderLine(models.Model):
@@ -669,8 +685,28 @@ class FikenOrderLine(models.Model):
 
     @property
     def net_price(self) -> float:
-        return self.price_without_fee * (1 - self.vat_percentage)
+        net_price = self.price_without_fee * (1 - self.vat_percentage)
+        if self.sale.status == status.REFUNDED:
+            return -net_price
+        return net_price
 
     @property
     def vat_price(self) -> float:
-        return self.price_without_fee * self.vat_percentage
+        vat_price = self.price_without_fee * self.vat_percentage
+        if self.sale.status == status.REFUNDED:
+            return -vat_price
+        return vat_price
+
+
+class FikenSaleAttachment(models.Model):
+    sale = models.ForeignKey(
+        to=FikenSale,
+        related_name='attachments',
+        on_delete=models.DO_NOTHING,
+    )
+    filename = models.CharField(max_length=200)
+    file = models.FileField(upload_to=settings.OW4_FIKEN_FILE_ROOT)
+    comment = models.CharField(max_length=4000)
+    attach_to_sale = models.BooleanField(default=True)
+    attach_to_payment = models.BooleanField(null=True, blank=True)
+    created = models.DateTimeField(auto_now_add=True)

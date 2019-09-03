@@ -6,8 +6,8 @@ from rest_framework import serializers
 from rest_framework.serializers import ValidationError
 
 from apps.payment import status
-from apps.payment.models import (FikenOrderLine, FikenSale, Payment, PaymentDelay, PaymentPrice, PaymentRelation,
-                                 PaymentTransaction)
+from apps.payment.models import (FikenOrderLine, FikenSale, FikenSaleAttachment, Payment, PaymentDelay, PaymentPrice,
+                                 PaymentRelation, PaymentTransaction)
 
 logger = logging.getLogger(__name__)
 
@@ -337,6 +337,18 @@ class PaymentTransactionUpdateSerializer(serializers.ModelSerializer):
             'payment_intent_id', 'id', 'payment_intent_secret', 'amount', 'status', 'used_stripe', 'datetime',
         )
         read_only_fields = ('id', 'payment_intent_secret', 'amount', 'status', 'used_stripe', 'datetime')
+
+
+class FikenSaleAttachmentSerializer(serializers.ModelSerializer):
+    attachToPayment = serializers.BooleanField(source='attach_to_payment')
+    attachToSale = serializers.BooleanField(source='attach_to_sale')
+
+    class Meta:
+        model = FikenSaleAttachment
+        fields = (
+            'filename', 'comment', 'attachToPayment', 'attachToSale',
+        )
+        read_only = True
 
 
 class FikenOrderLineSerializer(serializers.ModelSerializer):

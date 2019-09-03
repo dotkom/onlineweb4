@@ -1,12 +1,10 @@
 import logging
 
-from django.contrib.contenttypes.models import ContentType
 from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 
 from . import status
 from .models import FikenSale, PaymentRelation, PaymentTransaction
-from .serializers import FikenSaleSerializer
 from .tasks import register_sale_with_fiken
 
 logger = logging.getLogger(__name__)
@@ -43,27 +41,30 @@ def handle_payment_transaction_status_change(sender, instance: PaymentTransactio
 
 def handle_fiken_sale_created(sale: FikenSale):
     logger.info(f'Registering {sale} with Fiken')
-    sale_data = FikenSaleSerializer(sale).data
-    register_sale_with_fiken.delay(sale_data=sale_data)
+    register_sale_with_fiken.delay(sale_id=sale.id)
 
 
 @receiver(post_save, sender=PaymentRelation)
 def create_fiken_sale_for_relations(sender, instance: PaymentRelation, **kwargs):
-    fiken_sales_count = instance.sales.count()
-    if fiken_sales_count == 0 and instance.status == status.DONE:
+    has_done_sale = instance.sales.filter(status=status.DONE).exists()
+    if instance.status == status.DONE and not has_done_sale:
         sale = instance.create_fiken_sale(instance.payment_price.price)
         handle_fiken_sale_created(sale)
-    elif fiken_sales_count == 1 and instance.status == status.REMOVED:
+
+    has_removed_sale = instance.sales.filter(status=status.REMOVED).exists()
+    if instance.status == status.REMOVED and not has_removed_sale:
         sale = instance.create_fiken_sale(-instance.payment_price.price)
         handle_fiken_sale_created(sale)
 
 
 @receiver(post_save, sender=PaymentTransaction)
 def create_fiken_sale_for_transactions(sender, instance: PaymentTransaction, **kwargs):
-    fiken_sales_count = instance.sales.count()
-    if fiken_sales_count == 0 and instance.status == status.DONE:
+    has_done_sale = instance.sales.filter(status=status.DONE).exists()
+    if instance.status == status.DONE and not has_done_sale:
         sale = instance.create_fiken_sale(instance.amount)
         handle_fiken_sale_created(sale)
-    elif fiken_sales_count == 1 and instance.status == status.REMOVED:
+
+    has_removed_sale = instance.sales.filter(status=status.REMOVED).exists()
+    if instance.status == status.REMOVED and not has_removed_sale:
         sale = instance.create_fiken_sale(-instance.amount)
         handle_fiken_sale_created(sale)
