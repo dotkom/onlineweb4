@@ -1,14 +1,20 @@
 {%  if payment.prices|length == 1 %}
     <p class="status-text payment-price-tag">Prisen er på {{ payment.price.price }} Kr.</p>
-	<button id="stripeButton{{ payment.price.id }}" class="btn btn-large btn-success payment-button">Betal med kort</button>
+    <a href="https://beta.online.ntnu.no/payments/{{ payment.price.id }}" class="btn btn-large btn-success payment-button">Gå til betalingssiden</a>
+	<!--
+    <button id="stripeButton{{ payment.price.id }}" class="btn btn-large btn-success payment-button">Betal med kort</button>
+    -->
     <br />
 {%  else %}
     {% for payment_price in payment.prices %}
         <p class="status-text payment-price-tag">{{ payment_price.description }}</p>
+        <a href="https://beta.online.ntnu.no/payments/{{ payment_price.id }}" class="btn btn-large btn-success payment-button">Gå til betalingssiden</a>
+        <!--
         <button id="stripeButton{{ payment_price.id }}" class="btn btn-large btn-success payment-button">Betal med kort</button>
         {% if payment.prices|length > 1 %}
             <p class="help-text row-space">{{ payment_price.price }} Kr.</p>
         {% endif %}
+        -->
     {% endfor %}
     <br />
 {%  endif %}
