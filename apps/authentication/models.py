@@ -122,7 +122,7 @@ class OnlineUser(AbstractUser):
     zip_code = models.CharField(_("postnummer"), max_length=4, blank=True, null=True)
 
     # Other
-    allergies = models.TextField(_("allergier"), blank=True, null=True)
+    allergies = models.TextField(_("matallergier"), blank=True, null=True)
     mark_rules = models.BooleanField(_("godtatt prikkeregler"), default=False)
     rfid = models.CharField(_("RFID"), max_length=50, unique=True, blank=True, null=True, validators=[validate_rfid])
     nickname = models.CharField(_("nickname"), max_length=50, blank=True, null=True)
