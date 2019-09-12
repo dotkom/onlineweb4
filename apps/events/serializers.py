@@ -26,7 +26,7 @@ class AttendeeRegistrationReadOnlySerializer(serializers.ModelSerializer):
     class Meta:
         model = Attendee
         fields = (
-            'id', 'event', 'user', 'attended', 'timestamp', 'show_as_attending_event', 'paid', 'extras',
+            'id', 'event', 'user', 'attended', 'timestamp', 'show_as_attending_event', 'has_paid', 'extras',
         )
         read_only = True
 
