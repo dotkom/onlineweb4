@@ -137,7 +137,7 @@ class PaymentRelationCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = PaymentRelation
-        fields = ('id', 'payment', 'payment_price', 'payment_method_id', 'user', 'status')
+        fields = ('id', 'payment', 'payment_price', 'payment_method_id', 'user', 'status', 'payment_intent_secret')
         read_only_fields = ('id', 'payment_intent_secret', 'status')
 
 
