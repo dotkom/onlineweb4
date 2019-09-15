@@ -51,7 +51,7 @@
         <td>{{ order_line.subtotal }}</td>
         <td>{{ count }}</td>
         <td>
-            <button id="stripe-button" class="btn btn-success">Betal</button>
+            <a href="https://beta.online.ntnu.no/payments/webshop/" target="_blank" rel="noopener noreferrer" class="btn btn-success">Gå til betalingssiden</a>
         </td>
     </tr>
     {% endwith %}
@@ -63,10 +63,3 @@
 
 {% endblock %}
 </div>
-
-{% block js %}
-  {{ block.super }}
-  <script src="{{ STATIC_URL }}js/libs/jquery.cookie.js"></script>
-  <script src="https://checkout.stripe.com/checkout.js"></script>
-  <script src="{{ STATIC_URL }}js/webshop.js"></script>
-{% endblock %}
