@@ -463,17 +463,15 @@
                             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                             <h3>Refunder og meld deg av {{ event.title }} </h3>
                         </div>
-                        <form action="{% url 'payment_refund' payment_relation_id %}" method="POST">
-                            <div class="modal-body">
-                                {% csrf_token %}
-                                <p>Er du sikker på at du vil refundere og melde deg av?</p>
-                                <p><b>Merk:</b> Det kan ta opptil 10 dager før pengene kommer tilbake på din konto.</p>
-                            </div>
-                            <div class="modal-footer">
-                                <button class="btn" data-dismiss="modal" aria-hidden="true">Lukk</button>
-                                <button type="submit" class="btn btn-danger">Refunder</button>
-                            </div>
-                        </form>
+                        <div class="modal-body">
+                            {% csrf_token %}
+                            <p>Er du sikker på at du vil refundere og melde deg av?</p>
+                            <p><b>Merk:</b> Det kan ta opptil 10 dager før pengene kommer tilbake på din konto.</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn" data-dismiss="modal" aria-hidden="true">Lukk</button>
+                            <button id="refund-payment-button" data-paymentrelationid="{{ payment_relation_id }}" type="submit" data-dismiss="modal" class="btn btn-danger">Refunder</button>
+                        </div>
                     </div>
                 </div>
             </div>

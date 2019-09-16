@@ -11,32 +11,6 @@ import { makeApiRequest, showFlashMessage } from "common/utils/";
 const allExtras = window.all_extras;
 const selectedExtra = window.selected_extra;
 
-const refundPayment = async relationId => {
-    const refundUrl = `/api/v1/payment/relations/${relationId}/`;
-    const response = await fetch(refundUrl, {
-        method: "DELETE",
-        credentials: "include",
-        headers: { "X-CSRFToken": Cookies.get("csrftoken") }
-    });
-    const responseData = await response.json();
-    if (responseData.message) {
-        const status = response.ok ? "alert-success" : "alert-warning";
-        showFlashMessage(responseData.message, status);
-    }
-};
-
-window.addEventListener("load", () => {
-    const refundButton = document.getElementById("#payment-refund-button");
-    console.log(refundButton);
-    if (refundButton) {
-        const relationId = refundButton.dataset.paymentRelationId;
-        console.log(relationId);
-        refundButton.addEventListener("click", async () => {
-            await refundPayment(relationId);
-        });
-    }
-});
-
 const sendChoice = id => {
     const url = window.location.href.toString();
     const data = {
@@ -90,5 +64,31 @@ const init = () => {
         showFlashMessage(message, "alert-warning");
     }
 };
+
+const refundPayment = async relationId => {
+    const refundUrl = `/api/v1/payment/relations/${relationId}/`;
+    const response = await fetch(refundUrl, {
+        method: "DELETE",
+        credentials: "include",
+        headers: { "X-CSRFToken": Cookies.get("csrftoken") }
+    });
+    const responseData = await response.json();
+    if (responseData.message) {
+        const status = response.ok ? "alert-success" : "alert-warning";
+        showFlashMessage(responseData.message, status);
+    }
+};
+
+window.addEventListener("load", () => {
+    const refundButton = document.getElementById("refund-payment-button");
+    console.log(refundButton);
+    if (refundButton) {
+        const relationId = refundButton.dataset.paymentrelationid;
+        console.log(relationId);
+        refundButton.addEventListener("click", async () => {
+            await refundPayment(relationId);
+        });
+    }
+});
 
 export default init;
