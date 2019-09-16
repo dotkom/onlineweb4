@@ -298,6 +298,7 @@ class PaymentRelationViewSet(viewsets.ModelViewSet):
                     'message': _("Denne betalingen har allerede blitt refundert.")
                 }, status.HTTP_400_BAD_REQUEST)
 
+            payment_relation.refund()
             return Response({'message': _("Betalingen har blitt refundert.")}, status.HTTP_200_OK)
 
         except (InvalidRequestError, StripeError, Exception) as error:

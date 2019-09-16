@@ -37,7 +37,10 @@ class PaymentRelationReadOnlySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = PaymentRelation
-        fields = ('id', 'payment', 'payment_price', 'datetime', 'refunded', 'payment_intent_secret', 'status',)
+        fields = (
+            'id', 'payment', 'payment_price', 'datetime', 'refunded', 'payment_intent_secret', 'status',
+            'is_refundable', 'is_refundable_reason',
+        )
         read_only = True
 
 
@@ -137,7 +140,10 @@ class PaymentRelationCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = PaymentRelation
-        fields = ('id', 'payment', 'payment_price', 'payment_method_id', 'user', 'status', 'payment_intent_secret')
+        fields = (
+            'id', 'payment', 'payment_price', 'payment_method_id', 'user', 'status', 'payment_intent_secret',
+            'is_refundable', 'is_refundable_reason',
+        )
         read_only_fields = ('id', 'payment_intent_secret', 'status')
 
 
@@ -181,7 +187,10 @@ class PaymentRelationUpdateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = PaymentRelation
-        fields = ('payment_intent_id', 'id', 'payment_intent_secret', 'status', 'payment', 'payment_price',)
+        fields = (
+            'payment_intent_id', 'id', 'payment_intent_secret', 'status', 'payment', 'payment_price',
+            'is_refundable', 'is_refundable_reason',
+        )
         read_only_fields = ('id', 'payment_intent_secret', 'status', 'payment', 'payment_price',)
 
 
