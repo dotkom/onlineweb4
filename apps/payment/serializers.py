@@ -94,6 +94,11 @@ class PaymentRelationCreateSerializer(serializers.ModelSerializer):
         """ Get stripe token and remove it from the data that from the create data """
         payment_method_id = validated_data.pop('payment_method_id')
 
+        payment_relation: PaymentRelation = super().create({
+            **validated_data,
+            'status': status.PENDING,
+        })
+
         logger.info(f'Set up Stripe for payment:{payment.id}, user:{request.user.id}, '
                     f'price: {payment_price.price} kr')
         try:
@@ -110,22 +115,20 @@ class PaymentRelationCreateSerializer(serializers.ModelSerializer):
 
             # If the payment needs more validation by Stripe or the bank
             if intent.status == 'requires_source_action' and intent.next_action.type == 'use_stripe_sdk':
-                return super().create({
-                    **validated_data,
-                    'stripe_id': intent.id,
-                    'status': status.PENDING,
-                    'payment_intent_secret': intent.client_secret,
-                })
+                payment_relation.status = status.PENDING
+                payment_relation.payment_intent_secret = intent.client_secret
 
             elif intent.status == 'succeeded':
-                return super().create({
-                    'stripe_id': intent.id,
-                    **validated_data,
-                })
+                payment_relation.status = status.SUCCEEDED
 
             else:
                 logger.error(f'Payment intent returned an invalid status: {intent.status}')
                 raise ValidationError('Det skjedde noe galt under behandlingen av betalingen ')
+
+            payment_relation.stripe_id = intent.id
+            payment_relation.save()
+
+            return payment_relation
 
         except stripe.error.CardError as err:
             error = err.json_body.get('error', {})
@@ -232,6 +235,12 @@ class PaymentTransactionCreateSerializer(serializers.ModelSerializer):
         payment_method_id = validated_data.pop('payment_method_id')
 
         logger.info(f'User: {request.user} attempting to add {amount} to saldo')
+
+        transaction: PaymentTransaction = super().create({
+            **validated_data,
+            'status': status.PENDING,
+        })
+
         try:
             """ Use Trikom key for additions to user saldo """
             stripe_private_key = settings.STRIPE_PRIVATE_KEYS['trikom']
@@ -248,18 +257,20 @@ class PaymentTransactionCreateSerializer(serializers.ModelSerializer):
 
             # If the payment needs more validation by Stripe or the bank
             if intent.status == 'requires_source_action' and intent.next_action.type == 'use_stripe_sdk':
-                return super().create({
-                    **validated_data,
-                    'status': status.PENDING,
-                    'payment_intent_secret': intent.client_secret,
-                })
+                transaction.status = status.PENDING
+                transaction.payment_intent_secret = intent.client_secret
 
             elif intent.status == 'succeeded':
-                return super().create(validated_data)
+                transaction.status = status.SUCCEEDED
 
             else:
                 logger.error(f'Payment intent returned an invalid status: {intent.status}')
                 raise ValidationError('Det skjedde noe galt under behandlingen av betalingen ')
+
+            transaction.stripe_id = intent.id
+            transaction.save()
+
+            return transaction
 
         except stripe.error.CardError as err:
             error = err.json_body.get('error', {})
