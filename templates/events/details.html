@@ -174,7 +174,7 @@
                                             {% if attendance_event.unattend_deadline > now %}
                                                 {% if event.event_start > now %}
                                                     {% if payment_relation_id %}
-                                                        
+
                                                         <div class="btn-group">
                                                             <div class="action col-md-6 col-sm-6 col-xs-6">
                                                                 <a href="#refund" role="button" class="btn btn-large btn-danger" data-toggle="modal">Refunder og meld meg av</a>
@@ -192,7 +192,7 @@
                                         {% if not user_paid %}
                                             {% if attendance_event.unattend_deadline > now or place_on_wait_list %}
                                                 {% if event.event_start > now %}
-                                                    
+
                                                     <div class="btn-group">
                                                         <div class="action col-md-6 col-sm-6 col-xs-6"><a href="#unattend" role="button" class="btn btn-large btn-danger" data-toggle="modal">Meld meg av</a></div>
                                                     </div>
@@ -400,7 +400,7 @@
                 </div>
             </div>
 
-            {% if event.event_type == 1 %} 
+            {% if event.event_type == 1 %}
                 {% if user_status.status or user_attending %}
                 <div id="attendees" class="modal fade">
                     <div class="modal-dialog">
@@ -463,17 +463,15 @@
                             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                             <h3>Refunder og meld deg av {{ event.title }} </h3>
                         </div>
-                        <form action="{% url 'payment_refund' payment_relation_id %}" method="POST">
-                            <div class="modal-body">
-                                {% csrf_token %}
-                                <p>Er du sikker på at du vil refundere og melde deg av?</p>
-                                <p><b>Merk:</b> Det kan ta opptil 10 dager før pengene kommer tilbake på din konto.</p>
-                            </div>
-                            <div class="modal-footer">
-                                <button class="btn" data-dismiss="modal" aria-hidden="true">Lukk</button>
-                                <button type="submit" class="btn btn-danger">Refunder</button>
-                            </div>
-                        </form>
+                        <div class="modal-body">
+                            {% csrf_token %}
+                            <p>Er du sikker på at du vil refundere og melde deg av?</p>
+                            <p><b>Merk:</b> Det kan ta opptil 10 dager før pengene kommer tilbake på din konto.</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn" data-dismiss="modal" aria-hidden="true">Lukk</button>
+                            <button id="refund-payment-button" data-paymentrelationid="{{ payment_relation_id }}" type="submit" data-dismiss="modal" class="btn btn-danger">Refunder</button>
+                        </div>
                     </div>
                 </div>
             </div>

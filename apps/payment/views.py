@@ -62,10 +62,9 @@ class PaymentRelationViewSet(viewsets.ModelViewSet):
         """
         user = request.user
         payment_relation: PaymentRelation = self.get_object()
-        can_refund, message = payment_relation.payment.check_refund(payment_relation)
 
-        if not can_refund:
-            return Response({'message': message}, status=status.HTTP_400_BAD_REQUEST)
+        if not payment_relation.is_refundable:
+            return Response({'message': payment_relation.is_refundable_reason}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
             """ Handle the actual refund with the stripe API """
