@@ -21,13 +21,6 @@
         var selected_extra = "{{ attendee.extras }}";
         var all_extras = [{% for e in attendance_event.extras.all %}"{{e}}", {%endfor%}];
     </script>
-
-    {% if payment and not place_on_wait_list and not user_paid or payment and payment.payment_type == 1 %}
-      <script src="{{ STATIC_URL }}js/libs/jquery.cookie.js"></script>
-      <script src="https://checkout.stripe.com/checkout.js"></script>
-      <script src="{{ STATIC_URL }}js/payment.js"></script>
-    {% endif %}
-
     {% render_bundle 'eventsDetails' 'js' %}
 {% endblock %}
 

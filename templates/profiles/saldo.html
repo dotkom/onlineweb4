@@ -1,108 +1,31 @@
 <div class="row">
     <div class="col-md-12">
-        <h3>Din Saldo: {{ request.user.saldo }}kr</h3>
-    </div>
-</div>
-<div class="row-space"></div>
-<div class="row">
-    <div class="col-md-6">
-        <select id="amount" class="form-control">
-            <option value="100">100</option>
-            <option value="200">200</option>
-            <option value="500">500</option>
-        </select>
-    </div>
-
-    <div class="col-md-6">
-        <button id="stripeButton{{ payment_price.id }}" class="btn btn-primary payment-button">Fyll på saldo</button>
-    </div>
-</div>
-<hr>
-<div class="row">
-    <div class="col-md-12">
-        <h2>Historikk</h2>
+        <h3>Saldo</h3>
     </div>
 </div>
 <div class="row">
     <div class="col-md-12">
-        <div>
-            <ul class="nav nav-tabs" role="tablist">
-                <li role="presentation" class="active">
-                    <a href="#orders" aria-controls="orders" role="tab" data-toggle="tab">Ordre</a>
-                </li>
-                <li role="presentation">
-                    <a href="#transactions" aria-controls="transactions" role="tab" data-toggle="tab">Transaksjoner</a>
-                </li>
-            </ul>
-
-            <!-- Tab panes -->
-            <div class="tab-content">
-                <div role="tabpanel" class="tab-pane active" id="orders">
-                    <table class="table table-hover">
-                        <thead>
-                        <th>Tidspunkt</th>
-                        <th>Vare</th>
-                        <th>Beløp</th>
-                        </thead>
-                        <tbody>
-                        {% for order in orders %}
-                            <tr data-toggle="modal" data-target="#{{ order.order_line }}{{ order.object_id }}Modal">
-                                <td>{{ order.order_line.datetime }}</td>
-                                <td>{{ order.content_object }}</td>
-                                <td>{{ order.price }} kr</td>
-                            </tr>
-                            <!-- Bootstrap Modal -->
-                            <div id="{{ order.order_line }}{{ order.object_id }}Modal" class="modal fade" role="dialog">
-                                <div class="modal-dialog">
-                                    <!-- Modal content-->
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                            <h4 class="modal-title">Kvittering for kjøp</h4>
-                                        </div>
-                                        <div class="modal-body">
-                                            <p><strong>Dato:</strong> {{ order.order_line.datetime }}</p>
-                                            <p><strong>Type:</strong> {{ order.content_object }}</p>
-                                            <p><strong>Antall:</strong> {{ order.quantity }}</p>
-                                            <p><strong>Pris:</strong> {{ order.price }} kr</p>
-                                            <p><strong>Selger:</strong> Linjeforeningen Online</p>
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-default" data-dismiss="modal">
-                                                Close
-                                            </button>
-                                        </div>
-                                    </div>
-
-                                </div>
-                            </div>
-                        {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-                <div role="tabpanel" class="tab-pane" id="transactions">
-                    <table class="table">
-                        <thead>
-                        <th>Tidspunkt</th>
-                        <th>Betalingsmetode</th>
-                        <th>Beløp</th>
-                        </thead>
-                        <tbody>
-                        {% for transaction in transactions %}
-                            <tr>
-                                <td>{{ transaction.datetime }}</td>
-                                {% if transaction.used_stripe %}
-                                    <td>Web</td>
-                                {% else %}
-                                    <td>Kontant</td>
-                                {% endif %}
-                                <td>{{ transaction.amount }} kr</td>
-                            </tr>
-                        {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
+        <p>
+            13. januar 2018 ble betalingstjenestedirektivet (også kjent som
+            PSD2) innført. PSD2 stiller krav om blant annet "Strong customer
+            authentication" (SCA) fra 14. september 2019, som betyr at vi må
+            støtte 3-D Secure. Derfor har dotkom måttet lage en ny saldoside.
+        </p>
+        <p>
+            Den nye saldosiden ligger på beta-versjonen av Onlines nye
+            nettsider. Dotkom minner om at beta-siden enda er under utvikling,
+            og vi setter pris på all tilbakemelding dere kan gi.
+        </p>
+        <p>
+            Vi er klar over at man må logge inn igjen på den nye siden, men hvis
+            dere møter på problemer med den nye saldosiden kan dere sende en
+            mail til <a href="mailto:dotkom@online.ntnu.no">dotkom</a> eller
+            legge inn et issue på vårt Github
+            <a href="https://github.com/dotkom/onlineweb-frontend">repository</a
+            >.
+        </p>
+        <a href="https://beta.online.ntnu.no/payments/wallet" class="btn btn-primary">
+            Gå til saldosiden
+        </a>
     </div>
 </div>
