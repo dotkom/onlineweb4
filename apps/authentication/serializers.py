@@ -240,7 +240,7 @@ class OnlineGroupReadOnlySerializer(serializers.ModelSerializer):
         model = OnlineGroup
         fields = (
             'image', 'name_short', 'name_long', 'name_short', 'description_long', 'description_short',
-            'email', 'created', 'group_type', 'verbose_type', 'group', 'members',
+            'email', 'created', 'group_type', 'verbose_type', 'group', 'members', 'gsuite_name',
         )
         read_only = True
 
@@ -265,5 +265,5 @@ class OnlineGroupCreateOrUpdateSerializer(serializers.ModelSerializer):
         model = OnlineGroup
         fields = (
             'group', 'image', 'name_short', 'name_long', 'description_short', 'description_long', 'email',
-            'group_type',
+            'group_type', 'gsuite_name',
         )
