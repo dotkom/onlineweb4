@@ -213,17 +213,17 @@ class OnlineUser(AbstractUser):
         return AllowedUsername.objects.get(username=self.ntnu_username.lower())
 
     def change_saldo(self, amount):
-        try:
-            with transaction.atomic():
-                self.refresh_from_db()
-                self.saldo += amount
+        """
+        Update the saldo of a user with an atomic transaction.
+        """
+        with transaction.atomic():
+            self.refresh_from_db()
+            self.saldo += amount
 
-                if self.saldo < 0:
-                    raise NotAcceptable('Insufficient funds')
+            if self.saldo < 0:
+                raise NotAcceptable('Insufficient funds')
 
-                self.save()
-        except DatabaseError:
-            pass
+            self.save()
 
     @property
     def year(self):
