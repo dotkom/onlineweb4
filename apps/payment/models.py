@@ -12,7 +12,6 @@ from django.db import models
 from django.template.loader import render_to_string
 from django.utils import timezone
 from django.utils.translation import ugettext as _
-from rest_framework.exceptions import NotAcceptable
 
 from apps.events.models import AttendanceEvent, Attendee
 from apps.marks.models import Suspension
@@ -463,19 +462,16 @@ class PaymentTransaction(models.Model):
 
         """ When a payment succeeds, ot should be stored to the DB """
         if self.status == status.SUCCEEDED:
-            self.user.saldo = self.user.saldo + self.amount
 
-            if self.user.saldo < 0:
-                raise NotAcceptable("Insufficient funds")
+            self.user.change_saldo(self.amount)
 
-            self.user.save()
             """ Pass the transaction to the next step, which is DONE """
             self.status = status.DONE
 
         """ Handle when a transaction is being refunded by Stripe """
         if self.status == status.REFUNDED:
-            self.user.saldo = self.user.saldo - self.amount
-            self.user.save()
+            self.user.change_saldo(-self.amount)
+
             """ Pass transaction to the next strip, which is REMOVED """
             self.status = status.REMOVED
 

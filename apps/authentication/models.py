@@ -7,11 +7,12 @@ from functools import reduce
 
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser, Group
-from django.db import models
+from django.db import DatabaseError, models, transaction
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.html import strip_tags
 from django.utils.translation import ugettext as _
+from rest_framework.exceptions import NotAcceptable
 
 from apps.authentication.constants import FieldOfStudyType, GroupType, RoleType
 # If this list is changed, remember to check that the year property on
@@ -210,6 +211,19 @@ class OnlineUser(AbstractUser):
         if not self.is_member:
             return None
         return AllowedUsername.objects.get(username=self.ntnu_username.lower())
+
+    def change_saldo(self, amount):
+        try:
+            with transaction.atomic():
+                self.refresh_from_db()
+                self.saldo += amount
+
+                if self.saldo < 0:
+                    raise NotAcceptable('Insufficient funds')
+
+                self.save()
+        except DatabaseError:
+            pass
 
     @property
     def year(self):
