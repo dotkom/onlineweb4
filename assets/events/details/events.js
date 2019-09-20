@@ -1,4 +1,5 @@
 import $ from 'jquery';
+import Cookies from 'js-cookie';
 import { makeApiRequest, showFlashMessage } from 'common/utils/';
 
 /*
@@ -33,7 +34,8 @@ const sendChoice = (id) => {
     selected.text(chosenText + selected.text());
   };
   const error = (xhr, txt, errorMessage) => {
-    const message = 'Det skjedde en feil! Refresh siden og prøv igjen, eller kontakt de ansvarlige hvis det fortsatt ikke går. ';
+    const message =
+      'Det skjedde en feil! Refresh siden og prøv igjen, eller kontakt de ansvarlige hvis det fortsatt ikke går. ';
     showFlashMessage(message + errorMessage, 'alert-danger');
   };
 
@@ -49,12 +51,41 @@ const init = () => {
   });
 
   if (allExtras.length > 0 && selectedExtra === 'None') {
-    const message = 'Vennligst velg et alternativ for extra bestilling. (Over avmeldingsknappen)';
+    const message =
+      'Vennligst velg et alternativ for extra bestilling. (Over avmeldingsknappen)';
     showFlashMessage(message, 'alert-warning');
-  } else if (allExtras.length > 0 && selectedExtra !== '' && $.inArray(selectedExtra, allExtras) === -1) {
+  } else if (
+    allExtras.length > 0 &&
+    selectedExtra !== '' &&
+    $.inArray(selectedExtra, allExtras) === -1
+  ) {
     const message = 'Ditt valg til ekstra bestilling er ikke lenger gyldig! Velg et nytt.';
     showFlashMessage(message, 'alert-warning');
   }
 };
+
+const refundPayment = async (relationId) => {
+  const refundUrl = `/api/v1/payment/relations/${relationId}/`;
+  const response = await fetch(refundUrl, {
+    method: 'DELETE',
+    credentials: 'include',
+    headers: { 'X-CSRFToken': Cookies.get('csrftoken') },
+  });
+  const responseData = await response.json();
+  if (responseData.message) {
+    const status = response.ok ? 'alert-success' : 'alert-warning';
+    showFlashMessage(responseData.message, status);
+  }
+};
+
+window.addEventListener('load', () => {
+  const refundButton = document.getElementById('refund-payment-button');
+  if (refundButton) {
+    const relationId = refundButton.dataset.paymentrelationid;
+    refundButton.addEventListener('click', async () => {
+      await refundPayment(relationId);
+    });
+  }
+});
 
 export default init;

@@ -98,7 +98,7 @@ class PaymentTest(TestCase):
         self.attendance_event.unattend_deadline = timezone.now() - timedelta(days=1)
         self.attendance_event.save()
 
-        self.assertFalse(self.event_payment.check_refund(payment_relation)[0])
+        self.assertFalse(payment_relation.is_refundable)
 
     def testEventPaymentRefundCheckAtendeeExists(self):
         payment_relation = G(
@@ -108,7 +108,7 @@ class PaymentTest(TestCase):
             payment_price=self.payment_price
         )
 
-        self.assertFalse(self.event_payment.check_refund(payment_relation)[0])
+        self.assertFalse(payment_relation.is_refundable)
 
     def testEventPaymentRefundCheckEventStarted(self):
         G(Attendee, event=self.attendance_event, user=self.user)
@@ -122,7 +122,7 @@ class PaymentTest(TestCase):
         self.event.event_start = timezone.now() - timedelta(days=1)
         self.event.save()
 
-        self.assertFalse(self.event_payment.check_refund(payment_relation)[0])
+        self.assertFalse(payment_relation.is_refundable)
 
     def testEventPaymentRefundCheck(self):
         G(Attendee, event=self.attendance_event, user=self.user)
@@ -139,8 +139,7 @@ class PaymentTest(TestCase):
             payment_price=self.payment_price
         )
 
-        print(self.event_payment.check_refund(payment_relation))
-        self.assertTrue(self.event_payment.check_refund(payment_relation)[0])
+        self.assertTrue(payment_relation.is_refundable)
 
     def testEventPaymentRefund(self):
         G(Attendee, event=self.attendance_event, user=self.user)
@@ -154,7 +153,7 @@ class PaymentTest(TestCase):
         )
         self.assertFalse(payment_relation.refunded)
 
-        self.event_payment.handle_refund(payment_relation)
+        payment_relation.refund()
         attendees = Attendee.objects.all()
 
         self.assertTrue(payment_relation.refunded)

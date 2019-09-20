@@ -209,8 +209,6 @@ class Payment(models.Model):
         :param str host: hostname to include in email
         :param PaymentRelation payment_relation: user payment to refund
         """
-        payment_relation.refunded = True
-        payment_relation.save()
 
         if self._is_type(AttendanceEvent):
             Attendee.objects.get(event=self.content_object,
@@ -352,6 +350,20 @@ class PaymentRelation(models.Model):
 
     def get_to_mail(self):
         return self.user.email
+
+    def refund(self):
+        self.status = status.REFUNDED
+        self.save()
+
+    @property
+    def is_refundable(self) -> bool:
+        can_refund, reason = self.payment.check_refund(self)
+        return can_refund
+
+    @property
+    def is_refundable_reason(self) -> str:
+        can_refund, reason = self.payment.check_refund(self)
+        return reason
 
     def _handle_status_change(self):
         """
