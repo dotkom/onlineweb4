@@ -1,9 +1,8 @@
-from rest_framework import mixins, viewsets, permissions
-
 from oidc_provider.models import Client, ResponseType, UserConsent
+from rest_framework import mixins, permissions, viewsets
 
-from .serializers import (ClientCreateAndUpdateSerializer, ClientReadOnlySerializer, ResponseTypeReadOnlySerializer,
-                          UserConsentReadOnlySerializer,)
+from .serializers import (ClientCreateAndUpdateSerializer, ClientReadOnlySerializer,
+                          ResponseTypeReadOnlySerializer, UserConsentReadOnlySerializer)
 
 
 class UserConsentViewSet(viewsets.GenericViewSet,

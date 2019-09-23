@@ -1,7 +1,7 @@
+from oidc_provider.models import Client, ResponseType, UserConsent
 from rest_framework import serializers
 
 from apps.authentication.serializers import UserNameSerializer
-from oidc_provider.models import UserConsent, Client, ResponseType
 
 
 class UserConsentReadOnlySerializer(serializers.ModelSerializer):
