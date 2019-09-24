@@ -1,12 +1,12 @@
 from django.urls import reverse
 from django_dynamic_fixture import G
+from oidc_provider.models import (CLIENT_TYPE_CHOICES, RESPONSE_TYPE_CHOICES, Client, ResponseType,
+                                  UserConsent)
 from rest_framework import status
-
-from oidc_provider.models import Client, CLIENT_TYPE_CHOICES, ResponseType, RESPONSE_TYPE_CHOICES, UserConsent
 
 from apps.authentication.models import OnlineUser as User
 from apps.events.tests.utils import generate_user
-from apps.oidc_provider.test import OIDCTestCase
+from apps.online_oidc_provider.test import OIDCTestCase
 
 
 class ResponseTypesTest(OIDCTestCase):
