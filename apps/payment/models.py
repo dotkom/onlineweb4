@@ -20,6 +20,8 @@ from apps.webshop.models import OrderLine
 
 User = settings.AUTH_USER_MODEL
 
+logger = logging.getLogger(__name__)
+
 
 class Payment(models.Model):
 
@@ -315,7 +317,7 @@ class PaymentRelation(models.Model):
 
     unique_id = models.CharField(max_length=128, null=True, blank=True)
     """Unique ID for payment"""
-    stripe_id = models.CharField(max_length=128)
+    stripe_id = models.CharField(max_length=128, null=True, blank=True)
     """ID from Stripe payment"""
 
     status = models.CharField(
@@ -437,6 +439,8 @@ class PaymentTransaction(models.Model):
         default=status.SUCCEEDED
     )
     """ Status of a Stripe payment """
+    stripe_id = models.CharField(max_length=128, null=True, blank=True)
+    """ID from Stripe payment"""
     payment_intent_secret = models.CharField(max_length=200, null=True, blank=True)
     """ Stripe payment intent secret key for verifying pending transactions/intents """
 
