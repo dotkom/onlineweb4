@@ -18,7 +18,10 @@ class UserConsentViewSet(viewsets.GenericViewSet,
 
 
 class ClientViewSet(viewsets.ModelViewSet):
-    permission_classes = (permissions.AllowAny,)
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+
+    def get_permissions(self):
+        return super().get_permissions()
 
     def get_queryset(self):
         if self.action in ['retrieve', 'list']:
@@ -27,7 +30,7 @@ class ClientViewSet(viewsets.ModelViewSet):
             user = self.request.user
             if user.is_anonymous:
                 return Client.objects.none()
-            return Client.objects.filter(user=user)
+            return Client.objects.filter(owner=user)
 
         return super().get_queryset()
 
@@ -42,5 +45,5 @@ class ClientViewSet(viewsets.ModelViewSet):
 
 class ResponseTypeViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = ResponseTypeReadOnlySerializer
-    permission_classes = (permissions.AllowAny,)
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
     queryset = ResponseType.objects.all()
