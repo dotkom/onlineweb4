@@ -367,21 +367,7 @@ class PaymentRelation(models.Model):
         can_refund, reason = self.payment.check_refund(self)
         return reason
 
-    def _handle_status_change(self):
-        """
-        Called only from the save method. Saving should no be done here, as that would lead to recursion.
-        """
-        if self.status == status.SUCCEEDED:
-            """ Handle the completed payment. Remove delays, suspensions and marks """
-            self.payment.handle_payment(self.user)
-            self.status = status.DONE
-        elif self.status == status.REFUNDED:
-            self.refunded = True
-            self.payment.handle_refund(self)
-            self.status = status.REMOVED
-
     def save(self, *args, **kwargs):
-        self._handle_status_change()
         if not self.unique_id:
             self.unique_id = str(uuid.uuid4())
         super(PaymentRelation, self).save(*args, **kwargs)
@@ -470,31 +456,7 @@ class PaymentTransaction(models.Model):
     def __str__(self):
         return str(self.user) + " - " + str(self.amount) + "(" + str(self.datetime) + ")"
 
-    def _handle_status_change(self):
-        """
-        Should only be called from the save method.
-        TODO: Implement using pre-save signal.
-        """
-
-        """ When a payment succeeds, ot should be stored to the DB """
-        if self.status == status.SUCCEEDED:
-
-            self.user.change_saldo(self.amount)
-
-            """ Pass the transaction to the next step, which is DONE """
-            self.status = status.DONE
-
-        """ Handle when a transaction is being refunded by Stripe """
-        if self.status == status.REFUNDED:
-            self.user.change_saldo(-self.amount)
-
-            """ Pass transaction to the next strip, which is REMOVED """
-            self.status = status.REMOVED
-
     def save(self, *args, **kwargs):
-        """ Handle the currently set status of the transaction """
-        self._handle_status_change()
-
         super().save(*args, **kwargs)
         receipt = PaymentReceipt(object_id=self.id,
                                  content_type=ContentType.objects.get_for_model(self))
