@@ -1,11 +1,10 @@
-from textwrap import wrap
 import uuid
+from tempfile import gettempdir
 
 from pdfdocument.utils import PDFDocument
 from reportlab.lib import colors
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.platypus import Paragraph, TableStyle
-from tempfile import gettempdir
 
 
 class FikenSalePDF:

@@ -20,7 +20,7 @@ from apps.payment import status
 from apps.payment.constants import (FikenAccount, FikenSaleKind, StripeKey, TransactionType,
                                     VatTypeSale, vat_percentage)
 from apps.payment.pdf_generator import FikenSalePDF
-from apps.webshop.models import Order, OrderLine
+from apps.webshop.models import OrderLine
 
 User = settings.AUTH_USER_MODEL
 

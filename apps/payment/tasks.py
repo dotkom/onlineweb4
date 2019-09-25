@@ -7,7 +7,7 @@ from onlineweb4.celery import app
 from requests.auth import HTTPBasicAuth
 
 from .models import FikenSale, FikenSaleAttachment
-from .serializers import FikenSaleSerializer, FikenSaleAttachmentSerializer
+from .serializers import FikenSaleAttachmentSerializer, FikenSaleSerializer
 
 logger = logging.getLogger(__name__)
 

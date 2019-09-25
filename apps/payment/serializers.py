@@ -6,8 +6,8 @@ from rest_framework import serializers
 from rest_framework.serializers import ValidationError
 
 from apps.payment import status
-from apps.payment.models import (FikenOrderLine, FikenSale, FikenSaleAttachment, Payment, PaymentDelay, PaymentPrice,
-                                 PaymentRelation, PaymentTransaction)
+from apps.payment.models import (FikenOrderLine, FikenSale, FikenSaleAttachment, Payment,
+                                 PaymentDelay, PaymentPrice, PaymentRelation, PaymentTransaction)
 
 logger = logging.getLogger(__name__)
 
