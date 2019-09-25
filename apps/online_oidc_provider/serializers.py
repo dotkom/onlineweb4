@@ -23,7 +23,7 @@ class ClientCreateAndUpdateSerializer(serializers.ModelSerializer):
             'id', 'name', 'owner', 'date_created', 'website_url', 'terms_url', 'contact_email', 'logo',
             'require_consent', 'reuse_consent', 'scope', 'response_types',
         )
-        read_only_fields = ('date_created', 'reuse_consent', 'require_consent',)
+        read_only_fields = ('date_created', 'reuse_consent', 'require_consent', 'scope',)
 
 
 class ClientReadOnlySerializer(serializers.ModelSerializer):
