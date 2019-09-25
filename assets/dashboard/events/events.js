@@ -60,7 +60,7 @@ const Event = (function PrivateEvent($) {
         // Extras cell
         row += `<td>${attendee.extras}</td>`;
         // Delete cell
-        row += `<td><a href="#modal-delete-attendee" data-toggle="modal" data-id="${attendee.id}" data-name="${attendee.first_name} ${attendee.last_name}" class="remove-user">`;
+ row += `<td><a href="#modal-delete-attendee" data-toggle="modal" data-id="${attendee.id}" data-name="${attendee.first_name} ${attendee.last_name}" class="remove-user">`;
         row += '<i class="fa fa-times fa-lg pull-right red"></i>';
         row += "</a></td>";
         // Close row

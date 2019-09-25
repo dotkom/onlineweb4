@@ -90,9 +90,6 @@ def handle_add_attendee(event: Event, user_id: int):
         if not event.attendance_event.waitlist:
             return {'message': f'Det er ingen ledige plasser på {event.title}.', 'status': 400, **resp}
 
-
-
-
     user = User.objects.filter(pk=user_id)
     if user.count() != 1:
         return {'message': f'Fant ingen bruker med oppgitt ID ({user_id}).', 'status': 400, **resp}
