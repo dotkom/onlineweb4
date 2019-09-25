@@ -35,7 +35,7 @@ from apps.events.serializers import (AttendanceEventSerializer,
                                      UserAttendanceEventSerializer)
 from apps.events.utils import (handle_attend_event_payment, handle_attendance_event_detail,
                                handle_event_ajax, handle_event_payment, handle_mail_participants)
-from apps.oidc_provider.authentication import OidcOauth2Auth
+from apps.online_oidc_provider.authentication import OidcOauth2Auth
 from apps.payment.models import Payment, PaymentDelay, PaymentRelation
 
 from .utils import EventCalendar

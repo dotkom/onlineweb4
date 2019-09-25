@@ -10,7 +10,7 @@ from rest_framework import status
 from apps.authentication.models import OnlineUser
 from apps.companyprofile.models import Company
 from apps.events.models import Attendee, CompanyEvent
-from apps.oidc_provider.test import OIDCTestCase
+from apps.online_oidc_provider.test import OIDCTestCase
 from apps.profiles.models import Privacy
 
 from .utils import (attend_user_to_event, generate_event, generate_payment, generate_user,

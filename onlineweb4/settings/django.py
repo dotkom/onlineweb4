@@ -217,6 +217,7 @@ INSTALLED_APPS = (
     'apps.profiles',
     'apps.resourcecenter',
     'apps.mailinglists',
+    'apps.online_oidc_provider',
     'apps.inventory',
     'apps.payment',
     'apps.posters',

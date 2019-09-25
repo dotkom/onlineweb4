@@ -143,6 +143,11 @@ if 'apps.marks' in settings.INSTALLED_APPS:
         url(r'^dashboard/marks/',          include('apps.marks.dashboard.urls')),
     ]
 
+if 'apps.online_oidc_provider' in settings.INSTALLED_APPS:
+    urlpatterns += [
+        url(r'^oidc/', include('apps.online_oidc_provider.urls')),
+    ]
+
 if 'apps.inventory' in settings.INSTALLED_APPS:
     urlpatterns += [
         url(r'^dashboard/inventory/',          include('apps.inventory.dashboard.urls')),

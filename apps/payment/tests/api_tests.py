@@ -10,7 +10,7 @@ from rest_framework import status
 
 from apps.events.tests.utils import (attend_user_to_event, generate_event, generate_user,
                                      pay_for_event)
-from apps.oidc_provider.test import OIDCTestCase
+from apps.online_oidc_provider.test import OIDCTestCase
 from apps.payment import status as payment_status
 from apps.payment.models import PaymentRelation
 
