@@ -13,7 +13,9 @@ const Events = ({ mainEvents, smallEvents, setEventVisibility, eventTypes }) => 
         ? mainEvents.map((event, index) =>
           <Event key={index} {...event} />,
         )
-        : <div className="col-lg-12">Ingen arrangementer funnet.</div>
+        : <div className="col-lg-12">
+            Ingen arrangementer funnet, eller de er blokkert av en adblock.
+          </div>
       }
     </div>
     <div className="row clearfix hero">
