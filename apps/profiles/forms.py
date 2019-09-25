@@ -67,26 +67,16 @@ class PositionForm(forms.ModelForm):
     def clean(self):
         super(PositionForm, self).clean()
 
-        range_compiler = re.compile(r'\d{4}-\d{4}')
-        year_range = self.cleaned_data['period']
+        period_start = self.cleaned_data['period_start']
+        period_end = self.cleaned_data['period_end']
 
-        # If it doesn't match the format YYYY-YYYY
-        if not range_compiler.match(year_range):
-            self._errors['period'] = self.error_class(
-                [_('Feil format. Dobbelsjekk at input er på formatet YYYY-YYYY.')]
-            )
-            return self.cleaned_data
+        # Checks if period_start and period_end intervall is max one year.
+        if (period_end - period_start).days > 365:
+            self._errors['period_end'] = self.error_class([_('Du kan kun registrer verv i ett år av gangen.')])
 
-        years = year_range.split('-')
-
-        # If somewhat they fucked up input, we don't want None-shit after the split.
-        if not years[0] or not years[1]:
-            self._errors['period'] = self.error_class([_('Feil format. Dobbelsjekk input.')])
-            return self.cleaned_data
-
-        # If first year is larger than latter, or the diff is more than one, fail.
-        if (int(years[0]) > int(years[1])) or (int(years[1]) - int(years[0])) > 1:
-            self._errors['period'] = self.error_class([_('Ikke gyldig års-intervall. Bare ett år er tillat.')])
+        # Checks is period_start is a later date than period_end.
+        if period_start > period_end:
+            self._errors['period_start'] = self.error_class([_('Start-dato kan ikke være etter endt-dato.')])
 
         return self.cleaned_data
 
