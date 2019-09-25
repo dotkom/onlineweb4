@@ -37,13 +37,15 @@ def create_sale_attachment(_, sale_id: int):
     attachment: FikenSaleAttachment = sale.create_attachment()
     if IS_FIKEN_CONFIGURED:
         auth = HTTPBasicAuth(FIKEN_USER, FIKEN_PASSWORD)
-        headers = {'Content-type': 'multipart/form-data', 'Accept': 'application/json'}
+        headers = {}
 
         sale_attachment_data = FikenSaleAttachmentSerializer(attachment).data
         attachment_data = dict(
             SaleAttachment=(None, json.dumps(sale_attachment_data), 'application/json'),
-            AttachmentFile=('file.pdf', None, 'application/octet-stream'),
+            AttachmentFile=(attachment.filename, attachment.file.read(), 'application/pdf'),
         )
+
+        logger.debug(attachment_data)
 
         response = requests.post(
             url=get_fiken_sales_attachments_api_url(sale.fiken_id),

@@ -7,6 +7,7 @@ from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
+from django.core.files import File
 from django.core.mail import send_mail
 from django.db import models
 from django.template.loader import render_to_string
@@ -373,7 +374,7 @@ class PaymentRelation(models.Model):
         return reason
 
     def create_fiken_sale(self, amount: int):
-        ore_amount = amount * 100,  # Payment price is in Kr, sale amount is in Øre
+        ore_amount = amount * 100  # Payment price is in Kr, sale amount is in Øre
         sale = FikenSale.objects.create(
             stripe_key=self.payment.stripe_key,
             original_amount=amount * 100,  # Payment price is in Kr, sale amount is in Øre
@@ -659,13 +660,13 @@ class FikenSale(models.Model):
         return self.order_lines.all()
 
     def create_attachment(self):
-        attachment_file = FikenSalePDF(self).render_pdf()
         sale_attachment = FikenSaleAttachment.objects.create(
             sale=self,
             filename=f'sale-attachment-{self.identifier}.pdf',
             comment='',
         )
-        sale_attachment.file.save(sale_attachment.filename, attachment_file, )
+        attachment_file = FikenSalePDF(self).render_pdf()
+        sale_attachment.file.save(sale_attachment.filename, File(attachment_file))
         return sale_attachment
 
 
@@ -708,5 +709,5 @@ class FikenSaleAttachment(models.Model):
     file = models.FileField(upload_to=settings.OW4_FIKEN_FILE_ROOT)
     comment = models.CharField(max_length=4000)
     attach_to_sale = models.BooleanField(default=True)
-    attach_to_payment = models.BooleanField(null=True, blank=True)
+    attach_to_payment = models.BooleanField(default=False)
     created = models.DateTimeField(auto_now_add=True)
