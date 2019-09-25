@@ -11,6 +11,8 @@ class AddCareerOpportunityForm(forms.ModelForm):
         attrs={'placeholder': 'Kort ingress til karrieremuligheten (Max 250 tegn)'}))
     description = forms.CharField(label='Beskrivelse', required=True, widget=forms.Textarea(
         attrs={'placeholder': 'Detaljert beskrivelse av karrieremuligheten'}))
+    website = forms.URLField(label='Nettside', required=False, widget=forms.TextInput(
+        attrs={'placeholder': 'Nettadresse'}))
     start = forms.DateTimeField(label='Start-tid', required=True, widget=forms.TextInput(
         attrs={'placeholder': 'Velg start-tid'}))
     end = forms.DateTimeField(label='Slutt-tid', required=True, widget=forms.TextInput(
@@ -20,5 +22,5 @@ class AddCareerOpportunityForm(forms.ModelForm):
 
     class Meta:
         model = CareerOpportunity
-        fields = ('company', 'title', 'ingress', 'description', 'start', 'end',
+        fields = ('company', 'title', 'ingress', 'description', 'website', 'start', 'end',
                   'featured', 'deadline', 'employment', 'location')
