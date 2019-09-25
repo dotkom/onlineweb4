@@ -14,7 +14,7 @@ const Events = ({ mainEvents, smallEvents, setEventVisibility, eventTypes }) => 
           <Event key={index} {...event} />,
         )
         : <div className="col-lg-12">
-            Ingen arrangementer funnet, eller de er blokert av en adblock.
+            Ingen arrangementer funnet, eller de er blokkert av en adblock.
           </div>
       }
     </div>
