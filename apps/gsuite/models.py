@@ -84,7 +84,6 @@ class GroupSync(models.Model):
         to=GroupRole,
         related_name='sync_groups',
         verbose_name=_('Synkroniserte roller'),
-        null=True,
         blank=True,
     )
     """ Sync group members as a specific role """

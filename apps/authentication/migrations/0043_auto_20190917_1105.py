@@ -20,7 +20,7 @@ def revert_data(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('authentication', '0041_onlinegroup_gsuite_name'),
+        ('authentication', '0042_onlinegroup_gsuite_name'),
     ]
 
     operations = [
