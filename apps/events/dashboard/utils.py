@@ -3,6 +3,7 @@ from django.urls import reverse
 
 from apps.authentication.models import OnlineUser as User
 from apps.events.models import Attendee, Event
+from apps.payment.models import Payment
 
 
 def _get_attendee(attendee_id):
@@ -65,6 +66,7 @@ def _get_attendee_data(attendee_qs):
             'id': a.id,
             'first_name': a.user.first_name,
             'last_name': a.user.last_name,
+            'year_of_study': a.user.year,
             'paid': a.paid,
             'extras': str(a.extras),
             'attended': a.attended,
@@ -77,6 +79,7 @@ def _get_attendee_data(attendee_qs):
 def _get_event_context(event: Event, response={}):
     response['attendees'] = _get_attendee_data(event.attendance_event.attending_attendees_qs)
     response['waitlist'] = _get_attendee_data(event.attendance_event.waitlist_qs)
+    response['is_payment_event'] = Payment.objects.filter(object_id=event.attendance_event.pk).exists()
 
     return response
 
@@ -86,6 +89,9 @@ def handle_add_attendee(event: Event, user_id: int):
     if event.attendance_event.number_of_seats_taken >= event.attendance_event.max_capacity:
         if not event.attendance_event.waitlist:
             return {'message': f'Det er ingen ledige plasser på {event.title}.', 'status': 400, **resp}
+
+
+
 
     user = User.objects.filter(pk=user_id)
     if user.count() != 1:
