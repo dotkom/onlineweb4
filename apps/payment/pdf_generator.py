@@ -17,6 +17,11 @@ ORG_NAME = 'Linjeforeningen Online'
 ORG_CODE = '992 548 045 MVA'
 
 
+def format_nok_value(amount: int) -> str:
+    str_value = str(amount)
+    return f'{str_value[:-2]},{str_value[-2:]} kr'
+
+
 class FikenSalePDF:
 
     def __init__(self, sale):
@@ -24,16 +29,12 @@ class FikenSalePDF:
 
     @property
     def order_line_table_data(self):
-        table_data = [[
-            'Vare',
-            'Mva',
-            'Pris',
-        ]]
+        table_data = [['Vare', 'Mva', 'Pris']]
         for order_line in self.sale.order_lines.all():
             table_data.append([
                 order_line.description,
                 f'{order_line.vat_percentage * 100} %',
-                f'{ order_line.price / 100} kr',
+                format_nok_value(order_line.net_price),
             ])
 
         return table_data
@@ -48,18 +49,18 @@ class FikenSalePDF:
 
         vat_totals = []
         for vat_percentage, order_lines in order_lines_by_vat.items():
-            total_for_vat = sum([line.price for line in order_lines])
+            total_for_vat = sum([line.net_price for line in order_lines])
             vat_totals.append([
                 None,
                 f'{vat_percentage} %',
-                f'{total_for_vat / 100} kr',
+                format_nok_value(total_for_vat),
             ])
 
         return vat_totals
 
     @property
     def column_widths(self):
-        return 245, 80, 145
+        return 320, 60, 90
 
     def render_pdf(self):
         path = f'{gettempdir()}/{uuid.uuid1()}'
@@ -84,7 +85,7 @@ class FikenSalePDF:
         pdf.spacer(height=25)
         pdf.p('Ordrelinjer', style=create_paragraph_style(font_size=14))
         pdf.spacer(height=20)
-        table_style = get_order_line_table_style(border_color=colors.gray, grid_color=colors.dimgrey)
+        table_style = get_order_line_table_style(line_color=colors.dimgrey)
         pdf.table(self.order_line_table_data, self.column_widths, style=table_style)
 
         pdf.spacer(height=20)
@@ -97,7 +98,7 @@ class FikenSalePDF:
         pdf.p('Total', style=create_paragraph_style(font_size=14))
         pdf.spacer(height=10)
 
-        pdf.p(f'{self.sale.original_amount / 100} kr', style=create_paragraph_style(font_size=12, ))
+        pdf.p(format_nok_value(self.sale.amount), style=create_paragraph_style(font_size=12))
 
         pdf.generate()
         pdf_file = open(path, 'rb')
@@ -117,10 +118,10 @@ def get_vat_table_style(full_spans=None, line_color=colors.grey):
 
 
 # Table style for framed table with grids
-def get_order_line_table_style(full_spans=None, border_color=colors.black, grid_color=colors.grey):
+def get_order_line_table_style(full_spans=None, line_color=colors.grey):
     style = [
-        ('GRID', (0, 0), (-1, -1), 0.5, grid_color),
-        ('BOX', (0, 0), (-1, -1), 1, border_color),
+        ('LINEBELOW', (0, 0), (-1, 0), 1, line_color),
+        ('LINEBELOW', (0, 1), (-1, -1), 0.5, line_color),
         ('ALIGN', (1, 0), (-1, -1), 'RIGHT'),
     ]
     if full_spans:

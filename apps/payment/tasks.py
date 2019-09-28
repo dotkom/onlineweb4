@@ -45,8 +45,6 @@ def create_sale_attachment(_, sale_id: int):
             AttachmentFile=(attachment.filename, attachment.file.read(), 'application/pdf'),
         )
 
-        logger.debug(attachment_data)
-
         response = requests.post(
             url=get_fiken_sales_attachments_api_url(sale.fiken_id),
             auth=auth,

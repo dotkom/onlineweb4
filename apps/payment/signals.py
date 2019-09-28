@@ -48,12 +48,12 @@ def handle_fiken_sale_created(sale: FikenSale):
 def create_fiken_sale_for_relations(sender, instance: PaymentRelation, **kwargs):
     has_done_sale = instance.sales.filter(status=status.DONE).exists()
     if instance.status == status.DONE and not has_done_sale:
-        sale = instance.create_fiken_sale(instance.payment_price.price)
+        sale = instance.create_fiken_sale(instance.payment_price.price, status.DONE)
         handle_fiken_sale_created(sale)
 
     has_removed_sale = instance.sales.filter(status=status.REMOVED).exists()
     if instance.status == status.REMOVED and not has_removed_sale:
-        sale = instance.create_fiken_sale(-instance.payment_price.price)
+        sale = instance.create_fiken_sale(-instance.payment_price.price, status.REMOVED)
         handle_fiken_sale_created(sale)
 
 
@@ -61,10 +61,10 @@ def create_fiken_sale_for_relations(sender, instance: PaymentRelation, **kwargs)
 def create_fiken_sale_for_transactions(sender, instance: PaymentTransaction, **kwargs):
     has_done_sale = instance.sales.filter(status=status.DONE).exists()
     if instance.status == status.DONE and not has_done_sale:
-        sale = instance.create_fiken_sale(instance.amount)
+        sale = instance.create_fiken_sale(instance.amount, status.DONE)
         handle_fiken_sale_created(sale)
 
     has_removed_sale = instance.sales.filter(status=status.REMOVED).exists()
     if instance.status == status.REMOVED and not has_removed_sale:
-        sale = instance.create_fiken_sale(-instance.amount)
+        sale = instance.create_fiken_sale(-instance.amount, status.REMOVED)
         handle_fiken_sale_created(sale)

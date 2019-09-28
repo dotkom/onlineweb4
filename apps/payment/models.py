@@ -373,14 +373,15 @@ class PaymentRelation(models.Model):
         can_refund, reason = self.payment.check_refund(self)
         return reason
 
-    def create_fiken_sale(self, amount: int):
+    def create_fiken_sale(self, amount: int, status: str):
         ore_amount = amount * 100  # Payment price is in Kr, sale amount is in Øre
         sale = FikenSale.objects.create(
             stripe_key=self.payment.stripe_key,
             original_amount=amount * 100,  # Payment price is in Kr, sale amount is in Øre
             transaction_type=self.payment.transaction_type,
             object_id=self.id,
-            content_type=ContentType.objects.get_for_model(self)
+            content_type=ContentType.objects.get_for_model(self),
+            status=status,
         )
 
         if self.payment.is_type(AttendanceEvent):
@@ -493,14 +494,15 @@ class PaymentTransaction(models.Model):
     def __str__(self):
         return str(self.user) + " - " + str(self.amount) + "(" + str(self.datetime) + ")"
 
-    def create_fiken_sale(self, amount: int):
+    def create_fiken_sale(self, amount: int, status: str):
         ore_amount = amount * 100  # Transaction amount is in Kr, sale amount is in øre
         sale = FikenSale.objects.create(
             stripe_key=StripeKey.TRIKOM,
             original_amount=ore_amount,
             transaction_type=TransactionType.KIOSK,
             object_id=self.id,
-            content_type=ContentType.objects.get_for_model(self)
+            content_type=ContentType.objects.get_for_model(self),
+            status=status,
         )
         FikenOrderLine.objects.create(
             sale=sale,
@@ -618,10 +620,10 @@ class FikenSale(models.Model):
     """Helper attribute which points to the object select in object_id"""
 
     @staticmethod
-    def remove_stripe_fee(price: int) -> float:
+    def remove_stripe_fee(price: int) -> int:
         stripe_fee_percentage = 0.014  # 1.4 %
         stripe_fee = 180  # 1.8 Kr NOK
-        return price * (1 - stripe_fee_percentage) - stripe_fee
+        return int(price * (1 - stripe_fee_percentage) - stripe_fee)
 
     @property
     def identifier(self) -> str:
@@ -669,6 +671,13 @@ class FikenSale(models.Model):
         sale_attachment.file.save(sale_attachment.filename, File(attachment_file))
         return sale_attachment
 
+    def __str__(self):
+        return self.identifier
+
+    class Meta:
+        verbose_name = 'Salg i Fiken'
+        verbose_name_plural = 'Salg i Fiken'
+
 
 class FikenOrderLine(models.Model):
     sale = models.ForeignKey(to=FikenSale, related_name='order_lines', on_delete=models.CASCADE, null=True)
@@ -677,26 +686,32 @@ class FikenOrderLine(models.Model):
     description = models.CharField(max_length=200)
 
     @property
-    def price_without_fee(self) -> float:
+    def price_without_fee(self) -> int:
         return self.sale.remove_stripe_fee(self.price)
 
     @property
     def vat_percentage(self) -> float:
+        if self.vat_type not in vat_percentage:
+            return 0.0
         return vat_percentage[self.vat_type]
 
     @property
-    def net_price(self) -> float:
-        net_price = self.price_without_fee * (1 - self.vat_percentage)
+    def net_price(self) -> int:
+        net_price = int(self.price_without_fee * (1 - self.vat_percentage))
         if self.sale.status == status.REFUNDED:
             return -net_price
         return net_price
 
     @property
-    def vat_price(self) -> float:
-        vat_price = self.price_without_fee * self.vat_percentage
+    def vat_price(self) -> int:
+        vat_price = int(self.price_without_fee * self.vat_percentage)
         if self.sale.status == status.REFUNDED:
             return -vat_price
         return vat_price
+
+    class Meta:
+        verbose_name = 'Ordrelinje i Fiken'
+        verbose_name_plural = 'Ordrelinjer i Fiken'
 
 
 class FikenSaleAttachment(models.Model):
@@ -708,6 +723,10 @@ class FikenSaleAttachment(models.Model):
     filename = models.CharField(max_length=200)
     file = models.FileField(upload_to=settings.OW4_FIKEN_FILE_ROOT)
     comment = models.CharField(max_length=4000)
-    attach_to_sale = models.BooleanField(default=True)
-    attach_to_payment = models.BooleanField(default=False)
+    attach_to_sale = models.BooleanField(default=False)
+    attach_to_payment = models.BooleanField(default=True)
     created = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = 'Bilag i Fiken'
+        verbose_name_plural = 'Bilag i Fiken'
