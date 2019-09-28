@@ -4,8 +4,9 @@ from django.contrib import admin
 from django.contrib.contenttypes.admin import GenericStackedInline
 from reversion.admin import VersionAdmin
 
-from apps.payment.models import (FikenOrderLine, FikenSale, Payment, PaymentDelay, PaymentPrice,
-                                 PaymentReceipt, PaymentRelation, PaymentTransaction)
+from apps.payment.models import (FikenOrderLine, FikenSale, FikenSaleAttachment, Payment,
+                                 PaymentDelay, PaymentPrice, PaymentReceipt, PaymentRelation,
+                                 PaymentTransaction)
 from utils.admin import DepositWithdrawalFilter
 
 
@@ -63,17 +64,43 @@ class PaymentTransactionAdmin(VersionAdmin):
     list_filter = ('used_stripe', DepositWithdrawalFilter)
 
 
+class FikenSaleAttachmentInlineAdmin(admin.StackedInline):
+    model = FikenSaleAttachment
+    extra = 0
+    classes = ('grp-collapse grp-open',)  # style
+    fields = (
+        'filename', 'file', 'comment', 'attach_to_sale', 'attach_to_payment', 'created',
+    )
+    readonly_fields = (
+        'filename', 'file', 'comment', 'attach_to_sale', 'attach_to_payment', 'created',
+    )
+
+
 class FikenOrderLineInlineAdmin(admin.StackedInline):
     model = FikenOrderLine
     extra = 0
     classes = ('grp-collapse grp-open',)  # style
+    fields = (
+        'price', 'vat_type', 'description', 'price_without_fee', 'net_price', 'vat_price', 'vat_percentage'
+    )
+    readonly_fields = (
+        'price', 'vat_type', 'description', 'price_without_fee', 'net_price', 'vat_price', 'vat_percentage'
+    )
 
 
 @admin.register(FikenSale)
 class FikenSaleAdmin(VersionAdmin):
     model = FikenSale
-    inlines = (FikenOrderLineInlineAdmin,)
-    list_display = ('stripe_key', 'date', 'amount', 'original_amount',)
+    inlines = (FikenOrderLineInlineAdmin, FikenSaleAttachmentInlineAdmin)
+    list_display = ('__str__', 'stripe_key', 'created_date', 'amount', 'original_amount',)
+    fields = (
+        'stripe_key', 'account', 'amount', 'original_amount', 'date', 'kind', 'paid', 'transaction_type', 'status',
+        'fiken_id', 'content_type', 'object_id', 'created_date', 'identifier',
+    )
+    readonly_fields = (
+        'stripe_key', 'account', 'amount', 'original_amount', 'date', 'kind', 'paid', 'transaction_type', 'status',
+        'fiken_id', 'content_type', 'object_id', 'created_date', 'identifier',
+    )
 
 
 admin.site.register(PaymentReceipt, PaymentReceiptAdmin)
