@@ -10,27 +10,33 @@ from reportlab.platypus import Image, Paragraph, TableStyle
 
 logger = logging.getLogger(__name__)
 
-ONLINE_LOGO_IMAGE = f'{settings.PROJECT_ROOT_DIRECTORY}/files/static/img/online_logo.png'
+ONLINE_LOGO_IMAGE = f'{settings.PROJECT_ROOT_DIRECTORY}/files/static/img/online_logo_blue.png'
+
+HEADER = 'Kvittering for kjøp på online.ntnu.no'
+ORG_NAME = 'Linjeforeningen Online'
+ORG_CODE = '992 548 045 MVA'
 
 
 class FikenSalePDF:
 
     def __init__(self, sale):
         self.sale = sale
-        self.table_data = [(
-            create_body_text('Vare'),
-            create_body_text('Mva'),
-            create_body_text('Pris'),
-        )]
-        self.create_table_data()
 
-    def create_table_data(self):
+    @property
+    def order_line_table_data(self):
+        table_data = [[
+            'Vare',
+            'Mva',
+            'Pris',
+        ]]
         for order_line in self.sale.order_lines.all():
-            self.table_data.append((
-                create_body_text(order_line.description),
-                create_body_text(f'{order_line.vat_percentage * 100} %'),
-                create_body_text(f'{ order_line.price / 100} kr')
-            ))
+            table_data.append([
+                order_line.description,
+                f'{order_line.vat_percentage * 100} %',
+                f'{ order_line.price / 100} kr',
+            ])
+
+        return table_data
 
     @property
     def vat_table_data(self):
@@ -61,21 +67,25 @@ class FikenSalePDF:
         pdf.init_report()
 
         online_logo = Image(filename=ONLINE_LOGO_IMAGE)
+        online_logo.drawWidth /= 8
+        online_logo.drawHeight /= 8
         pdf.append(online_logo)
+        pdf.spacer(height=25)
 
-        pdf.p('Kvittering for kjøp på online.ntnu.no', style=create_paragraph_style(font_size=18))
+        pdf.p(HEADER, style=create_paragraph_style(font_size=18))
         pdf.spacer(height=16)
         pdf.p(self.sale.created_date.strftime('%d. %B %Y'), create_paragraph_style(font_size=9))
         pdf.spacer(height=25)
 
-        pdf.p('Linjeforeningen Online', style=create_paragraph_style(font_size=13))
+        pdf.p(ORG_NAME, style=create_paragraph_style(font_size=13))
         pdf.spacer(height=6)
-        pdf.p('992 548 045 MVA', style=create_paragraph_style(font_size=11))
+        pdf.p(ORG_CODE, style=create_paragraph_style(font_size=11))
 
         pdf.spacer(height=25)
         pdf.p('Ordrelinjer', style=create_paragraph_style(font_size=14))
         pdf.spacer(height=20)
-        pdf.table(self.table_data, self.column_widths, style=get_table_style())
+        table_style = get_order_line_table_style(border_color=colors.gray, grid_color=colors.dimgrey)
+        pdf.table(self.order_line_table_data, self.column_widths, style=table_style)
 
         pdf.spacer(height=20)
         pdf.p('Moms', style=create_paragraph_style(font_size=14))
@@ -87,7 +97,7 @@ class FikenSalePDF:
         pdf.p('Total', style=create_paragraph_style(font_size=14))
         pdf.spacer(height=10)
 
-        pdf.p(f'{self.sale.original_amount / 100} kr', style=create_paragraph_style(font_size=12))
+        pdf.p(f'{self.sale.original_amount / 100} kr', style=create_paragraph_style(font_size=12, ))
 
         pdf.generate()
         pdf_file = open(path, 'rb')
@@ -97,6 +107,7 @@ class FikenSalePDF:
 def get_vat_table_style(full_spans=None, line_color=colors.grey):
     style = [
         ('LINEBELOW', (0, 0), (-1, -1), 0.5, line_color),
+        ('ALIGN', (1, 0), (-1, -1), 'RIGHT'),
     ]
     if full_spans:
         for line in full_spans:
@@ -106,10 +117,11 @@ def get_vat_table_style(full_spans=None, line_color=colors.grey):
 
 
 # Table style for framed table with grids
-def get_table_style(full_spans=None, border_color=colors.black, grid_color=colors.grey):
+def get_order_line_table_style(full_spans=None, border_color=colors.black, grid_color=colors.grey):
     style = [
         ('GRID', (0, 0), (-1, -1), 0.5, grid_color),
         ('BOX', (0, 0), (-1, -1), 1, border_color),
+        ('ALIGN', (1, 0), (-1, -1), 'RIGHT'),
     ]
     if full_spans:
         for line in full_spans:
