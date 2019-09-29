@@ -1,12 +1,11 @@
 # -*- coding: utf8 -*-
 
 from django.conf import settings
-from django.core.urlresolvers import reverse_lazy
-from django.forms import HiddenInput, TextInput
-from django.forms.utils import flatatt, force_text, format_html
+from django.forms import HiddenInput
+from django.forms.utils import flatatt, format_html
+from django.urls import reverse_lazy
 
 from apps.gallery.models import ResponsiveImage
-from apps.gallery.widgets import SingleImageInput
 
 WIDGET_STRING = """<br /><input{} />\r\n
 <div id="multiple-images-field-thumbnail">{}</div>
@@ -35,47 +34,30 @@ WIDGET_STRING = """<br /><input{} />\r\n
 
 class MultipleImagesInput(HiddenInput):
     def __init__(self, attrs=None):
-        super(MultipleImagesInput, self).__init__(attrs)
+        super().__init__(attrs)
         self.input_type = 'hidden'
 
-    def render(self, name, value, attrs={'mulitple: True'}):
+    def render(self, name, value, **kwargs):
         """
         Renders this field widget as HTML
         :param name: Field input name
         :param value: Field input value
-        :param attrs: Field input attributes
         :return: An HTML string representing this widget
         """
 
-        print("Value: ", value)
-        #value = value.replace("[", "")
-        #value = value.replace("]", "")
-        is_empty = not value
-        #value = value[0]
-        # if value is None or []:
-        #    value = ''
-
         img_thumb = 'Det er ikke valgt noen bilder.'
 
-        attrs = self.build_attrs(self.attrs, attrs)
+        attrs = self.build_attrs(self.attrs, {'multiple': True})
         final_attrs = self.build_attrs(attrs, {'type': self.input_type, 'name': name})
 
-        """
-      if value:
-          #values = value.split(',')
-          #value = value.split(',')[0]
-          # Only add the value attribute if the value is non-empty
-          #final_attrs['value'] = force_text(self._format_value(value))
-          img = ResponsiveImage.objects.get(pk=value)
-          img_thumb = format_html(
-              '<img class="multiple" src="{}" alt title="{}"/>',
-              settings.MEDIA_URL + str(img.thumbnail),
-              str(img.name),
-              encoding='utf-8'
-
-          )
-      """
+        if value:
+            img = ResponsiveImage.objects.get(pk=value)
+            img_thumb = format_html(
+                '<img class="multiple" src="{}" alt title="{}"/>',
+                settings.MEDIA_URL + str(img.thumbnail),
+                str(img.name),
+                encoding='utf-8',
+            )
         upload_url = reverse_lazy('gallery_dashboard:upload')
 
         return format_html(WIDGET_STRING, flatatt(final_attrs), img_thumb, upload_url)
-        # return ResponsiveImage.objects.get(pk=1)

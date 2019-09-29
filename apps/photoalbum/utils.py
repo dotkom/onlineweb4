@@ -1,33 +1,13 @@
 # -*- coding: utf-8 -*-
 
-import os
-
-from django.conf import settings
-from django.contrib.auth import get_user_model
-from PIL import ExifTags, Image
-
 from apps.authentication.models import OnlineUser
-from apps.gallery.models import ResponsiveImage
-from apps.photoalbum.models import Album
+from apps.gallery.models import ResponsiveImage, UnhandledImage
+from apps.photoalbum.models import UserTag
 from apps.photoalbum.tasks import send_report_on_photo
 
 
 def report_photo(description, photo, user):
-    print("Description: ", description)
-    try:
-        user_name = user.get_full_name()
-    except BaseException:
-        user_name = "anonym"
-
-    msg = user_name + " rapporterte bildet " +  \
-        str(photo.pk) + " i album " + "phototitle" \
-        " med begrunnelse " + description
-    # photo.get_album(().title + \
-
-    print("Warning prokom: ", msg)
     send_report_on_photo(user, photo, description)
-
-    # Send email to prokom
 
 
 def get_next_photo(photo, album):
@@ -60,27 +40,15 @@ def print_album_photo_indexs(album):
         pks.append(photo.pk)
 
 
-def is_prokom(user):
-    print("Checking if user is in prokom")
-    return True
-    # if (user.comittee == 'prokom'):
-    #  return true
-    # else:
-    #  print("User is not in prokom")
-
-
 def get_photos_from_form(form):
-    print("get_photos_from_form")
     pks = form['photos']
-    # print(pks)
 
     pks_list = pks.split(',')
     photos = []
     for pk in pks_list:
-        photo = UnhandledImage.get(pk)
+        photo = UnhandledImage.objects.get(pk)
         photos.append(photo)
 
-    #photos = [ResponsiveImage.objects.get(pk=1), ResponsiveImage.objects.get(pk=2)]
     return photos
 
 
@@ -89,18 +57,9 @@ def get_photos_to_album(album_title):
     return photos
 
 
-"""
 def tag_users(users, photo):
-	print("In tag users")
-	print("Uses: ", users)
-	user_names = users.split(",")
+    user_names = users.split(",")
 
-	for name in user_names:
-		print("Name: ", name)
-		user = OnlineUser.objects.get(username=name)
-		print(user)
-
-		user_tag_to_photo, created= UserTagToPhoto.objects.get_or_create(user=user, photo=photo)
-
-		print("User tagged in photo: ", user_tag_to_photo)
-"""
+    for name in user_names:
+        user = OnlineUser.objects.get(username=name)
+        UserTag.objects.get_or_create(user=user, photo=photo)
