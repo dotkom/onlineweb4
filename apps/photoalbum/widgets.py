@@ -8,7 +8,6 @@ from django.forms.utils import flatatt, force_text, format_html
 from apps.gallery.models import ResponsiveImage
 from apps.gallery.widgets import SingleImageInput
 
-
 WIDGET_STRING = """<br /><input{} />\r\n
 <div id="multiple-images-field-thumbnail">{}</div>
 <a href="#" class="btn btn-primary" id="add-responsive-images">\r\n
@@ -83,4 +82,3 @@ class MultipleImagesInput(HiddenInput):
 
       return format_html(WIDGET_STRING, flatatt(final_attrs), img_thumb, upload_url)  
       #return ResponsiveImage.objects.get(pk=1)
-

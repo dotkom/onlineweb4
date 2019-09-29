@@ -2,12 +2,12 @@
 
 from django import forms
 from django.utils.translation import ugettext as _
-
 from taggit.forms import TagWidget
-from apps.photoalbum.widgets import MultipleImagesInput
-from apps.photoalbum.models import Album
 
 from apps.dashboard.widgets import multiple_widget_generator
+from apps.photoalbum.models import Album
+from apps.photoalbum.widgets import MultipleImagesInput
+
 
 class AlbumForm(forms.ModelForm):
 	class Meta(object):
