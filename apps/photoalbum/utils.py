@@ -2,15 +2,14 @@
 
 import os
 
-from django.contrib.auth import get_user_model
 from django.conf import settings
-
-from PIL import Image, ExifTags
-from apps.photoalbum.models import Album
-from apps.photoalbum.tasks import send_report_on_photo
-from apps.gallery.models import ResponsiveImage
+from django.contrib.auth import get_user_model
+from PIL import ExifTags, Image
 
 from apps.authentication.models import OnlineUser
+from apps.gallery.models import ResponsiveImage
+from apps.photoalbum.models import Album
+from apps.photoalbum.tasks import send_report_on_photo
 
 
 def report_photo(description, photo, user):

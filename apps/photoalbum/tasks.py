@@ -3,6 +3,7 @@ import logging
 from django.conf import settings
 from django.core.mail import EmailMessage, send_mail
 
+
 def send_report_on_photo(user, photo, description):
 	logger = logging.getLogger(__name__)
 
@@ -15,4 +16,3 @@ def send_report_on_photo(user, photo, description):
 	except ImproperlyConfigured:
 		logger.warn('Failed to send the report of the photo to prokom from user {user} on photo #{pk}.'.format(
             {'user': user.name, 'pk': photo.pk}))
-

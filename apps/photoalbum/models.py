@@ -2,10 +2,10 @@
 
 from django.db import models
 from django.db.models import permalink
-from django.template.defaultfilters import slugify 
+from django.template.defaultfilters import slugify
 from django.utils.translation import ugettext as _
-from unidecode import unidecode
 from taggit.managers import TaggableManager
+from unidecode import unidecode
 
 from apps.gallery.models import ResponsiveImage
 

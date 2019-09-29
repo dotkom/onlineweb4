@@ -1,28 +1,26 @@
 # -*- coding: utf-8 -*-
 
 from django import forms
-from django.urls import reverse
-from django.utils.translation import ugettext as _
 from django.db.models import Q
+from django.urls import reverse
 from django.utils import timezone
-
+from django.utils.translation import ugettext as _
 from django.views.generic import View
 from django.views.generic.detail import DetailView, SingleObjectMixin
 from django.views.generic.edit import FormView
 from django.views.generic.list import ListView
-
-from django_filters import FilterSet, Filter, CharFilter
-from watson import search as watson
+from django_filters import CharFilter, Filter, FilterSet
 from rest_framework import mixins, viewsets
+from watson import search as watson
 
-from apps.gallery.util import UploadImageHandler
 from apps.gallery.models import ResponsiveImage
-
+from apps.gallery.util import UploadImageHandler
 from apps.photoalbum import utils
-from apps.photoalbum.utils import report_photo, get_previous_photo, get_next_photo
-from apps.photoalbum.models import Album
-from apps.photoalbum.forms import ReportPhotoForm
 from apps.photoalbum.decorators import prokom_required
+from apps.photoalbum.forms import ReportPhotoForm
+from apps.photoalbum.models import Album
+from apps.photoalbum.utils import get_next_photo, get_previous_photo, report_photo
+
 
 class AlbumsListView(ListView):
 	model = Album

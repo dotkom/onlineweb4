@@ -4,17 +4,18 @@ from logging import getLogger
 
 from django.contrib import messages
 from django.core.urlresolvers import reverse
-from django.shortcuts import get_object_or_404, redirect, render
 from django.http import HttpResponseRedirect
-
-from django.views.generic import DetailView, ListView, TemplateView, UpdateView, FormView, CreateView
+from django.shortcuts import get_object_or_404, redirect, render
+from django.views.generic import (CreateView, DetailView, FormView, ListView, TemplateView,
+                                  UpdateView)
 from django.views.generic.edit import FormMixin
 
+from apps.dashboard.tools import DashboardPermissionMixin, check_access_or_403, get_base_context
+from apps.gallery.models import ResponsiveImage
 from apps.photoalbum.dashboard.forms import AlbumForm
 from apps.photoalbum.models import Album
-from apps.dashboard.tools import DashboardPermissionMixin, get_base_context, check_access_or_403
 from apps.photoalbum.utils import get_photos_from_form, get_photos_to_album
-from apps.gallery.models import ResponsiveImage
+
 
 # @permission_required('photoalbum.view_album')
 def photoalbum_index(request):
