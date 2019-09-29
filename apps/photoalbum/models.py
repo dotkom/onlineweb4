@@ -11,23 +11,24 @@ from apps.gallery.models import ResponsiveImage
 
 #IMAGE_FOLDER = "images/photo_album"
 
-class Album(models.Model):
-	title = models.CharField(_("Tittel"), blank=False, null=False, max_length=50)
-	tags = TaggableManager(blank=True)
-	photos = models.ManyToManyField(ResponsiveImage, blank=True)
 
-	#def __str__(self):
+class Album(models.Model):
+    title = models.CharField(_("Tittel"), blank=False, null=False, max_length=50)
+    tags = TaggableManager(blank=True)
+    photos = models.ManyToManyField(ResponsiveImage, blank=True)
+
+    # def __str__(self):
   #		return self.title
 
-	@property
-	def slug(self):
-		return slugify(unidecode(self.title))
+    @property
+    def slug(self):
+        return slugify(unidecode(self.title))
 
-	#@permalink
-	#def get_absolute_url(self):
-	#		return 'album_detail', None, {'pk': self.pk, 'slug': self.slug}
+    # @permalink
+    # def get_absolute_url(self):
+    #		return 'album_detail', None, {'pk': self.pk, 'slug': self.slug}
 
-	"""
+    """
 	def get_photos(self):
 		photo_list = AlbumToPhoto.objects.filter(album=self).values("photo")
 		photos = []
@@ -52,11 +53,12 @@ class Album(models.Model):
 		return tags
 	"""
 
+
 """
 class Photo(models.Model):
 	# Path should depend on album?
 	photo = models.ImageField(upload_to=IMAGE_FOLDER)
-	
+
 	def get_album(self):
 		return AlbumToPhoto.objects.get(photo=self).album
 

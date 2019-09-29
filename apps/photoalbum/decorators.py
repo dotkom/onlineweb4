@@ -9,11 +9,11 @@ from apps.photoalbum.utils import is_prokom
 
 def prokom_required(view_func):
 
-	def check_if_is_prokom(request, *args, **kwargs):
-		is_prokom(request.user)
-		prokom = True
-		if prokom:
-			return view_func(request, *args, **kwargs)
-		raise PermissionDenied
+    def check_if_is_prokom(request, *args, **kwargs):
+        is_prokom(request.user)
+        prokom = True
+        if prokom:
+            return view_func(request, *args, **kwargs)
+        raise PermissionDenied
 
-	return check_if_is_prokom
+    return check_if_is_prokom

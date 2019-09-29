@@ -19,111 +19,114 @@ from apps.photoalbum.utils import get_photos_from_form, get_photos_to_album
 
 # @permission_required('photoalbum.view_album')
 def photoalbum_index(request):
-	# check_access_or_403(request)
+    # check_access_or_403(request)
 
-	context = get_base_context(request)
-	context['albums'] = Album.objects.all()
+    context = get_base_context(request)
+    context['albums'] = Album.objects.all()
 
-	return render(request, 'photoalbum/dashboard/index.html', context)
+    return render(request, 'photoalbum/dashboard/index.html', context)
 
 
 # @permission_required('photoalbum.add_album')
 def photoalbum_create(request):
-	# check_access_or_403(request)
+    # check_access_or_403(request)
 
-	form = AlbumForm()
+    form = AlbumForm()
 
-	if request.method == 'POST':
+    if request.method == 'POST':
 
-		if 'upload_photos' in request.POST:
-			photos = form['files']
-			print("Files: ", photos)
+        if 'upload_photos' in request.POST:
+            photos = form['files']
+            print("Files: ", photos)
 
-		form = AlbumForm(request.POST)
-		if form.is_valid():
-			instance = form.save(commit=False)
-			instance.save()
-			instance.changed_by = request.user
-			instance.created_by = request.user
-			photos = get_photos_to_album(instance.title)
-						
-			for photo in photos:
-				instance.photos.add(photo)
+        form = AlbumForm(request.POST)
+        if form.is_valid():
+            instance = form.save(commit=False)
+            instance.save()
+            instance.changed_by = request.user
+            instance.created_by = request.user
+            photos = get_photos_to_album(instance.title)
 
-			instance.save()
+            for photo in photos:
+                instance.photos.add(photo)
 
-			messages.success(request, 'Albumet ble opprettet.')
-			
-			return redirect(photoalbum_detail, pk=instance.pk)
-		else:
-			message.error(request, 'Noen av de påkrevde feltene inneholder feil.')
+            instance.save()
 
-	context = get_base_context(request)
-	context['form'] = form
+            messages.success(request, 'Albumet ble opprettet.')
 
-	return render(request, 'photoalbum/dashboard/create.html', context)
+            return redirect(photoalbum_detail, pk=instance.pk)
+        else:
+            message.error(request, 'Noen av de påkrevde feltene inneholder feil.')
+
+    context = get_base_context(request)
+    context['form'] = form
+
+    return render(request, 'photoalbum/dashboard/create.html', context)
+
 
 def upload_photos(request, album_title):
-	print("In upload_photos")
-	photos = form['files']
-	print("Files: ", photos)
+    print("In upload_photos")
+    photos = form['files']
+    print("Files: ", photos)
 
-#@permissionrequired('photoalbum.view_album')
+# @permissionrequired('photoalbum.view_album')
+
+
 def photoalbum_detail(request, pk):
-	#check_access_or_403(request)
+    # check_access_or_403(request)
 
-	album = get_object_or_404(Album, pk=pk)
+    album = get_object_or_404(Album, pk=pk)
 
-	context = get_base_context(request)
-	context['album'] = album
+    context = get_base_context(request)
+    context['album'] = album
 
-	return render(request, 'photoalbum/dashboard/detail.html', context)
+    return render(request, 'photoalbum/dashboard/detail.html', context)
 
 
-#@permissionrequired('photoalbum.change_album')
+# @permissionrequired('photoalbum.change_album')
 def photoalbum_edit(request, pk):
-	#check_access_or_403(request)
+    # check_access_or_403(request)
 
-	album = get_object_or_404(Album, pk=pk)
+    album = get_object_or_404(Album, pk=pk)
 
-	form = AlbumForm(instance=album)
+    form = AlbumForm(instance=album)
 
-	if request.method == 'POST':
-		if 'upload_photos' in request.POST:
-			upload_photos(form)
+    if request.method == 'POST':
+        if 'upload_photos' in request.POST:
+            upload_photos(form)
 
-		if 'action' in request.POST and request.POST['action'] == 'delete':
-			instance = get_object_or_404(Album, pk=album.pk)
-			album_title = instance.title
-			album_pk = instance.pk
-			instance.delete()
-			messages.success(request, '%s ble slettet.' % album_title)
-			getLogger(__name__).info('%s deleted album %d (%s)' % (request.user, album_pk, album_title))
+        if 'action' in request.POST and request.POST['action'] == 'delete':
+            instance = get_object_or_404(Album, pk=album.pk)
+            album_title = instance.title
+            album_pk = instance.pk
+            instance.delete()
+            messages.success(request, '%s ble slettet.' % album_title)
+            getLogger(__name__).info('%s deleted album %d (%s)' % (request.user, album_pk, album_title))
 
-			return redirect(photoalbum_index)
+            return redirect(photoalbum_index)
 
-		form = AlbumForm(request.POST)
-		if form.is_valid():
-			instance = form.save(commit=False)
-			instance.save()
-			instance.changed_by = request.user
-			instance.created_by = request.user
-			photos = get_photos_to_album(instance.title)
-			
-			for photo in photos:
-				instance.photos.add(photo)
+        form = AlbumForm(request.POST)
+        if form.is_valid():
+            instance = form.save(commit=False)
+            instance.save()
+            instance.changed_by = request.user
+            instance.created_by = request.user
+            photos = get_photos_to_album(instance.title)
 
-			instance.save()
+            for photo in photos:
+                instance.photos.add(photo)
 
-			messages.success(request, 'Albumet ble lagret.')
-			getLogger(__name__).info('%s edited album %d (%s)' % (request.user, instance.pk, instance.title))
-			
-			return redirect(photoalbum_index)
-		else:
-			message.error(request, 'Noen av de påkrevde feltene inneholder feil.')
+            instance.save()
 
-	context = get_base_context(request)
-	context['form'] = form
-	context['edit'] = True
+            messages.success(request, 'Albumet ble lagret.')
+            getLogger(__name__).info('%s edited album %d (%s)' % (request.user, instance.pk, instance.title))
 
-	return render(request, 'photoalbum/dashboard/create.html', context)
+            return redirect(photoalbum_index)
+        else:
+            message.error(request, 'Noen av de påkrevde feltene inneholder feil.')
+
+    context = get_base_context(request)
+    context['form'] = form
+    context['edit'] = True
+
+    return render(request, 'photoalbum/dashboard/create.html', context)

@@ -33,37 +33,34 @@ WIDGET_STRING = """<br /><input{} />\r\n
 </div>\r\n"""
 
 
-
 class MultipleImagesInput(HiddenInput):
-  def __init__(self, attrs=None):
+    def __init__(self, attrs=None):
         super(MultipleImagesInput, self).__init__(attrs)
         self.input_type = 'hidden'
 
-  def render(self, name, value, attrs={'mulitple: True'}):
-      """
-      Renders this field widget as HTML
-      :param name: Field input name
-      :param value: Field input value
-      :param attrs: Field input attributes
-      :return: An HTML string representing this widget
-      """
+    def render(self, name, value, attrs={'mulitple: True'}):
+        """
+        Renders this field widget as HTML
+        :param name: Field input name
+        :param value: Field input value
+        :param attrs: Field input attributes
+        :return: An HTML string representing this widget
+        """
 
-      print("Value: ", value)
-      #value = value.replace("[", "")
-      #value = value.replace("]", "")   
-      is_empty = not value
-      #value = value[0]
-      #if value is None or []:
-      #    value = ''
+        print("Value: ", value)
+        #value = value.replace("[", "")
+        #value = value.replace("]", "")
+        is_empty = not value
+        #value = value[0]
+        # if value is None or []:
+        #    value = ''
 
+        img_thumb = 'Det er ikke valgt noen bilder.'
 
+        attrs = self.build_attrs(self.attrs, attrs)
+        final_attrs = self.build_attrs(attrs, {'type': self.input_type, 'name': name})
 
-      img_thumb = 'Det er ikke valgt noen bilder.'
-
-      attrs = self.build_attrs(self.attrs, attrs)
-      final_attrs = self.build_attrs(attrs, {'type': self.input_type, 'name': name})
-    
-      """
+        """
       if value:
           #values = value.split(',')
           #value = value.split(',')[0]
@@ -78,7 +75,7 @@ class MultipleImagesInput(HiddenInput):
 
           )
       """
-      upload_url = reverse_lazy('gallery_dashboard:upload')
+        upload_url = reverse_lazy('gallery_dashboard:upload')
 
-      return format_html(WIDGET_STRING, flatatt(final_attrs), img_thumb, upload_url)  
-      #return ResponsiveImage.objects.get(pk=1)
+        return format_html(WIDGET_STRING, flatatt(final_attrs), img_thumb, upload_url)
+        # return ResponsiveImage.objects.get(pk=1)
