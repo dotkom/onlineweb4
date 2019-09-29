@@ -10,30 +10,31 @@ from apps.photoalbum.widgets import MultipleImagesInput
 
 
 class AlbumForm(forms.ModelForm):
-	class Meta(object):
+    class Meta(object):
 
-		model = Album
-		fields = [
-			'title',
-			'tags',
-			'photos'
-		]
+        model = Album
+        fields = [
+            'title',
+            'tags',
+            'photos'
+        ]
 
-		photos_fields = [('photos', {'id': 'responsive-images-id'})]
-		widgetlist = [
-			#(MultipleImagesInput, 'photos')
-		]
+        photos_fields = [('photos', {'id': 'responsive-images-id'})]
+        widgetlist = [
+            #(MultipleImagesInput, 'photos')
+        ]
 
-		# Multiple widget generator merges results from regular widget_generator into a single widget dict
-		widgets = multiple_widget_generator(widgetlist)
-		widgets.update({
-			'tags': TagWidget(attrs={'placeholder': 'Eksempel: åre, online, kjelleren'}),
-			'photos': MultipleImagesInput(attrs={'multiple': True, 'name': 'Bilder'})
-			})
+        # Multiple widget generator merges results from regular widget_generator into a single widget dict
+        widgets = multiple_widget_generator(widgetlist)
+        widgets.update({
+            'tags': TagWidget(attrs={'placeholder': 'Eksempel: åre, online, kjelleren'}),
+            'photos': MultipleImagesInput(attrs={'multiple': True, 'name': 'Bilder'})
+        })
 
-		labels = {
-					'tags': 'Tags'
-		}
+        labels = {
+            'tags': 'Tags'
+        }
+
 
 """
 class UploadPhotosForm(forms.ModelForm):
