@@ -1,8 +1,5 @@
 # -*- coding: utf-8 -*-
-
-
 from django.core.exceptions import PermissionDenied
-from middleware.http import Http403
 
 from apps.photoalbum.utils import is_prokom
 
