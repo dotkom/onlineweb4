@@ -184,7 +184,6 @@ INSTALLED_APPS = (
     'oidc_provider',
     'raven.contrib.django.raven_compat',  # Sentry, error tracking
     'widget_tweaks',
-    'PIL',
 
     # Django apps
     'django.contrib.admin',
