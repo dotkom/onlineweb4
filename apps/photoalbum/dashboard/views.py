@@ -3,23 +3,18 @@
 from logging import getLogger
 
 from django.contrib import messages
-from django.core.urlresolvers import reverse
-from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render
-from django.views.generic import (CreateView, DetailView, FormView, ListView, TemplateView,
-                                  UpdateView)
-from django.views.generic.edit import FormMixin
+from guardian.decorators import permission_required
 
-from apps.dashboard.tools import DashboardPermissionMixin, check_access_or_403, get_base_context
-from apps.gallery.models import ResponsiveImage
+from apps.dashboard.tools import check_access_or_403, get_base_context
 from apps.photoalbum.dashboard.forms import AlbumForm
 from apps.photoalbum.models import Album
-from apps.photoalbum.utils import get_photos_from_form, get_photos_to_album
+from apps.photoalbum.utils import get_photos_to_album
 
 
-# @permission_required('photoalbum.view_album')
+@permission_required('photoalbum.view_album')
 def photoalbum_index(request):
-    # check_access_or_403(request)
+    check_access_or_403(request)
 
     context = get_base_context(request)
     context['albums'] = Album.objects.all()
@@ -27,9 +22,9 @@ def photoalbum_index(request):
     return render(request, 'photoalbum/dashboard/index.html', context)
 
 
-# @permission_required('photoalbum.add_album')
+@permission_required('photoalbum.add_album')
 def photoalbum_create(request):
-    # check_access_or_403(request)
+    check_access_or_403(request)
 
     form = AlbumForm()
 
@@ -56,7 +51,7 @@ def photoalbum_create(request):
 
             return redirect(photoalbum_detail, pk=instance.pk)
         else:
-            message.error(request, 'Noen av de påkrevde feltene inneholder feil.')
+            messages.error(request, 'Noen av de påkrevde feltene inneholder feil.')
 
     context = get_base_context(request)
     context['form'] = form
@@ -64,16 +59,15 @@ def photoalbum_create(request):
     return render(request, 'photoalbum/dashboard/create.html', context)
 
 
-def upload_photos(request, album_title):
+def upload_photos(request, form):
     print("In upload_photos")
     photos = form['files']
     print("Files: ", photos)
 
-# @permissionrequired('photoalbum.view_album')
 
-
+@permission_required('photoalbum.view_album')
 def photoalbum_detail(request, pk):
-    # check_access_or_403(request)
+    check_access_or_403(request)
 
     album = get_object_or_404(Album, pk=pk)
 
@@ -83,9 +77,9 @@ def photoalbum_detail(request, pk):
     return render(request, 'photoalbum/dashboard/detail.html', context)
 
 
-# @permissionrequired('photoalbum.change_album')
+@permission_required('photoalbum.change_album')
 def photoalbum_edit(request, pk):
-    # check_access_or_403(request)
+    check_access_or_403(request)
 
     album = get_object_or_404(Album, pk=pk)
 
@@ -123,7 +117,7 @@ def photoalbum_edit(request, pk):
 
             return redirect(photoalbum_index)
         else:
-            message.error(request, 'Noen av de påkrevde feltene inneholder feil.')
+            messages.error(request, 'Noen av de påkrevde feltene inneholder feil.')
 
     context = get_base_context(request)
     context['form'] = form

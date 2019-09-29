@@ -10,18 +10,17 @@ from apps.photoalbum.widgets import MultipleImagesInput
 
 
 class AlbumForm(forms.ModelForm):
-    class Meta(object):
+    class Meta:
 
         model = Album
         fields = [
             'title',
             'tags',
-            'photos'
         ]
 
         photos_fields = [('photos', {'id': 'responsive-images-id'})]
         widgetlist = [
-            #(MultipleImagesInput, 'photos')
+            # (MultipleImagesInput, 'photos')
         ]
 
         # Multiple widget generator merges results from regular widget_generator into a single widget dict
@@ -36,11 +35,10 @@ class AlbumForm(forms.ModelForm):
         }
 
 
-"""
 class UploadPhotosForm(forms.ModelForm):
-	photos = forms.FileField(widget=forms.ClearableFileInput(attrs={'multiple': True}), label=_("Bilder"), required=False)
+    widget = forms.ClearableFileInput(attrs={'multiple': True})
+    photos = forms.FileField(widget=widget, label=_("Bilder"), required=False)
 
-	class Meta(object):
-		model = Album
-		fields = ['photos']
-"""
+    class Meta:
+        model = Album
+        fields = ['photos']
