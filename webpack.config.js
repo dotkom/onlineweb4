@@ -94,12 +94,6 @@ const webpackConfig = {
     frontpage: [
       './assets/frontpage/index'
     ],
-<<<<<<< HEAD
-=======
-    genfors: [
-      './assets/genfors/index'
-    ],
->>>>>>> Can mark a photo in editing
     hobbygroups: [
       './assets/hobbygroups/index'
     ],
