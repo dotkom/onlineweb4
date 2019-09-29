@@ -23,129 +23,130 @@ from apps.photoalbum.utils import get_next_photo, get_previous_photo, report_pho
 
 
 class AlbumsListView(ListView):
-	model = Album
-	template_name = 'photoalbum/index.html'
+    model = Album
+    template_name = 'photoalbum/index.html'
 
-	def get_context_data(self, **kwargs):
-		context = super(AlbumsListView, self).get_context_data(**kwargs)
-		filter = AlbumFilter(self.request.GET, queryset=Album.objects.all())
+    def get_context_data(self, **kwargs):
+        context = super(AlbumsListView, self).get_context_data(**kwargs)
+        filter = AlbumFilter(self.request.GET, queryset=Album.objects.all())
 
-		context['albums'] = Album.objects.all()
-		context['filter'] = filter
+        context['albums'] = Album.objects.all()
+        context['filter'] = filter
 
-		return context
+        return context
+
 
 class AlbumFilter(FilterSet):
 
-	def filter_keyword(self, queryset, value):
-		queryset = []
-		if value != "":
-			list = value.split(" ")
-			try:  
-				for album in Album.objects.all():
-					for word in list:
-						# If word is in title
-						if word.lower() in album.title.lower():
-							queryset.append(album)
-						else:
-							try:
-								tags = album.tags
-								if tag != None and tag in tags():
-									queryset.append(album)
-							except Exception:
-								print("Tag does not exist")
-			except Exception as e:
-				queryset = Album.objects.all()
-		else:
-			queryset = Album.objects.all()
+    def filter_keyword(self, queryset, value):
+        queryset = []
+        if value != "":
+            list = value.split(" ")
+            try:
+                for album in Album.objects.all():
+                    for word in list:
+                        # If word is in title
+                        if word.lower() in album.title.lower():
+                            queryset.append(album)
+                        else:
+                            try:
+                                tags = album.tags
+                                if tag is not None and tag in tags():
+                                    queryset.append(album)
+                            except Exception:
+                                print("Tag does not exist")
+            except Exception as e:
+                queryset = Album.objects.all()
+        else:
+            queryset = Album.objects.all()
 
-		return queryset
+        return queryset
 
-	title = CharFilter(label=_(""), method=filter_keyword)
-	
-	class Meta:
-		model = Album
-		fields = ['title']
+    title = CharFilter(label=_(""), method=filter_keyword)
+
+    class Meta:
+        model = Album
+        fields = ['title']
 
 
 class AlbumDetailView(DetailView, View):
 
-	model = Album
-	template_name = "photoalbum/detail.html"
+    model = Album
+    template_name = "photoalbum/detail.html"
 
-	def get_context_data(self, **kwargs):
-		context = super(AlbumDetailView, self).get_context_data(**kwargs)
-	
-		album = Album.objects.get(pk=self.kwargs['pk'])
-		context['album'] = album
+    def get_context_data(self, **kwargs):
+        context = super(AlbumDetailView, self).get_context_data(**kwargs)
 
-		return context
+        album = Album.objects.get(pk=self.kwargs['pk'])
+        context['album'] = album
+
+        return context
 
 
 class PhotoDisplay(DetailView):
-	model = ResponsiveImage
-	template_name = "photoalbum/photo.html"
+    model = ResponsiveImage
+    template_name = "photoalbum/photo.html"
 
-	def get_context_data(self, **kwargs):
-		context = super(PhotoDisplay, self).get_context_data(**kwargs)
-		photo = ResponsiveImage.objects.get(pk=self.kwargs['pk'])
-		album = Album.objects.get(pk=self.kwargs['album_pk'])
-		
-		context['photo'] = photo
-		context['album'] = album
-		context['form'] = ReportPhotoForm()
-		context['tagged_users'] = context['photo'].tags
-		context['next_photo'] = get_next_photo(photo, album)
-		context['previous_photo'] = get_previous_photo(photo, album)
-		
-		return context
+    def get_context_data(self, **kwargs):
+        context = super(PhotoDisplay, self).get_context_data(**kwargs)
+        photo = ResponsiveImage.objects.get(pk=self.kwargs['pk'])
+        album = Album.objects.get(pk=self.kwargs['album_pk'])
+
+        context['photo'] = photo
+        context['album'] = album
+        context['form'] = ReportPhotoForm()
+        context['tagged_users'] = context['photo'].tags
+        context['next_photo'] = get_next_photo(photo, album)
+        context['previous_photo'] = get_previous_photo(photo, album)
+
+        return context
 
 
 class PhotoReportFormView(SingleObjectMixin, FormView):
-	model = ResponsiveImage
-	template_name= 'photoalbum/photo.html'
-	form_class = ReportPhotoForm
+    model = ResponsiveImage
+    template_name = 'photoalbum/photo.html'
+    form_class = ReportPhotoForm
 
-	def post(self, request, *args, **kwargs):
-		self.object = self.get_object()
-		return super(PhotoReportFormView, self).post(request, *args, **kwargs)
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        return super(PhotoReportFormView, self).post(request, *args, **kwargs)
 
-	def form_invalid(self, form):
-		return super().form_invalid(form)
+    def form_invalid(self, form):
+        return super().form_invalid(form)
 
-	def form_valid(self, form):
-		photo = self.get_object()
-		user = self.request.user
-		cleaned_data = form.cleaned_data
-		report_photo(cleaned_data['reason'], photo, user)
+    def form_valid(self, form):
+        photo = self.get_object()
+        user = self.request.user
+        cleaned_data = form.cleaned_data
+        report_photo(cleaned_data['reason'], photo, user)
 
-		return super().form_valid(form)
-			
-	def get_success_url(self):
-		photo_pk = self.object.pk
-		album_pk = self.object.album.pk
-		
-		return reverse('photo_detail', kwargs={'pk': self.object.pk, 'album_pk': self.object.album.pk})
+        return super().form_valid(form)
 
-	def get_context_data(self, **kwargs):
-		context = super(PhotoReportFormView, self).get_context_data(**kwargs)
-		context['photo'] = ResponsiveImage.objects.get(pk=self.kwargs['pk'])
-		album = context['photo'].get_album()
-		context['album'] = Album.objects.get(pk=album.pk)
-		context['form'] = ReportPhotoForm()
+    def get_success_url(self):
+        photo_pk = self.object.pk
+        album_pk = self.object.album.pk
 
-		return context
+        return reverse('photo_detail', kwargs={'pk': self.object.pk, 'album_pk': self.object.album.pk})
+
+    def get_context_data(self, **kwargs):
+        context = super(PhotoReportFormView, self).get_context_data(**kwargs)
+        context['photo'] = ResponsiveImage.objects.get(pk=self.kwargs['pk'])
+        album = context['photo'].get_album()
+        context['album'] = Album.objects.get(pk=album.pk)
+        context['form'] = ReportPhotoForm()
+
+        return context
 
 
 class PhotoDetailView(View):
 
-	def get(self, request, *args, **kwargs):
-		view = PhotoDisplay.as_view()
-		return view(request, *args, **kwargs)
+    def get(self, request, *args, **kwargs):
+        view = PhotoDisplay.as_view()
+        return view(request, *args, **kwargs)
 
-	def post(self, request, *args, **kwargs):
-		view = PhotoReportFormView.as_view()
-		return view(request, *args, **kwargs)
+    def post(self, request, *args, **kwargs):
+        view = PhotoReportFormView.as_view()
+        return view(request, *args, **kwargs)
 
 
 """
@@ -164,7 +165,7 @@ class PhotoAlbumViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixi
 			if year:
 				queryset = queryset.filter(
 					published_data__year=year,
-					published_date__lte=timezone.now()  
+					published_date__lte=timezone.now()
 				).order_by('-published_date')
 
 			if query and query != '':
@@ -172,9 +173,6 @@ class PhotoAlbumViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixi
 
 			return queryset
 """
-
-
-
 
 
 """

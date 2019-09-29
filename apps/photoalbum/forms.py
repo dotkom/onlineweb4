@@ -6,4 +6,4 @@ from apps.photoalbum.models import Album
 
 
 class ReportPhotoForm(forms.Form):
-	reason = forms.CharField(widget=forms.TextInput(), label=_("Begrunnelse"))
+    reason = forms.CharField(widget=forms.TextInput(), label=_("Begrunnelse"))

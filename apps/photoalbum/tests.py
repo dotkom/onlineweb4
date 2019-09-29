@@ -31,7 +31,7 @@ class PhotoAlbumTest(TestCase):
     pass
 
 	def testPhotoUpload(self):
- 
+
 		pass
 		# Also test that images are uploaded
 
@@ -43,7 +43,7 @@ class PhotoAlbumTest(TestCase):
 class AlbumEditFormTest(TestCase):
 
   def setUp(self):
-    
+
 	def testAlbumNameEdit(self):
 		pass
 
