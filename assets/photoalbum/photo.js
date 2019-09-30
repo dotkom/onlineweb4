@@ -1,13 +1,12 @@
-import $ from 'jquery'
+import $ from 'jquery';
 
 $(document).ready(() => {
-  console.log("Running second script")
-  $(".photo .big").bind("keydown", function(e) {
-    if (e.keyCode == 37) { // Left
-      console.log("Left arrow")
+  $('.photo .big').bind('keydown', (event) => {
+    if (event.keyCode === 37) { // Left
+      console.log('Left arrow');// eslint-disable-line no-console
     }
-    if (e.keyCode == 39) { // Right arrow
-      console.log("Right arrow")
+    if (event.keyCode === 39) { // Right arrow
+      console.log('Right arrow'); // eslint-disable-line no-console
     }
-  })
-})
+  });
+});

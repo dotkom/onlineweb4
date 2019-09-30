@@ -24,7 +24,7 @@ const Gallery = (function PrivateGallery($) {
   const events = new MicroEvent();
   const galleryImages = {};
   let formSelectedSingleImage = null;
-  let formSelectedMultipleImages = null;
+  const formSelectedMultipleImages = null;
 
   // DOM references
   const BUTTON_ADD_RESPONSIVE_IMAGE = $('#add-responsive-image');
@@ -100,6 +100,7 @@ const Gallery = (function PrivateGallery($) {
 
     // Declare the error callback
     const error = (xhr, errorMessage) => {
+      // eslint-disable-next-line no-console
       console.error(`Received error: ${xhr.responseText} ${errorMessage}`);
     };
 
@@ -133,30 +134,23 @@ const Gallery = (function PrivateGallery($) {
 
       // Listen for form widget button events
       BUTTON_ADD_RESPONSIVE_IMAGES.on('click', (e) => {
-        console.log("BUTTON_ADD_RESPONSIVE_IMAGES")
         e.preventDefault();
 
         const inputValue = $('#id_photos');
         const selectedImages = $('.image-selection-thumbnail-active');
         const thumbnailWrapper = $('#multiple-images-field-thumbnail');
 
-        var selectedImagesPk = []
-        var imagesHTML = ''
-        selectedImages.each(function() {
-          console.log($(this))
-          selectedImagesPk.push($(this).attr('data-id'))
-          imagesHTML += `<img src="${$(this).find('img').attr('src')}" alt class="hidden">`
-        })
-
-
-        console.log(selectedImagesPk)
+        const selectedImagesPk = [];
+        let imagesHTML = '';
+        selectedImages.each((_, element) => {
+          selectedImagesPk.push($(element).attr('data-id'));
+          imagesHTML += `<img src="${$(element).find('img').attr('src')}" alt class="hidden">`;
+        });
 
         if (selectedImages.length) {
           inputValue.val(selectedImagesPk);
-          //inputValue.val(ResponsiveImage.objects.get(pk=1))
-          //thumbnailWrapper.html(`<img src="${formSelectedSingleImage.find('img').attr('src')}" alt>`);
-          thumbnailWrapper.html('<p> Du har valgt ' + selectedImages.length + ' bilder. </p>' + imagesHTML);
-          thumbnailWrapper.attr('data-images', selectedImagesPk)
+          thumbnailWrapper.html(`<p> Du har valgt ${selectedImages.length} bilder. </p>${imagesHTML}`);
+          thumbnailWrapper.attr('data-images', selectedImagesPk);
         }
 
         IMAGE_SELECTION_WRAPPER.slideToggle(100);
@@ -172,7 +166,6 @@ const Gallery = (function PrivateGallery($) {
       // Remove set image
       BUTTON_REMOVE_IMAGES.on('click', (e) => {
         e.preventDefault();
-        //$('#responsive-image-id').attr('value', '');
         $('#single-image-field-thumbnail').html('Det er ikke valgt noe bilder.');
       });
 
@@ -214,19 +207,10 @@ const Gallery = (function PrivateGallery($) {
       // click events originating from elements classed "image-selection-thumbnail".
       // Updates the ID if the form input field and toggles highlighting.
       $('#image-gallery-search-results').on('click', '.image-selection-thumbnail', function clickThumb() {
-        console.log("In search results")
-        console.log($(this).parent())
-        var multiple = $('#image-gallery-search-results').hasClass('multiple') 
-        console.log(multiple)
+        const multiple = $('#image-gallery-search-results').hasClass('multiple');
         if (multiple) {
-          var image = $(this);
-          console.log(image)
+          const image = $(this);
           image.toggleClass('image-selection-thumbnail-active');
-
-          const inputValue = $('#responsive-image-id');
-          const thumbnailWrapper = $('#multiple-images-field-thumbnail');
-
-
         } else {
           if (formSelectedSingleImage) formSelectedSingleImage.removeClass('image-selection-thumbnail-active');
           formSelectedSingleImage = $(this);
@@ -241,23 +225,17 @@ const Gallery = (function PrivateGallery($) {
           }
         }
       });
-      /**
-      $('#image-gallery-search-results.multiple').on('click', '.image-selection-thumbnail', function clickThumb() {
-        //if (formSelectedMultipleImages) formSelectedMultipleImages.removeClass('image-selection-thumbnail-active');
-        var image = $(this);
-        console.log(image)
+      $('#image-gallery-search-results.multiple').on('click', '.image-selection-thumbnail', (event) => {
+        const image = $(event.target);
         image.addClass('image-selection-thumbnail-active');
 
         const inputValue = $('#responsive-image-id');
         const thumbnailWrapper = $('#single-image-field-thumbnail');
-        /**
         if (inputValue.length) {
           inputValue.val(formSelectedMultipleImages.attr('data-id'));
           thumbnailWrapper.html(`<img src="${formSelectedMultipleImages.find('img').attr('src')}" alt>`);
         }
-        
       });
-      **/
     },
 
     /**
