@@ -102,7 +102,8 @@ def study_callback(request):
 
     # Do user info request
     userinfo = client.do_user_info_request(state=auth_resp['state'], behavior='use_authorization_header')
-    ntnu_username_dataporten = userinfo.get('email').split('@')[0]
+    # connect-userid_sec format is array with "feide:username@ntnu.no"
+    ntnu_username_dataporten = userinfo.get('connect-userid_sec')[0].split(':')[1].split('@')[0]
     if request.user.ntnu_username and request.user.ntnu_username != ntnu_username_dataporten:
         logger.warning(
             '{} tried to authorize, but the registered ntnu_username and the one received from Dataporten differ.'
