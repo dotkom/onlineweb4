@@ -1,19 +1,18 @@
 # -*- coding: utf-8 -*-
 
-from django.db.models import Q
 from django.urls import reverse
-from django.utils import timezone
 from django.views.generic import View
 from django.views.generic.detail import DetailView, SingleObjectMixin
 from django.views.generic.edit import FormView
 from django.views.generic.list import ListView
-from rest_framework import mixins, viewsets
-from watson import search as watson
+from rest_framework import permissions, viewsets
 
 from apps.gallery.models import ResponsiveImage
 from apps.photoalbum.forms import ReportPhotoForm
-from apps.photoalbum.models import Album
+from apps.photoalbum.models import Album, Photo, UserTag
 from apps.photoalbum.utils import get_next_photo, get_previous_photo, report_photo
+
+from .serializers import AlbumReadOnlySerializer, PhotoReadOnlySerializer, UserTagReadOnlySerializer
 
 
 class AlbumsListView(ListView):
@@ -104,24 +103,30 @@ class PhotoDetailView(View):
         return view(request, *args, **kwargs)
 
 
-class PhotoAlbumViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.ListModelMixin):
-    queryset = Album.objects.all().order_by('-timestamp')[:15]
+class AlbumViewSet(viewsets.ReadOnlyModelViewSet):
+    permission_classes = (permissions.DjangoModelPermissions,)
+    queryset = Album.objects.all()
+    filterset_fields = ('published_date',)
+    serializer_class = AlbumReadOnlySerializer
+
+
+class AlbumPhotoViewSet(viewsets.ReadOnlyModelViewSet):
+    permission_classes = (permissions.DjangoModelPermissions,)
+    serializer_class = PhotoReadOnlySerializer
+    queryset = Photo.objects.all()
 
     def get_queryset(self):
-        queryset = Album.objects.all().order_by('-timestamp')[:15]
-        year = self.request.query_params.get('year', None)
-        tags = self.request.query_params.get('tags', None)
-        query = self.request.query_params.get('query', None)
+        queryset = super().get_queryset()
+        album_id = self.kwargs.get('album_id', None)
 
-        if tags:
-            queryset = queryset.filter(Q(tags__name__in=[tags]) | Q(tags__slug__in=[tags]))
-        if year:
-            queryset = queryset.filter(
-                published_data__year=year,
-                published_date__lte=timezone.now()
-            ).order_by('-published_date')
+        if album_id:
+            return queryset.filter(album_id=album_id)
 
-        if query and query != '':
-            queryset = watson.filter(queryset, query)
+        return queryset.none()
 
-        return queryset
+
+class PhotoUserTagViewSet(viewsets.ReadOnlyModelViewSet):
+    permission_classes = (permissions.DjangoModelPermissions,)
+    queryset = UserTag.objects.all()
+    filterset_fields = ('published_date',)
+    serializer_class = UserTagReadOnlySerializer

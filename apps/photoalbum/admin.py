@@ -1,12 +1,24 @@
 from django.contrib import admin
 from reversion.admin import VersionAdmin
 
-from apps.photoalbum.models import Album
+from apps.photoalbum.models import Album, Photo, UserTag
 
 
+@admin.register(Album)
 class AlbumAdmin(VersionAdmin):
     model = Album
-    list_display = ['title', 'photos', 'tags']
+    list_display = ('title', 'published_date', 'created_by')
+    search_fields = ('title', 'tags__name', 'published_date', 'created_by__first_name', 'description',)
 
 
-admin.site.register(Album, AlbumAdmin)
+class UserTagInlineAdmin(admin.StackedInline):
+    model = UserTag
+    extra = 0
+
+
+@admin.register(Photo)
+class PhotoAdmin(VersionAdmin):
+    model = Photo
+    list_display = ('title', 'album', 'photographer', 'photographer_name',)
+    search_fields = ('title', 'album', 'photographer', 'photographer_name', 'tags__name', 'description',)
+    inlines = (UserTagInlineAdmin,)

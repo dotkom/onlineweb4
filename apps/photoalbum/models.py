@@ -9,12 +9,19 @@ from unidecode import unidecode
 from apps.authentication.models import OnlineUser as User
 from apps.gallery.models import BaseResponsiveImage
 
-IMAGE_FOLDER = "images/photo_album"
-
 
 class Album(models.Model):
     title = models.CharField(_("Tittel"), blank=False, null=False, max_length=50)
+    description = models.TextField('Beskrivelse', blank=True, default='', max_length=2048)
+    created_date = models.DateTimeField(auto_now_add=True)
+    published_date = models.DateTimeField(null=True, blank=True)
     tags = TaggableManager(blank=True)
+    created_by = models.ForeignKey(
+        to=User,
+        verbose_name='Oppretted av',
+        related_name='created_albums',
+        on_delete=models.DO_NOTHING,
+    )
 
     def __str__(self):
         return self.title
@@ -23,12 +30,18 @@ class Album(models.Model):
     def slug(self):
         return slugify(unidecode(self.title))
 
+    @property
+    def cover_photo(self):
+        return self.photos.first()
+
 
 class Photo(BaseResponsiveImage):
     album = models.ForeignKey(
         to=Album,
         related_name='photos',
         on_delete=models.DO_NOTHING,
+        null=True,
+        blank=True,
     )
     title = models.CharField('Tittel', max_length=200, null=True, blank=True)
     description = models.TextField('Beskrivelse', blank=True, default='', max_length=2048)
@@ -49,6 +62,9 @@ class Photo(BaseResponsiveImage):
 
     class Meta(BaseResponsiveImage.Meta):
         ordering = ('album', 'timestamp')
+        verbose_name = 'Bilde'
+        verbose_name_plural = 'Bilder'
+        unique_together = (('album', 'title'),)
 
 
 class UserTag(models.Model):
@@ -68,4 +84,7 @@ class UserTag(models.Model):
     created_date = models.DateTimeField(auto_now_add=True)
 
     class Meta:
+        verbose_name = 'Tag'
+        verbose_name_plural = 'Tagger'
         ordering = ('photo', 'created_date', 'user',)
+        unique_together = (('user', 'photo',),)
