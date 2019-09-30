@@ -1,6 +1,6 @@
-const path = require('path')
-const BundleTracker = require('webpack-bundle-tracker')
-const CommonsChunkPlugin = require('webpack/lib/optimize/CommonsChunkPlugin')
+const path = require('path');
+const BundleTracker = require('webpack-bundle-tracker');
+const CommonsChunkPlugin = require('webpack/lib/optimize/CommonsChunkPlugin');
 
 /*
   A base configuration for webpack.
@@ -15,16 +15,16 @@ const webpackConfig = {
   // Try to reuse existing entries instead of creating more
   entry: {
     articleDetails: [
-      './assets/article/details/index'
+      './assets/article/details/index',
     ],
     articleArchive: [
-      './assets/article/archive/index'
+      './assets/article/archive/index',
     ],
     authentication: [
-      './assets/authentication/index'
+      './assets/authentication/index',
     ],
     careeropportunity: [
-      './assets/careeropportunity/index'
+      './assets/careeropportunity/index',
     ],
     core: [
       'react-hot-loader/patch',
@@ -32,116 +32,116 @@ const webpackConfig = {
       './assets/core/LoadingComponent/index',
     ],
     contact: [
-      './assets/contact/index'
+      './assets/contact/index',
     ],
     dashboard: [
-      './assets/dashboard/core/index'
+      './assets/dashboard/core/index',
     ],
     dashboardApproval: [
-      './assets/dashboard/approval/index'
+      './assets/dashboard/approval/index',
     ],
     dashboardArticle: [
-      './assets/dashboard/article/index'
+      './assets/dashboard/article/index',
     ],
     dashboardAuthentication: [
-      './assets/dashboard/authentication/index'
+      './assets/dashboard/authentication/index',
     ],
     dashboardCareeropportunity: [
-      './assets/dashboard/careeropportunity/index'
+      './assets/dashboard/careeropportunity/index',
     ],
     dashboardChunks: [
-      './assets/dashboard/chunks/index'
+      './assets/dashboard/chunks/index',
     ],
     dashboardEvents: [
-      './assets/dashboard/events/index'
+      './assets/dashboard/events/index',
     ],
     dashboardGallery: [
-      './assets/dashboard/gallery/index'
+      './assets/dashboard/gallery/index',
     ],
     dashboardGroups: [
-      './assets/dashboard/groups/index'
+      './assets/dashboard/groups/index',
     ],
     dashboardHobbies: [
       './assets/dashboard/hobbies/index',
     ],
     dashboardInventory: [
-      './assets/dashboard/inventory/index'
+      './assets/dashboard/inventory/index',
     ],
     dashboardMarks: [
-      './assets/dashboard/marks/index'
+      './assets/dashboard/marks/index',
     ],
     dashboardPosters: [
-      './assets/dashboard/posters/index'
+      './assets/dashboard/posters/index',
     ],
     dashboardResources: [
       './assets/dashboard/resources/index',
     ],
     dashboardWebshop: [
-      './assets/dashboard/webshop/index'
+      './assets/dashboard/webshop/index',
     ],
     eventsArchive: [
-      './assets/events/archive/index'
+      './assets/events/archive/index',
     ],
     eventsDetails: [
-      './assets/events/details/index'
+      './assets/events/details/index',
     ],
     eventsMail: [
       './assets/events/mail/index',
     ],
     feedback: [
-      './assets/feedback/index'
+      './assets/feedback/index',
     ],
     frontpage: [
-      './assets/frontpage/index'
+      './assets/frontpage/index',
     ],
     hobbygroups: [
-      './assets/hobbygroups/index'
+      './assets/hobbygroups/index',
     ],
     mailinglists: [
-      './assets/mailinglists/index'
+      './assets/mailinglists/index',
     ],
     offline: [
-      './assets/offline/index'
+      './assets/offline/index',
     ],
     profiles: [
-      './assets/profiles/index'
+      './assets/profiles/index',
     ],
     photoalbum: [
-      './assets/photoalbum/index'
+      './assets/photoalbum/index',
     ],
     sso: [
-      './assets/sso/index'
+      './assets/sso/index',
     ],
     resourcecenter: [
-      './assets/resourcecenter/index'
+      './assets/resourcecenter/index',
     ],
     webshop: [
-      './assets/webshop/index'
+      './assets/webshop/index',
     ],
     wiki: [
-      './assets/wiki/index'
-    ]
+      './assets/wiki/index',
+    ],
   },
   resolve: {
     modules: [
       // Makes it possible to write `import 'common/blabla'` to avoid a bunch of ../../
       path.join(__dirname, 'assets/'),
-      'node_modules'
-    ]
+      'node_modules',
+    ],
   },
   // Generated bundles output
   output: {
     // This path should be added to django's static file paths
     path: path.resolve('./bundles/webpack/'),
     // [name] is the entry name and [hash] is a unique hash for each compilation
-    filename: '[name]-[hash].js'
+    filename: '[name]-[hash].js',
   },
   // Externally managed dependencies
   // Ideally all dependencies should come from npm, but this is not always possible
   externals: {
     // django-js-reverse adds a global Urls object which we use to generate urls in javascript
     urls: 'Urls',
-    jquery: 'jQuery'
+    jquery: 'jQuery',
   },
   module: {
     /*
@@ -158,68 +158,68 @@ const webpackConfig = {
         test: /\.js$/,
         // Somehow babel fucks up jqplot
         exclude: /(node_modules|jqplot\.\w+\.js)/,
-        loaders: ['babel-loader']
+        loaders: ['babel-loader'],
       },
       {
         // Hack for modules that depend on global jQuery
         // https://webpack.js.org/guides/shimming/#imports-loader
         test: /(node_modules\/bootstrap\/.+|jquery.jqplot|jqplot\.\w+)\.js$/,
-        loader: 'imports-loader?jQuery=jquery,$=jquery,this=>window'
+        loader: 'imports-loader?jQuery=jquery,$=jquery,this=>window',
       },
       {
         test: /\.css$/,
         loader: [
           {
             // Load CSS by inserting <style> elements. Necessary for hot reloading
-            loader: 'style-loader'
+            loader: 'style-loader',
           },
           {
             // CSS + sourcemapping
             loader: 'css-loader',
             options: {
-              sourceMap: true
-            }
+              sourceMap: true,
+            },
           },
           {
             loader: 'postcss-loader',
             options: {
-              sourceMap: true
-            }
-          }
-        ]
+              sourceMap: true,
+            },
+          },
+        ],
       },
       {
         // Like .css execept that we run the file through a less transpiler first
         test: /\.less$/,
         loader: [
           {
-            loader: 'style-loader'
+            loader: 'style-loader',
           },
           {
             loader: 'css-loader',
             options: {
-              sourceMap: true
-            }
+              sourceMap: true,
+            },
           },
           {
             loader: 'postcss-loader',
             options: {
-              sourceMap: true
-            }
+              sourceMap: true,
+            },
           },
           {
             loader: 'less-loader',
             options: {
-              sourceMap: true
-            }
-          }
-        ]
+              sourceMap: true,
+            },
+          },
+        ],
       },
       {
         // webpack can import images from both javascript and css
         // By using url-loader we can inline small images (<10kB) in css
         test: /\.(png|gif|jpe?g)$/,
-        loader: 'url-loader?limit=10000'
+        loader: 'url-loader?limit=10000',
       },
       {
         /*
@@ -228,25 +228,25 @@ const webpackConfig = {
           with the version number to the font url which is completely useless for us
         */
         test: /\.(eot|svg|ttf|woff|woff2)(\?[a-z0-9=&.]+)?$/,
-        loader: 'url-loader?limit=10000'
-      }
-    ]
+        loader: 'url-loader?limit=10000',
+      },
+    ],
   },
   plugins: [
     // If several entries import the same code we can avoid duplication
     // of dependencies by adding it to a common entry which all entries can import from
     new CommonsChunkPlugin({
       names: ['common'],
-      minChunks: 2
+      minChunks: 2,
     }),
     // This is how we tell django which entries exist and where they are stored
-    new BundleTracker({ filename: './webpack-stats.json' })
-  ]
-}
+    new BundleTracker({ filename: './webpack-stats.json' }),
+  ],
+};
 
 // Add abakus override if instructed to do so
 if (process.env.OW4_ABAKUS_OVERRIDE && process.env.OW4_ABAKUS_OVERRIDE.toLowerCase() === 'true') {
-  webpackConfig.entry.core.push('./assets/core/z_override_abakus')
+  webpackConfig.entry.core.push('./assets/core/z_override_abakus');
 }
 
-module.exports = webpackConfig
+module.exports = webpackConfig;

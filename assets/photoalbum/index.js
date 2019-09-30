@@ -1,37 +1,29 @@
-import $ from 'jquery'
+import $ from 'jquery';
 
-import './less/photoalbum.less'
+import './less/photoalbum.less';
 
 $(document).ready(() => {
-  console.log('Running script')
-  $('.photo_edit').click(function choose_photo (e) {
-		const photo = $(this)
-    console.log("Choosing photo")
-		photo.toggleClass('image-selection-thumbnail-active')
-    const parent = photo.parent()
+  $('.photo_edit').click((event) => {
+    const photo = $(event.target);
+    photo.toggleClass('image-selection-thumbnail-active');
+    const parent = photo.parent();
 
-    parent.toggleClass('image-selection-thumbnail-active')
-  })
+    parent.toggleClass('image-selection-thumbnail-active');
+  });
 
-  $('#show_report_photo_form').click(function show_form (e) {
-		console.log("Changing visibility")
-		const button = $(this)
-		//button.style["visibility"] = "hidden"
-		$('#show_report_photo_form').toggleClass('hidden')
-		$('#report_photo_form').toggleClass('hidden')
-  })
+  $('#show_report_photo_form').click(() => {
+    // button.style["visibility"] = "hidden"
+    $('#show_report_photo_form').toggleClass('hidden');
+    $('#report_photo_form').toggleClass('hidden');
+  });
 
-  $(".photo .big").bind("keydown", function(e) {
-  	console.log("Running on keydown")
-    if (e.keyCode == 37) { // Left
-      console.log("Left arrow")
+  $('.photo .big').bind('keydown', (event) => {
+    if (event.keyCode === 37) { // Left
+      console.log('Left arrow'); // eslint-disable-line no-console
     }
-    if (e.keyCode == 39) { // Right arrow
-      console.log("Right arrow")
+    if (event.keyCode === 39) { // Right arrow
+      console.log('Right arrow'); // eslint-disable-line no-console
     }
-  })
-
-})
-
-
+  });
+});
 
