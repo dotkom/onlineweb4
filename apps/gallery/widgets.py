@@ -53,7 +53,6 @@ class SingleImageInput(HiddenInput):
         :return: An HTML string representing this widget
         """
 
-        print("Value in SingleImageInput, ", value)
         if value is None:
             value = ''
 
